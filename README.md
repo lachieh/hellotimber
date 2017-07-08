@@ -1,2 +1,0 @@
-# hellotimber
-Hellotimber.com
