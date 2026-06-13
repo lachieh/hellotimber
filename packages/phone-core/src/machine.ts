@@ -314,6 +314,7 @@ function forwardToApp(m: Machine, e: KeyEvent): void {
 }
 
 function handleTick(m: Machine, nowMs: number): void {
+  const dtMs = Math.max(0, nowMs - m.now);
   m.now = Math.max(m.now, nowMs);
   for (const [key, h] of m.held) {
     if (!h.longFired && m.now - h.downAt >= LONG_PRESS_MS) {
@@ -323,6 +324,14 @@ function handleTick(m: Machine, nowMs: number): void {
   }
   if (m.mode.kind === "boot") tickBoot(m);
   if (m.shortcut !== null && m.now >= m.shortcut.deadline) commitShortcut(m);
+  if (m.mode.kind === "app") {
+    try {
+      m.mode.app.tick(dtMs);
+    } catch {
+      // apps must never throw the machine into inconsistency
+    }
+    m.dirty = true;
+  }
 }
 
 function onShortPress(m: Machine, key: PhoneKey): void {
@@ -525,7 +534,11 @@ function buildNavStack(m: Machine, nodes: MenuNode[]): void {
     if (node.type === "submenu") stack.push({ kind: "submenu", node, selected: 0 });
     else if (node.type === "list") stack.push({ kind: "list", node, selected: 0 });
     else if (node.type === "reader") stack.push({ kind: "reader", node, scrollTop: 0 });
-    else break; // app/action targets handled in Task 8; stop at the parent view
+    else if (node.type === "app") {
+      m.mode = { kind: "nav", stack }; // the stack the app returns to
+      launchApp(m, node);
+      return;
+    } else break; // action target: stop at the parent view with it selected
     siblings = childrenOf(node);
   }
   m.mode = { kind: "nav", stack };
@@ -550,10 +563,30 @@ function enterNode(m: Machine, node: MenuNode): void {
       m.dirty = true;
       return;
     case "app":
+      launchApp(m, node);
+      return;
     case "action":
-      // App launching arrives in Task 8, action events in Task 9.
+      // Action events arrive in Task 9.
       return;
   }
+}
+
+/** Launch an app node's factory; no registered factory → no-op. */
+function launchApp(m: Machine, node: AppNode): void {
+  const factory = m.config.apps?.[node.appId];
+  if (factory === undefined) return; // unregistered appId: stay where we are
+  const stack: NavFrame[] = m.mode.kind === "nav" ? m.mode.stack : [{ kind: "carousel", index: 0 }];
+  const app = factory({
+    exit: () => {
+      // Voluntary exit — must be called synchronously from onKey/tick.
+      if (m.mode.kind !== "app" || m.mode.app !== app) return;
+      for (const h of m.held.values()) h.longFired = true; // swallow in-flight key releases
+      m.mode = { kind: "nav", stack };
+      m.dirty = true;
+    },
+  });
+  m.mode = { kind: "app", node, app, stack };
+  m.dirty = true;
 }
 
 /** C: pop one level; from the carousel itself, back to standby. */

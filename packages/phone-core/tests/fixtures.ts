@@ -1,5 +1,13 @@
 import { createPhone } from "../src/index";
-import type { MenuNode, Phone, PhoneConfig } from "../src/index";
+import type {
+  AppFactory,
+  KeyEvent,
+  MenuNode,
+  Phone,
+  PhoneApp,
+  PhoneConfig,
+  ScreenModel,
+} from "../src/index";
 
 /** Small but representative tree: submenus, lists, a reader, an app node, an action node. */
 export function testMenu(): MenuNode[] {
@@ -77,4 +85,41 @@ export function bootedPhone(overrides: Partial<PhoneConfig> = {}): Phone {
   phone.tick(0);
   phone.pressKey("power", 1000);
   return phone;
+}
+
+export interface FakeApp {
+  factory: AppFactory;
+  keys: KeyEvent[];
+  ticks: number[];
+  exitCount(): number;
+}
+
+/** Records delegated keys/ticks; exits itself when it sees a 'c' key-up. */
+export function makeFakeApp(appId = "write-message"): FakeApp {
+  const keys: KeyEvent[] = [];
+  const ticks: number[] = [];
+  let exited = 0;
+  const factory: AppFactory = (ctx) => {
+    const app: PhoneApp = {
+      onKey(e: KeyEvent): void {
+        keys.push(e);
+        if (e.type === "up" && e.key === "c") ctx.exit();
+      },
+      tick(dtMs: number): void {
+        ticks.push(dtMs);
+      },
+      render(): ScreenModel {
+        return {
+          kind: "custom",
+          appId,
+          frame: { width: 84, height: 48, pixels: new Uint8Array(84 * 48) },
+        };
+      },
+      onExit(): void {
+        exited += 1;
+      },
+    };
+    return app;
+  };
+  return { factory, keys, ticks, exitCount: () => exited };
 }
