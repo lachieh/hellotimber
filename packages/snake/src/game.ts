@@ -97,8 +97,20 @@ export function createSnake(opts: SnakeOptions = {}): SnakeGame {
       x: (head.x + dx + COLS) % COLS,
       y: (head.y + dy + ROWS) % ROWS,
     };
+    const eating = next.x === state.food.x && next.y === state.food.y;
     state.snake.unshift(next);
-    state.snake.pop();
+    if (eating) {
+      state.score += state.level; // spec: points per food = level
+      state.foodsEaten += 1;
+      const food = placeCell([...state.snake, ...state.walls]);
+      if (food === null) {
+        state.status = "game-over"; // board full — nothing left to eat
+        return false;
+      }
+      state.food = food;
+    } else {
+      state.snake.pop();
+    }
     return true;
   }
 
