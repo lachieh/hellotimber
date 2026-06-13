@@ -30,3 +30,6 @@ export {
 export { renderStandby } from "./render/standby";
 export { renderCarousel } from "./render/carousel";
 export { renderList, renderReader } from "./render/list";
+export { renderConfirm, renderEditor } from "./render/editor";
+export { renderScreen } from "./render";
+export type { RenderOptions } from "./render";
