@@ -1,0 +1,15 @@
+name: CI
+on:
+  push:
+    branches: [master]
+  pull_request:
+jobs:
+  ready:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v3
+        with:
+          install: true # installs tools from .config/mise.toml (node + vite-plus)
+      - run: mise exec -- vp install
+      - run: mise exec -- vp run ready
