@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@hellotimber/phone-3d demo</title>
+    <style>
+      html,
+      body,
+      #root {
+        height: 100%;
+        margin: 0;
+        background: #14161c;
+        color: #d8dce4;
+        font-family: monospace;
+      }
+      .demo {
+        display: flex;
+        height: 100%;
+      }
+      .stage {
+        flex: 1;
+        min-width: 0;
+      }
+      .sidebar {
+        width: 280px;
+        padding: 12px;
+        overflow-y: auto;
+        border-left: 1px solid #2a2e38;
+      }
+      .sidebar h2 {
+        font-size: 13px;
+        margin: 12px 0 6px;
+      }
+      .pattern-preview {
+        width: 252px; /* 84 × 3 */
+        height: 144px; /* 48 × 3 */
+        image-rendering: pixelated;
+        border: 1px solid #2a2e38;
+      }
+      #key-log {
+        font-size: 12px;
+        line-height: 1.5;
+        white-space: pre;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/demo/main.tsx"></script>
+  </body>
+</html>
