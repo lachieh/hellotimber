@@ -19,6 +19,18 @@ describe("glyph data", () => {
       expect(GLYPHS[ch], `missing glyph '${ch}'`).toBeDefined();
     }
   });
+
+  it("covers lowercase and punctuation", () => {
+    for (const ch of "abcdefghijklmnopqrstuvwxyz.,:;!?'\"()+-*/#@_<>=%") {
+      expect(GLYPHS[ch], `missing glyph '${ch}'`).toBeDefined();
+    }
+  });
+
+  it("covers the ellipsis and arrow UI glyphs", () => {
+    for (const ch of ["…", "►", "▲", "▼"]) {
+      expect(GLYPHS[ch], `missing glyph '${ch}'`).toBeDefined();
+    }
+  });
 });
 
 describe("FONT", () => {
