@@ -9,7 +9,9 @@ import { getPhoneRuntime } from "./phone";
  * <ClientOnly> in routes/_phone.tsx) and mounted ONCE for the whole session.
  */
 export default function PhoneStageHost() {
-  const { phone, renderer } = getPhoneRuntime();
+  // `input` is a closure on the runtime object, not a class method — no `this`.
+  // oxlint-disable-next-line unbound-method
+  const { renderer, input } = getPhoneRuntime();
   const settings = useSettings();
   const [version, setVersion] = useState(renderer.version);
 
@@ -25,8 +27,8 @@ export default function PhoneStageHost() {
     };
   }, [renderer]);
 
-  // Desktop keyboard → phone keys, alive exactly as long as the stage.
-  useEffect(() => attachKeyboard(phone), [phone]);
+  // Desktop keyboard → runtime input funnel, alive exactly as long as the stage.
+  useEffect(() => attachKeyboard(input), [input]);
 
   return (
     <PhoneStage
@@ -35,7 +37,7 @@ export default function PhoneStageHost() {
       screenVersion={version}
       backlightOn={settings.backlight}
       onKey={(key, action) => {
-        phone.send({ type: action, key });
+        input(key, action);
       }}
     />
   );

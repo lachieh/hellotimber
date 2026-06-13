@@ -7,6 +7,8 @@ import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
 const config = defineConfig({
+  // Deterministic build hash for the *#06# IMEI gag (no Date.now()).
+  define: { __BUILD_HASH__: JSON.stringify(process.env.BUILD_HASH ?? "devbuild") },
   resolve: {
     tsconfigPaths: true,
     dedupe: ["three", "react", "react-dom", "@react-three/fiber"],

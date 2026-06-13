@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import type { KeyEvent } from "@hellotimber/phone-core";
+import type { KeyEvent, PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
 import { attachKeyboard, phoneKeyForKeyboardKey } from "../src/phone/keyboard";
 
@@ -29,7 +29,9 @@ describe("phoneKeyForKeyboardKey", () => {
 describe("attachKeyboard", () => {
   function recordingPhone() {
     const sent: KeyEvent[] = [];
-    return { sent, phone: { send: (e: KeyEvent) => sent.push(e) } };
+    // The runtime input funnel: (key, action) → reconstruct the KeyEvent shape.
+    const input = (key: PhoneKey, type: KeyEvent["type"]) => sent.push({ type, key });
+    return { sent, input };
   }
 
   function press(target: EventTarget, type: "keydown" | "keyup", key: string): KeyboardEvent {
@@ -39,8 +41,8 @@ describe("attachKeyboard", () => {
   }
 
   it("sends down/up for handled keys and prevents default", () => {
-    const { sent, phone } = recordingPhone();
-    const detach = attachKeyboard(phone);
+    const { sent, input } = recordingPhone();
+    const detach = attachKeyboard(input);
     const down = press(document, "keydown", "Enter");
     const up = press(document, "keyup", "Enter");
     expect(sent).toEqual([
@@ -53,8 +55,8 @@ describe("attachKeyboard", () => {
   });
 
   it("ignores unhandled keys and leaves their default alone", () => {
-    const { sent, phone } = recordingPhone();
-    const detach = attachKeyboard(phone);
+    const { sent, input } = recordingPhone();
+    const detach = attachKeyboard(input);
     const ev = press(document, "keydown", "a");
     expect(sent).toEqual([]);
     expect(ev.defaultPrevented).toBe(false);
@@ -62,8 +64,8 @@ describe("attachKeyboard", () => {
   });
 
   it("ignores modifier chords (Cmd/Ctrl/Alt)", () => {
-    const { sent, phone } = recordingPhone();
-    const detach = attachKeyboard(phone);
+    const { sent, input } = recordingPhone();
+    const detach = attachKeyboard(input);
     const ev = new KeyboardEvent("keydown", {
       key: "5",
       metaKey: true,
@@ -77,22 +79,22 @@ describe("attachKeyboard", () => {
   });
 
   it("ignores keys typed into inputs and textareas", () => {
-    const { sent, phone } = recordingPhone();
-    const detach = attachKeyboard(phone);
-    const input = document.createElement("input");
+    const { sent, input } = recordingPhone();
+    const detach = attachKeyboard(input);
+    const inputEl = document.createElement("input");
     const textarea = document.createElement("textarea");
-    document.body.append(input, textarea);
-    press(input, "keydown", "Enter");
+    document.body.append(inputEl, textarea);
+    press(inputEl, "keydown", "Enter");
     press(textarea, "keydown", "5");
     expect(sent).toEqual([]);
-    input.remove();
+    inputEl.remove();
     textarea.remove();
     detach();
   });
 
   it("stops sending after detach", () => {
-    const { sent, phone } = recordingPhone();
-    const detach = attachKeyboard(phone);
+    const { sent, input } = recordingPhone();
+    const detach = attachKeyboard(input);
     detach();
     press(document, "keydown", "Enter");
     expect(sent).toEqual([]);

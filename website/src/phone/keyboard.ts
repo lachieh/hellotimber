@@ -1,4 +1,4 @@
-import type { KeyEvent, Phone, PhoneKey } from "@hellotimber/phone-core";
+import type { KeyEvent, PhoneKey } from "@hellotimber/phone-core";
 
 /**
  * Physical keyboard → phone key. Arrow keys scroll, Enter is the NaviKey,
@@ -36,9 +36,14 @@ function isTextEntryTarget(target: EventTarget | null): boolean {
 /**
  * Attach document-level key handling. preventDefault ONLY for handled keys;
  * text inputs and modifier chords pass through untouched. Returns a detach
- * function. The param is structural (just `send`) so tests can pass a stub.
+ * function. The param is the runtime input funnel (deviation 10) — keys flow
+ * through `input(key, action)` so the runtime can watch the stream (*#06#,
+ * screensaver idle). Tests can pass a stub.
  */
-export function attachKeyboard(phone: Pick<Phone, "send">, doc: Document = document): () => void {
+export function attachKeyboard(
+  input: (key: PhoneKey, action: KeyEvent["type"]) => void,
+  doc: Document = document,
+): () => void {
   const handle = (type: KeyEvent["type"]) => (e: KeyboardEvent) => {
     if (isTextEntryTarget(e.target)) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -46,7 +51,7 @@ export function attachKeyboard(phone: Pick<Phone, "send">, doc: Document = docum
     if (key === null) return;
     e.preventDefault();
     if (type === "down" && e.repeat) return; // OS auto-repeat: hold = one down
-    phone.send({ type, key });
+    input(key, type);
   };
   const onKeyDown = handle("down");
   const onKeyUp = handle("up");
