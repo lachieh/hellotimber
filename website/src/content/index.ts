@@ -1,55 +1,62 @@
-import type { Nokia3310Content } from "@hellotimber/phone-core";
+import type { ChatLine, Nokia3310Content } from "@hellotimber/phone-core";
+import { missedCalls, projects, roles } from "./call-register";
+import { chatMessages } from "./chat";
+import { clock } from "./clock";
+import { diverts } from "./divert";
+import { inbox, writeMessage } from "./messages";
+import { phonebook } from "./phonebook";
+import { profileModes } from "./profiles";
+import { nowItems } from "./reminders";
+import { site } from "./site";
 
-// ───────────────────────────────────────────────────────────────────────────
-// SAMPLE DATA — replace with real copy (plan 06). The STRUCTURE is real and
-// shared: nokia3310Menu(content) builds the phone menus from this object, and
-// the route ContentPanels render the same entries as HTML.
-// ───────────────────────────────────────────────────────────────────────────
-export const content: Nokia3310Content = {
-  phonebook: [
-    { id: "email", label: "Email", body: "lachlan@example.com — say hello." }, // SAMPLE DATA
-    { id: "github", label: "GitHub", body: "github.com/lachlan-example" }, // SAMPLE DATA
-    { id: "linkedin", label: "LinkedIn", body: "linkedin.com/in/lachlan-example" }, // SAMPLE DATA
-  ],
-  inbox: [
-    {
-      id: "hello",
-      label: "Hello!",
-      body: "Hi, I'm Lachlan. I build software and, apparently, phones.",
-    }, // SAMPLE DATA
-    {
-      id: "stack",
-      label: "What I use",
-      body: "TypeScript, React, three.js, and a 84x48 pixel grid.",
-    }, // SAMPLE DATA
-  ],
-  chat: [
-    { who: "them", text: "Lachlan shipped the impossible, twice." }, // SAMPLE DATA
-    { who: "me", text: "Thanks! The second one was easier." }, // SAMPLE DATA
-    { who: "them", text: "Would hire again. 10/10." }, // SAMPLE DATA
-  ],
-  missedCalls: [
-    { id: "startup", label: "That startup", body: "The one that got away (2019)." }, // SAMPLE DATA
-  ],
-  receivedCalls: [
-    { id: "acme", label: "Acme Corp 2022", body: "Senior engineer. Did senior engineering." }, // SAMPLE DATA
-    {
-      id: "initech",
-      label: "Initech 2020",
-      body: "Full-stack engineer. Shipped the TPS reports.",
-    }, // SAMPLE DATA
-  ],
-  dialledNumbers: [
-    { id: "this-site", label: "This site", body: "A Nokia 3310 that is also a website." }, // SAMPLE DATA
-    { id: "project-x", label: "Project X", body: "Shipped 2024. It did the thing." }, // SAMPLE DATA
-  ],
-  diverts: [
-    { id: "github", label: "GitHub", href: "https://github.com/lachlan-example" }, // SAMPLE DATA
-    { id: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/lachlan-example" }, // SAMPLE DATA
-  ],
-  reminders: [
-    { id: "learning", label: "Learning", body: "three.js internals and pixel fonts." }, // SAMPLE DATA
-    { id: "building", label: "Building", body: "This phone. You're holding it." }, // SAMPLE DATA
-  ],
-  clockNote: "Based in Australia (AEST). Generally awake when you are not.", // SAMPLE DATA
+export type * from "./types";
+export {
+  chatMessages,
+  clock,
+  diverts,
+  inbox,
+  missedCalls,
+  nowItems,
+  phonebook,
+  profileModes,
+  projects,
+  roles,
+  site,
+  writeMessage,
 };
+
+/**
+ * Adapter: the rich section modules → phone-core's Nokia3310Content.
+ * This is the no-drift seam (VISION): nokia3310Menu(content) builds the
+ * handset menus from EXACTLY the data the HTML panels render.
+ */
+export function nokiaContent(): Nokia3310Content {
+  return {
+    phonebook: phonebook.map((c) => ({
+      id: c.id,
+      label: c.label,
+      body: `${c.label}: ${c.value}`,
+    })),
+    inbox: inbox.map((m) => ({ id: m.id, label: m.label, body: m.text })),
+    chat: chatMessages.map((m): ChatLine => ({ who: m.who, text: `${m.nickname}: ${m.text}` })),
+    missedCalls: missedCalls.map((m) => ({ id: m.id, label: m.label, body: m.note })),
+    receivedCalls: roles.map((r) => ({
+      id: r.id,
+      label: `${r.org} ${r.period}`,
+      body: `${r.title}. ${r.summary}`,
+    })),
+    dialledNumbers: projects.map((p) => ({
+      id: p.id,
+      label: p.name,
+      body: `${p.blurb} (${p.year})`,
+    })),
+    diverts: diverts.map((d) => ({ id: d.id, label: d.label, href: d.href })),
+    reminders: nowItems.map((n) => ({ id: n.id, label: n.label, body: n.detail })),
+    clockNote: `${clock.availability} (${clock.timeZone})`,
+    // ringtones omitted: nokia3310Menu's defaults ("Nokia tune", "Ring ring",
+    // "Grande valse") match the tone ids Task 4 ships.
+  };
+}
+
+/** The one object both the handset menu and the HTML panels are built from. */
+export const content: Nokia3310Content = nokiaContent();
