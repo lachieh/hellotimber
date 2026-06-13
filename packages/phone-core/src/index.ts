@@ -11,3 +11,12 @@ export type {
   PhoneSnapshot,
   ScreenModel,
 } from "./types";
+export {
+  childrenOf,
+  isValidPath,
+  joinMenuPath,
+  normalizePath,
+  parsePath,
+  resolveIds,
+} from "./paths";
+export type { ParsedPath } from "./paths";
