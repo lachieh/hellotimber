@@ -499,3 +499,28 @@ a {
   font-size: 0.875rem;
   color: var(--sea-ink);
 }
+
+/* --- Accessibility & responsiveness (plan 06 Task 8) ---------------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.phone-layout a:focus-visible,
+.phone-layout button:focus-visible,
+.phone-layout input:focus-visible {
+  outline: 2px solid #2456c8;
+  outline-offset: 2px;
+}
+@media (max-width: 767px) {
+  .phone-layout {
+    grid-template-columns: 1fr; /* canvas above panel; panel fully usable */
+  }
+}

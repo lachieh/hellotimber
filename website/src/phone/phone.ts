@@ -136,11 +136,18 @@ export function getPhoneRuntime(): PhoneRuntime {
   }
   if (runtime !== null) return runtime;
 
+  // Reduced motion → skip the boot animation entirely (a11y, deviation/Task 8).
+  const reduceMotion =
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   const phone = createPhone({
     menu: withWorkingSettings(nokia3310Menu(content)),
     apps: buildApps(),
     carrier: "LACHLAN",
     clock: () => new Date().toTimeString().slice(0, 5), // 24h HH:MM
+    ...(reduceMotion ? { bootMs: 0 } : {}),
   });
 
   // 84×48 native canvas; NearestFilter upscaling happens on the 3D mesh.

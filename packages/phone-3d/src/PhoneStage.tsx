@@ -5,10 +5,18 @@ import type { Group } from "three";
 import { Nokia3310 } from "./Nokia3310";
 import type { Nokia3310Props } from "./types";
 
-/** Gentle idle sway (sine) + pointer-follow tilt, eased toward the target. */
+/** Gentle idle sway (sine) + pointer-follow tilt, eased toward the target.
+ *  Honors prefers-reduced-motion: the rig holds still for those users
+ *  (plan 06 deviation 6 — the single sanctioned phone-3d edit). */
+const prefersReducedMotion =
+  typeof window !== "undefined" &&
+  typeof window.matchMedia === "function" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 function SwayRig({ children }: { children: ReactNode }) {
   const group = useRef<Group>(null);
   useFrame((state) => {
+    if (prefersReducedMotion) return; // hold still — idle sway + tilt both off
     const g = group.current;
     if (!g) return;
     const t = state.clock.elapsedTime;

@@ -1,5 +1,6 @@
 import { ClientOnly, createFileRoute, Outlet } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
+import ScreenMirror from "../components/ScreenMirror";
 import SoundToggle from "../components/SoundToggle";
 
 const PhoneStageHost = lazy(() => import("../phone/PhoneStageHost"));
@@ -18,6 +19,8 @@ function PhoneLayout() {
           </Suspense>
           {/* SoundToggle reads localStorage, so it lives inside ClientOnly. */}
           <SoundToggle />
+          {/* aria-live mirror of the LCD; client-only (constructs the runtime). */}
+          <ScreenMirror />
         </ClientOnly>
       </div>
       <Outlet /> {/* only this subtree swaps on navigation */}
