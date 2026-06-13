@@ -1,16 +1,21 @@
 import { Canvas } from "@react-three/fiber";
 import { StrictMode, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { Keypad } from "../Keypad";
 import { PhoneBody } from "../PhoneBody";
 import { Screen } from "../Screen";
+import type { Nokia3310Key } from "../types";
 import { createTestPattern } from "./test-pattern";
+
+const KEYBOARD_KEYS = new Set<string>(["*", "#", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]);
 
 function App() {
   const pattern = useMemo(() => createTestPattern(), []);
   const [version, setVersion] = useState(pattern.version);
+  const [log, setLog] = useState<string[]>([]);
+  const [pressedKeys, setPressedKeys] = useState<ReadonlySet<Nokia3310Key>>(new Set());
   const previewRef = useRef<HTMLDivElement>(null);
 
-  // Animate the test pattern at 2 fps — counter + checkerboard flip
   useEffect(() => {
     const id = setInterval(() => {
       pattern.drawFrame();
@@ -19,7 +24,6 @@ function App() {
     return () => clearInterval(id);
   }, [pattern]);
 
-  // Show the live pattern canvas itself in the sidebar
   useEffect(() => {
     const host = previewRef.current;
     if (!host) return;
@@ -30,6 +34,31 @@ function App() {
     };
   }, [pattern]);
 
+  // Physical keyboard demo for the pressedKeys prop
+  useEffect(() => {
+    const update = (key: string, held: boolean) => {
+      if (!KEYBOARD_KEYS.has(key)) return;
+      setPressedKeys((prev) => {
+        const next = new Set(prev);
+        if (held) next.add(key as Nokia3310Key);
+        else next.delete(key as Nokia3310Key);
+        return next;
+      });
+    };
+    const down = (e: KeyboardEvent) => update(e.key, true);
+    const up = (e: KeyboardEvent) => update(e.key, false);
+    window.addEventListener("keydown", down);
+    window.addEventListener("keyup", up);
+    return () => {
+      window.removeEventListener("keydown", down);
+      window.removeEventListener("keyup", up);
+    };
+  }, []);
+
+  const handleKey = (key: Nokia3310Key, action: "down" | "up") => {
+    setLog((prev) => [`${key} ${action}`, ...prev].slice(0, 30));
+  };
+
   return (
     <div className="demo">
       <div className="stage">
@@ -39,13 +68,14 @@ function App() {
           <directionalLight position={[-5, -2, 4]} intensity={0.3} />
           <PhoneBody />
           <Screen screenCanvas={pattern.canvas} screenVersion={version} />
+          <Keypad onKey={handleKey} pressedKeys={pressedKeys} />
         </Canvas>
       </div>
       <aside className="sidebar">
         <h2>test pattern (version {version})</h2>
         <div ref={previewRef} />
         <h2>key log</h2>
-        <div id="key-log">(keypad arrives in Task 5)</div>
+        <div id="key-log">{log.join("\n")}</div>
       </aside>
     </div>
   );
