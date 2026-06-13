@@ -1,17 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../../components/ContentPanel";
-import { content } from "../../../content";
+import { diverts } from "../../../content";
 
 export const Route = createFileRoute("/_phone/menu/call-divert")({ component: CallDivertPanel });
 
 function CallDivertPanel() {
   return (
     <ContentPanel title="Call divert">
-      <p>Divert this visit to one of my profiles elsewhere:</p>
+      <p>
+        Divert this visit to one of my profiles elsewhere (selecting one on the handset opens it
+        too):
+      </p>
       <ul>
-        {content.diverts.map((d) => (
+        {diverts.map((d) => (
           <li key={d.id}>
-            <a href={d.href} target="_blank" rel="noopener noreferrer">
+            <a href={d.href} target="_blank" rel="me noopener noreferrer">
               {d.label}
             </a>
           </li>

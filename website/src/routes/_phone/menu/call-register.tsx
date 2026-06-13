@@ -1,31 +1,57 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../../components/ContentPanel";
-import { content } from "../../../content";
+import { missedCalls, projects, roles } from "../../../content";
 
 export const Route = createFileRoute("/_phone/menu/call-register")({
   component: CallRegisterPanel,
 });
 
 function CallRegisterPanel() {
-  const sections = [
-    ["Received calls — roles held", content.receivedCalls],
-    ["Dialled numbers — projects shipped", content.dialledNumbers],
-    ["Missed calls — ones that got away", content.missedCalls],
-  ] as const;
   return (
     <ContentPanel title="Call register">
-      {sections.map(([heading, items]) => (
-        <section key={heading}>
-          <h2>{heading}</h2>
-          <ul>
-            {items.map((item) => (
-              <li key={item.id}>
-                <strong>{item.label}</strong> — {item.body}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
+      <section aria-labelledby="received-calls">
+        <h2 id="received-calls">Received calls — roles held</h2>
+        <dl>
+          {roles.map((r) => (
+            <div key={r.id}>
+              <dt>
+                <strong>{r.title}</strong>, {r.org} <time dateTime={r.periodStart}>{r.period}</time>
+              </dt>
+              <dd>{r.summary}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+      <section aria-labelledby="dialled-numbers">
+        <h2 id="dialled-numbers">Dialled numbers — projects shipped</h2>
+        <dl>
+          {projects.map((p) => (
+            <div key={p.id}>
+              <dt>
+                {p.url ? (
+                  <a href={p.url} target="_blank" rel="noopener noreferrer">
+                    {p.name}
+                  </a>
+                ) : (
+                  <strong>{p.name}</strong>
+                )}{" "}
+                <time dateTime={p.year}>{p.year}</time>
+              </dt>
+              <dd>{p.blurb}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+      <section aria-labelledby="missed-calls">
+        <h2 id="missed-calls">Missed calls — ones that got away</h2>
+        <ul>
+          {missedCalls.map((m) => (
+            <li key={m.id}>
+              <strong>{m.label}</strong> — {m.note}
+            </li>
+          ))}
+        </ul>
+      </section>
     </ContentPanel>
   );
 }
