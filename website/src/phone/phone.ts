@@ -4,6 +4,7 @@ import { createScreenRenderer } from "@hellotimber/phone-screen";
 import type { ScreenRenderer } from "@hellotimber/phone-screen";
 import { content } from "../content";
 import { snakeApp } from "./apps/snake-app";
+import { handleSound } from "./audio";
 
 export interface PhoneRuntime {
   phone: Phone;
@@ -47,6 +48,9 @@ export function getPhoneRuntime(): PhoneRuntime {
   phone.on("action", (action) => {
     window.open(action.value, "_blank", "noopener,noreferrer");
   });
+
+  // Key beeps (and future phone-core tones) — settings/mute applied inside.
+  phone.on("sound", handleSound);
 
   // The machine's only clock: rAF-driven tick (boot animation, long presses,
   // multi-tap timeouts, app ticks all derive from this).

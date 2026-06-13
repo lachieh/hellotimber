@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import ContentPanel from "../../../components/ContentPanel";
+import { playTone, stopTone } from "../../../phone/audio";
+import { TONES } from "../../../phone/tones";
 
 export const Route = createFileRoute("/_phone/menu/tones")({ component: TonesPanel });
 
@@ -7,8 +9,24 @@ function TonesPanel() {
   return (
     <ContentPanel title="Tones">
       <p>
-        Ringtone picker and sound settings — monophonic, as nature intended. WebAudio playback
-        arrives with plan 06.
+        Monophonic ringtones, as nature intended. Preview them here, or pick one on the handset
+        under Tones → Ringing tone (it previews there too).
+      </p>
+      <ul>
+        {TONES.map((tone) => (
+          <li key={tone.id}>
+            <button type="button" onClick={() => playTone(tone.id)}>
+              ▶ {tone.label}
+            </button>
+          </li>
+        ))}
+      </ul>
+      <p>
+        <button type="button" onClick={() => stopTone()}>
+          ■ Stop
+        </button>{" "}
+        Keypad tones and the screensaver live here too — toggle them on the handset or under{" "}
+        <Link to="/menu/settings">Settings</Link>.
       </p>
     </ContentPanel>
   );
