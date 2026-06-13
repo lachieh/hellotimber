@@ -8,3 +8,4 @@ export type {
   SnakeStatus,
 } from "./types";
 export { tickIntervalMs } from "./timing";
+export { MAZE_NAMES } from "./mazes";
