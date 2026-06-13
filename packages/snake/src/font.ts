@@ -27,3 +27,22 @@ export function drawNumber(b: Bitmap, x: number, y: number, value: number): void
 export function numberWidth(value: number): number {
   return String(Math.max(0, Math.floor(value))).length * 4 - 1;
 }
+
+/** Minimal 5×7 caps font: exactly the glyphs needed for "GAME OVER". */
+export const FONT_5X7: Record<string, readonly string[]> = {
+  A: [".###.", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],
+  E: ["#####", "#....", "#....", "####.", "#....", "#....", "#####"],
+  G: [".####", "#....", "#....", "#.###", "#...#", "#...#", ".###."],
+  M: ["#...#", "##.##", "#.#.#", "#.#.#", "#...#", "#...#", "#...#"],
+  O: [".###.", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],
+  R: ["####.", "#...#", "#...#", "####.", "#.#..", "#..#.", "#...#"],
+  V: ["#...#", "#...#", "#...#", "#...#", "#...#", ".#.#.", "..#.."],
+};
+
+/** Draw caps text in the 5×7 font (6px advance; unknown chars/space skip). */
+export function drawText5x7(b: Bitmap, x: number, y: number, text: string): void {
+  for (let i = 0; i < text.length; i++) {
+    const glyph = FONT_5X7[text[i]];
+    if (glyph) drawArt(b, x + i * 6, y, glyph);
+  }
+}

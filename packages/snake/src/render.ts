@@ -1,5 +1,5 @@
 import { createBitmap, drawArt, fillRect } from "./bitmap";
-import { drawNumber, numberWidth } from "./font";
+import { drawNumber, drawText5x7, numberWidth } from "./font";
 import {
   SPRITE_BODY_NOTCH,
   SPRITE_BODY_SOLID,
@@ -21,7 +21,8 @@ export function renderSnakeFrame(state: SnakeState): Bitmap {
   const b = createBitmap(84, 48);
 
   if (state.status === "game-over") {
-    // completed in Task 10
+    drawText5x7(b, 15, 14, "GAME OVER"); // 53px wide, centered
+    drawNumber(b, Math.floor((b.width - numberWidth(state.score)) / 2), 28, state.score);
     return b;
   }
 
