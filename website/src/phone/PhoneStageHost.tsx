@@ -1,5 +1,6 @@
 import { PhoneStage } from "@hellotimber/phone-3d";
 import { useEffect, useState } from "react";
+import { useSettings } from "../settings";
 import { attachKeyboard } from "./keyboard";
 import { getPhoneRuntime } from "./phone";
 
@@ -9,6 +10,7 @@ import { getPhoneRuntime } from "./phone";
  */
 export default function PhoneStageHost() {
   const { phone, renderer } = getPhoneRuntime();
+  const settings = useSettings();
   const [version, setVersion] = useState(renderer.version);
 
   // rAF-driven version observation: re-render only when the LCD actually
@@ -31,7 +33,7 @@ export default function PhoneStageHost() {
       className="phone-stage"
       screenCanvas={renderer.canvas}
       screenVersion={version}
-      backlightOn
+      backlightOn={settings.backlight}
       onKey={(key, action) => {
         phone.send({ type: action, key });
       }}
