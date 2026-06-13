@@ -45,3 +45,5 @@ export {
 export type { MultitapKey, MultitapMode, MultitapState } from "./multitap";
 export { editorApp } from "./editor";
 export type { EditorOptions } from "./editor";
+export { nokia3310Menu } from "./nokia-menu";
+export type { ChatLine, ContentItem, DivertTarget, Nokia3310Content } from "./nokia-menu";
