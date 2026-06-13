@@ -1,9 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { StrictMode, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Keypad } from "../Keypad";
-import { PhoneBody } from "../PhoneBody";
-import { Screen } from "../Screen";
+import { Nokia3310 } from "../Nokia3310";
 import type { Nokia3310Key } from "../types";
 import { createTestPattern } from "./test-pattern";
 
@@ -14,6 +12,7 @@ function App() {
   const [version, setVersion] = useState(pattern.version);
   const [log, setLog] = useState<string[]>([]);
   const [pressedKeys, setPressedKeys] = useState<ReadonlySet<Nokia3310Key>>(new Set());
+  const [backlightOn, setBacklightOn] = useState(true);
   const previewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,12 +65,25 @@ function App() {
           <ambientLight intensity={0.7} />
           <directionalLight position={[4, 6, 8]} intensity={1.4} />
           <directionalLight position={[-5, -2, 4]} intensity={0.3} />
-          <PhoneBody />
-          <Screen screenCanvas={pattern.canvas} screenVersion={version} />
-          <Keypad onKey={handleKey} pressedKeys={pressedKeys} />
+          <Nokia3310
+            screenCanvas={pattern.canvas}
+            screenVersion={version}
+            onKey={handleKey}
+            backlightOn={backlightOn}
+            pressedKeys={pressedKeys}
+          />
         </Canvas>
       </div>
       <aside className="sidebar">
+        <h2>backlight</h2>
+        <label>
+          <input
+            type="checkbox"
+            checked={backlightOn}
+            onChange={(e) => setBacklightOn(e.target.checked)}
+          />{" "}
+          backlight on
+        </label>
         <h2>test pattern (version {version})</h2>
         <div ref={previewRef} />
         <h2>key log</h2>
