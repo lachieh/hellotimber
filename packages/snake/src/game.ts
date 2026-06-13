@@ -87,6 +87,15 @@ export function createSnake(opts: SnakeOptions = {}): SnakeGame {
   function tick(): boolean {
     if (state.status === "game-over") return false;
     if (state.status === "idle" || state.status === "paused") return true;
+    if (state.status === "dying") {
+      state.flashOn = !state.flashOn;
+      dyingTicks -= 1;
+      if (dyingTicks === 0) {
+        state.status = "game-over";
+        return false;
+      }
+      return true;
+    }
     if (state.pendingDir) {
       if (state.pendingDir !== OPPOSITE[state.dir]) state.dir = state.pendingDir;
       state.pendingDir = null;
@@ -98,6 +107,17 @@ export function createSnake(opts: SnakeOptions = {}): SnakeGame {
       y: (head.y + dy + ROWS) % ROWS,
     };
     const eating = next.x === state.food.x && next.y === state.food.y;
+    // when not eating, the tail vacates its cell this tick — not a collision
+    const body = eating ? state.snake : state.snake.slice(0, -1);
+    const blocked =
+      state.walls.some((c) => c.x === next.x && c.y === next.y) ||
+      body.some((c) => c.x === next.x && c.y === next.y);
+    if (blocked) {
+      state.status = "dying";
+      dyingTicks = 2;
+      state.flashOn = false; // snake hidden on the collision frame
+      return true;
+    }
     state.snake.unshift(next);
     let spawnedBonus = false;
     if (eating) {
