@@ -12,3 +12,4 @@ export {
   ENVELOPE_ICON,
   KEYGUARD_ICON,
 } from "./icons/status";
+export { FALLBACK_ICON, MENU_ICONS, menuIcon } from "./icons/menu-icons";
