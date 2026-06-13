@@ -10,7 +10,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 
 | #   | Plan                                       | Builds                                | Depends on                   | Status      |
 | --- | ------------------------------------------ | ------------------------------------- | ---------------------------- | ----------- |
-| 01  | [phone-core](./01-phone-core.md)           | `@hellotimber/phone-core`             | —                            | not started |
+| 01  | [phone-core](./01-phone-core.md)           | `@hellotimber/phone-core`             | —                            | done        |
 | 02  | [phone-screen](./02-phone-screen.md)       | `@hellotimber/phone-screen`           | — (types from 01)            | not started |
 | 03  | [phone-3d](./03-phone-3d.md)               | `@hellotimber/phone-3d`               | —                            | done        |
 | 04  | [snake](./04-snake.md)                     | `@hellotimber/snake`                  | —                            | done        |
