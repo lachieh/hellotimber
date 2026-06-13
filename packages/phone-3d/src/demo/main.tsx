@@ -2,6 +2,7 @@ import { Canvas } from "@react-three/fiber";
 import { StrictMode, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { PhoneBody } from "../PhoneBody";
+import { Screen } from "../Screen";
 import { createTestPattern } from "./test-pattern";
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
           <directionalLight position={[4, 6, 8]} intensity={1.4} />
           <directionalLight position={[-5, -2, 4]} intensity={0.3} />
           <PhoneBody />
+          <Screen screenCanvas={pattern.canvas} screenVersion={version} />
         </Canvas>
       </div>
       <aside className="sidebar">
