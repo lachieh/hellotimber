@@ -322,6 +322,7 @@ function handleTick(m: Machine, nowMs: number): void {
     }
   }
   if (m.mode.kind === "boot") tickBoot(m);
+  if (m.shortcut !== null && m.now >= m.shortcut.deadline) commitShortcut(m);
 }
 
 function onShortPress(m: Machine, key: PhoneKey): void {
@@ -380,8 +381,14 @@ function navShortPress(m: Machine, key: PhoneKey): void {
         m.shortcut = null;
         m.dirty = true;
       } else if (key === "navi") {
+        if (m.shortcut !== null && m.shortcut.digits.length > 0) {
+          commitShortcut(m);
+          return;
+        }
         m.shortcut = null;
         enterNode(m, m.config.menu[frame.index]!);
+      } else if (m.shortcut !== null && /^[1-9]$/.test(key)) {
+        shortcutDigit(m, Number(key));
       }
       return;
     }
@@ -467,6 +474,37 @@ function enterMenu(m: Machine): void {
   m.mode = { kind: "nav", stack: [{ kind: "carousel", index: 0 }] };
   m.shortcut = { digits: [], deadline: m.now + SHORTCUT_WINDOW_MS };
   m.dirty = true;
+}
+
+/** A digit pressed in the carousel while the 3s window is open. */
+function shortcutDigit(m: Machine, digit: number): void {
+  if (m.mode.kind !== "nav" || m.shortcut === null) return;
+  m.shortcut.digits.push(digit);
+  m.shortcut.deadline = m.now + SHORTCUT_WINDOW_MS; // each digit restarts the window
+  const first = m.shortcut.digits[0]!;
+  const top = m.mode.stack[0]!;
+  if (top.kind === "carousel" && first >= 1 && first <= m.config.menu.length) {
+    top.index = first - 1; // preview: the shortcut number shows top-right on the real phone
+    m.dirty = true;
+  }
+}
+
+/** Enter the accumulated digit path (navi pressed or window timed out). */
+function commitShortcut(m: Machine): void {
+  if (m.mode.kind !== "nav" || m.shortcut === null) return;
+  const digits = m.shortcut.digits;
+  m.shortcut = null;
+  if (digits.length === 0) return; // expired without input — stay in the carousel
+  const nodes: MenuNode[] = [];
+  let level: MenuNode[] = m.config.menu;
+  for (const d of digits) {
+    const node = level[d - 1];
+    if (node === undefined) break; // stop at the first invalid digit
+    nodes.push(node);
+    level = childrenOf(node);
+  }
+  if (nodes.length === 0) return;
+  buildNavStack(m, nodes);
 }
 
 /**
