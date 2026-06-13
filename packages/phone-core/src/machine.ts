@@ -368,27 +368,67 @@ function navShortPress(m: Machine, key: PhoneKey): void {
     return;
   }
 
-  if (frame.kind === "carousel") {
-    const total = m.config.menu.length;
-    if (key === "down") {
-      frame.index = wrapIndex(frame.index + 1, total);
-      m.shortcut = null; // scrolling cancels the digit-shortcut window
-      m.dirty = true;
-    } else if (key === "up") {
-      frame.index = wrapIndex(frame.index - 1, total);
-      m.shortcut = null;
-      m.dirty = true;
-    } else if (key === "navi") {
-      m.shortcut = null;
-      enterNode(m, m.config.menu[frame.index]!);
+  switch (frame.kind) {
+    case "carousel": {
+      const total = m.config.menu.length;
+      if (key === "down") {
+        frame.index = wrapIndex(frame.index + 1, total);
+        m.shortcut = null; // scrolling cancels the digit-shortcut window
+        m.dirty = true;
+      } else if (key === "up") {
+        frame.index = wrapIndex(frame.index - 1, total);
+        m.shortcut = null;
+        m.dirty = true;
+      } else if (key === "navi") {
+        m.shortcut = null;
+        enterNode(m, m.config.menu[frame.index]!);
+      }
+      return;
     }
-    return;
+    case "submenu": {
+      const total = frame.node.children.length;
+      if (total === 0) return;
+      if (key === "down") {
+        frame.selected = wrapIndex(frame.selected + 1, total);
+        m.dirty = true;
+      } else if (key === "up") {
+        frame.selected = wrapIndex(frame.selected - 1, total);
+        m.dirty = true;
+      } else if (key === "navi") {
+        enterNode(m, frame.node.children[frame.selected]!);
+      }
+      return;
+    }
+    case "list": {
+      const total = frame.node.items.length;
+      if (total === 0) return;
+      if (key === "down") {
+        frame.selected = wrapIndex(frame.selected + 1, total);
+        m.dirty = true;
+      } else if (key === "up") {
+        frame.selected = wrapIndex(frame.selected - 1, total);
+        m.dirty = true;
+      } else if (key === "navi") {
+        stack.push({ kind: "item", node: frame.node, itemIndex: frame.selected, scrollTop: 0 });
+        m.dirty = true;
+      }
+      return;
+    }
+    case "item":
+    case "reader": {
+      const body =
+        frame.kind === "item" ? frame.node.items[frame.itemIndex]!.body : frame.node.body;
+      const maxTop = Math.max(0, wrapLines(body).length - READER_VISIBLE_LINES);
+      if (key === "down" && frame.scrollTop < maxTop) {
+        frame.scrollTop += 1;
+        m.dirty = true;
+      } else if (key === "up" && frame.scrollTop > 0) {
+        frame.scrollTop -= 1;
+        m.dirty = true;
+      }
+      return;
+    }
   }
-
-  if (frame.kind === "submenu" && key === "navi" && frame.node.children.length > 0) {
-    enterNode(m, frame.node.children[frame.selected]!);
-  }
-  // List selection, item opening and reader scrolling arrive in Task 6.
 }
 
 /** Jump the machine to a parsed path as if the user had navigated there. Unknown → standby. */
