@@ -30,3 +30,16 @@ export {
   SHORTCUT_WINDOW_MS,
   wrapLines,
 } from "./machine";
+export {
+  clearAll,
+  commitPending,
+  createMultitap,
+  deleteLeft,
+  holdDigit,
+  moveCursor,
+  MULTITAP_TIMEOUT_MS,
+  pressDigit,
+  pressHash,
+  tickMultitap,
+} from "./multitap";
+export type { MultitapKey, MultitapMode, MultitapState } from "./multitap";
