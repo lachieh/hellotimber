@@ -14,7 +14,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 02  | [phone-screen](./02-phone-screen.md)       | `@hellotimber/phone-screen`           | — (types from 01)            | done        |
 | 03  | [phone-3d](./03-phone-3d.md)               | `@hellotimber/phone-3d`               | —                            | done        |
 | 04  | [snake](./04-snake.md)                     | `@hellotimber/snake`                  | —                            | done        |
-| 05  | [website shell](./05-website-shell.md)     | routes + router⇄phone bridge          | 01, 02, 03                   | not started |
+| 05  | [website shell](./05-website-shell.md)     | routes + router⇄phone bridge          | 01, 02, 03                   | done        |
 | 06  | [content & polish](./06-content-polish.md) | portfolio content, sound, SEO, deploy | 05 (04 for Snake menu entry) | not started |
 
 Plans 01–04 are parallel-safe: no shared files, no cross-package imports at runtime
