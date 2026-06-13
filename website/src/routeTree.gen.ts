@@ -11,6 +11,12 @@
 import { Route as rootRouteImport } from "./routes/__root";
 import { Route as PhoneRouteImport } from "./routes/_phone";
 import { Route as PhoneIndexRouteImport } from "./routes/_phone/index";
+import { Route as PhoneSplatRouteImport } from "./routes/_phone/$";
+import { Route as PhoneMenuPhoneBookRouteImport } from "./routes/_phone/menu/phone-book";
+import { Route as PhoneMenuChatRouteImport } from "./routes/_phone/menu/chat";
+import { Route as PhoneMenuMessagesIndexRouteImport } from "./routes/_phone/menu/messages/index";
+import { Route as PhoneMenuMessagesWriteRouteImport } from "./routes/_phone/menu/messages/write";
+import { Route as PhoneMenuMessagesInboxRouteImport } from "./routes/_phone/menu/messages/inbox";
 
 const PhoneRoute = PhoneRouteImport.update({
   id: "/_phone",
@@ -21,24 +27,95 @@ const PhoneIndexRoute = PhoneIndexRouteImport.update({
   path: "/",
   getParentRoute: () => PhoneRoute,
 } as any);
+const PhoneSplatRoute = PhoneSplatRouteImport.update({
+  id: "/$",
+  path: "/$",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuPhoneBookRoute = PhoneMenuPhoneBookRouteImport.update({
+  id: "/menu/phone-book",
+  path: "/menu/phone-book",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuChatRoute = PhoneMenuChatRouteImport.update({
+  id: "/menu/chat",
+  path: "/menu/chat",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuMessagesIndexRoute = PhoneMenuMessagesIndexRouteImport.update({
+  id: "/menu/messages/",
+  path: "/menu/messages/",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuMessagesWriteRoute = PhoneMenuMessagesWriteRouteImport.update({
+  id: "/menu/messages/write",
+  path: "/menu/messages/write",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuMessagesInboxRoute = PhoneMenuMessagesInboxRouteImport.update({
+  id: "/menu/messages/inbox",
+  path: "/menu/messages/inbox",
+  getParentRoute: () => PhoneRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
   "/": typeof PhoneIndexRoute;
+  "/$": typeof PhoneSplatRoute;
+  "/menu/chat": typeof PhoneMenuChatRoute;
+  "/menu/phone-book": typeof PhoneMenuPhoneBookRoute;
+  "/menu/messages/inbox": typeof PhoneMenuMessagesInboxRoute;
+  "/menu/messages/write": typeof PhoneMenuMessagesWriteRoute;
+  "/menu/messages/": typeof PhoneMenuMessagesIndexRoute;
 }
 export interface FileRoutesByTo {
+  "/$": typeof PhoneSplatRoute;
   "/": typeof PhoneIndexRoute;
+  "/menu/chat": typeof PhoneMenuChatRoute;
+  "/menu/phone-book": typeof PhoneMenuPhoneBookRoute;
+  "/menu/messages/inbox": typeof PhoneMenuMessagesInboxRoute;
+  "/menu/messages/write": typeof PhoneMenuMessagesWriteRoute;
+  "/menu/messages": typeof PhoneMenuMessagesIndexRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   "/_phone": typeof PhoneRouteWithChildren;
+  "/_phone/$": typeof PhoneSplatRoute;
   "/_phone/": typeof PhoneIndexRoute;
+  "/_phone/menu/chat": typeof PhoneMenuChatRoute;
+  "/_phone/menu/phone-book": typeof PhoneMenuPhoneBookRoute;
+  "/_phone/menu/messages/inbox": typeof PhoneMenuMessagesInboxRoute;
+  "/_phone/menu/messages/write": typeof PhoneMenuMessagesWriteRoute;
+  "/_phone/menu/messages/": typeof PhoneMenuMessagesIndexRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/";
+  fullPaths:
+    | "/"
+    | "/$"
+    | "/menu/chat"
+    | "/menu/phone-book"
+    | "/menu/messages/inbox"
+    | "/menu/messages/write"
+    | "/menu/messages/";
   fileRoutesByTo: FileRoutesByTo;
-  to: "/";
-  id: "__root__" | "/_phone" | "/_phone/";
+  to:
+    | "/$"
+    | "/"
+    | "/menu/chat"
+    | "/menu/phone-book"
+    | "/menu/messages/inbox"
+    | "/menu/messages/write"
+    | "/menu/messages";
+  id:
+    | "__root__"
+    | "/_phone"
+    | "/_phone/$"
+    | "/_phone/"
+    | "/_phone/menu/chat"
+    | "/_phone/menu/phone-book"
+    | "/_phone/menu/messages/inbox"
+    | "/_phone/menu/messages/write"
+    | "/_phone/menu/messages/";
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
@@ -61,15 +138,69 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof PhoneIndexRouteImport;
       parentRoute: typeof PhoneRoute;
     };
+    "/_phone/$": {
+      id: "/_phone/$";
+      path: "/$";
+      fullPath: "/$";
+      preLoaderRoute: typeof PhoneSplatRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/phone-book": {
+      id: "/_phone/menu/phone-book";
+      path: "/menu/phone-book";
+      fullPath: "/menu/phone-book";
+      preLoaderRoute: typeof PhoneMenuPhoneBookRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/chat": {
+      id: "/_phone/menu/chat";
+      path: "/menu/chat";
+      fullPath: "/menu/chat";
+      preLoaderRoute: typeof PhoneMenuChatRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/messages/": {
+      id: "/_phone/menu/messages/";
+      path: "/menu/messages";
+      fullPath: "/menu/messages/";
+      preLoaderRoute: typeof PhoneMenuMessagesIndexRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/messages/write": {
+      id: "/_phone/menu/messages/write";
+      path: "/menu/messages/write";
+      fullPath: "/menu/messages/write";
+      preLoaderRoute: typeof PhoneMenuMessagesWriteRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/messages/inbox": {
+      id: "/_phone/menu/messages/inbox";
+      path: "/menu/messages/inbox";
+      fullPath: "/menu/messages/inbox";
+      preLoaderRoute: typeof PhoneMenuMessagesInboxRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
   }
 }
 
 interface PhoneRouteChildren {
+  PhoneSplatRoute: typeof PhoneSplatRoute;
   PhoneIndexRoute: typeof PhoneIndexRoute;
+  PhoneMenuChatRoute: typeof PhoneMenuChatRoute;
+  PhoneMenuPhoneBookRoute: typeof PhoneMenuPhoneBookRoute;
+  PhoneMenuMessagesInboxRoute: typeof PhoneMenuMessagesInboxRoute;
+  PhoneMenuMessagesWriteRoute: typeof PhoneMenuMessagesWriteRoute;
+  PhoneMenuMessagesIndexRoute: typeof PhoneMenuMessagesIndexRoute;
 }
 
 const PhoneRouteChildren: PhoneRouteChildren = {
+  PhoneSplatRoute: PhoneSplatRoute,
   PhoneIndexRoute: PhoneIndexRoute,
+  PhoneMenuChatRoute: PhoneMenuChatRoute,
+  PhoneMenuPhoneBookRoute: PhoneMenuPhoneBookRoute,
+  PhoneMenuMessagesInboxRoute: PhoneMenuMessagesInboxRoute,
+  PhoneMenuMessagesWriteRoute: PhoneMenuMessagesWriteRoute,
+  PhoneMenuMessagesIndexRoute: PhoneMenuMessagesIndexRoute,
 };
 
 const PhoneRouteWithChildren = PhoneRoute._addFileChildren(PhoneRouteChildren);
