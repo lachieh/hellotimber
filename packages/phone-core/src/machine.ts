@@ -9,7 +9,7 @@ import type {
   PhoneSnapshot,
   ScreenModel,
 } from "./types";
-import { childrenOf, parsePath, resolveIds } from "./paths";
+import { childrenOf, normalizePath, parsePath, resolveIds } from "./paths";
 
 export const LONG_PRESS_MS = 800;
 export const SHORTCUT_WINDOW_MS = 3000;
@@ -605,8 +605,20 @@ function wrapIndex(i: number, total: number): number {
   return ((i % total) + total) % total;
 }
 
-function handleNavigate(_m: Machine, _path: string): void {
-  // Replaced in Task 10 (external router control).
+/** External (router) control: show `path` as if the user had navigated there. */
+function handleNavigate(m: Machine, path: string): void {
+  const target = normalizePath(path);
+  if (m.mode.kind === "off") {
+    if (target === "standby") return; // off already reads as 'standby'
+    powerOn(m, target); // deep link: boot, then land on the target
+    return;
+  }
+  if (m.mode.kind === "boot") {
+    m.mode.targetPath = target === "standby" ? null : target;
+    return;
+  }
+  if (target === currentPath(m)) return; // echo safety: no state change, no pathchange
+  applyPath(m, target);
 }
 
 // --- public factory ----------------------------------------------------------
