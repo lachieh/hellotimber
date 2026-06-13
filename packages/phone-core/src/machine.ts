@@ -9,6 +9,7 @@ import type {
   PhoneSnapshot,
   ScreenModel,
 } from "./types";
+import { childrenOf, parsePath, resolveIds } from "./paths";
 
 export const LONG_PRESS_MS = 800;
 export const SHORTCUT_WINDOW_MS = 3000;
@@ -347,16 +348,150 @@ function onLongPress(m: Machine, key: PhoneKey): void {
   // everything else: long presses belong to the active app (if any) or do nothing
 }
 
-function standbyShortPress(_m: Machine, _key: PhoneKey): void {
-  // Replaced in Task 5 (navi → menu, up → phone book, down → dialled numbers).
+function standbyShortPress(m: Machine, key: PhoneKey): void {
+  if (key === "navi") {
+    enterMenu(m);
+    return;
+  }
+  // Verified 3310 standby shortcuts: ▲ = phone book name list, ▼ = last dialled numbers.
+  if (key === "up") tryApplyPath(m, "menu/phone-book/search");
+  if (key === "down") tryApplyPath(m, "menu/call-register/dialled-numbers");
 }
 
-function navShortPress(_m: Machine, _key: PhoneKey): void {
-  // Replaced in Task 5 (carousel), extended in Tasks 6 (lists/readers) and 7 (shortcuts).
+function navShortPress(m: Machine, key: PhoneKey): void {
+  if (m.mode.kind !== "nav") return;
+  const stack = m.mode.stack;
+  const frame = stack[stack.length - 1]!;
+
+  if (key === "c") {
+    popFrame(m);
+    return;
+  }
+
+  if (frame.kind === "carousel") {
+    const total = m.config.menu.length;
+    if (key === "down") {
+      frame.index = wrapIndex(frame.index + 1, total);
+      m.shortcut = null; // scrolling cancels the digit-shortcut window
+      m.dirty = true;
+    } else if (key === "up") {
+      frame.index = wrapIndex(frame.index - 1, total);
+      m.shortcut = null;
+      m.dirty = true;
+    } else if (key === "navi") {
+      m.shortcut = null;
+      enterNode(m, m.config.menu[frame.index]!);
+    }
+    return;
+  }
+
+  if (frame.kind === "submenu" && key === "navi" && frame.node.children.length > 0) {
+    enterNode(m, frame.node.children[frame.selected]!);
+  }
+  // List selection, item opening and reader scrolling arrive in Task 6.
 }
 
-function applyPath(_m: Machine, _path: string): void {
-  // Replaced in Task 5 (jump the machine to a resolved menu path).
+/** Jump the machine to a parsed path as if the user had navigated there. Unknown → standby. */
+function applyPath(m: Machine, path: string): void {
+  const parsed = parsePath(path);
+  if (parsed === null || parsed.kind === "standby") {
+    goStandby(m);
+    return;
+  }
+  if (parsed.ids.length === 0) {
+    exitAppIfActive(m);
+    m.mode = { kind: "nav", stack: [{ kind: "carousel", index: 0 }] };
+    m.shortcut = null;
+    m.dirty = true;
+    return;
+  }
+  const nodes = resolveIds(m.config.menu, parsed.ids);
+  if (nodes === null) {
+    goStandby(m);
+    return;
+  }
+  buildNavStack(m, nodes);
+}
+
+/** Apply a well-known path if the configured menu has it; otherwise do nothing. */
+function tryApplyPath(m: Machine, path: string): void {
+  const parsed = parsePath(path);
+  if (parsed === null || parsed.kind === "standby") return;
+  const nodes = resolveIds(m.config.menu, parsed.ids);
+  if (nodes === null) return;
+  buildNavStack(m, nodes);
+}
+
+/** Open the menu carousel from standby and start the 3s shortcut window. */
+function enterMenu(m: Machine): void {
+  m.mode = { kind: "nav", stack: [{ kind: "carousel", index: 0 }] };
+  m.shortcut = { digits: [], deadline: m.now + SHORTCUT_WINDOW_MS };
+  m.dirty = true;
+}
+
+/**
+ * Build a nav stack for the resolved nodes, positioning each parent's
+ * carousel index / list selection on the path (so backing out with C
+ * lands on the item the user "came through").
+ */
+function buildNavStack(m: Machine, nodes: MenuNode[]): void {
+  exitAppIfActive(m);
+  m.shortcut = null;
+  const stack: NavFrame[] = [{ kind: "carousel", index: 0 }];
+  let siblings: MenuNode[] = m.config.menu;
+  for (const node of nodes) {
+    const indexInSiblings = siblings.findIndex((n) => n.id === node.id);
+    const parent = stack[stack.length - 1]!;
+    if (parent.kind === "carousel") parent.index = indexInSiblings;
+    else if (parent.kind === "submenu") parent.selected = indexInSiblings;
+    if (node.type === "submenu") stack.push({ kind: "submenu", node, selected: 0 });
+    else if (node.type === "list") stack.push({ kind: "list", node, selected: 0 });
+    else if (node.type === "reader") stack.push({ kind: "reader", node, scrollTop: 0 });
+    else break; // app/action targets handled in Task 8; stop at the parent view
+    siblings = childrenOf(node);
+  }
+  m.mode = { kind: "nav", stack };
+  m.dirty = true;
+}
+
+/** Enter a node from the carousel or a submenu list. */
+function enterNode(m: Machine, node: MenuNode): void {
+  if (m.mode.kind !== "nav") return;
+  m.shortcut = null;
+  switch (node.type) {
+    case "submenu":
+      m.mode.stack.push({ kind: "submenu", node, selected: 0 });
+      m.dirty = true;
+      return;
+    case "list":
+      m.mode.stack.push({ kind: "list", node, selected: 0 });
+      m.dirty = true;
+      return;
+    case "reader":
+      m.mode.stack.push({ kind: "reader", node, scrollTop: 0 });
+      m.dirty = true;
+      return;
+    case "app":
+    case "action":
+      // App launching arrives in Task 8, action events in Task 9.
+      return;
+  }
+}
+
+/** C: pop one level; from the carousel itself, back to standby. */
+function popFrame(m: Machine): void {
+  if (m.mode.kind !== "nav") return;
+  const stack = m.mode.stack;
+  if (stack.length === 1) {
+    goStandby(m);
+    return;
+  }
+  stack.pop();
+  m.dirty = true;
+}
+
+function wrapIndex(i: number, total: number): number {
+  return ((i % total) + total) % total;
 }
 
 function handleNavigate(_m: Machine, _path: string): void {
