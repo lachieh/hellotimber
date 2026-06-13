@@ -1,7 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import ContentPanel from "../../components/ContentPanel";
+import { site } from "../../content/site";
+import { pageHead } from "../../seo";
 
-export const Route = createFileRoute("/_phone/")({ component: StandbyPanel });
+export const Route = createFileRoute("/_phone/")({
+  head: () => pageHead({ description: site.tagline }),
+  component: StandbyPanel,
+});
 
 function StandbyPanel() {
   return (

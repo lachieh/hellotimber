@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../../components/ContentPanel";
 import { clock } from "../../../content";
+import { pageHead } from "../../../seo";
 
-export const Route = createFileRoute("/_phone/menu/clock")({ component: ClockPanel });
+export const Route = createFileRoute("/_phone/menu/clock")({
+  head: () => pageHead({ section: "Clock", description: "My local time and availability." }),
+  component: ClockPanel,
+});
 
 function ClockPanel() {
   return (

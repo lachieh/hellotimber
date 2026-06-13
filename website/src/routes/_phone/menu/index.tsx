@@ -1,7 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import ContentPanel from "../../../components/ContentPanel";
+import { pageHead } from "../../../seo";
 
-export const Route = createFileRoute("/_phone/menu/")({ component: MenuPanel });
+export const Route = createFileRoute("/_phone/menu/")({
+  head: () => pageHead({ section: "Menu", description: "Browse the phone menu." }),
+  component: MenuPanel,
+});
 
 const MENUS = [
   ["/menu/phone-book", "Phone book — contact details"],

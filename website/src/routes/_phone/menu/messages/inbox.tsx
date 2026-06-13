@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../../../components/ContentPanel";
 import { inbox } from "../../../../content";
+import { pageHead } from "../../../../seo";
 
-export const Route = createFileRoute("/_phone/menu/messages/inbox")({ component: InboxPanel });
+export const Route = createFileRoute("/_phone/menu/messages/inbox")({
+  head: () => pageHead({ section: "Inbox", description: "Short intros." }),
+  component: InboxPanel,
+});
 
 function InboxPanel() {
   return (

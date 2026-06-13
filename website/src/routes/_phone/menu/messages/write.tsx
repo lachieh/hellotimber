@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../../../components/ContentPanel";
 import { writeMessage } from "../../../../content";
+import { pageHead } from "../../../../seo";
 
-export const Route = createFileRoute("/_phone/menu/messages/write")({ component: WritePanel });
+export const Route = createFileRoute("/_phone/menu/messages/write")({
+  head: () => pageHead({ section: "Write message", description: "Send a message." }),
+  component: WritePanel,
+});
 
 function WritePanel() {
   const mailto = `mailto:${writeMessage.destinationEmail}?subject=${encodeURIComponent(writeMessage.subject)}`;

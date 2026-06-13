@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../../../components/ContentPanel";
+import { pageHead } from "../../../../seo";
 
-export const Route = createFileRoute("/_phone/menu/games/snake")({ component: SnakePanel });
+export const Route = createFileRoute("/_phone/menu/games/snake")({
+  head: () => pageHead({ section: "Snake II", description: "Play Snake." }),
+  component: SnakePanel,
+});
 
 function SnakePanel() {
   return (

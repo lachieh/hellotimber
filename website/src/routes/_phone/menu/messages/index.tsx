@@ -1,8 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import ContentPanel from "../../../../components/ContentPanel";
 import { inbox } from "../../../../content";
+import { pageHead } from "../../../../seo";
 
-export const Route = createFileRoute("/_phone/menu/messages/")({ component: MessagesPanel });
+export const Route = createFileRoute("/_phone/menu/messages/")({
+  head: () => pageHead({ section: "Messages", description: "About me, in SMS form." }),
+  component: MessagesPanel,
+});
 
 function MessagesPanel() {
   return (

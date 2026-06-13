@@ -1,3 +1,5 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Disallow:
+# SAMPLE DATA — replace hellotimber.example with the real deployed origin
+Sitemap: https://hellotimber.example/sitemap.xml

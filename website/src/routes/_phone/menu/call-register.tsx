@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../../components/ContentPanel";
 import { missedCalls, projects, roles } from "../../../content";
+import { pageHead } from "../../../seo";
 
 export const Route = createFileRoute("/_phone/menu/call-register")({
+  head: () => pageHead({ section: "Call register", description: "Work history and projects." }),
   component: CallRegisterPanel,
 });
 

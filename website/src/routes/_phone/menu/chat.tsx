@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../../components/ContentPanel";
 import { chatMessages } from "../../../content";
+import { pageHead } from "../../../seo";
 
-export const Route = createFileRoute("/_phone/menu/chat")({ component: ChatPanel });
+export const Route = createFileRoute("/_phone/menu/chat")({
+  head: () => pageHead({ section: "Chat", description: "What people say." }),
+  component: ChatPanel,
+});
 
 function ChatPanel() {
   return (

@@ -1,7 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import ContentPanel from "../../components/ContentPanel";
 
-export const Route = createFileRoute("/_phone/$")({ component: NotFoundPanel });
+export const Route = createFileRoute("/_phone/$")({
+  // NOT pageHead — the 404 catch-all must be noindex (deviation 9).
+  head: () => ({
+    meta: [{ name: "robots", content: "noindex" }, { title: "Lachlan Heywood — No service" }],
+  }),
+  component: NotFoundPanel,
+});
 
 function NotFoundPanel() {
   return (

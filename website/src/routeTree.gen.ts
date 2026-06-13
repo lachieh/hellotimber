@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PhoneRouteImport } from './routes/_phone'
 import { Route as PhoneIndexRouteImport } from './routes/_phone/index'
 import { Route as PhoneSplatRouteImport } from './routes/_phone/$'
@@ -30,6 +31,11 @@ import { Route as PhoneMenuMessagesWriteRouteImport } from './routes/_phone/menu
 import { Route as PhoneMenuMessagesInboxRouteImport } from './routes/_phone/menu/messages/inbox'
 import { Route as PhoneMenuGamesSnakeRouteImport } from './routes/_phone/menu/games/snake'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PhoneRoute = PhoneRouteImport.update({
   id: '/_phone',
   getParentRoute: () => rootRouteImport,
@@ -132,6 +138,7 @@ const PhoneMenuGamesSnakeRoute = PhoneMenuGamesSnakeRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof PhoneIndexRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$': typeof PhoneSplatRoute
   '/menu/calculator': typeof PhoneMenuCalculatorRoute
   '/menu/call-divert': typeof PhoneMenuCallDivertRoute
@@ -152,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/menu/messages/': typeof PhoneMenuMessagesIndexRoute
 }
 export interface FileRoutesByTo {
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$': typeof PhoneSplatRoute
   '/': typeof PhoneIndexRoute
   '/menu/calculator': typeof PhoneMenuCalculatorRoute
@@ -175,6 +183,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_phone': typeof PhoneRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_phone/$': typeof PhoneSplatRoute
   '/_phone/': typeof PhoneIndexRoute
   '/_phone/menu/calculator': typeof PhoneMenuCalculatorRoute
@@ -199,6 +208,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/sitemap.xml'
     | '/$'
     | '/menu/calculator'
     | '/menu/call-divert'
@@ -219,6 +229,7 @@ export interface FileRouteTypes {
     | '/menu/messages/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/sitemap.xml'
     | '/$'
     | '/'
     | '/menu/calculator'
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_phone'
+    | '/sitemap.xml'
     | '/_phone/$'
     | '/_phone/'
     | '/_phone/menu/calculator'
@@ -264,10 +276,18 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   PhoneRoute: typeof PhoneRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_phone': {
       id: '/_phone'
       path: ''
@@ -459,6 +479,7 @@ const PhoneRouteWithChildren = PhoneRoute._addFileChildren(PhoneRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   PhoneRoute: PhoneRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

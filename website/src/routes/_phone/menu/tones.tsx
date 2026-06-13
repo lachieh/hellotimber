@@ -2,8 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import ContentPanel from "../../../components/ContentPanel";
 import { playTone, stopTone } from "../../../phone/audio";
 import { TONES } from "../../../phone/tones";
+import { pageHead } from "../../../seo";
 
-export const Route = createFileRoute("/_phone/menu/tones")({ component: TonesPanel });
+export const Route = createFileRoute("/_phone/menu/tones")({
+  head: () => pageHead({ section: "Tones", description: "Sound settings and ringtones." }),
+  component: TonesPanel,
+});
 
 function TonesPanel() {
   return (

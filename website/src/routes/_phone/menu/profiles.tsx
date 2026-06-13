@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../../components/ContentPanel";
 import { profileModes } from "../../../content";
+import { pageHead } from "../../../seo";
 
-export const Route = createFileRoute("/_phone/menu/profiles")({ component: ProfilesPanel });
+export const Route = createFileRoute("/_phone/menu/profiles")({
+  head: () => pageHead({ section: "Profiles", description: "Visitor modes." }),
+  component: ProfilesPanel,
+});
 
 function ProfilesPanel() {
   return (

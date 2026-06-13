@@ -1,7 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import ContentPanel from "../../../../components/ContentPanel";
+import { pageHead } from "../../../../seo";
 
-export const Route = createFileRoute("/_phone/menu/games/")({ component: GamesPanel });
+export const Route = createFileRoute("/_phone/menu/games/")({
+  head: () => pageHead({ section: "Games", description: "Snake II and more." }),
+  component: GamesPanel,
+});
 
 function GamesPanel() {
   return (

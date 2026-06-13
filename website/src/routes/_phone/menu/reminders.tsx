@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../../components/ContentPanel";
 import { nowItems } from "../../../content";
+import { pageHead } from "../../../seo";
 
-export const Route = createFileRoute("/_phone/menu/reminders")({ component: RemindersPanel });
+export const Route = createFileRoute("/_phone/menu/reminders")({
+  head: () => pageHead({ section: "Reminders", description: "What I'm doing now." }),
+  component: RemindersPanel,
+});
 
 function RemindersPanel() {
   return (

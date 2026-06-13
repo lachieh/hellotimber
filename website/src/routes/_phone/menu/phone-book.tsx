@@ -1,8 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../../components/ContentPanel";
 import { phonebook } from "../../../content";
+import { pageHead } from "../../../seo";
 
-export const Route = createFileRoute("/_phone/menu/phone-book")({ component: PhoneBookPanel });
+export const Route = createFileRoute("/_phone/menu/phone-book")({
+  head: () =>
+    pageHead({
+      section: "Phone book",
+      description: "Contact details: email, GitHub, LinkedIn, CV.",
+    }),
+  component: PhoneBookPanel,
+});
 
 function PhoneBookPanel() {
   return (

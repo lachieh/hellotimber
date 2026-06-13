@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../../components/ContentPanel";
+import { pageHead } from "../../../seo";
 
 export const Route = createFileRoute("/_phone/menu/sim-services")({
+  head: () => pageHead({ section: "SIM services", description: "No service." }),
   component: SimServicesPanel,
 });
 
