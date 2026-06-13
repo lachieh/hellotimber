@@ -13,6 +13,11 @@
     "test": "vp test run"
   },
   "dependencies": {
+    "@hellotimber/phone-3d": "workspace:*",
+    "@hellotimber/phone-core": "workspace:*",
+    "@hellotimber/phone-screen": "workspace:*",
+    "@react-three/drei": "catalog:",
+    "@react-three/fiber": "catalog:",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-router": "latest",
@@ -23,7 +28,8 @@
     "lucide-react": "^0.545.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.1.18",
+    "three": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
@@ -34,6 +40,7 @@
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@types/three": "catalog:",
     "@vitejs/plugin-react": "^6.0.1",
     "jsdom": "^28.1.0",
     "typescript": "^6.0.2",

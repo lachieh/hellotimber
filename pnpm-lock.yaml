@@ -120,6 +120,21 @@ importers:
 
   website:
     dependencies:
+      '@hellotimber/phone-3d':
+        specifier: workspace:*
+        version: link:../packages/phone-3d
+      '@hellotimber/phone-core':
+        specifier: workspace:*
+        version: link:../packages/phone-core
+      '@hellotimber/phone-screen':
+        specifier: workspace:*
+        version: link:../packages/phone-screen
+      '@react-three/drei':
+        specifier: 'catalog:'
+        version: 10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(three@0.184.0))(@types/react@19.2.17)(@types/three@0.184.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(three@0.184.0)
+      '@react-three/fiber':
+        specifier: 'catalog:'
+        version: 9.6.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(three@0.184.0)
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.3.0(@voidzero-dev/vite-plus-core@0.1.24(@types/node@22.19.21)(jiti@2.7.0)(typescript@6.0.3))
@@ -153,6 +168,9 @@ importers:
       tailwindcss:
         specifier: ^4.1.18
         version: 4.3.0
+      three:
+        specifier: 'catalog:'
+        version: 0.184.0
     devDependencies:
       '@tailwindcss/typography':
         specifier: ^0.5.16
@@ -178,6 +196,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.0
         version: 19.2.3(@types/react@19.2.17)
+      '@types/three':
+        specifier: 'catalog:'
+        version: 0.184.1
       '@vitejs/plugin-react':
         specifier: ^6.0.1
         version: 6.0.2(@voidzero-dev/vite-plus-core@0.1.24(@types/node@22.19.21)(jiti@2.7.0)(typescript@6.0.3))
