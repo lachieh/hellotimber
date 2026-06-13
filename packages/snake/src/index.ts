@@ -7,3 +7,4 @@ export type {
   SnakeState,
   SnakeStatus,
 } from "./types";
+export { tickIntervalMs } from "./timing";
