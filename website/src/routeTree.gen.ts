@@ -9,68 +9,73 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from "./routes/__root";
-import { Route as AboutRouteImport } from "./routes/about";
-import { Route as IndexRouteImport } from "./routes/index";
+import { Route as PhoneRouteImport } from "./routes/_phone";
+import { Route as PhoneIndexRouteImport } from "./routes/_phone/index";
 
-const AboutRoute = AboutRouteImport.update({
-  id: "/about",
-  path: "/about",
+const PhoneRoute = PhoneRouteImport.update({
+  id: "/_phone",
   getParentRoute: () => rootRouteImport,
 } as any);
-const IndexRoute = IndexRouteImport.update({
+const PhoneIndexRoute = PhoneIndexRouteImport.update({
   id: "/",
   path: "/",
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => PhoneRoute,
 } as any);
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/about": typeof AboutRoute;
+  "/": typeof PhoneIndexRoute;
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/about": typeof AboutRoute;
+  "/": typeof PhoneIndexRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/about": typeof AboutRoute;
+  "/_phone": typeof PhoneRouteWithChildren;
+  "/_phone/": typeof PhoneIndexRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/about";
+  fullPaths: "/";
   fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/about";
-  id: "__root__" | "/" | "/about";
+  to: "/";
+  id: "__root__" | "/_phone" | "/_phone/";
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  AboutRoute: typeof AboutRoute;
+  PhoneRoute: typeof PhoneRouteWithChildren;
 }
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    "/about": {
-      id: "/about";
-      path: "/about";
-      fullPath: "/about";
-      preLoaderRoute: typeof AboutRouteImport;
+    "/_phone": {
+      id: "/_phone";
+      path: "";
+      fullPath: "/";
+      preLoaderRoute: typeof PhoneRouteImport;
       parentRoute: typeof rootRouteImport;
     };
-    "/": {
-      id: "/";
+    "/_phone/": {
+      id: "/_phone/";
       path: "/";
       fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
+      preLoaderRoute: typeof PhoneIndexRouteImport;
+      parentRoute: typeof PhoneRoute;
     };
   }
 }
 
+interface PhoneRouteChildren {
+  PhoneIndexRoute: typeof PhoneIndexRoute;
+}
+
+const PhoneRouteChildren: PhoneRouteChildren = {
+  PhoneIndexRoute: PhoneIndexRoute,
+};
+
+const PhoneRouteWithChildren = PhoneRoute._addFileChildren(PhoneRouteChildren);
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
+  PhoneRoute: PhoneRouteWithChildren,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
