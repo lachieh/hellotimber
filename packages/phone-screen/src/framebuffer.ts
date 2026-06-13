@@ -1,4 +1,6 @@
 import type { Bitmap } from "./bitmap";
+import { textWidth } from "./font/font";
+import type { PixelFont } from "./font/font";
 
 /**
  * An in-memory monochrome pixel surface: one byte per pixel, row-major,
@@ -56,5 +58,39 @@ export class Framebuffer {
         else this.fillRect(x + bx * scale, y + by * scale, scale, scale, value);
       }
     }
+  }
+
+  /**
+   * Draw text with the glyph font; returns the x where the next character
+   * would start. Unknown characters render as '?'. `color: 0` draws
+   * inverted-video text (e.g. onto a filled selection bar).
+   */
+  drawText(
+    font: PixelFont,
+    text: string,
+    x: number,
+    y: number,
+    opts: { scale?: number; color?: 0 | 1 } = {},
+  ): number {
+    const scale = opts.scale ?? 1;
+    const color = opts.color ?? 1;
+    let cx = x;
+    for (const ch of text) {
+      const glyph = font.glyphs.get(ch) ?? font.glyphs.get("?");
+      if (glyph !== undefined) this.blitBitmap(glyph, cx, y, { scale, value: color });
+      cx += (font.glyphWidth + font.gap) * scale;
+    }
+    return cx;
+  }
+
+  /** Draw text horizontally centered on this framebuffer. */
+  drawTextCentered(
+    font: PixelFont,
+    text: string,
+    y: number,
+    opts: { scale?: number; color?: 0 | 1 } = {},
+  ): void {
+    const x = Math.floor((this.width - textWidth(font, text, opts.scale ?? 1)) / 2);
+    this.drawText(font, text, x, y, opts);
   }
 }
