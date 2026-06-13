@@ -4,3 +4,11 @@ export { Framebuffer } from "./framebuffer";
 export { FONT, textWidth } from "./font/font";
 export type { PixelFont } from "./font/font";
 export { GLYPHS } from "./font/glyphs";
+export {
+  ANTENNA_ICON,
+  BATTERY_ICON,
+  drawBatteryLevel,
+  drawSignalLevel,
+  ENVELOPE_ICON,
+  KEYGUARD_ICON,
+} from "./icons/status";
