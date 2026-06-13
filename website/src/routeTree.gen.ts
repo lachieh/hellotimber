@@ -12,11 +12,23 @@ import { Route as rootRouteImport } from "./routes/__root";
 import { Route as PhoneRouteImport } from "./routes/_phone";
 import { Route as PhoneIndexRouteImport } from "./routes/_phone/index";
 import { Route as PhoneSplatRouteImport } from "./routes/_phone/$";
+import { Route as PhoneMenuIndexRouteImport } from "./routes/_phone/menu/index";
+import { Route as PhoneMenuTonesRouteImport } from "./routes/_phone/menu/tones";
+import { Route as PhoneMenuSimServicesRouteImport } from "./routes/_phone/menu/sim-services";
+import { Route as PhoneMenuSettingsRouteImport } from "./routes/_phone/menu/settings";
+import { Route as PhoneMenuRemindersRouteImport } from "./routes/_phone/menu/reminders";
+import { Route as PhoneMenuProfilesRouteImport } from "./routes/_phone/menu/profiles";
 import { Route as PhoneMenuPhoneBookRouteImport } from "./routes/_phone/menu/phone-book";
+import { Route as PhoneMenuClockRouteImport } from "./routes/_phone/menu/clock";
 import { Route as PhoneMenuChatRouteImport } from "./routes/_phone/menu/chat";
+import { Route as PhoneMenuCallRegisterRouteImport } from "./routes/_phone/menu/call-register";
+import { Route as PhoneMenuCallDivertRouteImport } from "./routes/_phone/menu/call-divert";
+import { Route as PhoneMenuCalculatorRouteImport } from "./routes/_phone/menu/calculator";
 import { Route as PhoneMenuMessagesIndexRouteImport } from "./routes/_phone/menu/messages/index";
+import { Route as PhoneMenuGamesIndexRouteImport } from "./routes/_phone/menu/games/index";
 import { Route as PhoneMenuMessagesWriteRouteImport } from "./routes/_phone/menu/messages/write";
 import { Route as PhoneMenuMessagesInboxRouteImport } from "./routes/_phone/menu/messages/inbox";
+import { Route as PhoneMenuGamesSnakeRouteImport } from "./routes/_phone/menu/games/snake";
 
 const PhoneRoute = PhoneRouteImport.update({
   id: "/_phone",
@@ -32,9 +44,44 @@ const PhoneSplatRoute = PhoneSplatRouteImport.update({
   path: "/$",
   getParentRoute: () => PhoneRoute,
 } as any);
+const PhoneMenuIndexRoute = PhoneMenuIndexRouteImport.update({
+  id: "/menu/",
+  path: "/menu/",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuTonesRoute = PhoneMenuTonesRouteImport.update({
+  id: "/menu/tones",
+  path: "/menu/tones",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuSimServicesRoute = PhoneMenuSimServicesRouteImport.update({
+  id: "/menu/sim-services",
+  path: "/menu/sim-services",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuSettingsRoute = PhoneMenuSettingsRouteImport.update({
+  id: "/menu/settings",
+  path: "/menu/settings",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuRemindersRoute = PhoneMenuRemindersRouteImport.update({
+  id: "/menu/reminders",
+  path: "/menu/reminders",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuProfilesRoute = PhoneMenuProfilesRouteImport.update({
+  id: "/menu/profiles",
+  path: "/menu/profiles",
+  getParentRoute: () => PhoneRoute,
+} as any);
 const PhoneMenuPhoneBookRoute = PhoneMenuPhoneBookRouteImport.update({
   id: "/menu/phone-book",
   path: "/menu/phone-book",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuClockRoute = PhoneMenuClockRouteImport.update({
+  id: "/menu/clock",
+  path: "/menu/clock",
   getParentRoute: () => PhoneRoute,
 } as any);
 const PhoneMenuChatRoute = PhoneMenuChatRouteImport.update({
@@ -42,9 +89,29 @@ const PhoneMenuChatRoute = PhoneMenuChatRouteImport.update({
   path: "/menu/chat",
   getParentRoute: () => PhoneRoute,
 } as any);
+const PhoneMenuCallRegisterRoute = PhoneMenuCallRegisterRouteImport.update({
+  id: "/menu/call-register",
+  path: "/menu/call-register",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuCallDivertRoute = PhoneMenuCallDivertRouteImport.update({
+  id: "/menu/call-divert",
+  path: "/menu/call-divert",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuCalculatorRoute = PhoneMenuCalculatorRouteImport.update({
+  id: "/menu/calculator",
+  path: "/menu/calculator",
+  getParentRoute: () => PhoneRoute,
+} as any);
 const PhoneMenuMessagesIndexRoute = PhoneMenuMessagesIndexRouteImport.update({
   id: "/menu/messages/",
   path: "/menu/messages/",
+  getParentRoute: () => PhoneRoute,
+} as any);
+const PhoneMenuGamesIndexRoute = PhoneMenuGamesIndexRouteImport.update({
+  id: "/menu/games/",
+  path: "/menu/games/",
   getParentRoute: () => PhoneRoute,
 } as any);
 const PhoneMenuMessagesWriteRoute = PhoneMenuMessagesWriteRouteImport.update({
@@ -57,23 +124,52 @@ const PhoneMenuMessagesInboxRoute = PhoneMenuMessagesInboxRouteImport.update({
   path: "/menu/messages/inbox",
   getParentRoute: () => PhoneRoute,
 } as any);
+const PhoneMenuGamesSnakeRoute = PhoneMenuGamesSnakeRouteImport.update({
+  id: "/menu/games/snake",
+  path: "/menu/games/snake",
+  getParentRoute: () => PhoneRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
   "/": typeof PhoneIndexRoute;
   "/$": typeof PhoneSplatRoute;
+  "/menu/calculator": typeof PhoneMenuCalculatorRoute;
+  "/menu/call-divert": typeof PhoneMenuCallDivertRoute;
+  "/menu/call-register": typeof PhoneMenuCallRegisterRoute;
   "/menu/chat": typeof PhoneMenuChatRoute;
+  "/menu/clock": typeof PhoneMenuClockRoute;
   "/menu/phone-book": typeof PhoneMenuPhoneBookRoute;
+  "/menu/profiles": typeof PhoneMenuProfilesRoute;
+  "/menu/reminders": typeof PhoneMenuRemindersRoute;
+  "/menu/settings": typeof PhoneMenuSettingsRoute;
+  "/menu/sim-services": typeof PhoneMenuSimServicesRoute;
+  "/menu/tones": typeof PhoneMenuTonesRoute;
+  "/menu/": typeof PhoneMenuIndexRoute;
+  "/menu/games/snake": typeof PhoneMenuGamesSnakeRoute;
   "/menu/messages/inbox": typeof PhoneMenuMessagesInboxRoute;
   "/menu/messages/write": typeof PhoneMenuMessagesWriteRoute;
+  "/menu/games/": typeof PhoneMenuGamesIndexRoute;
   "/menu/messages/": typeof PhoneMenuMessagesIndexRoute;
 }
 export interface FileRoutesByTo {
   "/$": typeof PhoneSplatRoute;
   "/": typeof PhoneIndexRoute;
+  "/menu/calculator": typeof PhoneMenuCalculatorRoute;
+  "/menu/call-divert": typeof PhoneMenuCallDivertRoute;
+  "/menu/call-register": typeof PhoneMenuCallRegisterRoute;
   "/menu/chat": typeof PhoneMenuChatRoute;
+  "/menu/clock": typeof PhoneMenuClockRoute;
   "/menu/phone-book": typeof PhoneMenuPhoneBookRoute;
+  "/menu/profiles": typeof PhoneMenuProfilesRoute;
+  "/menu/reminders": typeof PhoneMenuRemindersRoute;
+  "/menu/settings": typeof PhoneMenuSettingsRoute;
+  "/menu/sim-services": typeof PhoneMenuSimServicesRoute;
+  "/menu/tones": typeof PhoneMenuTonesRoute;
+  "/menu": typeof PhoneMenuIndexRoute;
+  "/menu/games/snake": typeof PhoneMenuGamesSnakeRoute;
   "/menu/messages/inbox": typeof PhoneMenuMessagesInboxRoute;
   "/menu/messages/write": typeof PhoneMenuMessagesWriteRoute;
+  "/menu/games": typeof PhoneMenuGamesIndexRoute;
   "/menu/messages": typeof PhoneMenuMessagesIndexRoute;
 }
 export interface FileRoutesById {
@@ -81,10 +177,22 @@ export interface FileRoutesById {
   "/_phone": typeof PhoneRouteWithChildren;
   "/_phone/$": typeof PhoneSplatRoute;
   "/_phone/": typeof PhoneIndexRoute;
+  "/_phone/menu/calculator": typeof PhoneMenuCalculatorRoute;
+  "/_phone/menu/call-divert": typeof PhoneMenuCallDivertRoute;
+  "/_phone/menu/call-register": typeof PhoneMenuCallRegisterRoute;
   "/_phone/menu/chat": typeof PhoneMenuChatRoute;
+  "/_phone/menu/clock": typeof PhoneMenuClockRoute;
   "/_phone/menu/phone-book": typeof PhoneMenuPhoneBookRoute;
+  "/_phone/menu/profiles": typeof PhoneMenuProfilesRoute;
+  "/_phone/menu/reminders": typeof PhoneMenuRemindersRoute;
+  "/_phone/menu/settings": typeof PhoneMenuSettingsRoute;
+  "/_phone/menu/sim-services": typeof PhoneMenuSimServicesRoute;
+  "/_phone/menu/tones": typeof PhoneMenuTonesRoute;
+  "/_phone/menu/": typeof PhoneMenuIndexRoute;
+  "/_phone/menu/games/snake": typeof PhoneMenuGamesSnakeRoute;
   "/_phone/menu/messages/inbox": typeof PhoneMenuMessagesInboxRoute;
   "/_phone/menu/messages/write": typeof PhoneMenuMessagesWriteRoute;
+  "/_phone/menu/games/": typeof PhoneMenuGamesIndexRoute;
   "/_phone/menu/messages/": typeof PhoneMenuMessagesIndexRoute;
 }
 export interface FileRouteTypes {
@@ -92,29 +200,65 @@ export interface FileRouteTypes {
   fullPaths:
     | "/"
     | "/$"
+    | "/menu/calculator"
+    | "/menu/call-divert"
+    | "/menu/call-register"
     | "/menu/chat"
+    | "/menu/clock"
     | "/menu/phone-book"
+    | "/menu/profiles"
+    | "/menu/reminders"
+    | "/menu/settings"
+    | "/menu/sim-services"
+    | "/menu/tones"
+    | "/menu/"
+    | "/menu/games/snake"
     | "/menu/messages/inbox"
     | "/menu/messages/write"
+    | "/menu/games/"
     | "/menu/messages/";
   fileRoutesByTo: FileRoutesByTo;
   to:
     | "/$"
     | "/"
+    | "/menu/calculator"
+    | "/menu/call-divert"
+    | "/menu/call-register"
     | "/menu/chat"
+    | "/menu/clock"
     | "/menu/phone-book"
+    | "/menu/profiles"
+    | "/menu/reminders"
+    | "/menu/settings"
+    | "/menu/sim-services"
+    | "/menu/tones"
+    | "/menu"
+    | "/menu/games/snake"
     | "/menu/messages/inbox"
     | "/menu/messages/write"
+    | "/menu/games"
     | "/menu/messages";
   id:
     | "__root__"
     | "/_phone"
     | "/_phone/$"
     | "/_phone/"
+    | "/_phone/menu/calculator"
+    | "/_phone/menu/call-divert"
+    | "/_phone/menu/call-register"
     | "/_phone/menu/chat"
+    | "/_phone/menu/clock"
     | "/_phone/menu/phone-book"
+    | "/_phone/menu/profiles"
+    | "/_phone/menu/reminders"
+    | "/_phone/menu/settings"
+    | "/_phone/menu/sim-services"
+    | "/_phone/menu/tones"
+    | "/_phone/menu/"
+    | "/_phone/menu/games/snake"
     | "/_phone/menu/messages/inbox"
     | "/_phone/menu/messages/write"
+    | "/_phone/menu/games/"
     | "/_phone/menu/messages/";
   fileRoutesById: FileRoutesById;
 }
@@ -145,11 +289,60 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof PhoneSplatRouteImport;
       parentRoute: typeof PhoneRoute;
     };
+    "/_phone/menu/": {
+      id: "/_phone/menu/";
+      path: "/menu";
+      fullPath: "/menu/";
+      preLoaderRoute: typeof PhoneMenuIndexRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/tones": {
+      id: "/_phone/menu/tones";
+      path: "/menu/tones";
+      fullPath: "/menu/tones";
+      preLoaderRoute: typeof PhoneMenuTonesRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/sim-services": {
+      id: "/_phone/menu/sim-services";
+      path: "/menu/sim-services";
+      fullPath: "/menu/sim-services";
+      preLoaderRoute: typeof PhoneMenuSimServicesRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/settings": {
+      id: "/_phone/menu/settings";
+      path: "/menu/settings";
+      fullPath: "/menu/settings";
+      preLoaderRoute: typeof PhoneMenuSettingsRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/reminders": {
+      id: "/_phone/menu/reminders";
+      path: "/menu/reminders";
+      fullPath: "/menu/reminders";
+      preLoaderRoute: typeof PhoneMenuRemindersRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/profiles": {
+      id: "/_phone/menu/profiles";
+      path: "/menu/profiles";
+      fullPath: "/menu/profiles";
+      preLoaderRoute: typeof PhoneMenuProfilesRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
     "/_phone/menu/phone-book": {
       id: "/_phone/menu/phone-book";
       path: "/menu/phone-book";
       fullPath: "/menu/phone-book";
       preLoaderRoute: typeof PhoneMenuPhoneBookRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/clock": {
+      id: "/_phone/menu/clock";
+      path: "/menu/clock";
+      fullPath: "/menu/clock";
+      preLoaderRoute: typeof PhoneMenuClockRouteImport;
       parentRoute: typeof PhoneRoute;
     };
     "/_phone/menu/chat": {
@@ -159,11 +352,39 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof PhoneMenuChatRouteImport;
       parentRoute: typeof PhoneRoute;
     };
+    "/_phone/menu/call-register": {
+      id: "/_phone/menu/call-register";
+      path: "/menu/call-register";
+      fullPath: "/menu/call-register";
+      preLoaderRoute: typeof PhoneMenuCallRegisterRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/call-divert": {
+      id: "/_phone/menu/call-divert";
+      path: "/menu/call-divert";
+      fullPath: "/menu/call-divert";
+      preLoaderRoute: typeof PhoneMenuCallDivertRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/calculator": {
+      id: "/_phone/menu/calculator";
+      path: "/menu/calculator";
+      fullPath: "/menu/calculator";
+      preLoaderRoute: typeof PhoneMenuCalculatorRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
     "/_phone/menu/messages/": {
       id: "/_phone/menu/messages/";
       path: "/menu/messages";
       fullPath: "/menu/messages/";
       preLoaderRoute: typeof PhoneMenuMessagesIndexRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
+    "/_phone/menu/games/": {
+      id: "/_phone/menu/games/";
+      path: "/menu/games";
+      fullPath: "/menu/games/";
+      preLoaderRoute: typeof PhoneMenuGamesIndexRouteImport;
       parentRoute: typeof PhoneRoute;
     };
     "/_phone/menu/messages/write": {
@@ -180,26 +401,57 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof PhoneMenuMessagesInboxRouteImport;
       parentRoute: typeof PhoneRoute;
     };
+    "/_phone/menu/games/snake": {
+      id: "/_phone/menu/games/snake";
+      path: "/menu/games/snake";
+      fullPath: "/menu/games/snake";
+      preLoaderRoute: typeof PhoneMenuGamesSnakeRouteImport;
+      parentRoute: typeof PhoneRoute;
+    };
   }
 }
 
 interface PhoneRouteChildren {
   PhoneSplatRoute: typeof PhoneSplatRoute;
   PhoneIndexRoute: typeof PhoneIndexRoute;
+  PhoneMenuCalculatorRoute: typeof PhoneMenuCalculatorRoute;
+  PhoneMenuCallDivertRoute: typeof PhoneMenuCallDivertRoute;
+  PhoneMenuCallRegisterRoute: typeof PhoneMenuCallRegisterRoute;
   PhoneMenuChatRoute: typeof PhoneMenuChatRoute;
+  PhoneMenuClockRoute: typeof PhoneMenuClockRoute;
   PhoneMenuPhoneBookRoute: typeof PhoneMenuPhoneBookRoute;
+  PhoneMenuProfilesRoute: typeof PhoneMenuProfilesRoute;
+  PhoneMenuRemindersRoute: typeof PhoneMenuRemindersRoute;
+  PhoneMenuSettingsRoute: typeof PhoneMenuSettingsRoute;
+  PhoneMenuSimServicesRoute: typeof PhoneMenuSimServicesRoute;
+  PhoneMenuTonesRoute: typeof PhoneMenuTonesRoute;
+  PhoneMenuIndexRoute: typeof PhoneMenuIndexRoute;
+  PhoneMenuGamesSnakeRoute: typeof PhoneMenuGamesSnakeRoute;
   PhoneMenuMessagesInboxRoute: typeof PhoneMenuMessagesInboxRoute;
   PhoneMenuMessagesWriteRoute: typeof PhoneMenuMessagesWriteRoute;
+  PhoneMenuGamesIndexRoute: typeof PhoneMenuGamesIndexRoute;
   PhoneMenuMessagesIndexRoute: typeof PhoneMenuMessagesIndexRoute;
 }
 
 const PhoneRouteChildren: PhoneRouteChildren = {
   PhoneSplatRoute: PhoneSplatRoute,
   PhoneIndexRoute: PhoneIndexRoute,
+  PhoneMenuCalculatorRoute: PhoneMenuCalculatorRoute,
+  PhoneMenuCallDivertRoute: PhoneMenuCallDivertRoute,
+  PhoneMenuCallRegisterRoute: PhoneMenuCallRegisterRoute,
   PhoneMenuChatRoute: PhoneMenuChatRoute,
+  PhoneMenuClockRoute: PhoneMenuClockRoute,
   PhoneMenuPhoneBookRoute: PhoneMenuPhoneBookRoute,
+  PhoneMenuProfilesRoute: PhoneMenuProfilesRoute,
+  PhoneMenuRemindersRoute: PhoneMenuRemindersRoute,
+  PhoneMenuSettingsRoute: PhoneMenuSettingsRoute,
+  PhoneMenuSimServicesRoute: PhoneMenuSimServicesRoute,
+  PhoneMenuTonesRoute: PhoneMenuTonesRoute,
+  PhoneMenuIndexRoute: PhoneMenuIndexRoute,
+  PhoneMenuGamesSnakeRoute: PhoneMenuGamesSnakeRoute,
   PhoneMenuMessagesInboxRoute: PhoneMenuMessagesInboxRoute,
   PhoneMenuMessagesWriteRoute: PhoneMenuMessagesWriteRoute,
+  PhoneMenuGamesIndexRoute: PhoneMenuGamesIndexRoute,
   PhoneMenuMessagesIndexRoute: PhoneMenuMessagesIndexRoute,
 };
 
