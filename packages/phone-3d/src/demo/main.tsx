@@ -1,7 +1,6 @@
-import { Canvas } from "@react-three/fiber";
 import { StrictMode, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Nokia3310 } from "../Nokia3310";
+import { PhoneStage } from "../PhoneStage";
 import type { Nokia3310Key } from "../types";
 import { createTestPattern } from "./test-pattern";
 
@@ -60,20 +59,14 @@ function App() {
 
   return (
     <div className="demo">
-      <div className="stage">
-        <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 18], fov: 40 }}>
-          <ambientLight intensity={0.7} />
-          <directionalLight position={[4, 6, 8]} intensity={1.4} />
-          <directionalLight position={[-5, -2, 4]} intensity={0.3} />
-          <Nokia3310
-            screenCanvas={pattern.canvas}
-            screenVersion={version}
-            onKey={handleKey}
-            backlightOn={backlightOn}
-            pressedKeys={pressedKeys}
-          />
-        </Canvas>
-      </div>
+      <PhoneStage
+        className="stage"
+        screenCanvas={pattern.canvas}
+        screenVersion={version}
+        onKey={handleKey}
+        backlightOn={backlightOn}
+        pressedKeys={pressedKeys}
+      />
       <aside className="sidebar">
         <h2>backlight</h2>
         <label>
