@@ -99,17 +99,39 @@ export function createSnake(opts: SnakeOptions = {}): SnakeGame {
     };
     const eating = next.x === state.food.x && next.y === state.food.y;
     state.snake.unshift(next);
+    let spawnedBonus = false;
     if (eating) {
-      state.score += state.level; // spec: points per food = level
+      state.score += state.level;
       state.foodsEaten += 1;
-      const food = placeCell([...state.snake, ...state.walls]);
+      const food = placeCell([
+        ...state.snake,
+        ...state.walls,
+        ...(state.bonus ? [state.bonus.cell] : []),
+      ]);
       if (food === null) {
-        state.status = "game-over"; // board full — nothing left to eat
+        state.status = "game-over";
         return false;
       }
       state.food = food;
+      if (state.foodsEaten % 5 === 0) {
+        const cell = placeCell([...state.snake, ...state.walls, state.food]);
+        if (cell) {
+          // a fresh bonus replaces any survivor from the previous batch
+          state.bonus = { cell, ttl: 20, value: state.level * 5 };
+          spawnedBonus = true;
+        }
+      }
+    } else if (state.bonus && next.x === state.bonus.cell.x && next.y === state.bonus.cell.y) {
+      state.score += state.bonus.value; // current countdown value
+      state.bonus = null;
+      state.snake.pop(); // bonus does NOT grow the snake
     } else {
       state.snake.pop();
+    }
+    if (state.bonus && !spawnedBonus) {
+      state.bonus.ttl -= 1;
+      state.bonus.value = Math.max(1, state.bonus.value - 1);
+      if (state.bonus.ttl === 0) state.bonus = null;
     }
     return true;
   }
