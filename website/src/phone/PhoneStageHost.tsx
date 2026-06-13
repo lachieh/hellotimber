@@ -1,5 +1,6 @@
 import { PhoneStage } from "@hellotimber/phone-3d";
 import { useEffect, useState } from "react";
+import { attachKeyboard } from "./keyboard";
 import { getPhoneRuntime } from "./phone";
 
 /**
@@ -21,6 +22,9 @@ export default function PhoneStageHost() {
       cancelAnimationFrame(raf);
     };
   }, [renderer]);
+
+  // Desktop keyboard → phone keys, alive exactly as long as the stage.
+  useEffect(() => attachKeyboard(phone), [phone]);
 
   return (
     <PhoneStage
