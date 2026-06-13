@@ -16,6 +16,7 @@
     "@hellotimber/phone-3d": "workspace:*",
     "@hellotimber/phone-core": "workspace:*",
     "@hellotimber/phone-screen": "workspace:*",
+    "@hellotimber/snake": "workspace:*",
     "@react-three/drei": "catalog:",
     "@react-three/fiber": "catalog:",
     "@tailwindcss/vite": "^4.1.18",

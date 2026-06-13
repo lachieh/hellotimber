@@ -3,6 +3,7 @@ import type { AppFactory, Phone } from "@hellotimber/phone-core";
 import { createScreenRenderer } from "@hellotimber/phone-screen";
 import type { ScreenRenderer } from "@hellotimber/phone-screen";
 import { content } from "../content";
+import { snakeApp } from "./apps/snake-app";
 
 export interface PhoneRuntime {
   phone: Phone;
@@ -16,7 +17,7 @@ function buildApps(): Record<string, AppFactory> {
     // Plan 01 deviation note 2: the multi-tap editor is hosted as an app.
     // onAccept delivery (real contact form) is plan 06 scope.
     "write-message": editorApp({ title: "Message:" }),
-    // "snake" is registered in Task 9 (requires plan 04).
+    snake: snakeApp(),
   };
 }
 

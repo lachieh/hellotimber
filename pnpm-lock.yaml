@@ -129,6 +129,9 @@ importers:
       '@hellotimber/phone-screen':
         specifier: workspace:*
         version: link:../packages/phone-screen
+      '@hellotimber/snake':
+        specifier: workspace:*
+        version: link:../packages/snake
       '@react-three/drei':
         specifier: 'catalog:'
         version: 10.7.7(@react-three/fiber@9.6.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(three@0.184.0))(@types/react@19.2.17)(@types/three@0.184.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(three@0.184.0)
