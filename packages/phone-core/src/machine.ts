@@ -566,7 +566,7 @@ function enterNode(m: Machine, node: MenuNode): void {
       launchApp(m, node);
       return;
     case "action":
-      // Action events arrive in Task 9.
+      emit(m, "action", node.action); // the host opens the link; the phone stays put
       return;
   }
 }
