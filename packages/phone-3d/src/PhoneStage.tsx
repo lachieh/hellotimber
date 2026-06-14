@@ -32,10 +32,10 @@ function SwayRig({ children }: { children: ReactNode }) {
  *  R3F's Canvas tracks its container size, so resize works out of the box. */
 export function PhoneStage({ className, ...props }: Nokia3310Props & { className?: string }) {
   return (
-    <Canvas className={className} dpr={[1, 2]} camera={{ position: [0, 0, 18], fov: 40 }}>
-      <ambientLight intensity={0.7} />
-      <directionalLight position={[4, 6, 8]} intensity={1.4} />
-      <directionalLight position={[-5, -2, 4]} intensity={0.3} />
+    <Canvas className={className} dpr={[1, 2]} camera={{ position: [0, 0, 15], fov: 42 }}>
+      <ambientLight intensity={0.85} />
+      <directionalLight position={[4, 6, 8]} intensity={1.6} />
+      <directionalLight position={[-5, -2, 4]} intensity={0.45} />
       <SwayRig>
         <Nokia3310 {...props} />
       </SwayRig>

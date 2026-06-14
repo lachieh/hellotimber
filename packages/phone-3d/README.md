@@ -1,11 +1,26 @@
 # @hellotimber/phone-3d
 
-A Nokia 3310 as react-three-fiber components: parametric body (no GLTF assets),
-17 pressable keys, an 84×48 canvas-textured screen, and a green backlight.
+A Nokia 3310 as react-three-fiber components: a realistic glTF model, 17 pressable
+keys (transparent raycast hotspots over the fused keypad), an 84×48 canvas-textured
+screen overlaid on the model's screen face, and a green backlight.
 
 The package is host-agnostic: you hand it any `HTMLCanvasElement` as the screen
 texture source and it reports physical key presses via callback. It knows nothing
 about what's on the screen or what the keys mean.
+
+## Model asset (required)
+
+The component loads a Draco-compressed glTF model that the **host must serve as a
+static asset**. By default it fetches `/models/nokia-3310.glb` and the Draco decoder
+from `/draco/` — override with the `modelUrl` / `dracoPath` props. This package ships
+a copy of both under `public/` for its own demo; a host app should copy
+`public/models/nokia-3310.glb` and `public/draco/*` into its own served `public/`
+(or point the props at wherever it serves them).
+
+**Model credit:** "Nokia 3310 Retro Electronics Challenge" by shaderbytes
+(Sketchfab), used under the Sketchfab Standard License (commercial use, no
+attribution required — credited here as good practice). Optimized for the web with
+`gltf-transform` (Draco geometry + WebP textures, ~142 KB).
 
 ## Install (outside this repo)
 
