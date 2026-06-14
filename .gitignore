@@ -29,3 +29,6 @@ dist-ssr
 
 # Environment
 .env
+
+# Playwright MCP
+.playwright-mcp/
