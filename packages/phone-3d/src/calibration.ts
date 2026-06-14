@@ -49,8 +49,8 @@ export interface ScreenCal {
 }
 
 export const DEFAULT_SCREEN_CAL: ScreenCal = {
-  scaleW: 1,
-  scaleH: 1,
+  scaleW: 0.87,
+  scaleH: 0.87,
   offX: 0,
   offY: 0,
   offZ: 0,

@@ -28,8 +28,8 @@ const HOTSPOT_Z_FRAC = 0.5;
  *  model's screen frame. offX/offY are fractions of the screen size; offZ is in
  *  model-local depth units (before the model is scaled). */
 const SCREEN_ADJUST: ScreenCal = {
-  scaleW: 1,
-  scaleH: 1,
+  scaleW: 0.87,
+  scaleH: 0.87,
   offX: 0,
   offY: 0,
   offZ: 0,
