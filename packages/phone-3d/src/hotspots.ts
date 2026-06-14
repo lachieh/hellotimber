@@ -16,6 +16,9 @@ export interface KeyHotspot {
   cy: number;
   w: number;
   h: number;
+  /** In-plane rotation in degrees (counter-clockwise), for keys that aren't
+   *  level/square against the camera. Optional; defaults to 0. */
+  rot?: number;
 }
 
 // Face layout (fractions). The screen sits ~0.62–0.86 in Y; the soft keys and

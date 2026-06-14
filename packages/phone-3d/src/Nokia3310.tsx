@@ -179,7 +179,7 @@ function KeyHotspots({
       {KEY_HOTSPOTS.map((base) => {
         const c = calibrating
           ? cal[base.key]
-          : { x: base.cx, y: base.cy, z: HOTSPOT_Z_FRAC, w: base.w, h: base.h };
+          : { x: base.cx, y: base.cy, z: HOTSPOT_Z_FRAC, w: base.w, h: base.h, rot: base.rot ?? 0 };
         const x = center.x + (c.x - 0.5) * size.x;
         const y = center.y + (c.y - 0.5) * size.y;
         const z = center.z + size.z * c.z;
@@ -194,6 +194,7 @@ function KeyHotspots({
             z={z}
             w={w}
             h={hgt}
+            rot={c.rot}
             onKey={onKey}
             debug={calibrating || DEBUG_HOTSPOTS}
             highlight={calibrating && base.key === selected}
@@ -211,6 +212,7 @@ function Hotspot({
   z,
   w,
   h,
+  rot,
   onKey,
   debug,
   highlight,
@@ -221,6 +223,7 @@ function Hotspot({
   z: number;
   w: number;
   h: number;
+  rot: number;
   onKey?: (key: Nokia3310Key, action: "down" | "up") => void;
   debug: boolean;
   highlight: boolean;
@@ -229,6 +232,7 @@ function Hotspot({
   return (
     <mesh
       position={[x, y, z]}
+      rotation={[0, 0, (rot * Math.PI) / 180]}
       onPointerDown={(e) => {
         e.stopPropagation();
         onKey?.(id, "down");

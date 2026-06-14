@@ -18,6 +18,7 @@ const FIELDS: { k: keyof KeyCal; label: string; min: number; max: number; step: 
   { k: "z", label: "z (depth)", min: -0.5, max: 1, step: 0.01 },
   { k: "w", label: "w (width)", min: 0.01, max: 0.6, step: 0.002 },
   { k: "h", label: "h (height)", min: 0.01, max: 0.3, step: 0.002 },
+  { k: "rot", label: "rot (°)", min: -45, max: 45, step: 0.5 },
 ];
 
 /**
@@ -126,7 +127,7 @@ export function CalibrationPanel() {
         </button>
       </div>
       <div style={{ marginTop: 8, opacity: 0.7, lineHeight: 1.4 }}>
-        Pick a key, drag x/y/z/w/h. Click keys on the phone to test. Copy pastes the final
+        Pick a key, drag x/y/z/w/h/rot. Click keys on the phone to test. Copy pastes the final
         KEY_HOTSPOTS into your clipboard.
       </div>
     </div>

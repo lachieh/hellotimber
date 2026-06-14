@@ -12,6 +12,7 @@ import type { Nokia3310Key } from "./types";
  *   x (cx), y (cy), w, h  — fractions of the model face (matches KeyHotspot).
  *   z                     — fraction of model depth out from center (0.5 = rim);
  *                           shared default unless a key overrides it.
+ *   rot                   — in-plane rotation in degrees (for skewed keys).
  */
 export interface KeyCal {
   x: number;
@@ -19,6 +20,7 @@ export interface KeyCal {
   z: number;
   w: number;
   h: number;
+  rot: number;
 }
 
 export type CalMap = Record<Nokia3310Key, KeyCal>;
@@ -29,7 +31,7 @@ export const DEFAULT_Z = 0.5;
 function initialCal(): CalMap {
   const map = {} as CalMap;
   for (const h of KEY_HOTSPOTS) {
-    map[h.key] = { x: h.cx, y: h.cy, z: DEFAULT_Z, w: h.w, h: h.h };
+    map[h.key] = { x: h.cx, y: h.cy, z: DEFAULT_Z, w: h.w, h: h.h, rot: h.rot ?? 0 };
   }
   return map;
 }
@@ -99,7 +101,8 @@ export function calToSource(cal: CalMap): string {
   const rows = order
     .map((k) => {
       const c = cal[k];
-      return `  { key: ${JSON.stringify(k)}, cx: ${f(c.x)}, cy: ${f(c.y)}, w: ${f(c.w)}, h: ${f(c.h)} },`;
+      const rot = Math.abs(c.rot) > 0.001 ? `, rot: ${f(c.rot)}` : "";
+      return `  { key: ${JSON.stringify(k)}, cx: ${f(c.x)}, cy: ${f(c.y)}, w: ${f(c.w)}, h: ${f(c.h)}${rot} },`;
     })
     .join("\n");
   // Z is a single shared depth (HOTSPOT_Z_FRAC in Nokia3310.tsx). Report the
