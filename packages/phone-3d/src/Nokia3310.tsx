@@ -179,7 +179,14 @@ function KeyHotspots({
       {KEY_HOTSPOTS.map((base) => {
         const c = calibrating
           ? cal[base.key]
-          : { x: base.cx, y: base.cy, z: HOTSPOT_Z_FRAC, w: base.w, h: base.h, rot: base.rot ?? 0 };
+          : {
+              x: base.cx,
+              y: base.cy,
+              z: base.z ?? HOTSPOT_Z_FRAC,
+              w: base.w,
+              h: base.h,
+              rot: base.rot ?? 0,
+            };
         const x = center.x + (c.x - 0.5) * size.x;
         const y = center.y + (c.y - 0.5) * size.y;
         const z = center.z + size.z * c.z;

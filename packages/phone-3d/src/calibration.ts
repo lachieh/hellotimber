@@ -31,7 +31,7 @@ export const DEFAULT_Z = 0.5;
 function initialCal(): CalMap {
   const map = {} as CalMap;
   for (const h of KEY_HOTSPOTS) {
-    map[h.key] = { x: h.cx, y: h.cy, z: DEFAULT_Z, w: h.w, h: h.h, rot: h.rot ?? 0 };
+    map[h.key] = { x: h.cx, y: h.cy, z: h.z ?? DEFAULT_Z, w: h.w, h: h.h, rot: h.rot ?? 0 };
   }
   return map;
 }
