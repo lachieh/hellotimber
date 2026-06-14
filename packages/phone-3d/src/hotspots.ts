@@ -24,11 +24,16 @@ const COL_L = 0.29;
 const COL_M = 0.5;
 const COL_R = 0.71;
 
+// Whole-keypad vertical nudge (fraction of face height). Negative = down. The
+// hit areas read ~10% too high against the rendered keys, so shift everything
+// (softkeys + digit grid) down as one tunable number; `power` stays on the rim.
+const Y_NUDGE = -0.035;
+
 // Digit rows (cy), top (1/2/3) to bottom (*/0/#).
-const ROW_1 = 0.42;
-const ROW_4 = 0.335;
-const ROW_7 = 0.25;
-const ROW_S = 0.165; // * 0 #
+const ROW_1 = 0.42 + Y_NUDGE;
+const ROW_4 = 0.335 + Y_NUDGE;
+const ROW_7 = 0.25 + Y_NUDGE;
+const ROW_S = 0.165 + Y_NUDGE; // * 0 #
 
 const KW = 0.16; // digit key hit width
 const KH = 0.075; // digit key hit height
@@ -38,12 +43,12 @@ export const KEY_HOTSPOTS: readonly KeyHotspot[] = [
   { key: "power", cx: 0.5, cy: 0.95, w: 0.16, h: 0.05 },
 
   // NaviKey (the big blue softkey) directly under the screen.
-  { key: "navi", cx: 0.5, cy: 0.485, w: 0.3, h: 0.05 },
+  { key: "navi", cx: 0.5, cy: 0.485 + Y_NUDGE, w: 0.3, h: 0.05 },
 
   // C key (left) and up/down rocker (right) flanking the NaviKey.
-  { key: "c", cx: 0.26, cy: 0.475, w: 0.15, h: 0.055 },
-  { key: "up", cx: 0.74, cy: 0.495, w: 0.15, h: 0.03 },
-  { key: "down", cx: 0.74, cy: 0.46, w: 0.15, h: 0.03 },
+  { key: "c", cx: 0.26, cy: 0.475 + Y_NUDGE, w: 0.15, h: 0.055 },
+  { key: "up", cx: 0.74, cy: 0.495 + Y_NUDGE, w: 0.15, h: 0.03 },
+  { key: "down", cx: 0.74, cy: 0.46 + Y_NUDGE, w: 0.15, h: 0.03 },
 
   // Digit grid 1-2-3 / 4-5-6 / 7-8-9 / *-0-#.
   { key: "1", cx: COL_L, cy: ROW_1, w: KW, h: KH },

@@ -2,6 +2,7 @@ import { useGLTF } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { isCalibrating, useCal, useSelectedKey } from "./calibration";
 import { KEY_HOTSPOTS } from "./hotspots";
 import { SCREEN_DIM_TINT } from "./materials";
 import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL } from "./types";
@@ -17,6 +18,10 @@ const SCREEN_MESH = "Plane003_screen_0";
 /** Name of the backlight element mesh. */
 const LIGHT_MESH = "Plane007_light_1_0";
 
+/** Depth of the key hotspot planes as a fraction of model depth, measured out
+ *  from center toward the camera. 0.5 = front rim. Tunable in one place. */
+const HOTSPOT_Z_FRAC = 0.5;
+
 /**
  * The real Nokia 3310 — a Draco-compressed glTF model (shaderbytes, Sketchfab
  * Standard license). The package renders whatever model URL the host serves; it
@@ -28,11 +33,14 @@ export function Nokia3310({
   screenVersion,
   onKey,
   backlightOn = true,
-  pressedKeys,
   modelUrl = DEFAULT_MODEL_URL,
   dracoPath = DEFAULT_DRACO_PATH,
 }: Nokia3310Props) {
   const { scene } = useGLTF(modelUrl, dracoPath);
+  // Calibration mode is dev-only; reads the live cal store so the panel can move
+  // hotspots in real time. selected drives the green highlight.
+  const calibrating = isCalibrating();
+  const selected = useSelectedKey();
 
   // Clone so multiple instances / strict-mode double-mounts don't fight over one
   // graph, and so we can freely mutate materials.
@@ -134,7 +142,7 @@ export function Nokia3310({
 
         {/* Invisible key hotspots for pointer interaction (the model's keypad is
             one fused mesh, so we raycast transparent planes over each key). */}
-        <KeyHotspots fit={fit} onKey={onKey} pressedKeys={pressedKeys} />
+        <KeyHotspots fit={fit} onKey={onKey} calibrating={calibrating} selected={selected} />
 
         {backlightOn && (
           <pointLight
@@ -150,37 +158,45 @@ export function Nokia3310({
   );
 }
 
-/** Renders one transparent, pointer-interactive plane per key, positioned from
- *  KEY_HOTSPOTS (fractions of the model's front face). */
+/** Renders one transparent, pointer-interactive plane per key. Positions come
+ *  from KEY_HOTSPOTS, or — when calibration mode is on — from the live cal map
+ *  so the on-screen panel can adjust x/y/z/w/h per key in real time. */
 function KeyHotspots({
   fit,
   onKey,
-  pressedKeys,
+  calibrating,
+  selected,
 }: {
   fit: { center: THREE.Vector3; size: THREE.Vector3 };
   onKey?: (key: Nokia3310Key, action: "down" | "up") => void;
-  pressedKeys?: ReadonlySet<Nokia3310Key>;
+  calibrating: boolean;
+  selected?: Nokia3310Key;
 }) {
   const { size, center } = fit;
-  const frontZ = center.z + size.z / 2 + 0.2;
+  const cal = useCal();
   return (
     <>
-      {KEY_HOTSPOTS.map((h) => {
-        const x = center.x + (h.cx - 0.5) * size.x;
-        const y = center.y + (h.cy - 0.5) * size.y;
-        const w = h.w * size.x;
-        const hgt = h.h * size.y;
-        const pressed = pressedKeys?.has(h.key) ?? false;
+      {KEY_HOTSPOTS.map((base) => {
+        const c = calibrating
+          ? cal[base.key]
+          : { x: base.cx, y: base.cy, z: HOTSPOT_Z_FRAC, w: base.w, h: base.h };
+        const x = center.x + (c.x - 0.5) * size.x;
+        const y = center.y + (c.y - 0.5) * size.y;
+        const z = center.z + size.z * c.z;
+        const w = c.w * size.x;
+        const hgt = c.h * size.y;
         return (
           <Hotspot
-            key={h.key}
-            id={h.key}
+            key={base.key}
+            id={base.key}
             x={x}
             y={y}
-            z={frontZ - (pressed ? 0.3 : 0)}
+            z={z}
             w={w}
             h={hgt}
             onKey={onKey}
+            debug={calibrating || DEBUG_HOTSPOTS}
+            highlight={calibrating && base.key === selected}
           />
         );
       })}
@@ -196,6 +212,8 @@ function Hotspot({
   w,
   h,
   onKey,
+  debug,
+  highlight,
 }: {
   id: Nokia3310Key;
   x: number;
@@ -204,6 +222,8 @@ function Hotspot({
   w: number;
   h: number;
   onKey?: (key: Nokia3310Key, action: "down" | "up") => void;
+  debug: boolean;
+  highlight: boolean;
 }) {
   const { gl } = useThree();
   return (
@@ -226,12 +246,12 @@ function Hotspot({
       }}
     >
       <planeGeometry args={[w, h]} />
-      {/* Invisible but still raycast-hit (transparent material with opacity 0).
-          Flip DEBUG_HOTSPOTS to visualize hit areas when re-calibrating. */}
+      {/* Invisible but still raycast-hit (opacity 0) in normal use; tinted when
+          debugging/calibrating, brighter for the selected key. */}
       <meshBasicMaterial
-        color="#ff0044"
+        color={highlight ? "#22ff88" : "#ff0044"}
         transparent
-        opacity={DEBUG_HOTSPOTS ? 0.4 : 0}
+        opacity={debug ? (highlight ? 0.7 : 0.35) : 0}
         depthWrite={false}
         depthTest={false}
       />
