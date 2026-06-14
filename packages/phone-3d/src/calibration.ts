@@ -36,7 +36,28 @@ function initialCal(): CalMap {
   return map;
 }
 
+/** Screen-overlay calibration: scale + offset applied to the auto-computed LCD
+ *  rectangle so it can be nudged inside the model's screen frame.
+ *  scaleW/scaleH multiply the detected size; offX/offY/offZ shift it (fractions
+ *  of the model face for x/y, raw depth units out from the glass for z). */
+export interface ScreenCal {
+  scaleW: number;
+  scaleH: number;
+  offX: number;
+  offY: number;
+  offZ: number;
+}
+
+export const DEFAULT_SCREEN_CAL: ScreenCal = {
+  scaleW: 1,
+  scaleH: 1,
+  offX: 0,
+  offY: 0,
+  offZ: 0,
+};
+
 let current: CalMap = initialCal();
+let screenCal: ScreenCal = { ...DEFAULT_SCREEN_CAL };
 let selected: Nokia3310Key = KEY_HOTSPOTS[0].key;
 const listeners = new Set<() => void>();
 
@@ -62,7 +83,21 @@ export function setKeyCal(key: Nokia3310Key, patch: Partial<KeyCal>): void {
 
 export function resetCal(): void {
   current = initialCal();
+  screenCal = { ...DEFAULT_SCREEN_CAL };
   emit();
+}
+
+export function getScreenCal(): ScreenCal {
+  return screenCal;
+}
+
+export function setScreenCal(patch: Partial<ScreenCal>): void {
+  screenCal = { ...screenCal, ...patch };
+  emit();
+}
+
+export function useScreenCal(): ScreenCal {
+  return useSyncExternalStore(subscribe, getScreenCal, getScreenCal);
 }
 
 export function getSelectedKey(): Nokia3310Key {
@@ -94,26 +129,29 @@ export function isCalibrating(): boolean {
 }
 
 /** Emit the calibrated values as ready-to-paste source: the per-key
- *  KEY_HOTSPOTS array (cx/cy/w/h) plus the shared HOTSPOT_Z_FRAC depth. */
-export function calToSource(cal: CalMap): string {
+ *  KEY_HOTSPOTS array (cx/cy/w/h/z/rot), the shared HOTSPOT_Z_FRAC depth, and —
+ *  when given — the SCREEN_ADJUST block for the LCD overlay. */
+export function calToSource(cal: CalMap, screen?: ScreenCal): string {
   const order = KEY_HOTSPOTS.map((h) => h.key);
   const f = (n: number) => n.toFixed(3).replace(/\.?0+$/, "");
+  // The shared depth is HOTSPOT_Z_FRAC; emit a per-key `z` only when it diverges.
+  const zDefault = mode(order.map((k) => cal[k].z));
   const rows = order
     .map((k) => {
       const c = cal[k];
+      const z = Math.abs(c.z - zDefault) > 0.001 ? `, z: ${f(c.z)}` : "";
       const rot = Math.abs(c.rot) > 0.001 ? `, rot: ${f(c.rot)}` : "";
-      return `  { key: ${JSON.stringify(k)}, cx: ${f(c.x)}, cy: ${f(c.y)}, w: ${f(c.w)}, h: ${f(c.h)}${rot} },`;
+      return `  { key: ${JSON.stringify(k)}, cx: ${f(c.x)}, cy: ${f(c.y)}, w: ${f(c.w)}, h: ${f(c.h)}${z}${rot} },`;
     })
     .join("\n");
-  // Z is a single shared depth (HOTSPOT_Z_FRAC in Nokia3310.tsx). Report the
-  // most common z; flag if keys diverge so you know to reconcile.
-  const zs = order.map((k) => cal[k].z);
-  const z = mode(zs);
-  const diverges = zs.some((v) => Math.abs(v - z) > 0.001);
-  const zLine = `// In Nokia3310.tsx set: const HOTSPOT_Z_FRAC = ${f(z)};${
-    diverges ? " // NOTE: per-key z varied during calibration; picked the most common" : ""
-  }`;
-  return `${zLine}\nexport const KEY_HOTSPOTS: readonly KeyHotspot[] = [\n${rows}\n];`;
+  const zLine = `// In Nokia3310.tsx set: const HOTSPOT_Z_FRAC = ${f(zDefault)};`;
+  const hotspots = `${zLine}\nexport const KEY_HOTSPOTS: readonly KeyHotspot[] = [\n${rows}\n];`;
+  if (!screen) return hotspots;
+  const screenBlock = `// In Nokia3310.tsx set SCREEN_ADJUST = {
+//   scaleW: ${f(screen.scaleW)}, scaleH: ${f(screen.scaleH)},
+//   offX: ${f(screen.offX)}, offY: ${f(screen.offY)}, offZ: ${f(screen.offZ)},
+// };`;
+  return `${screenBlock}\n${hotspots}`;
 }
 
 function mode(values: number[]): number {

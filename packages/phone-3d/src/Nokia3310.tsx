@@ -2,7 +2,8 @@ import { useGLTF } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { isCalibrating, useCal, useSelectedKey } from "./calibration";
+import { isCalibrating, useCal, useScreenCal, useSelectedKey } from "./calibration";
+import type { ScreenCal } from "./calibration";
 import { KEY_HOTSPOTS } from "./hotspots";
 import { SCREEN_DIM_TINT } from "./materials";
 import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL } from "./types";
@@ -21,6 +22,18 @@ const LIGHT_MESH = "Plane007_light_1_0";
 /** Depth of the key hotspot planes as a fraction of model depth, measured out
  *  from center toward the camera. 0.5 = front rim. Tunable in one place. */
 const HOTSPOT_Z_FRAC = 0.5;
+
+/** Baked screen-overlay adjustment (tuned via `?calibrate=1` → Screen sliders).
+ *  Multiplies/offsets the auto-detected LCD rectangle so it sits inside the
+ *  model's screen frame. offX/offY are fractions of the screen size; offZ is in
+ *  model-local depth units (before the model is scaled). */
+const SCREEN_ADJUST: ScreenCal = {
+  scaleW: 1,
+  scaleH: 1,
+  offX: 0,
+  offY: 0,
+  offZ: 0,
+};
 
 /**
  * The real Nokia 3310 — a Draco-compressed glTF model (shaderbytes, Sketchfab
@@ -41,6 +54,8 @@ export function Nokia3310({
   // hotspots in real time. selected drives the green highlight.
   const calibrating = isCalibrating();
   const selected = useSelectedKey();
+  const liveScreen = useScreenCal();
+  const screenAdj = calibrating ? liveScreen : SCREEN_ADJUST;
 
   // Clone so multiple instances / strict-mode double-mounts don't fight over one
   // graph, and so we can freely mutate materials.
@@ -128,10 +143,22 @@ export function Nokia3310({
       <group position={[-fit.center.x, -fit.center.y, -fit.center.z]}>
         <primitive object={model} />
 
-        {/* LCD overlay on the screen face */}
+        {/* LCD overlay on the screen face. Auto-sized from the screen mesh box,
+            then nudged by screenAdj (scale + offset) to sit inside the frame. */}
         {screenInfo.overlay && (
-          <mesh position={[screenInfo.overlay.x, screenInfo.overlay.y, screenInfo.overlay.z]}>
-            <planeGeometry args={[screenInfo.overlay.w, screenInfo.overlay.h]} />
+          <mesh
+            position={[
+              screenInfo.overlay.x + screenAdj.offX * screenInfo.overlay.w,
+              screenInfo.overlay.y + screenAdj.offY * screenInfo.overlay.h,
+              screenInfo.overlay.z + screenAdj.offZ,
+            ]}
+          >
+            <planeGeometry
+              args={[
+                screenInfo.overlay.w * screenAdj.scaleW,
+                screenInfo.overlay.h * screenAdj.scaleH,
+              ]}
+            />
             <meshBasicMaterial
               map={texture}
               toneMapped={false}

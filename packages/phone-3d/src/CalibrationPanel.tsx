@@ -2,13 +2,16 @@ import { useState } from "react";
 import {
   calToSource,
   getCal,
+  getScreenCal,
   resetCal,
   setKeyCal,
+  setScreenCal,
   setSelectedKey,
   useCal,
+  useScreenCal,
   useSelectedKey,
 } from "./calibration";
-import type { KeyCal } from "./calibration";
+import type { KeyCal, ScreenCal } from "./calibration";
 import { KEY_HOTSPOTS } from "./hotspots";
 import type { Nokia3310Key } from "./types";
 
@@ -21,6 +24,20 @@ const FIELDS: { k: keyof KeyCal; label: string; min: number; max: number; step: 
   { k: "rot", label: "rot (°)", min: -45, max: 45, step: 0.5 },
 ];
 
+const SCREEN_FIELDS: {
+  k: keyof ScreenCal;
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+}[] = [
+  { k: "scaleW", label: "scale W", min: 0.5, max: 1.5, step: 0.005 },
+  { k: "scaleH", label: "scale H", min: 0.5, max: 1.5, step: 0.005 },
+  { k: "offX", label: "off X", min: -0.5, max: 0.5, step: 0.005 },
+  { k: "offY", label: "off Y", min: -0.5, max: 0.5, step: 0.005 },
+  { k: "offZ", label: "off Z", min: -2, max: 2, step: 0.02 },
+];
+
 /**
  * Dev-only DOM overlay for tuning the 17 key hotspots live. Rendered by
  * PhoneStage as a sibling of the Canvas when `?calibrate=1`. Pick a key, drag
@@ -30,10 +47,11 @@ export function CalibrationPanel() {
   const cal = useCal();
   const selected = useSelectedKey();
   const c = cal[selected];
+  const screen = useScreenCal();
   const [copied, setCopied] = useState(false);
 
   const copy = () => {
-    const src = calToSource(getCal());
+    const src = calToSource(getCal(), getScreenCal());
     void navigator.clipboard?.writeText(src).then(
       () => {
         setCopied(true);
@@ -118,6 +136,42 @@ export function CalibrationPanel() {
         </label>
       ))}
 
+      <div
+        style={{ marginTop: 10, paddingTop: 8, borderTop: "1px solid #2a3a34", fontWeight: 700 }}
+      >
+        Screen overlay
+      </div>
+      {SCREEN_FIELDS.map((f) => (
+        <label key={f.k} style={{ display: "block", marginTop: 6 }}>
+          <span style={{ display: "inline-block", width: 78 }}>{f.label}</span>
+          <input
+            type="range"
+            min={f.min}
+            max={f.max}
+            step={f.step}
+            value={screen[f.k]}
+            onChange={(e) => setScreenCal({ [f.k]: Number(e.target.value) })}
+            style={{ width: 120, verticalAlign: "middle" }}
+          />
+          <input
+            type="number"
+            min={f.min}
+            max={f.max}
+            step={f.step}
+            value={Number(screen[f.k].toFixed(3))}
+            onChange={(e) => setScreenCal({ [f.k]: Number(e.target.value) })}
+            style={{
+              width: 56,
+              marginLeft: 6,
+              background: "#0e1412",
+              color: "#cfe",
+              border: "1px solid #3a4a44",
+              borderRadius: 4,
+            }}
+          />
+        </label>
+      ))}
+
       <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
         <button type="button" onClick={copy} style={btn("#22ff88", "#04130b")}>
           {copied ? "Copied!" : "Copy hotspots.ts"}
@@ -127,8 +181,8 @@ export function CalibrationPanel() {
         </button>
       </div>
       <div style={{ marginTop: 8, opacity: 0.7, lineHeight: 1.4 }}>
-        Pick a key, drag x/y/z/w/h/rot. Click keys on the phone to test. Copy pastes the final
-        KEY_HOTSPOTS into your clipboard.
+        Keys: pick one, drag x/y/z/w/h/rot. Screen: scale/offset the LCD into the frame. Copy pastes
+        the hotspots + SCREEN_ADJUST block.
       </div>
     </div>
   );
