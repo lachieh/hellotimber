@@ -35,7 +35,10 @@ const SCREEN_FIELDS: {
   { k: "scaleH", label: "scale H", min: 0.5, max: 1.5, step: 0.005 },
   { k: "offX", label: "off X", min: -0.5, max: 0.5, step: 0.005 },
   { k: "offY", label: "off Y", min: -0.5, max: 0.5, step: 0.005 },
-  { k: "offZ", label: "off Z", min: -2, max: 2, step: 0.02 },
+  { k: "offZ", label: "off Z", min: -10, max: 5, step: 0.05 },
+  { k: "pitch", label: "pitch °", min: -90, max: 90, step: 0.5 },
+  { k: "yaw", label: "yaw °", min: -90, max: 90, step: 0.5 },
+  { k: "roll", label: "roll °", min: -180, max: 180, step: 0.5 },
 ];
 
 /**

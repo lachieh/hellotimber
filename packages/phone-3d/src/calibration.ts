@@ -36,16 +36,20 @@ function initialCal(): CalMap {
   return map;
 }
 
-/** Screen-overlay calibration: scale + offset applied to the auto-computed LCD
- *  rectangle so it can be nudged inside the model's screen frame.
- *  scaleW/scaleH multiply the detected size; offX/offY/offZ shift it (fractions
- *  of the model face for x/y, raw depth units out from the glass for z). */
+/** Screen-overlay calibration: scale + offset + rotation applied to the
+ *  auto-computed LCD rectangle so it can be seated inside the model's screen
+ *  frame. scaleW/scaleH multiply the detected size; offX/offY/offZ shift it
+ *  (fractions of the screen size for x/y, raw depth units for z); pitch/yaw/roll
+ *  rotate it in degrees about the X/Y/Z axes. */
 export interface ScreenCal {
   scaleW: number;
   scaleH: number;
   offX: number;
   offY: number;
   offZ: number;
+  pitch: number;
+  yaw: number;
+  roll: number;
 }
 
 export const DEFAULT_SCREEN_CAL: ScreenCal = {
@@ -53,7 +57,10 @@ export const DEFAULT_SCREEN_CAL: ScreenCal = {
   scaleH: 0.87,
   offX: 0,
   offY: 0,
-  offZ: 0,
+  offZ: -3.75,
+  pitch: -8,
+  yaw: 0,
+  roll: 0,
 };
 
 let current: CalMap = initialCal();
@@ -150,6 +157,7 @@ export function calToSource(cal: CalMap, screen?: ScreenCal): string {
   const screenBlock = `// In Nokia3310.tsx set SCREEN_ADJUST = {
 //   scaleW: ${f(screen.scaleW)}, scaleH: ${f(screen.scaleH)},
 //   offX: ${f(screen.offX)}, offY: ${f(screen.offY)}, offZ: ${f(screen.offZ)},
+//   pitch: ${f(screen.pitch)}, yaw: ${f(screen.yaw)}, roll: ${f(screen.roll)},
 // };`;
   return `${screenBlock}\n${hotspots}`;
 }

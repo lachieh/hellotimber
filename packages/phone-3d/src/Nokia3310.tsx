@@ -6,7 +6,7 @@ import { isCalibrating, useCal, useScreenCal, useSelectedKey } from "./calibrati
 import type { ScreenCal } from "./calibration";
 import { KEY_HOTSPOTS } from "./hotspots";
 import { SCREEN_DIM_TINT } from "./materials";
-import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL } from "./types";
+import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL, DEFAULT_SCREEN_BG } from "./types";
 import type { Nokia3310Key, Nokia3310Props } from "./types";
 
 /** Target height (world units) the model is normalized to, so the rest of the
@@ -32,8 +32,13 @@ const SCREEN_ADJUST: ScreenCal = {
   scaleH: 0.87,
   offX: 0,
   offY: 0,
-  offZ: 0,
+  offZ: -3.75,
+  pitch: -8,
+  yaw: 0,
+  roll: 0,
 };
+
+const DEG = Math.PI / 180;
 
 /**
  * The real Nokia 3310 — a Draco-compressed glTF model (shaderbytes, Sketchfab
@@ -48,6 +53,7 @@ export function Nokia3310({
   backlightOn = true,
   modelUrl = DEFAULT_MODEL_URL,
   dracoPath = DEFAULT_DRACO_PATH,
+  screenBgColor = DEFAULT_SCREEN_BG,
 }: Nokia3310Props) {
   const { scene } = useGLTF(modelUrl, dracoPath);
   // Calibration mode is dev-only; reads the live cal store so the panel can move
@@ -108,11 +114,23 @@ export function Nokia3310({
         w: bb.max.x - bb.min.x,
         h: bb.max.y - bb.min.y,
       };
-      // Hide the model's baked screen graphic so our LCD reads clean.
-      screen.visible = false;
+      // Replace the model's baked screen graphic with a flat LCD-background fill,
+      // so when the overlay is smaller than the frame the surrounding screen
+      // surface still reads as one continuous LCD (colour set in an effect below).
+      screen.material = new THREE.MeshBasicMaterial({ toneMapped: false });
     }
     return { screen, light, overlay };
   }, [model]);
+
+  // Keep the screen-face fill in sync with the host's LCD background colour.
+  useEffect(() => {
+    const screen = screenInfo.screen;
+    const mat = screen?.material as THREE.MeshBasicMaterial | undefined;
+    if (mat) {
+      mat.color.set(screenBgColor);
+      mat.needsUpdate = true;
+    }
+  }, [screenInfo, screenBgColor]);
 
   // --- Backlight: drive the light mesh's emissive + a soft green point light.
   useEffect(() => {
@@ -144,7 +162,8 @@ export function Nokia3310({
         <primitive object={model} />
 
         {/* LCD overlay on the screen face. Auto-sized from the screen mesh box,
-            then nudged by screenAdj (scale + offset) to sit inside the frame. */}
+            then nudged by screenAdj (scale + offset + pitch/yaw/roll) to seat it
+            inside the frame. */}
         {screenInfo.overlay && (
           <mesh
             position={[
@@ -152,6 +171,7 @@ export function Nokia3310({
               screenInfo.overlay.y + screenAdj.offY * screenInfo.overlay.h,
               screenInfo.overlay.z + screenAdj.offZ,
             ]}
+            rotation={[screenAdj.pitch * DEG, screenAdj.yaw * DEG, screenAdj.roll * DEG]}
           >
             <planeGeometry
               args={[
