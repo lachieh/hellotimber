@@ -6,8 +6,7 @@
   "scripts": {
     "ready": "vp check && vp run -r test && vp run -r build",
     "dev": "vp run website#dev",
-    "prepare": "vp config || true",
-    "vercel-build": "vp run website#vercel-build"
+    "prepare": "vp config || true"
   },
   "devDependencies": {
     "vite-plus": "catalog:"

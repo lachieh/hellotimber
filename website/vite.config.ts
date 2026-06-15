@@ -2,6 +2,7 @@ import { defineConfig } from "vite-plus";
 import { devtools } from "@tanstack/devtools-vite";
 
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { nitro } from "nitro/vite";
 
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -14,13 +15,26 @@ const config = defineConfig({
     dedupe: ["three", "react", "react-dom", "@react-three/fiber"],
   },
   ssr: {
-    // Bundle EVERYTHING into the server build so the produced server.js is
-    // self-contained — required to ship it as a single Vercel serverless
-    // function (no node_modules at runtime). Also covers the workspace packages
-    // whose raw .ts exports can't be require()'d at SSR runtime.
-    noExternal: true,
+    // raw .ts exports can't be require()'d at SSR runtime — force-bundle the
+    // workspace source into the server build. Nitro handles the rest.
+    noExternal: [
+      "@hellotimber/phone-core",
+      "@hellotimber/phone-screen",
+      "@hellotimber/phone-3d",
+      "@hellotimber/snake",
+    ],
   },
-  plugins: [devtools(), tailwindcss(), tanstackStart(), viteReact()],
+  // Nitro builds the server output and auto-detects the host (Vercel sets VERCEL
+  // in CI → it emits .vercel/output). No deploy script / vercel.json needed.
+  // Skip it under Vitest: nitro's dev environment crashes in the test harness
+  // (it expects a real dev/build server), and tests never need the server build.
+  plugins: [
+    devtools(),
+    tailwindcss(),
+    tanstackStart(),
+    ...(process.env.VITEST ? [] : [nitro()]),
+    viteReact(),
+  ],
   test: {
     environment: "node",
     include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"],

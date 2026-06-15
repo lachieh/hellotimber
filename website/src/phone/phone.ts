@@ -132,7 +132,7 @@ function patchNode(
  */
 export function getPhoneRuntime(): PhoneRuntime {
   if (typeof window === "undefined") {
-    throw new Error("getPhoneRuntime() is client-only; guard the call site with typeof window");
+    throw new Error("getPhoneRuntime() is client-only; guard the call site with a browser check");
   }
   if (runtime !== null) return runtime;
 
