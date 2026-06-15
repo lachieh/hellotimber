@@ -4,9 +4,11 @@ packages:
 
 catalogMode: prefer
 
-onlyBuiltDependencies:
-  - esbuild
-  - lightningcss
+# Approve native build scripts (pnpm 11 allowBuilds map). esbuild + lightningcss
+# ship prebuilt binaries via their install scripts; both are trusted deps.
+allowBuilds:
+  esbuild: true
+  lightningcss: true
 
 catalog:
   "@types/node": ^24
@@ -32,5 +34,6 @@ peerDependencyRules:
   allowedVersions:
     vite: "*"
     vitest: "*"
-allowBuilds:
-  esbuild: set this to true or false
+minimumReleaseAgeExclude:
+  - "@vercel/python@6.45.0"
+  - vercel@54.14.0

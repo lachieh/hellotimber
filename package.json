@@ -9,6 +9,7 @@
     "prepare": "vp config || true"
   },
   "devDependencies": {
+    "vercel": "^54.14.0",
     "vite-plus": "catalog:"
   },
   "engines": {
