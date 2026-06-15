@@ -24,6 +24,15 @@ catalog:
   "@types/three": ^0.184.0
   "@react-three/fiber": ^9.6.1
   "@react-three/drei": ^10.7.7
+  "@tanstack/devtools-vite": latest
+  "@tanstack/router-cli": latest
+  "@tanstack/react-devtools": latest
+  "@tanstack/react-router": latest
+  "@tanstack/react-router-devtools": latest
+  "@tanstack/react-router-ssr-query": latest
+  "@tanstack/react-start": latest
+  "@tanstack/router-plugin": latest
+  nitro: 3.0.260610-beta
 overrides:
   vite: "catalog:"
   vitest: "catalog:"
