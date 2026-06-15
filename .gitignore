@@ -33,3 +33,6 @@ dist-ssr
 # Playwright MCP
 .playwright-mcp/
 .gstack/
+
+# Vercel build output
+.vercel/

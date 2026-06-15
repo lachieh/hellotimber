@@ -10,7 +10,8 @@
     "generate-routes": "tsr generate",
     "build": "vp build",
     "preview": "vp preview",
-    "test": "vp test run"
+    "test": "vp test run",
+    "vercel-build": "vp build && node deploy/vercel-build.mjs"
   },
   "dependencies": {
     "@hellotimber/phone-3d": "workspace:*",

@@ -14,14 +14,11 @@ const config = defineConfig({
     dedupe: ["three", "react", "react-dom", "@react-three/fiber"],
   },
   ssr: {
-    // raw .ts exports can't be require()'d by Node at SSR runtime;
-    // force-bundle workspace source into the server build
-    noExternal: [
-      "@hellotimber/phone-core",
-      "@hellotimber/phone-screen",
-      "@hellotimber/phone-3d",
-      "@hellotimber/snake",
-    ],
+    // Bundle EVERYTHING into the server build so the produced server.js is
+    // self-contained — required to ship it as a single Vercel serverless
+    // function (no node_modules at runtime). Also covers the workspace packages
+    // whose raw .ts exports can't be require()'d at SSR runtime.
+    noExternal: true,
   },
   plugins: [devtools(), tailwindcss(), tanstackStart(), viteReact()],
   test: {
