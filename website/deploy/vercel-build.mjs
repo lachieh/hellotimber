@@ -11,11 +11,10 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const websiteRoot = resolve(here, "..");
-const repoRoot = resolve(websiteRoot, "..");
 const dist = resolve(websiteRoot, "dist");
 // Build Output API must live at the directory Vercel treats as the project root.
-// We deploy from the repo root (workspace install needs it), so emit there.
-const out = resolve(repoRoot, ".vercel/output");
+// The Vercel project's Root Directory is `website`, so emit there.
+const out = resolve(websiteRoot, ".vercel/output");
 const fnDir = resolve(out, "functions/_serve.func");
 
 await rm(out, { recursive: true, force: true });
