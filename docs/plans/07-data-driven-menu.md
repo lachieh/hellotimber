@@ -160,16 +160,26 @@ Port the tree from `nokia-menu.ts` **verbatim first**, then apply these correcti
 
 ### Task 3 — write the tree
 
-- [ ] Add the `SiteNode` type to `website/src/content/types.ts` (definition above).
-- [ ] Write `website/src/content/menu.ts` exporting `siteMenu: SiteNode[]` — port the
+- [x] Add the `SiteNode` type to `website/src/content/types.ts` (definition above).
+- [x] Write `website/src/content/menu.ts` exporting `siteMenu: SiteNode[]` — port the
       tree from `packages/phone-core/src/nokia-menu.ts` (keep the `reader`/`stub`/`kebab`
       helpers, local to this file), inject content exactly as `content/index.ts` does
       today, declare the working app nodes directly (see Authenticity upgrades), and add
       `web.description` for the 13 top-level menus + the routed second-level pages
       (copy the descriptions from the current route files' `head()` blocks so SEO text
       is unchanged). Mark `sim-services` with `web: { noindex: true, panel: "sim-services" }`.
-- [ ] Run & expect PASS: `mise exec -- vp run website#test`
-- [ ] Commit: `feat(website): authentic 3310 menu tree as data (SiteNode[])`
+- [x] Run & expect PASS: `mise exec -- vp run website#test`
+- [x] Commit: `feat(website): authentic 3310 menu tree as data (SiteNode[])`
+
+> **Deviations (Task 3):** (1) the `kebab` helper was dropped — its only consumer was
+> the default-ringtone list, gone now that `ringing-tone` is an app node (this plan's
+> own authenticity upgrade); keeping it would trip noUnusedLocals. (2) `calculator`'s
+> appId has never been registered (`buildApps()` predates plan 07 without it);
+> unregistered appIds are a safe no-op in phone-core, so the node ports verbatim and
+> the APP_IDS test exempts `calculator` explicitly. (3) `web.panel` keys were set here
+> for all 16 bespoke panels (Task 6 registry consumes them) rather than editing the
+> tree twice. (4) 6-4 Restore factory settings has no child list in spec §5 — it keeps
+> the plain stub body; 6-1/6-3 carry their authentic child lists.
 
 ### Task 4 — tree helpers
 

@@ -152,10 +152,13 @@ describe("siteMenu — the 3310 tree as website data (spec §5)", () => {
   });
 
   it("every app node's appId is a registered app id", () => {
+    // "calculator" pre-dates plan 07 and has never had a registered app —
+    // unregistered appIds are a safe no-op in phone-core (machine.ts).
+    const pending = ["calculator"];
     const apps = appNodes(siteMenu);
     expect(apps.length).toBeGreaterThanOrEqual(3); // sanity: apps exist
     for (const { id, appId } of apps) {
-      expect(APP_IDS, `app node '${id}' → appId '${appId}'`).toContain(appId);
+      expect([...APP_IDS, ...pending], `app node '${id}' → appId '${appId}'`).toContain(appId);
     }
   });
 
