@@ -299,25 +299,33 @@ Port the tree from `nokia-menu.ts` **verbatim first**, then apply these correcti
 
 ### Task 8 — behavioral verification (the bug is dead)
 
-- [ ] `mise exec -- vp run website#dev`, then run the checks below with a real browser
+- [x] `mise exec -- vp run website#dev`, then run the checks below with a real browser
       (headed Playwright or manual — headless has no WebGL on this machine; the aria-live
       `[role=status]` mirror works regardless. **Wait ~5 s for boot; note the idle
       screensaver swallows the first key after 30 s idle — by design**).
-- [ ] Enter → Enter → Enter (standby → menu → Phone book → **Search**): URL becomes
+- [x] Enter → Enter → Enter (standby → menu → Phone book → **Search**): URL becomes
       `/menu/phone-book/search`, page shows the Phone book panel (or generic panel),
       the LCD stays on the Search list. **No SIM services hijack.**
-- [ ] Deep link `http://localhost:3000/menu/tones/composer`: boots, LCD lands on the
+- [x] Deep link `http://localhost:3000/menu/tones/composer`: boots, LCD lands on the
       Composer stub reader, HTTP status 200, head has Tones/Composer title.
-- [ ] `http://localhost:3000/menu/does-not-exist`: HTTP status **404**, page shows the
+- [x] `http://localhost:3000/menu/does-not-exist`: HTTP status **404**, page shows the
       SIM-services 404 panel, LCD shows SIM services (the steer — now correct).
-- [ ] `Escape` (C) steps back level-by-level with the URL following; hold-Escape →
+- [x] `Escape` (C) steps back level-by-level with the URL following; hold-Escape →
       standby at `/`.
-- [ ] Standby `ArrowUp` → `/menu/phone-book/search` list on LCD, no hijack.
-- [ ] SSR spot-check without a browser:
+- [x] Standby `ArrowUp` → `/menu/phone-book/search` list on LCD, no hijack.
+- [x] SSR spot-check without a browser:
       `curl -s -o /dev/null -w "%{http_code}" localhost:3000/menu/phone-book/search` → 200;
       same for `/menu/nope` → 404.
-- [ ] Update `docs/plans/README.md` status for plan 07 → done.
-- [ ] Commit: `feat(website): verify tree-resolved routing end to end; mark plan 07 done`
+- [x] Update `docs/plans/README.md` status for plan 07 → done.
+- [x] Commit: `feat(website): verify tree-resolved routing end to end; mark plan 07 done`
+
+> **Gate passed 2026-07-01 (orchestrator, headed browser):** Phone book → Search →
+> URL `/menu/phone-book/search`, LCD stays on the Search list (hijack dead); C steps
+> back with URL following; hold-C → standby at `/`; deep link `/menu/tones/composer`
+> → 200 + Composer reader + correct title; `/menu/does-not-exist` → HTTP 404 + the
+> intended sim-services steer; standby ▲ → `/menu/phone-book/search`. curl: search
+> 200, nope 404. NOTE: keys pressed during boot are swallowed — wait for standby
+> before driving (cost one confused re-run).
 
 ## Done means
 

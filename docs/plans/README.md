@@ -16,7 +16,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 04  | [snake](./04-snake.md)                       | `@hellotimber/snake`                                                             | —                             | done        |
 | 05  | [website shell](./05-website-shell.md)       | routes + router⇄phone bridge                                                     | 01, 02, 03                    | done        |
 | 06  | [content & polish](./06-content-polish.md)   | portfolio content, sound, SEO, deploy                                            | 05 (04 for Snake menu entry)  | done        |
-| 07  | [data-driven menu](./07-data-driven-menu.md) | one menu tree as data; tree-resolved routing (fixes the SIM-services 404 hijack) | 01–06                         | not started |
+| 07  | [data-driven menu](./07-data-driven-menu.md) | one menu tree as data; tree-resolved routing (fixes the SIM-services 404 hijack) | 01–06                         | done        |
 | 08  | [messaging](./08-messaging.md)               | authentic SMS + Chat backed by LLM contacts (claude-haiku-4-5)                   | 07                            | not started |
 | 09  | [phone model v2](./09-phone-model-v2.md)     | procedural 3310: per-key backlight, depress, no glTF                             | — (see plan header re Task 9) | done        |
 
