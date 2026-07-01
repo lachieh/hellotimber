@@ -87,6 +87,9 @@ are independent and reusable; **only `website/` composes them**.
 | `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                              | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
 | `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                | none                                                               |
 
+The 3310 menu tree is website content (`website/src/content/menu.ts`, `SiteNode[]`);
+phone-core ships only the generic `MenuNode` machine.
+
 **Control inversion (the key design decision):** the phone packages never import the
 router. `phone-core` exposes `navigate(path)` and emits `pathchange` events;
 TanStack Router and the phone are bridged _in the website_ by a small adapter that

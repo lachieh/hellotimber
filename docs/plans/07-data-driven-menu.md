@@ -122,11 +122,15 @@ Port the tree from `nokia-menu.ts` **verbatim first**, then apply these correcti
 
 ### Task 1 — VISION.md contract update
 
-- [ ] Edit `VISION.md`: remove the `nokia3310Menu`/`Nokia3310Content` lines from the
+- [x] Edit `VISION.md`: remove the `nokia3310Menu`/`Nokia3310Content` lines from the
       phone-core contract block; add one sentence under the architecture section: "The
       3310 menu tree is website content (`website/src/content/menu.ts`, `SiteNode[]`);
       phone-core ships only the generic `MenuNode` machine."
-- [ ] Commit: `docs: move 3310 menu tree ownership to website content (VISION)`
+- [x] Commit: `docs: move 3310 menu tree ownership to website content (VISION)`
+
+> **Deviation (Task 1):** VISION.md's phone-core contract block never listed
+> `nokia3310Menu`/`Nokia3310Content` — there was nothing to remove. Only the
+> ownership sentence was added (under Architecture, before "Control inversion").
 
 ### Task 2 — failing tests for the tree (TDD)
 
