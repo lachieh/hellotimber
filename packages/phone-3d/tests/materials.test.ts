@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vite-plus/test";
-import { BACKLIGHT_COLOR, MATERIALS, SCREEN_DIM_TINT } from "../src/materials";
+import {
+  BACKLIGHT_COLOR,
+  KEY_GLOW_INTENSITY,
+  LCD_GLOW_INTENSITY,
+  LEGEND_GLOW_INTENSITY,
+  MATERIALS,
+  PRINT_DARK,
+  PRINT_LIGHT,
+  SCREEN_DIM_TINT,
+} from "../src/materials";
 
 const HEX = /^#[0-9a-f]{6}$/;
 
@@ -18,5 +27,19 @@ describe("MATERIALS", () => {
 
   it("keeps the NaviKey blue distinct from the grey keys", () => {
     expect(MATERIALS.navi.color).not.toBe(MATERIALS.key.color);
+  });
+
+  it("defines valid print colors (dark print on keys, light print on the shell)", () => {
+    expect(PRINT_LIGHT).toMatch(HEX);
+    expect(PRINT_DARK).toMatch(HEX);
+    expect(PRINT_LIGHT).not.toBe(PRINT_DARK);
+  });
+
+  it("backlight glow intensities are sane and the legends outshine the caps", () => {
+    for (const i of [KEY_GLOW_INTENSITY, LEGEND_GLOW_INTENSITY, LCD_GLOW_INTENSITY]) {
+      expect(i).toBeGreaterThan(0);
+      expect(i).toBeLessThanOrEqual(2);
+    }
+    expect(LEGEND_GLOW_INTENSITY).toBeGreaterThan(KEY_GLOW_INTENSITY);
   });
 });

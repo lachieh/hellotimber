@@ -167,12 +167,12 @@ DELETED: hotspots.ts, calibration.ts, CalibrationPanel.tsx,
 
 ### Task 5 — backlight
 
-- [ ] Drive key-cap emissive, legend emissive, and LCD glow from `backlightOn` (colors
+- [x] Drive key-cap emissive, legend emissive, and LCD glow from `backlightOn` (colors
       from `materials.ts`; extend `tests/materials.test.ts` for the new spec fields).
       Screen-off tint keeps using `SCREEN_DIM_TINT`.
-- [ ] Demo gate: toggling backlight visibly lights **every key and legend** green and the
+- [x] Demo gate: toggling backlight visibly lights **every key and legend** green and the
       LCD glow; off-state still readable (dim), exactly like a real 3310 losing its light.
-- [ ] Commit: `feat(phone-3d): per-key green backlight`
+- [x] Commit: `feat(phone-3d): per-key green backlight`
 
 ### Task 6 — screen + assembly
 
