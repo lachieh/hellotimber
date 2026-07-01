@@ -36,3 +36,6 @@ dist-ssr
 
 # Vercel build output + CLI link
 .vercel/
+
+# Local reference renders (user-supplied, not licensed for redistribution)
+/nokia-3310/

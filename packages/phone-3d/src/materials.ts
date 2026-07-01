@@ -4,14 +4,21 @@ export interface MaterialSpec {
   metalness: number;
 }
 
-/** Dark-blue Xpress-on shell, grey keys, blue NaviKey (spec §1). */
+/** Palette traced from the reference renders (nokia-3310/ + spec §1): grey-blue
+ *  shell, one chrome "island" carrying screen + navi cluster, silver keys,
+ *  white NaviKey with the cyan bar. */
 export const MATERIALS = {
-  body: { color: "#27406e", roughness: 0.55, metalness: 0.05 },
-  face: { color: "#1d3358", roughness: 0.6, metalness: 0.05 },
-  key: { color: "#b8bcc4", roughness: 0.45, metalness: 0.1 },
-  navi: { color: "#2456c8", roughness: 0.4, metalness: 0.1 },
-  bezel: { color: "#0c1014", roughness: 0.7, metalness: 0 },
-  grille: { color: "#0c1014", roughness: 0.8, metalness: 0 },
+  // Colors are authored darker than the reference reads on screen — the
+  // stage's lights + environment are additive (~1.7× on camera-facing faces).
+  body: { color: "#4d566f", roughness: 0.55, metalness: 0.05 },
+  face: { color: "#49526b", roughness: 0.6, metalness: 0.05 },
+  island: { color: "#c3c7d1", roughness: 0.3, metalness: 0.75 },
+  key: { color: "#c9cdd6", roughness: 0.28, metalness: 0.7 },
+  navi: { color: "#e6e8ee", roughness: 0.3, metalness: 0.55 },
+  naviBar: { color: "#3fc1c9", roughness: 0.4, metalness: 0.1 },
+  bezel: { color: "#333a4e", roughness: 0.65, metalness: 0.05 },
+  grille: { color: "#4d566f", roughness: 0.6, metalness: 0.05 },
+  badge: { color: "#101216", roughness: 0.5, metalness: 0.1 },
 } as const satisfies Record<string, MaterialSpec>;
 
 /** Green LCD backlight glow (spec §9: backlight is green). */
@@ -25,6 +32,6 @@ export const PRINT_DARK = "#141a26";
 /** Emissive intensities when the backlight is on (0 = off state). The caps
  *  glow; the silkscreen print stays near-dark so legends keep their contrast
  *  against the lit keys. */
-export const KEY_GLOW_INTENSITY = 0.3;
+export const KEY_GLOW_INTENSITY = 0.14;
 export const LEGEND_GLOW_INTENSITY = 0.05;
 export const LCD_GLOW_INTENSITY = 0.55;

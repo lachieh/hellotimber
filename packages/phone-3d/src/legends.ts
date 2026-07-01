@@ -95,33 +95,72 @@ export function paintLegendAtlas(ctx: Ctx2D): void {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  // Digits + their letter triplets, laid out HORIZONTALLY (digit left, letters
-  // right — like the real keys) and kept inside the middle ±36px band: key
-  // decal planes are wide pills, and `cellPlaneGeometry` maps them onto the
-  // aspect-matching horizontal band of the square cell.
+  // Digits + letter triplets, mirrored per keypad column like the real phone
+  // (reference nokia-3310-1.png): LEFT column keys print the digit top-left
+  // with letters bottom-right; RIGHT column mirrors that; MIDDLE is level.
+  // All art stays inside the middle band — key decal planes are wide pills and
+  // `cellPlaneGeometry` band-maps them onto the square cell.
+  const COLUMN: Record<string, "left" | "mid" | "right"> = {
+    "1": "left",
+    "4": "left",
+    "7": "left",
+    "2": "mid",
+    "5": "mid",
+    "8": "mid",
+    "0": "mid",
+    "3": "right",
+    "6": "right",
+    "9": "right",
+  };
   for (const d of ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]) {
     const p = centerPx(LEGEND_CELLS[d]!);
     const letters = LETTERS[d];
-    ctx.font = "bold 62px sans-serif";
-    if (letters === undefined) {
-      ctx.fillText(d, p.x, p.y);
+    const col = COLUMN[d]!;
+    ctx.font = "italic bold 58px sans-serif";
+    if (col === "left") {
+      ctx.fillText(d, p.x - 26, p.y - 8);
+    } else if (col === "right") {
+      ctx.fillText(d, p.x + 26, p.y - 8);
     } else {
-      ctx.fillText(d, p.x - 28, p.y);
-      ctx.font = "700 26px sans-serif";
-      ctx.fillText(letters, p.x + 24, p.y);
+      ctx.fillText(d, p.x - 24, p.y);
+    }
+    if (letters !== undefined) {
+      ctx.font = "700 24px sans-serif";
+      if (col === "left") ctx.fillText(letters, p.x + 18, p.y + 14);
+      else if (col === "right") ctx.fillText(letters, p.x - 22, p.y + 14);
+      else ctx.fillText(letters, p.x + 26, p.y + 6);
     }
   }
+  // "1" carries the voicemail glyph (two joined circles) bottom-right.
+  {
+    const p = centerPx(LEGEND_CELLS["1"]!);
+    for (const dx of [-11, 11]) {
+      ctx.beginPath();
+      ctx.ellipse(p.x + 22 + dx, p.y + 16, 9, 9, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillRect(p.x + 22 - 11, p.y + 22, 22, 4); // baseline joining the circles
+  }
+  // "0" carries the space glyph (open-bottom bracket) to the right.
+  {
+    const p = centerPx(LEGEND_CELLS["0"]!);
+    ctx.fillRect(p.x + 12, p.y + 8, 4, 12);
+    ctx.fillRect(p.x + 12, p.y + 16, 34, 4);
+    ctx.fillRect(p.x + 42, p.y + 8, 4, 12);
+  }
 
-  // Symbols — the 3310 prints "* +" on the star key.
+  // Symbols — "* +" on the star key; shift-arrow + "#" on the hash key.
   {
     const star = centerPx(LEGEND_CELLS["*"]!);
-    ctx.font = "bold 54px sans-serif";
-    ctx.fillText("*", star.x - 16, star.y + 8);
-    ctx.font = "600 30px sans-serif";
-    ctx.fillText("+", star.x + 20, star.y - 4);
+    ctx.font = "italic bold 68px sans-serif";
+    ctx.fillText("*", star.x - 18, star.y + 12);
+    ctx.font = "700 32px sans-serif";
+    ctx.fillText("+", star.x + 22, star.y + 8);
     const hash = centerPx(LEGEND_CELLS["#"]!);
-    ctx.font = "bold 50px sans-serif";
-    ctx.fillText("#", hash.x, hash.y);
+    ctx.font = "700 34px sans-serif";
+    ctx.fillText("⇧", hash.x - 22, hash.y + 8);
+    ctx.font = "italic bold 46px sans-serif";
+    ctx.fillText("#", hash.x + 20, hash.y - 6);
   }
 
   // Cluster keys.
@@ -149,15 +188,14 @@ export function paintLegendAtlas(ctx: Ctx2D): void {
     ctx.fillText("NOKIA", n.x, n.y);
   }
 
-  // Earpiece: two columns of small slots.
+  // Earpiece: a single row of 6 round holes (the power key's legend plane is
+  // rotated 90°, turning this row into the phone's vertical dot column).
   {
     const e = centerPx(LEGEND_CELLS.earpiece!);
-    const slotW = 10;
-    const slotH = 26;
-    for (let col = -1; col <= 1; col += 2) {
-      for (let i = 0; i < 4; i++) {
-        ctx.fillRect(e.x + col * 18 - slotW / 2, e.y - 60 + i * 32, slotW, slotH);
-      }
+    for (let i = 0; i < 6; i++) {
+      ctx.beginPath();
+      ctx.ellipse(e.x - 80 + i * 32, e.y, 8, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
     }
   }
 }

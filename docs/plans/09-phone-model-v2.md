@@ -245,3 +245,33 @@ the package still proves itself standalone via its demo (AGENTS.md rule 3); the 
 surface equals the updated VISION contract; **zero** glTF/Draco/calibration bytes remain
 in the repo; and the Task 9 visual checklist passes — beveled artifact-free keypad,
 legends, green per-key backlight, and keys that move when pressed by mouse or keyboard.
+
+---
+
+## v2.1 — reference-traced authenticity pass (2026-07-01, post-completion)
+
+Lachlan supplied straight-on reference renders (local `nokia-3310/` folder,
+gitignored — not licensed for redistribution). The v2 geometry was re-traced
+against `nokia-3310-1.png` (~117 px/cm) in the same session, replacing every
+eyeballed v2 decision:
+
+- **Chrome island**: the screen surround + navi cluster sit on ONE silver
+  rounded plate (`ISLAND` in layout.ts) — the 3310's defining front feature the
+  v2 dark-bezel-on-blue look missed. Built as a SOLID beveled extrude with the
+  dark surround layered on top (punching the window through the extrude
+  mis-triangulated and z-fought the LCD; plate thickness must equal
+  `ISLAND_LIFT` exactly, bevels included).
+- **Palette**: grey-blue shell + chrome keys + white NaviKey with the cyan bar
+  (not blue), colors authored darker than target because stage lighting is
+  ~1.7× additive. `PhoneStage` gained a procedural `RoomEnvironment`
+  (`scene.environmentIntensity = 0.4`) so metalness reads as chrome.
+- **Keys**: true ellipses; mirrored per-column legends (digit outside, letters
+  inside); voicemail glyph on 1, space bracket on 0, `* +`, `⇧ #`; legends stay
+  dark under backlight (`LEGEND_GLOW < KEY_GLOW` — inverted from v2).
+- **LCD**: authentic tall-pixel aspect ≈1.35 (real active area ~31×23 mm for
+  84×48 px), not 7:4 — the layout test now pins the authentic ratio.
+- **Earpiece**: vertical 6-dot column (the power target's legend, rotated 90°).
+- Overlap test now insets footprints ×0.88 (inscribed ellipse/wedge — the real
+  cluster nestles tighter than bounding rects allow).
+
+Gate evidence refreshed: `assets/model-v2.png`, `assets/model-v2-backlight-off.png`.

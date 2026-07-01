@@ -5,11 +5,10 @@ import type { Nokia3310Key } from "./types";
  * phone centered at the origin, Y up, front face toward +Z (spec §1:
  * 4.8 × 11.3 × 2.2 cm).
  *
- * Key centers/rotations were seeded from the glTF-era calibrated hotspot
- * fractions (`x = (cx − 0.5) · 4.8`, `y = (cy − 0.5) · 11.3`), then the digit
- * grid was snapped to an exactly symmetric fan (mirrored x/rot, shared row y —
- * the hotspots carried up to ±0.09 cm of hand-calibration noise that a clean
- * rebuild shouldn't inherit).
+ * v2.1: every landmark below was measured off the reference renders in
+ * `nokia-3310/` (front view `nokia-3310-1.png`, 1120×1624 px, ≈117 px/cm,
+ * phone center at px y≈830) — replacing the v2 numbers that were seeded from
+ * the glTF-era hotspots.
  */
 
 export const BODY = { w: 4.8, h: 11.3, d: 2.2 } as const;
@@ -20,34 +19,44 @@ export const FACE_Z = BODY.d / 2;
 export const KEY_TRAVEL = 0.04;
 /** Legend decal float above its key cap (must stay below KEY_TRAVEL). */
 export const LEGEND_LIFT = 0.012;
-/** Key cap height above the face plane (extrude depth incl. bevel). */
+/** Key cap height above its base plane (extrude depth incl. bevel). */
 export const KEY_DEPTH = 0.14;
 
-/** Screen bezel (the raised surround) and the LCD opening, front view. */
-export const BEZEL = { x: 0, y: 1.9, w: 3.4, h: 2.3 } as const;
-/** LCD is exactly 84:48 = 7:4. Rendered plane carries the CanvasTexture. */
-export const LCD = { x: 0, y: 1.9, w: 2.8, h: 1.6 } as const;
-/** Bezel lip rises this far above the face; the LCD sits recessed below it. */
-export const BEZEL_LIP = 0.06;
-export const LCD_Z = FACE_Z + 0.03; // recessed under the lip (face 1.1 → lcd 1.13)
+/** The chrome "island": one silver plate carrying the screen surround and the
+ *  navi cluster — the 3310's defining front feature. Rounded rect, front view. */
+export const ISLAND = { x: 0, y: 0.55, w: 4.42, h: 4.9, r: 1.5 } as const;
+/** Island plate TOTAL thickness above the face, including its bevels
+ *  (cluster keys sit on top of it; the mesh sinks 0.01 into the face). */
+export const ISLAND_LIFT = 0.14;
+
+/** Dark screen surround inset into the island (was "bezel" in v2 — the name
+ *  is kept because the geometry tests reason about it as the screen keep-out). */
+export const BEZEL = { x: 0, y: 1.12, w: 3.78, h: 3.52 } as const;
+/** The visible LCD. Real 3310 active area is ≈31×23 mm for 84×48 px — the
+ *  pixels are TALLER than wide (ratio ≈1.35, not 7:4). Authentic. */
+export const LCD = { x: 0, y: 1.45, w: 3.24, h: 2.4 } as const;
+export const LCD_Z = FACE_Z + ISLAND_LIFT + 0.03;
+
+/** NOKIA badge (black plate, white wordmark) between earpiece and screen. */
+export const BADGE = { x: 0, y: 3.35, w: 1.78, h: 0.46 } as const;
 
 /**
- * Body silhouette — right-half width profile, top to bottom. The front Shape
- * mirrors these through x = 0 and splines through them: broad dome at the
- * earpiece, widest across the screen, a gentle waist, rounded chin.
+ * Body silhouette — right-half width profile, top to bottom. Near-straight
+ * sides with a gentle waist, broad shoulder dome, narrower rounded chin
+ * (traced from nokia-3310-1/8.png).
  */
 export const BODY_PROFILE: readonly { y: number; hw: number }[] = [
-  { y: 5.65, hw: 1.1 },
-  { y: 5.45, hw: 1.75 },
-  { y: 5.0, hw: 2.1 },
-  { y: 4.0, hw: 2.3 },
-  { y: 2.5, hw: 2.4 },
-  { y: 0.5, hw: 2.33 },
-  { y: -1.5, hw: 2.28 },
-  { y: -3.5, hw: 2.3 },
-  { y: -4.8, hw: 2.25 },
-  { y: -5.4, hw: 1.9 },
-  { y: -5.65, hw: 1.0 },
+  { y: 5.65, hw: 1.5 },
+  { y: 5.5, hw: 1.95 },
+  { y: 5.05, hw: 2.22 },
+  { y: 4.1, hw: 2.35 },
+  { y: 2.2, hw: 2.4 },
+  { y: 0.0, hw: 2.37 },
+  { y: -2.0, hw: 2.31 },
+  { y: -3.8, hw: 2.29 },
+  { y: -4.9, hw: 2.18 },
+  { y: -5.45, hw: 1.75 },
+  { y: -5.65, hw: 0.95 },
 ];
 
 export type KeyShape = "pill" | "crescent" | "wing-l" | "wing-r" | "dot";
@@ -63,10 +72,12 @@ export interface KeyLayoutEntry {
   /** In-plane rotation, degrees CCW (the keypad fan). */
   rot: number;
   shape: KeyShape;
+  /** Extra z under the cap (cluster keys ride on the chrome island). */
+  base?: number;
 }
 
-/** The digit fan: per row [y of the middle key, y of the side keys, |x| and
- *  |rot| of the side keys]. Rows read 123 / 456 / 789 / *0#. */
+/** The digit fan, measured per row: middle key level & lower, outer keys
+ *  higher, tilted ∓rot and mirrored. */
 const DIGIT_ROWS: readonly {
   keys: [Nokia3310Key, Nokia3310Key, Nokia3310Key];
   midY: number;
@@ -74,14 +85,14 @@ const DIGIT_ROWS: readonly {
   sideX: number;
   sideRot: number;
 }[] = [
-  { keys: ["1", "2", "3"], midY: -1.966, sideY: -1.785, sideX: 1.306, sideRot: 25 },
-  { keys: ["4", "5", "6"], midY: -2.712, sideY: -2.509, sideX: 1.277, sideRot: 25 },
-  { keys: ["7", "8", "9"], midY: -3.503, sideY: -3.345, sideX: 1.233, sideRot: 25 },
-  { keys: ["*", "0", "#"], midY: -4.294, sideY: -4.068, sideX: 1.176, sideRot: 25 },
+  { keys: ["1", "2", "3"], midY: -2.35, sideY: -2.18, sideX: 1.5, sideRot: 18 },
+  { keys: ["4", "5", "6"], midY: -3.12, sideY: -2.91, sideX: 1.41, sideRot: 18 },
+  { keys: ["7", "8", "9"], midY: -3.89, sideY: -3.66, sideX: 1.32, sideRot: 18 },
+  { keys: ["*", "0", "#"], midY: -4.62, sideY: -4.4, sideX: 1.24, sideRot: 18 },
 ];
 
-const SIDE_KEY = { w: 0.84, h: 0.48 };
-const MID_KEY = { w: 0.9, h: 0.52 };
+const SIDE_KEY = { w: 1.06, h: 0.56 };
+const MID_KEY = { w: 1.04, h: 0.5 };
 
 function digitEntries(): KeyLayoutEntry[] {
   return DIGIT_ROWS.flatMap((row): KeyLayoutEntry[] => [
@@ -99,15 +110,16 @@ function digitEntries(): KeyLayoutEntry[] {
 }
 
 export const KEY_LAYOUT: readonly KeyLayoutEntry[] = [
-  // Power lives on the real phone's top EDGE; here it doubles as the earpiece
-  // grille (dark pill with slot print) so it has a clickable front-face target.
-  { key: "power", x: 0, y: 4.55, w: 1.15, h: 0.55, rot: 0, shape: "dot" },
+  // Power lives on the real phone's top EDGE; the front-face target doubles as
+  // the earpiece dot column (body-colored cap, dark dot print).
+  { key: "power", x: 0, y: 4.55, w: 0.62, h: 1.05, rot: 0, shape: "dot" },
 
-  // Top cluster: the wide blue NaviKey, C wing on the left, ▲▼ wings on the right.
-  { key: "navi", x: 0, y: -0.271, w: 1.51, h: 0.62, rot: 0, shape: "crescent" },
-  { key: "c", x: -1.152, y: -0.723, w: 0.88, h: 0.5, rot: -36, shape: "wing-l" },
-  { key: "up", x: 1.277, y: -0.61, w: 0.59, h: 0.43, rot: 38.5, shape: "wing-r" },
-  { key: "down", x: 0.624, y: -1.017, w: 0.7, h: 0.52, rot: 24, shape: "wing-r" },
+  // The cluster rides ON the chrome island: white NaviKey notched into the
+  // screen surround, C wing lower-left, ▲ upper-right, ▼ inner-right.
+  { key: "navi", x: 0, y: -0.84, w: 1.9, h: 0.58, rot: 0, shape: "crescent", base: ISLAND_LIFT },
+  { key: "c", x: -1.28, y: -1.36, w: 1.08, h: 0.58, rot: -36, shape: "wing-l", base: ISLAND_LIFT },
+  { key: "up", x: 1.42, y: -1.1, w: 0.84, h: 0.44, rot: 42, shape: "wing-r", base: ISLAND_LIFT },
+  { key: "down", x: 0.74, y: -1.74, w: 0.9, h: 0.5, rot: 24, shape: "wing-r", base: ISLAND_LIFT },
 
   ...digitEntries(),
 ];

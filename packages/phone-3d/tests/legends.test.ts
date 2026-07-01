@@ -7,6 +7,7 @@ import type { Ctx2D } from "../src/legends";
 function recordingCtx() {
   const texts: { text: string; x: number; y: number }[] = [];
   const rects: { x: number; y: number; w: number; h: number }[] = [];
+  const ellipses: { x: number; y: number }[] = [];
   const ctx: Ctx2D = {
     font: "",
     fillStyle: "",
@@ -20,10 +21,12 @@ function recordingCtx() {
       rects.push({ x, y, w, h });
     },
     beginPath: () => {},
-    ellipse: () => {},
+    ellipse: (x: number, y: number) => {
+      ellipses.push({ x, y });
+    },
     fill: () => {},
   };
-  return { ctx, texts, rects };
+  return { ctx, texts, rects, ellipses };
 }
 
 const inCell = (name: string, x: number, y: number): boolean => {
@@ -87,7 +90,7 @@ describe("LEGEND_CELLS", () => {
 });
 
 describe("paintLegendAtlas", () => {
-  const { ctx, texts, rects } = recordingCtx();
+  const { ctx, texts, rects, ellipses } = recordingCtx();
   paintLegendAtlas(ctx);
   const drawn = (t: string) => texts.filter((e) => e.text === t);
 
@@ -122,17 +125,25 @@ describe("paintLegendAtlas", () => {
 
   it("draws the symbol and cluster legends", () => {
     expect(drawn("*").length + drawn("* +").length).toBeGreaterThanOrEqual(1); // star (with plus)
+    expect(drawn("+").length).toBeGreaterThanOrEqual(1);
     expect(drawn("#").length).toBeGreaterThanOrEqual(1);
+    expect(drawn("⇧").length).toBe(1); // shift glyph on the hash key
     expect(drawn("C").length).toBe(1);
     expect(drawn("▲").length).toBe(1);
     expect(drawn("▼").length).toBe(1);
     expect(drawn("NOKIA").length).toBe(1);
   });
 
-  it("draws the NaviKey bar and earpiece slots as fills in their cells", () => {
+  it("draws the NaviKey bar as a fill and the earpiece as a row of ≥6 dots", () => {
     const inRectCell = (name: string) =>
       rects.some((r) => inCell(name, r.x + r.w / 2, r.y + r.h / 2));
     expect(inRectCell("navi"), "navi bar").toBe(true);
-    expect(inRectCell("earpiece"), "earpiece slots").toBe(true);
+    const dots = ellipses.filter((e) => inCell("earpiece", e.x, e.y));
+    expect(dots.length, "earpiece dots").toBeGreaterThanOrEqual(6);
+  });
+
+  it("draws the voicemail circles on 1's cell", () => {
+    const circles = ellipses.filter((e) => inCell("1", e.x, e.y));
+    expect(circles.length).toBeGreaterThanOrEqual(2);
   });
 });

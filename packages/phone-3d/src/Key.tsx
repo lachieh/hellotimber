@@ -10,7 +10,6 @@ import {
   LEGEND_GLOW_INTENSITY,
   MATERIALS,
   PRINT_DARK,
-  PRINT_LIGHT,
 } from "./materials";
 import type { Nokia3310Key } from "./types";
 
@@ -33,13 +32,20 @@ function bowedPill(w: number, h: number, topBow: number, bottomBow: number): THR
   return shape;
 }
 
+/** True ellipse — the 3310's chrome lens keys (reference nokia-3310-1.png). */
+function ellipse(w: number, h: number): THREE.Shape {
+  const shape = new THREE.Shape();
+  shape.absellipse(0, 0, w / 2, h / 2, 0, Math.PI * 2, false, 0);
+  return shape;
+}
+
 function keyShape(entry: KeyLayoutEntry): THREE.Shape {
   const w = entry.w - 2 * CAP_BEVEL;
   const h = entry.h - 2 * CAP_BEVEL;
   switch (entry.shape) {
     case "pill":
     case "dot":
-      return bowedPill(w, h, 0, 0);
+      return ellipse(w, h);
     case "crescent":
       // The wide NaviKey: gentle smile — top edge nearly level, bottom bows up.
       return bowedPill(w, h, h * 0.08, h * 0.25);
@@ -92,13 +98,24 @@ export default function Key({ entry, backlightOn, pressed, onKey }: KeyProps) {
 
   const legendCell = legendCellFor(entry.key);
   const legendGeometry = useMemo(() => {
-    if (legendCell === "navi") {
-      const w = entry.w * 0.72;
-      return cellPlaneGeometry(w, w / 4, "navi"); // wide 4:1 atlas cell
+    if (entry.key === "navi") return null; // the cyan bar mesh IS the navi legend
+    if (entry.key === "power") {
+      // Earpiece dot row painted wide in the atlas; the plane is rotated 90°
+      // below, turning it into the phone's vertical dot column.
+      return cellPlaneGeometry(entry.h * 0.9, entry.w * 0.9, "earpiece");
     }
     // Wide pill decal; cellPlaneGeometry band-maps it aspect-correctly.
     return cellPlaneGeometry(entry.w * 0.9, entry.h * 0.9, legendCell);
   }, [entry, legendCell]);
+
+  // The NaviKey's cyan lozenge (its only marking on the real phone).
+  const naviBarGeometry = useMemo(
+    () =>
+      entry.key === "navi"
+        ? new THREE.ShapeGeometry(bowedPill(entry.w * 0.42, 0.15, 0, 0), 16)
+        : null,
+    [entry],
+  );
 
   const spec =
     entry.key === "navi"
@@ -106,7 +123,6 @@ export default function Key({ entry, backlightOn, pressed, onKey }: KeyProps) {
       : entry.key === "power"
         ? MATERIALS.grille
         : MATERIALS.key;
-  const printColor = entry.key === "power" ? PRINT_LIGHT : PRINT_DARK;
 
   const press = () => {
     if (heldRef.current) return;
@@ -130,7 +146,10 @@ export default function Key({ entry, backlightOn, pressed, onKey }: KeyProps) {
   });
 
   return (
-    <group position={[entry.x, entry.y, FACE_Z]} rotation={[0, 0, (entry.rot * Math.PI) / 180]}>
+    <group
+      position={[entry.x, entry.y, FACE_Z + (entry.base ?? 0)]}
+      rotation={[0, 0, (entry.rot * Math.PI) / 180]}
+    >
       <group ref={group}>
         <mesh
           geometry={capGeometry}
@@ -162,24 +181,41 @@ export default function Key({ entry, backlightOn, pressed, onKey }: KeyProps) {
           />
         </mesh>
 
-        {/* Counter-rotated: the 3310 prints legends upright despite the fan. */}
-        <mesh
-          geometry={legendGeometry}
-          position={[0, 0, KEY_DEPTH + LEGEND_LIFT]}
-          rotation={[0, 0, (-entry.rot * Math.PI) / 180]}
-        >
-          <meshStandardMaterial
-            map={legendTexture()}
-            transparent
-            color={printColor}
-            roughness={0.55}
-            metalness={0}
-            emissive={BACKLIGHT_COLOR}
-            emissiveIntensity={backlightOn ? LEGEND_GLOW_INTENSITY : 0}
-            polygonOffset
-            polygonOffsetFactor={-1}
-          />
-        </mesh>
+        {/* Counter-rotated: the 3310 prints legends upright despite the fan
+            (the power/earpiece column instead rotates 90° into a vertical run). */}
+        {legendGeometry !== null && (
+          <mesh
+            geometry={legendGeometry}
+            position={[0, 0, KEY_DEPTH + LEGEND_LIFT]}
+            rotation={[0, 0, ((entry.key === "power" ? 90 : -entry.rot) * Math.PI) / 180]}
+          >
+            <meshStandardMaterial
+              map={legendTexture()}
+              transparent
+              color={PRINT_DARK}
+              roughness={0.55}
+              metalness={0}
+              emissive={BACKLIGHT_COLOR}
+              emissiveIntensity={backlightOn ? LEGEND_GLOW_INTENSITY : 0}
+              polygonOffset
+              polygonOffsetFactor={-1}
+            />
+          </mesh>
+        )}
+
+        {naviBarGeometry !== null && (
+          <mesh geometry={naviBarGeometry} position={[0, 0.02, KEY_DEPTH + LEGEND_LIFT]}>
+            <meshStandardMaterial
+              color={MATERIALS.naviBar.color}
+              roughness={MATERIALS.naviBar.roughness}
+              metalness={MATERIALS.naviBar.metalness}
+              emissive={BACKLIGHT_COLOR}
+              emissiveIntensity={backlightOn ? LEGEND_GLOW_INTENSITY : 0}
+              polygonOffset
+              polygonOffsetFactor={-1}
+            />
+          </mesh>
+        )}
       </group>
     </group>
   );

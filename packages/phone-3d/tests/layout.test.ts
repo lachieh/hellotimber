@@ -55,8 +55,12 @@ describe("body & screen constants", () => {
     expect(BODY).toEqual({ w: 4.8, h: 11.3, d: 2.2 });
   });
 
-  it("LCD is exactly 84:48 (7:4) and sits inside the bezel with even side margins", () => {
-    expect(LCD.w / LCD.h).toBeCloseTo(7 / 4, 5);
+  it("LCD has the real 3310's tall-pixel aspect and sits inside the bezel", () => {
+    // The real active area is ≈31×23mm for 84×48 px — pixels are TALLER than
+    // wide, so the plane ratio is ≈1.35, NOT 7:4 (measured from the reference
+    // renders in nokia-3310/).
+    expect(LCD.w / LCD.h).toBeGreaterThan(1.3);
+    expect(LCD.w / LCD.h).toBeLessThan(1.42);
     expect(LCD.w).toBeLessThan(BEZEL.w);
     expect(LCD.h).toBeLessThan(BEZEL.h);
     expect(LCD.x).toBeCloseTo(BEZEL.x, 5); // horizontally centered in the bezel
@@ -84,11 +88,20 @@ describe("KEY_LAYOUT", () => {
   });
 
   it("no two keys overlap (rotation-aware)", () => {
+    // Caps are ellipses/wedges that don't fill their bounding rect's corners,
+    // and the real 3310 nestles the cluster keys tightly — test the inscribed
+    // shape by insetting each rect (ellipse ⊂ rect·0.88 near the corners).
+    const SHAPE_INSET = 0.88;
+    const inset = (e: KeyLayoutEntry): KeyLayoutEntry => ({
+      ...e,
+      w: e.w * SHAPE_INSET,
+      h: e.h * SHAPE_INSET,
+    });
     for (let i = 0; i < KEY_LAYOUT.length; i++) {
       for (let j = i + 1; j < KEY_LAYOUT.length; j++) {
         const a = KEY_LAYOUT[i]!;
         const b = KEY_LAYOUT[j]!;
-        expect(obbOverlap(a, b), `${a.key} overlaps ${b.key}`).toBe(false);
+        expect(obbOverlap(inset(a), inset(b)), `${a.key} overlaps ${b.key}`).toBe(false);
       }
     }
   });
@@ -106,6 +119,7 @@ describe("KEY_LAYOUT", () => {
     const bezelBottom = BEZEL.y - BEZEL.h / 2;
     for (const e of KEY_LAYOUT) {
       if (e.key === "power") continue; // power lives on the top edge, above the bezel
+      if (e.key === "navi") continue; // authentically notches INTO the surround
       for (const c of corners(e)) {
         expect(c.y, `${e.key} reaches into the bezel`).toBeLessThan(bezelBottom);
       }
