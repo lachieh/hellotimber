@@ -123,14 +123,19 @@ DELETED: hotspots.ts, calibration.ts, CalibrationPanel.tsx,
 
 ### Task 2 — legends atlas (TDD)
 
-- [ ] Failing `tests/legends.test.ts` (jsdom env for this file via vite config
+- [x] Failing `tests/legends.test.ts` (jsdom env for this file via vite config
       `test.environmentMatchGlobs` — canvas 2D only, no WebGL): atlas canvas is created
       at the declared size; every key id has a UV entry within [0,1]²; digit cells are
       non-blank (sample pixels); `2`/`abc`-style letter triplets present for 2–9;
       `0` carries the space glyph hint, `#`/`*` and NaviKey bar present.
-- [ ] Write `src/legends.ts` (pure painter, tall-narrow Nokia-ish print, white-on-
+- [x] Write `src/legends.ts` (pure painter, tall-narrow Nokia-ish print, white-on-
       transparent so material color/emissive tint it).
-- [ ] Test green. Commit: `feat(phone-3d): key legend + face decal atlas`
+- [x] Test green. Commit: `feat(phone-3d): key legend + face decal atlas`
+
+> **Executed with a deviation:** jsdom in this repo has no real 2D context
+> (phone-screen mocks `getContext`), so pixel sampling was replaced by a
+> node-env recording-stub `Ctx2D`; the painter draws through that interface
+> and `createLegendAtlas()` binds it to a real canvas in the browser.
 
 ### Task 3 — body
 
