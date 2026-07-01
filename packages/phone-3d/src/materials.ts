@@ -18,3 +18,11 @@ export const MATERIALS = {
 export const BACKLIGHT_COLOR = "#b4f5a0";
 /** Multiplier tint for the screen texture when the backlight is off. */
 export const SCREEN_DIM_TINT = "#7a8579";
+
+/** Legend print colors: light print on the dark shell, dark print on keys. */
+export const PRINT_LIGHT = "#dfe4ea";
+export const PRINT_DARK = "#141a26";
+/** Emissive intensities when the backlight is on (0 = off state). */
+export const KEY_GLOW_INTENSITY = 0.32;
+export const LEGEND_GLOW_INTENSITY = 0.85;
+export const LCD_GLOW_INTENSITY = 0.55;

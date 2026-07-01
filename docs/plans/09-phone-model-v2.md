@@ -139,15 +139,21 @@ DELETED: hotspots.ts, calibration.ts, CalibrationPanel.tsx,
 
 ### Task 3 — body
 
-- [ ] Write `src/PhoneBody.tsx`: front shell from the silhouette `Shape` (extrude +
+- [x] Write `src/PhoneBody.tsx`: front shell from the silhouette `Shape` (extrude +
       bevel), flat back shell, face plate, bezel ring with recessed opening, earpiece
       slot decals + NOKIA wordmark from the atlas. Materials from `materials.ts`
       (extend with `keyTop`, `legend`, emissive fields — keep the existing dark-blue
       Xpress-on palette).
-- [ ] Demo gate: body renders with **smooth, artifact-free shading** (orbit in the demo;
+- [x] Demo gate: body renders with **smooth, artifact-free shading** (orbit in the demo;
       compare against `assets/model-v1-artifacts.png` — no facets), correct proportions
       vs spec §1.
-- [ ] Commit: `feat(phone-3d): extruded beveled body, bezel, face decals`
+- [x] Commit: `feat(phone-3d): extruded beveled body, bezel, face decals`
+
+> **Note:** the visual gate for Tasks 3–6 ran as one consolidated headed-browser
+> session after Task 6's assembly (the demo can only show the v2 model once it
+> exists); code + tests still committed per task. Shared three-side atlas helpers
+> live in `src/atlas.ts` (one texture, per-cell UV geometries) — small addition to
+> the file list.
 
 ### Task 4 — keys: shapes, legends, depress, events
 
