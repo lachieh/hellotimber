@@ -2,6 +2,7 @@ import { createPhone, isValidPath } from "@hellotimber/phone-core";
 import type { MenuNode } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
 import { chatMessages } from "../src/content/chat";
+import { contacts } from "../src/content/contacts";
 import { diverts } from "../src/content/divert";
 import { siteMenu } from "../src/content/menu";
 import { phonebook } from "../src/content/phonebook";
@@ -296,9 +297,10 @@ describe("siteMenu — ported nokia-menu authenticity tests", () => {
     phone.pressKey("power", 1000);
     phone.pressKey("up");
     expect(phone.path).toBe("menu/phone-book/search");
+    // Contact links first, then the SMS personas (plan 08).
     expect(phone.screen).toMatchObject({
       kind: "list",
-      items: phonebook.map((c) => c.label),
+      items: [...phonebook.map((c) => c.label), ...contacts.map((c) => c.name)],
     });
   });
 

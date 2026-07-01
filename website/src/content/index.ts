@@ -1,6 +1,7 @@
 import { missedCalls, projects, roles } from "./call-register";
 import { chatMessages } from "./chat";
 import { clock } from "./clock";
+import { contacts } from "./contacts";
 import { diverts } from "./divert";
 import { inbox, writeMessage } from "./messages";
 import { siteMenu } from "./menu";
@@ -18,6 +19,7 @@ export type * from "./types";
 export {
   chatMessages,
   clock,
+  contacts,
   diverts,
   inbox,
   missedCalls,

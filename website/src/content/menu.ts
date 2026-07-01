@@ -1,6 +1,7 @@
 import { missedCalls, projects, roles } from "./call-register";
 import { chatMessages } from "./chat";
 import { clock } from "./clock";
+import { contacts } from "./contacts";
 import { diverts } from "./divert";
 import { inbox } from "./messages";
 import { phonebook } from "./phonebook";
@@ -40,11 +41,19 @@ export const siteMenu: SiteNode[] = [
         type: "list",
         id: "search",
         label: "Search",
-        items: phonebook.map((c) => ({
-          id: c.id,
-          label: c.label,
-          body: `${c.label}: ${c.value}`,
-        })),
+        items: [
+          ...phonebook.map((c) => ({
+            id: c.id,
+            label: c.label,
+            body: `${c.label}: ${c.value}`,
+          })),
+          // SMS personas (plan 08) — text them via Messages → Write messages.
+          ...contacts.map((c) => ({
+            id: c.id,
+            label: c.name,
+            body: `${c.name}: SMS contact. Text via Messages, Write messages.`,
+          })),
+        ],
       },
       stub("service-nos", "Service Nos."),
       stub("add-name", "Add name"),

@@ -186,18 +186,23 @@ path:"menu/messages/inbox"})` → standby screen carries `notice`; navi while
 
 ### Task 5 — website: contact personas
 
-- [ ] Write `website/src/content/contacts.ts` with the `Contact` interface above and
+- [x] Write `website/src/content/contacts.ts` with the `Contact` interface above and
       3–4 SAMPLE personas (flagged `// SAMPLE DATA` like the other content modules):
       `lachlan` (the portfolio owner — friendly, plugs real projects; used by Chat),
       plus e.g. `recruiter-rachel` and `y2k-support` for flavor. Every `canned` entry
       ≤160 chars. Each persona's `system` states: in-character, SMS style, ≤160 chars,
       it's the year 2000 and this is a Nokia 3310.
-- [ ] Test in `website/tests/contacts.test.ts`: ids kebab + unique; canned non-empty,
+- [x] Test in `website/tests/contacts.test.ts`: ids kebab + unique; canned non-empty,
       all ≤160; every persona `system` mentions the 160 limit.
-- [ ] Add the new contacts to the Phone book → Search list and to the handoff doc's
+- [x] Add the new contacts to the Phone book → Search list and to the handoff doc's
       sample-data checklist (`docs/content-handoff.md`).
-- [ ] `mise exec -- vp run website#test` green.
-- [ ] Commit: `feat(website): LLM contact personas (sample data)`
+- [x] `mise exec -- vp run website#test` green.
+- [x] Commit: `feat(website): LLM contact personas (sample data)`
+
+> **Deviation:** the menu-tree test "standby ▲ reaches the phone book name list"
+> asserted the Search list equals exactly the phonebook labels; it now asserts
+> phonebook labels + persona names (toMatchObject requires exact array length).
+> Also exported a `contactById(id)` helper from contacts.ts (used by Tasks 6–8).
 
 ### Task 6 — website: message store
 

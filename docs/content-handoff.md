@@ -38,6 +38,15 @@ grep -rn "example" website/src/content        # should find no example.com / *-h
       panel's "Email me directly" link should deliver.
 - [ ] `writeMessage.subject` — the prefilled subject line.
 
+### `website/src/content/contacts.ts` — SMS personas (plan 08)
+
+- [ ] `lachlan` — the portfolio-owner persona: rewrite `system` with real facts (projects,
+      role, tone) and the `canned` fallbacks in your own voice. **Every `canned` entry must
+      be ≤160 chars** (the contacts test enforces it) and every `system` must keep the
+      160-char SMS instruction.
+- [ ] `recruiter-rachel`, `y2k-support` — keep, rewrite, or replace these flavor personas
+      (3–4 total). Ids are thread keys: changing an id orphans that persona's stored thread.
+
 ### `website/src/content/chat.ts` — Chat (testimonials)
 
 - [ ] `chatMessages[]` — real testimonials (with permission): `nickname` + `text` per line,
