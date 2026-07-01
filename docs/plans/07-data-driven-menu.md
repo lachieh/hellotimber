@@ -183,7 +183,7 @@ Port the tree from `nokia-menu.ts` **verbatim first**, then apply these correcti
 
 ### Task 4 — tree helpers
 
-- [ ] Write `website/src/phone/site-tree.ts`:
+- [x] Write `website/src/phone/site-tree.ts`:
 
       ```ts
       import type { MenuNode } from "@hellotimber/phone-core";
@@ -199,12 +199,16 @@ Port the tree from `nokia-menu.ts` **verbatim first**, then apply these correcti
       export function indexablePaths(nodes: SiteNode[]): string[];
       ```
 
-- [ ] Write `website/tests/site-tree.test.ts`: round-trip — `toMenuNodes` output has no
+- [x] Write `website/tests/site-tree.test.ts`: round-trip — `toMenuNodes` output has no
       `web` keys and structurally satisfies `MenuNode`; `resolveSitePath` resolves every
       entry of `allSitePaths` and returns null for `menu/nope`, `menu/phone-book/nope`;
       `"/menu"` resolves to the empty chain (carousel); `indexablePaths` ⊆ `allSitePaths`.
-- [ ] Run & expect PASS: `mise exec -- vp run website#test`
-- [ ] Commit: `feat(website): site-tree helpers (toMenuNodes/resolve/paths)`
+- [x] Run & expect PASS: `mise exec -- vp run website#test`
+- [x] Commit: `feat(website): site-tree helpers (toMenuNodes/resolve/paths)`
+
+> **Note (Task 4):** `indexablePaths` always includes `"/menu"` — the carousel page has
+> no node of its own to carry a `web.description`, but it is a real indexable page
+> (it was in the hand-maintained sitemap and keeps its head copy in the Task 6 route).
 
 ### Task 5 — rewire the phone; remove the builder from phone-core
 
