@@ -1,4 +1,6 @@
+import { siteMenu } from "./content/menu";
 import { site } from "./content/site";
+import { indexablePaths } from "./phone/site-tree";
 
 export interface PageHeadInput {
   section?: string; // omit for home
@@ -27,27 +29,12 @@ export function pageHead(input: PageHeadInput): { meta: MetaTag[] } {
   };
 }
 
-/** Canonical, indexable paths — the phone sitemap (VISION table). Catch-all + 404 excluded. */
-export const SITEMAP_PATHS: string[] = [
-  "/",
-  "/menu",
-  "/menu/phone-book",
-  "/menu/messages",
-  "/menu/messages/inbox",
-  "/menu/messages/write",
-  "/menu/chat",
-  "/menu/call-register",
-  "/menu/tones",
-  "/menu/settings",
-  "/menu/call-divert",
-  "/menu/games",
-  "/menu/games/snake",
-  "/menu/calculator",
-  "/menu/reminders",
-  "/menu/clock",
-  "/menu/profiles",
-  "/menu/sim-services",
-];
+/**
+ * Canonical, indexable paths — derived from the menu tree (plan 07):
+ * "/" + every tree path with a `web.description` that isn't `noindex`
+ * (sim-services, the 404 twin, is excluded that way).
+ */
+export const SITEMAP_PATHS: string[] = ["/", ...indexablePaths(siteMenu)];
 
 export function personJsonLd(): Record<string, unknown> {
   return {

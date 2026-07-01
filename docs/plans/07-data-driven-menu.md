@@ -285,12 +285,17 @@ Port the tree from `nokia-menu.ts` **verbatim first**, then apply these correcti
 
 ### Task 7 — SEO derives from the tree
 
-- [ ] `website/src/seo.ts`: replace the hand-maintained `SITEMAP_PATHS` with
+- [x] `website/src/seo.ts`: replace the hand-maintained `SITEMAP_PATHS` with
       `["/", ...indexablePaths(siteMenu)]`. Update any tests that pinned the old list.
-- [ ] Run & expect PASS: `mise exec -- vp run website#test`; then
+- [x] Run & expect PASS: `mise exec -- vp run website#test`; then
       `mise exec -- vp run website#build` and check the built sitemap includes
       `/menu/phone-book` and **excludes** `/menu/sim-services`.
-- [ ] Commit: `feat(website): sitemap derived from the menu tree`
+- [x] Commit: `feat(website): sitemap derived from the menu tree`
+
+> **Note (Task 7):** no test pinned the old list; `seo.test.ts` gained a test pinning
+> the derived behavior (includes /menu, /menu/phone-book, /menu/games/snake; excludes
+> /menu/sim-services and undescribed paths). Verified on the live dev server:
+> /sitemap.xml serves 17 URLs — sim-services is out, phone-book is in.
 
 ### Task 8 — behavioral verification (the bug is dead)
 
