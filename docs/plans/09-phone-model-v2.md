@@ -196,24 +196,24 @@ DELETED: hotspots.ts, calibration.ts, CalibrationPanel.tsx,
 
 ### Task 7 — delete the glTF era
 
-- [ ] Delete `src/hotspots.ts`, `src/calibration.ts`, `src/CalibrationPanel.tsx`,
+- [x] Delete `src/hotspots.ts`, `src/calibration.ts`, `src/CalibrationPanel.tsx`,
       `tests/hotspots.test.ts`, `packages/phone-3d/public/models/`,
       `packages/phone-3d/public/draco/`, `website/public/models/`,
       `website/public/draco/`; remove `useGLTF`/draco imports, the `?calibrate` handling,
       the model credit in `README.md` (replace with a "fully procedural" note + props
       table), and the root `vite.config.ts` fmt/lint exclusion for `public/**` if nothing
       else needs it.
-- [ ] `grep -rn "draco\|useGLTF\|modelUrl\|hotspot\|calibrat" packages website/src` → no
+- [x] `grep -rn "draco\|useGLTF\|modelUrl\|hotspot\|calibrat" packages website/src` → no
       hits (except this plan + plan 03 history).
-- [ ] Full run: `mise exec -- vp run -r test` green.
-- [ ] Commit: `feat(phone-3d): remove glTF model, draco decoders, calibration machinery`
+- [x] Full run: `mise exec -- vp run -r test` green.
+- [x] Commit: `feat(phone-3d): remove glTF model, draco decoders, calibration machinery`
 
 ### Task 8 — demo polish + README
 
-- [ ] Demo (`src/demo/main.tsx`): add a `pressedKeys` playground (hold a docs-listed
+- [x] Demo (`src/demo/main.tsx`): add a `pressedKeys` playground (hold a docs-listed
       keyboard key → the 3D key depresses without pointer), backlight toggle stays.
-- [ ] README: usage outside the repo, props table (no asset serving section anymore).
-- [ ] Commit: `feat(phone-3d): v2 demo + README`
+- [x] README: usage outside the repo, props table (no asset serving section anymore).
+- [x] Commit: `feat(phone-3d): v2 demo + README`
 
 ### Task 9 — website integration
 
