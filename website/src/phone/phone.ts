@@ -71,6 +71,9 @@ function buildApps(): Record<string, AppFactory> {
   };
 }
 
+/** Registered app ids — every `app` node in the menu tree must use one of these. */
+export const APP_IDS: string[] = Object.keys(buildApps());
+
 /**
  * Replace specific stub menu nodes with same-id `app`/`submenu` nodes so the
  * Tones / Settings picker apps are reachable on the handset (deviation 2 —

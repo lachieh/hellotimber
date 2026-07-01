@@ -134,22 +134,29 @@ Port the tree from `nokia-menu.ts` **verbatim first**, then apply these correcti
 
 ### Task 2 — failing tests for the tree (TDD)
 
-- [ ] Write `website/tests/menu-tree.test.ts` (node env, `vite-plus/test`) asserting
+- [x] Write `website/tests/menu-tree.test.ts` (node env, `vite-plus/test`) asserting
       against `import { siteMenu } from "../src/content/menu"`, one `it` per bullet below.
-- [ ] Assert exactly **13 top-level menus** in manual order: Phone book, Messages, Chat,
+- [x] Assert exactly **13 top-level menus** in manual order: Phone book, Messages, Chat,
       Call register, Tones, Settings, Call divert, Games, Calculator, Reminders,
       Clock, Profiles, SIM services (spec §5).
-- [ ] Assert submenu children match spec §5 labels/order for Phone book (10),
+- [x] Assert submenu children match spec §5 labels/order for Phone book (10),
       Messages (10), Call register (8), Tones (9), Settings (4), Games (4).
-- [ ] Assert every node id is kebab-case (`/^[a-z0-9]+(-[a-z0-9]+)*$/`) and ids are
+- [x] Assert every node id is kebab-case (`/^[a-z0-9]+(-[a-z0-9]+)*$/`) and ids are
       unique per level.
-- [ ] Assert every `app` node's `appId` is one of the registered app ids exported by
+- [x] Assert every `app` node's `appId` is one of the registered app ids exported by
       `website/src/phone/phone.ts` (export the id list for the test).
-- [ ] Port the existing authenticity assertions from
+- [x] Port the existing authenticity assertions from
       `packages/phone-core/tests/nokia-menu.test.ts` (whatever exists there) into this
       file so no coverage is lost when phone-core drops the builder.
-- [ ] Run & expect FAIL (module doesn't exist yet): `mise exec -- vp run website#test`
-- [ ] Commit: `feat(website): failing menu-tree authenticity tests`
+- [x] Run & expect FAIL (module doesn't exist yet): `mise exec -- vp run website#test`
+- [x] Commit: `feat(website): failing menu-tree authenticity tests`
+
+> **Deviation (Task 2):** the pre-commit hook runs type-aware `vp check --fix`, so a
+> test importing a nonexistent module cannot be committed. Task 2 therefore ships the
+> `SiteNode` type (pulled forward from Task 3), an EMPTY `siteMenu` stub in
+> `website/src/content/menu.ts`, and the `APP_IDS` export in `phone.ts` — the failing
+> state is assertion-level red (15 tests fail: 13 menus expected, 0 present), not a
+> compile error. Tests also pin the Task 3 web-metadata + working-app-node upgrades.
 
 ### Task 3 — write the tree
 

@@ -87,6 +87,29 @@ export interface DivertLink {
   href: string;
 }
 
+/** Website-side wrapper: MenuNode shape + web metadata. Children are SiteNodes. */
+export type SiteNode = (
+  | { type: "submenu"; id: string; label: string; iconId?: string; children: SiteNode[] }
+  | {
+      type: "list";
+      id: string;
+      label: string;
+      items: { id: string; label: string; body: string }[];
+    }
+  | { type: "reader"; id: string; label: string; body: string }
+  | { type: "app"; id: string; label: string; appId: string }
+  | { type: "action"; id: string; label: string; action: { kind: "href"; value: string } }
+) & {
+  web?: {
+    /** meta description for this path's page (presence ⇒ indexable). */
+    description?: string;
+    /** key into the panel registry; omitted ⇒ generic panel from label/body. */
+    panel?: string;
+    /** exclude from sitemap even if described (stubs, easter eggs). */
+    noindex?: boolean;
+  };
+};
+
 /** Site-wide metadata for SEO/JSON-LD. */
 export interface SiteMeta {
   url: string; // canonical origin, NO trailing slash
