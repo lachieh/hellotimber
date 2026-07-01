@@ -44,6 +44,33 @@ describe("renderEditor", () => {
     expect(regionToArt(fb, 0, 8, 84, 24)).toBe(regionToArt(expected, 0, 8, 84, 24));
   });
 
+  it("renders the remaining-character countdown left of the mode indicator", () => {
+    const fb = new Framebuffer();
+    renderEditor(fb, editor({ text: "Hello world!", cursor: 12, limit: 160 }));
+    const expected = new Framebuffer();
+    const modeStart = 84 - textWidth(FONT, "Abc");
+    expected.drawText(FONT, "Abc", modeStart, 0);
+    // counter = limit − text.length, right-aligned with a 2px gap before the mode
+    expected.drawText(FONT, "148", modeStart - 3 - textWidth(FONT, "148") + 1, 0);
+    expect(regionToArt(fb, 48, 0, 36, 7)).toBe(regionToArt(expected, 48, 0, 36, 7));
+  });
+
+  it("shows the full limit on an empty editor and no counter without a limit", () => {
+    const withLimit = new Framebuffer();
+    renderEditor(withLimit, editor({ text: "", cursor: 0, limit: 160 }));
+    const expected = new Framebuffer();
+    const modeStart = 84 - textWidth(FONT, "Abc");
+    expected.drawText(FONT, "Abc", modeStart, 0);
+    expected.drawText(FONT, "160", modeStart - 3 - textWidth(FONT, "160") + 1, 0);
+    expect(regionToArt(withLimit, 48, 0, 36, 7)).toBe(regionToArt(expected, 48, 0, 36, 7));
+
+    const noLimit = new Framebuffer();
+    renderEditor(noLimit, editor({ text: "", cursor: 0 }));
+    const modeOnly = new Framebuffer();
+    modeOnly.drawText(FONT, "Abc", modeStart, 0);
+    expect(regionToArt(noLimit, 48, 0, 36, 7)).toBe(regionToArt(modeOnly, 48, 0, 36, 7));
+  });
+
   it("scrolls so the cursor row is visible past 4 rows", () => {
     const text = "a".repeat(14 * 5); // 5 full rows (0–4) + cursor lands on row 5
     const fb = new Framebuffer();

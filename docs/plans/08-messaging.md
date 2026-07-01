@@ -170,15 +170,19 @@ path:"menu/messages/inbox"})` → standby screen carries `notice`; navi while
 
 ### Task 4 — phone-screen: countdown + notice rendering (TDD)
 
-- [ ] Failing tests in `packages/phone-screen/tests/`: editor screens with
+- [x] Failing tests in `packages/phone-screen/tests/`: editor screens with
       `limit: 160` and 12 chars of text render `148` right-aligned on the top row next
       to the mode indicator (spec §2: counter + `Abc`/`123` sit top-right; counter =
       `limit - text.length`); standby with `notice` renders the **envelope icon**
       (already in `src/icons`) + the notice text in the content area and the notice
       `softkey` as the softkey label (replacing `Menu`).
-- [ ] Implement in `packages/phone-screen/src/render/editor.ts` + `render/standby.ts`.
-- [ ] `mise exec -- vp run @hellotimber/phone-screen#test` green.
-- [ ] Commit: `feat(phone-screen): SMS countdown + message-received standby notice`
+- [x] Implement in `packages/phone-screen/src/render/editor.ts` + `render/standby.ts`.
+- [x] `mise exec -- vp run @hellotimber/phone-screen#test` green.
+- [x] Commit: `feat(phone-screen): SMS countdown + message-received standby notice`
+
+> **Deviation:** while noticed, the standby render suppresses the carrier line and the
+> clock (the notice + envelope take over the content area, matching the real phone's
+> message-received screen); signal/battery bars stay.
 
 ### Task 5 — website: contact personas
 

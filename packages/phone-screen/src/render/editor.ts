@@ -1,5 +1,5 @@
 import type { ScreenModel } from "@hellotimber/phone-core";
-import { FONT } from "../font/font";
+import { FONT, textWidth } from "../font/font";
 import type { Framebuffer } from "../framebuffer";
 import { drawSoftkey, drawTextRight, LINE_CHARS, truncate, wrapText } from "./layout";
 
@@ -15,6 +15,13 @@ export function renderEditor(fb: Framebuffer, screen: EditorScreen): void {
   fb.clear(0);
   fb.drawText(FONT, truncate(screen.title, 9), 1, 0);
   drawTextRight(fb, screen.mode, 83, 0); // input-mode indicator top-right (spec §2)
+  if (screen.limit !== undefined) {
+    // SMS-style countdown (spec §2/§9): remaining chars, right-aligned with a
+    // 2px gap left of the mode indicator.
+    const remaining = Math.max(0, screen.limit - screen.text.length);
+    const modeStart = 84 - textWidth(FONT, screen.mode);
+    drawTextRight(fb, String(remaining), modeStart - 3, 0);
+  }
 
   // Hard character wrap (not word wrap) keeps cursor↔pixel math exact.
   const chars = [...screen.text];

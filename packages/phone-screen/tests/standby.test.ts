@@ -2,6 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 import type { ScreenModel } from "@hellotimber/phone-core";
 import { FONT, textWidth } from "../src/font/font";
 import { Framebuffer } from "../src/framebuffer";
+import { drawBatteryLevel, drawSignalLevel, ENVELOPE_ICON } from "../src/icons/status";
 import { renderStandby } from "../src/render/standby";
 import { regionToArt } from "./helpers";
 
@@ -49,6 +50,31 @@ describe("renderStandby", () => {
     const expected = new Framebuffer();
     expected.drawTextCentered(FONT, "Menu", 41);
     expect(regionToArt(fb, 0, 41, 84, 7)).toBe(regionToArt(expected, 0, 41, 84, 7));
+  });
+
+  it("a notice takes over the content area: envelope + text + its softkey", () => {
+    const fb = new Framebuffer();
+    renderStandby(fb, standby({ notice: { text: "1 message received", softkey: "Read" } }));
+    const expected = new Framebuffer();
+    drawSignalLevel(expected, 4);
+    drawBatteryLevel(expected, 4);
+    expected.blitBitmap(ENVELOPE_ICON, 4, 20); // icon centered on the text block
+    expected.drawText(FONT, "1 message", 14, 16); // wrapped at 11 chars, 2 lines
+    expected.drawText(FONT, "received", 14, 24);
+    expected.drawTextCentered(FONT, "Read", 41); // notice softkey replaces Menu
+    // Full-frame equality: also proves carrier and clock make way for the notice.
+    expect(regionToArt(fb, 0, 0, 84, 48)).toBe(regionToArt(expected, 0, 0, 84, 48));
+  });
+
+  it("a noticed standby suppresses the clock and keeps the status bars", () => {
+    const fb = new Framebuffer();
+    renderStandby(
+      fb,
+      standby({ clock: "12:34", notice: { text: "1 message received", softkey: "Read" } }),
+    );
+    expect(regionToArt(fb, 40, 32, 40, 7)).toBe(regionToArt(new Framebuffer(), 40, 32, 40, 7));
+    expect(fb.getPixel(0, 27)).toBe(1); // signal rung 0 still drawn
+    expect(fb.getPixel(83, 27)).toBe(1); // battery rung 0 still drawn
   });
 
   it("draws the clock lower-right only when present", () => {
