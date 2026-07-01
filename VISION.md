@@ -258,6 +258,7 @@ export interface Nokia3310Props {
   onKey?: (key: Nokia3310Key, action: "down" | "up") => void;
   backlightOn?: boolean;
   pressedKeys?: ReadonlySet<Nokia3310Key>; // visually depress keys (e.g. kbd input)
+  screenBgColor?: string; // LCD fill behind/around the texture (default classic green)
 }
 /** The phone model; must be rendered inside an R3F <Canvas>. */
 export function Nokia3310(props: Nokia3310Props): React.JSX.Element;

@@ -112,14 +112,14 @@ DELETED: hotspots.ts, calibration.ts, CalibrationPanel.tsx,
 
 ### Task 1 — VISION.md + layout data (TDD)
 
-- [ ] Update VISION.md per "Contract changes".
-- [ ] Write failing `packages/phone-3d/tests/layout.test.ts`: KEY_LAYOUT has exactly the
+- [x] Update VISION.md per "Contract changes".
+- [x] Write failing `packages/phone-3d/tests/layout.test.ts`: KEY_LAYOUT has exactly the
       17 `ALL_KEYS` entries, unique; XY bounding boxes (rotation-aware) don't overlap;
       digit rows fan symmetrically (rot(1) = −rot(3) etc.); every key inside the face
       bounds; bezel rect inside the face; LCD rect inside the bezel with even margins.
-- [ ] Write `src/layout.ts` — convert `hotspots.ts` calibrated fractions into cm-space
+- [x] Write `src/layout.ts` — convert `hotspots.ts` calibrated fractions into cm-space
       entries + silhouette/bezel/LCD constants (document the conversion in a comment).
-- [ ] Test green. Commit: `feat(phone-3d): v2 layout data from calibrated hotspots`
+- [x] Test green. Commit: `feat(phone-3d): v2 layout data from calibrated hotspots`
 
 ### Task 2 — legends atlas (TDD)
 
