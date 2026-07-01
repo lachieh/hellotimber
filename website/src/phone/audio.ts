@@ -49,6 +49,17 @@ export function playKeyBeep(): void {
   scheduleNote(ac, ac.destination, 1800, ac.currentTime, 30, 0.04);
 }
 
+/** Message alert (plan 08): the terse Nokia double-beep, twice. Mute-aware. */
+export function playMessageAlert(): void {
+  if (getSettings().muted) return;
+  const ac = ensureContext();
+  if (ac === null) return;
+  const at = ac.currentTime + 0.02;
+  for (const offset of [0, 0.18, 0.5, 0.68]) {
+    scheduleNote(ac, ac.destination, 1750, at + offset, 100, 0.06);
+  }
+}
+
 /** Play one ringtone by id (preview from the Tones menu/panel). */
 export function playTone(id: string): void {
   if (getSettings().muted) return;

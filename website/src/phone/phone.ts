@@ -2,11 +2,15 @@ import { createPhone, editorApp } from "@hellotimber/phone-core";
 import type { AppFactory, Phone, PhoneKey } from "@hellotimber/phone-core";
 import { createScreenRenderer } from "@hellotimber/phone-screen";
 import type { ScreenRenderer } from "@hellotimber/phone-screen";
+import { contactById, contacts } from "../content/contacts";
 import { siteMenu } from "../content/menu";
+import { cannedReply, MAX_HISTORY, MAX_SMS_CHARS } from "../messages/generate-reply";
+import { receiveRecorded, sendRecorded, threadOf } from "../messages/store";
 import { getSettings, updateSettings } from "../settings";
 import { pickerApp } from "./apps/picker-app";
+import { smsApps } from "./apps/sms";
 import { snakeApp } from "./apps/snake-app";
-import { handleSound } from "./audio";
+import { handleSound, playMessageAlert } from "./audio";
 import { artToBitmap, SCREENSAVER_ART } from "./pixel-art";
 import { toMenuNodes } from "./site-tree";
 import { TONES } from "./tones";
@@ -24,10 +28,47 @@ export interface PhoneRuntime {
 
 let runtime: PhoneRuntime | null = null;
 
+/** The phone instance smsApps' notice callback targets (set at runtime init). */
+let phoneForNotice: Phone | null = null;
+
+/**
+ * Client side of POST /api/sms (plan 08): resolves to the contact's reply.
+ * Never rejects — network/dev failures fall back to the canned replies, so
+ * the handset always hears back. History is snapshotted synchronously here,
+ * BEFORE the outbox record lands (see smsApps' send-then-record ordering).
+ */
+async function sendSms(contactId: string, text: string): Promise<string> {
+  const contact = contactById(contactId);
+  const history = threadOf(contactId)
+    .slice(-MAX_HISTORY)
+    .map((e) => ({ who: e.who, text: e.text }));
+  try {
+    const res = await fetch("/api/sms", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ contactId, text, history }),
+    });
+    if (!res.ok) throw new Error(`sms ${res.status}`);
+    const data = (await res.json()) as { reply?: unknown };
+    if (typeof data.reply !== "string" || data.reply === "") throw new Error("empty reply");
+    return data.reply.slice(0, MAX_SMS_CHARS);
+  } catch {
+    return contact !== undefined ? cannedReply(contact, history) : "OK.";
+  }
+}
+
 function buildApps(): Record<string, AppFactory> {
   return {
-    // Plan 01 deviation note 2: the multi-tap editor is hosted as an app.
-    "write-message": editorApp({ title: "Message:" }),
+    // Plan 08: the Write messages → To: → Sending chain (replaces the plan 01
+    // bare editor registration).
+    ...smsApps({
+      contacts: contacts.map((c) => ({ id: c.id, name: c.name })),
+      send: sendSms,
+      recordSend: sendRecorded,
+      recordReceive: receiveRecorded,
+      notify: (n) => phoneForNotice?.setNotice(n),
+      playAlert: playMessageAlert,
+    }),
     snake: snakeApp(),
     // Tones / Settings option pickers (deviation 2 — patched in by id below).
     "keypad-tones": pickerApp({
@@ -100,6 +141,7 @@ export function getPhoneRuntime(): PhoneRuntime {
     clock: () => new Date().toTimeString().slice(0, 5), // 24h HH:MM
     ...(reduceMotion ? { bootMs: 0 } : {}),
   });
+  phoneForNotice = phone; // sms reply notices target the live instance
 
   // 84×48 native canvas; NearestFilter upscaling happens on the 3D mesh.
   // The saved Welcome note shows during boot (deviation 5: renderer-lifetime).

@@ -267,15 +267,15 @@ path:"menu/messages/inbox"})` → standby screen carries `notice`; navi while
 
 ### Task 8 — website: the SMS flow apps
 
-- [ ] Write `website/src/phone/apps/sms.ts` registering the three apps below in
+- [x] Write `website/src/phone/apps/sms.ts` registering the three apps below in
       `buildApps()`.
-- [ ] **`write-message`** (replaces the current bare editor registration): the Task 2
+- [x] **`write-message`** (replaces the current bare editor registration): the Task 2
       editor with `charLimit: 160`, `menu: [Send, Clear text, Exit]`; `onMenu("send")`
       stashes the draft and `ctx.open("sms-to")`.
-- [ ] **`sms-to`**: picker over `contacts` titled `To:`; on pick, stash the contact and
+- [x] **`sms-to`**: picker over `contacts` titled `To:`; on pick, stash the contact and
       `ctx.open("sms-sending")`; C backs out to the editor (draft intact —
       `ctx.open("write-message")` with the stashed draft as `initial`).
-- [ ] **`sms-sending`**: renders `{kind:"confirm", text:"Sending message", softkey:""}`
+- [x] **`sms-sending`**: renders `{kind:"confirm", text:"Sending message", softkey:""}`
       for ~1.2 s of ticks, then `"Message sent"` for ~0.8 s, then exits. On entry it
       fires the actual send: `sendRecorded(...)` → `fetch("/api/sms")` → after a
       2–8 s randomized delay, `receiveRecorded(...)`, play the message-alert tone
@@ -283,11 +283,21 @@ path:"menu/messages/inbox"})` → standby screen carries `notice`; navi while
       `phone.setNotice({ text: "1 message received", softkey: "Read", path:
 "menu/messages/inbox" })`. Failures still deliver the canned reply (the API never
       5xxs by design; network errors fall back client-side too).
-- [ ] Tests: drive a real phone through compose → Options → Send → To: → sending →
+- [x] Tests: drive a real phone through compose → Options → Send → To: → sending →
       sent (fake timers, fetch mocked); assert outbox + inbox items, the notice, and
       that navi-on-notice lands the phone at `menu/messages/inbox`.
-- [ ] `mise exec -- vp run website#test` green.
-- [ ] Commit: `feat(website): full Write-messages → To: → sending → reply flow`
+- [x] `mise exec -- vp run website#test` green.
+- [x] Commit: `feat(website): full Write-messages → To: → sending → reply flow`
+
+> **Deviation:** the reply delay + timer are injected (`replyDelayMs`, `schedule` on
+> `SmsDeps`) instead of fake timers — tests fire the scheduled arrival explicitly.
+> Sending with an empty draft is a no-op (stays in the editor), so the server's
+> empty-text 400 is unreachable from the handset. `audio.ts` gains
+> `playMessageAlert()` (Nokia-style double-beep ×2, `settings.muted`-aware; keypadTones
+> only gates key beeps). The apps fire `send()` before `sendRecorded()` so the
+> client-side history snapshot excludes the message being sent. The standby notice is
+> wired through a module-level `phoneForNotice` ref in phone.ts (apps are built before
+> the phone exists).
 
 ### Task 9 — website: Chat (Menu 3) goes live
 
