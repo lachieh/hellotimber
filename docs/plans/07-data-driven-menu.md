@@ -231,7 +231,7 @@ Port the tree from `nokia-menu.ts` **verbatim first**, then apply these correcti
 
 ### Task 6 — panels move; the one dynamic route
 
-- [ ] Create `website/src/panels/`: move each panel's JSX out of the 16 route files into
+- [x] Create `website/src/panels/`: move each panel's JSX out of the 16 route files into
       `<id>.tsx` components (props: the resolved `SiteNode` chain). Add
       `GenericPanel.tsx` (title + body lines for readers/stubs; item list for lists) and
       `registry.tsx`:
@@ -243,7 +243,7 @@ Port the tree from `nokia-menu.ts` **verbatim first**, then apply these correcti
       };
       ```
 
-- [ ] Rewrite `website/src/routes/_phone/$.tsx`:
+- [x] Rewrite `website/src/routes/_phone/$.tsx`:
 
       ```tsx
       export const Route = createFileRoute("/_phone/$")({
@@ -262,12 +262,26 @@ Port the tree from `nokia-menu.ts` **verbatim first**, then apply these correcti
       `NotFoundPanel` keeps today's copy + `phone.navigate("menu/sim-services")` effect +
       `robots: noindex` — but now it can only mount for tree-invalid URLs.
 
-- [ ] Delete the 16 files under `website/src/routes/_phone/menu/` (and the old `$.tsx`
+- [x] Delete the 16 files under `website/src/routes/_phone/menu/` (and the old `$.tsx`
       content). Run `mise exec -- vp run website#dev` once so `routeTree.gen.ts`
       regenerates; stop it.
-- [ ] Run & expect PASS: `mise exec -- vp run website#test` and
+- [x] Run & expect PASS: `mise exec -- vp run website#test` and
       `mise exec -- vp run website#build`
-- [ ] Commit: `feat(website): single tree-resolved route; panels registry; no more hijack`
+- [x] Commit: `feat(website): single tree-resolved route; panels registry; no more hijack`
+
+> **Deviations (Task 6):** (1) with the per-page routes gone, the typed route space is
+> `"/" | "/$" | "/sitemap.xml"`, so literal `<Link to="/menu/...">` no longer
+> typechecks — added `components/SiteLink.tsx` (`Link to="/$"` + `params._splat`) and
+> the panels use it; `_phone/index.tsx`'s standby `<Link to="/menu">` had to switch to
+> it too (forced, one-line). (2) The `/menu` page's panel (`panels/menu.tsx`) derives
+> its 13 links from `siteMenu` instead of a hand-maintained list (that list was the
+> drift this plan kills); its head copy is a const in `$.tsx` since "/menu" has no tree
+> node. (3) `routeTree.gen.ts` was regenerated via `vp run website#build` — a dev
+> server was already live on port 3000. (4) Valid-but-undescribed pages get
+> `robots: noindex` + label title; `web.noindex` nodes (sim-services) keep their
+> description meta but also get `robots: noindex`. Verified against the live dev
+> server: /menu/phone-book/search + /menu/tones/composer → 200, /menu/does-not-exist
+> → 404 with the No-service head.
 
 ### Task 7 — SEO derives from the tree
 

@@ -1,14 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import ContentPanel from "../../../components/ContentPanel";
-import { missedCalls, projects, roles } from "../../../content";
-import { pageHead } from "../../../seo";
+import ContentPanel from "../components/ContentPanel";
+import { missedCalls, projects, roles } from "../content";
 
-export const Route = createFileRoute("/_phone/menu/call-register")({
-  head: () => pageHead({ section: "Call register", description: "Work history and projects." }),
-  component: CallRegisterPanel,
-});
-
-function CallRegisterPanel() {
+export default function CallRegisterPanel() {
   return (
     <ContentPanel title="Call register">
       <section aria-labelledby="received-calls">

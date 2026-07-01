@@ -1,14 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import ContentPanel from "../../../components/ContentPanel";
-import { profileModes } from "../../../content";
-import { pageHead } from "../../../seo";
+import ContentPanel from "../components/ContentPanel";
+import { profileModes } from "../content";
 
-export const Route = createFileRoute("/_phone/menu/profiles")({
-  head: () => pageHead({ section: "Profiles", description: "Visitor modes." }),
-  component: ProfilesPanel,
-});
-
-function ProfilesPanel() {
+export default function ProfilesPanel() {
   return (
     <ContentPanel title="Profiles">
       <p>Visitor modes that re-weight the content are a stretch goal. The lineup:</p>

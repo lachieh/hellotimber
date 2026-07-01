@@ -1,18 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import ContentPanel from "../../../components/ContentPanel";
-import { phonebook } from "../../../content";
-import { pageHead } from "../../../seo";
+import ContentPanel from "../components/ContentPanel";
+import { phonebook } from "../content";
 
-export const Route = createFileRoute("/_phone/menu/phone-book")({
-  head: () =>
-    pageHead({
-      section: "Phone book",
-      description: "Contact details: email, GitHub, LinkedIn, CV.",
-    }),
-  component: PhoneBookPanel,
-});
-
-function PhoneBookPanel() {
+export default function PhoneBookPanel() {
   return (
     <ContentPanel title="Phone book">
       <p>Contact details — the same entries the handset shows under Search.</p>

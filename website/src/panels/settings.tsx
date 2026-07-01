@@ -1,18 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import ContentPanel from "../../../components/ContentPanel";
-import { pageHead } from "../../../seo";
-import { updateSettings, useSettings } from "../../../settings";
+import ContentPanel from "../components/ContentPanel";
+import { updateSettings, useSettings } from "../settings";
 
-export const Route = createFileRoute("/_phone/menu/settings")({
-  head: () =>
-    pageHead({
-      section: "Settings",
-      description: "Phone settings: keypad tones, backlight, welcome note.",
-    }),
-  component: SettingsPanel,
-});
-
-function SettingsPanel() {
+export default function SettingsPanel() {
   const s = useSettings();
   return (
     <ContentPanel title="Settings">

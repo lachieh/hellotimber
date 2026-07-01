@@ -1,13 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import ContentPanel from "../../../../components/ContentPanel";
-import { pageHead } from "../../../../seo";
+import ContentPanel from "../components/ContentPanel";
 
-export const Route = createFileRoute("/_phone/menu/games/snake")({
-  head: () => pageHead({ section: "Snake II", description: "Play Snake." }),
-  component: SnakePanel,
-});
-
-function SnakePanel() {
+export default function SnakePanel() {
   return (
     <ContentPanel title="Snake II">
       <p>The real thing: wraparound edges, the bonus bug, one life.</p>

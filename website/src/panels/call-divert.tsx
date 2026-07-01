@@ -1,14 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import ContentPanel from "../../../components/ContentPanel";
-import { diverts } from "../../../content";
-import { pageHead } from "../../../seo";
+import ContentPanel from "../components/ContentPanel";
+import { diverts } from "../content";
 
-export const Route = createFileRoute("/_phone/menu/call-divert")({
-  head: () => pageHead({ section: "Call divert", description: "External profiles." }),
-  component: CallDivertPanel,
-});
-
-function CallDivertPanel() {
+export default function CallDivertPanel() {
   return (
     <ContentPanel title="Call divert">
       <p>

@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import ContentPanel from "../../components/ContentPanel";
+import SiteLink from "../../components/SiteLink";
 import { site } from "../../content/site";
 import { pageHead } from "../../seo";
 
@@ -20,8 +21,8 @@ function StandbyPanel() {
       {/* end SAMPLE DATA */}
       <p>
         This portfolio is a working Nokia 3310. Every menu on the phone is a page on this site, and
-        every page is a menu on the phone. Start at the <Link to="/menu">menu</Link>, or drive the
-        handset directly: arrow keys scroll, Enter is the NaviKey, Backspace is C.
+        every page is a menu on the phone. Start at the <SiteLink path="menu">menu</SiteLink>, or
+        drive the handset directly: arrow keys scroll, Enter is the NaviKey, Backspace is C.
       </p>
     </ContentPanel>
   );
