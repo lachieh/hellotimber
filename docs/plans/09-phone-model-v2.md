@@ -157,13 +157,13 @@ DELETED: hotspots.ts, calibration.ts, CalibrationPanel.tsx,
 
 ### Task 4 — keys: shapes, legends, depress, events
 
-- [ ] Write `src/Key.tsx` + `src/Keypad.tsx` per Architecture (extruded shape variants,
+- [x] Write `src/Key.tsx` + `src/Keypad.tsx` per Architecture (extruded shape variants,
       legend plane from atlas UV, depress lerp, pointer events with capture/leave, cursor
       pointer on hover).
-- [ ] Demo gate: click `5` → key visibly depresses, log shows `5 down`/`5 up`; drag off a
+- [x] Demo gate: click `5` → key visibly depresses, log shows `5 down`/`5 up`; drag off a
       pressed key → still releases; all 17 keys present with crisp legends; digit fan
       matches the real keypad's curve; NaviKey is the wide blue crescent.
-- [ ] Commit: `feat(phone-3d): per-key meshes with legends, depress, pointer events`
+- [x] Commit: `feat(phone-3d): per-key meshes with legends, depress, pointer events`
 
 ### Task 5 — backlight
 
