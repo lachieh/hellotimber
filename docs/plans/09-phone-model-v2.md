@@ -217,18 +217,26 @@ DELETED: hotspots.ts, calibration.ts, CalibrationPanel.tsx,
 
 ### Task 9 — website integration
 
-- [ ] `website/src/phone/PhoneStageHost.tsx`: maintain a `pressedKeys` set from the
+- [x] `website/src/phone/PhoneStageHost.tsx`: maintain a `pressedKeys` set from the
       keyboard funnel (key down adds, up removes — map via the existing
       `attachKeyboard` mapping) and pass it to `<PhoneStage/>`; no other website change
       (the removed props were never passed by the host).
-- [ ] Verify the lazy 3D chunk budget from plan 06 still holds (it will shrink —
+- [x] Verify the lazy 3D chunk budget from plan 06 still holds (it will shrink —
       record the new gz size in the commit message): `mise exec -- vp run website#build`.
-- [ ] Headed-browser walk on `vp run website#dev`: keys light with Settings → Phone
+- [x] Headed-browser walk on `vp run website#dev`: keys light with Settings → Phone
       settings → Lights off/on; keyboard digits visibly depress keys; clicking keys
       navigates; LCD crisp; **no keypad shading artifacts** (side-by-side with
       `assets/model-v1-artifacts.png`).
-- [ ] Update `docs/plans/README.md` status for plan 09 → done.
-- [ ] Commit: `feat(website): keyboard-driven key depress; mark plan 09 done`
+- [x] Update `docs/plans/README.md` status for plan 09 → done.
+- [x] Commit: `feat(website): keyboard-driven key depress; mark plan 09 done`
+
+> **Executed 2026-07-01.** Lazy 3D chunk: **237.35 kB gz** (was 236 kB — same JS,
+> minus ~380 kB of glb/Draco network assets; <700 kB budget holds). Headed-browser
+> walk: NaviKey click at `/menu` navigated to `/menu/phone-book` with the LCD
+> following; keyboard-held digits depress; backlight-off = silver keys/dim LCD
+> (toggled via the settings store — the on-handset Lights picker path is blocked
+> by the plan-07 hijack bug, not by this plan). No placeholders needed for
+> plans 07/08: this plan's surface doesn't overlap theirs.
 
 ## Done means
 

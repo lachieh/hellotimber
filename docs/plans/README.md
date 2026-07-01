@@ -18,7 +18,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 06  | [content & polish](./06-content-polish.md)   | portfolio content, sound, SEO, deploy                                            | 05 (04 for Snake menu entry)  | done        |
 | 07  | [data-driven menu](./07-data-driven-menu.md) | one menu tree as data; tree-resolved routing (fixes the SIM-services 404 hijack) | 01–06                         | not started |
 | 08  | [messaging](./08-messaging.md)               | authentic SMS + Chat backed by LLM contacts (claude-haiku-4-5)                   | 07                            | not started |
-| 09  | [phone model v2](./09-phone-model-v2.md)     | procedural 3310: per-key backlight, depress, no glTF                             | — (see plan header re Task 9) | not started |
+| 09  | [phone model v2](./09-phone-model-v2.md)     | procedural 3310: per-key backlight, depress, no glTF                             | — (see plan header re Task 9) | done        |
 
 Plans 01–04 are parallel-safe: no shared files, no cross-package imports at runtime
 (02 imports types from 01, which exist from 01's first task). Plan 09 is parallel-safe
