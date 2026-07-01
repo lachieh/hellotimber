@@ -149,7 +149,7 @@ body (`history: {who:"me"|"them"; text:string}[]`, client-supplied, capped serve
 
 ### Task 3 — phone-core: lazy list items, setNotice, ctx.open (TDD)
 
-- [ ] Failing tests: (a) a list node with `items: () => [...]` re-reads the thunk on
+- [x] Failing tests: (a) a list node with `items: () => [...]` re-reads the thunk on
       every render (mutate backing array → next render reflects it; selection clamps if
       the list shrinks); (b) `phone.setNotice({text:"1 message received", softkey:"Read",
 path:"menu/messages/inbox"})` → standby screen carries `notice`; navi while
@@ -158,9 +158,15 @@ path:"menu/messages/inbox"})` → standby screen carries `notice`; navi while
       (c) an app calling `ctx.open("other")` exits and the `other` app's `render()` is
       live next tick, on the same nav stack (C from it pops to where the first app was
       launched).
-- [ ] Implement in `packages/phone-core/src/machine.ts` (+ `types.ts`).
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test` green.
-- [ ] Commit: `feat(phone-core): lazy list items, standby notice, app chaining`
+- [x] Implement in `packages/phone-core/src/machine.ts` (+ `types.ts`).
+- [x] `mise exec -- vp run @hellotimber/phone-core#test` green.
+- [x] Commit: `feat(phone-core): lazy list items, standby notice, app chaining`
+
+> **Deviation:** widening the `AppFactory` ctx made two ctx object literals in
+> `website/tests/snake-app.test.ts` fail typecheck; added a no-op `open` to each
+> (minimal website-side accommodation only — no Task 5–10 features). `ctx.open()` is
+> a voluntary handoff like `ctx.exit()` (no `onExit`), keeps the launching node's
+> path, and is a no-op for unregistered appIds.
 
 ### Task 4 — phone-screen: countdown + notice rendering (TDD)
 

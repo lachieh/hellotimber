@@ -38,6 +38,8 @@ export type ScreenModel =
       clock?: string;
       signal: 0 | 1 | 2 | 3 | 4;
       battery: 0 | 1 | 2 | 3 | 4;
+      /** Standby-scoped notice, e.g. "1 message received" + Read. */
+      notice?: { text: string; softkey: string };
     }
   | { kind: "menu-carousel"; label: string; menuNumber: number; total: number; iconId: string }
   | { kind: "list"; title: string; items: string[]; selected: number; softkey: string }
@@ -54,13 +56,21 @@ export type ScreenModel =
   | { kind: "confirm"; text: string; softkey: string }
   | { kind: "custom"; appId: string; frame: Bitmap }; // games draw raw pixels
 
+/** One entry of a list node. */
+export interface MenuListItem {
+  id: string;
+  label: string;
+  body: string;
+}
+
 export type MenuNode =
   | { type: "submenu"; id: string; label: string; iconId?: string; children: MenuNode[] }
   | {
       type: "list";
       id: string;
       label: string;
-      items: { id: string; label: string; body: string }[];
+      /** May be lazy — the thunk is re-read on every render. */
+      items: MenuListItem[] | (() => MenuListItem[]);
     }
   | { type: "reader"; id: string; label: string; body: string }
   | { type: "app"; id: string; label: string; appId: string }
@@ -72,7 +82,8 @@ export interface PhoneApp {
   render(): ScreenModel;
   onExit?(): void;
 }
-export type AppFactory = (ctx: { exit(): void }) => PhoneApp;
+// open() = exit this app and immediately launch `appId` on the same nav stack.
+export type AppFactory = (ctx: { exit(): void; open(appId: string): void }) => PhoneApp;
 
 export interface PhoneConfig {
   menu: MenuNode[];
@@ -99,6 +110,9 @@ export interface Phone {
   pressKey(key: PhoneKey, holdMs?: number): void; // convenience: down + up
   tick(nowMs: number): void; // drives timers/animations
   navigate(path: string): void; // external (router) control
+  // Standby-scoped notice ("1 message received"): standby renders it;
+  // NaviKey navigates to `path` (default: clears); C clears; null clears.
+  setNotice(n: { text: string; softkey: string; path?: string } | null): void;
   readonly path: string; // e.g. 'standby', 'menu/games/snake'
   readonly screen: ScreenModel;
   subscribe(cb: (snap: PhoneSnapshot) => void): () => void;

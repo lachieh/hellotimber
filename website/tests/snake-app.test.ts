@@ -72,7 +72,7 @@ function memoryStore(initial = 0): SnakeTopScoreStore & { value: number } {
 function makeApp(fake: ReturnType<typeof fakeGame>, store = memoryStore()) {
   let exited = 0;
   const factory = snakeApp({ createGame: () => fake.game, topScore: store });
-  const app: PhoneApp = factory({ exit: () => (exited += 1) });
+  const app: PhoneApp = factory({ exit: () => (exited += 1), open: () => undefined });
   return { app, exitCount: () => exited };
 }
 
@@ -180,7 +180,7 @@ describe("snakeApp", () => {
       },
       topScore: memoryStore(),
     });
-    const app = factory({ exit: () => undefined });
+    const app = factory({ exit: () => undefined, open: () => undefined });
     fake.endGame();
     app.tick(tickIntervalMs(1)); // → game over
     app.onKey({ type: "down", key: "6" });

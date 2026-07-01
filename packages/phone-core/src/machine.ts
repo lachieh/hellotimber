@@ -1,5 +1,6 @@
 import type {
   KeyEvent,
+  MenuListItem,
   MenuNode,
   Phone,
   PhoneApp,
@@ -43,6 +44,18 @@ interface HeldKey {
   longFired: boolean;
 }
 
+type Notice = { text: string; softkey: string; path?: string };
+
+/** Resolve a list node's items — lazy thunks are re-read on every call. */
+function listItems(node: ListNode): MenuListItem[] {
+  return typeof node.items === "function" ? node.items() : node.items;
+}
+
+/** Clamp an index into [0, length-1] (0 for empty lists — lazy lists may shrink). */
+function clampIndex(index: number, length: number): number {
+  return length === 0 ? 0 : Math.min(Math.max(0, index), length - 1);
+}
+
 interface Machine {
   config: PhoneConfig;
   carrier: string;
@@ -50,6 +63,8 @@ interface Machine {
   /** Last time seen via tick(nowMs). The machine's ONLY clock. */
   now: number;
   mode: Mode;
+  /** Standby-scoped notice — survives menu round-trips until read/cleared. */
+  notice: Notice | null;
   held: Map<PhoneKey, HeldKey>;
   /** Menu-shortcut digit window (Task 7). */
   shortcut: { digits: number[]; deadline: number } | null;
@@ -171,6 +186,9 @@ function renderScreen(m: Machine): ScreenModel {
         clock: m.config.clock?.(),
         signal: 4,
         battery: 4,
+        ...(m.notice !== null
+          ? { notice: { text: m.notice.text, softkey: m.notice.softkey } }
+          : {}),
       };
     case "nav":
       return renderFrame(m, m.mode.stack[m.mode.stack.length - 1]!);
@@ -204,16 +222,22 @@ function renderFrame(m: Machine, frame: NavFrame): ScreenModel {
         selected: frame.selected,
         softkey: "Select",
       };
-    case "list":
+    case "list": {
+      const items = listItems(frame.node);
       return {
         kind: "list",
         title: frame.node.label,
-        items: frame.node.items.map((i) => i.label),
-        selected: frame.selected,
+        items: items.map((i) => i.label),
+        selected: clampIndex(frame.selected, items.length),
         softkey: "Select",
       };
+    }
     case "item": {
-      const item = frame.node.items[frame.itemIndex]!;
+      const items = listItems(frame.node);
+      const item = items[clampIndex(frame.itemIndex, items.length)];
+      if (item === undefined) {
+        return { kind: "reader", title: frame.node.label, lines: [], scrollTop: 0 };
+      }
       return {
         kind: "reader",
         title: item.label,
@@ -359,6 +383,20 @@ function onLongPress(m: Machine, key: PhoneKey): void {
 }
 
 function standbyShortPress(m: Machine, key: PhoneKey): void {
+  if (m.notice !== null) {
+    if (key === "navi") {
+      const target = m.notice.path;
+      m.notice = null;
+      m.dirty = true;
+      if (target !== undefined) applyPath(m, target); // e.g. Read → the inbox
+      return;
+    }
+    if (key === "c") {
+      m.notice = null; // dismiss in place
+      m.dirty = true;
+      return;
+    }
+  }
   if (key === "navi") {
     enterMenu(m);
     return;
@@ -416,8 +454,9 @@ function navShortPress(m: Machine, key: PhoneKey): void {
       return;
     }
     case "list": {
-      const total = frame.node.items.length;
+      const total = listItems(frame.node).length;
       if (total === 0) return;
+      frame.selected = clampIndex(frame.selected, total); // lazy lists may have shrunk
       if (key === "down") {
         frame.selected = wrapIndex(frame.selected + 1, total);
         m.dirty = true;
@@ -432,8 +471,13 @@ function navShortPress(m: Machine, key: PhoneKey): void {
     }
     case "item":
     case "reader": {
-      const body =
-        frame.kind === "item" ? frame.node.items[frame.itemIndex]!.body : frame.node.body;
+      let body: string;
+      if (frame.kind === "item") {
+        const items = listItems(frame.node);
+        body = items[clampIndex(frame.itemIndex, items.length)]?.body ?? "";
+      } else {
+        body = frame.node.body;
+      }
       const maxTop = Math.max(0, wrapLines(body).length - READER_VISIBLE_LINES);
       if (key === "down" && frame.scrollTop < maxTop) {
         frame.scrollTop += 1;
@@ -573,9 +617,19 @@ function enterNode(m: Machine, node: MenuNode): void {
 
 /** Launch an app node's factory; no registered factory → no-op. */
 function launchApp(m: Machine, node: AppNode): void {
-  const factory = m.config.apps?.[node.appId];
-  if (factory === undefined) return; // unregistered appId: stay where we are
+  if (m.config.apps?.[node.appId] === undefined) return; // unregistered appId: stay where we are
   const stack: NavFrame[] = m.mode.kind === "nav" ? m.mode.stack : [{ kind: "carousel", index: 0 }];
+  startApp(m, node, node.appId, stack);
+}
+
+/**
+ * Instantiate `appId` over `stack`. ctx.open() chains apps: the current app is
+ * replaced in place, on the SAME stack (path stays at the launching node), so
+ * ctx.exit() from any app in the chain pops to where the first one launched.
+ */
+function startApp(m: Machine, node: AppNode, appId: string, stack: NavFrame[]): void {
+  const factory = m.config.apps?.[appId];
+  if (factory === undefined) return;
   const app = factory({
     exit: () => {
       // Voluntary exit — must be called synchronously from onKey/tick.
@@ -583,6 +637,13 @@ function launchApp(m: Machine, node: AppNode): void {
       for (const h of m.held.values()) h.longFired = true; // swallow in-flight key releases
       m.mode = { kind: "nav", stack };
       m.dirty = true;
+    },
+    open: (nextAppId: string) => {
+      // Voluntary handoff (like exit, no onExit) — synchronous from onKey/tick.
+      if (m.mode.kind !== "app" || m.mode.app !== app) return;
+      if (m.config.apps?.[nextAppId] === undefined) return; // unknown: keep running
+      for (const h of m.held.values()) h.longFired = true; // swallow in-flight key releases
+      startApp(m, node, nextAppId, stack);
     },
   });
   m.mode = { kind: "app", node, app, stack };
@@ -630,6 +691,7 @@ export function createPhone(config: PhoneConfig): Phone {
     bootMs: config.bootMs ?? DEFAULT_BOOT_MS,
     now: 0,
     mode: { kind: "off" },
+    notice: null,
     held: new Map(),
     shortcut: null,
     dirty: false,
@@ -651,6 +713,12 @@ export function createPhone(config: PhoneConfig): Phone {
     },
     navigate(path: string): void {
       run(m, () => handleNavigate(m, path));
+    },
+    setNotice(n: Notice | null): void {
+      run(m, () => {
+        m.notice = n === null ? null : { ...n };
+        m.dirty = true; // subscribers re-render even off-standby (harmless)
+      });
     },
     get path(): string {
       return currentPath(m);

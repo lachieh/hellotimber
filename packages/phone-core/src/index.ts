@@ -2,6 +2,7 @@ export type {
   AppFactory,
   Bitmap,
   KeyEvent,
+  MenuListItem,
   MenuNode,
   Phone,
   PhoneApp,

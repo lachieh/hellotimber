@@ -70,4 +70,42 @@ describe("lists, items & readers", () => {
     phone.pressKey("navi");
     expect(phone.screen).toMatchObject({ kind: "list", items: [], selected: 0 });
   });
+
+  it("a lazy list re-reads its items thunk on every render", () => {
+    const backing = [
+      { id: "one", label: "One", body: "First." },
+      { id: "two", label: "Two", body: "Second." },
+    ];
+    const phone = bootedPhone({
+      menu: [{ type: "list", id: "lazy", label: "Lazy", items: () => [...backing] }],
+    });
+    phone.pressKey("navi"); // carousel
+    phone.pressKey("navi"); // enter the list
+    expect(phone.screen).toMatchObject({ kind: "list", items: ["One", "Two"], selected: 0 });
+    backing.push({ id: "three", label: "Three", body: "Third." });
+    expect(phone.screen).toMatchObject({ items: ["One", "Two", "Three"] });
+    phone.pressKey("down");
+    phone.pressKey("down"); // select Three
+    expect(phone.screen).toMatchObject({ selected: 2 });
+  });
+
+  it("lazy list selection clamps when the list shrinks", () => {
+    const backing = [
+      { id: "one", label: "One", body: "First." },
+      { id: "two", label: "Two", body: "Second." },
+      { id: "three", label: "Three", body: "Third." },
+    ];
+    const phone = bootedPhone({
+      menu: [{ type: "list", id: "lazy", label: "Lazy", items: () => [...backing] }],
+    });
+    phone.pressKey("navi");
+    phone.pressKey("navi"); // enter the list
+    phone.pressKey("down");
+    phone.pressKey("down"); // select Three
+    expect(phone.screen).toMatchObject({ selected: 2 });
+    backing.splice(1); // shrink to just One
+    expect(phone.screen).toMatchObject({ items: ["One"], selected: 0 });
+    phone.pressKey("navi"); // opens the clamped item, not a stale index
+    expect(phone.screen).toMatchObject({ kind: "reader", title: "One" });
+  });
 });

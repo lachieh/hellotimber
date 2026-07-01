@@ -48,12 +48,8 @@ export function editorApp(opts: EditorOptions): AppFactory {
     /** Selection in the Options list, or null while the editor itself shows. */
     let options: number | null = null;
 
-    // Until the host's AppFactory ctx grows open() (plan 08 task 3), forward
-    // best-effort — a missing open() makes chaining a no-op, never a crash.
-    const menuCtx: EditorMenuCtx = {
-      exit: () => ctx.exit(),
-      open: (appId: string) => (ctx as Partial<EditorMenuCtx>).open?.(appId),
-    };
+    // The AppFactory ctx already matches EditorMenuCtx — pass it straight through.
+    const menuCtx: EditorMenuCtx = ctx;
 
     /** Reject edits that would grow the text past charLimit (cycling never grows). */
     function limited(next: MultitapState): MultitapState {

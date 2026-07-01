@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { bootedPhone, makeFakeApp } from "./fixtures";
 import type { FakeApp } from "./fixtures";
-import type { Phone } from "../src/index";
+import type { AppFactory, Phone } from "../src/index";
 
 /** Boots a phone with the fake app registered and navigates by key to Write messages. */
 function appPhone(): { fake: FakeApp; phone: Phone } {
@@ -58,6 +58,47 @@ describe("app hosting", () => {
     phone.pressKey("navi"); // try to launch Write messages — unregistered
     expect(phone.path).toBe("menu/messages");
     expect(phone.screen).toMatchObject({ kind: "list", title: "Messages" });
+  });
+
+  it("ctx.open() chains to another app on the same nav stack", () => {
+    const other = makeFakeApp("other-app");
+    let firstExits = 0;
+    const first: AppFactory = (ctx) => ({
+      onKey(e) {
+        if (e.type === "up" && e.key === "5") ctx.open("other-app");
+      },
+      tick() {},
+      render: () => ({ kind: "confirm", text: "first", softkey: "" }),
+      onExit() {
+        firstExits += 1;
+      },
+    });
+    const phone = bootedPhone({ apps: { "write-message": first, "other-app": other.factory } });
+    phone.navigate("menu/messages/write");
+    expect(phone.screen).toMatchObject({ kind: "confirm", text: "first" });
+    phone.pressKey("5"); // first app chains via ctx.open
+    expect(phone.screen).toMatchObject({ kind: "custom", appId: "other-app" });
+    expect(firstExits).toBe(0); // voluntary handoff — no onExit (matches ctx.exit)
+    expect(other.exitCount()).toBe(0);
+    expect(phone.path).toBe("menu/messages/write"); // chaining is path-invisible
+    phone.pressKey("c"); // fake app exits on c → back to where the FIRST app launched
+    expect(phone.path).toBe("menu/messages");
+    expect(phone.screen).toMatchObject({ kind: "list", title: "Messages" });
+  });
+
+  it("ctx.open() to an unregistered appId is a no-op — the app keeps running", () => {
+    const first: AppFactory = (ctx) => ({
+      onKey(e) {
+        if (e.type === "up" && e.key === "5") ctx.open("does-not-exist");
+      },
+      tick() {},
+      render: () => ({ kind: "confirm", text: "first", softkey: "" }),
+    });
+    const phone = bootedPhone({ apps: { "write-message": first } });
+    phone.navigate("menu/messages/write");
+    phone.pressKey("5");
+    expect(phone.screen).toMatchObject({ kind: "confirm", text: "first" });
+    expect(phone.path).toBe("menu/messages/write");
   });
 
   it("a throwing app cannot break the machine", () => {
