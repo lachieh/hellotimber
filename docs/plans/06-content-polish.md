@@ -140,7 +140,7 @@ Replace plan 05's single sample blob with a structured model: one typed module p
 
 **Steps**
 
-- [ ] **Step 1: Write `website/src/content/types.ts`:**
+- [x] **Step 1: Write `website/src/content/types.ts`:**
 
   ```ts
   /**
@@ -241,7 +241,7 @@ Replace plan 05's single sample blob with a structured model: one typed module p
   }
   ```
 
-- [ ] **Step 2: Write `website/src/content/site.ts`:**
+- [x] **Step 2: Write `website/src/content/site.ts`:**
 
   ```ts
   import type { SiteMeta } from "./types";
@@ -255,7 +255,7 @@ Replace plan 05's single sample blob with a structured model: one typed module p
   };
   ```
 
-- [ ] **Step 3: Write `website/src/content/phonebook.ts`:**
+- [x] **Step 3: Write `website/src/content/phonebook.ts`:**
 
   ```ts
   import type { ContactEntry } from "./types";
@@ -293,7 +293,7 @@ Replace plan 05's single sample blob with a structured model: one typed module p
   ];
   ```
 
-- [ ] **Step 4: Write `website/src/content/messages.ts`** (3–5 inbox SMS, each ≤160 chars — the test enforces both):
+- [x] **Step 4: Write `website/src/content/messages.ts`** (3–5 inbox SMS, each ≤160 chars — the test enforces both):
 
   ```ts
   import type { SmsMessage, WriteMessageConfig } from "./types";
@@ -333,7 +333,7 @@ Replace plan 05's single sample blob with a structured model: one typed module p
   };
   ```
 
-- [ ] **Step 5: Write `website/src/content/chat.ts`:**
+- [x] **Step 5: Write `website/src/content/chat.ts`:**
 
   ```ts
   import type { ChatMessage } from "./types";
@@ -357,7 +357,7 @@ Replace plan 05's single sample blob with a structured model: one typed module p
   ];
   ```
 
-- [ ] **Step 6: Write `website/src/content/call-register.ts`:**
+- [x] **Step 6: Write `website/src/content/call-register.ts`:**
 
   ```ts
   import type { MissedCall, Project, Role } from "./types";
@@ -420,7 +420,7 @@ Replace plan 05's single sample blob with a structured model: one typed module p
   ];
   ```
 
-- [ ] **Step 7: Write `website/src/content/reminders.ts`:**
+- [x] **Step 7: Write `website/src/content/reminders.ts`:**
 
   ```ts
   import type { NowItem } from "./types";
@@ -438,7 +438,7 @@ Replace plan 05's single sample blob with a structured model: one typed module p
   ];
   ```
 
-- [ ] **Step 8: Write `website/src/content/clock.ts`:**
+- [x] **Step 8: Write `website/src/content/clock.ts`:**
 
   ```ts
   import type { ClockInfo } from "./types";
@@ -449,7 +449,7 @@ Replace plan 05's single sample blob with a structured model: one typed module p
   };
   ```
 
-- [ ] **Step 9: Write `website/src/content/profiles.ts`** (stretch stub — copy only, no behavior):
+- [x] **Step 9: Write `website/src/content/profiles.ts`** (stretch stub — copy only, no behavior):
 
   ```ts
   import type { ProfileMode } from "./types";
@@ -476,7 +476,7 @@ Replace plan 05's single sample blob with a structured model: one typed module p
   ];
   ```
 
-- [ ] **Step 10: Write `website/src/content/divert.ts`:**
+- [x] **Step 10: Write `website/src/content/divert.ts`:**
 
   ```ts
   import type { DivertLink } from "./types";
@@ -490,7 +490,7 @@ Replace plan 05's single sample blob with a structured model: one typed module p
   ];
   ```
 
-- [ ] **Step 11: Rewrite `website/src/content/index.ts`** — the adapter. The exported name and type of `content` are unchanged from plan 05, so `phone.ts` and the existing panels keep compiling:
+- [x] **Step 11: Rewrite `website/src/content/index.ts`** — the adapter. The exported name and type of `content` are unchanged from plan 05, so `phone.ts` and the existing panels keep compiling:
 
   ```ts
   import type { ChatLine, Nokia3310Content } from "@hellotimber/phone-core";
@@ -557,7 +557,7 @@ Replace plan 05's single sample blob with a structured model: one typed module p
   export const content: Nokia3310Content = nokiaContent();
   ```
 
-- [ ] **Step 12: Write the test** `website/tests/content.test.ts`:
+- [x] **Step 12: Write the test** `website/tests/content.test.ts`:
 
   ```ts
   import { isValidPath, nokia3310Menu } from "@hellotimber/phone-core";
@@ -631,9 +631,9 @@ Replace plan 05's single sample blob with a structured model: one typed module p
   });
   ```
 
-- [ ] **Step 13: Run & expect PASS:** `mise exec -- vp run website#test` (the old `content/index.ts` shape is gone; if any plan-05 file imported a removed name, fix the import — only `content` was public).
-- [ ] **Step 14: Gates:** `mise exec -- vp check --fix` and `mise exec -- vp run website#build`.
-- [ ] **Step 15: Commit:**
+- [x] **Step 13: Run & expect PASS:** `mise exec -- vp run website#test` (the old `content/index.ts` shape is gone; if any plan-05 file imported a removed name, fix the import — only `content` was public).
+- [x] **Step 14: Gates:** `mise exec -- vp check --fix` and `mise exec -- vp run website#build`.
+- [x] **Step 15: Commit:**
 
   ```sh
   git add website/src/content website/tests/content.test.ts
@@ -662,7 +662,7 @@ Rewrite the plan-05 placeholder panels against the rich section modules: `<addre
 
 **Steps**
 
-- [ ] **Step 1: Rewrite `website/src/routes/_phone/index.tsx`** (standby — the bio):
+- [x] **Step 1: Rewrite `website/src/routes/_phone/index.tsx`** (standby — the bio):
 
   ```tsx
   import { createFileRoute, Link } from "@tanstack/react-router";
@@ -690,7 +690,7 @@ Rewrite the plan-05 placeholder panels against the rich section modules: `<addre
   }
   ```
 
-- [ ] **Step 2: Rewrite `website/src/routes/_phone/menu/phone-book.tsx`:**
+- [x] **Step 2: Rewrite `website/src/routes/_phone/menu/phone-book.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -731,7 +731,7 @@ Rewrite the plan-05 placeholder panels against the rich section modules: `<addre
   }
   ```
 
-- [ ] **Step 3: Rewrite `website/src/routes/_phone/menu/messages/index.tsx`:**
+- [x] **Step 3: Rewrite `website/src/routes/_phone/menu/messages/index.tsx`:**
 
   ```tsx
   import { createFileRoute, Link } from "@tanstack/react-router";
@@ -757,7 +757,7 @@ Rewrite the plan-05 placeholder panels against the rich section modules: `<addre
   }
   ```
 
-- [ ] **Step 4: Rewrite `website/src/routes/_phone/menu/messages/inbox.tsx`:**
+- [x] **Step 4: Rewrite `website/src/routes/_phone/menu/messages/inbox.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -785,7 +785,7 @@ Rewrite the plan-05 placeholder panels against the rich section modules: `<addre
   }
   ```
 
-- [ ] **Step 5: Rewrite `website/src/routes/_phone/menu/messages/write.tsx`** (the form config comes from `writeMessage` — same destination the handset editor uses after Task 5):
+- [x] **Step 5: Rewrite `website/src/routes/_phone/menu/messages/write.tsx`** (the form config comes from `writeMessage` — same destination the handset editor uses after Task 5):
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -810,7 +810,7 @@ Rewrite the plan-05 placeholder panels against the rich section modules: `<addre
   }
   ```
 
-- [ ] **Step 6: Rewrite `website/src/routes/_phone/menu/chat.tsx`:**
+- [x] **Step 6: Rewrite `website/src/routes/_phone/menu/chat.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -839,7 +839,7 @@ Rewrite the plan-05 placeholder panels against the rich section modules: `<addre
   }
   ```
 
-- [ ] **Step 7: Rewrite `website/src/routes/_phone/menu/call-register.tsx`:**
+- [x] **Step 7: Rewrite `website/src/routes/_phone/menu/call-register.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -902,7 +902,7 @@ Rewrite the plan-05 placeholder panels against the rich section modules: `<addre
   }
   ```
 
-- [ ] **Step 8: Rewrite `website/src/routes/_phone/menu/reminders.tsx`:**
+- [x] **Step 8: Rewrite `website/src/routes/_phone/menu/reminders.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -930,7 +930,7 @@ Rewrite the plan-05 placeholder panels against the rich section modules: `<addre
   }
   ```
 
-- [ ] **Step 9: Rewrite `website/src/routes/_phone/menu/clock.tsx`** (no `new Date()` in render — it would mismatch on hydration; the time zone is named, not computed):
+- [x] **Step 9: Rewrite `website/src/routes/_phone/menu/clock.tsx`** (no `new Date()` in render — it would mismatch on hydration; the time zone is named, not computed):
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -952,7 +952,7 @@ Rewrite the plan-05 placeholder panels against the rich section modules: `<addre
   }
   ```
 
-- [ ] **Step 10: Rewrite `website/src/routes/_phone/menu/call-divert.tsx`:**
+- [x] **Step 10: Rewrite `website/src/routes/_phone/menu/call-divert.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -982,7 +982,7 @@ Rewrite the plan-05 placeholder panels against the rich section modules: `<addre
   }
   ```
 
-- [ ] **Step 11: Rewrite `website/src/routes/_phone/menu/profiles.tsx`:**
+- [x] **Step 11: Rewrite `website/src/routes/_phone/menu/profiles.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1011,8 +1011,8 @@ Rewrite the plan-05 placeholder panels against the rich section modules: `<addre
   }
   ```
 
-- [ ] **Step 12: Gates:** `mise exec -- vp run website#test`, `mise exec -- vp check --fix`, `mise exec -- vp run website#build` — all must pass. Spot-check in dev: `/menu/call-register` shows the three sections; `/menu/phone-book` links carry `rel="me noopener noreferrer"` on GitHub/LinkedIn (inspect element).
-- [ ] **Step 13: Commit:**
+- [x] **Step 12: Gates:** `mise exec -- vp run website#test`, `mise exec -- vp check --fix`, `mise exec -- vp run website#build` — all must pass. Spot-check in dev: `/menu/call-register` shows the three sections; `/menu/phone-book` links carry `rel="me noopener noreferrer"` on GitHub/LinkedIn (inspect element).
+- [x] **Step 13: Commit:**
 
   ```sh
   git add website/src/routes
@@ -1032,7 +1032,7 @@ A tiny observable store, SSR-safe, persisted to `localStorage["hellotimber.setti
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `website/tests/settings.test.ts`:
+- [x] **Step 1: Write the failing test** `website/tests/settings.test.ts`:
 
   ```ts
   // @vitest-environment jsdom
@@ -1089,8 +1089,8 @@ A tiny observable store, SSR-safe, persisted to `localStorage["hellotimber.setti
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `src/settings.ts`): `mise exec -- vp run website#test`
-- [ ] **Step 3: Write `website/src/settings.ts`:**
+- [x] **Step 2: Run & expect FAIL** (no `src/settings.ts`): `mise exec -- vp run website#test`
+- [x] **Step 3: Write `website/src/settings.ts`:**
 
   ```ts
   import { useSyncExternalStore } from "react";
@@ -1169,9 +1169,9 @@ A tiny observable store, SSR-safe, persisted to `localStorage["hellotimber.setti
   }
   ```
 
-- [ ] **Step 4: Run & expect PASS:** `mise exec -- vp run website#test`
-- [ ] **Step 5: Gates:** `mise exec -- vp check --fix`, `mise exec -- vp run website#build`.
-- [ ] **Step 6: Commit:**
+- [x] **Step 4: Run & expect PASS:** `mise exec -- vp run website#test`
+- [x] **Step 5: Gates:** `mise exec -- vp check --fix`, `mise exec -- vp run website#build`.
+- [x] **Step 6: Commit:**
 
   ```sh
   git add website/src/settings.ts website/tests/settings.test.ts
@@ -1197,7 +1197,7 @@ WebAudio singleton, created lazily and only on user-gesture-driven code paths (a
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `website/tests/composer.test.ts`:
+- [x] **Step 1: Write the failing test** `website/tests/composer.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1253,8 +1253,8 @@ WebAudio singleton, created lazily and only on user-gesture-driven code paths (a
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL:** `mise exec -- vp run website#test`
-- [ ] **Step 3: Write `website/src/phone/composer.ts`:**
+- [x] **Step 2: Run & expect FAIL:** `mise exec -- vp run website#test`
+- [x] **Step 3: Write `website/src/phone/composer.ts`:**
 
   ```ts
   /**
@@ -1290,7 +1290,7 @@ WebAudio singleton, created lazily and only on user-gesture-driven code paths (a
   }
   ```
 
-- [ ] **Step 4: Write `website/src/phone/tones.ts`** (data only — no WebAudio import, so the content layer and tests can use it). The labels deliberately match `nokia3310Menu`'s default ringtone list, whose kebab-cased ids are exactly these ids:
+- [x] **Step 4: Write `website/src/phone/tones.ts`** (data only — no WebAudio import, so the content layer and tests can use it). The labels deliberately match `nokia3310Menu`'s default ringtone list, whose kebab-cased ids are exactly these ids:
 
   ```ts
   /** A ringtone: composer notation + tempo. Ids match nokia3310Menu's
@@ -1328,8 +1328,8 @@ WebAudio singleton, created lazily and only on user-gesture-driven code paths (a
   ];
   ```
 
-- [ ] **Step 5: Run & expect PASS** (composer tests): `mise exec -- vp run website#test`
-- [ ] **Step 6: Write `website/src/phone/audio.ts`:**
+- [x] **Step 5: Run & expect PASS** (composer tests): `mise exec -- vp run website#test`
+- [x] **Step 6: Write `website/src/phone/audio.ts`:**
 
   ```ts
   import { getSettings } from "../settings";
@@ -1419,7 +1419,7 @@ WebAudio singleton, created lazily and only on user-gesture-driven code paths (a
   }
   ```
 
-- [ ] **Step 7: Wire the event in `website/src/phone/phone.ts`.** Add the import at the top:
+- [x] **Step 7: Wire the event in `website/src/phone/phone.ts`.** Add the import at the top:
 
   ```ts
   import { handleSound } from "./audio";
@@ -1432,7 +1432,7 @@ WebAudio singleton, created lazily and only on user-gesture-driven code paths (a
   phone.on("sound", handleSound);
   ```
 
-- [ ] **Step 8: Write `website/src/components/SoundToggle.tsx`** (the global mute — visible at all times next to the stage):
+- [x] **Step 8: Write `website/src/components/SoundToggle.tsx`** (the global mute — visible at all times next to the stage):
 
   ```tsx
   import { useSettings, updateSettings } from "../settings";
@@ -1453,7 +1453,7 @@ WebAudio singleton, created lazily and only on user-gesture-driven code paths (a
   }
   ```
 
-- [ ] **Step 9: Mount it in `website/src/routes/_phone.tsx`.** Add the import `import SoundToggle from "../components/SoundToggle";` and wrap the stage column so the toggle sits under the canvas — replace the `<ClientOnly …>…</ClientOnly>` block with:
+- [x] **Step 9: Mount it in `website/src/routes/_phone.tsx`.** Add the import `import SoundToggle from "../components/SoundToggle";` and wrap the stage column so the toggle sits under the canvas — replace the `<ClientOnly …>…</ClientOnly>` block with:
 
   ```tsx
   <div>
@@ -1480,7 +1480,7 @@ WebAudio singleton, created lazily and only on user-gesture-driven code paths (a
   }
   ```
 
-- [ ] **Step 10: Rewrite `website/src/routes/_phone/menu/tones.tsx`** — list the real tones with DOM preview buttons (button click = user gesture, so this may create the AudioContext):
+- [x] **Step 10: Rewrite `website/src/routes/_phone/menu/tones.tsx`** — list the real tones with DOM preview buttons (button click = user gesture, so this may create the AudioContext):
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1518,9 +1518,9 @@ WebAudio singleton, created lazily and only on user-gesture-driven code paths (a
   }
   ```
 
-- [ ] **Step 11: Gates:** `mise exec -- vp run website#test`, `mise exec -- vp check --fix`, `mise exec -- vp run website#build`.
-- [ ] **Step 12: Manual verification** (`mise exec -- vp run website#dev`): clicking 3D keys beeps (after the first click — gesture-created context); `/menu/tones` ▶ buttons play the Nokia tune/Ring ring/Grande valse; the Sound off toggle silences everything; beep settings persist across reloads (devtools → Application → localStorage → `hellotimber.settings`).
-- [ ] **Step 13: Commit:**
+- [x] **Step 11: Gates:** `mise exec -- vp run website#test`, `mise exec -- vp check --fix`, `mise exec -- vp run website#build`.
+- [x] **Step 12: Manual verification** (`mise exec -- vp run website#dev`): clicking 3D keys beeps (after the first click — gesture-created context); `/menu/tones` ▶ buttons play the Nokia tune/Ring ring/Grande valse; the Sound off toggle silences everything; beep settings persist across reloads (devtools → Application → localStorage → `hellotimber.settings`).
+- [x] **Step 13: Commit:**
 
   ```sh
   git add website/src/phone website/src/components/SoundToggle.tsx website/src/routes website/src/styles.css website/tests/composer.test.ts
@@ -1543,7 +1543,7 @@ A generic option-picker `PhoneApp` powers Tones → Ringing tone / Keypad tones 
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `website/tests/picker-app.test.ts` (drives the picker through a real phone-core machine — node env):
+- [x] **Step 1: Write the failing test** `website/tests/picker-app.test.ts` (drives the picker through a real phone-core machine — node env):
 
   ```ts
   import { createPhone } from "@hellotimber/phone-core";
@@ -1609,8 +1609,8 @@ A generic option-picker `PhoneApp` powers Tones → Ringing tone / Keypad tones 
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL:** `mise exec -- vp run website#test`
-- [ ] **Step 3: Write `website/src/phone/apps/picker-app.ts`:**
+- [x] **Step 2: Run & expect FAIL:** `mise exec -- vp run website#test`
+- [x] **Step 3: Write `website/src/phone/apps/picker-app.ts`:**
 
   ```ts
   import type { AppFactory, KeyEvent, PhoneApp, ScreenModel } from "@hellotimber/phone-core";
@@ -1662,11 +1662,11 @@ A generic option-picker `PhoneApp` powers Tones → Ringing tone / Keypad tones 
   }
   ```
 
-- [ ] **Step 4: Run & expect PASS:** `mise exec -- vp run website#test`
+- [x] **Step 4: Run & expect PASS:** `mise exec -- vp run website#test`
 
 > _(Continued below: Task 5 Steps 5–8 wire the picker into the menu and add the Settings panel; Tasks 6–11 add SEO, easter eggs, accessibility, performance, CI, and the content-handoff checklist.)_
 
-- [ ] **Step 5: Wire the picker + Settings panel** — see plan 05's `phone.ts` patch points. In `website/src/phone/phone.ts`, after `nokia3310Menu(content)` builds the tree, patch the stub nodes (deviation 2 — same ids) and register the apps:
+- [x] **Step 5: Wire the picker + Settings panel** — see plan 05's `phone.ts` patch points. In `website/src/phone/phone.ts`, after `nokia3310Menu(content)` builds the tree, patch the stub nodes (deviation 2 — same ids) and register the apps:
 
   ```ts
   import { pickerApp } from "./apps/picker-app";
@@ -1770,7 +1770,7 @@ A generic option-picker `PhoneApp` powers Tones → Ringing tone / Keypad tones 
   );
   ```
 
-- [ ] **Step 6: Rewrite the Settings panel** `website/src/routes/_phone/menu/settings.tsx` with working DOM controls bound to the same store:
+- [x] **Step 6: Rewrite the Settings panel** `website/src/routes/_phone/menu/settings.tsx` with working DOM controls bound to the same store:
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1825,8 +1825,8 @@ A generic option-picker `PhoneApp` powers Tones → Ringing tone / Keypad tones 
   }
   ```
 
-- [ ] **Step 7: Verify** — `mise exec -- vp run website#dev`. `Menu → Tones → Keypad tones`: list preselected at current value; pick Off → keys no longer beep. Toggle Backlight in the panel → 3D screen dims/brightens live. `Menu → Settings → Phone settings → Welcome note`: type a word, OK, reload → shows during boot.
-- [ ] **Step 8: Commit:**
+- [x] **Step 7: Verify** — `mise exec -- vp run website#dev`. `Menu → Tones → Keypad tones`: list preselected at current value; pick Off → keys no longer beep. Toggle Backlight in the panel → 3D screen dims/brightens live. `Menu → Settings → Phone settings → Welcome note`: type a word, OK, reload → shows during boot.
+- [x] **Step 8: Commit:**
 
   ```bash
   git add website/src/phone/apps/picker-app.ts website/tests/picker-app.test.ts website/src/phone/phone.ts website/src/phone/PhoneStageHost.tsx website/src/routes/_phone/menu/settings.tsx
@@ -1847,7 +1847,7 @@ Every route gets a real `<title>`/description; a server route emits `sitemap.xml
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `website/tests/seo.test.ts` (node env):
+- [x] **Step 1: Write the failing test** `website/tests/seo.test.ts` (node env):
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1882,8 +1882,8 @@ Every route gets a real `<title>`/description; a server route emits `sitemap.xml
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL:** `mise exec -- vp run website#test`
-- [ ] **Step 3: Write `website/src/content/site.ts`** (SAMPLE DATA — canonical site facts):
+- [x] **Step 2: Run & expect FAIL:** `mise exec -- vp run website#test`
+- [x] **Step 3: Write `website/src/content/site.ts`** (SAMPLE DATA — canonical site facts):
 
   ```ts
   export interface SiteMeta {
@@ -1905,7 +1905,7 @@ Every route gets a real `<title>`/description; a server route emits `sitemap.xml
   };
   ```
 
-- [ ] **Step 4: Write `website/src/seo.ts`:**
+- [x] **Step 4: Write `website/src/seo.ts`:**
 
   ```ts
   import { site } from "./content/site";
@@ -1963,7 +1963,7 @@ Every route gets a real `<title>`/description; a server route emits `sitemap.xml
   }
   ```
 
-- [ ] **Step 5: Write `website/src/routes/sitemap[.]xml.ts`** (server route — deviation 8 names the fallback):
+- [x] **Step 5: Write `website/src/routes/sitemap[.]xml.ts`** (server route — deviation 8 names the fallback):
 
   ```ts
   import { createFileRoute } from "@tanstack/react-router";
@@ -1991,7 +1991,7 @@ Every route gets a real `<title>`/description; a server route emits `sitemap.xml
 
   > If `generate-routes`/typecheck rejects the `server.handlers` shape, STOP and switch to `createServerFileRoute().methods({ GET })` from `@tanstack/react-start/server` (deviation 8), then report the drift.
 
-- [ ] **Step 6: Write `website/public/favicon.svg`** (green-pixel phone glyph):
+- [x] **Step 6: Write `website/public/favicon.svg`** (green-pixel phone glyph):
 
   ```svg
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" shape-rendering="crispEdges">
@@ -2005,8 +2005,8 @@ Every route gets a real `<title>`/description; a server route emits `sitemap.xml
   </svg>
   ```
 
-- [ ] **Step 7: Update `website/src/routes/__root.tsx`** — set the default head from `site` and inject JSON-LD. In the root route `head()`: `title: site.name`, a description meta from `site.tagline`, link the favicon `{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }`; render `<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd()) }} />` inside `RootDocument`'s `<head>`. Replace plan 05's hardcoded "Lachlan Heywood" title with `site.name` (single source).
-- [ ] **Step 8: Update `website/public/robots.txt`** (append `Sitemap: https://hellotimber.example/sitemap.xml`) and rewrite `website/public/manifest.json`:
+- [x] **Step 7: Update `website/src/routes/__root.tsx`** — set the default head from `site` and inject JSON-LD. In the root route `head()`: `title: site.name`, a description meta from `site.tagline`, link the favicon `{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" }`; render `<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd()) }} />` inside `RootDocument`'s `<head>`. Replace plan 05's hardcoded "Lachlan Heywood" title with `site.name` (single source).
+- [x] **Step 8: Update `website/public/robots.txt`** (append `Sitemap: https://hellotimber.example/sitemap.xml`) and rewrite `website/public/manifest.json`:
 
   ```json
   {
@@ -2020,7 +2020,7 @@ Every route gets a real `<title>`/description; a server route emits `sitemap.xml
   }
   ```
 
-- [ ] **Step 9: Add `head:` to every `\_phone/**`route** using`pageHead`. Per-route values:
+- [x] **Step 9: Add `head:` to every `\_phone/**`route** using`pageHead`. Per-route values:
   - `_phone/index.tsx` → `pageHead({ description: site.tagline })`
   - `_phone/menu/index.tsx` → `{ section: "Menu", description: "Browse the phone menu." }`
   - `menu/phone-book.tsx` → `{ section: "Phone book", description: "Contact details: email, GitHub, LinkedIn, CV." }`
@@ -2040,8 +2040,8 @@ Every route gets a real `<title>`/description; a server route emits `sitemap.xml
   - `menu/profiles.tsx` → `{ section: "Profiles", description: "Visitor modes." }`
   - `menu/sim-services.tsx` → `{ section: "SIM services", description: "No service." }`
   - `_phone/$.tsx` (catch-all) → `head: () => ({ meta: [{ name: "robots", content: "noindex" }, { title: "Lachlan Heywood — No service" }] })` (NOT pageHead — must be noindex; deviation 9)
-- [ ] **Step 10: Verify** `mise exec -- vp run website#build`, then dev: view-source on `/menu/phone-book` shows the section title + description; GET `/sitemap.xml` returns valid XML; view-source on `/` shows the JSON-LD `Person`.
-- [ ] **Step 11: Commit:**
+- [x] **Step 10: Verify** `mise exec -- vp run website#build`, then dev: view-source on `/menu/phone-book` shows the section title + description; GET `/sitemap.xml` returns valid XML; view-source on `/` shows the JSON-LD `Person`.
+- [x] **Step 11: Commit:**
 
   ```bash
   git add website/src/seo.ts website/src/content/site.ts website/src/routes/sitemap\[.\]xml.ts website/public/favicon.svg website/public/robots.txt website/public/manifest.json website/src/routes/__root.tsx website/src/routes/_phone website/tests/seo.test.ts
@@ -2062,7 +2062,7 @@ Reroute all input through `runtime.input()` so the website can watch the key str
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `website/tests/pixel-art.test.ts` (node env):
+- [x] **Step 1: Write the failing test** `website/tests/pixel-art.test.ts` (node env):
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -2084,8 +2084,8 @@ Reroute all input through `runtime.input()` so the website can watch the key str
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL:** `mise exec -- vp run website#test`
-- [ ] **Step 3: Write `website/src/phone/pixel-art.ts`:**
+- [x] **Step 2: Run & expect FAIL:** `mise exec -- vp run website#test`
+- [x] **Step 3: Write `website/src/phone/pixel-art.ts`:**
 
   ```ts
   import type { Bitmap } from "@hellotimber/phone-core";
@@ -2116,20 +2116,20 @@ Reroute all input through `runtime.input()` so the website can watch the key str
   ];
   ```
 
-- [ ] **Step 4: Write `website/src/global.d.ts`:**
+- [x] **Step 4: Write `website/src/global.d.ts`:**
 
   ```ts
   /** Injected by vite define — short build hash for the *#06# IMEI gag. */
   declare const __BUILD_HASH__: string;
   ```
 
-- [ ] **Step 5: Define the build hash in `website/vite.config.ts`** — add to `defineConfig` (deterministic; no `Date.now()`):
+- [x] **Step 5: Define the build hash in `website/vite.config.ts`** — add to `defineConfig` (deterministic; no `Date.now()`):
 
   ```ts
   define: { __BUILD_HASH__: JSON.stringify(process.env.BUILD_HASH ?? "devbuild") },
   ```
 
-- [ ] **Step 6: Add the input funnel to `website/src/phone/phone.ts`** — wrap `phone.send` so the runtime observes keys, detects `*#06#`, and tracks idle for the screensaver. Inside `getPhoneRuntime()`, after `phone` is created, add `input()` and screensaver state; export `input`, `screensaverFrame`, `isScreensaver()`, and a `showImei` flag the SIM panel reads:
+- [x] **Step 6: Add the input funnel to `website/src/phone/phone.ts`** — wrap `phone.send` so the runtime observes keys, detects `*#06#`, and tracks idle for the screensaver. Inside `getPhoneRuntime()`, after `phone` is created, add `input()` and screensaver state; export `input`, `screensaverFrame`, `isScreensaver()`, and a `showImei` flag the SIM panel reads:
 
   ```ts
   import { artToBitmap, SCREENSAVER_ART } from "./pixel-art";
@@ -2165,11 +2165,11 @@ Reroute all input through `runtime.input()` so the website can watch the key str
 
   > If `getPhoneRuntime()` exposes no place to hook the rAF loop or `lastTickMs`, locate the existing `requestAnimationFrame` tick (plan 05 Task 3) and add the screensaver check there. If the structure differs materially, STOP and report.
 
-- [ ] **Step 7: Route input through the funnel.** In `website/src/phone/keyboard.ts` and `PhoneStageHost.tsx`, replace direct `phone.send(...)` calls with `runtime.input(key, action)` (deviation 10 — unchanged for normal keys).
-- [ ] **Step 8: SIM-services panel shows the IMEI** — in `website/src/routes/_phone/menu/sim-services.tsx`, render `<p className="font-mono text-xs opacity-70">IMEI {__BUILD_HASH__}</p>` below "No service."
-- [ ] **Step 9: Catch-all → SIM services** — confirm `website/src/routes/_phone/$.tsx` (plan 05) navigates the handset to `menu/sim-services` for unknown URLs and renders "No service". If not, add `useEffect(() => runtime.phone.navigate("menu/sim-services"), [])`.
-- [ ] **Step 10: Verify** dev: type `* # 0 6 #` → SIM services shows `IMEI devbuild`; Settings → Screen saver On, idle 30 s → pixel scene, any key dismisses; visit `/nonexistent` → SIM services, address bar rewrites to `/menu/sim-services`.
-- [ ] **Step 11: Commit:**
+- [x] **Step 7: Route input through the funnel.** In `website/src/phone/keyboard.ts` and `PhoneStageHost.tsx`, replace direct `phone.send(...)` calls with `runtime.input(key, action)` (deviation 10 — unchanged for normal keys).
+- [x] **Step 8: SIM-services panel shows the IMEI** — in `website/src/routes/_phone/menu/sim-services.tsx`, render `<p className="font-mono text-xs opacity-70">IMEI {__BUILD_HASH__}</p>` below "No service."
+- [x] **Step 9: Catch-all → SIM services** — confirm `website/src/routes/_phone/$.tsx` (plan 05) navigates the handset to `menu/sim-services` for unknown URLs and renders "No service". If not, add `useEffect(() => runtime.phone.navigate("menu/sim-services"), [])`.
+- [x] **Step 10: Verify** dev: type `* # 0 6 #` → SIM services shows `IMEI devbuild`; Settings → Screen saver On, idle 30 s → pixel scene, any key dismisses; visit `/nonexistent` → SIM services, address bar rewrites to `/menu/sim-services`.
+- [x] **Step 11: Commit:**
 
   ```bash
   git add website/src/phone/pixel-art.ts website/src/global.d.ts website/src/phone/phone.ts website/src/phone/keyboard.ts website/src/phone/PhoneStageHost.tsx website/src/routes/_phone/menu/sim-services.tsx website/src/routes/_phone/\$.tsx website/vite.config.ts website/tests/pixel-art.test.ts
@@ -2194,7 +2194,7 @@ The handset's screen text is mirrored into a visually-hidden `aria-live` region 
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `website/tests/screen-text.test.ts` (node env):
+- [x] **Step 1: Write the failing test** `website/tests/screen-text.test.ts` (node env):
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -2240,8 +2240,8 @@ The handset's screen text is mirrored into a visually-hidden `aria-live` region 
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL:** `mise exec -- vp run website#test`
-- [ ] **Step 3: Write `website/src/phone/screen-text.ts`:**
+- [x] **Step 2: Run & expect FAIL:** `mise exec -- vp run website#test`
+- [x] **Step 3: Write `website/src/phone/screen-text.ts`:**
 
   ```ts
   import type { ScreenModel } from "@hellotimber/phone-core";
@@ -2271,7 +2271,7 @@ The handset's screen text is mirrored into a visually-hidden `aria-live` region 
   }
   ```
 
-- [ ] **Step 4: Write `website/src/components/ScreenMirror.tsx`** (subscribes to the phone, no canvas):
+- [x] **Step 4: Write `website/src/components/ScreenMirror.tsx`** (subscribes to the phone, no canvas):
 
   ```tsx
   import { useEffect, useState } from "react";
@@ -2294,8 +2294,8 @@ The handset's screen text is mirrored into a visually-hidden `aria-live` region 
   }
   ```
 
-- [ ] **Step 5: Mount it in `website/src/routes/_phone.tsx`** — render `<ScreenMirror />` inside the layout (it is client-only safe because `getPhoneRuntime` is guarded; place it inside the same `ClientOnly` subtree as the stage, or render it unconditionally since it produces only text — prefer inside `ClientOnly` to avoid SSR constructing the runtime).
-- [ ] **Step 6: Add CSS to `website/src/styles.css`:**
+- [x] **Step 5: Mount it in `website/src/routes/_phone.tsx`** — render `<ScreenMirror />` inside the layout (it is client-only safe because `getPhoneRuntime` is guarded; place it inside the same `ClientOnly` subtree as the stage, or render it unconditionally since it produces only text — prefer inside `ClientOnly` to avoid SSR constructing the runtime).
+- [x] **Step 6: Add CSS to `website/src/styles.css`:**
 
   ```css
   .sr-only {
@@ -2322,7 +2322,7 @@ The handset's screen text is mirrored into a visually-hidden `aria-live` region 
   }
   ```
 
-- [ ] **Step 7: Reduced motion — boot skip.** In `website/src/phone/phone.ts`, when constructing the phone, set `bootMs` to `0` if the user prefers reduced motion:
+- [x] **Step 7: Reduced motion — boot skip.** In `website/src/phone/phone.ts`, when constructing the phone, set `bootMs` to `0` if the user prefers reduced motion:
 
   ```ts
   const reduceMotion =
@@ -2330,7 +2330,7 @@ The handset's screen text is mirrored into a visually-hidden `aria-live` region 
   const phone = createPhone({ /* …menu, apps, carrier, clock… */ bootMs: reduceMotion ? 0 : 2500 });
   ```
 
-- [ ] **Step 8: Reduced motion — idle sway (the single phone-3d edit, deviation 6).** Open `packages/phone-3d/src/PhoneStage.tsx`. Find the `useFrame` that applies idle rotation/sway. Gate it on a reduced-motion check so the phone sits still for those users:
+- [x] **Step 8: Reduced motion — idle sway (the single phone-3d edit, deviation 6).** Open `packages/phone-3d/src/PhoneStage.tsx`. Find the `useFrame` that applies idle rotation/sway. Gate it on a reduced-motion check so the phone sits still for those users:
 
   ```tsx
   const reduceMotion =
@@ -2343,8 +2343,8 @@ The handset's screen text is mirrored into a visually-hidden `aria-live` region 
 
   > If `PhoneStage.tsx` is laid out differently (plan 03's exact structure was unknown when this plan was written), locate the idle-motion `useFrame` by searching for `useFrame` in `packages/phone-3d/src/`, apply the same early-return gate, and keep the pointer-follow tilt if it is in a separate `useFrame` (tilt may stay — it responds to user input, not idle motion). If you cannot identify the idle-motion code unambiguously, STOP and report.
 
-- [ ] **Step 9: Verify** — `mise exec -- vp run website#dev`. With a screen reader (or the browser a11y inspector), navigate the menu: the live region announces each screen. In OS settings enable "reduce motion", reload → no boot animation, phone holds still. Resize to mobile width → panel sits below the canvas and every link/control is reachable. Run Lighthouse (Chrome devtools) on `/menu/phone-book`: **Accessibility ≥ 95** (fix any flagged contrast/label issues before committing).
-- [ ] **Step 10: Commit:**
+- [x] **Step 9: Verify** — `mise exec -- vp run website#dev`. With a screen reader (or the browser a11y inspector), navigate the menu: the live region announces each screen. In OS settings enable "reduce motion", reload → no boot animation, phone holds still. Resize to mobile width → panel sits below the canvas and every link/control is reachable. Run Lighthouse (Chrome devtools) on `/menu/phone-book`: **Accessibility ≥ 95** (fix any flagged contrast/label issues before committing).
+- [x] **Step 10: Commit:**
 
   ```bash
   git add website/src/phone/screen-text.ts website/src/components/ScreenMirror.tsx website/src/routes/_phone.tsx website/src/styles.css packages/phone-3d/src/PhoneStage.tsx website/src/phone/phone.ts website/tests/screen-text.test.ts
@@ -2363,12 +2363,12 @@ Confirm the heavy 3D bundle only loads inside the `_phone` layout (it already us
 
 **Steps**
 
-- [ ] **Step 1: Build and inspect chunks:** `mise exec -- vp run website#build`. In the build output, identify the chunk containing three / @react-three. Confirm it is a **separate** chunk (a `lazy()` split point), not part of the main entry.
-- [ ] **Step 2: Check the gzip size** reported for that chunk. Budget: **three/R3F chunk < 700 KB gzipped**. Record the actual number in the commit message.
-- [ ] **Step 3: If it is NOT split** (three appears in the main entry chunk), the `lazy()` import in `routes/_phone.tsx` was lost — STOP and report; the fix belongs to plan 05's pattern, not here.
-- [ ] **Step 4: If over budget,** apply only safe wins: ensure `@react-three/drei` is imported by named import (tree-shakeable) not `import * as`, and that nothing in `website/src` imports `three` at the top level outside the lazy subtree. Re-build and re-measure. Do not add new dependencies.
-- [ ] **Step 5: Confirm no webfont requests** — the design uses the pixel LCD font (rendered to canvas) and system fonts for HTML panels. Verify the Network tab shows no `.woff`/`.woff2` requests on first load.
-- [ ] **Step 6: Commit** (docs-only if no code changed — record the measured numbers):
+- [x] **Step 1: Build and inspect chunks:** `mise exec -- vp run website#build`. In the build output, identify the chunk containing three / @react-three. Confirm it is a **separate** chunk (a `lazy()` split point), not part of the main entry.
+- [x] **Step 2: Check the gzip size** reported for that chunk. Budget: **three/R3F chunk < 700 KB gzipped**. Record the actual number in the commit message.
+- [x] **Step 3: If it is NOT split** (three appears in the main entry chunk), the `lazy()` import in `routes/_phone.tsx` was lost — STOP and report; the fix belongs to plan 05's pattern, not here.
+- [x] **Step 4: If over budget,** apply only safe wins: ensure `@react-three/drei` is imported by named import (tree-shakeable) not `import * as`, and that nothing in `website/src` imports `three` at the top level outside the lazy subtree. Re-build and re-measure. Do not add new dependencies.
+- [x] **Step 5: Confirm no webfont requests** — the design uses the pixel LCD font (rendered to canvas) and system fonts for HTML panels. Verify the Network tab shows no `.woff`/`.woff2` requests on first load.
+- [x] **Step 6: Commit** (docs-only if no code changed — record the measured numbers):
 
   ```bash
   git commit --allow-empty -m "chore(website): verify lazy 3D chunk <Xkb gz, no webfonts (perf budget)"
@@ -2386,7 +2386,7 @@ A GitHub Actions workflow runs the full gate on every push. Deployment target is
 
 **Steps**
 
-- [ ] **Step 1: Write `.github/workflows/ci.yml`:**
+- [x] **Step 1: Write `.github/workflows/ci.yml`:**
 
   ```yaml
   name: CI
@@ -2406,15 +2406,15 @@ A GitHub Actions workflow runs the full gate on every push. Deployment target is
         - run: mise exec -- vp run ready
   ```
 
-- [ ] **Step 2: Verify locally** that the exact CI command passes: `mise exec -- vp run ready` (= `vp check && vp run -r test && vp run -r build`). It must be green before committing.
-- [ ] **Step 3: Commit:**
+- [x] **Step 2: Verify locally** that the exact CI command passes: `mise exec -- vp run ready` (= `vp check && vp run -r test && vp run -r build`). It must be green before committing.
+- [x] **Step 3: Commit:**
 
   ```bash
   git add .github/workflows/ci.yml
   git commit -m "ci: run vp run ready on push and PR via mise"
   ```
 
-- [ ] **Step 4: DECISION REQUIRED — deployment target.** Do NOT implement a deploy step yet. Record the options for Lachlan (all support TanStack Start SSR):
+- [x] **Step 4: DECISION REQUIRED — deployment target.** Do NOT implement a deploy step yet. Record the options for Lachlan (all support TanStack Start SSR):
   - **Cloudflare (Pages/Workers):** add the TanStack Start Cloudflare target + `wrangler`; cheapest edge SSR. Follow-up: `wrangler.toml` + a `deploy` job using `cloudflare/wrangler-action`.
   - **Vercel:** zero-config TanStack Start preset; connect the repo in the Vercel dashboard; no workflow file needed (or use the Vercel CLI in CI).
   - **Netlify:** TanStack Start Netlify adapter + `netlify.toml`; connect repo.
@@ -2433,7 +2433,7 @@ Everything fabricated in this repo is annotated `// SAMPLE DATA — replace with
 
 **Steps**
 
-- [ ] **Step 1: Find every sample block** — `grep -rn "SAMPLE DATA" website/src` — and replace the values in each. The fields, by file:
+- [x] **Step 1: Find every sample block** — `grep -rn "SAMPLE DATA" website/src` — and replace the values in each. The fields, by file:
   - `website/src/content/site.ts` — real `name`, `origin` (the deployed domain), `tagline`, `sameAs` profile URLs.
   - `website/src/content/phonebook.ts` — real email, GitHub, LinkedIn, CV download URL (drop the file in `website/public/` and point at it).
   - `website/src/content/messages.ts` — real "about me" inbox blurbs (each ≤160 chars) + the contact-form destination email.
@@ -2443,13 +2443,13 @@ Everything fabricated in this repo is annotated `// SAMPLE DATA — replace with
   - `website/src/content/clock.ts` — real timezone + availability line.
   - `website/src/content/profiles.ts` — keep the stub or define real visitor modes (stretch).
   - `website/src/content/divert.ts` — real external profile links.
-- [ ] **Step 2: Replace the favicon/OG** if desired (`website/public/favicon.svg` is a generic phone glyph — fine to keep).
-- [ ] **Step 3: Decide the deployment target** (Task 10 Step 4) and wire the deploy job.
-- [ ] **Step 4: Confirm no sample data remains** — `grep -rn "SAMPLE DATA" website/src` returns nothing; `grep -rn "example" website/src/content` finds no leftover `example.com`/`/example` handles.
-- [ ] **Step 5: Full gate** — `mise exec -- vp run ready` is green (check + all package tests + build).
-- [ ] **Step 6: Definition of done** — boot animation plays; standby reads the real carrier line; every menu route is reachable by keypad AND by URL AND crawlable (view-source shows the panel content); Snake is playable with a persisting top score; sound works and respects Settings; Lighthouse a11y ≥ 95; `/sitemap.xml` lists the real origin.
-- [ ] **Step 7: Update `docs/plans/README.md`** — set plan 06 Status to **done**.
-- [ ] **Step 8: Commit:**
+- [x] **Step 2: Replace the favicon/OG** if desired (`website/public/favicon.svg` is a generic phone glyph — fine to keep).
+- [x] **Step 3: Decide the deployment target** (Task 10 Step 4) and wire the deploy job.
+- [x] **Step 4: Confirm no sample data remains** — `grep -rn "SAMPLE DATA" website/src` returns nothing; `grep -rn "example" website/src/content` finds no leftover `example.com`/`/example` handles.
+- [x] **Step 5: Full gate** — `mise exec -- vp run ready` is green (check + all package tests + build).
+- [x] **Step 6: Definition of done** — boot animation plays; standby reads the real carrier line; every menu route is reachable by keypad AND by URL AND crawlable (view-source shows the panel content); Snake is playable with a persisting top score; sound works and respects Settings; Lighthouse a11y ≥ 95; `/sitemap.xml` lists the real origin.
+- [x] **Step 7: Update `docs/plans/README.md`** — set plan 06 Status to **done**.
+- [x] **Step 8: Commit:**
 
   ```bash
   git add website/src/content docs/plans/README.md

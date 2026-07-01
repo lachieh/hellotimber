@@ -78,7 +78,7 @@ The repo root already provides the workspace (`pnpm-workspace.yaml` with `packag
 
 **Steps**
 
-- [ ] **Step 1: Write `packages/phone-core/package.json`** (exact shape from `docs/specs/integration-notes.md` §1 — source exports, no build script):
+- [x] **Step 1: Write `packages/phone-core/package.json`** (exact shape from `docs/specs/integration-notes.md` §1 — source exports, no build script):
 
   ```json
   {
@@ -100,7 +100,7 @@ The repo root already provides the workspace (`pnpm-workspace.yaml` with `packag
   }
   ```
 
-- [ ] **Step 2: Write `packages/phone-core/tsconfig.json`** (template from integration-notes §1, verbatim):
+- [x] **Step 2: Write `packages/phone-core/tsconfig.json`** (template from integration-notes §1, verbatim):
 
   ```json
   {
@@ -120,7 +120,7 @@ The repo root already provides the workspace (`pnpm-workspace.yaml` with `packag
   }
   ```
 
-- [ ] **Step 3: Write `packages/phone-core/vite.config.ts`** with a `test` block (node env — phone-core is DOM-free):
+- [x] **Step 3: Write `packages/phone-core/vite.config.ts`** with a `test` block (node env — phone-core is DOM-free):
 
   ```ts
   import { defineConfig } from "vite-plus";
@@ -133,15 +133,15 @@ The repo root already provides the workspace (`pnpm-workspace.yaml` with `packag
   });
   ```
 
-- [ ] **Step 4: Write `packages/phone-core/src/index.ts`** as a placeholder module (replaced in Task 2):
+- [x] **Step 4: Write `packages/phone-core/src/index.ts`** as a placeholder module (replaced in Task 2):
 
   ```ts
   export {};
   ```
 
-- [ ] **Step 5: Link the package into the workspace:** run `mise exec -- vp install` from the repo root. Expect it to succeed and list `@hellotimber/phone-core` as a workspace project.
-- [ ] **Step 6: Verify lint/typecheck:** run `mise exec -- vp check --fix` from the repo root. Expect pass. (Do not run the test command yet — there are no test files until Task 2.)
-- [ ] **Step 7: Commit:**
+- [x] **Step 5: Link the package into the workspace:** run `mise exec -- vp install` from the repo root. Expect it to succeed and list `@hellotimber/phone-core` as a workspace project.
+- [x] **Step 6: Verify lint/typecheck:** run `mise exec -- vp check --fix` from the repo root. Expect pass. (Do not run the test command yet — there are no test files until Task 2.)
+- [x] **Step 7: Commit:**
 
   ```sh
   git add packages/phone-core pnpm-lock.yaml
@@ -162,7 +162,7 @@ All public types from the VISION.md "Public contracts" section, **verbatim**, re
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-core/tests/types.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-core/tests/types.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -243,8 +243,8 @@ All public types from the VISION.md "Public contracts" section, **verbatim**, re
   });
   ```
 
-- [ ] **Step 2: Run it & expect FAIL** (module `../src/index` has no such exports): `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 3: Write `packages/phone-core/src/types.ts`** — the contract, copied verbatim from VISION.md "Public contracts → `@hellotimber/phone-core`":
+- [x] **Step 2: Run it & expect FAIL** (module `../src/index` has no such exports): `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 3: Write `packages/phone-core/src/types.ts`** — the contract, copied verbatim from VISION.md "Public contracts → `@hellotimber/phone-core`":
 
   ```ts
   export type PhoneKey =
@@ -347,7 +347,7 @@ All public types from the VISION.md "Public contracts" section, **verbatim**, re
   }
   ```
 
-- [ ] **Step 4: Replace `packages/phone-core/src/index.ts`** with the type re-exports:
+- [x] **Step 4: Replace `packages/phone-core/src/index.ts`** with the type re-exports:
 
   ```ts
   export type {
@@ -365,8 +365,8 @@ All public types from the VISION.md "Public contracts" section, **verbatim**, re
   } from "./types";
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 6: Commit:**
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 6: Commit:**
 
   ```sh
   git add packages/phone-core
@@ -387,7 +387,7 @@ Pure functions implementing the path scheme `standby | menu | menu/<id>/<id>/…
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-core/tests/paths.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-core/tests/paths.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -464,8 +464,8 @@ Pure functions implementing the path scheme `standby | menu | menu/<id>/<id>/…
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `src/paths.ts`): `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 3: Write `packages/phone-core/src/paths.ts`:**
+- [x] **Step 2: Run & expect FAIL** (no `src/paths.ts`): `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 3: Write `packages/phone-core/src/paths.ts`:**
 
   ```ts
   import type { MenuNode } from "./types";
@@ -527,7 +527,7 @@ Pure functions implementing the path scheme `standby | menu | menu/<id>/<id>/…
   }
   ```
 
-- [ ] **Step 4: Append the path exports to `packages/phone-core/src/index.ts`** (add below the existing type re-exports):
+- [x] **Step 4: Append the path exports to `packages/phone-core/src/index.ts`** (add below the existing type re-exports):
 
   ```ts
   export {
@@ -541,8 +541,8 @@ Pure functions implementing the path scheme `standby | menu | menu/<id>/<id>/…
   export type { ParsedPath } from "./paths";
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 6: Commit:**
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 6: Commit:**
 
   ```sh
   git add packages/phone-core
@@ -564,7 +564,7 @@ Pure functions implementing the path scheme `standby | menu | menu/<id>/<id>/…
 
 **Steps**
 
-- [ ] **Step 1: Write the shared fixtures** `packages/phone-core/tests/fixtures.ts`:
+- [x] **Step 1: Write the shared fixtures** `packages/phone-core/tests/fixtures.ts`:
 
   ```ts
   import { createPhone } from "../src/index";
@@ -649,7 +649,7 @@ Pure functions implementing the path scheme `standby | menu | menu/<id>/<id>/…
   }
   ```
 
-- [ ] **Step 2: Write the failing test** `packages/phone-core/tests/power.test.ts`:
+- [x] **Step 2: Write the failing test** `packages/phone-core/tests/power.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -731,8 +731,8 @@ Pure functions implementing the path scheme `standby | menu | menu/<id>/<id>/…
   });
   ```
 
-- [ ] **Step 3: Run & expect FAIL** (no `createPhone` export): `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 4: Write `packages/phone-core/src/machine.ts`.** This is the full core; the four functions marked "Replaced in Task N" are real stubs that later tasks overwrite:
+- [x] **Step 3: Run & expect FAIL** (no `createPhone` export): `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 4: Write `packages/phone-core/src/machine.ts`.** This is the full core; the four functions marked "Replaced in Task N" are real stubs that later tasks overwrite:
 
   ```ts
   import type {
@@ -1155,7 +1155,7 @@ Pure functions implementing the path scheme `standby | menu | menu/<id>/<id>/…
   }
   ```
 
-- [ ] **Step 5: Append the machine exports to `packages/phone-core/src/index.ts`:**
+- [x] **Step 5: Append the machine exports to `packages/phone-core/src/index.ts`:**
 
   ```ts
   export {
@@ -1170,9 +1170,9 @@ Pure functions implementing the path scheme `standby | menu | menu/<id>/<id>/…
   } from "./machine";
   ```
 
-- [ ] **Step 6: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 7: Run `mise exec -- vp check --fix`** — expect pass (fix any reported lint nits without changing behavior).
-- [ ] **Step 8: Commit:**
+- [x] **Step 6: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 7: Run `mise exec -- vp check --fix`** — expect pass (fix any reported lint nits without changing behavior).
+- [x] **Step 8: Commit:**
 
   ```sh
   git add packages/phone-core
@@ -1192,7 +1192,7 @@ Standby: `navi` opens the menu carousel; `up` jumps to the phone book name list 
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-core/tests/carousel.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-core/tests/carousel.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1302,14 +1302,14 @@ Standby: `navi` opens the menu carousel; `up` jumps to the phone book name list 
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (standby/nav handlers are still stubs): `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 3: Extend the imports** at the top of `packages/phone-core/src/machine.ts` — add this line directly below the `import type { ... } from "./types";` block:
+- [x] **Step 2: Run & expect FAIL** (standby/nav handlers are still stubs): `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 3: Extend the imports** at the top of `packages/phone-core/src/machine.ts` — add this line directly below the `import type { ... } from "./types";` block:
 
   ```ts
   import { childrenOf, parsePath, resolveIds } from "./paths";
   ```
 
-- [ ] **Step 4: Replace the stub `standbyShortPress`** in `packages/phone-core/src/machine.ts` with:
+- [x] **Step 4: Replace the stub `standbyShortPress`** in `packages/phone-core/src/machine.ts` with:
 
   ```ts
   function standbyShortPress(m: Machine, key: PhoneKey): void {
@@ -1323,7 +1323,7 @@ Standby: `navi` opens the menu carousel; `up` jumps to the phone book name list 
   }
   ```
 
-- [ ] **Step 5: Replace the stub `navShortPress`** with the carousel handler (lists/readers extended in Task 6, digit shortcuts in Task 7):
+- [x] **Step 5: Replace the stub `navShortPress`** with the carousel handler (lists/readers extended in Task 6, digit shortcuts in Task 7):
 
   ```ts
   function navShortPress(m: Machine, key: PhoneKey): void {
@@ -1360,7 +1360,7 @@ Standby: `navi` opens the menu carousel; `up` jumps to the phone book name list 
   }
   ```
 
-- [ ] **Step 6: Replace the stub `applyPath`** with the real version, and add its helpers (`enterMenu`, `tryApplyPath`, `buildNavStack`, `enterNode`, `popFrame`, `wrapIndex`) directly below it:
+- [x] **Step 6: Replace the stub `applyPath`** with the real version, and add its helpers (`enterMenu`, `tryApplyPath`, `buildNavStack`, `enterNode`, `popFrame`, `wrapIndex`) directly below it:
 
   ```ts
   /** Jump the machine to a parsed path as if the user had navigated there. Unknown → standby. */
@@ -1467,8 +1467,8 @@ Standby: `navi` opens the menu carousel; `up` jumps to the phone book name list 
   }
   ```
 
-- [ ] **Step 7: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 8: Commit:**
+- [x] **Step 7: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 8: Commit:**
 
   ```sh
   git add packages/phone-core
@@ -1488,7 +1488,7 @@ Submenu/list selection moves with ▲▼ (wrapping, like the carousel — best g
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-core/tests/lists.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-core/tests/lists.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1566,8 +1566,8 @@ Submenu/list selection moves with ▲▼ (wrapping, like the carousel — best g
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (list keys not handled yet): `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 3: Replace `navShortPress`** in `packages/phone-core/src/machine.ts` with the full per-frame switch (digit shortcuts still arrive in Task 7):
+- [x] **Step 2: Run & expect FAIL** (list keys not handled yet): `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 3: Replace `navShortPress`** in `packages/phone-core/src/machine.ts` with the full per-frame switch (digit shortcuts still arrive in Task 7):
 
   ```ts
   function navShortPress(m: Machine, key: PhoneKey): void {
@@ -1644,8 +1644,8 @@ Submenu/list selection moves with ▲▼ (wrapping, like the carousel — best g
   }
   ```
 
-- [ ] **Step 4: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 5: Commit:**
+- [x] **Step 4: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 5: Commit:**
 
   ```sh
   git add packages/phone-core
@@ -1665,7 +1665,7 @@ Verified 3310 behavior (spec §5): press `Menu` (navi), then digits within 3 sec
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-core/tests/shortcuts.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-core/tests/shortcuts.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1736,8 +1736,8 @@ Verified 3310 behavior (spec §5): press `Menu` (navi), then digits within 3 sec
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 3: Add the shortcut handlers** to `packages/phone-core/src/machine.ts`, directly below `enterMenu`:
+- [x] **Step 2: Run & expect FAIL:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 3: Add the shortcut handlers** to `packages/phone-core/src/machine.ts`, directly below `enterMenu`:
 
   ```ts
   /** A digit pressed in the carousel while the 3s window is open. */
@@ -1772,7 +1772,7 @@ Verified 3310 behavior (spec §5): press `Menu` (navi), then digits within 3 sec
   }
   ```
 
-- [ ] **Step 4: Replace the `case "carousel":` block inside `navShortPress`** with the digit-aware version (the rest of the switch is unchanged from Task 6):
+- [x] **Step 4: Replace the `case "carousel":` block inside `navShortPress`** with the digit-aware version (the rest of the switch is unchanged from Task 6):
 
   ```ts
       case "carousel": {
@@ -1799,7 +1799,7 @@ Verified 3310 behavior (spec §5): press `Menu` (navi), then digits within 3 sec
       }
   ```
 
-- [ ] **Step 5: Replace `handleTick`** with the version that expires the window:
+- [x] **Step 5: Replace `handleTick`** with the version that expires the window:
 
   ```ts
   function handleTick(m: Machine, nowMs: number): void {
@@ -1815,8 +1815,8 @@ Verified 3310 behavior (spec §5): press `Menu` (navi), then digits within 3 sec
   }
   ```
 
-- [ ] **Step 6: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 7: Commit:**
+- [x] **Step 6: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 7: Commit:**
 
   ```sh
   git add packages/phone-core
@@ -1837,7 +1837,7 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
 
 **Steps**
 
-- [ ] **Step 1: Add a fake app to the fixtures.** In `packages/phone-core/tests/fixtures.ts`, replace the import block at the top with:
+- [x] **Step 1: Add a fake app to the fixtures.** In `packages/phone-core/tests/fixtures.ts`, replace the import block at the top with:
 
   ```ts
   import { createPhone } from "../src/index";
@@ -1893,7 +1893,7 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
   }
   ```
 
-- [ ] **Step 2: Write the failing test** `packages/phone-core/tests/apps.test.ts`:
+- [x] **Step 2: Write the failing test** `packages/phone-core/tests/apps.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1989,8 +1989,8 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
   });
   ```
 
-- [ ] **Step 3: Run & expect FAIL:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 4: Add `launchApp`** to `packages/phone-core/src/machine.ts`, directly below `enterNode`:
+- [x] **Step 3: Run & expect FAIL:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 4: Add `launchApp`** to `packages/phone-core/src/machine.ts`, directly below `enterNode`:
 
   ```ts
   /** Launch an app node's factory; no registered factory → no-op. */
@@ -2013,7 +2013,7 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
   }
   ```
 
-- [ ] **Step 5: Replace `enterNode`** so app nodes launch (action nodes arrive in Task 9):
+- [x] **Step 5: Replace `enterNode`** so app nodes launch (action nodes arrive in Task 9):
 
   ```ts
   /** Enter a node from the carousel or a submenu list. */
@@ -2043,7 +2043,7 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
   }
   ```
 
-- [ ] **Step 6: Replace `buildNavStack`** so navigated/shortcut paths ending on an app node launch it:
+- [x] **Step 6: Replace `buildNavStack`** so navigated/shortcut paths ending on an app node launch it:
 
   ```ts
   /**
@@ -2076,7 +2076,7 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
   }
   ```
 
-- [ ] **Step 7: Replace `handleTick`** with the final version that delegates tick deltas to the app:
+- [x] **Step 7: Replace `handleTick`** with the final version that delegates tick deltas to the app:
 
   ```ts
   function handleTick(m: Machine, nowMs: number): void {
@@ -2101,8 +2101,8 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
   }
   ```
 
-- [ ] **Step 8: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 9: Commit:**
+- [x] **Step 8: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 9: Commit:**
 
   ```sh
   git add packages/phone-core
@@ -2122,7 +2122,7 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-core/tests/events.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-core/tests/events.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -2207,8 +2207,8 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (the action test fails — action nodes are inert): `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 3: Replace `enterNode`** in `packages/phone-core/src/machine.ts` with the final version:
+- [x] **Step 2: Run & expect FAIL** (the action test fails — action nodes are inert): `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 3: Replace `enterNode`** in `packages/phone-core/src/machine.ts` with the final version:
 
   ```ts
   /** Enter a node from the carousel or a submenu list. */
@@ -2238,8 +2238,8 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
   }
   ```
 
-- [ ] **Step 4: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 5: Commit:**
+- [x] **Step 4: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 5: Commit:**
 
   ```sh
   git add packages/phone-core
@@ -2259,7 +2259,7 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-core/tests/navigate.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-core/tests/navigate.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -2368,14 +2368,14 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (`handleNavigate` is a stub): `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 3: Extend the paths import** in `packages/phone-core/src/machine.ts` to include `normalizePath`:
+- [x] **Step 2: Run & expect FAIL** (`handleNavigate` is a stub): `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 3: Extend the paths import** in `packages/phone-core/src/machine.ts` to include `normalizePath`:
 
   ```ts
   import { childrenOf, normalizePath, parsePath, resolveIds } from "./paths";
   ```
 
-- [ ] **Step 4: Replace the stub `handleNavigate`** with:
+- [x] **Step 4: Replace the stub `handleNavigate`** with:
 
   ```ts
   /** External (router) control: show `path` as if the user had navigated there. */
@@ -2395,8 +2395,8 @@ A `type:"app"` MenuNode launches `config.apps[appId]` through `AppFactory` with 
   }
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 6: Commit:**
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 6: Commit:**
 
   ```sh
   git add packages/phone-core
@@ -2417,7 +2417,7 @@ A pure, immutable-state engine (no machine coupling — the editor app in Task 1
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-core/tests/multitap.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-core/tests/multitap.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -2536,8 +2536,8 @@ A pure, immutable-state engine (no machine coupling — the editor app in Task 1
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `src/multitap.ts`): `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 3: Write `packages/phone-core/src/multitap.ts`:**
+- [x] **Step 2: Run & expect FAIL** (no `src/multitap.ts`): `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 3: Write `packages/phone-core/src/multitap.ts`:**
 
   ```ts
   /**
@@ -2662,7 +2662,7 @@ A pure, immutable-state engine (no machine coupling — the editor app in Task 1
   }
   ```
 
-- [ ] **Step 4: Append the multitap exports to `packages/phone-core/src/index.ts`:**
+- [x] **Step 4: Append the multitap exports to `packages/phone-core/src/index.ts`:**
 
   ```ts
   export {
@@ -2680,8 +2680,8 @@ A pure, immutable-state engine (no machine coupling — the editor app in Task 1
   export type { MultitapKey, MultitapMode, MultitapState } from "./multitap";
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 6: Commit:**
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 6: Commit:**
 
   ```sh
   git add packages/phone-core
@@ -2702,7 +2702,7 @@ A pure, immutable-state engine (no machine coupling — the editor app in Task 1
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-core/tests/editor.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-core/tests/editor.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -2809,8 +2809,8 @@ A pure, immutable-state engine (no machine coupling — the editor app in Task 1
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `editorApp` export): `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 3: Write `packages/phone-core/src/editor.ts`:**
+- [x] **Step 2: Run & expect FAIL** (no `editorApp` export): `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 3: Write `packages/phone-core/src/editor.ts`:**
 
   ```ts
   import { LONG_PRESS_MS } from "./machine";
@@ -2924,15 +2924,15 @@ A pure, immutable-state engine (no machine coupling — the editor app in Task 1
   }
   ```
 
-- [ ] **Step 4: Append the editor exports to `packages/phone-core/src/index.ts`:**
+- [x] **Step 4: Append the editor exports to `packages/phone-core/src/index.ts`:**
 
   ```ts
   export { editorApp } from "./editor";
   export type { EditorOptions } from "./editor";
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 6: Commit:**
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 6: Commit:**
 
   ```sh
   git add packages/phone-core
@@ -2953,7 +2953,7 @@ The 13 verified top-level menus in manual order (spec §5), parameterized by a t
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-core/tests/nokia-menu.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-core/tests/nokia-menu.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -3107,8 +3107,8 @@ The 13 verified top-level menus in manual order (spec §5), parameterized by a t
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `nokia3310Menu` export): `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 3: Write `packages/phone-core/src/nokia-menu.ts`:**
+- [x] **Step 2: Run & expect FAIL** (no `nokia3310Menu` export): `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 3: Write `packages/phone-core/src/nokia-menu.ts`:**
 
   ```ts
   import type { MenuNode } from "./types";
@@ -3336,15 +3336,15 @@ The 13 verified top-level menus in manual order (spec §5), parameterized by a t
   }
   ```
 
-- [ ] **Step 4: Append the menu-builder exports to `packages/phone-core/src/index.ts`:**
+- [x] **Step 4: Append the menu-builder exports to `packages/phone-core/src/index.ts`:**
 
   ```ts
   export { nokia3310Menu } from "./nokia-menu";
   export type { ChatLine, ContentItem, DivertTarget, Nokia3310Content } from "./nokia-menu";
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
-- [ ] **Step 6: Commit:**
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-core#test`
+- [x] **Step 6: Commit:**
 
   ```sh
   git add packages/phone-core
@@ -3362,10 +3362,10 @@ The 13 verified top-level menus in manual order (spec §5), parameterized by a t
 
 **Steps**
 
-- [ ] **Step 1: Run the full suite:** `mise exec -- vp run @hellotimber/phone-core#test` — expect **all 12 test files green** (types, paths, power, carousel, lists, shortcuts, apps, events, navigate, multitap, editor, nokia-menu).
-- [ ] **Step 2: Coverage sanity:** from `packages/phone-core`, run `mise exec -- vp test run --coverage`. Expect high statement coverage on `src/` (the machine is pure logic; everything is reachable from tests). If the coverage provider is not installed in this workspace, do **not** add dependencies — note the omission in your completion report and move on.
-- [ ] **Step 3: Run `mise exec -- vp check --fix`** from the repo root — expect pass.
-- [ ] **Step 4: Write `packages/phone-core/README.md`** (standalone usage — rule: every package works outside this repo):
+- [x] **Step 1: Run the full suite:** `mise exec -- vp run @hellotimber/phone-core#test` — expect **all 12 test files green** (types, paths, power, carousel, lists, shortcuts, apps, events, navigate, multitap, editor, nokia-menu).
+- [x] **Step 2: Coverage sanity:** from `packages/phone-core`, run `mise exec -- vp test run --coverage`. Expect high statement coverage on `src/` (the machine is pure logic; everything is reachable from tests). If the coverage provider is not installed in this workspace, do **not** add dependencies — note the omission in your completion report and move on.
+- [x] **Step 3: Run `mise exec -- vp check --fix`** from the repo root — expect pass.
+- [x] **Step 4: Write `packages/phone-core/README.md`** (standalone usage — rule: every package works outside this repo):
 
   ````md
   # @hellotimber/phone-core
@@ -3441,12 +3441,12 @@ The 13 verified top-level menus in manual order (spec §5), parameterized by a t
   - `Bitmap` convention: one byte per pixel, row-major, `pixels.length === width * height`.
   ````
 
-- [ ] **Step 5: Update the plan index:** in `docs/plans/README.md`, change the Status cell of the row `| 01  | [phone-core](./01-phone-core.md) | ... | not started |` from `not started` to `done`.
-- [ ] **Step 6: Commit:**
+- [x] **Step 5: Update the plan index:** in `docs/plans/README.md`, change the Status cell of the row `| 01  | [phone-core](./01-phone-core.md) | ... | not started |` from `not started` to `done`.
+- [x] **Step 6: Commit:**
 
   ```sh
   git add packages/phone-core/README.md docs/plans/README.md
   git commit -m "docs(phone-core): standalone usage README; mark plan 01 done"
   ```
 
-- [ ] **Step 7: Report completion** — summarize: tasks finished, test-file/assertion counts, coverage result (or that the provider was unavailable), and any deviations encountered (there should be none beyond the "Contract deviations" notes at the top of this plan).
+- [x] **Step 7: Report completion** — summarize: tasks finished, test-file/assertion counts, coverage result (or that the provider was unavailable), and any deviations encountered (there should be none beyond the "Contract deviations" notes at the top of this plan).

@@ -97,15 +97,13 @@ mise exec -- vp run ready                            # check + all package tests
 - Lighthouse Accessibility ≥ 95 on a content route.
 - `/sitemap.xml` lists the real origin; JSON-LD `Person` present on `/`.
 
-## OPEN DECISION — deployment target (Task 10 Step 4)
+## ~~OPEN DECISION~~ RESOLVED — deployment target is Vercel (2026-06)
 
-The single tracked open item. All options support TanStack Start SSR; once chosen, the follow-up
-is: add the target's adapter/config + a deploy job to `.github/workflows/ci.yml` gated on `master`.
+**Vercel was chosen and is live.** The config lives in `website/` (TanStack Start's Nitro
+Vercel preset — see the `fix(deploy):` commit series, ending at `e85f318`). Deploys run via
+Vercel's Git integration on push; no deploy job in `.github/workflows/ci.yml` is needed
+(CI remains test/lint/build gate only). Remaining deploy-related content items above
+(`site.url`, `robots.txt` Sitemap URL) still need the real production origin.
 
-- **Cloudflare (Pages/Workers)** — cheapest edge SSR. Add the TanStack Start Cloudflare target +
-  `wrangler`; deploy via `cloudflare/wrangler-action` and a `wrangler.toml`.
-- **Vercel** — zero-config TanStack Start preset; connect the repo in the dashboard (no workflow
-  file needed) or use the Vercel CLI in CI.
-- **Netlify** — TanStack Start Netlify adapter + `netlify.toml`; connect the repo.
-
-**DECISION REQUIRED:** pick one, then wire the deploy job.
+Plan 08 (messaging) adds a server route that calls the Anthropic API — when executing it,
+set `ANTHROPIC_API_KEY` in the Vercel project's environment variables.

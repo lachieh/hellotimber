@@ -89,7 +89,7 @@ Write the scaffold files directly (per AGENTS.md "Creating a new package" — `v
 
 **Steps**
 
-- [ ] **Step 1: Write `packages/phone-screen/package.json`** (source-exports shape from `docs/specs/integration-notes.md` §1; phone-core type-only + jsdom for the Task 13 wrapper test):
+- [x] **Step 1: Write `packages/phone-screen/package.json`** (source-exports shape from `docs/specs/integration-notes.md` §1; phone-core type-only + jsdom for the Task 13 wrapper test):
 
   ```json
   {
@@ -113,7 +113,7 @@ Write the scaffold files directly (per AGENTS.md "Creating a new package" — `v
   }
   ```
 
-- [ ] **Step 2: Write `packages/phone-screen/tsconfig.json`** (template from integration-notes §1, verbatim):
+- [x] **Step 2: Write `packages/phone-screen/tsconfig.json`** (template from integration-notes §1, verbatim):
 
   ```json
   {
@@ -133,7 +133,7 @@ Write the scaffold files directly (per AGENTS.md "Creating a new package" — `v
   }
   ```
 
-- [ ] **Step 3: Write `packages/phone-screen/vite.config.ts`** — node test env (the rasterizer is DOM-free; the single jsdom test file opts in via docblock):
+- [x] **Step 3: Write `packages/phone-screen/vite.config.ts`** — node test env (the rasterizer is DOM-free; the single jsdom test file opts in via docblock):
 
   ```ts
   import { defineConfig } from "vite-plus";
@@ -146,16 +146,16 @@ Write the scaffold files directly (per AGENTS.md "Creating a new package" — `v
   });
   ```
 
-- [ ] **Step 4: Write `packages/phone-screen/src/index.ts`** as a placeholder module (replaced in Task 2):
+- [x] **Step 4: Write `packages/phone-screen/src/index.ts`** as a placeholder module (replaced in Task 2):
 
   ```ts
   export {};
   ```
 
-- [ ] **Step 5: Verify the prerequisite:** check that `packages/phone-core/src/types.ts` exists. If it does not, STOP and report (plan 01 Tasks 1–2 must land first).
-- [ ] **Step 6: Link the package into the workspace:** run `mise exec -- vp install` from the repo root. Expect success with `@hellotimber/phone-screen` listed as a workspace project.
-- [ ] **Step 7: Verify lint/typecheck:** run `mise exec -- vp check --fix` from the repo root. Expect pass. (No test files exist yet — do not run the test command.)
-- [ ] **Step 8: Commit:**
+- [x] **Step 5: Verify the prerequisite:** check that `packages/phone-core/src/types.ts` exists. If it does not, STOP and report (plan 01 Tasks 1–2 must land first).
+- [x] **Step 6: Link the package into the workspace:** run `mise exec -- vp install` from the repo root. Expect success with `@hellotimber/phone-screen` listed as a workspace project.
+- [x] **Step 7: Verify lint/typecheck:** run `mise exec -- vp check --fix` from the repo root. Expect pass. (No test files exist yet — do not run the test command.)
+- [x] **Step 8: Commit:**
 
   ```sh
   git add packages/phone-screen pnpm-lock.yaml
@@ -178,7 +178,7 @@ The core abstraction. `Framebuffer` wraps an `Uint8Array` of one byte per pixel 
 
 **Steps**
 
-- [ ] **Step 1: Write the test helpers** `packages/phone-screen/tests/helpers.ts`:
+- [x] **Step 1: Write the test helpers** `packages/phone-screen/tests/helpers.ts`:
 
   ```ts
   import { expect } from "vite-plus/test";
@@ -213,7 +213,7 @@ The core abstraction. `Framebuffer` wraps an `Uint8Array` of one byte per pixel 
   }
   ```
 
-- [ ] **Step 2: Write the failing test** `packages/phone-screen/tests/framebuffer.test.ts`:
+- [x] **Step 2: Write the failing test** `packages/phone-screen/tests/framebuffer.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -340,8 +340,8 @@ The core abstraction. `Framebuffer` wraps an `Uint8Array` of one byte per pixel 
   });
   ```
 
-- [ ] **Step 3: Run & expect FAIL** (no `src/bitmap.ts` / `src/framebuffer.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 4: Write `packages/phone-screen/src/bitmap.ts`:**
+- [x] **Step 3: Run & expect FAIL** (no `src/bitmap.ts` / `src/framebuffer.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 4: Write `packages/phone-screen/src/bitmap.ts`:**
 
   ```ts
   /**
@@ -375,7 +375,7 @@ The core abstraction. `Framebuffer` wraps an `Uint8Array` of one byte per pixel 
   }
   ```
 
-- [ ] **Step 5: Write `packages/phone-screen/src/framebuffer.ts`** (text methods arrive in Task 5):
+- [x] **Step 5: Write `packages/phone-screen/src/framebuffer.ts`** (text methods arrive in Task 5):
 
   ```ts
   import type { Bitmap } from "./bitmap";
@@ -440,7 +440,7 @@ The core abstraction. `Framebuffer` wraps an `Uint8Array` of one byte per pixel 
   }
   ```
 
-- [ ] **Step 6: Replace `packages/phone-screen/src/index.ts`:**
+- [x] **Step 6: Replace `packages/phone-screen/src/index.ts`:**
 
   ```ts
   export { bitmapFromArt } from "./bitmap";
@@ -448,8 +448,8 @@ The core abstraction. `Framebuffer` wraps an `Uint8Array` of one byte per pixel 
   export { Framebuffer } from "./framebuffer";
   ```
 
-- [ ] **Step 7: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 8: Commit:**
+- [x] **Step 7: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 8: Commit:**
 
   ```sh
   git add packages/phone-screen
@@ -471,7 +471,7 @@ Nokia-style 5×7 glyphs + 1 px advance gap (spec §2 best guess: 14 chars per 84
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-screen/tests/glyphs.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-screen/tests/glyphs.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -534,8 +534,8 @@ Nokia-style 5×7 glyphs + 1 px advance gap (spec §2 best guess: 14 chars per 84
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no font modules): `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 3: Write `packages/phone-screen/src/font/glyphs.ts`** — actual glyph data, exactly as below (each entry is 7 rows × 5 chars; Task 4 appends more entries before the closing brace):
+- [x] **Step 2: Run & expect FAIL** (no font modules): `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 3: Write `packages/phone-screen/src/font/glyphs.ts`** — actual glyph data, exactly as below (each entry is 7 rows × 5 chars; Task 4 appends more entries before the closing brace):
 
   ```ts
   /**
@@ -583,7 +583,7 @@ Nokia-style 5×7 glyphs + 1 px advance gap (spec §2 best guess: 14 chars per 84
   };
   ```
 
-- [ ] **Step 4: Write `packages/phone-screen/src/font/font.ts`:**
+- [x] **Step 4: Write `packages/phone-screen/src/font/font.ts`:**
 
   ```ts
   import { bitmapFromArt } from "../bitmap";
@@ -628,7 +628,7 @@ Nokia-style 5×7 glyphs + 1 px advance gap (spec §2 best guess: 14 chars per 84
   }
   ```
 
-- [ ] **Step 5: Append the font exports to `packages/phone-screen/src/index.ts`:**
+- [x] **Step 5: Append the font exports to `packages/phone-screen/src/index.ts`:**
 
   ```ts
   export { FONT, textWidth } from "./font/font";
@@ -636,8 +636,8 @@ Nokia-style 5×7 glyphs + 1 px advance gap (spec §2 best guess: 14 chars per 84
   export { GLYPHS } from "./font/glyphs";
   ```
 
-- [ ] **Step 6: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 7: Commit:**
+- [x] **Step 6: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 7: Commit:**
 
   ```sh
   git add packages/phone-screen
@@ -657,7 +657,7 @@ The rest of the glyph set: a–z, the punctuation set `. , : ; ! ? ' " ( ) + - *
 
 **Steps**
 
-- [ ] **Step 1: Extend the test** — add these two cases inside the existing `describe("glyph data", ...)` block in `packages/phone-screen/tests/glyphs.test.ts`:
+- [x] **Step 1: Extend the test** — add these two cases inside the existing `describe("glyph data", ...)` block in `packages/phone-screen/tests/glyphs.test.ts`:
 
   ```ts
   it("covers lowercase and punctuation", () => {
@@ -673,8 +673,8 @@ The rest of the glyph set: a–z, the punctuation set `. , : ; ! ? ' " ( ) + - *
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (glyphs missing): `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 3: Append the new glyph entries** to the `GLYPHS` object in `packages/phone-screen/src/font/glyphs.ts` — insert this block directly before the closing `};`, exactly as written:
+- [x] **Step 2: Run & expect FAIL** (glyphs missing): `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 3: Append the new glyph entries** to the `GLYPHS` object in `packages/phone-screen/src/font/glyphs.ts` — insert this block directly before the closing `};`, exactly as written:
 
   ```ts
     a: [".....", ".....", ".###.", "....#", ".####", "#...#", ".####"],
@@ -730,8 +730,8 @@ The rest of the glyph set: a–z, the punctuation set `. , : ; ! ? ' " ( ) + - *
     "▼": [".....", ".....", "#####", ".###.", "..#..", ".....", "....."],
   ```
 
-- [ ] **Step 4: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 5: Commit:**
+- [x] **Step 4: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 5: Commit:**
 
   ```sh
   git add packages/phone-screen
@@ -752,7 +752,7 @@ The rest of the glyph set: a–z, the punctuation set `. , : ; ! ? ' " ( ) + - *
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-screen/tests/text.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-screen/tests/text.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -848,8 +848,8 @@ The rest of the glyph set: a–z, the punctuation set `. , : ; ! ? ' " ( ) + - *
 
   > Note: the third test's expected art derives mechanically: a 7×9 filled rect with the `I` glyph (`.###.`/`..#..`…) punched out in color 0 at offset (1,1). If the assertion fails, print `regionToArt(fb, 0, 0, 7, 9)` and check it against the `I` art — do not silently accept the actual output.
 
-- [ ] **Step 2: Run & expect FAIL** (`drawText` is not a function): `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 3: Add the text methods to `packages/phone-screen/src/framebuffer.ts`.** First extend the imports at the top of the file:
+- [x] **Step 2: Run & expect FAIL** (`drawText` is not a function): `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 3: Add the text methods to `packages/phone-screen/src/framebuffer.ts`.** First extend the imports at the top of the file:
 
   ```ts
   import type { Bitmap } from "./bitmap";
@@ -895,8 +895,8 @@ The rest of the glyph set: a–z, the punctuation set `. , : ; ! ? ' " ( ) + - *
     }
   ```
 
-- [ ] **Step 4: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 5: Commit:**
+- [x] **Step 4: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 5: Commit:**
 
   ```sh
   git add packages/phone-screen
@@ -919,7 +919,7 @@ Fixed geometry (constants in the module): rung `i` (0 = bottom) occupies `y = 27
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-screen/tests/status-icons.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-screen/tests/status-icons.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1045,8 +1045,8 @@ Fixed geometry (constants in the module): rung `i` (0 = bottom) occupies `y = 27
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `src/icons/status.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 3: Write `packages/phone-screen/src/icons/status.ts`:**
+- [x] **Step 2: Run & expect FAIL** (no `src/icons/status.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 3: Write `packages/phone-screen/src/icons/status.ts`:**
 
   ```ts
   import { bitmapFromArt } from "../bitmap";
@@ -1109,7 +1109,7 @@ Fixed geometry (constants in the module): rung `i` (0 = bottom) occupies `y = 27
   }
   ```
 
-- [ ] **Step 4: Append the status exports to `packages/phone-screen/src/index.ts`:**
+- [x] **Step 4: Append the status exports to `packages/phone-screen/src/index.ts`:**
 
   ```ts
   export {
@@ -1122,8 +1122,8 @@ Fixed geometry (constants in the module): rung `i` (0 = bottom) occupies `y = 27
   } from "./icons/status";
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 6: Commit:**
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 6: Commit:**
 
   ```sh
   git add packages/phone-screen
@@ -1144,7 +1144,7 @@ Fixed geometry (constants in the module): rung `i` (0 = bottom) occupies `y = 27
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-screen/tests/menu-icons.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-screen/tests/menu-icons.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1198,8 +1198,8 @@ Fixed geometry (constants in the module): rung `i` (0 = bottom) occupies `y = 27
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `src/icons/menu-icons.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 3: Write `packages/phone-screen/src/icons/menu-icons.ts`** — first half (the file is completed in Step 4; write Steps 3+4 as ONE file in one go):
+- [x] **Step 2: Run & expect FAIL** (no `src/icons/menu-icons.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 3: Write `packages/phone-screen/src/icons/menu-icons.ts`** — first half (the file is completed in Step 4; write Steps 3+4 as ONE file in one go):
 
   ```ts
   import { bitmapFromArt } from "../bitmap";
@@ -1335,7 +1335,7 @@ Fixed geometry (constants in the module): rung `i` (0 = bottom) occupies `y = 27
     ],
   ```
 
-- [ ] **Step 4: Complete `packages/phone-screen/src/icons/menu-icons.ts`** — the remaining entries, the closing brace, and the exports (continue the `ART` object from Step 3 directly):
+- [x] **Step 4: Complete `packages/phone-screen/src/icons/menu-icons.ts`** — the remaining entries, the closing brace, and the exports (continue the `ART` object from Step 3 directly):
 
   ```ts
     games: [
@@ -1480,14 +1480,14 @@ Fixed geometry (constants in the module): rung `i` (0 = bottom) occupies `y = 27
   }
   ```
 
-- [ ] **Step 5: Append the icon exports to `packages/phone-screen/src/index.ts`:**
+- [x] **Step 5: Append the icon exports to `packages/phone-screen/src/index.ts`:**
 
   ```ts
   export { FALLBACK_ICON, MENU_ICONS, menuIcon } from "./icons/menu-icons";
   ```
 
-- [ ] **Step 6: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 7: Commit:**
+- [x] **Step 6: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 7: Commit:**
 
   ```sh
   git add packages/phone-screen
@@ -1510,7 +1510,7 @@ Two things land here. First, `src/render/layout.ts`: the shared zone constants a
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-screen/tests/boot.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-screen/tests/boot.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1599,8 +1599,8 @@ Two things land here. First, `src/render/layout.ts`: the shared zone constants a
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (modules missing): `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 3: Write `packages/phone-screen/src/render/layout.ts`:**
+- [x] **Step 2: Run & expect FAIL** (modules missing): `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 3: Write `packages/phone-screen/src/render/layout.ts`:**
 
   ```ts
   import { FONT, textWidth } from "../font/font";
@@ -1679,7 +1679,7 @@ Two things land here. First, `src/render/layout.ts`: the shared zone constants a
   }
   ```
 
-- [ ] **Step 4: Write `packages/phone-screen/src/icons/boot.ts`:**
+- [x] **Step 4: Write `packages/phone-screen/src/icons/boot.ts`:**
 
   ```ts
   import { bitmapFromArt } from "../bitmap";
@@ -1743,7 +1743,7 @@ Two things land here. First, `src/render/layout.ts`: the shared zone constants a
   );
   ```
 
-- [ ] **Step 5: Write `packages/phone-screen/src/render/boot.ts`:**
+- [x] **Step 5: Write `packages/phone-screen/src/render/boot.ts`:**
 
   ```ts
   import type { ScreenModel } from "@hellotimber/phone-core";
@@ -1778,7 +1778,7 @@ Two things land here. First, `src/render/layout.ts`: the shared zone constants a
   }
   ```
 
-- [ ] **Step 6: Append the new exports to `packages/phone-screen/src/index.ts`:**
+- [x] **Step 6: Append the new exports to `packages/phone-screen/src/index.ts`:**
 
   ```ts
   export { HANDS_FRAMES } from "./icons/boot";
@@ -1797,8 +1797,8 @@ Two things land here. First, `src/render/layout.ts`: the shared zone constants a
   } from "./render/layout";
   ```
 
-- [ ] **Step 7: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 8: Commit:**
+- [x] **Step 7: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 8: Commit:**
 
   ```sh
   git add packages/phone-screen
@@ -1819,7 +1819,7 @@ Spec §4, exactly four elements: operator name (the 2×-scaled "larger/bolder va
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-screen/tests/standby.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-screen/tests/standby.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1887,8 +1887,8 @@ Spec §4, exactly four elements: operator name (the 2×-scaled "larger/bolder va
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `src/render/standby.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 3: Write `packages/phone-screen/src/render/standby.ts`:**
+- [x] **Step 2: Run & expect FAIL** (no `src/render/standby.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 3: Write `packages/phone-screen/src/render/standby.ts`:**
 
   ```ts
   import type { ScreenModel } from "@hellotimber/phone-core";
@@ -1917,14 +1917,14 @@ Spec §4, exactly four elements: operator name (the 2×-scaled "larger/bolder va
   }
   ```
 
-- [ ] **Step 4: Append to `packages/phone-screen/src/index.ts`:**
+- [x] **Step 4: Append to `packages/phone-screen/src/index.ts`:**
 
   ```ts
   export { renderStandby } from "./render/standby";
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 6: Commit:**
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 6: Commit:**
 
   ```sh
   git add packages/phone-screen
@@ -1945,7 +1945,7 @@ Spec §5 presentation: one top-level menu at a time as a full-screen page — me
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-screen/tests/carousel.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-screen/tests/carousel.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -2025,8 +2025,8 @@ Spec §5 presentation: one top-level menu at a time as a full-screen page — me
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `src/render/carousel.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 3: Write `packages/phone-screen/src/render/carousel.ts`:**
+- [x] **Step 2: Run & expect FAIL** (no `src/render/carousel.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 3: Write `packages/phone-screen/src/render/carousel.ts`:**
 
   ```ts
   import type { ScreenModel } from "@hellotimber/phone-core";
@@ -2052,14 +2052,14 @@ Spec §5 presentation: one top-level menu at a time as a full-screen page — me
   }
   ```
 
-- [ ] **Step 4: Append to `packages/phone-screen/src/index.ts`:**
+- [x] **Step 4: Append to `packages/phone-screen/src/index.ts`:**
 
   ```ts
   export { renderCarousel } from "./render/carousel";
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 6: Commit:**
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 6: Commit:**
 
   ```sh
   git add packages/phone-screen
@@ -2080,7 +2080,7 @@ Lists (submenus, item lists): title row top, up to 3 item rows, the selected ite
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-screen/tests/list.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-screen/tests/list.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -2203,8 +2203,8 @@ Lists (submenus, item lists): title row top, up to 3 item rows, the selected ite
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `src/render/list.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 3: Write `packages/phone-screen/src/render/list.ts`:**
+- [x] **Step 2: Run & expect FAIL** (no `src/render/list.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 3: Write `packages/phone-screen/src/render/list.ts`:**
 
   ```ts
   import type { ScreenModel } from "@hellotimber/phone-core";
@@ -2263,14 +2263,14 @@ Lists (submenus, item lists): title row top, up to 3 item rows, the selected ite
   }
   ```
 
-- [ ] **Step 4: Append to `packages/phone-screen/src/index.ts`:**
+- [x] **Step 4: Append to `packages/phone-screen/src/index.ts`:**
 
   ```ts
   export { renderList, renderReader } from "./render/list";
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 6: Commit:**
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 6: Commit:**
 
   ```sh
   git add packages/phone-screen
@@ -2292,7 +2292,7 @@ Editor (spec §2/§6): title top-left, the input-mode indicator (`abc`/`Abc`/`12
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-screen/tests/editor.test.ts`:
+- [x] **Step 1: Write the failing test** `packages/phone-screen/tests/editor.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -2412,8 +2412,8 @@ Editor (spec §2/§6): title top-left, the input-mode indicator (`abc`/`Abc`/`12
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (modules missing): `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 3: Write `packages/phone-screen/src/render/editor.ts`:**
+- [x] **Step 2: Run & expect FAIL** (modules missing): `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 3: Write `packages/phone-screen/src/render/editor.ts`:**
 
   ```ts
   import type { ScreenModel } from "@hellotimber/phone-core";
@@ -2468,7 +2468,7 @@ Editor (spec §2/§6): title top-left, the input-mode indicator (`abc`/`Abc`/`12
   }
   ```
 
-- [ ] **Step 4: Write `packages/phone-screen/src/render/index.ts`** — the dispatcher:
+- [x] **Step 4: Write `packages/phone-screen/src/render/index.ts`** — the dispatcher:
 
   ```ts
   import type { ScreenModel } from "@hellotimber/phone-core";
@@ -2519,7 +2519,7 @@ Editor (spec §2/§6): title top-left, the input-mode indicator (`abc`/`Abc`/`12
   }
   ```
 
-- [ ] **Step 5: Append to `packages/phone-screen/src/index.ts`:**
+- [x] **Step 5: Append to `packages/phone-screen/src/index.ts`:**
 
   ```ts
   export { renderConfirm, renderEditor } from "./render/editor";
@@ -2527,8 +2527,8 @@ Editor (spec §2/§6): title top-left, the input-mode indicator (`abc`/`Abc`/`12
   export type { RenderOptions } from "./render";
   ```
 
-- [ ] **Step 6: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 7: Commit:**
+- [x] **Step 6: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 7: Commit:**
 
   ```sh
   git add packages/phone-screen
@@ -2549,7 +2549,7 @@ The VISION.md contract surface, verbatim (`ScreenRenderer` with `canvas`/`render
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `packages/phone-screen/tests/renderer.test.ts` — jsdom provides `document`/`HTMLCanvasElement`, but its 2D context is not implemented without the native `canvas` package, so the test stubs `getContext` with a recording fake:
+- [x] **Step 1: Write the failing test** `packages/phone-screen/tests/renderer.test.ts` — jsdom provides `document`/`HTMLCanvasElement`, but its 2D context is not implemented without the native `canvas` package, so the test stubs `getContext` with a recording fake:
 
   ```ts
   // @vitest-environment jsdom
@@ -2674,8 +2674,8 @@ The VISION.md contract surface, verbatim (`ScreenRenderer` with `canvas`/`render
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `src/renderer.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
-- [ ] **Step 3: Write `packages/phone-screen/src/renderer.ts`:**
+- [x] **Step 2: Run & expect FAIL** (no `src/renderer.ts`): `mise exec -- vp run @hellotimber/phone-screen#test`
+- [x] **Step 3: Write `packages/phone-screen/src/renderer.ts`:**
 
   ```ts
   import type { ScreenModel } from "@hellotimber/phone-core";
@@ -2772,16 +2772,16 @@ The VISION.md contract surface, verbatim (`ScreenRenderer` with `canvas`/`render
   }
   ```
 
-- [ ] **Step 4: Append to `packages/phone-screen/src/index.ts`:**
+- [x] **Step 4: Append to `packages/phone-screen/src/index.ts`:**
 
   ```ts
   export { createScreenRenderer } from "./renderer";
   export type { ScreenRenderer, ScreenRendererOptions } from "./renderer";
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test` (the jsdom file runs in jsdom via its docblock; everything else stays in node)
-- [ ] **Step 6: Run `mise exec -- vp check --fix`** — expect pass (fix any reported lint nits without changing behavior).
-- [ ] **Step 7: Commit:**
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run @hellotimber/phone-screen#test` (the jsdom file runs in jsdom via its docblock; everything else stays in node)
+- [x] **Step 6: Run `mise exec -- vp check --fix`** — expect pass (fix any reported lint nits without changing behavior).
+- [x] **Step 7: Commit:**
 
   ```sh
   git add packages/phone-screen
@@ -2799,10 +2799,10 @@ The VISION.md contract surface, verbatim (`ScreenRenderer` with `canvas`/`render
 
 **Steps**
 
-- [ ] **Step 1: Run the package suite:** `mise exec -- vp run @hellotimber/phone-screen#test` — expect ALL tests green.
-- [ ] **Step 2: Run the workspace suite:** `mise exec -- vp run -r test` — expect green (other packages' suites must be unaffected).
-- [ ] **Step 3: Run `mise exec -- vp check --fix`** — expect pass.
-- [ ] **Step 4: Write `packages/phone-screen/README.md`** (standalone usage — rule: every package works outside this repo):
+- [x] **Step 1: Run the package suite:** `mise exec -- vp run @hellotimber/phone-screen#test` — expect ALL tests green.
+- [x] **Step 2: Run the workspace suite:** `mise exec -- vp run -r test` — expect green (other packages' suites must be unaffected).
+- [x] **Step 3: Run `mise exec -- vp check --fix`** — expect pass.
+- [x] **Step 4: Write `packages/phone-screen/README.md`** (standalone usage — rule: every package works outside this repo):
 
   ````md
   # @hellotimber/phone-screen
@@ -2864,8 +2864,8 @@ The VISION.md contract surface, verbatim (`ScreenRenderer` with `canvas`/`render
   wrapper test uses jsdom with a stubbed 2D context.
   ````
 
-- [ ] **Step 5: Update the plan index:** in `docs/plans/README.md`, change the Status cell of the row `| 02  | [phone-screen](./02-phone-screen.md) | ... | not started |` from `not started` to `done`.
-- [ ] **Step 6: Commit:**
+- [x] **Step 5: Update the plan index:** in `docs/plans/README.md`, change the Status cell of the row `| 02  | [phone-screen](./02-phone-screen.md) | ... | not started |` from `not started` to `done`.
+- [x] **Step 6: Commit:**
 
   ```sh
   git add packages/phone-screen/README.md docs/plans/README.md

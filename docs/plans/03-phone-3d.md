@@ -127,13 +127,13 @@ Deviations from / interpretations of VISION.md and integration-notes (flag if wr
 `packages/phone-3d/vite.config.ts`, `packages/phone-3d/src/types.ts`,
 `packages/phone-3d/src/index.ts`, `packages/phone-3d/tests/types.test.ts`
 
-- [ ] Scaffold:
+- [x] Scaffold:
 
   ```sh
   mise exec -- vp create vite:library --directory packages/phone-3d --no-interactive --no-git
   ```
 
-- [ ] Delete the nested scaffold cruft (the monorepo root already provides these) and the
+- [x] Delete the nested scaffold cruft (the monorepo root already provides these) and the
       template source:
 
   ```sh
@@ -143,7 +143,7 @@ Deviations from / interpretations of VISION.md and integration-notes (flag if wr
          packages/phone-3d/dist packages/phone-3d/README.md
   ```
 
-- [ ] Replace `packages/phone-3d/package.json` entirely with (peers/devDeps per
+- [x] Replace `packages/phone-3d/package.json` entirely with (peers/devDeps per
       integration-notes §2, plus the demo's react plugin — deviation 1):
 
   ```json
@@ -183,7 +183,7 @@ Deviations from / interpretations of VISION.md and integration-notes (flag if wr
   }
   ```
 
-- [ ] Write `packages/phone-3d/tsconfig.json` (integration-notes §1 template):
+- [x] Write `packages/phone-3d/tsconfig.json` (integration-notes §1 template):
 
   ```json
   {
@@ -203,7 +203,7 @@ Deviations from / interpretations of VISION.md and integration-notes (flag if wr
   }
   ```
 
-- [ ] Write `packages/phone-3d/vite.config.ts` (test block per AGENTS.md — never a
+- [x] Write `packages/phone-3d/vite.config.ts` (test block per AGENTS.md — never a
       `vitest.config.ts`; react plugin for the demo):
 
   ```ts
@@ -219,7 +219,7 @@ Deviations from / interpretations of VISION.md and integration-notes (flag if wr
   });
   ```
 
-- [ ] Write `packages/phone-3d/src/types.ts` — the contract's key union (same literals as
+- [x] Write `packages/phone-3d/src/types.ts` — the contract's key union (same literals as
       phone-core's `PhoneKey`, but defined here; NO import from any sibling package):
 
   ```ts
@@ -277,13 +277,13 @@ Deviations from / interpretations of VISION.md and integration-notes (flag if wr
   ];
   ```
 
-- [ ] Write `packages/phone-3d/src/index.ts` (component exports are added by later tasks):
+- [x] Write `packages/phone-3d/src/index.ts` (component exports are added by later tasks):
 
   ```ts
   export type { Nokia3310Key, Nokia3310Props } from "./types";
   ```
 
-- [ ] Write `packages/phone-3d/tests/types.test.ts`:
+- [x] Write `packages/phone-3d/tests/types.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -307,7 +307,7 @@ Deviations from / interpretations of VISION.md and integration-notes (flag if wr
   });
   ```
 
-- [ ] Link into the workspace and verify:
+- [x] Link into the workspace and verify:
 
   ```sh
   mise exec -- vp install
@@ -317,7 +317,7 @@ Deviations from / interpretations of VISION.md and integration-notes (flag if wr
 
   All three must succeed (3 tests pass).
 
-- [ ] Commit: `feat(phone-3d): scaffold package with key union and contract types`
+- [x] Commit: `feat(phone-3d): scaffold package with key union and contract types`
 
 ---
 
@@ -330,7 +330,7 @@ top edge.
 
 **Files:** `packages/phone-3d/src/layout.ts`, `packages/phone-3d/tests/layout.test.ts`
 
-- [ ] Write `packages/phone-3d/src/layout.ts`:
+- [x] Write `packages/phone-3d/src/layout.ts`:
 
   ```ts
   import type { Nokia3310Key } from "./types";
@@ -392,7 +392,7 @@ top edge.
   ];
   ```
 
-- [ ] Write `packages/phone-3d/tests/layout.test.ts`:
+- [x] Write `packages/phone-3d/tests/layout.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -495,7 +495,7 @@ top edge.
   });
   ```
 
-- [ ] Verify:
+- [x] Verify:
 
   ```sh
   mise exec -- vp run @hellotimber/phone-3d#test
@@ -504,7 +504,7 @@ top edge.
 
   12 tests pass (3 from Task 1 + 9 new).
 
-- [ ] Commit: `feat(phone-3d): keypad layout table with geometry unit tests`
+- [x] Commit: `feat(phone-3d): keypad layout table with geometry unit tests`
 
 ---
 
@@ -514,7 +514,7 @@ top edge.
 `packages/phone-3d/src/PhoneBody.tsx`, `packages/phone-3d/src/demo/test-pattern.ts`,
 `packages/phone-3d/src/demo/main.tsx`, `packages/phone-3d/index.html`
 
-- [ ] Write `packages/phone-3d/src/materials.ts` (pure data — components spread these into
+- [x] Write `packages/phone-3d/src/materials.ts` (pure data — components spread these into
       `<meshStandardMaterial/>`):
 
   ```ts
@@ -540,7 +540,7 @@ top edge.
   export const SCREEN_DIM_TINT = "#7a8579";
   ```
 
-- [ ] Write `packages/phone-3d/tests/materials.test.ts`:
+- [x] Write `packages/phone-3d/tests/materials.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -567,7 +567,7 @@ top edge.
   });
   ```
 
-- [ ] Write `packages/phone-3d/src/PhoneBody.tsx` — body, face plate, screen bezel, and
+- [x] Write `packages/phone-3d/src/PhoneBody.tsx` — body, face plate, screen bezel, and
       earpiece grille dots above the display (spec §1: earpiece grille above the display,
       display window in the upper third):
 
@@ -606,7 +606,7 @@ top edge.
   }
   ```
 
-- [ ] Write `packages/phone-3d/src/demo/test-pattern.ts` — the 84×48 test-pattern canvas.
+- [x] Write `packages/phone-3d/src/demo/test-pattern.ts` — the 84×48 test-pattern canvas.
       Every `drawFrame()` flips the checkerboard parity and increments a counter, so a
       live texture is unmistakable:
 
@@ -657,7 +657,7 @@ top edge.
   }
   ```
 
-- [ ] Write `packages/phone-3d/index.html`:
+- [x] Write `packages/phone-3d/index.html`:
 
   ```html
   <!doctype html>
@@ -714,7 +714,7 @@ top edge.
   </html>
   ```
 
-- [ ] Write `packages/phone-3d/src/demo/main.tsx` (skeleton stage: inline `<Canvas>` —
+- [x] Write `packages/phone-3d/src/demo/main.tsx` (skeleton stage: inline `<Canvas>` —
       `<PhoneStage>` replaces it in Task 7; the test pattern animates in the sidebar
       preview; the 3D screen arrives in Task 4):
 
@@ -779,21 +779,21 @@ top edge.
   );
   ```
 
-- [ ] Verify tests and lint:
+- [x] Verify tests and lint:
 
   ```sh
   mise exec -- vp run @hellotimber/phone-3d#test
   mise exec -- vp check --fix
   ```
 
-- [ ] **Visual gate** — `cd packages/phone-3d && mise exec -- vp dev`, open the URL:
+- [x] **Visual gate** — `cd packages/phone-3d && mise exec -- vp dev`, open the URL:
   - A dark-blue rounded candy-bar phone fills the left pane: lighter face plate, a
     near-black bezel rectangle in the upper third, four small grille dots above it.
   - Sidebar shows the 84×48 checkerboard scaled ×3 with a 5-digit counter incrementing
     twice per second; the checkerboard parity flips with it; "version N" climbs.
   - No console errors. Stop the server.
 
-- [ ] Commit: `feat(phone-3d): materials, phone body, and demo playground skeleton`
+- [x] Commit: `feat(phone-3d): materials, phone body, and demo playground skeleton`
 
 ---
 
@@ -804,7 +804,7 @@ of the four settings or the upload strategy.
 
 **Files:** `packages/phone-3d/src/Screen.tsx`, `packages/phone-3d/src/demo/main.tsx`
 
-- [ ] Write `packages/phone-3d/src/Screen.tsx`:
+- [x] Write `packages/phone-3d/src/Screen.tsx`:
 
   ```tsx
   import { useFrame } from "@react-three/fiber";
@@ -859,7 +859,7 @@ of the four settings or the upload strategy.
   }
   ```
 
-- [ ] In `packages/phone-3d/src/demo/main.tsx`, render the screen on the phone. Add the
+- [x] In `packages/phone-3d/src/demo/main.tsx`, render the screen on the phone. Add the
       import below the `PhoneBody` import:
 
   ```tsx
@@ -872,21 +872,21 @@ of the four settings or the upload strategy.
   <Screen screenCanvas={pattern.canvas} screenVersion={version} />
   ```
 
-- [ ] Verify tests and lint:
+- [x] Verify tests and lint:
 
   ```sh
   mise exec -- vp run @hellotimber/phone-3d#test
   mise exec -- vp check --fix
   ```
 
-- [ ] **Visual gate** — `cd packages/phone-3d && mise exec -- vp dev`:
+- [x] **Visual gate** — `cd packages/phone-3d && mise exec -- vp dev`:
   - The bezel now carries a bright green-checkerboard screen with the 5-digit frame
     counter, pixel-crisp (no blur — NearestFilter working).
   - The counter on the **3D screen** increments in lockstep with the sidebar preview —
     this proves the `screenVersion` → `needsUpdate` upload path.
   - The screen reads as self-lit (not dimmed by scene lighting). No console errors.
 
-- [ ] Commit: `feat(phone-3d): screen mesh with version-gated CanvasTexture`
+- [x] Commit: `feat(phone-3d): screen mesh with version-gated CanvasTexture`
 
 ---
 
@@ -895,7 +895,7 @@ of the four settings or the upload strategy.
 **Files:** `packages/phone-3d/src/Key.tsx`, `packages/phone-3d/src/Keypad.tsx`,
 `packages/phone-3d/src/demo/main.tsx`
 
-- [ ] Write `packages/phone-3d/src/Key.tsx`. Every key is its own mesh; handlers call
+- [x] Write `packages/phone-3d/src/Key.tsx`. Every key is its own mesh; handlers call
       `e.stopPropagation()` (integration-notes §5). A key is depressed (z − 0.04) when
       pressed by pointer OR listed in `pressedKeys`. The pill renders as a flattened
       capsule; everything else as a `RoundedBox`:
@@ -986,7 +986,7 @@ of the four settings or the upload strategy.
   }
   ```
 
-- [ ] Write `packages/phone-3d/src/Keypad.tsx`:
+- [x] Write `packages/phone-3d/src/Keypad.tsx`:
 
   ```tsx
   import { Key } from "./Key";
@@ -1015,7 +1015,7 @@ of the four settings or the upload strategy.
   }
   ```
 
-- [ ] Rewrite `packages/phone-3d/src/demo/main.tsx` — adds the keypad, the key-press log,
+- [x] Rewrite `packages/phone-3d/src/demo/main.tsx` — adds the keypad, the key-press log,
       and a keyboard → `pressedKeys` demo (hold a digit/`*`/`#` key on your physical
       keyboard to depress it externally):
 
@@ -1125,14 +1125,14 @@ of the four settings or the upload strategy.
   );
   ```
 
-- [ ] Verify tests and lint:
+- [x] Verify tests and lint:
 
   ```sh
   mise exec -- vp run @hellotimber/phone-3d#test
   mise exec -- vp check --fix
   ```
 
-- [ ] **Visual gate** — `cd packages/phone-3d && mise exec -- vp dev`:
+- [x] **Visual gate** — `cd packages/phone-3d && mise exec -- vp dev`:
   - The full keypad is visible: blue NaviKey pill under the screen, grey C key
     below-left, grey rocker (two zones) below-right, 4×3 grey digit grid with the center
     column raised (the smile arc), black power button peeking over the top edge.
@@ -1145,7 +1145,7 @@ of the four settings or the upload strategy.
     (the `pressedKeys` path) — note it does NOT log, which is correct: external presses
     are display-only.
 
-- [ ] Commit: `feat(phone-3d): pressable keypad with pointer events and key log`
+- [x] Commit: `feat(phone-3d): pressable keypad with pointer events and key log`
 
 ---
 
@@ -1154,7 +1154,7 @@ of the four settings or the upload strategy.
 **Files:** `packages/phone-3d/src/Nokia3310.tsx`, `packages/phone-3d/src/index.ts`,
 `packages/phone-3d/src/demo/main.tsx`
 
-- [ ] Write `packages/phone-3d/src/Nokia3310.tsx` — the contract component:
+- [x] Write `packages/phone-3d/src/Nokia3310.tsx` — the contract component:
 
   ```tsx
   import { Keypad } from "./Keypad";
@@ -1195,14 +1195,14 @@ of the four settings or the upload strategy.
   }
   ```
 
-- [ ] Replace `packages/phone-3d/src/index.ts` with:
+- [x] Replace `packages/phone-3d/src/index.ts` with:
 
   ```ts
   export type { Nokia3310Key, Nokia3310Props } from "./types";
   export { Nokia3310 } from "./Nokia3310";
   ```
 
-- [ ] Update `packages/phone-3d/src/demo/main.tsx`: replace the three component imports
+- [x] Update `packages/phone-3d/src/demo/main.tsx`: replace the three component imports
 
   ```tsx
   import { Keypad } from "../Keypad";
@@ -1249,21 +1249,21 @@ of the four settings or the upload strategy.
   </label>
   ```
 
-- [ ] Verify tests and lint:
+- [x] Verify tests and lint:
 
   ```sh
   mise exec -- vp run @hellotimber/phone-3d#test
   mise exec -- vp check --fix
   ```
 
-- [ ] **Visual gate** — `cd packages/phone-3d && mise exec -- vp dev`:
+- [x] **Visual gate** — `cd packages/phone-3d && mise exec -- vp dev`:
   - The phone renders identically to Task 5 plus a soft green glow around the screen and
     upper keypad.
   - Untick "backlight on": the glow disappears AND the screen visibly dims to a murky
     green (the `SCREEN_DIM_TINT` multiplier). Re-tick: both return. Keys still click and
     log in both states.
 
-- [ ] Commit: `feat(phone-3d): Nokia3310 assembly with green backlight`
+- [x] Commit: `feat(phone-3d): Nokia3310 assembly with green backlight`
 
 ---
 
@@ -1272,7 +1272,7 @@ of the four settings or the upload strategy.
 **Files:** `packages/phone-3d/src/PhoneStage.tsx`, `packages/phone-3d/src/index.ts`,
 `packages/phone-3d/src/demo/main.tsx`
 
-- [ ] Write `packages/phone-3d/src/PhoneStage.tsx`:
+- [x] Write `packages/phone-3d/src/PhoneStage.tsx`:
 
   ```tsx
   import { Canvas, useFrame } from "@react-three/fiber";
@@ -1313,7 +1313,7 @@ of the four settings or the upload strategy.
   }
   ```
 
-- [ ] Replace `packages/phone-3d/src/index.ts` with the final contract surface:
+- [x] Replace `packages/phone-3d/src/index.ts` with the final contract surface:
 
   ```ts
   export type { Nokia3310Key, Nokia3310Props } from "./types";
@@ -1321,7 +1321,7 @@ of the four settings or the upload strategy.
   export { PhoneStage } from "./PhoneStage";
   ```
 
-- [ ] Update `packages/phone-3d/src/demo/main.tsx` to consume the stage exactly as a host
+- [x] Update `packages/phone-3d/src/demo/main.tsx` to consume the stage exactly as a host
       app would. Replace the imports
 
   ```tsx
@@ -1356,14 +1356,14 @@ of the four settings or the upload strategy.
   (R3F renders `className` onto the Canvas wrapper div, so the existing `.stage` flex
   CSS keeps sizing it.)
 
-- [ ] Verify tests and lint:
+- [x] Verify tests and lint:
 
   ```sh
   mise exec -- vp run @hellotimber/phone-3d#test
   mise exec -- vp check --fix
   ```
 
-- [ ] **Visual gate** — `cd packages/phone-3d && mise exec -- vp dev`:
+- [x] **Visual gate** — `cd packages/phone-3d && mise exec -- vp dev`:
   - The phone sways gently on its own (slow, small-amplitude rotation — never nauseating).
   - Moving the mouse across the stage tilts the phone toward the pointer; it eases back
     when the pointer rests. Keys remain clickable while swaying (raycast tracks the
@@ -1372,7 +1372,7 @@ of the four settings or the upload strategy.
     distortion and no console errors.
   - The frame counter still animates and the backlight toggle still works.
 
-- [ ] Commit: `feat(phone-3d): PhoneStage with idle sway and pointer tilt`
+- [x] Commit: `feat(phone-3d): PhoneStage with idle sway and pointer tilt`
 
 ---
 
@@ -1380,7 +1380,7 @@ of the four settings or the upload strategy.
 
 **Files:** `packages/phone-3d/README.md`, `docs/plans/README.md`
 
-- [ ] Write `packages/phone-3d/README.md`:
+- [x] Write `packages/phone-3d/README.md`:
 
   ````markdown
   # @hellotimber/phone-3d
@@ -1471,34 +1471,34 @@ of the four settings or the upload strategy.
   through the demo, since jsdom has no WebGL.
   ````
 
-- [ ] Run the **final visual checklist** against the demo
+- [x] Run the **final visual checklist** against the demo
       (`cd packages/phone-3d && mise exec -- vp dev`) — every line must hold:
-  - [ ] Phone proportions read as a 3310: tall rounded dark-blue candy-bar, screen in
+  - [x] Phone proportions read as a 3310: tall rounded dark-blue candy-bar, screen in
         the upper third, earpiece dots above the screen.
-  - [ ] Test-pattern screen is pixel-crisp; frame counter increments on the 3D screen
+  - [x] Test-pattern screen is pixel-crisp; frame counter increments on the 3D screen
         and sidebar preview in lockstep.
-  - [ ] Blue NaviKey pill, C below-left, rocker below-right, smiling 4×3 digit grid,
+  - [x] Blue NaviKey pill, C below-left, rocker below-right, smiling 4×3 digit grid,
         black power button on the top edge.
-  - [ ] Click each of the 17 keys → each depresses and logs `<key> down` / `<key> up`.
-  - [ ] Hover cursor is `pointer` over keys, default elsewhere; drag-off releases.
-  - [ ] Backlight toggle dims/relights screen and glow.
-  - [ ] Idle sway + pointer tilt active; window resize never distorts or errors.
-  - [ ] Browser console clean (no three.js warnings about multiple instances, no
+  - [x] Click each of the 17 keys → each depresses and logs `<key> down` / `<key> up`.
+  - [x] Hover cursor is `pointer` over keys, default elsewhere; drag-off releases.
+  - [x] Backlight toggle dims/relights screen and glow.
+  - [x] Idle sway + pointer tilt active; window resize never distorts or errors.
+  - [x] Browser console clean (no three.js warnings about multiple instances, no
         React key warnings).
-  - [ ] `src/index.ts` exports exactly: `Nokia3310Key`, `Nokia3310Props`, `Nokia3310`,
+  - [x] `src/index.ts` exports exactly: `Nokia3310Key`, `Nokia3310Props`, `Nokia3310`,
         `PhoneStage` — the VISION contract, nothing else.
-- [ ] Run the full verification suite one last time:
+- [x] Run the full verification suite one last time:
 
   ```sh
   mise exec -- vp run @hellotimber/phone-3d#test
   mise exec -- vp check --fix
   ```
 
-- [ ] **Plan status:** in `docs/plans/README.md`, change plan 03's Status column from
+- [x] **Plan status:** in `docs/plans/README.md`, change plan 03's Status column from
       `not started` to `done` (or `in progress` if any checklist line above failed —
       and report the failure).
 
-- [ ] Commit: `feat(phone-3d): README with usage and props table; mark plan 03 done`
+- [x] Commit: `feat(phone-3d): README with usage and props table; mark plan 03 done`
 
 ---
 
@@ -1508,3 +1508,26 @@ All 8 tasks committed; `mise exec -- vp run @hellotimber/phone-3d#test` green;
 `mise exec -- vp check --fix` clean; the demo passes the Task 8 visual checklist; the
 package's public surface is exactly the VISION.md `@hellotimber/phone-3d` contract; no
 file outside `packages/phone-3d/` was modified except `docs/plans/README.md` (status).
+
+---
+
+## Post-completion history (added 2026-07-01 — read before touching this package)
+
+This plan was executed as written (procedural model, all tasks committed). **After
+completion, the procedural model was replaced** by a real glTF asset in commit `22c10e2`
+("feat(phone-3d): replace procedural model with real glTF Nokia 3310"):
+
+- Deleted: `PhoneBody.tsx`, `Key.tsx`, `Keypad.tsx`, `Screen.tsx`, `layout.ts` and their tests.
+- Added: drei `useGLTF` loading of a Draco-compressed Sketchfab model (shaderbytes,
+  ~141 KB glb + ~240 KB Draco decoders served from `public/models` + `public/draco`),
+  transparent raycast **key hotspots** over the model's fused keypad (`hotspots.ts`),
+  and a dev-only calibration panel (`calibration.ts`, `CalibrationPanel.tsx`, `?calibrate=1`).
+- The `Nokia3310Props` contract gained `modelUrl` / `dracoPath` / `screenBgColor`;
+  `pressedKeys` became a silent no-op (the fused mesh cannot depress or light keys).
+
+**The glTF variant is itself superseded by [plan 09](./09-phone-model-v2.md)** (procedural
+model v2: per-key meshes, per-key backlight, key depress, `pressedKeys` honored), motivated
+by visible mesh artifacts — see `docs/plans/assets/model-v1-artifacts.png` (broken shading
+facets across the keypad face, blank unshaped keys). The 84×48 CanvasTexture LCD pipeline
+from this plan survived both swaps unchanged and remains correct
+(`docs/plans/assets/lcd-authentic-carousel.png`).

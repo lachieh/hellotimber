@@ -136,7 +136,7 @@ Add the package and three.js dependencies, the dedupe/noExternal config from int
 
 **Steps**
 
-- [ ] **Step 1: Update `website/package.json`** — replace the whole file with (only `dependencies` and `devDependencies` change: 6 new deps, 1 new devDep; `@hellotimber/snake` arrives in Task 9):
+- [x] **Step 1: Update `website/package.json`** — replace the whole file with (only `dependencies` and `devDependencies` change: 6 new deps, 1 new devDep; `@hellotimber/snake` arrives in Task 9):
 
   ```json
   {
@@ -192,7 +192,7 @@ Add the package and three.js dependencies, the dedupe/noExternal config from int
   }
   ```
 
-- [ ] **Step 2: Replace `website/vite.config.ts`** with (adds `resolve.dedupe` + `ssr.noExternal` per integration-notes §1, and the `test` block per §6; plugins unchanged):
+- [x] **Step 2: Replace `website/vite.config.ts`** with (adds `resolve.dedupe` + `ssr.noExternal` per integration-notes §1, and the `test` block per §6; plugins unchanged):
 
   ```ts
   import { defineConfig } from "vite-plus";
@@ -228,7 +228,7 @@ Add the package and three.js dependencies, the dedupe/noExternal config from int
   export default config;
   ```
 
-- [ ] **Step 3: Edit the root `vite.config.ts`** — add the `overrides` entry to the existing `lint` block (integration-notes §1: an override's `plugins` _replaces_ the base list, giving phone-3d the react lint plugin). The `lint` block becomes exactly:
+- [x] **Step 3: Edit the root `vite.config.ts`** — add the `overrides` entry to the existing `lint` block (integration-notes §1: an override's `plugins` _replaces_ the base list, giving phone-3d the react lint plugin). The `lint` block becomes exactly:
 
   ```ts
   lint: {
@@ -246,9 +246,9 @@ Add the package and three.js dependencies, the dedupe/noExternal config from int
 
   Nothing else in the root config changes (`staged`, `fmt`, `run` stay as they are).
 
-- [ ] **Step 4: Install:** run `mise exec -- vp install` from the repo root. Expect success; `three`, `@react-three/fiber`, `@react-three/drei`, `@types/three` resolve from the catalog and the three `@hellotimber/*` workspace links appear in `website/node_modules/@hellotimber/`. If install fails because a `packages/*` directory is missing, STOP — plans 01–03 are not done.
-- [ ] **Step 5: Gates:** `mise exec -- vp check --fix` then `mise exec -- vp run website#build` — both must pass (no source uses the new deps yet; this proves config + dep resolution).
-- [ ] **Step 6: Commit:**
+- [x] **Step 4: Install:** run `mise exec -- vp install` from the repo root. Expect success; `three`, `@react-three/fiber`, `@react-three/drei`, `@types/three` resolve from the catalog and the three `@hellotimber/*` workspace links appear in `website/node_modules/@hellotimber/`. If install fails because a `packages/*` directory is missing, STOP — plans 01–03 are not done.
+- [x] **Step 5: Gates:** `mise exec -- vp check --fix` then `mise exec -- vp run website#build` — both must pass (no source uses the new deps yet; this proves config + dep resolution).
+- [x] **Step 6: Commit:**
 
   ```sh
   git add website/package.json website/vite.config.ts vite.config.ts pnpm-lock.yaml
@@ -268,7 +268,7 @@ Pure functions: URL = `/` + phone path (VISION "The menu is the sitemap"). `/` �
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `website/tests/paths.test.ts`:
+- [x] **Step 1: Write the failing test** `website/tests/paths.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -318,11 +318,11 @@ Pure functions: URL = `/` + phone path (VISION "The menu is the sitemap"). `/` �
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `src/phone/paths.ts`): `mise exec -- vp run website#test`
+- [x] **Step 2: Run & expect FAIL** (no `src/phone/paths.ts`): `mise exec -- vp run website#test`
 
   This is the first test run in the website package (its vite config carries the TanStack Start plugins). The expected failure is "cannot resolve ../src/phone/paths". If instead the runner itself crashes on a plugin, STOP and report — do not work around it by moving tests to a package.
 
-- [ ] **Step 3: Write `website/src/phone/paths.ts`:**
+- [x] **Step 3: Write `website/src/phone/paths.ts`:**
 
   ```ts
   /**
@@ -348,8 +348,8 @@ Pure functions: URL = `/` + phone path (VISION "The menu is the sitemap"). `/` �
   }
   ```
 
-- [ ] **Step 4: Run & expect PASS:** `mise exec -- vp run website#test`
-- [ ] **Step 5: Commit:**
+- [x] **Step 4: Run & expect PASS:** `mise exec -- vp run website#test`
+- [x] **Step 5: Commit:**
 
   ```sh
   git add website/src/phone/paths.ts website/tests/paths.test.ts
@@ -369,7 +369,7 @@ One content module typed by phone-core's `Nokia3310Content` feeds **both** the p
 
 **Steps**
 
-- [ ] **Step 1: Write `website/src/content/index.ts`:**
+- [x] **Step 1: Write `website/src/content/index.ts`:**
 
   ```ts
   import type { Nokia3310Content } from "@hellotimber/phone-core";
@@ -429,7 +429,7 @@ One content module typed by phone-core's `Nokia3310Content` feeds **both** the p
   };
   ```
 
-- [ ] **Step 2: Write `website/src/phone/phone.ts`:**
+- [x] **Step 2: Write `website/src/phone/phone.ts`:**
 
   ```ts
   import { createPhone, editorApp, nokia3310Menu } from "@hellotimber/phone-core";
@@ -501,8 +501,8 @@ One content module typed by phone-core's `Nokia3310Content` feeds **both** the p
   }
   ```
 
-- [ ] **Step 3: Gates:** `mise exec -- vp check --fix` and `mise exec -- vp run website#build` — both must pass (the module is not imported anywhere yet; this proves it compiles against the real package contracts). If `editorApp`, `nokia3310Menu`, or `createScreenRenderer` do not exist with these signatures, STOP and report (plans 01/02 contract drift).
-- [ ] **Step 4: Commit:**
+- [x] **Step 3: Gates:** `mise exec -- vp check --fix` and `mise exec -- vp run website#build` — both must pass (the module is not imported anywhere yet; this proves it compiles against the real package contracts). If `editorApp`, `nokia3310Menu`, or `createScreenRenderer` do not exist with these signatures, STOP and report (plans 01/02 contract drift).
+- [x] **Step 4: Commit:**
 
   ```sh
   git add website/src/content/index.ts website/src/phone/phone.ts
@@ -523,7 +523,7 @@ The integration-notes §4 pattern adapted to the real contracts: `onResolved` fo
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `website/tests/router-sync.test.ts`:
+- [x] **Step 1: Write the failing test** `website/tests/router-sync.test.ts`:
 
   ```ts
   import { createPhone } from "@hellotimber/phone-core";
@@ -653,8 +653,8 @@ The integration-notes §4 pattern adapted to the real contracts: `onResolved` fo
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `src/phone/router-sync.ts`): `mise exec -- vp run website#test`
-- [ ] **Step 3: Write `website/src/phone/router-sync.ts`:**
+- [x] **Step 2: Run & expect FAIL** (no `src/phone/router-sync.ts`): `mise exec -- vp run website#test`
+- [x] **Step 3: Write `website/src/phone/router-sync.ts`:**
 
   ```ts
   import type { Phone } from "@hellotimber/phone-core";
@@ -704,7 +704,7 @@ The integration-notes §4 pattern adapted to the real contracts: `onResolved` fo
   }
   ```
 
-- [ ] **Step 4: Wire the bridge in `website/src/router.tsx`** — replace the whole file with (client-only guard: on the server a router is created per request and the phone must not exist there; the module-level `disconnect` keeps HMR re-runs from double-subscribing):
+- [x] **Step 4: Wire the bridge in `website/src/router.tsx`** — replace the whole file with (client-only guard: on the server a router is created per request and the phone must not exist there; the module-level `disconnect` keeps HMR re-runs from double-subscribing):
 
   ```ts
   import { createRouter as createTanStackRouter } from "@tanstack/react-router";
@@ -738,9 +738,9 @@ The integration-notes §4 pattern adapted to the real contracts: `onResolved` fo
   }
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run website#test`
-- [ ] **Step 6: Gates:** `mise exec -- vp check --fix` and `mise exec -- vp run website#build` — both must pass (the SSR build must not execute `getPhoneRuntime()`; if the build or a server render throws the client-only error, the guard in `getRouter()` is wrong — fix before proceeding).
-- [ ] **Step 7: Commit:**
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run website#test`
+- [x] **Step 6: Gates:** `mise exec -- vp check --fix` and `mise exec -- vp run website#build` — both must pass (the SSR build must not execute `getPhoneRuntime()`; if the build or a server render throws the client-only error, the guard in `getRouter()` is wrong — fix before proceeding).
+- [x] **Step 7: Commit:**
 
   ```sh
   git add website/src/phone/router-sync.ts website/src/router.tsx website/tests/router-sync.test.ts
@@ -766,7 +766,7 @@ The canvas mounts once in `routes/_phone.tsx` (pathless layout, integration-note
 
 **Steps**
 
-- [ ] **Step 1: Write `website/src/phone/PhoneStageHost.tsx`:**
+- [x] **Step 1: Write `website/src/phone/PhoneStageHost.tsx`:**
 
   ```tsx
   import { PhoneStage } from "@hellotimber/phone-3d";
@@ -809,7 +809,7 @@ The canvas mounts once in `routes/_phone.tsx` (pathless layout, integration-note
 
   (`Nokia3310Key` and `PhoneKey` are identical literal unions by contract, so the `onKey` callback assigns cleanly. If TypeScript rejects it, the packages drifted — STOP and report.)
 
-- [ ] **Step 2: Write `website/src/routes/_phone.tsx`** (integration-notes §3 verbatim pattern, stage wrapper filled in):
+- [x] **Step 2: Write `website/src/routes/_phone.tsx`** (integration-notes §3 verbatim pattern, stage wrapper filled in):
 
   ```tsx
   import { ClientOnly, createFileRoute, Outlet } from "@tanstack/react-router";
@@ -837,7 +837,7 @@ The canvas mounts once in `routes/_phone.tsx` (pathless layout, integration-note
 
   Desktop: stage left, content panel right (3fr/2fr grid). Mobile: one column, canvas first, panel below. Minimal styling — plan 06 polishes.
 
-- [ ] **Step 3: Move the index route under the layout:** `git mv website/src/routes/index.tsx website/src/routes/_phone/index.tsx`, then change its route id line — the file keeps its template content for now (Task 6 rewrites it):
+- [x] **Step 3: Move the index route under the layout:** `git mv website/src/routes/index.tsx website/src/routes/_phone/index.tsx`, then change its route id line — the file keeps its template content for now (Task 6 rewrites it):
 
   ```tsx
   export const Route = createFileRoute("/_phone/")({ component: App });
@@ -845,8 +845,8 @@ The canvas mounts once in `routes/_phone.tsx` (pathless layout, integration-note
 
   (Only the string changes: `"/"` → `"/_phone/"`. Leave the rest of the file as-is.)
 
-- [ ] **Step 4: Delete the about route:** `git rm website/src/routes/about.tsx` (superseded by the menu routes).
-- [ ] **Step 5: Edit `website/src/components/Header.tsx`** — the typed `<Link to="/about">` no longer compiles. Delete exactly this block from the nav:
+- [x] **Step 4: Delete the about route:** `git rm website/src/routes/about.tsx` (superseded by the menu routes).
+- [x] **Step 5: Edit `website/src/components/Header.tsx`** — the typed `<Link to="/about">` no longer compiles. Delete exactly this block from the nav:
 
   ```tsx
   <Link to="/about" className="nav-link" activeProps={{ className: "nav-link is-active" }}>
@@ -856,7 +856,7 @@ The canvas mounts once in `routes/_phone.tsx` (pathless layout, integration-note
 
   Leave everything else (Home link, Docs link, icons, ThemeToggle) untouched.
 
-- [ ] **Step 6: Edit `website/src/routes/__root.tsx`** — update the document title. Replace:
+- [x] **Step 6: Edit `website/src/routes/__root.tsx`** — update the document title. Replace:
 
   ```tsx
   {
@@ -872,7 +872,7 @@ The canvas mounts once in `routes/_phone.tsx` (pathless layout, integration-note
   },
   ```
 
-- [ ] **Step 7: Append the stage styles** to the end of `website/src/styles.css`:
+- [x] **Step 7: Append the stage styles** to the end of `website/src/styles.css`:
 
   ```css
   /* --- Nokia 3310 stage (plan 05) ------------------------------------- */
@@ -890,14 +890,14 @@ The canvas mounts once in `routes/_phone.tsx` (pathless layout, integration-note
   }
   ```
 
-- [ ] **Step 8: Regenerate the route tree:** `mise exec -- vp run website#generate-routes`. Expect `website/src/routeTree.gen.ts` to now contain the `/_phone` layout route and the `/_phone/` index route, and no `/about`. Never edit the generated file by hand.
-- [ ] **Step 9: Gates:** `mise exec -- vp run website#test`, `mise exec -- vp check --fix`, `mise exec -- vp run website#build` — all must pass.
-- [ ] **Step 10: Visual verification:** run `mise exec -- vp run website#dev` and open http://localhost:3000/ in a browser:
+- [x] **Step 8: Regenerate the route tree:** `mise exec -- vp run website#generate-routes`. Expect `website/src/routeTree.gen.ts` to now contain the `/_phone` layout route and the `/_phone/` index route, and no `/about`. Never edit the generated file by hand.
+- [x] **Step 9: Gates:** `mise exec -- vp run website#test`, `mise exec -- vp check --fix`, `mise exec -- vp run website#build` — all must pass.
+- [x] **Step 10: Visual verification:** run `mise exec -- vp run website#dev` and open http://localhost:3000/ in a browser:
   - The 3D phone renders (skeleton first, then the canvas hydrates in).
   - The boot sequence plays on the phone's LCD (~1 s hold on the first frame, then hands animation → standby with `LACHLAN` and the clock).
   - Clicking the phone's 3D keys works: NaviKey opens the menu carousel on the LCD and the browser URL changes to `/menu`. The router shows its default not-found for now (routes arrive in Tasks 6–7) — and because an unmatched URL falls outside the `_phone` layout, the canvas may unmount on that interim screen. That is expected ONLY until Task 6 adds the catch-all route; the canvas-persistence guarantee is verified in Task 7.
   - Pressing the browser Back button returns the LCD to standby.
-- [ ] **Step 11: Commit:**
+- [x] **Step 11: Commit:**
 
   ```sh
   git add -A website/src
@@ -924,7 +924,7 @@ The accessible HTML panel component, then the first batch of routes: standby (`/
 
 **Steps**
 
-- [ ] **Step 1: Write `website/src/components/ContentPanel.tsx`:**
+- [x] **Step 1: Write `website/src/components/ContentPanel.tsx`:**
 
   ```tsx
   import type { ReactNode } from "react";
@@ -957,7 +957,7 @@ The accessible HTML panel component, then the first batch of routes: standby (`/
   }
   ```
 
-- [ ] **Step 2: Rewrite `website/src/routes/_phone/index.tsx`** (standby — replaces the moved template content entirely):
+- [x] **Step 2: Rewrite `website/src/routes/_phone/index.tsx`** (standby — replaces the moved template content entirely):
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -982,7 +982,7 @@ The accessible HTML panel component, then the first batch of routes: standby (`/
   }
   ```
 
-- [ ] **Step 3: Write `website/src/routes/_phone/$.tsx`** — the catch-all. It keeps every phone-pushed URL (e.g. `menu/phone-book/search` from standby ▲) inside the layout so the canvas survives, and doubles as the site's 404 in SIM-services costume (VISION Menu 13):
+- [x] **Step 3: Write `website/src/routes/_phone/$.tsx`** — the catch-all. It keeps every phone-pushed URL (e.g. `menu/phone-book/search` from standby ▲) inside the layout so the canvas survives, and doubles as the site's 404 in SIM-services costume (VISION Menu 13):
 
   ```tsx
   import { createFileRoute, Link } from "@tanstack/react-router";
@@ -1003,7 +1003,7 @@ The accessible HTML panel component, then the first batch of routes: standby (`/
   }
   ```
 
-- [ ] **Step 4: Write `website/src/routes/_phone/menu/phone-book.tsx`** (representative list-panel route — the pattern for every content-backed route):
+- [x] **Step 4: Write `website/src/routes/_phone/menu/phone-book.tsx`** (representative list-panel route — the pattern for every content-backed route):
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1028,7 +1028,7 @@ The accessible HTML panel component, then the first batch of routes: standby (`/
   }
   ```
 
-- [ ] **Step 5: Write `website/src/routes/_phone/menu/messages/index.tsx`** (representative submenu route — typed links to its children, which are created in this same task):
+- [x] **Step 5: Write `website/src/routes/_phone/menu/messages/index.tsx`** (representative submenu route — typed links to its children, which are created in this same task):
 
   ```tsx
   import { createFileRoute, Link } from "@tanstack/react-router";
@@ -1053,7 +1053,7 @@ The accessible HTML panel component, then the first batch of routes: standby (`/
   }
   ```
 
-- [ ] **Step 6: Write `website/src/routes/_phone/menu/messages/inbox.tsx`:**
+- [x] **Step 6: Write `website/src/routes/_phone/menu/messages/inbox.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1077,7 +1077,7 @@ The accessible HTML panel component, then the first batch of routes: standby (`/
   }
   ```
 
-- [ ] **Step 7: Write `website/src/routes/_phone/menu/messages/write.tsx`:**
+- [x] **Step 7: Write `website/src/routes/_phone/menu/messages/write.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1101,7 +1101,7 @@ The accessible HTML panel component, then the first batch of routes: standby (`/
   }
   ```
 
-- [ ] **Step 8: Write `website/src/routes/_phone/menu/chat.tsx`:**
+- [x] **Step 8: Write `website/src/routes/_phone/menu/chat.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1126,8 +1126,8 @@ The accessible HTML panel component, then the first batch of routes: standby (`/
   }
   ```
 
-- [ ] **Step 9: Regenerate & gate:** `mise exec -- vp run website#generate-routes`, then `mise exec -- vp check --fix` and `mise exec -- vp run website#build` — all must pass.
-- [ ] **Step 10: Commit:**
+- [x] **Step 9: Regenerate & gate:** `mise exec -- vp run website#generate-routes`, then `mise exec -- vp check --fix` and `mise exec -- vp run website#build` — all must pass.
+- [x] **Step 10: Commit:**
 
   ```sh
   git add website/src/components/ContentPanel.tsx website/src/routes website/src/routeTree.gen.ts
@@ -1158,7 +1158,7 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
 
 **Steps**
 
-- [ ] **Step 1: Write `website/src/routes/_phone/menu/call-register.tsx`** (work history — all three registers on one panel; the phone's sublist URLs fall to the catch-all, see Contract deviations 3):
+- [x] **Step 1: Write `website/src/routes/_phone/menu/call-register.tsx`** (work history — all three registers on one panel; the phone's sublist URLs fall to the catch-all, see Contract deviations 3):
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1194,7 +1194,7 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
   }
   ```
 
-- [ ] **Step 2: Write `website/src/routes/_phone/menu/tones.tsx`:**
+- [x] **Step 2: Write `website/src/routes/_phone/menu/tones.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1214,7 +1214,7 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
   }
   ```
 
-- [ ] **Step 3: Write `website/src/routes/_phone/menu/settings.tsx`:**
+- [x] **Step 3: Write `website/src/routes/_phone/menu/settings.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1234,7 +1234,7 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
   }
   ```
 
-- [ ] **Step 4: Write `website/src/routes/_phone/menu/call-divert.tsx`** (external links from the same divert entries the phone's action nodes use):
+- [x] **Step 4: Write `website/src/routes/_phone/menu/call-divert.tsx`** (external links from the same divert entries the phone's action nodes use):
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1261,7 +1261,7 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
   }
   ```
 
-- [ ] **Step 5: Write `website/src/routes/_phone/menu/games/index.tsx`:**
+- [x] **Step 5: Write `website/src/routes/_phone/menu/games/index.tsx`:**
 
   ```tsx
   import { createFileRoute, Link } from "@tanstack/react-router";
@@ -1285,7 +1285,7 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
   }
   ```
 
-- [ ] **Step 6: Write `website/src/routes/_phone/menu/games/snake.tsx`:**
+- [x] **Step 6: Write `website/src/routes/_phone/menu/games/snake.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1307,7 +1307,7 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
   }
   ```
 
-- [ ] **Step 7: Write `website/src/routes/_phone/menu/calculator.tsx`:**
+- [x] **Step 7: Write `website/src/routes/_phone/menu/calculator.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1327,7 +1327,7 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
   }
   ```
 
-- [ ] **Step 8: Write `website/src/routes/_phone/menu/reminders.tsx`:**
+- [x] **Step 8: Write `website/src/routes/_phone/menu/reminders.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1352,7 +1352,7 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
   }
   ```
 
-- [ ] **Step 9: Write `website/src/routes/_phone/menu/clock.tsx`** (static copy only — no `new Date()` in render, it would mismatch on hydration):
+- [x] **Step 9: Write `website/src/routes/_phone/menu/clock.tsx`** (static copy only — no `new Date()` in render, it would mismatch on hydration):
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1371,7 +1371,7 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
   }
   ```
 
-- [ ] **Step 10: Write `website/src/routes/_phone/menu/profiles.tsx`:**
+- [x] **Step 10: Write `website/src/routes/_phone/menu/profiles.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1391,7 +1391,7 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
   }
   ```
 
-- [ ] **Step 11: Write `website/src/routes/_phone/menu/sim-services.tsx`:**
+- [x] **Step 11: Write `website/src/routes/_phone/menu/sim-services.tsx`:**
 
   ```tsx
   import { createFileRoute } from "@tanstack/react-router";
@@ -1411,7 +1411,7 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
   }
   ```
 
-- [ ] **Step 12: Write `website/src/routes/_phone/menu/index.tsx`** — last, because its typed links require every route above:
+- [x] **Step 12: Write `website/src/routes/_phone/menu/index.tsx`** — last, because its typed links require every route above:
 
   ```tsx
   import { createFileRoute, Link } from "@tanstack/react-router";
@@ -1451,15 +1451,15 @@ The rest of the VISION sitemap table, finishing with `/menu` (its typed links ne
   }
   ```
 
-- [ ] **Step 13: Regenerate & gate:** `mise exec -- vp run website#generate-routes`, then `mise exec -- vp run website#test`, `mise exec -- vp check --fix`, `mise exec -- vp run website#build` — all must pass.
-- [ ] **Step 14: Visual verification — the canvas NEVER remounts.** Run `mise exec -- vp run website#dev`, open http://localhost:3000/:
+- [x] **Step 13: Regenerate & gate:** `mise exec -- vp run website#generate-routes`, then `mise exec -- vp run website#test`, `mise exec -- vp check --fix`, `mise exec -- vp run website#build` — all must pass.
+- [x] **Step 14: Visual verification — the canvas NEVER remounts.** Run `mise exec -- vp run website#dev`, open http://localhost:3000/:
   - In the browser dev-tools console run: `window.__c = document.querySelector("canvas")`.
   - Click the panel link to `/menu` (or use the phone's NaviKey), then to `/menu/games`, then browser-Back twice.
   - Run: `window.__c === document.querySelector("canvas")` — must print `true` after every navigation. If `false`, the stage remounted — STOP and fix (the stage must live only in `_phone.tsx`, unkeyed).
   - Walk the phone with the 3D keys: standby → NaviKey → carousel → select Phone book — URL follows to `/menu/phone-book` and the panel swaps. Deep-load http://localhost:3000/menu/games/snake — the phone boots into the Games area (until Task 9 registers the app, phone-core treats the unregistered `snake` appId as a no-op and may settle on `menu/games`; after Task 9 it boots straight into the game).
   - Load http://localhost:3000/definitely/not/a/page — SIM-services 404 panel, canvas intact.
   - Narrow the window below `lg`: panel stacks below the canvas.
-- [ ] **Step 15: Commit:**
+- [x] **Step 15: Commit:**
 
   ```sh
   git add website/src/routes website/src/routeTree.gen.ts
@@ -1480,7 +1480,7 @@ Document-level keydown/keyup → phone key events. `preventDefault` **only** for
 
 **Steps**
 
-- [ ] **Step 1: Write the failing test** `website/tests/keyboard.test.ts`:
+- [x] **Step 1: Write the failing test** `website/tests/keyboard.test.ts`:
 
   ```ts
   // @vitest-environment jsdom
@@ -1585,8 +1585,8 @@ Document-level keydown/keyup → phone key events. `preventDefault` **only** for
   });
   ```
 
-- [ ] **Step 2: Run & expect FAIL** (no `src/phone/keyboard.ts`): `mise exec -- vp run website#test`
-- [ ] **Step 3: Write `website/src/phone/keyboard.ts`:**
+- [x] **Step 2: Run & expect FAIL** (no `src/phone/keyboard.ts`): `mise exec -- vp run website#test`
+- [x] **Step 3: Write `website/src/phone/keyboard.ts`:**
 
   ```ts
   import type { KeyEvent, Phone, PhoneKey } from "@hellotimber/phone-core";
@@ -1652,7 +1652,7 @@ Document-level keydown/keyup → phone key events. `preventDefault` **only** for
   }
   ```
 
-- [ ] **Step 4: Hook it into `website/src/phone/PhoneStageHost.tsx`** — add the import and a second `useEffect` after the version-observation effect:
+- [x] **Step 4: Hook it into `website/src/phone/PhoneStageHost.tsx`** — add the import and a second `useEffect` after the version-observation effect:
 
   ```tsx
   import { attachKeyboard } from "./keyboard";
@@ -1663,12 +1663,12 @@ Document-level keydown/keyup → phone key events. `preventDefault` **only** for
   useEffect(() => attachKeyboard(phone), [phone]);
   ```
 
-- [ ] **Step 5: Run & expect PASS:** `mise exec -- vp run website#test`, then `mise exec -- vp check --fix` and `mise exec -- vp run website#build`.
-- [ ] **Step 6: Visual verification:** `mise exec -- vp run website#dev`, open http://localhost:3000/:
+- [x] **Step 5: Run & expect PASS:** `mise exec -- vp run website#test`, then `mise exec -- vp check --fix` and `mise exec -- vp run website#build`.
+- [x] **Step 6: Visual verification:** `mise exec -- vp run website#dev`, open http://localhost:3000/:
   - Enter opens the menu (URL → `/menu`), arrows cycle the carousel, Enter selects, Backspace steps back, holding Backspace ≈1 s jumps to standby.
   - `p` held ≈1 s powers the phone off (LCD goes dark); held again powers it back on through boot.
   - Press `/` or `Cmd+L` etc. — browser behavior unaffected. Click into the browser URL bar and type digits — the phone must not react.
-- [ ] **Step 7: Commit:**
+- [x] **Step 7: Commit:**
 
   ```sh
   git add website/src/phone/keyboard.ts website/src/phone/PhoneStageHost.tsx website/tests/keyboard.test.ts
@@ -1692,7 +1692,7 @@ The adapter implements phone-core's `AppFactory` over `@hellotimber/snake` — t
 
 **Steps**
 
-- [ ] **Step 1: Add the dependency** in `website/package.json` — insert into `dependencies` (kept alphabetical):
+- [x] **Step 1: Add the dependency** in `website/package.json` — insert into `dependencies` (kept alphabetical):
 
   ```json
   "@hellotimber/snake": "workspace:*",
@@ -1700,7 +1700,7 @@ The adapter implements phone-core's `AppFactory` over `@hellotimber/snake` — t
 
   Then run `mise exec -- vp install`.
 
-- [ ] **Step 2: Write the failing test** `website/tests/snake-app.test.ts`:
+- [x] **Step 2: Write the failing test** `website/tests/snake-app.test.ts`:
 
   ```ts
   import type { PhoneApp } from "@hellotimber/phone-core";
@@ -1895,8 +1895,8 @@ The adapter implements phone-core's `AppFactory` over `@hellotimber/snake` — t
   });
   ```
 
-- [ ] **Step 3: Run & expect FAIL** (no `src/phone/apps/snake-app.ts`): `mise exec -- vp run website#test`
-- [ ] **Step 4: Write `website/src/phone/apps/snake-app.ts`:**
+- [x] **Step 3: Run & expect FAIL** (no `src/phone/apps/snake-app.ts`): `mise exec -- vp run website#test`
+- [x] **Step 4: Write `website/src/phone/apps/snake-app.ts`:**
 
   ```ts
   import type { AppFactory, PhoneApp, PhoneKey, ScreenModel } from "@hellotimber/phone-core";
@@ -2020,7 +2020,7 @@ The adapter implements phone-core's `AppFactory` over `@hellotimber/snake` — t
   }
   ```
 
-- [ ] **Step 5: Register the app** in `website/src/phone/phone.ts` — add the import and replace `buildApps`:
+- [x] **Step 5: Register the app** in `website/src/phone/phone.ts` — add the import and replace `buildApps`:
 
   ```ts
   import { snakeApp } from "./apps/snake-app";
@@ -2037,12 +2037,12 @@ The adapter implements phone-core's `AppFactory` over `@hellotimber/snake` — t
   }
   ```
 
-- [ ] **Step 6: Run & expect PASS:** `mise exec -- vp run website#test`, then `mise exec -- vp check --fix` and `mise exec -- vp run website#build`.
-- [ ] **Step 7: Visual verification:** `mise exec -- vp run website#dev`, open http://localhost:3000/menu/games/snake:
+- [x] **Step 6: Run & expect PASS:** `mise exec -- vp run website#test`, then `mise exec -- vp check --fix` and `mise exec -- vp run website#build`.
+- [x] **Step 7: Visual verification:** `mise exec -- vp run website#dev`, open http://localhost:3000/menu/games/snake:
   - The phone boots straight into Snake (idle board). Press an arrow key or 6 — the snake runs; eating food grows it and bumps the score.
   - Backspace pauses and exits to the Games list; re-entering Snake II continues the same game.
   - Die on purpose: the death flash plays, then GAME OVER. In dev tools, `localStorage.getItem("hellotimber.snake.topscore")` holds your score. Press 6 — a fresh game starts.
-- [ ] **Step 8: Commit:**
+- [x] **Step 8: Commit:**
 
   ```sh
   git add website/package.json pnpm-lock.yaml website/src/phone website/tests/snake-app.test.ts
@@ -2059,7 +2059,7 @@ The adapter implements phone-core's `AppFactory` over `@hellotimber/snake` — t
 
 **Steps**
 
-- [ ] **Step 1: SSR sanity — panel content must be server-rendered** (accessibility/SEO is the point of the panels). Start `mise exec -- vp run website#dev`, then from another shell:
+- [x] **Step 1: SSR sanity — panel content must be server-rendered** (accessibility/SEO is the point of the panels). Start `mise exec -- vp run website#dev`, then from another shell:
 
   ```sh
   curl -s http://localhost:3000/menu/chat | grep -c "Lachlan shipped the impossible"
@@ -2069,16 +2069,16 @@ The adapter implements phone-core's `AppFactory` over `@hellotimber/snake` — t
 
   Each must print ≥ 1 — the sample copy is in the raw HTML, not injected client-side. (Equivalently: browser View Source, not the elements inspector.) No output may contain the text of the client-only error from `getPhoneRuntime()`.
 
-- [ ] **Step 2: Canvas-persistence spot check** (repeat of Task 7 Step 14, now with Snake): set `window.__c = document.querySelector("canvas")` on `/`, navigate `/` → `/menu` → `/menu/games/snake` → back → back, confirm `window.__c === document.querySelector("canvas")` is `true` at each stop.
-- [ ] **Step 3: Full repo gate:** from the repo root run `mise exec -- vp run ready` (root script: `vp check && vp run -r test && vp run -r build`). Everything must pass. If a _package_ test fails (not website code), STOP and report — do not patch packages from this plan.
-- [ ] **Step 4: Update the plan index:** in `docs/plans/README.md`, set the Status cell of row `05` (website shell) to `done`. If Task 9 was skipped because plan 04 wasn't ready, set `done (snake wiring pending plan 04)` instead and report it.
-- [ ] **Step 5: Commit:**
+- [x] **Step 2: Canvas-persistence spot check** (repeat of Task 7 Step 14, now with Snake): set `window.__c = document.querySelector("canvas")` on `/`, navigate `/` → `/menu` → `/menu/games/snake` → back → back, confirm `window.__c === document.querySelector("canvas")` is `true` at each stop.
+- [x] **Step 3: Full repo gate:** from the repo root run `mise exec -- vp run ready` (root script: `vp check && vp run -r test && vp run -r build`). Everything must pass. If a _package_ test fails (not website code), STOP and report — do not patch packages from this plan.
+- [x] **Step 4: Update the plan index:** in `docs/plans/README.md`, set the Status cell of row `05` (website shell) to `done`. If Task 9 was skipped because plan 04 wasn't ready, set `done (snake wiring pending plan 04)` instead and report it.
+- [x] **Step 5: Commit:**
 
   ```sh
   git add docs/plans/README.md
   git commit -m "docs: mark plan 05 website shell done"
   ```
 
-- [ ] **Step 6: Report completion** — summarize: tasks finished, test files added (paths, router-sync, keyboard, snake-app), the verification results from Steps 1–3, and any deviations beyond the "Contract deviations" list at the top of this plan.
+- [x] **Step 6: Report completion** — summarize: tasks finished, test files added (paths, router-sync, keyboard, snake-app), the verification results from Steps 1–3, and any deviations beyond the "Contract deviations" list at the top of this plan.
 
 **Reminder for plan 06:** every block tagged `// SAMPLE DATA` in `website/src/content/index.ts` and the sample copy inside the route panels is placeholder text — plan 06 (content & polish) replaces it with real portfolio copy, wires sound + the contact-form delivery, and owns SEO/meta and chrome (Header/Footer) polish.

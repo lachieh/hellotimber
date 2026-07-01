@@ -166,7 +166,7 @@ Note: AGENTS.md offers a `vp create` scaffold recipe; this plan writes the files
 directly instead (same end state, no cruft to delete). If `vp install` fails to link
 the package afterwards, stop and report.
 
-- [ ] Write `packages/snake/package.json`:
+- [x] Write `packages/snake/package.json`:
 
   ```json
   {
@@ -188,7 +188,7 @@ the package afterwards, stop and report.
   }
   ```
 
-- [ ] Write `packages/snake/tsconfig.json` (the template from
+- [x] Write `packages/snake/tsconfig.json` (the template from
       `docs/specs/integration-notes.md` §1 — the root tsconfig has no DOM libs):
 
   ```json
@@ -209,7 +209,7 @@ the package afterwards, stop and report.
   }
   ```
 
-- [ ] Write `packages/snake/vite.config.ts`:
+- [x] Write `packages/snake/vite.config.ts`:
 
   ```ts
   import { defineConfig } from "vite-plus";
@@ -221,9 +221,9 @@ the package afterwards, stop and report.
   });
   ```
 
-- [ ] From the repo root run `mise exec -- vp install` to link the new workspace
+- [x] From the repo root run `mise exec -- vp install` to link the new workspace
       member (declared by the existing `packages/*` glob in `pnpm-workspace.yaml`).
-- [ ] Write the failing test `packages/snake/tests/api.test.ts`:
+- [x] Write the failing test `packages/snake/tests/api.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -260,9 +260,9 @@ the package afterwards, stop and report.
   });
   ```
 
-- [ ] Run (from `packages/snake/`): `mise exec -- vp test run` — **expect failure**
+- [x] Run (from `packages/snake/`): `mise exec -- vp test run` — **expect failure**
       (cannot resolve `../src/index`).
-- [ ] Write `packages/snake/src/types.ts` — the complete public types:
+- [x] Write `packages/snake/src/types.ts` — the complete public types:
 
   ```ts
   /** 1bpp bitmap, row-major, 0 = clear, 1 = set. Structurally identical to
@@ -324,7 +324,7 @@ the package afterwards, stop and report.
   }
   ```
 
-- [ ] Write `packages/snake/src/index.ts`:
+- [x] Write `packages/snake/src/index.ts`:
 
   ```ts
   export type {
@@ -338,9 +338,9 @@ the package afterwards, stop and report.
   } from "./types";
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect pass**.
-- [ ] Run `mise exec -- vp check --fix` from the repo root — must pass.
-- [ ] Commit: `feat(snake): scaffold package and lock public types`
+- [x] Run `mise exec -- vp test run` — **expect pass**.
+- [x] Run `mise exec -- vp check --fix` from the repo root — must pass.
+- [x] Commit: `feat(snake): scaffold package and lock public types`
 
 ---
 
@@ -349,7 +349,7 @@ the package afterwards, stop and report.
 **Files:** `packages/snake/src/prng.ts`, `packages/snake/src/timing.ts`,
 `packages/snake/src/index.ts`, `packages/snake/tests/prng.test.ts`
 
-- [ ] Write the failing test `packages/snake/tests/prng.test.ts` (the expected
+- [x] Write the failing test `packages/snake/tests/prng.test.ts` (the expected
       numbers below are the real mulberry32 outputs — do not alter them):
 
   ```ts
@@ -395,8 +395,8 @@ the package afterwards, stop and report.
   });
   ```
 
-- [ ] Run `mise exec -- vp test run` (from `packages/snake/`) — **expect failure**.
-- [ ] Write `packages/snake/src/prng.ts`:
+- [x] Run `mise exec -- vp test run` (from `packages/snake/`) — **expect failure**.
+- [x] Write `packages/snake/src/prng.ts`:
 
   ```ts
   /** mulberry32 — tiny deterministic PRNG; the package's only randomness source. */
@@ -411,7 +411,7 @@ the package afterwards, stop and report.
   }
   ```
 
-- [ ] Write `packages/snake/src/timing.ts`:
+- [x] Write `packages/snake/src/timing.ts`:
 
   ```ts
   /** Clamp a speed/level option into the Snake II range 1-9. */
@@ -429,7 +429,7 @@ the package afterwards, stop and report.
   }
   ```
 
-- [ ] Append to `packages/snake/src/index.ts`:
+- [x] Append to `packages/snake/src/index.ts`:
 
   ```ts
   export { tickIntervalMs } from "./timing";
@@ -438,9 +438,9 @@ the package afterwards, stop and report.
   (`mulberry32` and `clampLevel` stay internal — tests import them from `../src/...`
   directly.)
 
-- [ ] Run `mise exec -- vp test run` — **expect pass**.
-- [ ] Run `mise exec -- vp check --fix` — must pass.
-- [ ] Commit: `feat(snake): add seeded mulberry32 PRNG and tickIntervalMs helper`
+- [x] Run `mise exec -- vp test run` — **expect pass**.
+- [x] Run `mise exec -- vp check --fix` — must pass.
+- [x] Commit: `feat(snake): add seeded mulberry32 PRNG and tickIntervalMs helper`
 
 ---
 
@@ -454,7 +454,7 @@ Tunnel, Mill, Rails, Apartment; Box is the authentic perimeter; the other four a
 **plausible approximations** of the originals (exact layouts unverified — keep that
 comment in the source). Every maze must leave the snake start row clear.
 
-- [ ] Write the failing test `packages/snake/tests/mazes.test.ts`:
+- [x] Write the failing test `packages/snake/tests/mazes.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -500,8 +500,8 @@ comment in the source). Every maze must leave the snake start row clear.
   });
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect failure**.
-- [ ] Write `packages/snake/src/mazes.ts`. Copy the grids **exactly** (each row is
+- [x] Run `mise exec -- vp test run` — **expect failure**.
+- [x] Write `packages/snake/src/mazes.ts`. Copy the grids **exactly** (each row is
       exactly 21 characters; the wall counts in the test were computed from these grids):
 
   ```ts
@@ -608,15 +608,15 @@ comment in the source). Every maze must leave the snake start row clear.
   }
   ```
 
-- [ ] Append to `packages/snake/src/index.ts`:
+- [x] Append to `packages/snake/src/index.ts`:
 
   ```ts
   export { MAZE_NAMES } from "./mazes";
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect pass**.
-- [ ] Run `mise exec -- vp check --fix` — must pass.
-- [ ] Commit: `feat(snake): add the six Snake II maze grids`
+- [x] Run `mise exec -- vp test run` — **expect pass**.
+- [x] Run `mise exec -- vp check --fix` — must pass.
+- [x] Commit: `feat(snake): add the six Snake II maze grids`
 
 ---
 
@@ -631,7 +631,7 @@ on), movement with wraparound, the one-turn-per-tick queue with no-reverse, paus
 resume, and reset. Eating, bonus, and collisions land in Tasks 5–7 by replacing
 `tick()` with successively fuller versions.
 
-- [ ] Write the failing test `packages/snake/tests/movement.test.ts` (all expected
+- [x] Write the failing test `packages/snake/tests/movement.test.ts` (all expected
       values were computed from the reference algorithm with these exact seeds):
 
   ```ts
@@ -801,8 +801,8 @@ resume, and reset. Eating, bonus, and collisions land in Tasks 5–7 by replacin
   });
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect failure**.
-- [ ] Write `packages/snake/src/game.ts`:
+- [x] Run `mise exec -- vp test run` — **expect failure**.
+- [x] Write `packages/snake/src/game.ts`:
 
   ```ts
   import { parseMaze } from "./mazes";
@@ -935,16 +935,16 @@ resume, and reset. Eating, bonus, and collisions land in Tasks 5–7 by replacin
   }
   ```
 
-- [ ] Append to `packages/snake/src/index.ts`:
+- [x] Append to `packages/snake/src/index.ts`:
 
   ```ts
   export { createSnake } from "./game";
   export type { SnakeOptions } from "./game";
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect pass**.
-- [ ] Run `mise exec -- vp check --fix` — must pass.
-- [ ] Commit: `feat(snake): movement, wraparound, turn queue, pause and reset`
+- [x] Run `mise exec -- vp test run` — **expect pass**.
+- [x] Run `mise exec -- vp check --fix` — must pass.
+- [x] Commit: `feat(snake): movement, wraparound, turn queue, pause and reset`
 
 ---
 
@@ -953,7 +953,7 @@ resume, and reset. Eating, bonus, and collisions land in Tasks 5–7 by replacin
 **Files:** `packages/snake/src/game.ts` (replace `tick()`),
 `packages/snake/tests/helpers.ts`, `packages/snake/tests/food.test.ts`
 
-- [ ] Write `packages/snake/tests/helpers.ts` — a greedy, wrap-aware steering helper
+- [x] Write `packages/snake/tests/helpers.ts` — a greedy, wrap-aware steering helper
       used by the food/bonus/death suites (maze 0 only; the snake stays short in these
       tests so greedy steering is always safe):
 
@@ -1016,7 +1016,7 @@ resume, and reset. Eating, bonus, and collisions land in Tasks 5–7 by replacin
   }
   ```
 
-- [ ] Write the failing test `packages/snake/tests/food.test.ts`:
+- [x] Write the failing test `packages/snake/tests/food.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1061,8 +1061,8 @@ resume, and reset. Eating, bonus, and collisions land in Tasks 5–7 by replacin
   });
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect failure** (no growth/score yet).
-- [ ] In `packages/snake/src/game.ts`, replace the whole `tick()` function with:
+- [x] Run `mise exec -- vp test run` — **expect failure** (no growth/score yet).
+- [x] In `packages/snake/src/game.ts`, replace the whole `tick()` function with:
 
   ```ts
   function tick(): boolean {
@@ -1096,9 +1096,9 @@ resume, and reset. Eating, bonus, and collisions land in Tasks 5–7 by replacin
   }
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect pass** (movement suite must still pass).
-- [ ] Run `mise exec -- vp check --fix` — must pass.
-- [ ] Commit: `feat(snake): food eating, growth and level-scaled scoring`
+- [x] Run `mise exec -- vp test run` — **expect pass** (movement suite must still pass).
+- [x] Run `mise exec -- vp check --fix` — must pass.
+- [x] Commit: `feat(snake): food eating, growth and level-scaled scoring`
 
 ---
 
@@ -1112,7 +1112,7 @@ food**, occupies **1 logical cell** (drawn as a 4×4 bug sprite), lives for **20
 ticks**, starts at **value = level × 5** and loses 1 per tick (floor 1); eating it
 adds its current value and does **not** grow the snake.
 
-- [ ] Write the failing test `packages/snake/tests/bonus.test.ts` (expected cells/
+- [x] Write the failing test `packages/snake/tests/bonus.test.ts` (expected cells/
       values computed from the seed-1 PRNG sequence — do not alter):
 
   ```ts
@@ -1181,8 +1181,8 @@ adds its current value and does **not** grow the snake.
   });
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect failure**.
-- [ ] In `packages/snake/src/game.ts`, replace the whole `tick()` function with:
+- [x] Run `mise exec -- vp test run` — **expect failure**.
+- [x] In `packages/snake/src/game.ts`, replace the whole `tick()` function with:
 
   ```ts
   function tick(): boolean {
@@ -1238,9 +1238,9 @@ adds its current value and does **not** grow the snake.
   }
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect pass** (all earlier suites too).
-- [ ] Run `mise exec -- vp check --fix` — must pass.
-- [ ] Commit: `feat(snake): bonus bug spawn, countdown, scoring and expiry`
+- [x] Run `mise exec -- vp test run` — **expect pass** (all earlier suites too).
+- [x] Run `mise exec -- vp check --fix` — must pass.
+- [x] Commit: `feat(snake): bonus bug spawn, countdown, scoring and expiry`
 
 ---
 
@@ -1255,7 +1255,7 @@ and returns `true`; the next tick shows it again (`true`); the tick after transi
 to `game-over` and returns `false`. The tail cell is vacated on a non-eating move, so
 moving into it is **not** a collision.
 
-- [ ] Write the failing test `packages/snake/tests/death.test.ts` (tick counts
+- [x] Write the failing test `packages/snake/tests/death.test.ts` (tick counts
       computed: head starts at x=6, Box east wall at x=20 → 13 free moves, collision on
       tick 14):
 
@@ -1357,8 +1357,8 @@ moving into it is **not** a collision.
   });
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect failure**.
-- [ ] In `packages/snake/src/game.ts`, replace the whole `tick()` function with the
+- [x] Run `mise exec -- vp test run` — **expect failure**.
+- [x] In `packages/snake/src/game.ts`, replace the whole `tick()` function with the
       **final** version (this is the complete shipped engine tick):
 
   ```ts
@@ -1434,9 +1434,9 @@ moving into it is **not** a collision.
   }
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect pass** (every suite so far).
-- [ ] Run `mise exec -- vp check --fix` — must pass.
-- [ ] Commit: `feat(snake): wall/self collision, death flash and game over`
+- [x] Run `mise exec -- vp test run` — **expect pass** (every suite so far).
+- [x] Run `mise exec -- vp check --fix` — must pass.
+- [x] Commit: `feat(snake): wall/self collision, death flash and game over`
 
 ---
 
@@ -1446,7 +1446,7 @@ moving into it is **not** a collision.
 `packages/snake/src/sprites.ts`, `packages/snake/tests/pixels.ts`,
 `packages/snake/tests/bitmap.test.ts`
 
-- [ ] Write `packages/snake/tests/pixels.ts` — the pixel-assertion helper used by
+- [x] Write `packages/snake/tests/pixels.ts` — the pixel-assertion helper used by
       every rendering test:
 
   ```ts
@@ -1485,7 +1485,7 @@ moving into it is **not** a collision.
   }
   ```
 
-- [ ] Write the failing test `packages/snake/tests/bitmap.test.ts`:
+- [x] Write the failing test `packages/snake/tests/bitmap.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1589,8 +1589,8 @@ moving into it is **not** a collision.
   });
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect failure**.
-- [ ] Write `packages/snake/src/bitmap.ts`:
+- [x] Run `mise exec -- vp test run` — **expect failure**.
+- [x] Write `packages/snake/src/bitmap.ts`:
 
   ```ts
   import type { Bitmap } from "./types";
@@ -1622,7 +1622,7 @@ moving into it is **not** a collision.
   }
   ```
 
-- [ ] Write `packages/snake/src/font.ts`:
+- [x] Write `packages/snake/src/font.ts`:
 
   ```ts
   import { drawArt } from "./bitmap";
@@ -1656,7 +1656,7 @@ moving into it is **not** a collision.
   }
   ```
 
-- [ ] Write `packages/snake/src/sprites.ts`:
+- [x] Write `packages/snake/src/sprites.ts`:
 
   ```ts
   /** 4×4 cell sprites ('#' = set pixel). The chequered body look comes from
@@ -1687,9 +1687,9 @@ moving into it is **not** a collision.
   ];
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect pass**.
-- [ ] Run `mise exec -- vp check --fix` — must pass.
-- [ ] Commit: `feat(snake): bitmap primitives, 3x5 digit font and cell sprites`
+- [x] Run `mise exec -- vp test run` — **expect pass**.
+- [x] Run `mise exec -- vp check --fix` — must pass.
+- [x] Commit: `feat(snake): bitmap primitives, 3x5 digit font and cell sprites`
 
 ---
 
@@ -1703,7 +1703,7 @@ Pixel layout (from the design constants): cell `(cx, cy)` → pixel rect
 x=82 (i.e. drawn at `x = 84 − digits·4`); separator line across y=7. `idle` and
 `paused` render exactly like `running` (the host decides how to dress pauses).
 
-- [ ] Write the failing test `packages/snake/tests/render.test.ts`:
+- [x] Write the failing test `packages/snake/tests/render.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -1889,8 +1889,8 @@ x=82 (i.e. drawn at `x = 84 − digits·4`); separator line across y=7. `idle` a
   });
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect failure**.
-- [ ] Write `packages/snake/src/render.ts` (the `game-over` branch is a stub until
+- [x] Run `mise exec -- vp test run` — **expect failure**.
+- [x] Write `packages/snake/src/render.ts` (the `game-over` branch is a stub until
       Task 10):
 
   ```ts
@@ -1956,15 +1956,15 @@ x=82 (i.e. drawn at `x = 84 − digits·4`); separator line across y=7. `idle` a
   (Check the countdown x: `84 − (numberWidth(v) + 1)` puts the last glyph column at
   x=82 — for value 15 that is x=76, matching the test.)
 
-- [ ] Append to `packages/snake/src/index.ts`:
+- [x] Append to `packages/snake/src/index.ts`:
 
   ```ts
   export { renderSnakeFrame } from "./render";
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect pass**.
-- [ ] Run `mise exec -- vp check --fix` — must pass.
-- [ ] Commit: `feat(snake): rasterize score bar and playfield to an 84x48 bitmap`
+- [x] Run `mise exec -- vp test run` — **expect pass**.
+- [x] Run `mise exec -- vp check --fix` — must pass.
+- [x] Commit: `feat(snake): rasterize score bar and playfield to an 84x48 bitmap`
 
 ---
 
@@ -1980,7 +1980,7 @@ the final score centered below in the 3×5 digit font. Layout: "GAME OVER" is 9
 characters at a 6px advance (5 wide + 1 gap) = 53 px → x = ⌊(84−53)/2⌋ = 15, y = 14.
 Score: width = digits·4−1, x = ⌊(84−width)/2⌋, y = 28.
 
-- [ ] Write the failing test `packages/snake/tests/game-over.test.ts`:
+- [x] Write the failing test `packages/snake/tests/game-over.test.ts`:
 
   ```ts
   import { describe, expect, it } from "vite-plus/test";
@@ -2142,8 +2142,8 @@ Score: width = digits·4−1, x = ⌊(84−width)/2⌋, y = 28.
   });
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect failure**.
-- [ ] Append to `packages/snake/src/font.ts` (5×7 caps glyphs — only the letters in
+- [x] Run `mise exec -- vp test run` — **expect failure**.
+- [x] Append to `packages/snake/src/font.ts` (5×7 caps glyphs — only the letters in
       "GAME OVER"; a space just advances):
 
   ```ts
@@ -2167,7 +2167,7 @@ Score: width = digits·4−1, x = ⌊(84−width)/2⌋, y = 28.
   }
   ```
 
-- [ ] In `packages/snake/src/render.ts`, add `drawText5x7` to the existing `./font`
+- [x] In `packages/snake/src/render.ts`, add `drawText5x7` to the existing `./font`
       import and replace the game-over stub:
 
   ```ts
@@ -2178,9 +2178,9 @@ Score: width = digits·4−1, x = ⌊(84−width)/2⌋, y = 28.
   }
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect pass**.
-- [ ] Run `mise exec -- vp check --fix` — must pass.
-- [ ] Commit: `feat(snake): death flash rendering and GAME OVER screen`
+- [x] Run `mise exec -- vp test run` — **expect pass**.
+- [x] Run `mise exec -- vp check --fix` — must pass.
+- [x] Commit: `feat(snake): death flash rendering and GAME OVER screen`
 
 ---
 
@@ -2189,7 +2189,7 @@ Score: width = digits·4−1, x = ⌊(84−width)/2⌋, y = 28.
 **Files:** `packages/snake/tests/integration.test.ts`, `packages/snake/README.md`,
 `docs/plans/README.md`
 
-- [ ] Write the failing test `packages/snake/tests/integration.test.ts` — a full
+- [x] Write the failing test `packages/snake/tests/integration.test.ts` — a full
       deterministic playthrough using only the public API (tick counts per the death
       suite: 13 running ticks + collision tick + 1 flash tick all return `true`; the
       16th returns `false`):
@@ -2249,10 +2249,10 @@ Score: width = digits·4−1, x = ⌊(84−width)/2⌋, y = 28.
   });
   ```
 
-- [ ] Run `mise exec -- vp test run` — **expect failure** only if anything above
+- [x] Run `mise exec -- vp test run` — **expect failure** only if anything above
       regressed; if it fails for any other reason, stop and report. Otherwise it passes
       immediately — that is acceptable for this capstone test.
-- [ ] Write `packages/snake/README.md`:
+- [x] Write `packages/snake/README.md`:
 
   ````markdown
   # @hellotimber/snake
@@ -2338,12 +2338,12 @@ Score: width = digits·4−1, x = ⌊(84−width)/2⌋, y = 28.
   cells, scores and pixels.
   ````
 
-- [ ] Run the full verification from the repo root:
+- [x] Run the full verification from the repo root:
   - `mise exec -- vp run -r test` — all packages pass.
   - `mise exec -- vp check --fix` — passes clean.
-- [ ] In `docs/plans/README.md`, change plan 04's Status from `not started` to
+- [x] In `docs/plans/README.md`, change plan 04's Status from `not started` to
       `done`.
-- [ ] Commit: `feat(snake): integration playthrough test and standalone README`
+- [x] Commit: `feat(snake): integration playthrough test and standalone README`
 
 ---
 
