@@ -233,18 +233,37 @@ path:"menu/messages/inbox"})` → standby screen carries `notice`; navi while
 
 ### Task 7 — website: `/api/sms` server route
 
-- [ ] Add `@anthropic-ai/sdk` to `website/package.json` dependencies (pin via
+- [x] Add `@anthropic-ai/sdk` to `website/package.json` dependencies (pin via
       `pnpm-workspace.yaml` catalog if a second consumer ever appears; plain dep for now)
       — `mise exec -- vp install`. **This is the one new dependency this plan adds.**
-- [ ] Write `website/src/routes/api/sms.ts` per "The server route" above, with the LLM
+- [x] Write `website/src/routes/api/sms.ts` per "The server route" above, with the LLM
       call in a small injectable `generateReply(deps, contact, history, text)` exported
       for tests.
-- [ ] Tests (`website/tests/sms-api.test.ts`, node env): validation rejections (unknown
+- [x] Tests (`website/tests/sms-api.test.ts`, node env): validation rejections (unknown
       contact, >160 text, oversized history), canned fallback when the client factory
       returns null (no key) and when the SDK call throws, reply truncation to 160,
       history mapped to alternating roles with the new text last.
-- [ ] `mise exec -- vp run website#test` green; `mise exec -- vp run website#build` green.
-- [ ] Commit: `feat(website): /api/sms — claude-haiku-4-5 contact replies with canned fallback`
+- [x] `mise exec -- vp run website#test` green; `mise exec -- vp run website#build` green.
+- [x] Commit: `feat(website): /api/sms — claude-haiku-4-5 contact replies with canned fallback`
+
+> **Deviation (toolchain, forced):** `vp install` re-resolved the catalog's `latest`
+> dist-tags and pulled vite-plus 0.2.1, whose test runner is incompatible with
+> `@voidzero-dev/vite-plus-test` 0.1.24 (its npm `latest` — no 0.2.x published), which
+> broke `vp test` workspace-wide ("Could not find 'vitest' bin entry"). Pinned the
+> catalog's `vite`/`vitest`/`vite-plus` entries to 0.1.24 (the committed lockfile's
+> graph) with an unpin note; `catalogMode: prefer` also moved the sdk dep spec to
+> `"catalog:"` + a catalog entry, and pnpm added it to `minimumReleaseAgeExclude`.
+> TanStack `latest` entries drifted by patch versions in the lockfile (tests + build
+> green).
+
+> **Deviation (route logic):** the pure logic lives in
+> `website/src/messages/generate-reply.ts` (the route file imports it) so node-env
+> tests never load router code. Validation additionally rejects empty/whitespace text
+> and malformed history entries; oversized history (>12) is rejected with 400 per the
+> test list (the client sends `history.slice(-12)`). The canned fallback cycles by the
+> thread's reply count (not always `canned[0]`). `generateReply` drops leading "them"
+> turns so the Messages API list is user-first (the seeded Chat thread starts with the
+> contact speaking; assistant-first requests 400). Rate limiting returns 429.
 
 ### Task 8 — website: the SMS flow apps
 

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PhoneRouteImport } from './routes/_phone'
 import { Route as PhoneIndexRouteImport } from './routes/_phone/index'
+import { Route as ApiSmsRouteImport } from './routes/api/sms'
 import { Route as PhoneSplatRouteImport } from './routes/_phone/$'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -28,6 +29,11 @@ const PhoneIndexRoute = PhoneIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PhoneRoute,
 } as any)
+const ApiSmsRoute = ApiSmsRouteImport.update({
+  id: '/api/sms',
+  path: '/api/sms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PhoneSplatRoute = PhoneSplatRouteImport.update({
   id: '/$',
   path: '/$',
@@ -38,10 +44,12 @@ export interface FileRoutesByFullPath {
   '/': typeof PhoneIndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$': typeof PhoneSplatRoute
+  '/api/sms': typeof ApiSmsRoute
 }
 export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$': typeof PhoneSplatRoute
+  '/api/sms': typeof ApiSmsRoute
   '/': typeof PhoneIndexRoute
 }
 export interface FileRoutesById {
@@ -49,19 +57,27 @@ export interface FileRoutesById {
   '/_phone': typeof PhoneRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_phone/$': typeof PhoneSplatRoute
+  '/api/sms': typeof ApiSmsRoute
   '/_phone/': typeof PhoneIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/$'
+  fullPaths: '/' | '/sitemap.xml' | '/$' | '/api/sms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/sitemap.xml' | '/$' | '/'
-  id: '__root__' | '/_phone' | '/sitemap.xml' | '/_phone/$' | '/_phone/'
+  to: '/sitemap.xml' | '/$' | '/api/sms' | '/'
+  id:
+    | '__root__'
+    | '/_phone'
+    | '/sitemap.xml'
+    | '/_phone/$'
+    | '/api/sms'
+    | '/_phone/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   PhoneRoute: typeof PhoneRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiSmsRoute: typeof ApiSmsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -86,6 +102,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof PhoneIndexRouteImport
       parentRoute: typeof PhoneRoute
+    }
+    '/api/sms': {
+      id: '/api/sms'
+      path: '/api/sms'
+      fullPath: '/api/sms'
+      preLoaderRoute: typeof ApiSmsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_phone/$': {
       id: '/_phone/$'
@@ -112,6 +135,7 @@ const PhoneRouteWithChildren = PhoneRoute._addFileChildren(PhoneRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   PhoneRoute: PhoneRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiSmsRoute: ApiSmsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

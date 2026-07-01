@@ -13,6 +13,7 @@
     "test": "vp test run"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "catalog:",
     "@hellotimber/phone-3d": "workspace:*",
     "@hellotimber/phone-core": "workspace:*",
     "@hellotimber/phone-screen": "workspace:*",
