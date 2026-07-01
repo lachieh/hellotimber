@@ -2,8 +2,6 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import type { ReactNode } from "react";
 import type { Group } from "three";
-import { CalibrationPanel } from "./CalibrationPanel";
-import { isCalibrating } from "./calibration";
 import { Nokia3310 } from "./Nokia3310";
 import type { Nokia3310Props } from "./types";
 
@@ -15,13 +13,12 @@ const prefersReducedMotion =
   typeof window.matchMedia === "function" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-function SwayRig({ children, still }: { children: ReactNode; still: boolean }) {
+function SwayRig({ children }: { children: ReactNode }) {
   const group = useRef<Group>(null);
   useFrame((state) => {
     const g = group.current;
     if (!g) return;
-    if (prefersReducedMotion || still) {
-      // Ease back to neutral and hold (calibration needs a fixed, parallax-free pose).
+    if (prefersReducedMotion) {
       g.rotation.y += (0 - g.rotation.y) * 0.1;
       g.rotation.x += (0 - g.rotation.x) * 0.1;
       return;
@@ -36,22 +33,16 @@ function SwayRig({ children, still }: { children: ReactNode; still: boolean }) {
 }
 
 /** Convenience scene: Canvas + lighting + resize + subtle idle motion (VISION contract).
- *  R3F's Canvas tracks its container size, so resize works out of the box.
- *  In dev calibration mode (`?calibrate=1`) the phone holds still and a DOM
- *  control panel for tuning the key hotspots is shown alongside the canvas. */
+ *  R3F's Canvas tracks its container size, so resize works out of the box. */
 export function PhoneStage({ className, ...props }: Nokia3310Props & { className?: string }) {
-  const calibrating = isCalibrating();
   return (
-    <>
-      <Canvas className={className} dpr={[1, 2]} camera={{ position: [0, 0, 15], fov: 42 }}>
-        <ambientLight intensity={0.85} />
-        <directionalLight position={[4, 6, 8]} intensity={1.6} />
-        <directionalLight position={[-5, -2, 4]} intensity={0.45} />
-        <SwayRig still={calibrating}>
-          <Nokia3310 {...props} />
-        </SwayRig>
-      </Canvas>
-      {calibrating && <CalibrationPanel />}
-    </>
+    <Canvas className={className} dpr={[1, 2]} camera={{ position: [0, 0, 15], fov: 42 }}>
+      <ambientLight intensity={0.85} />
+      <directionalLight position={[4, 6, 8]} intensity={1.6} />
+      <directionalLight position={[-5, -2, 4]} intensity={0.45} />
+      <SwayRig>
+        <Nokia3310 {...props} />
+      </SwayRig>
+    </Canvas>
   );
 }
