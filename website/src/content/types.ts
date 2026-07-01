@@ -94,7 +94,10 @@ export type SiteNode = (
       type: "list";
       id: string;
       label: string;
-      items: { id: string; label: string; body: string }[];
+      /** May be lazy — the thunk is re-read on every render (live lists). */
+      items:
+        | { id: string; label: string; body: string }[]
+        | (() => { id: string; label: string; body: string }[]);
     }
   | { type: "reader"; id: string; label: string; body: string }
   | { type: "app"; id: string; label: string; appId: string }

@@ -3,7 +3,7 @@ import { chatMessages } from "./chat";
 import { clock } from "./clock";
 import { contacts } from "./contacts";
 import { diverts } from "./divert";
-import { inbox } from "./messages";
+import { inboxItems, outboxItems } from "../messages/store";
 import { phonebook } from "./phonebook";
 import { nowItems } from "./reminders";
 import type { SiteNode } from "./types";
@@ -84,10 +84,12 @@ export const siteMenu: SiteNode[] = [
         type: "list",
         id: "inbox",
         label: "Inbox",
-        items: inbox.map((m) => ({ id: m.id, label: m.label, body: m.text })),
+        // Live thunk (plan 08): seeded from content/messages.ts, then grows
+        // as contact replies arrive.
+        items: () => inboxItems(),
         web: { description: "Short intros.", panel: "inbox" },
       },
-      { type: "list", id: "outbox", label: "Outbox", items: [] },
+      { type: "list", id: "outbox", label: "Outbox", items: () => outboxItems() },
       stub("picture-messages", "Picture messages"),
       stub("templates", "Templates"),
       stub("smileys", "Smileys"),

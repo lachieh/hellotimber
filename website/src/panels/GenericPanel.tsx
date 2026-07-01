@@ -10,15 +10,18 @@ export default function GenericPanel({ chain }: { chain: SiteNode[] }) {
   const node = chain.at(-1);
   if (node === undefined) return null; // "/menu" renders MenuPanel, not this
   const path = `menu/${chain.map((n) => n.id).join("/")}`;
+  // Lazy list nodes (plan 08) resolve fresh on every render.
+  const listItems =
+    node.type === "list" ? (typeof node.items === "function" ? node.items() : node.items) : [];
   return (
     <ContentPanel title={node.label}>
       {node.type === "reader" && node.body.split("\n").map((line, i) => <p key={i}>{line}</p>)}
       {node.type === "list" &&
-        (node.items.length === 0 ? (
+        (listItems.length === 0 ? (
           <p>Empty.</p>
         ) : (
           <ul>
-            {node.items.map((item) => (
+            {listItems.map((item) => (
               <li key={item.id}>
                 <strong>{item.label}</strong> — {item.body}
               </li>

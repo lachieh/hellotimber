@@ -206,7 +206,7 @@ path:"menu/messages/inbox"})` → standby screen carries `notice`; navi while
 
 ### Task 6 — website: message store
 
-- [ ] Write `website/src/messages/store.ts`: state
+- [x] Write `website/src/messages/store.ts`: state
       `{ threads: Record<contactId, { who: "me"|"them"; text: string; at: number }[]>, unread: number }`;
       API `sendRecorded(contactId, text)`, `receiveRecorded(contactId, text)`,
       `markAllRead()`, `inboxItems()` / `outboxItems()` (newest first, mapped to
@@ -214,12 +214,22 @@ path:"menu/messages/inbox"})` → standby screen carries `notice`; navi while
       words, body = full text + timestamp line), `subscribe(cb)`. Persist to
       localStorage `hellotimber.messages` (same pattern as `settings.ts`); seed Inbox
       from the existing `content/messages.ts` sample inbox on first run.
-- [ ] Tests: persistence round-trip (mock storage), inbox/outbox item mapping, unread
+- [x] Tests: persistence round-trip (mock storage), inbox/outbox item mapping, unread
       counting, seeding happens exactly once.
-- [ ] Wire the tree (from plan 07): `messages/inbox` and `messages/outbox` list nodes
+- [x] Wire the tree (from plan 07): `messages/inbox` and `messages/outbox` list nodes
       get `items: () => inboxItems() / outboxItems()`.
-- [ ] `mise exec -- vp run website#test` green.
-- [ ] Commit: `feat(website): message store with persisted threads`
+- [x] `mise exec -- vp run website#test` green.
+- [x] Commit: `feat(website): message store with persisted threads`
+
+> **Deviation:** entries carry an optional `label` override so the seeded sample inbox
+> keeps its authentic labels ("Hello!", …); seeds live under a `hellotimber`
+> pseudo-thread so the `lachlan` thread stays clean for Chat (Task 9). Recorded `at`
+> timestamps are strictly monotonic (same-ms sends still sort newest-first). Added
+> `threadOf(contactId)` (needed by Tasks 8/9 for history + the chat view), widened
+> `SiteNode`'s list arm to the lazy-thunk union, and taught `GenericPanel` to resolve
+> thunks (only web consumer of list items). Caveat: a visitor with stored messages may
+> see a dev-only hydration warning on `/menu/messages/outbox` (server renders the seed
+> state); React patches it client-side.
 
 ### Task 7 — website: `/api/sms` server route
 
