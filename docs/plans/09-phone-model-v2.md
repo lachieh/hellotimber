@@ -275,3 +275,24 @@ eyeballed v2 decision:
   cluster nestles tighter than bounding rects allow).
 
 Gate evidence refreshed: `assets/model-v2.png`, `assets/model-v2-backlight-off.png`.
+
+### Future: evaluating a sourced mesh (parked 2026-07-01)
+
+Lachlan considers v2.1 acceptable for now but wants to revisit with a real
+sculpted model. If a mesh is sourced, it must pass ALL of:
+
+1. **17 separately named key meshes** (fused keypad killed v1 — non-negotiable;
+   ask for an outliner screenshot before buying).
+2. **Screen as its own flat quad** with clean UVs (the 84×48 CanvasTexture maps
+   straight onto it).
+3. **Untextured/PBR materials** (no baked shading — we drive color + emissive
+   per part for the backlight).
+4. **Original 3310, not the 2017 reissue** (half the marketplace hits are the
+   reissue).
+5. `.blend` or glTF, ~50–150k tris, license permitting use in a deployed web
+   app (royalty-free standard; not editorial-only).
+
+Integration path: keep this package's contract and Key/Keypad interaction
+model; swap the generated geometries for named-node lookups (the v1 glTF era
+proves the loading path; this time per-key nodes remove all its workarounds).
+Local reference renders live in `nokia-3310/` (gitignored).
