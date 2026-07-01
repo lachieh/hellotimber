@@ -130,8 +130,8 @@ body (`history: {who:"me"|"them"; text:string}[]`, client-supplied, capped serve
 
 ### Task 1 — VISION.md contract updates
 
-- [ ] Apply every change in "Contract changes" above to VISION.md's contract blocks.
-- [ ] Commit: `docs: messaging contract additions (editor menu, notice, lazy lists, ctx.open)`
+- [x] Apply every change in "Contract changes" above to VISION.md's contract blocks.
+- [x] Commit: `docs: messaging contract additions (editor menu, notice, lazy lists, ctx.open)`
 
 ### Task 2 — phone-core: editor Options menu + char limit (TDD)
 

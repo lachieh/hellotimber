@@ -148,11 +148,19 @@ export type ScreenModel =
       clock?: string;
       signal: 0 | 1 | 2 | 3 | 4;
       battery: 0 | 1 | 2 | 3 | 4;
+      notice?: { text: string; softkey: string }; // e.g. "1 message received" + Read
     }
   | { kind: "menu-carousel"; label: string; menuNumber: number; total: number; iconId: string }
   | { kind: "list"; title: string; items: string[]; selected: number; softkey: string }
   | { kind: "reader"; title: string; lines: string[]; scrollTop: number }
-  | { kind: "editor"; title: string; text: string; cursor: number; mode: "abc" | "Abc" | "123" }
+  | {
+      kind: "editor";
+      title: string;
+      text: string;
+      cursor: number;
+      mode: "abc" | "Abc" | "123";
+      limit?: number; // countdown basis: screens render `limit - text.length` top-right
+    }
   | { kind: "confirm"; text: string; softkey: string }
   | { kind: "custom"; appId: string; frame: Bitmap }; // games draw raw pixels
 
@@ -162,7 +170,10 @@ export type MenuNode =
       type: "list";
       id: string;
       label: string;
-      items: { id: string; label: string; body: string }[];
+      /** May be lazy — the thunk is re-read on every render. */
+      items:
+        | { id: string; label: string; body: string }[]
+        | (() => { id: string; label: string; body: string }[]);
     }
   | { type: "reader"; id: string; label: string; body: string }
   | { type: "app"; id: string; label: string; appId: string }
@@ -174,7 +185,20 @@ export interface PhoneApp {
   render(): ScreenModel;
   onExit?(): void;
 }
-export type AppFactory = (ctx: { exit(): void }) => PhoneApp;
+// open() = exit this app and immediately launch `appId` on the same nav stack.
+export type AppFactory = (ctx: { exit(): void; open(appId: string): void }) => PhoneApp;
+
+/** Multi-tap editor hosted as a PhoneApp (wire via {type:"app"} nodes). */
+export interface EditorOptions {
+  title: string;
+  initial?: string;
+  charLimit?: number; // editor ScreenModel carries it as `limit` (SMS countdown)
+  onAccept?: (text: string) => void; // legacy: navi accepts (no menu)
+  menu?: { id: string; label: string }[]; // navi opens an "Options" list instead
+  // ids "clear"/"exit" are built-in (clear text / ctx.exit()); others call onMenu.
+  onMenu?: (id: string, text: string, ctx: { exit(): void; open(appId: string): void }) => void;
+}
+export function editorApp(opts: EditorOptions): AppFactory;
 
 export interface PhoneConfig {
   menu: MenuNode[];
@@ -201,6 +225,9 @@ export interface Phone {
   pressKey(key: PhoneKey, holdMs?: number): void; // convenience: down + up
   tick(nowMs: number): void; // drives timers/animations
   navigate(path: string): void; // external (router) control
+  // Standby-scoped notice ("1 message received"): standby renders it;
+  // NaviKey navigates to `path` (default: clears); C clears; null clears.
+  setNotice(n: { text: string; softkey: string; path?: string } | null): void;
   readonly path: string; // e.g. 'standby', 'menu/games/snake'
   readonly screen: ScreenModel;
   subscribe(cb: (snap: PhoneSnapshot) => void): () => void;
