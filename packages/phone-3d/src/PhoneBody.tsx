@@ -97,13 +97,9 @@ export default function PhoneBody() {
     return centerDepth(geometry);
   }, []);
 
-  const decals = useMemo(
-    () => ({
-      nokia: cellPlaneGeometry(1.9, 0.46, "nokia"),
-      earpiece: cellPlaneGeometry(1.15, 0.55, "earpiece"),
-    }),
-    [],
-  );
+  // The earpiece grille is the power key's legend (see Key.tsx) — only the
+  // wordmark is printed directly on the shell.
+  const decals = useMemo(() => ({ nokia: cellPlaneGeometry(1.9, 0.46, "nokia") }), []);
   const printMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
@@ -138,11 +134,6 @@ export default function PhoneBody() {
 
       {/* Printed decals. */}
       <mesh geometry={decals.nokia} material={printMaterial} position={[0, 3.32, FACE_Z + 0.004]} />
-      <mesh
-        geometry={decals.earpiece}
-        material={printMaterial}
-        position={[0, 4.55, FACE_Z + 0.004]}
-      />
     </group>
   );
 }

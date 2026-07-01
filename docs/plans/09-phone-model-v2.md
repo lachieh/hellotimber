@@ -176,14 +176,23 @@ DELETED: hotspots.ts, calibration.ts, CalibrationPanel.tsx,
 
 ### Task 6 — screen + assembly
 
-- [ ] Write `src/Screen.tsx` (CanvasTexture pipeline copied from the current
+- [x] Write `src/Screen.tsx` (CanvasTexture pipeline copied from the current
       `Nokia3310.tsx` — NearestFilter, no mipmaps, version-gated `needsUpdate`,
       `screenBgColor` fill) positioned purely from `layout.ts`; rewrite
       `src/Nokia3310.tsx` as the thin assembly (body + keypad + screen + `pressedKeys`
       plumbing). Delete `SCREEN_ADJUST` and every calibration reference.
-- [ ] Demo gate: test-pattern renders pixel-crisp inside the bezel with even margins at
+- [x] Demo gate: test-pattern renders pixel-crisp inside the bezel with even margins at
       several window sizes; frame counter proves re-upload; no z-fighting.
-- [ ] Commit: `feat(phone-3d): LCD seated in bezel geometry; v2 assembly`
+- [x] Commit: `feat(phone-3d): LCD seated in bezel geometry; v2 assembly`
+
+> **Gate passed 2026-07-01** (consolidated for Tasks 3–6, headed browser):
+> `assets/model-v2.png` (backlight on) and `assets/model-v2-backlight-off.png`.
+> Click on '5' logged exactly `5 down`/`5 up`; keyboard-held keys depress via
+> `pressedKeys`; LCD test pattern pixel-crisp with a live frame counter; no
+> shading artifacts. Gate-driven fixes: legends laid out horizontally +
+> aspect-correct band UV mapping, upright (counter-rotated) print, print stays
+> dark vs glowing caps, power target doubles as the earpiece grille, StrictMode
+> emit-guard moved to a ref (was double-firing 'up').
 
 ### Task 7 — delete the glTF era
 

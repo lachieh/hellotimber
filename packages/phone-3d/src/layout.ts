@@ -99,8 +99,9 @@ function digitEntries(): KeyLayoutEntry[] {
 }
 
 export const KEY_LAYOUT: readonly KeyLayoutEntry[] = [
-  // Top edge power button (real 3310: small oval on the top face; front view dot).
-  { key: "power", x: 0, y: 4.86, w: 0.9, h: 0.4, rot: 0, shape: "dot" },
+  // Power lives on the real phone's top EDGE; here it doubles as the earpiece
+  // grille (dark pill with slot print) so it has a clickable front-face target.
+  { key: "power", x: 0, y: 4.55, w: 1.15, h: 0.55, rot: 0, shape: "dot" },
 
   // Top cluster: the wide blue NaviKey, C wing on the left, ▲▼ wings on the right.
   { key: "navi", x: 0, y: -0.271, w: 1.51, h: 0.62, rot: 0, shape: "crescent" },

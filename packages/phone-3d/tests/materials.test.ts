@@ -35,11 +35,13 @@ describe("MATERIALS", () => {
     expect(PRINT_LIGHT).not.toBe(PRINT_DARK);
   });
 
-  it("backlight glow intensities are sane and the legends outshine the caps", () => {
+  it("backlight glow intensities are sane; print stays darker than the caps", () => {
     for (const i of [KEY_GLOW_INTENSITY, LEGEND_GLOW_INTENSITY, LCD_GLOW_INTENSITY]) {
       expect(i).toBeGreaterThan(0);
       expect(i).toBeLessThanOrEqual(2);
     }
-    expect(LEGEND_GLOW_INTENSITY).toBeGreaterThan(KEY_GLOW_INTENSITY);
+    // Legends are silkscreen print — they must NOT outshine the lit caps or
+    // the digits wash out (verified against the demo, Task 6 gate).
+    expect(LEGEND_GLOW_INTENSITY).toBeLessThan(KEY_GLOW_INTENSITY);
   });
 });

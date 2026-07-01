@@ -10,6 +10,7 @@ import {
   LEGEND_GLOW_INTENSITY,
   MATERIALS,
   PRINT_DARK,
+  PRINT_LIGHT,
 } from "./materials";
 import type { Nokia3310Key } from "./types";
 
@@ -41,16 +42,16 @@ function keyShape(entry: KeyLayoutEntry): THREE.Shape {
       return bowedPill(w, h, 0, 0);
     case "crescent":
       // The wide NaviKey: gentle smile — top edge nearly level, bottom bows up.
-      return bowedPill(w, h, 0.04, 0.1);
+      return bowedPill(w, h, h * 0.08, h * 0.25);
     case "wing-l":
     case "wing-r":
       // C / ▲▼ wings: a slight banana that hugs the NaviKey once rotated.
-      return bowedPill(w, h, 0.05, 0.05);
+      return bowedPill(w, h, h * 0.12, h * 0.12);
   }
 }
 
-function legendCellFor(key: Nokia3310Key): string | null {
-  if (key === "power") return null; // top-edge dot carries no print
+function legendCellFor(key: Nokia3310Key): string {
+  if (key === "power") return "earpiece"; // the power target doubles as the grille
   return key; // digits, *, #, c, up, down, navi all have atlas cells
 }
 
@@ -67,6 +68,9 @@ export interface KeyProps {
 export default function Key({ entry, backlightOn, pressed, onKey }: KeyProps) {
   const group = useRef<THREE.Group>(null);
   const [pointerHeld, setPointerHeld] = useState(false);
+  // Emit-guard lives in a ref: setState updaters are double-invoked under
+  // StrictMode, so onKey side-effects must never run inside one.
+  const heldRef = useRef(false);
   const { gl } = useThree();
   const down = pointerHeld || pressed;
 
@@ -88,22 +92,33 @@ export default function Key({ entry, backlightOn, pressed, onKey }: KeyProps) {
 
   const legendCell = legendCellFor(entry.key);
   const legendGeometry = useMemo(() => {
-    if (legendCell === null) return null;
     if (legendCell === "navi") {
       const w = entry.w * 0.72;
       return cellPlaneGeometry(w, w / 4, "navi"); // wide 4:1 atlas cell
     }
-    const side = Math.min(entry.w, entry.h) * 0.92;
-    return cellPlaneGeometry(side, side, legendCell);
+    // Wide pill decal; cellPlaneGeometry band-maps it aspect-correctly.
+    return cellPlaneGeometry(entry.w * 0.9, entry.h * 0.9, legendCell);
   }, [entry, legendCell]);
 
-  const spec = entry.key === "navi" ? MATERIALS.navi : MATERIALS.key;
+  const spec =
+    entry.key === "navi"
+      ? MATERIALS.navi
+      : entry.key === "power"
+        ? MATERIALS.grille
+        : MATERIALS.key;
+  const printColor = entry.key === "power" ? PRINT_LIGHT : PRINT_DARK;
 
+  const press = () => {
+    if (heldRef.current) return;
+    heldRef.current = true;
+    setPointerHeld(true);
+    onKey?.(entry.key, "down");
+  };
   const release = () => {
-    setPointerHeld((held) => {
-      if (held) onKey?.(entry.key, "up");
-      return false;
-    });
+    if (!heldRef.current) return;
+    heldRef.current = false;
+    setPointerHeld(false);
+    onKey?.(entry.key, "up");
   };
 
   useFrame((_, dt) => {
@@ -122,8 +137,7 @@ export default function Key({ entry, backlightOn, pressed, onKey }: KeyProps) {
           onPointerDown={(e) => {
             e.stopPropagation();
             (e.target as Element | null)?.setPointerCapture(e.pointerId);
-            setPointerHeld(true);
-            onKey?.(entry.key, "down");
+            press();
           }}
           onPointerUp={(e) => {
             e.stopPropagation();
@@ -148,21 +162,24 @@ export default function Key({ entry, backlightOn, pressed, onKey }: KeyProps) {
           />
         </mesh>
 
-        {legendGeometry !== null && (
-          <mesh geometry={legendGeometry} position={[0, 0, KEY_DEPTH + LEGEND_LIFT]}>
-            <meshStandardMaterial
-              map={legendTexture()}
-              transparent
-              color={PRINT_DARK}
-              roughness={0.55}
-              metalness={0}
-              emissive={BACKLIGHT_COLOR}
-              emissiveIntensity={backlightOn ? LEGEND_GLOW_INTENSITY : 0}
-              polygonOffset
-              polygonOffsetFactor={-1}
-            />
-          </mesh>
-        )}
+        {/* Counter-rotated: the 3310 prints legends upright despite the fan. */}
+        <mesh
+          geometry={legendGeometry}
+          position={[0, 0, KEY_DEPTH + LEGEND_LIFT]}
+          rotation={[0, 0, (-entry.rot * Math.PI) / 180]}
+        >
+          <meshStandardMaterial
+            map={legendTexture()}
+            transparent
+            color={printColor}
+            roughness={0.55}
+            metalness={0}
+            emissive={BACKLIGHT_COLOR}
+            emissiveIntensity={backlightOn ? LEGEND_GLOW_INTENSITY : 0}
+            polygonOffset
+            polygonOffsetFactor={-1}
+          />
+        </mesh>
       </group>
     </group>
   );

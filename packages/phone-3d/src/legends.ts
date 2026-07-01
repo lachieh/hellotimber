@@ -95,37 +95,42 @@ export function paintLegendAtlas(ctx: Ctx2D): void {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  // Digits + their letter triplets.
+  // Digits + their letter triplets, laid out HORIZONTALLY (digit left, letters
+  // right — like the real keys) and kept inside the middle ±36px band: key
+  // decal planes are wide pills, and `cellPlaneGeometry` maps them onto the
+  // aspect-matching horizontal band of the square cell.
   for (const d of ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]) {
     const p = centerPx(LEGEND_CELLS[d]!);
     const letters = LETTERS[d];
-    ctx.font = "bold 64px sans-serif";
-    ctx.fillText(d, p.x, letters === undefined ? p.y : p.y - 18);
-    if (letters !== undefined) {
-      ctx.font = "600 28px sans-serif";
-      ctx.fillText(letters, p.x, p.y + 34);
+    ctx.font = "bold 62px sans-serif";
+    if (letters === undefined) {
+      ctx.fillText(d, p.x, p.y);
+    } else {
+      ctx.fillText(d, p.x - 28, p.y);
+      ctx.font = "700 26px sans-serif";
+      ctx.fillText(letters, p.x + 24, p.y);
     }
   }
 
   // Symbols — the 3310 prints "* +" on the star key.
   {
     const star = centerPx(LEGEND_CELLS["*"]!);
-    ctx.font = "bold 60px sans-serif";
-    ctx.fillText("*", star.x - 18, star.y + 8);
-    ctx.font = "600 34px sans-serif";
-    ctx.fillText("+", star.x + 26, star.y - 12);
+    ctx.font = "bold 54px sans-serif";
+    ctx.fillText("*", star.x - 16, star.y + 8);
+    ctx.font = "600 30px sans-serif";
+    ctx.fillText("+", star.x + 20, star.y - 4);
     const hash = centerPx(LEGEND_CELLS["#"]!);
-    ctx.font = "bold 56px sans-serif";
+    ctx.font = "bold 50px sans-serif";
     ctx.fillText("#", hash.x, hash.y);
   }
 
   // Cluster keys.
   {
     const c = centerPx(LEGEND_CELLS.c!);
-    ctx.font = "bold 58px sans-serif";
+    ctx.font = "bold 50px sans-serif";
     ctx.fillText("C", c.x, c.y);
     const up = centerPx(LEGEND_CELLS.up!);
-    ctx.font = "48px sans-serif";
+    ctx.font = "40px sans-serif";
     ctx.fillText("▲", up.x, up.y);
     const down = centerPx(LEGEND_CELLS.down!);
     ctx.fillText("▼", down.x, down.y);
