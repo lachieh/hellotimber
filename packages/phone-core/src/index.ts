@@ -44,4 +44,4 @@ export {
 } from "./multitap";
 export type { MultitapKey, MultitapMode, MultitapState } from "./multitap";
 export { editorApp } from "./editor";
-export type { EditorOptions } from "./editor";
+export type { EditorMenuCtx, EditorOptions } from "./editor";

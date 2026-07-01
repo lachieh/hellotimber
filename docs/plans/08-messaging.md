@@ -135,7 +135,7 @@ body (`history: {who:"me"|"them"; text:string}[]`, client-supplied, capped serve
 
 ### Task 2 — phone-core: editor Options menu + char limit (TDD)
 
-- [ ] Failing tests in `packages/phone-core/tests/editor.test.ts`: with
+- [x] Failing tests in `packages/phone-core/tests/editor.test.ts`: with
       `menu: [{id:"send",label:"Send"},{id:"clear",label:"Clear text"},{id:"exit",label:"Exit"}]`,
       pressing navi renders `{kind:"list", title:"Options", …}` over the draft (draft
       preserved); up/down move; navi on `Send` calls `onMenu("send", draft, ctx)`; C
@@ -143,9 +143,9 @@ body (`history: {who:"me"|"them"; text:string}[]`, client-supplied, capped serve
       `ctx.exit()`. With `charLimit: 160` the editor ScreenModel carries `limit: 160`
       and input beyond the limit is ignored. Without `menu`, legacy `onAccept` behavior
       is unchanged (regression guard for the welcome-note editor).
-- [ ] Implement in `packages/phone-core/src/editor.ts`.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test` green.
-- [ ] Commit: `feat(phone-core): editor options menu + character limit`
+- [x] Implement in `packages/phone-core/src/editor.ts`.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test` green.
+- [x] Commit: `feat(phone-core): editor options menu + character limit`
 
 ### Task 3 — phone-core: lazy list items, setNotice, ctx.open (TDD)
 

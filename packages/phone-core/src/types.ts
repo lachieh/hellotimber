@@ -42,7 +42,15 @@ export type ScreenModel =
   | { kind: "menu-carousel"; label: string; menuNumber: number; total: number; iconId: string }
   | { kind: "list"; title: string; items: string[]; selected: number; softkey: string }
   | { kind: "reader"; title: string; lines: string[]; scrollTop: number }
-  | { kind: "editor"; title: string; text: string; cursor: number; mode: "abc" | "Abc" | "123" }
+  | {
+      kind: "editor";
+      title: string;
+      text: string;
+      cursor: number;
+      mode: "abc" | "Abc" | "123";
+      /** Countdown basis: screens render `limit - text.length` (SMS 160). */
+      limit?: number;
+    }
   | { kind: "confirm"; text: string; softkey: string }
   | { kind: "custom"; appId: string; frame: Bitmap }; // games draw raw pixels
 
