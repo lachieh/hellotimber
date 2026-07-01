@@ -1,5 +1,6 @@
-/** A ringtone: composer notation + tempo. Ids match nokia3310Menu's
- *  default ringtone list ("Nokia tune" → "nokia-tune", …). */
+/** A ringtone: composer notation + tempo. Ids are kebab-case of the
+ *  label ("Nokia tune" → "nokia-tune", …); the Ringing tone picker app
+ *  presents these labels on the handset. */
 export interface ToneDef {
   id: string;
   label: string;

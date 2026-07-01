@@ -212,17 +212,22 @@ Port the tree from `nokia-menu.ts` **verbatim first**, then apply these correcti
 
 ### Task 5 — rewire the phone; remove the builder from phone-core
 
-- [ ] `website/src/phone/phone.ts`: build the phone with
+- [x] `website/src/phone/phone.ts`: build the phone with
       `menu: toMenuNodes(siteMenu)`; **delete** `withWorkingSettings` and `patchNode`;
       export `export const APP_IDS = Object.keys(buildApps())` for the Task 2 test.
       `website/src/content/index.ts` keeps exporting the content modules but drops the
       `Nokia3310Content` adapter shape (types now live in `content/types.ts`).
-- [ ] `packages/phone-core`: delete `src/nokia-menu.ts` + its test file; remove the two
+- [x] `packages/phone-core`: delete `src/nokia-menu.ts` + its test file; remove the two
       export lines from `src/index.ts`. Grep the repo for `nokia3310Menu|Nokia3310Content`
       — only `website/` history should remain; fix any straggler imports.
-- [ ] Run & expect PASS: `mise exec -- vp run -r test` (phone-core tests still green
+- [x] Run & expect PASS: `mise exec -- vp run -r test` (phone-core tests still green
       standalone — AGENTS.md rule 3).
-- [ ] Commit: `feat(website): phone consumes the data tree; drop nokia-menu from phone-core`
+- [x] Commit: `feat(website): phone consumes the data tree; drop nokia-menu from phone-core`
+
+> **Notes (Task 5):** `website/tests/content.test.ts`'s last test (built the menu via
+> `nokia3310Menu(content)`) now asserts against `siteMenu` directly; a stale
+> `nokia3310Menu` comment in `website/src/phone/tones.ts` was reworded.
+> `content/index.ts` re-exports `siteMenu` alongside the section modules.
 
 ### Task 6 — panels move; the one dynamic route
 

@@ -1,13 +1,14 @@
-import { createPhone, editorApp, nokia3310Menu } from "@hellotimber/phone-core";
-import type { AppFactory, MenuNode, Phone, PhoneKey } from "@hellotimber/phone-core";
+import { createPhone, editorApp } from "@hellotimber/phone-core";
+import type { AppFactory, Phone, PhoneKey } from "@hellotimber/phone-core";
 import { createScreenRenderer } from "@hellotimber/phone-screen";
 import type { ScreenRenderer } from "@hellotimber/phone-screen";
-import { content } from "../content";
+import { siteMenu } from "../content/menu";
 import { getSettings, updateSettings } from "../settings";
 import { pickerApp } from "./apps/picker-app";
 import { snakeApp } from "./apps/snake-app";
 import { handleSound } from "./audio";
 import { artToBitmap, SCREENSAVER_ART } from "./pixel-art";
+import { toMenuNodes } from "./site-tree";
 import { TONES } from "./tones";
 
 export interface PhoneRuntime {
@@ -75,61 +76,6 @@ function buildApps(): Record<string, AppFactory> {
 export const APP_IDS: string[] = Object.keys(buildApps());
 
 /**
- * Replace specific stub menu nodes with same-id `app`/`submenu` nodes so the
- * Tones / Settings picker apps are reachable on the handset (deviation 2 —
- * every path stays stable; phone-core is untouched).
- *
- * Reality note: `nokia3310Menu` ships `settings/phone-settings` as a stub
- * READER leaf, not a submenu, so patchNode can't descend into it. We replace
- * the whole `phone-settings` node with a submenu carrying Welcome note + Lights.
- */
-function withWorkingSettings(tree: MenuNode[]): MenuNode[] {
-  return patchNode(tree, {
-    "tones/keypad-tones": {
-      type: "app",
-      id: "keypad-tones",
-      label: "Keypad tones",
-      appId: "keypad-tones",
-    },
-    "tones/ringing-tone": {
-      type: "app",
-      id: "ringing-tone",
-      label: "Ringing tone",
-      appId: "ringing-tone",
-    },
-    "tones/screen-saver": {
-      type: "app",
-      id: "screen-saver",
-      label: "Screen saver",
-      appId: "screen-saver",
-    },
-    "settings/phone-settings": {
-      type: "submenu",
-      id: "phone-settings",
-      label: "Phone settings",
-      children: [
-        { type: "app", id: "welcome-note", label: "Welcome note", appId: "welcome-note" },
-        { type: "app", id: "lights", label: "Lights", appId: "lights" },
-      ],
-    },
-  });
-}
-
-/** Depth-first replace of menu nodes by full path (prefix defaults to "menu"). */
-function patchNode(
-  nodes: MenuNode[],
-  swaps: Record<string, MenuNode>,
-  prefix = "menu",
-): MenuNode[] {
-  return nodes.map((n) => {
-    const path = `${prefix}/${n.id}`;
-    if (swaps[path]) return swaps[path];
-    if (n.type === "submenu") return { ...n, children: patchNode(n.children, swaps, path) };
-    return n;
-  });
-}
-
-/**
  * The one phone instance for the whole browser session. Client-only:
  * SSR must never construct it (guard every call site with typeof window).
  */
@@ -145,8 +91,10 @@ export function getPhoneRuntime(): PhoneRuntime {
     typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  // The one tree (plan 07): the data tree drives the handset directly —
+  // working app nodes are declared in data, so no post-hoc patching.
   const phone = createPhone({
-    menu: withWorkingSettings(nokia3310Menu(content)),
+    menu: toMenuNodes(siteMenu),
     apps: buildApps(),
     carrier: "LACHLAN",
     clock: () => new Date().toTimeString().slice(0, 5), // 24h HH:MM

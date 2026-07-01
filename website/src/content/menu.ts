@@ -142,7 +142,7 @@ export const siteMenu: SiteNode[] = [
     iconId: "tones",
     web: { description: "Sound settings and ringtones.", panel: "tones" },
     children: [
-      // Working apps declared directly in data (plan 07 kills patchNode).
+      // Working apps declared directly in data (plan 07: no post-hoc node swaps).
       { type: "app", id: "ringing-tone", label: "Ringing tone", appId: "ringing-tone" },
       stub("ringing-volume", "Ringing volume"),
       stub("incoming-call-alert", "Incoming call alert"),

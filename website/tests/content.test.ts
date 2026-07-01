@@ -1,7 +1,7 @@
-import { isValidPath, nokia3310Menu } from "@hellotimber/phone-core";
+import { isValidPath } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
-import { content } from "../src/content";
 import { missedCalls, projects, roles } from "../src/content/call-register";
+import { siteMenu } from "../src/content/menu";
 import { diverts } from "../src/content/divert";
 import { inbox } from "../src/content/messages";
 import { phonebook } from "../src/content/phonebook";
@@ -43,8 +43,8 @@ describe("content model", () => {
     expect(site.url).toMatch(/^https:\/\/[^/]+$/);
   });
 
-  it("the adapted content builds a menu where every sitemap path resolves", () => {
-    const menu = nokia3310Menu(content);
+  it("the content-injected menu tree resolves every sitemap path", () => {
+    const menu = siteMenu;
     const required = [
       "menu/phone-book",
       "menu/phone-book/search",
