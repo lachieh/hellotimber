@@ -15,6 +15,8 @@ export interface MessageEntry {
   at: number; // epoch ms
   /** Display-label override — used by the seeded sample inbox ("Hello!"). */
   label?: string;
+  /** Chat-session entries (Menu 3) stay out of the Inbox/Outbox lists. */
+  via?: "chat";
 }
 
 export interface MessagesState {
@@ -100,18 +102,47 @@ function nextAt(state: MessagesState): number {
   return Math.max(Date.now(), latest + 1);
 }
 
+export interface RecordOpts {
+  /** Chat-session traffic: excluded from Inbox/Outbox lists and unread. */
+  chat?: boolean;
+}
+
 /** Record a message the visitor sent (Outbox). */
-export function sendRecorded(contactId: string, text: string): void {
+export function sendRecorded(contactId: string, text: string, opts?: RecordOpts): void {
   mutate((state) => {
-    (state.threads[contactId] ??= []).push({ who: "me", text, at: nextAt(state) });
+    (state.threads[contactId] ??= []).push({
+      who: "me",
+      text,
+      at: nextAt(state),
+      ...(opts?.chat ? { via: "chat" as const } : {}),
+    });
   });
 }
 
 /** Record a message a contact sent back (Inbox); counts as unread. */
-export function receiveRecorded(contactId: string, text: string): void {
+export function receiveRecorded(contactId: string, text: string, opts?: RecordOpts): void {
   mutate((state) => {
-    (state.threads[contactId] ??= []).push({ who: "them", text, at: nextAt(state) });
-    state.unread += 1;
+    (state.threads[contactId] ??= []).push({
+      who: "them",
+      text,
+      at: nextAt(state),
+      ...(opts?.chat ? { via: "chat" as const } : {}),
+    });
+    if (!opts?.chat) state.unread += 1; // in the chat session nothing is "unread"
+  });
+}
+
+/** Seed a thread once (Chat, Menu 3): no-op when it already has entries. */
+export function ensureThread(
+  contactId: string,
+  entries: { who: "me" | "them"; text: string }[],
+): void {
+  if (threadOf(contactId).length > 0) return;
+  mutate((state) => {
+    const thread = (state.threads[contactId] ??= []);
+    for (const entry of entries) {
+      thread.push({ who: entry.who, text: entry.text, at: nextAt(state), via: "chat" });
+    }
   });
 }
 
@@ -167,7 +198,7 @@ function items(who: MessageEntry["who"]): { id: string; label: string; body: str
   const all: { contactId: string; entry: MessageEntry; index: number }[] = [];
   for (const [contactId, thread] of Object.entries(getMessages().threads)) {
     thread.forEach((entry, index) => {
-      if (entry.who === who) all.push({ contactId, entry, index });
+      if (entry.who === who && entry.via !== "chat") all.push({ contactId, entry, index });
     });
   }
   all.sort((a, b) => b.entry.at - a.entry.at); // newest first

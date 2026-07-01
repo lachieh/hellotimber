@@ -1,5 +1,4 @@
 import { missedCalls, projects, roles } from "./call-register";
-import { chatMessages } from "./chat";
 import { clock } from "./clock";
 import { contacts } from "./contacts";
 import { diverts } from "./divert";
@@ -24,10 +23,6 @@ function reader(id: string, label: string, body: string): SiteNode {
 function stub(id: string, label: string): SiteNode {
   return reader(id, label, `${label}: not available. No network connection.`);
 }
-
-const chatBody =
-  chatMessages.map((m) => `${m.who === "them" ? ">" : "<"} ${m.nickname}: ${m.text}`).join("\n") ||
-  "No chat history.";
 
 export const siteMenu: SiteNode[] = [
   {
@@ -100,11 +95,13 @@ export const siteMenu: SiteNode[] = [
     ],
   },
   {
-    type: "reader",
+    // Plan 08: a live chat session with the "lachlan" persona (Menu 3 on the
+    // real 3310 is Chat — a session view, not a submenu).
+    type: "app",
     id: "chat",
     label: "Chat",
-    body: chatBody,
-    web: { description: "What people say.", panel: "chat" },
+    appId: "chat",
+    web: { description: "What people say — and a live chat.", panel: "chat" },
   },
   {
     type: "submenu",

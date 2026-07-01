@@ -254,14 +254,12 @@ describe("siteMenu — ported nokia-menu authenticity tests", () => {
     }
   });
 
-  it("renders the chat as a > / < conversation reader from the chat content", () => {
-    const chat = top("chat");
-    if (chat.type !== "reader") throw new Error("chat must be a reader");
-    expect(chat.body).toBe(
-      chatMessages
-        .map((m) => `${m.who === "them" ? ">" : "<"} ${m.nickname}: ${m.text}`)
-        .join("\n"),
-    );
+  it("Chat (Menu 3) is a live session app — no submenu, authentic position", () => {
+    // Plan 08: the reader became the live chat session backed by the
+    // lachlan persona (seeded from the testimonial chat content).
+    expect(top("chat")).toMatchObject({ type: "app", id: "chat", label: "Chat", appId: "chat" });
+    expect(siteMenu.indexOf(top("chat"))).toBe(2); // Menu 3
+    expect(chatMessages.length).toBeGreaterThan(0); // the seed content exists
   });
 
   it("call divert entries are href action nodes from the divert content", () => {

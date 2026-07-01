@@ -2,11 +2,13 @@ import { createPhone, editorApp } from "@hellotimber/phone-core";
 import type { AppFactory, Phone, PhoneKey } from "@hellotimber/phone-core";
 import { createScreenRenderer } from "@hellotimber/phone-screen";
 import type { ScreenRenderer } from "@hellotimber/phone-screen";
+import { chatMessages } from "../content/chat";
 import { contactById, contacts } from "../content/contacts";
 import { siteMenu } from "../content/menu";
 import { cannedReply, MAX_HISTORY, MAX_SMS_CHARS } from "../messages/generate-reply";
-import { receiveRecorded, sendRecorded, threadOf } from "../messages/store";
+import { ensureThread, receiveRecorded, sendRecorded, threadOf } from "../messages/store";
 import { getSettings, updateSettings } from "../settings";
+import { chatApps } from "./apps/chat";
 import { pickerApp } from "./apps/picker-app";
 import { smsApps } from "./apps/sms";
 import { snakeApp } from "./apps/snake-app";
@@ -67,6 +69,22 @@ function buildApps(): Record<string, AppFactory> {
       recordSend: sendRecorded,
       recordReceive: receiveRecorded,
       notify: (n) => phoneForNotice?.setNotice(n),
+      playAlert: playMessageAlert,
+    }),
+    // Plan 08: Chat (Menu 3) — the lachlan thread as a live session. Seeds
+    // once from the testimonial content; chat traffic stays out of the
+    // Inbox/Outbox lists ({ chat: true }).
+    ...chatApps({
+      nickname: "Lachlan",
+      thread: () => threadOf("lachlan"),
+      seed: () =>
+        ensureThread(
+          "lachlan",
+          chatMessages.map((m) => ({ who: m.who, text: `${m.nickname}: ${m.text}` })),
+        ),
+      send: (text) => sendSms("lachlan", text),
+      recordSend: (text) => sendRecorded("lachlan", text, { chat: true }),
+      recordReceive: (text) => receiveRecorded("lachlan", text, { chat: true }),
       playAlert: playMessageAlert,
     }),
     snake: snakeApp(),

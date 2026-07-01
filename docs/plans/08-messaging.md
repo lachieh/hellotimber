@@ -301,7 +301,7 @@ path:"menu/messages/inbox"})` → standby screen carries `notice`; navi while
 
 ### Task 9 — website: Chat (Menu 3) goes live
 
-- [ ] Write `website/src/phone/apps/chat.ts`: the `chat` tree node becomes
+- [x] Write `website/src/phone/apps/chat.ts`: the `chat` tree node becomes
       `{type:"app", appId:"chat"}`. The app renders the `lachlan` thread as a scrollable
       reader-style screen titled with the nickname, lines prefixed `>` (them) / `<` (me)
       per spec §5 Menu 3; seed the thread from the existing testimonial `chat` content
@@ -309,10 +309,22 @@ path:"menu/messages/inbox"})` → standby screen carries `notice`; navi while
       `charLimit: 160`, menu `[Send, Exit]`) → send via the same `/api/sms` path to the
       `lachlan` persona; the reply appends to the thread (no standby notice needed —
       you're in the session; play the alert tone only).
-- [ ] Tests: seeding, `>`/`<` prefixing, compose→send→reply appends in order.
-- [ ] Update the chat panel (plan 07 registry) copy to explain the live chat.
-- [ ] `mise exec -- vp run website#test` green.
-- [ ] Commit: `feat(website): live Chat session backed by the lachlan persona`
+- [x] Tests: seeding, `>`/`<` prefixing, compose→send→reply appends in order.
+- [x] Update the chat panel (plan 07 registry) copy to explain the live chat.
+- [x] `mise exec -- vp run website#test` green.
+- [x] Commit: `feat(website): live Chat session backed by the lachlan persona`
+
+> **Deviation:** the store gained `ensureThread(contactId, entries)` (one-shot seeding)
+> and a `{ chat: true }` option on send/receive recording: chat-session entries carry
+> `via: "chat"`, are excluded from the Inbox/Outbox item mapping, and don't bump
+> `unread` — otherwise the seeded testimonials (and live chat lines) would flood Menu
+> 2's lists. SMS sent to Lachlan via Write messages still lands in the shared `lachlan`
+> thread, so it shows up in the chat session too (one conversation, two doors). Seeds
+> bake the nickname into the text (`"CTO@Acme: …"`), reproducing the old reader look.
+> The session view sticks to the newest lines (arrivals pin the view to the bottom
+> unless the user scrolled up); leaving the composer (Exit / C on an empty draft)
+> returns to the session rather than out of Chat. The menu-tree "chat reader" test
+> became a "chat is the Menu 3 app node" test.
 
 ### Task 10 — end-to-end verification + docs
 
