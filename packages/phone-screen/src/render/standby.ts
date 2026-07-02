@@ -6,9 +6,10 @@ import { CONTENT_TOP, drawSoftkey, drawTextRight, truncate, wrapText } from "./l
 
 type StandbyScreen = Extract<ScreenModel, { kind: "standby" }>;
 
-/** Max carrier chars at 2x scale: 7 × 12px advance − 2 = 82px ≤ 84. */
-const CARRIER_MAX_CHARS = 7;
-const CARRIER_Y = 10;
+/** The operator line renders in the body font like the real phone (spec §4;
+ *  the v1 2x-scaled variant read far larger than the reference renders). */
+const CARRIER_MAX_CHARS = 14;
+const CARRIER_Y = 12;
 const CLOCK_Y = 32; // best guess: lower-right, under the battery stack (spec §4)
 const CLOCK_X_END = 79; // clear of the battery rungs at x 81–83
 
@@ -34,9 +35,7 @@ export function renderStandby(fb: Framebuffer, screen: StandbyScreen): void {
     drawSoftkey(fb, screen.notice.softkey);
     return;
   }
-  fb.drawTextCentered(FONT, truncate(screen.carrier, CARRIER_MAX_CHARS), CARRIER_Y, {
-    scale: 2,
-  });
+  fb.drawTextCentered(FONT, truncate(screen.carrier, CARRIER_MAX_CHARS), CARRIER_Y);
   if (screen.clock !== undefined) drawTextRight(fb, screen.clock, CLOCK_X_END, CLOCK_Y);
   drawSoftkey(fb, "Menu");
 }

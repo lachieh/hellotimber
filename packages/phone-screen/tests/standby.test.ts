@@ -13,23 +13,21 @@ function standby(overrides: Partial<StandbyScreen> = {}): StandbyScreen {
 }
 
 describe("renderStandby", () => {
-  it("draws the carrier name centered at 2x scale", () => {
+  it("draws the carrier name centered in the body font (spec: no 2x variant)", () => {
     const fb = new Framebuffer();
     renderStandby(fb, standby());
     const expected = new Framebuffer();
-    expected.drawTextCentered(FONT, "LACHLAN", 10, { scale: 2 });
-    // carrier rows only (2x glyphs: y 10–23), away from the edge bars (x 5–78)
-    expect(regionToArt(fb, 5, 10, 74, 14)).toBe(regionToArt(expected, 5, 10, 74, 14));
+    expected.drawTextCentered(FONT, "LACHLAN", 12);
+    // carrier rows only (y 12–20), away from the edge bars (x 5–78)
+    expect(regionToArt(fb, 5, 12, 74, 9)).toBe(regionToArt(expected, 5, 12, 74, 9));
   });
 
-  it("truncates over-long carrier names to 7 chars at 2x", () => {
+  it("truncates over-long carrier names to 14 chars", () => {
     const fb = new Framebuffer();
-    renderStandby(fb, standby({ carrier: "INTERNATIONAL" }));
+    renderStandby(fb, standby({ carrier: "INTERNATIONAL ROAMING" }));
     const expected = new Framebuffer();
-    expected.drawTextCentered(FONT, "INTERN…", 10, { scale: 2 });
-    // Compare the bar-free carrier region (x 5–78) like the 2x-scale test above:
-    // level-4 signal/battery rungs occupy x 0–2 / 81–83 and overlap a full-width region.
-    expect(regionToArt(fb, 5, 10, 74, 14)).toBe(regionToArt(expected, 5, 10, 74, 14));
+    expected.drawTextCentered(FONT, "INTERNATIONAL…", 12);
+    expect(regionToArt(fb, 5, 12, 74, 9)).toBe(regionToArt(expected, 5, 12, 74, 9));
   });
 
   it("draws signal and battery stacks at the configured levels", () => {

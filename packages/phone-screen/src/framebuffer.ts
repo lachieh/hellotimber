@@ -78,7 +78,7 @@ export class Framebuffer {
     for (const ch of text) {
       const glyph = font.glyphs.get(ch) ?? font.glyphs.get("?");
       if (glyph !== undefined) this.blitBitmap(glyph, cx, y, { scale, value: color });
-      cx += (font.glyphWidth + font.gap) * scale;
+      cx += (glyph?.width ?? font.nominalAdvance) * scale;
     }
     return cx;
   }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { FONT } from "../src/font/font";
+import { FONT, textWidth } from "../src/font/font";
 import { Framebuffer } from "../src/framebuffer";
 import { HANDS_FRAMES } from "../src/icons/boot";
 import { renderBoot } from "../src/render/boot";
@@ -47,7 +47,7 @@ describe("renderBoot", () => {
     renderBoot(fb, { kind: "boot", phase: "hands", frame: 0 }, "Welcome!");
     const expected = new Framebuffer();
     expected.blitBitmap(HANDS_FRAMES[0]!, 0, 4);
-    expected.drawText(FONT, "NOKIA", 53, 40); // 82 - textWidth("NOKIA")=29 → x 53
+    expected.drawText(FONT, "NOKIA", 82 - textWidth(FONT, "NOKIA"), 40);
     expect(regionToArt(fb, 0, 0, 84, 48)).toBe(regionToArt(expected, 0, 0, 84, 48));
   });
 

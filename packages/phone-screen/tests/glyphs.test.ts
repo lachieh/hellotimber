@@ -5,11 +5,12 @@ import { GLYPHS } from "../src/font/glyphs";
 import { expectPixels } from "./helpers";
 
 describe("glyph data", () => {
-  it("every glyph is 7 rows of exactly 5 chars of '#'/'.'", () => {
+  it("every glyph is 9 rows of consistent-width '#'/'.'", () => {
     for (const [ch, rows] of Object.entries(GLYPHS)) {
-      expect(rows, `glyph '${ch}' row count`).toHaveLength(7);
+      expect(rows, `glyph '${ch}' row count`).toHaveLength(9);
+      const width = rows[0]!.length;
       for (const row of rows) {
-        expect(row, `glyph '${ch}' row '${row}'`).toMatch(/^[#.]{5}$/);
+        expect(row, `glyph '${ch}' row '${row}'`).toMatch(new RegExp(`^[#.]{${width}}$`));
       }
     }
   });
@@ -34,37 +35,36 @@ describe("glyph data", () => {
 });
 
 describe("FONT", () => {
-  it("is a compiled 5×7 font with a 1px gap", () => {
-    expect(FONT.glyphWidth).toBe(5);
-    expect(FONT.glyphHeight).toBe(7);
-    expect(FONT.gap).toBe(1);
+  it("is the authentic variable-width 9-row font", () => {
+    expect(FONT.glyphHeight).toBe(9);
+    expect(FONT.nominalAdvance).toBe(6);
     expect(FONT.glyphs.size).toBe(Object.keys(GLYPHS).length);
+    // every glyph's height matches the cell; widths vary per glyph
+    for (const [ch, glyph] of FONT.glyphs) {
+      expect(glyph.height, `glyph '${ch}' height`).toBe(9);
+      expect(glyph.width, `glyph '${ch}' width`).toBeGreaterThan(0);
+    }
   });
 
-  it("compiled 'A' matches its art when blitted", () => {
-    const fb = new Framebuffer();
-    fb.blitBitmap(FONT.glyphs.get("A")!, 0, 0);
-    expectPixels(
-      fb,
-      0,
-      0,
-      `
-        .###.
-        #...#
-        #...#
-        #####
-        #...#
-        #...#
-        #...#
-      `,
-    );
+  it("carries the authentic metrics: narrow i, wide m, bold double-stem caps", () => {
+    expect(FONT.glyphs.get("i")!.width).toBe(3);
+    expect(FONT.glyphs.get("m")!.width).toBe(9);
+    expect(FONT.glyphs.get("M")!.width).toBe(8);
+    expect(FONT.glyphs.get("A")!.width).toBe(6);
+    // lowercase descenders reach below the baseline (rows 7-8)
+    const g = FONT.glyphs.get("g")!;
+    let descenderInk = false;
+    for (let y = 7; y < 9; y++) {
+      for (let x = 0; x < g.width; x++) if (g.pixels[y * g.width + x] === 1) descenderInk = true;
+    }
+    expect(descenderInk).toBe(true);
   });
 
-  it("textWidth: advance is 6px per char, no trailing gap", () => {
+  it("textWidth sums per-glyph advances (baked-in right bearing)", () => {
     expect(textWidth(FONT, "")).toBe(0);
-    expect(textWidth(FONT, "A")).toBe(5);
-    expect(textWidth(FONT, "AB")).toBe(11);
-    expect(textWidth(FONT, "MENU", 2)).toBe(46); // (4*6-1)*2
-    expect(textWidth(FONT, "NOKIA")).toBe(29);
+    expect(textWidth(FONT, "A")).toBe(6);
+    expect(textWidth(FONT, "AB")).toBe(12);
+    expect(textWidth(FONT, "im")).toBe(12); // 3 + 9 — variable width
+    expect(textWidth(FONT, "A", 2)).toBe(12); // scale multiplies
   });
 });
