@@ -276,7 +276,7 @@ eyeballed v2 decision:
 
 Gate evidence refreshed: `assets/model-v2.png`, `assets/model-v2-backlight-off.png`.
 
-### Future: evaluating a sourced mesh (parked 2026-07-01)
+### Future: evaluating a sourced mesh (parked 2026-07-01 — EXECUTED same day as [plan 10](./10-phone-model-v3-sourced.md); the checklist below was used to vet CGTrader #5212540)
 
 Lachlan considers v2.1 acceptable for now but wants to revisit with a real
 sculpted model. If a mesh is sourced, it must pass ALL of:

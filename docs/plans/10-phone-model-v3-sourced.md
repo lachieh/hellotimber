@@ -136,16 +136,25 @@ unnecessary.
 
 ### Task 4 — website integration + budget
 
-- [ ] Website needs no code change (`PhoneStageHost` passes no model props) —
+- [x] Website needs no code change (`PhoneStageHost` passes no model props) —
       verify `mise exec -- vp run website#build` and record the lazy 3D chunk + GLB + decoder transfer sizes in the commit message (budget: chunk gz
       < 700 KB, GLB ≤ 500 KB).
-- [ ] Headed-browser walk on the site: boot, navigate by 3D clicks + keyboard,
+- [x] Headed-browser walk on the site: boot, navigate by 3D clicks + keyboard,
       Lights setting toggles the backlight, side-by-side against
       `nokia-3310/nokia-3310-1.png`.
-- [ ] Screenshot evidence → `docs/plans/assets/model-v3.png` (+ backlight-off).
-- [ ] Update `docs/plans/README.md` (plan 10 row → done) and plan 09's
+- [x] Screenshot evidence → `docs/plans/assets/model-v3.png` (+ backlight-off).
+- [x] Update `docs/plans/README.md` (plan 10 row → done) and plan 09's
       "Future" section (mark: superseded by plan 10, executed).
-- [ ] Commit: `feat(website): phone model v3 live; mark plan 10 done`
+- [x] Commit: `feat(website): phone model v3 live; mark plan 10 done`
+
+> **Task 4 results (2026-07-01, headed browser):** lazy 3D chunk 258.45 kB gz
+> (<700 budget), GLB 490 kB, decoders ~250 kB wasm+wrapper. 3D NaviKey clicks
+> navigate the router (standby → /menu → /menu/phone-book with the LCD
+> following); keyboard depress works; backlight off reads correctly. One
+> post-gate fix (5786b3e): the display plane extends under the island frame and
+> its authored UVs cropped the status bars — UVs are now planar-projected onto
+> the visible aperture (SCREEN_APERTURE constants, measured once against the
+> standby screen). Evidence: assets/model-v3.png, assets/model-v3-backlight-off.png.
 
 ## Done means
 
