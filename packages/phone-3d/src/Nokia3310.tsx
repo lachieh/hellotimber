@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import Key from "./Key";
-import { KEY_NODES, SCREEN_APERTURE, STATIC_NODES } from "./layout";
+import { KEY_NODES, SCREEN_APERTURE, SCREEN_SCALE, STATIC_NODES } from "./layout";
 import { BACKLIGHT_COLOR, LCD_GLOW_INTENSITY, MATERIALS, SCREEN_DIM_TINT } from "./materials";
 import type { MaterialSpec } from "./materials";
 import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL, DEFAULT_SCREEN_BG } from "./types";
@@ -20,30 +20,23 @@ function standard(spec: MaterialSpec): THREE.MeshStandardMaterial {
   });
 }
 
-/** Replace the display mesh's UVs with a planar projection from its own
- *  local-space bounding rect, mapped so the texture spans exactly the VISIBLE
- *  aperture (the plane extends under the island's frame — SCREEN_APERTURE in
- *  layout.ts records the hidden margins, measured once against this asset).
- *  The authored UVs were unusable (status bars cropped clean off); the face
- *  is flat so position-projection is exact. flipY=false ⇒ v grows downward. */
-function projectPlanarUVs(mesh: THREE.Mesh): void {
-  const pos = mesh.geometry.getAttribute("position") as THREE.BufferAttribute;
-  const uv = mesh.geometry.getAttribute("uv") as THREE.BufferAttribute | undefined;
-  if (uv === undefined) return;
+/** The visible aperture of the model's display plane, in the plane's LOCAL
+ *  coords (the plane extends under the island's frame — SCREEN_APERTURE in
+ *  layout.ts records the hidden margins, measured once against this asset). */
+function visibleApertureRect(
+  mesh: THREE.Mesh,
+): { cx: number; cy: number; w: number; h: number; z: number } | null {
   mesh.geometry.computeBoundingBox();
   const bb = mesh.geometry.boundingBox;
-  if (bb === null) return;
-  const w = bb.max.x - bb.min.x || 1;
-  const h = bb.max.y - bb.min.y || 1;
+  if (bb === null) return null;
+  const w = bb.max.x - bb.min.x;
+  const h = bb.max.y - bb.min.y;
   const a = SCREEN_APERTURE;
-  for (let i = 0; i < uv.count; i++) {
-    const px = (pos.getX(i) - bb.min.x) / w; // 0 = left edge of the plane
-    const py = (pos.getY(i) - bb.min.y) / h; // 0 = bottom edge of the plane
-    const u = (px - a.left) / (1 - a.left - a.right);
-    const v = (1 - py - a.top) / (1 - a.top - a.bottom);
-    uv.setXY(i, u, v);
-  }
-  uv.needsUpdate = true;
+  const x0 = bb.min.x + a.left * w;
+  const x1 = bb.max.x - a.right * w;
+  const yTop = bb.max.y - a.top * h;
+  const yBot = bb.min.y + a.bottom * h;
+  return { cx: (x0 + x1) / 2, cy: (yTop + yBot) / 2, w: x1 - x0, h: yTop - yBot, z: bb.max.z };
 }
 
 /**
@@ -132,25 +125,45 @@ export function Nokia3310({
     t.magFilter = THREE.NearestFilter;
     t.minFilter = THREE.NearestFilter;
     t.generateMipmaps = false;
-    t.flipY = false; // glTF UV convention (v down) — flipping is wrong here
+    t.flipY = true; // the LCD child is a generated plane (standard v-up UVs)
     return t;
   }, [screenCanvas]);
   useEffect(() => () => texture.dispose(), [texture]);
 
-  useMemo(() => {
-    if (nodes.screen === null) return;
-    projectPlanarUVs(nodes.screen);
-    nodes.screen.material = new THREE.MeshBasicMaterial({ map: texture, toneMapped: false });
+  // Two layers, like the real phone: the model's oversized display plane
+  // becomes the DARK SURROUND, and a smaller child plane carries the pixels
+  // (SCREEN_SCALE of the visible aperture — the window itself is fixed
+  // geometry, so a smaller LCD means surround showing around it).
+  const lcd = useMemo(() => {
+    if (nodes.screen === null) return null;
+    nodes.screen.material = new THREE.MeshStandardMaterial({
+      color: MATERIALS.bezel.color,
+      roughness: MATERIALS.bezel.roughness,
+      metalness: MATERIALS.bezel.metalness,
+    });
+    const rect = visibleApertureRect(nodes.screen);
+    if (rect === null) return null;
+    const existing = nodes.screen.getObjectByName("lcd_pixels");
+    if (existing instanceof THREE.Mesh) return existing; // StrictMode re-run
+    const plane = new THREE.Mesh(
+      new THREE.PlaneGeometry(rect.w * SCREEN_SCALE, rect.h * SCREEN_SCALE),
+      new THREE.MeshBasicMaterial({ map: texture, toneMapped: false }),
+    );
+    plane.name = "lcd_pixels";
+    plane.position.set(rect.cx, rect.cy, rect.z + 0.0005);
+    nodes.screen.add(plane);
+    return plane;
   }, [nodes, texture]);
 
-  // Tint/dim + surround color react to props without rebuilding the material.
+  // Tint/dim reacts to props without rebuilding the material.
   useEffect(() => {
-    if (nodes.screen === null) return;
-    const mat = nodes.screen.material as THREE.MeshBasicMaterial;
+    if (lcd === null) return;
+    const mat = lcd.material as THREE.MeshBasicMaterial;
+    mat.map = texture;
     mat.color.set(backlightOn ? "#ffffff" : SCREEN_DIM_TINT);
     mat.needsUpdate = true;
-  }, [nodes, backlightOn]);
-  void screenBgColor; // surround fill is part of the mesh in v3 (dark well)
+  }, [lcd, texture, backlightOn]);
+  void screenBgColor; // the dark surround plays that role in v3
 
   const versionRef = useRef(screenVersion);
   versionRef.current = screenVersion;
