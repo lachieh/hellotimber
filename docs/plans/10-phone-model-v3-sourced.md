@@ -156,6 +156,16 @@ unnecessary.
 > the visible aperture (SCREEN_APERTURE constants, measured once against the
 > standby screen). Evidence: assets/model-v3.png, assets/model-v3-backlight-off.png.
 
+### Post-gate refinement (2026-07-02, `3dc5560`)
+
+Lachlan judged the full-aperture LCD too large. The display is now **two
+layers** like the real phone: the model's oversized display plane wears the
+dark bezel material (the surround band), and a generated child plane
+(`lcd_pixels`) carries the CanvasTexture at `SCREEN_SCALE` (0.8) of the
+visible aperture. The aperture UV remapping is gone (plane UVs untouched;
+flipY back to standard). `SCREEN_SCALE` in layout.ts is the single sizing
+knob; `SCREEN_APERTURE` still positions the aperture rect.
+
 ## Done means
 
 `vp run -r test`, `vp run website#build`, `vp check --fix` green; the public
