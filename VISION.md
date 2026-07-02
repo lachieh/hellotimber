@@ -289,6 +289,8 @@ export interface Nokia3310Props {
   backlightOn?: boolean;
   pressedKeys?: ReadonlySet<Nokia3310Key>; // visually depress keys (e.g. kbd input)
   screenBgColor?: string; // LCD fill behind/around the texture (default classic green)
+  modelUrl?: string; // host-served GLB (default "/models/nokia3310-v3.glb")
+  dracoPath?: string; // host-served Draco decoder dir (default "/draco/")
 }
 /** The phone model; must be rendered inside an R3F <Canvas>. */
 export function Nokia3310(props: Nokia3310Props): React.JSX.Element;

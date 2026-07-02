@@ -83,13 +83,13 @@ unnecessary.
 
 ### Task 1 — VISION + asset plumbing
 
-- [ ] VISION.md: re-add `modelUrl`/`dracoPath` to the phone-3d contract block
+- [x] VISION.md: re-add `modelUrl`/`dracoPath` to the phone-3d contract block
       with the new defaults.
-- [ ] Copy `nokia-3310/3dmodel/nokia3310-v3.glb` →
+- [x] Copy `nokia-3310/3dmodel/nokia3310-v3.glb` →
       `packages/phone-3d/public/models/` and `website/public/models/`; vendor
       the Draco decoder into both `public/draco/` dirs; restore the root
       vite.config comment about vendored decoders if lint flags them.
-- [ ] Commit: `feat(phone-3d): v3 asset + draco decoders (CGTrader #5212540, RF license)`
+- [x] Commit: `feat(phone-3d): v3 asset + draco decoders (CGTrader #5212540, RF license)`
 
 ### Task 2 — node map + tests (TDD)
 
