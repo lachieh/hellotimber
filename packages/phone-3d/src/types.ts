@@ -28,8 +28,8 @@ export interface Nokia3310Props {
   backlightOn?: boolean;
   /** Visually depress keys driven externally (e.g. keyboard input). */
   pressedKeys?: ReadonlySet<Nokia3310Key>;
-  /** Colour of the LCD surround fill. Accepted for contract stability; the v3
-   *  mesh display has no surround gap, so this is currently unused. */
+  /** Colour of the LCD surround fill around the pixel plane. Pass the same
+   *  `bg` you gave the screen renderer. Defaults to the classic green. */
   screenBgColor?: string;
   /** URL of the Draco-compressed GLB (served as a static asset by the host). */
   modelUrl?: string;

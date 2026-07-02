@@ -106,14 +106,19 @@ export function Nokia3310({
         metalness: 0.05,
       });
     }
-    // glass: barely-there gloss over the LCD
+    // glass: the model's own pane over the LCD — visibly reflective (picks up
+    // the stage's environment map) while staying clear over the pixels.
     if (nodes.glass) {
       nodes.glass.material = new THREE.MeshPhysicalMaterial({
         color: "#ffffff",
         transparent: true,
-        opacity: 0.08,
-        roughness: 0.08,
+        opacity: 0.16,
+        roughness: 0.04,
         metalness: 0,
+        clearcoat: 1,
+        clearcoatRoughness: 0.06,
+        envMapIntensity: 1.4,
+        depthWrite: false,
       });
     }
   }, [model, nodes]);
@@ -130,17 +135,13 @@ export function Nokia3310({
   }, [screenCanvas]);
   useEffect(() => () => texture.dispose(), [texture]);
 
-  // Two layers, like the real phone: the model's oversized display plane
-  // becomes the DARK SURROUND, and a smaller child plane carries the pixels
-  // (SCREEN_SCALE of the visible aperture — the window itself is fixed
-  // geometry, so a smaller LCD means surround showing around it).
+  // Two layers: the model's oversized display plane becomes the LCD SURROUND
+  // (filled with screenBgColor so it reads as one continuous screen — same
+  // contract as the v1 era), and a smaller child plane carries the pixels
+  // (SCREEN_SCALE of the visible aperture).
   const lcd = useMemo(() => {
     if (nodes.screen === null) return null;
-    nodes.screen.material = new THREE.MeshStandardMaterial({
-      color: MATERIALS.bezel.color,
-      roughness: MATERIALS.bezel.roughness,
-      metalness: MATERIALS.bezel.metalness,
-    });
+    nodes.screen.material = new THREE.MeshBasicMaterial({ toneMapped: false });
     const rect = visibleApertureRect(nodes.screen);
     if (rect === null) return null;
     const existing = nodes.screen.getObjectByName("lcd_pixels");
@@ -155,15 +156,20 @@ export function Nokia3310({
     return plane;
   }, [nodes, texture]);
 
-  // Tint/dim reacts to props without rebuilding the material.
+  // Tint/dim reacts to props without rebuilding materials. The surround is
+  // screenBgColor multiplied by the same dim tint as the pixels, so both
+  // layers read as one LCD in either backlight state.
   useEffect(() => {
-    if (lcd === null) return;
-    const mat = lcd.material as THREE.MeshBasicMaterial;
-    mat.map = texture;
-    mat.color.set(backlightOn ? "#ffffff" : SCREEN_DIM_TINT);
-    mat.needsUpdate = true;
-  }, [lcd, texture, backlightOn]);
-  void screenBgColor; // the dark surround plays that role in v3
+    if (lcd === null || nodes.screen === null) return;
+    const tint = new THREE.Color(backlightOn ? "#ffffff" : SCREEN_DIM_TINT);
+    const pixels = lcd.material as THREE.MeshBasicMaterial;
+    pixels.map = texture;
+    pixels.color.copy(tint);
+    pixels.needsUpdate = true;
+    const surround = nodes.screen.material as THREE.MeshBasicMaterial;
+    surround.color.set(screenBgColor).multiply(tint);
+    surround.needsUpdate = true;
+  }, [lcd, nodes, texture, backlightOn, screenBgColor]);
 
   const versionRef = useRef(screenVersion);
   versionRef.current = screenVersion;
