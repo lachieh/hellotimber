@@ -13,7 +13,7 @@ function cellOrigin(c: Cell): readonly [number, number] {
 type Dir = "up" | "right" | "down" | "left";
 
 /** Direction from `from` toward `to`, normalized across board wrap. */
-function dirBetween(from: Cell, to: Cell, cols: number, rows: number): Dir {
+function dirBetween(from: Cell, to: Cell): Dir {
   let dx = to.x - from.x;
   let dy = to.y - from.y;
   if (dx > 1) dx = -1;
@@ -28,22 +28,18 @@ function dirBetween(from: Cell, to: Cell, cols: number, rows: number): Dir {
 
 const HORIZONTAL = (d: Dir): boolean => d === "left" || d === "right";
 
-/** The dashed playfield frame (Snake II draws it even without a maze). The
- *  top edge doubles as the score underline, exactly like the reference. */
+/** Header rule + playfield frame, solid 1px (reference-measured: the
+ *  "dashes" in photos are the LCD pixel grid, not gaps). Layout per the
+ *  reference: digits rows 0–4, gap 5, score underline 6, frame top 7. */
 function drawFrame(b: Bitmap): void {
   const top = SCORE_BAR_H - 1; // y 7
   const bottom = b.height - 1; // y 47
-  for (let x = 0; x < b.width; x++) {
-    if (x % 3 !== 2) {
-      setPixel(b, x, top);
-      setPixel(b, x, bottom);
-    }
-  }
+  fillRect(b, 0, top - 1, b.width, 1); // score underline (y 6)
+  fillRect(b, 0, top, b.width, 1);
+  fillRect(b, 0, bottom, b.width, 1);
   for (let y = top; y <= bottom; y++) {
-    if ((y - top) % 3 !== 2) {
-      setPixel(b, 0, y);
-      setPixel(b, b.width - 1, y);
-    }
+    setPixel(b, 0, y);
+    setPixel(b, b.width - 1, y);
   }
 }
 
@@ -81,18 +77,18 @@ export function renderSnakeFrame(state: SnakeState): Bitmap {
   const snakeVisible = state.status !== "dying" || state.flashOn;
   if (!snakeVisible) return b;
 
-  const { snake, cols, rows } = state;
+  const { snake } = state;
   snake.forEach((c, i) => {
     const [x, y] = cellOrigin(c);
     const parity = (c.x + c.y) % 2 === 0;
 
     if (i === 0) {
-      const facing = snake.length > 1 ? dirBetween(snake[1]!, c, cols, rows) : "right";
+      const facing = snake.length > 1 ? dirBetween(snake[1]!, c) : "right";
       drawArt(b, x, y, HEAD[facing]);
       return;
     }
 
-    const toPrev = dirBetween(c, snake[i - 1]!, cols, rows);
+    const toPrev = dirBetween(c, snake[i - 1]!);
     if (i === snake.length - 1) {
       // Tail: a thin line tapering off in the travel axis, riding the wave band.
       if (HORIZONTAL(toPrev)) {
@@ -105,7 +101,7 @@ export function renderSnakeFrame(state: SnakeState): Bitmap {
       return;
     }
 
-    const toNext = dirBetween(c, snake[i + 1]!, cols, rows);
+    const toNext = dirBetween(c, snake[i + 1]!);
     if (HORIZONTAL(toPrev) && HORIZONTAL(toNext)) {
       // Straight horizontal: 2×2 block on the parity band + stepping wings.
       const off = parity ? 0 : 2;

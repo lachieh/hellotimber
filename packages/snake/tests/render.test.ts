@@ -39,30 +39,32 @@ describe("renderSnakeFrame", () => {
     expect(renderSnakeFrame(s)).not.toBe(b);
   });
 
-  it("draws the zero-padded score top-left and the dashed frame", () => {
+  it("draws the zero-padded 3x5 score, underline and solid frame", () => {
     const b = renderSnakeFrame(baseState({ score: 90 }));
     expectFrame(
       b,
       1,
       0,
-      24,
-      7,
+      15,
+      5,
       `
-      .###...###...###...###..
-      ##.##.##.##.##.##.##.##.
-      ##.##.##.##.##.##.##.##.
-      ##.##.##.##.##.##.##.##.
-      ##.##.##.##..####.##.##.
-      ##.##.##.##....##.##.##.
-      .###...###...###...###..
+      ###.###.###.###
+      #.#.#.#.#.#.#.#
+      #.#.#.#.###.#.#
+      #.#.#.#...#.#.#
+      ###.###.###.###
     `,
     );
-    // dashed frame: 2-on/1-off along the top (score underline) and bottom
-    expect(frameRegion(b, 0, 7, 6, 1)).toBe("##.##.");
-    expect(frameRegion(b, 0, 47, 6, 1)).toBe("##.##.");
+    // solid score underline (y6) and frame top (y7), full width
+    expect(frameRegion(b, 0, 6, 84, 1)).toBe("#".repeat(84));
+    expect(frameRegion(b, 0, 7, 84, 1)).toBe("#".repeat(84));
+    // frame bottom and sides
+    expect(frameRegion(b, 0, 47, 84, 1)).toBe("#".repeat(84));
+    expect(frameRegion(b, 0, 20, 1, 1)).toBe("#");
+    expect(frameRegion(b, 83, 20, 1, 1)).toBe("#");
     // score bar is otherwise empty
-    const emptyRows = Array.from({ length: 7 }, () => ".".repeat(8)).join("\n");
-    expect(frameRegion(b, 40, 0, 8, 7)).toBe(emptyRows);
+    const emptyRows = Array.from({ length: 5 }, () => ".".repeat(8)).join("\n");
+    expect(frameRegion(b, 40, 0, 8, 5)).toBe(emptyRows);
   });
 
   it("draws the directed head, wavy body and thin tail", () => {
@@ -158,21 +160,19 @@ describe("renderSnakeFrame", () => {
       .##.
     `,
     );
-    // countdown "15" right-aligned: widths 4+6=10 → x = 84 - (10+1) = 73
+    // countdown "15" right-aligned: width 7 → x = 84 - 8 = 76
     expectFrame(
       b,
-      73,
+      76,
       0,
-      10,
       7,
+      5,
       `
-      .##.####..
-      ###.#.....
-      .##.####..
-      .##....##.
-      .##....##.
-      .##....##.
-      .##.####..
+      .#..###
+      ##..#..
+      .#..###
+      .#....#
+      ###.###
     `,
     );
   });

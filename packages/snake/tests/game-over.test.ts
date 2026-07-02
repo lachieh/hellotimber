@@ -122,39 +122,35 @@ describe("game over screen", () => {
 
   it("centers the final score below the text", () => {
     const zero = renderSnakeFrame(baseState({ status: "game-over", score: 0 }));
-    // one bold digit: width 6 → x = 39
+    // one digit: width 3 → x = 40
     expectFrame(
       zero,
-      39,
+      40,
       28,
-      6,
-      7,
+      3,
+      5,
       `
-      .###..
-      ##.##.
-      ##.##.
-      ##.##.
-      ##.##.
-      ##.##.
-      .###..
+      ###
+      #.#
+      #.#
+      #.#
+      ###
     `,
     );
     const b = renderSnakeFrame(baseState({ status: "game-over", score: 123 }));
-    // three digits: widths 4+6+6 = 16 → x = 34
+    // three digits: width 11 → x = 36
     expectFrame(
       b,
-      34,
+      36,
       28,
-      16,
-      7,
+      11,
+      5,
       `
-      .##.####..####..
-      ###....##....##.
-      .##....##....##.
-      .##..###...###..
-      .##.##.......##.
-      .##.##.......##.
-      .##.#####.####..
+      .#..###.###
+      ##....#...#
+      .#..###.###
+      .#..#.....#
+      ###.###.###
     `,
     );
   });

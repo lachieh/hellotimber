@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { createBitmap, drawArt, fillRect, setPixel } from "../src/bitmap";
-import { DIGITS, drawNumber, numberWidth } from "../src/font";
+import { FONT_3X5, drawNumber, numberWidth } from "../src/font";
 import { HEAD, SPRITE_BONUS, SPRITE_FOOD } from "../src/sprites";
 import { expectFrame } from "./pixels";
 
@@ -48,27 +48,22 @@ describe("bitmap", () => {
   });
 });
 
-describe("bold digit font", () => {
-  it("has all ten digits, 7 rows each, consistent width", () => {
+describe("3x5 digit font", () => {
+  it("has all ten digits, 3x5 each", () => {
     for (const d of "0123456789") {
-      const rows = DIGITS[d]!;
-      expect(rows).toHaveLength(7);
-      const width = rows[0]!.length;
-      for (const row of rows) expect(row).toMatch(new RegExp(`^[#.]{${width}}$`));
+      const rows = FONT_3X5[d]!;
+      expect(rows).toHaveLength(5);
+      for (const row of rows) expect(row).toMatch(/^[#.]{3}$/);
     }
   });
 
-  it("drawNumber advances per glyph and zero-pads on request", () => {
+  it("drawNumber advances 4px per digit and zero-pads on request", () => {
     const b = createBitmap(40, 8);
     drawNumber(b, 0, 0, 90, 4); // "0090"
     const manual = createBitmap(40, 8);
-    let cx = 0;
-    for (const d of "0090") {
-      drawArt(manual, cx, 0, DIGITS[d]!);
-      cx += DIGITS[d]![0]!.length;
-    }
+    for (let i = 0; i < 4; i++) drawArt(manual, i * 4, 0, FONT_3X5["0090"[i]!]!);
     expect(b.pixels.join("")).toBe(manual.pixels.join(""));
-    expect(numberWidth(90, 4)).toBe(cx);
+    expect(numberWidth(90, 4)).toBe(15);
   });
 });
 

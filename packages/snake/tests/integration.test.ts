@@ -32,18 +32,16 @@ describe("full game on the Box maze", () => {
     );
     expectFrame(
       frame,
-      39,
+      40,
       28,
-      6,
-      7,
+      3,
+      5,
       `
-      .###..
-      ##.##.
-      ##.##.
-      ##.##.
-      ##.##.
-      ##.##.
-      .###..
+      ###
+      #.#
+      #.#
+      #.#
+      ###
     `,
     );
     expect(g.tick()).toBe(false);
