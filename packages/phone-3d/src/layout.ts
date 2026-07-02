@@ -43,3 +43,9 @@ export const STATIC_NODES = [
  *  drift with the asset). 0.004 ≈ 0.45 mm at true scale × the visual x2 the
  *  depress needs to read on screen. */
 export const KEY_TRAVEL_FRAC = 0.004;
+
+/** The GLB's display plane extends under the island's frame; only an interior
+ *  sub-rect is visible. Fractions of the plane's local bbox hidden on each
+ *  side — measured ONCE against this asset (standby screen: status bars +
+ *  softkey row must be fully visible). Asset-intrinsic, not runtime tuning. */
+export const SCREEN_APERTURE = { left: 0.02, right: 0.02, top: 0.07, bottom: 0.015 } as const;

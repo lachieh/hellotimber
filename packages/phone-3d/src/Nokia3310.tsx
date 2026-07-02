@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import Key from "./Key";
-import { KEY_NODES, STATIC_NODES } from "./layout";
+import { KEY_NODES, SCREEN_APERTURE, STATIC_NODES } from "./layout";
 import { BACKLIGHT_COLOR, LCD_GLOW_INTENSITY, MATERIALS, SCREEN_DIM_TINT } from "./materials";
 import type { MaterialSpec } from "./materials";
 import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL, DEFAULT_SCREEN_BG } from "./types";
@@ -20,25 +20,28 @@ function standard(spec: MaterialSpec): THREE.MeshStandardMaterial {
   });
 }
 
-/** Rewrite a mesh's UVs so its used UV bounds span exactly [0,1]² — the
- *  CanvasTexture then fills the visible display with no calibration. */
-function remapUVsToUnit(mesh: THREE.Mesh): void {
+/** Replace the display mesh's UVs with a planar projection from its own
+ *  local-space bounding rect, mapped so the texture spans exactly the VISIBLE
+ *  aperture (the plane extends under the island's frame — SCREEN_APERTURE in
+ *  layout.ts records the hidden margins, measured once against this asset).
+ *  The authored UVs were unusable (status bars cropped clean off); the face
+ *  is flat so position-projection is exact. flipY=false ⇒ v grows downward. */
+function projectPlanarUVs(mesh: THREE.Mesh): void {
+  const pos = mesh.geometry.getAttribute("position") as THREE.BufferAttribute;
   const uv = mesh.geometry.getAttribute("uv") as THREE.BufferAttribute | undefined;
   if (uv === undefined) return;
-  let minU = Infinity;
-  let maxU = -Infinity;
-  let minV = Infinity;
-  let maxV = -Infinity;
+  mesh.geometry.computeBoundingBox();
+  const bb = mesh.geometry.boundingBox;
+  if (bb === null) return;
+  const w = bb.max.x - bb.min.x || 1;
+  const h = bb.max.y - bb.min.y || 1;
+  const a = SCREEN_APERTURE;
   for (let i = 0; i < uv.count; i++) {
-    minU = Math.min(minU, uv.getX(i));
-    maxU = Math.max(maxU, uv.getX(i));
-    minV = Math.min(minV, uv.getY(i));
-    maxV = Math.max(maxV, uv.getY(i));
-  }
-  const du = maxU - minU || 1;
-  const dv = maxV - minV || 1;
-  for (let i = 0; i < uv.count; i++) {
-    uv.setXY(i, (uv.getX(i) - minU) / du, (uv.getY(i) - minV) / dv);
+    const px = (pos.getX(i) - bb.min.x) / w; // 0 = left edge of the plane
+    const py = (pos.getY(i) - bb.min.y) / h; // 0 = bottom edge of the plane
+    const u = (px - a.left) / (1 - a.left - a.right);
+    const v = (1 - py - a.top) / (1 - a.top - a.bottom);
+    uv.setXY(i, u, v);
   }
   uv.needsUpdate = true;
 }
@@ -136,7 +139,7 @@ export function Nokia3310({
 
   useMemo(() => {
     if (nodes.screen === null) return;
-    remapUVsToUnit(nodes.screen);
+    projectPlanarUVs(nodes.screen);
     nodes.screen.material = new THREE.MeshBasicMaterial({ map: texture, toneMapped: false });
   }, [nodes, texture]);
 
