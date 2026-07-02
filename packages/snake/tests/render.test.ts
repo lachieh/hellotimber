@@ -39,31 +39,35 @@ describe("renderSnakeFrame", () => {
     expect(renderSnakeFrame(s)).not.toBe(b);
   });
 
-  it("draws the score top-left and the separator line at y=7", () => {
+  it("draws the zero-padded score top-left and the dashed frame", () => {
     const b = renderSnakeFrame(baseState({ score: 90 }));
     expectFrame(
       b,
       1,
-      1,
+      0,
+      24,
       7,
-      5,
       `
-      ###.###
-      #.#.#.#
-      ###.#.#
-      ..#.#.#
-      ###.###
+      .###...###...###...###..
+      ##.##.##.##.##.##.##.##.
+      ##.##.##.##.##.##.##.##.
+      ##.##.##.##.##.##.##.##.
+      ##.##.##.##..####.##.##.
+      ##.##.##.##....##.##.##.
+      .###...###...###...###..
     `,
     );
-    expect(frameRegion(b, 0, 7, 84, 1)).toBe("#".repeat(84));
+    // dashed frame: 2-on/1-off along the top (score underline) and bottom
+    expect(frameRegion(b, 0, 7, 6, 1)).toBe("##.##.");
+    expect(frameRegion(b, 0, 47, 6, 1)).toBe("##.##.");
     // score bar is otherwise empty
     const emptyRows = Array.from({ length: 7 }, () => ".".repeat(8)).join("\n");
     expect(frameRegion(b, 40, 0, 8, 7)).toBe(emptyRows);
   });
 
-  it("draws head, notched and solid body segments at their cells", () => {
+  it("draws the directed head, wavy body and thin tail", () => {
     const b = renderSnakeFrame(baseState());
-    // head cell (6,5) → px (24,28)
+    // head cell (6,5) → px (24,28), facing right (open jaws)
     expectFrame(
       b,
       24,
@@ -71,13 +75,13 @@ describe("renderSnakeFrame", () => {
       4,
       4,
       `
-      ####
-      #..#
-      ####
-      ####
+      ###.
+      ##.#
+      ###.
+      ##.#
     `,
     );
-    // body index 1 (5,5) → notched
+    // body (5,5): horizontal wave block on the even-parity band + wings
     expectFrame(
       b,
       20,
@@ -85,13 +89,13 @@ describe("renderSnakeFrame", () => {
       4,
       4,
       `
+      .##.
       ####
-      #..#
-      #..#
-      ####
+      ....
+      ....
     `,
     );
-    // body index 2 (4,5) → solid
+    // tail (4,5): thin line on the odd-parity band
     expectFrame(
       b,
       16,
@@ -99,15 +103,15 @@ describe("renderSnakeFrame", () => {
       4,
       4,
       `
+      ....
+      ....
       ####
-      ####
-      ####
-      ####
+      ....
     `,
     );
   });
 
-  it("draws food as a 2x2 dot in its cell", () => {
+  it("draws food as the hollow diamond", () => {
     const b = renderSnakeFrame(baseState()); // food (13,0) → px (52,8)
     expectFrame(
       b,
@@ -116,9 +120,9 @@ describe("renderSnakeFrame", () => {
       4,
       4,
       `
-      ....
-      .##.
-      .##.
+      .#..
+      #.#.
+      .#..
       ....
     `,
     );
@@ -140,7 +144,7 @@ describe("renderSnakeFrame", () => {
 
   it("draws the bonus bug and its countdown top-right", () => {
     const b = renderSnakeFrame(baseState({ bonus: { cell: { x: 10, y: 2 }, ttl: 20, value: 15 } }));
-    // bonus cell (10,2) → px (40,16)
+    // bonus cell (10,2) → px (40,16): the beetle
     expectFrame(
       b,
       40,
@@ -148,25 +152,27 @@ describe("renderSnakeFrame", () => {
       4,
       4,
       `
+      #..#
       .##.
       ####
-      ####
-      #..#
+      .##.
     `,
     );
-    // countdown "15" right-aligned: x = 84 - 2*4 = 76
+    // countdown "15" right-aligned: widths 4+6=10 → x = 84 - (10+1) = 73
     expectFrame(
       b,
-      76,
-      1,
+      73,
+      0,
+      10,
       7,
-      5,
       `
-      .#..###
-      ##..#..
-      .#..###
-      .#....#
-      ###.###
+      .##.####..
+      ###.#.....
+      .##.####..
+      .##....##.
+      .##....##.
+      .##....##.
+      .##.####..
     `,
     );
   });

@@ -44,7 +44,7 @@ describe("dying flash", () => {
       ....
     `,
     );
-    // food still drawn
+    // food still drawn (the hollow diamond)
     expectFrame(
       b,
       52,
@@ -52,9 +52,9 @@ describe("dying flash", () => {
       4,
       4,
       `
-      ....
-      .##.
-      .##.
+      .#..
+      #.#.
+      .#..
       ....
     `,
     );
@@ -69,10 +69,10 @@ describe("dying flash", () => {
       4,
       4,
       `
-      ####
-      #..#
-      ####
-      ####
+      ###.
+      ##.#
+      ###.
+      ##.#
     `,
     );
   });
@@ -122,35 +122,39 @@ describe("game over screen", () => {
 
   it("centers the final score below the text", () => {
     const zero = renderSnakeFrame(baseState({ status: "game-over", score: 0 }));
-    // one digit: width 3 → x = 40
+    // one bold digit: width 6 → x = 39
     expectFrame(
       zero,
-      40,
+      39,
       28,
-      3,
-      5,
+      6,
+      7,
       `
-      ###
-      #.#
-      #.#
-      #.#
-      ###
+      .###..
+      ##.##.
+      ##.##.
+      ##.##.
+      ##.##.
+      ##.##.
+      .###..
     `,
     );
     const b = renderSnakeFrame(baseState({ status: "game-over", score: 123 }));
-    // three digits: width 11 → x = 36
+    // three digits: widths 4+6+6 = 16 → x = 34
     expectFrame(
       b,
-      36,
+      34,
       28,
-      11,
-      5,
+      16,
+      7,
       `
-      .#..###.###
-      ##....#...#
-      .#..###.###
-      .#..#.....#
-      ###.###.###
+      .##.####..####..
+      ###....##....##.
+      .##....##....##.
+      .##..###...###..
+      .##.##.......##.
+      .##.##.......##.
+      .##.#####.####..
     `,
     );
   });

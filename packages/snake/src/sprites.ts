@@ -1,26 +1,33 @@
-/** 4×4 cell sprites ('#' = set pixel). The chequered body look comes from
- * alternating solid and notched segments along the snake. */
-export const SPRITE_HEAD: readonly string[] = [
-  "####",
-  "#..#", // 2px "eye" slot
-  "####",
-  "####",
-];
+/** 4×4 cell sprites ('#' = set pixel), styled after the real Snake II
+ * (reference: the classic in-game screenshot — wavy stepped body, diamond
+ * food, open-jawed head, thin tapering tail). */
 
-export const SPRITE_BODY_NOTCH: readonly string[] = ["####", "#..#", "#..#", "####"];
+/** Rotate 4×4 string art 90° clockwise. */
+export function rotateCW(art: readonly string[]): readonly string[] {
+  const size = art.length;
+  const out: string[] = [];
+  for (let y = 0; y < size; y++) {
+    let row = "";
+    for (let x = 0; x < size; x++) row += art[size - 1 - x]![y] ?? ".";
+    out.push(row);
+  }
+  return out;
+}
 
-export const SPRITE_BODY_SOLID: readonly string[] = ["####", "####", "####", "####"];
+/** Head facing RIGHT: blunt skull, open jaws toward the food. */
+const HEAD_RIGHT: readonly string[] = ["###.", "##.#", "###.", "##.#"];
 
-export const SPRITE_FOOD: readonly string[] = [
-  "....",
-  ".##.", // 2×2 centered dot
-  ".##.",
-  "....",
-];
+/** Head sprites by direction of travel. */
+export const HEAD: Record<"up" | "right" | "down" | "left", readonly string[]> = (() => {
+  const right = HEAD_RIGHT;
+  const down = rotateCW(right);
+  const left = rotateCW(down);
+  const up = rotateCW(left);
+  return { up, right, down, left };
+})();
 
-export const SPRITE_BONUS: readonly string[] = [
-  ".##.", // bug: round back...
-  "####",
-  "####",
-  "#..#", // ...and legs
-];
+/** Food: the Snake II hollow diamond. */
+export const SPRITE_FOOD: readonly string[] = [".#..", "#.#.", ".#..", "...."];
+
+/** Bonus: the little beetle. */
+export const SPRITE_BONUS: readonly string[] = ["#..#", ".##.", "####", ".##."];

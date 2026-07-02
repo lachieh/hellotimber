@@ -1,13 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { createBitmap, drawArt, fillRect, setPixel } from "../src/bitmap";
-import { FONT_3X5, drawNumber } from "../src/font";
-import {
-  SPRITE_BODY_NOTCH,
-  SPRITE_BODY_SOLID,
-  SPRITE_BONUS,
-  SPRITE_FOOD,
-  SPRITE_HEAD,
-} from "../src/sprites";
+import { DIGITS, drawNumber, numberWidth } from "../src/font";
+import { HEAD, SPRITE_BONUS, SPRITE_FOOD } from "../src/sprites";
 import { expectFrame } from "./pixels";
 
 describe("bitmap", () => {
@@ -54,44 +48,33 @@ describe("bitmap", () => {
   });
 });
 
-describe("3x5 digit font", () => {
-  it("has all ten digits, 3x5 each", () => {
-    for (let d = 0; d <= 9; d++) {
-      const glyph = FONT_3X5[String(d)];
-      expect(glyph).toHaveLength(5);
-      for (const row of glyph) expect(row).toMatch(/^[#.]{3}$/);
+describe("bold digit font", () => {
+  it("has all ten digits, 7 rows each, consistent width", () => {
+    for (const d of "0123456789") {
+      const rows = DIGITS[d]!;
+      expect(rows).toHaveLength(7);
+      const width = rows[0]!.length;
+      for (const row of rows) expect(row).toMatch(new RegExp(`^[#.]{${width}}$`));
     }
   });
 
-  it("draws multi-digit numbers with a 1px gap", () => {
-    const b = createBitmap(16, 8);
-    drawNumber(b, 1, 1, 90);
-    expectFrame(
-      b,
-      1,
-      1,
-      7,
-      5,
-      `
-      ###.###
-      #.#.#.#
-      ###.#.#
-      ..#.#.#
-      ###.###
-    `,
-    );
+  it("drawNumber advances per glyph and zero-pads on request", () => {
+    const b = createBitmap(40, 8);
+    drawNumber(b, 0, 0, 90, 4); // "0090"
+    const manual = createBitmap(40, 8);
+    let cx = 0;
+    for (const d of "0090") {
+      drawArt(manual, cx, 0, DIGITS[d]!);
+      cx += DIGITS[d]![0]!.length;
+    }
+    expect(b.pixels.join("")).toBe(manual.pixels.join(""));
+    expect(numberWidth(90, 4)).toBe(cx);
   });
 });
 
 describe("sprites", () => {
-  it("are all 4x4", () => {
-    for (const s of [
-      SPRITE_HEAD,
-      SPRITE_BODY_NOTCH,
-      SPRITE_BODY_SOLID,
-      SPRITE_FOOD,
-      SPRITE_BONUS,
-    ]) {
+  it("are all 4x4 (head in all four directions)", () => {
+    for (const s of [HEAD.up, HEAD.right, HEAD.down, HEAD.left, SPRITE_FOOD, SPRITE_BONUS]) {
       expect(s).toHaveLength(4);
       for (const row of s) expect(row).toMatch(/^[#.]{4}$/);
     }
