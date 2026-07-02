@@ -1,9 +1,7 @@
-import { useFrame, useThree } from "@react-three/fiber";
-import { useMemo, useRef, useState } from "react";
+import { useFrame } from "@react-three/fiber";
+import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { cellPlaneGeometry, legendTexture } from "./atlas";
-import { FACE_Z, KEY_DEPTH, KEY_TRAVEL, LEGEND_LIFT } from "./layout";
-import type { KeyLayoutEntry } from "./layout";
 import {
   BACKLIGHT_COLOR,
   KEY_GLOW_INTENSITY,
@@ -11,212 +9,126 @@ import {
   MATERIALS,
   PRINT_DARK,
 } from "./materials";
+import type { MaterialSpec } from "./materials";
 import type { Nokia3310Key } from "./types";
 
-/** Cap bevel: outlines are built inset by this so the key's widest
- *  cross-section equals the layout footprint (the non-overlap guarantee). */
-const CAP_BEVEL = 0.05;
-
-/** Stadium (rounded-ends pill), centered, with optional vertical bowing of the
- *  long edges: positive bow curves an edge upward at its center. */
-function bowedPill(w: number, h: number, topBow: number, bottomBow: number): THREE.Shape {
-  const hw = w / 2;
-  const hh = h / 2;
-  const r = hh;
-  const shape = new THREE.Shape();
-  shape.moveTo(-hw + r, -hh);
-  shape.quadraticCurveTo(0, -hh + bottomBow * 2, hw - r, -hh);
-  shape.absarc(hw - r, 0, r, -Math.PI / 2, Math.PI / 2, false);
-  shape.quadraticCurveTo(0, hh + topBow * 2, -hw + r, hh);
-  shape.absarc(-hw + r, 0, r, Math.PI / 2, (3 * Math.PI) / 2, false);
-  return shape;
+/** Which atlas cell prints on each key. The sourced mesh ships geometry only
+ *  (its legends lived in the stripped textures), so the plan-09 atlas decals
+ *  carry the print. Power sits on the top edge — no front print. */
+function legendCellFor(key: Nokia3310Key): string | null {
+  if (key === "power") return null;
+  if (key === "*") return "*";
+  if (key === "#") return "#";
+  return key; // digits, c, up, down — cell names match the key ids
 }
 
-/** True ellipse — the 3310's chrome lens keys (reference nokia-3310-1.png). */
-function ellipse(w: number, h: number): THREE.Shape {
-  const shape = new THREE.Shape();
-  shape.absellipse(0, 0, w / 2, h / 2, 0, Math.PI * 2, false, 0);
-  return shape;
-}
-
-function keyShape(entry: KeyLayoutEntry): THREE.Shape {
-  const w = entry.w - 2 * CAP_BEVEL;
-  const h = entry.h - 2 * CAP_BEVEL;
-  switch (entry.shape) {
-    case "pill":
-    case "dot":
-      return ellipse(w, h);
-    case "crescent":
-      // The wide NaviKey: gentle smile — top edge nearly level, bottom bows up.
-      return bowedPill(w, h, h * 0.08, h * 0.25);
-    case "wing-l":
-    case "wing-r":
-      // C / ▲▼ wings: a slight banana that hugs the NaviKey once rotated.
-      return bowedPill(w, h, h * 0.12, h * 0.12);
-  }
-}
-
-function legendCellFor(key: Nokia3310Key): string {
-  if (key === "power") return "earpiece"; // the power target doubles as the grille
-  return key; // digits, *, #, c, up, down, navi all have atlas cells
+function specFor(key: Nokia3310Key): MaterialSpec {
+  if (key === "navi") return MATERIALS.navi;
+  if (key === "power") return MATERIALS.badge; // dark top-edge button
+  return MATERIALS.key;
 }
 
 export interface KeyProps {
-  entry: KeyLayoutEntry;
+  id: Nokia3310Key;
+  /** The adopted GLB node — geometry/position live in the mesh. */
+  mesh: THREE.Mesh;
   backlightOn: boolean;
-  /** Externally-driven depress (keyboard input mirrored into the 3D keypad). */
+  /** Externally-driven depress (keyboard input mirrored into the keypad). */
   pressed: boolean;
+  /** Depress travel in model units (scale-relative, computed by the loader). */
+  travel: number;
   onKey?: (key: Nokia3310Key, action: "down" | "up") => void;
 }
 
-/** One pressable key: beveled extruded cap + legend decal, sinks by KEY_TRAVEL
- *  while pointer-held or externally pressed. */
-export default function Key({ entry, backlightOn, pressed, onKey }: KeyProps) {
-  const group = useRef<THREE.Group>(null);
-  const [pointerHeld, setPointerHeld] = useState(false);
-  // Emit-guard lives in a ref: setState updaters are double-invoked under
-  // StrictMode, so onKey side-effects must never run inside one.
-  const heldRef = useRef(false);
-  const { gl } = useThree();
-  const down = pointerHeld || pressed;
+/**
+ * Drives one adopted key mesh: dresses its material, lerps the depress along
+ * the model's protrusion axis (+z), and floats a legend decal on the cap.
+ * Pointer events are routed by the loader (one handler on the model root);
+ * this component only animates. `pointerHeldRef` is flipped by that router.
+ */
+export default function Key({ id, mesh, backlightOn, pressed, travel, onKey }: KeyProps) {
+  void onKey; // events are routed centrally; prop kept for API symmetry
+  const baseZ = useRef<number | null>(null);
+  const pointerHeldRef = useRef(false);
+  // The router finds this ref through mesh.userData (set once below).
+  useMemo(() => {
+    mesh.userData.keyId = id;
+    mesh.userData.heldRef = pointerHeldRef;
+  }, [mesh, id]);
 
-  const capGeometry = useMemo(() => {
-    const geometry = new THREE.ExtrudeGeometry(keyShape(entry), {
-      depth: KEY_DEPTH - 2 * CAP_BEVEL,
-      bevelEnabled: true,
-      bevelThickness: CAP_BEVEL,
-      bevelSize: CAP_BEVEL,
-      bevelSegments: 3,
-      curveSegments: 24,
+  const material = useMemo(() => {
+    const spec = specFor(id);
+    const m = new THREE.MeshStandardMaterial({
+      color: spec.color,
+      roughness: spec.roughness,
+      metalness: spec.metalness,
+      emissive: new THREE.Color(BACKLIGHT_COLOR),
+      emissiveIntensity: 0,
     });
-    // Root the cap so it rises from the face plane: z ∈ [0, KEY_DEPTH].
-    geometry.computeBoundingBox();
-    const minZ = geometry.boundingBox?.min.z ?? 0;
-    geometry.translate(0, 0, -minZ);
-    return geometry;
-  }, [entry]);
+    mesh.material = m;
+    return m;
+  }, [mesh, id]);
 
-  const legendCell = legendCellFor(entry.key);
-  const legendGeometry = useMemo(() => {
-    if (entry.key === "navi") return null; // the cyan bar mesh IS the navi legend
-    if (entry.key === "power") {
-      // Earpiece dot row painted wide in the atlas; the plane is rotated 90°
-      // below, turning it into the phone's vertical dot column.
-      return cellPlaneGeometry(entry.h * 0.9, entry.w * 0.9, "earpiece");
+  // Legend decal: child of the key mesh, so it inherits position AND depress.
+  // Key rotations are baked into the vertices (separated from one object), so
+  // local +z faces the viewer and the print stays upright automatically.
+  const legend = useMemo(() => {
+    const cell = legendCellFor(id);
+    mesh.geometry.computeBoundingBox();
+    const bb = mesh.geometry.boundingBox;
+    if (bb === null) return null;
+    const w = bb.max.x - bb.min.x;
+    const h = bb.max.y - bb.min.y;
+    const front = bb.max.z;
+    if (id === "navi") {
+      // The cyan bar is the NaviKey's only marking.
+      const bar = new THREE.Mesh(
+        new THREE.PlaneGeometry(w * 0.42, h * 0.22),
+        new THREE.MeshStandardMaterial({
+          color: MATERIALS.naviBar.color,
+          roughness: MATERIALS.naviBar.roughness,
+          metalness: MATERIALS.naviBar.metalness,
+          emissive: new THREE.Color(BACKLIGHT_COLOR),
+          emissiveIntensity: 0,
+          polygonOffset: true,
+          polygonOffsetFactor: -1,
+        }),
+      );
+      bar.position.set((bb.min.x + bb.max.x) / 2, (bb.min.y + bb.max.y) / 2, front + h * 0.02);
+      return bar;
     }
-    // Wide pill decal; cellPlaneGeometry band-maps it aspect-correctly.
-    return cellPlaneGeometry(entry.w * 0.9, entry.h * 0.9, legendCell);
-  }, [entry, legendCell]);
-
-  // The NaviKey's cyan lozenge (its only marking on the real phone).
-  const naviBarGeometry = useMemo(
-    () =>
-      entry.key === "navi"
-        ? new THREE.ShapeGeometry(bowedPill(entry.w * 0.42, 0.15, 0, 0), 16)
-        : null,
-    [entry],
-  );
-
-  const spec =
-    entry.key === "navi"
-      ? MATERIALS.navi
-      : entry.key === "power"
-        ? MATERIALS.grille
-        : MATERIALS.key;
-
-  const press = () => {
-    if (heldRef.current) return;
-    heldRef.current = true;
-    setPointerHeld(true);
-    onKey?.(entry.key, "down");
-  };
-  const release = () => {
-    if (!heldRef.current) return;
-    heldRef.current = false;
-    setPointerHeld(false);
-    onKey?.(entry.key, "up");
-  };
+    if (cell === null) return null;
+    const decal = new THREE.Mesh(
+      cellPlaneGeometry(w * 0.86, h * 0.86, cell),
+      new THREE.MeshStandardMaterial({
+        map: legendTexture(),
+        transparent: true,
+        color: PRINT_DARK,
+        roughness: 0.55,
+        metalness: 0,
+        emissive: new THREE.Color(BACKLIGHT_COLOR),
+        emissiveIntensity: 0,
+        polygonOffset: true,
+        polygonOffsetFactor: -1,
+      }),
+    );
+    decal.position.set((bb.min.x + bb.max.x) / 2, (bb.min.y + bb.max.y) / 2, front + h * 0.02);
+    return decal;
+  }, [mesh, id]);
+  useMemo(() => {
+    if (legend !== null && legend.parent !== mesh) mesh.add(legend);
+  }, [mesh, legend]);
 
   useFrame((_, dt) => {
-    const g = group.current;
-    if (g === null) return;
-    const target = down ? -KEY_TRAVEL : 0;
+    if (baseZ.current === null) baseZ.current = mesh.position.z;
+    const down = pointerHeldRef.current || pressed;
+    const target = baseZ.current - (down ? travel : 0);
     const rate = Math.min(1, dt * 25);
-    g.position.z += (target - g.position.z) * rate;
+    mesh.position.z += (target - mesh.position.z) * rate;
+    material.emissiveIntensity = backlightOn ? KEY_GLOW_INTENSITY : 0;
+    const lm = legend?.material as THREE.MeshStandardMaterial | undefined;
+    if (lm) lm.emissiveIntensity = backlightOn ? LEGEND_GLOW_INTENSITY : 0;
   });
 
-  return (
-    <group
-      position={[entry.x, entry.y, FACE_Z + (entry.base ?? 0)]}
-      rotation={[0, 0, (entry.rot * Math.PI) / 180]}
-    >
-      <group ref={group}>
-        <mesh
-          geometry={capGeometry}
-          onPointerDown={(e) => {
-            e.stopPropagation();
-            (e.target as Element | null)?.setPointerCapture(e.pointerId);
-            press();
-          }}
-          onPointerUp={(e) => {
-            e.stopPropagation();
-            (e.target as Element | null)?.releasePointerCapture(e.pointerId);
-            release();
-          }}
-          onPointerCancel={release}
-          onPointerOver={(e) => {
-            e.stopPropagation();
-            gl.domElement.style.cursor = "pointer";
-          }}
-          onPointerOut={() => {
-            gl.domElement.style.cursor = "auto";
-          }}
-        >
-          <meshStandardMaterial
-            color={spec.color}
-            roughness={spec.roughness}
-            metalness={spec.metalness}
-            emissive={BACKLIGHT_COLOR}
-            emissiveIntensity={backlightOn ? KEY_GLOW_INTENSITY : 0}
-          />
-        </mesh>
-
-        {/* Counter-rotated: the 3310 prints legends upright despite the fan
-            (the power/earpiece column instead rotates 90° into a vertical run). */}
-        {legendGeometry !== null && (
-          <mesh
-            geometry={legendGeometry}
-            position={[0, 0, KEY_DEPTH + LEGEND_LIFT]}
-            rotation={[0, 0, ((entry.key === "power" ? 90 : -entry.rot) * Math.PI) / 180]}
-          >
-            <meshStandardMaterial
-              map={legendTexture()}
-              transparent
-              color={PRINT_DARK}
-              roughness={0.55}
-              metalness={0}
-              emissive={BACKLIGHT_COLOR}
-              emissiveIntensity={backlightOn ? LEGEND_GLOW_INTENSITY : 0}
-              polygonOffset
-              polygonOffsetFactor={-1}
-            />
-          </mesh>
-        )}
-
-        {naviBarGeometry !== null && (
-          <mesh geometry={naviBarGeometry} position={[0, 0.02, KEY_DEPTH + LEGEND_LIFT]}>
-            <meshStandardMaterial
-              color={MATERIALS.naviBar.color}
-              roughness={MATERIALS.naviBar.roughness}
-              metalness={MATERIALS.naviBar.metalness}
-              emissive={BACKLIGHT_COLOR}
-              emissiveIntensity={backlightOn ? LEGEND_GLOW_INTENSITY : 0}
-              polygonOffset
-              polygonOffsetFactor={-1}
-            />
-          </mesh>
-        )}
-      </group>
-    </group>
-  );
+  return null;
 }

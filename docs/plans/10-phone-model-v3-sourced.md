@@ -93,19 +93,19 @@ unnecessary.
 
 ### Task 2 — node map + tests (TDD)
 
-- [ ] `src/layout.ts` v3: export `KEY_NODES: Record<Nokia3310Key, string>`
+- [x] `src/layout.ts` v3: export `KEY_NODES: Record<Nokia3310Key, string>`
       (`"5" → "key_5"`, `"*" → "key_star"`, `"#" → "key_hash"`, etc.),
       `STATIC_NODES` (`body`, `island`, `screen`, `screen_glass`, `badge`,
       `badge_logo`, `side_cap`), KEY_TRAVEL (scale-relative: the model is
       ~2.37× life, travel must be computed against normalized size, not cm).
-- [ ] Rewrite `tests/layout.test.ts`: bijection between `ALL_KEYS` and
+- [x] Rewrite `tests/layout.test.ts`: bijection between `ALL_KEYS` and
       `KEY_NODES` names; no duplicate node names across KEY_NODES ∪
       STATIC_NODES; names match `^[a-z_0-9]+$`.
-- [ ] Commit: `feat(phone-3d): v3 node map (named-mesh contract)`
+- [x] Commit: `feat(phone-3d): v3 node map (named-mesh contract)`
 
 ### Task 3 — loader + assembly
 
-- [ ] Rewrite `Nokia3310.tsx`: useGLTF(modelUrl, dracoPath) → clone →
+- [x] Rewrite `Nokia3310.tsx`: useGLTF(modelUrl, dracoPath) → clone →
       normalize (existing STAGE_HEIGHT convention) → traverse: wrap each
       KEY_NODES mesh in the interaction `<Key/>` (depress axis = the node's
       protrusion direction, +z local), assign materials by node name from
@@ -113,16 +113,26 @@ unnecessary.
       pipeline (NearestFilter, version-gated upload — reuse `Screen.tsx`
       logic against the mesh instead of a generated plane), glass material on
       `screen_glass`, `useGLTF.preload` at module scope.
-- [ ] Delete the now-dead procedural modules: shape builders in `Key.tsx`
+- [x] Delete the now-dead procedural modules: shape builders in `Key.tsx`
       (keep the interaction shell), `PhoneBody.tsx`, `Screen.tsx` (logic moves
       into the loader), `legends.ts`/`atlas.ts` + their tests IF the mesh
       carries printed legends — **visual gate decides**; if legends are absent
       keep atlas decals positioned from key node bboxes.
-- [ ] Demo gate (`vp dev` + WebGL browser): all 17 keys present, click `5` →
+- [x] Demo gate (`vp dev` + WebGL browser): all 17 keys present, click `5` →
       exactly `5 down`/`5 up` + visible depress; keyboard-held digits depress
       via `pressedKeys`; backlight toggle lights keys/LCD; test pattern
       pixel-crisp and correctly bounded on the display; no z-fighting.
-- [ ] Commit: `feat(phone-3d): v3 assembly — named-node keys, mesh LCD`
+- [x] Commit: `feat(phone-3d): v3 assembly — named-node keys, mesh LCD`
+
+> **Task 3 deviations:** (a) pointer events are routed by ONE handler on the model
+> root (`e.object` → `userData.keyId`), not per-key JSX handlers — one raycast
+> surface, same semantics, StrictMode-safe held-refs; (b) the mesh ships without
+> printed legends (they lived in the stripped textures), so the plan-09 atlas
+> decals carry the print — parented to each key mesh so they inherit depress; key
+> rotations are baked into vertices, so decals stay upright with no counter-
+> rotation; (c) `screenBgColor` is accepted-but-unused (the mesh display has no
+> surround gap — documented in types.ts); (d) `Keypad.tsx` deleted along with
+> PhoneBody/Screen (keys render via the adopted nodes, not a JSX list).
 
 ### Task 4 — website integration + budget
 
