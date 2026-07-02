@@ -14,7 +14,7 @@ function baseState(partial: Partial<SnakeState> = {}): SnakeState {
     ],
     dir: "right",
     pendingDir: null,
-    food: { x: 13, y: 0 },
+    food: { x: 13, y: 1 },
     bonus: null,
     foodsEaten: 0,
     score: 0,
@@ -48,7 +48,7 @@ describe("dying flash", () => {
     expectFrame(
       b,
       52,
-      8,
+      12,
       4,
       4,
       `

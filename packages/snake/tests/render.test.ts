@@ -14,7 +14,7 @@ function baseState(partial: Partial<SnakeState> = {}): SnakeState {
     ],
     dir: "right",
     pendingDir: null,
-    food: { x: 13, y: 0 },
+    food: { x: 13, y: 1 },
     bonus: null,
     foodsEaten: 0,
     score: 0,
@@ -55,9 +55,10 @@ describe("renderSnakeFrame", () => {
       ###.###.###.###
     `,
     );
-    // solid score underline (y6) and frame top (y7), full width
+    // solid underline (y6), clear gap (y7), solid frame top (y8)
     expect(frameRegion(b, 0, 6, 84, 1)).toBe("#".repeat(84));
-    expect(frameRegion(b, 0, 7, 84, 1)).toBe("#".repeat(84));
+    expect(frameRegion(b, 0, 7, 84, 1)).toBe(".".repeat(84));
+    expect(frameRegion(b, 0, 8, 84, 1)).toBe("#".repeat(84));
     // frame bottom and sides
     expect(frameRegion(b, 0, 47, 84, 1)).toBe("#".repeat(84));
     expect(frameRegion(b, 0, 20, 1, 1)).toBe("#");
@@ -114,11 +115,11 @@ describe("renderSnakeFrame", () => {
   });
 
   it("draws food as the hollow diamond", () => {
-    const b = renderSnakeFrame(baseState()); // food (13,0) → px (52,8)
+    const b = renderSnakeFrame(baseState()); // food (13,1) → px (52,12)
     expectFrame(
       b,
       52,
-      8,
+      12,
       4,
       4,
       `

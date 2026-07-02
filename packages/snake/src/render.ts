@@ -30,11 +30,13 @@ const HORIZONTAL = (d: Dir): boolean => d === "left" || d === "right";
 
 /** Header rule + playfield frame, solid 1px (reference-measured: the
  *  "dashes" in photos are the LCD pixel grid, not gaps). Layout per the
- *  reference: digits rows 0–4, gap 5, score underline 6, frame top 7. */
+ *  reference: digits rows 0–4, gap 5, underline 6, gap 7, frame top 8.
+ *  The frame overlaps the outermost pixel of edge cells on all four sides
+ *  (left/right/bottom always did; the top now matches). */
 function drawFrame(b: Bitmap): void {
-  const top = SCORE_BAR_H - 1; // y 7
+  const top = SCORE_BAR_H; // y 8
   const bottom = b.height - 1; // y 47
-  fillRect(b, 0, top - 1, b.width, 1); // score underline (y 6)
+  fillRect(b, 0, top - 2, b.width, 1); // score underline (y 6); y 7 stays clear
   fillRect(b, 0, top, b.width, 1);
   fillRect(b, 0, bottom, b.width, 1);
   for (let y = top; y <= bottom; y++) {
