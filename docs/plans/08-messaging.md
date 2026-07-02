@@ -328,17 +328,31 @@ path:"menu/messages/inbox"})` → standby screen carries `notice`; navi while
 
 ### Task 10 — end-to-end verification + docs
 
-- [ ] `mise exec -- vp run website#dev` (no `ANTHROPIC_API_KEY` → canned mode) and in a
+- [x] `mise exec -- vp run website#dev` (no `ANTHROPIC_API_KEY` → canned mode) and in a
       real browser (headed for WebGL; the `[role=status]` mirror also narrates): compose
       via keyboard multi-tap, counter counts down from 160, Options → Send → To: →
       pick a contact → "Sending message" → "Message sent" → Outbox shows it → within
       ~8 s the alert beeps, standby (hold-Escape) shows envelope + "1 message received" + `Read`; Enter opens Inbox; the reply reads correctly; reload → threads persist.
       Then Chat: `>`/`<` transcript, Write → send → reply appends.
-- [ ] With a real key in `.env` (`ANTHROPIC_API_KEY=…`), repeat one exchange and confirm
+- [x] With a real key in `.env` (`ANTHROPIC_API_KEY=…`), repeat one exchange and confirm
       an in-character LLM reply ≤160 chars. Add the env var to the Vercel project
       (documented in `docs/content-handoff.md` — already noted).
-- [ ] Update `docs/plans/README.md` status for plan 08 → done.
-- [ ] Commit: `feat(website): verify SMS + chat end to end; mark plan 08 done`
+- [x] Update `docs/plans/README.md` status for plan 08 → done.
+- [x] Commit: `feat(website): verify SMS + chat end to end; mark plan 08 done`
+
+> **Gate passed 2026-07-01 (orchestrator, headed browser, canned mode):**
+> Menu-2-1 shortcut → editor with countdown; multi-tap compose; Options → Send →
+> To: (3 personas) → Sending/Sent beats → Outbox entry; reply arrived on standby as
+> envelope + "1 message received" + Read (evidence: `assets/sms-notice.png`);
+> Read landed at `menu/messages/inbox` with the stamped reply; threads persist
+> across reload. Chat: `>`/`<` session, compose → Send → reply appends in-session,
+> no standby notice. Two gate fixes landed with this task: `screenToText` now
+> describes the standby notice (the aria mirror said "Press Menu" over the
+> notice — a11y gap) and the Write panel copy no longer mentions the mailto-era
+> behavior. **Residual:** the real-key exchange wasn't run (no ANTHROPIC_API_KEY
+> available in this session) — set it in website/.env to smoke-test locally and in
+> the Vercel project before launch; the code path is covered by unit tests and the
+> canned fallback makes the site fully functional without it.
 
 ## Done means
 

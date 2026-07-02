@@ -7,7 +7,8 @@ export default function WritePanel() {
     <ContentPanel title="Write messages">
       <p>
         On the handset this opens a real multi-tap SMS editor — one key, many presses, 160
-        characters of commitment. Accepting the message (NaviKey) hands it to your mail client.
+        characters of commitment. Press the NaviKey for Options, Send it to a contact, and
+        they&apos;ll text you back in a few seconds.
       </p>
       <p>
         Prefer the easy way? <a href={mailto}>Email me directly</a>.

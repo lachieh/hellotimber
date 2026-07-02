@@ -7,6 +7,17 @@ describe("screenToText", () => {
       "Standby. LACHLAN. Press Menu.",
     );
   });
+  it("describes a noticed standby (message received) with its softkey", () => {
+    expect(
+      screenToText({
+        kind: "standby",
+        carrier: "LACHLAN",
+        signal: 4,
+        battery: 4,
+        notice: { text: "1 message received", softkey: "Read" },
+      }),
+    ).toBe("Standby. LACHLAN. 1 message received. Read.");
+  });
   it("reads a list with the current selection", () => {
     expect(
       screenToText({

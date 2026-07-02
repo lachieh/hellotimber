@@ -8,6 +8,9 @@ export function screenToText(s: ScreenModel): string {
     case "boot":
       return "Starting up.";
     case "standby":
+      if (s.notice !== undefined) {
+        return `Standby. ${s.carrier}. ${s.notice.text}. ${s.notice.softkey}.`;
+      }
       return `Standby. ${s.carrier}.${s.clock ? ` ${s.clock}.` : ""} Press Menu.`;
     case "menu-carousel":
       return `Menu. ${s.label}, ${s.menuNumber} of ${s.total}.`;
