@@ -2,6 +2,7 @@
 node = "22"
 pnpm = "11"
 "npm:vite-plus" = "latest"
+"npm:agent-browser" = "0.34.0"
 
 [env]
 _.path = ["node_modules/.bin"]
