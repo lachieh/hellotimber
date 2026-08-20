@@ -139,6 +139,18 @@ export interface Bitmap {
   pixels: Uint8Array;
 }
 
+export interface MenuIndicator {
+  /** One-based MenuOrder values from the root to the screen being displayed. */
+  segments: readonly number[];
+  /** True while another 1-9 shortcut digit is being accepted. */
+  awaitingNext: boolean;
+}
+
+export interface StandbyIndicators {
+  voicemail?: boolean;
+  message?: boolean;
+}
+
 export type ScreenModel =
   | { kind: "off" }
   | { kind: "boot"; phase: "hands" | "welcome"; frame: number } // hands animation carries the small NOKIA wordmark
@@ -148,11 +160,32 @@ export type ScreenModel =
       clock?: string;
       signal: 0 | 1 | 2 | 3 | 4;
       battery: 0 | 1 | 2 | 3 | 4;
+      indicators?: StandbyIndicators;
       notice?: { text: string; softkey: string }; // e.g. "1 message received" + Read
     }
-  | { kind: "menu-carousel"; label: string; menuNumber: number; total: number; iconId: string }
-  | { kind: "list"; title: string; items: string[]; selected: number; softkey: string }
-  | { kind: "reader"; title: string; lines: string[]; scrollTop: number }
+  | {
+      kind: "menu-carousel";
+      label: string;
+      menuNumber: number;
+      total: number;
+      iconId: string;
+      menuIndicator: MenuIndicator;
+    }
+  | {
+      kind: "list";
+      title: string;
+      items: string[];
+      selected: number;
+      softkey: string;
+      menuIndicator?: MenuIndicator;
+    }
+  | {
+      kind: "reader";
+      title: string;
+      lines: string[];
+      scrollTop: number;
+      menuIndicator?: MenuIndicator;
+    }
   | {
       kind: "editor";
       title: string;
