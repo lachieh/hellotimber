@@ -166,6 +166,15 @@ visible aperture. The aperture UV remapping is gone (plane UVs untouched;
 flipY back to standard). `SCREEN_SCALE` in layout.ts is the single sizing
 knob; `SCREEN_APERTURE` still positions the aperture rect.
 
+### Shell intersection repair (2026-08-20)
+
+The sourced `Outer_Body` contains disconnected front and rear cover shells.
+After subdivision, the rear shell crossed 4.9 mm into the front shell and
+produced moving dark wedges along the upper side seams. The integration GLB
+now compresses the rear shell's depth range so it ends 0.05 mm behind the
+front seam while preserving its back extent. Reapply this separation before
+the final `gltf-transform draco` step if the asset is regenerated.
+
 ## Done means
 
 `vp run -r test`, `vp run website#build`, `vp check --fix` green; the public

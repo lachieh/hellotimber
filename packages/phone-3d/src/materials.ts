@@ -28,10 +28,10 @@ export const SCREEN_DIM_TINT = "#7a8579";
 
 /** Legend print colors: light print on the dark shell, dark print on keys. */
 export const PRINT_LIGHT = "#dfe4ea";
-export const PRINT_DARK = "#141a26";
-/** Emissive intensities when the backlight is on (0 = off state). The caps
- *  glow; the silkscreen print stays near-dark so legends keep their contrast
- *  against the lit keys. */
-export const KEY_GLOW_INTENSITY = 0.14;
-export const LEGEND_GLOW_INTENSITY = 0.05;
+export const PRINT_DARK = "#18251b";
+/** The original legends are dark, translucent green plastic set into opaque
+ *  silver caps. A muted emission lifts the dark plastic without replacing its
+ *  color with the LCD's pale-green light. */
+export const LEGEND_GLOW_COLOR = "#496847";
+export const LEGEND_GLOW_INTENSITY = 0.6;
 export const LCD_GLOW_INTENSITY = 0.55;

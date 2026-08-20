@@ -2,13 +2,7 @@ import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { cellPlaneGeometry, legendTexture } from "./atlas";
-import {
-  BACKLIGHT_COLOR,
-  KEY_GLOW_INTENSITY,
-  LEGEND_GLOW_INTENSITY,
-  MATERIALS,
-  PRINT_DARK,
-} from "./materials";
+import { LEGEND_GLOW_COLOR, LEGEND_GLOW_INTENSITY, MATERIALS, PRINT_DARK } from "./materials";
 import type { MaterialSpec } from "./materials";
 import type { Nokia3310Key } from "./types";
 
@@ -56,14 +50,12 @@ export default function Key({ id, mesh, backlightOn, pressed, travel, onKey }: K
     mesh.userData.heldRef = pointerHeldRef;
   }, [mesh, id]);
 
-  const material = useMemo(() => {
+  useMemo(() => {
     const spec = specFor(id);
     const m = new THREE.MeshStandardMaterial({
       color: spec.color,
       roughness: spec.roughness,
       metalness: spec.metalness,
-      emissive: new THREE.Color(BACKLIGHT_COLOR),
-      emissiveIntensity: 0,
     });
     mesh.material = m;
     return m;
@@ -88,7 +80,7 @@ export default function Key({ id, mesh, backlightOn, pressed, travel, onKey }: K
           color: MATERIALS.naviBar.color,
           roughness: MATERIALS.naviBar.roughness,
           metalness: MATERIALS.naviBar.metalness,
-          emissive: new THREE.Color(BACKLIGHT_COLOR),
+          emissive: new THREE.Color(LEGEND_GLOW_COLOR),
           emissiveIntensity: 0,
           polygonOffset: true,
           polygonOffsetFactor: -1,
@@ -106,7 +98,7 @@ export default function Key({ id, mesh, backlightOn, pressed, travel, onKey }: K
         color: PRINT_DARK,
         roughness: 0.55,
         metalness: 0,
-        emissive: new THREE.Color(BACKLIGHT_COLOR),
+        emissive: new THREE.Color(LEGEND_GLOW_COLOR),
         emissiveIntensity: 0,
         polygonOffset: true,
         polygonOffsetFactor: -1,
@@ -125,7 +117,6 @@ export default function Key({ id, mesh, backlightOn, pressed, travel, onKey }: K
     const target = baseZ.current - (down ? travel : 0);
     const rate = Math.min(1, dt * 25);
     mesh.position.z += (target - mesh.position.z) * rate;
-    material.emissiveIntensity = backlightOn ? KEY_GLOW_INTENSITY : 0;
     const lm = legend?.material as THREE.MeshStandardMaterial | undefined;
     if (lm) lm.emissiveIntensity = backlightOn ? LEGEND_GLOW_INTENSITY : 0;
   });

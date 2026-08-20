@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
   BACKLIGHT_COLOR,
-  KEY_GLOW_INTENSITY,
   LCD_GLOW_INTENSITY,
+  LEGEND_GLOW_COLOR,
   LEGEND_GLOW_INTENSITY,
   MATERIALS,
   PRINT_DARK,
@@ -22,6 +22,7 @@ describe("MATERIALS", () => {
       expect(spec.metalness).toBeLessThanOrEqual(1);
     }
     expect(BACKLIGHT_COLOR).toMatch(HEX);
+    expect(LEGEND_GLOW_COLOR).toMatch(HEX);
     expect(SCREEN_DIM_TINT).toMatch(HEX);
   });
 
@@ -35,13 +36,11 @@ describe("MATERIALS", () => {
     expect(PRINT_LIGHT).not.toBe(PRINT_DARK);
   });
 
-  it("backlight glow intensities are sane; print stays darker than the caps", () => {
-    for (const i of [KEY_GLOW_INTENSITY, LEGEND_GLOW_INTENSITY, LCD_GLOW_INTENSITY]) {
+  it("backlight illuminates the translucent legends rather than the silver caps", () => {
+    for (const i of [LEGEND_GLOW_INTENSITY, LCD_GLOW_INTENSITY]) {
       expect(i).toBeGreaterThan(0);
       expect(i).toBeLessThanOrEqual(2);
     }
-    // Legends are silkscreen print — they must NOT outshine the lit caps or
-    // the digits wash out (verified against the demo, Task 6 gate).
-    expect(LEGEND_GLOW_INTENSITY).toBeLessThan(KEY_GLOW_INTENSITY);
+    expect(LEGEND_GLOW_INTENSITY).toBeLessThanOrEqual(1);
   });
 });
