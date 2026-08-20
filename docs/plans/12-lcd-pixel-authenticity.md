@@ -22,7 +22,7 @@ then use that capability to match the reference standby and menu screens exactly
 - authentic signal and battery ladders;
 - a dedicated fixed-cell 5x6 clock font and correct standby composition;
 - reference-derived notification icons;
-- the authentic one-pixel menu position rail and seven-pixel bumpout;
+- the authentic one-pixel menu position rail and seven-row bumpout;
 - 10-pixel inverted menu selections;
 - hierarchical numeric shortcut feedback such as `5 • 3 • _`;
 - immediate screen and URL navigation after every valid shortcut digit.
@@ -207,38 +207,45 @@ therefore occupies 25 pixels and starts at x=51 when right-aligned to x=75.
 | Element           | Geometry                                           |
 | ----------------- | -------------------------------------------------- |
 | Item text origins | `(2,9)`, `(2,19)`, `(2,29)`                        |
-| Selected band     | x=0..81, y=`textY-1`, width=82, height=10          |
+| Selected band     | x=0..77, y=`textY-1`, width=78, height=10          |
 | Selected padding  | 1 pixel above seven rows of ink, 2 pixels below    |
 | Selected text     | body font, color 0, same origin as unselected text |
 | Softkey           | centered at y=41                                   |
-| Position rail     | x=82, y=8..39                                      |
+| Rail gap          | x=78..80                                           |
+| Position rail     | x=81, y=8..39                                      |
+| Connector column  | x=82                                               |
 | Bump column       | x=83                                               |
-| Numeric indicator | right-aligned to x=80, y=0                         |
+| Numeric indicator | right-aligned to x=83, y=0                         |
 
 When `menuIndicator` is present, a list does not render `screen.title`. The three visible
 menu items use all three content rows, matching the `Search / Add name / Erase` reference.
 Generic application lists without `menuIndicator` retain their existing title behavior
 unless their own renderer explicitly opts out.
 
-The seven-pixel position bump replaces a section of the rail; it is not a filled thumb:
+The seven-row position bump replaces a section of the rail; it is not a filled thumb:
 
 ```text
-rail x=82:  |           |
-             \         upper 1px step to x=83
-bump x=83:   | 5px run
-             /         lower 1px step back to x=82
-rail x=82:  |           |
+x..
+x..
+xx.
+..x
+..x
+..x
+..x
+..x
+xx.
+x..
 ```
 
 For bump top `y`:
 
 ```text
-(83, y)          upper connector
+(81..82, y)      upper connector
 (83, y+1..y+5)   five-pixel vertical run
-(82, y+6)        lower connector / resumed rail
+(81..82, y+6)    lower connector / resumed rail
 ```
 
-Do not also draw the hidden x=82 section at `y..y+5`. The bump offset is:
+Do not draw the hidden x=81 section at `y+1..y+5`. The bump offset is:
 
 ```ts
 round((index * (32 - 7)) / max(1, total - 1));
@@ -257,8 +264,8 @@ segments=[5,3], awaitingNext=false  -> 5 • 3
 ```
 
 Add a literal `•` glyph to the body font. Keep the existing `_` glyph, but add an exact
-bitmap assertion for both glyphs. The formatted indicator is right-aligned to x=80 and
-must not touch the x=82 rail.
+bitmap assertion for both glyphs. The formatted indicator is right-aligned to x=83 with no
+gap to the framebuffer edge; the rail starts below it at y=8.
 
 ## Shortcut state and data flow
 
@@ -357,18 +364,19 @@ screen remains unchanged.
 
 - [x] TDD: add a literal full-frame `Search / Add name / Erase` fixture with the second row
       selected and a middle-position rail bump.
-- [x] TDD: pin the rail at x=82, blank replaced rail pixels, seven-pixel bump path, and first,
+- [x] TDD: pin the rail at x=81, x=82 connectors, the x=83 five-pixel run, and first,
       middle, and last bump offsets.
-- [x] TDD: pin selection bands to x=0..81 and exactly 10 pixels high; assert one-pixel top
-      and two-pixel bottom padding around the seven visible glyph rows.
+- [x] TDD: pin selection bands to x=0..77 and exactly 10 pixels high; assert the x=78..80
+      three-pixel rail gap, one-pixel top, and two-pixel bottom padding around the seven
+      visible glyph rows.
 - [x] Replace `drawScrollIndicator()` with `drawPositionRail()` implementing the path above.
       Use it in both list and carousel renderers.
 - [x] When `menuIndicator` exists, render three item rows and omit the list title. Preserve
       generic application-list behavior when it is absent.
-- [x] Add the `•` glyph and `drawMenuIndicator()`; right-align to x=80 and test active and
+- [x] Add the `•` glyph and `drawMenuIndicator()`; right-align to x=83 and test active and
       inactive hierarchy strings.
-- [x] Ensure labels truncate by measured pixel width before x=82 rather than by a fixed
-      character count. Do not let wide glyphs enter the rail.
+- [x] Ensure labels truncate by measured pixel width before the x=78..80 gap rather than by
+      a fixed character count. Do not let wide glyphs enter the rail.
 - [x] Preserve inverted-video rendering: fill the band first, then draw selected glyph ink
       with color 0.
 - [x] Commit: `fix(phone-screen): match the reference menu LCD`
@@ -435,7 +443,7 @@ screen remains unchanged.
 - Signal and battery levels 0-4 have exact, tested geometry and bottom icons.
 - The clock uses a dedicated fixed 5x6 face at top-right.
 - Menu selection is a 10-pixel inverted band with exact padding and a separate rail.
-- The position indicator is a one-pixel x=82 line with a seven-pixel x=83 bumpout.
+- The position indicator uses an x=81 line, x=82 connectors, and a five-pixel x=83 run.
 - Every valid shortcut digit immediately updates the displayed screen, phone path, URL,
   accessible description, and structured numeric hierarchy.
 - `_` appears only during active numeric entry and disappears on timeout or non-number input.

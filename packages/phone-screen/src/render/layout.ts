@@ -81,17 +81,19 @@ export function formatMenuIndicator(indicator: MenuIndicator): string {
 }
 
 export function drawMenuIndicator(fb: Framebuffer, indicator: MenuIndicator): void {
-  drawTextRight(fb, formatMenuIndicator(indicator), 80, 0);
+  drawTextRight(fb, formatMenuIndicator(indicator), 83, 0);
 }
 
-/** Draw the authentic one-pixel rail with a seven-pixel bumpout path. */
+/** Draw the rail, two connector pixels, and five-pixel outer bump. */
 export function drawPositionRail(fb: Framebuffer, index: number, total: number): void {
   const trackTop = CONTENT_TOP;
   const trackH = 32; // y 8–39
   const bumpH = 7;
   const offset = Math.round((index * (trackH - bumpH)) / Math.max(1, total - 1));
   const bumpTop = trackTop + offset;
-  fb.fillRect(82, trackTop, 1, trackH, 1);
-  fb.fillRect(82, bumpTop, 1, 6, 0);
-  fb.fillRect(83, bumpTop, 1, 6, 1);
+  fb.fillRect(81, trackTop, 1, trackH, 1);
+  fb.fillRect(81, bumpTop + 1, 1, 5, 0);
+  fb.setPixel(82, bumpTop, 1);
+  fb.fillRect(83, bumpTop + 1, 1, 5, 1);
+  fb.setPixel(82, bumpTop + 6, 1);
 }

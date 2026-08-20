@@ -35,7 +35,7 @@ describe("renderList", () => {
     expected.fillRect(0, 18, 82, 10, 1);
     expected.drawText(FONT, "Add name", 2, 19, { color: 0 });
     expected.drawText(FONT, "Erase", 2, 29);
-    expect(regionToArt(fb, 0, 8, 82, 31)).toBe(regionToArt(expected, 0, 8, 82, 31));
+    expect(regionToArt(fb, 0, 8, 78, 31)).toBe(regionToArt(expected, 0, 8, 78, 31));
   });
 
   it("preserves the title behavior for generic application lists", () => {
@@ -46,17 +46,19 @@ describe("renderList", () => {
     expect(regionToArt(fb, 0, 0, 82, 7)).toBe(regionToArt(expected, 0, 0, 82, 7));
   });
 
-  it("uses an exactly 10px band from x=0..81 with one top and two bottom padding rows", () => {
+  it("uses an exactly 10px band from x=0..77 with a three-pixel rail gap", () => {
     const fb = new Framebuffer();
     renderList(fb, list({ items: ["ABCDEFG"], selected: 0 }));
-    for (let x = 0; x <= 81; x++) {
+    for (let x = 0; x <= 77; x++) {
       expect(fb.getPixel(x, 8), `top padding x=${x}`).toBe(1);
       expect(fb.getPixel(x, 16), `bottom padding 1 x=${x}`).toBe(1);
       expect(fb.getPixel(x, 17), `bottom padding 2 x=${x}`).toBe(1);
     }
+    for (let x = 78; x <= 80; x++) expect(fb.getPixel(x, 8), `gap x=${x}`).toBe(0);
     expect(fb.getPixel(0, 18)).toBe(0);
-    expect(fb.getPixel(81, 18)).toBe(0);
-    expect(fb.getPixel(83, 8)).toBe(1); // bump path, separate from selection fill
+    expect(fb.getPixel(77, 18)).toBe(0);
+    expect(fb.getPixel(81, 8)).toBe(1);
+    expect(fb.getPixel(82, 8)).toBe(1);
   });
 
   it("fills the band before punching selected glyph ink to color 0", () => {
@@ -66,13 +68,14 @@ describe("renderList", () => {
     expect(fb.getPixel(4, 9)).toBe(1);
   });
 
-  it("truncates labels by measured width before x=82", () => {
-    expect(truncateToWidth(FONT, "mmmmmmmmmm", 80)).toBe("mmmmmmmm…");
+  it("truncates labels by measured width before the three-pixel rail gap", () => {
+    expect(truncateToWidth(FONT, "mmmmmmmmmm", 76)).toBe("mmmmmmm…");
     const fb = new Framebuffer();
     renderList(fb, list({ items: ["mmmmmmmmmm"], selected: 0 }));
-    expect(textWidth(FONT, truncateToWidth(FONT, "mmmmmmmmmm", 80))).toBeLessThanOrEqual(80);
-    for (let y = 9; y <= 13; y++) expect(fb.getPixel(83, y), `bump at y=${y}`).toBe(1);
-    for (let y = 14; y <= 15; y++) expect(fb.getPixel(82, y), `rail at y=${y}`).toBe(1);
+    expect(textWidth(FONT, truncateToWidth(FONT, "mmmmmmmmmm", 76))).toBeLessThanOrEqual(76);
+    for (let x = 78; x <= 80; x++) {
+      for (let y = 8; y <= 17; y++) expect(fb.getPixel(x, y), `gap at ${x},${y}`).toBe(0);
+    }
   });
 });
 
@@ -85,11 +88,12 @@ describe("drawPositionRail", () => {
     const fb = new Framebuffer();
     drawPositionRail(fb, index, total);
     for (let y = 8; y <= 39; y++) {
-      const inReplacedSection = y >= bumpTop && y <= bumpTop + 5;
-      expect(fb.getPixel(82, y), `x=82,y=${y}`).toBe(inReplacedSection ? 0 : 1);
-      expect(fb.getPixel(83, y), `x=83,y=${y}`).toBe(inReplacedSection ? 1 : 0);
+      const connector = y === bumpTop || y === bumpTop + 6;
+      const displaced = y > bumpTop && y < bumpTop + 6;
+      expect(fb.getPixel(81, y), `x=81,y=${y}`).toBe(displaced ? 0 : 1);
+      expect(fb.getPixel(82, y), `x=82,y=${y}`).toBe(connector ? 1 : 0);
+      expect(fb.getPixel(83, y), `x=83,y=${y}`).toBe(displaced ? 1 : 0);
     }
-    expect(fb.getPixel(82, bumpTop + 6)).toBe(1);
   });
 });
 
@@ -100,15 +104,14 @@ describe("menu indicator", () => {
     expect(formatMenuIndicator({ segments: [5, 3], awaitingNext: false })).toBe("5 • 3");
   });
 
-  it("right-aligns to x=80 without touching the rail", () => {
+  it("right-aligns to the x=83 frame edge with no gap", () => {
     const fb = new Framebuffer();
     drawMenuIndicator(fb, { segments: [5, 3], awaitingNext: true });
     const expected = new Framebuffer();
     const text = "5 • 3 • _";
-    expected.drawText(FONT, text, 81 - textWidth(FONT, text), 0);
-    expect(regionToArt(fb, 0, 0, 81, 9)).toBe(regionToArt(expected, 0, 0, 81, 9));
-    expect(fb.getPixel(81, 0)).toBe(0);
-    expect(fb.getPixel(82, 0)).toBe(0);
+    expected.drawText(FONT, text, 84 - textWidth(FONT, text), 0);
+    expect(regionToArt(fb, 0, 0, 84, 9)).toBe(regionToArt(expected, 0, 0, 84, 9));
+    expect(fb.getPixel(83, 6)).toBe(1);
   });
 });
 
@@ -142,7 +145,7 @@ describe("renderReader", () => {
 
     const expected = new Framebuffer();
     const indicatorText = formatMenuIndicator(menuIndicator);
-    const titleAreaWidth = 80 - textWidth(FONT, indicatorText);
+    const titleAreaWidth = 83 - textWidth(FONT, indicatorText);
     const title = truncateToWidth(FONT, "Incoming call alert", titleAreaWidth);
     expected.drawText(FONT, title, Math.floor((titleAreaWidth - textWidth(FONT, title)) / 2), 0);
     drawMenuIndicator(expected, menuIndicator);

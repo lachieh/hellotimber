@@ -15,7 +15,7 @@ type ReaderScreen = Extract<ScreenModel, { kind: "reader" }>;
 
 const ROW_YS = [9, 19, 29] as const;
 const VISIBLE_ROWS = 3;
-const LABEL_MAX_WIDTH = 80; // starts x=2 and must stop before rail x=82
+const LABEL_MAX_WIDTH = 76; // starts x=2, ends by x=77; x=78..80 is the rail gap
 
 function windowTop(selected: number, count: number): number {
   return Math.min(Math.max(0, selected - 1), Math.max(0, count - VISIBLE_ROWS));
@@ -34,7 +34,7 @@ export function renderList(fb: Framebuffer, screen: ListScreen): void {
     const y = ROW_YS[row]!;
     const label = truncateToWidth(FONT, item, LABEL_MAX_WIDTH);
     if (index === screen.selected) {
-      fb.fillRect(0, y - 1, 82, 10, 1);
+      fb.fillRect(0, y - 1, 78, 10, 1);
       fb.drawText(FONT, label, 2, y, { color: 0 });
     } else {
       fb.drawText(FONT, label, 2, y);
@@ -53,7 +53,7 @@ export function renderReader(fb: Framebuffer, screen: ReaderScreen): void {
     drawTitle(fb, screen.title);
   } else {
     const indicatorWidth = textWidth(FONT, formatMenuIndicator(screen.menuIndicator));
-    const titleAreaWidth = Math.max(0, 80 - indicatorWidth);
+    const titleAreaWidth = Math.max(0, 83 - indicatorWidth);
     const title = truncateToWidth(FONT, screen.title, titleAreaWidth);
     fb.drawText(FONT, title, Math.floor((titleAreaWidth - textWidth(FONT, title)) / 2), 0);
     drawMenuIndicator(fb, screen.menuIndicator);

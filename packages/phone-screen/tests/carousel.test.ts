@@ -36,16 +36,18 @@ describe("renderCarousel", () => {
     expect(fb.getPixel(82, 0)).toBe(0);
   });
 
-  it("uses the x=82 position rail for first and last carousel items", () => {
+  it("uses the three-column position rail for first and last carousel items", () => {
     const first = new Framebuffer();
     const last = new Framebuffer();
     renderCarousel(first, carousel({ menuNumber: 1 }));
     renderCarousel(last, carousel({ menuNumber: 13 }));
-    expect(first.getPixel(83, 8)).toBe(1);
-    expect(first.getPixel(82, 8)).toBe(0);
-    expect(last.getPixel(83, 33)).toBe(1);
-    expect(last.getPixel(82, 33)).toBe(0);
-    expect(first.getPixel(82, 20)).toBe(1);
+    expect(first.getPixel(81, 8)).toBe(1);
+    expect(first.getPixel(82, 8)).toBe(1);
+    expect(first.getPixel(83, 9)).toBe(1);
+    expect(last.getPixel(81, 33)).toBe(1);
+    expect(last.getPixel(82, 33)).toBe(1);
+    expect(last.getPixel(83, 34)).toBe(1);
+    expect(first.getPixel(81, 20)).toBe(1);
   });
 
   it("shows the Select softkey", () => {
