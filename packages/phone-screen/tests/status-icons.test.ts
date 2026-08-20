@@ -1,121 +1,153 @@
 import { describe, expect, it } from "vite-plus/test";
 import { Framebuffer } from "../src/framebuffer";
 import {
+  BATTERY_ICON,
   drawBatteryLevel,
   drawSignalLevel,
-  ENVELOPE_ICON,
-  KEYGUARD_ICON,
+  SIGNAL_ICON,
+  SMS_ICON,
+  VOICEMAIL_ICON,
 } from "../src/icons/status";
 import { expectPixels } from "./helpers";
 
-describe("status icons", () => {
-  it("envelope and keyguard are 8×8 bitmaps", () => {
-    for (const icon of [ENVELOPE_ICON, KEYGUARD_ICON]) {
-      expect(icon.width).toBe(8);
-      expect(icon.height).toBe(8);
-      expect(icon.pixels.some((p) => p === 1)).toBe(true);
+describe("reference status sprites", () => {
+  it("pins the signal, battery, voicemail, and SMS bitmaps", () => {
+    expectPixelsFromBitmap(SIGNAL_ICON, ["#.#.#", ".###.", "..#..", "..#..", "..#..", "..#.."]);
+    expectPixelsFromBitmap(BATTERY_ICON, ["..#..", "#####", "#...#", "#...#", "#...#", "#####"]);
+    expectPixelsFromBitmap(VOICEMAIL_ICON, [
+      ".##...##.",
+      "#..#.#..#",
+      "#..#.#..#",
+      ".##...##.",
+      "...###...",
+      "..#...#..",
+    ]);
+    expectPixelsFromBitmap(SMS_ICON, [
+      "########",
+      "#......#",
+      "##....##",
+      "#.#..#.#",
+      "#..##..#",
+      "########",
+    ]);
+  });
+
+  it("uses integral dimensions and binary pixels", () => {
+    for (const sprite of [SIGNAL_ICON, BATTERY_ICON, VOICEMAIL_ICON, SMS_ICON]) {
+      expect(Number.isInteger(sprite.width)).toBe(true);
+      expect(Number.isInteger(sprite.height)).toBe(true);
+      expect(sprite.pixels).toHaveLength(sprite.width * sprite.height);
+      expect([...sprite.pixels].every((pixel) => pixel === 0 || pixel === 1)).toBe(true);
     }
   });
 });
 
-describe("drawSignalLevel", () => {
-  it("draws the antenna glyph at the top-left", () => {
+describe("standby ladders", () => {
+  it("always places the 5x6 signal and battery icons at the bottom", () => {
     const fb = new Framebuffer();
     drawSignalLevel(fb, 0);
-    expectPixels(
-      fb,
-      0,
-      0,
-      `
-        #.#.#
-        .###.
-        ..#..
-        ..#..
-        ..#..
-      `,
-    );
-  });
-
-  it("level N fills the bottom N rungs, growing upward", () => {
-    const fb = new Framebuffer();
-    drawSignalLevel(fb, 2);
-    // rungs 0 and 1 (y 27 and 22) set, rungs 2 and 3 (y 17 and 12) clear
-    expectPixels(
-      fb,
-      0,
-      12,
-      `
-        ...
-        ...
-        ...
-        ...
-        ...
-        ...
-        ...
-        ...
-        ...
-        ...
-        ###
-        ###
-        ###
-        ###
-        ...
-        ###
-        ###
-        ###
-        ###
-      `,
-    );
-  });
-
-  it("level 4 fills all rungs; level 0 fills none", () => {
-    const full = new Framebuffer();
-    const empty = new Framebuffer();
-    drawSignalLevel(full, 4);
-    drawSignalLevel(empty, 0);
-    expect(full.getPixel(0, 12)).toBe(1);
-    expect(full.getPixel(2, 30)).toBe(1);
-    expect(empty.getPixel(0, 12)).toBe(0);
-    expect(empty.getPixel(2, 30)).toBe(0);
-  });
-});
-
-describe("drawBatteryLevel", () => {
-  it("draws the battery glyph at the top-right", () => {
-    const fb = new Framebuffer();
     drawBatteryLevel(fb, 0);
-    expectPixels(
-      fb,
-      79,
-      0,
-      `
-        ..#..
-        #####
-        #...#
-        #...#
-        #####
-      `,
-    );
+    expectPixels(fb, 0, 32, "#.#.#\n.###.\n..#..\n..#..\n..#..\n..#..");
+    expectPixels(fb, 79, 32, "..#..\n#####\n#...#\n#...#\n#...#\n#####");
   });
 
-  it("rungs stack on the right edge, growing upward", () => {
+  it.each([
+    [0, []],
+    [1, [[0, 24, 2, 6]]],
+    [
+      2,
+      [
+        [0, 24, 2, 6],
+        [0, 16, 2, 6],
+      ],
+    ],
+    [
+      3,
+      [
+        [0, 24, 2, 6],
+        [0, 16, 2, 6],
+        [0, 8, 3, 6],
+      ],
+    ],
+    [
+      4,
+      [
+        [0, 24, 2, 6],
+        [0, 16, 2, 6],
+        [0, 8, 3, 6],
+        [0, 0, 4, 6],
+      ],
+    ],
+  ] as const)("draws signal level %i with unequal six-pixel bars", (level, bars) => {
     const fb = new Framebuffer();
-    drawBatteryLevel(fb, 1);
-    expectPixels(
-      fb,
-      81,
-      22,
-      `
-        ...
-        ...
-        ...
-        ...
-        ...
-        ###
-        ###
-        ###
-        ###
-      `,
-    );
+    drawSignalLevel(fb, level);
+    expectBarGeometry(fb, bars, 0, 31);
+  });
+
+  it.each([
+    [0, []],
+    [1, [[82, 24, 2, 6]]],
+    [
+      2,
+      [
+        [82, 24, 2, 6],
+        [82, 16, 2, 6],
+      ],
+    ],
+    [
+      3,
+      [
+        [82, 24, 2, 6],
+        [82, 16, 2, 6],
+        [81, 8, 3, 6],
+      ],
+    ],
+    [
+      4,
+      [
+        [82, 24, 2, 6],
+        [82, 16, 2, 6],
+        [81, 8, 3, 6],
+        [80, 0, 4, 6],
+      ],
+    ],
+  ] as const)("draws battery level %i mirrored against the outer edge", (level, bars) => {
+    const fb = new Framebuffer();
+    drawBatteryLevel(fb, level);
+    expectBarGeometry(fb, bars, 79, 31);
   });
 });
+
+function expectPixelsFromBitmap(
+  bitmap: { width: number; height: number; pixels: Uint8Array },
+  rows: string[],
+): void {
+  expect(bitmap.width).toBe(rows[0]!.length);
+  expect(bitmap.height).toBe(rows.length);
+  expect(
+    Array.from(bitmap.pixels, (pixel) => (pixel === 1 ? "#" : "."))
+      .join("")
+      .match(new RegExp(`.{${bitmap.width}}`, "g")),
+  ).toEqual(rows);
+}
+
+function expectBarGeometry(
+  fb: Framebuffer,
+  bars: readonly (readonly [number, number, number, number])[],
+  minX: number,
+  maxY: number,
+): void {
+  const expected = new Set<string>();
+  for (const [x, y, width, height] of bars) {
+    for (let yy = y; yy < y + height; yy++) {
+      for (let xx = x; xx < x + width; xx++) expected.add(`${xx},${yy}`);
+    }
+  }
+  for (let y = 0; y <= maxY; y++) {
+    for (let x = minX; x < 84; x++) {
+      if (minX === 0 && x > 3) break;
+      if (minX === 79 && x < 79) continue;
+      expect(fb.getPixel(x, y), `${x},${y}`).toBe(expected.has(`${x},${y}`) ? 1 : 0);
+    }
+  }
+}

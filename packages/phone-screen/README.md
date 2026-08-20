@@ -51,6 +51,35 @@ fb.drawTextCentered(FONT, "overlay", 24);
 console.log(fb.pixels.length); // 4032
 ```
 
+## Native pixel authoring
+
+`bitmapFromArt`, `Framebuffer`, and `createPixelFont` are the direct 1:1
+authoring seam. Every character in the art is one logical LCD pixel; `#` is
+set and `.` is clear.
+
+```ts
+import { bitmapFromArt, createPixelFont, Framebuffer } from "@hellotimber/phone-screen";
+
+const mail = bitmapFromArt(["######", "#....#", "##..##", "#.##.#", "######"]);
+
+const digits = createPixelFont(
+  {
+    0: ["###.", "#.#.", "#.#.", "#.#.", "###."],
+    1: [".#..", "##..", ".#..", ".#..", "###."],
+  },
+  5,
+  4,
+);
+
+const pixels = new Framebuffer(); // native 84x48
+pixels.blitBitmap(mail, 4, 4);
+pixels.drawText(digits, "10", 16, 4);
+```
+
+Fonts without a fallback glyph reject unknown characters. Pass a fallback
+character as the fourth `createPixelFont` argument only when substitution is
+intentional.
+
 ## Testing
 
 `vp test run` (or `pnpm test`). Pixel-level tests run in node; the canvas

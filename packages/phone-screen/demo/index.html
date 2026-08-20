@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phone screen pixel harness</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <p>84 × 48 native framebuffer</p>
+        <h1>LCD pixel harness</h1>
+      </header>
+      <section class="controls" aria-label="Preview controls">
+        <label>
+          Screen
+          <select id="screen"></select>
+        </label>
+        <label>
+          Palette
+          <select id="palette">
+            <option value="on">Light on</option>
+            <option value="off">Light off</option>
+          </select>
+        </label>
+        <label>
+          Canonical 84 × 48 overlay
+          <input id="overlay" type="file" accept="image/*" />
+        </label>
+        <label>
+          Overlay opacity
+          <input id="opacity" type="range" min="0" max="100" value="50" />
+        </label>
+        <label class="check">
+          <input id="difference" type="checkbox" />
+          Difference blend
+        </label>
+      </section>
+      <section class="preview" aria-label="LCD preview">
+        <div id="frame"></div>
+      </section>
+      <p class="note">
+        Overlays should already be rectified to 84 × 48. Photograph processing is intentionally kept
+        out of production code.
+      </p>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

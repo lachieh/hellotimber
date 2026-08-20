@@ -124,7 +124,14 @@ describe("renderScreen dispatcher", () => {
     const screens: ScreenModel[] = [
       { kind: "boot", phase: "hands", frame: 0 },
       { kind: "standby", carrier: "LACHLAN", signal: 4, battery: 4 },
-      { kind: "menu-carousel", label: "Messages", menuNumber: 2, total: 13, iconId: "messages" },
+      {
+        kind: "menu-carousel",
+        label: "Messages",
+        menuNumber: 2,
+        total: 13,
+        iconId: "messages",
+        menuIndicator: { segments: [2], awaitingNext: false },
+      },
       { kind: "list", title: "Inbox", items: ["Hello"], selected: 0, softkey: "Select" },
       { kind: "reader", title: "Chat", lines: ["> hi"], scrollTop: 0 },
       { kind: "editor", title: "Message:", text: "Hi", cursor: 2, mode: "Abc" },

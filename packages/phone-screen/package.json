@@ -8,6 +8,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
+    "demo": "vp dev demo",
     "test": "vp test run"
   },
   "devDependencies": {

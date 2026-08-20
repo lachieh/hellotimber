@@ -12,13 +12,16 @@ export interface PixelFont {
   readonly glyphHeight: number;
   /** Advance used for characters missing from the map. */
   readonly nominalAdvance: number;
+  /** Optional glyph used for unknown characters; absent means unknown input is rejected. */
+  readonly fallbackGlyph?: string;
   readonly glyphs: ReadonlyMap<string, Bitmap>;
 }
 
-function compileFont(
+export function createPixelFont(
   art: Record<string, readonly string[]>,
   glyphHeight: number,
   nominalAdvance: number,
+  fallbackGlyph?: string,
 ): PixelFont {
   const glyphs = new Map<string, Bitmap>();
   for (const [ch, rows] of Object.entries(art)) {
@@ -28,15 +31,22 @@ function compileFont(
     }
     glyphs.set(ch, bitmap);
   }
-  return { glyphHeight, nominalAdvance, glyphs };
+  if (fallbackGlyph !== undefined && !glyphs.has(fallbackGlyph)) {
+    throw new Error(`fallback glyph '${fallbackGlyph}' is not defined`);
+  }
+  return { glyphHeight, nominalAdvance, fallbackGlyph, glyphs };
 }
 
 /** The 3310 body font: 9-row cells, ~6px average advance, 14 chars/line. */
-export const FONT: PixelFont = compileFont(GLYPHS, 9, 6);
+export const FONT: PixelFont = createPixelFont(GLYPHS, 9, 6, "?");
 
 /** Advance of a single character (nominal for unmapped characters). */
 export function charAdvance(font: PixelFont, ch: string): number {
-  return font.glyphs.get(ch)?.width ?? font.nominalAdvance;
+  const glyph =
+    font.glyphs.get(ch) ??
+    (font.fallbackGlyph === undefined ? undefined : font.glyphs.get(font.fallbackGlyph));
+  if (glyph === undefined) throw new Error(`unknown glyph '${ch}'`);
+  return glyph.width;
 }
 
 /** Pixel width of a rendered string (advance is baked into each glyph). */

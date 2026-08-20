@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vite-plus/test";
 import { Framebuffer } from "../src/framebuffer";
-import { FONT, textWidth } from "../src/font/font";
+import { createPixelFont, FONT, textWidth } from "../src/font/font";
+import { CLOCK_FONT, CLOCK_GLYPHS } from "../src/font/clock";
 import { GLYPHS } from "../src/font/glyphs";
-import { expectPixels } from "./helpers";
 
 describe("glyph data", () => {
   it("every glyph is 9 rows of consistent-width '#'/'.'", () => {
@@ -28,9 +28,78 @@ describe("glyph data", () => {
   });
 
   it("covers the ellipsis and arrow UI glyphs", () => {
-    for (const ch of ["…", "►", "▲", "▼"]) {
+    for (const ch of ["…", "►", "▲", "▼", "•"]) {
       expect(GLYPHS[ch], `missing glyph '${ch}'`).toBeDefined();
     }
+  });
+});
+
+describe("CLOCK_FONT", () => {
+  it("contains only fixed 5x6 cells for digits and colon", () => {
+    expect([...CLOCK_FONT.glyphs.keys()].sort()).toEqual("0123456789:".split("").sort());
+    for (const [ch, glyph] of CLOCK_FONT.glyphs) {
+      expect(glyph.width, ch).toBe(5);
+      expect(glyph.height, ch).toBe(6);
+      expect(
+        [...glyph.pixels].every((pixel) => pixel === 0 || pixel === 1),
+        ch,
+      ).toBe(true);
+    }
+    expect(textWidth(CLOCK_FONT, "21:51")).toBe(25);
+  });
+
+  it("pins every clock glyph bitmap", () => {
+    expect(CLOCK_GLYPHS).toEqual({
+      0: ["###..", "#.#..", "#.#..", "#.#..", "#.#..", "###.."],
+      1: [".#...", "##...", ".#...", ".#...", ".#...", "###.."],
+      2: ["###..", "..#..", "..#..", "###..", "#....", "###.."],
+      3: ["###..", "..#..", "..#..", "###..", "..#..", "###.."],
+      4: ["#.#..", "#.#..", "#.#..", "###..", "..#..", "..#.."],
+      5: ["###..", "#....", "#....", "###..", "..#..", "###.."],
+      6: ["###..", "#....", "#....", "###..", "#.#..", "###.."],
+      7: ["###..", "..#..", "..#..", ".#...", ".#...", ".#..."],
+      8: ["###..", "#.#..", "#.#..", "###..", "#.#..", "###.."],
+      9: ["###..", "#.#..", "#.#..", "###..", "..#..", "###.."],
+      ":": [".....", "..#..", ".....", ".....", "..#..", "....."],
+    });
+  });
+
+  it("rejects unknown characters instead of falling back to the body font question mark", () => {
+    const fb = new Framebuffer();
+    expect(() => fb.drawText(CLOCK_FONT, "2?", 0, 0)).toThrow(/unknown glyph '\?'/);
+  });
+});
+
+describe("createPixelFont", () => {
+  it("validates glyph height once for reusable font definitions", () => {
+    expect(() => createPixelFont({ x: ["#"] }, 2, 1)).toThrow(/glyph 'x'.*expected 2/);
+  });
+});
+
+describe("menu indicator glyphs", () => {
+  it("pins the bullet and cursor bitmaps", () => {
+    expect(GLYPHS["•"]).toEqual([
+      "....",
+      "....",
+      "....",
+      ".##.",
+      ".##.",
+      "....",
+      "....",
+      "....",
+      "....",
+    ]);
+    expect(GLYPHS._).toEqual([
+      "......",
+      "......",
+      "......",
+      "......",
+      "......",
+      "......",
+      "######",
+      "......",
+      "......",
+    ]);
   });
 });
 

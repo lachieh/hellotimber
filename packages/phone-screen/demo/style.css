@@ -1,0 +1,99 @@
+:root {
+  color: #dce7d8;
+  background: #151a16;
+  font-family: "Courier New", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+}
+
+main {
+  width: min(100% - 32px, 880px);
+  margin: 0 auto;
+  padding: 40px 0;
+}
+
+header p,
+.note {
+  color: #8ea18a;
+}
+
+h1 {
+  margin: 4px 0 28px;
+  font-size: clamp(28px, 6vw, 54px);
+  letter-spacing: -0.06em;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
+  padding: 20px;
+  border: 1px solid #3a4739;
+  background: #1c231d;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+  color: #a9baa5;
+  font-size: 13px;
+}
+
+select,
+input {
+  min-height: 36px;
+  color: inherit;
+  border: 1px solid #516250;
+  background: #111512;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.preview {
+  overflow-x: auto;
+  padding: 32px 0;
+}
+
+#frame {
+  position: relative;
+  width: 672px;
+  height: 384px;
+  box-shadow: 0 18px 60px rgb(0 0 0 / 45%);
+}
+
+#frame canvas,
+#frame img {
+  position: absolute;
+  inset: 0;
+  width: 672px;
+  height: 384px;
+  image-rendering: pixelated;
+}
+
+#frame img {
+  pointer-events: none;
+}
+
+.note {
+  max-width: 70ch;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .controls {
+    grid-template-columns: 1fr;
+  }
+}

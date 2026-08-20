@@ -2,25 +2,46 @@ import { bitmapFromArt } from "../bitmap";
 import type { Bitmap } from "../bitmap";
 import type { Framebuffer } from "../framebuffer";
 
-/** Antenna glyph topping the signal stack (left edge). */
-export const ANTENNA_ICON: Bitmap = bitmapFromArt(["#.#.#", ".###.", "..#..", "..#..", "..#.."]);
+export const SIGNAL_ICON: Bitmap = bitmapFromArt([
+  "#.#.#",
+  ".###.",
+  "..#..",
+  "..#..",
+  "..#..",
+  "..#..",
+]);
 
-/** Battery glyph topping the battery stack (right edge). */
-export const BATTERY_ICON: Bitmap = bitmapFromArt(["..#..", "#####", "#...#", "#...#", "#####"]);
+export const BATTERY_ICON: Bitmap = bitmapFromArt([
+  "..#..",
+  "#####",
+  "#...#",
+  "#...#",
+  "#...#",
+  "#####",
+]);
 
-/** Message-received envelope (spec §2 status icon; no ScreenModel field yet). */
-export const ENVELOPE_ICON: Bitmap = bitmapFromArt([
+export const VOICEMAIL_ICON: Bitmap = bitmapFromArt([
+  ".##...##.",
+  "#..#.#..#",
+  "#..#.#..#",
+  ".##...##.",
+  "...###...",
+  "..#...#..",
+]);
+
+export const SMS_ICON: Bitmap = bitmapFromArt([
   "########",
   "#......#",
   "##....##",
   "#.#..#.#",
   "#..##..#",
-  "#......#",
-  "#......#",
   "########",
 ]);
 
-/** Keyguard padlock (spec §2 status icon; no ScreenModel field yet). */
+/** Existing public names for the signal and message status sprites. */
+export const ANTENNA_ICON = SIGNAL_ICON;
+export const ENVELOPE_ICON = SMS_ICON;
+
 export const KEYGUARD_ICON: Bitmap = bitmapFromArt([
   "..####..",
   ".#....#.",
@@ -32,27 +53,37 @@ export const KEYGUARD_ICON: Bitmap = bitmapFromArt([
   "########",
 ]);
 
-const RUNG_W = 3;
-const RUNG_H = 4;
-const RUNG_PITCH = 5; // 4px rung + 1px gap
-const RUNG_BOTTOM_Y = 27; // bottom rung top edge; stack grows upward to y=12
-const SIGNAL_X = 0;
-const BATTERY_X = 81;
+const SIGNAL_BARS = [
+  [0, 24, 2],
+  [0, 16, 2],
+  [0, 8, 3],
+  [0, 0, 4],
+] as const;
 
-function drawRungs(fb: Framebuffer, x: number, level: number): void {
-  for (let i = 0; i < level; i++) {
-    fb.fillRect(x, RUNG_BOTTOM_Y - i * RUNG_PITCH, RUNG_W, RUNG_H, 1);
+const BATTERY_BARS = [
+  [82, 24, 2],
+  [82, 16, 2],
+  [81, 8, 3],
+  [80, 0, 4],
+] as const;
+
+function drawLevel(
+  fb: Framebuffer,
+  level: 0 | 1 | 2 | 3 | 4,
+  bars: readonly (readonly [x: number, y: number, width: number])[],
+): void {
+  for (let index = 0; index < level; index++) {
+    const [x, y, width] = bars[index]!;
+    fb.fillRect(x, y, width, 6, 1);
   }
 }
 
-/** Left-edge signal indicator: antenna glyph + 0–4 rungs growing upward. */
 export function drawSignalLevel(fb: Framebuffer, level: 0 | 1 | 2 | 3 | 4): void {
-  fb.blitBitmap(ANTENNA_ICON, 0, 0);
-  drawRungs(fb, SIGNAL_X, level);
+  drawLevel(fb, level, SIGNAL_BARS);
+  fb.blitBitmap(SIGNAL_ICON, 0, 32);
 }
 
-/** Right-edge battery indicator: battery glyph + 0–4 rungs growing upward. */
 export function drawBatteryLevel(fb: Framebuffer, level: 0 | 1 | 2 | 3 | 4): void {
-  fb.blitBitmap(BATTERY_ICON, 79, 0);
-  drawRungs(fb, BATTERY_X, level);
+  drawLevel(fb, level, BATTERY_BARS);
+  fb.blitBitmap(BATTERY_ICON, 79, 32);
 }

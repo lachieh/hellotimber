@@ -24,7 +24,7 @@ export function renderEditor(fb: Framebuffer, screen: EditorScreen): void {
   }
 
   // Hard character wrap (not word wrap) keeps cursor↔pixel math exact.
-  const chars = [...screen.text];
+  const chars = Array.from(screen.text);
   const rows: string[] = [];
   for (let i = 0; i < chars.length; i += LINE_CHARS) {
     rows.push(chars.slice(i, i + LINE_CHARS).join(""));

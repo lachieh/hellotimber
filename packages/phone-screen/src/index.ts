@@ -1,9 +1,10 @@
 export { bitmapFromArt } from "./bitmap";
 export type { Bitmap } from "./bitmap";
 export { Framebuffer } from "./framebuffer";
-export { FONT, textWidth } from "./font/font";
+export { createPixelFont, FONT, textWidth } from "./font/font";
 export type { PixelFont } from "./font/font";
 export { GLYPHS } from "./font/glyphs";
+export { CLOCK_FONT, CLOCK_GLYPHS } from "./font/clock";
 export {
   ANTENNA_ICON,
   BATTERY_ICON,
@@ -11,13 +12,17 @@ export {
   drawSignalLevel,
   ENVELOPE_ICON,
   KEYGUARD_ICON,
+  SIGNAL_ICON,
+  SMS_ICON,
+  VOICEMAIL_ICON,
 } from "./icons/status";
 export { FALLBACK_ICON, MENU_ICONS, menuIcon } from "./icons/menu-icons";
 export { HANDS_FRAMES } from "./icons/boot";
 export { renderBoot } from "./render/boot";
 export {
   CONTENT_TOP,
-  drawScrollIndicator,
+  drawMenuIndicator,
+  drawPositionRail,
   drawSoftkey,
   drawTextRight,
   drawTitle,
@@ -25,6 +30,8 @@ export {
   SOFTKEY_Y,
   TITLE_Y,
   truncate,
+  truncateToWidth,
+  formatMenuIndicator,
   wrapText,
 } from "./render/layout";
 export { renderStandby } from "./render/standby";

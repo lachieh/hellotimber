@@ -1,4 +1,6 @@
+import type { MenuIndicator } from "@hellotimber/phone-core";
 import { FONT, textWidth } from "../font/font";
+import type { PixelFont } from "../font/font";
 import type { Framebuffer } from "../framebuffer";
 
 // Spec §2 display zones on the 84×48 LCD.
@@ -9,9 +11,22 @@ export const LINE_CHARS = 14; // 14 × 6px advance = 84px
 
 /** Clamp to `max` chars, replacing the tail with '…' when too long. */
 export function truncate(text: string, max: number): string {
-  const chars = [...text];
+  const chars = Array.from(text);
   if (chars.length <= max) return text;
   return `${chars.slice(0, max - 1).join("")}…`;
+}
+
+/** Truncate to a rendered pixel width, including the ellipsis advance. */
+export function truncateToWidth(font: PixelFont, text: string, maxWidth: number): string {
+  if (textWidth(font, text) <= maxWidth) return text;
+  const ellipsis = "…";
+  const ellipsisWidth = textWidth(font, ellipsis);
+  let result = "";
+  for (const character of text) {
+    if (textWidth(font, result + character) + ellipsisWidth > maxWidth) break;
+    result += character;
+  }
+  return result + ellipsis;
 }
 
 /** Greedy word-wrap at `width` chars; hard-breaks longer words; '\n' = paragraph. */
@@ -59,16 +74,24 @@ export function drawTextRight(fb: Framebuffer, text: string, xEnd: number, y: nu
   fb.drawText(FONT, text, xEnd - textWidth(FONT, text) + 1, y);
 }
 
-/**
- * Right-edge scroll/position indicator (spec §5): 1px track at x=83 over
- * the content area, 3px-wide thumb showing index/total.
- */
-export function drawScrollIndicator(fb: Framebuffer, index: number, total: number): void {
+export function formatMenuIndicator(indicator: MenuIndicator): string {
+  const parts = indicator.segments.map(String);
+  if (indicator.awaitingNext && parts.length > 0) parts.push("_");
+  return parts.join(" • ");
+}
+
+export function drawMenuIndicator(fb: Framebuffer, indicator: MenuIndicator): void {
+  drawTextRight(fb, formatMenuIndicator(indicator), 80, 0);
+}
+
+/** Draw the authentic one-pixel rail with a seven-pixel bumpout path. */
+export function drawPositionRail(fb: Framebuffer, index: number, total: number): void {
   const trackTop = CONTENT_TOP;
   const trackH = 32; // y 8–39
-  fb.fillRect(83, trackTop, 1, trackH, 1);
-  const thumbH = Math.max(4, Math.floor(trackH / Math.max(1, total)));
-  const maxOffset = trackH - thumbH;
-  const offset = total <= 1 ? 0 : Math.round((index * maxOffset) / (total - 1));
-  fb.fillRect(81, trackTop + offset, 3, thumbH, 1);
+  const bumpH = 7;
+  const offset = Math.round((index * (trackH - bumpH)) / Math.max(1, total - 1));
+  const bumpTop = trackTop + offset;
+  fb.fillRect(82, trackTop, 1, trackH, 1);
+  fb.fillRect(82, bumpTop, 1, 6, 0);
+  fb.fillRect(83, bumpTop, 1, 6, 1);
 }

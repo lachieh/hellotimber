@@ -1,79 +1,114 @@
 import { describe, expect, it } from "vite-plus/test";
 import type { ScreenModel } from "@hellotimber/phone-core";
-import { FONT } from "../src/font/font";
+import { FONT, textWidth } from "../src/font/font";
 import { Framebuffer } from "../src/framebuffer";
 import { renderList, renderReader } from "../src/render/list";
+import {
+  drawMenuIndicator,
+  drawPositionRail,
+  formatMenuIndicator,
+  truncateToWidth,
+} from "../src/render/layout";
 import { regionToArt } from "./helpers";
 
-type ListScreen = Extract<ScreenModel, { kind: "list" }>;
+type ListScreen = Parameters<typeof renderList>[1];
 type ReaderScreen = Extract<ScreenModel, { kind: "reader" }>;
 
 function list(overrides: Partial<ListScreen> = {}): ListScreen {
   return {
     kind: "list",
     title: "Phone book",
-    items: ["Search", "Memory status"],
-    selected: 0,
+    items: ["Search", "Add name", "Erase"],
+    selected: 1,
     softkey: "Select",
+    menuIndicator: { segments: [1], awaitingNext: false },
     ...overrides,
   };
 }
 
 describe("renderList", () => {
-  it("draws the title centered on the top row and the softkey from the model", () => {
+  it("omits the title and uses all three content rows for firmware menu lists", () => {
     const fb = new Framebuffer();
     renderList(fb, list());
     const expected = new Framebuffer();
+    expected.drawText(FONT, "Search", 2, 9);
+    expected.fillRect(0, 18, 82, 10, 1);
+    expected.drawText(FONT, "Add name", 2, 19, { color: 0 });
+    expected.drawText(FONT, "Erase", 2, 29);
+    expect(regionToArt(fb, 0, 8, 82, 31)).toBe(regionToArt(expected, 0, 8, 82, 31));
+  });
+
+  it("preserves the title behavior for generic application lists", () => {
+    const fb = new Framebuffer();
+    renderList(fb, list({ menuIndicator: undefined }));
+    const expected = new Framebuffer();
     expected.drawTextCentered(FONT, "Phone book", 0);
-    expected.drawTextCentered(FONT, "Select", 41);
-    expect(regionToArt(fb, 0, 0, 84, 7)).toBe(regionToArt(expected, 0, 0, 84, 7));
-    expect(regionToArt(fb, 0, 41, 84, 7)).toBe(regionToArt(expected, 0, 41, 84, 7));
+    expect(regionToArt(fb, 0, 0, 82, 7)).toBe(regionToArt(expected, 0, 0, 82, 7));
   });
 
-  it("draws the selected item as an inverted-video bar", () => {
+  it("uses an exactly 10px band from x=0..81 with one top and two bottom padding rows", () => {
     const fb = new Framebuffer();
-    renderList(fb, list()); // selected 0 → row at y 9, bar at y 8–16
-    const expected = new Framebuffer();
-    expected.fillRect(0, 8, 84, 9, 1);
-    expected.drawText(FONT, "Search", 2, 9, { color: 0 });
-    expect(regionToArt(fb, 0, 8, 80, 9)).toBe(regionToArt(expected, 0, 8, 80, 9));
+    renderList(fb, list({ items: ["ABCDEFG"], selected: 0 }));
+    for (let x = 0; x <= 81; x++) {
+      expect(fb.getPixel(x, 8), `top padding x=${x}`).toBe(1);
+      expect(fb.getPixel(x, 16), `bottom padding 1 x=${x}`).toBe(1);
+      expect(fb.getPixel(x, 17), `bottom padding 2 x=${x}`).toBe(1);
+    }
+    expect(fb.getPixel(0, 18)).toBe(0);
+    expect(fb.getPixel(81, 18)).toBe(0);
+    expect(fb.getPixel(83, 8)).toBe(1); // bump path, separate from selection fill
   });
 
-  it("draws unselected items as plain text", () => {
+  it("fills the band before punching selected glyph ink to color 0", () => {
     const fb = new Framebuffer();
-    renderList(fb, list()); // second row at y 19
-    const expected = new Framebuffer();
-    expected.drawText(FONT, "Memory status", 2, 19);
-    expect(regionToArt(fb, 0, 18, 80, 9)).toBe(regionToArt(expected, 0, 18, 80, 9));
+    renderList(fb, list({ items: ["I"], selected: 0 }));
+    expect(fb.getPixel(2, 9)).toBe(0);
+    expect(fb.getPixel(4, 9)).toBe(1);
   });
 
-  it("scrolls so the selection stays visible (middle row when possible)", () => {
-    const items = ["One", "Two", "Three", "Four", "Five"];
+  it("truncates labels by measured width before x=82", () => {
+    expect(truncateToWidth(FONT, "mmmmmmmmmm", 80)).toBe("mmmmmmmm…");
     const fb = new Framebuffer();
-    renderList(fb, list({ items, selected: 3 })); // top = 2 → window Three/Four/Five
-    const expected = new Framebuffer();
-    expected.drawText(FONT, "Three", 2, 9);
-    expect(regionToArt(fb, 0, 9, 60, 7)).toBe(regionToArt(expected, 0, 9, 60, 7));
-    // selected 'Four' is the middle row → inverted bar at y 18–26
-    expect(fb.getPixel(0, 18)).toBe(1);
+    renderList(fb, list({ items: ["mmmmmmmmmm"], selected: 0 }));
+    expect(textWidth(FONT, truncateToWidth(FONT, "mmmmmmmmmm", 80))).toBeLessThanOrEqual(80);
+    for (let y = 9; y <= 13; y++) expect(fb.getPixel(83, y), `bump at y=${y}`).toBe(1);
+    for (let y = 14; y <= 15; y++) expect(fb.getPixel(82, y), `rail at y=${y}`).toBe(1);
   });
+});
 
-  it("shows the scroll indicator only when items overflow", () => {
-    const short = new Framebuffer();
-    renderList(short, list());
-    expect(short.getPixel(83, 20)).toBe(0);
-    const long = new Framebuffer();
-    renderList(long, list({ items: ["a", "b", "c", "d"], selected: 0 }));
-    expect(long.getPixel(83, 20)).toBe(1);
-  });
-
-  it("truncates long labels with an ellipsis", () => {
+describe("drawPositionRail", () => {
+  it.each([
+    [0, 3, 8],
+    [1, 3, 21],
+    [2, 3, 33],
+  ])("pins first/middle/last bump top for index %i", (index, total, bumpTop) => {
     const fb = new Framebuffer();
-    renderList(fb, list({ items: ["Extraordinarily long"], selected: 0 }));
+    drawPositionRail(fb, index, total);
+    for (let y = 8; y <= 39; y++) {
+      const inReplacedSection = y >= bumpTop && y <= bumpTop + 5;
+      expect(fb.getPixel(82, y), `x=82,y=${y}`).toBe(inReplacedSection ? 0 : 1);
+      expect(fb.getPixel(83, y), `x=83,y=${y}`).toBe(inReplacedSection ? 1 : 0);
+    }
+    expect(fb.getPixel(82, bumpTop + 6)).toBe(1);
+  });
+});
+
+describe("menu indicator", () => {
+  it("formats active and inactive structured hierarchy data", () => {
+    expect(formatMenuIndicator({ segments: [5], awaitingNext: true })).toBe("5 • _");
+    expect(formatMenuIndicator({ segments: [5, 3], awaitingNext: true })).toBe("5 • 3 • _");
+    expect(formatMenuIndicator({ segments: [5, 3], awaitingNext: false })).toBe("5 • 3");
+  });
+
+  it("right-aligns to x=80 without touching the rail", () => {
+    const fb = new Framebuffer();
+    drawMenuIndicator(fb, { segments: [5, 3], awaitingNext: true });
     const expected = new Framebuffer();
-    expected.fillRect(0, 8, 84, 9, 1);
-    expected.drawText(FONT, "Extraordinar…", 2, 9, { color: 0 });
-    expect(regionToArt(fb, 0, 8, 80, 9)).toBe(regionToArt(expected, 0, 8, 80, 9));
+    const text = "5 • 3 • _";
+    expected.drawText(FONT, text, 81 - textWidth(FONT, text), 0);
+    expect(regionToArt(fb, 0, 0, 81, 9)).toBe(regionToArt(expected, 0, 0, 81, 9));
+    expect(fb.getPixel(81, 0)).toBe(0);
+    expect(fb.getPixel(82, 0)).toBe(0);
   });
 });
 
@@ -88,7 +123,7 @@ describe("renderReader", () => {
     };
   }
 
-  it("draws title, three visible lines from scrollTop, and the Back softkey", () => {
+  it("draws title, three visible lines from scrollTop, and Back", () => {
     const fb = new Framebuffer();
     renderReader(fb, reader({ scrollTop: 1 }));
     const expected = new Framebuffer();
@@ -100,19 +135,18 @@ describe("renderReader", () => {
     expect(regionToArt(fb, 0, 0, 78, 48)).toBe(regionToArt(expected, 0, 0, 78, 48));
   });
 
-  it("shows ▲ only when scrolled down and ▼ only when more lines remain", () => {
-    const atTop = new Framebuffer();
-    renderReader(atTop, reader()); // 4 lines, scrollTop 0 → more below
-    const up = new Framebuffer();
-    up.drawText(FONT, "▲", 79, 9);
-    const down = new Framebuffer();
-    down.drawText(FONT, "▼", 79, 29);
-    expect(regionToArt(atTop, 79, 9, 5, 7)).toBe(regionToArt(new Framebuffer(), 79, 9, 5, 7));
-    expect(regionToArt(atTop, 79, 29, 5, 7)).toBe(regionToArt(down, 79, 29, 5, 7));
+  it("reserves measured top-row width for a menu indicator", () => {
+    const menuIndicator = { segments: [5, 3], awaitingNext: true };
+    const fb = new Framebuffer();
+    renderReader(fb, reader({ title: "Incoming call alert", menuIndicator }));
 
-    const atEnd = new Framebuffer();
-    renderReader(atEnd, reader({ scrollTop: 1 })); // lines 2–4 visible → nothing below
-    expect(regionToArt(atEnd, 79, 9, 5, 7)).toBe(regionToArt(up, 79, 9, 5, 7));
-    expect(regionToArt(atEnd, 79, 29, 5, 7)).toBe(regionToArt(new Framebuffer(), 79, 29, 5, 7));
+    const expected = new Framebuffer();
+    const indicatorText = formatMenuIndicator(menuIndicator);
+    const titleAreaWidth = 80 - textWidth(FONT, indicatorText);
+    const title = truncateToWidth(FONT, "Incoming call alert", titleAreaWidth);
+    expected.drawText(FONT, title, Math.floor((titleAreaWidth - textWidth(FONT, title)) / 2), 0);
+    drawMenuIndicator(expected, menuIndicator);
+
+    expect(regionToArt(fb, 0, 0, 81, 9)).toBe(regionToArt(expected, 0, 0, 81, 9));
   });
 });

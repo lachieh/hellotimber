@@ -62,8 +62,8 @@ export class Framebuffer {
 
   /**
    * Draw text with the glyph font; returns the x where the next character
-   * would start. Unknown characters render as '?'. `color: 0` draws
-   * inverted-video text (e.g. onto a filled selection bar).
+   * would start. Unknown characters use the font's fallback or throw when
+   * the font is strict. `color: 0` draws inverted-video text.
    */
   drawText(
     font: PixelFont,
@@ -76,9 +76,12 @@ export class Framebuffer {
     const color = opts.color ?? 1;
     let cx = x;
     for (const ch of text) {
-      const glyph = font.glyphs.get(ch) ?? font.glyphs.get("?");
-      if (glyph !== undefined) this.blitBitmap(glyph, cx, y, { scale, value: color });
-      cx += (glyph?.width ?? font.nominalAdvance) * scale;
+      const glyph =
+        font.glyphs.get(ch) ??
+        (font.fallbackGlyph === undefined ? undefined : font.glyphs.get(font.fallbackGlyph));
+      if (glyph === undefined) throw new Error(`unknown glyph '${ch}'`);
+      this.blitBitmap(glyph, cx, y, { scale, value: color });
+      cx += glyph.width * scale;
     }
     return cx;
   }
