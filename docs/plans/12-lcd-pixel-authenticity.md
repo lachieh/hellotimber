@@ -305,7 +305,7 @@ screen remains unchanged.
 - [x] Update `docs/specs/nokia-3310.md`: replace the old clock/font guesses with the
       reference-derived standby geometry; document the menu rail, inversion, numeric path,
       and which details are photographic evidence versus project interpretation.
-- [ ] Add the supplied menu photograph to `docs/todos-assets/menu-list-reference.png` if
+- [x] Add the supplied menu photograph to `docs/todos-assets/menu-list-reference.png` if
       it is not already available as a repository asset. Do not substitute the existing
       rendered screenshots in `docs/plans/assets/`.
 - [x] Change this plan's status to `in progress` and update `docs/plans/README.md`.
