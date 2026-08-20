@@ -50,7 +50,6 @@ export const KEY_TRAVEL_FRAC = 0.004;
  *  softkey row must be fully visible). Asset-intrinsic, not runtime tuning. */
 export const SCREEN_APERTURE = { left: 0.02, right: 0.02, top: 0.07, bottom: 0.015 } as const;
 
-/** Visible LCD scale relative to the model's (oversized) display plane —
- *  sizing experiment: the mesh window reads larger than the real 3310's
- *  display; shrinking reveals a dark surround like the real bezel. */
-export const SCREEN_SCALE = 0.8;
+/** Visible LCD scale relative to the model's oversized display plane. A narrow
+ *  surround remains visible, while the 84×48 render fills most of the window. */
+export const SCREEN_SCALE = 0.9;

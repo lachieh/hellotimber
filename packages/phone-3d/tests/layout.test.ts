@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { KEY_NODES, KEY_TRAVEL_FRAC, STATIC_NODES } from "../src/layout";
+import { KEY_NODES, KEY_TRAVEL_FRAC, SCREEN_SCALE, STATIC_NODES } from "../src/layout";
 import { ALL_KEYS } from "../src/types";
 
 describe("v3 node map", () => {
@@ -24,5 +24,10 @@ describe("v3 node map", () => {
   it("key travel is a small fraction of the model height", () => {
     expect(KEY_TRAVEL_FRAC).toBeGreaterThan(0);
     expect(KEY_TRAVEL_FRAC).toBeLessThan(0.02);
+  });
+
+  it("keeps the rendered LCD large with a narrow physical bezel", () => {
+    expect(SCREEN_SCALE).toBeGreaterThanOrEqual(0.9);
+    expect(SCREEN_SCALE).toBeLessThan(1);
   });
 });

@@ -4,7 +4,14 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import Key from "./Key";
 import { KEY_NODES, SCREEN_APERTURE, SCREEN_SCALE, STATIC_NODES } from "./layout";
-import { BACKLIGHT_COLOR, LCD_GLOW_INTENSITY, MATERIALS, SCREEN_DIM_TINT } from "./materials";
+import {
+  BACKLIGHT_COLOR,
+  LCD_GLOW_INTENSITY,
+  MATERIALS,
+  SCREEN_DIM_PIXEL_TINT,
+  SCREEN_DIM_TINT,
+  SCREEN_LIT_PIXEL_TINT,
+} from "./materials";
 import type { MaterialSpec } from "./materials";
 import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL, DEFAULT_SCREEN_BG } from "./types";
 import type { Nokia3310Key, Nokia3310Props } from "./types";
@@ -106,20 +113,10 @@ export function Nokia3310({
         metalness: 0.05,
       });
     }
-    // glass: the model's own pane over the LCD — visibly reflective (picks up
-    // the stage's environment map) while staying clear over the pixels.
+    // The sourced glass mesh only covers the upper part of the LCD. A matching
+    // full-size glass plane is added with lcd_pixels below.
     if (nodes.glass) {
-      nodes.glass.material = new THREE.MeshPhysicalMaterial({
-        color: "#ffffff",
-        transparent: true,
-        opacity: 0.16,
-        roughness: 0.04,
-        metalness: 0,
-        clearcoat: 1,
-        clearcoatRoughness: 0.06,
-        envMapIntensity: 1.4,
-        depthWrite: false,
-      });
+      nodes.glass.visible = false;
     }
   }, [model, nodes]);
 
@@ -153,6 +150,24 @@ export function Nokia3310({
     plane.name = "lcd_pixels";
     plane.position.set(rect.cx, rect.cy, rect.z + 0.0005);
     nodes.screen.add(plane);
+
+    const glass = new THREE.Mesh(
+      plane.geometry,
+      new THREE.MeshPhysicalMaterial({
+        color: "#ffffff",
+        transparent: true,
+        opacity: 0.08,
+        roughness: 0.04,
+        metalness: 0,
+        clearcoat: 1,
+        clearcoatRoughness: 0.06,
+        envMapIntensity: 1.4,
+        depthWrite: false,
+      }),
+    );
+    glass.name = "lcd_glass";
+    glass.position.set(rect.cx, rect.cy, rect.z + 0.001);
+    nodes.screen.add(glass);
     return plane;
   }, [nodes, texture]);
 
@@ -161,13 +176,14 @@ export function Nokia3310({
   // layers read as one LCD in either backlight state.
   useEffect(() => {
     if (lcd === null || nodes.screen === null) return;
-    const tint = new THREE.Color(backlightOn ? "#ffffff" : SCREEN_DIM_TINT);
+    const pixelTint = new THREE.Color(backlightOn ? SCREEN_LIT_PIXEL_TINT : SCREEN_DIM_PIXEL_TINT);
+    const surroundTint = new THREE.Color(backlightOn ? "#ffffff" : SCREEN_DIM_TINT);
     const pixels = lcd.material as THREE.MeshBasicMaterial;
     pixels.map = texture;
-    pixels.color.copy(tint);
+    pixels.color.copy(pixelTint);
     pixels.needsUpdate = true;
     const surround = nodes.screen.material as THREE.MeshBasicMaterial;
-    surround.color.set(screenBgColor).multiply(tint);
+    surround.color.set(screenBgColor).multiply(surroundTint);
     surround.needsUpdate = true;
   }, [lcd, nodes, texture, backlightOn, screenBgColor]);
 
