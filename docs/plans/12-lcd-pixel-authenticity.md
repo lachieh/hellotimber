@@ -215,7 +215,7 @@ therefore occupies 25 pixels and starts at x=51 when right-aligned to x=75.
 | Position rail     | x=81, y=8..39                                      |
 | Connector column  | x=82                                               |
 | Bump column       | x=83                                               |
-| Numeric indicator | right-aligned to x=83, y=0                         |
+| Numeric indicator | fixed 5x6 cells, right-aligned to x=83, y=0        |
 
 When `menuIndicator` is present, a list does not render `screen.title`. The three visible
 menu items use all three content rows, matching the `Search / Add name / Erase` reference.
@@ -263,9 +263,10 @@ segments=[5,3], awaitingNext=true   -> 5 • 3 • _
 segments=[5,3], awaitingNext=false  -> 5 • 3
 ```
 
-Add a literal `•` glyph to the body font. Keep the existing `_` glyph, but add an exact
-bitmap assertion for both glyphs. The formatted indicator is right-aligned to x=83 with no
-gap to the framebuffer edge; the rail starts below it at y=8.
+Use a dedicated fixed-cell 5x6 indicator face derived from the clock digits, with literal
+`•`, `_`, and space glyphs. Add exact bitmap assertions for the separator and cursor. The
+formatted indicator is right-aligned to x=83 with no gap to the framebuffer edge; the rail
+starts below it at y=8.
 
 ## Shortcut state and data flow
 
@@ -373,8 +374,8 @@ screen remains unchanged.
       Use it in both list and carousel renderers.
 - [x] When `menuIndicator` exists, render three item rows and omit the list title. Preserve
       generic application-list behavior when it is absent.
-- [x] Add the `•` glyph and `drawMenuIndicator()`; right-align to x=83 and test active and
-      inactive hierarchy strings.
+- [x] Add a fixed-cell 5x6 indicator face and `drawMenuIndicator()`; right-align to x=83 and
+      test active and inactive hierarchy strings.
 - [x] Ensure labels truncate by measured pixel width before the x=78..80 gap rather than by
       a fixed character count. Do not let wide glyphs enter the rail.
 - [x] Preserve inverted-video rendering: fill the band first, then draw selected glyph ink

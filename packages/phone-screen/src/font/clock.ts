@@ -16,3 +16,12 @@ export const CLOCK_GLYPHS: Record<string, readonly string[]> = {
 };
 
 export const CLOCK_FONT = createPixelFont(CLOCK_GLYPHS, 6, 5);
+
+export const MENU_INDICATOR_GLYPHS: Record<string, readonly string[]> = {
+  ...CLOCK_GLYPHS,
+  " ": [".....", ".....", ".....", ".....", ".....", "....."],
+  "•": [".....", ".....", "..#..", ".....", ".....", "....."],
+  _: [".....", ".....", ".....", ".....", ".....", "#####"],
+};
+
+export const MENU_INDICATOR_FONT = createPixelFont(MENU_INDICATOR_GLYPHS, 6, 5);

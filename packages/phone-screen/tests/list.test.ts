@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import type { ScreenModel } from "@hellotimber/phone-core";
+import { MENU_INDICATOR_FONT, MENU_INDICATOR_GLYPHS } from "../src/font/clock";
 import { FONT, textWidth } from "../src/font/font";
 import { Framebuffer } from "../src/framebuffer";
 import { renderList, renderReader } from "../src/render/list";
@@ -98,6 +99,24 @@ describe("drawPositionRail", () => {
 });
 
 describe("menu indicator", () => {
+  it("uses fixed 5x6 cells for digits, separators, and the cursor", () => {
+    expect(MENU_INDICATOR_FONT.glyphHeight).toBe(6);
+    for (const character of "0123456789 •_") {
+      const glyph = MENU_INDICATOR_FONT.glyphs.get(character);
+      expect(glyph?.width, character).toBe(5);
+      expect(glyph?.height, character).toBe(6);
+    }
+    expect(MENU_INDICATOR_GLYPHS["•"]).toEqual([
+      ".....",
+      ".....",
+      "..#..",
+      ".....",
+      ".....",
+      ".....",
+    ]);
+    expect(MENU_INDICATOR_GLYPHS._).toEqual([".....", ".....", ".....", ".....", ".....", "#####"]);
+  });
+
   it("formats active and inactive structured hierarchy data", () => {
     expect(formatMenuIndicator({ segments: [5], awaitingNext: true })).toBe("5 • _");
     expect(formatMenuIndicator({ segments: [5, 3], awaitingNext: true })).toBe("5 • 3 • _");
@@ -109,9 +128,10 @@ describe("menu indicator", () => {
     drawMenuIndicator(fb, { segments: [5, 3], awaitingNext: true });
     const expected = new Framebuffer();
     const text = "5 • 3 • _";
-    expected.drawText(FONT, text, 84 - textWidth(FONT, text), 0);
+    expected.drawText(MENU_INDICATOR_FONT, text, 84 - textWidth(MENU_INDICATOR_FONT, text), 0);
     expect(regionToArt(fb, 0, 0, 84, 9)).toBe(regionToArt(expected, 0, 0, 84, 9));
-    expect(fb.getPixel(83, 6)).toBe(1);
+    expect(fb.getPixel(83, 5)).toBe(1);
+    for (let x = 0; x < 84; x++) expect(fb.getPixel(x, 6), `x=${x}`).toBe(0);
   });
 });
 
@@ -145,7 +165,7 @@ describe("renderReader", () => {
 
     const expected = new Framebuffer();
     const indicatorText = formatMenuIndicator(menuIndicator);
-    const titleAreaWidth = 83 - textWidth(FONT, indicatorText);
+    const titleAreaWidth = 83 - textWidth(MENU_INDICATOR_FONT, indicatorText);
     const title = truncateToWidth(FONT, "Incoming call alert", titleAreaWidth);
     expected.drawText(FONT, title, Math.floor((titleAreaWidth - textWidth(FONT, title)) / 2), 0);
     drawMenuIndicator(expected, menuIndicator);

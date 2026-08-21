@@ -1,4 +1,5 @@
 import type { MenuIndicator } from "@hellotimber/phone-core";
+import { MENU_INDICATOR_FONT } from "../font/clock";
 import { FONT, textWidth } from "../font/font";
 import type { PixelFont } from "../font/font";
 import type { Framebuffer } from "../framebuffer";
@@ -81,7 +82,8 @@ export function formatMenuIndicator(indicator: MenuIndicator): string {
 }
 
 export function drawMenuIndicator(fb: Framebuffer, indicator: MenuIndicator): void {
-  drawTextRight(fb, formatMenuIndicator(indicator), 83, 0);
+  const text = formatMenuIndicator(indicator);
+  fb.drawText(MENU_INDICATOR_FONT, text, 84 - textWidth(MENU_INDICATOR_FONT, text), 0);
 }
 
 /** Draw the rail, two connector pixels, and five-pixel outer bump. */

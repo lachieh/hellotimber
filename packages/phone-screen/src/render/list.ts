@@ -1,4 +1,5 @@
 import type { ScreenModel } from "@hellotimber/phone-core";
+import { MENU_INDICATOR_FONT } from "../font/clock";
 import { FONT, textWidth } from "../font/font";
 import type { Framebuffer } from "../framebuffer";
 import {
@@ -52,7 +53,10 @@ export function renderReader(fb: Framebuffer, screen: ReaderScreen): void {
   if (screen.menuIndicator === undefined) {
     drawTitle(fb, screen.title);
   } else {
-    const indicatorWidth = textWidth(FONT, formatMenuIndicator(screen.menuIndicator));
+    const indicatorWidth = textWidth(
+      MENU_INDICATOR_FONT,
+      formatMenuIndicator(screen.menuIndicator),
+    );
     const titleAreaWidth = Math.max(0, 83 - indicatorWidth);
     const title = truncateToWidth(FONT, screen.title, titleAreaWidth);
     fb.drawText(FONT, title, Math.floor((titleAreaWidth - textWidth(FONT, title)) / 2), 0);
