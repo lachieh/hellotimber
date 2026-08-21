@@ -21,12 +21,12 @@ describe("renderStandby", () => {
     expect(regionToArt(fb, 5, 8, 74, 9)).toBe(regionToArt(expected, 5, 8, 74, 9));
   });
 
-  it("places fixed-cell clock 21:51 at x=51..75, y=0", () => {
+  it("places the normal-weight 5x6 clock 21:51 at x=46..75, y=0", () => {
     const fb = new Framebuffer();
     renderStandby(fb, standby({ clock: "21:51" }));
     const expected = new Framebuffer();
-    expected.drawText(CLOCK_FONT, "21:51", 51, 0);
-    expect(regionToArt(fb, 48, 0, 30, 6)).toBe(regionToArt(expected, 48, 0, 30, 6));
+    expected.drawText(CLOCK_FONT, "21:51", 46, 0);
+    expect(regionToArt(fb, 43, 0, 35, 6)).toBe(regionToArt(expected, 43, 0, 35, 6));
   });
 
   it("renders conditional notifications in voicemail-then-SMS order", () => {

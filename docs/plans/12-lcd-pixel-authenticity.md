@@ -20,7 +20,7 @@ Make the Nokia LCD reproducible at its native 84x48 resolution from explicit pix
 then use that capability to match the reference standby and menu screens exactly:
 
 - authentic signal and battery ladders;
-- a dedicated fixed-cell 5x6 clock font and correct standby composition;
+- a dedicated normal-weight 5x6 clock font and correct standby composition;
 - reference-derived notification icons;
 - the authentic one-pixel menu position rail and seven-row bumpout;
 - 10-pixel inverted menu selections;
@@ -40,7 +40,7 @@ best guesses that no longer match the photographic evidence:
 1. Standby icons are above four equal 3x4 bars; the reference puts unequal bars above
    bottom icons.
 2. The clock uses the general variable-width body font at lower-right; the reference
-   uses a fixed 5x6 clock face at top-right.
+   uses a normal-weight 5x6 clock face at top-right.
 3. The carrier starts at y=12; the reference starts near y=8.
 4. Menu lists render a title above three rows. In the reference, `Search`, `Add name`,
    and `Erase` are the three rows; there is no separate `Phone book` title.
@@ -61,7 +61,7 @@ best guesses that no longer match the photographic evidence:
 3. Full-frame literal fixtures are the visual source of truth. Expected frames must not
    be assembled with the same helpers under test.
 4. The body font remains available for existing screens. The clock receives a separate
-   fixed 5x6 font; do not globally force the body font into clock metrics.
+   normal-weight 5x6 font; do not globally force the body font into clock metrics.
 5. Menu shortcuts remain one `1`-`9` digit per hierarchy level. Existing top-level menu
    orders 10-13 remain visible but not directly shortcut-addressable; resolving that
    ambiguity is separate scope.
@@ -191,7 +191,7 @@ fixture only if a nearest-neighbor overlay against the reference proves a one-pi
 | Battery level 2   | x=82..83, y=16..21                                  |
 | Battery level 1   | x=82..83, y=24..29                                  |
 | Battery icon      | 5x6 sprite at x=79, y=32                            |
-| Clock             | fixed 5x6 cells, right edge x=75, y=0               |
+| Clock             | normal 5x6 face, right edge x=75, y=0               |
 | Notification area | x=7..48, y=0..6; voicemail then SMS                 |
 | Carrier           | body font centered, y=8                             |
 | Softkey           | body font centered, y=41 unless fixture proves y=40 |
@@ -199,8 +199,8 @@ fixture only if a nearest-neighbor overlay against the reference proves a one-pi
 Levels fill from the bottom upward. Level 1 draws only the narrow bar nearest the icon;
 level 4 draws all four bars. Signal bars are left-aligned; battery bars are right-aligned.
 
-The 5x6 clock font uses five-pixel cells with spacing baked into each cell. `21:51`
-therefore occupies 25 pixels and starts at x=51 when right-aligned to x=75.
+The normal-weight 5x6 clock font uses variable advances with right-side spacing baked into
+each glyph. `21:51` occupies 30 pixels and starts at x=46 when right-aligned to x=75.
 
 ### Menu list
 
@@ -215,7 +215,7 @@ therefore occupies 25 pixels and starts at x=51 when right-aligned to x=75.
 | Position rail     | x=81, y=8..39                                      |
 | Connector column  | x=82                                               |
 | Bump column       | x=83                                               |
-| Numeric indicator | fixed 5x6 cells, right-aligned to x=83, y=0        |
+| Numeric indicator | normal 5x6 face, right-aligned to x=83, y=0        |
 
 When `menuIndicator` is present, a list does not render `screen.title`. The three visible
 menu items use all three content rows, matching the `Search / Add name / Erase` reference.
@@ -263,7 +263,7 @@ segments=[5,3], awaitingNext=true   -> 5 • 3 • _
 segments=[5,3], awaitingNext=false  -> 5 • 3
 ```
 
-Use a dedicated fixed-cell 5x6 indicator face derived from the clock digits, with literal
+Use a dedicated normal-weight 5x6 indicator face shared with the clock digits, with literal
 `•`, `_`, and space glyphs. Add exact bitmap assertions for the separator and cursor. The
 formatted indicator is right-aligned to x=83 with no gap to the framebuffer edge; the rail
 starts below it at y=8.
@@ -334,7 +334,7 @@ screen remains unchanged.
 - [x] Rename/export the private font compiler as a small reusable `createPixelFont()` only
       if needed to define both body and clock fonts without duplicating validation. Do not
       add a retained scene graph, drawing context, generic geometry framework, or dependency.
-- [x] Add `packages/phone-screen/src/font/clock.ts` with fixed 5x6 cells for `0`-`9` and
+- [x] Add `packages/phone-screen/src/font/clock.ts` with normal-weight 5x6 glyphs for `0`-`9` and
       `:`. Unknown clock characters must fail or be rejected; they must not silently use the
       body-font `?`.
 - [x] Keep `bitmapFromArt`, `Framebuffer`, and `PixelFont` as the direct public authoring
@@ -374,7 +374,7 @@ screen remains unchanged.
       Use it in both list and carousel renderers.
 - [x] When `menuIndicator` exists, render three item rows and omit the list title. Preserve
       generic application-list behavior when it is absent.
-- [x] Add a fixed-cell 5x6 indicator face and `drawMenuIndicator()`; right-align to x=83 and
+- [x] Add a normal-weight 5x6 indicator face and `drawMenuIndicator()`; right-align to x=83 and
       test active and inactive hierarchy strings.
 - [x] Ensure labels truncate by measured pixel width before the x=78..80 gap rather than by
       a fixed character count. Do not let wide glyphs enter the rail.
@@ -442,7 +442,7 @@ screen remains unchanged.
 
 - The reference standby and menu-list fixtures match all 4,032 framebuffer pixels.
 - Signal and battery levels 0-4 have exact, tested geometry and bottom icons.
-- The clock uses a dedicated fixed 5x6 face at top-right.
+- The clock uses a dedicated normal-weight 5x6 face at top-right.
 - Menu selection is a 10-pixel inverted band with exact padding and a separate rail.
 - The position indicator uses an x=81 line, x=82 connectors, and a five-pixel x=83 run.
 - Every valid shortcut digit immediately updates the displayed screen, phone path, URL,

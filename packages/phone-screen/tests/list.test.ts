@@ -99,18 +99,17 @@ describe("drawPositionRail", () => {
 });
 
 describe("menu indicator", () => {
-  it("uses fixed 5x6 cells for digits, separators, and the cursor", () => {
+  it("uses the normal-weight 5x6 face for digits, separators, and the cursor", () => {
     expect(MENU_INDICATOR_FONT.glyphHeight).toBe(6);
-    for (const character of "0123456789 •_") {
-      const glyph = MENU_INDICATOR_FONT.glyphs.get(character);
-      expect(glyph?.width, character).toBe(5);
-      expect(glyph?.height, character).toBe(6);
-    }
+    expect(MENU_INDICATOR_FONT.glyphs.get("0")?.width).toBe(7);
+    expect(MENU_INDICATOR_FONT.glyphs.get("1")?.width).toBe(6);
+    expect(MENU_INDICATOR_FONT.glyphs.get("•")?.width).toBe(5);
+    expect(MENU_INDICATOR_FONT.glyphs.get("_")?.width).toBe(5);
     expect(MENU_INDICATOR_GLYPHS["•"]).toEqual([
       ".....",
       ".....",
-      "..#..",
       ".....",
+      "##...",
       ".....",
       ".....",
     ]);
