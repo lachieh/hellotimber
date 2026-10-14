@@ -851,17 +851,27 @@ state) and Profiles (8 records, 4 distinct frames: the records spell the 0-1-2-3
 **Files:** `src/display/{paint.ts,standby.ts,boot.ts,indicator.ts,unsupported.ts}`,
 `tests/paint-standby.test.ts`, `tests/paint-boot.test.ts`.
 
-- [ ] TDD: `paintStockScreen` with the literal model
+- [x] TDD: `paintStockScreen` with the literal model
       `{ kind: "standby", carrier: "Orange F", clock: "10:10", signal: 4, battery: 4 }` equals
       `standby/standby`.
-- [ ] TDD: for every boot step, `{ kind: "boot", phase: "hands", frame }` equals that golden
+- [x] TDD: for every boot step, `{ kind: "boot", phase: "hands", frame }` equals that golden
       image; `off` is blank.
-- [ ] Signal and battery levels 0-3 drop bars from the top. They are UNVERIFIED and covered by
+- [x] Signal and battery levels 0-3 drop bars from the top. They are UNVERIFIED and covered by
       a unit test only, since the kernel emits 4.
-- [ ] `custom` blits its frame verbatim. Kinds not used by the stock OS in this plan (`reader`,
+- [x] `custom` blits its frame verbatim. Kinds not used by the stock OS in this plan (`reader`,
       `editor`, `confirm`) paint the dotted-border "unsupported" marker plus the kind name, and
       the test asserts that marker.
-- [ ] Commit: `feat(nokia-os): stock standby and boot painting`.
+- [x] Commit: `feat(nokia-os): stock standby and boot painting`.
+
+Deviation: `tests/paint-indicator.test.ts` (new) checks `src/display/indicator.ts` against the
+indicator band of every carousel still and asserted level-1 image, and the first-digit dots
+against `menu/01-phone-book.anim` image `c`; `tests/support/goldens.ts` (new) loads goldens by id
+for Tasks 10-11. Measured layout: softkeys and the operator are centred at
+`floor((84 - advance width) / 2)` (`Menu`, `Select`, `Search`, `Options`, `Orange F` all fit, as
+phone-screen's `drawTextCentered` computes); the standby clock's last digit cell ends at x 78;
+the indicator's last digit cell ends at x 84. Until Task 10, `menu-carousel` and `list` paint the
+unsupported marker too (`menu carousel`, since the small font has no `-`), and so does the legacy
+boot `welcome` phase, which the stock phone never emits.
 
 ### Task 9 - Stock firmware composition (TDD)
 
