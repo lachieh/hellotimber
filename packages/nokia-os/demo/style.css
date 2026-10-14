@@ -57,6 +57,59 @@ h1 {
   pointer-events: none;
 }
 
+.screen-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+/* The vibrator: a lamp, and a shake of the LCD frame unless reduced motion is asked for. */
+.vibra {
+  padding: 4px 8px;
+  color: #516250;
+  font-size: 12px;
+  border: 1px solid #3a4739;
+}
+
+.vibra.on {
+  color: #151a16;
+  background: #ffcf5a;
+  border-color: #ffcf5a;
+}
+
+.lcd.shaking {
+  animation: shake 70ms linear infinite;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  25% {
+    translate: -2px 1px;
+  }
+  75% {
+    translate: 2px -1px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lcd.shaking {
+    animation: none;
+  }
+}
+
+.sound-log {
+  min-height: calc(8 * 1.5em);
+  margin: 0;
+  padding: 0;
+  color: #8ea18a;
+  font-size: 12px;
+  line-height: 1.5;
+  list-style: none;
+}
+
 [role="status"] {
   margin: 0;
   color: #c7f0d8;
@@ -129,6 +182,11 @@ input {
 
 .eeprom button {
   padding: 0 16px;
+}
+
+.eeprom .buttons {
+  display: flex;
+  gap: 8px;
 }
 
 .check {

@@ -12,7 +12,7 @@ README, which this plan edits too: do not start Task 1 before plan 15 is `done`.
 23 supplementary captures"), plans 13, 14, 15 and 23 in full before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan16/`. The planning probes in
 `$REF/captures/scratch-plan16/` are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-9 done).
+**Status:** in progress (Tasks 0-10 done).
 
 ## Goal
 
@@ -1072,24 +1072,41 @@ parallel with the main file, which keeps the rest and the coverage guard. Only `
 
 **Files:** `packages/nokia-os/demo/{index.html,main.ts,style.css}`, `packages/nokia-os/README.md`.
 
-- [ ] A `StockSoundPort` in the demo: one `AudioContext` created on the first user gesture; the
+- [x] A `StockSoundPort` in the demo: one `AudioContext` created on the first user gesture; the
       buzzer as a square `OscillatorNode`, the tone generator as a sine (the emulator renders it
       so; the earpiece path is quieter, Open question 2), each through a `GainNode` set from
       `volume` by a documented table; events scheduled at
       `ctx.currentTime + (atMs - phoneNow) / 1000 + 0.03`; a mute toggle. The vibrator drives a
       `VIBRA` lamp and a CSS shake of the LCD frame (`prefers-reduced-motion`: lamp only).
-- [ ] A "Factory settings" button that restarts the phone over storage seeded with the factory
+- [x] A "Factory settings" button that restarts the phone over storage seeded with the factory
       state (the demo boots virgin by default, plan 15 D4, and the virgin phone is nearly
       silent; Open question 3).
-- [ ] An event log under the status line (the last 8 events, `atMs output state`) so headless runs
+- [x] An event log under the status line (the last 8 events, `atMs output state`) so headless runs
       can check sound without hearing it.
-- [ ] Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`: Factory
+- [x] Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`: Factory
       settings; a keypad beep in the log; Tones › Ringing tone ▼ (Nokia tune's first notes ≈950
       ms later, the lamp on); C stops it; Menu 1 9 logs `Invalid shortcut`'s tone. Screenshots
       in the completion note.
-- [ ] README: the sound port (a WebAudio example), what is evidence (D1), the asset policy for
+- [x] README: the sound port (a WebAudio example), what is evidence (D1), the asset policy for
       sound (D3), virgin vs factory sound, and what later plans add.
-- [ ] Commit: `feat(nokia-os): WebAudio and vibration in the demo`.
+- [x] Commit: `feat(nokia-os): WebAudio and vibration in the demo`.
+
+**Completion note (Task 10).** The demo's port (`WebAudioSound` in `demo/main.ts`) makes its
+`AudioContext` on the first key or click, keeps a square buzzer and a sine tone generator running
+behind gains set at each event's scheduled time, and maps `volume` by two documented tables
+(buzzer: register 0/4/16/61/194 → gain 0/0.05/0.10/0.18/0.25, linear between; tone: the level
+word's low nibble, 0x0 → 0.06 down to 0xE → 0.004, 0xF muted). A Mute box, the `VIBRA` lamp with a
+CSS shake (lamp only under `prefers-reduced-motion`), **Factory settings** (erases the records,
+writes the factory state, restarts) and an eight-line event log. Verified headless with
+`agent-browser` (dev server on 5174; 5173 was taken): Factory settings and power-on logged the
+power-on tone (`tone 900 v=0x9105`, 124 ms); Menu logged a 124 ms keypad beep at `0x9104`; in
+Tones › Ringing tone, ▲ then ▼ onto Nokia tune logged `buzzer 1319 v=16` and `vibrator on` 991 ms
+after the ▼, then 1175, 740, 831, 1109 … Hz with the lamp lit, and C stopped it (`buzzer off`);
+Menu 1 9 logged `tone 1750 v=0x9105` for 289 ms; a Snake II meal (factory level 175, score 175)
+logged `buzzer 2636.9 v=6` for 6 ms and the vibrator for 480 ms. Screenshots:
+`/tmp/nokia-os-p16-{keypad-beep,ringing-list,ringing-preview,vibra,invalid-shortcut,snake-start,snake-meal}.png`.
+Observed, not changed: with the demo's 60 ms key holds, Menu 1 9's beep sounds 67 ms before
+`Invalid shortcut`'s tone replaces it, since the kernel opens the note at the 9's release.
 
 ### Task 11 - Verification gate and closeout
 

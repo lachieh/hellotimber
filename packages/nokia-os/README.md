@@ -14,7 +14,8 @@ queries, info pages and screens, input prompts (first screen), level bars, text 
 four game splashes. Choices persist in an EEPROM over a host storage port and pages show them
 (plan 15); the security code guards Phone security, Change security code, Restore factory
 settings and Clear timers, and gates the power-on with Phone security On. Snake II is playable
-(plan 23; see "Snake II"). Leaves that are whole applications open a marked
+(plan 23; see "Snake II"). The buzzer, the tone generator and the vibrator reach the host through a
+sound port (plan 16; see "Sound"). Leaves that are whole applications open a marked
 placeholder (a dotted border the firmware never draws) naming the plan that owns them; see "Leaf
 ownership".
 
@@ -74,7 +75,12 @@ a status line with the EEPROM records stored. The phone's EEPROM is the page's l
 settings survive a reload, and **Erase EEPROM** removes every `nokia-os/` record and restarts the
 virgin phone (a malformed record shows its error beside the button). The SIM select restarts the
 phone with `SIM 1` or `SIM 2`: with Phone security On, a SIM the phone has not seen asks for the
-security code (`12345`) at power-on. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
+security code (`12345`) at power-on. **Factory settings** restarts the phone over the factory
+state (the virgin phone is nearly silent; see "Sound"). The demo plays the sound port through
+WebAudio once a key or click has started audio (a **Mute** box silences it), lights a `VIBRA` lamp
+and shakes the LCD while the vibrator runs (the lamp only with reduced motion), and lists the last
+eight sound events (`atMs output state`) under the status line, so a headless run can check sound
+without hearing it. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
 difference; the list groups the goldens by top-level menu (`tree/05-tones`) and kind (`menu`,
 `probe`, `game`).
 
@@ -187,17 +193,84 @@ captures pixel for pixel and tick by tick.
   the clock to the seed is unknown, so the stock phone seeds from the minutes of the day
   (UNVERIFIED) and tests inject the recovered seeds.
 - **Cues.** The game emits `eat`, `crash`, `vibrate` and `top-score` cues stamped with the kernel
-  time to an internal sink. Plan 16 plays them; the stock settings (Warning tones, Sounds,
-  Shakes) decide which sound.
+  time to the phone's sounder (plan 16): a meal's 2636.9 Hz chirp, the crash's three 440 Hz
+  pulses and a new top score's fireworks tune need Warning tones and Games › Settings › Sounds On;
+  the ≈480 ms shakes need Shakes and Vibrating alert On. Keys on the game-over screens are silent.
 - **Scores.** Game over writes a new top score to the settings record, which Top score then shows.
   Navi or C suspends a game; `Continue` heads the game menu until the game resumes or is
   discarded (New game, OK on the Level page, power-off).
+
+## Sound
+
+The phone reports every change of its three outputs to `StockPhoneConfig.sound`, a
+`StockSoundPort`, stamped with the kernel time it happens at (`atMs`). Events come from `tick()` in
+time order, so a host schedules each one at `audioNow + (atMs - phoneNow) + latency` and a coarse
+tick plays the same as a fine one. nokia-os touches no audio API; phone-core's id-only `sound`
+event is not used.
+
+```ts
+import { createStockPhone, type StockSoundEvent } from "@hellotimber/nokia-os";
+
+const ctx = new AudioContext(); // create or resume it from a user gesture
+const voice = (type: OscillatorType) => {
+  const oscillator = ctx.createOscillator();
+  const gain = ctx.createGain();
+  oscillator.type = type;
+  gain.gain.value = 0;
+  oscillator.connect(gain).connect(ctx.destination);
+  oscillator.start();
+  return { oscillator, gain };
+};
+const voices = { buzzer: voice("square"), tone: voice("sine") };
+let phoneNow = 0;
+
+const phone = createStockPhone({
+  carrier: "Telstra",
+  sound: {
+    change(event: StockSoundEvent) {
+      const at = ctx.currentTime + (event.atMs - phoneNow) / 1000 + 0.03;
+      if (event.output === "vibrator") return; // drive a lamp or navigator.vibrate()
+      const { oscillator, gain } = voices[event.output];
+      if (event.hz === null) return gain.gain.setValueAtTime(0, at);
+      oscillator.frequency.setValueAtTime(event.hz, at);
+      // `volume` is the firmware's register; map it to a gain (loudness is not captured).
+      gain.gain.setValueAtTime(event.output === "buzzer" ? 0.15 : 0.04, at);
+    },
+  },
+});
+const loop = () => {
+  phoneNow = Math.floor(performance.now());
+  phone.tick(phoneNow);
+  requestAnimationFrame(loop);
+};
+requestAnimationFrame(loop);
+```
+
+- **Outputs.** `buzzer`: 13 MHz / the firmware's divider, `volume` the MAD2 volume register
+  (0-194 seen, higher is louder). `tone`: the DSP tone generator on the earpiece path, `volume`
+  its level word (`0x9108`/`0x9104`/`0x9100` for Keypad tones Level 1/2/3; a lower low nibble is
+  louder). `vibrator`: on or off. The demo's gain table (`demo/main.ts`) is a choice.
+- **What is evidence.** Sound is verified as event timelines, never waveforms: the emulator logs
+  each output's register changes every 1 ms, and `goldens/sound/**/*.sound.txt` hold those rows
+  aligned on the recording's first key. The captures' WAV files are the emulator's own synthesis
+  (it ignores both volume registers) and are never imported or asserted.
+- **Asset policy.** `import-captures` turns the capture corpus's sound recordings into the sound
+  goldens; `extract-resources` derives every program from them (`src/resources/generated/sounds.ts`:
+  the 35 ringing tones, the message tones, the keypad beep, note tones, Snake II's cues, the
+  per-level volume tables). The extracted firmware tone tables are only a cross-check.
+- **Virgin vs factory.** Empty storage is the virgin EEPROM, whose tone settings are unset: keys
+  beep, but ringing previews and warning tones are silent. The factory state (Restore factory
+  settings, or the demo's button) sounds: Ringing tone, Ringing volume and Message alert tone
+  previews, warning tones on error notes, Snake II's sounds and shakes.
+- **Later plans.** The incoming call's ringing and DTMF (22), the message alert (18), alarms and
+  reminders (21), profile switching (17), the other games' sounds (24) and the Composer (27) play
+  through the same sequencer.
 
 ## Leaf ownership
 
 Leaves that are whole applications open the placeholder, tagged with the plan that owns them:
 Write messages, Service command editor, Picture messages, Templates, Smileys, Topics, Chat and
-Screen saver › Screen saver and the Welcome note editor (18); Composer slots (16); the three
+Screen saver › Screen saver and the Welcome note editor (18); Composer slots (27); the three
 native languages (26); the other games' New game (24); Calculator (20); Stopwatch (21); Profiles ›
 Activate (17). Prompts and empty-state notes show their first screen until the plans for Messages
 (18), Phone book (19), Clock and Reminders (21) and Call register and Call divert (22) take them
