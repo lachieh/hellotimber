@@ -1,5 +1,5 @@
 // Sound and vibration cues (plan 23 D8): the games emit them, the session stamps them with the
-// kernel time, and plan 16 plays them. Internal until plan 16; not exported from the package.
+// kernel time, and the phone's sounder plays them (plan 16 D13). Internal; not exported.
 
 export type StockCue =
   /** A meal (food or creature): 2637 Hz for one or two units (with Warning tones On). */
@@ -15,5 +15,5 @@ export interface StockCueSink {
   cue(cue: StockCue, atMs: number): void;
 }
 
-/** The default sink: cues go nowhere until plan 16 plays them. */
+/** A sink that drops every cue (tests, and a games holder outside a phone). */
 export const NO_CUES: StockCueSink = { cue() {} };

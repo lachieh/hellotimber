@@ -23,6 +23,7 @@ import {
 import { goto, open } from "./support/drive.ts";
 import { SNAKE_SCENARIOS } from "./support/game.ts";
 import { BOOT_SCENARIOS, PROBE_SCENARIOS } from "./support/probes.ts";
+import { SOUND_SCENARIOS } from "./support/sound-scenarios.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";
 import { frameAt, standbyRig, stockRig, type Rig } from "./support/rig.ts";
 
@@ -210,7 +211,7 @@ const SCENARIOS: Record<string, (id: string) => void> = {
   "menu/11-clock.sub-1948": (id) => levelOne(id, 11, { clock: () => "19:48" }),
   "menu/11-clock.sub-0759": (id) => levelOne(id, 11, { clock: () => "07:59" }),
 };
-Object.assign(SCENARIOS, PROBE_SCENARIOS, BOOT_SCENARIOS, SNAKE_SCENARIOS);
+Object.assign(SCENARIOS, PROBE_SCENARIOS, BOOT_SCENARIOS, SNAKE_SCENARIOS, SOUND_SCENARIOS);
 SLUGS.forEach((slug, i) => {
   SCENARIOS[`menu/${slug}`] = (id) => carouselStill(id, i + 1);
   SCENARIOS[`menu/${slug}.anim`] = (id) => carouselAnim(id, i + 1);
@@ -331,6 +332,10 @@ const KNOWN_GAPS: Readonly<Record<string, string>> = {
     "C held through the suspend goes on to standby in the capture, but the kernel swallows the " +
     "keys held when an application exits, so the held C's long press never fires (phone-core; " +
     "the game suspends on C's key-down, as the capture shows the menu while C is held)",
+  "sound/keypad/pair":
+    "the ▲ pressed 70 ms before the DSP powers down beeps for 77 ms in the capture (one " +
+    "recording: the tone starts 93 ms after the key and stops where a 145 ms beep would); " +
+    "nokia-os beeps 145 ms (plan 16 D8)",
   "probe/shortcut-m8-6-3":
     `${PARTIAL_8}; ${ON_OVER_GAMES}; the window ends 2920 ms after the 3's redraw ` +
     "(2948 configured, +28 ms)",

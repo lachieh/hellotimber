@@ -10,6 +10,7 @@ import {
   createMemoryStorage,
   paintStockScreen,
   type StockPhoneConfig,
+  type StockSoundEvent,
   type StockStorage,
 } from "../../src/index";
 import type { RecordedFrame, RecordedTimeline } from "./golden.ts";
@@ -18,6 +19,8 @@ export interface Rig {
   readonly phone: Phone;
   /** Virtual time in ms; the phone has seen tick(now). */
   readonly now: number;
+  /** Every sound event the phone has emitted (plan 16), also passed on to `config.sound`. */
+  readonly sounds: readonly StockSoundEvent[];
   /** Key down, `holdMs` of 1 ms ticks, key up. */
   press(key: PhoneKey, holdMs?: number): void;
   hold(key: PhoneKey): void;
@@ -42,7 +45,14 @@ export interface Rig {
 }
 
 export function createRig(config: StockPhoneConfig, internals: StockPhoneInternals = {}): Rig {
-  const phone = createStockPhoneWith(config, internals);
+  const sounds: StockSoundEvent[] = [];
+  const sound = {
+    change(event: StockSoundEvent) {
+      sounds.push(event);
+      config.sound?.change(event);
+    },
+  };
+  const phone = createStockPhoneWith({ ...config, sound }, internals);
   let now = 0;
   phone.tick(now);
 
@@ -62,6 +72,7 @@ export function createRig(config: StockPhoneConfig, internals: StockPhoneInterna
     get now() {
       return now;
     },
+    sounds,
     press(key, holdMs = 0) {
       rig.hold(key);
       rig.advance(holdMs);
@@ -164,15 +175,22 @@ export function standbyRig(
 
 /**
  * A storage holding what the plan 15 boot captures had in their EEPROM: Phone security On (the
- * virgin prompt reproduced as the gate, with no recent SIM) and, optionally, a welcome note.
+ * virgin prompt reproduced as the gate, with no recent SIM) and, optionally, a welcome note. With
+ * `factory`, the factory state first (plan 16 D7: the sound captures' image; Phone security then
+ * defaults to Off, as Restore factory settings leaves it).
  */
 export function seededStorage(
-  seed: { readonly phoneSecurity?: boolean; readonly welcomeNote?: string } = {},
+  seed: {
+    readonly factory?: boolean;
+    readonly phoneSecurity?: boolean;
+    readonly welcomeNote?: string;
+  } = {},
 ): StockStorage {
   const storage = createMemoryStorage();
   const settings = createStockSettings(new StockEeprom(storage));
+  if (seed.factory) settings.restoreFactory();
   // Phone security's list is `Off`, `On` (CODE_SETTINGS).
-  if (seed.phoneSecurity ?? true) settings.choose(PHONE_SECURITY_KEY, 1);
+  if (seed.phoneSecurity ?? !seed.factory) settings.choose(PHONE_SECURITY_KEY, 1);
   if (seed.welcomeNote !== undefined) settings.setText(WELCOME_NOTE_KEY, seed.welcomeNote);
   return storage;
 }

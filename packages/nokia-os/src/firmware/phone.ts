@@ -1,4 +1,4 @@
-import { createPhone, type Phone } from "@hellotimber/phone-core";
+import { createPhone, type KeyEvent, type Phone, type PhoneKey } from "@hellotimber/phone-core";
 import { VISIBLE_ROWS } from "../display/list-rows";
 import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
 import { STOCK_SHORTCUT_WINDOW_MS, type StockPorts } from "./bindings";
@@ -9,6 +9,9 @@ import { createStockGames, createStockMenu } from "./menu";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { stockBootGates } from "./boot";
 import { createStockSettings } from "./settings";
+import type { StockSoundPort } from "../sound/port";
+import { SoundSequencer } from "../sound/sequencer";
+import { StockSounder, type KeyDownOptions } from "../sound/sounder";
 
 export interface StockPhoneConfig extends StockPorts {
   /** Operator line. Every glyph must exist in the stock small font (validated; throws). */
@@ -28,6 +31,11 @@ export interface StockPhoneConfig extends StockPorts {
    * security code when this SIM is not among the last five used. Default "sim-1"; non-empty.
    */
   sim?: string;
+  /**
+   * Plan 16: the phone's buzzer, tone generator and vibrator. Every change arrives from `tick()`
+   * stamped with the kernel time it happens at. Default: nowhere.
+   */
+  sound?: StockSoundPort;
 }
 
 /**
@@ -55,7 +63,7 @@ export interface StockPhoneInternals {
    * minutes of the day, UNVERIFIED; tests inject the seeds recovered from the captures).
    */
   readonly seed?: number;
-  /** Where the games' cues go, stamped with the kernel time (D8; default: nowhere). */
+  /** Where the games' cues go, stamped with the kernel time (D8; default: the phone's sounder). */
   readonly cues?: StockCueSink;
 }
 
@@ -93,14 +101,17 @@ export function createStockPhoneWith(
   const security = new StockSecurity(eeprom, settings, { now: () => now, sim });
   const skip = config.boot === "skip";
   const ports = { clock, date };
+  const port = config.sound;
+  const sequencer = new SoundSequencer((event) => port?.change(event));
+  const sounder = new StockSounder(sequencer, settings, () => now);
   const clockGames = createStockGames(ports, () => now);
   const games = {
     ...clockGames,
     ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
-    ...(internals.cues === undefined ? {} : { cues: internals.cues }),
+    cues: internals.cues ?? sounder,
   };
   const phone = createPhone({
-    menu: createStockMenu(ports, settings, games, security),
+    menu: createStockMenu(ports, settings, games, security, sounder),
     carrier: config.carrier,
     ...(clock === undefined ? {} : { clock }),
     bootTimeline: BOOT_TIMELINE,
@@ -115,17 +126,40 @@ export function createStockPhoneWith(
     // Stock shortcut digits: menu numbers, delayed opening, Invalid shortcut (plan 14 D14).
     shortcutEntry: { openDelayMs: STOCK_SHORTCUT_OPEN_DELAY_MS, invalid: invalidShortcut() },
   });
-  // Power-off loses the suspended game (it survives standby, Task 0 C8).
+  // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
+  let poweredOn = false;
   phone.subscribe((snapshot) => {
     if (!snapshot.poweredOn) games.snake = undefined;
+    if (snapshot.poweredOn === poweredOn) return;
+    poweredOn = snapshot.poweredOn;
+    if (poweredOn) sounder.powerOn({ boot: !skip });
+    else sounder.powerOff();
   });
-  return {
-    send: (event) => phone.send(event),
-    pressKey: (key, holdMs) => phone.pressKey(key, holdMs),
+  const send = (event: KeyEvent): void => {
+    if (event.type === "up") {
+      phone.send(event);
+      sounder.keyUp(event.key);
+      return;
+    }
+    const on = poweredOn;
+    const options = on ? keyDownOptions(event.key, phone) : undefined;
+    phone.send(event);
+    // The beep follows the key's handling: a widget may set this key's level or replace it.
+    if (options !== undefined) sounder.keyDown(event.key, options);
+  };
+  const wrapper: Phone = {
+    send,
+    pressKey(key, holdMs = 0) {
+      send({ type: "down", key });
+      if (holdMs > 0) wrapper.tick(now + holdMs);
+      send({ type: "up", key });
+    },
     tick(nowMs) {
-      // The kernel time the games stamp their cues with.
+      // The kernel time the games stamp their cues and the sounder its sounds with.
       now = Math.max(now, nowMs);
       phone.tick(nowMs);
+      sounder.tick();
+      sequencer.advance(now);
     },
     navigate: (path) => phone.navigate(path),
     setNotice: (notice) => phone.setNotice(notice),
@@ -138,4 +172,16 @@ export function createStockPhoneWith(
     subscribe: (callback) => phone.subscribe(callback),
     on: (event, callback) => phone.on(event, callback),
   };
+  return wrapper;
+}
+
+/**
+ * How a key-down beeps where the phone is (Task 0): the power key beeps at standby only
+ * (`boot/power-key`; not in the Ringing tone list, `boot/power-off`), and C in the menu
+ * carousel leaves the menu at its key-down, so it has no long press to beep at.
+ */
+function keyDownOptions(key: PhoneKey, phone: Phone): KeyDownOptions {
+  if (key === "power") return { beeps: phone.screen.kind === "standby", holdBeeps: false };
+  if (key === "c" && phone.screen.kind === "menu-carousel") return { holdBeeps: false };
+  return {};
 }

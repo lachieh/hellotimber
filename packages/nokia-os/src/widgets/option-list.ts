@@ -17,6 +17,11 @@ export interface OptionListOptions {
   readonly numbering?: ListNumbering;
   /** OK on option `index`. */
   choose(index: number, flow: Flow): void;
+  /**
+   * Every key-down, with the option ▲/▼ is about to highlight (other keys: the highlighted one;
+   * null while unset). Plan 16: the Keypad tones list beeps ▲/▼ at that option's level.
+   */
+  keyDown?(key: PhoneKey, highlighted: number | null): void;
 }
 
 /**
@@ -46,6 +51,11 @@ export class OptionListWidget implements Widget {
       indicator: rowsIndicator(flow.indicator(), selected, this.#options.numbering),
       softkey: selected === null ? UNSET_SOFTKEY : this.#options.softkey,
     };
+  }
+
+  onKeyDown(key: PhoneKey): void {
+    const next = moveRows(this.#cursor, key, this.#options.labels.length) ?? this.#cursor;
+    this.#options.keyDown?.(key, next.selected);
   }
 
   onKey(key: PhoneKey, flow: Flow): void {

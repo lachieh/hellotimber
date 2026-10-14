@@ -864,22 +864,45 @@ types (exported from the package in Task 5).
 `src/index.ts`, `tests/sounder.test.ts` (new), `tests/support/rig.ts` (sound recorder,
 `seededStorage({ factory })`), `tests/support/sound.ts` (new), `tests/firmware-phone.test.ts`.
 
-- [ ] TDD `tests/support/sound.ts` itself: `expectSoundTimeline`'s failure text for an early edge,
+- [x] TDD `tests/support/sound.ts` itself: `expectSoundTimeline`'s failure text for an early edge,
       a wrong frequency, a missing and an extra event (as plan 13 Task 2 tested `expectTimeline`).
-- [ ] TDD `StockSounder.keyDown` against `sound/keypad/*`: 900 Hz at each level's `dsp_level`;
+- [x] TDD `StockSounder.keyDown` against `sound/keypad/*`: 900 Hz at each level's `dsp_level`;
       Off silent; the virgin unset level per Task 0; the duration group rule; held keys.
-- [ ] `createStockPhoneWith`: one `SoundSequencer` emitting to `config.sound` (default: nowhere),
+- [x] `createStockPhoneWith`: one `SoundSequencer` emitting to `config.sound` (default: nowhere),
       advanced in the wrapper's `tick()`; key-downs from `send`/`pressKey` reach `keyDown` while
       powered on (the wrapper knows the kernel time); power-off calls `powerOff()`; `LeafBinder`
       and `StockGames` get the sounder (`games.cues` = the sounder unless `internals.cues` is
       given).
-- [ ] TDD the contract rules (Contract changes): ordering, no duplicates, power-off silence, no
+- [x] TDD the contract rules (Contract changes): ordering, no duplicates, power-off silence, no
       port = same screens (every existing acceptance scenario still passes).
-- [ ] `sound/boot/*`: the boot beep as Task 0 found it (a key-down of the power key, or a boot
+- [x] `sound/boot/*`: the boot beep as Task 0 found it (a key-down of the power key, or a boot
       program at its offset); power-off silence.
-- [ ] Export `StockSoundEvent` and `StockSoundPort` from `src/index.ts`.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): sound port, keypad tones and the vibrator`.
+- [x] Export `StockSoundEvent` and `StockSoundPort` from `src/index.ts`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): sound port, keypad tones and the vibrator`.
+
+Deviation (Task 5): `StockSounder` also has `keyUp(key)`, `tick()` (held-key beeps due by now:
+▲/▼ at each auto-repeat, `LEVEL_REPEAT`, and C at its long press, `C_HOLD_BEEP_MS` = 480: the
+captured 505-511 ms less the median 28 ms key latency), `powerOn({ boot })` and
+`keyBeepLevel(option)`; `keyDown(key, options)` takes whether the key beeps and has held beeps
+there, which the wrapper decides from the screen: the power key beeps at standby only (it beeps
+there in `boot/power-key` and `keypad/keys`, not in the Ringing tone list in `boot/power-off`),
+and C in the menu carousel has no long-press beep (`keypad/level-*`: it leaves the menu at its
+key-down). The wrapper calls `keyDown` after the kernel handled the key-down, so the Keypad
+tones list (an `OptionListOptions.keyDown` hook, bound in `leaves.ts`) sets the beep of its ▲/▼
+to the highlighted option (`keypad/levels-list`, `keypad/virgin-list`). The DSP's power state is
+read from the sequencer's last tone change. With `boot: "skip"` there is no power-on tone (the
+boot is skipped); power-off cancels a pending power-on tone. The power-off tone plays at the
+kernel's power-off (its 800 ms long press; the firmware's ≈1046 ms is not reproduced). Scenarios
+live in `tests/support/sound-scenarios.ts` (`SOUND_SCENARIOS`, registered in the acceptance
+test, so these goldens leave `awaitsPlan16Scenario`), and `sound/keypad/pair` is a known gap: its
+▲ 70 ms before the DSP powers down beeps 77 ms in the capture. `sound/boot/power-off` needs a
+preview and is driven in Task 6. Comparison (`tests/support/sound.ts`): a key-started or
+key-stopped edge may lag its key by up to `KEY_LATENCY_MAX_MS` (103); a key-started tone's end is
+within `KEY_TONE_TOLERANCE_MS` (10) of its length; a program's first edge after a key within
+`SOUND_ONSET_TOLERANCE_MS` (25); its later edges ±2 ms of it, or within `PASS_DRIFT` past one
+cycle. The factory Games Sounds and Shakes were already On in code (no `FACTORY_DEFAULTS` entry;
+the virgin opening); a settings test now pins them.
 
 ### Task 6 - Ringing and message tone previews (TDD against sound goldens)
 

@@ -1,9 +1,11 @@
-import type { Phone, PhoneKey } from "@hellotimber/phone-core";
+import type { KeyEvent, Phone, PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
 import type { StockCue } from "../src/firmware/cues";
 import { createStockPhoneWith } from "../src/firmware/phone";
-import { createStockPhone, type StockPhoneConfig } from "../src/index";
-import { BOOT_TIMELINE } from "../src/resources";
+import { createStockPhone, type StockPhoneConfig, type StockSoundEvent } from "../src/index";
+import { BOOT_TIMELINE, BOOT_TONE } from "../src/resources";
+import { LEVEL_REPEAT } from "../src/firmware/bindings";
+import { soundStorage } from "./support/sound-scenarios.ts";
 
 function poweredOn(config: Partial<StockPhoneConfig> = {}): Phone {
   const phone = createStockPhone({ carrier: "Orange F", boot: "skip", ...config });
@@ -389,5 +391,106 @@ describe("Snake II: New game, suspend and Continue (plan 23 D10, Task 0 C8)", ()
     expect(cues.map((c) => c.cue.kind)).toEqual(["crash", "vibrate"]);
     expect(cues[0]!.atMs).toBeGreaterThan(start);
     expect(cues[0]!.atMs).toBeLessThan(start + 1000);
+  });
+});
+
+describe("the sound port (plan 16 D4)", () => {
+  /** A factory phone ticked every `step` ms, keys at fixed kernel times; its port's events. */
+  function run(step: number, port = true) {
+    const events: { event: StockSoundEvent; tickMs: number }[] = [];
+    let tickMs = 0;
+    const storage = soundStorage("factory");
+    const phone = createStockPhone({
+      carrier: "Orange F",
+      storage,
+      ...(port ? { sound: { change: (event) => events.push({ event, tickMs }) } } : {}),
+    });
+    const screens: string[] = [];
+    phone.subscribe((snapshot) => screens.push(`${tickMs} ${JSON.stringify(snapshot)}`));
+    const script: [number, KeyEvent][] = [
+      [0, { type: "down", key: "power" }],
+      [1000, { type: "up", key: "power" }],
+      [12000, { type: "down", key: "navi" }],
+      [12050, { type: "up", key: "navi" }],
+      [12100, { type: "down", key: "down" }],
+      [14000, { type: "up", key: "down" }],
+      [15000, { type: "down", key: "c" }],
+      [17000, { type: "up", key: "c" }],
+      [20000, { type: "down", key: "power" }],
+      [21000, { type: "up", key: "power" }],
+    ];
+    for (let t = 0; t <= 24000; t += step) {
+      tickMs = t;
+      phone.tick(t);
+      for (const [at, event] of script) if (at === t) phone.send(event);
+    }
+    return { events, screens };
+  }
+
+  it("emits each change once its kernel time is reached, in time order, the same at any tick", () => {
+    const fine = run(1);
+    const coarse = run(50);
+    expect(coarse.events.map((e) => e.event)).toEqual(fine.events.map((e) => e.event));
+    for (const { events } of [fine, coarse]) {
+      let last = -Infinity;
+      for (const { event, tickMs } of events) {
+        expect(event.atMs).toBeLessThanOrEqual(tickMs);
+        expect(event.atMs).toBeGreaterThanOrEqual(last);
+        last = event.atMs;
+      }
+    }
+    // The power-on tone; Menu's beep, which ▼ runs on (no new onset), ▼'s auto-repeats; C (no
+    // long press in the carousel); the power key at standby; the power-off tone.
+    const repeat = 12100 + LEVEL_REPEAT.firstMs;
+    expect(
+      fine.events.flatMap((e) =>
+        e.event.output === "tone" && e.event.hz !== null ? [e.event.atMs] : [],
+      ),
+    ).toEqual([
+      800 + BOOT_TONE.atMs,
+      12000,
+      repeat,
+      repeat + LEVEL_REPEAT.everyMs,
+      repeat + 2 * LEVEL_REPEAT.everyMs,
+      15000,
+      20000,
+      20800,
+    ]);
+  });
+
+  it("never repeats an output's state", () => {
+    const last = new Map<string, string>();
+    for (const { event } of run(1).events) {
+      const state = JSON.stringify({ ...event, atMs: 0 });
+      expect(last.get(event.output)).not.toBe(state);
+      last.set(event.output, state);
+    }
+  });
+
+  it("plays the power-off tone at power-off and nothing after it", () => {
+    const { events } = run(1);
+    const off = events.findIndex((e) => e.event.atMs === 20800);
+    expect(events.slice(off).map((e) => e.event)).toEqual([
+      { output: "tone", atMs: 20800, hz: BOOT_TONE.program.steps[0]!.tone!.hz, volume: 0x9105 },
+      { output: "tone", atMs: 20800 + BOOT_TONE.program.steps[0]!.ms, hz: null },
+    ]);
+  });
+
+  it("cancels the power-on tone when the phone turns off first", () => {
+    const events: StockSoundEvent[] = [];
+    const phone = createStockPhone({
+      carrier: "Orange F",
+      sound: { change: (e) => events.push(e) },
+    });
+    phone.tick(0);
+    phone.pressKey("power", 800);
+    phone.tick(1000);
+    phone.pressKey("power", 800);
+    for (let t = 1800; t <= 8000; t += 10) phone.tick(t);
+    expect(events.map((e) => e.atMs)).toEqual([1800, 1800 + BOOT_TONE.program.steps[0]!.ms]);
+  });
+
+  it("changes nothing on screen: a phone without a port shows the same frames", () => {
+    expect(run(1, false).screens).toEqual(run(1).screens);
   });
 });

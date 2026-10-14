@@ -33,6 +33,8 @@ import { seedFromClock } from "../games/snake/seed";
 import { createMemoryStorage, StockEeprom } from "./eeprom";
 import { StockSecurity } from "./security";
 import { createStockSettings, stockPageValue, type StockSettings } from "./settings";
+import { SoundSequencer } from "../sound/sequencer";
+import { StockSounder } from "../sound/sounder";
 
 interface Builder {
   readonly ports: StockPorts;
@@ -157,16 +159,20 @@ export function createStockGames(ports: StockPorts = {}, now: () => number = () 
  * The stock menu, with Clock pages reading `ports` for their clock and date values, the other
  * pages, option lists and setters reading and writing `settings` (default: a fresh store over an
  * empty in-memory EEPROM, the virgin state), and the games keeping their suspended game in
- * `games` (default: fresh), and the security-code leaves verifying against `security`
- * (default: the virgin code, over its own in-memory EEPROM).
+ * `games` (default: fresh), the security-code leaves verifying against `security`
+ * (default: the virgin code, over its own in-memory EEPROM), and previews and note tones going to
+ * `sounder` (default: a sounder whose sequencer nothing advances: silent).
  */
 export function createStockMenu(
   ports: StockPorts = {},
   settings: StockSettings = createStockSettings(new StockEeprom(createMemoryStorage())),
   games: StockGames = createStockGames(ports),
   security: StockSecurity = new StockSecurity(new StockEeprom(createMemoryStorage()), settings),
+  sounder: StockSounder = new StockSounder(new SoundSequencer(() => {}), settings, () =>
+    games.now(),
+  ),
 ): PhoneMenu {
-  const leaves = new LeafBinder(settings, games, security);
+  const leaves = new LeafBinder(settings, games, security, sounder);
   const builder: Builder = { ports, settings, games, leaves };
   return new PhoneMenu(
     STOCK_TREE.map(

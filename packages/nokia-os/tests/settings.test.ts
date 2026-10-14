@@ -431,6 +431,18 @@ describe("factory state (D5)", () => {
     expect(stockPageValue(settings, PHONE_SECURITY_KEY)).toBe("Off");
   });
 
+  it("leaves Games › Settings › Sounds and Shakes On (plan 16 Task 0: the factory image's games sound and shake)", () => {
+    // Plan 15's factory table read Off for both (a v5.79 reading); the v6.39 factory image plays
+    // Snake II's sounds and shakes, so the factory state keeps their virgin On.
+    const storage = createMemoryStorage();
+    const eeprom = new StockEeprom(storage);
+    eeprom.write(SETTINGS_RECORD, SETTINGS_RECORD.factory!(written()));
+    const settings = createStockSettings(eeprom);
+    expect(settings.label("games/settings/sounds")).toBe("On");
+    expect(settings.label("games/settings/shakes")).toBe("On");
+    expect(FACTORY_DEFAULTS.some((entry) => entry.key.startsWith("games/settings/"))).toBe(false);
+  });
+
   it("keeps RESTORE_KEEPS (the welcome note, the top score) and resets other texts", () => {
     const factory = SETTINGS_RECORD.factory!(written());
     expect(factory.texts).toEqual({ [WELCOME_NOTE_KEY]: "Hi" });

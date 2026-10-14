@@ -71,6 +71,10 @@ import {
 import { PlaceholderApplication } from "./placeholder";
 import { SECURITY_CODE_DIGITS, type StockSecurity } from "./security";
 import type { StockSettings } from "./settings";
+import type { StockSounder } from "../sound/sounder";
+
+/** The Keypad tones lists' setting keys (Tones and each profile's Personalise). */
+const KEYPAD_TONES_LIST = /^(tones|profiles\/[a-z0-9-]+\/personalise)\/keypad-tones$/;
 
 /** The soft key of Instructions pages (P12; the tree records only their text). */
 const TEXT_PAGES_SOFTKEY = "More";
@@ -170,18 +174,25 @@ function treePath(number: string): StockTreeNode[] {
 }
 
 /**
- * Builds the stock leaves of one menu over one settings store, one games holder and one
- * security code.
+ * Builds the stock leaves of one menu over one settings store, one games holder, one security
+ * code and one sounder (previews and note tones, plan 16).
  */
 export class LeafBinder {
   readonly #settings: StockSettings;
   readonly #games: StockGames;
   readonly #security: StockSecurity;
+  readonly #sounder: StockSounder;
 
-  constructor(settings: StockSettings, games: StockGames, security: StockSecurity) {
+  constructor(
+    settings: StockSettings,
+    games: StockGames,
+    security: StockSecurity,
+    sounder: StockSounder,
+  ) {
     this.#settings = settings;
     this.#games = games;
     this.#security = security;
+    this.#sounder = sounder;
   }
 
   /** The application a leaf node opens. */
@@ -500,6 +511,13 @@ export class LeafBinder {
       };
     });
     const numbering = optionListNumbering(number);
+    // The Keypad tones list (Tones and every Personalise): ▲/▼ beep at the option they highlight.
+    const sounder = this.#sounder;
+    const keyDown = KEYPAD_TONES_LIST.test(key)
+      ? (pressed: PhoneKey, highlighted: number | null) => {
+          if (pressed === "up" || pressed === "down") sounder.keyBeepLevel(highlighted);
+        }
+      : undefined;
     return () =>
       new OptionListWidget({
         labels,
@@ -507,6 +525,7 @@ export class LeafBinder {
         opening: settings.choice(key),
         numbering,
         choose: (index, flow) => choices[index]!(flow),
+        ...(keyDown === undefined ? {} : { keyDown }),
       });
   }
 
