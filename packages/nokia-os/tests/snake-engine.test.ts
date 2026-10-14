@@ -3,6 +3,7 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
 import {
+  blinkSnake,
   newSnakeGame,
   snakeKey,
   snakeRender,
@@ -10,6 +11,10 @@ import {
   type SnakeStep,
 } from "../src/games/snake/engine";
 import type { Heading, Segment, SnakeState } from "../src/games/snake/model";
+import { SNAKE_MAZES } from "../src/resources";
+import { loadGolden } from "./support/goldens";
+import { goldenBoards } from "./support/snake-decode";
+import { INDEX } from "./support/tree";
 
 /** A game at 10:10's seed (first food (14, 8)) with the given overrides. */
 function game(overrides: Partial<SnakeState> = {}, maze = 0, level = 1): SnakeState {
@@ -386,4 +391,319 @@ describe("food, growth and score (H7, H8, H13, H16)", () => {
     expect(snakeRender(game({ score: 65536 + 42 })).score).toBe(42);
     expect(snakeRender(game({ score: 105 })).score).toBe(105);
   });
+});
+
+describe("creatures (H9, H10)", () => {
+  /** A game whose next step eats the food at (14, 8), with `counter` set. */
+  const beforeMeal = (counter: number, overrides: Partial<SnakeState> = {}) =>
+    game({
+      segments: snake(
+        [
+          [9, 8],
+          [10, 8],
+          [11, 8],
+          [12, 8],
+          [13, 8],
+        ],
+        "right",
+      ),
+      counter,
+      ...overrides,
+    });
+
+  it("counts 4 per meal while none is out and brings one on the fifth meal, countdown 20", () => {
+    const fourth = stepSnake(beforeMeal(12)).state;
+    expect([fourth.counter, fourth.creature]).toEqual([16, undefined]);
+    const fifth = stepSnake(beforeMeal(16));
+    expect(fifth.state.counter).toBe(20);
+    expect(fifth.state.creature).toMatchObject({ shown: true, frame: 1 });
+    const render = snakeRender(fifth.state);
+    expect(render.countdown).toBe(20);
+    expect(render.creature?.cells).toEqual(fifth.state.creature!.cells);
+  });
+
+  it("keeps the creature out of the new food's row and column, and the food out of its", () => {
+    const spawned = stepSnake(beforeMeal(16)).state;
+    const food = spawned.food!;
+    for (const c of spawned.creature!.cells) {
+      expect(c.x).not.toBe(food.x);
+      expect(c.y).not.toBe(food.y);
+    }
+  });
+
+  it("counts down one per step and goes when the countdown reaches 0", () => {
+    let state = stepSnake(beforeMeal(16)).state;
+    for (let left = 19; left >= 1; left--) {
+      state = stepSnake(state).state;
+      expect(snakeRender(state).countdown).toBe(left);
+    }
+    state = stepSnake(state).state;
+    expect(state.creature).toBeUndefined();
+    expect(state.counter).toBe(0);
+    expect(snakeRender(state).countdown).toBeUndefined();
+  });
+
+  it("does not count meals while a creature is out", () => {
+    const creature = {
+      kind: 2,
+      cells: [
+        { x: 2, y: 1 },
+        { x: 3, y: 1 },
+      ],
+      shown: true,
+      frame: 1,
+    } as const;
+    const after = stepSnake(beforeMeal(9, { creature })).state;
+    expect(after.counter).toBe(8);
+    expect(after.food!.x === 2 || after.food!.x === 3 || after.food!.y === 1).toBe(false);
+  });
+
+  it("scores 5 × level + 5 + 2 × the steps left on eating, without growing, with a fat neck", () => {
+    const creature = {
+      kind: 4,
+      cells: [
+        { x: 14, y: 8 },
+        { x: 15, y: 8 },
+      ],
+      shown: true,
+      frame: 1,
+    } as const;
+    const start = beforeMeal(11, { creature, food: { x: 3, y: 3 }, level: 9 });
+    const ate = stepSnake(start);
+    expect(ate.events).toEqual([{ kind: "ate", what: "creature", points: 45 + 5 + 22 }]);
+    expect(ate.cues).toEqual([{ kind: "eat" }, { kind: "vibrate", ms: 480 }]);
+    expect(ate.state.score).toBe(72);
+    expect([ate.state.creature, ate.state.counter, ate.state.grow]).toEqual([undefined, 0, false]);
+    const next = stepSnake(ate.state).state;
+    expect(next.segments).toHaveLength(5);
+    expect(next.segments.at(-2)).toMatchObject({ x: 14, y: 8, picture: "body-fat/right" });
+  });
+
+  it("opens the mouth before a creature cell", () => {
+    const creature = {
+      kind: 0,
+      cells: [
+        { x: 15, y: 2 },
+        { x: 16, y: 2 },
+      ],
+      shown: true,
+      frame: 1,
+    } as const;
+    const start = game({
+      segments: snake(
+        [
+          [11, 2],
+          [12, 2],
+          [13, 2],
+        ],
+        "right",
+      ),
+      creature,
+      counter: 10,
+    });
+    expect(head(stepSnake(start).state).picture).toBe("head-open/right");
+  });
+
+  it("alternates the large creature's two pictures every step", () => {
+    const creature = {
+      kind: "large",
+      cells: [
+        { x: 2, y: 1 },
+        { x: 3, y: 1 },
+        { x: 2, y: 2 },
+        { x: 3, y: 2 },
+      ],
+      shown: true,
+      frame: 1,
+    } as const;
+    const one = stepSnake(game({ creature, counter: 15 })).state;
+    expect(one.creature?.frame).toBe(2);
+    expect(stepSnake(one).state.creature?.frame).toBe(1);
+  });
+
+  it("eats the large creature once a game: a collected bit, and no large one after (RE, UNVERIFIED)", () => {
+    const creature = {
+      kind: "large",
+      cells: [
+        { x: 14, y: 7 },
+        { x: 15, y: 7 },
+        { x: 14, y: 8 },
+        { x: 15, y: 8 },
+      ],
+      shown: true,
+      frame: 1,
+    } as const;
+    const ate = stepSnake(beforeMeal(5, { creature, food: { x: 3, y: 3 } }));
+    expect(ate.events).toEqual([{ kind: "ate", what: "creature", points: 5 + 5 + 10 }]);
+    expect(ate.state.largeAllowed).toBe(false);
+    expect(ate.state.collected).not.toBe(0);
+    expect(ate.state.collected & ~0x3ff).toBe(0);
+  });
+
+  it("leaves a failed spawn's cells in place, hidden, with the counter at 0 (RE, UNVERIFIED)", () => {
+    // Rows 0-7 full of snake and row 8 the only room: every pair shares the new food's row.
+    const path: [number, number][] = [];
+    for (let y = 0; y < 8; y++) {
+      for (let i = 0; i < 20; i++) path.push([y % 2 === 0 ? i : 19 - i, y]);
+    }
+    for (let x = 0; x <= 5; x++) path.push([x, 8]);
+    const segments: Segment[] = path.map(([x, y], i) => ({
+      x,
+      y,
+      heading: "right",
+      picture: i === path.length - 1 ? "head/right" : "body/right",
+    }));
+    const start = game({ segments, food: { x: 6, y: 8 }, counter: 16, grow: true });
+    const after = stepSnake(start).state;
+    expect(after.food?.y).toBe(8);
+    expect(after.creature).toMatchObject({ shown: false });
+    expect([2, 4]).toContain(after.creature!.cells.length);
+    expect(after.counter).toBe(0);
+    expect(snakeRender(after).creature).toBeUndefined();
+    expect(snakeRender(after).countdown).toBeUndefined();
+  });
+});
+
+describe("death and the ring (H11)", () => {
+  const dying = () => {
+    const boxed = game(
+      {
+        segments: snake(
+          [
+            [15, 4],
+            [16, 4],
+            [17, 4],
+            [18, 4],
+          ],
+          "right",
+        ),
+      },
+      1,
+    );
+    return stepSnake(stepSnake(boxed).state).state;
+  };
+
+  it("blinks the dead snake: hidden, shown, hidden, …", () => {
+    const dead = dying();
+    expect(dead.crash).toBe("dead");
+    const hidden = blinkSnake(dead);
+    expect(snakeRender(hidden).segments).toEqual([]);
+    const shown = blinkSnake(hidden);
+    expect(snakeRender(shown).segments).toEqual(dead.segments);
+    expect(blinkSnake(game())).toEqual(game());
+  });
+
+  it("keeps the ring slots: head at start + 7, tail at start + 1, one slot per step, mod 299", () => {
+    expect(game().ring).toEqual({ head: 11, tail: 5 });
+    expect(newSnakeGame({ level: 1, maze: 2, seed: 1 }).ring).toEqual({ head: 7, tail: 1 });
+    expect(run(game(), 3).state.ring).toEqual({ head: 14, tail: 8 });
+    expect(stepSnake(game({ ring: { head: 298, tail: 292 } })).state.ring).toEqual({
+      head: 0,
+      tail: 293,
+    });
+  });
+
+  it("does not blink a snake whose ring has wrapped (the tail's slot above the head's)", () => {
+    const dead = { ...dying(), ring: { head: 9, tail: 271 } };
+    expect(blinkSnake(dead)).toBe(dead);
+  });
+});
+
+/** Every gameplay golden the engine replays: its level, maze and recovered seed (Task 5). */
+const TRACES: readonly { id: string; level: number; maze: number; seed: number }[] = [
+  { id: "bot-long", level: 1, maze: 0, seed: 44530 },
+  { id: "bot-short", level: 2, maze: 0, seed: 44530 },
+  { id: "bot-maze2", level: 1, maze: 2, seed: 44530 },
+  { id: "bot-maze3", level: 1, maze: 3, seed: 44530 },
+  { id: "bot-grace", level: 1, maze: 0, seed: 44530 },
+  { id: "pause-bot", level: 1, maze: 0, seed: 44530 },
+  { id: "score-8", level: 1, maze: 0, seed: 44530 },
+  { id: "seed-1010", level: 1, maze: 0, seed: 44530 },
+  { id: "seed-1010-second", level: 1, maze: 0, seed: 44530 },
+  { id: "seed-1011", level: 1, maze: 0, seed: 44590 },
+  { id: "seed-1200", level: 1, maze: 0, seed: 51130 },
+  { id: "seed-1948", level: 1, maze: 0, seed: 13689 },
+  { id: "seed-0759", level: 1, maze: 0, seed: 36670 },
+  { id: "seed-2359", level: 1, maze: 0, seed: 38909 },
+  { id: "seed-0000", level: 1, maze: 0, seed: 7995 },
+  { id: "seed-0001", level: 1, maze: 0, seed: 7995 },
+  { id: "seed-1010-14102026", level: 1, maze: 0, seed: 10048 },
+  { id: "creature-0914", level: 1, maze: 0, seed: 41170 },
+  { id: "creature-0956", level: 1, maze: 0, seed: 43690 },
+  { id: "creature-1007", level: 1, maze: 0, seed: 44350 },
+  { id: "creature-1021", level: 1, maze: 0, seed: 45190 },
+  { id: "creature-1035", level: 1, maze: 0, seed: 46030 },
+  { id: "creature-1107", level: 1, maze: 0, seed: 47950 },
+  { id: "creature-1221", level: 1, maze: 0, seed: 52390 },
+  ...INDEX.filter((e) => /^game\/snake\/keys-(right|up|pair|hold)-/.test(e.id)).map((e) => ({
+    id: e.id.slice("game/snake/".length),
+    level: 1,
+    maze: 0,
+    seed: 44530,
+  })),
+  ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((level) => ({
+    id: `ticks-l${level}`,
+    level,
+    maze: 0,
+    seed: 44530,
+  })),
+  ...[0, 1, 2, 3, 4, 5].map((maze) => ({ id: `maze-${maze}`, level: 1, maze, seed: 44530 })),
+  { id: "virgin-meal", level: 175, maze: 0, seed: 44530 },
+  { id: "virgin-game", level: 175, maze: 1, seed: 44530 },
+];
+
+describe("trace: the engine replays every gameplay golden (seed and input)", () => {
+  for (const { id, level, maze, seed } of TRACES) {
+    it(id, () => {
+      const golden = loadGolden(`game/snake/${id}`);
+      const boards = goldenBoards(`game/snake/${id}`, SNAKE_MAZES[maze]);
+      expect(boards.length).toBeGreaterThan(0);
+      const keys = new Map<number, PhoneKey[]>();
+      for (const press of golden.input ?? []) {
+        keys.set(press.tick, [...(keys.get(press.tick) ?? []), press.key as PhoneKey]);
+      }
+      let state = newSnakeGame({ level, maze, seed });
+      let tick = 0;
+      const stepTo = (target: number) => {
+        for (; tick < target; tick++) {
+          state = (keys.get(tick) ?? []).reduce(snakeKey, state);
+          state = stepSnake(state).state;
+        }
+      };
+      const cellsOf = (segments: readonly { x: number; y: number }[]) =>
+        segments
+          .map((s) => `${s.x},${s.y}`)
+          .sort()
+          .join(" ");
+      // At level 175 (8 ms ticks) a meal's redraw runs into the next tick's, so the frames
+      // number one tick fewer after each meal (virgin-meal, virgin-game): catch up by one.
+      let lost = 0;
+      for (const { tick: at, board } of boards) {
+        stepTo(at + lost);
+        if (level === 175 && cellsOf(snakeRender(state).segments) !== cellsOf(board.segments)) {
+          lost++;
+          stepTo(at + lost);
+        }
+        const where = `${id} tick ${at}${lost ? ` (engine tick ${at + lost})` : ""}`;
+        const render = snakeRender(state);
+        expect(render.score, where).toBe(board.score);
+        expect(render.countdown, where).toBe(board.countdown);
+        expect(render.food, where).toEqual(board.food);
+        expect(
+          render.creature && { kind: render.creature.kind, cells: render.creature.cells },
+          where,
+        ).toEqual(board.creature);
+        const decoded = new Map(board.segments.map((s) => [`${s.x},${s.y}`, s.pictures]));
+        expect(
+          [...render.segments].map((s) => `${s.x},${s.y}`).sort(),
+          `${where}: snake cells`,
+        ).toEqual([...decoded.keys()].sort());
+        for (const s of render.segments) {
+          expect(decoded.get(`${s.x},${s.y}`), `${where}: (${s.x}, ${s.y}) ${s.picture}`).toContain(
+            s.picture,
+          );
+        }
+      }
+    });
+  }
 });

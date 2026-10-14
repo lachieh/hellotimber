@@ -7,7 +7,7 @@ import type { StockCue } from "../../firmware/cues";
 import { SNAKE_DATA } from "../../resources/generated/snake";
 import { headingFor, opposite } from "./keys";
 import type { Cell, Heading, Segment, SegmentPicture, SnakeRenderModel, SnakeState } from "./model";
-import { BOARD_HEIGHT, BOARD_WIDTH, createSnakeRandom, placeFood } from "./rng";
+import { BOARD_HEIGHT, BOARD_WIDTH, createSnakeRandom, placeCreature, placeFood } from "./rng";
 
 /** Ring slots (the firmware's segment ring, modulus 299). */
 const RING = 299;
@@ -122,6 +122,13 @@ export function snakeKey(state: SnakeState, phoneKey: PhoneKey): SnakeState {
 /** One tick of the firmware's game (the RE notes' "One tick", steps 1-14). */
 export function stepSnake(state: SnakeState): SnakeStep {
   if (state.crash === "dead") return { state, cues: [], events: [] };
+  // The large creature changes picture at the start of every step (H9).
+  if (state.creature?.kind === "large" && state.creature.shown) {
+    state = {
+      ...state,
+      creature: { ...state.creature, frame: state.creature.frame === 1 ? 2 : 1 },
+    };
+  }
   const heading = state.pending;
   const head = state.segments.at(-1)!;
   const next = ahead(head, heading);
@@ -156,10 +163,13 @@ export function stepSnake(state: SnakeState): SnakeStep {
   }
 
   // The head steps on; its mouth opens when the next cell holds the food or a creature (H13).
+  // A head entering a creature first clears the creature's cells beyond it, so it stays shut
+  // (bot-long, tick 266).
   const beyond = ahead(next, heading);
+  const entering = state.creature?.cells.some((c) => key(c) === key(next)) ?? false;
   const open =
     (state.food !== undefined && key(state.food) === key(beyond)) ||
-    (state.creature?.cells.some((c) => key(c) === key(beyond)) ?? false);
+    (!entering && (state.creature?.cells.some((c) => key(c) === key(beyond)) ?? false));
   const neck = segments.length - 1;
   segments[neck] = {
     ...segments[neck]!,
@@ -179,19 +189,68 @@ export function stepSnake(state: SnakeState): SnakeStep {
   };
   const cues: StockCue[] = [];
   const events: SnakeEvent[] = [];
+  const rng = createSnakeRandom(state.seed);
+  const occupied = new Set([...wallCells(state.maze), ...segments].map(key));
+  const free = (x: number, y: number) => !occupied.has(`${x},${y}`);
 
-  // Food: + level, new food, and the tail stays on the next step (H7, H8).
-  const ate = state.food !== undefined && key(state.food) === key(next);
+  // A creature: eaten when the head enters one of its cells, else one step less to live (H10).
+  const creature = after.creature;
+  if (creature?.shown && creature.cells.some((c) => key(c) === key(next))) {
+    const points = 5 * after.level + 5 + 2 * after.counter;
+    let collected = after.collected;
+    if (creature.kind === "large") {
+      // The large creature sets a random clear collection bit (RE, UNVERIFIED: never eaten).
+      let bit = rng.next() % 10;
+      while (collected & (1 << bit) && collected !== 0x3ff) bit = rng.next() % 10;
+      collected |= 1 << bit;
+    }
+    after = {
+      ...after,
+      creature: undefined,
+      counter: 0,
+      score: after.score + points,
+      swallow: true,
+      collected,
+      largeAllowed: after.largeAllowed && creature.kind !== "large",
+    };
+    cues.push({ kind: "eat" }, { kind: "vibrate", ms: SNAKE_VIBRATE_MS });
+    events.push({ kind: "ate", what: "creature", points });
+  } else if (creature && after.counter > 0) {
+    const counter = after.counter - 1;
+    after = { ...after, counter, ...(counter === 0 ? { creature: undefined } : {}) };
+  }
+
+  // Food: + level, new food, and the tail stays on the next step (H7, H8). While no creature
+  // is out the counter gains 4; at 20, with no creature cells in use, one comes (H9).
+  const ate = after.food !== undefined && key(after.food) === key(next);
   after = { ...after, grow: ate };
   if (ate) {
-    const rng = createSnakeRandom(after.seed);
-    const occupied = new Set([...wallCells(after.maze), ...segments].map(key));
-    const food = placeFood(rng, (x, y) => !occupied.has(`${x},${y}`), after.creature?.cells ?? []);
-    after = { ...after, seed: rng.seed, food, score: after.score + after.level, swallow: true };
+    const food = placeFood(rng, free, after.creature?.cells ?? []);
+    after = { ...after, food, score: after.score + after.level, swallow: true };
+    if (!after.creature?.shown) after = { ...after, counter: after.counter + 4 };
+    if (after.creature === undefined && after.counter >= 20) {
+      const placed = placeCreature(rng, free, food, after.largeAllowed);
+      after = {
+        ...after,
+        creature: { kind: placed.kind, cells: placed.cells, shown: placed.placed, frame: 1 },
+        // A failed spawn leaves its last try's cells and resets the counter (RE, UNVERIFIED).
+        counter: placed.placed ? after.counter : 0,
+      };
+    }
     cues.push({ kind: "eat" }, { kind: "vibrate", ms: SNAKE_VIBRATE_MS });
     events.push({ kind: "ate", what: "food", points: state.level });
   }
-  return { state: after, cues, events };
+  return { state: { ...after, seed: rng.seed }, cues, events };
+}
+
+/**
+ * One step of the death blink: the snake hidden, then shown, in turn (H11). The firmware walks
+ * its ring from the tail's slot to the head's and does nothing when the ring has wrapped (the
+ * tail's slot above the head's), so such a snake stands still.
+ */
+export function blinkSnake(state: SnakeState): SnakeState {
+  if (state.crash !== "dead" || state.ring.tail > state.ring.head) return state;
+  return { ...state, visible: !state.visible };
 }
 
 /** What the painter draws (H16: the score's low 16 bits). */

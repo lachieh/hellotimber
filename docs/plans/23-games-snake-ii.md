@@ -911,14 +911,27 @@ returns cues. Vibration is 480 ms (Task 0 C10).
 
 **Files:** `src/games/snake/engine.ts`, `model.ts`, `tests/snake-engine.test.ts`.
 
-- [ ] TDD H9-H11: counter, spawn at 20, kinds, row/column exclusion with the food, countdown and
+- [x] TDD H9-H11: counter, spawn at 20, kinds, row/column exclusion with the food, countdown and
       HUD icon, expiry, eating score `5L + 5 + 2t`, the failed-spawn quirk (cells left in place), the
       large creature only if Task 0 saw it (else UNVERIFIED and unreachable by default), death
       blink schedule (visibility per blink step), the ring-wrap no-blink quirk.
-- [ ] Trace test: for every bot golden, drive the engine with its recovered seed and `input`
+- [x] Trace test: for every bot golden, drive the engine with its recovered seed and `input`
       (one `step()` per tick) and compare the decoded state of every tick still (head, body, food,
       creature, score). This proves the rules before any pixels are painted.
-- [ ] Commit: `feat(nokia-os): Snake II creatures, death and ring behaviour`.
+- [x] Commit: `feat(nokia-os): Snake II creatures, death and ring behaviour`.
+
+Outcome: the engine replays 74 gameplay goldens from their seed and `input` (every bot game,
+pause-bot, score-8, the C9 seed games, the creature recaptures, the C7 key probes, ticks-l1..9,
+maze-0..5, virgin-meal, virgin-game): at every decoded board the score, countdown, food,
+creature (kind and cells), snake cells and each segment's picture equal the golden's.
+Deviation (H13): a head entering a creature keeps its mouth shut although the creature's next
+cell lies ahead (bot-long tick 266): the head step clears the creature's cells beyond the head
+before the mouth test. Deviation (timelines at level 175): a meal's redraw runs into the next
+tick's, so the frame-numbered ticks of virgin-meal and virgin-game fall one behind the engine
+after each meal; the trace catches up by one there (Task 11's replays must too; the `input`
+ticks lie before the meals and are unaffected). The large creature's collection bit, a failed
+spawn (its last try's cells left in place, hidden, counter 0) and the counter running down over
+such cells follow the RE notes' tick order and are UNVERIFIED (never captured).
 
 ### Task 8 - Snake II painter (TDD against goldens)
 
