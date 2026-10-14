@@ -832,19 +832,29 @@ frequencies lie within 0.07 % of the extraction's notes; Mosquito, Bee and Rocke
 **Files:** `src/sound/program.ts` (new), `src/sound/sequencer.ts` (new),
 `src/sound/port.ts` (new: `StockSoundEvent`, `StockSoundPort`), `tests/sequencer.test.ts` (new).
 
-- [ ] TDD with synthetic programs: steps emit changes at their exact times; unchanged states emit
+- [x] TDD with synthetic programs: steps emit changes at their exact times; unchanged states emit
       nothing; a loop repeats from `loopFrom` indefinitely; a program that ends silences what it
       set; `stop(outputs, atMs)` silences at `atMs` (mid-step) and drops later steps; `play` on a
       busy output replaces its program at `atMs`, emitting one change (no `off` between two
       frequencies, nothing when the state is the same); programs on different outputs are
       independent.
-- [ ] TDD tick independence: advancing 1 ms at a time and in one 10 s jump emit the same events
+- [x] TDD tick independence: advancing 1 ms at a time and in one 10 s jump emit the same events
       with the same `atMs`; `atMs` never exceeds the `advance` time; events come in time order
       across outputs (ties: buzzer, tone, vibrator).
-- [ ] TDD the `volume` option: a function of step, pass and stored register (D10's rule plugs in
+- [x] TDD the `volume` option: a function of step, pass and stored register (D10's rule plugs in
       here) changes only `volume` fields.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): tick-driven sound sequencer`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): tick-driven sound sequencer`.
+
+Deviation (Task 4): the `volume` option is a `SoundVolume` (`changesAtMs` plus `of(output, hz,
+stored, offsetMs)`), not `(step, pass, stored)`: Level 5's jump and Ascending's steps are times
+that can change a sounding note (Task 3), so the sequencer re-reads the volume at each step's
+start and at each change time, as `renderAtLevels` does. `play` returns a `SoundPlay` handle;
+`cancel(play, atMs)` ends one program (one scheduled for later never sounds: a preview armed by
+▲/▼ and cancelled by the next key), `playing(play)` and `last(output)` let the sounder model the
+DSP's power state; `endStep` plays a prefix once (the Ringing volume list's first mark). A program
+asked for in the past starts at the time already reached. `src/sound/port.ts` holds the contract
+types (exported from the package in Task 5).
 
 ### Task 5 - The port, keypad tones and the phone's sounder (TDD)
 
