@@ -338,10 +338,10 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "5-4-*": "16", // Composer slots
   "5-9-4": "18", // Screen saver › Screen saver: nothing in the virgin EEPROM
   "12-*-2-9-4": "18",
-  "6-2-1-3": "15", // Русский: native-language note, then that UI
-  "6-2-1-4": "15", // Български
-  "6-2-1-5": "15", // Українська
-  "6-2-3": "15", // Welcome note: text editor
+  "6-2-1-3": "26", // Русский: native-language note, then that UI (plan 15 D12)
+  "6-2-1-4": "26", // Български
+  "6-2-1-5": "26", // Українська
+  "6-2-3": "18", // Welcome note: text editor (plan 15 D12; plan 15 owns the stored note)
   "8-2-1": "24", // Space impact › New game
   "8-3-1": "24", // Bantumi › New game
   "8-4-1-1": "24", // Pairs II › Time trial › New game

@@ -7,6 +7,8 @@ import {
   PERIOD_LEVELS,
   type PlayedFrame,
 } from "../scripts/game-capture-set.ts";
+import { PLACEHOLDER_OWNERS as IMPORTER_PLACEHOLDER_OWNERS } from "../scripts/tree-capture-set.ts";
+import { PLACEHOLDER_OWNERS } from "../src/firmware/bindings";
 import {
   LCD_HEIGHT,
   LCD_WIDTH,
@@ -102,6 +104,64 @@ describe("committed goldens", () => {
       expect(plan, `${entry.id}: ${entry.status}`).not.toBeNull();
       expect(Number(plan![1])).toBeGreaterThan(13);
     }
+  });
+});
+
+describe("plan 15 goldens", () => {
+  const PLAN15_IDS = [
+    "boot/power-on",
+    "boot/security-gate",
+    "boot/security-gate-keys",
+    "boot/security-gate-ok-123",
+    "boot/security-gate-ok-empty",
+    "boot/security-lockout",
+    "boot/security-lockout-4",
+    "boot/welcome-note",
+    "boot/welcome-note-long",
+    "boot/welcome-note-ungated",
+    "probe/code-wrong-6-3-5",
+    "probe/code-wrong-6-3-6-1",
+    "probe/code-wrong-6-4",
+    "probe/code-wrong-4-5-5",
+    "probe/code-keys-6-4",
+    "probe/code-keys-6-4-c-on-empty",
+    "probe/code-keys-6-4-ok-empty",
+    "probe/code-keys-6-4-ok-123",
+    "probe/persist-reboot",
+    "probe/accept-6-3-5-on",
+    "probe/accept-6-3-5-off",
+    "probe/accept-6-3-6-1-mismatch",
+    "probe/accept-6-3-6-1-lengths",
+    "probe/accept-6-3-6-1-match",
+    "probe/accept-6-4-old-code",
+    "probe/accept-6-4-new-code",
+    "probe/accept-6-4-restore",
+    "probe/accept-c7-restore",
+    "probe/accept-restore-phone-security",
+    "probe/accept-4-5-5",
+  ];
+
+  it("has every plan 15 golden, asserted", () => {
+    const status = new Map(index.map((entry) => [entry.id, entry.status]));
+    expect(PLAN15_IDS.filter((id) => status.get(id) !== "asserted")).toEqual([]);
+  });
+
+  it("imports the gate-free boot capture, cut before the clock wizard (D9)", () => {
+    const entry = index.find((e) => e.id === "boot/power-on")!;
+    const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+    expect(golden.source).toBe("captures/6.39/boot-clean/power-on 000-011");
+    expect(golden.timeline!.map((row) => row.durationMs)).toEqual([
+      268, 970, 1172, 1684, 132, 360, 302, 292, 367, 287, 320, 3951,
+    ]);
+  });
+
+  it("leaves no golden pending on plan 15", () => {
+    expect(index.filter((entry) => entry.status === "pending:15").map((e) => e.id)).toEqual([]);
+  });
+
+  it("keeps the importer's and the firmware's placeholder owners equal", () => {
+    expect(PLACEHOLDER_OWNERS).toEqual(IMPORTER_PLACEHOLDER_OWNERS);
+    expect(Object.values(PLACEHOLDER_OWNERS)).not.toContain("15");
   });
 });
 

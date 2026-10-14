@@ -328,13 +328,17 @@ describe("timeline extraction", () => {
 });
 
 describe("boot", () => {
-  it("has ten full frames and the 9888 ms D12 timeline; frame 0 is blank", () => {
+  it("has ten full frames and the 10105 ms gate-free boot timeline; frame 0 is blank", () => {
     expect(BOOT_FRAMES).toHaveLength(10);
     for (const frame of BOOT_FRAMES) expect([frame.width, frame.height]).toEqual([84, 48]);
     expect(BOOT_FRAMES[0]!.pixels.every((p) => p === 0)).toBe(true);
-    expect(BOOT_TIMELINE.durationMs).toBe(9888);
-    expect(BOOT_TIMELINE.steps.map((s) => s.frame)).toEqual([0, 1, 0, 2, 3, 4, 5, 6, 7, 8, 9]);
-    expect(BOOT_TIMELINE.steps.at(-1)!.durationMs).toBe(4231);
+    // boot-clean/power-on (plan 15 D9): self-test, a 132 ms blank, then the hands at irregular
+    // steps, the last held until the clock wizard.
+    expect(BOOT_TIMELINE.durationMs).toBe(10105);
+    expect(BOOT_TIMELINE.steps.map((s) => s.frame)).toEqual([0, 1, 0, 2, 0, 3, 4, 5, 6, 7, 8, 9]);
+    expect(BOOT_TIMELINE.steps.slice(4).map((s) => s.durationMs)).toEqual([
+      132, 360, 302, 292, 367, 287, 320, 3951,
+    ]);
   });
 });
 

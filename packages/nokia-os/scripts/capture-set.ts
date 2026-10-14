@@ -92,7 +92,20 @@ const LABELS: Record<(typeof MENU_SLUGS)[number], string> = {
 
 /** Capture artefacts and captures that are deliberately not imported, with the reason. */
 export const NOT_IMPORTED: Readonly<Record<string, string>> = {
-  "boot/security-code*, boot/security-code-entry": "virgin-EEPROM security-code prompt",
+  "boot/power-on, boot/security-code*, boot/security-code-entry, boot/welcome":
+    "the virgin-EEPROM power-on prompt; plan15/boot/gate records the same gate as one sequence and boot-clean/power-on the gate-free boot (plan 15 D9)",
+  "boot/welcome 011-015, plan15/boot/*/ and factory/boot clock-wizard frames, boot-clean/first-standby":
+    "virgin-EEPROM time and date wizard after the boot",
+  "plan15/boot/gate-lockout-early, -expiry, -reboot, -restart":
+    "lockout probes whose waits span minutes: their facts (≈290 s, restart, power cycle) are in the plan 15 Task 0 outcome",
+  "plan15/boot/welcome-erased, plan15/welcome/":
+    "the Welcome note editor and its notes: plan 18 owns the editor (plan 15 D12)",
+  "plan15/accept/boot-*": "the new-SIM rule, asserted by plan 15 Task 8's tests (no new pixels)",
+  "plan15/accept/c4-*, plan15/accept/c7-restore-again, plan15/accept/6-4-page":
+    "Restore's setup screens (text editor, page shots) and a repeat of c7-restore",
+  "plan15/factory/scroll/":
+    "every list after Restore: transcribed into FACTORY_DEFAULTS (plan 15 Task 5), each entry citing its scroll",
+  "plan15/*.wav, *.events.csv": "sound is out of scope (tones plan)",
   "setup/": "virgin-EEPROM time and date wizard",
   "standby/00-first-standby-prompt": "virgin-EEPROM alarm state (Snooze, 0000000000)",
   "menu/NN-<slug>/anim": "3 s recordings that truncate animations; menu-anim-long replaces them",
@@ -184,28 +197,13 @@ export const CAPTURE_SET: readonly CaptureSetEntry[] = [
     kind: "timeline",
     status: "asserted",
     prefer: {
-      source: { kind: "recording", dir: "boot-clean/power-on" },
+      source: { kind: "composite", parts: [{ dir: "boot-clean/power-on", from: 0, to: 11 }] },
       triggerFrame: 0,
-      note: "Power key at the start of the recording.",
-    },
-    fallback: {
-      source: {
-        kind: "composite",
-        parts: [
-          { dir: "boot/power-on", from: 0, to: 3 },
-          { dir: "boot/welcome", from: 4, to: 10 },
-        ],
-      },
-      triggerFrame: 0,
-      note: "D12 composition (UNVERIFIED as one sequence): self-test frames 0-3 of boot/power-on, then hands frames 4-10 of boot/welcome; the last hands frame is held for its captured duration, then standby.",
-      omitted: {
-        "power-on/004": "42 ms blank before the security-code prompt",
-        "power-on/005": "virgin-EEPROM security-code prompt",
-        "welcome/000-003": "virgin-EEPROM Code accepted animation",
-        "welcome/011-015": "virgin-EEPROM clock prompt",
-      },
+      note: "Power key at the start of the recording. The gate-free boot after Restore factory settings (plan 15 Task 0c): self-test, then the hands at irregular steps; the last hands frame is held until the clock wizard, then standby (plan 15 D9).",
+      omitted: { "012-043": "virgin-EEPROM time and date wizard" },
     },
   },
+  ...plan15BootEntries(),
   {
     id: "standby/standby",
     kind: "still",
@@ -286,4 +284,113 @@ function clockTimeEntries(): CaptureSetEntry[] {
       },
     ];
   });
+}
+
+/** Plan 15's boot goldens (plan 15 "Golden pipeline additions"; paths under plan15/boot/). */
+function plan15BootEntries(): CaptureSetEntry[] {
+  const WIZARD = "virgin-EEPROM time and date wizard";
+  const cut = (
+    id: string,
+    dir: string,
+    to: number,
+    last: number,
+    note: string,
+  ): CaptureSetEntry => ({
+    id,
+    kind: "timeline",
+    status: "asserted",
+    prefer: {
+      source: { kind: "composite", parts: [{ dir, from: 0, to }] },
+      triggerFrame: 0,
+      note,
+      omitted: { [`${pad3(to + 1)}-${pad3(last)}`]: WIZARD },
+    },
+  });
+  const recording = (id: string, dir: string, note: string): CaptureSetEntry => ({
+    id,
+    kind: "timeline",
+    status: "asserted",
+    prefer: { source: { kind: "recording", dir }, triggerFrame: 1, note },
+  });
+  const keys = [
+    "00-prompt",
+    "01-after-1",
+    "02-after-2",
+    "03-after-c",
+    "04-after-c-to-empty",
+    "05-after-c-on-empty",
+    "06-after-c-on-empty-2s",
+    "07-digits-05",
+    "08-digits-06",
+    "09-digits-07",
+    "10-digits-08",
+    "11-digits-09",
+    "12-digits-10",
+    "13-digits-11",
+    "14-after-hold-c-1s",
+    "15-typed-123",
+  ];
+  return [
+    cut(
+      "boot/security-gate",
+      "plan15/boot/gate",
+      27,
+      38,
+      "Power key at the start. Phone security asks for the code: self-test, 42 ms blank, the prompt; 00000 OK: Code error, the empty prompt; 12345 OK: Code accepted, then the hands (regular steps).",
+    ),
+    {
+      id: "boot/security-gate-keys",
+      kind: "still",
+      status: "asserted",
+      prefer: {
+        source: { kind: "shots", files: keys.map((name) => `plan15/boot/gate-keys/${name}.png`) },
+        note: "The power-on prompt after each key: 1, 2, C, C to empty, C on empty (nothing, also 2 s later), 5-11 digits (10 at most), C held 1 s (clears), 1 2 3.",
+      },
+    },
+    recording(
+      "boot/security-gate-ok-123",
+      "plan15/boot/gate-keys/ok-123",
+      "The power-on prompt with 1 2 3, OK at frame 1: Code error, then the empty prompt.",
+    ),
+    recording(
+      "boot/security-gate-ok-empty",
+      "plan15/boot/gate-keys/ok-empty",
+      "The empty power-on prompt, OK at frame 1: Code error, then the empty prompt.",
+    ),
+    recording(
+      "boot/security-lockout",
+      "plan15/boot/gate-lockout",
+      "The power-on prompt: six 00000 then 12345, each OK'd; the sixth and 12345 get Code error too (five wrong codes lock every entry). Frame 1 is the first digit.",
+    ),
+    recording(
+      "boot/security-lockout-4",
+      "plan15/boot/gate-lockout-4",
+      "The power-on prompt: four 00000 then 12345: Code accepted, then the hands (four wrong codes do not lock). Frame 1 is the first digit.",
+    ),
+    cut(
+      "boot/welcome-note",
+      "plan15/boot/welcome-hi",
+      14,
+      30,
+      "Power key at the start; welcome note Hi and the code gate: 12345, Code accepted, then Hi in the large face instead of the hands.",
+    ),
+    cut(
+      "boot/welcome-note-long",
+      "plan15/boot/welcome-long",
+      14,
+      30,
+      "As boot/welcome-note with the note Welcome to my phone, wrapped at the space.",
+    ),
+    cut(
+      "boot/welcome-note-ungated",
+      "plan15/factory/boot",
+      5,
+      38,
+      "Power key at the start; welcome note Hi after Restore factory settings (no code gate): self-test, a 7 ms partial draw, then Hi (plan 15 D9).",
+    ),
+  ];
+}
+
+function pad3(n: number): string {
+  return String(n).padStart(3, "0");
 }

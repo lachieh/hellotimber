@@ -507,7 +507,7 @@ export const BOOT_DATA: { readonly frames: readonly (readonly string[])[]; reado
     "steps": [
       {
         "frame": 0,
-        "durationMs": 245
+        "durationMs": 268
       },
       {
         "frame": 1,
@@ -515,39 +515,43 @@ export const BOOT_DATA: { readonly frames: readonly (readonly string[])[]; reado
       },
       {
         "frame": 0,
-        "durationMs": 1171
+        "durationMs": 1172
       },
       {
         "frame": 2,
-        "durationMs": 1687
+        "durationMs": 1684
+      },
+      {
+        "frame": 0,
+        "durationMs": 132
       },
       {
         "frame": 3,
-        "durationMs": 299
+        "durationMs": 360
       },
       {
         "frame": 4,
-        "durationMs": 263
+        "durationMs": 302
       },
       {
         "frame": 5,
-        "durationMs": 255
+        "durationMs": 292
       },
       {
         "frame": 6,
-        "durationMs": 256
+        "durationMs": 367
       },
       {
         "frame": 7,
-        "durationMs": 255
+        "durationMs": 287
       },
       {
         "frame": 8,
-        "durationMs": 256
+        "durationMs": 320
       },
       {
         "frame": 9,
-        "durationMs": 4231
+        "durationMs": 3951
       }
     ]
   }

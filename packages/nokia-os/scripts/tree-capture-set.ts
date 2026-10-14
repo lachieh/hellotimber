@@ -72,10 +72,10 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "5-4-*": "16", // Composer slots
   "5-9-4": "18", // Screen saver › Screen saver: nothing in the virgin EEPROM
   "12-*-2-9-4": "18",
-  "6-2-1-3": "15", // Русский: native-language note, then that UI
-  "6-2-1-4": "15", // Български
-  "6-2-1-5": "15", // Українська
-  "6-2-3": "15", // Welcome note: text editor
+  "6-2-1-3": "26", // Русский: native-language note, then that UI (plan 15 D12)
+  "6-2-1-4": "26", // Български
+  "6-2-1-5": "26", // Українська
+  "6-2-3": "18", // Welcome note: text editor (plan 15 D12; plan 15 owns the stored note)
   "8-2-1": "24", // Space impact › New game
   "8-3-1": "24", // Bantumi › New game
   "8-4-1-1": "24", // Pairs II › Time trial › New game
@@ -474,7 +474,9 @@ export function treeCaptureSet(
 /** A plan 14 Task 0 probe: a still (shots) or a timeline (a `record` directory). */
 interface ProbeSpec {
   readonly name: string;
+  /** Relative to `base` (default PROBE_DIR, plan 14's probes). */
   readonly dir: string;
+  readonly base?: string;
   readonly note: string;
   /** Stills: the shot names to keep, in order (default: every NN.png in `dir`). */
   readonly shots?: readonly string[];
@@ -490,6 +492,9 @@ interface ProbeSpec {
 }
 
 const PROBE_DIR = "plan14/probe";
+
+/** Plan 15's captures (plan 15 "Golden pipeline additions"). */
+const PLAN15_DIR = "plan15";
 
 const PROBE_STILLS: readonly ProbeSpec[] = [
   {
@@ -589,6 +594,57 @@ const PROBE_STILLS: readonly ProbeSpec[] = [
     name: "prepaid-recharge-status",
     dir: "prepaid/recharge-status",
     note: "P15: Prepaid credit page 4, Select (info pages), then ▼ per image.",
+  },
+  {
+    name: "code-keys-6-4",
+    base: PLAN15_DIR,
+    dir: "menu/6-4-keys",
+    note: "Plan 15 A5: Restore factory settings' prompt after each key: 1 2, C, C to empty, C on empty (back to the page), Select again, 1 2 3, OK (the empty prompt after Code error), 5-11 digits (10 at most), C held 1 s.",
+    shots: [
+      "00-entry",
+      "01-prompt",
+      "02-after-12",
+      "03-after-c",
+      "04-after-c-to-empty",
+      "06-after-c-on-empty",
+      "07-reopened",
+      "09-typed-123",
+      "11-after-ok-123",
+      "12-digits-05",
+      "13-digits-06",
+      "14-digits-07",
+      "15-digits-08",
+      "16-digits-09",
+      "17-digits-10",
+      "18-digits-11",
+      "19-after-hold-c-1s",
+    ],
+  },
+  {
+    name: "persist-reboot",
+    base: PLAN15_DIR,
+    dir: "persist",
+    note: "Plan 15 A7: Keypad tones and Cell info display before, after choosing Level 2 and On, then standby after saveflash and reboot, and both pages and lists as they open.",
+    shots: [
+      "before-5-6-page",
+      "before-5-6-list",
+      "set-5-6-page",
+      "before-6-2-2-page",
+      "before-6-2-2-list",
+      "set-6-2-2-page",
+      "standby",
+      "5-6-page",
+      "5-6-list",
+      "6-2-2-page",
+      "6-2-2-list",
+    ],
+  },
+  {
+    name: "accept-restore-phone-security",
+    base: PLAN15_DIR,
+    dir: "accept",
+    note: "Plan 15 0c: the Phone security page set On (code 11111), then after Restore factory settings: Off.",
+    shots: ["c7-6-3-5-on", "c7-6-3-5-after-restore"],
   },
 ];
 
@@ -720,13 +776,75 @@ const PROBE_TIMELINES: readonly ProbeSpec[] = [
     dir: "multiselect/rec",
     note: "P14: Language: Unmark on All, ▼, Mark on Suomi, C.",
   },
+  ...(
+    [
+      ["6-3-5", "Phone security"],
+      ["6-3-6-1", "Change security code"],
+      ["6-4", "Restore factory settings"],
+      ["4-5-5", "Show call duration › Clear timers"],
+    ] as const
+  ).map(([number, label]) => ({
+    name: `code-wrong-${number}`,
+    base: PLAN15_DIR,
+    dir: `menu/${number}-wrong`,
+    note: `Plan 15 A4: ${label} (${number}) Select, 00000 OK: Code error, the empty prompt, then C back to the page.`,
+  })),
+  ...(
+    [
+      ["c-on-empty", "05-c-on-empty", "C on the empty prompt: back to the page at once"],
+      ["ok-empty", "08-ok-empty", "OK on the empty prompt: Code error, then the empty prompt"],
+      ["ok-123", "10-ok-123", "OK with 1 2 3: Code error, then the empty prompt"],
+    ] as const
+  ).map(([name, dir, note]) => ({
+    name: `code-keys-6-4-${name}`,
+    base: PLAN15_DIR,
+    dir: `menu/6-4-keys/${dir}`,
+    note: `Plan 15 A5: Restore factory settings' prompt, ${note}.`,
+  })),
+  ...(
+    [
+      ["6-3-5-on", "Phone security Off, 12345: the Off/On list on Off, ▼, OK: Done, the page On"],
+      [
+        "6-3-5-off",
+        "Phone security On, 12345: the Off/On list on On, to Off, OK: Done, the page Off",
+      ],
+      [
+        "6-3-6-1-mismatch",
+        "Change security code, 12345, new 11111, verify 22222: Code error, back to Enter new",
+      ],
+      [
+        "6-3-6-1-lengths",
+        "Change security code at Enter new: new codes of 4, 6, 0 and 10 digits, each OK'd: Code error, back to Enter new each time",
+      ],
+      [
+        "6-3-6-1-match",
+        "Change security code, 12345, new 11111, verify 11111: Security code changed, the page",
+      ],
+      ["6-4-old-code", "after the change, Restore factory settings' prompt with 12345: Code error"],
+      [
+        "6-4-new-code",
+        "after the change, Restore factory settings' prompt with 11111: Settings restored, the page",
+      ],
+      ["6-4-restore", "Restore factory settings, 12345: Settings restored, the page"],
+      [
+        "c7-restore",
+        "Phone security On and code 11111, then Restore factory settings with 11111: Settings restored",
+      ],
+      ["4-5-5", "Clear timers, 12345: Timers cleared, the page"],
+    ] as const
+  ).map(([flow, note]) => ({
+    name: `accept-${flow}`,
+    base: PLAN15_DIR,
+    dir: `accept/${flow}`,
+    note: `Plan 15 0c (re-provisioned code): ${note}.`,
+  })),
 ];
 
 /** S7: every probe golden (hand-written scenarios, plan 14 Task 13), asserted unless pending. */
 export function probeCaptureSet(io: TreeCaptureIo): CaptureSetEntry[] {
   const entries: CaptureSetEntry[] = [];
   for (const probe of PROBE_STILLS) {
-    const dir = `${PROBE_DIR}/${probe.dir}`;
+    const dir = `${probe.base ?? PROBE_DIR}/${probe.dir}`;
     const names = probe.shots ?? io.scrollImages(dir);
     if (names === undefined || names.length === 0)
       throw new Error(`probe/${probe.name}: missing capture ${dir}`);
@@ -744,7 +862,7 @@ export function probeCaptureSet(io: TreeCaptureIo): CaptureSetEntry[] {
     });
   }
   for (const probe of PROBE_TIMELINES) {
-    const dir = `${PROBE_DIR}/${probe.dir}`;
+    const dir = `${probe.base ?? PROBE_DIR}/${probe.dir}`;
     const frames = io.recording(dir);
     if (frames === undefined || frames.length === 0)
       throw new Error(`probe/${probe.name}: missing capture ${dir}`);

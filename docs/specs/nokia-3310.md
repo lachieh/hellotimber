@@ -284,16 +284,16 @@ and battery levels below full are UNVERIFIED (the emulator always shows full).
 **Carousel:** title in `large`, centred in x 0..77 at `floor((78 - width) / 2)`, top y 7; icon
 within x 10..63, y 23..36; rail; indicator top-right; `Select` centred at y 40.
 
-**Boot:** LCD self-test (blank with the LED off 245 ms, all-on 970 ms, blank 1171 ms, battery
-ladder 1687 ms), then the 7-frame connecting-hands animation (299, 263, 255, 256, 255, 256 ms),
-the last frame held 4231 ms, then standby: 9888 ms in all. The captured power-on passes through a
-security-code prompt and a clock wizard between the two; both are virgin-EEPROM effects. A clean
-boot could not be captured (the in-menu security-code check rejects the code, so Phone security
-cannot be turned off), so the self-test + hands composition is UNVERIFIED as one continuous
-sequence. Boot starts when the kernel's 800 ms power long press fires (the firmware's power-key
-threshold is not captured). _(plan 15, in progress: plan 15 Task 0 captured the gate-free boot
-after a Restore (`boot-clean/power-on`); it replaces this composition, see "Security code, boot
-gates and storage".)_
+**Boot:** LCD self-test (blank with the LED off 268 ms, all-on 970 ms, blank 1172 ms, battery
+ladder 1684 ms), a 132 ms blank, then the 7-frame connecting-hands animation at irregular steps
+(360, 302, 292, 367, 287, 320 ms), the last frame held 3951 ms, then standby: 10105 ms in all.
+This is the gate-free boot captured after Restore factory settings (`boot-clean/power-on`, plan 15
+Task 0c), asserted by `boot/power-on`; it replaced plan 13's self-test + hands composition. The
+hands' steps vary by up to ≈40 ms between gate-free boots; nokia-os plays this capture's. The
+clock wizard that follows on the emulator is a virgin-EEPROM effect (RTC) and is cut. Boot starts
+when the kernel's 800 ms power long press fires (the firmware's power-key threshold is not
+captured). The security-code gate and the welcome note are under "Security code, boot gates and
+storage (plan 15)".
 
 ### Deeper levels and stock widgets (plan 14)
 

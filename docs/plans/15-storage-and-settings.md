@@ -685,22 +685,46 @@ settled by evidence: the prompt follows Phone security plus an unknown SIM on v5
 `tests/goldens-integrity.test.ts`, `tests/tree-capture-set.test.ts`, `tests/acceptance.test.ts`
 (todo shim only), `goldens/**`, `src/resources/generated/**`.
 
-- [ ] Add the "Golden pipeline additions" rows (cut points as `FrameRange`s; the omitted clock
+- [x] Add the "Golden pipeline additions" rows (cut points as `FrameRange`s; the omitted clock
       wizard frames listed under `omitted` with the reason). Remove the replaced
       `NOT_IMPORTED` reasons (`boot/security-code*`, `boot/welcome` 11-15 keeps its reason).
-- [ ] Re-own placeholders (D12) in both `PLACEHOLDER_OWNERS` tables: `6-2-3` → `18`,
+- [x] Re-own placeholders (D12) in both `PLACEHOLDER_OWNERS` tables: `6-2-3` → `18`,
       `6-2-1-3`, `6-2-1-4`, `6-2-1-5` → `26`. Their goldens become `pending:18`/`pending:26`.
-- [ ] Transcribe the new images' text runs in `text-runs.ts` (the mask face as measured; `Code
+- [x] Transcribe the new images' text runs in `text-runs.ts` (the mask face as measured; `Code
 error`, `Code accepted` and the welcome notes in `large`), checked against
       `plan15/text.json`. Resolve harvester reports with overrides naming their golden.
-- [ ] Integrity tests: the new ids exist and parse; no golden is `pending:15`; the two owner tables
+- [x] Integrity tests: the new ids exist and parse; no golden is `pending:15`; the two owner tables
       are equal (plan 14 Task 13's test covers the rest).
-- [ ] `tests/acceptance.test.ts`: list the new asserted goldens without a scenario as todos
+- [x] `tests/acceptance.test.ts`: list the new asserted goldens without a scenario as todos
       (`awaitsPlan15Scenario`; Task 10 deletes it).
-- [ ] Run `import-captures` and `extract-resources` twice each; the second runs change nothing.
+- [x] Run `import-captures` and `extract-resources` twice each; the second runs change nothing.
       Record fixture counts and new glyphs in a completion note.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import security-code and boot-gate goldens (plan 15)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import security-code and boot-gate goldens (plan 15)`.
+
+Deviation (golden rows): the key probes' sub-recordings cannot be stills, so they are timelines
+of their own: `boot/security-gate-ok-123`, `boot/security-gate-ok-empty`,
+`probe/code-keys-6-4-c-on-empty`, `-ok-empty` and `-ok-123`. Three rows follow Task 0's outcome:
+`boot/security-lockout-4` (four wrong codes do not lock, the counter's boundary),
+`boot/welcome-note-ungated` (`factory/boot`, D9) and `probe/accept-restore-phone-security`
+(Phone security `On`, then `Off` after Restore). The `probe/accept-*` timelines are 6-3-5-on,
+6-3-5-off, 6-3-6-1-mismatch, -lengths, -match, 6-4-old-code, 6-4-new-code, 6-4-restore,
+c7-restore and 4-5-5. `captures/6.39/boot/{power-on,security-code-entry,welcome}` are no longer
+imported at all: `plan15/boot/gate` records the same gate as one sequence, and
+`boot-clean/power-on` (frames 0-11, the clock wizard 12-43 omitted) replaces the D12 composition
+as `boot/power-on`, so its fallback is gone. Not imported, with reasons in `NOT_IMPORTED`: the
+lockout timing probes, the welcome editor (plan 18), `accept/boot-*` (the SIM rule, Task 8's
+tests), Restore's setup shots and `factory/scroll/` (Task 5 cites them). Outside the file list:
+`tests/resources.test.ts` pins the new boot timeline and `tests/firmware-menu.test.ts` the
+Welcome note's new owner.
+
+Completion note (Task 2): 511 fixtures (476 asserted, 35 pending), up from 482 (447 asserted):
+29 new goldens, and `boot/power-on` re-imported from `boot-clean/power-on`. Its timeline is the
+self-test (268, 970, 1172, 1684 ms), a 132 ms blank, the hands at 360, 302, 292, 367, 287 and
+320 ms, the last held 3951 ms (10105 ms in all); the hands images are unchanged, and
+`boot/power-on`'s acceptance scenario passes with the regenerated `BOOT_TIMELINE`. No golden is
+`pending:15`: 6-2-3 is `pending:18`, 6-2-1-3…5 `pending:26`. New glyphs: small `*`, large `H` and
+`W`; no glyph override was needed. Both generators ran twice with no diff.
 
 ### Task 3 - phone-core: boot gates (TDD)
 

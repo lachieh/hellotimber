@@ -5,7 +5,79 @@
     "status": "asserted",
     "kind": "timeline",
     "images": 10,
-    "frames": 11
+    "frames": 12
+  },
+  {
+    "id": "boot/security-gate",
+    "file": "boot/security-gate.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 20,
+    "frames": 28
+  },
+  {
+    "id": "boot/security-gate-keys",
+    "file": "boot/security-gate-keys.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 16,
+    "frames": 16
+  },
+  {
+    "id": "boot/security-gate-ok-123",
+    "file": "boot/security-gate-ok-123.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "boot/security-gate-ok-empty",
+    "file": "boot/security-gate-ok-empty.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 3
+  },
+  {
+    "id": "boot/security-lockout",
+    "file": "boot/security-lockout.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 50
+  },
+  {
+    "id": "boot/security-lockout-4",
+    "file": "boot/security-lockout-4.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 19,
+    "frames": 47
+  },
+  {
+    "id": "boot/welcome-note",
+    "file": "boot/welcome-note.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 15
+  },
+  {
+    "id": "boot/welcome-note-long",
+    "file": "boot/welcome-note-long.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 15
+  },
+  {
+    "id": "boot/welcome-note-ungated",
+    "file": "boot/welcome-note-ungated.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 6
   },
   {
     "id": "game/snake/after-long",
@@ -1337,6 +1409,158 @@
     "frames": 10
   },
   {
+    "id": "probe/accept-4-5-5",
+    "file": "probe/accept-4-5-5.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 11
+  },
+  {
+    "id": "probe/accept-6-3-5-off",
+    "file": "probe/accept-6-3-5-off.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 13
+  },
+  {
+    "id": "probe/accept-6-3-5-on",
+    "file": "probe/accept-6-3-5-on.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 14,
+    "frames": 14
+  },
+  {
+    "id": "probe/accept-6-3-6-1-lengths",
+    "file": "probe/accept-6-3-6-1-lengths.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 12,
+    "frames": 29
+  },
+  {
+    "id": "probe/accept-6-3-6-1-match",
+    "file": "probe/accept-6-3-6-1-match.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 16,
+    "frames": 16
+  },
+  {
+    "id": "probe/accept-6-3-6-1-mismatch",
+    "file": "probe/accept-6-3-6-1-mismatch.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 20,
+    "frames": 21
+  },
+  {
+    "id": "probe/accept-6-4-new-code",
+    "file": "probe/accept-6-4-new-code.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "probe/accept-6-4-old-code",
+    "file": "probe/accept-6-4-old-code.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 9
+  },
+  {
+    "id": "probe/accept-6-4-restore",
+    "file": "probe/accept-6-4-restore.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 11
+  },
+  {
+    "id": "probe/accept-c7-restore",
+    "file": "probe/accept-c7-restore.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 11
+  },
+  {
+    "id": "probe/accept-restore-phone-security",
+    "file": "probe/accept-restore-phone-security.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "probe/code-keys-6-4",
+    "file": "probe/code-keys-6-4.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 17,
+    "frames": 17
+  },
+  {
+    "id": "probe/code-keys-6-4-c-on-empty",
+    "file": "probe/code-keys-6-4-c-on-empty.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "probe/code-keys-6-4-ok-123",
+    "file": "probe/code-keys-6-4-ok-123.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "probe/code-keys-6-4-ok-empty",
+    "file": "probe/code-keys-6-4-ok-empty.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 3
+  },
+  {
+    "id": "probe/code-wrong-4-5-5",
+    "file": "probe/code-wrong-4-5-5.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 10
+  },
+  {
+    "id": "probe/code-wrong-6-3-5",
+    "file": "probe/code-wrong-6-3-5.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 10
+  },
+  {
+    "id": "probe/code-wrong-6-3-6-1",
+    "file": "probe/code-wrong-6-3-6-1.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 10
+  },
+  {
+    "id": "probe/code-wrong-6-4",
+    "file": "probe/code-wrong-6-4.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 10
+  },
+  {
     "id": "probe/confirm-10-3-2-yes",
     "file": "probe/confirm-10-3-2-yes.lcd.txt",
     "status": "pending:21",
@@ -1551,6 +1775,14 @@
     "kind": "timeline",
     "images": 3,
     "frames": 4
+  },
+  {
+    "id": "probe/persist-reboot",
+    "file": "probe/persist-reboot.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 11,
+    "frames": 11
   },
   {
     "id": "probe/prepaid-credit-info-display",
@@ -3113,7 +3345,7 @@
   {
     "id": "tree/06-settings/6-2-1-3.choose",
     "file": "tree/06-settings/6-2-1-3.choose.lcd.txt",
-    "status": "pending:15",
+    "status": "pending:26",
     "kind": "timeline",
     "images": 6,
     "frames": 6,
@@ -3124,7 +3356,7 @@
   {
     "id": "tree/06-settings/6-2-1-4.choose",
     "file": "tree/06-settings/6-2-1-4.choose.lcd.txt",
-    "status": "pending:15",
+    "status": "pending:26",
     "kind": "timeline",
     "images": 5,
     "frames": 5,
@@ -3135,7 +3367,7 @@
   {
     "id": "tree/06-settings/6-2-1-5.choose",
     "file": "tree/06-settings/6-2-1-5.choose.lcd.txt",
-    "status": "pending:15",
+    "status": "pending:26",
     "kind": "timeline",
     "images": 5,
     "frames": 5,
@@ -3168,7 +3400,7 @@
   {
     "id": "tree/06-settings/6-2-3.leaf",
     "file": "tree/06-settings/6-2-3.leaf.lcd.txt",
-    "status": "pending:15",
+    "status": "pending:18",
     "kind": "timeline",
     "images": 3,
     "frames": 13,

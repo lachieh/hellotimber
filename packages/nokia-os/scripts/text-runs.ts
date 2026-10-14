@@ -273,6 +273,27 @@ function gameOver(label: string, score: string): TextRun[] {
   ];
 }
 
+/** Plan 15's security-code prompt: the label, the `*` mask (small, from x 0, top 29) and OK. */
+function codePrompt(mask: string, right: number): TextRun[] {
+  return [
+    { font: "small", text: "Security", top: 7, left: 0, right: 40 },
+    { font: "small", text: "code:", top: 16, left: 0, right: 25 },
+    ...(mask === "" ? [] : [{ font: "small" as const, text: mask, top: 29, left: 0, right }]),
+    softkey("OK"),
+  ];
+}
+
+/** A plan 15 note's two large lines from x 0 at tops 3 and 18; the icon is right of `right`s. */
+function codeNote(second: string, secondRight: number): TextRun[] {
+  return [
+    { font: "large", text: "Code", top: 3, left: 0, right: 28 },
+    { font: "large", text: second, top: 18, left: 0, right: secondRight },
+  ];
+}
+
+/** The welcome note `Hi` (plan 15 A6): large, from x 1, top 7. */
+const WELCOME_HI: readonly TextRun[] = [{ font: "large", text: "Hi", top: 7, left: 1, right: 11 }];
+
 /** Golden id → image name → the text runs drawn in that image. */
 export const TEXT_RUNS: Readonly<Record<string, Readonly<Record<string, readonly TextRun[]>>>> = {
   "standby/standby": { "01-standby": STANDBY },
@@ -300,5 +321,22 @@ export const TEXT_RUNS: Readonly<Record<string, Readonly<Record<string, readonly
   },
   "tree/12-profiles/12-6-2.sub": {
     "09": [{ font: "thin", text: "\uE000\uE000", top: 29, left: 68, right: 77 }],
+  },
+  // Plan 15 (checked against plan15/text.json): the power-on prompt and its mask, the boot's
+  // Code error and Code accepted notes, and the welcome notes.
+  "boot/security-gate": {
+    d: codePrompt("", 0),
+    i: codePrompt("*****", 29),
+    j: codeNote("error", 31),
+    k: codeNote("accepted", 53),
+  },
+  "boot/security-gate-keys": { "12-digits-10": codePrompt("**********", 59) },
+  "boot/welcome-note": { m: WELCOME_HI },
+  "boot/welcome-note-ungated": { d: WELCOME_HI },
+  "boot/welcome-note-long": {
+    m: [
+      { font: "large", text: "Welcome to", top: 7, left: 1, right: 66 },
+      { font: "large", text: "my phone", top: 22, left: 1, right: 54 },
+    ],
   },
 };

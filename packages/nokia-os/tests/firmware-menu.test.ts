@@ -311,7 +311,7 @@ describe("PlaceholderApplication", () => {
       "menu/messages/write": "18",
       "menu/chat": "18",
       "menu/tones/composer/empty-4": "16",
-      "menu/settings/phone-settings/welcome-note": "15",
+      "menu/settings/phone-settings/welcome-note": "18",
       "menu/games/bantumi/new-game": "24",
       "menu/calculator": "20",
       "menu/clock/stopwatch": "21",

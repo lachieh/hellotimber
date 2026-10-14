@@ -1,6 +1,6 @@
 lcd-golden 1
 id: tree/06-settings/6-2-1-4.choose
-status: pending:15
+status: pending:26
 source: captures/6.39/plan14/open/6-2-1-4
 source-sha256: f3b9373b64e41a929154be12887cc94fdeacb7b39f16c5b0ae2fe8f7dd97cb44
 trigger-frame: 1

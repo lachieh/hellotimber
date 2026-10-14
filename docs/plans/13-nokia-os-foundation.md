@@ -158,6 +158,10 @@ hands → clock prompt. All of these are virgin-EEPROM effects except the self-t
 Fallback: self-test frames 0-3 of `boot/power-on` followed by hands frames 4-10 of `boot/welcome`.
 The last hands frame is held for its captured 4230.6 ms, then standby. The fallback is flagged
 UNVERIFIED in the spec.
+_Superseded by plan 15 (D9, Task 2):_ plan 15 Task 0c captured the gate-free boot after a
+Restore (`boot-clean/power-on`). `boot/power-on` now imports its frames 0-11 (self-test, a
+132 ms blank, the hands at irregular steps, the last held 3951 ms; 10105 ms in all) and the
+composition is gone.
 
 **D13 - Leaves open a `PlaceholderApplication`.** It renders a `custom` frame: a 1-pixel dotted
 border (never drawn by the firmware) and the entry label in the stock font. C exits to the parent.
