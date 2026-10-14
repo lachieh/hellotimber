@@ -191,6 +191,7 @@ export type ScreenModel =
       iconId: string;
       iconFrame?: number; // present iff the slot's graphic has a timeline
       menuIndicator: MenuIndicator;
+      opening?: true; // plan 14: shortcutEntry only; a typed entry is about to open (no soft key)
     }
   | {
       kind: "list";
@@ -202,6 +203,8 @@ export type ScreenModel =
       menuIndicator?: MenuIndicator;
       presentation?: "pages"; // present only for pages; absent = rows
       detail?: string; // selected child's current value, when the submenu's reader returns one
+      windowTop?: number; // plan 14: rows levels with PhoneConfig.rowsWindow; index on the first row
+      opening?: true; // plan 14: shortcutEntry only; a typed entry is about to open (no soft key)
     }
   | {
       kind: "reader";
@@ -268,6 +271,19 @@ export interface SubmenuOptions<Metadata = unknown> {
   presentation?: MenuPresentation; // default "rows"
   /** Current-value text for a child (e.g. "Off"); undefined = none. Opaque host function. */
   detail?(child: MenuEntry<Metadata>): string | undefined; // method syntax: keeps SubmenuEntry covariant
+  /** Softkey label on this level (plan 14). Default "Select"; must be non-empty. */
+  softkey?: string;
+  /**
+   * The child selected when the level is entered by Select, a shortcut or a path that ends at the
+   * level; re-read on every entry (plan 14). Undefined or not a child = the first child.
+   */
+  opening?(): MenuEntry<Metadata> | undefined; // method syntax: keeps SubmenuEntry covariant
+  /**
+   * Runs when the level is entered with Select, before its list (plan 14). While it runs the path
+   * is the level's path; its exit() reveals the list. Paths that land on the level, and returns
+   * from a child, skip it. Must not be the level's own child application.
+   */
+  intro?: PhoneApplication;
 }
 
 export abstract class MenuEntry<Metadata = unknown> {
@@ -365,7 +381,14 @@ export abstract class PhoneApplication {
 }
 
 export interface ApplicationContext {
-  exit(): void;
+  /**
+   * Leave the application: back to the launching stack (default) or straight to standby
+   * (deactivation reason `exit`; the menus are left as C-hold leaves them). Plan 14: `levels`
+   * (default 1) also closes `levels - 1` enclosing submenu levels, and `select` selects that
+   * child (by slug) in the level returned to; both are ignored with `to: "standby"`. exit() may
+   * be called inside createSession: the kernel returns without rendering the application.
+   */
+  exit(options?: { to?: "standby"; levels?: number; select?: string }): void;
   open(application: PhoneApplication): void;
 }
 
@@ -389,7 +412,24 @@ export interface PhoneConfig<Metadata = unknown> {
   menuOpenDelayMs?: number;
   /** Menu+digit shortcut window, from the Menu press and after each digit. Default 3000. */
   shortcutWindowMs?: number;
+  /** Plan 14: rows submenus keep a stateful circular window of this many rows. Default: off. */
+  rowsWindow?: number; // positive integer
+  /**
+   * Plan 14: stock shortcut digits. Menu numbers are matched as numbers at each level (a prefix
+   * of a longer number waits for shortcutWindowMs), a selected entry opens openDelayMs after its
+   * digit (models carry `opening: true` meanwhile), and digits that match no number open
+   * `invalid`, whose exit goes to standby. Default: off (per-digit shortcuts below).
+   */
+  shortcutEntry?: { openDelayMs: number; invalid: PhoneApplication };
 }
+
+/** Plan 14: the rows-window rule. `previousTop` undefined = entering the level. */
+export function rowsWindowTop(
+  previousTop: number | undefined,
+  selected: number,
+  count: number,
+  rows: number,
+): number;
 
 export interface PhoneSnapshot {
   path: string;
@@ -462,6 +502,19 @@ that moves the carousel opens it at once, C returns to standby).
 
 Digit shortcuts preserve the current one-digit-per-level behavior: orders 1-9 are direct
 targets, while orders 10-13 remain visible and traversable but are not direct digit targets.
+`shortcutEntry` (plan 14, opt-in) replaces this with the stock firmware's number matching.
+
+**Kernel policy (plan 14).** Every plan 14 addition is opt-in and generic; the website sets none,
+so its models are unchanged. _Rows window_ (`rowsWindow`): with `count <= rows` the window is 0;
+otherwise it keeps its position while the selection stays inside it (indices modulo `count`),
+scrolls so the selection is on the bottom row when the selection moves to the item just after
+the window's last row, and puts the selection on the top row for any other move outside it (▲
+above it, the wrap from the first item, a jump). Entering a level puts the window at `selected`
+(`count > rows`) or 0; the window survives a child opening and closing and is rebuilt when the
+level is entered again. `rowsWindowTop` exports the rule. _Opening selection_: a level's
+`opening()` picks the child selected on every entry (Select, shortcut, path landing). _Intro_: a
+level's `intro` application runs on Select-entry before the list. _Softkey_: a level's `softkey`
+replaces `Select` in its list model.
 
 `TopLevelEntry` is a presentation slot, not a path segment. It adds the required
 `MenuGraphic` for each carousel position around exactly one semantic entry. Nested entries
@@ -543,7 +596,7 @@ export interface StockPhoneConfig {
 
 export function createStockPhone(config: StockPhoneConfig): Phone;
 export const paintStockScreen: ScreenPainter;
-export const stockMenu: PhoneMenu; // 12 top-level entries, level-1 children, placeholders below
+export const stockMenu: PhoneMenu; // the whole v6.39 tree (plan 14); application leaves without behaviour open placeholders
 /** Characters of `text` missing from a stock font; [] when renderable. */
 export function missingStockGlyphs(
   text: string,

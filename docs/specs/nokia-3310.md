@@ -243,7 +243,9 @@ does nothing, yet the rail places them 5th of 5 (it uses the visible position an
   keeps its position: ▲ moves the selection within it, ▲ above it puts the selection on the top
   row, and ▲ from the first item wraps to the last item drawn on top of the first two
   (`Voice tags / Search / Service Nos.`). The window is circular and stateful; nokia-os does not
-  reproduce scrolling up yet (plan 14). How ▼ wraps from the last item is UNVERIFIED.
+  reproduce scrolling up yet (plan 14). ▼ from the last item continues circularly with the
+  selection on the bottom row (`Speed dials / Voice tags / Search`, then `Voice tags / Search /
+Service Nos.`; plan 14 P1).
 - _Pages_ (native menus: Messages, Call register, Tones, Settings, Call divert, Clock): one item per
   screen; label lines from x 0 at tops y 7/16/25 (a line must end before x 80); the current value
   (e.g. `Off`, `Level 1`, the time) in the thin font, top y 29, its last cell ending at x 78 (ink
@@ -261,8 +263,8 @@ three 1-px dots at y 5, x 78/80/82.
 the signal and battery ladders and icons erased for **39 ms**, then the carousel with the dots. A
 key that moves the carousel opens it at once. The dots become the menu number **2948 ms** after
 the Menu press (2985 ms into the capture minus the 37 ms trigger); the shortcut window is timed
-from the Menu press and after each digit. What is shown after a typed digit is UNVERIFIED
-(nokia-os draws the resolved segments without a cursor).
+from the Menu press and after each digit. What follows a typed digit is described under "Deeper
+levels and stock widgets (plan 14)".
 
 **Fonts:** four faces, harvested from the goldens: `small` (labels, operator, softkeys; 2-px stems,
 7-row capitals plus descenders, 8-row cells), `large` (carousel title, 11-row capitals, 13-row
@@ -289,6 +291,65 @@ boot could not be captured (the in-menu security-code check rejects the code, so
 cannot be turned off), so the self-test + hands composition is UNVERIFIED as one continuous
 sequence. Boot starts when the kernel's 800 ms power long press fires (the firmware's power-key
 threshold is not captured).
+
+### Deeper levels and stock widgets (plan 14)
+
+Source: the plan 14 recaptures (`captures/6.39/plan14/`, generator
+`captures/scripts/gen_v639_plan14.py`) and `docs/specs/nokia-3310-menu-tree.md`. Everything here
+is observed; items not yet reproduced by nokia-os are marked (plan 14, in progress).
+
+**Rows window (plan 14, in progress).** With 3 or fewer items the window never moves. Otherwise it
+keeps its position while the selection stays inside it (indices modulo the count); moving to the
+item just after the bottom row scrolls so the selection is on the bottom row; any other move
+outside the window (▲ above it, ▲ from the first item, a shortcut) puts the selection on the top
+row. Evidence: ▼ past the last item (`Speed dials / Voice tags / Search`), ▲ from the first
+(`Voice tags / Search / Service Nos.`), Games and Profiles both ways. The window survives a child
+submenu or a timed note and is rebuilt (opening item on top) when the level is entered again.
+
+**Opening selection and softkeys (plan 14, in progress).** Levels and option lists open on their
+current value; with more than 3 items the window starts at it (`Maximum time / 1 hour / 6
+hours`), otherwise at 0. 19 submenus read `OK` instead of `Select` (Info service, Screen saver,
+the divert levels, every profile); option lists read `OK`; info pages `Back` (or `Select` on a
+page that opens something); multi-select rows `Mark`/`Unmark`. A list whose virgin-EEPROM value
+is invalid opens unset: no rows, index `-0` (`5-2-0`), softkey `Quit`; its first ▼ selects the
+first item, its first ▲ the last item on the top row, and closing it without a choice keeps it
+unset. Tones settings are the General profile's (choosing in one shows in the other); the other
+profiles are independent.
+
+**Shortcut digits (plan 14, in progress).** Digits form menu numbers: at the top level `1` waits
+≈2.95 s for a second digit (10, 11, 12), showing `1` and three dots, then means Phone book; `1 1`
+is Clock, `1 2` Profiles; `1 8` and `1 9` show `Invalid shortcut` (≈2.9 s), then standby, where
+further digits start a phone number (UNVERIFIED beyond the first screen). A digit that selects an
+entry shows the typed path (`8-6`, `1-9`) without the softkey and opens it ≈1.46 s later; an
+opened submenu shows `<path>-` and three dots for ≈1.47 s, then its index. `Menu 8 1` plays the
+Snake II splash first; a digit during a splash only skips it. Entering Screen saver shows `5-9`
+and three dots for ≈2.9 s.
+
+**Stock widgets (plan 14, in progress).** Layouts are measured by plan 14 Tasks 6/7; behaviour:
+
+- _Option lists_: rows with the current value highlighted (no radio glyph); OK applies and shows
+  the result, then the page with the new value. Some return without a note (Set delay goes back
+  two levels to the Call divert page).
+- _Multi-select_: ☑/☐ marks at x 1..5, band from x 8, text at x 10; the softkey toggles
+  (`Unmark` on a marked row); C after a change asks `Save changes?` [Yes].
+- _Timed notes_: large text from x 0 at tops 3/18/33 plus an icon. Tick confirmations (`Done`,
+  `... erased`, `... selected`) ≈1.45 s in three steps (box ≈690, half ≈232, full ≈545 ms); long
+  confirmations (Screen saver `Done`, `Selected profile: ...`) ≈2.9 s; information and error notes
+  (`No phone numbers`, `Not allowed`, `Invalid shortcut`) one step ≈2.9 s. Identical notes jitter
+  by up to ±17 ms. C dismisses a note and stays on the list; ▼ dismisses it and moves.
+- _Progress notes_: `Requesting`/`Searching` with a hatched bar looping ≈271 ms per step and
+  `Quit`. C returns at once; Quit after 10 s on `Requesting` shows `Request not confirmed`, then
+  standby. The emulator's network never answers (artefact).
+- _Confirm queries_: small-face lines; C returns to the list; OK/Yes runs the result.
+- _Prompts_: a mode icon, a label, an entry box or value, softkey `OK`/`Search`/`Assign`/`Start`.
+  Text and number prompts blink a cursor every ≈480 ms; Search, Speed dials and code prompts do
+  not.
+- _Info pages_: one value per page, `Back`; a page with `Select` opens its own list.
+- _Games_: each game opens with an animated splash (Snake II ≈2.56 s, Space impact ≈2.48 s,
+  Bantumi ≈3.46 s, Pairs II ≈3.06 s), skipped by any key. Level: `Level:` and bars, ▲/▼ inert.
+  Instructions: `More` pages cycle; C leaves. Top score: an animated note that returns by itself
+  after ≈5.84 s (or on a key) with New game selected.
+- _View all_ (Reminders, nothing stored) returns straight to the carousel.
 
 **Capture artefacts (never reproduced as behaviour):**
 

@@ -23,7 +23,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 11  | [object menu model](./11-object-menu-model.md)           | immutable OO menu graph, object applications, working Calculator                   | 01-10                         | done        |
 | 12  | [LCD pixel authenticity](./12-lcd-pixel-authenticity.md) | reference standby/menu pixels + visible hierarchical shortcuts                     | 01-11                         | done        |
 | 13  | [Nokia OS foundation](./13-nokia-os-foundation.md)       | `@hellotimber/nokia-os`: stock v6.39 firmware, painter and LCD goldens             | 01-12                         | done        |
-| 14  | [menu tree depth](./14-menu-depth-and-stock-widgets.md)  | whole v6.39 menu tree incl. game menus; stock widgets; rows window; settings store | 13                            | not started |
+| 14  | [menu tree depth](./14-menu-depth-and-stock-widgets.md)  | whole v6.39 menu tree incl. game menus; stock widgets; rows window; settings store | 13                            | in progress |
 | 15  | Storage port and Settings                                | EEPROM-like persistence; Settings; factory defaults                                | 13                            | not started |
 | 16  | Tones and sound sequencer                                | tone sequencer, keypad/warning tones, ringing tones, Composer                      | 13, 15                        | not started |
 | 17  | Profiles                                                 | profile activation and personalisation; power-key profile list                     | 15, 16                        | not started |

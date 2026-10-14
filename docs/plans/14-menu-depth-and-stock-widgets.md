@@ -10,7 +10,7 @@
 captures, reference only), and the canonical plan 14 captures that Task 0 writes to
 `$REF/captures/6.39/plan14/`. `docs/specs/nokia-3310-menu-tree.md` is the human-readable form of
 `tree.json`. Read `$REF/captures/README.md` and plan 13 in full before starting.
-**Status:** not started.
+**Status:** in progress.
 
 ## Goal
 
@@ -83,6 +83,13 @@ selected on entry. (4) `SubmenuOptions.intro` runs an application before a level
 splash). (5) `ApplicationContext.exit({ to: "standby" })`. Plan 13 deferred softkeys because
 stock and kernel labels coincided; the tree shows `OK` on 19 submenus, so the deferral ends here.
 
+Deviation (Task 0): P5, P12 and C2 need two more opt-in seams, added to "Contract changes".
+(6) `PhoneConfig.shortcutEntry` switches the shortcut digits to the stock rules of D14 (numbers
+matched as numbers, delayed opening, an invalid-number application). (7) `ApplicationContext.exit`
+also takes `levels` (close enclosing submenu levels too: 10-2 View all returns to the carousel,
+a 7-3-4 Set delay choice to the Call divert page) and `select` (Top score returns to its game
+menu with New game selected). Hosts that set neither see no change.
+
 **D3 - The rows window rule (D2.1), from the captures.** With `count <= rows` the window is
 always 0. Otherwise the window keeps its position while the selection stays inside it (indices
 taken modulo `count`); when the selection moves to the item just after the window's last row, the
@@ -92,6 +99,17 @@ Entering a level puts the window at `selected` (`count > rows`) or 0. The window
 child opening and closing (the frame stays on the stack) and is rebuilt when the level is
 entered again. Task 0 probes confirm or correct the return, re-entry and shortcut cases before
 Task 4 is written.
+
+Task 0 outcome: confirmed, no correction (P1-P5, P10). ▼ from the last item continues
+circularly (`Speed dials / Voice tags / Search`, then `Voice tags / Search / Service Nos.`, then
+`Search / Service Nos. / Add name`); ▲ from the first item puts the last on the top row; both hold
+for 5 and 6 items (Games, Profiles), and lists of 2 or 3 never scroll. The window survives a child
+submenu and a timed note (P3: Erase on the top row stays there; `Voice tags / Search / Service
+Nos.` comes back unchanged). Entering the level again starts at the opening item on the top row
+(P4). A level entered through shortcut digits puts the typed entry on the top row (`Speed dials /
+Voice tags / Search`, `Settings / Snake II / Space impact`), which is the entry rule with
+`selected` = the typed entry. An unset list's first ▼ selects its first item (window 0), its
+first ▲ its last item on the top row (`Level 5 / Level 1 / Level 2`).
 
 **D4 - The stock tree is generated data; behaviour bindings are hand-written (new).**
 `scripts/import-tree.ts` reads `$REF/captures/6.39/tree.json` plus Task 0's OCR text
@@ -134,6 +152,19 @@ goldens: identical notes share a golden only when every step matches within ±2 
 gets its own golden and its own generated timeline (Screen saver's `Done` lasts ≈2.9 s, the
 option-list `Done` ≈1.45 s).
 
+Task 0 outcome: the jitter between identical notes is larger than ±2 ms (the `Done` box step
+runs 671-704 ms, `No phone numbers` 2884-2924 ms), so few recordings share a golden and most
+notes get their own timeline. Note classes after alignment: confirmations with the tick
+(`Done`, `... erased`, `... selected`, `Info message reception on/off`, `Clock hidden`) box
+671-704, half 218-247, full 509-569 ms, ≈1.43-1.50 s in all; long confirmations (Screen saver
+`Done`, `Timeout selected`, `Selected profile: ...`) the same with a 1962-2015 ms full step,
+≈2.9 s; information and error notes (`No phone numbers`, `No numbers`, `No voice tags saved`,
+`Not allowed`, `Set PIN code request on`, `Request not confirmed`, `Invalid shortcut`) one step,
+2884-2938 ms. Leading frames that are reproduced as captured: a ≈90 ms blank before `No phone
+numbers` from Service Nos. only, a 45-60 ms `Opening` before the Inbox/Outbox notes, a 55-63 ms
+erase before the Info service notes, 15 ms partial draws, and 8-9 ms partial erases before
+standby.
+
 **D9 - Settings: an internal in-memory store behind a narrow port (new; brings forward part of
 plan 15).** Pages must show choices (D5 evidence), so deferral would leave every choice
 invisible. `src/firmware/settings.ts` defines `StockSettings` (`choice`/`choose` for
@@ -145,6 +176,11 @@ alias the General profile's Personalise settings, because General is the active 
 plan 17 makes the active profile switchable (Task 0 probe P11 confirms the sharing). The store
 is not exported. Plan 15 adds the host persistence port, factory defaults and the public API, so
 a storage contract is not fixed before it has a consumer.
+
+Task 0 outcome: P11 confirms the sharing. Tones › Ringing volume → Level 3 shows `Level 3`
+on General › Personalise › Ringing volume (page and list, which opens on Level 3), while
+Silent's stays unset with its `Level 1` hint. Closing an unset list without choosing keeps it
+unset (P10).
 
 **D10 - The virgin-EEPROM state is the asserted initial state (continues plan 13 Open question
 3).** Unset tone lists (`-0`, no rows, `Quit`), `Top score: 45`, junk score IDs (`ç`, `ÆG`),
@@ -159,12 +195,26 @@ first screen, including a blinking cursor if Task 0 captures one, as a timeline.
 prompt and the other keys are inert. The plans in "Leaf ownership" add entry, editing,
 verification and results.
 
+Task 0 outcome (P9, C2): text and number prompts blink a cursor every ≈480 ms (Add name,
+message centre and voice mailbox numbers, Alarm clock, Set the time, Date, Set timer `hh:mm`,
+Rename, Chat and divert numbers, Topic number, Group number, Club Nokia ID). Search `Name:`,
+Speed dials `Key 2:` and the code prompts (security code, PIN, PIN2, barring password) do not
+blink. C returns to the list at once.
+
 **D12 - Game menus belong to this plan; gameplay stays with plans 23/24 (changes plan 13's
 follow-up text for 23/24).** The brief asks for level bars and text pages, and only the game
 menus use them. Snake II, Space impact, Bantumi and Pairs II become rows submenus with a splash
 `intro` (D2.4). Their Level, Mazes, Top score, Score IDs and Instructions leaves are stock
 widgets. New game opens the placeholder. Plans 23/24 keep the splash art (generated here),
 gameplay and the scores that gameplay writes. Task 14 updates the plan table rows 23/24.
+
+Task 0 outcome (P12): any key during a splash skips to the game menu and is consumed (▼, C and
+Navi at 300 ms all land on New game). Splashes (frames, time to the menu): Snake II 6, ≈2.56 s;
+Space impact 9, ≈2.48 s; Bantumi 13, ≈3.46 s; Pairs II 10, ≈3.06 s. Level: ▲/▼ are inert, OK and C return. Instructions: More cycles from
+the last page back to the first; C leaves. Top score is not static: the note animates (≈193 ms
+frames, some ≈387 ms) and returns by itself after ≈5.84 s, or at once on a key, to the game menu
+with New game selected and drawn as `Score IDs / Instructions / New game` (a ▼ key then selects
+Level). The tree's `static-note` kind for Top score is a crawl misreading (3.5 s window).
 
 **D13 - Text comes from the corpus's exact OCR; glyph bitmaps come only from goldens (extends
 plan 13 D8).** Plan 13 transcribed every text run by hand. With ~700 images that does not
@@ -182,6 +232,28 @@ navigated with ▼ only, so Task 0 records Menu 1, Menu 1 8, Menu 1 8 1, Menu 1 
 option list), Menu 1 1 0 (two-digit 1-10), and Menu 8 1 (splash). Task 5 implements what they
 show. Anything that needs more than the D2 seams is recorded as a Deviation with its own kernel
 test, or as UNVERIFIED in the spec.
+
+Deviation (Task 0, P5): the stock shortcut rules differ from the kernel's per-digit shortcuts
+and need the `shortcutEntry` seam (D2 deviation). Observed:
+
+- Digits form menu **numbers**, not one digit per level. At the top level `1` is a prefix of 10,
+  11 and 12: the carousel shows `1` and three dots for the window (≈2948 ms from the digit), then
+  the number resolves to 1. `1 1` is Clock, `1 2` Profiles; `1 8` and `1 9` match nothing and
+  show `Invalid shortcut` (≈2.9 s) at once, then standby, where further digits start a phone
+  number (`1`, `12`, key Call; out of scope). At Clock, `0` is shown as `11-0` and dots, and
+  `Invalid shortcut` follows when the window ends.
+- A digit that selects an entry shows it at once with the typed path (`8`, `12`, `8-6`,
+  `8-6-3`, `1-9`) and **no soft key**, and opens it ≈1.43-1.50 s later. An opened submenu then
+  shows `<path>-` and three dots with its soft key for ≈1.46-1.48 s (awaiting the next digit),
+  then its normal index (`12-1`, `8-6-1`). A typed leaf (Speed dials) opens its screen.
+- `Menu 8 1` plays the Snake II splash first, then shows the Games list with `8-1` and no soft
+  key for ≈2.9 s, then the game menu (`8-1-1`). A digit during the splash only skips it (`8 1 2`
+  ends on New game).
+- Unrelated to digits: entering Screen saver (5-9 and every profile's 12-n-2-9) shows `5-9` and
+  three dots for ≈2.9 s before `5-9-1`.
+
+Task 5 implements these with kernel tests where the seam allows; the standby number entry
+after an invalid shortcut stays out of scope (UNVERIFIED in the spec).
 
 **D15 - The website and nokia-os's public API do not change.** phone-core changes are additive
 and opt-in. The website sets none of them, so its models, routes and pixels are unchanged.
@@ -250,10 +322,19 @@ export interface PhoneConfig<Metadata = unknown> {
   // ...plan 13 fields unchanged...
   /** Rows submenus keep a stateful circular window of this many rows (plan 14 D3). Default: off. */
   rowsWindow?: number; // positive integer
+  /**
+   * Stock shortcut digits (plan 14 D14): menu numbers matched as numbers at each level (a prefix
+   * of a longer number waits for `shortcutWindowMs`), a selected entry opens `openDelayMs` after
+   * its digit, and digits that match no number open `invalid` (whose exit goes to standby).
+   * Default: off (plan 13's per-digit shortcuts). Task 5 fixes the exact shape with tests.
+   */
+  shortcutEntry?: { openDelayMs: number; invalid: PhoneApplication };
 }
 
 // ScreenModel `list` addition (omitted unless PhoneConfig.rowsWindow is set and the level is rows):
 //   windowTop?: number; // index of the item on the first visible row
+// ScreenModel `list` and `menu-carousel` addition (omitted unless shortcutEntry is set):
+//   opening?: true; // a typed entry is about to open: the stock painter hides the soft key
 
 /** The rows-window rule (D3). `previousTop` undefined = entering the level. */
 export function rowsWindowTop(
@@ -264,17 +345,22 @@ export function rowsWindowTop(
 ): number;
 
 export interface ApplicationContext {
-  /** Leave the application: back to the launching stack (default) or straight to standby. */
-  exit(options?: { to?: "standby" }): void;
+  /**
+   * Leave the application: back to the launching stack (default) or straight to standby.
+   * `levels` (default 1) also closes `levels - 1` enclosing submenu levels; `select` selects
+   * that child (by slug) in the level it returns to. Both are ignored with `to: "standby"`.
+   */
+  exit(options?: { to?: "standby"; levels?: number; select?: string }): void;
   open(application: PhoneApplication): void; // unchanged
 }
 ```
 
-Rules: `softkey` must be non-empty. `opening` is evaluated with the level's children only. An
+Rules (Task 0 added `shortcutEntry`, `opening`, `exit` `levels`/`select`): `softkey` must be non-empty. `opening` is evaluated with the level's children only. An
 `intro` must not be the level's own child application. `exit({ to: "standby" })` deactivates
 with reason `exit` and leaves the menus as C-hold does. An application may call `exit()` inside
 `createSession`. The kernel then returns to the stack without rendering the application (Task 5
-pins this with a test).
+pins this with a test). `levels` must be a positive integer no larger than the levels below the
+carousel plus one; `select` names a child of the level returned to, else it throws.
 
 ### `@hellotimber/nokia-os` (public API unchanged)
 
@@ -428,6 +514,20 @@ authoritative; Task 6/7 correct this table and the spec when they disagree.
 | Text pages          | three small-face lines from x 0; softkey `More`                                                                                                                   | `More` pages; after the last page back (P12)                                                                                                                    | 8-1-6 Instructions                                        |
 | Splash (intro)      | full-frame animated game title                                                                                                                                    | ~250 ms frames, then the game's rows menu (P12: skip key, shortcut)                                                                                             | 8-1 Snake II                                              |
 
+Deviation (Task 0 probes; layout corrections stay with Tasks 6/7): Option list: OK on a 7-3-4
+Set delay choice returns at once to the Call divert page (two levels, no note). Multi-select: the
+soft key toggles the row and flips to `Mark`/`Unmark`; C after a change asks the confirm query
+`Save changes?` [Yes] (P14), it does not simply leave. Timed note: C dismisses and stays on the
+list; ▼ during `Done` dismisses and moves (P6). Static note: Top score is an animated timed
+note (D12). Progress note: C on `Searching` returns at once; Quit on `Requesting` after 10 s shows
+`Request not confirmed` (≈2.9 s), then standby (P7). Confirm query: C returns to the list
+unchanged; OK runs the result (Level 5: `Done`, page `Level 5`; Club Nokia ID: a `Club Nokia ID:`
+text prompt; Erase › All › Yes: `Reminder memory empty` ≈2.87 s, then Reminders shows only `Add
+new`) (P8). Confirm query text tops are 2/12/22 or 4/13 (`Are you / sure?`). Text pages: More
+cycles; C leaves. Level bar: ▲/▼ inert. Info pages: 4-8-1 Credit info display opens an On/Off
+option list (on Off); 4-8-4 Recharge status opens info pages `Last recharge:` / `Expiry date:`
+with value `0` (P15).
+
 ## Leaf ownership
 
 Leaves in scope get stock widgets. These open the placeholder (C exits; pending goldens name the
@@ -455,6 +555,8 @@ Inbox/Outbox notes (18); Call register notes and info pages (22); divert and bar
 Closed user group, security prompts, Network selection (15); game menus' scores (23/24).
 `10-2` View all (returns immediately, nothing to show) is a no-op leaf: an application that exits
 inside `createSession`.
+Deviation (Task 0): View all returns to the carousel (Reminders, icon restarting), not to the
+Reminders list, so it exits inside `createSession` with `exit({ levels: 2 })`.
 
 ## Conventions for every task
 
@@ -487,10 +589,10 @@ inside `createSession`.
 `captures/scripts/v639-plan14.cap`, `captures/6.39/plan14/**`, a new section in
 `captures/README.md`.
 
-- [ ] Read `$REF/captures/README.md` (harness commands incl. `fork`, `exit`, `hex`) and
+- [x] Read `$REF/captures/README.md` (harness commands incl. `fork`, `exit`, `hex`) and
       `$REF/tools/menutree/` (`crawl.py` already navigates every node, including carousel
       animations that drop keys; reuse its navigation). Do not modify existing captures or scripts.
-- [ ] Write `gen_v639_plan14.py`. It reads `tree.json` and emits `v639-plan14.cap`
+- [x] Write `gen_v639_plan14.py`. It reads `tree.json` and emits `v639-plan14.cap`
       (`include v639-setup.inc`, `key c`, `run 2s`, then per item: navigate to the parent,
       `fork`, act, `exit`):
   - **C1 scroll:** every submenu and option list (all of them, including same-as copies):
@@ -523,35 +625,81 @@ inside `createSession`.
     P13 `set-delay`: 7-3-4 choose 5 seconds (record 6 s);
     P14 `multiselect`: Language Unmark on All, ▼, Mark, then C (records);
     P15 `prepaid`: 4-8 Select on Credit info display (scroll), then on Recharge status (scroll).
-- [ ] Run it with the virgin-EEPROM image into `captures/6.39` (see the README's v6.39 command).
-- [ ] OCR: run `tools/menutree/ocr.py` over every image under `plan14/` and write
+- [x] Run it with the virgin-EEPROM image into `captures/6.39` (see the README's v6.39 command).
+- [x] OCR: run `tools/menutree/ocr.py` over every image under `plan14/` and write
       `plan14/text.json`: `{ "<relative png path>": [{ "text", "font", "x", "y", "inverted" }] }`,
       with fonts named as `ocr.py` names them. Report which faces appear (`tiny6`, `plain8`,
       `bold8`, `plain13`, `bold13`, `large13`).
-- [ ] Check: every scroll wraps back to its first image; every `open` recording starts with the
+- [x] Check: every scroll wraps back to its first image; every `open` recording starts with the
       parent screen and ends settled (or loops, for progress notes); list any node with a
       missing capture and why.
-- [ ] Append "Plan 14 supplementary captures" to `$REF/captures/README.md`.
-- [ ] No commit. Report the probe outcomes (each P-number in one line), note classes with their
+- [x] Append "Plan 14 supplementary captures" to `$REF/captures/README.md`.
+- [x] No commit. Report the probe outcomes (each P-number in one line), note classes with their
       durations after alignment, the faces found, and any node whose capture failed. Record the
       outcome under this task as plan 13 did for its Task 0.
+
+**Task 0 outcome (2026-10-14).** Generator `captures/scripts/gen_v639_plan14.py` (`gen`, `run`,
+`ocr`, `check`), script `captures/scripts/v639-plan14.cap` (93 sections), details in the "Plan 14
+supplementary captures" section of `$REF/captures/README.md`. 4,367 images (1,604 distinct), 38 MB
+under `plan14/`: 152 scrolls, 306 `open/` recordings, the probes, and `text.json`.
+
+Deviation: the `.cap` uses `fork`/`exit`, which `tools/harness/cap` cannot replay from a file (the
+forked parent re-reads the child's lines), so `gen_v639_plan14.py run` plays it through the
+interactive driver (`tools/menutree/emu.py`) in three workers. Scrolls are explicit `shot`/`key
+down` sequences of count + 2 images: the harness `scroll` command stops at the wrap. Info-pages
+lists are scrolled like option lists and every page of the first list of each signature is
+recorded (S2/S5 treat them as lists, Task 2). P3 also records Erase on the top row (▼×5, ▲×2) and
+on the bottom row (▼×3; the plan's "▼×4 (Erase)" lands on Edit); P5 adds `1 2`, `8 6`, `8 6 3`
+and `1`, wait, `9`; P12 records Top score untouched for 9 s and with C/▼ at 2 s (a key at 8 s
+lands after the note has ended, and Navi then starts a game), and C on an Instructions page.
+
+- Faces found: `tiny6`, `plain8`, `bold8`, `large13`. No `plain13`/`bold13`, so no new stock face.
+- Checks: every scroll has count + 2 images with the expected index on each entry, except the
+  Screen saver lists (their first screen shows `5-9` and dots, D14). Every `open/` recording starts
+  on the parent with the entry highlighted. No capture failed. Recordings that do not settle:
+  cursor blinks, progress bars, the Top score animation, gameplay (8-1-1 has 694 frames).
+- P1 `wrap-down`: ▼ past the last item continues circularly (D3 confirmed).
+- P2 `wrap-small`: Reminders (3) and Erase (2) never scroll; Games (5) and Profiles (6) wrap both
+  ways as D3 says (▲ from the first puts the last on the top row).
+- P3 `return`: the window survives Select + C on a child submenu (top row, bottom row, wrapped)
+  and a timed note.
+- P4 `reenter`: C to the carousel and Select again rebuilds the window (Search on top).
+- P5 `shortcut`: numbers, not digits; delayed opening; `Invalid shortcut` (D14 deviation).
+- P6 `note-keys`: C dismisses a note and stays on the list; ▼ during `Done` dismisses and moves.
+- P7 `progress`: ≈271 ms bar loop; C on `Searching` returns at once; Quit on `Requesting` →
+  `Request not confirmed` ≈2.89 s → standby.
+- P8 `confirm`: C → back to the list unchanged; OK → result (`Done` then page `Level 5`; `Club
+Nokia ID:` prompt; Yes → `Reminder memory empty` ≈2.87 s → Reminders shows only `Add new`).
+- P9 `prompts`: 1-1, 1-9 and 6-4 do not blink; 11-5 blinks `hh:mm` every ≈480 ms (D11).
+- P10 `unset`: first ▼ → first item, first ▲ → last item on the top row; C and reopen stays
+  unset; Quit → page.
+- P11 `profile-share`: Tones and General share settings; Silent does not (D9 confirmed).
+- P12 `games`: splash skip on any key; Level inert; Instructions cycle, C leaves; Top score
+  animates and returns by itself after ≈5.84 s with New game selected (D12).
+- P13 `set-delay`: OK on 5 seconds returns at once to the Call divert page, no note.
+- P14 `multiselect`: the soft key toggles `Mark`/`Unmark`; C after a change asks `Save changes?`.
+- P15 `prepaid`: Credit info display → On/Off list on Off; Recharge status → `Last recharge:` /
+  `Expiry date:` info pages, value `0`, Back.
+- Note classes (D8): tick confirmations ≈1.43-1.50 s (box 671-704, half 218-247, full 509-569
+  ms); long confirmations ≈2.9 s (full step 1962-2015 ms); information/error notes one step
+  2884-2938 ms. Also: 10-2 View all returns to the carousel (Leaf ownership deviation).
 
 ### Task 1 - Contracts and documentation
 
 **Files:** `VISION.md`, `docs/specs/nokia-3310.md`, `docs/plans/README.md`, this plan.
 
-- [ ] Apply Task 0's outcome to D3, D14 and the contracts above (Deviation lines where it
+- [x] Apply Task 0's outcome to D3, D14 and the contracts above (Deviation lines where it
       changes them). If a probe needs a kernel seam beyond D2, add it to "Contract changes" now.
-- [ ] VISION: the phone-core additions exactly as in "Contract changes" (SubmenuOptions,
+- [x] VISION: the phone-core additions exactly as in "Contract changes" (SubmenuOptions,
       `rowsWindow`, `windowTop`, `rowsWindowTop`, `ApplicationContext.exit` options), the
       kernel-policy paragraph (window rule, opening, intro), and `stockMenu`'s comment (whole tree).
-- [ ] Spec §10: add "Deeper levels and stock widgets (plan 14)". Cover the window rule with
+- [x] Spec §10: add "Deeper levels and stock widgets (plan 14)". Cover the window rule with
       evidence, opening selection, softkeys, widget catalogue headings, and the probe outcomes. Mark
       everything not yet asserted as "(plan 14, in progress)". Replace the "How ▼ wraps … is
       UNVERIFIED" sentence with the P1 result.
-- [ ] Plans README: row 14 `in progress`.
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define menu depth, rows window and stock widget contracts (plan 14)`.
+- [x] Plans README: row 14 `in progress`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define menu depth, rows window and stock widget contracts (plan 14)`.
 
 ### Task 2 - Golden header keys, tree capture set and import (TDD)
 
