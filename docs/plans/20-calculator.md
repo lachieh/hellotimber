@@ -13,7 +13,7 @@ The per-plan file split (feature modules, per-plan capture sets and acceptance f
 "Plan 16 supplementary captures") and plans 13-16 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan20/`. The planning probes in `$REF/captures/scratch-plan20/`
 are evidence for this plan only and are never imported.
-**Status:** not started.
+**Status:** Task 0 capture closeout verified with the input gaps below; Tasks 1–9 paused pending plan reconciliation.
 
 ## Goal
 
@@ -304,45 +304,113 @@ before its trigger key; still sections write one `shot` per case and append `{ n
 LCD before each recording. Avoid the planning probes' traps: a C on `0` leaves the calculator, and
 C held on a list goes to standby.
 
-- [ ] **O open/exit:** `open` (Select → first screen, 3 s), `exit` (C on `0` → carousel, 4 s),
+- [x] **O open/exit:** `open` (Select → first screen, 3 s), `exit` (C on `0` → carousel, 4 s),
       `clear-held` (`5 6 7` then C held 2 s; a digit held 1.2 s; `*` and `#` held 1.2 s; C held on
       `0` 2 s), each with raw `press`/`release` edges so the held frames are visible (D8).
-- [ ] **E entry** (stills): each digit; `0 0`; 9 digits then a 10th; `1 2 # 3 4 5 6 7 8` then
+- [x] **E entry** (stills): each digit; `0 0`; 9 digits then a 10th; `1 2 # 3 4 5 6 7 8` then
       a 9; `#` first; `#` twice; `#` after 9 characters; C after each kind of character; C down to
       `0`.
-- [ ] **P operators:** stills of `*` ×1…5 after a number, after `0`, after a result; a digit after
+- [x] **P operators:** stills of `*` ×1…5 after a number, after `0`, after a result; a digit after
       each operator; C through `a op b` back to `0`; `*` after a second operand; `#` in the operator
       state; `operator-slow` (`*` three times 3 s apart).
-- [ ] **M Options:** scroll every state's list through its wrap (number, operator, operand); ▲
+- [x] **M Options:** scroll every state's list through its wrap (number, operator, operand); ▲
       from the first entry; C from the list; every entry chosen in every state where it exists.
 - [ ] **R results** (stills, one case each): every C5 case; the half cases `24691357/2` and
       `-24691357/2` (via `0 - 24691357` then `/ 2`); `-1/3`, `-2/3`, `-12345678 × 1`, `-123456789`
       (`0 - 123456789`), `-99999999.5`, `999999999 + 1`, `0.00000005 × 1`, `-0.00000005 × 1`,
       `0.5 + 0.5`, `9.9999999 + 0.00000001`; results used as operands (`(2/3) × 3`, `(1/3) + (1/3)`);
       In domestic of `99999999` at rate `100` (overflow), and of `0.0000001` at rate `0.5`.
-- [ ] **N notes:** `divide-by-zero` and `out-of-range` from OK on Equals and from an operator
+- [x] **N notes:** `divide-by-zero` and `out-of-range` from OK on Equals and from an operator
       choice, 4 s each; `keys-*`: C, a digit, ▼ and C held 1.5 s pressed 500 ms into each note.
-- [ ] **X exchange rate:** the list (both pages, wrap, C); both virgin prompts with 3 s of blink;
+- [x] **X exchange rate:** the list (both pages, wrap, C); both virgin prompts with 3 s of blink;
       `rate/keys` stills (first digit replaces a shown value, `#`, `##`, C, C to empty, C held,
       digits until the entry stops, C on an empty entry, OK on an empty entry, OK on `0.`); OK with
       `1.5` → `Rate saved` → screen (`rate/saved`, 4 s); the Domestic prompt after it; Domestic `3`
       then the Foreign prompt and `10` In domestic and In foreign (D6: typed value or reciprocal);
       `convert` stills for both directions, rate 0 and overflow.
-- [ ] **K persist:** after a rate is set, `saveflash`, cold boot from the image: the prompt shows
+- [x] **K persist:** after a rate is set, `saveflash`, cold boot from the image: the prompt shows
       the rate, the calculator starts at `0`. Restore factory settings (6-4, code `12345`) on
       `v639-plan15-seccode.fls` with a rate set, then the prompt (D6: kept or reset).
-- [ ] **S sound** (factory image, `audio` + `record` + `keys.csv` as plan 16): `keys` (every key
+- [x] **S sound** (factory image, `audio` + `record` + `keys.csv` as plan 16): `keys` (every key
       on the calculator screen, in Options and in the rate entry), `out-of-range`,
       `divide-by-zero`, `rate-saved`, `note-key` (a digit on an error note); one virgin
       `divide-by-zero` (Warning tones unset: silent).
-- [ ] OCR every image (plan 15's command with `OUT='plan20'`) into `plan20/text.json`.
-- [ ] `gen_v639_plan20.py check`: every case has its image; every recording settles or ends on a
+- [x] OCR every image (plan 15's command with `OUT='plan20'`) into `plan20/text.json`.
+- [x] `gen_v639_plan20.py check`: every case has its image; every recording settles or ends on a
       blink; every factory recording has events and `keys.csv`.
-- [ ] Append "Plan 20 supplementary captures" to `$REF/captures/README.md`.
-- [ ] No commit. Record the outcome under this task: the entry limit (digits, `.`, `-`), the
+- [x] Append "Plan 20 supplementary captures" to `$REF/captures/README.md`.
+- [x] No commit. Record the outcome under this task: the entry limit (digits, `.`, `-`), the
       rounding mode for halves and negatives, the held-key behaviour (D8), the C-held clear time,
       the Options per state, every note's timeline and sound, the rate entry's limit and empty/OK
       cases, the stored rate form (D6), Restore's effect, and any section that failed.
+
+#### Task 0 outcome — verified 2026-10-14
+
+Research only, resumed in `/Volumes/SSD/Projects/.worktrees/hellotimber/p20-calculator`,
+branch `t3/p20-calculator`, HEAD `d0e981c01662790259a251cc79393943ce2be622`. Tasks 1–9 remain
+paused under AGENTS.md's discrepancy rule. This closeout does not reconcile their design or
+implement a workaround. No code, goldens or tests changed; no commit, push or deployment.
+
+**Capture checks.** Reused the existing 369 cases / 27 recordings. Indexed `persist/before`,
+extended `exit` to 10 s (last frame starts at 5003.7 ms and holds for 5086.7 ms), added literal
+input-limit cases, complementary cursor phases, complete factory key coverage in Options/rate
+entry, independent numeric-key confirmations, and recordings of Restore and its resulting
+prompts. Final counts: **388 indexed stills, 67 recordings, 405 recorded frames, 793 native
+images (235 distinct)**. Case groups: entry 45, operators 39, options 23, choose 32, results 102,
+rate 66, convert 60, persist 21. Every native image is in `text.json`; faces are `bold8`,
+`large13`, `plain8`, `tiny6`. The generator's `cases`, `ocr` and strengthened `check` pass
+(check exit 0): unique case names, images in both directions, each recording's frame files,
+positive durations, ≥1000 ms settled tails or pixel-verified alternating ~480 ms blink tails,
+nonempty audio/events, key edges, sound-event columns and complete OCR coverage. No final
+`failed-*.txt` remains. Shared harness binaries/scripts were read only; no tools or dependencies
+were installed.
+
+Evidence paths below are relative to `$REF/captures/6.39/plan20/`. Full counts, frame durations,
+key counts, sound pairs and harness hashes are in `task0-evidence.json`; `check.txt` holds the
+successful check. Replay scripts are `$REF/captures/scripts/v639-plan20-<section>.cap`, generated
+by `gen_v639_plan20.py`. The REF README's supplementary section is appended.
+
+| Verified fact                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Canonical evidence                                                                                                                                                                                                                     | Consequence for later tasks                                                                                                                                                                                                                                                                                |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Entry accepts nine characters, counting `.`, with leading zeros collapsed and extra input ignored. `#` first gives `0.`; a second `#` is ignored. C removes a character, returns the last character to `0`, then leaves on another C.                                                                                                                                                                                                                                                                          | `entry/{nine-digits,ten-digits,point-eight,point-nine,point-first,point-twice,point-after-nine,c-to-zero,zero-c}.png` and their cases                                                                                                  | Tasks 3–4 retain this entry rule. A minus sign cannot be typed directly.                                                                                                                                                                                                                                   |
+| Minus does **not** consume the magnitude's nine-character result budget. `-123456789`, `-999999999`, `-0.3333333` and `-0.0000001` are displayed successfully. `-99999999.5` rounds to `-100000000`; `999999999 × 1` succeeds. Ten integer digits overflow.                                                                                                                                                                                                                                                    | `results/{-123456789,-999999999+0,-1d3,-0.0000001d2,-99999999.5,999999999x1,999999999+1,-1-999999999}.png`                                                                                                                             | **Deviation: D3 and Tasks 3/5/8:** the total-string-length ≤9 property is false. Tests/painter must account for the additional sign after reconciliation.                                                                                                                                                  |
+| Halves round away from zero: `±24691357/2 → ±12345679`; `±0.0000001/2 → ±0.0000001`; `±0.0000003/2 → ±0.0000002`. Results feed subsequent operations at displayed precision: `(1/3)×3 → 0.9999999`, `(2/3)×3 → 2.0000001`, `(1/3)+(1/3) → 0.6666666`.                                                                                                                                                                                                                                                          | `results/*d2*.png`, `results/{1d3x3,2d3x3,1d3+1d3}.png`, `cases.json`                                                                                                                                                                  | Tasks 3–4 use these observed rounding/operand results.                                                                                                                                                                                                                                                     |
+| Keys redraw while held. In `clear-held`, digit `1` draws at 3746.5 ms with key down 3700.5–4900.7; `*` draws `+` at 5747.8 with key down 5700.8–6901.0; `#` draws `0.` at 7746.1 with key down 7701.1–8901.2. Each enters once. C first deletes, then clears `567` at 1432.2 ms, 532.1 ms after down (900.1 ms); the other clear is 544.0 ms after down. C held on `0` exits to the carousel, then standby.                                                                                                    | `clear-held/{timings,keys}.csv`, frames `000`–`013`; `entry/c-held-*.png`                                                                                                                                                              | **Deviation: D8 / Task 6:** release-only handling is contradicted. Clear is approximately 500 ms plus redraw latency, not the kernel's default 800 ms.                                                                                                                                                     |
+| Options has 8 entries for a number/result, 4 for an operator without operand, 5 with operand, always opening on the first. Wrap, ▲ from first, C and every choice are captured. `*` continues cycling across 3 s gaps.                                                                                                                                                                                                                                                                                         | `options/**`, `choose/**`, `operator-slow/{timings,keys}.csv`                                                                                                                                                                          | Tasks 4/6 preserve state-dependent lists and cycling.                                                                                                                                                                                                                                                      |
+| Error notes restore the arithmetic state after 2875.4–2906.4 ms. Equals/Add both produce them. Keys at 500.1 ms dismiss them: a digit also edits the restored operand (`7 / 0 → 7 / 5`; `99999 * 99999 → 99999 * 999995`); ▼ restores unchanged; C restores unchanged; held C then returns to standby.                                                                                                                                                                                                         | `notes/**/{timings,keys}.csv`, `sound/note-key/**`                                                                                                                                                                                     | Task 6 must forward the dismissing key appropriately.                                                                                                                                                                                                                                                      |
+| The virgin Foreign prompt shows `0`; Domestic is empty. Blink is ~480 ms. Typed rate entry stops at seven characters (`1234567`, `1.12345`, `0.12345`), while a prefilled reciprocal can show nine (`0.6666667`). First digit replaces a prefilled value. `#` on the virgin value starts `.` (not calculator `0.`); a duplicate point is ignored. C can empty the field; C on empty returns to the rate list. Held C clears. OK on empty or `.` saves zero and returns through `Rate saved` to the calculator. | `rate/prompt-*`, `rate/keys/{limit*,point*,typed*,prefilled*,c*,ok-*}.png`, `rate/saved/**`                                                                                                                                            | **Deviation: D7 / Tasks 4/6:** rate editing has its own limit/empty rules; it cannot reuse calculator entry semantics blindly.                                                                                                                                                                             |
+| Rate editing has cursor movement and insertion. `123`, ▲, `4` yields `4123`; `123`, ▲, ▲, `4` yields `1423`. ▲ advances/wraps from the end to the start; ▼ from the end moves onto the last digit. `123`, ▲, ▲, ▲, C yields `13` (delete at cursor). At seven typed characters, insertion is rejected. Cursor ink sometimes prevents OCR from reading the obscured digit; PNGs and paired blink phases are authoritative.                                                                                      | `rate/keys/{up-digit,up-mid,up-mid-digit,down,down-mid,start-c,limit-insert}.png` and `@8x` previews                                                                                                                                   | **Deviation: D7 / Tasks 4/6/8:** the planned digits/#/C/OK-only widget omits observed cursor state and insertion/deletion.                                                                                                                                                                                 |
+| Foreign `1.5` gives Domestic `0.6666667`; Domestic `3` gives Foreign `0.3333333`. After Domestic `3`, `10` In domestic is `3.3333333` and In foreign is `30`, not multiplication by the rounded displayed reciprocal (`3.333333`).                                                                                                                                                                                                                                                                             | `rate/after/{foreign-1.5-domestic,domestic-3-foreign}.png`, `convert/domestic-3-10-in-{domestic,foreign}.png`                                                                                                                          | D6's typed rate plus direction is consistent with the observed conversions. Physical EEPROM encoding remains UNVERIFIED; these captures prove behavior, not its byte representation.                                                                                                                       |
+| Foreign `1.5` survives `saveflash`/cold boot; the calculator starts at `0` after boot and re-entry. Restore (6-4, `12345`, security-code seed) resets the rate to **1 in both directions**, after either Domestic `2` or Foreign `1.5`.                                                                                                                                                                                                                                                                        | `persist/{before,boot-first,boot-foreign-blink,boot-domestic-blink,reentry}.png`; `persist/restore{,-foreign}-run/**`; `persist/restore{,-foreign}-prompt-{foreign,domestic}/**`; `firmware/work/v639-plan20-persist.fls` under `$REF` | **Deviation: D6 / Task 4:** Restore must not keep the record. Factory value differs from virgin zero/empty prompts.                                                                                                                                                                                        |
+| Factory calculator/rate keys beep at 900 Hz, Level 2 (`0x9104`), about 140–148 ms. Error notes replace OK's beep with 1750 Hz, `0x9105` (Out of range 296.1 ms, divide-by-zero 288.1 ms). The virgin error-triggering OK is silent; its preceding Options key still beeps. `Rate saved` has no additional confirmation tone, but its OK key beeps. Its tick segments are 694.1/232.0/523.1 ms in `rate/saved`, 708.1/218.0/538.1 in the factory sound recording.                                               | `sound/{keys,out-of-range,divide-by-zero,divide-by-zero-virgin,rate-saved,note-key}.events.csv`, corresponding recordings                                                                                                              | Tasks 6–7 distinguish silent confirmation from silent triggering key.                                                                                                                                                                                                                                      |
+| Numeric, `*`, `#` keys **leave Options for standby number entry** (`Call`), producing DTMF pairs. For example `0`: 1336+941 Hz; `1`: 1209+697 Hz; `*`: 1209+941 Hz; `#`: 1477+941 Hz. Arrows/C/OK there beep at 900 Hz. Independent short `0`/`1` recordings confirm the transition and pairs.                                                                                                                                                                                                                 | `sound/keys-options-{0…9,star,hash}/**` and `.events.csv`; `sound/options-dtmf-confirm-{0,1}/**` and `.events.csv`                                                                                                                     | **Deviation: D9 / Tasks 6–7:** the no-DTMF/every-key-900-Hz assumption fails, and the existing `OptionListWidget` ignores these numeric keys. Reconciling number-entry ownership (plan 22) and VISION's single-frequency tone event contract is required; no sounder or kernel workaround was implemented. |
+
+**Remaining Task 0 input gap (R intentionally unticked).** The requested operands
+`0.00000005`, `-0.00000005` and `0.00000001` cannot be represented as calculator operands
+under the captured nine-character magnitude limit. Added `results/literal-0.00000005x1`,
+`literal--0.00000005x1`, `literal-9.9999999+0.00000001` (and `-after`) with their exact key
+sequences. The extra digit is discarded; the outputs are `0`, `0`, `9.9999999`. These are
+**input-truncation captures, not proof of the requested mathematical calculations**. Existing
+`±0.0000001/2` captures independently establish half rounding. The old generator captured
+`9.9999999 + 0.0000001 → 10`, which is a different calculation. Task 1 must reconcile R and
+Tasks 3/8 before implementation; no operand injection or alternate arithmetic was used.
+
+**Infrastructure discrepancies (read only).** Task 2's pending-scenario mechanism is absent:
+`packages/nokia-os/tests/support/acceptance.ts:36` declares only `plan`, `scenarios`, `knownGaps`
+and `timeoutsMs`; `:166` makes non-asserted goldens todos, and `:179` throws
+`no scenario for ${id}` for an asserted golden without a scenario. A `knownGaps` entry only
+runs as an expected failure when a scenario exists; it cannot supply Task 2's proposed todo.
+Task 6's per-plan timeline registration is absent: `scripts/widget-sprites.ts:280` owns the
+shared `PROBE_TIMELINES` table; `scripts/extract-resources.ts:49` imports it and `:739` iterates
+it. No plan-owned calculator registration seam exists. Both requirements exceed this plan's
+one-line shared-file ownership rule. Tasks 1–9 remain paused until reconciliation, including
+these infrastructure gaps and the captured D3/D6/D7/D8/D9 discrepancies.
+
+**Transient failures resolved.** Initial indexing/exit checks failed and are now fixed. An
+exploratory held-DTMF recording failed an incorrect assumption that Options would remain open
+(held `1` reached telephony); it was discarded, and the independent short-key confirmations
+pass. A first strengthened check attempted unavailable Pillow; it now uses the existing PNG
+reader, with no dependency or shared-harness changes. No final section failed.
 
 ### Task 1 - Documentation
 
