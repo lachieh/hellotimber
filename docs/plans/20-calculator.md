@@ -5,7 +5,9 @@
 
 **Prerequisites:** plans 13, 14 and 15 complete; plan 16 Tasks 1-9 complete (the sound goldens,
 `NOTE_SOUNDS`, the sounder and note tones; Tasks 10-11 are demo and closeout and do not block).
-The per-plan file split (feature modules, per-plan capture sets and acceptance files, see
+Plan 29 owns the shared capture/resource pipeline. Before resuming runtime, inspect its delivered
+API and verify calculator text, note sound and timeline registration end to end. No plan 29
+API or filename is assumed here. The per-plan file split (feature modules, per-plan capture sets and acceptance files, see
 "Conventions") must have landed before Task 2; if it has not, stop and report.
 **Ground truth:** the v6.39 emulator corpus at
 `REF=/Volumes/SSD/Projects/lachieh/hellotimber/nokia-3310` (gitignored, main checkout only). Read
@@ -13,14 +15,14 @@ The per-plan file split (feature modules, per-plan capture sets and acceptance f
 "Plan 16 supplementary captures") and plans 13-16 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan20/`. The planning probes in `$REF/captures/scratch-plan20/`
 are evidence for this plan only and are never imported.
-**Status:** Task 0 capture closeout verified with the input gaps below; Tasks 1–9 paused pending plan reconciliation.
+**Status:** Task 1 owned documentation reconciled against Task 0. Runtime Tasks 2-9 remain paused until plan 29 is integrated and its resource registration is verified. Task 0 R remains unticked. Parent-owned index and contract work is outstanding.
 
 ## Goal
 
 Replace the Calculator placeholder (menu 9) of `@hellotimber/nokia-os` with the stock v6.39
 calculator, pixel- and timing-faithful to the captures:
 
-- number entry in the calculator's own layout (digits, `#` decimal point, the 9-character limit,
+- number entry in the calculator's own layout (digits, `#` decimal point, the nine-character magnitude limit (minus excluded),
   C delete, C held clear, C on `0` leaving), the operator cycle on `*` (`+ - * /`), chaining;
 - the Options menu in its three states (8, 4 and 5 entries): Equals, Add, Subtract, Multiply,
   Divide, In domestic, In foreign, Exchange rate;
@@ -85,7 +87,7 @@ EEPROM record, widgets, painter and feature module; documentation in
 Deliberately left to later plans (each in "Follow-up plan adjustments"):
 
 - **Currency conversion in standby** (the user guide's `Convert` after digits and `#` at standby)
-  → plan 22, which owns standby number entry; it reads the rate through this plan's
+  → plan 22, which also owns the captured Options numeric/star/hash handoff; it reads the rate through this plan's
   `CalculatorRate`.
 - **The other languages' strings** → plan 26.
 - **The website's calculator** stays as it is (D10).
@@ -105,23 +107,16 @@ brief).** The brief's "= via `*`" is not what the firmware does: `*` after a sec
 evaluates and starts `+` on the result (C3), which reaches the same number, and the result alone is
 shown only by Options › Equals. `*` has no multi-tap timeout (C3). `#` only adds a point (C2).
 
-**D3 - Decimal arithmetic on display strings (new).** `src/calculator/decimal.ts` holds a value as
-sign, digits (BigInt) and scale, parses a display string and formats one. `+ - × ÷` are exact
-(division as a rational) and then rounded to the display rule: the shortest text with at most 9
-characters (`.` counted; `-` counted provisionally, Task 0 decides), rounding half away from zero
-(`12345678.5` → `12345679`; the negative half case is Task 0's), trailing fraction zeros and a
-trailing point dropped, a value that rounds to zero shown as `0`; an integer part of 10 or more
-digits is `Out of range`, ÷ 0 is `Dividing by zero not allowed`. The rounded value is the operand
-of every later step (C5). Conversions use the same rule. Every case of Task 0's results section
-is a test.
+**D3 - Exact decimal arithmetic with a nine-character magnitude (Deviation from the provisional sign rule).** `src/calculator/decimal.ts` parses display strings as sign, BigInt digits and scale. Arithmetic is exact (division as a rational), then rounded half away from zero to fit at most nine magnitude characters, including `.` but excluding a leading `-`. Thus `-123456789` and `-0.3333333` are valid ten-character strings. Drop trailing fractional zeros and a trailing point from results, and show rounded zero as `0`. Ten integer digits, including rounding carry to ten digits, produce `out-of-range`; division by zero produces `divide-by-zero`. Later arithmetic uses the displayed result. Conversions use the same formatting rule but the original directional rate (D6). Task 0's literal over-limit inputs test entry truncation, not `calculate` with impossible operands; use its representable division cases for half rounding (Task 1 criterion correction).
 
 **D4 - The calculator is a stock flow; its engine is pure (new; plan 14 D1 pattern).** The
 application bound to node 9 is a `StockFlowApplication` whose root widget renders the calculator
 screen and pushes the Options list, the exchange-rate list, the rate entry and notes, as other
 stock leaves do. The rules (entry, operators, the Options entries per state, results and notes)
 live in `src/calculator/engine.ts`, a pure state machine with no widget, timer or storage, so
-they are tested without a phone. The Options list reuses `OptionListWidget` (opening on the first
-entry); the exchange-rate list reuses the info-pages widget (pages without values, soft key
+they are tested without a phone. The Options list uses the rows-list presentation (opening on the first
+entry). Existing `OptionListWidget` ignores numeric keys; D9 requires a later shared
+standby-entry handoff before this path can be complete; the exchange-rate list reuses the info-pages widget (pages without values, soft key
 `OK`); the rate entry is a small widget over plan 14's prompt model (D7).
 
 **D5 - Indicators are rooted at the Options menu (new).** The calculator screen has no indicator;
@@ -129,37 +124,18 @@ Options reads `1`…`n` (the position in the list for its state) and the exchang
 `8-2` (C1). The calculator's widgets see an indicator rooted at Options, not the kernel's `9`
 (the info-pages `atPage` pattern), so no kernel change is needed.
 
-**D6 - The exchange rate is an EEPROM record (new; plan 15 D2).** `CALCULATOR_RECORD`
-(`nokia-os/calculator`, version 1) holds `{ direction: "foreign" | "domestic", rate: string }`,
-the rate as typed in its direction (virgin `{ direction: "foreign", rate: "0" }`). The other
-direction's prompt shows the reciprocal under D3's rule (`0.6666667`). In domestic and In foreign
-multiply or divide by the typed value per direction (C6). Whether the firmware stores the typed
-value or the reciprocal is visible only through a rounding case (rate typed as 3 in one direction,
-then converted in the other); Task 0 decides and a Deviation fixes the record. Restore factory
-settings keeps the record unless Task 0 shows it reset (plan 15 D5: records without `factory` are
-kept). The record is registered in `STOCK_RECORDS`.
+**D6 - Persist the typed directional rate; Restore sets rate 1 (Deviation).** `CALCULATOR_RECORD` (`nokia-os/calculator`, version 1) holds `{ direction: "foreign" | "domestic", rate: string }`. Virgin state is Foreign `0`, with the Domestic prompt empty. Saving empty or `.` normalises to zero. Show the reciprocal in the other direction using D3, but convert with the original typed value. Domestic `3` shows Foreign `0.3333333`, yet `10` In domestic is `3.3333333` and In foreign is `30`. Multiplying by the displayed reciprocal would incorrectly give `3.333333`. Foreign `1.5` survives saveflash/cold boot. Restore factory settings resets the record to `{ direction: "foreign", rate: "1" }`, giving `1` in both prompts, after either captured direction. Register the record with an explicit factory value. This is a reproduction storage design; the firmware's physical EEPROM representation remains UNVERIFIED.
 
-**D7 - The rate entry is this plan's own widget, built on plan 14's prompt (new; plan 18
-independence).** Plan 18 plans a general number entry, but plan 20 must not wait for it. The rate
-entry renders plan 14's `prompt` model (pen icon, `Exchange rate:`, box, large value, the measured
-cursor blink) and implements only the captured keys: digits, `#`, C, C held, OK. If plan 18's
-number entry has landed when Task 6 starts and its behaviour equals Task 0's rate captures, Task 6
-uses it instead and records a Deviation.
+**D7 - A separate cursor-based rate editor (Deviation).** The rate entry uses the prompt presentation (pen, `Exchange rate:`, box, large value, ~480 ms cursor blink). Typed input has a seven-character limit including `.`, while a prefilled reciprocal can contain nine characters. The first digit replaces a prefilled value. `#` on virgin Foreign `0` starts `.`, and duplicate points are ignored. C can empty the field, C on empty returns to the rate list, held C clears, and OK on empty or `.` saves zero. Implement cursor movement, insertion and deletion: `123`, ▲, `4` gives `4123`; `123`, ▲, ▲, `4` gives `1423`; `123`, ▲, ▲, ▲, C gives `13`; ▼ at the end moves onto the last digit. Reject insertion at seven typed characters. Use paired blink PNGs when the cursor obscures a digit. Do not substitute calculator input or an unverified plan 18 editor.
 
-**D8 - Keys act on release; firmware redraw latency is not reproduced (plan 14 D8).** Stock
-widgets get keys on release (plan 14). Task 0 records a held digit, a held `*` and a held `#`; if
-the firmware draws them while the key is still down, the calculator handles them on key-down
-(`onKeyDown`, plan 23 D7) and a Deviation records it. The 46-88 ms between a key and the redraw
-(C1, C7) is not reproduced; goldens align on the first changed frame.
+**D8 - Calculator keys act while down (Deviation from release-only handling).** Held digit, `*` and `#` draw before release and enter once. Handle each captured key once on key-down, with no duplicate release action. C first deletes, then clears while held: clear redraw occurs 532.1 and 544.0 ms after down. These are observed draw times, consistent with an approximately 500 ms hold plus redraw latency; they do not prove the exact internal timer. Do not inherit the kernel's 800 ms threshold. C held on `0` exits through the carousel to standby. Verify press/release edges and the entire clear-held timeline before choosing the implementation timer. Align LCD timelines on the first changed frame; ordinary firmware redraw latency is not reproduced.
 
-**D9 - Sound through plan 16's port, unchanged (new; plan 16 D8/D12).** Calculator keys beep as
-every stock key does (the sounder's key-down beep; 900 Hz, no DTMF). `Out of range` and
-`Dividing by zero not allowed` sound their warning tone through `NOTE_SOUNDS`, which Task 2's sound
-goldens extend by their quoted note text (plan 16 Task 3's rule), so no sounder code changes.
-`Rate saved` is a silent confirmation unless Task 0 shows otherwise.
+**D9 - Beeps, warnings and Options DTMF have different paths (Deviation).** Factory calculator/rate keys beep at 900 Hz, Level 2 (`0x9104`), about 140-148 ms. Error notes replace OK's beep with 1750 Hz at `0x9105` (Out of range 296.1 ms, divide-by-zero 288.1 ms). Virgin error-triggering OK is silent; its preceding Options beep is not. `Rate saved` adds no confirmation tone, but its OK key beeps.
+
+Numeric, `*` and `#` keys leave Options for standby number entry with soft key `Call`, emitting DTMF pairs. Independent short-key confirmations give `0` = 1336+941 Hz and `1` = 1209+697 Hz; `*` = 1209+941 Hz and `#` = 1477+941 Hz. Arrows/C/OK in Options still beep at 900 Hz. Existing list handling and the single-frequency `StockSoundEvent` cannot reproduce this. Plan 22 owns standby entry; the parent/shared sound owner must reconcile dual-frequency events with VISION and host consumers. This is a bounded later gate for Options escape LCD/sound drivers and final acceptance. Keep their fixtures `pending:20` until that integration passes. Do not invent a telephony UI, flatten DTMF to one tone, emit two unrelated single-tone events, or modify shared sound/kernel code in plan 20.
 
 **D10 - The website does not change.** `git diff --stat <commit before Task 1> -- website/` is
-empty at the end. No VISION contract changes: the record, engine and widgets are internal.
+empty at the end. The record and engine are internal. D9 requires parent-owned sound-contract reconciliation before Options escape acceptance; this task does not edit VISION.
 
 ## Ground truth and artefacts
 
@@ -187,10 +163,9 @@ change. Scripts keep plan 13's conventions (Node type stripping, `node:*` and si
 
 ## Contract changes
 
-None. `createStockPhone`, `StockPhoneConfig`, `stockMenu`, `paintStockScreen`,
-`missingStockGlyphs`, the storage and sound API are unchanged. `stockMenu`'s node 9 opens the
-calculator instead of a placeholder. The new storage key `nokia-os/calculator` is under
-`STOCK_STORAGE_PREFIX`, as plan 15 promises hosts.
+The calculator record and arithmetic require no routing or package-boundary changes. The new key `nokia-os/calculator` stays under `STOCK_STORAGE_PREFIX`. Node 9 eventually opens the calculator instead of a placeholder.
+
+**Required later gate:** VISION's `StockSoundEvent` exposes one `hz` per tone event; the captured Options escape has two simultaneous frequencies. The parent/shared sound owner must define and verify a contract that preserves both frequencies and host behavior. Plan 22 must provide the standby-entry handoff. Neither API shape nor telephony behavior is invented here. Record their delivered contracts before implementing D9; final completion depends on both.
 
 ## Internal API (for plan 22)
 
@@ -216,37 +191,44 @@ export class CalculatorRate {
 
 ## Golden pipeline additions
 
-No format change. Plan 20's capture set (`scripts/capture-sets/20-calculator.ts`) holds LCD and
+Use the existing `pending:20` status and per-plan fixture vocabulary. Any resource or
+dual-frequency extension must come from the verified shared-owner result. Plan 20's capture set (`scripts/capture-sets/20-calculator.ts`) holds LCD and
 sound rows (the per-plan shape the file split defines) and exports `CALCULATOR_CASES`: per still
 image, the keys pressed from the calculator's first screen (Task 0's `cases.json`, transcribed).
 The importer names stills by case; the acceptance scenarios replay the same table, so a case's
-keys have one source. Sources are under `$REF/captures/6.39/plan20/`; all `asserted`.
+keys have one source. Preserve case setup metadata for persistence/Restore, waits and held edges,
+not just key names. Sources are under `$REF/captures/6.39/plan20/`. Import as `pending:20`;
+promote each fixture to `asserted` only after its real behavioral scenario passes.
 
-| Fixture id                                                                | Source                  | Kind     | Asserts                                                                  |
-| ------------------------------------------------------------------------- | ----------------------- | -------- | ------------------------------------------------------------------------ |
-| `calculator/open`                                                         | `open`                  | timeline | Select on Calculator → `0` (trigger: first changed frame)                |
-| `calculator/entry`                                                        | `entry/*.png`           | stills   | digits, leading zeros, the 9-character limit, `#`, C, C to `0`           |
-| `calculator/exit`                                                         | `exit`                  | timeline | C on `0` → carousel, icon restarting                                     |
-| `calculator/clear-held`                                                   | `clear-held`            | timeline | C held: when the entry clears; held digit, `*`, `#` (D8)                 |
-| `calculator/operators`                                                    | `operators/*.png`       | stills   | the `*` cycle and wrap, three lines, C through operand and operator      |
-| `calculator/operator-slow`                                                | `operator-slow`         | timeline | `*` 3 s apart still cycles (no timeout)                                  |
-| `calculator/options-{number,operator,operand}`                            | `options/<state>/*.png` | stills   | the 8-, 4- and 5-entry lists scrolled through the wrap, ▲ from the first |
-| `calculator/choose`                                                       | `choose/*.png`          | stills   | every Options entry in every state, and C on Options                     |
-| `calculator/results`                                                      | `results/*.png`         | stills   | the arithmetic table (Task 0 R)                                          |
-| `calculator/divide-by-zero`, `calculator/out-of-range`                    | `notes/*`               | timeline | each note from OK to the restored screen                                 |
-| `calculator/note-keys`                                                    | `notes/keys-*`          | timeline | C, a digit, ▼ and C held during a note                                   |
-| `calculator/rate-list`                                                    | `rate/list/*.png`       | stills   | `8-1`, `8-2`, wrap, C                                                    |
-| `calculator/rate-prompt-{foreign,domestic}`                               | `rate/prompt-*`         | timeline | the virgin prompt and its cursor blink                                   |
-| `calculator/rate-keys`                                                    | `rate/keys/*.png`       | stills   | replace-on-first-digit, `#`, C, C held, the length limit, OK on empty    |
-| `calculator/rate-saved`                                                   | `rate/saved`            | timeline | OK → `Rate saved` → the calculator                                       |
-| `calculator/convert`                                                      | `convert/*.png`         | stills   | In domestic and In foreign in both directions, rate 0, overflow          |
-| `calculator/persist`                                                      | `persist/*.png`         | stills   | the rate after a power cycle and after Restore; `0` on re-entry          |
-| `sound/calculator/{keys,out-of-range,divide-by-zero,rate-saved,note-key}` | `sound/*` (factory)     | sound    | beeps, warning tones, the silent confirmation (D9)                       |
+| Fixture id                                                                   | Source                        | Kind      | Asserts                                                                  |
+| ---------------------------------------------------------------------------- | ----------------------------- | --------- | ------------------------------------------------------------------------ |
+| `calculator/open`                                                            | `open`                        | timeline  | Select on Calculator → `0` (trigger: first changed frame)                |
+| `calculator/entry`                                                           | `entry/*.png`                 | stills    | digits, leading zeros, the 9-character limit, `#`, C, C to `0`           |
+| `calculator/exit`                                                            | `exit`                        | timeline  | C on `0` → carousel, icon restarting                                     |
+| `calculator/clear-held`                                                      | `clear-held`                  | timeline  | C held: when the entry clears; held digit, `*`, `#` (D8)                 |
+| `calculator/operators`                                                       | `operators/*.png`             | stills    | the `*` cycle and wrap, three lines, C through operand and operator      |
+| `calculator/operator-slow`                                                   | `operator-slow`               | timeline  | `*` 3 s apart still cycles (no timeout)                                  |
+| `calculator/options-{number,operator,operand}`                               | `options/<state>/*.png`       | stills    | the 8-, 4- and 5-entry lists scrolled through the wrap, ▲ from the first |
+| `calculator/choose`                                                          | `choose/*.png`                | stills    | every Options entry in every state, and C on Options                     |
+| `calculator/results`                                                         | `results/*.png`               | stills    | the arithmetic table (Task 0 R)                                          |
+| `calculator/divide-by-zero`, `calculator/out-of-range`                       | `notes/*`                     | timeline  | each note from OK to the restored screen                                 |
+| `calculator/note-keys`                                                       | `notes/keys-*`                | timeline  | C, a digit, ▼ and C held during a note                                   |
+| `calculator/rate-list`                                                       | `rate/list/*.png`             | stills    | `8-1`, `8-2`, wrap, C                                                    |
+| `calculator/rate-prompt-{foreign,domestic}`                                  | `rate/prompt-*`               | timeline  | the virgin prompt and its cursor blink                                   |
+| `calculator/rate-keys`                                                       | `rate/keys/*.png`             | stills    | seven-character cursor edits, prefill, `#`, C/hold, empty OK             |
+| `calculator/rate-saved`                                                      | `rate/saved`                  | timeline  | OK → `Rate saved` → the calculator                                       |
+| `calculator/convert`                                                         | `convert/*.png`               | stills    | In domestic and In foreign in both directions, rate 0, overflow          |
+| `calculator/persist`                                                         | `persist/*.png`               | stills    | the rate after a power cycle and after Restore; `0` on re-entry          |
+| `sound/calculator/{keys,out-of-range,divide-by-zero,rate-saved,note-key}`    | `sound/*` (factory)           | sound     | beeps, warning tones, the silent confirmation (D9)                       |
+| `sound/calculator/keys-rate-*`                                               | `sound/keys-rate-*`           | sound     | every rate key, paired with cursor LCD recordings                        |
+| `sound/calculator/keys-options-*`, `sound/calculator/options-dtmf-confirm-*` | matching `sound/*`            | sound/LCD | Options escape, `Call`, simultaneous DTMF pairs; D9 gate                 |
+| `sound/calculator/divide-by-zero-virgin`                                     | `sound/divide-by-zero-virgin` | sound     | silent error-triggering OK with preceding Options beep                   |
 
 `menu/09-calculator.sub` and `sound/note/9` become `asserted` when node 9 leaves the placeholder
-owners (Task 2). The new goldens' text runs (OCR, `plan20/text.json`) feed the glyph harvester
+owners only after real node 9 LCD/sound drivers pass (Tasks 6-8). Task 2 keeps
+their existing `pending:20` status and owner entries. The new goldens' text runs (OCR, `plan20/text.json`) feed the glyph harvester
 through the capture set; the small face gains `/`, the only glyph the calculator needs that no
-golden has yet (the planning sheets show no other).
+golden has yet (planning observation; verify the actual generated diff through plan 29).
 
 ## Stock display observations (from the scratch sheets; Task 5 measures from goldens)
 
@@ -268,11 +250,13 @@ golden has yet (the planning sheets show no other).
   `tests/calculator-*.test.ts`, `tests/support/calculator.ts`,
   `tests/acceptance/20-calculator.test.ts`, `docs/specs/stock/calculator.md`, this plan and row 20
   of the plans README. Shared files get one-line registrations only, each named in its task: the
-  feature list that composes the stock menu, `src/firmware/records.ts`, the capture-set list,
-  `src/display/widgets/index.ts` (model union and paint switch), and the placeholder-owner table(s).
+  `src/firmware/features/index.ts`, `src/firmware/records.ts`,
+  `scripts/capture-sets/index.ts`, `src/display/widgets/index.ts` (model union and paint switch),
+  `scripts/tree-capture-set.ts` (owner 20 group), and the owning
+  `scripts/capture-sets/13-foundation.ts` / `16-tones-and-sound.ts` status entries.
   If a registration needs more than that, stop and report. `bindings.ts`, `leaves.ts`,
-  `acceptance.test.ts`, `capture-set.ts` (beyond the one status line of Task 2) and `demo/` are not
-  edited.
+  `acceptance.test.ts`, `scripts/capture-set.ts` and `demo/` are not
+  edited. Parent/shared owners handle changes beyond these registration exceptions.
 - TDD: write the failing test first wherever the task names tests.
 - After each task: `mise exec -- vp check --fix` and the named test commands.
 - Commit rule: run `mise exec -- vp check --fix` yourself, stage files by explicit path, then
@@ -412,41 +396,60 @@ exploratory held-DTMF recording failed an incorrect assumption that Options woul
 pass. A first strengthened check attempted unavailable Pillow; it now uses the existing PNG
 reader, with no dependency or shared-harness changes. No final section failed.
 
-### Task 1 - Documentation
+### Task 1 - Documentation reconciliation (bounded assignment)
 
-**Files:** `docs/specs/stock/calculator.md` (new), `docs/plans/README.md` (row 20), this plan.
+**Owned files:** `docs/specs/stock/calculator.md` (new), this plan. Parent owns the plans README row 20, `docs/specs/nokia-3310.md` §10 index and VISION; the plan 29 worker owns shared tooling. No runtime, goldens, generated resources or dependencies change.
 
-- [ ] Apply Task 0's outcome to D3, D6, D8 and D9 (Deviation lines where it changes them).
-- [ ] `docs/specs/stock/calculator.md`: the C1-C7 facts and Task 0's outcome as the stock
-      calculator's behaviour (layout, keys, Options per state, arithmetic and rounding, notes,
-      currency, persistence, sound, timings), the artefacts table, UNVERIFIED items, and the
-      contrast with the website's calculator. Marked "(plan 20, in progress)".
-- [ ] Plans README row 20 `in progress`.
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: specify the stock calculator (plan 20)`.
+- [x] Apply verified D3/D6/D7/D8/D9 deviations to decisions, tests and contract gates.
+- [x] Write the calculator spec with C1-C7 facts corrected by Task 0, evidence paths, artefacts, UNVERIFIED items and website contrast, marked "(plan 20, in progress)".
+- [ ] Parent: update plans README row 20 to `in progress` and add the calculator spec to the §10 index.
+- [ ] Parent/shared owners: integrate and verify plan 29's resource registration before runtime resumes; reconcile D9's standby and dual-frequency contracts before those scenarios can pass.
+- [x] No runtime code. `mise exec -- vp check --fix`; repeat formatting until stable.
+- [x] Commit owned files only: `docs: reconcile stock calculator plan with measured behavior`.
 
-### Task 2 - Capture set, goldens and the re-owned placeholder (TDD)
+**Exact R criterion correction.** The original requests `0.00000005 × 1`, `-0.00000005 × 1` and `9.9999999 + 0.00000001` require operands beyond the captured entry budget. Replace their acceptance meaning with two separate obligations: (1) replay the literal key sequences and assert truncation outputs `0`, `0`, `9.9999999` using `results/literal-*` and `-after`; (2) test representable calculations `±0.0000001 / 2 → ±0.0000001` and `±0.0000003 / 2 → ±0.0000002` for half rounding, plus captured `9.9999999 + 0.0000001 → 10` for carry. The carry is a different calculation, not evidence for the impossible sum. The canonical case keys and PNGs independently support these replacements. Do not inject operands or label literal captures as the requested arithmetic. R stays unticked in this documentation-only unit; the parent must review the revised criterion against the full original C5/R checklist before closing Task 0.
+
+**Original Task 1 step still outstanding:** the plans README row 20 status update belongs to
+the parent. The parent also owns the authenticity-spec index and any VISION contract update.
+Plan 29 resource registration is an additional runtime prerequisite, not evidence that the
+original Task 1 is fully complete. The Task 0 outcome above is retained as its historical
+closeout. Documentation reconciliation alone does not clear the runtime pause.
+
+**Task 1 owned-unit verification (2026-10-14):** `vp check --fix` passes with no warnings,
+lint errors or type errors in 399 files. Explicit `vp fmt` followed by `vp fmt --check` is
+stable for both owned documents. `vp run @hellotimber/nokia-os#test` passes: 51 files,
+2991 passed tests, 15 expected failures and 67 existing todos (19.50 s). No runtime or shared
+files changed. Task 0 evidence is preserved; R remains unticked.
+
+### Task 2 - Capture set and pending goldens (TDD; gated on plan 29)
 
 **Files:** `scripts/capture-sets/20-calculator.ts` (new), the capture-set list (one-line
-registration), `scripts/capture-set.ts` (the `09-calculator` row's status only), the
-placeholder-owner table(s) (delete `"9": "20"`), `tests/calculator-capture-set.test.ts` (new),
-`goldens/**` (generated).
+registration), `tests/calculator-capture-set.test.ts` (new),
+`goldens/**` (generated), `tests/acceptance/20-calculator.test.ts` (new).
 
 - [ ] TDD the capture set on synthetic sources (injected loader, no REF): every fixture row of
       "Golden pipeline additions"; stills named by `CALCULATOR_CASES` in case order; a case with
       no image, or an image with no case, throws naming both; sound rows reuse plan 16's
       `sound-format`/normalisation with `state: factory` (`virgin` for the virgin row).
-- [ ] `menu/09-calculator.sub` and `sound/note/9` become `asserted` (the status line and the owner
-      deletion); no golden is `pending:20`.
+- [ ] Keep new calculator fixtures and existing `menu/09-calculator.sub` / `sound/note/9`
+      `pending:20`. Keep placeholder ownership until Tasks 6-8 supply passing behavioral drivers.
+      Existing fixtures stay in their original per-plan indexes; do not move them to index 20.
 - [ ] Text runs from `plan20/text.json` reach the glyph harvester through the capture set; run
-      `extract-resources` twice (no diff): the small face gains `/` and nothing else changes
-      (`tests/resources.test.ts` unchanged except the glyph count it pins, if any).
-- [ ] The sound goldens' quoted note text adds `Out of range` and `Dividing by zero not allowed`
-      to `NOTE_SOUNDS` (plan 16's generator, regenerated twice with no diff).
+      the delivered regeneration command twice (no diff on the second run). Verify `/` in the
+      small face and review all generated changes against the registered inputs. Do not assume
+      that this is the only glyph or resource change. Shared resource-test updates belong to
+      the plan 29 worker until the delivered registration API is verified.
+- [ ] Through the verified plan 29 registration, the sound goldens' quoted note text adds
+      `Out of range` and `Dividing by zero not allowed` to `NOTE_SOUNDS`; verify regenerated warning programs and silent `Rate saved` behavior,
+      rather than assuming plan 16's generator already discovers new per-plan notes.
 - [ ] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
       completion note.
-- [ ] Until Task 8, the calculator goldens without a scenario are todos through the split's
-      pending-scenario mechanism (one entry in this plan's acceptance file, deleted in Task 8).
+- [ ] Use existing `pending:20` fixture statuses until real scenarios pass. Add
+      `tests/acceptance/20-calculator.test.ts` with the existing `acceptancePlan` shape when its
+      index is created. No awaits-scenario shim, fake driver or `knownGaps` substitute.
+- [ ] Text, note sounds and timeline resources depend on plan 29's delivered registration API.
+      Inspect and record that API after integration; do not edit the shared pipeline or assume
+      registration filenames. Verify repeated regeneration is stable before closing Task 2.
 - [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
 - [ ] Commit: `feat(nokia-os): import calculator captures (plan 20)`.
 
@@ -456,11 +459,16 @@ placeholder-owner table(s) (delete `"9": "20"`), `tests/calculator-capture-set.t
 
 - [ ] TDD parse/format round trips for every display string in the goldens (`0`, `0.`, `123.`,
       `0.0012345`, `-21`); invalid strings throw.
-- [ ] TDD `calculate` against every `calculator/results` case (expected strings transcribed from
-      the goldens' cases, independent of the code): exact sums and products, division as a
-      rational, the 9-character rule, rounding (Task 0's half and negative rules), zero results,
-      `out-of-range`, `divide-by-zero`; property tests that no `ok` result exceeds 9 characters
+- [ ] TDD `calculate` against the representable arithmetic cases in `calculator/results`
+      (expected strings transcribed from the goldens, independent of the code): exact sums and
+      products, division as a rational, the nine-character magnitude rule (minus excluded), rounding (Task 0's representable
+      half and negative cases), zero results,
+      `out-of-range`, `divide-by-zero`; property tests that no `ok` magnitude exceeds 9 characters (strip one leading minus)
       and that `0.1 + 0.2` and other float traps are exact.
+- [ ] Literal over-limit cases are engine entry/replay tests (Tasks 4/8), never pure arithmetic
+      proof using the impossible operands. Assert `-123456789`, `-999999999`, `-0.3333333`,
+      the captured `results/-99999999.5` result `-100000000` from `0 - 99999999`, then
+      subtracting `0.5` (the filename is not a literal operand), and ten-integer-digit overflow.
 - [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
 - [ ] Commit: `feat(nokia-os): the calculator's decimal arithmetic`.
 
@@ -473,10 +481,13 @@ placeholder-owner table(s) (delete `"9": "20"`), `tests/calculator-capture-set.t
 - [ ] TDD the engine from Task 0's cases: entry (limit, `#`, leading zeros, C, C held), the `*`
       cycle and chaining, the lines shown (one, two or three), `options()` per state (8, 4 or 5
       entries with their actions), each action's effect, notes as results that restore the state
-      before the action, and C on `0` as `leave`.
+      before the action, and C on `0` as `leave`. Replay literal input truncation per the corrected R criterion.
+- [ ] TDD a distinct rate-editor state with seven typed characters, nine-character prefill,
+      replace-on-first-digit, point/empty behavior, cursor wrap and insertion/deletion from D7.
 - [ ] TDD `CALCULATOR_RECORD` (virgin value, encode/decode, version, stale content dropped, the
-      factory behaviour Task 0 found) and `CalculatorRate` (`shown` per direction, `set`, `convert`
-      per direction, rate 0) against the `calculator/convert` and `persist` cases.
+      factory reset to rate `1` in both directions after either stored direction) and `CalculatorRate` (`shown` per direction, `set`, `convert`
+      per direction, virgin Foreign `0` / Domestic empty, saved empty/`.` as zero, exact Domestic
+      `3` conversions `10 → 3.3333333` / `30`, rate 0) against the `calculator/convert` and `persist` cases.
 - [ ] `tests/eeprom.test.ts`'s pinned record list (if any) gains the record; nothing else changes.
 - [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
 - [ ] Commit: `feat(nokia-os): calculator engine and exchange-rate record`.
@@ -488,10 +499,11 @@ and paint switch: two lines), `tests/calculator-paint.test.ts` (new).
 
 - [ ] TDD a `calculator` widget model (`lines`, `softkey`) painted against every still of
       `calculator/entry`, `operators`, `results` and `convert` that shows the calculator screen:
-      right-aligned small-face lines, their tops measured from the goldens (record them in the
+      right-aligned small-face lines including valid ten-character signed results, their tops measured from the goldens (record them in the
       spec), `Options` as every soft key. A line that does not fit throws in tests (plan 13 D10).
-- [ ] Rate prompts, lists and notes reuse plan 14's painters: assert one still of each paints
-      exactly from its existing model.
+- [ ] Rate lists and notes reuse plan 14's painters. Compare rate prompts at both blink phases
+      and cursor positions; if the existing prompt model cannot express D7, report the required
+      parent-owned model change before proceeding.
 - [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
 - [ ] Commit: `feat(nokia-os): paint the stock calculator`.
 
@@ -503,17 +515,26 @@ their named timelines), the feature list (one-line registration), `tests/calcula
 (new), `tests/support/calculator.ts` (new: open the calculator, replay a case).
 
 - [ ] TDD the calculator widget with the flow rig: keys per D8, the engine's lines as the model,
-      Options pushes an `OptionListWidget` built from `options()` (opening on the first entry,
+      Options pushes a rows list built from `options()` (opening on the first entry,
       indicator rooted at Options, D5), choices run the engine and pop, notes replace the list and
-      return to the restored calculator, C on `0` leaves (`flow.back()`).
+      return to the restored calculator, C on `0` leaves (`flow.back()`). Assert no duplicate
+      release action, once-only held digit/star/hash, initial C deletion and held clear timing
+      against the 532.1-544.0 ms draws. Dismissing digit edits the restored operand; arrows/C
+      dismiss unchanged; held C can continue to standby.
+- [ ] Options numeric/star/hash escape drivers depend on the later verified plan 22 handoff and
+      dual-frequency contract (D9). Preserve their pending status until then; do not silently
+      ignore these keys or implement a private standby substitute.
 - [ ] TDD the exchange-rate list (info pages, `8-k`, soft key `OK`) and the rate entry (D7):
-      prefilled from `CalculatorRate.shown`, keys as Task 0, the cursor blink from
-      `calculator/rate-prompt-*`, OK → `set` → `Rate saved` → back to the calculator screen (three
+      prefilled from `CalculatorRate.shown`, keys as Task 0, seven-character limit and cursor insertion/deletion/wrap, nine-character prefill, and
+      both cursor phases from `calculator/rate-prompt-*`, OK → `set` → `Rate saved` → back to the calculator screen (three
       levels).
 - [ ] Note timelines (`Rate saved`, `Out of range`, `Dividing by zero not allowed`) come from
-      their goldens through the widget-timeline generator's per-plan registration; notes pass
+      their goldens through plan 29's verified per-plan resource registration (API recorded
+      only after delivery); notes pass
       `sound` (plan 16) so their warning tones play.
-- [ ] Node 9 opens the feature's application; `stockMenu` no longer has a placeholder for it
+- [ ] After real opening LCD/sound drivers pass, node 9 opens the feature's application;
+      promote the existing fixtures in their owning capture sets and remove placeholder ownership.
+      `stockMenu` no longer has a placeholder for it
       (`tests/firmware-menu.test.ts`'s owner expectation for `menu/calculator` is removed with the
       owner, as plan 16 Task 2 did for the Composer).
 - [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
@@ -525,10 +546,13 @@ their named timelines), the feature list (one-line registration), `tests/calcula
 
 - [ ] Drive `sound/calculator/*` and `sound/note/9` from the factory state
       (`seededStorage({ factory: true })`) with plan 16's `recordSound`/`expectSoundTimeline` and
-      tolerances: key beeps on every calculator, Options and rate-entry key; the warning tones
-      replacing OK's beep; `Rate saved` silent; the virgin divide-by-zero silent.
-- [ ] If a golden needs sounder behaviour beyond D9 (a calculator key that does not beep, a
-      different tone), stop and report: the sounder is plan 16's file.
+      tolerances: calculator/rate keys and Options arrows/C/OK beep at 900 Hz; warning tones
+      replace OK's beep; `Rate saved` adds no tone but its OK beeps; virgin error OK is silent
+      while preceding Options beeps. Drive every `keys-options-*`, `keys-rate-*` and independent
+      `options-dtmf-confirm-*` recording, preserving both tone columns for DTMF. The latter
+      Options escape paths remain pending until the shared D9 gate passes.
+- [ ] Do not change the shared sounder. D9's dual-frequency contract is parent/shared-owner work;
+      inspect its delivered API and verify host output before promoting DTMF fixtures.
 - [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
 - [ ] Commit: `feat(nokia-os): calculator beeps and warning tones`.
 
@@ -538,9 +562,16 @@ their named timelines), the feature list (one-line registration), `tests/calcula
 
 - [ ] One scenario per asserted calculator golden (LCD and sound), replaying `CALCULATOR_CASES`
       for stills and the recordings' keys for timelines; `menu/09-calculator.sub` and
-      `sound/note/9` included. Delete Task 2's pending-scenario entry; the split's coverage guard
+      `sound/note/9` included in their original owning indexes. Promote only passing fixtures
+      through capture-set inputs and reimport; remove matching placeholder ownership only with
+      real node coverage. There is no pending-scenario entry to delete. The split's coverage guard
       fails for an asserted calculator golden without a scenario, and for node 9 if uncovered.
-- [ ] Known gaps, if any, are listed with their cause in this file, as plan 14's are.
+- [ ] Replay literal truncation and representable rounding as separate obligations, preserving
+      setups, timing and raw held edges. Include cursor blink/edits and both Restore directions.
+- [ ] D9 standby/DTMF drivers must pass the shared integration gate before final acceptance.
+      Missing integration stays `pending:20`, not a known gap or a fake asserted scenario.
+- [ ] Known gaps, if any, require real scenarios and measured comparison failures with causes,
+      as plan 14's do.
 - [ ] Every other plan's goldens still pass.
 - [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
       `mise exec -- vp check --fix`. Report the calculator file's run time.
@@ -563,26 +594,22 @@ their named timelines), the feature list (one-line registration), `tests/calcula
 ## Follow-up plan adjustments
 
 - **22 - Call register and standby number entry:** currency conversion at standby (digits, `#`
-  twice, `Convert`) reads `CalculatorRate`; its captures belong to plan 22.
+  twice, `Convert`) reads `CalculatorRate`; its captures belong to plan 22. It also owns the
+  captured Calculator Options numeric/star/hash transition to standby `Call`. Agree the handoff
+  and preserve both DTMF frequencies with the parent/shared sound owner before D9 acceptance.
+  This requirement does not authorise invented call progress or network behavior.
 - **26 - Languages:** the calculator's strings (Options entries, notes, the rate pages and prompt)
   in the other languages.
 - **Portfolio integration (not sequenced):** the website's calculator is replaced when the website
   adopts nokia-os.
 
-## Open questions for Lachlan
+## Remaining gates
 
-Resolved provisionally so execution is not blocked; each is cheap to reverse.
-
-1. **Brief vs firmware (D1, D2):** the v6.39 Options have no Square, Square root or Change sign,
-   and `*` never means equals. The plan follows the firmware. Reverse only by choosing another
-   firmware version.
-2. **Negative width and rounding (D3):** `-` counts toward the 9 characters and negative halves
-   round away from zero until Task 0 shows otherwise.
-3. **Stored rate form (D6):** the typed value and its direction; Task 0's rounding case decides.
-4. **Restore factory settings and the rate (D6):** kept unless Task 0 shows it reset.
-5. **Rate entry widget (D7):** this plan's own, not plan 18's, unless plan 18 has landed with
-   identical behaviour.
-6. **Key-down vs release (D8):** release, unless Task 0's held keys show key-down drawing.
+1. Parent-owned plans README row 20 and authenticity-spec index still need updating.
+2. Task 0 R remains unticked pending full checklist review under the corrected criterion.
+3. Plan 29 integration and verified text/note/timeline resource registration gate runtime Tasks 2-9. No API assumption is made before its result.
+4. Plan 22 standby entry and parent/shared sound-contract reconciliation gate Options numeric/star/hash acceptance and final completion. Required proof is the captured `Call` LCD plus both simultaneous DTMF frequencies, using real behavioral drivers.
+5. Physical EEPROM encoding and the exact internal C-hold timer remain UNVERIFIED. Preserve observable behavior without claiming those internals.
 
 ## Conflicts found while planning
 
@@ -603,4 +630,5 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
 - The exchange rate persists in `nokia-os/calculator`; the calculator starts at `0` on entry.
 - No golden or placeholder names plan 20; every asserted calculator golden has a scenario.
 - phone-core and the website are unchanged; `vp check`, `vp run -r test` and
-  `vp run website#build` pass; the spec and the plans README match what shipped.
+  `vp run website#build` pass; the spec and the plans README match what shipped. The D9 standby/dual-frequency gate
+  must be verified; pending fixtures cannot be counted as completion.
