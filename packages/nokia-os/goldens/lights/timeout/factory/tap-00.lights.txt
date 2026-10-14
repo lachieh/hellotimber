@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/timeout/factory/tap-00
+status: pending:25
+source: captures/6.39/plan25/lights/timeout/factory/tap-00
+source-sha256: a407f5a4a9c4cf44d6f461e2c61f77b80cbd0f8d76128f8451e1615b0b197b14
+state: factory
+power-on: 61461
+keys: 0:c
+note: C at standby with the LEDs off, 0 ms after a light tick (Task 0 L).
+omitted: none
+
+@events
+# t_ms light   state
+19     display on
+19     keypad  on
+13878  display off
+13878  keypad  off

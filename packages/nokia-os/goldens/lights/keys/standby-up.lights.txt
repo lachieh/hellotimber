@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/keys/standby-up
+status: pending:25
+source: captures/6.39/plan25/lights/keys/standby-up
+source-sha256: c5ba419dd582c1c68102759c3883ca9bb9f031796b38bf85242284c2fb32b637
+state: factory
+power-on: 59655
+keys: 0:up
+note: up at standby with the LEDs off.
+omitted: none
+
+@events
+# t_ms light   state
+13     display on
+13     keypad  on
+13704  display off
+13704  keypad  off

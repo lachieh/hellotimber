@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/timeout/factory/hold-2000
+status: pending:25
+source: captures/6.39/plan25/lights/timeout/factory/hold-2000
+source-sha256: e36e38e4e48bfaa869db82079d9b656db1a95cadec7b45cf8a33ecb310dcd388
+state: factory
+power-on: 61261
+keys: 0:c+2000
+note: C held 2000 ms at standby.
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+14078  display off
+14078  keypad  off

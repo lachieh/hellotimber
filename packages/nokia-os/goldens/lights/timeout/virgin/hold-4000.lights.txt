@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/timeout/virgin/hold-4000
+status: pending:25
+source: captures/6.39/plan25/lights/timeout/virgin/hold-4000
+source-sha256: d6240e4a7175510e3be41ba7fdd2ea00f6872e02aca308490f6b9c60853a6cd1
+state: virgin
+power-on: 69192
+keys: 0:c+4001
+note: C held 4000 ms at standby.
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+14078  display off
+14078  keypad  off

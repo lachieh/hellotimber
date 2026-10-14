@@ -619,22 +619,50 @@ writer; stop and report if it needs more), `tests/lights-format.test.ts` (new),
 `tests/keyguard-capture-set.test.ts` (new), `tests/acceptance/25-keyguard-and-backlight.test.ts`
 (new: pending-scenario entries only), `goldens/**` (generated).
 
-- [ ] TDD `lights-format.ts`: round trip; header order; `power-on` a non-negative integer; `keys`
+- [x] TDD `lights-format.ts`: round trip; header order; `power-on` a non-negative integer; `keys`
       as plan 16; light names; states; consecutive equal states rejected; empty goldens; every error
       names `file:line`.
-- [ ] TDD the capture set on synthetic sources (injected loader, no REF): every row of "Golden
+- [x] TDD the capture set on synthetic sources (injected loader, no REF): every row of "Golden
       pipeline additions"; `.lights.csv` → rows per light, aligned on the first key-down, with
       `power-on` from the comment line plus the offset; partial end frames omitted; equal hint
       recordings share `keyguard/hint`; a missing file or column throws naming the recording.
-- [ ] Statuses: the `pending:18` and `pending:22` rows of the table; everything else asserted.
-- [ ] Text runs reach the glyph harvester; run `extract-resources` twice (no diff) and record the
+- [x] Statuses: the `pending:18` and `pending:22` rows of the table; everything else asserted.
+- [x] Text runs reach the glyph harvester; run `extract-resources` twice (no diff) and record the
       glyphs it added (expected: none, or a few large-face capitals).
-- [ ] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
+- [x] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
       completion note.
-- [ ] The acceptance file lists the asserted goldens without a scenario through the split's
+- [x] The acceptance file lists the asserted goldens without a scenario through the split's
       pending-scenario mechanism (one entry, deleted in Task 10).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import keyguard and lights captures (plan 25)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import keyguard and lights captures (plan 25)`.
+
+**Task 2 completion (2026-10-14).** Two commits: the shared tooling first (`feat(nokia-os): lights
+golden kind`: `lights-format.ts`, `PlanCaptureSet.lights`, `CaptureIo.lights` at the end of the
+interface, the importer's `lightsIo` reader at the end of its io object and its writer loop after
+the sounds, the index kind `"lights"`, `goldens-integrity.test.ts`'s fixture regex, LCD filter and
+a lights parse check; a re-import then changed no golden or index file), then plan 25's set. The
+import writes 210 fixtures (2.3 MB) to `goldens/index/25.json`: 62 timelines, 3 stills, 139 lights
+and 6 sound goldens; 189 `pending:25`, 4 `pending:18`, 17 `pending:22` (the other plans: 842,
+unchanged). The second run changes nothing. The keyguard texts add three large glyphs, `K`, `U`
+and `*` (`extract-resources` twice: the second run is up to date), with a `Ke` touch override
+(width 8) and `*`'s advance (8, UNVERIFIED: it only ends a run).
+
+Deviation: plan 29 replaced the "pending-scenario mechanism" and `scripts/widget-sprites.ts`.
+Every golden this plan will assert is imported `pending:25` and listed as a todo by
+`tests/acceptance/25-keyguard-and-backlight.test.ts` (no scenarios yet); the task that drives a
+golden adds its scenario and flips its status in the capture set (lights: Task 4 and 8; LCD: Task
+7; sound: Task 9; Task 10 checks none is left). Resource evidence (text runs, glyph overrides,
+then sprites and timelines) lives in `scripts/resource-inputs/25-keyguard-and-backlight.ts`,
+registered through the capture set's `resources`.
+
+Deviation: fixture ids follow the captures: `lights/timeout/<virgin|factory>/{tap-NN,hold-<ms>,
+pair-straddle,relight-<ms>}`, `lights/timeout/factory/fine-<ms>`, `lights/keys/<place>-<key>`,
+`lights/keyguard/*` from the `keyguard/*` recordings (no separate lights recordings), the hint as
+two shared goldens (`keyguard/hint`: digits, `*`, `#`; `keyguard/hint/up`: ▲, ▼, C and the held
+keys, 6 ms earlier with a 23 ms end partial) plus `keyguard/hint/pwr` (lit). The keyguard notes'
+end partial draws stay in the goldens (plan 14's `cut`/`edges` widget steps reproduce them).
+`tests/goldens-integrity.test.ts`'s "sound goldens (plan 16)" block now reads plan 16's index only
+(it required `plan16/` sources of every sound golden).
 
 ### Task 3 - The lights model (pure, TDD)
 

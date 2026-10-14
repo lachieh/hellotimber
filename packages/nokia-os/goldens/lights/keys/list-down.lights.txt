@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/keys/list-down
+status: pending:25
+source: captures/6.39/plan25/lights/keys/list-down
+source-sha256: 770fc8969f4021deaf4b0da7de6e3d495b990e4f833824733e10de0ec35590cc
+state: factory
+power-on: 93345
+keys: 0:down
+note: down in Phone book's list, dark.
+omitted: none
+
+@events
+# t_ms light   state
+19     display on
+19     keypad  on
+13716  display off
+13716  keypad  off

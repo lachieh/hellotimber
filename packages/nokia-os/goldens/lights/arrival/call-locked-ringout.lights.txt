@@ -1,0 +1,14 @@
+lights-golden 1
+id: lights/arrival/call-locked-ringout
+status: pending:22
+source: captures/6.39/plan25/lights/arrival/call-locked-ringout
+source-sha256: 426a0f0337f6cca9b1f385fcc6595fcc88038a577c7709afa5c25dc4ce7a39d9
+state: virgin
+power-on: 81378
+note: An incoming call at a dark locked standby, left to ring 75 s.
+omitted: none
+
+@events
+# t_ms light   state
+1731   display on
+1731   keypad  on

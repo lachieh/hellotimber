@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/arrival/call-locked-reject
+status: pending:22
+source: captures/6.39/plan25/lights/arrival/call-locked-reject
+source-sha256: f1971181afec4a4f67650ae958dfcb83894e2c4b0425f1498238e1be40863f40
+state: virgin
+power-on: 84479
+keys: 0:c
+note: An incoming call at a dark locked standby, rejected with C at 3 s.
+omitted: none
+
+@events
+# t_ms light   state
+-1369  display on
+-1369  keypad  on
+14652  display off
+14652  keypad  off

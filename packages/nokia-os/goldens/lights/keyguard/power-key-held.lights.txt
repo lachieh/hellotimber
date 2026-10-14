@@ -1,0 +1,15 @@
+lights-golden 1
+id: lights/keyguard/power-key-held
+status: pending:25
+source: captures/6.39/plan25/keyguard/power-cycle/power-key-held
+source-sha256: 8cb7f4c85255fc89b8f258a172596b4fb4397f8dc81f00251868ed17c5964fe9
+state: factory
+power-on: 51974
+keys: 0:power+10000
+note: The power key held 10 s on a lit locked standby: the hint, no power-off.
+omitted: none
+
+@events
+# t_ms light   state
+-100   display on
+-100   keypad  on

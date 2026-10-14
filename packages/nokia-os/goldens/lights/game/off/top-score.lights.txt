@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/game/off/top-score
+status: pending:25
+source: captures/6.39/plan25/lights/game/off/top-score
+source-sha256: 09ac63be85951e34f871bb620ebb1b9ede388bdc50584d9eae1f248c5013c2f6
+state: factory
+power-on: 137691
+keys: 0:navi 2039:8 4582:4 5213:2 5848:6
+note: Snake II level 1, Games › Settings › Lights Off: New game, one meal, a crash (a new top score), 20 s.
+omitted: none
+
+@events
+# t_ms light   state
+0      display on
+0      keypad  on
+38     display off
+38     keypad  off
+8521   display on
+8521   keypad  on

@@ -240,7 +240,7 @@ describe("game goldens (plan 23)", () => {
 });
 
 describe("sound goldens (plan 16)", () => {
-  const sounds = index.filter((entry) => entry.kind === "sound");
+  const sounds = readPlanIndex(GOLDENS, "16").filter((entry) => entry.kind === "sound");
   const STATES = /^(virgin|factory|v639-[a-z0-9-]+)$/;
 
   for (const entry of sounds) {

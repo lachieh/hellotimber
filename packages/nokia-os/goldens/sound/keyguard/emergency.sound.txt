@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/keyguard/emergency
+status: pending:25
+source: captures/6.39/plan25/sound/keyguard/emergency
+source-sha256: aa8e76ee8c2557755ad3e9ee23c0a005fafcaf2d18234c90a9bffac009561d9c
+state: factory
+keys: 0:1 500:1 1000:2
+note: 1 1 2 on a dark locked standby: silent.
+omitted: none
+
+@events
+# t_ms output   state

@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/arrival/call-reject
+status: pending:22
+source: captures/6.39/plan25/lights/arrival/call-reject
+source-sha256: e89b4bfe7d1ce556ea167d3d58bb3324527ef6e95f3c3e66ac6d2575408e202f
+state: virgin
+power-on: 70557
+keys: 0:c
+note: An incoming call at a dark standby, rejected with C at 3 s.
+omitted: none
+
+@events
+# t_ms light   state
+-1100  display on
+-1100  keypad  on
+14698  display off
+14698  keypad  off

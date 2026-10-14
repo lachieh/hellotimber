@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/timeout/virgin/relight-13000
+status: pending:25
+source: captures/6.39/plan25/lights/timeout/virgin/relight-13000
+source-sha256: 23b51e40647e13fb43a6efe8498c0b8ab1b0faf61a28be793e62e52f67e9af9a
+state: virgin
+power-on: 69192
+keys: 0:c 13001:c
+note: C, then C 13000 ms later while the LEDs are on.
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+27958  display off
+27958  keypad  off

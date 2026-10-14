@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/timeout/virgin/tap-01
+status: pending:25
+source: captures/6.39/plan25/lights/timeout/virgin/tap-01
+source-sha256: cb62e927778e481745f1bf25627fbdc59a0738d57b0f7baded689056d32c490d
+state: virgin
+power-on: 69517
+keys: 0:c
+note: C at standby with the LEDs off, 124 ms after a light tick (Task 0 L).
+omitted: none
+
+@events
+# t_ms light   state
+18     display on
+18     keypad  on
+13754  display off
+13754  keypad  off

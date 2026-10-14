@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/arrival/call
+status: pending:22
+source: captures/6.39/plan25/lights/arrival/call
+source-sha256: 6383963e68a40cd33ee23bc874d204da5a533a904758f056606b5daf5bb0e19a
+state: virgin
+power-on: 73557
+keys: 0:navi 3060:navi
+note: An incoming call at a dark standby, answered with Navi at 6 s, ended with Navi 3 s later.
+omitted: none
+
+@events
+# t_ms light   state
+-4101  display on
+-4101  keypad  on
+17648  display off
+17648  keypad  off

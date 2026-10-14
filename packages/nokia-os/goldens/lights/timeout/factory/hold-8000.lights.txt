@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/timeout/factory/hold-8000
+status: pending:25
+source: captures/6.39/plan25/lights/timeout/factory/hold-8000
+source-sha256: 139c781ef9beb7c82c324eee50d63183314fad1ae240011209eb58dadae1979b
+state: factory
+power-on: 61261
+keys: 0:c+8000
+note: C held 8000 ms at standby.
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+14078  display off
+14078  keypad  off

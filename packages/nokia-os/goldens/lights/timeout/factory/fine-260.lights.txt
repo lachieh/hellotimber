@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/timeout/factory/fine-260
+status: pending:25
+source: captures/6.39/plan25/lights/timeout/factory/fine-260
+source-sha256: fa275635f63893612a41557e9956bbc3197318958b4369e4e2abd0755ac7895a
+state: factory
+power-on: 61722
+keys: 0:c
+note: C at standby 260 ms after a light tick: pins the timeout (D2).
+omitted: none
+
+@events
+# t_ms light   state
+14     display on
+14     keypad  on
+15603  display off
+15603  keypad  off

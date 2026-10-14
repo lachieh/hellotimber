@@ -1,0 +1,13 @@
+lights-golden 1
+id: lights/keyguard/hint
+status: pending:25
+source: captures/6.39/plan25/keyguard/hint/5
+source-sha256: 59acca11425f9102660b729e809f7e0e3f5eefa1203f6df7d14316987c9678b5
+state: virgin
+power-on: 81478
+keys: 0:5
+note: 5 on a dark locked standby (K3).
+omitted: none
+
+@events
+# t_ms light   state

@@ -1,0 +1,16 @@
+lights-golden 1
+id: lights/boot/power-on
+status: pending:25
+source: captures/6.39/plan25/lights/boot/power-on
+source-sha256: e12db9bb45cd8904b34a8cfbde9cd93ab06c274927b41002899bef4354d3eb5b
+state: factory
+power-on: 0
+note: Power-on to 40 s, no key (L4).
+omitted: none
+
+@events
+# t_ms light   state
+270    display on
+270    keypad  on
+23791  keypad  off
+23792  display off

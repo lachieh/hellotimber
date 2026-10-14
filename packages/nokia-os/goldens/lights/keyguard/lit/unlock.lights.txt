@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/keyguard/lit/unlock
+status: pending:25
+source: captures/6.39/plan25/keyguard/lit/unlock
+source-sha256: dbb00e6ef82e3119f0d48dc2ee890c46b672a481bb95228b99315eac622edbc3
+state: virgin
+power-on: 72277
+keys: 0:navi 300:*
+note: While the lock's own light is on (locked ≈3.5 s after Menu).
+omitted: none
+
+@events
+# t_ms light   state
+-100   display on
+-100   keypad  on
+14958  display off
+14958  keypad  off

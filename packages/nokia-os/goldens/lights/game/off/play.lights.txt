@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/game/off/play
+status: pending:25
+source: captures/6.39/plan25/lights/game/off/play
+source-sha256: 7644656eb2b89c911d6766a9bcb630ad6833229180608f8e16ab2898a2cb48a7
+state: factory
+power-on: 137691
+keys: 0:navi 2039:8 4582:6 5213:2 5848:6 8392:8 9023:4 13471:8 14753:4 21098:8 23650:4 26185:8 28735:6 29997:8
+note: Snake II level 1, Games › Settings › Lights Off: New game, 30 s of bot play.
+omitted: none
+
+@events
+# t_ms light   state
+0      display on
+0      keypad  on
+38     display off
+38     keypad  off

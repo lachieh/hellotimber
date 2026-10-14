@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/timeout/factory/relight-13000
+status: pending:25
+source: captures/6.39/plan25/lights/timeout/factory/relight-13000
+source-sha256: 95c9332f13d9f6ef57744056833b0bd60f6a69afb4ebf2f82a9d3642b6f7be34
+state: factory
+power-on: 61261
+keys: 0:c 13001:c
+note: C, then C 13000 ms later while the LEDs are on.
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+27960  display off
+27960  keypad  off
