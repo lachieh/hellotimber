@@ -1,14 +1,20 @@
-// The stock settings store (plan 14 D9): an internal, in-memory port until plan 15 adds host
-// persistence and factory defaults. Its initial state is the captured virgin EEPROM (D10).
+// The stock settings store (plan 14 D9, plan 15 D3): the captured virgin EEPROM (plan 14 D10)
+// with the phone's writes on top, persisted as one EEPROM record (`SETTINGS_RECORD`), and the
+// factory state Restore factory settings writes (plan 15 D5).
 import {
+  CODE_SETTINGS,
+  FACTORY_DEFAULTS,
   HOST_VALUES,
+  RESTORE_KEEPS,
   setterLevel,
   settingAlias,
   settingKey,
   slugOf,
   VIRGIN_NUMBERS,
   VIRGIN_TEXTS,
+  WELCOME_NOTE_KEY,
 } from "./bindings";
+import type { EepromRecord, StockEeprom } from "./eeprom";
 import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
 
 export interface StockSettings {
@@ -23,6 +29,10 @@ export interface StockSettings {
    * text is its display value until the key's first choice or toggle replaces it (D9).
    */
   text(key: string): string | undefined;
+  /** Writes (or, with undefined, clears) a typed text: the welcome note, a profile name. */
+  setText(key: string, text: string | undefined): void;
+  /** The chosen option's label of a single-choice setting (`"Level 2"`), if chosen. */
+  label(key: string): string | undefined;
   /** A numeric value (plan 23 D9: Snake II's level and top score). */
   number(key: string): number;
   setNumber(key: string, value: number): void;
@@ -41,13 +51,62 @@ export interface StockSettingsSnapshot {
   readonly aliases: Readonly<Record<string, string>>;
 }
 
-export function createMemorySettings(initial: StockSettingsSnapshot): StockSettings {
+/**
+ * What the settings record stores (D3): the writes since the virgin EEPROM, by stored key (an
+ * aliased key under its target). A text of `null` clears a virgin text.
+ */
+export interface SettingsOverrides {
+  readonly choices: Readonly<Record<string, number>>;
+  readonly marks: Readonly<Record<string, readonly boolean[]>>;
+  readonly texts: Readonly<Record<string, string | null>>;
+  readonly numbers: Readonly<Record<string, number>>;
+}
+
+type MutableOverrides = {
+  -readonly [K in keyof SettingsOverrides]: Record<string, SettingsOverrides[K][string]>;
+};
+
+const NO_OVERRIDES: SettingsOverrides = { choices: {}, marks: {}, texts: {}, numbers: {} };
+
+function copyOverrides(overrides: SettingsOverrides): MutableOverrides {
+  return {
+    choices: { ...overrides.choices },
+    marks: Object.fromEntries(Object.entries(overrides.marks).map(([k, v]) => [k, [...v]])),
+    texts: { ...overrides.texts },
+    numbers: { ...overrides.numbers },
+  };
+}
+
+/**
+ * A store over `initial` with `overrides` applied (a key's choice or marks remove its virgin
+ * text, D9), calling `save` with the overrides after every write.
+ */
+function settingsOver(
+  initial: StockSettingsSnapshot,
+  stored: SettingsOverrides,
+  save: (overrides: SettingsOverrides) => void,
+): StockSettings {
+  const overrides = copyOverrides(stored);
   const choices = new Map(
     Object.entries(initial.choices).map(([key, value]) => [key, { ...value }]),
   );
   const marks = new Map(Object.entries(initial.marks).map(([key, value]) => [key, [...value]]));
   const texts = new Map(Object.entries(initial.texts));
   const numbers = new Map(Object.entries(initial.numbers));
+  for (const [key, index] of Object.entries(overrides.choices)) {
+    choices.get(key)!.chosen = index;
+    texts.delete(key);
+  }
+  for (const [key, value] of Object.entries(overrides.marks)) {
+    marks.set(key, [...value]);
+    texts.delete(key);
+  }
+  for (const [key, value] of Object.entries(overrides.texts)) {
+    if (value === null) texts.delete(key);
+    else texts.set(key, value);
+  }
+  for (const [key, value] of Object.entries(overrides.numbers)) numbers.set(key, value);
+
   const resolve = (key: string): string => initial.aliases[key] ?? key;
   const single = (key: string): { options: number; chosen: number | null } => {
     const found = choices.get(resolve(key));
@@ -68,22 +127,47 @@ export function createMemorySettings(initial: StockSettingsSnapshot): StockSetti
       throw new Error(`Setting "${key}" has ${options} options; got index ${index}.`);
     }
   };
+  /** A choice or marks replace the key's text: its virgin display text and any written one. */
+  const replaceText = (stored: string): void => {
+    texts.delete(stored);
+    delete overrides.texts[stored];
+  };
   return {
     choice: (key) => single(key).chosen,
     choose(key, index) {
       const setting = single(key);
       check(key, setting.options, index);
       setting.chosen = index;
-      texts.delete(resolve(key));
+      replaceText(resolve(key));
+      overrides.choices[resolve(key)] = index;
+      save(overrides);
     },
     marks: (key) => [...multi(key)],
     toggle(key, index) {
       const setting = multi(key);
       check(key, setting.length, index);
       setting[index] = !setting[index];
-      texts.delete(resolve(key));
+      replaceText(resolve(key));
+      overrides.marks[resolve(key)] = [...setting];
+      save(overrides);
     },
     text: (key) => texts.get(resolve(key)),
+    setText(key, text) {
+      const stored = resolve(key);
+      if (!(stored in initial.texts) && !TYPED_TEXTS.includes(stored)) {
+        throw new Error(`No text setting "${key}".`);
+      }
+      if (text === undefined) texts.delete(stored);
+      else texts.set(stored, text);
+      if (text !== undefined) overrides.texts[stored] = text;
+      else if (stored in initial.texts) overrides.texts[stored] = null;
+      else delete overrides.texts[stored];
+      save(overrides);
+    },
+    label(key) {
+      const chosen = single(key).chosen;
+      return chosen === null ? undefined : OPTION_LABELS.get(resolve(key))?.[chosen];
+    },
     number: (key) => numbers.get(numeric(key))!,
     setNumber(key, value) {
       const stored = numeric(key);
@@ -91,8 +175,15 @@ export function createMemorySettings(initial: StockSettingsSnapshot): StockSetti
         throw new Error(`Setting "${key}" takes a non-negative integer; got ${value}.`);
       }
       numbers.set(stored, value);
+      overrides.numbers[stored] = value;
+      save(overrides);
     },
   };
+}
+
+/** An in-memory store over `initial` (tests and widget rigs): nothing persists. */
+export function createMemorySettings(initial: StockSettingsSnapshot): StockSettings {
+  return settingsOver(initial, NO_OVERRIDES, () => {});
 }
 
 /** Every tree node with its path from the top level. */
@@ -122,6 +213,16 @@ function setterLabels(node: StockTreeNode): readonly string[] | undefined {
 }
 
 /**
+ * The option labels of a single-choice setting at `node`, in its order: an option list's, a
+ * setter level's, or a code setting's (`CODE_SETTINGS`); undefined for other nodes.
+ */
+function choiceLabels(node: StockTreeNode): readonly string[] | undefined {
+  const spec = node.opens;
+  if (spec.kind === "option-list" && !spec.multi) return spec.options.map((o) => o.label);
+  return setterLabels(node) ?? CODE_SETTINGS[node.number];
+}
+
+/**
  * The pages that show a value, by key, with their option labels when they are single-choice
  * settings: every node whose page showed a value in the virgin capture (its value hint), and every
  * list that opens unset (its page shows the choice once made: Incoming call alert → `Ringing`).
@@ -133,8 +234,7 @@ const VALUE_PAGES: ReadonlyMap<string, readonly string[]> = new Map(
     const spec = node.opens;
     const single = spec.kind === "option-list" && !spec.multi;
     if (node.valueHint === undefined && !(single && spec.opening === null)) return [];
-    const labels = single ? spec.options.map((option) => option.label) : setterLabels(node);
-    return [[settingKey(path), labels ?? []] as const];
+    return [[settingKey(path), choiceLabels(node) ?? []] as const];
   }),
 );
 
@@ -159,10 +259,10 @@ export function virginSettings(): StockSettingsSnapshot {
       texts[key] = node.valueHint;
     }
     const spec = node.opens;
-    const setter = setterLabels(node);
+    const setter = setterLabels(node) ?? CODE_SETTINGS[node.number];
     if (setter !== undefined) {
       const chosen = setter.indexOf(node.valueHint ?? "");
-      if (chosen < 0) throw new Error(`Setter level ${node.number} shows no option as its value.`);
+      if (chosen < 0) throw new Error(`Setting ${node.number} shows no option as its value.`);
       choices[key] = { options: setter.length, chosen };
     } else if (spec.kind === "option-list") {
       if (spec.multi) marks[key] = spec.options.map((option) => option.marked === true);
@@ -224,4 +324,147 @@ export function stockPageValue(settings: StockSettings, key: string): string | u
   if (text !== undefined) return text;
   const chosen = labels.length === 0 ? null : settings.choice(key);
   return chosen === null ? undefined : labels[chosen];
+}
+
+/** The option labels of every option list and single choice, by key (aliases included). */
+const OPTION_LABELS: ReadonlyMap<string, readonly string[]> = new Map(
+  [...nodes()].flatMap((path) => {
+    const node = path[path.length - 1]!;
+    const spec = node.opens;
+    const labels =
+      spec.kind === "option-list" ? spec.options.map((o) => o.label) : choiceLabels(node);
+    return labels === undefined ? [] : [[settingKey(path), labels] as const];
+  }),
+);
+
+/** Texts the user types that have no virgin value (plan 18 writes the welcome note). */
+const TYPED_TEXTS: readonly string[] = [WELCOME_NOTE_KEY];
+
+let virginCache: StockSettingsSnapshot | undefined;
+/** The virgin snapshot, computed once. */
+function virgin(): StockSettingsSnapshot {
+  virginCache ??= virginSettings();
+  return virginCache;
+}
+
+/** The keys a settings record can hold, by table, sorted (pinned by a snapshot test, D3). */
+export function settingsRecordKeys(): Record<keyof SettingsOverrides, string[]> {
+  const v = virgin();
+  return {
+    choices: Object.keys(v.choices).sort(),
+    marks: Object.keys(v.marks).sort(),
+    texts: [...new Set([...Object.keys(v.texts), ...TYPED_TEXTS])].sort(),
+    numbers: Object.keys(v.numbers).sort(),
+  };
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/** The entries of table `name` in stored data whose values `keep` accepts; throws on a bad shape. */
+function table<T>(
+  data: Record<string, unknown>,
+  name: keyof SettingsOverrides,
+  keep: (key: string, value: unknown) => value is T,
+): Record<string, T> {
+  const stored = data[name];
+  if (stored === undefined) return {};
+  if (!isPlainObject(stored)) throw new Error(`"${name}" is not an object.`);
+  return Object.fromEntries(Object.entries(stored).filter(([k, v]) => keep(k, v))) as Record<
+    string,
+    T
+  >;
+}
+
+/** Only the entries of `from` whose keys are in `keys`. */
+function only<T>(from: Readonly<Record<string, T>>, keys: readonly string[]): Record<string, T> {
+  return Object.fromEntries(Object.entries(from).filter(([key]) => keys.includes(key)));
+}
+
+/** The factory choices and marks (FACTORY_DEFAULTS), by stored key. */
+function factoryTables(): Pick<SettingsOverrides, "choices" | "marks"> {
+  const choices: Record<string, number> = {};
+  const marks: Record<string, boolean[]> = {};
+  const v = virgin();
+  for (const entry of FACTORY_DEFAULTS) {
+    const key = v.aliases[entry.key] ?? entry.key;
+    const labels = OPTION_LABELS.get(key);
+    if (labels === undefined) throw new Error(`Factory default for unknown list "${entry.key}".`);
+    if ("label" in entry) {
+      const index = labels.indexOf(entry.label);
+      if (index < 0 || !(key in v.choices)) {
+        throw new Error(`Factory default "${entry.label}" is not an option of "${entry.key}".`);
+      }
+      choices[key] = index;
+    } else {
+      const unknown = entry.marked.filter((label) => !labels.includes(label));
+      if (unknown.length > 0 || !(key in v.marks)) {
+        throw new Error(`Factory marks ${JSON.stringify(unknown)} are not options of "${key}".`);
+      }
+      marks[key] = labels.map((label) => entry.marked.includes(label));
+    }
+  }
+  return { choices, marks };
+}
+
+/**
+ * The settings record (D3): overrides of the virgin snapshot. Stale entries (an unknown key, an
+ * index out of range, marks of the wrong length) are dropped on load; Restore factory settings
+ * writes `factory` (D5): virgin choices and marks under FACTORY_DEFAULTS, and only the texts
+ * and numbers of RESTORE_KEEPS.
+ */
+export const SETTINGS_RECORD: EepromRecord<SettingsOverrides> = {
+  name: "settings",
+  version: 1,
+  initial: () => NO_OVERRIDES,
+  decode(data) {
+    if (!isPlainObject(data)) throw new Error("not an object.");
+    const v = virgin();
+    const texts = settingsRecordKeys().texts;
+    return {
+      choices: table(data, "choices", (key, value): value is number => {
+        const setting = v.choices[key];
+        return (
+          setting !== undefined &&
+          Number.isInteger(value) &&
+          (value as number) >= 0 &&
+          (value as number) < setting.options
+        );
+      }),
+      marks: table(
+        data,
+        "marks",
+        (key, value): value is boolean[] =>
+          Array.isArray(value) &&
+          value.length === v.marks[key]?.length &&
+          value.every((mark) => typeof mark === "boolean"),
+      ),
+      texts: table(
+        data,
+        "texts",
+        (key, value): value is string | null =>
+          texts.includes(key) && (typeof value === "string" || value === null),
+      ),
+      numbers: table(
+        data,
+        "numbers",
+        (key, value): value is number =>
+          key in v.numbers && Number.isInteger(value) && (value as number) >= 0,
+      ),
+    };
+  },
+  encode: (value) => ({ ...value }),
+  factory: (current) => ({
+    ...factoryTables(),
+    texts: only(current.texts, RESTORE_KEEPS),
+    numbers: only(current.numbers, RESTORE_KEEPS),
+  }),
+};
+
+/** The phone's settings over its EEPROM (D3): every write is stored at once. */
+export function createStockSettings(eeprom: StockEeprom): StockSettings {
+  return settingsOver(virgin(), eeprom.read(SETTINGS_RECORD), (overrides) =>
+    eeprom.write(SETTINGS_RECORD, overrides),
+  );
 }

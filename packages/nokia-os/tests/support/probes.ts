@@ -17,6 +17,7 @@ import {
   type TimelineTolerance,
 } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
+import { createMemoryStorage } from "../../src/index";
 import { frameAt, standbyRig, type Rig } from "./rig.ts";
 
 /** One harness tap (`key`): ≈42 ms down, the 250 ms settle and the 300 ms key gap. */
@@ -155,7 +156,41 @@ const WRAPS: Readonly<Record<string, string>> = {
   profiles: "navi down*11 navi",
 };
 
+/** Tones › Keypad tones and Settings › Phone settings › Cell info display, as plan 15 A7 keys. */
+const KEYPAD_TONES = "navi wait:300 down*4 wait:1000 navi down*5";
+const CELL_INFO = "navi wait:300 down*5 wait:1000 navi down navi down";
+const TO_STANDBY = "c wait:1000 c wait:1000 c wait:2000";
+
+/**
+ * Plan 15 A7 (`probe/persist-reboot`): Keypad tones › Level 2 and Cell info display › On, then
+ * a new phone over the same storage (`saveflash`, `reboot`) shows both on their pages and opens
+ * both lists on them.
+ */
+function persistReboot(id: string): void {
+  const storage = createMemoryStorage();
+  const golden = loadGolden(id);
+  const check = (rig: Rig, image: string, script: string): void => {
+    keys(rig, script);
+    expectLcd(rig.paint(), goldenImage(id, image), `${id}: ${image}`);
+  };
+  const first = standbyRig({ storage });
+  check(first, "before-5-6-page", KEYPAD_TONES);
+  check(first, "before-5-6-list", "navi");
+  check(first, "set-5-6-page", "down*3 navi wait:3000");
+  check(first, "before-6-2-2-page", `${TO_STANDBY} ${CELL_INFO}`);
+  check(first, "before-6-2-2-list", "navi");
+  check(first, "set-6-2-2-page", "down navi wait:3000");
+  const second = standbyRig({ storage });
+  check(second, "standby", "");
+  check(second, "5-6-page", KEYPAD_TONES);
+  check(second, "5-6-list", "navi");
+  check(second, "6-2-2-page", `${TO_STANDBY} ${CELL_INFO}`);
+  check(second, "6-2-2-list", "navi");
+  expect(golden.images).toHaveLength(11);
+}
+
 export const PROBE_SCENARIOS: Record<string, (id: string) => void> = {
+  "probe/persist-reboot": persistReboot,
   "probe/wrap-down": (id) => stills(id, standbyRig(), wrap(`${PHONE_BOOK} down*9`, "down", 4)),
   ...Object.fromEntries(
     Object.entries(WRAPS).flatMap(([name, base]) =>

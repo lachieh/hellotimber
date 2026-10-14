@@ -3,15 +3,21 @@ import { VISIBLE_ROWS } from "../display/list-rows";
 import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
 import { STOCK_SHORTCUT_WINDOW_MS, type StockPorts } from "./bindings";
 import type { StockCueSink } from "./cues";
+import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { invalidShortcut } from "./leaves";
 import { createStockGames, createStockMenu } from "./menu";
-import { createMemorySettings, virginSettings } from "./settings";
+import { createStockSettings } from "./settings";
 
 export interface StockPhoneConfig extends StockPorts {
   /** Operator line. Every glyph must exist in the stock small font (validated; throws). */
   carrier: string;
   /** Default "animated". "skip" = bootMs 0 (tests, reduced motion). */
   boot?: "animated" | "skip";
+  /**
+   * Plan 15: where settings persist (`window.localStorage` fits). Default: a fresh in-memory
+   * storage. Empty storage is the virgin EEPROM. A malformed record throws, naming its key.
+   */
+  storage?: StockStorage;
 }
 
 /**
@@ -49,7 +55,8 @@ export function createStockPhone(config: StockPhoneConfig): Phone {
 }
 
 /**
- * `createStockPhone` with internal options. The phone owns its settings store and its games
+ * `createStockPhone` with internal options. The phone owns its EEPROM over `config.storage`
+ * (read once here, so a malformed record throws now), its settings store over it, and its games
  * holder (the suspended game), which power-off clears.
  */
 export function createStockPhoneWith(
@@ -65,6 +72,8 @@ export function createStockPhoneWith(
     );
   }
   const { clock, date } = config;
+  const eeprom = new StockEeprom(config.storage ?? createMemoryStorage());
+  const settings = createStockSettings(eeprom);
   let now = 0;
   const ports = { clock, date };
   const clockGames = createStockGames(ports, () => now);
@@ -74,7 +83,7 @@ export function createStockPhoneWith(
     ...(internals.cues === undefined ? {} : { cues: internals.cues }),
   };
   const phone = createPhone({
-    menu: createStockMenu(ports, createMemorySettings(virginSettings()), games),
+    menu: createStockMenu(ports, settings, games),
     carrier: config.carrier,
     ...(clock === undefined ? {} : { clock }),
     bootTimeline: BOOT_TIMELINE,

@@ -30,12 +30,8 @@ import { NO_CUES } from "./cues";
 import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
 import { LeafBinder, type LeafPlace } from "./leaves";
 import { seedFromClock } from "../games/snake/seed";
-import {
-  createMemorySettings,
-  stockPageValue,
-  virginSettings,
-  type StockSettings,
-} from "./settings";
+import { createMemoryStorage, StockEeprom } from "./eeprom";
+import { createStockSettings, stockPageValue, type StockSettings } from "./settings";
 
 interface Builder {
   readonly ports: StockPorts;
@@ -158,12 +154,13 @@ export function createStockGames(ports: StockPorts = {}, now: () => number = () 
 
 /**
  * The stock menu, with Clock pages reading `ports` for their clock and date values, the other
- * pages, option lists and setters reading and writing `settings` (default: a fresh store in the
- * virgin-EEPROM state), and the games keeping their suspended game in `games` (default: fresh).
+ * pages, option lists and setters reading and writing `settings` (default: a fresh store over an
+ * empty in-memory EEPROM, the virgin state), and the games keeping their suspended game in
+ * `games` (default: fresh).
  */
 export function createStockMenu(
   ports: StockPorts = {},
-  settings: StockSettings = createMemorySettings(virginSettings()),
+  settings: StockSettings = createStockSettings(new StockEeprom(createMemoryStorage())),
   games: StockGames = createStockGames(ports),
 ): PhoneMenu {
   const builder: Builder = { ports, settings, games, leaves: new LeafBinder(settings, games) };

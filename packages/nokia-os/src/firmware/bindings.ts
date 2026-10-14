@@ -524,3 +524,151 @@ export const INVALID_SHORTCUT = { lines: ["Invalid", "shortcut"], timeline: "inv
  * Voice mailbox number prompt's.
  */
 export const CURSOR_STYLE = "2-9";
+
+// ---------------------------------------------------------------- plan 15: settings and security
+
+/** The stored welcome note (a typed text; absent = no note). Plan 18's editor writes it. */
+export const WELCOME_NOTE_KEY = "settings/phone-settings/welcome-note";
+
+/** Phone security (6-3-5): a single choice behind the security code (`CODE_SETTINGS`). */
+export const PHONE_SECURITY_KEY = "settings/security-settings/phone-security";
+
+/**
+ * Code-prompt leaves that store a single choice, by node number, with the option labels in
+ * list order: Phone security's list is `Off`, `On` (`probe/accept-6-3-5-on` image h). The page
+ * reads the choice like a setter level's (virgin `Off`, `tree/06-settings/6-3.sub`).
+ */
+export const CODE_SETTINGS: Readonly<Record<string, readonly string[]>> = {
+  "6-3-5": ["Off", "On"],
+};
+
+/**
+ * Settings Restore factory settings keeps (D5, Task 0): the welcome note (v6.39
+ * `plan15/accept/c4-*` then `factory/boot` shows `Hi`) and Snake II's top score (v5.79
+ * `5.79/plan15/before/8-1-4` and `after/`: 1297 both times). Every other text and number
+ * returns to virgin, profile names included (`Silenth` became `Silent`).
+ */
+export const RESTORE_KEEPS: readonly string[] = [WELCOME_NOTE_KEY, "games/snake/top-score"];
+
+/** A factory value read from a v6.39 factory scroll after a captured Restore (D5). */
+export type FactoryDefault = {
+  readonly key: string;
+  readonly evidence: "v6.39";
+  /** The scroll image under `$REF/captures/6.39/` that shows it. */
+  readonly capture: string;
+} & ({ readonly label: string } | { readonly marked: readonly string[] });
+
+function scroll(number: string): string {
+  return `plan15/factory/scroll/${number}/01.png`;
+}
+
+/** The Personalise lists in their order (12-n-2-1…8, 9 Screen saver, 9-3 Timeout). */
+const PERSONALISE = [
+  ["ringing-tone", "1"],
+  ["ringing-volume", "2"],
+  ["incoming-call-alert", "3"],
+  ["message-alert-tone", "5"],
+  ["keypad-tones", "6"],
+  ["warning-tones", "7"],
+  ["vibrating-alert", "8"],
+  ["screen-saver", "9"],
+] as const;
+
+/** One profile's factory Personalise values (the README "v6.39 factory values" table). */
+function profile(slug: string, n: number, labels: readonly string[]): FactoryDefault[] {
+  return [
+    ...PERSONALISE.map(
+      ([setting, k], i): FactoryDefault => ({
+        key: `profiles/${slug}/personalise/${setting}`,
+        label: labels[i]!,
+        evidence: "v6.39",
+        capture: scroll(`12-${n}-2-${k}`),
+      }),
+    ),
+    {
+      key: `profiles/${slug}/personalise/screen-saver/timeout`,
+      label: "5 seconds",
+      evidence: "v6.39",
+      capture: scroll(`12-${n}-2-9-3`),
+    },
+  ];
+}
+
+/**
+ * What Restore factory settings writes over the virgin choices and marks (D5): v6.39's own
+ * factory scrolls after `accept/6-4-restore` (`$REF/captures/6.39/plan15/factory/scroll/`,
+ * README "v6.39 factory values"). Tones are the General profile's (`SETTING_ALIASES`). Every
+ * list not named keeps its virgin opening. Info service › Topics also shrinks to `Add topic`
+ * (plan 18 owns the topics).
+ */
+export const FACTORY_DEFAULTS: readonly FactoryDefault[] = [
+  ...profile("general", 1, [
+    "Nokia tune",
+    "Level 4",
+    "Ringing",
+    "Standard",
+    "Level 2",
+    "On",
+    "On",
+    "Off",
+  ]),
+  ...profile("silent", 2, ["Nokia tune", "Level 1", "Off", "No tone", "Off", "Off", "Off", "On"]),
+  ...profile("discreet", 3, [
+    "Nokia tune",
+    "Level 1",
+    "Beep once",
+    "Beep once",
+    "Level 1",
+    "Off",
+    "On",
+    "On",
+  ]),
+  ...profile("loud", 4, [
+    "Nokia tune",
+    "Level 5",
+    "Ringing",
+    "Special",
+    "Level 3",
+    "On",
+    "On",
+    "On",
+  ]),
+  ...profile("empty", 5, [
+    "Get cool",
+    "Level 3",
+    "Ringing",
+    "Standard",
+    "Level 2",
+    "On",
+    "On",
+    "On",
+  ]),
+  ...profile("empty-2", 6, [
+    "Nokia tune",
+    "Level 3",
+    "Ringing",
+    "Standard",
+    "Level 2",
+    "On",
+    "On",
+    "Off",
+  ]),
+  {
+    key: "settings/call-settings/own-number-sending",
+    label: "Set by network",
+    evidence: "v6.39",
+    capture: scroll("6-1-4"),
+  },
+  {
+    key: "call-divert/divert-if-not-answered/set-delay",
+    label: "30 seconds",
+    evidence: "v6.39",
+    capture: scroll("7-3-4"),
+  },
+  {
+    key: "messages/info-service/language",
+    marked: ["All"],
+    evidence: "v6.39",
+    capture: scroll("2-8-5"),
+  },
+];

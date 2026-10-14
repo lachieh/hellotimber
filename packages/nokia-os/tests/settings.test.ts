@@ -1,12 +1,25 @@
-// The internal stock settings store (plan 14 Task 8, D9) and its virgin-EEPROM state (D10).
+// The internal stock settings store (plan 14 Task 8, D9), its virgin-EEPROM state (D10), and its
+// persistent record with the factory state (plan 15 Task 5, D3, D5).
 import { describe, expect, it } from "vite-plus/test";
-import { settingAlias } from "../src/firmware/bindings";
+import {
+  FACTORY_DEFAULTS,
+  PHONE_SECURITY_KEY,
+  RESTORE_KEEPS,
+  settingAlias,
+  WELCOME_NOTE_KEY,
+} from "../src/firmware/bindings";
+import { StockEeprom } from "../src/firmware/eeprom";
 import {
   createMemorySettings,
+  createStockSettings,
+  SETTINGS_RECORD,
+  settingsRecordKeys,
   stockPageValue,
   virginSettings,
+  type SettingsOverrides,
   type StockSettingsSnapshot,
 } from "../src/firmware/settings";
+import { createMemoryStorage, STOCK_STORAGE_PREFIX, type StockStorage } from "../src/index";
 
 const SNAPSHOT: StockSettingsSnapshot = {
   choices: {
@@ -209,5 +222,219 @@ describe("virgin-EEPROM settings (D10)", () => {
     settings.choose("tones/screen-saver", 1);
     expect(stockPageValue(settings, "profiles/general/personalise/screen-saver")).toBe("On");
     expect(stockPageValue(settings, "profiles/silent/personalise/screen-saver")).toBe("Off");
+  });
+});
+
+// ---------------------------------------------------------------- plan 15 Task 5
+
+const OVERRIDE_KEY = `${STOCK_STORAGE_PREFIX}settings`;
+
+/** A settings store over a fresh EEPROM on `storage`. */
+function persistent(storage: StockStorage = createMemoryStorage()) {
+  return { storage, settings: createStockSettings(new StockEeprom(storage)) };
+}
+
+describe("SETTINGS_RECORD (D3)", () => {
+  it("starts with no overrides: the virgin snapshot is the initial state", () => {
+    expect(SETTINGS_RECORD.initial()).toEqual({ choices: {}, marks: {}, texts: {}, numbers: {} });
+    const { settings } = persistent();
+    expect(settings.choice("phone-book/options/type-of-view")).toBe(2);
+    expect(settings.number("games/snake/top-score")).toBe(45);
+    expect(settings.text("tones/ringing-volume")).toBe("Level 1");
+  });
+
+  it("stores only what was written, aliased keys once under their target", () => {
+    const { storage, settings } = persistent();
+    settings.choose("tones/keypad-tones", 2);
+    settings.setNumber("games/snake/top-score", 105);
+    expect(storage.getItem(OVERRIDE_KEY)).toBe(
+      '{"choices":{"profiles/general/personalise/keypad-tones":2},"marks":{},' +
+        '"numbers":{"games/snake/top-score":105},"texts":{},"version":1}',
+    );
+  });
+
+  it("removes a key's virgin text when its stored choice is loaded, as in memory", () => {
+    const storage = createMemoryStorage();
+    storage.setItem(
+      OVERRIDE_KEY,
+      '{"version":1,"choices":{"profiles/general/personalise/ringing-volume":2}}',
+    );
+    const { settings } = persistent(storage);
+    expect(settings.choice("tones/ringing-volume")).toBe(2);
+    expect(settings.text("tones/ringing-volume")).toBeUndefined();
+    expect(stockPageValue(settings, "tones/ringing-volume")).toBe("Level 3");
+  });
+
+  it("drops stale content: unknown keys, indexes out of range, marks of the wrong length", () => {
+    const decoded = SETTINGS_RECORD.decode(
+      {
+        choices: {
+          "tones/nope": 1,
+          "tones/keypad-tones": 1,
+          "profiles/general/personalise/keypad-tones": 4,
+          "phone-book/options/type-of-view": 0,
+          "games/settings/shakes": 0.5,
+        },
+        marks: {
+          "messages/info-service/language": [true, false],
+          "messages/info-service/topics/select": [false, false, false, false, "x"],
+        },
+        texts: { "settings/phone-settings/welcome-note": "Hi", "nope/text": "x", "tones/x": 3 },
+        numbers: { "games/snake/level": 9, "games/snake/top-score": -1, "games/nope": 1 },
+      },
+      1,
+    );
+    expect(decoded).toEqual({
+      choices: { "phone-book/options/type-of-view": 0 },
+      marks: {},
+      texts: { "settings/phone-settings/welcome-note": "Hi" },
+      numbers: { "games/snake/level": 9 },
+    });
+  });
+
+  it("throws on a bad shape, which the EEPROM reports with its key", () => {
+    expect(() => SETTINGS_RECORD.decode({ choices: [] }, 1)).toThrow(/choices/);
+    const storage = createMemoryStorage();
+    storage.setItem(OVERRIDE_KEY, '{"version":1,"marks":"x"}');
+    expect(() => new StockEeprom(storage)).toThrow(`EEPROM record ${OVERRIDE_KEY}:`);
+  });
+
+  it("pins the keys a record can hold (a renamed slug must bump the version)", () => {
+    expect(settingsRecordKeys()).toMatchSnapshot();
+  });
+});
+
+describe("createStockSettings (D3, D11)", () => {
+  it("persists every write at once: a second store over the same storage reads it", () => {
+    const { storage, settings } = persistent();
+    settings.choose("settings/phone-settings/cell-info-display", 0);
+    settings.toggle("messages/info-service/language", 1);
+    settings.setText(WELCOME_NOTE_KEY, "Hi");
+    settings.setNumber("games/snake/level", 3);
+    const again = persistent(storage).settings;
+    expect(again.choice("settings/phone-settings/cell-info-display")).toBe(0);
+    expect(again.marks("messages/info-service/language").slice(0, 2)).toEqual([true, false]);
+    expect(again.text(WELCOME_NOTE_KEY)).toBe("Hi");
+    expect(again.number("games/snake/level")).toBe(3);
+  });
+
+  it("setText writes and, with undefined, clears a text (virgin texts included)", () => {
+    const { storage, settings } = persistent();
+    expect(settings.text(WELCOME_NOTE_KEY)).toBeUndefined();
+    settings.setText(WELCOME_NOTE_KEY, "Welcome to my phone");
+    expect(settings.text(WELCOME_NOTE_KEY)).toBe("Welcome to my phone");
+    settings.setText(WELCOME_NOTE_KEY, undefined);
+    expect(settings.text(WELCOME_NOTE_KEY)).toBeUndefined();
+    settings.setText("messages/voice-mailbox-number", undefined);
+    expect(persistent(storage).settings.text("messages/voice-mailbox-number")).toBeUndefined();
+    expect(() => settings.setText("nope/text", "x")).toThrow('No text setting "nope/text".');
+  });
+
+  it("label() is the chosen option's label of a single-choice setting, if chosen", () => {
+    const { settings } = persistent();
+    expect(settings.label("tones/keypad-tones")).toBeUndefined();
+    expect(settings.label("phone-book/options/type-of-view")).toBe("Large font");
+    settings.choose("tones/keypad-tones", 2);
+    expect(settings.label("tones/keypad-tones")).toBe("Level 2");
+    expect(settings.label("messages/info-service")).toBe("Off");
+    expect(() => settings.label("nope")).toThrow('No single-choice setting "nope".');
+  });
+
+  it("keeps the in-memory rules: validation, aliases, a choice removes the virgin text", () => {
+    const { settings } = persistent();
+    expect(() => settings.choose("tones/ringing-volume", 5)).toThrow(/has 5 options; got index 5/);
+    settings.choose("tones/ringing-volume", 1);
+    expect(settings.text("tones/ringing-volume")).toBeUndefined();
+    expect(settings.choice("profiles/general/personalise/ringing-volume")).toBe(1);
+  });
+
+  it("keeps working in memory when storage refuses writes", () => {
+    const base = createMemoryStorage();
+    const storage: StockStorage = {
+      ...base,
+      getItem: (key) => base.getItem(key),
+      setItem() {
+        throw new Error("QuotaExceededError");
+      },
+    };
+    const { settings } = persistent(storage);
+    settings.choose("tones/keypad-tones", 3);
+    expect(settings.choice("tones/keypad-tones")).toBe(3);
+  });
+});
+
+describe("Phone security is a single choice (CODE_SETTINGS)", () => {
+  it("stores Off/On, virgin Off, and the page reads it like a setter level", () => {
+    const virgin = virginSettings();
+    expect(virgin.choices[PHONE_SECURITY_KEY]).toEqual({ options: 2, chosen: 0 });
+    const { settings } = persistent();
+    expect(stockPageValue(settings, PHONE_SECURITY_KEY)).toBe("Off");
+    settings.choose(PHONE_SECURITY_KEY, 1);
+    expect(stockPageValue(settings, PHONE_SECURITY_KEY)).toBe("On");
+    expect(settings.label(PHONE_SECURITY_KEY)).toBe("On");
+  });
+});
+
+describe("factory state (D5)", () => {
+  const written = (): SettingsOverrides => {
+    const { storage, settings } = persistent();
+    settings.choose("tones/keypad-tones", 0);
+    settings.choose("settings/phone-settings/cell-info-display", 0);
+    settings.choose(PHONE_SECURITY_KEY, 1);
+    settings.choose("games/settings/shakes", 0);
+    settings.toggle("messages/info-service/language", 7);
+    settings.setText(WELCOME_NOTE_KEY, "Hi");
+    settings.setText("messages/voice-mailbox-number", "123");
+    settings.setNumber("games/snake/top-score", 105);
+    settings.setNumber("games/snake/level", 3);
+    return new StockEeprom(storage).read(SETTINGS_RECORD);
+  };
+
+  it("cites a v6.39 capture for every default, and every label is one of its list's", () => {
+    for (const entry of FACTORY_DEFAULTS) {
+      expect(entry.evidence, entry.key).toBe("v6.39");
+      expect(entry.capture, entry.key).toMatch(/^plan15\/factory\/scroll\/[\d-]+\/01\.png$/);
+    }
+    expect(() => SETTINGS_RECORD.factory!(SETTINGS_RECORD.initial())).not.toThrow();
+  });
+
+  it("returns choices and marks to virgin, then applies FACTORY_DEFAULTS", () => {
+    const factory = SETTINGS_RECORD.factory!(written());
+    const storage = createMemoryStorage();
+    const eeprom = new StockEeprom(storage);
+    eeprom.write(SETTINGS_RECORD, factory);
+    const settings = createStockSettings(eeprom);
+    // Factory values that differ from the virgin EEPROM (Task 0 0c).
+    expect(settings.label("tones/ringing-tone")).toBe("Nokia tune");
+    expect(settings.label("tones/ringing-volume")).toBe("Level 4");
+    expect(settings.label("tones/incoming-call-alert")).toBe("Ringing");
+    expect(settings.label("tones/message-alert-tone")).toBe("Standard");
+    expect(settings.label("tones/keypad-tones")).toBe("Level 2");
+    expect(settings.label("tones/warning-tones")).toBe("On");
+    expect(settings.label("tones/vibrating-alert")).toBe("On");
+    expect(settings.label("tones/screen-saver/timeout")).toBe("5 seconds");
+    expect(settings.label("profiles/silent/personalise/incoming-call-alert")).toBe("Off");
+    expect(settings.label("profiles/discreet/personalise/message-alert-tone")).toBe("Beep once");
+    expect(settings.label("profiles/loud/personalise/ringing-volume")).toBe("Level 5");
+    expect(settings.label("profiles/empty/personalise/ringing-tone")).toBe("Get cool");
+    expect(settings.label("profiles/empty-2/personalise/screen-saver")).toBe("Off");
+    expect(settings.label("profiles/silent/personalise/screen-saver")).toBe("On");
+    expect(settings.label("settings/call-settings/own-number-sending")).toBe("Set by network");
+    expect(settings.label("call-divert/divert-if-not-answered/set-delay")).toBe("30 seconds");
+    expect(settings.marks("messages/info-service/language").filter(Boolean)).toHaveLength(1);
+    expect(settings.marks("messages/info-service/language")[0]).toBe(true);
+    // Lists with no factory default keep their virgin opening.
+    expect(settings.choice("settings/phone-settings/cell-info-display")).toBe(1);
+    expect(settings.choice("games/settings/shakes")).toBe(1);
+    expect(settings.text("games/settings/shakes")).toBe("1 player");
+    expect(settings.choice(PHONE_SECURITY_KEY)).toBe(0);
+    expect(stockPageValue(settings, PHONE_SECURITY_KEY)).toBe("Off");
+  });
+
+  it("keeps RESTORE_KEEPS (the welcome note, the top score) and resets other texts", () => {
+    const factory = SETTINGS_RECORD.factory!(written());
+    expect(factory.texts).toEqual({ [WELCOME_NOTE_KEY]: "Hi" });
+    expect(factory.numbers).toEqual({ "games/snake/top-score": 105 });
+    expect(RESTORE_KEEPS).toEqual([WELCOME_NOTE_KEY, "games/snake/top-score"]);
   });
 });

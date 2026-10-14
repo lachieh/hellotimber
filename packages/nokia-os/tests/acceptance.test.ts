@@ -330,13 +330,7 @@ const KNOWN_GAPS: Readonly<Record<string, string>> = {
  * Plan 15 Task 2 shim: the asserted goldens plan 15 imported before the behaviour that drives
  * them exists (Tasks 5-8 write their scenarios). Listed as todos until then; Task 10 deletes it.
  */
-const PLAN15_PREFIXES = [
-  "boot/security-",
-  "boot/welcome-note",
-  "probe/accept-",
-  "probe/code-",
-  "probe/persist-",
-];
+const PLAN15_PREFIXES = ["boot/security-", "boot/welcome-note", "probe/accept-", "probe/code-"];
 function awaitsPlan15Scenario(id: string): boolean {
   return SCENARIOS[id] === undefined && PLAN15_PREFIXES.some((prefix) => id.startsWith(prefix));
 }

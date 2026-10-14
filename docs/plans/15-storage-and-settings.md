@@ -787,26 +787,44 @@ that has one. `removeItem` is never called by nokia-os itself; it is for a host'
 `src/firmware/phone.ts`, `tests/settings.test.ts`, `tests/persistence.test.ts` (new),
 `tests/firmware-phone.test.ts`.
 
-- [ ] TDD `SETTINGS_RECORD`: overrides only; aliased keys under their target; a choice removes
+- [x] TDD `SETTINGS_RECORD`: overrides only; aliased keys under their target; a choice removes
       the virgin text on load as in memory; unknown keys, out-of-range indexes and wrong-length
       marks are dropped; the set of writable keys is pinned by a snapshot test (D3).
-- [ ] TDD `createStockSettings(eeprom)`: every write persists at once; `setText`, `label`; a
+- [x] TDD `createStockSettings(eeprom)`: every write persists at once; `setText`, `label`; a
       second store over the same storage reads the same values.
-- [ ] Phone security becomes a single choice (`CODE_SETTINGS`: 6-3-5, labels per Task 0b, virgin
+- [x] Phone security becomes a single choice (`CODE_SETTINGS`: 6-3-5, labels per Task 0b, virgin
       `Off`, the page reads it like a setter level).
-- [ ] TDD factory (D5): `factory(current)` restores virgin choices and marks, applies
+- [x] TDD factory (D5): `factory(current)` restores virgin choices and marks, applies
       `FACTORY_DEFAULTS` (each entry carries `evidence` and its capture), keeps `RESTORE_KEEPS`
       and typed texts.
-- [ ] `createStockMenu(ports, settings)` keeps its signature; `createStockPhone` builds one
+- [x] `createStockMenu(ports, settings)` keeps its signature; `createStockPhone` builds one
       `StockEeprom` over `config.storage ?? createMemoryStorage()` and passes the persistent store.
       Subtract: `createMemorySettings` remains only as the in-memory test helper if tests still
       need it, else delete it.
-- [ ] TDD `persistence.test.ts` through keys: choose Keypad tones › Level 2, drop the phone,
+- [x] TDD `persistence.test.ts` through keys: choose Keypad tones › Level 2, drop the phone,
       create another over the same storage: the page shows `Level 2` and the list opens on it (as
       `probe/persist-reboot`); a malformed record throws from `createStockPhone`.
-- [ ] Every plan 13/14 golden still passes with the default storage (virgin).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): persistent settings over the storage port`.
+- [x] Every plan 13/14 golden still passes with the default storage (virgin).
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): persistent settings over the storage port`.
+
+Deviation (record shape): `SettingsOverrides` is `{ choices, marks, texts, numbers }`. `numbers`
+holds Snake II's level and top score (plan 23 D9), and a text of `null` clears a virgin text
+(`setText(key, undefined)` on Voice mailbox number), so a cleared value stays cleared after a
+reload. Writable texts are the virgin texts plus the welcome note; plan 17 adds profile names.
+
+Deviation (`RESTORE_KEEPS`): it holds the welcome note and Snake II's top score. v5.79 keeps the
+Top scores across Restore (`5.79/plan15/before/8-1-4`, `after/`), and plan 23 stores Snake II's
+as a number in this record. Snake II's level has no evidence and returns to virgin, like the
+lists. Info service › Topics shrinking to `Add topic` stays with plan 18 (the topics are its
+placeholders); its language marks reset to `All` here.
+
+Completion note (Task 5): `createStockSettings(eeprom)` stores every write at once and reads
+the record once. `createMemorySettings(snapshot)` remains as the in-memory helper that widget
+tests use; `createStockMenu`'s default store and `createStockPhone` are persistent. `label(key)`
+reads every option list's labels. `settingsRecordKeys()` feeds the pinned snapshot
+(`tests/__snapshots__/settings.test.ts.snap`). Phone security is a choice with a virgin text,
+like a setter level. `probe/persist-reboot` has its scenario (two phones over one storage).
 
 ### Task 6 - Security record and code entry (TDD against goldens)
 
