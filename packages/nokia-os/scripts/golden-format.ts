@@ -23,6 +23,36 @@ export const GOLDEN_SCENARIOS: readonly GoldenScenario[] = [
   "choose",
 ];
 
+/** Keys a golden's `input` may press: phone-core's PhoneKey names (no import: see above). */
+export const INPUT_KEYS: readonly string[] = [
+  "0",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "*",
+  "#",
+  "up",
+  "down",
+  "navi",
+  "c",
+  "power",
+];
+
+/**
+ * One key of a game golden's `input` (plan 23): pressed after the frame of engine tick `tick`
+ * (0 = the New game frame) and before tick `tick + 1`. Keys on one tick are pressed in order.
+ */
+export interface GoldenKeyPress {
+  readonly tick: number;
+  readonly key: string;
+}
+
 export interface GoldenImage {
   readonly name: string;
   /** LCD_WIDTH × LCD_HEIGHT, row-major, one byte per pixel: 1 = lit, 0 = clear. */
@@ -58,6 +88,8 @@ export interface Golden {
   readonly scenario?: GoldenScenario;
   /** Tree node numbers (entries such as `1-8-1`, option choices such as `1-8-1-2`) this golden covers. */
   readonly covers?: readonly string[];
+  /** Game goldens (plan 23): the keys pressed, by engine tick. Absent = no keys. */
+  readonly input?: readonly GoldenKeyPress[];
   readonly images: readonly GoldenImage[];
   /** Present for timeline fixtures; absent for stills. */
   readonly timeline?: readonly GoldenTimelineRow[];
@@ -122,6 +154,9 @@ export function serializeGolden(golden: Golden): string {
   );
   if (golden.scenario !== undefined || golden.covers !== undefined) {
     out.push(`scenario: ${golden.scenario ?? ""}`, `covers: ${(golden.covers ?? []).join(" ")}`);
+  }
+  if (golden.input !== undefined) {
+    out.push(`input: ${golden.input.map((press) => `${press.tick}:${press.key}`).join(" ")}`);
   }
   out.push("");
   for (const image of golden.images) {
@@ -234,6 +269,8 @@ export function parseGolden(text: string, file: string): Golden {
     const repeated = covers.find((number, i) => covers!.indexOf(number) !== i);
     if (repeated !== undefined) fail(coversLine.line, `covers lists "${repeated}" twice`);
   }
+  const inputLine = header("input", true);
+  const input = inputLine ? parseInput(inputLine.value, (m) => fail(inputLine.line, m)) : undefined;
   if (at(index) !== "") fail(index, `expected a blank line after the header, got "${at(index)}"`);
   index++;
 
@@ -318,9 +355,31 @@ export function parseGolden(text: string, file: string): Golden {
     ...(note ? { note: note.value } : {}),
     omitted: omitted!,
     ...(scenario !== undefined ? { scenario, covers: covers! } : {}),
+    ...(input !== undefined ? { input } : {}),
     images,
     ...(timeline ? { timeline } : {}),
   };
+}
+
+const INPUT_PAIR = /^(0|[1-9][0-9]*):(\S+)$/;
+
+function parseInput(value: string, fail: (message: string) => never): GoldenKeyPress[] {
+  const out: GoldenKeyPress[] = [];
+  for (const pair of value.split(" ")) {
+    const match = INPUT_PAIR.exec(pair);
+    if (!match) fail(`input must be space-separated <tick>:<key> pairs, got "${value}"`);
+    const tick = Number(match![1]);
+    const key = match![2]!;
+    if (!INPUT_KEYS.includes(key)) {
+      fail(`input key must be a phone key (0-9, *, #, up, down, navi, c, power), got "${key}"`);
+    }
+    const previous = out.at(-1);
+    if (previous !== undefined && tick < previous.tick) {
+      fail(`input ticks must ascend: ${tick} after ${previous.tick}`);
+    }
+    out.push({ tick, key });
+  }
+  return out;
 }
 
 function parseOmitted(value: string): GoldenOmission[] | undefined {
@@ -417,4 +476,105 @@ function validateTimeline(
       fail(imageLines.get(image.name)!, `image "${image.name}" is not used by the timeline`);
     }
   }
+}
+
+// ---------------------------------------------------------------- tick fixtures (plan 23)
+
+const TICK_MAGIC = "tick-golden 1";
+const TICK_HEADER = "# level first_ms intervals_ms…";
+
+/** One level's ticks: the first tick after the start frame, then each interval (ms). */
+export interface TickRow {
+  readonly level: number;
+  readonly firstMs: number;
+  readonly intervalsMs: readonly number[];
+}
+
+/** Timing-only fixture (`*.ticks.txt`): tick periods per level, no pixels (plan 23 D6). */
+export interface TickGolden {
+  readonly id: string;
+  readonly status: GoldenStatus;
+  readonly source: string;
+  readonly sourceSha256: string;
+  readonly note?: string;
+  readonly rows: readonly TickRow[];
+}
+
+export function serializeTickGolden(golden: TickGolden): string {
+  const out = [
+    TICK_MAGIC,
+    `id: ${golden.id}`,
+    `status: ${golden.status}`,
+    `source: ${golden.source}`,
+    `source-sha256: ${golden.sourceSha256}`,
+  ];
+  if (golden.note !== undefined) out.push(`note: ${golden.note}`);
+  out.push("", "@ticks", TICK_HEADER);
+  for (const row of golden.rows) {
+    out.push(`${String(row.level).padEnd(6)}${[row.firstMs, ...row.intervalsMs].join(" ")}`);
+  }
+  out.push("");
+  return out.join("\n");
+}
+
+export function parseTickGolden(text: string, file: string): TickGolden {
+  const lines = text.split("\n");
+  let index = 0;
+  const fail = (lineIndex: number, message: string): never => {
+    throw new GoldenFormatError(file, lineIndex + 1, message);
+  };
+  if (lines[0] !== TICK_MAGIC) fail(0, `expected "${TICK_MAGIC}", got "${lines[0] ?? ""}"`);
+  index = 1;
+  const header = (key: string, optional: boolean): { value: string; line: number } | undefined => {
+    const line = lines[index] ?? "";
+    if (line.startsWith(`${key}: `)) {
+      index++;
+      return { value: line.slice(key.length + 2), line: index - 1 };
+    }
+    if (optional) return undefined;
+    return fail(index, `expected header "${key}: …", got "${line}"`);
+  };
+  const id = header("id", false)!;
+  if (!ID.test(id.value)) fail(id.line, `id must match ${ID.source}, got "${id.value}"`);
+  const status = header("status", false)!;
+  if (!STATUS.test(status.value)) {
+    fail(status.line, `status must be "asserted" or "pending:<plan>", got "${status.value}"`);
+  }
+  const source = header("source", false)!;
+  const sha = header("source-sha256", false)!;
+  if (!SHA256.test(sha.value)) fail(sha.line, "source-sha256 must be 64 lowercase hex digits");
+  const note = header("note", true);
+  if (lines[index] !== "")
+    fail(index, `expected a blank line after the header, got "${lines[index]}"`);
+  index++;
+  if (lines[index] !== "@ticks") fail(index, 'expected "@ticks"');
+  index++;
+  if (lines[index] !== TICK_HEADER) fail(index, `expected the column header "${TICK_HEADER}"`);
+  index++;
+  const rows: TickRow[] = [];
+  for (; index < lines.length && lines[index] !== ""; index++) {
+    const cells = lines[index]!.trim().split(/\s+/);
+    const bad = cells.find((cell) => !INTEGER.test(cell));
+    if (bad !== undefined) fail(index, `expected integers, got "${bad}"`);
+    const [level, first, ...intervals] = cells.map(Number) as [number, number, ...number[]];
+    const previous = rows.at(-1);
+    if (previous !== undefined && level <= previous.level) {
+      fail(index, `levels must ascend: ${level} after ${previous.level}`);
+    }
+    if (first === undefined || intervals.length < 2) {
+      fail(index, "a level needs a first tick and at least two intervals");
+    }
+    rows.push({ level, firstMs: first, intervalsMs: intervals });
+  }
+  if (rows.length === 0) fail(index, "@ticks has no rows");
+  if (lines.slice(index).some((line) => line !== ""))
+    fail(index, "unexpected content after @ticks");
+  return {
+    id: id.value,
+    status: status.value as GoldenStatus,
+    source: source.value,
+    sourceSha256: sha.value,
+    ...(note ? { note: note.value } : {}),
+    rows,
+  };
 }

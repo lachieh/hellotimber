@@ -4,8 +4,11 @@ import {
   LCD_HEIGHT,
   LCD_WIDTH,
   parseGolden,
+  parseTickGolden,
   serializeGolden,
+  serializeTickGolden,
   type Golden,
+  type TickGolden,
 } from "../scripts/golden-format.ts";
 
 const SHA = "0123456789abcdef".repeat(4);
@@ -412,6 +415,156 @@ describe("scenario and covers header keys (plan 14)", () => {
         all[covers] = `covers: ${value}`;
         expect(parseError(all.join("\n"))).toBe(`bad.lcd.txt:${covers + 1}: ${message}`);
       }
+    });
+  });
+});
+
+describe("input header key (plan 23)", () => {
+  const gameGolden: Golden = {
+    ...timelineGolden,
+    id: "game/snake/keys-right-2",
+    input: [
+      { tick: 0, key: "8" },
+      { tick: 14, key: "6" },
+      { tick: 31, key: "2" },
+      { tick: 31, key: "navi" },
+    ],
+  };
+  const treeGolden: Golden = { ...gameGolden, scenario: "leaf", covers: ["8-1-1"] };
+  const at = (all: string[], key: string): number => lineIndex(all, (l) => l.startsWith(key));
+
+  it("follows omitted (or covers), round-trips, and keeps same-tick keys in order", () => {
+    const text = serializeGolden(gameGolden);
+    const all = text.split("\n");
+    expect(all.slice(7, 10)).toEqual(["omitted: none", "input: 0:8 14:6 31:2 31:navi", ""]);
+    expect(parseGolden(text, "x")).toEqual(gameGolden);
+    expect(serializeGolden(parseGolden(text, "x"))).toBe(text);
+
+    const tree = serializeGolden(treeGolden).split("\n");
+    expect(tree.slice(9, 12)).toEqual(["covers: 8-1-1", "input: 0:8 14:6 31:2 31:navi", ""]);
+    expect(parseGolden(tree.join("\n"), "x")).toEqual(treeGolden);
+  });
+
+  it("is absent from earlier goldens", () => {
+    expect(parseGolden(serializeGolden(stillGolden), "x")).not.toHaveProperty("input");
+  });
+
+  it("accepts every phone key name", () => {
+    const keys = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#", "up", "down"];
+    const input = [...keys, "navi", "c", "power"].map((key, tick) => ({ tick, key }));
+    const golden = { ...gameGolden, input };
+    expect(parseGolden(serializeGolden(golden), "x").input).toEqual(input);
+  });
+
+  describe("rejects", () => {
+    it("descending ticks, unknown keys and malformed pairs", () => {
+      const all = serializeGolden(gameGolden).split("\n");
+      const input = at(all, "input: ");
+      for (const [value, message] of [
+        ["3:2 2:4", "input ticks must ascend: 2 after 3"],
+        [
+          "3:left",
+          'input key must be a phone key (0-9, *, #, up, down, navi, c, power), got "left"',
+        ],
+        ["3", 'input must be space-separated <tick>:<key> pairs, got "3"'],
+        ["03:2", 'input must be space-separated <tick>:<key> pairs, got "03:2"'],
+        ["", 'input must be space-separated <tick>:<key> pairs, got ""'],
+      ] as const) {
+        all[input] = `input: ${value}`;
+        expect(parseError(all.join("\n"))).toBe(`bad.lcd.txt:${input + 1}: ${message}`);
+      }
+    });
+
+    it("input before omitted", () => {
+      const all = serializeGolden(gameGolden).split("\n");
+      const input = at(all, "input: ");
+      const omitted = at(all, "omitted: ");
+      [all[omitted], all[input]] = [all[input]!, all[omitted]!];
+      expect(parseError(all.join("\n"))).toBe(
+        `bad.lcd.txt:${omitted + 1}: expected header "omitted: …", got "input: 0:8 14:6 31:2 31:navi"`,
+      );
+    });
+  });
+});
+
+describe("tick fixture format (plan 23)", () => {
+  const fixture: TickGolden = {
+    id: "game/snake/periods",
+    status: "asserted",
+    source: "captures/6.39/plan23/periods",
+    sourceSha256: SHA,
+    note: "New game at each level, No maze, no keys; tick start times after the start frame.",
+    rows: [
+      { level: 10, firstMs: 1846, intervalsMs: [1859, 1858] },
+      { level: 175, firstMs: 6, intervalsMs: [8, 7, 8] },
+    ],
+  };
+
+  it("serializes the documented layout and round-trips", () => {
+    const text = serializeTickGolden(fixture);
+    expect(text.split("\n")).toEqual([
+      "tick-golden 1",
+      "id: game/snake/periods",
+      "status: asserted",
+      "source: captures/6.39/plan23/periods",
+      `source-sha256: ${SHA}`,
+      "note: New game at each level, No maze, no keys; tick start times after the start frame.",
+      "",
+      "@ticks",
+      "# level first_ms intervals_ms…",
+      "10    1846 1859 1858",
+      "175   6 8 7 8",
+      "",
+    ]);
+    expect(parseTickGolden(text, "x")).toEqual(fixture);
+    const { note: _note, ...plain } = fixture;
+    expect(parseTickGolden(serializeTickGolden(plain), "x")).toEqual(plain);
+  });
+
+  describe("rejects", () => {
+    const tickError = (text: string): string => {
+      try {
+        parseTickGolden(text, "p.ticks.txt");
+      } catch (error) {
+        expect(error).toBeInstanceOf(GoldenFormatError);
+        return (error as Error).message;
+      }
+      throw new Error("expected a parse error");
+    };
+    const all = (): string[] => serializeTickGolden(fixture).split("\n");
+
+    it("a missing magic line or headers out of order", () => {
+      const lines = all();
+      lines[0] = "lcd-golden 1";
+      expect(tickError(lines.join("\n"))).toBe(
+        'p.ticks.txt:1: expected "tick-golden 1", got "lcd-golden 1"',
+      );
+      const swapped = all();
+      [swapped[2], swapped[3]] = [swapped[3]!, swapped[2]!];
+      expect(tickError(swapped.join("\n"))).toBe(
+        'p.ticks.txt:3: expected header "status: …", got "source: captures/6.39/plan23/periods"',
+      );
+    });
+
+    it("levels out of order or repeated, non-integers and too few intervals", () => {
+      for (const [row, message] of [
+        ["9     5 6 7", "levels must ascend: 9 after 10"],
+        ["10    5 6 7", "levels must ascend: 10 after 10"],
+        ["11    5 6.5 7", 'expected integers, got "6.5"'],
+        ["11    5 6", "a level needs a first tick and at least two intervals"],
+      ] as const) {
+        const lines = all();
+        lines.splice(10, 0, row);
+        expect(tickError(lines.join("\n"))).toBe(`p.ticks.txt:11: ${message}`);
+      }
+    });
+
+    it("a missing @ticks section or no rows", () => {
+      const lines = all();
+      expect(tickError(lines.slice(0, 7).join("\n"))).toBe('p.ticks.txt:8: expected "@ticks"');
+      expect(tickError([...lines.slice(0, 9), ""].join("\n"))).toBe(
+        "p.ticks.txt:10: @ticks has no rows",
+      );
     });
   });
 });

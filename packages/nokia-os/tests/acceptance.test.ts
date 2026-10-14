@@ -321,6 +321,14 @@ const KNOWN_GAPS: Readonly<Record<string, string>> = {
     "(2948 configured, +28 ms)",
 };
 
+/**
+ * Asserted plan 23 goldens imported before nokia-os plays Snake II: their scenarios are plan 23
+ * Task 11's (which deletes this), so they run as todos meanwhile.
+ */
+function awaitsPlan23Scenario(id: string): boolean {
+  return id.startsWith("game/") || id === "tree/08-games/8-1-1.leaf";
+}
+
 /** The scenario of an asserted golden: hand-written (plan 13, probes) or generic (tree). */
 function scenarioOf(id: string, covers: readonly string[] | undefined): (() => void) | undefined {
   const scenario = SCENARIOS[id];
@@ -333,6 +341,10 @@ describe("stock phone against every asserted v6.39 golden", () => {
   for (const { id, status, covers } of INDEX) {
     if (status !== "asserted") {
       it.todo(`${id} (${status.replace("pending:", "pending: plan ")})`);
+      continue;
+    }
+    if (awaitsPlan23Scenario(id)) {
+      it.todo(`${id} (asserted; scenario: plan 23 Task 11)`);
       continue;
     }
     const scenario = scenarioOf(id, covers);
@@ -408,7 +420,9 @@ describe("coverage guard (plan 14 D7)", () => {
 
   it("has a scenario for every asserted golden", () => {
     expect(
-      asserted.filter((e) => scenarioOf(e.id, e.covers) === undefined).map((e) => e.id),
+      asserted
+        .filter((e) => !awaitsPlan23Scenario(e.id) && scenarioOf(e.id, e.covers) === undefined)
+        .map((e) => e.id),
     ).toEqual([]);
   });
 

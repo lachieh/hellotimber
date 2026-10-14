@@ -131,6 +131,24 @@ describe("tree capture set (plan 14 S1-S8)", () => {
     expect(ids.get("tree/01-phone-book/1-1.leaf")!.covers).toEqual(["1-1"]);
   });
 
+  it("asserts an early placeholder leaf, keeping its first 40 frames (plan 23: 8-1-1)", () => {
+    const long = frames(
+      ["page-2-2", 60],
+      ...Array.from({ length: 60 }, (_, i): [string, number] => [`game-${i}`, 8]),
+    );
+    const entry = byId(
+      treeCaptureSet(TREE, io({ "5-2": long }), { ...TABLES, assertedEarly: { "5-2": "16" } }),
+    ).get("tree/05-tones/5-2.leaf")!;
+    expect(entry.status).toBe("asserted");
+    expect(entry.prefer.source).toEqual({
+      kind: "composite",
+      parts: [{ dir: "plan14/open/5-2", from: 0, to: 39 }],
+    });
+    expect(entry.prefer.omitted).toEqual({
+      "040-060": "after the first 40 frames; plan 16's game goldens assert the rest",
+    });
+  });
+
   it("marks placeholder leaves pending on their owner plan", () => {
     expect(ids.get("tree/05-tones/5-2.leaf")!.status).toBe("pending:16");
     expect(ids.get("tree/01-phone-book/1-1.leaf")!.status).toBe("asserted");

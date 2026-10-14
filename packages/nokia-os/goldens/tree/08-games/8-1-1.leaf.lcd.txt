@@ -1,11 +1,11 @@
 lcd-golden 1
 id: tree/08-games/8-1-1.leaf
-status: pending:23
+status: asserted
 source: captures/6.39/plan14/open/8-1-1 000-039
 source-sha256: 30404dec29caaee57bfcd2de1a793930a58db73f07ff48bbcddb6163c05c7479
 trigger-frame: 1
 note: New game (8-1-1) highlighted at frame 0; Select redraws at frame 1 (D8).
-omitted: 040-693 (after the first 40 frames; the owner plan recaptures)
+omitted: 040-693 (after the first 40 frames; plan 23's game goldens assert the rest)
 scenario: leaf
 covers: 8-1-1
 

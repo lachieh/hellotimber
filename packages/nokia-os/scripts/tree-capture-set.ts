@@ -118,6 +118,13 @@ export const SHARE_TOLERANCE_MS = 2;
  */
 export const MAX_PENDING_FRAMES = 40;
 
+/**
+ * Placeholder leaves whose golden is asserted while the leaf still opens the placeholder, by
+ * number → the plan that asserts it, keeping MAX_PENDING_FRAMES frames: Snake II's New game at
+ * the virgin level (plan 23 "Capture set"; plan 23 Task 11 runs it).
+ */
+export const ASSERTED_EARLY: Readonly<Record<string, string>> = { "8-1-1": "23" };
+
 // ---------------------------------------------------------------- io
 
 /** One distinct LCD state of a `record` directory; `image` identifies the pixels. */
@@ -137,6 +144,7 @@ export interface TreeCaptureIo {
 export interface TreeCaptureTables {
   readonly sameAs?: Readonly<Record<string, string>>;
   readonly placeholders?: Readonly<Record<string, string>>;
+  readonly assertedEarly?: Readonly<Record<string, string>>;
 }
 
 export class TreeCaptureError extends Error {
@@ -279,9 +287,10 @@ export function treeCaptureSet(
 ): CaptureSetEntry[] {
   const sameAs = tables.sameAs ?? SAME_AS;
   const placeholders = tables.placeholders ?? PLACEHOLDER_OWNERS;
+  const assertedEarly = tables.assertedEarly ?? ASSERTED_EARLY;
   const statusOf = (number: string): GoldenStatus => {
     const plan = placeholderOwner(number, placeholders);
-    return plan === undefined ? "asserted" : `pending:${plan}`;
+    return plan === undefined || number in assertedEarly ? "asserted" : `pending:${plan}`;
   };
   const entries: CaptureSetEntry[] = [];
   const groups: Group[] = [];
@@ -427,7 +436,9 @@ export function treeCaptureSet(
       group.members.length > 1
         ? ` Shared by ${covers.join(", ")}: their recordings match after the trigger (±${SHARE_TOLERANCE_MS} ms); image a is each one's own starting screen.`
         : "";
-    const cut = first.status !== "asserted" && frames.length > MAX_PENDING_FRAMES;
+    const early = assertedEarly[first.number];
+    const cut =
+      (first.status !== "asserted" || early !== undefined) && frames.length > MAX_PENDING_FRAMES;
     const last = frames.length - 1;
     entries.push({
       id: `tree/${topSlug(first.number)}/${first.number}.${group.scenario}`,
@@ -442,7 +453,10 @@ export function treeCaptureSet(
         ...(cut
           ? {
               omitted: {
-                [`${pad3(MAX_PENDING_FRAMES)}-${pad3(last)}`]: `after the first ${MAX_PENDING_FRAMES} frames; the owner plan recaptures`,
+                [`${pad3(MAX_PENDING_FRAMES)}-${pad3(last)}`]:
+                  early === undefined
+                    ? `after the first ${MAX_PENDING_FRAMES} frames; the owner plan recaptures`
+                    : `after the first ${MAX_PENDING_FRAMES} frames; plan ${early}'s game goldens assert the rest`,
               },
             }
           : {}),

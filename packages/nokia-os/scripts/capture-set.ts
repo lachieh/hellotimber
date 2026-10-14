@@ -1,7 +1,12 @@
 // Which REF captures become which golden fixtures. The importer executes this table; nothing
 // else decides what is imported. Paths are relative to `$REF/captures/6.39`.
 // See docs/plans/13-nokia-os-foundation.md "Capture set" and "Ground truth and artefacts".
-import type { GoldenScenario, GoldenStatus, TriggerFrame } from "./golden-format.ts";
+import type {
+  GoldenKeyPress,
+  GoldenScenario,
+  GoldenStatus,
+  TriggerFrame,
+} from "./golden-format.ts";
 
 /** Frames `from`..`to` (inclusive, 0-based) of one `record` directory. */
 export interface FrameRange {
@@ -20,7 +25,16 @@ export type CaptureSource =
   /** A `scroll` directory (01.png, 02.png, …), one still per screen. */
   | { readonly kind: "scroll"; readonly dir: string }
   /** Named `shot` PNGs, one still each, named after the file stem. */
-  | { readonly kind: "shots"; readonly files: readonly string[] };
+  | { readonly kind: "shots"; readonly files: readonly string[] }
+  /** Single frames of `record` directories as named stills (plan 23 tick stills). */
+  | {
+      readonly kind: "frames";
+      readonly frames: readonly {
+        readonly name: string;
+        readonly dir: string;
+        readonly frame: number;
+      }[];
+    };
 
 export interface SourceChoice {
   readonly source: CaptureSource;
@@ -42,6 +56,8 @@ export interface CaptureSetEntry {
   /** Generated tree goldens (plan 14 D7): the generic scenario and the tree nodes covered. */
   readonly scenario?: GoldenScenario;
   readonly covers?: readonly string[];
+  /** Game goldens (plan 23): the keys pressed, by engine tick. */
+  readonly input?: readonly GoldenKeyPress[];
 }
 
 export const MENU_SLUGS = [
@@ -80,7 +96,12 @@ export const NOT_IMPORTED: Readonly<Record<string, string>> = {
   "setup/": "virgin-EEPROM time and date wizard",
   "standby/00-first-standby-prompt": "virgin-EEPROM alarm state (Snooze, 0000000000)",
   "menu/NN-<slug>/anim": "3 s recordings that truncate animations; menu-anim-long replaces them",
-  "game/": "out of scope (Snake II plans)",
+  "game/": "the first Snake II recording (level 175); plan 23's recaptures (plan23/) replace it",
+  "plan23/bot/*/after/score-ids, plan23/virgin/after/score-ids":
+    "Last/Top score IDs after a game are codes the firmware derives (plan 23 Open question 4)",
+  "plan23/bot/grace/try-*": "the grace window probes; bot-grace holds the saved run",
+  "plan23/sound/, plan23/*.wav, plan23/*.events.csv":
+    "cue timing: plan 23 Task 10 reads the measured edges (plan 23 Task 0 outcome)",
   "boot/*.wav, *.events.csv": "sound is out of scope (tones plan)",
 };
 

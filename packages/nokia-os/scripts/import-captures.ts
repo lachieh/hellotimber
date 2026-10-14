@@ -3,8 +3,9 @@
 //   mise exec -- vp run @hellotimber/nokia-os#import-captures /path/to/nokia-3310
 //
 // Executes scripts/capture-set.ts plus the plan 14 tree selection (scripts/tree-capture-set.ts
-// over `captures/6.39/tree.json`), writes goldens/<id>.lcd.txt and goldens/index.json, and
-// deletes fixtures the tables no longer produce. Idempotent: a second run changes nothing.
+// over `captures/6.39/tree.json`) and the plan 23 game set (scripts/game-capture-set.ts), writes
+// goldens/<id>.lcd.txt, goldens/game/snake/periods.ticks.txt and goldens/index.json, and deletes
+// fixtures the tables no longer produce. Idempotent: a second run changes nothing.
 // Runs under Node's type stripping: imports only node:* and sibling scripts with .ts extensions.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -19,13 +20,22 @@ import {
   type SourceChoice,
 } from "./capture-set.ts";
 import {
+  gameCaptureSet,
+  periodFixture,
+  type GameCaptureIo,
+  type GameKeyRow,
+} from "./game-capture-set.ts";
+import {
   parseGolden,
+  parseTickGolden,
   serializeGolden,
+  serializeTickGolden,
   timelineImageName,
   type Golden,
   type GoldenImage,
   type GoldenTimelineRow,
   type LcdMode,
+  type TickGolden,
 } from "./golden-format.ts";
 import { decodeLcdPng } from "./png.ts";
 import {
@@ -43,10 +53,11 @@ interface IndexEntry {
   id: string;
   file: string;
   status: string;
-  kind: "still" | "timeline";
+  kind: "still" | "timeline" | "ticks";
   images: number;
   frames: number;
   covers?: readonly string[];
+  input?: true;
 }
 
 interface TimingRow {
@@ -69,8 +80,12 @@ function main(): void {
   if (!existsSync(treePath)) fail(`missing ${treePath}: the plan 14 menu-tree crawl`);
   const tree = JSON.parse(readFileSync(treePath, "utf8")) as TreeJson;
   let treeEntries: CaptureSetEntry[];
+  let gameEntries: CaptureSetEntry[];
+  let periods: ReturnType<typeof periodFixture>;
   try {
     treeEntries = [...probeCaptureSet(captureIo(root)), ...treeCaptureSet(tree, captureIo(root))];
+    gameEntries = gameCaptureSet(gameIo(root));
+    periods = periodFixture(gameIo(root));
   } catch (error) {
     return fail((error as Error).message);
   }
@@ -78,7 +93,7 @@ function main(): void {
   const written = new Set<string>();
   const index: IndexEntry[] = [];
   const fallbacks: string[] = [];
-  for (const entry of [...CAPTURE_SET, ...treeEntries]) {
+  for (const entry of [...CAPTURE_SET, ...treeEntries, ...gameEntries]) {
     const choice = chooseSource(root, entry);
     if (!choice) {
       console.log(`skip  ${entry.id} (optional; no capture)`);
@@ -106,8 +121,34 @@ function main(): void {
       images: golden.images.length,
       frames: golden.timeline ? golden.timeline.length : golden.images.length,
       ...(golden.covers ? { covers: golden.covers } : {}),
+      ...(golden.input ? { input: true as const } : {}),
     });
   }
+
+  const hash = createHash("sha256");
+  for (const file of periods.timings) hash.update(readFileSync(join(root, file)));
+  const ticks: TickGolden = {
+    id: periods.id,
+    status: periods.status,
+    source: periods.source,
+    sourceSha256: hash.digest("hex"),
+    note: periods.note,
+    rows: periods.rows,
+  };
+  const ticksText = serializeTickGolden(ticks);
+  const ticksFile = `${ticks.id}.ticks.txt`;
+  parseTickGolden(ticksText, ticksFile);
+  mkdirSync(dirname(join(GOLDENS, ticksFile)), { recursive: true });
+  writeIfChanged(join(GOLDENS, ticksFile), ticksText);
+  written.add(join(GOLDENS, ticksFile));
+  index.push({
+    id: ticks.id,
+    file: ticksFile,
+    status: ticks.status,
+    kind: "ticks",
+    images: 0,
+    frames: ticks.rows.length,
+  });
 
   for (const stale of listFixtures(GOLDENS)) {
     if (!written.has(stale)) {
@@ -141,6 +182,8 @@ function describe(source: CaptureSource): string {
       return source.dir;
     case "shots":
       return source.files.join(" + ");
+    case "frames":
+      return `${source.frames.length} frames of ${[...new Set(source.frames.map((f) => f.dir))].join(" + ")}`;
     case "composite":
       return source.parts.map((p) => `${p.dir} ${pad3(p.from)}-${pad3(p.to)}`).join(" + ");
   }
@@ -163,6 +206,8 @@ function available(root: string, source: CaptureSource): boolean {
       );
     case "shots":
       return source.files.every((file) => existsSync(join(root, file)));
+    case "frames":
+      return source.frames.every((f) => existsSync(join(root, f.dir, `${pad3(f.frame)}.png`)));
     case "composite":
       return source.parts.every((p) => existsSync(join(root, p.dir, "timings.csv")));
   }
@@ -192,6 +237,7 @@ function buildGolden(root: string, entry: CaptureSetEntry, choice: SourceChoice)
     ...(entry.scenario !== undefined
       ? { scenario: entry.scenario, covers: entry.covers ?? [] }
       : {}),
+    ...(entry.input !== undefined ? { input: entry.input } : {}),
   };
   const source = choice.source;
   if (entry.kind === "still") {
@@ -216,6 +262,11 @@ function buildGolden(root: string, entry: CaptureSetEntry, choice: SourceChoice)
       files = source.files.map((file) => ({
         name: basename(file).replace(/\.png$/, ""),
         path: join(root, file),
+      }));
+    } else if (source.kind === "frames") {
+      files = source.frames.map((f) => ({
+        name: f.name,
+        path: join(root, f.dir, `${pad3(f.frame)}.png`),
       }));
     } else {
       return fail(`${entry.id}: a still needs a shot, shots or scroll source`);
@@ -307,8 +358,42 @@ function captureIo(root: string): TreeCaptureIo {
   };
 }
 
+/** Reads plan 23 recordings (pixels) and their keys.csv for the game set. */
+function gameIo(root: string): GameCaptureIo {
+  return {
+    recording(dir: string) {
+      const csvPath = join(root, dir, "timings.csv");
+      if (!existsSync(csvPath)) return undefined;
+      return parseTimings(readFileSync(csvPath, "utf8"), csvPath).map((row) => {
+        const pngPath = join(root, dir, `${pad3(row.frame)}.png`);
+        return {
+          pixels: decodeLcdPng(readFileSync(pngPath), pngPath),
+          startMs: row.startMs,
+          durationMs: row.durationMs,
+        };
+      });
+    },
+    keys(dir: string): GameKeyRow[] | undefined {
+      const path = join(root, dir, "keys.csv");
+      if (!existsSync(path)) return undefined;
+      const lines = readFileSync(path, "utf8").trim().split("\n");
+      if (lines[0] !== "tick,key,press_ms") fail(`${path}: unexpected header "${lines[0]}"`);
+      return lines.slice(1).map((line, i) => {
+        const [tick, key, pressMs] = line.split(",");
+        if (key === undefined || pressMs === undefined || !Number.isFinite(Number(pressMs))) {
+          fail(`${path}:${i + 2}: bad row "${line}"`);
+        }
+        return { tick: Number(tick), key: key!, pressMs: Number(pressMs) };
+      });
+    },
+  };
+}
+
 function sourceLabel(source: CaptureSource): string {
   if (source.kind === "shots") return source.files.map((f) => `${CAPTURES}/${f}`).join(" + ");
+  if (source.kind === "frames") {
+    return [...new Set(source.frames.map((f) => f.dir))].map((d) => `${CAPTURES}/${d}`).join(" + ");
+  }
   if (source.kind === "composite") {
     return source.parts
       .map((p) => `${CAPTURES}/${p.dir} ${pad3(p.from)}-${pad3(p.to)}`)
@@ -346,7 +431,7 @@ function listFixtures(dir: string): string[] {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) out.push(...listFixtures(path));
-    else if (entry.name.endsWith(".lcd.txt")) out.push(path);
+    else if (entry.name.endsWith(".lcd.txt") || entry.name.endsWith(".ticks.txt")) out.push(path);
   }
   return out;
 }

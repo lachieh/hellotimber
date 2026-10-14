@@ -13,7 +13,7 @@ plan 14 goldens already committed for 8-1, the original `$REF/captures/6.39/game
 exploratory runs in `$REF/captures/scratch-plan23/` (planning evidence, never imported), and the
 canonical recaptures that Task 0 writes to `$REF/captures/6.39/plan23/`. Read
 `$REF/captures/README.md`, plan 13 and plan 14 in full before starting.
-**Status:** in progress (Tasks 0, 1 and 3 done).
+**Status:** in progress (Tasks 0-3 done).
 
 ## Goal
 
@@ -713,24 +713,54 @@ and Top score 175 (`virgin/after/`).
 `tests/golden-format.test.ts`, `tests/game-capture-set.test.ts` (new),
 `tests/goldens-integrity.test.ts`, `goldens/**`.
 
-- [ ] TDD `golden-format.ts`: `input` (order, ascending ticks, known key names, round trip);
+- [x] TDD `golden-format.ts`: `input` (order, ascending ticks, known key names, round trip);
       `parseTickGolden`/`serializeTickGolden` (`tick-golden 1`) with `file:line` errors; existing
       goldens parse unchanged.
-- [ ] TDD `game-capture-set.ts` on synthetic recordings (injected loader): tick numbering from
+- [x] TDD `game-capture-set.ts` on synthetic recordings (injected loader): tick numbering from
       frames (a tick frame starts ≥ half a period after the previous tick frame; non-tick frames
       such as a partial redraw are kept but not numbered), `keys.csv` → `input` (a key belongs to
       the last tick frame before its `press_ms` plus the measured latency window; ambiguous keys
       throw and name the recording), tick-stills selection (meals ±1, creature events, every 25th,
       last 12), timelines cut at the menu's return, `periods` rows (first tick and every interval).
-- [ ] Wire the importer: `CAPTURE_SET` + `treeCaptureSet` + `probeCaptureSet` + `gameCaptureSet`;
+- [x] Wire the importer: `CAPTURE_SET` + `treeCaptureSet` + `probeCaptureSet` + `gameCaptureSet`;
       `index.json` entries gain `input: true` when present. `tree/08-games/8-1-1.leaf` becomes
       `asserted` (keep its 40 frames).
-- [ ] Integrity test: `game/*` timelines have a numeric `trigger-frame`; tick stills' names are
+- [x] Integrity test: `game/*` timelines have a numeric `trigger-frame`; tick stills' names are
       ascending `t<tick>`; every `input` tick exists in its golden; the tick fixture covers 10..175.
-- [ ] Run the importer twice; the second run leaves `goldens/` unchanged. Record fixture counts and
+- [x] Run the importer twice; the second run leaves `goldens/` unchanged. Record fixture counts and
       bytes in the completion notes (budget guide: ≤ 2 MB of new text grids).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import Snake II gameplay captures as goldens`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): import Snake II gameplay captures as goldens`.
+
+Deviation: tick numbering also infers a **blocked tick** with no frame from a gap of a period
+plus the ≈93 ms grace (± 16 ms; `numberTicks`). A key pressed during the grace then lands on the
+blocked tick, so replaying `input` reaches the grace: `bot-grace` has `60:2`, `virgin-game` has
+`7:4`. The two level-175 goldens (`virgin-meal`, `virgin-game`) carry input read from the frames
+(the tick before the turn shows), in the table, because at one cell per ≈8 ms every key lies
+within a tick of its 30-45 ms latency window. Every other `input` comes from `keys.csv` by the
+latency rule, and it equals the bot's own tick labels in every bot game.
+Deviation: to bound size, the C7 key probes are tick stills of each key's tick and the two after
+it (selection `input`) instead of timelines; Navi, C and C held stay timelines. The C9 seed games
+are stills of tick 0, each meal and the last tick (selection `meals`). Bot games use the plan's
+rule (`game`). A new capture source `frames` (single frames as named stills) carries tick stills.
+Deviation: goldens beyond the plan's table: `seed-<clock>` (C9, for Task 5's seed fit; the clock
+is in each note), `pause-bot` (Continue without a reseed), `gameover-*` (C12, cut from the frame
+before the key; no `input`, because the keys come after the game; the notes give the key time),
+`after-<game>-top-score` and `level-keys-virgin-up`. Not imported: the Score IDs pages after a
+game (codes; Open question 4), the grace `try-*` probes, and the sound recordings (Task 10 takes
+the cue edges from the Task 0 outcome).
+Deviation: `tree/08-games/8-1-1.leaf` is asserted and keeps its 40 frames through a new table,
+`ASSERTED_EARLY` (`tree-capture-set.ts`, injectable, tested). `PLACEHOLDER_OWNERS` keeps 8-1-1
+until Task 10. `tests/acceptance.test.ts` lists asserted `game/*` goldens and 8-1-1 as todos
+(`awaitsPlan23Scenario`; Task 11 deletes it), as plan 14 Task 2 did. The period fixture is an
+`index.json` entry of kind `ticks` (`images: 0`, `frames`: its rows).
+
+Completion (Task 2): 473 fixtures (438 asserted, 35 pending). Plan 23 adds 108 `game/snake/*`:
+107 asserted and `level-keys-digit-1` pending:22. They are 64 stills, 43 timelines and the period
+fixture (166 levels), with 755 images and 3.17 MB of text grids, over the 2 MB guide. The largest
+are `bot-long` (121 tick stills), `ticks-l1`..`l9` (90 frames), the 33 key probes (≈3 images
+each), the mazes and the deaths. `goldens/` is 10.7 MB. A second importer run leaves `goldens/`
+unchanged, and `import-tree` and `extract-resources` produce no diff.
 
 ### Task 3 - phone-core: shown children numbered by position (TDD)
 
