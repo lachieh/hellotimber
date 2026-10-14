@@ -160,17 +160,23 @@ describe("MenuLevel", () => {
     expect(Object.isFrozen(level)).toBe(true);
   });
 
-  it("rejects duplicate slugs, duplicate orders, and non-contiguous orders", () => {
+  it("rejects duplicate slugs and duplicate orders", () => {
     expect(() => new MenuLevel([reader("same", 1), reader("same", 2)])).toThrow(
       /duplicate.*slug.*same/i,
     );
     expect(() => new MenuLevel([reader("first", 1), reader("second", 1)])).toThrow(
       /duplicate.*order.*1/i,
     );
-    expect(() => new MenuLevel([reader("first", 1), reader("third", 3)])).toThrow(
-      /contiguous.*expected 2/i,
-    );
-    expect(() => new MenuLevel([reader("second", 2)])).toThrow(/contiguous.*expected 1/i);
+  });
+
+  it("keeps a hidden entry's number: sibling orders may skip a value", () => {
+    const fourth = reader("fourth", 4);
+    const first = reader("first", 1);
+    const level = new MenuLevel([fourth, reader("second", 2), first]);
+    expect(level.entries.map((entry) => entry.order.value)).toEqual([1, 2, 4]);
+    expect(level.byOrder(4)).toBe(fourth);
+    expect(level.byOrder(3)).toBeUndefined();
+    expect(new MenuLevel([reader("second", 2)]).entries).toHaveLength(1);
   });
 });
 

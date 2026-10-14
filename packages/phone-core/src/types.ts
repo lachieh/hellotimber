@@ -73,6 +73,8 @@ export type ScreenModel =
       kind: "list";
       title: string;
       items: string[];
+      /** Menu numbers of a submenu's items; present only when they are not 1..n (hidden entries). */
+      itemOrders?: number[];
       selected: number;
       softkey: string;
       menuIndicator?: MenuIndicator;

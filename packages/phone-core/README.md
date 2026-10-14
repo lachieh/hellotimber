@@ -39,7 +39,9 @@ unsubscribe();
   safe for router bridges with echo suppression. Unknown paths fall back to
   `standby`. Navigating while off boots the phone and lands on the target.
 - Menu entries carry explicit slugs and one-based order. Each top-level slot also requires
-  a graphic; optional generic metadata remains opaque to phone-core.
+  a graphic; optional generic metadata remains opaque to phone-core. Top-level orders are
+  contiguous; a submenu level may skip a number (a hidden entry keeps its number), and its list
+  model then carries `itemOrders` (the shortcut numbers) beside the visible positions.
 - Application entries hold reusable `PhoneApplication` definitions directly. Every launch
   creates a fresh `PhoneApplicationSession`; `context.open(application)` hands off to another
   definition on the same path and stack, while `context.exit()` returns to the menu.

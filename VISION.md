@@ -196,6 +196,7 @@ export type ScreenModel =
       kind: "list";
       title: string;
       items: string[];
+      itemOrders?: number[]; // a submenu's menu numbers; present only when they are not 1..n
       selected: number;
       softkey: string;
       menuIndicator?: MenuIndicator;
@@ -424,8 +425,11 @@ visitors, but cannot add new entry kinds. Every semantic entry has an explicit k
 `MenuSlug` and one-based `MenuOrder`; order is the sole source for display position, menu
 number, shortcuts, traversal, and parent-selection restoration. `MenuLevel` defensively
 copies and canonically sorts entries. Construction rejects invalid or duplicate sibling
-slugs/orders, non-contiguous order, empty labels/graphics, cycles, reused semantic entries,
-invalid list item IDs, and application entries without a definition.
+slugs/orders, non-contiguous top-level order, empty labels/graphics, cycles, reused semantic
+entries, invalid list item IDs, and application entries without a definition. A submenu level
+may skip an order (plan 13): the stock firmware keeps a hidden entry's menu number, so Call
+divert's visible entries are numbered 1-4 and 6. Shortcuts use the number, ▲/▼ and the position
+rail use the visible position, and the list model carries `itemOrders` for such a level.
 
 **Timelines (plan 13).** `Timeline` steps must be non-empty, each `frame` a non-negative
 integer and each `durationMs` a positive integer; `loopFrom` must be in range. Timelines hold

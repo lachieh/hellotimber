@@ -463,10 +463,13 @@ function renderFrame<Metadata>(
     }
     case "submenu": {
       const detail = submenuDetail(frame);
+      const entries = frame.entry.children.entries;
+      const orders = entries.map((entry) => entry.order.value);
       return {
         kind: "list",
         title: frame.entry.label,
-        items: frame.entry.children.entries.map((entry) => entry.label),
+        items: entries.map((entry) => entry.label),
+        ...(orders.every((value, index) => value === index + 1) ? {} : { itemOrders: orders }),
         selected: frame.selected,
         softkey: "Select",
         menuIndicator: menuIndicator(m),
@@ -877,9 +880,10 @@ function buildNavStack<Metadata>(
   const stack: NavFrame<Metadata>[] = [carouselFrame(m, 0, "enter")];
   for (const entry of entries) {
     const parent = stack[stack.length - 1]!;
-    const index = entry.order.value - 1;
-    if (parent.kind === "carousel") parent.index = index;
-    else if (parent.kind === "submenu") parent.selected = index;
+    // Position within the parent level: a submenu level may skip a hidden entry's number.
+    if (parent.kind === "carousel") parent.index = entry.order.value - 1;
+    else if (parent.kind === "submenu")
+      parent.selected = parent.entry.children.entries.indexOf(entry);
 
     const destination = entry.accept<"continue" | "application" | "action">({
       visitSubmenu(submenu) {

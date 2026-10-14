@@ -244,8 +244,14 @@ export class ApplicationEntry<Metadata = unknown> extends MenuEntry<Metadata> {
   }
 }
 
+/**
+ * Sorts siblings by order and rejects duplicates. A submenu level may skip a number: the
+ * firmware keeps a hidden entry's menu number (Call divert shows 1-4 then 6). Top-level orders
+ * stay contiguous because the carousel's position is its menu number.
+ */
 function canonicalEntries<Metadata>(
   entries: readonly MenuEntry<Metadata>[],
+  { contiguous }: { contiguous: boolean },
 ): readonly MenuEntry<Metadata>[] {
   for (const entry of entries) {
     const concrete =
@@ -272,6 +278,7 @@ function canonicalEntries<Metadata>(
   }
 
   for (const [index, entry] of sorted.entries()) {
+    if (!contiguous) break;
     const expected = index + 1;
     if (entry.order.value !== expected) {
       throw new Error(
@@ -286,7 +293,7 @@ export class MenuLevel<Metadata = unknown> implements Iterable<MenuEntry<Metadat
   readonly entries: readonly MenuEntry<Metadata>[];
 
   constructor(entries: readonly MenuEntry<Metadata>[]) {
-    this.entries = canonicalEntries(entries);
+    this.entries = canonicalEntries(entries, { contiguous: false });
     Object.freeze(this);
   }
 
@@ -359,7 +366,10 @@ export class PhoneMenu<Metadata = unknown> {
       throw new Error("Phone menu requires top-level entry slots with graphics.");
     }
     const byEntry = new Map(entries.map((slot) => [slot.entry, slot]));
-    const canonical = canonicalEntries(entries.map((slot) => slot.entry));
+    const canonical = canonicalEntries(
+      entries.map((slot) => slot.entry),
+      { contiguous: true },
+    );
     this.entries = Object.freeze(canonical.map((entry) => byEntry.get(entry)!));
     validateTopology(canonical);
 
