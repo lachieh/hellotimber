@@ -212,8 +212,9 @@ it did not see go down. C held 475 ms after it deleted clears to `0` (the captur
 redraw 471 and 478 ms after the deletion's redraw); held after dismissing a note it goes to
 standby. The rate entry's cursor blinks with the representative prompt cursor (plan 14 P9),
 within 25 ms of the calculator's own prompt recordings. OK on an untouched prefilled rate
-stores nothing (`rate/after/ok-unchanged-domestic-foreign` reopens Foreign `1.5`). With four
-Options entries ▲ from the first puts the last on the top row (`options/operator-up`).
+stores nothing (`rate/after/ok-unchanged-domestic-foreign` reopens Foreign `1.5`). Options is a
+shared rows list (`openRows`/`moveRows`): with four entries ▲ from the first puts the last on the
+top row (`options/operator-up`), as in every 4-item stock list ([menu-depth.md](menu-depth.md)).
 
 Measured known gaps: C held across the calculator's exit (the kernel swallows the held key, so
 the firmware's standby after the carousel does not follow); standby after a held C on a

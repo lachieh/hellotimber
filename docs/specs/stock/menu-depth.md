@@ -10,12 +10,18 @@ or press keys after the trigger: ±25 ms), except the items listed under "Not re
 closeout's known gaps).
 
 **Rows window.** With 3 or fewer items the window never moves. Otherwise it
-keeps its position while the selection stays inside it (indices modulo the count); moving to the
+keeps its position while the selection stays inside it (indices modulo the count); ▼ to the
 item just after the bottom row scrolls so the selection is on the bottom row; any other move
 outside the window (▲ above it, ▲ from the first item, a shortcut) puts the selection on the top
-row. Evidence: ▼ past the last item (`Speed dials / Voice tags / Search`), ▲ from the first
-(`Voice tags / Search / Service Nos.`), Games and Profiles both ways. The window survives a child
-submenu or a timed note and is rebuilt (opening item on top) when the level is entered again.
+row. The rule follows the key, not only the position: with 4 items the item after the bottom row
+is also the one above the top row, and ▲ to it puts it on the top row (`rowsWindowTop`'s `move`).
+Evidence: ▼ past the last item (`Speed dials / Voice tags / Search`), ▲ from the first
+(`Voice tags / Search / Service Nos.`), Games and Profiles both ways; for 4 items 7-3 Divert if
+not answered and 4-4 Erase recent call lists (`scratch-rows4` probe: ▲ from Activate shows `Set
+delay / Activate / Cancel`, ▲ from Cancel with `Cancel / Status / Set delay` shows `Activate /
+Cancel / Status`, ▼ past Set delay shows `Status / Set delay / Activate`) and the calculator's
+Options (`calculator/options-operator`). The window survives a child submenu or a timed note and
+is rebuilt (opening item on top) when the level is entered again.
 
 **Opening selection and softkeys.** Levels and option lists open on their
 current value; with more than 3 items the window starts at it (`Maximum time / 1 hour / 6
@@ -105,8 +111,7 @@ dismisses; P6 probed pages), C on `Requesting`, other keys on notes, OK on a pag
 (Prepaid credit's On/Off does not store), Screen saver's opening after On, Screen saver's entry
 indicator after a shortcut or a path, digits during it, ▲ during Snake II's Top score, Rename in Discreet,
 Loud and the empty slots (`10 - length` characters left), digits during an option list or a
-splash shortcut, `0 1` as a shortcut, the 12-hour clock beyond `10:10 am`, a 4-item list's ▲
-wrap (D3 gives the bottom row).
+splash shortcut, `0 1` as a shortcut, the 12-hour clock beyond `10:10 am`.
 
 **Capture artefacts (never reproduced as behaviour):**
 

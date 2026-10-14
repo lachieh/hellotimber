@@ -628,9 +628,11 @@ entry do: a note's warning tone replaces the beep of the OK that opens it only a
 down (`sound/note/calculator-*`: the note draws 57 ms after OK goes down, before its release).
 Each widget ignores the release of a key whose down it did not see.
 
-Deviation: Options is the calculator's own rows widget: with four entries ▲ from the first puts
-Divide on the top row (`options/operator-up`), which the kernel's direction-blind
-`rowsWindowTop` scrolls onto the bottom row (reported to the parent as a phone-core question).
+Deviation (resolved after delivery): Options was first the calculator's own rows widget, because
+with four entries ▲ from the first puts Divide on the top row (`options/operator-up`) and the
+kernel's direction-blind `rowsWindowTop` scrolled it onto the bottom row. Probes of the stock
+4-item lists (7-3, 4-4) showed the same rule, so `rowsWindowTop` now takes the move's direction
+and Options uses the shared `openRows`/`moveRows`.
 
 Deviation: OK on an untouched prefilled rate stores nothing (`rate/after/ok-unchanged-domestic-
 foreign` reopens Foreign at `1.5`, not the reciprocal of `0.6666667`).
