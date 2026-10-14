@@ -1,4 +1,3 @@
-import { siteMenu } from "./content/menu";
 import { site } from "./content/site";
 import { indexablePaths } from "./phone/site-tree";
 
@@ -30,11 +29,10 @@ export function pageHead(input: PageHeadInput): { meta: MetaTag[] } {
 }
 
 /**
- * Canonical, indexable paths — derived from the menu tree (plan 07):
- * "/" + every tree path with a `web.description` that isn't `noindex`
- * (sim-services, the 404 twin, is excluded that way).
+ * Canonical, indexable paths derived from PhoneMenu order and typed metadata.
+ * SIM services, the 404 twin, is explicitly excluded by its noindex metadata.
  */
-export const SITEMAP_PATHS: string[] = ["/", ...indexablePaths(siteMenu)];
+export const SITEMAP_PATHS: string[] = ["/", ...indexablePaths()];
 
 export function personJsonLd(): Record<string, unknown> {
   return {

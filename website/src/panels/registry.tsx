@@ -1,5 +1,6 @@
+import type { MenuEntry } from "@hellotimber/phone-core";
 import type { ComponentType } from "react";
-import type { SiteNode } from "../content/types";
+import type { PanelId, WebMetadata } from "../content/types";
 import CalculatorPanel from "./calculator";
 import CallDivertPanel from "./call-divert";
 import CallRegisterPanel from "./call-register";
@@ -18,12 +19,12 @@ import TonesPanel from "./tones";
 import WritePanel from "./write";
 
 export interface PanelProps {
-  /** The resolved SiteNode chain for the current path (root → leaf). */
-  chain: SiteNode[];
+  /** The resolved semantic entry chain for the current path (root to leaf). */
+  chain: readonly MenuEntry<WebMetadata>[];
 }
 
-/** `web.panel` key → bespoke panel. Anything else renders GenericPanel. */
-export const PANELS: Record<string, ComponentType<PanelProps>> = {
+/** Typed metadata panel key to bespoke panel. Entries without one render GenericPanel. */
+export const PANELS = {
   "phone-book": PhoneBookPanel,
   messages: MessagesPanel,
   inbox: InboxPanel,
@@ -40,4 +41,4 @@ export const PANELS: Record<string, ComponentType<PanelProps>> = {
   clock: ClockPanel,
   profiles: ProfilesPanel,
   "sim-services": SimServicesPanel,
-};
+} satisfies Record<PanelId, ComponentType<PanelProps>>;

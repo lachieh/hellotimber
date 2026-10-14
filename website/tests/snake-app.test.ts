@@ -1,9 +1,9 @@
-import type { PhoneApp } from "@hellotimber/phone-core";
+import type { PhoneApplicationSession } from "@hellotimber/phone-core";
 import { tickIntervalMs } from "@hellotimber/snake";
 import type { SnakeGame, SnakeInput, SnakeState } from "@hellotimber/snake";
 import { describe, expect, it } from "vite-plus/test";
-import { snakeApp, snakeInputForKey } from "../src/phone/apps/snake-app";
-import type { SnakeTopScoreStore } from "../src/phone/apps/snake-app";
+import { SnakeApplication, snakeInputForKey } from "../src/phone/applications/snake";
+import type { SnakeTopScoreStore } from "../src/phone/applications/snake";
 
 // ── fake SnakeGame: records calls, lets tests script tick() results ──
 function fakeGame(overrides: Partial<SnakeState> = {}) {
@@ -71,8 +71,11 @@ function memoryStore(initial = 0): SnakeTopScoreStore & { value: number } {
 
 function makeApp(fake: ReturnType<typeof fakeGame>, store = memoryStore()) {
   let exited = 0;
-  const factory = snakeApp({ createGame: () => fake.game, topScore: store });
-  const app: PhoneApp = factory({ exit: () => (exited += 1), open: () => undefined });
+  const application = new SnakeApplication({ createGame: () => fake.game, topScore: store });
+  const app: PhoneApplicationSession = application.createSession({
+    exit: () => (exited += 1),
+    open: () => undefined,
+  });
   return { app, exitCount: () => exited };
 }
 
@@ -89,7 +92,7 @@ describe("snakeInputForKey", () => {
   });
 });
 
-describe("snakeApp", () => {
+describe("SnakeApplication", () => {
   it("dispatches on key down only (down starts the idle game, per plan 04)", () => {
     const fake = fakeGame();
     const { app } = makeApp(fake);
@@ -162,10 +165,10 @@ describe("snakeApp", () => {
     expect(screen.frame.pixels).toHaveLength(84 * 48);
   });
 
-  it("pauses on onExit (navigating away)", () => {
+  it("pauses when deactivated after navigating away", () => {
     const fake = fakeGame({ status: "running" });
     const { app } = makeApp(fake);
-    app.onExit?.();
+    app.onDeactivate?.("navigate");
     expect(fake.calls.pause).toBe(1);
   });
 
@@ -173,14 +176,14 @@ describe("snakeApp", () => {
     const fake = fakeGame({ status: "running", level: 1 });
     const fresh = fakeGame();
     let creations = 0;
-    const factory = snakeApp({
+    const application = new SnakeApplication({
       createGame: () => {
         creations += 1;
         return creations === 1 ? fake.game : fresh.game;
       },
       topScore: memoryStore(),
     });
-    const app = factory({ exit: () => undefined, open: () => undefined });
+    const app = application.createSession({ exit: () => undefined, open: () => undefined });
     fake.endGame();
     app.tick(tickIntervalMs(1)); // → game over
     app.onKey({ type: "down", key: "6" });

@@ -1,18 +1,32 @@
-import { createPhone } from "@hellotimber/phone-core";
-import type { MenuNode, Phone } from "@hellotimber/phone-core";
+import {
+  ApplicationEntry,
+  createPhone,
+  MenuGraphic,
+  MenuOrder,
+  MenuSlug,
+  PhoneMenu,
+  TopLevelEntry,
+} from "@hellotimber/phone-core";
+import type { Phone } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
-import { pickerApp } from "../src/phone/apps/picker-app";
+import { PickerApplication } from "../src/phone/applications/picker";
 
 function pickerPhone(opts: { selected?: () => number; onPick: (i: number) => void }): Phone {
-  const menu: MenuNode[] = [
-    { type: "app", id: "keypad-tones", label: "Keypad tones", appId: "picker" },
-  ];
+  const application = new PickerApplication("keypad-tones", {
+    title: "Keypad tones",
+    options: ["On", "Off"],
+    ...opts,
+  });
+  const entry = new ApplicationEntry(
+    new MenuSlug("keypad-tones"),
+    new MenuOrder(1),
+    "Keypad tones",
+    application,
+  );
+  const menu = new PhoneMenu([new TopLevelEntry(entry, new MenuGraphic("keypad-tones"))]);
   const phone = createPhone({
     menu,
     bootMs: 0,
-    apps: {
-      picker: pickerApp({ title: "Keypad tones", options: ["On", "Off"], ...opts }),
-    },
   });
   phone.tick(0);
   phone.pressKey("power", 1000);
@@ -20,7 +34,7 @@ function pickerPhone(opts: { selected?: () => number; onPick: (i: number) => voi
   return phone;
 }
 
-describe("pickerApp", () => {
+describe("PickerApplication", () => {
   it("renders a list screen with the current selection preselected", () => {
     const phone = pickerPhone({ selected: () => 1, onPick: () => {} });
     expect(phone.screen).toEqual({

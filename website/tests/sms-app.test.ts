@@ -1,6 +1,19 @@
 // @vitest-environment jsdom
-import { createPhone, MULTITAP_TIMEOUT_MS } from "@hellotimber/phone-core";
-import type { MenuNode, Phone } from "@hellotimber/phone-core";
+import {
+  ApplicationEntry,
+  createPhone,
+  DynamicMenuListSource,
+  ListEntry,
+  MenuGraphic,
+  MenuLevel,
+  MenuOrder,
+  MenuSlug,
+  MULTITAP_TIMEOUT_MS,
+  PhoneMenu,
+  SubmenuEntry,
+  TopLevelEntry,
+} from "@hellotimber/phone-core";
+import type { Phone } from "@hellotimber/phone-core";
 import { beforeEach, describe, expect, it } from "vite-plus/test";
 import { inbox } from "../src/content/messages";
 import {
@@ -11,21 +24,8 @@ import {
   resetMessagesForTests,
   sendRecorded,
 } from "../src/messages/store";
-import { smsApps } from "../src/phone/apps/sms";
-import type { SmsDeps } from "../src/phone/apps/sms";
-
-const MENU: MenuNode[] = [
-  {
-    type: "submenu",
-    id: "messages",
-    label: "Messages",
-    children: [
-      { type: "app", id: "write", label: "Write messages", appId: "write-message" },
-      { type: "list", id: "inbox", label: "Inbox", items: () => inboxItems() },
-      { type: "list", id: "outbox", label: "Outbox", items: () => outboxItems() },
-    ],
-  },
-];
+import { SmsApplication } from "../src/phone/applications/sms";
+import type { SmsDeps } from "../src/phone/applications/sms";
 
 interface Harness {
   phone: Phone;
@@ -61,7 +61,33 @@ function makeHarness(reply = "a reply!"): Harness {
       scheduled.push({ fn, ms });
     },
   };
-  const phone = createPhone({ menu: MENU, apps: smsApps(deps), bootMs: 0 });
+  const messages = new SubmenuEntry(
+    new MenuSlug("messages"),
+    new MenuOrder(1),
+    "Messages",
+    new MenuLevel([
+      new ApplicationEntry(
+        new MenuSlug("write"),
+        new MenuOrder(1),
+        "Write messages",
+        new SmsApplication(deps),
+      ),
+      new ListEntry(
+        new MenuSlug("inbox"),
+        new MenuOrder(2),
+        "Inbox",
+        new DynamicMenuListSource(inboxItems),
+      ),
+      new ListEntry(
+        new MenuSlug("outbox"),
+        new MenuOrder(3),
+        "Outbox",
+        new DynamicMenuListSource(outboxItems),
+      ),
+    ]),
+  );
+  const menu = new PhoneMenu([new TopLevelEntry(messages, new MenuGraphic("messages"))]);
+  const phone = createPhone({ menu, bootMs: 0 });
   phoneRef = phone;
   let now = 0;
   phone.tick(now);

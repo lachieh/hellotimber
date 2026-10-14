@@ -37,8 +37,30 @@ describe("screenToText", () => {
         menuNumber: 8,
         total: 13,
         iconId: "games",
+        menuIndicator: { segments: [8], awaitingNext: false },
       }),
-    ).toBe("Menu. Games, 8 of 13.");
+    ).toBe("Menu 8. Games, 8 of 13.");
+  });
+  it("announces active and resolved menu hierarchies without visual punctuation", () => {
+    const active = screenToText({
+      kind: "list",
+      title: "Tones",
+      items: ["Ringing tone"],
+      selected: 0,
+      softkey: "Select",
+      menuIndicator: { segments: [5], awaitingNext: true },
+    });
+    const resolved = screenToText({
+      kind: "reader",
+      title: "Incoming call alert",
+      lines: ["Not available"],
+      scrollTop: 0,
+      menuIndicator: { segments: [5, 3], awaitingNext: false },
+    });
+
+    expect(active).toBe("Menu 5. Enter another digit. Tones. Ringing tone, 1 of 1. Select.");
+    expect(resolved).toBe("Menu 5 then 3. Incoming call alert. Not available");
+    expect(`${active}${resolved}`).not.toMatch(/[•_]/);
   });
   it("falls back gracefully for custom app screens", () => {
     expect(

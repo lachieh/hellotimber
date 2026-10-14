@@ -1,6 +1,15 @@
 // @vitest-environment jsdom
-import { createPhone, MULTITAP_TIMEOUT_MS } from "@hellotimber/phone-core";
-import type { MenuNode, Phone } from "@hellotimber/phone-core";
+import {
+  ApplicationEntry,
+  createPhone,
+  MenuGraphic,
+  MenuOrder,
+  MenuSlug,
+  MULTITAP_TIMEOUT_MS,
+  PhoneMenu,
+  TopLevelEntry,
+} from "@hellotimber/phone-core";
+import type { Phone } from "@hellotimber/phone-core";
 import { beforeEach, describe, expect, it } from "vite-plus/test";
 import { chatMessages } from "../src/content/chat";
 import {
@@ -12,10 +21,8 @@ import {
   sendRecorded,
   threadOf,
 } from "../src/messages/store";
-import { chatApps } from "../src/phone/apps/chat";
-import type { ChatDeps } from "../src/phone/apps/chat";
-
-const MENU: MenuNode[] = [{ type: "app", id: "chat", label: "Chat", appId: "chat" }];
+import { ChatApplication } from "../src/phone/applications/chat";
+import type { ChatDeps } from "../src/phone/applications/chat";
 
 function makeHarness(reply = "heya!") {
   const sends: string[] = [];
@@ -43,7 +50,14 @@ function makeHarness(reply = "heya!") {
       scheduled.push({ fn, ms });
     },
   };
-  const phone: Phone = createPhone({ menu: MENU, apps: chatApps(deps), bootMs: 0 });
+  const chat = new ApplicationEntry(
+    new MenuSlug("chat"),
+    new MenuOrder(1),
+    "Chat",
+    new ChatApplication(deps),
+  );
+  const menu = new PhoneMenu([new TopLevelEntry(chat, new MenuGraphic("chat"))]);
+  const phone: Phone = createPhone({ menu, bootMs: 0 });
   let now = 0;
   phone.tick(now);
   phone.pressKey("power", 1000);

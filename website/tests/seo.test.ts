@@ -22,13 +22,26 @@ describe("seo", () => {
     expect(new Set(SITEMAP_PATHS).size).toBe(SITEMAP_PATHS.length);
     for (const p of SITEMAP_PATHS) expect(p.startsWith("/")).toBe(true);
   });
-  it("sitemap derives from the tree: indexable pages in, noindex out", () => {
-    expect(SITEMAP_PATHS[0]).toBe("/");
-    expect(SITEMAP_PATHS).toContain("/menu");
-    expect(SITEMAP_PATHS).toContain("/menu/phone-book");
-    expect(SITEMAP_PATHS).toContain("/menu/games/snake");
-    expect(SITEMAP_PATHS).not.toContain("/menu/sim-services"); // noindex easter egg
-    expect(SITEMAP_PATHS).not.toContain("/menu/phone-book/search"); // no description
+  it("preserves every sitemap path byte-for-byte in canonical order", () => {
+    expect(SITEMAP_PATHS).toEqual([
+      "/",
+      "/menu",
+      "/menu/phone-book",
+      "/menu/messages",
+      "/menu/messages/write",
+      "/menu/messages/inbox",
+      "/menu/chat",
+      "/menu/call-register",
+      "/menu/tones",
+      "/menu/settings",
+      "/menu/call-divert",
+      "/menu/games",
+      "/menu/games/snake",
+      "/menu/calculator",
+      "/menu/reminders",
+      "/menu/clock",
+      "/menu/profiles",
+    ]);
   });
   it("Person JSON-LD has the expected shape", () => {
     const ld = personJsonLd();

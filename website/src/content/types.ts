@@ -87,31 +87,27 @@ export interface DivertLink {
   href: string;
 }
 
-/** Website-side wrapper: MenuNode shape + web metadata. Children are SiteNodes. */
-export type SiteNode = (
-  | { type: "submenu"; id: string; label: string; iconId?: string; children: SiteNode[] }
-  | {
-      type: "list";
-      id: string;
-      label: string;
-      /** May be lazy — the thunk is re-read on every render (live lists). */
-      items:
-        | { id: string; label: string; body: string }[]
-        | (() => { id: string; label: string; body: string }[]);
-    }
-  | { type: "reader"; id: string; label: string; body: string }
-  | { type: "app"; id: string; label: string; appId: string }
-  | { type: "action"; id: string; label: string; action: { kind: "href"; value: string } }
-) & {
-  web?: {
-    /** meta description for this path's page (presence ⇒ indexable). */
-    description?: string;
-    /** key into the panel registry; omitted ⇒ generic panel from label/body. */
-    panel?: string;
-    /** exclude from sitemap even if described (stubs, easter eggs). */
-    noindex?: boolean;
-  };
-};
+export type PanelId =
+  | "phone-book"
+  | "messages"
+  | "inbox"
+  | "write"
+  | "chat"
+  | "call-register"
+  | "tones"
+  | "settings"
+  | "call-divert"
+  | "games"
+  | "snake"
+  | "calculator"
+  | "reminders"
+  | "clock"
+  | "profiles"
+  | "sim-services";
+
+export type WebMetadata =
+  | { indexing: "index"; description: string; panel?: PanelId }
+  | { indexing: "noindex"; description?: string; panel?: PanelId };
 
 /** Site-wide metadata for SEO/JSON-LD. */
 export interface SiteMeta {

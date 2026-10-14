@@ -8,10 +8,10 @@ export default function MenuPanel() {
     <ContentPanel title="Menu">
       <p>All 13 menus, in genuine year-2000 order:</p>
       <ol>
-        {siteMenu.map((n) => (
-          <li key={n.id}>
-            <SiteLink path={`menu/${n.id}`}>{n.label}</SiteLink>
-            {n.web?.description ? <> — {n.web.description}</> : null}
+        {siteMenu.entries.map(({ entry }) => (
+          <li key={entry.slug.value}>
+            <SiteLink path={`menu/${entry.slug.value}`}>{entry.label}</SiteLink>
+            {entry.metadata?.description ? <> — {entry.metadata.description}</> : null}
           </li>
         ))}
       </ol>

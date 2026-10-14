@@ -1,66 +1,65 @@
-import type { MenuNode } from "@hellotimber/phone-core";
-import type { SiteNode } from "../content/types";
+import type { MenuEntry, MenuEntryVisitor } from "@hellotimber/phone-core";
+import { siteMenu } from "../content/menu";
+import type { PanelId, WebMetadata } from "../content/types";
 
-/**
- * Helpers over the SiteNode tree (plan 07). The tree is the single source of
- * truth: the phone's menus, the URL space, and the sitemap all derive from it.
- */
-
-/** Strip web metadata → the phone's MenuNode[] (deep). */
-export function toMenuNodes(nodes: SiteNode[]): MenuNode[] {
-  return nodes.map((n): MenuNode => {
-    if (n.type === "submenu") {
-      const { web: _web, children, ...rest } = n;
-      return { ...rest, children: toMenuNodes(children) };
-    }
-    const { web: _web, ...rest } = n;
-    return rest;
-  });
+export interface SiteRouteProjection {
+  title: string;
+  description: string | null;
+  indexing: "index" | "noindex";
+  panel: PanelId | null;
+  slugChain: string[];
 }
 
-function childrenOf(node: SiteNode): SiteNode[] {
-  return node.type === "submenu" ? node.children : [];
-}
+type EntryProjection = Omit<SiteRouteProjection, "slugChain">;
 
-/** Resolve "menu/a/b" (or "/menu/a/b") → the SiteNode chain, or null. */
-export function resolveSitePath(nodes: SiteNode[], path: string): SiteNode[] | null {
-  const segments = path.split("/").filter((s) => s !== "");
-  if (segments[0] !== "menu") return null;
-  const chain: SiteNode[] = [];
-  let level = nodes;
-  for (const id of segments.slice(1)) {
-    const node = level.find((n) => n.id === id);
-    if (node === undefined) return null;
-    chain.push(node);
-    level = childrenOf(node);
-  }
-  return chain; // [] ⇒ the "/menu" carousel itself
-}
-
-/** Every valid URL pathname ("/menu", "/menu/a", "/menu/a/b", …). */
-export function allSitePaths(nodes: SiteNode[]): string[] {
-  const paths: string[] = ["/menu"];
-  const walk = (level: SiteNode[], prefix: string): void => {
-    for (const n of level) {
-      const path = `${prefix}/${n.id}`;
-      paths.push(path);
-      walk(childrenOf(n), path);
-    }
+function projectEntryMetadata(entry: MenuEntry<WebMetadata>): EntryProjection {
+  return {
+    title: entry.label,
+    description: entry.metadata?.description ?? null,
+    indexing: entry.metadata?.indexing ?? "noindex",
+    panel: entry.metadata?.panel ?? null,
   };
-  walk(nodes, "/menu");
-  return paths;
 }
 
-/**
- * allSitePaths filtered to indexable nodes (web.description && !web.noindex).
- * "/menu" (the carousel — no node of its own) is always indexable.
- */
-export function indexablePaths(nodes: SiteNode[]): string[] {
-  return allSitePaths(nodes).filter((path) => {
-    const chain = resolveSitePath(nodes, path);
-    if (chain === null) return false;
-    const node = chain.at(-1);
-    if (node === undefined) return true; // "/menu" itself
-    return typeof node.web?.description === "string" && node.web.noindex !== true;
+const routeMetadataVisitor = {
+  visitSubmenu: projectEntryMetadata,
+  visitList: projectEntryMetadata,
+  visitReader: projectEntryMetadata,
+  visitAction: projectEntryMetadata,
+  visitApplication: projectEntryMetadata,
+} satisfies MenuEntryVisitor<WebMetadata, EntryProjection>;
+
+/** Resolve a phone path to loader-safe data. No menu or application objects cross the route seam. */
+export function projectSiteRoute(path: string): SiteRouteProjection | null {
+  const chain = siteMenu.resolve(path);
+  if (chain === null) return null;
+
+  const entry = chain.at(-1);
+  if (entry === undefined) {
+    return {
+      title: "Menu",
+      description: "Browse the phone menu.",
+      indexing: "index",
+      panel: null,
+      slugChain: [],
+    };
+  }
+
+  return {
+    ...entry.accept(routeMetadataVisitor),
+    slugChain: chain.map((ancestor) => ancestor.slug.value),
+  };
+}
+
+/** Every valid menu URL in the aggregate's canonical order. */
+export function allSitePaths(): string[] {
+  return siteMenu.paths().map((path) => `/${path}`);
+}
+
+/** Canonical menu URLs whose leaf metadata explicitly permits indexing. */
+export function indexablePaths(): string[] {
+  return siteMenu.paths().flatMap((path) => {
+    const projection = projectSiteRoute(path);
+    return projection?.indexing === "index" ? [`/${path}`] : [];
   });
 }

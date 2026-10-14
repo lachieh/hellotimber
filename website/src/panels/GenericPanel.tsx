@@ -1,52 +1,55 @@
+import type { MenuEntryVisitor } from "@hellotimber/phone-core";
+import type { ReactNode } from "react";
 import ContentPanel from "../components/ContentPanel";
 import SiteLink from "../components/SiteLink";
-import type { SiteNode } from "../content/types";
+import type { WebMetadata } from "../content/types";
+import type { PanelProps } from "./registry";
 
 /**
  * Fallback panel for tree nodes without a bespoke panel: stubs, deep
  * submenus, pickers. Every valid phone screen gets a real HTML page.
  */
-export default function GenericPanel({ chain }: { chain: SiteNode[] }) {
+export default function GenericPanel({ chain }: PanelProps) {
   const node = chain.at(-1);
   if (node === undefined) return null; // "/menu" renders MenuPanel, not this
-  const path = `menu/${chain.map((n) => n.id).join("/")}`;
-  // Lazy list nodes (plan 08) resolve fresh on every render.
-  const listItems =
-    node.type === "list" ? (typeof node.items === "function" ? node.items() : node.items) : [];
-  return (
-    <ContentPanel title={node.label}>
-      {node.type === "reader" && node.body.split("\n").map((line, i) => <p key={i}>{line}</p>)}
-      {node.type === "list" &&
-        (listItems.length === 0 ? (
-          <p>Empty.</p>
-        ) : (
-          <ul>
-            {listItems.map((item) => (
-              <li key={item.id}>
-                <strong>{item.label}</strong> — {item.body}
-              </li>
-            ))}
-          </ul>
+  const path = `menu/${chain.map((entry) => entry.slug.value).join("/")}`;
+  const content = node.accept<ReactNode>({
+    visitSubmenu: (entry) => (
+      <ul>
+        {entry.children.entries.map((child) => (
+          <li key={child.slug.value}>
+            <SiteLink path={`${path}/${child.slug.value}`}>{child.label}</SiteLink>
+          </li>
         ))}
-      {node.type === "submenu" && (
+      </ul>
+    ),
+    visitList: (entry) => {
+      // Dynamic sources are intentionally read afresh for every React render.
+      const items = entry.source.read();
+      return items.length === 0 ? (
+        <p>Empty.</p>
+      ) : (
         <ul>
-          {node.children.map((child) => (
-            <li key={child.id}>
-              <SiteLink path={`${path}/${child.id}`}>{child.label}</SiteLink>
+          {items.map((item) => (
+            <li key={item.id}>
+              <strong>{item.label}</strong> — {item.body}
             </li>
           ))}
         </ul>
-      )}
-      {node.type === "app" && (
-        <p>{node.label} is interactive on the handset — drive it with the phone keys.</p>
-      )}
-      {node.type === "action" && (
-        <p>
-          <a href={node.action.value} target="_blank" rel="noopener noreferrer">
-            {node.label}
-          </a>
-        </p>
-      )}
-    </ContentPanel>
-  );
+      );
+    },
+    visitReader: (entry) => entry.body.split("\n").map((line, index) => <p key={index}>{line}</p>),
+    visitAction: (entry) => (
+      <p>
+        <a href={entry.action.value} target="_blank" rel="noopener noreferrer">
+          {entry.label}
+        </a>
+      </p>
+    ),
+    visitApplication: (entry) => (
+      <p>{entry.label} is interactive on the handset — drive it with the phone keys.</p>
+    ),
+  } satisfies MenuEntryVisitor<WebMetadata, ReactNode>);
+
+  return <ContentPanel title={node.label}>{content}</ContentPanel>;
 }
