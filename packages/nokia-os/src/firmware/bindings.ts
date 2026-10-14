@@ -232,3 +232,155 @@ export const PAGE_RESULTS = {
     ],
   },
 } as const;
+
+/**
+ * Same-as subtrees (plan 14 S6): everything strictly below each key is the subtree below its
+ * value, renumbered. Equal to the importer's table (`scripts/tree-capture-set.ts`; Task 13 test).
+ */
+export const SAME_AS: Readonly<Record<string, string>> = {
+  "7-2": "7-1",
+  "7-4": "7-1",
+  "12-3-2": "12-2-2",
+  "12-4-2": "12-2-2",
+  "12-5-2": "12-2-2",
+  "12-6-2": "12-2-2",
+};
+
+/**
+ * The node whose goldens and timelines stand for `number`: below a same-as root, the model's
+ * node (`12-3-2-9-1` → `12-2-2-9-1`: a long Screen saver `Done`, not the short style).
+ */
+export function modelNumber(number: string): string {
+  for (const [copy, model] of Object.entries(SAME_AS)) {
+    if (number.startsWith(`${copy}-`)) return model + number.slice(copy.length);
+  }
+  return number;
+}
+
+/**
+ * Leaves that open the placeholder, by node pattern → owner plan (plan 14 "Leaf ownership").
+ * A pattern is a menu number whose segments may be `*` (any one segment); a trailing `-**` also
+ * matches the node itself and everything below. Equal to the importer's table (Task 13 test).
+ */
+export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
+  "2-1": "18", // Write messages: text editor
+  "2-4": "18", // Picture messages: nothing in the virgin EEPROM
+  "2-5": "18", // Templates
+  "2-6": "18", // Smileys
+  "2-8-4-1-**": "18", // Topics: lists of box-glyph names (virgin EEPROM)
+  "2-8-4-2-**": "18",
+  "2-8-4-3-**": "18",
+  "2-10": "18", // Service command editor
+  "3": "18", // Chat
+  "5-4-*": "16", // Composer slots
+  "5-9-4": "18", // Screen saver › Screen saver: nothing in the virgin EEPROM
+  "12-*-2-9-4": "18",
+  "6-2-1-3": "15", // Русский: native-language note, then that UI
+  "6-2-1-4": "15", // Български
+  "6-2-1-5": "15", // Українська
+  "6-2-3": "15", // Welcome note: text editor
+  "8-1-1": "23", // Snake II › New game: gameplay
+  "8-2-1": "24", // Space impact › New game
+  "8-3-1": "24", // Bantumi › New game
+  "8-4-1-1": "24", // Pairs II › Time trial › New game
+  "8-4-2-1": "24", // Pairs II › Puzzle › New game
+  "9": "20", // Calculator
+  "11-4": "21", // Stopwatch
+  "12-*-1": "17", // Profiles › Activate
+};
+
+/** Whether menu number `number` matches a `PLACEHOLDER_OWNERS`/`SETTER_LEVELS` pattern. */
+export function matchesPattern(number: string, pattern: string): boolean {
+  const deep = pattern.endsWith("-**");
+  const want = (deep ? pattern.slice(0, -3) : pattern).split("-");
+  const have = number.split("-");
+  if (deep ? have.length < want.length : have.length !== want.length) return false;
+  return want.every((segment, i) => segment === "*" || segment === have[i]);
+}
+
+/** The plan that owns the placeholder at node `number`, if it is one. */
+export function placeholderOwner(number: string): string | undefined {
+  for (const [pattern, plan] of Object.entries(PLACEHOLDER_OWNERS)) {
+    if (matchesPattern(number, pattern)) return plan;
+  }
+  return undefined;
+}
+
+/**
+ * Submenu levels whose leaves set the level's value (no option list): the children, by slug, in
+ * the setting's option order. Selecting one stores it (its note follows), the page shows its
+ * label and the level opens on it (Info service opens on Off, `tree/02-messages/2-8.sub`).
+ * Opening Screen saver on the stored value after On is UNVERIFIED (virgin: Off, its first child).
+ */
+export const SETTER_LEVELS: Readonly<Record<string, readonly string[]>> = {
+  "2-8": ["on", "off"], // Info service On/Off
+  "5-9": ["off", "on"], // Tones › Screen saver
+  "12-*-2-9": ["off", "on"], // Profiles › Personalise › Screen saver
+};
+
+/** The setter children (slugs) of the level at `number`, if it is a setter level. */
+export function setterLevel(number: string): readonly string[] | undefined {
+  for (const [pattern, slugs] of Object.entries(SETTER_LEVELS)) {
+    if (matchesPattern(number, pattern)) return slugs;
+  }
+  return undefined;
+}
+
+/**
+ * Leaves that close more than themselves (`exit({ levels })` through the flow): OK on a Call
+ * divert › Set delay choice returns at once to the Call divert page, no note (P13), and View all
+ * returns to the carousel (`tree/10-reminders/10-2.leaf`), both without drawing anything.
+ */
+export const EXIT_LEVELS: Readonly<Record<string, number>> = { "7-3-4": 2, "10-2": 2 };
+
+/** Notes that end by selecting a child of the level returned to (P12: Top score → New game). */
+export const NOTE_END_SELECT: Readonly<Record<string, string>> = { "Top score:": "new-game" };
+
+/**
+ * What confirming a query shows, by its first line, beyond the tree's record (P8): Level 5 stores
+ * the choice only after OK, then `Done`; Reminders › Erase › All empties the reminder memory;
+ * Club Nokia ID asks for the ID.
+ */
+export const QUERY_RESULTS: Readonly<
+  Record<
+    string,
+    | { readonly kind: "note"; readonly lines: readonly string[]; readonly timeline: string }
+    | { readonly kind: "prompt"; readonly lines: readonly string[]; readonly softkey: string }
+  >
+> = {
+  "Select maximum": { kind: "note", lines: ["Done"], timeline: "level-5-done" },
+  // probe/confirm-10-3-2-yes image c. The firmware then hides View all and Erase (image d), which
+  // needs reminder data (plan 21).
+  "Are you": {
+    kind: "note",
+    lines: ["Reminder", "memory", "empty"],
+    timeline: "reminder-memory-empty",
+  },
+  // probe/confirm-8-6-4-ok image c: the prompt has no value.
+  "Replace old ID?": { kind: "prompt", lines: ["Club Nokia ID:"], softkey: "OK" },
+};
+
+/** The layout of Club Nokia ID's prompt (probe/confirm-8-6-4-ok image c). */
+export const CLUB_NOKIA_ID_PROMPT: PromptLayout = { icons: ["pen"], entry: "end" };
+
+/**
+ * Club Nokia ID's prompt has no recording of its own: probe/confirm-8-6-4-ok's cursor steps
+ * (474, 481, 481, 479, 481, 479, 481, 482 ms) start within ±2 ms of the Closed user group number
+ * prompt's (476, 480, 481, 479, 481, 480, 481, 479 ms), a prompt of the same layout.
+ */
+export const CLUB_NOKIA_ID_BLINK = "6-3-4-2";
+
+/** Requesting's Quit: `Request not confirmed`, then standby (P7; C on Requesting UNVERIFIED). */
+export const REQUEST_NOT_CONFIRMED = {
+  lines: ["Request", "not", "confirmed"],
+  timeline: "request-not-confirmed",
+} as const;
+
+/** The note digits that match no menu number open (P5); the kernel then goes to standby. */
+export const INVALID_SHORTCUT = { lines: ["Invalid", "shortcut"], timeline: "invalid-shortcut" };
+
+/**
+ * The cursor blink of prompts whose own recording has none (a cursor every ≈480 ms, P9): the
+ * Voice mailbox number prompt's.
+ */
+export const CURSOR_STYLE = "2-9";

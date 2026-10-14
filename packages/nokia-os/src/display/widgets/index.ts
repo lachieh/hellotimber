@@ -1,4 +1,5 @@
 import type { Framebuffer } from "@hellotimber/phone-screen";
+import { placeholderFrame } from "../placeholder";
 import { paintConfirm, type ConfirmModel } from "./confirm";
 import { paintInfoPage, type InfoPageModel } from "./info-pages";
 import { paintInfoScreen, type InfoScreenModel } from "./info-screen";
@@ -23,6 +24,12 @@ export type { PromptEntry, PromptModel } from "./prompt";
 export type { SplashModel } from "./splash";
 export type { TextPageModel } from "./text-pages";
 
+/** A choice a later plan implements (D13), inside a flow: the placeholder frame of `label`. */
+export interface PlaceholderModel {
+  readonly kind: "placeholder";
+  readonly label: string;
+}
+
 /** What a stock widget shows: plain data, compared by value to decide whether to repaint. */
 export type WidgetModel =
   | OptionsModel
@@ -35,7 +42,8 @@ export type WidgetModel =
   | PromptModel
   | LevelBarModel
   | TextPageModel
-  | SplashModel;
+  | SplashModel
+  | PlaceholderModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -75,6 +83,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "splash":
       paintSplash(fb, model, previous);
+      return;
+    case "placeholder":
+      fb.pixels.set(placeholderFrame(model.label).pixels);
       return;
   }
 }

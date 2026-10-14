@@ -8,10 +8,13 @@ import { placeholderFrame } from "../display/placeholder";
  */
 export class PlaceholderApplication extends PhoneApplication {
   readonly label: string;
+  /** The plan that implements the leaf (plan 14 "Leaf ownership"); never drawn. */
+  readonly ownerPlan: string;
 
-  constructor(id: string, label: string) {
+  constructor(id: string, label: string, ownerPlan: string) {
     super(id);
     this.label = label;
+    this.ownerPlan = ownerPlan;
     Object.freeze(this);
   }
 

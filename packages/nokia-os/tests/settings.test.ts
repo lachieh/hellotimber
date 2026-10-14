@@ -166,4 +166,21 @@ describe("virgin-EEPROM settings (D10)", () => {
     settings.choose("phone-book/options/type-of-view", 0);
     expect(stockPageValue(settings, "phone-book/options/type-of-view")).toBe("Name list");
   });
+
+  it("stores setter levels as choices: Info service and Screen saver On/Off (Task 12)", () => {
+    const virgin = virginSettings();
+    expect(virgin.choices["messages/info-service"]).toEqual({ options: 2, chosen: 1 });
+    expect(virgin.choices["profiles/general/personalise/screen-saver"]).toEqual({
+      options: 2,
+      chosen: 0,
+    });
+    expect(virgin.aliases["tones/screen-saver"]).toBe("profiles/general/personalise/screen-saver");
+    const settings = createMemorySettings(virgin);
+    expect(stockPageValue(settings, "messages/info-service")).toBe("Off");
+    settings.choose("messages/info-service", 0);
+    expect(stockPageValue(settings, "messages/info-service")).toBe("On");
+    settings.choose("tones/screen-saver", 1);
+    expect(stockPageValue(settings, "profiles/general/personalise/screen-saver")).toBe("On");
+    expect(stockPageValue(settings, "profiles/silent/personalise/screen-saver")).toBe("Off");
+  });
 });

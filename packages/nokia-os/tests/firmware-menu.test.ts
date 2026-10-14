@@ -1,6 +1,7 @@
 import {
   ApplicationEntry,
   createPhone,
+  PhoneApplication,
   SubmenuEntry,
   type MenuEntry,
   type Phone,
@@ -9,11 +10,14 @@ import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { LEVEL1 } from "../scripts/text-runs.ts";
 import { paintDottedBorder } from "../src/display/unsupported";
+import { placeholderOwner } from "../src/firmware/bindings";
+import { STOCK_TREE, type StockTreeNode } from "../src/firmware/generated/stock-tree";
 import { createStockMenu } from "../src/firmware/menu";
 import { PlaceholderApplication } from "../src/firmware/placeholder";
 import { createMemorySettings, virginSettings } from "../src/firmware/settings";
 import { stockMenu } from "../src/index";
 import { STOCK_FONTS } from "../src/resources";
+import { StockFlowApplication } from "../src/widgets/flow";
 
 const SLUGS = [
   "phone-book",
@@ -88,13 +92,65 @@ describe("stockMenu", () => {
     }
   });
 
-  it("has no levels below level 1: every child is a placeholder application", () => {
-    for (const slot of stockMenu.entries) {
-      const children = slot.entry instanceof SubmenuEntry ? slot.entry.children.entries : [];
-      for (const child of children) {
-        expect(child, child.slug.value).toBeInstanceOf(ApplicationEntry);
-        expect((child as ApplicationEntry).application).toBeInstanceOf(PlaceholderApplication);
-      }
+  it("holds every node of the generated tree in order, with hidden numbers kept", () => {
+    const visit = (nodes: readonly StockTreeNode[], entries: readonly MenuEntry[]): void => {
+      expect(entries.map((e) => e.slug.value)).toEqual(nodes.map((n) => n.slug));
+      nodes.forEach((node, i) => {
+        const entry = entries[i]!;
+        expect(entry.label, node.number).toBe(node.label);
+        expect(entry.order.value, node.number).toBe(Number(node.number.split("-").at(-1)));
+        const spec = node.opens;
+        if (spec.kind === "submenu") {
+          const level = submenu(entry);
+          expect(level.presentation, node.number).toBe(spec.presentation);
+          expect(level.softkey, node.number).toBe(spec.softkey);
+          expect(level.intro !== undefined, node.number).toBe(spec.intro === true);
+          visit(node.children ?? [], level.children.entries);
+        } else {
+          expect(entry, node.number).toBeInstanceOf(ApplicationEntry);
+        }
+      });
+    };
+    visit(
+      STOCK_TREE,
+      stockMenu.entries.map((slot) => slot.entry),
+    );
+  });
+
+  it("opens every leaf as a stock flow, the placeholder of its owner plan, or an exit", () => {
+    const kinds = new Map<string, string>();
+    const visit = (nodes: readonly StockTreeNode[], entries: readonly MenuEntry[]): void => {
+      nodes.forEach((node, i) => {
+        const entry = entries[i]!;
+        if (entry instanceof SubmenuEntry) {
+          visit(node.children ?? [], entry.children.entries);
+          return;
+        }
+        const application = (entry as ApplicationEntry).application;
+        const owner = placeholderOwner(node.number);
+        if (application instanceof PlaceholderApplication) {
+          expect(application.ownerPlan, node.number).toBe(owner);
+          expect(application.ownerPlan).toMatch(/^\d+$/);
+          kinds.set(node.number, "placeholder");
+        } else {
+          expect(owner, `${node.number} is owned by plan ${owner}`).toBeUndefined();
+          expect(application, node.number).toBeInstanceOf(
+            node.opens.kind === "returns-immediately" ? PhoneApplication : StockFlowApplication,
+          );
+          kinds.set(node.number, "stock");
+        }
+      });
+    };
+    visit(
+      STOCK_TREE,
+      stockMenu.entries.map((slot) => slot.entry),
+    );
+    // The "Leaf ownership" table: Chat, Calculator, Composer, New game, Activate, Stopwatch, ...
+    for (const number of ["3", "9", "2-1", "5-4-3", "8-1-1", "8-4-2-1", "11-4", "12-5-1"]) {
+      expect(kinds.get(number), number).toBe("placeholder");
+    }
+    for (const number of ["1-1", "1-2", "1-8-1", "4-5", "8-1-2", "8-1-6", "10-2", "8-6-4"]) {
+      expect(kinds.get(number), number).toBe("stock");
     }
   });
 
@@ -102,7 +158,14 @@ describe("stockMenu", () => {
     const paths = stockMenu.paths();
     expect(new Set(paths).size).toBe(paths.length);
     for (const path of paths) expect(path).toMatch(/^menu(\/[a-z0-9]+(-[a-z0-9]+)*)*$/);
-    expect(paths.length).toBe(1 + 12 + 10 + 10 + 8 + 9 + 4 + 5 + 5 + 3 + 6 + 6);
+    let nodes = 0;
+    const count = (level: readonly StockTreeNode[]): void =>
+      level.forEach((node) => {
+        nodes++;
+        count(node.children ?? []);
+      });
+    count(STOCK_TREE);
+    expect(paths.length).toBe(1 + nodes);
     for (const path of [
       "menu/phone-book/search",
       "menu/phone-book/send-bcard",
@@ -110,8 +173,10 @@ describe("stockMenu", () => {
       "menu/call-register/dialled-numbers",
       "menu/call-divert/cancel-all-diverts",
       "menu/games/snake",
+      "menu/games/snake/top-score",
       "menu/profiles/empty",
       "menu/profiles/empty-2",
+      "menu/profiles/empty-2/personalise/screen-saver/timeout",
     ])
       expect(paths).toContain(path);
   });
@@ -151,26 +216,56 @@ describe("PlaceholderApplication", () => {
   }
 
   it("renders a dotted border and the entry label, one centred line per line break", () => {
-    const phone = atLeaf("menu/call-divert/divert-if-not-answered");
+    const phone = atLeaf("menu/messages/picture-messages");
     const screen = phone.screen;
     if (screen.kind !== "custom") throw new Error(`expected custom, got ${screen.kind}`);
-    expect(screen.appId).toBe("placeholder:call-divert/divert-if-not-answered");
+    expect(screen.appId).toBe("placeholder:messages/picture-messages");
     const expected = new Framebuffer();
     paintDottedBorder(expected);
-    expected.drawTextCentered(STOCK_FONTS.small, "Divert if not", 15);
-    expected.drawTextCentered(STOCK_FONTS.small, "answered", 24);
+    expected.drawTextCentered(STOCK_FONTS.small, "Picture", 15);
+    expected.drawTextCentered(STOCK_FONTS.small, "messages", 24);
     expect(Array.from(screen.frame.pixels)).toEqual(Array.from(expected.pixels));
   });
 
   it("swallows every key but C, which returns to the parent with the selection kept", () => {
-    const phone = atLeaf("menu/call-divert/divert-if-not-answered");
+    const phone = atLeaf("menu/messages/picture-messages");
     const frame = phone.screen;
     for (const key of ["navi", "up", "down", "1", "*", "#"] as const) phone.pressKey(key);
-    expect(phone.path).toBe("menu/call-divert/divert-if-not-answered");
+    expect(phone.path).toBe("menu/messages/picture-messages");
     expect(phone.screen).toEqual(frame);
     phone.pressKey("c");
-    expect(phone.path).toBe("menu/call-divert");
-    expect(phone.screen).toMatchObject({ kind: "list", selected: 2 });
+    expect(phone.path).toBe("menu/messages");
+    expect(phone.screen).toMatchObject({ kind: "list", selected: 3 });
+  });
+
+  it("names the plan that owns it (never drawn)", () => {
+    const owners: Record<string, string> = {};
+    const walk = (entries: readonly MenuEntry[], prefix: string): void => {
+      for (const entry of entries) {
+        const path = `${prefix}/${entry.slug.value}`;
+        if (entry instanceof SubmenuEntry) walk(entry.children.entries, path);
+        else if ((entry as ApplicationEntry).application instanceof PlaceholderApplication) {
+          owners[path] = (
+            (entry as ApplicationEntry).application as PlaceholderApplication
+          ).ownerPlan;
+        }
+      }
+    };
+    walk(
+      stockMenu.entries.map((slot) => slot.entry),
+      "menu",
+    );
+    expect(owners).toMatchObject({
+      "menu/messages/write": "18",
+      "menu/chat": "18",
+      "menu/tones/composer/empty-4": "16",
+      "menu/settings/phone-settings/welcome-note": "15",
+      "menu/games/snake/new-game": "23",
+      "menu/games/bantumi/new-game": "24",
+      "menu/calculator": "20",
+      "menu/clock/stopwatch": "21",
+      "menu/profiles/loud/activate": "17",
+    });
   });
 
   it("opens for the top-level applications too (Chat, Calculator)", () => {

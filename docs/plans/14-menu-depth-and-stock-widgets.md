@@ -1180,18 +1180,49 @@ splash probes to the game menu, and the three skip probes (pixels and the exit a
 **Files:** `src/firmware/menu.ts`, `src/firmware/bindings.ts`, `src/firmware/placeholder.ts`,
 `src/firmware/phone.ts`, `tests/firmware-menu.test.ts`, `tests/firmware-phone.test.ts`.
 
-- [ ] Build `createStockMenu(ports)` from `STOCK_TREE`: submenus with presentation, `softkey`,
+- [x] Build `createStockMenu(ports)` from `STOCK_TREE`: submenus with presentation, `softkey`,
       `opening` (from the store), `detail` (Task 8), `intro` (splash) and hidden numbers; leaves as
       flow applications from `bindings.ts` (default widget by kind; placeholders per "Leaf
       ownership" with their plan; `10-2` no-op; leaf setters such as Info service On/Off and
       Screen saver On/Off; 6-2-4-1 `standby()`). Delete `STOCK_LEVELS` (subtract).
-- [ ] `PlaceholderApplication` gains `ownerPlan` (shown nowhere on screen; asserted by tests).
+- [x] `PlaceholderApplication` gains `ownerPlan` (shown nowhere on screen; asserted by tests).
       Export `PLACEHOLDER_OWNERS` and `SAME_AS` from bindings for Task 13.
-- [ ] TDD: every `STOCK_TREE` node maps to a menu entry or a flow; paths unique and kebab-case;
+- [x] TDD: every `STOCK_TREE` node maps to a menu entry or a flow; paths unique and kebab-case;
       every placeholder has an owner; level 1 unchanged against plan 13; `createStockPhone` sets
       `rowsWindow: 3`; standby ▲/▼ still open the plan 13 targets (now prompt/note widgets).
-- [ ] Run the full nokia-os suite: plan 13's acceptance must stay green.
-- [ ] Commit: `feat(nokia-os): compose the whole v6.39 menu tree with stock widgets`.
+- [x] Run the full nokia-os suite: plan 13's acceptance must stay green.
+- [x] Commit: `feat(nokia-os): compose the whole v6.39 menu tree with stock widgets`.
+
+Deviation: the leaf bindings live in `src/firmware/leaves.ts` (`LeafBinder`, `invalidShortcut`),
+which resolves every timeline, layout and result when the menu is built, so a missing binding
+fails at construction and names its node. `bindings.ts` gains the tables they read: `SAME_AS` and
+`modelNumber`, `PLACEHOLDER_OWNERS` and `placeholderOwner`, `SETTER_LEVELS` (Info service On/Off,
+Screen saver Off/On in Tones and every profile), `EXIT_LEVELS` (7-3-4 Set delay and 10-2 View all
+close two levels), `NOTE_END_SELECT` (Top score → New game), `QUERY_RESULTS` (Level 5 stores and
+shows `Done`; Erase › All shows `Reminder memory empty`; Club Nokia ID opens its prompt),
+`REQUEST_NOT_CONFIRMED` (Requesting's Quit), `INVALID_SHORTCUT` and `CURSOR_STYLE` (2-9's blink
+for prompts with a cursor and no recording, e.g. 7-3-1-2). Club Nokia ID's prompt reuses the
+Closed user group number prompt's blink (6-3-4-2): every step of probe/confirm-8-6-4-ok starts
+within ±2 ms of it. `createStockPhone` sets `shortcutEntry` (`openDelayMs` 1460, P5; the probes
+show 1431-1480 ms between the redraws).
+Deviation: setter levels are single-choice settings in the store (no text setter):
+`virginSettings` adds a choice per setter level, chosen at its page value, and `VALUE_PAGES`
+gets its labels, so the Messages page shows `On` after Info service › On and the level opens on
+the stored child (Screen saver after On: UNVERIFIED). Aliases cover Tones › Screen saver.
+Deviation: Profiles slot 6 had the slug `entry` (its captured label is two U+E000 boxes, slugged
+before the label override); `tree-model.ts` `SLUG_OVERRIDES` keeps plan 13's `empty-2`, and
+`import-tree` was rerun twice (no diff on the second run).
+Deviation: choices owned by later plans inside an option list (6-2-1 Русский, Български,
+Українська: plan 15) show a placeholder widget (`WidgetModel` kind `placeholder`, the plan 13
+placeholder frame) and store nothing. Choices store before their note, progress note or return;
+a confirm query is pushed above its list (C returns to the list, P8) and stores on OK; a prompt
+result replaces the list and stores nothing (the value needs entry). These are UNVERIFIED beyond
+the goldens: ▲/▼ during a note select the neighbour only on pages levels (P6 probed Options; on
+rows levels the kernel's `select` would put it on the bottom row, so ▲/▼ only dismiss there);
+Prepaid credit's On/Off list goes back without storing (P15 only scrolled it); Rename in Discreet,
+Loud and the empty slots shows that profile's name with `10 - length` characters left (Silent:
+`4`); after Erase › All the Reminders level still lists View all and Erase (the firmware hides
+them, probe/confirm-10-3-2-yes image d; reminder data is plan 21's).
 
 ### Task 13 - Acceptance at scale and the coverage guard
 

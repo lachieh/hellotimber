@@ -1,6 +1,7 @@
 import { createPhone, type Phone } from "@hellotimber/phone-core";
 import { VISIBLE_ROWS } from "../display/list-rows";
 import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
+import { invalidShortcut } from "./leaves";
 import { createStockMenu } from "./menu";
 import type { StockPorts } from "./bindings";
 
@@ -25,6 +26,12 @@ export const STOCK_MENU_OPEN_DELAY_MS = 39;
 /** The first-digit dots turn into the menu number 2948 ms after Menu (menu/01-phone-book.anim). */
 export const STOCK_SHORTCUT_WINDOW_MS = 2948;
 
+/**
+ * A typed entry opens this long after its digit (P5: 1431-1480 ms between the redraws; plan 14
+ * Task 5 pins 1460 ms).
+ */
+export const STOCK_SHORTCUT_OPEN_DELAY_MS = 1460;
+
 /** A phone-core phone running the stock v6.39 firmware. It starts powered off. */
 export function createStockPhone(config: StockPhoneConfig): Phone {
   const missing = missingStockGlyphs(config.carrier, "small");
@@ -47,5 +54,7 @@ export function createStockPhone(config: StockPhoneConfig): Phone {
     shortcutWindowMs: STOCK_SHORTCUT_WINDOW_MS,
     // Rows levels keep the stateful circular window of the stock painter (plan 14 D3).
     rowsWindow: VISIBLE_ROWS,
+    // Stock shortcut digits: menu numbers, delayed opening, Invalid shortcut (plan 14 D14).
+    shortcutEntry: { openDelayMs: STOCK_SHORTCUT_OPEN_DELAY_MS, invalid: invalidShortcut() },
   });
 }

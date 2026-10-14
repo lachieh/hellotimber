@@ -1,6 +1,7 @@
-// The stock v6.39 main menu and its level-1 screens (plan 13 "Stock firmware model"). Labels are
-// the firmware text as read from the goldens, with firmware line breaks as `\n` (D10); every
-// leaf below level 0/1 is a placeholder until a later plan implements it.
+// The stock v6.39 menu (plan 14 D4): the generated tree (`generated/stock-tree.ts`) as phone-core
+// entries. Submenus keep their presentation, soft key, opening selection, page values and game
+// splash; leaves open stock widget flows or the placeholder of the plan that owns them
+// (`leaves.ts`, `bindings.ts`).
 import {
   ApplicationEntry,
   MenuLevel,
@@ -10,11 +11,12 @@ import {
   SubmenuEntry,
   TopLevelEntry,
   type MenuEntry,
-  type MenuPresentation,
+  type SubmenuOptions,
 } from "@hellotimber/phone-core";
 import { stockMenuGraphic } from "../resources";
-import { HOST_VALUES, type StockPorts } from "./bindings";
-import { PlaceholderApplication } from "./placeholder";
+import { HOST_VALUES, settingKey, setterLevel, type StockPorts } from "./bindings";
+import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
+import { LeafBinder, type LeafPlace } from "./leaves";
 import {
   createMemorySettings,
   stockPageValue,
@@ -22,191 +24,10 @@ import {
   type StockSettings,
 } from "./settings";
 
-/** A level-1 entry: its label, plus a slug or menu number when they are not derived. */
-type ChildSpec = string | { label: string; slug?: string; order?: number };
-
-interface TopSpec {
-  slug: string;
-  label: string;
-  /** Absent for top-level applications (Chat, Calculator). */
-  submenu?: { presentation: MenuPresentation; children: readonly ChildSpec[] };
-}
-
-const STOCK_LEVELS: readonly TopSpec[] = [
-  {
-    slug: "phone-book",
-    label: "Phone book",
-    submenu: {
-      presentation: "rows",
-      children: [
-        "Search",
-        "Service Nos.",
-        "Add name",
-        "Erase",
-        "Edit",
-        "Assign tone",
-        "Send b'card",
-        "Options",
-        "Speed dials",
-        "Voice tags",
-      ],
-    },
-  },
-  {
-    slug: "messages",
-    label: "Messages",
-    submenu: {
-      presentation: "pages",
-      children: [
-        { label: "Write\nmessages", slug: "write" },
-        "Inbox",
-        "Outbox",
-        "Picture\nmessages",
-        "Templates",
-        "Smileys",
-        "Message\nsettings",
-        "Info\nservice",
-        "Voice\nmailbox\nnumber",
-        "Service\ncommand\neditor",
-      ],
-    },
-  },
-  { slug: "chat", label: "Chat" },
-  {
-    slug: "call-register",
-    label: "Call register",
-    submenu: {
-      presentation: "pages",
-      children: [
-        "Missed\ncalls",
-        "Received\ncalls",
-        "Dialled\nnumbers",
-        "Erase recent\ncall lists",
-        "Show call\nduration",
-        "Show call\ncosts",
-        "Call cost\nsettings",
-        "Prepaid credit",
-      ],
-    },
-  },
-  {
-    slug: "tones",
-    label: "Tones",
-    submenu: {
-      presentation: "pages",
-      children: [
-        "Ringing\ntone",
-        "Ringing\nvolume",
-        "Incoming\ncall alert",
-        "Composer",
-        "Message\nalert tone",
-        "Keypad\ntones",
-        "Warning tones",
-        "Vibrating\nalert",
-        "Screen saver",
-      ],
-    },
-  },
-  {
-    slug: "settings",
-    label: "Settings",
-    submenu: {
-      presentation: "pages",
-      children: [
-        "Call\nsettings",
-        "Phone\nsettings",
-        "Security\nsettings",
-        "Restore\nfactory\nsettings",
-      ],
-    },
-  },
-  {
-    slug: "call-divert",
-    label: "Call divert",
-    submenu: {
-      presentation: "pages",
-      children: [
-        "Divert all\nvoice calls\nwithout ringing",
-        "Divert\nwhen busy",
-        "Divert if not\nanswered",
-        "Divert when\nphone off\nor no coverage",
-        // Menu number 5 is hidden; the firmware keeps this entry's number 6 (`7-6`).
-        { label: "Cancel all\ndiverts", order: 6 },
-      ],
-    },
-  },
-  {
-    slug: "games",
-    label: "Games",
-    submenu: {
-      presentation: "rows",
-      children: [
-        { label: "Snake II", slug: "snake" },
-        // The firmware writes "Space impact" with a lower-case i.
-        "Space impact",
-        "Bantumi",
-        "Pairs II",
-        // Menu number 5 is hidden; the firmware keeps this entry's number 6 (`8-6`).
-        { label: "Settings", order: 6 },
-      ],
-    },
-  },
-  { slug: "calculator", label: "Calculator" },
-  {
-    slug: "reminders",
-    label: "Reminders",
-    submenu: { presentation: "rows", children: ["Add new", "View all", "Erase"] },
-  },
-  {
-    slug: "clock",
-    label: "Clock",
-    submenu: {
-      presentation: "pages",
-      children: [
-        "Alarm\nclock",
-        "Clock\nsettings",
-        "Date setting",
-        "Stopwatch",
-        "Countdown\ntimer",
-        "Auto update of\ndate and time",
-      ],
-    },
-  },
-  {
-    slug: "profiles",
-    label: "Profiles",
-    submenu: {
-      presentation: "rows",
-      children: [
-        "General",
-        "Silent",
-        "Discreet",
-        "Loud",
-        "(empty)",
-        // Slot 6 exists (it changes the rail) but its captured name is uninitialised EEPROM;
-        // the label is UNVERIFIED until the profiles plan (17).
-        { label: "(empty)", slug: "empty-2" },
-      ],
-    },
-  },
-];
-
-/** Kebab-case slug of a label: line breaks become spaces, apostrophes vanish (`send-bcard`). */
-function slugOf(label: string): string {
-  return label
-    .toLowerCase()
-    .replace(/'/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
-function placeholder(slug: string, order: number, label: string, path: string): ApplicationEntry {
-  return new ApplicationEntry(
-    new MenuSlug(slug),
-    new MenuOrder(order),
-    label,
-    new PlaceholderApplication(`placeholder:${path}`, label),
-  );
+interface Builder {
+  readonly ports: StockPorts;
+  readonly settings: StockSettings;
+  readonly leaves: LeafBinder;
 }
 
 /** The value a stock page shows: the host's for the Clock pages, else the settings' (D9). */
@@ -215,46 +36,83 @@ function pageDetail(key: string, ports: StockPorts, settings: StockSettings): st
   return port === undefined ? stockPageValue(settings, key) : ports[port]?.();
 }
 
-function topEntry(
-  spec: TopSpec,
-  order: number,
-  ports: StockPorts,
-  settings: StockSettings,
-): MenuEntry {
-  if (spec.submenu === undefined) return placeholder(spec.slug, order, spec.label, spec.slug);
-  const children = spec.submenu.children.map((child, i) => {
-    const { label, slug, order: number } = typeof child === "string" ? { label: child } : child;
-    const childSlug = slug ?? slugOf(label);
-    return placeholder(childSlug, number ?? i + 1, label, `${spec.slug}/${childSlug}`);
-  });
-  return new SubmenuEntry(
-    new MenuSlug(spec.slug),
-    new MenuOrder(order),
-    spec.label,
-    new MenuLevel(children),
-    undefined,
-    {
-      presentation: spec.submenu.presentation,
-      detail: (child) => pageDetail(`${spec.slug}/${child.slug.value}`, ports, settings),
-    },
-  );
+/**
+ * The siblings ▲/▼ select after a child's note is dismissed (P6), on pages levels only (see
+ * `LeafPlace.moves`); circular, like the level.
+ */
+function movesOf(parent: StockTreeNode | undefined, index: number): LeafPlace["moves"] | undefined {
+  const siblings = parent?.children;
+  if (parent === undefined || siblings === undefined) return undefined;
+  if (parent.opens.kind !== "submenu" || parent.opens.presentation !== "pages") return undefined;
+  const count = siblings.length;
+  return {
+    up: siblings[(index + count - 1) % count]!.slug,
+    down: siblings[(index + 1) % count]!.slug,
+  };
+}
+
+function entryOf(path: readonly StockTreeNode[], index: number, b: Builder): MenuEntry {
+  const node = path[path.length - 1]!;
+  const parent = path[path.length - 2];
+  const slug = new MenuSlug(node.slug);
+  const order = new MenuOrder(Number(node.number.split("-").at(-1)));
+  const spec = node.opens;
+  if (spec.kind !== "submenu") {
+    const moves = movesOf(parent, index);
+    const place: LeafPlace = { path, ...(moves === undefined ? {} : { moves }) };
+    const setter = parent === undefined ? undefined : setterLevel(parent.number);
+    const setterIndex = setter?.indexOf(node.slug) ?? -1;
+    const application =
+      setterIndex >= 0
+        ? b.leaves.setter(place, settingKey(path.slice(0, -1)), setterIndex)
+        : b.leaves.application(place);
+    return new ApplicationEntry(slug, order, node.label, application);
+  }
+
+  const children = (node.children ?? []).map((child, i) => entryOf([...path, child], i, b));
+  const key = settingKey(path);
+  const setter = setterLevel(node.number);
+  const bySlug = (s: string | undefined) => children.find((child) => child.slug.value === s);
+  const opening =
+    setter !== undefined
+      ? () => {
+          const chosen = b.settings.choice(key);
+          return bySlug(chosen === null ? undefined : setter[chosen]);
+        }
+      : spec.opening !== undefined
+        ? () => bySlug(spec.opening)
+        : undefined;
+  const options: SubmenuOptions = {
+    presentation: spec.presentation,
+    softkey: spec.softkey,
+    ...(spec.presentation === "pages"
+      ? {
+          detail: (child: MenuEntry) =>
+            pageDetail(`${key}/${child.slug.value}`, b.ports, b.settings),
+        }
+      : {}),
+    ...(opening === undefined ? {} : { opening }),
+    ...(spec.intro ? { intro: b.leaves.intro(node, path.map((n) => n.slug).join("/")) } : {}),
+  };
+  return new SubmenuEntry(slug, order, node.label, new MenuLevel(children), undefined, options);
 }
 
 /**
  * The stock menu, with Clock pages reading `ports` for their clock and date values and the other
- * pages reading `settings` (default: a fresh store in the virgin-EEPROM state).
+ * pages, option lists and setters reading and writing `settings` (default: a fresh store in the
+ * virgin-EEPROM state).
  */
 export function createStockMenu(
   ports: StockPorts = {},
   settings: StockSettings = createMemorySettings(virginSettings()),
 ): PhoneMenu {
+  const builder: Builder = { ports, settings, leaves: new LeafBinder(settings) };
   return new PhoneMenu(
-    STOCK_LEVELS.map(
-      (spec, i) =>
-        new TopLevelEntry(topEntry(spec, i + 1, ports, settings), stockMenuGraphic(spec.slug)),
+    STOCK_TREE.map(
+      (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),
     ),
   );
 }
 
-/** The 12-entry v6.39 main menu, level-1 screens and placeholder leaves (no host ports). */
+/** The whole v6.39 menu tree (no host ports, its own virgin settings store). */
 export const stockMenu: PhoneMenu = createStockMenu();

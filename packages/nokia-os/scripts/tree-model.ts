@@ -217,8 +217,15 @@ export function slugOf(label: string): string {
     .replace(/^-|-$/g, "");
 }
 
-/** Plan 13's slugs that do not follow the label (the website's `write`, `snake`). */
-export const SLUG_OVERRIDES: Readonly<Record<string, string>> = { "2-1": "write", "8-1": "snake" };
+/**
+ * Plan 13's slugs that do not follow the label (the website's `write`, `snake`), and Profiles
+ * slot 6, whose captured label is two undefined-character boxes (plan 13 `empty-2`, D10).
+ */
+export const SLUG_OVERRIDES: Readonly<Record<string, string>> = {
+  "2-1": "write",
+  "8-1": "snake",
+  "12-6": "empty-2",
+};
 
 /** Sibling slugs: the label's slug, `-2`, `-3`, … on collisions (plan 13's `empty-2`). */
 export function siblingSlugs(nodes: readonly { number: string; label: string }[]): string[] {

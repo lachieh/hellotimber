@@ -9025,7 +9025,7 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
    },
    {
     "number": "12-6",
-    "slug": "entry",
+    "slug": "empty-2",
     "label": "(empty)",
     "opens": {
      "kind": "submenu",

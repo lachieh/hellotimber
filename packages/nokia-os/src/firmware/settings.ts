@@ -1,6 +1,13 @@
 // The stock settings store (plan 14 D9): an internal, in-memory port until plan 15 adds host
 // persistence and factory defaults. Its initial state is the captured virgin EEPROM (D10).
-import { HOST_VALUES, settingAlias, settingKey, slugOf, VIRGIN_TEXTS } from "./bindings";
+import {
+  HOST_VALUES,
+  setterLevel,
+  settingAlias,
+  settingKey,
+  slugOf,
+  VIRGIN_TEXTS,
+} from "./bindings";
 import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
 
 export interface StockSettings {
@@ -82,8 +89,22 @@ function* nodes(
 }
 
 /**
+ * The option labels of a setter level (`SETTER_LEVELS`: Info service, Screen saver), in the
+ * setting's order; undefined for other nodes.
+ */
+function setterLabels(node: StockTreeNode): readonly string[] | undefined {
+  const slugs = node.opens.kind === "submenu" ? setterLevel(node.number) : undefined;
+  if (slugs === undefined) return undefined;
+  return slugs.map((slug) => {
+    const child = node.children?.find((c) => c.slug === slug);
+    if (child === undefined) throw new Error(`Setter level ${node.number} has no child "${slug}".`);
+    return child.label;
+  });
+}
+
+/**
  * The pages that show a value, by key, with their option labels when they are single-choice
- * lists: every node whose page showed a value in the virgin capture (its value hint), and every
+ * settings: every node whose page showed a value in the virgin capture (its value hint), and every
  * list that opens unset (its page shows the choice once made: Incoming call alert → `Ringing`).
  * Other pages show none (Erase recent call lists, Voice mailbox number).
  */
@@ -93,14 +114,15 @@ const VALUE_PAGES: ReadonlyMap<string, readonly string[]> = new Map(
     const spec = node.opens;
     const single = spec.kind === "option-list" && !spec.multi;
     if (node.valueHint === undefined && !(single && spec.opening === null)) return [];
-    const labels = single ? spec.options.map((option) => option.label) : [];
-    return [[settingKey(path), labels] as const];
+    const labels = single ? spec.options.map((option) => option.label) : setterLabels(node);
+    return [[settingKey(path), labels ?? []] as const];
   }),
 );
 
 /**
  * The captured virgin-EEPROM state (D10) from the generated tree: option lists open on their
- * captured value (null when unset), multi-select marks, page values as display text (the Clock
+ * captured value (null when unset), setter levels on their page value (Info service `Off`),
+ * multi-select marks, page values as display text (the Clock
  * pages are the host's), info page values, and the free-text values of `VIRGIN_TEXTS`. Keys that
  * alias another (Tones → General) are stored once, under their target.
  */
@@ -117,7 +139,12 @@ export function virginSettings(): StockSettingsSnapshot {
       texts[key] = node.valueHint;
     }
     const spec = node.opens;
-    if (spec.kind === "option-list") {
+    const setter = setterLabels(node);
+    if (setter !== undefined) {
+      const chosen = setter.indexOf(node.valueHint ?? "");
+      if (chosen < 0) throw new Error(`Setter level ${node.number} shows no option as its value.`);
+      choices[key] = { options: setter.length, chosen };
+    } else if (spec.kind === "option-list") {
       if (spec.multi) marks[key] = spec.options.map((option) => option.marked === true);
       else choices[key] = { options: spec.options.length, chosen: spec.opening };
     } else if (spec.kind === "info-pages") {
