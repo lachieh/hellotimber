@@ -549,12 +549,12 @@ harness helpers below.
 - [ ] **O outbox** (`plan18/sms/outbox*`): three saved messages (one with a number), the list, each
       message read (▼ through it), Options (each entry: Erase with its query and note, Edit, Use
       number with and without a number in the text, Forward), the last erase (`No more messages in
-  outbox`).
+outbox`).
 - [ ] **I incoming** (`plan18/sms/arrive*`, `inbox*`): `sms` at standby (record 6 s from the command,
       five times, for the link-time median); C, Menu, ▼ and a digit on the notice (records); the
       indicator after C (shot); a second and a third arrival before reading (the notice text); an
       arrival in the menus, in the editor, during a note, in a Snake II game and during `Sending
-  message` (records: what interrupts?); a 160-character SMS, one with characters outside the
+message` (records: what interrupts?); a 160-character SMS, one with characters outside the
       typeable set (é, ü, ~), one from an alphanumeric sender if the emulator accepts it; Read, the
       list, the view (▼/▲ through every line), Details, every Option (Erase query and notes, Reply
       → editor → Send, Edit, Use number, Forward), read/unread icons; the same list through Menu 2 2;
@@ -730,7 +730,7 @@ editable prompt replaces the static one where a node is bound), `tests/widgets-e
 
 - [ ] 6-2-3: the editor (count style, 36, multi-tap only, Options Save/Erase as captured). Save →
       `setText(WELCOME_NOTE_KEY, text)` and `Welcome note saved` → the page; Erase → `setText(…,
-  undefined)` and `Welcome note erased`; the empty cases per Task 0 W. The editor opens on the
+undefined)` and `Welcome note erased`; the empty cases per Task 0 W. The editor opens on the
       stored note.
 - [ ] TDD through keys: type `Hi`, Save, power off and on: plan 15's welcome-note gate shows `Hi`
       (its goldens still pass); Erase, power on: the hands play.
