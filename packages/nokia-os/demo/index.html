@@ -7,19 +7,17 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <main>
+    <main id="main">
       <header>
         <p>@hellotimber/nokia-os demo</p>
         <h1>Stock 3310 firmware, v6.39</h1>
       </header>
 
       <section class="phone" aria-label="Phone">
-        <div class="screen-row">
+        <div id="screen-row" class="screen-row">
           <div id="lcd" class="lcd"></div>
-          <span id="vibra" class="vibra" aria-label="Vibrator">VIBRA</span>
         </div>
         <p id="status" role="status" aria-live="polite"></p>
-        <ol id="sound-log" class="sound-log" aria-label="Sound events (the last 8)"></ol>
         <p id="error" class="error" hidden></p>
         <div class="keypad" aria-label="Keypad">
           <button type="button" data-key="power" class="wide">Power (P)</button>
@@ -47,66 +45,8 @@
         </p>
       </section>
 
-      <section class="controls" aria-label="Phone settings">
-        <form id="carrier-form">
-          <label>
-            Operator
-            <input id="carrier" autocomplete="off" spellcheck="false" />
-          </label>
-          <button type="submit">Restart with operator</button>
-          <p id="carrier-error" class="error" hidden></p>
-        </form>
-        <label class="check">
-          <input id="skip-boot" type="checkbox" />
-          Skip boot (restarts the phone)
-        </label>
-        <label>
-          SIM card (restarts the phone)
-          <select id="sim">
-            <option value="sim-1">SIM 1</option>
-            <option value="sim-2">SIM 2</option>
-          </select>
-        </label>
-        <label class="check">
-          <input id="mute" type="checkbox" />
-          Mute
-        </label>
-        <div class="eeprom">
-          <div class="buttons">
-            <button id="erase" type="button">Erase EEPROM</button>
-            <button id="factory" type="button">Factory settings</button>
-          </div>
-          <p class="note">
-            Settings persist in this page's localStorage. Erase removes every
-            <code>nokia-os/</code> record and restarts the virgin phone. With Phone security On, a
-            SIM the phone has not seen asks for the security code (12345) at power-on. The virgin
-            phone is nearly silent (its tone settings are unset); Factory settings restarts it over
-            the factory state, where keys beep, tone lists preview and Snake II sounds. Sound starts
-            with the first key or click.
-          </p>
-          <p id="storage-error" class="error" role="alert" hidden></p>
-        </div>
-      </section>
-
-      <section id="goldens" class="controls" aria-label="Golden overlay" hidden>
-        <label>
-          Golden image
-          <select id="golden"></select>
-        </label>
-        <label>
-          View
-          <select id="view">
-            <option value="off">Phone only</option>
-            <option value="overlay">Overlay</option>
-            <option value="difference">Difference</option>
-          </select>
-        </label>
-        <label>
-          Overlay opacity
-          <input id="opacity" type="range" min="0" max="100" value="50" />
-        </label>
-        <p id="diff-summary" class="note"></p>
-      </section>
+      <!-- Panels (demo/panels/) add their controls here, and sections after it. -->
+      <section id="controls" class="controls" aria-label="Phone settings"></section>
     </main>
     <script type="module" src="./main.ts"></script>
   </body>
