@@ -954,18 +954,23 @@ with no diff.
 **Files:** `packages/phone-core/src/{types.ts,machine.ts,index.ts}`, README; tests
 `standby-indicators.test.ts` (new), `notice-open.test.ts` (new).
 
-- [ ] TDD `standbyIndicators`: absent → models unchanged; a reader returning `{ message: true }`
+- [x] TDD `standbyIndicators`: absent → models unchanged; a reader returning `{ message: true }`
       emits `indicators` on standby only; a change between ticks emits exactly one snapshot; an
       unchanged value emits none; `{}`/`{ message: false }` emit no field.
-- [ ] TDD `setNotice({ open })`: Navi runs the application with the path `standby`, an empty stack
+- [x] TDD `setNotice({ open })`: Navi runs the application with the path `standby`, an empty stack
       and `menuIndicator()` without segments; its `exit()` returns to standby; `levels`/`select`/`row`
       throw; C on the notice clears it; `path` with `open` throws; power-off deactivates once;
       `navigate()` while it runs deactivates it (`navigate`); an exception in `createSession` shows the
       `App error` reader as for any application.
-- [ ] Existing tests pass unchanged; configs without the seams produce identical models.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
+- [x] Existing tests pass unchanged; configs without the seams produce identical models.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
       `vp check --fix`.
-- [ ] Commit: `feat(phone-core): standby indicators and notices that open an application`.
+- [x] Commit: `feat(phone-core): standby indicators and notices that open an application`.
+
+Deviation: **Task 4:** `src/index.ts` needs no change (`StandbyIndicators` was already exported).
+Two consequences of the standby path are pinned by tests: `navigate("standby")` leaves a notice's
+application although its path is already `standby`, and C on its `App error` reader returns to
+standby (its stack is empty). Its invalid `exit` options name "a notice's application".
 
 ### Task 5 - Multi-tap engine (pure, TDD)
 

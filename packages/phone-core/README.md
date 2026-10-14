@@ -142,4 +142,16 @@ unsubscribe();
   });
   ```
 
+- `standbyIndicators: () => ({ message?, voicemail? })` (default none) is re-read on every tick
+  like `clock()`; the standby model carries `indicators` with the fields that are true, and a
+  changed value emits one snapshot.
+- `setNotice({ text, softkey, path? | open? })` shows a standby notice; C clears it. Navi goes to
+  `path`, or runs the `open` application as a standby application: the stack is empty, the path
+  stays `standby`, `menuIndicator()` has no segments and `exit()` returns to standby (`levels`,
+  `select` and `row` throw). `navigate()` and power-off deactivate it as any application:
+
+  ```ts
+  phone.setNotice({ text: "1 message received", softkey: "Read", open: inbox });
+  ```
+
 - `Bitmap` convention: one byte per pixel, row-major, `pixels.length === width * height`.
