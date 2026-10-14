@@ -12,6 +12,7 @@ import { STOCK_FONT_DATA } from "./generated/fonts";
 import { MENU_ICON_DATA } from "./generated/menu-icons";
 import { SNAKE_DATA } from "./generated/snake";
 import { STATUS_DATA } from "./generated/status";
+import { TEXT_DATA } from "./generated/text";
 import { SOUND_DATA } from "./generated/sounds";
 import { WIDGET_DATA } from "./generated/widgets";
 
@@ -248,3 +249,21 @@ export const NOTE_SOUNDS = SOUND_DATA.noteSounds;
 export const GAME_CUES = SOUND_DATA.gameCues;
 /** The power-on tone (and the power key's long press): its time into the power-on. */
 export const BOOT_TONE = SOUND_DATA.bootTone;
+
+// ---------------------------------------------------------------- text entry and SMS (plan 18)
+
+/**
+ * Multi-tap timings measured on the plan 18 goldens (scripts/messages-resources.ts, D5): the
+ * commit after a pending character's first redraw, the cursor's blink, held C's clear after the
+ * first deletion, held # (from key-down) and a held digit's threshold (from key-down).
+ */
+export const TEXT_TIMINGS = TEXT_DATA.text;
+/**
+ * `Sending message`'s shortest duration: the median of five synthetic-cell sends (2574.3-2790.4
+ * ms, D10; UNVERIFIED on a live network). A host that settles later extends it.
+ */
+export const SEND_LINK_MS: number = TEXT_DATA.messages.sendLinkMs;
+/** A delivered SMS reaches standby this long later: the median of five (2141.3-2464.4 ms, D10). */
+export const RECEIVE_LINK_MS: number = TEXT_DATA.messages.receiveLinkMs;
+/** `Saving message` shows its first bar frame this long before `Message saved`. */
+export const SAVING_MS: number = TEXT_DATA.messages.savingMs;

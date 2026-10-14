@@ -484,19 +484,20 @@ guard treats `glyphs/*` as resources, not scenarios (as `text-runs.ts` inputs ar
 are generated from Task 0's `manifest.json` (the character typed per shot), checked against
 `plan18/text.json`, into `scripts/generated/messages-text-runs.ts`.
 
-## Stock display observations (scratch; Task 3 measures from goldens)
+## Stock display observations (measured by Task 3 on the goldens)
 
-| Element        | Observation                                                                                                                                                      |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Editor header  | multi-tap pen x 1..9 y 0..5; T9 pen with bars x 0..17; mode text in the 6-row face (`Abc` from x 14 in multi-tap); counter right-aligned to x 83 (`459/1`, `36`) |
-| Editor text    | small face from x 1, tops 8/18/28; cursor 1x10 at y 7..16 after the last character's blank column; blink ≈480 ms; `Options` centred at y 40                      |
-| Symbol table   | header pen + `?!$`-like mode text; 31 cells in rows of 11/11/9, cell pitch 7, from x 2, tops 7/17/27, thin face; selection = inverted cell; soft key `Use`       |
-| Number prompt  | `Phone number:` small at top 7; counter digits top right (`30`); box y 16..36; digits large right-aligned ending x 82; cursor at the end; `Search`/`OK`          |
-| Sending        | hatched bar x 0..83, y 7..14 (the `Requesting` sprite set, Task 3 checks equality); `Sending` / `message` small at tops 18/29; no soft key                       |
-| Message sent   | `Message` / `sent` large at tops 3/18; envelope animation within x 63..83, y 9..24 (6 frames)                                                                    |
-| Standby notice | envelope icon left; `1` / `message` / `received` small at tops 7/16/25 from x 6; `Read`; the operator line is not drawn                                          |
-| Inbox list     | rows layout with an envelope icon at x 1..8 per row, sender from x 10; `Read`                                                                                    |
-| Message view   | small face from x 0, top 0, pitch 9 (up to four text lines per page); `Options`                                                                                  |
+| Element        | Measured layout                                                                                                                                                                                                                                             |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Editor header  | multi-tap pen = `prompt/pen` (x 1..9, y 0..5); T9 pen with bars x 0..17 (`editor/t9-pen`, 18b); mode text art at x 14..30 (`prompt/abc`, `prompt/abc-lower`, `editor/mode-upper`, `editor/mode-123`); counter in digits, ending at x 83 (`459/1` from x 56) |
+| Editor text    | small cells from x 1 at tops 8/18/28; cursor 1x10 at y 7..16; blink 480 ms; commit 1452 ms after the pending character's first redraw; `Options` small at top 40                                                                                            |
+| Symbol table   | header pen + `editor/mode-symbols` (x 14..30); 31 cells in rows of 11/11/9; cell k's 8x8 box at x 1 + 7 × column, y 7 + 10 × row, its thin glyph from x 2 + 7 × column at top 7 + 10 × row; the selected cell's box inverted; soft key `Use`                |
+| Number prompt  | `Phone number:` small at top 7 from x 0; counter digits top right (`30` from x 72); up to ten digits large at top 23, right-aligned (one digit from x 75); more digits in small rows from x 5, right-aligned, at tops 28, 19, 10; `Search`/`OK`             |
+| Sending        | the Requesting bar (`progress-1`..`-10`, x 0..83, y 7..14) at 260-272 ms steps; `Sending` / `message` small at tops 18/29; no soft key; 2662 ms (median)                                                                                                    |
+| Message sent   | `Message` / `sent` large at tops 3/18; the envelope in seven frames within x 63..83, y 0..24 (`message-sent-1`..`-7`, 1403 ms)                                                                                                                              |
+| Saving, Erased | `Saving message`: the bar's first frame for 88 ms, then `Message saved` (tick note); `Erasing message`: the bar, then `Erased` with a waste bin lifting its lid (`erased-1`..`-6`, x 64..83, y 2..22)                                                       |
+| Standby notice | envelope x 7..18, y 0..5 (`message/envelope`, also the unread indicator); `1` / `message` / `received` small at tops 7/16/25; `Read`; the operator line is not drawn                                                                                        |
+| Inbox list     | rows at tops 8/18/28; unread icon x 0..5 one row below the top (`message/unread`), read and saved icon x 1..6 (`message/read`); sender small from x 10; the selected row inverted from x 8                                                                  |
+| Message view   | small face from x 0, top 0, pitch 9 (up to four text lines per page); `Options`                                                                                                                                                                             |
 
 ## Conventions for every task
 
@@ -897,25 +898,56 @@ nothing (identical tree hash).
 `src/resources/index.ts`, `tests/harvest.test.ts`, `tests/resources.test.ts`, this plan's display
 table.
 
-- [ ] Generate text runs for every `glyphs/*` image from Task 0's manifest (the typed character, its
+- [x] Generate text runs for every `glyphs/*` image from Task 0's manifest (the typed character, its
       face, its bounds), and for the new `text/*`/`sms/*`/`welcome/*` images from `plan18/text.json`
       (plan 14 Task 3's mapping). Feed both to the harvester; resolve reports with overrides that
       name their golden.
-- [ ] Crop table additions: the multi-tap and T9 header icons (the T9 one for 18b), the mode texts if
+- [x] Crop table additions: the multi-tap and T9 header icons (the T9 one for 18b), the mode texts if
       they are not glyph runs, the envelope icons (standby notice, standby indicator, inbox read and
       unread), the `Message sent` animation frames, the symbol-table selection if it is not a plain
       inversion. Check the `Sending message` bar against the `Requesting` sprites (reuse if equal).
-- [ ] Timings into `text.ts` (`TEXT_TIMINGS`): commit timeout, blink, held-C, held-`#`, held digit,
+- [x] Timings into `text.ts` (`TEXT_TIMINGS`): commit timeout, blink, held-C, held-`#`, held digit,
       held `*`; and widget timelines: `T9 dictionary deactivated`, `Sending message` (bar loop),
       `Message sent`, `Message saved`, `Centre number saved`, `Saved`, `Welcome note saved/erased`,
       the erase notes, `Opening`, the failure note if captured. `SEND_LINK_MS` and `RECEIVE_LINK_MS`
       (D10) as medians with the spread in a comment.
-- [ ] TDD: freshness; every typeable character renders in `small` and `large` (D6) and every symbol
+- [x] TDD: freshness; every typeable character renders in `small` and `large` (D6) and every symbol
       in `thin`; `digits` holds `/`, `A`, `B`, `C`, `a`, `b`, `c`; every new sprite is binary and
       inside its golden's ink.
-- [ ] Correct "Stock display observations" with the measured layout.
-- [ ] Run `extract-resources` twice; no diff.
-- [ ] Commit: `feat(nokia-os): harvest text entry glyphs, message sprites and timings`.
+- [x] Correct "Stock display observations" with the measured layout.
+- [x] Run `extract-resources` twice; no diff.
+- [x] Commit: `feat(nokia-os): harvest text entry glyphs, message sprites and timings`.
+
+Deviation: **Task 3 (paths, plan 29):** plan 18's evidence is `PlanCaptureSet.resources` in
+`scripts/resource-inputs/18-messages-and-chat.ts` (text runs, glyph overrides, sprite batch 180,
+timeline batch 180, kinds `message-sent` and `erased`); `scripts/glyph-overrides.ts` and
+`scripts/widget-sprites.ts` no longer exist. The REF-reading run generator is
+`scripts/messages-text-runs.ts` (package script `messages-text-runs`, like `import-tree`), writing
+`scripts/generated/messages-text-runs.ts`. Timings come from `scripts/messages-resources.ts` into
+`src/resources/generated/text.ts` (`TEXT_DATA`), one call and one file in `extract-resources.ts`.
+
+Deviation: **Task 3 (fonts):** the harvester gains two override kinds: `span` (a glyph with blank
+columns in its ink, `"`) and `spacing` (advance = bearing + ink + one blank column, for
+characters the goldens only show alone). Every measured glyph of every font follows that rule
+except `1` (a padded digit cell) and large `.` and `R` (`tests/resources.test.ts`). The header's
+mode texts are art, not digits glyphs: `123`'s digits conflict with the menu indicator's, so
+`digits` gains `/` (the counter) but not `A B C a b c`; the four mode texts are sprites, Abc and
+abc being plan 14's `prompt/abc` and `prompt/abc-lower`. `"` needs `span`; large `+` a bearing of 1.
+`digitHoldMs` is 1475, the upper end of the captured 1450/1475 bracket.
+
+Deviation: **Task 3 (timelines):** Sending message is plan 14's Requesting bar (the same sprites
+in order, verified), not a new timeline; it lasts `SEND_LINK_MS` (2662) at least. `Erased` has an
+animated bin (`message-erased`); `Opening` is plan 14's 2-2 timeline. No failure note exists
+(D14). Named notes: `t9-dictionary-deactivated`, `message-saved`, `centre-number-saved`,
+`voice-mailbox-saved`, `welcome-note-saved`, `welcome-note-erased`, `no-more-messages-inbox`,
+`no-more-messages-outbox`, `no-phone-numbers`, `message-memory-full`, `message-sent`. Other
+plans' tests that used now-typeable characters as missing ones use `~` and `{` instead.
+
+**Task 3 completion note:** fonts small 178, large 162, digits 13, thin 101 glyphs (every
+typeable character in small and large, every symbol in thin). `TEXT_TIMINGS` = commit 1452,
+blink 480, held-C clear 478, held # 1010, held digit 1475 ms; `SEND_LINK_MS` 2662,
+`RECEIVE_LINK_MS` 2324, `SAVING_MS` 88. `regenerate` and `messages-text-runs` each run twice
+with no diff.
 
 ### Task 4 - phone-core: standby indicators and notice applications (TDD)
 

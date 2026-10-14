@@ -21,6 +21,9 @@ import {
   BOOT_FRAMES,
   BOOT_TIMELINE,
   GATE_HANDS_TIMELINE,
+  RECEIVE_LINK_MS,
+  SAVING_MS,
+  SEND_LINK_MS,
   STOCK_FONTS,
   STOCK_MENU_ICONS,
   stockMenuGraphic,
@@ -28,8 +31,10 @@ import {
   WIDGET_TIMELINE_BY_NAME,
   WIDGET_TIMELINE_BY_NODE,
   WIDGET_TIMELINES,
+  TEXT_TIMINGS,
   type StockFontName,
 } from "../src/resources";
+import { TEXT_DATA } from "../src/resources/generated/text";
 import { BOOT_DATA } from "../src/resources/generated/boot";
 import { STOCK_FONT_DATA } from "../src/resources/generated/fonts";
 import { MENU_ICON_DATA } from "../src/resources/generated/menu-icons";
@@ -152,6 +157,7 @@ describe("generated resources", () => {
       widgets: WIDGET_DATA,
       snake: SNAKE_DATA,
       sounds: SOUND_DATA,
+      text: TEXT_DATA,
     }).toEqual(extractResources());
   });
 
@@ -222,8 +228,8 @@ describe("generated resources", () => {
 
   it("names missing characters once, in order, and ignores line breaks", () => {
     expect(missingStockGlyphs("Show call\nduration", "small")).toEqual([]);
-    expect(missingStockGlyphs("jam & jazz@", "small")).toEqual(["j", "&", "@"]);
-    expect(missingStockGlyphs("&@", "large" satisfies StockFontName)).toEqual(["&", "@"]);
+    expect(missingStockGlyphs("jam ~ jazz{", "small")).toEqual(["~", "{"]);
+    expect(missingStockGlyphs("~{", "large" satisfies StockFontName)).toEqual(["~", "{"]);
   });
 
   it("renders any live time and date: every digit in the standby digits and thin page fonts", () => {
@@ -516,22 +522,25 @@ describe("widget sprites and timelines", () => {
       "splash/8-1-1:1390",
     ]);
     expect(WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NODE["8-4"]!]!.timeline.durationMs).toBe(3060);
-    expect(Object.keys(WIDGET_TIMELINE_BY_NAME).sort()).toEqual([
-      "boot-code-error",
-      "code-accepted",
-      "code-accepted-welcome",
-      "code-error",
-      "game-over-fireworks",
-      "game-over-note",
-      "invalid-shortcut",
-      "level-5-done",
-      "phone-security-done",
-      "reminder-memory-empty",
-      "request-not-confirmed",
-      "security-code-changed",
-      "settings-restored",
-      "timers-cleared",
-    ]);
+    // Plans 13-15 and 23's named timelines (other plans add theirs).
+    expect(Object.keys(WIDGET_TIMELINE_BY_NAME).sort()).toEqual(
+      expect.arrayContaining([
+        "boot-code-error",
+        "code-accepted",
+        "code-accepted-welcome",
+        "code-error",
+        "game-over-fireworks",
+        "game-over-note",
+        "invalid-shortcut",
+        "level-5-done",
+        "phone-security-done",
+        "reminder-memory-empty",
+        "request-not-confirmed",
+        "security-code-changed",
+        "settings-restored",
+        "timers-cleared",
+      ]),
+    );
     expect(describeSteps(WIDGET_TIMELINE_BY_NAME["invalid-shortcut"]!)).toEqual([
       "note/error:2903",
       "edges5-78:9",
@@ -787,5 +796,168 @@ describe("sound programs and rules (plan 16 Task 3)", () => {
     for (const table of Object.values(SOUND_DATA.volumeTables)) {
       for (const hz of Object.keys(table)) expect(hz).toMatch(/^[1-9][0-9]*(\.[0-9])?$/);
     }
+  });
+});
+
+describe("text entry and SMS resources (plan 18)", () => {
+  /** Task 0's multi-tap cycles (upper and lower) and the symbol table: the typeable set (D6). */
+  const CYCLES = [
+    ".,'?!-&1@\\/",
+    "ABC2ÄÀÁÂÃÆÇ",
+    "DEF3ÈÉËÊ",
+    "GHI4ÎÏÌÍİĞ",
+    "JKL5£",
+    "MNO6ÖÔÒÓØÑ",
+    "PQRS7$",
+    "TUV8ÜÙÛÚ",
+    "WXYZ9",
+    " 0",
+    ".,'?!-&1",
+    "abc2äàáâãæç",
+    "def3èéëê",
+    "ghi4îïìíığ",
+    "jkl5£",
+    "mno6öôòóøñ",
+    "pqrs7$ß",
+    "tuv8üùûú",
+    "wxyz9",
+  ];
+  const SYMBOLS = ".,?!:;-+#*()\\'\"_@&$£%/<>¿¡§=¤€¥";
+  const TYPEABLE = [...new Set(Array.from(CYCLES.join("") + SYMBOLS))].join("");
+
+  it("has 149 typeable characters, every one in small and large (D6)", () => {
+    expect(Array.from(TYPEABLE)).toHaveLength(149);
+    expect(missingStockGlyphs(TYPEABLE, "small")).toEqual([]);
+    expect(missingStockGlyphs(TYPEABLE, "large")).toEqual([]);
+  });
+
+  it("has every symbol of the symbol table in thin", () => {
+    expect(Array.from(SYMBOLS)).toHaveLength(31);
+    expect(missingStockGlyphs(SYMBOLS, "thin")).toEqual([]);
+  });
+
+  it("draws the editor's counter in digits, `/` included", () => {
+    expect(missingStockGlyphs("0123456789/", "digits")).toEqual([]);
+    const fb = new Framebuffer();
+    // glyphs/digits 001: `459/1` from x 56, its last cell ending at x 83.
+    expect(fb.drawText(STOCK_FONTS.digits, "459/1", 0, 0)).toBe(28);
+  });
+
+  it("gives every glyph its ink plus one blank column, but `1` and large `.` and `R`", () => {
+    const spaced = new Set(
+      INPUTS.glyphOverrides.flatMap((o) => (o.kind === "spacing" ? [`${o.font} ${o.char}`] : [])),
+    );
+    expect(spaced.size).toBeGreaterThan(150);
+    const bearings = new Map<string, number>(
+      INPUTS.glyphOverrides.flatMap((o) =>
+        o.kind === "bearing" ? [[`${o.font} ${o.char}`, o.bearing] as const] : [],
+      ),
+    );
+    const others: string[] = [];
+    for (const [font, data] of Object.entries(STOCK_FONT_DATA)) {
+      for (const [ch, rows] of Object.entries(data.glyphs)) {
+        const lit = Array.from(rows[0]!, (_, x) => rows.some((row) => row[x] === "#"));
+        if (!lit.includes(true)) continue;
+        const lead = lit.indexOf(true);
+        const trail = lit.length - 1 - lit.lastIndexOf(true);
+        if (lead !== (bearings.get(`${font} ${ch}`) ?? 0) || trail !== 1)
+          others.push(`${font} ${ch}`);
+      }
+    }
+    expect(others.sort()).toEqual([
+      "digits 1",
+      "large .",
+      "large 1",
+      "large R",
+      "small 1",
+      "thin 1",
+    ]);
+  });
+
+  it("measures the multi-tap and SMS timings on their goldens (D5, D10)", () => {
+    expect(TEXT_TIMINGS).toEqual({
+      commitMs: 1452,
+      blinkMs: 480,
+      clearAfterDeleteMs: 478,
+      numberModeHoldMs: 1010,
+      digitHoldMs: 1475,
+    });
+    expect([SEND_LINK_MS, RECEIVE_LINK_MS, SAVING_MS]).toEqual([2662, 2324, 88]);
+  });
+
+  /** `golden`'s image cropped to a sprite's rectangle. */
+  function cropOf(id: string, image: string, sprite: string): string[] {
+    const { x, y, art } = WIDGET_DATA.sprites[sprite]!;
+    const { pixels } = loadGolden(id).images.find((i) => i.name === image)!;
+    return art.map((row, dy) =>
+      Array.from(row, (_, dx) => (pixels[(y + dy) * 84 + x + dx] === 1 ? "#" : ".")).join(""),
+    );
+  }
+
+  it("draws the multi-tap header with the prompts' pen, Abc and abc", () => {
+    expect(cropOf("text/key-modes", "mode-sentence", "prompt/pen")).toEqual(
+      WIDGET_DATA.sprites["prompt/pen"]!.art,
+    );
+    expect(cropOf("text/key-modes", "mode-sentence", "prompt/abc")).toEqual(
+      WIDGET_DATA.sprites["prompt/abc"]!.art,
+    );
+    expect(cropOf("text/key-modes", "mode-lower", "prompt/abc-lower")).toEqual(
+      WIDGET_DATA.sprites["prompt/abc-lower"]!.art,
+    );
+    for (const id of ["editor/mode-upper", "editor/mode-123", "editor/mode-symbols"])
+      expect(WIDGET_DATA.sprites[id], id).toBeDefined();
+  });
+
+  it("shows the same envelope on the received notice and as the unread indicator", () => {
+    expect(cropOf("sms/notice", "indicator-after-c", "message/envelope")).toEqual(
+      WIDGET_DATA.sprites["message/envelope"]!.art,
+    );
+  });
+
+  it("draws Sending message's bar with the Requesting progress sprites, in order", () => {
+    const golden = loadGolden("sms/send");
+    const rows = golden.timeline!.slice(golden.triggerFrame as number);
+    const bars = rows.slice(
+      0,
+      rows.findIndex((row) => row.image === "l"),
+    );
+    expect(bars.map((row) => row.image)).toEqual([
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+    ]);
+    bars.forEach((row, i) =>
+      expect(cropOf("sms/send", row.image, `progress-${i + 1}`), row.image).toEqual(
+        WIDGET_DATA.sprites[`progress-${i + 1}`]!.art,
+      ),
+    );
+  });
+
+  it("names the notes plan 18 shows, and Message sent's and Erased's animations", () => {
+    const names = Object.keys(WIDGET_TIMELINE_BY_NAME);
+    expect(names.slice(names.indexOf("t9-dictionary-deactivated"))).toEqual([
+      "t9-dictionary-deactivated",
+      "message-saved",
+      "centre-number-saved",
+      "voice-mailbox-saved",
+      "welcome-note-saved",
+      "welcome-note-erased",
+      "no-more-messages-inbox",
+      "no-more-messages-outbox",
+      "no-phone-numbers",
+      "message-memory-full",
+      "message-sent",
+      "message-erased",
+    ]);
+    const sent = WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NAME["message-sent"]!]!;
+    expect(sent.timeline.durationMs).toBe(1403);
+    expect(sent.frames).toHaveLength(7);
   });
 });

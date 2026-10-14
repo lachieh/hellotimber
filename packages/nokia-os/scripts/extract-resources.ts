@@ -14,7 +14,8 @@
 //   the notes that follow a key, the game-over screens), aligned on their trigger frame (D8);
 // - snake (plan 23): the Snake II pictures, mazes and timing of scripts/snake-resources.ts;
 // - sounds (plan 16): the tone programs and volume rules of scripts/sound-programs.ts, from the
-//   sound goldens.
+//   sound goldens;
+// - text (plan 18): the multi-tap and SMS timings of scripts/messages-resources.ts.
 //
 // Writes src/resources/generated/*.ts. Idempotent. `extractResources` is also run in-process by
 // tests/resources.test.ts to prove the committed files are fresh. Runs under Node's type
@@ -42,6 +43,7 @@ import {
   type HarvestedFont,
   type RunSample,
 } from "./harvest-glyphs.ts";
+import { extractMessagesResources, type MessagesResourceData } from "./messages-resources.ts";
 import { extractSnakeResources, type SnakeResourceData } from "./snake-resources.ts";
 import { parseSoundGolden } from "./sound-format.ts";
 import { extractSoundResources, type SoundResourceData } from "./sound-programs.ts";
@@ -159,6 +161,7 @@ export interface ExtractedResources {
   readonly widgets: WidgetData;
   readonly snake: SnakeResourceData;
   readonly sounds: SoundResourceData;
+  readonly text: MessagesResourceData;
 }
 
 // ---------------------------------------------------------------- pixels
@@ -757,6 +760,7 @@ export function extractResources(
         .filter((entry) => entry.kind === "sound")
         .map((entry) => entry.id),
     ),
+    text: extractMessagesResources((id) => loadGolden(goldensDir, id)),
   };
 }
 
@@ -809,6 +813,11 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
       "SOUND_DATA",
       `{ readonly previewDelayMs: number; readonly messagePreviewDelayMs: number; readonly ringingTones: readonly { readonly name: string; readonly slug: string; readonly program: ${TYPES.program}; readonly firstMarkStep: number; readonly cycleMs?: number; readonly level5At: { readonly note: number; readonly offsetMs: number }; readonly ascendingAt: readonly { readonly note: number; readonly offsetMs: number }[] }[]; readonly volumeTables: Readonly<Record<string, Readonly<Record<string, number>>>>; readonly messageTones: Readonly<Record<string, ${TYPES.program}>>; readonly beepOnceLevels: Readonly<Record<string, number>>; readonly unsetMessageVolumes: Readonly<Record<string, number>>; readonly keypad: { readonly hz: number; readonly levels: Readonly<Record<string, number>>; readonly awakeMs: number; readonly wokenMs: number; readonly sleepAfterMs: number }; readonly noteSounds: Readonly<Record<string, ${TYPES.program}>>; readonly gameCues: { readonly eat: ${TYPES.program}; readonly crash: ${TYPES.program}; readonly topScore: ${TYPES.program}; readonly topScoreAfterCrashMs: number; readonly vibrateMs: number }; readonly bootTone: { readonly atMs: number; readonly program: ${TYPES.program} } }`,
       resources.sounds,
+    ),
+    "text.ts": module(
+      "TEXT_DATA",
+      "{ readonly text: { readonly commitMs: number; readonly blinkMs: number; readonly clearAfterDeleteMs: number; readonly numberModeHoldMs: number; readonly digitHoldMs: number }; readonly messages: { readonly sendLinkMs: number; readonly receiveLinkMs: number; readonly savingMs: number } }",
+      resources.text,
     ),
     "snake.ts": module(
       "SNAKE_DATA",

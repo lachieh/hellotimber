@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { LCD_HEIGHT, LCD_WIDTH } from "../scripts/golden-format.ts";
 import { harvestGlyphs, type GlyphOverride, type RunSample } from "../scripts/harvest-glyphs.ts";
+import { glyphRun, messagesOcrRuns } from "../scripts/messages-text-runs.ts";
 
 /** An 84×48 frame with `art` (rows of '#'/'.') stamped at (x, y); `fill` paints a solid band first. */
 function frame(
@@ -137,6 +138,68 @@ describe("harvestGlyphs", () => {
     expect(result.fonts.small.glyphs[" "]).toEqual(["...", "...", "..."]);
   });
 
+  it("keeps a glyph with blank columns inside its ink whole where a span override gives its width", () => {
+    // A lone '"' drawn as two strokes: "#.#" (plan 18 glyphs/small).
+    const quote = sample('"', ["#.#", "#.#", "..."]);
+    const unspanned = harvestGlyphs([quote], [], METRICS);
+    expect(unspanned.issues[0]).toMatchObject({ kind: "segment-count", expected: 1, found: 2 });
+    const spanned = harvestGlyphs(
+      [quote, sample('A"', ["###.#.#", "#.#.#.#", "#.#...."])],
+      [
+        { kind: "span", font: "small", char: '"', width: 3 },
+        { kind: "advance", font: "small", char: '"', advance: 4 },
+      ],
+      METRICS,
+    );
+    expect(spanned.issues).toEqual([]);
+    expect(spanned.fonts.small.glyphs['"']).toEqual(["#.#.", "#.#.", "...."]);
+    expect(spanned.fonts.small.glyphs.A).toEqual(["###.", "#.#.", "#.#."]);
+  });
+
+  it("derives a lone glyph's advance from its ink plus one blank column (spacing override)", () => {
+    const lone = sample("1", [".#", "##", ".#"]);
+    expect(harvestGlyphs([lone], [], METRICS).issues).toEqual([
+      { kind: "unknown-advance", font: "small", char: "1", sources: ["toy 1"] },
+    ]);
+    const spaced = harvestGlyphs(
+      [lone],
+      [
+        { kind: "spacing", font: "small", char: "1" },
+        { kind: "bearing", font: "small", char: "1", bearing: 1 },
+      ],
+      METRICS,
+    );
+    expect(spaced.issues).toEqual([]);
+    expect(spaced.fonts.small.glyphs["1"]).toEqual(["..#.", ".##.", "..#."]);
+  });
+
+  it("reports a spacing override that contradicts a measured advance", () => {
+    // "AB" measures A's advance as 4 (ink 3 + 1): a spacing override agrees; "A.B" gives 5.
+    const agree = harvestGlyphs(
+      [sample("AB", ["###.##", "#.#.##", "#.#.#."])],
+      [
+        { kind: "spacing", font: "small", char: "A" },
+        { kind: "spacing", font: "small", char: "B" },
+      ],
+      METRICS,
+    );
+    expect(agree.issues).toEqual([]);
+    const disagree = harvestGlyphs(
+      [sample("AB", ["###..##", "#.#..##", "#.#..#."])],
+      [{ kind: "spacing", font: "small", char: "A" }],
+      METRICS,
+    );
+    expect(disagree.issues).toContainEqual({
+      kind: "advance-conflict",
+      font: "small",
+      char: "A",
+      values: [
+        { advance: 4, sources: ["spacing"] },
+        { advance: 5, sources: ["toy AB"] },
+      ],
+    });
+  });
+
   it("reports conflicting bitmaps for one character", () => {
     const result = harvestGlyphs(
       [sample("A", A), sample("A", ["###", "###", "#.#"])].map((s, i) => ({
@@ -243,6 +306,33 @@ describe("harvestGlyphs", () => {
     );
     expect(result.issues).toEqual([
       { kind: "overflow", font: "small", char: "A", bearing: 0, inkWidth: 3, advance: 2 },
+    ]);
+  });
+});
+
+describe("plan 18 text runs (scripts/messages-text-runs.ts)", () => {
+  it("reads a glyph sheet's character in its screen's band, and nothing for the space", () => {
+    expect(glyphRun("small", "Ä")).toEqual([
+      { font: "small", text: "Ä", top: 8, left: 0, right: 83 },
+    ]);
+    expect(glyphRun("large", "€")).toEqual([
+      { font: "large", text: "€", top: 18, left: 1, right: 82 },
+    ]);
+    expect(glyphRun("small", " ")).toEqual([]);
+  });
+
+  it("keeps OCR's text runs but drops art read as a lone ı", () => {
+    const run = (text: string, font = "bold8") => ({
+      text,
+      font,
+      x: 1,
+      x1: 20,
+      y: 8,
+      inverted: false,
+    });
+    expect(messagesOcrRuns([run("Hello"), run("ı", "large13"), run("Use")], "t")).toEqual([
+      { font: "small", text: "Hello", top: 8, left: 1, right: 19 },
+      { font: "small", text: "Use", top: 8, left: 1, right: 19 },
     ]);
   });
 });

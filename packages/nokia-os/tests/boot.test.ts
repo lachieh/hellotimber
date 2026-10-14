@@ -187,8 +187,8 @@ describe("the welcome note (W)", () => {
   });
 
   it("draws a note with characters the large face lacks without them, and never throws", () => {
-    const note = "Hi €";
-    expect(missingStockGlyphs(note, "large")).toEqual(["€"]);
+    const note = "Hi ~";
+    expect(missingStockGlyphs(note, "large")).toEqual(["~"]);
     expect(welcomeNoteLines(note)).toEqual(["Hi"]);
     const rig = stockRig({ storage: seededStorage({ phoneSecurity: false, welcomeNote: note }) });
     powerOn(rig);
