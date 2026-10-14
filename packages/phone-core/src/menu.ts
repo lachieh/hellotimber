@@ -108,8 +108,22 @@ export abstract class MenuEntry<Metadata = unknown> {
   abstract accept<Result>(visitor: MenuEntryVisitor<Metadata, Result>): Result;
 }
 
+/** How a submenu level is drawn: a list of rows, or one item per screen. */
+export type MenuPresentation = "rows" | "pages";
+
+export interface SubmenuOptions<Metadata = unknown> {
+  presentation?: MenuPresentation; // default "rows"
+  /**
+   * Current-value text for a child (e.g. "Off"); undefined = none. Opaque host function.
+   * Method syntax keeps SubmenuEntry covariant in Metadata, like the other entry kinds.
+   */
+  detail?(child: MenuEntry<Metadata>): string | undefined;
+}
+
 export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
   readonly children: MenuLevel<Metadata>;
+  readonly presentation: MenuPresentation;
+  readonly #options: SubmenuOptions<Metadata>;
 
   constructor(
     slug: MenuSlug,
@@ -117,11 +131,27 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
     label: string,
     children: MenuLevel<Metadata>,
     metadata?: Metadata,
+    options: SubmenuOptions<Metadata> = {},
   ) {
     super(slug, order, label, metadata);
     if (!(children instanceof MenuLevel)) throw new Error("Submenu entry requires a menu level.");
+    const presentation = options.presentation ?? "rows";
+    if (presentation !== "rows" && presentation !== "pages") {
+      throw new Error(`Submenu presentation "${String(presentation)}" must be "rows" or "pages".`);
+    }
+    if (options.detail !== undefined && typeof options.detail !== "function") {
+      throw new Error("Submenu detail must be a function.");
+    }
     this.children = children;
+    this.presentation = presentation;
+    this.#options = { ...options };
     Object.freeze(this);
+  }
+
+  /** The host detail reader's text for `child`; undefined without a reader or a string value. */
+  detailOf(child: MenuEntry<Metadata>): string | undefined {
+    const value = this.#options.detail?.(child);
+    return typeof value === "string" ? value : undefined;
   }
 
   accept<Result>(visitor: MenuEntryVisitor<Metadata, Result>): Result {

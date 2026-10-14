@@ -17,6 +17,7 @@ import type {
   ApplicationContext,
   Phone,
   PhoneApplicationSession,
+  PhoneConfig,
   PhoneSnapshot,
 } from "../src/index";
 
@@ -96,8 +97,12 @@ function animatedMenu(): PhoneMenu {
 }
 
 /** A booted phone on a virtual clock that only ever advances through `advance`. */
-function rig(): { phone: Phone; at: () => number; advance: (ms: number) => void } {
-  const phone = createPhone({ menu: animatedMenu(), bootMs: 0 });
+function rig(overrides: Partial<PhoneConfig> = {}): {
+  phone: Phone;
+  at: () => number;
+  advance: (ms: number) => void;
+} {
+  const phone = createPhone({ menu: animatedMenu(), bootMs: 0, ...overrides });
   let now = 0;
   phone.tick(now);
   phone.pressKey("power", 1000);
@@ -137,7 +142,7 @@ describe("animated menu graphics", () => {
       total: 4,
       iconId: "alpha",
       iconFrame: 0,
-      menuIndicator: { segments: [1], awaitingNext: false },
+      menuIndicator: { segments: [1], awaitingNext: false, awaitingFirst: true },
     });
     phone.pressKey("down");
     expect(phone.screen).not.toHaveProperty("iconFrame");
@@ -255,5 +260,73 @@ describe("animated menu graphics", () => {
     const seen = watch(phone, at);
     advance(1000);
     expect(seen).toEqual([]);
+  });
+});
+
+describe("menu open delay", () => {
+  it("keeps standby on screen, marked leaving, until the carousel opens", () => {
+    const { phone, at, advance } = rig({ carrier: "NET", menuOpenDelayMs: 39 });
+    const seen: Array<[number, PhoneSnapshot["screen"]]> = [];
+    phone.subscribe((snap) => seen.push([at(), snap.screen]));
+    phone.pressKey("navi");
+    expect(phone.path).toBe("menu");
+    advance(200);
+    expect(seen.map(([time, screen]) => [time - 1000, screen])).toEqual([
+      [
+        0,
+        {
+          kind: "standby",
+          carrier: "NET",
+          clock: undefined,
+          signal: 4,
+          battery: 4,
+          leaving: true,
+        },
+      ],
+      [39, expect.objectContaining({ kind: "menu-carousel", iconFrame: 0 })],
+      // The icon timeline starts when the carousel opens, not at the key press.
+      [139, expect.objectContaining({ kind: "menu-carousel", iconFrame: 1 })],
+      [189, expect.objectContaining({ kind: "menu-carousel", iconFrame: 2 })],
+    ]);
+  });
+
+  it("times the shortcut window from the Menu press", () => {
+    const { phone, advance } = rig({ menuOpenDelayMs: 39, shortcutWindowMs: 2948 });
+    phone.pressKey("navi");
+    advance(2947);
+    expect(phone.screen).toMatchObject({ menuIndicator: { awaitingFirst: true } });
+    advance(1);
+    expect(phone.screen).toMatchObject({
+      menuIndicator: { segments: [1], awaitingNext: false },
+    });
+    expect(phone.screen).not.toHaveProperty("menuIndicator.awaitingFirst");
+  });
+
+  it("opens at once when a key moves the carousel during the delay", () => {
+    const { phone, advance } = rig({ menuOpenDelayMs: 39 });
+    phone.pressKey("navi");
+    advance(10);
+    phone.pressKey("down");
+    expect(phone.screen).toMatchObject({ kind: "menu-carousel", iconId: "beta" });
+  });
+
+  it("returns to standby when C is pressed during the delay", () => {
+    const { phone, advance } = rig({ menuOpenDelayMs: 39 });
+    phone.pressKey("navi");
+    advance(10);
+    phone.pressKey("c");
+    expect(phone.path).toBe("standby");
+    expect(phone.screen).not.toHaveProperty("leaving");
+  });
+
+  it("does not delay path navigation to the menu", () => {
+    const { phone } = rig({ menuOpenDelayMs: 39 });
+    phone.navigate("menu");
+    expect(phone.screen.kind).toBe("menu-carousel");
+  });
+
+  it("rejects a negative or fractional delay", () => {
+    expect(() => rig({ menuOpenDelayMs: -1 })).toThrow(/menuOpenDelayMs/);
+    expect(() => rig({ menuOpenDelayMs: 1.5 })).toThrow(/menuOpenDelayMs/);
   });
 });

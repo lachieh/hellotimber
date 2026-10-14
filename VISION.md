@@ -181,6 +181,7 @@ export type ScreenModel =
       battery: 0 | 1 | 2 | 3 | 4;
       indicators?: StandbyIndicators;
       notice?: { text: string; softkey: string }; // e.g. "1 message received" + Read
+      leaving?: true; // only during PhoneConfig.menuOpenDelayMs, between Menu and the carousel
     }
   | {
       kind: "menu-carousel";
@@ -265,7 +266,7 @@ export type MenuPresentation = "rows" | "pages";
 export interface SubmenuOptions<Metadata = unknown> {
   presentation?: MenuPresentation; // default "rows"
   /** Current-value text for a child (e.g. "Off"); undefined = none. Opaque host function. */
-  detail?: (child: MenuEntry<Metadata>) => string | undefined;
+  detail?(child: MenuEntry<Metadata>): string | undefined; // method syntax: keeps SubmenuEntry covariant
 }
 
 export abstract class MenuEntry<Metadata = unknown> {
@@ -288,6 +289,8 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
   );
   readonly children: MenuLevel<Metadata>;
   readonly presentation: MenuPresentation;
+  /** The options' detail reader for `child` (re-read on every tick); undefined unless it returns a string. */
+  detailOf(child: MenuEntry<Metadata>): string | undefined;
 }
 
 export class ListEntry<Metadata = unknown> extends MenuEntry<Metadata> {
@@ -381,6 +384,10 @@ export interface PhoneConfig<Metadata = unknown> {
   bootTimeline?: Timeline;
   /** Paths opened by ▲/▼ in standby; unknown/absent = no-op. */
   standbyKeys?: { up?: string; down?: string };
+  /** Menu in standby: standby stays on screen with `leaving: true` this long, then the carousel opens. Default 0. */
+  menuOpenDelayMs?: number;
+  /** Menu+digit shortcut window, from the Menu press and after each digit. Default 3000. */
+  shortcutWindowMs?: number;
 }
 
 export interface PhoneSnapshot {
@@ -441,8 +448,13 @@ and mark the model dirty only when they change.
 
 **Kernel policy (plan 13).** phone-core keeps no Nokia or website policy for standby ▲/▼
 (`standbyKeys`, no default) or the operator line (`carrier`, default `""`). It keeps the 800 ms
-long press, the 3000 ms shortcut window, full signal and battery, the softkey strings and the
-`App error` reader, because the stock firmware uses identical values.
+long press, full signal and battery, the softkey strings and the `App error` reader, because the
+stock firmware uses identical values. Two stock timings that the captures pin more tightly than
+the kernel defaults are host config with website-preserving defaults: `shortcutWindowMs`
+(default 3000) and `menuOpenDelayMs` (default 0; while it runs, the path is already `menu` and
+the screen is the standby model with `leaving: true`, and the carousel's timeline and the
+shortcut window are timed from the carousel opening and the Menu press respectively; a key
+that moves the carousel opens it at once, C returns to standby).
 
 Digit shortcuts preserve the current one-digit-per-level behavior: orders 1-9 are direct
 targets, while orders 10-13 remain visible and traversable but are not direct digit targets.

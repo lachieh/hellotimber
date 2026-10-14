@@ -97,6 +97,8 @@ interface Machine<Metadata> {
   carrier: string;
   bootMs: number;
   bootTimeline: Timeline | undefined;
+  menuOpenDelayMs: number;
+  shortcutWindowMs: number;
   /** Last time seen via tick(nowMs). The machine's ONLY clock. */
   now: number;
   mode: Mode<Metadata>;
@@ -187,25 +189,48 @@ function runOnce<Metadata>(m: Machine<Metadata>, fn: () => void): void {
 }
 
 /**
- * Time-driven screen state that has no other change trigger (timeline frames). Comparing it after
- * every run emits a snapshot exactly when the visible frame changes, and never on idle ticks.
+ * Screen state that changes with time or host values but has no other change trigger: timeline
+ * frames, the carousel opening after its delay, the standby clock and a submenu detail. Comparing
+ * it after every run emits a snapshot exactly when one of them changes, never on idle ticks.
  */
 function tickSignature<Metadata>(m: Machine<Metadata>): string {
-  if (m.mode.kind === "boot" && m.bootTimeline !== undefined) {
-    return `boot:${m.bootTimeline.frameAt(m.now - m.mode.startedAt)}`;
+  switch (m.mode.kind) {
+    case "boot":
+      return m.bootTimeline === undefined
+        ? ""
+        : `boot:${m.bootTimeline.frameAt(m.now - m.mode.startedAt)}`;
+    case "standby":
+      return `standby:${JSON.stringify(m.config.clock?.())}`;
+    case "nav": {
+      const frame = shownNavFrame(m.mode.stack);
+      if (frame?.kind === "carousel") {
+        if (m.now < frame.revealedAt) return `opening:${JSON.stringify(m.config.clock?.())}`;
+        const iconFrame = carouselIconFrame(m, frame);
+        return iconFrame === undefined ? "" : `icon:${frame.index}:${iconFrame}`;
+      }
+      if (frame?.kind === "submenu") return `detail:${JSON.stringify(submenuDetail(frame))}`;
+      return "";
+    }
+    default:
+      return "";
   }
-  const carousel = visibleCarousel(m);
-  const iconFrame = carousel === undefined ? undefined : carouselIconFrame(m, carousel);
-  return iconFrame === undefined ? "" : `icon:${carousel!.index}:${iconFrame}`;
 }
 
-/** The carousel frame currently on screen (an action frame shows its parent), if any. */
-function visibleCarousel<Metadata>(m: Machine<Metadata>): CarouselFrame | undefined {
-  if (m.mode.kind !== "nav") return undefined;
-  const stack = m.mode.stack;
+/** The frame drawn for a navigation stack: its top, or the parent of a top action frame. */
+function shownNavFrame<Metadata>(
+  stack: readonly NavFrame<Metadata>[],
+): DisplayNavFrame<Metadata> | undefined {
   const top = stack[stack.length - 1];
   const shown = top?.kind === "action" ? stack[stack.length - 2] : top;
-  return shown?.kind === "carousel" ? shown : undefined;
+  return shown?.kind === "action" ? undefined : shown;
+}
+
+/** The selected child's value from the submenu's detail reader, when it returns a string. */
+function submenuDetail<Metadata>(
+  frame: Extract<NavFrame<Metadata>, { kind: "submenu" }>,
+): string | undefined {
+  const child = frame.entry.children.entries[frame.selected];
+  return child === undefined ? undefined : frame.entry.detailOf(child);
 }
 
 function carouselIconFrame<Metadata>(
@@ -293,6 +318,9 @@ function menuIndicator<Metadata>(m: Machine<Metadata>): MenuIndicator {
   return {
     segments,
     awaitingNext: m.shortcut !== null && m.shortcut.entries.length > 0,
+    ...(m.shortcut !== null && m.shortcut.entries.length === 0
+      ? { awaitingFirst: true as const }
+      : {}),
   };
 }
 
@@ -370,22 +398,10 @@ function renderScreen<Metadata>(m: Machine<Metadata>): ScreenModel {
       };
     }
     case "standby":
-      return {
-        kind: "standby",
-        carrier: m.carrier,
-        clock: m.config.clock?.(),
-        signal: 4,
-        battery: 4,
-        ...(m.notice === null
-          ? {}
-          : { notice: { text: m.notice.text, softkey: m.notice.softkey } }),
-      };
+      return standbyScreen(m, false);
     case "nav": {
-      const frame = m.mode.stack[m.mode.stack.length - 1]!;
-      if (frame.kind !== "action") return renderFrame(m, frame);
-      const parent = m.mode.stack[m.mode.stack.length - 2];
-      if (parent === undefined || parent.kind === "action") return { kind: "off" };
-      return renderFrame(m, parent);
+      const frame = shownNavFrame(m.mode.stack);
+      return frame === undefined ? { kind: "off" } : renderFrame(m, frame);
     }
     case "app": {
       const { origin, session } = m.mode.activation;
@@ -413,12 +429,26 @@ function renderScreen<Metadata>(m: Machine<Metadata>): ScreenModel {
   }
 }
 
+function standbyScreen<Metadata>(m: Machine<Metadata>, leaving: boolean): ScreenModel {
+  return {
+    kind: "standby",
+    carrier: m.carrier,
+    clock: m.config.clock?.(),
+    signal: 4,
+    battery: 4,
+    ...(m.notice === null ? {} : { notice: { text: m.notice.text, softkey: m.notice.softkey } }),
+    ...(leaving ? { leaving: true as const } : {}),
+  };
+}
+
 function renderFrame<Metadata>(
   m: Machine<Metadata>,
   frame: DisplayNavFrame<Metadata>,
 ): ScreenModel {
   switch (frame.kind) {
     case "carousel": {
+      // Until the menu-open delay has passed, standby is still on screen.
+      if (m.now < frame.revealedAt) return standbyScreen(m, true);
       const slot = m.config.menu.entries[frame.index]!;
       const iconFrame = carouselIconFrame(m, frame);
       return {
@@ -431,7 +461,8 @@ function renderFrame<Metadata>(
         menuIndicator: menuIndicator(m),
       };
     }
-    case "submenu":
+    case "submenu": {
+      const detail = submenuDetail(frame);
       return {
         kind: "list",
         title: frame.entry.label,
@@ -439,7 +470,10 @@ function renderFrame<Metadata>(
         selected: frame.selected,
         softkey: "Select",
         menuIndicator: menuIndicator(m),
+        ...(frame.entry.presentation === "pages" ? { presentation: "pages" as const } : {}),
+        ...(detail === undefined ? {} : { detail }),
       };
+    }
     case "list": {
       const items = frame.entry.source.read();
       const { index } = selectedListItem(frame, items);
@@ -692,9 +726,10 @@ function standbyShortPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void 
       return;
     }
   }
+  const standbyKeys = m.config.standbyKeys;
   if (key === "navi") enterMenu(m);
-  else if (key === "up") tryApplyPath(m, "menu/phone-book/search");
-  else if (key === "down") tryApplyPath(m, "menu/call-register/dialled-numbers");
+  else if (key === "up" && standbyKeys?.up !== undefined) tryApplyPath(m, standbyKeys.up);
+  else if (key === "down" && standbyKeys?.down !== undefined) tryApplyPath(m, standbyKeys.down);
 }
 
 function navShortPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void {
@@ -799,11 +834,13 @@ function tryApplyPath<Metadata>(m: Machine<Metadata>, path: string): void {
 }
 
 function enterMenu<Metadata>(m: Machine<Metadata>): void {
-  m.mode = { kind: "nav", stack: [carouselFrame(m, 0, "enter")] };
+  const carousel = carouselFrame(m, 0, "enter");
+  carousel.revealedAt += m.menuOpenDelayMs;
+  m.mode = { kind: "nav", stack: [carousel] };
   m.shortcut = {
     entries: [],
     nextLevel: m.config.menu.entries.map((slot) => slot.entry),
-    deadline: m.now + SHORTCUT_WINDOW_MS,
+    deadline: m.now + m.shortcutWindowMs,
   };
   m.dirty = true;
 }
@@ -820,15 +857,15 @@ function shortcutDigit<Metadata>(m: Machine<Metadata>, digit: number): void {
 
   shortcut.entries.push(entry);
   shortcut.nextLevel = childrenOf(entry);
-  shortcut.deadline = m.now + SHORTCUT_WINDOW_MS;
+  shortcut.deadline = m.now + m.shortcutWindowMs;
   buildNavStack(m, shortcut.entries, true);
 }
 
 function cancelShortcut<Metadata>(m: Machine<Metadata>): void {
   if (m.shortcut === null) return;
-  const wasVisible = m.shortcut.entries.length > 0;
+  // The open window is always visible: awaitingFirst before a digit, awaitingNext after.
   m.shortcut = null;
-  if (wasVisible) m.dirty = true;
+  m.dirty = true;
 }
 
 function buildNavStack<Metadata>(
@@ -955,13 +992,29 @@ function resolveBootMs<Metadata>(config: PhoneConfig<Metadata>): number {
   return bootMs ?? bootTimeline.durationMs;
 }
 
+function nonNegativeInteger(name: string, value: number | undefined, fallback: number): number {
+  if (value === undefined) return fallback;
+  if (!Number.isInteger(value) || value < 0) {
+    throw new Error(`${name} must be a non-negative integer (received ${value}).`);
+  }
+  return value;
+}
+
 export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): Phone {
   const bootMs = resolveBootMs(config);
+  const shortcutWindowMs = nonNegativeInteger(
+    "shortcutWindowMs",
+    config.shortcutWindowMs,
+    SHORTCUT_WINDOW_MS,
+  );
+  if (shortcutWindowMs === 0) throw new Error("shortcutWindowMs must be a positive integer.");
   const m: Machine<Metadata> = {
     config,
-    carrier: config.carrier ?? "LACHLAN",
+    carrier: config.carrier ?? "",
     bootMs,
     bootTimeline: config.bootTimeline,
+    menuOpenDelayMs: nonNegativeInteger("menuOpenDelayMs", config.menuOpenDelayMs, 0),
+    shortcutWindowMs,
     now: 0,
     mode: { kind: "off" },
     notice: null,

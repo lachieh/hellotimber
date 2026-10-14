@@ -2,7 +2,7 @@ import { createPhone } from "@hellotimber/phone-core";
 import type { Phone, PhoneKey } from "@hellotimber/phone-core";
 import { createScreenRenderer } from "@hellotimber/phone-screen";
 import type { ScreenRenderer } from "@hellotimber/phone-screen";
-import { siteMenu } from "../content/menu";
+import { SITE_STANDBY_KEYS, siteMenu } from "../content/menu";
 import { getSettings } from "../settings";
 import { handleSound } from "./audio";
 import { bindPhoneNotices } from "./notice-binding";
@@ -40,6 +40,7 @@ export function getPhoneRuntime(): PhoneRuntime {
   const phone = createPhone({
     menu: siteMenu,
     carrier: "LACHLAN",
+    standbyKeys: SITE_STANDBY_KEYS,
     clock: () => new Date().toTimeString().slice(0, 5), // 24h HH:MM
     ...(reduceMotion ? { bootMs: 0 } : {}),
   });

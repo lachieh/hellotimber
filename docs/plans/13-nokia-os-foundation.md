@@ -262,7 +262,7 @@ export type MenuPresentation = "rows" | "pages";
 export interface SubmenuOptions<Metadata = unknown> {
   presentation?: MenuPresentation; // default "rows"
   /** Current-value text for a child (e.g. "Off"); undefined = none. Opaque host function. */
-  detail?: (child: MenuEntry<Metadata>) => string | undefined;
+  detail?(child: MenuEntry<Metadata>): string | undefined; // method syntax: keeps SubmenuEntry covariant
 }
 
 export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
@@ -299,6 +299,8 @@ export interface PhoneConfig<Metadata = unknown> {
   bootTimeline?: Timeline;
   /** Paths opened by ▲/▼ in standby; unknown/absent = no-op. */
   standbyKeys?: { up?: string; down?: string };
+  menuOpenDelayMs?: number; // Task 5 deviation; default 0 (standby model gains leaving?: true)
+  shortcutWindowMs?: number; // Task 5 deviation; default 3000
 }
 ```
 
@@ -734,22 +736,39 @@ every run (boot frame with `bootTimeline`, visible carousel icon frame). The leg
 `fixtures.ts`; `website/src/phone/phone.ts`, `website/src/content/menu.ts`, and the website
 tests that exercise standby ▲/▼ or assert the indicator while the shortcut window is open.
 
-- [ ] TDD `SubmenuOptions`: `presentation` defaults to rows. `list.presentation` is emitted only
+- [x] TDD `SubmenuOptions`: `presentation` defaults to rows. `list.presentation` is emitted only
       for pages. `detail` is emitted only when the reader returns a string, is evaluated for the
       _selected_ child, and does not change when the selection moves to a child without a value.
-- [ ] TDD tick refresh: when a standby `clock()` value or a visible `detail` value changes
+- [x] TDD tick refresh: when a standby `clock()` value or a visible `detail` value changes
       between ticks, exactly one snapshot is emitted; an unchanged value emits none.
-- [ ] TDD `awaitingFirst`: present from Menu until the first digit, the timeout or a
+- [x] TDD `awaitingFirst`: present from Menu until the first digit, the timeout or a
       non-digit key; absent everywhere else. Update the exact-model assertions that observe
       the open window.
-- [ ] TDD `standbyKeys`: configured paths open on ▲/▼; absent or unknown paths are no-ops.
+- [x] TDD `standbyKeys`: configured paths open on ▲/▼; absent or unknown paths are no-ops.
       Remove the hardcoded slugs from `machine.ts`.
-- [ ] Carrier default `""`; update the power test that pinned `LACHLAN`.
-- [ ] Website: export `SITE_STANDBY_KEYS` (the current two paths) from `website/src/content/menu.ts`.
+- [x] Carrier default `""`; update the power test that pinned `LACHLAN`.
+- [x] Website: export `SITE_STANDBY_KEYS` (the current two paths) from `website/src/content/menu.ts`.
       Pass it in `phone.ts` and in every website test helper that relies on standby ▲/▼. Make no
       other website changes.
-- [ ] `mise exec -- vp run -r test`, `vp run website#build`, `vp check --fix`.
-- [ ] Commit: `feat(phone-core): menu presentation, item details, first-digit state, host standby keys`.
+- [x] `mise exec -- vp run -r test`, `vp run website#build`, `vp check --fix`.
+- [x] Commit: `feat(phone-core): menu presentation, item details, first-digit state, host standby keys`.
+
+Deviation: `menu/01-phone-book.anim` needs two more kernel timings, added as host config with
+website-preserving defaults. (1) Frame 1 is a 39 ms firmware frame (standby with the signal and
+battery ladders and icons erased) before the carousel: `PhoneConfig.menuOpenDelayMs` (default 0)
+keeps the standby model on screen with `leaving: true` for that long after Menu; the path is
+already `menu`, the carousel's icon timeline starts when it opens (Phone book's first step
+1129 ms is counted from the carousel, frame 2), a key that moves the carousel opens it at once,
+and C returns to standby. (2) Aligned on the trigger (frame 1, D9), the dots become `1` at
+2948 ms, not 3000 (capture 2985 ms minus the 37 ms trigger start), so D6's "3000 ms matches" is
+off by 52 ms, outside ±2 ms: `PhoneConfig.shortcutWindowMs` (default 3000) is timed from the Menu
+press and after each digit. nokia-os sets 39 and 2948 (Task 9). Path navigation to `menu` never
+waits for the delay.
+Deviation: phone-core's own `lists.test.ts` used the hardcoded standby ▲; it now passes
+`TEST_STANDBY_KEYS` from `fixtures.ts`. The only website test using standby ▲/▼ was
+`tests/menu-tree.test.ts`; no website test asserted the indicator while the window is open.
+`cancelShortcut` now always emits (the open window is always visible), so the Menu window
+timeout produces one snapshot on the website (no pixel change).
 
 ### Task 6 - phone-screen: injectable painter (TDD)
 

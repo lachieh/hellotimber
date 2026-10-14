@@ -7,7 +7,7 @@ import {
   ReaderEntry,
   TopLevelEntry,
 } from "../src/index";
-import { bootedPhone } from "./fixtures";
+import { bootedPhone, TEST_STANDBY_KEYS } from "./fixtures";
 
 describe("standby keys & menu carousel", () => {
   it("navi in standby opens the carousel on menu 1", () => {
@@ -20,7 +20,7 @@ describe("standby keys & menu carousel", () => {
       menuNumber: 1,
       total: 5,
       iconId: "phone-book",
-      menuIndicator: { segments: [1], awaitingNext: false },
+      menuIndicator: { segments: [1], awaitingNext: false, awaitingFirst: true },
     });
   });
 
@@ -86,8 +86,10 @@ describe("standby keys & menu carousel", () => {
     expect(phone.path).toBe("standby");
   });
 
-  it("standby up opens the phone book name list", () => {
-    const phone = bootedPhone();
+  const standbyKeys = TEST_STANDBY_KEYS;
+
+  it("standby up opens the configured up path", () => {
+    const phone = bootedPhone({ standbyKeys });
     phone.pressKey("up");
     expect(phone.path).toBe("menu/phone-book/search");
     expect(phone.screen).toMatchObject({
@@ -97,15 +99,26 @@ describe("standby keys & menu carousel", () => {
     });
   });
 
-  it("standby down opens the dialled numbers list", () => {
-    const phone = bootedPhone();
+  it("standby down opens the configured down path", () => {
+    const phone = bootedPhone({ standbyKeys });
     phone.pressKey("down");
     expect(phone.path).toBe("menu/call-register/dialled-numbers");
     expect(phone.screen).toMatchObject({ kind: "list", title: "Dialled numbers" });
   });
 
-  it("standby up is a no-op when the menu lacks phone-book/search", () => {
+  it("standby up/down are no-ops without standbyKeys or with one key configured", () => {
+    const phone = bootedPhone();
+    phone.pressKey("up");
+    phone.pressKey("down");
+    expect(phone.path).toBe("standby");
+    const upOnly = bootedPhone({ standbyKeys: { up: standbyKeys.up } });
+    upOnly.pressKey("down");
+    expect(upOnly.path).toBe("standby");
+  });
+
+  it("standby up is a no-op when the configured path is not in the menu", () => {
     const phone = bootedPhone({
+      standbyKeys,
       menu: new PhoneMenu([
         new TopLevelEntry(
           new ReaderEntry(new MenuSlug("only"), new MenuOrder(1), "Only", "x"),

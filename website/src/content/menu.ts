@@ -442,6 +442,12 @@ const simServices = reader(
   { indexing: "noindex", description: "No service.", panel: "sim-services" },
 );
 
+/** Standby ▲/▼ shortcuts: the phone book name list and the dialled-numbers list. */
+export const SITE_STANDBY_KEYS = {
+  up: "menu/phone-book/search",
+  down: "menu/call-register/dialled-numbers",
+} as const;
+
 export const siteMenu: PhoneMenu<WebMetadata> = new PhoneMenu([
   new TopLevelEntry(phoneBook, new MenuGraphic("phone-book")),
   new TopLevelEntry(messages, new MenuGraphic("messages")),

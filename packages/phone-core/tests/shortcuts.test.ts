@@ -15,6 +15,7 @@ import type {
   ApplicationContext,
   KeyEvent,
   MenuEntry,
+  MenuIndicator,
   Phone,
   PhoneApplicationSession,
 } from "../src/index";
@@ -53,7 +54,7 @@ function shortcutPhone(menu = shortcutMenu()): Phone {
   return bootedPhone({ menu });
 }
 
-function indicator(phone: Phone): { segments: readonly number[]; awaitingNext: boolean } {
+function indicator(phone: Phone): MenuIndicator {
   const screen = phone.screen;
   if (screen.kind !== "menu-carousel" && screen.kind !== "list" && screen.kind !== "reader") {
     throw new Error(`Expected a menu screen, received ${screen.kind}.`);
@@ -63,14 +64,63 @@ function indicator(phone: Phone): { segments: readonly number[]; awaitingNext: b
 }
 
 describe("menu shortcuts", () => {
-  it("shows the selected carousel number without a cursor before a digit", () => {
+  it("marks the window as awaiting its first digit before a digit", () => {
     const phone = shortcutPhone();
 
     phone.pressKey("navi");
 
     expect(phone.path).toBe("menu");
     expect(phone.screen).toMatchObject({ kind: "menu-carousel", menuNumber: 1 });
+    expect(indicator(phone)).toEqual({ segments: [1], awaitingNext: false, awaitingFirst: true });
+  });
+
+  it("drops awaitingFirst at the first accepted digit", () => {
+    const phone = shortcutPhone();
+    phone.pressKey("navi");
+    phone.pressKey("5");
+    expect(indicator(phone)).toEqual({ segments: [5], awaitingNext: true });
+  });
+
+  it("drops awaitingFirst exactly when the window times out, with one snapshot", () => {
+    const phone = shortcutPhone(); // booted at now = 1000
+    phone.pressKey("navi");
+    const seen: MenuIndicator[] = [];
+    phone.subscribe((snap) => {
+      if (snap.screen.kind === "menu-carousel") seen.push(snap.screen.menuIndicator);
+    });
+    phone.tick(3_999);
+    expect(indicator(phone).awaitingFirst).toBe(true);
+    phone.tick(4_000);
+    phone.tick(4_500);
+    expect(seen).toEqual([{ segments: [1], awaitingNext: false }]);
+  });
+
+  it("drops awaitingFirst on a non-digit key-down", () => {
+    const phone = shortcutPhone();
+    phone.pressKey("navi");
+    phone.send({ type: "down", key: "down" });
     expect(indicator(phone)).toEqual({ segments: [1], awaitingNext: false });
+    phone.send({ type: "up", key: "down" });
+    expect(indicator(phone)).toEqual({ segments: [2], awaitingNext: false });
+  });
+
+  it("never sets awaitingFirst outside the Menu window", () => {
+    const phone = shortcutPhone();
+    phone.navigate("menu");
+    expect(indicator(phone)).toEqual({ segments: [1], awaitingNext: false });
+    phone.navigate("menu/tones");
+    expect(indicator(phone)).toEqual({ segments: [5], awaitingNext: false });
+  });
+
+  it("uses the configured shortcutWindowMs", () => {
+    const phone = bootedPhone({ menu: shortcutMenu(), shortcutWindowMs: 2948 });
+    phone.tick(1000);
+    phone.pressKey("navi");
+    phone.tick(3947);
+    expect(indicator(phone).awaitingFirst).toBe(true);
+    phone.tick(3948);
+    expect(indicator(phone)).toEqual({ segments: [1], awaitingNext: false });
+    expect(() => bootedPhone({ shortcutWindowMs: 0 })).toThrow(/shortcutWindowMs/);
   });
 
   it("silently closes the initial window when no digit was accepted", () => {

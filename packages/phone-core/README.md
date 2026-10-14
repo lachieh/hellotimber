@@ -60,4 +60,9 @@ unsubscribe();
   new TopLevelEntry(entry, new MenuGraphic("games", icon));
   ```
 
+- Host policy is configuration, not kernel code: `standbyKeys` (paths for ▲/▼ in standby),
+  `carrier` (default `""`), `shortcutWindowMs` (default 3000), and `menuOpenDelayMs`
+  (default 0: standby stays on screen with `leaving: true` before the carousel). The standby
+  `clock()` and submenu `detail` readers are re-read on every tick; a changed value emits one
+  snapshot. Submenus choose `presentation: "rows" | "pages"`.
 - `Bitmap` convention: one byte per pixel, row-major, `pixels.length === width * height`.

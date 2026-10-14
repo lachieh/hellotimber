@@ -49,13 +49,13 @@ describe("power & boot", () => {
     });
   });
 
-  it("carrier defaults to LACHLAN, clock omitted without a clock fn", () => {
+  it("carrier defaults to empty, clock omitted without a clock fn", () => {
     const phone = createPhone(testConfig());
     phone.pressKey("power", 1000);
     const screen = phone.screen;
     expect(screen).toEqual({
       kind: "standby",
-      carrier: "LACHLAN",
+      carrier: "",
       clock: undefined,
       signal: 4,
       battery: 4,

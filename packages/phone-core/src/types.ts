@@ -32,8 +32,10 @@ export interface Bitmap {
 export interface MenuIndicator {
   /** One-based MenuOrder values from the root to the screen being displayed. */
   segments: readonly number[];
-  /** True while another 1-9 shortcut digit is being accepted. */
+  /** True while another 1-9 shortcut digit is being accepted (after at least one digit). */
   awaitingNext: boolean;
+  /** Present only while the shortcut window is open and no digit has been accepted. */
+  awaitingFirst?: true;
 }
 
 export interface StandbyIndicators {
@@ -54,6 +56,8 @@ export type ScreenModel =
       indicators?: StandbyIndicators;
       /** Standby-scoped notice, e.g. "1 message received" + Read. */
       notice?: { text: string; softkey: string };
+      /** Present only during PhoneConfig.menuOpenDelayMs, after Menu and before the carousel. */
+      leaving?: true;
     }
   | {
       kind: "menu-carousel";
@@ -72,6 +76,10 @@ export type ScreenModel =
       selected: number;
       softkey: string;
       menuIndicator?: MenuIndicator;
+      /** Present only for page submenus (one item per screen); absent = rows. */
+      presentation?: "pages";
+      /** The selected child's current value, when the submenu's detail reader returns one. */
+      detail?: string;
     }
   | {
       kind: "reader";
@@ -101,11 +109,17 @@ export interface MenuListItem {
 
 export interface PhoneConfig<Metadata = unknown> {
   menu: PhoneMenu<Metadata>;
-  carrier?: string; // standby line, default 'LACHLAN'
-  clock?: () => string | undefined; // host supplies time; phone shows it
+  carrier?: string; // standby line, default ""
+  clock?: () => string | undefined; // host supplies time; re-read on each tick
   bootMs?: number; // 0 skips boot; otherwise defaults to bootTimeline?.durationMs ?? 3000
   /** Finite boot animation; when set, boot lasts its durationMs. */
   bootTimeline?: Timeline;
+  /** Paths opened by ▲/▼ in standby; unknown/absent = no-op. */
+  standbyKeys?: { up?: string; down?: string };
+  /** Menu in standby: standby stays on screen (`leaving: true`) this long before the carousel. Default 0. */
+  menuOpenDelayMs?: number;
+  /** Length of the Menu+digit shortcut window, from the Menu press and after each digit. Default 3000. */
+  shortcutWindowMs?: number;
 }
 
 export interface PhoneSnapshot {

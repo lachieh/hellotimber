@@ -11,7 +11,7 @@ import {
   wrapLines,
 } from "../src/index";
 import type { MenuListSource, ScreenModel } from "../src/index";
-import { bootedPhone } from "./fixtures";
+import { bootedPhone, TEST_STANDBY_KEYS } from "./fixtures";
 
 function listMenu(source: MenuListSource, label = "Lazy"): PhoneMenu {
   return new PhoneMenu([
@@ -30,7 +30,7 @@ describe("lists, items & readers", () => {
   });
 
   it("list selection moves with up/down and wraps", () => {
-    const phone = bootedPhone();
+    const phone = bootedPhone({ standbyKeys: TEST_STANDBY_KEYS });
     phone.pressKey("up"); // standby shortcut → Search list (Alice, Bob)
     expect(phone.screen).toMatchObject({ kind: "list", items: ["Alice", "Bob"], selected: 0 });
     phone.pressKey("down");
@@ -42,7 +42,7 @@ describe("lists, items & readers", () => {
   });
 
   it("navi opens the selected item as a reader; the path stays at the list", () => {
-    const phone = bootedPhone();
+    const phone = bootedPhone({ standbyKeys: TEST_STANDBY_KEYS });
     phone.pressKey("up");
     phone.pressKey("navi");
     expect(phone.screen).toMatchObject({ kind: "reader", title: "Alice", scrollTop: 0 });
@@ -64,7 +64,7 @@ describe("lists, items & readers", () => {
   });
 
   it("reader scrolls down and up, clamped to the content", () => {
-    const phone = bootedPhone();
+    const phone = bootedPhone({ standbyKeys: TEST_STANDBY_KEYS });
     phone.pressKey("up");
     phone.pressKey("navi"); // open Alice (long body → several wrapped lines)
     phone.pressKey("up"); // already at top — no change

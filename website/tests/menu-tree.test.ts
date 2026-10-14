@@ -12,7 +12,7 @@ import { describe, expect, it } from "vite-plus/test";
 import { chatMessages } from "../src/content/chat";
 import { contacts } from "../src/content/contacts";
 import { diverts } from "../src/content/divert";
-import { siteMenu } from "../src/content/menu";
+import { SITE_STANDBY_KEYS, siteMenu } from "../src/content/menu";
 import { phonebook } from "../src/content/phonebook";
 import type { WebMetadata } from "../src/content/types";
 import { CalculatorApplication } from "../src/phone/applications/calculator";
@@ -314,7 +314,7 @@ describe("siteMenu - handset integration", () => {
   });
 
   it("drives a full phone: standby up reaches the phone book name list", () => {
-    const phone = createPhone({ menu: siteMenu, bootMs: 0 });
+    const phone = createPhone({ menu: siteMenu, bootMs: 0, standbyKeys: SITE_STANDBY_KEYS });
     phone.tick(0);
     phone.pressKey("power", 1000);
     phone.pressKey("up");

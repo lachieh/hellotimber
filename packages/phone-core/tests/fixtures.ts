@@ -115,6 +115,12 @@ export function testMenu(
   ]);
 }
 
+/** Standby ▲/▼ targets in the test menu (the website's shape). */
+export const TEST_STANDBY_KEYS = {
+  up: "menu/phone-book/search",
+  down: "menu/call-register/dialled-numbers",
+} as const;
+
 export function testConfig(
   overrides: Partial<PhoneConfig> = {},
   application?: PhoneApplication,
