@@ -446,47 +446,47 @@ harness runs from the emulator's directory, so relative image paths do not resol
 
 **0a - v6.39 virgin image** (`tools/harness/cap firmware/raw/6.39/combined/3310_v639_ppm_E_virgin_eeprom_2MiB.fls captures/scripts/v639-plan15.cap captures/6.39`):
 
-- [ ] A1 `plan15/boot/gate`: from power-on, record 30 s: `run 8s`; `0 0 0 0 0`, OK; `run 4s`;
+- [x] A1 `plan15/boot/gate`: from power-on, record 30 s: `run 8s`; `0 0 0 0 0`, OK; `run 4s`;
       `1 2 3 4 5`, OK; `run 12s`. Also `audio plan15/boot/gate` (plan 16 wants key beeps).
-- [ ] A2 `plan15/boot/gate-keys/`: shots after `1`, after `2`, after C, after C on the empty
+- [x] A2 `plan15/boot/gate-keys/`: shots after `1`, after `2`, after C, after C on the empty
       entry (plus 2 s: does it do anything?), after typing 11 digits one by one (shot from the
       5th; the most digits the mask takes), after holding C for 1 s with digits typed, and after
       OK with `1 2 3` (record 4 s).
-- [ ] A3 `plan15/boot/gate-lockout`: six wrong codes in a row (record), then `12345`. Report
+- [x] A3 `plan15/boot/gate-lockout`: six wrong codes in a row (record), then `12345`. Report
       whether any lockout note or refusal appears.
-- [ ] A4 `plan15/menu/<number>-wrong` for 6-3-5, 6-3-6-1, 6-4 and 4-5-5 (Call register › Show
+- [x] A4 `plan15/menu/<number>-wrong` for 6-3-5, 6-3-6-1, 6-4 and 4-5-5 (Call register › Show
       call duration, ▼ to Clear timers, Select): navigate, `record ... start` before the Select,
       Select, `run 2s`, `0 0 0 0 0` one key at a time, OK, `run 5s`, C, `run 2s`, `record stop`.
       Use `00000`, never `12345` (D6).
-- [ ] A5 `plan15/menu/6-4-keys/`: in Restore's prompt: shot after `1 2`, after C, after C on
+- [x] A5 `plan15/menu/6-4-keys/`: in Restore's prompt: shot after `1 2`, after C, after C on
       empty (where does it go?), OK on empty, OK with `1 2 3`, 11 digits.
-- [ ] A6 welcome note: Menu 6 2 3, multi-tap `Hi` (`4 4`, wait 1.5 s, `4 4 4`), Options › Save
+- [x] A6 welcome note: Menu 6 2 3, multi-tap `Hi` (`4 4`, wait 1.5 s, `4 4 4`), Options › Save
       (record the note into `plan15/welcome/save-hi`), `saveflash firmware/work/v639-plan15-welcome-hi.fls`,
       `reboot` from it, record 25 s into `plan15/boot/welcome-hi` with the code at 8 s. Repeat
       with a note long enough to need a second line (`plan15/boot/welcome-long`; pick words whose
       letters are easy to type). Record Options › Erase too (`plan15/welcome/erase`).
-- [ ] A7 `plan15/persist/`: choose Tones › Keypad tones › Level 2 and Settings › Phone settings ›
+- [x] A7 `plan15/persist/`: choose Tones › Keypad tones › Level 2 and Settings › Phone settings ›
       Cell info display › On; `saveflash`; `reboot` from it; setup; shots of both pages and both
       lists as they open.
-- [ ] OCR every image under `plan15/` with `tools/menutree/ocr.py` into `plan15/text.json` (plan
+- [x] OCR every image under `plan15/` with `tools/menutree/ocr.py` into `plan15/text.json` (plan
       14's format).
 
 **0b - v5.79 native image, code `62628`** (`firmware/raw/5.79/3310_nr1_v579.fls`; Romanian UI;
 the code is the emulator oracle's, probe O). Navigate with ▼ and read numbers from the indicator:
 v5.79's tree is not crawled, so do not assume v6.39 numbers.
 
-- [ ] B1 `5.79/plan15/before/<v639 number>.png`: the first screen of each option list whose v6.39
+- [x] B1 `5.79/plan15/before/<v639 number>.png`: the first screen of each option list whose v6.39
       virgin value is an artefact (spec §10: the unset lists in Tones and General's Personalise,
       Screen saver › Timeout, Set delay, Message alert tone, Games › Settings, every Settings
       list), and the Profiles names, after the clock setup.
-- [ ] B2 Restore: set a welcome note and change two settings first; then Restore factory
+- [x] B2 Restore: set a welcome note and change two settings first; then Restore factory
       settings with `62628` (record from before OK to the settled page); then `after/` shots of
       the B1 screens, the welcome note page, the profile names and Phone book (data kept?).
-- [ ] B3 Phone security with `62628`: record what follows the code; choose On; then `saveflash`,
+- [x] B3 Phone security with `62628`: record what follows the code; choose On; then `saveflash`,
       `reboot` from it: does the same SIM get the power-on prompt? Then Off again.
-- [ ] B4 Change security code: `62628` → new `11111` → verify `22222` (record the mismatch and
+- [x] B4 Change security code: `62628` → new `11111` → verify `22222` (record the mismatch and
       where it returns) → again with a matching verify (record) → Restore's prompt accepts `11111`?
-- [ ] Write a table in the README section: per v6.39 list, its v5.79 option count and opening
+- [x] Write a table in the README section: per v6.39 list, its v5.79 option count and opening
       index before and after Restore. Lists whose counts differ are marked "no evidence".
 
 **0c - optional, time-boxed to 3 hours: make v6.39 accept the code in-menu.** Known (probes P-R):
@@ -494,24 +494,131 @@ v5.79's tree is not crawled, so do not assume v6.39 numbers.
 verify's entry is not enough. The harness already appends helpers to its copy of `main.c`
 (`build.sh`); add more there and in `dct3cap.c`, never in the emulator's sources.
 
-- [ ] Compare the 8 bytes at 0x111B84 (and verify's other inputs, found by disassembling 0x2E8D50
+- [x] Compare the 8 bytes at 0x111B84 (and verify's other inputs, found by disassembling 0x2E8D50
       with `tools/nokia-dct3-emulator/tools/disfw.c`) at power-on prompt time and at the in-menu
       prompt. If only the block changed, a harness command restoring the power-on bytes before the
       in-menu verify is enough. Otherwise locate v6.39's `encrypt` routine (the one verify calls
       before its compare) and re-provision the block with `encrypt("12345")` in context, as the
       emulator's 2100 hook does.
-- [ ] If achieved: repeat B2-B4 on v6.39 into `6.39/plan15/accept/<flow>`; scroll every option
+- [x] If achieved: repeat B2-B4 on v6.39 into `6.39/plan15/accept/<flow>`; scroll every option
       list after Restore into `6.39/plan15/factory/scroll/<number>` (plan 14's C1 style); and
       record a power-on after Restore into `6.39/boot-clean/power-on` if Restore clears the virgin
       prompt. Document the commands in the README section.
-- [ ] If not achieved within the box: record what was tried in the NOT-ACHIEVED addendum.
+- [x] If not achieved within the box: record what was tried in the NOT-ACHIEVED addendum.
+      (Not needed: 0c was achieved. The addendum records how.)
 
-- [ ] Append "Plan 15 supplementary captures" to `$REF/captures/README.md`, including the
+- [x] Append "Plan 15 supplementary captures" to `$REF/captures/README.md`, including the
       investigation table above and the oracle invocation:
       `cd tools/nokia-dct3-emulator && SECCODE=1 SECCODE_DEBUG=1 SECCODE_GET=0x28819a SECCODE_DECRYPT=0x2e8c1a SECCODE_BLOCK=0x111b84 SECCODE_VERIFY=0x2e8d50 build/dct3_boot_trace <fls> 120000000`.
-- [ ] No commit. Record the outcome under this task, as plans 13 and 14 did: A1-A7 facts (code
+- [x] No commit. Record the outcome under this task, as plans 13 and 14 did: A1-A7 facts (code
       length bounds, C behaviour, lockout, welcome-note layout and duration), B1-B4 flow shapes
       and the default-value table, and 0c's result.
+
+**Task 0 outcome (2026-10-14).** Scripts `captures/scripts/v639-plan15.cap` (0a and 0c),
+`v579-plan15.cap` (0b) and, for a second SIM, `v639-plan15-sim2.cap` and `v579-plan15-sim2.cap`
+(the harness reads the SIM fixture once per process, so each SIM needs its own run; fixture
+`captures/5.79/plan15/sim2-gsm.json`). Output: 6.39/plan15 has 2040 images and 40 timelines,
+including 159 factory scrolls; 6.39/boot-clean has two new timelines; 5.79/plan15 has 1323 images
+and 21 timelines; `plan15/text.json` holds the OCR. The README section
+"Plan 15 supplementary captures" has the commands, the investigation and the v5.79 table. Harness
+additions in `build.sh`/`dct3cap.c`: `peek`, `poke`, `call` (an in-context firmware call); the
+binary is now rebuilt by an atomic rename.
+
+- A1 boot gate (`boot/gate`): self-test 0-3, 42 ms blank, prompt, the mask, boot `Code error`
+  2889 ms, empty prompt, `Code accepted` 689/232/582 ms, hands (308 ms, then ≈255 ms steps, last
+  4215.6 ms), clock wizard. Audio recorded.
+- A2/A5 code entry: the mask is `*` in `bold8` from x 0, top 29. It holds 10 digits; the 11th key
+  is ignored. C deletes the last digit and C held 1 s clears all. C on the empty entry does nothing
+  at the boot gate (still nothing 2 s later) and returns to the page at once in a menu. OK with
+  fewer than 5 digits, or empty, shows `Code error` (≈2.9 s), then the empty prompt.
+- A3 lockout: five consecutive wrong codes lock every entry, the correct code included. Each
+  attempt gets `Code error`, with no other note. The lockout lasts ≈290 s of emulated time
+  (`12345` was rejected 286.7 s after the fifth OK and accepted 291.7 s after it). Any entry
+  during the lockout restarts it. It survives a power cycle. Four wrong codes then `12345`: accepted.
+  The counter (0x111B88, EEPROM) and the routine are shared by the boot gate and the menus. An
+  accepted code resets the counter.
+- A4 in-menu wrong code (6-3-5, 6-3-6-1, 6-4, 4-5-5): page; prompt 50-66 ms after Select; mask;
+  `Code error` 2902-2905 ms; empty prompt; C returns to the page. 4-5-5's page softkey is `OK`.
+- A6 welcome note: the editor counts down from 36 characters. Options are `Save` and `Erase`.
+  `Welcome\nnote\nsaved` and `...erased` are tick notes (686/232/525 ms), then the page. At
+  power-on, the note replaces the hands. It is drawn in `large13` from x 1 at tops 7 and 22 and
+  wraps at the space (`Welcome to` / `my phone`). After the gate, both notes end 6357.9 ms after
+  `Code accepted` appears (`Hi` 4930.7 ms; the long note starts 16 ms later and lasts 4914.7 ms).
+  With no gate (`factory/boot`, after a Restore), `Hi` follows the self-test after a 7 ms partial
+  draw and lasts 5079.5 ms, then the clock wizard. After Erase, the hands play again
+  (`boot/welcome-erased`).
+- A7 persistence: Keypad tones `Level 2` and Cell info display `On` survive `saveflash` +
+  `reboot`. Both pages show the value and both lists open on it.
+- B1/B2 v5.79 Restore: page, prompt, `62628`, then `Revenit la setările originale` (tick
+  689/232/518 ms), then the page. These were unchanged by Restore: the welcome note (shown at the
+  next power-on), the Top scores (1297, 7745) and the language. Reset: the tone and setting lists
+  (README table) and the profile names (slot 3 `MyX` became `Discret` with Discreet's values).
+  Phone book: no evidence, because the SIM holds no names. The table is superseded by the v6.39
+  factory scrolls below. Games › Settings is where they differ: v5.79's factory is `Off`, v6.39's
+  is `On`.
+- B3 Phone security: prompt, code, then the list at once. It has no `Code accepted` note, opens on
+  the stored value and lists `Off` first. OK shows a `Done` tick, then the page. The new-SIM rule
+  holds on both versions. With Phone security On, the same SIM powers on with no prompt. A SIM
+  never used gets the prompt, then `Code accepted`. That SIM gets no prompt the next time. With
+  Phone security Off, a new SIM gets no prompt.
+- B4 Change security code: `Security code:` → `Enter new\nsecurity code:` → `Verify new\nsecurity
+  code:`. A mismatch shows `Code error` (2907-2911 ms) and returns to `Enter new security code:`.
+  A new code must have exactly 5 digits: 0, 4, 6 and 10 digits all show `Code error` and return
+  to `Enter new`. A match shows `Security\ncode\nchanged` (tick 680/232/537 ms), then the page.
+  Afterwards the old code fails and the new one passes (in menus).
+- 0c **achieved** (the fix took about 30 minutes of the 3-hour box). The virgin PMM stores the code record enciphered under
+  another key. The firmware reloads it into 0x111B84 when the clock wizard is left, and from then
+  on no 5-digit code verifies. The firmware's own set-code routine, called in context at standby
+  (`call 0x2e8d96` with `"12345"`, then `saveflash`), re-provisions the record. On the saved image
+  (`firmware/work/v639-plan15-seccode.fls`) every in-menu prompt accepts `12345`. The v6.39 flows
+  are in `6.39/plan15/accept/`:
+  - Phone security, as on v5.79: `Done` tick, then the page.
+  - Change security code, as B4 with v6.39's strings.
+  - Clear timers: `Timers\ncleared` tick, then the page.
+  - Restore: `Settings\nrestored` tick (679-697/217-233/515-546 ms), then the page.
+  - The factory scroll of every submenu, option list and info-pages list is in `factory/scroll/`.
+  - Restore removes the virgin power-on prompt. `6.39/boot-clean/power-on` records the gate-free
+    boot: self-test, then the hands at irregular steps (132, 360, 302, 292, 366, 287, 320 ms, last
+    3951 ms), then the clock wizard.
+  - v6.39's Restore keeps the welcome note and the security code. It resets Phone security to
+    `Off`, the profile names (`Silenth` returned to `Silent`; slot 6's boxes became `(empty)`),
+    the Info service topics (only `Add topic` remains) and the Info service language marks.
+  - Factory values that differ from the virgin EEPROM: Ringing tone `Nokia tune`, Ringing volume
+    `Level 4`, Incoming call alert `Ringing`, Message alert tone `Standard`, Keypad tones
+    `Level 2`, Warning tones `On`, Vibrating alert `On`, Screen saver Timeout `5 seconds`, Own
+    number sending `Set by network` and Set delay `30 seconds`. Each profile has its own values
+    (the README table), and v5.79's agree slot by slot. Every other list keeps its virgin
+    opening.
+
+Deviation (D6, D7; Tasks 6, 8): a lockout exists (A3). The security record needs the
+wrong-attempt counter and the lockout's start. Any entry during the lockout gets `Code error` and
+restarts it, and the lockout survives power-off. The boot gate's C on an empty entry is inert,
+unlike the menus (A2/A5). `changeCode` takes exactly 5 digits (B4).
+
+Deviation (D8; Tasks 2, 7; Open question 3 is moot): Task 0c succeeded. Phone security, Change
+security code, Restore and Clear timers are v6.39 captures (`plan15/accept/`), not compositions.
+`COMPOSED_FLOWS` is empty for them, and Task 2 imports `probe/accept-*`. Change security code's
+mismatch shows `Code error`, not `Codes do not match`, and returns to `Enter new security code:`.
+No in-menu flow shows `Code accepted`. The Phone security list is `Off`, `On`, in that order
+(Task 5's `CODE_SETTINGS` labels). Clear timers' accepted flow shows `Timers cleared`; erasing
+the timers stays with plan 22.
+
+Deviation (D5; Tasks 5, 7): `FACTORY_DEFAULTS` comes from the v6.39 factory scrolls with
+`evidence: "v6.39"`, not from v5.79. `RESTORE_KEEPS` is the welcome note only, plus the security
+record. Restore resets profile names (typed texts), `settings/security-settings/phone-security`
+and the Info service topics and language marks. The follow-ups for plans 17 (profile names are
+reset) and 18 (Restore clears the topics) change accordingly.
+
+Deviation (D9; Tasks 2, 8; plan 13 D12): the gate-free power-on is now a capture
+(`boot-clean/power-on`) and replaces plan 13's composition as the asserted boot. Its hands steps
+differ from `boot/welcome`'s. The welcome-note boot without a gate is captured too
+(`factory/boot`), so it is no longer a composition. Under the gate, the note's end is anchored
+6357.9 ms after `Code accepted`, not at a fixed 4930.7 ms. Task 8 times the gated note from
+`Code accepted` and the gate-free note from the self-test.
+
+Deviation (Conflicts; Task 1): the virgin power-on prompt comes from the stale code record. Its
+handling as an artefact (D4) is unchanged. NOT-ACHIEVED.md has an addendum. Open question 2 is
+settled by evidence: the prompt follows Phone security plus an unknown SIM on v5.79 and on v6.39.
 
 ### Task 1 - Contracts and documentation
 
