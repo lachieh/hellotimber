@@ -887,15 +887,25 @@ placement sequence (`goldenPlacements`), and reads boards without the snake (the
 **Files:** `src/games/snake/{engine.ts,model.ts,keys.ts}` (new), `tests/snake-engine.test.ts`
 (new).
 
-- [ ] `model.ts`: the state (ring of segments with ring indices, heading, pending heading, food,
+- [x] `model.ts`: the state (ring of segments with ring indices, heading, pending heading, food,
       creature, counters, crash state, score, level, maze) and the render model (cells with picture
       ids, food, creature, HUD values, blink visibility); pure, no time.
-- [ ] TDD H1-H8 and H16 with synthetic states: start per maze; wrap; walls; tail-cell rule; pending
+- [x] TDD H1-H8 and H16 with synthetic states: start per maze; wrap; walls; tail-cell rule; pending
       heading and no reverse; every key of H5 including diagonals and rotation; grace tick (saved by
       a turn, else death); growth one tick after eating; fat neck travelling; mouth open; score
       digits (low 16 bits).
-- [ ] `step()` returns `{ cues, events }` (cues per D8; events: `ate`, `crashed`, `died`).
-- [ ] Commit: `feat(nokia-os): Snake II engine movement, keys, collisions and food`.
+- [x] `step()` returns `{ cues, events }` (cues per D8; events: `ate`, `crashed`, `died`).
+- [x] Commit: `feat(nokia-os): Snake II engine movement, keys, collisions and food`.
+
+Deviation: the engine is pure functions over an immutable `SnakeState` (`newSnakeGame`,
+`snakeKey`, `stepSnake`, `snakeRender`; `blinkSnake` in Task 7), so suspend can keep a state
+as it is. Events: `crashed` is the first blocked step (the grace begins), `died` the second (the
+blink begins, cues `crash` and `vibrate`); game over is the session's, after the death steps.
+The state keeps the firmware's current and previous headings (`heading`, `previous`): a blocked
+step sets only `heading`, so grace keys are judged against the blocked direction and the saving
+step's neck is pictured from the last move. `src/firmware/cues.ts` (Task 10's file) is created
+now with the `StockCue` union and `StockCueSink` exactly as the contract, because `stepSnake`
+returns cues. Vibration is 480 ms (Task 0 C10).
 
 ### Task 7 - Engine II: creatures, death and the ring (TDD)
 
