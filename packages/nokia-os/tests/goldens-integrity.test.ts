@@ -16,6 +16,7 @@ import {
   parseTickGolden,
   type Golden,
 } from "../scripts/golden-format.ts";
+import { parseSoundGolden } from "../scripts/sound-format.ts";
 
 const GOLDENS = join(import.meta.dirname, "../goldens");
 
@@ -23,9 +24,10 @@ interface IndexEntry {
   id: string;
   file: string;
   status: string;
-  kind: "still" | "timeline" | "ticks";
-  images: number;
-  frames: number;
+  kind: "still" | "timeline" | "ticks" | "sound";
+  images?: number;
+  frames?: number;
+  events?: number;
   covers?: string[];
   input?: true;
 }
@@ -36,9 +38,7 @@ function fixtureFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) return fixtureFiles(path);
-    return entry.name.endsWith(".lcd.txt") || entry.name.endsWith(".ticks.txt")
-      ? [relative(GOLDENS, path)]
-      : [];
+    return /\.(lcd|ticks|sound)\.txt$/.test(entry.name) ? [relative(GOLDENS, path)] : [];
   });
 }
 
@@ -53,13 +53,13 @@ describe("committed goldens", () => {
     expect(fixtureFiles(GOLDENS).sort()).toEqual(index.map((entry) => entry.file).sort());
   });
 
-  for (const entry of index.filter((e) => e.kind !== "ticks")) {
+  for (const entry of index.filter((e) => e.kind !== "ticks" && e.kind !== "sound")) {
     it(`${entry.id} parses, is 84x48 and matches its index entry`, () => {
       const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
       expect(golden.id).toBe(entry.id);
       expect(entry.file).toBe(`${entry.id}.lcd.txt`);
       expect(golden.status).toBe(entry.status);
-      expect(golden.images).toHaveLength(entry.images);
+      expect(golden.images).toHaveLength(entry.images!);
       for (const image of golden.images) expect(image.pixels).toHaveLength(LCD_WIDTH * LCD_HEIGHT);
       expect(entry.covers).toEqual(golden.covers);
       expect(entry.input === true).toBe(golden.input !== undefined);
@@ -72,7 +72,7 @@ describe("committed goldens", () => {
         expect(typeof golden.triggerFrame).toBe("number");
       }
       if (entry.kind === "timeline") {
-        expect(golden.timeline).toHaveLength(entry.frames);
+        expect(golden.timeline).toHaveLength(entry.frames!);
         if (golden.status === "asserted") expect(golden.triggerFrame).toBeDefined();
       } else {
         expect(golden.timeline).toBeUndefined();
@@ -85,7 +85,7 @@ describe("committed goldens", () => {
     const seen = new Map<string, string>();
     const twice: string[] = [];
     for (const entry of index) {
-      if (entry.status !== "asserted" || entry.kind === "ticks") continue;
+      if (entry.status !== "asserted" || entry.kind === "ticks" || entry.kind === "sound") continue;
       const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
       for (const number of golden.covers ?? []) {
         const key = `${golden.scenario} ${number}`;
@@ -213,5 +213,39 @@ describe("game goldens (plan 23)", () => {
     expect(fixture.status).toBe(entry.status);
     expect(fixture.rows.map((row) => row.level)).toEqual(PERIOD_LEVELS);
     expect(entry.frames).toBe(fixture.rows.length);
+  });
+});
+
+describe("sound goldens (plan 16)", () => {
+  const sounds = index.filter((entry) => entry.kind === "sound");
+  const STATES = /^(virgin|factory|v639-[a-z0-9-]+)$/;
+
+  for (const entry of sounds) {
+    it(`${entry.id} parses and matches its index entry`, () => {
+      const golden = parseSoundGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+      expect(golden.id).toBe(entry.id);
+      expect(entry.file).toBe(`${entry.id}.sound.txt`);
+      expect(golden.status).toBe(entry.status);
+      expect(golden.rows).toHaveLength(entry.events!);
+      expect(golden.state).toMatch(STATES);
+      expect(golden.source).toMatch(/^captures\/6\.39\/plan16\//);
+    });
+  }
+
+  it("has every tone's preview, Level 5, Ascending and volume-list golden", () => {
+    for (const family of [
+      "ringing-tone",
+      "ringing-tone/level-5",
+      "alert/ascending",
+      "ringing-volume/tone",
+    ]) {
+      const ids = sounds.filter((e) => new RegExp(`^sound/${family}/\\d\\d-`).test(e.id));
+      expect(ids, family).toHaveLength(35);
+    }
+  });
+
+  it("leaves no golden pending on plan 16 (the Composer is plan 27's)", () => {
+    expect(index.filter((entry) => entry.status === "pending:16").map((e) => e.id)).toEqual([]);
+    expect(PLACEHOLDER_OWNERS["5-4-*"]).toBe("27");
   });
 });

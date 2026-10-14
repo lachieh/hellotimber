@@ -1,0 +1,48 @@
+sound-golden 1
+id: sound/ringing-volume/tone/08-playground
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/08
+source-sha256: 7b0b1218ff9cf8bfdcbc67cbbf657a307fe80d67c965d0de474a0d40492a137d
+state: factory
+keys: 0:down
+note: Playground stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+169    tone     off
+991    buzzer   831 v=12
+991    vibrator on
+1106   buzzer   off
+1223   buzzer   831 v=12
+1339   buzzer   off
+1455   buzzer   698 v=13
+1571   buzzer   off
+1687   buzzer   932 v=17
+1687   vibrator off
+1803   buzzer   off
+1920   buzzer   831 v=12
+2036   buzzer   off
+2152   buzzer   831 v=12
+2268   buzzer   off
+2384   buzzer   698 v=13
+2616   buzzer   off
+3081   vibrator on
+3082   buzzer   2489 v=17
+3198   buzzer   off
+3321   buzzer   2489 v=17
+3430   buzzer   off
+3547   buzzer   2093.1 v=34
+3663   buzzer   off
+3779   buzzer   2793.9 v=25
+3779   vibrator off
+3895   buzzer   off
+4011   buzzer   2489 v=17
+4127   buzzer   off
+4244   buzzer   2489 v=17
+4360   buzzer   off
+4476   buzzer   2093.1 v=34
+4708   buzzer   off
+4708   vibrator on
+5382   vibrator off

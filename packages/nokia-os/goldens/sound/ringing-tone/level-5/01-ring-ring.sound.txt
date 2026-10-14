@@ -1,0 +1,66 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/01-ring-ring
+status: asserted
+source: captures/6.39/plan16/levels/5/01
+source-sha256: 740fc01298e2d4f55b0d01f71144e3d4c553803b7b63da4c921a580d073de935
+state: factory
+keys: 0:up
+note: Ring ring's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: none
+
+@events
+# t_ms output   state
+41     tone     900 v=0x9104
+188    tone     off
+1013   vibrator on
+1014   buzzer   622 v=11
+1063   buzzer   988 v=16
+1117   buzzer   622 v=11
+1172   buzzer   988 v=16
+1226   buzzer   622 v=11
+1280   buzzer   988 v=16
+1334   buzzer   622 v=11
+1388   buzzer   988 v=16
+1443   buzzer   622 v=11
+1497   buzzer   988 v=16
+1551   buzzer   off
+1551   vibrator off
+1745   buzzer   622 v=11
+1745   vibrator on
+1799   buzzer   988 v=16
+1853   buzzer   622 v=11
+1907   buzzer   988 v=16
+1961   buzzer   622 v=11
+2016   buzzer   988 v=16
+2070   buzzer   622 v=11
+2124   buzzer   988 v=16
+2178   buzzer   622 v=11
+2232   buzzer   988 v=16
+2286   vibrator off
+2287   buzzer   off
+4519   buzzer   622 v=11
+4519   vibrator on
+4572   buzzer   988 v=16
+4626   buzzer   622 v=11
+4680   buzzer   988 v=16
+4735   buzzer   622 v=11
+4789   buzzer   988 v=16
+4843   buzzer   622 v=11
+4897   buzzer   988 v=16
+4951   buzzer   622 v=11
+5020   buzzer   988 v=16
+5067   vibrator off
+5068   buzzer   off
+5270   buzzer   622 v=23
+5270   vibrator on
+5323   buzzer   988 v=92
+5377   buzzer   622 v=23
+5431   buzzer   988 v=92
+5486   buzzer   622 v=23
+5540   buzzer   988 v=92
+5594   buzzer   622 v=23
+5648   buzzer   988 v=92
+5702   buzzer   622 v=23
+5770   buzzer   988 v=92
+5818   vibrator off
+5819   buzzer   off

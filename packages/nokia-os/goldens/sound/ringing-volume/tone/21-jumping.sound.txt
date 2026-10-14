@@ -1,0 +1,46 @@
+sound-golden 1
+id: sound/ringing-volume/tone/21-jumping
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/21
+source-sha256: 67b34aebed3546ca1af7caa5b7b15c810aa00c960f7c98e9028ac6774449953a
+state: factory
+keys: 0:down
+note: Jumping stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+171    tone     off
+993    buzzer   523 v=11
+993    vibrator on
+1116   buzzer   off
+1488   buzzer   1047 v=14
+1612   buzzer   off
+1983   buzzer   988 v=16
+1983   vibrator off
+2107   buzzer   784 v=13
+2231   buzzer   off
+2355   buzzer   880 v=14
+2480   buzzer   784 v=13
+2603   buzzer   off
+2731   buzzer   659 v=12
+2850   buzzer   off
+2981   buzzer   523 v=11
+2981   vibrator on
+3099   buzzer   784 v=13
+3232   buzzer   off
+3355   buzzer   523 v=11
+3483   buzzer   698 v=13
+3603   buzzer   off
+3733   buzzer   523 v=11
+3850   buzzer   off
+3983   vibrator off
+3984   buzzer   659 v=12
+4106   buzzer   523 v=11
+4234   buzzer   587 v=11
+4354   buzzer   off
+4484   buzzer   523 v=11
+4602   buzzer   off
+4602   vibrator on
+5275   vibrator off

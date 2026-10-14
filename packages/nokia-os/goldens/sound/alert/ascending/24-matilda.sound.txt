@@ -1,0 +1,90 @@
+sound-golden 1
+id: sound/alert/ascending/24-matilda
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/24
+source-sha256: d45dba4e557a5e27951c9a29a6e15a0c39371d9eb89cbecadc55eef3e04c5239
+state: factory
+keys: 0:down
+note: Matilda's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 3 (divider rewrite)
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+167    tone     off
+990    vibrator on
+991    buzzer   880 v=3
+1297   buzzer   off
+1321   buzzer   880 v=3
+1460   buzzer   off
+1490   buzzer   880 v=3
+1623   buzzer   off
+1646   buzzer   880 v=3
+1956   buzzer   off
+1991   buzzer   740 v=3
+2320   buzzer   1175 v=6
+2320   vibrator off
+2629   buzzer   off
+2653   buzzer   1175 v=6
+2792   buzzer   off
+2815   buzzer   1175 v=6
+2955   buzzer   off
+2992   buzzer   1109 v=5
+3296   buzzer   off
+3320   buzzer   988 v=4
+3653   buzzer   880 v=3
+3653   vibrator on
+3962   buzzer   off
+3994   buzzer   880 v=3
+4133   buzzer   off
+4156   buzzer   880 v=3
+4295   buzzer   off
+4318   buzzer   988 v=4
+4651   buzzer   880 v=3
+4791   buzzer   off
+4814   buzzer   880 v=3
+4953   buzzer   off
+4977   buzzer   880 v=3
+4977   vibrator off
+5310   buzzer   784 v=4
+5472   buzzer   740 v=3
+5635   buzzer   659 v=3
+5945   buzzer   off
+5968   buzzer   587 v=5
+6130   buzzer   659 v=5
+6293   buzzer   740 v=5
+6293   vibrator on
+6603   buzzer   off
+6626   buzzer   740 v=5
+6765   buzzer   off
+6789   buzzer   740 v=5
+6928   buzzer   off
+6951   buzzer   659 v=5
+7261   buzzer   off
+7284   buzzer   659 v=5
+7617   buzzer   587 v=5
+7617   vibrator off
+7780   buzzer   659 v=5
+7942   buzzer   740 v=5
+8105   buzzer   587 v=5
+8268   buzzer   494 v=4
+8430   buzzer   554 v=5
+8593   buzzer   587 v=5
+8903   buzzer   off
+8926   buzzer   440 v=4
+8926   vibrator on
+9259   buzzer   587 v=5
+9421   buzzer   740 v=5
+9584   buzzer   880 v=6
+9918   buzzer   784 v=9
+10081  buzzer   740 v=8
+10220  buzzer   off
+10254  vibrator off
+10255  buzzer   659 v=7
+10561  buzzer   off
+10584  buzzer   659 v=7
+10723  buzzer   off
+10755  buzzer   659 v=7
+10894  buzzer   off
+10917  buzzer   587 v=7
+11506  buzzer   off

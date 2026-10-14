@@ -3,9 +3,10 @@
 //   mise exec -- vp run @hellotimber/nokia-os#import-captures /path/to/nokia-3310
 //
 // Executes scripts/capture-set.ts plus the plan 14 tree selection (scripts/tree-capture-set.ts
-// over `captures/6.39/tree.json`) and the plan 23 game set (scripts/game-capture-set.ts), writes
-// goldens/<id>.lcd.txt, goldens/game/snake/periods.ticks.txt and goldens/index.json, and deletes
-// fixtures the tables no longer produce. Idempotent: a second run changes nothing.
+// over `captures/6.39/tree.json`), the plan 23 game set (scripts/game-capture-set.ts) and the plan
+// 16 sound set (scripts/sound-capture-set.ts), writes goldens/<id>.lcd.txt,
+// goldens/game/snake/periods.ticks.txt, goldens/sound/**.sound.txt and goldens/index.json, and
+// deletes fixtures the tables no longer produce. Idempotent: a second run changes nothing.
 // Runs under Node's type stripping: imports only node:* and sibling scripts with .ts extensions.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -38,6 +39,8 @@ import {
   type TickGolden,
 } from "./golden-format.ts";
 import { decodeLcdPng } from "./png.ts";
+import { SOUND_NOT_IMPORTED, soundCaptureSet, type SoundCaptureIo } from "./sound-capture-set.ts";
+import { parseSoundGolden, serializeSoundGolden, type SoundGolden } from "./sound-format.ts";
 import {
   probeCaptureSet,
   treeCaptureSet,
@@ -49,16 +52,18 @@ import {
 const CAPTURES = "captures/6.39";
 const GOLDENS = resolve(dirname(fileURLToPath(import.meta.url)), "../goldens");
 
-interface IndexEntry {
-  id: string;
-  file: string;
-  status: string;
-  kind: "still" | "timeline" | "ticks";
-  images: number;
-  frames: number;
-  covers?: readonly string[];
-  input?: true;
-}
+type IndexEntry =
+  | {
+      id: string;
+      file: string;
+      status: string;
+      kind: "still" | "timeline" | "ticks";
+      images: number;
+      frames: number;
+      covers?: readonly string[];
+      input?: true;
+    }
+  | { id: string; file: string; status: string; kind: "sound"; events: number };
 
 interface TimingRow {
   frame: number;
@@ -82,10 +87,12 @@ function main(): void {
   let treeEntries: CaptureSetEntry[];
   let gameEntries: CaptureSetEntry[];
   let periods: ReturnType<typeof periodFixture>;
+  let sounds: SoundGolden[];
   try {
     treeEntries = [...probeCaptureSet(captureIo(root)), ...treeCaptureSet(tree, captureIo(root))];
     gameEntries = gameCaptureSet(gameIo(root));
     periods = periodFixture(gameIo(root));
+    sounds = soundCaptureSet(soundIo(root));
   } catch (error) {
     return fail((error as Error).message);
   }
@@ -150,6 +157,22 @@ function main(): void {
     frames: ticks.rows.length,
   });
 
+  for (const golden of sounds) {
+    const text = serializeSoundGolden(golden);
+    const file = `${golden.id}.sound.txt`;
+    parseSoundGolden(text, file); // the importer never writes an invalid fixture
+    mkdirSync(dirname(join(GOLDENS, file)), { recursive: true });
+    writeIfChanged(join(GOLDENS, file), text);
+    written.add(join(GOLDENS, file));
+    index.push({
+      id: golden.id,
+      file,
+      status: golden.status,
+      kind: "sound",
+      events: golden.rows.length,
+    });
+  }
+
   for (const stale of listFixtures(GOLDENS)) {
     if (!written.has(stale)) {
       rmSync(stale);
@@ -165,7 +188,9 @@ function main(): void {
   );
   console.log(fallbacks.length ? `fallbacks: ${fallbacks.join(", ")}` : "fallbacks: none");
   console.log("not imported (artefacts / out of scope):");
-  for (const [what, why] of Object.entries(NOT_IMPORTED)) console.log(`  ${what}: ${why}`);
+  for (const [what, why] of Object.entries({ ...NOT_IMPORTED, ...SOUND_NOT_IMPORTED })) {
+    console.log(`  ${what}: ${why}`);
+  }
 }
 
 function fail(message: string): never {
@@ -389,6 +414,28 @@ function gameIo(root: string): GameCaptureIo {
   };
 }
 
+/** Reads plan 16 sound recordings: `<dir>.events.csv`, `<dir>/keys.csv`. */
+function soundIo(root: string): SoundCaptureIo {
+  const text = (path: string): string | undefined =>
+    existsSync(join(root, path)) ? readFileSync(join(root, path), "utf8") : undefined;
+  return {
+    events: (dir) => text(`${dir}.events.csv`),
+    keys: (dir) => text(`${dir}/keys.csv`),
+    sha256(dir) {
+      const hash = createHash("sha256");
+      hash.update(readFileSync(join(root, `${dir}.events.csv`)));
+      hash.update(readFileSync(join(root, dir, "keys.csv")));
+      return hash.digest("hex");
+    },
+    list: (dir) =>
+      existsSync(join(root, dir))
+        ? readdirSync(join(root, dir))
+            .filter((f) => f.endsWith(".events.csv"))
+            .map((f) => f.slice(0, -".events.csv".length))
+        : [],
+  };
+}
+
 function sourceLabel(source: CaptureSource): string {
   if (source.kind === "shots") return source.files.map((f) => `${CAPTURES}/${f}`).join(" + ");
   if (source.kind === "frames") {
@@ -431,7 +478,7 @@ function listFixtures(dir: string): string[] {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) out.push(...listFixtures(path));
-    else if (entry.name.endsWith(".lcd.txt") || entry.name.endsWith(".ticks.txt")) out.push(path);
+    else if (/\.(lcd|ticks|sound)\.txt$/.test(entry.name)) out.push(path);
   }
   return out;
 }

@@ -1,0 +1,36 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/05-city-bird
+status: asserted
+source: captures/6.39/plan16/levels/5/05
+source-sha256: c88e89f3a972be7447ee46efdd4ee821d06d8dff42190d839c79e2094a6fb3d0
+state: factory
+keys: 0:down
+note: City bird's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 1 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+167    tone     off
+993    buzzer   2636.9 v=18
+993    vibrator on
+1104   buzzer   off
+1158   buzzer   2636.9 v=18
+1274   buzzer   2349.1 v=22
+1623   buzzer   2636.9 v=18
+1743   buzzer   2349.1 v=22
+2087   buzzer   2636.9 v=18
+2204   buzzer   2349.1 v=22
+2552   buzzer   off
+2552   vibrator off
+5263   vibrator on
+5264   buzzer   2636.9 v=153
+5379   buzzer   off
+5434   buzzer   2636.9 v=153
+5550   buzzer   2349.1 v=122
+5898   buzzer   2636.9 v=153
+6014   buzzer   2349.1 v=122
+6363   buzzer   2636.9 v=153
+6479   buzzer   2349.1 v=122
+6827   buzzer   off
+6827   vibrator off

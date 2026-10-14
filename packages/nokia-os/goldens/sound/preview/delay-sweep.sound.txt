@@ -1,0 +1,58 @@
+sound-golden 1
+id: sound/preview/delay-sweep
+status: asserted
+source: captures/6.39/plan16/preview/delay-sweep
+source-sha256: 50d5b5a2b8b483b15cd01e54783c6bc62f369dcd3e5d54f73d7e6e1d8f14550b
+state: factory
+keys: 0:down 700:down 1600:down 2540:down 3501:down 4501:down
+note: ▼ ×6 from Nokia tune, 0.7-1.2 s apart.
+omitted: 1 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9104
+178    tone     off
+727    tone     900 v=0x9104
+867    tone     off
+1625   tone     900 v=0x9104
+1765   tone     off
+2570   tone     900 v=0x9104
+2710   tone     off
+3531   tone     900 v=0x9104
+3671   tone     off
+4493   buzzer   2489 v=17
+4493   vibrator on
+4530   buzzer   off
+4530   vibrator off
+4531   tone     900 v=0x9104
+4678   tone     off
+5492   buzzer   1319 v=16
+5492   vibrator on
+5537   buzzer   off
+6265   vibrator off
+6266   buzzer   1319 v=16
+6312   buzzer   off
+7040   buzzer   1319 v=16
+7040   vibrator on
+7086   buzzer   off
+7814   buzzer   1319 v=16
+7814   vibrator off
+8008   buzzer   1396.9 v=21
+8201   buzzer   1319 v=16
+8405   buzzer   1175 v=16
+8596   buzzer   1319 v=16
+8596   vibrator on
+8655   buzzer   off
+9378   buzzer   1319 v=16
+9378   vibrator off
+9425   buzzer   off
+10159  buzzer   1319 v=16
+10159  vibrator on
+10200  buzzer   off
+10928  buzzer   1319 v=16
+10928  vibrator off
+11122  buzzer   1396.9 v=21
+11315  buzzer   1319 v=16
+11509  buzzer   1047 v=14
+11702  vibrator on
+11703  buzzer   1175 v=16

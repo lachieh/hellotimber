@@ -1,0 +1,90 @@
+sound-golden 1
+id: sound/alert/ascending/12-croak
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/12
+source-sha256: fabc39c1afd170683076d647394023233ac587b111c759c70fb75bea1c3b0880
+state: factory
+keys: 0:down
+note: Croak's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+168    tone     off
+989    vibrator on
+990    buzzer   440 v=3
+1004   buzzer   off
+1019   buzzer   440 v=3
+1035   buzzer   off
+1050   buzzer   440 v=3
+1066   buzzer   off
+1081   buzzer   440 v=3
+1097   buzzer   off
+1112   buzzer   440 v=3
+1128   buzzer   off
+1156   buzzer   440 v=3
+1166   buzzer   off
+1569   buzzer   440 v=3
+1585   buzzer   off
+1600   buzzer   440 v=3
+1616   buzzer   off
+1631   buzzer   440 v=3
+1656   buzzer   off
+1670   buzzer   440 v=3
+1685   buzzer   off
+1701   buzzer   440 v=3
+1716   buzzer   off
+1732   buzzer   440 v=3
+1747   buzzer   off
+2157   buzzer   440 v=3
+2165   buzzer   off
+2181   buzzer   440 v=3
+2196   buzzer   off
+2212   buzzer   440 v=3
+2227   buzzer   off
+2243   buzzer   440 v=3
+2258   buzzer   off
+2274   buzzer   440 v=3
+2289   buzzer   off
+2305   buzzer   440 v=3
+2320   buzzer   off
+2336   vibrator off
+4761   buzzer   440 v=4
+4761   vibrator on
+4776   buzzer   off
+4792   buzzer   440 v=4
+4807   buzzer   off
+4823   buzzer   440 v=4
+4838   buzzer   off
+4853   buzzer   440 v=4
+4869   buzzer   off
+4884   buzzer   440 v=4
+4912   buzzer   off
+4923   buzzer   440 v=4
+4939   buzzer   off
+5341   buzzer   440 v=4
+5357   buzzer   off
+5372   buzzer   440 v=4
+5388   buzzer   off
+5412   buzzer   440 v=4
+5426   buzzer   off
+5442   buzzer   440 v=4
+5457   buzzer   off
+5473   buzzer   440 v=4
+5488   buzzer   off
+5504   buzzer   440 v=4
+5519   buzzer   off
+5922   buzzer   440 v=4
+5937   buzzer   off
+5953   buzzer   440 v=4
+5968   buzzer   off
+5984   buzzer   440 v=4
+5999   buzzer   off
+6015   buzzer   440 v=4
+6030   buzzer   off
+6046   buzzer   440 v=4
+6061   buzzer   off
+6077   buzzer   440 v=4
+6092   buzzer   off
+6108   vibrator off

@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/note/4-6-2
+status: asserted
+source: captures/6.39/plan16/notes/4-6-2
+source-sha256: e0c31691fa32641b54d083c6c2786f2b7ce92121f4be3dab2b49c99aab533d60
+state: factory
+keys: 0:navi
+note: OK on 4-6-2 (factory).
+omitted: none
+
+@events
+# t_ms output   state
+24     tone     900 v=0x9104
+176    tone     off

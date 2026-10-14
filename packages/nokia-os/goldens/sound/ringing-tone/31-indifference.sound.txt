@@ -1,0 +1,103 @@
+sound-golden 1
+id: sound/ringing-tone/31-indifference
+status: asserted
+source: captures/6.39/plan16/ringing-tone/31
+source-sha256: 3dd6320caccd91ce3ded580a4ee7da5d9d4f46ca586076a2ba0109a935e0d723
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from The Buffoon onto Indifference: its preview at Level 4, Vibrating alert On.
+omitted: 1 (divider rewrite), 1 (level rewrite)
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+178    tone     off
+999    vibrator on
+1000   buzzer   1568 v=25
+1223   buzzer   off
+1246   buzzer   1568 v=25
+1339   buzzer   off
+1362   buzzer   1396.9 v=21
+1455   buzzer   off
+1455   vibrator off
+1742   buzzer   1175 v=16
+1835   buzzer   off
+2121   buzzer   988 v=16
+2214   buzzer   off
+2268   vibrator on
+2269   buzzer   1396.9 v=21
+2725   buzzer   off
+2748   buzzer   1396.9 v=21
+2841   buzzer   off
+2864   vibrator off
+2865   buzzer   1175 v=16
+2957   buzzer   off
+3245   buzzer   988 v=16
+3338   buzzer   off
+3624   buzzer   784 v=13
+3717   buzzer   off
+4004   buzzer   1245 v=14
+4004   vibrator on
+4228   buzzer   off
+4252   buzzer   1245 v=14
+4344   buzzer   off
+4368   buzzer   1175 v=16
+4461   buzzer   off
+4461   vibrator off
+4747   buzzer   1047 v=14
+4972   buzzer   off
+5026   buzzer   784 v=13
+5088   buzzer   off
+5111   buzzer   880 v=14
+5336   buzzer   off
+5405   buzzer   1047 v=14
+5405   vibrator on
+5792   buzzer   off
+5986   vibrator off
+6954   vibrator on
+7535   vibrator off
+8495   buzzer   1568 v=25
+8495   vibrator on
+8719   buzzer   off
+8743   buzzer   1568 v=25
+8836   buzzer   off
+8859   buzzer   1396.9 v=21
+8952   buzzer   off
+8952   vibrator off
+9238   buzzer   1175 v=16
+9331   buzzer   off
+9618   buzzer   988 v=16
+9711   buzzer   off
+9765   buzzer   1396.9 v=21
+9765   vibrator on
+10223  buzzer   off
+10246  buzzer   1396.9 v=21
+10339  buzzer   off
+10362  buzzer   1175 v=16
+10362  vibrator off
+10455  buzzer   off
+10742  buzzer   988 v=16
+10834  buzzer   off
+11121  buzzer   784 v=13
+11214  buzzer   off
+11500  vibrator on
+11501  buzzer   1245 v=14
+11725  buzzer   off
+11748  buzzer   1245 v=14
+11841  buzzer   off
+11864  buzzer   1175 v=16
+11957  buzzer   off
+11957  vibrator off
+12244  buzzer   1047 v=14
+12468  buzzer   off
+12523  buzzer   784 v=13
+12584  buzzer   off
+12608  buzzer   880 v=14
+12832  buzzer   off
+12894  vibrator on
+12895  buzzer   1047 v=14
+13281  buzzer   off
+13475  vibrator off
+14443  vibrator on
+15024  vibrator off
+@loop 1000 7495

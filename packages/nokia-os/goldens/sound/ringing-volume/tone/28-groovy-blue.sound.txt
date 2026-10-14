@@ -1,0 +1,24 @@
+sound-golden 1
+id: sound/ringing-volume/tone/28-groovy-blue
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/28
+source-sha256: 6a8920d9f0d171c5ca4813956e45a131fa66675e6746277fc6666c9ce8c9d275
+state: factory
+keys: 0:down
+note: Groovy Blue stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: none
+
+@events
+# t_ms output   state
+24     tone     900 v=0x9104
+167    tone     off
+988    buzzer   1396.9 v=21
+1104   buzzer   off
+3312   buzzer   1047 v=14
+3312   vibrator on
+3428   buzzer   1245 v=14
+3544   buzzer   1047 v=14
+3660   buzzer   1245 v=14
+3776   buzzer   1396.9 v=21
+3892   buzzer   off
+3892   vibrator off

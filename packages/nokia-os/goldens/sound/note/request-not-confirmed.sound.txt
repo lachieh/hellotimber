@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/note/request-not-confirmed
+status: asserted
+source: captures/6.39/plan16/notes/request-not-confirmed
+source-sha256: 0a6d1a624e58a79bd319b2fab6975da4c6531a26e1b1b7b13276bb53e99cbfc9
+state: factory
+keys: 0:navi 10060:navi
+note: Call divert › Cancel all diverts: Requesting, Quit, Request not confirmed (silent).
+omitted: none
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9104
+169    tone     off
+10120  tone     900 v=0x9104
+10244  tone     off

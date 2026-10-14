@@ -1,0 +1,36 @@
+sound-golden 1
+id: sound/alert/ascending/11-rocket
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/11
+source-sha256: 70b0ef0e41435e1be042b12e7a22049b9255f921c533b5399d3644de032b9114
+state: factory
+keys: 0:down
+note: Rocket's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+40     tone     900 v=0x9104
+182    tone     off
+1004   buzzer   2910.2 v=9
+1004   vibrator on
+1119   buzzer   2852.8 v=8
+1235   buzzer   2796.9 v=7
+1351   buzzer   2739.7 v=7
+1468   buzzer   2683.7 v=6
+1584   buzzer   2626.8 v=6
+1700   buzzer   2571.2 v=6
+1816   buzzer   2515 v=7
+2293   buzzer   off
+2293   vibrator off
+5000   buzzer   2910.2 v=14
+5000   vibrator on
+5116   buzzer   2852.8 v=13
+5232   buzzer   2796.9 v=11
+5348   buzzer   2739.7 v=11
+5464   buzzer   2683.7 v=10
+5580   buzzer   2626.8 v=8
+5696   buzzer   2571.2 v=9
+5813   buzzer   2515 v=10
+6277   buzzer   off
+6277   vibrator off

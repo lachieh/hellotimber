@@ -1,0 +1,37 @@
+sound-golden 1
+id: sound/ringing-tone/05-city-bird
+status: asserted
+source: captures/6.39/plan16/ringing-tone/05
+source-sha256: a96de92133a744b41fefbb55cc69f7d845482b79cadb2ffdb1f0cac1a4d4b5ed
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Bee onto City bird: its preview at Level 4, Vibrating alert On.
+omitted: none
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9104
+170    tone     off
+992    buzzer   2636.9 v=18
+992    vibrator on
+1107   buzzer   off
+1162   buzzer   2636.9 v=18
+1278   buzzer   2349.1 v=22
+1626   buzzer   2636.9 v=18
+1742   buzzer   2349.1 v=22
+2091   buzzer   2636.9 v=18
+2207   buzzer   2349.1 v=22
+2566   buzzer   off
+2566   vibrator off
+5274   vibrator on
+5275   buzzer   2636.9 v=18
+5390   buzzer   off
+5445   buzzer   2636.9 v=18
+5571   buzzer   2349.1 v=22
+5917   buzzer   2636.9 v=18
+6033   buzzer   2349.1 v=22
+6382   buzzer   2636.9 v=18
+6498   buzzer   2349.1 v=22
+6846   buzzer   off
+6846   vibrator off
+@loop 992 4283

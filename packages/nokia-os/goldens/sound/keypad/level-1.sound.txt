@@ -1,0 +1,28 @@
+sound-golden 1
+id: sound/keypad/level-1
+status: asserted
+source: captures/6.39/plan16/keypad/levels/1
+source-sha256: d01c262c7db2df51a22ae4ec3f9d2b996db42dd643349b4264bccafdcabb11d0
+state: factory
+keys: 0:navi 1060:down 2120:down 3180:c 4241:c+1500 9791:navi 10852:c+1500
+note: Keypad tones Level 1: Menu, ▼, ▼, C, C held, Menu after 4 s, C held.
+omitted: none
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9108
+173    tone     off
+1096   tone     900 v=0x9108
+1242   tone     off
+2141   tone     900 v=0x9108
+2287   tone     off
+3206   tone     900 v=0x9108
+3349   tone     off
+4268   tone     900 v=0x9108
+4410   tone     off
+4747   tone     900 v=0x9108
+4890   tone     off
+9861   tone     900 v=0x9108
+9985   tone     off
+10875  tone     900 v=0x9108
+11016  tone     off

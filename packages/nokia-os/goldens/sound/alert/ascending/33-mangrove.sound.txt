@@ -1,0 +1,130 @@
+sound-golden 1
+id: sound/alert/ascending/33-mangrove
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/33
+source-sha256: edd0306980bba95c9051f36d315cfef7812ab6aea1a42443a59e00821bacc854
+state: factory
+keys: 0:down
+note: Mangrove's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 5 (divider rewrite)
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+173    tone     off
+987    buzzer   2636.9 v=6
+994    buzzer   off
+1017   buzzer   2636.9 v=6
+1025   buzzer   off
+1048   buzzer   2636.9 v=6
+1056   buzzer   off
+4061   vibrator on
+4062   buzzer   2636.9 v=6
+4069   buzzer   off
+4092   buzzer   2636.9 v=6
+4100   buzzer   off
+4123   buzzer   2636.9 v=6
+4131   buzzer   off
+4518   vibrator off
+5587   vibrator on
+6067   vibrator off
+7135   vibrator on
+7136   buzzer   2636.9 v=8
+7143   buzzer   off
+7166   buzzer   2636.9 v=8
+7174   buzzer   off
+7197   buzzer   2636.9 v=8
+7219   buzzer   off
+7600   vibrator off
+8669   vibrator on
+9149   vibrator off
+10224  buzzer   2636.9 v=12
+10224  vibrator on
+10226  buzzer   off
+10249  buzzer   2636.9 v=12
+10257  buzzer   off
+10280  buzzer   2636.9 v=12
+10288  buzzer   off
+10675  vibrator off
+11744  vibrator on
+12226  vibrator off
+13292  vibrator on
+13293  buzzer   2636.9 v=18
+13300  buzzer   off
+13323  buzzer   2636.9 v=18
+13331  buzzer   off
+13354  buzzer   2636.9 v=18
+13362  buzzer   off
+13749  vibrator off
+14818  vibrator on
+15298  vibrator off
+16367  buzzer   2636.9 v=18
+16367  vibrator on
+16374  buzzer   off
+16398  buzzer   2636.9 v=18
+16405  buzzer   off
+16429  buzzer   2636.9 v=18
+16436  buzzer   off
+16824  vibrator off
+17893  vibrator on
+18373  vibrator off
+19442  buzzer   2636.9 v=18
+19442  vibrator on
+19449  buzzer   off
+19473  buzzer   2636.9 v=18
+19487  buzzer   off
+19504  buzzer   2636.9 v=18
+19511  buzzer   off
+19898  vibrator off
+20967  vibrator on
+21447  vibrator off
+22516  buzzer   2636.9 v=18
+22516  vibrator on
+22524  buzzer   off
+22547  buzzer   2636.9 v=18
+22554  buzzer   off
+22578  buzzer   2636.9 v=18
+22585  buzzer   off
+22973  vibrator off
+24042  vibrator on
+24522  vibrator off
+25591  buzzer   2636.9 v=18
+25591  vibrator on
+25599  buzzer   off
+25622  buzzer   2636.9 v=18
+25630  buzzer   off
+25653  buzzer   2636.9 v=18
+25661  buzzer   off
+26048  vibrator off
+27116  vibrator on
+27596  vibrator off
+28665  buzzer   2636.9 v=18
+28665  vibrator on
+28673  buzzer   off
+28696  buzzer   2636.9 v=18
+28704  buzzer   off
+28727  buzzer   2636.9 v=18
+28735  buzzer   off
+29122  vibrator off
+30191  vibrator on
+30672  vibrator off
+31740  vibrator on
+31741  buzzer   2636.9 v=18
+31756  buzzer   off
+31779  buzzer   2636.9 v=18
+31787  buzzer   off
+31810  buzzer   2636.9 v=18
+31818  buzzer   off
+32205  vibrator off
+33274  vibrator on
+33759  vibrator off
+34822  vibrator on
+34823  buzzer   2636.9 v=18
+34830  buzzer   off
+34853  buzzer   2636.9 v=18
+34861  buzzer   off
+34884  buzzer   2636.9 v=18
+34892  buzzer   off
+35279  vibrator off
+36348  vibrator on
+36828  vibrator off

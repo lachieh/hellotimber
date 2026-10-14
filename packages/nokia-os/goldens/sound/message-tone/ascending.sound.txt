@@ -1,0 +1,114 @@
+sound-golden 1
+id: sound/message-tone/ascending
+status: asserted
+source: captures/6.39/plan16/message-tone/ascending
+source-sha256: 0d11fc9d22f0662eedfc375b20f420cb1c72ea580157def3306aadc18fe5fe0e
+state: factory
+keys: 0:down
+note: Tones › Message alert tone: ▼ from Beep once onto Ascending.
+omitted: none
+
+@events
+# t_ms output   state
+38     tone     900 v=0x9104
+183    tone     off
+1004   buzzer   2683.7 v=6
+1004   vibrator on
+1290   buzzer   off
+1383   buzzer   2683.7 v=6
+1476   buzzer   off
+1476   vibrator off
+1569   buzzer   2683.7 v=6
+1855   buzzer   off
+1948   buzzer   2683.7 v=6
+2041   buzzer   off
+2328   buzzer   2683.7 v=6
+2328   vibrator on
+2622   buzzer   off
+2715   buzzer   2683.7 v=6
+3001   vibrator off
+3002   buzzer   off
+3095   buzzer   2683.7 v=6
+3382   buzzer   off
+3668   buzzer   2683.7 v=6
+3955   buzzer   off
+4048   buzzer   2683.7 v=6
+4141   buzzer   off
+4427   buzzer   2683.7 v=6
+4714   buzzer   off
+4807   buzzer   2683.7 v=6
+4900   buzzer   off
+5186   buzzer   2683.7 v=6
+5279   buzzer   off
+5566   buzzer   2683.7 v=6
+5852   buzzer   off
+5945   buzzer   2683.7 v=10
+6038   buzzer   off
+6131   buzzer   2683.7 v=10
+6417   buzzer   off
+6510   buzzer   2683.7 v=10
+6603   buzzer   off
+6890   buzzer   2683.7 v=10
+7176   buzzer   off
+7463   buzzer   2683.7 v=10
+7556   buzzer   off
+7649   buzzer   2683.7 v=10
+7741   buzzer   off
+8028   buzzer   2683.7 v=10
+8314   buzzer   off
+8407   buzzer   2683.7 v=10
+8500   buzzer   off
+8787   buzzer   2683.7 v=10
+9073   buzzer   off
+9166   buzzer   2683.7 v=10
+9453   buzzer   off
+9546   buzzer   2683.7 v=10
+9639   buzzer   off
+10414  buzzer   2683.7 v=14
+10507  buzzer   off
+10600  buzzer   2683.7 v=14
+10886  buzzer   off
+10979  buzzer   2683.7 v=14
+11266  buzzer   off
+11359  buzzer   2683.7 v=14
+11452  buzzer   off
+11738  buzzer   2683.7 v=14
+11831  buzzer   off
+12118  buzzer   2683.7 v=14
+12404  buzzer   off
+12497  buzzer   2683.7 v=14
+12783  buzzer   off
+12889  buzzer   2683.7 v=14
+13171  buzzer   off
+13457  buzzer   2683.7 v=14
+13550  buzzer   off
+13643  buzzer   2683.7 v=22
+13929  buzzer   off
+14022  buzzer   2683.7 v=22
+14309  buzzer   off
+14402  buzzer   2683.7 v=22
+14495  buzzer   off
+14781  buzzer   2683.7 v=22
+14874  buzzer   off
+14967  buzzer   2683.7 v=22
+15254  buzzer   off
+15347  buzzer   2683.7 v=22
+15439  buzzer   off
+15532  buzzer   2683.7 v=22
+15625  buzzer   off
+15912  buzzer   2683.7 v=22
+16005  buzzer   off
+18228  buzzer   2683.7 v=22
+18228  vibrator on
+18515  buzzer   off
+18608  buzzer   2683.7 v=22
+18700  vibrator off
+18701  buzzer   off
+18793  buzzer   2683.7 v=22
+19080  buzzer   off
+19173  buzzer   2683.7 v=22
+19266  buzzer   off
+19552  vibrator on
+19553  buzzer   2683.7 v=22
+19839  buzzer   off
+19932  buzzer   2683.7 v=22

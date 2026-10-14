@@ -1,0 +1,36 @@
+sound-golden 1
+id: sound/keypad/hold
+status: pending:22
+source: captures/6.39/plan16/keypad/hold
+source-sha256: 716aa9f6befa063c0f8bcc8d90cd8979575eecbca2dbcd2424b056b496adc143
+state: factory
+keys: 0:5+1000 2050:c+1500 4601:navi 5661:down+1500 8211:navi 9271:up+1000 11322:c+1500
+note: 5 held at standby (DTMF), C held, ▼ held in the menu (repeats), ▲ held, C held.
+omitted: none
+
+@events
+# t_ms output   state
+29     tone     1336+770 v=0x9104
+1056   tone     off
+2075   tone     900 v=0x9104
+2218   tone     off
+2555   tone     900 v=0x9104
+2698   tone     off
+4631   tone     900 v=0x9104
+4774   tone     off
+5681   tone     900 v=0x9104
+5835   tone     off
+6455   tone     900 v=0x9104
+6602   tone     off
+6935   tone     900 v=0x9104
+7082   tone     off
+8230   tone     900 v=0x9104
+8375   tone     off
+9294   tone     900 v=0x9104
+9436   tone     off
+10071  tone     900 v=0x9104
+10218  tone     off
+11342  tone     900 v=0x9104
+11489  tone     off
+11833  tone     900 v=0x9104
+11977  tone     off

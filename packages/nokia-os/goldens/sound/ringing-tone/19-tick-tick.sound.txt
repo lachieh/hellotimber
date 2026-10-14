@@ -1,0 +1,81 @@
+sound-golden 1
+id: sound/ringing-tone/19-tick-tick
+status: asserted
+source: captures/6.39/plan16/ringing-tone/19
+source-sha256: 76cf46883205d5dcdd3549f05a01ccfaed4a2b45992df0407bf80328f9f78bf0
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Polite onto Tick tick: its preview at Level 4, Vibrating alert On.
+omitted: 3 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+35     tone     900 v=0x9104
+182    tone     off
+997    buzzer   1319 v=16
+997    vibrator on
+1042   buzzer   off
+1773   buzzer   1319 v=16
+1773   vibrator off
+1816   buzzer   off
+2544   vibrator on
+2545   buzzer   1319 v=16
+2591   buzzer   off
+3319   vibrator off
+3320   buzzer   1319 v=16
+3526   buzzer   1396.9 v=21
+3714   buzzer   1319 v=16
+3908   buzzer   1175 v=16
+4102   buzzer   1319 v=16
+4102   vibrator on
+4148   buzzer   off
+4876   buzzer   1319 v=16
+4876   vibrator off
+4922   buzzer   off
+5650   vibrator on
+5651   buzzer   1319 v=16
+5697   buzzer   off
+6425   buzzer   1319 v=16
+6425   vibrator off
+6618   buzzer   1396.9 v=21
+6812   buzzer   1319 v=16
+7005   buzzer   1047 v=14
+7199   buzzer   1175 v=16
+7199   vibrator on
+7245   buzzer   off
+7973   vibrator off
+7974   buzzer   1175 v=16
+8032   buzzer   off
+8755   vibrator on
+8756   buzzer   1175 v=16
+8802   buzzer   off
+9535   buzzer   1175 v=16
+9535   vibrator off
+9723   buzzer   1319 v=16
+9918   buzzer   1175 v=16
+10112  buzzer   1047 v=14
+10305  buzzer   1319 v=16
+10305  vibrator on
+10352  buzzer   off
+11079  vibrator off
+11080  buzzer   1319 v=16
+11126  buzzer   off
+11854  buzzer   1319 v=16
+11854  vibrator on
+11900  buzzer   off
+12628  buzzer   1319 v=16
+12628  vibrator off
+12822  buzzer   1396.9 v=21
+13015  buzzer   1319 v=16
+13209  buzzer   1175 v=16
+13403  buzzer   1319 v=16
+13403  vibrator on
+13449  buzzer   off
+14177  buzzer   1319 v=16
+14177  vibrator off
+14223  buzzer   off
+14951  vibrator on
+14952  buzzer   1319 v=16
+14998  buzzer   off
+15725  vibrator off
+@loop 997 9308

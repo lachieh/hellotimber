@@ -1,0 +1,173 @@
+sound-golden 1
+id: sound/alert/ascending/14-mozart-40
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/14
+source-sha256: 867ea591d108e9beb29eaaff9e09ee42e51aa2f0a31e989f5d9cb85ba1f21a56
+state: factory
+keys: 0:down
+note: Mozart 40's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 4 (divider rewrite)
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9104
+185    tone     off
+991    vibrator on
+992    buzzer   622 v=3
+1107   buzzer   587 v=3
+1192   buzzer   off
+1215   buzzer   587 v=3
+1331   buzzer   off
+1331   vibrator off
+1447   vibrator on
+1448   buzzer   622 v=3
+1564   buzzer   587 v=3
+1649   buzzer   off
+1672   buzzer   587 v=3
+1788   buzzer   off
+1788   vibrator off
+1904   vibrator on
+1905   buzzer   622 v=3
+2020   buzzer   587 v=3
+2106   buzzer   off
+2136   buzzer   587 v=3
+2245   buzzer   off
+2245   vibrator off
+2361   buzzer   932 v=4
+2593   buzzer   off
+2826   buzzer   932 v=4
+2826   vibrator on
+2942   buzzer   880 v=3
+3058   buzzer   784 v=4
+3175   buzzer   off
+3291   vibrator off
+3292   buzzer   784 v=4
+3408   buzzer   698 v=3
+3524   buzzer   622 v=3
+3640   buzzer   off
+3756   buzzer   622 v=3
+3756   vibrator on
+3872   buzzer   587 v=3
+3988   buzzer   523 v=3
+4104   buzzer   off
+4220   vibrator off
+4221   buzzer   523 v=3
+4453   buzzer   off
+4685   vibrator on
+4686   buzzer   587 v=3
+4801   buzzer   523 v=3
+4891   buzzer   off
+4910   buzzer   523 v=3
+5026   buzzer   off
+5026   vibrator off
+5142   buzzer   587 v=3
+5142   vibrator on
+5258   buzzer   523 v=3
+5344   buzzer   off
+5367   buzzer   523 v=4
+5483   buzzer   off
+5483   vibrator off
+5599   buzzer   587 v=5
+5599   vibrator on
+5715   buzzer   523 v=4
+5800   buzzer   off
+5824   buzzer   523 v=4
+5940   buzzer   off
+5940   vibrator off
+6056   buzzer   880 v=6
+6288   buzzer   off
+6520   vibrator on
+6521   buzzer   880 v=6
+6643   buzzer   784 v=6
+6753   buzzer   740 v=5
+6869   buzzer   off
+6985   buzzer   740 v=5
+6985   vibrator off
+7101   buzzer   622 v=5
+7217   buzzer   587 v=5
+7333   buzzer   off
+7450   buzzer   587 v=5
+7450   vibrator on
+7566   buzzer   523 v=4
+7682   buzzer   466 v=4
+7798   buzzer   off
+7914   buzzer   466 v=4
+7914   vibrator off
+8146   buzzer   off
+8379   buzzer   932 v=7
+8495   buzzer   880 v=6
+8580   buzzer   off
+8603   buzzer   880 v=6
+8836   buzzer   1047 v=7
+9068   buzzer   740 v=5
+9068   vibrator on
+9300   buzzer   880 v=6
+9532   vibrator off
+9533   buzzer   784 v=9
+9765   buzzer   587 v=7
+9998   buzzer   off
+10231  buzzer   932 v=11
+10347  buzzer   880 v=8
+10432  buzzer   off
+10455  buzzer   880 v=8
+10687  buzzer   1047 v=10
+10920  buzzer   740 v=8
+10920  vibrator on
+11152  buzzer   880 v=8
+11384  buzzer   784 v=9
+11384  vibrator off
+11617  buzzer   932 v=11
+11849  buzzer   880 v=8
+11965  buzzer   784 v=9
+12081  buzzer   698 v=8
+12197  buzzer   622 v=7
+12314  buzzer   587 v=7
+12314  vibrator on
+12546  buzzer   740 v=8
+12778  buzzer   784 v=9
+13010  vibrator off
+13011  buzzer   880 v=8
+13243  buzzer   932 v=11
+13475  buzzer   1047 v=14
+13591  buzzer   932 v=17
+13707  buzzer   880 v=14
+13940  buzzer   784 v=13
+14172  buzzer   1175 v=16
+14172  vibrator on
+14405  buzzer   off
+14636  vibrator off
+14637  buzzer   1245 v=14
+15101  buzzer   1175 v=16
+15101  vibrator on
+15333  buzzer   off
+15566  buzzer   1245 v=14
+15566  vibrator off
+16030  vibrator on
+16031  buzzer   1175 v=16
+16263  buzzer   off
+16495  buzzer   1245 v=14
+16495  vibrator off
+16961  buzzer   1175 v=16
+16961  vibrator on
+17193  buzzer   1245 v=14
+17425  buzzer   1175 v=16
+17661  buzzer   1245 v=14
+17890  buzzer   1175 v=16
+17890  vibrator off
+17944  buzzer   1245 v=14
+17998  buzzer   1175 v=16
+18052  buzzer   1245 v=14
+18107  buzzer   1175 v=16
+18161  buzzer   1245 v=14
+18215  buzzer   1175 v=16
+18269  buzzer   1245 v=14
+18323  buzzer   1175 v=16
+18378  buzzer   1245 v=14
+18432  buzzer   1175 v=16
+18486  buzzer   1245 v=14
+18540  buzzer   1175 v=16
+18594  buzzer   1245 v=14
+18662  buzzer   1175 v=16
+18773  buzzer   off
+18773  vibrator on
+19237  vibrator off

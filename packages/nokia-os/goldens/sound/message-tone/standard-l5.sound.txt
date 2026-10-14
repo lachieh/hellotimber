@@ -1,0 +1,26 @@
+sound-golden 1
+id: sound/message-tone/standard-l5
+status: asserted
+source: captures/6.39/plan16/message-tone/standard-l5
+source-sha256: 1067e83cbfa42173dd2785a204520890537a1ca267657acb29b3f368ef720612
+state: factory
+keys: 0:down
+note: Tones › Message alert tone: Ringing volume Level 5, ▼ onto Standard.
+omitted: none
+
+@events
+# t_ms output   state
+35     tone     900 v=0x9104
+180    tone     off
+1002   buzzer   1499.9 v=178
+1002   vibrator on
+1195   buzzer   off
+1272   buzzer   1499.9 v=178
+1466   buzzer   off
+1543   vibrator off
+2217   buzzer   1499.9 v=178
+2217   vibrator on
+2415   buzzer   off
+2488   buzzer   1499.9 v=178
+2681   buzzer   off
+2759   vibrator off

@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/profile/general/ringing-tone
+status: asserted
+source: captures/6.39/plan16/profile/general/ringing-tone
+source-sha256: 3331413d0cfdafe90051092faf01f7918ae6dad4ca4770a1b305d077b561ecde
+state: factory
+keys: 0:down
+note: Profiles › General › Personalise › Ringing tone: ▼ from Croak onto Nokia tune.
+omitted: 1 (divider rewrite), 2 (stale frequency)
+
+@events
+# t_ms output   state
+24     tone     900 v=0x9104
+164    tone     off
+985    vibrator on
+986    buzzer   1319 v=16
+1101   buzzer   1175 v=16
+1217   buzzer   740 v=12
+1457   buzzer   831 v=12
+1697   buzzer   1109 v=17
+1697   vibrator off
+1813   buzzer   988 v=16
+1929   buzzer   587 v=11
+2169   buzzer   659 v=12
+2409   vibrator on
+2410   buzzer   988 v=16
+2525   buzzer   880 v=14
+2647   buzzer   554 v=11
+2882   buzzer   659 v=12
+3123   buzzer   880 v=14
+3123   vibrator off
+3851   buzzer   off
+3851   vibrator on
+4578   vibrator off
+7002   vibrator on
+7003   buzzer   1319 v=16
+7118   buzzer   1175 v=16
+7235   buzzer   740 v=12
+7475   buzzer   831 v=12
+7714   vibrator off
+7715   buzzer   1109 v=17
+7831   buzzer   988 v=16
+7947   buzzer   587 v=11
+8187   buzzer   659 v=12
+8427   buzzer   988 v=16
+8427   vibrator on
+8543   buzzer   880 v=14
+8659   buzzer   554 v=11
+8906   buzzer   659 v=12
+9139   vibrator off
+9140   buzzer   880 v=14
+9867   buzzer   off
+9867   vibrator on
+10596  vibrator off

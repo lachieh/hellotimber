@@ -1,0 +1,94 @@
+sound-golden 1
+id: sound/preview/stop-key
+status: asserted
+source: captures/6.39/plan16/preview/stop-key
+source-sha256: 9a4b91c1b3c34b51f3c551ac5fa4f1df2a744fc0aeaf2e7a570db41c3595836f
+state: factory
+keys: 0:down 2560:down
+note: ▼ onto Nokia tune, ▼ again 2.5 s later.
+omitted: 2 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+171    tone     off
+993    buzzer   1319 v=16
+993    vibrator on
+1108   buzzer   1175 v=16
+1230   buzzer   740 v=12
+1464   buzzer   831 v=12
+1704   vibrator off
+1705   buzzer   1109 v=17
+1821   buzzer   988 v=16
+1937   buzzer   587 v=11
+2177   buzzer   659 v=12
+2417   buzzer   988 v=16
+2417   vibrator on
+2533   buzzer   880 v=14
+2586   buzzer   off
+2586   vibrator off
+2587   tone     900 v=0x9104
+2734   tone     off
+3550   buzzer   622 v=11
+3550   vibrator on
+3665   buzzer   587 v=11
+3750   buzzer   off
+3773   buzzer   587 v=11
+3889   buzzer   off
+3889   vibrator off
+4005   vibrator on
+4006   buzzer   622 v=11
+4121   buzzer   587 v=11
+4206   buzzer   off
+4235   buzzer   587 v=11
+4346   buzzer   off
+4346   vibrator off
+4462   buzzer   622 v=11
+4462   vibrator on
+4578   buzzer   587 v=11
+4663   buzzer   off
+4687   buzzer   587 v=11
+4803   buzzer   off
+4803   vibrator off
+4919   buzzer   932 v=17
+5151   buzzer   off
+5384   buzzer   932 v=17
+5384   vibrator on
+5500   buzzer   880 v=14
+5616   buzzer   784 v=13
+5737   buzzer   off
+5848   buzzer   784 v=13
+5848   vibrator off
+5964   buzzer   698 v=13
+6080   buzzer   622 v=11
+6196   buzzer   off
+6313   buzzer   622 v=11
+6313   vibrator on
+6429   buzzer   587 v=11
+6545   buzzer   523 v=11
+6661   buzzer   off
+6777   buzzer   523 v=11
+6777   vibrator off
+7010   buzzer   off
+7242   buzzer   587 v=11
+7242   vibrator on
+7358   buzzer   523 v=11
+7443   buzzer   off
+7467   buzzer   523 v=11
+7583   buzzer   off
+7583   vibrator off
+7699   buzzer   587 v=11
+7699   vibrator on
+7815   buzzer   523 v=11
+7900   buzzer   off
+7923   buzzer   523 v=11
+8039   vibrator off
+8040   buzzer   off
+8156   buzzer   587 v=11
+8156   vibrator on
+8272   buzzer   523 v=11
+8357   buzzer   off
+8380   buzzer   523 v=11
+8496   buzzer   off
+8496   vibrator off
+8613   buzzer   880 v=14

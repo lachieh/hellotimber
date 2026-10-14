@@ -1,0 +1,161 @@
+sound-golden 1
+id: sound/ringing-tone/26-auld-lang-syne
+status: asserted
+source: captures/6.39/plan16/ringing-tone/26
+source-sha256: 0e66c804cd2df4234fca8c77acedaf55c9142b2cfe1cbfd431e2078b66ecc841
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Merry Xmas onto Auld lang syne: its preview at Level 4, Vibrating alert On.
+omitted: 4 (divider rewrite)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+183    tone     off
+997    buzzer   440 v=10
+1445   buzzer   off
+1471   buzzer   587 v=11
+1471   vibrator on
+2165   buzzer   off
+2165   vibrator off
+2188   buzzer   587 v=11
+2397   buzzer   off
+2421   buzzer   587 v=11
+2870   buzzer   off
+2893   buzzer   740 v=12
+3343   buzzer   off
+3366   vibrator on
+3367   buzzer   659 v=12
+4063   buzzer   off
+4063   vibrator off
+4087   buzzer   587 v=11
+4295   buzzer   off
+4319   buzzer   659 v=12
+4768   buzzer   off
+4791   buzzer   740 v=12
+5240   buzzer   off
+5264   buzzer   587 v=11
+5264   vibrator on
+5960   buzzer   off
+5960   vibrator off
+5984   buzzer   587 v=11
+6193   buzzer   off
+6228   buzzer   740 v=12
+6673   buzzer   off
+6696   buzzer   880 v=14
+7145   buzzer   off
+7168   vibrator on
+7169   buzzer   988 v=16
+7865   vibrator off
+8074   buzzer   off
+8609   buzzer   988 v=16
+9058   buzzer   off
+9081   buzzer   880 v=14
+9081   vibrator on
+9778   buzzer   off
+9778   vibrator off
+9801   buzzer   740 v=12
+10011  buzzer   off
+10035  buzzer   740 v=12
+10485  buzzer   off
+10507  buzzer   587 v=11
+10956  buzzer   off
+10986  buzzer   659 v=12
+10986  vibrator on
+11676  buzzer   off
+11676  vibrator off
+11699  buzzer   587 v=11
+11908  buzzer   off
+11932  buzzer   659 v=12
+12381  buzzer   off
+12404  buzzer   740 v=12
+12853  buzzer   off
+12876  vibrator on
+12877  buzzer   587 v=11
+13573  buzzer   off
+13573  vibrator off
+13597  buzzer   494 v=10
+13805  buzzer   off
+13829  buzzer   494 v=10
+14278  buzzer   off
+14301  buzzer   440 v=10
+14750  buzzer   off
+14774  buzzer   587 v=11
+14774  vibrator on
+15470  vibrator off
+15679  buzzer   off
+16214  buzzer   988 v=16
+16663  buzzer   off
+16686  buzzer   880 v=14
+16686  vibrator on
+17384  buzzer   off
+17384  vibrator off
+17407  buzzer   740 v=12
+17616  buzzer   off
+17640  buzzer   740 v=12
+18089  buzzer   off
+18112  buzzer   587 v=11
+18561  buzzer   off
+18584  vibrator on
+18585  buzzer   659 v=12
+19281  buzzer   off
+19281  vibrator off
+19304  buzzer   587 v=11
+19513  buzzer   off
+19537  buzzer   659 v=12
+19999  buzzer   off
+20017  buzzer   988 v=16
+20466  buzzer   off
+20500  vibrator on
+20501  buzzer   880 v=14
+21194  buzzer   off
+21194  vibrator off
+21217  buzzer   740 v=12
+21426  buzzer   off
+21449  buzzer   740 v=12
+21898  buzzer   off
+21922  buzzer   880 v=14
+22371  buzzer   off
+22394  buzzer   988 v=16
+22394  vibrator on
+23091  vibrator off
+23300  buzzer   off
+23836  buzzer   1175 v=16
+24284  buzzer   off
+24308  buzzer   880 v=14
+24308  vibrator on
+25007  buzzer   off
+25007  vibrator off
+25028  buzzer   740 v=12
+25237  buzzer   off
+25260  buzzer   740 v=12
+25709  buzzer   off
+25733  buzzer   587 v=11
+26182  buzzer   off
+26205  buzzer   659 v=12
+26205  vibrator on
+26902  buzzer   off
+26902  vibrator off
+26925  buzzer   587 v=11
+27134  buzzer   off
+27157  buzzer   659 v=12
+27606  buzzer   off
+27630  buzzer   740 v=12
+28079  buzzer   off
+28102  buzzer   587 v=11
+28102  vibrator on
+28799  buzzer   off
+28799  vibrator off
+28822  buzzer   494 v=10
+29031  buzzer   off
+29054  buzzer   494 v=10
+29514  buzzer   off
+29535  buzzer   440 v=10
+29984  buzzer   off
+30014  vibrator on
+30015  buzzer   587 v=11
+30712  vibrator off
+30922  buzzer   off
+31952  vibrator on
+32648  vibrator off
+@loop 997 28538

@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/keypad/virgin-list
+status: asserted
+source: captures/6.39/plan16/keypad/virgin-list
+source-sha256: 40feca043e2e4c8df61e21941bd904888b1f2d55b2076e861fcf5a2165c94dac
+state: virgin
+keys: 0:down 1260:down 2520:down 3781:down 5041:down
+note: Virgin Tones › Keypad tones: ▼ ×5.
+omitted: none
+
+@events
+# t_ms output   state
+1307   tone     900 v=0x9108
+1431   tone     off
+2545   tone     900 v=0x9104
+2686   tone     off
+3806   tone     900 v=0x9100
+3949   tone     off

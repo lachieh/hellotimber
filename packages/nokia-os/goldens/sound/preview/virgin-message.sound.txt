@@ -1,0 +1,56 @@
+sound-golden 1
+id: sound/preview/virgin-message
+status: asserted
+source: captures/6.39/plan16/preview/virgin-message
+source-sha256: 93380dd9eb34d622607108bd9e22bd9a33feee3b160bfb3adc85b41fc3307c21
+state: virgin
+keys: 0:down 8060:down
+note: Virgin Tones › Message alert tone (No tone): ▼ Standard, 8 s later ▼ Special.
+omitted: 1 (divider rewrite), 1 (level rewrite)
+
+@events
+# t_ms output   state
+40     tone     900 v=0x9100
+185    tone     off
+1006   buzzer   1499.9 v=3
+1199   buzzer   off
+1276   buzzer   1499.9 v=3
+1470   buzzer   off
+2221   buzzer   1499.9 v=3
+2415   buzzer   off
+2492   buzzer   1499.9 v=3
+2686   buzzer   off
+8123   tone     900 v=0x9100
+8246   tone     off
+9068   buzzer   2683.7 v=3
+9174   buzzer   off
+9261   buzzer   2683.7 v=3
+9354   buzzer   off
+9447   buzzer   2683.7 v=3
+9540   buzzer   off
+9826   buzzer   2683.7 v=3
+10114  buzzer   off
+10207  buzzer   2683.7 v=3
+10493  buzzer   off
+10780  buzzer   2683.7 v=3
+10872  buzzer   off
+10965  buzzer   2683.7 v=3
+11058  buzzer   off
+11151  buzzer   2683.7 v=3
+11244  buzzer   off
+12212  buzzer   2683.7 v=3
+12305  buzzer   off
+12398  buzzer   2683.7 v=3
+12491  buzzer   off
+12584  buzzer   2683.7 v=3
+12680  buzzer   off
+12963  buzzer   2683.7 v=3
+13250  buzzer   off
+13343  buzzer   2683.7 v=3
+13629  buzzer   off
+13916  buzzer   2683.7 v=3
+14009  buzzer   off
+14102  buzzer   2683.7 v=3
+14194  buzzer   off
+14287  buzzer   2683.7 v=3
+14380  buzzer   off

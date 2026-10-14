@@ -1,0 +1,82 @@
+sound-golden 1
+id: sound/alert/ascending/08-playground
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/08
+source-sha256: 510a1c8ab5f174944b561c3c9ed792f66151e194f20c625aef2e8d38bc1c8eeb
+state: factory
+keys: 0:down
+note: Playground's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+171    tone     off
+993    buzzer   831 v=4
+993    vibrator on
+1108   buzzer   off
+1224   buzzer   831 v=4
+1340   buzzer   off
+1457   buzzer   698 v=3
+1573   buzzer   off
+1698   buzzer   932 v=4
+1698   vibrator off
+1813   buzzer   off
+1929   buzzer   831 v=4
+2045   buzzer   off
+2161   buzzer   831 v=4
+2277   buzzer   off
+2394   buzzer   698 v=3
+2626   buzzer   off
+3091   vibrator on
+3092   buzzer   2489 v=7
+3208   buzzer   off
+3324   buzzer   2489 v=7
+3452   buzzer   off
+3564   buzzer   2093.1 v=11
+3680   buzzer   off
+3796   buzzer   2793.9 v=7
+3796   vibrator off
+3912   buzzer   off
+4028   buzzer   2489 v=7
+4144   buzzer   off
+4261   buzzer   2489 v=7
+4377   buzzer   off
+4493   buzzer   2093.1 v=11
+4725   vibrator on
+4726   buzzer   off
+5399   vibrator off
+7629   buzzer   831 v=6
+7629   vibrator on
+7745   buzzer   off
+7861   buzzer   831 v=6
+7978   buzzer   off
+8094   buzzer   698 v=6
+8210   buzzer   off
+8326   buzzer   932 v=7
+8326   vibrator off
+8442   buzzer   off
+8558   buzzer   831 v=6
+8674   buzzer   off
+8791   buzzer   831 v=6
+8907   buzzer   off
+9023   buzzer   698 v=6
+9255   buzzer   off
+9720   buzzer   2489 v=13
+9720   vibrator on
+9836   buzzer   off
+9962   buzzer   2489 v=13
+10077  buzzer   off
+10193  buzzer   2093.1 v=25
+10309  buzzer   off
+10425  vibrator off
+10426  buzzer   2793.9 v=17
+10542  buzzer   off
+10658  buzzer   2489 v=13
+10774  buzzer   off
+10890  buzzer   2489 v=13
+11006  buzzer   off
+11122  buzzer   2093.1 v=25
+11355  buzzer   off
+11355  vibrator on
+12028  vibrator off

@@ -1,0 +1,67 @@
+sound-golden 1
+id: sound/ringing-volume/tone/25-merry-xmas
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/25
+source-sha256: 632dd83506672ba63e47074cbbc2c49ae3b58ced109f6fc1115a2970fcb6e51c
+state: factory
+keys: 0:down
+note: Merry Xmas stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 2 (divider rewrite)
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+175    tone     off
+996    buzzer   988 v=16
+1166   buzzer   off
+1336   vibrator on
+1337   buzzer   1319 v=16
+1507   buzzer   off
+1677   buzzer   1319 v=16
+1847   buzzer   1480 v=24
+2022   buzzer   1319 v=16
+2188   buzzer   1245 v=14
+2358   vibrator off
+2359   buzzer   1109 v=17
+2529   buzzer   off
+2699   buzzer   1109 v=17
+2869   buzzer   off
+3040   buzzer   1109 v=17
+3211   buzzer   off
+3382   buzzer   1480 v=24
+3382   vibrator on
+3552   buzzer   off
+3722   buzzer   1480 v=24
+3893   buzzer   1660.9 v=21
+4063   buzzer   1480 v=24
+4233   buzzer   1319 v=16
+4404   buzzer   1245 v=14
+4404   vibrator off
+4574   buzzer   off
+4745   buzzer   988 v=16
+4915   buzzer   off
+5085   buzzer   988 v=16
+5255   buzzer   off
+5426   buzzer   1660.9 v=21
+5426   vibrator on
+5596   buzzer   off
+5778   buzzer   1660.9 v=21
+5945   buzzer   1760.1 v=17
+6115   buzzer   1660.9 v=21
+6285   buzzer   1480 v=24
+6456   buzzer   1319 v=16
+6456   vibrator off
+6626   buzzer   off
+6797   buzzer   1109 v=17
+6967   buzzer   off
+7137   buzzer   988 v=16
+7222   buzzer   off
+7308   buzzer   988 v=16
+7393   buzzer   off
+7478   buzzer   1109 v=17
+7478   vibrator on
+7826   buzzer   1480 v=24
+8175   buzzer   1245 v=14
+8532   buzzer   1319 v=16
+8532   vibrator off
+9228   buzzer   off

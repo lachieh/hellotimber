@@ -1,0 +1,25 @@
+sound-golden 1
+id: sound/ringing-volume/tone/11-rocket
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/11
+source-sha256: 95f7232e39ec7d8bee62eeea3439874a49ca02b3afc8dc6bacc02f363091b0d4
+state: factory
+keys: 0:down
+note: Rocket stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: none
+
+@events
+# t_ms output   state
+22     tone     900 v=0x9104
+165    tone     off
+986    vibrator on
+987    buzzer   2910.2 v=33
+1102   buzzer   2852.8 v=29
+1218   buzzer   2796.9 v=25
+1334   buzzer   2739.7 v=25
+1450   buzzer   2683.7 v=22
+1566   buzzer   2626.8 v=18
+1683   buzzer   2571.2 v=17
+1799   buzzer   2515 v=17
+2263   buzzer   off
+2263   vibrator off

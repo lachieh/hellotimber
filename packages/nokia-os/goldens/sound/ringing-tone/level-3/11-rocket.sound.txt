@@ -1,0 +1,36 @@
+sound-golden 1
+id: sound/ringing-tone/level-3/11-rocket
+status: asserted
+source: captures/6.39/plan16/levels/3/11
+source-sha256: 0a31e577550b742bdf0c85fd4813401f3058ae82d7d0b0c0d79aecf5a28a148e
+state: factory
+keys: 0:down
+note: Rocket's Ringing tone preview at Ringing volume Level 3.
+omitted: none
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9104
+164    tone     off
+985    vibrator on
+986    buzzer   2910.2 v=21
+1101   buzzer   2852.8 v=19
+1217   buzzer   2796.9 v=17
+1333   buzzer   2739.7 v=16
+1449   buzzer   2683.7 v=14
+1565   buzzer   2626.8 v=12
+1682   buzzer   2571.2 v=12
+1798   buzzer   2515 v=12
+2262   buzzer   off
+2262   vibrator off
+4974   buzzer   2910.2 v=21
+4974   vibrator on
+5090   buzzer   2852.8 v=19
+5206   buzzer   2796.9 v=17
+5322   buzzer   2739.7 v=16
+5438   buzzer   2683.7 v=14
+5554   buzzer   2626.8 v=12
+5670   buzzer   2571.2 v=12
+5787   buzzer   2515 v=12
+6251   buzzer   off
+6251   vibrator off

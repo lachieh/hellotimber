@@ -1,0 +1,40 @@
+sound-golden 1
+id: sound/alert/ascending/03-mosquito
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/03
+source-sha256: 0cd6961889a94126c81d0a8369b0be8776d971df8c5657ad5ddaadd34c5da5ec
+state: factory
+keys: 0:down
+note: Mosquito's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+24     tone     900 v=0x9104
+174    tone     off
+987    vibrator on
+988    buzzer   2683.7 v=6
+1080   buzzer   2852.8 v=8
+1173   buzzer   2683.7 v=6
+1266   buzzer   2852.8 v=8
+1358   buzzer   2683.7 v=6
+1451   buzzer   2852.8 v=8
+1544   buzzer   2683.7 v=6
+1637   buzzer   2852.8 v=8
+1730   buzzer   2683.7 v=6
+1823   buzzer   2852.8 v=8
+1916   buzzer   off
+1916   vibrator off
+4631   buzzer   2683.7 v=6
+4631   vibrator on
+4720   buzzer   2852.8 v=8
+4813   buzzer   2683.7 v=6
+4906   buzzer   2852.8 v=8
+4999   buzzer   2683.7 v=6
+5092   buzzer   2852.8 v=8
+5185   buzzer   2683.7 v=6
+5278   buzzer   2852.8 v=8
+5382   buzzer   2683.7 v=10
+5471   buzzer   2852.8 v=13
+5564   buzzer   off
+5564   vibrator off

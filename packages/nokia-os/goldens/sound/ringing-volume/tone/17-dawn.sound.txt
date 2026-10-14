@@ -1,0 +1,21 @@
+sound-golden 1
+id: sound/ringing-volume/tone/17-dawn
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/17
+source-sha256: 7f63c02f84f012f292298064036cfcb6f2ce3798a7bc18f398580cb85c1b4d15
+state: factory
+keys: 0:down
+note: Dawn stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9104
+166    tone     off
+987    buzzer   2349.1 v=22
+987    vibrator on
+1335   buzzer   off
+1737   vibrator off
+3233   buzzer   2349.1 v=22
+3318   buzzer   2489 v=17
+3488   buzzer   off

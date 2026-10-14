@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/alert/beep-once
+status: asserted
+source: captures/6.39/plan16/alert/beep-once
+source-sha256: 6cd63dc7c92e6b89fccc64e44578cf99f0a743bb82c19679a741b99a5462b2a3
+state: factory
+keys: 0:down
+note: Incoming call alert Beep once: ▼ from Croak onto Nokia tune.
+omitted: none
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9104
+165    tone     off

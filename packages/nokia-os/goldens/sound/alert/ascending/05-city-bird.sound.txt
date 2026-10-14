@@ -1,0 +1,36 @@
+sound-golden 1
+id: sound/alert/ascending/05-city-bird
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/05
+source-sha256: 7cebda565d2ed6cbe61aae31426c851307a287f1d7dcab546d9264f899fcc5bb
+state: factory
+keys: 0:down
+note: City bird's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: none
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+168    tone     off
+990    buzzer   2636.9 v=6
+990    vibrator on
+1105   buzzer   off
+1159   buzzer   2636.9 v=6
+1275   buzzer   2349.1 v=9
+1624   buzzer   2636.9 v=6
+1740   buzzer   2349.1 v=9
+2088   buzzer   2636.9 v=6
+2205   buzzer   2349.1 v=9
+2553   buzzer   off
+2553   vibrator off
+5264   vibrator on
+5265   buzzer   2636.9 v=8
+5380   buzzer   off
+5435   buzzer   2636.9 v=8
+5551   buzzer   2349.1 v=14
+5899   buzzer   2636.9 v=8
+6015   buzzer   2349.1 v=14
+6364   buzzer   2636.9 v=8
+6480   buzzer   2349.1 v=14
+6828   buzzer   off
+6828   vibrator off

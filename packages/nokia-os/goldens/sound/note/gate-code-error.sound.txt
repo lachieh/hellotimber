@@ -1,0 +1,24 @@
+sound-golden 1
+id: sound/note/gate-code-error
+status: asserted
+source: captures/6.39/plan16/notes/gate-code-error
+source-sha256: 2e7589b538909aa4e29a24e6d26943e44c966d7d3a95a8fbf470e000779eca32
+state: v639-plan15-factory-security-on
+keys: 0:0 360:0 720:0 1080:0 1440:0 1800:navi
+note: "Code error" (Warning tones On) at the power-on prompt (Phone security On, a new SIM): 00000, OK.
+omitted: none
+
+@events
+# t_ms output   state
+37     tone     900 v=0x9104
+176    tone     off
+399    tone     900 v=0x9104
+548    tone     off
+739    tone     900 v=0x9104
+881    tone     off
+1095   tone     900 v=0x9104
+1237   tone     off
+1459   tone     900 v=0x9104
+1601   tone     off
+1819   buzzer   1000 v=22
+2104   buzzer   off

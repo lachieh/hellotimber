@@ -1,0 +1,98 @@
+sound-golden 1
+id: sound/preview/virgin-alert
+status: asserted
+source: captures/6.39/plan16/preview/virgin-alert
+source-sha256: d720b22a1b2d85fdc15d5a04b757b301ea8e3e0d6cd88bfce3c3929e460fd311
+state: virgin
+keys: 0:down 8060:down
+note: Virgin, only Incoming call alert set (Ringing): Tones › Ringing tone (unset) ▼, 8 s later ▼.
+omitted: none
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9100
+164    tone     off
+8102   tone     900 v=0x9100
+8226   tone     off
+9047   buzzer   440 v=3
+9078   buzzer   587 v=3
+9109   buzzer   440 v=3
+9139   buzzer   587 v=3
+9170   buzzer   440 v=3
+9201   buzzer   587 v=3
+9232   buzzer   440 v=3
+9263   buzzer   587 v=3
+9294   buzzer   440 v=3
+9325   buzzer   587 v=3
+9356   buzzer   440 v=3
+9387   buzzer   587 v=3
+9418   buzzer   440 v=3
+9449   buzzer   587 v=3
+9480   buzzer   440 v=3
+9511   buzzer   587 v=3
+9542   buzzer   440 v=3
+9573   buzzer   587 v=3
+9604   buzzer   440 v=3
+9635   buzzer   587 v=3
+9666   buzzer   440 v=3
+9697   buzzer   587 v=3
+9728   buzzer   440 v=3
+9759   buzzer   587 v=3
+9790   buzzer   440 v=3
+9821   buzzer   587 v=3
+9852   buzzer   440 v=3
+9883   buzzer   587 v=3
+9915   buzzer   440 v=3
+9946   buzzer   587 v=3
+9977   buzzer   440 v=3
+10008  buzzer   587 v=3
+10039  buzzer   440 v=3
+10070  buzzer   587 v=3
+10101  buzzer   440 v=3
+10132  buzzer   587 v=3
+10163  buzzer   440 v=3
+10194  buzzer   587 v=3
+10225  buzzer   440 v=3
+10256  buzzer   587 v=3
+10286  buzzer   off
+13477  buzzer   440 v=3
+13508  buzzer   587 v=3
+13539  buzzer   440 v=3
+13570  buzzer   587 v=3
+13601  buzzer   440 v=3
+13632  buzzer   587 v=3
+13663  buzzer   440 v=3
+13694  buzzer   587 v=3
+13727  buzzer   440 v=3
+13756  buzzer   587 v=3
+13787  buzzer   440 v=3
+13818  buzzer   587 v=3
+13849  buzzer   440 v=3
+13879  buzzer   587 v=3
+13910  buzzer   440 v=3
+13941  buzzer   587 v=3
+13977  buzzer   440 v=3
+14003  buzzer   587 v=3
+14034  buzzer   440 v=3
+14065  buzzer   587 v=3
+14096  buzzer   440 v=3
+14127  buzzer   587 v=3
+14158  buzzer   440 v=3
+14189  buzzer   587 v=3
+14228  buzzer   440 v=3
+14259  buzzer   587 v=3
+14290  buzzer   440 v=3
+14321  buzzer   587 v=3
+14352  buzzer   440 v=3
+14383  buzzer   587 v=3
+14414  buzzer   440 v=3
+14445  buzzer   587 v=3
+14478  buzzer   440 v=3
+14507  buzzer   587 v=3
+14538  buzzer   440 v=3
+14569  buzzer   587 v=3
+14600  buzzer   440 v=3
+14631  buzzer   587 v=3
+14662  buzzer   440 v=3
+14693  buzzer   587 v=3
+14728  buzzer   off

@@ -1,0 +1,42 @@
+sound-golden 1
+id: sound/ringing-volume/tone/10-improvisation
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/10
+source-sha256: de7f6dfa665e92861f17cfce674d6e70a64e94a406e4de24b7dc7782900f27ae
+state: factory
+keys: 0:down
+note: Improvisation stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: none
+
+@events
+# t_ms output   state
+24     tone     900 v=0x9104
+167    tone     off
+988    buzzer   1319 v=16
+988    vibrator on
+1127   buzzer   1175 v=16
+1266   buzzer   740 v=12
+1406   buzzer   831 v=12
+1545   buzzer   740 v=12
+1684   buzzer   880 v=14
+1824   buzzer   740 v=12
+1963   buzzer   988 v=16
+2102   vibrator off
+2103   buzzer   1109 v=17
+2242   buzzer   988 v=16
+2381   buzzer   622 v=11
+2521   buzzer   740 v=12
+2660   buzzer   622 v=11
+2799   buzzer   831 v=12
+2939   buzzer   622 v=11
+3079   buzzer   880 v=14
+3219   buzzer   988 v=16
+3219   vibrator on
+3358   buzzer   880 v=14
+3497   buzzer   554 v=11
+3637   buzzer   831 v=12
+3776   buzzer   554 v=11
+3915   buzzer   622 v=11
+4055   buzzer   659 v=12
+4194   buzzer   off
+4194   vibrator off

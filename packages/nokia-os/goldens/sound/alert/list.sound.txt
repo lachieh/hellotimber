@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/alert/list
+status: asserted
+source: captures/6.39/plan16/alert/list
+source-sha256: 3a1709b5a51495334a2a54afa54d0fc442dde19c01d076f8a15d885516b4a481
+state: factory
+keys: 0:down 5061:down 10122:down 15182:down 20243:down
+note: Tones › Incoming call alert: ▼ ×5, 5 s apart.
+omitted: none
+
+@events
+# t_ms output   state
+33     tone     900 v=0x9104
+173    tone     off
+5114   tone     900 v=0x9104
+5238   tone     off
+10187  tone     900 v=0x9104
+10311  tone     off
+15236  tone     900 v=0x9104
+15360  tone     off
+20294  tone     900 v=0x9104
+20417  tone     off

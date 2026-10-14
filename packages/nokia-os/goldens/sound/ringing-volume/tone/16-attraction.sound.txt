@@ -1,0 +1,24 @@
+sound-golden 1
+id: sound/ringing-volume/tone/16-attraction
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/16
+source-sha256: c30ccf8ba5ab6320a67e78ebd238046a5aea985d419cc6bda0c656455d0b5bcb
+state: factory
+keys: 0:down
+note: Attraction stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: none
+
+@events
+# t_ms output   state
+24     tone     900 v=0x9104
+167    tone     off
+988    buzzer   2636.9 v=18
+988    vibrator on
+1103   buzzer   off
+1336   vibrator off
+4705   vibrator on
+4706   buzzer   2636.9 v=18
+4821   buzzer   2489 v=17
+4938   buzzer   2636.9 v=18
+5054   buzzer   off
+5054   vibrator off

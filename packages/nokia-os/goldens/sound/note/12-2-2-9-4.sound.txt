@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/note/12-2-2-9-4
+status: pending:18
+source: captures/6.39/plan16/notes/12-2-2-9-4
+source-sha256: a34ba6c55fee5ff0706212ce236a5c3e8f4b1aadd00dbacdd0c4f5b4844c45c3
+state: factory
+keys: 0:navi
+note: "Screen saver missing" (Warning tones On) after OK on 12-2-2-9-4, 12-4-2-9-4 (factory).
+omitted: none
+
+@events
+# t_ms output   state
+45     tone     1750 v=0x9105
+333    tone     off

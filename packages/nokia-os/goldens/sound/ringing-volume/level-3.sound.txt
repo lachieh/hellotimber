@@ -1,0 +1,34 @@
+sound-golden 1
+id: sound/ringing-volume/level-3
+status: asserted
+source: captures/6.39/plan16/ringing-volume/3
+source-sha256: 322d0a11e53f8a6e9b426b0c5cf72401ee8aa86a1880a490948da8d7b28ceb59
+state: factory
+keys: 0:down
+note: Tones › Ringing volume (Nokia tune stored), ▼ from Level 2 onto Level 3.
+omitted: none
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+170    tone     off
+992    buzzer   1319 v=10
+992    vibrator on
+1115   buzzer   1175 v=12
+1231   buzzer   740 v=8
+1471   buzzer   831 v=8
+1711   buzzer   1109 v=12
+1711   vibrator off
+1827   buzzer   988 v=11
+1943   buzzer   587 v=7
+2183   buzzer   659 v=7
+2423   vibrator on
+2424   buzzer   988 v=11
+2540   buzzer   880 v=8
+2656   buzzer   554 v=7
+2896   buzzer   659 v=7
+3137   buzzer   880 v=8
+3137   vibrator off
+3870   buzzer   off
+3870   vibrator on
+4593   vibrator off

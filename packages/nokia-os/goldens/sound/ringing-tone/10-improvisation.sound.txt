@@ -1,0 +1,71 @@
+sound-golden 1
+id: sound/ringing-tone/10-improvisation
+status: asserted
+source: captures/6.39/plan16/ringing-tone/10
+source-sha256: 4bb9ff580dac72932d30975dd8d824ba4740d0225b10f301cea855174e1986d0
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from That's it! onto Improvisation: its preview at Level 4, Vibrating alert On.
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+168    tone     off
+990    buzzer   1319 v=16
+990    vibrator on
+1136   buzzer   1175 v=16
+1275   buzzer   740 v=12
+1415   buzzer   831 v=12
+1554   buzzer   740 v=12
+1694   buzzer   880 v=14
+1833   buzzer   740 v=12
+1972   buzzer   988 v=16
+2112   buzzer   1109 v=17
+2112   vibrator off
+2251   buzzer   988 v=16
+2390   buzzer   622 v=11
+2530   buzzer   740 v=12
+2669   buzzer   622 v=11
+2809   buzzer   831 v=12
+2948   buzzer   622 v=11
+3087   buzzer   880 v=14
+3228   buzzer   988 v=16
+3228   vibrator on
+3367   buzzer   880 v=14
+3506   buzzer   554 v=11
+3646   buzzer   831 v=12
+3785   buzzer   554 v=11
+3925   buzzer   622 v=11
+4064   buzzer   659 v=12
+4203   buzzer   off
+4203   vibrator off
+5365   buzzer   1319 v=16
+5365   vibrator on
+5504   buzzer   1175 v=16
+5644   buzzer   740 v=12
+5783   buzzer   831 v=12
+5922   buzzer   740 v=12
+6062   buzzer   880 v=14
+6201   buzzer   740 v=12
+6341   buzzer   988 v=16
+6480   buzzer   1109 v=17
+6480   vibrator off
+6619   buzzer   988 v=16
+6759   buzzer   622 v=11
+6898   buzzer   740 v=12
+7037   buzzer   622 v=11
+7177   buzzer   831 v=12
+7316   buzzer   622 v=11
+7456   buzzer   880 v=14
+7595   buzzer   988 v=16
+7595   vibrator on
+7734   buzzer   880 v=14
+7874   buzzer   554 v=11
+8013   buzzer   831 v=12
+8153   buzzer   554 v=11
+8292   buzzer   622 v=11
+8431   buzzer   659 v=12
+8571   buzzer   off
+8571   vibrator off
+@loop 990 4375

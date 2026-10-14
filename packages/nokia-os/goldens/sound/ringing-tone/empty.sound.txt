@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/ringing-tone/empty
+status: asserted
+source: captures/6.39/plan16/ringing-tone/36
+source-sha256: 77dda64b4881cbf78fd29a5ccd9d5b17e858682aefd8a843a3776bc5f1f8ecbc
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Get cool onto the first (empty) slot: no preview.
+omitted: none
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+174    tone     off

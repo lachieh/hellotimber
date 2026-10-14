@@ -1,0 +1,86 @@
+sound-golden 1
+id: sound/ringing-volume/tone/26-auld-lang-syne
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/26
+source-sha256: 06a216d65a4a7da0b91917a8b8e9c35da54d19327f94f1bf4fd95dcec99ee1f6
+state: factory
+keys: 0:down
+note: Auld lang syne stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 2 (divider rewrite)
+
+@events
+# t_ms output   state
+21     tone     900 v=0x9104
+164    tone     off
+985    buzzer   440 v=10
+1434   buzzer   off
+1457   buzzer   587 v=11
+1457   vibrator on
+2154   buzzer   off
+2154   vibrator off
+2177   buzzer   587 v=11
+2397   buzzer   off
+2417   buzzer   587 v=11
+2866   buzzer   off
+2898   buzzer   740 v=12
+3347   buzzer   off
+3371   buzzer   659 v=12
+3371   vibrator on
+4067   vibrator off
+4068   buzzer   off
+4091   buzzer   587 v=11
+4300   buzzer   off
+4323   buzzer   659 v=12
+4772   buzzer   off
+4795   buzzer   740 v=12
+5244   buzzer   off
+5268   buzzer   587 v=11
+5268   vibrator on
+5965   buzzer   off
+5965   vibrator off
+5988   buzzer   587 v=11
+6197   buzzer   off
+6220   buzzer   740 v=12
+6669   buzzer   off
+6693   buzzer   880 v=14
+7155   buzzer   off
+7173   buzzer   988 v=16
+7173   vibrator on
+7869   vibrator off
+8079   buzzer   off
+8613   buzzer   988 v=16
+9062   buzzer   off
+9085   vibrator on
+9086   buzzer   880 v=14
+9782   buzzer   off
+9782   vibrator off
+9805   buzzer   740 v=12
+10015  buzzer   off
+10039  buzzer   740 v=12
+10488  buzzer   off
+10511  buzzer   587 v=11
+10960  buzzer   off
+10983  vibrator on
+10984  buzzer   659 v=12
+11680  buzzer   off
+11680  vibrator off
+11704  buzzer   587 v=11
+11913  buzzer   off
+11936  buzzer   659 v=12
+12385  buzzer   off
+12414  buzzer   740 v=12
+12857  buzzer   off
+12881  buzzer   587 v=11
+12881  vibrator on
+13577  vibrator off
+13578  buzzer   off
+13601  buzzer   494 v=10
+13810  buzzer   off
+13833  buzzer   494 v=10
+14282  buzzer   off
+14305  buzzer   440 v=10
+14754  buzzer   off
+14778  buzzer   587 v=11
+14778  vibrator on
+15475  vibrator off
+15684  buzzer   off

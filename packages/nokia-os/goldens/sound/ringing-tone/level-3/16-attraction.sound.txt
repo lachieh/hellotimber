@@ -1,0 +1,90 @@
+sound-golden 1
+id: sound/ringing-tone/level-3/16-attraction
+status: asserted
+source: captures/6.39/plan16/levels/3/16
+source-sha256: f73bf73249f7998063e775a1a73631f9fffd318f8794e0f79dcdf5caf7db2644
+state: factory
+keys: 0:down
+note: Attraction's Ringing tone preview at Ringing volume Level 3.
+omitted: 4 (stale frequency)
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9104
+173    tone     off
+986    vibrator on
+987    buzzer   2636.9 v=12
+1102   buzzer   off
+1334   vibrator off
+4704   buzzer   2636.9 v=12
+4704   vibrator on
+4820   buzzer   2489 v=13
+4936   buzzer   2636.9 v=12
+5052   buzzer   off
+5052   vibrator off
+8537   buzzer   2636.9 v=12
+8537   vibrator on
+8622   buzzer   988 v=11
+8707   buzzer   2489 v=13
+8792   buzzer   988 v=11
+8877   buzzer   2636.9 v=12
+8963   buzzer   988 v=11
+9048   buzzer   2959.9 v=22
+9133   buzzer   off
+9133   vibrator off
+12502  vibrator on
+12503  buzzer   2959.9 v=22
+12587  buzzer   988 v=11
+12678  buzzer   3322.3 v=41
+12758  buzzer   988 v=11
+12843  buzzer   2959.9 v=22
+12929  buzzer   988 v=11
+13013  buzzer   2636.9 v=12
+13099  buzzer   988 v=11
+13184  buzzer   2489 v=13
+13269  buzzer   988 v=11
+13354  buzzer   2216.9 v=24
+13439  buzzer   988 v=11
+13524  buzzer   2489 v=13
+13610  buzzer   988 v=11
+13695  buzzer   2636.9 v=12
+13780  buzzer   off
+13780  vibrator off
+17149  vibrator on
+17150  buzzer   2636.9 v=12
+17235  buzzer   988 v=11
+17320  buzzer   2489 v=13
+17405  buzzer   988 v=11
+17490  buzzer   2636.9 v=12
+17575  buzzer   988 v=11
+17660  buzzer   2489 v=13
+17746  buzzer   988 v=11
+17831  buzzer   2636.9 v=12
+17916  buzzer   988 v=11
+18001  buzzer   2959.9 v=22
+18086  buzzer   off
+18086  vibrator off
+21455  buzzer   2959.9 v=22
+21455  vibrator on
+21540  buzzer   988 v=11
+21625  buzzer   3322.3 v=41
+21710  buzzer   988 v=11
+21795  buzzer   2959.9 v=22
+21881  buzzer   988 v=11
+21966  buzzer   2636.9 v=12
+22051  buzzer   988 v=11
+22136  buzzer   2489 v=13
+22221  buzzer   988 v=11
+22306  buzzer   2216.9 v=24
+22392  buzzer   988 v=11
+22477  buzzer   2489 v=13
+22562  buzzer   988 v=11
+22648  buzzer   2636.9 v=12
+22763  buzzer   off
+22996  vibrator off
+26365  buzzer   2636.9 v=12
+26365  vibrator on
+26481  buzzer   2489 v=13
+26597  buzzer   2636.9 v=12
+26713  vibrator off
+26714  buzzer   off

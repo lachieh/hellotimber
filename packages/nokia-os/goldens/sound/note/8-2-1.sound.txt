@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/note/8-2-1
+status: pending:24
+source: captures/6.39/plan16/notes/8-2-1
+source-sha256: 52622f3441056b5bf98f4520fb254c3902cd15de2553d5b7d82f1a2b57fc26d5
+state: factory
+keys: 0:navi
+note: OK on 8-2-1 (factory).
+omitted: none
+
+@events
+# t_ms output   state

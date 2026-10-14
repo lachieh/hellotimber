@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/message-tone/beep-once-ringing-l1
+status: asserted
+source: captures/6.39/plan16/message-tone/beep-once-ringing-l1
+source-sha256: 64fefb87634963f167def238203f31888d9c8fac7752fc123a1e1cf15895dab7
+state: factory
+keys: 0:down
+note: Tones › Message alert tone: Ringing volume Level 1, ▼ onto Beep once.
+omitted: none
+
+@events
+# t_ms output   state
+41     tone     900 v=0x9104
+185    tone     off
+1007   tone     1750 v=0x9107
+1007   vibrator on
+1293   vibrator off
+1347   tone     off
+2261   vibrator on
+2741   vibrator off
+3710   vibrator on
+4190   vibrator off

@@ -1,0 +1,24 @@
+sound-golden 1
+id: sound/message-tone/ok
+status: asserted
+source: captures/6.39/plan16/message-tone/ok
+source-sha256: 5b3afeedae7b13fdbdea1a7f675a89a729cd7eab4018cd5ca6c48f77704173e2
+state: factory
+keys: 0:down 1560:navi
+note: Tones › Message alert tone: ▼ onto Special, OK during its preview.
+omitted: none
+
+@events
+# t_ms output   state
+36     tone     900 v=0x9104
+188    tone     off
+1002   buzzer   2683.7 v=22
+1002   vibrator on
+1094   buzzer   off
+1187   buzzer   2683.7 v=22
+1280   buzzer   off
+1373   buzzer   2683.7 v=22
+1373   vibrator off
+1466   buzzer   off
+1603   tone     900 v=0x9104
+1745   tone     off

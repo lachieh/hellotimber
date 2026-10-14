@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/profile/active/general-alert-off/message-tone
+status: asserted
+source: captures/6.39/plan16/profile/active/general-alert-off/message-tone
+source-sha256: f002fbc16f806b457c20a655b74893fce0fbbe843136c93afd8f4f8db58a2d13
+state: factory
+keys: 0:down
+note: General (active) with Incoming call alert Off; Loud › Personalise › Message alert tone: ▼ onto Beep once.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+56     tone     900 v=0x9104
+202    tone     off
+1023   tone     1750 v=0x9100
+1023   vibrator on
+1309   vibrator off
+1363   tone     off
+2290   vibrator on
+2765   vibrator off
+3734   vibrator on
+4214   vibrator off

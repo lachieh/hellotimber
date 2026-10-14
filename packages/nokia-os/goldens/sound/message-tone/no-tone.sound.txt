@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/message-tone/no-tone
+status: asserted
+source: captures/6.39/plan16/message-tone/no-tone
+source-sha256: 82a408c5ffd1f758210ba554e6bd0079ed0c118e6eac6a6433e6f630639313d0
+state: factory
+keys: 0:up
+note: Tones › Message alert tone: ▲ from Standard onto No tone.
+omitted: none
+
+@events
+# t_ms output   state
+39     tone     900 v=0x9104
+183    tone     off

@@ -1,0 +1,228 @@
+sound-golden 1
+id: sound/preview/first-down-back
+status: asserted
+source: captures/6.39/plan16/preview/first-down-back
+source-sha256: 18147db8fc67c36cff547b98082ff5be938df6c82d3a228f46b30504a285e8a5
+state: virgin
+keys: 0:down 8060:down 16120:up 24181:down
+note: Virgin, Ringing volume Level 3 and Incoming call alert Ringing: ▼, ▼, ▲, ▼, 8 s apart.
+omitted: 1 (level rewrite), 6 (stale frequency)
+
+@events
+# t_ms output   state
+40     tone     900 v=0x9100
+182    tone     off
+8105   tone     900 v=0x9100
+8228   tone     off
+9050   buzzer   440 v=6
+9080   buzzer   587 v=7
+9111   buzzer   440 v=6
+9142   buzzer   587 v=7
+9173   buzzer   440 v=6
+9204   buzzer   587 v=7
+9235   buzzer   440 v=6
+9266   buzzer   587 v=7
+9297   buzzer   440 v=6
+9328   buzzer   587 v=7
+9359   buzzer   440 v=6
+9390   buzzer   587 v=7
+9421   buzzer   440 v=6
+9452   buzzer   587 v=7
+9483   buzzer   440 v=6
+9514   buzzer   587 v=7
+9546   buzzer   440 v=6
+9576   buzzer   587 v=7
+9607   buzzer   440 v=6
+9638   buzzer   587 v=7
+9669   buzzer   440 v=6
+9700   buzzer   587 v=7
+9731   buzzer   440 v=6
+9762   buzzer   587 v=7
+9797   buzzer   440 v=6
+9824   buzzer   587 v=7
+9855   buzzer   440 v=6
+9886   buzzer   587 v=7
+9918   buzzer   440 v=6
+9948   buzzer   587 v=7
+9979   buzzer   440 v=6
+10010  buzzer   587 v=7
+10048  buzzer   440 v=6
+10072  buzzer   587 v=7
+10103  buzzer   440 v=6
+10134  buzzer   587 v=7
+10165  buzzer   440 v=6
+10196  buzzer   587 v=7
+10227  buzzer   440 v=6
+10258  buzzer   587 v=7
+10298  buzzer   off
+13487  buzzer   440 v=6
+13518  buzzer   587 v=7
+13553  buzzer   440 v=6
+13580  buzzer   587 v=7
+13611  buzzer   440 v=6
+13642  buzzer   587 v=7
+13673  buzzer   440 v=6
+13704  buzzer   587 v=7
+13735  buzzer   440 v=6
+13766  buzzer   587 v=7
+13803  buzzer   440 v=6
+13828  buzzer   587 v=7
+13859  buzzer   440 v=6
+13890  buzzer   587 v=7
+13921  buzzer   440 v=6
+13952  buzzer   587 v=7
+13983  buzzer   440 v=6
+14014  buzzer   587 v=7
+14054  buzzer   440 v=6
+14083  buzzer   587 v=7
+14114  buzzer   440 v=6
+14145  buzzer   587 v=7
+14176  buzzer   440 v=6
+14207  buzzer   587 v=7
+14238  buzzer   440 v=6
+14269  buzzer   587 v=7
+14304  buzzer   440 v=6
+14331  buzzer   587 v=7
+14362  buzzer   440 v=6
+14393  buzzer   587 v=7
+14424  buzzer   440 v=6
+14455  buzzer   587 v=7
+14486  buzzer   440 v=6
+14517  buzzer   587 v=7
+14554  buzzer   440 v=6
+14579  buzzer   587 v=7
+14610  buzzer   440 v=6
+14641  buzzer   587 v=7
+14672  buzzer   440 v=6
+14703  buzzer   587 v=7
+14734  buzzer   off
+16166  tone     900 v=0x9100
+16290  tone     off
+17113  buzzer   622 v=7
+17166  buzzer   988 v=11
+17221  buzzer   622 v=7
+17275  buzzer   988 v=11
+17329  buzzer   622 v=7
+17383  buzzer   988 v=11
+17437  buzzer   622 v=7
+17492  buzzer   988 v=11
+17559  buzzer   622 v=7
+17608  buzzer   988 v=11
+17662  buzzer   off
+17856  buzzer   622 v=7
+17910  buzzer   988 v=11
+17964  buzzer   622 v=7
+18018  buzzer   988 v=11
+18072  buzzer   622 v=7
+18127  buzzer   988 v=11
+18181  buzzer   622 v=7
+18235  buzzer   988 v=11
+18289  buzzer   622 v=7
+18343  buzzer   988 v=11
+18398  buzzer   off
+20620  buzzer   622 v=7
+20674  buzzer   988 v=11
+20728  buzzer   622 v=7
+20783  buzzer   988 v=11
+20837  buzzer   622 v=7
+20891  buzzer   988 v=11
+20945  buzzer   622 v=7
+20999  buzzer   988 v=11
+21064  buzzer   622 v=7
+21116  buzzer   988 v=11
+21170  buzzer   off
+21363  buzzer   622 v=7
+21418  buzzer   988 v=11
+21472  buzzer   622 v=7
+21526  buzzer   988 v=11
+21580  buzzer   622 v=7
+21634  buzzer   988 v=11
+21689  buzzer   622 v=7
+21743  buzzer   988 v=11
+21797  buzzer   622 v=7
+21851  buzzer   988 v=11
+21905  buzzer   off
+24222  tone     900 v=0x9100
+24346  tone     off
+25167  buzzer   440 v=6
+25197  buzzer   587 v=7
+25228  buzzer   440 v=6
+25259  buzzer   587 v=7
+25290  buzzer   440 v=6
+25321  buzzer   587 v=7
+25352  buzzer   440 v=6
+25383  buzzer   587 v=7
+25414  buzzer   440 v=6
+25445  buzzer   587 v=7
+25476  buzzer   440 v=6
+25507  buzzer   587 v=7
+25538  buzzer   440 v=6
+25571  buzzer   587 v=7
+25600  buzzer   440 v=6
+25631  buzzer   587 v=7
+25662  buzzer   440 v=6
+25693  buzzer   587 v=7
+25724  buzzer   440 v=6
+25755  buzzer   587 v=7
+25786  buzzer   440 v=6
+25822  buzzer   587 v=7
+25848  buzzer   440 v=6
+25879  buzzer   587 v=7
+25910  buzzer   440 v=6
+25941  buzzer   587 v=7
+25972  buzzer   440 v=6
+26003  buzzer   587 v=7
+26034  buzzer   440 v=6
+26072  buzzer   587 v=7
+26103  buzzer   440 v=6
+26134  buzzer   587 v=7
+26165  buzzer   440 v=6
+26196  buzzer   587 v=7
+26227  buzzer   440 v=6
+26258  buzzer   587 v=7
+26289  buzzer   440 v=6
+26322  buzzer   587 v=7
+26351  buzzer   440 v=6
+26382  buzzer   587 v=7
+26413  buzzer   off
+29611  buzzer   440 v=6
+29642  buzzer   587 v=7
+29673  buzzer   440 v=6
+29704  buzzer   587 v=7
+29735  buzzer   440 v=6
+29766  buzzer   587 v=7
+29797  buzzer   440 v=6
+29828  buzzer   587 v=7
+29859  buzzer   440 v=6
+29890  buzzer   587 v=7
+29921  buzzer   440 v=6
+29952  buzzer   587 v=7
+29983  buzzer   440 v=6
+30014  buzzer   587 v=7
+30045  buzzer   440 v=6
+30078  buzzer   587 v=7
+30107  buzzer   440 v=6
+30138  buzzer   587 v=7
+30169  buzzer   440 v=6
+30200  buzzer   587 v=7
+30231  buzzer   440 v=6
+30262  buzzer   587 v=7
+30293  buzzer   440 v=6
+30328  buzzer   587 v=7
+30355  buzzer   440 v=6
+30385  buzzer   587 v=7
+30417  buzzer   440 v=6
+30448  buzzer   587 v=7
+30479  buzzer   440 v=6
+30510  buzzer   587 v=7
+30541  buzzer   440 v=6
+30579  buzzer   587 v=7
+30603  buzzer   440 v=6
+30634  buzzer   587 v=7
+30665  buzzer   440 v=6
+30696  buzzer   587 v=7
+30727  buzzer   440 v=6
+30758  buzzer   587 v=7
+30789  buzzer   440 v=6
+30830  buzzer   587 v=7
+30859  buzzer   off

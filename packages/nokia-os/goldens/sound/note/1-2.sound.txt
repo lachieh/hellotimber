@@ -1,0 +1,15 @@
+sound-golden 1
+id: sound/note/1-2
+status: asserted
+source: captures/6.39/plan16/notes/1-2
+source-sha256: e6bea7dc6a17a92389d578aaea907f72ce823201635490f8fd31f64756df0446
+state: factory
+keys: 0:navi
+note: "No phone numbers" (Warning tones On) after OK on 1-2 (factory).
+omitted: none
+
+@events
+# t_ms output   state
+67     tone     900 v=0x9104
+149    tone     1750 v=0x9105
+441    tone     off

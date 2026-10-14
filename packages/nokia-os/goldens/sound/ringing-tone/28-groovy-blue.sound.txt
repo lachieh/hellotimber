@@ -1,0 +1,143 @@
+sound-golden 1
+id: sound/ringing-tone/28-groovy-blue
+status: asserted
+source: captures/6.39/plan16/ringing-tone/28
+source-sha256: a4b9d909f65ab1330c21529871c92d88cb2496615e1e964dc4c2bbdfb94b49a6
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Hurdy-gurdy onto Groovy Blue: its preview at Level 4, Vibrating alert On.
+omitted: 1 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+173    tone     off
+995    buzzer   1396.9 v=21
+1110   buzzer   off
+3318   buzzer   1047 v=14
+3318   vibrator on
+3434   buzzer   1245 v=14
+3550   buzzer   1047 v=14
+3666   buzzer   1245 v=14
+3782   buzzer   1396.9 v=21
+3898   vibrator off
+3899   buzzer   off
+6105   vibrator on
+6106   buzzer   1047 v=14
+6222   buzzer   1245 v=14
+6338   buzzer   1047 v=14
+6454   buzzer   1245 v=14
+6570   buzzer   1396.9 v=21
+6802   vibrator off
+6803   buzzer   698 v=13
+6918   buzzer   off
+7151   buzzer   698 v=13
+7267   buzzer   off
+7501   buzzer   698 v=13
+7615   buzzer   off
+7848   buzzer   698 v=13
+7964   buzzer   off
+8196   buzzer   698 v=13
+8312   buzzer   off
+8545   buzzer   698 v=13
+8661   buzzer   off
+8893   buzzer   1047 v=14
+8893   vibrator on
+9009   buzzer   1245 v=14
+9125   buzzer   1047 v=14
+9254   buzzer   1245 v=14
+9365   buzzer   1396.9 v=21
+9598   buzzer   off
+9598   vibrator off
+9613   buzzer   1396.9 v=21
+9729   buzzer   off
+9963   buzzer   1396.9 v=21
+10079  buzzer   off
+10311  buzzer   1396.9 v=21
+10427  buzzer   off
+10660  buzzer   1396.9 v=21
+10776  buzzer   off
+11008  buzzer   1396.9 v=21
+11124  buzzer   off
+11357  buzzer   1396.9 v=21
+11473  buzzer   off
+11705  buzzer   1047 v=14
+11705  vibrator on
+11821  buzzer   1245 v=14
+11937  buzzer   1047 v=14
+12053  buzzer   1245 v=14
+12170  buzzer   1396.9 v=21
+12402  buzzer   off
+12402  vibrator off
+12417  buzzer   1396.9 v=21
+12534  buzzer   1660.9 v=21
+12766  buzzer   1396.9 v=21
+12882  buzzer   1864.9 v=21
+13114  buzzer   1396.9 v=21
+13230  buzzer   off
+13463  buzzer   1396.9 v=21
+13579  buzzer   1660.9 v=21
+13811  buzzer   1396.9 v=21
+13927  buzzer   1864.9 v=21
+14043  buzzer   off
+14160  buzzer   1396.9 v=21
+14276  buzzer   off
+14512  buzzer   1047 v=14
+14512  vibrator on
+14624  buzzer   1245 v=14
+14740  buzzer   1047 v=14
+14857  buzzer   1245 v=14
+14973  buzzer   1396.9 v=21
+15205  buzzer   off
+15205  vibrator off
+15221  buzzer   1396.9 v=21
+15337  buzzer   1660.9 v=21
+15569  buzzer   1396.9 v=21
+15685  buzzer   1864.9 v=21
+15917  buzzer   1396.9 v=21
+16033  buzzer   off
+16266  buzzer   1396.9 v=21
+16382  buzzer   1660.9 v=21
+16614  buzzer   1396.9 v=21
+16732  buzzer   1864.9 v=21
+16848  buzzer   off
+16964  buzzer   1396.9 v=21
+17080  buzzer   off
+17312  vibrator on
+17313  buzzer   1047 v=14
+17428  buzzer   1245 v=14
+17545  buzzer   1047 v=14
+17661  buzzer   1245 v=14
+17777  buzzer   1396.9 v=21
+18018  buzzer   off
+18018  vibrator off
+18032  buzzer   1396.9 v=21
+18149  buzzer   2093.1 v=34
+18381  buzzer   1396.9 v=21
+18497  buzzer   1976 v=30
+18729  buzzer   1396.9 v=21
+18845  buzzer   1864.9 v=21
+19078  buzzer   1396.9 v=21
+19194  buzzer   1760.1 v=17
+19426  buzzer   1396.9 v=21
+19542  buzzer   1660.9 v=21
+19713  buzzer   off
+19770  buzzer   1396.9 v=21
+19883  buzzer   1568 v=25
+20115  vibrator on
+20116  buzzer   1047 v=14
+20232  buzzer   1245 v=14
+20348  buzzer   1047 v=14
+20464  buzzer   1245 v=14
+20580  buzzer   1396.9 v=21
+20580  vibrator off
+20696  buzzer   off
+22903  buzzer   1047 v=14
+22903  vibrator on
+23025  buzzer   1245 v=14
+23135  buzzer   1047 v=14
+23251  buzzer   1245 v=14
+23368  buzzer   1396.9 v=21
+23484  buzzer   off
+23484  vibrator off
+@loop 995 22373

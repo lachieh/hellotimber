@@ -1,0 +1,28 @@
+sound-golden 1
+id: sound/preview/open
+status: asserted
+source: captures/6.39/plan16/preview/open
+source-sha256: ad8e67f772f3e39df2ea0f8472974639dbec07c45ec8c5d55a236345a5eae3cf
+state: factory
+keys: 0:navi 460:5 920:1 5981:c+1500 8531:navi 8991:5 9451:5
+note: Menu 5 1 (the list opens on Nokia tune), C held, Menu 5 5.
+omitted: none
+
+@events
+# t_ms output   state
+42     tone     900 v=0x9104
+189    tone     off
+490    tone     900 v=0x9104
+630    tone     off
+979    tone     900 v=0x9104
+1126   tone     off
+6021   tone     900 v=0x9104
+6145   tone     off
+6488   tone     900 v=0x9104
+6633   tone     off
+8565   tone     900 v=0x9104
+8708   tone     off
+9016   tone     900 v=0x9104
+9157   tone     off
+9481   tone     900 v=0x9104
+9622   tone     off

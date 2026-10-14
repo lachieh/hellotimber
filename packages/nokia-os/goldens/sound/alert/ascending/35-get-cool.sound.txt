@@ -1,0 +1,60 @@
+sound-golden 1
+id: sound/alert/ascending/35-get-cool
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/35
+source-sha256: 783281d08201c8e5eabf1ed979219f3f730bb120c48f169b0e844594755dd1f5
+state: factory
+keys: 0:down
+note: Get cool's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 1 (divider rewrite), 2 (stale frequency)
+
+@events
+# t_ms output   state
+32     tone     900 v=0x9104
+179    tone     off
+993    buzzer   1109 v=5
+993    vibrator on
+1363   buzzer   1245 v=5
+1487   buzzer   1396.9 v=5
+1735   buzzer   1660.9 v=6
+1735   vibrator off
+1983   buzzer   2216.9 v=11
+2232   buzzer   2489 v=7
+2355   buzzer   2093.1 v=11
+2482   buzzer   2216.9 v=11
+2732   buzzer   off
+2983   buzzer   2489 v=7
+2983   vibrator on
+3354   buzzer   2216.9 v=11
+3485   buzzer   2093.1 v=11
+3735   buzzer   1864.9 v=6
+3735   vibrator off
+3985   buzzer   1660.9 v=6
+4236   buzzer   1864.9 v=6
+4353   buzzer   1568 v=7
+4486   buzzer   1660.9 v=6
+4736   buzzer   off
+4987   buzzer   1109 v=5
+4987   vibrator on
+5352   buzzer   1245 v=5
+5487   buzzer   1396.9 v=5
+5737   vibrator off
+5738   buzzer   1660.9 v=10
+5988   buzzer   2216.9 v=17
+6238   buzzer   2489 v=10
+6359   buzzer   2093.1 v=17
+6489   buzzer   2216.9 v=17
+6739   buzzer   off
+6989   buzzer   2489 v=10
+6989   vibrator on
+7358   buzzer   2216.9 v=17
+7490   buzzer   2093.1 v=17
+7740   buzzer   1864.9 v=10
+7740   vibrator off
+7991   buzzer   1660.9 v=10
+8241   buzzer   1864.9 v=10
+8364   buzzer   1568 v=12
+8491   buzzer   1660.9 v=10
+8742   buzzer   off
+8992   vibrator on
+8994   vibrator off

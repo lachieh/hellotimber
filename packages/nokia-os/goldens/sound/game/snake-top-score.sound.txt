@@ -1,0 +1,58 @@
+sound-golden 1
+id: sound/game/snake-top-score
+status: asserted
+source: captures/6.39/plan16/game/top-score
+source-sha256: 0f4257c52e78de2455bd40f87a88be6f560758d348ff99ffa554451051269415
+state: factory
+keys: 0:navi 2039:8 4582:4 5213:2 5848:6
+note: Snake II, level 1, factory settings: a meal, then a crash: the top score.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+40     tone     900 v=0x9104
+186    tone     off
+2054   tone     900 v=0x9104
+2199   tone     off
+4477   vibrator on
+4478   buzzer   2636.9 v=6
+4484   buzzer   off
+4595   tone     900 v=0x9104
+4740   tone     off
+4956   vibrator off
+5230   tone     900 v=0x9104
+5375   tone     off
+5865   tone     900 v=0x9104
+6010   tone     off
+6475   buzzer   440 v=3
+6475   vibrator on
+6490   buzzer   off
+6505   buzzer   440 v=3
+6521   buzzer   off
+6536   buzzer   440 v=3
+6552   buzzer   off
+6955   vibrator off
+8520   buzzer   587 v=3
+8658   buzzer   off
+8797   buzzer   587 v=3
+8913   buzzer   off
+8937   buzzer   587 v=3
+9053   buzzer   off
+9076   buzzer   880 v=3
+9479   buzzer   off
+9502   buzzer   587 v=3
+9618   buzzer   off
+9641   buzzer   880 v=3
+10075  buzzer   off
+11436  buzzer   587 v=3
+11570  buzzer   off
+11710  buzzer   587 v=3
+11826  buzzer   off
+11849  buzzer   587 v=3
+11965  buzzer   off
+11989  buzzer   880 v=3
+12392  buzzer   off
+12415  buzzer   587 v=3
+12531  buzzer   off
+12554  buzzer   880 v=3
+12988  buzzer   off

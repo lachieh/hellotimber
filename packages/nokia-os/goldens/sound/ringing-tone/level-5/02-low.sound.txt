@@ -1,0 +1,100 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/02-low
+status: asserted
+source: captures/6.39/plan16/levels/5/02
+source-sha256: 583c78143c70e0af0c9c37e006c2cea073e35cdb62d34808f937bdf94b5fa570
+state: factory
+keys: 0:down
+note: Low's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9104
+164    tone     off
+985    vibrator on
+986    buzzer   440 v=10
+1016   buzzer   587 v=11
+1047   buzzer   440 v=10
+1078   buzzer   587 v=11
+1109   buzzer   440 v=10
+1148   buzzer   587 v=11
+1178   buzzer   440 v=10
+1209   buzzer   587 v=11
+1240   buzzer   440 v=10
+1271   buzzer   587 v=11
+1302   buzzer   440 v=10
+1333   buzzer   587 v=11
+1364   buzzer   440 v=10
+1399   buzzer   587 v=11
+1426   buzzer   440 v=10
+1457   buzzer   587 v=11
+1488   buzzer   440 v=10
+1519   buzzer   587 v=11
+1550   buzzer   440 v=10
+1581   buzzer   587 v=11
+1612   buzzer   440 v=10
+1649   buzzer   587 v=11
+1674   buzzer   440 v=10
+1705   buzzer   587 v=11
+1736   buzzer   440 v=10
+1767   buzzer   587 v=11
+1798   buzzer   440 v=10
+1829   buzzer   587 v=11
+1860   buzzer   440 v=10
+1900   buzzer   587 v=11
+1929   buzzer   440 v=10
+1960   buzzer   587 v=11
+1991   buzzer   440 v=10
+2022   buzzer   587 v=11
+2053   buzzer   440 v=10
+2084   buzzer   587 v=11
+2115   buzzer   440 v=10
+2150   buzzer   587 v=11
+2177   buzzer   440 v=10
+2208   buzzer   587 v=11
+2239   buzzer   off
+2239   vibrator off
+5438   buzzer   440 v=15
+5438   vibrator on
+5469   buzzer   587 v=21
+5500   buzzer   440 v=15
+5531   buzzer   587 v=21
+5562   buzzer   440 v=15
+5593   buzzer   587 v=21
+5624   buzzer   440 v=15
+5656   buzzer   587 v=21
+5686   buzzer   440 v=15
+5717   buzzer   587 v=21
+5748   buzzer   440 v=15
+5779   buzzer   587 v=21
+5810   buzzer   440 v=15
+5841   buzzer   587 v=21
+5872   buzzer   440 v=15
+5906   buzzer   587 v=21
+5934   buzzer   440 v=15
+5965   buzzer   587 v=21
+5996   buzzer   440 v=15
+6027   buzzer   587 v=21
+6058   buzzer   440 v=15
+6089   buzzer   587 v=21
+6120   buzzer   440 v=15
+6156   buzzer   587 v=21
+6182   buzzer   440 v=15
+6212   buzzer   587 v=21
+6243   buzzer   440 v=15
+6274   buzzer   587 v=21
+6305   buzzer   440 v=15
+6336   buzzer   587 v=21
+6367   buzzer   440 v=15
+6407   buzzer   587 v=21
+6437   buzzer   440 v=15
+6468   buzzer   587 v=21
+6499   buzzer   440 v=15
+6530   buzzer   587 v=21
+6561   buzzer   440 v=15
+6592   buzzer   587 v=21
+6623   buzzer   440 v=15
+6657   buzzer   587 v=21
+6685   buzzer   off
+6685   vibrator off

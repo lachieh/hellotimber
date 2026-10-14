@@ -1,0 +1,57 @@
+sound-golden 1
+id: sound/ringing-volume/tone/02-low
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/02
+source-sha256: b1ca857ff7f3c146a899bb3a2b74018fd530cdb47d30c5d3fc062f0445c6917a
+state: factory
+keys: 0:down
+note: Low stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9104
+174    tone     off
+987    vibrator on
+988    buzzer   440 v=10
+1018   buzzer   587 v=11
+1049   buzzer   440 v=10
+1080   buzzer   587 v=11
+1111   buzzer   440 v=10
+1142   buzzer   587 v=11
+1173   buzzer   440 v=10
+1204   buzzer   587 v=11
+1235   buzzer   440 v=10
+1266   buzzer   587 v=11
+1296   buzzer   440 v=10
+1328   buzzer   587 v=11
+1358   buzzer   440 v=10
+1389   buzzer   587 v=11
+1420   buzzer   440 v=10
+1451   buzzer   587 v=11
+1482   buzzer   440 v=10
+1513   buzzer   587 v=11
+1544   buzzer   440 v=10
+1575   buzzer   587 v=11
+1606   buzzer   440 v=10
+1637   buzzer   587 v=11
+1668   buzzer   440 v=10
+1699   buzzer   587 v=11
+1730   buzzer   440 v=10
+1761   buzzer   587 v=11
+1792   buzzer   440 v=10
+1823   buzzer   587 v=11
+1854   buzzer   440 v=10
+1885   buzzer   587 v=11
+1916   buzzer   440 v=10
+1947   buzzer   587 v=11
+1978   buzzer   440 v=10
+2009   buzzer   587 v=11
+2040   buzzer   440 v=10
+2071   buzzer   587 v=11
+2102   buzzer   440 v=10
+2133   buzzer   587 v=11
+2164   buzzer   440 v=10
+2195   buzzer   587 v=11
+2226   buzzer   off
+2226   vibrator off

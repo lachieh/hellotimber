@@ -1,0 +1,91 @@
+sound-golden 1
+id: sound/ringing-tone/12-croak
+status: asserted
+source: captures/6.39/plan16/ringing-tone/12
+source-sha256: 02435b30bce95a0cfa9fb42929d01a59ee339be4c0c8ffb0214168cb391c6d31
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Rocket onto Croak: its preview at Level 4, Vibrating alert On.
+omitted: 5 (divider rewrite)
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9104
+170    tone     off
+992    buzzer   440 v=10
+992    vibrator on
+1006   buzzer   off
+1022   buzzer   440 v=10
+1037   buzzer   off
+1053   buzzer   440 v=10
+1068   buzzer   off
+1084   buzzer   440 v=10
+1099   buzzer   off
+1115   buzzer   440 v=10
+1130   buzzer   off
+1146   buzzer   440 v=10
+1161   buzzer   off
+1564   buzzer   440 v=10
+1579   buzzer   off
+1595   buzzer   440 v=10
+1616   buzzer   off
+1626   buzzer   440 v=10
+1641   buzzer   off
+1657   buzzer   440 v=10
+1672   buzzer   off
+1688   buzzer   440 v=10
+1703   buzzer   off
+1719   buzzer   440 v=10
+1734   buzzer   off
+2137   buzzer   440 v=10
+2152   buzzer   off
+2168   buzzer   440 v=10
+2183   buzzer   off
+2199   buzzer   440 v=10
+2214   buzzer   off
+2230   buzzer   440 v=10
+2245   buzzer   off
+2261   buzzer   440 v=10
+2276   buzzer   off
+2292   buzzer   440 v=10
+2307   buzzer   off
+2323   vibrator off
+4748   buzzer   440 v=10
+4748   vibrator on
+4763   buzzer   off
+4779   buzzer   440 v=10
+4794   buzzer   off
+4809   buzzer   440 v=10
+4825   buzzer   off
+4840   buzzer   440 v=10
+4856   buzzer   off
+4872   buzzer   440 v=10
+4887   buzzer   off
+4902   buzzer   440 v=10
+4918   buzzer   off
+5321   buzzer   440 v=10
+5336   buzzer   off
+5352   buzzer   440 v=10
+5372   buzzer   off
+5383   buzzer   440 v=10
+5398   buzzer   off
+5413   buzzer   440 v=10
+5429   buzzer   off
+5444   buzzer   440 v=10
+5460   buzzer   off
+5475   buzzer   440 v=10
+5491   buzzer   off
+5894   buzzer   440 v=10
+5909   buzzer   off
+5925   buzzer   440 v=10
+5940   buzzer   off
+5956   buzzer   440 v=10
+5971   buzzer   off
+5986   buzzer   440 v=10
+6002   buzzer   off
+6017   buzzer   440 v=10
+6033   buzzer   off
+6048   buzzer   440 v=10
+6064   buzzer   off
+6079   vibrator off
+@loop 992 3756

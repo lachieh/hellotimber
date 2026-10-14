@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/profile/discreet/ringing-tone
+status: asserted
+source: captures/6.39/plan16/profile/discreet/ringing-tone
+source-sha256: 26194e2fcabe806595f1eff9cf5437cf795e93e119cd7637a822b12ff084b754
+state: factory
+keys: 0:down
+note: Profiles › Discreet › Personalise › Ringing tone: ▼ from Croak onto Nokia tune.
+omitted: none
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+174    tone     off

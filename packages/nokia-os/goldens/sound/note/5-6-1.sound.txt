@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/note/5-6-1
+status: asserted
+source: captures/6.39/plan16/notes/5-6-1
+source-sha256: dc7b33837185bf725d0061370d88e2304ae4a244f980044e05089dce0ee51037
+state: factory
+keys: 0:navi
+note: OK on 5-6-1 (factory).
+omitted: none
+
+@events
+# t_ms output   state

@@ -1,0 +1,50 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/18-polite
+status: asserted
+source: captures/6.39/plan16/levels/5/18
+source-sha256: 3617012b20c0a79acc000bfb6774eeb5b67343482abc369a9dcc25a13714b773
+state: factory
+keys: 0:down
+note: Polite's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 1 (level rewrite), 3 (stale frequency)
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9104
+165    tone     off
+986    buzzer   2489 v=17
+986    vibrator on
+1047   buzzer   1480 v=24
+1109   buzzer   2489 v=17
+1171   buzzer   off
+1171   vibrator off
+4084   buzzer   2489 v=17
+4084   vibrator on
+4146   buzzer   1480 v=24
+4208   buzzer   2489 v=17
+4270   buzzer   1480 v=24
+4332   buzzer   2489 v=17
+4393   buzzer   1480 v=24
+4455   buzzer   2489 v=17
+4517   buzzer   off
+4517   vibrator off
+7429   buzzer   2489 v=128
+7429   vibrator on
+7491   buzzer   1480 v=178
+7553   buzzer   2489 v=128
+7615   buzzer   1480 v=178
+7677   buzzer   2489 v=128
+7739   buzzer   1480 v=178
+7801   buzzer   2489 v=128
+7863   buzzer   1480 v=178
+7925   buzzer   2489 v=128
+7986   buzzer   1480 v=178
+8048   buzzer   2489 v=128
+8110   buzzer   1480 v=178
+8172   buzzer   2489 v=128
+8234   buzzer   1480 v=178
+8297   buzzer   2489 v=128
+8358   buzzer   1480 v=178
+8420   buzzer   2489 v=128
+8482   buzzer   off
+8482   vibrator off

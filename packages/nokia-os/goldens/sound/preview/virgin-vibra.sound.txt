@@ -1,0 +1,102 @@
+sound-golden 1
+id: sound/preview/virgin-vibra
+status: asserted
+source: captures/6.39/plan16/preview/virgin-vibra
+source-sha256: 77976d8cb5109123f1d5a20ce5085343c12ad590ae1638dfd5455d0756e1a47c
+state: virgin
+keys: 0:down 8060:down
+note: Virgin, Ringing volume, Incoming call alert and Vibrating alert set: Tones › Ringing tone (unset) ▼, 8 s later ▼.
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9100
+164    tone     off
+8118   tone     900 v=0x9100
+8241   tone     off
+9063   buzzer   440 v=6
+9063   vibrator on
+9093   buzzer   587 v=7
+9124   buzzer   440 v=6
+9155   buzzer   587 v=7
+9186   buzzer   440 v=6
+9217   buzzer   587 v=7
+9248   buzzer   440 v=6
+9279   buzzer   587 v=7
+9310   buzzer   440 v=6
+9341   buzzer   587 v=7
+9372   buzzer   440 v=6
+9403   buzzer   587 v=7
+9434   buzzer   440 v=6
+9465   buzzer   587 v=7
+9496   buzzer   440 v=6
+9527   buzzer   587 v=7
+9558   buzzer   440 v=6
+9589   buzzer   587 v=7
+9620   buzzer   440 v=6
+9651   buzzer   587 v=7
+9682   buzzer   440 v=6
+9713   buzzer   587 v=7
+9744   buzzer   440 v=6
+9775   buzzer   587 v=7
+9806   buzzer   440 v=6
+9837   buzzer   587 v=7
+9868   buzzer   440 v=6
+9899   buzzer   587 v=7
+9931   buzzer   440 v=6
+9962   buzzer   587 v=7
+9992   buzzer   440 v=6
+10023  buzzer   587 v=7
+10054  buzzer   440 v=6
+10088  buzzer   587 v=7
+10116  buzzer   440 v=6
+10147  buzzer   587 v=7
+10178  buzzer   440 v=6
+10209  buzzer   587 v=7
+10240  buzzer   440 v=6
+10271  buzzer   587 v=7
+10302  buzzer   off
+10302  vibrator off
+13493  buzzer   440 v=6
+13493  vibrator on
+13523  buzzer   587 v=7
+13554  buzzer   440 v=6
+13593  buzzer   587 v=7
+13624  buzzer   440 v=6
+13655  buzzer   587 v=7
+13686  buzzer   440 v=6
+13717  buzzer   587 v=7
+13748  buzzer   440 v=6
+13779  buzzer   587 v=7
+13810  buzzer   440 v=6
+13843  buzzer   587 v=7
+13872  buzzer   440 v=6
+13903  buzzer   587 v=7
+13934  buzzer   440 v=6
+13965  buzzer   587 v=7
+13996  buzzer   440 v=6
+14027  buzzer   587 v=7
+14058  buzzer   440 v=6
+14094  buzzer   587 v=7
+14120  buzzer   440 v=6
+14151  buzzer   587 v=7
+14182  buzzer   440 v=6
+14213  buzzer   587 v=7
+14244  buzzer   440 v=6
+14275  buzzer   587 v=7
+14306  buzzer   440 v=6
+14344  buzzer   587 v=7
+14375  buzzer   440 v=6
+14406  buzzer   587 v=7
+14437  buzzer   440 v=6
+14468  buzzer   587 v=7
+14499  buzzer   440 v=6
+14530  buzzer   587 v=7
+14561  buzzer   440 v=6
+14594  buzzer   587 v=7
+14623  buzzer   440 v=6
+14654  buzzer   587 v=7
+14685  buzzer   440 v=6
+14716  buzzer   587 v=7
+14747  buzzer   off
+14747  vibrator off

@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/profile/general/message-tone
+status: asserted
+source: captures/6.39/plan16/profile/general/message-tone
+source-sha256: c56a8a416e94fceb80226f33b1004f01e4492c6328838e54bd2eef5a51fa50ea
+state: factory
+keys: 0:down
+note: Profiles › General › Personalise › Message alert tone: ▼ from Standard onto Special.
+omitted: 2 (divider rewrite)
+
+@events
+# t_ms output   state
+36     tone     900 v=0x9104
+180    tone     off
+1001   vibrator on
+1002   buzzer   2683.7 v=22
+1094   buzzer   off
+1187   buzzer   2683.7 v=22
+1280   buzzer   off
+1373   buzzer   2683.7 v=22
+1373   vibrator off
+1466   buzzer   off
+1752   buzzer   2683.7 v=22
+1752   vibrator on
+2039   buzzer   off
+2132   buzzer   2683.7 v=22
+2418   buzzer   off
+2704   vibrator off
+2705   buzzer   2683.7 v=22
+2797   buzzer   off
+2890   buzzer   2683.7 v=22
+2983   buzzer   off
+3076   buzzer   2683.7 v=22
+3170   buzzer   off
+4138   buzzer   2683.7 v=22
+4138   vibrator on
+4231   buzzer   off
+4324   buzzer   2683.7 v=22
+4417   buzzer   off
+4510   buzzer   2683.7 v=22
+4510   vibrator off
+4603   buzzer   off
+4889   vibrator on
+4890   buzzer   2683.7 v=22
+5176   buzzer   off
+5269   buzzer   2683.7 v=22
+5555   buzzer   off
+5842   buzzer   2683.7 v=22
+5842   vibrator off
+5934   buzzer   off
+6028   buzzer   2683.7 v=22
+6125   buzzer   off
+6213   buzzer   2683.7 v=22
+6306   buzzer   off

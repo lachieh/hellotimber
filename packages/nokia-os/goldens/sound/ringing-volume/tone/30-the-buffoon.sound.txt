@@ -1,0 +1,60 @@
+sound-golden 1
+id: sound/ringing-volume/tone/30-the-buffoon
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/30
+source-sha256: a05c8bd4cee66e815a75bad4d4a0476ac92ddd6a409338e767a22ba43ee76e00
+state: factory
+keys: 0:down
+note: The Buffoon stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+170    tone     off
+991    buzzer   523 v=11
+1083   buzzer   off
+1107   buzzer   622 v=11
+1331   buzzer   off
+1354   buzzer   784 v=13
+1448   buzzer   off
+1470   vibrator on
+1471   buzzer   1047 v=14
+1563   buzzer   off
+1850   buzzer   988 v=16
+1949   buzzer   off
+2229   buzzer   932 v=17
+2585   vibrator off
+2586   buzzer   off
+2872   buzzer   932 v=17
+2965   buzzer   off
+2988   buzzer   831 v=12
+3214   buzzer   off
+3237   buzzer   932 v=17
+3330   buzzer   off
+3353   buzzer   831 v=12
+3452   buzzer   off
+3601   buzzer   784 v=13
+3957   buzzer   off
+4368   buzzer   784 v=13
+4460   buzzer   off
+4484   buzzer   831 v=12
+4484   vibrator on
+4708   buzzer   off
+4732   buzzer   932 v=17
+4824   buzzer   off
+4848   buzzer   831 v=12
+4954   buzzer   off
+5235   buzzer   784 v=13
+5328   buzzer   off
+5614   buzzer   622 v=11
+5614   vibrator off
+5707   buzzer   off
+5862   buzzer   622 v=11
+5956   buzzer   off
+5978   buzzer   698 v=13
+6071   buzzer   off
+6358   buzzer   740 v=12
+6582   buzzer   off
+6605   buzzer   784 v=13
+6962   buzzer   off

@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/game/snake-top-score-page
+status: asserted
+source: captures/6.39/plan16/game/top-score-page
+source-sha256: c934b2cfc5fee0dc4d574be89a9faef7fea101de742fb5978109bf4237f9d4be
+state: factory
+keys: 0:navi
+note: Snake II, level 1, factory settings: Snake II › Top score (the note).
+omitted: none
+
+@events
+# t_ms output   state
+40     tone     900 v=0x9104
+185    tone     off

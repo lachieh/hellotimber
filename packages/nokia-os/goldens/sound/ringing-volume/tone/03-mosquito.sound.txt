@@ -1,0 +1,27 @@
+sound-golden 1
+id: sound/ringing-volume/tone/03-mosquito
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/03
+source-sha256: 964159f061116b2317be165af201f16883ac2743cb48d13f022747d4966da0dc
+state: factory
+keys: 0:down
+note: Mosquito stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: none
+
+@events
+# t_ms output   state
+21     tone     900 v=0x9104
+164    tone     off
+995    buzzer   2683.7 v=22
+995    vibrator on
+1086   buzzer   2852.8 v=29
+1179   buzzer   2683.7 v=22
+1272   buzzer   2852.8 v=29
+1364   buzzer   2683.7 v=22
+1457   buzzer   2852.8 v=29
+1550   buzzer   2683.7 v=22
+1643   buzzer   2852.8 v=29
+1745   buzzer   2683.7 v=22
+1837   buzzer   2852.8 v=29
+1930   buzzer   off
+1930   vibrator off

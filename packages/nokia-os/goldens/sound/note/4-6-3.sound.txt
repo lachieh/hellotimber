@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/note/4-6-3
+status: asserted
+source: captures/6.39/plan16/notes/4-6-3
+source-sha256: 356981bce31ed05c4054dbc100501550888432d4ac309dc60be4e128094e83e4
+state: factory
+keys: 0:navi
+note: "Not allowed" (Warning tones On) after OK on 4-6-3, 4-7-1, 4-7-2 (factory).
+omitted: none
+
+@events
+# t_ms output   state
+25     buzzer   1000 v=22
+307    buzzer   off

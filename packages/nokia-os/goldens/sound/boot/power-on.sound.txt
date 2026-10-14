@@ -1,0 +1,13 @@
+sound-golden 1
+id: sound/boot/power-on
+status: asserted
+source: captures/6.39/plan16/boot/power-on
+source-sha256: 9f916173fc93acf5cccaff28cfc14dbdbece54b8489614c3032ba68762e30bf4
+state: v639-plan15-restored
+note: The harness power-on (no keys), 16 s.
+omitted: none
+
+@events
+# t_ms output   state
+2425   tone     900 v=0x9105
+2549   tone     off

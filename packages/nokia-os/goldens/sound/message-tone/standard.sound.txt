@@ -1,0 +1,26 @@
+sound-golden 1
+id: sound/message-tone/standard
+status: asserted
+source: captures/6.39/plan16/message-tone/standard
+source-sha256: 8ba7e7471537405217feb414c31c5527bb3df0fc437817a133167f3dcea06baa
+state: factory
+keys: 0:down
+note: Tones › Message alert tone: ▼ from No tone onto Standard.
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+42     tone     900 v=0x9104
+187    tone     off
+1008   buzzer   1499.9 v=25
+1008   vibrator on
+1201   buzzer   off
+1279   buzzer   1499.9 v=25
+1480   buzzer   off
+1557   vibrator off
+2231   vibrator on
+2232   buzzer   1499.9 v=25
+2424   buzzer   off
+2502   buzzer   1499.9 v=25
+2695   buzzer   off
+2773   vibrator off

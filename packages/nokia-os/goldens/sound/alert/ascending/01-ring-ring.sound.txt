@@ -1,0 +1,66 @@
+sound-golden 1
+id: sound/alert/ascending/01-ring-ring
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/01
+source-sha256: d00bb267b93e035424d7d198a6b57b1ec9543fa43a68ed266b93062b724bd646
+state: factory
+keys: 0:up
+note: Ring ring's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+174    tone     off
+987    vibrator on
+988    buzzer   622 v=3
+1041   buzzer   988 v=4
+1095   buzzer   622 v=3
+1149   buzzer   988 v=4
+1204   buzzer   622 v=3
+1258   buzzer   988 v=4
+1312   buzzer   622 v=3
+1376   buzzer   988 v=4
+1428   buzzer   622 v=3
+1482   buzzer   988 v=4
+1536   vibrator off
+1537   buzzer   off
+1730   buzzer   622 v=3
+1730   vibrator on
+1784   buzzer   988 v=4
+1839   buzzer   622 v=3
+1893   buzzer   988 v=4
+1947   buzzer   622 v=3
+2001   buzzer   988 v=4
+2055   buzzer   622 v=3
+2110   buzzer   988 v=4
+2164   buzzer   622 v=3
+2218   buzzer   988 v=4
+2272   buzzer   off
+2272   vibrator off
+4496   buzzer   622 v=3
+4496   vibrator on
+4550   buzzer   988 v=4
+4604   buzzer   622 v=3
+4658   buzzer   988 v=4
+4712   buzzer   622 v=3
+4767   buzzer   988 v=4
+4821   buzzer   622 v=3
+4881   buzzer   988 v=4
+4929   buzzer   622 v=3
+4983   buzzer   988 v=4
+5037   vibrator off
+5038   buzzer   off
+5231   buzzer   622 v=3
+5231   vibrator on
+5285   buzzer   988 v=4
+5340   buzzer   622 v=5
+5394   buzzer   988 v=7
+5448   buzzer   622 v=5
+5502   buzzer   988 v=7
+5556   buzzer   622 v=5
+5611   buzzer   988 v=7
+5665   buzzer   622 v=5
+5719   buzzer   988 v=7
+5773   buzzer   off
+5773   vibrator off

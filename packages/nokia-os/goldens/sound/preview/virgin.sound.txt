@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/preview/virgin
+status: asserted
+source: captures/6.39/plan16/preview/virgin
+source-sha256: 6ed61b5d9a89e8468eb16357d7c1f46a878e2e370b502ba2772331c1a2619454
+state: virgin
+keys: 0:down 8060:down
+note: Virgin, nothing set: Tones › Ringing tone (unset) ▼, 8 s later ▼.
+omitted: none
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9100
+169    tone     off
+8107   tone     900 v=0x9100
+8231   tone     off

@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/vibrator/choose
+status: asserted
+source: captures/6.39/plan16/vibrator/choose
+source-sha256: c9d1ac5937211c2f628b56e920da37bf2ce3bbda10f8d0e649bba356c6e174d2
+state: factory
+keys: 0:down 2060:navi 6121:navi 7681:up 9741:navi
+note: Tones › Vibrating alert: ▼ Off, OK, Select, ▲ On, OK.
+omitted: 3 (level rewrite)
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9104
+173    tone     off
+2093   tone     900 v=0x9104
+2241   tone     off
+6191   tone     900 v=0x9104
+6315   tone     off
+7712   tone     900 v=0x9104
+7856   tone     off
+9776   tone     900 v=0x9104
+9923   tone     off

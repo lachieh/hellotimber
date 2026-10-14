@@ -1,0 +1,90 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/16-attraction
+status: asserted
+source: captures/6.39/plan16/levels/5/16
+source-sha256: f1e59caed281d51a626e6f91252017721bc196b025eca0fbe6f13f8d3f26cb05
+state: factory
+keys: 0:down
+note: Attraction's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 1 (divider rewrite), 4 (stale frequency)
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+167    tone     off
+988    vibrator on
+989    buzzer   2636.9 v=18
+1103   buzzer   off
+1336   vibrator off
+4705   vibrator on
+4706   buzzer   2636.9 v=153
+4821   buzzer   2489 v=128
+4938   buzzer   2636.9 v=153
+5054   buzzer   off
+5054   vibrator off
+8538   vibrator on
+8539   buzzer   2636.9 v=153
+8624   buzzer   988 v=92
+8709   buzzer   2489 v=128
+8805   buzzer   988 v=92
+8887   buzzer   2636.9 v=153
+8972   buzzer   988 v=92
+9057   buzzer   2959.9 v=178
+9142   buzzer   off
+9142   vibrator off
+12512  buzzer   2959.9 v=178
+12512  vibrator on
+12597  buzzer   988 v=92
+12682  buzzer   3322.3 v=183
+12767  buzzer   988 v=92
+12852  buzzer   2959.9 v=178
+12938  buzzer   988 v=92
+13023  buzzer   2636.9 v=153
+13108  buzzer   988 v=92
+13193  buzzer   2489 v=128
+13278  buzzer   988 v=92
+13364  buzzer   2216.9 v=96
+13449  buzzer   988 v=92
+13534  buzzer   2489 v=128
+13619  buzzer   988 v=92
+13704  buzzer   2636.9 v=153
+13789  buzzer   off
+13789  vibrator off
+17159  buzzer   2636.9 v=153
+17159  vibrator on
+17244  buzzer   988 v=92
+17329  buzzer   2489 v=128
+17414  buzzer   988 v=92
+17500  buzzer   2636.9 v=153
+17585  buzzer   988 v=92
+17670  buzzer   2489 v=128
+17755  buzzer   988 v=92
+17840  buzzer   2636.9 v=153
+17925  buzzer   988 v=92
+18011  buzzer   2959.9 v=178
+18096  buzzer   off
+18096  vibrator off
+21464  buzzer   2959.9 v=178
+21464  vibrator on
+21549  buzzer   988 v=92
+21635  buzzer   3322.3 v=183
+21720  buzzer   988 v=92
+21805  buzzer   2959.9 v=178
+21890  buzzer   988 v=92
+21975  buzzer   2636.9 v=153
+22060  buzzer   988 v=92
+22146  buzzer   2489 v=128
+22231  buzzer   988 v=92
+22326  buzzer   2216.9 v=96
+22409  buzzer   988 v=92
+22494  buzzer   2489 v=128
+22579  buzzer   988 v=92
+22665  buzzer   2636.9 v=153
+22780  buzzer   off
+23013  vibrator off
+26382  vibrator on
+26383  buzzer   2636.9 v=153
+26498  buzzer   2489 v=128
+26615  buzzer   2636.9 v=153
+26731  buzzer   off
+26731  vibrator off

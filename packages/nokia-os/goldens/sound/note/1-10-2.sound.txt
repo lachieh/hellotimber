@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/note/1-10-2
+status: asserted
+source: captures/6.39/plan16/notes/1-10-2
+source-sha256: 8cd444126da4611ec81c2a722195fed75a56e7156e47a63a867e5b356b32758a
+state: factory
+keys: 0:navi
+note: "No voice tags saved" (Warning tones On) after OK on 1-10-2, 1-10-4 (factory).
+omitted: none
+
+@events
+# t_ms output   state
+43     tone     1750 v=0x9105
+335    tone     off

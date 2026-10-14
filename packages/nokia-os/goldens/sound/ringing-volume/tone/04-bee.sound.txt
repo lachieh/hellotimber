@@ -1,0 +1,27 @@
+sound-golden 1
+id: sound/ringing-volume/tone/04-bee
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/04
+source-sha256: 3bcf48b31ba65b9b40eca234fcd2a8d80636007f781114a2a1f9f1608e371815
+state: factory
+keys: 0:down
+note: Bee stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: none
+
+@events
+# t_ms output   state
+22     tone     900 v=0x9104
+165    tone     off
+987    buzzer   2626.8 v=18
+987    vibrator on
+1033   buzzer   2910.2 v=33
+1079   buzzer   2626.8 v=18
+1125   buzzer   2910.2 v=33
+1172   buzzer   2626.8 v=18
+1218   buzzer   2910.2 v=33
+1265   buzzer   2626.8 v=18
+1311   buzzer   2910.2 v=33
+1359   buzzer   2626.8 v=18
+1404   buzzer   2910.2 v=33
+1451   buzzer   off
+1451   vibrator off

@@ -1,0 +1,30 @@
+sound-golden 1
+id: sound/game/snake-meal
+status: asserted
+source: captures/6.39/plan16/game/meal
+source-sha256: 424ac2f08af11a10eb5e4a117b952ec2cf77ae3cacb9d60480e39b3cb3ba557f
+state: factory
+keys: 0:navi 2039:8 4582:6 5213:2 5848:6
+note: Snake II, level 1, factory settings: two meals.
+omitted: 1 (divider rewrite), 1 (level rewrite)
+
+@events
+# t_ms output   state
+40     tone     900 v=0x9104
+186    tone     off
+2054   tone     900 v=0x9104
+2199   tone     off
+4477   vibrator on
+4478   buzzer   2636.9 v=6
+4484   buzzer   off
+4595   tone     900 v=0x9104
+4740   tone     off
+4956   vibrator off
+5230   tone     900 v=0x9104
+5375   tone     off
+5865   tone     900 v=0x9104
+6010   tone     off
+8287   vibrator on
+8288   buzzer   2636.9 v=6
+8294   buzzer   off
+8766   vibrator off

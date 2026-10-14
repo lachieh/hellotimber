@@ -1,0 +1,46 @@
+sound-golden 1
+id: sound/message-tone/vib-off-special
+status: asserted
+source: captures/6.39/plan16/message-tone/vib-off-special
+source-sha256: 1d659cef5d0a2b230a8d0c84c872921f3e2264aa5a00928ed86bef5137f1c6a6
+state: factory
+keys: 0:down
+note: Tones › Message alert tone: Vibrating alert Off, ▼ onto Special.
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+41     tone     900 v=0x9104
+185    tone     off
+1007   buzzer   2683.7 v=22
+1099   buzzer   off
+1192   buzzer   2683.7 v=22
+1285   buzzer   off
+1385   buzzer   2683.7 v=22
+1478   buzzer   off
+1765   buzzer   2683.7 v=22
+2051   buzzer   off
+2144   buzzer   2683.7 v=22
+2431   buzzer   off
+2717   buzzer   2683.7 v=22
+2810   buzzer   off
+2903   buzzer   2683.7 v=22
+2996   buzzer   off
+3089   buzzer   2683.7 v=22
+3183   buzzer   off
+4151   buzzer   2683.7 v=22
+4244   buzzer   off
+4337   buzzer   2683.7 v=22
+4430   buzzer   off
+4523   buzzer   2683.7 v=22
+4615   buzzer   off
+4902   buzzer   2683.7 v=22
+5188   buzzer   off
+5281   buzzer   2683.7 v=22
+5568   buzzer   off
+5855   buzzer   2683.7 v=22
+5947   buzzer   off
+6040   buzzer   2683.7 v=22
+6142   buzzer   off
+6234   buzzer   2683.7 v=22
+6327   buzzer   off

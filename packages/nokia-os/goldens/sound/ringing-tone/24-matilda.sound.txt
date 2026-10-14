@@ -1,0 +1,90 @@
+sound-golden 1
+id: sound/ringing-tone/24-matilda
+status: asserted
+source: captures/6.39/plan16/ringing-tone/24
+source-sha256: e2c46915a1240b48038d3c11325cc5aa8a0e67ea53d1e7c7d05ee688479efdd6
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Toreador onto Matilda: its preview at Level 4, Vibrating alert On.
+omitted: 2 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+29     tone     900 v=0x9104
+169    tone     off
+991    buzzer   880 v=14
+991    vibrator on
+1300   buzzer   off
+1323   buzzer   880 v=14
+1463   buzzer   off
+1486   buzzer   880 v=14
+1625   buzzer   off
+1648   buzzer   880 v=14
+1958   buzzer   off
+1981   buzzer   740 v=12
+2314   vibrator off
+2315   buzzer   1175 v=16
+2624   buzzer   off
+2647   buzzer   1175 v=16
+2787   buzzer   off
+2810   buzzer   1175 v=16
+2952   buzzer   off
+2973   buzzer   1109 v=17
+3283   buzzer   off
+3307   buzzer   988 v=16
+3640   buzzer   880 v=14
+3640   vibrator on
+3954   buzzer   off
+3973   buzzer   880 v=14
+4112   buzzer   off
+4135   buzzer   880 v=14
+4274   buzzer   off
+4298   buzzer   988 v=16
+4631   buzzer   880 v=14
+4770   buzzer   off
+4793   buzzer   880 v=14
+4933   buzzer   off
+4956   buzzer   880 v=14
+4956   vibrator off
+5289   buzzer   784 v=13
+5456   buzzer   740 v=12
+5614   buzzer   659 v=12
+5924   buzzer   off
+5957   buzzer   587 v=11
+6117   buzzer   659 v=12
+6280   buzzer   740 v=12
+6280   vibrator on
+6590   buzzer   off
+6613   buzzer   740 v=12
+6752   buzzer   off
+6776   buzzer   740 v=12
+6915   buzzer   off
+6938   buzzer   659 v=12
+7248   buzzer   off
+7271   buzzer   659 v=12
+7604   buzzer   587 v=11
+7604   vibrator off
+7767   buzzer   659 v=12
+7929   buzzer   740 v=12
+8092   buzzer   587 v=11
+8255   buzzer   494 v=10
+8417   buzzer   554 v=11
+8580   buzzer   587 v=11
+8889   buzzer   off
+8913   buzzer   440 v=10
+8913   vibrator on
+9246   buzzer   587 v=11
+9408   buzzer   740 v=12
+9571   buzzer   880 v=14
+9904   buzzer   784 v=13
+10068  buzzer   740 v=12
+10214  buzzer   off
+10230  buzzer   659 v=12
+10230  vibrator off
+10540  buzzer   off
+10563  buzzer   659 v=12
+10715  buzzer   off
+10734  buzzer   659 v=12
+10873  buzzer   off
+10896  buzzer   587 v=11
+11485  buzzer   off

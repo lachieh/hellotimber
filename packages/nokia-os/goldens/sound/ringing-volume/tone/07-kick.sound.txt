@@ -1,0 +1,60 @@
+sound-golden 1
+id: sound/ringing-volume/tone/07-kick
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/07
+source-sha256: 90262fa96a5bb792cf2011d20ea37b9ccbeaa1456502c1683bf6c73ab4bd2a52
+state: factory
+keys: 0:down
+note: Kick stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 4 (divider rewrite)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+171    tone     off
+992    vibrator on
+993    buzzer   659 v=12
+1162   buzzer   off
+1216   buzzer   2636.9 v=18
+1231   buzzer   off
+1332   buzzer   2636.9 v=18
+1348   buzzer   off
+1448   vibrator off
+1449   buzzer   587 v=11
+1619   buzzer   off
+1673   buzzer   2636.9 v=18
+1688   buzzer   off
+1905   vibrator on
+1906   buzzer   523 v=11
+2075   buzzer   off
+2130   buzzer   2636.9 v=18
+2145   buzzer   off
+2246   buzzer   2636.9 v=18
+2261   buzzer   off
+2362   buzzer   494 v=10
+2362   vibrator off
+2532   buzzer   off
+2819   buzzer   2636.9 v=18
+2819   vibrator on
+2834   buzzer   off
+2935   buzzer   2636.9 v=18
+2951   buzzer   off
+3051   buzzer   659 v=12
+3223   buzzer   off
+3277   buzzer   587 v=11
+3277   vibrator off
+3447   buzzer   off
+3501   buzzer   2636.9 v=18
+3517   buzzer   off
+3734   buzzer   523 v=11
+3734   vibrator on
+3904   buzzer   off
+3967   buzzer   2636.9 v=18
+3981   buzzer   off
+4082   buzzer   2636.9 v=18
+4098   buzzer   off
+4198   buzzer   494 v=10
+4198   vibrator off
+4547   buzzer   off
+4547   vibrator on
+5220   vibrator off

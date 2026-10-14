@@ -1,0 +1,53 @@
+sound-golden 1
+id: sound/alert/ascending/04-bee
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/04
+source-sha256: ad15a20409e9d0cb14e1c0cffde08a8e1d38af13af8f8c37962003bf10c886f7
+state: factory
+keys: 0:down
+note: Bee's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+167    tone     off
+990    vibrator on
+991    buzzer   2626.8 v=6
+1034   buzzer   2910.2 v=9
+1081   buzzer   2626.8 v=6
+1127   buzzer   2910.2 v=9
+1174   buzzer   2626.8 v=6
+1220   buzzer   2910.2 v=9
+1267   buzzer   2626.8 v=6
+1313   buzzer   2910.2 v=9
+1359   buzzer   2626.8 v=6
+1406   buzzer   2910.2 v=9
+1452   buzzer   off
+1452   vibrator off
+4551   buzzer   2626.8 v=6
+4551   vibrator on
+4597   buzzer   2910.2 v=9
+4644   buzzer   2626.8 v=6
+4690   buzzer   2910.2 v=9
+4746   buzzer   2626.8 v=6
+4791   buzzer   2910.2 v=9
+4837   buzzer   2626.8 v=6
+4884   buzzer   2910.2 v=9
+4930   buzzer   2626.8 v=6
+4977   buzzer   2910.2 v=9
+5023   buzzer   off
+5023   vibrator off
+5217   buzzer   2626.8 v=6
+5217   vibrator on
+5263   buzzer   2910.2 v=9
+5310   buzzer   2626.8 v=6
+5356   buzzer   2910.2 v=9
+5403   buzzer   2626.8 v=6
+5449   buzzer   2910.2 v=9
+5497   buzzer   2626.8 v=6
+5542   buzzer   2910.2 v=9
+5588   buzzer   2626.8 v=6
+5635   buzzer   2910.2 v=9
+5681   buzzer   off
+5681   vibrator off

@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/note/invalid-shortcut-keypad-l3
+status: asserted
+source: captures/6.39/plan16/notes/invalid-shortcut-keypad-l3
+source-sha256: a349417466ef7ee9d279583848d12ae08261b063ef738bcdbb1d692f0b0d1e29
+state: factory
+keys: 0:navi 460:1 920:9
+note: "Invalid shortcut" (Warning tones On) after Menu 1 9, Keypad tones Level 3.
+omitted: none
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9100
+173    tone     off
+482    tone     900 v=0x9100
+622    tone     off
+944    tone     1750 v=0x9105
+1234   tone     off

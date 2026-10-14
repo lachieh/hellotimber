@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/alert/ascending-l5
+status: asserted
+source: captures/6.39/plan16/alert/ascending-l5
+source-sha256: f43ffb6883383acc9ec50c6178c60751ded6537ab4ea474334f51a49c6496227
+state: factory
+keys: 0:down
+note: Incoming call alert Ascending, Ringing volume Level 5: ▼ from Croak onto Nokia tune.
+omitted: 1 (divider rewrite), 3 (stale frequency)
+
+@events
+# t_ms output   state
+24     tone     900 v=0x9104
+165    tone     off
+986    vibrator on
+987    buzzer   1319 v=4
+1102   buzzer   1175 v=6
+1218   buzzer   740 v=3
+1464   buzzer   831 v=4
+1698   buzzer   1109 v=5
+1698   vibrator off
+1814   buzzer   988 v=4
+1930   buzzer   587 v=3
+2170   buzzer   659 v=3
+2410   vibrator on
+2411   buzzer   988 v=4
+2527   buzzer   880 v=3
+2643   buzzer   554 v=3
+2883   buzzer   659 v=3
+3124   buzzer   880 v=3
+3124   vibrator off
+3852   buzzer   off
+3852   vibrator on
+4579   vibrator off
+7003   vibrator on
+7004   buzzer   1319 v=7
+7119   buzzer   1175 v=8
+7236   buzzer   740 v=5
+7476   buzzer   831 v=6
+7723   buzzer   1109 v=8
+7723   vibrator off
+7840   buzzer   988 v=7
+7956   buzzer   587 v=5
+8196   buzzer   659 v=5
+8436   buzzer   988 v=7
+8436   vibrator on
+8552   buzzer   880 v=6
+8668   buzzer   554 v=5
+8908   buzzer   659 v=5
+9148   buzzer   880 v=6
+9148   vibrator off
+9876   buzzer   off
+9876   vibrator on
+10605  vibrator off

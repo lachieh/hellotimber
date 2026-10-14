@@ -1,0 +1,128 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/33-mangrove
+status: asserted
+source: captures/6.39/plan16/levels/5/33
+source-sha256: 3f3243e6b8c3f5428ffdefd9a15e43cc9f3e4036403367c9d8959a9dc2947801
+state: factory
+keys: 0:down
+note: Mangrove's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 1 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9104
+172    tone     off
+986    buzzer   2636.9 v=18
+993    buzzer   off
+1016   buzzer   2636.9 v=18
+1024   buzzer   off
+1047   buzzer   2636.9 v=18
+1055   buzzer   off
+4060   buzzer   2636.9 v=18
+4060   vibrator on
+4068   buzzer   off
+4102   buzzer   2636.9 v=18
+4107   buzzer   off
+4130   buzzer   2636.9 v=18
+4137   buzzer   off
+4525   vibrator off
+5604   vibrator on
+6081   vibrator off
+7150   buzzer   2636.9 v=153
+7150   vibrator on
+7157   buzzer   off
+7181   buzzer   2636.9 v=153
+7188   buzzer   off
+7212   buzzer   2636.9 v=153
+7219   buzzer   off
+7607   vibrator off
+8675   vibrator on
+9155   vibrator off
+10225  buzzer   2636.9 v=153
+10225  vibrator on
+10233  buzzer   off
+10256  buzzer   2636.9 v=153
+10264  buzzer   off
+10287  buzzer   2636.9 v=153
+10295  buzzer   off
+10682  vibrator off
+11750  vibrator on
+12230  vibrator off
+13299  buzzer   2636.9 v=153
+13299  vibrator on
+13307  buzzer   off
+13330  buzzer   2636.9 v=153
+13338  buzzer   off
+13366  buzzer   2636.9 v=153
+13369  buzzer   off
+13756  vibrator off
+14825  vibrator on
+15305  vibrator off
+16373  vibrator on
+16374  buzzer   2636.9 v=153
+16381  buzzer   off
+16404  buzzer   2636.9 v=153
+16412  buzzer   off
+16435  buzzer   2636.9 v=153
+16443  buzzer   off
+16831  vibrator off
+17900  vibrator on
+18380  vibrator off
+19448  vibrator on
+19449  buzzer   2636.9 v=153
+19456  buzzer   off
+19479  buzzer   2636.9 v=153
+19487  buzzer   off
+19510  buzzer   2636.9 v=153
+19518  buzzer   off
+19905  vibrator off
+20974  vibrator on
+21454  vibrator off
+22523  buzzer   2636.9 v=153
+22523  vibrator on
+22530  buzzer   off
+22554  buzzer   2636.9 v=153
+22561  buzzer   off
+22585  buzzer   2636.9 v=153
+22592  buzzer   off
+22979  vibrator off
+24049  vibrator on
+24529  vibrator off
+25598  buzzer   2636.9 v=153
+25598  vibrator on
+25605  buzzer   off
+25660  buzzer   2636.9 v=153
+25667  buzzer   off
+26054  vibrator off
+27137  vibrator on
+27611  vibrator off
+28680  buzzer   2636.9 v=153
+28680  vibrator on
+28687  buzzer   off
+28711  buzzer   2636.9 v=153
+28718  buzzer   off
+28742  buzzer   2636.9 v=153
+28749  buzzer   off
+29139  vibrator off
+30205  vibrator on
+30686  vibrator off
+31755  buzzer   2636.9 v=153
+31755  vibrator on
+31762  buzzer   off
+31786  buzzer   2636.9 v=153
+31793  buzzer   off
+31817  buzzer   2636.9 v=153
+31824  buzzer   off
+32212  vibrator off
+33280  vibrator on
+33760  vibrator off
+34829  buzzer   2636.9 v=153
+34829  vibrator on
+34837  buzzer   off
+34860  buzzer   2636.9 v=153
+34868  buzzer   off
+34899  buzzer   2636.9 v=153
+34906  buzzer   off
+35293  vibrator off
+36362  vibrator on
+36842  vibrator off

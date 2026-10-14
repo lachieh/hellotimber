@@ -1,0 +1,13 @@
+sound-golden 1
+id: sound/boot/power-on-keypad-off
+status: asserted
+source: captures/6.39/plan16/boot/power-on-keypad-off
+source-sha256: e7bfabc58bd3f01fb0a707300ccab2c2a7a04653ad61c04335b5a9c84d86ce5c
+state: v639-plan16-keypad-off
+note: The harness power-on with Keypad tones Off (no keys), 16 s.
+omitted: none
+
+@events
+# t_ms output   state
+2425   tone     900 v=0x9105
+2549   tone     off

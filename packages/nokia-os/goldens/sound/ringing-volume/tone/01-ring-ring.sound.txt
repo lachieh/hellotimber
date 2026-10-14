@@ -1,0 +1,40 @@
+sound-golden 1
+id: sound/ringing-volume/tone/01-ring-ring
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/01
+source-sha256: 32925a16608a075dd02b7fef39e681b15525c278bb753c158ff981827401f2f9
+state: factory
+keys: 0:down
+note: Ring ring stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 3 (stale frequency)
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+175    tone     off
+996    vibrator on
+997    buzzer   622 v=11
+1050   buzzer   988 v=16
+1104   buzzer   622 v=11
+1158   buzzer   988 v=16
+1213   buzzer   622 v=11
+1271   buzzer   988 v=16
+1321   buzzer   622 v=11
+1375   buzzer   988 v=16
+1429   buzzer   622 v=11
+1484   buzzer   988 v=16
+1538   buzzer   off
+1538   vibrator off
+1731   vibrator on
+1732   buzzer   622 v=11
+1786   buzzer   988 v=16
+1840   buzzer   622 v=11
+1894   buzzer   988 v=16
+1948   buzzer   622 v=11
+2002   buzzer   988 v=16
+2057   buzzer   622 v=11
+2111   buzzer   988 v=16
+2165   buzzer   622 v=11
+2219   buzzer   988 v=16
+2273   buzzer   off
+2273   vibrator off

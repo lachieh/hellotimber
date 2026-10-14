@@ -1,0 +1,31 @@
+sound-golden 1
+id: sound/preview/volume-stop-c
+status: asserted
+source: captures/6.39/plan16/preview/volume-stop-c
+source-sha256: ca70d5339666a45a9af97e294d4c68b2e870b9e405b1b1436aa6489ce9fcf3d7
+state: factory
+keys: 0:up 2560:c
+note: Ringing volume: ▲ onto Level 3, C 2.5 s later.
+omitted: none
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+170    tone     off
+992    buzzer   1319 v=10
+992    vibrator on
+1107   buzzer   1175 v=12
+1223   buzzer   740 v=8
+1463   buzzer   831 v=8
+1703   vibrator off
+1704   buzzer   1109 v=12
+1820   buzzer   988 v=11
+1936   buzzer   587 v=7
+2176   buzzer   659 v=7
+2416   buzzer   988 v=11
+2416   vibrator on
+2532   buzzer   880 v=8
+2575   buzzer   off
+2575   vibrator off
+2585   tone     900 v=0x9104
+2726   tone     off

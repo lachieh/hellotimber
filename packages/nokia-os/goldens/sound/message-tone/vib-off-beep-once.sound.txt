@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/message-tone/vib-off-beep-once
+status: asserted
+source: captures/6.39/plan16/message-tone/vib-off-beep-once
+source-sha256: 95b20bf831af4d365a3b6831c8276ff2bd170c6f9db3429888a442ad8a9a7d2b
+state: factory
+keys: 0:down
+note: Tones › Message alert tone: Vibrating alert Off, ▼ onto Beep once.
+omitted: none
+
+@events
+# t_ms output   state
+50     tone     900 v=0x9104
+197    tone     off
+1025   tone     1750 v=0x9104
+1358   tone     off

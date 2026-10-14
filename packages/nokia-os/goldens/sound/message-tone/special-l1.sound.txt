@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/message-tone/special-l1
+status: asserted
+source: captures/6.39/plan16/message-tone/special-l1
+source-sha256: e77427858ff67bc724c44d710dc0ba79daf4d66d4659ecae25494552d6fa2515
+state: factory
+keys: 0:down
+note: Tones › Message alert tone: Ringing volume Level 1, ▼ onto Special.
+omitted: none
+
+@events
+# t_ms output   state
+50     tone     900 v=0x9104
+197    tone     off
+1010   vibrator on
+1025   buzzer   2683.7 v=6
+1111   buzzer   off
+1204   buzzer   2683.7 v=6
+1296   buzzer   off
+1389   vibrator off
+1390   buzzer   2683.7 v=6
+1482   buzzer   off
+1776   buzzer   2683.7 v=6
+1776   vibrator on
+2063   buzzer   off
+2156   buzzer   2683.7 v=6
+2442   buzzer   off
+2729   buzzer   2683.7 v=6
+2729   vibrator off
+2822   buzzer   off
+2915   buzzer   2683.7 v=6
+3008   buzzer   off
+3101   buzzer   2683.7 v=6
+3195   buzzer   off
+4163   buzzer   2683.7 v=6
+4163   vibrator on
+4255   buzzer   off
+4348   buzzer   2683.7 v=6
+4441   buzzer   off
+4534   buzzer   2683.7 v=6
+4534   vibrator off
+4627   buzzer   off
+4914   buzzer   2683.7 v=6
+4914   vibrator on
+5200   buzzer   off
+5293   buzzer   2683.7 v=6
+5580   buzzer   off
+5866   buzzer   2683.7 v=6
+5866   vibrator off
+5959   buzzer   off
+6052   buzzer   2683.7 v=6
+6145   buzzer   off
+6238   buzzer   2683.7 v=6
+6331   buzzer   off

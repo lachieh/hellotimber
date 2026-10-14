@@ -1,0 +1,20 @@
+sound-golden 1
+id: sound/ringing-volume/tone/18-polite
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/18
+source-sha256: ff34dde6862957537ab651dc37273c6026d6d55b6fc58414acf890ec3ed130a6
+state: factory
+keys: 0:down
+note: Polite stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: none
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+169    tone     off
+991    buzzer   2489 v=17
+991    vibrator on
+1052   buzzer   1480 v=24
+1114   buzzer   2489 v=17
+1176   buzzer   off
+1176   vibrator off

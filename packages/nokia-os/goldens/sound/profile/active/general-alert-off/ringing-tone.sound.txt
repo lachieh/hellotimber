@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/profile/active/general-alert-off/ringing-tone
+status: asserted
+source: captures/6.39/plan16/profile/active/general-alert-off/ringing-tone
+source-sha256: 511c0ead28cce618022064c7bfb755a2c7c58326e236a743eaac02faaf50190a
+state: factory
+keys: 0:down
+note: General (active) with Incoming call alert Off; Loud › Personalise › Ringing tone: ▼ onto Nokia tune.
+omitted: 1 (divider rewrite), 2 (stale frequency)
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9104
+177    tone     off
+991    vibrator on
+992    buzzer   1319 v=16
+1107   buzzer   1175 v=16
+1223   buzzer   740 v=12
+1463   buzzer   831 v=12
+1703   buzzer   1109 v=17
+1703   vibrator off
+1819   buzzer   988 v=16
+1935   buzzer   587 v=11
+2175   buzzer   659 v=12
+2415   vibrator on
+2416   buzzer   988 v=16
+2531   buzzer   880 v=14
+2648   buzzer   554 v=11
+2888   buzzer   659 v=12
+3128   vibrator off
+3129   buzzer   880 v=14
+3856   vibrator on
+3857   buzzer   off
+4584   vibrator off
+7008   buzzer   1319 v=61
+7008   vibrator on
+7124   buzzer   1175 v=56
+7240   buzzer   740 v=23
+7480   buzzer   831 v=31
+7720   vibrator off
+7721   buzzer   1109 v=194
+7837   buzzer   988 v=92
+7953   buzzer   587 v=21
+8193   buzzer   659 v=23
+8433   buzzer   988 v=92
+8433   vibrator on
+8549   buzzer   880 v=31
+8665   buzzer   554 v=18
+8905   buzzer   659 v=23
+9145   buzzer   880 v=31
+9145   vibrator off
+9873   buzzer   off
+9873   vibrator on
+10602  vibrator off

@@ -1,0 +1,130 @@
+sound-golden 1
+id: sound/ringing-tone/33-mangrove
+status: asserted
+source: captures/6.39/plan16/ringing-tone/33
+source-sha256: d385ca206debd9e5cd5c202dd1f0ea944fd7dd07f98c380a6313063a2c349683
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Barn dance onto Mangrove: its preview at Level 4, Vibrating alert On.
+omitted: 2 (divider rewrite)
+
+@events
+# t_ms output   state
+29     tone     900 v=0x9104
+175    tone     off
+989    buzzer   2636.9 v=18
+996    buzzer   off
+1020   buzzer   2636.9 v=18
+1027   buzzer   off
+1050   buzzer   2636.9 v=18
+1058   buzzer   off
+4064   buzzer   2636.9 v=18
+4064   vibrator on
+4071   buzzer   off
+4095   buzzer   2636.9 v=18
+4102   buzzer   off
+4126   buzzer   2636.9 v=18
+4133   buzzer   off
+4520   vibrator off
+5589   vibrator on
+6069   vibrator off
+7138   buzzer   2636.9 v=18
+7138   vibrator on
+7145   buzzer   off
+7178   buzzer   2636.9 v=18
+7184   buzzer   off
+7208   buzzer   2636.9 v=18
+7215   buzzer   off
+7602   vibrator off
+8681   vibrator on
+9159   vibrator off
+10228  vibrator on
+10229  buzzer   2636.9 v=18
+10236  buzzer   off
+10259  buzzer   2636.9 v=18
+10267  buzzer   off
+10290  buzzer   2636.9 v=18
+10298  buzzer   off
+10685  vibrator off
+11754  vibrator on
+12234  vibrator off
+13303  buzzer   2636.9 v=18
+13303  vibrator on
+13310  buzzer   off
+13334  buzzer   2636.9 v=18
+13341  buzzer   off
+13365  buzzer   2636.9 v=18
+13372  buzzer   off
+13759  vibrator off
+14828  vibrator on
+15308  vibrator off
+16377  buzzer   2636.9 v=18
+16377  vibrator on
+16384  buzzer   off
+16408  buzzer   2636.9 v=18
+16415  buzzer   off
+16442  buzzer   2636.9 v=18
+16446  buzzer   off
+16835  vibrator off
+17903  vibrator on
+18383  vibrator off
+19452  buzzer   2636.9 v=18
+19452  vibrator on
+19460  buzzer   off
+19483  buzzer   2636.9 v=18
+19491  buzzer   off
+19514  buzzer   2636.9 v=18
+19522  buzzer   off
+19909  vibrator off
+20977  vibrator on
+21457  vibrator off
+22526  buzzer   2636.9 v=18
+22526  vibrator on
+22534  buzzer   off
+22557  buzzer   2636.9 v=18
+22565  buzzer   off
+22588  buzzer   2636.9 v=18
+22596  buzzer   off
+22983  vibrator off
+24053  vibrator on
+24533  vibrator off
+25601  vibrator on
+25602  buzzer   2636.9 v=18
+25609  buzzer   off
+25632  buzzer   2636.9 v=18
+25640  buzzer   off
+25663  buzzer   2636.9 v=18
+25671  buzzer   off
+26058  vibrator off
+27127  vibrator on
+27607  vibrator off
+28675  vibrator on
+28676  buzzer   2636.9 v=18
+28683  buzzer   off
+28711  buzzer   2636.9 v=18
+28714  buzzer   off
+28737  buzzer   2636.9 v=18
+28745  buzzer   off
+29132  vibrator off
+30213  vibrator on
+30690  vibrator off
+31758  vibrator on
+31759  buzzer   2636.9 v=18
+31766  buzzer   off
+31789  buzzer   2636.9 v=18
+31797  buzzer   off
+31820  buzzer   2636.9 v=18
+31828  buzzer   off
+32217  vibrator off
+33284  vibrator on
+33764  vibrator off
+34832  vibrator on
+34833  buzzer   2636.9 v=18
+34840  buzzer   off
+34863  buzzer   2636.9 v=18
+34871  buzzer   off
+34894  buzzer   2636.9 v=18
+34902  buzzer   off
+35289  vibrator off
+36358  vibrator on
+36838  vibrator off

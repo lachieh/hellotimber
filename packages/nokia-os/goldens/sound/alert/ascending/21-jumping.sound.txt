@@ -1,0 +1,78 @@
+sound-golden 1
+id: sound/alert/ascending/21-jumping
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/21
+source-sha256: 9369ae33e55509ffb3c742c10027fd2b0e88b25afe7c91b2fbc4b57a29072baa
+state: factory
+keys: 0:down
+note: Jumping's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9104
+178    tone     off
+992    buzzer   523 v=3
+992    vibrator on
+1115   buzzer   off
+1487   buzzer   1047 v=4
+1610   buzzer   off
+1982   buzzer   988 v=4
+1982   vibrator off
+2106   buzzer   784 v=4
+2230   buzzer   off
+2354   buzzer   880 v=3
+2478   buzzer   784 v=4
+2601   buzzer   off
+2726   buzzer   659 v=3
+2849   buzzer   off
+2973   vibrator on
+2974   buzzer   523 v=3
+3098   buzzer   784 v=4
+3222   buzzer   off
+3346   buzzer   523 v=3
+3470   buzzer   698 v=3
+3594   buzzer   off
+3718   buzzer   523 v=3
+3841   buzzer   off
+3965   vibrator off
+3966   buzzer   659 v=3
+4089   buzzer   523 v=3
+4213   buzzer   587 v=3
+4338   buzzer   off
+4461   buzzer   523 v=3
+4589   buzzer   off
+4589   vibrator on
+5258   vibrator off
+7388   buzzer   523 v=4
+7388   vibrator on
+7512   buzzer   off
+7884   buzzer   1047 v=7
+8007   buzzer   off
+8379   buzzer   988 v=7
+8379   vibrator off
+8503   buzzer   784 v=6
+8627   buzzer   off
+8751   buzzer   880 v=8
+8875   buzzer   784 v=9
+8999   buzzer   off
+9123   buzzer   659 v=7
+9246   buzzer   off
+9370   vibrator on
+9371   buzzer   523 v=6
+9494   buzzer   784 v=9
+9618   buzzer   off
+9742   buzzer   523 v=6
+9866   buzzer   698 v=8
+9991   buzzer   off
+10115  buzzer   523 v=6
+10239  buzzer   off
+10362  vibrator off
+10363  buzzer   659 v=7
+10486  buzzer   523 v=6
+10610  buzzer   587 v=7
+10734  buzzer   off
+10858  buzzer   523 v=6
+10982  buzzer   off
+10982  vibrator on
+11656  vibrator off

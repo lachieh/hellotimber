@@ -1,0 +1,82 @@
+sound-golden 1
+id: sound/ringing-volume/tone/32-barn-dance
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/32
+source-sha256: 63da77a66c954d6a239bcc2d9531589ef647a94f572f065e46b268108514a659
+state: factory
+keys: 0:down
+note: Barn dance stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 2 (divider rewrite)
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+170    tone     off
+992    buzzer   1319 v=16
+992    vibrator on
+1192   buzzer   off
+1216   buzzer   659 v=12
+1417   buzzer   off
+1440   buzzer   831 v=12
+1641   buzzer   off
+1665   buzzer   988 v=16
+1866   buzzer   off
+1889   buzzer   880 v=14
+1889   vibrator off
+2091   buzzer   off
+2114   buzzer   1109 v=17
+2315   buzzer   off
+2338   buzzer   988 v=16
+2540   buzzer   off
+2563   buzzer   831 v=12
+2764   buzzer   off
+2788   buzzer   1319 v=16
+2788   vibrator on
+2989   buzzer   off
+3012   buzzer   659 v=12
+3218   buzzer   off
+3238   buzzer   831 v=12
+3439   buzzer   off
+3468   buzzer   988 v=16
+3663   vibrator off
+3664   buzzer   off
+3687   buzzer   880 v=14
+3888   buzzer   off
+3911   buzzer   1480 v=24
+4113   buzzer   off
+4136   buzzer   1319 v=16
+4337   buzzer   off
+4361   buzzer   1109 v=17
+4562   buzzer   off
+4585   buzzer   1319 v=16
+4585   vibrator on
+4786   buzzer   off
+4810   buzzer   659 v=12
+5011   buzzer   off
+5034   buzzer   831 v=12
+5235   buzzer   off
+5259   buzzer   988 v=16
+5471   buzzer   off
+5491   buzzer   880 v=14
+5491   vibrator off
+5692   buzzer   off
+5721   buzzer   1109 v=17
+5917   buzzer   off
+5940   buzzer   988 v=16
+6141   buzzer   off
+6165   buzzer   831 v=12
+6366   buzzer   off
+6389   vibrator on
+6390   buzzer   1319 v=16
+6590   buzzer   off
+6614   buzzer   1109 v=17
+6815   buzzer   off
+6838   buzzer   988 v=16
+7040   buzzer   off
+7063   buzzer   831 v=12
+7264   buzzer   off
+7287   vibrator off
+7288   buzzer   659 v=12
+7724   buzzer   off
+7744   buzzer   659 v=12
+8178   buzzer   off

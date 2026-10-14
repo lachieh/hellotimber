@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/ringing-tone/04-bee
+status: asserted
+source: captures/6.39/plan16/ringing-tone/04
+source-sha256: 7dd82979a81fc9833294984891b74487e063a15a2b94bb3899d00e17447760d6
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Mosquito onto Bee: its preview at Level 4, Vibrating alert On.
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+169    tone     off
+991    buzzer   2626.8 v=18
+991    vibrator on
+1037   buzzer   2910.2 v=33
+1083   buzzer   2626.8 v=18
+1130   buzzer   2910.2 v=33
+1176   buzzer   2626.8 v=18
+1223   buzzer   2910.2 v=33
+1269   buzzer   2626.8 v=18
+1315   buzzer   2910.2 v=33
+1362   buzzer   2626.8 v=18
+1408   buzzer   2910.2 v=33
+1455   buzzer   off
+1455   vibrator off
+4553   vibrator on
+4554   buzzer   2626.8 v=18
+4600   buzzer   2910.2 v=33
+4646   buzzer   2626.8 v=18
+4705   buzzer   2910.2 v=33
+4747   buzzer   2626.8 v=18
+4793   buzzer   2910.2 v=33
+4840   buzzer   2626.8 v=18
+4886   buzzer   2910.2 v=33
+4933   buzzer   2626.8 v=18
+4979   buzzer   2910.2 v=33
+5025   vibrator off
+5026   buzzer   off
+5219   vibrator on
+5220   buzzer   2626.8 v=18
+5266   buzzer   2910.2 v=33
+5312   buzzer   2626.8 v=18
+5359   buzzer   2910.2 v=33
+5405   buzzer   2626.8 v=18
+5456   buzzer   2910.2 v=33
+5498   buzzer   2626.8 v=18
+5544   buzzer   2910.2 v=33
+5591   buzzer   2626.8 v=18
+5637   buzzer   2910.2 v=33
+5684   buzzer   off
+5684   vibrator off
+@loop 991 4229

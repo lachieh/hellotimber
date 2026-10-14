@@ -1,0 +1,36 @@
+sound-golden 1
+id: sound/note/warning-off
+status: asserted
+source: captures/6.39/plan16/notes/warning-off
+source-sha256: a93095e29cbb74e24db6c1f1c97a5fc9bb1232d2ac2400b4b5d7a84f7fd04d0f
+state: factory
+keys: 0:navi 460:1 920:9 5381:c+1500 7931:navi 8391:6 8851:4 10812:0 11172:0 11532:0 11892:0 12252:0 12612:navi
+note: Warning tones Off: Menu 1 9 (Invalid shortcut), C held, Menu 6 4, 00000, OK (Code error).
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+33     tone     900 v=0x9104
+176    tone     off
+476    tone     900 v=0x9104
+617    tone     off
+5427   tone     900 v=0x9104
+5551   tone     off
+5888   tone     900 v=0x9104
+6031   tone     off
+7963   tone     900 v=0x9104
+8106   tone     off
+8414   tone     900 v=0x9104
+8556   tone     off
+8874   tone     900 v=0x9104
+9020   tone     off
+10839  tone     900 v=0x9104
+10980  tone     off
+11186  tone     900 v=0x9104
+11329  tone     off
+11550  tone     900 v=0x9104
+11693  tone     off
+11906  tone     900 v=0x9104
+12049  tone     off
+12270  tone     900 v=0x9104
+12413  tone     off

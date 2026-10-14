@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/message-tone/beep-once-ringing-l5
+status: asserted
+source: captures/6.39/plan16/message-tone/beep-once-ringing-l5
+source-sha256: 4fbdb21a618c4b1232c4ad9c4131390c7f0b091801b6df420dadf53a8cd55fee
+state: factory
+keys: 0:down
+note: Tones › Message alert tone: Ringing volume Level 5, ▼ onto Beep once.
+omitted: none
+
+@events
+# t_ms output   state
+35     tone     900 v=0x9104
+180    tone     off
+1002   tone     1750 v=0x9100
+1002   vibrator on
+1288   vibrator off
+1342   tone     off
+2256   vibrator on
+2736   vibrator off
+3705   vibrator on
+4185   vibrator off

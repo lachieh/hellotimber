@@ -1,0 +1,24 @@
+sound-golden 1
+id: sound/keypad/levels-list
+status: asserted
+source: captures/6.39/plan16/keypad/levels/list
+source-sha256: a3a4f762aa8e7999683ac19f750b80fda4772f35d2359674fb718e9b782bc902
+state: factory
+keys: 0:up 1260:up 2520:up 3781:up 5041:down 6301:down 7561:down 8821:c
+note: Tones › Keypad tones from Level 2: ▲ ×4, ▼ ×3, C (each beep at the highlighted level).
+omitted: none
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9108
+165    tone     off
+2549   tone     900 v=0x9100
+2690   tone     off
+3804   tone     900 v=0x9104
+3945   tone     off
+5066   tone     900 v=0x9100
+5207   tone     off
+7591   tone     900 v=0x9108
+7732   tone     off
+8846   tone     900 v=0x9104
+8986   tone     off

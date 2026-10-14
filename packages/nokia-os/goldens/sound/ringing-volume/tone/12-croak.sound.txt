@@ -1,0 +1,52 @@
+sound-golden 1
+id: sound/ringing-volume/tone/12-croak
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/12
+source-sha256: e6add142e23b0495b64a43a69dbedae55898c753acbef553894082fe8a28a515
+state: factory
+keys: 0:down
+note: Croak stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: none
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+176    tone     off
+998    buzzer   440 v=10
+998    vibrator on
+1020   buzzer   off
+1028   buzzer   440 v=10
+1044   buzzer   off
+1059   buzzer   440 v=10
+1075   buzzer   off
+1090   buzzer   440 v=10
+1106   buzzer   off
+1121   buzzer   440 v=10
+1137   buzzer   off
+1152   buzzer   440 v=10
+1168   buzzer   off
+1570   buzzer   440 v=10
+1586   buzzer   off
+1601   buzzer   440 v=10
+1617   buzzer   off
+1632   buzzer   440 v=10
+1648   buzzer   off
+1663   buzzer   440 v=10
+1679   buzzer   off
+1694   buzzer   440 v=10
+1710   buzzer   off
+1725   buzzer   440 v=10
+1741   buzzer   off
+2143   buzzer   440 v=10
+2159   buzzer   off
+2174   buzzer   440 v=10
+2190   buzzer   off
+2205   buzzer   440 v=10
+2221   buzzer   off
+2236   buzzer   440 v=10
+2252   buzzer   off
+2272   buzzer   440 v=10
+2283   buzzer   off
+2298   buzzer   440 v=10
+2314   buzzer   off
+2329   vibrator off

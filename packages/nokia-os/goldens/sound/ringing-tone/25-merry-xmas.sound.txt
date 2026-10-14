@@ -1,0 +1,121 @@
+sound-golden 1
+id: sound/ringing-tone/25-merry-xmas
+status: asserted
+source: captures/6.39/plan16/ringing-tone/25
+source-sha256: 9b6a7e5673cc1993ef5966b2705c66c30c2bb0a3dead3abbb17c0d3b2389eb8d
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Matilda onto Merry Xmas: its preview at Level 4, Vibrating alert On.
+omitted: 3 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+29     tone     900 v=0x9104
+176    tone     off
+990    buzzer   988 v=16
+1159   buzzer   off
+1335   vibrator on
+1336   buzzer   1319 v=16
+1500   buzzer   off
+1671   buzzer   1319 v=16
+1841   buzzer   1480 v=24
+2011   buzzer   1319 v=16
+2182   buzzer   1245 v=14
+2352   buzzer   1109 v=17
+2352   vibrator off
+2522   buzzer   off
+2693   buzzer   1109 v=17
+2863   buzzer   off
+3033   buzzer   1109 v=17
+3205   buzzer   off
+3375   buzzer   1480 v=24
+3375   vibrator on
+3545   buzzer   off
+3716   buzzer   1480 v=24
+3886   buzzer   1660.9 v=21
+4057   buzzer   1480 v=24
+4227   buzzer   1319 v=16
+4397   buzzer   1245 v=14
+4397   vibrator off
+4568   buzzer   off
+4738   buzzer   988 v=16
+4908   buzzer   off
+5091   buzzer   988 v=16
+5257   buzzer   off
+5427   vibrator on
+5428   buzzer   1660.9 v=21
+5597   buzzer   off
+5768   buzzer   1660.9 v=21
+5938   buzzer   1760.1 v=17
+6109   buzzer   1660.9 v=21
+6279   buzzer   1480 v=24
+6449   buzzer   1319 v=16
+6449   vibrator off
+6620   buzzer   off
+6790   buzzer   1109 v=17
+6960   buzzer   off
+7131   buzzer   988 v=16
+7216   buzzer   off
+7301   buzzer   988 v=16
+7386   buzzer   off
+7471   vibrator on
+7472   buzzer   1109 v=17
+7820   buzzer   1480 v=24
+8168   buzzer   1245 v=14
+8517   buzzer   1319 v=16
+8517   vibrator off
+9214   buzzer   off
+11306  buzzer   988 v=16
+11476  buzzer   off
+11646  vibrator on
+11647  buzzer   1319 v=16
+11816  buzzer   off
+11987  buzzer   1319 v=16
+12157  buzzer   1480 v=24
+12328  buzzer   1319 v=16
+12498  buzzer   1245 v=14
+12668  buzzer   1109 v=17
+12668  vibrator off
+12839  buzzer   off
+13009  buzzer   1109 v=17
+13179  buzzer   off
+13354  buzzer   1109 v=17
+13520  buzzer   off
+13690  vibrator on
+13691  buzzer   1480 v=24
+13861  buzzer   off
+14031  buzzer   1480 v=24
+14202  buzzer   1660.9 v=21
+14372  buzzer   1480 v=24
+14542  buzzer   1319 v=16
+14712  vibrator off
+14713  buzzer   1245 v=14
+14883  buzzer   off
+15053  buzzer   988 v=16
+15224  buzzer   off
+15394  buzzer   988 v=16
+15564  buzzer   off
+15735  buzzer   1660.9 v=21
+15735  vibrator on
+15905  buzzer   off
+16075  buzzer   1660.9 v=21
+16246  buzzer   1760.1 v=17
+16416  buzzer   1660.9 v=21
+16587  buzzer   1480 v=24
+16757  buzzer   1319 v=16
+16757  vibrator off
+16928  buzzer   off
+17110  buzzer   1109 v=17
+17277  buzzer   off
+17447  buzzer   988 v=16
+17532  buzzer   off
+17617  buzzer   988 v=16
+17702  buzzer   off
+17788  buzzer   1109 v=17
+17788  vibrator on
+18136  buzzer   1480 v=24
+18485  buzzer   1245 v=14
+18833  buzzer   1319 v=16
+18833  vibrator off
+19530  buzzer   off
+@loop 990 10316

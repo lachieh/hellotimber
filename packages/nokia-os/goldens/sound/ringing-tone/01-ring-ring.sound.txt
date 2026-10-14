@@ -1,0 +1,67 @@
+sound-golden 1
+id: sound/ringing-tone/01-ring-ring
+status: asserted
+source: captures/6.39/plan16/ringing-tone/01
+source-sha256: 88cc7998fe865d611ffca57e4fe08b743e526c0228e3962a9bc11e9c41f80b8f
+state: factory
+keys: 0:up
+note: Tones › Ringing tone, ▲ from Low onto Ring ring: its preview at Level 4, Vibrating alert On.
+omitted: none
+
+@events
+# t_ms output   state
+29     tone     900 v=0x9104
+176    tone     off
+990    buzzer   622 v=11
+990    vibrator on
+1043   buzzer   988 v=16
+1098   buzzer   622 v=11
+1152   buzzer   988 v=16
+1206   buzzer   622 v=11
+1260   buzzer   988 v=16
+1314   buzzer   622 v=11
+1369   buzzer   988 v=16
+1423   buzzer   622 v=11
+1477   buzzer   988 v=16
+1531   buzzer   off
+1531   vibrator off
+1725   buzzer   622 v=11
+1725   vibrator on
+1779   buzzer   988 v=16
+1836   buzzer   622 v=11
+1887   buzzer   988 v=16
+1942   buzzer   622 v=11
+1996   buzzer   988 v=16
+2050   buzzer   622 v=11
+2104   buzzer   988 v=16
+2158   buzzer   622 v=11
+2213   buzzer   988 v=16
+2267   buzzer   off
+2267   vibrator off
+4490   vibrator on
+4491   buzzer   622 v=11
+4544   buzzer   988 v=16
+4599   buzzer   622 v=11
+4653   buzzer   988 v=16
+4707   buzzer   622 v=11
+4761   buzzer   988 v=16
+4815   buzzer   622 v=11
+4870   buzzer   988 v=16
+4924   buzzer   622 v=11
+4978   buzzer   988 v=16
+5032   buzzer   off
+5032   vibrator off
+5226   buzzer   622 v=11
+5226   vibrator on
+5280   buzzer   988 v=16
+5342   buzzer   622 v=11
+5396   buzzer   988 v=16
+5450   buzzer   622 v=11
+5505   buzzer   988 v=16
+5559   buzzer   622 v=11
+5613   buzzer   988 v=16
+5667   buzzer   622 v=11
+5721   buzzer   988 v=16
+5776   buzzer   off
+5776   vibrator off
+@loop 990 3501

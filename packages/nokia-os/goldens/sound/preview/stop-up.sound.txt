@@ -1,0 +1,106 @@
+sound-golden 1
+id: sound/preview/stop-up
+status: asserted
+source: captures/6.39/plan16/preview/stop-up
+source-sha256: b5e3d9d5c0b1e4db654281a07ea71063c0e9594c695f74d4f2e6dad0fe974f77
+state: factory
+keys: 0:down 2560:up
+note: ▼ onto Nokia tune, ▲ 2.5 s later.
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+171    tone     off
+993    buzzer   1319 v=16
+993    vibrator on
+1108   buzzer   1175 v=16
+1230   buzzer   740 v=12
+1464   buzzer   831 v=12
+1704   vibrator off
+1705   buzzer   1109 v=17
+1821   buzzer   988 v=16
+1937   buzzer   587 v=11
+2177   buzzer   659 v=12
+2417   buzzer   988 v=16
+2417   vibrator on
+2533   buzzer   880 v=14
+2586   buzzer   off
+2586   vibrator off
+2587   tone     900 v=0x9104
+2734   tone     off
+3550   buzzer   440 v=10
+3550   vibrator on
+3564   buzzer   off
+3579   buzzer   440 v=10
+3595   buzzer   off
+3610   buzzer   440 v=10
+3626   buzzer   off
+3641   buzzer   440 v=10
+3657   buzzer   off
+3672   buzzer   440 v=10
+3688   buzzer   off
+3703   buzzer   440 v=10
+3719   buzzer   off
+4121   buzzer   440 v=10
+4137   buzzer   off
+4152   buzzer   440 v=10
+4168   buzzer   off
+4183   buzzer   440 v=10
+4199   buzzer   off
+4214   buzzer   440 v=10
+4235   buzzer   off
+4245   buzzer   440 v=10
+4261   buzzer   off
+4276   buzzer   440 v=10
+4292   buzzer   off
+4694   buzzer   440 v=10
+4710   buzzer   off
+4736   buzzer   440 v=10
+4748   buzzer   off
+4764   buzzer   440 v=10
+4779   buzzer   off
+4795   buzzer   440 v=10
+4810   buzzer   off
+4826   buzzer   440 v=10
+4841   buzzer   off
+4857   buzzer   440 v=10
+4872   buzzer   off
+4888   vibrator off
+7312   buzzer   440 v=10
+7312   vibrator on
+7327   buzzer   off
+7343   buzzer   440 v=10
+7358   buzzer   off
+7374   buzzer   440 v=10
+7389   buzzer   off
+7405   buzzer   440 v=10
+7420   buzzer   off
+7436   buzzer   440 v=10
+7451   buzzer   off
+7467   buzzer   440 v=10
+7490   buzzer   off
+7892   buzzer   440 v=10
+7908   buzzer   off
+7923   buzzer   440 v=10
+7939   buzzer   off
+7954   buzzer   440 v=10
+7970   buzzer   off
+7990   buzzer   440 v=10
+8001   buzzer   off
+8016   buzzer   440 v=10
+8032   buzzer   off
+8047   buzzer   440 v=10
+8063   buzzer   off
+8465   buzzer   440 v=10
+8491   buzzer   off
+8504   buzzer   440 v=10
+8520   buzzer   off
+8535   buzzer   440 v=10
+8551   buzzer   off
+8566   buzzer   440 v=10
+8581   buzzer   off
+8597   buzzer   440 v=10
+8612   buzzer   off
+8628   buzzer   440 v=10
+8643   buzzer   off

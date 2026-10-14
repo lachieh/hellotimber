@@ -1,0 +1,38 @@
+sound-golden 1
+id: sound/ringing-volume/tone/35-get-cool
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/35
+source-sha256: 59b9f69dfe34079a442327c1bdcf92e44a8c68a26947bd91daa3dc6f28260d78
+state: factory
+keys: 0:down
+note: Get cool stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (divider rewrite), 3 (stale frequency)
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+169    tone     off
+991    buzzer   1109 v=17
+991    vibrator on
+1362   buzzer   1245 v=14
+1486   buzzer   1396.9 v=21
+1733   buzzer   1660.9 v=21
+1733   vibrator off
+1981   buzzer   2216.9 v=28
+2229   buzzer   2489 v=17
+2353   buzzer   2093.1 v=34
+2477   buzzer   2216.9 v=28
+2724   buzzer   off
+2972   vibrator on
+2973   buzzer   2489 v=17
+3354   buzzer   2216.9 v=28
+3477   buzzer   2093.1 v=34
+3724   vibrator off
+3725   buzzer   1864.9 v=21
+3972   buzzer   1660.9 v=21
+4228   buzzer   1864.9 v=21
+4355   buzzer   1568 v=25
+4476   buzzer   1660.9 v=21
+4723   buzzer   off
+4971   vibrator on
+4973   vibrator off

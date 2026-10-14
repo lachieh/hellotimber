@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/keypad/level-off
+status: asserted
+source: captures/6.39/plan16/keypad/levels/off
+source-sha256: 8d7e1c7fdea64406d8f447c763b5e7726b5ae6a52e9e6bd6d2864bd37f2599af
+state: factory
+keys: 0:navi 1060:down 2120:down 3181:c 4241:c+1500 9791:navi 10852:c+1500
+note: Keypad tones Off: Menu, ▼, ▼, C, C held, Menu after 4 s, C held.
+omitted: none
+
+@events
+# t_ms output   state

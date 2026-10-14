@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/message-tone/beep-once
+status: asserted
+source: captures/6.39/plan16/message-tone/beep-once
+source-sha256: e6f6592291b8f46941f28eb918b23e32fa2a25cb977c5ec6184bfab7cbaab6d7
+state: factory
+keys: 0:down
+note: Tones › Message alert tone: ▼ from Special onto Beep once.
+omitted: none
+
+@events
+# t_ms output   state
+42     tone     900 v=0x9104
+187    tone     off
+1008   vibrator on
+1009   tone     1750 v=0x9104
+1294   vibrator off
+1348   tone     off
+2262   vibrator on
+2742   vibrator off
+3711   vibrator on
+4191   vibrator off

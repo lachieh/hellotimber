@@ -1,0 +1,82 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/19-tick-tick
+status: asserted
+source: captures/6.39/plan16/levels/5/19
+source-sha256: 5401b65054c83a8424f0b542b13199272a9cf01d6f507433e0184504c98e93f4
+state: factory
+keys: 0:down
+note: Tick tick's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+171    tone     off
+993    buzzer   1319 v=16
+993    vibrator on
+1038   buzzer   off
+1766   vibrator off
+1767   buzzer   1319 v=16
+1813   buzzer   off
+2541   buzzer   1319 v=16
+2541   vibrator on
+2587   buzzer   off
+3316   buzzer   1319 v=16
+3316   vibrator off
+3510   buzzer   1396.9 v=21
+3704   buzzer   1319 v=16
+3897   buzzer   1175 v=16
+4090   vibrator on
+4091   buzzer   1319 v=16
+4137   buzzer   off
+4865   buzzer   1319 v=16
+4865   vibrator off
+4911   buzzer   off
+5639   buzzer   1319 v=61
+5639   vibrator on
+5685   buzzer   off
+6413   vibrator off
+6414   buzzer   1319 v=61
+6607   buzzer   1396.9 v=173
+6801   buzzer   1319 v=61
+6994   buzzer   1047 v=194
+7188   buzzer   1175 v=56
+7188   vibrator on
+7234   buzzer   off
+7962   buzzer   1175 v=56
+7962   vibrator off
+8008   buzzer   off
+8736   vibrator on
+8737   buzzer   1175 v=56
+8783   buzzer   off
+9511   buzzer   1175 v=56
+9511   vibrator off
+9713   buzzer   1319 v=61
+9907   buzzer   1175 v=56
+10100  buzzer   1047 v=194
+10294  buzzer   1319 v=61
+10294  vibrator on
+10340  buzzer   off
+11068  buzzer   1319 v=61
+11068  vibrator off
+11115  buzzer   off
+11843  buzzer   1319 v=61
+11843  vibrator on
+11889  buzzer   off
+12617  buzzer   1319 v=61
+12617  vibrator off
+12811  buzzer   1396.9 v=173
+13004  buzzer   1319 v=61
+13198  buzzer   1175 v=56
+13391  vibrator on
+13392  buzzer   1319 v=61
+13438  buzzer   off
+14166  buzzer   1319 v=61
+14166  vibrator off
+14220  buzzer   off
+14948  buzzer   1319 v=61
+14948  vibrator on
+14994  buzzer   off
+15722  buzzer   1319 v=61
+15722  vibrator off
+15724  buzzer   off

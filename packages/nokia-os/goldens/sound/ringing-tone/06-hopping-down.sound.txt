@@ -1,0 +1,101 @@
+sound-golden 1
+id: sound/ringing-tone/06-hopping-down
+status: asserted
+source: captures/6.39/plan16/ringing-tone/06
+source-sha256: 1cae9741c25a5d01a3bf405d8be3a5f39cf834d426d47dbb1403a294c906901c
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from City bird onto Hopping down: its preview at Level 4, Vibrating alert On.
+omitted: 1 (divider rewrite), 1 (level rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9104
+167    tone     off
+985    vibrator on
+986    buzzer   1760.1 v=17
+1054   buzzer   1396.9 v=21
+1124   buzzer   1175 v=16
+1194   buzzer   off
+1410   vibrator off
+1411   buzzer   1760.1 v=17
+1480   buzzer   1396.9 v=21
+1550   buzzer   1047 v=14
+1619   buzzer   off
+1836   vibrator on
+1837   buzzer   1760.1 v=17
+1906   buzzer   1319 v=16
+1976   buzzer   1047 v=14
+2045   buzzer   off
+2262   buzzer   1568 v=25
+2262   vibrator off
+2332   buzzer   1319 v=16
+2402   buzzer   1047 v=14
+2471   buzzer   off
+2688   buzzer   1568 v=25
+2688   vibrator on
+2758   buzzer   1245 v=14
+2828   buzzer   1047 v=14
+2897   buzzer   off
+3114   buzzer   1568 v=25
+3114   vibrator off
+3185   buzzer   1245 v=14
+3254   buzzer   988 v=16
+3324   buzzer   off
+3541   buzzer   1568 v=25
+3541   vibrator on
+3611   buzzer   1175 v=16
+3683   buzzer   988 v=16
+3750   buzzer   off
+3967   buzzer   1396.9 v=21
+3967   vibrator off
+4037   buzzer   1175 v=16
+4106   buzzer   988 v=16
+4184   buzzer   off
+4400   vibrator on
+4401   buzzer   1396.9 v=21
+4470   buzzer   1175 v=16
+4540   buzzer   880 v=14
+4609   buzzer   off
+4826   vibrator off
+4827   buzzer   1396.9 v=21
+4896   buzzer   1047 v=14
+4966   buzzer   880 v=14
+5035   buzzer   off
+5252   vibrator on
+5253   buzzer   1319 v=16
+5322   buzzer   1047 v=14
+5392   buzzer   880 v=14
+5632   buzzer   off
+5848   vibrator off
+6329   buzzer   1760.1 v=17
+6329   vibrator on
+6398   buzzer   1396.9 v=21
+6468   buzzer   1175 v=16
+6538   buzzer   off
+6754   vibrator off
+6755   buzzer   1760.1 v=17
+6824   buzzer   1396.9 v=21
+6894   buzzer   1047 v=14
+6963   buzzer   off
+7188   buzzer   1760.1 v=17
+7188   vibrator on
+7258   buzzer   1319 v=16
+7328   buzzer   1047 v=14
+7397   buzzer   off
+7614   buzzer   1568 v=25
+7614   vibrator off
+7688   buzzer   1319 v=16
+7753   buzzer   1047 v=14
+7823   buzzer   off
+8040   buzzer   1568 v=25
+8040   vibrator on
+8110   buzzer   1245 v=14
+8190   buzzer   1047 v=14
+8257   buzzer   off
+8473   vibrator off
+8474   buzzer   1568 v=25
+8543   buzzer   1245 v=14
+8613   buzzer   988 v=16
+8690   buzzer   off
+@loop 986 5343

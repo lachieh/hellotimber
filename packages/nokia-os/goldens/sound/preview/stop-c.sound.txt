@@ -1,0 +1,31 @@
+sound-golden 1
+id: sound/preview/stop-c
+status: asserted
+source: captures/6.39/plan16/preview/stop-c
+source-sha256: cfefd34c042aa8221e9f5ce7796e829024c542fd9fd4279738a8b335381aaded
+state: factory
+keys: 0:down 2560:c
+note: ▼ onto Nokia tune, C 2.5 s later.
+omitted: 1 (level rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+171    tone     off
+993    buzzer   1319 v=16
+993    vibrator on
+1108   buzzer   1175 v=16
+1230   buzzer   740 v=12
+1464   buzzer   831 v=12
+1704   vibrator off
+1705   buzzer   1109 v=17
+1821   buzzer   988 v=16
+1937   buzzer   587 v=11
+2177   buzzer   659 v=12
+2417   buzzer   988 v=16
+2417   vibrator on
+2533   buzzer   880 v=14
+2576   buzzer   off
+2577   vibrator off
+2585   tone     900 v=0x9104
+2727   tone     off

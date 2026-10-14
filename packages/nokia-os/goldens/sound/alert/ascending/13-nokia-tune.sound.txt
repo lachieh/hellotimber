@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/alert/ascending/13-nokia-tune
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/13
+source-sha256: e461fccfae9ad58e086780a123c2f67eed6294340e45b84db57c98f2af62e225
+state: factory
+keys: 0:down
+note: Nokia tune's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: none
+
+@events
+# t_ms output   state
+34     tone     900 v=0x9104
+176    tone     off
+998    buzzer   1319 v=4
+998    vibrator on
+1113   buzzer   1175 v=6
+1230   buzzer   740 v=3
+1470   buzzer   831 v=4
+1710   buzzer   1109 v=5
+1710   vibrator off
+1826   buzzer   988 v=4
+1942   buzzer   587 v=3
+2182   buzzer   659 v=3
+2422   buzzer   988 v=4
+2422   vibrator on
+2538   buzzer   880 v=3
+2654   buzzer   554 v=3
+2894   buzzer   659 v=3
+3135   vibrator off
+3136   buzzer   880 v=3
+3863   vibrator on
+3864   buzzer   off
+4591   vibrator off
+7029   buzzer   1319 v=7
+7029   vibrator on
+7139   buzzer   1175 v=8
+7255   buzzer   740 v=5
+7495   buzzer   831 v=6
+7735   buzzer   1109 v=8
+7735   vibrator off
+7851   buzzer   988 v=7
+7967   buzzer   587 v=5
+8207   buzzer   659 v=5
+8447   vibrator on
+8448   buzzer   988 v=7
+8564   buzzer   880 v=6
+8680   buzzer   554 v=5
+8920   buzzer   659 v=5
+9160   buzzer   880 v=8
+9160   vibrator off
+9889   buzzer   off
+9889   vibrator on
+10617  vibrator off

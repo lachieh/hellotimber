@@ -1,0 +1,42 @@
+sound-golden 1
+id: sound/profile/active/general-vibra-off/ringing-tone
+status: asserted
+source: captures/6.39/plan16/profile/active/general-vibra-off/ringing-tone
+source-sha256: 02fe3452446d60c614d54ec1591dd5f53a9f5afe97fe8b62a4e6d9b22e819981
+state: factory
+keys: 0:down
+note: General (active) with Vibrating alert Off; Loud › Personalise › Ringing tone: ▼ onto Nokia tune.
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9104
+165    tone     off
+986    buzzer   1319 v=16
+1102   buzzer   1175 v=16
+1218   buzzer   740 v=12
+1458   buzzer   831 v=12
+1698   buzzer   1109 v=17
+1814   buzzer   988 v=16
+1930   buzzer   587 v=11
+2170   buzzer   659 v=12
+2410   buzzer   988 v=16
+2526   buzzer   880 v=14
+2643   buzzer   554 v=11
+2883   buzzer   659 v=12
+3124   buzzer   880 v=14
+3851   buzzer   off
+7003   buzzer   1319 v=61
+7119   buzzer   1175 v=56
+7235   buzzer   740 v=23
+7475   buzzer   831 v=31
+7716   buzzer   1109 v=194
+7832   buzzer   988 v=92
+7948   buzzer   587 v=21
+8188   buzzer   659 v=23
+8428   buzzer   988 v=92
+8544   buzzer   880 v=31
+8660   buzzer   554 v=18
+8900   buzzer   659 v=23
+9140   buzzer   880 v=31
+9868   buzzer   off

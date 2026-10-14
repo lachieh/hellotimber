@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/13-nokia-tune
+status: asserted
+source: captures/6.39/plan16/levels/5/13
+source-sha256: e3a01ae8073935bc2ea51c17ab23b830b33d64c85c65df10c60aaab76199d7fb
+state: factory
+keys: 0:down
+note: Nokia tune's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: none
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+168    tone     off
+989    vibrator on
+990    buzzer   1319 v=16
+1105   buzzer   1175 v=16
+1221   buzzer   740 v=12
+1461   buzzer   831 v=12
+1701   buzzer   1109 v=17
+1701   vibrator off
+1817   buzzer   988 v=16
+1933   buzzer   587 v=11
+2173   buzzer   659 v=12
+2413   vibrator on
+2414   buzzer   988 v=16
+2529   buzzer   880 v=14
+2646   buzzer   554 v=11
+2886   buzzer   659 v=12
+3127   buzzer   880 v=14
+3127   vibrator off
+3855   buzzer   off
+3855   vibrator on
+4582   vibrator off
+7014   buzzer   1319 v=61
+7014   vibrator on
+7130   buzzer   1175 v=56
+7246   buzzer   740 v=23
+7486   buzzer   831 v=31
+7726   buzzer   1109 v=194
+7726   vibrator off
+7842   buzzer   988 v=92
+7959   buzzer   587 v=21
+8199   buzzer   659 v=23
+8439   buzzer   988 v=92
+8439   vibrator on
+8555   buzzer   880 v=31
+8671   buzzer   554 v=18
+8920   buzzer   659 v=23
+9170   buzzer   880 v=31
+9170   vibrator off
+9895   vibrator on
+9896   buzzer   off
+10623  vibrator off

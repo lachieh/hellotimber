@@ -1,0 +1,38 @@
+sound-golden 1
+id: sound/ringing-volume/tone/19-tick-tick
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/19
+source-sha256: b11baa30a52fc934241c7cc5123b822ad2c9e045d3205f62ff201bc68a46f3ab
+state: factory
+keys: 0:down
+note: Tick tick stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+171    tone     off
+992    vibrator on
+993    buzzer   1319 v=16
+1038   buzzer   off
+1766   buzzer   1319 v=16
+1766   vibrator off
+1812   buzzer   off
+2540   vibrator on
+2541   buzzer   1319 v=16
+2587   buzzer   off
+3315   vibrator off
+3316   buzzer   1319 v=16
+3509   buzzer   1396.9 v=21
+3703   buzzer   1319 v=16
+3896   buzzer   1175 v=16
+4090   buzzer   1319 v=16
+4090   vibrator on
+4136   buzzer   off
+4864   buzzer   1319 v=16
+4864   vibrator off
+4911   buzzer   off
+5639   buzzer   1319 v=16
+5639   vibrator on
+5685   buzzer   off
+6413   vibrator off

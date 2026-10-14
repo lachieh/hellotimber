@@ -1,0 +1,38 @@
+sound-golden 1
+id: sound/preview/rapid
+status: asserted
+source: captures/6.39/plan16/preview/rapid
+source-sha256: 09839e64d6d127b147153fb0ad88fe30ec95d51384b891faa9087b209b715a4d
+state: factory
+keys: 0:down 150:down 300:down 450:down
+note: ▼ ×4 from Nokia tune, 150 ms apart.
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9104
+317    tone     off
+325    tone     900 v=0x9104
+472    tone     off
+480    tone     900 v=0x9104
+627    tone     off
+1441   buzzer   2349.1 v=22
+1441   vibrator on
+1789   buzzer   off
+2191   vibrator off
+3687   buzzer   2349.1 v=22
+3772   buzzer   2489 v=17
+3942   buzzer   off
+6033   buzzer   2489 v=17
+6033   vibrator on
+6118   buzzer   2636.9 v=18
+6351   buzzer   2489 v=17
+6467   buzzer   2636.9 v=18
+6699   buzzer   2489 v=17
+6815   buzzer   2636.9 v=18
+7047   buzzer   2093.1 v=34
+7164   buzzer   1976 v=30
+7404   buzzer   1760.1 v=17
+7520   buzzer   2349.1 v=22
+7690   buzzer   off
+7690   vibrator off

@@ -1,0 +1,20 @@
+sound-golden 1
+id: sound/note/invalid-shortcut-key
+status: asserted
+source: captures/6.39/plan16/notes/invalid-shortcut-key
+source-sha256: a0d450001c69dc8a36928036da3c02ce4abd5e806f94de2960e299ebcd6d44be
+state: factory
+keys: 0:navi 460:1 920:9 1480:down
+note: "Invalid shortcut" (Warning tones On) after Menu 1 9; ▼ on the note.
+omitted: none
+
+@events
+# t_ms output   state
+42     tone     900 v=0x9104
+189    tone     off
+482    tone     900 v=0x9104
+623    tone     off
+945    tone     1750 v=0x9105
+1234   tone     off
+1506   tone     1750 v=0x9105
+1800   tone     off

@@ -1,0 +1,30 @@
+sound-golden 1
+id: sound/note/code-error
+status: asserted
+source: captures/6.39/plan16/notes/code-error
+source-sha256: 60ae9d3459caac90cdc01c2f3b9338865d3c2a7796cf0d0f8254368070c92919
+state: factory
+keys: 0:navi 460:6 920:4 2880:0 3241:0 3601:0 3961:0 4321:0 4681:navi
+note: "Code error" (Warning tones On): Menu 6 4, 00000, OK.
+omitted: none
+
+@events
+# t_ms output   state
+42     tone     900 v=0x9104
+189    tone     off
+489    tone     900 v=0x9104
+630    tone     off
+941    tone     900 v=0x9104
+1087   tone     off
+2896   tone     900 v=0x9104
+3039   tone     off
+3261   tone     900 v=0x9104
+3404   tone     off
+3617   tone     900 v=0x9104
+3760   tone     off
+3982   tone     900 v=0x9104
+4124   tone     off
+4337   tone     900 v=0x9104
+4480   tone     off
+4706   buzzer   1000 v=22
+4991   buzzer   off

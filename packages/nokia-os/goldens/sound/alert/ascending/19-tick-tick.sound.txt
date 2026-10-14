@@ -1,0 +1,80 @@
+sound-golden 1
+id: sound/alert/ascending/19-tick-tick
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/19
+source-sha256: 7f400e101c2001f3be5253050667ce1c549c29cc6a257a63786787b46df68cc0
+state: factory
+keys: 0:down
+note: Tick tick's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+24     tone     900 v=0x9104
+164    tone     off
+986    buzzer   1319 v=4
+986    vibrator on
+1032   buzzer   off
+1760   buzzer   1319 v=4
+1760   vibrator off
+1813   buzzer   off
+2534   buzzer   1319 v=4
+2534   vibrator on
+2580   buzzer   off
+3316   buzzer   1319 v=4
+3316   vibrator off
+3503   buzzer   1396.9 v=5
+3697   buzzer   1319 v=4
+3890   buzzer   1175 v=6
+4084   buzzer   1319 v=4
+4084   vibrator on
+4130   buzzer   off
+4858   buzzer   1319 v=4
+4858   vibrator off
+4904   buzzer   off
+5632   vibrator on
+5633   buzzer   1319 v=7
+5679   buzzer   off
+6407   buzzer   1319 v=7
+6407   vibrator off
+6600   buzzer   1396.9 v=8
+6794   buzzer   1319 v=7
+6988   buzzer   1047 v=7
+7181   buzzer   1175 v=8
+7181   vibrator on
+7227   buzzer   off
+7955   vibrator off
+7956   buzzer   1175 v=8
+8002   buzzer   off
+8730   buzzer   1175 v=8
+8730   vibrator on
+8776   buzzer   off
+9504   buzzer   1175 v=12
+9504   vibrator off
+9698   buzzer   1319 v=10
+9891   buzzer   1175 v=12
+10086  buzzer   1047 v=10
+10279  vibrator on
+10280  buzzer   1319 v=10
+10327  buzzer   off
+11054  buzzer   1319 v=10
+11054  vibrator off
+11100  buzzer   off
+11829  buzzer   1319 v=10
+11829  vibrator on
+11875  buzzer   off
+12602  vibrator off
+12603  buzzer   1319 v=10
+12796  buzzer   1396.9 v=13
+12990  buzzer   1319 v=10
+13183  buzzer   1175 v=12
+13377  buzzer   1319 v=10
+13377  vibrator on
+13423  buzzer   off
+14151  buzzer   1319 v=16
+14151  vibrator off
+14198  buzzer   off
+14926  buzzer   1319 v=16
+14926  vibrator on
+14972  buzzer   off
+15700  vibrator off

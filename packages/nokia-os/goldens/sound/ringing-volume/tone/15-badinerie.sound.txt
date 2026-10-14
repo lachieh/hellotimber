@@ -1,0 +1,74 @@
+sound-golden 1
+id: sound/ringing-volume/tone/15-badinerie
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/15
+source-sha256: 8eaec4608f0dcb7bf9f42ae12b4788755e2ecc971a7005527f0fd89c97d37b79
+state: factory
+keys: 0:down
+note: Badinerie stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (divider rewrite), 3 (stale frequency)
+
+@events
+# t_ms output   state
+22     tone     900 v=0x9104
+165    tone     off
+986    vibrator on
+987    buzzer   1660.9 v=21
+1102   buzzer   off
+1226   buzzer   1976 v=30
+1342   buzzer   off
+1350   buzzer   1660.9 v=21
+1466   buzzer   off
+1474   buzzer   1245 v=14
+1590   buzzer   off
+1714   buzzer   1660.9 v=21
+1830   buzzer   1245 v=14
+1830   vibrator off
+1946   buzzer   off
+1954   buzzer   988 v=16
+2070   buzzer   off
+2186   buzzer   1245 v=14
+2302   buzzer   988 v=16
+2418   buzzer   off
+2426   buzzer   831 v=12
+2759   buzzer   off
+2759   vibrator on
+2913   buzzer   622 v=11
+3014   buzzer   off
+3022   buzzer   831 v=12
+3139   buzzer   988 v=16
+3255   buzzer   off
+3263   buzzer   831 v=12
+3379   buzzer   932 v=17
+3496   buzzer   831 v=12
+3612   buzzer   932 v=17
+3728   buzzer   831 v=12
+3844   buzzer   784 v=13
+3960   buzzer   932 v=17
+4076   buzzer   1109 v=17
+4192   buzzer   off
+4200   buzzer   932 v=17
+4316   vibrator off
+4317   buzzer   988 v=16
+4549   buzzer   off
+4556   buzzer   831 v=12
+4797   buzzer   1660.9 v=21
+4874   buzzer   off
+5037   buzzer   1976 v=30
+5153   buzzer   1660.9 v=21
+5269   buzzer   1245 v=14
+5385   buzzer   off
+5501   buzzer   1660.9 v=21
+5617   vibrator on
+5618   buzzer   1245 v=14
+5733   buzzer   988 v=16
+5842   buzzer   off
+5974   buzzer   1245 v=14
+6090   buzzer   988 v=16
+6206   buzzer   831 v=12
+6608   buzzer   off
+6686   buzzer   988 v=16
+6802   buzzer   932 v=17
+6919   buzzer   988 v=16
+7073   buzzer   off
+7073   vibrator off

@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/preview/long
+status: asserted
+source: captures/6.39/plan16/preview/long
+source-sha256: 62da3042ac215fe922c41247fdfa36c649e522308e55879da48af5f88a7f69d7
+state: factory
+keys: 0:down
+note: ▼ onto Nokia tune, left for 65 s.
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+171    tone     off
+993    buzzer   1319 v=16
+993    vibrator on
+1108   buzzer   1175 v=16
+1230   buzzer   740 v=12
+1464   buzzer   831 v=12
+1704   vibrator off
+1705   buzzer   1109 v=17
+1821   buzzer   988 v=16
+1937   buzzer   587 v=11
+2177   buzzer   659 v=12
+2417   buzzer   988 v=16
+2417   vibrator on
+2533   buzzer   880 v=14
+2649   buzzer   554 v=11
+2889   buzzer   659 v=12
+3130   buzzer   880 v=14
+3130   vibrator off
+3858   buzzer   off
+3858   vibrator on
+4586   vibrator off
+7010   buzzer   1319 v=16
+7010   vibrator on
+7126   buzzer   1175 v=16
+7242   buzzer   740 v=12
+7490   buzzer   831 v=12
+7740   buzzer   1109 v=17
+7740   vibrator off
+7854   buzzer   988 v=16
+7970   buzzer   587 v=11
+8210   buzzer   659 v=12
+8450   buzzer   988 v=16
+8450   vibrator on
+8566   buzzer   880 v=14
+8682   buzzer   554 v=11
+8922   buzzer   659 v=12
+9162   buzzer   880 v=14
+9162   vibrator off
+9890   buzzer   off
+9890   vibrator on
+10619  vibrator off

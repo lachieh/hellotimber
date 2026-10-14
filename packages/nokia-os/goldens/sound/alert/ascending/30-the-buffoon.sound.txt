@@ -1,0 +1,106 @@
+sound-golden 1
+id: sound/alert/ascending/30-the-buffoon
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/30
+source-sha256: 73330386ed7fc7e06b2667303650ea70f35ac42e7db29a66d20f881dcb138a78
+state: factory
+keys: 0:down
+note: The Buffoon's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 3 (divider rewrite)
+
+@events
+# t_ms output   state
+29     tone     900 v=0x9104
+176    tone     off
+990    buzzer   523 v=3
+1082   buzzer   off
+1105   buzzer   622 v=3
+1330   buzzer   off
+1353   buzzer   784 v=4
+1446   buzzer   off
+1469   vibrator on
+1470   buzzer   1047 v=4
+1562   buzzer   off
+1849   buzzer   988 v=4
+1942   buzzer   off
+2228   buzzer   932 v=4
+2584   buzzer   off
+2584   vibrator off
+2871   buzzer   932 v=4
+2964   buzzer   off
+2987   buzzer   831 v=4
+3212   buzzer   off
+3236   buzzer   932 v=4
+3329   buzzer   off
+3352   buzzer   831 v=4
+3445   buzzer   off
+3600   buzzer   784 v=4
+3956   buzzer   off
+4366   buzzer   784 v=4
+4459   buzzer   off
+4483   buzzer   831 v=4
+4483   vibrator on
+4707   buzzer   off
+4730   buzzer   932 v=4
+4823   buzzer   off
+4846   buzzer   831 v=4
+4939   buzzer   off
+5226   buzzer   784 v=4
+5319   buzzer   off
+5605   buzzer   622 v=5
+5605   vibrator off
+5698   buzzer   off
+5853   buzzer   622 v=5
+5946   buzzer   off
+5969   buzzer   698 v=6
+6062   buzzer   off
+6349   buzzer   740 v=5
+6573   buzzer   off
+6596   buzzer   784 v=6
+6953   buzzer   off
+7108   buzzer   523 v=4
+7200   buzzer   off
+7224   buzzer   622 v=5
+7448   buzzer   off
+7472   buzzer   784 v=6
+7564   buzzer   off
+7588   buzzer   1047 v=7
+7588   vibrator on
+7680   buzzer   off
+7967   buzzer   988 v=7
+8063   buzzer   off
+8347   buzzer   932 v=7
+8703   buzzer   off
+8703   vibrator off
+8989   buzzer   932 v=7
+9082   buzzer   off
+9105   buzzer   831 v=6
+9330   buzzer   off
+9353   buzzer   932 v=7
+9446   buzzer   off
+9469   buzzer   831 v=8
+9565   buzzer   off
+9717   buzzer   784 v=9
+10074  buzzer   off
+10485  buzzer   784 v=9
+10578  buzzer   off
+10601  buzzer   831 v=8
+10601  vibrator on
+10825  buzzer   off
+10849  buzzer   932 v=11
+10941  buzzer   off
+10965  buzzer   831 v=8
+11068  buzzer   off
+11352  buzzer   784 v=9
+11445  buzzer   off
+11731  vibrator off
+11732  buzzer   622 v=7
+11824  buzzer   off
+11979  buzzer   622 v=7
+12072  buzzer   off
+12095  buzzer   698 v=8
+12188  buzzer   off
+12475  buzzer   740 v=8
+12699  buzzer   off
+12723  buzzer   784 v=9
+13079  buzzer   off

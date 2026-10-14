@@ -1,0 +1,55 @@
+sound-golden 1
+id: sound/ringing-volume/tone/14-mozart-40
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/14
+source-sha256: 4514d5103815f0756649f37d6c2b495663f5022a93cf6e7575e11fb8da2b397e
+state: factory
+keys: 0:down
+note: Mozart 40 stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: none
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+176    tone     off
+998    buzzer   622 v=11
+998    vibrator on
+1113   buzzer   587 v=11
+1198   buzzer   off
+1222   buzzer   587 v=11
+1338   buzzer   off
+1338   vibrator off
+1454   buzzer   622 v=11
+1454   vibrator on
+1570   buzzer   587 v=11
+1655   buzzer   off
+1679   buzzer   587 v=11
+1795   buzzer   off
+1795   vibrator off
+1911   buzzer   622 v=11
+1911   vibrator on
+2027   buzzer   587 v=11
+2112   buzzer   off
+2136   buzzer   587 v=11
+2252   buzzer   off
+2252   vibrator off
+2368   buzzer   932 v=17
+2600   buzzer   off
+2832   vibrator on
+2833   buzzer   932 v=17
+2949   buzzer   880 v=14
+3065   buzzer   784 v=13
+3182   buzzer   off
+3298   buzzer   784 v=13
+3298   vibrator off
+3414   buzzer   698 v=13
+3530   buzzer   622 v=11
+3646   buzzer   off
+3775   buzzer   622 v=11
+3775   vibrator on
+3887   buzzer   587 v=11
+4003   buzzer   523 v=11
+4119   buzzer   off
+4235   buzzer   523 v=11
+4235   vibrator off
+4467   buzzer   off

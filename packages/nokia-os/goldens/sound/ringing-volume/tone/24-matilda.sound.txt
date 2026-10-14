@@ -1,0 +1,52 @@
+sound-golden 1
+id: sound/ringing-volume/tone/24-matilda
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/24
+source-sha256: b9cfd5bc73f3ad4233401e848c0f7fa23cf53eb652abae4a8f7ccfbb1239c01b
+state: factory
+keys: 0:down
+note: Matilda stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9104
+174    tone     off
+987    vibrator on
+988    buzzer   880 v=14
+1296   buzzer   off
+1320   buzzer   880 v=14
+1459   buzzer   off
+1482   buzzer   880 v=14
+1626   buzzer   off
+1645   buzzer   880 v=14
+1955   buzzer   off
+1978   buzzer   740 v=12
+2311   buzzer   1175 v=16
+2311   vibrator off
+2627   buzzer   off
+2644   buzzer   1175 v=16
+2783   buzzer   off
+2806   buzzer   1175 v=16
+2946   buzzer   off
+2969   buzzer   1109 v=17
+3280   buzzer   off
+3303   buzzer   988 v=16
+3636   buzzer   880 v=14
+3636   vibrator on
+3946   buzzer   off
+3969   buzzer   880 v=14
+4108   buzzer   off
+4132   buzzer   880 v=14
+4271   buzzer   off
+4294   buzzer   988 v=16
+4631   buzzer   880 v=14
+4766   buzzer   off
+4790   buzzer   880 v=14
+4929   buzzer   off
+4952   vibrator off
+4953   buzzer   880 v=14
+5285   buzzer   784 v=13
+5448   buzzer   740 v=12
+5611   buzzer   659 v=12
+5920   buzzer   off

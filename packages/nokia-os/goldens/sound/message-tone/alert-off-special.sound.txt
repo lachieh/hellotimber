@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/message-tone/alert-off-special
+status: asserted
+source: captures/6.39/plan16/message-tone/alert-off-special
+source-sha256: 7d2f756518c2215f2ad2db97e268e95522ae5ee088575669a6ca062453e99b34
+state: factory
+keys: 0:down
+note: Tones › Message alert tone: Incoming call alert Off, ▼ onto Special.
+omitted: none
+
+@events
+# t_ms output   state
+38     tone     900 v=0x9104
+190    tone     off
+1004   buzzer   2683.7 v=22
+1004   vibrator on
+1096   buzzer   off
+1189   buzzer   2683.7 v=22
+1282   buzzer   off
+1375   buzzer   2683.7 v=22
+1375   vibrator off
+1468   buzzer   off
+1754   vibrator on
+1755   buzzer   2683.7 v=22
+2041   buzzer   off
+2141   buzzer   2683.7 v=22
+2420   buzzer   off
+2707   buzzer   2683.7 v=22
+2707   vibrator off
+2800   buzzer   off
+2893   buzzer   2683.7 v=22
+2986   buzzer   off
+3079   buzzer   2683.7 v=22
+3172   buzzer   off
+4145   buzzer   2683.7 v=22
+4145   vibrator on
+4233   buzzer   off
+4326   buzzer   2683.7 v=22
+4419   buzzer   off
+4512   buzzer   2683.7 v=22
+4512   vibrator off
+4605   buzzer   off
+4896   buzzer   2683.7 v=22
+4896   vibrator on
+5178   buzzer   off
+5271   buzzer   2683.7 v=22
+5557   buzzer   off
+5844   buzzer   2683.7 v=22
+5844   vibrator off
+5937   buzzer   off
+6030   buzzer   2683.7 v=22
+6123   buzzer   off
+6216   buzzer   2683.7 v=22
+6309   buzzer   off

@@ -1,0 +1,34 @@
+sound-golden 1
+id: sound/keypad/pair
+status: asserted
+source: captures/6.39/plan16/keypad/pair
+source-sha256: 9c2c3cf45c93e1e7361dc6553306e0a43577d9ab56db76466b30de18898072a5
+state: factory
+keys: 0:down 100:down 1660:down 1860:down 3421:down 3821:down 5381:up 6441:up 8501:up 11462:up 14522:up 17682:up
+note: Phone book list: ▼▼ 100, 200, 400 ms apart, then ▲ after 1-4 s gaps (the DSP powers down).
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9104
+264    tone     off
+1682   tone     900 v=0x9104
+1828   tone     off
+1884   tone     900 v=0x9104
+2030   tone     off
+3441   tone     900 v=0x9104
+3587   tone     off
+3843   tone     900 v=0x9104
+3993   tone     off
+5400   tone     900 v=0x9104
+5554   tone     off
+6461   tone     900 v=0x9104
+6607   tone     off
+8528   tone     900 v=0x9104
+8675   tone     off
+11479  tone     900 v=0x9104
+11626  tone     off
+14615  tone     900 v=0x9104
+14692  tone     off
+17728  tone     900 v=0x9104
+17852  tone     off

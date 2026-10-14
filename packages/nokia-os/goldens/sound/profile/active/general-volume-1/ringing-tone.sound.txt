@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/profile/active/general-volume-1/ringing-tone
+status: asserted
+source: captures/6.39/plan16/profile/active/general-volume-1/ringing-tone
+source-sha256: 959a7a122b2d7a788b3f02a9b13304dd0a6da28d18677aa18b6cbf271e75727a
+state: factory
+keys: 0:down
+note: General (active) with Ringing volume Level 1; Loud › Personalise › Ringing tone: ▼ onto Nokia tune.
+omitted: 1 (level rewrite), 2 (stale frequency)
+
+@events
+# t_ms output   state
+29     tone     900 v=0x9104
+169    tone     off
+990    buzzer   1319 v=16
+990    vibrator on
+1106   buzzer   1175 v=16
+1222   buzzer   740 v=12
+1462   buzzer   831 v=12
+1703   buzzer   1109 v=17
+1703   vibrator off
+1818   buzzer   988 v=16
+1934   buzzer   587 v=11
+2174   buzzer   659 v=12
+2414   buzzer   988 v=16
+2414   vibrator on
+2530   buzzer   880 v=14
+2646   buzzer   554 v=11
+2887   buzzer   659 v=12
+3127   vibrator off
+3128   buzzer   880 v=14
+3855   vibrator on
+3856   buzzer   off
+4583   vibrator off
+7007   buzzer   1319 v=61
+7007   vibrator on
+7123   buzzer   1175 v=56
+7239   buzzer   740 v=23
+7479   buzzer   831 v=31
+7719   vibrator off
+7720   buzzer   1109 v=194
+7836   buzzer   988 v=92
+7962   buzzer   587 v=21
+8213   buzzer   659 v=23
+8447   vibrator on
+8448   buzzer   988 v=92
+8563   buzzer   880 v=31
+8680   buzzer   554 v=18
+8920   buzzer   659 v=23
+9160   buzzer   880 v=31
+9160   vibrator off
+9889   buzzer   off
+9889   vibrator on
+10616  vibrator off

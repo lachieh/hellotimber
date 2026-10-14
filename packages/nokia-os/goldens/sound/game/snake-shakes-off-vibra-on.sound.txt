@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/game/snake-shakes-off-vibra-on
+status: asserted
+source: captures/6.39/plan16/game/shakes-off-vibra-on
+source-sha256: 6f2a31c6eaa5d8f38e68a8e07874cc3a722a8dd6277037cbf608a28a00140bae
+state: factory
+keys: 0:navi 2033:8
+note: Snake II, level 1, factory settings: Shakes Off, one meal.
+omitted: none
+
+@events
+# t_ms output   state
+34     tone     900 v=0x9104
+180    tone     off
+2049   tone     900 v=0x9104
+2193   tone     off
+4480   buzzer   2636.9 v=6
+4486   buzzer   off

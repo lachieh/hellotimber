@@ -1,0 +1,58 @@
+sound-golden 1
+id: sound/ringing-volume/tone/31-indifference
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/31
+source-sha256: 66373d11ccdba0f26b14f302418684c867aa819b120ad90070a6ec7abef5292f
+state: factory
+keys: 0:down
+note: Indifference stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+171    tone     off
+993    buzzer   1568 v=25
+993    vibrator on
+1217   buzzer   off
+1240   buzzer   1568 v=25
+1333   buzzer   off
+1356   buzzer   1396.9 v=21
+1449   buzzer   off
+1449   vibrator off
+1735   buzzer   1175 v=16
+1829   buzzer   off
+2115   buzzer   988 v=16
+2208   buzzer   off
+2262   buzzer   1396.9 v=21
+2262   vibrator on
+2719   buzzer   off
+2742   buzzer   1396.9 v=21
+2835   buzzer   off
+2858   buzzer   1175 v=16
+2858   vibrator off
+2951   buzzer   off
+3239   buzzer   988 v=16
+3332   buzzer   off
+3618   buzzer   784 v=13
+3711   buzzer   off
+3998   buzzer   1245 v=14
+3998   vibrator on
+4222   buzzer   off
+4245   buzzer   1245 v=14
+4338   buzzer   off
+4362   buzzer   1175 v=16
+4454   buzzer   off
+4454   vibrator off
+4741   buzzer   1047 v=14
+4965   buzzer   off
+5020   buzzer   784 v=13
+5085   buzzer   off
+5105   buzzer   880 v=14
+5335   buzzer   off
+5391   vibrator on
+5392   buzzer   1047 v=14
+5778   buzzer   off
+5972   vibrator off
+6940   vibrator on
+7521   vibrator off

@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/alert/off
+status: asserted
+source: captures/6.39/plan16/alert/off
+source-sha256: b5e897ffc934d62d5100967966ba0fc77641a49ae199452a6cbc1469ab4ddc98
+state: factory
+keys: 0:down
+note: Incoming call alert Off: ▼ from Croak onto Nokia tune.
+omitted: none
+
+@events
+# t_ms output   state
+39     tone     900 v=0x9104
+181    tone     off

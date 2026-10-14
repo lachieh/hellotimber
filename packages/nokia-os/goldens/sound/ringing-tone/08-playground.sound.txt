@@ -1,0 +1,83 @@
+sound-golden 1
+id: sound/ringing-tone/08-playground
+status: asserted
+source: captures/6.39/plan16/ringing-tone/08
+source-sha256: b56bb8e038b55779755a29fab0998979fbe1e629159287d6c7c5fb403bd02d35
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Kick onto Playground: its preview at Level 4, Vibrating alert On.
+omitted: 3 (divider rewrite)
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9104
+166    tone     off
+987    vibrator on
+988    buzzer   831 v=12
+1103   buzzer   off
+1219   buzzer   831 v=12
+1335   buzzer   off
+1451   buzzer   698 v=13
+1567   buzzer   off
+1684   buzzer   932 v=17
+1684   vibrator off
+1800   buzzer   off
+1916   buzzer   831 v=12
+2032   buzzer   off
+2159   buzzer   831 v=12
+2272   buzzer   off
+2388   buzzer   698 v=13
+2621   buzzer   off
+3085   vibrator on
+3086   buzzer   2489 v=17
+3202   buzzer   off
+3319   buzzer   2489 v=17
+3435   buzzer   off
+3551   buzzer   2093.1 v=34
+3667   buzzer   off
+3783   buzzer   2793.9 v=25
+3783   vibrator off
+3912   buzzer   off
+4023   buzzer   2489 v=17
+4139   buzzer   off
+4255   buzzer   2489 v=17
+4372   buzzer   off
+4488   buzzer   2093.1 v=34
+4720   buzzer   off
+4720   vibrator on
+5394   vibrator off
+7624   buzzer   831 v=12
+7624   vibrator on
+7740   buzzer   off
+7856   buzzer   831 v=12
+7972   buzzer   off
+8088   buzzer   698 v=13
+8205   buzzer   off
+8321   buzzer   932 v=17
+8321   vibrator off
+8437   buzzer   off
+8553   buzzer   831 v=12
+8669   buzzer   off
+8785   buzzer   831 v=12
+8901   buzzer   off
+9018   buzzer   698 v=13
+9250   buzzer   off
+9715   buzzer   2489 v=17
+9715   vibrator on
+9831   buzzer   off
+9948   buzzer   2489 v=17
+10064  buzzer   off
+10180  buzzer   2093.1 v=34
+10296  buzzer   off
+10422  buzzer   2793.9 v=25
+10422  vibrator off
+10536  buzzer   off
+10653  buzzer   2489 v=17
+10769  buzzer   off
+10885  buzzer   2489 v=17
+11001  buzzer   off
+11117  buzzer   2093.1 v=34
+11349  vibrator on
+11350  buzzer   off
+12023  vibrator off
+@loop 988 6636

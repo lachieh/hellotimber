@@ -1,0 +1,44 @@
+sound-golden 1
+id: sound/ringing-volume/tone/06-hopping-down
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/06
+source-sha256: 6954eb0d3572aff6da6f65e2e49604a81569c8560af8926a8464118cd08e367c
+state: factory
+keys: 0:down
+note: Hopping down stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+24     tone     900 v=0x9104
+167    tone     off
+989    buzzer   1760.1 v=17
+989    vibrator on
+1058   buzzer   1396.9 v=21
+1128   buzzer   1175 v=16
+1197   buzzer   off
+1414   buzzer   1760.1 v=17
+1414   vibrator off
+1484   buzzer   1396.9 v=21
+1553   buzzer   1047 v=14
+1623   buzzer   off
+1840   buzzer   1760.1 v=17
+1840   vibrator on
+1910   buzzer   1319 v=16
+1979   buzzer   1047 v=14
+2049   buzzer   off
+2266   buzzer   1568 v=25
+2266   vibrator off
+2340   buzzer   1319 v=16
+2405   buzzer   1047 v=14
+2475   buzzer   off
+2692   buzzer   1568 v=25
+2692   vibrator on
+2761   buzzer   1245 v=14
+2840   buzzer   1047 v=14
+2908   buzzer   off
+3125   vibrator off
+3126   buzzer   1568 v=25
+3196   buzzer   1245 v=14
+3266   buzzer   988 v=16
+3342   buzzer   off

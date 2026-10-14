@@ -1,0 +1,51 @@
+sound-golden 1
+id: sound/ringing-tone/18-polite
+status: asserted
+source: captures/6.39/plan16/ringing-tone/18
+source-sha256: 6ba5b87ab83cd2e9440f10bf6ff4dbfd173de44f36b9e192291ecd6cbceeceb0
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Dawn onto Polite: its preview at Level 4, Vibrating alert On.
+omitted: 1 (stale frequency), 1 (vibrator glitch)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+168    tone     off
+990    buzzer   2489 v=17
+990    vibrator on
+1051   buzzer   1480 v=24
+1113   buzzer   2489 v=17
+1175   buzzer   off
+1175   vibrator off
+4095   buzzer   2489 v=17
+4095   vibrator on
+4157   buzzer   1480 v=24
+4219   buzzer   2489 v=17
+4281   buzzer   1480 v=24
+4343   buzzer   2489 v=17
+4405   buzzer   1480 v=24
+4467   buzzer   2489 v=17
+4528   vibrator off
+4529   buzzer   off
+7440   buzzer   2489 v=17
+7440   vibrator on
+7502   buzzer   1480 v=24
+7564   buzzer   2489 v=17
+7626   buzzer   1480 v=24
+7688   buzzer   2489 v=17
+7750   buzzer   1480 v=24
+7812   buzzer   2489 v=17
+7874   buzzer   1480 v=24
+7936   buzzer   2489 v=17
+7998   buzzer   1480 v=24
+8060   buzzer   2489 v=17
+8122   buzzer   1480 v=24
+8184   buzzer   2489 v=17
+8245   buzzer   1480 v=24
+8308   buzzer   2489 v=17
+8369   buzzer   1480 v=24
+8431   buzzer   2489 v=17
+8493   buzzer   off
+8493   vibrator off
+@loop 990 7318

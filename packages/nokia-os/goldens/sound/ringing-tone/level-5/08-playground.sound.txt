@@ -1,0 +1,82 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/08-playground
+status: asserted
+source: captures/6.39/plan16/levels/5/08
+source-sha256: 27d34e7aea98900fa1a18009475adf696eb55fb41db7a7143d33bfc55948e989
+state: factory
+keys: 0:down
+note: Playground's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 2 (divider rewrite)
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9104
+170    tone     off
+992    buzzer   831 v=12
+992    vibrator on
+1107   buzzer   off
+1223   buzzer   831 v=12
+1339   buzzer   off
+1456   buzzer   698 v=13
+1572   buzzer   off
+1688   buzzer   932 v=17
+1688   vibrator off
+1804   buzzer   off
+1920   buzzer   831 v=12
+2036   buzzer   off
+2153   buzzer   831 v=12
+2269   buzzer   off
+2385   buzzer   698 v=13
+2617   buzzer   off
+3089   buzzer   2489 v=17
+3089   vibrator on
+3199   buzzer   off
+3315   buzzer   2489 v=17
+3431   buzzer   off
+3547   buzzer   2093.1 v=34
+3663   buzzer   off
+3779   vibrator off
+3780   buzzer   2793.9 v=25
+3896   buzzer   off
+4012   buzzer   2489 v=17
+4128   buzzer   off
+4244   buzzer   2489 v=17
+4360   buzzer   off
+4477   buzzer   2093.1 v=34
+4709   buzzer   off
+4709   vibrator on
+5382   vibrator off
+7613   buzzer   831 v=31
+7613   vibrator on
+7729   buzzer   off
+7846   buzzer   831 v=31
+7961   buzzer   off
+8077   buzzer   698 v=82
+8193   buzzer   off
+8309   vibrator off
+8310   buzzer   932 v=107
+8426   buzzer   off
+8542   buzzer   831 v=31
+8658   buzzer   off
+8774   buzzer   831 v=31
+8890   buzzer   off
+9006   buzzer   698 v=82
+9239   buzzer   off
+9703   vibrator on
+9704   buzzer   2489 v=128
+9819   buzzer   off
+9936   buzzer   2489 v=128
+10053  buzzer   off
+10169  buzzer   2093.1 v=71
+10285  buzzer   off
+10401  buzzer   2793.9 v=164
+10401  vibrator off
+10517  buzzer   off
+10634  buzzer   2489 v=128
+10750  buzzer   off
+10866  buzzer   2489 v=128
+10982  buzzer   off
+11101  buzzer   2093.1 v=71
+11331  buzzer   off
+11331  vibrator on
+12004  vibrator off

@@ -1,0 +1,105 @@
+sound-golden 1
+id: sound/ringing-tone/17-dawn
+status: asserted
+source: captures/6.39/plan16/ringing-tone/17
+source-sha256: 6af17806904e0d9bb982aecf12d884e18e66bee8114f807222fe0db23093afb1
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Attraction onto Dawn: its preview at Level 4, Vibrating alert On.
+omitted: 2 (stale frequency)
+
+@events
+# t_ms output   state
+29     tone     900 v=0x9104
+169    tone     off
+1002   buzzer   2349.1 v=22
+1002   vibrator on
+1346   buzzer   off
+1752   vibrator off
+3255   buzzer   2349.1 v=22
+3337   buzzer   2489 v=17
+3508   buzzer   off
+5598   vibrator on
+5599   buzzer   2489 v=17
+5683   buzzer   2636.9 v=18
+5916   buzzer   2489 v=17
+6032   buzzer   2636.9 v=18
+6264   buzzer   2489 v=17
+6380   buzzer   2636.9 v=18
+6613   buzzer   2093.1 v=34
+6729   buzzer   1976 v=30
+6961   buzzer   1760.1 v=17
+7077   buzzer   2349.1 v=22
+7260   buzzer   off
+7260   vibrator off
+9346   buzzer   2489 v=17
+9346   vibrator on
+9431   buzzer   2636.9 v=18
+9664   buzzer   2489 v=17
+9780   buzzer   2636.9 v=18
+10016  buzzer   2489 v=17
+10129  buzzer   2636.9 v=18
+10361  buzzer   2093.1 v=34
+10478  buzzer   1976 v=30
+10710  buzzer   1760.1 v=17
+10826  buzzer   2349.1 v=22
+10996  buzzer   off
+10996  vibrator off
+11167  buzzer   1976 v=30
+11337  buzzer   off
+11517  buzzer   1760.1 v=17
+11686  buzzer   1568 v=25
+12034  buzzer   off
+14357  buzzer   1760.1 v=17
+14357  vibrator on
+14589  buzzer   1660.9 v=21
+14706  buzzer   1760.1 v=17
+14938  buzzer   1660.9 v=21
+15054  buzzer   1760.1 v=17
+15286  buzzer   1660.9 v=21
+15402  buzzer   1760.1 v=17
+15635  buzzer   1976 v=30
+15751  buzzer   1175 v=16
+15867  buzzer   1319 v=16
+15983  buzzer   1175 v=16
+16099  buzzer   1319 v=16
+16216  buzzer   1175 v=16
+16332  buzzer   1319 v=16
+16448  buzzer   1175 v=16
+16448  vibrator off
+16502  buzzer   1319 v=16
+16556  buzzer   1175 v=16
+16610  buzzer   1319 v=16
+16665  buzzer   1175 v=16
+16720  buzzer   1319 v=16
+16775  buzzer   1175 v=16
+16828  buzzer   1319 v=16
+16882  buzzer   1175 v=16
+16937  buzzer   1319 v=16
+16991  buzzer   1175 v=16
+17045  buzzer   1319 v=16
+17099  buzzer   1175 v=16
+17154  buzzer   1319 v=16
+17208  buzzer   1175 v=16
+17276  buzzer   1319 v=16
+17324  buzzer   1175 v=16
+17378  buzzer   1319 v=16
+17432  buzzer   1175 v=16
+17486  buzzer   1319 v=16
+17541  buzzer   1175 v=16
+17595  buzzer   off
+19918  buzzer   1175 v=16
+20034  buzzer   1319 v=16
+20150  buzzer   1480 v=24
+20280  buzzer   1568 v=25
+20390  buzzer   1760.1 v=17
+20506  buzzer   1976 v=30
+20623  buzzer   2093.1 v=34
+20739  buzzer   2349.1 v=22
+20739  vibrator on
+21087  buzzer   off
+21490  vibrator off
+22984  buzzer   2349.1 v=22
+23070  buzzer   2489 v=17
+23240  buzzer   off
+@loop 1002 19737

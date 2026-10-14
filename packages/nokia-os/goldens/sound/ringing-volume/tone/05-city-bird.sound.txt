@@ -1,0 +1,25 @@
+sound-golden 1
+id: sound/ringing-volume/tone/05-city-bird
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/05
+source-sha256: 56bbb4de36600a1f233e4ffecd62a9c3d8f05f53b588bf8fc863151d0f9f31c5
+state: factory
+keys: 0:down
+note: City bird stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+171    tone     off
+993    buzzer   2636.9 v=18
+993    vibrator on
+1108   buzzer   off
+1163   buzzer   2636.9 v=18
+1279   buzzer   2349.1 v=22
+1627   buzzer   2636.9 v=18
+1743   buzzer   2349.1 v=22
+2092   buzzer   2636.9 v=18
+2208   buzzer   2349.1 v=22
+2556   buzzer   off
+2556   vibrator off

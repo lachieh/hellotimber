@@ -1,0 +1,28 @@
+sound-golden 1
+id: sound/keypad/virgin
+status: asserted
+source: captures/6.39/plan16/keypad/virgin
+source-sha256: 923c21df3927a0197ffa4855654518c0d23ad3bce732d0e81a94ca8975f7cc70
+state: virgin
+keys: 0:navi 1060:down 2120:down 3181:c 4241:c+1500 9791:navi 10852:c+1500
+note: Virgin (Keypad tones unset): Menu, ▼, ▼, C, C held, Menu after 4 s, C held.
+omitted: none
+
+@events
+# t_ms output   state
+69     tone     900 v=0x9100
+193    tone     off
+1085   tone     900 v=0x9100
+1230   tone     off
+2145   tone     900 v=0x9100
+2291   tone     off
+3203   tone     900 v=0x9100
+3353   tone     off
+4265   tone     900 v=0x9100
+4406   tone     off
+4744   tone     900 v=0x9100
+4886   tone     off
+9850   tone     900 v=0x9100
+9974   tone     off
+10879  tone     900 v=0x9100
+11020  tone     off

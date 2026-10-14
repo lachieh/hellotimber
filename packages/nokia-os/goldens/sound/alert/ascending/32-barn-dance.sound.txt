@@ -1,0 +1,150 @@
+sound-golden 1
+id: sound/alert/ascending/32-barn-dance
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/32
+source-sha256: 64fbc2d0cf1ba4464b6c944bf9c56a7c5b3d767dc9de2d48cca118aea253a2ba
+state: factory
+keys: 0:down
+note: Barn dance's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 3 (divider rewrite)
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+174    tone     off
+996    buzzer   1319 v=4
+996    vibrator on
+1196   buzzer   off
+1219   buzzer   659 v=3
+1421   buzzer   off
+1444   buzzer   831 v=4
+1645   buzzer   off
+1669   buzzer   988 v=4
+1870   buzzer   off
+1893   buzzer   880 v=3
+1893   vibrator off
+2094   buzzer   off
+2118   buzzer   1109 v=5
+2325   buzzer   off
+2342   buzzer   988 v=4
+2543   buzzer   off
+2576   buzzer   831 v=4
+2776   buzzer   off
+2799   buzzer   1319 v=4
+2799   vibrator on
+3000   buzzer   off
+3024   buzzer   659 v=3
+3226   buzzer   off
+3249   buzzer   831 v=4
+3450   buzzer   off
+3474   buzzer   988 v=4
+3675   buzzer   off
+3675   vibrator off
+3698   buzzer   880 v=3
+3900   buzzer   off
+3923   buzzer   1480 v=6
+4124   buzzer   off
+4147   buzzer   1319 v=4
+4349   buzzer   off
+4372   buzzer   1109 v=5
+4579   buzzer   off
+4597   buzzer   1319 v=4
+4597   vibrator on
+4798   buzzer   off
+4830   buzzer   659 v=5
+5030   buzzer   off
+5053   buzzer   831 v=6
+5255   buzzer   off
+5278   buzzer   988 v=7
+5479   buzzer   off
+5502   vibrator off
+5503   buzzer   880 v=6
+5704   buzzer   off
+5727   buzzer   1109 v=8
+5928   buzzer   off
+5952   buzzer   988 v=7
+6153   buzzer   off
+6176   buzzer   831 v=6
+6377   buzzer   off
+6401   buzzer   1319 v=7
+6401   vibrator on
+6602   buzzer   off
+6625   buzzer   1109 v=8
+6832   buzzer   off
+6850   buzzer   988 v=7
+7051   buzzer   off
+7083   buzzer   831 v=6
+7283   buzzer   off
+7307   buzzer   659 v=5
+7307   vibrator off
+7740   buzzer   off
+7764   buzzer   659 v=5
+8197   buzzer   off
+11090  buzzer   1319 v=10
+11090  vibrator on
+11288  buzzer   off
+11311  buzzer   659 v=7
+11512  buzzer   off
+11536  buzzer   831 v=8
+11737  buzzer   off
+11760  buzzer   988 v=11
+11961  buzzer   off
+11985  buzzer   880 v=8
+11985  vibrator off
+12186  buzzer   off
+12209  buzzer   1109 v=12
+12411  buzzer   off
+12434  buzzer   988 v=11
+12635  buzzer   off
+12659  buzzer   831 v=12
+12860  buzzer   off
+12883  buzzer   1319 v=16
+12883  vibrator on
+13092  buzzer   off
+13115  buzzer   659 v=12
+13317  buzzer   off
+13342  buzzer   831 v=12
+13541  buzzer   off
+13564  buzzer   988 v=16
+13766  buzzer   off
+13766  vibrator off
+13789  buzzer   880 v=14
+13990  buzzer   off
+14014  buzzer   1480 v=24
+14215  buzzer   off
+14238  buzzer   1319 v=16
+14439  buzzer   off
+14463  buzzer   1109 v=17
+14664  buzzer   off
+14687  vibrator on
+14688  buzzer   1319 v=16
+14889  buzzer   off
+14912  buzzer   659 v=12
+15113  buzzer   off
+15136  buzzer   831 v=12
+15345  buzzer   off
+15369  buzzer   988 v=16
+15570  buzzer   off
+15595  vibrator off
+15596  buzzer   880 v=14
+15794  buzzer   off
+15818  buzzer   1109 v=17
+16019  buzzer   off
+16042  buzzer   988 v=16
+16244  buzzer   off
+16267  buzzer   831 v=12
+16468  buzzer   off
+16492  buzzer   1319 v=16
+16492  vibrator on
+16693  buzzer   off
+16716  buzzer   1109 v=17
+16918  buzzer   off
+16942  buzzer   988 v=16
+17143  buzzer   off
+17166  buzzer   831 v=12
+17367  buzzer   off
+17391  buzzer   659 v=12
+17391  vibrator off
+17824  buzzer   off
+17850  buzzer   659 v=12
+18281  buzzer   off

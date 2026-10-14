@@ -1,0 +1,79 @@
+sound-golden 1
+id: sound/ringing-tone/21-jumping
+status: asserted
+source: captures/6.39/plan16/ringing-tone/21
+source-sha256: 829dbf218dd6d0c2c66cfeb6dee6395b49e7daf3c0ac7cbd4c48df9cd081273a
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Samba rumble onto Jumping: its preview at Level 4, Vibrating alert On.
+omitted: 1 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9104
+173    tone     off
+987    buzzer   523 v=11
+987    vibrator on
+1109   buzzer   off
+1481   buzzer   1047 v=14
+1605   buzzer   off
+1977   buzzer   988 v=16
+1977   vibrator off
+2101   buzzer   784 v=13
+2225   buzzer   off
+2349   buzzer   880 v=14
+2472   buzzer   784 v=13
+2596   buzzer   off
+2720   buzzer   659 v=12
+2844   buzzer   off
+2968   buzzer   523 v=11
+2968   vibrator on
+3092   buzzer   784 v=13
+3217   buzzer   off
+3341   buzzer   523 v=11
+3465   buzzer   698 v=13
+3588   buzzer   off
+3712   buzzer   523 v=11
+3836   buzzer   off
+3960   buzzer   659 v=12
+3960   vibrator off
+4084   buzzer   523 v=11
+4208   buzzer   587 v=11
+4332   buzzer   off
+4456   buzzer   523 v=11
+4580   buzzer   off
+4580   vibrator on
+5253   vibrator off
+7383   buzzer   523 v=11
+7383   vibrator on
+7507   buzzer   off
+7878   buzzer   1047 v=14
+8002   buzzer   off
+8374   buzzer   988 v=16
+8374   vibrator off
+8498   buzzer   784 v=13
+8622   buzzer   off
+8746   buzzer   880 v=14
+8870   buzzer   784 v=13
+8993   buzzer   off
+9117   buzzer   659 v=12
+9241   buzzer   off
+9365   buzzer   523 v=11
+9365   vibrator on
+9489   buzzer   784 v=13
+9613   buzzer   off
+9737   buzzer   523 v=11
+9861   buzzer   698 v=13
+9985   buzzer   off
+10109  buzzer   523 v=11
+10233  buzzer   off
+10357  buzzer   659 v=12
+10357  vibrator off
+10481  buzzer   523 v=11
+10605  buzzer   587 v=11
+10729  buzzer   off
+10853  buzzer   523 v=11
+10977  buzzer   off
+10977  vibrator on
+11650  vibrator off
+@loop 987 6396

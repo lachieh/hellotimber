@@ -1,0 +1,50 @@
+sound-golden 1
+id: sound/alert/ascending/18-polite
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/18
+source-sha256: 560b0b2c5cfaec7c3dd77042b7171290deff97902f30ffd23e67be1155115415
+state: factory
+keys: 0:down
+note: Polite's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 2 (divider rewrite), 1 (level rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9104
+166    tone     off
+987    vibrator on
+988    buzzer   2489 v=7
+1048   buzzer   1480 v=6
+1110   buzzer   2489 v=7
+1177   buzzer   off
+1177   vibrator off
+4085   buzzer   2489 v=7
+4085   vibrator on
+4147   buzzer   1480 v=6
+4209   buzzer   2489 v=7
+4271   buzzer   1480 v=6
+4333   buzzer   2489 v=7
+4395   buzzer   1480 v=6
+4456   buzzer   2489 v=7
+4518   buzzer   off
+4518   vibrator off
+7436   vibrator on
+7437   buzzer   2489 v=10
+7492   buzzer   1480 v=11
+7554   buzzer   2489 v=10
+7616   buzzer   1480 v=11
+7687   buzzer   2489 v=10
+7747   buzzer   1480 v=11
+7809   buzzer   2489 v=10
+7871   buzzer   1480 v=11
+7937   buzzer   2489 v=10
+7995   buzzer   1480 v=11
+8057   buzzer   2489 v=10
+8119   buzzer   1480 v=11
+8187   buzzer   2489 v=10
+8243   buzzer   1480 v=11
+8305   buzzer   2489 v=10
+8367   buzzer   1480 v=11
+8438   buzzer   2489 v=10
+8498   vibrator off
+8499   buzzer   off

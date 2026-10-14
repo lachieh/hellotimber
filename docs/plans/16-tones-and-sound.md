@@ -739,28 +739,39 @@ error` (menus and the boot gate), `Not allowed`, `Set PIN code request on`. Ever
 `tests/sound-capture-set.test.ts` (new), `tests/goldens-integrity.test.ts`,
 `tests/acceptance.test.ts` (todo shim only), `goldens/**`.
 
-- [ ] TDD `sound-format.ts`: parse/serialize round trip; header order; `keys` ascending with known
+- [x] TDD `sound-format.ts`: parse/serialize round trip; header order; `keys` ascending with known
       key names; integer, non-decreasing times; output names; states (`off`, `on` for the
       vibrator only, `<hz> v=<volume>`); consecutive equal states rejected; `@loop` well-formed;
       silent goldens; every error names `file:line`.
-- [ ] TDD `sound-capture-set.ts` on synthetic events/keys (injected loader, no REF): the v2
+- [x] TDD `sound-capture-set.ts` on synthetic events/keys (injected loader, no REF): the v2
       columns → rows per output; normalisation (D6) with `omitted` counts; alignment on the first
       key-down; loop detection (two passes equal within ±2 ms, else throw naming the recording);
       equal note recordings share a golden; a missing column, file or key throws naming the
       recording.
-- [ ] Wire `import-captures`: `soundCaptureSet` beside the existing sets; `index.json` entries
+- [x] Wire `import-captures`: `soundCaptureSet` beside the existing sets; `index.json` entries
       `kind: "sound"` with `events` counts; `NOT_IMPORTED` reasons for `levels/` (rule check only)
       and the plan 23 v1 sound recordings (superseded).
-- [ ] Re-own the Composer (D14): `"5-4-*": "27"` in both `PLACEHOLDER_OWNERS` tables; the pending
+- [x] Re-own the Composer (D14): `"5-4-*": "27"` in both `PLACEHOLDER_OWNERS` tables; the pending
       goldens become `pending:27`; no golden is `pending:16`.
-- [ ] Integrity tests: every sound golden parses; ids unique; `state` known; no `pending:16`; the
+- [x] Integrity tests: every sound golden parses; ids unique; `state` known; no `pending:16`; the
       two owner tables equal (plan 14's test).
-- [ ] `tests/acceptance.test.ts`: asserted sound goldens without a scenario are todos
+- [x] `tests/acceptance.test.ts`: asserted sound goldens without a scenario are todos
       (`awaitsPlan16Scenario`; Task 9 deletes it).
-- [ ] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
+- [x] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
       completion note.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import sound captures as event-timeline goldens (plan 16)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import sound captures as event-timeline goldens (plan 16)`.
+
+**Completion note (Task 2).** `import-captures` writes 331 sound goldens (1.4 MB, 18 249 event
+rows; 299 asserted, 32 pending on plans 17, 18, 20, 21, 22, 24, 26 and 27) beside the 511 LCD
+fixtures (842 in `index.json`); a second run changes nothing. The 287 tree note recordings share 74
+goldens (`sound/note/<first number>`), plus 7 named notes. Ringing previews carry `@loop` for the 30
+tones with a second pass. The four `tree/05-tones/5-4-*.leaf` goldens are `pending:27`; no golden
+names plan 16. Deviations: the format takes `<t>:<key>+<hold_ms>` for held keys and `<hz>+<hz2>` for
+DTMF tone states (D6 deviation); loop detection uses the measured jitter tolerance (25 ms + 1.2 %),
+not ±2 ms; `tests/firmware-menu.test.ts` and `tests/tree-capture-set.test.ts` change their Composer
+owner expectation to 27 (the D14 re-own); the acceptance guard skips sound goldens that await their
+scenario (`awaitsPlan16Scenario`) until Task 9.
 
 ### Task 3 - Sound programs and rules from the goldens (TDD)
 

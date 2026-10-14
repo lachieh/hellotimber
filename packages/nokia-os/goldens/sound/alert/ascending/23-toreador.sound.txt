@@ -1,0 +1,99 @@
+sound-golden 1
+id: sound/alert/ascending/23-toreador
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/23
+source-sha256: d9bbef45297898843c129d90d474be705a5e4338386e03a1a25667499000b588
+state: factory
+keys: 0:down
+note: Toreador's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 1 (divider rewrite), 3 (stale frequency)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+168    tone     off
+990    buzzer   988 v=4
+990    vibrator on
+1376   buzzer   1109 v=5
+1663   buzzer   988 v=4
+1755   vibrator off
+1756   buzzer   831 v=4
+2042   buzzer   off
+2135   buzzer   831 v=4
+2421   buzzer   off
+2514   vibrator on
+2515   buzzer   831 v=4
+2801   buzzer   740 v=3
+2894   buzzer   831 v=4
+3181   buzzer   880 v=3
+3274   buzzer   831 v=4
+3274   vibrator off
+3859   buzzer   off
+4049   buzzer   880 v=6
+4049   vibrator on
+4436   buzzer   740 v=5
+4722   buzzer   988 v=7
+4815   buzzer   831 v=6
+4815   vibrator off
+5396   buzzer   off
+5589   vibrator on
+5590   buzzer   659 v=5
+5977   buzzer   554 v=5
+6263   buzzer   740 v=5
+6362   buzzer   494 v=4
+6362   vibrator off
+6937   buzzer   off
+7130   vibrator on
+7131   buzzer   740 v=5
+7905   vibrator off
+8098   buzzer   1109 v=12
+8292   buzzer   988 v=11
+8486   buzzer   880 v=8
+8679   buzzer   831 v=8
+8679   vibrator on
+8873   buzzer   740 v=8
+9066   buzzer   831 v=8
+9260   buzzer   880 v=8
+9453   vibrator off
+9454   buzzer   831 v=8
+10035  buzzer   off
+10229  buzzer   622 v=7
+10229  vibrator on
+10619  buzzer   831 v=8
+10902  buzzer   off
+10995  vibrator off
+10996  buzzer   831 v=8
+11383  buzzer   784 v=9
+11669  buzzer   932 v=11
+11762  buzzer   1245 v=10
+11762  vibrator on
+12343  buzzer   1245 v=14
+12536  vibrator off
+13311  buzzer   off
+13311  vibrator on
+13504  buzzer   1109 v=17
+13698  buzzer   1047 v=14
+13891  buzzer   1109 v=17
+14085  buzzer   740 v=12
+14085  vibrator off
+14279  buzzer   831 v=12
+14472  buzzer   880 v=14
+14859  vibrator on
+14860  buzzer   off
+15053  buzzer   831 v=12
+15247  buzzer   659 v=12
+15440  buzzer   1109 v=17
+15634  buzzer   988 v=16
+15634  vibrator off
+16408  buzzer   off
+16408  vibrator on
+16602  buzzer   659 v=12
+16796  buzzer   494 v=10
+16990  buzzer   880 v=14
+17183  vibrator off
+17184  buzzer   831 v=12
+17571  buzzer   740 v=12
+17958  buzzer   659 v=12
+17958  vibrator on
+18538  buzzer   off
+18732  vibrator off

@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/message-tone/beep-once-keypad-l3
+status: asserted
+source: captures/6.39/plan16/message-tone/beep-once-keypad-l3
+source-sha256: 795bd634e8455b19067a16b38fc6d975ac202c34673df30475f8b30e0085ec8e
+state: factory
+keys: 0:down
+note: Tones › Message alert tone: Keypad tones Level 3, ▼ onto Beep once.
+omitted: none
+
+@events
+# t_ms output   state
+50     tone     900 v=0x9100
+197    tone     off
+1010   vibrator on
+1025   tone     1750 v=0x9104
+1304   vibrator off
+1358   tone     off
+2277   vibrator on
+2752   vibrator off
+3721   vibrator on
+4201   vibrator off

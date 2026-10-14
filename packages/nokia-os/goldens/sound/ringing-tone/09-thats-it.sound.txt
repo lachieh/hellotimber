@@ -1,0 +1,83 @@
+sound-golden 1
+id: sound/ringing-tone/09-thats-it
+status: asserted
+source: captures/6.39/plan16/ringing-tone/09
+source-sha256: f8ec0b7dfe476df314de14a7c3ceb5d92ba4edc952316985034d9aa88b2a8bca
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Playground onto That's it!: its preview at Level 4, Vibrating alert On.
+omitted: none
+
+@events
+# t_ms output   state
+36     tone     900 v=0x9104
+182    tone     off
+996    vibrator on
+997    buzzer   1864.9 v=21
+1065   buzzer   off
+1282   buzzer   1396.9 v=21
+1352   buzzer   off
+1421   buzzer   1396.9 v=21
+1491   buzzer   off
+1561   buzzer   1568 v=25
+1630   buzzer   off
+1847   buzzer   1396.9 v=21
+1847   vibrator off
+1917   buzzer   off
+2420   buzzer   1760.1 v=17
+2490   buzzer   off
+2707   buzzer   1864.9 v=21
+2900   buzzer   off
+3575   buzzer   2489 v=17
+3575   vibrator on
+3645   buzzer   off
+3862   buzzer   1864.9 v=21
+3931   buzzer   off
+4001   buzzer   1864.9 v=21
+4071   buzzer   off
+4140   buzzer   2093.1 v=34
+4210   buzzer   off
+4427   buzzer   1864.9 v=21
+4427   vibrator off
+4496   buzzer   off
+5000   buzzer   2349.1 v=22
+5069   buzzer   off
+5286   buzzer   2489 v=17
+5480   buzzer   off
+5573   vibrator on
+6440   vibrator off
+8182   vibrator on
+8183   buzzer   1864.9 v=21
+8252   buzzer   off
+8469   buzzer   1396.9 v=21
+8539   buzzer   off
+8608   buzzer   1396.9 v=21
+8678   buzzer   off
+8748   buzzer   1568 v=25
+8817   buzzer   off
+9034   buzzer   1396.9 v=21
+9034   vibrator off
+9104   buzzer   off
+9607   buzzer   1760.1 v=17
+9677   buzzer   off
+9894   buzzer   1864.9 v=21
+10088  buzzer   off
+10762  buzzer   2489 v=17
+10762  vibrator on
+10832  buzzer   off
+11049  buzzer   1864.9 v=21
+11118  buzzer   off
+11188  buzzer   1864.9 v=21
+11258  buzzer   off
+11327  buzzer   2093.1 v=34
+11397  buzzer   off
+11614  buzzer   1864.9 v=21
+11614  vibrator off
+11683  buzzer   off
+12187  buzzer   2349.1 v=22
+12256  buzzer   off
+12473  buzzer   2489 v=17
+12667  buzzer   off
+12760  vibrator on
+13627  vibrator off
+@loop 997 7186

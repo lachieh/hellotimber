@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/alert/ring-once
+status: asserted
+source: captures/6.39/plan16/alert/ring-once
+source-sha256: 26888cf656103daff09c24d93f0bcfea9b453e362680c0e535fd2653afb9f69d
+state: factory
+keys: 0:down
+note: Incoming call alert Ring once: ▼ from Croak onto Nokia tune.
+omitted: 2 (stale frequency)
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9104
+170    tone     off
+991    vibrator on
+992    buzzer   1319 v=16
+1107   buzzer   1175 v=16
+1223   buzzer   740 v=12
+1463   buzzer   831 v=12
+1703   buzzer   1109 v=17
+1703   vibrator off
+1819   buzzer   988 v=16
+1935   buzzer   587 v=11
+2176   buzzer   659 v=12
+2417   vibrator on
+2418   buzzer   988 v=16
+2532   buzzer   880 v=14
+2648   buzzer   554 v=11
+2888   buzzer   659 v=12
+3129   buzzer   880 v=14
+3129   vibrator off
+3857   buzzer   off
+3857   vibrator on
+4585   vibrator off
+7008   vibrator on
+7009   buzzer   1319 v=16
+7125   buzzer   1175 v=16
+7241   buzzer   740 v=12
+7481   buzzer   831 v=12
+7721   buzzer   1109 v=17
+7721   vibrator off
+7837   buzzer   988 v=16
+7953   buzzer   587 v=11
+8193   buzzer   659 v=12
+8433   vibrator on
+8434   buzzer   988 v=16
+8549   buzzer   880 v=14
+8677   buzzer   554 v=11
+8927   buzzer   659 v=12
+9161   buzzer   880 v=14
+9161   vibrator off
+9890   buzzer   off
+9890   vibrator on
+10618  vibrator off

@@ -335,7 +335,7 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "2-8-4-3-**": "18",
   "2-10": "18", // Service command editor
   "3": "18", // Chat
-  "5-4-*": "16", // Composer slots
+  "5-4-*": "27", // Composer slots (plan 16 D14)
   "5-9-4": "18", // Screen saver › Screen saver: nothing in the virgin EEPROM
   "12-*-2-9-4": "18",
   "6-2-1-3": "26", // Русский: native-language note, then that UI (plan 15 D12)

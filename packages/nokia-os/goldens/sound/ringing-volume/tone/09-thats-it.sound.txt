@@ -1,0 +1,48 @@
+sound-golden 1
+id: sound/ringing-volume/tone/09-thats-it
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/09
+source-sha256: b4fb2d7b2b928e94984b1f3f1ccd8fbb1713031a52982609747d67647f25e6b9
+state: factory
+keys: 0:down
+note: That's it! stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9104
+166    tone     off
+987    buzzer   1864.9 v=21
+987    vibrator on
+1056   buzzer   off
+1273   buzzer   1396.9 v=21
+1342   buzzer   off
+1412   buzzer   1396.9 v=21
+1482   buzzer   off
+1552   buzzer   1568 v=25
+1621   buzzer   off
+1838   buzzer   1396.9 v=21
+1838   vibrator off
+1908   buzzer   off
+2411   buzzer   1760.1 v=17
+2481   buzzer   off
+2698   buzzer   1864.9 v=21
+2891   buzzer   off
+3566   buzzer   2489 v=17
+3566   vibrator on
+3636   buzzer   off
+3852   buzzer   1864.9 v=21
+3931   buzzer   off
+4000   buzzer   1864.9 v=21
+4069   buzzer   off
+4139   buzzer   2093.1 v=34
+4209   buzzer   off
+4432   buzzer   1864.9 v=21
+4432   vibrator off
+4495   buzzer   off
+4998   buzzer   2349.1 v=22
+5068   buzzer   off
+5285   buzzer   2489 v=17
+5478   buzzer   off
+5571   vibrator on
+6439   vibrator off

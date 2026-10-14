@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/preview/virgin-volume
+status: asserted
+source: captures/6.39/plan16/preview/virgin-volume
+source-sha256: 8741389e57ebc5b97625edc060fe388c2f7af166893ea43be1bbb9f01f44d501
+state: virgin
+keys: 0:down 8060:down
+note: Virgin, only Ringing volume set (Level 3): Tones › Ringing tone (unset) ▼, 8 s later ▼.
+omitted: none
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9100
+167    tone     off
+8105   tone     900 v=0x9100
+8229   tone     off

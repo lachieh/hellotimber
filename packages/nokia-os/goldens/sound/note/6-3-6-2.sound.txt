@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/note/6-3-6-2
+status: asserted
+source: captures/6.39/plan16/notes/6-3-6-2
+source-sha256: 5b6add4c6bd4d337f001ef0bd263285d43061133368f8bcaefa845d7de2acf56
+state: factory
+keys: 0:navi
+note: "Set PIN code request on" (Warning tones On) after OK on 6-3-6-2 (factory).
+omitted: none
+
+@events
+# t_ms output   state
+24     buzzer   1000 v=22
+305    buzzer   off

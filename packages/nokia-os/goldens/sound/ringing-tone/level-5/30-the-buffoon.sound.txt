@@ -1,0 +1,106 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/30-the-buffoon
+status: asserted
+source: captures/6.39/plan16/levels/5/30
+source-sha256: 588b89827a37a92fa494e337ab4e5beb5e220425747eb928d1acde5cb5df0a20
+state: factory
+keys: 0:down
+note: The Buffoon's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 2 (divider rewrite), 1 (level rewrite)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+179    tone     off
+989    buzzer   523 v=11
+1081   buzzer   off
+1104   buzzer   622 v=11
+1329   buzzer   off
+1352   buzzer   784 v=13
+1445   buzzer   off
+1468   vibrator on
+1469   buzzer   1047 v=14
+1561   buzzer   off
+1848   buzzer   988 v=16
+1941   buzzer   off
+2227   buzzer   932 v=17
+2583   buzzer   off
+2583   vibrator off
+2870   buzzer   932 v=17
+2963   buzzer   off
+2986   buzzer   831 v=12
+3211   buzzer   off
+3235   buzzer   932 v=17
+3328   buzzer   off
+3351   buzzer   831 v=12
+3445   buzzer   off
+3599   buzzer   784 v=13
+3955   buzzer   off
+4365   buzzer   784 v=13
+4458   buzzer   off
+4481   vibrator on
+4482   buzzer   831 v=12
+4706   buzzer   off
+4729   buzzer   932 v=17
+4822   buzzer   off
+4845   buzzer   831 v=12
+4947   buzzer   off
+5233   buzzer   784 v=13
+5325   buzzer   off
+5612   buzzer   622 v=23
+5612   vibrator off
+5705   buzzer   off
+5860   buzzer   622 v=23
+5953   buzzer   off
+5976   buzzer   698 v=82
+6069   buzzer   off
+6355   buzzer   740 v=23
+6580   buzzer   off
+6603   buzzer   784 v=30
+6959   buzzer   off
+7114   buzzer   523 v=18
+7207   buzzer   off
+7230   buzzer   622 v=23
+7455   buzzer   off
+7478   buzzer   784 v=30
+7571   buzzer   off
+7594   vibrator on
+7595   buzzer   1047 v=194
+7701   buzzer   off
+7982   buzzer   988 v=92
+8074   buzzer   off
+8361   buzzer   932 v=107
+8717   buzzer   off
+8717   vibrator off
+9004   buzzer   932 v=107
+9096   buzzer   off
+9120   buzzer   831 v=31
+9344   buzzer   off
+9368   buzzer   932 v=107
+9460   buzzer   off
+9484   buzzer   831 v=31
+9577   buzzer   off
+9732   buzzer   784 v=30
+10089  buzzer   off
+10499  buzzer   784 v=30
+10592  buzzer   off
+10615  vibrator on
+10616  buzzer   831 v=31
+10840  buzzer   off
+10863  buzzer   932 v=107
+10956  buzzer   off
+10979  buzzer   831 v=31
+11072  buzzer   off
+11359  buzzer   784 v=30
+11457  buzzer   off
+11738  buzzer   622 v=23
+11738  vibrator off
+11831  buzzer   off
+11986  buzzer   622 v=23
+12079  buzzer   off
+12102  buzzer   698 v=82
+12208  buzzer   off
+12489  buzzer   740 v=23
+12714  buzzer   off
+12737  buzzer   784 v=30
+13093  buzzer   off

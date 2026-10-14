@@ -1,0 +1,106 @@
+sound-golden 1
+id: sound/alert/ascending/07-kick
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/07
+source-sha256: 10d3858f3cafc5048eaed8435265df0613bb6d468b62ea014fe046f4c47aeeb6
+state: factory
+keys: 0:down
+note: Kick's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 2 (divider rewrite)
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9104
+170    tone     off
+992    buzzer   659 v=3
+992    vibrator on
+1161   buzzer   off
+1216   buzzer   2636.9 v=6
+1231   buzzer   off
+1333   buzzer   2636.9 v=6
+1347   buzzer   off
+1448   buzzer   587 v=3
+1448   vibrator off
+1618   buzzer   off
+1672   buzzer   2636.9 v=6
+1688   buzzer   off
+1905   buzzer   523 v=3
+1905   vibrator on
+2084   buzzer   off
+2137   buzzer   2636.9 v=6
+2152   buzzer   off
+2253   buzzer   2636.9 v=6
+2269   buzzer   off
+2369   buzzer   494 v=3
+2369   vibrator off
+2540   buzzer   off
+2836   buzzer   2636.9 v=6
+2836   vibrator on
+2849   buzzer   off
+2950   buzzer   2636.9 v=6
+2965   buzzer   off
+3066   buzzer   659 v=3
+3237   buzzer   off
+3292   buzzer   587 v=3
+3292   vibrator off
+3462   buzzer   off
+3516   buzzer   2636.9 v=6
+3532   buzzer   off
+3749   buzzer   523 v=3
+3749   vibrator on
+3919   buzzer   off
+3973   buzzer   2636.9 v=6
+3989   buzzer   off
+4089   buzzer   2636.9 v=6
+4105   buzzer   off
+4205   vibrator off
+4206   buzzer   494 v=3
+4554   buzzer   off
+4554   vibrator on
+5227   vibrator off
+7357   buzzer   659 v=5
+7357   vibrator on
+7527   buzzer   off
+7593   buzzer   2636.9 v=8
+7605   buzzer   off
+7706   buzzer   2636.9 v=8
+7721   buzzer   off
+7822   buzzer   587 v=5
+7822   vibrator off
+7992   buzzer   off
+8046   buzzer   2636.9 v=8
+8062   buzzer   off
+8279   buzzer   523 v=4
+8279   vibrator on
+8449   buzzer   off
+8503   buzzer   2636.9 v=8
+8518   buzzer   off
+8619   buzzer   2636.9 v=8
+8635   buzzer   off
+8735   vibrator off
+8736   buzzer   494 v=4
+8906   buzzer   off
+9192   vibrator on
+9193   buzzer   2636.9 v=12
+9208   buzzer   off
+9308   buzzer   2636.9 v=12
+9324   buzzer   off
+9425   buzzer   659 v=7
+9596   buzzer   off
+9649   buzzer   587 v=7
+9649   vibrator off
+9819   buzzer   off
+9874   buzzer   2636.9 v=12
+9889   buzzer   off
+10107  buzzer   523 v=6
+10107  vibrator on
+10277  buzzer   off
+10332  buzzer   2636.9 v=12
+10348  buzzer   off
+10448  buzzer   2636.9 v=12
+10463  buzzer   off
+10564  buzzer   494 v=6
+10564  vibrator off
+10912  vibrator on
+10913  buzzer   off
+11599  vibrator off

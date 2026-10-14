@@ -1,0 +1,106 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/07-kick
+status: asserted
+source: captures/6.39/plan16/levels/5/07
+source-sha256: e545ee117d23ddd2932755d92b2927d1482f66a75b3d9e5bd85daf149fa21aa8
+state: factory
+keys: 0:down
+note: Kick's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 3 (divider rewrite)
+
+@events
+# t_ms output   state
+29     tone     900 v=0x9104
+169    tone     off
+991    buzzer   659 v=12
+991    vibrator on
+1160   buzzer   off
+1221   buzzer   2636.9 v=18
+1230   buzzer   off
+1331   buzzer   2636.9 v=18
+1346   buzzer   off
+1447   buzzer   587 v=11
+1447   vibrator off
+1617   buzzer   off
+1671   buzzer   2636.9 v=18
+1687   buzzer   off
+1904   buzzer   523 v=11
+1904   vibrator on
+2074   buzzer   off
+2128   buzzer   2636.9 v=18
+2144   buzzer   off
+2244   buzzer   2636.9 v=18
+2260   buzzer   off
+2360   vibrator off
+2361   buzzer   494 v=10
+2531   buzzer   off
+2817   vibrator on
+2818   buzzer   2636.9 v=18
+2833   buzzer   off
+2934   buzzer   2636.9 v=18
+2949   buzzer   off
+3050   buzzer   659 v=12
+3225   buzzer   off
+3275   buzzer   587 v=11
+3275   vibrator off
+3445   buzzer   off
+3500   buzzer   2636.9 v=18
+3515   buzzer   off
+3732   buzzer   523 v=11
+3732   vibrator on
+3902   buzzer   off
+3957   buzzer   2636.9 v=18
+3976   buzzer   off
+4073   buzzer   2636.9 v=18
+4088   buzzer   off
+4189   buzzer   494 v=10
+4189   vibrator off
+4537   vibrator on
+4538   buzzer   off
+5211   vibrator off
+7341   buzzer   659 v=23
+7341   vibrator on
+7511   buzzer   off
+7565   buzzer   2636.9 v=153
+7580   buzzer   off
+7681   buzzer   2636.9 v=153
+7697   buzzer   off
+7797   vibrator off
+7798   buzzer   587 v=21
+7981   buzzer   off
+8030   buzzer   2636.9 v=153
+8045   buzzer   off
+8262   buzzer   523 v=18
+8262   vibrator on
+8432   buzzer   off
+8487   buzzer   2636.9 v=153
+8502   buzzer   off
+8603   buzzer   2636.9 v=153
+8618   buzzer   off
+8732   vibrator off
+8733   buzzer   494 v=18
+8897   buzzer   off
+9184   buzzer   2636.9 v=153
+9184   vibrator on
+9199   buzzer   off
+9300   buzzer   2636.9 v=153
+9315   buzzer   off
+9416   buzzer   659 v=23
+9586   buzzer   off
+9640   buzzer   587 v=21
+9640   vibrator off
+9811   buzzer   off
+9865   buzzer   2636.9 v=153
+9880   buzzer   off
+10098  vibrator on
+10099  buzzer   523 v=18
+10268  buzzer   off
+10323  buzzer   2636.9 v=153
+10338  buzzer   off
+10439  buzzer   2636.9 v=153
+10454  buzzer   off
+10555  buzzer   494 v=18
+10555  vibrator off
+10904  buzzer   off
+10904  vibrator on
+11577  vibrator off

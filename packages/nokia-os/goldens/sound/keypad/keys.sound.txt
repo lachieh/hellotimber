@@ -1,0 +1,110 @@
+sound-golden 1
+id: sound/keypad/keys
+status: pending:22
+source: captures/6.39/plan16/keypad/keys
+source-sha256: ecc4d29f74d74dcd9a9396593322430d2ba9a3cfa6a2220826f680914b8d9616
+state: factory
+keys: 0:1 1060:c+1500 3611:2 4671:c+1500 7221:3 8281:c+1500 10832:4 11892:c+1500 14442:5 15502:c+1500 18053:6 19113:c+1500 21663:7 22723:c+1500 25274:8 26334:c+1500 28884:9 29944:c+1500 32495:* 33555:c+1500 36105:0 37165:c+1500 39716:# 40776:c+1500 43326:up 44386:c+1500 46937:down 47997:c+1500 50547:navi 51607:c+1500 54158:c 55218:c+1500 57768:power 59369:c
+note: Every key at standby, C held after each (DTMF digits).
+omitted: none
+
+@events
+# t_ms output   state
+29     tone     1209+697 v=0x9104
+173    tone     off
+1084   tone     900 v=0x9104
+1227   tone     off
+1564   tone     900 v=0x9104
+1707   tone     off
+3627   tone     1336+697 v=0x9104
+3768   tone     off
+4693   tone     900 v=0x9104
+4836   tone     off
+5173   tone     900 v=0x9104
+5316   tone     off
+7243   tone     1477+697 v=0x9104
+7384   tone     off
+8309   tone     900 v=0x9104
+8460   tone     off
+8797   tone     900 v=0x9104
+8940   tone     off
+10853  tone     1209+770 v=0x9104
+10993  tone     off
+11919  tone     900 v=0x9104
+12062  tone     off
+12399  tone     900 v=0x9104
+12542  tone     off
+14461  tone     1336+770 v=0x9104
+14602  tone     off
+15527  tone     900 v=0x9104
+15670  tone     off
+16007  tone     900 v=0x9104
+16150  tone     off
+18070  tone     1477+770 v=0x9104
+18211  tone     off
+19137  tone     900 v=0x9104
+19280  tone     off
+19617  tone     900 v=0x9104
+19760  tone     off
+21679  tone     1209+852 v=0x9104
+21819  tone     off
+22745  tone     900 v=0x9104
+22888  tone     off
+23225  tone     900 v=0x9104
+23368  tone     off
+25297  tone     1336+852 v=0x9104
+25437  tone     off
+26362  tone     900 v=0x9104
+26505  tone     off
+26843  tone     900 v=0x9104
+26985  tone     off
+28905  tone     1477+852 v=0x9104
+29045  tone     off
+29971  tone     900 v=0x9104
+30122  tone     off
+30451  tone     900 v=0x9104
+30594  tone     off
+32515  tone     1209+941 v=0x9104
+32655  tone     off
+33586  tone     900 v=0x9104
+33731  tone     off
+34075  tone     900 v=0x9104
+34219  tone     off
+36123  tone     1336+941 v=0x9104
+36263  tone     off
+37189  tone     900 v=0x9104
+37332  tone     off
+37669  tone     900 v=0x9104
+37812  tone     off
+39733  tone     1477+941 v=0x9104
+39888  tone     off
+40798  tone     900 v=0x9104
+40941  tone     off
+41278  tone     900 v=0x9104
+41421  tone     off
+43367  tone     900 v=0x9104
+43512  tone     off
+44409  tone     900 v=0x9104
+44550  tone     off
+44889  tone     900 v=0x9104
+45030  tone     off
+46966  tone     1750 v=0x9105
+47261  tone     off
+48019  tone     900 v=0x9104
+48159  tone     off
+48498  tone     900 v=0x9104
+48647  tone     off
+50579  tone     900 v=0x9104
+50722  tone     off
+51634  tone     900 v=0x9104
+51775  tone     off
+54182  tone     900 v=0x9104
+54324  tone     off
+55243  tone     900 v=0x9104
+55385  tone     off
+55722  tone     900 v=0x9104
+55865  tone     off
+57806  tone     900 v=0x9104
+57948  tone     off
+59394  tone     900 v=0x9104
+59536  tone     off

@@ -1,0 +1,40 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/03-mosquito
+status: asserted
+source: captures/6.39/plan16/levels/5/03
+source-sha256: 39c00d64b8800744c22a6119b81dc310f0210e863b222f51f2816d9c8ae01193
+state: factory
+keys: 0:down
+note: Mosquito's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: none
+
+@events
+# t_ms output   state
+39     tone     900 v=0x9104
+180    tone     off
+1013   vibrator on
+1014   buzzer   2683.7 v=22
+1102   buzzer   2852.8 v=29
+1195   buzzer   2683.7 v=22
+1288   buzzer   2852.8 v=29
+1381   buzzer   2683.7 v=22
+1474   buzzer   2852.8 v=29
+1566   buzzer   2683.7 v=22
+1659   buzzer   2852.8 v=29
+1764   buzzer   2683.7 v=22
+1853   buzzer   2852.8 v=29
+1946   buzzer   off
+1946   vibrator off
+4657   buzzer   2683.7 v=22
+4657   vibrator on
+4750   buzzer   2852.8 v=29
+4843   buzzer   2683.7 v=22
+4936   buzzer   2852.8 v=29
+5029   buzzer   2683.7 v=22
+5122   buzzer   2852.8 v=29
+5215   buzzer   2683.7 v=158
+5308   buzzer   2852.8 v=168
+5400   buzzer   2683.7 v=158
+5493   buzzer   2852.8 v=168
+5586   buzzer   off
+5586   vibrator off

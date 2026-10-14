@@ -1,0 +1,60 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/35-get-cool
+status: asserted
+source: captures/6.39/plan16/levels/5/35
+source-sha256: 0b2e0fc378d857229339f8f1e8678151f54b39d1a5b0777e8ad14e5632f34119
+state: factory
+keys: 0:down
+note: Get cool's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 1 (level rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+178    tone     off
+992    buzzer   1109 v=17
+992    vibrator on
+1369   buzzer   1245 v=14
+1486   buzzer   1396.9 v=21
+1734   buzzer   1660.9 v=21
+1734   vibrator off
+1982   buzzer   2216.9 v=28
+2237   buzzer   2489 v=17
+2370   buzzer   2093.1 v=34
+2493   buzzer   2216.9 v=28
+2741   buzzer   off
+2988   vibrator on
+2989   buzzer   2489 v=17
+3372   buzzer   2216.9 v=28
+3493   buzzer   2093.1 v=34
+3740   vibrator off
+3741   buzzer   1864.9 v=21
+3988   buzzer   1660.9 v=21
+4244   buzzer   1864.9 v=21
+4374   buzzer   1568 v=25
+4492   buzzer   1660.9 v=21
+4739   buzzer   off
+4987   vibrator on
+4988   buzzer   1109 v=17
+5375   buzzer   1245 v=14
+5498   buzzer   1396.9 v=173
+5746   buzzer   1660.9 v=153
+5746   vibrator off
+5994   buzzer   2216.9 v=96
+6249   buzzer   2489 v=128
+6376   buzzer   2093.1 v=71
+6497   buzzer   2216.9 v=96
+6745   buzzer   off
+6993   buzzer   2489 v=128
+6993   vibrator on
+7378   buzzer   2216.9 v=96
+7496   buzzer   2093.1 v=71
+7744   buzzer   1864.9 v=145
+7744   vibrator off
+7992   buzzer   1660.9 v=153
+8247   buzzer   1864.9 v=145
+8379   buzzer   1568 v=188
+8503   buzzer   1660.9 v=153
+8750   buzzer   off
+8998   vibrator on
+9000   vibrator off

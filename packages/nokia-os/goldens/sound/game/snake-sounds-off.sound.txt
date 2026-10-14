@@ -1,0 +1,26 @@
+sound-golden 1
+id: sound/game/snake-sounds-off
+status: asserted
+source: captures/6.39/plan16/game/sounds-off
+source-sha256: 483ad6a3b82234bbd39d4add0dc6462969c24dff593b6593350cda93bd23c865
+state: factory
+keys: 0:navi 2035:8 4580:4 5223:2 5854:6
+note: Snake II, level 1, factory settings: Sounds Off, one meal, then a crash.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+37     tone     900 v=0x9104
+183    tone     off
+2052   tone     900 v=0x9104
+2196   tone     off
+4474   vibrator on
+4593   tone     900 v=0x9104
+4737   tone     off
+4954   vibrator off
+5235   tone     900 v=0x9104
+5380   tone     off
+5875   tone     900 v=0x9104
+6023   tone     off
+6479   vibrator on
+6959   vibrator off

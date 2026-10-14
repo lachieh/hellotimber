@@ -1,0 +1,53 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/04-bee
+status: asserted
+source: captures/6.39/plan16/levels/5/04
+source-sha256: 51fd210993a003653efa8196dc7113e9df0ec97bf62a82c844e355e3e8e7f9e7
+state: factory
+keys: 0:down
+note: Bee's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 4 (stale frequency)
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9104
+166    tone     off
+987    vibrator on
+988    buzzer   2626.8 v=18
+1033   buzzer   2910.2 v=33
+1080   buzzer   2626.8 v=18
+1128   buzzer   2910.2 v=33
+1173   buzzer   2626.8 v=18
+1219   buzzer   2910.2 v=33
+1266   buzzer   2626.8 v=18
+1312   buzzer   2910.2 v=33
+1358   buzzer   2626.8 v=18
+1405   buzzer   2910.2 v=33
+1451   buzzer   off
+1451   vibrator off
+4550   buzzer   2626.8 v=18
+4550   vibrator on
+4596   buzzer   2910.2 v=33
+4643   buzzer   2626.8 v=18
+4689   buzzer   2910.2 v=33
+4736   buzzer   2626.8 v=18
+4782   buzzer   2910.2 v=33
+4829   buzzer   2626.8 v=18
+4884   buzzer   2910.2 v=33
+4929   buzzer   2626.8 v=18
+4976   buzzer   2910.2 v=33
+5022   buzzer   off
+5022   vibrator off
+5216   buzzer   2626.8 v=18
+5216   vibrator on
+5262   buzzer   2910.2 v=33
+5309   buzzer   2626.8 v=18
+5355   buzzer   2910.2 v=33
+5402   buzzer   2626.8 v=18
+5448   buzzer   2910.2 v=33
+5494   buzzer   2626.8 v=18
+5541   buzzer   2910.2 v=176
+5587   buzzer   2626.8 v=153
+5635   buzzer   2910.2 v=176
+5680   buzzer   off
+5680   vibrator off

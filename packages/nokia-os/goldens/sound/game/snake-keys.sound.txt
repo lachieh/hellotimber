@@ -1,0 +1,34 @@
+sound-golden 1
+id: sound/game/snake-keys
+status: asserted
+source: captures/6.39/plan16/game/keys
+source-sha256: d61f7f50a2069dae27b7452b8d4c81063c7cc922fc3fbad90b6de2bbc3a53bb5
+state: factory
+keys: 0:navi 1040:2 1800:4 2560:8 3321:6 4081:5 4841:1 5601:3
+note: Snake II, level 1, factory settings: 2 4 8 6 5 1 3 during play.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+40     tone     900 v=0x9104
+186    tone     off
+1056   tone     900 v=0x9104
+1200   tone     off
+1814   tone     900 v=0x9104
+1959   tone     off
+2579   tone     900 v=0x9104
+2725   tone     off
+3300   buzzer   440 v=3
+3300   vibrator on
+3315   buzzer   off
+3330   buzzer   440 v=3
+3346   buzzer   off
+3361   buzzer   440 v=3
+3378   buzzer   off
+3393   tone     900 v=0x9104
+3539   tone     off
+3779   vibrator off
+4100   tone     900 v=0x9104
+4244   tone     off
+4859   tone     900 v=0x9104
+5003   tone     off

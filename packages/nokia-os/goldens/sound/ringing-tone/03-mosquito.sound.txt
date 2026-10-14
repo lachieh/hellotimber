@@ -1,0 +1,41 @@
+sound-golden 1
+id: sound/ringing-tone/03-mosquito
+status: asserted
+source: captures/6.39/plan16/ringing-tone/03
+source-sha256: 3422deff135b063e832436849de82b36c8573f8060bcc591484b20f4e34e6950
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Low onto Mosquito: its preview at Level 4, Vibrating alert On.
+omitted: none
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+168    tone     off
+990    buzzer   2683.7 v=22
+990    vibrator on
+1085   buzzer   2852.8 v=29
+1175   buzzer   2683.7 v=22
+1268   buzzer   2852.8 v=29
+1361   buzzer   2683.7 v=22
+1454   buzzer   2852.8 v=29
+1547   buzzer   2683.7 v=22
+1640   buzzer   2852.8 v=29
+1733   buzzer   2683.7 v=22
+1836   buzzer   2852.8 v=29
+1926   buzzer   off
+1926   vibrator off
+4637   vibrator on
+4638   buzzer   2683.7 v=22
+4730   buzzer   2852.8 v=29
+4823   buzzer   2683.7 v=22
+4916   buzzer   2852.8 v=29
+5009   buzzer   2683.7 v=22
+5102   buzzer   2852.8 v=29
+5195   buzzer   2683.7 v=22
+5288   buzzer   2852.8 v=29
+5381   buzzer   2683.7 v=22
+5474   buzzer   2852.8 v=29
+5566   vibrator off
+5567   buzzer   off
+@loop 990 3648

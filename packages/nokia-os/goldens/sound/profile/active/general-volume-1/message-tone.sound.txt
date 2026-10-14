@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/profile/active/general-volume-1/message-tone
+status: asserted
+source: captures/6.39/plan16/profile/active/general-volume-1/message-tone
+source-sha256: c4d89dcbd5dd2e907a9e51ccc699754dec6b29fa13f82e61ad17df57b6a9d77b
+state: factory
+keys: 0:down
+note: General (active) with Ringing volume Level 1; Loud › Personalise › Message alert tone: ▼ onto Beep once.
+omitted: none
+
+@events
+# t_ms output   state
+41     tone     900 v=0x9104
+185    tone     off
+1006   vibrator on
+1007   tone     1750 v=0x9100
+1292   vibrator off
+1346   tone     off
+2260   vibrator on
+2740   vibrator off
+3709   vibrator on
+4189   vibrator off

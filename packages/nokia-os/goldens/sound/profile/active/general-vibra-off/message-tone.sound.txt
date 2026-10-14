@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/profile/active/general-vibra-off/message-tone
+status: asserted
+source: captures/6.39/plan16/profile/active/general-vibra-off/message-tone
+source-sha256: 1e0b7a0d64d20480e91f8bbe27587ae811a0753dd9e05d3daf4f1d16281ff20c
+state: factory
+keys: 0:down
+note: General (active) with Vibrating alert Off; Loud › Personalise › Message alert tone: ▼ onto Beep once.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+51     tone     900 v=0x9104
+197    tone     off
+1018   tone     1750 v=0x9100
+1358   tone     off

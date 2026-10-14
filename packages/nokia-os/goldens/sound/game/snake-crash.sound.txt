@@ -1,0 +1,26 @@
+sound-golden 1
+id: sound/game/snake-crash
+status: asserted
+source: captures/6.39/plan16/game/crash
+source-sha256: 9b001fa52290a5accac58e408662a600c148042956223736e7e31df47bb447d4
+state: factory
+keys: 0:navi 150:8 769:4 1404:2
+note: Snake II, level 1, factory settings: a crash before any meal.
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+40     tone     900 v=0x9104
+309    tone     off
+785    tone     900 v=0x9104
+929    tone     off
+1419   tone     900 v=0x9104
+1564   tone     off
+2029   buzzer   440 v=3
+2029   vibrator on
+2044   buzzer   off
+2060   buzzer   440 v=3
+2075   buzzer   off
+2090   buzzer   440 v=3
+2106   buzzer   off
+2509   vibrator off

@@ -1,0 +1,102 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/31-indifference
+status: asserted
+source: captures/6.39/plan16/levels/5/31
+source-sha256: 33c0d7a326e2eb636abbaa90adf54f8b455bcfb0114ae926bcff466eb3c16dea
+state: factory
+keys: 0:down
+note: Indifference's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+174    tone     off
+996    buzzer   1568 v=25
+996    vibrator on
+1219   buzzer   off
+1243   buzzer   1568 v=25
+1335   buzzer   off
+1359   buzzer   1396.9 v=21
+1452   buzzer   off
+1452   vibrator off
+1738   buzzer   1175 v=16
+1831   buzzer   off
+2118   buzzer   988 v=16
+2210   buzzer   off
+2265   buzzer   1396.9 v=21
+2265   vibrator on
+2722   buzzer   off
+2745   buzzer   1396.9 v=21
+2838   buzzer   off
+2861   buzzer   1175 v=16
+2861   vibrator off
+2954   buzzer   off
+3241   buzzer   988 v=16
+3334   buzzer   off
+3621   buzzer   784 v=13
+3714   buzzer   off
+4000   vibrator on
+4001   buzzer   1245 v=14
+4225   buzzer   off
+4248   buzzer   1245 v=14
+4341   buzzer   off
+4364   buzzer   1175 v=16
+4457   buzzer   off
+4457   vibrator off
+4744   buzzer   1047 v=14
+4968   buzzer   off
+5022   buzzer   784 v=30
+5084   buzzer   off
+5108   buzzer   880 v=31
+5333   buzzer   off
+5394   buzzer   1047 v=194
+5394   vibrator on
+5781   buzzer   off
+5975   vibrator off
+6943   vibrator on
+7523   vibrator off
+8484   buzzer   1568 v=188
+8484   vibrator on
+8708   buzzer   off
+8732   buzzer   1568 v=188
+8838   buzzer   off
+8855   buzzer   1396.9 v=173
+8948   buzzer   off
+8948   vibrator off
+9235   buzzer   1175 v=56
+9338   buzzer   off
+9622   buzzer   988 v=92
+9715   buzzer   off
+9769   buzzer   1396.9 v=173
+9769   vibrator on
+10227  buzzer   off
+10250  buzzer   1396.9 v=173
+10343  buzzer   off
+10366  vibrator off
+10367  buzzer   1175 v=56
+10459  buzzer   off
+10746  buzzer   988 v=92
+10841  buzzer   off
+11125  buzzer   784 v=30
+11218  buzzer   off
+11505  buzzer   1245 v=58
+11505  vibrator on
+11729  buzzer   off
+11753  buzzer   1245 v=58
+11845  buzzer   off
+11869  buzzer   1175 v=56
+11961  vibrator off
+11962  buzzer   off
+12248  buzzer   1047 v=194
+12473  buzzer   off
+12527  buzzer   784 v=30
+12594  buzzer   off
+12612  buzzer   880 v=31
+12844  buzzer   off
+12906  vibrator on
+12907  buzzer   1047 v=194
+13293  buzzer   off
+13487  vibrator off
+14455  vibrator on
+15036  vibrator off

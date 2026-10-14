@@ -1,0 +1,393 @@
+sound-golden 1
+id: sound/alert/ascending/15-badinerie
+status: asserted
+source: captures/6.39/plan16/alert/ascending-tones/15
+source-sha256: 0109621d536cc40bd72f71e09ea6a282320e2614a45aaeb24e6bbdeb79bdbb49
+state: factory
+keys: 0:down
+note: Badinerie's Ringing tone preview with Incoming call alert Ascending, Level 4 (D10: its steps).
+omitted: 1 (buzzer gap), 6 (divider rewrite), 6 (stale frequency)
+
+@events
+# t_ms output   state
+34     tone     900 v=0x9104
+176    tone     off
+998    buzzer   1660.9 v=6
+998    vibrator on
+1113   buzzer   off
+1237   buzzer   1976 v=8
+1353   buzzer   off
+1361   buzzer   1660.9 v=6
+1477   buzzer   off
+1485   buzzer   1245 v=5
+1601   buzzer   off
+1725   buzzer   1660.9 v=6
+1841   buzzer   1245 v=5
+1841   vibrator off
+1957   buzzer   off
+1965   buzzer   988 v=4
+2081   buzzer   off
+2198   buzzer   1245 v=5
+2314   buzzer   988 v=4
+2430   buzzer   off
+2438   buzzer   831 v=4
+2772   vibrator on
+2773   buzzer   off
+2918   buzzer   622 v=3
+3026   buzzer   off
+3034   buzzer   831 v=4
+3151   buzzer   988 v=4
+3275   buzzer   831 v=4
+3391   buzzer   932 v=4
+3507   buzzer   831 v=4
+3623   buzzer   932 v=4
+3739   buzzer   831 v=4
+3856   buzzer   784 v=4
+3972   buzzer   932 v=4
+4088   buzzer   1109 v=5
+4204   buzzer   off
+4212   buzzer   932 v=4
+4328   buzzer   988 v=4
+4328   vibrator off
+4560   buzzer   off
+4568   buzzer   831 v=4
+4808   buzzer   1660.9 v=6
+4885   buzzer   off
+5048   buzzer   1976 v=13
+5164   buzzer   1660.9 v=10
+5280   buzzer   1245 v=7
+5396   buzzer   off
+5513   buzzer   1660.9 v=10
+5637   buzzer   1245 v=7
+5637   vibrator on
+5753   buzzer   988 v=7
+5861   buzzer   off
+5993   buzzer   1245 v=7
+6109   buzzer   988 v=7
+6225   buzzer   831 v=6
+6628   buzzer   off
+6705   buzzer   988 v=7
+6821   buzzer   932 v=7
+6938   buzzer   988 v=7
+7092   buzzer   off
+7092   vibrator off
+7170   buzzer   988 v=7
+7286   buzzer   932 v=7
+7402   buzzer   988 v=7
+7634   buzzer   off
+7642   buzzer   1660.9 v=10
+7882   buzzer   off
+7890   buzzer   988 v=7
+7952   buzzer   off
+8045   buzzer   1109 v=8
+8045   vibrator on
+8091   buzzer   988 v=7
+8362   buzzer   932 v=7
+8478   buzzer   off
+8602   buzzer   1245 v=7
+8711   buzzer   1175 v=8
+8827   buzzer   off
+8835   buzzer   1245 v=7
+8974   buzzer   off
+9059   buzzer   1245 v=10
+9059   vibrator off
+9183   buzzer   1175 v=12
+9315   buzzer   1245 v=10
+9555   buzzer   1976 v=19
+9795   buzzer   1245 v=10
+9880   buzzer   off
+9958   buzzer   1396.9 v=13
+10034  buzzer   1245 v=10
+10268  buzzer   off
+10285  buzzer   1175 v=12
+10285  vibrator on
+10535  buzzer   off
+10539  buzzer   932 v=11
+10655  buzzer   1245 v=10
+10786  buzzer   1480 v=16
+10888  buzzer   off
+10895  buzzer   1245 v=10
+11012  buzzer   1396.9 v=13
+11128  buzzer   1245 v=10
+11244  buzzer   1396.9 v=13
+11360  buzzer   1245 v=10
+11360  vibrator off
+11476  buzzer   1175 v=12
+11592  buzzer   1396.9 v=13
+11708  buzzer   1660.9 v=14
+11809  buzzer   off
+11817  buzzer   1396.9 v=13
+11933  buzzer   off
+11941  buzzer   1480 v=16
+12057  buzzer   1396.9 v=13
+12173  buzzer   1245 v=10
+12289  vibrator on
+12290  buzzer   1175 v=12
+12405  buzzer   1245 v=10
+12514  buzzer   off
+12522  buzzer   1480 v=16
+12614  buzzer   off
+12630  buzzer   1245 v=10
+12746  buzzer   1175 v=12
+12862  buzzer   1245 v=10
+12978  buzzer   1660.9 v=21
+13094  vibrator off
+13095  buzzer   1245 v=14
+13211  buzzer   1175 v=16
+13327  buzzer   1245 v=14
+13443  buzzer   off
+13451  buzzer   1864.9 v=21
+13567  buzzer   1245 v=14
+13683  buzzer   off
+13691  buzzer   1175 v=16
+13807  buzzer   off
+13815  buzzer   1245 v=14
+13815  vibrator on
+13931  buzzer   1976 v=30
+14047  buzzer   off
+14055  buzzer   1245 v=14
+14171  buzzer   off
+14179  buzzer   1175 v=16
+14295  buzzer   off
+14303  buzzer   1245 v=14
+14419  buzzer   1976 v=30
+14541  buzzer   1864.9 v=21
+14651  buzzer   1660.9 v=21
+14651  vibrator off
+14767  buzzer   off
+14775  buzzer   1864.9 v=21
+14891  buzzer   1480 v=24
+15007  buzzer   1396.9 v=21
+15123  buzzer   1245 v=14
+15240  buzzer   1480 v=24
+15418  buzzer   1396.9 v=21
+15441  buzzer   off
+15449  buzzer   1480 v=24
+15449  vibrator on
+15464  buzzer   1396.9 v=21
+15588  buzzer   1245 v=14
+15650  buzzer   off
+15689  buzzer   1245 v=14
+15967  buzzer   off
+16184  buzzer   1245 v=14
+16300  buzzer   off
+16300  vibrator off
+16417  buzzer   1480 v=24
+16543  buzzer   off
+16548  buzzer   1245 v=14
+16664  buzzer   off
+16672  buzzer   932 v=17
+16795  buzzer   off
+16921  buzzer   1245 v=14
+17045  buzzer   off
+17052  buzzer   932 v=17
+17169  buzzer   740 v=12
+17169  vibrator on
+17295  buzzer   off
+17409  buzzer   932 v=17
+17525  buzzer   off
+17546  buzzer   740 v=12
+17656  buzzer   off
+17664  buzzer   622 v=11
+18020  buzzer   off
+18144  buzzer   880 v=14
+18384  buzzer   831 v=12
+18562  buzzer   off
+18562  vibrator off
+18617  buzzer   1109 v=17
+18857  buzzer   1047 v=14
+18973  buzzer   1245 v=14
+19089  buzzer   1480 v=24
+19329  buzzer   1319 v=16
+19445  buzzer   1245 v=14
+19561  buzzer   1319 v=16
+19801  buzzer   1109 v=17
+20049  buzzer   off
+20049  vibrator on
+20057  buzzer   1319 v=16
+20181  buzzer   off
+20300  buzzer   1660.9 v=21
+20413  buzzer   1319 v=16
+20529  buzzer   1109 v=17
+20645  buzzer   off
+20762  buzzer   1319 v=16
+20878  buzzer   1109 v=17
+20994  buzzer   932 v=17
+21118  buzzer   off
+21118  vibrator off
+21234  buzzer   1109 v=17
+21350  buzzer   932 v=17
+21466  buzzer   740 v=12
+21954  buzzer   off
+22070  buzzer   988 v=16
+22186  buzzer   1245 v=14
+22287  buzzer   off
+22302  buzzer   988 v=16
+22419  buzzer   1109 v=17
+22419  vibrator on
+22535  buzzer   988 v=16
+22651  buzzer   1109 v=17
+22767  buzzer   988 v=16
+22883  buzzer   off
+22891  buzzer   932 v=17
+22891  vibrator off
+23007  buzzer   1109 v=17
+23123  buzzer   1319 v=16
+23239  buzzer   1109 v=17
+23356  buzzer   1245 v=14
+23472  buzzer   1109 v=17
+23472  vibrator on
+23588  buzzer   988 v=16
+23697  buzzer   off
+23705  buzzer   932 v=17
+23821  buzzer   988 v=16
+23937  buzzer   1245 v=14
+24056  buzzer   988 v=16
+24170  buzzer   932 v=17
+24170  vibrator off
+24286  buzzer   988 v=16
+24402  buzzer   1319 v=16
+24518  buzzer   988 v=16
+24634  buzzer   932 v=17
+24750  buzzer   988 v=16
+24867  buzzer   1480 v=24
+24983  buzzer   988 v=16
+24983  vibrator on
+25099  buzzer   932 v=17
+25215  buzzer   988 v=16
+25331  buzzer   1660.9 v=21
+25447  buzzer   988 v=16
+25564  buzzer   932 v=17
+25680  buzzer   988 v=16
+25680  vibrator off
+25808  buzzer   1660.9 v=21
+25920  buzzer   1480 v=24
+26028  buzzer   off
+26036  buzzer   1319 v=16
+26152  buzzer   1480 v=24
+26253  buzzer   off
+26268  buzzer   1245 v=14
+26384  buzzer   1109 v=17
+26501  buzzer   988 v=16
+26501  vibrator on
+26617  buzzer   1245 v=14
+26810  buzzer   1109 v=17
+26833  buzzer   1245 v=14
+26857  buzzer   1109 v=17
+26965  buzzer   988 v=16
+27035  buzzer   off
+27074  buzzer   988 v=16
+27329  buzzer   off
+27329  vibrator off
+27560  buzzer   1245 v=14
+27678  buzzer   1109 v=17
+27794  buzzer   1245 v=14
+27925  buzzer   off
+28034  buzzer   1245 v=14
+28150  buzzer   1109 v=17
+28250  buzzer   off
+28266  buzzer   1245 v=14
+28266  vibrator on
+28506  buzzer   1976 v=30
+28684  buzzer   off
+28707  buzzer   1245 v=14
+28831  buzzer   off
+28893  buzzer   1319 v=16
+28963  buzzer   1245 v=14
+29187  buzzer   1109 v=17
+29365  vibrator off
+29366  buzzer   off
+29435  buzzer   1109 v=17
+29563  buzzer   1047 v=14
+29675  buzzer   off
+29683  buzzer   1109 v=17
+29822  buzzer   off
+29915  buzzer   1109 v=17
+30032  buzzer   off
+30032  vibrator on
+30039  buzzer   1047 v=14
+30155  buzzer   off
+30163  buzzer   1109 v=17
+30403  buzzer   off
+30411  buzzer   1864.9 v=21
+30590  buzzer   off
+30644  buzzer   1109 v=17
+30722  buzzer   off
+30791  vibrator off
+30792  buzzer   1245 v=14
+30853  buzzer   off
+30869  buzzer   1109 v=17
+31109  buzzer   off
+31117  buzzer   988 v=16
+31357  buzzer   1660.9 v=21
+31426  buzzer   off
+31589  buzzer   1976 v=30
+31643  buzzer   1864.9 v=21
+31690  buzzer   off
+31697  vibrator on
+31698  buzzer   1660.9 v=21
+31752  buzzer   1480 v=24
+31817  buzzer   1319 v=16
+32479  buzzer   off
+32534  buzzer   1660.9 v=21
+32588  buzzer   1480 v=24
+32642  buzzer   1319 v=16
+32688  buzzer   off
+32696  buzzer   1245 v=14
+32696  vibrator off
+32750  buzzer   1109 v=17
+33378  buzzer   off
+33471  buzzer   1319 v=16
+33525  buzzer   1245 v=14
+33579  buzzer   1109 v=17
+33633  buzzer   988 v=16
+33687  buzzer   880 v=14
+33804  buzzer   1109 v=17
+33920  buzzer   1319 v=16
+33920  vibrator on
+34036  buzzer   1109 v=17
+34152  buzzer   880 v=14
+34268  buzzer   831 v=12
+34384  buzzer   880 v=14
+34477  buzzer   off
+34501  buzzer   831 v=12
+34617  buzzer   784 v=13
+34821  vibrator off
+34822  buzzer   off
+34849  buzzer   622 v=11
+35089  buzzer   659 v=12
+35329  buzzer   622 v=11
+35445  buzzer   932 v=17
+35553  buzzer   off
+35572  buzzer   1109 v=17
+35794  buzzer   off
+35823  buzzer   988 v=16
+35823  vibrator on
+35933  buzzer   932 v=17
+36049  buzzer   988 v=16
+36227  buzzer   off
+36282  buzzer   831 v=12
+36336  buzzer   932 v=17
+36390  buzzer   off
+36398  buzzer   988 v=16
+36398  vibrator off
+36452  buzzer   1109 v=17
+36506  buzzer   1245 v=14
+36614  buzzer   off
+36738  buzzer   988 v=16
+36855  buzzer   1245 v=14
+36971  buzzer   1660.9 v=21
+37075  buzzer   off
+37075  vibrator on
+37203  buzzer   1245 v=14
+37444  buzzer   1109 v=17
+37490  buzzer   off
+37552  buzzer   988 v=16
+37591  buzzer   off
+37669  buzzer   932 v=17
+37715  buzzer   off
+37785  buzzer   988 v=16
+37831  buzzer   off
+37831  vibrator off
+37901  buzzer   831 v=12
+38613  buzzer   off

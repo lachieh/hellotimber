@@ -1,0 +1,34 @@
+sound-golden 1
+id: sound/keypad/list
+status: asserted
+source: captures/6.39/plan16/keypad/list
+source-sha256: d37b16b938ee1285efa52ec4ffe13cc5f56c99eebdb1aab0eecac60038b8b21f
+state: factory
+keys: 0:down 1060:down 2120:down 6181:down 10242:down 11302:c 12362:down 13422:navi 14982:down 16042:down 20103:down
+note: Tones › Incoming call alert: ▼ with 1 s and 4 s gaps, C, ▼, Select, ▼.
+omitted: none
+
+@events
+# t_ms output   state
+33     tone     900 v=0x9104
+173    tone     off
+1093   tone     900 v=0x9104
+1234   tone     off
+2163   tone     900 v=0x9104
+2310   tone     off
+6229   tone     900 v=0x9104
+6353   tone     off
+10296  tone     900 v=0x9104
+10420  tone     off
+11330  tone     900 v=0x9104
+11473  tone     off
+12379  tone     900 v=0x9104
+12526  tone     off
+13472  tone     900 v=0x9104
+13618  tone     off
+15008  tone     900 v=0x9104
+15151  tone     off
+16069  tone     900 v=0x9104
+16212  tone     off
+20146  tone     900 v=0x9104
+20270  tone     off

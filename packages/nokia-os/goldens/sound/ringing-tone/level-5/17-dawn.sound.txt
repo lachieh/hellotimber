@@ -1,0 +1,104 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/17-dawn
+status: asserted
+source: captures/6.39/plan16/levels/5/17
+source-sha256: f7505b9a70b7600c5a867694310714b06785c8a50f6a12867ba72fa440618077
+state: factory
+keys: 0:down
+note: Dawn's Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 2 (divider rewrite), 3 (stale frequency)
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9104
+167    tone     off
+987    vibrator on
+988    buzzer   2349.1 v=22
+1335   buzzer   off
+1737   vibrator off
+3233   buzzer   2349.1 v=22
+3318   buzzer   2489 v=17
+3489   buzzer   off
+5579   vibrator on
+5580   buzzer   2489 v=128
+5664   buzzer   2636.9 v=153
+5897   buzzer   2489 v=128
+6013   buzzer   2636.9 v=153
+6245   buzzer   2489 v=128
+6361   buzzer   2636.9 v=153
+6594   buzzer   2093.1 v=71
+6710   buzzer   1976 v=148
+6942   buzzer   1760.1 v=143
+7058   buzzer   2349.1 v=122
+7228   vibrator off
+7229   buzzer   off
+9319   vibrator on
+9320   buzzer   2489 v=128
+9405   buzzer   2636.9 v=153
+9637   buzzer   2489 v=128
+9753   buzzer   2636.9 v=153
+9986   buzzer   2489 v=128
+10102  buzzer   2636.9 v=153
+10335  buzzer   2093.1 v=71
+10451  buzzer   1976 v=148
+10694  buzzer   1760.1 v=143
+10807  buzzer   2349.1 v=122
+10977  buzzer   off
+10977  vibrator off
+11148  buzzer   1976 v=148
+11318  buzzer   off
+11489  buzzer   1760.1 v=143
+11659  buzzer   1568 v=188
+12007  buzzer   off
+14330  vibrator on
+14331  buzzer   1760.1 v=143
+14563  buzzer   1660.9 v=153
+14679  buzzer   1760.1 v=143
+14911  buzzer   1660.9 v=153
+15027  buzzer   1760.1 v=143
+15260  buzzer   1660.9 v=153
+15376  buzzer   1760.1 v=143
+15608  buzzer   1976 v=148
+15724  buzzer   1175 v=56
+15840  buzzer   1319 v=61
+15957  buzzer   1175 v=56
+16073  buzzer   1319 v=61
+16202  buzzer   1175 v=56
+16313  buzzer   1319 v=61
+16429  buzzer   1175 v=56
+16429  vibrator off
+16483  buzzer   1319 v=61
+16537  buzzer   1175 v=56
+16591  buzzer   1319 v=61
+16646  buzzer   1175 v=56
+16703  buzzer   1319 v=61
+16755  buzzer   1175 v=56
+16809  buzzer   1319 v=61
+16863  buzzer   1175 v=56
+16918  buzzer   1319 v=61
+16972  buzzer   1175 v=56
+17026  buzzer   1319 v=61
+17080  buzzer   1175 v=56
+17135  buzzer   1319 v=61
+17189  buzzer   1175 v=56
+17243  buzzer   1319 v=61
+17297  buzzer   1175 v=56
+17351  buzzer   1319 v=61
+17406  buzzer   1175 v=56
+17460  buzzer   1319 v=61
+17514  buzzer   1175 v=56
+17568  buzzer   off
+19891  buzzer   1175 v=56
+20007  buzzer   1319 v=61
+20123  buzzer   1480 v=178
+20240  buzzer   1568 v=188
+20356  buzzer   1760.1 v=143
+20472  buzzer   1976 v=148
+20588  buzzer   2093.1 v=71
+20709  buzzer   2349.1 v=122
+20709  vibrator on
+21053  buzzer   off
+21460  vibrator off
+22962  buzzer   2349.1 v=122
+23043  buzzer   2489 v=128
+23213  buzzer   off

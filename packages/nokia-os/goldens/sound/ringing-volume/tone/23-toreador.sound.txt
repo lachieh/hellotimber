@@ -1,0 +1,45 @@
+sound-golden 1
+id: sound/ringing-volume/tone/23-toreador
+status: asserted
+source: captures/6.39/plan16/ringing-volume/tones/23
+source-sha256: 3d1497195ca49ff1862c5acad39105e46fa28447ae222a8045e2b2a34fd55692
+state: factory
+keys: 0:down
+note: Toreador stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
+omitted: 1 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+21     tone     900 v=0x9104
+164    tone     off
+995    buzzer   988 v=16
+995    vibrator on
+1380   buzzer   1109 v=17
+1666   buzzer   988 v=16
+1759   vibrator off
+1760   buzzer   831 v=12
+2046   buzzer   off
+2139   buzzer   831 v=12
+2425   buzzer   off
+2518   vibrator on
+2519   buzzer   831 v=12
+2805   buzzer   740 v=12
+2898   buzzer   831 v=12
+3185   buzzer   880 v=14
+3278   buzzer   831 v=12
+3278   vibrator off
+3859   buzzer   off
+4052   vibrator on
+4053   buzzer   880 v=14
+4440   buzzer   740 v=12
+4726   buzzer   988 v=16
+4819   buzzer   831 v=12
+4819   vibrator off
+5400   buzzer   off
+5593   vibrator on
+5594   buzzer   659 v=12
+5981   buzzer   554 v=11
+6267   buzzer   740 v=12
+6360   buzzer   494 v=10
+6360   vibrator off
+6941   buzzer   off

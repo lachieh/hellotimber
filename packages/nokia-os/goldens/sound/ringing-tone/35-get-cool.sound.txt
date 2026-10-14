@@ -1,0 +1,61 @@
+sound-golden 1
+id: sound/ringing-tone/35-get-cool
+status: asserted
+source: captures/6.39/plan16/ringing-tone/35
+source-sha256: 3d84aa3a6a875f1b130207d6180527b93bd1ede0bb361cddc8de336f65d6c05f
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Knick-knack onto Get cool: its preview at Level 4, Vibrating alert On.
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+173    tone     off
+987    vibrator on
+988    buzzer   1109 v=17
+1358   buzzer   1245 v=14
+1482   buzzer   1396.9 v=21
+1730   buzzer   1660.9 v=21
+1730   vibrator off
+1978   buzzer   2216.9 v=28
+2225   buzzer   2489 v=17
+2349   buzzer   2093.1 v=34
+2473   buzzer   2216.9 v=28
+2721   buzzer   off
+2969   buzzer   2489 v=17
+2969   vibrator on
+3341   buzzer   2216.9 v=28
+3465   buzzer   2093.1 v=34
+3713   buzzer   1864.9 v=21
+3713   vibrator off
+3961   buzzer   1660.9 v=21
+4209   buzzer   1864.9 v=21
+4333   buzzer   1568 v=25
+4456   buzzer   1660.9 v=21
+4704   buzzer   off
+4952   buzzer   1109 v=17
+4952   vibrator on
+5324   buzzer   1245 v=14
+5448   buzzer   1396.9 v=21
+5697   buzzer   1660.9 v=21
+5697   vibrator off
+5948   buzzer   2216.9 v=28
+6198   buzzer   2489 v=17
+6315   buzzer   2093.1 v=34
+6448   buzzer   2216.9 v=28
+6699   buzzer   off
+6949   buzzer   2489 v=17
+6949   vibrator on
+7322   buzzer   2216.9 v=28
+7450   buzzer   2093.1 v=34
+7700   buzzer   1864.9 v=21
+7700   vibrator off
+7951   buzzer   1660.9 v=21
+8201   buzzer   1864.9 v=21
+8320   buzzer   1568 v=25
+8451   buzzer   1660.9 v=21
+8701   buzzer   off
+8952   vibrator on
+8954   vibrator off
+@loop 988 3964

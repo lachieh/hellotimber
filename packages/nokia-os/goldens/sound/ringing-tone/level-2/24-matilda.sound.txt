@@ -1,0 +1,90 @@
+sound-golden 1
+id: sound/ringing-tone/level-2/24-matilda
+status: asserted
+source: captures/6.39/plan16/levels/2/24
+source-sha256: b1376e9135f0b8bd6d2bc260650756f782fe2f7bcaac604a2e50fce5693ae844
+state: factory
+keys: 0:down
+note: Matilda's Ringing tone preview at Ringing volume Level 2.
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+168    tone     off
+990    buzzer   880 v=6
+990    vibrator on
+1299   buzzer   off
+1322   buzzer   880 v=6
+1461   buzzer   off
+1485   buzzer   880 v=6
+1636   buzzer   off
+1655   buzzer   880 v=6
+1965   buzzer   off
+1988   buzzer   740 v=5
+2321   buzzer   1175 v=8
+2321   vibrator off
+2637   buzzer   off
+2654   buzzer   1175 v=8
+2793   buzzer   off
+2816   buzzer   1175 v=8
+2956   buzzer   off
+2979   buzzer   1109 v=8
+3290   buzzer   off
+3313   buzzer   988 v=7
+3646   buzzer   880 v=6
+3646   vibrator on
+3956   buzzer   off
+3979   buzzer   880 v=6
+4118   buzzer   off
+4142   buzzer   880 v=6
+4281   buzzer   off
+4304   buzzer   988 v=7
+4641   buzzer   880 v=6
+4776   buzzer   off
+4800   buzzer   880 v=6
+4939   buzzer   off
+4962   vibrator off
+4963   buzzer   880 v=6
+5295   buzzer   784 v=6
+5458   buzzer   740 v=5
+5621   buzzer   659 v=5
+5930   buzzer   off
+5954   buzzer   587 v=5
+6116   buzzer   659 v=5
+6279   buzzer   740 v=5
+6279   vibrator on
+6588   buzzer   off
+6612   buzzer   740 v=5
+6751   buzzer   off
+6774   buzzer   740 v=5
+6914   buzzer   off
+6937   buzzer   659 v=5
+7247   buzzer   off
+7270   buzzer   659 v=5
+7603   buzzer   587 v=5
+7603   vibrator off
+7766   buzzer   659 v=5
+7928   buzzer   740 v=5
+8091   buzzer   587 v=5
+8253   buzzer   494 v=4
+8416   buzzer   554 v=5
+8579   buzzer   587 v=5
+8897   buzzer   off
+8919   vibrator on
+8920   buzzer   440 v=4
+9252   buzzer   587 v=5
+9415   buzzer   740 v=5
+9577   buzzer   880 v=6
+9911   buzzer   784 v=6
+10074  buzzer   740 v=5
+10213  buzzer   off
+10237  buzzer   659 v=5
+10237  vibrator off
+10546  buzzer   off
+10570  buzzer   659 v=5
+10709  buzzer   off
+10732  buzzer   659 v=5
+10872  buzzer   off
+10901  buzzer   587 v=5
+11483  buzzer   off

@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/game/snake-warning-off
+status: asserted
+source: captures/6.39/plan16/game/warning-off
+source-sha256: 3c5c92cfbf05803359a52421c3b0320b0eef5b88fbc65fd7b10239ad78ed7904
+state: factory
+keys: 0:navi 2035:8
+note: Snake II, level 1, factory settings: Warning tones Off, one meal.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+36     tone     900 v=0x9104
+182    tone     off
+2051   tone     900 v=0x9104
+2196   tone     off
+4474   vibrator on
+4953   vibrator off

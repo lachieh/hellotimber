@@ -1,0 +1,37 @@
+sound-golden 1
+id: sound/ringing-tone/11-rocket
+status: asserted
+source: captures/6.39/plan16/ringing-tone/11
+source-sha256: a478e4e3eb707b150210b72b3ceba6603b31a54ee57cdd60de115e9559baadf7
+state: factory
+keys: 0:down
+note: Tones › Ringing tone, ▼ from Improvisation onto Rocket: its preview at Level 4, Vibrating alert On.
+omitted: none
+
+@events
+# t_ms output   state
+29     tone     900 v=0x9104
+169    tone     off
+1002   buzzer   2910.2 v=33
+1002   vibrator on
+1114   buzzer   2852.8 v=29
+1230   buzzer   2796.9 v=25
+1346   buzzer   2739.7 v=25
+1462   buzzer   2683.7 v=22
+1578   buzzer   2626.8 v=18
+1695   buzzer   2571.2 v=17
+1811   buzzer   2515 v=17
+2275   buzzer   off
+2275   vibrator off
+4987   buzzer   2910.2 v=33
+4987   vibrator on
+5103   buzzer   2852.8 v=29
+5219   buzzer   2796.9 v=25
+5335   buzzer   2739.7 v=25
+5451   buzzer   2683.7 v=22
+5567   buzzer   2626.8 v=18
+5683   buzzer   2571.2 v=17
+5800   buzzer   2515 v=17
+6264   buzzer   off
+6264   vibrator off
+@loop 1002 3985

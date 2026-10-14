@@ -1,0 +1,82 @@
+sound-golden 1
+id: sound/ringing-tone/level-5/09-thats-it
+status: asserted
+source: captures/6.39/plan16/levels/5/09
+source-sha256: 739dbcec02f71ec4b60ecd6c85fe81b03ca911e122039e02f1ac82cb06d1b14d
+state: factory
+keys: 0:down
+note: That's it!'s Ringing tone preview at Ringing volume Level 5 (D10: its jump).
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+171    tone     off
+993    buzzer   1864.9 v=21
+993    vibrator on
+1062   buzzer   off
+1279   buzzer   1396.9 v=21
+1348   buzzer   off
+1418   buzzer   1396.9 v=21
+1488   buzzer   off
+1557   buzzer   1568 v=25
+1627   buzzer   off
+1844   buzzer   1396.9 v=21
+1844   vibrator off
+1913   buzzer   off
+2417   buzzer   1760.1 v=17
+2486   buzzer   off
+2703   buzzer   1864.9 v=21
+2897   buzzer   off
+3572   buzzer   2489 v=17
+3572   vibrator on
+3641   buzzer   off
+3858   buzzer   1864.9 v=21
+3928   buzzer   off
+3997   buzzer   1864.9 v=21
+4067   buzzer   off
+4137   buzzer   2093.1 v=34
+4206   buzzer   off
+4423   vibrator off
+4424   buzzer   1864.9 v=21
+4493   buzzer   off
+4996   buzzer   2349.1 v=22
+5066   buzzer   off
+5283   buzzer   2489 v=17
+5476   buzzer   off
+5569   vibrator on
+6437   vibrator off
+8179   buzzer   1864.9 v=145
+8179   vibrator on
+8249   buzzer   off
+8465   buzzer   1396.9 v=173
+8535   buzzer   off
+8605   buzzer   1396.9 v=173
+8674   buzzer   off
+8744   buzzer   1568 v=188
+8814   buzzer   off
+9031   buzzer   1396.9 v=173
+9031   vibrator off
+9100   buzzer   off
+9604   buzzer   1760.1 v=143
+9673   buzzer   off
+9890   buzzer   1864.9 v=145
+10085  buzzer   off
+10759  buzzer   2489 v=128
+10759  vibrator on
+10828  buzzer   off
+11045  buzzer   1864.9 v=145
+11115  buzzer   off
+11184  buzzer   1864.9 v=145
+11254  buzzer   off
+11324  buzzer   2093.1 v=71
+11393  buzzer   off
+11610  buzzer   1864.9 v=145
+11610  vibrator off
+11680  buzzer   off
+12183  buzzer   2349.1 v=122
+12253  buzzer   off
+12470  buzzer   2489 v=128
+12663  buzzer   off
+12756  vibrator on
+13623  vibrator off

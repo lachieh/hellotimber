@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/note/2-1
+status: pending:18
+source: captures/6.39/plan16/notes/2-1
+source-sha256: 5c05d3cbafc3bcb4828afc71dc2f4ca4df964d1d8eb196ccfdfb26fd370c5c48
+state: factory
+keys: 0:navi
+note: OK on 2-1 (factory).
+omitted: none
+
+@events
+# t_ms output   state
+42     tone     900 v=0x9104
+182    tone     off
