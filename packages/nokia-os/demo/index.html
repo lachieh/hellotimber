@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nokia 3310 v6.39 stock OS</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <p>@hellotimber/nokia-os demo</p>
+        <h1>Stock 3310 firmware, v6.39</h1>
+      </header>
+
+      <section class="phone" aria-label="Phone">
+        <div id="lcd" class="lcd"></div>
+        <p id="status" role="status" aria-live="polite"></p>
+        <p id="error" class="error" hidden></p>
+        <div class="keypad" aria-label="Keypad">
+          <button type="button" data-key="power" class="wide">Power (P)</button>
+          <button type="button" data-key="navi" class="wide">Navi (Enter)</button>
+          <button type="button" data-key="c">C (Esc)</button>
+          <button type="button" data-key="up">▲</button>
+          <button type="button" data-key="down">▼</button>
+          <button type="button" data-key="1">1</button>
+          <button type="button" data-key="2">2</button>
+          <button type="button" data-key="3">3</button>
+          <button type="button" data-key="4">4</button>
+          <button type="button" data-key="5">5</button>
+          <button type="button" data-key="6">6</button>
+          <button type="button" data-key="7">7</button>
+          <button type="button" data-key="8">8</button>
+          <button type="button" data-key="9">9</button>
+          <button type="button" data-key="*">*</button>
+          <button type="button" data-key="0">0</button>
+          <button type="button" data-key="#">#</button>
+        </div>
+        <p class="note">
+          Keyboard: arrows ▲/▼, Enter Navi, Backspace or Escape C (hold for standby), digits, * and
+          #, P power (held for 1 s). The phone starts switched off.
+        </p>
+      </section>
+
+      <section class="controls" aria-label="Phone settings">
+        <form id="carrier-form">
+          <label>
+            Operator
+            <input id="carrier" autocomplete="off" spellcheck="false" />
+          </label>
+          <button type="submit">Restart with operator</button>
+          <p id="carrier-error" class="error" hidden></p>
+        </form>
+        <label class="check">
+          <input id="skip-boot" type="checkbox" />
+          Skip boot (restarts the phone)
+        </label>
+      </section>
+
+      <section id="goldens" class="controls" aria-label="Golden overlay" hidden>
+        <label>
+          Golden image
+          <select id="golden"></select>
+        </label>
+        <label>
+          View
+          <select id="view">
+            <option value="off">Phone only</option>
+            <option value="overlay">Overlay</option>
+            <option value="difference">Difference</option>
+          </select>
+        </label>
+        <label>
+          Overlay opacity
+          <input id="opacity" type="range" min="0" max="100" value="50" />
+        </label>
+        <p id="diff-summary" class="note"></p>
+      </section>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -995,21 +995,29 @@ kernel's `navigate("menu")` skips the 39 ms delay, so no scenario uses it).
 
 **Files:** `packages/nokia-os/demo/{index.html,main.ts,style.css}`, `packages/nokia-os/README.md`.
 
-- [ ] Demo: `createStockPhone` plus `createScreenRenderer({ paint: paintStockScreen, scale: 6 })`
+- [x] Demo: `createStockPhone` plus `createScreenRenderer({ paint: paintStockScreen, scale: 6 })`
       with a requestAnimationFrame tick loop. Keys: arrows → ▲/▼, Enter → Navi,
       Backspace/Escape → C, digits, `*`, `#`, and `p` → power (held for 1 s). Clickable buttons
       for the same keys. A carrier input validated with `missingStockGlyphs`. A "skip boot"
       toggle. A live `[role=status]` line showing `phone.path` and `screen.kind`.
-- [ ] Golden overlay: a select over `goldens/**` loaded with `import.meta.glob(..., { query: "?raw" })`
+- [x] Golden overlay: a select over `goldens/**` loaded with `import.meta.glob(..., { query: "?raw" })`
       and parsed with `scripts/golden-format.ts`. Overlay and difference views, as in
       phone-screen's harness. Dev-only.
-- [ ] Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and the project's
+- [x] Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and the project's
       `agent-browser` tool. Capture screenshots after boot, at standby, after Menu (dots) and in a
       pages submenu, and check the status line.
-- [ ] README: what the package is, the asset policy, the golden workflow (import → extract →
+- [x] README: what the package is, the asset policy, the golden workflow (import → extract →
       test), standalone usage with phone-screen (and with phone-3d through the canvas), and the
       artefact table summary.
-- [ ] Commit: `feat(nokia-os): standalone stock OS demo`.
+- [x] Commit: `feat(nokia-os): standalone stock OS demo`.
+
+Deviation: the demo's golden overlay paints the current screen with `paintStockScreen` into its
+own framebuffer (the renderer does not expose its pixels) and draws either the golden in magenta
+over the LCD or a per-pixel difference (shared ink dark, phone-only red, golden-only blue) with a
+count. The host clock and date ports format as the firmware does (`07:59`, `13.10.2026`). The
+phone starts switched off; `P` or the Power button holds power for 1 s. Verified headless with
+`agent-browser` (status line `path: standby · screen: off` → `boot` → `standby`, Menu dots, a
+Messages page, Clock settings with the live time).
 
 ### Task 13 - Verification gate and documentation closeout
 
