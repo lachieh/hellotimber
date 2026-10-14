@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/calculator/keys-rate-hash
+status: pending:20
+source: captures/6.39/plan20/sound/keys-rate-hash
+source-sha256: 9a5339ca3850fa62f98d9cc745f8f09c136e843f7fb9a8633d589de61d4a12b1
+state: factory
+keys: 0:#
+note: The Foreign prompt with 1, then #.
+omitted: none
+
+@events
+# t_ms output   state
+19     tone     900 v=0x9104
+161    tone     off

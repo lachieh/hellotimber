@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/note/calculator-out-of-range
+status: pending:20
+source: captures/6.39/plan20/sound/out-of-range
+source-sha256: 3ab27e54edde4231c787913d666cba39f1b9fe0bdcc1e6cb0192916afa6d78bf
+state: factory
+keys: 0:navi 300:navi
+note: "Out of range" (Warning tones On) after 99999 * 99999, Options, OK on Equals.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+34     tone     900 v=0x9104
+175    tone     off
+343    tone     1750 v=0x9105
+639    tone     off

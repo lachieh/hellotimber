@@ -427,31 +427,74 @@ files changed. Task 0 evidence is preserved; R remains unticked.
 registration), `tests/calculator-capture-set.test.ts` (new),
 `goldens/**` (generated), `tests/acceptance/20-calculator.test.ts` (new).
 
-- [ ] TDD the capture set on synthetic sources (injected loader, no REF): every fixture row of
+- [x] TDD the capture set on synthetic sources (injected loader, no REF): every fixture row of
       "Golden pipeline additions"; stills named by `CALCULATOR_CASES` in case order; a case with
       no image, or an image with no case, throws naming both; sound rows reuse plan 16's
       `sound-format`/normalisation with `state: factory` (`virgin` for the virgin row).
-- [ ] Keep new calculator fixtures and existing `menu/09-calculator.sub` / `sound/note/9`
+- [x] Keep new calculator fixtures and existing `menu/09-calculator.sub` / `sound/note/9`
       `pending:20`. Keep placeholder ownership until Tasks 6-8 supply passing behavioral drivers.
       Existing fixtures stay in their original per-plan indexes; do not move them to index 20.
-- [ ] Text runs from `plan20/text.json` reach the glyph harvester through the capture set; run
+- [x] Text runs from `plan20/text.json` reach the glyph harvester through the capture set; run
       the delivered regeneration command twice (no diff on the second run). Verify `/` in the
       small face and review all generated changes against the registered inputs. Do not assume
       that this is the only glyph or resource change. Shared resource-test updates belong to
       the plan 29 worker until the delivered registration API is verified.
-- [ ] Through the verified plan 29 registration, the sound goldens' quoted note text adds
+- [x] Through the verified plan 29 registration, the sound goldens' quoted note text adds
       `Out of range` and `Dividing by zero not allowed` to `NOTE_SOUNDS`; verify regenerated warning programs and silent `Rate saved` behavior,
       rather than assuming plan 16's generator already discovers new per-plan notes.
-- [ ] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
+- [x] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
       completion note.
-- [ ] Use existing `pending:20` fixture statuses until real scenarios pass. Add
+- [x] Use existing `pending:20` fixture statuses until real scenarios pass. Add
       `tests/acceptance/20-calculator.test.ts` with the existing `acceptancePlan` shape when its
       index is created. No awaits-scenario shim, fake driver or `knownGaps` substitute.
-- [ ] Text, note sounds and timeline resources depend on plan 29's delivered registration API.
+- [x] Text, note sounds and timeline resources depend on plan 29's delivered registration API.
       Inspect and record that API after integration; do not edit the shared pipeline or assume
       registration filenames. Verify repeated regeneration is stable before closing Task 2.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import calculator captures (plan 20)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import calculator captures (plan 20)`.
+
+**Task 2 completion (2026-10-14).** Plan 29's delivered API was used as documented:
+`PlanCaptureSet.resources` from `scripts/resource-inputs/20-calculator.ts` (the small `/` text
+run plus an `advance` override, and three named `note` timelines in batch 200), registered by
+one line in `scripts/capture-sets/index.ts`. `import-captures` run three times: 117 plan 20
+fixtures (16 stills holding all 388 cases, 61 timelines, 40 sound goldens; 89 `pending:20`,
+28 `pending:22`; 2 482 309 bytes); the second and third runs left every golden byte-identical
+(tree hash compared), and no other plan's golden or index changed. `regenerate` twice: the first
+added the small `/` (`fonts.ts`), `Out of range` and `Dividing by zero not allowed` to
+`NOTE_SOUNDS` (1750 Hz, 0x9105, 296/288 ms; `Rate saved` stays silent) and the
+`calculator-out-of-range` (2906 ms), `calculator-divide-by-zero` (2890 ms) and
+`calculator-rate-saved` (694/232/523 ms) timelines (`widgets.ts`); the second was up to date.
+
+Deviation: the golden format names images [a-z0-9-] while 84 Task 0 stills have `.` or `+`
+in their names (`results/0.1+0.2`). With the parent's authorisation the shared importer gained
+named shots (`shots` entries may be `{ file, name }`, validated before writes; committed alone,
+`feat(nokia-os): named shots in capture sets`, and recorded in plan 29); `imageNameOf` writes
+`.` as `p` and `+` as `plus` (`0p1plus0p2`).
+
+Deviation: the importer's io lists only numbered PNGs, so "an image with no case" is checked
+for the numbered sequence directories at import and for every directory in the unit tests
+(injected lister); Task 0's REF `check` verified images and cases in both directions.
+
+Deviation: the two warning-tone sound goldens are `sound/note/calculator-out-of-range` and
+`sound/note/calculator-divide-by-zero`, not `sound/calculator/*`: plan 29 has no note-sound
+registration, and plan 16's extractor reads `NOTE_SOUNDS` from every `sound/note/*` golden whose
+note quotes its text, so the ids carry them there with no shared change.
+
+Deviation: the user's brief marks the D9 escape fixtures (`calculator/keys-options-{0-9,star,
+hash}`, `calculator/options-dtmf-confirm-{0,1}` and their sound goldens) `pending:22`, not
+`pending:20`, so they wait on plan 22 in plan 20's index.
+
+Deviation (shared tests, one assertion each): `tests/goldens-integrity.test.ts` accepted only
+`plan16/` sound sources and now accepts any plan's directory; `tests/resources.test.ts`'s pinned
+`WIDGET_TIMELINE_BY_NAME` and `NOTE_SOUNDS` lists gain the three timelines and two notes.
+`EepromRecord` registration (Task 4) goes through the feature's `records`, which
+`src/firmware/records.ts` already composes, so that file needs no line.
+
+Extra fixtures beyond the table: `calculator/operators-{star,star-zero,star-result,c-through}`
+(one per capture directory, since a still's images are named by file), `calculator/rate-after`,
+`calculator/rate-blink-keys`, `calculator/{divide-by-zero,out-of-range}-add`,
+`calculator/in-foreign-rate-0`, `calculator/persist-*` recordings and the LCD of the factory key
+recordings (`calculator/keys-rate-*`, `calculator/keys-options-*`).
 
 ### Task 3 - Decimal arithmetic (pure, TDD)
 

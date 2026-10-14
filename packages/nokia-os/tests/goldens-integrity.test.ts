@@ -238,7 +238,7 @@ describe("sound goldens (plan 16)", () => {
       expect(golden.status).toBe(entry.status);
       expect(golden.rows).toHaveLength(entry.events!);
       expect(golden.state).toMatch(STATES);
-      expect(golden.source).toMatch(/^captures\/6\.39\/plan16\//);
+      expect(golden.source).toMatch(/^captures\/6\.39\/plan\d+[a-z]?\//);
     });
   }
 

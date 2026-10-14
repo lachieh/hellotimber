@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/calculator/keys-options-menu
+status: pending:20
+source: captures/6.39/plan20/sound/keys-options-menu
+source-sha256: 2cfd0efb8c46b202f1df6ec7906a499e96f2102f9a3516838fbf0f42f7253aa2
+state: factory
+keys: 0:navi
+note: Options on 0, then OK.
+omitted: none
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9104
+170    tone     off

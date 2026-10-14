@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/note/calculator-divide-by-zero
+status: pending:20
+source: captures/6.39/plan20/sound/divide-by-zero
+source-sha256: 583473c2ccaf4bcb5e631b90eaf214451f551d340586e10a91a57902386011bb
+state: factory
+keys: 0:navi 300:navi
+note: "Dividing by zero not allowed" (Warning tones On) after 7 / 0, Options, OK on Equals.
+omitted: none
+
+@events
+# t_ms output   state
+34     tone     900 v=0x9104
+175    tone     off
+328    tone     1750 v=0x9105
+616    tone     off

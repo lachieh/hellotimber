@@ -518,6 +518,9 @@ describe("widget sprites and timelines", () => {
     expect(WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NODE["8-4"]!]!.timeline.durationMs).toBe(3060);
     expect(Object.keys(WIDGET_TIMELINE_BY_NAME).sort()).toEqual([
       "boot-code-error",
+      "calculator-divide-by-zero",
+      "calculator-out-of-range",
+      "calculator-rate-saved",
       "code-accepted",
       "code-accepted-welcome",
       "code-error",
@@ -729,10 +732,12 @@ describe("sound programs and rules (plan 16 Task 3)", () => {
     }
     expect(Object.keys(SOUND_DATA.noteSounds).sort()).toEqual([
       "Code error",
+      "Dividing by zero not allowed",
       "Invalid shortcut",
       "No phone numbers",
       "No voice tags saved",
       "Not allowed",
+      "Out of range",
       "Screen saver missing",
       "Set PIN code request on",
     ]);

@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/calculator/rate-saved
+status: pending:20
+source: captures/6.39/plan20/sound/rate-saved
+source-sha256: 8d41dbf4a7d6eccc23e597be92e9444aaafbac2d5f04a01ce6162bc3362ede67
+state: factory
+keys: 0:2 300:navi
+note: The empty Foreign prompt (C held), 2, OK: Rate saved adds no tone; OK beeps.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+18     tone     900 v=0x9104
+161    tone     off
+329    tone     900 v=0x9104
+470    tone     off

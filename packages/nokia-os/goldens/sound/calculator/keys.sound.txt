@@ -1,0 +1,88 @@
+sound-golden 1
+id: sound/calculator/keys
+status: pending:20
+source: captures/6.39/plan20/sound/keys
+source-sha256: d36ecb04ed793c26165541183b13e5d29f1ef305f4e5ea7c7dc830e3f60a3894
+state: factory
+keys: 0:1 300:2 600:3 900:4 1200:5 1500:6 1800:7 2100:8 2400:9 2700:0 3000:# 3300:* 3600:* 3901:5 4201:up 4501:down 4801:c 5101:c 5401:navi 5701:down 6001:up 6301:c 6601:navi 6901:navi 7701:navi 8001:up 8301:navi 8601:down 8901:up 9201:navi 10001:1 10301:# 10601:5 10901:c 11201:c 11502:c 11802:c+1500
+note: Every key on the calculator screen, in Options (▼ ▲ C, OK on Equals) and in the rate entry, then C held.
+omitted: 7 (level rewrite)
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9104
+166    tone     off
+325    tone     900 v=0x9104
+468    tone     off
+627    tone     900 v=0x9104
+770    tone     off
+925    tone     900 v=0x9104
+1072   tone     off
+1223   tone     900 v=0x9104
+1366   tone     off
+1525   tone     900 v=0x9104
+1668   tone     off
+1827   tone     900 v=0x9104
+1970   tone     off
+2121   tone     900 v=0x9104
+2265   tone     off
+2423   tone     900 v=0x9104
+2567   tone     off
+2725   tone     900 v=0x9104
+2869   tone     off
+3029   tone     900 v=0x9104
+3171   tone     off
+3331   tone     900 v=0x9104
+3473   tone     off
+3626   tone     900 v=0x9104
+3768   tone     off
+3927   tone     900 v=0x9104
+4070   tone     off
+4231   tone     900 v=0x9104
+4372   tone     off
+4526   tone     900 v=0x9104
+4666   tone     off
+4851   tone     900 v=0x9104
+4991   tone     off
+5144   tone     900 v=0x9104
+5286   tone     off
+5439   tone     900 v=0x9104
+5580   tone     off
+5726   tone     900 v=0x9104
+5866   tone     off
+6028   tone     900 v=0x9104
+6168   tone     off
+6334   tone     900 v=0x9104
+6478   tone     off
+6641   tone     900 v=0x9104
+6788   tone     off
+6919   tone     900 v=0x9104
+7067   tone     off
+7739   tone     900 v=0x9104
+7880   tone     off
+8026   tone     900 v=0x9104
+8166   tone     off
+8339   tone     900 v=0x9104
+8484   tone     off
+8623   tone     900 v=0x9104
+8770   tone     off
+8926   tone     900 v=0x9104
+9072   tone     off
+9223   tone     900 v=0x9104
+9366   tone     off
+10022  tone     900 v=0x9104
+10164  tone     off
+10324  tone     900 v=0x9104
+10466  tone     off
+10618  tone     900 v=0x9104
+10760  tone     off
+10923  tone     900 v=0x9104
+11071  tone     off
+11226  tone     900 v=0x9104
+11373  tone     off
+11520  tone     900 v=0x9104
+11667  tone     off
+11831  tone     900 v=0x9104
+11977  tone     off
+12340  tone     900 v=0x9104
+12480  tone     off
