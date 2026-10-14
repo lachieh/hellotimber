@@ -827,15 +827,20 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
   };
 }
 
-function main(): void {
+/** Writes src/resources/generated/*.ts from the committed goldens; returns the files changed. */
+export function writeResources(): string[] {
   if (!existsSync(GOLDENS_DIR)) throw new Error(`missing ${GOLDENS_DIR}`);
   mkdirSync(GENERATED_DIR, { recursive: true });
+  const written: string[] = [];
   for (const [file, text] of Object.entries(generatedFiles(extractResources()))) {
     const path = join(GENERATED_DIR, file);
     if (existsSync(path) && readFileSync(path, "utf8") === text) continue;
     writeFileSync(path, text);
-    console.log(`wrote src/resources/generated/${file}`);
+    written.push(`src/resources/generated/${file}`);
   }
+  return written;
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  for (const file of writeResources()) console.log(`wrote ${file}`);
+}

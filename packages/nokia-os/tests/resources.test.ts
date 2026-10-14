@@ -1,9 +1,14 @@
 import { SubmenuEntry } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vite-plus/test";
-import { extractResources, inferLoop, toTimeline } from "../scripts/extract-resources.ts";
+import {
+  extractResources,
+  generatedFiles,
+  inferLoop,
+  toTimeline,
+} from "../scripts/extract-resources.ts";
 import { TREE_TEXT_RUNS } from "../scripts/generated/tree-text-runs.ts";
 import { readGoldenIndex } from "../scripts/golden-index.ts";
 import { TEXT_RUNS } from "../scripts/text-runs.ts";
@@ -140,6 +145,15 @@ describe("generated resources", () => {
       snake: SNAKE_DATA,
       sounds: SOUND_DATA,
     }).toEqual(extractResources());
+  });
+
+  it("are byte for byte what `regenerate` writes (resolve a conflict by regenerating)", () => {
+    const dir = join(import.meta.dirname, "../src/resources/generated");
+    const files = generatedFiles(extractResources());
+    expect(readdirSync(dir).sort()).toEqual(Object.keys(files).sort());
+    for (const [file, text] of Object.entries(files)) {
+      expect(readFileSync(join(dir, file), "utf8") === text, file).toBe(true);
+    }
   });
 
   it("have binary glyphs of one height per font", () => {
