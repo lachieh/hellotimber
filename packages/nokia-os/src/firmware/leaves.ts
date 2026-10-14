@@ -15,7 +15,7 @@ import {
   WIDGET_TIMELINES,
 } from "../resources";
 import type { StockWidgetTimeline } from "../resources";
-import { codeEntry } from "../widgets/code-entry";
+import { codeEntry, codeError, maskedEntry } from "../widgets/code-entry";
 import { confirmQuery } from "../widgets/confirm";
 import { StockFlowApplication, type Flow, type Widget } from "../widgets/flow";
 import { infoPages, type InfoPage } from "../widgets/info-pages";
@@ -31,8 +31,9 @@ import { splashIntro } from "../widgets/splash";
 import { textPages } from "../widgets/text-pages";
 import {
   CLUB_NOKIA_ID_BLINK,
+  ACCEPT_FLOWS,
   CLUB_NOKIA_ID_PROMPT,
-  CODE_LEAVES,
+  CODE_SETTINGS,
   CURSOR_STYLE,
   EXIT_LEVELS,
   INVALID_SHORTCUT,
@@ -54,6 +55,8 @@ import {
   slugOf,
   SNAKE_LEVEL,
   splitPromptLines,
+  type AcceptFlow,
+  type AcceptNote,
   type PromptLayout,
 } from "./bindings";
 import {
@@ -66,7 +69,7 @@ import {
   type StockTreeNode,
 } from "./generated/stock-tree";
 import { PlaceholderApplication } from "./placeholder";
-import type { StockSecurity } from "./security";
+import { SECURITY_CODE_DIGITS, type StockSecurity } from "./security";
 import type { StockSettings } from "./settings";
 
 /** The soft key of Instructions pages (P12; the tree records only their text). */
@@ -153,23 +156,17 @@ function nextSibling(number: string): string {
   return level[(index + 1) % level.length]!.slug;
 }
 
-/** The label of tree node `number`, or of the info page `<pages>-<k>` (Clear timers, 4-5-5). */
-function labelOf(number: string): string {
-  const segments = number.split("-");
+/** The path from the top level to tree node `number`. */
+function treePath(number: string): StockTreeNode[] {
+  const path: StockTreeNode[] = [];
   let level: readonly StockTreeNode[] = STOCK_TREE;
-  let node: StockTreeNode | undefined;
-  for (const [i, segment] of segments.entries()) {
+  for (const segment of number.split("-")) {
     const found = level.find((n) => n.number.split("-").at(-1) === segment);
-    if (found === undefined) {
-      const pages = node?.opens.kind === "info-pages" ? node.opens.pages : [];
-      const page = i === segments.length - 1 ? pages[Number(segment) - 1] : undefined;
-      if (page === undefined) throw new Error(`No tree node ${number}.`);
-      return page.label;
-    }
-    node = found;
+    if (found === undefined) throw new Error(`No tree node ${number}.`);
+    path.push(found);
     level = found.children ?? [];
   }
-  return node!.label;
+  return path;
 }
 
 /**
@@ -333,7 +330,7 @@ export class LeafBinder {
         return () => infoScreen({ lines: () => lines, softkey: sk });
       }
       case "code-prompt":
-        if (CODE_LEAVES[number] !== undefined) return this.#codeLeaf(number, screen);
+        if (ACCEPT_FLOWS[number] !== undefined) return this.#codeLeaf(number, screen);
       // falls through: PIN, PIN2 and barring prompts keep plan 14's first screen (D7)
       case "text-input":
       case "number-input": {
@@ -366,20 +363,86 @@ export class LeafBinder {
     }
   }
 
-  /** A security-code leaf (D7): the stock code entry; an accepted code opens its flow. */
+  /** A security-code leaf (D7): the stock code entry; an accepted code opens its flow (D8). */
   #codeLeaf(number: string, screen: StockLeafScreen): () => Widget {
     const softkey = screen.softkey;
     if (softkey === undefined) throw new Error(`${number}: a code prompt without a soft key.`);
     const { label } = splitPromptLines(screen.lines);
-    const placeholder = labelOf(number);
     const security = this.#security;
-    return () =>
-      codeEntry({
-        lines: label,
-        softkey,
-        security,
-        accepted: (flow) => flow.replace(placeholderWidget(placeholder)),
-      });
+    const accepted = this.#acceptFlow(number, softkey, ACCEPT_FLOWS[number]!);
+    return () => codeEntry({ lines: label, softkey, security, accepted });
+  }
+
+  /** What an accepted code opens at leaf `number`, as `probe/accept-*` records it. */
+  #acceptFlow(number: string, softkey: string, flow: AcceptFlow): (flow: Flow) => void {
+    const done = this.#acceptNote(flow.note);
+    const settings = this.#settings;
+    const security = this.#security;
+    switch (flow.kind) {
+      case "phone-security": {
+        const labels = CODE_SETTINGS[number];
+        if (labels === undefined) throw new Error(`${number}: no code setting to choose.`);
+        const key = settingKey(treePath(number));
+        return (f) =>
+          f.replace(
+            new OptionListWidget({
+              labels,
+              softkey,
+              opening: settings.choice(key),
+              numbering: optionListNumbering(number),
+              choose: (index, inner) => {
+                settings.choose(key, index);
+                if (security.phoneSecurity()) security.insertSim(security.sim);
+                inner.replace(done());
+              },
+            }),
+          );
+      }
+      case "change-code": {
+        const { enter, verify } = flow;
+        // The new code twice; a mismatch or a wrong length: `Code error`, then `enter` (B4).
+        const enterNew = (): Widget =>
+          maskedEntry({
+            lines: enter,
+            softkey,
+            submit(code, f, clear) {
+              if (code.length !== SECURITY_CODE_DIGITS) {
+                clear();
+                f.push(codeError());
+                return;
+              }
+              f.replace(
+                maskedEntry({
+                  lines: verify,
+                  softkey,
+                  submit(again, g) {
+                    if (again === code) {
+                      security.changeCode(code);
+                      g.replace(done());
+                      return;
+                    }
+                    g.replace(enterNew());
+                    g.push(codeError());
+                  },
+                }),
+              );
+            },
+          });
+        return (f) => f.replace(enterNew());
+      }
+      case "restore":
+        return (f) => {
+          settings.restoreFactory();
+          f.replace(done());
+        };
+      case "note":
+        return (f) => f.replace(done());
+    }
+  }
+
+  #acceptNote(binding: AcceptNote): () => Widget {
+    const timeline = named(binding.timeline);
+    return () => note({ lines: binding.lines, timeline });
   }
 
   /**

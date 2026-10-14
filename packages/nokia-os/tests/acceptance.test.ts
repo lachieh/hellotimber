@@ -308,6 +308,10 @@ const ON_OVER_GAMES =
  * scenarios run as expected failures, so a gap that starts passing must leave this table.
  */
 const KNOWN_GAPS: Readonly<Record<string, string>> = {
+  "probe/accept-6-3-5-on":
+    "the prompt first draws a 15 ms partial frame (image b: the soft key row still shows " +
+    "Select's last letter), a redraw in progress that the kernel does not reproduce (closeout " +
+    "decision 2); probe/accept-6-3-5-off's prompt, the same path, has none",
   "probe/note-keys-done-down-300":
     "Done's 16 ms partial draw covers fewer LCD bytes than the 15 ms one of " +
     "tree/01-phone-book/1-8-1-1.choose (same path), whose timeline the note plays",
@@ -330,7 +334,7 @@ const KNOWN_GAPS: Readonly<Record<string, string>> = {
  * Plan 15 Task 2 shim: the asserted goldens plan 15 imported before the behaviour that drives
  * them exists (Tasks 5-8 write their scenarios). Listed as todos until then; Task 10 deletes it.
  */
-const PLAN15_PREFIXES = ["boot/security-", "boot/welcome-note", "probe/accept-"];
+const PLAN15_PREFIXES = ["boot/security-", "boot/welcome-note"];
 function awaitsPlan15Scenario(id: string): boolean {
   return SCENARIOS[id] === undefined && PLAN15_PREFIXES.some((prefix) => id.startsWith(prefix));
 }

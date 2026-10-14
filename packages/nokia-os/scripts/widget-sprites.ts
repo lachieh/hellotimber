@@ -299,6 +299,11 @@ export const PROBE_TIMELINES: readonly {
   // Plan 15 A4: a wrong security code in Restore factory settings' prompt (2904 ms; the other
   // in-menu prompts' 2902-2905 ms), then the empty prompt.
   { golden: "probe/code-wrong-6-4", kind: "note", name: "code-error" },
+  // Plan 15 0c: the notes after an accepted security code (bindings `ACCEPT_FLOWS`).
+  { golden: "probe/accept-6-3-5-off", kind: "note", name: "phone-security-done" },
+  { golden: "probe/accept-6-3-6-1-match", kind: "note", name: "security-code-changed" },
+  { golden: "probe/accept-c7-restore", kind: "note", name: "settings-restored" },
+  { golden: "probe/accept-4-5-5", kind: "note", name: "timers-cleared" },
   // P5: Menu 1 8, then standby.
   { golden: "probe/shortcut-m1-8", kind: "note", name: "invalid-shortcut" },
   // Plan 23 D13: Game over! / Your score: (the short game), and the fireworks before Game over!

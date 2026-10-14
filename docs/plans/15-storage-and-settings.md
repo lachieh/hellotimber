@@ -878,21 +878,42 @@ first screen.
 `ACCEPT_FLOWS`), `src/firmware/settings.ts` (restore entry point), `tests/settings-flows.test.ts`
 (new), `scripts/widget-sprites.ts` only if Task 0c adds timelines.
 
-- [ ] If Task 0c succeeded: drive each flow against `probe/accept-*` goldens, and
+- [x] If Task 0c succeeded: drive each flow against `probe/accept-*` goldens, and
       `FACTORY_DEFAULTS` from the v6.39 factory scrolls (every list's opening after Restore).
       Otherwise: compose per D8 with Task 0b's shapes; every composed screen is in
       `COMPOSED_FLOWS` with its evidence and string ids; reuse captured timelines by note class
       (tick `Done`, error `Not allowed`).
-- [ ] TDD Phone security: the list opens on the stored value; OK stores and shows the note, then
+- [x] TDD Phone security: the list opens on the stored value; OK stores and shows the note, then
       the page value; On inserts the current SIM.
-- [ ] TDD Change security code: both new-code prompts use `codeEntry`'s entry; a match stores the
+- [x] TDD Change security code: both new-code prompts use `codeEntry`'s entry; a match stores the
       code (the next `verify` takes it, the old one fails); a mismatch follows 0b.
-- [ ] TDD Restore factory settings: after the note every page shows its factory value; the
+- [x] TDD Restore factory settings: after the note every page shows its factory value; the
       security code, Phone security, the welcome note and profile names are kept (per 0b); the
       settings record in storage equals `factory(previous)`.
-- [ ] Remove the Task 6 placeholders owned by `15` (subtract); no placeholder names plan 15.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): Phone security, Change security code and Restore factory settings`.
+- [x] Remove the Task 6 placeholders owned by `15` (subtract); no placeholder names plan 15.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): Phone security, Change security code and Restore factory settings`.
+
+Deviation (bindings): Task 0c made every flow a capture, so there is no `COMPOSED_FLOWS` table.
+`ACCEPT_FLOWS` (by node number, 4-5-5 included) replaces Task 6's `CODE_LEAVES`: each entry is the
+flow's kind, its v6.39 strings and the name of its note's timeline. The four tick timelines are
+named probe timelines in `scripts/widget-sprites.ts` (`phone-security-done`,
+`security-code-changed`, `settings-restored`, `timers-cleared`); `settings-restored` comes from
+`probe/accept-c7-restore`, the recording within 18 ms of the other two. Restore's kept settings
+follow Task 0 (the security code and the welcome note are kept; Phone security and profile names
+are reset), not 0b's indicative list.
+
+Deviation (API): `StockSettings.restoreFactory()` is the restore entry point: the persistent store
+runs `StockEeprom.restoreFactory()` and reloads its record; the in-memory helper applies the same
+factory function. `StockSecurity` takes `{ now, sim }` options (default SIM `"sim-1"`,
+`STOCK_DEFAULT_SIM`) and exposes `sim`, so Phone security On puts the phone's own SIM first; Task
+8 passes `config.sim`.
+
+Completion note (Task 7): the eleven `probe/accept-*` goldens have scenarios. Ten pass, four of
+them within ±25 ms because their `Code error` or `Settings restored` plays another recording's
+timeline. `probe/accept-6-3-5-on` is a known gap: its prompt starts with a 15 ms partial draw that
+`accept-6-3-5-off`, the same path, does not have. `tests/settings-flows.test.ts` drives the
+flows through keys and reads the records back from storage. No placeholder names plan 15.
 
 ### Task 8 - Boot gates in the stock phone (TDD against goldens)
 

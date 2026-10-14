@@ -17,7 +17,7 @@ function rig(storage: StockStorage = createMemoryStorage()) {
   const eeprom = new StockEeprom(storage);
   const settings = createStockSettings(eeprom);
   let now = 0;
-  const security = new StockSecurity(eeprom, settings, () => now);
+  const security = new StockSecurity(eeprom, settings, { now: () => now });
   return {
     storage,
     eeprom,

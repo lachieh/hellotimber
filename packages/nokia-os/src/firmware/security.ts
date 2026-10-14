@@ -60,8 +60,18 @@ export const SECURITY_RECORD: EepromRecord<SecurityState> = {
   encode: (value) => ({ ...value }),
 };
 
+/** The SIM a phone has when the host names none (D10). */
+export const STOCK_DEFAULT_SIM = "sim-1";
+
+export interface StockSecurityOptions {
+  /** The kernel clock (ms) the lockout is timed by. Default: always 0. */
+  readonly now?: () => number;
+  /** The inserted SIM card's identity (D10). Default STOCK_DEFAULT_SIM. */
+  readonly sim?: string;
+}
+
 /**
- * The phone's security code over its EEPROM, timed by the kernel clock `now` (ms). The lockout's
+ * The phone's security code over its EEPROM, with the inserted SIM. The lockout's
  * start is kept in memory: a phone that loads a locked record (a power cycle, a reload) starts
  * the lockout again at its first entry, as the capture shows a cold power-on still locked (A3).
  */
@@ -69,13 +79,16 @@ export class StockSecurity {
   readonly #eeprom: StockEeprom;
   readonly #settings: StockSettings;
   readonly #now: () => number;
+  /** The inserted SIM card (D10). */
+  readonly sim: string;
   /** When the lockout last (re)started, if this phone has seen it start. */
   #lockedAt: number | undefined;
 
-  constructor(eeprom: StockEeprom, settings: StockSettings, now: () => number = () => 0) {
+  constructor(eeprom: StockEeprom, settings: StockSettings, options: StockSecurityOptions = {}) {
     this.#eeprom = eeprom;
     this.#settings = settings;
-    this.#now = now;
+    this.#now = options.now ?? (() => 0);
+    this.sim = options.sim ?? STOCK_DEFAULT_SIM;
   }
 
   /**

@@ -33,6 +33,11 @@ export interface StockSettings {
   setText(key: string, text: string | undefined): void;
   /** The chosen option's label of a single-choice setting (`"Level 2"`), if chosen. */
   label(key: string): string | undefined;
+  /**
+   * Restore factory settings (D5): every EEPROM record with a `factory` takes it, this store's
+   * included (the security record and later plans' data are kept).
+   */
+  restoreFactory(): void;
   /** A numeric value (plan 23 D9: Snake II's level and top score). */
   number(key: string): number;
   setNumber(key: string, value: number): void;
@@ -78,34 +83,43 @@ function copyOverrides(overrides: SettingsOverrides): MutableOverrides {
 }
 
 /**
- * A store over `initial` with `overrides` applied (a key's choice or marks remove its virgin
- * text, D9), calling `save` with the overrides after every write.
+ * A store over `initial` with `stored` applied (a key's choice or marks remove its virgin text,
+ * D9), calling `save` with the overrides after every write. Restore factory settings replaces
+ * the overrides with `restore(current)` (D5).
  */
 function settingsOver(
   initial: StockSettingsSnapshot,
   stored: SettingsOverrides,
   save: (overrides: SettingsOverrides) => void,
+  restore: (current: SettingsOverrides) => SettingsOverrides,
 ): StockSettings {
-  const overrides = copyOverrides(stored);
-  const choices = new Map(
-    Object.entries(initial.choices).map(([key, value]) => [key, { ...value }]),
-  );
-  const marks = new Map(Object.entries(initial.marks).map(([key, value]) => [key, [...value]]));
-  const texts = new Map(Object.entries(initial.texts));
-  const numbers = new Map(Object.entries(initial.numbers));
-  for (const [key, index] of Object.entries(overrides.choices)) {
-    choices.get(key)!.chosen = index;
-    texts.delete(key);
-  }
-  for (const [key, value] of Object.entries(overrides.marks)) {
-    marks.set(key, [...value]);
-    texts.delete(key);
-  }
-  for (const [key, value] of Object.entries(overrides.texts)) {
-    if (value === null) texts.delete(key);
-    else texts.set(key, value);
-  }
-  for (const [key, value] of Object.entries(overrides.numbers)) numbers.set(key, value);
+  let overrides = copyOverrides(NO_OVERRIDES);
+  let choices = new Map<string, { options: number; chosen: number | null }>();
+  let marks = new Map<string, boolean[]>();
+  let texts = new Map<string, string>();
+  let numbers = new Map<string, number>();
+  const load = (from: SettingsOverrides): void => {
+    overrides = copyOverrides(from);
+    choices = new Map(Object.entries(initial.choices).map(([key, value]) => [key, { ...value }]));
+    marks = new Map(Object.entries(initial.marks).map(([key, value]) => [key, [...value]]));
+    texts = new Map(Object.entries(initial.texts));
+    numbers = new Map(Object.entries(initial.numbers));
+    for (const [key, index] of Object.entries(overrides.choices)) {
+      const setting = choices.get(key);
+      if (setting !== undefined) setting.chosen = index;
+      texts.delete(key);
+    }
+    for (const [key, value] of Object.entries(overrides.marks)) {
+      if (marks.has(key)) marks.set(key, [...value]);
+      texts.delete(key);
+    }
+    for (const [key, value] of Object.entries(overrides.texts)) {
+      if (value === null) texts.delete(key);
+      else texts.set(key, value);
+    }
+    for (const [key, value] of Object.entries(overrides.numbers)) numbers.set(key, value);
+  };
+  load(stored);
 
   const resolve = (key: string): string => initial.aliases[key] ?? key;
   const single = (key: string): { options: number; chosen: number | null } => {
@@ -168,6 +182,9 @@ function settingsOver(
       const chosen = single(key).chosen;
       return chosen === null ? undefined : OPTION_LABELS.get(resolve(key))?.[chosen];
     },
+    restoreFactory() {
+      load(restore(overrides));
+    },
     number: (key) => numbers.get(numeric(key))!,
     setNumber(key, value) {
       const stored = numeric(key);
@@ -183,7 +200,7 @@ function settingsOver(
 
 /** An in-memory store over `initial` (tests and widget rigs): nothing persists. */
 export function createMemorySettings(initial: StockSettingsSnapshot): StockSettings {
-  return settingsOver(initial, NO_OVERRIDES, () => {});
+  return settingsOver(initial, NO_OVERRIDES, () => {}, factorySettings);
 }
 
 /** Every tree node with its path from the top level. */
@@ -409,10 +426,21 @@ function factoryTables(): Pick<SettingsOverrides, "choices" | "marks"> {
 }
 
 /**
+ * The factory state (D5): virgin choices and marks under FACTORY_DEFAULTS, and only the texts
+ * and numbers of RESTORE_KEEPS.
+ */
+function factorySettings(current: SettingsOverrides): SettingsOverrides {
+  return {
+    ...factoryTables(),
+    texts: only(current.texts, RESTORE_KEEPS),
+    numbers: only(current.numbers, RESTORE_KEEPS),
+  };
+}
+
+/**
  * The settings record (D3): overrides of the virgin snapshot. Stale entries (an unknown key, an
  * index out of range, marks of the wrong length) are dropped on load; Restore factory settings
- * writes `factory` (D5): virgin choices and marks under FACTORY_DEFAULTS, and only the texts
- * and numbers of RESTORE_KEEPS.
+ * writes `factorySettings`.
  */
 export const SETTINGS_RECORD: EepromRecord<SettingsOverrides> = {
   name: "settings",
@@ -455,16 +483,18 @@ export const SETTINGS_RECORD: EepromRecord<SettingsOverrides> = {
     };
   },
   encode: (value) => ({ ...value }),
-  factory: (current) => ({
-    ...factoryTables(),
-    texts: only(current.texts, RESTORE_KEEPS),
-    numbers: only(current.numbers, RESTORE_KEEPS),
-  }),
+  factory: factorySettings,
 };
 
 /** The phone's settings over its EEPROM (D3): every write is stored at once. */
 export function createStockSettings(eeprom: StockEeprom): StockSettings {
-  return settingsOver(virgin(), eeprom.read(SETTINGS_RECORD), (overrides) =>
-    eeprom.write(SETTINGS_RECORD, overrides),
+  return settingsOver(
+    virgin(),
+    eeprom.read(SETTINGS_RECORD),
+    (overrides) => eeprom.write(SETTINGS_RECORD, overrides),
+    () => {
+      eeprom.restoreFactory();
+      return eeprom.read(SETTINGS_RECORD);
+    },
   );
 }

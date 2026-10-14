@@ -539,15 +539,56 @@ export const PHONE_SECURITY_KEY = "settings/security-settings/phone-security";
  */
 export const CODE_ERROR = { lines: ["Code", "error"], timeline: "code-error" } as const;
 
+/** A note after an accepted security code: its firmware lines and named timeline. */
+export interface AcceptNote {
+  readonly lines: readonly string[];
+  readonly timeline: string;
+}
+
+/** What an accepted security code opens (D8, Task 0c: `probe/accept-*`, all v6.39 captures). */
+export type AcceptFlow =
+  /** The `Off`/`On` list on the stored value; OK stores it, `note`, then the page. */
+  | { readonly kind: "phone-security"; readonly note: AcceptNote }
+  /**
+   * `enter`, then `verify` (the new code twice, masked); a match stores it, `note`, then the
+   * page; a mismatch, or a new code that is not 5 digits, shows `Code error`, then `enter`.
+   */
+  | {
+      readonly kind: "change-code";
+      readonly enter: readonly string[];
+      readonly verify: readonly string[];
+      readonly note: AcceptNote;
+    }
+  /** Restore factory settings (D5), `note`, then the page. */
+  | { readonly kind: "restore"; readonly note: AcceptNote }
+  /** `note`, then the page (erasing the timers is plan 22's). */
+  | { readonly kind: "note"; readonly note: AcceptNote };
+
 /**
- * Security-code leaves (D7): the leaf (or, for 4-5-5, the Clear timers page result) uses the
- * stock code entry. Until Task 7 an accepted code opens the placeholder of the plan named here.
+ * Security-code leaves (D7), by node number (4-5-5 is the Clear timers page result): they use
+ * the stock code entry, and an accepted code opens the flow. Strings are v6.39's
+ * (`$REF/extracted/6.39/text/english.txt`: `Enter new\nsecurity code:` 0x3d5, `Verify
+ * new\nsecurity code:` 0x3d6, `Security\ncode\nchanged` 0x3d3, `Settings\nrestored` 0x2d6), as
+ * the accept goldens show them; each note's timeline is its own recording's.
  */
-export const CODE_LEAVES: Readonly<Record<string, string>> = {
-  "6-3-5": "15", // Phone security
-  "6-3-6-1": "15", // Change security code
-  "6-4": "15", // Restore factory settings
-  "4-5-5": "22", // Show call duration › Clear timers
+export const ACCEPT_FLOWS: Readonly<Record<string, AcceptFlow>> = {
+  // probe/accept-6-3-5-off image j: `Done` (687/232/549 ms).
+  "6-3-5": { kind: "phone-security", note: { lines: ["Done"], timeline: "phone-security-done" } },
+  // probe/accept-6-3-6-1-match images a, g and m (680/232/537 ms).
+  "6-3-6-1": {
+    kind: "change-code",
+    enter: ["Enter new", "security code:"],
+    verify: ["Verify new", "security code:"],
+    note: { lines: ["Security", "code", "changed"], timeline: "security-code-changed" },
+  },
+  // probe/accept-c7-restore image h (689/233/523 ms; 6-4-restore 697/217/546, 6-4-new-code
+  // 679/233/515: c7's lies within 18 ms of both).
+  "6-4": {
+    kind: "restore",
+    note: { lines: ["Settings", "restored"], timeline: "settings-restored" },
+  },
+  // probe/accept-4-5-5 image h (689/245/511 ms).
+  "4-5-5": { kind: "note", note: { lines: ["Timers", "cleared"], timeline: "timers-cleared" } },
 };
 
 /**

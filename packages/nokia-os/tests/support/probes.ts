@@ -213,8 +213,119 @@ function codeWrong(id: string, number: string): void {
   timeline(id, after(CODE_LEAVES[number]!), "navi", [...digits, [7, "navi"], [9, "c"]]);
 }
 
+const STANDBY = "c*5 wait:2000";
+/** At standby with the code changed to 11111 (Change security code, a matching verify). */
+const CODE_11111 = `${CODE_LEAVES["6-3-6-1"]} navi 1 2 3 4 5 navi 1*5 navi 1*5 navi wait:3000 ${STANDBY}`;
+/** At standby with Phone security On, set with `code`. */
+const securityOn = (code: string) =>
+  `${CODE_LEAVES["6-3-5"]} navi ${code.split("").join(" ")} navi down navi wait:3000 ${STANDBY}`;
+/** At Change security code's `Enter new security code:` prompt. */
+const ENTER_NEW = `${CODE_LEAVES["6-3-6-1"]} navi 1 2 3 4 5 navi`;
+
+/** Keys on golden rows `from`, `from + 1`, …: one digit each. */
+function digitsAt(from: number, digits: string): Later[] {
+  return digits.split("").map((digit, i) => [from + i, digit as PhoneKey] as const);
+}
+
 export const PROBE_SCENARIOS: Record<string, (id: string) => void> = {
   "probe/persist-reboot": persistReboot,
+
+  // Plan 15 0c: accepted codes (v6.39 with the re-provisioned code). Each note plays its own
+  // recording's timeline, so only the notes recorded elsewhere compare within ±25 ms (JITTER).
+  "probe/accept-6-3-5-on": (id) =>
+    timeline(id, after(CODE_LEAVES["6-3-5"]!), "navi", [
+      ...digitsAt(3, "12345"),
+      [8, "navi"],
+      [9, "down"],
+      [10, "navi"],
+    ]),
+  "probe/accept-6-3-5-off": (id) =>
+    timeline(id, after(`${securityOn("12345")} ${CODE_LEAVES["6-3-5"]}`), "navi", [
+      ...digitsAt(2, "12345"),
+      [7, "navi"],
+      [8, "down"],
+      [9, "navi"],
+    ]),
+  // Code error plays probe/code-wrong-6-4's timeline (2904 ms; here 2911 ms).
+  "probe/accept-6-3-6-1-mismatch": (id) =>
+    timeline(
+      id,
+      after(CODE_LEAVES["6-3-6-1"]!),
+      "navi",
+      [
+        ...digitsAt(2, "12345"),
+        [7, "navi"],
+        ...digitsAt(8, "11111"),
+        [13, "navi"],
+        ...digitsAt(14, "22222"),
+        [19, "navi"],
+      ],
+      JITTER,
+    ),
+  // New codes of 4, 6, 0 and 10 digits; Code error as above (2910-2918 ms here).
+  "probe/accept-6-3-6-1-lengths": (id) =>
+    timeline(
+      id,
+      after(ENTER_NEW),
+      "1",
+      [
+        ...digitsAt(2, "234"),
+        [5, "navi"],
+        ...digitsAt(7, "123456"),
+        [13, "navi"],
+        [15, "navi"],
+        ...digitsAt(17, "1234567890"),
+        [27, "navi"],
+      ],
+      JITTER,
+    ),
+  "probe/accept-6-3-6-1-match": (id) =>
+    timeline(id, after(ENTER_NEW), "1", [
+      ...digitsAt(2, "1111"),
+      [6, "navi"],
+      ...digitsAt(7, "11111"),
+      [12, "navi"],
+    ]),
+  // Code error as above (2919 ms here).
+  "probe/accept-6-4-old-code": (id) =>
+    timeline(
+      id,
+      after(`${CODE_11111} ${CODE_LEAVES["6-4"]}`),
+      "navi",
+      [...digitsAt(2, "12345"), [7, "navi"]],
+      JITTER,
+    ),
+  // Settings restored plays probe/accept-c7-restore's timeline (18 ms off this recording's).
+  "probe/accept-6-4-new-code": (id) =>
+    timeline(
+      id,
+      after(`${CODE_11111} ${RESTORE_PROMPT}`),
+      "1",
+      [...digitsAt(2, "1111"), [6, "navi"]],
+      JITTER,
+    ),
+  // As above (15 ms off).
+  "probe/accept-6-4-restore": (id) =>
+    timeline(
+      id,
+      after(CODE_LEAVES["6-4"]!),
+      "navi",
+      [...digitsAt(2, "12345"), [7, "navi"]],
+      JITTER,
+    ),
+  "probe/accept-c7-restore": (id) =>
+    timeline(id, after(`${CODE_11111} ${securityOn("11111")} ${CODE_LEAVES["6-4"]}`), "navi", [
+      ...digitsAt(2, "11111"),
+      [7, "navi"],
+    ]),
+  "probe/accept-4-5-5": (id) =>
+    timeline(id, after(CODE_LEAVES["4-5-5"]!), "navi", [...digitsAt(2, "12345"), [7, "navi"]]),
+  // Phone security On (code 11111), then Restore factory settings: the page reads Off.
+  "probe/accept-restore-phone-security": (id) =>
+    stills(id, standbyRig(), [
+      `${CODE_11111} ${securityOn("11111")} ${CODE_LEAVES["6-3-5"]}`,
+      `${STANDBY} ${CODE_LEAVES["6-4"]} navi 1*5 navi wait:3000 ${STANDBY} ${CODE_LEAVES["6-3-5"]}`,
+    ]),
   ...Object.fromEntries(
     Object.keys(CODE_LEAVES).map((number) => [
       `probe/code-wrong-${number}`,

@@ -7272,6 +7272,126 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
+    "phone-security-done": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 687
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 549
+        }
+      ]
+    },
+    "security-code-changed": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 680
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 537
+        }
+      ]
+    },
+    "settings-restored": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 689
+        },
+        {
+          "frame": 1,
+          "durationMs": 233
+        },
+        {
+          "frame": 2,
+          "durationMs": 523
+        }
+      ]
+    },
+    "timers-cleared": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 689
+        },
+        {
+          "frame": 1,
+          "durationMs": 245
+        },
+        {
+          "frame": 2,
+          "durationMs": 511
+        }
+      ]
+    },
     "invalid-shortcut": {
       "frames": [
         {
@@ -7491,6 +7611,10 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "level-5-done": "level-5-done",
     "reminder-memory-empty": "reminder-memory-empty",
     "code-error": "code-error",
+    "phone-security-done": "phone-security-done",
+    "security-code-changed": "security-code-changed",
+    "settings-restored": "settings-restored",
+    "timers-cleared": "timers-cleared",
     "invalid-shortcut": "invalid-shortcut",
     "game-over-note": "game-over-note",
     "game-over-fireworks": "game-over-fireworks"

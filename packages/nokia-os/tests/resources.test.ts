@@ -488,8 +488,12 @@ describe("widget sprites and timelines", () => {
       "game-over-note",
       "invalid-shortcut",
       "level-5-done",
+      "phone-security-done",
       "reminder-memory-empty",
       "request-not-confirmed",
+      "security-code-changed",
+      "settings-restored",
+      "timers-cleared",
     ]);
     expect(describeSteps(WIDGET_TIMELINE_BY_NAME["invalid-shortcut"]!)).toEqual([
       "note/error:2903",
@@ -497,6 +501,22 @@ describe("widget sprites and timelines", () => {
     ]);
     // Plan 15 A4: a wrong security code, then the empty prompt (probe/code-wrong-6-4).
     expect(describeSteps(WIDGET_TIMELINE_BY_NAME["code-error"]!)).toEqual(["note/error:2904"]);
+    // Plan 15 0c: the ticks after an accepted code, each from its own recording.
+    const tick = (box: number, half: number, full: number) => [
+      `note/tick-box:${box}`,
+      `note/tick-half:${half}`,
+      `note/tick:${full}`,
+    ];
+    expect(describeSteps(WIDGET_TIMELINE_BY_NAME["phone-security-done"]!)).toEqual(
+      tick(687, 232, 549),
+    );
+    expect(describeSteps(WIDGET_TIMELINE_BY_NAME["security-code-changed"]!)).toEqual(
+      tick(680, 232, 537),
+    );
+    expect(describeSteps(WIDGET_TIMELINE_BY_NAME["settings-restored"]!)).toEqual(
+      tick(689, 233, 523),
+    );
+    expect(describeSteps(WIDGET_TIMELINE_BY_NAME["timers-cleared"]!)).toEqual(tick(689, 245, 511));
   });
 
   it("plays the game-over note, and the fireworks before TOP SCORE: as captured (plan 23 D13)", () => {

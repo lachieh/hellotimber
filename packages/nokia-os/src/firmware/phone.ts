@@ -77,7 +77,7 @@ export function createStockPhoneWith(
   const eeprom = new StockEeprom(config.storage ?? createMemoryStorage());
   const settings = createStockSettings(eeprom);
   let now = 0;
-  const security = new StockSecurity(eeprom, settings, () => now);
+  const security = new StockSecurity(eeprom, settings, { now: () => now });
   const ports = { clock, date };
   const clockGames = createStockGames(ports, () => now);
   const games = {
