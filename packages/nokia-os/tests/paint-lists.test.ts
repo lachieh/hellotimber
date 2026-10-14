@@ -1,8 +1,8 @@
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { rowsWindowTop, SubmenuEntry, type ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
+import { readGoldenIndex } from "../scripts/golden-index.ts";
 import { paintIndicator } from "../src/display/indicator";
 import { paintRail, railBumpTop } from "../src/display/rail";
 import { createStockMenu } from "../src/firmware/menu";
@@ -12,14 +12,7 @@ import { goldenImage, loadGolden } from "./support/goldens.ts";
 
 type List = Extract<ScreenModel, { kind: "list" }>;
 
-interface IndexEntry {
-  id: string;
-  status: string;
-}
-
-const INDEX: IndexEntry[] = JSON.parse(
-  readFileSync(join(import.meta.dirname, "../goldens/index.json"), "utf8"),
-);
+const INDEX = readGoldenIndex(join(import.meta.dirname, "../goldens"));
 
 // Clock settings and Date setting show the emulator's clock and setup date (D11 test inputs).
 const menu = createStockMenu({ clock: () => "10:10", date: () => "13.10.2026" });

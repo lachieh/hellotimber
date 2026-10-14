@@ -1,0 +1,370 @@
+[
+  {
+    "id": "boot/power-on",
+    "file": "boot/power-on.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 12
+  },
+  {
+    "id": "menu/01-phone-book",
+    "file": "menu/01-phone-book.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/01-phone-book.anim",
+    "file": "menu/01-phone-book.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 12
+  },
+  {
+    "id": "menu/01-phone-book.sub",
+    "file": "menu/01-phone-book.sub.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "menu/01-phone-book.sub-up",
+    "file": "menu/01-phone-book.sub-up.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "menu/02-messages",
+    "file": "menu/02-messages.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/02-messages.anim",
+    "file": "menu/02-messages.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 15,
+    "frames": 18
+  },
+  {
+    "id": "menu/02-messages.sub",
+    "file": "menu/02-messages.sub.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "menu/03-chat",
+    "file": "menu/03-chat.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/03-chat.anim",
+    "file": "menu/03-chat.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 15
+  },
+  {
+    "id": "menu/03-chat.sub",
+    "file": "menu/03-chat.sub.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "menu/04-call-register",
+    "file": "menu/04-call-register.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/04-call-register.anim",
+    "file": "menu/04-call-register.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 14
+  },
+  {
+    "id": "menu/04-call-register.sub",
+    "file": "menu/04-call-register.sub.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "menu/05-tones",
+    "file": "menu/05-tones.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/05-tones.anim",
+    "file": "menu/05-tones.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 18,
+    "frames": 19
+  },
+  {
+    "id": "menu/05-tones.sub",
+    "file": "menu/05-tones.sub.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 9,
+    "frames": 9
+  },
+  {
+    "id": "menu/06-settings",
+    "file": "menu/06-settings.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/06-settings.anim",
+    "file": "menu/06-settings.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 9,
+    "frames": 9
+  },
+  {
+    "id": "menu/06-settings.sub",
+    "file": "menu/06-settings.sub.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "menu/07-call-divert",
+    "file": "menu/07-call-divert.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/07-call-divert.anim",
+    "file": "menu/07-call-divert.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 12,
+    "frames": 13
+  },
+  {
+    "id": "menu/07-call-divert.sub",
+    "file": "menu/07-call-divert.sub.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "menu/08-games",
+    "file": "menu/08-games.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/08-games.anim",
+    "file": "menu/08-games.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 14
+  },
+  {
+    "id": "menu/08-games.sub",
+    "file": "menu/08-games.sub.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "menu/09-calculator",
+    "file": "menu/09-calculator.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/09-calculator.anim",
+    "file": "menu/09-calculator.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 14,
+    "frames": 15
+  },
+  {
+    "id": "menu/09-calculator.sub",
+    "file": "menu/09-calculator.sub.lcd.txt",
+    "status": "pending:20",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/10-reminders",
+    "file": "menu/10-reminders.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/10-reminders.anim",
+    "file": "menu/10-reminders.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 15,
+    "frames": 16
+  },
+  {
+    "id": "menu/10-reminders.sub",
+    "file": "menu/10-reminders.sub.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "menu/11-clock",
+    "file": "menu/11-clock.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/11-clock.anim",
+    "file": "menu/11-clock.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 9,
+    "frames": 10
+  },
+  {
+    "id": "menu/11-clock.sub",
+    "file": "menu/11-clock.sub.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "menu/11-clock.sub-0759",
+    "file": "menu/11-clock.sub-0759.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "menu/11-clock.sub-1948",
+    "file": "menu/11-clock.sub-1948.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "menu/12-profiles",
+    "file": "menu/12-profiles.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "menu/12-profiles.anim",
+    "file": "menu/12-profiles.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 10
+  },
+  {
+    "id": "menu/12-profiles.sub",
+    "file": "menu/12-profiles.sub.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "menu/return.anim",
+    "file": "menu/return.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 9,
+    "frames": 11
+  },
+  {
+    "id": "menu/revisit.anim",
+    "file": "menu/revisit.anim.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 9,
+    "frames": 10
+  },
+  {
+    "id": "standby/idle",
+    "file": "standby/idle.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "standby/standby",
+    "file": "standby/standby.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "standby/standby-0759",
+    "file": "standby/standby-0759.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "standby/standby-1948",
+    "file": "standby/standby-1948.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  }
+]

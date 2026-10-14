@@ -1,18 +1,14 @@
 // Lookups in the generated stock tree for widget tests.
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { MenuIndicator } from "@hellotimber/phone-core";
+import { readGoldenIndex, type GoldenIndexEntry } from "../../scripts/golden-index.ts";
 import { settingKey } from "../../src/firmware/bindings";
 import { STOCK_TREE, type StockTreeNode } from "../../src/firmware/generated/stock-tree";
 
-export interface IndexEntry {
-  readonly id: string;
-  readonly status: string;
-  readonly covers?: readonly string[];
-}
+export type { GoldenIndexEntry as IndexEntry } from "../../scripts/golden-index.ts";
 
-export const INDEX: readonly IndexEntry[] = JSON.parse(
-  readFileSync(join(import.meta.dirname, "../../goldens/index.json"), "utf8"),
+export const INDEX: readonly GoldenIndexEntry[] = readGoldenIndex(
+  join(import.meta.dirname, "../../goldens"),
 );
 
 /** The tree node numbered `number` and the path to it from the top level. */

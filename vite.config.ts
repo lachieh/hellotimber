@@ -14,7 +14,7 @@ export default defineConfig({
       "**/routeTree.gen.ts",
       "**/public/**",
       "packages/nokia-os/src/resources/generated/**",
-      "packages/nokia-os/goldens/index.json",
+      "packages/nokia-os/goldens/index/**",
       // Plan 14: the stock tree and the tree text runs, written by scripts/import-tree.ts.
       "packages/nokia-os/src/firmware/generated/**",
       "packages/nokia-os/scripts/generated/**",

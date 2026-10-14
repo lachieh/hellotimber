@@ -24,6 +24,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { MENU_SLUGS } from "./capture-set.ts";
+import { readGoldenIndex } from "./golden-index.ts";
 import { TREE_TEXT_RUNS } from "./generated/tree-text-runs.ts";
 import { GLYPH_OVERRIDES } from "./glyph-overrides.ts";
 import {
@@ -713,12 +714,7 @@ function extractWidgets(goldensDir: string): WidgetData {
 
   const screens = treeScreens();
   const byNode: Record<string, string> = {};
-  const index = JSON.parse(readFileSync(join(goldensDir, "index.json"), "utf8")) as {
-    id: string;
-    status: string;
-    kind: string;
-    covers?: string[];
-  }[];
+  const index = readGoldenIndex(goldensDir);
   for (const entry of index) {
     if (entry.status !== "asserted" || entry.kind !== "timeline" || !entry.covers) continue;
     const kinds = new Set(
@@ -766,12 +762,7 @@ export function extractResources(goldensDir: string = GOLDENS_DIR): ExtractedRes
     ),
     sounds: extractSoundResources(
       (id) => parseSoundGolden(readFileSync(join(goldensDir, `${id}.sound.txt`), "utf8"), id),
-      (
-        JSON.parse(readFileSync(join(goldensDir, "index.json"), "utf8")) as {
-          id: string;
-          kind: string;
-        }[]
-      )
+      readGoldenIndex(goldensDir)
         .filter((entry) => entry.kind === "sound")
         .map((entry) => entry.id),
     ),

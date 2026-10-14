@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vite-plus/test";
 import { extractResources, inferLoop, toTimeline } from "../scripts/extract-resources.ts";
 import { TREE_TEXT_RUNS } from "../scripts/generated/tree-text-runs.ts";
+import { readGoldenIndex } from "../scripts/golden-index.ts";
 import { TEXT_RUNS } from "../scripts/text-runs.ts";
 import { placeholderOwner } from "../scripts/tree-capture-set.ts";
 import { WIDGET_SPRITES as CROPS } from "../scripts/widget-sprites.ts";
@@ -410,9 +411,7 @@ describe("widget sprites and timelines", () => {
   });
 
   it("gives every asserted in-scope note and progress note, and every game splash, a timeline", () => {
-    const index = JSON.parse(
-      readFileSync(join(import.meta.dirname, "../goldens/index.json"), "utf8"),
-    ) as { id: string; status: string; kind: string; covers?: string[] }[];
+    const index = readGoldenIndex(join(import.meta.dirname, "../goldens"));
     const kinds = new Map<string, string>();
     const visit = (node: StockTreeNode): void => {
       kinds.set(node.number, node.opens.kind);

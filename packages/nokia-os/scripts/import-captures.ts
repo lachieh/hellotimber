@@ -2,30 +2,33 @@
 //
 //   mise exec -- vp run @hellotimber/nokia-os#import-captures /path/to/nokia-3310
 //
-// Executes scripts/capture-set.ts plus the plan 14 tree selection (scripts/tree-capture-set.ts
-// over `captures/6.39/tree.json`), the plan 23 game set (scripts/game-capture-set.ts) and the plan
-// 16 sound set (scripts/sound-capture-set.ts), writes goldens/<id>.lcd.txt,
-// goldens/game/snake/periods.ticks.txt, goldens/sound/**.sound.txt and goldens/index.json, and
-// deletes fixtures the tables no longer produce. Idempotent: a second run changes nothing.
+// Executes every plan's capture set (scripts/capture-sets/index.ts: LCD goldens, tick fixtures and
+// sound goldens), writes goldens/<id>.lcd.txt, <id>.ticks.txt and <id>.sound.txt and one index
+// per plan (goldens/index/<NN>.json, scripts/golden-index.ts), and deletes fixtures and index
+// files the sets no longer produce. Idempotent: a second run changes nothing.
 // Runs under Node's type stripping: imports only node:* and sibling scripts with .ts extensions.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  CAPTURE_SET,
-  NOT_IMPORTED,
-  type CaptureSetEntry,
-  type CaptureSource,
-  type FrameRange,
-  type SourceChoice,
+import type {
+  CaptureIo,
+  CaptureSetEntry,
+  CaptureSource,
+  FrameRange,
+  PlanCaptureSet,
+  SourceChoice,
 } from "./capture-set.ts";
+import * as CAPTURE_SETS from "./capture-sets/index.ts";
+import type { GameCaptureIo, GameKeyRow } from "./game-capture-set.ts";
 import {
-  gameCaptureSet,
-  periodFixture,
-  type GameCaptureIo,
-  type GameKeyRow,
-} from "./game-capture-set.ts";
+  GOLDEN_INDEX_DIR,
+  indexedPlans,
+  PLAN_NUMBER,
+  planIndexPath,
+  serializePlanIndex,
+  type GoldenIndexEntry,
+} from "./golden-index.ts";
 import {
   parseGolden,
   parseTickGolden,
@@ -39,31 +42,12 @@ import {
   type TickGolden,
 } from "./golden-format.ts";
 import { decodeLcdPng } from "./png.ts";
-import { SOUND_NOT_IMPORTED, soundCaptureSet, type SoundCaptureIo } from "./sound-capture-set.ts";
-import { parseSoundGolden, serializeSoundGolden, type SoundGolden } from "./sound-format.ts";
-import {
-  probeCaptureSet,
-  treeCaptureSet,
-  type RecordingFrame,
-  type TreeCaptureIo,
-  type TreeJson,
-} from "./tree-capture-set.ts";
+import type { SoundCaptureIo } from "./sound-capture-set.ts";
+import { parseSoundGolden, serializeSoundGolden } from "./sound-format.ts";
+import type { RecordingFrame, TreeCaptureIo, TreeJson } from "./tree-capture-set.ts";
 
 const CAPTURES = "captures/6.39";
 const GOLDENS = resolve(dirname(fileURLToPath(import.meta.url)), "../goldens");
-
-type IndexEntry =
-  | {
-      id: string;
-      file: string;
-      status: string;
-      kind: "still" | "timeline" | "ticks";
-      images: number;
-      frames: number;
-      covers?: readonly string[];
-      input?: true;
-    }
-  | { id: string; file: string; status: string; kind: "sound"; events: number };
 
 interface TimingRow {
   frame: number;
@@ -75,6 +59,19 @@ interface TimingRow {
 
 const LCD_MODES: Record<string, LcdMode> = { "0": "blank", "2": "normal", "3": "inverse" };
 
+/** The registered capture sets in plan order; each plan number once. */
+function captureSets(): PlanCaptureSet[] {
+  const sets = Object.values(CAPTURE_SETS) as PlanCaptureSet[];
+  for (const set of sets) {
+    if (!PLAN_NUMBER.test(set.plan)) fail(`capture set plan "${set.plan}" is not a plan number`);
+    if (sets.filter((other) => other.plan === set.plan).length > 1) {
+      fail(`two capture sets for plan ${set.plan}`);
+    }
+  }
+  const order = (plan: string): number => Number.parseInt(plan, 10);
+  return sets.sort((a, b) => order(a.plan) - order(b.plan) || (a.plan < b.plan ? -1 : 1));
+}
+
 function main(): void {
   const ref = process.argv[2];
   if (!ref) fail("usage: import-captures <REF> (the nokia-3310 capture corpus directory)");
@@ -83,94 +80,108 @@ function main(): void {
 
   const treePath = join(root, "tree.json");
   if (!existsSync(treePath)) fail(`missing ${treePath}: the plan 14 menu-tree crawl`);
-  const tree = JSON.parse(readFileSync(treePath, "utf8")) as TreeJson;
-  let treeEntries: CaptureSetEntry[];
-  let gameEntries: CaptureSetEntry[];
-  let periods: ReturnType<typeof periodFixture>;
-  let sounds: SoundGolden[];
-  try {
-    treeEntries = [...probeCaptureSet(captureIo(root)), ...treeCaptureSet(tree, captureIo(root))];
-    gameEntries = gameCaptureSet(gameIo(root));
-    periods = periodFixture(gameIo(root));
-    sounds = soundCaptureSet(soundIo(root));
-  } catch (error) {
-    return fail((error as Error).message);
-  }
+  const io: CaptureIo = {
+    tree: JSON.parse(readFileSync(treePath, "utf8")) as TreeJson,
+    frames: captureIo(root),
+    game: gameIo(root),
+    sound: soundIo(root),
+  };
 
+  const sets = captureSets();
   const written = new Set<string>();
-  const index: IndexEntry[] = [];
+  const indexes = new Map<string, GoldenIndexEntry[]>();
   const fallbacks: string[] = [];
-  for (const entry of [...CAPTURE_SET, ...treeEntries, ...gameEntries]) {
-    const choice = chooseSource(root, entry);
-    if (!choice) {
-      console.log(`skip  ${entry.id} (optional; no capture)`);
-      continue;
-    }
-    if (choice === entry.fallback) {
-      fallbacks.push(entry.id);
-      console.log(
-        `FALLBACK ${entry.id}: ${describe(entry.prefer.source)} missing; using ${describe(choice.source)}`,
-      );
-    }
-    const golden = buildGolden(root, entry, choice);
-    const text = serializeGolden(golden);
-    parseGolden(text, `${entry.id}.lcd.txt`); // the importer never writes an invalid fixture
-    const file = `${entry.id}.lcd.txt`;
+  const write = (plan: string, file: string, text: string, entry: GoldenIndexEntry): void => {
     const path = join(GOLDENS, file);
+    if (written.has(path)) fail(`${entry.id}: listed twice`);
     mkdirSync(dirname(path), { recursive: true });
     writeIfChanged(path, text);
     written.add(path);
-    index.push({
-      id: golden.id,
-      file,
-      status: golden.status,
-      kind: entry.kind,
-      images: golden.images.length,
-      frames: golden.timeline ? golden.timeline.length : golden.images.length,
-      ...(golden.covers ? { covers: golden.covers } : {}),
-      ...(golden.input ? { input: true as const } : {}),
-    });
-  }
-
-  const hash = createHash("sha256");
-  for (const file of periods.timings) hash.update(readFileSync(join(root, file)));
-  const ticks: TickGolden = {
-    id: periods.id,
-    status: periods.status,
-    source: periods.source,
-    sourceSha256: hash.digest("hex"),
-    note: periods.note,
-    rows: periods.rows,
+    indexes.get(plan)!.push(entry);
   };
-  const ticksText = serializeTickGolden(ticks);
-  const ticksFile = `${ticks.id}.ticks.txt`;
-  parseTickGolden(ticksText, ticksFile);
-  mkdirSync(dirname(join(GOLDENS, ticksFile)), { recursive: true });
-  writeIfChanged(join(GOLDENS, ticksFile), ticksText);
-  written.add(join(GOLDENS, ticksFile));
-  index.push({
-    id: ticks.id,
-    file: ticksFile,
-    status: ticks.status,
-    kind: "ticks",
-    images: 0,
-    frames: ticks.rows.length,
-  });
+  // Every set selects its goldens before anything is written.
+  let planned: {
+    readonly set: PlanCaptureSet;
+    readonly lcd: readonly CaptureSetEntry[];
+    readonly ticks: ReturnType<NonNullable<PlanCaptureSet["ticks"]>>;
+    readonly sounds: ReturnType<NonNullable<PlanCaptureSet["sounds"]>>;
+  }[];
+  try {
+    planned = sets.map((set) => ({
+      set,
+      lcd: set.lcd?.(io) ?? [],
+      ticks: set.ticks?.(io) ?? [],
+      sounds: set.sounds?.(io) ?? [],
+    }));
+  } catch (error) {
+    return fail((error as Error).message);
+  }
+  for (const { set, lcd, ticks, sounds } of planned) {
+    indexes.set(set.plan, []);
+    for (const entry of lcd) {
+      const choice = chooseSource(root, entry);
+      if (!choice) {
+        console.log(`skip  ${entry.id} (optional; no capture)`);
+        continue;
+      }
+      if (choice === entry.fallback) {
+        fallbacks.push(entry.id);
+        console.log(
+          `FALLBACK ${entry.id}: ${describe(entry.prefer.source)} missing; using ${describe(choice.source)}`,
+        );
+      }
+      const golden = buildGolden(root, entry, choice);
+      const text = serializeGolden(golden);
+      const file = `${entry.id}.lcd.txt`;
+      parseGolden(text, file); // the importer never writes an invalid fixture
+      write(set.plan, file, text, {
+        id: golden.id,
+        file,
+        status: golden.status,
+        kind: entry.kind,
+        images: golden.images.length,
+        frames: golden.timeline ? golden.timeline.length : golden.images.length,
+        ...(golden.covers ? { covers: golden.covers } : {}),
+        ...(golden.input ? { input: true as const } : {}),
+      });
+    }
 
-  for (const golden of sounds) {
-    const text = serializeSoundGolden(golden);
-    const file = `${golden.id}.sound.txt`;
-    parseSoundGolden(text, file); // the importer never writes an invalid fixture
-    mkdirSync(dirname(join(GOLDENS, file)), { recursive: true });
-    writeIfChanged(join(GOLDENS, file), text);
-    written.add(join(GOLDENS, file));
-    index.push({
-      id: golden.id,
-      file,
-      status: golden.status,
-      kind: "sound",
-      events: golden.rows.length,
-    });
+    for (const fixture of ticks) {
+      const hash = createHash("sha256");
+      for (const file of fixture.timings) hash.update(readFileSync(join(root, file)));
+      const golden: TickGolden = {
+        id: fixture.id,
+        status: fixture.status,
+        source: fixture.source,
+        sourceSha256: hash.digest("hex"),
+        note: fixture.note,
+        rows: fixture.rows,
+      };
+      const text = serializeTickGolden(golden);
+      const file = `${golden.id}.ticks.txt`;
+      parseTickGolden(text, file);
+      write(set.plan, file, text, {
+        id: golden.id,
+        file,
+        status: golden.status,
+        kind: "ticks",
+        images: 0,
+        frames: golden.rows.length,
+      });
+    }
+
+    for (const golden of sounds) {
+      const text = serializeSoundGolden(golden);
+      const file = `${golden.id}.sound.txt`;
+      parseSoundGolden(text, file); // the importer never writes an invalid fixture
+      write(set.plan, file, text, {
+        id: golden.id,
+        file,
+        status: golden.status,
+        kind: "sound",
+        events: golden.rows.length,
+      });
+    }
   }
 
   for (const stale of listFixtures(GOLDENS)) {
@@ -179,17 +190,27 @@ function main(): void {
       console.log(`removed stale ${relative(GOLDENS, stale)}`);
     }
   }
-  index.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-  writeIfChanged(join(GOLDENS, "index.json"), `${JSON.stringify(index, null, 2)}\n`);
+  mkdirSync(join(GOLDENS, GOLDEN_INDEX_DIR), { recursive: true });
+  for (const [plan, entries] of indexes) {
+    writeIfChanged(planIndexPath(GOLDENS, plan), serializePlanIndex(entries));
+  }
+  for (const plan of indexedPlans(GOLDENS)) {
+    if (indexes.has(plan)) continue;
+    rmSync(planIndexPath(GOLDENS, plan));
+    console.log(`removed stale ${GOLDEN_INDEX_DIR}/${plan}.json`);
+  }
 
-  const asserted = index.filter((e) => e.status === "asserted").length;
+  const all = [...indexes.values()].flat();
+  const asserted = all.filter((e) => e.status === "asserted").length;
   console.log(
-    `\n${index.length} fixtures (${asserted} asserted, ${index.length - asserted} pending) in ${relative(process.cwd(), GOLDENS) || "."}`,
+    `\n${all.length} fixtures (${asserted} asserted, ${all.length - asserted} pending) in ${relative(process.cwd(), GOLDENS) || "."}`,
   );
   console.log(fallbacks.length ? `fallbacks: ${fallbacks.join(", ")}` : "fallbacks: none");
   console.log("not imported (artefacts / out of scope):");
-  for (const [what, why] of Object.entries({ ...NOT_IMPORTED, ...SOUND_NOT_IMPORTED })) {
-    console.log(`  ${what}: ${why}`);
+  for (const set of sets) {
+    for (const [what, why] of Object.entries(set.notImported ?? {})) {
+      console.log(`  ${what}: ${why}`);
+    }
   }
 }
 

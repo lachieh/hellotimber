@@ -16,23 +16,20 @@ import {
   parseTickGolden,
   type Golden,
 } from "../scripts/golden-format.ts";
+import * as CAPTURE_SETS from "../scripts/capture-sets/index.ts";
+import {
+  indexedPlans,
+  readGoldenIndex,
+  readPlanIndex,
+  type GoldenIndexEntry,
+} from "../scripts/golden-index.ts";
 import { parseSoundGolden } from "../scripts/sound-format.ts";
 
 const GOLDENS = join(import.meta.dirname, "../goldens");
 
-interface IndexEntry {
-  id: string;
-  file: string;
-  status: string;
-  kind: "still" | "timeline" | "ticks" | "sound";
-  images?: number;
-  frames?: number;
-  events?: number;
-  covers?: string[];
-  input?: true;
-}
+type IndexEntry = GoldenIndexEntry;
 
-const index = JSON.parse(readFileSync(join(GOLDENS, "index.json"), "utf8")) as IndexEntry[];
+const index: readonly IndexEntry[] = readGoldenIndex(GOLDENS);
 
 function fixtureFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -47,6 +44,15 @@ describe("committed goldens", () => {
     const ids = index.map((entry) => entry.id);
     expect(new Set(ids).size).toBe(ids.length);
     expect(ids).toEqual([...ids].sort());
+  });
+
+  it("has one index file per registered capture set (goldens/index/<plan>.json)", () => {
+    const plans = Object.values(CAPTURE_SETS).map((set) => set.plan);
+    expect(indexedPlans(GOLDENS)).toEqual([...plans].sort());
+    for (const plan of plans) {
+      const ids = readPlanIndex(GOLDENS, plan).map((entry) => entry.id);
+      expect(ids, plan).toEqual([...ids].sort());
+    }
   });
 
   it("indexes every fixture file", () => {

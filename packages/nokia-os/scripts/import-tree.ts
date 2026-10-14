@@ -11,6 +11,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseGolden } from "./golden-format.ts";
+import { readGoldenIndex } from "./golden-index.ts";
 import type { TextRun } from "./harvest-glyphs.ts";
 import { decodeLcdPng } from "./png.ts";
 import type { TreeJson } from "./tree-capture-set.ts";
@@ -103,11 +104,6 @@ export interface StockTreeNode {
   readonly children?: readonly StockTreeNode[];
 }
 `;
-
-interface IndexEntry {
-  id: string;
-  file: string;
-}
 
 function main(): void {
   const ref = process.argv[2];
@@ -209,7 +205,7 @@ function treeTextRuns(
     const path = join(root, "plan14", rel);
     byPixels.set(pixelKey(decodeLcdPng(readFileSync(path), path)), ocr[rel]!);
   }
-  const index = JSON.parse(readFileSync(join(GOLDENS, "index.json"), "utf8")) as IndexEntry[];
+  const index = readGoldenIndex(GOLDENS);
   const out: Record<string, Record<string, TextRun[]>> = {};
   for (const entry of index) {
     if (!entry.id.startsWith("tree/") && !entry.id.startsWith("probe/")) continue;

@@ -1,0 +1,1003 @@
+[
+  {
+    "id": "game/snake/after-long",
+    "file": "game/snake/after-long.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "game/snake/after-long-top-score",
+    "file": "game/snake/after-long-top-score.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 17
+  },
+  {
+    "id": "game/snake/after-short",
+    "file": "game/snake/after-short.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "game/snake/after-virgin",
+    "file": "game/snake/after-virgin.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "game/snake/after-virgin-top-score",
+    "file": "game/snake/after-virgin-top-score.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 17
+  },
+  {
+    "id": "game/snake/bot-grace",
+    "file": "game/snake/bot-grace.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 33,
+    "frames": 33,
+    "input": true
+  },
+  {
+    "id": "game/snake/bot-grace.death",
+    "file": "game/snake/bot-grace.death.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 12
+  },
+  {
+    "id": "game/snake/bot-long",
+    "file": "game/snake/bot-long.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 121,
+    "frames": 121,
+    "input": true
+  },
+  {
+    "id": "game/snake/bot-long.death",
+    "file": "game/snake/bot-long.death.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 9,
+    "frames": 15
+  },
+  {
+    "id": "game/snake/bot-maze2",
+    "file": "game/snake/bot-maze2.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 19,
+    "frames": 19,
+    "input": true
+  },
+  {
+    "id": "game/snake/bot-maze2.death",
+    "file": "game/snake/bot-maze2.death.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 12
+  },
+  {
+    "id": "game/snake/bot-maze3",
+    "file": "game/snake/bot-maze3.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 23,
+    "frames": 23,
+    "input": true
+  },
+  {
+    "id": "game/snake/bot-maze3.death",
+    "file": "game/snake/bot-maze3.death.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 12
+  },
+  {
+    "id": "game/snake/bot-short",
+    "file": "game/snake/bot-short.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 13,
+    "frames": 13,
+    "input": true
+  },
+  {
+    "id": "game/snake/bot-short.death",
+    "file": "game/snake/bot-short.death.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 12
+  },
+  {
+    "id": "game/snake/creature-0914",
+    "file": "game/snake/creature-0914.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 9,
+    "frames": 9,
+    "input": true
+  },
+  {
+    "id": "game/snake/creature-0956",
+    "file": "game/snake/creature-0956.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8,
+    "input": true
+  },
+  {
+    "id": "game/snake/creature-1007",
+    "file": "game/snake/creature-1007.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 11,
+    "frames": 11,
+    "input": true
+  },
+  {
+    "id": "game/snake/creature-1021",
+    "file": "game/snake/creature-1021.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8,
+    "input": true
+  },
+  {
+    "id": "game/snake/creature-1035",
+    "file": "game/snake/creature-1035.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 9,
+    "frames": 9,
+    "input": true
+  },
+  {
+    "id": "game/snake/creature-1107",
+    "file": "game/snake/creature-1107.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 10,
+    "frames": 10,
+    "input": true
+  },
+  {
+    "id": "game/snake/creature-1221",
+    "file": "game/snake/creature-1221.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 11,
+    "frames": 11,
+    "input": true
+  },
+  {
+    "id": "game/snake/gameover-blink-navi",
+    "file": "game/snake/gameover-blink-navi.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "game/snake/gameover-fireworks-navi",
+    "file": "game/snake/gameover-fireworks-navi.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "game/snake/gameover-note-down",
+    "file": "game/snake/gameover-note-down.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "game/snake/gameover-note-navi",
+    "file": "game/snake/gameover-note-navi.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "game/snake/keys-c",
+    "file": "game/snake/keys-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-c-hold",
+    "file": "game/snake/keys-c-hold.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-hold-2",
+    "file": "game/snake/keys-hold-2.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-hold-hash",
+    "file": "game/snake/keys-hold-hash.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-navi",
+    "file": "game/snake/keys-navi.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-pair-2-4",
+    "file": "game/snake/keys-pair-2-4.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-pair-2-8",
+    "file": "game/snake/keys-pair-2-8.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-pair-8-2",
+    "file": "game/snake/keys-pair-8-2.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-0",
+    "file": "game/snake/keys-right-0.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-1",
+    "file": "game/snake/keys-right-1.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-2",
+    "file": "game/snake/keys-right-2.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-3",
+    "file": "game/snake/keys-right-3.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-4",
+    "file": "game/snake/keys-right-4.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-5",
+    "file": "game/snake/keys-right-5.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-6",
+    "file": "game/snake/keys-right-6.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-7",
+    "file": "game/snake/keys-right-7.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-8",
+    "file": "game/snake/keys-right-8.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-9",
+    "file": "game/snake/keys-right-9.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-down",
+    "file": "game/snake/keys-right-down.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-hash",
+    "file": "game/snake/keys-right-hash.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-star",
+    "file": "game/snake/keys-right-star.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-right-up",
+    "file": "game/snake/keys-right-up.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-0",
+    "file": "game/snake/keys-up-0.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-1",
+    "file": "game/snake/keys-up-1.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-2",
+    "file": "game/snake/keys-up-2.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-3",
+    "file": "game/snake/keys-up-3.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-4",
+    "file": "game/snake/keys-up-4.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-5",
+    "file": "game/snake/keys-up-5.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-6",
+    "file": "game/snake/keys-up-6.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-7",
+    "file": "game/snake/keys-up-7.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-8",
+    "file": "game/snake/keys-up-8.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-9",
+    "file": "game/snake/keys-up-9.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-down",
+    "file": "game/snake/keys-up-down.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-hash",
+    "file": "game/snake/keys-up-hash.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-star",
+    "file": "game/snake/keys-up-star.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/keys-up-up",
+    "file": "game/snake/keys-up-up.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/level-1",
+    "file": "game/snake/level-1.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "game/snake/level-2",
+    "file": "game/snake/level-2.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "game/snake/level-3",
+    "file": "game/snake/level-3.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "game/snake/level-4",
+    "file": "game/snake/level-4.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "game/snake/level-5",
+    "file": "game/snake/level-5.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "game/snake/level-6",
+    "file": "game/snake/level-6.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "game/snake/level-7",
+    "file": "game/snake/level-7.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "game/snake/level-8",
+    "file": "game/snake/level-8.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "game/snake/level-9",
+    "file": "game/snake/level-9.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "game/snake/level-keys-c",
+    "file": "game/snake/level-keys-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "game/snake/level-keys-digit-1",
+    "file": "game/snake/level-keys-digit-1.lcd.txt",
+    "status": "pending:22",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "game/snake/level-keys-hold-up",
+    "file": "game/snake/level-keys-hold-up.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "game/snake/level-keys-ok",
+    "file": "game/snake/level-keys-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "game/snake/level-keys-virgin-up",
+    "file": "game/snake/level-keys-virgin-up.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "game/snake/maze-0",
+    "file": "game/snake/maze-0.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "game/snake/maze-1",
+    "file": "game/snake/maze-1.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 11,
+    "frames": 20
+  },
+  {
+    "id": "game/snake/maze-2",
+    "file": "game/snake/maze-2.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "game/snake/maze-3",
+    "file": "game/snake/maze-3.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 17
+  },
+  {
+    "id": "game/snake/maze-4",
+    "file": "game/snake/maze-4.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 11,
+    "frames": 20
+  },
+  {
+    "id": "game/snake/maze-5",
+    "file": "game/snake/maze-5.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "game/snake/pause-bot",
+    "file": "game/snake/pause-bot.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 16,
+    "frames": 16,
+    "input": true
+  },
+  {
+    "id": "game/snake/pause-c",
+    "file": "game/snake/pause-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "game/snake/pause-continue",
+    "file": "game/snake/pause-continue.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6,
+    "input": true
+  },
+  {
+    "id": "game/snake/pause-continue-turn",
+    "file": "game/snake/pause-continue-turn.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6,
+    "input": true
+  },
+  {
+    "id": "game/snake/pause-from-standby",
+    "file": "game/snake/pause-from-standby.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 8
+  },
+  {
+    "id": "game/snake/pause-level",
+    "file": "game/snake/pause-level.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "game/snake/pause-list",
+    "file": "game/snake/pause-list.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 9,
+    "frames": 9
+  },
+  {
+    "id": "game/snake/pause-nav",
+    "file": "game/snake/pause-nav.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/pause-new-game",
+    "file": "game/snake/pause-new-game.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "game/snake/pause-reenter",
+    "file": "game/snake/pause-reenter.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 8
+  },
+  {
+    "id": "game/snake/pause-top-score",
+    "file": "game/snake/pause-top-score.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 17
+  },
+  {
+    "id": "game/snake/periods",
+    "file": "game/snake/periods.ticks.txt",
+    "status": "asserted",
+    "kind": "ticks",
+    "images": 0,
+    "frames": 166
+  },
+  {
+    "id": "game/snake/score-8",
+    "file": "game/snake/score-8.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 10,
+    "frames": 10,
+    "input": true
+  },
+  {
+    "id": "game/snake/score-8.death",
+    "file": "game/snake/score-8.death.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 12
+  },
+  {
+    "id": "game/snake/seed-0000",
+    "file": "game/snake/seed-0000.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4,
+    "input": true
+  },
+  {
+    "id": "game/snake/seed-0001",
+    "file": "game/snake/seed-0001.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4,
+    "input": true
+  },
+  {
+    "id": "game/snake/seed-0759",
+    "file": "game/snake/seed-0759.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4,
+    "input": true
+  },
+  {
+    "id": "game/snake/seed-1010",
+    "file": "game/snake/seed-1010.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 5,
+    "frames": 5,
+    "input": true
+  },
+  {
+    "id": "game/snake/seed-1010-14102026",
+    "file": "game/snake/seed-1010-14102026.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4,
+    "input": true
+  },
+  {
+    "id": "game/snake/seed-1010-second",
+    "file": "game/snake/seed-1010-second.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4,
+    "input": true
+  },
+  {
+    "id": "game/snake/seed-1011",
+    "file": "game/snake/seed-1011.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4,
+    "input": true
+  },
+  {
+    "id": "game/snake/seed-1200",
+    "file": "game/snake/seed-1200.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4,
+    "input": true
+  },
+  {
+    "id": "game/snake/seed-1948",
+    "file": "game/snake/seed-1948.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4,
+    "input": true
+  },
+  {
+    "id": "game/snake/seed-2359",
+    "file": "game/snake/seed-2359.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4,
+    "input": true
+  },
+  {
+    "id": "game/snake/ticks-l1",
+    "file": "game/snake/ticks-l1.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "game/snake/ticks-l2",
+    "file": "game/snake/ticks-l2.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "game/snake/ticks-l3",
+    "file": "game/snake/ticks-l3.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "game/snake/ticks-l4",
+    "file": "game/snake/ticks-l4.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "game/snake/ticks-l5",
+    "file": "game/snake/ticks-l5.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "game/snake/ticks-l6",
+    "file": "game/snake/ticks-l6.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 11,
+    "frames": 11
+  },
+  {
+    "id": "game/snake/ticks-l7",
+    "file": "game/snake/ticks-l7.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "game/snake/ticks-l8",
+    "file": "game/snake/ticks-l8.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "game/snake/ticks-l9",
+    "file": "game/snake/ticks-l9.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "game/snake/virgin-game",
+    "file": "game/snake/virgin-game.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 29,
+    "frames": 44,
+    "input": true
+  },
+  {
+    "id": "game/snake/virgin-meal",
+    "file": "game/snake/virgin-meal.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 14,
+    "frames": 14,
+    "input": true
+  }
+]

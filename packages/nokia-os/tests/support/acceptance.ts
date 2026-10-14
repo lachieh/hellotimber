@@ -2,10 +2,13 @@
 // golden's scenario, the known gaps, and `describeGoldens`, which the acceptance test files run
 // in slices so they run in parallel (plan 16 Task 9). A golden marked `asserted` without a
 // scenario fails; `pending` goldens are listed as todos naming their plan.
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, it } from "vite-plus/test";
 import type { Golden, GoldenScenario } from "../../scripts/golden-format.ts";
+import {
+  readGoldenIndex,
+  type GoldenIndexEntry as IndexEntry,
+} from "../../scripts/golden-index.ts";
 import type { StockPhoneConfig } from "../../src/index";
 import {
   expectLcd,
@@ -21,15 +24,10 @@ import { SOUND_SCENARIOS } from "./sound-scenarios.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { frameAt, standbyRig, stockRig, type Rig } from "./rig.ts";
 
-export interface IndexEntry {
-  id: string;
-  status: string;
-  kind: string;
-  covers?: string[];
-}
+export type { IndexEntry };
 
-export const INDEX: IndexEntry[] = JSON.parse(
-  readFileSync(join(import.meta.dirname, "../../goldens/index.json"), "utf8"),
+export const INDEX: readonly IndexEntry[] = readGoldenIndex(
+  join(import.meta.dirname, "../../goldens"),
 );
 
 /** The kernel's long press: power turns the phone on this long after the key goes down. */
