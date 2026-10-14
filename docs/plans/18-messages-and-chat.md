@@ -977,20 +977,42 @@ standby (its stack is empty). Its invalid `exit` options name "a notice's applic
 **Files:** `src/text/{keys.ts,multitap.ts,layout.ts,index.ts}` (new), `tests/text-multitap.test.ts`
 (new), `tests/text-layout.test.ts` (new).
 
-- [ ] `keys.ts`: `MULTITAP_KEYS` (per key, the upper- and lower-case cycles as Task 0 recorded; each
+- [x] `keys.ts`: `MULTITAP_KEYS` (per key, the upper- and lower-case cycles as Task 0 recorded; each
       row's comment names its golden), `SYMBOLS` (the grid in order), `TYPEABLE`.
-- [ ] TDD `multitap.ts` with synthetic times: cycles and their wrap; a different key commits the
+- [x] TDD `multitap.ts` with synthetic times: cycles and their wrap; a different key commits the
       pending character; the commit deadline (`TEXT_TIMINGS`); sentence case (after `.`/`?`/`!` and a
       space, at the start, per Task 0); the `#` cycle from each mode; held `#` ↔ `123`; held digits;
       `0` (space, `0`); `1` punctuation; the limit (a key at the limit does what Task 0 shows); ▲/▼
       per S7 as corrected by Task 0; delete and clear; insertion mid-text; `textInsert` for symbols
       and numbers.
-- [ ] TDD `layout.ts`: `wrapText` with the stock `small`/`large` advances (word wrap at spaces, a word
+- [x] TDD `layout.ts`: `wrapText` with the stock `small`/`large` advances (word wrap at spaces, a word
       wider than a line breaks where Task 0 shows), `viewTop` per Task 0's scroll captures.
-- [ ] Trace test: replay every `text/key-*`, `text/case-*`, `text/cursor-*`, `text/delete-*` and
+- [x] Trace test: replay every `text/key-*`, `text/case-*`, `text/cursor-*`, `text/delete-*` and
       `text/wrap-*` golden's key sequence through the engine and compare the text, cursor and mode
       with the golden's OCR-derived text (`tests/support/messages.ts` reads the generated runs).
-- [ ] Commit: `feat(nokia-os): stock multi-tap text entry engine`.
+- [x] Commit: `feat(nokia-os): stock multi-tap text entry engine`.
+
+Deviation: **Task 5 (API):** `TextState` gains `letters` (the letter mode a held # returns to from
+123). `multitap.ts` adds `emptyText`, `shownMode` (sentence case shows Abc or abc by position) and
+`pendingCycle`; `textHold` on a digit replaces the pending letter with the digit and commits it,
+and the widget calls it at the commit when the key was held `digitHoldMs` (the captured digit
+appears at the commit, not at the threshold). `wrapText` takes an optional `PendingSlot` (below);
+`layout.ts` adds `pendingSlot`, `cursorLine`, `textWidth`, `advance` and `EDITOR_LINE_WIDTH`.
+
+Deviation: **Task 5 (rules beyond Task 0's words):** lines hold 81 columns; a pending character
+takes its key cycle's widest advance (the only rule that fits `text/wrap-words` 15 and 27 together;
+text re-wraps when it commits, unverified); spaces hang at a line end, and an end past x 83 puts
+the cursor on a new empty line (`text/wrap-spaces` 06); the cursor stands on the blank column
+after the previous character. A sentence starts when the text before the slot is blank or ends
+with `.`, `?` or `!` and spaces (a letter straight after the mark is unverified); # steps
+sentence case → ABC → abc, skipping a mode that shows the same as the current one.
+
+Deviation: **Task 5 (trace test):** the trace replays Task 0's command logs (transcribed in
+`tests/support/messages.ts`) and compares pixels, not OCR text: each line drawn with the stock
+small font, the cursor's place when it is lit, and the header's mode sprite, for every image of
+`text/key-*`, `text/case-cycle-*`, `text/case-after`, `text/cursor-*`, `text/delete`,
+`text/wrap-*` and `text/counter` (in `tests/text-layout.test.ts`). OCR runs are cursor-obscured
+(Task 0 Deviation); pixels are not.
 
 ### Task 6 - Editor widget and painter (TDD against goldens)
 
