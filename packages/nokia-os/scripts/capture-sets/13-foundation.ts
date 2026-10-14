@@ -68,10 +68,10 @@ function menuEntries(): CaptureSetEntry[] {
       entries.push({
         id: `menu/${slug}.sub`,
         kind: "still",
-        status: "pending:18",
+        status: "pending:18c",
         prefer: {
           source: { kind: "scroll", dir: `menu/${slug}/sub` },
-          note: "Chat's first screens; the Messages and Chat plan asserts them.",
+          note: "Chat's first screens; the Chat plan (18c) asserts them.",
         },
       });
       return;

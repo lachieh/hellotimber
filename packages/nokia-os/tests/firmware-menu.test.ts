@@ -141,7 +141,7 @@ describe("stockMenu", () => {
         const owner = placeholderOwner(node.number);
         if (application instanceof PlaceholderApplication) {
           expect(application.ownerPlan, node.number).toBe(owner);
-          expect(application.ownerPlan).toMatch(/^\d+$/);
+          expect(application.ownerPlan).toMatch(/^\d+[a-z]?$/);
           kinds.set(node.number, "placeholder");
         } else {
           expect(owner, `${node.number} is owned by plan ${owner}`).toBeUndefined();
@@ -309,7 +309,7 @@ describe("PlaceholderApplication", () => {
     expect(owners["menu/games/snake/new-game"]).toBeUndefined();
     expect(owners).toMatchObject({
       "menu/messages/write": "18",
-      "menu/chat": "18",
+      "menu/chat": "18c",
       "menu/tones/composer/empty-4": "27",
       "menu/settings/phone-settings/welcome-note": "18",
       "menu/games/bantumi/new-game": "24",

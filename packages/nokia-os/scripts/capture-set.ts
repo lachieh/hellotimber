@@ -92,6 +92,8 @@ export interface CaptureIo {
   readonly game: GameCaptureIo;
   /** Sound events and keys (sound goldens). */
   readonly sound: SoundCaptureIo;
+  /** A JSON file's contents (a capture manifest), or undefined when it is missing. */
+  readonly json: (path: string) => unknown;
 }
 
 /**

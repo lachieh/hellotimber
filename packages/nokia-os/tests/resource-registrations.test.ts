@@ -121,10 +121,10 @@ it("takes a plan-owned glyph specimen and its bearing through font extraction", 
 
 it("allows resource evidence from an honestly pending LCD golden", () => {
   const pending = index.find((entry) => entry.id === "menu/03-chat.sub")!;
-  expect(pending.status).toBe("pending:18");
+  expect(pending.status).toBe("pending:18c");
   const inputs = compose([
     {
-      plan: "18",
+      plan: "18c",
       resources: {
         textRuns: {
           "menu/03-chat.sub": {
@@ -135,7 +135,7 @@ it("allows resource evidence from an honestly pending LCD golden", () => {
     },
   ]);
   expect(inputs.textRuns["menu/03-chat.sub"]!["01"]![0]!.text).toBe("Phone number:");
-  expect(pending.status).toBe("pending:18");
+  expect(pending.status).toBe("pending:18c");
 });
 
 it.each([

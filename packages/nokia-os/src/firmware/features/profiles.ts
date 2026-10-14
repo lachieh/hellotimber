@@ -45,7 +45,7 @@ export const profilesFeature: StockFeature = {
   sameAs: { "12-3-2": "12-2-2", "12-4-2": "12-2-2", "12-5-2": "12-2-2", "12-6-2": "12-2-2" },
   placeholders: {
     "12-*-1": "17", // Profiles › Activate
-    "12-*-2-9-4": "18", // Personalise › Screen saver › Screen saver: nothing in the virgin EEPROM
+    "12-*-2-9-4": "18c", // Personalise › Screen saver › Screen saver: nothing in the virgin EEPROM
   },
   widgets: {
     promptLayouts: {

@@ -832,23 +832,62 @@ pipeline and cross-plan acceptance driver registrations also need their owners. 
 `tests/messages-capture-set.test.ts` (new), `tests/goldens-integrity.test.ts`,
 `tests/acceptance.test.ts` (todo shim only), `goldens/**`.
 
-- [ ] TDD `messages-capture-set.ts` on synthetic recordings (injected loader, as
+- [x] TDD `messages-capture-set.ts` on synthetic recordings (injected loader, as
       `game-capture-set.test.ts`): ids, kinds, cut points, `trigger-frame` on the first changed frame
       (plan 14 D8), glyph-sheet stills with a `manifest` note.
-- [ ] Re-own (D1): `2-4`, `2-5`, `2-6`, `2-8-4-*-**`, `2-10`, `3`, `5-9-4`, `12-*-2-9-4` → `18c`;
+- [x] Re-own (D1): `2-4`, `2-5`, `2-6`, `2-8-4-*-**`, `2-10`, `3`, `5-9-4`, `12-*-2-9-4` → `18c`;
       `2-1` and `6-2-3` leave the tables (bound in Tasks 8/10); the Dictionary T9 choices are not
       tree nodes (the editor's Options are bindings), so `18b` owns them in `EDITOR_OPTIONS` (Task
       10). `tree/02-messages/2-1.leaf` → `pending:18b` (D3); `menu/03-chat.sub`, the Topics goldens
       and `2-4.leaf`/`2-10.leaf` → `pending:18c`; `tree/06-settings/6-2-3.leaf` → asserted.
-- [ ] Integrity: no golden is `pending:18`; the owner tables are equal; `glyphs/*` stills have a
+- [x] Integrity: no golden is `pending:18`; the owner tables are equal; `glyphs/*` stills have a
       manifest note whose characters match the image count.
-- [ ] `tests/acceptance.test.ts`: list the new asserted goldens without a scenario as todos
+- [x] `tests/acceptance.test.ts`: list the new asserted goldens without a scenario as todos
       (`awaitsPlan18Scenario`; Task 12 deletes it).
-- [ ] Run `import-captures` twice; the second run changes nothing. Record fixture counts, images and
+- [x] Run `import-captures` twice; the second run changes nothing. Record fixture counts, images and
       bytes in a completion note (budget guide: ≤ 2 MB of new text grids; glyph sheets dominate, so
       crop nothing but keep one image per character).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import text entry and SMS goldens (plan 18)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import text entry and SMS goldens (plan 18)`.
+
+Deviation: **Task 2 (paths, plan 29 conventions):** the table is `scripts/messages-capture-set.ts`
+(tested by `tests/messages-capture-set.test.ts` with an injected `MessagesCaptureIo`), registered
+by `scripts/capture-sets/18-messages-and-chat.ts` and one line in `scripts/capture-sets/index.ts`;
+its goldens are indexed in `goldens/index/18.json` and run by
+`tests/acceptance/18-messages-and-chat.test.ts`. `CaptureIo` gains a generic `json(path)` reader
+(`capture-set.ts`, `import-captures.ts`) for the glyph manifests. `NOT_IMPORTED` now lives in
+plan 15's capture set: its Welcome entry is narrowed to `plan15/boot/welcome-erased`. The Chat
+level list's status is set in plan 13's capture set (`pending:18c`). Placeholder owners change
+in `scripts/tree-capture-set.ts` and the features (`messages`, `chat`, `tones`, `profiles`).
+
+Deviation: **Task 2 (status, plan 29 pending workflow):** every new golden is `pending:18`, not
+asserted, and no `awaitsPlan18Scenario` shim exists: the harness lists pending goldens as todos
+and the acceptance file has no scenarios yet. Later tasks promote each golden in
+`messages-capture-set.ts` when its scenario exists. `2-1` and `6-2-3` stay owned by `18` until
+Tasks 10 and 8 bind them, so `tree/06-settings/6-2-3.leaf`, `tree/02-messages/2-1.leaf` and
+their sound notes stay `pending:18`; Task 10 needs a status override to make `2-1.leaf`
+`pending:18b` once `2-1` is bound (D3). The integrity check "no golden is `pending:18`" moves to
+Task 12; Task 2 checks instead that plan 18 is pending elsewhere only on those two leaves.
+
+Deviation: **Task 2 (ids and selection):** key goldens are `text/key-<k>-upper` and
+`text/key-<k>-lower` with the first cycle only. The repeat matches the first cycle pixel for
+pixel, and Abc matches ABC below the header (both verified). Glyph sheets are one still per face
+(`glyphs/large`, `glyphs/small`, `glyphs/digits`) whose note ends `manifest [<JSON chars>]`, one
+per image. `glyphs/large` keeps the first shot of each of the 149 characters. `glyphs/small`
+keeps the 19 characters only the symbol table types: the 130 multi-tap small shots are
+byte-identical to the `text/key-*` stills (verified), which the harvester reads instead.
+Sweeps, repeated samples and helper artefacts are listed in `MESSAGES_NOT_IMPORTED` with
+reasons (T9 probes for 18b, `sms/fail/`, `sms/receive-limits/`, `sms/elsewhere/snake`, extra
+link-time samples). `sms/send` is the median send recording (`send/3`, 2662.4 ms).
+
+**Task 2 completion note:** 196 plan 18 fixtures (85 stills, 111 timelines; 1,290 images;
+5,410,431 bytes of text grids), all `pending:18`. The corpus now has 1,038 fixtures (775
+asserted, 263 pending). Re-owned to `18c`: `menu/03-chat.sub`, nine tree goldens (`2-4.leaf`
+and its shared nodes, `2-10.leaf`, the Topics lists and choices) and ten sound notes. The import
+is over the 2 MB guide: the plan's golden table needs about 1,300 distinct images even after
+deduplication (the small glyph sheet, second key cycles, sentence-mode keys, mirrored symbol
+shots and identical before/after lists are excluded). A second `import-captures` run changes
+nothing (identical tree hash).
 
 ### Task 3 - Glyphs, sprites and timings (TDD)
 

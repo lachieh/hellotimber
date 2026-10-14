@@ -1,6 +1,6 @@
 lcd-golden 1
 id: tree/02-messages/2-8-4-2-2.choose
-status: pending:18
+status: pending:18c
 source: captures/6.39/plan14/open/2-8-4-2-2
 source-sha256: d5f7212ae8a4af731bcd23a3a764018f5b0adaa3f362d5fc5c4ea743ac0d6cfe
 trigger-frame: 1

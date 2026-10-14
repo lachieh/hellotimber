@@ -137,7 +137,7 @@ describe("coverage guard (plan 14 D7)", () => {
       Object.keys(SAME_AS).find((root) => number.startsWith(`${root}-`));
     // An option choice or info page is covered by its list's `.options`/`.open` golden (S2/S3:
     // the list's entries; the choice's result is the list signature's `.choose`), asserted, or
-    // pending for the plan that owns the choice (Topics, plan 18).
+    // pending for the plan that owns the choice (Topics, plan 18c).
     const listCovered = (number: string): boolean => {
       const list = number.split("-").slice(0, -1).join("-");
       const node = treeNode(list);

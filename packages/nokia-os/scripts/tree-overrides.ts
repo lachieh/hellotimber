@@ -14,7 +14,7 @@ export const TREE_OVERRIDES: TreeOverrides = {
   },
   optionLabels: {
     // plan14/scroll/2-8-4-1/01 (and 2-8-4-2, 2-8-4-3): each topic is six boxes (D10; Topics stays
-    // a placeholder for plan 18).
+    // a placeholder for plan 18c).
     "2-8-4-1": TOPIC,
     "2-8-4-2": TOPIC,
     "2-8-4-3": TOPIC,

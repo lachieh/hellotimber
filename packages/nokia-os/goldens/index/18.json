@@ -1,0 +1,1570 @@
+[
+  {
+    "id": "glyphs/digits",
+    "file": "glyphs/digits.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "glyphs/large",
+    "file": "glyphs/large.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 149,
+    "frames": 149
+  },
+  {
+    "id": "glyphs/small",
+    "file": "glyphs/small.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 19,
+    "frames": 19
+  },
+  {
+    "id": "sms/arrive-1",
+    "file": "sms/arrive-1.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/arrive-2",
+    "file": "sms/arrive-2.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/arrive-3",
+    "file": "sms/arrive-3.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/arrive-4",
+    "file": "sms/arrive-4.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/arrive-5",
+    "file": "sms/arrive-5.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/centre-1",
+    "file": "sms/centre-1.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "sms/centre-1-ok",
+    "file": "sms/centre-1-ok.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "sms/centre-1-ok-empty",
+    "file": "sms/centre-1-ok-empty.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "sms/centre-2",
+    "file": "sms/centre-2.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "sms/centre-2-ok",
+    "file": "sms/centre-2-ok.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "sms/elsewhere",
+    "file": "sms/elsewhere.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "sms/elsewhere-editor",
+    "file": "sms/elsewhere-editor.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 17
+  },
+  {
+    "id": "sms/elsewhere-menu",
+    "file": "sms/elsewhere-menu.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/elsewhere-messages-menu",
+    "file": "sms/elsewhere-messages-menu.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/elsewhere-note",
+    "file": "sms/elsewhere-note.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "sms/elsewhere-sending",
+    "file": "sms/elsewhere-sending.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 20,
+    "frames": 40
+  },
+  {
+    "id": "sms/elsewhere-snake",
+    "file": "sms/elsewhere-snake.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 13
+  },
+  {
+    "id": "sms/erase",
+    "file": "sms/erase.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 12
+  },
+  {
+    "id": "sms/erase-empty",
+    "file": "sms/erase-empty.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 13
+  },
+  {
+    "id": "sms/exit",
+    "file": "sms/exit.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/full",
+    "file": "sms/full.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/full-arrival",
+    "file": "sms/full-arrival.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 33
+  },
+  {
+    "id": "sms/full-persist-inbox",
+    "file": "sms/full-persist-inbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "sms/full-persist-inbox-open",
+    "file": "sms/full-persist-inbox-open.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/full-persist-outbox",
+    "file": "sms/full-persist-outbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "sms/full-persist-outbox-open",
+    "file": "sms/full-persist-outbox-open.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/full-save",
+    "file": "sms/full-save.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 10
+  },
+  {
+    "id": "sms/inbox",
+    "file": "sms/inbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "sms/inbox-details",
+    "file": "sms/inbox-details.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/inbox-erase-last",
+    "file": "sms/inbox-erase-last.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "sms/inbox-list",
+    "file": "sms/inbox-list.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "sms/inbox-list-one-read",
+    "file": "sms/inbox-list-one-read.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "sms/inbox-menu-2-2",
+    "file": "sms/inbox-menu-2-2.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/inbox-menu-2-2-list",
+    "file": "sms/inbox-menu-2-2-list.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "sms/inbox-option-chat",
+    "file": "sms/inbox-option-chat.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 10
+  },
+  {
+    "id": "sms/inbox-option-details",
+    "file": "sms/inbox-option-details.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/inbox-option-details-odd",
+    "file": "sms/inbox-option-details-odd.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/inbox-option-edit",
+    "file": "sms/inbox-option-edit.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 10
+  },
+  {
+    "id": "sms/inbox-option-erase",
+    "file": "sms/inbox-option-erase.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 13
+  },
+  {
+    "id": "sms/inbox-option-forward",
+    "file": "sms/inbox-option-forward.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 11
+  },
+  {
+    "id": "sms/inbox-option-reply",
+    "file": "sms/inbox-option-reply.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 11
+  },
+  {
+    "id": "sms/inbox-option-reply-send",
+    "file": "sms/inbox-option-reply-send.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 20,
+    "frames": 35
+  },
+  {
+    "id": "sms/inbox-option-typed",
+    "file": "sms/inbox-option-typed.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/inbox-option-use-number",
+    "file": "sms/inbox-option-use-number.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/inbox-option-use-number-odd",
+    "file": "sms/inbox-option-use-number-odd.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/inbox-options",
+    "file": "sms/inbox-options.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "sms/inbox-read",
+    "file": "sms/inbox-read.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "sms/inbox-view-1",
+    "file": "sms/inbox-view-1.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 11,
+    "frames": 11
+  },
+  {
+    "id": "sms/inbox-view-2",
+    "file": "sms/inbox-view-2.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 13,
+    "frames": 13
+  },
+  {
+    "id": "sms/insert-smiley",
+    "file": "sms/insert-smiley.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "sms/notice",
+    "file": "sms/notice.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "sms/notice-c",
+    "file": "sms/notice-c.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/notice-count-list",
+    "file": "sms/notice-count-list.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/notice-count-read",
+    "file": "sms/notice-count-read.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "sms/notice-digit",
+    "file": "sms/notice-digit.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/notice-down",
+    "file": "sms/notice-down.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 4
+  },
+  {
+    "id": "sms/notice-hash",
+    "file": "sms/notice-hash.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/notice-inbox-menu",
+    "file": "sms/notice-inbox-menu.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/notice-read",
+    "file": "sms/notice-read.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "sms/notice-up",
+    "file": "sms/notice-up.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 4
+  },
+  {
+    "id": "sms/outbox",
+    "file": "sms/outbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "sms/outbox-edit",
+    "file": "sms/outbox-edit.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 10
+  },
+  {
+    "id": "sms/outbox-erase",
+    "file": "sms/outbox-erase.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 13
+  },
+  {
+    "id": "sms/outbox-erase-last",
+    "file": "sms/outbox-erase-last.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "sms/outbox-forward",
+    "file": "sms/outbox-forward.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 10
+  },
+  {
+    "id": "sms/outbox-list",
+    "file": "sms/outbox-list.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/outbox-open",
+    "file": "sms/outbox-open.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/outbox-options",
+    "file": "sms/outbox-options.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "sms/outbox-read",
+    "file": "sms/outbox-read.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 11,
+    "frames": 11
+  },
+  {
+    "id": "sms/outbox-use-number",
+    "file": "sms/outbox-use-number.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/outbox-use-number-found",
+    "file": "sms/outbox-use-number-found.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/persist",
+    "file": "sms/persist.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/persist-inbox",
+    "file": "sms/persist-inbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/persist-outbox",
+    "file": "sms/persist-outbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/restore",
+    "file": "sms/restore.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/restore-inbox",
+    "file": "sms/restore-inbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/restore-ok",
+    "file": "sms/restore-ok.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "sms/restore-outbox",
+    "file": "sms/restore-outbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/save",
+    "file": "sms/save.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 9,
+    "frames": 15
+  },
+  {
+    "id": "sms/save-empty",
+    "file": "sms/save-empty.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 14
+  },
+  {
+    "id": "sms/send",
+    "file": "sms/send.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 20,
+    "frames": 23
+  },
+  {
+    "id": "sms/send-by-set-alphanumeric",
+    "file": "sms/send-by-set-alphanumeric.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 23,
+    "frames": 41
+  },
+  {
+    "id": "sms/send-by-set-numeric",
+    "file": "sms/send-by-set-numeric.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 38,
+    "frames": 56
+  },
+  {
+    "id": "sms/send-by-set-set-2",
+    "file": "sms/send-by-set-set-2.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/send-by-set-set-2-list",
+    "file": "sms/send-by-set-set-2-list.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/send-prompt",
+    "file": "sms/send-prompt.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sms/send-to-many",
+    "file": "sms/send-to-many.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 7
+  },
+  {
+    "id": "sms/sim-same-inbox",
+    "file": "sms/sim-same-inbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 6
+  },
+  {
+    "id": "sms/sim-same-new-process",
+    "file": "sms/sim-same-new-process.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "sms/sim-same-outbox",
+    "file": "sms/sim-same-outbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 6
+  },
+  {
+    "id": "sms/sim-second",
+    "file": "sms/sim-second.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "sms/sim-second-inbox",
+    "file": "sms/sim-second-inbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 6
+  },
+  {
+    "id": "sms/sim-second-outbox",
+    "file": "sms/sim-second-outbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 6
+  },
+  {
+    "id": "sms/template",
+    "file": "sms/template.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "sms/time-format",
+    "file": "sms/time-format.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "sms/voice-mailbox",
+    "file": "sms/voice-mailbox.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sms/voice-mailbox-ok",
+    "file": "sms/voice-mailbox-ok.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "text/blink",
+    "file": "text/blink.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 11
+  },
+  {
+    "id": "text/case-after",
+    "file": "text/case-after.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "text/case-cycle-empty",
+    "file": "text/case-cycle-empty.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "text/case-cycle-sentence",
+    "file": "text/case-cycle-sentence.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "text/case-cycle-space",
+    "file": "text/case-cycle-space.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "text/case-cycle-word",
+    "file": "text/case-cycle-word.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "text/case-numeric-back",
+    "file": "text/case-numeric-back.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 13
+  },
+  {
+    "id": "text/case-numeric-back-after",
+    "file": "text/case-numeric-back-after.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "text/commit",
+    "file": "text/commit.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 6
+  },
+  {
+    "id": "text/commit-blink",
+    "file": "text/commit-blink.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 11
+  },
+  {
+    "id": "text/commit-gap",
+    "file": "text/commit-gap.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "text/commit-other",
+    "file": "text/commit-other.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "text/counter",
+    "file": "text/counter.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 20,
+    "frames": 20
+  },
+  {
+    "id": "text/counter-limit-key",
+    "file": "text/counter-limit-key.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 8
+  },
+  {
+    "id": "text/cursor-one",
+    "file": "text/cursor-one.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 19,
+    "frames": 19
+  },
+  {
+    "id": "text/cursor-three",
+    "file": "text/cursor-three.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 22,
+    "frames": 22
+  },
+  {
+    "id": "text/delete",
+    "file": "text/delete.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "text/delete-empty",
+    "file": "text/delete-empty.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "text/delete-hold",
+    "file": "text/delete-hold.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 11
+  },
+  {
+    "id": "text/delete-hold-short",
+    "file": "text/delete-hold-short.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 7
+  },
+  {
+    "id": "text/dictionary-off",
+    "file": "text/dictionary-off.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 16,
+    "frames": 20
+  },
+  {
+    "id": "text/editor",
+    "file": "text/editor.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "text/hold-digit",
+    "file": "text/hold-digit.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 8
+  },
+  {
+    "id": "text/hold-digit-after",
+    "file": "text/hold-digit-after.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "text/hold-digit-lower",
+    "file": "text/hold-digit-lower.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 7
+  },
+  {
+    "id": "text/hold-digit-pending",
+    "file": "text/hold-digit-pending.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 8
+  },
+  {
+    "id": "text/hold-full",
+    "file": "text/hold-full.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 8
+  },
+  {
+    "id": "text/hold-hash",
+    "file": "text/hold-hash.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 9
+  },
+  {
+    "id": "text/hold-hash-back",
+    "file": "text/hold-hash-back.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 10
+  },
+  {
+    "id": "text/hold-hash-back-after",
+    "file": "text/hold-hash-back-after.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "text/hold-numeric",
+    "file": "text/hold-numeric.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "text/hold-one",
+    "file": "text/hold-one.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 8
+  },
+  {
+    "id": "text/hold-star-after",
+    "file": "text/hold-star-after.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "text/hold-threshold-1450",
+    "file": "text/hold-threshold-1450.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 7
+  },
+  {
+    "id": "text/hold-threshold-1475",
+    "file": "text/hold-threshold-1475.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 7
+  },
+  {
+    "id": "text/hold-zero",
+    "file": "text/hold-zero.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 8
+  },
+  {
+    "id": "text/holds-full-before",
+    "file": "text/holds-full-before.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "text/input",
+    "file": "text/input.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "text/input-routing-ok",
+    "file": "text/input-routing-ok.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 20,
+    "frames": 35
+  },
+  {
+    "id": "text/input-routing-open",
+    "file": "text/input-routing-open.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 6
+  },
+  {
+    "id": "text/input-send-by-set-list",
+    "file": "text/input-send-by-set-list.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "text/input-set-1-list",
+    "file": "text/input-set-1-list.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "text/key-0-lower",
+    "file": "text/key-0-lower.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "text/key-0-upper",
+    "file": "text/key-0-upper.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "text/key-1-lower",
+    "file": "text/key-1-lower.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "text/key-1-upper",
+    "file": "text/key-1-upper.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 11,
+    "frames": 11
+  },
+  {
+    "id": "text/key-2-lower",
+    "file": "text/key-2-lower.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 11,
+    "frames": 11
+  },
+  {
+    "id": "text/key-2-upper",
+    "file": "text/key-2-upper.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 11,
+    "frames": 11
+  },
+  {
+    "id": "text/key-3-lower",
+    "file": "text/key-3-lower.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "text/key-3-upper",
+    "file": "text/key-3-upper.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "text/key-4-lower",
+    "file": "text/key-4-lower.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "text/key-4-upper",
+    "file": "text/key-4-upper.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "text/key-5-lower",
+    "file": "text/key-5-lower.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "text/key-5-upper",
+    "file": "text/key-5-upper.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "text/key-6-lower",
+    "file": "text/key-6-lower.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "text/key-6-upper",
+    "file": "text/key-6-upper.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "text/key-7-lower",
+    "file": "text/key-7-lower.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "text/key-7-upper",
+    "file": "text/key-7-upper.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "text/key-8-lower",
+    "file": "text/key-8-lower.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "text/key-8-upper",
+    "file": "text/key-8-upper.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "text/key-9-lower",
+    "file": "text/key-9-lower.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "text/key-9-upper",
+    "file": "text/key-9-upper.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "text/key-modes",
+    "file": "text/key-modes.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "text/number",
+    "file": "text/number.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 44,
+    "frames": 44
+  },
+  {
+    "id": "text/number-c-on-empty",
+    "file": "text/number-c-on-empty.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "text/number-hold-2",
+    "file": "text/number-hold-2.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 10
+  },
+  {
+    "id": "text/number-hold-c",
+    "file": "text/number-hold-c.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 11
+  },
+  {
+    "id": "text/number-hold-hash",
+    "file": "text/number-hold-hash.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 10
+  },
+  {
+    "id": "text/number-hold-star",
+    "file": "text/number-hold-star.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "text/number-search-empty",
+    "file": "text/number-search-empty.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "text/number-star-settle",
+    "file": "text/number-star-settle.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 3
+  },
+  {
+    "id": "text/options",
+    "file": "text/options.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 9,
+    "frames": 9
+  },
+  {
+    "id": "text/star-hold",
+    "file": "text/star-hold.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "text/star-tap",
+    "file": "text/star-tap.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "text/symbols",
+    "file": "text/symbols.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "text/symbols-c",
+    "file": "text/symbols-c.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 6
+  },
+  {
+    "id": "text/symbols-down",
+    "file": "text/symbols-down.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 31,
+    "frames": 31
+  },
+  {
+    "id": "text/symbols-up",
+    "file": "text/symbols-up.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "text/symbols-use-first",
+    "file": "text/symbols-use-first.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "text/symbols-use-last",
+    "file": "text/symbols-use-last.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "text/symbols-use-middle",
+    "file": "text/symbols-use-middle.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "text/wrap-long-word",
+    "file": "text/wrap-long-word.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "text/wrap-spaces",
+    "file": "text/wrap-spaces.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "text/wrap-words",
+    "file": "text/wrap-words.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 14,
+    "frames": 14
+  },
+  {
+    "id": "welcome/37th-key",
+    "file": "welcome/37th-key.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 7
+  },
+  {
+    "id": "welcome/c-on-empty",
+    "file": "welcome/c-on-empty.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "welcome/editor",
+    "file": "welcome/editor.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "welcome/erase-empty",
+    "file": "welcome/erase-empty.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "welcome/face",
+    "file": "welcome/face.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 9,
+    "frames": 9
+  },
+  {
+    "id": "welcome/hold-c",
+    "file": "welcome/hold-c.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 11
+  },
+  {
+    "id": "welcome/options",
+    "file": "welcome/options.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "welcome/plan15",
+    "file": "welcome/plan15.lcd.txt",
+    "status": "pending:18",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "welcome/plan15-erase",
+    "file": "welcome/plan15-erase.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "welcome/plan15-save-long",
+    "file": "welcome/plan15-save-long.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "welcome/save-empty",
+    "file": "welcome/save-empty.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "welcome/save-hi",
+    "file": "welcome/save-hi.lcd.txt",
+    "status": "pending:18",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  }
+]

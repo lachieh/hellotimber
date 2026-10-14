@@ -71,6 +71,8 @@ function main(): void {
     frames: captureIo(root),
     game: gameIo(root),
     sound: soundIo(root),
+    json: (path) =>
+      existsSync(join(root, path)) ? JSON.parse(readFileSync(join(root, path), "utf8")) : undefined,
   };
 
   const sets = captureSets();
