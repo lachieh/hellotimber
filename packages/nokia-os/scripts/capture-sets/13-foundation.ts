@@ -56,7 +56,7 @@ function menuEntries(): CaptureSetEntry[] {
       entries.push({
         id: `menu/${slug}.sub`,
         kind: "still",
-        status: "pending:20",
+        status: "asserted",
         prefer: {
           source: { kind: "scroll", dir: `menu/${slug}/sub` },
           note: "Calculator's first screen; the Calculator plan asserts it.",

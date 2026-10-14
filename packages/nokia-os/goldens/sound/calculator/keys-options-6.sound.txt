@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/calculator/keys-options-6
+status: pending:22
+source: captures/6.39/plan20/sound/keys-options-6
+source-sha256: a31137b7fed3c5ae0b048990aa7bcfdd21f580455a6d64c0648eb5fef6f1d135
+state: factory
+keys: 0:6
+note: Options on 0, then 6: its DTMF pair (two simultaneous tones). Pending plan 22 and the dual-frequency sound contract (D9).
+omitted: none
+
+@events
+# t_ms output   state
+32     tone     1477+770 v=0x9104
+178    tone     off

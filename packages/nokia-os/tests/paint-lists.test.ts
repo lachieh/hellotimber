@@ -71,7 +71,11 @@ function paint(screen: ScreenModel): Framebuffer {
 describe("stock submenu lists against every asserted level-1 golden", () => {
   const subs = INDEX.filter(
     (entry) =>
-      entry.id.startsWith("menu/") && entry.id.endsWith(".sub") && entry.status === "asserted",
+      entry.id.startsWith("menu/") &&
+      entry.id.endsWith(".sub") &&
+      entry.status === "asserted" &&
+      // Calculator's first screen is its application (plan 20), not a list.
+      entry.id !== "menu/09-calculator.sub",
   );
 
   it("covers the ten asserted level-1 sequences", () => {

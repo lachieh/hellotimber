@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/calculator/keys-options-c
+status: asserted
+source: captures/6.39/plan20/sound/keys-options-c
+source-sha256: 447d2cf5adfbd5131edf5195bebb4fcc9e58725b0c3ca1e33915cae4f4b3ac2f
+state: factory
+keys: 0:c
+note: Options on 0, then C.
+omitted: none
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+170    tone     off

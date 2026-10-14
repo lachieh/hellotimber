@@ -1,9 +1,10 @@
-# Stock v6.39 calculator (plan 20, in progress)
+# Stock v6.39 calculator (plan 20; Options' standby escape pending plan 22)
 
-This reference describes the measured calculator behavior for the plan 20 implementation.
-Runtime remains paused until plan 29's capture/resource registration is integrated and verified.
-Options numeric/star/hash acceptance also requires the later standby-entry and sound contracts.
-See [plan 20](../../plans/20-calculator.md) for implementation tasks and outstanding gates.
+This reference describes the measured calculator behavior that nokia-os's node 9 implements
+(`src/calculator/`, `src/widgets/calculator.ts`) and that plan 20's goldens assert (84 passing
+scenarios, 5 measured known gaps). Options' numeric/star/hash escape to standby number entry
+awaits plan 22's handoff and the dual-frequency sound contract (its 28 fixtures are
+`pending:22`). See [plan 20](../../plans/20-calculator.md) for the tasks and remaining gates.
 
 ## Evidence and authority
 
@@ -29,8 +30,10 @@ The existing first-screen capture is `../menu/09-calculator/sub/01.png`; the ope
 
 Menu 9 opens a single `0` above `Options`, without a calculator-screen indicator. The display
 uses up to three right-aligned small-face lines: first operand, operator, second operand.
-Painter coordinates must be measured from imported goldens before Task 5 closes. The planning
-layout has `Options` at y 40. It is not proof of every baseline or cursor coordinate.
+Measured on the imported goldens (Task 5, all 278 calculator-screen stills): the lines use the
+small face at tops 8, 18 and 28, the last line always at 28, each right-aligned so its last cell
+ends at column 83 (ink to column 82); the operator is a single small-face character (`/` is the
+glyph the calculator adds to the face); `Options` is centred at top 40.
 
 Digits append and leading zeros collapse. Entry accepts nine magnitude characters, counting
 `.`. Extra characters are ignored. `#` on a fresh calculator entry gives `0.`; a second point
@@ -139,6 +142,10 @@ field, C on empty returns to the rate list, and held C clears. OK on empty or `.
 | ▼ from the end                      | cursor on last digit | `down.png`, `down-mid.png`  |
 | insertion at seven typed characters | unchanged            | `limit-insert.png`          |
 
+The value is the prompt's large face right-aligned in the box; the cursor is one column wide,
+rows 22-35, one column left of the character after it (column 82 at the end), measured on all
+63 rate-entry stills in both blink phases.
+
 ▲ advances and wraps from the end to the start. Cursor deletion is not ordinary calculator
 backspace. Use paired blink phases when cursor ink obscures a character. The plan 18 editor
 must not be assumed to support these rules.
@@ -191,13 +198,29 @@ Plan 20 must not invent telephony, flatten DTMF or emit two unrelated single-ton
 Keep these fixtures `pending:20` until real LCD and sound drivers pass the delivered contracts.
 This is a bounded later gate for these scenarios and final completion.
 
-Plan 29 owns text harvesting, note sounds and named timeline registration. Inspect its actual
-delivered API before runtime Task 2. Verify text/note/timeline regeneration end to end and
-repeat it without changes. No unverified registration filename or API is prescribed here.
-Existing `menu/09-calculator.sub` and `sound/note/9` remain pending in their original indexes
-until real opening drivers pass. Import new calculator fixtures as `pending:20`, promote only
-passing behavioral drivers, and retain placeholder ownership until real node coverage passes.
-Do not add an awaits-scenario shim or label missing drivers as known gaps.
+Plan 29's registration carries the calculator's evidence (`scripts/resource-inputs/20-calculator.ts`):
+the small face's `/` and the named note timelines `calculator-out-of-range` (2906 ms),
+`calculator-divide-by-zero` (2890 ms) and `calculator-rate-saved` (694/232/523 ms). The two
+warning tones reach `NOTE_SOUNDS` from the `sound/note/calculator-*` goldens (1750 Hz, 0x9105,
+296 and 288 ms). `menu/09-calculator.sub` is asserted in plan 13's index; node 9's opening beep
+equals the other OK-beep notes and shares `sound/note/2-7-1-1` in plan 16's index.
+
+## Reproduction notes
+
+Keys act as they go down in every calculator screen, and a screen ignores the release of a key
+it did not see go down. C held 475 ms after it deleted clears to `0` (the captured clears
+redraw 471 and 478 ms after the deletion's redraw); held after dismissing a note it goes to
+standby. The rate entry's cursor blinks with the representative prompt cursor (plan 14 P9),
+within 25 ms of the calculator's own prompt recordings. OK on an untouched prefilled rate
+stores nothing (`rate/after/ok-unchanged-domestic-foreign` reopens Foreign `1.5`). With four
+Options entries ▲ from the first puts the last on the top row (`options/operator-up`).
+
+Measured known gaps: C held across the calculator's exit (the kernel swallows the held key, so
+the firmware's standby after the carousel does not follow); standby after a held C on a
+dismissed note comes without the firmware's 84 ms partial draw; after Restore with Domestic 2
+the captured prompts open with the cursor hidden (UNVERIFIED cause). A still's blink phase
+follows the capture harness's tap timing, so rate-entry stills match either phase within one
+480 ms step.
 
 ## Capture artefacts, uncertainty and website contrast
 
@@ -208,7 +231,7 @@ Do not add an awaits-scenario shim or label missing drivers as known gaps.
 | Virgin zero rate and silent error OK | Virgin EEPROM captures                                            | Reproduce the initial state                                                      |
 | Cursor hides a digit from OCR        | PNG ink and complementary blink phases                            | Compare both phases; do not infer a missing digit from OCR                       |
 
-Exact painter coordinates await imported goldens. The exact internal C timer, physical EEPROM
+The exact internal C timer, physical EEPROM
 rate encoding, internal arithmetic representation and uncaptured telephony behavior remain
 UNVERIFIED. None is inferred from a filename, OCR alone or the failed held-key exploration.
 

@@ -280,6 +280,9 @@ The sorted JSON manifest's SHA-256 is
 `b03b689cf408f521f08cd664fe63166412701d55cdee1c92992822ad86816034`.
 No output fixtures or generated modules were staged.
 
+Extension (plan 20, authorised by the parent): a `shots` source's entries may be `{ file, name }`
+to name an image whose file stem is not a golden image name (`shotImages`, validated before writes).
+
 Next consumer edits belong to their plan owners: the parent registers plan 29 in
 `docs/plans/README.md`; plan 18 Tasks 2/3 replace scenario shims/resource exemptions
 with pending imports and `resources` in their capture object; plan 20 Tasks 2/6

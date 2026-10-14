@@ -107,7 +107,8 @@ export class GoldenFormatError extends Error {
   }
 }
 
-const IMAGE_NAME = /^[a-z0-9-]+$/;
+/** A golden image's name. */
+export const IMAGE_NAME = /^[a-z0-9-]+$/;
 const ID = /^[a-z0-9][a-z0-9./-]*$/;
 const STATUS = /^(asserted|pending:[a-z0-9-]+)$/;
 const SHA256 = /^[0-9a-f]{64}$/;

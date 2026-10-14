@@ -21767,6 +21767,30 @@ export const SOUND_DATA: { readonly previewDelayMs: number; readonly messagePrev
         }
       ]
     },
+    "Dividing by zero not allowed": {
+      "id": "sound/note/calculator-divide-by-zero",
+      "steps": [
+        {
+          "ms": 288,
+          "tone": {
+            "hz": 1750,
+            "volume": 37125
+          }
+        }
+      ]
+    },
+    "Out of range": {
+      "id": "sound/note/calculator-out-of-range",
+      "steps": [
+        {
+          "ms": 296,
+          "tone": {
+            "hz": 1750,
+            "volume": 37125
+          }
+        }
+      ]
+    },
     "Code error": {
       "id": "sound/note/code-error",
       "steps": [
