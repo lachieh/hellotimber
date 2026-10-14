@@ -1,6 +1,6 @@
 // Messages (menu 2; plan 18 implements the editor and SMS): Message settings' and the voice
 // mailbox's prompts and virgin values, Info service's setter level and topics, and the leaves
-// plan 18 owns (placeholders until then).
+// plans 18 and 18c own (placeholders until then).
 import type { PromptLayout } from "../../widgets/prompt";
 import type { StockFeature } from "./feature";
 
@@ -10,13 +10,13 @@ export const messagesFeature: StockFeature = {
   name: "messages",
   placeholders: {
     "2-1": "18", // Write messages: text editor
-    "2-4": "18", // Picture messages: nothing in the virgin EEPROM
-    "2-5": "18", // Templates
-    "2-6": "18", // Smileys
-    "2-8-4-1-**": "18", // Topics: lists of box-glyph names (virgin EEPROM)
-    "2-8-4-2-**": "18",
-    "2-8-4-3-**": "18",
-    "2-10": "18", // Service command editor
+    "2-4": "18c", // Picture messages: nothing in the virgin EEPROM
+    "2-5": "18c", // Templates
+    "2-6": "18c", // Smileys
+    "2-8-4-1-**": "18c", // Topics: lists of box-glyph names (virgin EEPROM)
+    "2-8-4-2-**": "18c",
+    "2-8-4-3-**": "18c",
+    "2-10": "18c", // Service command editor
   },
   widgets: {
     promptLayouts: {
@@ -57,7 +57,7 @@ export const messagesFeature: StockFeature = {
       { key: "messages/voice-mailbox-number", number: "2-9", line: 1 },
     ],
     // Info service › Languages after Restore (`plan15/factory/scroll/2-8-5`). Info service ›
-    // Topics also shrinks to `Add topic` (plan 18 owns the topics).
+    // Topics also shrinks to `Add topic` (plan 18c owns the topics).
     factoryDefaults: [
       {
         key: "messages/info-service/language",

@@ -63,6 +63,26 @@ export type GlyphOverride =
       readonly font: FontName;
       readonly pair: string;
       readonly width: number;
+    }
+  /**
+   * A glyph whose ink has blank columns inside it (`"`): wherever it is written, its ink spans
+   * `width` columns from its first lit column, gaps included.
+   */
+  | {
+      readonly kind: "span";
+      readonly font: FontName;
+      readonly char: string;
+      readonly width: number;
+    }
+  /**
+   * The stock fonts' spacing for a character the goldens never show inside a word: its cell is
+   * its bearing, its ink and one blank column (plan 18 Task 3; every measured glyph but the
+   * digits and four large ones follows it). A measured advance must agree.
+   */
+  | {
+      readonly kind: "spacing";
+      readonly font: FontName;
+      readonly char: string;
     };
 
 export type HarvestIssue =
@@ -153,6 +173,7 @@ function readRun(
   sample: RunSample,
   height: number,
   touching: ReadonlyMap<string, number>,
+  spans: ReadonlyMap<string, number>,
   issues: HarvestIssue[],
 ): { observations: [string, Observation][]; pairs: Pair[] } | undefined {
   const { run, pixels, source } = sample;
@@ -182,6 +203,16 @@ function readRun(
     }
     g++;
   }
+  // Spanning glyphs: merge the segments their ink width covers.
+  glyphChars.forEach((ch, g) => {
+    const width = spans.get(ch);
+    const segment = segments[g];
+    if (width === undefined || !segment) return;
+    while (segments[g + 1] && segments[g + 1]![1] <= segment[0] + width - 1) {
+      segment[1] = segments[g + 1]![1];
+      segments.splice(g + 1, 1);
+    }
+  });
   if (segments.length !== glyphChars.length) {
     issues.push({
       kind: "segment-count",
@@ -241,11 +272,14 @@ export function harvestGlyphs(
     const bitmaps = new Map<string, Tally<readonly string[]>>();
     const pairs: Pair[] = [];
     const touching = new Map<string, number>();
-    for (const o of overrides)
+    const spans = new Map<string, number>();
+    for (const o of overrides) {
       if (o.kind === "touch" && o.font === font) touching.set(o.pair, o.width);
+      if (o.kind === "span" && o.font === font) spans.set(o.char, o.width);
+    }
     for (const sample of samples) {
       if (sample.run.font !== font) continue;
-      const read = readRun(sample, height, touching, issues);
+      const read = readRun(sample, height, touching, spans, issues);
       if (!read) continue;
       for (const [ch, observation] of read.observations) {
         if (!bitmaps.has(ch)) bitmaps.set(ch, new Tally());
@@ -267,6 +301,12 @@ export function harvestGlyphs(
     };
     for (const o of overrides) {
       if (o.kind === "advance" && o.font === font) tallyAdvance(o.char, o.advance, "override");
+    }
+    for (const o of overrides) {
+      if (o.kind !== "spacing" || o.font !== font) continue;
+      const variants = bitmaps.get(o.char)?.entries;
+      if (variants?.length !== 1) continue;
+      tallyAdvance(o.char, bearing(o.char) + variants[0]!.value[0]!.length + 1, "spacing");
     }
     for (const pair of pairs) {
       if (pair.spaces !== 0) continue;

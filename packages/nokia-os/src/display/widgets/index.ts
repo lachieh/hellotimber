@@ -1,7 +1,9 @@
 import type { Framebuffer } from "@hellotimber/phone-screen";
 import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
+import { paintCalculator, type CalculatorModel } from "./calculator";
 import { paintConfirm, type ConfirmModel } from "./confirm";
+import { paintEditor, type EditorModel } from "./editor";
 import { paintGameOver, type GameOverModel } from "./game-over";
 import { paintInfoPage, type InfoPageModel } from "./info-pages";
 import { paintInfoScreen, type InfoScreenModel } from "./info-screen";
@@ -14,9 +16,11 @@ import { paintProgress, type ProgressModel } from "./progress";
 import { paintPrompt, type PromptModel } from "./prompt";
 import { paintSnake, type SnakeModel } from "./snake";
 import { paintSplash, type SplashModel } from "./splash";
+import { paintSymbols, type SymbolsModel } from "./symbols";
 import { paintTextPage, type TextPageModel } from "./text-pages";
 
 export type { ConfirmModel } from "./confirm";
+export type { EditorModel } from "./editor";
 export type { GameOverModel } from "./game-over";
 export type { InfoPageModel } from "./info-pages";
 export type { InfoScreenModel } from "./info-screen";
@@ -30,6 +34,7 @@ export type { ProgressModel } from "./progress";
 export type { PromptEntry, PromptModel } from "./prompt";
 export type { SnakeModel } from "./snake";
 export type { SplashModel } from "./splash";
+export type { SymbolsModel } from "./symbols";
 export type { TextPageModel } from "./text-pages";
 
 /** A choice a later plan implements (D13), inside a flow: the placeholder frame of `label`. */
@@ -62,7 +67,10 @@ export type WidgetModel =
   | GameOverModel
   | BootFrameModel
   | WelcomeNoteModel
+  | EditorModel
+  | SymbolsModel
   | PlaceholderModel
+  | CalculatorModel
   | KeyguardModel;
 
 /**
@@ -116,8 +124,17 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
     case "welcome-note":
       paintWelcomeNote(fb, model);
       return;
+    case "editor":
+      paintEditor(fb, model);
+      return;
+    case "symbols":
+      paintSymbols(fb, model);
+      return;
     case "placeholder":
       fb.pixels.set(placeholderFrame(model.label).pixels);
+      return;
+    case "calculator":
+      paintCalculator(fb, model);
       return;
     case "keyguard":
       paintKeyguard(fb, model, previous);

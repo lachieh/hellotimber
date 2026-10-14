@@ -3,5 +3,5 @@ import type { StockFeature } from "./feature";
 
 export const chatFeature: StockFeature = {
   name: "chat",
-  placeholders: { "3": "18" },
+  placeholders: { "3": "18c" },
 };

@@ -24,6 +24,7 @@ import {
   readPlanIndex,
   type GoldenIndexEntry,
 } from "../scripts/golden-index.ts";
+import { parseManifestNote } from "../scripts/messages-capture-set.ts";
 import { parseLightsGolden } from "../scripts/lights-format.ts";
 import { parseSoundGolden } from "../scripts/sound-format.ts";
 
@@ -251,7 +252,7 @@ describe("sound goldens (plan 16)", () => {
       expect(golden.status).toBe(entry.status);
       expect(golden.rows).toHaveLength(entry.events!);
       expect(golden.state).toMatch(STATES);
-      expect(golden.source).toMatch(/^captures\/6\.39\/plan16\//);
+      expect(golden.source).toMatch(/^captures\/6\.39\/plan\d+[a-z]?\//);
     });
   }
 
@@ -270,5 +271,56 @@ describe("sound goldens (plan 16)", () => {
   it("leaves no golden pending on plan 16 (the Composer is plan 27's)", () => {
     expect(index.filter((entry) => entry.status === "pending:16").map((e) => e.id)).toEqual([]);
     expect(PLACEHOLDER_OWNERS["5-4-*"]).toBe("27");
+  });
+});
+
+describe("plan 18 goldens", () => {
+  const own = readPlanIndex(GOLDENS, "18");
+  const load = (entry: IndexEntry): Golden =>
+    parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+
+  it("leaves plan 18 pending elsewhere only on the leaves it still owns (2-1, 6-2-3)", () => {
+    // Plan 25's keyguard and lights recordings of message arrivals (K7) wait on plan 18's screens
+    // too; they cover no tree leaf.
+    const elsewhere = index.filter(
+      (entry) =>
+        entry.status === "pending:18" &&
+        !own.some((e) => e.id === entry.id) &&
+        !/^(keyguard|lights)\//.test(entry.id),
+    );
+    const owned = Object.entries(PLACEHOLDER_OWNERS)
+      .filter(([, plan]) => plan === "18")
+      .map(([number]) => number);
+    expect(owned.sort()).toEqual(["2-1", "6-2-3"]);
+    for (const entry of elsewhere) {
+      const numbers = entry.covers ?? [entry.id.slice(entry.id.lastIndexOf("/") + 1)];
+      expect(
+        numbers.every((number) => owned.includes(number)),
+        entry.id,
+      ).toBe(true);
+    }
+  });
+
+  it("re-owns Chat, the content leaves and their goldens to plan 18c (D1)", () => {
+    for (const number of ["2-4", "2-5", "2-6", "2-8-4-1-**", "2-10", "3", "5-9-4", "12-*-2-9-4"])
+      expect(PLACEHOLDER_OWNERS[number], number).toBe("18c");
+    const status = new Map(index.map((entry) => [entry.id, entry.status]));
+    expect(status.get("menu/03-chat.sub")).toBe("pending:18c");
+    expect(status.get("tree/02-messages/2-4.leaf")).toBe("pending:18c");
+  });
+
+  it("lists every glyph sheet's characters in its note, one per image", () => {
+    const sheets = own.filter((entry) => entry.id.startsWith("glyphs/"));
+    expect(sheets.map((entry) => entry.id)).toEqual([
+      "glyphs/digits",
+      "glyphs/large",
+      "glyphs/small",
+    ]);
+    for (const entry of sheets) {
+      const golden = load(entry);
+      const chars = parseManifestNote(golden.note);
+      expect(chars, entry.id).toHaveLength(golden.images.length);
+      if (entry.id !== "glyphs/digits") expect(new Set(chars).size, entry.id).toBe(chars!.length);
+    }
   });
 });

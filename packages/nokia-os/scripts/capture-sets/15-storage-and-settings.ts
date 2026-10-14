@@ -249,8 +249,8 @@ export const storageAndSettings: PlanCaptureSet = {
       "virgin-EEPROM time and date wizard after the boot",
     "plan15/boot/gate-lockout-early, -expiry, -reboot, -restart":
       "lockout probes whose waits span minutes: their facts (≈290 s, restart, power cycle) are in the plan 15 Task 0 outcome",
-    "plan15/boot/welcome-erased, plan15/welcome/":
-      "the Welcome note editor and its notes: plan 18 owns the editor (plan 15 D12)",
+    "plan15/boot/welcome-erased":
+      "the boot after the Welcome note's Erase: the note-free boot of boot/power-on (plan 18 imports plan15/welcome/)",
     "plan15/accept/boot-*": "the new-SIM rule, asserted by plan 15 Task 8's tests (no new pixels)",
     "plan15/accept/c4-*, plan15/accept/c7-restore-again, plan15/accept/6-4-page":
       "Restore's setup screens (text editor, page shots) and a repeat of c7-restore",

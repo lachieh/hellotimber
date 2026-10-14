@@ -1,6 +1,6 @@
 lcd-golden 1
 id: tree/02-messages/2-8-4-1.options
-status: pending:18
+status: pending:18c
 source: captures/6.39/plan14/scroll/2-8-4-1
 source-sha256: 8e3d88169d686b611e52ef94a46e0c0b38fcf00ff2140a25f1a80edaa3387c69
 note: Select (2-8-4-1): option list, opens on (unreadable: box glyphs), then ▼ per image.

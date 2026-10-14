@@ -109,7 +109,8 @@ export const resources: ResourceDeclarations = {
     },
   ],
   glyphOverrides: [
-    // `Keypad`: K's leg touches e (keyguard/lock d); e's ink starts 8 columns after K's.
+    // `Keypad`: K's leg fills its blank column, as large R's does, so it touches e (keyguard/lock
+    // d); e's ink starts 8 columns after K's. K's advance is 8 everywhere (not plan 18's spacing).
     { kind: "touch", font: "large", pair: "Ke", width: 8 },
     // `*` ends `and then *` (7 columns of ink): one blank column, as the large face's others.
     { kind: "advance", font: "large", char: "*", advance: 8 },

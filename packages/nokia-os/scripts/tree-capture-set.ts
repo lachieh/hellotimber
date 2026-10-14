@@ -64,22 +64,21 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   // Plan 17: Profiles.
   "12-*-1": "17", // Profiles › Activate
 
-  // Plan 18: Messages (18c: Chat, Templates, Smileys, Picture messages, Topics).
+  // Plan 18: Messages I (Write messages and Welcome note until plan 18 Tasks 8 and 10 bind them).
   "2-1": "18", // Write messages: text editor
-  "2-4": "18", // Picture messages: nothing in the virgin EEPROM
-  "2-5": "18", // Templates
-  "2-6": "18", // Smileys
-  "2-8-4-1-**": "18", // Topics: lists of box-glyph names (virgin EEPROM)
-  "2-8-4-2-**": "18",
-  "2-8-4-3-**": "18",
-  "2-10": "18", // Service command editor
-  "3": "18", // Chat
-  "5-9-4": "18", // Screen saver › Screen saver: nothing in the virgin EEPROM
-  "12-*-2-9-4": "18",
   "6-2-3": "18", // Welcome note: text editor (plan 15 D12; plan 15 owns the stored note)
 
-  // Plan 20: Calculator.
-  "9": "20", // Calculator
+  // Plan 18c: Chat and content (plan 18 D1).
+  "2-4": "18c", // Picture messages: nothing in the virgin EEPROM
+  "2-5": "18c", // Templates
+  "2-6": "18c", // Smileys
+  "2-8-4-1-**": "18c", // Topics: lists of box-glyph names (virgin EEPROM)
+  "2-8-4-2-**": "18c",
+  "2-8-4-3-**": "18c",
+  "2-10": "18c", // Service command editor
+  "3": "18c", // Chat
+  "5-9-4": "18c", // Screen saver › Screen saver: nothing in the virgin EEPROM
+  "12-*-2-9-4": "18c",
 
   // Plan 21: Clock and Reminders.
   "11-4": "21", // Stopwatch

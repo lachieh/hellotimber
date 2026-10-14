@@ -6,11 +6,12 @@
 import type { ResourceDeclarations } from "./resource-declarations.ts";
 import type { GameCaptureIo, TickFixtureSpec } from "./game-capture-set.ts";
 import type { LightsCaptureIo, LightsGolden } from "./lights-format.ts";
-import type {
-  GoldenKeyPress,
-  GoldenScenario,
-  GoldenStatus,
-  TriggerFrame,
+import {
+  IMAGE_NAME,
+  type GoldenKeyPress,
+  type GoldenScenario,
+  type GoldenStatus,
+  type TriggerFrame,
 } from "./golden-format.ts";
 import type { SoundCaptureIo } from "./sound-capture-set.ts";
 import type { SoundGolden } from "./sound-format.ts";
@@ -32,8 +33,8 @@ export type CaptureSource =
   | { readonly kind: "composite"; readonly parts: readonly FrameRange[] }
   /** A `scroll` directory (01.png, 02.png, …), one still per screen. */
   | { readonly kind: "scroll"; readonly dir: string }
-  /** Named `shot` PNGs, one still each, named after the file stem. */
-  | { readonly kind: "shots"; readonly files: readonly string[] }
+  /** Named `shot` PNGs, one still each, named after the file stem unless the entry names it. */
+  | { readonly kind: "shots"; readonly files: readonly ShotFile[] }
   /** Single frames of `record` directories as named stills (plan 23 tick stills). */
   | {
       readonly kind: "frames";
@@ -43,6 +44,31 @@ export type CaptureSource =
         readonly frame: number;
       }[];
     };
+
+/**
+ * One PNG of a `shots` source: a path (the image is named after its stem), or a path and the
+ * image's name, for a file whose stem is not a golden image name (`results/0.1+0.2.png`).
+ */
+export type ShotFile = string | { readonly file: string; readonly name: string };
+
+/** A `shots` source's files and image names; throws naming the file when a name is invalid. */
+export function shotImages(
+  files: readonly ShotFile[],
+): { readonly file: string; readonly name: string }[] {
+  return files.map((shot) => {
+    const file = typeof shot === "string" ? shot : shot.file;
+    const name =
+      typeof shot === "string"
+        ? file.slice(file.lastIndexOf("/") + 1).replace(/\.png$/, "")
+        : shot.name;
+    if (!IMAGE_NAME.test(name)) {
+      throw new Error(
+        `${file}: image name "${name}" must match [a-z0-9-]+ (name the shot: { file, name })`,
+      );
+    }
+    return { file, name };
+  });
+}
 
 export interface SourceChoice {
   readonly source: CaptureSource;
@@ -93,6 +119,8 @@ export interface CaptureIo {
   readonly game: GameCaptureIo;
   /** Sound events and keys (sound goldens). */
   readonly sound: SoundCaptureIo;
+  /** A JSON file's contents (a capture manifest), or undefined when it is missing. */
+  readonly json: (path: string) => unknown;
   /** Plan 25: LED logs and keys (lights goldens). */
   readonly lights: LightsCaptureIo;
 }

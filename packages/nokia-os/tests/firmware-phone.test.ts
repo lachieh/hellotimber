@@ -33,8 +33,8 @@ function clocked(config: Partial<StockPhoneConfig> = {}) {
 
 describe("createStockPhone", () => {
   it("rejects a carrier the small font cannot draw and names the characters", () => {
-    expect(() => createStockPhone({ carrier: "Zap & Zone@" })).toThrow(
-      'Carrier "Zap & Zone@" has characters the stock small font lacks: "Z", "&", "@".',
+    expect(() => createStockPhone({ carrier: "Zap ~ Zone{" })).toThrow(
+      'Carrier "Zap ~ Zone{" has characters the stock small font lacks: "~", "{".',
     );
     expect(() => createStockPhone({ carrier: "Telstra" })).not.toThrow();
   });

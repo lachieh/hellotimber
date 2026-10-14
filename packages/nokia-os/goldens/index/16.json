@@ -695,7 +695,7 @@
   {
     "id": "sound/note/12-1-2-9-4",
     "file": "sound/note/12-1-2-9-4.sound.txt",
-    "status": "pending:18",
+    "status": "pending:18c",
     "kind": "sound",
     "events": 2
   },
@@ -709,7 +709,7 @@
   {
     "id": "sound/note/12-2-2-9-4",
     "file": "sound/note/12-2-2-9-4.sound.txt",
-    "status": "pending:18",
+    "status": "pending:18c",
     "kind": "sound",
     "events": 2
   },
@@ -737,7 +737,7 @@
   {
     "id": "sound/note/12-5-2-9-4",
     "file": "sound/note/12-5-2-9-4.sound.txt",
-    "status": "pending:18",
+    "status": "pending:18c",
     "kind": "sound",
     "events": 2
   },
@@ -751,7 +751,7 @@
   {
     "id": "sound/note/12-6-2-9-4",
     "file": "sound/note/12-6-2-9-4.sound.txt",
-    "status": "pending:18",
+    "status": "pending:18c",
     "kind": "sound",
     "events": 2
   },
@@ -765,7 +765,7 @@
   {
     "id": "sound/note/2-10",
     "file": "sound/note/2-10.sound.txt",
-    "status": "pending:18",
+    "status": "pending:18c",
     "kind": "sound",
     "events": 2
   },
@@ -786,21 +786,21 @@
   {
     "id": "sound/note/2-4",
     "file": "sound/note/2-4.sound.txt",
-    "status": "pending:18",
+    "status": "pending:18c",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/note/2-5",
     "file": "sound/note/2-5.sound.txt",
-    "status": "pending:18",
+    "status": "pending:18c",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/note/2-6",
     "file": "sound/note/2-6.sound.txt",
-    "status": "pending:18",
+    "status": "pending:18c",
     "kind": "sound",
     "events": 2
   },
@@ -856,7 +856,7 @@
   {
     "id": "sound/note/3",
     "file": "sound/note/3.sound.txt",
-    "status": "pending:18",
+    "status": "pending:18c",
     "kind": "sound",
     "events": 2
   },
@@ -996,7 +996,7 @@
   {
     "id": "sound/note/5-9-4",
     "file": "sound/note/5-9-4.sound.txt",
-    "status": "pending:18",
+    "status": "pending:18c",
     "kind": "sound",
     "events": 2
   },
@@ -1081,13 +1081,6 @@
     "id": "sound/note/8-4-2-1",
     "file": "sound/note/8-4-2-1.sound.txt",
     "status": "pending:24",
-    "kind": "sound",
-    "events": 2
-  },
-  {
-    "id": "sound/note/9",
-    "file": "sound/note/9.sound.txt",
-    "status": "pending:20",
     "kind": "sound",
     "events": 2
   },

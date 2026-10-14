@@ -122,7 +122,7 @@ export function createStockPhoneWith(
     cues: internals.cues ?? sounder,
   };
   const phone = createPhone({
-    menu: createStockMenu(ports, settings, games, security, sounder),
+    menu: createStockMenu(ports, settings, games, security, sounder, eeprom),
     carrier: config.carrier,
     ...(clock === undefined ? {} : { clock }),
     bootTimeline: BOOT_TIMELINE,

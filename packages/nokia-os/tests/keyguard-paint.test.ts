@@ -38,6 +38,21 @@ function imagesOf(id: string, from: number, count: number): string[] {
     .map((row) => row.image);
 }
 
+describe("plan 25's generated resources", () => {
+  it("names the keyguard's timelines", () => {
+    expect(Object.keys(WIDGET_TIMELINE_BY_NAME)).toEqual(
+      expect.arrayContaining([
+        "keyguard-emergency",
+        "keyguard-hint",
+        "keyguard-hint-scroll",
+        "keyguard-now-press",
+        "keypad-active",
+        "keypad-locked",
+      ]),
+    );
+  });
+});
+
 describe("the locked standby (K2)", () => {
   it("is standby with the key icon and Unlock (keyguard/standby)", () => {
     expectLcd(

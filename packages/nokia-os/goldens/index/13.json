@@ -82,7 +82,7 @@
   {
     "id": "menu/03-chat.sub",
     "file": "menu/03-chat.sub.lcd.txt",
-    "status": "pending:18",
+    "status": "pending:18c",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -226,7 +226,7 @@
   {
     "id": "menu/09-calculator.sub",
     "file": "menu/09-calculator.sub.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1

@@ -306,6 +306,17 @@ describe("option list behaviour", () => {
     expect(flow.model()).toMatchObject({ selected: 4, windowTop: 4 });
   });
 
+  it("puts ▲ out of a list of four on the top row (5-6 Keypad tones; rows-window probe)", () => {
+    const flow = listFlow("5-6", virgin());
+    flow.press("down"); // Off on the top row
+    flow.press("up");
+    expect(flow.model()).toMatchObject({ selected: 3, windowTop: 3 }); // Level 3 / Off / Level 1
+    for (const key of ["down", "down", "down", "down"] as const) flow.press(key);
+    expect(flow.model()).toMatchObject({ selected: 3, windowTop: 1 });
+    for (const key of ["up", "up", "up"] as const) flow.press(key);
+    expect(flow.model()).toMatchObject({ selected: 0, windowTop: 0 }); // Off / Level 1 / Level 2
+  });
+
   it("numbers its indicator per list: path, parent level or option only", () => {
     expect(listFlow("1-8-1", virgin()).model().indicator.segments).toEqual([1, 8, 1, 3]);
     expect(listFlow("7-3-4", virgin()).model().indicator.segments).toEqual([7, 3, 0]);

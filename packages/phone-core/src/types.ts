@@ -166,6 +166,11 @@ export interface PhoneConfig<Metadata = unknown> {
    * from `open()` or `createSession` skips the gate.
    */
   bootGates?: readonly BootGate[];
+  /**
+   * Plan 18: standby indicators (message, voicemail), re-read on every tick like `clock`; a
+   * change emits one snapshot. Emitted on the standby model only when a field is true. Default: none.
+   */
+  standbyIndicators?: () => StandbyIndicators | undefined;
 }
 
 /** Plan 15: an application that may hold the boot at an offset into it. */
@@ -196,9 +201,15 @@ export interface Phone {
   pressKey(key: PhoneKey, holdMs?: number): void; // convenience: down + up
   tick(nowMs: number): void; // drives timers/animations
   navigate(path: string): void; // external (router) control
-  // Standby-scoped notice ("1 message received"): standby renders it;
-  // NaviKey navigates to `path` (default: clears); C clears; null clears.
-  setNotice(n: { text: string; softkey: string; path?: string } | null): void;
+  /**
+   * Standby-scoped notice ("1 message received"): standby renders it; C clears it. Navi navigates
+   * to `path` (default: clears), or (plan 18) runs `open` as a standby application: empty stack,
+   * path stays `standby`, `menuIndicator()` has no segments, `exit()` returns to standby
+   * (`levels`/`select`/`row` throw). `path` and `open` together throw. null clears.
+   */
+  setNotice(
+    n: { text: string; softkey: string; path?: string; open?: PhoneApplication } | null,
+  ): void;
   readonly path: string; // e.g. 'standby', 'menu/games/snake'
   readonly screen: ScreenModel;
   subscribe(cb: (snap: PhoneSnapshot) => void): () => void;

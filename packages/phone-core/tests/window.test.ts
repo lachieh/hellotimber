@@ -12,8 +12,9 @@ function walk(count: number, start: number, keys: string): number[][] {
   let top = rowsWindowTop(undefined, selected, count, 3);
   const seen = [rowsOf(top, count)];
   for (const key of keys) {
-    selected = (selected + (key === "v" ? 1 : -1) + count) % count;
-    top = rowsWindowTop(top, selected, count, 3);
+    const move = key === "v" ? "down" : "up";
+    selected = (selected + (move === "down" ? 1 : -1) + count) % count;
+    top = rowsWindowTop(top, selected, count, 3, move);
     seen.push(rowsOf(top, count));
   }
   return seen;
@@ -110,6 +111,46 @@ describe("rowsWindowTop", () => {
       [2, 3, 0],
       [2, 3, 0],
     ]);
+  });
+
+  // 7-3 Divert if not answered and 4-4 Erase recent call lists (4 entries; rows-window probe).
+  // With count = rows + 1 the item after the bottom row is also the item above the top row, so
+  // only the move's direction tells ▼ (onto the bottom row) from ▲ (onto the top row).
+  it("puts ▲ out of a window of 4 on the top row, ▼ on the bottom row", () => {
+    expect(rowsWindowTop(0, 3, 4, 3, "up")).toBe(3);
+    expect(rowsWindowTop(1, 0, 4, 3, "up")).toBe(0);
+    expect(rowsWindowTop(0, 3, 4, 3, "down")).toBe(1);
+    expect(rowsWindowTop(1, 0, 4, 3, "down")).toBe(2);
+  });
+
+  it("follows the 4-entry captures both ways", () => {
+    // ▲ from entry: Set delay / Activate / Cancel, Status / Set delay / Activate, ...
+    expect(walk(4, 0, "^^^^^")).toEqual([
+      [0, 1, 2],
+      [3, 0, 1],
+      [2, 3, 0],
+      [1, 2, 3],
+      [0, 1, 2],
+      [3, 0, 1],
+    ]);
+    // ▼×3, then ▲ back above the window and through the wrap.
+    expect(walk(4, 0, "vvv^^^^")).toEqual([
+      [0, 1, 2],
+      [0, 1, 2],
+      [0, 1, 2],
+      [1, 2, 3],
+      [1, 2, 3],
+      [1, 2, 3],
+      [0, 1, 2],
+      [3, 0, 1],
+    ]);
+    // ▼ past the last continues on the bottom row: Status / Set delay / Activate, then Cancel.
+    expect(walk(4, 0, "vvvvv").slice(3)).toEqual([
+      [1, 2, 3],
+      [2, 3, 0],
+      [3, 0, 1],
+    ]);
+    expect(walk(4, 0, "vv^^^")[5]).toEqual([3, 0, 1]);
   });
 
   it("is 0 for an empty list and rejects out-of-range input", () => {

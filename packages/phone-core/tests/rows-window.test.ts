@@ -177,6 +177,35 @@ describe("rows window (PhoneConfig.rowsWindow)", () => {
     expect(list(phone)).toMatchObject({ selected: 7, windowTop: 7 });
   });
 
+  it("puts ▲ out of a level of rows + 1 on the top row (7-3 Divert if not answered)", () => {
+    const labels = ["Activate", "Cancel", "Status", "Set delay"];
+    const level = new MenuLevel(
+      labels.map(
+        (label, index) => new ReaderEntry(slug(`d-${index + 1}`), order(index + 1), label, "Body"),
+      ),
+    );
+    const phone = bootedPhone({
+      menu: new PhoneMenu([
+        new TopLevelEntry(
+          new SubmenuEntry(slug("divert"), order(1), "Divert", level),
+          new MenuGraphic("divert"),
+        ),
+      ]),
+      rowsWindow: 3,
+    });
+    phone.navigate("menu/divert");
+    expect(press(phone, ["up", "up", "down", "down", "down", "up", "up", "up"])).toEqual([
+      [3, 3],
+      [2, 2],
+      [3, 2],
+      [0, 2],
+      [1, 3],
+      [0, 3],
+      [3, 3],
+      [2, 2],
+    ]);
+  });
+
   it("never scrolls a level of rows or fewer", () => {
     const phone = phoneWith();
     phone.navigate("menu/book/item-4");

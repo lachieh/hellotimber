@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/calculator/keys-rate-c
+status: asserted
+source: captures/6.39/plan20/sound/keys-rate-c
+source-sha256: 270805fe9489b896d6335a35809b2f9e16ab708181d0165f4d707d51a6d9eb19
+state: factory
+keys: 0:c
+note: The Foreign prompt with 1, then C.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+22     tone     900 v=0x9104
+169    tone     off

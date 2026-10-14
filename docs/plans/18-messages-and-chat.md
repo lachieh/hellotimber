@@ -484,19 +484,20 @@ guard treats `glyphs/*` as resources, not scenarios (as `text-runs.ts` inputs ar
 are generated from Task 0's `manifest.json` (the character typed per shot), checked against
 `plan18/text.json`, into `scripts/generated/messages-text-runs.ts`.
 
-## Stock display observations (scratch; Task 3 measures from goldens)
+## Stock display observations (measured by Task 3 on the goldens)
 
-| Element        | Observation                                                                                                                                                      |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Editor header  | multi-tap pen x 1..9 y 0..5; T9 pen with bars x 0..17; mode text in the 6-row face (`Abc` from x 14 in multi-tap); counter right-aligned to x 83 (`459/1`, `36`) |
-| Editor text    | small face from x 1, tops 8/18/28; cursor 1x10 at y 7..16 after the last character's blank column; blink ≈480 ms; `Options` centred at y 40                      |
-| Symbol table   | header pen + `?!$`-like mode text; 31 cells in rows of 11/11/9, cell pitch 7, from x 2, tops 7/17/27, thin face; selection = inverted cell; soft key `Use`       |
-| Number prompt  | `Phone number:` small at top 7; counter digits top right (`30`); box y 16..36; digits large right-aligned ending x 82; cursor at the end; `Search`/`OK`          |
-| Sending        | hatched bar x 0..83, y 7..14 (the `Requesting` sprite set, Task 3 checks equality); `Sending` / `message` small at tops 18/29; no soft key                       |
-| Message sent   | `Message` / `sent` large at tops 3/18; envelope animation within x 63..83, y 9..24 (6 frames)                                                                    |
-| Standby notice | envelope icon left; `1` / `message` / `received` small at tops 7/16/25 from x 6; `Read`; the operator line is not drawn                                          |
-| Inbox list     | rows layout with an envelope icon at x 1..8 per row, sender from x 10; `Read`                                                                                    |
-| Message view   | small face from x 0, top 0, pitch 9 (up to four text lines per page); `Options`                                                                                  |
+| Element        | Measured layout                                                                                                                                                                                                                                             |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Editor header  | multi-tap pen = `prompt/pen` (x 1..9, y 0..5); T9 pen with bars x 0..17 (`editor/t9-pen`, 18b); mode text art at x 14..30 (`prompt/abc`, `prompt/abc-lower`, `editor/mode-upper`, `editor/mode-123`); counter in digits, ending at x 83 (`459/1` from x 56) |
+| Editor text    | small cells from x 1 at tops 8/18/28; cursor 1x10 at y 7..16; blink 480 ms; commit 1452 ms after the pending character's first redraw; `Options` small at top 40                                                                                            |
+| Symbol table   | header pen + `editor/mode-symbols` (x 14..30); 31 cells in rows of 11/11/9; cell k's 8x8 box at x 1 + 7 × column, y 7 + 10 × row, its thin glyph from x 2 + 7 × column at top 7 + 10 × row; the selected cell's box inverted; soft key `Use`                |
+| Number prompt  | `Phone number:` small at top 7 from x 0; counter digits top right (`30` from x 72); up to ten digits large at top 23, right-aligned (one digit from x 75); more digits in small rows from x 5, right-aligned, at tops 28, 19, 10; `Search`/`OK`             |
+| Sending        | the Requesting bar (`progress-1`..`-10`, x 0..83, y 7..14) at 260-272 ms steps; `Sending` / `message` small at tops 18/29; no soft key; 2662 ms (median)                                                                                                    |
+| Message sent   | `Message` / `sent` large at tops 3/18; the envelope in seven frames within x 63..83, y 0..24 (`message-sent-1`..`-7`, 1403 ms)                                                                                                                              |
+| Saving, Erased | `Saving message`: the bar's first frame for 88 ms, then `Message saved` (tick note); `Erasing message`: the bar, then `Erased` with a waste bin lifting its lid (`erased-1`..`-6`, x 64..83, y 2..22)                                                       |
+| Standby notice | envelope x 7..18, y 0..5 (`message/envelope`, also the unread indicator); `1` / `message` / `received` small at tops 7/16/25; `Read`; the operator line is not drawn                                                                                        |
+| Inbox list     | rows at tops 8/18/28; unread icon x 0..5 one row below the top (`message/unread`), read and saved icon x 1..6 (`message/read`); sender small from x 10; the selected row inverted from x 8                                                                  |
+| Message view   | small face from x 0, top 0, pitch 9 (up to four text lines per page); `Options`                                                                                                                                                                             |
 
 ## Conventions for every task
 
@@ -832,23 +833,62 @@ pipeline and cross-plan acceptance driver registrations also need their owners. 
 `tests/messages-capture-set.test.ts` (new), `tests/goldens-integrity.test.ts`,
 `tests/acceptance.test.ts` (todo shim only), `goldens/**`.
 
-- [ ] TDD `messages-capture-set.ts` on synthetic recordings (injected loader, as
+- [x] TDD `messages-capture-set.ts` on synthetic recordings (injected loader, as
       `game-capture-set.test.ts`): ids, kinds, cut points, `trigger-frame` on the first changed frame
       (plan 14 D8), glyph-sheet stills with a `manifest` note.
-- [ ] Re-own (D1): `2-4`, `2-5`, `2-6`, `2-8-4-*-**`, `2-10`, `3`, `5-9-4`, `12-*-2-9-4` → `18c`;
+- [x] Re-own (D1): `2-4`, `2-5`, `2-6`, `2-8-4-*-**`, `2-10`, `3`, `5-9-4`, `12-*-2-9-4` → `18c`;
       `2-1` and `6-2-3` leave the tables (bound in Tasks 8/10); the Dictionary T9 choices are not
       tree nodes (the editor's Options are bindings), so `18b` owns them in `EDITOR_OPTIONS` (Task
       10). `tree/02-messages/2-1.leaf` → `pending:18b` (D3); `menu/03-chat.sub`, the Topics goldens
       and `2-4.leaf`/`2-10.leaf` → `pending:18c`; `tree/06-settings/6-2-3.leaf` → asserted.
-- [ ] Integrity: no golden is `pending:18`; the owner tables are equal; `glyphs/*` stills have a
+- [x] Integrity: no golden is `pending:18`; the owner tables are equal; `glyphs/*` stills have a
       manifest note whose characters match the image count.
-- [ ] `tests/acceptance.test.ts`: list the new asserted goldens without a scenario as todos
+- [x] `tests/acceptance.test.ts`: list the new asserted goldens without a scenario as todos
       (`awaitsPlan18Scenario`; Task 12 deletes it).
-- [ ] Run `import-captures` twice; the second run changes nothing. Record fixture counts, images and
+- [x] Run `import-captures` twice; the second run changes nothing. Record fixture counts, images and
       bytes in a completion note (budget guide: ≤ 2 MB of new text grids; glyph sheets dominate, so
       crop nothing but keep one image per character).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import text entry and SMS goldens (plan 18)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import text entry and SMS goldens (plan 18)`.
+
+Deviation: **Task 2 (paths, plan 29 conventions):** the table is `scripts/messages-capture-set.ts`
+(tested by `tests/messages-capture-set.test.ts` with an injected `MessagesCaptureIo`), registered
+by `scripts/capture-sets/18-messages-and-chat.ts` and one line in `scripts/capture-sets/index.ts`;
+its goldens are indexed in `goldens/index/18.json` and run by
+`tests/acceptance/18-messages-and-chat.test.ts`. `CaptureIo` gains a generic `json(path)` reader
+(`capture-set.ts`, `import-captures.ts`) for the glyph manifests. `NOT_IMPORTED` now lives in
+plan 15's capture set: its Welcome entry is narrowed to `plan15/boot/welcome-erased`. The Chat
+level list's status is set in plan 13's capture set (`pending:18c`). Placeholder owners change
+in `scripts/tree-capture-set.ts` and the features (`messages`, `chat`, `tones`, `profiles`).
+
+Deviation: **Task 2 (status, plan 29 pending workflow):** every new golden is `pending:18`, not
+asserted, and no `awaitsPlan18Scenario` shim exists: the harness lists pending goldens as todos
+and the acceptance file has no scenarios yet. Later tasks promote each golden in
+`messages-capture-set.ts` when its scenario exists. `2-1` and `6-2-3` stay owned by `18` until
+Tasks 10 and 8 bind them, so `tree/06-settings/6-2-3.leaf`, `tree/02-messages/2-1.leaf` and
+their sound notes stay `pending:18`; Task 10 needs a status override to make `2-1.leaf`
+`pending:18b` once `2-1` is bound (D3). The integrity check "no golden is `pending:18`" moves to
+Task 12; Task 2 checks instead that plan 18 is pending elsewhere only on those two leaves.
+
+Deviation: **Task 2 (ids and selection):** key goldens are `text/key-<k>-upper` and
+`text/key-<k>-lower` with the first cycle only. The repeat matches the first cycle pixel for
+pixel, and Abc matches ABC below the header (both verified). Glyph sheets are one still per face
+(`glyphs/large`, `glyphs/small`, `glyphs/digits`) whose note ends `manifest [<JSON chars>]`, one
+per image. `glyphs/large` keeps the first shot of each of the 149 characters. `glyphs/small`
+keeps the 19 characters only the symbol table types: the 130 multi-tap small shots are
+byte-identical to the `text/key-*` stills (verified), which the harvester reads instead.
+Sweeps, repeated samples and helper artefacts are listed in `MESSAGES_NOT_IMPORTED` with
+reasons (T9 probes for 18b, `sms/fail/`, `sms/receive-limits/`, `sms/elsewhere/snake`, extra
+link-time samples). `sms/send` is the median send recording (`send/3`, 2662.4 ms).
+
+**Task 2 completion note:** 196 plan 18 fixtures (85 stills, 111 timelines; 1,290 images;
+5,410,431 bytes of text grids), all `pending:18`. The corpus now has 1,038 fixtures (775
+asserted, 263 pending). Re-owned to `18c`: `menu/03-chat.sub`, nine tree goldens (`2-4.leaf`
+and its shared nodes, `2-10.leaf`, the Topics lists and choices) and ten sound notes. The import
+is over the 2 MB guide: the plan's golden table needs about 1,300 distinct images even after
+deduplication (the small glyph sheet, second key cycles, sentence-mode keys, mirrored symbol
+shots and identical before/after lists are excluded). A second `import-captures` run changes
+nothing (identical tree hash).
 
 ### Task 3 - Glyphs, sprites and timings (TDD)
 
@@ -858,79 +898,153 @@ pipeline and cross-plan acceptance driver registrations also need their owners. 
 `src/resources/index.ts`, `tests/harvest.test.ts`, `tests/resources.test.ts`, this plan's display
 table.
 
-- [ ] Generate text runs for every `glyphs/*` image from Task 0's manifest (the typed character, its
+- [x] Generate text runs for every `glyphs/*` image from Task 0's manifest (the typed character, its
       face, its bounds), and for the new `text/*`/`sms/*`/`welcome/*` images from `plan18/text.json`
       (plan 14 Task 3's mapping). Feed both to the harvester; resolve reports with overrides that
       name their golden.
-- [ ] Crop table additions: the multi-tap and T9 header icons (the T9 one for 18b), the mode texts if
+- [x] Crop table additions: the multi-tap and T9 header icons (the T9 one for 18b), the mode texts if
       they are not glyph runs, the envelope icons (standby notice, standby indicator, inbox read and
       unread), the `Message sent` animation frames, the symbol-table selection if it is not a plain
       inversion. Check the `Sending message` bar against the `Requesting` sprites (reuse if equal).
-- [ ] Timings into `text.ts` (`TEXT_TIMINGS`): commit timeout, blink, held-C, held-`#`, held digit,
+- [x] Timings into `text.ts` (`TEXT_TIMINGS`): commit timeout, blink, held-C, held-`#`, held digit,
       held `*`; and widget timelines: `T9 dictionary deactivated`, `Sending message` (bar loop),
       `Message sent`, `Message saved`, `Centre number saved`, `Saved`, `Welcome note saved/erased`,
       the erase notes, `Opening`, the failure note if captured. `SEND_LINK_MS` and `RECEIVE_LINK_MS`
       (D10) as medians with the spread in a comment.
-- [ ] TDD: freshness; every typeable character renders in `small` and `large` (D6) and every symbol
+- [x] TDD: freshness; every typeable character renders in `small` and `large` (D6) and every symbol
       in `thin`; `digits` holds `/`, `A`, `B`, `C`, `a`, `b`, `c`; every new sprite is binary and
       inside its golden's ink.
-- [ ] Correct "Stock display observations" with the measured layout.
-- [ ] Run `extract-resources` twice; no diff.
-- [ ] Commit: `feat(nokia-os): harvest text entry glyphs, message sprites and timings`.
+- [x] Correct "Stock display observations" with the measured layout.
+- [x] Run `extract-resources` twice; no diff.
+- [x] Commit: `feat(nokia-os): harvest text entry glyphs, message sprites and timings`.
+
+Deviation: **Task 3 (paths, plan 29):** plan 18's evidence is `PlanCaptureSet.resources` in
+`scripts/resource-inputs/18-messages-and-chat.ts` (text runs, glyph overrides, sprite batch 180,
+timeline batch 180, kinds `message-sent` and `erased`); `scripts/glyph-overrides.ts` and
+`scripts/widget-sprites.ts` no longer exist. The REF-reading run generator is
+`scripts/messages-text-runs.ts` (package script `messages-text-runs`, like `import-tree`), writing
+`scripts/generated/messages-text-runs.ts`. Timings come from `scripts/messages-resources.ts` into
+`src/resources/generated/text.ts` (`TEXT_DATA`), one call and one file in `extract-resources.ts`.
+
+Deviation: **Task 3 (fonts):** the harvester gains two override kinds: `span` (a glyph with blank
+columns in its ink, `"`) and `spacing` (advance = bearing + ink + one blank column, for
+characters the goldens only show alone). Every measured glyph of every font follows that rule
+except `1` (a padded digit cell) and large `.` and `R` (`tests/resources.test.ts`). The header's
+mode texts are art, not digits glyphs: `123`'s digits conflict with the menu indicator's, so
+`digits` gains `/` (the counter) but not `A B C a b c`; the four mode texts are sprites, Abc and
+abc being plan 14's `prompt/abc` and `prompt/abc-lower`. `"` needs `span`; large `+` a bearing of 1.
+`digitHoldMs` is 1475, the upper end of the captured 1450/1475 bracket.
+
+Deviation: **Task 3 (timelines):** Sending message is plan 14's Requesting bar (the same sprites
+in order, verified), not a new timeline; it lasts `SEND_LINK_MS` (2662) at least. `Erased` has an
+animated bin (`message-erased`); `Opening` is plan 14's 2-2 timeline. No failure note exists
+(D14). Named notes: `t9-dictionary-deactivated`, `message-saved`, `centre-number-saved`,
+`voice-mailbox-saved`, `welcome-note-saved`, `welcome-note-erased`, `no-more-messages-inbox`,
+`no-more-messages-outbox`, `no-phone-numbers`, `message-memory-full`, `message-sent`. Other
+plans' tests that used now-typeable characters as missing ones use `~` and `{` instead.
+
+**Task 3 completion note:** fonts small 178, large 162, digits 13, thin 101 glyphs (every
+typeable character in small and large, every symbol in thin). `TEXT_TIMINGS` = commit 1452,
+blink 480, held-C clear 478, held # 1010, held digit 1475 ms from key-down (Task 6 measures it
+from the first redraw: 1428 ms); `SEND_LINK_MS` 2662,
+`RECEIVE_LINK_MS` 2324, `SAVING_MS` 88. `regenerate` and `messages-text-runs` each run twice
+with no diff.
 
 ### Task 4 - phone-core: standby indicators and notice applications (TDD)
 
 **Files:** `packages/phone-core/src/{types.ts,machine.ts,index.ts}`, README; tests
 `standby-indicators.test.ts` (new), `notice-open.test.ts` (new).
 
-- [ ] TDD `standbyIndicators`: absent → models unchanged; a reader returning `{ message: true }`
+- [x] TDD `standbyIndicators`: absent → models unchanged; a reader returning `{ message: true }`
       emits `indicators` on standby only; a change between ticks emits exactly one snapshot; an
       unchanged value emits none; `{}`/`{ message: false }` emit no field.
-- [ ] TDD `setNotice({ open })`: Navi runs the application with the path `standby`, an empty stack
+- [x] TDD `setNotice({ open })`: Navi runs the application with the path `standby`, an empty stack
       and `menuIndicator()` without segments; its `exit()` returns to standby; `levels`/`select`/`row`
       throw; C on the notice clears it; `path` with `open` throws; power-off deactivates once;
       `navigate()` while it runs deactivates it (`navigate`); an exception in `createSession` shows the
       `App error` reader as for any application.
-- [ ] Existing tests pass unchanged; configs without the seams produce identical models.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
+- [x] Existing tests pass unchanged; configs without the seams produce identical models.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
       `vp check --fix`.
-- [ ] Commit: `feat(phone-core): standby indicators and notices that open an application`.
+- [x] Commit: `feat(phone-core): standby indicators and notices that open an application`.
+
+Deviation: **Task 4:** `src/index.ts` needs no change (`StandbyIndicators` was already exported).
+Two consequences of the standby path are pinned by tests: `navigate("standby")` leaves a notice's
+application although its path is already `standby`, and C on its `App error` reader returns to
+standby (its stack is empty). Its invalid `exit` options name "a notice's application".
 
 ### Task 5 - Multi-tap engine (pure, TDD)
 
 **Files:** `src/text/{keys.ts,multitap.ts,layout.ts,index.ts}` (new), `tests/text-multitap.test.ts`
 (new), `tests/text-layout.test.ts` (new).
 
-- [ ] `keys.ts`: `MULTITAP_KEYS` (per key, the upper- and lower-case cycles as Task 0 recorded; each
+- [x] `keys.ts`: `MULTITAP_KEYS` (per key, the upper- and lower-case cycles as Task 0 recorded; each
       row's comment names its golden), `SYMBOLS` (the grid in order), `TYPEABLE`.
-- [ ] TDD `multitap.ts` with synthetic times: cycles and their wrap; a different key commits the
+- [x] TDD `multitap.ts` with synthetic times: cycles and their wrap; a different key commits the
       pending character; the commit deadline (`TEXT_TIMINGS`); sentence case (after `.`/`?`/`!` and a
       space, at the start, per Task 0); the `#` cycle from each mode; held `#` ↔ `123`; held digits;
       `0` (space, `0`); `1` punctuation; the limit (a key at the limit does what Task 0 shows); ▲/▼
       per S7 as corrected by Task 0; delete and clear; insertion mid-text; `textInsert` for symbols
       and numbers.
-- [ ] TDD `layout.ts`: `wrapText` with the stock `small`/`large` advances (word wrap at spaces, a word
+- [x] TDD `layout.ts`: `wrapText` with the stock `small`/`large` advances (word wrap at spaces, a word
       wider than a line breaks where Task 0 shows), `viewTop` per Task 0's scroll captures.
-- [ ] Trace test: replay every `text/key-*`, `text/case-*`, `text/cursor-*`, `text/delete-*` and
+- [x] Trace test: replay every `text/key-*`, `text/case-*`, `text/cursor-*`, `text/delete-*` and
       `text/wrap-*` golden's key sequence through the engine and compare the text, cursor and mode
       with the golden's OCR-derived text (`tests/support/messages.ts` reads the generated runs).
-- [ ] Commit: `feat(nokia-os): stock multi-tap text entry engine`.
+- [x] Commit: `feat(nokia-os): stock multi-tap text entry engine`.
+
+Deviation: **Task 5 (API):** `TextState` gains `letters` (the letter mode a held # returns to from
+123). `multitap.ts` adds `emptyText`, `shownMode` (sentence case shows Abc or abc by position) and
+`pendingCycle`; `textHold` on a digit replaces the pending letter with the digit and commits it,
+and the widget calls it at the commit when the key was held `digitHoldMs` (the captured digit
+appears at the commit, not at the threshold). `wrapText` takes an optional `PendingSlot` (below);
+`layout.ts` adds `pendingSlot`, `cursorLine`, `textWidth`, `advance` and `EDITOR_LINE_WIDTH`.
+
+Deviation: **Task 5 (rules beyond Task 0's words):** a line's cells run x 1..83; a word moves
+unless it ends two columns short of that, a longer word breaks at the line's end (Task 6 refined
+this on `welcome/face` 13); a pending character takes its key's widest advance in either case
+(the only rule that fits `text/wrap-words` 15 and 27 together), and the text re-wraps when it
+commits; spaces hang at a line end, and an end past x 83 puts the cursor on a new empty line
+(`text/wrap-spaces` 06); the cursor stands on the blank column after the previous character. A sentence starts when the text before the slot is blank or ends
+with `.`, `?` or `!` and spaces (a letter straight after the mark is unverified); # steps
+sentence case → ABC → abc, skipping a mode that shows the same as the current one.
+
+Deviation: **Task 5 (trace test):** the trace replays Task 0's command logs (transcribed in
+`tests/support/messages.ts`) and compares pixels, not OCR text: each line drawn with the stock
+small font, the cursor's place when it is lit, and the header's mode sprite, for every image of
+`text/key-*`, `text/case-cycle-*`, `text/case-after`, `text/cursor-*`, `text/delete`,
+`text/wrap-*` and `text/counter` (in `tests/text-layout.test.ts`). OCR runs are cursor-obscured
+(Task 0 Deviation); pixels are not.
 
 ### Task 6 - Editor widget and painter (TDD against goldens)
 
 **Files:** `src/widgets/editor.ts` (new), `src/display/widgets/{editor.ts,index.ts}`,
 `tests/widgets-editor.test.ts` (new).
 
-- [ ] `EditorSpec`: header icon, counter style (`sms`: `<left>/<parts>`; `count`: characters left),
+- [x] `EditorSpec`: header icon, counter style (`sms`: `<left>/<parts>`; `count`: characters left),
       limit, soft key, `options(flow, text)` (the Options flow), `onEmptyC` (`back`), and an initial
       text and cursor (Reply/Edit/Forward).
-- [ ] TDD: the painter from literal models equals every editor image of `text/*`, `welcome/*` and
+- [x] TDD: the painter from literal models equals every editor image of `text/*`, `welcome/*` and
       `sms/*` (header, counter, wrapped lines, scrolled view, pending character without a cursor,
       the cursor's position and blink state).
-- [ ] TDD the widget in a flow (`tests/support/flow-rig.ts`): keys through the engine, holds timed
+- [x] TDD the widget in a flow (`tests/support/flow-rig.ts`): keys through the engine, holds timed
       by `onKeyDown` + `tick`, the commit and the blink as `TEXT_TIMINGS`, C on empty, Options.
       Timeline goldens (`text/commit`, `text/delete-hold`, blink) pass within ±2 ms after alignment.
-- [ ] Commit: `feat(nokia-os): stock text editor widget`.
+- [x] Commit: `feat(nokia-os): stock text editor widget`.
+
+Deviation: **Task 6 (spec and tests):** `EditorSpec` is `counter` (`sms` | `count`), `limit`,
+`layout` (`sms` | `welcome`), `softkey`, `text`/`cursor`/`mode`, `options(flow, editor)` with an
+`EditorControl` (`text`, `clear`, `insert`), `symbols` (Task 7) and `onEmptyC`; the header is
+always the pen and the mode sprite. The painter is tested on models built from replayed engine
+states (`editorModel`, exported for that), full frame against every image of the traced
+`text/*` stills, `welcome/face` and `welcome/editor`; the `sms/*` editors are Tasks 10-11's flows.
+
+Deviation: **Task 6 (measured behaviour):** the cursor blinks on a free-running 480 ms timer
+from the editor's start; no key or commit restarts it (`text/commit` and `text/hold-digit` show
+opposite phases after a commit, predicted by their phase before the key). `digitHoldMs` is now
+measured from the letter's first redraw (1428 ms; regenerated `text.ts`): the widget decides a
+held digit at the commit, from the hold until then or the release. `welcome/face` 13 showed a
+long word filling 82 large columns, so lines break at 83 columns and words wrap two short of it.
 
 ### Task 7 - Symbol table, text-input and number-entry widgets (TDD against goldens)
 
@@ -938,16 +1052,31 @@ table.
 `src/display/widgets/{symbols.ts,prompt.ts,index.ts}`, `src/widgets/prompt.ts` (subtract: an
 editable prompt replaces the static one where a node is bound), `tests/widgets-entry.test.ts` (new).
 
-- [ ] TDD the symbol table: painter against `text/symbols*`; ▲/▼ moves and wraps; `Use` inserts into
+- [x] TDD the symbol table: painter against `text/symbols*`; ▲/▼ moves and wraps; `Use` inserts into
       the widget below and pops; C pops without inserting.
-- [ ] TDD the number entry: painter against `text/number*` and the Send prompt goldens; digits, the
+- [x] TDD the number entry: painter against `text/number*` and the Send prompt goldens; digits, the
       `*` cycle, `#`, ▲/▼ as captured, C/held C/C on empty, the counter, `Search` while empty
       (opens what Task 0 recorded: a note, or plan 19's placeholder), `OK` → `done(number, flow)`.
-- [ ] TDD the text input: painter against `text/input*`; the engine with the prompt's limit and
+- [x] TDD the text input: painter against `text/input*`; the engine with the prompt's limit and
       counter; OK → `done(text, flow)`; C on empty → back.
-- [ ] The plan 14 prompt goldens that stay first-screen-only (PIN, barring, the prompts other plans
+- [x] The plan 14 prompt goldens that stay first-screen-only (PIN, barring, the prompts other plans
       own) still pass unchanged.
-- [ ] Commit: `feat(nokia-os): stock symbol table, text input and number entry`.
+- [x] Commit: `feat(nokia-os): stock symbol table, text input and number entry`.
+
+Deviation: **Task 7 (structure):** the editor's key handling moved into `src/widgets/text-entry.ts`
+(`TextEntry`: keys, holds, blink, `EditorControl`), shared by `editor` and `textInput`. The
+editor's `*` opens `symbolTable` by default (`openSymbols`). `PromptEntry` gains `text` (an
+editable text, large from x 2 with a 15-row cursor) and `number` (large right-aligned while it
+fits in 80 columns, else small rows of up to 78 columns filled from its end at tops 28/19/10,
+the label hidden and the box raised to y 7 at three rows). `src/widgets/prompt.ts` is
+unchanged: no node is bound yet, so nothing it draws is replaced (Tasks 8 and 10 bind them).
+
+Deviation: **Task 7 (measured behaviour):** the selected symbol's box is solid with its symbol
+clear, covering the column it shares with the previous box (`text/symbols-down` 01: €'s last
+column); the thin symbol runs were narrowed to six columns so € no longer harvests that column.
+Number entry types digits and # at key-down; `*` cycles `* + p w` pending for the commit time;
+the counter skips `+`; `sms/send-prompt` 1-prompt is the empty prompt. Routing address opens in
+ABC (`textInput`'s `mode`); a text input's long text does not wrap (unverified).
 
 ### Task 8 - Welcome note, centre and voice mailbox numbers (TDD)
 

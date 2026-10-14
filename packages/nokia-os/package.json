@@ -12,7 +12,8 @@
     "demo": "vp dev demo",
     "import-captures": "node scripts/import-captures.ts",
     "import-tree": "node scripts/import-tree.ts",
-    "extract-resources": "node scripts/extract-resources.ts"
+    "extract-resources": "node scripts/extract-resources.ts",
+    "messages-text-runs": "node scripts/messages-text-runs.ts"
   },
   "dependencies": {
     "@hellotimber/phone-core": "workspace:*",

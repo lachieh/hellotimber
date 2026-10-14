@@ -69,17 +69,20 @@ unsubscribe();
   snapshot. Submenus choose `presentation: "rows" | "pages"`.
 - `rowsWindow` (default off) gives rows submenus a stateful circular window of that many rows;
   their list models then carry `windowTop`, the index of the item on the first visible row.
-  `rowsWindowTop(previousTop, selected, count, rows)` is the rule, exported so host widgets draw
-  their own lists the same way: with `count <= rows` the window is 0; entering a level
-  (`previousTop` undefined) puts the selection on the top row; the window then holds while the
-  selection stays inside it (indices modulo `count`), a move to the item just after the bottom
-  row puts it on the bottom row, and any other move outside puts it on the top row. The window
-  survives a child opening and closing and is rebuilt when the level is entered again.
+  `rowsWindowTop(previousTop, selected, count, rows, move?)` is the rule, exported so host
+  widgets draw their own lists the same way: with `count <= rows` the window is 0; entering a
+  level (`previousTop` undefined) puts the selection on the top row; the window then holds while
+  the selection stays inside it (indices modulo `count`), ▼ to the item just after the bottom
+  row puts it on the bottom row, and any other move outside (▲, a jump) puts it on the top row.
+  Pass the key as `move` (`"up"` / `"down"`; omit it for a jump): with `count = rows + 1` the
+  item after the bottom row is also the one above the top row. The window survives a child
+  opening and closing and is rebuilt when the level is entered again.
 
   ```ts
   rowsWindowTop(undefined, 0, 10, 3); // 0: entering a ten-item level
-  rowsWindowTop(7, 0, 10, 3); // 8: ▼ from the last item shows items 8, 9, 0
-  rowsWindowTop(0, 9, 10, 3); // 9: ▲ from the first item shows items 9, 0, 1
+  rowsWindowTop(7, 0, 10, 3, "down"); // 8: ▼ from the last item shows items 8, 9, 0
+  rowsWindowTop(0, 9, 10, 3, "up"); // 9: ▲ from the first item shows items 9, 0, 1
+  rowsWindowTop(0, 3, 4, 3, "up"); // 3: ▲ from the first of four shows items 3, 0, 1
   ```
 
 - Submenu options beyond `presentation` and `detail` are opt-in: `softkey` (default `Select`)
@@ -140,6 +143,18 @@ unsubscribe();
     bootMs: 3000,
     bootGates: [{ atMs: 1000, open: () => (locked() ? lockScreen : undefined) }],
   });
+  ```
+
+- `standbyIndicators: () => ({ message?, voicemail? })` (default none) is re-read on every tick
+  like `clock()`; the standby model carries `indicators` with the fields that are true, and a
+  changed value emits one snapshot.
+- `setNotice({ text, softkey, path? | open? })` shows a standby notice; C clears it. Navi goes to
+  `path`, or runs the `open` application as a standby application: the stack is empty, the path
+  stays `standby`, `menuIndicator()` has no segments and `exit()` returns to standby (`levels`,
+  `select` and `row` throw). `navigate()` and power-off deactivate it as any application:
+
+  ```ts
+  phone.setNotice({ text: "1 message received", softkey: "Read", open: inbox });
   ```
 
 - `Bitmap` convention: one byte per pixel, row-major, `pixels.length === width * height`.

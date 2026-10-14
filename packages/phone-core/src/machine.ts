@@ -29,6 +29,7 @@ import type {
   PhoneKey,
   PhoneSnapshot,
   ScreenModel,
+  StandbyIndicators,
 } from "./types";
 
 export const LONG_PRESS_MS = 800;
@@ -84,7 +85,9 @@ type ActivationOrigin<Metadata> =
   | { kind: "entry"; entry: ApplicationEntry<Metadata> }
   | { kind: "intro"; viaShortcut: boolean }
   | { kind: "invalid" }
-  | { kind: "gate"; boot: HeldBoot };
+  | { kind: "gate"; boot: HeldBoot }
+  /** Plan 18: a standby notice's application (PhoneConfig setNotice `open`). */
+  | { kind: "notice" };
 
 /** A boot held by a gate (PhoneConfig.bootGates): where it resumes and what follows. */
 interface HeldBoot {
@@ -119,7 +122,7 @@ interface HeldKey {
   shortcutCaptured: boolean;
 }
 
-type Notice = { text: string; softkey: string; path?: string };
+type Notice = { text: string; softkey: string; path?: string; open?: PhoneApplication };
 
 /** A level's entries with their menu numbers (orders, or positions under SubmenuOptions.shown). */
 type Numbered<Metadata> = readonly { entry: MenuEntry<Metadata>; number: number }[];
@@ -260,11 +263,13 @@ function tickSignature<Metadata>(m: Machine<Metadata>): string {
         ? ""
         : `boot:${m.bootTimeline.frameAt(m.now - m.mode.startedAt)}`;
     case "standby":
-      return `standby:${JSON.stringify(m.config.clock?.())}`;
+      return `standby:${JSON.stringify(m.config.clock?.())}:${JSON.stringify(standbyIndicators(m))}`;
     case "nav": {
       const frame = shownNavFrame(m.mode.stack);
       if (frame?.kind === "carousel") {
-        if (m.now < frame.revealedAt) return `opening:${JSON.stringify(m.config.clock?.())}`;
+        if (m.now < frame.revealedAt) {
+          return `opening:${JSON.stringify(m.config.clock?.())}:${JSON.stringify(standbyIndicators(m))}`;
+        }
         const iconFrame = carouselIconFrame(m, frame);
         return iconFrame === undefined ? "" : `icon:${frame.index}:${iconFrame}`;
       }
@@ -406,7 +411,13 @@ function stepSelection<Metadata>(
   const selected = wrapIndex(shown.indexOf(all[frame.selected]!) + step, shown.length);
   frame.selected = all.indexOf(shown[selected]!);
   if (frame.windowTop !== undefined && m.rowsWindow !== undefined) {
-    frame.windowTop = rowsWindowTop(frame.windowTop, selected, shown.length, m.rowsWindow);
+    frame.windowTop = rowsWindowTop(
+      frame.windowTop,
+      selected,
+      shown.length,
+      m.rowsWindow,
+      step > 0 ? "down" : "up",
+    );
   }
   m.dirty = true;
 }
@@ -540,7 +551,7 @@ function stockIndicator<Metadata>(m: Machine<Metadata>, s: StockShortcut<Metadat
 function currentPath<Metadata>(m: Machine<Metadata>): string {
   let slugs: string[];
   if (m.mode.kind === "nav") slugs = stackSlugs(m.mode.stack);
-  else if (m.mode.kind === "app" && m.mode.activation.origin.kind !== "gate") {
+  else if (m.mode.kind === "app" && !isStandbyApplication(m.mode.activation)) {
     const { stack, origin } = m.mode.activation;
     slugs = [...stackSlugs(stack), ...originSlugs(origin)];
   } else return "standby";
@@ -651,13 +662,33 @@ function stockOpening<Metadata>(m: Machine<Metadata>): { opening?: true } {
   return m.shortcut?.kind === "stock" && m.shortcut.pending !== null ? { opening: true } : {};
 }
 
+/** The host's standby indicators, only the fields that are true (undefined when none is). */
+function standbyIndicators<Metadata>(m: Machine<Metadata>): StandbyIndicators | undefined {
+  const read = m.config.standbyIndicators?.();
+  if (read === undefined) return undefined;
+  const shown: StandbyIndicators = {};
+  if (read.voicemail === true) shown.voicemail = true;
+  if (read.message === true) shown.message = true;
+  return Object.keys(shown).length === 0 ? undefined : shown;
+}
+
+/**
+ * Applications that run at standby with the path `standby` and an empty stack: plan 15's boot
+ * gates and plan 18's notice applications.
+ */
+function isStandbyApplication<Metadata>(activation: AppActivation<Metadata>): boolean {
+  return activation.origin.kind === "gate" || activation.origin.kind === "notice";
+}
+
 function standbyScreen<Metadata>(m: Machine<Metadata>, leaving: boolean): ScreenModel {
+  const indicators = standbyIndicators(m);
   return {
     kind: "standby",
     carrier: m.carrier,
     clock: m.config.clock?.(),
     signal: 4,
     battery: 4,
+    ...(indicators === undefined ? {} : { indicators }),
     ...(m.notice === null ? {} : { notice: { text: m.notice.text, softkey: m.notice.softkey } }),
     ...(leaving ? { leaving: true as const } : {}),
   };
@@ -804,6 +835,17 @@ function startApplication<Metadata>(
         });
         return;
       }
+      if (origin.kind === "notice") {
+        gateExitsToStandby(options, "a notice's application");
+        run(m, () => {
+          if (!isActive(m, activation, token)) return;
+          swallowHeldReleases(m);
+          deactivate(activation, "exit");
+          m.mode = { kind: "standby" };
+          m.dirty = true;
+        });
+        return;
+      }
       const plan = exitPlan(m, activation, options);
       run(m, () => {
         if (!isActive(m, activation, token)) return;
@@ -857,13 +899,16 @@ function startApplication<Metadata>(
   }
 }
 
-/** Validates a boot gate's exit options: only `to: "standby"` (end the boot) is allowed. */
-function gateExitsToStandby(options: ExitOptions = {}): boolean {
+/**
+ * Validates a standby application's exit options (a boot gate's, a notice's): only
+ * `to: "standby"` (for a gate, end the boot) is allowed.
+ */
+function gateExitsToStandby(options: ExitOptions = {}, who = "a boot gate"): boolean {
   if (options.to !== undefined && options.to !== "standby") {
     throw new Error(`exit "to" must be "standby" (received ${String(options.to)}).`);
   }
   if (options.levels !== undefined || options.select !== undefined || options.row !== undefined) {
-    throw new Error("exit levels, select and row are not available to a boot gate.");
+    throw new Error(`exit levels, select and row are not available to ${who}.`);
   }
   return options.to === "standby";
 }
@@ -1090,7 +1135,8 @@ function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
     if (activation.session === null) {
       if (held !== undefined && !held.longFired && event.key === "c") {
         cancelShortcut(m);
-        returnToStack(m, activation.stack);
+        if (activation.origin.kind === "notice") goStandby(m);
+        else returnToStack(m, activation.stack);
       }
     } else {
       forwardToApp(m, event);
@@ -1164,10 +1210,11 @@ function onLongPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void {
 function standbyShortPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void {
   if (m.notice !== null) {
     if (key === "navi") {
-      const target = m.notice.path;
+      const { path: target, open } = m.notice;
       m.notice = null;
       m.dirty = true;
-      if (target !== undefined) applyPath(m, target);
+      if (open !== undefined) startApplication(m, { kind: "notice" }, open, []);
+      else if (target !== undefined) applyPath(m, target);
       return;
     }
     if (key === "c") {
@@ -1628,7 +1675,9 @@ function handleNavigate<Metadata>(m: Machine<Metadata>, path: string): void {
     m.mode.activation.origin.boot.targetPath = target === "standby" ? null : target;
     return;
   }
-  if (target === currentPath(m)) return;
+  // A notice's application shows the path `standby` but is not standby: leave it.
+  const noticeApp = m.mode.kind === "app" && m.mode.activation.origin.kind === "notice";
+  if (target === currentPath(m) && !noticeApp) return;
   applyPath(m, target);
 }
 
@@ -1752,6 +1801,9 @@ export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): 
       run(m, () => handleNavigate(m, path));
     },
     setNotice(notice: Notice | null): void {
+      if (notice !== null && notice.path !== undefined && notice.open !== undefined) {
+        throw new Error("A notice takes a path or an open application, not both.");
+      }
       run(m, () => {
         m.notice = notice === null ? null : { ...notice };
         m.dirty = true;

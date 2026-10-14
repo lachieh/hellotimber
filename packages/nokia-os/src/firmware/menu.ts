@@ -153,35 +153,50 @@ export function createStockGames(ports: StockPorts = {}, now: () => number = () 
 
 /**
  * The stock menu, with Clock pages reading `ports` for their clock and date values, the other
- * pages, option lists and setters reading and writing `settings` (default: a fresh store over an
- * empty in-memory EEPROM, the virgin state), and the games keeping their suspended game in
- * `games` (default: fresh), the security-code leaves verifying against `security`
- * (default: the virgin code, over its own in-memory EEPROM), and previews and note tones going to
- * `sounder` (default: a sounder whose sequencer nothing advances: silent).
+ * pages, option lists and setters reading and writing `settings` (default: a fresh store over
+ * `eeprom`), and the games keeping their suspended game in `games` (default: fresh), the
+ * security-code leaves verifying against `security` (default: the virgin code, over its own
+ * in-memory EEPROM), previews and note tones going to `sounder` (default: a sounder whose
+ * sequencer nothing advances: silent), and features' records in `eeprom` (default: an empty
+ * in-memory EEPROM, the virgin state).
  */
 export function createStockMenu(
   ports: StockPorts = {},
-  settings: StockSettings = createStockSettings(new StockEeprom(createMemoryStorage())),
+  settings?: StockSettings,
   games: StockGames = createStockGames(ports),
-  security: StockSecurity = new StockSecurity(new StockEeprom(createMemoryStorage()), settings),
-  sounder: StockSounder = new StockSounder(new SoundSequencer(() => {}), settings, () =>
-    games.now(),
-  ),
+  security?: StockSecurity,
+  sounder?: StockSounder,
+  eeprom: StockEeprom = new StockEeprom(createMemoryStorage()),
 ): PhoneMenu {
-  const services: StockServices = {
-    ports,
-    settings,
-    games,
-    security,
-    sounder,
-    noteSound: (lines) => sounder.note(lines),
-  };
-  const builder: Builder = { ports, settings, leaves: new LeafBinder(services) };
+  const services = stockServices(ports, settings, games, security, sounder, eeprom);
+  const builder: Builder = { ports, settings: services.settings, leaves: new LeafBinder(services) };
   return new PhoneMenu(
     STOCK_TREE.map(
       (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),
     ),
   );
+}
+
+/** What feature bindings see: `createStockMenu`'s services, its defaults filled in over `eeprom`. */
+export function stockServices(
+  ports: StockPorts,
+  settings: StockSettings | undefined,
+  games: StockGames,
+  security: StockSecurity | undefined,
+  sounder: StockSounder | undefined,
+  eeprom: StockEeprom,
+): StockServices {
+  const store = settings ?? createStockSettings(eeprom);
+  const sound = sounder ?? new StockSounder(new SoundSequencer(() => {}), store, () => games.now());
+  return {
+    ports,
+    settings: store,
+    games,
+    security: security ?? new StockSecurity(new StockEeprom(createMemoryStorage()), store),
+    sounder: sound,
+    noteSound: (lines) => sound.note(lines),
+    eeprom,
+  };
 }
 
 /** The whole v6.39 menu tree (no host ports, its own virgin settings store). */
