@@ -19,6 +19,7 @@ import { normalizePath, parsePath, resolveIds } from "./paths";
 import { Timeline } from "./timeline";
 import { rowsWindowTop } from "./window";
 import type {
+  BootGate,
   KeyEvent,
   MenuIndicator,
   MenuListItem,
@@ -82,7 +83,18 @@ type SubmenuFrame<Metadata> = Extract<NavFrame<Metadata>, { kind: "submenu" }>;
 type ActivationOrigin<Metadata> =
   | { kind: "entry"; entry: ApplicationEntry<Metadata> }
   | { kind: "intro"; viaShortcut: boolean }
-  | { kind: "invalid" };
+  | { kind: "invalid" }
+  | { kind: "gate"; boot: HeldBoot };
+
+/** A boot held by a gate (PhoneConfig.bootGates): where it resumes and what follows. */
+interface HeldBoot {
+  /** The boot offset the gate holds; exit() resumes the boot clock here. */
+  atMs: number;
+  /** Index of the next gate to ask. */
+  nextGate: number;
+  /** A navigate() target recorded during the boot, applied when it ends. */
+  targetPath: string | null;
+}
 
 interface AppActivation<Metadata> {
   origin: ActivationOrigin<Metadata>;
@@ -96,7 +108,7 @@ interface AppActivation<Metadata> {
 
 type Mode<Metadata> =
   | { kind: "off" }
-  | { kind: "boot"; startedAt: number; targetPath: string | null }
+  | { kind: "boot"; startedAt: number; targetPath: string | null; nextGate: number }
   | { kind: "standby" }
   | { kind: "nav"; stack: NavFrame<Metadata>[] }
   | { kind: "app"; activation: AppActivation<Metadata> };
@@ -145,6 +157,7 @@ interface Machine<Metadata> {
   carrier: string;
   bootMs: number;
   bootTimeline: Timeline | undefined;
+  bootGates: readonly BootGate[];
   menuOpenDelayMs: number;
   shortcutWindowMs: number;
   /** Rows per circular window (PhoneConfig.rowsWindow); undefined = no window state. */
@@ -527,7 +540,7 @@ function stockIndicator<Metadata>(m: Machine<Metadata>, s: StockShortcut<Metadat
 function currentPath<Metadata>(m: Machine<Metadata>): string {
   let slugs: string[];
   if (m.mode.kind === "nav") slugs = stackSlugs(m.mode.stack);
-  else if (m.mode.kind === "app") {
+  else if (m.mode.kind === "app" && m.mode.activation.origin.kind !== "gate") {
     const { stack, origin } = m.mode.activation;
     slugs = [...stackSlugs(stack), ...originSlugs(origin)];
   } else return "standby";
@@ -780,6 +793,17 @@ function startApplication<Metadata>(
   m.dirty = true;
   const context: ApplicationContext = {
     exit(options?: ExitOptions): void {
+      if (origin.kind === "gate") {
+        const toStandby = gateExitsToStandby(options);
+        run(m, () => {
+          if (!isActive(m, activation, token)) return;
+          swallowHeldReleases(m);
+          deactivate(activation, "exit");
+          if (toStandby) finishBoot(m, origin.boot.targetPath);
+          else resumeBoot(m, origin.boot);
+        });
+        return;
+      }
       const plan = exitPlan(m, activation, options);
       run(m, () => {
         if (!isActive(m, activation, token)) return;
@@ -831,6 +855,17 @@ function startApplication<Metadata>(
   } catch {
     // A current activation renders its null session as App error.
   }
+}
+
+/** Validates a boot gate's exit options: only `to: "standby"` (end the boot) is allowed. */
+function gateExitsToStandby(options: ExitOptions = {}): boolean {
+  if (options.to !== undefined && options.to !== "standby") {
+    throw new Error(`exit "to" must be "standby" (received ${String(options.to)}).`);
+  }
+  if (options.levels !== undefined || options.select !== undefined || options.row !== undefined) {
+    throw new Error("exit levels, select and row are not available to a boot gate.");
+  }
+  return options.to === "standby";
 }
 
 /**
@@ -930,13 +965,14 @@ function togglePower<Metadata>(m: Machine<Metadata>): void {
 }
 
 function powerOn<Metadata>(m: Machine<Metadata>, targetPath: string | null): void {
-  if (m.bootMs <= 0) {
+  m.dirty = true;
+  if (m.bootMs <= 0 && m.bootGates.length === 0) {
     m.mode = { kind: "standby" };
     if (targetPath !== null) applyPath(m, targetPath);
-  } else {
-    m.mode = { kind: "boot", startedAt: m.now, targetPath };
+    return;
   }
-  m.dirty = true;
+  m.mode = { kind: "boot", startedAt: m.now, targetPath, nextGate: 0 };
+  tickBoot(m);
 }
 
 function powerOff<Metadata>(m: Machine<Metadata>): void {
@@ -957,11 +993,76 @@ function tickBoot<Metadata>(m: Machine<Metadata>): void {
   if (m.mode.kind !== "boot") return;
   // The legacy frame clock repaints every tick; a timeline repaints through tickSignature.
   if (m.bootTimeline === undefined) m.dirty = true;
-  if (m.now - m.mode.startedAt < m.bootMs) return;
-  const target = m.mode.targetPath;
+  // A gate may resume or end the boot itself (exit inside createSession), so re-read the mode.
+  while (m.mode.kind === "boot") {
+    const boot = m.mode;
+    const elapsed = m.now - boot.startedAt;
+    const gate = m.bootGates[boot.nextGate];
+    if (gate !== undefined && gate.atMs <= elapsed) {
+      boot.nextGate += 1;
+      openGate(m, boot, gate);
+      continue;
+    }
+    if (elapsed >= m.bootMs) finishBoot(m, boot.targetPath);
+    return;
+  }
+}
+
+/**
+ * Asks `gate` for an application; one holds the boot at the gate's offset. A gate whose open()
+ * or createSession throws is skipped, and the boot goes on as if it had returned undefined.
+ */
+function openGate<Metadata>(
+  m: Machine<Metadata>,
+  boot: Extract<Mode<Metadata>, { kind: "boot" }>,
+  gate: BootGate,
+): void {
+  let application: PhoneApplication | undefined;
+  try {
+    application = gate.open();
+  } catch {
+    return;
+  }
+  if (!(application instanceof PhoneApplication)) return;
+  const origin: ActivationOrigin<Metadata> = {
+    kind: "gate",
+    boot: { atMs: gate.atMs, nextGate: boot.nextGate, targetPath: boot.targetPath },
+  };
+  startApplication(m, origin, application, []);
+  const mode = m.mode;
+  if (mode.kind !== "app" || mode.activation.origin !== origin) return;
+  const session = mode.activation.session;
+  if (session === null) {
+    m.mode = boot;
+    m.dirty = true;
+    return;
+  }
+  // The gate holds from the moment the boot reached its offset, which a coarse tick passed.
+  const overshoot = m.now - (boot.startedAt + gate.atMs);
+  if (overshoot <= 0) return;
+  try {
+    session.tick(overshoot);
+  } catch {
+    // Application timer failures are isolated from firmware navigation.
+  }
+}
+
+/** A gate exited: the boot clock runs again from the gate's offset. */
+function resumeBoot<Metadata>(m: Machine<Metadata>, held: HeldBoot): void {
+  m.mode = {
+    kind: "boot",
+    startedAt: m.now - held.atMs,
+    targetPath: held.targetPath,
+    nextGate: held.nextGate,
+  };
+  m.dirty = true;
+  tickBoot(m);
+}
+
+function finishBoot<Metadata>(m: Machine<Metadata>, targetPath: string | null): void {
   m.mode = { kind: "standby" };
   m.dirty = true;
-  if (target !== null) applyPath(m, target);
+  if (targetPath !== null) applyPath(m, targetPath);
 }
 
 function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
@@ -1020,7 +1121,17 @@ function handleTick<Metadata>(m: Machine<Metadata>, nowMs: number): void {
       onLongPress(m, key);
     }
   }
+  const before = m.mode.kind === "app" ? m.mode.activation : null;
   if (m.mode.kind === "boot") tickBoot(m);
+  // A gate opened by this tick has had its share of the tick (openGate).
+  if (
+    m.mode.kind === "app" &&
+    m.mode.activation !== before &&
+    m.mode.activation.origin.kind === "gate"
+  ) {
+    m.dirty = true;
+    return;
+  }
   if (m.mode.kind === "nav") {
     const shown = shownNavFrame(m.mode.stack);
     if (shown?.kind === "submenu") shownChildrenOf(m, shown);
@@ -1513,6 +1624,10 @@ function handleNavigate<Metadata>(m: Machine<Metadata>, path: string): void {
     m.mode.targetPath = target === "standby" ? null : target;
     return;
   }
+  if (m.mode.kind === "app" && m.mode.activation.origin.kind === "gate") {
+    m.mode.activation.origin.boot.targetPath = target === "standby" ? null : target;
+    return;
+  }
   if (target === currentPath(m)) return;
   applyPath(m, target);
 }
@@ -1530,6 +1645,31 @@ function resolveBootMs<Metadata>(config: PhoneConfig<Metadata>): number {
     );
   }
   return bootMs ?? bootTimeline.durationMs;
+}
+
+function resolveBootGates<Metadata>(
+  config: PhoneConfig<Metadata>,
+  bootMs: number,
+): readonly BootGate[] {
+  const gates = config.bootGates;
+  if (gates === undefined) return [];
+  if (!Array.isArray(gates)) throw new Error("bootGates must be an array.");
+  let previous = 0;
+  return gates.map((gate: BootGate, index) => {
+    const { atMs } = gate;
+    if (!Number.isInteger(atMs) || atMs < 0 || atMs > Math.max(0, bootMs)) {
+      throw new Error(
+        `bootGates[${index}].atMs must be an integer in 0..${Math.max(0, bootMs)} (received ${atMs}).`,
+      );
+    }
+    if (atMs < previous) {
+      throw new Error(`bootGates must be in ascending atMs (${atMs} after ${previous}).`);
+    }
+    if (typeof gate.open !== "function")
+      throw new Error(`bootGates[${index}].open must be a function.`);
+    previous = atMs;
+    return gate;
+  });
 }
 
 function positiveInteger(name: string, value: number | undefined): number | undefined {
@@ -1577,6 +1717,7 @@ export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): 
     carrier: config.carrier ?? "",
     bootMs,
     bootTimeline: config.bootTimeline,
+    bootGates: resolveBootGates(config, bootMs),
     menuOpenDelayMs: nonNegativeInteger("menuOpenDelayMs", config.menuOpenDelayMs, 0),
     shortcutWindowMs,
     rowsWindow: positiveInteger("rowsWindow", config.rowsWindow),

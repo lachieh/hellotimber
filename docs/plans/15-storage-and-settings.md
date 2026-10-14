@@ -731,20 +731,26 @@ self-test (268, 970, 1172, 1684 ms), a 132 ms blank, the hands at 360, 302, 292,
 **Files:** `packages/phone-core/src/{types.ts,machine.ts,application.ts,index.ts}`, README;
 tests `boot-gates.test.ts` (new).
 
-- [ ] TDD validation: unsorted gates, a non-integer or out-of-range `atMs` throw; gates without
+- [x] TDD validation: unsorted gates, a non-integer or out-of-range `atMs` throw; gates without
       `bootTimeline` and with the legacy boot both work.
-- [ ] TDD the hold: at `atMs` the boot frame stops advancing, the gate's render is the screen,
+- [x] TDD the hold: at `atMs` the boot frame stops advancing, the gate's render is the screen,
       keys reach it, `phone.path` is `standby`, snapshots fire on its renders only.
-- [ ] TDD the exits: `exit()` resumes the timeline at `atMs` (the remaining duration is exact);
+- [x] TDD the exits: `exit()` resumes the timeline at `atMs` (the remaining duration is exact);
       two gates at the same offset run in order; `exit({ to: "standby" })` ends the boot; `levels`,
       `select` and `row` throw; `open()` replaces in place.
-- [ ] TDD `navigate()` during a gate records the target, applied at the boot's end; power long
+- [x] TDD `navigate()` during a gate records the target, applied at the boot's end; power long
       press deactivates the gate once with `power-off`; a new power-on calls `open()` again.
-- [ ] TDD `bootMs: 0`: gates run in order at power-on, then standby (and a pending deep link).
-- [ ] TDD containment: `open()` or `createSession` throwing skips the gate.
-- [ ] Existing tests pass unchanged; configs without gates produce identical models.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`, `vp check --fix`.
-- [ ] Commit: `feat(phone-core): boot gates`.
+- [x] TDD `bootMs: 0`: gates run in order at power-on, then standby (and a pending deep link).
+- [x] TDD containment: `open()` or `createSession` throwing skips the gate.
+- [x] Existing tests pass unchanged; configs without gates produce identical models.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`, `vp check --fix`.
+- [x] Commit: `feat(phone-core): boot gates`.
+
+Completion note (Task 3): 23 tests in `boot-gates.test.ts`. A gate's application runs as an
+application activation with a `gate` origin and an empty stack, so the kernel's key, power and
+containment paths are the existing ones. A gate that a coarse tick reaches late holds from its
+offset: its session's first tick gets only the time since the boot reached `atMs` (a test pins
+it), so a host's gate timeline stays exact at any tick rate.
 
 ### Task 4 - The storage port and EEPROM records (TDD)
 

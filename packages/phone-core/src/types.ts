@@ -156,6 +156,27 @@ export interface PhoneConfig<Metadata = unknown> {
    * an intro waits for the window end.
    */
   shortcutEntry?: { openDelayMs: number; invalid: PhoneApplication };
+  /**
+   * Plan 15: applications that hold the boot at offsets into it, in ascending `atMs` (equal
+   * offsets run in order). While a gate's application runs the boot clock is paused, the screen
+   * and keys are the application's, the path stays `standby`, and `navigate()` only records the
+   * target applied when the boot ends; the power long press still powers off. Its `exit()`
+   * resumes the boot at `atMs`; `exit({ to: "standby" })` ends the boot at once; `levels`,
+   * `select` and `row` throw. With `bootMs: 0` the gates run in order at power-on. An exception
+   * from `open()` or `createSession` skips the gate.
+   */
+  bootGates?: readonly BootGate[];
+}
+
+/** Plan 15: an application that may hold the boot at an offset into it. */
+export interface BootGate {
+  /** Offset into the boot (ms) at which the gate is asked; an integer in 0..bootMs. */
+  atMs: number;
+  /**
+   * Called once per power-on when the boot reaches `atMs`. An application holds the boot until it
+   * exits; undefined lets the boot go on.
+   */
+  open(): PhoneApplication | undefined;
 }
 
 export interface PhoneSnapshot {

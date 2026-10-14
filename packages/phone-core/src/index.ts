@@ -1,5 +1,6 @@
 export type {
   Bitmap,
+  BootGate,
   KeyEvent,
   MenuIndicator,
   MenuListItem,

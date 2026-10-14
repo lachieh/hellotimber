@@ -126,4 +126,20 @@ unsubscribe();
   soft key) and opens it `openDelayMs` later; a submenu with an `intro` runs it at once; no
   match opens the `invalid` application, whose exit goes to standby. While a digit is awaited
   the indicator carries `typed` (the digits so far, `""` for none).
+- `bootGates: [{ atMs, open() }]` (default none) lets applications hold the boot: when the boot
+  reaches `atMs` (an integer in `0..bootMs`, gates in ascending order) the kernel calls `open()`
+  once per power-on, and an application it returns takes the screen and the keys while the boot
+  clock is paused. The path stays `standby`, and `navigate()` records the target for the boot's
+  end. `exit()` resumes the boot at `atMs`; `exit({ to: "standby" })` ends it at once. With
+  `bootMs: 0` the gates run in order at power-on. A gate whose `open()` or `createSession`
+  throws is skipped. A lock screen at power-on:
+
+  ```ts
+  const phone = createPhone({
+    menu,
+    bootMs: 3000,
+    bootGates: [{ atMs: 1000, open: () => (locked() ? lockScreen : undefined) }],
+  });
+  ```
+
 - `Bitmap` convention: one byte per pixel, row-major, `pixels.length === width * height`.
