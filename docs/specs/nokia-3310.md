@@ -158,6 +158,12 @@ Sources: [helpdoc Games](https://nokia-3310.helpdoc.net/en/12-games-menu-8/) (li
 
 ## 8. Sounds
 
+> **Manual-sourced history.** This section records the user guide and secondary sources. The v6.39
+> captures correct it in places (§10 "Tones and sound (plan 16)"): key beeps are a 900 Hz tone
+> generator beep of ≈140 ms (≈124 ms when it wakes the DSP), not a square-wave buzzer blip; the
+> Ringing tone list has 35 tones plus 7 `(empty)` slots; 5-7 reads `Warning tones`; the power-on
+> plays a short 900 Hz tone.
+
 Sources: manual Tones chapter p.65–69, Composer pages ([helpdoc composer](https://nokia-3310.helpdoc.net/en/9-tones-menu-5/composer/creating-a-new-ringing-tone/), verified), [Wikipedia](https://en.wikipedia.org/wiki/Nokia_3310).
 
 - **Key beeps:** `Keypad tones` volume setting (off or levels); short square-wave beep per keypress, muted in Silent profile (profile mutes all tones — verified).
@@ -581,6 +587,57 @@ while suspended; the timer unit (≈7.745 ms) on hardware. **Not reproduced:** t
 codes a game writes (the pages keep their virgin values; Club Nokia, later), the key-to-redraw
 latency, the Warning tones redraw delay, the redraws the emulator drops at level 175, and C
 held through a suspend going on to standby.
+
+### Tones and sound (plan 16, in progress)
+
+Source: plan 16 Task 0 (`$REF/captures/6.39/plan16/`, 631 recordings; the planning probes
+S1-S10 in `docs/plans/16-tones-and-sound.md`). The emulator logs register changes of three
+outputs every 1 ms: the **buzzer** (13 MHz / a 16-bit divider, enable bit, volume register MAD2
+PUP 0x1E), the DSP **tone generator** (earpiece path; oscillator register / 4 Hz, a second
+oscillator for DTMF, level word at 0x100A8) and the **vibrator**. Sound goldens assert those
+events, never audio (the WAV is the emulator's synthesis and ignores both volume registers).
+Plan 14's "tone previews are silent" holds only for the virgin EEPROM: its tone settings are
+unset, which silences ringing previews and warning tones; the factory state (plan 15) sounds.
+
+- **Keypad tones:** 900 Hz on the tone generator at every key-down, ≈143 ms (140-150) while the
+  DSP is awake, ≈124 ms when the key wakes it (the DSP powers down ≈2966 ms after the last tone);
+  a key-down during a beep extends it; held ▲/▼ beep at each auto-repeat, a held C at its long
+  press. Level words 0x9108/0x9104/0x9100 for Level 1/2/3, Off silent, unset 0x9100. In the Keypad
+  tones list ▲/▼'s beep plays the highlighted level. Digits, `*` and `#` at standby play DTMF
+  pairs while held. The firmware's beep comes 12-103 ms after the key (not reproduced).
+- **Ringing tone previews:** ▲/▼ in Ringing tone, Ringing volume or Message alert tone (Tones and
+  each Personalise) plays the highlighted entry ≈991 ms after the key-down. The Ringing tone list
+  plays to the tone's second cycle mark (two passes for most tones, less for the long ones), the
+  Ringing volume list the stored tone to its first mark, message tones once; nothing loops. ▲/▼,
+  C, OK and the power key stop a preview; opening a list or the first ▼ out of an unset list
+  previews nothing; `(empty)` slots are silent.
+- **Gating:** Ringing previews need an alert type that rings (Ringing, Ascending, Ring once); Beep
+  once, Off and unset are silent. Alert type and volume come from the edited profile, the
+  vibrator from the active profile's Vibrating alert. Message previews ignore the alert type.
+- **Volume:** the buzzer register is a table per Ringing volume level and note frequency (Levels
+  1-4 exactly); Level 5 starts at Level 4's table and jumps to a louder table at a tone-specific
+  note; Ascending starts at Level 1 and steps up about every 4 s, capped at the stored level.
+- **Message alert tones:** Standard 1499.9 Hz pulses, Special 2683.7 Hz pulse groups, Beep once a
+  1750 Hz tone-generator beep (its level word set by Ringing volume) then three 480 ms vibrator
+  pulses, Ascending the Special pattern stepping Level 1 → 4.
+- **Warning tones** (On): `Invalid shortcut`, `No phone numbers`, `No voice tags saved`, `Screen
+saver missing` play 1750 Hz on the tone generator (≈290 ms); `Code error`, `Not allowed`, `Set PIN
+code request on` the buzzer at 1000 Hz (≈285 ms). Other notes are silent. The tone replaces the
+  key's beep; Off silences that key.
+- **Snake II:** meal 2636.9 Hz for one timer unit, crash three 15 ms 440 Hz pulses, a top score
+  the fireworks tune; sound needs Warning tones and Sounds On, the ≈480 ms vibrator Shakes and
+  Vibrating alert On. Factory Games settings are On.
+- **Power:** the power-on plays 900 Hz for 124 ms 2425 ms in (also with Keypad tones Off); the power
+  key's long press plays it again and stops previews.
+
+| Artefact                                                                       | Cause                                  | Handling                                             |
+| ------------------------------------------------------------------------------ | -------------------------------------- | ---------------------------------------------------- |
+| WAV timbre (low-passed square, sine tones, 3.4 ms envelope)                    | the emulator's synthesiser             | never asserted or imported                           |
+| 1 ms states (`buzzer_on=1, hz=0`, stale frequency, mute word, vibrator glitch) | two-step register writes; 1 ms polling | dropped by the importer, counted under `omitted`     |
+| key-to-beep latency 12-103 ms; tone lead over a note's redraw                  | firmware key scan and draw latency     | not reproduced                                       |
+| edge jitter between passes (median 11 ms, ≤ 48 ms), second pass ≈1 % slower    | emulator timer and DSP power state     | later passes compared with a tolerance               |
+| silent previews and warning tones in the virgin state                          | unset tone settings                    | the virgin initial state, asserted by virgin goldens |
+| timer unit ≈7.745 ms                                                           | emulator timebase                      | durations as captured; UNVERIFIED on hardware        |
 
 ---
 

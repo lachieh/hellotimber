@@ -88,13 +88,13 @@ are independent and reusable; **only `website/` composes them**.
                    └───────────────────┘
 ```
 
-| Package                     | Responsibility                                                                                                                                                                                                  | Dependencies                                                       |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                         | none                                                               |
-| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                    | `phone-core` (type-only)                                           |
-| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                      | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
-| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                        | none                                                               |
-| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
+| Package                     | Responsibility                                                                                                                                                                                                                                                  | Dependencies                                                       |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                         | none                                                               |
+| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                    | `phone-core` (type-only)                                           |
+| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                      | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
+| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                        | none                                                               |
+| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
 
 The website does **not** consume `@hellotimber/nokia-os` yet (plan 13). How portfolio content
 integrates with the stock OS is decided later. Until then the website keeps phone-screen's own
@@ -693,6 +693,29 @@ export interface StockPhoneConfig {
    * security code when this SIM is not among the last five used. Default "sim-1"; non-empty.
    */
   sim?: string;
+  /** Plan 16: the phone's buzzer, tone generator and vibrator. Default: nowhere. */
+  sound?: StockSoundPort;
+}
+
+/**
+ * Plan 16: one change of the phone's sound outputs at kernel time `atMs`. `volume` is the
+ * firmware's level register as captured: buzzer, MAD2 PUP 0x1E (0-194 seen; higher is louder);
+ * tone, the DSP tone-level word at 0x100A8 (e.g. 0x9108/0x9104/0x9100 for Keypad tones Level
+ * 1/2/3; a lower low nibble is louder). Hosts map it to gain (loudness is not captured).
+ */
+export type StockSoundEvent =
+  | {
+      readonly output: "buzzer" | "tone";
+      readonly atMs: number;
+      readonly hz: number; // > 0: sounding at this frequency (buzzer: 13 MHz / divider)
+      readonly volume: number;
+    }
+  | { readonly output: "buzzer" | "tone"; readonly atMs: number; readonly hz: null } // silent
+  | { readonly output: "vibrator"; readonly atMs: number; readonly on: boolean };
+
+/** Plan 16: where the phone's sound goes. Events arrive in `atMs` order from `tick()`. */
+export interface StockSoundPort {
+  change(event: StockSoundEvent): void;
 }
 
 /** Plan 15: the phone's EEPROM, as the Web Storage subset (`window.localStorage` fits). */
@@ -724,6 +747,17 @@ nokia-os owns the stock firmware _and its pixels_: it paints with phone-screen's
 generated from committed LCD golden fixtures (`packages/nokia-os/goldens/`) that an importer
 derives from emulator captures of the real v6.39 firmware. Nothing from the capture corpus is
 committed except those golden text grids. See `docs/plans/13-nokia-os-foundation.md`.
+
+**Sound (plan 16).** nokia-os's sound goes through `StockPhoneConfig.sound`, not phone-core's
+id-only `sound` event (that stays the website's contract). The phone emits every buzzer, tone
+generator and vibrator change from `tick()` once kernel time reaches it, stamped with its own
+`atMs`, so the output is the same at any tick rate and a host schedules each event at
+`audioNow + (atMs - phoneNow) + latency`. Rules: `atMs` never exceeds the emitting tick's kernel
+time and never decreases; an output's consecutive events differ; power-off silences both
+outputs and stops the vibrator if they were active; a phone with no port behaves identically.
+nokia-os touches no audio API. Its sound programs are generated from committed sound goldens
+(event timelines of captured buzzer, tone and vibrator registers; never audio). See
+`docs/plans/16-tones-and-sound.md`.
 
 **Storage (plan 15).** The phone's memory is a host `StockStorage`, synchronous and written at
 once on every change, as EEPROM writes are. nokia-os keeps one versioned JSON record per owner

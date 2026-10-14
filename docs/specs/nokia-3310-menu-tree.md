@@ -1009,6 +1009,10 @@ reminder "Hi", alarm 07:00, composed tone "A". The Phone book view setting is th
 
 ### Tones › Ringing tone
 
+> Previews (plan 16): in the factory state ▲/▼ in Ringing tone, Ringing volume and Message alert
+> tone play the highlighted entry ≈991 ms later; the virgin EEPROM crawled here leaves them silent.
+> See `docs/specs/nokia-3310.md` §10 "Tones and sound (plan 16)".
+
 - `5-1` **Ringing tone** → option-list, key **Quit**
   - entries: Ring ring · Low · Mosquito · Bee · City bird · Hopping down · Kick · Playground · That's it! · Improvisation · Rocket · Croak · Nokia tune · Mozart 40 · Badinerie · Attraction · Dawn · Polite · Tick tick · Samba rumble · Jumping · Lamb · Toreador · Matilda · Merry Xmas · Auld lang syne · Hurdy-gurdy · Groovy Blue · Sunny walks · The Buffoon · Indifference · Barn dance · Mangrove · Knick-knack · Get cool · A · (empty) · (empty) · (empty) · (empty) · (empty) · (empty)
   - each: timed-note "Done", then back

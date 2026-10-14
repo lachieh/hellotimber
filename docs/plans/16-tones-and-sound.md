@@ -12,7 +12,7 @@ README, which this plan edits too: do not start Task 1 before plan 15 is `done`.
 23 supplementary captures"), plans 13, 14, 15 and 23 in full before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan16/`. The planning probes in
 `$REF/captures/scratch-plan16/` are evidence for this plan only and are never imported.
-**Status:** not started.
+**Status:** in progress (Tasks 0-1 done).
 
 ## Goal
 
@@ -117,6 +117,10 @@ emulator's sources are not modified. Task 0 first confirms that 0x100A8 is the t
 level (the keypad levels, the message `Beep once`, `Invalid shortcut`); if another register is,
 log that one and record a Deviation.
 
+_After Task 0 (D2 confirmed):_ 0x100A8 is the tone generator's level word, so `dsp_level` logs
+it; `buzzer_vol` is decimal and `dsp_level` hex in the events file, and the sound goldens keep
+those notations.
+
 **D3 - Sound assets are reproductions derived from captured events (the brief's question).** The
 policy of plans 13-23 applies unchanged: an importer turns REF captures into committed text
 fixtures (`goldens/sound/**/*.sound.txt`, D6), and `extract-resources` derives the sound programs
@@ -157,6 +161,17 @@ importer and counted under `omitted`: a 1 ms `buzzer_on=1, hz=0` row while the f
 the divider, and a 1 ms row with the old frequency when a note change and a vibrator edge land in
 the same grain.
 
+_After Task 0 (Deviation D6):_ normalisation drops every output state held for one 1 ms grain
+or less (a two-step register write), each counted under `omitted` by reason: `divider rewrite`
+(buzzer on at 0 Hz), `stale frequency` (a new volume or frequency before the other), `buzzer gap`,
+`tone gap`, `level rewrite` (the tone's mute word written a grain before it stops) and `vibrator
+glitch`. Held keys carry their hold in `keys` (`4241:c+1500`, keys held over 200 ms), and the tone
+generator's state may name its second oscillator (`1209+697 v=0x9104`, DTMF at standby). `@loop
+<start> <period>` marks the tone's cycle: the rows from `start` repeat with `period`, and the last
+pass may stop early (previews end at a cycle mark, they do not loop); edges of a later pass may
+drift by 25 ms plus 1.2 % of their offset (Task 0: a median 11 ms, ≤ 48 ms between passes). ±2 ms
+holds within a recording's own pass only, which is what a program rebuilt from that pass replays.
+
 **D7 - Sound goldens record the factory state; the virgin state is asserted silent (new; refines
 plan 15 D4).** Empty storage stays the virgin EEPROM (plan 15 D4), but the sound captures run on
 plan 15's factory-restored image, and their scenarios seed storage with the factory state
@@ -165,12 +180,27 @@ note are irrelevant to sound). A few virgin recordings are asserted too: silent 
 keypad beep at the unset level, `Invalid shortcut` after Warning tones On. Every golden header
 names its `state`.
 
+_After Task 0 (D7 confirmed, refined):_ the virgin state is silent for ringing previews
+(Incoming call alert unset), plays message previews at Level 1 without the vibrator, beeps keys at
+the DSP word 0x9100 (Level 3's) and sounds warning tones once Warning tones is On. An unset Ringing
+volume plays Level 1's table.
+
 **D8 - Keypad tones are the tone generator on key-down (corrects spec §8).** Every key-down while
 the phone is on sounds 900 Hz at the level of `tones/keypad-tones` (Off: nothing), for the
 duration Task 0 measures; Task 0 also explains the two duration groups of S2 (provisionally: a
 ▲/▼ that arms a preview cuts its beep to ≈124 ms) and the virgin unset level. The firmware's
 25-43 ms key-scan latency is not reproduced, as plan 14 D8 and plan 23 D6 decided for screens:
 nokia-os beeps at the key-down. Game keys beep too (plan 23: "900 Hz beeps on every key").
+
+_After Task 0 (Deviation D8):_ the two duration groups are the DSP's power state, not the
+lists: a beep lasts ≈143 ms (140-150) while the DSP is awake and ≈124 ms (123-139) when the key
+wakes it; the DSP powers down ≈2966 ms after the last tone generator output ends. A key-down while a
+beep sounds extends it to that key's end. Held ▲/▼ beep again at each auto-repeat and a held C at
+its long press. In the Keypad tones list, ▲/▼'s own beep plays at the highlighted level (Off:
+silent). An error note's tone replaces its key's beep (D12). Digits, `*` and `#` at standby play
+DTMF pairs while held: number entry is plan 22's, so plan 16 beeps 900 Hz everywhere nokia-os has
+screens today and records DTMF in `sound/keypad/keys` (pending:22). The capture's key-to-beep
+latency (awake median 28 ms, woken median 51 ms) is not reproduced.
 
 **D9 - Previews are a property of three option lists (new).** Ringing tone, Ringing volume and
 Message alert tone lists, in Tones and in each profile's Personalise, preview the highlighted
@@ -183,6 +213,14 @@ Task 0) and a set volume; the vibrator runs with that profile's Vibrating alert 
 alert, Keypad tones, Warning tones and Vibrating alert lists preview nothing (S5, S8). Opening a
 list previews nothing. The S9 first-▼ quirk is reproduced only if Task 0 confirms it.
 
+_After Task 0 (Deviation D9):_ `PREVIEW_DELAY_MS` = 991 (985-1014 from the key-down; message
+tones ≈1006, 1002-1010). Previews do not loop: the Ringing tone list plays the tone up to its second
+cycle mark (two passes for 21 tones, a cut second pass for 9, inside the first pass for 14, 15, 23,
+24, 33); the Ringing volume list plays the stored tone to its first mark; message tones play once.
+A preview's alert type and volume come from the profile whose list it is, its vibrator from the
+active profile's Vibrating alert. The S9 quirk is real: the first ▼ out of an unset list arms no
+preview. Opening a list, the Incoming call alert list and choosing a value preview nothing.
+
 **D10 - Volume levels and Ascending are a rule fitted to captures (new; plan 23 D4's
 standard).** Each ringing tone's program stores its own volume steps at one level (Level 4, the
 factory value). A rule maps a level to the register (provisionally a base per level plus each
@@ -191,12 +229,25 @@ step's offset). The rule is accepted only if it reproduces every Task 0 recordin
 goldens); otherwise each level is its own captured program (Deviation, larger fixtures). Ascending
 is fitted the same way from its recordings (its start level, its step per loop, its cap).
 
+_After Task 0 (Deviation D10):_ the register is a table per level and note frequency (45
+frequencies; Levels 1-4 reproduce every recording of all 35 tones, the last note aside where the
+preview's stop races it). Level 5 plays Level 4's table, then jumps once to a fifth table at a
+tone-specific note; Ascending starts at Level 1 and steps one level about every 4 s at
+tone-specific notes, capped at the stored level. Neither point follows a rule visible in the
+captures, so both are stored per tone: the importer commits the Level 5 and the Ascending previews
+of all 35 tones, Levels 1-3 of eight tones that cover every frequency (`check` verifies the rest in
+REF), and `VOLUME_RULE` is the five tables plus the per-tone jump and step notes.
+
 **D11 - Alert types "as far as previews go" (the brief's scope).** Plan 16 reproduces what the
 alert type does to previews (S5) and stores the programs and rules an incoming call needs
 (ringing tone, level, Ascending ramp, vibrator, and `Ring once`/`Beep once` as captured from their
 previews, if any). The incoming-call screen, its ringing and its alert-type behaviour are plan
 22's; the message arrival alert is plan 18's. `StockSounder` exposes `ring(profile)` and
 `messageAlert(profile)` for them, tested only as programs and gating.
+
+_After Task 0 (D11 refined):_ Ring once previews like Ringing; Beep once and Off silence
+ringing previews. The message `Beep once` is the tone generator at a DSP word set by Ringing volume
+(Level 1 0x9107, Level 4 0x9104, Level 5 0x9100; Levels 2 and 3 not captured).
 
 **D12 - Warning tones belong to notes, by note text (new).** With `tones/warning-tones` On, a
 timed note sounds the program captured for its text (`NOTE_SOUNDS`, generated from the note
@@ -207,6 +258,12 @@ note's first frame: the firmware's lead of the tone over its redraw (≈39 ms, S
 reproduced, because nokia-os draws at the key (plan 14 D8). The power-on security gate's `Code
 error` follows the same rule with the active profile's Warning tones.
 
+_After Task 0 (Deviation D12):_ with Warning tones On, `Invalid shortcut`, `No phone numbers`,
+`No voice tags saved` and `Screen saver missing` sound 1750 Hz on the tone generator (0x9105,
+≈290 ms), and `Code error`, `Not allowed` and `Set PIN code request on` the buzzer at 1000 Hz (v=22,
+≈285 ms); every other note is silent. The tone replaces the triggering key's beep, a key pressed on
+the note sounds it again, and with Warning tones Off the triggering key is silent.
+
 **D13 - Game cues become sounds (completes plan 23 D8).** `StockCue`s from the Snake II session
 go to the phone's sounder instead of `NO_CUES`: `eat` and `crash` play their captured programs
 when Warning tones is On and Games › Settings › Sounds allows it, `vibrate` runs the vibrator for
@@ -214,6 +271,14 @@ its `ms` when Shakes and Vibrating alert allow it (Task 0 decides the matrix), a
 plays what Task 0 captures (it was UNVERIFIED). The cue edges keep plan 23's tolerance
 (`GAME_TICK_TOLERANCE_MS`). `tests/fixtures/snake-cues.json` and `scripts/snake-cues.ts` are
 superseded by sound goldens and deleted (subtract).
+
+_After Task 0 (D13 decided):_ sound needs Warning tones On and Games › Settings › Sounds On; the
+vibrator needs Shakes On and Vibrating alert On. Meal: 2636.9 Hz for 6-7 ms (v=6); crash: three
+15 ms 440 Hz pulses (v=3) with ≈480 ms of vibrator; top score: the fireworks tune (587/880 Hz, v=3)
+≈2 s after the crash, emitted where plan 23's `top-score` cue fires. The factory Games settings are
+On (plan 15's factory table read Off). The power-on tone (900 Hz, 0x9105, 124 ms at 2425 ms) is a
+boot tone, not the power key (S10); the power key's long press plays the same tone and stops
+previews.
 
 **D14 - The Composer is deferred to its own plan 27 (the brief's alternative, justified).** The
 Composer is an editor (note entry with eight key roles and a held-key dot, cursor movement, the
@@ -269,8 +334,9 @@ DSP level register; Task 1 fixes them and a change is a Deviation here.
 ```ts
 /**
  * Plan 16: one change of the phone's sound outputs at kernel time `atMs`. `volume` is the
- * firmware's level register as captured (buzzer: MAD2 PUP 0x1E; tone: the DSP level, Task 0);
- * hosts map it to gain (the loudness of a register value is not captured).
+ * firmware's level register as captured: buzzer, MAD2 PUP 0x1E (0-194 seen; higher is louder);
+ * tone, the DSP tone-level word at 0x100A8 (e.g. 0x9108/0x9104/0x9100 for Keypad tones Level
+ * 1/2/3; a lower low nibble is louder). Hosts map it to gain (loudness is not captured).
  */
 export type StockSoundEvent =
   | {
@@ -293,6 +359,10 @@ export interface StockPhoneConfig {
   sound?: StockSoundPort;
 }
 ```
+
+_After Task 0:_ the field names stand; `volume` is defined per output as above (Task 1). DTMF
+(the tone generator's second oscillator, digits at standby) needs a second frequency: plan 22
+extends the event then.
 
 Rules (Task 5 pins each with a test): every event has `atMs` ≤ the kernel time of the `tick()`
 that emits it and ≥ the previous event's; an output's consecutive events always differ (no
@@ -419,6 +489,20 @@ of kind `sound`). Ids, sources under `$REF/captures/6.39/plan16/`, all `asserted
 | `sound/game/snake-{meal,crash,top-score,sounds-off,shakes-*}`     | `game/*`                    | Snake II cues (D13)                                                   |
 | `sound/boot/{power-on,power-off}`                                 | `boot/*`                    | the power key's beep during boot (S10); power-off silences a preview  |
 
+_After Task 0 (Deviation, the table Task 2 implements):_ ids are `sound/<recording path>` with
+`<nn>-<slug>` for tones. Ringing tones carry `@loop` where a second pass starts (30 of 35).
+`sound/ringing-tone/level-<1,2,3>/<nn>-<slug>` for the eight tones that cover all 45 frequencies (8,
+11, 14, 15, 16, 24, 27, 35) and `level-5/<nn>-<slug>` for all 35 (D10); `sound/alert/ascending/<nn>-
+<slug>` for all 35 (`alert/ascending-tones/`); `sound/ringing-volume/tone/<nn>-<slug>` for all 35
+(the volume list's first-mark preview of each stored tone); `ringing-tone/37`-`42` equal 36 and are
+not imported. Added recordings keep their path as id: `keypad/{pair,levels-list,virgin-list}`,
+`alert/ascending-l5`, `alert/list`, `message-tone/{standard-l5,vib-off-*,alert-off-special,beep-once-*}`,
+`profile/general/*`, `profile/active/*`, `preview/{stop-up,rapid-500,delay-sweep,long,volume-stop-c,open,first-down-back,virgin-*}`,
+`notes/{invalid-shortcut-key,invalid-shortcut-keypad-l3,gate-code-error}`, `game/{top-score-page,keys,warning-off}`,
+`boot/{power-on-keypad-off,power-key}`. Status: `keypad/keys` and `keypad/hold` are pending:22 (DTMF at
+standby), `boot/power-key` pending:17 (the power-key profile list), a note of a placeholder leaf
+pending on its owner; the rest asserted.
+
 Every Task 0 recording becomes one golden, except `levels/<n>/<nn>` beyond the two committed tones
 (REF-side rule check only, listed in `NOT_IMPORTED` with the reason). Notes whose recordings are
 equal (same rows within ±2 ms after alignment) share one golden whose `note:` lists the node
@@ -440,6 +524,13 @@ events (the `Timeline mismatch` style of plan 13). Comparison (D6, D8, D12):
   frequencies and volumes match exactly;
 - the keypad beep's end matches within the spread Task 0 measures for its duration group;
 - game cues use `GAME_TICK_TOLERANCE_MS` (plan 23 D6).
+
+_After Task 0 (measured):_ preview onsets fall 985-1014 ms after the key-down, so
+`SOUND_ONSET_TOLERANCE_MS` = 25 around 991 holds; note tones start 25-45 ms after their key in the
+captures (the lead over the redraw included) and keypad beeps 12-103 ms after it, a latency
+nokia-os does not reproduce, so beep and note onsets are compared against the key-down with that
+window. Edges of a program's captured pass replay exactly; a later pass of the same recording
+matches within 25 ms plus 1.2 % of its offset (D6 deviation).
 
 `tests/acceptance.test.ts` reads `index.json` entries of kind `sound` and requires a scenario for
 each asserted one (`SOUND_SCENARIOS`), as for LCD goldens.
@@ -479,92 +570,166 @@ binary atomically (plan 15). Scripts use `reboot <absolute image path>` and `rec
 writes `keys.csv` (`key,down_ms,up_ms`, relative to the audio start) from the commands it issued
 (the harness log prints each command's emulated time).
 
-- [ ] **H harness:** add `buzzer_vol` and `dsp_level` to `audio_pump`'s change detection and
+- [x] **H harness:** add `buzzer_vol` and `dsp_level` to `audio_pump`'s change detection and
       columns (after `vibra`, so readers of the first six columns keep working). Read
       `dsp_level` through a helper appended in `build.sh` (`cap_dsp_level()`, the word the probe
       found at 0x100A8). Verify on a keypad beep at each level and a ringing preview: the keypad
       levels differ in `dsp_level`, preview notes carry `buzzer_vol`. If 0x100A8 is not the tone
       level, find the register (the DSP mailbox writes around 0x100A0-0x100C0, `src/mad2/dsp/`)
       and log that one. Update the README's "Output format" row.
-- [ ] **Setup:** `v639-factory-setup.inc`: `reboot …/firmware/work/v639-plan15-restored.fls`,
+- [x] **Setup:** `v639-factory-setup.inc`: `reboot …/firmware/work/v639-plan15-restored.fls`,
       `run 12s`, `key 1 0 1 0 menu`, `run 4s`, `key 1 3 1 0 2 0 2 6 menu`, `run 20s`,
       `hold c 1500ms`, `run 1s` (plan 15's factory setup). Every factory section starts from it;
       virgin sections from `v639-setup.inc`. Every section returns to standby with
       `hold c 1500ms` before the next (probe B's lesson).
-- [ ] **K keypad:** at standby, in a pages list and in a Tones option list: every key tapped,
+- [x] **K keypad:** at standby, in a pages list and in a Tones option list: every key tapped,
       held 1 s, and two keys in quick succession, at Keypad tones Off, Level 1, 2 and 3 (factory)
       and unset (virgin). Decide what makes a beep 120-124 ms rather than 140-150 ms (S2), and
       what the virgin unset level sounds like. Record LCD frames too so beeps can be related to
       redraws.
-- [ ] **R ringing tones:** factory: for each of the 42 Ringing tone entries (35 tones, 7
+- [x] **R ringing tones:** factory: for each of the 42 Ringing tone entries (35 tones, 7
       `(empty)`), highlight it with one ▼ from the entry above (▲ from below for the first),
       record ≥ 2 passes of its preview (or 25 s), then C. Name `ringing-tone/<nn>`. Repeat the 35
       tones at Level 1, 2, 3 and 5 (`levels/<n>/<nn>`, set through Ringing volume) for D10's rule
       check.
-- [ ] **V volume:** from the Ringing volume list, each level highlighted with the stored tone
+- [x] **V volume:** from the Ringing volume list, each level highlighted with the stored tone
       Nokia tune (`ringing-volume/<n>`), ≥ 2 passes each; Level 5 including its confirm query
       and OK (does the query or OK stop the preview?).
-- [ ] **A alert types:** with Incoming call alert Ascending (Level 1 and Level 4), Ring once,
+- [x] **A alert types:** with Incoming call alert Ascending (Level 1 and Level 4), Ring once,
       Beep once and Off: the Nokia tune preview for 30 s each (`alert/*`); and scrolling the
       Incoming call alert list itself (`alert/list`: S5 says silent).
-- [ ] **Vb vibrator:** Nokia tune preview with Vibrating alert Off (`vibrator/off`); choosing On
+- [x] **Vb vibrator:** Nokia tune preview with Vibrating alert Off (`vibrator/off`); choosing On
       and Off (`vibrator/choose`: S8 says no pulse).
-- [ ] **M message tones:** each Message alert tone highlighted (Standard, Special, Beep once,
+- [x] **M message tones:** each Message alert tone highlighted (Standard, Special, Beep once,
       Ascending, No tone), 10 s each, at Level 4 and (Special only) Level 1; with Vibrating alert
       Off once; and OK on a choice.
-- [ ] **P profiles:** in Profiles › Silent, Discreet and Loud › Personalise: Ringing tone ▼ and
+- [x] **P profiles:** in Profiles › Silent, Discreet and Loud › Personalise: Ringing tone ▼ and
       Message alert tone ▼ previews (does the preview follow the edited profile's alert type,
       volume and vibrator, or the active profile's?).
-- [ ] **X preview mechanics:** virgin: Ringing tone ▼ with everything unset; then with only the
+- [x] **X preview mechanics:** virgin: Ringing tone ▼ with everything unset; then with only the
       volume set, then only the alert type (`preview/virgin*`); the first ▼ out of an unset list
       after both are set (`preview/first-down`, S9). Factory: ▼ while a note of the preview
       sounds (`stop-key`), C during a preview (`stop-c`), OK during a preview (`ok`), ▼▼▼▼ fast
       (`rapid`), and a preview left to run 60 s (does it stop by itself?).
-- [ ] **N notes:** factory (Warning tones On): replay plan 14's `open/` and `choose` sections
+- [x] **N notes:** factory (Warning tones On): replay plan 14's `open/` and `choose` sections
       (`gen_v639_plan14.py`'s C2 navigation) with audio into `notes/<number>`, covering every
       timed note, static note, progress note and confirm query the tree reaches; plus
       `Invalid shortcut`, in-menu `Code error` (`00000`), the power-on gate's `Code error`
       (`firmware/work/v639-plan15-factory-security-on.fls`), `Request not confirmed` and the
       Top score note. Then Warning tones Off and the error notes again (`notes/warning-off`).
-- [ ] **G games:** factory with Warning tones On, Snake II at level 1 (plan 23's level routine):
+- [x] **G games:** factory with Warning tones On, Snake II at level 1 (plan 23's level routine):
       a meal and a crash (`game/meal`, `game/crash`); a new top score's fireworks
       (`game/top-score`, plan 23 C6's Maze 1 route); Games › Settings › Sounds Off then a meal
       (`game/sounds-off`); Shakes On/Off × Vibrating alert On/Off, one meal each
       (`game/shakes-*`); keys during play (beeps).
-- [ ] **B boot:** factory power-on with audio from the power key's press (`boot/power-on`: is
+- [x] **B boot:** factory power-on with audio from the power key's press (`boot/power-on`: is
       S10's beep the held power key?), and a power-off during a preview (`boot/power-off`).
-- [ ] `gen_v639_plan16.py check`: every recording has its events (v2) and `keys.csv`; every
+- [x] `gen_v639_plan16.py check`: every recording has its events (v2) and `keys.csv`; every
       ringing tone shows ≥ 2 passes and the same rows each pass within ±2 ms (the loop); every
       `levels/` recording equals its Level 4 recording under the fitted volume rule (report the
       rule, or the tones it fails); no factory recording shows an unexpected silence.
-- [ ] Append "Plan 16 supplementary captures" to `$REF/captures/README.md`: commands, the S1-S10
+- [x] Append "Plan 16 supplementary captures" to `$REF/captures/README.md`: commands, the S1-S10
       table, the volume rule and the outcome below.
-- [ ] No commit. Record the outcome under this task: the event columns and the DSP register, the
+- [x] No commit. Record the outcome under this task: the event columns and the DSP register, the
       keypad durations and their rule, the preview delay and its spread, loop periods, the volume
       and Ascending rules, the alert-type matrix, message tone shapes, profile behaviour, the
       note-sound table (which notes sound, which are silent), the game matrix, the boot beep, and
       any section that failed.
+
+**Outcome (Task 0, 2026-10-14).** 631 recordings in `$REF/captures/6.39/plan16/`, written by
+`gen_v639_plan16.py` (sections run through `tools/menutree/emu.py` with `fork`, as plan 23's;
+each section's command stream is `scripts/v639-plan16-<section>.cap`). `check` passes. Layout,
+commands and the findings in prose: `$REF/captures/README.md` "Plan 16 supplementary captures".
+
+- **Event columns.** `buzzer_vol` (PUP 0x1E, decimal) and `dsp_level` (the word at 0x100A8, hex)
+  follow `vibra`; the plan 13 clock script gives byte-identical LCD output before and after the
+  harness change. 0x100A8 is the tone generator's level (D2 confirmed): keypad Level 1/2/3 write
+  0x9108/0x9104/0x9100 while the beep sounds; warning tones 0x9105 at every keypad level; the
+  message `Beep once` follows Ringing volume (Level 1 0x9107, Level 4 0x9104, Level 5 0x9100). The
+  idle word 0x910F mutes the generator, 0x900F powers the DSP down, 0x840A wakes it.
+- **Keypad tones.** 900 Hz, 140-150 ms (median 143, n = 740) while the DSP is awake; the DSP
+  powers down ≈2966 ms after the last tone ends and the next key wakes it for a 123-139 ms beep
+  (median 124, n = 32). That, not the ▲/▼ of a Tones list, decides the two groups of S2 (the lists
+  were pressed after previews had let the DSP sleep). A key that lands ≈70 ms before the
+  power-down gets a ≈77 ms beep (one capture). Onset after the key-down: awake 12-93 ms (median
+  28), woken 37-103 (median 51). A key-down while a beep sounds extends it (no new onset). Held
+  ▲/▼ beep again at each auto-repeat (≈775 ms, then every ≈480 ms) and a held C at its long press
+  (≈500 ms). In the Keypad tones list, ▲/▼'s own beep plays at the highlighted level (Off:
+  silent); C restores the stored level. The unset (virgin) level writes 0x9100. Digits, `*` and
+  `#` at standby (number entry, plan 22) play DTMF pairs (1209-1477 Hz + 697-941 Hz) for as long as
+  they are held; the security-code prompts and menus beep 900 Hz. A short power-key press beeps;
+  game keys beep.
+- **Previews.** Start ≈991 ms after the key-down (985-1014, n = 249; message tones 1002-1010).
+  They do not loop. The Ringing tone list plays the tone until its second cycle mark: two whole
+  passes for 21 tones, a cut second pass for 9 (4, 6, 16-20, 26, 28), and for 14, 15, 23, 24 and
+  33 the preview ends inside the first pass. The Ringing volume list plays the stored
+  tone to its first mark (`ringing-volume/tones/<nn>`: a prefix of the tone-list preview). Message
+  previews play once. Between passes edges jitter by a median 11 ms (≤ 48), and the second pass
+  runs up to ≈1 % slower (after the DSP powered down), so the ±2 ms pass-to-pass match of the
+  plan does not hold. ▲/▼ stop a preview at the key (the next one starts ≈991 ms later), as do C,
+  OK and the power key's long press (≈1046 ms). Opening a list previews nothing. S9 confirmed: the
+  first ▼ out of an unset list previews nothing; ▲ back onto the same entry does. `(empty)` slots
+  are silent. Level 5 previews when highlighted; its query and OK sound only their key beeps.
+- **Volume rule.** `buzzer_vol` is a function of the level and the note's frequency alone: five
+  tables of 45 frequencies (e.g. 1319 Hz: 4, 7, 10, 16 | 61) reproduce every Level 1-4 recording
+  of all 35 tones exactly (the last note may differ: the preview's stop races the next note).
+  Level 5 plays at Level 4's table and jumps once to the fifth table at a tone-specific note
+  (3.1-7.2 s in; Nokia tune at its second pass). Ascending starts at Level 1's table and steps one
+  level at a time about every 4 s, at tone-specific notes (first step 3.1-7.2 s), capped at the
+  stored level (`ascending-l1` stays at Level 1). Neither point follows from time, passes or the
+  vibrator in the captures, so both are stored per tone (D10 Deviation).
+- **Alert types.** Ringing and Ring once preview identically; Beep once and Off silence ringing
+  previews and the vibrator; Ascending as above; the Incoming call alert list previews nothing
+  (S5). Unset (virgin): silent ringing previews; an unset volume plays Level 1's table; message
+  previews play (no alert-type gate) without the vibrator.
+- **Vibrator.** Each tone carries its own vibrator track (Nokia tune ≈712 ms on/off; Ring ring
+  with its bursts); Vibrating alert Off removes it; choosing On or Off pulses nothing (S8).
+- **Message tones.** No tone: silent. Standard: 1499.9 Hz, two 193 ms pulses twice, vibrator.
+  Special: 2683.7 Hz in three groups of 93/286 ms pulses, vibrator, ≈6.3 s. Beep once: 1750 Hz on
+  the tone generator for ≈285-340 ms, then three 480 ms vibrator pulses. Ascending: the Special
+  pattern, stepping Level 1 → 4 once per pass, ≈20 s. Volumes follow the ringing tables
+  (Standard at Level 5 plays the fifth table at once). Incoming call alert Off does not gate them.
+- **Profiles.** A Personalise list previews with that profile's Incoming call alert and Ringing
+  volume (Silent: Off, Discreet: Beep once → silent; Loud: Level 5) and the active profile's
+  Vibrating alert (`profile/active/*`).
+- **Notes** (Warning tones On; 287 tree leaves and options of plan 14's `open/` replayed, 19 not
+  reachable in the factory tree). 1750 Hz tone (0x9105, ≈290 ms): `Invalid shortcut`, `No phone
+numbers`, `No voice tags saved`, `Screen saver missing`. 1000 Hz buzzer (v=22, ≈285 ms): `Code
+error` (menus and the boot gate), `Not allowed`, `Set PIN code request on`. Every other note,
+  confirmation, query and progress note (incl. `Request not confirmed`) is silent. The tone
+  replaces the triggering key's beep, and a key pressed on the note sounds it again; with Warning
+  tones Off the triggering key is silent.
+- **Games** (Snake II, level 1). Meal: 2636.9 Hz for one timer unit (6-7 ms, v=6); crash: three
+  440 Hz pulses of 15 ms (v=3); top score: the fireworks tune (587/880 Hz, v=3, twice) ≈2 s after
+  the crash. Sound needs Warning tones On and Sounds On; the vibrator (≈480 ms per meal and at the
+  crash) needs Shakes On and Vibrating alert On. The factory Games settings are On (plan 15's
+  factory table mislabelled them Off). The Top score page is silent.
+- **Boot.** The power-on plays 900 Hz (0x9105) for 124 ms, 2425 ms in, also with Keypad tones Off:
+  a power-on tone, not the power key (S10). The power key's long press plays the same tone.
+- **Failures.** None left. The harness cannot advance a powered-off emulator, so `boot/power-off`
+  ends at the power-off; a forked `reboot` kills dct3cap, so the boot section runs unforked.
+  Plan 15's factory Games values and the S2 duration cause were wrong (above).
 
 ### Task 1 - Contracts and documentation
 
 **Files:** `VISION.md`, `docs/specs/nokia-3310.md`, `docs/specs/nokia-3310-menu-tree.md`,
 `docs/plans/README.md`, this plan.
 
-- [ ] Apply Task 0's outcome to D2 and D7-D13 (Deviation lines where it changes them) and fix the
+- [x] Apply Task 0's outcome to D2 and D7-D13 (Deviation lines where it changes them) and fix the
       contract's field names (`volume` semantics per output).
-- [ ] VISION: the `StockSoundEvent`, `StockSoundPort` and `StockPhoneConfig.sound` contract and
+- [x] VISION: the `StockSoundEvent`, `StockSoundPort` and `StockPhoneConfig.sound` contract and
       its rules; a sentence that nokia-os's sound goes through the port, not phone-core's
       `sound` event; the nokia-os row of the package table mentions sound.
-- [ ] Spec §8: mark the manual-sourced bullets as history where §10 corrects them (keypad tones
+- [x] Spec §8: mark the manual-sourced bullets as history where §10 corrects them (keypad tones
       are a 900 Hz tone-generator beep of ≈140 ms, not a square-wave buzzer blip; 35 tones plus 7
       `(empty)` slots; `Warning tones` wording). Spec §10: a "Tones and sound (plan 16)"
       subsection with the S1-S10 facts and Task 0's outcome, marked "(plan 16, in progress)";
       the artefacts above. Correct plan 14's "previews are silent" (virgin only).
-- [ ] Menu-tree spec "Tones": a note that previews play in the factory state (link to §10).
-- [ ] Plans README: row 16 `in progress`; add row 27 (Composer: editor, playback, saved tones;
+- [x] Menu-tree spec "Tones": a note that previews play in the factory state (link to §10).
+- [x] Plans README: row 16 `in progress`; add row 27 (Composer: editor, playback, saved tones;
       depends on 16, 18; not started).
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define the stock sound port and tone contracts (plan 16)`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define the stock sound port and tone contracts (plan 16)`.
 
 ### Task 2 - Sound goldens, importer and re-owned Composer placeholders (TDD)
 
@@ -613,6 +778,15 @@ writes `keys.csv` (`key,down_ms,up_ms`, relative to the audio start) from the co
       `top-score`; the vibrator duration), `PREVIEW_DELAY_MS`, `VOLUME_RULE` and
       `ASCENDING_RULE` (D10, fitted by the generator and checked against every level golden),
       each with a comment naming its goldens.
+      _After Task 0:_ `RINGING_TONES` are the Ringing tone list previews (to the second cycle mark, as
+      captured) with each tone's `firstMark` (the step the Ringing volume list stops at, from
+      `sound/ringing-volume/tone/*`) and `cycle` (`@loop`, absent for the five one-pass tones);
+      `VOLUME_RULE` is the five frequency tables plus each tone's Level 5 jump step; `ASCENDING_RULE`
+      each tone's step notes (Level 1 first, capped at the stored level); `KEYPAD_BEEP` adds the woken
+      duration and the DSP's power-down delay (≈2966 ms); `MESSAGE_TONES` include the `Beep once` DSP
+      words per level; `NOTE_SOUNDS` read the note text from each sounding note golden's `note:` (quoted
+      first); `BOOT_TONE` is the power-on and power-off tone.
+
 - [ ] TDD freshness (in-process extraction equals the committed file); every ringing program
       re-renders its golden's two passes; the volume rule reproduces `sound/ringing-volume/*`
       and the `level-*` goldens exactly; Ascending reproduces its goldens; frequencies are
