@@ -10,7 +10,8 @@
 // - status: the signal and battery ladders and icons cropped from standby/standby;
 // - widgets (plan 14): the sprites of scripts/widget-sprites.ts, and the widget timelines of the
 //   tree goldens (notes, progress notes, blinking prompts) and of the probes it names (splashes,
-//   the notes that follow a key), aligned on their trigger frame (D8).
+//   the notes that follow a key, the game-over screens), aligned on their trigger frame (D8);
+// - snake (plan 23): the Snake II pictures, mazes and timing of scripts/snake-resources.ts.
 //
 // Writes src/resources/generated/*.ts. Idempotent. `extractResources` is also run in-process by
 // tests/resources.test.ts to prove the committed files are fresh. Runs under Node's type
@@ -22,7 +23,13 @@ import { fileURLToPath } from "node:url";
 import { MENU_SLUGS } from "./capture-set.ts";
 import { TREE_TEXT_RUNS } from "./generated/tree-text-runs.ts";
 import { GLYPH_OVERRIDES } from "./glyph-overrides.ts";
-import { findGoldenImage, LCD_WIDTH, parseGolden, type Golden } from "./golden-format.ts";
+import {
+  findGoldenImage,
+  LCD_WIDTH,
+  parseGolden,
+  parseTickGolden,
+  type Golden,
+} from "./golden-format.ts";
 import {
   formatIssue,
   harvestGlyphs,
@@ -30,6 +37,7 @@ import {
   type HarvestedFont,
   type RunSample,
 } from "./harvest-glyphs.ts";
+import { extractSnakeResources, type SnakeResourceData } from "./snake-resources.ts";
 import { FONT_HEIGHTS, TEXT_RUNS } from "./text-runs.ts";
 import {
   PROBE_TIMELINES,
@@ -148,6 +156,7 @@ export interface ExtractedResources {
   readonly boot: BootData;
   readonly status: StatusData;
   readonly widgets: WidgetData;
+  readonly snake: SnakeResourceData;
 }
 
 // ---------------------------------------------------------------- pixels
@@ -714,6 +723,10 @@ export function extractResources(goldensDir: string = GOLDENS_DIR): ExtractedRes
     boot: extractBoot(goldensDir),
     status: extractStatus(goldensDir),
     widgets: extractWidgets(goldensDir),
+    snake: extractSnakeResources(
+      (id) => loadGolden(goldensDir, id),
+      (id) => parseTickGolden(readFileSync(join(goldensDir, `${id}.ticks.txt`), "utf8"), id),
+    ),
   };
 }
 
@@ -759,6 +772,11 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
       "WIDGET_DATA",
       `{ readonly sprites: Readonly<Record<string, ${TYPES.sprite}>>; readonly timelines: Readonly<Record<string, ${TYPES.widgetTimeline}>>; readonly byNode: Readonly<Record<string, string>>; readonly byName: Readonly<Record<string, string>> }`,
       resources.widgets,
+    ),
+    "snake.ts": module(
+      "SNAKE_DATA",
+      "{ readonly sprites: Readonly<Record<string, readonly string[]>>; readonly mazes: readonly { readonly start: { readonly x: number; readonly y: number }; readonly walls: readonly { readonly x1: number; readonly y1: number; readonly x2: number; readonly y2: number }[] }[]; readonly periods: Readonly<Record<number, number>>; readonly firstTick: Readonly<Record<number, number>>; readonly graceMs: number; readonly death: readonly { readonly visible: boolean; readonly durationMs: number }[] }",
+      resources.snake,
     ),
   };
 }

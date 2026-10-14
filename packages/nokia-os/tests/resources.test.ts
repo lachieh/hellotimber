@@ -25,6 +25,7 @@ import {
 import { BOOT_DATA } from "../src/resources/generated/boot";
 import { STOCK_FONT_DATA } from "../src/resources/generated/fonts";
 import { MENU_ICON_DATA } from "../src/resources/generated/menu-icons";
+import { SNAKE_DATA } from "../src/resources/generated/snake";
 import { STATUS_DATA } from "../src/resources/generated/status";
 import { WIDGET_DATA } from "../src/resources/generated/widgets";
 import {
@@ -130,6 +131,7 @@ describe("generated resources", () => {
       boot: BOOT_DATA,
       status: STATUS_DATA,
       widgets: WIDGET_DATA,
+      snake: SNAKE_DATA,
     }).toEqual(extractResources());
   });
 
@@ -477,6 +479,8 @@ describe("widget sprites and timelines", () => {
     ]);
     expect(WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NODE["8-4"]!]!.timeline.durationMs).toBe(3060);
     expect(Object.keys(WIDGET_TIMELINE_BY_NAME).sort()).toEqual([
+      "game-over-fireworks",
+      "game-over-note",
       "invalid-shortcut",
       "level-5-done",
       "reminder-memory-empty",
@@ -485,6 +489,29 @@ describe("widget sprites and timelines", () => {
     expect(describeSteps(WIDGET_TIMELINE_BY_NAME["invalid-shortcut"]!)).toEqual([
       "note/error:2903",
       "edges5-78:9",
+    ]);
+  });
+
+  it("plays the game-over note, and the fireworks before TOP SCORE: as captured (plan 23 D13)", () => {
+    // bot-short.death: Game over! / Your score: for 2939 ms, then the game menu.
+    expect(describeSteps(WIDGET_TIMELINE_BY_NAME["game-over-note"]!)).toEqual([
+      "game-over/title:2939",
+    ]);
+    // bot-long.death: six pictures twice, then Game over! / TOP SCORE: for 2935 ms.
+    expect(describeSteps(WIDGET_TIMELINE_BY_NAME["game-over-fireworks"]!)).toEqual([
+      "fireworks-1:231",
+      "fireworks-2:234",
+      "fireworks-3:232",
+      "fireworks-4:241",
+      "fireworks-5:217",
+      "fireworks-6:233",
+      "fireworks-1:216",
+      "fireworks-2:217",
+      "fireworks-3:217",
+      "fireworks-4:217",
+      "fireworks-5:231",
+      "fireworks-6:386",
+      "game-over/title:2935",
     ]);
   });
 });

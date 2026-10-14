@@ -10,6 +10,7 @@ import {
 import { BOOT_DATA } from "./generated/boot";
 import { STOCK_FONT_DATA } from "./generated/fonts";
 import { MENU_ICON_DATA } from "./generated/menu-icons";
+import { SNAKE_DATA } from "./generated/snake";
 import { STATUS_DATA } from "./generated/status";
 import { WIDGET_DATA } from "./generated/widgets";
 
@@ -127,3 +128,80 @@ export const WIDGET_TIMELINE_BY_NODE: Readonly<Record<string, string>> = WIDGET_
 
 /** Named widget timelines from probes (`request-not-confirmed`, `invalid-shortcut`, ...). */
 export const WIDGET_TIMELINE_BY_NAME: Readonly<Record<string, string>> = WIDGET_DATA.byName;
+
+// ---------------------------------------------------------------- Snake II (plan 23)
+
+/** A direction of travel. */
+export type SnakeHeading = "right" | "left" | "up" | "down";
+/** A corner by the two cell edges it joins. */
+export type SnakeCorner = "up-left" | "up-right" | "down-left" | "down-right";
+export type SnakeCreatureKind = 0 | 1 | 2 | 3 | 4 | 5;
+
+const HEADINGS = ["right", "left", "up", "down"] as const satisfies readonly SnakeHeading[];
+const CORNERS = [
+  "up-left",
+  "up-right",
+  "down-left",
+  "down-right",
+] as const satisfies readonly SnakeCorner[];
+const KINDS = [0, 1, 2, 3, 4, 5] as const satisfies readonly SnakeCreatureKind[];
+
+/** Every Snake II picture: 4x4 cells, 8x4 creatures and HUD icons, the 8x8 large creature's two
+ * pictures, and the 4x5 HUD digits. */
+export const SNAKE_SPRITE_IDS = [
+  ...HEADINGS.flatMap((h) => [
+    `head/${h}` as const,
+    `head-open/${h}` as const,
+    `tail/${h}` as const,
+    `body/${h}` as const,
+    `body-fat/${h}` as const,
+  ]),
+  ...CORNERS.flatMap((c) => [`corner/${c}` as const, `corner-fat/${c}` as const]),
+  "food",
+  ...KINDS.flatMap((k) => [`creature/${k}` as const, `creature-icon/${k}` as const]),
+  "large/1",
+  "large/2",
+  "large-icon/1",
+  "large-icon/2",
+  ...([0, 1, 2, 3, 4, 5, 6, 7, 8, 9] as const).map((d) => `digit/${d}` as const),
+] as const;
+
+export type SnakeSpriteId = (typeof SNAKE_SPRITE_IDS)[number];
+
+/** Snake II pictures cropped from the gameplay goldens (scripts/snake-resources.ts). */
+export const SNAKE_SPRITES: Readonly<Record<SnakeSpriteId, Bitmap>> = Object.fromEntries(
+  SNAKE_SPRITE_IDS.map((id) => {
+    const art = SNAKE_DATA.sprites[id];
+    if (!art) throw new Error(`No Snake II sprite "${id}".`);
+    return [id, bitmapFromArt(art)];
+  }),
+) as Record<SnakeSpriteId, Bitmap>;
+
+export interface SnakeWall {
+  readonly x1: number;
+  readonly y1: number;
+  readonly x2: number;
+  readonly y2: number;
+}
+
+export interface SnakeMaze {
+  /** The cell behind the tail: the snake starts on (x + 1 .. x + 7, y), heading right. */
+  readonly start: { readonly x: number; readonly y: number };
+  /** Wall segments from cell to cell, drawn as 2-px lines through the cell centres. */
+  readonly walls: readonly SnakeWall[];
+}
+
+/** No maze, then Maze 1..5, as the Mazes option list orders them. */
+export const SNAKE_MAZES: readonly SnakeMaze[] = SNAKE_DATA.mazes;
+
+/** Level (1..175) → engine tick period (ms), as captured (D2). */
+export const SNAKE_PERIODS: Readonly<Record<number, number>> = SNAKE_DATA.periods;
+/** Level → the first tick's delay after the New game frame (ms). */
+export const SNAKE_FIRST_TICK: Readonly<Record<number, number>> = SNAKE_DATA.firstTick;
+/** A blocked tick → the grace tick that saves or kills the snake (ms, H6). */
+export const SNAKE_GRACE_MS: number = SNAKE_DATA.graceMs;
+/** The crash → the game-over screen: the snake hidden and shown in turn (H11). */
+export const SNAKE_DEATH_STEPS: readonly {
+  readonly visible: boolean;
+  readonly durationMs: number;
+}[] = SNAKE_DATA.death;

@@ -794,23 +794,48 @@ exit into it.
 (generated), `src/resources/index.ts`, `tests/resources.test.ts`, `tests/snake-resources.test.ts`
 (new).
 
-- [ ] Crop table (golden id, image, rectangle, sprite id) for: heads (closed and open, four
+- [x] Crop table (golden id, image, rectangle, sprite id) for: heads (closed and open, four
       directions), tails (four), straight and fat straight (four each), corners and fat corners
       (four each), food, the six creatures (board and HUD icon), the large creature if C5 showed
       it, HUD digits 0-9, the six fireworks pictures, the nine Level bar counts (`level/snake-<n>`).
       Report every picture the goldens do not show; missing pictures fail the task (recapture with
       a targeted bot run, Deviation).
-- [ ] Maze extractor: from each `maze-<m>` start image, the wall cells (2-px runs through cell
+- [x] Maze extractor: from each `maze-<m>` start image, the wall cells (2-px runs through cell
       centres per H1) as segments, and the start cell from the snake; emit `SNAKE_MAZES`.
-- [ ] Timing: `SNAKE_PERIODS` (1..175: levels 1-9 from `ticks-l<L>`, the rest from `periods`, each
+- [x] Timing: `SNAKE_PERIODS` (1..175: levels 1-9 from `ticks-l<L>`, the rest from `periods`, each
       the median interval), `SNAKE_FIRST_TICK`, the grace, death and blink durations from the
       death timelines, and widget timelines for the game-over note and fireworks
       (`WIDGET_TIMELINE_BY_NAME`).
-- [ ] TDD: freshness (in-process extraction equals the committed file); every sprite is binary and
+- [x] TDD: freshness (in-process extraction equals the committed file); every sprite is binary and
       inside its golden's ink; every maze leaves its start row free; periods are positive integers
       for every level 1..175; the game-over texts render in their faces (`missingStockGlyphs`).
-- [ ] Run `extract-resources` twice; no diff.
-- [ ] Commit: `feat(nokia-os): derive Snake II sprites, mazes and timings from goldens`.
+- [x] Run `extract-resources` twice; no diff.
+- [x] Commit: `feat(nokia-os): derive Snake II sprites, mazes and timings from goldens`.
+
+Deviation (missing pictures, recaptured as the task says): the C5 games showed the small
+creatures of kinds 3, 4 and 5 only (kind = `rand16 mod 6`, recovered from each game's seed), and
+no game-over score with an 8 (the large font had no `8`). Two sections added to
+`gen_v639_plan23.py` (`creatures`, `score-8`; `$REF/captures/README.md` "Plan 23 Task 4
+recaptures") play seven level-1 games at clocks whose seeds draw the missing kinds for the first
+creature (kind 0: 09:14, 09:56; kind 1: 11:07, 12:21; kind 2: 10:07, 10:21, 10:35, chosen with
+`(seconds of the day + 7930) mod 65521`), and one game to eight meals that dies (`Your score:
+8`). They are imported as `creature-<HHMM>` (tick stills, `meals`), `score-8` and
+`score-8.death` (332 KB). Every listed picture is now shown; none is missing.
+Deviation (picture set): corners are four pictures named by the cell edges they join (each serves
+two turns); the fat straights coincide in pairs (left = up, right = down); the large creature
+alternates two pictures (`large/1`, `large/2`) tick by tick and so does its HUD icon; digits are
+4x5 cells (ink in the right three columns). The Snake Level bars (`level/snake-<n>`), the six
+fireworks pictures and a `game-over/title` marker (the note's `Game over!` line) are widget
+sprites in `scripts/widget-sprites.ts`, so the game-over timelines come from the probe-timeline
+machinery (new kind `game-over`): `game-over-note` (bot-short.death) and `game-over-fireworks`
+(bot-long.death), as captured. The game-over texts needed glyph runs (`scripts/text-runs.ts`, not
+listed) and two overrides (large `RE` touch, large `8` advance).
+Deviation (timing): periods are each golden's median interval, so levels 4 and 6 read 287 and
+171 ms (seven intervals) where Task 0's full-recording medians read 286 and 170. The grace (93 ms)
+comes from the one saved grace in a timeline (`virgin-game`); a crash draws its first hidden frame
+88-110 ms after the blocked tick (maze-1/3/4). The death steps (medians of nine blink deaths) are
+hidden 243, shown 237, 243, 238, 242, 238, 243, 237, then hidden 145 until the game-over screen
+(2066 ms from the first hidden frame).
 
 ### Task 5 - Random numbers and the seed (TDD)
 

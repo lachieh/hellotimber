@@ -10,6 +10,9 @@ export type SpriteGroup =
   | "prompt-icon"
   | "mark"
   | "level-bar"
+  | "level-snake"
+  | "fireworks"
+  | "game-over"
   | "splash-8-1"
   | "splash-8-2"
   | "splash-8-3"
@@ -199,6 +202,36 @@ export const WIDGET_SPRITES: readonly SpriteCrop[] = [
     y0: 18,
     y1: 36,
   },
+  // Snake II's Level page at each stored level 1..9 (plan 23 C1, D11): `min(level, 9)` bars.
+  ...Array.from({ length: 9 }, (_, i) => ({
+    id: `level/snake-${i + 1}`,
+    group: "level-snake" as const,
+    golden: `game/snake/level-${i + 1}`,
+    image: `${i + 1}`,
+    x0: 5,
+    x1: 74,
+    y0: 13,
+    y1: 36,
+  })),
+  // Game over (plan 23 D13): a new top score's six full-screen fireworks pictures, and the
+  // note's first line, `Game over!` (the lines below it carry the score and vary).
+  ...frames(
+    "fireworks",
+    "fireworks",
+    "game/snake/bot-long.death",
+    ["b", "c", "d", "e", "f", "g"],
+    FULL,
+  ),
+  {
+    id: "game-over/title",
+    group: "game-over",
+    golden: "game/snake/bot-short.death",
+    image: "c",
+    x0: 0,
+    x1: 83,
+    y0: 0,
+    y1: 16,
+  },
   // Game splashes, full frame (P12). Pairs II's image d is a 16 ms partial draw, not a frame.
   ...frames("splash/8-1", "splash-8-1", "probe/games-splash-8-1", ["b", "c", "d", "e", "f"], FULL),
   ...frames(
@@ -228,6 +261,7 @@ export const WIDGET_SPRITES: readonly SpriteCrop[] = [
 export const TIMELINE_GROUPS = {
   note: ["note-icon", "top-score"],
   progress: ["progress-bar"],
+  "game-over": ["fireworks", "game-over"],
   prompt: [],
   "splash-8-1": ["splash-8-1"],
   "splash-8-2": ["splash-8-2"],
@@ -264,4 +298,8 @@ export const PROBE_TIMELINES: readonly {
   { golden: "probe/confirm-10-3-2-yes", kind: "note", name: "reminder-memory-empty" },
   // P5: Menu 1 8, then standby.
   { golden: "probe/shortcut-m1-8", kind: "note", name: "invalid-shortcut" },
+  // Plan 23 D13: Game over! / Your score: (the short game), and the fireworks before Game over!
+  // / TOP SCORE: (the long game's new top score), each until the game menu returns.
+  { golden: "game/snake/bot-short.death", kind: "game-over", name: "game-over-note" },
+  { golden: "game/snake/bot-long.death", kind: "game-over", name: "game-over-fireworks" },
 ];

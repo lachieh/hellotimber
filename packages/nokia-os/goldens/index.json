@@ -133,6 +133,69 @@
     "frames": 12
   },
   {
+    "id": "game/snake/creature-0914",
+    "file": "game/snake/creature-0914.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 9,
+    "frames": 9,
+    "input": true
+  },
+  {
+    "id": "game/snake/creature-0956",
+    "file": "game/snake/creature-0956.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8,
+    "input": true
+  },
+  {
+    "id": "game/snake/creature-1007",
+    "file": "game/snake/creature-1007.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 11,
+    "frames": 11,
+    "input": true
+  },
+  {
+    "id": "game/snake/creature-1021",
+    "file": "game/snake/creature-1021.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8,
+    "input": true
+  },
+  {
+    "id": "game/snake/creature-1035",
+    "file": "game/snake/creature-1035.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 9,
+    "frames": 9,
+    "input": true
+  },
+  {
+    "id": "game/snake/creature-1107",
+    "file": "game/snake/creature-1107.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 10,
+    "frames": 10,
+    "input": true
+  },
+  {
+    "id": "game/snake/creature-1221",
+    "file": "game/snake/creature-1221.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 11,
+    "frames": 11,
+    "input": true
+  },
+  {
     "id": "game/snake/gameover-blink-navi",
     "file": "game/snake/gameover-blink-navi.lcd.txt",
     "status": "asserted",
@@ -747,6 +810,23 @@
     "kind": "ticks",
     "images": 0,
     "frames": 166
+  },
+  {
+    "id": "game/snake/score-8",
+    "file": "game/snake/score-8.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 10,
+    "frames": 10,
+    "input": true
+  },
+  {
+    "id": "game/snake/score-8.death",
+    "file": "game/snake/score-8.death.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 12
   },
   {
     "id": "game/snake/seed-0000",

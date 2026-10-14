@@ -436,6 +436,11 @@ const SCREENS: readonly ScreenSpec[] = [
     }, then the game menu.`,
   })),
   {
+    name: "score-8.death",
+    dir: "score-8/death",
+    note: "Task 4 recapture: the score-8 game from the bot's last key: the blocked tick, the grace, the blink, Game over! / Your score: / 8, then the game menu.",
+  },
+  {
     name: "gameover-blink-navi",
     dir: "gameover/short-navi-1500",
     from: 5,
@@ -649,6 +654,33 @@ const GAMES: readonly GameSpec[] = [
     kind: "stills",
     selection: "meals",
     note: "C9: the second game after seed-1010 without a power cycle (13.10.2026 10:10): the same placements, so New game reseeds from the clock.",
+  },
+  // Task 4 recaptures: C5 showed the creature kinds 3-5 only; these clocks' seeds draw kinds 0-2.
+  ...(
+    [
+      ["0914", 0],
+      ["0956", 0],
+      ["1007", 2],
+      ["1021", 2],
+      ["1035", 2],
+      ["1107", 1],
+      ["1221", 1],
+    ] as const
+  ).map(([tag, kind]) => ({
+    name: `creature-${tag}`,
+    dirs: [`creatures/${tag}/game`],
+    level: 1,
+    kind: "stills" as const,
+    selection: "meals" as const,
+    note: `Task 4 recapture: power-on with the clock at 13.10.2026 ${tag.slice(0, 2)}:${tag.slice(2)}, level 1, No maze, bot-steered; the fifth meal brings a creature of kind ${kind}, left alone until it expires.`,
+  })),
+  {
+    name: "score-8",
+    dirs: ["score-8/game"],
+    level: 1,
+    kind: "stills",
+    selection: "meals",
+    note: "Task 4 recapture: level 1, No maze, 13.10.2026 10:10, bot-steered to eight meals (the creature left alone); ends at the bot's last key.",
   },
 ];
 

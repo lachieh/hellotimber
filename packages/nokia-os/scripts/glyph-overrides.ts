@@ -26,6 +26,8 @@ export const GLYPH_OVERRIDES: readonly GlyphOverride[] = [
   // "l" (Request): the leg of the large R fills its blank column, so R runs into a following e.
   // R's ink is 8 columns.
   { kind: "touch", font: "large", pair: "Re", width: 8 },
+  // game/snake/bot-long.death "h" ("TOP SCORE:", plan 23): the leg runs into a following E too.
+  { kind: "touch", font: "large", pair: "RE", width: 8 },
   // menu/12-profiles.sub "05" "(empty)": ')' ink is 3 columns.
   { kind: "advance", font: "small", char: ")", advance: 4 },
   // menu/01-phone-book.sub "02" "Service Nos.": '.' ink is 2 columns.
@@ -70,6 +72,8 @@ export const GLYPH_OVERRIDES: readonly GlyphOverride[] = [
   { kind: "advance", font: "large", char: "5", advance: 8 },
   // tree/11-clock/11-3.leaf "b" ("13.10.2026"): '6' ink is 7 columns, a full large digit cell.
   { kind: "advance", font: "large", char: "6", advance: 8 },
+  // game/snake/score-8.death "c" ("8", plan 23): '8' ink is 7 columns, a full large digit cell.
+  { kind: "advance", font: "large", char: "8", advance: 8 },
   // tree/02-messages/2-2.leaf "c" ("in inbox"): 'x' ink is 6 columns.
   { kind: "advance", font: "large", char: "x", advance: 7 },
   // probe/games-instructions-8-2-4 "02" ("Use the # key to"): '#' ink is 5 columns.

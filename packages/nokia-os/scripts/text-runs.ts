@@ -264,6 +264,15 @@ function standby(clock: string): TextRun[] {
 
 const STANDBY = standby("10:10");
 
+/** A game-over note (plan 23 D13): large lines from x 0 at tops 3, 18 and 33. */
+function gameOver(label: string, score: string): TextRun[] {
+  return [
+    { font: "large", text: "Game over!", top: 3 },
+    { font: "large", text: label, top: 18 },
+    { font: "large", text: score, top: 33 },
+  ];
+}
+
 /** Golden id → image name → the text runs drawn in that image. */
 export const TEXT_RUNS: Readonly<Record<string, Readonly<Record<string, readonly TextRun[]>>>> = {
   "standby/standby": { "01-standby": STANDBY },
@@ -279,6 +288,10 @@ export const TEXT_RUNS: Readonly<Record<string, Readonly<Record<string, readonly
     ],
   },
   "menu/09-calculator.sub": { "01": [softkey("Options")] },
+  // Snake II's game-over notes (plan 23): Your score: 4 and 8, TOP SCORE: 105.
+  "game/snake/bot-short.death": { c: gameOver("Your score:", "4") },
+  "game/snake/score-8.death": { c: gameOver("Your score:", "8") },
+  "game/snake/bot-long.death": { h: gameOver("TOP SCORE:", "105") },
   // Profiles slot 6's uninitialised name: two U+E000 undefined-character boxes (D10), as a row
   // label (small rows) and as its Rename page value (thin). The OCR reads them as art, so the
   // generated tree runs skip them.
