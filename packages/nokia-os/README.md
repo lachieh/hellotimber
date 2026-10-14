@@ -11,9 +11,10 @@ one-item pages with a current value), each level's soft key and opening selectio
 shortcut digits (menu numbers, delayed opening, `Invalid shortcut`). Leaves open stock widgets:
 option lists (single choice, unset, multi-select), timed, static and progress notes, confirm
 queries, info pages and screens, input prompts (first screen), level bars, text pages, and the
-four game splashes. Choices persist in an in-memory settings store and pages show them. Leaves
-that are whole applications open a marked placeholder (a dotted border the firmware never draws)
-naming the plan that owns them; see "Leaf ownership".
+four game splashes. Choices persist in an in-memory settings store and pages show them. Snake II
+is playable (plan 23; see "Snake II"). Leaves that are whole applications open a marked
+placeholder (a dotted border the firmware never draws) naming the plan that owns them; see "Leaf
+ownership".
 
 ## Usage
 
@@ -62,10 +63,12 @@ mise exec -- vp run @hellotimber/nokia-os#demo   # http://localhost:5173
 ```
 
 Arrows ▲/▼, Enter Navi, Backspace or Escape C (hold it to return to standby), digits, `*`,
-`#`, and `P` power (held for 1 s). The buttons do the same. The demo validates the operator
-name, can skip the boot, and shows the phone's path and screen kind in a status line. In dev it
-also lays any committed golden over the LCD, as an overlay or as a pixel difference; the list
-groups the goldens by top-level menu (`tree/05-tones`) and kind (`menu`, `probe`).
+`#`, and `P` power (held for 1 s). The buttons do the same. In Snake II the digits steer (2/4/6/8,
+and 1/3/7/9 relative), ▲/▼ and `*`/`#` turn, Enter or Escape suspend the game. The demo validates
+the operator name, can skip the boot, and shows the phone's path, screen kind and application in
+a status line. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
+difference; the list groups the goldens by top-level menu (`tree/05-tones`) and kind (`menu`,
+`probe`, `game`).
 
 ## Asset policy
 
@@ -87,8 +90,8 @@ mise exec -- vp run @hellotimber/nokia-os#import-captures $REF
 # 2. Generate the stock menu tree (src/firmware/generated/stock-tree.ts) from tree.json and the
 #    corpus OCR, plus the harvester's text runs (scripts/generated/tree-text-runs.ts).
 mise exec -- vp run @hellotimber/nokia-os#import-tree $REF
-# 3. Derive fonts, icons, boot frames, status art, widget sprites and widget timelines into
-#    src/resources/generated/.
+# 3. Derive fonts, icons, boot frames, status art, widget sprites and widget timelines, and
+#    Snake II's pictures, mazes and timings, into src/resources/generated/.
 mise exec -- vp run @hellotimber/nokia-os#extract-resources
 # 4. Test: pixel and timing acceptance against every asserted golden, the tree coverage guard,
 #    and freshness checks.
@@ -111,17 +114,45 @@ plan that owns the node, or a same-as subtree equal to its model. Tests never re
 ## Settings store
 
 `src/firmware/settings.ts` keeps option-list choices, multi-select marks, setter levels (Info
-service, Screen saver) and free text in memory, per phone. Its initial state is the captured
-virgin EEPROM (unset tone lists, `Top score: 45`, the SIM's numbers); Tones share the General
-profile's settings. It is internal: nothing persists across a reload, and factory defaults and a
-host persistence port belong to plan 15.
+service, Screen saver), free text and numbers (Snake II's level and top score) in memory, per
+phone. Its initial state is the captured virgin EEPROM (unset tone lists, Snake II level 175 and
+`Top score: 45`, the SIM's numbers); Tones share the General profile's settings. It is internal:
+nothing persists across a reload, and factory defaults and a host persistence port belong to
+plan 15.
+
+## Snake II
+
+`Games › Snake II › New game` plays the firmware's game (plan 23), checked against gameplay
+captures pixel for pixel and tick by tick.
+
+- **Engine.** `src/games/snake/` is a pure engine (`newSnakeGame`, `snakeKey`, `stepSnake`,
+  `blinkSnake`, `snakeRender`) with the firmware's rules: the 20x9 board and its wrap, the five
+  mazes, every game key, food and growth, the bonus creatures and their countdown, the grace
+  tick before a crash, the death blink and the ring quirk. It is separate from
+  `@hellotimber/snake`, the website's game, whose rules all differ. `src/widgets/snake.ts` runs it
+  at the captured timings and ends in the shared game-over screens (`src/widgets/game-over.ts`).
+- **Speed.** The virgin EEPROM stores level 175, which the Level page draws as nine bars. At 175
+  the firmware reads its period past the end of its nine-entry table and finds 0, so the snake
+  moves one cell per ≈7.7 ms timer unit and a meal scores 175. nokia-os reproduces that, and
+  every level the Level page can store (▼ from 175 reaches 174..1) ticks at its captured period
+  (`SNAKE_PERIODS`, from the goldens).
+- **Random numbers.** Placements come from the firmware's 16-bit generator, reseeded at New game
+  (not at Continue); one seed reproduces every placement of each recorded game. The function from
+  the clock to the seed is unknown, so the stock phone seeds from the minutes of the day
+  (UNVERIFIED) and tests inject the recovered seeds.
+- **Cues.** The game emits `eat`, `crash`, `vibrate` and `top-score` cues stamped with the kernel
+  time to an internal sink. Plan 16 plays them; the stock settings (Warning tones, Sounds,
+  Shakes) decide which sound.
+- **Scores.** Game over writes a new top score to the settings store, which Top score then shows.
+  Navi or C suspends a game; `Continue` heads the game menu until the game resumes or is
+  discarded (New game, OK on the Level page, power-off).
 
 ## Leaf ownership
 
 Leaves that are whole applications open the placeholder, tagged with the plan that owns them:
 Write messages, Service command editor, Picture messages, Templates, Smileys, Topics, Chat and
 Screen saver › Screen saver (18); Composer slots (16); the three native languages and the Welcome
-note (15); each game's New game (23 for Snake II, 24 for the others); Calculator (20); Stopwatch
+note (15); the other games' New game (24); Calculator (20); Stopwatch
 (21); Profiles › Activate (17). Prompts and empty-state notes show their first screen until the
 plans for Messages (18), Phone book (19), Clock and Reminders (21), Call register and Call divert
 (22) and Settings (15) take them over.
@@ -138,4 +169,5 @@ The emulator's virgin EEPROM and synthetic network leave marks that the OS does 
 | Profiles slot 6 name                                | two U+E000 boxes, as captured                      |
 | Page values (`Level 1`, `Off`, …)                   | initial state of the in-memory settings store      |
 | Unset tone lists, `Top score: 45`, score IDs        | initial state of the in-memory settings store      |
+| Snake II level 175 (one cell per ≈7.7 ms)           | the virgin state; plan 15 decides factory defaults |
 | `Requesting` / `Searching` never finish             | the bar loops until Quit or C                      |

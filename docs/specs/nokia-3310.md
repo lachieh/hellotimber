@@ -428,11 +428,11 @@ wrap (D3 gives the bottom row).
 Factory restore could not be captured either (`Code error` for `12345`), so the page values and
 Profiles slot 6 above remain virgin-EEPROM values.
 
-### Snake II (plan 23, in progress)
+### Snake II (plan 23)
 
 Source: the plan 23 recaptures (`captures/6.39/plan23/`, generator
-`captures/scripts/gen_v639_plan23.py`). Observed facts, not yet asserted by nokia-os goldens
-(plan 23, in progress). The RE notes (`games_snake2_3310.md`) are cross-checks only.
+`captures/scripts/gen_v639_plan23.py`), asserted by nokia-os's `game/snake/*` goldens (pixels
+exact; tick intervals within 16 ms). The RE notes (`games_snake2_3310.md`) are cross-checks only.
 
 **Board.** 20x9 cells; cell (x, y) at pixel (2 + 4x, 10 + 4y). A frame runs at x 0 and 83 from
 y 8 to 47, with rules at y 6 and y 8. The score is four HUD digits at x 0/4/8/12 with leading
@@ -455,7 +455,8 @@ vertically and up when moving horizontally, 3 right/up, 7 left/down, 9 right/dow
 turn clockwise, `*` and ▲ anticlockwise. 0, 5 and a reversal do nothing. A key is judged against
 the current direction when it is pressed; the last key before a tick wins, and the tick applies
 it. A key acts on key-down and does not repeat. Navi or C during play suspends the game, and
-holding C goes to standby.
+holding C goes to standby (not reproduced: the kernel drops a key held when an application
+exits).
 
 **Rules.** A blocked cell ahead (a wall, or the body; the tail's cell is free unless the snake
 grows on this step) makes the blocked direction current and gives a ≈93 ms grace tick. A turn
@@ -467,11 +468,13 @@ is in the virgin EEPROM). Eating a creature scores `5 × level + 5 + 2 × ticks 
 grow the snake. Food and creatures never share a row or column. Placements come from `seed =
 (seed × 0x625f + 0x3623) mod 0xfff1` (food x = r mod 20, then y = r mod 9). The seed is reset
 from the clock and date at New game, not at Continue: one seed reproduces every placement of a
-recorded game.
+recorded game. Most captured clocks fit `(seconds of the day + 7930) mod 65521`, but no function
+of the clock and date fits them all; nokia-os seeds from the minutes of the day (UNVERIFIED).
 
 **Death and game over.** After the crash the snake blinks every ≈240 ms (nine frames) for ≈2.07
 s, unless its ring index has wrapped (after ≈290 moves), in which case it does not blink. A new
-top score then shows the fireworks (six pictures twice, ≈217-241 ms each) and `Game over!` /
+top score is written first (the fireworks come ≈45 ms later than the plain note would) and then
+shows the fireworks (six pictures twice, ≈217-241 ms each, ≈2.87 s in all) and `Game over!` /
 `TOP SCORE:` / score for ≈2.94 s. Otherwise `Game over!` / `Your score:` / score shows for ≈2.94 s
 on a cleared screen. The game menu follows with New game on the top row. Navi or C skips the
 fireworks or the note; during the blink they suspend the dying game; ▼ does nothing. The top
@@ -488,7 +491,17 @@ Level page while suspended removes Continue.
 **Sound.** Game sounds need Tones › Warning tones On (unset in the virgin EEPROM, so captured
 games are silent apart from the 900 Hz keypad beeps): a meal sounds 2637 Hz for one or two timer
 units, the crash three ≈15 ms 440 Hz beeps. With Shakes On the vibrator runs ≈480 ms per meal and
-from the crash.
+from the crash. The edges lead the tick's redraw by 11-14 ms (40-55 ms when a meal's buzzer
+delays it); nokia-os emits each cue with its frame, and plan 16 plays them.
+
+**UNVERIFIED** (not captured; nokia-os follows the RE notes or its own choice): the seed function
+(above); the top-score sound; eating the large creature (its collection bit, and no large
+creature after it); a creature spawn that finds no place (its cells kept, hidden); Continue on a
+game suspended during its blink (the blink resumes at the first key); ▲ or ▼ during Top score
+while suspended; the timer unit (≈7.745 ms) on hardware. **Not reproduced:** the Score IDs
+codes a game writes (the pages keep their virgin values; Club Nokia, later), the key-to-redraw
+latency, the Warning tones redraw delay, the redraws the emulator drops at level 175, and C
+held through a suspend going on to standby.
 
 ---
 

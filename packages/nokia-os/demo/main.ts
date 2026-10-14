@@ -1,5 +1,6 @@
-// Standalone demo: the stock v6.39 firmware (the whole menu tree, plan 14) on a 2D canvas,
-// driven by the keyboard or buttons, with a dev-only overlay of the committed goldens.
+// Standalone demo: the stock v6.39 firmware (the whole menu tree, plan 14, and Snake II, plan 23)
+// on a 2D canvas, driven by the keyboard or buttons, with a dev-only overlay of the committed
+// goldens. Arrows stay ▲/▼ (they turn the snake); the digits steer it.
 import type { Phone, PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { createScreenRenderer, Framebuffer, type ScreenRenderer } from "@hellotimber/phone-screen";
 import { LCD_HEIGHT, LCD_WIDTH, parseGolden, type GoldenImage } from "../scripts/golden-format.ts";
@@ -63,7 +64,8 @@ function attach(): void {
 }
 
 function show(screen: ScreenModel): void {
-  status.textContent = `path: ${phone.path} · screen: ${screen.kind}`;
+  const app = screen.kind === "custom" ? ` (${screen.appId})` : "";
+  status.textContent = `path: ${phone.path} · screen: ${screen.kind}${app}`;
   try {
     renderer.render(screen);
     error.hidden = true;

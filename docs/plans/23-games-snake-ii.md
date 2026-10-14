@@ -13,7 +13,7 @@ plan 14 goldens already committed for 8-1, the original `$REF/captures/6.39/game
 exploratory runs in `$REF/captures/scratch-plan23/` (planning evidence, never imported), and the
 canonical recaptures that Task 0 writes to `$REF/captures/6.39/plan23/`. Read
 `$REF/captures/README.md`, plan 13 and plan 14 in full before starting.
-**Status:** in progress (Tasks 0-3 done).
+**Status:** done.
 
 ## Goal
 
@@ -1095,16 +1095,34 @@ standby (phone-core). `tests/support/rig.ts` gained the internal options (not in
 **Files:** `packages/nokia-os/{README.md,demo/main.ts}`, `docs/specs/nokia-3310.md`,
 `docs/plans/README.md`, this plan.
 
-- [ ] Demo: arrow keys keep steering ▲/▼, digits steer the game; the golden overlay lists
+- [x] Demo: arrow keys keep steering ▲/▼, digits steer the game; the golden overlay lists
       `game/*`. Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`
       (headless: drive via the `[role=status]` line, Skip boot): set Level 1, New game, steer to a
       meal, die, see `Game over!` and the menu; Navi during play and Continue.
-- [ ] README: the engine (D1), the speed finding (D2), seeds (D4), cues (D8), scores (D9).
-- [ ] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
+- [x] README: the engine (D1), the speed finding (D2), seeds (D4), cues (D8), scores (D9).
+- [x] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
       `git diff --stat <commit before Task 1> -- website/ packages/snake/` is empty.
-- [ ] Spec §10: replace "(plan 23, in progress)" with verified facts; list what stays UNVERIFIED.
-- [ ] Plans README: row 23 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete Snake II (plan 23)`.
+- [x] Spec §10: replace "(plan 23, in progress)" with verified facts; list what stays UNVERIFIED.
+- [x] Plans README: row 23 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete Snake II (plan 23)`.
+
+Outcome: the demo maps the keys as before (arrows ▲/▼, digits steer) and its status line names
+the open application (`custom (stock:games/snake/new-game)`); the golden overlay lists the
+`game` goldens. Headless check (`agent-browser`, the 2D canvas read back in the page): Skip
+boot, power, Games › Snake II, Level ▼ ×174 to 1 and OK, New game, steered to the first food
+(score `0001`), Navi (`Continue / New game / Level`, `8-1-1`), Continue (the board stands until a
+key), resumed with 4, a U-turn into the body, `Game over!` / `Your score:`, the game menu on New
+game, and Top score still 45. Screenshots: `/tmp/nokia-os-p23-01-game-menu.png` …
+`09-top-score.png`. The README gained "Snake II"; the spec's §10 section is verified, with its
+UNVERIFIED and not-reproduced lists; `git diff --stat 4032a2f -- website/ packages/snake/` is
+empty; `vp check`, `vp run -r test` and `vp run website#build` pass.
+
+Completion: Tasks 0-12 done. 482 goldens: 447 asserted (116 of plan 23's 117) and 35 pending
+(`game/snake/level-keys-digit-1` pending:22); 7 known gaps (plan 14's six and
+`game/snake/keys-c-hold`). UNVERIFIED and left for later: the seed function (minutes of the
+day), the top-score sound and cue time, eating the large creature, a failed creature spawn,
+Continue on a game suspended in its blink, the Score IDs codes (not reproduced), keys during Top
+score while suspended, and the timer unit on hardware.
 
 ## Follow-ups
 
