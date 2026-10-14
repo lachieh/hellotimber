@@ -757,16 +757,28 @@ it), so a host's gate timeline stays exact at any tick rate.
 **Files:** `src/firmware/eeprom.ts` (new), `src/firmware/records.ts` (new), `src/index.ts`,
 `tests/eeprom.test.ts` (new).
 
-- [ ] TDD `createMemoryStorage`: the Web Storage subset; separate instances share nothing.
-- [ ] TDD `StockEeprom` with a toy record: missing key → `initial()`; round trip; the stored JSON
+- [x] TDD `createMemoryStorage`: the Web Storage subset; separate instances share nothing.
+- [x] TDD `StockEeprom` with a toy record: missing key → `initial()`; round trip; the stored JSON
       is `{"version":n,...}` with sorted keys (exact string asserted); `decode` receives older
       versions; malformed JSON, a non-object, a bad or newer version throw naming the key; reads
       are cached; a throwing `setItem` keeps the value in memory and does not throw;
       `restoreFactory()` applies `factory` and leaves records without one untouched; only keys
       with `STOCK_STORAGE_PREFIX` are touched.
-- [ ] Export `StockStorage`, `createMemoryStorage`, `STOCK_STORAGE_PREFIX` from `src/index.ts`.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): host storage port and versioned EEPROM records`.
+- [x] Export `StockStorage`, `createMemoryStorage`, `STOCK_STORAGE_PREFIX` from `src/index.ts`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): host storage port and versioned EEPROM records`.
+
+Deviation (records list): `STOCK_RECORDS` is empty after this task; Task 5 adds
+`SETTINGS_RECORD` and Task 6 `SECURITY_RECORD`. `StockStorage`, `STOCK_STORAGE_PREFIX` and
+`createMemoryStorage` live in `src/firmware/eeprom.ts` with `StockEeprom`.
+
+Completion note (Task 4): 26 tests in `eeprom.test.ts`. `StockEeprom` loads every record it holds
+in its constructor, so a malformed record throws there (naming the storage key) and Task 5's
+`createStockPhone` throws by constructing it. `decode` receives the stored fields without
+`version`, and a `decode` error is rethrown with the key. `read` returns a copy
+(`structuredClone`), so callers cannot change a stored value by mutation. `encode` must return an
+object without its own `version`. `restoreFactory()` writes `factory(current)` for each record
+that has one. `removeItem` is never called by nokia-os itself; it is for a host's erase (Task 9).
 
 ### Task 5 - Persistent settings, virgin and factory states (TDD)
 
