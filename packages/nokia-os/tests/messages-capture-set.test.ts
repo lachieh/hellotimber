@@ -168,7 +168,7 @@ describe("glyph sheets", () => {
   const files = (id: string): readonly string[] => {
     const source = sheets.get(id)!.prefer.source;
     if (source.kind !== "shots") throw new Error(`${id} is not shots`);
-    return source.files;
+    return source.files.map((entry) => (typeof entry === "string" ? entry : entry.file));
   };
 
   it("keeps one large shot per character, the first", () => {

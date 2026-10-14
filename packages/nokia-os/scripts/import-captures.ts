@@ -11,13 +11,14 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type {
-  CaptureIo,
-  CaptureSetEntry,
-  CaptureSource,
-  FrameRange,
-  PlanCaptureSet,
-  SourceChoice,
+import {
+  shotImages,
+  type CaptureIo,
+  type CaptureSetEntry,
+  type CaptureSource,
+  type FrameRange,
+  type PlanCaptureSet,
+  type SourceChoice,
 } from "./capture-set.ts";
 import { captureSets } from "./capture-registry.ts";
 import type { GameCaptureIo, GameKeyRow } from "./game-capture-set.ts";
@@ -101,6 +102,14 @@ function main(): void {
       ticks: set.ticks?.(io) ?? [],
       sounds: set.sounds?.(io) ?? [],
     }));
+    // Shot names are checked before anything is written.
+    for (const { lcd } of planned) {
+      for (const entry of lcd) {
+        for (const choice of [entry.prefer, entry.fallback]) {
+          if (choice?.source.kind === "shots") shotImages(choice.source.files);
+        }
+      }
+    }
   } catch (error) {
     return fail((error as Error).message);
   }
@@ -215,7 +224,9 @@ function describe(source: CaptureSource): string {
     case "scroll":
       return source.dir;
     case "shots":
-      return source.files.join(" + ");
+      return shotImages(source.files)
+        .map((shot) => shot.file)
+        .join(" + ");
     case "frames":
       return `${source.frames.length} frames of ${[...new Set(source.frames.map((f) => f.dir))].join(" + ")}`;
     case "composite":
@@ -239,7 +250,7 @@ function available(root: string, source: CaptureSource): boolean {
         readdirSync(join(root, source.dir)).some((f) => /^\d+\.png$/.test(f))
       );
     case "shots":
-      return source.files.every((file) => existsSync(join(root, file)));
+      return shotImages(source.files).every((shot) => existsSync(join(root, shot.file)));
     case "frames":
       return source.frames.every((f) => existsSync(join(root, f.dir, `${pad3(f.frame)}.png`)));
     case "composite":
@@ -293,9 +304,9 @@ function buildGolden(root: string, entry: CaptureSetEntry, choice: SourceChoice)
         }
       }
     } else if (source.kind === "shots") {
-      files = source.files.map((file) => ({
-        name: basename(file).replace(/\.png$/, ""),
-        path: join(root, file),
+      files = shotImages(source.files).map((shot) => ({
+        name: shot.name,
+        path: join(root, shot.file),
       }));
     } else if (source.kind === "frames") {
       files = source.frames.map((f) => ({
@@ -446,7 +457,11 @@ function soundIo(root: string): SoundCaptureIo {
 }
 
 function sourceLabel(source: CaptureSource): string {
-  if (source.kind === "shots") return source.files.map((f) => `${CAPTURES}/${f}`).join(" + ");
+  if (source.kind === "shots") {
+    return shotImages(source.files)
+      .map((shot) => `${CAPTURES}/${shot.file}`)
+      .join(" + ");
+  }
   if (source.kind === "frames") {
     return [...new Set(source.frames.map((f) => f.dir))].map((d) => `${CAPTURES}/${d}`).join(" + ");
   }

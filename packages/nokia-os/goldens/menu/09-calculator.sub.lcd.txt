@@ -1,6 +1,6 @@
 lcd-golden 1
 id: menu/09-calculator.sub
-status: pending:20
+status: asserted
 source: captures/6.39/menu/09-calculator/sub
 source-sha256: ed331d83f87e4c073c432f4dc0f02dead3f0aafd6f6d7622b666919dd4256110
 note: Calculator's first screen; the Calculator plan asserts it.

@@ -14,7 +14,7 @@ import type { ListNumbering } from "../../widgets/rows";
 import type { NoteSound } from "../../widgets/note";
 import type { PromptLayout } from "../../widgets/prompt";
 import type { StockGames } from "../../widgets/snake";
-import type { EepromRecord } from "../eeprom";
+import type { EepromRecord, StockEeprom } from "../eeprom";
 import type { StockResult, StockScreenSpec } from "../generated/stock-tree";
 import type { StockPorts } from "../ports";
 import type { StockSecurity } from "../security";
@@ -30,6 +30,8 @@ export interface StockServices {
   readonly sounder: StockSounder;
   /** Every note's warning tone goes here, by its lines (plan 16 D12). */
   readonly noteSound: NoteSound;
+  /** The phone's EEPROM, for the records a feature registers (`records`, plan 15 D2). */
+  readonly eeprom: StockEeprom;
 }
 
 /** The tree node a bound screen opens for. */

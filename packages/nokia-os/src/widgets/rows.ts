@@ -27,7 +27,7 @@ export function moveRows(cursor: RowsCursor, key: PhoneKey, count: number): Rows
   const next = (selected + (key === "down" ? 1 : count - 1)) % count;
   return {
     selected: next,
-    windowTop: rowsWindowTop(cursor.windowTop, next, count, VISIBLE_ROWS),
+    windowTop: rowsWindowTop(cursor.windowTop, next, count, VISIBLE_ROWS, key),
   };
 }
 

@@ -80,9 +80,6 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "5-9-4": "18c", // Screen saver › Screen saver: nothing in the virgin EEPROM
   "12-*-2-9-4": "18c",
 
-  // Plan 20: Calculator.
-  "9": "20", // Calculator
-
   // Plan 21: Clock and Reminders.
   "11-4": "21", // Stopwatch
 

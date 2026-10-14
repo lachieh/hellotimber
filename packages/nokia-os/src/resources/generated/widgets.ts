@@ -8448,6 +8448,64 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
           "durationMs": 1058
         }
       ]
+    },
+    "calculator-out-of-range": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/info"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 2906
+        }
+      ]
+    },
+    "calculator-divide-by-zero": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/info"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 2890
+        }
+      ]
+    },
+    "calculator-rate-saved": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 694
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 523
+        }
+      ]
     }
   },
   "byNode": {
@@ -8566,6 +8624,9 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "no-phone-numbers": "no-phone-numbers",
     "message-memory-full": "message-memory-full",
     "message-sent": "message-sent",
-    "message-erased": "message-erased"
+    "message-erased": "message-erased",
+    "calculator-out-of-range": "calculator-out-of-range",
+    "calculator-divide-by-zero": "calculator-divide-by-zero",
+    "calculator-rate-saved": "calculator-rate-saved"
   }
 };

@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/calculator/options-dtmf-confirm-0
+status: pending:22
+source: captures/6.39/plan20/sound/options-dtmf-confirm-0
+source-sha256: 0360bd8206c3640738dcdf3ef99a9a4bc84a57e82cb07ff400dabe6ffe197c73
+state: factory
+keys: 0:0
+note: Options on 0, then 0: its DTMF pair (independent confirmation). Pending plan 22 (D9).
+omitted: none
+
+@events
+# t_ms output   state
+32     tone     1336+941 v=0x9104
+178    tone     off

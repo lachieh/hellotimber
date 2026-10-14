@@ -845,6 +845,12 @@ nokia-os does not use) carry no `windowTop`; Task 9's painter keeps a fallback f
 without it. `rowsWindowTop` validates its input (positive `rows`, indices in range) and returns 0
 for an empty level.
 
+Deviation (after plan 20): "the item just after the window's last row" means a ▼ move.
+With `count = rows + 1` that item is also the one above the top row, and ▲ to it puts it on the
+top row (probes of 7-3 and 4-4, `captures/scratch-rows4/`; `calculator/options-operator`).
+`rowsWindowTop` takes an optional fifth `move` (`"up"`/`"down"`; omitted = a jump, as before);
+the kernel's ▲/▼ steps and nokia-os's `moveRows` pass it.
+
 ### Task 5 - phone-core: submenu softkey, opening, intro and exit to standby (TDD)
 
 **Files:** `packages/phone-core/src/{menu.ts,machine.ts,application.ts,types.ts,index.ts}`,

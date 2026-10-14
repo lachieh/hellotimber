@@ -226,7 +226,7 @@
   {
     "id": "menu/09-calculator.sub",
     "file": "menu/09-calculator.sub.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1

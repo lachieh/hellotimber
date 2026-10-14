@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/calculator/divide-by-zero-virgin
+status: asserted
+source: captures/6.39/plan20/sound/divide-by-zero-virgin
+source-sha256: 84e27adb8b42e12fafc0ab999d6a041ae404aca8c41df7d794b3abcd5cccf86c
+state: virgin
+keys: 0:navi 300:navi
+note: Virgin (Warning tones unset): 7 / 0, Options, OK on Equals: the note is silent, Options' key beeps.
+omitted: none
+
+@events
+# t_ms output   state
+38     tone     900 v=0x9100
+178    tone     off

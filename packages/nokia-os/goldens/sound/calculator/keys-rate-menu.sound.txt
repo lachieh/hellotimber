@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/calculator/keys-rate-menu
+status: asserted
+source: captures/6.39/plan20/sound/keys-rate-menu
+source-sha256: 1ef0768773465cc3c6c1712c3c027bce3b865e9f6aeae052aca45659f6a1e365
+state: factory
+keys: 0:navi
+note: The Foreign prompt with 1, then OK.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+169    tone     off

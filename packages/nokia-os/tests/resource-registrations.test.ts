@@ -105,7 +105,8 @@ it("takes a plan-owned glyph specimen and its bearing through font extraction", 
         }
       : set,
   );
-  expect(() => extractResources(GOLDENS_DIR, moved)).toThrow(/glyph harvest reported/);
+  // Plan 18's goldens also harvest small "1", so removing plan 13's specimen alone no longer
+  // fails extraction; the registration moved to another plan must still give the same glyph.
   const result = extractResources(GOLDENS_DIR, [
     ...moved,
     {

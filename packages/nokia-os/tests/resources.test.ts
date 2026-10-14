@@ -738,10 +738,12 @@ describe("sound programs and rules (plan 16 Task 3)", () => {
     }
     expect(Object.keys(SOUND_DATA.noteSounds).sort()).toEqual([
       "Code error",
+      "Dividing by zero not allowed",
       "Invalid shortcut",
       "No phone numbers",
       "No voice tags saved",
       "Not allowed",
+      "Out of range",
       "Screen saver missing",
       "Set PIN code request on",
     ]);
@@ -942,7 +944,8 @@ describe("text entry and SMS resources (plan 18)", () => {
 
   it("names the notes plan 18 shows, and Message sent's and Erased's animations", () => {
     const names = Object.keys(WIDGET_TIMELINE_BY_NAME);
-    expect(names.slice(names.indexOf("t9-dictionary-deactivated"))).toEqual([
+    const first = names.indexOf("t9-dictionary-deactivated");
+    expect(names.slice(first, first + 12)).toEqual([
       "t9-dictionary-deactivated",
       "message-saved",
       "centre-number-saved",

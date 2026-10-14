@@ -15,7 +15,7 @@ API or filename is assumed here. The per-plan file split (feature modules, per-p
 "Plan 16 supplementary captures") and plans 13-16 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan20/`. The planning probes in `$REF/captures/scratch-plan20/`
 are evidence for this plan only and are never imported.
-**Status:** Task 1 owned documentation reconciled against Task 0. Runtime Tasks 2-9 remain paused until plan 29 is integrated and its resource registration is verified. Task 0 R remains unticked. Parent-owned index and contract work is outstanding.
+**Status:** implemented except D9. Tasks 2-8 done on plan 29's registration; node 9 is the stock calculator. Options' numeric/star/hash escape (D9) waits on plan 22 and the dual-frequency sound contract (28 fixtures `pending:22`). Task 0 R stays unticked for the parent's review of the corrected criterion.
 
 ## Goal
 
@@ -427,50 +427,99 @@ files changed. Task 0 evidence is preserved; R remains unticked.
 registration), `tests/calculator-capture-set.test.ts` (new),
 `goldens/**` (generated), `tests/acceptance/20-calculator.test.ts` (new).
 
-- [ ] TDD the capture set on synthetic sources (injected loader, no REF): every fixture row of
+- [x] TDD the capture set on synthetic sources (injected loader, no REF): every fixture row of
       "Golden pipeline additions"; stills named by `CALCULATOR_CASES` in case order; a case with
       no image, or an image with no case, throws naming both; sound rows reuse plan 16's
       `sound-format`/normalisation with `state: factory` (`virgin` for the virgin row).
-- [ ] Keep new calculator fixtures and existing `menu/09-calculator.sub` / `sound/note/9`
+- [x] Keep new calculator fixtures and existing `menu/09-calculator.sub` / `sound/note/9`
       `pending:20`. Keep placeholder ownership until Tasks 6-8 supply passing behavioral drivers.
       Existing fixtures stay in their original per-plan indexes; do not move them to index 20.
-- [ ] Text runs from `plan20/text.json` reach the glyph harvester through the capture set; run
+- [x] Text runs from `plan20/text.json` reach the glyph harvester through the capture set; run
       the delivered regeneration command twice (no diff on the second run). Verify `/` in the
       small face and review all generated changes against the registered inputs. Do not assume
       that this is the only glyph or resource change. Shared resource-test updates belong to
       the plan 29 worker until the delivered registration API is verified.
-- [ ] Through the verified plan 29 registration, the sound goldens' quoted note text adds
+- [x] Through the verified plan 29 registration, the sound goldens' quoted note text adds
       `Out of range` and `Dividing by zero not allowed` to `NOTE_SOUNDS`; verify regenerated warning programs and silent `Rate saved` behavior,
       rather than assuming plan 16's generator already discovers new per-plan notes.
-- [ ] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
+- [x] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
       completion note.
-- [ ] Use existing `pending:20` fixture statuses until real scenarios pass. Add
+- [x] Use existing `pending:20` fixture statuses until real scenarios pass. Add
       `tests/acceptance/20-calculator.test.ts` with the existing `acceptancePlan` shape when its
       index is created. No awaits-scenario shim, fake driver or `knownGaps` substitute.
-- [ ] Text, note sounds and timeline resources depend on plan 29's delivered registration API.
+- [x] Text, note sounds and timeline resources depend on plan 29's delivered registration API.
       Inspect and record that API after integration; do not edit the shared pipeline or assume
       registration filenames. Verify repeated regeneration is stable before closing Task 2.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import calculator captures (plan 20)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import calculator captures (plan 20)`.
+
+**Task 2 completion (2026-10-14).** Plan 29's delivered API was used as documented:
+`PlanCaptureSet.resources` from `scripts/resource-inputs/20-calculator.ts` (the small `/` text
+run plus an `advance` override, and three named `note` timelines in batch 200), registered by
+one line in `scripts/capture-sets/index.ts`. `import-captures` run three times: 117 plan 20
+fixtures (16 stills holding all 388 cases, 61 timelines, 40 sound goldens; 89 `pending:20`,
+28 `pending:22`; 2 482 309 bytes); the second and third runs left every golden byte-identical
+(tree hash compared), and no other plan's golden or index changed. `regenerate` twice: the first
+added the small `/` (`fonts.ts`), `Out of range` and `Dividing by zero not allowed` to
+`NOTE_SOUNDS` (1750 Hz, 0x9105, 296/288 ms; `Rate saved` stays silent) and the
+`calculator-out-of-range` (2906 ms), `calculator-divide-by-zero` (2890 ms) and
+`calculator-rate-saved` (694/232/523 ms) timelines (`widgets.ts`); the second was up to date.
+
+Deviation: the golden format names images [a-z0-9-] while 84 Task 0 stills have `.` or `+`
+in their names (`results/0.1+0.2`). With the parent's authorisation the shared importer gained
+named shots (`shots` entries may be `{ file, name }`, validated before writes; committed alone,
+`feat(nokia-os): named shots in capture sets`, and recorded in plan 29); `imageNameOf` writes
+`.` as `p` and `+` as `plus` (`0p1plus0p2`).
+
+Deviation: the importer's io lists only numbered PNGs, so "an image with no case" is checked
+for the numbered sequence directories at import and for every directory in the unit tests
+(injected lister); Task 0's REF `check` verified images and cases in both directions.
+
+Deviation: the two warning-tone sound goldens are `sound/note/calculator-out-of-range` and
+`sound/note/calculator-divide-by-zero`, not `sound/calculator/*`: plan 29 has no note-sound
+registration, and plan 16's extractor reads `NOTE_SOUNDS` from every `sound/note/*` golden whose
+note quotes its text, so the ids carry them there with no shared change.
+
+Deviation: the user's brief marks the D9 escape fixtures (`calculator/keys-options-{0-9,star,
+hash}`, `calculator/options-dtmf-confirm-{0,1}` and their sound goldens) `pending:22`, not
+`pending:20`, so they wait on plan 22 in plan 20's index.
+
+Deviation (shared tests, one assertion each): `tests/goldens-integrity.test.ts` accepted only
+`plan16/` sound sources and now accepts any plan's directory; `tests/resources.test.ts`'s pinned
+`WIDGET_TIMELINE_BY_NAME` and `NOTE_SOUNDS` lists gain the three timelines and two notes.
+`EepromRecord` registration (Task 4) goes through the feature's `records`, which
+`src/firmware/records.ts` already composes, so that file needs no line.
+
+Extra fixtures beyond the table: `calculator/operators-{star,star-zero,star-result,c-through}`
+(one per capture directory, since a still's images are named by file), `calculator/rate-after`,
+`calculator/rate-blink-keys`, `calculator/{divide-by-zero,out-of-range}-add`,
+`calculator/in-foreign-rate-0`, `calculator/persist-*` recordings and the LCD of the factory key
+recordings (`calculator/keys-rate-*`, `calculator/keys-options-*`).
 
 ### Task 3 - Decimal arithmetic (pure, TDD)
 
 **Files:** `src/calculator/decimal.ts` (new), `tests/calculator-decimal.test.ts` (new).
 
-- [ ] TDD parse/format round trips for every display string in the goldens (`0`, `0.`, `123.`,
+- [x] TDD parse/format round trips for every display string in the goldens (`0`, `0.`, `123.`,
       `0.0012345`, `-21`); invalid strings throw.
-- [ ] TDD `calculate` against the representable arithmetic cases in `calculator/results`
+- [x] TDD `calculate` against the representable arithmetic cases in `calculator/results`
       (expected strings transcribed from the goldens, independent of the code): exact sums and
       products, division as a rational, the nine-character magnitude rule (minus excluded), rounding (Task 0's representable
       half and negative cases), zero results,
       `out-of-range`, `divide-by-zero`; property tests that no `ok` magnitude exceeds 9 characters (strip one leading minus)
       and that `0.1 + 0.2` and other float traps are exact.
-- [ ] Literal over-limit cases are engine entry/replay tests (Tasks 4/8), never pure arithmetic
+- [x] Literal over-limit cases are engine entry/replay tests (Tasks 4/8), never pure arithmetic
       proof using the impossible operands. Assert `-123456789`, `-999999999`, `-0.3333333`,
       the captured `results/-99999999.5` result `-100000000` from `0 - 99999999`, then
       subtracting `0.5` (the filename is not a literal operand), and ten-integer-digit overflow.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the calculator's decimal arithmetic`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the calculator's decimal arithmetic`.
+
+**Task 3 completion.** `src/calculator/decimal.ts` parses display strings to sign, BigInt
+digits, scale and point, computes exactly (quotients as rationals) and shows the result with
+`showRational`: fraction digits = 9 − integer digits − 1, half away from zero on the magnitude,
+trailing zeros and point dropped, ten integer digits (also by carry) out of range. 64 tests: 59
+transcribed result/convert rows, float traps, formatting, and a 400-value property run.
 
 ### Task 4 - Engine and exchange-rate record (pure, TDD)
 
@@ -478,34 +527,55 @@ registration), `tests/calculator-capture-set.test.ts` (new),
 `src/firmware/records.ts` (one-line registration of `CALCULATOR_RECORD`),
 `tests/calculator-engine.test.ts` (new), `tests/calculator-rate.test.ts` (new).
 
-- [ ] TDD the engine from Task 0's cases: entry (limit, `#`, leading zeros, C, C held), the `*`
+- [x] TDD the engine from Task 0's cases: entry (limit, `#`, leading zeros, C, C held), the `*`
       cycle and chaining, the lines shown (one, two or three), `options()` per state (8, 4 or 5
       entries with their actions), each action's effect, notes as results that restore the state
       before the action, and C on `0` as `leave`. Replay literal input truncation per the corrected R criterion.
-- [ ] TDD a distinct rate-editor state with seven typed characters, nine-character prefill,
+- [x] TDD a distinct rate-editor state with seven typed characters, nine-character prefill,
       replace-on-first-digit, point/empty behavior, cursor wrap and insertion/deletion from D7.
-- [ ] TDD `CALCULATOR_RECORD` (virgin value, encode/decode, version, stale content dropped, the
+- [x] TDD `CALCULATOR_RECORD` (virgin value, encode/decode, version, stale content dropped, the
       factory reset to rate `1` in both directions after either stored direction) and `CalculatorRate` (`shown` per direction, `set`, `convert`
       per direction, virgin Foreign `0` / Domestic empty, saved empty/`.` as zero, exact Domestic
       `3` conversions `10 → 3.3333333` / `30`, rate 0) against the `calculator/convert` and `persist` cases.
-- [ ] `tests/eeprom.test.ts`'s pinned record list (if any) gains the record; nothing else changes.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): calculator engine and exchange-rate record`.
+- [x] `tests/eeprom.test.ts`'s pinned record list (if any) gains the record; nothing else changes.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): calculator engine and exchange-rate record`.
+
+**Task 4 completion.** `src/calculator/engine.ts` (`pressKey`, `clearHeld`, `displayLines`,
+`optionsFor`, `chooseOption`; 99 tests from Task 0's cases, including the literal truncation
+replays), `src/calculator/rate-entry.ts` (the D7 cursor editor) and `src/calculator/rate.ts`
+(`CALCULATOR_RECORD`, `CalculatorRate`; 47 tests). Rules read from the stills beyond the plan's
+wording: C on a shown result clears it to `0` (`choose/result-c`), C on a typed `0` empties the
+entry and only C on nothing typed leaves (`entry/zero-c`, `entry/result-c-c`); the rate entry's
+`*` does nothing (`rate/keys/star`) and `#` on a prefilled value replaces it with `.`
+(`rate/keys/prefilled-point`).
+
+Deviation: `CALCULATOR_RECORD` is registered by the calculator feature's `records` (plan 15
+D2), which `src/firmware/records.ts` already composes; that file needs no line, and
+`tests/eeprom.test.ts` pins no record list.
 
 ### Task 5 - Calculator painter (TDD against goldens)
 
 **Files:** `src/display/widgets/calculator.ts` (new), `src/display/widgets/index.ts` (model union
 and paint switch: two lines), `tests/calculator-paint.test.ts` (new).
 
-- [ ] TDD a `calculator` widget model (`lines`, `softkey`) painted against every still of
+- [x] TDD a `calculator` widget model (`lines`, `softkey`) painted against every still of
       `calculator/entry`, `operators`, `results` and `convert` that shows the calculator screen:
       right-aligned small-face lines including valid ten-character signed results, their tops measured from the goldens (record them in the
       spec), `Options` as every soft key. A line that does not fit throws in tests (plan 13 D10).
-- [ ] Rate lists and notes reuse plan 14's painters. Compare rate prompts at both blink phases
+- [x] Rate lists and notes reuse plan 14's painters. Compare rate prompts at both blink phases
       and cursor positions; if the existing prompt model cannot express D7, report the required
       parent-owned model change before proceeding.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): paint the stock calculator`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): paint the stock calculator`.
+
+**Task 5 completion.** `src/display/widgets/calculator.ts` paints a `calculator` model: the
+screen (`lines`, `softkey`) or the rate entry (the plan 14 prompt with the value in a box and
+its own between-character cursor, D7: the existing prompt model draws only an end or start
+cursor, so the calculator model composes `paintPrompt` instead of changing the shared model).
+344 tests: all 278 calculator-screen stills and all 63 rate-entry stills (both blink phases,
+cursor at the start, inside and at the end) match pixel for pixel; coordinates are in the spec.
+`src/display/widgets/index.ts` gains the import, the union member and the switch case.
 
 ### Task 6 - The calculator feature (TDD against goldens)
 
@@ -514,82 +584,159 @@ and paint switch: two lines), `tests/calculator-paint.test.ts` (new).
 their named timelines), the feature list (one-line registration), `tests/calculator-flow.test.ts`
 (new), `tests/support/calculator.ts` (new: open the calculator, replay a case).
 
-- [ ] TDD the calculator widget with the flow rig: keys per D8, the engine's lines as the model,
+- [x] TDD the calculator widget with the flow rig: keys per D8, the engine's lines as the model,
       Options pushes a rows list built from `options()` (opening on the first entry,
       indicator rooted at Options, D5), choices run the engine and pop, notes replace the list and
       return to the restored calculator, C on `0` leaves (`flow.back()`). Assert no duplicate
       release action, once-only held digit/star/hash, initial C deletion and held clear timing
       against the 532.1-544.0 ms draws. Dismissing digit edits the restored operand; arrows/C
       dismiss unchanged; held C can continue to standby.
-- [ ] Options numeric/star/hash escape drivers depend on the later verified plan 22 handoff and
+- [ ] (D9, pending:22) Options numeric/star/hash escape drivers depend on the later verified plan 22 handoff and
       dual-frequency contract (D9). Preserve their pending status until then; do not silently
       ignore these keys or implement a private standby substitute.
-- [ ] TDD the exchange-rate list (info pages, `8-k`, soft key `OK`) and the rate entry (D7):
+- [x] TDD the exchange-rate list (info pages, `8-k`, soft key `OK`) and the rate entry (D7):
       prefilled from `CalculatorRate.shown`, keys as Task 0, seven-character limit and cursor insertion/deletion/wrap, nine-character prefill, and
       both cursor phases from `calculator/rate-prompt-*`, OK → `set` → `Rate saved` → back to the calculator screen (three
       levels).
-- [ ] Note timelines (`Rate saved`, `Out of range`, `Dividing by zero not allowed`) come from
+- [x] Note timelines (`Rate saved`, `Out of range`, `Dividing by zero not allowed`) come from
       their goldens through plan 29's verified per-plan resource registration (API recorded
       only after delivery); notes pass
       `sound` (plan 16) so their warning tones play.
-- [ ] After real opening LCD/sound drivers pass, node 9 opens the feature's application;
+- [x] After real opening LCD/sound drivers pass, node 9 opens the feature's application;
       promote the existing fixtures in their owning capture sets and remove placeholder ownership.
       `stockMenu` no longer has a placeholder for it
       (`tests/firmware-menu.test.ts`'s owner expectation for `menu/calculator` is removed with the
       owner, as plan 16 Task 2 did for the Composer).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the stock calculator and currency conversion`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the stock calculator and currency conversion`.
+
+**Task 6 completion.** `src/widgets/calculator.ts` holds the calculator screen, Options, the
+rate pages and entry and the notes; `src/firmware/features/calculator.ts` binds node 9 over the
+phone's EEPROM (`StockServices.eeprom`, added with the parent's approval in
+`feat(nokia-os): feature services reach the phone's EEPROM`). 17 flow tests; replaying every
+Task 0 still on the stock phone matches 368 of 388 exactly, the other 20 only in the rate
+entry's blink phase (Task 8). Node 9's placeholder group left `scripts/tree-capture-set.ts`;
+`menu/09-calculator.sub` is asserted in plan 13's index and runs plan 13's level-one scenario.
+
+Deviation: plan 16's importer folds equal note recordings into one golden, so once node 9 left
+the placeholders `sound/note/9` joined the asserted `sound/note/2-7-1-1` group (its note now
+lists 9); that group's scenario drives its first node, so Task 7 drives node 9's opening beep
+against it.
+
+Deviation (D8): Options and the rate pages act as keys go down too, as the screen and the
+entry do: a note's warning tone replaces the beep of the OK that opens it only at that key's
+down (`sound/note/calculator-*`: the note draws 57 ms after OK goes down, before its release).
+Each widget ignores the release of a key whose down it did not see.
+
+Deviation (resolved after delivery): Options was first the calculator's own rows widget, because
+with four entries ▲ from the first puts Divide on the top row (`options/operator-up`) and the
+kernel's direction-blind `rowsWindowTop` scrolled it onto the bottom row. Probes of the stock
+4-item lists (7-3, 4-4) showed the same rule, so `rowsWindowTop` now takes the move's direction
+and Options uses the shared `openRows`/`moveRows`.
+
+Deviation: OK on an untouched prefilled rate stores nothing (`rate/after/ok-unchanged-domestic-
+foreign` reopens Foreign at `1.5`, not the reciprocal of `0.6666667`).
+
+Deviation (shared tests, one assertion each): `tests/firmware-menu.test.ts` lists 9 among the
+stock leaves and drops its owner; `tests/paint-lists.test.ts` leaves Calculator's first screen
+(an application) out of the level-one lists; plan 13's acceptance runs `menu/09-calculator.sub`.
+
+D9 seam: Options does not act on digits, `*` and `#` (a commented seam in `OptionsWidget`);
+plan 22's standby number entry binds there. Their fixtures stay `pending:22`.
 
 ### Task 7 - Calculator sounds (TDD against sound goldens)
 
 **Files:** `tests/calculator-sound.test.ts` (new), `tests/support/calculator.ts`.
 
-- [ ] Drive `sound/calculator/*` and `sound/note/9` from the factory state
+- [x] Drive `sound/calculator/*` and `sound/note/9` from the factory state
       (`seededStorage({ factory: true })`) with plan 16's `recordSound`/`expectSoundTimeline` and
       tolerances: calculator/rate keys and Options arrows/C/OK beep at 900 Hz; warning tones
       replace OK's beep; `Rate saved` adds no tone but its OK beeps; virgin error OK is silent
       while preceding Options beeps. Drive every `keys-options-*`, `keys-rate-*` and independent
       `options-dtmf-confirm-*` recording, preserving both tone columns for DTMF. The latter
       Options escape paths remain pending until the shared D9 gate passes.
-- [ ] Do not change the shared sounder. D9's dual-frequency contract is parent/shared-owner work;
+- [x] Do not change the shared sounder. D9's dual-frequency contract is parent/shared-owner work;
       inspect its delivered API and verify host output before promoting DTMF fixtures.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): calculator beeps and warning tones`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): calculator beeps and warning tones`.
+
+**Task 7 completion.** `tests/calculator-sound.test.ts` drives all 27 factory/virgin
+calculator sound goldens that are not D9 escapes (`CALCULATOR_SOUND_SCENARIOS` in
+`tests/support/calculator.ts`, reused by Task 8) with plan 16's `playSound` /
+`expectSoundTimeline` tolerances, plus node 9's opening beep against `sound/note/2-7-1-1`. No
+sounder change: key beeps are the phone's, the notes' warning tones come from `NOTE_SOUNDS`
+(Task 2). Removing the notes' `sound` hook fails the four warning-tone goldens. The 14 D9
+escape sound goldens (DTMF pairs, both columns kept by the importer) stay `pending:22` with no
+driver.
 
 ### Task 8 - Acceptance
 
 **Files:** `tests/acceptance/20-calculator.test.ts`, `tests/support/calculator.ts`.
 
-- [ ] One scenario per asserted calculator golden (LCD and sound), replaying `CALCULATOR_CASES`
+- [x] One scenario per asserted calculator golden (LCD and sound), replaying `CALCULATOR_CASES`
       for stills and the recordings' keys for timelines; `menu/09-calculator.sub` and
       `sound/note/9` included in their original owning indexes. Promote only passing fixtures
       through capture-set inputs and reimport; remove matching placeholder ownership only with
       real node coverage. There is no pending-scenario entry to delete. The split's coverage guard
       fails for an asserted calculator golden without a scenario, and for node 9 if uncovered.
-- [ ] Replay literal truncation and representable rounding as separate obligations, preserving
+- [x] Replay literal truncation and representable rounding as separate obligations, preserving
       setups, timing and raw held edges. Include cursor blink/edits and both Restore directions.
-- [ ] D9 standby/DTMF drivers must pass the shared integration gate before final acceptance.
+- [ ] (D9, pending:22) D9 standby/DTMF drivers must pass the shared integration gate before final acceptance.
       Missing integration stays `pending:20`, not a known gap or a fake asserted scenario.
-- [ ] Known gaps, if any, require real scenarios and measured comparison failures with causes,
+- [x] Known gaps, if any, require real scenarios and measured comparison failures with causes,
       as plan 14's do.
-- [ ] Every other plan's goldens still pass.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
+- [x] Every other plan's goldens still pass.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
       `mise exec -- vp check --fix`. Report the calculator file's run time.
-- [ ] Commit: `test(nokia-os): drive every calculator golden`.
+- [x] Commit: `test(nokia-os): drive every calculator golden`.
+
+**Task 8 completion.** `tests/acceptance/20-calculator.test.ts` runs 117 goldens of index 20 in
+11.9 s: 84 pass, 5 run as known gaps, 28 are `pending:22` todos (14 LCD, 14 sound). Every
+other fixture of the capture set is asserted. Stills replay their Task 0 case on a fresh phone
+(`stillScenario`, setups included: saveflash/cold boot, re-entry, Restore after either
+direction); timelines replay their recording's keys on the rows their effects start
+(`recordingScenario`, held edges included), the rate entry's key recordings aligned on the key
+(`keyAlignedScenario`: the blink runs from the prompt, not the key). Literal truncation
+(`results/literal-*`) replays as entry; representable rounding is Task 3's arithmetic.
+`menu/09-calculator.sub` runs in plan 13's acceptance; node 9's opening beep is in
+`sound/note/2-7-1-1`'s group (plan 16) and in `tests/calculator-sound.test.ts`.
+
+Tolerances beyond ±2 ms, each with its cause in the scenario: rate-entry stills accept either
+blink phase within one 480 ms step (the phase follows the harness's tap timing, not recorded);
+blink timelines, the carousel's icon after exit, `in-foreign-rate-0`, Rate saved after the
+key recording and the Restore runs compare within PROBE_TOLERANCE_MS (another recording's
+timeline replayed).
+
+Known gaps (real scenarios, measured failures): `calculator/clear-held` (C held on `0` exits at
+its down; the firmware goes on to standby while C is held, which phone-core's kernel swallows
+across an application's exit); `calculator/note-keys-{divide-by-zero,out-of-range}-c-held`
+(standby 475 ms after the dismissing C, 491 ms in the capture, without the firmware's 84 ms
+partial draw); `calculator/persist-restore-prompt-{foreign,domestic}` (after Restore with
+Domestic 2 the prompt opens with the cursor hidden; UNVERIFIED cause).
 
 ### Task 9 - Verification gate and closeout
 
 **Files:** this plan, `docs/plans/README.md` (row 20), `docs/specs/stock/calculator.md`.
 
-- [ ] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
+- [x] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
       `mise exec -- vp run website#build`; `git diff --stat <commit before Task 1> -- website/` is
       empty.
-- [ ] Demo check (no demo edit): `mise exec -- vp run @hellotimber/nokia-os#demo` with
+- [x] Demo check (no demo edit): `mise exec -- vp run @hellotimber/nokia-os#demo` with
       `agent-browser`: Menu 9, `1 2 * 3`, Options › Equals shows `15`; Exchange rate › Foreign
       `1.5`, `Rate saved`; `10` In domestic shows `15`. Screenshots in the completion note.
-- [ ] Spec: replace "(plan 20, in progress)" with verified facts; list what stays UNVERIFIED.
-- [ ] Plans README row 20 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete the stock calculator (plan 20)`.
+- [x] Spec: replace "(plan 20, in progress)" with verified facts; list what stays UNVERIFIED.
+- [ ] Plans README row 20 `done`. Completion notes; status `done`. (Parent-owned; blocked on D9.)
+- [x] Commit: `docs: complete the stock calculator (plan 20)`.
+
+**Task 9 completion.** `vp check` passes (423 files); `vp run -r test` passes in all six
+workspaces (nokia-os: 3825 passed, 20 expected failures, 93 todos); `vp run website#build`
+passes; `git diff --stat ece981c -- website/` is empty. Demo (port 5291, agent-browser,
+screenshots `/tmp/nokia-os-p20-*.png`): Menu ▲×4 Select opens `0`; `0.1 + 0.2` Equals shows
+`0.3`; `* 12 * * * * 3` chains to `12.3 / 3`, Equals `4.1`; `99999 * 99999` shows Out of range,
+then the operands again; `7 / 0` shows Dividing by zero not allowed, then `7 / 0`; Exchange
+rate › 8-1 › `1.5` OK shows Rate saved and stores `{"direction":"foreign","rate":"1.5"}` in
+localStorage; `10` In domestic shows `15`. The spec records what shipped and what stays
+UNVERIFIED. The plan is not `done`: D9 remains.
 
 ## Follow-up plan adjustments
 
@@ -605,9 +752,9 @@ their named timelines), the feature list (one-line registration), `tests/calcula
 
 ## Remaining gates
 
-1. Parent-owned plans README row 20 and authenticity-spec index still need updating.
+1. Parent: the plans README row 20 stays `in progress` until D9 lands.
 2. Task 0 R remains unticked pending full checklist review under the corrected criterion.
-3. Plan 29 integration and verified text/note/timeline resource registration gate runtime Tasks 2-9. No API assumption is made before its result.
+3. Done: plan 29's registration carries the calculator's text, note timelines and warning tones (Task 2).
 4. Plan 22 standby entry and parent/shared sound-contract reconciliation gate Options numeric/star/hash acceptance and final completion. Required proof is the captured `Call` LCD plus both simultaneous DTMF frequencies, using real behavioral drivers.
 5. Physical EEPROM encoding and the exact internal C-hold timer remain UNVERIFIED. Preserve observable behavior without claiming those internals.
 
