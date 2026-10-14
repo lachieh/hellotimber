@@ -402,15 +402,15 @@ reader, with no dependency or shared-harness changes. No final section failed.
 
 - [x] Apply verified D3/D6/D7/D8/D9 deviations to decisions, tests and contract gates.
 - [x] Write the calculator spec with C1-C7 facts corrected by Task 0, evidence paths, artefacts, UNVERIFIED items and website contrast, marked "(plan 20, in progress)".
-- [ ] Parent: update plans README row 20 to `in progress` and add the calculator spec to the §10 index.
+- [x] Parent: update plans README row 20 to `in progress` and add the calculator spec to the §10 index.
 - [ ] Parent/shared owners: integrate and verify plan 29's resource registration before runtime resumes; reconcile D9's standby and dual-frequency contracts before those scenarios can pass.
 - [x] No runtime code. `mise exec -- vp check --fix`; repeat formatting until stable.
 - [x] Commit owned files only: `docs: reconcile stock calculator plan with measured behavior`.
 
 **Exact R criterion correction.** The original requests `0.00000005 × 1`, `-0.00000005 × 1` and `9.9999999 + 0.00000001` require operands beyond the captured entry budget. Replace their acceptance meaning with two separate obligations: (1) replay the literal key sequences and assert truncation outputs `0`, `0`, `9.9999999` using `results/literal-*` and `-after`; (2) test representable calculations `±0.0000001 / 2 → ±0.0000001` and `±0.0000003 / 2 → ±0.0000002` for half rounding, plus captured `9.9999999 + 0.0000001 → 10` for carry. The carry is a different calculation, not evidence for the impossible sum. The canonical case keys and PNGs independently support these replacements. Do not inject operands or label literal captures as the requested arithmetic. R stays unticked in this documentation-only unit; the parent must review the revised criterion against the full original C5/R checklist before closing Task 0.
 
-**Original Task 1 step still outstanding:** the plans README row 20 status update belongs to
-the parent. The parent also owns the authenticity-spec index and any VISION contract update.
+**Parent integration:** the plans README row 20 is `in progress` and the calculator spec is
+linked in the authenticity-spec index. Any VISION contract update remains parent-owned.
 Plan 29 resource registration is an additional runtime prerequisite, not evidence that the
 original Task 1 is fully complete. The Task 0 outcome above is retained as its historical
 closeout. Documentation reconciliation alone does not clear the runtime pause.
