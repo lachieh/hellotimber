@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/note-keys-out-of-range-c
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/notes/keys-out-of-range-c
 source-sha256: 4c239c149d4b9c1dbd66f23cf922da8a01df0a6d677106edf8abb521c2936f2a
 trigger-frame: 1

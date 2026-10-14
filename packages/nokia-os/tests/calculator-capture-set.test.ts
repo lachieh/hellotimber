@@ -127,11 +127,11 @@ describe("calculator capture set", () => {
     );
   });
 
-  it("imports everything pending: plan 20 until its scenario passes, plan 22 for D9", () => {
+  it("asserts every fixture but the D9 escapes, which wait on plan 22", () => {
     for (const [id, entry] of lcd) {
       const d9 = /keys-options-(\d|star|hash)$|options-dtmf-confirm/.test(id);
       if (d9) expect(entry.status, id).toBe("pending:22");
-      else expect(["asserted", "pending:20"], id).toContain(entry.status);
+      else expect(entry.status, id).toBe("asserted");
     }
     expect(lcd.get("calculator/keys-options-up")!.status).not.toBe("pending:22");
   });

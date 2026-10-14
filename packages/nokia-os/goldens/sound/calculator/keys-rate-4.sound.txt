@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calculator/keys-rate-4
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/sound/keys-rate-4
 source-sha256: e94e4a6178852e784cc4920460716b8b32d6c82a721b9f182963a018235df871
 state: factory

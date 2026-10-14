@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/persist
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/persist/before.png + captures/6.39/plan20/persist/boot-first.png + captures/6.39/plan20/persist/boot-foreign.png + captures/6.39/plan20/persist/boot-foreign-blink.png + captures/6.39/plan20/persist/boot-domestic.png + captures/6.39/plan20/persist/boot-domestic-blink.png + captures/6.39/plan20/persist/reentry.png + captures/6.39/plan20/persist/restore-set.png + captures/6.39/plan20/persist/restore-done.png + captures/6.39/plan20/persist/restore-first.png + captures/6.39/plan20/persist/restore-foreign.png + captures/6.39/plan20/persist/restore-domestic.png + captures/6.39/plan20/persist/restore-foreign-blink.png + captures/6.39/plan20/persist/restore-domestic-blink.png + captures/6.39/plan20/persist/restore-foreign-set.png + captures/6.39/plan20/persist/restore-foreign-done.png + captures/6.39/plan20/persist/restore-foreign-first.png + captures/6.39/plan20/persist/restore-foreign-foreign.png + captures/6.39/plan20/persist/restore-foreign-domestic.png + captures/6.39/plan20/persist/restore-foreign-foreign-blink.png + captures/6.39/plan20/persist/restore-foreign-domestic-blink.png
 source-sha256: 7c15e13327f8095b04b7b9fd9ed67e64136aa5f037ad869b066c396f488c5950
 note: The rate after saveflash and a cold boot, re-entry at 0, and Restore factory settings after either direction. Each image's keys from the first screen are its CALCULATOR_CASES entry.

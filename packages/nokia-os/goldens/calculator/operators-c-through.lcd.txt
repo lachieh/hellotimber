@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/operators-c-through
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/operators/c-through/00.png + captures/6.39/plan20/operators/c-through/01.png + captures/6.39/plan20/operators/c-through/02.png + captures/6.39/plan20/operators/c-through/03.png + captures/6.39/plan20/operators/c-through/04.png + captures/6.39/plan20/operators/c-through/05.png
 source-sha256: 8c5aed7b2fb035c15ffabbafe26bccd27b7f980fcdfe51a35dd47d89d71a3704
 note: 12 + 34, then C ×5: through the operand, the operator, the first operand to 0. Each image's keys from the first screen are its CALCULATOR_CASES entry.

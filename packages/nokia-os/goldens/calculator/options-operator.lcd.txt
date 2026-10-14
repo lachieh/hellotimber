@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/options-operator
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/options/operator/00.png + captures/6.39/plan20/options/operator/01.png + captures/6.39/plan20/options/operator/02.png + captures/6.39/plan20/options/operator/03.png + captures/6.39/plan20/options/operator/04.png + captures/6.39/plan20/options/operator-up.png
 source-sha256: 1a969e827cba7e6ab44857ecb15e390a5039b4b0f382054b46f8726ae9c429f2
 note: Options on 12 - (4 entries): ▼ through the wrap, and ▲ from the first. Each image's keys from the first screen are its CALCULATOR_CASES entry.

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calculator/rate-saved
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/sound/rate-saved
 source-sha256: 8d41dbf4a7d6eccc23e597be92e9444aaafbac2d5f04a01ce6162bc3362ede67
 state: factory

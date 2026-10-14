@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/note/calculator-divide-by-zero
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/sound/divide-by-zero
 source-sha256: 583473c2ccaf4bcb5e631b90eaf214451f551d340586e10a91a57902386011bb
 state: factory

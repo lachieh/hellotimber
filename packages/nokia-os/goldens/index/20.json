@@ -2,7 +2,7 @@
   {
     "id": "calculator/choose",
     "file": "calculator/choose.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 32,
     "frames": 32
@@ -10,7 +10,7 @@
   {
     "id": "calculator/clear-held",
     "file": "calculator/clear-held.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 11,
     "frames": 14
@@ -18,7 +18,7 @@
   {
     "id": "calculator/convert",
     "file": "calculator/convert.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 60,
     "frames": 60
@@ -26,7 +26,7 @@
   {
     "id": "calculator/divide-by-zero",
     "file": "calculator/divide-by-zero.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -34,7 +34,7 @@
   {
     "id": "calculator/divide-by-zero-add",
     "file": "calculator/divide-by-zero-add.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -42,7 +42,7 @@
   {
     "id": "calculator/entry",
     "file": "calculator/entry.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 45,
     "frames": 45
@@ -50,7 +50,7 @@
   {
     "id": "calculator/exit",
     "file": "calculator/exit.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 14,
     "frames": 15
@@ -58,7 +58,7 @@
   {
     "id": "calculator/in-foreign-rate-0",
     "file": "calculator/in-foreign-rate-0.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -146,7 +146,7 @@
   {
     "id": "calculator/keys-options-c",
     "file": "calculator/keys-options-c.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -154,7 +154,7 @@
   {
     "id": "calculator/keys-options-down",
     "file": "calculator/keys-options-down.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -170,7 +170,7 @@
   {
     "id": "calculator/keys-options-menu",
     "file": "calculator/keys-options-menu.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -186,7 +186,7 @@
   {
     "id": "calculator/keys-options-up",
     "file": "calculator/keys-options-up.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -194,7 +194,7 @@
   {
     "id": "calculator/keys-rate-0",
     "file": "calculator/keys-rate-0.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -202,7 +202,7 @@
   {
     "id": "calculator/keys-rate-1",
     "file": "calculator/keys-rate-1.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -210,7 +210,7 @@
   {
     "id": "calculator/keys-rate-2",
     "file": "calculator/keys-rate-2.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -218,7 +218,7 @@
   {
     "id": "calculator/keys-rate-3",
     "file": "calculator/keys-rate-3.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -226,7 +226,7 @@
   {
     "id": "calculator/keys-rate-4",
     "file": "calculator/keys-rate-4.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -234,7 +234,7 @@
   {
     "id": "calculator/keys-rate-5",
     "file": "calculator/keys-rate-5.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -242,7 +242,7 @@
   {
     "id": "calculator/keys-rate-6",
     "file": "calculator/keys-rate-6.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -250,7 +250,7 @@
   {
     "id": "calculator/keys-rate-7",
     "file": "calculator/keys-rate-7.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -258,7 +258,7 @@
   {
     "id": "calculator/keys-rate-8",
     "file": "calculator/keys-rate-8.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -266,7 +266,7 @@
   {
     "id": "calculator/keys-rate-9",
     "file": "calculator/keys-rate-9.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -274,7 +274,7 @@
   {
     "id": "calculator/keys-rate-c",
     "file": "calculator/keys-rate-c.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -282,7 +282,7 @@
   {
     "id": "calculator/keys-rate-down",
     "file": "calculator/keys-rate-down.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 9
@@ -290,7 +290,7 @@
   {
     "id": "calculator/keys-rate-hash",
     "file": "calculator/keys-rate-hash.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -298,7 +298,7 @@
   {
     "id": "calculator/keys-rate-menu",
     "file": "calculator/keys-rate-menu.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -306,7 +306,7 @@
   {
     "id": "calculator/keys-rate-star",
     "file": "calculator/keys-rate-star.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 9
@@ -314,7 +314,7 @@
   {
     "id": "calculator/keys-rate-up",
     "file": "calculator/keys-rate-up.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 9
@@ -322,7 +322,7 @@
   {
     "id": "calculator/note-keys-divide-by-zero-c",
     "file": "calculator/note-keys-divide-by-zero-c.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -330,7 +330,7 @@
   {
     "id": "calculator/note-keys-divide-by-zero-c-held",
     "file": "calculator/note-keys-divide-by-zero-c-held.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -338,7 +338,7 @@
   {
     "id": "calculator/note-keys-divide-by-zero-digit",
     "file": "calculator/note-keys-divide-by-zero-digit.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -346,7 +346,7 @@
   {
     "id": "calculator/note-keys-divide-by-zero-down",
     "file": "calculator/note-keys-divide-by-zero-down.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -354,7 +354,7 @@
   {
     "id": "calculator/note-keys-out-of-range-c",
     "file": "calculator/note-keys-out-of-range-c.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -362,7 +362,7 @@
   {
     "id": "calculator/note-keys-out-of-range-c-held",
     "file": "calculator/note-keys-out-of-range-c-held.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -370,7 +370,7 @@
   {
     "id": "calculator/note-keys-out-of-range-digit",
     "file": "calculator/note-keys-out-of-range-digit.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -378,7 +378,7 @@
   {
     "id": "calculator/note-keys-out-of-range-down",
     "file": "calculator/note-keys-out-of-range-down.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -386,7 +386,7 @@
   {
     "id": "calculator/open",
     "file": "calculator/open.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -394,7 +394,7 @@
   {
     "id": "calculator/operator-slow",
     "file": "calculator/operator-slow.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -402,7 +402,7 @@
   {
     "id": "calculator/operators",
     "file": "calculator/operators.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 15,
     "frames": 15
@@ -410,7 +410,7 @@
   {
     "id": "calculator/operators-c-through",
     "file": "calculator/operators-c-through.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -418,7 +418,7 @@
   {
     "id": "calculator/operators-star",
     "file": "calculator/operators-star.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -426,7 +426,7 @@
   {
     "id": "calculator/operators-star-result",
     "file": "calculator/operators-star-result.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -434,7 +434,7 @@
   {
     "id": "calculator/operators-star-zero",
     "file": "calculator/operators-star-zero.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -458,7 +458,7 @@
   {
     "id": "calculator/options-number",
     "file": "calculator/options-number.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -466,7 +466,7 @@
   {
     "id": "calculator/options-operand",
     "file": "calculator/options-operand.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 7,
     "frames": 7
@@ -474,7 +474,7 @@
   {
     "id": "calculator/options-operator",
     "file": "calculator/options-operator.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -482,7 +482,7 @@
   {
     "id": "calculator/out-of-range",
     "file": "calculator/out-of-range.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -490,7 +490,7 @@
   {
     "id": "calculator/out-of-range-add",
     "file": "calculator/out-of-range-add.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -498,7 +498,7 @@
   {
     "id": "calculator/persist",
     "file": "calculator/persist.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 21,
     "frames": 21
@@ -506,7 +506,7 @@
   {
     "id": "calculator/persist-restore-foreign-prompt-domestic",
     "file": "calculator/persist-restore-foreign-prompt-domestic.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -514,7 +514,7 @@
   {
     "id": "calculator/persist-restore-foreign-prompt-foreign",
     "file": "calculator/persist-restore-foreign-prompt-foreign.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -522,7 +522,7 @@
   {
     "id": "calculator/persist-restore-foreign-run",
     "file": "calculator/persist-restore-foreign-run.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -530,7 +530,7 @@
   {
     "id": "calculator/persist-restore-prompt-domestic",
     "file": "calculator/persist-restore-prompt-domestic.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -538,7 +538,7 @@
   {
     "id": "calculator/persist-restore-prompt-foreign",
     "file": "calculator/persist-restore-prompt-foreign.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -546,7 +546,7 @@
   {
     "id": "calculator/persist-restore-run",
     "file": "calculator/persist-restore-run.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -554,7 +554,7 @@
   {
     "id": "calculator/rate-after",
     "file": "calculator/rate-after.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 13,
     "frames": 13
@@ -562,7 +562,7 @@
   {
     "id": "calculator/rate-blink-keys",
     "file": "calculator/rate-blink-keys.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 12
@@ -570,7 +570,7 @@
   {
     "id": "calculator/rate-keys",
     "file": "calculator/rate-keys.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 46,
     "frames": 46
@@ -578,7 +578,7 @@
   {
     "id": "calculator/rate-list",
     "file": "calculator/rate-list.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 7,
     "frames": 7
@@ -586,7 +586,7 @@
   {
     "id": "calculator/rate-prompt-domestic",
     "file": "calculator/rate-prompt-domestic.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -594,7 +594,7 @@
   {
     "id": "calculator/rate-prompt-foreign",
     "file": "calculator/rate-prompt-foreign.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -602,7 +602,7 @@
   {
     "id": "calculator/rate-saved",
     "file": "calculator/rate-saved.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -610,7 +610,7 @@
   {
     "id": "calculator/results",
     "file": "calculator/results.lcd.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "still",
     "images": 102,
     "frames": 102
@@ -618,14 +618,14 @@
   {
     "id": "sound/calculator/divide-by-zero-virgin",
     "file": "sound/calculator/divide-by-zero-virgin.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys",
     "file": "sound/calculator/keys.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 76
   },
@@ -702,14 +702,14 @@
   {
     "id": "sound/calculator/keys-options-c",
     "file": "sound/calculator/keys-options-c.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-options-down",
     "file": "sound/calculator/keys-options-down.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
@@ -723,7 +723,7 @@
   {
     "id": "sound/calculator/keys-options-menu",
     "file": "sound/calculator/keys-options-menu.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
@@ -737,126 +737,126 @@
   {
     "id": "sound/calculator/keys-options-up",
     "file": "sound/calculator/keys-options-up.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-0",
     "file": "sound/calculator/keys-rate-0.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-1",
     "file": "sound/calculator/keys-rate-1.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-2",
     "file": "sound/calculator/keys-rate-2.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-3",
     "file": "sound/calculator/keys-rate-3.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-4",
     "file": "sound/calculator/keys-rate-4.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-5",
     "file": "sound/calculator/keys-rate-5.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-6",
     "file": "sound/calculator/keys-rate-6.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-7",
     "file": "sound/calculator/keys-rate-7.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-8",
     "file": "sound/calculator/keys-rate-8.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-9",
     "file": "sound/calculator/keys-rate-9.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-c",
     "file": "sound/calculator/keys-rate-c.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-down",
     "file": "sound/calculator/keys-rate-down.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-hash",
     "file": "sound/calculator/keys-rate-hash.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-menu",
     "file": "sound/calculator/keys-rate-menu.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-star",
     "file": "sound/calculator/keys-rate-star.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-rate-up",
     "file": "sound/calculator/keys-rate-up.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/note-key",
     "file": "sound/calculator/note-key.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
@@ -877,21 +877,21 @@
   {
     "id": "sound/calculator/rate-saved",
     "file": "sound/calculator/rate-saved.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/note/calculator-divide-by-zero",
     "file": "sound/note/calculator-divide-by-zero.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/note/calculator-out-of-range",
     "file": "sound/note/calculator-out-of-range.sound.txt",
-    "status": "pending:20",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   }

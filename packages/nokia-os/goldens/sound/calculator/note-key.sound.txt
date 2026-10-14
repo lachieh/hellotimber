@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calculator/note-key
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/sound/note-key
 source-sha256: ed799a0bee2db24b99f15360283cc2f69f34b2f6d5edc456f7382c4e807f1a18
 state: factory

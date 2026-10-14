@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/rate-prompt-foreign
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/rate/prompt-foreign
 source-sha256: 82de4f352962e84c283f5982b41ae0342bcdb08cb140f2eb46c206725893d2d6
 trigger-frame: 1

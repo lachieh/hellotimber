@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/keys-rate-star
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/sound/keys-rate-star
 source-sha256: 742c90a57283bab023485112dda73249cfdd8a05794e249aca7ffbf853281d54
 trigger-frame: 0

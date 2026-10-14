@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/open
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/open
 source-sha256: b2a74057cb90a1fb18b5295f4df66a79e175a16cd6cb825009eae61095c6ddac
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/options-number
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/options/number/00.png + captures/6.39/plan20/options/number/01.png + captures/6.39/plan20/options/number/02.png + captures/6.39/plan20/options/number/03.png + captures/6.39/plan20/options/number/04.png + captures/6.39/plan20/options/number/05.png + captures/6.39/plan20/options/number/06.png + captures/6.39/plan20/options/number/07.png + captures/6.39/plan20/options/number/08.png + captures/6.39/plan20/options/number-up.png
 source-sha256: 947f8819acf716e6f64957e9f52200608ff6962c6042c15a09dfbeceda23e20b
 note: Options on 12 (8 entries): ▼ through the wrap, and ▲ from the first. Each image's keys from the first screen are its CALCULATOR_CASES entry.

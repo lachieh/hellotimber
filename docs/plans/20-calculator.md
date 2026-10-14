@@ -671,22 +671,46 @@ driver.
 
 **Files:** `tests/acceptance/20-calculator.test.ts`, `tests/support/calculator.ts`.
 
-- [ ] One scenario per asserted calculator golden (LCD and sound), replaying `CALCULATOR_CASES`
+- [x] One scenario per asserted calculator golden (LCD and sound), replaying `CALCULATOR_CASES`
       for stills and the recordings' keys for timelines; `menu/09-calculator.sub` and
       `sound/note/9` included in their original owning indexes. Promote only passing fixtures
       through capture-set inputs and reimport; remove matching placeholder ownership only with
       real node coverage. There is no pending-scenario entry to delete. The split's coverage guard
       fails for an asserted calculator golden without a scenario, and for node 9 if uncovered.
-- [ ] Replay literal truncation and representable rounding as separate obligations, preserving
+- [x] Replay literal truncation and representable rounding as separate obligations, preserving
       setups, timing and raw held edges. Include cursor blink/edits and both Restore directions.
-- [ ] D9 standby/DTMF drivers must pass the shared integration gate before final acceptance.
+- [ ] (D9, pending:22) D9 standby/DTMF drivers must pass the shared integration gate before final acceptance.
       Missing integration stays `pending:20`, not a known gap or a fake asserted scenario.
-- [ ] Known gaps, if any, require real scenarios and measured comparison failures with causes,
+- [x] Known gaps, if any, require real scenarios and measured comparison failures with causes,
       as plan 14's do.
-- [ ] Every other plan's goldens still pass.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
+- [x] Every other plan's goldens still pass.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
       `mise exec -- vp check --fix`. Report the calculator file's run time.
-- [ ] Commit: `test(nokia-os): drive every calculator golden`.
+- [x] Commit: `test(nokia-os): drive every calculator golden`.
+
+**Task 8 completion.** `tests/acceptance/20-calculator.test.ts` runs 117 goldens of index 20 in
+11.9 s: 84 pass, 5 run as known gaps, 28 are `pending:22` todos (14 LCD, 14 sound). Every
+other fixture of the capture set is asserted. Stills replay their Task 0 case on a fresh phone
+(`stillScenario`, setups included: saveflash/cold boot, re-entry, Restore after either
+direction); timelines replay their recording's keys on the rows their effects start
+(`recordingScenario`, held edges included), the rate entry's key recordings aligned on the key
+(`keyAlignedScenario`: the blink runs from the prompt, not the key). Literal truncation
+(`results/literal-*`) replays as entry; representable rounding is Task 3's arithmetic.
+`menu/09-calculator.sub` runs in plan 13's acceptance; node 9's opening beep is in
+`sound/note/2-7-1-1`'s group (plan 16) and in `tests/calculator-sound.test.ts`.
+
+Tolerances beyond ±2 ms, each with its cause in the scenario: rate-entry stills accept either
+blink phase within one 480 ms step (the phase follows the harness's tap timing, not recorded);
+blink timelines, the carousel's icon after exit, `in-foreign-rate-0`, Rate saved after the
+key recording and the Restore runs compare within PROBE_TOLERANCE_MS (another recording's
+timeline replayed).
+
+Known gaps (real scenarios, measured failures): `calculator/clear-held` (C held on `0` exits at
+its down; the firmware goes on to standby while C is held, which phone-core's kernel swallows
+across an application's exit); `calculator/note-keys-{divide-by-zero,out-of-range}-c-held`
+(standby 475 ms after the dismissing C, 491 ms in the capture, without the firmware's 84 ms
+partial draw); `calculator/persist-restore-prompt-{foreign,domestic}` (after Restore with
+Domestic 2 the prompt opens with the cursor hidden; UNVERIFIED cause).
 
 ### Task 9 - Verification gate and closeout
 

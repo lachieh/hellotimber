@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/persist-restore-foreign-run
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/persist/restore-foreign-run
 source-sha256: c8565fe1a80294705b1876016057e0e981762b87981dadc46c2bc3704db8781c
 trigger-frame: 1

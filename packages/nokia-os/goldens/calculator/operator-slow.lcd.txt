@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/operator-slow
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/operator-slow
 source-sha256: 98b9002421e912da8aa19b456b0042512376cafa5f9f1f9cb2905c43f5fe18e0
 trigger-frame: 1

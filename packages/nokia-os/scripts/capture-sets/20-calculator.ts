@@ -1,8 +1,9 @@
 // Plan 20's goldens (docs/plans/20-calculator.md "Golden pipeline additions"; paths under plan20/):
 // the calculator's stills, named by CALCULATOR_CASES (Task 0's cases.json, transcribed), its
-// timelines and its sound goldens. New fixtures import as `pending:20` until a real scenario
-// passes (`ASSERTED`); Options' numeric/star/hash escape to standby number entry with its DTMF
-// pairs is `pending:22` (D9: plan 22's standby-entry handoff and the dual-frequency contract).
+// timelines and its sound goldens. Each was imported `pending:20` until its scenario passed
+// (tests/acceptance/20-calculator.test.ts); Options' numeric/star/hash escape to standby number
+// entry with its DTMF pairs is `pending:22` (D9: plan 22's standby-entry handoff and the
+// dual-frequency contract).
 //
 // Pure: imports only sibling scripts, reads captures through the injected io.
 import type { CaptureIo, CaptureSetEntry, PlanCaptureSet, ShotFile } from "../capture-set.ts";
@@ -719,15 +720,14 @@ export const CALCULATOR_CASES: readonly CalculatorCase[] = [
   },
 ];
 
-/** The fixtures promoted after their scenario passed (Task 8); every other one is pending. */
-const ASSERTED: ReadonlySet<string> = new Set<string>([]);
-
-/** D9 (plan 22): Options' digit, `*` and `#` leave for standby number entry with DTMF pairs. */
+/** D9 (plan 22): Options' digits, `*` and `#` leave for standby number entry with DTMF pairs. */
 const STANDBY_ENTRY = "pending:22" as const satisfies GoldenStatus;
 
-function status(id: string): GoldenStatus {
-  return ASSERTED.has(id) ? "asserted" : "pending:20";
-}
+/**
+ * Every other fixture is asserted: its scenario passes (Task 8), or fails as a known gap with
+ * its measured cause (tests/acceptance/20-calculator.test.ts).
+ */
+const ASSERTED = "asserted" as const satisfies GoldenStatus;
 
 /** A still fixture: the case directories it holds, and what it shows. */
 interface StillFixture {
@@ -876,7 +876,7 @@ export function calculatorStills(
     return {
       id,
       kind: "still",
-      status: status(id),
+      status: ASSERTED,
       prefer: {
         source: { kind: "shots", files: shots },
         note: `${note} Each image's keys from the first screen are its CALCULATOR_CASES entry.`,
@@ -1060,7 +1060,7 @@ function recordingEntries(): CaptureSetEntry[] {
   return CALCULATOR_RECORDINGS.map((recording) => ({
     id: recording.id,
     kind: "timeline",
-    status: recording.status ?? status(recording.id),
+    status: recording.status ?? ASSERTED,
     prefer: {
       source: { kind: "recording", dir: `plan20/${recording.dir}` },
       triggerFrame: recording.triggerFrame,
@@ -1074,7 +1074,7 @@ function recordingEntries(): CaptureSetEntry[] {
  * warning-tone notes are `sound/note/…` goldens whose note quotes their text, the form plan 16's
  * extractor reads warning tones from (`NOTE_SOUNDS`).
  */
-/** A factory recording unless `state` says otherwise; pending plan 20 unless `status` says. */
+/** A factory recording unless `state` says otherwise; asserted unless `status` says. */
 type SoundRow = Omit<SoundCaptureEntry, "state" | "status"> & {
   readonly state?: string;
   readonly status?: GoldenStatus;
@@ -1140,7 +1140,7 @@ export const CALCULATOR_SOUNDS: readonly SoundCaptureEntry[] = (
   (entry: SoundRow): SoundCaptureEntry => ({
     ...entry,
     state: entry.state ?? "factory",
-    status: entry.status ?? status(entry.id),
+    status: entry.status ?? ASSERTED,
   }),
 );
 

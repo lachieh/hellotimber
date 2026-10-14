@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/operators-star-zero
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/operators/star-zero/00.png + captures/6.39/plan20/operators/star-zero/01.png + captures/6.39/plan20/operators/star-zero/02.png + captures/6.39/plan20/operators/star-zero/03.png + captures/6.39/plan20/operators/star-zero/04.png + captures/6.39/plan20/operators/star-zero/05.png
 source-sha256: 344dbb731a2445085701f94243a3e92cedcb7b8d76c904667da70cea0c6a83a0
 note: 0, then * ×1…5. Each image's keys from the first screen are its CALCULATOR_CASES entry.

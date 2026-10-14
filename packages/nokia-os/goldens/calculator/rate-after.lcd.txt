@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/rate-after
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/rate/after/foreign-1.5-screen.png + captures/6.39/plan20/rate/after/foreign-1.5-foreign.png + captures/6.39/plan20/rate/after/foreign-1.5-domestic.png + captures/6.39/plan20/rate/after/foreign-1.5-domestic-digit.png + captures/6.39/plan20/rate/after/foreign-1.5-domestic-c.png + captures/6.39/plan20/rate/after/foreign-1.5-domestic-c-2.png + captures/6.39/plan20/rate/after/domestic-2-foreign.png + captures/6.39/plan20/rate/after/domestic-3-foreign.png + captures/6.39/plan20/rate/after/domestic-3-domestic.png + captures/6.39/plan20/rate/after/ok-unchanged.png + captures/6.39/plan20/rate/after/ok-unchanged-domestic.png + captures/6.39/plan20/rate/after/ok-unchanged-domestic-foreign.png + captures/6.39/plan20/rate/after/foreign-with-operand.png
 source-sha256: eb7baf3d64bb37a6feeda1faaf3b4252bbea28557fb4ab8d5c3f41369018ed08
 note: The prompts after Rate saved in both directions (the reciprocal), OK unchanged, the list from an operand. Each image's keys from the first screen are its CALCULATOR_CASES entry.

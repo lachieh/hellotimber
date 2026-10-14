@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/note-keys-divide-by-zero-digit
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/notes/keys-divide-by-zero-digit
 source-sha256: 27900cfb057a3b6e254feeed2fc1a7c33b70f3ba0972a687e9bf66a55fae9aa7
 trigger-frame: 1

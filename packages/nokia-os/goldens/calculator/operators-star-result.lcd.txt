@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/operators-star-result
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/operators/star-result/00.png + captures/6.39/plan20/operators/star-result/01.png + captures/6.39/plan20/operators/star-result/02.png + captures/6.39/plan20/operators/star-result/03.png + captures/6.39/plan20/operators/star-result/04.png + captures/6.39/plan20/operators/star-result/05.png
 source-sha256: 49ab137af7cf3a11807c6c0d29f9e602a4ada83de6988d1d3f98ac4512d3e0c8
 note: The result 15 (12 + 3, Equals), then * ×1…5. Each image's keys from the first screen are its CALCULATOR_CASES entry.

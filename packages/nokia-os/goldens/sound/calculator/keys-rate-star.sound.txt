@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calculator/keys-rate-star
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/sound/keys-rate-star
 source-sha256: 9a129fa61f7c7fcdb701ea80ab99622e23ed8fbc8ac12398586b2d6aad2761bd
 state: factory

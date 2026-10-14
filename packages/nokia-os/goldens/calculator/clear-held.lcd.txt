@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/clear-held
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/clear-held
 source-sha256: 6ed2b06b39a13b0b4727bc8103fa51973d3d20e62a9b46439e0bb0d2438ede33
 trigger-frame: 1

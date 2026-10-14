@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/out-of-range
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/notes/out-of-range
 source-sha256: 37cc82cc4266648896e5fd916d904cf14049b0071ebf034ac49b199223a6f2c5
 trigger-frame: 1

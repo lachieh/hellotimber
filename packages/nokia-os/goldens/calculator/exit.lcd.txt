@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/exit
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/exit
 source-sha256: 1640f6cf8106fba79524a39c257d4da94f589abad5fb6384afd22ca58aa6871a
 trigger-frame: 1

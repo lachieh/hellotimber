@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/in-foreign-rate-0
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/notes/in-foreign-rate-0
 source-sha256: 5879fa3c841ce4bf8e8ccf6a88b13143e35f84e95abbe02f58dc218be2bb9a4b
 trigger-frame: 1

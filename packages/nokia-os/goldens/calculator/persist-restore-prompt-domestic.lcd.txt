@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/persist-restore-prompt-domestic
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/persist/restore-prompt-domestic
 source-sha256: 6ff5cc2a11605d893ee88567f1770156919893a0bc8b0c2250a8a336cbef988e
 trigger-frame: 1

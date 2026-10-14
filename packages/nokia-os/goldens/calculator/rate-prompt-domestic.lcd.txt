@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/rate-prompt-domestic
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/rate/prompt-domestic
 source-sha256: 35dbe28639803af83b0ae18594c88dcd335edca5fbdc672d52fbde3ed3c9df73
 trigger-frame: 1

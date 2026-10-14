@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/divide-by-zero
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/notes/divide-by-zero
 source-sha256: bae1280bb6309b34a224c886a65a8da2ce2a9e66fc363b74b82dcaece5c1eb06
 trigger-frame: 1

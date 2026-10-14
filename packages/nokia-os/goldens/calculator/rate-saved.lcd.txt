@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/rate-saved
-status: pending:20
+status: asserted
 source: captures/6.39/plan20/rate/saved
 source-sha256: 6c6a705df6782854e41fe000472c2ea2c1a60a8e3aa151d9222a51f62aadfbd2
 trigger-frame: 1
