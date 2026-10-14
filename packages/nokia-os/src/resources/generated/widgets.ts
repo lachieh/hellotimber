@@ -7272,6 +7272,80 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
+    "boot-code-error": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/error"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 2889
+        }
+      ]
+    },
+    "code-accepted": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 689
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 582
+        }
+      ]
+    },
+    "code-accepted-welcome": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 689
+        },
+        {
+          "frame": 1,
+          "durationMs": 247
+        },
+        {
+          "frame": 2,
+          "durationMs": 491
+        }
+      ]
+    },
     "phone-security-done": {
       "frames": [
         {
@@ -7611,6 +7685,9 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "level-5-done": "level-5-done",
     "reminder-memory-empty": "reminder-memory-empty",
     "code-error": "code-error",
+    "boot-code-error": "boot-code-error",
+    "code-accepted": "code-accepted",
+    "code-accepted-welcome": "code-accepted-welcome",
     "phone-security-done": "phone-security-done",
     "security-code-changed": "security-code-changed",
     "settings-restored": "settings-restored",

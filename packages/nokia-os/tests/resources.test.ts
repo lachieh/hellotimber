@@ -13,6 +13,7 @@ import { missingStockGlyphs, stockMenu } from "../src/index";
 import {
   BOOT_FRAMES,
   BOOT_TIMELINE,
+  GATE_HANDS_TIMELINE,
   STOCK_FONTS,
   STOCK_MENU_ICONS,
   stockMenuGraphic,
@@ -340,6 +341,13 @@ describe("boot", () => {
       132, 360, 302, 292, 367, 287, 320, 3951,
     ]);
   });
+
+  it("plays the hands after the power-on code at boot/security-gate's regular steps", () => {
+    expect(GATE_HANDS_TIMELINE.steps.map((s) => s.frame)).toEqual([3, 4, 5, 6, 7, 8, 9]);
+    expect(GATE_HANDS_TIMELINE.steps.map((s) => s.durationMs)).toEqual([
+      308, 255, 255, 257, 255, 256, 4215,
+    ]);
+  });
 });
 
 describe("widget sprites and timelines", () => {
@@ -483,6 +491,9 @@ describe("widget sprites and timelines", () => {
     ]);
     expect(WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NODE["8-4"]!]!.timeline.durationMs).toBe(3060);
     expect(Object.keys(WIDGET_TIMELINE_BY_NAME).sort()).toEqual([
+      "boot-code-error",
+      "code-accepted",
+      "code-accepted-welcome",
       "code-error",
       "game-over-fireworks",
       "game-over-note",
@@ -517,6 +528,12 @@ describe("widget sprites and timelines", () => {
       tick(689, 233, 523),
     );
     expect(describeSteps(WIDGET_TIMELINE_BY_NAME["timers-cleared"]!)).toEqual(tick(689, 245, 511));
+    // Plan 15 Task 8: the power-on prompt's own notes (boot/security-gate, boot/welcome-note).
+    expect(describeSteps(WIDGET_TIMELINE_BY_NAME["boot-code-error"]!)).toEqual(["note/error:2889"]);
+    expect(describeSteps(WIDGET_TIMELINE_BY_NAME["code-accepted"]!)).toEqual(tick(689, 232, 582));
+    expect(describeSteps(WIDGET_TIMELINE_BY_NAME["code-accepted-welcome"]!)).toEqual(
+      tick(689, 247, 491),
+    );
   });
 
   it("plays the game-over note, and the fireworks before TOP SCORE: as captured (plan 23 D13)", () => {

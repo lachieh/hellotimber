@@ -22,7 +22,7 @@ import {
 } from "./support/golden.ts";
 import { goto, open } from "./support/drive.ts";
 import { SNAKE_SCENARIOS } from "./support/game.ts";
-import { PROBE_SCENARIOS } from "./support/probes.ts";
+import { BOOT_SCENARIOS, PROBE_SCENARIOS } from "./support/probes.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";
 import { frameAt, standbyRig, stockRig, type Rig } from "./support/rig.ts";
 
@@ -209,7 +209,7 @@ const SCENARIOS: Record<string, (id: string) => void> = {
   "menu/11-clock.sub-1948": (id) => levelOne(id, 11, { clock: () => "19:48" }),
   "menu/11-clock.sub-0759": (id) => levelOne(id, 11, { clock: () => "07:59" }),
 };
-Object.assign(SCENARIOS, PROBE_SCENARIOS, SNAKE_SCENARIOS);
+Object.assign(SCENARIOS, PROBE_SCENARIOS, BOOT_SCENARIOS, SNAKE_SCENARIOS);
 SLUGS.forEach((slug, i) => {
   SCENARIOS[`menu/${slug}`] = (id) => carouselStill(id, i + 1);
   SCENARIOS[`menu/${slug}.anim`] = (id) => carouselAnim(id, i + 1);
@@ -312,6 +312,11 @@ const KNOWN_GAPS: Readonly<Record<string, string>> = {
     "the prompt first draws a 15 ms partial frame (image b: the soft key row still shows " +
     "Select's last letter), a redraw in progress that the kernel does not reproduce (closeout " +
     "decision 2); probe/accept-6-3-5-off's prompt, the same path, has none",
+  "boot/security-lockout-4":
+    "Code accepted and the hands play boot/security-gate's timeline (689/232/582 ms, then a " +
+    "308 ms first hands step); this recording's are 678/232/575 and 299 ms, so the hands start " +
+    "26-28 ms late, a spread between two recordings of one path beyond PROBE_TOLERANCE_MS. The " +
+    "fact it records, four wrong codes do not lock, passes up to Code accepted",
   "probe/note-keys-done-down-300":
     "Done's 16 ms partial draw covers fewer LCD bytes than the 15 ms one of " +
     "tree/01-phone-book/1-8-1-1.choose (same path), whose timeline the note plays",

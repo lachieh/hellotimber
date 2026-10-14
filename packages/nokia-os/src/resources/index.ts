@@ -83,6 +83,11 @@ export function stockMenuGraphic(id: string): MenuGraphic {
 /** Boot: full-frame images, and the timeline whose frames index them (D12 composition). */
 export const BOOT_FRAMES: readonly Bitmap[] = BOOT_DATA.frames.map((art) => bitmapFromArt(art));
 export const BOOT_TIMELINE: Timeline = timeline(BOOT_DATA.timeline);
+/**
+ * The hands after the power-on security code is accepted (`boot/security-gate`, plan 15 D9):
+ * the same `BOOT_FRAMES` at the gate's regular ≈255 ms steps, the last held until standby.
+ */
+export const GATE_HANDS_TIMELINE: Timeline = timeline(BOOT_DATA.gateHands);
 
 function sprite(data: (typeof STATUS_DATA)["signalIcon"]): StockSprite {
   return { x: data.x, y: data.y, bitmap: bitmapFromArt(data.art) };

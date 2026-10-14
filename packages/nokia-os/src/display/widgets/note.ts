@@ -1,9 +1,10 @@
-import { Framebuffer } from "@hellotimber/phone-screen";
+import { Framebuffer, textWidth } from "@hellotimber/phone-screen";
 import { STOCK_FONTS, WIDGET_SPRITES, type WidgetFrame } from "../../resources";
 import { paintStandby } from "../standby";
 
 /** Note text: the large face from x 0, one line per firmware line (`tree/01-phone-book/1-2.leaf`). */
 const LINE_TOPS = [3, 18, 33] as const;
+const LCD_WIDTH = 84;
 /** LCD bytes are 8-row pages written column by column (the `cut` partial draw). */
 const PAGE_ROWS = 8;
 
@@ -98,4 +99,58 @@ export function paintNote(fb: Framebuffer, model: NoteModel, previous?: Uint8Arr
     return;
   }
   paintNoteScreen(fb, lines, frame);
+}
+
+/**
+ * The welcome note at power-on (plan 15 W): the large face from x 1, lines at tops 7 and 22
+ * (`boot/welcome-note`, `-long`). A third line at top 37 is UNVERIFIED (the editor takes 36
+ * characters; no capture needs three lines).
+ */
+const WELCOME_X = 1;
+const WELCOME_TOPS = [7, 22, 37] as const;
+
+export interface WelcomeNoteModel {
+  readonly kind: "welcome-note";
+  /** The stored note as typed. */
+  readonly text: string;
+}
+
+/**
+ * The note's lines: words fill a line while they fit and wrap at the space (`Welcome to` /
+ * `my phone`, `boot/welcome-note-long`). Characters the large face lacks are left out: the note
+ * is user text, so the boot never throws on it (missingStockGlyphs reports them). A word wider
+ * than a line breaks where it stops fitting (UNVERIFIED), and lines past the third are dropped.
+ */
+export function welcomeNoteLines(text: string): string[] {
+  const font = STOCK_FONTS.large;
+  const width = LCD_WIDTH - WELCOME_X;
+  let drawable = "";
+  for (const ch of text) if (ch === " " || font.glyphs.has(ch)) drawable += ch;
+  const lines: string[] = [];
+  let line = "";
+  const fits = (candidate: string) => textWidth(font, candidate) <= width;
+  for (const word of drawable.split(" ").filter((w) => w.length > 0)) {
+    const joined = line === "" ? word : `${line} ${word}`;
+    if (fits(joined)) {
+      line = joined;
+      continue;
+    }
+    if (line !== "") lines.push(line);
+    line = "";
+    for (const ch of word) {
+      if (line !== "" && !fits(line + ch)) {
+        lines.push(line);
+        line = "";
+      }
+      line += ch;
+    }
+  }
+  if (line !== "") lines.push(line);
+  return lines.slice(0, WELCOME_TOPS.length);
+}
+
+export function paintWelcomeNote(fb: Framebuffer, model: WelcomeNoteModel): void {
+  welcomeNoteLines(model.text).forEach((line, i) =>
+    fb.drawText(STOCK_FONTS.large, line, WELCOME_X, WELCOME_TOPS[i]!),
+  );
 }

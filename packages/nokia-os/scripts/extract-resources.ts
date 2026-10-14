@@ -6,7 +6,8 @@
 //   scripts/generated/tree-text-runs.ts (plan 14, from the corpus OCR), + glyph-overrides.ts;
 // - menu icons: per carousel `.anim` golden, the icon frames cropped to the union ink box of
 //   x 0..79, y 20..39, and their timeline (plus the Clock's per-reveal timelines);
-// - boot: the full-frame images and timeline of boot/power-on;
+// - boot: the full-frame images and timeline of boot/power-on, and the hands of
+//   boot/security-gate (plan 15);
 // - status: the signal and battery ladders and icons cropped from standby/standby;
 // - widgets (plan 14): the sprites of scripts/widget-sprites.ts, and the widget timelines of the
 //   tree goldens (notes, progress notes, blinking prompts) and of the probes it names (splashes,
@@ -113,6 +114,8 @@ export interface StatusData {
 export interface BootData {
   readonly frames: readonly (readonly string[])[];
   readonly timeline: TimelineData;
+  /** The hands after the power-on code is accepted (boot/security-gate), indexing `frames`. */
+  readonly gateHands: TimelineData;
 }
 
 /** What one step of a widget timeline shows (plan 14 Task 7). */
@@ -160,6 +163,8 @@ export interface ExtractedResources {
 }
 
 // ---------------------------------------------------------------- pixels
+
+const FULL_LCD = { x0: 0, x1: 83, y0: 0, y1: 47 } as const;
 
 type Region = {
   readonly x0: number;
@@ -357,8 +362,9 @@ function extractMenuIcons(goldensDir: string): Record<string, MenuIconData> {
 function extractBoot(goldensDir: string): BootData {
   const golden = loadGolden(goldensDir, "boot/power-on");
   const names = golden.images.map((image) => image.name);
+  const frames = golden.images.map((image) => crop(image.pixels, FULL_LCD));
   return {
-    frames: golden.images.map((image) => crop(image.pixels, { x0: 0, x1: 83, y0: 0, y1: 47 })),
+    frames,
     // Every boot step is finite (the last one is held, then standby): no merging, no loop.
     timeline: {
       steps: golden.timeline!.map((row) => ({
@@ -366,7 +372,27 @@ function extractBoot(goldensDir: string): BootData {
         durationMs: row.durationMs,
       })),
     },
+    gateHands: gateHands(loadGolden(goldensDir, "boot/security-gate"), frames),
   };
+}
+
+/**
+ * The hands after `Code accepted` (plan 15 D9): the trailing rows of boot/security-gate that show
+ * boot/power-on's hands images (the same pictures at the gate's regular ≈255 ms steps).
+ */
+function gateHands(gate: Golden, frames: readonly (readonly string[])[]): TimelineData {
+  const byArt = new Map(frames.map((art, i) => [art.join("\n"), i]));
+  const blank = byArt.get(frames[0]!.join("\n"));
+  const rows = gate.timeline!;
+  const steps: TimelineStepData[] = [];
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const art = crop(findGoldenImage(gate, rows[i]!.image).pixels, FULL_LCD).join("\n");
+    const frame = byArt.get(art);
+    if (frame === undefined || frame === blank) break;
+    steps.unshift({ frame, durationMs: rows[i]!.durationMs });
+  }
+  if (steps.length === 0) throw new Error(`${gate.id}: no boot/power-on hands at its end`);
+  return { steps };
 }
 
 /** Ink parts of a status column, top to bottom, split on blank rows. */
@@ -579,13 +605,18 @@ function extractWidgets(goldensDir: string): WidgetData {
    * widget's (the parent returning). Before the widget's first sprite, frames are kept as
    * captured; partial draws (≤ PARTIAL_MS) are composites of their neighbours.
    */
-  const segment = (id: string, kind: TimelineKind, start: "trigger" | "first-sprite"): Step[] => {
+  const segment = (
+    id: string,
+    kind: TimelineKind,
+    start: "trigger" | "first-sprite",
+    fromFrame?: number,
+  ): Step[] => {
     const g = golden(id);
     const rows = g.timeline;
     if (!rows || typeof g.triggerFrame !== "number")
       throw new Error(`${id}: not a triggered timeline`);
     const pixelsOf = (i: number): Uint8Array => findGoldenImage(g, rows[i]!.image).pixels;
-    let i = g.triggerFrame;
+    let i = Math.max(g.triggerFrame, fromFrame ?? 0);
     if (start === "first-sprite") {
       while (i < rows.length && spriteIn(pixelsOf(i), kind) === undefined) i++;
     }
@@ -709,7 +740,8 @@ function extractWidgets(goldensDir: string): WidgetData {
     if (key === undefined)
       throw new Error(`${probe.golden}: a probe timeline needs a node or a name`);
     const looping = probe.kind === "progress";
-    const id = add(key, segment(probe.golden, probe.kind, "first-sprite"), looping);
+    const steps = segment(probe.golden, probe.kind, "first-sprite", probe.fromFrame);
+    const id = add(key, steps, looping);
     if (probe.node !== undefined) byNode[probe.node] = id;
     if (probe.name !== undefined) byName[probe.name] = id;
   }
@@ -760,7 +792,7 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
     ),
     "boot.ts": module(
       "BOOT_DATA",
-      `{ readonly frames: readonly (readonly string[])[]; readonly timeline: ${TYPES.timeline} }`,
+      `{ readonly frames: readonly (readonly string[])[]; readonly timeline: ${TYPES.timeline}; readonly gateHands: ${TYPES.timeline} }`,
       resources.boot,
     ),
     "status.ts": module(

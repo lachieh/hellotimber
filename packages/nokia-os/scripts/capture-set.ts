@@ -362,11 +362,20 @@ function plan15BootEntries(): CaptureSetEntry[] {
       "plan15/boot/gate-lockout",
       "The power-on prompt: six 00000 then 12345, each OK'd; the sixth and 12345 get Code error too (five wrong codes lock every entry). Frame 1 is the first digit.",
     ),
-    recording(
-      "boot/security-lockout-4",
-      "plan15/boot/gate-lockout-4",
-      "The power-on prompt: four 00000 then 12345: Code accepted, then the hands (four wrong codes do not lock). Frame 1 is the first digit.",
-    ),
+    {
+      id: "boot/security-lockout-4",
+      kind: "timeline",
+      status: "asserted",
+      prefer: {
+        source: {
+          kind: "composite",
+          parts: [{ dir: "plan15/boot/gate-lockout-4", from: 0, to: 43 }],
+        },
+        triggerFrame: 1,
+        note: "The power-on prompt: four 00000 then 12345: Code accepted, then the hands (four wrong codes do not lock). Frame 1 is the first digit.",
+        omitted: { "044-046": WIZARD },
+      },
+    },
     cut(
       "boot/welcome-note",
       "plan15/boot/welcome-hi",

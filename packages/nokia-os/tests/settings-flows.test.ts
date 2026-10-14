@@ -39,11 +39,15 @@ describe("Phone security (6-3-5)", () => {
     expectLcd(rig.paint(), goldenImage("probe/accept-6-3-5-off", "h"), "the list on On");
   });
 
-  it("puts the inserted SIM first among the recent SIMs when it turns On", () => {
-    const { rig, storage } = phone();
-    expect(stored(storage).security.recentSims).toEqual([]);
+  it("keeps the inserted SIM first among the recent SIMs when it turns On", () => {
+    const storage = createMemoryStorage();
+    standbyRig({ storage, sim: "sim-2" });
+    // Every power-on that passes records its SIM (Task 8), so the phone's own SIM is first.
+    const rig = standbyRig({ storage });
+    expect(stored(storage).security.recentSims).toEqual(["sim-1", "sim-2"]);
     keys(rig, `${PHONE_SECURITY} navi 1 2 3 4 5 navi down navi wait:3000`);
-    expect(stored(storage).security.recentSims).toEqual(["sim-1"]);
+    expect(stored(storage).security.recentSims).toEqual(["sim-1", "sim-2"]);
+    expect(stored(storage).settings.choices[PHONE_SECURITY_KEY]).toBe(1);
   });
 });
 

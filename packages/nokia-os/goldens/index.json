@@ -52,8 +52,8 @@
     "file": "boot/security-lockout-4.lcd.txt",
     "status": "asserted",
     "kind": "timeline",
-    "images": 19,
-    "frames": 47
+    "images": 17,
+    "frames": 44
   },
   {
     "id": "boot/welcome-note",

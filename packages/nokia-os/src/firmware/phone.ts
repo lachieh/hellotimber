@@ -6,19 +6,28 @@ import type { StockCueSink } from "./cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { invalidShortcut } from "./leaves";
 import { createStockGames, createStockMenu } from "./menu";
-import { StockSecurity } from "./security";
+import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
+import { stockBootGates } from "./boot";
 import { createStockSettings } from "./settings";
 
 export interface StockPhoneConfig extends StockPorts {
   /** Operator line. Every glyph must exist in the stock small font (validated; throws). */
   carrier: string;
-  /** Default "animated". "skip" = bootMs 0 (tests, reduced motion). */
+  /**
+   * Default "animated". "skip" = bootMs 0 (tests, reduced motion): no self-test, hands or welcome
+   * note, but the security code is still asked for when Phone security wants it.
+   */
   boot?: "animated" | "skip";
   /**
    * Plan 15: where settings persist (`window.localStorage` fits). Default: a fresh in-memory
    * storage. Empty storage is the virgin EEPROM. A malformed record throws, naming its key.
    */
   storage?: StockStorage;
+  /**
+   * Plan 15: the inserted SIM card's identity. With Phone security On, power-on asks for the
+   * security code when this SIM is not among the last five used. Default "sim-1"; non-empty.
+   */
+  sim?: string;
 }
 
 /**
@@ -58,8 +67,8 @@ export function createStockPhone(config: StockPhoneConfig): Phone {
 /**
  * `createStockPhone` with internal options. The phone owns its EEPROM over `config.storage`
  * (read once here, so a malformed record throws now), its settings store and security code over
- * it (the lockout timed by the kernel clock), and its games holder (the suspended game), which
- * power-off clears.
+ * it (the lockout timed by the kernel clock, the SIM from `config.sim`), its boot gates, and its
+ * games holder (the suspended game), which power-off clears.
  */
 export function createStockPhoneWith(
   config: StockPhoneConfig,
@@ -73,11 +82,16 @@ export function createStockPhoneWith(
         .join(", ")}.`,
     );
   }
+  const sim = config.sim ?? STOCK_DEFAULT_SIM;
+  if (typeof sim !== "string" || sim === "") {
+    throw new Error(`The SIM must be a non-empty string (received ${JSON.stringify(sim)}).`);
+  }
   const { clock, date } = config;
   const eeprom = new StockEeprom(config.storage ?? createMemoryStorage());
   const settings = createStockSettings(eeprom);
   let now = 0;
-  const security = new StockSecurity(eeprom, settings, { now: () => now });
+  const security = new StockSecurity(eeprom, settings, { now: () => now, sim });
+  const skip = config.boot === "skip";
   const ports = { clock, date };
   const clockGames = createStockGames(ports, () => now);
   const games = {
@@ -90,7 +104,9 @@ export function createStockPhoneWith(
     carrier: config.carrier,
     ...(clock === undefined ? {} : { clock }),
     bootTimeline: BOOT_TIMELINE,
-    ...(config.boot === "skip" ? { bootMs: 0 } : {}),
+    ...(skip ? { bootMs: 0 } : {}),
+    // Plan 15 D9: the security code and the welcome note hold the boot after the self-test.
+    bootGates: stockBootGates({ security, settings, skip }),
     standbyKeys: STOCK_STANDBY_KEYS,
     menuOpenDelayMs: STOCK_MENU_OPEN_DELAY_MS,
     shortcutWindowMs: STOCK_SHORTCUT_WINDOW_MS,

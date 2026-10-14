@@ -17,8 +17,9 @@ import {
   type TimelineTolerance,
 } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
-import { createMemoryStorage } from "../../src/index";
-import { frameAt, standbyRig, type Rig } from "./rig.ts";
+import { GATE_BLANK_MS, SELF_TEST_MS } from "../../src/firmware/boot";
+import { createMemoryStorage, type StockStorage } from "../../src/index";
+import { frameAt, seededStorage, standbyRig, stockRig, type Rig } from "./rig.ts";
 
 /** One harness tap (`key`): ≈42 ms down, the 250 ms settle and the 300 ms key gap. */
 export const TAP_MS = 592;
@@ -602,4 +603,128 @@ export const PROBE_SCENARIOS: Record<string, (id: string) => void> = {
     stills(id, after("navi down*3 navi down*7 navi"), ["", "navi", ...Array(6).fill("down")]),
   "probe/prepaid-recharge-status": (id) =>
     stills(id, after("navi down*3 navi down*7 navi"), ["down*3", "navi", ...Array(6).fill("down")]),
+};
+
+// ---------------------------------------------------------------- plan 15 boot gates (Task 8)
+
+/** The kernel's long press: power turns the phone on this long after the key goes down. */
+const POWER_LONG_PRESS_MS = 800;
+
+/**
+ * A boot golden from the power key (trigger frame 0), with `later` keys on the ticks their
+ * golden rows start. Every boot scenario compares within PROBE_TOLERANCE_MS: its self-test
+ * replays boot/power-on's recording, whose first frame (power key to the first draw, 268 ms)
+ * these recordings show as 245-270 ms, and whose steps the gate-free welcome note's recording
+ * shows 8 ms longer; the gate's notes replay boot/security-gate's and boot/welcome-note's.
+ */
+function bootTimeline(id: string, storage: StockStorage, later: readonly Later[] = []): Rig {
+  const golden = loadGolden(id);
+  const rows = golden.timeline!;
+  const rig = stockRig({ storage });
+  rig.advance(100);
+  rig.hold("power");
+  rig.advance(POWER_LONG_PRESS_MS - 2);
+  const last = rows[rows.length - 1]!;
+  const span = last.startMs + last.durationMs - rows[0]!.startMs + 100;
+  const schedule = later.map(([row, key]) => {
+    if (typeof row !== "number") throw new Error(`${id}: boot keys go on golden rows`);
+    return { atMs: rows[row]!.startMs - rows[0]!.startMs, run: () => rig.press(key) };
+  });
+  const recording = rig.record(
+    span,
+    () => {
+      rig.advance(1);
+      rig.release("power");
+    },
+    schedule,
+  );
+  expectTimeline(
+    recording,
+    golden,
+    `${id}: power on, then ${later.map((l) => l[1]).join(" ")}`,
+    JITTER,
+  );
+  return rig;
+}
+
+/** A phone at the power-on prompt (Phone security On, no recent SIM), as `run 8s` leaves it. */
+function atGatePrompt(): Rig {
+  const rig = stockRig({ storage: seededStorage() });
+  rig.press("power", 1000);
+  rig.advance(SELF_TEST_MS + GATE_BLANK_MS + 3000);
+  return rig;
+}
+
+/** Entries at the power-on prompt from golden row `from`: one digit per row, then OK. */
+function entriesAt(from: number, codes: readonly string[]): Later[] {
+  return codes.flatMap((code, k) => {
+    const start = from + k * (code.length + 2);
+    return [...digitsAt(start, code), [start + code.length, "navi"] as const];
+  });
+}
+
+const STANDBY_IMAGE = () => goldenImage("standby/standby", "01-standby");
+
+export const BOOT_SCENARIOS: Record<string, (id: string) => void> = {
+  // A1: 00000 OK (Code error, 2889 ms), then 12345 OK: Code accepted, the hands, standby.
+  "boot/security-gate": (id) => {
+    const rig = bootTimeline(id, seededStorage(), [
+      ...entriesAt(6, ["00000"]),
+      ...entriesAt(13, ["12345"]),
+    ]);
+    expectLcd(rig.paint(), STANDBY_IMAGE(), `${id}: after the hands`);
+  },
+  // A6: 12345 OK: Code accepted, then the note instead of the hands, then standby.
+  "boot/welcome-note": (id) => {
+    const rig = bootTimeline(id, seededStorage({ welcomeNote: "Hi" }), entriesAt(6, ["12345"]));
+    expectLcd(rig.paint(), STANDBY_IMAGE(), `${id}: after the note`);
+  },
+  "boot/welcome-note-long": (id) => {
+    const storage = seededStorage({ welcomeNote: "Welcome to my phone" });
+    const rig = bootTimeline(id, storage, entriesAt(6, ["12345"]));
+    expectLcd(rig.paint(), STANDBY_IMAGE(), `${id}: after the note`);
+  },
+  // 0c: after Restore (no gate), the note follows the self-test.
+  "boot/welcome-note-ungated": (id) => {
+    const rig = bootTimeline(id, seededStorage({ phoneSecurity: false, welcomeNote: "Hi" }));
+    expectLcd(rig.paint(), STANDBY_IMAGE(), `${id}: after the note`);
+  },
+  // A2: the prompt after each key (`v639-plan15.cap`).
+  "boot/security-gate-keys": (id) =>
+    stills(id, atGatePrompt(), [
+      "",
+      "1",
+      "2",
+      "c",
+      "c",
+      "c",
+      "wait:2000",
+      "1 2 3 4 5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "0",
+      "1",
+      "c~1000",
+      "1 2 3",
+    ]),
+  // Code error plays boot/security-gate's timeline (2889 ms; here 2904 and 2909 ms).
+  "boot/security-gate-ok-123": (id) => {
+    const rig = atGatePrompt();
+    keys(rig, "1 2 3");
+    timeline(id, rig, "navi", [], JITTER);
+  },
+  "boot/security-gate-ok-empty": (id) => timeline(id, atGatePrompt(), "navi", [], JITTER),
+  // A3: six 00000 then 12345; the fifth wrong code locks every entry. Code error as above
+  // (2890-2907 ms here).
+  "boot/security-lockout": (id) => {
+    const [first, ...later] = entriesAt(1, [...Array(6).fill("00000"), "12345"]);
+    timeline(id, atGatePrompt(), first![1], later, JITTER);
+  },
+  // Four 00000 then 12345: accepted, the hands. Code error as above (2890-2904 ms here).
+  "boot/security-lockout-4": (id) => {
+    const [first, ...later] = entriesAt(1, [...Array(4).fill("00000"), "12345"]);
+    timeline(id, atGatePrompt(), first![1], later, JITTER);
+  },
 };

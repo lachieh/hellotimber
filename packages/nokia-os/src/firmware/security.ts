@@ -141,6 +141,7 @@ export class StockSecurity {
   /** `sim` moves to the front of the recent SIMs (five at most). */
   insertSim(sim: string): void {
     const state = this.#state;
+    if (state.recentSims[0] === sim) return;
     const recentSims = [sim, ...state.recentSims.filter((s) => s !== sim)].slice(0, RECENT_SIMS);
     this.#write({ ...state, recentSims });
   }

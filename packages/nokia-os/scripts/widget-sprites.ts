@@ -274,14 +274,15 @@ export type TimelineKind = keyof typeof TIMELINE_GROUPS;
 /**
  * Probe recordings whose widget timeline has no tree golden: the game splashes (by the game's
  * node), the notes that follow a key inside a widget (by name), and a longer recording of a
- * tree node's progress bar. A probe's timeline starts at
- * its first frame that shows the kind's sprites.
+ * tree node's progress bar. A probe's timeline starts at its first frame that shows the kind's
+ * sprites, searching from the trigger frame or from `fromFrame` (a second note in a recording).
  */
 export const PROBE_TIMELINES: readonly {
   readonly golden: string;
   readonly kind: TimelineKind;
   readonly node?: string;
   readonly name?: string;
+  readonly fromFrame?: number;
 }[] = [
   { golden: "probe/games-splash-8-1", kind: "splash-8-1", node: "8-1" },
   { golden: "probe/games-splash-8-2", kind: "splash-8-2", node: "8-2" },
@@ -299,6 +300,13 @@ export const PROBE_TIMELINES: readonly {
   // Plan 15 A4: a wrong security code in Restore factory settings' prompt (2904 ms; the other
   // in-menu prompts' 2902-2905 ms), then the empty prompt.
   { golden: "probe/code-wrong-6-4", kind: "note", name: "code-error" },
+  // Plan 15 Task 8: the power-on prompt's own notes. A wrong code: `Code error` (2889 ms), then
+  // the empty prompt. The right one: `Code accepted` (689/232/582 ms), then the hands (from
+  // frame 12, the prompt after Code error); with a welcome note, `Code accepted` (689/247/491
+  // ms) gives way to the note instead.
+  { golden: "boot/security-gate", kind: "note", name: "boot-code-error" },
+  { golden: "boot/security-gate", kind: "note", name: "code-accepted", fromFrame: 12 },
+  { golden: "boot/welcome-note", kind: "note", name: "code-accepted-welcome" },
   // Plan 15 0c: the notes after an accepted security code (bindings `ACCEPT_FLOWS`).
   { golden: "probe/accept-6-3-5-off", kind: "note", name: "phone-security-done" },
   { golden: "probe/accept-6-3-6-1-match", kind: "note", name: "security-code-changed" },

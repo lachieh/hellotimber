@@ -921,26 +921,63 @@ flows through keys and reads the records back from storage. No placeholder names
 (welcome-note layout, if it differs from notes), `tests/boot.test.ts` (new),
 `tests/support/rig.ts` (`storage`/`sim` options), `tests/support/probes.ts`.
 
-- [ ] `SELF_TEST_MS` from `BOOT_TIMELINE` (end of step 3, 4073 ms); a test pins it against
+- [x] `SELF_TEST_MS` from `BOOT_TIMELINE` (end of step 3, 4073 ms); a test pins it against
       `boot/power-on`.
-- [ ] Security gate application: the 42 ms blank, the prompt, `codeEntry` with the boot's own
+- [x] Security gate application: the 42 ms blank, the prompt, `codeEntry` with the boot's own
       `Code error` and `Code accepted` timelines (from `boot/security-gate`), then `exit()`.
       `insertSim(sim)` on every power-on that passes (gate or not).
-- [ ] Welcome-note gate application: the stored note laid out as measured on
+- [x] Welcome-note gate application: the stored note laid out as measured on
       `boot/welcome-note` and `boot/welcome-note-long`, held 4930.7 ms, then
       `exit({ to: "standby" })`. A note with glyphs the large face lacks is drawn with what exists
       and missing characters are reported by a test helper, not thrown at boot (D10 of plan 13
       applies to firmware labels, not user text).
-- [ ] `createStockPhone`: validates `sim`; `bootGates` as D9 (`boot: "skip"` keeps the security
+- [x] `createStockPhone`: validates `sim`; `bootGates` as D9 (`boot: "skip"` keeps the security
       gate only).
-- [ ] Acceptance: `boot/security-gate` (storage seeded with Phone security On, empty recent SIMs;
+- [x] Acceptance: `boot/security-gate` (storage seeded with Phone security On, empty recent SIMs;
       keys at the golden's times; then `standby/standby`), `boot/welcome-note` and
       `-long` (seeded note and gate), `boot/security-lockout` if imported; `boot/power-on` still
       passes with empty storage.
-- [ ] TDD: the same SIM after a passed gate boots without it; a sixth SIM evicts the oldest;
+- [x] TDD: the same SIM after a passed gate boots without it; a sixth SIM evicts the oldest;
       navigate during the gate waits; power off during the gate.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): security-code and welcome-note boot gates`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): security-code and welcome-note boot gates`.
+
+Deviation (`SELF_TEST_MS`): it is 4094 ms, not 4073. Task 2 regenerated `BOOT_TIMELINE` from
+`boot-clean/power-on`, whose step 3 ends there; the gated recordings' self-tests end at 4073 and
+4080 ms because their first frame (power key to the first draw) is 245-253 ms, not 268.
+
+Deviation (gate shape): the security gate plays `Code accepted` and then its own hands
+(`GATE_HANDS_TIMELINE`, `boot/security-gate`'s regular steps 308, 255, 255, 257, 255, 256, 4215
+ms) and ends the boot with `exit({ to: "standby" })`. `exit()` would resume `BOOT_TIMELINE`'s
+irregular hands. With a stored note, `Code accepted` plays `boot/welcome-note`'s timeline
+(689/247/491 ms, not 689/232/582) and the note stays until 6358 ms after `Code accepted`
+appears. The welcome-note gate runs only when the security gate did not open: a 7 ms blank, the
+note for 5080 ms (`boot/welcome-note-ungated`), then standby. With `boot: "skip"` the security
+gate opens at 0 and goes to standby after `Code accepted`, with no hands and no note. The boot's
+`Code error` is its own named timeline (`boot-code-error`, 2889 ms); `code-accepted` and
+`code-accepted-welcome` are named too (`PROBE_TIMELINES` gains a `fromFrame` for the second note
+of `boot/security-gate`), and `BOOT_DATA` gains `gateHands`. `insertSim` skips the write when
+the SIM is already first.
+
+Deviation (lockout-4 golden): `boot/security-lockout-4` kept three clock-wizard frames (044-046)
+that Task 2 did not cut. Its capture-set row is now a composite of frames 0-43 with them omitted;
+`import-captures` ran twice with no second diff. It is a known gap: its `Code accepted` and hands
+(678/232/575, 299 ms) are 26-28 ms off `boot/security-gate`'s, beyond ±25 ms. Four wrong codes
+not locking is also pinned by `tests/security.test.ts`.
+
+Deviation (tolerance): every boot scenario compares within ±25 ms (plan 14 closeout decision 2).
+Each replays another recording's timings: boot/power-on's self-test (first frame 245-270 ms
+across recordings; the ungated note's self-test steps are 8 ms longer), and boot/security-gate's
+`Code error` (2889 ms; 2890-2909 ms in the key and lockout recordings).
+
+Completion note (Task 8): 16 tests in `tests/boot.test.ts`. Every `boot/*` golden has a
+scenario (`BOOT_SCENARIOS` in `tests/support/probes.ts`). All pass except the
+`boot/security-lockout-4` known gap. `tests/support/rig.ts` gains `seededStorage` (Phone
+security On, optional note); `storage` and `sim` reach the phone through `StockPhoneConfig`. A
+note's characters that the large face lacks are left out (`welcomeNoteLines`), and tests report
+them with `missingStockGlyphs(note, "large")`. A long note wraps greedily at spaces. A word wider
+than the line breaks mid-word, and lines past the third are dropped; both are UNVERIFIED.
+`extract-resources` ran twice with no diff.
 
 ### Task 9 - Demo and README
 

@@ -2,8 +2,16 @@
 // (plan 13 "Scenario harness and coverage guard").
 import type { Phone, PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
+import { PHONE_SECURITY_KEY, WELCOME_NOTE_KEY } from "../../src/firmware/bindings";
+import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockPhoneWith, type StockPhoneInternals } from "../../src/firmware/phone";
-import { paintStockScreen, type StockPhoneConfig } from "../../src/index";
+import { createStockSettings } from "../../src/firmware/settings";
+import {
+  createMemoryStorage,
+  paintStockScreen,
+  type StockPhoneConfig,
+  type StockStorage,
+} from "../../src/index";
 import type { RecordedFrame, RecordedTimeline } from "./golden.ts";
 
 export interface Rig {
@@ -152,4 +160,19 @@ export function standbyRig(
   rig.press("power", 1000);
   rig.advance(1000);
   return rig;
+}
+
+/**
+ * A storage holding what the plan 15 boot captures had in their EEPROM: Phone security On (the
+ * virgin prompt reproduced as the gate, with no recent SIM) and, optionally, a welcome note.
+ */
+export function seededStorage(
+  seed: { readonly phoneSecurity?: boolean; readonly welcomeNote?: string } = {},
+): StockStorage {
+  const storage = createMemoryStorage();
+  const settings = createStockSettings(new StockEeprom(storage));
+  // Phone security's list is `Off`, `On` (CODE_SETTINGS).
+  if (seed.phoneSecurity ?? true) settings.choose(PHONE_SECURITY_KEY, 1);
+  if (seed.welcomeNote !== undefined) settings.setText(WELCOME_NOTE_KEY, seed.welcomeNote);
+  return storage;
 }

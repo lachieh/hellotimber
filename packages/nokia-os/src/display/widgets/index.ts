@@ -1,4 +1,5 @@
 import type { Framebuffer } from "@hellotimber/phone-screen";
+import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
 import { paintConfirm, type ConfirmModel } from "./confirm";
 import { paintGameOver, type GameOverModel } from "./game-over";
@@ -6,7 +7,7 @@ import { paintInfoPage, type InfoPageModel } from "./info-pages";
 import { paintInfoScreen, type InfoScreenModel } from "./info-screen";
 import { paintLevelBar, type LevelBarModel } from "./level-bar";
 import { paintMulti, type MultiModel } from "./multi";
-import { paintNote, type NoteModel } from "./note";
+import { paintNote, paintWelcomeNote, type NoteModel, type WelcomeNoteModel } from "./note";
 import { paintOptions, type OptionsModel } from "./options";
 import { paintProgress, type ProgressModel } from "./progress";
 import { paintPrompt, type PromptModel } from "./prompt";
@@ -20,7 +21,8 @@ export type { InfoPageModel } from "./info-pages";
 export type { InfoScreenModel } from "./info-screen";
 export type { LevelBarModel } from "./level-bar";
 export type { MultiModel } from "./multi";
-export type { NoteModel } from "./note";
+export type { NoteModel, WelcomeNoteModel } from "./note";
+export { welcomeNoteLines } from "./note";
 export type { OptionsModel } from "./options";
 export type { ProgressModel } from "./progress";
 export type { PromptEntry, PromptModel } from "./prompt";
@@ -32,6 +34,13 @@ export type { TextPageModel } from "./text-pages";
 export interface PlaceholderModel {
   readonly kind: "placeholder";
   readonly label: string;
+}
+
+/** A full-frame boot image inside a boot gate (plan 15: the 42 ms blank, the hands). */
+export interface BootFrameModel {
+  readonly kind: "boot-frame";
+  /** Index into `BOOT_FRAMES` (0 is the blank LCD). */
+  readonly frame: number;
 }
 
 /** What a stock widget shows: plain data, compared by value to decide whether to repaint. */
@@ -49,6 +58,8 @@ export type WidgetModel =
   | SplashModel
   | SnakeModel
   | GameOverModel
+  | BootFrameModel
+  | WelcomeNoteModel
   | PlaceholderModel;
 
 /**
@@ -95,6 +106,12 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "game-over":
       paintGameOver(fb, model);
+      return;
+    case "boot-frame":
+      paintBootFrame(fb, model.frame);
+      return;
+    case "welcome-note":
+      paintWelcomeNote(fb, model);
       return;
     case "placeholder":
       fb.pixels.set(placeholderFrame(model.label).pixels);

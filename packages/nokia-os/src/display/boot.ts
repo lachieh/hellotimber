@@ -10,7 +10,12 @@ export function paintBoot(fb: Framebuffer, screen: Extract<ScreenModel, { kind: 
     paintUnsupported(fb, `boot ${screen.phase}`);
     return;
   }
-  const frame = BOOT_FRAMES[screen.frame];
-  if (!frame) throw new Error(`No stock boot frame ${screen.frame} (have ${BOOT_FRAMES.length}).`);
+  paintBootFrame(fb, screen.frame);
+}
+
+/** One full-frame boot image (`BOOT_FRAMES`; 0 is the blank LCD). */
+export function paintBootFrame(fb: Framebuffer, index: number): void {
+  const frame = BOOT_FRAMES[index];
+  if (!frame) throw new Error(`No stock boot frame ${index} (have ${BOOT_FRAMES.length}).`);
   fb.blitBitmap(frame, 0, 0);
 }
