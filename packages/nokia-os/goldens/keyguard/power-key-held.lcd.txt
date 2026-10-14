@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/power-key-held
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/power-cycle/power-key-held
 source-sha256: 94d6001bff7498b9b73a636a20cb325a8787323b9b8615e2765b190ce3977247
 trigger-frame: 1

@@ -6,7 +6,8 @@
 // Statuses (plan 29's pending workflow): a golden whose screens belong to a later plan names it
 // (`pending:18`, `pending:22`); every other golden is `pending:25` until the plan 25 task that
 // drives it promotes it here (Tasks 4 and 7-9). Task 4 asserts the timeout, key, boot and
-// power-key lights goldens (tests/support/lights.ts `lightsScenario`).
+// power-key lights goldens (tests/support/lights.ts `lightsScenario`), Task 7 the keyguard's LCD
+// goldens (tests/support/keyguard.ts `keyguardTimeline`).
 import type { CaptureSetEntry, PlanCaptureSet } from "../capture-set.ts";
 import type { GoldenStatus } from "../golden-format.ts";
 import type { LightName, LightsCaptureIo, LightsGolden, LightsRow } from "../lights-format.ts";
@@ -339,7 +340,7 @@ function timeline(
   id: string,
   dir: string,
   note: string,
-  status: GoldenStatus = OWN,
+  status: GoldenStatus = ASSERTED,
 ): CaptureSetEntry {
   return {
     id,
@@ -353,7 +354,7 @@ function still(
   id: string,
   file: string,
   note: string,
-  status: GoldenStatus = OWN,
+  status: GoldenStatus = ASSERTED,
 ): CaptureSetEntry {
   return {
     id,
@@ -408,7 +409,7 @@ export function keyguardLcdSet(frames: TreeCaptureIo): CaptureSetEntry[] {
         `keyguard/lock-gap/${ms}`,
         `keyguard/lock-gap/${ms}`,
         `Menu, then * ${ms} ms later: ${ms <= 2920 ? "locks" : "standby number entry (plan 22)"}.`,
-        ms <= 2920 ? OWN : CALLS,
+        ms <= 2920 ? ASSERTED : CALLS,
       ),
     ),
     timeline(

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/unlock-alone
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/unlock-alone
 source-sha256: ec4e939b19c8d8906934564653c4c80eb2d606d1ebbd2ee7cb5133863113423a
 trigger-frame: 1

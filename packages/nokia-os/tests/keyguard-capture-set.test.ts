@@ -267,14 +267,17 @@ describe("plan 25's capture set", () => {
     ]) {
       expect(status(id), id).toBe("pending:22");
     }
-    for (const id of ["keyguard/lock", "keyguard/hint", "lights/game/off/play"]) {
-      expect(status(id), id).toBe("pending:25");
-    }
-    // Task 4 drives the timeout, key, boot and power-key lights goldens.
+    expect(status("lights/game/off/play")).toBe("pending:25");
+    // Task 4 drives the timeout, key, boot and power-key lights goldens; Task 7 the keyguard's
+    // LCD goldens.
     for (const id of [
       "lights/timeout/factory/tap-00",
       "lights/boot/gate",
       "lights/power-key/menu",
+      "keyguard/lock",
+      "keyguard/lock-gap/2920",
+      "keyguard/hint",
+      "keyguard/standby",
     ]) {
       expect(status(id), id).toBe("asserted");
     }

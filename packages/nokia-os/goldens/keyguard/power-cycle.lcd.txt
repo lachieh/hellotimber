@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/power-cycle
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/power-cycle/standby.png
 source-sha256: 9d418ec64f159b8bc3233aef7c1a7301ebd79c101fe0179576c5804fbb9c2915
 note: After a cold power-on from the locked phone's flash: unlocked (Menu).

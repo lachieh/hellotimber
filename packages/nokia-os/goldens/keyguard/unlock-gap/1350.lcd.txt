@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/unlock-gap/1350
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/unlock-gap/1350
 source-sha256: 91ebd6b305977821413d0c7015852cfd6d94d1fa1431e986d97a3ad428e8cf6d
 trigger-frame: 1

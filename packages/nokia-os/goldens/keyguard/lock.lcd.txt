@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/lock
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/lock
 source-sha256: b13f2e74f56ee41fcfebee538516f1a2085f0366132c09564b98debbeb1c7b4f
 trigger-frame: 1

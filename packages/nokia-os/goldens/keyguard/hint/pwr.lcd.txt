@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/hint/pwr
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/hint/pwr
 source-sha256: 3bafedcb3ef162d214fc628b8b0f50792ffde0aab8cccd794256e040411e6a16
 trigger-frame: 1

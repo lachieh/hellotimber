@@ -5,24 +5,37 @@
 //
 // Durations are the generated widget timelines' (plan 25's resource registration); the lock
 // window and the leads before the hint and `Keypad active` are the goldens' (tests check them).
-import type { PhoneKey } from "@hellotimber/phone-core";
+import type { Phone, PhoneKey, ScreenModel } from "@hellotimber/phone-core";
+import { Framebuffer } from "@hellotimber/phone-screen";
+import { paintWidget, type KeyguardModel } from "../../display/widgets";
+import type { StockWidgetTimeline } from "../../resources";
 import { timelineByName } from "../timelines";
 import type { StockFeature } from "./feature";
+
+/** The keyguard's generated widget timelines (plan 25's resource registration). */
+const TIMELINES = {
+  lockNote: timelineByName("keypad-locked"),
+  hint: timelineByName("keyguard-hint"),
+  hintScroll: timelineByName("keyguard-hint-scroll"),
+  nowPress: timelineByName("keyguard-now-press"),
+  activeNote: timelineByName("keypad-active"),
+  emergency: timelineByName("keyguard-emergency"),
+} as const;
 
 /** The phone's lengths of the keyguard's screens, from the generated widget timelines. */
 export const KEYGUARD_TIMES = {
   /** `Keypad locked` (K1: 442/232/240/1972 ms, a 9 ms partial draw). */
-  lockNoteMs: timelineByName("keypad-locked").timeline.durationMs,
+  lockNoteMs: TIMELINES.lockNote.timeline.durationMs,
   /** The hint after a digit, `*` or `#` (K3). */
-  hintMs: timelineByName("keyguard-hint").timeline.durationMs,
-  /** The hint after C, ▲ or ▼ (its last step ends 23 ms sooner). */
-  hintScrollMs: timelineByName("keyguard-hint-scroll").timeline.durationMs,
+  hintMs: TIMELINES.hint.timeline.durationMs,
+  /** The hint after C, ▲, ▼ or the power key, before its closing partial (its last step ends 23 ms sooner). */
+  hintScrollMs: TIMELINES.hintScroll.timeline.durationMs,
   /** `Now press *` (K4): also the unlock window (`*` at 1440 ms unlocks, at 1450 ms does not). */
-  nowPressMs: timelineByName("keyguard-now-press").timeline.durationMs,
+  nowPressMs: TIMELINES.nowPress.timeline.durationMs,
   /** `Keypad active` (K5: `Done`'s box and tick, 683/232/521 ms, a 9 ms partial). */
-  activeNoteMs: timelineByName("keypad-active").timeline.durationMs,
+  activeNoteMs: TIMELINES.activeNote.timeline.durationMs,
   /** The emergency display (K6: 3879 ms). */
-  emergencyMs: timelineByName("keyguard-emergency").timeline.durationMs,
+  emergencyMs: TIMELINES.emergency.timeline.durationMs,
 } as const;
 
 /**
@@ -32,8 +45,15 @@ export const KEYGUARD_TIMES = {
 export const KEYGUARD_LOCK_WINDOW_MS = 2925;
 /** Standby with its ladders erased before the hint (`keyguard/hint` frame 1). */
 export const KEYGUARD_HINT_LEAD_MS = 27;
-/** The same before C's, ▲'s and ▼'s hint (`keyguard/hint/up` frame 1). */
+/** The same before the hint of C, ▲, ▼ and the power key (`keyguard/hint/up` frame 1). */
 export const KEYGUARD_HINT_SCROLL_LEAD_MS = 25;
+/**
+ * The partial draw that closes the hint of C, ▲, ▼ and the power key (`keyguard/hint/up` and
+ * `hint/pwr` frame 10, the image of
+ * the digits' 8 ms one): longer than the extractor's partials, so the generated timeline stops
+ * before it and the keyguard plays the digits' hint's last frame for this long.
+ */
+export const KEYGUARD_HINT_SCROLL_PARTIAL_MS = 23;
 /** `Now press *` without its ladders before `Keypad active` (`keyguard/unlock` frame 2). */
 export const KEYGUARD_UNLOCK_LEAD_MS = 21;
 /** Of the numbers tried (112, 911, 999, 000, 08, 110), only 112 passes the keyguard (Task 0). */
@@ -54,9 +74,25 @@ export type KeyguardState =
   | "unlocked-note"
   | "passing";
 
-/** What the keyguard shows, since when (kernel time). */
+/** A screen of the keyguard's with ladders, which a key leaves (ladders erased) for the hint. */
+export type KeyguardLeadScreen =
+  | { readonly screen: "locked-standby" }
+  | { readonly screen: "now-press" }
+  | { readonly screen: "emergency"; readonly number: string };
+
+/**
+ * What the keyguard shows, since when (kernel time). A hint called from a screen with ladders
+ * first shows that screen without them for `lead.ms` (`keyguard/hint` b, `unlock-digit` c,
+ * `emergency/112-digit` e); one that replaces a note (a key during the hint) starts at once
+ * (`keyguard/hint-during`).
+ */
 export type KeyguardView =
-  | { readonly state: "hint"; readonly since: number; readonly scroll: boolean }
+  | {
+      readonly state: "hint";
+      readonly since: number;
+      readonly scroll: boolean;
+      readonly lead?: { readonly ms: number; readonly under: KeyguardLeadScreen };
+    }
   | { readonly state: "emergency"; readonly since: number; readonly number: string }
   | { readonly state: Exclude<KeyguardState, "hint" | "emergency">; readonly since: number };
 
@@ -72,7 +108,8 @@ export interface KeyguardOutcome {
 
 const PASSED: KeyguardOutcome = { consumed: false, activity: true, silent: false };
 const SWALLOWED: KeyguardOutcome = { consumed: true, activity: false, silent: true };
-const SCROLL_KEYS: ReadonlySet<PhoneKey> = new Set(["c", "up", "down"]);
+/** Keys whose hint has the shorter lead and the 23 ms closing partial (`keyguard/hint/up`, `pwr`). */
+const SCROLL_KEYS: ReadonlySet<PhoneKey> = new Set(["c", "up", "down", "power"]);
 const DIGITS = /^[0-9]$/;
 
 export interface KeyguardOptions {
@@ -221,8 +258,32 @@ export class KeyguardEngine {
         return this.#take(key, { consumed: true, activity: true, silent: true });
       }
     }
-    this.#show({ state: "hint", since: now, scroll: SCROLL_KEYS.has(key) });
+    const scroll = SCROLL_KEYS.has(key);
+    const under = this.#leadScreen();
+    this.#show({
+      state: "hint",
+      since: now,
+      scroll,
+      ...(under === undefined
+        ? {}
+        : { lead: { ms: scroll ? KEYGUARD_HINT_SCROLL_LEAD_MS : KEYGUARD_HINT_LEAD_MS, under } }),
+    });
     return this.#take(key, { ...SWALLOWED, activity: key === "power" });
+  }
+
+  /** The screen with ladders showing now, if one does (a note shows none). */
+  #leadScreen(): KeyguardLeadScreen | undefined {
+    const view = this.#view;
+    switch (view.state) {
+      case "locked":
+        return { screen: "locked-standby" };
+      case "unlocking":
+        return { screen: "now-press" };
+      case "emergency":
+        return { screen: "emergency", number: view.number };
+      default:
+        return undefined;
+    }
   }
 
   #locked(since: number): void {
@@ -246,9 +307,10 @@ export class KeyguardEngine {
       case "hint":
         return (
           view.since +
+          (view.lead?.ms ?? 0) +
           (view.scroll
-            ? KEYGUARD_HINT_SCROLL_LEAD_MS + KEYGUARD_TIMES.hintScrollMs
-            : KEYGUARD_HINT_LEAD_MS + KEYGUARD_TIMES.hintMs)
+            ? KEYGUARD_TIMES.hintScrollMs + KEYGUARD_HINT_SCROLL_PARTIAL_MS
+            : KEYGUARD_TIMES.hintMs)
         );
       case "unlocking":
         return view.since + KEYGUARD_TIMES.nowPressMs;
@@ -262,5 +324,137 @@ export class KeyguardEngine {
   }
 }
 
-/** The keyguard's wiring over the kernel arrives in Task 7; the engine is above. */
+// ---------------------------------------------------------------- the overlay (Task 7, D4)
+
+type Standby = Extract<ScreenModel, { kind: "standby" }>;
+type NoteScreen = Extract<KeyguardModel, { frame: unknown }>["screen"];
+
+/** A note's step `elapsed` ms into `timeline` (a `cut` step carries the step it draws). */
+function noteStep(
+  screen: NoteScreen,
+  timeline: StockWidgetTimeline,
+  elapsed: number,
+): KeyguardModel {
+  const index = timeline.timeline.frameAt(elapsed);
+  const frame = timeline.frames[index]!;
+  const next = frame.kind === "cut" ? timeline.frames[index + 1] : undefined;
+  return { kind: "keyguard", screen, frame, ...(next === undefined ? {} : { next }) };
+}
+
+/** A screen of the keyguard's with ladders, over the kernel's standby. */
+function withLadders(under: KeyguardLeadScreen, standby: Standby): KeyguardModel {
+  return under.screen === "emergency"
+    ? { kind: "keyguard", screen: "emergency", standby, number: under.number }
+    : { kind: "keyguard", screen: under.screen, standby };
+}
+
+/**
+ * What the keyguard shows at `now` for `view`, over the kernel's `standby`; undefined while the
+ * kernel's own screen shows (unlocked, or a call passing through).
+ */
+export function keyguardModel(
+  view: KeyguardView,
+  now: number,
+  standby: Standby,
+): KeyguardModel | undefined {
+  const elapsed = now - view.since;
+  switch (view.state) {
+    case "unlocked":
+    case "passing":
+      return undefined;
+    case "locked":
+      return withLadders({ screen: "locked-standby" }, standby);
+    case "unlocking":
+      return withLadders({ screen: "now-press" }, standby);
+    case "emergency":
+      return withLadders({ screen: "emergency", number: view.number }, standby);
+    case "locking":
+      return noteStep("lock-note", TIMELINES.lockNote, elapsed);
+    case "unlocked-note":
+      return elapsed < KEYGUARD_UNLOCK_LEAD_MS
+        ? withLadders({ screen: "now-press" }, { ...standby, leaving: true })
+        : noteStep("active-note", TIMELINES.activeNote, elapsed - KEYGUARD_UNLOCK_LEAD_MS);
+    case "hint": {
+      const lead = view.lead;
+      if (lead !== undefined && elapsed < lead.ms) {
+        return withLadders(lead.under, { ...standby, leaving: true });
+      }
+      const t = elapsed - (lead?.ms ?? 0);
+      if (!view.scroll) return noteStep("hint", TIMELINES.hint, t);
+      if (t < KEYGUARD_TIMES.hintScrollMs) return noteStep("hint", TIMELINES.hintScroll, t);
+      // The closing partial draw: the digits' hint's last step (KEYGUARD_HINT_SCROLL_PARTIAL_MS).
+      return noteStep("hint", TIMELINES.hint, KEYGUARD_TIMES.hintMs - 1);
+    }
+  }
+}
+
+/**
+ * The keyguard over a kernel phone (D4): the stock wrapper hands it every key-down of a powered
+ * phone and shows its screen, while it has one, instead of the kernel's. The kernel stays at
+ * standby underneath, so its clock, indicators and notice keep updating in the locked standby.
+ * Frames are `custom` screens painted by the stock painter, repainted only when their model
+ * changes (each sees the frame shown before: the notes' partial draws start from it).
+ */
+export class KeyguardOverlay {
+  readonly engine: KeyguardEngine;
+  readonly #kernel: Phone;
+  readonly #now: () => number;
+  /** The kernel's standby last seen (the locked standby composes it). */
+  #standby: Standby | undefined;
+  #shown: { readonly json: string; readonly screen: ScreenModel & { kind: "custom" } } | undefined;
+
+  constructor(kernel: Phone, options: KeyguardOptions) {
+    this.#kernel = kernel;
+    this.#now = options.now;
+    this.engine = new KeyguardEngine(options);
+  }
+
+  /**
+   * A powered phone's key-down. Menu at standby (no notice: Navi reads it) opens the lock
+   * window; the locking `*` returns the kernel's carousel to standby underneath the lock note.
+   */
+  keyDown(key: PhoneKey): KeyguardOutcome {
+    const screen = this.#kernel.screen;
+    const atStandby = screen.kind === "standby" && screen.notice === undefined;
+    const wasLocked = this.engine.locked;
+    const outcome = this.engine.keyDown(key, atStandby);
+    if (!wasLocked && this.engine.locked) this.#kernel.navigate("standby");
+    return outcome;
+  }
+
+  /** A key-up: true when the keyguard took the key (the kernel must not see its key-up). */
+  keyUp(key: PhoneKey): boolean {
+    return this.engine.keyUp(key);
+  }
+
+  /** Power-off: the keyguard lives in RAM. */
+  reset(): void {
+    this.engine.reset();
+  }
+
+  /** The keyguard's screen now, or undefined while the kernel's shows. */
+  get screen(): ScreenModel | undefined {
+    this.engine.tick();
+    const kernel = this.#kernel.screen;
+    if (kernel.kind === "standby") {
+      // The locked standby keeps its ladders: Menu's `leaving` frame belongs to the carousel.
+      const { leaving: _leaving, ...standby } = kernel;
+      this.#standby = standby;
+    }
+    const standby = this.#standby;
+    if (standby === undefined) return undefined;
+    const model = keyguardModel(this.engine.view, this.#now(), standby);
+    if (model === undefined) return undefined;
+    const json = JSON.stringify(model);
+    const shown = this.#shown;
+    if (shown?.json === json) return shown.screen;
+    const fb = new Framebuffer();
+    paintWidget(fb, model, shown?.screen.frame.pixels);
+    const frame = { width: fb.width, height: fb.height, pixels: fb.pixels };
+    this.#shown = { json, screen: { kind: "custom", appId: "keyguard", frame } };
+    return this.#shown.screen;
+  }
+}
+
+/** The keyguard is wired by the stock phone wrapper (`src/firmware/phone.ts`): no tree screens. */
 export const keyguardFeature: StockFeature = { name: "keyguard" };

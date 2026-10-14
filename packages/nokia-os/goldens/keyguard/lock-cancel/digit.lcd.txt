@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/lock-cancel/digit
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/lock-cancel/digit
 source-sha256: 63074ae23102fd2edbcc4fc81c2b99c1e40a3c11b80ef0ec9c464f43d1e327a5
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/emergency/112
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/emergency/112
 source-sha256: 18ae76da0c7219d2a68869b6a3b06236fe1c3d9f67157241ac0a1d06fb69516d
 trigger-frame: 1

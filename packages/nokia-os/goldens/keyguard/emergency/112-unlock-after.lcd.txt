@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/emergency/112-unlock-after
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/emergency/112-unlock-after
 source-sha256: 37c1f13bac72f436747e5e0d5e98cd787508d10c348f031d0778e407e5b29288
 trigger-frame: 1

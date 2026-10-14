@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/unlock-star-held
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/unlock-star-held
 source-sha256: d2c7818668046b2543d1479cbd39a8367f63aba5efbc2a8af3f6fcbdb7093e37
 trigger-frame: 1

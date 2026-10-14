@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/hint-during
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/hint-during
 source-sha256: e8663f201335955693801f4498a82d4e4ba2912b11cb910286ad45add068fbdf
 trigger-frame: 1

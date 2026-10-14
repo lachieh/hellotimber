@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/standby
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/standby.png
 source-sha256: 0635c97e8466c4a20fd3107f1fa8ee629842d39cb8211b371eaffa2a42ed78a8
 note: The locked standby (K2).

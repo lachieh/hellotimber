@@ -6,6 +6,7 @@ import type { PhoneKey } from "@hellotimber/phone-core";
 import {
   KEYGUARD_HINT_LEAD_MS,
   KEYGUARD_HINT_SCROLL_LEAD_MS,
+  KEYGUARD_HINT_SCROLL_PARTIAL_MS,
   KEYGUARD_LOCK_WINDOW_MS,
   KEYGUARD_TIMES,
   KEYGUARD_UNLOCK_LEAD_MS,
@@ -84,6 +85,19 @@ describe("the generated durations and the goldens' windows", () => {
     expect(KEYGUARD_HINT_SCROLL_LEAD_MS).toBe(frame("keyguard/hint/up", 1));
     expect(KEYGUARD_UNLOCK_LEAD_MS).toBe(frame("keyguard/unlock", 2));
   });
+
+  it("closes C's, ▲'s and ▼'s hint with the digits' partial draw, for its own time", () => {
+    const up = loadGolden("keyguard/hint/up");
+    const digits = loadGolden("keyguard/hint");
+    const partial = up.timeline![10]!;
+    expect(KEYGUARD_HINT_SCROLL_PARTIAL_MS).toBe(partial.durationMs);
+    expect(findGoldenImage(up, partial.image).pixels).toEqual(
+      findGoldenImage(digits, digits.timeline![10]!.image).pixels,
+    );
+    // The generated timeline stops where the partial starts.
+    const start = (rows: typeof up.timeline, n: number) => rows![n]!.startMs - rows![2]!.startMs;
+    expect(KEYGUARD_TIMES.hintScrollMs).toBe(start(up.timeline, 10));
+  });
 });
 
 describe("locking (D5)", () => {
@@ -131,10 +145,15 @@ describe("the locked phone (K3, D6)", () => {
       const r = locked();
       r.at(10_000);
       expect(r.key(key), key).toEqual({ ...SWALLOWED, activity: key === "power" });
+      const scroll = key === "c" || key === "up" || key === "down" || key === "power";
       expect(r.engine.view, key).toEqual({
         state: "hint",
         since: 10_000,
-        scroll: key === "c" || key === "up" || key === "down",
+        scroll,
+        lead: {
+          ms: scroll ? KEYGUARD_HINT_SCROLL_LEAD_MS : KEYGUARD_HINT_LEAD_MS,
+          under: { screen: "locked-standby" },
+        },
       });
     }
   });
@@ -146,16 +165,26 @@ describe("the locked phone (K3, D6)", () => {
     const ends = 10_000 + KEYGUARD_HINT_LEAD_MS + KEYGUARD_TIMES.hintMs;
     r.at(11_000);
     r.key("6");
+    // A key during the hint restarts it at once: no lead (keyguard/hint-during).
     expect(r.engine.view).toEqual({ state: "hint", since: 11_000, scroll: false });
     r.at(ends + 500); // past the first hint's end: the second still shows
     expect(r.engine.state).toBe("hint");
-    r.at(11_000 + KEYGUARD_HINT_LEAD_MS + KEYGUARD_TIMES.hintMs);
+    r.at(11_000 + KEYGUARD_TIMES.hintMs - 1);
+    expect(r.engine.state).toBe("hint");
+    r.at(11_000 + KEYGUARD_TIMES.hintMs);
     expect(r.engine.state).toBe("locked");
 
     const c = locked();
     c.at(10_000);
     c.key("c");
-    c.at(10_000 + KEYGUARD_HINT_SCROLL_LEAD_MS + KEYGUARD_TIMES.hintScrollMs);
+    const scrollEnds =
+      10_000 +
+      KEYGUARD_HINT_SCROLL_LEAD_MS +
+      KEYGUARD_TIMES.hintScrollMs +
+      KEYGUARD_HINT_SCROLL_PARTIAL_MS;
+    c.at(scrollEnds - 1);
+    expect(c.engine.state).toBe("hint");
+    c.at(scrollEnds);
     expect(c.engine.state).toBe("locked");
   });
 

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/unlock-digit
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/unlock-digit
 source-sha256: 6ec21ce8251e0f5a52551a07d9875aa4283c000a6f612f672a0842f21cebc1b7
 trigger-frame: 1

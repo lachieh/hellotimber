@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/unlock-twice-star
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/unlock-twice-star
 source-sha256: 16b468c61757a1f65131a773ae3903ce9f23506f130ce0ff29e79344c891fdd2
 trigger-frame: 1
