@@ -843,20 +843,44 @@ hidden 243, shown 237, 243, 238, 242, 238, 243, 237, then hidden 145 until the g
 `src/games/snake/seed.ts` (new: clock → seed), `tests/support/snake-decode.ts` (new),
 `tests/snake-rng.test.ts` (new), `tests/snake-decode.test.ts` (new).
 
-- [ ] TDD the decoder on synthetic frames painted from known cells (the sprites from Task 4):
+- [x] TDD the decoder on synthetic frames painted from known cells (the sprites from Task 4):
       head, body cells, food, creature cells, score digits; it rejects frames it cannot read.
-- [ ] TDD `rng.ts`: the generator (H12), `next()`, and placement helpers `placeFood` and
+- [x] TDD `rng.ts`: the generator (H12), `next()`, and placement helpers `placeFood` and
       `placeCreature` (H8, H9) on an occupancy grid.
-- [ ] `snake-seeds.ts` searches the 65,521 seeds for a golden's decoded placement sequence; the
+- [x] `snake-seeds.ts` searches the 65,521 seeds for a golden's decoded placement sequence; the
       test runs it over every gameplay golden and requires exactly one seed per golden that
       reproduces every placement (meals' new food, creatures and kinds). If none fits, stop and
       report: H12 is wrong.
-- [ ] Fit `seed.ts` from the C9 seeds (one per clock setting and date): try the clock's fields
+- [x] Fit `seed.ts` from the C9 seeds (one per clock setting and date): try the clock's fields
       (hours, minutes, an RTC seconds value of 0, day, month, year) and simple combinations; commit
       the function that fits every setting, with a test per setting. If none fits, use the
       fallback of D4 and say so in the test name.
-- [ ] Reseed points (H12, C8): the splash, New game and Continue; a test per point from the goldens.
-- [ ] Commit: `feat(nokia-os): Snake II random numbers reproduced from captured placements`.
+- [x] Reseed points (H12, C8): the splash, New game and Continue; a test per point from the goldens.
+- [x] Commit: `feat(nokia-os): Snake II random numbers reproduced from captured placements`.
+
+Outcome: H12, H8 and H9 hold. `searchSeeds` finds exactly the recording's seed for every
+golden with three or more placements (44530 for the 10:10 games: bot-long's 37 placements with
+five creatures, the large one included, bot-short, bot-maze2, bot-maze3, bot-grace, pause-bot,
+score-8, seed-1010 and its second game), each C9 clock's seed, and each creature recapture's
+seed. Two seeds fit seed-0759 (36670, 60943; four placements) and creature-0914 (5371, 41170).
+The timelines (ticks-l1..9, maze-0..5, virgin-meal, virgin-game: one or two placements) admit
+4-584 seeds each, 44530 among them. The C7 key probes have no tick 0 and are not searched.
+Deviation (seed function, D4 fallback): no closed form of the clock and date ports fits every C9
+seed. `(seconds of the day + 7930) mod 65521` fits 07:59, 10:10, 10:11, 12:00, 19:48 and the
+seven Task 4 recapture clocks (09:14-12:21). 23:59 (38909) and 10:10 on 14.10.2026 (10048) both
+differ from it by exactly 10160, the shift a 32-bit seconds count adds when `seed × 0x625f`
+overflows 2^32 in the first draw (2^32 mod 65521 = 225; -225 × 0x625f^-1 ≡ 10160), so the
+generator is fed a 32-bit timestamp; but 5788 epochs fit those seven settings, none at a
+midnight, so the epoch is open. 00:00 and 00:01 give the same seed (7995; the two captures are
+identical), which no function of the shown clock gives (perhaps no reseed at those times; the
+boot seed 7995 is not on seed 1's orbit). `seed.ts` therefore uses the minutes of the day
+(UNVERIFIED), and a test records the evidence. Tests and Task 10's `createStockPhoneWith(config,
+{ seed })` inject recovered seeds.
+Deviation (reseed points): tests cover New game (seed-1010-second draws seed-1010's placements,
+not a continuation of its generator) and Continue (pause-bot's placements continue its game's
+sequence: no reseed, Task 0). The splash reseed is not observable (New game reseeds anyway), so
+it has no test. The decoder (`tests/support/snake-decode.ts`) also turns a golden into its
+placement sequence (`goldenPlacements`), and reads boards without the snake (the blink).
 
 ### Task 6 - Engine I: board, movement, keys, collisions and food (TDD)
 
