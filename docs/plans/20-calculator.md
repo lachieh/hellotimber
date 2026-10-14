@@ -527,19 +527,32 @@ transcribed result/convert rows, float traps, formatting, and a 400-value proper
 `src/firmware/records.ts` (one-line registration of `CALCULATOR_RECORD`),
 `tests/calculator-engine.test.ts` (new), `tests/calculator-rate.test.ts` (new).
 
-- [ ] TDD the engine from Task 0's cases: entry (limit, `#`, leading zeros, C, C held), the `*`
+- [x] TDD the engine from Task 0's cases: entry (limit, `#`, leading zeros, C, C held), the `*`
       cycle and chaining, the lines shown (one, two or three), `options()` per state (8, 4 or 5
       entries with their actions), each action's effect, notes as results that restore the state
       before the action, and C on `0` as `leave`. Replay literal input truncation per the corrected R criterion.
-- [ ] TDD a distinct rate-editor state with seven typed characters, nine-character prefill,
+- [x] TDD a distinct rate-editor state with seven typed characters, nine-character prefill,
       replace-on-first-digit, point/empty behavior, cursor wrap and insertion/deletion from D7.
-- [ ] TDD `CALCULATOR_RECORD` (virgin value, encode/decode, version, stale content dropped, the
+- [x] TDD `CALCULATOR_RECORD` (virgin value, encode/decode, version, stale content dropped, the
       factory reset to rate `1` in both directions after either stored direction) and `CalculatorRate` (`shown` per direction, `set`, `convert`
       per direction, virgin Foreign `0` / Domestic empty, saved empty/`.` as zero, exact Domestic
       `3` conversions `10 → 3.3333333` / `30`, rate 0) against the `calculator/convert` and `persist` cases.
-- [ ] `tests/eeprom.test.ts`'s pinned record list (if any) gains the record; nothing else changes.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): calculator engine and exchange-rate record`.
+- [x] `tests/eeprom.test.ts`'s pinned record list (if any) gains the record; nothing else changes.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): calculator engine and exchange-rate record`.
+
+**Task 4 completion.** `src/calculator/engine.ts` (`pressKey`, `clearHeld`, `displayLines`,
+`optionsFor`, `chooseOption`; 99 tests from Task 0's cases, including the literal truncation
+replays), `src/calculator/rate-entry.ts` (the D7 cursor editor) and `src/calculator/rate.ts`
+(`CALCULATOR_RECORD`, `CalculatorRate`; 47 tests). Rules read from the stills beyond the plan's
+wording: C on a shown result clears it to `0` (`choose/result-c`), C on a typed `0` empties the
+entry and only C on nothing typed leaves (`entry/zero-c`, `entry/result-c-c`); the rate entry's
+`*` does nothing (`rate/keys/star`) and `#` on a prefilled value replaces it with `.`
+(`rate/keys/prefilled-point`).
+
+Deviation: `CALCULATOR_RECORD` is registered by the calculator feature's `records` (plan 15
+D2), which `src/firmware/records.ts` already composes; that file needs no line, and
+`tests/eeprom.test.ts` pins no record list.
 
 ### Task 5 - Calculator painter (TDD against goldens)
 
