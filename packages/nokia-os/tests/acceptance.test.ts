@@ -204,6 +204,19 @@ const SCENARIOS: Record<string, (id: string) => void> = {
       "Clock, Select, 2 s, C",
     );
   },
+  "menu/01-phone-book.sub-up": (id) => {
+    const golden = loadGolden(id);
+    const rig = standbyRig();
+    rig.press("navi");
+    rig.advance(100);
+    rig.press("navi");
+    for (let i = 0; i < 5; i++) rig.press("down");
+    golden.images.forEach((image, i) => {
+      if (i > 0) rig.press("up");
+      rig.advance(10);
+      expectLcd(rig.paint(), { id, image }, `Phone book, ▼×5, ▲×${i}`);
+    });
+  },
   "menu/11-clock.sub-1948": (id) => levelOne(id, 11, { clock: () => "19:48" }),
   "menu/11-clock.sub-0759": (id) => levelOne(id, 11, { clock: () => "07:59" }),
 };
@@ -218,11 +231,11 @@ SLUGS.forEach((slug, i) => {
 
 /**
  * Asserted plan 14 goldens whose scenarios land with the stock widgets: the generic tree
- * scenarios and the probe scenarios in plan 14 Task 13, the rows window in Task 9. Until then
- * they are todos; Task 13 deletes this bridge.
+ * scenarios and the probe scenarios in plan 14 Task 13. Until then they are todos; Task 13
+ * deletes this bridge.
  */
 function awaitsPlan14Scenario(id: string): boolean {
-  return id.startsWith("tree/") || id.startsWith("probe/") || id === "menu/01-phone-book.sub-up";
+  return id.startsWith("tree/") || id.startsWith("probe/");
 }
 
 describe("stock phone against every asserted v6.39 golden", () => {
@@ -232,7 +245,7 @@ describe("stock phone against every asserted v6.39 golden", () => {
       continue;
     }
     if (awaitsPlan14Scenario(id) && SCENARIOS[id] === undefined) {
-      it.todo(`${id} (asserted; scenario lands in plan 14 Task 9/13)`);
+      it.todo(`${id} (asserted; scenario lands in plan 14 Task 13)`);
       continue;
     }
     const scenario = SCENARIOS[id];

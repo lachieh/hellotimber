@@ -1036,20 +1036,45 @@ the first frame with a `digits` run), so Task 11 takes their labels from the gol
 `src/display/widgets/{options.ts,multi.ts}` (new), `src/firmware/phone.ts` (`rowsWindow: 3`),
 `tests/flow.test.ts`, `tests/widgets-lists.test.ts` (new), `tests/paint-lists.test.ts`.
 
-- [ ] TDD flow host (`StockFlowApplication`): a stack of widgets; `push`, `replace`,
+- [x] TDD flow host (`StockFlowApplication`): a stack of widgets; `push`, `replace`,
       `back(levels)` (empty → `context.exit()`), `standby()` (→ `exit({ to: "standby" })`);
       keys act on short-press release as in the placeholder; tick drives the top widget; render
       returns a cached `custom` frame painted by `paintWidget`, repainted only when the model changes.
-- [ ] Rows painter takes `windowTop` (circular rows). Kernel lists use `screen.windowTop`. Remove
+- [x] Rows painter takes `windowTop` (circular rows). Kernel lists use `screen.windowTop`. Remove
       the `max(0, selected - 2)` rule (subtract). Plan 13's literal list models in
       `paint-lists.test.ts` gain the `windowTop` the kernel now emits; their `.sub` goldens still pass.
-- [ ] TDD option list: opening per the store; D3 window; indicator `<path>-<k>` and `-0` unset;
+- [x] TDD option list: opening per the store; D3 window; indicator `<path>-<k>` and `-0` unset;
       softkey `OK`/`Quit`; OK writes the store and runs the option's result (`replace` with its
       widget); C back. Unset ▼/▲ per P10.
-- [ ] TDD multi-select: marks from the store; softkey `Mark`/`Unmark` toggles; C leaves (P14).
-- [ ] Painting tests: the literal widget models equal every image of one `.options` golden per
+- [x] TDD multi-select: marks from the store; softkey `Mark`/`Unmark` toggles; C leaves (P14).
+- [x] Painting tests: the literal widget models equal every image of one `.options` golden per
       layout variant (single, unset, multi) and `menu/01-phone-book.sub-up`.
-- [ ] Commit: `feat(nokia-os): flow host, circular rows window and option lists`.
+- [x] Commit: `feat(nokia-os): flow host, circular rows window and option lists`.
+
+Deviation: option-list indicators are not always `<list path>-<k>`. Decoding the first image of
+every option-list golden: the lists of Message settings › Set n show only the option's number
+(`tree/02-messages/2-7-1-3.options`: `6`; all 2-7-n-m lists), and the Call divert lists show
+their parent level's path (`tree/07-call-divert/7-3-4.options`: `7-3-0`, `7-3-1`;
+`7-1-1.options`: `7-1-1`). The option list takes a `numbering` (`path`/`parent`/`option`) and
+`bindings.ts` has `optionListNumbering(number)` (prefixes `2-7-` → option, `7-` → parent), which
+Task 12 passes to every list. Every other list, info pages included, reads `<path>-<k>`.
+Deviation: the indicator painter draws the stock awaiting form (`MenuIndicator.typed`): the
+level's path, a dash and the typed digits, right-aligned to end at x 78, then the dots (`1`, `12-`,
+`11-0`; probe/shortcut-m1-2 images d and i); kernel lists add no selection number then, and the
+list and carousel painters hide the soft key while `opening`. `awaitingFirst` still draws only
+the dots. Widget lists use the same rule through `rowsIndicator` (src/widgets/rows.ts, shared by
+the option list and multi-select with the D3 cursor). Painters live in
+`src/display/widgets/{options,multi,index}.ts`; `index.ts` holds the `WidgetModel` union and
+`paintWidget`. `menu/01-phone-book.sub-up` gets its key-driven acceptance scenario here (Phone
+book, ▼×5, ▲ per image), so `awaitsPlan14Scenario` keeps only `tree/*` and `probe/*`.
+Deviation: multi-select toggles write the store at once and C leaves (this task's text); Task 10
+adds the `Save changes?` query of P14.
+
+Completion (Task 9): pixel-exact in unit tests, driven by keys through the flow host against the
+virgin store: every asserted option-list `.options` golden (single choice, unset, multi-select
+2-8-5) image by image, and every asserted option-list `.open` golden (Profiles' Personalise lists
+included, through the Tones alias); literal models for 2-7-1-3, 5-2 and 2-8-5; the kernel's
+`menu/01-phone-book.sub-up` (paint test and acceptance) and every plan 13 `.sub` with `windowTop`.
 
 ### Task 10 - Notes, progress notes and confirm queries (TDD against goldens)
 

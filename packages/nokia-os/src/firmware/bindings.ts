@@ -73,3 +73,22 @@ export const VIRGIN_TEXTS: readonly (
   { key: "games/pairs-ii/time-trial/top-score", number: "8-4-1-3", line: 1 },
   { key: "games/pairs-ii/puzzle/top-score", number: "8-4-2-3", line: 1 },
 ];
+
+/**
+ * Option lists whose indicator is not `<list path>-<k>`, by node number prefix (measured on the
+ * first image of every option-list golden): the lists of Message settings › Set n show only the
+ * option's number (`tree/02-messages/2-7-1-3.options`: `6`), and the Call divert lists show their
+ * parent level's path (`tree/07-call-divert/7-3-4.options`: `7-3-0`, `7-3-1`).
+ */
+const OPTION_LIST_NUMBERING: readonly {
+  readonly prefix: string;
+  readonly numbering: "parent" | "option";
+}[] = [
+  { prefix: "2-7-", numbering: "option" },
+  { prefix: "7-", numbering: "parent" },
+];
+
+/** How the option list at tree node `number` numbers its indicator. */
+export function optionListNumbering(number: string): "path" | "parent" | "option" {
+  return OPTION_LIST_NUMBERING.find(({ prefix }) => number.startsWith(prefix))?.numbering ?? "path";
+}

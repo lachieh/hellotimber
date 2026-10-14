@@ -11,7 +11,8 @@ const TITLE_WIDTH = 78;
 
 /**
  * The main-menu carousel: the large title, the animated icon (frame `iconFrame`, else its
- * first frame), the rail placing the slot among `total`, the indicator and the softkey.
+ * first frame), the rail placing the slot among `total`, the indicator and the softkey (hidden
+ * while a typed entry is opening).
  */
 export function paintCarousel(
   fb: Framebuffer,
@@ -28,5 +29,6 @@ export function paintCarousel(
   fb.blitBitmap(frame, icon.x, icon.y);
   paintRail(fb, screen.menuNumber - 1, screen.total);
   paintIndicator(fb, screen.menuIndicator);
-  fb.drawTextCentered(STOCK_FONTS.small, "Select", SOFTKEY_TOP);
+  // While a typed entry is opening there is no soft key (plan 14 D14).
+  if (!screen.opening) fb.drawTextCentered(STOCK_FONTS.small, "Select", SOFTKEY_TOP);
 }

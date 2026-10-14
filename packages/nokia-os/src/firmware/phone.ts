@@ -1,4 +1,5 @@
 import { createPhone, type Phone } from "@hellotimber/phone-core";
+import { VISIBLE_ROWS } from "../display/list-rows";
 import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
 import { createStockMenu } from "./menu";
 import type { StockPorts } from "./bindings";
@@ -44,5 +45,7 @@ export function createStockPhone(config: StockPhoneConfig): Phone {
     standbyKeys: STOCK_STANDBY_KEYS,
     menuOpenDelayMs: STOCK_MENU_OPEN_DELAY_MS,
     shortcutWindowMs: STOCK_SHORTCUT_WINDOW_MS,
+    // Rows levels keep the stateful circular window of the stock painter (plan 14 D3).
+    rowsWindow: VISIBLE_ROWS,
   });
 }

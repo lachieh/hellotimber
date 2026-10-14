@@ -1,14 +1,14 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { SubmenuEntry, type ScreenModel } from "@hellotimber/phone-core";
+import { rowsWindowTop, SubmenuEntry, type ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { paintIndicator } from "../src/display/indicator";
 import { paintRail, railBumpTop } from "../src/display/rail";
 import { createStockMenu } from "../src/firmware/menu";
 import { paintStockScreen } from "../src/index";
-import { expectLcd } from "./support/golden.ts";
-import { loadGolden } from "./support/goldens.ts";
+import { expectLcd, lcdMismatch } from "./support/golden.ts";
+import { goldenImage, loadGolden } from "./support/goldens.ts";
 
 type List = Extract<ScreenModel, { kind: "list" }>;
 
@@ -24,8 +24,14 @@ const INDEX: IndexEntry[] = JSON.parse(
 // Clock settings and Date setting show the emulator's clock and setup date (D11 test inputs).
 const menu = createStockMenu({ clock: () => "10:10", date: () => "13.10.2026" });
 
-/** The literal list model the kernel emits for `submenu` with child `selected` highlighted. */
-function listModel(submenu: SubmenuEntry, selected: number): List {
+/** Rows submenus keep a three-row circular window (createStockPhone sets `rowsWindow: 3`). */
+const ROWS = 3;
+
+/**
+ * The literal list model the kernel emits for `submenu` with child `selected` highlighted and,
+ * on a rows level, the window top `windowTop` (default: as entered with `selected`).
+ */
+function listModel(submenu: SubmenuEntry, selected: number, windowTop?: number): List {
   const children = submenu.children.entries;
   const orders = children.map((child) => child.order.value);
   const detail = submenu.detailOf(children[selected]!);
@@ -39,7 +45,27 @@ function listModel(submenu: SubmenuEntry, selected: number): List {
     menuIndicator: { segments: [submenu.order.value], awaitingNext: false },
     ...(submenu.presentation === "pages" ? { presentation: "pages" as const } : {}),
     ...(detail === undefined ? {} : { detail }),
+    ...(submenu.presentation === "pages"
+      ? {}
+      : { windowTop: windowTop ?? rowsWindowTop(undefined, selected, children.length, ROWS) }),
   };
+}
+
+/** The selections and window tops of a rows level entered at `from`, then moved by `keys`. */
+function walk(
+  count: number,
+  from: number,
+  keys: readonly ("up" | "down")[],
+): { selected: number; windowTop: number }[] {
+  let selected = from;
+  let windowTop = rowsWindowTop(undefined, from, count, ROWS);
+  const states = [{ selected, windowTop }];
+  for (const key of keys) {
+    selected = (selected + (key === "down" ? 1 : count - 1)) % count;
+    windowTop = rowsWindowTop(windowTop, selected, count, ROWS);
+    states.push({ selected, windowTop });
+  }
+  return states;
 }
 
 function paint(screen: ScreenModel): Framebuffer {
@@ -64,14 +90,112 @@ describe("stock submenu lists against every asserted level-1 golden", () => {
     const number = Number(/menu\/(\d+)-/.exec(id)![1]);
     const submenu = menu.entries[number - 1]!.entry as SubmenuEntry;
 
-    for (const image of golden.images) {
-      const selected = Number(image.name) - 1;
+    // Each image is one ▼ further from the first child.
+    const states = walk(
+      submenu.children.entries.length,
+      0,
+      golden.images.map(() => "down"),
+    );
+    golden.images.forEach((image, i) => {
+      const { selected, windowTop } = states[i]!;
       it(`${id} "${image.name}"`, () => {
-        const model = listModel(submenu, selected);
+        const model = listModel(submenu, selected, windowTop);
         expectLcd(paint(model), { id, image }, `${submenu.label}, selected ${selected}`);
       });
-    }
+    });
   }
+
+  it("menu/01-phone-book.sub-up: ▲ keeps the window, then puts the selection on the top row and wraps (D3)", () => {
+    const id = "menu/01-phone-book.sub-up";
+    const golden = loadGolden(id);
+    const phoneBook = menu.entries[0]!.entry as SubmenuEntry;
+    const count = phoneBook.children.entries.length;
+    // Item 6 was reached with ▼×5 from the entry; each image is one ▲ further.
+    const states = walk(count, 0, [
+      ...Array<"down">(5).fill("down"),
+      ...golden.images.slice(1).map(() => "up" as const),
+    ]).slice(5);
+    golden.images.forEach((image, i) => {
+      const { selected, windowTop } = states[i]!;
+      expectLcd(
+        paint(listModel(phoneBook, selected, windowTop)),
+        { id, image },
+        `Phone book, ▼×5, ▲×${i}: selected ${selected}, window ${windowTop}`,
+      );
+    });
+  });
+
+  it("draws a model without windowTop as entered (selection on the top row)", () => {
+    const phoneBook = menu.entries[0]!.entry as SubmenuEntry;
+    const { windowTop, ...entered } = listModel(phoneBook, 4, 4);
+    expect(windowTop).toBe(4);
+    expect(paint(entered).pixels).toEqual(paint(listModel(phoneBook, 4, 4)).pixels);
+  });
+});
+
+describe("stock indicator while a shortcut digit is awaited (MenuIndicator.typed)", () => {
+  /** Rows 0..6 at x 50..83 of `fb` against the golden image: the indicator's corner. */
+  function expectIndicator(fb: Framebuffer, id: string, image: string): void {
+    const corner = new Uint8Array(fb.pixels.length);
+    const golden = goldenImage(id, image);
+    const expected = new Uint8Array(golden.image.pixels.length);
+    for (let y = 0; y < 7; y++) {
+      for (let x = 50; x < 84; x++) {
+        corner[y * 84 + x] = fb.pixels[y * 84 + x]!;
+        expected[y * 84 + x] = golden.image.pixels[y * 84 + x]!;
+      }
+    }
+    const message = lcdMismatch(
+      corner,
+      { id, image: { ...golden.image, pixels: expected } },
+      "indicator corner",
+    );
+    if (message !== undefined) throw new Error(message);
+  }
+
+  it("draws the typed digits right-aligned before the dots (`1` and dots, P5 m1-2 d)", () => {
+    const fb = new Framebuffer();
+    paintIndicator(fb, { segments: [], awaitingNext: true, typed: "1" });
+    expectIndicator(fb, "probe/shortcut-m1-2", "d");
+  });
+
+  it("draws the level's path and a dash for an empty typed number (`12-` and dots, P5 m1-2 i)", () => {
+    const fb = new Framebuffer();
+    paintIndicator(fb, { segments: [12], awaitingNext: true, typed: "" });
+    expectIndicator(fb, "probe/shortcut-m1-2", "i");
+  });
+
+  it("adds no selection number to a list whose indicator is awaiting a digit", () => {
+    const profiles = menu.entries[11]!.entry as SubmenuEntry;
+    const model = {
+      ...listModel(profiles, 0),
+      menuIndicator: { segments: [12], awaitingNext: true, typed: "" },
+    };
+    expectLcd(paint(model), goldenImage("probe/shortcut-m1-2", "i"), "Profiles, `12-` and dots");
+  });
+
+  it("hides the carousel soft key while a typed entry is opening", () => {
+    const carousel: ScreenModel = {
+      kind: "menu-carousel",
+      label: "Profiles",
+      menuNumber: 12,
+      total: 12,
+      iconId: "profiles",
+      menuIndicator: { segments: [12], awaitingNext: false },
+    };
+    const softkey = (fb: Framebuffer) => fb.pixels.slice(40 * 84);
+    expect(softkey(paint(carousel)).some((p) => p === 1)).toBe(true);
+    expect(softkey(paint({ ...carousel, opening: true })).every((p) => p === 0)).toBe(true);
+  });
+
+  it("hides the list soft key while a typed entry is opening", () => {
+    const profiles = menu.entries[11]!.entry as SubmenuEntry;
+    const shown = paint(listModel(profiles, 0));
+    const opening = paint({ ...listModel(profiles, 0), opening: true });
+    for (let y = 40; y < 48; y++)
+      for (let x = 0; x < 84; x++) expect(opening.getPixel(x, y), `(${x}, ${y})`).toBe(0);
+    expect(shown.pixels.slice(40 * 84).some((p) => p === 1)).toBe(true);
+  });
 });
 
 describe("stock rail", () => {

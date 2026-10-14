@@ -49,6 +49,15 @@ describe("createStockPhone", () => {
     expect(phone.screen).toMatchObject({ kind: "standby" });
   });
 
+  it("keeps the circular rows window: ▲ from Search shows Voice tags on the top row (D3)", () => {
+    const phone = poweredOn();
+    phone.pressKey("navi");
+    phone.pressKey("navi");
+    expect(phone.screen).toMatchObject({ kind: "list", selected: 0, windowTop: 0 });
+    phone.pressKey("up");
+    expect(phone.screen).toMatchObject({ kind: "list", selected: 9, windowTop: 9 });
+  });
+
   it("opens the stock standby ▲/▼ targets", () => {
     const up = poweredOn();
     up.pressKey("up");
