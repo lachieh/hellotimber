@@ -65,7 +65,15 @@ inside your own `<Canvas>` instead.
 | `backlightOn`   | `boolean`                                             | no       | The display LEDs. Default `true`; off = dim LCD, no green glow      |
 | `keypadLightOn` | `boolean`                                             | no       | The keypad LEDs (legend + NaviKey glow). Default: `backlightOn`     |
 | `pressedKeys`   | `ReadonlySet<Nokia3310Key>`                           | no       | Visually depress keys from outside (e.g. keyboard input)            |
-| `screenBgColor` | `string`                                              | no       | LCD surround fill; pass your screen renderer's background color     |
+| `screenBgColor` | `string`                                              | no       | The LCD's background; pass your screen renderer's background color  |
+
+The LCD is drawn the way an early backlit monochrome panel looks: the
+background is `screenBgColor` lit from three LEDs along the top edge (a
+top-down gradient with three soft hotspots; flat and dim when
+`backlightOn` is off), and the canvas's ink pixels (those farther from
+`screenBgColor` than half the farthest colour's distance) float just above it
+with a soft drop shadow. The canvas's background pixels are never drawn, so
+`screenBgColor` must match the background your renderer paints.
 
 The real phone drives its two LED lines separately (the keypad stays dark under
 keyguard while the display lights). A host maps its light events to the two
@@ -94,5 +102,6 @@ keyboard to see `pressedKeys` depress the 3D keys.
 vp run @hellotimber/phone-3d#test
 ```
 
-Pure logic only (layout geometry invariants, legend atlas, key union, materials)
+Pure logic only (layout geometry invariants, legend atlas, key union, materials,
+the backlight lightmap, the ink and shadow masks)
 — 3D rendering is verified through the demo, since jsdom has no WebGL.
