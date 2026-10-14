@@ -11,6 +11,7 @@ import { BOOT_DATA } from "./generated/boot";
 import { STOCK_FONT_DATA } from "./generated/fonts";
 import { MENU_ICON_DATA } from "./generated/menu-icons";
 import { STATUS_DATA } from "./generated/status";
+import { WIDGET_DATA } from "./generated/widgets";
 
 export type StockFontName = "small" | "large" | "digits" | "thin";
 
@@ -98,3 +99,31 @@ export const STATUS_SPRITES: {
   batteryBars: STATUS_DATA.batteryBars.map(sprite),
   batteryIcon: sprite(STATUS_DATA.batteryIcon),
 };
+
+/** What one step of a stock widget's timeline shows (see scripts/extract-resources.ts). */
+export type WidgetFrame = (typeof WIDGET_DATA)["timelines"][string]["frames"][number];
+
+export interface StockWidgetTimeline {
+  /** Indexed by the timeline's frames. */
+  readonly frames: readonly WidgetFrame[];
+  readonly timeline: Timeline;
+}
+
+/** Widget art cropped from the goldens (note icons, bars, marks, prompt icons, splashes). */
+export const WIDGET_SPRITES: Readonly<Record<string, StockSprite>> = Object.fromEntries(
+  Object.entries(WIDGET_DATA.sprites).map(([id, data]) => [id, sprite(data)]),
+);
+
+/** Widget timelines by id, aligned on their trigger frame (plan 14 D8). */
+export const WIDGET_TIMELINES: Readonly<Record<string, StockWidgetTimeline>> = Object.fromEntries(
+  Object.entries(WIDGET_DATA.timelines).map(([id, data]) => [
+    id,
+    { frames: data.frames, timeline: timeline(data) },
+  ]),
+);
+
+/** Tree node number → widget timeline id (notes, progress notes, prompt cursors, splashes). */
+export const WIDGET_TIMELINE_BY_NODE: Readonly<Record<string, string>> = WIDGET_DATA.byNode;
+
+/** Named widget timelines from probes (`request-not-confirmed`, `invalid-shortcut`, ...). */
+export const WIDGET_TIMELINE_BY_NAME: Readonly<Record<string, string>> = WIDGET_DATA.byName;

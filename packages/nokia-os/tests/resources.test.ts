@@ -1,10 +1,14 @@
 import { SubmenuEntry } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vite-plus/test";
 import { extractResources, inferLoop, toTimeline } from "../scripts/extract-resources.ts";
 import { TREE_TEXT_RUNS } from "../scripts/generated/tree-text-runs.ts";
 import { TEXT_RUNS } from "../scripts/text-runs.ts";
 import { placeholderOwner } from "../scripts/tree-capture-set.ts";
+import { WIDGET_SPRITES as CROPS } from "../scripts/widget-sprites.ts";
+import { loadGolden } from "./support/goldens";
 import { missingStockGlyphs, stockMenu } from "../src/index";
 import {
   BOOT_FRAMES,
@@ -12,12 +16,17 @@ import {
   STOCK_FONTS,
   STOCK_MENU_ICONS,
   stockMenuGraphic,
+  WIDGET_SPRITES,
+  WIDGET_TIMELINE_BY_NAME,
+  WIDGET_TIMELINE_BY_NODE,
+  WIDGET_TIMELINES,
   type StockFontName,
 } from "../src/resources";
 import { BOOT_DATA } from "../src/resources/generated/boot";
 import { STOCK_FONT_DATA } from "../src/resources/generated/fonts";
 import { MENU_ICON_DATA } from "../src/resources/generated/menu-icons";
 import { STATUS_DATA } from "../src/resources/generated/status";
+import { WIDGET_DATA } from "../src/resources/generated/widgets";
 import {
   STOCK_TREE,
   type StockResult,
@@ -120,6 +129,7 @@ describe("generated resources", () => {
       menuIcons: MENU_ICON_DATA,
       boot: BOOT_DATA,
       status: STATUS_DATA,
+      widgets: WIDGET_DATA,
     }).toEqual(extractResources());
   });
 
@@ -316,5 +326,144 @@ describe("boot", () => {
     expect(BOOT_TIMELINE.durationMs).toBe(9888);
     expect(BOOT_TIMELINE.steps.map((s) => s.frame)).toEqual([0, 1, 0, 2, 3, 4, 5, 6, 7, 8, 9]);
     expect(BOOT_TIMELINE.steps.at(-1)!.durationMs).toBe(4231);
+  });
+});
+
+describe("widget sprites and timelines", () => {
+  /** The frame names of a timeline's steps, e.g. `note/tick:541` or `cut90:15`. */
+  function describeSteps(id: string): string[] {
+    const { frames, timeline } = WIDGET_TIMELINES[id]!;
+    return timeline.steps.map(({ frame, durationMs }) => {
+      const f = frames[frame]!;
+      const name =
+        f.kind === "sprite"
+          ? f.sprite
+          : f.kind === "cut"
+            ? `cut${f.bytes}`
+            : f.kind === "edges"
+              ? `edges${f.x0}-${f.x1}`
+              : f.kind;
+      return `${name}:${durationMs}`;
+    });
+  }
+
+  it("crops every listed sprite from its golden: binary art with ink, lit only where the golden is", () => {
+    for (const crop of CROPS) {
+      const sprite = WIDGET_DATA.sprites[crop.id]!;
+      expect([sprite.x, sprite.y], crop.id).toEqual([crop.x0, crop.y0]);
+      expect(sprite.art, crop.id).toHaveLength(crop.y1 - crop.y0 + 1);
+      expect(sprite.art.join(""), crop.id).toMatch(/^[#.]*#[#.]*$/);
+      const { pixels } = loadGolden(crop.golden).images.find((image) => image.name === crop.image)!;
+      sprite.art.forEach((row, dy) => {
+        expect(row, crop.id).toHaveLength(crop.x1 - crop.x0 + 1);
+        Array.from(row).forEach((ch, dx) => {
+          expect(ch === "#", `${crop.id} (${dx}, ${dy})`).toBe(
+            pixels[(crop.y0 + dy) * 84 + crop.x0 + dx] === 1,
+          );
+        });
+      });
+      expect(WIDGET_SPRITES[crop.id]!.bitmap.width, crop.id).toBe(crop.x1 - crop.x0 + 1);
+    }
+  });
+
+  it("references only known sprites, and loops only progress bars and prompt cursors", () => {
+    for (const [id, data] of Object.entries(WIDGET_DATA.timelines)) {
+      for (const frame of data.frames) {
+        if (frame.kind === "sprite" || frame.kind === "image")
+          expect(WIDGET_DATA.sprites[frame.sprite], `${id} ${frame.sprite}`).toBeDefined();
+      }
+      const kinds = new Set(
+        data.frames.map((frame) =>
+          frame.kind === "sprite" ? frame.sprite.split("-")[0] : frame.kind,
+        ),
+      );
+      const loops = kinds.has("progress") || kinds.has("cursor");
+      expect(data.loopFrom !== undefined, id).toBe(loops);
+      expect(Number.isFinite(WIDGET_TIMELINES[id]!.timeline.durationMs), id).toBe(!loops);
+    }
+  });
+
+  it("gives every asserted in-scope note and progress note, and every game splash, a timeline", () => {
+    const index = JSON.parse(
+      readFileSync(join(import.meta.dirname, "../goldens/index.json"), "utf8"),
+    ) as { id: string; status: string; kind: string; covers?: string[] }[];
+    const kinds = new Map<string, string>();
+    const visit = (node: StockTreeNode): void => {
+      kinds.set(node.number, node.opens.kind);
+      if (node.opens.kind === "option-list") {
+        node.opens.options.forEach((o, i) => kinds.set(`${node.number}-${i + 1}`, o.result.kind));
+      }
+      if (node.opens.kind === "submenu" && node.opens.intro) kinds.set(node.number, "splash");
+      for (const child of node.children ?? []) visit(child);
+    };
+    STOCK_TREE.forEach(visit);
+    const expected: string[] = [];
+    for (const entry of index) {
+      if (entry.status !== "asserted" || entry.kind !== "timeline") continue;
+      for (const number of entry.covers ?? []) {
+        if (["timed-note", "progress-note"].includes(kinds.get(number)!)) expected.push(number);
+      }
+    }
+    for (const [number, kind] of kinds) if (kind === "splash") expected.push(number);
+    expect(expected.length).toBeGreaterThan(70);
+    expect(expected.filter((number) => WIDGET_TIMELINE_BY_NODE[number] === undefined)).toEqual([]);
+    expect(["8-1", "8-2", "8-3", "8-4"].every((n) => expected.includes(n))).toBe(true);
+  });
+
+  it("reproduces a confirmation: 15 ms partial draw, then the tick's three steps (D8)", () => {
+    expect(describeSteps(WIDGET_TIMELINE_BY_NODE["1-8-1-1"]!)).toEqual([
+      "cut90:15",
+      "note/tick-box:674",
+      "note/tick-half:240",
+      "note/tick:541",
+    ]);
+    // Service Nos. starts with a 90 ms blank; Phone book › Erase › One by one does not.
+    expect(describeSteps(WIDGET_TIMELINE_BY_NODE["1-2"]!)).toEqual(["blank:90", "note/info:2924"]);
+    expect(describeSteps(WIDGET_TIMELINE_BY_NODE["4-6-3"]!)).toEqual(["note/error:2907"]);
+    // Inbox: a 60 ms `Opening` screen kept as captured.
+    expect(describeSteps(WIDGET_TIMELINE_BY_NODE["2-2"]!)[0]).toBe("image:60");
+    // Settings › Restore… (6-2-4-1 Done): ends with a 9 ms draw of standby's edges.
+    expect(describeSteps(WIDGET_TIMELINE_BY_NODE["6-2-4-1"]!).at(-1)).toBe("edges5-78:9");
+  });
+
+  it("loops the progress bar's ten frames and the prompt cursor from their second step", () => {
+    const progress = WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NODE["7-6"]!]!;
+    expect(progress.timeline.steps).toHaveLength(11);
+    expect(WIDGET_DATA.timelines[WIDGET_TIMELINE_BY_NODE["7-6"]!]!.loopFrom).toBe(1);
+    expect(progress.timeline.durationMs).toBe(Infinity);
+    expect(describeSteps(WIDGET_TIMELINE_BY_NODE["7-6"]!).map((s) => s.split(":")[0])).toEqual([
+      ...Array.from({ length: 10 }, (_, i) => `progress-${i + 1}`),
+      "progress-1",
+    ]);
+    expect(describeSteps(WIDGET_TIMELINE_BY_NODE["11-5"]!)).toEqual([
+      "cursor:477",
+      "plain:480",
+      "cursor:481",
+    ]);
+    // Prompts that do not blink (Search, Speed dials, code prompts) have no timeline (P9).
+    for (const number of ["1-1", "1-9", "6-4"])
+      expect(WIDGET_TIMELINE_BY_NODE[number], number).toBeUndefined();
+  });
+
+  it("plays each splash to its game menu, and names the notes that follow a key in a probe", () => {
+    expect(describeSteps(WIDGET_TIMELINE_BY_NODE["8-1"]!)).toEqual([
+      "splash/8-1-1:248",
+      "splash/8-1-2:240",
+      "splash/8-1-3:240",
+      "splash/8-1-4:239",
+      "splash/8-1-5:201",
+      "splash/8-1-1:1390",
+    ]);
+    expect(WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NODE["8-4"]!]!.timeline.durationMs).toBe(3060);
+    expect(Object.keys(WIDGET_TIMELINE_BY_NAME).sort()).toEqual([
+      "invalid-shortcut",
+      "level-5-done",
+      "reminder-memory-empty",
+      "request-not-confirmed",
+    ]);
+    expect(describeSteps(WIDGET_TIMELINE_BY_NAME["invalid-shortcut"]!)).toEqual([
+      "note/error:2903",
+      "edges5-78:9",
+    ]);
   });
 });

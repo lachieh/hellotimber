@@ -951,18 +951,42 @@ need captures with these characters.
 `src/resources/generated/widgets.ts` (generated), `src/resources/index.ts`,
 `tests/resources.test.ts`.
 
-- [ ] Crop table (golden id, image, rectangle, sprite id): note icons (each tick step, `!`,
+- [x] Crop table (golden id, image, rectangle, sprite id): note icons (each tick step, `!`,
       octagon, and others found), progress bar frames, prompt mode icons, ☑/☐ marks, level-bar
       art, the four game splashes' frames.
-- [ ] Timelines: from each `leaf`/`choose`/probe timeline golden, the sprite frame sequence
+- [x] Timelines: from each `leaf`/`choose`/probe timeline golden, the sprite frame sequence
       with durations from the trigger frame (D8), including the terminal step before the parent
       returns. Equal sequences share an id. Emit `WIDGET_TIMELINE_BY_NODE` (node number →
       timeline id) from the goldens' `covers`. Progress bars carry `loopFrom`.
-- [ ] TDD: freshness; every sprite is binary and inside its golden's ink; every timeline is
+- [x] TDD: freshness; every sprite is binary and inside its golden's ink; every timeline is
       finite except progress loops; every `leaf` golden of an in-scope note, progress note or
       splash has a timeline.
-- [ ] Run twice; no diff.
-- [ ] Commit: `feat(nokia-os): derive stock widget sprites and timelines from goldens`.
+- [x] Run twice; no diff.
+- [x] Commit: `feat(nokia-os): derive stock widget sprites and timelines from goldens`.
+
+Deviation: a timeline step shows a `WidgetFrame`, not only a sprite: `sprite` (the widget's
+screen with that sprite as its animated element), `cursor`/`plain` (a prompt's cursor shown or
+hidden), `blank`, `image` (a leading frame of another screen kept whole as captured, sprite
+`capture/<golden>/<image>`: the 45-60 ms `Opening` before the Inbox/Outbox notes, the 55-63 ms
+erase before the Info service notes), `cut` (a partial draw: the next frame's first `bytes` LCD
+bytes, written in 8-row pages column by column, over the previous screen; the 15 ms draw before
+`Done` after Type of view, the 16 ms draw inside the Pairs II splash) and `edges` (the next screen
+outside columns 5..78, the previous inside: the 8-9 ms draw before standby). Painters need the
+previous screen for `cut`/`edges`; the flow host has it for its own widgets.
+Deviation: blinking prompts (P9) get cursor timelines too, so loops are progress bars and prompt
+cursors; both loop from step 1 (step 0 is the first, shorter draw). Timelines are keyed by their
+first covered node (or probe key) and shared when equal (`1-5`/`1-6`, `6-3-4-2`/`11-2-2`, ...).
+Probes have no `covers`, so `scripts/widget-sprites.ts` lists the probe timelines later tasks need
+(`PROBE_TIMELINES`): the four splashes by game node (8-1..8-4) and, by name in
+`WIDGET_TIMELINE_BY_NAME`, `request-not-confirmed` (P7), `level-5-done` and
+`reminder-memory-empty` (P8) and `invalid-shortcut` (P5). Accessors in `src/resources/index.ts`:
+`WIDGET_SPRITES`, `WIDGET_TIMELINES` (frames + phone-core `Timeline`), `WIDGET_TIMELINE_BY_NODE`,
+`WIDGET_TIMELINE_BY_NAME`.
+
+Completion (Task 7): 67 sprites (5 note icons: tick box/half/full, info `!`, error octagon; 11
+Top score frames; 10 progress-bar frames; 3 prompt icons: pen, `abc`, phone book; 2 marks; 3 level
+bars; 29 splash frames; 4 lead captures) and 87 timelines (78 tree nodes mapped, 4 splashes, 4
+named). `widgets.ts` is 244 KB (splash frames are full-frame). A second run changes nothing.
 
 ### Task 8 - Settings store and page values (TDD)
 
