@@ -25,8 +25,6 @@ export const MATERIALS = {
 export const BACKLIGHT_COLOR = "#b4f5a0";
 /** Multiplier tint for the screen texture when the backlight is off. */
 export const SCREEN_DIM_TINT = "#7a8579";
-/** Slightly darker off-state tint for the active 84×48 pixel plane. */
-export const SCREEN_DIM_PIXEL_TINT = "#5f695f";
 /** Matching active-plane contrast while the LCD backlight is on. */
 export const SCREEN_LIT_PIXEL_TINT = "#eeefee";
 

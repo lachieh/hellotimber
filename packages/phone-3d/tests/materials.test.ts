@@ -8,7 +8,6 @@ import {
   legendEmission,
   PRINT_DARK,
   PRINT_LIGHT,
-  SCREEN_DIM_PIXEL_TINT,
   SCREEN_DIM_TINT,
   SCREEN_LIT_PIXEL_TINT,
 } from "../src/materials";
@@ -26,7 +25,6 @@ describe("MATERIALS", () => {
     }
     expect(BACKLIGHT_COLOR).toMatch(HEX);
     expect(LEGEND_GLOW_COLOR).toMatch(HEX);
-    expect(SCREEN_DIM_PIXEL_TINT).toMatch(HEX);
     expect(SCREEN_DIM_TINT).toMatch(HEX);
     expect(SCREEN_LIT_PIXEL_TINT).toMatch(HEX);
   });
