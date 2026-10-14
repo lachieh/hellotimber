@@ -4,7 +4,13 @@ import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
 import type { StockCueSink } from "./cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { invalidShortcut } from "./leaves";
-import { createStockGames, createStockMenu, STOCK_SHORTCUT_WINDOW_MS } from "./menu";
+import {
+  createStockGames,
+  createStockMenu,
+  STOCK_SHORTCUT_WINDOW_MS,
+  stockMessaging,
+} from "./menu";
+import { createSyntheticNetwork, type StockNetworkPort } from "../messages/network";
 import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { stockBootGates } from "./boot";
@@ -36,6 +42,12 @@ export interface StockPhoneConfig extends StockPorts {
    * stamped with the kernel time it happens at. Default: nowhere.
    */
   sound?: StockSoundPort;
+  /**
+   * Plan 18: where SMS go and come from (D9). The phone subscribes once and keeps the
+   * subscription for its lifetime. Default: `createSyntheticNetwork()` (every send accepted,
+   * nothing delivered unless the host calls its `deliver`).
+   */
+  network?: StockNetworkPort;
 }
 
 /**
@@ -110,8 +122,15 @@ export function createStockPhoneWith(
     ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
     cues: internals.cues ?? sounder,
   };
+  const messaging = stockMessaging(
+    eeprom,
+    settings,
+    sim,
+    config.network ?? createSyntheticNetwork(),
+  );
+  messaging.connect();
   const phone = createPhone({
-    menu: createStockMenu(ports, settings, games, security, sounder, eeprom),
+    menu: createStockMenu(ports, settings, games, security, sounder, eeprom, messaging),
     carrier: config.carrier,
     ...(clock === undefined ? {} : { clock }),
     bootTimeline: BOOT_TIMELINE,
@@ -130,10 +149,15 @@ export function createStockPhoneWith(
   let poweredOn = false;
   phone.subscribe((snapshot) => {
     if (!snapshot.poweredOn) games.snake = undefined;
+    // Plan 18 D9: messages delivered while off land once power-on reaches standby.
+    if (snapshot.poweredOn && snapshot.screen.kind === "standby") messaging.atStandby();
     if (snapshot.poweredOn === poweredOn) return;
     poweredOn = snapshot.poweredOn;
     if (poweredOn) sounder.powerOn({ boot: !skip });
-    else sounder.powerOff();
+    else {
+      sounder.powerOff();
+      messaging.poweredOff();
+    }
   });
   const send = (event: KeyEvent): void => {
     if (event.type === "up") {
@@ -157,6 +181,7 @@ export function createStockPhoneWith(
     tick(nowMs) {
       // The kernel time the games stamp their cues and the sounder its sounds with.
       now = Math.max(now, nowMs);
+      messaging.tick(now);
       phone.tick(nowMs);
       sounder.tick();
       sequencer.advance(now);

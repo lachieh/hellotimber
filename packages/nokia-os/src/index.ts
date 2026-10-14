@@ -8,3 +8,12 @@ export type { StockSoundEvent, StockSoundPort } from "./sound/port";
 export { stockMenu } from "./firmware/menu";
 export { missingStockGlyphs } from "./resources";
 export type { StockFontName } from "./resources";
+export { createSyntheticNetwork } from "./messages/network";
+export type {
+  StockIncomingSms,
+  StockNetworkPort,
+  StockSendOutcome,
+  StockSms,
+  StockTimestamp,
+  SyntheticNetwork,
+} from "./messages/network";

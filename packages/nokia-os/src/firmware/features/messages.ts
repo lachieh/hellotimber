@@ -1,7 +1,9 @@
 // Messages (menu 2; plan 18 implements the editor and SMS): the message centre and voice mailbox
 // numbers, Message settings' virgin values, Info service's setter level and topics, and the
 // leaves plans 18 and 18c own (placeholders until then).
+import { MESSAGES_RECORD } from "../../messages/store";
 import type { Widget } from "../../widgets/flow";
+import type { EepromRecord } from "../eeprom";
 import { note } from "../../widgets/note";
 import { numberEntry } from "../../widgets/number-entry";
 import { nodeTimeline, timelineByName } from "../timelines";
@@ -9,6 +11,8 @@ import type { ScreenBinding, StockFeature } from "./feature";
 
 /** The SIM's message centre of Set 1 (an emulator artefact, `sms/centre-1` 00). */
 const SET_1_CENTRE = "+1234567890";
+/** Set 1's message centre number: received messages' Details show it. */
+export const SET_1_CENTRE_KEY = "messages/message-settings/set-1/message-centre-number";
 const SET_2_CENTRE_KEY = "messages/message-settings/set-2/message-centre-number";
 
 /**
@@ -104,11 +108,13 @@ export const messagesFeature: StockFeature = {
     // The setters return to their page (`tree/02-messages/2-8-1.leaf` image f).
     noteEnds: { "2-8-1": { levels: 2 }, "2-8-2": { levels: 2 }, "2-8-3": { levels: 2 } },
   },
+  // The SIM's Inbox and Outbox (D7): Restore keeps them.
+  records: [MESSAGES_RECORD as EepromRecord<unknown>],
   settings: {
     virginTexts: [
       // tree/02-messages/2-7-1-1.leaf "c": the SIM's message centre (an emulator artefact). The
       // tree has no lines for this prompt.
-      { key: "messages/message-settings/set-1/message-centre-number", text: SET_1_CENTRE },
+      { key: SET_1_CENTRE_KEY, text: SET_1_CENTRE },
       // The SIM's voice mailbox (2-9 `Phone number:`).
       { key: "messages/voice-mailbox-number", number: "2-9", line: 1 },
     ],

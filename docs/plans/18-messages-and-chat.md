@@ -1128,20 +1128,36 @@ PROBE_TOLERANCE_MS.
 `src/firmware/records.ts`, `src/firmware/phone.ts`, `src/index.ts`, `tests/messages-store.test.ts`
 (new), `tests/messages-network.test.ts` (new).
 
-- [ ] TDD `MESSAGES_RECORD` (plan 15 D2): per-SIM inbox/outbox (D7, or phone-wide per Task 0 F);
+- [x] TDD `MESSAGES_RECORD` (plan 15 D2): per-SIM inbox/outbox (D7, or phone-wide per Task 0 F);
       capacity 15 shared; `full` per Task 0; decode drops malformed entries; no `factory` (Restore
       keeps it; a test runs `restoreFactory()`); the stored JSON shape pinned by a snapshot.
-- [ ] TDD `createSyntheticNetwork`: `send` returns `"sent"` and records `sent`; `deliver` reaches every
+- [x] TDD `createSyntheticNetwork`: `send` returns `"sent"` and records `sent`; `deliver` reaches every
       subscriber; validation errors name the field.
-- [ ] TDD `StockMessaging` with the kernel clock: `send` settles after `max(SEND_LINK_MS, settle)`
+- [x] TDD `StockMessaging` with the kernel clock: `send` settles after `max(SEND_LINK_MS, settle)`
       (sync, resolved and rejected promises, a promise settled after power-off ignored); arrivals
       appear `RECEIVE_LINK_MS` after `deliver`; deliveries while off wait for standby (D9 rule).
-- [ ] `timestamp.ts`: the `Sent:` date and time format (Task 0, both time formats).
-- [ ] `createStockPhone`: builds the store over the phone's EEPROM and SIM, subscribes the network
+- [x] `timestamp.ts`: the `Sent:` date and time format (Task 0, both time formats).
+- [x] `createStockPhone`: builds the store over the phone's EEPROM and SIM, subscribes the network
       (default synthetic), unsubscribes nothing (the phone lives as long as the host keeps it;
       document it). Export `createSyntheticNetwork` and the types from `src/index.ts`.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): messages record and host network port`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): messages record and host network port`.
+
+Deviation: **Task 9 (paths and wiring):** the record is the messages feature's (`records`), not a
+line in `src/firmware/records.ts`; its store is built over `services.eeprom`. `StockServices`
+gains `messaging` (the phone's `StockMessaging`, whose `store` is the `StockMessages`), which
+`createStockMenu` takes as a last parameter (default: the security's SIM over its EEPROM and a
+synthetic network nothing ticks). `createStockPhone` connects it once, ticks it before the kernel,
+calls `atStandby()` on a powered-on standby snapshot and `poweredOff()` on power-off.
+
+Deviation: **Task 9 (internal API):** `InboxMessage` keeps its message `centre` (Details' Message
+centre page: the phone's Set 1 centre when it arrived, `sms/inbox-details` 02; the port carries no
+SMSC), so `receive(sms, centre?)`. `StockMessaging` is `constructor(store, network, centre)` with
+`connect()`, `deliver(sms)` (checked, as the host's callback), `send(sms, settled)`, `tick(now)`,
+`onArrival(listener)` (Task 11: the notice and the alert), `poweredOff()`, `atStandby()` and
+`sending`. A port that throws or answers anything but `"sent"` fails the send.
+`createSyntheticNetwork()` returns `SyntheticNetwork` (`StockNetworkPort` plus `deliver`, `sent`),
+exported with the port's types. A one-digit day in `Sent:` is padded (UNVERIFIED).
 
 ### Task 10 - Write messages and its Options (TDD)
 
