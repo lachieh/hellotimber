@@ -29,6 +29,8 @@ export interface TreeJsonNode {
     readonly no_highlight_on_entry?: boolean;
     readonly splash_first?: boolean;
     readonly options?: readonly TreeJsonOption[];
+    /** Where a leaf went by itself within 3.5 s (timed notes). */
+    readonly then?: { readonly back_to_list?: boolean; readonly to_standby?: boolean };
   };
   readonly children?: readonly TreeJsonNode[];
 }

@@ -15,6 +15,9 @@ export default defineConfig({
       "**/public/**",
       "packages/nokia-os/src/resources/generated/**",
       "packages/nokia-os/goldens/index.json",
+      // Plan 14: the stock tree and the tree text runs, written by scripts/import-tree.ts.
+      "packages/nokia-os/src/firmware/generated/**",
+      "packages/nokia-os/scripts/generated/**",
     ],
   },
   lint: {

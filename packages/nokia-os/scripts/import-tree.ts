@@ -1,0 +1,230 @@
+// Generate the stock menu tree data from the v6.39 crawl (plan 14 Task 3, D4, D13).
+//
+//   mise exec -- vp run @hellotimber/nokia-os#import-tree /path/to/nokia-3310
+//
+// Reads `$REF/captures/6.39/tree.json`, `plan14/text.json` (Task 0's OCR) and the plan 14 PNGs,
+// and writes `src/firmware/generated/stock-tree.ts` (types and data, import-free) and
+// `scripts/generated/tree-text-runs.ts` (harvester runs per plan 14 golden image). Idempotent.
+// Runs under Node's type stripping: imports only node:*, sibling scripts and generated data.
+import { createHash } from "node:crypto";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { parseGolden } from "./golden-format.ts";
+import type { TextRun } from "./harvest-glyphs.ts";
+import { decodeLcdPng } from "./png.ts";
+import type { TreeJson } from "./tree-capture-set.ts";
+import { buildStockTree, harvestRuns, type OcrRun, type TreeText } from "./tree-model.ts";
+import { TREE_OVERRIDES } from "./tree-overrides.ts";
+
+const PACKAGE = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const GOLDENS = join(PACKAGE, "goldens");
+const TREE_OUT = join(PACKAGE, "src/firmware/generated/stock-tree.ts");
+const RUNS_OUT = join(PACKAGE, "scripts/generated/tree-text-runs.ts");
+
+/** The generated tree's types (plan 14 "Stock tree data"; Task 3 fixed the exact shape). */
+export const STOCK_TREE_TYPES = `/** Leaf screens a stock widget or a placeholder handles (\`docs/specs/nokia-3310-menu-tree.md\`). */
+export type StockLeafKind =
+  | "timed-note"
+  | "static-note"
+  | "progress-note"
+  | "confirm-query"
+  | "info-screen"
+  | "text-input"
+  | "number-input"
+  | "code-prompt"
+  | "level-bar"
+  | "text-editor"
+  | "application"
+  | "symbol-table"
+  | "no-response"
+  | "returns-immediately"
+  | "standby";
+
+/** What a leaf screen shows: its text lines (firmware line breaks) and soft key. */
+export interface StockLeafScreen {
+  readonly kind: StockLeafKind;
+  readonly lines: readonly string[];
+  readonly softkey?: string;
+  /** Where a timed note goes by itself (named "after": an object with "then" is a thenable). */
+  readonly after?: "back" | "standby";
+}
+
+/** What confirming an option or an info page shows. */
+export type StockResult =
+  | StockLeafScreen
+  | { readonly kind: "option-list" | "info-pages" | "returns-immediately" | "not-probed" };
+
+export interface StockOption {
+  readonly label: string;
+  /** Multi-select lists: marked in the virgin EEPROM. */
+  readonly marked?: true;
+  readonly result: StockResult;
+}
+
+export interface StockPage {
+  readonly label: string;
+  readonly value?: string;
+  readonly softkey: string;
+  readonly result?: StockResult;
+}
+
+export type StockScreenSpec =
+  | {
+      readonly kind: "submenu";
+      readonly presentation: "rows" | "pages";
+      readonly softkey: string;
+      /** Slug of the child selected on entry; absent = the first child. */
+      readonly opening?: string;
+      readonly intro?: true;
+    }
+  | {
+      readonly kind: "option-list";
+      /** The soft key once a row is selected ("OK"; multi-select: "Mark"/"Unmark"). */
+      readonly softkey: string;
+      /** Index selected on entry; null = opens unset (no rows, index -0, soft key Quit). */
+      readonly opening: number | null;
+      readonly multi?: true;
+      readonly options: readonly StockOption[];
+    }
+  | { readonly kind: "info-pages"; readonly pages: readonly StockPage[] }
+  | { readonly kind: "text-pages"; readonly pages: readonly (readonly string[])[] }
+  | StockLeafScreen;
+
+export interface StockTreeNode {
+  /** "1-8-1"; the last segment is the menu order (hidden gaps kept). */
+  readonly number: string;
+  readonly slug: string;
+  /** Firmware lines joined with "\\n" (pages); one line (rows). */
+  readonly label: string;
+  /** The page value as captured (virgin EEPROM). */
+  readonly valueHint?: string;
+  readonly opens: StockScreenSpec;
+  readonly children?: readonly StockTreeNode[];
+}
+`;
+
+interface IndexEntry {
+  id: string;
+  file: string;
+}
+
+function main(): void {
+  const ref = process.argv[2];
+  if (!ref) fail("usage: import-tree <REF> (the nokia-3310 capture corpus directory)");
+  const root = join(resolve(ref), "captures/6.39");
+  const treePath = join(root, "tree.json");
+  const textPath = join(root, "plan14/text.json");
+  if (!existsSync(treePath)) fail(`missing ${treePath}: the menu-tree crawl`);
+  if (!existsSync(textPath))
+    fail(`missing ${textPath}: run plan 14 Task 0 (gen_v639_plan14.py ocr)`);
+  const tree = JSON.parse(readFileSync(treePath, "utf8")) as TreeJson;
+  const ocr = JSON.parse(readFileSync(textPath, "utf8")) as Record<string, OcrRun[]>;
+
+  let stockTree;
+  try {
+    stockTree = buildStockTree(tree.root.children, treeText(root, ocr), TREE_OVERRIDES);
+  } catch (error) {
+    return fail((error as Error).message);
+  }
+  write(
+    TREE_OUT,
+    `// GENERATED by scripts/import-tree.ts from tree.json and plan14/text.json - do not edit\n${STOCK_TREE_TYPES}\nexport const STOCK_TREE: readonly StockTreeNode[] = ${literal(stockTree)};\n`,
+  );
+
+  const runs = treeTextRuns(root, ocr);
+  const lines = Object.entries(runs).map(
+    ([id, images]) =>
+      `  ${JSON.stringify(id)}: {\n${Object.entries(images)
+        .map(([name, list]) => `    ${JSON.stringify(name)}: ${JSON.stringify(list)},`)
+        .join("\n")}\n  },`,
+  );
+  write(
+    RUNS_OUT,
+    `// GENERATED by scripts/import-tree.ts from goldens/ and plan14/text.json - do not edit\n` +
+      `// Text runs of every plan 14 golden image, read by the harvester beside text-runs.ts.\n` +
+      `export const TREE_TEXT_RUNS: Readonly<Record<string, Readonly<Record<string, readonly {\n` +
+      `  readonly font: "small" | "large" | "digits" | "thin";\n  readonly text: string;\n` +
+      `  readonly top: number;\n  readonly inverted?: boolean;\n  readonly left?: number;\n` +
+      `  readonly right?: number;\n}[]>>>> = {\n${lines.join("\n")}\n};\n`,
+  );
+  const count = (nodes: readonly { children?: readonly unknown[] }[]): number =>
+    nodes.reduce((n, node) => n + 1 + count((node.children ?? []) as never), 0);
+  console.log(
+    `stock tree: ${count(stockTree)} nodes; text runs: ${Object.keys(runs).length} goldens, ${Object.values(runs).reduce((n, images) => n + Object.keys(images).length, 0)} images`,
+  );
+}
+
+function fail(message: string): never {
+  console.error(`import-tree: ${message}`);
+  process.exit(1);
+}
+
+/** JSON with one array element per line at the top level (readable diffs, stable output). */
+function literal(value: unknown): string {
+  return JSON.stringify(value, null, 1);
+}
+
+function write(path: string, text: string): void {
+  mkdirSync(dirname(path), { recursive: true });
+  if (existsSync(path) && readFileSync(path, "utf8") === text) return;
+  writeFileSync(path, text);
+}
+
+function pngNames(dir: string, pattern: RegExp): string[] {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => pattern.test(f))
+    .sort();
+}
+
+function treeText(root: string, ocr: Record<string, OcrRun[]>): TreeText {
+  const runsOf = (rel: string): OcrRun[] => {
+    const runs = ocr[rel];
+    if (runs === undefined) fail(`plan14/text.json has no entry for ${rel}`);
+    return runs;
+  };
+  const images = (dir: string, pattern: RegExp): OcrRun[][] | undefined => {
+    const names = pngNames(join(root, "plan14", dir), pattern);
+    return names.length === 0 ? undefined : names.map((name) => runsOf(`${dir}/${name}`));
+  };
+  return {
+    scroll: (number) => images(`scroll/${number}`, /^\d\d\.png$/),
+    open: (number) => images(`open/${number}`, /^\d\d\d\.png$/),
+    pages: (number) => images(`probe/games/instructions-${number}`, /^\d\d\.png$/),
+  };
+}
+
+function pixelKey(pixels: Uint8Array): string {
+  return createHash("sha256").update(pixels).digest("hex");
+}
+
+/** Runs per plan 14 golden image: each image is matched to an OCR'd capture by its pixels. */
+function treeTextRuns(
+  root: string,
+  ocr: Record<string, OcrRun[]>,
+): Record<string, Record<string, TextRun[]>> {
+  const byPixels = new Map<string, OcrRun[]>();
+  for (const rel of Object.keys(ocr).sort()) {
+    const path = join(root, "plan14", rel);
+    byPixels.set(pixelKey(decodeLcdPng(readFileSync(path), path)), ocr[rel]!);
+  }
+  const index = JSON.parse(readFileSync(join(GOLDENS, "index.json"), "utf8")) as IndexEntry[];
+  const out: Record<string, Record<string, TextRun[]>> = {};
+  for (const entry of index) {
+    if (!entry.id.startsWith("tree/") && !entry.id.startsWith("probe/")) continue;
+    const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+    const images: Record<string, TextRun[]> = {};
+    for (const image of golden.images) {
+      const runs = byPixels.get(pixelKey(image.pixels));
+      if (runs === undefined)
+        fail(`${entry.id} image "${image.name}": no OCR'd capture has its pixels`);
+      const harvest = harvestRuns(runs, `${entry.id} ${image.name}`);
+      if (harvest.length > 0) images[image.name] = harvest;
+    }
+    if (Object.keys(images).length > 0) out[entry.id] = images;
+  }
+  return out;
+}
+
+main();

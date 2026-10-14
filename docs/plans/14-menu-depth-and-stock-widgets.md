@@ -766,26 +766,54 @@ second importer run leaves `goldens/` unchanged.
 `vite.config.ts` (fmt ignore for the generated files), `tests/tree-model.test.ts` (new),
 `tests/stock-tree.test.ts` (new).
 
-- [ ] TDD `tree-model.ts` (pure) on `tree-mini.json` plus synthetic OCR runs: labels from runs
+- [x] TDD `tree-model.ts` (pure) on `tree-mini.json` plus synthetic OCR runs: labels from runs
       joined with `\n` by row band per widget layout; refuse runs that do not spell the
       `tree.json` label and name the node; parse `tree.json` result strings
       (`timed-note "Done", then back`, `confirm-query "…" [OK]`, `returns immediately`,
       `not probed`) into `StockResult`; slugs via plan 13's `slugOf` with collision suffixes and
       the plan 13 overrides (`write`, `snake`, `empty-2`); value hints; opening selections;
       `intro` for game entries (`splash_first`); drop `text_ids`, `label_source`, capture paths.
-- [ ] Map OCR faces to stock fonts (`bold8` → small, `large13` → large, `tiny6` → digits,
+- [x] Map OCR faces to stock fonts (`bold8` → small, `large13` → large, `tiny6` → digits,
       `plain8` → thin). If `bold13`/`plain13` appear, map them to new faces `tall`/`tallThin`
       and record a Deviation for Task 6.
-- [ ] `import-tree.ts`: reads `$REF/captures/6.39/tree.json` and `plan14/text.json`; writes
+- [x] `import-tree.ts`: reads `$REF/captures/6.39/tree.json` and `plan14/text.json`; writes
       `stock-tree.ts` and `tree-text-runs.ts` (runs per golden id and image, the font mapped,
       `left`/`right` bounds per layout, as plan 13 Task 7's runs). Package script `import-tree`.
-- [ ] TDD `stock-tree.test.ts` (reads the generated file only): 12 top-level nodes; level 1
+- [x] TDD `stock-tree.test.ts` (reads the generated file only): 12 top-level nodes; level 1
       equals plan 13's `LEVEL1` (labels with breaks, presentations, numbers); numbers unique and
       consistent with their parents; hidden gaps 6-2-5, 6-3-3, 7-5, 8-5 and 12-n-2-4 kept; every
       option list's `opening` is null or in range; slugs unique among siblings.
-- [ ] Run `import-tree` twice; no diff. Review the generated file. Spot-check ten labels against
+- [x] Run `import-tree` twice; no diff. Review the generated file. Spot-check ten labels against
       `docs/specs/nokia-3310-menu-tree.md` and report.
-- [ ] Commit: `feat(nokia-os): generate the stock menu tree data from the v6.39 crawl`.
+- [x] Commit: `feat(nokia-os): generate the stock menu tree data from the v6.39 crawl`.
+
+Deviation: the generated `stock-tree.ts` holds its types as well as the data, so it stays
+import-free; the types are authored as `STOCK_TREE_TYPES` in `import-tree.ts`, and
+`tree-model.ts` imports them type-only. Shape changes against the indicative types: a leaf's
+`then` is `after` (an object with `then` is a thenable; the linter flags it); `info-pages` has no
+list softkey, each `StockPage` has its own `softkey`; a multi-select `StockOption` carries
+`marked` (virgin marks); `StockResult` adds `option-list` and `info-pages` (4-8-1, 4-8-4);
+`text-pages` is its own spec, not a `StockLeafKind`.
+Deviation: OCR cannot tell `I` from `l` (identical glyphs), so a label read from pixels must
+spell its `tree.json` label up to that, and the label keeps `tree.json`'s characters broken where
+the pixels break it (`AII calls'` → `All calls'\nduration`). A leaf's lines come from the
+richest frame between the key and the return (the first frame with a menu index or standby's
+`Menu` ends the search). Overrides (`tree-overrides.ts`): 12-6 keeps `(empty)` (D10), the
+Topics option labels are six U+E000 boxes, and Top score (8-1-4, 8-2-2, 8-4-1-3, 8-4-2-3) is a
+`timed-note` (P12). 7-3-4's choices stay `not-probed` in the data although P13 shows them
+returning two levels; Task 12's bindings own that.
+Deviation: `tree-text-runs.ts` matches every `tree/*` and `probe/*` golden image to its OCR'd
+capture by pixels and keeps the OCR's exact column bounds (`left` = x, `right` = x1 - 1), mapping
+`bold8` → small, `large13` → large, `tiny6` → digits, `plain8` → thin; lone `I`/`l`/`i`/`'`
+readings (art) are dropped. Only those four faces occur, so Task 6 adds no font.
+
+Completion (Task 3): 279 nodes (12 top-level). `stock-tree.ts` is 206 KB, `tree-text-runs.ts`
+338 KB (314 goldens, 1,345 images with text). A second `import-tree` run changes nothing. Spot
+check against `docs/specs/nokia-3310-menu-tree.md` (all equal, with firmware breaks): 2-7-1-1
+`Message/centre/number`, 4-5 `Show call/duration`, 6-3-2-3 `International/except to/home
+country`, 7-4 `Divert when/phone off/or no coverage`, 8-2 `Space impact`, 11-6 `Auto update
+of/date and time`, 6-2-6 `Confirm SIM/service actions`, 1-7 `Send b'card`, 6-3-6-4 `Change
+barring/password`, 12-1-2-5 `Message/alert tone`.
 
 ### Task 4 - phone-core: circular rows window (TDD)
 

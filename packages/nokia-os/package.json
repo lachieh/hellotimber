@@ -11,6 +11,7 @@
     "test": "vp test run",
     "demo": "vp dev demo",
     "import-captures": "node scripts/import-captures.ts",
+    "import-tree": "node scripts/import-tree.ts",
     "extract-resources": "node scripts/extract-resources.ts"
   },
   "dependencies": {
