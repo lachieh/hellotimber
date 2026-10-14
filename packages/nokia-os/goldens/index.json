@@ -2593,7 +2593,7 @@
     "file": "sound/message-tone/ascending.sound.txt",
     "status": "asserted",
     "kind": "sound",
-    "events": 102
+    "events": 174
   },
   {
     "id": "sound/message-tone/beep-once",
@@ -4357,7 +4357,7 @@
     "file": "sound/ringing-volume/tone/27-hurdy-gurdy.sound.txt",
     "status": "asserted",
     "kind": "sound",
-    "events": 126
+    "events": 125
   },
   {
     "id": "sound/ringing-volume/tone/28-groovy-blue",

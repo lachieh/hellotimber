@@ -12,6 +12,7 @@ import { STOCK_FONT_DATA } from "./generated/fonts";
 import { MENU_ICON_DATA } from "./generated/menu-icons";
 import { SNAKE_DATA } from "./generated/snake";
 import { STATUS_DATA } from "./generated/status";
+import { SOUND_DATA } from "./generated/sounds";
 import { WIDGET_DATA } from "./generated/widgets";
 
 export type StockFontName = "small" | "large" | "digits" | "thin";
@@ -212,3 +213,35 @@ export const SNAKE_DEATH_STEPS: readonly {
 }[] = SNAKE_DATA.death;
 /** A new top score's game-over screen comes this much after the death steps (virgin-game). */
 export const SNAKE_TOP_SCORE_MS: number = SNAKE_DATA.topScoreMs;
+
+// ---------------------------------------------------------------- sound (plan 16)
+
+/**
+ * The 35 Ringing tone list previews at Level 4 (to each tone's second cycle mark), with the
+ * Ringing volume list's first mark, the cycle, Level 5's jump and Ascending's steps
+ * (scripts/sound-programs.ts, from the sound goldens).
+ */
+export const RINGING_TONES = SOUND_DATA.ringingTones;
+/** ▲/▼ in a preview list → the preview's first output (ms after the key-down). */
+export const PREVIEW_DELAY_MS: number = SOUND_DATA.previewDelayMs;
+/** The same for the Message alert tone list. */
+export const MESSAGE_PREVIEW_DELAY_MS: number = SOUND_DATA.messagePreviewDelayMs;
+/**
+ * The buzzer volume register by Ringing volume level and note frequency (D10): Levels 1-4
+ * exactly; Level 5 plays Level 4's table up to the tone's `level5AtMs`, then the fifth.
+ */
+export const VOLUME_RULE = { tables: SOUND_DATA.volumeTables } as const;
+/** Ascending: Level 1 first, one level up at each of the tone's `ascendingAtMs`, capped at the stored level. */
+export const ASCENDING_RULE = { startLevel: 1 } as const;
+/** Message alert tones at Level 4 (`standard`, `special`, `beep-once`, `ascending`; No tone is silent). */
+export const MESSAGE_TONES = SOUND_DATA.messageTones;
+/** The message `Beep once` tone's DSP word by Ringing volume level (Levels 2-3 not captured). */
+export const BEEP_ONCE_LEVELS: Readonly<Record<string, number>> = SOUND_DATA.beepOnceLevels;
+/** Keypad tones: 900 Hz at the level's DSP word; awake and woken durations; the DSP's sleep. */
+export const KEYPAD_BEEP = SOUND_DATA.keypad;
+/** Note text → its warning tone (Warning tones On, D12). */
+export const NOTE_SOUNDS = SOUND_DATA.noteSounds;
+/** Snake II: the meal, the crash and the top score; the vibrator's run per shake (D13). */
+export const GAME_CUES = SOUND_DATA.gameCues;
+/** The power-on tone (and the power key's long press): its time into the power-on. */
+export const BOOT_TONE = SOUND_DATA.bootTone;

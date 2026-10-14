@@ -6,7 +6,7 @@ source-sha256: 388a1d8e6c319ee9dfc8237d229e94b1ef8a87e1772fa26f9f842ae45f2b44fe
 state: factory
 keys: 0:down
 note: Hurdy-gurdy stored; Tones › Ringing volume, ▼ from Level 3 onto Level 4 (to its first mark).
-omitted: 4 (stale frequency)
+omitted: 5 (stale frequency)
 
 @events
 # t_ms output   state
@@ -18,7 +18,6 @@ omitted: 4 (stale frequency)
 1293   buzzer   523 v=11
 1347   buzzer   off
 1464   buzzer   880 v=14
-1518   buzzer   880 v=13
 1532   buzzer   698 v=13
 1580   buzzer   off
 1696   buzzer   659 v=12

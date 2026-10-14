@@ -29,6 +29,10 @@ import { MENU_ICON_DATA } from "../src/resources/generated/menu-icons";
 import { SNAKE_DATA } from "../src/resources/generated/snake";
 import { STATUS_DATA } from "../src/resources/generated/status";
 import { WIDGET_DATA } from "../src/resources/generated/widgets";
+import { SOUND_DATA } from "../src/resources/generated/sounds";
+import { parseSoundGolden, type SoundGolden, type SoundRow } from "../scripts/sound-format.ts";
+import { LEVEL_COVER_TONES, RINGING_TONE_NAMES, toneSlug } from "../scripts/sound-capture-set.ts";
+import { previewRows, renderProgram, type SoundProgramData } from "../scripts/sound-programs.ts";
 import {
   STOCK_TREE,
   type StockResult,
@@ -133,6 +137,7 @@ describe("generated resources", () => {
       status: STATUS_DATA,
       widgets: WIDGET_DATA,
       snake: SNAKE_DATA,
+      sounds: SOUND_DATA,
     }).toEqual(extractResources());
   });
 
@@ -557,5 +562,190 @@ describe("widget sprites and timelines", () => {
       "fireworks-6:386",
       "game-over/title:2935",
     ]);
+  });
+});
+
+function soundGolden(id: string): SoundGolden {
+  return parseSoundGolden(
+    readFileSync(join(import.meta.dirname, "../goldens", `${id}.sound.txt`), "utf8"),
+    id,
+  );
+}
+
+/** Buzzer frequencies of a recording's preview, one per note (a volume change is no new note). */
+function previewHz(rows: readonly SoundRow[]): number[] {
+  const out: number[] = [];
+  let last: number | null = null;
+  for (const row of rows) {
+    if (row.output !== "buzzer") continue;
+    const hz = row.state.kind === "sounding" ? row.state.hz : null;
+    if (hz !== null && hz !== last) out.push(hz);
+    last = hz;
+  }
+  return out;
+}
+
+/** Every buzzer state of `rows` (ms from their first) is `level(t)`'s table volume. */
+function volumesFollow(rows: readonly SoundRow[], level: (t: number) => number): string[] {
+  const start = rows[0]!.ms;
+  return rows.flatMap((row) => {
+    if (row.output !== "buzzer" || row.state.kind !== "sounding") return [];
+    const l = level(row.ms - start);
+    const want = SOUND_DATA.volumeTables[String(l)]?.[String(row.state.hz)];
+    return want === row.state.volume
+      ? []
+      : [`${row.ms} ms ${row.state.hz} Hz: ${row.state.volume}, Level ${l} is ${want}`];
+  });
+}
+
+function sameNotes(a: readonly number[], b: readonly number[]): boolean {
+  return (
+    Math.abs(a.length - b.length) <= 1 &&
+    a.slice(0, Math.min(a.length, b.length)).every((hz, i) => hz === b[i])
+  );
+}
+
+describe("sound programs and rules (plan 16 Task 3)", () => {
+  const tones = SOUND_DATA.ringingTones;
+
+  it("list the 35 tones in the Ringing tone list's order", () => {
+    expect(tones.map((t) => t.name)).toEqual(RINGING_TONE_NAMES);
+  });
+
+  it("re-render every tone's Ringing tone list preview exactly", () => {
+    for (const tone of tones) {
+      const rows = previewRows(soundGolden(`sound/ringing-tone/${tone.slug}`));
+      expect(renderProgram(tone.program, rows[0]!.ms), tone.slug).toEqual(rows);
+    }
+  });
+
+  it("stop the Ringing volume list's preview at the first mark", () => {
+    for (const tone of tones) {
+      const golden = soundGolden(`sound/ringing-volume/tone/${tone.slug}`);
+      const rows = previewRows(golden);
+      const cut = renderProgram(tone.program, 0, { stopStep: tone.firstMarkStep });
+      expect(previewHz(cut), tone.slug).toEqual(previewHz(rows));
+    }
+  });
+
+  it("reproduce Levels 1-3 and the Ringing volume list by the frequency tables", () => {
+    const cases: [number, string, SoundProgramData][] = [];
+    for (const nn of LEVEL_COVER_TONES) {
+      for (const level of [1, 2, 3]) {
+        cases.push([
+          level,
+          `sound/ringing-tone/level-${level}/${toneSlug(nn)}`,
+          tones[nn - 1]!.program,
+        ]);
+      }
+    }
+    for (const level of [1, 2, 3, 4, 5]) {
+      cases.push([level, `sound/ringing-volume/level-${level}`, tones[12]!.program]);
+    }
+    for (const [level, id, program] of cases) {
+      const rows = previewRows(soundGolden(id));
+      const whole = previewHz(renderProgram(program, 0));
+      const played = previewHz(rows);
+      if (id.startsWith("sound/ringing-volume/"))
+        expect(played, id).toEqual(whole.slice(0, played.length));
+      else expect(sameNotes(played, whole), id).toBe(true);
+      // the Ringing volume list previews Level 5 at Level 4's table (one pass)
+      expect(
+        volumesFollow(rows, () => Math.min(level, 4)),
+        id,
+      ).toEqual([]);
+    }
+  });
+
+  it("reproduce Level 5: Level 4's table, then the fifth from the tone's jump", () => {
+    for (const tone of tones) {
+      const id = `sound/ringing-tone/level-5/${tone.slug}`;
+      const rows = previewRows(soundGolden(id));
+      expect(sameNotes(previewHz(rows), previewHz(renderProgram(tone.program, 0))), id).toBe(true);
+      expect(
+        volumesFollow(rows, (t) => (t < tone.level5AtMs ? 4 : 5)),
+        id,
+      ).toEqual([]);
+    }
+  });
+
+  it("reproduce Ascending: Level 1, one level up at each point, up to the stored Level 4", () => {
+    for (const tone of tones) {
+      const id = `sound/alert/ascending/${tone.slug}`;
+      const rows = previewRows(soundGolden(id));
+      const level = (t: number) =>
+        Math.min(4, 1 + tone.ascendingAtMs.filter((at) => at <= t).length);
+      expect(volumesFollow(rows, level), id).toEqual([]);
+    }
+    // stored Level 1: no step (alert/ascending-l1, Nokia tune)
+    const l1 = previewRows(soundGolden("sound/alert/ascending-l1"));
+    expect(volumesFollow(l1, () => 1)).toEqual([]);
+  });
+
+  it("re-render the message tones, note tones, game cues and the boot tone from their goldens", () => {
+    for (const [slug, program] of Object.entries(SOUND_DATA.messageTones)) {
+      const rows = soundGolden(`sound/message-tone/${slug}`).rows.filter((r) => r.ms > 300);
+      expect(renderProgram(program, rows[0]!.ms), slug).toEqual(rows);
+    }
+    expect(Object.keys(SOUND_DATA.noteSounds).sort()).toEqual([
+      "Code error",
+      "Invalid shortcut",
+      "No phone numbers",
+      "No voice tags saved",
+      "Not allowed",
+      "Screen saver missing",
+      "Set PIN code request on",
+    ]);
+    expect(SOUND_DATA.noteSounds["Invalid shortcut"]!.steps).toEqual([
+      { ms: 289, tone: { hz: 1750, volume: 0x9105 } },
+    ]);
+    expect(SOUND_DATA.noteSounds["Code error"]!.steps).toEqual([
+      { ms: 285, buzzer: { hz: 1000, volume: 22 } },
+    ]);
+    expect(SOUND_DATA.gameCues.eat.steps).toEqual([{ ms: 6, buzzer: { hz: 2636.9, volume: 6 } }]);
+    expect(SOUND_DATA.gameCues.crash.steps.filter((s) => s.buzzer).length).toBe(3);
+    expect(SOUND_DATA.bootTone).toEqual({
+      atMs: 2425,
+      program: { id: "boot/power-on", steps: [{ ms: 124, tone: { hz: 900, volume: 0x9105 } }] },
+    });
+  });
+
+  it("measure the keypad beep and the preview delay", () => {
+    expect(SOUND_DATA.keypad.levels).toEqual({
+      "1": 0x9108,
+      "2": 0x9104,
+      "3": 0x9100,
+      unset: 0x9100,
+    });
+    expect(SOUND_DATA.keypad.awakeMs).toBeGreaterThanOrEqual(140);
+    expect(SOUND_DATA.keypad.awakeMs).toBeLessThanOrEqual(150);
+    expect(SOUND_DATA.keypad.wokenMs).toBe(124);
+    expect(SOUND_DATA.previewDelayMs).toBe(991);
+    expect(SOUND_DATA.beepOnceLevels).toEqual({ "1": 0x9107, "4": 0x9104, "5": 0x9100 });
+  });
+
+  it("use positive frequencies with at most one decimal", () => {
+    const programs: SoundProgramData[] = [
+      ...tones.map((t) => t.program),
+      ...Object.values(SOUND_DATA.messageTones),
+      ...Object.values(SOUND_DATA.noteSounds),
+      SOUND_DATA.gameCues.eat,
+      SOUND_DATA.gameCues.crash,
+      SOUND_DATA.gameCues.topScore,
+      SOUND_DATA.bootTone.program,
+    ];
+    for (const program of programs) {
+      for (const step of program.steps) {
+        expect(step.ms, program.id).toBeGreaterThan(0);
+        for (const out of [step.buzzer, step.tone]) {
+          if (!out) continue;
+          expect(out.hz, program.id).toBeGreaterThan(0);
+          expect(Math.round(out.hz * 10) / 10, program.id).toBe(out.hz);
+        }
+      }
+    }
+    for (const table of Object.values(SOUND_DATA.volumeTables)) {
+      for (const hz of Object.keys(table)) expect(hz).toMatch(/^[1-9][0-9]*(\.[0-9])?$/);
+    }
   });
 });

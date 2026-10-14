@@ -43,7 +43,8 @@ export class SoundCaptureError extends Error {
 export const EVENTS_HEADER =
   "t_ms,dsp_tone1_hz,dsp_tone2_hz,buzzer_on,buzzer_hz,vibra,buzzer_vol,dsp_level";
 export const KEYS_HEADER = "key,down_ms,up_ms";
-/** A state held this long or less is a two-step register write, polled once (D6). */
+/** A state held this long or less is a two-step register write, polled once (D6); so is a
+ * note's volume written ahead of its divider, however long (`staleFrequency`). */
 export const GRAIN_MS = 1.05;
 /** Keys held longer than this carry their hold in `keys` (taps are 40-100 ms). */
 export const HOLD_MS = 200;
@@ -182,6 +183,22 @@ function omissionReason(output: SoundOutputName, state: Polled): string {
 }
 
 /**
+ * The firmware writes a note's volume before its divider: a state with the previous note's
+ * frequency at the next note's volume is that gap, however long it lasted (Task 0 saw 1-14 ms).
+ */
+function staleFrequency(previous?: Polled, state?: Polled, next?: Polled): boolean {
+  const sounding = (p?: Polled): p is Extract<SoundState, { kind: "sounding" }> =>
+    p !== undefined && p !== "divider-rewrite" && p.kind === "sounding";
+  if (!sounding(previous) || !sounding(state) || !sounding(next)) return false;
+  return (
+    previous.hz === state.hz &&
+    previous.volume !== state.volume &&
+    next.hz !== state.hz &&
+    next.volume === state.volume
+  );
+}
+
+/**
  * The events as per-output state changes: a state held for one grain or less is dropped (and
  * counted by reason), equal neighbours merge, and the log's initial "off" rows go.
  */
@@ -202,7 +219,11 @@ export function normaliseEvents(events: readonly RawEvent[]): {
     let current = "off";
     changes.forEach((change, i) => {
       const next = changes[i + 1];
-      if (change.state === "divider-rewrite" || (next && next.ms - change.ms <= GRAIN_MS)) {
+      if (
+        change.state === "divider-rewrite" ||
+        (next && next.ms - change.ms <= GRAIN_MS) ||
+        staleFrequency(changes[i - 1]?.state, change.state, next?.state)
+      ) {
         const reason = omissionReason(output, change.state);
         counts.set(reason, (counts.get(reason) ?? 0) + 1);
         return;

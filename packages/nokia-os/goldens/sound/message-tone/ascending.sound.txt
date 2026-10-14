@@ -2,11 +2,11 @@ sound-golden 1
 id: sound/message-tone/ascending
 status: asserted
 source: captures/6.39/plan16/message-tone/ascending
-source-sha256: 0d11fc9d22f0662eedfc375b20f420cb1c72ea580157def3306aadc18fe5fe0e
+source-sha256: 0dd954f88845b67802bed30b389dd2b8c882957e2989085fab75b45d0ba2a7e0
 state: factory
 keys: 0:down
 note: Tones › Message alert tone: ▼ from Beep once onto Ascending.
-omitted: none
+omitted: 4 (divider rewrite)
 
 @events
 # t_ms output   state
@@ -112,3 +112,75 @@ omitted: none
 19553  buzzer   2683.7 v=22
 19839  buzzer   off
 19932  buzzer   2683.7 v=22
+20218  buzzer   off
+20218  vibrator off
+20311  buzzer   2683.7 v=22
+20598  buzzer   off
+20884  buzzer   2683.7 v=22
+21171  buzzer   off
+21264  buzzer   2683.7 v=22
+21356  buzzer   off
+21652  buzzer   2683.7 v=22
+21937  buzzer   off
+22030  buzzer   2683.7 v=22
+22123  buzzer   off
+22410  buzzer   2683.7 v=22
+22502  buzzer   off
+22789  buzzer   2683.7 v=22
+23075  buzzer   off
+23169  buzzer   2683.7 v=22
+23261  buzzer   off
+23354  buzzer   2683.7 v=22
+23655  buzzer   off
+23743  buzzer   2683.7 v=22
+23835  buzzer   off
+24122  buzzer   2683.7 v=22
+24408  buzzer   off
+24695  buzzer   2683.7 v=22
+24788  buzzer   off
+24881  buzzer   2683.7 v=22
+24974  buzzer   off
+25260  buzzer   2683.7 v=22
+25547  buzzer   off
+25640  buzzer   2683.7 v=22
+25732  buzzer   off
+26019  buzzer   2683.7 v=22
+26305  buzzer   off
+26409  buzzer   2683.7 v=22
+26693  buzzer   off
+26786  buzzer   2683.7 v=22
+26878  buzzer   off
+27661  buzzer   2683.7 v=22
+27754  buzzer   off
+27847  buzzer   2683.7 v=22
+28133  buzzer   off
+28226  buzzer   2683.7 v=22
+28512  buzzer   off
+28605  buzzer   2683.7 v=22
+28698  buzzer   off
+28985  buzzer   2683.7 v=22
+29078  buzzer   off
+29364  buzzer   2683.7 v=22
+29664  buzzer   off
+29751  buzzer   2683.7 v=22
+30038  buzzer   off
+30131  buzzer   2683.7 v=22
+30418  buzzer   off
+30705  buzzer   2683.7 v=22
+30798  buzzer   off
+30891  buzzer   2683.7 v=22
+31177  buzzer   off
+31270  buzzer   2683.7 v=22
+31557  buzzer   off
+31650  buzzer   2683.7 v=22
+31742  buzzer   off
+32029  buzzer   2683.7 v=22
+32122  buzzer   off
+32215  buzzer   2683.7 v=22
+32501  buzzer   off
+32594  buzzer   2683.7 v=22
+32687  buzzer   off
+32780  buzzer   2683.7 v=22
+32873  buzzer   off
+33170  buzzer   2683.7 v=22
+33260  buzzer   off

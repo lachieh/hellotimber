@@ -143,6 +143,23 @@ describe("normalisation (D6)", () => {
     ]);
   });
 
+  it("drops a note's volume written ahead of its divider, however long", () => {
+    const { rows, omitted } = normaliseEvents(
+      parseEventsCsv(
+        eventsCsv(
+          row(1),
+          row(456, [0, 0, 1, "880.0", 0, 14, "0x910F"]),
+          row(510, [0, 0, 1, "880.0", 0, 13, "0x910F"]), // the next note's volume, 14 ms early
+          row(524, [0, 0, 1, "698.0", 0, 13, "0x910F"]),
+          row(572, [0, 0, 0, "0.0", 0, 13, "0x910F"]),
+        ),
+        "x",
+      ),
+    );
+    expect(rows.map((r) => r.ms)).toEqual([456, 524, 572]);
+    expect(omitted).toEqual([{ count: 1, reason: "stale frequency" }]);
+  });
+
   it("keeps a DTMF pair as one tone state", () => {
     const { rows } = normaliseEvents(
       parseEventsCsv(eventsCsv(row(1), row(29, [1209, 697, 0, "0.0", 0, 0, "0x9104"])), "x"),

@@ -12,7 +12,7 @@ README, which this plan edits too: do not start Task 1 before plan 15 is `done`.
 23 supplementary captures"), plans 13, 14, 15 and 23 in full before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan16/`. The planning probes in
 `$REF/captures/scratch-plan16/` are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-1 done).
+**Status:** in progress (Tasks 0-3 done).
 
 ## Goal
 
@@ -232,11 +232,11 @@ is fitted the same way from its recordings (its start level, its step per loop, 
 _After Task 0 (Deviation D10):_ the register is a table per level and note frequency (45
 frequencies; Levels 1-4 reproduce every recording of all 35 tones, the last note aside where the
 preview's stop races it). Level 5 plays Level 4's table, then jumps once to a fifth table at a
-tone-specific note; Ascending starts at Level 1 and steps one level about every 4 s at
-tone-specific notes, capped at the stored level. Neither point follows a rule visible in the
+tone-specific time; Ascending starts at Level 1 and steps one level about every 4 s at
+tone-specific times, capped at the stored level. Neither point follows a rule visible in the
 captures, so both are stored per tone: the importer commits the Level 5 and the Ascending previews
 of all 35 tones, Levels 1-3 of eight tones that cover every frequency (`check` verifies the rest in
-REF), and `VOLUME_RULE` is the five tables plus the per-tone jump and step notes.
+REF), and `VOLUME_RULE` is the five tables plus the per-tone jump and step times.
 
 **D11 - Alert types "as far as previews go" (the brief's scope).** Plan 16 reproduces what the
 alert type does to previews (S5) and stores the programs and rules an incoming call needs
@@ -673,9 +673,9 @@ commands and the findings in prose: `$REF/captures/README.md` "Plan 16 supplemen
 - **Volume rule.** `buzzer_vol` is a function of the level and the note's frequency alone: five
   tables of 45 frequencies (e.g. 1319 Hz: 4, 7, 10, 16 | 61) reproduce every Level 1-4 recording
   of all 35 tones exactly (the last note may differ: the preview's stop races the next note).
-  Level 5 plays at Level 4's table and jumps once to the fifth table at a tone-specific note
+  Level 5 plays at Level 4's table and jumps once to the fifth table at a tone-specific time
   (3.1-7.2 s in; Nokia tune at its second pass). Ascending starts at Level 1's table and steps one
-  level at a time about every 4 s, at tone-specific notes (first step 3.1-7.2 s), capped at the
+  level at a time about every 4 s, at tone-specific times (first step 3.1-7.2 s), capped at the
   stored level (`ascending-l1` stays at Level 1). Neither point follows from time, passes or the
   vibrator in the captures, so both are stored per tone (D10 Deviation).
 - **Alert types.** Ringing and Ring once preview identically; Beep once and Off silence ringing
@@ -687,7 +687,7 @@ commands and the findings in prose: `$REF/captures/README.md` "Plan 16 supplemen
 - **Message tones.** No tone: silent. Standard: 1499.9 Hz, two 193 ms pulses twice, vibrator.
   Special: 2683.7 Hz in three groups of 93/286 ms pulses, vibrator, ≈6.3 s. Beep once: 1750 Hz on
   the tone generator for ≈285-340 ms, then three 480 ms vibrator pulses. Ascending: the Special
-  pattern, stepping Level 1 → 4 once per pass, ≈20 s. Volumes follow the ringing tables
+  pattern, stepping Level 1 → 4 once per pass, ≈33 s (recaptured for 60 s in Task 3). Volumes follow the ringing tables
   (Standard at Level 5 plays the fifth table at once). Incoming call alert Off does not gate them.
 - **Profiles.** A Personalise list previews with that profile's Incoming call alert and Ringing
   volume (Silent: Off, Discreet: Beep once → silent; Loud: Level 5) and the active profile's
@@ -779,11 +779,11 @@ scenario (`awaitsPlan16Scenario`) until Task 9.
 `src/resources/generated/sounds.ts` (generated), `src/resources/index.ts`,
 `tests/sound-programs.test.ts` (new), `tests/resources.test.ts`.
 
-- [ ] TDD `sound-programs.ts` on synthetic goldens: a golden's rows from its program's first edge
+- [x] TDD `sound-programs.ts` on synthetic goldens: a golden's rows from its program's first edge
       to its loop (or its end) become a `SoundProgram` (steps with buzzer/tone/vibrator states and
       durations; `loopFrom` from `@loop`); rendering the program over the golden's span reproduces
       its rows exactly (the round trip that keeps the derivation honest).
-- [ ] Derive and emit: `RINGING_TONES` (35 programs in list order, by slug, Level 4 volumes),
+- [x] Derive and emit: `RINGING_TONES` (35 programs in list order, by slug, Level 4 volumes),
       `MESSAGE_TONES`, `NOTE_SOUNDS` (note text → program, D12), `KEYPAD_BEEP` (frequency, the
       level → `dsp_level` table, the duration per group), `GAME_CUES` (`eat`, `crash`,
       `top-score`; the vibrator duration), `PREVIEW_DELAY_MS`, `VOLUME_RULE` and
@@ -793,21 +793,39 @@ scenario (`awaitsPlan16Scenario`) until Task 9.
       captured) with each tone's `firstMark` (the step the Ringing volume list stops at, from
       `sound/ringing-volume/tone/*`) and `cycle` (`@loop`, absent for the five one-pass tones);
       `VOLUME_RULE` is the five frequency tables plus each tone's Level 5 jump step; `ASCENDING_RULE`
-      each tone's step notes (Level 1 first, capped at the stored level); `KEYPAD_BEEP` adds the woken
+      each tone's step times (Level 1 first, capped at the stored level); `KEYPAD_BEEP` adds the woken
       duration and the DSP's power-down delay (≈2966 ms); `MESSAGE_TONES` include the `Beep once` DSP
       words per level; `NOTE_SOUNDS` read the note text from each sounding note golden's `note:` (quoted
       first); `BOOT_TONE` is the power-on and power-off tone.
 
-- [ ] TDD freshness (in-process extraction equals the committed file); every ringing program
+- [x] TDD freshness (in-process extraction equals the committed file); every ringing program
       re-renders its golden's two passes; the volume rule reproduces `sound/ringing-volume/*`
       and the `level-*` goldens exactly; Ascending reproduces its goldens; frequencies are
       positive with at most one decimal.
-- [ ] Cross-check only (report in the completion note, import nothing): the 35 tone names and
+- [x] Cross-check only (report in the completion note, import nothing): the 35 tone names and
       order against `$REF/extracted/6.39/tones/index.json`, and note frequencies against its
       `notes`.
-- [ ] Run `extract-resources` twice; no diff.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): derive tone programs and volume rules from sound goldens`.
+- [x] Run `extract-resources` twice; no diff.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): derive tone programs and volume rules from sound goldens`.
+
+**Completion note (Task 3).** `extract-resources` writes `src/resources/generated/sounds.ts`
+(`SOUND_DATA`, 426 KB) and `src/resources/index.ts` exports `RINGING_TONES`, `PREVIEW_DELAY_MS`
+(991), `MESSAGE_PREVIEW_DELAY_MS` (1004), `VOLUME_RULE`, `ASCENDING_RULE`, `MESSAGE_TONES`,
+`BEEP_ONCE_LEVELS`, `KEYPAD_BEEP` (0x9108/0x9104/0x9100, unset 0x9100; 145 ms awake, 124 ms woken,
+sleep after 2966 ms), `NOTE_SOUNDS` (7 texts), `GAME_CUES` and `BOOT_TONE`; a second run changes
+nothing. Every tone program re-renders its preview golden exactly; the frequency tables (Levels
+1-5: 45, 45, 45, 46, 46 frequencies, 1499.9 Hz from Standard) reproduce every committed level and
+Ringing volume golden; Level 5 (`level5AtMs`) and Ascending (`ascendingAtMs`) reproduce theirs.
+Deviations: Level 5's jump and Ascending's steps are times, not notes: Toreador's Ascending raises
+the volume inside a note, so a sounding note changes at once (`renderAtLevels`); a note's volume
+written ahead of its divider is dropped however long it lasts (Hurdy-gurdy: 14 ms; importer
+rule `staleFrequency`, golden `ringing-volume/tone/27-hurdy-gurdy` re-imported); the message
+Ascending recording was cut at 20 s and was recaptured for 60 s (it ends at ≈33 s). The importer
+keeps `NOTE_SOUNDS` texts in the golden notes' quoted prefix. Cross-check (nothing imported): the
+35 names and their order equal `extracted/6.39/tones/index.json`; 247 of the 260 captured tone
+frequencies lie within 0.07 % of the extraction's notes; Mosquito, Bee and Rocket glide over
+2515-2910 Hz where the extraction decoded 77.8/82.4 Hz notes (its control codes misread there).
 
 ### Task 4 - The sequencer (pure, TDD)
 

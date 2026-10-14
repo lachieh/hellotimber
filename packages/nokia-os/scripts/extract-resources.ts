@@ -12,7 +12,9 @@
 // - widgets (plan 14): the sprites of scripts/widget-sprites.ts, and the widget timelines of the
 //   tree goldens (notes, progress notes, blinking prompts) and of the probes it names (splashes,
 //   the notes that follow a key, the game-over screens), aligned on their trigger frame (D8);
-// - snake (plan 23): the Snake II pictures, mazes and timing of scripts/snake-resources.ts.
+// - snake (plan 23): the Snake II pictures, mazes and timing of scripts/snake-resources.ts;
+// - sounds (plan 16): the tone programs and volume rules of scripts/sound-programs.ts, from the
+//   sound goldens.
 //
 // Writes src/resources/generated/*.ts. Idempotent. `extractResources` is also run in-process by
 // tests/resources.test.ts to prove the committed files are fresh. Runs under Node's type
@@ -39,6 +41,8 @@ import {
   type RunSample,
 } from "./harvest-glyphs.ts";
 import { extractSnakeResources, type SnakeResourceData } from "./snake-resources.ts";
+import { parseSoundGolden } from "./sound-format.ts";
+import { extractSoundResources, type SoundResourceData } from "./sound-programs.ts";
 import { FONT_HEIGHTS, TEXT_RUNS } from "./text-runs.ts";
 import {
   PROBE_TIMELINES,
@@ -160,6 +164,7 @@ export interface ExtractedResources {
   readonly status: StatusData;
   readonly widgets: WidgetData;
   readonly snake: SnakeResourceData;
+  readonly sounds: SoundResourceData;
 }
 
 // ---------------------------------------------------------------- pixels
@@ -759,6 +764,17 @@ export function extractResources(goldensDir: string = GOLDENS_DIR): ExtractedRes
       (id) => loadGolden(goldensDir, id),
       (id) => parseTickGolden(readFileSync(join(goldensDir, `${id}.ticks.txt`), "utf8"), id),
     ),
+    sounds: extractSoundResources(
+      (id) => parseSoundGolden(readFileSync(join(goldensDir, `${id}.sound.txt`), "utf8"), id),
+      (
+        JSON.parse(readFileSync(join(goldensDir, "index.json"), "utf8")) as {
+          id: string;
+          kind: string;
+        }[]
+      )
+        .filter((entry) => entry.kind === "sound")
+        .map((entry) => entry.id),
+    ),
   };
 }
 
@@ -770,6 +786,8 @@ const TYPES = {
   timeline:
     "{ readonly steps: readonly { readonly frame: number; readonly durationMs: number }[]; readonly loopFrom?: number; readonly loopInferred?: true }",
   sprite: "{ readonly x: number; readonly y: number; readonly art: readonly string[] }",
+  program:
+    "{ readonly id: string; readonly steps: readonly { readonly ms: number; readonly buzzer?: { readonly hz: number; readonly volume: number } | null; readonly tone?: { readonly hz: number; readonly volume: number } | null; readonly vibrator?: boolean }[]; readonly loopFrom?: number }",
   widgetTimeline:
     '{ readonly frames: readonly ({ readonly kind: "sprite" | "image"; readonly sprite: string } | { readonly kind: "cursor" | "plain" | "blank" } | { readonly kind: "cut"; readonly bytes: number } | { readonly kind: "edges"; readonly x0: number; readonly x1: number })[]; readonly steps: readonly { readonly frame: number; readonly durationMs: number }[]; readonly loopFrom?: number }',
 };
@@ -804,6 +822,11 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
       "WIDGET_DATA",
       `{ readonly sprites: Readonly<Record<string, ${TYPES.sprite}>>; readonly timelines: Readonly<Record<string, ${TYPES.widgetTimeline}>>; readonly byNode: Readonly<Record<string, string>>; readonly byName: Readonly<Record<string, string>> }`,
       resources.widgets,
+    ),
+    "sounds.ts": module(
+      "SOUND_DATA",
+      `{ readonly previewDelayMs: number; readonly messagePreviewDelayMs: number; readonly ringingTones: readonly { readonly name: string; readonly slug: string; readonly program: ${TYPES.program}; readonly firstMarkStep: number; readonly cycleMs?: number; readonly level5AtMs: number; readonly ascendingAtMs: readonly number[] }[]; readonly volumeTables: Readonly<Record<string, Readonly<Record<string, number>>>>; readonly messageTones: Readonly<Record<string, ${TYPES.program}>>; readonly beepOnceLevels: Readonly<Record<string, number>>; readonly keypad: { readonly hz: number; readonly levels: Readonly<Record<string, number>>; readonly awakeMs: number; readonly wokenMs: number; readonly sleepAfterMs: number }; readonly noteSounds: Readonly<Record<string, ${TYPES.program}>>; readonly gameCues: { readonly eat: ${TYPES.program}; readonly crash: ${TYPES.program}; readonly topScore: ${TYPES.program}; readonly vibrateMs: number }; readonly bootTone: { readonly atMs: number; readonly program: ${TYPES.program} } }`,
+      resources.sounds,
     ),
     "snake.ts": module(
       "SNAKE_DATA",
