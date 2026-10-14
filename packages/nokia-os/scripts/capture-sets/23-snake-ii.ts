@@ -1,3 +1,4 @@
+import { resources } from "../resource-inputs/23-snake-ii.ts";
 // Plan 23's goldens (docs/plans/23-games-snake-ii.md "Capture set"): Snake II's game goldens and
 // the period fixture, from the tables of scripts/game-capture-set.ts.
 import type { PlanCaptureSet } from "../capture-set.ts";
@@ -5,6 +6,7 @@ import { gameCaptureSet, periodFixture } from "../game-capture-set.ts";
 
 export const snakeII: PlanCaptureSet = {
   plan: "23",
+  resources,
   lcd: (io) => gameCaptureSet(io.game),
   ticks: (io) => [periodFixture(io.game)],
   notImported: {

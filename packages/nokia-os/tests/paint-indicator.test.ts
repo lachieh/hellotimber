@@ -1,6 +1,7 @@
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { TEXT_RUNS } from "../scripts/text-runs.ts";
+import { captureSets } from "../scripts/capture-registry.ts";
+const TEXT_RUNS = captureSets().find((set) => set.plan === "13")!.resources!.textRuns!;
 import { paintIndicator } from "../src/display/indicator";
 import { goldenImage } from "./support/goldens.ts";
 

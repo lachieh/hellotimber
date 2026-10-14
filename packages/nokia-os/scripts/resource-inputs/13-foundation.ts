@@ -1,5 +1,5 @@
 // The text drawn in each golden image, transcribed by reading the images (plan 13, Task 7).
-// This is the only manual input to resource extraction: the harvester checks every run against
+// PlanCaptureSet.resources registers these runs: the harvester checks every run against
 // the pixels and reports any transcription that does not fit (scripts/harvest-glyphs.ts).
 //
 // Layout facts used to place runs (plan 13 "Stock display observations"):
@@ -10,14 +10,8 @@
 //   max(0, selected - 2).
 // - carousel: title (large) at top 7; indicator (digits) at top 0; softkey (small) at top 40.
 // Runs stop short of the rail (x 81..83) and the standby status bars (x 0..3, 80..83).
-import type { FontName, TextRun } from "./harvest-glyphs.ts";
-
-export const FONT_HEIGHTS: Readonly<Record<FontName, number>> = {
-  small: 8,
-  large: 13,
-  digits: 6,
-  thin: 8,
-};
+import type { TextRun } from "../harvest-glyphs.ts";
+import type { ResourceDeclarations } from "../resource-declarations.ts";
 
 const softkey = (text: string): TextRun => ({ font: "small", text, top: 40 });
 const indicator = (text: string): TextRun => ({ font: "digits", text, top: 0, left: 40 });
@@ -264,79 +258,63 @@ function standby(clock: string): TextRun[] {
 
 const STANDBY = standby("10:10");
 
-/** A game-over note (plan 23 D13): large lines from x 0 at tops 3, 18 and 33. */
-function gameOver(label: string, score: string): TextRun[] {
-  return [
-    { font: "large", text: "Game over!", top: 3 },
-    { font: "large", text: label, top: 18 },
-    { font: "large", text: score, top: 33 },
-  ];
-}
+const glyphOverrides = ([] = [
+  // menu/02-messages.sub "01" vs "02": `2-1` and `2-2` put the last digit in the same cell, but
+  // 1's ink starts one column after 2's. Digits sit in 6-column cells; 1 is drawn one column in.
+  { kind: "bearing", font: "digits", char: "1", bearing: 1 },
+  // menu/11-clock.sub "03" (13.10.2026) and "02" (10:10): the thin 1 likewise sits one column
+  // into a 5-column digit cell (`.` and `:` measure 3 before a 1 and 2 before a 2).
+  { kind: "bearing", font: "thin", char: "1", bearing: 1 },
+  // probe/unset-down "01" ("Level 1" inverted): the small 1 likewise sits one column into its
+  // cell (a 3-column space before it measures 4 without the bearing).
+  { kind: "bearing", font: "small", char: "1", bearing: 1 },
+  // menu/10-reminders, tree/04-call-register/4-4-4.choose "b" (Received), probe/progress-7-6-quit
+  // "l" (Request): the leg of the large R fills its blank column, so R runs into a following e.
+  // R's ink is 8 columns.
+  { kind: "touch", font: "large", pair: "Re", width: 8 },
+  // menu/12-profiles.sub "05" "(empty)": ')' ink is 3 columns.
+  { kind: "advance", font: "small", char: ")", advance: 4 },
+  // menu/01-phone-book.sub "02" "Service Nos.": '.' ink is 2 columns.
+  { kind: "advance", font: "small", char: ".", advance: 3 },
+  // menu/03-chat.sub "01" "Phone number:": ':' ink is 2 columns.
+  { kind: "advance", font: "small", char: ":", advance: 3 },
+  // standby/standby "Orange F": 'F' ink is 5 columns.
+  { kind: "advance", font: "small", char: "F", advance: 6 },
+  // menu/02-messages.sub "02" "Inbox": 'x' ink is 5 columns.
+  { kind: "advance", font: "small", char: "x", advance: 6 },
+  // menu/01-phone-book "Phone book": 'k' ink is 6 columns.
+  { kind: "advance", font: "large", char: "k", advance: 7 },
+  // menu/01-phone-book.sub "03" (`1-3`): '3' ink is 5 columns, a full digit cell.
+  { kind: "advance", font: "digits", char: "3", advance: 6 },
+  // menu/01-phone-book.sub "09" (`1-9`): '9' ink is 5 columns.
+  { kind: "advance", font: "digits", char: "9", advance: 6 },
+  // menu/11-clock.sub "03" "13.10.2026": '6' ink is 4 columns, a full thin digit cell.
+  { kind: "advance", font: "thin", char: "6", advance: 5 },
+  // menu/11-clock.sub-1948 "02" "19:48": '8' ink is 4 columns, a full thin digit cell.
+  { kind: "advance", font: "thin", char: "8", advance: 5 },
+  // menu/05-tones.sub "02" "Level 1": 'l' ink is 1 column.
+  { kind: "advance", font: "thin", char: "l", advance: 2 },
+  // Plan 14 (Task 6): characters the menu-tree goldens show only at a word end; each cell is its
+  // ink plus one blank column, as above (digits fill their tabular cells the same way).
+  // tree/05-tones/5-1.options "10" "That's it!": '!' ink is 2 columns.
+  { kind: "advance", font: "small", char: "!", advance: 3 },
+] as const);
 
-/** Plan 15's security-code prompt: the label, the `*` mask (small, from x 0, top 29) and OK. */
-function codePrompt(mask: string, right: number): TextRun[] {
-  return [
-    { font: "small", text: "Security", top: 7, left: 0, right: 40 },
-    { font: "small", text: "code:", top: 16, left: 0, right: 25 },
-    ...(mask === "" ? [] : [{ font: "small" as const, text: mask, top: 29, left: 0, right }]),
-    softkey("OK"),
-  ];
-}
-
-/** A plan 15 note's two large lines from x 0 at tops 3 and 18; the icon is right of `right`s. */
-function codeNote(second: string, secondRight: number): TextRun[] {
-  return [
-    { font: "large", text: "Code", top: 3, left: 0, right: 28 },
-    { font: "large", text: second, top: 18, left: 0, right: secondRight },
-  ];
-}
-
-/** The welcome note `Hi` (plan 15 A6): large, from x 1, top 7. */
-const WELCOME_HI: readonly TextRun[] = [{ font: "large", text: "Hi", top: 7, left: 1, right: 11 }];
-
-/** Golden id → image name → the text runs drawn in that image. */
-export const TEXT_RUNS: Readonly<Record<string, Readonly<Record<string, readonly TextRun[]>>>> = {
-  "standby/standby": { "01-standby": STANDBY },
-  "standby/idle": { a: STANDBY },
-  ...level1Runs(),
-  ...clockTimeRuns(),
-  // Pending goldens are real firmware output too; their text extends the fonts.
-  "menu/03-chat.sub": {
-    "01": [{ font: "small", text: "Phone number:", top: 7, right: 79 }, softkey("Search")],
-    "02": [
-      { font: "large", text: "No phone", top: 3, right: 60 },
-      { font: "large", text: "numbers", top: 18, right: 60 },
-    ],
+export const resources: ResourceDeclarations = {
+  textRuns: {
+    "standby/standby": { "01-standby": STANDBY },
+    "standby/idle": { a: STANDBY },
+    ...level1Runs(),
+    ...clockTimeRuns(),
+    // Pending goldens are real firmware output too; their text extends the fonts.
+    "menu/03-chat.sub": {
+      "01": [{ font: "small", text: "Phone number:", top: 7, right: 79 }, softkey("Search")],
+      "02": [
+        { font: "large", text: "No phone", top: 3, right: 60 },
+        { font: "large", text: "numbers", top: 18, right: 60 },
+      ],
+    },
+    "menu/09-calculator.sub": { "01": [softkey("Options")] },
   },
-  "menu/09-calculator.sub": { "01": [softkey("Options")] },
-  // Snake II's game-over notes (plan 23): Your score: 4 and 8, TOP SCORE: 105.
-  "game/snake/bot-short.death": { c: gameOver("Your score:", "4") },
-  "game/snake/score-8.death": { c: gameOver("Your score:", "8") },
-  "game/snake/bot-long.death": { h: gameOver("TOP SCORE:", "105") },
-  // Profiles slot 6's uninitialised name: two U+E000 undefined-character boxes (D10), as a row
-  // label (small rows) and as its Rename page value (thin). The OCR reads them as art, so the
-  // generated tree runs skip them.
-  "probe/wrap-small-profiles-down": {
-    "06": [{ font: "small", text: "\uE000\uE000", top: 18, left: 2, right: 11 }],
-  },
-  "tree/12-profiles/12-6-2.sub": {
-    "09": [{ font: "thin", text: "\uE000\uE000", top: 29, left: 68, right: 77 }],
-  },
-  // Plan 15 (checked against plan15/text.json): the power-on prompt and its mask, the boot's
-  // Code error and Code accepted notes, and the welcome notes.
-  "boot/security-gate": {
-    d: codePrompt("", 0),
-    i: codePrompt("*****", 29),
-    j: codeNote("error", 31),
-    k: codeNote("accepted", 53),
-  },
-  "boot/security-gate-keys": { "12-digits-10": codePrompt("**********", 59) },
-  "boot/welcome-note": { m: WELCOME_HI },
-  "boot/welcome-note-ungated": { d: WELCOME_HI },
-  "boot/welcome-note-long": {
-    m: [
-      { font: "large", text: "Welcome to", top: 7, left: 1, right: 66 },
-      { font: "large", text: "my phone", top: 22, left: 1, right: 54 },
-    ],
-  },
+  glyphOverrides,
 };

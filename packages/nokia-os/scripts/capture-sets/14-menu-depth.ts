@@ -1,3 +1,4 @@
+import { resources } from "../resource-inputs/14-menu-depth.ts";
 // Plan 14's goldens (docs/plans/14-menu-depth-and-stock-widgets.md "Golden selection"): the
 // generated tree selection (rules S1-S8 over `tree.json`, scripts/tree-capture-set.ts) and the
 // Task 0 probes (S7), each with a hand-written scenario.
@@ -238,6 +239,7 @@ const PROBE_TIMELINES: readonly ProbeSpec[] = [
 
 export const menuDepth: PlanCaptureSet = {
   plan: "14",
+  resources,
   lcd: (io) => [
     ...probeCaptureSet(io.frames, {
       base: "plan14/probe",

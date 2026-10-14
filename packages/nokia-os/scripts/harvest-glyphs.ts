@@ -3,11 +3,18 @@
 // A run names the text drawn in one font at one band of an image. The harvester splits the
 // band's ink into glyphs on blank columns and measures each character's advance as the distance
 // between consecutive left edges within a word; word gaps give the space width. It never guesses:
-// anything it cannot decide is reported as an issue, and `scripts/glyph-overrides.ts` resolves the
+// anything it cannot decide is reported as an issue, and plan-owned glyph overrides resolves the
 // reported cases explicitly. Pure: no node:* imports, so tests run it in-process.
 import { LCD_WIDTH } from "./golden-format.ts";
 
 export type FontName = "small" | "large" | "digits" | "thin";
+
+export const FONT_HEIGHTS: Readonly<Record<FontName, number>> = {
+  small: 8,
+  large: 13,
+  digits: 6,
+  thin: 8,
+};
 
 export const FONT_NAMES: readonly FontName[] = ["small", "large", "digits", "thin"];
 

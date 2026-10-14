@@ -8,7 +8,7 @@ import {
 } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { LEVEL1 } from "../scripts/text-runs.ts";
+import { LEVEL1 } from "../scripts/resource-inputs/13-foundation.ts";
 import { paintDottedBorder } from "../src/display/unsupported";
 import { placeholderOwner } from "../src/firmware/stock";
 import { STOCK_TREE, type StockTreeNode } from "../src/firmware/generated/stock-tree";

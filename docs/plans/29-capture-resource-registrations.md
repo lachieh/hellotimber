@@ -196,24 +196,95 @@ splashes and its probes; 15 owns security/welcome runs and security/boot probes;
 probes. All former contributors move; ordered batches preserve interleaving.
 The `LEVEL1` foundation expectations used by menu/tree tests move with plan 13.
 
-- [ ] First write failing tests for registration reaching extraction, pending input
+- [x] First write failing tests for registration reaching extraction, pending input
       use, duplicate ownership and missing indexed fixture/image. Use committed
       goldens or synthetic input only; record the meaningful failure.
-- [ ] Implement registry/types, migrate every contributor and every caller in one
+- [x] Implement registry/types, migrate every contributor and every caller in one
       working unit. No new dependencies, placeholders or unused APIs.
-- [ ] Prove new registered run/override/crop/probe affects the extracted result;
+- [x] Prove new registered run/override/crop/probe affects the extracted result;
       test ordering, invalid bands/crops/kinds, duplicates and missing registration.
-- [ ] Prove asserted-without-scenario still fails and pending still runs no driver;
+- [x] Prove asserted-without-scenario still fails and pending still runs no driver;
       retain existing coverage-guard semantics and fix suffix grammar only.
-- [ ] `mise exec -- vp check --fix` (repeat `vp fmt` until stable).
-- [ ] Focused tests: `mise exec -- vp test run packages/nokia-os/tests/resource-registrations.test.ts packages/nokia-os/tests/acceptance-contract.test.ts packages/nokia-os/tests/resources.test.ts packages/nokia-os/tests/acceptance/coverage-guard.test.ts`.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`.
-- [ ] `mise exec -- vp run -r test` and `mise exec -- vp run website#build`.
-- [ ] Run `mise exec -- vp run @hellotimber/nokia-os#regenerate` twice;
+- [x] `mise exec -- vp check --fix` (repeat `vp fmt` until stable).
+- [x] Focused tests: `mise exec -- vp test run packages/nokia-os/tests/resource-registrations.test.ts packages/nokia-os/tests/acceptance-contract.test.ts packages/nokia-os/tests/resources.test.ts packages/nokia-os/tests/acceptance/coverage-guard.test.ts`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`.
+- [x] `mise exec -- vp run -r test` and `mise exec -- vp run website#build`.
+- [x] Run `mise exec -- vp run @hellotimber/nokia-os#regenerate` twice;
       second run has no diff and every generated file matches its baseline SHA-256.
       Do not accept changed bytes or edit generated output to make tests pass.
-- [ ] Inspect final diff, record evidence and commit explicit owned paths only.
+- [x] Inspect final diff, record evidence and commit explicit owned paths only.
       Never stage `TODOS.md`, goldens, generated resources or unrelated files.
 
 Completion requires actual passing gates. Return commits, APIs, pending workflow,
 byte evidence, commands, and exact next consumer edits; no push/deployment.
+
+## Verified delivery
+
+Task 0 was committed first as `b8a4411`; runtime/tooling edits began afterward.
+The first registration test failed because `capture-registry.ts` did not exist.
+The completed tests exercise a new kind/crop/probe through real extraction, and
+move a real specimen plus its required small-1 bearing between plan registrations.
+Removing that bearing causes a glyph-harvest failure; restoring it through the
+consumer registration restores the expected font. Negative cases cover duplicate
+plans/bands/overrides/sprites/batches/kinds/targets, missing indexed fixtures and
+images/files, bad rectangles/bands/frames, missing kinds/groups and ink-free crops.
+File coverage catches omitted index/resource registrations. The two existing
+foundation tests may import `LEVEL1` as fixture vocabulary; extraction evidence
+consumers use the registry.
+
+Acceptance-contract tests invoke the existing harness: pending evidence registers
+only a todo, asserted-without-scenario throws, adding a known gap does not suppress
+that throw, and a real scenario is called with its golden id. No acceptance runtime
+API or coverage exemption was added. The existing coverage guard passes unchanged.
+The golden integrity test now uses `PLAN_NUMBER` and numeric-prefix comparison for
+pending suffixes such as `18c`.
+
+Commands and results:
+
+- `mise exec -- vp install`: already up to date.
+- `mise exec -- vp check --fix`: root formatting/lint/typecheck passed (404 files).
+- Focused tests, run inside `packages/nokia-os` with `mise exec -- vp test run tests/resource-registrations.test.ts tests/acceptance-contract.test.ts tests/resources.test.ts tests/acceptance/coverage-guard.test.ts`: 4 files, 76 tests passed.
+- `mise exec -- vp run @hellotimber/nokia-os#test`: 53 files; 3011 passed,
+  15 existing expected failures, 67 existing todos. The 20 new tests all pass.
+- `mise exec -- vp run website#build`: passed.
+- The first bare `mise exec -- vp run -r test` failed 22 existing website tests:
+  `window.localStorage` was undefined, with Node's experimental-webstorage warning.
+  Disabling native experimental webstorage fixes the jsdom test environment;
+  no website or dependency edits were made.
+- `NODE_OPTIONS=--no-experimental-webstorage mise exec -- vp run --no-cache -r test`:
+  all six workspaces passed, zero cache hits. Counts: phone-core 314, phone-screen
+  100, phone-3d 20, snake 62, nokia-os 3011 (plus existing expected failures/todos),
+  website 164.
+- `mise exec -- vp env doctor` was attempted for that runtime failure; the installed
+  Vite+ 0.1.24 returned `Command 'env' not found`. `mise exec -- node --version`
+  returned v22.22.3. The command-only webstorage adjustment is recorded rather than
+  changing unrelated website tests or toolchain declarations.
+- Two sequential `mise exec -- vp run @hellotimber/nokia-os#regenerate` runs both
+  reported `extract-resources: up to date`. Neither run changed generated bytes.
+- `git diff --check` passed. Goldens, `scripts/generated/` and
+  `src/resources/generated/` have no diff against the base.
+
+Each generated file's SHA-256 equals its pre-migration `57a07fa` baseline:
+
+```text
+boot.ts b6499a164be48742fecd0c9d6471809959177964ac74c5fd3bed4237b4f59a47
+fonts.ts f270f0b44278dd0258266565f80dee0e45b4046b32b0c02b314d1864ca3dec82
+menu-icons.ts 61fea1a0e4edebb23a3159c87fd19fad992c2df5ae2cf439d4b80d17b4e5f2c6
+snake.ts 9c7f946de4c616d5ef360169e19e96e6c77773e7be92e3516c73ebb11ced5572
+sounds.ts 157b26e1bc1b712d835c62c4306ffc15da3523a981dc66ccba00999302464649
+status.ts 1809674a5a7b3ebe13b1b818671a103bc0396a42b471ad1f3849807bd4898031
+widgets.ts f586f670931d70650e89e9270be41d80552bc4b7bdb130971122fc8641f384f1
+```
+
+The sorted JSON manifest's SHA-256 is
+`b03b689cf408f521f08cd664fe63166412701d55cdee1c92992822ad86816034`.
+No output fixtures or generated modules were staged.
+
+Next consumer edits belong to their plan owners: the parent registers plan 29 in
+`docs/plans/README.md`; plan 18 Tasks 2/3 replace scenario shims/resource exemptions
+with pending imports and `resources` in their capture object; plan 20 Tasks 2/6
+register its `/` evidence and named rate notes there; plan 18c uses the same contract
+for content evidence. Use distinct batch positions (for example 180 for 18, 183 for
+18c and 200 for 20). Keep old goldens in their original indexes, and add real drivers
+in those owners' acceptance files before promotion. Feature plans add their owned
+modules and one capture-index export, with no shared extraction-table edits.

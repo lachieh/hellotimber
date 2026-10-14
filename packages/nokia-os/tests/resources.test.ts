@@ -9,11 +9,12 @@ import {
   inferLoop,
   toTimeline,
 } from "../scripts/extract-resources.ts";
-import { TREE_TEXT_RUNS } from "../scripts/generated/tree-text-runs.ts";
+import { captureSets } from "../scripts/capture-registry.ts";
+import { composeResourceDeclarations } from "../scripts/resource-declarations.ts";
 import { readGoldenIndex } from "../scripts/golden-index.ts";
-import { TEXT_RUNS } from "../scripts/text-runs.ts";
+
 import { placeholderOwner } from "../scripts/tree-capture-set.ts";
-import { WIDGET_SPRITES as CROPS } from "../scripts/widget-sprites.ts";
+
 import { loadGolden } from "./support/goldens";
 import { missingStockGlyphs, stockMenu } from "../src/index";
 import {
@@ -45,6 +46,13 @@ import {
   type StockScreenSpec,
   type StockTreeNode,
 } from "../src/firmware/generated/stock-tree";
+
+const INPUTS = composeResourceDeclarations(
+  captureSets(),
+  readGoldenIndex(join(import.meta.dirname, "../goldens")),
+  loadGolden,
+);
+const CROPS = INPUTS.sprites;
 
 interface ShownText {
   readonly text: string;
@@ -169,7 +177,7 @@ describe("generated resources", () => {
   });
 
   it("render every transcribed label, value and softkey", () => {
-    for (const images of [...Object.values(TEXT_RUNS), ...Object.values(TREE_TEXT_RUNS)]) {
+    for (const images of Object.values(INPUTS.textRuns)) {
       for (const runs of Object.values(images)) {
         for (const run of runs)
           expect(missingStockGlyphs(run.text, run.font), run.text).toEqual([]);
