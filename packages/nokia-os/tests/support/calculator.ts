@@ -10,6 +10,8 @@ import {
 } from "../../scripts/capture-sets/20-calculator.ts";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
 import { standbyRig, type Rig } from "./rig.ts";
+import { expectSoundTimeline, loadSoundGolden, playSound } from "./sound.ts";
+import { soundRig } from "./sound-scenarios.ts";
 
 /** A harness tap (`key`): ≈42 ms down, the 250 ms settle and the 300 ms key gap. */
 export const TAP_DOWN_MS = 42;
@@ -128,3 +130,62 @@ export function casesOf(
     c,
   }));
 }
+
+// ---------------------------------------------------------------- sound (Task 7)
+
+/** The Foreign rate prompt from the first screen (`FOREIGN`), and the Options list (`menu`). */
+export const FOREIGN = "menu up menu menu +500";
+export const DOMESTIC = "menu up menu down menu +500";
+
+/**
+ * The calculator on a phone in `state` (plan 16's sound setup: factory with C held and 1 s of
+ * standby, or virgin), then `setup` played: the golden's keys follow at once, the DSP awake.
+ */
+export function soundCalculator(state: "factory" | "virgin", setup: string): Rig {
+  const rig = soundRig(state);
+  openCalculator(rig);
+  play(rig, setup);
+  return rig;
+}
+
+/** Plays sound golden `id`'s keys after `setup` on the calculator and compares the events. */
+export function calculatorSound(
+  id: string,
+  setup: string,
+  state: "factory" | "virgin" = "factory",
+): void {
+  const golden = loadSoundGolden(id);
+  const rig = soundCalculator(state, setup);
+  expectSoundTimeline(playSound(rig, golden), golden, `${id}: ${setup}, then ${golden.note}`);
+}
+
+const NOTE_SETUPS = {
+  "out-of-range": "9 9 9 9 9 * * * 9 9 9 9 9",
+  "divide-by-zero": "7 * * * * 0",
+} as const;
+
+const RATE_SLUGS = [..."0123456789".split(""), "star", "hash", "up", "down", "c", "menu"];
+
+/** Every calculator sound golden's scenario (the D9 escape keys wait on plan 22). */
+export const CALCULATOR_SOUND_SCENARIOS: Readonly<Record<string, (id: string) => void>> = {
+  "sound/calculator/keys": (id) => calculatorSound(id, ""),
+  "sound/note/calculator-out-of-range": (id) => calculatorSound(id, NOTE_SETUPS["out-of-range"]),
+  "sound/note/calculator-divide-by-zero": (id) =>
+    calculatorSound(id, NOTE_SETUPS["divide-by-zero"]),
+  "sound/calculator/divide-by-zero-virgin": (id) =>
+    calculatorSound(id, NOTE_SETUPS["divide-by-zero"], "virgin"),
+  "sound/calculator/note-key": (id) => calculatorSound(id, NOTE_SETUPS["out-of-range"]),
+  "sound/calculator/rate-saved": (id) => calculatorSound(id, `${FOREIGN} c@1500`),
+  ...Object.fromEntries(
+    RATE_SLUGS.map((slug) => [
+      `sound/calculator/keys-rate-${slug}`,
+      (id: string) => calculatorSound(id, `${FOREIGN} 1`),
+    ]),
+  ),
+  ...Object.fromEntries(
+    ["up", "down", "c", "menu"].map((slug) => [
+      `sound/calculator/keys-options-${slug}`,
+      (id: string) => calculatorSound(id, "menu"),
+    ]),
+  ),
+};

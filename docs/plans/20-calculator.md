@@ -646,17 +646,26 @@ plan 22's standby number entry binds there. Their fixtures stay `pending:22`.
 
 **Files:** `tests/calculator-sound.test.ts` (new), `tests/support/calculator.ts`.
 
-- [ ] Drive `sound/calculator/*` and `sound/note/9` from the factory state
+- [x] Drive `sound/calculator/*` and `sound/note/9` from the factory state
       (`seededStorage({ factory: true })`) with plan 16's `recordSound`/`expectSoundTimeline` and
       tolerances: calculator/rate keys and Options arrows/C/OK beep at 900 Hz; warning tones
       replace OK's beep; `Rate saved` adds no tone but its OK beeps; virgin error OK is silent
       while preceding Options beeps. Drive every `keys-options-*`, `keys-rate-*` and independent
       `options-dtmf-confirm-*` recording, preserving both tone columns for DTMF. The latter
       Options escape paths remain pending until the shared D9 gate passes.
-- [ ] Do not change the shared sounder. D9's dual-frequency contract is parent/shared-owner work;
+- [x] Do not change the shared sounder. D9's dual-frequency contract is parent/shared-owner work;
       inspect its delivered API and verify host output before promoting DTMF fixtures.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): calculator beeps and warning tones`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): calculator beeps and warning tones`.
+
+**Task 7 completion.** `tests/calculator-sound.test.ts` drives all 27 factory/virgin
+calculator sound goldens that are not D9 escapes (`CALCULATOR_SOUND_SCENARIOS` in
+`tests/support/calculator.ts`, reused by Task 8) with plan 16's `playSound` /
+`expectSoundTimeline` tolerances, plus node 9's opening beep against `sound/note/2-7-1-1`. No
+sounder change: key beeps are the phone's, the notes' warning tones come from `NOTE_SOUNDS`
+(Task 2). Removing the notes' `sound` hook fails the four warning-tone goldens. The 14 D9
+escape sound goldens (DTMF pairs, both columns kept by the importer) stay `pending:22` with no
+driver.
 
 ### Task 8 - Acceptance
 
