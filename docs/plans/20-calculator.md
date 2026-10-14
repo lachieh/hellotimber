@@ -15,7 +15,7 @@ API or filename is assumed here. The per-plan file split (feature modules, per-p
 "Plan 16 supplementary captures") and plans 13-16 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan20/`. The planning probes in `$REF/captures/scratch-plan20/`
 are evidence for this plan only and are never imported.
-**Status:** Task 1 owned documentation reconciled against Task 0. Runtime Tasks 2-9 remain paused until plan 29 is integrated and its resource registration is verified. Task 0 R remains unticked. Parent-owned index and contract work is outstanding.
+**Status:** implemented except D9. Tasks 2-8 done on plan 29's registration; node 9 is the stock calculator. Options' numeric/star/hash escape (D9) waits on plan 22 and the dual-frequency sound contract (28 fixtures `pending:22`). Task 0 R stays unticked for the parent's review of the corrected criterion.
 
 ## Goal
 
@@ -716,15 +716,25 @@ Domestic 2 the prompt opens with the cursor hidden; UNVERIFIED cause).
 
 **Files:** this plan, `docs/plans/README.md` (row 20), `docs/specs/stock/calculator.md`.
 
-- [ ] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
+- [x] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
       `mise exec -- vp run website#build`; `git diff --stat <commit before Task 1> -- website/` is
       empty.
-- [ ] Demo check (no demo edit): `mise exec -- vp run @hellotimber/nokia-os#demo` with
+- [x] Demo check (no demo edit): `mise exec -- vp run @hellotimber/nokia-os#demo` with
       `agent-browser`: Menu 9, `1 2 * 3`, Options › Equals shows `15`; Exchange rate › Foreign
       `1.5`, `Rate saved`; `10` In domestic shows `15`. Screenshots in the completion note.
-- [ ] Spec: replace "(plan 20, in progress)" with verified facts; list what stays UNVERIFIED.
-- [ ] Plans README row 20 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete the stock calculator (plan 20)`.
+- [x] Spec: replace "(plan 20, in progress)" with verified facts; list what stays UNVERIFIED.
+- [ ] Plans README row 20 `done`. Completion notes; status `done`. (Parent-owned; blocked on D9.)
+- [x] Commit: `docs: complete the stock calculator (plan 20)`.
+
+**Task 9 completion.** `vp check` passes (423 files); `vp run -r test` passes in all six
+workspaces (nokia-os: 3825 passed, 20 expected failures, 93 todos); `vp run website#build`
+passes; `git diff --stat ece981c -- website/` is empty. Demo (port 5291, agent-browser,
+screenshots `/tmp/nokia-os-p20-*.png`): Menu ▲×4 Select opens `0`; `0.1 + 0.2` Equals shows
+`0.3`; `* 12 * * * * 3` chains to `12.3 / 3`, Equals `4.1`; `99999 * 99999` shows Out of range,
+then the operands again; `7 / 0` shows Dividing by zero not allowed, then `7 / 0`; Exchange
+rate › 8-1 › `1.5` OK shows Rate saved and stores `{"direction":"foreign","rate":"1.5"}` in
+localStorage; `10` In domestic shows `15`. The spec records what shipped and what stays
+UNVERIFIED. The plan is not `done`: D9 remains.
 
 ## Follow-up plan adjustments
 
@@ -740,9 +750,9 @@ Domestic 2 the prompt opens with the cursor hidden; UNVERIFIED cause).
 
 ## Remaining gates
 
-1. Parent-owned plans README row 20 and authenticity-spec index still need updating.
+1. Parent: the plans README row 20 stays `in progress` until D9 lands.
 2. Task 0 R remains unticked pending full checklist review under the corrected criterion.
-3. Plan 29 integration and verified text/note/timeline resource registration gate runtime Tasks 2-9. No API assumption is made before its result.
+3. Done: plan 29's registration carries the calculator's text, note timelines and warning tones (Task 2).
 4. Plan 22 standby entry and parent/shared sound-contract reconciliation gate Options numeric/star/hash acceptance and final completion. Required proof is the captured `Call` LCD plus both simultaneous DTMF frequencies, using real behavioral drivers.
 5. Physical EEPROM encoding and the exact internal C-hold timer remain UNVERIFIED. Preserve observable behavior without claiming those internals.
 
