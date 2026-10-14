@@ -98,6 +98,20 @@ unsubscribe();
   });
   ```
 
+- `shown(child)` (opt-in) hides children while it returns false, re-read on every tick: the
+  list, ▲/▼, the rows window and shortcuts skip hidden children, a path landing on one shows the
+  level, and the level numbers its shown children by position (`8-1-1` is whichever child is
+  first now). A selected child that becomes hidden gives way to the first shown one; showing none
+  throws. `exit({ select })` can select a child that appeared while the application ran:
+
+  ```ts
+  const cont = new ApplicationEntry(slug("continue"), new MenuOrder(1), "Continue", game);
+  new SubmenuEntry(slug("snake"), order, "Snake II", new MenuLevel([cont, ...rest]), undefined, {
+    shown: (child) => child !== cont || suspended(),
+    opening: () => (suspended() ? cont : undefined),
+  });
+  ```
+
 - `context.exit(options?)`: `exit()` returns to the menu; `exit({ to: "standby" })` leaves the
   menus as C-hold does; `exit({ levels: 2 })` also closes the enclosing level, and
   `exit({ select: "slug" })` selects that child of the level returned to, on the bottom row of a

@@ -13,7 +13,7 @@ plan 14 goldens already committed for 8-1, the original `$REF/captures/6.39/game
 exploratory runs in `$REF/captures/scratch-plan23/` (planning evidence, never imported), and the
 canonical recaptures that Task 0 writes to `$REF/captures/6.39/plan23/`. Read
 `$REF/captures/README.md`, plan 13 and plan 14 in full before starting.
-**Status:** in progress (Tasks 0-1 done).
+**Status:** in progress (Tasks 0, 1 and 3 done).
 
 ## Goal
 
@@ -737,18 +737,25 @@ and Top score 175 (`virgin/after/`).
 **Files:** `packages/phone-core/src/{menu.ts,machine.ts,types.ts,index.ts}`, README; tests
 `shown.test.ts` (new).
 
-- [ ] TDD `shown`: hidden children are not listed, not reachable by ▲/▼ (wrap included), not
+- [x] TDD `shown`: hidden children are not listed, not reachable by ▲/▼ (wrap included), not
       counted by the rail or the rows window, not shortcut targets; numbers are positions
       (`segments` and the painter's appended number); `itemOrders` omitted; a path landing on a
       hidden child falls back to the level; `opening()` returning a hidden child falls back to the
       first shown; re-read per tick: a child that appears emits one snapshot; all hidden throws.
-- [ ] TDD `exit({ select })` into a level whose `shown` changed while the application ran (Continue
+- [x] TDD `exit({ select })` into a level whose `shown` changed while the application ran (Continue
       appears after Navi) selects it, with `row` as plan 14.
-- [ ] Shortcut entry (`shortcutEntry`) on a `shown` level matches positions.
-- [ ] Existing tests pass unchanged; levels without `shown` produce identical models.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
+- [x] Shortcut entry (`shortcutEntry`) on a `shown` level matches positions.
+- [x] Existing tests pass unchanged; levels without `shown` produce identical models.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
       `vp check --fix`.
-- [ ] Commit: `feat(phone-core): submenu children shown on demand, numbered by position`.
+- [x] Commit: `feat(phone-core): submenu children shown on demand, numbered by position`.
+
+Deviation: `SubmenuEntry` gains `shownChildren()` (throws naming the level when none is shown),
+`numberOf(child)` and `numbersByPosition`, the readers the kernel and hosts share. A hidden
+child's number is the position it would take among the shown ones, which a running Continue
+needs after its game resumes. The machine refits a level frame (selection and window) whenever
+its shown children change: on every tick for the shown level, on every key, on entry and on an
+exit into it.
 
 ### Task 4 - Snake II resources from goldens (TDD)
 

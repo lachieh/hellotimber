@@ -139,6 +139,14 @@ export interface SubmenuOptions<Metadata = unknown> {
    * (none); a non-negative integer.
    */
   entryIndicatorMs?: number;
+  /**
+   * Whether `child` is shown; re-read when the level's list is built and on every tick. Hidden
+   * children are skipped by display, ▲/▼, the rows window, shortcuts and `opening()`, and a path
+   * that lands on one falls back to the level. A level with `shown` numbers its shown children by
+   * position (1..n) instead of by MenuOrder. At least one child must be shown. Default: every
+   * child shown, numbered by order. Method syntax keeps SubmenuEntry covariant in Metadata.
+   */
+  shown?(child: MenuEntry<Metadata>): boolean;
 }
 
 export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
@@ -186,6 +194,9 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
       );
       if (own) throw new Error("Submenu intro must not be one of the level's own applications.");
     }
+    if (options.shown !== undefined && typeof options.shown !== "function") {
+      throw new Error("Submenu shown must be a function.");
+    }
     const entryIndicatorMs = options.entryIndicatorMs ?? 0;
     if (!Number.isInteger(entryIndicatorMs) || entryIndicatorMs < 0) {
       throw new Error(
@@ -207,12 +218,37 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
     return typeof value === "string" ? value : undefined;
   }
 
-  /** The child selected on entry: the opening reader's child, else the first child. */
+  /** The child selected on entry: the opening reader's child if shown, else the first shown. */
   openingChild(): MenuEntry<Metadata> | undefined {
     const child = this.#options.opening?.();
-    return child !== undefined && this.children.entries.includes(child)
-      ? child
-      : this.children.entries[0];
+    const shown = this.shownChildren();
+    return child !== undefined && shown.includes(child) ? child : shown[0];
+  }
+
+  /** True when the level has a `shown` reader: its children are numbered by position. */
+  get numbersByPosition(): boolean {
+    return this.#options.shown !== undefined;
+  }
+
+  /** The children shown now (all of them without a `shown` reader); throws when none is. */
+  shownChildren(): readonly MenuEntry<Metadata>[] {
+    const all = this.children.entries;
+    if (this.#options.shown === undefined || all.length === 0) return all;
+    const shown = all.filter((child) => this.#options.shown!(child) === true);
+    if (shown.length === 0) {
+      throw new Error(`Submenu "${this.slug.value}" shows none of its children.`);
+    }
+    return shown;
+  }
+
+  /**
+   * The menu number of `child` in this level: its order, or with `shown` its position among the
+   * shown children (a hidden child counts as if shown, after the shown ones before it).
+   */
+  numberOf(child: MenuEntry<Metadata>): number {
+    if (this.#options.shown === undefined) return child.order.value;
+    const shown = this.shownChildren();
+    return shown.filter((entry) => entry.order.value < child.order.value).length + 1;
   }
 
   accept<Result>(visitor: MenuEntryVisitor<Metadata, Result>): Result {

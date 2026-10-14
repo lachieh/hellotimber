@@ -15,7 +15,7 @@ import type {
   MenuEntryVisitor,
   ReaderEntry,
 } from "./menu";
-import { childrenOf, normalizePath, parsePath, resolveIds } from "./paths";
+import { normalizePath, parsePath, resolveIds } from "./paths";
 import { Timeline } from "./timeline";
 import { rowsWindowTop } from "./window";
 import type {
@@ -59,6 +59,8 @@ type NavFrame<Metadata> =
       windowTop: number | undefined;
       /** Until when the entering indicator shows (SubmenuOptions.entryIndicatorMs). */
       enteringUntil: number;
+      /** The shown children's slugs when `selected` and `windowTop` were last fitted to them. */
+      shownKey: string;
     }
   | {
       kind: "list";
@@ -107,11 +109,14 @@ interface HeldKey {
 
 type Notice = { text: string; softkey: string; path?: string };
 
+/** A level's entries with their menu numbers (orders, or positions under SubmenuOptions.shown). */
+type Numbered<Metadata> = readonly { entry: MenuEntry<Metadata>; number: number }[];
+
 /** Plan 13 shortcuts: one digit (1-9) per level, each entering its entry at once. */
 interface DigitShortcut<Metadata> {
   kind: "digits";
   entries: MenuEntry<Metadata>[];
-  nextLevel: readonly MenuEntry<Metadata>[];
+  nextLevel: Numbered<Metadata>;
   deadline: number;
 }
 
@@ -251,7 +256,8 @@ function tickSignature<Metadata>(m: Machine<Metadata>): string {
         return iconFrame === undefined ? "" : `icon:${frame.index}:${iconFrame}`;
       }
       if (frame?.kind === "submenu") {
-        return `detail:${JSON.stringify(submenuDetail(frame))}:${entering(m)}`;
+        const shown = shownKeyOf(frame.entry);
+        return `detail:${JSON.stringify(submenuDetail(frame))}:${entering(m)}:${shown}`;
       }
       return "";
     }
@@ -273,6 +279,64 @@ function shownNavFrame<Metadata>(
 function submenuDetail<Metadata>(frame: SubmenuFrame<Metadata>): string | undefined {
   const child = frame.entry.children.entries[frame.selected];
   return child === undefined ? undefined : frame.entry.detailOf(child);
+}
+
+function shownKeyOf<Metadata>(entry: SubmenuEntry<Metadata>): string {
+  return entry.numbersByPosition
+    ? entry
+        .shownChildren()
+        .map((child) => child.slug.value)
+        .join("/")
+    : "";
+}
+
+/**
+ * The level's shown children, after fitting the frame to them (SubmenuOptions.shown is re-read):
+ * a selected child that became hidden gives way to the first shown child, and a change in the
+ * shown children rebuilds the rows window at the selection.
+ */
+function shownChildrenOf<Metadata>(
+  m: Machine<Metadata>,
+  frame: SubmenuFrame<Metadata>,
+): readonly MenuEntry<Metadata>[] {
+  const shown = frame.entry.shownChildren();
+  const key = shownKeyOf(frame.entry);
+  if (key === frame.shownKey) return shown;
+  frame.shownKey = key;
+  const all = frame.entry.children.entries;
+  if (shown.length > 0 && !shown.includes(all[frame.selected]!)) {
+    frame.selected = all.indexOf(shown[0]!);
+  }
+  if (frame.windowTop !== undefined && m.rowsWindow !== undefined) {
+    frame.windowTop = rowsWindowTop(
+      undefined,
+      shown.indexOf(all[frame.selected]!),
+      shown.length,
+      m.rowsWindow,
+    );
+  }
+  return shown;
+}
+
+/** The menu number of `entry` in the level shown by `parent` (the carousel: its order). */
+function numberIn<Metadata>(
+  parent: NavFrame<Metadata> | undefined,
+  entry: MenuEntry<Metadata>,
+): number {
+  return parent?.kind === "submenu" ? parent.entry.numberOf(entry) : entry.order.value;
+}
+
+/** An entry's children with their menu numbers; none for leaves. */
+function numberedChildren<Metadata>(entry: MenuEntry<Metadata>): Numbered<Metadata> {
+  if (!(entry instanceof SubmenuEntry)) return [];
+  return entry.shownChildren().map((child) => ({ entry: child, number: entry.numberOf(child) }));
+}
+
+function numberedTopLevel<Metadata>(m: Machine<Metadata>): Numbered<Metadata> {
+  return m.config.menu.entries.map((slot) => ({
+    entry: slot.entry,
+    number: slot.entry.order.value,
+  }));
 }
 
 function carouselIconFrame<Metadata>(
@@ -303,7 +367,9 @@ function submenuFrame<Metadata>(
     selected,
     windowTop: undefined,
     enteringUntil: 0,
+    shownKey: "",
   };
+  shownChildrenOf(m, frame); // a hidden `selected` gives way to the first shown child
   enterWindow(m, frame);
   return frame;
 }
@@ -311,20 +377,23 @@ function submenuFrame<Metadata>(
 /** Rebuild a rows level's window with the entry rule (the selection on the top row). */
 function enterWindow<Metadata>(m: Machine<Metadata>, frame: SubmenuFrame<Metadata>): void {
   if (m.rowsWindow === undefined || frame.entry.presentation !== "rows") return;
-  const count = frame.entry.children.entries.length;
-  frame.windowTop = rowsWindowTop(undefined, frame.selected, count, m.rowsWindow);
+  const shown = shownChildrenOf(m, frame);
+  const selected = shown.indexOf(frame.entry.children.entries[frame.selected]!);
+  frame.windowTop = rowsWindowTop(undefined, selected, shown.length, m.rowsWindow);
 }
 
-/** Move a level's selection, keeping its window per the rows-window rule. */
-function selectChild<Metadata>(
+/** Move a level's selection `step` shown children on (wrapping), keeping its window. */
+function stepSelection<Metadata>(
   m: Machine<Metadata>,
   frame: SubmenuFrame<Metadata>,
-  selected: number,
+  step: number,
 ): void {
-  frame.selected = selected;
+  const shown = shownChildrenOf(m, frame);
+  const all = frame.entry.children.entries;
+  const selected = wrapIndex(shown.indexOf(all[frame.selected]!) + step, shown.length);
+  frame.selected = all.indexOf(shown[selected]!);
   if (frame.windowTop !== undefined && m.rowsWindow !== undefined) {
-    const count = frame.entry.children.entries.length;
-    frame.windowTop = rowsWindowTop(frame.windowTop, selected, count, m.rowsWindow);
+    frame.windowTop = rowsWindowTop(frame.windowTop, selected, shown.length, m.rowsWindow);
   }
   m.dirty = true;
 }
@@ -366,18 +435,19 @@ function stackSlugs<Metadata>(stack: readonly NavFrame<Metadata>[]): string[] {
   return slugs;
 }
 
+/** Menu numbers of the stack's entries, each in the level that shows it. */
 function stackOrders<Metadata>(stack: readonly NavFrame<Metadata>[]): number[] {
   const orders: number[] = [];
-  for (const frame of stack) {
+  stack.forEach((frame, index) => {
     if (
       frame.kind === "submenu" ||
       frame.kind === "list" ||
       frame.kind === "reader" ||
       frame.kind === "action"
     ) {
-      orders.push(frame.entry.order.value);
+      orders.push(numberIn(stack[index - 1], frame.entry));
     }
-  }
+  });
   return orders;
 }
 
@@ -385,15 +455,18 @@ function originSlugs<Metadata>(origin: ActivationOrigin<Metadata>): string[] {
   return origin.kind === "entry" ? [origin.entry.slug.value] : [];
 }
 
-function originOrders<Metadata>(origin: ActivationOrigin<Metadata>): number[] {
-  return origin.kind === "entry" ? [origin.entry.order.value] : [];
+function originOrders<Metadata>(
+  stack: readonly NavFrame<Metadata>[],
+  origin: ActivationOrigin<Metadata>,
+): number[] {
+  return origin.kind === "entry" ? [numberIn(stack[stack.length - 1], origin.entry)] : [];
 }
 
 /** Menu numbers from the root to the shown level (or application), without the carousel's. */
 function levelOrders<Metadata>(m: Machine<Metadata>): number[] {
   if (m.mode.kind === "app") {
     const { stack, origin } = m.mode.activation;
-    return [...stackOrders(stack), ...originOrders(origin)];
+    return [...stackOrders(stack), ...originOrders(stack, origin)];
   }
   return m.mode.kind === "nav" ? stackOrders(m.mode.stack) : [];
 }
@@ -437,8 +510,9 @@ function stockIndicator<Metadata>(m: Machine<Metadata>, s: StockShortcut<Metadat
   }
   if (s.pending !== null) {
     if (s.digits === "") return { segments: positionOrders(m), awaitingNext: false };
+    const top = m.mode.kind === "nav" ? m.mode.stack[m.mode.stack.length - 1] : undefined;
     return {
-      segments: [...levelOrders(m), s.pending.entry.order.value],
+      segments: [...levelOrders(m), numberIn(top, s.pending.entry)],
       awaitingNext: true,
       typed: s.digits,
     };
@@ -598,15 +672,17 @@ function renderFrame<Metadata>(
       };
     }
     case "submenu": {
+      const shown = shownChildrenOf(m, frame);
       const detail = submenuDetail(frame);
-      const entries = frame.entry.children.entries;
-      const orders = entries.map((entry) => entry.order.value);
+      const orders = shown.map((entry) => entry.order.value);
+      const positional =
+        frame.entry.numbersByPosition || orders.every((value, index) => value === index + 1);
       return {
         kind: "list",
         title: frame.entry.label,
-        items: entries.map((entry) => entry.label),
-        ...(orders.every((value, index) => value === index + 1) ? {} : { itemOrders: orders }),
-        selected: frame.selected,
+        items: shown.map((entry) => entry.label),
+        ...(positional ? {} : { itemOrders: orders }),
+        selected: shown.indexOf(frame.entry.children.entries[frame.selected]!),
         softkey: frame.entry.softkey,
         menuIndicator: menuIndicator(m),
         ...(frame.entry.presentation === "pages" ? { presentation: "pages" as const } : {}),
@@ -737,7 +813,10 @@ function startApplication<Metadata>(
     menuIndicator(): MenuIndicator {
       if (m.mode.kind === "app" && m.mode.activation === activation) return menuIndicator(m);
       return {
-        segments: [...stackOrders(activation.stack), ...originOrders(activation.origin)],
+        segments: [
+          ...stackOrders(activation.stack),
+          ...originOrders(activation.stack, activation.origin),
+        ],
         awaitingNext: false,
       };
     },
@@ -790,14 +869,16 @@ function exitPlan<Metadata>(
       top.kind === "carousel"
         ? m.config.menu.entries.map((slot) => slot.entry)
         : top.kind === "submenu"
-          ? top.entry.children.entries
+          ? top.entry.shownChildren()
           : [];
-    const index = entries.findIndex((entry) => entry.slug.value === select);
-    if (index < 0)
-      throw new Error(`exit select "${select}" is not a child of the level returned to.`);
+    const child = entries.find((entry) => entry.slug.value === select);
+    if (child === undefined)
+      throw new Error(`exit select "${select}" is not a shown child of the level returned to.`);
     apply = () => {
-      if (top.kind === "carousel") top.index = index;
-      else if (top.kind === "submenu") selectOnRow(m, top, index, row);
+      if (top.kind === "carousel") top.index = entries.indexOf(child);
+      else if (top.kind === "submenu") {
+        selectOnRow(m, top, top.entry.children.entries.indexOf(child), row);
+      }
     };
   }
   return { stack, apply, plain: levels === 1 && select === undefined };
@@ -816,13 +897,15 @@ function selectOnRow<Metadata>(
   row: "top" | "bottom",
 ): void {
   frame.selected = index;
+  const shown = shownChildrenOf(m, frame);
   if (frame.windowTop === undefined || m.rowsWindow === undefined) return;
   if (row === "top") {
     enterWindow(m, frame);
     return;
   }
-  const count = frame.entry.children.entries.length;
-  frame.windowTop = count <= m.rowsWindow ? 0 : wrapIndex(index - m.rowsWindow + 1, count);
+  const count = shown.length;
+  const position = shown.indexOf(frame.entry.children.entries[index]!);
+  frame.windowTop = count <= m.rowsWindow ? 0 : wrapIndex(position - m.rowsWindow + 1, count);
 }
 
 /** Runs a level's intro before its list; the intro's stack ends with the level's frame. */
@@ -938,6 +1021,10 @@ function handleTick<Metadata>(m: Machine<Metadata>, nowMs: number): void {
     }
   }
   if (m.mode.kind === "boot") tickBoot(m);
+  if (m.mode.kind === "nav") {
+    const shown = shownNavFrame(m.mode.stack);
+    if (shown?.kind === "submenu") shownChildrenOf(m, shown);
+  }
   const shortcut = m.shortcut;
   if (shortcut?.kind === "digits" && m.now >= shortcut.deadline) cancelShortcut(m);
   else if (shortcut?.kind === "stock" && !shortcutIntroRunning(m)) tickStockShortcut(m, shortcut);
@@ -1014,10 +1101,11 @@ function navShortPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void {
     case "submenu": {
       const entries = frame.entry.children.entries;
       if (entries.length === 0) return;
+      shownChildrenOf(m, frame);
       if (key === "down") {
-        selectChild(m, frame, wrapIndex(frame.selected + 1, entries.length));
+        stepSelection(m, frame, 1);
       } else if (key === "up") {
-        selectChild(m, frame, wrapIndex(frame.selected - 1, entries.length));
+        stepSelection(m, frame, -1);
       } else if (key === "navi") {
         enterEntry(m, entries[frame.selected]!);
       }
@@ -1097,7 +1185,7 @@ function enterMenu<Metadata>(m: Machine<Metadata>): void {
       ? {
           kind: "digits",
           entries: [],
-          nextLevel: m.config.menu.entries.map((slot) => slot.entry),
+          nextLevel: numberedTopLevel(m),
           deadline,
         }
       : { kind: "stock", digits: "", deadline, pending: null, resolvedDigits: undefined };
@@ -1126,11 +1214,11 @@ function shortcutDigit<Metadata>(m: Machine<Metadata>, digit: number): void {
     stockDigit(m, shortcut, digit);
     return;
   }
-  const entry = shortcut.nextLevel.find((candidate) => candidate.order.value === digit);
+  const entry = shortcut.nextLevel.find((candidate) => candidate.number === digit)?.entry;
   if (entry === undefined) return;
 
   shortcut.entries.push(entry);
-  shortcut.nextLevel = childrenOf(entry);
+  shortcut.nextLevel = numberedChildren(entry);
   shortcut.deadline = m.now + m.shortcutWindowMs;
   buildNavStack(m, shortcut.entries, true);
 }
@@ -1151,32 +1239,29 @@ type NumberMatch<Metadata> =
  * Matches typed digits as a menu number among `level`'s entries. A number that is also the
  * prefix of a longer one waits (`1` with 10-12), as do leading zeros; no candidate is none.
  */
-function matchNumber<Metadata>(
-  level: readonly MenuEntry<Metadata>[],
-  digits: string,
-): NumberMatch<Metadata> {
+function matchNumber<Metadata>(level: Numbered<Metadata>, digits: string): NumberMatch<Metadata> {
   const number = digits.replace(/^0+/, "");
   if (number === "")
     return level.length > 0 ? { kind: "wait", exact: undefined } : { kind: "none" };
-  const exact = level.find((entry) => String(entry.order.value) === number);
-  const longer = level.some((entry) => {
-    const text = String(entry.order.value);
+  const exact = level.find((candidate) => String(candidate.number) === number)?.entry;
+  const longer = level.some((candidate) => {
+    const text = String(candidate.number);
     return text.length > number.length && text.startsWith(number);
   });
   if (exact !== undefined && !longer) return { kind: "entry", entry: exact };
   return exact !== undefined || longer ? { kind: "wait", exact } : { kind: "none" };
 }
 
-/** The entries the next typed number selects among. */
+/** The entries the next typed number selects among, with their numbers. */
 function stockLevel<Metadata>(
   m: Machine<Metadata>,
   s: StockShortcut<Metadata>,
-): readonly MenuEntry<Metadata>[] {
-  if (s.pending !== null) return childrenOf(s.pending.entry);
+): Numbered<Metadata> {
+  if (s.pending !== null) return numberedChildren(s.pending.entry);
   if (m.mode.kind !== "nav") return [];
   const top = m.mode.stack[m.mode.stack.length - 1];
-  if (top?.kind === "carousel") return m.config.menu.entries.map((slot) => slot.entry);
-  return top?.kind === "submenu" ? top.entry.children.entries : [];
+  if (top?.kind === "carousel") return numberedTopLevel(m);
+  return top?.kind === "submenu" ? numberedChildren(top.entry) : [];
 }
 
 function stockDigit<Metadata>(
@@ -1314,6 +1399,12 @@ function buildNavStack<Metadata>(
     // Position within the parent level: a submenu level may skip a hidden entry's number.
     if (parent.kind === "carousel") parent.index = entry.order.value - 1;
     else if (parent.kind === "submenu") {
+      if (!parent.entry.shownChildren().includes(entry)) {
+        // A path through a hidden child (SubmenuOptions.shown) lands on its level.
+        parent.selected = openingIndex(parent.entry);
+        enterWindow(m, parent);
+        break;
+      }
       parent.selected = parent.entry.children.entries.indexOf(entry);
       enterWindow(m, parent);
     }
