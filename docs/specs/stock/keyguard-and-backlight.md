@@ -79,6 +79,19 @@ key-down unless stated.
   their key is still held.
 - **Power cycle.** A cold power-on (the emulator's battery pull) comes up unlocked.
 
+## Screens (measured, plan 25 Task 6)
+
+Every position below paints its golden pixel for pixel (`tests/keyguard-paint.test.ts`).
+
+| Screen            | Layout                                                                                                                                                                                                  |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Locked standby    | standby (ladders, operator, clock) with the key icon at x 7-19, y 0-5, and `Unlock` (small, centred, top 40) in place of `Menu`; before the hint it shows without ladders for 27 ms (25 ms for C, ▲, ▼) |
+| `Keypad locked`   | large lines from x 0 at tops 3 and 18; the keypad icon in x 62-83, y 0-25, crossed out over four steps; a 9 ms partial draw (`edges` 5-78) before the locked standby                                    |
+| Hint              | large lines at tops 3, 18 and 33; the keypad and finger in x 62-83, y 0-25 (seven images over eight steps, the first repeated last); an 8 ms partial draw (23 ms after C, ▲, ▼)                         |
+| `Now press *`     | the locked standby without the operator line: the small face from x 6 at tops 7 and 16; `Unlock` kept. As `*` unlocks, the same without ladders for 21 ms                                               |
+| `Keypad active`   | large lines at tops 3 and 18 with `Done`'s dotted box and tick (plan 14's `note/tick-box`, `note/tick-half`, `note/tick`)                                                                               |
+| Emergency display | the locked standby's icons and clock, no operator; the number in the large face at top 24, its last cell ending at x 76; `Call` (small, centred, top 40)                                                |
+
 ## Artefacts and UNVERIFIED
 
 | Item                                                                   | Handling                                               |

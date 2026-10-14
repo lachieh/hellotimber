@@ -787,15 +787,32 @@ standby returns; keys other than C, Unlock and digits during the emergency displ
 and paint switch: two lines), `scripts/widget-sprites.ts` (sprite sources: one-line registration
 per sprite set), `src/resources/generated/**` (regenerated), `tests/keyguard-paint.test.ts` (new).
 
-- [ ] Harvest from the goldens: the key icon, the `Keypad locked` icon frames, the hint's keypad
+- [x] Harvest from the goldens: the key icon, the `Keypad locked` icon frames, the hint's keypad
       and finger frames (the `Keypad active` box and tick are plan 14's `Done` sprites; assert
       they equal). `extract-resources` twice, no diff.
-- [ ] TDD a `keyguard` widget model (`locked-standby` composing the kernel's standby model,
+- [x] TDD a `keyguard` widget model (`locked-standby` composing the kernel's standby model,
       `lock-note`, `hint`, `now-press`, `active-note`, `emergency`) painted against every still and
       every distinct timeline image of the keyguard goldens; measured tops and positions recorded
       in the spec. A text that does not fit throws in tests (plan 13 D10).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): paint the keyguard screens`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): paint the keyguard screens`.
+
+**Task 6 completion.** `src/display/widgets/keyguard.ts` paints a `keyguard` widget model
+(`locked-standby`, `now-press` and `emergency` over the kernel's standby model; `lock-note`,
+`hint` and `active-note` as timeline steps through plan 14's note painter, its `edges` partial
+draws included). `src/display/widgets/index.ts` changed in four lines: the import, the type
+export, the `WidgetModel` union member and the `paintWidget` case. 10 tests paint the locked
+standby (and its ladderless lead), every step of `Keypad locked`, the hint and `Keypad active`
+(with their partial draws, each over the previous frame), `Now press *` (and its ladderless
+frame) and `112` against their golden images; an emergency number that does not fit throws.
+Measured positions are in the spec ("Screens").
+
+Deviation: the sprites were harvested in Task 5 (the engine's timelines need them), and
+`scripts/widget-sprites.ts` no longer exists (plan 29): the registration is plan 25's resource
+module. `Keypad active`'s box and tick are `Done`'s sprites by construction: its timeline is
+plan 14's `note` kind and matched `note/tick-box`, `note/tick-half` and `note/tick` exactly (the
+test asserts the three). The locked standby is drawn with `paintStandby` and its soft-key band
+redrawn with `Unlock` (or `Call`), so `src/display/standby.ts` does not change.
 
 ### Task 7 - The keyguard feature (TDD against goldens)
 
