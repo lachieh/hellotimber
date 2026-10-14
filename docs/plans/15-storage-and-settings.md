@@ -10,7 +10,7 @@ stock widgets and the internal in-memory settings store).
 `$REF/captures/README.md`, `$REF/captures/6.39/boot-clean/NOT-ACHIEVED.md`, plan 13 and plan 14 in
 full before starting. Task 0 writes this plan's captures to `$REF/captures/6.39/plan15/` and
 `$REF/captures/5.79/plan15/`.
-**Status:** not started.
+**Status:** in progress.
 
 ## Goal
 
@@ -156,12 +156,29 @@ otherwise the v5.79 opening positions from Task 0b for lists whose options match
 (each entry cites its capture, flagged `evidence: "v5.79"`). A list with no evidence keeps its
 virgin value. Task 0b also decides `RESTORE_KEEPS` from what survived Restore on v5.79.
 
+_After Task 0 (Deviation D5):_ `FACTORY_DEFAULTS` comes from v6.39's own factory scrolls
+(`plan15/factory/scroll/<number>/01.png`, `evidence: "v6.39"`): Tones 5-1…5-8 and General
+12-1-2-1…8 `Nokia tune`, `Level 4`, `Ringing`, `Standard`, `Level 2`, `On`, `On`; every Screen
+saver Timeout `5 seconds`; Silent, Discreet, Loud and slots 5/6 their own values (the README
+table); Own number sending `Set by network`; Set delay `30 seconds`; Phone security `Off`; Info
+service topics reduced to `Add topic` and its language marks to `All`. Every other list keeps its
+virgin opening. `RESTORE_KEEPS` is the welcome note only; profile names are reset, and the
+security record is kept (it has no `factory`).
+
 **D6 - Security code: stored, verified exactly, default `12345` (new).** The security record is
 `{ code: "12345", recentSims: [] }` (plus a wrong-attempt counter only if Task 0 A3 shows a
 lockout). Verification compares the typed digits with the stored code. The code length bounds
 (the most digits the prompt takes; whether OK with too few does anything) come from Task 0 A2/A5.
 The emulator limitation never becomes behaviour: no golden may record `12345` being rejected
 in-menu. Wrong-code goldens are recorded with `00000`.
+
+_After Task 0 (Deviation D6, D7):_ the entry takes at most 10 digits (the 11th key is ignored);
+OK with fewer than 5 digits, or none, shows `Code error`; a new code must have exactly 5 digits.
+Five consecutive wrong codes start a ≈290 s lockout (emulated time) during which every entry,
+the correct one included, gets `Code error` and restarts the lockout; it survives power-off, and
+an accepted code outside it resets the counter. The record is therefore
+`{ code: "12345", recentSims: [], wrongAttempts: 0, lockedSince?: … }`, shared by the boot gate
+and every in-menu prompt.
 
 **D7 - One stock code-entry widget for every security-code leaf (extends plan 14 D11).** The
 prompt's first screen is plan 14's; digits append to the entry, drawn as the captured `*` mask;
@@ -170,6 +187,11 @@ shows `Code error` with the captured timeline and returns to the empty prompt (B
 runs the leaf's flow (D8). Bound to 6-3-5, 6-3-6-1 and 6-4, to the 4-5-5 Clear timers page result
 (accept → plan 22's placeholder), and exported internally for plan 19's Erase all. Other code
 prompts (PIN, PIN2, barring password) keep plan 14's first screen.
+
+_After Task 0 (A2/A5):_ the mask is `*` in the small face from x 0, top 29. C deletes the last
+digit and C held 1 s clears the entry. C on an empty entry returns to the page at once in a menu
+and does nothing at the boot gate. A wrong code's `Code error` lasts 2889-2911 ms, then the empty
+prompt.
 
 **D8 - Post-acceptance flows: v6.39 captures if Task 0c succeeds, else compositions with
 v5.79 evidence (new; a narrow exception to plan 13 D8 and plan 14 D13).** No v6.39 capture shows
@@ -190,6 +212,14 @@ evidence and is UNVERIFIED in the spec. Indicative shapes, to be replaced by 0b'
 If Lachlan rejects composed screens (Open question 3), these three leaves keep the code-entry
 widget and open plan 15's placeholder after an accepted code instead.
 
+_After Task 0 (Deviation D8):_ Task 0c captured every flow on v6.39 (`plan15/accept/`), so
+`COMPOSED_FLOWS` is empty for them and the final shapes are the captures: no in-menu flow shows
+`Code accepted`. Phone security: code → `Off`/`On` list on the stored value → `Done` tick → the
+page. Change security code: code → `Enter new\nsecurity code:` → `Verify new\nsecurity code:` →
+`Security\ncode\nchanged` tick → the page; a mismatch or a new code that is not 5 digits shows
+`Code error` and returns to `Enter new`. Restore: code → `Settings\nrestored` tick → the page.
+Clear timers: code → `Timers\ncleared` tick → the page.
+
 **D9 - Boot gates: a generic phone-core seam and two stock gates (new; revises plan 13 D12).**
 phone-core gains `PhoneConfig.bootGates`: at an offset into the boot, an application may hold the
 boot; its `exit()` resumes the boot there, `exit({ to: "standby" })` ends it. nokia-os sets two
@@ -205,6 +235,13 @@ gates at the end of the self-test (4073 ms, `boot/power-on` frames 0-3):
 
 A boot with no gate is plan 13's composition (UNVERIFIED as one sequence). A boot with the
 welcome note and no security gate is a composition too (W had the gate before the note).
+
+_After Task 0 (Deviation D9):_ both are captures now. The gate-free boot is
+`boot-clean/power-on` (self-test, then the hands at 132, 360, 302, 292, 366, 287, 320 ms, the last
+held 3951 ms), which replaces plan 13's composition as `boot/power-on`. The gate-free welcome note
+is `factory/boot` (a 7 ms partial draw, then the note for 5079.5 ms). Under the gate the note ends
+6357.9 ms after `Code accepted` appears, and the hands after the gate keep `boot/welcome`'s
+regular ≈255 ms steps.
 
 **D10 - The inserted SIM is host config (new).** `StockPhoneConfig.sim` (default `"sim-1"`) names
 the SIM. At each power-on that passes, the SIM moves to the front of `recentSims` (five at most).
@@ -562,7 +599,7 @@ binary is now rebuilt by an atomic rename.
   never used gets the prompt, then `Code accepted`. That SIM gets no prompt the next time. With
   Phone security Off, a new SIM gets no prompt.
 - B4 Change security code: `Security code:` → `Enter new\nsecurity code:` → `Verify new\nsecurity
-  code:`. A mismatch shows `Code error` (2907-2911 ms) and returns to `Enter new security code:`.
+code:`. A mismatch shows `Code error` (2907-2911 ms) and returns to `Enter new security code:`.
   A new code must have exactly 5 digits: 0, 4, 6 and 10 digits all show `Code error` and return
   to `Enter new`. A match shows `Security\ncode\nchanged` (tick 680/232/537 ms), then the page.
   Afterwards the old code fails and the new one passes (in menus).
@@ -625,21 +662,21 @@ settled by evidence: the prompt follows Phone security plus an unknown SIM on v5
 **Files:** `VISION.md`, `docs/specs/nokia-3310.md`, `docs/specs/nokia-3310-menu-tree.md`,
 `docs/plans/README.md`, this plan.
 
-- [ ] Apply Task 0's outcome to D5-D9 (Deviation lines where it changes them), including the
+- [x] Apply Task 0's outcome to D5-D9 (Deviation lines where it changes them), including the
       composed flows' final shapes and `FACTORY_DEFAULTS`' evidence.
-- [ ] VISION: `BootGate`/`bootGates` and their rules; nokia-os `StockStorage`,
+- [x] VISION: `BootGate`/`bootGates` and their rules; nokia-os `StockStorage`,
       `STOCK_STORAGE_PREFIX`, `createMemoryStorage`, `StockPhoneConfig.storage`/`sim`; a sentence
       that empty storage is the virgin EEPROM.
-- [ ] Spec §3: the welcome note replaces the hands (W). Spec §10: a "Security code, boot gates
+- [x] Spec §3: the welcome note replaces the hands (W). Spec §10: a "Security code, boot gates
       and storage (plan 15)" subsection (gate timeline, mask, `Code error` flow, the investigation
       outcome, Restore's shape, the virgin-vs-factory rule) and the new artefacts. Mark everything
       not yet asserted "(plan 15, in progress)".
-- [ ] Menu-tree spec "Behind codes the emulator could not pass": replace the paragraph with the
+- [x] Menu-tree spec "Behind codes the emulator could not pass": replace the paragraph with the
       oracle finding and the corrected `Code error` return (to the prompt, not the list).
-- [ ] Plans README: row 15 `in progress`; add row 26 (Languages: Русский, Български, Українська UI;
+- [x] Plans README: row 15 `in progress`; add row 26 (Languages: Русский, Български, Українська UI;
       depends on 14, 15; not started).
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define storage port, security code and boot gate contracts (plan 15)`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define storage port, security code and boot gate contracts (plan 15)`.
 
 ### Task 2 - Goldens, glyphs and re-owned placeholders (TDD)
 

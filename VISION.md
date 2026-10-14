@@ -464,6 +464,19 @@ export interface PhoneConfig<Metadata = unknown> {
    * `invalid`, whose exit goes to standby. Default: off (per-digit shortcuts below).
    */
   shortcutEntry?: { openDelayMs: number; invalid: PhoneApplication };
+  /** Plan 15: applications that hold the boot at offsets into it, in ascending `atMs`. */
+  bootGates?: readonly BootGate[];
+}
+
+/** Plan 15: an application that may hold the boot at an offset into it. */
+export interface BootGate {
+  /** Offset into the boot (ms) at which the gate is asked; an integer in 0..bootMs. */
+  atMs: number;
+  /**
+   * Called once per power-on when the boot reaches `atMs`. An application holds the boot until it
+   * exits; undefined lets the boot go on.
+   */
+  open(): PhoneApplication | undefined;
 }
 
 /** Plan 14: the rows-window rule. `previousTop` undefined = entering the level. */
@@ -584,6 +597,19 @@ shows no child throws, naming the level. `exit({ select })` may select a child t
 when the application started and is shown now (Snake II's Continue after Navi). A hidden child's
 number is the position it would take among the shown ones.
 
+**Kernel policy (plan 15).** _Boot gates_ (`bootGates`, opt-in, generic; the website sets none,
+so its models are unchanged): gates must be in ascending `atMs` (equal offsets run in order) and
+each `atMs` an integer in `0..bootMs`, else `createPhone` throws. With `bootMs: 0` the gates run
+in order at power-on, before standby. When the boot reaches a gate's offset the kernel calls its
+`open()` once per power-on; an application it returns holds the boot. While it runs the boot
+clock is paused, the screen is the application's, keys go to it, the path stays `standby`, and
+`navigate()` only records the target, applied when the boot ends; the power long press still
+powers off (deactivation reason `power-off`). Its `exit()` resumes the boot at `atMs` (the next
+gate at the same offset first); `exit({ to: "standby" })` ends the boot at once; `levels`,
+`select` and `row` throw. `open()` from the gate application replaces it in place, and
+`menuIndicator()` returns no segments. An exception from the gate's `open()` or from
+`createSession` skips that gate.
+
 `TopLevelEntry` is a presentation slot, not a path segment. It adds the required
 `MenuGraphic` for each carousel position around exactly one semantic entry. Nested entries
 cannot carry graphics. The renderer continues to receive the graphic ID through
@@ -658,10 +684,31 @@ export interface StockPhoneConfig {
   clock?: () => string | undefined;
   /** Date text for Clock → Date setting, in the firmware's format as captured. */
   date?: () => string | undefined;
-  /** Default "animated". "skip" = bootMs 0 (tests, reduced motion). */
+  /** Default "animated". "skip" = bootMs 0 (tests, reduced motion); still runs the security gate. */
   boot?: "animated" | "skip";
+  /** Plan 15: where settings persist. Default: a fresh in-memory storage. Empty = virgin EEPROM. */
+  storage?: StockStorage;
+  /**
+   * Plan 15: the inserted SIM card's identity. With Phone security On, power-on asks for the
+   * security code when this SIM is not among the last five used. Default "sim-1"; non-empty.
+   */
+  sim?: string;
 }
 
+/** Plan 15: the phone's EEPROM, as the Web Storage subset (`window.localStorage` fits). */
+export interface StockStorage {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+}
+
+/** nokia-os writes only keys that start with this. */
+export const STOCK_STORAGE_PREFIX = "nokia-os/";
+
+/** A fresh in-memory storage (the default; tests). */
+export function createMemoryStorage(): StockStorage;
+
+/** Throws when a stored record is malformed or newer than the code, naming the storage key. */
 export function createStockPhone(config: StockPhoneConfig): Phone;
 export const paintStockScreen: ScreenPainter;
 export const stockMenu: PhoneMenu; // the whole v6.39 tree (plan 14); application leaves without behaviour open placeholders
@@ -677,6 +724,12 @@ nokia-os owns the stock firmware _and its pixels_: it paints with phone-screen's
 generated from committed LCD golden fixtures (`packages/nokia-os/goldens/`) that an importer
 derives from emulator captures of the real v6.39 firmware. Nothing from the capture corpus is
 committed except those golden text grids. See `docs/plans/13-nokia-os-foundation.md`.
+
+**Storage (plan 15).** The phone's memory is a host `StockStorage`, synchronous and written at
+once on every change, as EEPROM writes are. nokia-os keeps one versioned JSON record per owner
+under `STOCK_STORAGE_PREFIX` and touches no other key. Empty storage is the virgin EEPROM: the
+state every golden asserts. Restore factory settings writes the factory state. See
+`docs/plans/15-storage-and-settings.md`.
 
 ### `@hellotimber/phone-3d`
 

@@ -24,7 +24,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 12  | [LCD pixel authenticity](./12-lcd-pixel-authenticity.md) | reference standby/menu pixels + visible hierarchical shortcuts                     | 01-11                         | done        |
 | 13  | [Nokia OS foundation](./13-nokia-os-foundation.md)       | `@hellotimber/nokia-os`: stock v6.39 firmware, painter and LCD goldens             | 01-12                         | done        |
 | 14  | [menu tree depth](./14-menu-depth-and-stock-widgets.md)  | whole v6.39 menu tree incl. game menus; stock widgets; rows window; settings store | 13                            | done        |
-| 15  | [storage and settings](./15-storage-and-settings.md)     | host storage port, EEPROM records, security code, boot gates, factory restore      | 13, 14                        | not started |
+| 15  | [storage and settings](./15-storage-and-settings.md)     | host storage port, EEPROM records, security code, boot gates, factory restore      | 13, 14                        | in progress |
 | 16  | Tones and sound sequencer                                | tone sequencer, keypad/warning tones, ringing tones, Composer                      | 13, 15                        | not started |
 | 17  | Profiles                                                 | profile activation and personalisation; power-key profile list                     | 15, 16                        | not started |
 | 18  | Messages and Chat                                        | stock text entry, messages, Chat (`menu/03-chat.sub` asserted)                     | 14, 15                        | not started |
@@ -35,6 +35,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 23  | [Games I: Snake II](./23-games-snake-ii.md)              | Snake II gameplay and the scores it writes (menu, widgets: 14)                     | 14 (15 for persistence)       | done        |
 | 24  | Games II: Space Impact, Bantumi, Pairs II                | gameplay and the scores it writes (menus: 14)                                      | 14                            | not started |
 | 25  | Keyguard and backlight                                   | keyguard, backlight/keypad LED timing, phone-3d signal                             | 13                            | not started |
+| 26  | Languages                                                | Русский, Български, Українська UI (Cyrillic screens and notes)                     | 14, 15                        | not started |
 
 Plans 01–04 are parallel-safe: no shared files, no cross-package imports at runtime
 (02 imports types from 01, which exist from 01's first task). Plan 09 is parallel-safe

@@ -382,15 +382,15 @@ subtrees are written out once and then referred to.
       - On: text-input "Group number:" [Back]
       - Off: timed-note "Done", then back
     - `6-3-5` **Phone security** [Off] → code-prompt, "Security code:", key **OK**
-      - **with security code 12345** → timed-note, "Code error"; then back to the list after ≈2.9 s
+      - **with security code 12345** → timed-note, "Code error" (emulator effect, see "Behind codes"); then the empty prompt again after ≈2.9 s
     - `6-3-6` **Change access codes** → submenu (one entry per screen)
       - `6-3-6-1` **Change security code** → code-prompt, "Security code:", key **OK**
-        - **with security code 12345** → timed-note, "Code error"; then back to the list after ≈2.9 s
+        - **with security code 12345** → timed-note, "Code error" (emulator effect, see "Behind codes"); then the empty prompt again after ≈2.9 s
       - `6-3-6-2` **Change PIN code** → timed-note, "Set PIN code request on"; then back to the list after ≈2.9 s
       - `6-3-6-3` **Change PIN2 code** → code-prompt, "Current PIN2 code:", key **OK**
       - `6-3-6-4` **Change barring password** → code-prompt, "Current password:", key **OK**
   - `6-4` **Restore factory settings** → code-prompt, "Security code:", key **OK**
-    - **with security code 12345** → timed-note, "Code error"; then back to the list after ≈2.9 s
+    - **with security code 12345** → timed-note, "Code error" (emulator effect, see "Behind codes"); then the empty prompt again after ≈2.9 s
 - `7` **Call divert** → submenu (one entry per screen)
   - `7-1` **Divert all voice calls without ringing** → submenu (3-row list)
     - `7-1-1` **Activate** → option-list, key **OK**
@@ -716,7 +716,7 @@ reminder "Hi", alarm 07:00, composed tone "A". The Phone book view setting is th
     - **pressing Erase** → item-view, "Erase? / A", key **OK**
   - `1-4-2` **Erase all** → confirm-query, "Are you sure?", key **OK**
     - **pressing OK** → code-prompt, "Security code:", key **OK**
-      - **with security code 12345** → timed-note, "Code error"; then back to the list after ≈2.9 s
+      - **with security code 12345** → timed-note, "Code error" (emulator effect, see "Behind codes"); then the empty prompt again after ≈2.9 s
 
 ### Phone book › Edit
 
@@ -1149,11 +1149,17 @@ The main-menu table (`extracted/6.39/menu/main_menu.json`) also has hidden entri
 services (dynamic text), "Net monitor" (0x00a, service-enabled) and "Picture" (0x047). None of
 them appeared.
 
-**Behind codes the emulator could not pass.** The power-on prompt accepts 12345, but every
-in-menu security-code check answers "Code error". So the screens after the code for
-`6-3-5` Phone security, `6-3-6-1` Change security code, `6-4` Restore factory settings,
-`4-5-5` Clear timers and Phone book › Erase › Erase all were not reached. PIN, PIN2 and
-barring-password prompts (`6-3-1`, `6-3-6-3`, `6-3-6-4`, call barring) were not entered either.
+**Behind codes the emulator could not pass.** The crawl's in-menu `Code error` for `12345` was
+an emulator effect, not a different code (plan 15 Task 0): the virgin PMM stores the code record
+enciphered under another key, the firmware reloads it when the clock wizard is left, and from
+then on no 5-digit code verifies. The emulator's own oracle (`build/dct3_boot_trace` with
+`SECCODE=1`) and calling the firmware's set-code routine with `12345` at standby fixed it, and
+plan 15 captured what follows the code for `6-3-5` Phone security, `6-3-6-1` Change security code,
+`6-4` Restore factory settings and `4-5-5` Clear timers (`captures/6.39/plan15/accept/`; see the
+spec's §10 "Security code, boot gates and storage"). A wrong code's `Code error` (≈2.9 s) returns
+to the empty `Security code:` prompt, not to the list: the crawl's return to the list was the
+crawler pressing C on that empty prompt. Phone book › Erase › Erase all, and the PIN, PIN2 and
+barring-password prompts (`6-3-1`, `6-3-6-3`, `6-3-6-4`, call barring) were not entered.
 
 **No response in the virgin EEPROM.** `2-4` Picture messages, `2-5` Templates, `2-6` Smileys,
 the editor's Options › Template and Insert smiley, and Screen saver › Screen saver (`5-9-4`,
