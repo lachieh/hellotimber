@@ -13,7 +13,7 @@ plan 14 goldens already committed for 8-1, the original `$REF/captures/6.39/game
 exploratory runs in `$REF/captures/scratch-plan23/` (planning evidence, never imported), and the
 canonical recaptures that Task 0 writes to `$REF/captures/6.39/plan23/`. Read
 `$REF/captures/README.md`, plan 13 and plan 14 in full before starting.
-**Status:** not started.
+**Status:** in progress (Tasks 0-1 done).
 
 ## Goal
 
@@ -139,6 +139,12 @@ reads a generated period table (`SNAKE_PERIODS`, from goldens). The table is a r
 recorded timing; no firmware byte is copied (plan 13 D8). Expected values, to be confirmed: levels
 1-9 ≈ 635, 465, 364, 287, 217, 170, 132, 101, 85 ms (RE unit counts x 7.745 ms); 175 ≈ one unit.
 
+Task 0 outcome: confirmed. Levels 1-9 tick every 635, 465, 364, 286, 217, 170, 132, 101 and
+85 ms. Levels 10-175 tick every 8 ms (one unit, 84 levels) to 2478 ms, and 175 every 8 ms. The
+first tick comes about 20 ms less than a period after the New game frame (616 ms at level 1),
+and some fast levels differ (6 ms at 22 and 175). `SNAKE_FIRST_TICK` is therefore per level,
+as planned. Deviation: the Level page's ▲ does nothing at 9 or above, so 175 can only go down.
+
 **D3 - The captures are ground truth; the RE notes and the flash image are cross-checks and
 hypotheses (extends plan 13 D8 and plan 14 D13).** `$REF/tools/lukesau-nokia-dct3-re/docs/
 games_snake2_3310.md` and `games_applications_3310.md` describe the game from a decompile. This plan
@@ -157,6 +163,13 @@ at reseed time; Task 5 fits it from Task 0's clock series (C9). If no function o
 `clock()`/`date()` ports fits, the stock phone seeds from the minutes of the day (UNVERIFIED) and
 tests inject the recovered seed through an internal seam (Open question 2). Provenance: the
 constants come from the RE notes; the plan records this, and the tests are the evidence.
+
+Task 0 outcome: confirmed. In every bot game one seed reproduces every food and creature
+placement (`seeds.json`); `long` has 36 placements, including a large creature. The 2x2 large
+creature draws `r mod 50 == 0`, then x = r mod 19 and y = r mod 8, and makes no kind draw. The
+10:10 / 13.10.2026 seed is 44530; the other C9 settings are in the Task 0 outcome. Deviation:
+Continue does not reseed (`pause/bot`), so H12's reseed points are the splash (unobservable)
+and New game.
 
 **D5 - Verification: engine unit tests, key-replayed golden sequences, and decoded traces (new).**
 
@@ -188,9 +201,19 @@ stable, else with the game tolerance and a stated reason. The key-to-game latenc
 the scratch runs; Navi to the pause menu ≈100 ms) is not reproduced, as plan 14 D8 decided for
 menus: `input:` places keys by tick.
 
+Task 0 outcome: `GAME_TICK_TOLERANCE_MS` = 16 (two units). Intervals spread ±5 ms at level 1 and
+±15 ms at levels 3-9. Some tick redraws come in two bursts 13-15 ms apart; the first burst is a
+partial frame, which the importer keeps and does not number. The grace tick (≈93 ms), the blink
+(≈237-243 ms), the death period (≈2.07 s), the fireworks (217-241 ms per picture) and the notes
+(≈2.94 s) are steady within a few ms. They are compared as plan 13 does.
+
 **D7 - Game keys act on key-down (new).** The flow host delivers keys on release (plan 14). The game
 widget declares `onKeyDown`, and the flow host forwards `down` events to widgets that have it.
 Task 0 C7 confirms with a held key (press, run 2 ticks, release). Key repeat is ignored (H5).
+
+Task 0 outcome: confirmed. A 2 or # held for three ticks turns at the first tick after the
+press, once. The Level page does repeat a held ▲ (≈780 ms, then ≈490 ms); that is a Level-widget
+fact for Task 9, not a game key.
 
 **D8 - Sound and vibration are cues now and sound later (new; plan 16 dependency).** The engine
 returns cues with each step (`eat`, `crash`, `vibrate`, …) and the session stamps them with the
@@ -200,6 +223,16 @@ within the game tolerance, when `Sounds`/`Shakes` allow them. Plan 16 maps cues 
 sequences (it measures their notes from the same `.wav`/`.events.csv`) and wires the sink to
 `PhoneEventMap.sound`. Keypad tones during play (the 900 Hz beeps in the captures) are plan 16's
 keypad-tone policy, not cues.
+
+Task 0 outcome: a game makes sound only with Tones › Warning tones On, which the virgin EEPROM
+leaves unset, so every virgin-state capture is silent apart from keypad beeps. With Warning tones
+On (`sound/warning-on/`) a meal sounds 2637 Hz (one or two units) and the crash sounds three 440
+Hz beeps of ≈15 ms. The vibrator runs ≈480 ms per meal and from the crash, only with Shakes On.
+Deviation: the cues are `eat` (food or creature), `crash` (the second blocked tick) and
+`vibrate` (480 ms), with the times the captures show. `top-score` stays in the union as
+UNVERIFIED: its sound (RE `0x23`) was not captured with Warning tones On. The engine emits every
+cue; the stock settings decide what plays (Shakes gates `vibrate`; Sounds and Warning tones gate
+the rest, plan 16).
 
 **D9 - Scores and levels live in the in-memory settings store; plan 15 persists them (new;
 dependency).** The store gains numeric values (`number(key)`, `setNumber(key, value)`, snapshot
@@ -223,12 +256,27 @@ suspended", and `opening()` = Continue while suspended. The website sets none of
 fills the rest (splash on re-entry while suspended, Continue's frozen board until a key, C during
 play); a contradiction becomes a Deviation in Task 3 before code.
 
+Task 0 outcome: confirmed. The pause list is `Continue / New game / Level / Mazes / Top score /
+Score IDs / Instructions` (`8-1-1`..`8-1-7`), with Continue on the top row. Entering Snake II
+again while suspended plays the splash, then opens on Continue (the intro rule is unchanged).
+Continue's board stands until a key. C during play suspends like Navi. More facts for Task 10:
+Top score while suspended returns to Continue on the bottom row (the return selects the first
+entry, so `NOTE_ENDS` selects `continue` while suspended), and OK on the Level page while
+suspended discards the game (Continue disappears; the selection stays on the third row, now
+Mazes). Navi or C during the death blink suspends the dying game. The suspended game survives
+standby.
+
 **D11 - The Level page becomes stateful (corrects plan 14 P12 / D12).** Level reads
 `games/snake/level`, draws `min(level, 9)` filled bars (bar sprites per count from Task 0's nine
 captured pages), ▲ raises and ▼ lowers by one with the clamps Task 0 C1 measures (from 1..9: 1..9;
 from above 9: ▼ by one, ▲ per C1), OK stores and returns, C returns without storing (C1). Bantumi's
 and Pairs II's Level pages keep plan 14's static widget until plan 24 measures them (Task 9 leaves a
 note in `LEVEL_BARS`). The spec's and the code's "▲/▼ inert" statements are corrected.
+
+Task 0 outcome (C1): ▼ lowers the level by one down to 1. ▲ raises it by one only below 9: one ▲
+from 175 leaves 175, and 90 ▲ from 175 stay at nine bars. OK stores and C discards; both return
+to the game menu with Level selected. A held ▲ repeats. `1`, `5` and `#` leave for standby
+number entry (plan 22).
 
 **D12 - Public API and website unchanged.** `createStockPhone`, `StockPhoneConfig`,
 `paintStockScreen`, `stockMenu` and `missingStockGlyphs` keep their signatures; `stockMenu` gains
@@ -259,6 +307,26 @@ their own sprites and timelines, parameterised by score text, so plan 24 reuses 
 | H14 | Game over: a new top score plays the six-picture fireworks twice (≈233 ms each), then `Game over!` / `TOP SCORE:` / score ≈2.95 s; otherwise `Game over!` / `Your score:` / score over the board ≈2.95 s; then the game menu with New game selected | C5, C6, C12                   |
 | H15 | Navi suspends to the game menu with Continue first; Continue redraws the board, which stands until the first key                                                                                                                                    | C8                            |
 | H16 | Score shows the low 16 bits as four digits with leading zeros                                                                                                                                                                                       | C6 (175 per meal)             |
+
+Task 0 outcome: H1, H2, H4, H5, H7-H11, H13 and H16 hold. The bot checked H1, H2, H4, H5, H7-H11
+and H16 tick by tick, and the H8/H9/H12 placements come from one seed per game. H13's open mouth
+and H7's fat neck are pictures that the tick stills hold; Task 8 asserts them. H16's low-16-bit
+wrap is not reached. Deviations:
+
+- H3: the first tick comes about 20 ms less than a period after the New game frame (616 ms at
+  level 1), because the frame is drawn ≈20 ms after the timer starts.
+- H5: the scroll keys are ▼ clockwise and ▲ anticlockwise.
+- H6: the blocked tick makes the blocked direction current, so a saving key must be
+  perpendicular to it; the turn back the way the snake came is a reversal and is ignored. The
+  grace lasts ≈93 ms (12 units), and the key must come within ≈60 ms of the blocked tick.
+- H9: the large creature appears in this EEPROM (the large-creature bit is set).
+- H11: the blink has nine frames ≈240 ms apart, and game over comes ≈2.07 s after the crash.
+- H12: Continue does not reseed.
+- H14: `Game over!` / `Your score:` clears the screen (it is not drawn over the board). The menu
+  then shows New game on the top row (`8-1-1`). Navi or C skips the fireworks or the note; ▼
+  does nothing.
+- H15: Navi or C during the blink suspends a dying game. Top score and the Level page while
+  suspended behave as D10's outcome says.
 
 ## Ground truth and artefacts
 
@@ -330,17 +398,17 @@ model), `src/widgets/{snake.ts,game-over.ts}`, `src/display/widgets/{snake.ts,ga
 ```ts
 // src/firmware/cues.ts (internal until plan 16)
 export type StockCue =
-  | { readonly kind: "eat" }
-  | { readonly kind: "crash" }
-  | { readonly kind: "top-score" }
-  | { readonly kind: "vibrate"; readonly ms: number };
+  | { readonly kind: "eat" } // a meal (food or creature): 2637 Hz, 1-2 units (Warning tones On)
+  | { readonly kind: "crash" } // the second blocked tick: three 440 Hz beeps of ≈15 ms
+  | { readonly kind: "top-score" } // UNVERIFIED (RE sound 0x23; not captured with sound on)
+  | { readonly kind: "vibrate"; readonly ms: number }; // 480 ms per meal and at the crash
 export interface StockCueSink {
   cue(cue: StockCue, atMs: number): void;
 }
 ```
 
-The cue list is provisional: Task 0 C10 fixes which edges exist (buzzer on/off, vibra) and Task 1
-records the final union here.
+Task 1 (from Task 0 C10): the union above is final. `eat`, `crash` and `vibrate` are captured;
+`top-score` is UNVERIFIED and kept for plan 16.
 
 ## Golden pipeline additions
 
@@ -439,29 +507,29 @@ An explicit table (like plan 14's `probeCaptureSet`) appended by the importer. I
 `captures/scripts/v639-plan23*.cap`, `captures/6.39/plan23/**`, a new section in
 `captures/README.md`. Do not modify existing captures, scripts or `scratch-plan23/`.
 
-- [ ] Read `$REF/captures/README.md` (harness commands; `fork`/`exit` need the interactive driver
+- [x] Read `$REF/captures/README.md` (harness commands; `fork`/`exit` need the interactive driver
       `tools/menutree/emu.py`, as plan 14's `gen_v639_plan14.py run` does), the scratch scripts in
       `captures/scratch-plan23/`, and the RE notes named in D3.
-- [ ] Write `gen_v639_plan23.py` with subcommands `run` (plays sections through `emu.py`, `-j 3`
+- [x] Write `gen_v639_plan23.py` with subcommands `run` (plays sections through `emu.py`, `-j 3`
       workers, `--only <section>`), `bot`, `ocr` and `check`. Every section starts from
       `include v639-setup.inc`, `key c`, `run 2s` (clock 10:10 unless C9), records audio
       (`audio …`) around every gameplay recording, and navigates to Snake II as the scratch
       scripts do (Menu, ▼×7, Select, splash skip with Navi, `idle`).
-- [ ] **Setting a level fast:** from the virgin Level page press ▼ 174 times (level 1) then ▲ to
+- [x] **Setting a level fast:** from the virgin Level page press ▼ 174 times (level 1) then ▲ to
       the target, OK; `fork` at each target level so later sections start there.
-- [ ] **C1 levels:** virgin page; ▲ once then ▼ until the page shows eight bars, counting presses
+- [x] **C1 levels:** virgin page; ▲ once then ▼ until the page shows eight bars, counting presses
       (decides whether ▲ from 175 is ignored, raises to 176 or clamps to 9); ▼ to 1 with a shot at
       every bar count; ▲ to 9 with shots; ▲/▼ beyond the clamps; C after a change then reopen
       (does C discard?); OK then reopen; a digit key (scratch: `1` left for standby with `1`
       typed) - record it.
-- [ ] **C2 ticks:** levels 1..9: New game, `record plan23/ticks/<L> start` before Select, 10 s, no
+- [x] **C2 ticks:** levels 1..9: New game, `record plan23/ticks/<L> start` before Select, 10 s, no
       keys.
-- [ ] **C3 periods:** every level 10..175 (fork after each ▼ from 175): New game, record 8 s
+- [x] **C3 periods:** every level 10..175 (fork after each ▼ from 175): New game, record 8 s
       (`max` 40 frames is enough for the timings; keep `timings.csv` complete).
-- [ ] **C4 mazes:** level 1, each of No maze and Maze 1-5 chosen in Mazes: New game, record from
+- [x] **C4 mazes:** level 1, each of No maze and Maze 1-5 chosen in Mazes: New game, record from
       before Select to 3 s after the game menu returns (or 25 s): start cell, walls, the run
       straight right into a wall where there is one, grace tick, blink, `Game over!`, the menu.
-- [ ] **C5 bot games:** a closed-loop bot in `gen_v639_plan23.py bot` reads the LCD (`hex`) after
+- [x] **C5 bot games:** a closed-loop bot in `gen_v639_plan23.py bot` reads the LCD (`hex`) after
       every tick, decodes head, food and creature cells (H1 geometry), and presses keys between
       ticks (`press`/`run`/`release`, timed from the last tick frame; the scratch runs show a
       30-45 ms key latency at the virgin speed, so at level 1-2 any time in the first half of the
@@ -474,53 +542,169 @@ An explicit table (like plan 14's `probeCaptureSet`) appended by the importer. I
   - `maze2`, `maze3` (level 1): five meals each with the walls in play, then die on a wall.
   - `grace` (level 1): steer straight at the body, turn during the 100 ms grace tick (saved);
     then again without turning (dies).
-- [ ] **C6 virgin:** level 175 (no level change): the scratch `steer-12.cap` steering (key 8, 52 ms
+- [x] **C6 virgin:** level 175 (no level change): the scratch `steer-12.cap` steering (key 8, 52 ms
       after Select's release) eats (14, 8) → `0175`; keep recording until the game menu returns
       after the death (it hits its own body or runs until it dies; record 30 s); then shots of Top
       score (`175`?) and Score IDs.
-- [ ] **C7 keys** (level 1, one recording each, keys on chosen ticks): every digit 1-9, `*`, `#`,
+- [x] **C7 keys** (level 1, one recording each, keys on chosen ticks): every digit 1-9, `*`, `#`,
       ▲, ▼, 0, 5 while heading right and while heading up; the reverse key; two keys in one
       tick (last wins); a key held for three ticks (acts on down?); C and Navi during play.
-- [ ] **C8 pause** (level 1): Navi during play (record), ▼ through the whole list (shots), C (shot),
+- [x] **C8 pause** (level 1): Navi during play (record), ▼ through the whole list (shots), C (shot),
       Select on Snake II while suspended (record 6 s: splash or not), Continue (record 4 s:
       frozen board?), then a key (record: resume; next food placement after a meal = reseed?), New
       game while suspended, Top score while suspended, C during play.
-- [ ] **C9 seed:** setups with the clock at 10:10, 10:11, 00:00, 00:01, 12:00, 19:48, 07:59 and
+- [x] **C9 seed:** setups with the clock at 10:10, 10:11, 00:00, 00:01, 12:00, 19:48, 07:59 and
       23:59 (copy `v639-setup.inc` with the time changed, as the scratch `setup-1948.inc` does), and
       10:10 with the date 14.10.2026: at level 1, the first three meals each (bot), shots of every
       placement. Also two games in a row at 10:10 without a power cycle.
-- [ ] **C10 sound:** Games › Settings › Sounds Off, then a `short` game; Sounds On again; Shakes
+- [x] **C10 sound:** Games › Settings › Sounds Off, then a `short` game; Sounds On again; Shakes
       changed to each option, then a meal; record audio throughout.
-- [ ] **C11 after:** after the `long` game: Top score (record 7 s), Score IDs (every page); after the
+- [x] **C11 after:** after the `long` game: Top score (record 7 s), Score IDs (every page); after the
       `short` game the same.
-- [ ] **C12 game over:** Navi, C and ▼ during the `Your score:` note and during the fireworks
+- [x] **C12 game over:** Navi, C and ▼ during the `Your score:` note and during the fireworks
       (records): skip, ignore or move?
-- [ ] OCR every new image with `tools/menutree/ocr.py` into `plan23/text.json` (plan 14 format).
-- [ ] `check`: every recording starts on its parent screen; every gameplay recording has a
+- [x] OCR every new image with `tools/menutree/ocr.py` into `plan23/text.json` (plan 14 format).
+- [x] `check`: every recording starts on its parent screen; every gameplay recording has a
       `keys.csv` and audio; every level 10..175 has ≥ 3 tick frames; the bot's decoded states
       chain (one cell per tick).
-- [ ] Append "Plan 23 supplementary captures" to `$REF/captures/README.md` and replace the "Snake
+- [x] Append "Plan 23 supplementary captures" to `$REF/captures/README.md` and replace the "Snake
       II speed is wrong" caveat with the D2 explanation.
-- [ ] No commit. Record the outcome under this task: C1 clamps, periods 1-9 and the 10..175 range,
+- [x] No commit. Record the outcome under this task: C1 clamps, periods 1-9 and the 10..175 range,
       first-tick offsets, interval spread (for `GAME_TICK_TOLERANCE_MS`), maze start cells, each
       H1-H16 confirmed or corrected, pause behaviour, sound/vibra edges, Score IDs after a game,
       and any section that failed.
+
+**Task 0 outcome (2026-10-14).** Generator `captures/scripts/gen_v639_plan23.py` (`run`, `bot`,
+`ocr`, `check`, plus `seeds`: the D4 check) and one command log per section
+(`captures/scripts/v639-plan23-<section>.cap`); details in "Plan 23 supplementary captures" of
+`$REF/captures/README.md`, whose speed caveat now carries the D2 explanation. 10,033 images (848
+distinct), 127 MB under `plan23/` with the audio. Every section passed `check`; no section is left
+failed. Faces in `text.json`: `tiny6`, `plain8`, `bold8`, `large13`.
+
+Deviation: the generator drives `emu.py` from Python instead of emitting one `.cap`: the bot needs
+the LCD between ticks, and the per-section logs are the replayable scripts. Sections run in their
+own dct3cap process (retried up to three times if it dies). Levels are set by ▼ ×185 at a 100 ms
+keygap (the clamp makes extra presses harmless), checked by counting bars. C3 records at most 60
+frames per level (`record … start 60`) and no audio: 166 eight-second WAVs would add ≈130 MB for no
+cue. C9 reboots from a flash saved after setting level 1 (`saveflash`; the level survives the
+reboot) and types the other clock in the setup.
+
+Deviation (C5 `long`): the bot dies at move 297 (31 meals, 5 creatures, score 105), not after
+≥ 320 ticks. The ring-wrap quirk needs a death between the head index wrapping (move 288) and the
+tail index wrapping (move 294 + growth); a death after that window blinks again. The recorded
+death does not blink (H11).
+
+Deviation (C5 `grace`): the turn is tried at nine offsets in forks (`bot/grace/try-*`, recorded),
+then the saved game continues in `bot/grace/save`. The bot steers into a side of its body with
+the straight cell free and turns straight on, because the blocked tick makes the blocked
+direction current (see H6).
+
+Deviation (C6): a level-175 snake cannot be steered into its own body, because taps register at
+least ≈50 ms (six cells) apart. `virgin/meal` records the No-maze meal (8 pressed 28 ms after
+Select's release; `0175`). The fireworks path runs at the same level 175 on Maze 1 (`virgin/game`):
+▲ at once turns the snake up column 14 into the top wall, and ← during the grace tick runs it
+along row 1 through the food (12, 1) into the left wall. That gives fireworks, `TOP SCORE: 175`
+and Top score 175 (`virgin/after/`).
+
+- **C1 levels:** ▼ lowers the stored level by one per press down to 1 (167 presses from 175 reach
+  eight bars). ▲ raises it by one only below 9: one ▲ from 175 leaves 175, and 90 ▲ from 175
+  stay at nine bars without wrapping. The page draws `min(level, 9)` filled bars. OK stores and C
+  discards (`ok/`: 5 → reopened 5; `c/`: 3 → reopened 5); both return to the game menu with Level
+  selected (`8-1-2`). A held ▲ repeats: +1 on press, again after ≈778 ms, then every ≈482-496 ms.
+  `1`, `5` and `#` leave for standby number entry (`1` and `Call`; plan 22).
+- **Periods (C2, C3):** levels 1-9 tick every 635, 465, 364, 286, 217, 170, 132, 101 and 85 ms
+  (medians; RE units × 7.745 ms). The first tick comes 616, 445, 347, 267, 197, 150, 112, 81 and
+  65 ms after the New game frame, about 20 ms less than a period: the New game frame is drawn
+  ≈20 ms after the timer starts. Levels 10-175 tick every 8 ms (one unit; 84 levels including
+  every odd level from 111 up) or every 15, 23, 39, 46, 62, 77, 93, 116, 132, 178, 480, 674, 890,
+  1200, 1231-1239, 1820, 1858 or 2215-2478 ms. Their first tick varies (6 ms at levels 22 and
+  175, 19 at 21). Interval spread: ±5 ms at level 1 and ±15 ms at levels 3-9 (two units, from a
+  late tick or a split redraw), so `GAME_TICK_TOLERANCE_MS` = 16 holds. Some tick redraws come
+  in two bursts 13-15 ms apart (a partial frame; levels 6 and 86, and `sound/warning-on`).
+- **Mazes (C4):** start cells (head − 7) are (4, 4) for No maze and Mazes 1 and 5, (0, 4) for
+  Maze 2, (0, 5) for Maze 3 and (4, 7) for Maze 4 (H2). The first food at 10:10 is (14, 8), except
+  on Maze 1 and Maze 4, where (14, 8) is a wall and the retry gives (12, 1). Mazes 1, 3 and 4 run
+  straight into the right wall and die (grace, blink, `Game over!`, the menu after ≈10.2 s).
+  No maze, Maze 2 and Maze 5 run for 25 s.
+- **Death and game over (H11, H14):** the second blocked tick vibrates. The blink then hides and
+  shows the snake every ≈237-243 ms, in nine frames. Game over follows ≈2.07 s after the crash
+  with the snake hidden. A death after the ring index wrapped does not blink: the long game's
+  board stands still for 2.83 s. A new top score shows 12 full-screen fireworks frames (six
+  pictures twice, 217-241 ms each, the last 386-423 ms), then `Game over!` / `TOP SCORE:` /
+  score for ≈2.94 s. Otherwise `Game over!` / `Your score:` / score shows for ≈2.94 s **on a
+  cleared screen**, not over the board (correction). Either way the game menu follows with New
+  game on the top row (`8-1-1`). The top score is written (Top score shows 105 after `long` and
+  175 after `virgin`) and plays the usual Top score animation.
+- **C12:** Navi or C during the blink suspends the dying game: the pause menu with Continue
+  appears. Navi or C during the fireworks or the note skips to the game menu (New game). ▼ is
+  ignored throughout.
+- **Keys (C7, H4, H5, D7):** 2/4/6/8 are absolute and 1/3/7/9 relative, as H5 says. `#` and ▼
+  turn clockwise, `*` and ▲ anticlockwise. 0, 5 and the reverse key do nothing. With two keys
+  between ticks the last one wins (2 then 8 → down; 2 then 4 → up, since 4 is a reversal). A key
+  acts on key-down, and a key held for three ticks turns once (no repeat; `hold-2`,
+  `hold-hash`). C during play suspends the game like Navi; holding C then goes to standby.
+- **Grace (H6):** the blocked tick makes the blocked direction current. A key judged against it
+  saves the snake only if it is perpendicular; the turn back the way the snake came is a
+  reversal and is ignored. The saving move comes ≈93 ms (12 units) after the blocked tick and
+  needs the key no later than ≈60 ms into the grace (`try-p80` dies). The next tick follows one
+  period later. A turn before the blocked tick simply turns (`try-m40`).
+- **Creatures (H9, H10):** the counter rule, the countdown from 20 and the HUD icon and digits
+  held on every tick of every bot game. Scores match `5L + 5 + 2t` (32 at t = 11, 42 at t = 16).
+  The 2x2 large creature appears in this EEPROM (`long`, tick 212, expired), so the large-creature
+  bit is set. It was not eaten (not captured).
+- **Random numbers (D4, H8, H12):** one seed per game reproduces every food and creature
+  placement in every bot game (`seeds.json`). `long` has 36 placements, including the large
+  creature (`r mod 50 == 0`, then x = r mod 19, y = r mod 8, no kind draw). The small creatures
+  draw a kind per H9. The 10:10 / 13.10.2026 seed is 44530 in every game. That includes Maze 2,
+  Maze 3 and the second game of a power cycle, so New game reseeds from the clock. Seeds per C9
+  setting: 00:00 → 7995, 00:01 → 7995, 07:59 → 36670 or 60943, 10:10 → 44530, 10:11 → 44590,
+  12:00 → 51130, 19:48 → 13689, 23:59 → 38909, 10:10 on 14.10.2026 → 10048.
+  `(seconds of the day + 7930) mod 65521` fits 07:59, 10:10, 10:11, 12:00 and 19:48 but not
+  00:00, 00:01, 23:59 or the other date; Task 5 fits the function. **Continue does not reseed:**
+  `pause/bot` suspends before the first meal and still places (14, 8), (19, 7), (12, 1), (2, 5)
+  like an uninterrupted game (H12 corrected). A reseed at the splash cannot be observed, because
+  New game reseeds anyway.
+- **Pause (C8, H15, D10):** Navi shows `Continue / New game / Level / Mazes / Top score / Score IDs
+/ Instructions`, numbered `8-1-1`..`8-1-7`, with Continue on the top row. C goes to the Games
+  list. Selecting Snake II again plays the splash and opens on Continue. The suspended game
+  survives a trip to standby. Continue redraws the board exactly and stands until a key; the
+  first tick comes one period (+≈20 ms) after that key, and the key's turn applies. New game
+  while suspended starts a new game. Top score while suspended returns to Continue on the bottom
+  row (`Score IDs / Instructions / Continue`): the return selects the first entry. **Level OK while
+  suspended removes Continue**, and the selection stays on the third row (`8-1-3`, now Mazes).
+- **Sound and vibra (C10, D8):** game sounds need Tones › Warning tones On, which the virgin
+  EEPROM leaves unset (`sound/warning-on/`). With the virgin settings no buzzer sounds, whether
+  Sounds is On or Off. With Warning tones On, a meal sounds 2637 Hz for 6-20 ms and the crash
+  sounds three 440 Hz beeps of ≈15 ms, ≈15 ms apart. The top-score sound was not captured with
+  Warning tones On (UNVERIFIED). The vibrator runs ≈480 ms per meal (food or creature) and from
+  the crash when Shakes is On. With Shakes Off it does not run, and game over gives no pulse.
+  The 900 Hz keypad beeps sound on every key.
+- **Score IDs (C11, Open question 4):** after every game Last score ID changes to a nine-character
+  code (`92ndekju1` after `short`). Top score ID changes only with a new top score, to the same
+  code as Last score ID (`9e0copc02` after `long`, `hcwtip9u1` after `virgin`). Bonus ID stays
+  `No ID`.
+- **H1-H16:** H1, H2, H4, H5, H7, H8, H9, H10, H11 and H16 are confirmed (H7's fat segment and
+  H13's open mouth are pictures that the tick stills hold; Task 8 checks them). Corrected: H3 (the
+  first tick is ≈20 ms short of a period after the New game frame), H6 (the saving turn is
+  judged against the blocked direction; the grace is ≈93 ms), H12 (Continue does not reseed),
+  H14 (the plain note clears the screen) and H15 (Level OK while suspended drops Continue; Top
+  score returns to Continue).
 
 ### Task 1 - Contracts and documentation
 
 **Files:** `VISION.md`, `docs/specs/nokia-3310.md`, `docs/plans/README.md`, this plan.
 
-- [ ] Apply Task 0's outcome to D2, D6 (`GAME_TICK_TOLERANCE_MS`), D8 (cue union), D10, D11 and
+- [x] Apply Task 0's outcome to D2, D6 (`GAME_TICK_TOLERANCE_MS`), D8 (cue union), D10, D11 and
       H1-H16 (Deviation lines where it changes them).
-- [ ] VISION: the `SubmenuOptions.shown` seam exactly as in "Contract changes" and a kernel-policy
+- [x] VISION: the `SubmenuOptions.shown` seam exactly as in "Contract changes" and a kernel-policy
       sentence (plan 23: shown children, positional numbers). The `@hellotimber/snake` section
       gains one sentence: website-only; the stock OS has its own engine (D1).
-- [ ] Spec §10: add "Snake II (plan 23)": board, speed and the virgin level 175 (the D2 evidence),
+- [x] Spec §10: add "Snake II (plan 23)": board, speed and the virgin level 175 (the D2 evidence),
       keys, rules as verified, pause/Continue, game over; correct plan 14's "Level: ▲/▼ inert";
       add the artefacts above; mark everything not yet asserted "(plan 23, in progress)".
-- [ ] Plans README: row 23 `in progress`.
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define Snake II gameplay contracts and the level speed finding (plan 23)`.
+- [x] Plans README: row 23 `in progress`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define Snake II gameplay contracts and the level speed finding (plan 23)`.
 
 ### Task 2 - Golden pipeline: `input`, tick stills, the tick fixture and the game capture set (TDD)
 

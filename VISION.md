@@ -302,6 +302,13 @@ export interface SubmenuOptions<Metadata = unknown> {
    * shortcuts, intros and returns from a child do not show it. Default 0; non-negative integer.
    */
   entryIndicatorMs?: number;
+  /**
+   * Plan 23: whether `child` is shown; re-read when the level's list is built and on every tick.
+   * Hidden children are skipped by display, ▲/▼, the rail, shortcuts and `opening()`, and a path
+   * that lands on one falls back to the level. A level with `shown` numbers its shown children
+   * by position (1..n) instead of by MenuOrder. Default: every child shown, numbered by order.
+   */
+  shown?(child: MenuEntry<Metadata>): boolean; // method syntax: keeps SubmenuEntry covariant
 }
 
 export abstract class MenuEntry<Metadata = unknown> {
@@ -567,6 +574,16 @@ it ends, its parent shows the entry opening again, the window restarts, and an o
 fell due meanwhile waits for the window end. The window restarts at every digit and resolve;
 the window end opens an entry still pending and closes the shortcut.
 
+**Kernel policy (plan 23).** _Shown children_ (`SubmenuOptions.shown`, opt-in, generic; the
+website sets none): a level with `shown` lists, steps through, windows and shortcut-matches only
+its shown children, numbered by position (1..n), with no `itemOrders`. `shown` is re-read on
+every tick, and a change emits one snapshot. A selected child that becomes hidden gives way to
+the first shown child, and the rows window is rebuilt at the selection. A path or an `opening()`
+that lands on a hidden child falls back to the level and its first shown child. A level that
+shows no child throws, naming the level. `exit({ select })` may select a child that was hidden
+when the application started and is shown now (Snake II's Continue after Navi). A hidden child's
+number is the position it would take among the shown ones.
+
 `TopLevelEntry` is a presentation slot, not a path segment. It adds the required
 `MenuGraphic` for each carousel position around exactly one semantic entry. Nested entries
 cannot carry graphics. The renderer continues to receive the graphic ID through
@@ -730,6 +747,9 @@ export const MAZE_NAMES: readonly string[]; // ['No maze','Box','Tunnel','Mill',
 
 `website/src/phone/` hosts the concrete Snake `PhoneApplication`, renderer→3D props, and
 the router bridge. Adapters are the only place two packages meet.
+
+`@hellotimber/snake` is the website's game only. The stock OS (`@hellotimber/nokia-os`) has its
+own Snake II engine reproduced from the v6.39 captures (plan 23 D1).
 
 ## Router integration design (website)
 
