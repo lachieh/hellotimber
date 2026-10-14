@@ -1,21 +1,12 @@
 // The stock settings store (plan 14 D9, plan 15 D3): the captured virgin EEPROM (plan 14 D10)
 // with the phone's writes on top, persisted as one EEPROM record (`SETTINGS_RECORD`), and the
 // factory state Restore factory settings writes (plan 15 D5).
-import {
-  CODE_SETTINGS,
-  FACTORY_DEFAULTS,
-  HOST_VALUES,
-  RESTORE_KEEPS,
-  setterLevel,
-  settingAlias,
-  settingKey,
-  slugOf,
-  VIRGIN_NUMBERS,
-  VIRGIN_TEXTS,
-  WELCOME_NOTE_KEY,
-} from "./bindings";
 import type { EepromRecord, StockEeprom } from "./eeprom";
-import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
+import type { StockTreeNode } from "./generated/stock-tree";
+import { setterLevel, settingAlias, STOCK_SETTINGS } from "./stock";
+import { settingKey, slugOf, treePaths } from "./tree";
+
+const { codeSettings, factoryDefaults, hostValues, restoreKeeps, typedTexts } = STOCK_SETTINGS;
 
 export interface StockSettings {
   /** Chosen option index of a single-choice setting; null = never written (virgin EEPROM). */
@@ -168,7 +159,7 @@ function settingsOver(
     text: (key) => texts.get(resolve(key)),
     setText(key, text) {
       const stored = resolve(key);
-      if (!(stored in initial.texts) && !TYPED_TEXTS.includes(stored)) {
+      if (!(stored in initial.texts) && !typedTexts.includes(stored)) {
         throw new Error(`No text setting "${key}".`);
       }
       if (text === undefined) texts.delete(stored);
@@ -203,21 +194,9 @@ export function createMemorySettings(initial: StockSettingsSnapshot): StockSetti
   return settingsOver(initial, NO_OVERRIDES, () => {}, factorySettings);
 }
 
-/** Every tree node with its path from the top level. */
-function* nodes(
-  level: readonly StockTreeNode[] = STOCK_TREE,
-  parents: readonly StockTreeNode[] = [],
-): Generator<readonly StockTreeNode[]> {
-  for (const node of level) {
-    const path = [...parents, node];
-    yield path;
-    yield* nodes(node.children ?? [], path);
-  }
-}
-
 /**
- * The option labels of a setter level (`SETTER_LEVELS`: Info service, Screen saver), in the
- * setting's order; undefined for other nodes.
+ * The option labels of a setter level (Info service, Screen saver), in the setting's order;
+ * undefined for other nodes.
  */
 function setterLabels(node: StockTreeNode): readonly string[] | undefined {
   const slugs = node.opens.kind === "submenu" ? setterLevel(node.number) : undefined;
@@ -231,12 +210,12 @@ function setterLabels(node: StockTreeNode): readonly string[] | undefined {
 
 /**
  * The option labels of a single-choice setting at `node`, in its order: an option list's, a
- * setter level's, or a code setting's (`CODE_SETTINGS`); undefined for other nodes.
+ * setter level's, or a code setting's; undefined for other nodes.
  */
 function choiceLabels(node: StockTreeNode): readonly string[] | undefined {
   const spec = node.opens;
   if (spec.kind === "option-list" && !spec.multi) return spec.options.map((o) => o.label);
-  return setterLabels(node) ?? CODE_SETTINGS[node.number];
+  return setterLabels(node) ?? codeSettings[node.number];
 }
 
 /**
@@ -246,7 +225,7 @@ function choiceLabels(node: StockTreeNode): readonly string[] | undefined {
  * Other pages show none (Erase recent call lists, Voice mailbox number).
  */
 const VALUE_PAGES: ReadonlyMap<string, readonly string[]> = new Map(
-  [...nodes()].flatMap((path) => {
+  [...treePaths()].flatMap((path) => {
     const node = path[path.length - 1]!;
     const spec = node.opens;
     const single = spec.kind === "option-list" && !spec.multi;
@@ -259,8 +238,7 @@ const VALUE_PAGES: ReadonlyMap<string, readonly string[]> = new Map(
  * The captured virgin-EEPROM state (D10) from the generated tree: option lists open on their
  * captured value (null when unset), setter levels on their page value (Info service `Off`),
  * multi-select marks, page values as display text (the Clock
- * pages are the host's), info page values, the free-text values of `VIRGIN_TEXTS` and the numbers
- * of `VIRGIN_NUMBERS`. Keys that
+ * pages are the host's), info page values, and the features' virgin texts and numbers. Keys that
  * alias another (Tones → General) are stored once, under their target.
  */
 export function virginSettings(): StockSettingsSnapshot {
@@ -268,15 +246,15 @@ export function virginSettings(): StockSettingsSnapshot {
   const marks: Record<string, boolean[]> = {};
   const texts: Record<string, string> = {};
   const byNumber = new Map<string, StockTreeNode>();
-  for (const path of nodes()) {
+  for (const path of treePaths()) {
     const node = path[path.length - 1]!;
     const key = settingKey(path);
     byNumber.set(node.number, node);
-    if (node.valueHint !== undefined && HOST_VALUES[key] === undefined) {
+    if (node.valueHint !== undefined && hostValues[key] === undefined) {
       texts[key] = node.valueHint;
     }
     const spec = node.opens;
-    const setter = setterLabels(node) ?? CODE_SETTINGS[node.number];
+    const setter = setterLabels(node) ?? codeSettings[node.number];
     if (setter !== undefined) {
       const chosen = setter.indexOf(node.valueHint ?? "");
       if (chosen < 0) throw new Error(`Setting ${node.number} shows no option as its value.`);
@@ -290,7 +268,7 @@ export function virginSettings(): StockSettingsSnapshot {
       }
     }
   }
-  for (const entry of VIRGIN_TEXTS) {
+  for (const entry of STOCK_SETTINGS.virginTexts) {
     if ("text" in entry) {
       texts[entry.key] = entry.text;
       continue;
@@ -302,7 +280,7 @@ export function virginSettings(): StockSettingsSnapshot {
   }
 
   const numbers: Record<string, number> = {};
-  for (const entry of VIRGIN_NUMBERS) {
+  for (const entry of STOCK_SETTINGS.virginNumbers) {
     if ("value" in entry) {
       numbers[entry.key] = entry.value;
       continue;
@@ -345,7 +323,7 @@ export function stockPageValue(settings: StockSettings, key: string): string | u
 
 /** The option labels of every option list and single choice, by key (aliases included). */
 const OPTION_LABELS: ReadonlyMap<string, readonly string[]> = new Map(
-  [...nodes()].flatMap((path) => {
+  [...treePaths()].flatMap((path) => {
     const node = path[path.length - 1]!;
     const spec = node.opens;
     const labels =
@@ -353,9 +331,6 @@ const OPTION_LABELS: ReadonlyMap<string, readonly string[]> = new Map(
     return labels === undefined ? [] : [[settingKey(path), labels] as const];
   }),
 );
-
-/** Texts the user types that have no virgin value (plan 18 writes the welcome note). */
-const TYPED_TEXTS: readonly string[] = [WELCOME_NOTE_KEY];
 
 let virginCache: StockSettingsSnapshot | undefined;
 /** The virgin snapshot, computed once. */
@@ -370,7 +345,7 @@ export function settingsRecordKeys(): Record<keyof SettingsOverrides, string[]> 
   return {
     choices: Object.keys(v.choices).sort(),
     marks: Object.keys(v.marks).sort(),
-    texts: [...new Set([...Object.keys(v.texts), ...TYPED_TEXTS])].sort(),
+    texts: [...new Set([...Object.keys(v.texts), ...typedTexts])].sort(),
     numbers: Object.keys(v.numbers).sort(),
   };
 }
@@ -399,12 +374,12 @@ function only<T>(from: Readonly<Record<string, T>>, keys: readonly string[]): Re
   return Object.fromEntries(Object.entries(from).filter(([key]) => keys.includes(key)));
 }
 
-/** The factory choices and marks (FACTORY_DEFAULTS), by stored key. */
+/** The factory choices and marks (the features' factory defaults), by stored key. */
 function factoryTables(): Pick<SettingsOverrides, "choices" | "marks"> {
   const choices: Record<string, number> = {};
   const marks: Record<string, boolean[]> = {};
   const v = virgin();
-  for (const entry of FACTORY_DEFAULTS) {
+  for (const entry of factoryDefaults) {
     const key = v.aliases[entry.key] ?? entry.key;
     const labels = OPTION_LABELS.get(key);
     if (labels === undefined) throw new Error(`Factory default for unknown list "${entry.key}".`);
@@ -426,14 +401,14 @@ function factoryTables(): Pick<SettingsOverrides, "choices" | "marks"> {
 }
 
 /**
- * The factory state (D5): virgin choices and marks under FACTORY_DEFAULTS, and only the texts
- * and numbers of RESTORE_KEEPS.
+ * The factory state (D5): virgin choices and marks under the factory defaults, and only the
+ * texts and numbers Restore keeps.
  */
 function factorySettings(current: SettingsOverrides): SettingsOverrides {
   return {
     ...factoryTables(),
-    texts: only(current.texts, RESTORE_KEEPS),
-    numbers: only(current.numbers, RESTORE_KEEPS),
+    texts: only(current.texts, restoreKeeps),
+    numbers: only(current.numbers, restoreKeeps),
   };
 }
 

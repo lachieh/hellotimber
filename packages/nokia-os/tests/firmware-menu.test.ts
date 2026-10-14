@@ -10,7 +10,7 @@ import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { LEVEL1 } from "../scripts/text-runs.ts";
 import { paintDottedBorder } from "../src/display/unsupported";
-import { placeholderOwner } from "../src/firmware/bindings";
+import { placeholderOwner } from "../src/firmware/stock";
 import { STOCK_TREE, type StockTreeNode } from "../src/firmware/generated/stock-tree";
 import { createStockMenu } from "../src/firmware/menu";
 import { PlaceholderApplication } from "../src/firmware/placeholder";

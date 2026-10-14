@@ -3,8 +3,8 @@
 // keys and power; widgets reach it through `LeafBinder` (previews, note tones).
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockCue, StockCueSink } from "../firmware/cues";
-import { LEVEL_REPEAT, type PreviewList } from "../firmware/bindings";
 import type { StockSettings } from "../firmware/settings";
+import { LEVEL_REPEAT } from "../widgets/level-bar";
 import {
   BEEP_ONCE_LEVELS,
   BOOT_TONE,
@@ -20,6 +20,14 @@ import {
 } from "../resources";
 import { noteStarts, type SoundProgram } from "./program";
 import type { SoundPlay, SoundSequencer, SoundVolume } from "./sequencer";
+
+/**
+ * The option lists that preview what they highlight (plan 16 D9), by setting slug, in Tones and
+ * every Personalise. Incoming call alert, Keypad tones, Warning tones and Vibrating alert
+ * preview nothing (Task 0).
+ */
+export const PREVIEW_LISTS = ["ringing-tone", "ringing-volume", "message-alert-tone"] as const;
+export type PreviewList = (typeof PREVIEW_LISTS)[number];
 
 /** Tones › Keypad tones (through `settingAlias`: the active profile's). Options: Off, Level 1-3. */
 export const KEYPAD_TONES_KEY = "tones/keypad-tones";

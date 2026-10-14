@@ -57,9 +57,14 @@ export const SAME_AS: Readonly<Record<string, string>> = {
 /**
  * Leaves that open the placeholder, by node pattern → owner plan (plan 14 "Leaf ownership").
  * A pattern is a menu number whose segments may be `*` (any one segment); a trailing `-**`
- * also matches everything below.
+ * also matches everything below. Grouped by owner plan, so the plan that implements its leaves
+ * deletes only its own group; equal to the firmware features' placeholders (coverage guard).
  */
 export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
+  // Plan 17: Profiles.
+  "12-*-1": "17", // Profiles › Activate
+
+  // Plan 18: Messages (18c: Chat, Templates, Smileys, Picture messages, Topics).
   "2-1": "18", // Write messages: text editor
   "2-4": "18", // Picture messages: nothing in the virgin EEPROM
   "2-5": "18", // Templates
@@ -69,20 +74,29 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "2-8-4-3-**": "18",
   "2-10": "18", // Service command editor
   "3": "18", // Chat
-  "5-4-*": "27", // Composer slots (plan 16 D14)
   "5-9-4": "18", // Screen saver › Screen saver: nothing in the virgin EEPROM
   "12-*-2-9-4": "18",
-  "6-2-1-3": "26", // Русский: native-language note, then that UI (plan 15 D12)
-  "6-2-1-4": "26", // Български
-  "6-2-1-5": "26", // Українська
   "6-2-3": "18", // Welcome note: text editor (plan 15 D12; plan 15 owns the stored note)
+
+  // Plan 20: Calculator.
+  "9": "20", // Calculator
+
+  // Plan 21: Clock and Reminders.
+  "11-4": "21", // Stopwatch
+
+  // Plan 24: Games II.
   "8-2-1": "24", // Space impact › New game
   "8-3-1": "24", // Bantumi › New game
   "8-4-1-1": "24", // Pairs II › Time trial › New game
   "8-4-2-1": "24", // Pairs II › Puzzle › New game
-  "9": "20", // Calculator
-  "11-4": "21", // Stopwatch
-  "12-*-1": "17", // Profiles › Activate
+
+  // Plan 26: Languages.
+  "6-2-1-3": "26", // Русский: native-language note, then that UI (plan 15 D12)
+  "6-2-1-4": "26", // Български
+  "6-2-1-5": "26", // Українська
+
+  // Plan 27: Composer.
+  "5-4-*": "27", // Composer slots (plan 16 D14)
 };
 
 /** Leaf screen kinds a stock widget or placeholder handles; anything else is an import error. */

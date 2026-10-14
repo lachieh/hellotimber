@@ -1,6 +1,6 @@
 // The stock tree's leaves as applications (plan 14 Task 12): each leaf, option list and info
-// page opens a flow of stock widgets bound by `bindings.ts`, or the placeholder of the plan that
-// owns it. Timelines and layouts are resolved when the menu is built, so a missing binding fails
+// page opens a flow of stock widgets read from the tree and the features' tables (`stock.ts`), a
+// screen a feature implements, or the placeholder of the plan that owns it. Timelines and layouts are resolved when the menu is built, so a missing binding fails
 // there and names its node.
 import { PhoneApplication } from "@hellotimber/phone-core";
 import type {
@@ -8,71 +8,49 @@ import type {
   PhoneApplicationSession,
   PhoneKey,
 } from "@hellotimber/phone-core";
-import {
-  missingStockGlyphs,
-  WIDGET_TIMELINE_BY_NAME,
-  WIDGET_TIMELINE_BY_NODE,
-  WIDGET_TIMELINES,
-} from "../resources";
+import { missingStockGlyphs, WIDGET_TIMELINE_BY_NODE } from "../resources";
 import type { StockWidgetTimeline } from "../resources";
-import { codeEntry, codeError, maskedEntry } from "../widgets/code-entry";
 import { confirmQuery } from "../widgets/confirm";
 import { StockFlowApplication, type Flow, type Widget } from "../widgets/flow";
 import { infoPages, type InfoPage } from "../widgets/info-pages";
 import { infoScreen } from "../widgets/info-screen";
-import { levelBar, snakeLevel } from "../widgets/level-bar";
+import { levelBar } from "../widgets/level-bar";
 import { multiSelect } from "../widgets/multi-select";
-import { note, type NoteEnd, type NoteOptions, type NoteSound } from "../widgets/note";
+import { note, type NoteEnd, type NoteOptions } from "../widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
 import { progress } from "../widgets/progress";
-import { promptFromLayout } from "../widgets/prompt";
-import { snakeGame, type StockGames } from "../widgets/snake";
+import { promptFromLayout, type PromptLayout } from "../widgets/prompt";
 import { splashIntro } from "../widgets/splash";
 import { textPages } from "../widgets/text-pages";
+import type { LeadEntry, ScreenPlace, StockServices } from "./features/feature";
+import type {
+  StockLeafScreen,
+  StockOption,
+  StockPage,
+  StockResult,
+  StockScreenSpec,
+  StockTreeNode,
+} from "./generated/stock-tree";
+import { PlaceholderApplication } from "./placeholder";
 import {
-  CLUB_NOKIA_ID_BLINK,
-  ACCEPT_FLOWS,
-  CLUB_NOKIA_ID_PROMPT,
-  CODE_SETTINGS,
-  CURSOR_STYLE,
   EXIT_LEVELS,
-  INVALID_SHORTCUT,
   LEVEL_BARS,
   modelNumber,
   noteEnd,
   noteMoves,
   noteTimelineId,
   numberLine,
-  NUMERIC_LEVELS,
+  optionListHooks,
   optionListNumbering,
-  PAGE_RESULTS,
   placeholderOwner,
-  PREVIEW_LISTS,
-  profileSetting,
+  PROGRESS_QUITS,
   PROMPT_LAYOUTS,
   promptLayout,
   QUERY_RESULTS,
-  REQUEST_NOT_CONFIRMED,
-  settingKey,
-  slugOf,
-  SNAKE_LEVEL,
-  splitPromptLines,
-  type AcceptFlow,
-  type AcceptNote,
-  type PromptLayout,
-} from "./bindings";
-import {
-  STOCK_TREE,
-  type StockLeafScreen,
-  type StockOption,
-  type StockPage,
-  type StockResult,
-  type StockScreenSpec,
-  type StockTreeNode,
-} from "./generated/stock-tree";
-import { PlaceholderApplication } from "./placeholder";
-import { SECURITY_CODE_DIGITS, type StockSecurity } from "./security";
-import type { StockSettings } from "./settings";
+  SCREENS,
+} from "./stock";
+import { timelineById, timelineByName } from "./timelines";
+import { settingKey, slugOf } from "./tree";
 import type { StockSounder } from "../sound/sounder";
 
 /** The soft key of Instructions pages (P12; the tree records only their text). */
@@ -89,18 +67,6 @@ export interface LeafPlace {
   readonly moves?: NoteOptions["moves"];
 }
 
-function timelineById(id: string, what: string): StockWidgetTimeline {
-  const found = WIDGET_TIMELINES[id];
-  if (found === undefined) throw new Error(`No widget timeline "${id}" for ${what}.`);
-  return found;
-}
-
-function named(name: string): StockWidgetTimeline {
-  const id = WIDGET_TIMELINE_BY_NAME[name];
-  if (id === undefined) throw new Error(`No named widget timeline "${name}".`);
-  return timelineById(id, name);
-}
-
 /** The node's own recording's timeline (or its same-as model's), if any. */
 function ownTimeline(number: string): StockWidgetTimeline | undefined {
   const id = WIDGET_TIMELINE_BY_NODE[modelNumber(number)];
@@ -111,6 +77,15 @@ function noteTimeline(number: string, lines: readonly string[]): StockWidgetTime
   const id = noteTimelineId(WIDGET_TIMELINE_BY_NODE, modelNumber(number), lines);
   return id === undefined ? undefined : timelineById(id, `the note at ${number}`);
 }
+
+/**
+ * The cursor blink of prompts whose own recording has none (a cursor every ≈480 ms, P9): the
+ * Voice mailbox number prompt's.
+ */
+const CURSOR_STYLE = "2-9";
+
+/** The note digits that match no menu number open (P5); the kernel then goes to standby. */
+const INVALID_SHORTCUT = { lines: ["Invalid", "shortcut"], timeline: "invalid-shortcut" };
 
 /** The placeholder of a choice inside a flow (6-2-1 native languages): C goes back. */
 function placeholderWidget(label: string): Widget {
@@ -147,61 +122,28 @@ function blinkOf(number: string, layout: PromptLayout): StockWidgetTimeline | un
   return ownTimeline(number) ?? timelineById(CURSOR_STYLE, `the cursor at ${number}`);
 }
 
-/** The slug of the tree node after `number` among its siblings (circular). */
-function nextSibling(number: string): string {
-  const segments = number.split("-");
-  let level: readonly StockTreeNode[] = STOCK_TREE;
-  for (const segment of segments.slice(0, -1)) {
-    level = level.find((n) => n.number.split("-").at(-1) === segment)?.children ?? [];
-  }
-  const index = level.findIndex((n) => n.number === number);
-  if (index < 0) throw new Error(`No tree node ${number}.`);
-  return level[(index + 1) % level.length]!.slug;
-}
-
-/** The path from the top level to tree node `number`. */
-function treePath(number: string): StockTreeNode[] {
-  const path: StockTreeNode[] = [];
-  let level: readonly StockTreeNode[] = STOCK_TREE;
-  for (const segment of number.split("-")) {
-    const found = level.find((n) => n.number.split("-").at(-1) === segment);
-    if (found === undefined) throw new Error(`No tree node ${number}.`);
-    path.push(found);
-    level = found.children ?? [];
-  }
-  return path;
+/** The application id of the node at `path`. */
+function idOf(path: readonly StockTreeNode[]): string {
+  return `stock:${path.map((n) => n.slug).join("/")}`;
 }
 
 /**
- * Builds the stock leaves of one menu over one settings store, one games holder, one security
- * code and one sounder (previews and note tones, plan 16).
+ * Builds the stock leaves of one menu over one phone's services: its settings store, games
+ * holder, security code, sounder (previews and note tones, plan 16) and host ports.
  */
 export class LeafBinder {
-  readonly #settings: StockSettings;
-  readonly #games: StockGames;
-  readonly #security: StockSecurity;
-  readonly #sounder: StockSounder;
+  readonly #services: StockServices;
 
-  constructor(
-    settings: StockSettings,
-    games: StockGames,
-    security: StockSecurity,
-    sounder: StockSounder,
-  ) {
-    this.#settings = settings;
-    this.#games = games;
-    this.#security = security;
-    this.#sounder = sounder;
+  constructor(services: StockServices) {
+    this.#services = services;
   }
-
-  /** Every note's warning tone goes to the sounder, by its lines (D12). */
-  readonly #noteSound: NoteSound = (lines) => this.#sounder.note(lines);
 
   /** The application a leaf node opens. */
   application(place: LeafPlace): PhoneApplication {
     const node = place.path[place.path.length - 1]!;
-    const id = `stock:${place.path.map((n) => n.slug).join("/")}`;
-    if (node.number === SNAKE_LEVEL.newGame) return this.#snake(id, "new");
+    const id = idOf(place.path);
+    const bound = this.#bound(node.number, node.opens, settingKey(place.path));
+    if (bound !== undefined) return new StockFlowApplication(id, bound);
     const owner = placeholderOwner(node.number);
     if (owner !== undefined) {
       const path = place.path.map((n) => n.slug).join("/");
@@ -217,26 +159,25 @@ export class LeafBinder {
   /** A setter leaf (Info service On, Screen saver Off): stores its index, then its note. */
   setter(place: LeafPlace, key: string, index: number): PhoneApplication {
     const node = place.path[place.path.length - 1]!;
-    const id = `stock:${place.path.map((n) => n.slug).join("/")}`;
     const spec = node.opens;
     if (!("lines" in spec)) throw new Error(`Setter ${node.number} opens no note.`);
     const make = this.#screen(node.number, spec, place.moves);
-    return new StockFlowApplication(id, () => {
-      this.#settings.choose(key, index);
+    const settings = this.#services.settings;
+    return new StockFlowApplication(idOf(place.path), () => {
+      settings.choose(key, index);
       return make();
     });
   }
 
-  /** Snake II's Continue (plan 23 D10): resumes the suspended game. */
-  snakeContinue(levelPath: readonly StockTreeNode[]): PhoneApplication {
-    const slugs = [...levelPath.map((n) => n.slug), SNAKE_LEVEL.continue.slug];
-    return this.#snake(`stock:${slugs.join("/")}`, "continue");
+  /** The entry a feature heads the level at `levelPath` with (Snake II's Continue). */
+  lead(levelPath: readonly StockTreeNode[], lead: LeadEntry): PhoneApplication {
+    const id = `${idOf(levelPath)}/${lead.slug}`;
+    return new StockFlowApplication(id, lead.open(this.#services));
   }
 
-  #snake(id: string, start: "new" | "continue"): PhoneApplication {
-    const games = this.#games;
-    const settings = this.#settings;
-    return new StockFlowApplication(id, () => snakeGame({ games, settings, start }));
+  /** Whether the lead entry is listed now. */
+  leadShown(lead: LeadEntry): boolean {
+    return lead.shown(this.#services);
   }
 
   /** A game level's splash intro (D12). */
@@ -244,6 +185,18 @@ export class LeafBinder {
     const timeline = ownTimeline(node.number);
     if (timeline === undefined) throw new Error(`No splash timeline for ${node.number}.`);
     return splashIntro(`stock:intro:${path}`, timeline);
+  }
+
+  /** The screen a feature implements at node `number` (`SCREENS`), if one does. */
+  #bound(
+    number: string,
+    screen: StockScreenSpec | StockResult,
+    key: string,
+  ): (() => Widget) | undefined {
+    const binding = SCREENS[number];
+    if (binding === undefined) return undefined;
+    const place: ScreenPlace = { number, screen, key, numbering: optionListNumbering(number) };
+    return binding(this.#services, place);
   }
 
   #root(place: LeafPlace, spec: StockScreenSpec): () => Widget {
@@ -273,6 +226,8 @@ export class LeafBinder {
     value?: string,
   ): () => Widget {
     const { lines, softkey } = screen;
+    const services = this.#services;
+    const sound = services.noteSound;
     const need = (what: string): string => {
       if (softkey === undefined) throw new Error(`${number}: ${what} without a soft key.`);
       return softkey;
@@ -284,28 +239,22 @@ export class LeafBinder {
         if (timeline === undefined && screen.kind === "timed-note") {
           throw new Error(`No widget timeline for the note at ${number}.`);
         }
-        const end: NoteEnd = noteEnd(number) ?? (screen.after === "standby" ? "standby" : "back");
-        const keys = moves ?? noteMoves(number);
-        // Snake II's notes return to the first entry: Continue while a game is suspended
-        // (Task 0 C8: Top score → `Score IDs / Instructions / Continue`).
-        const games = this.#games;
+        const fallback: NoteEnd = screen.after === "standby" ? "standby" : "back";
+        const end = noteEnd(number);
+        // A bound end may depend on the phone (Snake II's Top score returns to Continue while a
+        // game is suspended), so it is read when the note opens.
         const endNow = (): NoteEnd =>
-          typeof end === "object" &&
-          end.select !== undefined &&
-          number.startsWith(`${SNAKE_LEVEL.number}-`) &&
-          games.snake !== undefined
-            ? { ...end, select: SNAKE_LEVEL.continue.slug }
-            : end;
+          end === undefined ? fallback : typeof end === "function" ? end(services) : end;
+        const keys = moves ?? noteMoves(number);
         // A line that shows a numeric setting (Top score) reads it when the note opens.
         const shown = numberLine(number);
-        const settings = this.#settings;
+        const settings = services.settings;
         const linesNow = (): readonly string[] =>
           shown === undefined
             ? lines
             : lines.map((line, i) =>
                 i === shown.line ? String(settings.number(shown.key)) : line,
               );
-        const sound = this.#noteSound;
         return () =>
           note({
             lines: linesNow(),
@@ -320,20 +269,20 @@ export class LeafBinder {
         if (timeline === undefined) throw new Error(`No widget timeline for ${number}.`);
         const text = lines[0]!;
         const sk = need("a progress note");
-        const notConfirmed = named(REQUEST_NOT_CONFIRMED.timeline);
-        const sound = this.#noteSound;
+        const quitNote = PROGRESS_QUITS[text];
+        const quitTimeline = quitNote === undefined ? undefined : timelineByName(quitNote.timeline);
         const quit =
-          text === "Requesting"
-            ? (flow: Flow) =>
+          quitNote === undefined
+            ? undefined
+            : (flow: Flow) =>
                 flow.replace(
                   note({
-                    lines: REQUEST_NOT_CONFIRMED.lines,
-                    timeline: notConfirmed,
+                    lines: quitNote.lines,
+                    timeline: quitTimeline!,
                     end: "standby",
                     sound,
                   }),
-                )
-            : undefined;
+                );
         return () =>
           progress({ text, softkey: sk, timeline, ...(quit === undefined ? {} : { quit }) });
       }
@@ -347,8 +296,8 @@ export class LeafBinder {
         return () => infoScreen({ lines: () => lines, softkey: sk });
       }
       case "code-prompt":
-        if (ACCEPT_FLOWS[number] !== undefined) return this.#codeLeaf(number, screen);
-      // falls through: PIN, PIN2 and barring prompts keep plan 14's first screen (D7)
+      // PIN, PIN2 and barring prompts keep plan 14's first screen (plan 15 D7); the security
+      // code's are the security feature's screens.
       case "text-input":
       case "number-input": {
         const layout = layoutOf(number, screen, value);
@@ -357,20 +306,6 @@ export class LeafBinder {
       }
       case "level-bar": {
         const sk = need("a level bar");
-        const key = NUMERIC_LEVELS[number];
-        if (key !== undefined) {
-          const settings = this.#settings;
-          const games = this.#games;
-          // OK while a game is suspended discards it; the selection stays on Level's row,
-          // now the next entry (Task 0 C8: `8-1-3`, Mazes).
-          const after = nextSibling(number);
-          const discard = (): string | undefined => {
-            if (games.snake === undefined) return undefined;
-            games.snake = undefined;
-            return after;
-          };
-          return () => snakeLevel({ settings, key, softkey: sk, onStore: discard });
-        }
         const bars = LEVEL_BARS[modelNumber(number)];
         if (bars === undefined) throw new Error(`No level bars for ${number}.`);
         return () => levelBar({ bars, softkey: sk });
@@ -378,91 +313,6 @@ export class LeafBinder {
       default:
         throw new Error(`${number}: no stock widget for a ${screen.kind} screen.`);
     }
-  }
-
-  /** A security-code leaf (D7): the stock code entry; an accepted code opens its flow (D8). */
-  #codeLeaf(number: string, screen: StockLeafScreen): () => Widget {
-    const softkey = screen.softkey;
-    if (softkey === undefined) throw new Error(`${number}: a code prompt without a soft key.`);
-    const { label } = splitPromptLines(screen.lines);
-    const security = this.#security;
-    const accepted = this.#acceptFlow(number, softkey, ACCEPT_FLOWS[number]!);
-    const sound = this.#noteSound;
-    return () => codeEntry({ lines: label, softkey, security, accepted, sound });
-  }
-
-  /** What an accepted code opens at leaf `number`, as `probe/accept-*` records it. */
-  #acceptFlow(number: string, softkey: string, flow: AcceptFlow): (flow: Flow) => void {
-    const done = this.#acceptNote(flow.note);
-    const settings = this.#settings;
-    const security = this.#security;
-    const sound = this.#noteSound;
-    switch (flow.kind) {
-      case "phone-security": {
-        const labels = CODE_SETTINGS[number];
-        if (labels === undefined) throw new Error(`${number}: no code setting to choose.`);
-        const key = settingKey(treePath(number));
-        return (f) =>
-          f.replace(
-            new OptionListWidget({
-              labels,
-              softkey,
-              opening: settings.choice(key),
-              numbering: optionListNumbering(number),
-              choose: (index, inner) => {
-                settings.choose(key, index);
-                if (security.phoneSecurity()) security.insertSim(security.sim);
-                inner.replace(done());
-              },
-            }),
-          );
-      }
-      case "change-code": {
-        const { enter, verify } = flow;
-        // The new code twice; a mismatch or a wrong length: `Code error`, then `enter` (B4).
-        const enterNew = (): Widget =>
-          maskedEntry({
-            lines: enter,
-            softkey,
-            submit(code, f, clear) {
-              if (code.length !== SECURITY_CODE_DIGITS) {
-                clear();
-                f.push(codeError(undefined, sound));
-                return;
-              }
-              f.replace(
-                maskedEntry({
-                  lines: verify,
-                  softkey,
-                  submit(again, g) {
-                    if (again === code) {
-                      security.changeCode(code);
-                      g.replace(done());
-                      return;
-                    }
-                    g.replace(enterNew());
-                    g.push(codeError(undefined, sound));
-                  },
-                }),
-              );
-            },
-          });
-        return (f) => f.replace(enterNew());
-      }
-      case "restore":
-        return (f) => {
-          settings.restoreFactory();
-          f.replace(done());
-        };
-      case "note":
-        return (f) => f.replace(done());
-    }
-  }
-
-  #acceptNote(binding: AcceptNote): () => Widget {
-    const timeline = named(binding.timeline);
-    const sound = this.#noteSound;
-    return () => note({ lines: binding.lines, timeline, sound });
   }
 
   /**
@@ -478,13 +328,13 @@ export class LeafBinder {
     if (result === undefined) throw new Error(`No result for the query at ${number}.`);
     let make: () => Widget;
     if (result.kind === "note") {
-      const timeline = named(result.timeline);
-      const sound = this.#noteSound;
+      const timeline = timelineByName(result.timeline);
+      const sound = this.#services.noteSound;
       make = () => note({ lines: result.lines, timeline, sound });
     } else {
-      const blink = timelineById(CLUB_NOKIA_ID_BLINK, `the prompt after ${number}`);
+      const blink = timelineById(result.blink, `the prompt after ${number}`);
       const screen = { lines: result.lines, softkey: result.softkey };
-      make = () => promptFromLayout(CLUB_NOKIA_ID_PROMPT, screen, blink);
+      make = () => promptFromLayout(result.layout, screen, blink);
     }
     return (flow, pushed) => {
       store();
@@ -500,7 +350,7 @@ export class LeafBinder {
     const node = place.path[place.path.length - 1]!;
     const number = node.number;
     const key = settingKey(place.path);
-    const settings = this.#settings;
+    const settings = this.#services.settings;
     const labels = spec.options.map((option) => option.label);
     if (spec.multi) {
       const opening = spec.opening ?? 0;
@@ -514,35 +364,15 @@ export class LeafBinder {
     const choices = spec.options.map((option, i): ((flow: Flow) => void) => {
       const store = () => settings.choose(key, i);
       if (exitLevels === undefined)
-        return this.#choice(`${number}-${i + 1}`, option, place.moves, store);
+        return this.#choice(`${number}-${i + 1}`, option, key, place.moves, store);
       return (flow) => {
         store();
         flow.back(exitLevels);
       };
     });
     const numbering = optionListNumbering(number);
-    const sounder = this.#sounder;
-    const profile = profileSetting(key);
-    // Plan 16 (Tones and every Personalise): the Keypad tones list's keys beep at the option
-    // highlighted (▲/▼ at the one they move to), C at the stored one (Task 0); the preview lists preview it (D9), except the first move out of an unset list
-    // (S9), and stop when the list closes.
-    const keyDown =
-      profile?.setting === "keypad-tones"
-        ? (pressed: PhoneKey, highlighted: number | null) => {
-            if (pressed !== "c") sounder.keyBeepLevel(highlighted);
-          }
-        : undefined;
-    const list = PREVIEW_LISTS.find((slug) => slug === profile?.setting);
-    const preview =
-      profile === undefined || list === undefined
-        ? {}
-        : {
-            highlight: (index: number, previous: number | null) => {
-              if (previous === null) sounder.stopPreview();
-              else sounder.preview(list, index, profile.prefix);
-            },
-            close: () => sounder.stopPreview(),
-          };
+    // Plan 16: key beeps and previews, from the feature that hooks this setting (tones).
+    const hooks = optionListHooks(key, this.#services);
     return () =>
       new OptionListWidget({
         labels,
@@ -550,8 +380,7 @@ export class LeafBinder {
         opening: settings.choice(key),
         numbering,
         choose: (index, flow) => choices[index]!(flow),
-        ...(keyDown === undefined ? {} : { keyDown }),
-        ...preview,
+        ...hooks,
       });
   }
 
@@ -563,12 +392,15 @@ export class LeafBinder {
   #choice(
     number: string,
     option: StockOption,
+    key: string,
     moves: NoteOptions["moves"],
     store: () => void,
   ): (flow: Flow) => void {
     const owner = placeholderOwner(number);
     if (owner !== undefined) return (flow) => flow.replace(placeholderWidget(option.label));
     const result: StockResult = option.result;
+    const bound = this.#bound(number, result, key);
+    if (bound !== undefined) return (flow) => flow.replace(bound());
     if (!("lines" in result)) {
       if (result.kind === "returns-immediately") {
         return (flow) => {
@@ -601,7 +433,7 @@ export class LeafBinder {
   #infoPages(place: LeafPlace, specPages: readonly StockPage[]): () => Widget {
     const node = place.path[place.path.length - 1]!;
     const key = settingKey(place.path);
-    const settings = this.#settings;
+    const settings = this.#services.settings;
     const pages: InfoPage[] = specPages.map((page) => {
       const pageKey = `${key}/${slugOf(page.label)}`;
       return {
@@ -620,27 +452,9 @@ export class LeafBinder {
   #pageResult(number: string, page: StockPage, pageKey: string): (() => Widget) | undefined {
     const result = page.result;
     if (result === undefined) return undefined;
+    const bound = this.#bound(number, result, pageKey);
+    if (bound !== undefined) return bound;
     if ("lines" in result) return this.#screen(number, result);
-    if (number === "4-8-1") {
-      // P15: an On/Off list on the page's value. Whether a choice changes the page is UNVERIFIED
-      // (the probe only scrolled it), so OK goes back without storing.
-      const list = PAGE_RESULTS["4-8-1"];
-      const settings = this.#settings;
-      return () => {
-        const value = settings.text(pageKey);
-        const opening = list.labels.findIndex((label) => label === value);
-        return new OptionListWidget({
-          labels: list.labels,
-          softkey: list.softkey,
-          opening: opening < 0 ? null : opening,
-          choose: (_index, flow) => flow.back(),
-        });
-      };
-    }
-    if (number === "4-8-4") {
-      const pages = PAGE_RESULTS["4-8-4"].pages.map((p) => ({ ...p, value: () => p.value }));
-      return () => infoPages({ pages });
-    }
     throw new Error(`${number}: no binding for a ${result.kind} page result.`);
   }
 }
@@ -675,7 +489,7 @@ class ExitApplication extends PhoneApplication {
  * sounds its warning tone through `sounder` (D12).
  */
 export function invalidShortcut(sounder: StockSounder): PhoneApplication {
-  const timeline = named(INVALID_SHORTCUT.timeline);
+  const timeline = timelineByName(INVALID_SHORTCUT.timeline);
   return new StockFlowApplication("stock:invalid-shortcut", () =>
     note({ lines: INVALID_SHORTCUT.lines, timeline, sound: (lines) => sounder.note(lines) }),
   );

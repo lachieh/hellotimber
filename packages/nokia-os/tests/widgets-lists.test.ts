@@ -8,7 +8,7 @@ import type {
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { paintWidget, type WidgetModel } from "../src/display/widgets";
-import { optionListNumbering } from "../src/firmware/bindings";
+import { optionListNumbering } from "../src/firmware/stock";
 import { createMemorySettings, virginSettings, type StockSettings } from "../src/firmware/settings";
 import { StockFlowApplication, type Flow, type Widget } from "../src/widgets/flow";
 import { multiSelect } from "../src/widgets/multi-select";

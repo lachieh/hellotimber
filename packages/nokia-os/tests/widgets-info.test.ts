@@ -1,14 +1,8 @@
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { paintWidget } from "../src/display/widgets";
-import {
-  LEVEL_BARS,
-  PAGE_RESULTS,
-  promptLayout,
-  settingKey,
-  slugOf,
-  splitPromptLines,
-} from "../src/firmware/bindings";
+import { LEVEL_BARS, promptLayout } from "../src/firmware/stock";
+import { settingKey, slugOf } from "../src/firmware/tree";
 import type { StockLeafScreen, StockPage } from "../src/firmware/generated/stock-tree";
 import { createMemorySettings, virginSettings, type StockSettings } from "../src/firmware/settings";
 import { WIDGET_TIMELINE_BY_NODE, WIDGET_TIMELINES } from "../src/resources";
@@ -18,7 +12,7 @@ import { infoScreen } from "../src/widgets/info-screen";
 import { levelBar, snakeLevel } from "../src/widgets/level-bar";
 import { note } from "../src/widgets/note";
 import { OptionListWidget } from "../src/widgets/option-list";
-import { promptFromLayout } from "../src/widgets/prompt";
+import { promptFromLayout, splitPromptLines } from "../src/widgets/prompt";
 import { splash, splashIntro } from "../src/widgets/splash";
 import { textPages } from "../src/widgets/text-pages";
 import { expectLcd, GAME_TICK_TOLERANCE_MS } from "./support/golden.ts";
@@ -69,7 +63,8 @@ function pageResult(number: string, page: StockPage, settings: StockSettings): W
     return promptFromLayout(promptLayout(number, result.kind)!, result);
   }
   if (number === "4-8-1") {
-    const list = PAGE_RESULTS["4-8-1"];
+    // P15: Credit info display opens an On/Off list on its page value.
+    const list = { labels: ["On", "Off"], softkey: "OK" };
     const value = settings.text("call-register/prepaid-credit/credit-info-display");
     return new OptionListWidget({
       labels: list.labels,
@@ -80,7 +75,10 @@ function pageResult(number: string, page: StockPage, settings: StockSettings): W
   }
   if (number === "4-8-4") {
     return infoPages({
-      pages: PAGE_RESULTS["4-8-4"].pages.map((p) => ({ ...p, value: () => p.value })),
+      pages: [
+        { label: "Last recharge:", value: () => "0", softkey: "Back" },
+        { label: "Expiry date:", value: () => "0", softkey: "Back" },
+      ],
     });
   }
   throw new Error(`${number}: no binding for a ${result.kind} page result.`);

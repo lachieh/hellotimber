@@ -1,10 +1,10 @@
 // Plan 15 Task 6: the security record and its rules (D6, Task 0 A2-A5, A3 lockout, B3, B4).
 import { describe, expect, it } from "vite-plus/test";
-import { PHONE_SECURITY_KEY } from "../src/firmware/bindings";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { STOCK_RECORDS } from "../src/firmware/records";
 import {
   LOCKOUT_MS,
+  PHONE_SECURITY_KEY,
   SECURITY_RECORD,
   StockSecurity,
   WRONG_CODE_LIMIT,

@@ -1,7 +1,7 @@
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { paintWidget } from "../src/display/widgets";
-import { noteTimelineId, NOTE_STYLES, optionListNumbering } from "../src/firmware/bindings";
+import { noteTimelineId, NOTE_STYLES, optionListNumbering } from "../src/firmware/stock";
 import type {
   StockLeafScreen,
   StockResult,

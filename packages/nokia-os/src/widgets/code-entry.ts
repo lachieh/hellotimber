@@ -3,12 +3,17 @@
 // the empty entry goes back in a menu and does nothing at the boot gate. OK submits.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { PromptModel } from "../display/widgets";
-import { CODE_ERROR } from "../firmware/bindings";
 import { CODE_ENTRY_MAX_DIGITS, type StockSecurity } from "../firmware/security";
 import type { StockWidgetTimeline } from "../resources";
 import { WIDGET_TIMELINE_BY_NAME, WIDGET_TIMELINES } from "../resources";
 import type { Flow, Widget } from "./flow";
 import { note, type NoteSound } from "./note";
+
+/**
+ * The note a wrong security code shows (`probe/code-wrong-*` image h; `Code\nerror` in the
+ * firmware's string table), then the empty prompt.
+ */
+export const CODE_ERROR = { lines: ["Code", "error"], timeline: "code-error" } as const;
 
 /** C held this long clears the whole entry (A2/A5: `hold c 1000ms`). */
 export const CLEAR_HOLD_MS = 1000;

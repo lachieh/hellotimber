@@ -13,7 +13,7 @@ import {
 import { codeEntry } from "../widgets/code-entry";
 import { StockFlowApplication, type Flow, type Widget } from "../widgets/flow";
 import type { NoteSound } from "../widgets/note";
-import { WELCOME_NOTE_KEY } from "./bindings";
+import { WELCOME_NOTE_KEY } from "./features/settings";
 import type { StockSecurity } from "./security";
 import type { StockSettings } from "./settings";
 

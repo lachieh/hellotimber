@@ -2,7 +2,7 @@
 import { join } from "node:path";
 import type { MenuIndicator } from "@hellotimber/phone-core";
 import { readGoldenIndex, type GoldenIndexEntry } from "../../scripts/golden-index.ts";
-import { settingKey } from "../../src/firmware/bindings";
+import { settingKey } from "../../src/firmware/tree";
 import { STOCK_TREE, type StockTreeNode } from "../../src/firmware/generated/stock-tree";
 
 export type { GoldenIndexEntry as IndexEntry } from "../../scripts/golden-index.ts";

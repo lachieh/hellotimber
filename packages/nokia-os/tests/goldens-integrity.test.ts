@@ -8,7 +8,7 @@ import {
   type PlayedFrame,
 } from "../scripts/game-capture-set.ts";
 import { PLACEHOLDER_OWNERS as IMPORTER_PLACEHOLDER_OWNERS } from "../scripts/tree-capture-set.ts";
-import { PLACEHOLDER_OWNERS } from "../src/firmware/bindings";
+import { PLACEHOLDER_OWNERS } from "../src/firmware/stock";
 import {
   LCD_HEIGHT,
   LCD_WIDTH,

@@ -1,8 +1,10 @@
 // The security code (plan 15 D6, D10): one EEPROM record shared by the boot gate and every
 // in-menu prompt, with the captured rules of Task 0 (A2-A5 entry, A3 lockout, B3 SIM, B4 change).
-import { PHONE_SECURITY_KEY } from "./bindings";
 import type { EepromRecord, StockEeprom } from "./eeprom";
 import type { StockSettings } from "./settings";
+
+/** Phone security (6-3-5): a single choice behind the security code (the security feature). */
+export const PHONE_SECURITY_KEY = "settings/security-settings/phone-security";
 
 export interface SecurityState {
   /** The stored code: 5 digits (the virgin and factory code is `12345`, user guide). */

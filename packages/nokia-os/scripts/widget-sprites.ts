@@ -307,7 +307,7 @@ export const PROBE_TIMELINES: readonly {
   { golden: "boot/security-gate", kind: "note", name: "boot-code-error" },
   { golden: "boot/security-gate", kind: "note", name: "code-accepted", fromFrame: 12 },
   { golden: "boot/welcome-note", kind: "note", name: "code-accepted-welcome" },
-  // Plan 15 0c: the notes after an accepted security code (bindings `ACCEPT_FLOWS`).
+  // Plan 15 0c: the notes after an accepted security code (the security feature's accept flows).
   { golden: "probe/accept-6-3-5-off", kind: "note", name: "phone-security-done" },
   { golden: "probe/accept-6-3-6-1-match", kind: "note", name: "security-code-changed" },
   { golden: "probe/accept-c7-restore", kind: "note", name: "settings-restored" },

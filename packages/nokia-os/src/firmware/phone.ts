@@ -1,11 +1,11 @@
 import { createPhone, type KeyEvent, type Phone, type PhoneKey } from "@hellotimber/phone-core";
 import { VISIBLE_ROWS } from "../display/list-rows";
 import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
-import { STOCK_SHORTCUT_WINDOW_MS, type StockPorts } from "./bindings";
 import type { StockCueSink } from "./cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { invalidShortcut } from "./leaves";
-import { createStockGames, createStockMenu } from "./menu";
+import { createStockGames, createStockMenu, STOCK_SHORTCUT_WINDOW_MS } from "./menu";
+import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { stockBootGates } from "./boot";
 import { createStockSettings } from "./settings";

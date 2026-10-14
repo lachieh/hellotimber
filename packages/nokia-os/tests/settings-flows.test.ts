@@ -1,7 +1,8 @@
 // Plan 15 Task 7: what an accepted security code opens (D8, Task 0c `probe/accept-*`), through
 // the stock phone's keys, with the EEPROM read back from its storage.
 import { describe, expect, it } from "vite-plus/test";
-import { PHONE_SECURITY_KEY, WELCOME_NOTE_KEY } from "../src/firmware/bindings";
+import { WELCOME_NOTE_KEY } from "../src/firmware/features/settings";
+import { PHONE_SECURITY_KEY } from "../src/firmware/security";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { SECURITY_RECORD } from "../src/firmware/security";
 import { SETTINGS_RECORD, createStockSettings } from "../src/firmware/settings";

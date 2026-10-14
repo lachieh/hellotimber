@@ -1,7 +1,7 @@
 // The stock v6.39 menu (plan 14 D4): the generated tree (`generated/stock-tree.ts`) as phone-core
 // entries. Submenus keep their presentation, soft key, opening selection, page values and game
-// splash; leaves open stock widget flows or the placeholder of the plan that owns them
-// (`leaves.ts`, `bindings.ts`).
+// splash; leaves open stock widget flows, a feature's screens or the placeholder of the plan that
+// owns them (`leaves.ts`, `stock.ts`, `features/`).
 import {
   ApplicationEntry,
   MenuLevel,
@@ -15,44 +15,36 @@ import {
 } from "@hellotimber/phone-core";
 import { stockMenuGraphic } from "../resources";
 import type { StockGames } from "../widgets/snake";
-import {
-  HOST_VALUES,
-  settingKey,
-  setterLevel,
-  showsEntryIndicator,
-  SNAKE_LEVEL,
-  STOCK_SHORTCUT_WINDOW_MS,
-  TIME_FORMAT,
-  twelveHourClock,
-  type StockPorts,
-} from "./bindings";
 import { NO_CUES } from "./cues";
+import type { StockServices } from "./features/feature";
 import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
 import { LeafBinder, type LeafPlace } from "./leaves";
 import { seedFromClock } from "../games/snake/seed";
 import { createMemoryStorage, StockEeprom } from "./eeprom";
+import type { StockPorts } from "./ports";
 import { StockSecurity } from "./security";
 import { createStockSettings, stockPageValue, type StockSettings } from "./settings";
+import { LEADS, setterLevel, showsEntryIndicator, STOCK_SETTINGS } from "./stock";
+import { settingKey } from "./tree";
 import { SoundSequencer } from "../sound/sequencer";
 import { StockSounder } from "../sound/sounder";
+
+/** The first-digit dots turn into the menu number 2948 ms after Menu (menu/01-phone-book.anim). */
+export const STOCK_SHORTCUT_WINDOW_MS = 2948;
 
 interface Builder {
   readonly ports: StockPorts;
   readonly settings: StockSettings;
-  readonly games: StockGames;
   readonly leaves: LeafBinder;
 }
 
 /**
- * The value a stock page shows: the host's for the Clock pages (the clock in the chosen Time
- * format), else the settings' (D9).
+ * The value a stock page shows: the host's where a feature reads it (the Clock pages: the clock
+ * in the chosen Time format), else the settings' (D9).
  */
 function pageDetail(key: string, ports: StockPorts, settings: StockSettings): string | undefined {
-  const port = HOST_VALUES[key];
-  if (port === undefined) return stockPageValue(settings, key);
-  const value = ports[port]?.();
-  const twelveHour = settings.choice(TIME_FORMAT.key) === TIME_FORMAT.twelveHour;
-  return port === "clock" && twelveHour && value !== undefined ? twelveHourClock(value) : value;
+  const host = STOCK_SETTINGS.hostValues[key];
+  return host === undefined ? stockPageValue(settings, key) : host(ports, settings);
 }
 
 /**
@@ -93,27 +85,31 @@ function entryOf(
     return new ApplicationEntry(slug, order, node.label, application);
   }
 
-  // Snake II's level: Continue heads it while a game is suspended (plan 23 D10); the tree's
-  // children follow it (orders 2..7, slugs unchanged), numbered by position.
-  const snake = node.number === SNAKE_LEVEL.number;
-  const continueEntry = snake
-    ? new ApplicationEntry(
-        new MenuSlug(SNAKE_LEVEL.continue.slug),
-        new MenuOrder(1),
-        SNAKE_LEVEL.continue.label,
-        b.leaves.snakeContinue(path),
-      )
-    : undefined;
+  // A feature's lead entry heads the level while it is shown, and the level opens on it then
+  // (Snake II's Continue, plan 23 D10); the tree's children follow it (orders 2.., slugs
+  // unchanged), numbered by position.
+  const lead = LEADS[node.number];
+  const leadEntry =
+    lead === undefined
+      ? undefined
+      : new ApplicationEntry(
+          new MenuSlug(lead.slug),
+          new MenuOrder(1),
+          lead.label,
+          b.leaves.lead(path, lead),
+        );
   const children = [
-    ...(continueEntry === undefined ? [] : [continueEntry]),
-    ...(node.children ?? []).map((child, i) => entryOf([...path, child], i, b, snake ? 1 : 0)),
+    ...(leadEntry === undefined ? [] : [leadEntry]),
+    ...(node.children ?? []).map((child, i) =>
+      entryOf([...path, child], i, b, leadEntry === undefined ? 0 : 1),
+    ),
   ];
   const key = settingKey(path);
   const setter = setterLevel(node.number);
   const bySlug = (s: string | undefined) => children.find((child) => child.slug.value === s);
   const opening =
-    continueEntry !== undefined
-      ? () => (b.games.snake === undefined ? undefined : continueEntry)
+    lead !== undefined
+      ? () => (b.leaves.leadShown(lead) ? leadEntry : undefined)
       : setter !== undefined
         ? () => {
             const chosen = b.settings.choice(key);
@@ -132,9 +128,9 @@ function entryOf(
         }
       : {}),
     ...(opening === undefined ? {} : { opening }),
-    ...(continueEntry === undefined
+    ...(lead === undefined
       ? {}
-      : { shown: (child: MenuEntry) => child !== continueEntry || b.games.snake !== undefined }),
+      : { shown: (child: MenuEntry) => child !== leadEntry || b.leaves.leadShown(lead) }),
     ...(spec.intro ? { intro: b.leaves.intro(node, path.map((n) => n.slug).join("/")) } : {}),
     ...(showsEntryIndicator(node.number) ? { entryIndicatorMs: STOCK_SHORTCUT_WINDOW_MS } : {}),
   };
@@ -172,8 +168,15 @@ export function createStockMenu(
     games.now(),
   ),
 ): PhoneMenu {
-  const leaves = new LeafBinder(settings, games, security, sounder);
-  const builder: Builder = { ports, settings, games, leaves };
+  const services: StockServices = {
+    ports,
+    settings,
+    games,
+    security,
+    sounder,
+    noteSound: (lines) => sounder.note(lines),
+  };
+  const builder: Builder = { ports, settings, leaves: new LeafBinder(services) };
   return new PhoneMenu(
     STOCK_TREE.map(
       (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),

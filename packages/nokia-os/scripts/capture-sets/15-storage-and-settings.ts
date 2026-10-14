@@ -253,7 +253,7 @@ export const storageAndSettings: PlanCaptureSet = {
     "plan15/accept/c4-*, plan15/accept/c7-restore-again, plan15/accept/6-4-page":
       "Restore's setup screens (text editor, page shots) and a repeat of c7-restore",
     "plan15/factory/scroll/":
-      "every list after Restore: transcribed into FACTORY_DEFAULTS (plan 15 Task 5), each entry citing its scroll",
+      "every list after Restore: transcribed into the features' factory defaults (src/firmware/features/, plan 15 Task 5), each entry citing its scroll",
     "plan15/*.wav, *.events.csv": "sound is out of scope (tones plan)",
   },
 };

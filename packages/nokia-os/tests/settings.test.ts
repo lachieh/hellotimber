@@ -1,13 +1,11 @@
 // The internal stock settings store (plan 14 Task 8, D9), its virgin-EEPROM state (D10), and its
 // persistent record with the factory state (plan 15 Task 5, D3, D5).
 import { describe, expect, it } from "vite-plus/test";
-import {
-  FACTORY_DEFAULTS,
-  PHONE_SECURITY_KEY,
-  RESTORE_KEEPS,
-  settingAlias,
-  WELCOME_NOTE_KEY,
-} from "../src/firmware/bindings";
+import { WELCOME_NOTE_KEY } from "../src/firmware/features/settings";
+import { PHONE_SECURITY_KEY } from "../src/firmware/security";
+import { settingAlias, STOCK_SETTINGS } from "../src/firmware/stock";
+
+const { factoryDefaults: FACTORY_DEFAULTS, restoreKeeps: RESTORE_KEEPS } = STOCK_SETTINGS;
 import { StockEeprom } from "../src/firmware/eeprom";
 import {
   createMemorySettings,
@@ -447,6 +445,6 @@ describe("factory state (D5)", () => {
     const factory = SETTINGS_RECORD.factory!(written());
     expect(factory.texts).toEqual({ [WELCOME_NOTE_KEY]: "Hi" });
     expect(factory.numbers).toEqual({ "games/snake/top-score": 105 });
-    expect(RESTORE_KEEPS).toEqual([WELCOME_NOTE_KEY, "games/snake/top-score"]);
+    expect([...RESTORE_KEEPS].sort()).toEqual(["games/snake/top-score", WELCOME_NOTE_KEY]);
   });
 });

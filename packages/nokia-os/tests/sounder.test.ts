@@ -3,7 +3,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import type { SoundGolden } from "../scripts/sound-format.ts";
 import { C_HOLD_BEEP_MS } from "../src/sound/sounder";
-import { LEVEL_REPEAT } from "../src/firmware/bindings";
+import { LEVEL_REPEAT } from "../src/widgets/level-bar";
 import type { StockSoundEvent } from "../src/index";
 import { KEYPAD_BEEP } from "../src/resources";
 import { soundRig } from "./support/sound-scenarios.ts";

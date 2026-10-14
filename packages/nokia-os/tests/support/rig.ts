@@ -2,7 +2,8 @@
 // (plan 13 "Scenario harness and coverage guard").
 import type { Phone, PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
-import { PHONE_SECURITY_KEY, WELCOME_NOTE_KEY } from "../../src/firmware/bindings";
+import { WELCOME_NOTE_KEY } from "../../src/firmware/features/settings";
+import { PHONE_SECURITY_KEY } from "../../src/firmware/security";
 import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockPhoneWith, type StockPhoneInternals } from "../../src/firmware/phone";
 import { createStockSettings } from "../../src/firmware/settings";
@@ -189,7 +190,7 @@ export function seededStorage(
   const storage = createMemoryStorage();
   const settings = createStockSettings(new StockEeprom(storage));
   if (seed.factory) settings.restoreFactory();
-  // Phone security's list is `Off`, `On` (CODE_SETTINGS).
+  // Phone security's list is `Off`, `On` (the security feature's code setting).
   if (seed.phoneSecurity ?? !seed.factory) settings.choose(PHONE_SECURITY_KEY, 1);
   if (seed.welcomeNote !== undefined) settings.setText(WELCOME_NOTE_KEY, seed.welcomeNote);
   return storage;

@@ -9,7 +9,7 @@ import {
   PLACEHOLDER_OWNERS as IMPORTER_PLACEHOLDER_OWNERS,
   SAME_AS as IMPORTER_SAME_AS,
 } from "../../scripts/tree-capture-set.ts";
-import { PLACEHOLDER_OWNERS, placeholderOwner, SAME_AS } from "../../src/firmware/bindings";
+import { PLACEHOLDER_OWNERS, placeholderOwner, SAME_AS } from "../../src/firmware/stock";
 import { STOCK_TREE, type StockTreeNode } from "../../src/firmware/generated/stock-tree";
 import { stockMenu } from "../../src/index";
 import {
@@ -201,7 +201,7 @@ describe("coverage guard (plan 14 D7)", () => {
     }
   });
 
-  it("shares the importer's placeholder owners and same-as table with the firmware bindings", () => {
+  it("shares the importer's placeholder owners and same-as table with the firmware features", () => {
     expect(PLACEHOLDER_OWNERS).toEqual(IMPORTER_PLACEHOLDER_OWNERS);
     expect(SAME_AS).toEqual(IMPORTER_SAME_AS);
   });

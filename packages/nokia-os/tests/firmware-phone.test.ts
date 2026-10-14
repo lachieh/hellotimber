@@ -4,7 +4,7 @@ import type { StockCue } from "../src/firmware/cues";
 import { createStockPhoneWith } from "../src/firmware/phone";
 import { createStockPhone, type StockPhoneConfig, type StockSoundEvent } from "../src/index";
 import { BOOT_TIMELINE, BOOT_TONE } from "../src/resources";
-import { LEVEL_REPEAT } from "../src/firmware/bindings";
+import { LEVEL_REPEAT } from "../src/widgets/level-bar";
 import { soundStorage } from "./support/sound-scenarios.ts";
 
 function poweredOn(config: Partial<StockPhoneConfig> = {}): Phone {

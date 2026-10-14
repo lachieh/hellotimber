@@ -1,8 +1,13 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { LevelBarModel } from "../display/widgets";
-import { LEVEL_REPEAT } from "../firmware/bindings";
 import type { StockSettings } from "../firmware/settings";
 import type { Flow, Widget } from "./flow";
+
+/**
+ * A held ▲/▼ on Snake II's Level page (plan 23 Task 0 C1, `game/snake/level-keys-hold-up`): one
+ * step on the press, the next ≈778 ms later, then one every 482-496 ms (489 ms).
+ */
+export const LEVEL_REPEAT = { firstMs: 778, everyMs: 489 } as const;
 
 /**
  * A Level page with fixed bars, as the virgin EEPROM shows them; OK and C go back (P12). Bantumi
