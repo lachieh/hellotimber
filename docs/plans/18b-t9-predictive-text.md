@@ -549,7 +549,7 @@ dictionary; `englishT9` where a golden needs it), `tests/acceptance.test.ts`.
 
 Resolved provisionally so execution is not blocked; each is cheap to reverse.
 
-1. **Dictionary source (D2):** IlyaSemenov/wikipedia-word-frequency (MIT, Wikipedia counts).
+1. **Dictionary source (D2) — confirmed by Lachlan 2026-10-14:** IlyaSemenov/wikipedia-word-frequency (MIT, Wikipedia counts).
    Reverse: Google Books Ngram 1-grams (CC BY 3.0) with the same build, or a smaller hand-curated
    list.
 2. **Size (D3):** 30,000 words (≈117 KB gzipped). Reverse: 20,000 (≈76 KB) or 50,000 (≈200 KB).
@@ -558,7 +558,7 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
 4. **User dictionary capacity (D7):** a budget of 840 = Σ(length + 1), oldest dropped, fitted to
    two measurements (166-169 four-letter or 91-99 eight-letter words). Reverse: a plain word count
    (about 160).
-5. **User words across power cycles (D7):** kept (stored at once). In the emulator a user word was
+5. **User words across power cycles (D7) — confirmed by Lachlan 2026-10-14:** kept (stored at once). In the emulator a user word was
    lost after a cold boot in all three variants tried (saved in the editor, at standby, and during
    the phone's own switch-off, which wrote nothing), while the Dictionary choice was kept. Reverse:
    keep user words in memory only (lost at power-off), matching the emulator. Restore factory
