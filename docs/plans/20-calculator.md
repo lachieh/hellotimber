@@ -584,31 +584,63 @@ cursor at the start, inside and at the end) match pixel for pixel; coordinates a
 their named timelines), the feature list (one-line registration), `tests/calculator-flow.test.ts`
 (new), `tests/support/calculator.ts` (new: open the calculator, replay a case).
 
-- [ ] TDD the calculator widget with the flow rig: keys per D8, the engine's lines as the model,
+- [x] TDD the calculator widget with the flow rig: keys per D8, the engine's lines as the model,
       Options pushes a rows list built from `options()` (opening on the first entry,
       indicator rooted at Options, D5), choices run the engine and pop, notes replace the list and
       return to the restored calculator, C on `0` leaves (`flow.back()`). Assert no duplicate
       release action, once-only held digit/star/hash, initial C deletion and held clear timing
       against the 532.1-544.0 ms draws. Dismissing digit edits the restored operand; arrows/C
       dismiss unchanged; held C can continue to standby.
-- [ ] Options numeric/star/hash escape drivers depend on the later verified plan 22 handoff and
+- [ ] (D9, pending:22) Options numeric/star/hash escape drivers depend on the later verified plan 22 handoff and
       dual-frequency contract (D9). Preserve their pending status until then; do not silently
       ignore these keys or implement a private standby substitute.
-- [ ] TDD the exchange-rate list (info pages, `8-k`, soft key `OK`) and the rate entry (D7):
+- [x] TDD the exchange-rate list (info pages, `8-k`, soft key `OK`) and the rate entry (D7):
       prefilled from `CalculatorRate.shown`, keys as Task 0, seven-character limit and cursor insertion/deletion/wrap, nine-character prefill, and
       both cursor phases from `calculator/rate-prompt-*`, OK → `set` → `Rate saved` → back to the calculator screen (three
       levels).
-- [ ] Note timelines (`Rate saved`, `Out of range`, `Dividing by zero not allowed`) come from
+- [x] Note timelines (`Rate saved`, `Out of range`, `Dividing by zero not allowed`) come from
       their goldens through plan 29's verified per-plan resource registration (API recorded
       only after delivery); notes pass
       `sound` (plan 16) so their warning tones play.
-- [ ] After real opening LCD/sound drivers pass, node 9 opens the feature's application;
+- [x] After real opening LCD/sound drivers pass, node 9 opens the feature's application;
       promote the existing fixtures in their owning capture sets and remove placeholder ownership.
       `stockMenu` no longer has a placeholder for it
       (`tests/firmware-menu.test.ts`'s owner expectation for `menu/calculator` is removed with the
       owner, as plan 16 Task 2 did for the Composer).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the stock calculator and currency conversion`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the stock calculator and currency conversion`.
+
+**Task 6 completion.** `src/widgets/calculator.ts` holds the calculator screen, Options, the
+rate pages and entry and the notes; `src/firmware/features/calculator.ts` binds node 9 over the
+phone's EEPROM (`StockServices.eeprom`, added with the parent's approval in
+`feat(nokia-os): feature services reach the phone's EEPROM`). 17 flow tests; replaying every
+Task 0 still on the stock phone matches 368 of 388 exactly, the other 20 only in the rate
+entry's blink phase (Task 8). Node 9's placeholder group left `scripts/tree-capture-set.ts`;
+`menu/09-calculator.sub` is asserted in plan 13's index and runs plan 13's level-one scenario.
+
+Deviation: plan 16's importer folds equal note recordings into one golden, so once node 9 left
+the placeholders `sound/note/9` joined the asserted `sound/note/2-7-1-1` group (its note now
+lists 9); that group's scenario drives its first node, so Task 7 drives node 9's opening beep
+against it.
+
+Deviation (D8): Options and the rate pages act as keys go down too, as the screen and the
+entry do: a note's warning tone replaces the beep of the OK that opens it only at that key's
+down (`sound/note/calculator-*`: the note draws 57 ms after OK goes down, before its release).
+Each widget ignores the release of a key whose down it did not see.
+
+Deviation: Options is the calculator's own rows widget: with four entries ▲ from the first puts
+Divide on the top row (`options/operator-up`), which the kernel's direction-blind
+`rowsWindowTop` scrolls onto the bottom row (reported to the parent as a phone-core question).
+
+Deviation: OK on an untouched prefilled rate stores nothing (`rate/after/ok-unchanged-domestic-
+foreign` reopens Foreign at `1.5`, not the reciprocal of `0.6666667`).
+
+Deviation (shared tests, one assertion each): `tests/firmware-menu.test.ts` lists 9 among the
+stock leaves and drops its owner; `tests/paint-lists.test.ts` leaves Calculator's first screen
+(an application) out of the level-one lists; plan 13's acceptance runs `menu/09-calculator.sub`.
+
+D9 seam: Options does not act on digits, `*` and `#` (a commented seam in `OptionsWidget`);
+plan 22's standby number entry binds there. Their fixtures stay `pending:22`.
 
 ### Task 7 - Calculator sounds (TDD against sound goldens)
 

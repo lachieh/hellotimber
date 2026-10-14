@@ -78,9 +78,6 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "12-*-2-9-4": "18",
   "6-2-3": "18", // Welcome note: text editor (plan 15 D12; plan 15 owns the stored note)
 
-  // Plan 20: Calculator.
-  "9": "20", // Calculator
-
   // Plan 21: Clock and Reminders.
   "11-4": "21", // Stopwatch
 
