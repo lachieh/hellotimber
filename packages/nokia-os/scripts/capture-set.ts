@@ -1,7 +1,7 @@
 // Which REF captures become which golden fixtures. The importer executes this table; nothing
 // else decides what is imported. Paths are relative to `$REF/captures/6.39`.
 // See docs/plans/13-nokia-os-foundation.md "Capture set" and "Ground truth and artefacts".
-import type { GoldenStatus, TriggerFrame } from "./golden-format.ts";
+import type { GoldenScenario, GoldenStatus, TriggerFrame } from "./golden-format.ts";
 
 /** Frames `from`..`to` (inclusive, 0-based) of one `record` directory. */
 export interface FrameRange {
@@ -18,7 +18,9 @@ export type CaptureSource =
   /** Frame ranges of several recordings, concatenated into one timeline. */
   | { readonly kind: "composite"; readonly parts: readonly FrameRange[] }
   /** A `scroll` directory (01.png, 02.png, …), one still per screen. */
-  | { readonly kind: "scroll"; readonly dir: string };
+  | { readonly kind: "scroll"; readonly dir: string }
+  /** Named `shot` PNGs, one still each, named after the file stem. */
+  | { readonly kind: "shots"; readonly files: readonly string[] };
 
 export interface SourceChoice {
   readonly source: CaptureSource;
@@ -37,6 +39,9 @@ export interface CaptureSetEntry {
   readonly fallback?: SourceChoice;
   /** Optional rows are skipped silently when no source exists (Task 0 probes). */
   readonly optional?: boolean;
+  /** Generated tree goldens (plan 14 D7): the generic scenario and the tree nodes covered. */
+  readonly scenario?: GoldenScenario;
+  readonly covers?: readonly string[];
 }
 
 export const MENU_SLUGS = [
@@ -228,10 +233,10 @@ export const CAPTURE_SET: readonly CaptureSetEntry[] = [
   {
     id: "menu/01-phone-book.sub-up",
     kind: "still",
-    status: "pending:14",
+    status: "asserted",
     prefer: {
       source: { kind: "scroll", dir: "menu-scroll-up/01-phone-book" },
-      note: "Phone book level 1 from item 6, ▲ per image through the wrap to Voice tags. The rows window keeps its position, ▲ above it puts the selection on the top row, and the wrap shows Voice tags, Search, Service Nos.; the kernel has no window state yet (plan 14).",
+      note: "Phone book level 1 from item 6, ▲ per image through the wrap to Voice tags. The rows window keeps its position, ▲ above it puts the selection on the top row, and the wrap shows Voice tags, Search, Service Nos. (plan 14 D3).",
     },
   },
 ];

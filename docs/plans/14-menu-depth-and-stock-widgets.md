@@ -708,24 +708,55 @@ Nokia ID:` prompt; Yes → `Reminder memory empty` ≈2.87 s → Reminders shows
 (new), `tests/fixtures/tree-mini.json` (new, hand-written, not REF data),
 `tests/goldens-integrity.test.ts`, `goldens/**`.
 
-- [ ] TDD `golden-format.ts`: optional `scenario`/`covers` after `omitted` (order, both or
+- [x] TDD `golden-format.ts`: optional `scenario`/`covers` after `omitted` (order, both or
       neither, known scenario names, covers non-empty and well-formed numbers); round trip;
       plan 13 fixtures still parse unchanged.
-- [ ] TDD `tree-capture-set.ts` on `tree-mini.json` (a dozen nodes: a rows and a pages submenu, a
+- [x] TDD `tree-capture-set.ts` on `tree-mini.json` (a dozen nodes: a rows and a pages submenu, a
       hidden-number gap, two option lists with one signature, an unset list, a note pair with
       equal recordings, a placeholder leaf, a same-as subtree): rules S1-S8, ids, `covers`, and
       grouping by recording equality, which the test feeds through an injected recording loader.
       Unknown leaf kinds and missing captures throw and name the node.
-- [ ] Wire the importer: `CAPTURE_SET` (plan 13) + `treeCaptureSet(tree.json, captures root)`;
+- [x] Wire the importer: `CAPTURE_SET` (plan 13) + `treeCaptureSet(tree.json, captures root)`;
       `index.json` entries gain `covers` when present. Move `menu/01-phone-book.sub-up` to
       `asserted` and add `probe/*` rows (S7) with notes naming their probe.
-- [ ] Integrity test: tree goldens with `scenario` have `covers`; `leaf`/`choose` timelines have a
+- [x] Integrity test: tree goldens with `scenario` have `covers`; `leaf`/`choose` timelines have a
       numeric `trigger-frame`; no node number is covered twice by asserted goldens of the same
       scenario kind.
-- [ ] Run the importer against REF twice; the second run leaves `goldens/` unchanged. Record the
+- [x] Run the importer against REF twice; the second run leaves `goldens/` unchanged. Record the
       fixture counts (asserted/pending, images, bytes) in the completion notes.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import the v6.39 menu tree as rule-selected goldens`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): import the v6.39 menu tree as rule-selected goldens`.
+
+Deviation: level 0/1 keep plan 13's goldens. S1, S4 and S8 apply below the carousel: the
+level-1 lists are `menu/NN-<slug>.sub` and the top-level applications Chat and Calculator are
+`menu/03-chat.sub` (pending:18) and `menu/09-calculator.sub` (pending:20), so the guard (Task 13)
+counts those as covering nodes `1`..`12`.
+Deviation: info-pages lists (4-5, 4-6, 4-8, 4-8-4, Score IDs) follow the option-list rules: S2
+`.options` (one image per page) for the first of each signature, S3 `.open` for the rest, S5
+`.choose` for their pages (Task 0 records every page of the first list of each signature).
+Deviation: S4/S5 equality compares the frames after the trigger up to the return to frame 0's
+screen, plus whether it returns; frame 0 and the return differ per node (the node's own parent).
+A shared golden's image `a` is the first covered node's parent, so Task 13's `leaf`/`choose`
+scenario for the other covered nodes compares frame 0 and the return against that node's own
+parent screen (its frame before the trigger), not image `a`. Identical notes jitter by up to
+±17 ms (D8), so only six groups share: `1-5 1-6`, `4-1 4-2`, `6-3-5 6-3-6-1 6-4`, `8-4-1-2
+8-4-2-2`, `5-4-1 5-4-2 5-4-6 5-4-7` (pending:16) and the no-response leaves `2-4 2-5 2-6 5-9-4
+12-1-2-9-4 12-2-2-9-4` (pending:18).
+Deviation: probes are an explicit table in `tree-capture-set.ts` (`probeCaptureSet`, 68 goldens
+`probe/<name>`, trigger = first changed frame); named shots use a new `shots` capture source.
+Pending timelines keep at most 40 frames (`MAX_PENDING_FRAMES`; Snake II gameplay has 694),
+the rest listed under `omitted`. `goldens/index.json` (now with `covers` arrays) is excluded from
+oxfmt in the root `vite.config.ts` so the importer stays idempotent. `tests/acceptance.test.ts`
+lists asserted `tree/*`, `probe/*` and `menu/01-phone-book.sub-up` goldens without a scenario as
+todos (`awaitsPlan14Scenario`; Task 13 deletes it), and `tests/paint-lists.test.ts` selects only
+`menu/*.sub` goldens.
+
+Completion (Task 2): 360 fixtures, 329 asserted and 31 pending; plan 14 adds 314 (217 tree + 68
+probe asserted, 29 tree pending) and moves `menu/01-phone-book.sub-up` to asserted. Tree goldens:
+44 `.sub`, 34 `.options`, 33 `.open`, 85 `.leaf`, 50 `.choose`. Images: 1,733 (1,466 new). Size:
+7.28 MB of text grids (≈6.0 MB new); `goldens/` gzips to ≈450 KB (plan 13: 51 KB), so the pack
+grows by ≈400 KB, not D6's ≈150 KB: few leaves share (jitter) and the probes add 420 images. A
+second importer run leaves `goldens/` unchanged.
 
 ### Task 3 - Generated stock tree data (TDD)
 

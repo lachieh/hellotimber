@@ -50,7 +50,10 @@ function paint(screen: ScreenModel): Framebuffer {
 }
 
 describe("stock submenu lists against every asserted level-1 golden", () => {
-  const subs = INDEX.filter((entry) => entry.id.endsWith(".sub") && entry.status === "asserted");
+  const subs = INDEX.filter(
+    (entry) =>
+      entry.id.startsWith("menu/") && entry.id.endsWith(".sub") && entry.status === "asserted",
+  );
 
   it("covers the ten asserted level-1 sequences", () => {
     expect(subs).toHaveLength(10);

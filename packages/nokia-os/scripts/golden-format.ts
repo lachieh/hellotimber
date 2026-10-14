@@ -13,6 +13,15 @@ const TIMELINE_HEADER = "# frame image start_ms duration_ms lcd    leds";
 export type GoldenStatus = "asserted" | `pending:${string}`;
 export type LcdMode = "normal" | "inverse" | "blank";
 export type TriggerFrame = number | "before-recording";
+/** How the acceptance runner drives a generated tree golden (plan 14 D7). */
+export type GoldenScenario = "list" | "options" | "open" | "leaf" | "choose";
+export const GOLDEN_SCENARIOS: readonly GoldenScenario[] = [
+  "list",
+  "options",
+  "open",
+  "leaf",
+  "choose",
+];
 
 export interface GoldenImage {
   readonly name: string;
@@ -45,6 +54,10 @@ export interface Golden {
   readonly note?: string;
   /** Source frames deliberately left out, with the reason. Empty = `omitted: none`. */
   readonly omitted: readonly GoldenOmission[];
+  /** Generated tree goldens: the generic scenario, with `covers`. Absent = hand-written scenario. */
+  readonly scenario?: GoldenScenario;
+  /** Tree node numbers (entries such as `1-8-1`, option choices such as `1-8-1-2`) this golden covers. */
+  readonly covers?: readonly string[];
   readonly images: readonly GoldenImage[];
   /** Present for timeline fixtures; absent for stills. */
   readonly timeline?: readonly GoldenTimelineRow[];
@@ -69,6 +82,7 @@ const SHA256 = /^[0-9a-f]{64}$/;
 const OMISSION = /^([^,()]+?) \(([^()]+)\)$/;
 const INTEGER = /^(0|[1-9][0-9]*)$/;
 const LCD_MODES: readonly LcdMode[] = ["normal", "inverse", "blank"];
+const MENU_NUMBER = /^[1-9][0-9]*(-[1-9][0-9]*)*$/;
 
 /** Timeline image names in first-appearance order: a, b, …, z, aa, ab, … */
 export function timelineImageName(index: number): string {
@@ -105,8 +119,11 @@ export function serializeGolden(golden: Golden): string {
         ? "none"
         : golden.omitted.map((o) => `${o.name} (${o.reason})`).join(", ")
     }`,
-    "",
   );
+  if (golden.scenario !== undefined || golden.covers !== undefined) {
+    out.push(`scenario: ${golden.scenario ?? ""}`, `covers: ${(golden.covers ?? []).join(" ")}`);
+  }
+  out.push("");
   for (const image of golden.images) {
     out.push(`@image ${image.name}`, ...pixelsToRows(image.pixels), "");
   }
@@ -189,6 +206,34 @@ export function parseGolden(text: string, file: string): Golden {
   const omittedLine = header("omitted", false)!;
   const omitted = parseOmitted(omittedLine.value);
   if (!omitted) fail(omittedLine.line, 'omitted must be "none" or a comma list of "name (reason)"');
+  const scenarioLine = header("scenario", true);
+  const coversLine = header("covers", true);
+  if ((scenarioLine === undefined) !== (coversLine === undefined)) {
+    fail(
+      scenarioLine ? index : coversLine!.line,
+      "scenario and covers must both be present or both absent",
+    );
+  }
+  let scenario: GoldenScenario | undefined;
+  let covers: string[] | undefined;
+  if (scenarioLine && coversLine) {
+    if (!GOLDEN_SCENARIOS.includes(scenarioLine.value as GoldenScenario)) {
+      fail(
+        scenarioLine.line,
+        `scenario must be one of ${GOLDEN_SCENARIOS.join(", ")}, got "${scenarioLine.value}"`,
+      );
+    }
+    scenario = scenarioLine.value as GoldenScenario;
+    covers = coversLine.value.split(" ");
+    if (!covers.every((number) => MENU_NUMBER.test(number))) {
+      fail(
+        coversLine.line,
+        `covers must be a space-separated list of menu numbers such as 1-8-1, got "${coversLine.value}"`,
+      );
+    }
+    const repeated = covers.find((number, i) => covers!.indexOf(number) !== i);
+    if (repeated !== undefined) fail(coversLine.line, `covers lists "${repeated}" twice`);
+  }
   if (at(index) !== "") fail(index, `expected a blank line after the header, got "${at(index)}"`);
   index++;
 
@@ -272,6 +317,7 @@ export function parseGolden(text: string, file: string): Golden {
     ...(triggerFrame !== undefined ? { triggerFrame } : {}),
     ...(note ? { note: note.value } : {}),
     omitted: omitted!,
+    ...(scenario !== undefined ? { scenario, covers: covers! } : {}),
     images,
     ...(timeline ? { timeline } : {}),
   };

@@ -321,3 +321,97 @@ describe("golden format", () => {
     });
   });
 });
+
+describe("scenario and covers header keys (plan 14)", () => {
+  const leafGolden: Golden = {
+    ...timelineGolden,
+    id: "tree/01-phone-book/1-2.leaf",
+    scenario: "leaf",
+    covers: ["1-2", "1-4-1", "1-10-2"],
+  };
+
+  it("follow omitted, in order, and round-trip", () => {
+    const text = serializeGolden(leafGolden);
+    const all = text.split("\n");
+    expect(all.slice(7, 11)).toEqual([
+      "omitted: none",
+      "scenario: leaf",
+      "covers: 1-2 1-4-1 1-10-2",
+      "",
+    ]);
+    const parsed = parseGolden(text, "x.lcd.txt");
+    expect(parsed).toEqual(leafGolden);
+    expect(serializeGolden(parsed)).toBe(text);
+  });
+
+  it("are absent from plan 13 goldens", () => {
+    const parsed = parseGolden(serializeGolden(stillGolden), "x.lcd.txt");
+    expect(parsed).not.toHaveProperty("scenario");
+    expect(parsed).not.toHaveProperty("covers");
+  });
+
+  it("accept every scenario name", () => {
+    for (const scenario of ["list", "options", "open", "leaf", "choose"] as const) {
+      const golden = { ...stillGolden, scenario, covers: ["8-1-3"] };
+      expect(parseGolden(serializeGolden(golden), "x").scenario).toBe(scenario);
+    }
+  });
+
+  describe("rejects", () => {
+    const at = (all: string[], key: string): number => lineIndex(all, (l) => l.startsWith(key));
+
+    it("scenario without covers", () => {
+      const all = serializeGolden(leafGolden).split("\n");
+      const covers = at(all, "covers: ");
+      all.splice(covers, 1);
+      expect(parseError(all.join("\n"))).toBe(
+        `bad.lcd.txt:${covers + 1}: scenario and covers must both be present or both absent`,
+      );
+    });
+
+    it("covers without scenario", () => {
+      const all = serializeGolden(leafGolden).split("\n");
+      const scenario = at(all, "scenario: ");
+      all.splice(scenario, 1);
+      expect(parseError(all.join("\n"))).toBe(
+        `bad.lcd.txt:${scenario + 1}: scenario and covers must both be present or both absent`,
+      );
+    });
+
+    it("covers before scenario", () => {
+      const all = serializeGolden(leafGolden).split("\n");
+      const scenario = at(all, "scenario: ");
+      [all[scenario], all[scenario + 1]] = [all[scenario + 1]!, all[scenario]!];
+      expect(parseError(all.join("\n"))).toBe(
+        `bad.lcd.txt:${scenario + 1}: scenario and covers must both be present or both absent`,
+      );
+    });
+
+    it("an unknown scenario", () => {
+      const all = serializeGolden(leafGolden).split("\n");
+      const scenario = at(all, "scenario: ");
+      all[scenario] = "scenario: walk";
+      expect(parseError(all.join("\n"))).toBe(
+        `bad.lcd.txt:${scenario + 1}: scenario must be one of list, options, open, leaf, choose, got "walk"`,
+      );
+    });
+
+    it("empty, malformed or repeated covers", () => {
+      const all = serializeGolden(leafGolden).split("\n");
+      const covers = at(all, "covers: ");
+      for (const [value, message] of [
+        ["", 'covers must be a space-separated list of menu numbers such as 1-8-1, got ""'],
+        [
+          "1-2  1-3",
+          'covers must be a space-separated list of menu numbers such as 1-8-1, got "1-2  1-3"',
+        ],
+        ["1-02", 'covers must be a space-separated list of menu numbers such as 1-8-1, got "1-02"'],
+        ["1-8-", 'covers must be a space-separated list of menu numbers such as 1-8-1, got "1-8-"'],
+        ["1-2 1-2", 'covers lists "1-2" twice'],
+      ] as const) {
+        all[covers] = `covers: ${value}`;
+        expect(parseError(all.join("\n"))).toBe(`bad.lcd.txt:${covers + 1}: ${message}`);
+      }
+    });
+  });
+});

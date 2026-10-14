@@ -12,6 +12,7 @@ interface IndexEntry {
   kind: "still" | "timeline";
   images: number;
   frames: number;
+  covers?: string[];
 }
 
 const index = JSON.parse(readFileSync(join(GOLDENS, "index.json"), "utf8")) as IndexEntry[];
@@ -43,6 +44,15 @@ describe("committed goldens", () => {
       expect(golden.status).toBe(entry.status);
       expect(golden.images).toHaveLength(entry.images);
       for (const image of golden.images) expect(image.pixels).toHaveLength(LCD_WIDTH * LCD_HEIGHT);
+      expect(entry.covers).toEqual(golden.covers);
+      if (golden.scenario !== undefined) {
+        expect(entry.id).toMatch(/^tree\/\d\d-[a-z-]+\/[0-9-]+\.(sub|options|open|leaf|choose)$/);
+        expect(golden.covers!.length).toBeGreaterThan(0);
+      }
+      if (golden.scenario === "leaf" || golden.scenario === "choose") {
+        expect(golden.timeline).toBeDefined();
+        expect(typeof golden.triggerFrame).toBe("number");
+      }
       if (entry.kind === "timeline") {
         expect(golden.timeline).toHaveLength(entry.frames);
         if (golden.status === "asserted") expect(golden.triggerFrame).toBeDefined();
@@ -52,6 +62,22 @@ describe("committed goldens", () => {
       }
     });
   }
+
+  it("covers no tree node twice with asserted goldens of the same scenario", () => {
+    const seen = new Map<string, string>();
+    const twice: string[] = [];
+    for (const entry of index) {
+      if (entry.status !== "asserted") continue;
+      const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+      for (const number of golden.covers ?? []) {
+        const key = `${golden.scenario} ${number}`;
+        const other = seen.get(key);
+        if (other !== undefined) twice.push(`${key}: ${other} and ${entry.id}`);
+        seen.set(key, entry.id);
+      }
+    }
+    expect(twice).toEqual([]);
+  });
 
   it("names a later plan for every pending fixture", () => {
     const pending = index.filter((entry) => entry.status !== "asserted");

@@ -216,10 +216,23 @@ SLUGS.forEach((slug, i) => {
   }
 });
 
+/**
+ * Asserted plan 14 goldens whose scenarios land with the stock widgets: the generic tree
+ * scenarios and the probe scenarios in plan 14 Task 13, the rows window in Task 9. Until then
+ * they are todos; Task 13 deletes this bridge.
+ */
+function awaitsPlan14Scenario(id: string): boolean {
+  return id.startsWith("tree/") || id.startsWith("probe/") || id === "menu/01-phone-book.sub-up";
+}
+
 describe("stock phone against every asserted v6.39 golden", () => {
   for (const { id, status } of INDEX) {
     if (status !== "asserted") {
       it.todo(`${id} (${status.replace("pending:", "pending: plan ")})`);
+      continue;
+    }
+    if (awaitsPlan14Scenario(id) && SCENARIOS[id] === undefined) {
+      it.todo(`${id} (asserted; scenario lands in plan 14 Task 9/13)`);
       continue;
     }
     const scenario = SCENARIOS[id];

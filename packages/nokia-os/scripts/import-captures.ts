@@ -2,8 +2,9 @@
 //
 //   mise exec -- vp run @hellotimber/nokia-os#import-captures /path/to/nokia-3310
 //
-// Executes scripts/capture-set.ts, writes goldens/<id>.lcd.txt and goldens/index.json, and
-// deletes fixtures the table no longer produces. Idempotent: a second run changes nothing.
+// Executes scripts/capture-set.ts plus the plan 14 tree selection (scripts/tree-capture-set.ts
+// over `captures/6.39/tree.json`), writes goldens/<id>.lcd.txt and goldens/index.json, and
+// deletes fixtures the tables no longer produce. Idempotent: a second run changes nothing.
 // Runs under Node's type stripping: imports only node:* and sibling scripts with .ts extensions.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -27,6 +28,13 @@ import {
   type LcdMode,
 } from "./golden-format.ts";
 import { decodeLcdPng } from "./png.ts";
+import {
+  probeCaptureSet,
+  treeCaptureSet,
+  type RecordingFrame,
+  type TreeCaptureIo,
+  type TreeJson,
+} from "./tree-capture-set.ts";
 
 const CAPTURES = "captures/6.39";
 const GOLDENS = resolve(dirname(fileURLToPath(import.meta.url)), "../goldens");
@@ -38,6 +46,7 @@ interface IndexEntry {
   kind: "still" | "timeline";
   images: number;
   frames: number;
+  covers?: readonly string[];
 }
 
 interface TimingRow {
@@ -56,10 +65,20 @@ function main(): void {
   const root = join(resolve(ref), CAPTURES);
   if (!existsSync(root)) fail(`missing ${root}: pass the nokia-3310 corpus directory as REF`);
 
+  const treePath = join(root, "tree.json");
+  if (!existsSync(treePath)) fail(`missing ${treePath}: the plan 14 menu-tree crawl`);
+  const tree = JSON.parse(readFileSync(treePath, "utf8")) as TreeJson;
+  let treeEntries: CaptureSetEntry[];
+  try {
+    treeEntries = [...probeCaptureSet(captureIo(root)), ...treeCaptureSet(tree, captureIo(root))];
+  } catch (error) {
+    return fail((error as Error).message);
+  }
+
   const written = new Set<string>();
   const index: IndexEntry[] = [];
   const fallbacks: string[] = [];
-  for (const entry of CAPTURE_SET) {
+  for (const entry of [...CAPTURE_SET, ...treeEntries]) {
     const choice = chooseSource(root, entry);
     if (!choice) {
       console.log(`skip  ${entry.id} (optional; no capture)`);
@@ -86,6 +105,7 @@ function main(): void {
       kind: entry.kind,
       images: golden.images.length,
       frames: golden.timeline ? golden.timeline.length : golden.images.length,
+      ...(golden.covers ? { covers: golden.covers } : {}),
     });
   }
 
@@ -119,6 +139,8 @@ function describe(source: CaptureSource): string {
     case "recording":
     case "scroll":
       return source.dir;
+    case "shots":
+      return source.files.join(" + ");
     case "composite":
       return source.parts.map((p) => `${p.dir} ${pad3(p.from)}-${pad3(p.to)}`).join(" + ");
   }
@@ -135,7 +157,12 @@ function available(root: string, source: CaptureSource): boolean {
     case "recording":
       return existsSync(join(root, source.dir, "timings.csv"));
     case "scroll":
-      return existsSync(join(root, source.dir, "01.png"));
+      return (
+        existsSync(join(root, source.dir)) &&
+        readdirSync(join(root, source.dir)).some((f) => /^\d+\.png$/.test(f))
+      );
+    case "shots":
+      return source.files.every((file) => existsSync(join(root, file)));
     case "composite":
       return source.parts.every((p) => existsSync(join(root, p.dir, "timings.csv")));
   }
@@ -162,6 +189,9 @@ function buildGolden(root: string, entry: CaptureSetEntry, choice: SourceChoice)
     ...(choice.triggerFrame !== undefined ? { triggerFrame: choice.triggerFrame } : {}),
     ...(choice.note !== undefined ? { note: choice.note } : {}),
     omitted,
+    ...(entry.scenario !== undefined
+      ? { scenario: entry.scenario, covers: entry.covers ?? [] }
+      : {}),
   };
   const source = choice.source;
   if (entry.kind === "still") {
@@ -182,8 +212,13 @@ function buildGolden(root: string, entry: CaptureSetEntry, choice: SourceChoice)
           fail(`${entry.id}: omitted image ${name} does not exist in ${source.dir}`);
         }
       }
+    } else if (source.kind === "shots") {
+      files = source.files.map((file) => ({
+        name: basename(file).replace(/\.png$/, ""),
+        path: join(root, file),
+      }));
     } else {
-      return fail(`${entry.id}: a still needs a shot or scroll source`);
+      return fail(`${entry.id}: a still needs a shot, shots or scroll source`);
     }
     const images: GoldenImage[] = files.map(({ name, path }) => {
       const bytes = readFileSync(path);
@@ -246,7 +281,34 @@ function buildGolden(root: string, entry: CaptureSetEntry, choice: SourceChoice)
   return { ...base, sourceSha256: hash.digest("hex"), images, timeline };
 }
 
+/** Reads plan 14 captures for the tree selection: recordings by pixel content, scroll names. */
+function captureIo(root: string): TreeCaptureIo {
+  return {
+    recording(dir: string): RecordingFrame[] | undefined {
+      const csvPath = join(root, dir, "timings.csv");
+      if (!existsSync(csvPath)) return undefined;
+      return parseTimings(readFileSync(csvPath, "utf8"), csvPath).map((row) => {
+        const pngPath = join(root, dir, `${pad3(row.frame)}.png`);
+        const pixels = decodeLcdPng(readFileSync(pngPath), pngPath);
+        return {
+          image: createHash("sha256").update(pixels).digest("hex"),
+          startMs: row.startMs,
+          durationMs: row.durationMs,
+        };
+      });
+    },
+    scrollImages(dir: string): string[] | undefined {
+      if (!existsSync(join(root, dir))) return undefined;
+      return readdirSync(join(root, dir))
+        .filter((f) => /^\d+\.png$/.test(f))
+        .sort()
+        .map((f) => f.replace(/\.png$/, ""));
+    },
+  };
+}
+
 function sourceLabel(source: CaptureSource): string {
+  if (source.kind === "shots") return source.files.map((f) => `${CAPTURES}/${f}`).join(" + ");
   if (source.kind === "composite") {
     return source.parts
       .map((p) => `${CAPTURES}/${p.dir} ${pad3(p.from)}-${pad3(p.to)}`)

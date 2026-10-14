@@ -9,10 +9,12 @@ export default defineConfig({
     // never hand-formatted (see AGENTS.md). Exclude so `vp check` and the build agree.
     // public/** holds static assets (favicon, robots.txt) — never ours to format.
     // nokia-os resources are generated from goldens; the freshness test compares them as data.
+    // The golden index is written by the capture importer, which must run idempotently.
     ignorePatterns: [
       "**/routeTree.gen.ts",
       "**/public/**",
       "packages/nokia-os/src/resources/generated/**",
+      "packages/nokia-os/goldens/index.json",
     ],
   },
   lint: {
