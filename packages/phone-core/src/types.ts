@@ -43,6 +43,12 @@ export interface MenuIndicator {
    * adds no selection number (`12-` and dots, `11-0` and dots, `1` and dots).
    */
   typed?: string;
+  /**
+   * Present for SubmenuOptions.entryIndicatorMs after Select entered the shown level: `segments`
+   * are the level's own path, which the painter draws with the awaiting mark and no selection
+   * number (`5-9` and dots, plan 14 closeout).
+   */
+  entering?: true;
 }
 
 export interface StandbyIndicators {

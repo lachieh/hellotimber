@@ -169,6 +169,12 @@ export interface MenuIndicator {
    * `segments-typed` plus the awaiting dots without adding a selection number (`12-`, `11-0`, `1`).
    */
   typed?: string;
+  /**
+   * Plan 14 closeout: present for SubmenuOptions.entryIndicatorMs after Select entered the shown
+   * level; `segments` are the level's own path, drawn with the awaiting mark and no selection
+   * number (`5-9` and dots).
+   */
+  entering?: true;
 }
 
 export interface StandbyIndicators {
@@ -290,6 +296,12 @@ export interface SubmenuOptions<Metadata = unknown> {
    * from a child, skip it. Must not be the level's own child application.
    */
   intro?: PhoneApplication;
+  /**
+   * Plan 14 closeout: for this long after Select-entry the level's indicator is `entering` (its
+   * own path and the awaiting mark) instead of the selection's number; any key ends it. Paths,
+   * shortcuts, intros and returns from a child do not show it. Default 0; non-negative integer.
+   */
+  entryIndicatorMs?: number;
 }
 
 export abstract class MenuEntry<Metadata = unknown> {
@@ -537,7 +549,9 @@ above it, the wrap from the first item, a jump). Entering a level puts the windo
 (`count > rows`) or 0; the window survives a child opening and closing and is rebuilt when the
 level is entered again. `rowsWindowTop` exports the rule. _Opening selection_: a level's
 `opening()` picks the child selected on every entry (Select, shortcut, path landing). _Intro_: a
-level's `intro` application runs on Select-entry before the list. _Softkey_: a level's `softkey`
+level's `intro` application runs on Select-entry before the list. _Entry indicator_: a level's
+`entryIndicatorMs` shows its own path as `entering` for that long after Select-entry; the list
+works meanwhile, and any key ends it (Screen saver shows `5-9` and dots for ≈2.9 s). _Softkey_: a level's `softkey`
 replaces `Select` in its list model. _Exit_: `exit({ select, row })` places the selected child in a
 rows window: `row: "bottom"` (default) puts it on the bottom row (Snake II's Top score returns to
 `Score IDs / Instructions / New game`); `row: "top"` rebuilds the window at it as on entry (Space

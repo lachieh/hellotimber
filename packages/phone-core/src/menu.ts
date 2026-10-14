@@ -132,6 +132,13 @@ export interface SubmenuOptions<Metadata = unknown> {
    * be the level's own child application.
    */
   intro?: PhoneApplication;
+  /**
+   * For this long after the level is entered with Select, its menu indicator shows the level's
+   * own path as `entering` instead of the selection's number; any key ends it early. Paths that
+   * land on the level, shortcuts, intros and returns from a child do not show it. Default 0
+   * (none); a non-negative integer.
+   */
+  entryIndicatorMs?: number;
 }
 
 export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
@@ -141,6 +148,8 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
   readonly softkey: string;
   /** Application run before the list on Select-entry; undefined = none. */
   readonly intro: PhoneApplication | undefined;
+  /** How long the entering indicator shows after Select-entry; 0 = never. */
+  readonly entryIndicatorMs: number;
   readonly #options: SubmenuOptions<Metadata>;
 
   constructor(
@@ -177,8 +186,15 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
       );
       if (own) throw new Error("Submenu intro must not be one of the level's own applications.");
     }
+    const entryIndicatorMs = options.entryIndicatorMs ?? 0;
+    if (!Number.isInteger(entryIndicatorMs) || entryIndicatorMs < 0) {
+      throw new Error(
+        `Submenu entryIndicatorMs must be a non-negative integer (received ${entryIndicatorMs}).`,
+      );
+    }
     this.children = children;
     this.presentation = presentation;
+    this.entryIndicatorMs = entryIndicatorMs;
     this.softkey = softkey;
     this.intro = intro;
     this.#options = { ...options };

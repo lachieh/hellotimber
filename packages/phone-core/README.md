@@ -87,7 +87,8 @@ unsubscribe();
   (Select, shortcut, a path ending at the level; undefined or not a child = the first child);
   `intro` is an application run on Select-entry before the list. While the intro runs the path
   is the level's; its `exit()` reveals the list. Paths, per-digit shortcuts and returns from a
-  child skip it.
+  child skip it. `entryIndicatorMs` makes the level's indicator `entering` (its own path with the
+  awaiting mark) for that long after Select-entry; the list works meanwhile and any key ends it.
 
   ```ts
   new SubmenuEntry(slug, order, "Snake II", level, undefined, {

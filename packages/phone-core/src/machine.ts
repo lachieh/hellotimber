@@ -57,6 +57,8 @@ type NavFrame<Metadata> =
       selected: number;
       /** First visible row; set only for rows levels when PhoneConfig.rowsWindow is on. */
       windowTop: number | undefined;
+      /** Until when the entering indicator shows (SubmenuOptions.entryIndicatorMs). */
+      enteringUntil: number;
     }
   | {
       kind: "list";
@@ -248,7 +250,9 @@ function tickSignature<Metadata>(m: Machine<Metadata>): string {
         const iconFrame = carouselIconFrame(m, frame);
         return iconFrame === undefined ? "" : `icon:${frame.index}:${iconFrame}`;
       }
-      if (frame?.kind === "submenu") return `detail:${JSON.stringify(submenuDetail(frame))}`;
+      if (frame?.kind === "submenu") {
+        return `detail:${JSON.stringify(submenuDetail(frame))}:${entering(m)}`;
+      }
       return "";
     }
     default:
@@ -298,6 +302,7 @@ function submenuFrame<Metadata>(
     entry,
     selected,
     windowTop: undefined,
+    enteringUntil: 0,
   };
   enterWindow(m, frame);
   return frame;
@@ -405,11 +410,21 @@ function positionOrders<Metadata>(m: Machine<Metadata>): number[] {
 function menuIndicator<Metadata>(m: Machine<Metadata>): MenuIndicator {
   const shortcut = m.shortcut;
   if (shortcut?.kind === "stock") return stockIndicator(m, shortcut);
+  if (shortcut === null && entering(m)) {
+    return { segments: levelOrders(m), awaitingNext: false, entering: true };
+  }
   return {
     segments: positionOrders(m),
     awaitingNext: shortcut !== null && shortcut.entries.length > 0,
     ...(shortcut !== null && shortcut.entries.length === 0 ? { awaitingFirst: true as const } : {}),
   };
+}
+
+/** The shown level was entered with Select less than its entryIndicatorMs ago. */
+function entering<Metadata>(m: Machine<Metadata>): boolean {
+  if (m.mode.kind !== "nav") return false;
+  const top = m.mode.stack[m.mode.stack.length - 1];
+  return top?.kind === "submenu" && m.now < top.enteringUntil;
 }
 
 /**
@@ -973,6 +988,10 @@ function navShortPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void {
   if (m.mode.kind !== "nav") return;
   const stack = m.mode.stack;
   const frame = stack[stack.length - 1]!;
+  if (frame.kind === "submenu" && m.now < frame.enteringUntil) {
+    frame.enteringUntil = 0;
+    m.dirty = true;
+  }
   if (key === "c") {
     popFrame(m);
     return;
@@ -1339,21 +1358,26 @@ function enterEntry<Metadata>(m: Machine<Metadata>, entry: MenuEntry<Metadata>):
   openEntry(m, entry, true);
 }
 
-/** Opens `entry` on top of the navigation stack; `runIntro` runs a level's intro first. */
+/**
+ * Opens `entry` on top of the navigation stack. Select-entry (`bySelect`) runs a level's intro
+ * first and starts its entry indicator; a shortcut's opening does neither.
+ */
 function openEntry<Metadata>(
   m: Machine<Metadata>,
   entry: MenuEntry<Metadata>,
-  runIntro: boolean,
+  bySelect: boolean,
 ): void {
   if (m.mode.kind !== "nav") return;
   const stack = m.mode.stack;
   const visitor: MenuEntryVisitor<Metadata, void> = {
     visitSubmenu(submenu) {
-      if (runIntro && submenu.intro !== undefined) {
+      if (bySelect && submenu.intro !== undefined) {
         startIntro(m, submenu, stack, false);
         return;
       }
-      stack.push(submenuFrame(m, submenu, openingIndex(submenu)));
+      const frame = submenuFrame(m, submenu, openingIndex(submenu));
+      if (bySelect) frame.enteringUntil = m.now + submenu.entryIndicatorMs;
+      stack.push(frame);
       m.dirty = true;
     },
     visitList(list) {

@@ -172,3 +172,80 @@ describe("SubmenuOptions.opening", () => {
     });
   });
 });
+
+describe("SubmenuOptions.entryIndicatorMs", () => {
+  const HOLD_MS = 2948;
+
+  /** The phone at the carousel on the level's slot, `now` ms into its clock. */
+  function atCarousel(options: SubmenuOptions, config: Partial<PhoneConfig> = {}) {
+    const phone = phoneFor(options, config);
+    phone.navigate("menu");
+    let now = 1000;
+    return {
+      phone,
+      tick: (ms: number) => {
+        now += ms;
+        phone.tick(now);
+      },
+    };
+  }
+
+  it("shows the level's own path as entering for that long after Select, then the selection", () => {
+    const { phone, tick } = atCarousel({ entryIndicatorMs: HOLD_MS });
+    const indicators: unknown[] = [];
+    phone.pressKey("navi");
+    phone.subscribe((snap) => {
+      if (snap.screen.kind === "list") indicators.push(snap.screen.menuIndicator);
+    });
+    expect(list(phone).menuIndicator).toEqual({
+      segments: [1],
+      awaitingNext: false,
+      entering: true,
+    });
+    tick(HOLD_MS - 1);
+    expect(list(phone).menuIndicator).toMatchObject({ entering: true });
+    expect(indicators).toEqual([]);
+    tick(1);
+    expect(list(phone).menuIndicator).toEqual({ segments: [1], awaitingNext: false });
+    expect(indicators).toEqual([{ segments: [1], awaitingNext: false }]);
+  });
+
+  it("ends at any key: ▼ moves on, Select opens the selected child", () => {
+    const moved = atCarousel({ entryIndicatorMs: HOLD_MS });
+    moved.phone.pressKey("navi");
+    moved.tick(600);
+    moved.phone.pressKey("down");
+    expect(list(moved.phone)).toMatchObject({
+      selected: 1,
+      menuIndicator: { segments: [1], awaitingNext: false },
+    });
+    expect(list(moved.phone).menuIndicator).not.toHaveProperty("entering");
+
+    const opened = atCarousel({ entryIndicatorMs: HOLD_MS });
+    opened.phone.pressKey("navi");
+    opened.tick(600);
+    opened.phone.pressKey("navi");
+    expect(opened.phone.path).toBe("menu/level/item-1");
+    opened.phone.pressKey("c");
+    expect(list(opened.phone).menuIndicator).toEqual({ segments: [1], awaitingNext: false });
+  });
+
+  it("is not shown on a path landing or a return from a child", () => {
+    const { phone } = atCarousel({ entryIndicatorMs: HOLD_MS });
+    phone.navigate("menu/level");
+    expect(list(phone).menuIndicator).toEqual({ segments: [1], awaitingNext: false });
+    phone.navigate("menu/level/item-2");
+    phone.pressKey("c");
+    expect(list(phone).menuIndicator).toEqual({ segments: [1], awaitingNext: false });
+  });
+
+  it("defaults to 0 (none) and rejects a negative or fractional duration", () => {
+    expect(levelMenu({}).level.entryIndicatorMs).toBe(0);
+    expect(levelMenu({ entryIndicatorMs: HOLD_MS }).level.entryIndicatorMs).toBe(HOLD_MS);
+    expect(() => levelMenu({ entryIndicatorMs: -1 })).toThrow(/entryIndicatorMs/);
+    expect(() => levelMenu({ entryIndicatorMs: 1.5 })).toThrow(/entryIndicatorMs/);
+    const { phone } = atCarousel({});
+    phone.pressKey("navi");
+    expect(list(phone).menuIndicator).toEqual({ segments: [1], awaitingNext: false });
+  });
+});
