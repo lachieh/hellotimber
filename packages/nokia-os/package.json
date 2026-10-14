@@ -1,0 +1,25 @@
+{
+  "name": "@hellotimber/nokia-os",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "vp test run",
+    "demo": "vp dev demo",
+    "import-captures": "node scripts/import-captures.ts",
+    "extract-resources": "node scripts/extract-resources.ts"
+  },
+  "dependencies": {
+    "@hellotimber/phone-core": "workspace:*",
+    "@hellotimber/phone-screen": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

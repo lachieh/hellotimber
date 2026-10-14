@@ -9,19 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PhoneRouteImport } from './routes/_phone'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PhoneIndexRouteImport } from './routes/_phone/index'
-import { Route as ApiSmsRouteImport } from './routes/api/sms'
 import { Route as PhoneSplatRouteImport } from './routes/_phone/$'
+import { Route as ApiSmsRouteImport } from './routes/api/sms'
 
+const PhoneRoute = PhoneRouteImport.update({
+  id: '/_phone',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PhoneRoute = PhoneRouteImport.update({
-  id: '/_phone',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PhoneIndexRoute = PhoneIndexRouteImport.update({
@@ -29,15 +29,15 @@ const PhoneIndexRoute = PhoneIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PhoneRoute,
 } as any)
-const ApiSmsRoute = ApiSmsRouteImport.update({
-  id: '/api/sms',
-  path: '/api/sms',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PhoneSplatRoute = PhoneSplatRouteImport.update({
   id: '/$',
   path: '/$',
   getParentRoute: () => PhoneRoute,
+} as any)
+const ApiSmsRoute = ApiSmsRouteImport.update({
+  id: '/api/sms',
+  path: '/api/sms',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -82,18 +82,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_phone': {
       id: '/_phone'
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof PhoneRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_phone/': {
@@ -103,19 +103,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PhoneIndexRouteImport
       parentRoute: typeof PhoneRoute
     }
-    '/api/sms': {
-      id: '/api/sms'
-      path: '/api/sms'
-      fullPath: '/api/sms'
-      preLoaderRoute: typeof ApiSmsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_phone/$': {
       id: '/_phone/$'
       path: '/$'
       fullPath: '/$'
       preLoaderRoute: typeof PhoneSplatRouteImport
       parentRoute: typeof PhoneRoute
+    }
+    '/api/sms': {
+      id: '/api/sms'
+      path: '/api/sms'
+      fullPath: '/api/sms'
+      preLoaderRoute: typeof ApiSmsRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }

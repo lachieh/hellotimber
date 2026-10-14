@@ -633,24 +633,35 @@ phone-screen` to the allowed directions. Clarify rule 3 (declared dependencies).
 `scripts/golden-format.ts`, `tests/support/golden.ts`, `tests/golden-format.test.ts`,
 `tests/golden-diff.test.ts`.
 
-- [ ] Scaffold with `mise exec -- vp create vite:library --directory packages/nokia-os --no-interactive --no-git`.
+- [x] Scaffold with `mise exec -- vp create vite:library --directory packages/nokia-os --no-interactive --no-git`.
       Delete the cruft listed in AGENTS.md.
-- [ ] `package.json`: source exports; scripts `test` (`vp test run`), `demo` (`vp dev demo`),
+- [x] `package.json`: source exports; scripts `test` (`vp test run`), `demo` (`vp dev demo`),
       `import-captures` (`node scripts/import-captures.ts`) and `extract-resources`
       (`node scripts/extract-resources.ts`); dependencies `@hellotimber/phone-core` and
       `@hellotimber/phone-screen` (`workspace:*`); devDependencies `@types/node`, `typescript`,
       `vite-plus` (`catalog:`).
-- [ ] `tsconfig.json`: the AGENTS template, with include `src`, `tests`, `scripts`, `demo`, plus
+- [x] `tsconfig.json`: the AGENTS template, with include `src`, `tests`, `scripts`, `demo`, plus
       `"allowImportingTsExtensions": true` and `types: ["vite-plus/client", "node"]`.
-- [ ] TDD `golden-format.ts`: parse and serialize round trip; reject bad headers, wrong
+- [x] TDD `golden-format.ts`: parse and serialize round trip; reject bad headers, wrong
       dimensions, non-`#`/`.` characters, duplicate images, unknown image references,
       non-monotonic starts and misplaced `+`. Every error names `file:line`.
-- [ ] TDD `expectLcd` / `expectTimeline`: assert the exact failure text for a synthetic 3-pixel
+- [x] TDD `expectLcd` / `expectTimeline`: assert the exact failure text for a synthetic 3-pixel
       difference (window, ruler, legend, counts, first coordinate). Cover `LCD_DIFF=full`.
       Cover timing failures (early, late, missing image, last-frame lower bound) and alignment
       by `trigger-frame` and by `before-recording`.
-- [ ] `mise exec -- vp install`, `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): scaffold package with LCD golden format and diff helpers`.
+- [x] `mise exec -- vp install`, `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): scaffold package with LCD golden format and diff helpers`.
+
+Deviation: adding the `packages/nokia-os` importer made pnpm re-resolve the catalog's `latest`
+entries (TanStack patch/minor bumps) in `pnpm-lock.yaml` (an offline, lockfile-only install
+bumps them the same way). The bumped router plugin reorders the generated
+`website/src/routeTree.gen.ts` (import/route order only); it is committed as generated. All tests
+and the website build pass.
+Deviation: the plan's sample `LCD mismatch` block is illustrative (its counts and window do not
+match its grid). The helper reports the first difference in row-major (reading) order, prints a
+tens digit at the window's first column and at every multiple of 10, and `LCD_DIFF=full` prints
+`golden | actual | diff` rows prefixed by y. Timeline fixtures must also chain
+(`start_ms` = previous start + duration), which cumulative rounding (D9) guarantees.
 
 ### Task 3 - Capture importer and committed goldens
 
