@@ -559,15 +559,23 @@ D2), which `src/firmware/records.ts` already composes; that file needs no line, 
 **Files:** `src/display/widgets/calculator.ts` (new), `src/display/widgets/index.ts` (model union
 and paint switch: two lines), `tests/calculator-paint.test.ts` (new).
 
-- [ ] TDD a `calculator` widget model (`lines`, `softkey`) painted against every still of
+- [x] TDD a `calculator` widget model (`lines`, `softkey`) painted against every still of
       `calculator/entry`, `operators`, `results` and `convert` that shows the calculator screen:
       right-aligned small-face lines including valid ten-character signed results, their tops measured from the goldens (record them in the
       spec), `Options` as every soft key. A line that does not fit throws in tests (plan 13 D10).
-- [ ] Rate lists and notes reuse plan 14's painters. Compare rate prompts at both blink phases
+- [x] Rate lists and notes reuse plan 14's painters. Compare rate prompts at both blink phases
       and cursor positions; if the existing prompt model cannot express D7, report the required
       parent-owned model change before proceeding.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): paint the stock calculator`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): paint the stock calculator`.
+
+**Task 5 completion.** `src/display/widgets/calculator.ts` paints a `calculator` model: the
+screen (`lines`, `softkey`) or the rate entry (the plan 14 prompt with the value in a box and
+its own between-character cursor, D7: the existing prompt model draws only an end or start
+cursor, so the calculator model composes `paintPrompt` instead of changing the shared model).
+344 tests: all 278 calculator-screen stills and all 63 rate-entry stills (both blink phases,
+cursor at the start, inside and at the end) match pixel for pixel; coordinates are in the spec.
+`src/display/widgets/index.ts` gains the import, the union member and the switch case.
 
 ### Task 6 - The calculator feature (TDD against goldens)
 

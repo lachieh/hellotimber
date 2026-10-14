@@ -29,8 +29,10 @@ The existing first-screen capture is `../menu/09-calculator/sub/01.png`; the ope
 
 Menu 9 opens a single `0` above `Options`, without a calculator-screen indicator. The display
 uses up to three right-aligned small-face lines: first operand, operator, second operand.
-Painter coordinates must be measured from imported goldens before Task 5 closes. The planning
-layout has `Options` at y 40. It is not proof of every baseline or cursor coordinate.
+Measured on the imported goldens (Task 5, all 278 calculator-screen stills): the lines use the
+small face at tops 8, 18 and 28, the last line always at 28, each right-aligned so its last cell
+ends at column 83 (ink to column 82); the operator is a single small-face character (`/` is the
+glyph the calculator adds to the face); `Options` is centred at top 40.
 
 Digits append and leading zeros collapse. Entry accepts nine magnitude characters, counting
 `.`. Extra characters are ignored. `#` on a fresh calculator entry gives `0.`; a second point
@@ -139,6 +141,10 @@ field, C on empty returns to the rate list, and held C clears. OK on empty or `.
 | ▼ from the end                      | cursor on last digit | `down.png`, `down-mid.png`  |
 | insertion at seven typed characters | unchanged            | `limit-insert.png`          |
 
+The value is the prompt's large face right-aligned in the box; the cursor is one column wide,
+rows 22-35, one column left of the character after it (column 82 at the end), measured on all
+63 rate-entry stills in both blink phases.
+
 ▲ advances and wraps from the end to the start. Cursor deletion is not ordinary calculator
 backspace. Use paired blink phases when cursor ink obscures a character. The plan 18 editor
 must not be assumed to support these rules.
@@ -208,7 +214,7 @@ Do not add an awaits-scenario shim or label missing drivers as known gaps.
 | Virgin zero rate and silent error OK | Virgin EEPROM captures                                            | Reproduce the initial state                                                      |
 | Cursor hides a digit from OCR        | PNG ink and complementary blink phases                            | Compare both phases; do not infer a missing digit from OCR                       |
 
-Exact painter coordinates await imported goldens. The exact internal C timer, physical EEPROM
+The exact internal C timer, physical EEPROM
 rate encoding, internal arithmetic representation and uncaptured telephony behavior remain
 UNVERIFIED. None is inferred from a filename, OCR alone or the failed held-key exploration.
 
