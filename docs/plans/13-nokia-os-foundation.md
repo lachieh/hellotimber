@@ -914,18 +914,31 @@ adds slot 6, which the goldens omit); `resources.test.ts` checks every `stockMen
 **Files:** `src/display/{carousel.ts,rail.ts,list-rows.ts,list-pages.ts,placeholder.ts}`,
 `tests/paint-carousel.test.ts`, `tests/paint-lists.test.ts`.
 
-- [ ] TDD: for each `menu/NN-<slug>` still, painting the literal carousel model (label and
+- [x] TDD: for each `menu/NN-<slug>` still, painting the literal carousel model (label and
       graphic from `stockMenu`, `menuIndicator: { segments: [NN], awaitingNext: false }`)
       matches the golden for exactly one `iconFrame` of that graphic.
-- [ ] TDD: `awaitingFirst` paints the dots; this matches the first `menu/01-phone-book.anim`
+- [x] TDD: `awaitingFirst` paints the dots; this matches the first `menu/01-phone-book.anim`
       image.
-- [ ] TDD: for every image of every asserted `.sub` golden, painting the literal list model
+- [x] TDD: for every image of every asserted `.sub` golden, painting the literal list model
       (items from the level's labels, the selected index, `presentation`, `detail` from the
       snapshot, `menuIndicator: { segments: [NN, i+1], awaitingNext: false }`) equals the image.
-- [ ] TDD rail: bump offsets for n = 3, 5, 6, 8, 9, 10, 12 at first, middle and last positions.
+- [x] TDD rail: bump offsets for n = 3, 5, 6, 8, 9, 10, 12 at first, middle and last positions.
       Pin the pixel shape.
-- [ ] TDD: a page line wider than the page throws and names the label (D10).
-- [ ] Commit: `feat(nokia-os): stock carousel, rail and submenu painting`.
+- [x] TDD: a page line wider than the page throws and names the label (D10).
+- [x] Commit: `feat(nokia-os): stock carousel, rail and submenu painting`.
+
+Deviation: the kernel's submenu indicator is the level's own path (`[NN]`), not `[NN, i+1]`, and
+the website depends on that. So the literal list models carry `segments: [NN]` (plus `itemOrders`
+for Call divert and Games), and the stock painter appends the selected item's menu number
+(`itemOrders[selected]`, else `selected + 1`) to draw `7-6`; the rail uses the visible position
+and count. All 12 carousel stills (each matches exactly one icon frame), the first-digit dots and
+every image of the ten asserted `.sub` goldens pass pixel-exact.
+Deviation: measured layout: the carousel title is centred in x 0..77 at
+`floor((78 - width) / 2)` (the rows band's columns; checked on all 12 stills). A rows label
+wider than the band (x 2..77) also throws, like a page line (x 0..79). With one item the rail's
+bump sits at the top. The rows window is `max(0, selected - 2)` only; how the firmware scrolls
+back up is not captured (the model holds no window state). The placeholder frame painter landed
+in Task 9.
 
 ### Task 11 - Acceptance: drive the stock phone through every asserted golden
 
