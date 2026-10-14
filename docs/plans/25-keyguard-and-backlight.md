@@ -929,52 +929,77 @@ input only if a keyguard note sounds (`NOTE_SOUNDS` by quoted note text; regener
 `packages/phone-3d/src/demo/main.tsx`, `packages/phone-3d/tests/{types,materials}.test.ts`,
 `packages/phone-3d/README.md`.
 
-- [ ] TDD (types test): `keypadLightOn` is optional and defaults to `backlightOn` (a pure
+- [x] TDD (types test): `keypadLightOn` is optional and defaults to `backlightOn` (a pure
       `resolveLights(props)` helper in `types.ts` returns `{ display, keypad }`).
-- [ ] TDD (materials test): the lit legend emission is about ten times today's (`TODOS.md`: the
+- [x] TDD (materials test): the lit legend emission is about ten times today's (`TODOS.md`: the
       keypad reads at ≈1/10): pin the relative luminance of `LEGEND_GLOW_COLOR` ×
       `LEGEND_GLOW_INTENSITY` against today's value (≥ 8×), the NaviKey bar included; the unlit
       state stays 0.
-- [ ] `Key` reads the keypad light, the LCD the display light; the demo gets a second checkbox.
-- [ ] Visual check: `mise exec -- vp run @hellotimber/phone-3d#dev` with `agent-browser` (headed if
+- [x] `Key` reads the keypad light, the LCD the display light; the demo gets a second checkbox.
+- [x] Visual check: `mise exec -- vp run @hellotimber/phone-3d#dev` with `agent-browser` (headed if
       headless WebGL is unavailable); screenshots lit/unlit in the completion note, or Lachlan's
       sign-off requested there.
-- [ ] `mise exec -- vp run @hellotimber/phone-3d#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(phone-3d): separate keypad light and brighter keypad`.
+- [x] `mise exec -- vp run @hellotimber/phone-3d#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(phone-3d): separate keypad light and brighter keypad`.
+
+**Task 12 completion.** `resolveLights` (`types.ts`); `Key` reads the keypad light, the LCD the
+display light; the demo's second checkbox. Lit legends glow `#7fcf6a` × 1.4, 9.95× the old
+`#496847` × 0.6 in relative luminance; the NaviKey bar `#6fd6b8` × 1.2 (9.33×); unlit both 0.
+Verified headed (agent-browser; WebGL works headed, not headless):
+`/tmp/phone3d-p25-t12-{lit,keypad-off,display-off}.png`.
 
 ### Task 13 - phone-3d: three top LEDs and their gradient (TDD)
 
 **Files:** `packages/phone-3d/src/backlight.ts` (new, pure), `packages/phone-3d/src/Nokia3310.tsx`,
 `packages/phone-3d/src/materials.ts`, `packages/phone-3d/tests/backlight.test.ts` (new).
 
-- [ ] TDD `backlightLightmap(width, height)`: RGBA data lit by three LEDs just above the top edge,
+- [x] TDD `backlightLightmap(width, height)`: RGBA data lit by three LEDs just above the top edge,
       evenly spaced (x = 1/6, 1/2, 5/6 of the width): three local maxima along the top row
       at those x; each column decreasing downward; no pixel below `LIT_FLOOR` (the bottom stays
       readable); deterministic. `unlitLightmap()` is uniform at the unlit level.
-- [ ] The LCD surround and pixel plane use it as a `lightMap` (MeshBasicMaterial; intensity scaled
+- [x] The LCD surround and pixel plane use it as a `lightMap` (MeshBasicMaterial; intensity scaled
       so the brightest texel equals today's lit tint), swapped with the unlit map when the display
       light is off; the green glow point light becomes three weak lights at the LED positions.
-- [ ] Visual check as Task 12 (lit and unlit, straight on and at 30°).
-- [ ] `mise exec -- vp run @hellotimber/phone-3d#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(phone-3d): light the LCD from three top LEDs`.
+- [x] Visual check as Task 12 (lit and unlit, straight on and at 30°).
+- [x] `mise exec -- vp run @hellotimber/phone-3d#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(phone-3d): light the LCD from three top LEDs`.
+
+**Task 13 completion.** `src/backlight.ts`: LEDs at 1/6, 1/2, 5/6 of the width, `LIT_FLOOR` = 0.7;
+three weak point lights replace the green glow light. Screenshots
+`/tmp/phone3d-p25-t13-{lit,unlit}{,-30deg}.png`.
+
+Deviation: three's `MeshBasicMaterial` divides a light map by π, so "the brightest texel equals
+today's lit tint" is `lightMapIntensity` = π over the normalised map. `SCREEN_DIM_PIXEL_TINT` is
+gone (no pixel plane uses it); the demo's test pattern (`src/demo/test-pattern.ts`) became a
+two-colour LCD image, since its old checkerboard colours all counted as ink for Task 14.
 
 ### Task 14 - phone-3d: floating LCD ink with a drop shadow (TDD)
 
 **Files:** `packages/phone-3d/src/lcd-ink.ts` (new, pure), `packages/phone-3d/src/Nokia3310.tsx`,
 `packages/phone-3d/tests/lcd-ink.test.ts` (new), `packages/phone-3d/README.md`.
 
-- [ ] TDD `inkMask(rgba, bg)`: from the host canvas's pixels, alpha 255 where a pixel is ink (the
+- [x] TDD `inkMask(rgba, bg)`: from the host canvas's pixels, alpha 255 where a pixel is ink (the
       colour farther from `screenBgColor` than half the fg-bg distance), 0 elsewhere, for any
       palette; `shadowMask(mask, scale, blur)`: the mask upscaled `scale`× and box-blurred `blur`
       texels, values within 0-255, ink-only input gives the expected blur sums.
-- [ ] The LCD becomes three layers over the lit surround: the shadow (black, mask alpha ×
+- [x] The LCD becomes three layers over the lit surround: the shadow (black, mask alpha ×
       `INK_SHADOW_OPACITY`, offset ≈⅓ LCD pixel right and down), then the ink (the fg colour through
       the mask) a hair above it; the masks re-derive on each `screenVersion` bump. The host canvas's
       background is no longer drawn directly (the surround and lightmap are the background).
-- [ ] Visual check as Task 12: ink sharp, shadow visible but subtle, lit and unlit.
-- [ ] `mise exec -- vp run @hellotimber/phone-3d#test`, `mise exec -- vp run website#build`,
+- [x] Visual check as Task 12: ink sharp, shadow visible but subtle, lit and unlit.
+- [x] `mise exec -- vp run @hellotimber/phone-3d#test`, `mise exec -- vp run website#build`,
       `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(phone-3d): floating LCD ink with a drop shadow`.
+- [x] Commit: `feat(phone-3d): floating LCD ink with a drop shadow`.
+
+**Task 14 completion.** `src/lcd-ink.ts`: the shadow at `INK_SHADOW_OPACITY` = 0.3, offset ⅓ LCD
+pixel right and down, its mask at 3× with a 1-texel box blur; the masks re-derive on each
+`screenVersion` bump. Screenshots `/tmp/phone3d-p25-t14-{lit,unlit,lit-30deg}.png`,
+`/tmp/phone3d-p25-final-{lit,keypad-off}.png`: a top-down gradient with three faint hotspots,
+sharp ink over a subtle shadow, a clearly brighter keypad.
+
+Deviation: `inkMask` takes and returns ImageData-like `{ width, height, data }` (the shadow needs
+the size); the ink colour is the canvas colour farthest from `screenBgColor`, and the ink layer is
+the canvas texture cut out by the mask.
 
 ### Task 15 - Verification gate and closeout
 
