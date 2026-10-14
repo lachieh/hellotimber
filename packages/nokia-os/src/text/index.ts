@@ -3,7 +3,6 @@ export { isTextKey, MULTITAP_KEYS, SYMBOLS, TEXT_KEYS, TYPEABLE } from "./keys";
 export type { KeyCycles, TextKey } from "./keys";
 export {
   emptyText,
-  pendingCycle,
   shownMode,
   textClear,
   textDelete,

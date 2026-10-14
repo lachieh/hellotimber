@@ -2,6 +2,7 @@ import type { Framebuffer } from "@hellotimber/phone-screen";
 import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
 import { paintConfirm, type ConfirmModel } from "./confirm";
+import { paintEditor, type EditorModel } from "./editor";
 import { paintGameOver, type GameOverModel } from "./game-over";
 import { paintInfoPage, type InfoPageModel } from "./info-pages";
 import { paintInfoScreen, type InfoScreenModel } from "./info-screen";
@@ -16,6 +17,7 @@ import { paintSplash, type SplashModel } from "./splash";
 import { paintTextPage, type TextPageModel } from "./text-pages";
 
 export type { ConfirmModel } from "./confirm";
+export type { EditorModel } from "./editor";
 export type { GameOverModel } from "./game-over";
 export type { InfoPageModel } from "./info-pages";
 export type { InfoScreenModel } from "./info-screen";
@@ -60,6 +62,7 @@ export type WidgetModel =
   | GameOverModel
   | BootFrameModel
   | WelcomeNoteModel
+  | EditorModel
   | PlaceholderModel;
 
 /**
@@ -112,6 +115,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "welcome-note":
       paintWelcomeNote(fb, model);
+      return;
+    case "editor":
+      paintEditor(fb, model);
       return;
     case "placeholder":
       fb.pixels.set(placeholderFrame(model.label).pixels);

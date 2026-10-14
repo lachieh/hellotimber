@@ -880,7 +880,7 @@ describe("text entry and SMS resources (plan 18)", () => {
       blinkMs: 480,
       clearAfterDeleteMs: 478,
       numberModeHoldMs: 1010,
-      digitHoldMs: 1475,
+      digitHoldMs: 1428,
     });
     expect([SEND_LINK_MS, RECEIVE_LINK_MS, SAVING_MS]).toEqual([2662, 2324, 88]);
   });

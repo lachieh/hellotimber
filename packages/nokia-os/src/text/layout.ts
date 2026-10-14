@@ -2,17 +2,20 @@
 // the window of lines that follows the cursor. Pure.
 //
 // Measured on the wrap goldens (`text/wrap-words`, `-long-word`, `-spaces`, `text/counter`,
-// `welcome/face`): a line holds 81 columns of glyph cells; a word that does not fit on the rest
-// of a line moves to the next one, a word longer than a line breaks where it overflows, and
+// `welcome/face`): a line's glyph cells run from x 1 to x 83 (83 columns); a word moves to the
+// next line unless it ends two columns short of that (81 columns of `gjmp tadgjmptw` stay,
+// 82 of `ptw adgjmptwad` move, `text/counter` 166), a word longer than a line breaks where it
+// overflows the whole line (82 large columns of `Adgjmptwadgj` stay, `welcome/face` 13), and
 // spaces stay at the end of their line however far they overflow it. A pending character takes
-// the width of the widest character of its key's cycle (so cycling never re-wraps): this is the
-// one rule that fits every capture (`text/wrap-words` 15 wraps `gj` at 80 columns, while 81
-// columns of `tadgjmptw` fit), unverified beyond them. The cursor stands on the blank column
+// the width of the widest character of its key's cycles (both cases), so cycling never re-wraps
+// (`text/wrap-words` 15 moves `gj`, 80 columns, because `K` takes 7). These are the rules that fit
+// every capture; the text re-wraps when the character commits (`welcome/face` 13). The cursor stands on the blank column
 // after the character before it (x = the width before it, from the line's left edge at x 1);
 // when spaces push the end of the text past x 83, the cursor there starts a new, empty line
 // (`text/wrap-spaces` 06).
 import { STOCK_FONTS, type StockFontName } from "../resources";
-import { pendingCycle, type TextState } from "./multitap";
+import { isTextKey, MULTITAP_KEYS } from "./keys";
+import type { TextState } from "./multitap";
 
 /** One line of wrapped text: the characters `start`..`end - 1` (trailing spaces included). */
 export interface TextLine {
@@ -26,8 +29,11 @@ export interface PendingSlot {
   readonly width: number;
 }
 
-/** The editor's line width in columns (x 1..81 from the text's left edge at x 1). */
-export const EDITOR_LINE_WIDTH = 81;
+/** The editor's line width in columns (x 1..83 from the text's left edge at x 1). */
+export const EDITOR_LINE_WIDTH = 83;
+
+/** A word moves to the next line unless it ends this many columns short of the line's end. */
+const WORD_MARGIN = 2;
 
 /** The last column the cursor can stand on (the LCD's last). */
 const LAST_CURSOR_X = 83;
@@ -46,9 +52,10 @@ export function textWidth(font: StockFontName, text: string): number {
 
 /** The slot of `state`'s pending character: the widest character of its key's cycle. */
 export function pendingSlot(state: TextState, font: StockFontName): PendingSlot | undefined {
-  const cycle = pendingCycle(state);
-  if (cycle === undefined) return undefined;
-  return { at: state.cursor - 1, width: Math.max(...cycle.map((char) => advance(font, char))) };
+  const key = state.pending?.key;
+  if (key === undefined || !isTextKey(key)) return undefined;
+  const chars = [...MULTITAP_KEYS[key].upper, ...MULTITAP_KEYS[key].lower];
+  return { at: state.cursor - 1, width: Math.max(...chars.map((char) => advance(font, char))) };
 }
 
 /** `text` wrapped into lines of `width` columns (see the header for the rules). */
@@ -79,8 +86,8 @@ export function wrapText(
     let end = i;
     let word = 0;
     while (end < chars.length && chars[end] !== " ") word += widthOf(end++);
-    if (x > 0 && x + word > width) breakAt(i);
-    if (x + word <= width) {
+    if (x > 0 && x + word > width - WORD_MARGIN) breakAt(i);
+    if (x + word <= width - WORD_MARGIN) {
       x += word;
       i = end;
       continue;

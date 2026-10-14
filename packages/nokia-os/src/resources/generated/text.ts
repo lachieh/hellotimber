@@ -6,7 +6,7 @@ export const TEXT_DATA: { readonly text: { readonly commitMs: number; readonly b
     "blinkMs": 480,
     "clearAfterDeleteMs": 478,
     "numberModeHoldMs": 1010,
-    "digitHoldMs": 1475
+    "digitHoldMs": 1428
   },
   "messages": {
     "sendLinkMs": 2662,

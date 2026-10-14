@@ -24,7 +24,7 @@ const wrap = (text: string, font: "small" | "large" = "small") =>
   shown(text, wrapText(text, font, EDITOR_LINE_WIDTH));
 
 describe("wrapText (measured on the wrap goldens)", () => {
-  it("fills a line to 81 columns and breaks a longer word where it overflows", () => {
+  it("breaks a word longer than the line where it overflows its 83 columns", () => {
     // text/wrap-long-word 13, 14: 13 letters (80 columns) fit, the 14th starts line 2.
     expect(textWidth("small", "Adgjmptwadgjm")).toBe(80);
     expect(wrap("Adgjmptwadgjm")).toEqual(["Adgjmptwadgjm"]);
@@ -32,7 +32,7 @@ describe("wrapText (measured on the wrap goldens)", () => {
     expect(wrap("Adgjmptwadgjmptwadgjmptwadgj")).toEqual(["Adgjmptwadgjm", "ptwadgjmptwad", "gj"]);
   });
 
-  it("moves a word that does not fit to the next line, its space staying behind", () => {
+  it("moves a word that does not end two columns short of the line's end, its space staying", () => {
     // text/counter 166: `ptw adgjmptwad` is 82 columns.
     expect(wrap("ptw adgjmptwa")).toEqual(["ptw adgjmptwa"]);
     expect(wrap("ptw adgjmptwad")).toEqual(["ptw ", "adgjmptwad"]);
@@ -53,12 +53,12 @@ describe("wrapText (measured on the wrap goldens)", () => {
   });
 
   it("gives a pending character its key's widest character (text/wrap-words 15)", () => {
-    // `Adgj mptw ad gj` is 80 columns, but j's key also types `5` and `£` (6 columns each).
+    // `Adgj mptw ad gj` is 80 columns, but j's key also types `K` (7 columns).
     let state: TextState = { ...emptyText(), text: "Adgj mptw ad g", cursor: 14 };
     state = textKey(state, "5", 0, 459);
     expect(state.text).toBe("Adgj mptw ad gj");
     const slot = pendingSlot(state, "small");
-    expect(slot).toEqual({ at: 14, width: 6 });
+    expect(slot).toEqual({ at: 14, width: 7 });
     expect(shown(state.text, wrapText(state.text, "small", EDITOR_LINE_WIDTH, slot))).toEqual([
       "Adgj mptw ad ",
       "gj",
@@ -66,9 +66,10 @@ describe("wrapText (measured on the wrap goldens)", () => {
     expect(wrap("Adgj mptw ad gj")).toEqual(["Adgj mptw ad gj"]);
   });
 
-  it("wraps the welcome note's large face at the same width (welcome/face 11, 12)", () => {
-    expect(wrap("Adgjmptwadg", "large")).toEqual(["Adgjmptwadg"]);
-    expect(wrap("Adgjmptwadgj", "large")).toEqual(["Adgjmptwadg", "j"]);
+  it("breaks the welcome note's large face at the same width (welcome/face 13)", () => {
+    expect(textWidth("large", "Adgjmptwadgj")).toBe(82);
+    expect(wrap("Adgjmptwadgj", "large")).toEqual(["Adgjmptwadgj"]);
+    expect(wrap("Adgjmptwadgjm", "large")).toEqual(["Adgjmptwadgj", "m"]);
   });
 
   it("has one empty line for an empty text", () => {

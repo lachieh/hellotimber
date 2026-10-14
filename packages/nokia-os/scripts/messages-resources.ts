@@ -16,9 +16,10 @@ export interface TextTimingData {
   /** Held # enters 123 (and leaves it) this long after the key goes down (`text/hold-hash`). */
   readonly numberModeHoldMs: number;
   /**
-   * A digit key held at least this long (from key-down) inserts its digit instead of the
-   * pending letter when the letter commits: 1450 ms keeps the letter, 1475 ms gives the digit
-   * (`text/hold-threshold-1450`, `text/hold-threshold-1475`); the bracket is the captured one.
+   * A digit key held at least this long from its character's first redraw inserts the digit
+   * instead of the pending letter when the letter commits: holds of 1450 and 1475 ms from
+   * key-down keep the letter and give the digit (`text/hold-threshold-1450`, `-1475`, whose
+   * letter is first drawn 47 ms after key-down): the upper end of the captured bracket.
    */
   readonly digitHoldMs: number;
 }
@@ -43,7 +44,7 @@ export interface MessagesResourceData {
   readonly messages: MessageTimingData;
 }
 
-/** The captured hold bracket of a held digit (D5). */
+/** The shortest captured hold (key-down to key-up) that types the digit (keys.csv, D5). */
 export const DIGIT_HOLD_MS = 1475;
 
 function trigger(golden: Golden): number {
@@ -134,8 +135,12 @@ export function extractMessagesResources(load: (id: string) => Golden): Messages
   const saving = firstFrame(save, trigger(save), bar);
   const savingMs = save.timeline![saving]!.durationMs;
 
+  // The hold that gives the digit, from its letter's first redraw (the trigger frame).
+  const threshold = load("text/hold-threshold-1475");
+  const digitHoldMs = DIGIT_HOLD_MS - threshold.timeline![trigger(threshold)]!.startMs;
+
   return {
-    text: { commitMs, blinkMs, clearAfterDeleteMs, numberModeHoldMs, digitHoldMs: DIGIT_HOLD_MS },
+    text: { commitMs, blinkMs, clearAfterDeleteMs, numberModeHoldMs, digitHoldMs },
     messages: { sendLinkMs, receiveLinkMs, savingMs },
   };
 }

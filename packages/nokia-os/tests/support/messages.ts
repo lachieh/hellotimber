@@ -23,6 +23,8 @@ export const SMS_LIMIT = 459;
 export interface TextTrace {
   readonly mode: TextMode;
   readonly script: string;
+  /** Text already in the editor (a stored welcome note). */
+  readonly text?: string;
 }
 
 const repeat = (n: number, f: (i: number) => string): string =>
@@ -117,6 +119,27 @@ export const TEXT_TRACES: Readonly<Record<string, TextTrace>> = {
   },
 };
 
+export const WELCOME_LIMIT = 36;
+
+/** The welcome note's stills (welcome.cap, welcome-face.cap), replayed with WELCOME_LIMIT. */
+export const WELCOME_TRACES: Readonly<Record<string, TextTrace>> = {
+  "welcome/face": {
+    mode: "Abc",
+    script: Array.from(`${"23456789".repeat(4)}0234`, (key, i) => `K:${key} [${pad(i + 1)}]`).join(
+      " ",
+    ),
+  },
+  "welcome/editor": {
+    mode: "Abc",
+    script: "[editor] K:4,4 R:1700 K:4,4,4 R:1700 [hi] K:c R:300 [hi-c]",
+  },
+  "welcome/editor#36": {
+    mode: "Abc",
+    script: `K:${Array.from(`${"23456789".repeat(4)}2345`).join(",")} R:1700 [36] K:6 R:3000 K:0 R:1700 [37th-key-0]`,
+  },
+  "welcome/editor#reopened": { mode: "Abc", text: "Hi", script: "[reopened]" },
+};
+
 /** One shot of a replayed script: the golden image and the entry state at that moment. */
 export interface TraceShot {
   readonly image: string;
@@ -126,7 +149,8 @@ export interface TraceShot {
 
 /** Replays `trace` through the engine (taps on key-down; # on release as one tap). */
 export function replayTrace(trace: TextTrace, limit = SMS_LIMIT): TraceShot[] {
-  let state = emptyText(trace.mode);
+  const text = trace.text ?? "";
+  let state: TextState = { ...emptyText(trace.mode), text, cursor: Array.from(text).length };
   let now = 0;
   const shots: TraceShot[] = [];
   for (const token of trace.script.split(" ").filter((t) => t !== "")) {

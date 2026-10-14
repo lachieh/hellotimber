@@ -945,7 +945,8 @@ plans' tests that used now-typeable characters as missing ones use `~` and `{` i
 
 **Task 3 completion note:** fonts small 178, large 162, digits 13, thin 101 glyphs (every
 typeable character in small and large, every symbol in thin). `TEXT_TIMINGS` = commit 1452,
-blink 480, held-C clear 478, held # 1010, held digit 1475 ms; `SEND_LINK_MS` 2662,
+blink 480, held-C clear 478, held # 1010, held digit 1475 ms from key-down (Task 6 measures it
+from the first redraw: 1428 ms); `SEND_LINK_MS` 2662,
 `RECEIVE_LINK_MS` 2324, `SAVING_MS` 88. `regenerate` and `messages-text-runs` each run twice
 with no diff.
 
@@ -999,11 +1000,12 @@ and the widget calls it at the commit when the key was held `digitHoldMs` (the c
 appears at the commit, not at the threshold). `wrapText` takes an optional `PendingSlot` (below);
 `layout.ts` adds `pendingSlot`, `cursorLine`, `textWidth`, `advance` and `EDITOR_LINE_WIDTH`.
 
-Deviation: **Task 5 (rules beyond Task 0's words):** lines hold 81 columns; a pending character
-takes its key cycle's widest advance (the only rule that fits `text/wrap-words` 15 and 27 together;
-text re-wraps when it commits, unverified); spaces hang at a line end, and an end past x 83 puts
-the cursor on a new empty line (`text/wrap-spaces` 06); the cursor stands on the blank column
-after the previous character. A sentence starts when the text before the slot is blank or ends
+Deviation: **Task 5 (rules beyond Task 0's words):** a line's cells run x 1..83; a word moves
+unless it ends two columns short of that, a longer word breaks at the line's end (Task 6 refined
+this on `welcome/face` 13); a pending character takes its key's widest advance in either case
+(the only rule that fits `text/wrap-words` 15 and 27 together), and the text re-wraps when it
+commits; spaces hang at a line end, and an end past x 83 puts the cursor on a new empty line
+(`text/wrap-spaces` 06); the cursor stands on the blank column after the previous character. A sentence starts when the text before the slot is blank or ends
 with `.`, `?` or `!` and spaces (a letter straight after the mark is unverified); # steps
 sentence case → ABC → abc, skipping a mode that shows the same as the current one.
 
@@ -1019,16 +1021,30 @@ small font, the cursor's place when it is lit, and the header's mode sprite, for
 **Files:** `src/widgets/editor.ts` (new), `src/display/widgets/{editor.ts,index.ts}`,
 `tests/widgets-editor.test.ts` (new).
 
-- [ ] `EditorSpec`: header icon, counter style (`sms`: `<left>/<parts>`; `count`: characters left),
+- [x] `EditorSpec`: header icon, counter style (`sms`: `<left>/<parts>`; `count`: characters left),
       limit, soft key, `options(flow, text)` (the Options flow), `onEmptyC` (`back`), and an initial
       text and cursor (Reply/Edit/Forward).
-- [ ] TDD: the painter from literal models equals every editor image of `text/*`, `welcome/*` and
+- [x] TDD: the painter from literal models equals every editor image of `text/*`, `welcome/*` and
       `sms/*` (header, counter, wrapped lines, scrolled view, pending character without a cursor,
       the cursor's position and blink state).
-- [ ] TDD the widget in a flow (`tests/support/flow-rig.ts`): keys through the engine, holds timed
+- [x] TDD the widget in a flow (`tests/support/flow-rig.ts`): keys through the engine, holds timed
       by `onKeyDown` + `tick`, the commit and the blink as `TEXT_TIMINGS`, C on empty, Options.
       Timeline goldens (`text/commit`, `text/delete-hold`, blink) pass within ±2 ms after alignment.
-- [ ] Commit: `feat(nokia-os): stock text editor widget`.
+- [x] Commit: `feat(nokia-os): stock text editor widget`.
+
+Deviation: **Task 6 (spec and tests):** `EditorSpec` is `counter` (`sms` | `count`), `limit`,
+`layout` (`sms` | `welcome`), `softkey`, `text`/`cursor`/`mode`, `options(flow, editor)` with an
+`EditorControl` (`text`, `clear`, `insert`), `symbols` (Task 7) and `onEmptyC`; the header is
+always the pen and the mode sprite. The painter is tested on models built from replayed engine
+states (`editorModel`, exported for that), full frame against every image of the traced
+`text/*` stills, `welcome/face` and `welcome/editor`; the `sms/*` editors are Tasks 10-11's flows.
+
+Deviation: **Task 6 (measured behaviour):** the cursor blinks on a free-running 480 ms timer
+from the editor's start; no key or commit restarts it (`text/commit` and `text/hold-digit` show
+opposite phases after a commit, predicted by their phase before the key). `digitHoldMs` is now
+measured from the letter's first redraw (1428 ms; regenerated `text.ts`): the widget decides a
+held digit at the commit, from the hold until then or the release. `welcome/face` 13 showed a
+long word filling 82 large columns, so lines break at 83 columns and words wrap two short of it.
 
 ### Task 7 - Symbol table, text-input and number-entry widgets (TDD against goldens)
 

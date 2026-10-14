@@ -85,12 +85,6 @@ function cycleOf(state: TextState, key: TextKey): readonly string[] {
   return upper ? MULTITAP_KEYS[key].upper : MULTITAP_KEYS[key].lower;
 }
 
-/** The cycle of the pending character's key, in its case (undefined when nothing is pending). */
-export function pendingCycle(state: TextState): readonly string[] | undefined {
-  const key = state.pending?.key;
-  return key !== undefined && isTextKey(key) ? cycleOf(state, key) : undefined;
-}
-
 /**
  * The # cycle: sentence case → ABC → abc → sentence case, skipping a mode that would show what
  * the current one shows (mid-sentence sentence case shows abc, so there # alternates abc and
