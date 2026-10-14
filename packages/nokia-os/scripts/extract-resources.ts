@@ -775,7 +775,7 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
     ),
     "snake.ts": module(
       "SNAKE_DATA",
-      "{ readonly sprites: Readonly<Record<string, readonly string[]>>; readonly mazes: readonly { readonly start: { readonly x: number; readonly y: number }; readonly walls: readonly { readonly x1: number; readonly y1: number; readonly x2: number; readonly y2: number }[] }[]; readonly periods: Readonly<Record<number, number>>; readonly firstTick: Readonly<Record<number, number>>; readonly graceMs: number; readonly death: readonly { readonly visible: boolean; readonly durationMs: number }[] }",
+      "{ readonly sprites: Readonly<Record<string, readonly string[]>>; readonly mazes: readonly { readonly start: { readonly x: number; readonly y: number }; readonly walls: readonly { readonly x1: number; readonly y1: number; readonly x2: number; readonly y2: number }[] }[]; readonly periods: Readonly<Record<number, number>>; readonly firstTick: Readonly<Record<number, number>>; readonly graceMs: number; readonly death: readonly { readonly visible: boolean; readonly durationMs: number }[]; readonly topScoreMs: number }",
       resources.snake,
     ),
   };

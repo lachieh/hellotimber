@@ -1044,20 +1044,51 @@ across the nine captured deaths the blink steps run 222-251 ms and the note 2925
 **Files:** `tests/support/drive.ts`, `tests/support/probes.ts`, `tests/support/game.ts` (new),
 `tests/acceptance.test.ts`.
 
-- [ ] Scenarios for every `game/*` golden: navigate as the capture did (rig keys), set the level and
+- [x] Scenarios for every `game/*` golden: navigate as the capture did (rig keys), set the level and
       maze through the menus (Level ▼/▲ presses as C1), press `input` keys on their ticks, record,
       compare pixels exactly and timing per D6 (`GAME_TICK_TOLERANCE_MS` for tick intervals,
       ±2 ms or the stated tolerance for the rest); tick stills compare after each listed tick.
-- [ ] The tick fixture: for each level 10..175 set through the Level page (fast path: a rig helper
+- [x] The tick fixture: for each level 10..175 set through the Level page (fast path: a rig helper
       that writes the store, plus one scenario per decade that presses ▼ for real), start a game
       and compare the first tick and intervals.
-- [ ] `tree/08-games/8-1-1.leaf`: the generic `leaf` scenario with the game tolerance.
-- [ ] Coverage guard: Continue (bindings-added, not in `STOCK_TREE`) must be covered by an asserted
+- [x] `tree/08-games/8-1-1.leaf`: the generic `leaf` scenario with the game tolerance.
+- [x] Coverage guard: Continue (bindings-added, not in `STOCK_TREE`) must be covered by an asserted
       `pause-*` golden; `8-1-1` is covered by asserted goldens; no new `KNOWN_GAPS` without a reason.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report the
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report the
       suite's run time (bot replays must keep it under ≈20 s; otherwise mark the long replays
       `it.concurrent` or reduce tick stills, Deviation).
-- [ ] Commit: `test(nokia-os): drive Snake II against its goldens`.
+- [x] Commit: `test(nokia-os): drive Snake II against its goldens`.
+
+Outcome: `tests/support/game.ts` holds `SNAKE_SCENARIOS`, one per `game/snake/*` golden and
+`tree/08-games/8-1-1.leaf`; `awaitsPlan23Scenario` is gone. 482 goldens: 447 asserted, 35
+pending; plan 23's 117 are 116 asserted and `level-keys-digit-1` (pending:22). The acceptance
+file passes 448 scenarios with 7 known gaps (the six of plan 14 and `game/snake/keys-c-hold`).
+The nokia-os suite runs in ≈19 s (the acceptance file ≈17 s; the slowest scenarios are the
+period fixture, 2 s, and the bot-long replays, ≈0.7-1.3 s each). Rigs seed New game with
+10:10's 44530 (`SEED_1010`) or the trace's recovered seed through `createStockPhoneWith`.
+Deviation (`tree/08-games/8-1-1.leaf`): its scenario is the game's, not the generic leaf one:
+at level 175 the capture misses redraws (`q` lasts 33 ms and the head jumps three cells; a
+meal's redraw runs into the next tick's), so the comparison lets a tick row follow session
+frames the capture never showed, as many as its interval holds periods
+(`missedTicksPeriodMs`); `virgin-meal` and `virgin-game` use the same rule.
+Deviation (timing, `gameRows`): game-over screens compare intervals within PROBE_TOLERANCE_MS
+(plan 14 closeout decision 2: they replay bot-short's and bot-long's recordings), the note
+aligned on the first game-over frame; the fireworks pictures after the first are compared by
+pixels and order only, as `virgin-game`'s steps differ from `bot-long`'s by up to 37 ms (62
+summed) though both sequences take 2871-2872 ms. The fixture's levels 118 and 134 (two
+intervals 29 ms apart) and 26 (a late tick) allow their own interval spread.
+Deviation (top score): a new top score's game-over screen comes 45 ms after the death steps
+(`virgin-game`'s last step is 190 ms, not 145; bot-long's fireworks also come ≈36 ms late), so
+`extract-resources` derives `SNAKE_TOP_SCORE_MS` (45) and the session writes the top score, then
+waits it out before the fireworks. The `top-score` cue comes with the write.
+Deviation (death goldens): a `bot-*.death` golden starts on the board when its recording
+started, sometimes ticks after the bot's last key (`bot-maze2`, `bot-maze3`), so the scenario
+starts at the session's frame with those pixels. `gameover-*` press their key as long after the
+session's showing of the golden's first screen as the capture did (the notes' 1500, 4000 and
+7000 ms after the last key). `pause-continue*` press the resuming key one period before the
+captured first tick (the key time is not in the capture). Known gap `keys-c-hold`: the kernel
+swallows the keys held when an application exits, so C held through the suspend does not reach
+standby (phone-core). `tests/support/rig.ts` gained the internal options (not in the file list).
 
 ### Task 12 - Demo, README, verification gate and closeout
 

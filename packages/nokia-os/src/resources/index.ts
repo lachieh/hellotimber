@@ -205,3 +205,5 @@ export const SNAKE_DEATH_STEPS: readonly {
   readonly visible: boolean;
   readonly durationMs: number;
 }[] = SNAKE_DATA.death;
+/** A new top score's game-over screen comes this much after the death steps (virgin-game). */
+export const SNAKE_TOP_SCORE_MS: number = SNAKE_DATA.topScoreMs;

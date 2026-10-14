@@ -20,10 +20,10 @@ import { goldenImage, loadGolden } from "./goldens.ts";
 import { frameAt, standbyRig, type Rig } from "./rig.ts";
 
 /** One harness tap (`key`): ≈42 ms down, the 250 ms settle and the 300 ms key gap. */
-const TAP_MS = 592;
+export const TAP_MS = 592;
 
 /** A token list: `navi`, `down*9`, `wait:1500`. Each key is a tap followed by TAP_MS. */
-function keys(rig: Rig, script: string): void {
+export function keys(rig: Rig, script: string): void {
   for (const token of script.split(/\s+/).filter(Boolean)) {
     if (token.startsWith("wait:")) {
       rig.advance(Number(token.slice(5)));
@@ -38,7 +38,7 @@ function keys(rig: Rig, script: string): void {
 }
 
 /** A rig at standby after `script`. */
-function after(script: string): Rig {
+export function after(script: string): Rig {
   const rig = standbyRig();
   keys(rig, script);
   return rig;
@@ -49,7 +49,7 @@ function after(script: string): Rig {
  * With `toleranceMs` an image may have been on screen up to that long before or after its step
  * ends (a shot timed from a key the firmware times from its redraw).
  */
-function stills(id: string, rig: Rig, steps: readonly string[], toleranceMs = 0): void {
+export function stills(id: string, rig: Rig, steps: readonly string[], toleranceMs = 0): void {
   const golden = loadGolden(id);
   expect(steps.length, `${id}: one step per image`).toBe(golden.images.length);
   golden.images.forEach((image, i) => {
@@ -85,7 +85,7 @@ const KEY_TO_REDRAW_MS = 50;
  * the row it draws first (KEY_TO_REDRAW_MS before it; the row is then untimed). A key goes ahead
  * when its effect pre-empts a timer step that would fall inside its redraw latency.
  */
-type Later =
+export type Later =
   | readonly [row: number, key: PhoneKey]
   | readonly [{ ms: number }, PhoneKey]
   | readonly [{ ahead: number }, PhoneKey];
@@ -94,7 +94,7 @@ type Later =
  * A timeline probe from `rig`: frame 0 must be on screen, then the trigger key and the later
  * keys; the recording runs until the golden's last row has been held as long as it was.
  */
-function timeline(
+export function timeline(
   id: string,
   rig: Rig,
   trigger: PhoneKey,
@@ -128,9 +128,9 @@ function timeline(
 }
 
 /** Probe timelines compared within PROBE_TOLERANCE_MS (see the file header). */
-const JITTER = { toleranceMs: PROBE_TOLERANCE_MS } as const;
+export const JITTER = { toleranceMs: PROBE_TOLERANCE_MS } as const;
 
-const SNAKE = "navi down*7 navi navi wait:7000";
+export const SNAKE = "navi down*7 navi navi wait:7000";
 const PHONE_BOOK = "navi navi";
 
 /** Instructions of each game: the path to its game menu and the ▼ count to Instructions. */

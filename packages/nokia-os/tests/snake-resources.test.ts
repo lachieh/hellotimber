@@ -10,6 +10,7 @@ import {
   SNAKE_DEATH_STEPS,
   SNAKE_FIRST_TICK,
   SNAKE_GRACE_MS,
+  SNAKE_TOP_SCORE_MS,
   SNAKE_MAZES,
   SNAKE_PERIODS,
   SNAKE_SPRITE_IDS,
@@ -229,6 +230,10 @@ describe("Snake II timing", () => {
     const total = SNAKE_DEATH_STEPS.reduce((sum, s) => sum + s.durationMs, 0);
     expect(total).toBeGreaterThanOrEqual(2060);
     expect(total).toBeLessThanOrEqual(2085);
+  });
+
+  it("holds a new top score's game-over screen ≈45 ms longer (virgin-game: 190 ms, not 145)", () => {
+    expect(SNAKE_TOP_SCORE_MS).toBe(45);
   });
 });
 

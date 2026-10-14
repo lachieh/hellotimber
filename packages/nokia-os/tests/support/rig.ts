@@ -2,7 +2,8 @@
 // (plan 13 "Scenario harness and coverage guard").
 import type { Phone, PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
-import { createStockPhone, paintStockScreen, type StockPhoneConfig } from "../../src/index";
+import { createStockPhoneWith, type StockPhoneInternals } from "../../src/firmware/phone";
+import { paintStockScreen, type StockPhoneConfig } from "../../src/index";
 import type { RecordedFrame, RecordedTimeline } from "./golden.ts";
 
 export interface Rig {
@@ -32,8 +33,8 @@ export interface Rig {
   ): RecordedTimeline;
 }
 
-export function createRig(config: StockPhoneConfig): Rig {
-  const phone = createStockPhone(config);
+export function createRig(config: StockPhoneConfig, internals: StockPhoneInternals = {}): Rig {
+  const phone = createStockPhoneWith(config, internals);
   let now = 0;
   phone.tick(now);
 
@@ -80,7 +81,8 @@ export function createRig(config: StockPhoneConfig): Rig {
         const last = frames[frames.length - 1]!;
         // A screen replaced within the same millisecond was never visible.
         if (frames.length > 1 && last.startMs === now && !powerFrames.has(last)) frames.pop();
-        if (!powerChanged && samePixels(frames[frames.length - 1]!.pixels, pixels)) return;
+        const shown = frames[frames.length - 1]!.pixels;
+        if (!powerChanged && (shown === pixels || samePixels(shown, pixels))) return;
         const frame = { startMs: now, pixels };
         if (powerChanged) powerFrames.add(frame);
         frames.push(frame);
@@ -120,18 +122,33 @@ export function frameAt(recording: RecordedTimeline, atMs: number): RecordedFram
  * The emulator's operator, clock and setup date are artefacts used as test inputs (D11). The
  * Task 11 captures set the clock to 19:48 and 07:59 instead of 10:10.
  */
-export function stockRig(config: Partial<StockPhoneConfig> = {}): Rig {
-  return createRig({
-    carrier: "Orange F",
-    clock: () => "10:10",
-    date: () => "13.10.2026",
-    ...config,
-  });
+export function stockRig(
+  config: Partial<StockPhoneConfig> = {},
+  internals: StockPhoneInternals = { seed: SEED_1010 },
+): Rig {
+  return createRig(
+    {
+      carrier: "Orange F",
+      clock: () => "10:10",
+      date: () => "13.10.2026",
+      ...config,
+    },
+    internals,
+  );
 }
 
+/**
+ * Snake II's seed at the captures' 10:10 on 13.10.2026 (plan 23 Task 5): the stock phone seeds
+ * from the minutes of the day (UNVERIFIED), so rigs inject the recovered seed.
+ */
+export const SEED_1010 = 44530;
+
 /** A phone at standby, booted with `boot: "skip"`, every timer settled. */
-export function standbyRig(config: Partial<StockPhoneConfig> = {}): Rig {
-  const rig = stockRig({ boot: "skip", ...config });
+export function standbyRig(
+  config: Partial<StockPhoneConfig> = {},
+  internals?: StockPhoneInternals,
+): Rig {
+  const rig = stockRig({ boot: "skip", ...config }, internals);
   rig.press("power", 1000);
   rig.advance(1000);
   return rig;

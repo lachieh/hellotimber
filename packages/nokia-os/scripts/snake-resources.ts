@@ -356,6 +356,9 @@ const DEATH_GOLDENS = [
   "game/snake/score-8.death",
 ] as const;
 
+/** The death timeline with a blink and a new top score (fireworks, `TOP SCORE: 175`). */
+const TOP_SCORE_DEATH = "game/snake/virgin-game";
+
 /**
  * The timeline whose snake a turn in the grace saves (C6: ← after the blocked tick 7): its move
  * frame comes one grace after the blocked tick. A crash draws its first hidden frame -5..+17 ms
@@ -376,6 +379,8 @@ export interface SnakeResourceData {
   readonly graceMs: number;
   /** From the crash (the second blocked tick) to the game-over screen (H11). */
   readonly death: readonly DeathStep[];
+  /** A new top score's game-over screen comes this much later (the score is written first). */
+  readonly topScoreMs: number;
 }
 
 export function extractSnakeResources(
@@ -440,5 +445,11 @@ export function extractSnakeResources(
     durationMs: median(blinks.map((steps) => steps[j]!.durationMs)),
   }));
 
-  return { sprites, mazes, periods, firstTick, graceMs, death };
+  // The one blinking death with a new top score (virgin-game, 175) holds its last step longer
+  // than the others: the fireworks wait for the top score to be written.
+  const topScoreSteps = blinks[DEATH_GOLDENS.indexOf(TOP_SCORE_DEATH)]!;
+  const topScoreMs = topScoreSteps.at(-1)!.durationMs - death.at(-1)!.durationMs;
+  if (!(topScoreMs > 0)) throw new Error(`${TOP_SCORE_DEATH}: no top-score delay`);
+
+  return { sprites, mazes, periods, firstTick, graceMs, death, topScoreMs };
 }

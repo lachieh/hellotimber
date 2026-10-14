@@ -117,7 +117,7 @@ describe("New game (H1-H3, D2, D6)", () => {
       const id = `game/snake/ticks-l${level}`;
       const rows = gameRows(id, level);
       const recording = play(rig, t, rows.at(-1)!.startMs - rows[0]!.startMs + 10);
-      expectGameTimeline(recording, id, rows, { returns: false });
+      expectGameTimeline(recording, id, rows, {});
     });
   }
 
@@ -169,14 +169,15 @@ describe("the crash, the death blink and game over (H6, H11, H14)", () => {
     const { rig, settings, cues } = gameRig({ level: 1 });
     const recording = play(rig, trace("bot-long"), 300_000);
     const first = recording.frames.findIndex((f) => !isBoardFrame(f.pixels));
-    // The ring has wrapped: the board stands for the whole death (2066 ms) after the crash.
+    // The ring has wrapped: the board stands for the whole death (2066 ms) after the crash, and
+    // the top score's write (45 ms).
     const crash = cues.find((c) => c.cue.kind === "crash")!.atMs;
-    expect(recording.frames[first]!.startMs - crash).toBe(2066);
+    expect(recording.frames[first]!.startMs - crash).toBe(2066 + 45);
     expectGameTimeline(from(recording, first), id, gameRows(id, 1), { returns: true });
     expect(settings.number(SNAKE_SETTINGS.topScore)).toBe(105);
     expect(cues.at(-1)).toEqual({
       cue: { kind: "top-score" },
-      atMs: recording.frames[first]!.startMs,
+      atMs: recording.frames[first]!.startMs - 45,
     });
   });
 });

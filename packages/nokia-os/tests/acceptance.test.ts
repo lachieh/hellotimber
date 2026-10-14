@@ -12,7 +12,7 @@ import {
 } from "../scripts/tree-capture-set.ts";
 import { PLACEHOLDER_OWNERS, placeholderOwner, SAME_AS } from "../src/firmware/bindings";
 import { STOCK_TREE, type StockTreeNode } from "../src/firmware/generated/stock-tree";
-import type { StockPhoneConfig } from "../src/index";
+import { stockMenu, type StockPhoneConfig } from "../src/index";
 import {
   expectLcd,
   expectTimeline,
@@ -21,6 +21,7 @@ import {
   type RecordedTimeline,
 } from "./support/golden.ts";
 import { goto, open } from "./support/drive.ts";
+import { SNAKE_SCENARIOS } from "./support/game.ts";
 import { PROBE_SCENARIOS } from "./support/probes.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";
 import { frameAt, standbyRig, stockRig, type Rig } from "./support/rig.ts";
@@ -208,7 +209,7 @@ const SCENARIOS: Record<string, (id: string) => void> = {
   "menu/11-clock.sub-1948": (id) => levelOne(id, 11, { clock: () => "19:48" }),
   "menu/11-clock.sub-0759": (id) => levelOne(id, 11, { clock: () => "07:59" }),
 };
-Object.assign(SCENARIOS, PROBE_SCENARIOS);
+Object.assign(SCENARIOS, PROBE_SCENARIOS, SNAKE_SCENARIOS);
 SLUGS.forEach((slug, i) => {
   SCENARIOS[`menu/${slug}`] = (id) => carouselStill(id, i + 1);
   SCENARIOS[`menu/${slug}.anim`] = (id) => carouselAnim(id, i + 1);
@@ -316,18 +317,14 @@ const KNOWN_GAPS: Readonly<Record<string, string>> = {
   "probe/shortcut-m8-1": PARTIAL_8,
   "probe/shortcut-m8-1-2": `${PARTIAL_8}; Snake II opens 1427 ms after the 1's redraw (-33 ms)`,
   "probe/shortcut-m8-6": `${PARTIAL_8}; ${ON_OVER_GAMES}`,
+  "game/snake/keys-c-hold":
+    "C held through the suspend goes on to standby in the capture, but the kernel swallows the " +
+    "keys held when an application exits, so the held C's long press never fires (phone-core; " +
+    "the game suspends on C's key-down, as the capture shows the menu while C is held)",
   "probe/shortcut-m8-6-3":
     `${PARTIAL_8}; ${ON_OVER_GAMES}; the window ends 2920 ms after the 3's redraw ` +
     "(2948 configured, +28 ms)",
 };
-
-/**
- * Asserted plan 23 goldens imported before nokia-os plays Snake II: their scenarios are plan 23
- * Task 11's (which deletes this), so they run as todos meanwhile.
- */
-function awaitsPlan23Scenario(id: string): boolean {
-  return id.startsWith("game/") || id === "tree/08-games/8-1-1.leaf";
-}
 
 /** The scenario of an asserted golden: hand-written (plan 13, probes) or generic (tree). */
 function scenarioOf(id: string, covers: readonly string[] | undefined): (() => void) | undefined {
@@ -341,10 +338,6 @@ describe("stock phone against every asserted v6.39 golden", () => {
   for (const { id, status, covers } of INDEX) {
     if (status !== "asserted") {
       it.todo(`${id} (${status.replace("pending:", "pending: plan ")})`);
-      continue;
-    }
-    if (awaitsPlan23Scenario(id)) {
-      it.todo(`${id} (asserted; scenario: plan 23 Task 11)`);
       continue;
     }
     const scenario = scenarioOf(id, covers);
@@ -420,9 +413,7 @@ describe("coverage guard (plan 14 D7)", () => {
 
   it("has a scenario for every asserted golden", () => {
     expect(
-      asserted
-        .filter((e) => !awaitsPlan23Scenario(e.id) && scenarioOf(e.id, e.covers) === undefined)
-        .map((e) => e.id),
+      asserted.filter((e) => scenarioOf(e.id, e.covers) === undefined).map((e) => e.id),
     ).toEqual([]);
   });
 
@@ -468,6 +459,27 @@ describe("coverage guard (plan 14 D7)", () => {
     expect(unaccounted, "tree nodes no golden accounts for").toEqual([]);
     // No node may be covered only by known gaps (KNOWN_GAPS holds probes only).
     expect(gapNodes, "tree nodes covered only by known gaps").toEqual([]);
+  });
+
+  it("covers Snake II's Continue (added by the bindings, not in the tree) with pause goldens", () => {
+    expect(stockMenu.paths()).toContain("menu/games/snake/continue");
+    const pause = asserted.filter((e) => e.id.startsWith("game/snake/pause-") && !KNOWN_GAPS[e.id]);
+    expect(pause.map((e) => e.id)).toEqual(
+      expect.arrayContaining([
+        "game/snake/pause-nav",
+        "game/snake/pause-list",
+        "game/snake/pause-continue",
+        "game/snake/pause-continue-turn",
+        "game/snake/pause-reenter",
+      ]),
+    );
+    for (const e of pause) expect(scenarioOf(e.id, e.covers), e.id).toBeDefined();
+  });
+
+  it("covers Snake II's New game (8-1-1) with asserted goldens that pass", () => {
+    const covering = asserted.filter((e) => coversOf(e).includes("8-1-1") && !KNOWN_GAPS[e.id]);
+    expect(covering.map((e) => e.id)).toEqual(["tree/08-games/8-1-1.leaf"]);
+    expect(placeholderOwner("8-1-1")).toBeUndefined();
   });
 
   it("proves every same-as subtree equal to its model (labels aside from profile names)", () => {

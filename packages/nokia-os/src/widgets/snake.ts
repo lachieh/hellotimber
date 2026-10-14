@@ -8,7 +8,13 @@ import type { StockCueSink } from "../firmware/cues";
 import type { StockSettings } from "../firmware/settings";
 import { blinkSnake, newSnakeGame, snakeKey, snakeRender, stepSnake } from "../games/snake/engine";
 import type { SnakeState } from "../games/snake/model";
-import { SNAKE_DEATH_STEPS, SNAKE_FIRST_TICK, SNAKE_GRACE_MS, SNAKE_PERIODS } from "../resources";
+import {
+  SNAKE_DEATH_STEPS,
+  SNAKE_FIRST_TICK,
+  SNAKE_GRACE_MS,
+  SNAKE_PERIODS,
+  SNAKE_TOP_SCORE_MS,
+} from "../resources";
 import type { Flow, Widget } from "./flow";
 import { gameOver } from "./game-over";
 
@@ -48,7 +54,7 @@ type Phase =
   | { readonly kind: "waiting"; readonly death?: SuspendedSnake["death"] }
   /** The next engine step is `leftMs` away. */
   | { readonly kind: "playing"; leftMs: number }
-  /** Death step `step` of SNAKE_DEATH_STEPS ends in `leftMs`. */
+  /** Death step `step` of SNAKE_DEATH_STEPS (or, past them, the top score's write) ends in `leftMs`. */
   | { readonly kind: "dying"; step: number; leftMs: number };
 
 class SnakeGameWidget implements Widget {
@@ -56,6 +62,8 @@ class SnakeGameWidget implements Widget {
   readonly #settings: StockSettings;
   #state: SnakeState;
   #phase: Phase;
+  /** The game ended with a new top score (written when the death steps end). */
+  #topScore = false;
 
   constructor({ games, settings, start }: SnakeGameOptions) {
     this.#games = games;
@@ -134,28 +142,29 @@ class SnakeGameWidget implements Widget {
     }
   }
 
-  /** The end of a death step: the next one, or the game-over screen. False once it is over. */
+  /**
+   * The end of a death step: the next one, or the game-over screen. A new top score is written
+   * when the steps end, and its fireworks come SNAKE_TOP_SCORE_MS later (H14). False once over.
+   */
   #blink(phase: Extract<Phase, { kind: "dying" }>, flow: Flow): boolean {
     const next = phase.step + 1;
     const step = SNAKE_DEATH_STEPS[next];
-    if (step === undefined) {
-      this.#over(flow);
-      return false;
+    if (step !== undefined) {
+      this.#state = blinkSnake(this.#state);
+      this.#phase = { kind: "dying", step: next, leftMs: step.durationMs };
+      return true;
     }
-    this.#state = blinkSnake(this.#state);
-    this.#phase = { kind: "dying", step: next, leftMs: step.durationMs };
-    return true;
-  }
-
-  /** Game over (H14): a score above the stored top score is written and gets the fireworks. */
-  #over(flow: Flow): void {
     const score = this.#state.score & 0xffff;
     const topScore = score > this.#settings.number(SNAKE_SETTINGS.topScore);
-    if (topScore) {
+    if (next === SNAKE_DEATH_STEPS.length && topScore) {
       this.#settings.setNumber(SNAKE_SETTINGS.topScore, score);
       this.#games.cues.cue({ kind: "top-score" }, this.#games.now());
+      this.#phase = { kind: "dying", step: next, leftMs: SNAKE_TOP_SCORE_MS };
+      this.#topScore = true;
+      return true;
     }
-    flow.replace(gameOver({ topScore, score: String(score), select: "new-game" }));
+    flow.replace(gameOver({ topScore: this.#topScore, score: String(score), select: "new-game" }));
+    return false;
   }
 
   /** Navi or C: the game menu opens on Continue, on the top row (H15, D10). */
