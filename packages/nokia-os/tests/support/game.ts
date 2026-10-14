@@ -655,6 +655,25 @@ function levelPage(level: number): Rig {
   return rig;
 }
 
+/**
+ * Plan 14's `tree/08-games/8-1-1.leaf` (asserted early for plan 23): the virgin New game (level
+ * 175), with the game's comparison (D6). Plan 14's acceptance file runs it.
+ */
+export function newGameLeafScenario(id: string): void {
+  const golden = loadGolden(id);
+  const rig = standbyRig();
+  goto(rig, "8-1-1");
+  rig.advance(592);
+  expectLcd(rig.paint(), goldenImage(id, golden.timeline![0]!.image), "New game highlighted");
+  const rows = gameRows(id, 175);
+  const recording = rig.record(rows.at(-1)!.startMs - rows[0]!.startMs + 50, () =>
+    rig.press("navi"),
+  );
+  expectGameTimeline({ frames: fromTrigger(recording) }, id, rows, {
+    missedTicksPeriodMs: SNAKE_PERIODS[175]!,
+  });
+}
+
 export const SNAKE_SCENARIOS: Record<string, (id: string) => void> = {
   // The Level page (C1, D11).
   ...Object.fromEntries(
@@ -710,21 +729,6 @@ export const SNAKE_SCENARIOS: Record<string, (id: string) => void> = {
       (id: string) => newGameTimeline(id, traceOf(id)),
     ]),
   ),
-  "tree/08-games/8-1-1.leaf": (id) => {
-    // The virgin New game (level 175): plan 14's leaf, with the game's comparison (D6).
-    const golden = loadGolden(id);
-    const rig = standbyRig();
-    goto(rig, "8-1-1");
-    rig.advance(592);
-    expectLcd(rig.paint(), goldenImage(id, golden.timeline![0]!.image), "New game highlighted");
-    const rows = gameRows(id, 175);
-    const recording = rig.record(rows.at(-1)!.startMs - rows[0]!.startMs + 50, () =>
-      rig.press("navi"),
-    );
-    expectGameTimeline({ frames: fromTrigger(recording) }, id, rows, {
-      missedTicksPeriodMs: SNAKE_PERIODS[175]!,
-    });
-  },
   "game/snake/virgin-meal": (id) => newGameTimeline(id, traceOf(id)),
   "game/snake/virgin-game": (id) => newGameTimeline(id, traceOf(id)),
 

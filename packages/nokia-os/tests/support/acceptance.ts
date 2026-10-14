@@ -1,45 +1,55 @@
-// The acceptance scenarios (plan 13 "Scenario harness and coverage guard"): every asserted
-// golden's scenario, the known gaps, and `describeGoldens`, which the acceptance test files run
-// in slices so they run in parallel (plan 16 Task 9). A golden marked `asserted` without a
-// scenario fails; `pending` goldens are listed as todos naming their plan.
+// The acceptance harness (plan 13 "Scenario harness and coverage guard"). Each plan has one file,
+// `tests/acceptance/<NN>-<slug>.test.ts`, that calls `acceptancePlan` with its scenarios and known
+// gaps; it runs the goldens of `goldens/index/<NN>.json` (one `it` each, so plan files run in
+// parallel). A golden marked `asserted` without a scenario fails; `pending` goldens are listed as
+// todos naming their plan. `tests/acceptance/coverage-guard.test.ts` imports every plan file in
+// collection mode (`collectAcceptancePlans`) and checks them together.
+import { readdirSync } from "node:fs";
 import { join } from "node:path";
-import { expect, it } from "vite-plus/test";
+import { pathToFileURL } from "node:url";
+import { describe, expect, it } from "vite-plus/test";
 import type { Golden, GoldenScenario } from "../../scripts/golden-format.ts";
 import {
   readGoldenIndex,
+  readPlanIndex,
   type GoldenIndexEntry as IndexEntry,
 } from "../../scripts/golden-index.ts";
-import type { StockPhoneConfig } from "../../src/index";
-import {
-  expectLcd,
-  expectTimeline,
-  lcdMismatch,
-  TIMING_TOLERANCE_MS,
-  type RecordedTimeline,
-} from "./golden.ts";
+import { expectLcd, expectTimeline, type RecordedTimeline } from "./golden.ts";
 import { goto, open } from "./drive.ts";
-import { SNAKE_SCENARIOS } from "./game.ts";
-import { BOOT_SCENARIOS, PROBE_SCENARIOS } from "./probes.ts";
-import { SOUND_SCENARIOS } from "./sound-scenarios.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
-import { frameAt, standbyRig, stockRig, type Rig } from "./rig.ts";
+import { standbyRig, type Rig } from "./rig.ts";
 
 export type { IndexEntry };
 
-export const INDEX: readonly IndexEntry[] = readGoldenIndex(
-  join(import.meta.dirname, "../../goldens"),
-);
+export const GOLDENS = join(import.meta.dirname, "../../goldens");
+
+/** Every plan's goldens, sorted by id. */
+export const INDEX: readonly IndexEntry[] = readGoldenIndex(GOLDENS);
 
 /** The kernel's long press: power turns the phone on this long after the key goes down. */
 export const LONG_PRESS_MS = 800;
 
-/** Menu, then ▼ to carousel item `number` (1-based), with the icon settled. */
-function carouselRig(number: number): Rig {
-  const rig = standbyRig();
-  rig.press("navi");
-  for (let i = 1; i < number; i++) rig.press("down");
-  rig.advance(6000);
-  return rig;
+/** A golden's scenario: drives a phone and compares it with the golden `id`. */
+export type Scenario = (id: string) => void;
+
+/** One plan's acceptance: the scenarios and known gaps of the goldens it imports. */
+export interface AcceptancePlan {
+  /** The plan number; its goldens are `goldens/index/<plan>.json`. */
+  readonly plan: string;
+  /**
+   * Hand-written scenarios by golden id. Generated tree goldens (they declare a `scenario` and
+   * `covers`) run the generic tree scenario and need none.
+   */
+  readonly scenarios: Readonly<Record<string, Scenario>>;
+  /**
+   * Asserted goldens whose scenario cannot pass, each with its reason: separate recordings of one
+   * path that disagree beyond what the comparison allows (partial draws caught at different
+   * points, timer spreads beyond PROBE_TOLERANCE_MS), or a firmware quirk behind one. Their
+   * scenarios run as expected failures, so a gap that starts passing must leave this table.
+   */
+  readonly knownGaps?: Readonly<Record<string, string>>;
+  /** Scenarios that may outlast the default 5 s timeout on a loaded machine, by golden id. */
+  readonly timeoutsMs?: Readonly<Record<string, number>>;
 }
 
 /** How long after the trigger a timeline golden ends (the last frame's end, or lower bound). */
@@ -50,168 +60,12 @@ function spanAfterTrigger(golden: Golden): number {
   return last.startMs + last.durationMs - trigger.startMs;
 }
 
-function recordTimeline(rig: Rig, golden: Golden, trigger: () => void): RecordedTimeline {
+/** Records `trigger` and everything after it for as long as `golden`'s timeline runs. */
+export function recordTimeline(rig: Rig, golden: Golden, trigger: () => void): RecordedTimeline {
   return rig.record(spanAfterTrigger(golden) + 100, trigger);
 }
 
-export const SLUGS = [
-  "01-phone-book",
-  "02-messages",
-  "03-chat",
-  "04-call-register",
-  "05-tones",
-  "06-settings",
-  "07-call-divert",
-  "08-games",
-  "09-calculator",
-  "10-reminders",
-  "11-clock",
-  "12-profiles",
-] as const;
-
-/**
- * When each carousel still was shot, in ms after its trigger (Menu for 01, ▼ for the rest).
- * `v639-all.cap` taps the key, records 3 s, then shoots; the recording starts when the tap
- * returns. Measured from REF by aligning each 3 s recording's first icon change with the same
- * change in `menu-anim-long` (whose frame 1 is the trigger), plus 3000 ms.
- */
-const STILL_AT_MS: Readonly<Record<(typeof SLUGS)[number], number>> = {
-  "01-phone-book": 3576,
-  "02-messages": 3545,
-  "03-chat": 3566,
-  "04-call-register": 3557,
-  "05-tones": 3550,
-  "06-settings": 3549,
-  "07-call-divert": 3544,
-  "08-games": 3537,
-  "09-calculator": 3551,
-  "10-reminders": 3563,
-  "11-clock": 3569,
-  "12-profiles": 3553,
-};
-
-/** From the previous carousel item (or standby for 01), press the key that shows item `n`. */
-function revealCarouselItem(n: number): { rig: Rig; trigger: () => void; context: string } {
-  if (n === 1) {
-    const rig = standbyRig();
-    return { rig, trigger: () => rig.press("navi"), context: "standby, Menu" };
-  }
-  const rig = carouselRig(n - 1);
-  return { rig, trigger: () => rig.press("down"), context: `Menu, ▼×${n - 2}, settle, ▼` };
-}
-
-function carouselStill(id: string, n: number): void {
-  const slug = SLUGS[n - 1]!;
-  const { rig, trigger, context } = revealCarouselItem(n);
-  const at = STILL_AT_MS[slug];
-  const recording = rig.record(at + TIMING_TOLERANCE_MS + 1, trigger);
-  const golden = goldenImage(id, slug);
-  // Within ±2 ms of a frame boundary either neighbouring frame may have been on screen.
-  const shown = new Set(
-    [at - TIMING_TOLERANCE_MS, at, at + TIMING_TOLERANCE_MS].map((t) =>
-      frameAt(recording, recording.triggerMs + t),
-    ),
-  );
-  if ([...shown].some((frame) => lcdMismatch(frame.pixels, golden, context) === undefined)) return;
-  expectLcd(frameAt(recording, recording.triggerMs + at), golden, `${context}, ${at} ms later`);
-}
-
-function carouselAnim(id: string, n: number): void {
-  const golden = loadGolden(id);
-  const { rig, trigger, context } = revealCarouselItem(n);
-  expectTimeline(recordTimeline(rig, golden, trigger), golden, context);
-}
-
-/** Menu, ▼ to item `n`, Select, then ▼ per image; each image is the screen after its key. */
-function levelOne(id: string, n: number, config: Partial<StockPhoneConfig> = {}): void {
-  const golden = loadGolden(id);
-  const rig = standbyRig(config);
-  rig.press("navi");
-  rig.advance(100);
-  for (let i = 1; i < n; i++) rig.press("down");
-  rig.press("navi");
-  golden.images.forEach((image, i) => {
-    if (i > 0) rig.press("down");
-    rig.advance(10);
-    expectLcd(rig.paint(), { id, image }, `Menu, ▼×${n - 1}, Select, ▼×${i}`);
-  });
-}
-
-export const SCENARIOS: Record<string, (id: string) => void> = {
-  "boot/power-on": (id) => {
-    const golden = loadGolden(id);
-    const rig = stockRig();
-    rig.advance(100);
-    rig.hold("power");
-    rig.advance(LONG_PRESS_MS - 2);
-    // The trigger is the tick on which the held power key turns the phone on.
-    const recording = recordTimeline(rig, golden, () => {
-      rig.advance(1);
-      rig.release("power");
-    });
-    expectTimeline(recording, golden, "hold power until the phone turns on");
-    expectLcd(rig.paint(), goldenImage("standby/standby", "01-standby"), "after boot");
-  },
-  "standby/standby": (id) => {
-    expectLcd(standbyRig().paint(), goldenImage(id, "01-standby"), "power on (boot skipped)");
-  },
-  "standby/standby-1948": (id) => {
-    const rig = standbyRig({ clock: () => "19:48" });
-    expectLcd(rig.paint(), goldenImage(id, "standby"), "power on at 19:48");
-  },
-  "standby/standby-0759": (id) => {
-    const rig = standbyRig({ clock: () => "07:59" });
-    expectLcd(rig.paint(), goldenImage(id, "standby"), "power on at 07:59");
-  },
-  "standby/idle": (id) => {
-    const rig = standbyRig();
-    expectTimeline(rig.record(10_000), loadGolden(id), "standby, no key for 10 s");
-  },
-  "menu/revisit.anim": (id) => {
-    const golden = loadGolden(id);
-    const rig = carouselRig(12);
-    expectTimeline(
-      recordTimeline(rig, golden, () => rig.press("up")),
-      golden,
-      "Profiles, ▲",
-    );
-  },
-  "menu/return.anim": (id) => {
-    const golden = loadGolden(id);
-    const rig = carouselRig(11);
-    rig.press("navi");
-    rig.advance(2000);
-    expectTimeline(
-      recordTimeline(rig, golden, () => rig.press("c")),
-      golden,
-      "Clock, Select, 2 s, C",
-    );
-  },
-  "menu/01-phone-book.sub-up": (id) => {
-    const golden = loadGolden(id);
-    const rig = standbyRig();
-    rig.press("navi");
-    rig.advance(100);
-    rig.press("navi");
-    for (let i = 0; i < 5; i++) rig.press("down");
-    golden.images.forEach((image, i) => {
-      if (i > 0) rig.press("up");
-      rig.advance(10);
-      expectLcd(rig.paint(), { id, image }, `Phone book, ▼×5, ▲×${i}`);
-    });
-  },
-  "menu/11-clock.sub-1948": (id) => levelOne(id, 11, { clock: () => "19:48" }),
-  "menu/11-clock.sub-0759": (id) => levelOne(id, 11, { clock: () => "07:59" }),
-};
-Object.assign(SCENARIOS, PROBE_SCENARIOS, BOOT_SCENARIOS, SNAKE_SCENARIOS, SOUND_SCENARIOS);
-SLUGS.forEach((slug, i) => {
-  SCENARIOS[`menu/${slug}`] = (id) => carouselStill(id, i + 1);
-  SCENARIOS[`menu/${slug}.anim`] = (id) => carouselAnim(id, i + 1);
-  // Chat and Calculator open placeholders; their captured first screens are pending goldens.
-  if (slug !== "03-chat" && slug !== "09-calculator") {
-    SCENARIOS[`menu/${slug}.sub`] = (id) => levelOne(id, i + 1);
-  }
-});
+// ---------------------------------------------------------------- generic tree scenario (plan 14)
 
 /**
  * After `goto`, the trigger comes one harness tap later, as in the captures (`key`: ≈42 ms down,
@@ -287,127 +141,93 @@ function treeScenario(id: string, covers: readonly string[]): void {
   });
 }
 
-const PARTIAL_8 =
-  "`8` first draws a 16 ms partial frame (image d: the first 27 bytes of the Games screen over " +
-  "Phone book's), a redraw in progress that the kernel does not reproduce (closeout decision 2: " +
-  "no key-to-redraw latency) and exact pixels cannot skip";
-const ON_OVER_GAMES =
-  "while 8-6 is opening the firmware draws Settings' first page value (`On`) over the Games " +
-  "list (image f)";
+// ---------------------------------------------------------------- plans
 
-/** Plan 16: Badinerie's Level 4 recording (its program) rests 8 ms where other recordings do not. */
-const BADINERIE_REST =
-  "Badinerie's Level 4 recording, the program, rests 8 ms between two 831 Hz notes ≈2.28 s " +
-  "into the preview; this recording plays them as one";
-
-/**
- * Asserted goldens whose scenario cannot pass, each with its reason: separate recordings of one
- * path that disagree beyond what the comparison allows (partial draws caught at different
- * points, timer spreads beyond PROBE_TOLERANCE_MS), or a firmware quirk behind one. Their
- * scenarios run as expected failures, so a gap that starts passing must leave this table.
- */
-export const KNOWN_GAPS: Readonly<Record<string, string>> = {
-  "probe/accept-6-3-5-on":
-    "the prompt first draws a 15 ms partial frame (image b: the soft key row still shows " +
-    "Select's last letter), a redraw in progress that the kernel does not reproduce (closeout " +
-    "decision 2); probe/accept-6-3-5-off's prompt, the same path, has none",
-  "boot/security-lockout-4":
-    "Code accepted and the hands play boot/security-gate's timeline (689/232/582 ms, then a " +
-    "308 ms first hands step); this recording's are 678/232/575 and 299 ms, so the hands start " +
-    "26-28 ms late, a spread between two recordings of one path beyond PROBE_TOLERANCE_MS. The " +
-    "fact it records, four wrong codes do not lock, passes up to Code accepted",
-  "probe/note-keys-done-down-300":
-    "Done's 16 ms partial draw covers fewer LCD bytes than the 15 ms one of " +
-    "tree/01-phone-book/1-8-1-1.choose (same path), whose timeline the note plays",
-  "probe/shortcut-m1-wait-9":
-    "Speed dials opens 1502 ms after the 9's redraw (1427-1477 ms in the other shortcut " +
-    "probes, 1460 configured): -42 ms; the captures record redraws, not key times",
-  "probe/shortcut-m8-1": PARTIAL_8,
-  "probe/shortcut-m8-1-2": `${PARTIAL_8}; Snake II opens 1427 ms after the 1's redraw (-33 ms)`,
-  "probe/shortcut-m8-6": `${PARTIAL_8}; ${ON_OVER_GAMES}`,
-  "game/snake/keys-c-hold":
-    "C held through the suspend goes on to standby in the capture, but the kernel swallows the " +
-    "keys held when an application exits, so the held C's long press never fires (phone-core; " +
-    "the game suspends on C's key-down, as the capture shows the menu while C is held)",
-  "sound/keypad/pair":
-    "the ▲ pressed 70 ms before the DSP powers down beeps for 77 ms in the capture (one " +
-    "recording: the tone starts 93 ms after the key and stops where a 145 ms beep would); " +
-    "nokia-os beeps 145 ms (plan 16 D8)",
-  "sound/note/1-2":
-    "Phone book › Search shows `No phone numbers` ≈150 ms after OK in the capture, so OK's " +
-    "beep sounds before the note's tone replaces it; nokia-os opens the note at the key " +
-    "(plan 14 D8), so its tone replaces the beep at once",
-  "sound/alert/ascending-l5":
-    "Ascending at Level 5: the Level 2 → 3 step and Nokia tune's last note race in this " +
-    "recording (that note stays at Level 2; in the Level 4 recordings it steps, `ascendingAt`)",
-  "sound/alert/ascending/15-badinerie": BADINERIE_REST,
-  "sound/ringing-tone/level-3/15-badinerie": BADINERIE_REST,
-  "sound/ringing-tone/level-5/33-mangrove":
-    "this recording lacks Mangrove's 27th 7 ms chirp (≈25.7 s into the preview; 35 of the 36 " +
-    "the Level 4 recording, the program, plays)",
-  "probe/shortcut-m8-6-3":
-    `${PARTIAL_8}; ${ON_OVER_GAMES}; the window ends 2920 ms after the 3's redraw ` +
-    "(2948 configured, +28 ms)",
-};
-
-/** The scenario of an asserted golden: hand-written (plan 13, probes) or generic (tree). */
+/** The scenario of an asserted golden: the plan's hand-written one, or the generic tree one. */
 export function scenarioOf(
+  plan: AcceptancePlan,
   id: string,
   covers: readonly string[] | undefined,
 ): (() => void) | undefined {
-  const scenario = SCENARIOS[id];
+  const scenario = plan.scenarios[id];
   if (scenario !== undefined) return () => scenario(id);
   if (covers !== undefined) return () => treeScenario(id, covers);
   return undefined;
 }
 
 /**
- * One `it` per golden of `INDEX` that `include` takes: asserted ones run their scenario (a known
- * gap as an expected failure, so a gap that starts passing must leave KNOWN_GAPS; one without a
- * scenario fails), pending ones are todos naming their plan.
+ * One `it` per golden of the plan's index: asserted ones run their scenario (a known gap as an
+ * expected failure, so a gap that starts passing must leave `knownGaps`; one without a scenario
+ * fails), pending ones are todos naming their plan.
  */
-export function describeGoldens(include: (id: string) => boolean): void {
-  for (const { id, status, covers } of INDEX) {
-    if (!include(id)) continue;
-    if (status !== "asserted") {
-      it.todo(`${id} (${status.replace("pending:", "pending: plan ")})`);
-      continue;
+function describePlan(plan: AcceptancePlan): void {
+  describe("stock phone against every asserted v6.39 golden", () => {
+    for (const { id, status, covers } of readPlanIndex(GOLDENS, plan.plan)) {
+      if (status !== "asserted") {
+        it.todo(`${id} (${status.replace("pending:", "pending: plan ")})`);
+        continue;
+      }
+      const scenario = scenarioOf(plan, id, covers);
+      const gap = plan.knownGaps?.[id];
+      if (gap !== undefined && scenario !== undefined) {
+        it.fails(`${id} (known gap: ${gap})`, scenario);
+        continue;
+      }
+      it(
+        id,
+        () => {
+          if (scenario === undefined) throw new Error(`no scenario for ${id}`);
+          scenario();
+        },
+        plan.timeoutsMs?.[id],
+      );
     }
-    const scenario = scenarioOf(id, covers);
-    const gap = KNOWN_GAPS[id];
-    if (gap !== undefined && scenario !== undefined) {
-      it.fails(`${id} (known gap: ${gap})`, scenario);
-      continue;
-    }
-    it(
-      id,
-      () => {
-        if (scenario === undefined) throw new Error(`no scenario for ${id}`);
-        scenario();
-      },
-      TIMEOUTS_MS[id],
-    );
-  }
+  });
+}
+
+/** Set while the coverage guard imports the plan files: plans are collected, not described. */
+let collecting: AcceptancePlan[] | undefined;
+
+/**
+ * Declares a plan's acceptance. In its own test file this describes the plan's goldens; while
+ * the coverage guard collects (`collectAcceptancePlans`), it only hands the plan over. A plan
+ * file must call it once and register no other tests.
+ */
+export function acceptancePlan(plan: AcceptancePlan): void {
+  if (collecting !== undefined) collecting.push(plan);
+  else describePlan(plan);
+}
+
+/** The directory of the plan files. */
+export const ACCEPTANCE_DIR = join(import.meta.dirname, "../acceptance");
+
+/** A plan file's name: `<NN>-<slug>.test.ts`; group 1 is the plan number. */
+export const PLAN_FILE = /^(\d+[a-z]?)-[a-z0-9-]+\.test\.ts$/;
+
+/** The plan files, sorted. */
+export function acceptancePlanFiles(): string[] {
+  return readdirSync(ACCEPTANCE_DIR)
+    .filter((file) => PLAN_FILE.test(file))
+    .sort();
 }
 
 /**
- * Scenarios that may outlast the default 5 s timeout on a loaded machine: `game/snake/periods`
- * plays New game at all 166 captured levels on one phone (≈1.6 s alone, the longest scenario,
- * ≈5× any other).
+ * Every plan file's plan, by file name. Each file is imported in collection mode, so it must not
+ * have been imported before in this module graph (vitest isolates test files).
  */
-const TIMEOUTS_MS: Readonly<Record<string, number>> = { "game/snake/periods": 20_000 };
-
-/**
- * The slices the acceptance files run (each file one, so they run in parallel): Snake II's
- * goldens, the sound goldens in two halves, and the rest (`acceptance.test.ts`).
- */
-export const ACCEPTANCE_SLICES = {
-  games: (id: string): boolean => id.startsWith("game/"),
-  "sound-tones": (id: string): boolean => /^sound\/(ringing-tone|ringing-volume|alert)\//.test(id),
-  sound: (id: string): boolean =>
-    id.startsWith("sound/") && !/^sound\/(ringing-tone|ringing-volume|alert)\//.test(id),
-} as const;
-
-/** Goldens no slice takes: `acceptance.test.ts` runs them. */
-export const isRest = (id: string): boolean =>
-  !Object.values(ACCEPTANCE_SLICES).some((slice) => slice(id));
+export async function collectAcceptancePlans(): Promise<ReadonlyMap<string, AcceptancePlan>> {
+  const plans = new Map<string, AcceptancePlan>();
+  for (const file of acceptancePlanFiles()) {
+    collecting = [];
+    try {
+      await import(/* @vite-ignore */ pathToFileURL(join(ACCEPTANCE_DIR, file)).href);
+      if (collecting.length !== 1) {
+        throw new Error(`${file} declares ${collecting.length} acceptance plans, not one.`);
+      }
+      plans.set(file, collecting[0]!);
+    } finally {
+      collecting = undefined;
+    }
+  }
+  return plans;
+}
