@@ -99,8 +99,9 @@ unsubscribe();
 
 - `context.exit(options?)`: `exit()` returns to the menu; `exit({ to: "standby" })` leaves the
   menus as C-hold does; `exit({ levels: 2 })` also closes the enclosing level, and
-  `exit({ select: "slug" })` selects that child of the level returned to (on the bottom row of a
-  rows window). Invalid `levels`/`select` throw. `exit()` inside `createSession` returns without
+  `exit({ select: "slug" })` selects that child of the level returned to, on the bottom row of a
+  rows window (`row: "bottom"`, the default) or on the top row with the window rebuilt at it as on
+  entry (`row: "top"`). Invalid `levels`/`select` throw. `exit()` inside `createSession` returns without
   rendering the application. `context.menuIndicator?.()` gives an application its menu numbers
   and the shortcut state, for applications that draw their own indicator.
 - `shortcutEntry: { openDelayMs, invalid }` (default off) switches Menu+digit shortcuts from one

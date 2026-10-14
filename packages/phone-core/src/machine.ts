@@ -2,6 +2,7 @@ import { PhoneApplication } from "./application";
 import type {
   ApplicationContext,
   DeactivationReason,
+  ExitOptions,
   PhoneApplicationSession,
 } from "./application";
 import { SubmenuEntry } from "./menu";
@@ -103,8 +104,6 @@ interface HeldKey {
 }
 
 type Notice = { text: string; softkey: string; path?: string };
-
-type ExitOptions = Parameters<ApplicationContext["exit"]>[0];
 
 /** Plan 13 shortcuts: one digit (1-9) per level, each entering its entry at once. */
 interface DigitShortcut<Metadata> {
@@ -762,7 +761,13 @@ function exitPlan<Metadata>(
     );
   }
   const stack = levels === 1 ? base : base.slice(0, base.length - levels + 1);
-  const { select } = options;
+  const { select, row = "bottom" } = options;
+  if (row !== "top" && row !== "bottom") {
+    throw new Error(`exit row must be "top" or "bottom" (received ${String(row)}).`);
+  }
+  if (options.row !== undefined && select === undefined) {
+    throw new Error("exit row needs select (the child to place).");
+  }
   let apply = (): void => {};
   if (select !== undefined) {
     const top = stack[stack.length - 1]!;
@@ -777,7 +782,7 @@ function exitPlan<Metadata>(
       throw new Error(`exit select "${select}" is not a child of the level returned to.`);
     apply = () => {
       if (top.kind === "carousel") top.index = index;
-      else if (top.kind === "submenu") selectOnBottomRow(m, top, index);
+      else if (top.kind === "submenu") selectOnRow(m, top, index, row);
     };
   }
   return { stack, apply, plain: levels === 1 && select === undefined };
@@ -785,15 +790,22 @@ function exitPlan<Metadata>(
 
 /**
  * Selects a child for an application's exit. With a rows window the child goes on the bottom
- * row (Top score returns to `Score IDs / Instructions / New game`, plan 14 P12).
+ * row (Snake II's Top score returns to `Score IDs / Instructions / New game`, plan 14 P12) or
+ * on the top row, the window rebuilt at it as on entry (Space impact's returns to `Top score /
+ * Score IDs / Instructions`).
  */
-function selectOnBottomRow<Metadata>(
+function selectOnRow<Metadata>(
   m: Machine<Metadata>,
   frame: SubmenuFrame<Metadata>,
   index: number,
+  row: "top" | "bottom",
 ): void {
   frame.selected = index;
   if (frame.windowTop === undefined || m.rowsWindow === undefined) return;
+  if (row === "top") {
+    enterWindow(m, frame);
+    return;
+  }
   const count = frame.entry.children.entries.length;
   frame.windowTop = count <= m.rowsWindow ? 0 : wrapIndex(index - m.rowsWindow + 1, count);
 }

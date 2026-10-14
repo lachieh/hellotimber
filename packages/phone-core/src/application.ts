@@ -2,16 +2,26 @@ import type { KeyEvent, MenuIndicator, ScreenModel } from "./types";
 
 export type DeactivationReason = "exit" | "replace" | "navigate" | "power-off";
 
+/** Where ApplicationContext.exit goes (see there). */
+export interface ExitOptions {
+  to?: "standby";
+  levels?: number;
+  select?: string;
+  row?: "top" | "bottom";
+}
+
 export interface ApplicationContext {
   /**
    * Leave the application: back to the launching stack (default) or straight to standby
    * (`to: "standby"`, deactivation reason `exit`; the menus are left as C-hold leaves them).
    * `levels` (default 1) also closes `levels - 1` enclosing levels, and `select` selects that
-   * child (by slug) in the level returned to, on the bottom row of a rows window; both are
-   * ignored with `to: "standby"` and throw when they name no level or child. May be called
-   * inside createSession: the kernel then returns without rendering the application.
+   * child (by slug) in the level returned to. In a rows window `row` places it: on the bottom
+   * row (default) or on the top row, the window rebuilt at it as on entry. They are ignored
+   * with `to: "standby"` and throw when they name no level or child, or `row` comes without
+   * `select`. May be called inside createSession: the kernel then returns without rendering the
+   * application.
    */
-  exit(options?: { to?: "standby"; levels?: number; select?: string }): void;
+  exit(options?: ExitOptions): void;
   open(application: PhoneApplication): void;
   /**
    * The menu indicator for this application's position: its menu numbers and, while a

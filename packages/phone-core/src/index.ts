@@ -15,6 +15,7 @@ export { PhoneApplication } from "./application";
 export type {
   ApplicationContext,
   DeactivationReason,
+  ExitOptions,
   PhoneApplicationSession,
 } from "./application";
 export {

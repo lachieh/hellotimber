@@ -276,11 +276,60 @@ describe("ApplicationContext.exit options", () => {
     expect(top.screen).toMatchObject({ kind: "menu-carousel", menuNumber: 3 });
   });
 
+  it("exit({ select, row: 'top' }) rebuilds the window with the child on the top row (Space impact's Top score)", () => {
+    const record = { reasons: [] as DeactivationReason[], renders: 0 };
+    const menu = divertMenu(exitingApplication({ levels: 2, select: "item-2" }, record));
+    const phone = bootedPhone({ menu, rowsWindow: 3 });
+    phone.navigate("menu/divert");
+    phone.pressKey("down");
+    expect(phone.screen).toMatchObject({ selected: 1, windowTop: 0 });
+    for (let index = 0; index < 4; index += 1) phone.pressKey("down");
+    phone.pressKey("navi");
+    phone.pressKey("navi");
+    phone.pressKey("5");
+    // Bottom row by default: Busy / Item 1 / Item 2.
+    expect(phone.screen).toMatchObject({ kind: "list", selected: 1, windowTop: 5 });
+
+    const topRow = divertMenu(exitingApplication({ select: "set-delay", row: "top" }, record));
+    const busy = bootedPhone({ menu: topRow, rowsWindow: 3 });
+    busy.navigate("menu/divert/busy");
+    busy.pressKey("navi");
+    busy.pressKey("5");
+    expect(busy.screen).toMatchObject({ kind: "list", title: "Busy", selected: 0, windowTop: 0 });
+
+    const sameLevel = divertMenu(
+      exitingApplication({ levels: 2, select: "item-5", row: "top" }, record),
+    );
+    const divert = bootedPhone({ menu: sameLevel, rowsWindow: 3 });
+    divert.navigate("menu/divert/busy/set-delay");
+    divert.pressKey("5");
+    // Item 5 / Item 6 / Busy: the window rebuilt at the child, as on entry.
+    expect(divert.screen).toMatchObject({ kind: "list", selected: 3, windowTop: 3 });
+  });
+
+  it("keeps row for rows windows only: pages levels and the carousel just select", () => {
+    const record = { reasons: [] as DeactivationReason[], renders: 0 };
+    const phone = bootedPhone(
+      { rowsWindow: 3 },
+      exitingApplication({ levels: 2, select: "chat", row: "top" }, record),
+    );
+    phone.navigate("menu/messages/write");
+    phone.pressKey("5");
+    expect(phone.screen).toMatchObject({ kind: "menu-carousel", menuNumber: 3 });
+  });
+
   it("throws for levels or select outside the stack", () => {
     const errors: unknown[] = [];
     class CheckingApplication extends PhoneApplication {
       createSession(context: ApplicationContext): PhoneApplicationSession {
-        for (const options of [{ levels: 0 }, { levels: 1.5 }, { levels: 4 }, { select: "nope" }]) {
+        for (const options of [
+          { levels: 0 },
+          { levels: 1.5 },
+          { levels: 4 },
+          { select: "nope" },
+          { row: "top" as const },
+          { select: "write", row: "middle" as "top" },
+        ]) {
           try {
             context.exit(options);
           } catch (error) {
@@ -296,9 +345,11 @@ describe("ApplicationContext.exit options", () => {
     }
     const phone = bootedPhone({}, new CheckingApplication("checking"));
     phone.navigate("menu/messages/write");
-    expect(errors).toHaveLength(4);
+    expect(errors).toHaveLength(6);
     expect(String(errors[0])).toMatch(/levels/);
     expect(String(errors[3])).toMatch(/select/);
+    expect(String(errors[4])).toMatch(/row needs select/);
+    expect(String(errors[5])).toMatch(/row must be "top" or "bottom"/);
     expect(phone.path).toBe("menu/messages/write");
   });
 });
