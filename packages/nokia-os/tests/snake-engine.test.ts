@@ -11,10 +11,7 @@ import {
   type SnakeStep,
 } from "../src/games/snake/engine";
 import type { Heading, Segment, SnakeState } from "../src/games/snake/model";
-import { SNAKE_MAZES } from "../src/resources";
-import { loadGolden } from "./support/goldens";
-import { goldenBoards } from "./support/snake-decode";
-import { INDEX } from "./support/tree";
+import { replayBoards, SNAKE_TRACES } from "./support/game";
 
 /** A game at 10:10's seed (first food (14, 8)) with the given overrides. */
 function game(overrides: Partial<SnakeState> = {}, maze = 0, level = 1): SnakeState {
@@ -609,82 +606,13 @@ describe("death and the ring (H11)", () => {
   });
 });
 
-/** Every gameplay golden the engine replays: its level, maze and recovered seed (Task 5). */
-const TRACES: readonly { id: string; level: number; maze: number; seed: number }[] = [
-  { id: "bot-long", level: 1, maze: 0, seed: 44530 },
-  { id: "bot-short", level: 2, maze: 0, seed: 44530 },
-  { id: "bot-maze2", level: 1, maze: 2, seed: 44530 },
-  { id: "bot-maze3", level: 1, maze: 3, seed: 44530 },
-  { id: "bot-grace", level: 1, maze: 0, seed: 44530 },
-  { id: "pause-bot", level: 1, maze: 0, seed: 44530 },
-  { id: "score-8", level: 1, maze: 0, seed: 44530 },
-  { id: "seed-1010", level: 1, maze: 0, seed: 44530 },
-  { id: "seed-1010-second", level: 1, maze: 0, seed: 44530 },
-  { id: "seed-1011", level: 1, maze: 0, seed: 44590 },
-  { id: "seed-1200", level: 1, maze: 0, seed: 51130 },
-  { id: "seed-1948", level: 1, maze: 0, seed: 13689 },
-  { id: "seed-0759", level: 1, maze: 0, seed: 36670 },
-  { id: "seed-2359", level: 1, maze: 0, seed: 38909 },
-  { id: "seed-0000", level: 1, maze: 0, seed: 7995 },
-  { id: "seed-0001", level: 1, maze: 0, seed: 7995 },
-  { id: "seed-1010-14102026", level: 1, maze: 0, seed: 10048 },
-  { id: "creature-0914", level: 1, maze: 0, seed: 41170 },
-  { id: "creature-0956", level: 1, maze: 0, seed: 43690 },
-  { id: "creature-1007", level: 1, maze: 0, seed: 44350 },
-  { id: "creature-1021", level: 1, maze: 0, seed: 45190 },
-  { id: "creature-1035", level: 1, maze: 0, seed: 46030 },
-  { id: "creature-1107", level: 1, maze: 0, seed: 47950 },
-  { id: "creature-1221", level: 1, maze: 0, seed: 52390 },
-  ...INDEX.filter((e) => /^game\/snake\/keys-(right|up|pair|hold)-/.test(e.id)).map((e) => ({
-    id: e.id.slice("game/snake/".length),
-    level: 1,
-    maze: 0,
-    seed: 44530,
-  })),
-  ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((level) => ({
-    id: `ticks-l${level}`,
-    level,
-    maze: 0,
-    seed: 44530,
-  })),
-  ...[0, 1, 2, 3, 4, 5].map((maze) => ({ id: `maze-${maze}`, level: 1, maze, seed: 44530 })),
-  { id: "virgin-meal", level: 175, maze: 0, seed: 44530 },
-  { id: "virgin-game", level: 175, maze: 1, seed: 44530 },
-];
-
 describe("trace: the engine replays every gameplay golden (seed and input)", () => {
-  for (const { id, level, maze, seed } of TRACES) {
-    it(id, () => {
-      const golden = loadGolden(`game/snake/${id}`);
-      const boards = goldenBoards(`game/snake/${id}`, SNAKE_MAZES[maze]);
+  for (const trace of SNAKE_TRACES) {
+    it(trace.id, () => {
+      const boards = replayBoards(trace);
       expect(boards.length).toBeGreaterThan(0);
-      const keys = new Map<number, PhoneKey[]>();
-      for (const press of golden.input ?? []) {
-        keys.set(press.tick, [...(keys.get(press.tick) ?? []), press.key as PhoneKey]);
-      }
-      let state = newSnakeGame({ level, maze, seed });
-      let tick = 0;
-      const stepTo = (target: number) => {
-        for (; tick < target; tick++) {
-          state = (keys.get(tick) ?? []).reduce(snakeKey, state);
-          state = stepSnake(state).state;
-        }
-      };
-      const cellsOf = (segments: readonly { x: number; y: number }[]) =>
-        segments
-          .map((s) => `${s.x},${s.y}`)
-          .sort()
-          .join(" ");
-      // At level 175 (8 ms ticks) a meal's redraw runs into the next tick's, so the frames
-      // number one tick fewer after each meal (virgin-meal, virgin-game): catch up by one.
-      let lost = 0;
-      for (const { tick: at, board } of boards) {
-        stepTo(at + lost);
-        if (level === 175 && cellsOf(snakeRender(state).segments) !== cellsOf(board.segments)) {
-          lost++;
-          stepTo(at + lost);
-        }
-        const where = `${id} tick ${at}${lost ? ` (engine tick ${at + lost})` : ""}`;
+      for (const { tick, engineTick, board, state } of boards) {
+        const where = `${trace.id} tick ${tick}${engineTick !== tick ? ` (engine tick ${engineTick})` : ""}`;
         const render = snakeRender(state);
         expect(render.score, where).toBe(board.score);
         expect(render.countdown, where).toBe(board.countdown);

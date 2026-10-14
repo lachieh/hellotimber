@@ -938,10 +938,17 @@ such cells follow the RE notes' tick order and are UNVERIFIED (never captured).
 **Files:** `src/display/widgets/snake.ts` (new), `src/display/widgets/index.ts`
 (`SnakeModel` in `WidgetModel`), `tests/paint-snake.test.ts` (new).
 
-- [ ] TDD: painting the engine's render model equals every `ticks-l<L>` image, every `maze-<m>`
+- [x] TDD: painting the engine's render model equals every `ticks-l<L>` image, every `maze-<m>`
       start image, every tick still of every bot golden (engine driven by seed and `input`), and the
       blink frames of the death timelines; HUD countdown and icon; score `0175`.
-- [ ] Commit: `feat(nokia-os): paint Snake II from the stock sprites`.
+- [x] Commit: `feat(nokia-os): paint Snake II from the stock sprites`.
+
+Outcome: every board the 74 replayed goldens show paints pixel-exact (`tests/paint-snake.test.ts`),
+and so do the blink frames of maze-1/3/4 and the five bot deaths, and bot-long's unblinking
+death. Deviation: one board image is not painted, `ticks-l6` image `c`, the partial first burst
+of a two-burst redraw (Task 0); the engine draws whole ticks, and the test lists it. The replay
+helpers moved from the engine test to `tests/support/game.ts` (`SNAKE_TRACES`, `replayBoards`,
+`snakeReplay`), which Task 11 reuses.
 
 ### Task 9 - Settings, the Level page and Top score (TDD)
 

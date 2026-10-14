@@ -194,6 +194,9 @@ export function decodeBoard(pixels: Uint8Array, maze?: SnakeMaze, where = "board
 export interface TickBoard {
   readonly tick: number;
   readonly board: DecodedBoard;
+  /** The golden's pixels for the board, and where they come from (for messages). */
+  readonly pixels: Uint8Array;
+  readonly where: string;
 }
 
 /**
@@ -205,9 +208,12 @@ export function goldenBoards(id: string, maze?: SnakeMaze): TickBoard[] {
   if (!golden.timeline) {
     return golden.images.map((image) => {
       if (!/^t\d{4}$/.test(image.name)) throw new Error(`${id}: image ${image.name} is not a tick`);
+      const where = `${id} ${image.name}`;
       return {
         tick: Number(image.name.slice(1)),
-        board: decodeBoard(image.pixels, maze, `${id} ${image.name}`),
+        board: decodeBoard(image.pixels, maze, where),
+        pixels: image.pixels,
+        where,
       };
     });
   }
@@ -221,9 +227,10 @@ export function goldenBoards(id: string, maze?: SnakeMaze): TickBoard[] {
   const boards: TickBoard[] = [];
   for (const tick of numberTicks(frames, framePeriod(frames))) {
     if (tick.virtual) continue;
-    const board = decodeBoard(tick.last!.pixels, maze, `${id} frame ${tick.last!.frame}`);
+    const where = `${id} frame ${tick.last!.frame}`;
+    const board = decodeBoard(tick.last!.pixels, maze, where);
     if (board.segments.length === 0) break;
-    boards.push({ tick: tick.tick, board });
+    boards.push({ tick: tick.tick, board, pixels: tick.last!.pixels, where });
   }
   return boards;
 }

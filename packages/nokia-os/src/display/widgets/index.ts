@@ -9,6 +9,7 @@ import { paintNote, type NoteModel } from "./note";
 import { paintOptions, type OptionsModel } from "./options";
 import { paintProgress, type ProgressModel } from "./progress";
 import { paintPrompt, type PromptModel } from "./prompt";
+import { paintSnake, type SnakeModel } from "./snake";
 import { paintSplash, type SplashModel } from "./splash";
 import { paintTextPage, type TextPageModel } from "./text-pages";
 
@@ -21,6 +22,7 @@ export type { NoteModel } from "./note";
 export type { OptionsModel } from "./options";
 export type { ProgressModel } from "./progress";
 export type { PromptEntry, PromptModel } from "./prompt";
+export type { SnakeModel } from "./snake";
 export type { SplashModel } from "./splash";
 export type { TextPageModel } from "./text-pages";
 
@@ -43,6 +45,7 @@ export type WidgetModel =
   | LevelBarModel
   | TextPageModel
   | SplashModel
+  | SnakeModel
   | PlaceholderModel;
 
 /**
@@ -83,6 +86,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "splash":
       paintSplash(fb, model, previous);
+      return;
+    case "snake":
+      paintSnake(fb, model);
       return;
     case "placeholder":
       fb.pixels.set(placeholderFrame(model.label).pixels);
