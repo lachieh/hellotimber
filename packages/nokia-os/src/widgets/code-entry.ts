@@ -8,7 +8,7 @@ import { CODE_ENTRY_MAX_DIGITS, type StockSecurity } from "../firmware/security"
 import type { StockWidgetTimeline } from "../resources";
 import { WIDGET_TIMELINE_BY_NAME, WIDGET_TIMELINES } from "../resources";
 import type { Flow, Widget } from "./flow";
-import { note } from "./note";
+import { note, type NoteSound } from "./note";
 
 /** C held this long clears the whole entry (A2/A5: `hold c 1000ms`). */
 export const CLEAR_HOLD_MS = 1000;
@@ -93,9 +93,12 @@ export function codeErrorTimeline(): StockWidgetTimeline {
   return found;
 }
 
-/** `Code error`, then the screen below (the empty prompt, B). */
-export function codeError(timeline: StockWidgetTimeline = codeErrorTimeline()): Widget {
-  return note({ lines: CODE_ERROR.lines, timeline });
+/** `Code error`, then the screen below (the empty prompt, B), with its warning tone (D12). */
+export function codeError(
+  timeline: StockWidgetTimeline = codeErrorTimeline(),
+  sound?: NoteSound,
+): Widget {
+  return note({ lines: CODE_ERROR.lines, timeline, ...(sound === undefined ? {} : { sound }) });
 }
 
 export interface CodeEntryOptions {
@@ -107,6 +110,8 @@ export interface CodeEntryOptions {
   readonly onEmptyC?: "back" | "inert";
   /** The `Code error` timeline (default the in-menu one; the boot gate has its own, plan 15 Task 8). */
   readonly error?: StockWidgetTimeline;
+  /** Plan 16: `Code error`'s warning tone. */
+  readonly sound?: NoteSound;
 }
 
 /**
@@ -125,7 +130,7 @@ export function codeEntry(options: CodeEntryOptions): Widget {
         return;
       }
       clear();
-      flow.push(codeError(error));
+      flow.push(codeError(error, options.sound));
     },
   });
 }

@@ -22,7 +22,7 @@ import { infoPages, type InfoPage } from "../widgets/info-pages";
 import { infoScreen } from "../widgets/info-screen";
 import { levelBar, snakeLevel } from "../widgets/level-bar";
 import { multiSelect } from "../widgets/multi-select";
-import { note, type NoteEnd, type NoteOptions } from "../widgets/note";
+import { note, type NoteEnd, type NoteOptions, type NoteSound } from "../widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
 import { progress } from "../widgets/progress";
 import { promptFromLayout } from "../widgets/prompt";
@@ -194,6 +194,9 @@ export class LeafBinder {
     this.#sounder = sounder;
   }
 
+  /** Every note's warning tone goes to the sounder, by its lines (D12). */
+  readonly #noteSound: NoteSound = (lines) => this.#sounder.note(lines);
+
   /** The application a leaf node opens. */
   application(place: LeafPlace): PhoneApplication {
     const node = place.path[place.path.length - 1]!;
@@ -302,12 +305,14 @@ export class LeafBinder {
             : lines.map((line, i) =>
                 i === shown.line ? String(settings.number(shown.key)) : line,
               );
+        const sound = this.#noteSound;
         return () =>
           note({
             lines: linesNow(),
             ...(timeline === undefined ? {} : { timeline }),
             end: endNow(),
             ...(keys === undefined ? {} : { moves: keys }),
+            sound,
           });
       }
       case "progress-note": {
@@ -316,6 +321,7 @@ export class LeafBinder {
         const text = lines[0]!;
         const sk = need("a progress note");
         const notConfirmed = named(REQUEST_NOT_CONFIRMED.timeline);
+        const sound = this.#noteSound;
         const quit =
           text === "Requesting"
             ? (flow: Flow) =>
@@ -324,6 +330,7 @@ export class LeafBinder {
                     lines: REQUEST_NOT_CONFIRMED.lines,
                     timeline: notConfirmed,
                     end: "standby",
+                    sound,
                   }),
                 )
             : undefined;
@@ -380,7 +387,8 @@ export class LeafBinder {
     const { label } = splitPromptLines(screen.lines);
     const security = this.#security;
     const accepted = this.#acceptFlow(number, softkey, ACCEPT_FLOWS[number]!);
-    return () => codeEntry({ lines: label, softkey, security, accepted });
+    const sound = this.#noteSound;
+    return () => codeEntry({ lines: label, softkey, security, accepted, sound });
   }
 
   /** What an accepted code opens at leaf `number`, as `probe/accept-*` records it. */
@@ -388,6 +396,7 @@ export class LeafBinder {
     const done = this.#acceptNote(flow.note);
     const settings = this.#settings;
     const security = this.#security;
+    const sound = this.#noteSound;
     switch (flow.kind) {
       case "phone-security": {
         const labels = CODE_SETTINGS[number];
@@ -418,7 +427,7 @@ export class LeafBinder {
             submit(code, f, clear) {
               if (code.length !== SECURITY_CODE_DIGITS) {
                 clear();
-                f.push(codeError());
+                f.push(codeError(undefined, sound));
                 return;
               }
               f.replace(
@@ -432,7 +441,7 @@ export class LeafBinder {
                       return;
                     }
                     g.replace(enterNew());
-                    g.push(codeError());
+                    g.push(codeError(undefined, sound));
                   },
                 }),
               );
@@ -452,7 +461,8 @@ export class LeafBinder {
 
   #acceptNote(binding: AcceptNote): () => Widget {
     const timeline = named(binding.timeline);
-    return () => note({ lines: binding.lines, timeline });
+    const sound = this.#noteSound;
+    return () => note({ lines: binding.lines, timeline, sound });
   }
 
   /**
@@ -469,7 +479,8 @@ export class LeafBinder {
     let make: () => Widget;
     if (result.kind === "note") {
       const timeline = named(result.timeline);
-      make = () => note({ lines: result.lines, timeline });
+      const sound = this.#noteSound;
+      make = () => note({ lines: result.lines, timeline, sound });
     } else {
       const blink = timelineById(CLUB_NOKIA_ID_BLINK, `the prompt after ${number}`);
       const screen = { lines: result.lines, softkey: result.softkey };
@@ -512,13 +523,13 @@ export class LeafBinder {
     const numbering = optionListNumbering(number);
     const sounder = this.#sounder;
     const profile = profileSetting(key);
-    // Plan 16 (Tones and every Personalise): the Keypad tones list's ▲/▼ beep at the option they
-    // highlight; the preview lists preview it (D9), except the first move out of an unset list
+    // Plan 16 (Tones and every Personalise): the Keypad tones list's keys beep at the option
+    // highlighted (▲/▼ at the one they move to), C at the stored one (Task 0); the preview lists preview it (D9), except the first move out of an unset list
     // (S9), and stop when the list closes.
     const keyDown =
       profile?.setting === "keypad-tones"
         ? (pressed: PhoneKey, highlighted: number | null) => {
-            if (pressed === "up" || pressed === "down") sounder.keyBeepLevel(highlighted);
+            if (pressed !== "c") sounder.keyBeepLevel(highlighted);
           }
         : undefined;
     const list = PREVIEW_LISTS.find((slug) => slug === profile?.setting);
@@ -659,10 +670,13 @@ class ExitApplication extends PhoneApplication {
   }
 }
 
-/** The note digits that match no menu number open; the kernel goes to standby after it (P5). */
-export function invalidShortcut(): PhoneApplication {
+/**
+ * The note digits that match no menu number open; the kernel goes to standby after it (P5). It
+ * sounds its warning tone through `sounder` (D12).
+ */
+export function invalidShortcut(sounder: StockSounder): PhoneApplication {
   const timeline = named(INVALID_SHORTCUT.timeline);
   return new StockFlowApplication("stock:invalid-shortcut", () =>
-    note({ lines: INVALID_SHORTCUT.lines, timeline }),
+    note({ lines: INVALID_SHORTCUT.lines, timeline, sound: (lines) => sounder.note(lines) }),
   );
 }

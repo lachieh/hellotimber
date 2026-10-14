@@ -3,10 +3,13 @@
 // and compares the port's events (tests/support/sound.ts). The acceptance test runs them.
 import { LEVEL_COVER_TONES } from "../../scripts/sound-capture-set.ts";
 import { StockEeprom } from "../../src/firmware/eeprom";
-import { createStockSettings } from "../../src/firmware/settings";
+import { GATE_BLANK_MS, SELF_TEST_MS } from "../../src/firmware/boot";
+import { createStockSettings, type StockSettings } from "../../src/firmware/settings";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
 import { RINGING_TONES } from "../../src/resources";
-import { open } from "./drive.ts";
+import { settingKey } from "../../src/firmware/bindings";
+import { goto, open } from "./drive.ts";
+import { INDEX, treePath } from "./tree.ts";
 import { keys } from "./probes.ts";
 import { seededStorage, standbyRig, stockRig, type Rig } from "./rig.ts";
 import {
@@ -334,6 +337,114 @@ function powerOff(id: string): void {
     after,
     `${id}: from the power-off`,
   );
+}
+
+// N: the warning tone of every timed note (Warning tones On): OK on the golden's first node.
+for (const { id, status } of INDEX) {
+  const number = /^sound\/note\/(\d[\d-]*)$/.exec(id)?.[1];
+  if (number === undefined || status !== "asserted") continue;
+  SOUND_SCENARIOS[id] = (golden) => {
+    const storage = soundStorage("factory");
+    const rig = standbyRig({ storage });
+    rig.press("c", 1500);
+    rig.advance(1000);
+    gotoFactory(rig, number, createStockSettings(new StockEeprom(storage)));
+    // The capture idles before its OK (`idle 300ms`): the last move's beep has ended.
+    rig.advance(NAV_SETTLE_MS);
+    expectSound(golden, rig);
+  };
+}
+
+Object.assign(SOUND_SCENARIOS, {
+  // Menu 1 9: `Invalid shortcut`'s 1750 Hz tone replaces the 9's beep; a key on the note sounds
+  // it again; at Keypad tones Level 3 the tone keeps its own level.
+  "sound/note/invalid-shortcut": (id: string) => expectSound(id, soundRig("factory")),
+  "sound/note/invalid-shortcut-key": (id: string) => expectSound(id, soundRig("factory")),
+  "sound/note/invalid-shortcut-keypad-l3": (id: string) =>
+    expectSound(id, soundRig("factory", { [KEYPAD]: 3 })),
+  // Menu 6 4, 00000, OK: `Code error` on the buzzer in place of OK's beep.
+  // The capture types the code 1960 ms after Menu 6 4's 4, which the kernel's shortcut window
+  // (2948 ms, phone-core) still takes as a digit: the scenario opens 6-4 by its menu path and
+  // compares from the first 0.
+  "sound/note/code-error": (id: string) => {
+    const rig = soundRig("factory");
+    open(rig, "6-4");
+    rig.advance(NAV_SETTLE_MS);
+    expectSoundFrom(id, rig, 2880);
+  },
+  // Warning tones Off: both error notes silent, and so are the keys that opened them (Menu 1 9
+  // and C held as captured; then 6-4 by its menu path, as for `code-error`).
+  "sound/note/warning-off": (id: string) => {
+    const rig = soundRig("factory", { "tones/warning-tones": 1 });
+    expectSoundUntil(id, rig, 7931);
+    open(rig, "6-4");
+    rig.advance(NAV_SETTLE_MS);
+    expectSoundFrom(id, rig, 10812);
+  },
+  // Call divert › Cancel all diverts: Requesting, Quit, `Request not confirmed` (silent).
+  "sound/note/request-not-confirmed": (id: string) => {
+    const rig = soundRig("factory");
+    goto(rig, "7-6");
+    rig.advance(NAV_SETTLE_MS);
+    expectSound(id, rig);
+  },
+  // The power-on prompt (Phone security On, a new SIM): 00000, OK: the gate's `Code error`.
+  "sound/note/gate-code-error": (id: string) => {
+    const storage = soundStorage("factory", { "settings/security-settings/phone-security": 1 });
+    const rig = stockRig({ storage });
+    rig.press("power", 800);
+    rig.advance(SELF_TEST_MS + GATE_BLANK_MS + 500);
+    expectSound(id, rig);
+  },
+});
+
+/** The wait after a scenario's own navigation, before the golden's first key. */
+const NAV_SETTLE_MS = 500;
+
+/** Golden `id` from its time `fromMs` on (its earlier keys done another way), as time 0. */
+function expectSoundFrom(id: string, rig: Rig, fromMs: number): void {
+  const golden = loadSoundGolden(id);
+  const part = {
+    ...golden,
+    keys: (golden.keys ?? [])
+      .filter((k) => k.ms >= fromMs)
+      .map((k) => ({ ...k, ms: k.ms - fromMs })),
+    rows: golden.rows.filter((r) => r.ms >= fromMs).map((r) => ({ ...r, ms: r.ms - fromMs })),
+  };
+  expectSoundTimeline(playSound(rig, part), part, `${id}: from ${fromMs} ms`);
+}
+
+/** Golden `id`'s keys and rows before `untilMs`. */
+function expectSoundUntil(id: string, rig: Rig, untilMs: number): void {
+  const golden = loadSoundGolden(id);
+  const part = {
+    ...golden,
+    keys: (golden.keys ?? []).filter((k) => k.ms < untilMs),
+    rows: golden.rows.filter((r) => r.ms < untilMs),
+  };
+  expectSoundTimeline(playSound(rig, part, { tailMs: 1000 }), part, `${id}: until ${untilMs} ms`);
+}
+
+/**
+ * Highlights tree node or option `number` from a settled factory standby. An option of a
+ * single-choice list is reached from the list's stored choice (the factory state's, which
+ * `goto`'s virgin openings do not know); everything else as `goto`.
+ */
+function gotoFactory(rig: Rig, number: string, settings: StockSettings): void {
+  const segments = number.split("-");
+  const listNumber = segments.slice(0, -1).join("-");
+  const listPath = listNumber === "" ? undefined : treePath(listNumber);
+  const list = listPath?.at(-1);
+  if (list?.opens.kind !== "option-list" || list.opens.multi) {
+    goto(rig, number);
+    return;
+  }
+  open(rig, listNumber);
+  const count = list.opens.options.length;
+  const target = Number(segments.at(-1)) - 1;
+  const chosen = settings.choice(settingKey(listPath!));
+  const downs = chosen === null ? target + 1 : (target - chosen + count) % count;
+  for (let i = 0; i < downs; i++) rig.press("down");
 }
 
 /** The animated power-on of a factory phone; time 0 is the kernel's power-on (long press). */

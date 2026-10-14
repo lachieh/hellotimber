@@ -11,6 +11,7 @@ import {
   KEYPAD_BEEP,
   MESSAGE_PREVIEW_DELAY_MS,
   MESSAGE_TONES,
+  NOTE_SOUNDS,
   PREVIEW_DELAY_MS,
   RINGING_TONES,
   UNSET_MESSAGE_VOLUMES,
@@ -27,6 +28,10 @@ export const KEYPAD_TONES_KEY = "tones/keypad-tones";
  * key-to-beep latency of 28 ms that nokia-os does not reproduce, D8).
  */
 export const C_HOLD_BEEP_MS = 480;
+
+/** Tones › Warning tones (the active profile's): On, Off; unset in the virgin EEPROM. */
+const WARNING_TONES_KEY = "tones/warning-tones";
+const WARNING_TONES_ON = 0;
 
 /** Incoming call alert's options (5-3, 12-n-2-3). */
 const ALERT = { ringing: 0, ascending: 1, ringOnce: 2, beepOnce: 3, off: 4 } as const;
@@ -143,6 +148,10 @@ export class StockSounder implements StockCueSink {
   #preview: SoundPlay | undefined;
   /** When the last key went down (a preview counts its delay from it). */
   #lastKeyMs: number | undefined;
+  /** When a note with a warning tone last opened (the key going down then makes no beep). */
+  #noteAtMs: number | undefined;
+  /** The last key's beep and when it started. */
+  #beep: { readonly play: SoundPlay; readonly atMs: number } | undefined;
   /** The Keypad tones option the next key-down beeps at, instead of the stored one. */
   #keyLevel: { readonly option: number | null } | undefined;
 
@@ -162,7 +171,8 @@ export class StockSounder implements StockCueSink {
     this.#lastKeyMs = now;
     const level = this.#keyLevel;
     this.#keyLevel = undefined;
-    if (options.beeps ?? true) this.#keyBeep(now, level?.option);
+    // A note's warning tone opened by this key replaces its beep (D12).
+    if ((options.beeps ?? true) && this.#noteAtMs !== now) this.#keyBeep(now, level?.option);
     const repeats = key === "up" || key === "down";
     const first = repeats ? LEVEL_REPEAT.firstMs : key === "c" ? C_HOLD_BEEP_MS : undefined;
     const next = (options.holdBeeps ?? true) && first !== undefined ? now + first : undefined;
@@ -209,6 +219,7 @@ export class StockSounder implements StockCueSink {
     this.#preview = undefined;
     this.#held.clear();
     this.#keyLevel = undefined;
+    this.#beep = undefined;
     this.#sequencer.stop(["buzzer", "tone", "vibrator"], now);
     this.#sequencer.play(BOOT_TONE.program, now);
   }
@@ -290,6 +301,24 @@ export class StockSounder implements StockCueSink {
     const index = this.#settings.choice(`${prefix}/message-alert-tone`) ?? 0;
     const vibrates = this.#settings.choice(`${prefix}/vibrating-alert`) === VIBRATING_ON;
     return this.#message(index, prefix, this.#now(), vibrates);
+  }
+
+  /**
+   * A note opened, or a key went down on it (D12): a note with a warning tone (`NOTE_SOUNDS`, by
+   * its text) replaces the beep of the key that opened it, and plays the tone when Warning tones
+   * is On; with it Off (or unset) that key is silent. Other notes change nothing.
+   */
+  note(lines: readonly string[]): void {
+    const program = NOTE_SOUNDS[lines.join(" ")];
+    if (program === undefined) return;
+    const now = this.#now();
+    this.#noteAtMs = now;
+    if (this.#beep !== undefined && this.#beep.atMs === now) {
+      this.#sequencer.cancel(this.#beep.play, now);
+    }
+    if (this.#settings.choice(WARNING_TONES_KEY) === WARNING_TONES_ON) {
+      this.#sequencer.play(program, now);
+    }
   }
 
   /** Plays `program` now (plan 27's Composer). */
@@ -402,6 +431,6 @@ export class StockSounder implements StockCueSink {
     const word = level === undefined ? this.#keypadWord() : this.#keypadWord(level);
     if (word === null) return;
     const ms = this.#dspAwake(atMs) ? KEYPAD_BEEP.awakeMs : KEYPAD_BEEP.wokenMs;
-    this.#sequencer.play(beepProgram(word, ms), atMs);
+    this.#beep = { play: this.#sequencer.play(beepProgram(word, ms), atMs), atMs };
   }
 }

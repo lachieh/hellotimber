@@ -117,14 +117,14 @@ export function createStockPhoneWith(
     bootTimeline: BOOT_TIMELINE,
     ...(skip ? { bootMs: 0 } : {}),
     // Plan 15 D9: the security code and the welcome note hold the boot after the self-test.
-    bootGates: stockBootGates({ security, settings, skip }),
+    bootGates: stockBootGates({ security, settings, skip, sound: (lines) => sounder.note(lines) }),
     standbyKeys: STOCK_STANDBY_KEYS,
     menuOpenDelayMs: STOCK_MENU_OPEN_DELAY_MS,
     shortcutWindowMs: STOCK_SHORTCUT_WINDOW_MS,
     // Rows levels keep the stateful circular window of the stock painter (plan 14 D3).
     rowsWindow: VISIBLE_ROWS,
     // Stock shortcut digits: menu numbers, delayed opening, Invalid shortcut (plan 14 D14).
-    shortcutEntry: { openDelayMs: STOCK_SHORTCUT_OPEN_DELAY_MS, invalid: invalidShortcut() },
+    shortcutEntry: { openDelayMs: STOCK_SHORTCUT_OPEN_DELAY_MS, invalid: invalidShortcut(sounder) },
   });
   // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
   let poweredOn = false;

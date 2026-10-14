@@ -28,7 +28,15 @@ export interface NoteOptions {
    * to (P6: ▼ during `Done` dismisses it and moves). Without them ▲/▼ only dismiss.
    */
   readonly moves?: { readonly up?: string; readonly down?: string };
+  /**
+   * Plan 16 (D12): the note's warning tone, by its lines, played when the note opens and again
+   * when a key goes down on it (in place of the key's beep).
+   */
+  readonly sound?: NoteSound;
 }
+
+/** Plays a note's warning tone by its lines (the phone's sounder decides whether it has one). */
+export type NoteSound = (lines: readonly string[]) => void;
 
 /**
  * A timed note (`Done`, `No phone numbers`, `Not allowed`, Top score) or, without a timeline, a
@@ -42,6 +50,11 @@ class NoteWidget implements Widget {
   constructor(options: NoteOptions) {
     this.#options = options;
     this.#playback = options.timeline === undefined ? undefined : new Playback(options.timeline);
+    options.sound?.(options.lines);
+  }
+
+  onKeyDown(): void {
+    this.#options.sound?.(this.#options.lines);
   }
 
   render(): NoteModel {

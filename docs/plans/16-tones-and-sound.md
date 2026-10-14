@@ -12,7 +12,7 @@ README, which this plan edits too: do not start Task 1 before plan 15 is `done`.
 23 supplementary captures"), plans 13, 14, 15 and 23 in full before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan16/`. The planning probes in
 `$REF/captures/scratch-plan16/` are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-3 done).
+**Status:** in progress (Tasks 0-7 done).
 
 ## Goal
 
@@ -391,32 +391,48 @@ export interface SoundProgram {
 
 // src/sound/sequencer.ts (pure)
 export type SoundOutput = "buzzer" | "tone" | "vibrator";
+export interface SoundVolume {
+  readonly changesAtMs: readonly number[]; // where a sounding note re-reads its volume
+  of(output: "buzzer" | "tone", hz: number, stored: number, offsetMs: number): number;
+}
 export class SoundSequencer {
   constructor(emit: (event: StockSoundEvent) => void);
   /** Starts `program` at `atMs` on the outputs it uses, replacing what played there. */
   play(
     program: SoundProgram,
     atMs: number,
-    options?: { volume?: (step: number, pass: number, stored: number) => number },
-  ): void;
+    options?: { volume?: SoundVolume; endStep?: number },
+  ): SoundPlay;
   stop(outputs: readonly SoundOutput[], atMs: number): void;
+  cancel(play: SoundPlay, atMs: number): void; // a play not started by atMs never sounds
+  playing(play: SoundPlay): boolean;
+  last(output: SoundOutput): StockSoundEvent | undefined;
   advance(nowMs: number): void; // emits every change due up to nowMs
 }
 
-// src/sound/sounder.ts (per phone; settings-aware)
+// src/sound/sounder.ts (per phone; settings-aware). `prefix` is a profile's settings prefix:
+// `tones` (the active profile, through `settingAlias`) or `profiles/<profile>/personalise`.
 export class StockSounder implements StockCueSink {
   constructor(sequencer: SoundSequencer, settings: StockSettings, now: () => number);
-  keyDown(key: PhoneKey): void; // keypad tone per tones/keypad-tones (D8)
-  preview(list: PreviewList, index: number, profile: string): void; // D9
+  keyDown(key: PhoneKey, options?: { beeps?: boolean; holdBeeps?: boolean }): void; // D8
+  keyUp(key: PhoneKey): void;
+  keyBeepLevel(option: number | null): void; // the Keypad tones list's highlighted level
+  tick(): void; // held-key beeps due by now
+  powerOn(options: { boot: boolean }): void;
+  powerOff(): void;
+  preview(list: PreviewList, index: number, prefix: string): void; // D9
   stopPreview(): void;
   note(lines: readonly string[]): void; // D12
-  cue(cue: StockCue, atMs: number): void; // D13
-  play(program: SoundProgram): void; // plan 27 (Composer)
-  ring(profile: string): void; // D11, for plan 22
-  messageAlert(profile: string): void; // D11, for plan 18
-  powerOff(): void;
+  cue(cue: StockCue, atMs: number): void; // D13 (Task 8)
+  play(program: SoundProgram): SoundPlay; // plan 27 (Composer)
+  ring(prefix: string): SoundPlay | undefined; // D11, for plan 22
+  messageAlert(prefix: string): SoundPlay | undefined; // D11, for plan 18
 }
 ```
+
+_After Tasks 4-7 (Deviation):_ the signatures above are the shipped ones (see the Task 4-6
+deviations for why `volume` is a `SoundVolume`, why plays have handles and why the sounder takes
+keys, ticks and power).
 
 Setting keys read (all through `settingAlias`, so plan 17's active profile needs no change here):
 `tones/keypad-tones`, `tones/warning-tones`, `tones/vibrating-alert`, and for a list at
@@ -962,16 +978,31 @@ makes the second key run the first beep on).
 `src/firmware/boot.ts` (the gate's `Code error`), `src/sound/sounder.ts` (`note`),
 `tests/sound-notes.test.ts` (new).
 
-- [ ] TDD the note sound: with Warning tones On a note whose text has a `NOTE_SOUNDS` program
+- [x] TDD the note sound: with Warning tones On a note whose text has a `NOTE_SOUNDS` program
       plays it from its first frame; Off (or no program) is silent; a key that ends the note early
       stops its sound if Task 0 shows that (else the sound runs out).
-- [ ] Bind every note leaf, result and named note (`Invalid shortcut`, `Request not confirmed`,
+- [x] Bind every note leaf, result and named note (`Invalid shortcut`, `Request not confirmed`,
       the code entry's `Code error`, the boot gate's) to its sound by text, so the sound follows
       the text wherever the note opens.
-- [ ] Drive every `sound/note/*` golden's path (plan 14's `goto`/`open` keys) and compare
+- [x] Drive every `sound/note/*` golden's path (plan 14's `goto`/`open` keys) and compare
       (`SOUND_ONSET_TOLERANCE_MS` for the onset, D12).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): warning tones on notes`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): warning tones on notes`.
+
+Deviation (Task 7): `NoteOptions.sound` is a callback by the note's lines (`NoteSound`), called
+when the note opens and again on each key-down on it (Task 0: a key on the note sounds the tone
+again, in place of its beep); `codeEntry`/`codeError` take it, `stockBootGates` and
+`invalidShortcut(sounder)` too. `StockSounder.note(lines)` looks the joined lines up in
+`NOTE_SOUNDS`; a note with a tone silences the beep of the key that opened it (same kernel
+millisecond) and plays the tone with Warning tones On (unset counts as Off). A key that ends the
+note does not stop its tone (it runs out). Scenarios drive each asserted tree note golden's first
+node from the factory state (an option of a single-choice list from the list's stored choice,
+which `goto`'s virgin openings do not know) after a 500 ms settle (the capture's `idle`).
+`sound/note/code-error` and `warning-off` open 6-4 by its menu path and compare from the first 0:
+the capture types the code 1960 ms after Menu 6 4's 4, which phone-core's 2948 ms shortcut
+window still takes as a shortcut digit (`Invalid shortcut`). Known gap: `sound/note/1-2` (the
+capture shows `No phone numbers` ≈150 ms after OK, so OK's beep sounds first). In the Keypad
+tones list OK also beeps at the highlighted option (`sound/note/5-6-*`: OK on Off is silent).
 
 ### Task 8 - Snake II's sounds and vibration (TDD against sound goldens)
 

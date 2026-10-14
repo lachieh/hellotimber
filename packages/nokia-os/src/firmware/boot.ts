@@ -12,6 +12,7 @@ import {
 } from "../resources";
 import { codeEntry } from "../widgets/code-entry";
 import { StockFlowApplication, type Flow, type Widget } from "../widgets/flow";
+import type { NoteSound } from "../widgets/note";
 import { WELCOME_NOTE_KEY } from "./bindings";
 import type { StockSecurity } from "./security";
 import type { StockSettings } from "./settings";
@@ -121,6 +122,8 @@ const handsPhase: Phase = {
 export interface StockBootGateOptions {
   readonly security: StockSecurity;
   readonly settings: StockSettings;
+  /** Plan 16: the gate's `Code error` sounds its warning tone (default: silent). */
+  readonly sound?: NoteSound;
   /** `boot: "skip"`: the security gate runs at power-on with no animation, and no note. */
   readonly skip: boolean;
 }
@@ -138,7 +141,7 @@ function welcomeNote(settings: StockSettings): string | undefined {
  * welcome note in their place, and standby. Every power-on that passes records the SIM.
  */
 function securityGate(options: StockBootGateOptions): BootGate {
-  const { security, settings, skip } = options;
+  const { security, settings, skip, sound } = options;
   const accepted = (flow: Flow): void => {
     security.insertSim(security.sim);
     const note = skip ? undefined : welcomeNote(settings);
@@ -159,6 +162,7 @@ function securityGate(options: StockBootGateOptions): BootGate {
       accepted,
       onEmptyC: "inert",
       error: named("boot-code-error"),
+      ...(sound === undefined ? {} : { sound }),
     });
   return {
     atMs: skip ? 0 : SELF_TEST_MS,
