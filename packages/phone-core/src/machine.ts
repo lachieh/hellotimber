@@ -406,7 +406,13 @@ function stepSelection<Metadata>(
   const selected = wrapIndex(shown.indexOf(all[frame.selected]!) + step, shown.length);
   frame.selected = all.indexOf(shown[selected]!);
   if (frame.windowTop !== undefined && m.rowsWindow !== undefined) {
-    frame.windowTop = rowsWindowTop(frame.windowTop, selected, shown.length, m.rowsWindow);
+    frame.windowTop = rowsWindowTop(
+      frame.windowTop,
+      selected,
+      shown.length,
+      m.rowsWindow,
+      step > 0 ? "down" : "up",
+    );
   }
   m.dirty = true;
 }
