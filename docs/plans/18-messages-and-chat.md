@@ -1083,17 +1083,44 @@ ABC (`textInput`'s `mode`); a text input's long text does not wrap (unverified).
 **Files:** `src/firmware/leaves.ts`, `src/firmware/bindings.ts` (`WELCOME_EDITOR`, `NUMBER_SAVES`),
 `tests/welcome-editor.test.ts` (new), `tests/settings-flows.test.ts`.
 
-- [ ] 6-2-3: the editor (count style, 36, multi-tap only, Options Save/Erase as captured). Save →
+- [x] 6-2-3: the editor (count style, 36, multi-tap only, Options Save/Erase as captured). Save →
       `setText(WELCOME_NOTE_KEY, text)` and `Welcome note saved` → the page; Erase → `setText(…,
 undefined)` and `Welcome note erased`; the empty cases per Task 0 W. The editor opens on the
       stored note.
-- [ ] TDD through keys: type `Hi`, Save, power off and on: plan 15's welcome-note gate shows `Hi`
+- [x] TDD through keys: type `Hi`, Save, power off and on: plan 15's welcome-note gate shows `Hi`
       (its goldens still pass); Erase, power on: the hands play.
-- [ ] 2-7-1-1, 2-7-2-1, 2-9: number entry on the stored text; OK writes it and plays its note, then
+- [x] 2-7-1-1, 2-7-2-1, 2-9: number entry on the stored text; OK writes it and plays its note, then
       the page (Task 0 M); the virgin values stay as plan 14 captured.
-- [ ] Remove `6-2-3` from both placeholder tables (if Task 2 has not).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): Welcome note editor and editable centre and voice mailbox numbers`.
+- [x] Remove `6-2-3` from both placeholder tables (if Task 2 has not).
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): Welcome note editor and editable centre and voice mailbox numbers`.
+
+Deviation: **Task 8 (paths, plan 29 features):** the Welcome note editor is the settings feature's
+screen `6-2-3` (`src/firmware/features/settings.ts`), the number entries the messages feature's
+screens `2-7-1-1`, `2-7-2-1` and `2-9` (their plan 14 prompt layouts are subtracted); no
+`leaves.ts`/`bindings.ts` tables. The tests are `tests/welcome-editor.test.ts`; the settings record's
+key snapshot gains Set 2's centre (a typed text: the virgin SIM has none, `sms/centre-2` 00).
+
+Deviation: **Task 8 (measured behaviour):** the editor and the number entry blink as their node's
+own recording when it has one (plan 14 P9; irregular 479-490 ms steps that the tree goldens
+`6-2-3.leaf`, `2-7-1-1.leaf`, `2-7-2-1.leaf` and `2-9.leaf` assert), so `extract-resources` treats a
+`text-editor` first screen as a prompt's blink. Before `Centre number saved` the firmware draws the
+page's soft key alone for 128 ms (`sms/centre-1-ok`, `-2-ok` frame 1). The voice mailbox prompt
+has no counter; its limit is the Send prompt's 30 (UNVERIFIED: the capture types 19 digits).
+
+Deviation: **Tasks 8, 12 (acceptance lever, built here):** `scripts/messages-scripts.ts` (package
+script `messages-scripts`) transcribes Task 0's command logs into
+`scripts/generated/messages-scripts.ts`; `tests/support/replay.ts` replays them (forks, taps,
+holds, the setup, reboots) and compares every shot, scroll and recording of a golden. Plan 18's
+scenario table is `MESSAGES_SCENARIOS` in `tests/support/messages.ts`; a golden is promoted by
+listing it in `MESSAGES_ASSERTED` (`scripts/messages-capture-set.ts`) and re-importing. The T9
+Dictionary off of the logs is replayed as the multi-tap one (D3). Recordings compare without the
+cursor's blink phase by default (`blink: "free"`): the firmware's phase differs between forks of
+one editor (`welcome/hold-c` and `welcome/37th-key`: 47 ms from the same snapshot) and a deletion
+shows the cursor at once without restarting the blink (`welcome/hold-c` b, c), so the phase is not
+reproducible from the logs. Task 8 promotes 19 goldens (`welcome/*`, `sms/centre-*`,
+`sms/voice-mailbox*`); a recording that replays another recording's note timeline keeps
+PROBE_TOLERANCE_MS.
 
 ### Task 9 - Messages record, network port and synthetic network (TDD)
 

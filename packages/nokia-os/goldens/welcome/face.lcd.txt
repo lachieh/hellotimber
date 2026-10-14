@@ -1,6 +1,6 @@
 lcd-golden 1
 id: welcome/face
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/welcome/face/01.png + captures/6.39/plan18/welcome/face/11.png + captures/6.39/plan18/welcome/face/12.png + captures/6.39/plan18/welcome/face/13.png + captures/6.39/plan18/welcome/face/23.png + captures/6.39/plan18/welcome/face/24.png + captures/6.39/plan18/welcome/face/26.png + captures/6.39/plan18/welcome/face/27.png + captures/6.39/plan18/welcome/face/36.png
 source-sha256: ede1d4116feb92c5d45823af3820ffe82669433f3d3a80931dad4fdde09789e2
 note: Keys 2-9 typed into Welcome note, one shot per key: large at tops 8/22 while two lines fit, then small at tops 8/17/26.

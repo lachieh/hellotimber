@@ -46,8 +46,39 @@ export class MessagesCaptureError extends Error {
   }
 }
 
-/** Every plan 18 fixture's status until its scenario exists (plan 29 "Pending workflow"). */
+/** A plan 18 fixture's status until its scenario exists (plan 29 "Pending workflow"). */
 export const MESSAGES_STATUS: GoldenStatus = "pending:18";
+
+/**
+ * The fixtures whose scenario exists (tests/support/messages.ts `MESSAGES_SCENARIOS`), by the
+ * task that promoted them: asserted. The rest stay pending until their task promotes them.
+ */
+export const MESSAGES_ASSERTED: ReadonlySet<string> = new Set([
+  // Task 8: Welcome note, the message centre and voice mailbox numbers.
+  "welcome/editor",
+  "welcome/face",
+  "welcome/options",
+  "welcome/save-hi",
+  "welcome/save-empty",
+  "welcome/erase-empty",
+  "welcome/c-on-empty",
+  "welcome/hold-c",
+  "welcome/37th-key",
+  "welcome/plan15",
+  "welcome/plan15-erase",
+  "welcome/plan15-save-long",
+  "sms/centre-1",
+  "sms/centre-1-ok",
+  "sms/centre-1-ok-empty",
+  "sms/centre-2",
+  "sms/centre-2-ok",
+  "sms/voice-mailbox",
+  "sms/voice-mailbox-ok",
+]);
+
+function statusOf(id: string): GoldenStatus {
+  return MESSAGES_ASSERTED.has(id) ? "asserted" : MESSAGES_STATUS;
+}
 
 const BASE = "plan18";
 
@@ -1257,7 +1288,7 @@ export function recordingEntry(io: MessagesCaptureIo, row: RecordingRow): Captur
   return {
     id: row.id,
     kind: "timeline",
-    status: MESSAGES_STATUS,
+    status: statusOf(row.id),
     prefer: {
       source:
         row.to === undefined
@@ -1280,7 +1311,7 @@ function shotsEntry(row: ShotsRow): CaptureSetEntry {
   return {
     id: row.id,
     kind: "still",
-    status: MESSAGES_STATUS,
+    status: statusOf(row.id),
     prefer: {
       source: { kind: "shots", files: row.shots.map((shot) => `${dir}/${shot}.png`) },
       note: row.note,
@@ -1300,7 +1331,7 @@ function scrollEntry(io: MessagesCaptureIo, row: ScrollRow): CaptureSetEntry {
     return {
       id: row.id,
       kind: "still",
-      status: MESSAGES_STATUS,
+      status: statusOf(row.id),
       prefer: { source: { kind: "scroll", dir }, note: row.note },
     };
   }
@@ -1313,7 +1344,7 @@ function scrollEntry(io: MessagesCaptureIo, row: ScrollRow): CaptureSetEntry {
   return {
     id: row.id,
     kind: "still",
-    status: MESSAGES_STATUS,
+    status: statusOf(row.id),
     prefer: {
       source: {
         kind: "shots",

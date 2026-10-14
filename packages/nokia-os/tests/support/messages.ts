@@ -7,7 +7,11 @@
 //   [<name>]   a shot: the golden image `<name>` (shots the golden left out are skipped).
 //
 // A tap is 392 ms in the captures (≈42 ms down, the emulator's 250 ms settle, a 100 ms key gap).
+import { MESSAGES_CAPTURE_SCRIPTS } from "../../scripts/generated/messages-scripts.ts";
 import type { TextMode, TextState } from "../../src/text/multitap";
+import { PROBE_TOLERANCE_MS } from "./golden.ts";
+import { replayScenario, type ReplayContext, type TimelineOptions } from "./replay.ts";
+import { standbyRig } from "./rig.ts";
 import {
   emptyText,
   textDelete,
@@ -172,3 +176,98 @@ export function replayTrace(trace: TextTrace, limit = SMS_LIMIT): TraceShot[] {
   }
   return shots;
 }
+
+// ---------------------------------------------------------------- capture replay (Task 12)
+
+/**
+ * The capture's setup (`v639-setup.inc`): power-on, the security code, time and date, C. It
+ * takes 55.4 s of emulated time (taps of 592 ms at the default key gap).
+ */
+export const SETUP_MS = 8000 + 6 * 592 + 9000 + 5 * 592 + 4000 + 9 * 592 + 20000 + 592 + 2000;
+
+/**
+ * The T9 editor's Options › Dictionary › Dictionary off (Options' eighth entry; the list opens
+ * on English), as the multi-tap editor nokia-os opens with (D3) does it: Dictionary is Options'
+ * fifth entry and its list opens on Dictionary off.
+ */
+const T9_DICTIONARY_OFF = [
+  ...Array.from({ length: 7 }, () => "key down"),
+  "key menu",
+  "run 1200ms",
+  "key up",
+  "key menu",
+];
+const MULTITAP_DICTIONARY_OFF = [
+  ...Array.from({ length: 4 }, () => "key down"),
+  "key menu",
+  "run 1200ms",
+  "key menu",
+];
+
+/**
+ * A block's commands as a stock phone replays them: each T9 Dictionary off replaced by the
+ * multi-tap one, and a reboot's power-on (plan 15's logs record the boot, then type the setup's
+ * code, time and date) replaced by the setup.
+ */
+export function messagesRewrite(lines: readonly string[]): string[] {
+  const out: string[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i]!.startsWith("reboot ") && lines[i + 1] !== "include setup") {
+      out.push(lines[i]!, "include setup");
+      // The setup ends with C and 2 s at standby.
+      while (i < lines.length && !(lines[i] === "run 2s" && lines[i - 1] === "key c")) i++;
+      continue;
+    }
+    if (T9_DICTIONARY_OFF.every((line, k) => lines[i + k] === line)) {
+      out.push(...MULTITAP_DICTIONARY_OFF);
+      i += T9_DICTIONARY_OFF.length - 1;
+    } else out.push(lines[i]!);
+  }
+  return out;
+}
+
+/** Plan 18's capture logs on a virgin stock phone (`standbyRig` stands for the setup). */
+export const MESSAGES_REPLAY: ReplayContext = {
+  scripts: MESSAGES_CAPTURE_SCRIPTS,
+  rewrite: messagesRewrite,
+  setup: (storage) => standbyRig({ storage }),
+  setupMs: SETUP_MS,
+};
+
+/** The scenario of plan 18 golden `id`: its capture replayed (tests/support/replay.ts). */
+export function messagesScenario(options: TimelineOptions = {}): (id: string) => void {
+  return (id) => replayScenario(MESSAGES_REPLAY, id, options);
+}
+
+/** A recording of a note whose timeline another recording of the same note gave (D8). */
+const OTHER_RECORDING: TimelineOptions = { toleranceMs: PROBE_TOLERANCE_MS };
+
+/** Every asserted plan 18 golden's scenario (tests/acceptance/18-messages-and-chat.test.ts). */
+export const MESSAGES_SCENARIOS: Readonly<Record<string, (id: string) => void>> = {
+  // Task 8: Welcome note, the message centre and voice mailbox numbers.
+  "welcome/editor": messagesScenario(),
+  "welcome/face": messagesScenario(),
+  "welcome/options": messagesScenario(),
+  "welcome/save-hi": messagesScenario(),
+  // Welcome note erased plays welcome/erase-empty's timeline.
+  "welcome/save-empty": messagesScenario(OTHER_RECORDING),
+  "welcome/erase-empty": messagesScenario(),
+  "welcome/c-on-empty": messagesScenario(),
+  "welcome/hold-c": messagesScenario(),
+  "welcome/37th-key": messagesScenario(),
+  "welcome/plan15": messagesScenario(),
+  // Plan 15's recordings of the same notes (plan 18's are the timelines).
+  "welcome/plan15-erase": messagesScenario(OTHER_RECORDING),
+  "welcome/plan15-save-long": messagesScenario(OTHER_RECORDING),
+  "sms/centre-1": messagesScenario(),
+  "sms/centre-1-ok": messagesScenario(),
+  // No phone numbers plays text/number-search-empty's timeline.
+  "sms/centre-1-ok-empty": messagesScenario(OTHER_RECORDING),
+  "sms/centre-2": messagesScenario(),
+  "sms/centre-2-ok": messagesScenario(),
+  "sms/voice-mailbox": messagesScenario(),
+  "sms/voice-mailbox-ok": messagesScenario(),
+};
+
+/** Asserted plan 18 goldens whose scenario cannot pass, with the reason. */
+export const MESSAGES_KNOWN_GAPS: Readonly<Record<string, string>> = {};

@@ -5,8 +5,9 @@
 // free-running TEXT_TIMINGS.blinkMs timer from the entry's start: keys and commits never restart
 // it (`text/commit` and `text/hold-digit` keep the phase they had before the key).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import { TEXT_TIMINGS } from "../resources";
+import { TEXT_TIMINGS, type StockWidgetTimeline } from "../resources";
 import { isTextKey } from "../text/keys";
+import { Playback } from "./playback";
 import {
   emptyText,
   textClear,
@@ -36,6 +37,11 @@ export interface TextEntryOptions {
   /** Default the end of `text`. */
   readonly cursor?: number;
   readonly mode?: TextMode;
+  /**
+   * The cursor's blink as a node's own recording shows it (a loop of `cursor`/`plain` steps,
+   * plan 14 P9: Welcome note's); default TEXT_TIMINGS.blinkMs steps.
+   */
+  readonly blink?: StockWidgetTimeline;
 }
 
 /** A key held down: when, and when it came up (undefined while it is down). */
@@ -50,6 +56,15 @@ interface Held {
 /** What a key-down asks of the screen around the entry. */
 export type EntryRequest = "empty-c" | "symbols" | undefined;
 
+/**
+ * Whether a free-running blink shows the cursor `nowMs` after it started: by the node's own
+ * recording (`blink`, already advanced to now), else every TEXT_TIMINGS.blinkMs, shown first.
+ */
+export function blinkShown(blink: Playback | undefined, nowMs: number): boolean {
+  if (blink !== undefined) return blink.frame.kind === "cursor";
+  return Math.floor(nowMs / TEXT_TIMINGS.blinkMs) % 2 === 0;
+}
+
 /** One multi-tap entry: its state, its clock, its holds and its cursor blink. */
 export class TextEntry {
   readonly limit: number;
@@ -60,6 +75,7 @@ export class TextEntry {
   #hash: Held | undefined;
   /** C held after a deletion: when that deletion happened. */
   #clear: Held | undefined;
+  readonly #blink: Playback | undefined;
 
   constructor(options: TextEntryOptions) {
     this.limit = options.limit;
@@ -69,6 +85,7 @@ export class TextEntry {
       text,
       cursor: options.cursor ?? Array.from(text).length,
     };
+    this.#blink = options.blink === undefined ? undefined : new Playback(options.blink);
   }
 
   get state(): TextState {
@@ -82,7 +99,7 @@ export class TextEntry {
 
   /** The blink's step: the cursor shows (while nothing is pending). */
   get cursorShown(): boolean {
-    return Math.floor(this.#now / TEXT_TIMINGS.blinkMs) % 2 === 0;
+    return blinkShown(this.#blink, this.#now);
   }
 
   control(): EditorControl {
@@ -139,6 +156,7 @@ export class TextEntry {
 
   tick(dtMs: number): void {
     this.#now += dtMs;
+    this.#blink?.advance(dtMs);
     const now = this.#now;
     const hash = this.#hash;
     if (hash !== undefined && !hash.fired && now - hash.downAt >= TEXT_TIMINGS.numberModeHoldMs) {

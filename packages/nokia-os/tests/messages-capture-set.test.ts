@@ -2,6 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 import {
   CYCLE_LENGTHS,
   glyphEntries,
+  MESSAGES_ASSERTED,
   MESSAGES_STATUS,
   manifestNote,
   messagesCaptureSet,
@@ -56,7 +57,10 @@ describe("messagesCaptureSet", () => {
 
   it("lists every fixture once, pending on plan 18 until its scenario exists", () => {
     expect(new Set(entries.map((e) => e.id)).size).toBe(entries.length);
-    expect(entries.every((e) => e.status === MESSAGES_STATUS)).toBe(true);
+    for (const e of entries) {
+      expect(e.status, e.id).toBe(MESSAGES_ASSERTED.has(e.id) ? "asserted" : MESSAGES_STATUS);
+    }
+    expect([...MESSAGES_ASSERTED].filter((id) => !byId.has(id))).toEqual([]);
     expect(MESSAGES_STATUS).toBe("pending:18");
     for (const e of entries) expect(e.id).toMatch(/^(text|welcome|sms|glyphs)\/[a-z0-9-]+$/);
   });

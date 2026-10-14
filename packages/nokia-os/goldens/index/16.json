@@ -1036,13 +1036,6 @@
     "events": 2
   },
   {
-    "id": "sound/note/6-2-3",
-    "file": "sound/note/6-2-3.sound.txt",
-    "status": "pending:18",
-    "kind": "sound",
-    "events": 2
-  },
-  {
     "id": "sound/note/6-3-6-2",
     "file": "sound/note/6-3-6-2.sound.txt",
     "status": "asserted",

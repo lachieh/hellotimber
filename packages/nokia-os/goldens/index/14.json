@@ -1799,7 +1799,7 @@
   {
     "id": "tree/06-settings/6-2-3.leaf",
     "file": "tree/06-settings/6-2-3.leaf.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 13,

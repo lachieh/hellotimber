@@ -141,6 +141,7 @@ exports[`SETTINGS_RECORD (D3) > pins the keys a record can hold (a renamed slug 
     "messages/message-settings/set-1/message-centre-number",
     "messages/message-settings/set-1/message-validity",
     "messages/message-settings/set-1/messages-sent-as",
+    "messages/message-settings/set-2/message-centre-number",
     "messages/message-settings/set-2/message-validity",
     "messages/message-settings/set-2/messages-sent-as",
     "messages/voice-mailbox-number",

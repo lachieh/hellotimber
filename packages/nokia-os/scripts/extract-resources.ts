@@ -446,6 +446,8 @@ function widgetKind(screen: StockScreenSpec | StockResult): string | undefined {
     case "text-input":
     case "number-input":
     case "code-prompt":
+    // Plan 18: an editor's first screen blinks its cursor as a prompt's does.
+    case "text-editor":
       return "prompt";
     default:
       return undefined;

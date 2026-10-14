@@ -308,11 +308,11 @@ describe("PlaceholderApplication", () => {
     );
     expect(owners["menu/games/snake/new-game"]).toBeUndefined();
     expect(owners["menu/calculator"]).toBeUndefined();
+    expect(owners["menu/settings/phone-settings/welcome-note"]).toBeUndefined();
     expect(owners).toMatchObject({
       "menu/messages/write": "18",
       "menu/chat": "18c",
       "menu/tones/composer/empty-4": "27",
-      "menu/settings/phone-settings/welcome-note": "18",
       "menu/games/bantumi/new-game": "24",
       "menu/clock/stopwatch": "21",
       "menu/profiles/loud/activate": "17",

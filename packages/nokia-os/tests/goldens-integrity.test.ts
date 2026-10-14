@@ -266,14 +266,14 @@ describe("plan 18 goldens", () => {
   const load = (entry: IndexEntry): Golden =>
     parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
 
-  it("leaves plan 18 pending elsewhere only on the leaves it still owns (2-1, 6-2-3)", () => {
+  it("leaves plan 18 pending elsewhere only on the leaves it still owns (2-1)", () => {
     const elsewhere = index.filter(
       (entry) => entry.status === "pending:18" && !own.some((e) => e.id === entry.id),
     );
     const owned = Object.entries(PLACEHOLDER_OWNERS)
       .filter(([, plan]) => plan === "18")
       .map(([number]) => number);
-    expect(owned.sort()).toEqual(["2-1", "6-2-3"]);
+    expect(owned.sort()).toEqual(["2-1"]);
     for (const entry of elsewhere) {
       const numbers = entry.covers ?? [entry.id.slice(entry.id.lastIndexOf("/") + 1)];
       expect(

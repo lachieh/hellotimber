@@ -3,6 +3,7 @@
 // text out and paints the editor's screen.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { EditorModel } from "../display/widgets";
+import type { StockWidgetTimeline } from "../resources";
 import {
   cursorLine,
   EDITOR_LINE_WIDTH,
@@ -37,6 +38,8 @@ export interface EditorSpec {
   readonly symbols?: (flow: Flow, editor: EditorControl) => void;
   /** C on the empty text: back to the screen below (default), or nothing. */
   readonly onEmptyC?: "back" | "inert";
+  /** The cursor's blink from the node's own recording (`TextEntryOptions.blink`). */
+  readonly blink?: StockWidgetTimeline;
 }
 
 /** Characters left and parts: one part up to 160, then 153 per part (`text/counter`). */
@@ -130,6 +133,7 @@ class EditorWidget implements Widget {
       ...(spec.text === undefined ? {} : { text: spec.text }),
       ...(spec.cursor === undefined ? {} : { cursor: spec.cursor }),
       ...(spec.mode === undefined ? {} : { mode: spec.mode }),
+      ...(spec.blink === undefined ? {} : { blink: spec.blink }),
     });
   }
 

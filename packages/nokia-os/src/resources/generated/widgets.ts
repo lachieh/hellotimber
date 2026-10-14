@@ -4965,6 +4965,63 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
+    "6-2-3": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 479
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 487
+        },
+        {
+          "frame": 1,
+          "durationMs": 481
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
+    },
     "6-2-4-1": {
       "frames": [
         {
@@ -8556,6 +8613,7 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "6-1-3-2": "6-1-3-2",
     "6-1-4-3": "6-1-4-3",
     "6-2-1-2": "6-2-1-2",
+    "6-2-3": "6-2-3",
     "6-2-4-1": "6-2-4-1",
     "6-2-4-2": "6-2-4-2",
     "6-2-6-1": "6-2-6-1",

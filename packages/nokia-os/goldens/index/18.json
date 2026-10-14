@@ -66,7 +66,7 @@
   {
     "id": "sms/centre-1",
     "file": "sms/centre-1.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -74,7 +74,7 @@
   {
     "id": "sms/centre-1-ok",
     "file": "sms/centre-1-ok.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -82,7 +82,7 @@
   {
     "id": "sms/centre-1-ok-empty",
     "file": "sms/centre-1-ok-empty.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -90,7 +90,7 @@
   {
     "id": "sms/centre-2",
     "file": "sms/centre-2.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -98,7 +98,7 @@
   {
     "id": "sms/centre-2-ok",
     "file": "sms/centre-2-ok.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -786,7 +786,7 @@
   {
     "id": "sms/voice-mailbox",
     "file": "sms/voice-mailbox.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -794,7 +794,7 @@
   {
     "id": "sms/voice-mailbox-ok",
     "file": "sms/voice-mailbox-ok.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1474,7 +1474,7 @@
   {
     "id": "welcome/37th-key",
     "file": "welcome/37th-key.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 7
@@ -1482,7 +1482,7 @@
   {
     "id": "welcome/c-on-empty",
     "file": "welcome/c-on-empty.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1490,7 +1490,7 @@
   {
     "id": "welcome/editor",
     "file": "welcome/editor.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -1498,7 +1498,7 @@
   {
     "id": "welcome/erase-empty",
     "file": "welcome/erase-empty.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1506,7 +1506,7 @@
   {
     "id": "welcome/face",
     "file": "welcome/face.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 9,
     "frames": 9
@@ -1514,7 +1514,7 @@
   {
     "id": "welcome/hold-c",
     "file": "welcome/hold-c.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 11
@@ -1522,7 +1522,7 @@
   {
     "id": "welcome/options",
     "file": "welcome/options.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1530,7 +1530,7 @@
   {
     "id": "welcome/plan15",
     "file": "welcome/plan15.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -1538,7 +1538,7 @@
   {
     "id": "welcome/plan15-erase",
     "file": "welcome/plan15-erase.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1546,7 +1546,7 @@
   {
     "id": "welcome/plan15-save-long",
     "file": "welcome/plan15-save-long.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1554,7 +1554,7 @@
   {
     "id": "welcome/save-empty",
     "file": "welcome/save-empty.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1562,7 +1562,7 @@
   {
     "id": "welcome/save-hi",
     "file": "welcome/save-hi.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
