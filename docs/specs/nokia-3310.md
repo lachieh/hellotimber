@@ -590,10 +590,11 @@ codes a game writes (the pages keep their virgin values; Club Nokia, later), the
 latency, the Warning tones redraw delay, the redraws the emulator drops at level 175, and C
 held through a suspend going on to standby.
 
-### Tones and sound (plan 16, in progress)
+### Tones and sound (plan 16)
 
 Source: plan 16 Task 0 (`$REF/captures/6.39/plan16/`, 631 recordings; the planning probes
-S1-S10 in `docs/plans/16-tones-and-sound.md`). The emulator logs register changes of three
+S1-S10 in `docs/plans/16-tones-and-sound.md`), imported as 331 sound goldens (299 asserted, each
+driven by a scenario; 6 known gaps). The emulator logs register changes of three
 outputs every 1 ms: the **buzzer** (13 MHz / a 16-bit divider, enable bit, volume register MAD2
 PUP 0x1E), the DSP **tone generator** (earpiece path; oscillator register / 4 Hz, a second
 oscillator for DTMF, level word at 0x100A8) and the **vibrator**. Sound goldens assert those
@@ -643,6 +644,22 @@ code request on` the buzzer at 1000 Hz (≈285 ms). Other notes are silent. The 
 | edge jitter between passes (median 11 ms, ≤ 48 ms), second pass ≈1 % slower    | emulator timer and DSP power state     | later passes compared with a tolerance               |
 | silent previews and warning tones in the virgin state                          | unset tone settings                    | the virgin initial state, asserted by virgin goldens |
 | timer unit ≈7.745 ms                                                           | emulator timebase                      | durations as captured; UNVERIFIED on hardware        |
+| game cues 47-54 ms after the session's (the New game redraw latency)           | firmware key scan and draw latency     | cues aligned on the first; intervals compared        |
+
+**UNVERIFIED** (not captured; nokia-os makes a documented choice): loudness, since the emulator
+renders neither volume register (the port carries the registers; a host maps them to gain); the
+earpiece's timbre (the emulator renders the tone generator as a sine); Standard at Ringing volume
+Levels 1-3 (1499.9 Hz was captured at Levels 4-5 only: the nearest captured frequency's
+register); the message `Beep once` word at Levels 2-3 (stepped between Level 1's 0x9107 and Level
+4's 0x9104) and with Ringing volume unset (Level 1's); the message Ascending at levels other than
+4 (it plays as captured); an incoming call's ringing (`ring()`, plan 22) for the five tones whose
+preview ends inside its first pass (it repeats what was captured), and Ring once and Beep once as
+they ring; Navi and C on the game-over screens (silent like the other keys); the power key's
+power-off tone at the kernel's 800 ms long press (≈1046 ms in the capture). **Not reproduced:**
+the keypad beep of 77 ms when a key lands ≈70 ms before the DSP powers down (one capture), and the
+key-to-output latencies above. DTMF at standby (`sound/keypad/keys`, `hold`) is plan 22's: digits
+there beep 900 Hz until number entry exists, and the dialling tones need the event's second
+oscillator (a contract extension then).
 
 ---
 

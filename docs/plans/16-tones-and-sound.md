@@ -12,7 +12,7 @@ README, which this plan edits too: do not start Task 1 before plan 15 is `done`.
 23 supplementary captures"), plans 13, 14, 15 and 23 in full before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan16/`. The planning probes in
 `$REF/captures/scratch-plan16/` are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-10 done).
+**Status:** done.
 
 ## Goal
 
@@ -1112,13 +1112,24 @@ Observed, not changed: with the demo's 60 ms key holds, Menu 1 9's beep sounds 6
 
 **Files:** this plan, `docs/plans/README.md`, `docs/specs/nokia-3310.md`.
 
-- [ ] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
+- [x] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
       `mise exec -- vp run website#build`; `git diff --stat <commit before Task 1> -- website/` is
       empty.
-- [ ] Spec §10: replace "(plan 16, in progress)" with verified facts; list what stays
+- [x] Spec §10: replace "(plan 16, in progress)" with verified facts; list what stays
       UNVERIFIED (loudness, the earpiece timbre, anything Task 0 could not capture).
-- [ ] Plans README row 16 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete tones and sound (plan 16)`.
+- [x] Plans README row 16 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete tones and sound (plan 16)`.
+
+**Completion note (Task 11).** `vp check`, `vp run -r test` (nokia-os: 2967 passed, 15 expected
+failures, 67 todos in ≈15.4 s) and `vp run website#build` pass; `git diff --stat 65d9a52 -- website/`
+is empty, and phone-core is unchanged. Spec §10 "Tones and sound (plan 16)" states the verified
+facts and what stays UNVERIFIED: loudness and the earpiece's timbre; Standard at Ringing volume
+Levels 1-3; the message `Beep once` word at Levels 2-3 and unset; the message Ascending at levels
+other than 4; `ring()` for the five tones with no captured second pass, and Ring once and Beep once
+as they ring; Navi and C on the game-over screens; the power-off tone's timing. Plan 22 owns the
+dialling tones: digits at standby beep 900 Hz until number entry exists, and DTMF needs the
+`StockSoundEvent` extension for the tone generator's second oscillator (`sound/keypad/keys` and
+`hold` stay pending:22).
 
 ## Follow-up plan adjustments
 

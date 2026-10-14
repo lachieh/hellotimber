@@ -25,7 +25,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 13  | [Nokia OS foundation](./13-nokia-os-foundation.md)          | `@hellotimber/nokia-os`: stock v6.39 firmware, painter and LCD goldens                     | 01-12                         | done        |
 | 14  | [menu tree depth](./14-menu-depth-and-stock-widgets.md)     | whole v6.39 menu tree incl. game menus; stock widgets; rows window; settings store         | 13                            | done        |
 | 15  | [storage and settings](./15-storage-and-settings.md)        | host storage port, EEPROM records, security code, boot gates, factory restore              | 13, 14                        | done        |
-| 16  | [Tones and sound](./16-tones-and-sound.md)                  | sound port, sequencer; keypad, warning, game tones; tone previews (Composer: 27)           | 13, 14, 15, 23                | in progress |
+| 16  | [Tones and sound](./16-tones-and-sound.md)                  | sound port, sequencer; keypad, warning, game tones; tone previews (Composer: 27)           | 13, 14, 15, 23                | done        |
 | 17  | Profiles                                                    | profile activation and personalisation; power-key profile list                             | 15, 16                        | not started |
 | 18  | [Messages I: text entry and SMS](./18-messages-and-chat.md) | multi-tap entry, editor/prompts, Welcome note, Write/Send/Save, Inbox/Outbox, network port | 14, 15                        | not started |
 | 18b | [Messages II: T9](./18b-t9-predictive-text.md)              | T9 predictive text, open-list English dictionary, Matches, Insert word, user words         | 18                            | not started |
