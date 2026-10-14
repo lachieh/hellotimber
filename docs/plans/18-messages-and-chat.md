@@ -504,20 +504,20 @@ are generated from Task 0's `manifest.json` (the character typed per shot), chec
 supplementary captures" section in `captures/README.md`, `firmware/work/v639-plan18-*.fls`, and the
 harness helpers below.
 
-- [ ] Read `$REF/captures/README.md` (harness commands, `fork`/`exit` through
+- [x] Read `$REF/captures/README.md` (harness commands, `fork`/`exit` through
       `tools/menutree/emu.py`), `captures/scratch-plan18/NOTES.md` and its `tools/*.py`. Do not modify
       existing captures or scripts.
-- [ ] Harness: add `sms <from> <text...>` and `callin <number>` to `tools/harness/dct3cap.c`
+- [x] Harness: add `sms <from> <text...>` and `callin <number>` to `tools/harness/dct3cap.c`
       exactly as `captures/scratch-plan18/harness/dct3cap.c` does (calls into the emulator's own
       `dct3_web_incoming_sms`/`dct3_web_incoming_call`; the emulator's sources stay untouched).
       Plan 16's Task 0 may be editing the harness: if `build.sh` or `dct3cap.c` changed since this
       plan was written, merge by hand and rebuild (`build.sh` swaps the binary atomically). Record
       the commands in the README's command table.
-- [ ] Write `gen_v639_plan18.py` (`run -j 3`, `--only`, `ocr`, `check`), driving `emu.py` like plan
+- [x] Write `gen_v639_plan18.py` (`run -j 3`, `--only`, `ocr`, `check`), driving `emu.py` like plan
       23's generator. Every section: `include v639-setup.inc`, `key c`, `run 2s`, then
       `fork`…`exit`. Sections that type text first set Options › Dictionary › Dictionary off and
       record that flow once (`text/dictionary-off`). Clock 10:10 on 13.10.2026 throughout.
-- [ ] **T text entry** (`plan18/text/`): every key 0-9 pressed until its cycle repeats twice (shots
+- [x] **T text entry** (`plan18/text/`): every key 0-9 pressed until its cycle repeats twice (shots
       per press) in `Abc`, `abc` and `ABC`; the commit (`record` from before a press for 3 s) and
       same-key gaps of 1300-1600 ms in 50 ms steps (shots); `#` from every state, with and without
       text, at a sentence start (after `.` and space) and mid-word; held `#` (record: the threshold)
@@ -527,30 +527,30 @@ harness helpers below.
       typing in the middle; C, held C (record), C on empty; a text of 459+ characters typed fast
       with alternating keys (shots at 155-165, 300-310, 455-460 and at the limit: what happens on
       the 460th?); a word longer than a line; spaces at a line end; the cursor blink (record 5 s).
-- [ ] **G glyph sheets** (`plan18/glyphs/<face>/NNN.png` + `manifest.json` `{ file, face, char }`):
+- [x] **G glyph sheets** (`plan18/glyphs/<face>/NNN.png` + `manifest.json` `{ file, face, char }`):
       every character of the typeable set (T's cycles ∪ the symbol table) once in the editor
       (`small`; type it, shot, C) and once in a large text-input prompt (`large`; Phone book › Add
       name, type, shot, C; mark the plan 19 node as only a vehicle), plus the header mode texts and
       the counter with `/` (`digits`). Check: every manifest char is read back by `ocr.py`.
-- [ ] **W welcome note** (`plan18/welcome/`): reuse plan 15's `welcome/` if it already holds the
+- [x] **W welcome note** (`plan18/welcome/`): reuse plan 15's `welcome/` if it already holds the
       editor, Save and Erase records; add: the editor's Options list, C/held C, 36 characters and a
       37th key, Save on an empty note (what happens?), Erase on an empty note.
-- [ ] **N number entry** (`plan18/text/number*`): Write messages › Options › Send's prompt: each
+- [x] **N number entry** (`plan18/text/number*`): Write messages › Options › Send's prompt: each
       digit, `*` pressed repeatedly (the dial-character cycle), `#`, held keys, ▲/▼, C, held C, C on
       empty, 30 digits and a 31st, Search on empty (record: the virgin phone book's answer), OK.
       Also Insert number (its prompt and what OK inserts) and Send by set › Set 1 › Alphanumeric's
       `Routing address:` text input (typing, OK).
-- [ ] **S send** (`plan18/sms/`): Send to a 10-digit number (record from OK to the settled editor,
+- [x] **S send** (`plan18/sms/`): Send to a 10-digit number (record from OK to the settled editor,
       `ROM6_LOG=1` and the log kept), three more sends for the link-time median; Send by set (Set 1
       Numeric, Alphanumeric, Set 2); Send to many (virgin note); Template and Insert smiley (virgin,
       record 4 s); Save (record) and Save on an empty text; Erase; Exit. Failure (D14): send with the
       message centre number cleared (2-7-1-1, C held, OK), with Set 2 (no centre), and within 1 s of
       a reboot's standby; record each and report which, if any, shows a failure note.
-- [ ] **O outbox** (`plan18/sms/outbox*`): three saved messages (one with a number), the list, each
+- [x] **O outbox** (`plan18/sms/outbox*`): three saved messages (one with a number), the list, each
       message read (▼ through it), Options (each entry: Erase with its query and note, Edit, Use
       number with and without a number in the text, Forward), the last erase (`No more messages in
 outbox`).
-- [ ] **I incoming** (`plan18/sms/arrive*`, `inbox*`): `sms` at standby (record 6 s from the command,
+- [x] **I incoming** (`plan18/sms/arrive*`, `inbox*`): `sms` at standby (record 6 s from the command,
       five times, for the link-time median); C, Menu, ▼ and a digit on the notice (records); the
       indicator after C (shot); a second and a third arrival before reading (the notice text); an
       arrival in the menus, in the editor, during a note, in a Snake II game and during `Sending
@@ -559,21 +559,190 @@ message` (records: what interrupts?); a 160-character SMS, one with characters o
       list, the view (▼/▲ through every line), Details, every Option (Erase query and notes, Reply
       → editor → Send, Edit, Use number, Forward), read/unread icons; the same list through Menu 2 2;
       Time format 12-hour then a message's `Sent:` page.
-- [ ] **M numbers** (`plan18/sms/centre*`, `voice-mailbox*`): 2-7-1-1 and 2-7-2-1 (edit, clear, OK,
+- [x] **M numbers** (`plan18/sms/centre*`, `voice-mailbox*`): 2-7-1-1 and 2-7-2-1 (edit, clear, OK,
       `Centre number saved`, the page after), 2-9 (edit, OK, `Saved`).
-- [ ] **F full / persistence / SIM**: fill the SIM to 15 messages (arrivals and saves), then one more
+- [x] **F full / persistence / SIM**: fill the SIM to 15 messages (arrivals and saves), then one more
       arrival and one more Save (records); `saveflash`, `reboot` from it (the inbox survives?);
       reboot with `SWSIM_FS=captures/5.79/plan15/sim2-gsm.json` (plan 15's second SIM: are the
       messages gone? D7); Restore factory settings with the re-provisioned image
       (`firmware/work/v639-plan15-seccode.fls`): messages kept?
-- [ ] OCR every new image into `plan18/text.json` (plan 14's format and command).
-- [ ] `check`: every recording starts on its parent; every manifest char is read back; the arrival
+- [x] OCR every new image into `plan18/text.json` (plan 14's format and command).
+- [x] `check`: every recording starts on its parent; every manifest char is read back; the arrival
       recordings each contain the notice.
-- [ ] Append "Plan 18 supplementary captures" to `$REF/captures/README.md`.
-- [ ] No commit. Record the outcome under this task: the key cycles (complete), commit and hold
+- [x] Append "Plan 18 supplementary captures" to `$REF/captures/README.md`.
+- [x] No commit. Record the outcome under this task: the key cycles (complete), commit and hold
       thresholds, the case cycle, ▲/▼, held C, the counter at every boundary and at the limit, the
       symbol grid, the number-entry `*` cycle and Search, link-time medians and spread, the failure
       result, arrival behaviour everywhere, Options flows, capacity, persistence and the SIM result.
+
+**Task 0 outcome (2026-10-14; resumed and verified):** retained the existing canonical runs;
+completed the missing `welcome-face` probe, extended held-digit/case probes and receive-limit
+attempts, and corrected the centre-cleared probe to disable Dictionary before typing. Added
+full-capacity reboot verification and a level-1 Snake arrival probe (13 gameplay frames at
+about 635 ms/tick; the ROM6 log confirms the incoming SMS ACK while play continues). No runtime
+code or commits. `captures/scripts/gen_v639_plan18.py` has 44 sections and 44 replayable
+`v639-plan18-*.cap` command logs. `captures/6.39/plan18/` contains **4,754 LCD images** plus
+4,754 previews, **194 recordings** with `timings.csv` and `keys.csv`, `text.json` covering every
+LCD image, `recordings.json`, `summary.json`, and protocol logs in `logs/`. The small and large
+glyph sheets each have 181 shots (149 distinct characters); digits has five header/counter shots.
+`firmware/work/v639-plan18-{multitap,persist,full}.fls` are the saved images. Plan 15's existing
+Welcome Save/Erase and boot captures remain reference inputs, untouched.
+
+The main harness already contained the scratch `sms`/`callin` port and plan 16's volume columns
+at resumption. Its optional `CAP_EPOCH` pins SMS timestamps to 13-Oct-2026 plus emulated time;
+unset, the wall clock is unchanged. The existing plan-13 clock-script rerun in
+`/tmp/p18-p13check` matches **all 44 PNG files byte for byte** against the original corpus.
+No emulator sources changed. The generator's PNG reader now reuses plan 14's decoder (Pillow was
+absent). Final `check`: **194 recordings, 0 problems, 2 notes** (Template and Insert smiley do
+nothing). Additional validation checked OCR coverage, both glyph manifests against the entire
+149-character set, and the pixels of every key's two repeated cycles. Nothing was copied from
+`REF/extracted`; neither `REF/t9` nor `REF/captures/plan18b` was used.
+
+**Complete multi-tap cycles**, in press order (`␠` means space). `sentence` at an empty editor
+matches `upper`; the three mode directories avoid the case-insensitive filesystem collision.
+Pixel-identical glyphs are resolved by the two faces and the captured case, with raw OCR retained
+in the manifests.
+
+| Key | Upper / sentence-start  | Lower                   |
+| --- | ----------------------- | ----------------------- |
+| 1   | `. , ' ? ! - & 1 @ \ /` | `. , ' ? ! - & 1`       |
+| 2   | `A B C 2 Ä À Á Â Ã Æ Ç` | `a b c 2 ä à á â ã æ ç` |
+| 3   | `D E F 3 È É Ë Ê`       | `d e f 3 è é ë ê`       |
+| 4   | `G H I 4 Î Ï Ì Í İ Ğ`   | `g h i 4 î ï ì í ı ğ`   |
+| 5   | `J K L 5 £`             | `j k l 5 £`             |
+| 6   | `M N O 6 Ö Ô Ò Ó Ø Ñ`   | `m n o 6 ö ô ò ó ø ñ`   |
+| 7   | `P Q R S 7 $`           | `p q r s 7 $ ß`         |
+| 8   | `T U V 8 Ü Ù Û Ú`       | `t u v 8 ü ù û ú`       |
+| 9   | `W X Y Z 9`             | `w x y z 9`             |
+| 0   | `␠ 0`                   | `␠ 0`                   |
+
+**Entry and layout:** `text/commit` has a pending A at 47.0 ms, commit at 1499.2 ms:
+**1452.2 ms from the first redraw**. Blink intervals are 479.1–481.1 ms (nominal 480).
+The same-key gap shots bracket commit (short gaps cycle, long gaps insert); the raw key gap also
+contains scan/redraw latency. Held C deletes once (51.0 ms) then clears (529.1 ms), **478.1 ms
+after that first deletion redraw**; C on empty returns to the parent. Held `#` enters `123` at
+1010.1 ms from key-down; tap `#` in `123` stays numeric, and another held `#` returns to letters
+(`ABC` retained; lower returns to sentence-start `Abc` in the empty probe). A held digit first
+shows its letter, commits, then redraws as the digit at the next blink (about 1.93 s after its
+first letter redraw). The dedicated 25 ms hold sweep brackets the input hold threshold:
+1450 ms leaves A, 1475 ms gives 2; all digits and all four modes have recordings. Numeric mode
+inserts the digit once, without held-key repetition. Tapped/held `*` opens the symbol table.
+
+`#` cycles `Abc → ABC → abc → Abc` while empty or after `. `, `? `, `! `; mid-word and after
+an ordinary space it alternates `abc ↔ ABC`. The earlier interleaved type/delete probe alone
+cannot establish this: `text/case-cycle/` records uninterrupted hash presses. **▲ moves right,
+▼ left**, wrapping at either end; mid-text insertion/deletion and three-line movement are
+captured. SMS text uses small at x 1, tops 8/18/28; words wrap at spaces, long words break, and
+the visible window follows the cursor. Welcome uses large at tops 8/22 while two lines fit,
+then small at tops 8/17/26 (the probe switches at character 24; this is a width constraint,
+not a fixed character-count rule).
+
+The symbol grid has **31 cells**, rows of 11/11/9:
+
+```text
+. , ? ! : ; - + # * (
+) \ ' " _ @ & $ £ % /
+< > ¿ ¡ § = ¤ € ¥
+```
+
+▲ advances and ▼ retreats, wrapping; Use first/middle/last and C are recorded. Counter values
+at 155–165 are `304/1` … `299/1`, then `298/2` … `294/2`; at 300–310 they are `159/2` …
+`153/2`, then `152/3` … `149/3`; at 455–459 they are `4/3` … `0/3`. Further keys never increase
+the length beyond 459. While the last character is pending it can still change; the separate
+`holds-extended/full-committed-key` recording leaves the committed text unchanged. Welcome's
+limit is 36; a 37th key is ignored. Saving an empty Welcome note and Erasing an empty one both
+show `Welcome note erased`; Save Hi reopens the stored note.
+
+**Number entry:** `* → + → p → w → *`, committing between cycles after a pause; `+` does not
+consume the 30-digit counter. `#` inserts itself, ▲/▼ move right/left and wrap, C/held C delete/
+clear, and C on empty returns. The 30th digit reaches zero and further digits do not extend the
+value. Search on empty shows `No phone numbers` and returns to the prompt. Routing address is
+large text input; OK sends using it. Centre 1/2 saves show `Centre number saved`; voice mailbox
+shows `Saved` (the virgin value is prefilled, so the probe appends to it). Empty centre OK is
+Search, not a way to persist an empty centre.
+
+**SMS:** five sends give Sending durations **2646.4, 2790.4, 2662.4, 2574.3, 2754.4 ms**:
+median **2662.4 ms**, range **2574.3–2790.4**. Message sent lasts **1400.2–1420.2 ms**. ROM6 logs
+show CP/RP ACK, no loopback; the editor keeps the text and Outbox is empty after sends. The
+stall-phase sweep also settles every send. Send by set offers Numeric/Alphanumeric for both
+sets; Set 2 asks for a message centre before sending. Send to many shows `No phone numbers`;
+Template and Insert smiley do not respond. Save (including empty) shows `Saving message`,
+`Message saved`, then the editor; Erase clears immediately; Exit returns to standby.
+
+Five standby arrival latencies are **2425.4, 2281.3, 2141.3, 2464.4, 2324.3 ms**: median
+**2324.3 ms**, range **2141.3–2464.4**. Notices count 1/2/3, Read opens the Inbox with indicator
+`1`; via Menu 2 2 it is `2-2-1`. C dismisses the notice but keeps the envelope; a menu round trip
+after dismissal does not restore the notice. ▲ opens last dialled numbers, ▼ Phone book, digits/
+`#` number entry; Navi is Read. Arrivals do not interrupt a menu, editor, game or Sending message;
+returning to standby shows the envelope without a deferred received notice. During Invalid
+shortcut the note finishes before the received notice appears. The emulator substitutes sender
+`12345` for the alphanumeric `Nokia` input. The requested 160-character attempt is truncated to
+120 by its GSM packer; raw UTF-8 é/ü/~ input is not faithfully encoded (ASCII septets are used).
+Both attempts and their views are retained in `sms/receive-limits/`.
+
+Inbox Options: **Erase, Reply, Chat, Edit, Use number, Forward, Details**. Reply opens an **empty**
+editor, with sender prefilled at Send; Edit/Forward keep the original text. Details pages are
+Sender, Message centre, Time. Message reading advances by whole text pages (up to four lines,
+9 px pitch), then Sender and Sent, and wraps; it does not scroll one line per key. Sent remains
+24-hour (`14:11:17`) after the phone is set to 12-hour. Outbox has three saved messages, rows
+labelled `Message`, Options **Erase, Edit, Use number, Forward**; text with/without a number is
+captured. Erase asks `Erase message?`, shows `Erasing message`, then `Erased` or `No more messages
+in inbox/outbox` on the last entry.
+
+Ten incoming plus five saved messages fill the **15 shared slots**. The separate
+`sms/full-persist/` probe confirms all ten Inbox and five Outbox list rows survive a cold reboot
+within the process, with zero pixel differences before/after. Its first fixed-wait attempt
+delivered only six of ten queued SMS; the corrected probe waits for each received notice before
+continuing, rather than assuming a 5 s injection wait proves delivery. An extra arrival shows
+`No space for new messages` with OK; another Save shows `Message memory full`. Inbox and Outbox
+survive `saveflash`/cold reboot **within one process** and Restore with the 12345 image. They are
+both empty after a **new process with the same SIM fixture**, as well as with SIM 2: saveflash
+saves phone flash, not the emulator's in-memory SIM overlay. Thus the second-SIM probe is
+inconclusive for message ownership/persisted SIM storage; it does not prove phone-wide storage.
+
+Deviation: **Tasks 2, 7, 10, 12 / plan 18b:** multi-tap Options has nine entries, excluding Insert
+word, Insert number and Insert symbol. Insert number/symbol were captured in the virgin T9 UI
+(`text/insert-number-t9`, `text/insert-symbol-t9`), solely as 18b evidence; they must not become
+multi-tap options. This probe does not read any 18b dirty-room data.
+
+Deviation: **Tasks 3, 5, 6, 8:** Welcome requires adaptive large/small text layout, not the SMS
+small-only painter. Case behaviour depends on sentence position; lower key 1 and key 7 have
+different cycles from upper. Empty Welcome Save erases. Held digit eligibility and its visible
+replacement happen at different times; preserve both rather than substituting the kernel's
+800 ms long press.
+
+Deviation: **Tasks 3, 6 / D6:** stock `ocr.py` has no font matching the bold six-row SMS mode/
+counter header. The five digits-manifest entries label whole header specimens, not independently
+OCR-verified characters. Task 3 must harvest/crop those header sprites from captures (its existing
+"mode texts if they are not glyph runs" path), including `/`, rather than claim ordinary OCR
+coverage. Small/large characters are verified, allowing pixel-identical glyph classes. A blinking
+cursor also obscures adjacent glyphs in general `text.json`; do not treat an OCR-truncated run as
+the editor's complete stored text (Tasks 3, 12).
+
+Deviation: **Tasks 1, 3, 9–12 / D10:** use the measured medians and explicit spread above, replacing
+the planning single samples 2714/2472 ms. Across recordings link-time jitter exceeds ±2 ms;
+within each captured timeline preserve its actual durations.
+
+Deviation: **Tasks 1, 9–12 / D14:** no failure note was reached. Empty centre OK invokes Search
+and cannot save an empty centre; Set 2 asks for a centre instead of sending. The boot attempt's
+menu/input sequence cannot send within 1 s of standby, and the standard setup already waits for
+registration. These are attempted/unavailable conditions, not three proven failing sends. Keep
+the composed failure note explicitly UNVERIFIED. Do not call a successful send proof that an
+empty centre works.
+
+Deviation: **Tasks 1, 9, 11, 12 / D7, D9:** the ordinary helper's 120-septet cap and ASCII packing
+prevent a faithful 160-character/Unicode receive golden. The long 115-character view and the
+160-byte truncation attempt are evidence, not verification of complete 160-character delivery.
+Alphanumeric sender support is likewise unverified. Same-SIM new-process loss makes the SIM
+ownership comparison inconclusive; preserve the provisional per-SIM record decision only with
+this qualification. Restore retention and the 15-slot mixed limit are verified.
+
+Deviation: **Task 2:** exclude `sms/elsewhere/snake` (one frame at the invalid virgin level 175)
+from live-play acceptance. `sms/elsewhere/snake-level-1` replaces it as proof of arrivals during
+a moving game; the old capture is retained with an artefact note, not silently overwritten.
+
+Deviation: **Tasks 1, 6, 11, 12 / D8, D13:** Reply starts empty, and the reader turns pages rather
+than scrolling one line. Apply these before implementing the message view and its scenarios.
 
 ### Task 1 - Contracts and documentation
 
