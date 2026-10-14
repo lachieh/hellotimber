@@ -500,20 +500,26 @@ recordings (`calculator/keys-rate-*`, `calculator/keys-options-*`).
 
 **Files:** `src/calculator/decimal.ts` (new), `tests/calculator-decimal.test.ts` (new).
 
-- [ ] TDD parse/format round trips for every display string in the goldens (`0`, `0.`, `123.`,
+- [x] TDD parse/format round trips for every display string in the goldens (`0`, `0.`, `123.`,
       `0.0012345`, `-21`); invalid strings throw.
-- [ ] TDD `calculate` against the representable arithmetic cases in `calculator/results`
+- [x] TDD `calculate` against the representable arithmetic cases in `calculator/results`
       (expected strings transcribed from the goldens, independent of the code): exact sums and
       products, division as a rational, the nine-character magnitude rule (minus excluded), rounding (Task 0's representable
       half and negative cases), zero results,
       `out-of-range`, `divide-by-zero`; property tests that no `ok` magnitude exceeds 9 characters (strip one leading minus)
       and that `0.1 + 0.2` and other float traps are exact.
-- [ ] Literal over-limit cases are engine entry/replay tests (Tasks 4/8), never pure arithmetic
+- [x] Literal over-limit cases are engine entry/replay tests (Tasks 4/8), never pure arithmetic
       proof using the impossible operands. Assert `-123456789`, `-999999999`, `-0.3333333`,
       the captured `results/-99999999.5` result `-100000000` from `0 - 99999999`, then
       subtracting `0.5` (the filename is not a literal operand), and ten-integer-digit overflow.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the calculator's decimal arithmetic`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the calculator's decimal arithmetic`.
+
+**Task 3 completion.** `src/calculator/decimal.ts` parses display strings to sign, BigInt
+digits, scale and point, computes exactly (quotients as rationals) and shows the result with
+`showRational`: fraction digits = 9 − integer digits − 1, half away from zero on the magnitude,
+trailing zeros and point dropped, ten integer digits (also by carry) out of range. 64 tests: 59
+transcribed result/convert rows, float traps, formatting, and a 400-value property run.
 
 ### Task 4 - Engine and exchange-rate record (pure, TDD)
 
