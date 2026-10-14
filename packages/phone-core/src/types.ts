@@ -43,6 +43,7 @@ export interface StandbyIndicators {
 
 export type ScreenModel =
   | { kind: "off" }
+  // With PhoneConfig.bootTimeline, boot is always phase "hands" and frame is the timeline frame.
   | { kind: "boot"; phase: "hands" | "welcome"; frame: number } // hands animation carries the small NOKIA wordmark
   | {
       kind: "standby";
@@ -60,6 +61,8 @@ export type ScreenModel =
       menuNumber: number;
       total: number;
       iconId: string;
+      /** Visible frame of the slot graphic's timeline; present iff the graphic has a timeline. */
+      iconFrame?: number;
       menuIndicator: MenuIndicator;
     }
   | {
@@ -100,7 +103,9 @@ export interface PhoneConfig<Metadata = unknown> {
   menu: PhoneMenu<Metadata>;
   carrier?: string; // standby line, default 'LACHLAN'
   clock?: () => string | undefined; // host supplies time; phone shows it
-  bootMs?: number; // 0 to skip boot in tests
+  bootMs?: number; // 0 skips boot; otherwise defaults to bootTimeline?.durationMs ?? 3000
+  /** Finite boot animation; when set, boot lasts its durationMs. */
+  bootTimeline?: Timeline;
 }
 
 export interface PhoneSnapshot {
@@ -129,3 +134,4 @@ export interface Phone {
   on<K extends keyof PhoneEventMap>(ev: K, cb: PhoneEventMap[K]): () => void;
 }
 import type { PhoneMenu } from "./menu";
+import type { Timeline } from "./timeline";

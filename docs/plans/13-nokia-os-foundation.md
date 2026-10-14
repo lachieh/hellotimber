@@ -244,10 +244,17 @@ export class Timeline {
   frameAt(elapsedMs: number): number;
 }
 
+export type CarouselReveal = "enter" | "next" | "previous" | "return"; // Task 4 deviation
+
 export class MenuGraphic {
-  constructor(id: string, timeline?: Timeline);
+  constructor(
+    id: string,
+    timeline?: Timeline,
+    options?: { reveals?: Partial<Record<CarouselReveal, Timeline>> },
+  );
   readonly id: string;
   readonly timeline: Timeline | undefined;
+  timelineFor(reveal: CarouselReveal): Timeline | undefined;
 }
 
 export type MenuPresentation = "rows" | "pages";
@@ -692,19 +699,33 @@ Deviation: single `shot` stills name their image after the file stem (`01-standb
 `index.ts`, `README.md`; tests `timeline.test.ts` (new), `animated-graphics.test.ts` (new),
 `power.test.ts`.
 
-- [ ] TDD `Timeline`: validation, `frameAt` at step boundaries (a step starts exactly at its
+- [x] TDD `Timeline`: validation, `frameAt` at step boundaries (a step starts exactly at its
       cumulative start), hold-last, `loopFrom` cycles, `durationMs`, defensive copy and freeze.
-- [ ] TDD `MenuGraphic(id, timeline?)` and its immutability.
-- [ ] TDD machine: `iconFrame` is present only for timeline graphics. Each restart condition
+- [x] TDD `MenuGraphic(id, timeline?)` and its immutability.
+- [x] TDD machine: `iconFrame` is present only for timeline graphics. Each restart condition
       (per the Task 0 probes) resets it. Subscribers are notified exactly when the frame index
       changes, and never on ticks that leave it unchanged. A settled timeline stops producing
       snapshots.
-- [ ] TDD `bootTimeline`: the boot model's frame follows the timeline; standby follows its
+- [x] TDD `bootTimeline`: the boot model's frame follows the timeline; standby follows its
       duration; `bootMs: 0` still skips; conflicting `bootMs` throws; deep-link navigation during
       boot is still honoured.
-- [ ] Existing tests pass unchanged. Graphics without a timeline produce identical models.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`, `vp check --fix`.
-- [ ] Commit: `feat(phone-core): tick-driven timelines for menu graphics and boot`.
+- [x] Existing tests pass unchanged. Graphics without a timeline produce identical models.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`, `vp check --fix`.
+- [x] Commit: `feat(phone-core): tick-driven timelines for menu graphics and boot`.
+
+Deviation: `MenuGraphic` takes an optional `{ reveals }` map of per-reveal timelines
+(`CarouselReveal = "enter" | "next" | "previous" | "return"`) and exposes `timelineFor(reveal)`.
+The three Clock goldens cannot share one timeline. Frame starts relative to the reveal are
+▼ `11-clock.anim` c 1400, d 1619, then 1850/2083/2315/2547/2780/3012; ▲ `revisit.anim` c 1385,
+d 1617, then 1849/…/3011; C `return.anim` c 1386, d 1628, then 1858/…/3020. ▼ and ▲ differ only
+at c (one frame shown 15 ms late), and C runs about 9 ms late from d onwards, so no single
+timeline (and no entry-dependent first-step offset) fits all three within ±2 ms. Per D9 the
+jitter is reproduced as captured: Tasks 7/9 give the Clock graphic `previous` (from
+`menu/revisit.anim`) and `return` (from `menu/return.anim`) timelines; every other icon has only a
+default timeline. Path navigation that lands on the carousel counts as `enter`.
+Deviation: snapshots for timeline frames come from a generic "tick signature" compared after
+every run (boot frame with `bootTimeline`, visible carousel icon frame). The legacy boot (no
+`bootTimeline`) still repaints on every tick, so existing tests and the website are unchanged.
 
 ### Task 5 - phone-core: presentation, details, first-digit state, host-owned standby policy (TDD)
 

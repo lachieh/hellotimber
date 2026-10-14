@@ -43,4 +43,21 @@ unsubscribe();
 - Application entries hold reusable `PhoneApplication` definitions directly. Every launch
   creates a fresh `PhoneApplicationSession`; `context.open(application)` hands off to another
   definition on the same path and stack, while `context.exit()` returns to the menu.
+- Animation is described by `Timeline`s (`{ frame, durationMs }` steps, optional `loopFrom`).
+  They hold no pixels: the kernel resolves _which_ frame is visible and the host's renderer maps
+  it to pixels. A top-level `MenuGraphic(id, timeline, { reveals })` exposes
+  `screen.iconFrame` on the carousel. The timeline restarts every time the slot is revealed
+  (`enter`, `next` ▼, `previous` ▲, `return` from a deeper screen), and `reveals` can play a
+  different timeline per reveal. Subscribers get a snapshot only when the visible frame
+  changes. `bootTimeline` drives the boot screen the same way and sets the boot length.
+
+  ```ts
+  const icon = new Timeline([
+    { frame: 0, durationMs: 1100 },
+    { frame: 1, durationMs: 194 },
+    { frame: 0, durationMs: 1 },
+  ]);
+  new TopLevelEntry(entry, new MenuGraphic("games", icon));
+  ```
+
 - `Bitmap` convention: one byte per pixel, row-major, `pixels.length === width * height`.

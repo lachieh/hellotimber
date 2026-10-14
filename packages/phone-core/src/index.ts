@@ -33,7 +33,9 @@ export {
   SubmenuEntry,
   TopLevelEntry,
 } from "./menu";
-export type { MenuEntryVisitor, MenuListSource } from "./menu";
+export type { CarouselReveal, MenuEntryVisitor, MenuGraphicOptions, MenuListSource } from "./menu";
+export { Timeline } from "./timeline";
+export type { TimelineStep } from "./timeline";
 export {
   childrenOf,
   isValidPath,

@@ -1,4 +1,5 @@
 import { PhoneApplication } from "./application";
+import { Timeline } from "./timeline";
 import type { MenuListItem } from "./types";
 
 const KEBAB_CASE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -31,13 +32,52 @@ export class MenuOrder {
   }
 }
 
+/**
+ * How a carousel slot became visible: `enter` (menu opened from standby or by path navigation),
+ * `next` (▼), `previous` (▲), `return` (back from a deeper screen).
+ */
+export type CarouselReveal = "enter" | "next" | "previous" | "return";
+
+const CAROUSEL_REVEALS: readonly CarouselReveal[] = ["enter", "next", "previous", "return"];
+
+export interface MenuGraphicOptions {
+  /** Timelines that replace the default one for particular reveals (requires a default). */
+  reveals?: Partial<Record<CarouselReveal, Timeline>>;
+}
+
 export class MenuGraphic {
   readonly id: string;
+  /** Default timeline, restarted whenever the slot is revealed; undefined = static graphic. */
+  readonly timeline: Timeline | undefined;
+  readonly #reveals: Partial<Record<CarouselReveal, Timeline>>;
 
-  constructor(id: string) {
+  constructor(id: string, timeline?: Timeline, options: MenuGraphicOptions = {}) {
     if (id.trim() === "") throw new Error("Menu graphic id must be a non-empty identifier.");
+    if (timeline !== undefined && !(timeline instanceof Timeline)) {
+      throw new Error(`Menu graphic "${id}" timeline must be a Timeline.`);
+    }
+    const reveals: Partial<Record<CarouselReveal, Timeline>> = {};
+    for (const [reveal, revealTimeline] of Object.entries(options.reveals ?? {})) {
+      if (!CAROUSEL_REVEALS.includes(reveal as CarouselReveal)) {
+        throw new Error(`Menu graphic "${id}" has an unknown reveal "${reveal}".`);
+      }
+      if (!(revealTimeline instanceof Timeline)) {
+        throw new Error(`Menu graphic "${id}" reveal "${reveal}" must be a Timeline.`);
+      }
+      reveals[reveal as CarouselReveal] = revealTimeline;
+    }
+    if (timeline === undefined && Object.keys(reveals).length > 0) {
+      throw new Error(`Menu graphic "${id}" needs a default timeline to override per reveal.`);
+    }
     this.id = id;
+    this.timeline = timeline;
+    this.#reveals = Object.freeze(reveals);
     Object.freeze(this);
+  }
+
+  /** The timeline played when the slot is revealed by `reveal`; undefined for a static graphic. */
+  timelineFor(reveal: CarouselReveal): Timeline | undefined {
+    return this.#reveals[reveal] ?? this.timeline;
   }
 }
 

@@ -7,6 +7,7 @@ import type {
 import type {
   ActionEntry,
   ApplicationEntry,
+  CarouselReveal,
   ListEntry,
   MenuEntry,
   MenuEntryVisitor,
@@ -14,6 +15,7 @@ import type {
   SubmenuEntry,
 } from "./menu";
 import { childrenOf, normalizePath, parsePath, resolveIds } from "./paths";
+import { Timeline } from "./timeline";
 import type {
   KeyEvent,
   MenuIndicator,
@@ -33,9 +35,20 @@ export const DEFAULT_BOOT_MS = 3000;
 export const READER_VISIBLE_LINES = 3;
 export const READER_LINE_CHARS = 14;
 
+/**
+ * The carousel slot on screen. Its graphic's timeline (chosen by `reveal`) runs from `revealedAt`;
+ * every reveal restarts it.
+ */
+interface CarouselFrame {
+  kind: "carousel";
+  index: number;
+  reveal: CarouselReveal;
+  revealedAt: number;
+}
+
 /** One level of the navigation stack. stack[0] is always the menu carousel. */
 type NavFrame<Metadata> =
-  | { kind: "carousel"; index: number }
+  | CarouselFrame
   | { kind: "submenu"; entry: SubmenuEntry<Metadata>; selected: number }
   | {
       kind: "list";
@@ -83,6 +96,7 @@ interface Machine<Metadata> {
   config: PhoneConfig<Metadata>;
   carrier: string;
   bootMs: number;
+  bootTimeline: Timeline | undefined;
   /** Last time seen via tick(nowMs). The machine's ONLY clock. */
   now: number;
   mode: Mode<Metadata>;
@@ -98,6 +112,8 @@ interface Machine<Metadata> {
   notifying: boolean;
   deferredRuns: (() => void)[];
   dirty: boolean;
+  /** tickSignature() at the last snapshot; a tick that changes it emits a new snapshot. */
+  shownSignature: string;
   subscribers: Set<(snap: PhoneSnapshot) => void>;
   listeners: { [K in keyof PhoneEventMap]: Set<PhoneEventMap[K]> };
 }
@@ -149,8 +165,11 @@ function runOnce<Metadata>(m: Machine<Metadata>, fn: () => void): void {
     m.dirty = true;
     emit(m, "pathchange", after);
   }
+  const signature = tickSignature(m);
+  if (signature !== m.shownSignature) m.dirty = true;
   if (!m.dirty) return;
   m.dirty = false;
+  m.shownSignature = signature;
   const snap = snapshot(m);
   const wasNotifying = m.notifying;
   m.notifying = true;
@@ -165,6 +184,62 @@ function runOnce<Metadata>(m: Machine<Metadata>, fn: () => void): void {
   } finally {
     m.notifying = wasNotifying;
   }
+}
+
+/**
+ * Time-driven screen state that has no other change trigger (timeline frames). Comparing it after
+ * every run emits a snapshot exactly when the visible frame changes, and never on idle ticks.
+ */
+function tickSignature<Metadata>(m: Machine<Metadata>): string {
+  if (m.mode.kind === "boot" && m.bootTimeline !== undefined) {
+    return `boot:${m.bootTimeline.frameAt(m.now - m.mode.startedAt)}`;
+  }
+  const carousel = visibleCarousel(m);
+  const iconFrame = carousel === undefined ? undefined : carouselIconFrame(m, carousel);
+  return iconFrame === undefined ? "" : `icon:${carousel!.index}:${iconFrame}`;
+}
+
+/** The carousel frame currently on screen (an action frame shows its parent), if any. */
+function visibleCarousel<Metadata>(m: Machine<Metadata>): CarouselFrame | undefined {
+  if (m.mode.kind !== "nav") return undefined;
+  const stack = m.mode.stack;
+  const top = stack[stack.length - 1];
+  const shown = top?.kind === "action" ? stack[stack.length - 2] : top;
+  return shown?.kind === "carousel" ? shown : undefined;
+}
+
+function carouselIconFrame<Metadata>(
+  m: Machine<Metadata>,
+  frame: CarouselFrame,
+): number | undefined {
+  const timeline = m.config.menu.entries[frame.index]!.graphic.timelineFor(frame.reveal);
+  return timeline?.frameAt(m.now - frame.revealedAt);
+}
+
+function carouselFrame<Metadata>(
+  m: Machine<Metadata>,
+  index: number,
+  reveal: CarouselReveal,
+): CarouselFrame {
+  return { kind: "carousel", index, reveal, revealedAt: m.now };
+}
+
+function revealCarousel<Metadata>(
+  m: Machine<Metadata>,
+  frame: CarouselFrame,
+  reveal: CarouselReveal,
+): void {
+  frame.reveal = reveal;
+  frame.revealedAt = m.now;
+  m.dirty = true;
+}
+
+/** Make `stack` the navigation state after a deeper screen closes. */
+function returnToStack<Metadata>(m: Machine<Metadata>, stack: NavFrame<Metadata>[]): void {
+  m.mode = { kind: "nav", stack };
+  const top = stack[stack.length - 1];
+  if (top?.kind === "carousel") revealCarousel(m, top, "return");
+  m.dirty = true;
 }
 
 function snapshot<Metadata>(m: Machine<Metadata>): PhoneSnapshot {
@@ -281,6 +356,9 @@ function renderScreen<Metadata>(m: Machine<Metadata>): ScreenModel {
       return { kind: "off" };
     case "boot": {
       const elapsed = m.now - m.mode.startedAt;
+      if (m.bootTimeline !== undefined) {
+        return { kind: "boot", phase: "hands", frame: m.bootTimeline.frameAt(elapsed) };
+      }
       const handsMs = Math.floor((m.bootMs * 2) / 3);
       if (elapsed < handsMs) {
         return { kind: "boot", phase: "hands", frame: Math.floor(elapsed / BOOT_FRAME_MS) };
@@ -342,12 +420,14 @@ function renderFrame<Metadata>(
   switch (frame.kind) {
     case "carousel": {
       const slot = m.config.menu.entries[frame.index]!;
+      const iconFrame = carouselIconFrame(m, frame);
       return {
         kind: "menu-carousel",
         label: slot.entry.label,
         menuNumber: slot.entry.order.value,
         total: m.config.menu.entries.length,
         iconId: slot.graphic.id,
+        ...(iconFrame === undefined ? {} : { iconFrame }),
         menuIndicator: menuIndicator(m),
       };
     }
@@ -454,8 +534,7 @@ function startApplication<Metadata>(
         cancelShortcut(m);
         swallowHeldReleases(m);
         deactivate(activation, "exit");
-        m.mode = { kind: "nav", stack: activation.stack };
-        m.dirty = true;
+        returnToStack(m, activation.stack);
       });
     },
     open(nextDefinition: PhoneApplication): void {
@@ -510,10 +589,12 @@ function goStandby<Metadata>(m: Machine<Metadata>): void {
 
 function tickBoot<Metadata>(m: Machine<Metadata>): void {
   if (m.mode.kind !== "boot") return;
-  m.dirty = true;
+  // The legacy frame clock repaints every tick; a timeline repaints through tickSignature.
+  if (m.bootTimeline === undefined) m.dirty = true;
   if (m.now - m.mode.startedAt < m.bootMs) return;
   const target = m.mode.targetPath;
   m.mode = { kind: "standby" };
+  m.dirty = true;
   if (target !== null) applyPath(m, target);
 }
 
@@ -541,8 +622,7 @@ function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
     const activation = m.mode.activation;
     if (activation.session === null) {
       if (held !== undefined && !held.longFired && event.key === "c") {
-        m.mode = { kind: "nav", stack: activation.stack };
-        m.dirty = true;
+        returnToStack(m, activation.stack);
       }
     } else {
       forwardToApp(m, event);
@@ -631,10 +711,10 @@ function navShortPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void {
       const total = m.config.menu.entries.length;
       if (key === "down") {
         frame.index = wrapIndex(frame.index + 1, total);
-        m.dirty = true;
+        revealCarousel(m, frame, "next");
       } else if (key === "up") {
         frame.index = wrapIndex(frame.index - 1, total);
-        m.dirty = true;
+        revealCarousel(m, frame, "previous");
       } else if (key === "navi") {
         enterEntry(m, m.config.menu.entries[frame.index]!.entry);
       }
@@ -696,7 +776,7 @@ function applyPath<Metadata>(m: Machine<Metadata>, path: string): void {
   }
   deactivateActive(m, "navigate");
   if (parsed.ids.length === 0) {
-    m.mode = { kind: "nav", stack: [{ kind: "carousel", index: 0 }] };
+    m.mode = { kind: "nav", stack: [carouselFrame(m, 0, "enter")] };
     m.shortcut = null;
     m.dirty = true;
     return;
@@ -719,7 +799,7 @@ function tryApplyPath<Metadata>(m: Machine<Metadata>, path: string): void {
 }
 
 function enterMenu<Metadata>(m: Machine<Metadata>): void {
-  m.mode = { kind: "nav", stack: [{ kind: "carousel", index: 0 }] };
+  m.mode = { kind: "nav", stack: [carouselFrame(m, 0, "enter")] };
   m.shortcut = {
     entries: [],
     nextLevel: m.config.menu.entries.map((slot) => slot.entry),
@@ -757,7 +837,7 @@ function buildNavStack<Metadata>(
   preserveShortcut = false,
 ): void {
   if (!preserveShortcut) m.shortcut = null;
-  const stack: NavFrame<Metadata>[] = [{ kind: "carousel", index: 0 }];
+  const stack: NavFrame<Metadata>[] = [carouselFrame(m, 0, "enter")];
   for (const entry of entries) {
     const parent = stack[stack.length - 1]!;
     const index = entry.order.value - 1;
@@ -839,7 +919,7 @@ function popFrame<Metadata>(m: Machine<Metadata>): void {
     return;
   }
   m.mode.stack.pop();
-  m.dirty = true;
+  returnToStack(m, m.mode.stack);
 }
 
 function wrapIndex(index: number, total: number): number {
@@ -860,11 +940,28 @@ function handleNavigate<Metadata>(m: Machine<Metadata>, path: string): void {
   applyPath(m, target);
 }
 
+function resolveBootMs<Metadata>(config: PhoneConfig<Metadata>): number {
+  const { bootMs, bootTimeline } = config;
+  if (bootTimeline === undefined) return bootMs ?? DEFAULT_BOOT_MS;
+  if (!(bootTimeline instanceof Timeline)) throw new Error("bootTimeline must be a Timeline.");
+  if (!Number.isFinite(bootTimeline.durationMs)) {
+    throw new Error("bootTimeline must be finite (no loopFrom).");
+  }
+  if (bootMs !== undefined && bootMs !== 0 && bootMs !== bootTimeline.durationMs) {
+    throw new Error(
+      `bootMs ${bootMs} conflicts with bootTimeline (${bootTimeline.durationMs} ms); use 0 or omit it.`,
+    );
+  }
+  return bootMs ?? bootTimeline.durationMs;
+}
+
 export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): Phone {
+  const bootMs = resolveBootMs(config);
   const m: Machine<Metadata> = {
     config,
     carrier: config.carrier ?? "LACHLAN",
-    bootMs: config.bootMs ?? DEFAULT_BOOT_MS,
+    bootMs,
+    bootTimeline: config.bootTimeline,
     now: 0,
     mode: { kind: "off" },
     notice: null,
@@ -874,6 +971,7 @@ export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): 
     notifying: false,
     deferredRuns: [],
     dirty: false,
+    shownSignature: "",
     subscribers: new Set(),
     listeners: { pathchange: new Set(), action: new Set(), sound: new Set() },
   };

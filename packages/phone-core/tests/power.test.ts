@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
-import { createPhone } from "../src/index";
+import { createPhone, Timeline } from "../src/index";
+import type { PhoneSnapshot } from "../src/index";
 import { testConfig } from "./fixtures";
 
 describe("power & boot", () => {
@@ -81,5 +82,73 @@ describe("power & boot", () => {
     off();
     phone.pressKey("power", 1000);
     expect(seen).toHaveLength(count);
+  });
+
+  describe("bootTimeline", () => {
+    // 0 (100 ms), 1 (50 ms), 0 again (30 ms), 2 held 200 ms: 380 ms in total.
+    const bootTimeline = new Timeline([
+      { frame: 0, durationMs: 100 },
+      { frame: 1, durationMs: 50 },
+      { frame: 0, durationMs: 30 },
+      { frame: 2, durationMs: 200 },
+    ]);
+
+    function powerOn(overrides: Parameters<typeof testConfig>[0] = {}) {
+      const phone = createPhone(testConfig({ bootMs: undefined, bootTimeline, ...overrides }));
+      const seen: Array<[number, PhoneSnapshot["screen"]]> = [];
+      let now = 0;
+      phone.tick(now);
+      phone.send({ type: "down", key: "power" });
+      phone.subscribe((snap) => seen.push([now, snap.screen]));
+      const advance = (ms: number): void => {
+        for (let i = 0; i < ms; i++) phone.tick(++now);
+      };
+      advance(800); // long press fires: boot starts at 800
+      phone.send({ type: "up", key: "power" });
+      return { phone, seen, advance };
+    }
+
+    it("shows the timeline's frames as the hands phase, then standby after its duration", () => {
+      const { phone, seen, advance } = powerOn();
+      advance(1000);
+      expect(phone.screen.kind).toBe("standby");
+      expect(seen.map(([time, screen]) => [time - 800, screen])).toEqual([
+        [0, { kind: "boot", phase: "hands", frame: 0 }],
+        [100, { kind: "boot", phase: "hands", frame: 1 }],
+        [150, { kind: "boot", phase: "hands", frame: 0 }],
+        [180, { kind: "boot", phase: "hands", frame: 2 }],
+        [380, expect.objectContaining({ kind: "standby" })],
+      ]);
+    });
+
+    it("still skips boot with bootMs 0, and accepts bootMs equal to the duration", () => {
+      const skipped = createPhone(testConfig({ bootMs: 0, bootTimeline }));
+      skipped.pressKey("power", 1000);
+      expect(skipped.screen.kind).toBe("standby");
+
+      const { phone, advance } = powerOn({ bootMs: 380 });
+      advance(379);
+      expect(phone.screen).toEqual({ kind: "boot", phase: "hands", frame: 2 });
+      advance(1);
+      expect(phone.screen.kind).toBe("standby");
+    });
+
+    it("rejects a conflicting bootMs and a looping timeline", () => {
+      expect(() => createPhone(testConfig({ bootMs: 3000, bootTimeline }))).toThrow(/bootMs/);
+      const looping = new Timeline(bootTimeline.steps, { loopFrom: 1 });
+      expect(() => createPhone(testConfig({ bootMs: undefined, bootTimeline: looping }))).toThrow(
+        /finite/,
+      );
+    });
+
+    it("honours a deep link requested during boot", () => {
+      const { phone, advance } = powerOn();
+      advance(10);
+      phone.navigate("menu/phone-book/search");
+      advance(369);
+      expect(phone.screen.kind).toBe("boot");
+      advance(1);
+      expect(phone.path).toBe("menu/phone-book/search");
+    });
   });
 });

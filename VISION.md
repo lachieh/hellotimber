@@ -245,10 +245,19 @@ export class Timeline {
   frameAt(elapsedMs: number): number;
 }
 
+/** How a carousel slot became visible: menu opened (standby or path), ▼, ▲, back from a deeper screen. */
+export type CarouselReveal = "enter" | "next" | "previous" | "return";
+
 export class MenuGraphic {
-  constructor(id: string, timeline?: Timeline); // non-empty identifier; renderer registry key
+  constructor(
+    id: string, // non-empty identifier; renderer registry key
+    timeline?: Timeline, // default timeline; undefined = static graphic
+    options?: { reveals?: Partial<Record<CarouselReveal, Timeline>> }, // per-reveal overrides; need a default
+  );
   readonly id: string;
   readonly timeline: Timeline | undefined;
+  /** The timeline played for `reveal`: its override, else `timeline`. */
+  timelineFor(reveal: CarouselReveal): Timeline | undefined;
 }
 
 export type MenuPresentation = "rows" | "pages";
@@ -415,9 +424,12 @@ invalid list item IDs, and application entries without a definition.
 integer and each `durationMs` a positive integer; `loopFrom` must be in range. Timelines hold
 no pixels: the kernel resolves _which_ frame is visible and the painter maps graphic id + frame
 to pixels. A carousel slot whose `MenuGraphic` has a timeline exposes `iconFrame`; the machine
-restarts that timeline when the menu is entered, when ▲/▼ changes the slot, when C returns to
-the carousel and when `navigate("menu")` lands on it, and it emits a snapshot only when the
-visible frame index changes (a settled timeline stops producing snapshots). `bootTimeline` must
+restarts that timeline on every reveal: `enter` (Menu from standby, `navigate("menu")` or any
+path navigation that lands on the carousel), `next` (▼), `previous` (▲) and `return` (C or an
+application exit back to the carousel). A graphic may supply a different timeline per reveal,
+because the recorded firmware timing of one icon differs by entry key (plan 13, Task 4). The
+machine emits a snapshot only when the visible frame index changes (a settled timeline stops
+producing snapshots). `bootTimeline` must
 be finite; combining it with a `bootMs` other than 0 or its duration throws.
 
 **Presentation and details (plan 13).** How a submenu level is drawn is a menu-model fact:
