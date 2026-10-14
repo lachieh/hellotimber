@@ -9,7 +9,7 @@
 reproduced in-repo as committed golden fixtures (`packages/nokia-os/goldens/`). Read
 `$REF/captures/README.md` before touching captures. Deeper menu levels come from
 `docs/specs/nokia-3310-menu-tree.md` (produced by a concurrent crawl). This plan does not need that spec.
-**Status:** in progress.
+**Status:** done.
 
 ## Goal
 
@@ -1023,23 +1023,24 @@ Messages page, Clock settings with the live time).
 
 **Files:** this plan, `docs/plans/README.md`, `docs/specs/nokia-3310.md`.
 
-- [ ] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`, `mise exec -- vp run website#build`.
-- [ ] Prove the website is untouched: `git diff --stat <commit before Task 1> -- website/src/routes website/src/panels website/public`
+- [x] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`, `mise exec -- vp run website#build`.
+- [x] Prove the website is untouched: `git diff --stat <commit before Task 1> -- website/src/routes website/src/panels website/public`
       is empty. Any website change must be limited to the Task 5 items.
-- [ ] Update the spec with verified facts (restart rule, settle/loop per icon, boot path) and
+- [x] Update the spec with verified facts (restart rule, settle/loop per icon, boot path) and
       remaining UNVERIFIED items.
-- [ ] Add completion notes here (fallbacks used, open questions answered), set the status to
+- [x] Add completion notes here (fallbacks used, open questions answered), set the status to
       `done`, and update the README row. Add the follow-up plans below to the README as
       `not started`.
-- [ ] Commit: `docs: complete nokia-os foundation (plan 13)`.
+- [x] Commit: `docs: complete nokia-os foundation (plan 13)`.
 
 ## Follow-up plans (14+)
 
 - **14 - Menu tree depth and stock widgets.** Implement every remaining navigable level from
   `docs/specs/nokia-3310-menu-tree.md` with goldens. Add the reusable stock widgets those levels
   need: option lists with selection marks, confirmation notes ("Done"-style animations with
-  captured timings), `Options` menus, and multi-digit shortcut display. Leaves without behaviour
-  stay placeholders.
+  captured timings), `Options` menus, and multi-digit shortcut display. Give rows lists their
+  stateful, circular window (kernel list-model state) so `menu/01-phone-book.sub-up` becomes
+  asserted, and capture how ▼ wraps. Leaves without behaviour stay placeholders.
 - **15 - Storage port and Settings.** Add an EEPROM-like persistence port (in-memory default,
   host adapters), replace the plan 13 settings snapshot with real state, and implement Settings
   (call, phone and security settings, welcome note, restore factory settings) and the factory
@@ -1116,3 +1117,23 @@ each is cheap to reverse. Lachlan may override any of them.
   `boot-clean/`. Every `menu/NN-<slug>.anim` uses `menu-anim-long/` (no `before-recording`
   fallback), and both probes (`menu/revisit.anim`, `menu/return.anim`) are present. The `.sub`
   goldens are the virgin-EEPROM captures (factory restore was unavailable); Profiles omits `06`.
+- Task 11 (acceptance): 46 fixtures, 43 asserted and 3 pending. All 43 asserted goldens pass
+  pixel for pixel through key-driven scenarios, and all 16 asserted timelines (boot, idle, 12
+  icons, both probes) pass within ±2 ms after alignment. The supplementary REF script
+  `captures/scripts/v639-plan13-clock.cap` added `clock-time/` (four asserted goldens: standby and
+  the Clock pages at 19:48 and 07:59, which complete the digits and thin fonts) and
+  `menu-scroll-up/` (`menu/01-phone-book.sub-up`, `pending:14`). Pending: `menu/03-chat.sub`
+  (plan 18), `menu/09-calculator.sub` (plan 20), `menu/01-phone-book.sub-up` (plan 14).
+- Task 12 (demo): `vp run @hellotimber/nokia-os#demo` boots the stock OS from power-on with the
+  keyboard; verified headless with `agent-browser`.
+- Task 13 (gate): `vp check`, `vp run -r test` and `vp run website#build` pass. `git diff --stat
+b5baa66 -- website/src/routes website/src/panels website/public` is empty; the only website
+  changes since plan 13 began are Task 5's (`content/menu.ts`, `phone/phone.ts`,
+  `tests/menu-tree.test.ts`) and the regenerated `routeTree.gen.ts` (Task 2 deviation).
+- Open questions, as resolved: (1) the demo operator is `Telstra`; (2) Profiles slot 6 stays
+  `(empty)`, UNVERIFIED (factory restore was refused); (3) the asserted page values are the
+  virgin-EEPROM captures; (4) the live standby clock is in the kernel (D6); (5) boot is the D12
+  composition, UNVERIFIED as one sequence; (6) nokia-os depends on phone-screen at runtime (D1).
+- Still UNVERIFIED (recorded in the spec §10): the boot composition, the indicator after a typed
+  shortcut digit, rows-list ▼ wrap (and ▲ scrolling, captured but not reproduced), signal and
+  battery levels below full, Profiles slot 6, and the firmware's power-key threshold.

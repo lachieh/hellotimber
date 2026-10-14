@@ -196,68 +196,99 @@ where this section and a golden disagree, fix this section. Plan 13 has the full
 
 **Main menu (12 entries, carousel order):** Phone book, Messages, Chat, Call register, Tones,
 Settings, Call divert, Games, Calculator, Reminders, Clock, Profiles. Each carousel slot has an
-animated icon. Every icon animation **settles** (none loops) and restarts from its first frame
-when the slot becomes visible: on Menu, on ▲/▼, and on C back from a submenu (probes
-`menu-anim-long/90-revisit`, `91-return`). All icons except Settings end on their first frame;
-Settings plays once and holds its last frame. Firmware frame counts: Tones 17, Calculator 13,
-Reminders 14.
+animated icon. Verified (Task 0 probes, asserted in `packages/nokia-os/tests/acceptance.test.ts`):
 
-**Level-1 labels (v6.39 wording; `/` = firmware line break on pages):**
+- Every icon animation **settles**; none loops. Each recording ends on a frame held ≥ 3.5 s. All
+  icons except Settings end on their first frame; Settings plays its 8 frames once and holds the
+  last. Distinct frames: Phone book 4, Messages 14, Chat 12, Call register 12 (one held only
+  15 ms), Tones 17, Settings 8, Call divert 11, Games 4, Calculator 13, Reminders 14, Clock 8,
+  Profiles 4 (sequence 1-2-3-4-1-4-3-2-1).
+- The icon **restarts** from its first frame whenever its slot becomes visible: Menu, ▲/▼, and C
+  back from a submenu. Path navigation that lands on the carousel counts as entering it.
+- Timings are reproduced as captured, jitter included (for example 208/179 ms around a ~194 ms
+  period). The Clock icon's timeline depends on how its slot was revealed. Frame starts after
+  the key: ▼ 1400, 1619, 1850, 2083, 2315, 2547, 2780, 3012 ms; ▲ 1385, 1617, 1849, …, 3011 ms;
+  C (return) 1386, 1628, 1858, …, 3020 ms. No single timeline fits all three within ±2 ms, so
+  the Clock graphic carries one timeline per reveal; every other icon has one timeline.
 
-| #   | Entry         | Presentation | Level-1 items                                                                                                                                                       |
-| --- | ------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Phone book    | rows         | Search, Service Nos., Add name, Erase, Edit, Assign tone, Send b'card, Options, Speed dials, Voice tags                                                             |
-| 2   | Messages      | pages        | Write/messages, Inbox, Outbox, Picture/messages, Templates, Smileys, Message/settings (verify), Info/service, Voice/mailbox/number (verify), Service/command/editor |
-| 3   | Chat          | application  | (chat flow)                                                                                                                                                         |
-| 4   | Call register | pages        | Missed/calls, Received/calls, Dialled/numbers, Erase recent call/lists, Show call/duration, Show call/costs, Call cost/settings (verify), Prepaid credit            |
-| 5   | Tones         | pages        | Ringing/tone, Ringing/volume, Incoming/call alert, Composer, Message/alert tone, Keypad/tones, Warning and game tones (verify), Vibrating/alert, Screen saver       |
-| 6   | Settings      | pages        | Call/settings, Phone/settings, Security/settings, Restore/factory/settings                                                                                          |
-| 7   | Call divert   | pages        | Divert all/voice calls/without ringing, Divert when/busy, Divert if not/answered, Divert if out/of reach/… (third line: verify), Cancel all/diverts                 |
-| 8   | Games         | rows         | Snake II, Space Impact, Bantumi, Pairs II, Settings                                                                                                                 |
-| 9   | Calculator    | application  | (calculator)                                                                                                                                                        |
-| 10  | Reminders     | rows         | Add new, View all, Erase                                                                                                                                            |
-| 11  | Clock         | pages        | Alarm/clock, Clock/settings, Date setting, Stopwatch, Countdown/timer, Auto update of/date and time (verify)                                                        |
-| 12  | Profiles      | rows         | General, Silent, Discreet, Loud, (empty), slot 6 (UNVERIFIED label; see artefacts)                                                                                  |
+**Level-1 labels (v6.39 wording, checked against the goldens; `/` = firmware line break):**
 
-Labels marked "verify" take their exact line breaks from the goldens. There is no auto-wrap:
-firmware text carries explicit breaks (`Show call` / `duration`).
+| #   | Entry         | Presentation | Level-1 items                                                                                                                                         |
+| --- | ------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Phone book    | rows         | Search, Service Nos., Add name, Erase, Edit, Assign tone, Send b'card, Options, Speed dials, Voice tags                                               |
+| 2   | Messages      | pages        | Write/messages, Inbox, Outbox, Picture/messages, Templates, Smileys, Message/settings, Info/service, Voice/mailbox/number, Service/command/editor     |
+| 3   | Chat          | application  | (chat flow)                                                                                                                                           |
+| 4   | Call register | pages        | Missed/calls, Received/calls, Dialled/numbers, Erase recent/call lists, Show call/duration, Show call/costs, Call cost/settings, Prepaid credit       |
+| 5   | Tones         | pages        | Ringing/tone, Ringing/volume, Incoming/call alert, Composer, Message/alert tone, Keypad/tones, Warning tones, Vibrating/alert, Screen saver           |
+| 6   | Settings      | pages        | Call/settings, Phone/settings, Security/settings, Restore/factory/settings                                                                            |
+| 7   | Call divert   | pages        | Divert all/voice calls/without ringing, Divert/when busy, Divert if not/answered, Divert when/phone off/or no coverage, Cancel all/diverts (number 6) |
+| 8   | Games         | rows         | Snake II, Space impact, Bantumi, Pairs II, Settings (number 6)                                                                                        |
+| 9   | Calculator    | application  | (calculator)                                                                                                                                          |
+| 10  | Reminders     | rows         | Add new, View all, Erase                                                                                                                              |
+| 11  | Clock         | pages        | Alarm/clock, Clock/settings, Date setting, Stopwatch, Countdown/timer, Auto update of/date and time                                                   |
+| 12  | Profiles      | rows         | General, Silent, Discreet, Loud, (empty), slot 6 (UNVERIFIED label; see artefacts)                                                                    |
+
+There is no auto-wrap: firmware text carries explicit breaks (`Show call` / `duration`).
+
+**Hidden entries keep their menu numbers.** Call divert and Games each skip number 5: their last
+entries show `7-6` and `8-6` in the indicator, `Menu 7 6` opens Cancel all diverts and `Menu 7 5`
+does nothing, yet the rail places them 5th of 5 (it uses the visible position and count).
 
 **Two submenu presentations.**
 
 - _Rows_ (Phone book and application lists: Games, Reminders, Profiles): three rows; the selected
-  row is an inverted band x 0..77, y `7+10r`..`16+10r`; text at x 2, top y `8+10r`; window
-  `max(0, selected-2)`, so the selection stays on the bottom row once scrolled.
+  row is an inverted band x 0..77, y `7+10r`..`16+10r`; text at x 2, top y `8+10r`. Scrolling
+  down from the first item, the selection moves down to the bottom row and then stays there
+  (window `max(0, selected-2)`). Scrolling **up** (captured in Task 11, `pending:14`) the window
+  keeps its position: ▲ moves the selection within it, ▲ above it puts the selection on the top
+  row, and ▲ from the first item wraps to the last item drawn on top of the first two
+  (`Voice tags / Search / Service Nos.`). The window is circular and stateful; nokia-os does not
+  reproduce scrolling up yet (plan 14). How ▼ wraps from the last item is UNVERIFIED.
 - _Pages_ (native menus: Messages, Call register, Tones, Settings, Call divert, Clock): one item per
-  screen; label lines from x 0 at tops y 7/16/25; the current value (e.g. `Off`, `Level 1`) in a
-  thin 1-px-stem font right-aligned to x 76, top y 29.
+  screen; label lines from x 0 at tops y 7/16/25 (a line must end before x 80); the current value
+  (e.g. `Off`, `Level 1`, the time) in the thin font, top y 29, its last cell ending at x 78 (ink
+  ends at x 76).
 
 **Rail:** x 81, y 7..36. Bump top `b = 7 + floor(i*23/(n-1))`: pixels (81..82, b), (83, b+1..b+5),
-(81..82, b+6); x 81 is absent at b+1..b+5.
+(81..82, b+6); x 81 is absent at b+1..b+5. With one item the bump sits at the top.
 
-**Indicator:** `digits` font (6 rows), right edge x 81 (`1`) / 82 (`2`); levels joined by a 2-px
-`-` (e.g. `1-1`, `11-1`). While the first shortcut digit is awaited the indicator is three 1-px
-dots at y 5, x 78/80/82; after 3 s (2985 ms from the key in the capture) it becomes the number.
-What is shown after a typed digit is UNVERIFIED (plan 13 renders the resolved segments without a
-cursor).
+**Indicator:** `digits` font (6 rows, 6-column digit cells; `1` sits one column into its cell);
+the last digit cell ends at x 84, so the ink's right edge is x 81 (`1`) / 82 (`2`). Levels are
+joined by a 2-px `-` (`1-1`, `11-1`). While the first shortcut digit is awaited the indicator is
+three 1-px dots at y 5, x 78/80/82.
 
-**Fonts:** four faces: `small` (labels, operator, softkeys; 2-px stems, 7-row capitals plus
-descenders), `large` (carousel title, 11-row capitals), `digits` (indicator and standby clock),
-`thin` (page values).
+**Menu timing (measured, aligned on the Menu press):** Menu from standby first shows standby with
+the signal and battery ladders and icons erased for **39 ms**, then the carousel with the dots. A
+key that moves the carousel opens it at once. The dots become the menu number **2948 ms** after
+the Menu press (2985 ms into the capture minus the 37 ms trigger); the shortcut window is timed
+from the Menu press and after each digit. What is shown after a typed digit is UNVERIFIED
+(nokia-os draws the resolved segments without a cursor).
+
+**Fonts:** four faces, harvested from the goldens: `small` (labels, operator, softkeys; 2-px stems,
+7-row capitals plus descenders, 8-row cells), `large` (carousel title, 11-row capitals, 13-row
+cells), `digits` (indicator and standby clock, 6 rows), `thin` (page values, 7 rows, 1-px stems,
+5-column digit cells). In every face a glyph's cell is its ink plus one blank column, except the
+digit bearings and the large `R`, whose leg touches the next letter. `digits` and `thin` hold
+every digit (Task 11 captured the clock at 19:48 and 07:59); the firmware keeps the hour's
+leading zero (`07:59`).
 
 **Standby:** signal bars at x 0, rows 0-6 (w4), 8-14 (w3), 16-22 (w2), 24-29 (w2); antenna icon at
-(0,31); battery mirrored, icon 4×6 at (80,31); operator centred, top y 8; clock right edge ≈ x 76,
-y 0; `Menu` centred, top y 40 (descenders reach y 47). Standby does not blink or change over 10 s.
+(0,31); battery mirrored, icon 4×6 at (80,31); operator centred at `floor((84 - width) / 2)`, top
+y 8; clock in `digits`, its last cell ending at x 78 (ink to x 76), top y 0; `Menu` centred the
+same way, top y 40 (descenders reach y 47). Standby does not blink or change over 10 s. Signal
+and battery levels below full are UNVERIFIED (the emulator always shows full).
 
-**Carousel:** title in `large`, centred near x 37.5, top y 7; icon within x 10..63, y 23..36; rail;
-indicator top-right; `Select` centred at y 40. Entering the menu from standby draws a 39 ms
-transient (standby with the bars erased) before the carousel.
+**Carousel:** title in `large`, centred in x 0..77 at `floor((78 - width) / 2)`, top y 7; icon
+within x 10..63, y 23..36; rail; indicator top-right; `Select` centred at y 40.
 
-**Boot:** LCD self-test (blank with LED off, all-on, blank, battery ladder), then the 7-frame
-connecting-hands animation, the last frame held about 4.2 s, then standby. The captured power-on
-passes through a security-code prompt and a clock wizard between the two; both are virgin-EEPROM
-effects. A clean boot could not be captured (the in-menu security-code check rejects the code, so
-Phone security cannot be turned off), so the self-test + hands composition is UNVERIFIED as one
-continuous sequence.
+**Boot:** LCD self-test (blank with the LED off 245 ms, all-on 970 ms, blank 1171 ms, battery
+ladder 1687 ms), then the 7-frame connecting-hands animation (299, 263, 255, 256, 255, 256 ms),
+the last frame held 4231 ms, then standby: 9888 ms in all. The captured power-on passes through a
+security-code prompt and a clock wizard between the two; both are virgin-EEPROM effects. A clean
+boot could not be captured (the in-menu security-code check rejects the code, so Phone security
+cannot be turned off), so the self-test + hands composition is UNVERIFIED as one continuous
+sequence. Boot starts when the kernel's 800 ms power long press fires (the firmware's power-key
+threshold is not captured).
 
 **Capture artefacts (never reproduced as behaviour):**
 
