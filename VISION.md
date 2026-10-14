@@ -87,8 +87,12 @@ are independent and reusable; **only `website/` composes them**.
 | `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                              | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
 | `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                | none                                                               |
 
-The 3310 menu tree is website content (`website/src/content/menu.ts`, `SiteNode[]`);
-phone-core ships only the generic `MenuNode` machine.
+The Nokia content graph is website-owned (`website/src/content/menu.ts`) and is composed as
+one `PhoneMenu<WebMetadata>` object graph. `phone-core` owns only the generic immutable menu
+model, traversal, and firmware behavior. Website metadata crosses that boundary as opaque
+generic data: phone-core stores and returns it but never interprets, mutates, or recursively
+freezes it. The website projects the same graph into routes, sitemap entries, SEO metadata,
+and HTML panels; router loaders return plain serializable projections, never class instances.
 
 **Control inversion (the key design decision):** the phone packages never import the
 router. `phone-core` exposes `navigate(path)` and emits `pathchange` events;
@@ -197,45 +201,119 @@ export type ScreenModel =
   | { kind: "confirm"; text: string; softkey: string }
   | { kind: "custom"; appId: string; frame: Bitmap }; // games draw raw pixels
 
-export type MenuNode =
-  | { type: "submenu"; id: string; label: string; iconId?: string; children: MenuNode[] }
-  | {
-      type: "list";
-      id: string;
-      label: string;
-      /** May be lazy — the thunk is re-read on every render. */
-      items:
-        | { id: string; label: string; body: string }[]
-        | (() => { id: string; label: string; body: string }[]);
-    }
-  | { type: "reader"; id: string; label: string; body: string }
-  | { type: "app"; id: string; label: string; appId: string }
-  | { type: "action"; id: string; label: string; action: { kind: "href"; value: string } };
+export class MenuSlug {
+  readonly value: string;
+  constructor(value: string); // kebab-case only
+  toString(): string;
+}
 
-export interface PhoneApp {
-  onKey(e: KeyEvent): void;
+export class MenuOrder {
+  readonly value: number;
+  constructor(value: number); // positive integer, one-based
+}
+
+export class MenuGraphic {
+  readonly id: string;
+  constructor(id: string); // non-empty identifier; renderer registry key
+}
+
+export abstract class MenuEntry<Metadata = unknown> {
+  readonly slug: MenuSlug;
+  readonly order: MenuOrder;
+  readonly label: string;
+  readonly metadata: Metadata | undefined;
+
+  abstract accept<Result>(visitor: MenuEntryVisitor<Metadata, Result>): Result;
+}
+
+export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
+  readonly children: MenuLevel<Metadata>;
+}
+
+export class ListEntry<Metadata = unknown> extends MenuEntry<Metadata> {
+  readonly source: MenuListSource;
+}
+
+export class ReaderEntry<Metadata = unknown> extends MenuEntry<Metadata> {
+  readonly body: string;
+}
+
+export class ActionEntry<Metadata = unknown> extends MenuEntry<Metadata> {
+  readonly action: { kind: "href"; value: string };
+}
+
+export class ApplicationEntry<Metadata = unknown> extends MenuEntry<Metadata> {
+  readonly application: PhoneApplication;
+}
+
+export interface MenuEntryVisitor<Metadata, Result> {
+  visitSubmenu(entry: SubmenuEntry<Metadata>): Result;
+  visitList(entry: ListEntry<Metadata>): Result;
+  visitReader(entry: ReaderEntry<Metadata>): Result;
+  visitAction(entry: ActionEntry<Metadata>): Result;
+  visitApplication(entry: ApplicationEntry<Metadata>): Result;
+}
+
+export class MenuLevel<Metadata = unknown> implements Iterable<MenuEntry<Metadata>> {
+  constructor(entries: readonly MenuEntry<Metadata>[]);
+  readonly entries: readonly MenuEntry<Metadata>[]; // canonical order
+  bySlug(slug: string): MenuEntry<Metadata> | undefined;
+  byOrder(order: number): MenuEntry<Metadata> | undefined;
+}
+
+export class TopLevelEntry<Metadata = unknown> {
+  readonly entry: MenuEntry<Metadata>;
+  readonly graphic: MenuGraphic;
+}
+
+export class PhoneMenu<Metadata = unknown> {
+  constructor(entries: readonly TopLevelEntry<Metadata>[]);
+  readonly entries: readonly TopLevelEntry<Metadata>[];
+  resolve(path: string): readonly MenuEntry<Metadata>[] | null;
+  paths(): readonly string[];
+  isValidPath(path: string): boolean;
+  walk<Result>(visitor: MenuEntryVisitor<Metadata, Result>): readonly Result[];
+}
+
+export interface MenuListItem {
+  id: string;
+  label: string;
+  body: string;
+}
+
+export interface MenuListSource {
+  read(): readonly MenuListItem[];
+}
+
+export class StaticMenuListSource implements MenuListSource {
+  /* defensive copy */
+}
+
+export class DynamicMenuListSource implements MenuListSource {
+  /* injected reader */
+}
+
+export type DeactivationReason = "exit" | "replace" | "navigate" | "power-off";
+
+export abstract class PhoneApplication {
+  readonly id: string; // diagnostics/custom ScreenModel identity; never a URL segment
+  abstract createSession(context: ApplicationContext): PhoneApplicationSession;
+}
+
+export interface ApplicationContext {
+  exit(): void;
+  open(application: PhoneApplication): void;
+}
+
+export interface PhoneApplicationSession {
+  onKey(event: KeyEvent): void;
   tick(dtMs: number): void;
   render(): ScreenModel;
-  onExit?(): void;
+  onDeactivate?(reason: DeactivationReason): void;
 }
-// open() = exit this app and immediately launch `appId` on the same nav stack.
-export type AppFactory = (ctx: { exit(): void; open(appId: string): void }) => PhoneApp;
 
-/** Multi-tap editor hosted as a PhoneApp (wire via {type:"app"} nodes). */
-export interface EditorOptions {
-  title: string;
-  initial?: string;
-  charLimit?: number; // editor ScreenModel carries it as `limit` (SMS countdown)
-  onAccept?: (text: string) => void; // legacy: navi accepts (no menu)
-  menu?: { id: string; label: string }[]; // navi opens an "Options" list instead
-  // ids "clear"/"exit" are built-in (clear text / ctx.exit()); others call onMenu.
-  onMenu?: (id: string, text: string, ctx: { exit(): void; open(appId: string): void }) => void;
-}
-export function editorApp(opts: EditorOptions): AppFactory;
-
-export interface PhoneConfig {
-  menu: MenuNode[];
-  apps?: Record<string, AppFactory>;
+export interface PhoneConfig<Metadata = unknown> {
+  menu: PhoneMenu<Metadata>;
   carrier?: string; // standby line, default 'LACHLAN'
   clock?: () => string | undefined; // host supplies time; phone shows it
   bootMs?: number; // 0 to skip boot in tests
@@ -267,11 +345,50 @@ export interface Phone {
   on<K extends keyof PhoneEventMap>(ev: K, cb: PhoneEventMap[K]): () => void;
 }
 
-export function createPhone(config: PhoneConfig): Phone;
+export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): Phone;
 ```
 
-**Path scheme:** `standby` | `menu` | `menu/<id>/<id>/…` — node ids from the `MenuNode`
-tree, kebab-case, joined by `/`. `navigate()` to an unknown path falls back to `standby`.
+The menu hierarchy is closed: consumers compose the concrete entry classes and implement
+visitors, but cannot add new entry kinds. Every semantic entry has an explicit kebab-case
+`MenuSlug` and one-based `MenuOrder`; order is the sole source for display position, menu
+number, shortcuts, traversal, and parent-selection restoration. `MenuLevel` defensively
+copies and canonically sorts entries. Construction rejects invalid or duplicate sibling
+slugs/orders, non-contiguous order, empty labels/graphics, cycles, reused semantic entries,
+invalid list item IDs, and application entries without a definition.
+
+Digit shortcuts preserve the current one-digit-per-level behavior: orders 1-9 are direct
+targets, while orders 10-13 remain visible and traversable but are not direct digit targets.
+
+`TopLevelEntry` is a presentation slot, not a path segment. It adds the required
+`MenuGraphic` for each carousel position around exactly one semantic entry. Nested entries
+cannot carry graphics. The renderer continues to receive the graphic ID through
+`ScreenModel.iconId`.
+
+Metadata, application definitions, list sources, and typed arrays are opaque dependencies.
+Only owned topology and list snapshots are defensively copied/frozen; phone-core does not
+recursively freeze host-owned values. List rows have stable IDs but no slug or menu order.
+Each `read()` becomes an immutable, validated snapshot, and an open reader retains its
+snapshot until the visitor backs out.
+
+`PhoneApplication` objects are immutable, reusable definitions safe to construct at module
+and SSR scope. Every launch calls `createSession()` for fresh mutable per-launch state;
+definition construction performs no browser access, timers, subscriptions, fetches, storage,
+random seeding, or game creation. `ApplicationEntry` refers directly to a definition object,
+so `context.open(otherDefinition)` performs an in-place object handoff on the same launching
+entry, path, and navigation stack without a string registry.
+
+The machine retains the launching `ApplicationEntry`, definition, session, navigation stack,
+and a unique activation token. `exit()` and `open()` verify both the active session and token,
+making callbacks from stale asynchronous activations permanent no-ops. A successfully
+created session is deactivated at most once with `exit`, `replace`, `navigate`, or
+`power-off`. Application exceptions are contained: failed creation renders the existing
+`App error` reader, while key, tick, render, and deactivation failures cannot break power or
+navigation. `EditorApplication` is the reusable core multi-tap application definition and
+follows the same session lifecycle.
+
+**Path scheme:** `standby` | `menu` | `menu/<slug>/<slug>/…` — explicit entry slugs are
+kebab-case and joined by `/`. Application IDs, graphics, labels, order, and metadata never
+influence URLs. `navigate()` to an unknown path falls back to `standby`.
 
 ### `@hellotimber/phone-screen`
 
@@ -359,8 +476,8 @@ export function tickIntervalMs(speed: number): number;
 export const MAZE_NAMES: readonly string[]; // ['No maze','Box','Tunnel','Mill','Rails','Apartment']
 ```
 
-`website/src/phone/` hosts the adapters: snake→`PhoneApp`, renderer→3D props, and the
-router bridge. Adapters are the only place two packages meet.
+`website/src/phone/` hosts the concrete Snake `PhoneApplication`, renderer→3D props, and
+the router bridge. Adapters are the only place two packages meet.
 
 ## Router integration design (website)
 
