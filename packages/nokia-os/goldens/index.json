@@ -32,6 +32,14 @@
     "frames": 10
   },
   {
+    "id": "menu/01-phone-book.sub-up",
+    "file": "menu/01-phone-book.sub-up.lcd.txt",
+    "status": "pending:14",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
     "id": "menu/02-messages",
     "file": "menu/02-messages.lcd.txt",
     "status": "asserted",
@@ -272,6 +280,22 @@
     "frames": 6
   },
   {
+    "id": "menu/11-clock.sub-0759",
+    "file": "menu/11-clock.sub-0759.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "menu/11-clock.sub-1948",
+    "file": "menu/11-clock.sub-1948.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
     "id": "menu/12-profiles",
     "file": "menu/12-profiles.lcd.txt",
     "status": "asserted",
@@ -322,6 +346,22 @@
   {
     "id": "standby/standby",
     "file": "standby/standby.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "standby/standby-0759",
+    "file": "standby/standby-0759.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "standby/standby-1948",
+    "file": "standby/standby-1948.lcd.txt",
     "status": "asserted",
     "kind": "still",
     "images": 1,

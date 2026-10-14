@@ -65,6 +65,12 @@ describe("generated resources", () => {
     expect(missingStockGlyphs("12", "large" satisfies StockFontName)).toEqual(["1", "2"]);
   });
 
+  it("renders any live time and date: every digit in the standby digits and thin page fonts", () => {
+    // The 19:48 and 07:59 captures (Task 11) supply the digits that 10:10 and 13.10.2026 lack.
+    expect(missingStockGlyphs("0123456789:", "digits")).toEqual([]);
+    expect(missingStockGlyphs("0123456789:.", "thin")).toEqual([]);
+  });
+
   it("has strict fonts: drawing a missing glyph throws", () => {
     const fb = new Framebuffer();
     expect(fb.drawText(STOCK_FONTS.digits, "10:10", 0, 0)).toBe(27);

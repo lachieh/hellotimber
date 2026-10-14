@@ -222,4 +222,42 @@ export const CAPTURE_SET: readonly CaptureSetEntry[] = [
       note: "Select on Clock at frame 1, C back to the carousel at frame 2: the Clock icon restarts.",
     },
   },
+  // Task 11 supplementary captures (`scripts/v639-plan13-clock.cap`): the setup's 10:10 shows
+  // only some digits, so the same setup ran with the clock set to 19:48 and to 07:59.
+  ...clockTimeEntries(),
+  {
+    id: "menu/01-phone-book.sub-up",
+    kind: "still",
+    status: "pending:14",
+    prefer: {
+      source: { kind: "scroll", dir: "menu-scroll-up/01-phone-book" },
+      note: "Phone book level 1 from item 6, ▲ per image through the wrap to Voice tags. The rows window keeps its position, ▲ above it puts the selection on the top row, and the wrap shows Voice tags, Search, Service Nos.; the kernel has no window state yet (plan 14).",
+    },
+  },
 ];
+
+function clockTimeEntries(): CaptureSetEntry[] {
+  return (["1948", "0759"] as const).flatMap((time): CaptureSetEntry[] => {
+    const shown = `${time.slice(0, 2)}:${time.slice(2)}`;
+    return [
+      {
+        id: `standby/standby-${time}`,
+        kind: "still",
+        status: "asserted",
+        prefer: {
+          source: { kind: "shot", file: `clock-time/${time}/standby.png` },
+          note: `Standby with the clock set to ${shown} during setup (a test input, like 10:10).`,
+        },
+      },
+      {
+        id: `menu/11-clock.sub-${time}`,
+        kind: "still",
+        status: "asserted",
+        prefer: {
+          source: { kind: "scroll", dir: `clock-time/${time}/clock-sub` },
+          note: `Clock level 1 with the clock set to ${shown}: Select, then ▼ per image.`,
+        },
+      },
+    ];
+  });
+}

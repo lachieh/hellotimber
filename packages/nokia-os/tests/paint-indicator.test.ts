@@ -28,7 +28,8 @@ describe("stock menu indicator", () => {
   );
 
   it("covers every carousel still and level-1 image", () => {
-    expect(cases.length).toBe(12 + 10 + 10 + 8 + 9 + 4 + 5 + 5 + 3 + 6 + 5);
+    // Carousel, then each level-1 sequence, then the Clock pages at 19:48 and 07:59.
+    expect(cases.length).toBe(12 + 10 + 10 + 8 + 9 + 4 + 5 + 5 + 3 + 6 + 5 + 6 + 6);
   });
 
   for (const { id, name, text } of cases) {

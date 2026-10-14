@@ -39,6 +39,8 @@ export const GLYPH_OVERRIDES: readonly GlyphOverride[] = [
   { kind: "advance", font: "digits", char: "9", advance: 6 },
   // menu/11-clock.sub "03" "13.10.2026": '6' ink is 4 columns, a full thin digit cell.
   { kind: "advance", font: "thin", char: "6", advance: 5 },
+  // menu/11-clock.sub-1948 "02" "19:48": '8' ink is 4 columns, a full thin digit cell.
+  { kind: "advance", font: "thin", char: "8", advance: 5 },
   // menu/05-tones.sub "02" "Level 1": 'l' ink is 1 column.
   { kind: "advance", font: "thin", char: "l", advance: 2 },
 ];

@@ -179,17 +179,19 @@ Nothing from REF is committed.
 
 Capture inventory used by this plan (`$REF/captures/6.39/` unless noted):
 
-| Source                           | Contents                                                                     | Use                                                        |
-| -------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `boot/power-on/` (6 frames)      | blank (LED off), all-on, blank, battery ladder, blank 42 ms, security prompt | frames 0-3 (fallback boot); 4-5 omitted                    |
-| `boot/welcome/` (16 frames)      | "Code accepted" 0-3, hands 4-10, clock prompt 11-15                          | frames 4-10 (hands); others omitted                        |
-| `standby/01-standby.png`         | standby, "Orange F", 10:10                                                   | asserted (artefact values as test inputs)                  |
-| `standby/standby-10s/`           | one frame for 10 s                                                           | asserted: no blinking, no change                           |
-| `menu/NN-<slug>.png` (12)        | carousel after its 3 s recording                                             | asserted                                                   |
-| `menu/NN-<slug>/anim/`           | ~3 s of icon frames (truncated)                                              | fallback only; replaced by `menu-anim-long/` from Task 0   |
-| `menu/NN-<slug>/sub/MM.png`      | level-1 screens in scroll order                                              | asserted, except Chat/Calculator (pending) and Profiles 06 |
-| `menu-anim-long/` (Task 0)       | per-item transition + 10 s, plus revisit/return probes                       | asserted timelines                                         |
-| `boot-clean/` (Task 0, optional) | power-on to standby without the security prompt                              | asserted boot timeline if produced                         |
+| Source                                    | Contents                                                                     | Use                                                        |
+| ----------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `boot/power-on/` (6 frames)               | blank (LED off), all-on, blank, battery ladder, blank 42 ms, security prompt | frames 0-3 (fallback boot); 4-5 omitted                    |
+| `boot/welcome/` (16 frames)               | "Code accepted" 0-3, hands 4-10, clock prompt 11-15                          | frames 4-10 (hands); others omitted                        |
+| `standby/01-standby.png`                  | standby, "Orange F", 10:10                                                   | asserted (artefact values as test inputs)                  |
+| `standby/standby-10s/`                    | one frame for 10 s                                                           | asserted: no blinking, no change                           |
+| `menu/NN-<slug>.png` (12)                 | carousel after its 3 s recording                                             | asserted                                                   |
+| `menu/NN-<slug>/anim/`                    | ~3 s of icon frames (truncated)                                              | fallback only; replaced by `menu-anim-long/` from Task 0   |
+| `menu/NN-<slug>/sub/MM.png`               | level-1 screens in scroll order                                              | asserted, except Chat/Calculator (pending) and Profiles 06 |
+| `menu-anim-long/` (Task 0)                | per-item transition + 10 s, plus revisit/return probes                       | asserted timelines                                         |
+| `boot-clean/` (Task 0, optional)          | power-on to standby without the security prompt                              | asserted boot timeline if produced                         |
+| `clock-time/{1948,0759}/` (Task 11)       | standby and every Clock page with the clock set to 19:48 / 07:59             | asserted (every digit in the digits and thin fonts)        |
+| `menu-scroll-up/01-phone-book/` (Task 11) | Phone book from item 6, ▲ through the wrap                                   | `pending:14` (rows window state)                           |
 
 Artefacts (never reproduced as behaviour):
 
@@ -401,18 +403,21 @@ Rules, enforced by `scripts/golden-format.ts` with `file:line` errors:
 
 A declarative table that the importer executes. Fixture ids and sources:
 
-| Fixture id                  | Source (prefer → fallback)                                                             | Kind     | Status                         |
-| --------------------------- | -------------------------------------------------------------------------------------- | -------- | ------------------------------ |
-| `boot/power-on`             | `boot-clean/power-on` → `boot/power-on` frames 000-003 + `boot/welcome` 004-010        | timeline | asserted                       |
-| `standby/standby`           | `standby/01-standby.png`                                                               | still    | asserted                       |
-| `standby/idle`              | `standby/standby-10s`                                                                  | timeline | asserted                       |
-| `menu/NN-<slug>` (×12)      | `menu/NN-<slug>.png`                                                                   | still    | asserted                       |
-| `menu/NN-<slug>.anim` (×12) | `menu-anim-long/NN-<slug>` → `menu/NN-<slug>/anim` (`trigger-frame: before-recording`) | timeline | asserted                       |
-| `menu/revisit.anim`         | `menu-anim-long/90-revisit` (only if captured)                                         | timeline | asserted                       |
-| `menu/return.anim`          | `menu-anim-long/91-return` (only if captured)                                          | timeline | asserted                       |
-| `menu/NN-<slug>.sub` (×10)  | `menu/NN-<slug>/sub/*.png` (Profiles omits `06`)                                       | stills   | asserted                       |
-| `menu/03-chat.sub`          | `menu/03-chat/sub/*.png`                                                               | stills   | `pending:18` (Messages & Chat) |
-| `menu/09-calculator.sub`    | `menu/09-calculator/sub/01.png`                                                        | stills   | `pending:20` (Calculator)      |
+| Fixture id                    | Source (prefer → fallback)                                                             | Kind     | Status                         |
+| ----------------------------- | -------------------------------------------------------------------------------------- | -------- | ------------------------------ |
+| `boot/power-on`               | `boot-clean/power-on` → `boot/power-on` frames 000-003 + `boot/welcome` 004-010        | timeline | asserted                       |
+| `standby/standby`             | `standby/01-standby.png`                                                               | still    | asserted                       |
+| `standby/idle`                | `standby/standby-10s`                                                                  | timeline | asserted                       |
+| `menu/NN-<slug>` (×12)        | `menu/NN-<slug>.png`                                                                   | still    | asserted                       |
+| `menu/NN-<slug>.anim` (×12)   | `menu-anim-long/NN-<slug>` → `menu/NN-<slug>/anim` (`trigger-frame: before-recording`) | timeline | asserted                       |
+| `menu/revisit.anim`           | `menu-anim-long/90-revisit` (only if captured)                                         | timeline | asserted                       |
+| `menu/return.anim`            | `menu-anim-long/91-return` (only if captured)                                          | timeline | asserted                       |
+| `menu/NN-<slug>.sub` (×10)    | `menu/NN-<slug>/sub/*.png` (Profiles omits `06`)                                       | stills   | asserted                       |
+| `menu/03-chat.sub`            | `menu/03-chat/sub/*.png`                                                               | stills   | `pending:18` (Messages & Chat) |
+| `menu/09-calculator.sub`      | `menu/09-calculator/sub/01.png`                                                        | stills   | `pending:20` (Calculator)      |
+| `standby/standby-HHMM` (×2)   | `clock-time/HHMM/standby.png` (Task 11; HHMM = 1948, 0759)                             | still    | asserted                       |
+| `menu/11-clock.sub-HHMM` (×2) | `clock-time/HHMM/clock-sub/*.png` (Task 11)                                            | stills   | asserted                       |
+| `menu/01-phone-book.sub-up`   | `menu-scroll-up/01-phone-book/*.png` (Task 11)                                         | stills   | `pending:14` (Menu tree depth) |
 
 Slugs: `01-phone-book 02-messages 03-chat 04-call-register 05-tones 06-settings
 07-call-divert 08-games 09-calculator 10-reminders 11-clock 12-profiles`.
@@ -944,7 +949,7 @@ in Task 9.
 
 **Files:** `tests/support/rig.ts`, `tests/acceptance.test.ts`.
 
-- [ ] Rig per "Scenario harness". Scenarios:
+- [x] Rig per "Scenario harness". Scenarios:
   - `boot/power-on`: hold power, record until standby; `expectTimeline`, then the final frame
     equals `standby/standby` (carrier `Orange F`, clock `10:10`);
   - `standby/standby`, `standby/idle` (10 s, no change);
@@ -954,9 +959,37 @@ in Task 9.
   - `menu/NN-<slug>`: the frame at the still's capture time, matched within ±2 ms of a frame
     boundary when the icon is animating;
   - `menu/NN-<slug>.sub`: Menu, ▼×(NN-1), Select, then ▼ per image.
-- [ ] Coverage guard: any asserted id without a scenario fails; pending ids are `it.todo`.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
-- [ ] Commit: `test(nokia-os): pixel and timing acceptance against v6.39 goldens`.
+- [x] Coverage guard: any asserted id without a scenario fails; pending ids are `it.todo`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
+- [x] Commit: `test(nokia-os): pixel and timing acceptance against v6.39 goldens`.
+
+Deviation: the thin font had only the digits of `10:10` and `13.10.2026`, so Clock settings
+threw for any live time with 4, 5, 7, 8 or 9. A supplementary REF script,
+`captures/scripts/v639-plan13-clock.cap`, runs `v639-setup.inc`'s setup twice (`reboot` between)
+with the clock set to 19:48 and to 07:59, and shoots standby and every Clock page into
+`clock-time/`. Four asserted goldens come from it (`standby/standby-1948`, `standby/standby-0759`,
+`menu/11-clock.sub-1948`, `menu/11-clock.sub-0759`); `text-runs.ts` transcribes them and one
+override (`thin 8`, ink 4 columns, a full digit cell) resolves the harvester's report. Both fonts
+now hold every digit (`resources.test.ts`), so a live clock and date never throw. The firmware
+keeps the leading zero (`07:59`) on standby and on the page.
+Deviation: the same script records a rows list scrolling up (`menu-scroll-up/01-phone-book`,
+golden `menu/01-phone-book.sub-up`, `pending:14`). The window is stateful and circular: from item 6
+(window 4..6) ▲ moves the selection within the window, ▲ above it puts the selection on the top
+row (window = selected), and ▲ from Search wraps to Voice tags shown as `Voice tags / Search /
+Service Nos.` with Voice tags on top. The painter's `max(0, selected - 2)` matches only the
+scroll-down captures. Asserting this needs window state in the kernel's list model, which is
+beyond Task 11, so plan 14 owns it; how ▼ wraps from the last item is still uncaptured.
+Deviation: a carousel still's capture time is per item, 3537-3576 ms after its trigger
+(`STILL_AT_MS` in `tests/acceptance.test.ts`): `v639-all.cap` taps the key, records 3 s from
+when the tap returns, then shoots, and the tap's return varies. Each time was measured in REF by
+aligning the 3 s recording's first icon change with `menu-anim-long`. Every still matches the
+frame on screen at that time (±2 ms).
+Deviation: `record(durationMs, trigger)` ticks 1 ms before running `trigger` (the harness starts
+recording before the key), and the trigger time is the rig time when `trigger` returns. The boot
+scenario holds power and records with a trigger that ticks once, onto the tick where the 800 ms
+long press turns the phone on. Frames are kept on a pixel change or a power change; a screen
+replaced within the same millisecond is dropped. Every scenario drives real key presses (the
+kernel's `navigate("menu")` skips the 39 ms delay, so no scenario uses it).
 
 ### Task 12 - Standalone demo and README
 

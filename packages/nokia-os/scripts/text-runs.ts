@@ -200,6 +200,22 @@ function imageName(n: number): string {
   return String(n).padStart(2, "0");
 }
 
+/** Each image of a level-1 `.sub` golden: the label (and page value), indicator and softkey. */
+function levelImages(
+  level: Level1,
+  number: number,
+  values = level.values,
+): Record<string, readonly TextRun[]> {
+  const images: Record<string, readonly TextRun[]> = {};
+  level.labels.forEach((label, j) => {
+    const body =
+      level.presentation === "pages" ? page(label, values?.[j + 1]) : rows(level.labels, j);
+    const shown = level.numbers?.[j] ?? j + 1;
+    images[imageName(j + 1)] = [...body, indicator(`${number}-${shown}`), softkey("Select")];
+  });
+  return images;
+}
+
 function level1Runs(): Record<string, Record<string, readonly TextRun[]>> {
   const out: Record<string, Record<string, readonly TextRun[]>> = {};
   LEVEL1.forEach((level, i) => {
@@ -212,30 +228,48 @@ function level1Runs(): Record<string, Record<string, readonly TextRun[]>> {
       ],
     };
     if (level.labels.length === 0) return;
-    const images: Record<string, readonly TextRun[]> = {};
-    level.labels.forEach((label, j) => {
-      const body =
-        level.presentation === "pages" ? page(label, level.values?.[j + 1]) : rows(level.labels, j);
-      const shown = level.numbers?.[j] ?? j + 1;
-      images[imageName(j + 1)] = [...body, indicator(`${number}-${shown}`), softkey("Select")];
-    });
-    out[`menu/${level.slug}.sub`] = images;
+    out[`menu/${level.slug}.sub`] = levelImages(level, number);
   });
   return out;
 }
 
-const STANDBY: readonly TextRun[] = [
-  // "Orange F" and 10:10 are emulator artefacts (D11); the bars sit at x 0..3 and 80..83.
-  { font: "small", text: "Orange F", top: 8, left: 5, right: 78 },
-  { font: "digits", text: "10:10", top: 0, left: 5, right: 78 },
-  softkey("Menu"),
-];
+/**
+ * The Task 11 clock captures: the same setup with the clock set to 19:48 and to 07:59, so the
+ * digits and thin fonts gain every digit. Their standby and Clock pages differ from the 10:10
+ * captures only in the time.
+ */
+function clockTimeRuns(): Record<string, Record<string, readonly TextRun[]>> {
+  const clock = LEVEL1.findIndex((level) => level.slug === "11-clock");
+  const level = LEVEL1[clock]!;
+  const out: Record<string, Record<string, readonly TextRun[]>> = {};
+  for (const time of ["19:48", "07:59"]) {
+    const suffix = time.replace(":", "");
+    out[`standby/standby-${suffix}`] = { standby: standby(time) };
+    out[`menu/11-clock.sub-${suffix}`] = levelImages(level, clock + 1, {
+      ...level.values,
+      2: time,
+    });
+  }
+  return out;
+}
+
+// "Orange F" and the clock are emulator artefacts (D11); the bars sit at x 0..3 and 80..83.
+function standby(clock: string): TextRun[] {
+  return [
+    { font: "small", text: "Orange F", top: 8, left: 5, right: 78 },
+    { font: "digits", text: clock, top: 0, left: 5, right: 78 },
+    softkey("Menu"),
+  ];
+}
+
+const STANDBY = standby("10:10");
 
 /** Golden id → image name → the text runs drawn in that image. */
 export const TEXT_RUNS: Readonly<Record<string, Readonly<Record<string, readonly TextRun[]>>>> = {
   "standby/standby": { "01-standby": STANDBY },
   "standby/idle": { a: STANDBY },
   ...level1Runs(),
+  ...clockTimeRuns(),
   // Pending goldens are real firmware output too; their text extends the fonts.
   "menu/03-chat.sub": {
     "01": [{ font: "small", text: "Phone number:", top: 7, right: 79 }, softkey("Search")],
