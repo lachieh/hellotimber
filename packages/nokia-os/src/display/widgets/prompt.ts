@@ -13,16 +13,23 @@ const VALUE_END = 83;
 const TEXT_INSET = 2;
 /** A text entry's cursor spans 15 rows from just below the box's top edge. */
 const TEXT_CURSOR_ROWS = 15;
+/**
+ * A code entry's mask: one `*` per digit in the small face from x 0, top 29 (plan 15 Task 0
+ * A2/A5: `probe/code-keys-6-4`, `boot/security-gate-keys`).
+ */
+const MASK_TOP = 29;
 
 /**
  * Where an input prompt's entry is (plan 14 D11: first screen only):
  * - `value`: the value in the large face right below the label, from x 0 (Speed dials `(empty)`);
  * - `box`: a frame from below the label to y 36 holding the value: `text` entry (left, large,
  *   the cursor after it), or a number or time right-aligned on the frame's bottom, with the
- *   cursor at its `end`, at its `start`, or `none` (Search does not blink).
+ *   cursor at its `end`, at its `start`, or `none` (Search does not blink);
+ * - `mask`: a code entry, one `*` per digit typed (plan 15 D7).
  */
 export type PromptEntry =
   | { readonly kind: "value"; readonly text: string }
+  | { readonly kind: "mask"; readonly digits: number }
   | {
       readonly kind: "box";
       readonly text: string;
@@ -37,7 +44,7 @@ export interface PromptModel {
   /** Characters left, top right in the digits face (Add name: `16`). */
   readonly counter?: string;
   readonly label: readonly string[];
-  /** Absent: a code prompt (label only). */
+  /** Absent: the label only (the PIN, PIN2 and barring prompts, plan 14 D11). */
   readonly entry?: PromptEntry;
   /** The blinking cursor's step: shown or hidden. */
   readonly cursor: boolean;
@@ -61,6 +68,7 @@ export function paintPrompt(fb: Framebuffer, model: PromptModel): void {
   const { entry } = model;
   if (entry?.kind === "value") fb.drawText(STOCK_FONTS.large, entry.text, 0, below);
   if (entry?.kind === "box") paintBox(fb, entry, below, model.cursor);
+  if (entry?.kind === "mask") fb.drawText(STOCK_FONTS.small, "*".repeat(entry.digits), 0, MASK_TOP);
   fb.drawTextCentered(STOCK_FONTS.small, model.softkey, SOFTKEY_TOP);
 }
 

@@ -483,6 +483,7 @@ describe("widget sprites and timelines", () => {
     ]);
     expect(WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NODE["8-4"]!]!.timeline.durationMs).toBe(3060);
     expect(Object.keys(WIDGET_TIMELINE_BY_NAME).sort()).toEqual([
+      "code-error",
       "game-over-fireworks",
       "game-over-note",
       "invalid-shortcut",
@@ -494,6 +495,8 @@ describe("widget sprites and timelines", () => {
       "note/error:2903",
       "edges5-78:9",
     ]);
+    // Plan 15 A4: a wrong security code, then the empty prompt (probe/code-wrong-6-4).
+    expect(describeSteps(WIDGET_TIMELINE_BY_NAME["code-error"]!)).toEqual(["note/error:2904"]);
   });
 
   it("plays the game-over note, and the fireworks before TOP SCORE: as captured (plan 23 D13)", () => {

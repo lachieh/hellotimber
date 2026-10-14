@@ -23,11 +23,20 @@ import { frameAt, standbyRig, type Rig } from "./rig.ts";
 /** One harness tap (`key`): ≈42 ms down, the 250 ms settle and the 300 ms key gap. */
 export const TAP_MS = 592;
 
-/** A token list: `navi`, `down*9`, `wait:1500`. Each key is a tap followed by TAP_MS. */
+/**
+ * A token list: `navi`, `down*9`, `wait:1500`, `c~1000` (C held 1000 ms). Each key is a tap (or
+ * the hold) followed by TAP_MS.
+ */
 export function keys(rig: Rig, script: string): void {
   for (const token of script.split(/\s+/).filter(Boolean)) {
     if (token.startsWith("wait:")) {
       rig.advance(Number(token.slice(5)));
+      continue;
+    }
+    const hold = /^(.+)~(\d+)$/.exec(token);
+    if (hold !== null) {
+      rig.press(hold[1] as PhoneKey, Number(hold[2]));
+      rig.advance(TAP_MS);
       continue;
     }
     const [key, times = "1"] = token.split("*");
@@ -189,8 +198,53 @@ function persistReboot(id: string): void {
   expect(golden.images).toHaveLength(11);
 }
 
+/** The security-code leaves highlighted, as plan 15 A4/A5 reach them. */
+const CODE_LEAVES: Readonly<Record<string, string>> = {
+  "6-3-5": "navi wait:300 down*5 wait:1000 navi down*2 navi down*3",
+  "6-3-6-1": "navi wait:300 down*5 wait:1000 navi down*2 navi down*4 navi",
+  "6-4": "navi wait:300 down*5 wait:1000 navi down*3",
+  "4-5-5": "navi wait:300 down*3 wait:1000 navi down*4 navi down*4",
+};
+const RESTORE_PROMPT = `${CODE_LEAVES["6-4"]} navi wait:2000`;
+
+/** A4: Select, `00000` one digit per golden row, OK, `Code error`, the empty prompt, C. */
+function codeWrong(id: string, number: string): void {
+  const digits = [2, 3, 4, 5, 6].map((row) => [row, "0"] as const);
+  timeline(id, after(CODE_LEAVES[number]!), "navi", [...digits, [7, "navi"], [9, "c"]]);
+}
+
 export const PROBE_SCENARIOS: Record<string, (id: string) => void> = {
   "probe/persist-reboot": persistReboot,
+  ...Object.fromEntries(
+    Object.keys(CODE_LEAVES).map((number) => [
+      `probe/code-wrong-${number}`,
+      (id: string) => codeWrong(id, number),
+    ]),
+  ),
+  // A5: Restore's prompt after each key (`v639-plan15.cap`); the sub-recordings are timelines.
+  "probe/code-keys-6-4": (id) =>
+    stills(id, standbyRig(), [
+      CODE_LEAVES["6-4"]!,
+      "navi wait:2000",
+      "1 2",
+      "c",
+      "c",
+      "c wait:3000",
+      "navi wait:2000",
+      "navi wait:4000 1 2 3",
+      "navi wait:5000",
+      "1 2 3 4 5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "0",
+      "1",
+      "c~1000",
+    ]),
+  "probe/code-keys-6-4-c-on-empty": (id) => timeline(id, after(RESTORE_PROMPT), "c"),
+  "probe/code-keys-6-4-ok-empty": (id) => timeline(id, after(RESTORE_PROMPT), "navi"),
+  "probe/code-keys-6-4-ok-123": (id) => timeline(id, after(`${RESTORE_PROMPT} 1 2 3`), "navi"),
   "probe/wrap-down": (id) => stills(id, standbyRig(), wrap(`${PHONE_BOOK} down*9`, "down", 4)),
   ...Object.fromEntries(
     Object.entries(WRAPS).flatMap(([name, base]) =>

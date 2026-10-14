@@ -78,6 +78,7 @@ function atPage(widget: Widget, number: number): Widget {
   return {
     render: (flow) => widget.render(deeper(flow)),
     onKey: (key, flow) => widget.onKey?.(key, deeper(flow)),
+    onKeyDown: (key, flow) => widget.onKeyDown?.(key, deeper(flow)),
     tick: (dtMs, flow) => widget.tick?.(dtMs, deeper(flow)),
   };
 }

@@ -833,22 +833,44 @@ like a setter level. `probe/persist-reboot` has its scenario (two phones over on
 `src/firmware/leaves.ts`, `src/firmware/bindings.ts` (`CODE_LEAVES`), `src/firmware/records.ts`,
 `tests/security.test.ts` (new), `tests/widgets-code.test.ts` (new).
 
-- [ ] TDD `SECURITY_RECORD` and `StockSecurity`: default `12345`; `verify` exact; `changeCode`
+- [x] TDD `SECURITY_RECORD` and `StockSecurity`: default `12345`; `verify` exact; `changeCode`
       bounds from Task 0; `insertSim` keeps five, most recent first; `asksAtPowerOn` per D9/D10;
       the record survives `restoreFactory()`. Add a wrong-attempt counter only if A3 shows a
       lockout, with its captured behaviour.
-- [ ] TDD the prompt painter's mask entry: `probe/code-keys-6-4` and `boot/security-gate-keys`
+- [x] TDD the prompt painter's mask entry: `probe/code-keys-6-4` and `boot/security-gate-keys`
       images pixel-exact from literal models.
-- [ ] TDD `codeEntry` in a flow (`tests/support/flow-rig.ts`): digits, C, C on empty, OK on empty
+- [x] TDD `codeEntry` in a flow (`tests/support/flow-rig.ts`): digits, C, C on empty, OK on empty
       and with too few digits, the most digits, per A2/A5; a wrong code plays `Code error` with
       its golden timeline and returns to the empty prompt; an accepted code calls `accepted`.
-- [ ] Bind `CODE_LEAVES` in `leaves.ts`: 6-3-5, 6-3-6-1, 6-4 and the 4-5-5 page result use
+- [x] Bind `CODE_LEAVES` in `leaves.ts`: 6-3-5, 6-3-6-1, 6-4 and the 4-5-5 page result use
       `codeEntry`; until Task 7, an accepted code opens a placeholder owned by `15` (4-5-5's by
       `22`). PIN, PIN2 and barring prompts are unchanged.
-- [ ] Acceptance scenarios for `probe/code-wrong-*` and `probe/code-keys-6-4` (hand-written, in
+- [x] Acceptance scenarios for `probe/code-wrong-*` and `probe/code-keys-6-4` (hand-written, in
       `tests/support/probes.ts`); plan 14's `6-3-5.leaf` and `4-5-5` goldens still pass.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): security code verification and stock code entry`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): security code verification and stock code entry`.
+
+Deviation (API): `new StockSecurity(eeprom, settings, now)` takes the kernel clock (default
+`() => 0`) to time the lockout (A3). The record is `{ code, recentSims, wrongAttempts }`; the
+counter persists and the lockout's start is kept in memory, so a phone that loads a locked record
+(a power cycle or a reload) starts the lockout again at its first entry, as the cold power-on in
+`boot/gate-lockout-reboot` stays locked. A lockout that has run out resets the counter. Every
+rejected OK counts toward the five (UNVERIFIED for entries shorter than 5 digits).
+`codeEntry` also takes `softkey`, `onEmptyC` (`"back"` in menus, `"inert"` at the boot gate) and
+`error` (the `Code error` timeline; Task 8 passes the boot's); `maskedEntry` is the same entry
+with its own OK, for Task 7's new-code prompts. `createStockMenu` gains an optional fourth
+`security` argument; `CODE_ERROR` joins the bindings.
+
+Deviation (files): the `Code error` timeline is a named probe timeline (`code-error`, from
+`probe/code-wrong-6-4`, 2904 ms) in `scripts/widget-sprites.ts`, pinned in
+`tests/resources.test.ts`; `extract-resources` ran twice with no diff. `src/widgets/info-pages.ts`
+now forwards key-down to a page's result (C held 1 s in Clear timers' prompt). The probe key
+scripts gain a hold token (`c~1000`).
+
+Completion note (Task 6): `probe/code-wrong-{6-3-5,6-3-6-1,6-4,4-5-5}`, `probe/code-keys-6-4`
+and its three sub-recordings pass at ±2 ms; the mask painter matches `probe/code-keys-6-4` and
+`boot/security-gate-keys` from literal models. PIN, PIN2 and barring prompts keep plan 14's
+first screen.
 
 ### Task 7 - Phone security, Change security code, Restore factory settings (TDD)
 

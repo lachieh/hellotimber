@@ -15,6 +15,7 @@ import {
   WIDGET_TIMELINES,
 } from "../resources";
 import type { StockWidgetTimeline } from "../resources";
+import { codeEntry } from "../widgets/code-entry";
 import { confirmQuery } from "../widgets/confirm";
 import { StockFlowApplication, type Flow, type Widget } from "../widgets/flow";
 import { infoPages, type InfoPage } from "../widgets/info-pages";
@@ -31,6 +32,7 @@ import { textPages } from "../widgets/text-pages";
 import {
   CLUB_NOKIA_ID_BLINK,
   CLUB_NOKIA_ID_PROMPT,
+  CODE_LEAVES,
   CURSOR_STYLE,
   EXIT_LEVELS,
   INVALID_SHORTCUT,
@@ -51,6 +53,7 @@ import {
   settingKey,
   slugOf,
   SNAKE_LEVEL,
+  splitPromptLines,
   type PromptLayout,
 } from "./bindings";
 import {
@@ -63,6 +66,7 @@ import {
   type StockTreeNode,
 } from "./generated/stock-tree";
 import { PlaceholderApplication } from "./placeholder";
+import type { StockSecurity } from "./security";
 import type { StockSettings } from "./settings";
 
 /** The soft key of Instructions pages (P12; the tree records only their text). */
@@ -149,14 +153,38 @@ function nextSibling(number: string): string {
   return level[(index + 1) % level.length]!.slug;
 }
 
-/** Builds the stock leaves of one menu over one settings store and one games holder. */
+/** The label of tree node `number`, or of the info page `<pages>-<k>` (Clear timers, 4-5-5). */
+function labelOf(number: string): string {
+  const segments = number.split("-");
+  let level: readonly StockTreeNode[] = STOCK_TREE;
+  let node: StockTreeNode | undefined;
+  for (const [i, segment] of segments.entries()) {
+    const found = level.find((n) => n.number.split("-").at(-1) === segment);
+    if (found === undefined) {
+      const pages = node?.opens.kind === "info-pages" ? node.opens.pages : [];
+      const page = i === segments.length - 1 ? pages[Number(segment) - 1] : undefined;
+      if (page === undefined) throw new Error(`No tree node ${number}.`);
+      return page.label;
+    }
+    node = found;
+    level = found.children ?? [];
+  }
+  return node!.label;
+}
+
+/**
+ * Builds the stock leaves of one menu over one settings store, one games holder and one
+ * security code.
+ */
 export class LeafBinder {
   readonly #settings: StockSettings;
   readonly #games: StockGames;
+  readonly #security: StockSecurity;
 
-  constructor(settings: StockSettings, games: StockGames) {
+  constructor(settings: StockSettings, games: StockGames, security: StockSecurity) {
     this.#settings = settings;
     this.#games = games;
+    this.#security = security;
   }
 
   /** The application a leaf node opens. */
@@ -304,9 +332,11 @@ export class LeafBinder {
         const sk = need("an info screen");
         return () => infoScreen({ lines: () => lines, softkey: sk });
       }
+      case "code-prompt":
+        if (CODE_LEAVES[number] !== undefined) return this.#codeLeaf(number, screen);
+      // falls through: PIN, PIN2 and barring prompts keep plan 14's first screen (D7)
       case "text-input":
-      case "number-input":
-      case "code-prompt": {
+      case "number-input": {
         const layout = layoutOf(number, screen, value);
         const blink = blinkOf(number, layout);
         return () => promptFromLayout(layout, screen, blink);
@@ -334,6 +364,22 @@ export class LeafBinder {
       default:
         throw new Error(`${number}: no stock widget for a ${screen.kind} screen.`);
     }
+  }
+
+  /** A security-code leaf (D7): the stock code entry; an accepted code opens its flow. */
+  #codeLeaf(number: string, screen: StockLeafScreen): () => Widget {
+    const softkey = screen.softkey;
+    if (softkey === undefined) throw new Error(`${number}: a code prompt without a soft key.`);
+    const { label } = splitPromptLines(screen.lines);
+    const placeholder = labelOf(number);
+    const security = this.#security;
+    return () =>
+      codeEntry({
+        lines: label,
+        softkey,
+        security,
+        accepted: (flow) => flow.replace(placeholderWidget(placeholder)),
+      });
   }
 
   /**

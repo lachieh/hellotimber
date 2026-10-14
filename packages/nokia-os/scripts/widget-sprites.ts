@@ -296,6 +296,9 @@ export const PROBE_TIMELINES: readonly {
   { golden: "probe/confirm-5-2-5-ok", kind: "note", name: "level-5-done" },
   // P8: Reminders › Erase › All › Yes.
   { golden: "probe/confirm-10-3-2-yes", kind: "note", name: "reminder-memory-empty" },
+  // Plan 15 A4: a wrong security code in Restore factory settings' prompt (2904 ms; the other
+  // in-menu prompts' 2902-2905 ms), then the empty prompt.
+  { golden: "probe/code-wrong-6-4", kind: "note", name: "code-error" },
   // P5: Menu 1 8, then standby.
   { golden: "probe/shortcut-m1-8", kind: "note", name: "invalid-shortcut" },
   // Plan 23 D13: Game over! / Your score: (the short game), and the fireworks before Game over!

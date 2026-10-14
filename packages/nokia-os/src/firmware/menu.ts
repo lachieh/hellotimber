@@ -31,6 +31,7 @@ import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
 import { LeafBinder, type LeafPlace } from "./leaves";
 import { seedFromClock } from "../games/snake/seed";
 import { createMemoryStorage, StockEeprom } from "./eeprom";
+import { StockSecurity } from "./security";
 import { createStockSettings, stockPageValue, type StockSettings } from "./settings";
 
 interface Builder {
@@ -156,14 +157,17 @@ export function createStockGames(ports: StockPorts = {}, now: () => number = () 
  * The stock menu, with Clock pages reading `ports` for their clock and date values, the other
  * pages, option lists and setters reading and writing `settings` (default: a fresh store over an
  * empty in-memory EEPROM, the virgin state), and the games keeping their suspended game in
- * `games` (default: fresh).
+ * `games` (default: fresh), and the security-code leaves verifying against `security`
+ * (default: the virgin code, over its own in-memory EEPROM).
  */
 export function createStockMenu(
   ports: StockPorts = {},
   settings: StockSettings = createStockSettings(new StockEeprom(createMemoryStorage())),
   games: StockGames = createStockGames(ports),
+  security: StockSecurity = new StockSecurity(new StockEeprom(createMemoryStorage()), settings),
 ): PhoneMenu {
-  const builder: Builder = { ports, settings, games, leaves: new LeafBinder(settings, games) };
+  const leaves = new LeafBinder(settings, games, security);
+  const builder: Builder = { ports, settings, games, leaves };
   return new PhoneMenu(
     STOCK_TREE.map(
       (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),

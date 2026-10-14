@@ -6,6 +6,7 @@ import type { StockCueSink } from "./cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { invalidShortcut } from "./leaves";
 import { createStockGames, createStockMenu } from "./menu";
+import { StockSecurity } from "./security";
 import { createStockSettings } from "./settings";
 
 export interface StockPhoneConfig extends StockPorts {
@@ -56,8 +57,9 @@ export function createStockPhone(config: StockPhoneConfig): Phone {
 
 /**
  * `createStockPhone` with internal options. The phone owns its EEPROM over `config.storage`
- * (read once here, so a malformed record throws now), its settings store over it, and its games
- * holder (the suspended game), which power-off clears.
+ * (read once here, so a malformed record throws now), its settings store and security code over
+ * it (the lockout timed by the kernel clock), and its games holder (the suspended game), which
+ * power-off clears.
  */
 export function createStockPhoneWith(
   config: StockPhoneConfig,
@@ -75,6 +77,7 @@ export function createStockPhoneWith(
   const eeprom = new StockEeprom(config.storage ?? createMemoryStorage());
   const settings = createStockSettings(eeprom);
   let now = 0;
+  const security = new StockSecurity(eeprom, settings, () => now);
   const ports = { clock, date };
   const clockGames = createStockGames(ports, () => now);
   const games = {
@@ -83,7 +86,7 @@ export function createStockPhoneWith(
     ...(internals.cues === undefined ? {} : { cues: internals.cues }),
   };
   const phone = createPhone({
-    menu: createStockMenu(ports, settings, games),
+    menu: createStockMenu(ports, settings, games, security),
     carrier: config.carrier,
     ...(clock === undefined ? {} : { clock }),
     bootTimeline: BOOT_TIMELINE,

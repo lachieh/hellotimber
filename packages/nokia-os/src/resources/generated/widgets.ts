@@ -7258,6 +7258,20 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
+    "code-error": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/error"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 2904
+        }
+      ]
+    },
     "invalid-shortcut": {
       "frames": [
         {
@@ -7476,6 +7490,7 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "request-not-confirmed": "request-not-confirmed",
     "level-5-done": "level-5-done",
     "reminder-memory-empty": "reminder-memory-empty",
+    "code-error": "code-error",
     "invalid-shortcut": "invalid-shortcut",
     "game-over-note": "game-over-note",
     "game-over-fireworks": "game-over-fireworks"

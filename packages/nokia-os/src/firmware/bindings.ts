@@ -534,6 +534,23 @@ export const WELCOME_NOTE_KEY = "settings/phone-settings/welcome-note";
 export const PHONE_SECURITY_KEY = "settings/security-settings/phone-security";
 
 /**
+ * The note a wrong security code shows (`probe/code-wrong-*` image h; `Code\nerror` in the
+ * firmware's string table), then the empty prompt.
+ */
+export const CODE_ERROR = { lines: ["Code", "error"], timeline: "code-error" } as const;
+
+/**
+ * Security-code leaves (D7): the leaf (or, for 4-5-5, the Clear timers page result) uses the
+ * stock code entry. Until Task 7 an accepted code opens the placeholder of the plan named here.
+ */
+export const CODE_LEAVES: Readonly<Record<string, string>> = {
+  "6-3-5": "15", // Phone security
+  "6-3-6-1": "15", // Change security code
+  "6-4": "15", // Restore factory settings
+  "4-5-5": "22", // Show call duration › Clear timers
+};
+
+/**
  * Code-prompt leaves that store a single choice, by node number, with the option labels in
  * list order: Phone security's list is `Off`, `On` (`probe/accept-6-3-5-on` image h). The page
  * reads the choice like a setter level's (virgin `Off`, `tree/06-settings/6-3.sub`).
