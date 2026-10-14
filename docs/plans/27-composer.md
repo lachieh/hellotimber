@@ -599,14 +599,23 @@ D4), `src/resources/generated/composer.ts` and `sounds.ts` (generated), `src/res
 checks that `SubmenuOptions.label` exists as plan 17 specifies, records that here and commits
 nothing.
 
-- [ ] Add `SubmenuOptions.label?(child)` exactly as plan 17's "Contract changes" specify, with
+- [x] Add `SubmenuOptions.label?(child)` exactly as plan 17's "Contract changes" specify, with
       plan 17 Task 4's `label` tests (list items and the child level's title follow the reader;
       re-read per tick; one snapshot per change; an empty string throws; paths and slugs
       unchanged). Plan 17 Task 4 then finds it and reuses it.
-- [ ] Existing tests pass unchanged; configs without the seam produce identical models.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
+- [x] Existing tests pass unchanged; configs without the seam produce identical models.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
       `vp check --fix`.
-- [ ] Commit: `feat(phone-core): submenu label reader`.
+- [x] Commit: `feat(phone-core): submenu label reader`.
+
+**Task 6 completion.** Plan 17 Task 4 had not landed on this branch, so phone-core gains
+`SubmenuOptions.label?(child: MenuEntry<Metadata>): string | undefined` exactly as plan 17's
+contract states, plus `SubmenuEntry.labelOf(child): string` (the reader's text, else the child's
+label; an empty string throws; a reader's exception is contained). The level's list items, the
+child's own level title (submenu, list or reader) and an application's activation title read it;
+the tick signature includes the labels, so a change emits one snapshot. Tests:
+`packages/phone-core/tests/submenu-label.test.ts` (9). VISION and the phone-core README document
+it. Plan 17 Task 4 reuses it (its `label` tests are these).
 
 ### Task 7 - Composer painter, icon and glyphs (TDD against goldens)
 

@@ -115,6 +115,17 @@ unsubscribe();
   });
   ```
 
+- `label(child)` (opt-in) is the text a child shows in its level's list and as its own level's
+  title, re-read on every tick (one snapshot per change); undefined keeps the child's label, an
+  empty string throws, and an exception the reader throws leaves the child's label. Slugs and
+  paths do not change (a Composer slot named by its saved tone):
+
+  ```ts
+  new SubmenuEntry(slug("composer"), order, "Composer", slots, undefined, {
+    label: (child) => savedName(child.slug.value), // undefined: "(empty)"
+  });
+  ```
+
 - `context.exit(options?)`: `exit()` returns to the menu; `exit({ to: "standby" })` leaves the
   menus as C-hold does; `exit({ levels: 2 })` also closes the enclosing level, and
   `exit({ select: "slug" })` selects that child of the level returned to, on the bottom row of a

@@ -147,6 +147,14 @@ export interface SubmenuOptions<Metadata = unknown> {
    * child shown, numbered by order. Method syntax keeps SubmenuEntry covariant in Metadata.
    */
   shown?(child: MenuEntry<Metadata>): boolean;
+  /**
+   * Plan 17 (plan 27 Task 6): the text `child` shows in this level's list and as its own level's
+   * title; re-read on every tick (a change emits one snapshot). Undefined = the child's label. An
+   * empty string throws, as entry labels do; an exception the reader throws is contained (the
+   * child's own label shows). Slugs and paths do not change. Method syntax keeps SubmenuEntry
+   * covariant in Metadata.
+   */
+  label?(child: MenuEntry<Metadata>): string | undefined;
 }
 
 export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
@@ -197,6 +205,9 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
     if (options.shown !== undefined && typeof options.shown !== "function") {
       throw new Error("Submenu shown must be a function.");
     }
+    if (options.label !== undefined && typeof options.label !== "function") {
+      throw new Error("Submenu label must be a function.");
+    }
     const entryIndicatorMs = options.entryIndicatorMs ?? 0;
     if (!Number.isInteger(entryIndicatorMs) || entryIndicatorMs < 0) {
       throw new Error(
@@ -216,6 +227,26 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
   detailOf(child: MenuEntry<Metadata>): string | undefined {
     const value = this.#options.detail?.(child);
     return typeof value === "string" ? value : undefined;
+  }
+
+  /**
+   * The text `child` shows (SubmenuOptions.label): the reader's string, else the child's label.
+   * Throws on an empty string; a reader's own exception leaves the child's label.
+   */
+  labelOf(child: MenuEntry<Metadata>): string {
+    let value: string | undefined;
+    try {
+      value = this.#options.label?.(child);
+    } catch {
+      return child.label;
+    }
+    if (typeof value !== "string") return child.label;
+    if (value.trim() === "") {
+      throw new Error(
+        `Submenu "${this.slug.value}" label for "${child.slug.value}" must be non-empty.`,
+      );
+    }
+    return value;
   }
 
   /** The child selected on entry: the opening reader's child if shown, else the first shown. */
