@@ -18,6 +18,9 @@ import { createMemorySettings, virginSettings } from "../src/firmware/settings";
 import { stockMenu } from "../src/index";
 import { STOCK_FONTS } from "../src/resources";
 import { StockFlowApplication } from "../src/widgets/flow";
+import { expectFlowTimeline } from "./support/flow-rig.ts";
+import { PROBE_TOLERANCE_MS } from "./support/golden.ts";
+import { loadGolden } from "./support/goldens.ts";
 
 const SLUGS = [
   "phone-book",
@@ -191,6 +194,44 @@ describe("stockMenu", () => {
     // A fresh menu has its own store.
     const fresh = submenu(createStockMenu().entries[4]!.entry);
     expect(fresh.detailOf(fresh.children.entries[1]!)).toBe("Level 1");
+  });
+
+  it("shows the stored top score on Snake II's Top score (plan 23 D9)", () => {
+    const settings = createMemorySettings(virginSettings());
+    settings.setNumber("games/snake/top-score", 105);
+    const games = submenu(createStockMenu({}, settings).entries[7]!.entry);
+    const snake = submenu(games.children.entries[0]!);
+    const top = snake.children.entries.find((c) => c.slug.value === "top-score");
+    if (!(top instanceof ApplicationEntry)) throw new Error("Top score is not an application");
+    const exits: unknown[] = [];
+    const session = top.application.createSession({
+      exit: (options) => void exits.push(options),
+      open: () => {},
+    });
+    // Played from the trigger as `game/snake/after-long-top-score` (Top score after the long
+    // game, 105), up to the game menu it returns to. The note plays tree 8-1-4's timeline,
+    // a few ms off other recordings (plan 14 closeout): the probe tolerance.
+    const frames: { startMs: number; pixels: Uint8Array }[] = [];
+    let exitMs: number | undefined;
+    for (let t = 0; t < 8000; t++) {
+      if (t > 0) session.tick(1);
+      if (exits.length > 0) {
+        exitMs = t;
+        break;
+      }
+      const screen = session.render();
+      if (screen.kind !== "custom") throw new Error(`expected custom, got ${screen.kind}`);
+      const last = frames.at(-1)?.pixels;
+      if (!last || last.some((v, i) => v !== screen.frame.pixels[i])) {
+        frames.push({ startMs: t, pixels: screen.frame.pixels });
+      }
+    }
+    const golden = loadGolden("game/snake/after-long-top-score");
+    expectFlowTimeline({ frames, ...(exitMs === undefined ? {} : { exitMs }) }, golden, {
+      returns: true,
+      toleranceMs: PROBE_TOLERANCE_MS,
+    });
+    expect(exits).toEqual([{ select: "new-game" }]);
   });
 
   it("returns no page value without host ports for the Clock and Date pages", () => {

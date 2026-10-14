@@ -19,7 +19,7 @@ import { confirmQuery } from "../widgets/confirm";
 import { StockFlowApplication, type Flow, type Widget } from "../widgets/flow";
 import { infoPages, type InfoPage } from "../widgets/info-pages";
 import { infoScreen } from "../widgets/info-screen";
-import { levelBar } from "../widgets/level-bar";
+import { levelBar, snakeLevel } from "../widgets/level-bar";
 import { multiSelect } from "../widgets/multi-select";
 import { note, type NoteEnd, type NoteOptions } from "../widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
@@ -38,6 +38,8 @@ import {
   noteEnd,
   noteMoves,
   noteTimelineId,
+  numberLine,
+  NUMERIC_LEVELS,
   optionListNumbering,
   PAGE_RESULTS,
   placeholderOwner,
@@ -216,9 +218,18 @@ export class LeafBinder {
         }
         const end: NoteEnd = noteEnd(number) ?? (screen.after === "standby" ? "standby" : "back");
         const keys = moves ?? noteMoves(number);
+        // A line that shows a numeric setting (Top score) reads it when the note opens.
+        const shown = numberLine(number);
+        const settings = this.#settings;
+        const linesNow = (): readonly string[] =>
+          shown === undefined
+            ? lines
+            : lines.map((line, i) =>
+                i === shown.line ? String(settings.number(shown.key)) : line,
+              );
         return () =>
           note({
-            lines,
+            lines: linesNow(),
             ...(timeline === undefined ? {} : { timeline }),
             end,
             ...(keys === undefined ? {} : { moves: keys }),
@@ -261,9 +272,14 @@ export class LeafBinder {
         return () => promptFromLayout(layout, screen, blink);
       }
       case "level-bar": {
+        const sk = need("a level bar");
+        const key = NUMERIC_LEVELS[number];
+        if (key !== undefined) {
+          const settings = this.#settings;
+          return () => snakeLevel({ settings, key, softkey: sk });
+        }
         const bars = LEVEL_BARS[modelNumber(number)];
         if (bars === undefined) throw new Error(`No level bars for ${number}.`);
-        const sk = need("a level bar");
         return () => levelBar({ bars, softkey: sk });
       }
       default:

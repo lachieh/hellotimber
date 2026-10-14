@@ -15,13 +15,13 @@ import { WIDGET_TIMELINE_BY_NODE, WIDGET_TIMELINES } from "../src/resources";
 import type { Widget } from "../src/widgets/flow";
 import { infoPages, type InfoPage } from "../src/widgets/info-pages";
 import { infoScreen } from "../src/widgets/info-screen";
-import { levelBar } from "../src/widgets/level-bar";
+import { levelBar, snakeLevel } from "../src/widgets/level-bar";
 import { note } from "../src/widgets/note";
 import { OptionListWidget } from "../src/widgets/option-list";
 import { promptFromLayout } from "../src/widgets/prompt";
 import { splash, splashIntro } from "../src/widgets/splash";
 import { textPages } from "../src/widgets/text-pages";
-import { expectLcd } from "./support/golden.ts";
+import { expectLcd, GAME_TICK_TOLERANCE_MS } from "./support/golden.ts";
 import { expectFlowTimeline, flowRig, recordFlow } from "./support/flow-rig.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";
 import { indicatorOf, INDEX, treePath } from "./support/tree.ts";
@@ -268,6 +268,7 @@ describe("input prompts against every asserted prompt golden (first screen, curs
 });
 
 describe("level bars (P12)", () => {
+  // Bantumi's and Pairs II's Level pages keep plan 14's static bars until plan 24 measures them.
   for (const number of Object.keys(LEVEL_BARS)) {
     const id = `tree/08-games/${number}.leaf`;
     if (!INDEX.some((e) => e.id === id && e.status === "asserted")) continue;
@@ -277,20 +278,106 @@ describe("level bars (P12)", () => {
       expectLcd({ pixels: rig.frame() }, goldenImage(id, triggerImage(id)), `${number} Level`);
     });
   }
+});
 
-  it("probe/games-level-keys: ▲ and ▼ are inert, OK goes back", () => {
+describe("Snake II's Level page (plan 23 D11, C1)", () => {
+  const KEY = "games/snake/level";
+  /** The page over `settings` (virgin: 175), after `downs` ▼ presses. */
+  function page(settings: StockSettings = virgin(), downs = 0) {
+    const rig = flowRig(() => snakeLevel({ settings, key: KEY, softkey: "OK" }));
+    for (let i = 0; i < downs; i++) rig.press("down");
+    return { rig, settings };
+  }
+  const at = (level: number) => {
+    const settings = virgin();
+    settings.setNumber(KEY, level);
+    return page(settings);
+  };
+
+  it("tree/08-games/8-1-2.leaf: the virgin level 175 draws nine bars", () => {
+    const id = "tree/08-games/8-1-2.leaf";
+    expectLcd({ pixels: page().rig.frame() }, goldenImage(id, triggerImage(id)), "virgin Level");
+  });
+
+  for (let n = 1; n <= 9; n++) {
+    it(`game/snake/level-${n}: ${n} filled bars`, () => {
+      const id = `game/snake/level-${n}`;
+      expectLcd({ pixels: at(n).rig.frame() }, goldenImage(id, String(n)), `level ${n}`);
+    });
+  }
+
+  it("game/snake/level-keys-virgin-up: ▲ from 175 changes nothing; 167 ▼ show eight bars", () => {
+    const id = "game/snake/level-keys-virgin-up";
+    const { rig } = page();
+    expectLcd({ pixels: rig.frame() }, goldenImage(id, "virgin"), "virgin");
+    rig.press("up");
+    expectLcd({ pixels: rig.frame() }, goldenImage(id, "up-from-virgin"), "▲");
+    for (let i = 0; i < 166; i++) rig.press("down");
+    expectLcd({ pixels: rig.frame() }, goldenImage("game/snake/level-9", "9"), "▲, ▼ ×166");
+    rig.press("down");
+    expectLcd({ pixels: rig.frame() }, goldenImage(id, "up-then-down-to-8"), "▲, ▼ ×167");
+  });
+
+  it("clamps at 1 and, from below 9, at 9", () => {
+    const { rig } = at(2);
+    rig.press("down");
+    rig.press("down");
+    expectLcd({ pixels: rig.frame() }, goldenImage("game/snake/level-1", "1"), "2, ▼ ×2");
+    for (let i = 0; i < 12; i++) rig.press("up");
+    expectLcd({ pixels: rig.frame() }, goldenImage("game/snake/level-9", "9"), "1, ▲ ×12");
+    rig.press("navi");
+  });
+
+  it("game/snake/level-keys-ok: OK stores the level and goes back", () => {
+    const id = "game/snake/level-keys-ok";
+    const { rig, settings } = page(virgin(), 170);
+    expectLcd({ pixels: rig.frame() }, goldenImage(id, "a"), "175, ▼ ×170");
+    expect(settings.number(KEY)).toBe(175);
+    rig.press("navi");
+    expectFlowTimeline(recordFlow(rig, 100), loadGolden(id), { returns: true });
+    expect(rig.exits.map((e) => e.options)).toEqual([undefined]);
+    expect(settings.number(KEY)).toBe(5);
+  });
+
+  it("game/snake/level-keys-c: C goes back without storing", () => {
+    const id = "game/snake/level-keys-c";
+    const settings = virgin();
+    settings.setNumber(KEY, 5);
+    const { rig } = page(settings, 2);
+    expectLcd({ pixels: rig.frame() }, goldenImage(id, "a"), "5, ▼ ×2");
+    rig.press("c");
+    expectFlowTimeline(recordFlow(rig, 100), loadGolden(id), { returns: true });
+    expect(settings.number(KEY)).toBe(5);
+  });
+
+  it("game/snake/level-keys-hold-up: ▲ acts on key-down and repeats while held", () => {
+    const id = "game/snake/level-keys-hold-up";
+    const { rig } = at(5);
+    rig.session.onKey({ type: "down", key: "up" });
+    const recording = recordFlow(rig, 2000);
+    rig.session.onKey({ type: "up", key: "up" });
+    // The repeat runs 482-496 ms apart: compared with the game tolerance (D6).
+    expectFlowTimeline(recording, loadGolden(id), {
+      returns: false,
+      toleranceMs: GAME_TICK_TOLERANCE_MS,
+    });
+    rig.advance(1000);
+    expect(rig.frame()).toEqual(recording.frames.at(-1)!.pixels);
+  });
+
+  it("probe/games-level-keys: ▲ from 175 stays, ▼ gives 174 (nine bars), OK stores it", () => {
     const id = "probe/games-level-keys";
-    const rig = flowRig(() => levelBar({ bars: "level/8-1", softkey: "OK" }));
-    expectLcd({ pixels: rig.frame() }, goldenImage(id, triggerImage(id)), "Level");
+    const { rig, settings } = page();
     rig.press("up");
     rig.press("down");
     expectLcd({ pixels: rig.frame() }, goldenImage(id, triggerImage(id)), "Level, ▲, ▼");
     rig.press("navi");
     expect(rig.exits.map((e) => e.options)).toEqual([undefined]);
+    expect(settings.number(KEY)).toBe(174);
   });
 
   it("probe/games-level-c: C goes back", () => {
-    const rig = flowRig(() => levelBar({ bars: "level/8-1", softkey: "OK" }));
+    const { rig } = page();
     rig.press("c");
     expect(rig.exits).toHaveLength(1);
   });

@@ -81,13 +81,36 @@ export const VIRGIN_TEXTS: readonly (
   // Phone book › Options › Memory status: `SIM card:` / `50 free` / `0 in use`.
   { key: "phone-book/options/memory-status/free", number: "1-8-2", line: 1 },
   { key: "phone-book/options/memory-status/used", number: "1-8-2", line: 2 },
-  // Top scores (`Top score:` / the score): uninitialised game EEPROM (Snake II, Space impact)
-  // and zero (Pairs II).
-  { key: "games/snake/top-score", number: "8-1-4", line: 1 },
+  // Top scores (`Top score:` / the score): uninitialised game EEPROM (Space impact) and zero
+  // (Pairs II). Snake II's is a number (`VIRGIN_NUMBERS`).
   { key: "games/space-impact/top-score", number: "8-2-2", line: 1 },
   { key: "games/pairs-ii/time-trial/top-score", number: "8-4-1-3", line: 1 },
   { key: "games/pairs-ii/puzzle/top-score", number: "8-4-2-3", line: 1 },
 ];
+
+/**
+ * Numeric settings (plan 23 D9) and their virgin values: Snake II's level, 175 in the virgin
+ * EEPROM (D2: `game/snake/level-keys-virgin-up`, 167 ▼ from it show eight bars), and its top
+ * score, the `Top score:` note's second line (`tree/08-games/8-1-4.leaf`: 45). The game writes
+ * the top score; the Level page the level.
+ */
+export const VIRGIN_NUMBERS: readonly (
+  | { readonly key: string; readonly value: number }
+  | { readonly key: string; readonly number: string; readonly line: number }
+)[] = [
+  { key: "games/snake/level", value: 175 },
+  { key: "games/snake/top-score", number: "8-1-4", line: 1 },
+];
+
+/** The note lines a numeric setting shows, by node number: line `line` is its value. */
+export function numberLine(
+  number: string,
+): { readonly key: string; readonly line: number } | undefined {
+  for (const entry of VIRGIN_NUMBERS) {
+    if ("number" in entry && entry.number === number) return { key: entry.key, line: entry.line };
+  }
+  return undefined;
+}
 
 /**
  * Option lists whose indicator is not `<list path>-<k>`, by node number prefix (measured on the
@@ -225,13 +248,27 @@ export function splitPromptLines(lines: readonly string[]): {
   return { label: lines.slice(0, end), value: lines.slice(end).join(" ") };
 }
 
-/** The level bar each game's Level shows (virgin EEPROM; Pairs II's two modes share one). */
+/**
+ * The fixed level bar each game's Level shows (virgin EEPROM; Pairs II's two modes share one).
+ * Snake II's Level page is stateful (`NUMERIC_LEVELS`, plan 23 D11); Bantumi's and Pairs II's
+ * keep these until plan 24 measures them.
+ */
 export const LEVEL_BARS: Readonly<Record<string, string>> = {
-  "8-1-2": "level/8-1",
   "8-3-2": "level/8-3",
   "8-4-1-2": "level/8-4",
   "8-4-2-2": "level/8-4",
 };
+
+/** Level pages that edit a numeric setting (plan 23 D11): Snake II's, by node number. */
+export const NUMERIC_LEVELS: Readonly<Record<string, string>> = {
+  "8-1-2": "games/snake/level",
+};
+
+/**
+ * A held ▲/▼ on Snake II's Level page (plan 23 Task 0 C1, `game/snake/level-keys-hold-up`): one
+ * step on the press, the next ≈778 ms later, then one every 482-496 ms (489 ms).
+ */
+export const LEVEL_REPEAT = { firstMs: 778, everyMs: 489 } as const;
 
 /**
  * Info-page results the tree records only by kind (P15): Prepaid credit's Credit info display

@@ -5,10 +5,10 @@ import { SOFTKEY_TOP } from "../standby";
 /** `Level:` in the small face at x 5, top 0 (`tree/08-games/8-1-2.leaf`). */
 const LEVEL_LABEL = { text: "Level:", x: 5, top: 0 } as const;
 
-/** A game's level bar: `Level:` and the bars as the virgin EEPROM shows them (P12). */
+/** A game's Level page: `Level:` and the bars for its level (P12; plan 23 D11). */
 export interface LevelBarModel {
   readonly kind: "level-bar";
-  /** The bars' sprite id (`level/8-1`). */
+  /** The bars' sprite id (`level/snake-5`, `level/8-3`). */
   readonly bars: string;
   readonly softkey: string;
 }

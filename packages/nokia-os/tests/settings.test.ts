@@ -15,6 +15,7 @@ const SNAPSHOT: StockSettingsSnapshot = {
   },
   marks: { "messages/info-service/language": [true, false, true] },
   texts: { "tones/ringing-volume": "Level 1", "messages/voice-mailbox-number": "793000333" },
+  numbers: { "games/snake/level": 175, "games/snake/top-score": 45 },
   aliases: { "tones/keypad-tones": "tones/ringing-volume" },
 };
 
@@ -71,10 +72,32 @@ describe("createMemorySettings", () => {
     const b = createMemorySettings(SNAPSHOT);
     a.choose("phone-book/options/type-of-view", 0);
     a.toggle("messages/info-service/language", 0);
+    a.setNumber("games/snake/level", 3);
     expect(b.choice("phone-book/options/type-of-view")).toBe(2);
     expect(b.marks("messages/info-service/language")).toEqual([true, false, true]);
+    expect(b.number("games/snake/level")).toBe(175);
     expect(SNAPSHOT.choices["phone-book/options/type-of-view"]!.chosen).toBe(2);
     expect(SNAPSHOT.marks["messages/info-service/language"]).toEqual([true, false, true]);
+    expect(SNAPSHOT.numbers["games/snake/level"]).toBe(175);
+  });
+
+  it("reads and writes numeric values (plan 23 D9)", () => {
+    const settings = createMemorySettings(SNAPSHOT);
+    expect(settings.number("games/snake/level")).toBe(175);
+    settings.setNumber("games/snake/level", 1);
+    settings.setNumber("games/snake/top-score", 105);
+    expect(settings.number("games/snake/level")).toBe(1);
+    expect(settings.number("games/snake/top-score")).toBe(105);
+  });
+
+  it("validates numbers as non-negative integers and names unknown keys", () => {
+    const settings = createMemorySettings(SNAPSHOT);
+    expect(() => settings.setNumber("games/snake/level", 1.5)).toThrow(
+      'Setting "games/snake/level" takes a non-negative integer; got 1.5.',
+    );
+    expect(() => settings.setNumber("games/snake/level", -1)).toThrow(/got -1/);
+    expect(() => settings.number("games/nope")).toThrow('No numeric setting "games/nope".');
+    expect(() => settings.setNumber("games/nope", 1)).toThrow('No numeric setting "games/nope".');
   });
 });
 
@@ -104,13 +127,17 @@ describe("virgin-EEPROM settings (D10)", () => {
       "messages/voice-mailbox-number": "793000333",
       "phone-book/options/memory-status/free": "50 free",
       "phone-book/options/memory-status/used": "0 in use",
-      "games/snake/top-score": "45",
       "games/pairs-ii/puzzle/top-score": "0",
       "games/snake/score-ids/last-score-id": "ç",
       "games/snake/score-ids/top-score-id": "ÆG",
       "games/settings/club-nokia-id": "T",
       "messages/info-service": "Off",
     });
+  });
+
+  it("stores Snake II's level and top score as numbers: 175 and 45 (plan 23 D2, D9)", () => {
+    expect(virgin.numbers).toEqual({ "games/snake/level": 175, "games/snake/top-score": 45 });
+    expect(virgin.texts["games/snake/top-score"]).toBeUndefined();
   });
 
   it("leaves the Clock pages to the host ports", () => {

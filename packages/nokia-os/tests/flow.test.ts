@@ -132,6 +132,26 @@ describe("StockFlowApplication", () => {
     expect(root.keys).toEqual(["navi"]);
   });
 
+  it("forwards key-downs to a widget that declares onKeyDown, and releases as before (D7)", () => {
+    const downs: PhoneKey[] = [];
+    const root = new Probe("root");
+    const game: Widget = Object.assign(new Probe("game"), {
+      onKeyDown: (key: PhoneKey) => void downs.push(key),
+    });
+    root.onKeyAction = (_key, flow) => flow.push(game);
+    const { session } = start(() => root);
+    // A widget without onKeyDown sees only releases.
+    session.onKey({ type: "down", key: "navi" });
+    expect(root.keys).toEqual([]);
+    session.onKey({ type: "up", key: "navi" });
+    session.onKey({ type: "down", key: "2" });
+    expect(downs).toEqual(["2"]);
+    expect((game as Probe).keys).toEqual([]);
+    session.onKey({ type: "up", key: "2" });
+    expect((game as Probe).keys).toEqual(["2"]);
+    expect(downs).toEqual(["2"]);
+  });
+
   it("push and back return to the widget below; back on the last widget exits", () => {
     const root = new Probe("root");
     const child = new Probe("child");

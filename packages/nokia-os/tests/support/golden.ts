@@ -19,6 +19,12 @@ export const TIMING_TOLERANCE_MS = 2;
  */
 export const PROBE_TOLERANCE_MS = 25;
 
+/**
+ * Snake II tick intervals (plan 23 D6, Task 0): two timer units. Intervals spread ±5 ms at
+ * level 1 and ±15 ms at levels 3-9; compared interval by interval, never cumulatively.
+ */
+export const GAME_TICK_TOLERANCE_MS = 16;
+
 /** How `expectTimeline` compares frame starts. */
 export interface TimelineTolerance {
   /** Allowed |Δ| of every timed frame start and of the last frame's hold. Default ±2 ms. */

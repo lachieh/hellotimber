@@ -956,16 +956,29 @@ helpers moved from the engine test to `tests/support/game.ts` (`SNAKE_TRACES`, `
 `src/display/widgets/level-bar.ts`, `src/firmware/leaves.ts`, `tests/settings.test.ts`,
 `tests/widgets-info.test.ts`.
 
-- [ ] Check whether plan 15 has landed (D9). If not: TDD `number`/`setNumber` and snapshot
+- [x] Check whether plan 15 has landed (D9). If not: TDD `number`/`setNumber` and snapshot
       `numbers` (validated integers; separate instances do not share); virgin
       `games/snake/level` = 175 and `games/snake/top-score` = 45 (move the latter out of
       `VIRGIN_TEXTS`).
-- [ ] TDD the Level widget for Snake II (D11): bars from the stored level, ▲/▼ per C1, OK stores
+- [x] TDD the Level widget for Snake II (D11): bars from the stored level, ▲/▼ per C1, OK stores
       and returns, C per C1; the plan 14 goldens (`8-1-2.leaf`, `probe/games-level-keys`,
       `probe/games-level-c`) still pass; every `level-<n>` and `level-keys-*` golden passes.
       Bantumi and Pairs II keep the static widget (comment naming plan 24).
-- [ ] Top score note reads `games/snake/top-score`; the `8-1-4.leaf` golden still passes.
-- [ ] Commit: `feat(nokia-os): stateful Snake II level and top score settings`.
+- [x] Top score note reads `games/snake/top-score`; the `8-1-4.leaf` golden still passes.
+- [x] Commit: `feat(nokia-os): stateful Snake II level and top score settings`.
+
+Outcome: plan 15 has not landed, so the in-memory store gained `number`/`setNumber` and the
+snapshot `numbers` (non-negative integers), with the virgin values in `VIRGIN_NUMBERS`
+(`bindings.ts`: level 175; top score read from `8-1-4`'s second line, 45). Snake II's Level page
+(`snakeLevel`, bound by `NUMERIC_LEVELS`) passes `8-1-2.leaf`, `level-1`..`9`,
+`level-keys-virgin-up`, `-ok`, `-c`, `-hold-up` and both plan 14 probes; Top score reads the
+stored number when it opens (`numberLine`) and plays `after-long-top-score` at 105.
+Deviation: the flow's `onKeyDown` (D7, listed in Task 10) lands here, because the Level page's
+▲/▼ act on key-down and repeat while held (`level-keys-hold-up`: +1 on the press, then after
+778 ms, then every 482-496 ms; `LEVEL_REPEAT` = 778/489). Releases still reach `onKey`, which
+stops the repeat. The repeat is compared with `GAME_TICK_TOLERANCE_MS` (16, now in
+`tests/support/golden.ts`), since its intervals spread 14 ms. `level-keys-digit-1` stays
+pending:22.
 
 ### Task 10 - Game application, game over and suspend (TDD)
 

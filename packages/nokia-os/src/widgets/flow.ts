@@ -31,10 +31,15 @@ export interface Flow {
   indicator(): MenuIndicator;
 }
 
-/** One stock screen in a flow. Keys arrive on short-press release; ticks only reach the top. */
+/**
+ * One stock screen in a flow. Keys arrive on release (`onKey`); a widget that acts on key-down
+ * (game keys, the Level page's ▲/▼, plan 23 D7) also declares `onKeyDown`. Ticks only reach the
+ * top.
+ */
 export interface Widget {
   render(flow: Flow): WidgetModel;
   onKey?(key: PhoneKey, flow: Flow): void;
+  onKeyDown?(key: PhoneKey, flow: Flow): void;
   tick?(dtMs: number, flow: Flow): void;
 }
 
@@ -78,6 +83,7 @@ class FlowSession implements PhoneApplicationSession, Flow {
 
   onKey(event: { type: "down" | "up"; key: PhoneKey }): void {
     if (event.type === "up") this.#top?.onKey?.(event.key, this);
+    else this.#top?.onKeyDown?.(event.key, this);
   }
 
   tick(dtMs: number): void {

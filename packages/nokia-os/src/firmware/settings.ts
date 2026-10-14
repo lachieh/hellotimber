@@ -6,6 +6,7 @@ import {
   settingAlias,
   settingKey,
   slugOf,
+  VIRGIN_NUMBERS,
   VIRGIN_TEXTS,
 } from "./bindings";
 import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
@@ -22,6 +23,9 @@ export interface StockSettings {
    * text is its display value until the key's first choice or toggle replaces it (D9).
    */
   text(key: string): string | undefined;
+  /** A numeric value (plan 23 D9: Snake II's level and top score). */
+  number(key: string): number;
+  setNumber(key: string, value: number): void;
 }
 
 export interface StockSettingsSnapshot {
@@ -31,6 +35,8 @@ export interface StockSettingsSnapshot {
   >;
   readonly marks: Readonly<Record<string, readonly boolean[]>>;
   readonly texts: Readonly<Record<string, string>>;
+  /** Numeric values: non-negative integers. */
+  readonly numbers: Readonly<Record<string, number>>;
   /** Keys that read and write another key (D9: Tones are the General profile's). */
   readonly aliases: Readonly<Record<string, string>>;
 }
@@ -41,6 +47,7 @@ export function createMemorySettings(initial: StockSettingsSnapshot): StockSetti
   );
   const marks = new Map(Object.entries(initial.marks).map(([key, value]) => [key, [...value]]));
   const texts = new Map(Object.entries(initial.texts));
+  const numbers = new Map(Object.entries(initial.numbers));
   const resolve = (key: string): string => initial.aliases[key] ?? key;
   const single = (key: string): { options: number; chosen: number | null } => {
     const found = choices.get(resolve(key));
@@ -51,6 +58,10 @@ export function createMemorySettings(initial: StockSettingsSnapshot): StockSetti
     const found = marks.get(resolve(key));
     if (!found) throw new Error(`No multi-select setting "${key}".`);
     return found;
+  };
+  const numeric = (key: string): string => {
+    if (!numbers.has(resolve(key))) throw new Error(`No numeric setting "${key}".`);
+    return resolve(key);
   };
   const check = (key: string, options: number, index: number): void => {
     if (!Number.isInteger(index) || index < 0 || index >= options) {
@@ -73,6 +84,14 @@ export function createMemorySettings(initial: StockSettingsSnapshot): StockSetti
       texts.delete(resolve(key));
     },
     text: (key) => texts.get(resolve(key)),
+    number: (key) => numbers.get(numeric(key))!,
+    setNumber(key, value) {
+      const stored = numeric(key);
+      if (!Number.isInteger(value) || value < 0) {
+        throw new Error(`Setting "${key}" takes a non-negative integer; got ${value}.`);
+      }
+      numbers.set(stored, value);
+    },
   };
 }
 
@@ -123,7 +142,8 @@ const VALUE_PAGES: ReadonlyMap<string, readonly string[]> = new Map(
  * The captured virgin-EEPROM state (D10) from the generated tree: option lists open on their
  * captured value (null when unset), setter levels on their page value (Info service `Off`),
  * multi-select marks, page values as display text (the Clock
- * pages are the host's), info page values, and the free-text values of `VIRGIN_TEXTS`. Keys that
+ * pages are the host's), info page values, the free-text values of `VIRGIN_TEXTS` and the numbers
+ * of `VIRGIN_NUMBERS`. Keys that
  * alias another (Tones → General) are stored once, under their target.
  */
 export function virginSettings(): StockSettingsSnapshot {
@@ -164,6 +184,20 @@ export function virginSettings(): StockSettingsSnapshot {
     texts[entry.key] = line;
   }
 
+  const numbers: Record<string, number> = {};
+  for (const entry of VIRGIN_NUMBERS) {
+    if ("value" in entry) {
+      numbers[entry.key] = entry.value;
+      continue;
+    }
+    const opens = byNumber.get(entry.number)?.opens;
+    const line = opens && "lines" in opens ? opens.lines[entry.line] : undefined;
+    if (line === undefined || !/^\d+$/.test(line)) {
+      throw new Error(`No number on line ${entry.line} of tree node ${entry.number}.`);
+    }
+    numbers[entry.key] = Number(line);
+  }
+
   const aliases: Record<string, string> = {};
   for (const table of [choices, marks, texts] as Record<string, unknown>[]) {
     for (const key of Object.keys(table)) {
@@ -176,7 +210,7 @@ export function virginSettings(): StockSettingsSnapshot {
       delete table[key];
     }
   }
-  return { choices, marks, texts, aliases };
+  return { choices, marks, texts, numbers, aliases };
 }
 
 /**
