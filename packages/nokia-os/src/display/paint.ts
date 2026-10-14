@@ -49,8 +49,8 @@ export const paintStockScreen: ScreenPainter = (fb, screen) => {
  * items. Rows show the kernel's circular window (`windowTop`; a model without one is drawn as
  * entered, the selection on the top row). The indicator adds the selected item's menu number to
  * the level's own (`7-6`): a hidden entry's number is skipped (`itemOrders`), so the number can
- * differ from the position. While a shortcut digit is awaited (`typed`) it adds none, and while
- * a typed entry is opening there is no soft key (plan 14 D14).
+ * differ from the position. While a shortcut digit is awaited (`typed`) or the level is
+ * `entering` it adds none, and while a typed entry is opening there is no soft key (plan 14 D14).
  */
 function paintList(fb: Framebuffer, screen: Extract<ScreenModel, { kind: "list" }>): void {
   if (screen.presentation === "pages") {
@@ -67,7 +67,7 @@ function paintList(fb: Framebuffer, screen: Extract<ScreenModel, { kind: "list" 
     const number = screen.itemOrders?.[screen.selected] ?? screen.selected + 1;
     paintIndicator(
       fb,
-      indicator.typed === undefined
+      indicator.typed === undefined && !indicator.entering
         ? { ...indicator, segments: [...indicator.segments, number] }
         : indicator,
     );

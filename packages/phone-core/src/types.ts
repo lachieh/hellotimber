@@ -46,7 +46,7 @@ export interface MenuIndicator {
   /**
    * Present for SubmenuOptions.entryIndicatorMs after Select entered the shown level: `segments`
    * are the level's own path, which the painter draws with the awaiting mark and no selection
-   * number (`5-9` and dots, plan 14 closeout).
+   * number (`5-9-` and dots, plan 14 closeout).
    */
   entering?: true;
 }

@@ -172,7 +172,7 @@ export interface MenuIndicator {
   /**
    * Plan 14 closeout: present for SubmenuOptions.entryIndicatorMs after Select entered the shown
    * level; `segments` are the level's own path, drawn with the awaiting mark and no selection
-   * number (`5-9` and dots).
+   * number (`5-9-` and dots).
    */
   entering?: true;
 }
@@ -551,11 +551,11 @@ level is entered again. `rowsWindowTop` exports the rule. _Opening selection_: a
 `opening()` picks the child selected on every entry (Select, shortcut, path landing). _Intro_: a
 level's `intro` application runs on Select-entry before the list. _Entry indicator_: a level's
 `entryIndicatorMs` shows its own path as `entering` for that long after Select-entry; the list
-works meanwhile, and any key ends it (Screen saver shows `5-9` and dots for ≈2.9 s). _Softkey_: a level's `softkey`
+works meanwhile, and any key ends it (Screen saver shows `5-9-` and dots for ≈2.9 s). _Softkey_: a level's `softkey`
 replaces `Select` in its list model. _Exit_: `exit({ select, row })` places the selected child in a
 rows window: `row: "bottom"` (default) puts it on the bottom row (Snake II's Top score returns to
 `Score IDs / Instructions / New game`); `row: "top"` rebuilds the window at it as on entry (Space
-impact's and Pairs II's Top score return to `Top score / Score IDs / Instructions`).
+impact's and Pairs II's Top score return to `New game / Top score / Score IDs`).
 _Shortcut entry_ (`shortcutEntry`): digits 0-9 form menu numbers at the level the digits apply
 to (the pending entry's children while an entry is opening, else the shown level). A number that
 prefixes a longer one, or is all zeros, waits; the window end resolves it (or opens `invalid`)

@@ -12,9 +12,10 @@ export type NoteEnd =
   | "standby"
   /**
    * Back past `levels` levels (default 1: Info service's notes return to the Messages page, 2),
-   * selecting the child `select` in the level returned to (Top score: `new-game`).
+   * selecting the child `select` in the level returned to, on the window's bottom row or, with
+   * `row: "top"`, on its top row (Top score: `new-game`, on the bottom row in Snake II).
    */
-  | { readonly levels?: number; readonly select?: string };
+  | { readonly levels?: number; readonly select?: string; readonly row?: "top" | "bottom" };
 
 export interface NoteOptions {
   /** Firmware lines, drawn in the large face. */
@@ -73,7 +74,10 @@ class NoteWidget implements Widget {
     const end = this.#options.end ?? "back";
     if (end === "back") flow.back();
     else if (end === "standby") flow.standby();
-    else flow.back(end.levels ?? 1, end.select === undefined ? {} : { select: end.select });
+    else {
+      const { select, row } = end;
+      flow.back(end.levels ?? 1, select === undefined ? {} : { select, ...(row ? { row } : {}) });
+    }
   }
 }
 

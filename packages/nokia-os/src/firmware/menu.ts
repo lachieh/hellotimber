@@ -18,6 +18,8 @@ import {
   HOST_VALUES,
   settingKey,
   setterLevel,
+  showsEntryIndicator,
+  STOCK_SHORTCUT_WINDOW_MS,
   TIME_FORMAT,
   twelveHourClock,
   type StockPorts,
@@ -106,6 +108,7 @@ function entryOf(path: readonly StockTreeNode[], index: number, b: Builder): Men
       : {}),
     ...(opening === undefined ? {} : { opening }),
     ...(spec.intro ? { intro: b.leaves.intro(node, path.map((n) => n.slug).join("/")) } : {}),
+    ...(showsEntryIndicator(node.number) ? { entryIndicatorMs: STOCK_SHORTCUT_WINDOW_MS } : {}),
   };
   return new SubmenuEntry(slug, order, node.label, new MenuLevel(children), undefined, options);
 }

@@ -45,4 +45,15 @@ describe("stock menu indicator", () => {
     paintIndicator(fb, { segments: [1], awaitingNext: true, awaitingFirst: true });
     expect(band(fb.pixels)).toEqual(band(goldenImage("menu/01-phone-book.anim", "c").image.pixels));
   });
+
+  it("shows the level's own path and three dots while it is entering (Screen saver)", () => {
+    for (const [id, segments] of [
+      ["tree/05-tones/5-9.sub", [5, 9]],
+      ["tree/12-profiles/12-1-2-9.sub", [12, 1, 2, 9]],
+    ] as const) {
+      const fb = new Framebuffer();
+      paintIndicator(fb, { segments, awaitingNext: false, entering: true });
+      expect(band(fb.pixels), id).toEqual(band(goldenImage(id, "01").image.pixels));
+    }
+  });
 });

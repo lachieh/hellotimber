@@ -806,8 +806,8 @@ function exitPlan<Metadata>(
 /**
  * Selects a child for an application's exit. With a rows window the child goes on the bottom
  * row (Snake II's Top score returns to `Score IDs / Instructions / New game`, plan 14 P12) or
- * on the top row, the window rebuilt at it as on entry (Space impact's returns to `Top score /
- * Score IDs / Instructions`).
+ * on the top row, the window rebuilt at it as on entry (Space impact's returns to `New game /
+ * Top score / Score IDs`).
  */
 function selectOnRow<Metadata>(
   m: Machine<Metadata>,

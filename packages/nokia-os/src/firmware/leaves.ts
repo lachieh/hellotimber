@@ -36,6 +36,7 @@ import {
   LEVEL_BARS,
   modelNumber,
   noteEnd,
+  noteMoves,
   noteTimelineId,
   optionListNumbering,
   PAGE_RESULTS,
@@ -214,12 +215,13 @@ export class LeafBinder {
           throw new Error(`No widget timeline for the note at ${number}.`);
         }
         const end: NoteEnd = noteEnd(number) ?? (screen.after === "standby" ? "standby" : "back");
+        const keys = moves ?? noteMoves(number);
         return () =>
           note({
             lines,
             ...(timeline === undefined ? {} : { timeline }),
             end,
-            ...(moves === undefined ? {} : { moves }),
+            ...(keys === undefined ? {} : { moves: keys }),
           });
       }
       case "progress-note": {

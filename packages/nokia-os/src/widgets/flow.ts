@@ -20,10 +20,11 @@ export interface Flow {
   /**
    * Close `levels` widgets (default 1). Past the last one the flow exits to the menu, closing
    * the remaining levels there too (`back(2)` from a list opened by a submenu: two levels up),
-   * and selecting the child `select` (a slug) in the level it returns to. `select` is ignored
-   * when the flow does not exit.
+   * and selecting the child `select` (a slug) in the level it returns to, placed on the window's
+   * bottom row or, with `row: "top"`, its top row. `select` is ignored when the flow does not
+   * exit.
    */
-  back(levels?: number, options?: { select?: string }): void;
+  back(levels?: number, options?: { select?: string; row?: "top" | "bottom" }): void;
   /** Leave the menus for standby. */
   standby(): void;
   /** The menu indicator for the flow's position, as the kernel reports it. */
@@ -120,7 +121,7 @@ class FlowSession implements PhoneApplicationSession, Flow {
     this.#stack.push(widget);
   }
 
-  back(levels = 1, options: { select?: string } = {}): void {
+  back(levels = 1, options: { select?: string; row?: "top" | "bottom" } = {}): void {
     if (this.#closed) return;
     if (!Number.isInteger(levels) || levels < 1) {
       throw new Error(`back levels must be a positive integer (received ${levels}).`);
@@ -133,6 +134,7 @@ class FlowSession implements PhoneApplicationSession, Flow {
     const exit = {
       ...(beyond === 0 ? {} : { levels: beyond + 1 }),
       ...(options.select === undefined ? {} : { select: options.select }),
+      ...(options.row === undefined ? {} : { row: options.row }),
     };
     this.#context.exit(Object.keys(exit).length === 0 ? undefined : exit);
     this.#closed = true;

@@ -218,8 +218,12 @@ SLUGS.forEach((slug, i) => {
   }
 });
 
-/** After `goto`, the kernel's and the widgets' timers settle before the trigger. */
-const SETTLE_MS = 3000;
+/**
+ * After `goto`, the trigger comes one harness tap later, as in the captures (`key`: ≈42 ms down,
+ * the 250 ms settle and the 300 ms key gap): Screen saver's entry indicator (≈2.9 s) is still on
+ * screen when its leaves are selected (`tree/05-tones/5-9-1.leaf` frame 0).
+ */
+const SETTLE_MS = 592;
 
 /**
  * `golden` with every row that shows frame 0's image (the parent screen before the trigger, and
@@ -288,11 +292,6 @@ function treeScenario(id: string, covers: readonly string[]): void {
   });
 }
 
-const SCREEN_SAVER_WINDOW =
-  "entering Screen saver shows its number and dots for ≈2.9 s (D14); needs a kernel seam";
-const TOP_SCORE_WINDOW =
-  "Top score returns with the window rebuilt at Top score (`Top score / Score IDs / " +
-  "Instructions`); the kernel's exit({ select }) puts the child on the bottom row";
 const LATENCY =
   "kernel timers run from the key, the firmware's from its jittered redraw (a typed entry " +
   "opens 1431-1477 ms after its digit's redraw; `8` draws a 16 ms partial frame), D8";
@@ -309,15 +308,6 @@ const TOP_SCORE_JITTER =
  * run as expected failures, so a gap that starts passing must leave this table.
  */
 const KNOWN_GAPS: Readonly<Record<string, string>> = {
-  "tree/05-tones/5-9.sub": SCREEN_SAVER_WINDOW,
-  "tree/05-tones/5-9-1.leaf": SCREEN_SAVER_WINDOW,
-  "tree/12-profiles/12-1-2-9.sub": SCREEN_SAVER_WINDOW,
-  "tree/12-profiles/12-1-2-9-1.leaf": SCREEN_SAVER_WINDOW,
-  "tree/12-profiles/12-2-2-9.sub": SCREEN_SAVER_WINDOW,
-  "tree/12-profiles/12-2-2-9-1.leaf": SCREEN_SAVER_WINDOW,
-  "tree/08-games/8-2-2.leaf": TOP_SCORE_WINDOW,
-  "tree/08-games/8-4-1-3.leaf": TOP_SCORE_WINDOW,
-  "tree/08-games/8-4-2-3.leaf": TOP_SCORE_WINDOW,
   "probe/games-top-score-wait": TOP_SCORE_JITTER,
   "probe/games-top-score-c-2s": TOP_SCORE_JITTER,
   "probe/games-top-score-down-2s": `${TOP_SCORE_JITTER}; ▼ also returns to New game and then moves to Level (two moves)`,
@@ -479,18 +469,8 @@ describe("coverage guard (plan 14 D7)", () => {
       else unaccounted.push(number);
     }
     expect(unaccounted, "tree nodes no golden accounts for").toEqual([]);
-    // Nodes whose only goldens are known gaps (KNOWN_GAPS): listed so they cannot grow silently.
-    expect(gapNodes).toEqual([
-      "5-9",
-      "5-9-1",
-      "8-2-2",
-      "8-4-1-3",
-      "8-4-2-3",
-      "12-1-2-9",
-      "12-1-2-9-1",
-      "12-2-2-9",
-      "12-2-2-9-1",
-    ]);
+    // No node may be covered only by known gaps (KNOWN_GAPS holds probes only).
+    expect(gapNodes, "tree nodes covered only by known gaps").toEqual([]);
   });
 
   it("proves every same-as subtree equal to its model (labels aside from profile names)", () => {

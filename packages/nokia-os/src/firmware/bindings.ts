@@ -343,6 +343,24 @@ export function setterLevel(number: string): readonly string[] | undefined {
   return undefined;
 }
 
+/** The first-digit dots turn into the menu number 2948 ms after Menu (menu/01-phone-book.anim). */
+export const STOCK_SHORTCUT_WINDOW_MS = 2948;
+
+/**
+ * Levels whose Select-entry shows their own path and the awaiting dots before the selection's
+ * number, by node pattern, with how long (SubmenuOptions.entryIndicatorMs): Screen saver shows
+ * `5-9-` and dots (`tree/05-tones/5-9.sub` image 01, `tree/12-profiles/12-1-2-9.sub` 01: the
+ * profile's own path), and the firmware opens a digit window on that entry, so it lasts the stock
+ * shortcut window (D14: ≈2.9 s; no capture runs it to its end). Keys work meanwhile (▼ shows
+ * `5-9-2`, image 02; OK on Off opens its note, `5-9-1.leaf` frame 0).
+ */
+export const ENTRY_INDICATOR_LEVELS: readonly string[] = ["5-9", "12-*-2-9"];
+
+/** Whether the level at `number` shows the entry indicator (`ENTRY_INDICATOR_LEVELS`). */
+export function showsEntryIndicator(number: string): boolean {
+  return ENTRY_INDICATOR_LEVELS.some((pattern) => matchesPattern(number, pattern));
+}
+
 /**
  * Leaves that close more than themselves (`exit({ levels })` through the flow): OK on a Call
  * divert › Set delay choice returns at once to the Call divert page, no note (P13), and View all
@@ -350,14 +368,25 @@ export function setterLevel(number: string): readonly string[] | undefined {
  */
 export const EXIT_LEVELS: Readonly<Record<string, number>> = { "7-3-4": 2, "10-2": 2 };
 
+/** Where a note ends beyond the screen below (`NOTE_ENDS`). */
+export interface NoteEndBinding {
+  readonly levels?: number;
+  readonly select?: string;
+  readonly row?: "top" | "bottom";
+}
+
 /**
  * Notes that end somewhere other than the screen below, by node pattern (a leaf, or an option
  * choice `<list>-<k>`): `levels` closes that many levels (the setters and Clock settings return
  * to their page: `tree/02-messages/2-8-1.leaf` image f, `tree/05-tones/5-9-2.leaf` image e,
  * `tree/11-clock/11-2-1.leaf` and `11-2-3-1.choose` image e), `select` selects a child of the
- * level returned to (Snake II's Top score returns to New game, P12).
+ * level returned to, on the bottom row of the window unless `row` is "top". Snake II's Top score
+ * returns to New game on the bottom row (`Score IDs / Instructions / New game`, P12); Space
+ * impact's and Pairs II's return to New game on the top row, the window rebuilt at it
+ * (`New game / Top score / Score IDs`, `tree/08-games/8-2-2.leaf`, `8-4-1-3.leaf`, `8-4-2-3.leaf`
+ * image m).
  */
-export const NOTE_ENDS: Readonly<Record<string, { levels?: number; select?: string }>> = {
+export const NOTE_ENDS: Readonly<Record<string, NoteEndBinding>> = {
   "2-8-1": { levels: 2 },
   "2-8-2": { levels: 2 },
   "2-8-3": { levels: 2 },
@@ -368,12 +397,34 @@ export const NOTE_ENDS: Readonly<Record<string, { levels?: number; select?: stri
   "11-2-1": { levels: 2 },
   "11-2-3-*": { levels: 2 },
   "8-1-4": { select: "new-game" },
+  "8-2-2": { select: "new-game", row: "top" },
+  "8-4-*-3": { select: "new-game", row: "top" },
 };
 
 /** How the note at node `number` ends, if not plainly back (`NOTE_ENDS`). */
-export function noteEnd(number: string): { levels?: number; select?: string } | undefined {
+export function noteEnd(number: string): NoteEndBinding | undefined {
   for (const [pattern, end] of Object.entries(NOTE_ENDS)) {
     if (matchesPattern(number, pattern)) return end;
+  }
+  return undefined;
+}
+
+/**
+ * Children ▲/▼ select when they dismiss a note on a rows level, by node pattern (pages levels
+ * get their neighbours, `LeafPlace.moves`). ▼ during Snake II's Top score returns to New game
+ * and moves on to Level, which puts Level on the bottom row (`Instructions / New game / Level`,
+ * `probe/games-top-score-down-2s` image m); ▲ there is UNVERIFIED and only dismisses.
+ */
+export const NOTE_MOVES: Readonly<
+  Record<string, { readonly up?: string; readonly down?: string }>
+> = { "8-1-4": { down: "level" } };
+
+/** The note moves bound to node `number` (`NOTE_MOVES`). */
+export function noteMoves(
+  number: string,
+): { readonly up?: string; readonly down?: string } | undefined {
+  for (const [pattern, moves] of Object.entries(NOTE_MOVES)) {
+    if (matchesPattern(number, pattern)) return moves;
   }
   return undefined;
 }

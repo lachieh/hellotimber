@@ -3,7 +3,7 @@ import { VISIBLE_ROWS } from "../display/list-rows";
 import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
 import { invalidShortcut } from "./leaves";
 import { createStockMenu } from "./menu";
-import type { StockPorts } from "./bindings";
+import { STOCK_SHORTCUT_WINDOW_MS, type StockPorts } from "./bindings";
 
 export interface StockPhoneConfig extends StockPorts {
   /** Operator line. Every glyph must exist in the stock small font (validated; throws). */
@@ -23,8 +23,6 @@ export const STOCK_STANDBY_KEYS = {
 
 /** Standby stays on screen (ladders erased) for 39 ms after Menu (menu/01-phone-book.anim b). */
 export const STOCK_MENU_OPEN_DELAY_MS = 39;
-/** The first-digit dots turn into the menu number 2948 ms after Menu (menu/01-phone-book.anim). */
-export const STOCK_SHORTCUT_WINDOW_MS = 2948;
 
 /**
  * A typed entry opens this long after its digit (P5: 1431-1480 ms between the redraws; plan 14

@@ -13,11 +13,13 @@ const AWAITING_TEXT_END = AWAITING_DOTS[0];
  * the last digit cell ends at the LCD's right edge (`2-1`: the 1's ink ends at x 81, a 2's at 82).
  * While a stock shortcut digit is awaited (`typed`) it shows the level's path, a dash and the
  * digits typed so far, then three dots (`1` and dots, `12-` and dots, `11-0` and dots, plan 14
- * D14); right after Menu (`awaitingFirst`) only the dots. After a plan 13 per-digit shortcut
- * (`awaitingNext` without `typed`) the segments are drawn without a mark (UNVERIFIED, D5).
+ * D14); right after Menu (`awaitingFirst`) only the dots. A level `entering` shows the same
+ * form with nothing typed (`5-9-` and dots on entering Screen saver, `tree/05-tones/5-9.sub` 01).
+ * After a plan 13 per-digit shortcut (`awaitingNext` without `typed`) the segments are drawn
+ * without a mark (UNVERIFIED, D5).
  */
 export function paintIndicator(fb: Framebuffer, indicator: MenuIndicator): void {
-  if (indicator.awaitingFirst || indicator.typed !== undefined) {
+  if (indicator.awaitingFirst || indicator.typed !== undefined || indicator.entering) {
     // With `awaitingFirst` the segments hold the carousel slot, which is not drawn.
     const { segments, typed = "" } = indicator;
     const text =
