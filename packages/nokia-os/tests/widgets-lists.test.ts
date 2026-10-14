@@ -12,7 +12,7 @@ import { optionListNumbering } from "../src/firmware/bindings";
 import { createMemorySettings, virginSettings, type StockSettings } from "../src/firmware/settings";
 import { StockFlowApplication, type Flow, type Widget } from "../src/widgets/flow";
 import { multiSelect } from "../src/widgets/multi-select";
-import { settingOptionList } from "../src/widgets/option-list";
+import { OptionListWidget, settingOptionList } from "../src/widgets/option-list";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";
 import { indicatorOf, INDEX, optionNode, treePath } from "./support/tree.ts";
@@ -316,6 +316,50 @@ describe("option list behaviour", () => {
     const typed: MenuIndicator = { segments: [1, 8, 1], awaitingNext: true, typed: "" };
     const flow = stubFlow(optionList("1-8-1", virgin())(), typed);
     expect(flow.model().indicator).toEqual(typed);
+  });
+
+  it("reports each ▲/▼ move to `highlight` with the previous selection, never the opening (plan 16)", () => {
+    const seen: [number, number | null][] = [];
+    const list = (opening: number | null) =>
+      stubFlow(
+        new OptionListWidget({
+          labels: ["Ring ring", "Low", "Mosquito"],
+          opening,
+          softkey: "OK",
+          choose: () => {},
+          highlight: (index, previous) => void seen.push([index, previous]),
+        }),
+        { segments: [5, 1], awaitingNext: false },
+      );
+    const set = list(1);
+    set.model();
+    set.press("navi");
+    set.press("c");
+    expect(seen).toEqual([]);
+    const flow = list(1);
+    flow.press("down");
+    flow.press("up");
+    flow.press("1");
+    expect(seen).toEqual([
+      [2, 1],
+      [1, 2],
+    ]);
+    seen.length = 0;
+    list(null).press("down");
+    expect(seen).toEqual([[0, null]]);
+  });
+
+  it("tells the option list's close hook when the list leaves the flow", () => {
+    let closes = 0;
+    const widget = new OptionListWidget({
+      labels: ["On", "Off"],
+      opening: 0,
+      softkey: "OK",
+      choose: () => {},
+      close: () => void closes++,
+    });
+    widget.close?.();
+    expect(closes).toBe(1);
   });
 
   it("ignores the other keys", () => {

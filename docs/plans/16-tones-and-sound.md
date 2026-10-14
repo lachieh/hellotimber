@@ -913,19 +913,47 @@ Ringing tone, Ringing volume and Message alert tone lists in Tones and every Per
 slug), `src/firmware/leaves.ts`, `tests/flow.test.ts`, `tests/widgets-lists.test.ts`,
 `tests/sound-previews.test.ts` (new).
 
-- [ ] TDD flow `close()`: called once for a widget leaving the stack by `back`, `replace` or the
+- [x] TDD flow `close()`: called once for a widget leaving the stack by `back`, `replace` or the
       session's deactivation (C, C held, power-off, navigate); not for one that stays below a
       push.
-- [ ] TDD option-list `highlight`: called after ▲/▼ moves the selection (unset → first included,
+- [x] TDD option-list `highlight`: called after ▲/▼ moves the selection (unset → first included,
       per Task 0's S9 finding), never on opening.
-- [ ] TDD previews against `sound/ringing-tone/*`, `sound/ringing-volume/*`, `sound/alert/*`,
+- [x] TDD previews against `sound/ringing-tone/*`, `sound/ringing-volume/*`, `sound/alert/*`,
       `sound/vibrator/*`, `sound/message-tone/*`, `sound/profile/*` and `sound/preview/*`: the
       delay, the loop, the level, Ascending, the alert-type gate, the vibrator, the edited
       profile's settings, what stops a preview, the `(empty)` slots and the virgin silence.
-- [ ] `ring(profile)` and `messageAlert(profile)` (D11): programs and gating only, one test each.
-- [ ] Plan 14's option-list goldens still pass (previews change no pixel).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): ringing and message tone previews`.
+- [x] `ring(profile)` and `messageAlert(profile)` (D11): programs and gating only, one test each.
+- [x] Plan 14's option-list goldens still pass (previews change no pixel).
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): ringing and message tone previews`.
+
+Deviation (Task 6): `highlight(index, previous)` gets the previous selection, and the S9 quirk
+is the binding's (`previous === null`: no preview); `OptionListOptions.close` stops the preview
+when the list leaves the flow. `preview(list, index, prefix)` and `ring(prefix)` /
+`messageAlert(prefix)` take the profile's settings prefix (`tones` or
+`profiles/<profile>/personalise`); `PREVIEW_LISTS` and `profileSetting(key)` are in
+`bindings.ts`. A preview starts `PREVIEW_DELAY_MS` (message tones `MESSAGE_PREVIEW_DELAY_MS`)
+after the key-down that armed it. Two generator changes (Task 3's files, regenerated twice with no
+diff): Level 5's jump and Ascending's steps are stored as note positions (`level5At`,
+`ascendingAt`: a note of the tone and a time into it) instead of times from the preview's start,
+because recordings of one tone drift from the Level 4 recording the program comes from, so a
+time landed on the neighbouring note (Croak, Hopping down); and `unsetMessageVolumes` (from
+`sound/preview/virgin-message`): with Ringing volume unset, message tones play their captured
+registers (3), not Level 1's table (6) as D7's refinement said (ringing tones do play Level 1's).
+UNVERIFIED and documented in `sounder.ts`: Standard at Levels 1-3 (1499.9 Hz is captured at
+Levels 4-5 only: the nearest frequency's register), the message Beep once word at Levels 2-3
+(stepped between Level 1's and Level 4's) and unset (Level 1's), the message Ascending at levels
+other than 4 (plays as captured), and `ring()` for the five tones without a captured second pass
+(repeats what was captured). `ring` loops one cycle (`cycleMs`; not `firstMarkStep`, which is the
+Ringing volume list's earlier stop for 9 tones). Comparison of another recording of a program
+than the one it was built from (`drift`): every edge after its onset within `PASS_DRIFT`, and a
+final pulse of up to `STOP_RACE_MS` (3) at a preview's end may be in either recording (the stop
+races the next note or vibrator pulse); `endMs` marks where a capture stopped recording. Known
+gaps: `alert/ascending-l5` (its Level 2 → 3 step races the last note), Badinerie's
+`level-3`/`ascending` recordings (the program's recording rests 8 ms between two notes where
+they do not) and `ringing-tone/level-5/33-mangrove` (one 7 ms chirp missing). `sound/preview/rapid`
+compares the buzzer and vibrator only (keys 150 ms apart: the capture's ≈30 ms beep latency
+makes the second key run the first beep on).
 
 ### Task 7 - Warning tones on notes (TDD against sound goldens)
 

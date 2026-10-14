@@ -24,3 +24,22 @@ export interface SoundProgram {
   /** The step index the program repeats from; absent = plays once. */
   readonly loopFrom?: number;
 }
+
+/**
+ * The start time of each note of `program`'s buzzer: a step that sounds a new frequency (a
+ * volume change within a note is the same note).
+ */
+export function noteStarts(program: SoundProgram): number[] {
+  const starts: number[] = [];
+  let sounding: number | null = null;
+  let t = 0;
+  for (const step of program.steps) {
+    if (step.buzzer !== undefined) {
+      const hz = step.buzzer === null ? null : step.buzzer.hz;
+      if (hz !== null && hz !== sounding) starts.push(t);
+      sounding = hz;
+    }
+    t += step.ms;
+  }
+  return starts;
+}

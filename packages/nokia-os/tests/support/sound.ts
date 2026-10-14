@@ -103,6 +103,42 @@ export interface SoundTolerance {
    * another level): edges past the first cycle drift as a later pass (PASS_DRIFT).
    */
   readonly cycleMs?: number;
+  /**
+   * The golden is another recording of a program built from a different golden (a tone at
+   * another level, in another list or profile): every edge after its onset drifts as between
+   * passes (PASS_DRIFT; Task 0: recordings of one tone differ by a median 11 ms, at most 48).
+   */
+  readonly drift?: boolean;
+  /** Compare only these outputs (a scenario says why the others are not comparable). */
+  readonly outputs?: readonly SoundOutputName[];
+  /**
+   * When the capture stopped recording while a program played: later events are not compared,
+   * and within PASS_DRIFT of it an edge may fall on either side of the end.
+   */
+  readonly endMs?: number;
+}
+
+/**
+ * A preview's stop races its next edge (Task 0: "the last note may differ"): another recording
+ * may end with a pulse of up to this length (a note or a vibrator pulse) that the program's
+ * recording lacks, or lack one it has.
+ */
+export const STOP_RACE_MS = 3;
+
+/** `rows` without a final on-then-off pulse of at most STOP_RACE_MS on any output. */
+function withoutStopRace(rows: readonly SoundRow[]): SoundRow[] {
+  const drop = new Set<SoundRow>();
+  for (const output of ["buzzer", "tone", "vibrator"] as const) {
+    const own = rows.filter((row) => row.output === output);
+    const [on, off] = own.slice(-2);
+    if (on && off && isOn(on.state) && !isOn(off.state) && off.ms - on.ms <= STOP_RACE_MS) {
+      if (own.length === 2 || !isOn(own.at(-3)!.state)) {
+        drop.add(on);
+        drop.add(off);
+      }
+    }
+  }
+  return rows.filter((row) => !drop.has(row));
 }
 
 /** Classifies each golden row (see the module notes in plan 16 "Scenarios"). */
@@ -121,7 +157,9 @@ function checksOf(golden: SoundGolden, tolerance: SoundTolerance): Check[] {
   const after = (i: number, toleranceMs: number): Check => {
     const offset = golden.rows[i]!.ms - golden.rows[anchor!]!.ms;
     const drift =
-      cycle !== undefined && offset >= cycle ? PASS_DRIFT.ms + PASS_DRIFT.ratio * offset : 0;
+      tolerance.drift === true || (cycle !== undefined && offset >= cycle)
+        ? PASS_DRIFT.ms + PASS_DRIFT.ratio * offset
+        : 0;
     return { kind: "after", anchor: anchor!, toleranceMs: Math.max(toleranceMs, drift) };
   };
   const program = (i: number): Check => {
@@ -189,11 +227,34 @@ export function expectSoundTimeline(
   context: string,
   tolerance: SoundTolerance = {},
 ): void {
+  const keep = (row: SoundRow): boolean =>
+    tolerance.outputs === undefined || tolerance.outputs.includes(row.output);
+  let actualRows = recorded.events
+    .map((event) => ({
+      ms: event.atMs - recorded.originMs,
+      output: event.output,
+      state: stateOf(event),
+    }))
+    .filter(keep);
+  if (tolerance.drift === true) {
+    actualRows = withoutStopRace(actualRows);
+    golden = { ...golden, rows: withoutStopRace(golden.rows) };
+  }
+  golden = { ...golden, rows: golden.rows.filter(keep) };
+  const end = tolerance.endMs;
+  const nearEnd = (ms: number): boolean =>
+    end !== undefined && ms >= end - PASS_DRIFT.ms - PASS_DRIFT.ratio * end;
+  if (end !== undefined)
+    actualRows = actualRows.filter(
+      (row) =>
+        row.ms <= end ||
+        (nearEnd(row.ms) && row.ms <= end + PASS_DRIFT.ms + PASS_DRIFT.ratio * end),
+    );
   const actual = new Map<SoundOutputName, SoundRow[]>();
-  for (const event of recorded.events) {
-    const rows = actual.get(event.output) ?? [];
-    rows.push({ ms: event.atMs - recorded.originMs, output: event.output, state: stateOf(event) });
-    actual.set(event.output, rows);
+  for (const row of actualRows) {
+    const rows = actual.get(row.output) ?? [];
+    rows.push(row);
+    actual.set(row.output, rows);
   }
   const checks = checksOf(golden, tolerance);
   const used = new Map<SoundOutputName, number>();
@@ -210,8 +271,11 @@ export function expectSoundTimeline(
     const want = formatSoundState(row.output, row.state);
     const prefix = `${String(row.ms).padStart(8)}  ${row.output.padEnd(8)}  ${want.padEnd(20)}`;
     if (got === undefined) {
-      failed = true;
-      lines.push(`${prefix}  ${"-".padStart(8)}  ${"-".padStart(6)}  ✗ missing`);
+      const late = nearEnd(row.ms);
+      if (!late) failed = true;
+      lines.push(
+        `${prefix}  ${"-".padStart(8)}  ${"-".padStart(6)}  ${late ? "past the end" : "✗ missing"}`,
+      );
       return;
     }
     const delta = got.ms - row.ms;
@@ -239,6 +303,7 @@ export function expectSoundTimeline(
   });
   for (const [output, rows] of actual) {
     for (const extra of rows.slice(used.get(output) ?? 0)) {
+      if (nearEnd(extra.ms)) continue;
       failed = true;
       lines.push(
         `${"-".padStart(8)}  ${output.padEnd(8)}  ${"".padEnd(20)}  ${String(extra.ms).padStart(8)}  ${"".padStart(6)}  ✗ extra ${formatSoundState(output, extra.state)}`,

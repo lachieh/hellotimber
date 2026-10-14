@@ -36,6 +36,24 @@ export function settingAlias(key: string): string {
   return key;
 }
 
+/**
+ * A profile setting's key split into its profile prefix (`tones`, the active profile's through
+ * `SETTING_ALIASES`, or `profiles/<profile>/personalise`) and its setting slug; undefined for
+ * other keys.
+ */
+export function profileSetting(key: string): { prefix: string; setting: string } | undefined {
+  const match = /^(tones|profiles\/[a-z0-9-]+\/personalise)\/([a-z0-9-]+)$/.exec(key);
+  return match === null ? undefined : { prefix: match[1]!, setting: match[2]! };
+}
+
+/**
+ * The option lists that preview what they highlight (plan 16 D9), by setting slug, in Tones and
+ * every Personalise. Incoming call alert, Keypad tones, Warning tones and Vibrating alert
+ * preview nothing (Task 0).
+ */
+export const PREVIEW_LISTS = ["ringing-tone", "ringing-volume", "message-alert-tone"] as const;
+export type PreviewList = (typeof PREVIEW_LISTS)[number];
+
 /** Host ports whose text appears on stock pages (and the clock on standby). */
 export interface StockPorts {
   /** "HH:MM"; shown on Clock → Clock settings (and on standby). */

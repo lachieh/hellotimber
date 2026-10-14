@@ -41,6 +41,12 @@ export interface Widget {
   onKey?(key: PhoneKey, flow: Flow): void;
   onKeyDown?(key: PhoneKey, flow: Flow): void;
   tick?(dtMs: number, flow: Flow): void;
+  /**
+   * The widget left the flow: popped by `back`, replaced, or the session ended (C held,
+   * power-off, navigate). Called once; not while the widget waits below a push (plan 16: a list
+   * stops its preview).
+   */
+  close?(): void;
 }
 
 const NO_INDICATOR: MenuIndicator = { segments: [], awaitingNext: false };
@@ -107,6 +113,13 @@ class FlowSession implements PhoneApplicationSession, Flow {
 
   onDeactivate(): void {
     this.#closed = true;
+    this.#closeAll();
+  }
+
+  /** Closes the widgets still on the stack, top first. */
+  #closeAll(): void {
+    const left = this.#stack.splice(0).reverse();
+    for (const widget of left) widget.close?.();
   }
 
   /** Paints the outgoing widget's current state first: the next one may draw over it. */
@@ -123,7 +136,7 @@ class FlowSession implements PhoneApplicationSession, Flow {
   replace(widget: Widget): void {
     if (this.#closed) return;
     this.#leaving();
-    this.#stack.pop();
+    this.#stack.pop()?.close?.();
     this.#stack.push(widget);
   }
 
@@ -134,7 +147,9 @@ class FlowSession implements PhoneApplicationSession, Flow {
     }
     this.#leaving();
     const popped = Math.min(levels, this.#stack.length);
-    this.#stack.length -= popped;
+    for (const widget of this.#stack.splice(this.#stack.length - popped).reverse()) {
+      widget.close?.();
+    }
     if (this.#stack.length > 0) return;
     const beyond = levels - popped;
     const exit = {
@@ -150,6 +165,7 @@ class FlowSession implements PhoneApplicationSession, Flow {
     if (this.#closed) return;
     this.#context.exit({ to: "standby" });
     this.#closed = true;
+    this.#closeAll();
   }
 
   indicator(): MenuIndicator {

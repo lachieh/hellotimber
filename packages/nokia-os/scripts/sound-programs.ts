@@ -215,6 +215,36 @@ function noteHz(program: SoundProgramData): number[] {
   return out;
 }
 
+/** The start time of each note of `noteHz` (a volume change within a note is the same note). */
+export function noteStarts(program: SoundProgramData): number[] {
+  const out: number[] = [];
+  let sounding: number | null = null;
+  let t = 0;
+  for (const step of program.steps) {
+    if (step.buzzer !== undefined) {
+      const hz = step.buzzer === null ? null : step.buzzer.hz;
+      if (hz !== null && hz !== sounding) out.push(t);
+      sounding = hz;
+    }
+    t += step.ms;
+  }
+  return out;
+}
+
+/** Where in its notes a level change happens: note `note` (0-based), `offsetMs` into it. */
+export interface NotePosition {
+  readonly note: number;
+  readonly offsetMs: number;
+}
+
+/** The position of time `t` (a step of `program` that sounds a note) among its notes. */
+function notePosition(program: SoundProgramData, t: number, where: string): NotePosition {
+  const starts = noteStarts(program);
+  const note = starts.filter((start) => start <= t).length - 1;
+  if (note < 0) throw new SoundProgramError(where, `no note sounds at ${t} ms`);
+  return { note, offsetMs: t - starts[note]! };
+}
+
 /** Same frequencies, the last note aside (the preview's stop races it). */
 function sameNotes(a: SoundProgramData, b: SoundProgramData): boolean {
   const x = noteHz(a);
@@ -268,10 +298,14 @@ export interface RingingToneData {
   readonly firstMarkStep: number;
   /** The tone's cycle (`@loop`): absent when the preview ends inside the first pass. */
   readonly cycleMs?: number;
-  /** Level 5: when (ms from the preview's start) the fifth table takes over from Level 4's. */
-  readonly level5AtMs: number;
-  /** Ascending: when the level rises one step, Level 1 first (a note sounding changes at once). */
-  readonly ascendingAtMs: readonly number[];
+  /**
+   * Level 5: where the fifth table takes over from Level 4's, as a note of the tone and a time
+   * into it (recordings of one tone drift, so a time from the preview's start would land on
+   * another note).
+   */
+  readonly level5At: NotePosition;
+  /** Ascending: where the level rises one step, Level 1 first (a note sounding changes at once). */
+  readonly ascendingAt: readonly NotePosition[];
 }
 
 export interface SoundResourceData {
@@ -282,6 +316,11 @@ export interface SoundResourceData {
   readonly messageTones: Readonly<Record<string, SoundProgramData>>;
   /** Message Beep once: Ringing volume level → the DSP word of its tone (as captured). */
   readonly beepOnceLevels: Readonly<Record<string, number>>;
+  /**
+   * Message tones with Ringing volume unset (the virgin EEPROM): frequency → buzzer volume
+   * (`sound/preview/virgin-message`; not Level 1's table).
+   */
+  readonly unsetMessageVolumes: Readonly<Record<string, number>>;
   readonly keypad: {
     readonly hz: number;
     /** Keypad tones level (`1`-`3`, `unset`) → DSP word; Off plays nothing. */
@@ -457,6 +496,19 @@ export function extractSoundResources(
       throw new SoundProgramError(id, "has no Beep once tone");
     return row.state.volume;
   };
+  const unsetMessageVolumes: Record<string, number> = {};
+  for (const n of notes(
+    programFromRows("preview/virgin-message", previewRows(load("sound/preview/virgin-message"))),
+  )) {
+    const had = unsetMessageVolumes[String(n.hz)];
+    if (had !== undefined && had !== n.volume) {
+      throw new SoundProgramError(
+        "sound/preview/virgin-message",
+        `${n.hz} Hz at ${n.volume} and ${had}`,
+      );
+    }
+    unsetMessageVolumes[String(n.hz)] = n.volume;
+  }
   const beepOnceLevels = {
     "1": toneWord("sound/message-tone/beep-once-ringing-l1"),
     "4": toneWord("sound/message-tone/beep-once"),
@@ -470,7 +522,8 @@ export function extractSoundResources(
     if (!sameNotes(program, tone.program)) {
       throw new SoundProgramError(golden.id, `plays other notes than ${tone.name}`);
     }
-    const jump = levelSteps(level5[i]!, tables, 4, 5, `sound/ringing-tone/level-5/${tone.slug}`);
+    const level5Id = `sound/ringing-tone/level-5/${tone.slug}`;
+    const jump = levelSteps(level5[i]!, tables, 4, 5, level5Id);
     if (jump.length !== 1) throw new SoundProgramError(tone.slug, "Level 5 needs exactly one jump");
     return {
       name: tone.name,
@@ -478,8 +531,10 @@ export function extractSoundResources(
       program: tone.program,
       firstMarkStep: tone.firstMarkStep,
       ...(tone.cycleMs !== undefined ? { cycleMs: tone.cycleMs } : {}),
-      level5AtMs: jump[0]!,
-      ascendingAtMs: levelSteps(program, tables, 1, 4, golden.id),
+      level5At: notePosition(level5[i]!, jump[0]!, level5Id),
+      ascendingAt: levelSteps(program, tables, 1, 4, golden.id).map((t) =>
+        notePosition(program, t, golden.id),
+      ),
     };
   });
 
@@ -537,6 +592,7 @@ export function extractSoundResources(
     volumeTables: tables,
     messageTones,
     beepOnceLevels,
+    unsetMessageVolumes,
     keypad: {
       hz: 900,
       levels: keypadLevels,

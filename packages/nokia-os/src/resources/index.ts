@@ -228,15 +228,18 @@ export const PREVIEW_DELAY_MS: number = SOUND_DATA.previewDelayMs;
 export const MESSAGE_PREVIEW_DELAY_MS: number = SOUND_DATA.messagePreviewDelayMs;
 /**
  * The buzzer volume register by Ringing volume level and note frequency (D10): Levels 1-4
- * exactly; Level 5 plays Level 4's table up to the tone's `level5AtMs`, then the fifth.
+ * exactly; Level 5 plays Level 4's table up to the tone's `level5At`, then the fifth.
  */
 export const VOLUME_RULE = { tables: SOUND_DATA.volumeTables } as const;
-/** Ascending: Level 1 first, one level up at each of the tone's `ascendingAtMs`, capped at the stored level. */
+/** Ascending: Level 1 first, one level up at each of the tone's `ascendingAt`, capped at the stored level. */
 export const ASCENDING_RULE = { startLevel: 1 } as const;
 /** Message alert tones at Level 4 (`standard`, `special`, `beep-once`, `ascending`; No tone is silent). */
 export const MESSAGE_TONES = SOUND_DATA.messageTones;
 /** The message `Beep once` tone's DSP word by Ringing volume level (Levels 2-3 not captured). */
 export const BEEP_ONCE_LEVELS: Readonly<Record<string, number>> = SOUND_DATA.beepOnceLevels;
+/** Message tones' buzzer volume by frequency while Ringing volume is unset (the virgin EEPROM). */
+export const UNSET_MESSAGE_VOLUMES: Readonly<Record<string, number>> =
+  SOUND_DATA.unsetMessageVolumes;
 /** Keypad tones: 900 Hz at the level's DSP word; awake and woken durations; the DSP's sleep. */
 export const KEYPAD_BEEP = SOUND_DATA.keypad;
 /** Note text → its warning tone (Warning tones On, D12). */

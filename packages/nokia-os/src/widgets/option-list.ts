@@ -22,6 +22,13 @@ export interface OptionListOptions {
    * null while unset). Plan 16: the Keypad tones list beeps ▲/▼ at that option's level.
    */
   keyDown?(key: PhoneKey, highlighted: number | null): void;
+  /**
+   * ▲/▼ moved the selection to `index` from `previous` (null: the list was unset). Never called
+   * on opening. Plan 16: preview lists arm a preview.
+   */
+  highlight?(index: number, previous: number | null): void;
+  /** The list left the flow (plan 16: its preview stops). */
+  close?(): void;
 }
 
 /**
@@ -65,8 +72,15 @@ export class OptionListWidget implements Widget {
     } else if (key === "navi" && selected !== null) {
       this.#options.choose(selected, flow);
     } else {
-      this.#cursor = moveRows(this.#cursor, key, this.#options.labels.length) ?? this.#cursor;
+      const moved = moveRows(this.#cursor, key, this.#options.labels.length);
+      if (moved === undefined) return;
+      this.#cursor = moved;
+      if (moved.selected !== null) this.#options.highlight?.(moved.selected, selected);
     }
+  }
+
+  close(): void {
+    this.#options.close?.();
   }
 }
 

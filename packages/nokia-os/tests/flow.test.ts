@@ -244,6 +244,51 @@ describe("StockFlowApplication", () => {
     expect(other.keys).toEqual([]);
   });
 
+  it("closes a widget once as it leaves the stack, not while it stays below a push (plan 16)", () => {
+    const closed: string[] = [];
+    const closing = (label: string): Probe =>
+      Object.assign(new Probe(label), { close: () => void closed.push(label) });
+    // back
+    const list = closing("list");
+    const query = closing("query");
+    list.onKeyAction = (key, flow) => (key === "navi" ? flow.push(query) : flow.back());
+    query.onKeyAction = (_key, flow) => flow.back();
+    const { session } = start(() => list);
+    press(session, "navi");
+    expect(closed).toEqual([]);
+    press(session, "c");
+    expect(closed).toEqual(["query"]);
+    press(session, "c");
+    press(session, "c");
+    expect(closed).toEqual(["query", "list"]);
+    // replace, then back past the flow
+    closed.length = 0;
+    const ringing = closing("ringing");
+    const done = closing("done");
+    ringing.onKeyAction = (_key, flow) => flow.replace(done);
+    done.onKeyAction = (_key, flow) => flow.back(2);
+    const second = start(() => ringing);
+    press(second.session, "navi");
+    expect(closed).toEqual(["ringing"]);
+    press(second.session, "navi");
+    expect(closed).toEqual(["ringing", "done"]);
+    // standby, and the session's deactivation (C held, power-off, navigate): every level
+    closed.length = 0;
+    const bottom = closing("bottom");
+    const top = closing("top");
+    bottom.onKeyAction = (_key, flow) => flow.push(top);
+    top.onKeyAction = (_key, flow) => flow.standby();
+    const third = start(() => bottom);
+    press(third.session, "navi");
+    press(third.session, "c");
+    third.session.onDeactivate?.("navigate");
+    expect(closed).toEqual(["top", "bottom"]);
+    const fourth = start(() => closing("held"));
+    fourth.session.onDeactivate?.("navigate");
+    fourth.session.onDeactivate?.("navigate");
+    expect(closed).toEqual(["top", "bottom", "held"]);
+  });
+
   it("builds a fresh root widget for every session", () => {
     const made: Probe[] = [];
     const app = new StockFlowApplication("stock:test", () => {

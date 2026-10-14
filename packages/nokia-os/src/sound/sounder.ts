@@ -3,11 +3,21 @@
 // keys and power; widgets reach it through `LeafBinder` (previews, note tones).
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockCue, StockCueSink } from "../firmware/cues";
-import { LEVEL_REPEAT } from "../firmware/bindings";
+import { LEVEL_REPEAT, type PreviewList } from "../firmware/bindings";
 import type { StockSettings } from "../firmware/settings";
-import { BOOT_TONE, KEYPAD_BEEP } from "../resources";
-import type { SoundProgram } from "./program";
-import type { SoundPlay, SoundSequencer } from "./sequencer";
+import {
+  BEEP_ONCE_LEVELS,
+  BOOT_TONE,
+  KEYPAD_BEEP,
+  MESSAGE_PREVIEW_DELAY_MS,
+  MESSAGE_TONES,
+  PREVIEW_DELAY_MS,
+  RINGING_TONES,
+  UNSET_MESSAGE_VOLUMES,
+  VOLUME_RULE,
+} from "../resources";
+import { noteStarts, type SoundProgram } from "./program";
+import type { SoundPlay, SoundSequencer, SoundVolume } from "./sequencer";
 
 /** Tones › Keypad tones (through `settingAlias`: the active profile's). Options: Off, Level 1-3. */
 export const KEYPAD_TONES_KEY = "tones/keypad-tones";
@@ -17,6 +27,88 @@ export const KEYPAD_TONES_KEY = "tones/keypad-tones";
  * key-to-beep latency of 28 ms that nokia-os does not reproduce, D8).
  */
 export const C_HOLD_BEEP_MS = 480;
+
+/** Incoming call alert's options (5-3, 12-n-2-3). */
+const ALERT = { ringing: 0, ascending: 1, ringOnce: 2, beepOnce: 3, off: 4 } as const;
+/** Message alert tone's options (5-5, 12-n-2-5); No tone is silent. */
+const MESSAGE_TONE_SLUGS = [undefined, "standard", "special", "beep-once", "ascending"] as const;
+/** Vibrating alert's options: On, Off. */
+const VIBRATING_ON = 0;
+
+type RingingTone = (typeof RINGING_TONES)[number];
+
+/** The Ringing volume level (1-5) from `atMs` into a program on. */
+interface LevelStep {
+  readonly atMs: number;
+  readonly level: number;
+}
+
+/** A buzzer volume register from VOLUME_RULE's table for `level`. */
+function tableVolume(level: number, hz: number): number {
+  const table = VOLUME_RULE.tables[String(level)];
+  const exact = table?.[String(hz)];
+  if (exact !== undefined) return exact;
+  // UNVERIFIED: a frequency not captured at this level (Standard's 1499.9 Hz at Levels 1-3)
+  // takes the nearest captured frequency's register.
+  const nearest = Object.keys(table ?? {})
+    .map(Number)
+    .sort((a, b) => Math.abs(a - hz) - Math.abs(b - hz))[0];
+  if (nearest === undefined) throw new Error(`No volume table for Level ${level}.`);
+  return table![String(nearest)]!;
+}
+
+/** The message `Beep once` tone's DSP word at `level` (captured: 1, 4, 5). */
+function beepOnceWord(level: number): number {
+  const exact = BEEP_ONCE_LEVELS[String(level)];
+  if (exact !== undefined) return exact;
+  // UNVERIFIED: Levels 2 and 3 were not captured; the word steps one per level between Level
+  // 1's 0x9107 and Level 4's 0x9104.
+  const low = BEEP_ONCE_LEVELS["1"]!;
+  const high = BEEP_ONCE_LEVELS["4"]!;
+  return low - Math.round(((low - high) * (level - 1)) / 3);
+}
+
+/** The volume rule over a level timeline (D10): the buzzer from the tables, the tone's word. */
+function levelVolume(levels: readonly LevelStep[]): SoundVolume {
+  const levelAt = (offsetMs: number): number =>
+    levels.filter((step) => step.atMs <= offsetMs).at(-1)?.level ?? levels[0]!.level;
+  return {
+    changesAtMs: levels.slice(1).map((step) => step.atMs),
+    of: (output, hz, _stored, offsetMs) =>
+      output === "buzzer" ? tableVolume(levelAt(offsetMs), hz) : beepOnceWord(levelAt(offsetMs)),
+  };
+}
+
+/** A tone's note position (`level5At`, `ascendingAt`) as a time into `program`. */
+function positionMs(
+  program: SoundProgram,
+  position: { readonly note: number; readonly offsetMs: number },
+): number {
+  const start = noteStarts(program)[position.note];
+  if (start === undefined) throw new Error(`${program.id} has no note ${position.note}.`);
+  return start + position.offsetMs;
+}
+
+/** How many of a tone's preview steps make one cycle (its first pass, `cycleMs` long). */
+function cycleSteps(tone: RingingTone): number {
+  if (tone.cycleMs === undefined) return tone.program.steps.length;
+  let t = 0;
+  let best = { steps: tone.program.steps.length, off: Infinity };
+  tone.program.steps.forEach((step, i) => {
+    t += step.ms;
+    const off = Math.abs(t - tone.cycleMs!);
+    if (off < best.off) best = { steps: i + 1, off };
+  });
+  return best.steps;
+}
+
+/** `program` without its vibrator track (Vibrating alert Off). */
+function withoutVibrator(program: SoundProgram): SoundProgram {
+  return {
+    ...program,
+    steps: program.steps.map(({ vibrator: _vibrator, ...step }) => step),
+  };
+}
 
 /** How a key-down beeps (the wrapper knows where the phone is). */
 export interface KeyDownOptions {
@@ -47,6 +139,10 @@ export class StockSounder implements StockCueSink {
   readonly #held = new Map<PhoneKey, HeldKey>();
   /** Programs started for later that power-off must cancel (the boot tone). */
   #scheduled: SoundPlay[] = [];
+  /** The preview playing or armed. */
+  #preview: SoundPlay | undefined;
+  /** When the last key went down (a preview counts its delay from it). */
+  #lastKeyMs: number | undefined;
   /** The Keypad tones option the next key-down beeps at, instead of the stored one. */
   #keyLevel: { readonly option: number | null } | undefined;
 
@@ -63,6 +159,7 @@ export class StockSounder implements StockCueSink {
    */
   keyDown(key: PhoneKey, options: KeyDownOptions = {}): void {
     const now = this.#now();
+    this.#lastKeyMs = now;
     const level = this.#keyLevel;
     this.#keyLevel = undefined;
     if (options.beeps ?? true) this.#keyBeep(now, level?.option);
@@ -109,10 +206,90 @@ export class StockSounder implements StockCueSink {
     const now = this.#now();
     for (const play of this.#scheduled) this.#sequencer.cancel(play, now);
     this.#scheduled = [];
+    this.#preview = undefined;
     this.#held.clear();
     this.#keyLevel = undefined;
     this.#sequencer.stop(["buzzer", "tone", "vibrator"], now);
     this.#sequencer.play(BOOT_TONE.program, now);
+  }
+
+  /**
+   * ▲/▼ highlighted option `index` of a preview list of the profile whose settings start with
+   * `prefix` (`tones` or `profiles/<profile>/personalise`), D9: the preview playing stops, and
+   * the highlighted one starts `PREVIEW_DELAY_MS` after the key (message tones:
+   * `MESSAGE_PREVIEW_DELAY_MS`). A preview reads that profile's Incoming call alert and Ringing
+   * volume, and the active profile's Vibrating alert.
+   */
+  preview(list: PreviewList, index: number, prefix: string): void {
+    this.stopPreview();
+    const key = this.#lastKeyMs ?? this.#now();
+    if (list === "message-alert-tone") {
+      this.#preview = this.#message(
+        index,
+        prefix,
+        key + MESSAGE_PREVIEW_DELAY_MS,
+        this.#vibrates(),
+      );
+      return;
+    }
+    const at = key + PREVIEW_DELAY_MS;
+    if (list === "ringing-tone") {
+      const tone = RINGING_TONES[index];
+      if (tone === undefined) return; // an `(empty)` slot
+      this.#preview = this.#ringing(tone, prefix, this.#level(prefix), at, this.#vibrates());
+      return;
+    }
+    // Ringing volume: the stored tone at the highlighted level, to its first cycle mark.
+    const tone = this.#tone(prefix);
+    if (tone === undefined) return;
+    this.#preview = this.#ringing(
+      tone,
+      prefix,
+      index + 1,
+      at,
+      this.#vibrates(),
+      tone.firstMarkStep,
+    );
+  }
+
+  /** Stops the preview (C, OK, leaving the list, another ▲/▼). */
+  stopPreview(): void {
+    if (this.#preview !== undefined) this.#sequencer.cancel(this.#preview, this.#now());
+    this.#preview = undefined;
+  }
+
+  /**
+   * Plan 22: the incoming call's ringing for the profile at `prefix`: one cycle of its ringing
+   * tone (the preview's first pass, to `cycleMs`) repeated for Ringing and Ascending, once for
+   * Ring once, nothing for Beep once and Off (their ringing is not captured, D11), at its Ringing
+   * volume (Level 5 and Ascending as in previews), with its own Vibrating alert. The five tones
+   * whose preview ends inside its first pass (no `cycleMs`) repeat what was captured (UNVERIFIED:
+   * plan 22 captures them whole).
+   */
+  ring(prefix: string): SoundPlay | undefined {
+    const tone = this.#tone(prefix);
+    if (tone === undefined) return undefined;
+    const alert = this.#settings.choice(`${prefix}/incoming-call-alert`);
+    const pass: SoundProgram = {
+      id: `ring/${tone.slug}`,
+      steps: tone.program.steps.slice(0, cycleSteps(tone)),
+      ...(alert === ALERT.ringOnce ? {} : { loopFrom: 0 }),
+    };
+    const vibrates = this.#settings.choice(`${prefix}/vibrating-alert`) === VIBRATING_ON;
+    return this.#ringing(
+      { ...tone, program: pass },
+      prefix,
+      this.#level(prefix),
+      this.#now(),
+      vibrates,
+    );
+  }
+
+  /** Plan 18: a received message's alert for the profile at `prefix` (its Message alert tone). */
+  messageAlert(prefix: string): SoundPlay | undefined {
+    const index = this.#settings.choice(`${prefix}/message-alert-tone`) ?? 0;
+    const vibrates = this.#settings.choice(`${prefix}/vibrating-alert`) === VIBRATING_ON;
+    return this.#message(index, prefix, this.#now(), vibrates);
   }
 
   /** Plays `program` now (plan 27's Composer). */
@@ -122,6 +299,85 @@ export class StockSounder implements StockCueSink {
 
   /** Game cues (plan 23 D8): plan 16 Task 8 plays them. */
   cue(_cue: StockCue, _atMs: number): void {}
+
+  /** The active profile's Vibrating alert (Tones, through `settingAlias`) is On. */
+  #vibrates(): boolean {
+    return this.#settings.choice("tones/vibrating-alert") === VIBRATING_ON;
+  }
+
+  /** The profile's Ringing volume level (1-5); null while unset (the virgin EEPROM). */
+  #level(prefix: string): number | null {
+    const index = this.#settings.choice(`${prefix}/ringing-volume`);
+    return index === null ? null : index + 1;
+  }
+
+  /** The profile's stored ringing tone, if one is set and built in. */
+  #tone(prefix: string): RingingTone | undefined {
+    const index = this.#settings.choice(`${prefix}/ringing-tone`);
+    return index === null ? undefined : RINGING_TONES[index];
+  }
+
+  /**
+   * A ringing tone at `level` (unset: Level 1's table, D7), gated by the profile's Incoming call
+   * alert: Ringing and Ring once play, Ascending ramps from Level 1, Beep once, Off and unset are
+   * silent (Task 0). Level 5 plays Level 4's table up to the tone's `level5At` (D10).
+   */
+  #ringing(
+    tone: RingingTone,
+    prefix: string,
+    level: number | null,
+    atMs: number,
+    vibrates: boolean,
+    endStep?: number,
+  ): SoundPlay | undefined {
+    const alert = this.#settings.choice(`${prefix}/incoming-call-alert`);
+    if (alert === null || alert === ALERT.beepOnce || alert === ALERT.off) return undefined;
+    const stored = level ?? 1;
+    const program = vibrates ? tone.program : withoutVibrator(tone.program);
+    const at = (position: { readonly note: number; readonly offsetMs: number }): number =>
+      positionMs(tone.program, position);
+    const levels: LevelStep[] =
+      alert === ALERT.ascending
+        ? [
+            { atMs: 0, level: 1 },
+            ...tone.ascendingAt.map((position, i) => ({ atMs: at(position), level: i + 2 })),
+          ].filter((step) => step.level <= stored)
+        : stored === 5
+          ? [
+              { atMs: 0, level: 4 },
+              { atMs: at(tone.level5At), level: 5 },
+            ]
+          : [{ atMs: 0, level: stored }];
+    return this.#sequencer.play(program, atMs, {
+      volume: levelVolume(levels),
+      ...(endStep === undefined ? {} : { endStep }),
+    });
+  }
+
+  /** Message alert tone option `index` at the profile's Ringing volume (no alert-type gate). */
+  #message(index: number, prefix: string, atMs: number, vibrates: boolean): SoundPlay | undefined {
+    const slug = MESSAGE_TONE_SLUGS[index];
+    if (slug === undefined) return undefined;
+    const captured = MESSAGE_TONES[slug];
+    if (captured === undefined) throw new Error(`No message tone "${slug}".`);
+    const program = vibrates ? captured : withoutVibrator(captured);
+    // Ascending was captured at Level 4 only: it plays as captured (UNVERIFIED at other levels).
+    if (slug === "ascending") return this.#sequencer.play(program, atMs);
+    const level = this.#level(prefix);
+    if (level !== null) {
+      return this.#sequencer.play(program, atMs, { volume: levelVolume([{ atMs: 0, level }]) });
+    }
+    // Ringing volume unset (virgin): the buzzer at its captured registers, not Level 1's table;
+    // the Beep once tone at Level 1's word (UNVERIFIED: not captured unset).
+    const unset: SoundVolume = {
+      changesAtMs: [],
+      of: (output, hz) =>
+        output === "tone"
+          ? beepOnceWord(1)
+          : (UNSET_MESSAGE_VOLUMES[String(hz)] ?? tableVolume(1, hz)),
+    };
+    return this.#sequencer.play(program, atMs, { volume: unset });
+  }
 
   /** The DSP word of Keypad tones option `level` (default: the stored one); null: Off. */
   #keypadWord(level: number | null = this.#settings.choice(KEYPAD_TONES_KEY)): number | null {

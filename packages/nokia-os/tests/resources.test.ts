@@ -598,6 +598,24 @@ function volumesFollow(rows: readonly SoundRow[], level: (t: number) => number):
   });
 }
 
+/** The time (ms from `rows`' first) of a note position: its note's start plus its offset. */
+function atPosition(
+  rows: readonly SoundRow[],
+  position: { readonly note: number; readonly offsetMs: number },
+): number {
+  const starts: number[] = [];
+  let sounding: number | null = null;
+  for (const row of rows) {
+    if (row.output !== "buzzer") continue;
+    const hz = row.state.kind === "sounding" ? row.state.hz : null;
+    if (hz !== null && hz !== sounding) starts.push(row.ms - rows[0]!.ms);
+    sounding = hz;
+  }
+  const start = starts[position.note];
+  if (start === undefined) throw new Error(`no note ${position.note}`);
+  return start + position.offsetMs;
+}
+
 function sameNotes(a: readonly number[], b: readonly number[]): boolean {
   return (
     Math.abs(a.length - b.length) <= 1 &&
@@ -662,8 +680,9 @@ describe("sound programs and rules (plan 16 Task 3)", () => {
       const id = `sound/ringing-tone/level-5/${tone.slug}`;
       const rows = previewRows(soundGolden(id));
       expect(sameNotes(previewHz(rows), previewHz(renderProgram(tone.program, 0))), id).toBe(true);
+      const jump = atPosition(rows, tone.level5At);
       expect(
-        volumesFollow(rows, (t) => (t < tone.level5AtMs ? 4 : 5)),
+        volumesFollow(rows, (t) => (t < jump ? 4 : 5)),
         id,
       ).toEqual([]);
     }
@@ -673,8 +692,8 @@ describe("sound programs and rules (plan 16 Task 3)", () => {
     for (const tone of tones) {
       const id = `sound/alert/ascending/${tone.slug}`;
       const rows = previewRows(soundGolden(id));
-      const level = (t: number) =>
-        Math.min(4, 1 + tone.ascendingAtMs.filter((at) => at <= t).length);
+      const steps = tone.ascendingAt.map((position) => atPosition(rows, position));
+      const level = (t: number) => Math.min(4, 1 + steps.filter((at) => at <= t).length);
       expect(volumesFollow(rows, level), id).toEqual([]);
     }
     // stored Level 1: no step (alert/ascending-l1, Nokia tune)

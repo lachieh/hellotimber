@@ -47,6 +47,8 @@ import {
   optionListNumbering,
   PAGE_RESULTS,
   placeholderOwner,
+  PREVIEW_LISTS,
+  profileSetting,
   PROMPT_LAYOUTS,
   promptLayout,
   QUERY_RESULTS,
@@ -72,9 +74,6 @@ import { PlaceholderApplication } from "./placeholder";
 import { SECURITY_CODE_DIGITS, type StockSecurity } from "./security";
 import type { StockSettings } from "./settings";
 import type { StockSounder } from "../sound/sounder";
-
-/** The Keypad tones lists' setting keys (Tones and each profile's Personalise). */
-const KEYPAD_TONES_LIST = /^(tones|profiles\/[a-z0-9-]+\/personalise)\/keypad-tones$/;
 
 /** The soft key of Instructions pages (P12; the tree records only their text). */
 const TEXT_PAGES_SOFTKEY = "More";
@@ -511,13 +510,28 @@ export class LeafBinder {
       };
     });
     const numbering = optionListNumbering(number);
-    // The Keypad tones list (Tones and every Personalise): ▲/▼ beep at the option they highlight.
     const sounder = this.#sounder;
-    const keyDown = KEYPAD_TONES_LIST.test(key)
-      ? (pressed: PhoneKey, highlighted: number | null) => {
-          if (pressed === "up" || pressed === "down") sounder.keyBeepLevel(highlighted);
-        }
-      : undefined;
+    const profile = profileSetting(key);
+    // Plan 16 (Tones and every Personalise): the Keypad tones list's ▲/▼ beep at the option they
+    // highlight; the preview lists preview it (D9), except the first move out of an unset list
+    // (S9), and stop when the list closes.
+    const keyDown =
+      profile?.setting === "keypad-tones"
+        ? (pressed: PhoneKey, highlighted: number | null) => {
+            if (pressed === "up" || pressed === "down") sounder.keyBeepLevel(highlighted);
+          }
+        : undefined;
+    const list = PREVIEW_LISTS.find((slug) => slug === profile?.setting);
+    const preview =
+      profile === undefined || list === undefined
+        ? {}
+        : {
+            highlight: (index: number, previous: number | null) => {
+              if (previous === null) sounder.stopPreview();
+              else sounder.preview(list, index, profile.prefix);
+            },
+            close: () => sounder.stopPreview(),
+          };
     return () =>
       new OptionListWidget({
         labels,
@@ -526,6 +540,7 @@ export class LeafBinder {
         numbering,
         choose: (index, flow) => choices[index]!(flow),
         ...(keyDown === undefined ? {} : { keyDown }),
+        ...preview,
       });
   }
 
