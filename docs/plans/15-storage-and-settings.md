@@ -983,17 +983,31 @@ than the line breaks mid-word, and lines past the third are dropped; both are UN
 
 **Files:** `packages/nokia-os/demo/{index.html,main.ts,style.css}`, `packages/nokia-os/README.md`.
 
-- [ ] Demo: `storage: window.localStorage`; an "Erase EEPROM" button removing every
+- [x] Demo: `storage: window.localStorage`; an "Erase EEPROM" button removing every
       `STOCK_STORAGE_PREFIX` key and restarting the phone; a SIM select (`SIM 1`, `SIM 2`) that
       restarts the phone with that `sim`; the status line adds the stored record names. A
       malformed record shows the error with the Erase button.
-- [ ] Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`: choose
+- [x] Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`: choose
       Keypad tones › Level 2, reload, the page still shows it; Phone security On, switch SIM,
       power on: the prompt, a wrong code's `Code error`, `12345`, the hands; Restore factory
       settings resets Keypad tones.
-- [ ] README: the storage port (with the localStorage example), records and versions, virgin vs
+- [x] README: the storage port (with the localStorage example), records and versions, virgin vs
       factory, the security code and boot gates, and what is left to later plans.
-- [ ] Commit: `feat(nokia-os): persistent demo with EEPROM and SIM controls`.
+- [x] Commit: `feat(nokia-os): persistent demo with EEPROM and SIM controls`.
+
+Deviation (verification): Keypad tones' factory value is `Level 2` (D5), so after the reload check
+the verification set it to `Off`; Restore then showed `Level 2` again and Phone security `Off`.
+The demo keeps the SIM choice in the page only (a reload returns to `SIM 1`).
+
+Completion note (Task 9): driven headless with `agent-browser` against
+`vp run @hellotimber/nokia-os#demo`. From an erased EEPROM: power on (status `EEPROM: security`,
+the SIM recorded), Keypad tones › Level 2, reload, the page still shows `Level 2`
+(`EEPROM: security, settings`); Keypad tones › Off; Phone security On with `12345`; `SIM 2`;
+power on: the self-test, the prompt, `00000` `Code error`, `12345` `Code accepted`, the hands,
+standby; Restore factory settings with `12345`: `Settings restored`, Keypad tones `Level 2`,
+Phone security `Off`. A hand-written malformed `nokia-os/settings` shows
+`EEPROM record nokia-os/settings: not JSON.` beside Erase EEPROM, and Erase recovers.
+Screenshots: `/tmp/nokia-os-p15-*.png` (02-14).
 
 ### Task 10 - Acceptance, verification gate and closeout
 

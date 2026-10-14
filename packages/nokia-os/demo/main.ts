@@ -1,10 +1,18 @@
 // Standalone demo: the stock v6.39 firmware (the whole menu tree, plan 14, and Snake II, plan 23)
 // on a 2D canvas, driven by the keyboard or buttons, with a dev-only overlay of the committed
-// goldens. Arrows stay ▲/▼ (they turn the snake); the digits steer it.
+// goldens. Arrows stay ▲/▼ (they turn the snake); the digits steer it. The phone's EEPROM is the
+// page's localStorage (plan 15): settings survive a reload, and empty storage is the virgin
+// phone. "Erase EEPROM" empties it; the SIM select swaps the card (Phone security's new-SIM
+// prompt).
 import type { Phone, PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { createScreenRenderer, Framebuffer, type ScreenRenderer } from "@hellotimber/phone-screen";
 import { LCD_HEIGHT, LCD_WIDTH, parseGolden, type GoldenImage } from "../scripts/golden-format.ts";
-import { createStockPhone, missingStockGlyphs, paintStockScreen } from "../src/index";
+import {
+  createStockPhone,
+  missingStockGlyphs,
+  paintStockScreen,
+  STOCK_STORAGE_PREFIX,
+} from "../src/index";
 
 const SCALE = 6;
 const POWER_HOLD_MS = 1000;
@@ -43,29 +51,70 @@ const carrierForm = element<HTMLFormElement>("carrier-form");
 const carrierInput = element<HTMLInputElement>("carrier");
 const carrierError = element<HTMLParagraphElement>("carrier-error");
 const skipBoot = element<HTMLInputElement>("skip-boot");
+const simSelect = element<HTMLSelectElement>("sim");
+const eraseButton = element<HTMLButtonElement>("erase");
+const storageError = element<HTMLParagraphElement>("storage-error");
 
 const renderer: ScreenRenderer = createScreenRenderer({ paint: paintStockScreen, scale: SCALE });
 renderer.canvas.setAttribute("aria-label", "Phone LCD");
 lcd.append(renderer.canvas);
 
 let carrier = DEFAULT_CARRIER;
-let phone: Phone = startPhone();
+/** Undefined while the stored EEPROM is malformed (the error and Erase are shown instead). */
+let phone: Phone | undefined = startPhone();
 let unsubscribe = (): void => {};
 
-function startPhone(): Phone {
-  return createStockPhone({ carrier, clock, date, boot: skipBoot.checked ? "skip" : "animated" });
+/**
+ * A phone over the page's localStorage with the selected SIM. A malformed record makes
+ * createStockPhone throw, naming its key; the demo shows that with the Erase button.
+ */
+function startPhone(): Phone | undefined {
+  try {
+    const started = createStockPhone({
+      carrier,
+      clock,
+      date,
+      boot: skipBoot.checked ? "skip" : "animated",
+      storage: window.localStorage,
+      sim: simSelect.value,
+    });
+    storageError.hidden = true;
+    return started;
+  } catch (cause) {
+    storageError.textContent = `${cause instanceof Error ? cause.message : String(cause)} Erase the EEPROM to start again.`;
+    storageError.hidden = false;
+    return undefined;
+  }
+}
+
+/** The names of the EEPROM records stored in localStorage (`settings`, `security`). */
+function storedRecords(): string[] {
+  const names: string[] = [];
+  for (let i = 0; i < window.localStorage.length; i++) {
+    const key = window.localStorage.key(i);
+    if (key?.startsWith(STOCK_STORAGE_PREFIX)) names.push(key.slice(STOCK_STORAGE_PREFIX.length));
+  }
+  return names.sort();
 }
 
 /** Subscribes to the current phone and shows its screen. */
 function attach(): void {
   unsubscribe();
-  unsubscribe = phone.subscribe(({ screen }) => show(screen));
-  show(phone.screen);
+  unsubscribe = (): void => {};
+  if (phone === undefined) {
+    renderer.render({ kind: "off" });
+    status.textContent = `EEPROM: ${storedRecords().join(", ") || "empty"}`;
+    return;
+  }
+  const current = phone;
+  unsubscribe = current.subscribe(({ screen }) => show(current, screen));
+  show(current, current.screen);
 }
 
-function show(screen: ScreenModel): void {
+function show(current: Phone, screen: ScreenModel): void {
   const app = screen.kind === "custom" ? ` (${screen.appId})` : "";
-  status.textContent = `path: ${phone.path} · screen: ${screen.kind}${app}`;
+  const records = storedRecords().join(", ") || "empty";
+  status.textContent = `path: ${current.path} · screen: ${screen.kind}${app} · EEPROM: ${records}`;
   try {
     renderer.render(screen);
     error.hidden = true;
@@ -84,7 +133,7 @@ function restart(): void {
 
 // One virtual clock for every phone: performance.now() in whole milliseconds.
 function frame(): void {
-  phone.tick(Math.floor(performance.now()));
+  phone?.tick(Math.floor(performance.now()));
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
@@ -92,9 +141,9 @@ requestAnimationFrame(frame);
 // --- keys ---------------------------------------------------------------------------------
 
 function pressPower(): void {
-  phone.send({ type: "down", key: "power" });
   const pressed = phone;
-  setTimeout(() => pressed.send({ type: "up", key: "power" }), POWER_HOLD_MS);
+  pressed?.send({ type: "down", key: "power" });
+  setTimeout(() => pressed?.send({ type: "up", key: "power" }), POWER_HOLD_MS);
 }
 
 window.addEventListener("keydown", (event) => {
@@ -109,12 +158,12 @@ window.addEventListener("keydown", (event) => {
   const key = KEYBOARD[event.key];
   if (key === undefined) return;
   event.preventDefault();
-  if (!event.repeat) phone.send({ type: "down", key });
+  if (!event.repeat) phone?.send({ type: "down", key });
 });
 
 window.addEventListener("keyup", (event) => {
   const key = KEYBOARD[event.key];
-  if (key !== undefined) phone.send({ type: "up", key });
+  if (key !== undefined) phone?.send({ type: "up", key });
 });
 
 for (const button of document.querySelectorAll<HTMLButtonElement>("button[data-key]")) {
@@ -127,12 +176,12 @@ for (const button of document.querySelectorAll<HTMLButtonElement>("button[data-k
   const release = (): void => {
     if (!down) return;
     down = false;
-    phone.send({ type: "up", key });
+    phone?.send({ type: "up", key });
   };
   button.addEventListener("pointerdown", (event) => {
     button.setPointerCapture(event.pointerId);
     down = true;
-    phone.send({ type: "down", key });
+    phone?.send({ type: "down", key });
   });
   button.addEventListener("pointerup", release);
   button.addEventListener("pointercancel", release);
@@ -154,6 +203,15 @@ carrierForm.addEventListener("submit", (event) => {
 });
 
 skipBoot.addEventListener("change", restart);
+
+// A new SIM card: with Phone security On, the next power-on asks for the code (plan 15 D10).
+simSelect.addEventListener("change", restart);
+
+// Erase EEPROM: every nokia-os record goes, so the next phone is the virgin one (plan 15 D4).
+eraseButton.addEventListener("click", () => {
+  for (const name of storedRecords()) window.localStorage.removeItem(STOCK_STORAGE_PREFIX + name);
+  restart();
+});
 
 // --- golden overlay (dev only) -------------------------------------------------------------
 
@@ -208,7 +266,7 @@ function createGoldenOverlay(): GoldenOverlay {
   lcd.append(canvas);
   const ctx = canvas.getContext("2d")!;
   const actual = new Framebuffer();
-  let current: ScreenModel = phone.screen;
+  let current: ScreenModel = phone?.screen ?? { kind: "off" };
 
   function draw(): void {
     const mode = view.value;

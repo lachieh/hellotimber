@@ -120,6 +120,17 @@ input {
   background: #111512;
 }
 
+.eeprom {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 8px;
+  justify-items: start;
+}
+
+.eeprom button {
+  padding: 0 16px;
+}
+
 .check {
   display: flex;
   align-items: center;

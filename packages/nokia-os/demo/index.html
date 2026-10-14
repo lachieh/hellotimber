@@ -56,6 +56,22 @@
           <input id="skip-boot" type="checkbox" />
           Skip boot (restarts the phone)
         </label>
+        <label>
+          SIM card (restarts the phone)
+          <select id="sim">
+            <option value="sim-1">SIM 1</option>
+            <option value="sim-2">SIM 2</option>
+          </select>
+        </label>
+        <div class="eeprom">
+          <button id="erase" type="button">Erase EEPROM</button>
+          <p class="note">
+            Settings persist in this page's localStorage. Erase removes every
+            <code>nokia-os/</code> record and restarts the virgin phone. With Phone security On, a
+            SIM the phone has not seen asks for the security code (12345) at power-on.
+          </p>
+          <p id="storage-error" class="error" role="alert" hidden></p>
+        </div>
       </section>
 
       <section id="goldens" class="controls" aria-label="Golden overlay" hidden>
