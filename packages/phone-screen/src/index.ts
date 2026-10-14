@@ -41,4 +41,4 @@ export { renderConfirm, renderEditor } from "./render/editor";
 export { renderScreen } from "./render";
 export type { RenderOptions } from "./render";
 export { createScreenRenderer } from "./renderer";
-export type { ScreenRenderer, ScreenRendererOptions } from "./renderer";
+export type { ScreenPainter, ScreenRenderer, ScreenRendererOptions } from "./renderer";

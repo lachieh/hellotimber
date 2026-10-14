@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 import type { ScreenModel } from "@hellotimber/phone-core";
+import { Framebuffer, renderScreen } from "../src/index";
+import type { ScreenPainter } from "../src/index";
 import { createScreenRenderer } from "../src/renderer";
 
 interface FakeImageData {
@@ -116,5 +118,71 @@ describe("createScreenRenderer", () => {
     a.render(welcome);
     b.render(welcome);
     expect(paints[0]!.data).not.toEqual(paints[1]!.data);
+  });
+});
+
+describe("createScreenRenderer with an injected painter", () => {
+  const FG = [0x43, 0x52, 0x3d];
+  const BG = [0xc7, 0xf0, 0xd8];
+  const canvasPixel = (data: Uint8ClampedArray, i: number): number[] => [
+    data[i * 4]!,
+    data[i * 4 + 1]!,
+    data[i * 4 + 2]!,
+  ];
+
+  it("lets the painter control every pixel", () => {
+    const { paints } = stubCanvas2d();
+    const seen: Array<[Framebuffer, ScreenModel]> = [];
+    // Standby lights everything; anything else draws a checkerboard.
+    const paint: ScreenPainter = (fb, screen) => {
+      seen.push([fb, screen]);
+      for (let i = 0; i < fb.pixels.length; i++) {
+        fb.pixels[i] = screen.kind === "standby" ? 1 : ((i % 84) + Math.floor(i / 84)) % 2;
+      }
+    };
+    const r = createScreenRenderer({ paint });
+    r.render(STANDBY);
+    r.render(OFF);
+    expect(seen.map(([, screen]) => screen)).toEqual([STANDBY, OFF]);
+    expect(seen[0]![0]).toBeInstanceOf(Framebuffer);
+    for (let i = 0; i < 84 * 48; i++) {
+      expect(canvasPixel(paints[0]!.data, i)).toEqual(FG);
+      const lit = ((i % 84) + Math.floor(i / 84)) % 2 === 1;
+      expect(canvasPixel(paints[1]!.data, i)).toEqual(lit ? FG : BG);
+    }
+  });
+
+  it("bumps version only when the painted output changes", () => {
+    const { paints } = stubCanvas2d();
+    const constant: ScreenPainter = (fb) => {
+      fb.clear(0);
+      fb.setPixel(3, 4, 1);
+    };
+    const r = createScreenRenderer({ paint: constant });
+    r.render(OFF);
+    r.render(STANDBY); // different model, identical output
+    expect(r.version).toBe(1);
+    expect(paints).toHaveLength(1);
+  });
+
+  it("defaults to the existing renderer", () => {
+    const { paints } = stubCanvas2d();
+    const legacy: ScreenPainter = (fb, screen) =>
+      renderScreen(fb, screen, { welcomeText: "Welcome!" });
+    for (const screen of [STANDBY, { kind: "boot", phase: "welcome", frame: 0 } as const]) {
+      createScreenRenderer().render(screen);
+      createScreenRenderer({ paint: legacy }).render(screen);
+    }
+    expect(paints).toHaveLength(4);
+    expect(paints[0]!.data).toEqual(paints[1]!.data);
+    expect(paints[2]!.data).toEqual(paints[3]!.data);
+  });
+
+  it("rejects paint together with welcomeText at the type level", () => {
+    stubCanvas2d();
+    const paint: ScreenPainter = (fb) => fb.clear(0);
+    // @ts-expect-error welcomeText belongs to the legacy painter only
+    createScreenRenderer({ paint, welcomeText: "Hello!" });
+    expect(createScreenRenderer({ paint, scale: 2 }).canvas.width).toBe(168);
   });
 });

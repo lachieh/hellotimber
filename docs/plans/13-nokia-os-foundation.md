@@ -775,14 +775,18 @@ timeout produces one snapshot on the website (no pixel change).
 **Files:** `packages/phone-screen/src/renderer.ts`, `src/index.ts`, `README.md`,
 `tests/renderer.test.ts` (new cases only).
 
-- [ ] TDD: a custom `paint` controls every pixel; `version` bumps only when output changes;
+- [x] TDD: a custom `paint` controls every pixel; `version` bumps only when output changes;
       `paint` and `welcomeText` together is a type error (`@ts-expect-error` test); the default is
       the existing renderer.
-- [ ] Export `type ScreenPainter`.
-- [ ] `git diff --stat main -- packages/phone-screen/src/render packages/phone-screen/src/font packages/phone-screen/src/icons packages/phone-screen/tests/fixtures`
+- [x] Export `type ScreenPainter`.
+- [x] `git diff --stat main -- packages/phone-screen/src/render packages/phone-screen/src/font packages/phone-screen/src/icons packages/phone-screen/tests/fixtures`
       must be empty, and all existing phone-screen tests pass unmodified.
-- [ ] `mise exec -- vp run @hellotimber/phone-screen#test`, `vp run -r test`, `vp run website#build`, `vp check --fix`.
-- [ ] Commit: `feat(phone-screen): injectable screen painter`.
+- [x] `mise exec -- vp run @hellotimber/phone-screen#test`, `vp run -r test`, `vp run website#build`, `vp check --fix`.
+- [x] Commit: `feat(phone-screen): injectable screen painter`.
+
+Deviation: none to the contract. The renderer hands the painter the framebuffer as-is (it still
+holds the previous frame), so a custom painter clears it itself, as the legacy `renderScreen`
+does; the README says so.
 
 ### Task 7 - Stock resources derived from goldens (TDD)
 

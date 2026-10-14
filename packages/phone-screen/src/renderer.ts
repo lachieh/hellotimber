@@ -8,14 +8,26 @@ export interface ScreenRenderer {
   readonly version: number; // increments on visible change
 }
 
-export interface ScreenRendererOptions {
+/**
+ * Paints one ScreenModel into the 84×48 framebuffer. The painter owns every pixel: the
+ * framebuffer still holds the previous frame, so a painter normally clears it first.
+ */
+export type ScreenPainter = (fb: Framebuffer, screen: ScreenModel) => void;
+
+export type ScreenRendererOptions = {
   scale?: number; // default 1: native 84×48 — three.js NearestFilter and CSS
   // image-rendering:pixelated handle upscaling crisply
   fg?: string;
   bg?: string; // default classic green LCD palette
-  /** Boot 'welcome' phase text (the boot ScreenModel carries none). Default "Welcome!". */
-  welcomeText?: string;
-}
+} & (
+  | {
+      /** Default: the legacy (website) layout, `renderScreen`. */
+      paint?: undefined;
+      /** Boot 'welcome' phase text (the boot ScreenModel carries none). Default "Welcome!". */
+      welcomeText?: string;
+    }
+  | { paint: ScreenPainter; welcomeText?: never }
+);
 
 const LCD_FG = "#43523d";
 const LCD_BG = "#c7f0d8";
@@ -37,6 +49,8 @@ export function createScreenRenderer(opts: ScreenRendererOptions = {}): ScreenRe
   const fg = parseHexColor(opts.fg ?? LCD_FG);
   const bg = parseHexColor(opts.bg ?? LCD_BG);
   const welcomeText = opts.welcomeText ?? "Welcome!";
+  const paintScreen: ScreenPainter =
+    opts.paint ?? ((target, screen) => renderScreen(target, screen, { welcomeText }));
 
   const fb = new Framebuffer();
   const canvas = document.createElement("canvas");
@@ -50,7 +64,7 @@ export function createScreenRenderer(opts: ScreenRendererOptions = {}): ScreenRe
   let previous: Uint8Array | null = null;
   let version = 0;
 
-  function paint(): void {
+  function blit(): void {
     const data = image.data;
     for (let y = 0; y < fb.height; y++) {
       for (let x = 0; x < fb.width; x++) {
@@ -82,11 +96,11 @@ export function createScreenRenderer(opts: ScreenRendererOptions = {}): ScreenRe
       return version;
     },
     render(screen: ScreenModel): void {
-      renderScreen(fb, screen, { welcomeText });
+      paintScreen(fb, screen);
       if (previous !== null && samePixels(previous, fb.pixels)) return;
       previous ??= new Uint8Array(fb.pixels.length);
       previous.set(fb.pixels);
-      paint();
+      blit();
       version += 1;
     },
   };

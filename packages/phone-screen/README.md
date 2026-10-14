@@ -30,6 +30,25 @@ frame();
 `render()` repaints and bumps `version` only when the output actually changes,
 so it is safe to call every animation frame.
 
+### Custom painters
+
+The default layout is the website's. A different firmware look supplies its own
+`ScreenPainter`, `(fb: Framebuffer, screen: ScreenModel) => void`, and keeps the canvas,
+palette, scaling and change detection. The painter owns every pixel: the framebuffer still
+holds the previous frame, so clear it first. `welcomeText` belongs to the default painter
+and is a type error next to `paint`.
+
+```ts
+import { createScreenRenderer, renderScreen } from "@hellotimber/phone-screen";
+import type { ScreenPainter } from "@hellotimber/phone-screen";
+
+const paint: ScreenPainter = (fb, screen) => {
+  if (screen.kind === "off") fb.clear(0);
+  else renderScreen(fb, screen, { welcomeText: "Hi" }); // or draw your own pixels
+};
+const renderer = createScreenRenderer({ paint, scale: 6 });
+```
+
 ## Node / headless use
 
 Everything except `createScreenRenderer` is DOM-free. Draw into a
