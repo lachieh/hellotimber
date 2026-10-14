@@ -42,6 +42,7 @@ export type {
   SubmenuOptions,
 } from "./menu";
 export { Timeline } from "./timeline";
+export { rowsWindowTop } from "./window";
 export type { TimelineStep } from "./timeline";
 export {
   childrenOf,

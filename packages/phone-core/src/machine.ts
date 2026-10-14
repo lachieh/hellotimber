@@ -16,6 +16,7 @@ import type {
 } from "./menu";
 import { childrenOf, normalizePath, parsePath, resolveIds } from "./paths";
 import { Timeline } from "./timeline";
+import { rowsWindowTop } from "./window";
 import type {
   KeyEvent,
   MenuIndicator,
@@ -49,7 +50,13 @@ interface CarouselFrame {
 /** One level of the navigation stack. stack[0] is always the menu carousel. */
 type NavFrame<Metadata> =
   | CarouselFrame
-  | { kind: "submenu"; entry: SubmenuEntry<Metadata>; selected: number }
+  | {
+      kind: "submenu";
+      entry: SubmenuEntry<Metadata>;
+      selected: number;
+      /** First visible row; set only for rows levels when PhoneConfig.rowsWindow is on. */
+      windowTop: number | undefined;
+    }
   | {
       kind: "list";
       entry: ListEntry<Metadata>;
@@ -61,6 +68,7 @@ type NavFrame<Metadata> =
   | { kind: "action"; entry: ActionEntry<Metadata> };
 
 type DisplayNavFrame<Metadata> = Exclude<NavFrame<Metadata>, { kind: "action" }>;
+type SubmenuFrame<Metadata> = Extract<NavFrame<Metadata>, { kind: "submenu" }>;
 
 interface AppActivation<Metadata> {
   origin: ApplicationEntry<Metadata>;
@@ -99,6 +107,8 @@ interface Machine<Metadata> {
   bootTimeline: Timeline | undefined;
   menuOpenDelayMs: number;
   shortcutWindowMs: number;
+  /** Rows per circular window (PhoneConfig.rowsWindow); undefined = no window state. */
+  rowsWindow: number | undefined;
   /** Last time seen via tick(nowMs). The machine's ONLY clock. */
   now: number;
   mode: Mode<Metadata>;
@@ -226,9 +236,7 @@ function shownNavFrame<Metadata>(
 }
 
 /** The selected child's value from the submenu's detail reader, when it returns a string. */
-function submenuDetail<Metadata>(
-  frame: Extract<NavFrame<Metadata>, { kind: "submenu" }>,
-): string | undefined {
+function submenuDetail<Metadata>(frame: SubmenuFrame<Metadata>): string | undefined {
   const child = frame.entry.children.entries[frame.selected];
   return child === undefined ? undefined : frame.entry.detailOf(child);
 }
@@ -247,6 +255,43 @@ function carouselFrame<Metadata>(
   reveal: CarouselReveal,
 ): CarouselFrame {
   return { kind: "carousel", index, reveal, revealedAt: m.now };
+}
+
+/** A submenu level as entered: its window starts at the selection (plan 14 D3). */
+function submenuFrame<Metadata>(
+  m: Machine<Metadata>,
+  entry: SubmenuEntry<Metadata>,
+  selected: number,
+): SubmenuFrame<Metadata> {
+  const frame: SubmenuFrame<Metadata> = {
+    kind: "submenu",
+    entry,
+    selected,
+    windowTop: undefined,
+  };
+  enterWindow(m, frame);
+  return frame;
+}
+
+/** Rebuild a rows level's window with the entry rule (the selection on the top row). */
+function enterWindow<Metadata>(m: Machine<Metadata>, frame: SubmenuFrame<Metadata>): void {
+  if (m.rowsWindow === undefined || frame.entry.presentation !== "rows") return;
+  const count = frame.entry.children.entries.length;
+  frame.windowTop = rowsWindowTop(undefined, frame.selected, count, m.rowsWindow);
+}
+
+/** Move a level's selection, keeping its window per the rows-window rule. */
+function selectChild<Metadata>(
+  m: Machine<Metadata>,
+  frame: SubmenuFrame<Metadata>,
+  selected: number,
+): void {
+  frame.selected = selected;
+  if (frame.windowTop !== undefined && m.rowsWindow !== undefined) {
+    const count = frame.entry.children.entries.length;
+    frame.windowTop = rowsWindowTop(frame.windowTop, selected, count, m.rowsWindow);
+  }
+  m.dirty = true;
 }
 
 function revealCarousel<Metadata>(
@@ -475,6 +520,7 @@ function renderFrame<Metadata>(
         menuIndicator: menuIndicator(m),
         ...(frame.entry.presentation === "pages" ? { presentation: "pages" as const } : {}),
         ...(detail === undefined ? {} : { detail }),
+        ...(frame.windowTop === undefined ? {} : { windowTop: frame.windowTop }),
       };
     }
     case "list": {
@@ -762,11 +808,9 @@ function navShortPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void {
       const entries = frame.entry.children.entries;
       if (entries.length === 0) return;
       if (key === "down") {
-        frame.selected = wrapIndex(frame.selected + 1, entries.length);
-        m.dirty = true;
+        selectChild(m, frame, wrapIndex(frame.selected + 1, entries.length));
       } else if (key === "up") {
-        frame.selected = wrapIndex(frame.selected - 1, entries.length);
-        m.dirty = true;
+        selectChild(m, frame, wrapIndex(frame.selected - 1, entries.length));
       } else if (key === "navi") {
         enterEntry(m, entries[frame.selected]!);
       }
@@ -882,12 +926,14 @@ function buildNavStack<Metadata>(
     const parent = stack[stack.length - 1]!;
     // Position within the parent level: a submenu level may skip a hidden entry's number.
     if (parent.kind === "carousel") parent.index = entry.order.value - 1;
-    else if (parent.kind === "submenu")
+    else if (parent.kind === "submenu") {
       parent.selected = parent.entry.children.entries.indexOf(entry);
+      enterWindow(m, parent);
+    }
 
     const destination = entry.accept<"continue" | "application" | "action">({
       visitSubmenu(submenu) {
-        stack.push({ kind: "submenu", entry: submenu, selected: 0 });
+        stack.push(submenuFrame(m, submenu, 0));
         return "continue";
       },
       visitList(list) {
@@ -925,7 +971,7 @@ function enterEntry<Metadata>(m: Machine<Metadata>, entry: MenuEntry<Metadata>):
   const visitor: MenuEntryVisitor<Metadata, void> = {
     visitSubmenu(submenu) {
       if (m.mode.kind === "nav") {
-        m.mode.stack.push({ kind: "submenu", entry: submenu, selected: 0 });
+        m.mode.stack.push(submenuFrame(m, submenu, 0));
         m.dirty = true;
       }
     },
@@ -996,6 +1042,13 @@ function resolveBootMs<Metadata>(config: PhoneConfig<Metadata>): number {
   return bootMs ?? bootTimeline.durationMs;
 }
 
+function positiveInteger(name: string, value: number | undefined): number | undefined {
+  if (value !== undefined && (!Number.isInteger(value) || value <= 0)) {
+    throw new Error(`${name} must be a positive integer (received ${value}).`);
+  }
+  return value;
+}
+
 function nonNegativeInteger(name: string, value: number | undefined, fallback: number): number {
   if (value === undefined) return fallback;
   if (!Number.isInteger(value) || value < 0) {
@@ -1019,6 +1072,7 @@ export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): 
     bootTimeline: config.bootTimeline,
     menuOpenDelayMs: nonNegativeInteger("menuOpenDelayMs", config.menuOpenDelayMs, 0),
     shortcutWindowMs,
+    rowsWindow: positiveInteger("rowsWindow", config.rowsWindow),
     now: 0,
     mode: { kind: "off" },
     notice: null,

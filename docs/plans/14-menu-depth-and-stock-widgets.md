@@ -820,17 +820,22 @@ barring/password`, 12-1-2-5 `Message/alert tone`.
 **Files:** `packages/phone-core/src/{machine.ts,types.ts,index.ts}`, `src/window.ts` (new),
 README; tests `window.test.ts` (new), `rows-window.test.ts` (new).
 
-- [ ] TDD `rowsWindowTop` (pure): every D3 case. Entry (`count <= rows` → 0, else `selected`);
+- [x] TDD `rowsWindowTop` (pure): every D3 case. Entry (`count <= rows` → 0, else `selected`);
       ▼ inside; ▼ to the item after the bottom row; ▲ inside; ▲ above; ▼ wrap from last
       (`[8, 9, 0]` for 10 items); ▲ wrap from first (`[9, 0, 1]`); jumps; `count` 1, 2, 3, 4.
       Apply every Task 0 correction (P1-P5).
-- [ ] TDD machine: with `rowsWindow: 3`, rows list models carry `windowTop` following the rule
+- [x] TDD machine: with `rowsWindow: 3`, rows list models carry `windowTop` following the rule
       for ▲/▼, child open/close (kept), re-entry (rebuilt), path navigation and shortcuts
       (per P3-P5); pages levels and configs without `rowsWindow` produce models identical to
       today's (existing exact-model tests unchanged).
-- [ ] Export `rowsWindowTop`; document it in the README.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`, `vp check --fix`.
-- [ ] Commit: `feat(phone-core): stateful circular rows window`.
+- [x] Export `rowsWindowTop`; document it in the README.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`, `vp check --fix`.
+- [x] Commit: `feat(phone-core): stateful circular rows window`.
+
+Deviation: the window state lives on submenu levels only. `ListEntry` lists (a website concept
+nokia-os does not use) carry no `windowTop`; Task 9's painter keeps a fallback for list models
+without it. `rowsWindowTop` validates its input (positive `rows`, indices in range) and returns 0
+for an empty level.
 
 ### Task 5 - phone-core: submenu softkey, opening, intro and exit to standby (TDD)
 

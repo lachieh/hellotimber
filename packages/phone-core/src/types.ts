@@ -82,6 +82,8 @@ export type ScreenModel =
       presentation?: "pages";
       /** The selected child's current value, when the submenu's detail reader returns one. */
       detail?: string;
+      /** Index of the item on the first visible row; rows submenus with PhoneConfig.rowsWindow only. */
+      windowTop?: number;
     }
   | {
       kind: "reader";
@@ -122,6 +124,11 @@ export interface PhoneConfig<Metadata = unknown> {
   menuOpenDelayMs?: number;
   /** Length of the Menu+digit shortcut window, from the Menu press and after each digit. Default 3000. */
   shortcutWindowMs?: number;
+  /**
+   * Rows submenus keep a stateful circular window of this many rows and their list models carry
+   * `windowTop` (see `rowsWindowTop`). Positive integer. Default: off (no `windowTop`).
+   */
+  rowsWindow?: number;
 }
 
 export interface PhoneSnapshot {

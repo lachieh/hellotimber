@@ -67,4 +67,19 @@ unsubscribe();
   (default 0: standby stays on screen with `leaving: true` before the carousel). The standby
   `clock()` and submenu `detail` readers are re-read on every tick; a changed value emits one
   snapshot. Submenus choose `presentation: "rows" | "pages"`.
+- `rowsWindow` (default off) gives rows submenus a stateful circular window of that many rows;
+  their list models then carry `windowTop`, the index of the item on the first visible row.
+  `rowsWindowTop(previousTop, selected, count, rows)` is the rule, exported so host widgets draw
+  their own lists the same way: with `count <= rows` the window is 0; entering a level
+  (`previousTop` undefined) puts the selection on the top row; the window then holds while the
+  selection stays inside it (indices modulo `count`), a move to the item just after the bottom
+  row puts it on the bottom row, and any other move outside puts it on the top row. The window
+  survives a child opening and closing and is rebuilt when the level is entered again.
+
+  ```ts
+  rowsWindowTop(undefined, 0, 10, 3); // 0: entering a ten-item level
+  rowsWindowTop(7, 0, 10, 3); // 8: ▼ from the last item shows items 8, 9, 0
+  rowsWindowTop(0, 9, 10, 3); // 9: ▲ from the first item shows items 9, 0, 1
+  ```
+
 - `Bitmap` convention: one byte per pixel, row-major, `pixels.length === width * height`.
