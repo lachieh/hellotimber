@@ -2622,9 +2622,41 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 9
     },
     "1-4-1": {
       "frames": [
@@ -2817,9 +2849,41 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 490
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 9
     },
     "2-7-1-2-2": {
       "frames": [
@@ -2902,9 +2966,41 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 495
+        },
+        {
+          "frame": 1,
+          "durationMs": 481
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 9
     },
     "2-7-3-1-1": {
       "frames": [
@@ -3093,9 +3189,41 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 487
+        },
+        {
+          "frame": 1,
+          "durationMs": 481
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 9
     },
     "4-1": {
       "frames": [
@@ -3644,9 +3772,45 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 271
+        },
+        {
+          "frame": 1,
+          "durationMs": 272
+        },
+        {
+          "frame": 2,
+          "durationMs": 271
+        },
+        {
+          "frame": 3,
+          "durationMs": 271
+        },
+        {
+          "frame": 4,
+          "durationMs": 271
+        },
+        {
+          "frame": 5,
+          "durationMs": 271
+        },
+        {
+          "frame": 6,
+          "durationMs": 271
+        },
+        {
+          "frame": 7,
+          "durationMs": 271
+        },
+        {
+          "frame": 8,
+          "durationMs": 271
+        },
+        {
+          "frame": 9,
+          "durationMs": 272
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 10
     },
     "6-1-4-3": {
       "frames": [
@@ -3834,9 +3998,45 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 271
+        },
+        {
+          "frame": 1,
+          "durationMs": 271
+        },
+        {
+          "frame": 2,
+          "durationMs": 273
+        },
+        {
+          "frame": 3,
+          "durationMs": 270
+        },
+        {
+          "frame": 4,
+          "durationMs": 271
+        },
+        {
+          "frame": 5,
+          "durationMs": 271
+        },
+        {
+          "frame": 6,
+          "durationMs": 285
+        },
+        {
+          "frame": 7,
+          "durationMs": 265
+        },
+        {
+          "frame": 8,
+          "durationMs": 271
+        },
+        {
+          "frame": 9,
+          "durationMs": 272
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 10
     },
     "6-2-6-1": {
       "frames": [
@@ -3889,9 +4089,41 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 9
     },
     "6-3-6-2": {
       "frames": [
@@ -3994,9 +4226,45 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 272
+        },
+        {
+          "frame": 1,
+          "durationMs": 272
+        },
+        {
+          "frame": 2,
+          "durationMs": 271
+        },
+        {
+          "frame": 3,
+          "durationMs": 271
+        },
+        {
+          "frame": 4,
+          "durationMs": 272
+        },
+        {
+          "frame": 5,
+          "durationMs": 270
+        },
+        {
+          "frame": 6,
+          "durationMs": 271
+        },
+        {
+          "frame": 7,
+          "durationMs": 271
+        },
+        {
+          "frame": 8,
+          "durationMs": 271
+        },
+        {
+          "frame": 9,
+          "durationMs": 271
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 10
     },
     "7-1-1-2": {
       "frames": [
@@ -4019,9 +4287,41 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 496
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 9
     },
     "7-1-2": {
       "frames": [
@@ -4110,9 +4410,45 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 271
+        },
+        {
+          "frame": 1,
+          "durationMs": 271
+        },
+        {
+          "frame": 2,
+          "durationMs": 272
+        },
+        {
+          "frame": 3,
+          "durationMs": 271
+        },
+        {
+          "frame": 4,
+          "durationMs": 273
+        },
+        {
+          "frame": 5,
+          "durationMs": 269
+        },
+        {
+          "frame": 6,
+          "durationMs": 271
+        },
+        {
+          "frame": 7,
+          "durationMs": 271
+        },
+        {
+          "frame": 8,
+          "durationMs": 271
+        },
+        {
+          "frame": 9,
+          "durationMs": 271
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 10
     },
     "7-1-3": {
       "frames": [
@@ -4201,9 +4537,45 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 270
+        },
+        {
+          "frame": 1,
+          "durationMs": 273
+        },
+        {
+          "frame": 2,
+          "durationMs": 271
+        },
+        {
+          "frame": 3,
+          "durationMs": 271
+        },
+        {
+          "frame": 4,
+          "durationMs": 271
+        },
+        {
+          "frame": 5,
+          "durationMs": 271
+        },
+        {
+          "frame": 6,
+          "durationMs": 271
+        },
+        {
+          "frame": 7,
+          "durationMs": 272
+        },
+        {
+          "frame": 8,
+          "durationMs": 270
+        },
+        {
+          "frame": 9,
+          "durationMs": 271
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 10
     },
     "7-3-2": {
       "frames": [
@@ -4292,9 +4664,45 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 271
+        },
+        {
+          "frame": 1,
+          "durationMs": 273
+        },
+        {
+          "frame": 2,
+          "durationMs": 272
+        },
+        {
+          "frame": 3,
+          "durationMs": 269
+        },
+        {
+          "frame": 4,
+          "durationMs": 271
+        },
+        {
+          "frame": 5,
+          "durationMs": 272
+        },
+        {
+          "frame": 6,
+          "durationMs": 270
+        },
+        {
+          "frame": 7,
+          "durationMs": 272
+        },
+        {
+          "frame": 8,
+          "durationMs": 270
+        },
+        {
+          "frame": 9,
+          "durationMs": 271
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 10
     },
     "7-3-3": {
       "frames": [
@@ -4383,9 +4791,45 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 271
+        },
+        {
+          "frame": 1,
+          "durationMs": 271
+        },
+        {
+          "frame": 2,
+          "durationMs": 272
+        },
+        {
+          "frame": 3,
+          "durationMs": 271
+        },
+        {
+          "frame": 4,
+          "durationMs": 274
+        },
+        {
+          "frame": 5,
+          "durationMs": 268
+        },
+        {
+          "frame": 6,
+          "durationMs": 273
+        },
+        {
+          "frame": 7,
+          "durationMs": 269
+        },
+        {
+          "frame": 8,
+          "durationMs": 272
+        },
+        {
+          "frame": 9,
+          "durationMs": 270
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 10
     },
     "7-6": {
       "frames": [
@@ -4474,9 +4918,121 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 270
+        },
+        {
+          "frame": 1,
+          "durationMs": 273
+        },
+        {
+          "frame": 2,
+          "durationMs": 271
+        },
+        {
+          "frame": 3,
+          "durationMs": 271
+        },
+        {
+          "frame": 4,
+          "durationMs": 271
+        },
+        {
+          "frame": 5,
+          "durationMs": 271
+        },
+        {
+          "frame": 6,
+          "durationMs": 271
+        },
+        {
+          "frame": 7,
+          "durationMs": 272
+        },
+        {
+          "frame": 8,
+          "durationMs": 270
+        },
+        {
+          "frame": 9,
+          "durationMs": 271
+        },
+        {
+          "frame": 0,
+          "durationMs": 271
+        },
+        {
+          "frame": 1,
+          "durationMs": 272
+        },
+        {
+          "frame": 2,
+          "durationMs": 270
+        },
+        {
+          "frame": 3,
+          "durationMs": 271
+        },
+        {
+          "frame": 4,
+          "durationMs": 271
+        },
+        {
+          "frame": 5,
+          "durationMs": 271
+        },
+        {
+          "frame": 6,
+          "durationMs": 271
+        },
+        {
+          "frame": 7,
+          "durationMs": 271
+        },
+        {
+          "frame": 8,
+          "durationMs": 271
+        },
+        {
+          "frame": 9,
+          "durationMs": 272
+        },
+        {
+          "frame": 0,
+          "durationMs": 270
+        },
+        {
+          "frame": 1,
+          "durationMs": 271
+        },
+        {
+          "frame": 2,
+          "durationMs": 272
+        },
+        {
+          "frame": 3,
+          "durationMs": 270
+        },
+        {
+          "frame": 4,
+          "durationMs": 272
+        },
+        {
+          "frame": 5,
+          "durationMs": 270
+        },
+        {
+          "frame": 6,
+          "durationMs": 271
+        },
+        {
+          "frame": 7,
+          "durationMs": 271
+        },
+        {
+          "frame": 8,
+          "durationMs": 274
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 29
     },
     "8-1-3-1": {
       "frames": [
@@ -5149,9 +5705,41 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 9
     },
     "11-1": {
       "frames": [
@@ -5174,9 +5762,41 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 493
+        },
+        {
+          "frame": 1,
+          "durationMs": 475
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 9
     },
     "11-2-1": {
       "frames": [
@@ -5207,6 +5827,63 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
           "durationMs": 525
         }
       ]
+    },
+    "11-2-2": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 476
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        }
+      ],
+      "loopFrom": 9
     },
     "11-2-3-1": {
       "frames": [
@@ -5289,9 +5966,41 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 488
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 9
     },
     "11-5": {
       "frames": [
@@ -5314,9 +6023,41 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 490
+        },
+        {
+          "frame": 1,
+          "durationMs": 478
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
         }
       ],
-      "loopFrom": 1
+      "loopFrom": 9
     },
     "11-6-1": {
       "frames": [
@@ -5407,6 +6148,63 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
           "durationMs": 1992
         }
       ]
+    },
+    "12-2-2-10": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 493
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        }
+      ],
+      "loopFrom": 9
     },
     "12-2-2-9-1": {
       "frames": [
@@ -5929,7 +6727,7 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "10-1": "10-1",
     "11-1": "11-1",
     "11-2-1": "11-2-1",
-    "11-2-2": "6-3-4-2",
+    "11-2-2": "11-2-2",
     "11-2-3-1": "11-2-3-1",
     "11-2-3-2": "11-2-3-2",
     "11-3": "11-3",
@@ -5937,7 +6735,7 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "11-6-1": "11-6-1",
     "12-1-2-9-1": "12-1-2-9-1",
     "12-1-2-9-2": "12-1-2-9-2",
-    "12-2-2-10": "11-1",
+    "12-2-2-10": "12-2-2-10",
     "12-2-2-9-1": "12-2-2-9-1",
     "12-2-2-9-2": "12-2-2-9-2",
     "8-1": "8-1",

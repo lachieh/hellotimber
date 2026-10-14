@@ -651,8 +651,10 @@ function extractWidgets(goldensDir: string): WidgetData {
       if (steps.slice(0, period + 1).some((step) => step.lowerBound)) {
         throw new Error(`${key}: the loop's first cycle is cut short by the recording`);
       }
-      // Steps 0..period; the cycle runs from step 1 (step 0 is the first, unaligned draw).
-      data = toWidgetTimeline(steps.slice(0, period + 1), 1);
+      // Every step as captured (later cycles drift by a few ms, D8), then the last full cycle
+      // repeats. The last recorded step is dropped: the recording's end or a key cut it short.
+      const complete = steps.slice(0, -1);
+      data = toWidgetTimeline(complete, complete.length - period);
     } else data = toWidgetTimeline(steps);
     const key2 = JSON.stringify(data);
     const existing = Object.entries(timelines).find(([, t]) => JSON.stringify(t) === key2);
@@ -694,7 +696,8 @@ function extractWidgets(goldensDir: string): WidgetData {
     const key = probe.node ?? probe.name;
     if (key === undefined)
       throw new Error(`${probe.golden}: a probe timeline needs a node or a name`);
-    const id = add(key, segment(probe.golden, probe.kind, "first-sprite"), false);
+    const looping = probe.kind === "progress";
+    const id = add(key, segment(probe.golden, probe.kind, "first-sprite"), looping);
     if (probe.node !== undefined) byNode[probe.node] = id;
     if (probe.name !== undefined) byName[probe.name] = id;
   }

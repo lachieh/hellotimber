@@ -92,3 +92,25 @@ const OPTION_LIST_NUMBERING: readonly {
 export function optionListNumbering(number: string): "path" | "parent" | "option" {
   return OPTION_LIST_NUMBERING.find(({ prefix }) => number.startsWith(prefix))?.numbering ?? "path";
 }
+
+/**
+ * Generated widget timelines for notes whose node has none of its own (no golden recorded it),
+ * by note text: a representative recording of the same note class (D8). Timelines are keyed by
+ * their first covered node (`WIDGET_TIMELINE_BY_NODE`): `Done` is a tick confirmation (box 684,
+ * half 232, full 540 ms), `Timeout selected` a long one (full ≈1978 ms), `Requesting` the
+ * looping bar.
+ */
+export const NOTE_STYLES: Readonly<Record<string, string>> = {
+  Done: "2-7-3-3-2",
+  "Timeout selected": "5-9-3-1",
+  Requesting: "7-6",
+};
+
+/** The widget timeline id of the note at tree node `number` with text `lines`, if any. */
+export function noteTimelineId(
+  byNode: Readonly<Record<string, string>>,
+  number: string,
+  lines: readonly string[],
+): string | undefined {
+  return byNode[number] ?? NOTE_STYLES[lines.join(" ")];
+}

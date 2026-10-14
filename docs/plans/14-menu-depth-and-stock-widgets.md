@@ -1082,13 +1082,49 @@ included, through the Tones alias); literal models for 2-7-1-3, 5-2 and 2-8-5; t
 `src/display/widgets/{note.ts,progress.ts,confirm.ts}` (new), `src/firmware/bindings.ts`
 (`NOTE_STYLES` by note text), `tests/widgets-notes.test.ts` (new).
 
-- [ ] TDD timed note: text lines in the measured face; icon sprite per its timeline frame;
+- [x] TDD timed note: text lines in the measured face; icon sprite per its timeline frame;
       ends with `back()` (or `standby()`) after the generated timeline; key behaviour per P6.
-- [ ] TDD static note (stays until a key; P12), progress note (looping bar; Quit/C per P7),
+- [x] TDD static note (stays until a key; P12), progress note (looping bar; Quit/C per P7),
       confirm query (OK → result, C → back per P8; softkey from the tree).
-- [ ] Painting tests against one golden per note style, the progress loop images and each
+- [x] Painting tests against one golden per note style, the progress loop images and each
       confirm query's first image.
-- [ ] Commit: `feat(nokia-os): stock timed, static and progress notes and confirm queries`.
+- [x] Commit: `feat(nokia-os): stock timed, static and progress notes and confirm queries`.
+
+Deviation: loops are reproduced as captured. Later cycles of a progress bar drift by 3-14 ms from
+the first (`tree/06-settings/6-2-4-2.leaf` row 16), so `extract-resources.ts` now keeps every
+recorded step of a looping timeline (progress bars and prompt cursors) and repeats only the last
+full cycle; the last recorded step is dropped (the recording's end or a key cut it short). The
+emulator is deterministic (the first 5.4 s of `probe/progress-7-6-quit` equal the 7-6 leaf's
+rows), so `PROBE_TIMELINES` takes node 7-6's bar from that 10 s probe. `resources.test.ts` pins
+the new shape. Regenerated twice, no diff.
+Deviation: `NOTE_STYLES` (bindings.ts) maps note text to a representative generated timeline for
+notes no golden recorded (`Done` → 2-7-3-3-2, `Timeout selected` → 5-9-3-1, `Requesting` → 7-6);
+`noteTimelineId(byNode, number, lines)` prefers the node's own. Task 12 must map nodes inside
+`SAME_AS` subtrees to their model's numbers first (12-3-2-9-1 → 12-2-2-9-1: a long Screen saver
+`Done`, not the short style). Topics, language and profile notes are placeholder-owned.
+Deviation: widget shapes as built. Notes end with `back`, `standby` or `{ select }` (Top score:
+`new-game`, P12); any key ends a note at once (C and ▼ probed, other keys UNVERIFIED), and
+▲/▼ select the bound neighbour (`moves`, sibling slugs from Task 12) in the level returned to
+(P6), which needed `Flow.back(levels, { select })`. Progress notes: Quit and C both run `quit`
+(default back; Requesting binds the `request-not-confirmed` note, `end: "standby"`; C on
+Requesting is UNVERIFIED). Confirm queries: tops by line count (1: 2; 2: 4/13; 3: 2/12/22) and
+an optional `cancel`. The Level 5 choice stores only after its query's OK, then the
+`level-5-done` note replaces the query (bound in Task 12; pinned by a test). Multi-select now
+keeps draft marks: C after a change pushes `Save changes?` [Yes] (`probe/multiselect` image
+after-c), Yes stores and leaves, C on the query leaves without storing (UNVERIFIED). The flow
+paints the outgoing widget before `push`/`replace`/`back`, so a `cut` draws over it; `edges` draws
+standby's ladders (signal and battery 4) outside x 5..78. Test support:
+`tests/support/flow-rig.ts` (a flow on a 1 ms clock, compared with a golden's widget rows and
+its exit time) and `tests/support/tree.ts`.
+
+Completion (Task 10): pixel- and timing-exact (±2 ms, aligned on the trigger) through the flow
+host: all 39 asserted `.leaf` goldens whose node opens a timed or progress note (information,
+error, tick, long, Inbox/Outbox `Opening` leads, Info service erase leads, 6-2-4-1's edges step
+to standby, the four Top scores and every progress bar), including the exit time; all 35
+asserted option-list `.choose` goldens whose result is a note, progress note or confirm query
+(1-8-1-1's 15 ms `cut` included); `probe/progress-7-6-quit` (10 s of bar, Quit, `Request not
+confirmed`, edges, standby), `probe/confirm-5-2-5-ok`, `probe/multiselect.rec` and the first
+image of every confirm-query probe.
 
 ### Task 11 - Info pages, prompts, level bar, text pages and game splash (TDD against goldens)
 

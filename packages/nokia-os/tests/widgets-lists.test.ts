@@ -1,5 +1,3 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import type {
   ApplicationContext,
   MenuIndicator,
@@ -10,50 +8,16 @@ import type {
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { paintWidget, type WidgetModel } from "../src/display/widgets";
-import { optionListNumbering, settingKey } from "../src/firmware/bindings";
-import { STOCK_TREE, type StockTreeNode } from "../src/firmware/generated/stock-tree";
+import { optionListNumbering } from "../src/firmware/bindings";
 import { createMemorySettings, virginSettings, type StockSettings } from "../src/firmware/settings";
 import { StockFlowApplication, type Flow, type Widget } from "../src/widgets/flow";
 import { multiSelect } from "../src/widgets/multi-select";
 import { settingOptionList } from "../src/widgets/option-list";
 import { expectLcd } from "./support/golden.ts";
-import { loadGolden } from "./support/goldens.ts";
-
-interface IndexEntry {
-  id: string;
-  status: string;
-}
-
-const INDEX: IndexEntry[] = JSON.parse(
-  readFileSync(join(import.meta.dirname, "../goldens/index.json"), "utf8"),
-);
+import { goldenImage, loadGolden } from "./support/goldens.ts";
+import { indicatorOf, INDEX, optionNode, treePath } from "./support/tree.ts";
 
 type ExitOptions = Parameters<ApplicationContext["exit"]>[0];
-
-/** The tree node numbered `number` and the path to it. */
-function treePath(number: string): StockTreeNode[] {
-  const path: StockTreeNode[] = [];
-  let level: readonly StockTreeNode[] = STOCK_TREE;
-  for (const segment of number.split("-")) {
-    const node = level.find((n) => n.number.split("-").at(-1) === segment);
-    if (!node) throw new Error(`No tree node ${number}.`);
-    path.push(node);
-    level = node.children ?? [];
-  }
-  return path;
-}
-
-function optionNode(number: string) {
-  const path = treePath(number);
-  const node = path.at(-1)!;
-  if (node.opens.kind !== "option-list") throw new Error(`${number} is not an option list.`);
-  return { node, spec: node.opens, key: settingKey(path) };
-}
-
-/** The kernel's indicator for an application at `number` (`5-2` → segments 5, 2). */
-function indicatorOf(number: string): MenuIndicator {
-  return { segments: number.split("-").map(Number), awaitingNext: false };
-}
 
 function paint(model: WidgetModel): Framebuffer {
   const fb = new Framebuffer();
@@ -249,9 +213,15 @@ function stubFlow(root: Widget, indicator: MenuIndicator) {
     press(key: PhoneKey) {
       stack.at(-1)!.onKey?.(key, flow);
     },
+    /** The top widget's model, which must be a list. */
     model() {
-      return stack.at(-1)!.render(flow) as Extract<WidgetModel, { kind: "options" | "multi" }>;
+      const model = stack.at(-1)!.render(flow);
+      if (model.kind !== "options" && model.kind !== "multi") {
+        throw new Error(`Expected a list, got ${model.kind}.`);
+      }
+      return model;
     },
+    rendered: () => stack.at(-1)!.render(flow),
   };
 }
 
@@ -372,21 +342,79 @@ describe("multi-select widget", () => {
   it("shows the stored marks and toggles the selected row with the soft key (P14)", () => {
     const settings = virgin();
     const { key, flow } = language(settings);
+    const stored = settings.marks(key);
     expect(flow.model()).toMatchObject({ kind: "multi", selected: 0, softkey: "Unmark" });
+    expect(flow.model().kind === "multi" && flow.model()).toMatchObject({ marks: stored });
     flow.press("navi");
-    expect(settings.marks(key)[0]).toBe(false);
     expect(flow.model()).toMatchObject({ softkey: "Mark" });
     flow.press("down");
     flow.press("down");
     expect(flow.model()).toMatchObject({ selected: 2, softkey: "Mark" });
     flow.press("navi");
-    expect(settings.marks(key)[2]).toBe(true);
     expect(flow.model()).toMatchObject({ softkey: "Unmark" });
+    // Nothing is stored until the change is saved.
+    expect(settings.marks(key)).toEqual(stored);
   });
 
-  it("C leaves", () => {
+  it("C without a change leaves", () => {
     const { flow } = language(virgin());
+    flow.press("navi");
+    flow.press("navi");
     flow.press("c");
     expect(flow.exits).toEqual([undefined]);
+  });
+
+  it("C after a change asks `Save changes?`; Yes stores the marks and leaves (P14)", () => {
+    const settings = virgin();
+    const { key, flow } = language(settings);
+    const stored = settings.marks(key);
+    flow.press("navi");
+    flow.press("down");
+    flow.press("down");
+    flow.press("navi");
+    flow.press("c");
+    expect(flow.exits).toEqual([]);
+    expect(flow.rendered()).toEqual({
+      kind: "confirm",
+      lines: ["Save", "changes?"],
+      softkey: "Yes",
+    });
+    expectLcd(paint(flow.rendered()), goldenImage("probe/multiselect", "after-c"), "Save changes?");
+    flow.press("navi");
+    expect(flow.exits).toEqual([undefined]);
+    expect(settings.marks(key)).toEqual(
+      stored.map((mark, i) => (i === 0 || i === 2 ? !mark : mark)),
+    );
+  });
+
+  it("probe/multiselect.rec: soft key, ▼, soft key, C through the flow host (P14)", () => {
+    const id = "probe/multiselect.rec";
+    const { spec, key } = optionNode("2-8-5");
+    const settings = virgin();
+    const flow = drive(
+      () => multiSelect({ key, labels: spec.options.map((o) => o.label), opening: 0, settings }),
+      indicatorOf("2-8-5"),
+    );
+    const steps: [PhoneKey, string][] = [
+      ["navi", "b"],
+      ["down", "c"],
+      ["navi", "d"],
+      ["c", "e"],
+    ];
+    for (const [pressed, image] of steps) {
+      flow.press(pressed);
+      expectLcd({ pixels: flow.frame() }, goldenImage(id, image), `then ${pressed}`);
+    }
+  });
+
+  it("C on `Save changes?` leaves without storing (UNVERIFIED)", () => {
+    const settings = virgin();
+    const { key, flow } = language(settings);
+    const stored = settings.marks(key);
+    flow.press("navi");
+    flow.press("c");
+    flow.press("c");
+    expect(flow.exits).toEqual([undefined]);
+    expect(settings.marks(key)).toEqual(stored);
   });
 });

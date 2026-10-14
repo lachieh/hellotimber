@@ -185,6 +185,20 @@ describe("StockFlowApplication", () => {
     );
   });
 
+  it("back with select exits selecting that child; inside the flow select is ignored", () => {
+    const root = new Probe("list");
+    const note = new Probe("note");
+    root.onKeyAction = (_key, flow) => flow.push(note);
+    note.onKeyAction = (key, flow) => flow.back(key === "c" ? 1 : 2, { select: "new-game" });
+    const { context, session } = start(() => root);
+    press(session, "navi");
+    press(session, "c");
+    expect(context.exits).toEqual([]);
+    press(session, "navi");
+    press(session, "down");
+    expect(context.exits).toEqual([{ select: "new-game" }]);
+  });
+
   it("standby() exits straight to standby", () => {
     const root = new Probe("note");
     root.onKeyAction = (_key, flow) => flow.standby();

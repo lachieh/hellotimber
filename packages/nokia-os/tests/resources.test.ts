@@ -426,20 +426,34 @@ describe("widget sprites and timelines", () => {
     expect(describeSteps(WIDGET_TIMELINE_BY_NODE["6-2-4-1"]!).at(-1)).toBe("edges5-78:9");
   });
 
-  it("loops the progress bar's ten frames and the prompt cursor from their second step", () => {
-    const progress = WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NODE["7-6"]!]!;
-    expect(progress.timeline.steps).toHaveLength(11);
-    expect(WIDGET_DATA.timelines[WIDGET_TIMELINE_BY_NODE["7-6"]!]!.loopFrom).toBe(1);
+  it("plays progress bars and prompt cursors as captured, then loops their last cycle", () => {
+    // Golden durations from the trigger, without the last row (cut short by the recording's end
+    // or by a key).
+    const captured = (id: string) => {
+      const golden = loadGolden(id);
+      return golden.timeline!.slice(golden.triggerFrame as number, -1).map((row) => row.durationMs);
+    };
+    const progressId = WIDGET_TIMELINE_BY_NODE["7-6"]!;
+    const progress = WIDGET_TIMELINES[progressId]!;
     expect(progress.timeline.durationMs).toBe(Infinity);
-    expect(describeSteps(WIDGET_TIMELINE_BY_NODE["7-6"]!).map((s) => s.split(":")[0])).toEqual([
-      ...Array.from({ length: 10 }, (_, i) => `progress-${i + 1}`),
-      "progress-1",
-    ]);
-    expect(describeSteps(WIDGET_TIMELINE_BY_NODE["11-5"]!)).toEqual([
-      "cursor:477",
-      "plain:480",
-      "cursor:481",
-    ]);
+    const bar = progress.timeline.steps;
+    // The 10 s Quit probe continues the 7-6 leaf recording (the emulator is deterministic).
+    // Without the bar step Quit cut short (62 ms), the note and the edges step.
+    const barRows = captured("probe/progress-7-6-quit").slice(0, -3);
+    expect(bar.map((step) => step.durationMs)).toEqual(barRows);
+    const leaf = captured("tree/07-call-divert/7-6.leaf");
+    expect(barRows.slice(0, leaf.length)).toEqual(leaf);
+    expect(WIDGET_DATA.timelines[progressId]!.loopFrom).toBe(bar.length - 10);
+    expect(describeSteps(progressId).map((s) => s.split(":")[0])).toEqual(
+      bar.map((_, i) => `progress-${(i % 10) + 1}`),
+    );
+    const cursorId = WIDGET_TIMELINE_BY_NODE["11-5"]!;
+    expect(describeSteps(cursorId)).toEqual(
+      captured("tree/11-clock/11-5.leaf").map(
+        (ms, i) => `${i % 2 === 0 ? "cursor" : "plain"}:${ms}`,
+      ),
+    );
+    expect(WIDGET_DATA.timelines[cursorId]!.loopFrom).toBe(describeSteps(cursorId).length - 2);
     // Prompts that do not blink (Search, Speed dials, code prompts) have no timeline (P9).
     for (const number of ["1-1", "1-9", "6-4"])
       expect(WIDGET_TIMELINE_BY_NODE[number], number).toBeUndefined();

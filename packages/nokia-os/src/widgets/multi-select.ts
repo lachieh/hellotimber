@@ -1,6 +1,7 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { MultiModel } from "../display/widgets";
 import type { StockSettings } from "../firmware/settings";
+import { confirmQuery } from "./confirm";
 import type { Flow, Widget } from "./flow";
 import { moveRows, openRows, rowsIndicator, type RowsCursor } from "./rows";
 
@@ -13,12 +14,20 @@ export interface MultiSelectOptions {
   readonly settings: StockSettings;
 }
 
+/** Asked by C after a change (probe/multiselect image after-c). */
+const SAVE_QUERY = { lines: ["Save", "changes?"], softkey: "Yes" } as const;
+
 class MultiSelectWidget implements Widget {
   readonly #options: MultiSelectOptions;
+  readonly #stored: readonly boolean[];
+  /** The marks as toggled here; stored only when `Save changes?` is answered Yes. */
+  readonly #marks: boolean[];
   #cursor: RowsCursor;
 
   constructor(options: MultiSelectOptions) {
     this.#options = options;
+    this.#stored = options.settings.marks(options.key);
+    this.#marks = [...this.#stored];
     this.#cursor = openRows(options.opening, options.labels.length);
   }
 
@@ -27,12 +36,11 @@ class MultiSelectWidget implements Widget {
   }
 
   render(flow: Flow): MultiModel {
-    const { key, labels, settings } = this.#options;
-    const marks = settings.marks(key);
+    const marks = [...this.#marks];
     const selected = this.#selected;
     return {
       kind: "multi",
-      items: labels,
+      items: this.#options.labels,
       marks,
       selected,
       windowTop: this.#cursor.windowTop,
@@ -42,16 +50,37 @@ class MultiSelectWidget implements Widget {
   }
 
   onKey(key: PhoneKey, flow: Flow): void {
-    const { key: setting, labels, settings } = this.#options;
-    if (key === "c") flow.back();
-    else if (key === "navi") settings.toggle(setting, this.#selected);
-    else this.#cursor = moveRows(this.#cursor, key, labels.length) ?? this.#cursor;
+    if (key === "c") this.#leave(flow);
+    else if (key === "navi") this.#marks[this.#selected] = !this.#marks[this.#selected];
+    else this.#cursor = moveRows(this.#cursor, key, this.#options.labels.length) ?? this.#cursor;
+  }
+
+  #leave(flow: Flow): void {
+    if (this.#marks.every((mark, i) => mark === this.#stored[i])) {
+      flow.back();
+      return;
+    }
+    const { key, settings } = this.#options;
+    flow.push(
+      confirmQuery({
+        ...SAVE_QUERY,
+        confirm: (inner) => {
+          this.#marks.forEach((mark, i) => {
+            if (mark !== settings.marks(key)[i]) settings.toggle(key, i);
+          });
+          inner.back(2);
+        },
+        // UNVERIFIED (P14 stops at the query): C leaves without saving.
+        cancel: (inner) => inner.back(2),
+      }),
+    );
   }
 }
 
 /**
  * A multi-select list (Info service › Language): the stored marks, the soft key toggles the
- * selected row (`Unmark` on a marked row, `Mark` otherwise), C leaves (P14).
+ * selected row (`Unmark` on a marked row, `Mark` otherwise). C leaves; after a change it asks
+ * `Save changes?` [Yes] first, and only Yes stores the marks (P14).
  */
 export function multiSelect(options: MultiSelectOptions): Widget {
   return new MultiSelectWidget(options);

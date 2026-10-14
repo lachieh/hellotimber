@@ -228,7 +228,8 @@ export type TimelineKind = keyof typeof TIMELINE_GROUPS;
 
 /**
  * Probe recordings whose widget timeline has no tree golden: the game splashes (by the game's
- * node) and the notes that follow a key inside a widget (by name). A probe's timeline starts at
+ * node), the notes that follow a key inside a widget (by name), and a longer recording of a
+ * tree node's progress bar. A probe's timeline starts at
  * its first frame that shows the kind's sprites.
  */
 export const PROBE_TIMELINES: readonly {
@@ -241,6 +242,9 @@ export const PROBE_TIMELINES: readonly {
   { golden: "probe/games-splash-8-2", kind: "splash-8-2", node: "8-2" },
   { golden: "probe/games-splash-8-3", kind: "splash-8-3", node: "8-3" },
   { golden: "probe/games-splash-8-4", kind: "splash-8-4", node: "8-4" },
+  // P7: Requesting for 10 s on Cancel all diverts. The emulator is deterministic, so this is the
+  // 7-6 leaf recording (5.6 s) continued; its bar steps replace the leaf's for node 7-6.
+  { golden: "probe/progress-7-6-quit", kind: "progress", node: "7-6" },
   // P7: Quit on Requesting after 10 s, then standby.
   { golden: "probe/progress-7-6-quit", kind: "note", name: "request-not-confirmed" },
   // P8: Ringing volume › Level 5 › OK on the query.

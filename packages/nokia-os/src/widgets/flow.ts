@@ -19,9 +19,11 @@ export interface Flow {
   replace(widget: Widget): void;
   /**
    * Close `levels` widgets (default 1). Past the last one the flow exits to the menu, closing
-   * the remaining levels there too (`back(2)` from a list opened by a submenu: two levels up).
+   * the remaining levels there too (`back(2)` from a list opened by a submenu: two levels up),
+   * and selecting the child `select` (a slug) in the level it returns to. `select` is ignored
+   * when the flow does not exit.
    */
-  back(levels?: number): void;
+  back(levels?: number, options?: { select?: string }): void;
   /** Leave the menus for standby. */
   standby(): void;
   /** The menu indicator for the flow's position, as the kernel reports it. */
@@ -39,7 +41,8 @@ const NO_INDICATOR: MenuIndicator = { segments: [], awaitingNext: false };
 
 /**
  * A stock leaf: a flow of widgets starting with `root()`, built afresh for every session. It
- * renders `custom` frames, repainted only when the top widget's model changes.
+ * renders `custom` frames, repainted only when the top widget's model changes; the painter sees
+ * the frame shown before (a widget's partial draws start from it, D8).
  */
 export class StockFlowApplication extends PhoneApplication {
   readonly #root: () => Widget;
@@ -88,7 +91,7 @@ class FlowSession implements PhoneApplicationSession, Flow {
     const key = JSON.stringify(model);
     if (this.#shown?.model !== key) {
       const fb = new Framebuffer();
-      paintWidget(fb, model);
+      paintWidget(fb, model, this.#shown?.screen.frame.pixels);
       const frame = { width: fb.width, height: fb.height, pixels: fb.pixels };
       this.#shown = { model: key, screen: { kind: "custom", appId: this.#appId, frame } };
     }
@@ -99,26 +102,39 @@ class FlowSession implements PhoneApplicationSession, Flow {
     this.#closed = true;
   }
 
+  /** Paints the outgoing widget's current state first: the next one may draw over it. */
+  #leaving(): void {
+    if (this.#top !== undefined) this.render();
+  }
+
   push(widget: Widget): void {
-    if (!this.#closed) this.#stack.push(widget);
+    if (this.#closed) return;
+    this.#leaving();
+    this.#stack.push(widget);
   }
 
   replace(widget: Widget): void {
     if (this.#closed) return;
+    this.#leaving();
     this.#stack.pop();
     this.#stack.push(widget);
   }
 
-  back(levels = 1): void {
+  back(levels = 1, options: { select?: string } = {}): void {
     if (this.#closed) return;
     if (!Number.isInteger(levels) || levels < 1) {
       throw new Error(`back levels must be a positive integer (received ${levels}).`);
     }
+    this.#leaving();
     const popped = Math.min(levels, this.#stack.length);
     this.#stack.length -= popped;
     if (this.#stack.length > 0) return;
     const beyond = levels - popped;
-    this.#context.exit(beyond === 0 ? undefined : { levels: beyond + 1 });
+    const exit = {
+      ...(beyond === 0 ? {} : { levels: beyond + 1 }),
+      ...(options.select === undefined ? {} : { select: options.select }),
+    };
+    this.#context.exit(Object.keys(exit).length === 0 ? undefined : exit);
     this.#closed = true;
   }
 
