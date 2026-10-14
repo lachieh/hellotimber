@@ -12,8 +12,9 @@ export const SYMBOL_GRID = ". , ? ! : ; - + # * ( ) \\ ' \" _ @ & $ £ % / < > �
 
 /**
  * The symbol table's cells as thin runs: cell k at column k mod 11, row k div 11, its glyph from
- * x 2 + 7 × column at top 7 + 10 × row (`text/symbols-down`; every symbol's ink starts one column
- * into its 8-column cell). Image `01` has the last cell selected, `02` the one before it.
+ * x 2 + 7 × column at top 7 + 10 × row, six columns wide (`text/symbols-down`; every symbol's ink
+ * starts one column into its 8-column box, and the next box starts six columns later: a selected
+ * one covers that column). Image `01` has the last cell selected, `02` the one before it.
  */
 function symbolRuns(cells: readonly number[]): TextRun[] {
   return cells.map((k) => {
@@ -23,7 +24,7 @@ function symbolRuns(cells: readonly number[]): TextRun[] {
       text: SYMBOL_GRID[k]!,
       top: 7 + 10 * Math.floor(k / 11),
       left,
-      right: Math.min(83, left + 6),
+      right: left + 5,
     };
   });
 }

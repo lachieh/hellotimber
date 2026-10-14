@@ -1,14 +1,8 @@
-// The stock text editor (plan 18 D4, D5): Write messages, Welcome note, Reply/Edit/Forward and
-// later Chat. Keys go through the multi-tap engine (src/text) on key-down, as the firmware acts
-// (Task 0: a character, C, # in 123, ▲/▼ and * redraw ≈50 ms after key-down; a tapped # changes
-// the case on release); holds are timed here with TEXT_TIMINGS, not the kernel's long press.
-// The cursor blinks on a free-running TEXT_TIMINGS.blinkMs timer from the editor's start: keys
-// and commits never restart it (`text/commit`, `text/hold-digit`, `text/delete-hold` all keep
-// the phase they had).
+// The stock text editor (plan 18 D4, S6): Write messages, Welcome note, Reply/Edit/Forward and
+// later Chat. Its keys, holds and blink are a `TextEntry`'s (text-entry.ts); this module lays the
+// text out and paints the editor's screen.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { EditorModel } from "../display/widgets";
-import { TEXT_TIMINGS } from "../resources";
-import { isTextKey } from "../text/keys";
 import {
   cursorLine,
   EDITOR_LINE_WIDTH,
@@ -17,30 +11,12 @@ import {
   viewTop,
   wrapText,
 } from "../text/layout";
-import {
-  emptyText,
-  shownMode,
-  textClear,
-  textDelete,
-  textHold,
-  textInsert,
-  textKey,
-  textMove,
-  textTick,
-  type TextMode,
-  type TextState,
-} from "../text/multitap";
+import { shownMode, type TextMode, type TextState } from "../text/multitap";
 import type { Flow, Widget } from "./flow";
+import { symbolTable } from "./symbol-table";
+import { TextEntry, type EditorControl } from "./text-entry";
 
-/** What an editor's Options and symbol table may do to it. */
-export interface EditorControl {
-  /** The text, the pending character committed. */
-  readonly text: string;
-  /** Erase: the text cleared. */
-  clear(): void;
-  /** `chars` inserted at the cursor (Insert symbol, Insert number). */
-  insert(chars: string): void;
-}
+export type { EditorControl } from "./text-entry";
 
 export interface EditorSpec {
   /** `sms`: characters left and the message parts (`459/1`); `count`: characters left (`36`). */
@@ -57,7 +33,7 @@ export interface EditorSpec {
   readonly mode?: TextMode;
   /** The soft key (Navi): the editor's Options. */
   readonly options: (flow: Flow, editor: EditorControl) => void;
-  /** `*`, tapped or held: the symbol table (plan 18 Task 7). */
+  /** `*`, tapped or held: default the symbol table (`openSymbols`). */
   readonly symbols?: (flow: Flow, editor: EditorControl) => void;
   /** C on the empty text: back to the screen below (default), or nothing. */
   readonly onEmptyC?: "back" | "inert";
@@ -142,130 +118,47 @@ export function editorModel(
   };
 }
 
-/** A key held down: when, and when it came up (undefined while it is down). */
-interface Held {
-  readonly key: PhoneKey;
-  readonly downAt: number;
-  upAt?: number;
-  /** Its hold has acted (123 entered, the text cleared). */
-  fired: boolean;
-}
-
 class EditorWidget implements Widget {
   readonly #spec: EditorSpec;
-  #state: TextState;
-  #now = 0;
+  readonly #entry: TextEntry;
   #top = 0;
-  /** The last character key pressed, for a held digit at its commit. */
-  #digit: Held | undefined;
-  #hash: Held | undefined;
-  /** C held after a deletion: when that deletion happened. */
-  #clear: Held | undefined;
 
   constructor(spec: EditorSpec) {
     this.#spec = spec;
-    const text = spec.text ?? "";
-    this.#state = {
-      ...emptyText(spec.mode ?? "Abc"),
-      text,
-      cursor: spec.cursor ?? Array.from(text).length,
-    };
-  }
-
-  #control(): EditorControl {
-    return {
-      text: textTick(this.#state, Number.POSITIVE_INFINITY).text,
-      clear: () => {
-        this.#state = textClear(this.#state);
-      },
-      insert: (chars) => {
-        this.#state = textInsert(this.#state, chars, this.#spec.limit);
-      },
-    };
+    this.#entry = new TextEntry({
+      limit: spec.limit,
+      ...(spec.text === undefined ? {} : { text: spec.text }),
+      ...(spec.cursor === undefined ? {} : { cursor: spec.cursor }),
+      ...(spec.mode === undefined ? {} : { mode: spec.mode }),
+    });
   }
 
   render(): EditorModel {
-    const cursorShown = Math.floor(this.#now / TEXT_TIMINGS.blinkMs) % 2 === 0;
-    const { model, top } = editorModel(this.#state, this.#spec, this.#top, cursorShown);
+    const entry = this.#entry;
+    const { model, top } = editorModel(entry.state, this.#spec, this.#top, entry.cursorShown);
     this.#top = top;
     return model;
   }
 
   onKeyDown(key: PhoneKey, flow: Flow): void {
-    const limit = this.#spec.limit;
-    if (isTextKey(key)) {
-      this.#state = textKey(this.#state, key, this.#now, limit);
-      this.#digit = { key, downAt: this.#now, fired: false };
-      return;
-    }
-    switch (key) {
-      case "#":
-        this.#hash = { key, downAt: this.#now, fired: false };
-        if (this.#state.mode === "123") this.#state = textKey(this.#state, "#", this.#now, limit);
-        return;
-      case "*":
-        this.#spec.symbols?.(flow, this.#control());
-        return;
-      case "up":
-      case "down":
-        this.#state = textMove(this.#state, key);
-        return;
-      case "c":
-        if (this.#state.text === "") {
-          if ((this.#spec.onEmptyC ?? "back") === "back") flow.back();
-          return;
-        }
-        this.#state = textDelete(this.#state);
-        this.#clear = { key, downAt: this.#now, fired: false };
-        return;
-      default:
-        return;
-    }
+    const request = this.#entry.keyDown(key);
+    if (request === "empty-c" && (this.#spec.onEmptyC ?? "back") === "back") flow.back();
+    if (request === "symbols") (this.#spec.symbols ?? openSymbols)(flow, this.#entry.control());
   }
 
   onKey(key: PhoneKey, flow: Flow): void {
-    if (this.#digit?.key === key && this.#digit.upAt === undefined) this.#digit.upAt = this.#now;
-    if (key === "#") {
-      const hash = this.#hash;
-      this.#hash = undefined;
-      if (hash !== undefined && !hash.fired && this.#state.mode !== "123") {
-        this.#state = textKey(this.#state, "#", this.#now, this.#spec.limit);
-      }
-      return;
-    }
-    if (key === "c") this.#clear = undefined;
-    if (key === "navi") this.#spec.options(flow, this.#control());
+    this.#entry.keyUp(key);
+    if (key === "navi") this.#spec.options(flow, this.#entry.control());
   }
 
   tick(dtMs: number): void {
-    this.#now += dtMs;
-    const now = this.#now;
-    const hash = this.#hash;
-    if (hash !== undefined && !hash.fired && now - hash.downAt >= TEXT_TIMINGS.numberModeHoldMs) {
-      hash.fired = true;
-      this.#state = textHold(this.#state, "#", now, this.#spec.limit);
-    }
-    const clear = this.#clear;
-    if (
-      clear !== undefined &&
-      !clear.fired &&
-      now - clear.downAt >= TEXT_TIMINGS.clearAfterDeleteMs
-    ) {
-      clear.fired = true;
-      this.#state = textClear(this.#state);
-    }
-    const pending = this.#state.pending;
-    if (pending === null || now < pending.sinceMs + TEXT_TIMINGS.commitMs) return;
-    const digit = this.#digit;
-    const held =
-      digit !== undefined && digit.key === pending.key && digit.downAt === pending.sinceMs
-        ? (digit.upAt ?? now) - digit.downAt
-        : 0;
-    this.#state =
-      isTextKey(pending.key) && held >= TEXT_TIMINGS.digitHoldMs
-        ? textHold(this.#state, pending.key, now, this.#spec.limit)
-        : textTick(this.#state, now);
+    this.#entry.tick(dtMs);
   }
+}
+
+/** `*`'s default: the symbol table, Use inserting into the entry (plan 18 S5). */
+export function openSymbols(flow: Flow, editor: EditorControl): void {
+  flow.push(symbolTable((symbol) => editor.insert(symbol)));
 }
 
 /** The stock text editor (plan 18 D4). */

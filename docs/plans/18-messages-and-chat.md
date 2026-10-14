@@ -1052,16 +1052,31 @@ long word filling 82 large columns, so lines break at 83 columns and words wrap 
 `src/display/widgets/{symbols.ts,prompt.ts,index.ts}`, `src/widgets/prompt.ts` (subtract: an
 editable prompt replaces the static one where a node is bound), `tests/widgets-entry.test.ts` (new).
 
-- [ ] TDD the symbol table: painter against `text/symbols*`; ▲/▼ moves and wraps; `Use` inserts into
+- [x] TDD the symbol table: painter against `text/symbols*`; ▲/▼ moves and wraps; `Use` inserts into
       the widget below and pops; C pops without inserting.
-- [ ] TDD the number entry: painter against `text/number*` and the Send prompt goldens; digits, the
+- [x] TDD the number entry: painter against `text/number*` and the Send prompt goldens; digits, the
       `*` cycle, `#`, ▲/▼ as captured, C/held C/C on empty, the counter, `Search` while empty
       (opens what Task 0 recorded: a note, or plan 19's placeholder), `OK` → `done(number, flow)`.
-- [ ] TDD the text input: painter against `text/input*`; the engine with the prompt's limit and
+- [x] TDD the text input: painter against `text/input*`; the engine with the prompt's limit and
       counter; OK → `done(text, flow)`; C on empty → back.
-- [ ] The plan 14 prompt goldens that stay first-screen-only (PIN, barring, the prompts other plans
+- [x] The plan 14 prompt goldens that stay first-screen-only (PIN, barring, the prompts other plans
       own) still pass unchanged.
-- [ ] Commit: `feat(nokia-os): stock symbol table, text input and number entry`.
+- [x] Commit: `feat(nokia-os): stock symbol table, text input and number entry`.
+
+Deviation: **Task 7 (structure):** the editor's key handling moved into `src/widgets/text-entry.ts`
+(`TextEntry`: keys, holds, blink, `EditorControl`), shared by `editor` and `textInput`. The
+editor's `*` opens `symbolTable` by default (`openSymbols`). `PromptEntry` gains `text` (an
+editable text, large from x 2 with a 15-row cursor) and `number` (large right-aligned while it
+fits in 80 columns, else small rows of up to 78 columns filled from its end at tops 28/19/10,
+the label hidden and the box raised to y 7 at three rows). `src/widgets/prompt.ts` is
+unchanged: no node is bound yet, so nothing it draws is replaced (Tasks 8 and 10 bind them).
+
+Deviation: **Task 7 (measured behaviour):** the selected symbol's box is solid with its symbol
+clear, covering the column it shares with the previous box (`text/symbols-down` 01: €'s last
+column); the thin symbol runs were narrowed to six columns so € no longer harvests that column.
+Number entry types digits and # at key-down; `*` cycles `* + p w` pending for the commit time;
+the counter skips `+`; `sms/send-prompt` 1-prompt is the empty prompt. Routing address opens in
+ABC (`textInput`'s `mode`); a text input's long text does not wrap (unverified).
 
 ### Task 8 - Welcome note, centre and voice mailbox numbers (TDD)
 

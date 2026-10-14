@@ -14,6 +14,7 @@ import { paintProgress, type ProgressModel } from "./progress";
 import { paintPrompt, type PromptModel } from "./prompt";
 import { paintSnake, type SnakeModel } from "./snake";
 import { paintSplash, type SplashModel } from "./splash";
+import { paintSymbols, type SymbolsModel } from "./symbols";
 import { paintTextPage, type TextPageModel } from "./text-pages";
 
 export type { ConfirmModel } from "./confirm";
@@ -30,6 +31,7 @@ export type { ProgressModel } from "./progress";
 export type { PromptEntry, PromptModel } from "./prompt";
 export type { SnakeModel } from "./snake";
 export type { SplashModel } from "./splash";
+export type { SymbolsModel } from "./symbols";
 export type { TextPageModel } from "./text-pages";
 
 /** A choice a later plan implements (D13), inside a flow: the placeholder frame of `label`. */
@@ -63,6 +65,7 @@ export type WidgetModel =
   | BootFrameModel
   | WelcomeNoteModel
   | EditorModel
+  | SymbolsModel
   | PlaceholderModel;
 
 /**
@@ -118,6 +121,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "editor":
       paintEditor(fb, model);
+      return;
+    case "symbols":
+      paintSymbols(fb, model);
       return;
     case "placeholder":
       fb.pixels.set(placeholderFrame(model.label).pixels);
