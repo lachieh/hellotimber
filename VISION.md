@@ -29,8 +29,9 @@ order, key semantics, timings, sounds — is a hard requirement, specified in
 
 ## Non-goals
 
-- Simulating telephony (calls/SMS over a network), SIM features, or T9 dictionaries
-  beyond what the UI bit needs.
+- The portfolio website simulating telephony (calls/SMS over a network) or SIM features.
+  nokia-os accepts SMS through a host network port; the host owns the network.
+- T9 dictionaries beyond what the UI bit needs (plan 18b settles dictionary scope/source).
 - Mobile-first 3D performance heroics. It should run fine on a laptop; on small
   screens the HTML panels carry the content.
 - Pixel-perfect photogrammetry of the shell. Convincing > exact; the screen behavior
@@ -88,13 +89,13 @@ are independent and reusable; **only `website/` composes them**.
                    └───────────────────┘
 ```
 
-| Package                     | Responsibility                                                                                                                                                                                                                                                  | Dependencies                                                       |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                         | none                                                               |
-| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                    | `phone-core` (type-only)                                           |
-| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                      | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
-| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                        | none                                                               |
-| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
+| Package                     | Responsibility                                                                                                                                                                                                                                                                                                          | Dependencies                                                       |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                                                                                 | none                                                               |
+| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                            | `phone-core` (type-only)                                           |
+| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                              | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
+| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                | none                                                               |
+| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18, in progress), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
 
 The website does **not** consume `@hellotimber/nokia-os` yet (plan 13). How portfolio content
 integrates with the stock OS is decided later. Until then the website keeps phone-screen's own
@@ -446,6 +447,8 @@ export interface PhoneConfig<Metadata = unknown> {
   menu: PhoneMenu<Metadata>;
   carrier?: string; // standby line, default "" (was "LACHLAN"; the website passes its own)
   clock?: () => string | undefined; // host supplies time; re-read on each tick
+  /** Plan 18: re-read per tick; change emits one snapshot; standby includes only true fields. */
+  standbyIndicators?: () => StandbyIndicators | undefined;
   bootMs?: number; // 0 skips boot; otherwise defaults to bootTimeline?.durationMs ?? 3000
   /** Finite boot animation; when set, boot length = its durationMs. */
   bootTimeline?: Timeline;
@@ -504,9 +507,15 @@ export interface Phone {
   pressKey(key: PhoneKey, holdMs?: number): void; // convenience: down + up
   tick(nowMs: number): void; // drives timers/animations
   navigate(path: string): void; // external (router) control
-  // Standby-scoped notice ("1 message received"): standby renders it;
-  // NaviKey navigates to `path` (default: clears); C clears; null clears.
-  setNotice(n: { text: string; softkey: string; path?: string } | null): void;
+  /**
+   * Standby-scoped notice ("1 message received"): standby renders it; C clears it. Navi navigates
+   * to `path` (default: clears), or (plan 18) runs `open` as a standby application: empty stack,
+   * path stays `standby`, `menuIndicator()` has no segments, `exit()` returns to standby
+   * (`levels`/`select`/`row` throw). `path` and `open` together throw. null clears.
+   */
+  setNotice(
+    n: { text: string; softkey: string; path?: string; open?: PhoneApplication } | null,
+  ): void;
   readonly path: string; // e.g. 'standby', 'menu/games/snake'
   readonly screen: ScreenModel;
   subscribe(cb: (snap: PhoneSnapshot) => void): () => void;
@@ -555,6 +564,11 @@ the kernel defaults are host config with website-preserving defaults: `shortcutW
 the screen is the standby model with `leaving: true`, and the carousel's timeline and the
 shortcut window are timed from the carousel opening and the Menu press respectively; a key
 that moves the carousel opens it at once, C returns to standby).
+
+**Kernel policy (plan 18, in progress).** Standby indicators are host readers re-read per tick.
+A notice may open an application at standby with an empty navigation stack. Neither interface
+contains Nokia policy. Existing hosts that omit them keep their current models. Captured SMS
+arrivals do not require general interruption of applications.
 
 Digit shortcuts preserve the current one-digit-per-level behavior: orders 1-9 are direct
 targets, while orders 10-13 remain visible and traversable but are not direct digit targets.
@@ -695,7 +709,48 @@ export interface StockPhoneConfig {
   sim?: string;
   /** Plan 16: the phone's buzzer, tone generator and vibrator. Default: nowhere. */
   sound?: StockSoundPort;
+  /** Plan 18, in progress: SMS host port. Default: createSyntheticNetwork(). */
+  network?: StockNetworkPort;
 }
+
+/** Plan 18: one SMS as the phone sees it: a typed recipient number/address and text. */
+export interface StockSms {
+  readonly number: string;
+  readonly text: string;
+}
+
+/** Plan 18: the service centre's time stamp of an incoming SMS (local time, as the phone shows it). */
+export interface StockTimestamp {
+  readonly year: number;
+  readonly month: number; // 1-12
+  readonly day: number;
+  readonly hour: number;
+  readonly minute: number;
+  readonly second: number;
+}
+
+export interface StockIncomingSms extends StockSms {
+  readonly sentAt: StockTimestamp;
+}
+
+export type StockSendOutcome = "sent" | "failed";
+
+/** Plan 18: the phone's network for SMS. The host owns delivery and outcomes; times are the phone's. */
+export interface StockNetworkPort {
+  /** An outgoing SMS. The phone shows `Sending message` until this settles (and its link time). */
+  send(sms: StockSms): StockSendOutcome | Promise<StockSendOutcome>;
+  /** Called once by `createStockPhone`; the host calls `deliver` for each incoming SMS. */
+  subscribe(deliver: (sms: StockIncomingSms) => void): () => void;
+}
+
+/**
+ * Plan 18: the emulator's network: every send is "sent", nothing loops back. `deliver` injects
+ * an incoming SMS into every subscribed phone; `sent` lists what phones sent, in order.
+ */
+export function createSyntheticNetwork(): StockNetworkPort & {
+  deliver(sms: StockIncomingSms): void;
+  readonly sent: readonly StockSms[];
+};
 
 /**
  * Plan 16: one change of the phone's sound outputs at kernel time `atMs`. `volume` is the
@@ -758,6 +813,22 @@ outputs and stops the vibrator if they were active; a phone with no port behaves
 nokia-os touches no audio API. Its sound programs are generated from committed sound goldens
 (event timelines of captured buzzer, tone and vibrator registers; never audio). See
 `docs/plans/16-tones-and-sound.md`.
+
+**SMS network (plan 18, in progress; contract ahead of runtime).** The host supplies delivery
+and outcomes. The phone uses kernel time and preserves the typed number/address and text.
+Synthetic sends succeed without loopback; `deliver` broadcasts to subscribers and `sent` records
+outgoing SMS in order. The phone subscribes once for its host lifetime; no disposal API exists.
+Send settles after max(2662.4 ms, host settle time); receive delay is 2324.3 ms. Measured ranges
+are 2574.3-2790.4 ms and 2141.3-2464.4 ms respectively, unverified on a live network.
+Rejected sends count as failed; late outcomes after power-off are ignored. Off-phone deliveries
+queue until standby (host policy, UNVERIFIED in the emulator). Malformed synthetic delivery
+throws naming number, text or the out-of-range timestamp field. Failed-send UI is an unverified
+composition, never a captured fact. The provisional per-SIM messages record has 15 shared
+Inbox/Outbox slots, retains Save but not Send, and survives Restore; SIM ownership remains
+inconclusive. See [stock text entry and SMS](docs/specs/stock/text-entry-and-sms.md).
+
+Plan 18c's delivery-kind/editor/session registration requirements await owner reconciliation;
+this SMS-only contract does not authorize its proposed picture/card extension.
 
 **Storage (plan 15).** The phone's memory is a host `StockStorage`, synchronous and written at
 once on every change, as EEPROM writes are. nokia-os keeps one versioned JSON record per owner

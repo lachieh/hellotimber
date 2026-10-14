@@ -14,7 +14,7 @@ plan 14 goldens already committed for Messages, the crawl's `tree/02-messages/` 
 `$REF/captures/scratch-plan18/` (evidence only, never imported; `NOTES.md` there lists them), and
 the canonical recaptures Task 0 writes to `$REF/captures/6.39/plan18/`. Read
 `$REF/captures/README.md` and plans 13, 14, 15 and 23 in full before starting.
-**Status:** not started.
+**Status:** in progress (Task 0 complete; Task 1 contracts documented).
 
 ## Goal
 
@@ -30,8 +30,8 @@ and timing-faithful to the captures:
   (Phone book names, Reminders, Rename, the Composer's tone name, Chat);
 - **Welcome note** (6-2-3): the editor, Save and Erase, writing the note plan 15 shows at power-on;
 - **Write messages** (2-1) in multi-tap mode with its Options menu: Send (number prompt, `Sending
-message`, `Message sent` or the failure note), Send by set, Save, Erase, Exit, Insert number,
-  Insert symbol, the Dictionary list, and the virgin-EEPROM behaviour of Send to many, Template and
+message`, `Message sent` or the UNVERIFIED composed failure note), Send by set, Save, Erase, Exit,
+  the Dictionary list, and the virgin-EEPROM behaviour of Send to many, Template and
   Insert smiley;
 - **Inbox** (2-2) and **Outbox** (2-3): lists, reading, scrolling, Details, Options (Erase, Reply,
   Edit, Use number, Forward), the standby `1 message received` notice and envelope indicator;
@@ -133,16 +133,17 @@ dictionary, a T9 editor would produce wrong words, which is worse than a differe
 So plan 18 makes `messages/dictionary` a stored choice whose initial value is `Dictionary off`
 (`VIRGIN_OVERRIDES` in `bindings.ts`, citing this decision); the Dictionary list opens on it; its
 `English`, `Русский` and `Български` entries open a placeholder owned by `18b`, as plan 15 did for
-the Cyrillic languages. Every plan 18 golden is recorded after Options › Dictionary › Dictionary off
-(the captured `T9 dictionary deactivated` flow is asserted). `tree/02-messages/2-1.leaf` (the T9
+the Cyrillic languages. Plan 18 multi-tap editor goldens use Options › Dictionary › Dictionary off.
+The captured `T9 dictionary deactivated` flow is asserted; T9 insertion probes are 18b evidence. `tree/02-messages/2-1.leaf` (the T9
 first screen) becomes `pending:18b`. Plan 18b removes the override.
 
 **D4 - Widgets: one editor, one text-input prompt, one number entry, one symbol table (extends plan
 14 D11).** All are flow widgets painting `custom` frames:
 
 - `editor(spec)`: the full-screen editor (S6) for Write messages, Welcome note, Reply/Edit/Forward
-  and later Chat. `spec` fixes the header icon, the counter style (`459/1` for SMS, `36` for the
-  welcome note), the limit, the soft key and the Options flow it opens.
+  and later Chat. Reply starts empty; Edit/Forward keep the original text. `spec` fixes the header
+  icon, counter style (`459/1` for SMS, `36` for Welcome), limit, soft key and Options flow.
+  Welcome uses adaptive large/small layout.
 - `textInput(layout)`: plan 14's text prompt (`Name:`, `Routing address:`, `Chat name:`) made
   editable: the same multi-tap engine drawing into the prompt's box in the large face. Plan 18 binds
   it only where it owns the node (Send by set › Set 1 › Alphanumeric); plans 17, 19, 21 and 27 bind
@@ -152,6 +153,9 @@ first screen) becomes `pending:18b`. Plan 18b removes the override.
   counter, `Search` while empty and `OK` after a digit. Search on an empty entry opens what Task 0
   records (virgin phone book: a note), owned by plan 19 if it is the name list.
 - `symbolTable()`: the S5 grid; `Use` returns the symbol to the widget below it.
+
+The symbol grid has 31 cells (11/11/9). Multi-tap Options has nine entries and excludes
+Insert word, Insert number and Insert symbol; the insertion probes are T9 evidence for 18b.
 
 Each prompt layout already measured in `PROMPT_LAYOUTS` keeps its pixels; plan 18 adds the entry
 behaviour and the counter.
@@ -164,28 +168,38 @@ holds themselves with `onKeyDown` + `tick`, as `codeEntry` does; the kernel's 80
 not used. Key-to-redraw latency is not reproduced (plan 14 D8): timings are measured from the
 key's first redraw.
 
+Task 0 measured commit at 1452.2 ms from the pending character's first redraw, nominal
+480 ms blink and held-C clear 478.1 ms after the first deletion redraw. Held-digit eligibility
+is bracketed by 1450/1475 ms holds; visible replacement follows at the next blink, about
+1.93 s after the first letter redraw. These are distinct events. Held `#` enters number mode;
+tap `#` there stays numeric. Case cycling depends on sentence position; ▲ moves right and
+▼ left, wrapping. Empty Welcome Save erases, as does Erase.
+
 **D6 - Characters are a closed set; every typeable character must render (extends plan 13 D10).**
-The typeable set is the union of `MULTITAP_KEYS` and the symbol table. Task 0 captures every one of
-them in each face that shows user text: `small` (editor, reading, lists), `large` (text-input
-prompts and the welcome note at power-on), `thin` (the symbol table) and `digits` (the header's
-mode texts and the `/` of the counter). `resources.test.ts` asserts `missingStockGlyphs(c, face)`
-is empty for every typeable character in `small` and `large`. Text from the network may contain
-characters outside the set; the reader draws what the face has and the test helper reports the
-rest (plan 15's welcome-note rule), never throws.
+Task 0 verifies 149 distinct typeable characters, the union of the case-dependent multi-tap
+cycles and the 31-symbol grid, in small and large glyph manifests. Lower key 1 and key 7 differ
+from upper. Thin supplies symbol-table art. The five digits-manifest shots are whole bold
+six-row header/counter specimens, not independently OCR-verified glyphs; Task 3 crops mode
+and counter sprites, including `/`, from those captures. A blinking cursor can obscure a
+neighbouring glyph in `text.json`; OCR-truncated runs are not complete stored-text assertions.
+`resources.test.ts` checks every typeable character in small and large. Network text outside
+this set uses available glyphs and reports missing ones through the helper, without throwing.
+Complete 160-character/Unicode reception and alphanumeric senders remain UNVERIFIED (D9).
 
-**D7 - SMS live in a `messages` EEPROM record keyed by SIM (new; plan 15 D2 record).** The 3310
-stores SMS on the SIM (`EF_SMS`, 15 records on the emulator SIM, S14). The record `messages` (v1)
-holds, per SIM identity (`StockPhoneConfig.sim`), the inbox (number, text, timestamp, read flag)
-and the outbox (saved texts, with a number when one was used). Capacity 15 per SIM, shared by both
-lists; when full the firmware's behaviour comes from Task 0 (`Message memory full`, S14). The record
-has no `factory` (Restore keeps messages, user guide; plan 15 D5). If Task 0 shows that messages do
-not follow the SIM (a second SIM still shows them), the record becomes phone-wide and this is a
-Deviation.
+**D7 - SMS use a provisional per-SIM `messages` EEPROM record (plan 15 D2).**
+The proposed v1 record holds inbox entries (number, text, timestamp, read flag) and saved
+Outbox texts (optional number), keyed by `StockPhoneConfig.sim`. Task 0 verifies 15 shared
+slots: ten incoming and five saved messages survive cold reboot within one process and
+Restore. Extra arrival shows `No space for new messages`; Save shows `Message memory full`.
+The record has no `factory`, so Restore keeps it. Per-SIM ownership is a host-storage policy,
+not a measured fact: a new emulator process loses messages even with the same SIM fixture,
+because saveflash does not persist its SIM overlay. The second-SIM comparison is inconclusive
+and does not establish phone-wide storage either. Other SIM capacities remain UNVERIFIED.
 
-**D8 - Sent messages are not stored; saved ones are (captured, S10).** `Send` keeps the editor's
-text and returns to the editor after `Message sent`; the Outbox lists only messages saved with
-`Save` (the 3310's Outbox is the user guide's "Saved messages"). Reply, Edit and Forward open the
-editor on the message's text.
+**D8 - Sent messages are not stored; saved ones are (Task 0).** Send returns to the editor with
+its text after `Message sent`; Outbox remains empty. Save, including empty text, shows `Saving
+message`, then `Message saved` and retains the text in Outbox. Reply starts empty and prefills
+the sender at Send; Edit and Forward keep the original text. Erase clears the editor immediately.
 
 **D9 - A public host network port (contract change).** `StockPhoneConfig.network?:
 StockNetworkPort`. The phone calls `send(sms)` for every outgoing SMS and shows `Sending message`
@@ -194,16 +208,20 @@ until the outcome is settled (sync or a promise, applied at the next `tick()`); 
 port has no clock. The default is `createSyntheticNetwork()`, exported, which reproduces the
 emulator's network: it accepts every SMS and never loops one back, and its `deliver()` injects an
 incoming SMS. A host that backs the port with something else (the website's LLM contacts, later)
-changes no screen. The port carries no protocol detail (no SMSC, no PDU): numbers and text only,
-plus the SMSC timestamp of an incoming message as plain fields.
+changes no screen. The port carries no protocol detail (no SMSC, no PDU): recipient numbers/addresses and text only,
+plus the SMSC timestamp of an incoming message as plain fields. Send by set Alphanumeric uses
+the captured Routing address text input, so outgoing `number` must preserve that address too.
+Incoming alphanumeric senders, complete 160-character reception and faithful Unicode delivery
+remain unverified: the ordinary helper caps input at 120 septets, packs ASCII, and substitutes
+`12345` for sender `Nokia`. The host text contract is broader than that capture helper.
 
-**D10 - Link times are the phone's and are reproduced; network latency is the host's (new).** The
-emulator's network answers at once at protocol level, so the captured 2714 ms of `Sending message`
-and the 2472 ms between injection and the notice are the phone's own radio signalling (channel
-request, assignment, CP/RP) on the synthetic cell. The phone therefore shows `Sending message` for
-`max(SEND_LINK_MS, the host's settle time)` and shows an arrival `RECEIVE_LINK_MS` after
-`deliver()`. Both constants are Task 0 medians over several sends and arrivals (jitter recorded);
-they are UNVERIFIED on a live network.
+**D10 - Reproduce measured synthetic-cell link times; the host owns additional latency.**
+Five sends give median `SEND_LINK_MS = 2662.4`, range 2574.3-2790.4 ms. Five arrivals give
+median `RECEIVE_LINK_MS = 2324.3`, range 2141.3-2464.4 ms. The service settles Send at
+`max(SEND_LINK_MS, host settle time)` and arrival at `RECEIVE_LINK_MS` after delivery.
+These are measured end-to-end synthetic-cell delays, not isolated proof of a firmware-only
+radio timer. They remain UNVERIFIED on a live network. Preserve each recording's durations;
+cross-recording link jitter exceeds ±2 ms and requires an explicit tolerance.
 
 **D11 - Two opt-in phone-core seams for standby (new; generic).**
 
@@ -216,28 +234,33 @@ they are UNVERIFIED on a live network.
    standby and `levels`/`select`/`row` throw (plan 15's boot-gate rules). This is how Read opens the
    Inbox list with indicator `1` and C back to standby (S11). The website sets neither.
 
-If Task 0 shows an arrival interrupting a menu, the editor, a note or a game (not only standby),
-Task 1 adds the seam that needs to the contract before any code (plan 14 Task 1 precedent) and
-records it here.
+Task 0 shows no interruption of menu, editor, moving game or Sending message.
+No general interruption interface is needed; notice-key routing remains unresolved below. Invalid shortcut
+finishes before the received notice appears.
 
-**D12 - The arrival screen follows the captures (new).** At standby an arrival sets the notice
-(`1 message received`, then the counts Task 0 records for more) and the indicator. What C, Menu and
-the other keys do on the notice, whether the notice survives a menu round trip, and what an
-arrival does elsewhere come from Task 0 (section I). Reading a message clears its unread flag; the
-indicator follows the inbox.
+**D12 - Arrival notices and unread indicators follow Task 0.** Standby notices count 1/2/3.
+Read opens Inbox with indicator `1`; Menu 2 2 opens with `2-2-1`. C dismisses the notice while
+keeping the unread envelope; a menu round trip does not restore it. On the received notice,
+▲ opens last dialled numbers, ▼ Phone book, digits/`#` number entry, Navi Read. These notice
+key routes are stock policy; preserve existing normal-standby key config. Arrivals elsewhere
+do not interrupt; returning to standby shows the envelope without a deferred received notice.
+Reading clears the message's unread flag. The current kernel notice contract exposes only Navi/C actions, while normal standby handles
+▲/▼ via fixed config and ignores digits. Notice-specific routing is an unresolved owner contract
+prerequisite before Tasks 4/11; do not silently add a kernel interface or substitute normal routes.
 
-**D13 - Message view (new).** The message is laid out in the small face from x 0 at top 0 with a
-9-row pitch, wrapped at spaces like the editor, followed by `Sender:` / the number and `Sent:` / the
-date / the time as extra lines (S11); ▼/▲ scroll one line and wrap; the soft key is `Options`.
-The date and time format (`14-Oct-2026`, `14:21:43`) is the firmware's, applied to the timestamp
-the network port supplies (D9); Task 0 checks whether the 12-hour Time format changes it.
+**D13 - Message reading turns whole pages (Task 0).** Text uses small, up to four lines per page
+at 9 px pitch, followed by Sender and Sent pages; ▲/▼ turn pages and wrap. The soft key is
+`Options`. Details pages are Sender, Message centre and Time. `Sent:` formats the port's local
+timestamp as `14-Oct-2026` / `14:11:17`, still 24-hour after selecting 12-hour Time format.
 
-**D14 - Failure: the captured note if Task 0 can produce one, else a composition (plan 15 D8
-policy).** A send settled `"failed"` shows the firmware's failure note. Task 0 tries to make the
-emulator fail a send (message centre number cleared, Set 2 without a centre, a send before
-registration). If none fails, the note is composed from the firmware string (`Message\nsending\nfailed`
-0x480, cross-check only, transcribed by hand) in the error-note class (octagon, ≈2.9 s), listed in
-`COMPOSED_FLOWS` with its evidence, and UNVERIFIED in the spec.
+**D14 - Failed-send UI remains a composition, UNVERIFIED.** No failure note was reached.
+Empty centre OK invokes Search and cannot save an empty centre; Set 2 asks for a centre.
+The boot/input sequence cannot send within 1 s of standby and ordinary setup already waits
+for registration. These attempts do not prove failing sends or successful empty-centre sends.
+The host contract still permits `"failed"` and maps rejected promises to it. The proposed
+`Message\nsending\nfailed` note (firmware string 0x480, planning cross-check only), error-note
+class and ≈2.9 s duration are an explicitly unverified composition in `COMPOSED_FLOWS`, not
+captured behaviour. Task 2 must not import or assert a failure golden that does not exist.
 
 **D15 - The message alert is plan 16's (dependency, conditional).** An arrival calls
 `StockSounder.messageAlert(profile)` if plan 16 has landed when Task 11 starts (`src/sound/sounder.ts`
@@ -264,14 +287,14 @@ empty at the end.
 
 New artefacts (spec §10 table, Task 1):
 
-| Artefact                                                     | Cause                                         | Handling                                                                 |
-| ------------------------------------------------------------ | --------------------------------------------- | ------------------------------------------------------------------------ |
-| Every send accepted, nothing looped back                     | the emulator's synthetic network              | the default synthetic network (D9); hosts decide                         |
-| `Sent:` timestamp from the host's wall clock (`14-Oct-2026`) | the emulator stamps SMS-DELIVER from the host | the network port supplies the timestamp; captured values are test inputs |
-| Link times 2714 ms (send) and ≈2472 ms (arrival)             | synthetic cell timing                         | reproduced as phone link time (D10); UNVERIFIED on a live network        |
-| 15 SMS slots                                                 | the emulator SIM's `EF_SMS`                   | capacity per SIM (D7); UNVERIFIED for other SIMs                         |
-| Write messages opens in T9                                   | virgin EEPROM, firmware default               | overridden to Dictionary off until 18b (D3)                              |
-| Templates, Picture messages, Smileys empty; Smileys as boxes | no preloaded content (virgin, factory, used)  | 18c                                                                      |
+| Artefact                                                     | Cause                                                    | Handling                                                                 |
+| ------------------------------------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Every send accepted, nothing looped back                     | the emulator's synthetic network                         | the default synthetic network (D9); hosts decide                         |
+| `Sent:` timestamp from the host's wall clock (`14-Oct-2026`) | the emulator stamps SMS-DELIVER from the host            | the network port supplies the timestamp; captured values are test inputs |
+| Link medians 2662.4 ms send / 2324.3 ms arrival              | synthetic cell timing                                    | reproduced as phone link time (D10); UNVERIFIED on a live network        |
+| 15 SMS slots                                                 | the emulator SIM's `EF_SMS`                              | 15 shared slots verified; per-SIM ownership provisional (D7)             |
+| Write messages opens in T9                                   | virgin EEPROM, firmware default                          | overridden to Dictionary off until 18b (D3)                              |
+| Template/Insert smiley do not respond in captured state      | observed no-response; other content states belong to 18c | 18c                                                                      |
 
 ## Package boundaries
 
@@ -313,7 +336,7 @@ export interface Phone {
 ### `@hellotimber/nokia-os` (additive)
 
 ```ts
-/** Plan 18: one SMS as the phone sees it: digits (`+`, `*`, `#`, `p`, `w` allowed) and text. */
+/** Plan 18: one SMS as the phone sees it: a typed recipient number/address and text. */
 export interface StockSms {
   readonly number: string;
   readonly text: string;
@@ -438,23 +461,23 @@ A new explicit table `scripts/messages-capture-set.ts` (like `game-capture-set.t
 importer. Ids `text/<name>`, `sms/<name>`, `welcome/<name>`, `glyphs/<face>-<n>`; `status:
 asserted` unless noted. Every scenario is hand-written in `tests/support/messages.ts`.
 
-| Fixture id(s)                                | Source (`$REF/captures/6.39/`)         | Kind               | Asserts                                                                 |
-| -------------------------------------------- | -------------------------------------- | ------------------ | ----------------------------------------------------------------------- |
-| `text/dictionary-off`                        | `plan18/text/dictionary-off`           | timeline           | the Dictionary list, `T9 dictionary deactivated`, the multi-tap editor  |
-| `text/key-<k>` (k = 0-9)                     | `plan18/text/keys/<k>`                 | stills             | each press of the key through two full cycles (S3)                      |
-| `text/commit`, `text/commit-gap-<ms>`        | `plan18/text/commit*`                  | timeline / stills  | pending without cursor, the commit, the blink; same-key gaps            |
-| `text/case-*`, `text/number-mode`            | `plan18/text/case*`, `number*`         | stills / timelines | the `#` cycle from each state, sentence case, held `#`, held digits     |
-| `text/symbols`, `text/symbols-*`             | `plan18/text/symbols*`                 | stills             | the grid, every move (▲/▼ wrap), `Use`, C                               |
-| `text/cursor-*`, `text/delete-*`             | `plan18/text/cursor*`, `delete*`       | stills / timelines | ▲/▼ at start, middle and end; C; held C; C on empty                     |
-| `text/wrap-*`, `text/counter-*`              | `plan18/text/wrap*`, `counter*`        | stills             | wrap, scroll, long words, the counter at 160/161, 306/307, 459 and full |
-| `text/input-*`, `text/number-*`              | `plan18/text/input*`, `number*`        | stills / timelines | the text-input and number-entry prompts (Routing address, Phone number) |
-| `welcome/*`                                  | `plan15/welcome/*`, `plan18/welcome/*` | timelines          | editor, Save, Erase, the page after                                     |
-| `sms/send*`, `sms/save*`, `sms/send-by-set*` | `plan18/sms/send*` …                   | timelines          | Sending, Message sent, failure (D14), Saved, Send by set, Send to many  |
-| `sms/arrive*`, `sms/inbox*`, `sms/read*`     | `plan18/sms/arrive*` …                 | timelines / stills | notice, indicator, Read, list, view, Details, Options flows             |
-| `sms/outbox*`                                | `plan18/sms/outbox*`                   | timelines / stills | saved messages: list, view, Options                                     |
-| `sms/centre*`, `sms/voice-mailbox*`          | `plan18/sms/centre*`, `voice-mailbox*` | timelines          | editing and saving the numbers                                          |
-| `sms/full*`, `sms/persist*`, `sms/sim*`      | `plan18/sms/full*`, `persist*`, `sim*` | stills / timelines | capacity, reboot persistence, the second SIM (D7)                       |
-| `glyphs/small-<n>`, `glyphs/large-<n>`, …    | `plan18/glyphs/<face>/*`               | stills             | glyph sheets for the harvester (not scenarios; integrity only)          |
+| Fixture id(s)                                | Source (`$REF/captures/6.39/`)         | Kind               | Asserts                                                                               |
+| -------------------------------------------- | -------------------------------------- | ------------------ | ------------------------------------------------------------------------------------- |
+| `text/dictionary-off`                        | `plan18/text/dictionary-off`           | timeline           | the Dictionary list, `T9 dictionary deactivated`, the multi-tap editor                |
+| `text/key-<k>` (k = 0-9)                     | `plan18/text/keys/<k>`                 | stills             | each press of the key through two full cycles (S3)                                    |
+| `text/commit`, `text/commit-gap-<ms>`        | `plan18/text/commit*`                  | timeline / stills  | pending without cursor, the commit, the blink; same-key gaps                          |
+| `text/case-*`, `text/number-mode`            | `plan18/text/case*`, `number*`         | stills / timelines | the `#` cycle from each state, sentence case, held `#`, held digits                   |
+| `text/symbols`, `text/symbols-*`             | `plan18/text/symbols*`                 | stills             | the grid, every move (▲/▼ wrap), `Use`, C                                             |
+| `text/cursor-*`, `text/delete-*`             | `plan18/text/cursor*`, `delete*`       | stills / timelines | ▲/▼ at start, middle and end; C; held C; C on empty                                   |
+| `text/wrap-*`, `text/counter-*`              | `plan18/text/wrap*`, `counter*`        | stills             | wrap, scroll, long words, the counter at 160/161, 306/307, 459 and full               |
+| `text/input-*`, `text/number-*`              | `plan18/text/input*`, `number*`        | stills / timelines | the text-input and number-entry prompts (Routing address, Phone number)               |
+| `welcome/*`                                  | `plan15/welcome/*`, `plan18/welcome/*` | timelines          | editor, Save, Erase, the page after                                                   |
+| `sms/send*`, `sms/save*`, `sms/send-by-set*` | `plan18/sms/send*` …                   | timelines          | Sending, Message sent, Saved (failure has no capture, D14), Send by set, Send to many |
+| `sms/arrive*`, `sms/inbox*`, `sms/read*`     | `plan18/sms/arrive*` …                 | timelines / stills | notice, indicator, Read, list, view, Details, Options flows                           |
+| `sms/outbox*`                                | `plan18/sms/outbox*`                   | timelines / stills | saved messages: list, view, Options                                                   |
+| `sms/centre*`, `sms/voice-mailbox*`          | `plan18/sms/centre*`, `voice-mailbox*` | timelines          | editing and saving the numbers                                                        |
+| `sms/full*`, `sms/persist*`, `sms/sim*`      | `plan18/sms/full*`, `persist*`, `sim*` | stills / timelines | capacity, reboot persistence, the second SIM (D7)                                     |
+| `glyphs/small-<n>`, `glyphs/large-<n>`, …    | `plan18/glyphs/<face>/*`               | stills             | glyph sheets for the harvester (not scenarios; integrity only)                        |
 
 Glyph sheets are harvest input only: `goldens-integrity.test.ts` checks them, and the coverage
 guard treats `glyphs/*` as resources, not scenarios (as `text-runs.ts` inputs are). Their text runs
@@ -467,13 +490,13 @@ are generated from Task 0's `manifest.json` (the character typed per shot), chec
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Editor header  | multi-tap pen x 1..9 y 0..5; T9 pen with bars x 0..17; mode text in the 6-row face (`Abc` from x 14 in multi-tap); counter right-aligned to x 83 (`459/1`, `36`) |
 | Editor text    | small face from x 1, tops 8/18/28; cursor 1x10 at y 7..16 after the last character's blank column; blink ≈480 ms; `Options` centred at y 40                      |
-| Symbol table   | header pen + `?!$`-like mode text; 3 rows x 11 cells, cell pitch 7, from x 2, tops 7/17/27, thin face; selection = inverted cell; soft key `Use`                 |
+| Symbol table   | header pen + `?!$`-like mode text; 31 cells in rows of 11/11/9, cell pitch 7, from x 2, tops 7/17/27, thin face; selection = inverted cell; soft key `Use`       |
 | Number prompt  | `Phone number:` small at top 7; counter digits top right (`30`); box y 16..36; digits large right-aligned ending x 82; cursor at the end; `Search`/`OK`          |
 | Sending        | hatched bar x 0..83, y 7..14 (the `Requesting` sprite set, Task 3 checks equality); `Sending` / `message` small at tops 18/29; no soft key                       |
 | Message sent   | `Message` / `sent` large at tops 3/18; envelope animation within x 63..83, y 9..24 (6 frames)                                                                    |
 | Standby notice | envelope icon left; `1` / `message` / `received` small at tops 7/16/25 from x 6; `Read`; the operator line is not drawn                                          |
 | Inbox list     | rows layout with an envelope icon at x 1..8 per row, sender from x 10; `Read`                                                                                    |
-| Message view   | small face from x 0, top 0, pitch 9 (up to 5 lines); `Options`                                                                                                   |
+| Message view   | small face from x 0, top 0, pitch 9 (up to four text lines per page); `Options`                                                                                  |
 
 ## Conventions for every task
 
@@ -749,23 +772,57 @@ than scrolling one line. Apply these before implementing the message view and it
 **Files:** `VISION.md`, `docs/specs/nokia-3310.md`, `docs/specs/nokia-3310-menu-tree.md`,
 `docs/plans/README.md`, this plan.
 
-- [ ] Apply Task 0's outcome to D3-D14 and the contracts (Deviation lines where it changes them). If
+- [x] Apply Task 0's outcome to D3-D14 and the contracts (Deviation lines where it changes them). If
       Task 0 shows arrivals interrupting non-standby screens, add the kernel seam they need to
       "Contract changes" now (D11).
-- [ ] VISION: the phone-core seams and the nokia-os network contract exactly as in "Contract
+- [x] VISION: the phone-core seams and the nokia-os network contract exactly as in "Contract
       changes"; a kernel-policy sentence for plan 18 (standby indicators re-read per tick; a notice
       may open a standby application); the nokia-os row: SMS through a host network port. Narrow the
       non-goal "Simulating telephony (calls/SMS over a network) … T9 dictionaries" to the website
       (nokia-os simulates nothing: the host owns the network) and leave the T9 sentence for 18b to
       settle (Open question 3).
-- [ ] Spec §6: mark "Text entry" manual-sourced and point to §10. Spec §10: add "Text entry and SMS
+- [x] Spec §6: mark "Text entry" manual-sourced and point to §10. Spec §10: add "Text entry and SMS
       (plan 18)" (S-findings as verified by Task 0, artefacts above, everything "(plan 18, in
       progress)").
-- [ ] Menu-tree spec: correct `Dictionary off` (a tick note, then the editor), and "Needs incoming
+- [x] Menu-tree spec: correct `Dictionary off` (a tick note, then the editor), and "Needs incoming
       traffic" (the harness can now inject SMS; Inbox verified by plan 18).
-- [ ] Plans README: row 18 `in progress`; rows 18b and 18c exist (`not started`).
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define text entry, SMS and network port contracts (plan 18)`.
+- [x] Plans README: row 18 `in progress`; rows 18b and 18c exist (`not started`).
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define text entry, SMS and network port contracts (plan 18)`.
+
+Deviation: **Task 1 (documentation path):** firmware facts live in `docs/specs/stock/text-entry-and-sms.md`,
+linked from Nokia spec §10, following AGENTS.md's stock-spec-per-area convention. Captures
+remain evidence until Task 2 imports fixtures; documented contracts are planned, not runtime exports.
+
+Task 1 applies all eight Task 0 deviations to the decisions above and the stock spec. The
+Task 2 importer must classify the T9 insertion probes as 18b evidence, retain the invalid-level
+`sms/elsewhere/snake` artefact, and use `sms/elsewhere/snake-level-1` for live-play coverage.
+Header specimens require cropping; cursor-obscured OCR requires independent stored-text checks.
+Later task bullets that still describe inserted multi-tap options, Reply text, line scrolling,
+Set 2's old item view or definite SIM ownership are superseded by Task 0 and D3-D14.
+
+**Unresolved owner prerequisites (read only; reconcile before Task 2).** This plan's later task
+paths predate the feature split. AGENTS.md requires `scripts/capture-sets/18-<slug>.ts`, one
+registration in its index, `goldens/index/18.json`, and
+`tests/acceptance/18-<slug>.test.ts` calling `acceptancePlan` once. Runtime contributions belong
+in `src/firmware/features/`, not broad changes to `bindings.ts`/`leaves.ts`. Resolve exact paths
+and placeholder groups before Task 2; preserve other plans' golden indexes and registrations.
+
+`awaitsPlan18Scenario` has no current acceptance API. `AcceptancePlan` accepts only plan,
+scenarios, knownGaps and timeoutsMs; an asserted golden without a scenario throws. Task 2's
+proposed todo bridge needs an acceptance-owner decision before import; `knownGaps` cannot
+supply a missing scenario. Plan 20's findings independently report this gap and the shared
+fixed `PROBE_TIMELINES` resource table. Resource registration is an owner prerequisite for
+Task 3, not permission to repair Calculator or Space Impact here.
+
+Plan 18c (068bbb6) requires one-line editor-option registrations with live editor insertion
+state, delivery-kind registration, session subscriptions with cleanup, and Chat consumption
+before normal Inbox handling. Plan 18's current `StockMessaging` sketch exposes only send/tick
+and its public port is SMS-only. Those extension contracts are unresolved prerequisites for
+18c, not additions authorized by Task 1. Reconcile with the messaging owner before Tasks 9-11;
+do not silently widen the public port or implement a second transport. The shared resource
+pipeline and cross-plan acceptance driver registrations also need their owners. Plan 16's
+`StockSounder.messageAlert` now exists; Task 11 can use it under D15, without changing sound code.
 
 ### Task 2 - Goldens and re-owned placeholders (TDD)
 
@@ -1045,13 +1102,13 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
    nobody), or a public word list (not the firmware's, so not a reproduction).
 4. **Default network (D9):** the synthetic network (accept everything, no loopback), so the demo
    and tests behave like the captures. Reverse: no default network, every send fails.
-5. **Link times (D10):** reproduced as phone time (2714 ms send, ≈2472 ms arrival) even when the
+5. **Link times (D10):** reproduced as synthetic-cell medians (2662.4 ms send, 2324.3 ms arrival) even when the
    host answers instantly. Reverse: settle only on the host.
-6. **SMS on the SIM (D7):** messages follow `StockPhoneConfig.sim`, 15 slots, if Task 0 confirms.
+6. **SMS on the SIM (D7):** provisional per-SIM policy; 15 shared slots verified, ownership inconclusive.
    Reverse: phone-wide storage.
 7. **Failure note (D14):** composed from the firmware string if the emulator cannot fail a send.
    Reverse: `"failed"` shows nothing and returns to the editor.
-8. **▲/▼ in text (S7):** as captured (▲ right), against the user guide; Task 0 decides.
+8. **▲/▼ in text (S7):** Task 0 confirms ▲ right, ▼ left, wrapping, against the manual summary.
 
 ## Conflicts found while planning
 

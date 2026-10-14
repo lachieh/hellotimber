@@ -147,7 +147,7 @@ subtrees are written out once and then referred to.
       - `2-1/Options-6` **Insert number** → text-input, "Insert number:", key **OK**
       - `2-1/Options-7` **Insert symbol** → symbol-table, "? + # \* ( / ) \ ' " \_ @ & $ £ % / / < > ¿ § = ¤ €¥", key **Use**
       - `2-1/Options-8` **Dictionary** → submenu (3-row list), opens on English
-        - `2-1/Options-8-1` **Dictionary off** → static-note, "T9 dictionary deactivated"; then back to the editor
+        - `2-1/Options-8-1` **Dictionary off** → tick-note, "T9 dictionary deactivated" (≈1.39 s); then back to the editor
           - **Options** → returns-immediately, "Send / Send to many / Template", key **OK**
         - `2-1/Options-8-2` **English** → timed-note, "T9 dictionary activated"; then back to the list after ≈4.3 s
         - `2-1/Options-8-3` **Русский** → timed-note, "T9 dictionary activated"; then back to the list after ≈4.3 s
@@ -772,7 +772,7 @@ reminder "Hi", alarm 07:00, composed tone "A". The Phone book view setting is th
     - `2-1/Options-7` **Insert symbol** → symbol-table, "? + # \* ( / ) \ ' " \_ @ & $ £ % / / < > ¿ § = ¤ €¥", key **Use**
       - **pressing Use** → returns-immediately, key **Options**
     - `2-1/Options-8` **Dictionary** → submenu (3-row list), opens on English
-      - `2-1/Options-8-1` **Dictionary off** → static-note, "T9 dictionary deactivated"; then back to the editor
+      - `2-1/Options-8-1` **Dictionary off** → tick-note, "T9 dictionary deactivated" (≈1.39 s); then back to the editor
         - **Options** → returns-immediately, "Send / Send to many / Template", key **OK**
       - `2-1/Options-8-2` **English** → timed-note, "T9 dictionary activated"; then back to the list after ≈4.3 s
       - `2-1/Options-8-3` **Русский** → timed-note, "T9 dictionary activated"; then back to the list after ≈4.2 s
@@ -817,7 +817,7 @@ reminder "Hi", alarm 07:00, composed tone "A". The Phone book view setting is th
             - **pressing Use** → text-editor, "Highh", key **Options**
               - **Options** → returns-immediately, "Send / Send to many / Template", key **OK**
           - `2-3-1/Options-2/Options-9` **Dictionary** → submenu (3-row list), opens on English
-            - `2-3-1/Options-2/Options-9-1` **Dictionary off** → static-note, "T9 dictionary deactivated"; then back to the editor
+            - `2-3-1/Options-2/Options-9-1` **Dictionary off** → tick-note, "T9 dictionary deactivated" (≈1.39 s); then back to the editor
               - **Options** → returns-immediately, "Send / Send to many / Template", key **OK**
             - `2-3-1/Options-2/Options-9-2` **English** → static-note, "T9 dictionary activated"; then back to the editor
               - **Options** → returns-immediately, "Send / Send to many / Template", key **OK**
@@ -859,7 +859,7 @@ reminder "Hi", alarm 07:00, composed tone "A". The Phone book view setting is th
             - **pressing Use** → text-editor, "Highh", key **Options**
               - **Options** → returns-immediately, "Send / Send to many / Template", key **OK**
           - `2-3-1/Options-4/Options-9` **Dictionary** → submenu (3-row list), opens on English
-            - `2-3-1/Options-4/Options-9-1` **Dictionary off** → static-note, "T9 dictionary deactivated"; then back to the editor
+            - `2-3-1/Options-4/Options-9-1` **Dictionary off** → tick-note, "T9 dictionary deactivated" (≈1.39 s); then back to the editor
               - **Options** → returns-immediately, "Send / Send to many / Template", key **OK**
             - `2-3-1/Options-4/Options-9-2` **English** → static-note, "T9 dictionary activated"; then back to the editor
               - **Options** → returns-immediately, "Send / Send to many / Template", key **OK**
@@ -988,7 +988,7 @@ reminder "Hi", alarm 07:00, composed tone "A". The Phone book view setting is th
         - `4-3/Options-6/Options-7` **Insert symbol** → symbol-table, "? + # \* ( / ) \ ' " \_ @ & $ £ % / / < > ¿ § = ¤ €¥", key **Use**
           - **pressing Use** → timed-note, key **Options**; then back to the list after ≈3.8 s
         - `4-3/Options-6/Options-8` **Dictionary** → submenu (3-row list), opens on English
-          - `4-3/Options-6/Options-8-1` **Dictionary off** → static-note, "T9 dictionary deactivated"; then back to the editor
+          - `4-3/Options-6/Options-8-1` **Dictionary off** → tick-note, "T9 dictionary deactivated" (≈1.39 s); then back to the editor
             - **Options** → returns-immediately, "Send / Send to many / Template", key **OK**
           - `4-3/Options-6/Options-8-2` **English** → timed-note, "T9 dictionary activated"; then back to the list after ≈4.3 s
           - `4-3/Options-6/Options-8-3` **Русский** → static-note, "T9 dictionary activated"; then back to the editor
@@ -1170,10 +1170,11 @@ the editor's Options › Template and Insert smiley, and Screen saver › Screen
 `12-n-2-9-4`) do nothing for 3.5 s and later. On a shipped phone these hold preloaded pictures,
 templates and smileys, so their lists are missing here.
 
-**Needs incoming traffic.** Inbox (`2-2`), Missed calls (`4-1`) and Received calls (`4-2`) only
-showed their empty notes, because the emulator cannot inject an SMS or a call. Their entry
-views and Options menus should match the Outbox / Dialled numbers ones in "With content", but
-that was not verified.
+**Incoming traffic (plan 18, in progress).** The harness can inject SMS. Task 0 verifies
+Inbox lists, reading pages, Details, Options and received notices; see
+[stock/text-entry-and-sms.md](stock/text-entry-and-sms.md). The earlier empty Inbox crawl
+is virgin-state evidence, not an injection limitation. Missed/Received calls need their own
+incoming-call verification in plan 22; SMS evidence does not establish their views or Options.
 
 **Network operations.** "Requesting" (call waiting, barring and divert Activate/Cancel/Status,
 `7-6`) and "Searching" (`6-2-4-2`) never finished within the observation window on the

@@ -117,11 +117,13 @@ Sources: manual p.19 keys, p.28, p.34–38, p.32 ([scroll keys verbatim](https:/
 - **NaviKey:** context softkey = select/confirm/primary action. Standby: `Menu`. Number typed: `Call`. Incoming call: `Answer`. In lists: `Select`/`OK`/`View`. In editors: `Options`. Also `Send`, `Use`, `Unlock`, `Read` etc. There are no Send/End hardware keys — calls are placed with NaviKey (`Call`) and ended with it (`End`).
 - **C key (verified, p.19):** deletes character to the left when entering text; **press-and-hold deletes all characters**; steps back to the previous menu level; **rejects an incoming call**; (with `Options`) used for clearing. Back out of menus level-by-level with C; hold to return to standby.
 - **Scroll keys in standby (VERIFIED, helpdoc verbatim):** **▲ up = opens the Phone book name/number list; ▼ down = opens the list of last dialled numbers** (redial list, last 20 numbers; scroll then press `Call`).
-- **Scroll keys elsewhere (verified):** browse menus/settings; **in text entry they move the cursor left (▲) and right (▼)**; during a call they adjust earpiece volume.
+- **Scroll keys elsewhere (verified):** browse menus/settings; **the manual describes cursor left (▲) and right (▼); v6.39 captures show the reverse (see §10)**; during a call they adjust earpiece volume.
 - **Power key short-press in standby = profile switcher** (verified). **Long-press `#`: no documented function on the 3310** (silent-profile toggle via # arrived on later models) — UNVERIFIED/absent, recommend no-op.
 - **Long-press `1` in standby = dial voice mailbox** (verified, speed-dial section). Long-press `2`–`9` = speed dial if enabled (verified).
 - **Keyguard (verified, p.32):** lock = press **`Menu` then `*` "quickly"** (within ~1.5 s); unlock = press **`Unlock` (NaviKey) then `*`** quickly; keyguard icon shown; answering calls still works; emergency 112 possible while locked.
-- **Text entry (verified):**
+- **Text entry (manual-sourced):** This summary describes the manual. For measured v6.39
+  rules that supersede its cursor direction, held `0`/`#`, case and timeout claims, see
+  [§10](#10-firmware-ground-truth-v639-captures) and [stock text entry](stock/text-entry-and-sms.md).
   - Two modes: **predictive text input** (T9-style dictionary; one keypress per letter; word matched against dictionary; dictionary language selectable; can be set off via Options → `Dictionary`) and **traditional multi-tap**.
   - Multi-tap: press key repeatedly until the character appears; **`0` = space** (verified); **`1` cycles punctuation/special characters**; **`*` opens the special-character picker** (grid of symbols; scroll, press `Use`) (verified); **short press `#` switches upper/lower case** (verified); **press-and-hold a digit key inserts that number; press-and-hold `0` toggles letter/number mode (`123` indicator shown)** (verified); same-key consecutive letters: press ▼ (cursor right) or wait one second (verified); `C` deletes left, hold-`C` clears all.
   - In predictive mode, accept word with `0` (space) — UNVERIFIED detail, standard Nokia behavior.
@@ -207,6 +209,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Deeper levels, stock widgets, shortcuts, capture artefacts | [stock/menu-depth.md](stock/menu-depth.md)                     | 14   |
 | Security code, boot gates, storage, virgin/factory states  | [stock/storage-and-settings.md](stock/storage-and-settings.md) | 15   |
 | Tones and sound                                            | [stock/sound.md](stock/sound.md)                               | 16   |
+| Text entry and SMS (plan 18, in progress)                  | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)     | 18   |
 | Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                         | 23   |
 
 ---
