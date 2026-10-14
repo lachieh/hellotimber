@@ -3,7 +3,7 @@ id: text/symbols-down
 status: pending:18
 source: captures/6.39/plan18/text/symbols/down
 source-sha256: c4483946858c515b3c8186ea47f30dd1b3333cc5436befd44bf1d5248ca0b727
-note: ▼ pressed 31 times in the symbol table: every cell, then the first again (▼ advances).
+note: ▼ pressed 31 times from the first cell: the last cell, then each one before it back to the first (▼ retreats and wraps).
 omitted: none
 
 @image 01

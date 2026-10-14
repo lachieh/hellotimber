@@ -3,7 +3,7 @@ id: sms/send-prompt
 status: pending:18
 source: captures/6.39/plan18/sms/send/1-prompt.png + captures/6.39/plan18/sms/send/outbox-after.png
 source-sha256: 0fb99c6fbb42273e7b46a969490d668329ee97a4391ff6f135507c11d580fa57
-note: Send's Phone number: with 0412345678 typed; Outbox after the sends: No messages in outbox (sent messages are not kept).
+note: Send's empty Phone number: prompt; the Messages list on Outbox after the sends.
 omitted: none
 
 @image 1-prompt

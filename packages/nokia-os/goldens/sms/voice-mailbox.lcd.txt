@@ -3,7 +3,7 @@ id: sms/voice-mailbox
 status: pending:18
 source: captures/6.39/plan18/sms/voice-mailbox/00.png + captures/6.39/plan18/sms/voice-mailbox/typed.png + captures/6.39/plan18/sms/voice-mailbox/reopened.png
 source-sha256: 039a5019db4548e819d1c36650ee28104ab65aa878cbe0f2e078f1c40d7a984c
-note: Voice mailbox number (2-9): as it opens (the virgin number), digits appended, reopened after the save.
+note: Voice mailbox number (2-9): as it opens (the virgin number), digits appended, reopened after Saved.
 omitted: none
 
 @image 00

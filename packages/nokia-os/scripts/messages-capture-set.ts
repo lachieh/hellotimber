@@ -334,7 +334,7 @@ const SHOTS: readonly ShotsRow[] = [
     id: "sms/send-prompt",
     dir: "sms/send",
     shots: ["1-prompt", "outbox-after"],
-    note: "Send's Phone number: with 0412345678 typed; Outbox after the sends: No messages in outbox (sent messages are not kept).",
+    note: "Send's empty Phone number: prompt; the Messages list on Outbox after the sends.",
   },
   {
     id: "sms/send-by-set-set-2-list",
@@ -351,10 +351,10 @@ const SHOTS: readonly ShotsRow[] = [
       "count-3",
       "indicator-after-c",
       "menu-after-c",
-      "standby-after-menu",
       "standby-down-after-c",
+      "standby-after-menu",
     ],
-    note: "Standby after 1, 2 and 3 arrivals; after C (the envelope stays); Menu then back: no notice; ▼ after C.",
+    note: "Standby after 1, 2 and 3 arrivals; after C on the notice (the envelope stays); Menu after it (Phone book); ▼ after it (No phone numbers); standby after Menu and back (no notice).",
   },
   {
     id: "sms/inbox",
@@ -366,7 +366,7 @@ const SHOTS: readonly ShotsRow[] = [
     id: "sms/inbox-option-typed",
     dir: "sms/inbox/option",
     shots: ["reply-typed", "reply-prompt", "forward-typed"],
-    note: "Reply's empty editor with Hi typed and its Phone number: prompt prefilled with the sender; Forward's editor with the text kept.",
+    note: "Reply's empty editor with A typed; its Send's Phone number: prefilled with the sender; Forward's editor with the text kept and a typed.",
   },
   {
     id: "sms/inbox-view-1",
@@ -422,7 +422,7 @@ const SHOTS: readonly ShotsRow[] = [
     id: "sms/full",
     dir: "sms/full",
     shots: ["inbox-10", "outbox-5", "after-16"],
-    note: "Ten incoming and five saved messages (15 slots); standby after a sixteenth arrival.",
+    note: "The Inbox list of ten incoming and the Outbox list of five saved messages (15 slots); a sixteenth arrival: No space for new messages.",
   },
   {
     id: "sms/persist",
@@ -451,8 +451,8 @@ const SHOTS: readonly ShotsRow[] = [
   {
     id: "sms/time-format",
     dir: "sms/time-format",
-    shots: ["standby", "list", "view-1", "view-2", "view-3"],
-    note: "Time format 12-hour: standby, the Inbox list, the message's text, Sender and Sent pages (Sent stays 24-hour).",
+    shots: ["list", "standby", "view-1", "view-2", "view-3"],
+    note: "Clock › Time format's list, 12-hour chosen; standby; then a message's Sender page, its Sent page (still 24-hour) and its text (Twelve hour).",
   },
   {
     id: "sms/elsewhere",
@@ -463,20 +463,20 @@ const SHOTS: readonly ShotsRow[] = [
   {
     id: "sms/centre-1",
     dir: "sms/centre-1",
-    shots: ["00", "typed-1", "typed", "cleared", "reopened"],
-    note: "Set 1's Message centre number (2-7-1-1): as it opens, a digit typed, a number typed, cleared, reopened after the save.",
+    shots: ["00", "typed-1", "cleared", "typed", "reopened"],
+    note: "Set 1's Message centre number (2-7-1-1): as it opens (the SIM's +1234567890), a digit appended, cleared (Search), 0419000000 typed, reopened after the save.",
   },
   {
     id: "sms/centre-2",
     dir: "sms/centre-2",
-    shots: ["00", "typed-1", "typed", "cleared", "reopened"],
-    note: "Set 2's Message centre number (2-7-2-1): as it opens, a digit typed, a number typed, cleared, reopened after the save.",
+    shots: ["00", "typed-1", "cleared", "typed", "reopened"],
+    note: "Set 2's Message centre number (2-7-2-1): as it opens, a digit typed, cleared, a number typed, reopened after the save.",
   },
   {
     id: "sms/voice-mailbox",
     dir: "sms/voice-mailbox",
     shots: ["00", "typed", "reopened"],
-    note: "Voice mailbox number (2-9): as it opens (the virgin number), digits appended, reopened after the save.",
+    note: "Voice mailbox number (2-9): as it opens (the virgin number), digits appended, reopened after Saved.",
   },
 ];
 
@@ -528,14 +528,14 @@ const SCROLLS: readonly ScrollRow[] = [
   {
     id: "text/symbols-down",
     dir: "text/symbols/down",
-    note: "▼ pressed 31 times in the symbol table: every cell, then the first again (▼ advances).",
+    note: "▼ pressed 31 times from the first cell: the last cell, then each one before it back to the first (▼ retreats and wraps).",
   },
   {
     id: "text/symbols-up",
     dir: "text/symbols/up",
     keep: 1,
     omittedReason: "the cells of text/symbols-down in reverse order: identical pixels as verified",
-    note: "▲ in the symbol table from the first cell: the last cell (▲ retreats and wraps).",
+    note: "▲ from the first cell: the second (▲ advances); the next 30 are text/symbols-down's cells in reverse order.",
   },
   {
     id: "text/wrap-spaces",
@@ -693,7 +693,7 @@ const RECORDINGS: readonly RecordingRow[] = [
   {
     id: "text/symbols-use-middle",
     dir: "text/symbols/use-middle",
-    note: "Use on a middle cell.",
+    note: "Use on cell 16 (@, 15 ▼ from the first).",
   },
   {
     id: "text/symbols-use-last",
