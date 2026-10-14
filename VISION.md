@@ -78,14 +78,27 @@ are independent and reusable; **only `website/` composes them**.
                           ▼           ▼           ▼           ▼
                    phone-core   phone-screen   phone-3d     snake
                    (firmware)   (rasterizer)   (R3F model)  (game logic)
+                      ▲  ▲          ▲
+                      │  └──────────┤ (type-only)
+                      │             │
+                   ┌──┴─────────────┴──┐
+                   │ nokia-os          │  stock v6.39 firmware + its pixels
+                   │ (not consumed by  │  (menu, placeholders, painter, goldens,
+                   │  the website yet) │   standalone demo)
+                   └───────────────────┘
 ```
 
-| Package                     | Responsibility                                                                                                                                          | Dependencies                                                       |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_ | none                                                               |
-| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                            | `phone-core` (type-only)                                           |
-| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                              | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
-| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                | none                                                               |
+| Package                     | Responsibility                                                                                                                                                                                                  | Dependencies                                                       |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                         | none                                                               |
+| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                    | `phone-core` (type-only)                                           |
+| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                      | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
+| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                        | none                                                               |
+| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
+
+The website does **not** consume `@hellotimber/nokia-os` yet (plan 13). How portfolio content
+integrates with the stock OS is decided later. Until then the website keeps phone-screen's own
+layout; phone-screen's painter seam lets a host swap in `paintStockScreen`.
 
 The Nokia content graph is website-owned (`website/src/content/menu.ts`) and is composed as
 one `PhoneMenu<WebMetadata>` object graph. `phone-core` owns only the generic immutable menu
@@ -146,8 +159,10 @@ export interface Bitmap {
 export interface MenuIndicator {
   /** One-based MenuOrder values from the root to the screen being displayed. */
   segments: readonly number[];
-  /** True while another 1-9 shortcut digit is being accepted. */
+  /** True while another 1-9 shortcut digit is being accepted (after at least one digit). */
   awaitingNext: boolean;
+  /** Present only while the shortcut window is open and no digit has been accepted. */
+  awaitingFirst?: true;
 }
 
 export interface StandbyIndicators {
@@ -173,6 +188,7 @@ export type ScreenModel =
       menuNumber: number;
       total: number;
       iconId: string;
+      iconFrame?: number; // present iff the slot's graphic has a timeline
       menuIndicator: MenuIndicator;
     }
   | {
@@ -182,6 +198,8 @@ export type ScreenModel =
       selected: number;
       softkey: string;
       menuIndicator?: MenuIndicator;
+      presentation?: "pages"; // present only for pages; absent = rows
+      detail?: string; // selected child's current value, when the submenu's reader returns one
     }
   | {
       kind: "reader";
@@ -200,6 +218,7 @@ export type ScreenModel =
     }
   | { kind: "confirm"; text: string; softkey: string }
   | { kind: "custom"; appId: string; frame: Bitmap }; // games draw raw pixels
+// boot: unchanged shape; with PhoneConfig.bootTimeline, phase is "hands" and frame = timeline frame
 
 export class MenuSlug {
   readonly value: string;
@@ -212,9 +231,32 @@ export class MenuOrder {
   constructor(value: number); // positive integer, one-based
 }
 
+export interface TimelineStep {
+  frame: number; // non-negative integer; host-defined frame index
+  durationMs: number; // positive integer
+}
+
+export class Timeline {
+  constructor(steps: readonly TimelineStep[], options?: { loopFrom?: number });
+  readonly steps: readonly TimelineStep[];
+  /** One pass, in ms; Infinity when `loopFrom` is set. */
+  readonly durationMs: number;
+  /** Visible frame `elapsedMs` after start. Holds the last step unless looping. */
+  frameAt(elapsedMs: number): number;
+}
+
 export class MenuGraphic {
+  constructor(id: string, timeline?: Timeline); // non-empty identifier; renderer registry key
   readonly id: string;
-  constructor(id: string); // non-empty identifier; renderer registry key
+  readonly timeline: Timeline | undefined;
+}
+
+export type MenuPresentation = "rows" | "pages";
+
+export interface SubmenuOptions<Metadata = unknown> {
+  presentation?: MenuPresentation; // default "rows"
+  /** Current-value text for a child (e.g. "Off"); undefined = none. Opaque host function. */
+  detail?: (child: MenuEntry<Metadata>) => string | undefined;
 }
 
 export abstract class MenuEntry<Metadata = unknown> {
@@ -227,7 +269,16 @@ export abstract class MenuEntry<Metadata = unknown> {
 }
 
 export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
+  constructor(
+    slug: MenuSlug,
+    order: MenuOrder,
+    label: string,
+    children: MenuLevel<Metadata>,
+    metadata?: Metadata,
+    options?: SubmenuOptions<Metadata>,
+  );
   readonly children: MenuLevel<Metadata>;
+  readonly presentation: MenuPresentation;
 }
 
 export class ListEntry<Metadata = unknown> extends MenuEntry<Metadata> {
@@ -314,9 +365,13 @@ export interface PhoneApplicationSession {
 
 export interface PhoneConfig<Metadata = unknown> {
   menu: PhoneMenu<Metadata>;
-  carrier?: string; // standby line, default 'LACHLAN'
-  clock?: () => string | undefined; // host supplies time; phone shows it
-  bootMs?: number; // 0 to skip boot in tests
+  carrier?: string; // standby line, default "" (was "LACHLAN"; the website passes its own)
+  clock?: () => string | undefined; // host supplies time; re-read on each tick
+  bootMs?: number; // 0 skips boot; otherwise defaults to bootTimeline?.durationMs ?? 3000
+  /** Finite boot animation; when set, boot length = its durationMs. */
+  bootTimeline?: Timeline;
+  /** Paths opened by ▲/▼ in standby; unknown/absent = no-op. */
+  standbyKeys?: { up?: string; down?: string };
 }
 
 export interface PhoneSnapshot {
@@ -355,6 +410,27 @@ number, shortcuts, traversal, and parent-selection restoration. `MenuLevel` defe
 copies and canonically sorts entries. Construction rejects invalid or duplicate sibling
 slugs/orders, non-contiguous order, empty labels/graphics, cycles, reused semantic entries,
 invalid list item IDs, and application entries without a definition.
+
+**Timelines (plan 13).** `Timeline` steps must be non-empty, each `frame` a non-negative
+integer and each `durationMs` a positive integer; `loopFrom` must be in range. Timelines hold
+no pixels: the kernel resolves _which_ frame is visible and the painter maps graphic id + frame
+to pixels. A carousel slot whose `MenuGraphic` has a timeline exposes `iconFrame`; the machine
+restarts that timeline when the menu is entered, when ▲/▼ changes the slot, when C returns to
+the carousel and when `navigate("menu")` lands on it, and it emits a snapshot only when the
+visible frame index changes (a settled timeline stops producing snapshots). `bootTimeline` must
+be finite; combining it with a `bootMs` other than 0 or its duration throws.
+
+**Presentation and details (plan 13).** How a submenu level is drawn is a menu-model fact:
+`SubmenuEntry.presentation` is `"rows"` (default) or `"pages"` (one item per screen), and reaches
+the painter as `list.presentation` (emitted only for pages). A submenu's `detail` reader returns
+the _selected_ child's current-value text; `list.detail` is emitted only when it returns a
+string. Host strings shown on screen (the standby clock and `detail`) are re-read on each tick
+and mark the model dirty only when they change.
+
+**Kernel policy (plan 13).** phone-core keeps no Nokia or website policy for standby ▲/▼
+(`standbyKeys`, no default) or the operator line (`carrier`, default `""`). It keeps the 800 ms
+long press, the 3000 ms shortcut window, full signal and battery, the softkey strings and the
+`App error` reader, because the stock firmware uses identical values.
 
 Digit shortcuts preserve the current one-digit-per-level behavior: orders 1-9 are direct
 targets, while orders 10-13 remain visible and traversable but are not direct digit targets.
@@ -400,14 +476,58 @@ export interface ScreenRenderer {
   render(screen: ScreenModel): void; // draw + bump version when output changes
   readonly version: number; // increments on visible change
 }
-export function createScreenRenderer(opts?: {
+/** Paints one ScreenModel into the 84×48 framebuffer. The default is the legacy renderScreen. */
+export type ScreenPainter = (fb: Framebuffer, screen: ScreenModel) => void;
+
+export type ScreenRendererOptions = {
   scale?: number; // default 1: native 84×48 — three.js NearestFilter and CSS
   // image-rendering:pixelated handle upscaling crisply
   fg?: string;
   bg?: string; // default classic green LCD palette
-  welcomeText?: string; // shown during the boot "welcome" phase (the ScreenModel carries no text)
-}): ScreenRenderer;
+} & (
+  | { paint?: undefined; welcomeText?: string } // legacy painter (default, unchanged);
+  // welcomeText is shown during the boot "welcome" phase (the ScreenModel carries no text)
+  | { paint: ScreenPainter; welcomeText?: never }
+);
+export function createScreenRenderer(opts?: ScreenRendererOptions): ScreenRenderer;
 ```
+
+The painter seam is additive: without `paint`, output is byte-identical to the legacy renderer.
+New optional ScreenModel fields (`iconFrame`, `presentation`, `detail`, `awaitingFirst`) are
+ignored by the legacy painter.
+
+### `@hellotimber/nokia-os`
+
+```ts
+import type { Phone, PhoneMenu } from "@hellotimber/phone-core";
+import type { ScreenPainter } from "@hellotimber/phone-screen";
+
+export interface StockPhoneConfig {
+  /** Operator line. Every glyph must exist in the stock small font (validated; throws). */
+  carrier: string;
+  /** "HH:MM" for standby and Clock → Clock settings; undefined hides the standby clock. */
+  clock?: () => string | undefined;
+  /** Date text for Clock → Date setting, in the firmware's format as captured. */
+  date?: () => string | undefined;
+  /** Default "animated". "skip" = bootMs 0 (tests, reduced motion). */
+  boot?: "animated" | "skip";
+}
+
+export function createStockPhone(config: StockPhoneConfig): Phone;
+export const paintStockScreen: ScreenPainter;
+export const stockMenu: PhoneMenu; // 12 top-level entries, level-1 children, placeholders below
+/** Characters of `text` missing from a stock font; [] when renderable. */
+export function missingStockGlyphs(
+  text: string,
+  font: "small" | "large" | "digits" | "thin",
+): string[];
+```
+
+nokia-os owns the stock firmware _and its pixels_: it paints with phone-screen's `Framebuffer`,
+`bitmapFromArt` and `createPixelFont`, and its fonts, icons, boot frames and status art are
+generated from committed LCD golden fixtures (`packages/nokia-os/goldens/`) that an importer
+derives from emulator captures of the real v6.39 firmware. Nothing from the capture corpus is
+committed except those golden text grids. See `docs/plans/13-nokia-os-foundation.md`.
 
 ### `@hellotimber/phone-3d`
 

@@ -30,6 +30,11 @@ Sources: [Wikipedia](https://en.wikipedia.org/wiki/Nokia_3310), manual "Your pho
 Sources: [Wikipedia](https://en.wikipedia.org/wiki/Nokia_3310) (84×48), manual "Display indicators" ([p.20](https://www.manualslib.com/manual/112008/Nokia-3310.html?page=20)), [helpdoc standby page](https://nokia-3310.helpdoc.net/en/1-your-phone/display-indicators/standby-mode/).
 
 - **Resolution: 84 × 48 px, monochrome — VERIFIED** (Wikipedia: 1.5″, 64 ppi, "5 lines"). Black pixels on green backlit background (backlight green; see §9).
+
+  > **Website-only geometry.** The zone and font geometry below (plan 12) was reconstructed
+  > from perspective photographs and describes the _website's_ phone-screen layout. The stock
+  > firmware's measured geometry is in §10, which takes precedence for `@hellotimber/nokia-os`.
+
 - **Zones:**
   - **Left edge:** signal-strength indicator — antenna glyph below four tapered horizontal bars; "the higher the bar, the stronger the signal" (manual, verified; geometry reconstructed from `docs/todos-assets/home-screen-reference.png`). Bars are six pixels high with two-pixel gaps, left-aligned, and widths `2, 2, 3, 4` from bottom to top.
   - **Right edge:** battery indicator — battery glyph below a mirrored four-bar stack; "the higher the bar, the more power left" (manual, verified; geometry reconstructed from the same photograph). Bars are six pixels high with two-pixel gaps, right-aligned, and widths `2, 2, 3, 4` from bottom to top.
@@ -74,6 +79,12 @@ Exactly four elements (manual, verbatim list):
 ---
 
 ## 5. Complete main menu tree (names and order from the user guide)
+
+> **Manual-sourced history.** This section records the user guide (doc 9357246) wording and
+> the plan 12 photographic list geometry, which the website still follows. The firmware itself
+> (v6.39, PPM E) has 12 top-level entries (no SIM services with the emulator SIM) and different
+> wording in places. See §10 for v6.39 level 0-1 ground truth and
+> `docs/specs/nokia-3310-menu-tree.md` for deeper levels.
 
 Source: "List of menu functions", manual p.41–43 ([p.41](https://www.manualslib.com/manual/112008/Nokia-3310.html?page=41), [p.42](https://www.manualslib.com/manual/112008/Nokia-3310.html?page=42), [p.43](https://www.manualslib.com/manual/112008/Nokia-3310.html?page=43)) cross-checked against the [helpdoc section list](https://nokia-3310.helpdoc.net/en/). All items below are **VERIFIED** against the manual unless noted.
 
@@ -173,6 +184,96 @@ Sources as cited inline.
 - **Welcome note** text on boot (verified), **Chat** as a headline feature (verified), **160-char SMS with countdown counter**, long-SMS chaining up to 459 chars (3 × 153) — Wikipedia, secondary-verified.
 - Battery: BMC-3 NiMH 900 mAh, talk 2.5–4.5 h, standby up to ~260 h (mobile-review/Wikipedia) — useful for replica battery-drain pacing.
 - **Xpress-on covers** — replica theming hook (verified).
+
+---
+
+## 10. Firmware ground truth (v6.39 captures)
+
+Source: pixel-exact LCD captures of the real v6.39 firmware (PPM E, English) running in the
+djr-747 DCT3 emulator (`nokia-3310/captures/6.39` in the main checkout, gitignored), reproduced
+in-repo as golden text grids under `packages/nokia-os/goldens/`. The goldens are authoritative;
+where this section and a golden disagree, fix this section. Plan 13 has the full tables.
+
+**Main menu (12 entries, carousel order):** Phone book, Messages, Chat, Call register, Tones,
+Settings, Call divert, Games, Calculator, Reminders, Clock, Profiles. Each carousel slot has an
+animated icon. Every icon animation **settles** (none loops) and restarts from its first frame
+when the slot becomes visible: on Menu, on ▲/▼, and on C back from a submenu (probes
+`menu-anim-long/90-revisit`, `91-return`). All icons except Settings end on their first frame;
+Settings plays once and holds its last frame. Firmware frame counts: Tones 17, Calculator 13,
+Reminders 14.
+
+**Level-1 labels (v6.39 wording; `/` = firmware line break on pages):**
+
+| #   | Entry         | Presentation | Level-1 items                                                                                                                                                       |
+| --- | ------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Phone book    | rows         | Search, Service Nos., Add name, Erase, Edit, Assign tone, Send b'card, Options, Speed dials, Voice tags                                                             |
+| 2   | Messages      | pages        | Write/messages, Inbox, Outbox, Picture/messages, Templates, Smileys, Message/settings (verify), Info/service, Voice/mailbox/number (verify), Service/command/editor |
+| 3   | Chat          | application  | (chat flow)                                                                                                                                                         |
+| 4   | Call register | pages        | Missed/calls, Received/calls, Dialled/numbers, Erase recent call/lists, Show call/duration, Show call/costs, Call cost/settings (verify), Prepaid credit            |
+| 5   | Tones         | pages        | Ringing/tone, Ringing/volume, Incoming/call alert, Composer, Message/alert tone, Keypad/tones, Warning and game tones (verify), Vibrating/alert, Screen saver       |
+| 6   | Settings      | pages        | Call/settings, Phone/settings, Security/settings, Restore/factory/settings                                                                                          |
+| 7   | Call divert   | pages        | Divert all/voice calls/without ringing, Divert when/busy, Divert if not/answered, Divert if out/of reach/… (third line: verify), Cancel all/diverts                 |
+| 8   | Games         | rows         | Snake II, Space Impact, Bantumi, Pairs II, Settings                                                                                                                 |
+| 9   | Calculator    | application  | (calculator)                                                                                                                                                        |
+| 10  | Reminders     | rows         | Add new, View all, Erase                                                                                                                                            |
+| 11  | Clock         | pages        | Alarm/clock, Clock/settings, Date setting, Stopwatch, Countdown/timer, Auto update of/date and time (verify)                                                        |
+| 12  | Profiles      | rows         | General, Silent, Discreet, Loud, (empty), slot 6 (UNVERIFIED label; see artefacts)                                                                                  |
+
+Labels marked "verify" take their exact line breaks from the goldens. There is no auto-wrap:
+firmware text carries explicit breaks (`Show call` / `duration`).
+
+**Two submenu presentations.**
+
+- _Rows_ (Phone book and application lists: Games, Reminders, Profiles): three rows; the selected
+  row is an inverted band x 0..77, y `7+10r`..`16+10r`; text at x 2, top y `8+10r`; window
+  `max(0, selected-2)`, so the selection stays on the bottom row once scrolled.
+- _Pages_ (native menus: Messages, Call register, Tones, Settings, Call divert, Clock): one item per
+  screen; label lines from x 0 at tops y 7/16/25; the current value (e.g. `Off`, `Level 1`) in a
+  thin 1-px-stem font right-aligned to x 76, top y 29.
+
+**Rail:** x 81, y 7..36. Bump top `b = 7 + floor(i*23/(n-1))`: pixels (81..82, b), (83, b+1..b+5),
+(81..82, b+6); x 81 is absent at b+1..b+5.
+
+**Indicator:** `digits` font (6 rows), right edge x 81 (`1`) / 82 (`2`); levels joined by a 2-px
+`-` (e.g. `1-1`, `11-1`). While the first shortcut digit is awaited the indicator is three 1-px
+dots at y 5, x 78/80/82; after 3 s (2985 ms from the key in the capture) it becomes the number.
+What is shown after a typed digit is UNVERIFIED (plan 13 renders the resolved segments without a
+cursor).
+
+**Fonts:** four faces: `small` (labels, operator, softkeys; 2-px stems, 7-row capitals plus
+descenders), `large` (carousel title, 11-row capitals), `digits` (indicator and standby clock),
+`thin` (page values).
+
+**Standby:** signal bars at x 0, rows 0-6 (w4), 8-14 (w3), 16-22 (w2), 24-29 (w2); antenna icon at
+(0,31); battery mirrored, icon 4×6 at (80,31); operator centred, top y 8; clock right edge ≈ x 76,
+y 0; `Menu` centred, top y 40 (descenders reach y 47). Standby does not blink or change over 10 s.
+
+**Carousel:** title in `large`, centred near x 37.5, top y 7; icon within x 10..63, y 23..36; rail;
+indicator top-right; `Select` centred at y 40. Entering the menu from standby draws a 39 ms
+transient (standby with the bars erased) before the carousel.
+
+**Boot:** LCD self-test (blank with LED off, all-on, blank, battery ladder), then the 7-frame
+connecting-hands animation, the last frame held about 4.2 s, then standby. The captured power-on
+passes through a security-code prompt and a clock wizard between the two; both are virgin-EEPROM
+effects. A clean boot could not be captured (the in-menu security-code check rejects the code, so
+Phone security cannot be turned off), so the self-test + hands composition is UNVERIFIED as one
+continuous sequence.
+
+**Capture artefacts (never reproduced as behaviour):**
+
+| Artefact                                                | Cause                          | Handling                                            |
+| ------------------------------------------------------- | ------------------------------ | --------------------------------------------------- |
+| Operator `Orange F`                                     | emulator synthetic PLMN 208-01 | host `carrier`; used only as a test input           |
+| Clock frozen at `10:10`                                 | emulator RTC                   | host `clock()`; used only as a test input           |
+| Date on Clock → Date setting                            | date typed during setup        | host `date()`                                       |
+| Security-code prompt, `Code accepted`, time/date wizard | virgin EEPROM                  | not reproduced                                      |
+| First standby `Snooze` prompt and `0000000000`          | virgin EEPROM alarm state      | not imported                                        |
+| Profiles slot 6 (two boxes)                             | uninitialised EEPROM name      | slot exists (it changes the rail); label UNVERIFIED |
+| Page values (`Level 1`, `No tone`, `Off`, ...)          | virgin-EEPROM settings         | static snapshot until the storage plan              |
+| Snake II speed                                          | emulator/EEPROM                | out of scope                                        |
+
+Factory restore could not be captured either (`Code error` for `12345`), so the page values and
+Profiles slot 6 above remain virgin-EEPROM values.
 
 ---
 

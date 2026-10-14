@@ -9,7 +9,7 @@
 reproduced in-repo as committed golden fixtures (`packages/nokia-os/goldens/`). Read
 `$REF/captures/README.md` before touching captures. Deeper menu levels come from
 `docs/specs/nokia-3310-menu-tree.md` (produced by a concurrent crawl). This plan does not need that spec.
-**Status:** not started.
+**Status:** in progress.
 
 ## Goal
 
@@ -557,55 +557,75 @@ the real name and redial lists.
 `captures/6.39/menu-anim-long/**`, optionally `captures/6.39/boot-clean/**`, an appended section in
 `captures/README.md`, and a scratch flash image under `firmware/work/`.
 
-- [ ] Read `$REF/captures/README.md`. Build the harness if `cap` asks for it. Do not modify the
+- [x] Read `$REF/captures/README.md`. Build the harness if `cap` asks for it. Do not modify the
       emulator, existing captures or `v639-all.cap`. The concurrent crawl may be using the
       harness, so write only the new paths above.
-- [ ] Write `v639-plan13.cap`: `include v639-setup.inc`, then `key c` and `run 2s` to clear the
+- [x] Write `v639-plan13.cap`: `include v639-setup.inc`, then `key c` and `run 2s` to clear the
       first-standby prompt, then:
   - `record menu-anim-long/01-phone-book start`, `key menu`, `run 10s`, `record stop`;
   - for items 2-12: `record menu-anim-long/NN-<slug> start`, `key down`, `run 10s`, `record stop`;
   - `90-revisit`: `record ... start`, `key up`, `run 6s`, `record stop` (12 → 11: does the icon restart?);
   - `91-return`: `record ... start`, `key menu`, `run 1500ms`, `key c`, `run 6s`, `record stop`
     (does the icon restart after returning from a submenu?).
-- [ ] Clean boot, time-boxed to one attempt. Find the setting that removes the boot
+- [x] Clean boot, time-boxed to one attempt. Find the setting that removes the boot
       security-code prompt (Settings → Security settings; use `docs/specs/nokia-3310-menu-tree.md`
       if it exists). Then `saveflash firmware/work/v639-clean.fls`, `reboot` from it, and record to
       `boot-clean/power-on` for 20 s. If the prompt cannot be removed, write
       `boot-clean/NOT-ACHIEVED.md` describing what was tried, and use the D12 fallback.
-- [ ] Factory defaults: after the clean-boot step, run Settings → Restore factory settings
+- [x] Factory defaults: after the clean-boot step, run Settings → Restore factory settings
       (security code `12345`), `saveflash firmware/work/v639-factory.fls`, then re-record every
       level-1 list into `factory-sub/NN-<slug>/` (same scroll order as `menu/NN-<slug>/sub`).
       These replace the virgin-EEPROM page values and the Profiles slot-6 artefact as asserted
       goldens (see Open questions 2-3). If restore is unavailable or changes nothing, note it in
       the README section and keep the original `sub` captures.
-- [ ] Run the script with `tools/harness/cap firmware/raw/6.39/combined/3310_v639_ppm_E_virgin_eeprom_2MiB.fls captures/scripts/v639-plan13.cap captures/6.39`.
-- [ ] Check: each `menu-anim-long/NN-*/timings.csv` has frame 0 = the previous screen and
+- [x] Run the script with `tools/harness/cap firmware/raw/6.39/combined/3310_v639_ppm_E_virgin_eeprom_2MiB.fls captures/scripts/v639-plan13.cap captures/6.39`.
+- [x] Check: each `menu-anim-long/NN-*/timings.csv` has frame 0 = the previous screen and
       frame 1 = the new screen. Each recording either settles (last row is a lower bound
       ≥ 1 s) or visibly loops. Record which in the README section.
-- [ ] Append a "Plan 13 supplementary captures" section to `$REF/captures/README.md`.
-- [ ] No commit. Report: icons that settle vs loop, restart behaviour from the probes, and the
+- [x] Append a "Plan 13 supplementary captures" section to `$REF/captures/README.md`.
+- [x] No commit. Report: icons that settle vs loop, restart behaviour from the probes, and the
       clean-boot outcome.
+
+**Task 0 outcome (2026-10-13).** Script `captures/scripts/v639-plan13.cap`; details in the
+"Plan 13 supplementary captures" section of `$REF/captures/README.md`.
+
+- All 12 icons **settle** (each recording ends on a held frame ≥ 3.5 s); none loops. All end on
+  their first frame except Settings, which plays 8 frames once and holds the last. Distinct icon
+  frames: Phone book 4, Messages 14, Chat 12, Call register 12, Tones 17, Settings 8, Call divert
+  11, Games 4, Calculator 13, Reminders 14, Clock 8, Profiles 4.
+- Probes: the icon **restarts** from its first frame on ▲ (`90-revisit`) and on C back from a
+  submenu (`91-return`). The restart rule in "Contract changes" stands. The Clock's first step
+  lasted 1400 ms after ▼ but 1385 ms after ▲ or C (15 ms, beyond the ±2 ms tolerance).
+- `01-phone-book`: frame 1 is a 39 ms transient (standby with the bars erased); the carousel
+  with the first-digit dots is frame 2 (76 ms); the dots become `1` at 2985 ms.
+- `04-call-register` frame 3 is held only 15 ms (real firmware output).
+- Clean boot: **not achieved** (`$REF/captures/6.39/boot-clean/NOT-ACHIEVED.md`). Phone security
+  is On in the virgin EEPROM, and the in-menu security-code check answers `Code error` to
+  `12345` although the power-on gate accepts it. The D12 fallback applies.
+- Factory restore: **not available** for the same reason (`Code error`). No `factory-sub/`; the
+  original `menu/*/sub` captures stay the asserted page goldens (virgin-EEPROM values) and
+  Profiles slot 6 stays UNVERIFIED (Open questions 2-3 resolve to their fallbacks).
 
 ### Task 1 - Contracts and documentation
 
 **Files:** `VISION.md`, `AGENTS.md`, `docs/plans/README.md`, `docs/specs/nokia-3310.md`, this plan.
 
-- [ ] VISION: add the `@hellotimber/nokia-os` row to the package table and architecture diagram,
+- [x] VISION: add the `@hellotimber/nokia-os` row to the package table and architecture diagram,
       the phone-core additions, the `ScreenPainter` option, and the nokia-os contract,
       all exactly as in "Contract changes". State that the website does not consume nokia-os yet.
-- [ ] AGENTS.md: add `nokia-os/` to the workspace layout. Add `nokia-os ──▶ phone-core,
-  phone-screen` to the allowed directions. Clarify rule 3 (declared dependencies). Add the
+- [x] AGENTS.md: add `nokia-os/` to the workspace layout. Add `nokia-os ──▶ phone-core,
+phone-screen` to the allowed directions. Clarify rule 3 (declared dependencies). Add the
       golden workflow: REF is never committed, and `import-captures` / `extract-resources`
       regenerate `goldens/` and `src/resources/generated/`.
-- [ ] Spec: add "§10 Firmware ground truth (v6.39 captures)". It covers the two submenu
+- [x] Spec: add "§10 Firmware ground truth (v6.39 captures)". It covers the two submenu
       presentations, the rail and indicator geometry, first-digit dots, firmware line breaks,
       the 12-entry main menu, v6.39 level-1 labels, the boot self-test, and the artefact table.
       Mark plan 12's photographic geometry as _website-only_. Keep §5 as manual-sourced history
       and point to §10 and `nokia-3310-menu-tree.md`.
-- [ ] Plans README: add row 13 (`not started` → `in progress`), with dependencies `01-12`.
-- [ ] No runtime code.
-- [ ] `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define nokia-os package and stock firmware contracts (plan 13)`.
+- [x] Plans README: add row 13 (`not started` → `in progress`), with dependencies `01-12`.
+- [x] No runtime code.
+- [x] `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define nokia-os package and stock firmware contracts (plan 13)`.
 
 ### Task 2 - Scaffold `@hellotimber/nokia-os`, golden format and diff helpers (TDD)
 

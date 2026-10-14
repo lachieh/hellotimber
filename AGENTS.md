@@ -53,6 +53,7 @@ packages/
   phone-screen/     @hellotimber/phone-screen — ScreenModel → 84×48 pixels on a 2D canvas
   phone-3d/         @hellotimber/phone-3d     — R3F <Nokia3310/> 3D model (body, keys, screen mesh)
   snake/            @hellotimber/snake        — Snake II game logic (pure TS)
+  nokia-os/         @hellotimber/nokia-os     — stock v6.39 firmware + its pixels (menu, painter, goldens, demo)
 docs/plans/         numbered implementation plans (the source of truth for tasks)
 ```
 
@@ -69,7 +70,8 @@ use `"catalog:"` specifiers where a catalog entry exists.
 2. **Allowed internal dependency direction** (type-level or runtime):
 
    ```
-   website ──▶ phone-core, phone-screen, phone-3d, snake
+   website ──▶ phone-core, phone-screen, phone-3d, snake   (not nokia-os yet)
+   nokia-os ──▶ phone-core, phone-screen   (runtime: kernel/menu model/Timeline; LCD toolkit)
    phone-screen ──▶ phone-core (type-only imports of ScreenModel — no runtime dep)
    snake, phone-3d ──▶ (no internal deps)
    ```
@@ -78,8 +80,9 @@ use `"catalog:"` specifiers where a catalog entry exists.
    `HTMLCanvasElement` for the screen texture and reports key presses via callback —
    it never imports phone-core.
 
-3. **Every package must work standalone**: its tests pass with no sibling packages
-   present, and its README shows usage outside this repo.
+3. **Every package must work standalone**: its tests pass with only the package's
+   _declared_ dependencies present (no undeclared siblings), and its README shows usage
+   outside this repo.
 4. **React/three are peer dependencies** in packages that need them (plus
    devDependencies for local dev/tests). Never put `three` in `dependencies` —
    duplicate three instances break `instanceof` checks at runtime.
@@ -113,6 +116,19 @@ use `"catalog:"` specifiers where a catalog entry exists.
 5. `mise exec -- vp install` from the repo root to link it into the workspace.
 
 The consuming side declares `"@hellotimber/<name>": "workspace:*"`.
+
+## Stock firmware goldens (nokia-os)
+
+`packages/nokia-os` is checked pixel-for-pixel against emulator captures of the real
+v6.39 firmware. The capture corpus (`nokia-3310/` in the main checkout, called `$REF` in
+plan 13) is gitignored and **never committed**; nothing from `$REF/extracted` is ever copied.
+
+- `vp run @hellotimber/nokia-os#import-captures <REF>` turns captures into committed text-grid
+  fixtures under `packages/nokia-os/goldens/` plus `goldens/index.json`.
+- `vp run @hellotimber/nokia-os#extract-resources` regenerates `src/resources/generated/`
+  (fonts, icons, boot frames, status art) from those goldens.
+- Never hand-edit `goldens/**` or `src/resources/generated/**`: change the importer, its
+  capture-set table or the extractor inputs and regenerate. Tests never read `$REF`.
 
 ## Testing conventions
 
