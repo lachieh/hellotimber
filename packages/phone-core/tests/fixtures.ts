@@ -1,125 +1,176 @@
-import { createPhone } from "../src/index";
+import {
+  ActionEntry,
+  ApplicationEntry,
+  createPhone,
+  ListEntry,
+  MenuGraphic,
+  MenuLevel,
+  MenuOrder,
+  MenuSlug,
+  PhoneApplication,
+  PhoneMenu,
+  ReaderEntry,
+  StaticMenuListSource,
+  SubmenuEntry,
+  TopLevelEntry,
+} from "../src/index";
 import type {
-  AppFactory,
+  ApplicationContext,
+  DeactivationReason,
   KeyEvent,
-  MenuNode,
   Phone,
-  PhoneApp,
+  PhoneApplicationSession,
   PhoneConfig,
   ScreenModel,
 } from "../src/index";
 
-/** Small but representative tree: submenus, lists, a reader, an app node, an action node. */
-export function testMenu(): MenuNode[] {
-  return [
-    {
-      type: "submenu",
-      id: "phone-book",
-      label: "Phone book",
-      children: [
-        {
-          type: "list",
-          id: "search",
-          label: "Search",
-          items: [
-            {
-              id: "alice",
-              label: "Alice",
-              body: "Alice's card. Email alice@example.com. Likes long walks through menu trees.",
-            },
-            { id: "bob", label: "Bob", body: "Bob's card." },
-          ],
-        },
-        {
-          type: "reader",
-          id: "memory-status",
-          label: "Memory status",
-          body: "SIM memory 2/2 used.",
-        },
-      ],
-    },
-    {
-      type: "submenu",
-      id: "messages",
-      label: "Messages",
-      children: [
-        { type: "app", id: "write", label: "Write messages", appId: "write-message" },
-        {
-          type: "list",
-          id: "inbox",
-          label: "Inbox",
-          items: [{ id: "hello", label: "Hello", body: "First message." }],
-        },
-      ],
-    },
-    { type: "reader", id: "chat", label: "Chat", body: "> hi\n< hello" },
-    {
-      type: "submenu",
-      id: "call-register",
-      label: "Call register",
-      children: [
-        {
-          type: "list",
-          id: "dialled-numbers",
-          label: "Dialled numbers",
-          items: [{ id: "proj", label: "Project X", body: "Shipped 2025." }],
-        },
-      ],
-    },
-    {
-      type: "action",
-      id: "github",
-      label: "GitHub",
-      action: { kind: "href", value: "https://github.com/example" },
-    },
-  ];
+const slug = (value: string): MenuSlug => new MenuSlug(value);
+const order = (value: number): MenuOrder => new MenuOrder(value);
+
+class PassiveApplication extends PhoneApplication {
+  createSession(context: ApplicationContext): PhoneApplicationSession {
+    return {
+      onKey(event) {
+        if (event.type === "up" && event.key === "c") context.exit();
+      },
+      tick() {},
+      render: () => ({ kind: "confirm", text: "Write", softkey: "" }),
+    };
+  }
 }
 
-export function testConfig(overrides: Partial<PhoneConfig> = {}): PhoneConfig {
-  return { menu: testMenu(), bootMs: 0, ...overrides };
+/** Small but representative tree: submenus, lists, a reader, an app, and an action. */
+export function testMenu(
+  application: PhoneApplication = new PassiveApplication("write-message"),
+): PhoneMenu {
+  return new PhoneMenu([
+    new TopLevelEntry(
+      new SubmenuEntry(
+        slug("phone-book"),
+        order(1),
+        "Phone book",
+        new MenuLevel([
+          new ListEntry(
+            slug("search"),
+            order(1),
+            "Search",
+            new StaticMenuListSource([
+              {
+                id: "alice",
+                label: "Alice",
+                body: "Alice's card. Email alice@example.com. Likes long walks through menu trees.",
+              },
+              { id: "bob", label: "Bob", body: "Bob's card." },
+            ]),
+          ),
+          new ReaderEntry(slug("memory-status"), order(2), "Memory status", "SIM memory 2/2 used."),
+        ]),
+      ),
+      new MenuGraphic("phone-book"),
+    ),
+    new TopLevelEntry(
+      new SubmenuEntry(
+        slug("messages"),
+        order(2),
+        "Messages",
+        new MenuLevel([
+          new ApplicationEntry(slug("write"), order(1), "Write messages", application),
+          new ListEntry(
+            slug("inbox"),
+            order(2),
+            "Inbox",
+            new StaticMenuListSource([{ id: "hello", label: "Hello", body: "First message." }]),
+          ),
+        ]),
+      ),
+      new MenuGraphic("messages"),
+    ),
+    new TopLevelEntry(
+      new ReaderEntry(slug("chat"), order(3), "Chat", "> hi\n< hello"),
+      new MenuGraphic("chat"),
+    ),
+    new TopLevelEntry(
+      new SubmenuEntry(
+        slug("call-register"),
+        order(4),
+        "Call register",
+        new MenuLevel([
+          new ListEntry(
+            slug("dialled-numbers"),
+            order(1),
+            "Dialled numbers",
+            new StaticMenuListSource([{ id: "proj", label: "Project X", body: "Shipped 2025." }]),
+          ),
+        ]),
+      ),
+      new MenuGraphic("call-register"),
+    ),
+    new TopLevelEntry(
+      new ActionEntry(slug("github"), order(5), "GitHub", {
+        kind: "href",
+        value: "https://github.com/example",
+      }),
+      new MenuGraphic("github"),
+    ),
+  ]);
 }
 
-/** A phone that has been powered on (bootMs 0 → straight to standby). */
-export function bootedPhone(overrides: Partial<PhoneConfig> = {}): Phone {
-  const phone = createPhone(testConfig(overrides));
+export function testConfig(
+  overrides: Partial<PhoneConfig> = {},
+  application?: PhoneApplication,
+): PhoneConfig {
+  return {
+    menu: application === undefined ? testMenu() : testMenu(application),
+    bootMs: 0,
+    ...overrides,
+  };
+}
+
+/** A phone that has been powered on (bootMs 0 -> straight to standby). */
+export function bootedPhone(
+  overrides: Partial<PhoneConfig> = {},
+  application?: PhoneApplication,
+): Phone {
+  const phone = createPhone(testConfig(overrides, application));
   phone.tick(0);
   phone.pressKey("power", 1000);
   return phone;
 }
 
 export interface FakeApp {
-  factory: AppFactory;
+  application: PhoneApplication;
   keys: KeyEvent[];
   ticks: number[];
-  exitCount(): number;
+  deactivations: DeactivationReason[];
 }
 
-/** Records delegated keys/ticks; exits itself when it sees a 'c' key-up. */
+/** Records delegated keys/ticks; exits itself when it sees a C key-up. */
 export function makeFakeApp(appId = "write-message"): FakeApp {
   const keys: KeyEvent[] = [];
   const ticks: number[] = [];
-  let exited = 0;
-  const factory: AppFactory = (ctx) => {
-    const app: PhoneApp = {
-      onKey(e: KeyEvent): void {
-        keys.push(e);
-        if (e.type === "up" && e.key === "c") ctx.exit();
-      },
-      tick(dtMs: number): void {
-        ticks.push(dtMs);
-      },
-      render(): ScreenModel {
-        return {
-          kind: "custom",
-          appId,
-          frame: { width: 84, height: 48, pixels: new Uint8Array(84 * 48) },
-        };
-      },
-      onExit(): void {
-        exited += 1;
-      },
-    };
-    return app;
-  };
-  return { factory, keys, ticks, exitCount: () => exited };
+  const deactivations: DeactivationReason[] = [];
+  class FakeApplication extends PhoneApplication {
+    createSession(context: ApplicationContext): PhoneApplicationSession {
+      return {
+        onKey(event): void {
+          keys.push(event);
+          if (event.type === "up" && event.key === "c") context.exit();
+        },
+        tick(dtMs): void {
+          ticks.push(dtMs);
+        },
+        render(): ScreenModel {
+          return {
+            kind: "custom",
+            appId,
+            frame: { width: 84, height: 48, pixels: new Uint8Array(84 * 48) },
+          };
+        },
+        onDeactivate(reason): void {
+          deactivations.push(reason);
+        },
+      };
+    }
+  }
+  return { application: new FakeApplication(appId), keys, ticks, deactivations };
 }

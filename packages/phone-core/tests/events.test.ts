@@ -77,4 +77,32 @@ describe("actions & events", () => {
     phone.pressKey("navi");
     expect(phone.path).toBe("menu/phone-book"); // machine still consistent
   });
+
+  it("delivers reentrant path changes to listeners in chronological order", () => {
+    const phone = bootedPhone();
+    const seen: string[] = [];
+    phone.on("pathchange", (path) => {
+      seen.push(`first:${path}`);
+      if (path === "menu") phone.navigate("menu/chat");
+    });
+    phone.on("pathchange", (path) => seen.push(`second:${path}`));
+
+    phone.pressKey("navi");
+
+    expect(seen).toEqual(["first:menu", "second:menu", "first:menu/chat", "second:menu/chat"]);
+  });
+
+  it("delivers reentrant snapshots to subscribers in chronological order", () => {
+    const phone = bootedPhone();
+    const seen: string[] = [];
+    phone.subscribe((snapshot) => {
+      seen.push(`first:${snapshot.path}`);
+      if (snapshot.path === "menu") phone.navigate("menu/chat");
+    });
+    phone.subscribe((snapshot) => seen.push(`second:${snapshot.path}`));
+
+    phone.pressKey("navi");
+
+    expect(seen).toEqual(["first:menu", "second:menu", "first:menu/chat", "second:menu/chat"]);
+  });
 });

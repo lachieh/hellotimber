@@ -1,17 +1,39 @@
 export type {
-  AppFactory,
   Bitmap,
   KeyEvent,
+  MenuIndicator,
   MenuListItem,
-  MenuNode,
   Phone,
-  PhoneApp,
   PhoneConfig,
   PhoneEventMap,
   PhoneKey,
   PhoneSnapshot,
   ScreenModel,
+  StandbyIndicators,
 } from "./types";
+export { PhoneApplication } from "./application";
+export type {
+  ApplicationContext,
+  DeactivationReason,
+  PhoneApplicationSession,
+} from "./application";
+export {
+  ActionEntry,
+  ApplicationEntry,
+  DynamicMenuListSource,
+  ListEntry,
+  MenuEntry,
+  MenuGraphic,
+  MenuLevel,
+  MenuOrder,
+  MenuSlug,
+  PhoneMenu,
+  ReaderEntry,
+  StaticMenuListSource,
+  SubmenuEntry,
+  TopLevelEntry,
+} from "./menu";
+export type { MenuEntryVisitor, MenuListSource } from "./menu";
 export {
   childrenOf,
   isValidPath,
@@ -44,5 +66,5 @@ export {
   tickMultitap,
 } from "./multitap";
 export type { MultitapKey, MultitapMode, MultitapState } from "./multitap";
-export { editorApp } from "./editor";
-export type { EditorMenuCtx, EditorOptions } from "./editor";
+export { EditorApplication } from "./editor";
+export type { EditorApplicationOptions } from "./editor";

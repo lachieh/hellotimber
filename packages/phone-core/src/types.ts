@@ -29,6 +29,18 @@ export interface Bitmap {
   pixels: Uint8Array;
 }
 
+export interface MenuIndicator {
+  /** One-based MenuOrder values from the root to the screen being displayed. */
+  segments: readonly number[];
+  /** True while another 1-9 shortcut digit is being accepted. */
+  awaitingNext: boolean;
+}
+
+export interface StandbyIndicators {
+  voicemail?: boolean;
+  message?: boolean;
+}
+
 export type ScreenModel =
   | { kind: "off" }
   | { kind: "boot"; phase: "hands" | "welcome"; frame: number } // hands animation carries the small NOKIA wordmark
@@ -38,12 +50,33 @@ export type ScreenModel =
       clock?: string;
       signal: 0 | 1 | 2 | 3 | 4;
       battery: 0 | 1 | 2 | 3 | 4;
+      indicators?: StandbyIndicators;
       /** Standby-scoped notice, e.g. "1 message received" + Read. */
       notice?: { text: string; softkey: string };
     }
-  | { kind: "menu-carousel"; label: string; menuNumber: number; total: number; iconId: string }
-  | { kind: "list"; title: string; items: string[]; selected: number; softkey: string }
-  | { kind: "reader"; title: string; lines: string[]; scrollTop: number }
+  | {
+      kind: "menu-carousel";
+      label: string;
+      menuNumber: number;
+      total: number;
+      iconId: string;
+      menuIndicator: MenuIndicator;
+    }
+  | {
+      kind: "list";
+      title: string;
+      items: string[];
+      selected: number;
+      softkey: string;
+      menuIndicator?: MenuIndicator;
+    }
+  | {
+      kind: "reader";
+      title: string;
+      lines: string[];
+      scrollTop: number;
+      menuIndicator?: MenuIndicator;
+    }
   | {
       kind: "editor";
       title: string;
@@ -63,31 +96,8 @@ export interface MenuListItem {
   body: string;
 }
 
-export type MenuNode =
-  | { type: "submenu"; id: string; label: string; iconId?: string; children: MenuNode[] }
-  | {
-      type: "list";
-      id: string;
-      label: string;
-      /** May be lazy — the thunk is re-read on every render. */
-      items: MenuListItem[] | (() => MenuListItem[]);
-    }
-  | { type: "reader"; id: string; label: string; body: string }
-  | { type: "app"; id: string; label: string; appId: string }
-  | { type: "action"; id: string; label: string; action: { kind: "href"; value: string } };
-
-export interface PhoneApp {
-  onKey(e: KeyEvent): void;
-  tick(dtMs: number): void;
-  render(): ScreenModel;
-  onExit?(): void;
-}
-// open() = exit this app and immediately launch `appId` on the same nav stack.
-export type AppFactory = (ctx: { exit(): void; open(appId: string): void }) => PhoneApp;
-
-export interface PhoneConfig {
-  menu: MenuNode[];
-  apps?: Record<string, AppFactory>;
+export interface PhoneConfig<Metadata = unknown> {
+  menu: PhoneMenu<Metadata>;
   carrier?: string; // standby line, default 'LACHLAN'
   clock?: () => string | undefined; // host supplies time; phone shows it
   bootMs?: number; // 0 to skip boot in tests
@@ -118,3 +128,4 @@ export interface Phone {
   subscribe(cb: (snap: PhoneSnapshot) => void): () => void;
   on<K extends keyof PhoneEventMap>(ev: K, cb: PhoneEventMap[K]): () => void;
 }
+import type { PhoneMenu } from "./menu";

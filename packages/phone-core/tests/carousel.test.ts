@@ -1,4 +1,12 @@
 import { describe, expect, it } from "vite-plus/test";
+import {
+  MenuGraphic,
+  MenuOrder,
+  MenuSlug,
+  PhoneMenu,
+  ReaderEntry,
+  TopLevelEntry,
+} from "../src/index";
 import { bootedPhone } from "./fixtures";
 
 describe("standby keys & menu carousel", () => {
@@ -12,6 +20,7 @@ describe("standby keys & menu carousel", () => {
       menuNumber: 1,
       total: 5,
       iconId: "phone-book",
+      menuIndicator: { segments: [1], awaitingNext: false },
     });
   });
 
@@ -97,7 +106,12 @@ describe("standby keys & menu carousel", () => {
 
   it("standby up is a no-op when the menu lacks phone-book/search", () => {
     const phone = bootedPhone({
-      menu: [{ type: "reader", id: "only", label: "Only", body: "x" }],
+      menu: new PhoneMenu([
+        new TopLevelEntry(
+          new ReaderEntry(new MenuSlug("only"), new MenuOrder(1), "Only", "x"),
+          new MenuGraphic("only"),
+        ),
+      ]),
     });
     phone.pressKey("up");
     expect(phone.path).toBe("standby");

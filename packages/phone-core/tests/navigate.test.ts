@@ -87,18 +87,34 @@ describe("navigate(path)", () => {
 
   it("navigate to an app path launches the app", () => {
     const fake = makeFakeApp();
-    const phone = bootedPhone({ apps: { "write-message": fake.factory } });
+    const phone = bootedPhone({}, fake.application);
     phone.navigate("menu/messages/write");
     expect(phone.path).toBe("menu/messages/write");
     expect(phone.screen).toMatchObject({ kind: "custom", appId: "write-message" });
   });
 
+  it("preserves a direct action path without opening it", () => {
+    const phone = bootedPhone();
+    const actions: unknown[] = [];
+    phone.on("action", (action) => actions.push(action));
+
+    phone.navigate("menu/github");
+
+    expect(phone.path).toBe("menu/github");
+    expect(phone.screen).toMatchObject({ kind: "menu-carousel", label: "GitHub" });
+    expect(actions).toEqual([]);
+
+    phone.pressKey("c");
+    expect(phone.path).toBe("menu");
+    expect(phone.screen).toMatchObject({ kind: "menu-carousel", label: "GitHub" });
+  });
+
   it("navigating away from an app tears it down via onExit", () => {
     const fake = makeFakeApp();
-    const phone = bootedPhone({ apps: { "write-message": fake.factory } });
+    const phone = bootedPhone({}, fake.application);
     phone.navigate("menu/messages/write");
     phone.navigate("menu/chat");
-    expect(fake.exitCount()).toBe(1);
+    expect(fake.deactivations).toEqual(["navigate"]);
     expect(phone.path).toBe("menu/chat");
   });
 });

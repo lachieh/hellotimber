@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vite-plus/test";
-import { createPhone, editorApp } from "../src/index";
-import type { Phone, ScreenModel } from "../src/index";
+import { createPhone, EditorApplication } from "../src/index";
+import type { ApplicationContext, Phone, ScreenModel } from "../src/index";
 import { testConfig } from "./fixtures";
 
 function editorPhone(onAccept?: (text: string) => void): Phone {
   const phone = createPhone(
-    testConfig({ apps: { "write-message": editorApp({ title: "Message:", onAccept }) } }),
+    testConfig({}, new EditorApplication("write-message", { title: "Message:", onAccept })),
   );
   phone.tick(0);
   phone.pressKey("power", 1000);
@@ -102,36 +102,30 @@ describe("editor app", () => {
 });
 
 describe("editor options menu + char limit", () => {
-  interface MenuCtx {
-    exit(): void;
-    open(appId: string): void;
-  }
-
   function optionsPhone(charLimit?: number): {
     phone: Phone;
     calls: { id: string; text: string }[];
-    ctx: () => MenuCtx | null;
+    ctx: () => ApplicationContext | null;
   } {
     const calls: { id: string; text: string }[] = [];
-    let lastCtx: MenuCtx | null = null;
+    let lastCtx: ApplicationContext | null = null;
     const phone = createPhone(
-      testConfig({
-        apps: {
-          "write-message": editorApp({
-            title: "Message:",
-            ...(charLimit !== undefined ? { charLimit } : {}),
-            menu: [
-              { id: "send", label: "Send" },
-              { id: "clear", label: "Clear text" },
-              { id: "exit", label: "Exit" },
-            ],
-            onMenu: (id, text, ctx) => {
-              calls.push({ id, text });
-              lastCtx = ctx;
-            },
-          }),
-        },
-      }),
+      testConfig(
+        {},
+        new EditorApplication("write-message", {
+          title: "Message:",
+          ...(charLimit !== undefined ? { charLimit } : {}),
+          menu: [
+            { id: "send", label: "Send" },
+            { id: "clear", label: "Clear text" },
+            { id: "exit", label: "Exit" },
+          ],
+          onMenu: (id, text, ctx) => {
+            calls.push({ id, text });
+            lastCtx = ctx;
+          },
+        }),
+      ),
     );
     phone.tick(0);
     phone.pressKey("power", 1000);
@@ -240,15 +234,14 @@ describe("editor options menu + char limit", () => {
   it("without menu, legacy onAccept still works with a charLimit", () => {
     const accepted: string[] = [];
     const phone = createPhone(
-      testConfig({
-        apps: {
-          "write-message": editorApp({
-            title: "Message:",
-            charLimit: 160,
-            onAccept: (t) => accepted.push(t),
-          }),
-        },
-      }),
+      testConfig(
+        {},
+        new EditorApplication("write-message", {
+          title: "Message:",
+          charLimit: 160,
+          onAccept: (t) => accepted.push(t),
+        }),
+      ),
     );
     phone.tick(0);
     phone.pressKey("power", 1000);

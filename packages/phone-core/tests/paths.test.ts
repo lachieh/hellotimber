@@ -7,25 +7,9 @@ import {
   parsePath,
   resolveIds,
 } from "../src/paths";
-import type { MenuNode } from "../src/types";
+import { testMenu } from "./fixtures";
 
-const menu: MenuNode[] = [
-  {
-    type: "submenu",
-    id: "phone-book",
-    label: "Phone book",
-    children: [
-      {
-        type: "list",
-        id: "search",
-        label: "Search",
-        items: [{ id: "a", label: "A", body: "a" }],
-      },
-      { type: "reader", id: "memory-status", label: "Memory status", body: "SIM 2/2 used." },
-    ],
-  },
-  { type: "app", id: "calculator", label: "Calculator", appId: "calculator" },
-];
+const menu = testMenu();
 
 describe("paths", () => {
   it("normalizes slashes and blanks", () => {
@@ -47,15 +31,15 @@ describe("paths", () => {
     expect(parsePath("menu//x")).toBeNull();
   });
 
-  it("resolves ids to nodes through submenus only", () => {
-    const nodes = resolveIds(menu, ["phone-book", "search"]);
-    expect(nodes?.map((n) => n.id)).toEqual(["phone-book", "search"]);
+  it("resolves slugs through submenus only", () => {
+    const entries = resolveIds(menu, ["phone-book", "search"]);
+    expect(entries?.map((entry) => entry.slug.value)).toEqual(["phone-book", "search"]);
     expect(resolveIds(menu, [])).toEqual([]);
     expect(resolveIds(menu, ["phone-book", "missing"])).toBeNull();
-    expect(resolveIds(menu, ["calculator", "child"])).toBeNull(); // apps have no children
+    expect(resolveIds(menu, ["chat", "child"])).toBeNull();
   });
 
-  it("validates full paths and joins ids back", () => {
+  it("validates full paths and joins slugs back", () => {
     expect(isValidPath(menu, "standby")).toBe(true);
     expect(isValidPath(menu, "menu")).toBe(true);
     expect(isValidPath(menu, "menu/phone-book/memory-status")).toBe(true);
@@ -65,8 +49,8 @@ describe("paths", () => {
     expect(joinMenuPath(["a", "b"])).toBe("menu/a/b");
   });
 
-  it("childrenOf returns children for submenus, [] otherwise", () => {
-    expect(childrenOf(menu[0]!)).toHaveLength(2);
-    expect(childrenOf(menu[1]!)).toEqual([]);
+  it("childrenOf returns canonical submenu children and [] otherwise", () => {
+    expect(childrenOf(menu.entries[0]!.entry)).toHaveLength(2);
+    expect(childrenOf(menu.entries[2]!.entry)).toEqual([]);
   });
 });

@@ -1,7 +1,26 @@
 import { describe, expect, it } from "vite-plus/test";
-import { wrapLines } from "../src/index";
-import type { ScreenModel } from "../src/index";
+import {
+  DynamicMenuListSource,
+  ListEntry,
+  MenuGraphic,
+  MenuOrder,
+  MenuSlug,
+  PhoneMenu,
+  StaticMenuListSource,
+  TopLevelEntry,
+  wrapLines,
+} from "../src/index";
+import type { MenuListSource, ScreenModel } from "../src/index";
 import { bootedPhone } from "./fixtures";
+
+function listMenu(source: MenuListSource, label = "Lazy"): PhoneMenu {
+  return new PhoneMenu([
+    new TopLevelEntry(
+      new ListEntry(new MenuSlug(label.toLowerCase()), new MenuOrder(1), label, source),
+      new MenuGraphic(label.toLowerCase()),
+    ),
+  ]);
+}
 
 describe("lists, items & readers", () => {
   it("wrapLines wraps at 14 chars, hard-breaks long words, honors newlines", () => {
@@ -61,7 +80,7 @@ describe("lists, items & readers", () => {
 
   it("an empty list ignores navi and arrows", () => {
     const phone = bootedPhone({
-      menu: [{ type: "list", id: "empty", label: "Empty", items: [] }],
+      menu: listMenu(new StaticMenuListSource([]), "Empty"),
     });
     phone.pressKey("navi"); // carousel
     phone.pressKey("navi"); // enter the empty list
@@ -77,7 +96,7 @@ describe("lists, items & readers", () => {
       { id: "two", label: "Two", body: "Second." },
     ];
     const phone = bootedPhone({
-      menu: [{ type: "list", id: "lazy", label: "Lazy", items: () => [...backing] }],
+      menu: listMenu(new DynamicMenuListSource(() => backing)),
     });
     phone.pressKey("navi"); // carousel
     phone.pressKey("navi"); // enter the list
@@ -96,7 +115,7 @@ describe("lists, items & readers", () => {
       { id: "three", label: "Three", body: "Third." },
     ];
     const phone = bootedPhone({
-      menu: [{ type: "list", id: "lazy", label: "Lazy", items: () => [...backing] }],
+      menu: listMenu(new DynamicMenuListSource(() => backing)),
     });
     phone.pressKey("navi");
     phone.pressKey("navi"); // enter the list
@@ -107,5 +126,53 @@ describe("lists, items & readers", () => {
     expect(phone.screen).toMatchObject({ items: ["One"], selected: 0 });
     phone.pressKey("navi"); // opens the clamped item, not a stale index
     expect(phone.screen).toMatchObject({ kind: "reader", title: "One" });
+  });
+
+  it("tracks a dynamic selection by stable ID across prepends and reorders", () => {
+    const backing = [
+      { id: "one", label: "One", body: "First." },
+      { id: "two", label: "Two", body: "Second." },
+      { id: "three", label: "Three", body: "Third." },
+    ];
+    const phone = bootedPhone({ menu: listMenu(new DynamicMenuListSource(() => backing)) });
+    phone.navigate("menu/lazy");
+    phone.pressKey("down");
+    expect(phone.screen).toMatchObject({ selected: 1 });
+
+    backing.unshift({ id: "zero", label: "Zero", body: "Zeroth." });
+    expect(phone.screen).toMatchObject({ items: ["Zero", "One", "Two", "Three"], selected: 2 });
+    backing.splice(0, backing.length, backing[2]!, backing[0]!, backing[1]!, backing[3]!);
+    expect(phone.screen).toMatchObject({ items: ["Two", "Zero", "One", "Three"], selected: 0 });
+  });
+
+  it("clamps the previous index when the selected stable ID disappears", () => {
+    const backing = [
+      { id: "one", label: "One", body: "First." },
+      { id: "two", label: "Two", body: "Second." },
+      { id: "three", label: "Three", body: "Third." },
+    ];
+    const phone = bootedPhone({ menu: listMenu(new DynamicMenuListSource(() => backing)) });
+    phone.navigate("menu/lazy");
+    phone.pressKey("down");
+    phone.pressKey("down");
+    backing.splice(2, 1);
+    expect(phone.screen).toMatchObject({ items: ["One", "Two"], selected: 1 });
+  });
+
+  it("keeps an open reader on its immutable row snapshot until back", () => {
+    const backing = [{ id: "one", label: "Original", body: "Original body." }];
+    const phone = bootedPhone({ menu: listMenu(new DynamicMenuListSource(() => backing)) });
+    phone.navigate("menu/lazy");
+    phone.pressKey("navi");
+    backing[0] = { id: "one", label: "Updated", body: "Updated body." };
+    expect(phone.screen).toEqual({
+      kind: "reader",
+      title: "Original",
+      lines: ["Original body."],
+      scrollTop: 0,
+      menuIndicator: { segments: [1], awaitingNext: false },
+    });
+    phone.pressKey("c");
+    expect(phone.screen).toMatchObject({ kind: "list", items: ["Updated"], selected: 0 });
   });
 });

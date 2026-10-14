@@ -1,4 +1,5 @@
-import type { MenuNode } from "./types";
+import { SubmenuEntry } from "./menu";
+import type { MenuEntry, PhoneMenu } from "./menu";
 
 /** Trim whitespace and leading/trailing slashes; empty → 'standby'. */
 export function normalizePath(path: string): string {
@@ -22,36 +23,28 @@ export function parsePath(path: string): ParsedPath | null {
   return { kind: "menu", ids };
 }
 
-/** The nodes a path segment can descend into — only submenus nest. */
-export function childrenOf(node: MenuNode): MenuNode[] {
-  return node.type === "submenu" ? node.children : [];
+/** The entries a path segment can descend into — only submenus nest. */
+export function childrenOf<Metadata>(entry: MenuEntry<Metadata>): readonly MenuEntry<Metadata>[] {
+  return entry instanceof SubmenuEntry ? entry.children.entries : [];
 }
 
 /**
  * Resolve menu ids to the nodes along the path (one node per id).
  * Returns null if any segment is unknown.
  */
-export function resolveIds(menu: MenuNode[], ids: string[]): MenuNode[] | null {
-  const nodes: MenuNode[] = [];
-  let level: MenuNode[] = menu;
-  for (const id of ids) {
-    const node = level.find((n) => n.id === id);
-    if (node === undefined) return null;
-    nodes.push(node);
-    level = childrenOf(node);
-  }
-  return nodes;
+export function resolveIds<Metadata>(
+  menu: PhoneMenu<Metadata>,
+  ids: readonly string[],
+): readonly MenuEntry<Metadata>[] | null {
+  return menu.resolve(joinMenuPath(ids));
 }
 
 /** True when the path is 'standby', 'menu', or resolves fully in the tree. */
-export function isValidPath(menu: MenuNode[], path: string): boolean {
-  const parsed = parsePath(path);
-  if (parsed === null) return false;
-  if (parsed.kind === "standby") return true;
-  return resolveIds(menu, parsed.ids) !== null;
+export function isValidPath<Metadata>(menu: PhoneMenu<Metadata>, path: string): boolean {
+  return menu.isValidPath(path);
 }
 
 /** Join node ids back into a path string ('menu' when empty). */
-export function joinMenuPath(ids: string[]): string {
+export function joinMenuPath(ids: readonly string[]): string {
   return ids.length === 0 ? "menu" : `menu/${ids.join("/")}`;
 }
