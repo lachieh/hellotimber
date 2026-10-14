@@ -515,22 +515,23 @@ fix the observation in this plan and in the spec.
 ## Stock firmware model (level 0 and 1)
 
 Labels below are the v6.39 text as read from the captures. `/` marks a firmware line break,
-which becomes `\n` in data. Breaks marked "verify" must be read from the golden before use.
+which becomes `\n` in data. Task 7 verified every label against its golden; the transcription
+used for the fonts is `packages/nokia-os/scripts/text-runs.ts`.
 
-| #   | Slug            | Label         | Kind / presentation | Level-1 children (order)                                                                                                                                                        |
-| --- | --------------- | ------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | `phone-book`    | Phone book    | submenu, rows       | Search, Service Nos., Add name, Erase, Edit, Assign tone, Send b'card, Options, Speed dials, Voice tags                                                                         |
-| 2   | `messages`      | Messages      | submenu, pages      | Write/messages, Inbox, Outbox, Picture/messages, Templates, Smileys, Message/settings (verify), Info/service, Voice/mailbox/number (verify), Service/command/editor             |
-| 3   | `chat`          | Chat          | application         | placeholder (captured first screens are `pending:18`)                                                                                                                           |
-| 4   | `call-register` | Call register | submenu, pages      | Missed/calls, Received/calls, Dialled/numbers, Erase recent call/lists, Show call/duration, Show call/costs, Call cost/settings (verify), Prepaid credit                        |
-| 5   | `tones`         | Tones         | submenu, pages      | Ringing/tone, Ringing/volume, Incoming/call alert, Composer, Message/alert tone, Keypad/tones, Warning and game tones (verify), Vibrating/alert, Screen saver                   |
-| 6   | `settings`      | Settings      | submenu, pages      | Call/settings, Phone/settings, Security/settings, Restore/factory/settings (verify)                                                                                             |
-| 7   | `call-divert`   | Call divert   | submenu, pages      | Divert all/voice calls/without ringing, Divert when/busy (verify), Divert if not/answered (verify), Divert if out/of reach/... (verify; third line present), Cancel all/diverts |
-| 8   | `games`         | Games         | submenu, rows       | Snake II, Space Impact, Bantumi, Pairs II, Settings                                                                                                                             |
-| 9   | `calculator`    | Calculator    | application         | placeholder (captured first screen is `pending:20`)                                                                                                                             |
-| 10  | `reminders`     | Reminders     | submenu, rows       | Add new, View all, Erase (verify)                                                                                                                                               |
-| 11  | `clock`         | Clock         | submenu, pages      | Alarm/clock, Clock/settings, Date setting, Stopwatch, Countdown/timer, Auto update of/date and time (verify)                                                                    |
-| 12  | `profiles`      | Profiles      | submenu, rows       | General, Silent, Discreet, Loud, (empty), (empty) - slot 6 UNVERIFIED                                                                                                           |
+| #   | Slug            | Label         | Kind / presentation | Level-1 children (order)                                                                                                                                                    |
+| --- | --------------- | ------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `phone-book`    | Phone book    | submenu, rows       | Search, Service Nos., Add name, Erase, Edit, Assign tone, Send b'card, Options, Speed dials, Voice tags                                                                     |
+| 2   | `messages`      | Messages      | submenu, pages      | Write/messages, Inbox, Outbox, Picture/messages, Templates, Smileys, Message/settings, Info/service, Voice/mailbox/number, Service/command/editor                           |
+| 3   | `chat`          | Chat          | application         | placeholder (captured first screens are `pending:18`)                                                                                                                       |
+| 4   | `call-register` | Call register | submenu, pages      | Missed/calls, Received/calls, Dialled/numbers, Erase recent/call lists, Show call/duration, Show call/costs, Call cost/settings, Prepaid credit                             |
+| 5   | `tones`         | Tones         | submenu, pages      | Ringing/tone, Ringing/volume, Incoming/call alert, Composer, Message/alert tone, Keypad/tones, Warning tones, Vibrating/alert, Screen saver                                 |
+| 6   | `settings`      | Settings      | submenu, pages      | Call/settings, Phone/settings, Security/settings, Restore/factory/settings                                                                                                  |
+| 7   | `call-divert`   | Call divert   | submenu, pages      | Divert all/voice calls/without ringing, Divert/when busy, Divert if not/answered, Divert when/phone off/or no coverage, Cancel all/diverts (menu number 6: a 5th is hidden) |
+| 8   | `games`         | Games         | submenu, rows       | Snake II, Space impact (lower-case i), Bantumi, Pairs II, Settings (menu number 6: a 5th is hidden)                                                                         |
+| 9   | `calculator`    | Calculator    | application         | placeholder (captured first screen is `pending:20`)                                                                                                                         |
+| 10  | `reminders`     | Reminders     | submenu, rows       | Add new, View all, Erase                                                                                                                                                    |
+| 11  | `clock`         | Clock         | submenu, pages      | Alarm/clock, Clock/settings, Date setting, Stopwatch, Countdown/timer, Auto update of/date and time                                                                         |
+| 12  | `profiles`      | Profiles      | submenu, rows       | General, Silent, Discreet, Loud, (empty), (empty) - slot 6 UNVERIFIED                                                                                                       |
 
 Children are `ApplicationEntry` placeholders with kebab-case slugs from their labels. Reuse the
 website's slugs where the label matches (for example `search`, `send-bcard`, `dialled-numbers`).
@@ -794,32 +795,56 @@ does; the README says so.
 `scripts/extract-resources.ts`, `src/resources/generated/{fonts,menu-icons,boot,status}.ts`,
 `src/resources/index.ts`, `tests/harvest.test.ts`, `tests/resources.test.ts`.
 
-- [ ] `text-runs.ts`: per golden image, the text runs it contains:
+- [x] `text-runs.ts`: per golden image, the text runs it contains:
       `{ font, text, top, inverted? }`. Transcribe them from the images, guided by the label
       table. This is the only manual input.
-- [ ] TDD the harvester on synthetic rows. It finds each run's ink columns in its band,
+- [x] TDD the harvester on synthetic rows. It finds each run's ink columns in its band,
       inverting the band for selected rows, and splits glyphs on blank columns. Advance is the
       distance between consecutive left edges within a word, and space width comes from word
       gaps. It reports, without guessing: a segment count that differs from the character
       count, conflicting bitmaps or advances for the same character, and characters with
       unknown advance. Overrides in `glyph-overrides.ts` resolve the reported cases
       explicitly. Each override carries a comment naming its golden.
-- [ ] Extractor:
+- [x] Extractor:
   - icons: per carousel `.anim` golden, take the union ink bounding box of all images within
     x 0..79, y 20..39. Assert no icon ink at y < 20 apart from label descenders. Emit the art,
     the origin and the timeline (image index per step, durations, `loopFrom` when the
     recording ends in a detected cycle, flagged `// loop inferred`);
   - boot: full-frame images and timeline from `boot/power-on`;
   - status: signal and battery ladders plus icons cropped from `standby/standby`.
-- [ ] Generated files start with `// GENERATED by scripts/<name>.ts from goldens/ - do not edit`.
-- [ ] TDD `resources.test.ts`: running extraction and harvesting in-process over `goldens/`
+- [x] Generated files start with `// GENERATED by scripts/<name>.ts from goldens/ - do not edit`.
+- [x] TDD `resources.test.ts`: running extraction and harvesting in-process over `goldens/`
       deep-equals the committed generated data (freshness). Every font glyph is binary and
       consistent in height. Every label in `stockMenu`'s data table and every softkey is
       renderable (`missingStockGlyphs` returns `[]`).
-- [ ] Cross-check only: icon frame counts per menu against `$REF/extracted/6.39/menu/main_menu.json`.
+- [x] Cross-check only: icon frame counts per menu against `$REF/extracted/6.39/menu/main_menu.json`.
       Report differences; do not import.
-- [ ] Run `vp run @hellotimber/nokia-os#extract-resources` twice; the second run produces no diff.
-- [ ] Commit: `feat(nokia-os): derive stock fonts, icons and boot frames from goldens`.
+- [x] Run `vp run @hellotimber/nokia-os#extract-resources` twice; the second run produces no diff.
+- [x] Commit: `feat(nokia-os): derive stock fonts, icons and boot frames from goldens`.
+
+Deviation: a text run also takes optional `left`/`right` column bounds (default 0..83). Text bands
+share rows with the standby bars, the rail and the indicator, so the harvester needs to know which
+columns belong to the run. Overrides come in three kinds: `bearing` (the digits and thin `1` sit
+one column into a tabular digit cell), `advance` (characters seen only at a word end; every
+in-word measurement in all four fonts is ink plus one blank column), and `split` (the large `R` of
+`Reminders` touches the `e`). Runs cover the standby, carousel and `.sub` stills, including the
+pending Chat/Calculator screens; `.anim` images are not transcribed (their titles repeat the
+stills).
+Deviation: the goldens corrected the label table above: `Space impact`, `Divert/when busy`,
+`Divert when/phone off/or no coverage`, `Warning tones` (one line), `Date setting` (one line).
+The firmware keeps hidden entries' menu numbers: the last Call divert and Games entries show
+`7-6` and `8-6` while the rail places them 5th of 5. Tasks 9 and 10 must let the indicator number
+differ from the position (the rail uses the visible count).
+Deviation: the generated files are JSON-style literals excluded from oxfmt (root
+`vite.config.ts`), so the extractor's output is stable; the freshness test compares them as data.
+An inferred loop is flagged with a `loopInferred: true` field rather than a comment (none occurs:
+every icon settles). `resources.test.ts` checks that every transcribed label, value and softkey is
+renderable; `stockMenu` lands in Task 9, which extends the check to its data table. Resource
+accessors (`STOCK_FONTS`, `STOCK_MENU_ICONS`, `stockMenuGraphic`, `BOOT_FRAMES`, `BOOT_TIMELINE`,
+`STATUS_SPRITES`) live in `src/resources/index.ts`; only `missingStockGlyphs` is public.
+Cross-check (`$REF/extracted/6.39/menu/main_menu.json`, read only): icon record counts equal the
+distinct golden frames except Call register (11 records, 12 frames: the 15 ms frame is a distinct
+state) and Profiles (8 records, 4 distinct frames: the records spell the 0-1-2-3-0-3-2-1 sequence).
 
 ### Task 8 - Stock painter I: standby, boot, indicator, custom and unsupported (TDD against goldens)
 
