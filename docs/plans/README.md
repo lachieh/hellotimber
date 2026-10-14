@@ -23,7 +23,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 11  | [object menu model](./11-object-menu-model.md)           | immutable OO menu graph, object applications, working Calculator                   | 01-10                         | done        |
 | 12  | [LCD pixel authenticity](./12-lcd-pixel-authenticity.md) | reference standby/menu pixels + visible hierarchical shortcuts                     | 01-11                         | done        |
 | 13  | [Nokia OS foundation](./13-nokia-os-foundation.md)       | `@hellotimber/nokia-os`: stock v6.39 firmware, painter and LCD goldens             | 01-12                         | done        |
-| 14  | [menu tree depth](./14-menu-depth-and-stock-widgets.md)  | whole v6.39 menu tree incl. game menus; stock widgets; rows window; settings store | 13                            | done¹       |
+| 14  | [menu tree depth](./14-menu-depth-and-stock-widgets.md)  | whole v6.39 menu tree incl. game menus; stock widgets; rows window; settings store | 13                            | done        |
 | 15  | Storage port and Settings                                | EEPROM-like persistence; Settings; factory defaults                                | 13                            | not started |
 | 16  | Tones and sound sequencer                                | tone sequencer, keypad/warning tones, ringing tones, Composer                      | 13, 15                        | not started |
 | 17  | Profiles                                                 | profile activation and personalisation; power-key profile list                     | 15, 16                        | not started |
@@ -31,7 +31,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 19  | Phone book                                               | SIM/phone memory, Search, Add name, Edit, Erase, Speed dials                       | 14, 15                        | not started |
 | 20  | Calculator restyle                                       | stock calculator screens (`menu/09-calculator.sub` asserted)                       | 14                            | not started |
 | 21  | Clock and Reminders                                      | alarm, clock/date settings, stopwatch, countdown, reminders                        | 14, 15                        | not started |
-| 22  | Call register and Call divert                            | call lists, durations and costs, divert flows                                      | 14, 15                        | not started |
+| 22  | Call register and Call divert                            | standby number entry and dialling; call lists, durations and costs, divert flows   | 14, 15                        | not started |
 | 23  | Games I: Snake II                                        | Snake II gameplay and the scores it writes (menu, widgets: 14)                     | 14                            | not started |
 | 24  | Games II: Space Impact, Bantumi, Pairs II                | gameplay and the scores it writes (menus: 14)                                      | 14                            | not started |
 | 25  | Keyguard and backlight                                   | keyguard, backlight/keypad LED timing, phone-3d signal                             | 13                            | not started |
@@ -39,9 +39,6 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 Plans 01–04 are parallel-safe: no shared files, no cross-package imports at runtime
 (02 imports types from 01, which exist from 01's first task). Plan 09 is parallel-safe
 with 07/08 except its final website task; 08 strictly follows 07.
-
-¹ Plan 14 is done with 30 asserted goldens left as known gaps that need decisions (kernel seams,
-key-to-redraw latency, capture jitter); see its Task 13 notes.
 
 Plans 14-25 are the follow-ups listed in plan 13 ("Follow-up plans"); their files are written
 when they are scheduled. Portfolio integration of `@hellotimber/nokia-os` is not sequenced.

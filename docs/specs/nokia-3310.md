@@ -298,8 +298,9 @@ threshold is not captured).
 Source: the plan 14 recaptures (`captures/6.39/plan14/`, generator
 `captures/scripts/gen_v639_plan14.py`) and `docs/specs/nokia-3310-menu-tree.md`. Everything here
 is observed and reproduced by nokia-os pixel for pixel, and within ±2 ms after aligning on the
-first changed frame, against the plan 14 goldens, except the items listed under "Not reproduced
-yet" (plan 14 Task 13's known gaps).
+first changed frame, against the plan 14 goldens (probes that replay another recording's timings
+or press keys after the trigger: ±25 ms), except the items listed under "Not reproduced" (plan 14
+closeout's known gaps).
 
 **Rows window.** With 3 or fewer items the window never moves. Otherwise it
 keeps its position while the selection stays inside it (indices modulo the count); moving to the
@@ -323,13 +324,17 @@ profiles are independent.
 digit (10, 11, 12), showing `1` and three dots, then means Phone book; `1 1` is Clock, `1 2`
 Profiles; `1 8` and `1 9` show `Invalid shortcut` (≈2.9 s), then standby, where further digits
 start a phone number (not reproduced). A digit that selects an entry shows the typed path (`8-6`,
-`1-9`) without the softkey and opens it 1431-1477 ms after the digit's redraw (nokia-os: 1460 ms
+`1-9`) without the softkey and opens it 1427-1502 ms after the digit's redraw (nokia-os: 1460 ms
 after the key); an opened submenu shows `<path>-` and three dots for ≈1.47 s, then its index.
 `Menu 8 1` plays the Snake II splash first; a digit during a splash only skips it. Entering
-Screen saver (5-9 and every profile's 12-n-2-9) shows `5-9` and three dots for ≈2.9 s (not
-reproduced). The firmware redraws 50-125 ms after a key and runs its timers from the key, so
-these delays measured between redraws jitter by tens of milliseconds; nokia-os redraws at the
-key.
+Screen saver with Select (5-9 and every profile's 12-n-2-9) shows the level's path with a dash
+and three dots (`5-9-`, `12-1-2-9-`) for ≈2.9 s before the selection's number (the firmware
+opens a digit window there; nokia-os: the 2948 ms shortcut window); the list works meanwhile (▼
+shows `5-9-2`, OK opens Off). The firmware redraws 50-125 ms after a key and runs its timers from
+the key, so these delays measured between redraws jitter by tens of milliseconds (window
+2920-2948 ms); nokia-os redraws at the key. While a typed `8-6` (Settings,
+a pages level) is opening, the firmware draws Settings' first page value `On` over the Games list
+(not reproduced).
 
 **Stock widgets.** Layouts measured from the plan 14 goldens (Task 6): notes
 draw large text from x 0 at tops 3/18/33 and their icon within x 63..83, y 3..22; progress notes a
@@ -371,23 +376,25 @@ tops 7/16/25, softkey `More`, no rail. Behaviour:
 - _Games_: each game opens with an animated splash (Snake II ≈2.56 s, Space impact ≈2.48 s,
   Bantumi ≈3.46 s, Pairs II ≈3.06 s), skipped by any key. Level: `Level:` and bars, ▲/▼ inert.
   Instructions: `More` pages cycle; C leaves. Top score: an animated note that returns by itself
-  after ≈5.84 s (or on a key). Snake II returns with New game selected (`Score IDs / Instructions
-/ New game`); Space impact and Pairs II return with the window rebuilt at Top score (`Top score /
-Score IDs / Instructions`).
+  after ≈5.84 s (or on a key). Snake II returns with New game selected on the bottom row (`Score IDs
+/ Instructions / New game`; ▼ during the note lands on Level: `Instructions / New game / Level`);
+  Space impact and Pairs II return with New game selected on the top row (`New game / Top score /
+Score IDs`).
 - _View all_ (Reminders, nothing stored) returns straight to the carousel; the Reminders icon then
   holds 1382 ms before animating (its own return timing).
 
-**Not reproduced yet** (plan 14 Task 13 known gaps; each golden runs as an expected failure):
-Screen saver's `5-9` and dots on entry and the Space impact/Pairs II Top score window (both need
-kernel seams); ▼ during Snake II's Top score (returns to New game, then moves to Level); capture
-jitter between recordings of the same path beyond ±2 ms (splash skip 252 vs 248 ms, Top score,
-Searching, Done's 16 ms partial draw, Phone book's carousel return after C); the key-to-redraw
-latency of shortcut digits; standby number entry after Invalid shortcut; the Reminders level
-after Erase › All (only `Add new`; plan 21).
+**Not reproduced** (plan 14 closeout known gaps; each golden runs as an expected failure): partial
+draws, redraws in progress that nokia-os does not draw (a 16 ms draw after `Menu 8`; Done's 16 ms
+draw after Type of view, which covers fewer bytes than in another recording of the same path);
+shortcut delays outside ±25 ms of nokia-os's (Speed dials opening 1502 ms after `9`, Snake II 1427
+ms after `1`, the window ending 2920 ms after `3`); Settings' `On` drawn over the Games list while
+`8-6` opens. Owned by later plans (pending goldens): standby number entry after Invalid shortcut
+(plan 22) and the Reminders level after Erase › All (only `Add new`; plan 21).
 
 **UNVERIFIED** (no capture; nokia-os's choice): ▲/▼ during a note on rows levels (nokia-os only
 dismisses; P6 probed pages), C on `Requesting`, other keys on notes, OK on a page's list
-(Prepaid credit's On/Off does not store), Screen saver's opening after On, Rename in Discreet,
+(Prepaid credit's On/Off does not store), Screen saver's opening after On, Screen saver's entry
+indicator after a shortcut or a path, digits during it, ▲ during Snake II's Top score, Rename in Discreet,
 Loud and the empty slots (`10 - length` characters left), digits during an option list or a
 splash shortcut, `0 1` as a shortcut, the 12-hour clock beyond `10:10 am`, a 4-item list's ▲
 wrap (D3 gives the bottom row).

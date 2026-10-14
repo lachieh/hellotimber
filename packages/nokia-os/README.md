@@ -102,8 +102,9 @@ become goldens and whether each is `asserted` or `pending:<plan>`. Tree goldens 
 the generated tree, and `tests/support/probes.ts` holds the probes' hand-written scenarios.
 `tests/acceptance.test.ts` drives the phone on a virtual 1 ms clock through a scenario for every
 asserted golden and fails if one has none; timelines are compared after aligning on the first
-changed frame, within ±2 ms. Its `KNOWN_GAPS` table lists the asserted goldens nokia-os cannot
-reproduce yet, each with its reason (they run as expected failures). The coverage guard proves
+changed frame, within ±2 ms (probes that replay another recording's timings or press later keys:
+`PROBE_TOLERANCE_MS`, 25 ms). Its `KNOWN_GAPS` table lists the asserted goldens nokia-os cannot
+reproduce, each with its reason (they run as expected failures). The coverage guard proves
 that every tree node and option choice is covered by an asserted golden, a golden pending for the
 plan that owns the node, or a same-as subtree equal to its model. Tests never read the corpus.
 

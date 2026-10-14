@@ -10,8 +10,8 @@
 captures, reference only), and the canonical plan 14 captures that Task 0 writes to
 `$REF/captures/6.39/plan14/`. `docs/specs/nokia-3310-menu-tree.md` is the human-readable form of
 `tree.json`. Read `$REF/captures/README.md` and plan 13 in full before starting.
-**Status:** done, with 30 asserted goldens left as known gaps that need decisions (Task 13,
-"Completion notes").
+**Status:** done. Task 13 left 30 asserted goldens as known gaps; "Closeout decisions" closes
+24 of them, makes 4 pending for their owner plans, and justifies the 6 left.
 
 ## Goal
 
@@ -355,6 +355,10 @@ export interface ApplicationContext {
   open(application: PhoneApplication): void; // unchanged
 }
 ```
+
+Closeout (decision 1, "Closeout decisions"): `SubmenuOptions.entryIndicatorMs` (with
+`MenuIndicator.entering`) and `exit({ select, row: "top" | "bottom" })`, both opt-in; VISION
+records them.
 
 Rules (Task 0 added `shortcutEntry`, `opening`, `exit` `levels`/`select`): `softkey` must be non-empty. `opening` is evaluated with the level's children only. An
 `intro` must not be the level's own child application. `exit({ to: "standby" })` deactivates
@@ -1238,12 +1242,13 @@ them, probe/confirm-10-3-2-yes image d; reminder data is plan 21's).
 - [x] Coverage guard per "Generic scenarios and the coverage guard", including `SAME_AS`
       structural equality (same shape, labels equal except profile names) and the equality of
       the importer's and the bindings' `PLACEHOLDER_OWNERS`/`SAME_AS`.
-- [ ] Every asserted golden passes; timelines within ±2 ms after alignment. Report the suite's
-      run time. (Not met: 30 known gaps, below.)
+- [x] Every asserted golden passes; timelines within ±2 ms after alignment. Report the suite's
+      run time. (Task 13: 30 known gaps, below; after "Closeout decisions": 6, each justified.)
 - [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
 - [x] Commit: `test(nokia-os): drive the whole menu tree against its goldens`.
 
-Not met: "Every asserted golden passes". 30 asserted goldens (9 tree, 21 probe) cannot pass
+Not met at Task 13 (closed out in "Closeout decisions"): "Every asserted golden passes". 30
+asserted goldens (9 tree, 21 probe) cannot pass
 within plan 14's contracts; `tests/acceptance.test.ts` lists each in `KNOWN_GAPS` with its reason
 and runs its scenario as an expected failure (`it.fails`), so a gap that starts passing must
 leave the table. The decisions they need are in "Completion notes". By cause:
@@ -1251,10 +1256,10 @@ leave the table. The decisions they need are in "Completion notes". By cause:
 - Kernel seams beyond the contracts (9 tree + 1 probe). Entering Screen saver (5-9, 12-1-2-9,
   12-2-2-9) shows `5-9` and dots for ≈2.9 s before `5-9-1` (D14); no seam draws a level's
   number in the awaiting form on Select-entry (`5-9.sub`, `5-9-1.leaf` and the profile copies).
-  Space impact's and Pairs II's Top score return with the window rebuilt at Top score (`Top score /
-Score IDs / Instructions`, `8-2-2.leaf`, `8-4-1-3.leaf`, `8-4-2-3.leaf`), which the kernel's
-  `exit({ select })` (bottom row) cannot express; one rule fits all three games and Snake II:
-  rebuild the window at the launching child, then move to `select` by the D3 rule. ▼ during
+  Space impact's and Pairs II's Top score return with a different window (`8-2-2.leaf`,
+  `8-4-1-3.leaf`, `8-4-2-3.leaf`), which the kernel's `exit({ select })` (bottom row) cannot
+  express. (Closeout correction: image m shows `New game / Top score / Score IDs` with New game
+  on the top row, not the window rebuilt at Top score.) ▼ during
   Snake II's Top score returns to New game and then moves to Level (two moves,
   `probe/games-top-score-down-2s`).
 - Capture jitter between recordings of the same path, beyond ±2 ms (8 probes): the splash-skip
@@ -1376,34 +1381,83 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
 
 ## Completion notes
 
-Commits: Task 12 `b9b5175`, Task 13 `893c9ca`, Task 14 this commit (tasks 0-11: see `git log`).
+Commits: Task 12 `b9b5175`, Task 13 `893c9ca`, Task 14 `ed7262a` (tasks 0-11: see `git log`);
+closeout: see "Closeout decisions".
 
 - The whole v6.39 tree (279 nodes, 12 top-level) is `stockMenu`, built from the generated tree by
   `src/firmware/menu.ts` and `src/firmware/leaves.ts`, with `createStockPhone` setting
   `rowsWindow: 3` and `shortcutEntry` (1460 ms, `Invalid shortcut`). Placeholders carry
   `ownerPlan`. The website does not change (no diff under `website/`).
-- Goldens: 365 fixtures, 334 asserted and 31 pending. 304 asserted goldens pass pixel for pixel
-  and, for timelines, within ±2 ms after alignment; 30 are known gaps (`KNOWN_GAPS` in
-  `tests/acceptance.test.ts`, run as expected failures). The coverage guard accounts for every
-  tree node and option choice; 9 nodes (5-9, 5-9-1, 8-2-2, 8-4-1-3, 8-4-2-3, 12-1-2-9,
-  12-1-2-9-1, 12-2-2-9, 12-2-2-9-1) are covered only by known gaps and are pinned in the guard.
-- Generated data and resources are fresh and idempotent (`import-tree`, `extract-resources` run
-  twice, no diff). `vp check`, `vp run -r test` and `vp run website#build` pass; the nokia-os
-  suite runs in ≈8 s.
-
-Decisions for Lachlan (the known gaps, Task 13):
-
-1. Two kernel seams would close 9 tree goldens and one probe: a submenu option that shows the
-   level's number in the awaiting form for the shortcut window on Select-entry (Screen saver), and
-   `exit({ select })` rebuilding the window at the launching child before moving to `select` by
-   the D3 rule (Top score in all four games; Snake II's documented `Score IDs / Instructions / New
-game` still holds). ▼ during Snake II's Top score needs one more step (return to New game, then
-   move). Both change VISION's kernel contract, so they were not made here.
-2. Timing the probes cannot hold at ±2 ms: the firmware redraws 50-125 ms after a key and runs its
-   timers from the key (Open question 4), and separate recordings of one path differ by 3-22 ms
-   (splash skip, Top score, Searching, partial draws). Options: model the latency, relax the
-   tolerance for multi-key probes, or mark those probes pending.
-3. Out of plan 14: standby number entry after `Invalid shortcut` (3 probes) and the Reminders level
-   after Erase › All (plan 21).
+- Goldens: 365 fixtures, 330 asserted and 35 pending. 324 asserted goldens pass pixel for pixel
+  and, for timelines, within ±2 ms after alignment (probes that replay another recording's timings
+  or press later keys: ±25 ms); 6 probes are known gaps (`KNOWN_GAPS` in
+  `tests/acceptance.test.ts`, run as expected failures), each a disagreement between recordings or
+  a firmware quirk behind one. The coverage guard accounts for every tree node and option choice;
+  no node is covered only by a known gap.
+- Generated data and resources are fresh and idempotent (`import-captures`, `import-tree`,
+  `extract-resources` run twice, no diff). `vp check`, `vp run -r test` and
+  `vp run website#build` pass; the nokia-os suite runs in ≈8 s.
 
 Still UNVERIFIED: see spec §10 "Deeper levels and stock widgets (plan 14)".
+
+## Closeout decisions
+
+The orchestrator decided Task 13's three open questions (2026-10-14); this section records them
+and what they closed. 30 known gaps became 6: 24 pass and 4 are pending.
+
+1. **Two opt-in kernel seams (phone-core; the website sets neither and its tests are untouched).**
+   (a) `SubmenuOptions.entryIndicatorMs`: for that long after Select-entry the level's indicator
+   is `MenuIndicator.entering` (its own path) instead of the selection's number; the list works
+   meanwhile and any key ends it; paths, shortcuts, intros and returns from a child do not show
+   it. nokia-os sets it on Screen saver (5-9, 12-n-2-9) to the shortcut window, 2948 ms (no
+   capture runs it to its end), and paints `entering` as the awaiting form with nothing typed:
+   the goldens show `5-9-` and dots (a dash, which D14's "`5-9` and dots" omitted).
+   (b) `exit({ select, row })`: `row: "bottom"` (default) keeps Snake II's Top score return
+   (`Score IDs / Instructions / New game`); `row: "top"` rebuilds the window at the selected child
+   as on entry. The goldens show Space impact's and Pairs II's Top score returning to **New
+   game** on the top row (`New game / Top score / Score IDs`, image m), not to Top score as Task 13
+   wrote, so `NOTE_ENDS` selects `new-game` with `row: "top"`. ▼ during Snake II's Top score lands
+   on Level on the bottom row (`NOTE_MOVES`; ▲ there is UNVERIFIED). Closed: 9 tree goldens and
+   the pixels of `probe/games-top-score-down-2s`.
+   The generic `leaf`/`choose` scenarios now press their trigger one harness tap (592 ms) after
+   `goto`, as the captures do, instead of 3 s: Screen saver's leaves are selected while the
+   indicator shows (`5-9-1.leaf` frame 0). No other golden changed result.
+2. **Probe timing anchored on the key, not modelled latency.** Probe timelines stay aligned on
+   their trigger key (frame `trigger-frame` = the key). Probes that replay another recording's
+   timings or press keys after the trigger compare frame starts within `PROBE_TOLERANCE_MS` = 25
+   (recording-to-recording jitter measured at 3-22 ms); each such scenario in
+   `tests/support/probes.ts` says why, every other probe keeps ±2 ms, and pixels stay exact. A
+   later key may go `ahead` of its first redraw by D8's 50 ms lower bound, and that redraw's start
+   is then not compared (`progress-6-2-4-2-c`: C pre-empts the bar step due 38 ms before its
+   redraw). Later keys otherwise press on the tick their redraw starts, because the kernel's
+   delays (1460 ms, 2948 ms) are measured between redraws: pressing them at harness key times
+   shifts every later frame by the key's unknown latency. Still probes may take the same window
+   (`reenter`'s shot lands 9 ms after Phone book's icon steps). Closed: the three Top score
+   probes, the three splash-skip probes, Searching's C, `reenter`, and shortcut `m1`, `m1-1-0`,
+   `m1-2`.
+3. **Out of scope → pending.** `shortcut-m1-8-1`, `-m1-8-1-2` and `-m1-9-c` (digits and C at
+   standby after Invalid shortcut start a number) are `pending:22`; plan 22 now owns standby
+   number entry and dialling (plans README). `confirm-10-3-2-yes` (Reminders after Erase › All
+   hides View all and Erase) is `pending:21`. `tree-capture-set.ts` gives probes a `status`;
+   `import-captures` ran twice with no diff.
+
+The 6 remaining known gaps, each a recording disagreement or a firmware quirk the decisions
+leave out (their reasons are in `KNOWN_GAPS`):
+
+- `probe/note-keys-done-down-300`: Done's 16 ms partial draw covers fewer LCD bytes than the
+  15 ms one of `tree/01-phone-book/1-8-1-1.choose`, the same path whose timeline the note plays.
+  Pixels cannot match both recordings.
+- `probe/shortcut-m1-wait-9`: Speed dials opens 1502 ms after the 9's redraw; the other shortcut
+  probes open 1427-1477 ms after theirs (1460 configured). −42 ms. The captures record redraws,
+  not key times, so no key-anchored delay fits every recording within ±25 ms.
+- `probe/shortcut-m8-1`, `-m8-1-2`, `-m8-6`, `-m8-6-3`: `8` first draws a 16 ms partial frame
+  (the first 27 bytes of the Games screen over Phone book's), a redraw in progress that the
+  kernel does not reproduce (decision 2) and exact pixels cannot skip; with that frame drawn,
+  the rest of `m8-1` is within ±25 ms. `m8-1-2` also opens Snake II 1427 ms after the 1's redraw (−33 ms). `m8-6` and
+  `m8-6-3` also show a firmware quirk: while `8-6` (Settings, a pages level) is opening, the
+  firmware draws Settings' first page value `On` over the Games list (image f), which no list
+  model carries; `m8-6-3`'s window ends 2920 ms after the 3's redraw (+28 ms).
+
+Options if these should close: reproduce partial draws as captured frames (a carousel `cut` step
+for `Menu 8`, one per-recording byte count for Done), widen the probe tolerance to ≈45 ms for the
+shortcut delays, and give rows lists a detail drawn while a pages child is opening.
