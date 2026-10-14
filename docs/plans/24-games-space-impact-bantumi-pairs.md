@@ -16,7 +16,8 @@ lands second rebases onto the other and keeps both plans' tests green.
 supplementary captures") and plans 13, 14, 16, 23 and 28 in full before starting. The planning
 probes in `$REF/captures/scratch-plan24/{space-impact,bantumi,pairs2}/` are evidence for this plan
 only and are never imported. Task 0 writes this plan's captures to `$REF/captures/6.39/plan24/`.
-**Status:** not started.
+**Status:** Task 0 partially attempted; incomplete. Documentation reconciled on 2026-10-14;
+Tasks 1-6 remain unstarted. See the Task 0 evidence and outcome below.
 
 ## Goal
 
@@ -34,7 +35,7 @@ Make Space impact (`Games › Space impact › New game`, node 8-2-1) playable i
 - goldens for all of it, replayed by key-driven acceptance scenarios.
 
 It also builds the **Games II seams** that Bantumi (plan 24b) and Pairs II (plan 24c) need: one
-shared game random generator and clock seed, one suspended-game slot with Continue on every game
+shared game random generator and clock seed, per-game suspended state with Continue on every game
 level, game-over endings beyond `Your score:`, game sounds as data, Level pages with any number of
 bars, and game capture tooling that is not Snake-shaped (D1, D10-D13).
 
@@ -51,16 +52,16 @@ gameplay.
 
 ## Why this plan exists (measured gap)
 
-| Area                | nokia-os after plans 14-23                            | v6.39 captures (planning probes, `$REF/captures/scratch-plan24/`)                                                                                                                            |
-| ------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| New game (8-2-1)    | placeholder owned by 24; golden `pending:24`          | a side-scrolling shooter: a 93 ms tick (12 timer units), an inverted level 0, a HUD of lives, a special weapon and its count, and a 5-digit score (`space-impact/out-A-nokeys`)              |
-| Keys                | none                                                  | 8 up, 0 down, `*` back, `#` forward, 1/3 fire, 4/6 special; the stock Instructions say the same (`plan14/probe/games/instructions-8-2-4`)                                                    |
-| Levels              | none                                                  | levels last 50-60 s each; the scroll stops at a boss; a boss kill flies the ship off (≈3.4 s) into the next level (`space-impact/out-levels`, god mode, planning only)                       |
-| Random numbers      | Snake II's generator, inside `src/games/snake/rng.ts` | the same `game_rand16`, seeded at New game by Snake II's clock rule; one chain for the whole game; a second, phone-wide ANSI `rand` for random spawn rows (D5, D6)                           |
-| Splash              | a fixed timeline cut from the 10:10 capture (plan 14) | its 30 stars are drawn from the clock seed, so the picture differs per clock (H18)                                                                                                           |
-| Pause               | Snake II only: `games.snake` and `SNAKE_LEVEL`        | Space impact pauses to `Continue / New game / Top score / Score IDs / Instructions` (`8-2-1`..`8-2-5`); a suspended Pairs II game vanished when the other mode's menu opened (one slot? D10) |
-| Top score           | the note reads the virgin text `45` (`VIRGIN_TEXTS`)  | a new top score plays the fireworks and `TOP SCORE:`; the Top score page then shows it (`space-impact/out-after`: 70)                                                                        |
-| Sound and vibration | Snake II cues only (`eat`, `crash`, `top-score`)      | shot, death, missile/wall, beam and bonus sounds with Warning tones On; the vibrator ≈480 ms per death and per boss kill                                                                     |
+| Area                | nokia-os after plans 14-23                            | v6.39 captures (planning probes, `$REF/captures/scratch-plan24/`)                                                                                                                                                       |
+| ------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| New game (8-2-1)    | placeholder owned by 24; golden `pending:24`          | a side-scrolling shooter: a 93 ms tick (12 timer units), an inverted level 0, a HUD of lives, a special weapon and its count, and a 5-digit score (`space-impact/out-A-nokeys`)                                         |
+| Keys                | none                                                  | 8 up, 0 down, `*` back, `#` forward, 1/3 fire, 4/6 special; the stock Instructions say the same (`plan14/probe/games/instructions-8-2-4`)                                                                               |
+| Levels              | none                                                  | levels last 50-60 s each; the scroll stops at a boss; a boss kill flies the ship off (≈3.4 s) into the next level (`space-impact/out-levels`, god mode, planning only)                                                  |
+| Random numbers      | Snake II's generator, inside `src/games/snake/rng.ts` | the same `game_rand16`, seeded at New game by Snake II's clock rule; one chain for the whole game; a second, phone-wide ANSI `rand` for random spawn rows (D5, D6)                                                      |
+| Splash              | a fixed timeline cut from the 10:10 capture (plan 14) | its 30 stars are drawn from the clock seed, so the picture differs per clock (H18)                                                                                                                                      |
+| Pause               | Snake II only: `games.snake` and `SNAKE_LEVEL`        | Space impact pauses to `Continue / New game / Top score / Score IDs / Instructions` (`8-2-1`..`8-2-5`); canonical S2 retains Snake II and Space impact Continue together; Pairs II cross-mode scope is UNVERIFIED (D10) |
+| Top score           | the note reads the virgin text `45` (`VIRGIN_TEXTS`)  | a new top score plays the fireworks and `TOP SCORE:`; the Top score page then shows it (`space-impact/out-after`: 70)                                                                                                   |
+| Sound and vibration | Snake II cues only (`eat`, `crash`, `top-score`)      | shot, death, missile/wall, beam and bonus sounds with Warning tones On; the vibrator ≈480 ms per death and per boss kill                                                                                                |
 
 ## Planning investigation (2026-10-14)
 
@@ -131,8 +132,10 @@ Instructions` (`8-2-1`..`8-2-5`) ≈70 ms after the key; C again goes to the Gam
   (Pairs II: a 6 moved the cursor; Bantumi: the key releases a paused search, sowing or countdown
   and does nothing else because keys are ignored there).
 - **Suspend slot.** Starting Puzzle while Time trial was suspended removed Time trial's Continue,
-  and suspending Puzzle then opening the Time trial menu removed Puzzle's (`pairs2/out-e6`). The
-  framework may hold one suspended game for all games (D10, Task 0 S2).
+  and suspending Puzzle then opening the Time trial menu removed Puzzle's (`pairs2/out-e6`).
+  This is planning evidence about Pairs II modes only, not a phone-wide slot. Canonical S2
+  shows independent Snake II and Space impact suspension (D10); Pairs II cross-mode scope remains
+  UNVERIFIED pending 24c captures.
 
 ## Scope and non-goals
 
@@ -173,8 +176,11 @@ tables is committed.
 **D4 - Every level is captured from unmodified play by a look-ahead bot (new).** Pokes break the
 HUD (investigation item 9), so god mode is planning-only. Task 0's bot plays by tick: before each
 tick it `fork`s, tries candidate inputs a few ticks ahead, `exit`s from the ones that lose a life
-and replays the best for real. The recorded run is a real game with real keys (`keys.csv` by tick)
-and its frames are pixel-faithful. One full run plays levels 0-7 to the end of the game; variety
+and replays the best for real. All candidate scoring, phase and level tracking, key release,
+continue/stop decisions and recording boundaries come from LCD observations and their history.
+RAM reads cross-check those observations only (Task 0 capture-driver proof). The recorded run
+is a real game with real keys (`keys.csv` by tick) and its frames are pixel-faithful. One full run
+plays levels 0-7 to the end of the game; variety
 runs cover what one run misses (every bonus kind, the wall and the beam, a death and a continue in
 each level, the repeat-fire cap).
 
@@ -184,12 +190,16 @@ fallback is replaced if Task 0's fit holds (new; revises plan 23 D4).** `game_ra
 `src/games/random.ts` (Snake II keeps its placement helpers and imports the generator). The seed
 state is the u32 the firmware writes at New game: its first step runs in 32-bit wrapping
 arithmetic, later steps stay below 0xfff1. Task 0 S7 reads the u32 (peek) at New game for the
-plan 23 C9 clocks and dates and fits `u32 = f(date, time)`. If one function reproduces every
-recovered seed of every seed golden (Snake II's C9 games and this plan's S7 games, from the LCD),
+plan 23 C9 clocks and dates and fits `u32 = f(date, time)`. If one function reproduces the
+complete LCD random-event sequences of every Snake II seed golden (including all C9 clocks/dates
+and overflow cases) and this plan's informative S7 datasets,
 `src/games/seed.ts` replaces plan 23's minutes-of-the-day fallback for all games. Otherwise the
-fallback stays, as UNVERIFIED, and tests inject recovered seeds. Space impact draws for enemy fire,
-bonus kinds and explosion frames from one chain per game (no reseed between levels or on Continue;
-investigation item 5). The splash draws its 30 stars from the same clock seed (H18).
+fallback stays, as UNVERIFIED, and tests inject recovered seeds where identifiable. RAM peeks
+are cross-checks, never the sole proof of the fit. Noninformative traces use a clock seed proved
+independently by informative LCD datasets; they do not claim seed recovery (Task 6). Space impact
+draws for enemy fire, bonus kinds and explosion frames from one chain per game (no reseed between
+levels or on Continue; investigation item 5). The splash draws its 30 stars from the same clock
+seed (H18).
 
 **D6 - The ANSI `rand` is a phone-wide generator (new).** Random spawn rows (`y = 0x3f`) draw from
 a second generator whose state survives games and is set only at power-on (investigation item 6).
@@ -219,22 +229,24 @@ The feature declares `onKeyDown` and `onKey` (release). A held key repeats every
 repeats fire up to the captured cap. Goldens carry `input:` by tick as plan 23's, with an added
 release form (`<tick>:<key>^`) for held keys (Golden pipeline additions).
 
-**D10 - Games II seam: one suspended-game slot and Continue on every game level (new; revises plan
-23 D10 and Task 10).** Plan 23 keeps `StockGames.snake`. Task 0 S2 decides between one slot for
-all games (the Pairs II evidence) and one per game:
+**D10 - Games II seam: per-game suspended state and Continue on every game level (new; revises
+plan 23 D10 and Task 10).** Select the existing per-game alternative:
+`StockGames.suspended: Partial<Record<StockGameId, unknown>>`. Canonical S2 LCD probes retain
+Continue for Snake II and Space impact simultaneously, in both suspend orderings
+(`plan24/slot/{snake-suspended,si-suspended}/after-other-suspended/{snake,si}-menu.png`).
+Opening the other game's menu, Bantumi's menu, Pairs II's mode list or standby preserves the
+suspended game in these probes. Suspending one game must not overwrite another game's state.
+New game clears that game's suspended state; retain Snake II's existing Level-store clearing
+behaviour and power-off clearing. Require captured evidence before adding further clearing rules.
 
-- one slot: `StockGames.suspended: { readonly game: StockGameId; readonly state: unknown } |
-undefined`; suspending any game replaces it; and whatever S2 shows clears it (starting another
-  game, opening another game's menu, power-off);
-- per game: `StockGames.suspended: Partial<Record<StockGameId, unknown>>`.
-
-Either way, a table of game levels (`GAME_LEVELS`: level number, New game number, the feature's
-game id, its Continue factory) replaces `SNAKE_LEVEL`. The Continue entry, `shown`, `opening()`,
-the Top score and Level returns (`NOTE_ENDS`, `onStore`) read it for every game: Snake II (8-1),
-Space impact (8-2), Bantumi (8-3), Pairs II Time trial (8-4-1) and Puzzle (8-4-2). Continue's
-board stands until a key, which then reaches the game (every game, "Facts shared"). Snake II's
-goldens pass unchanged; if S2 shows the single slot, new Snake II scenarios assert that another
-game clears its Continue.
+A table of game levels (`GAME_LEVELS`: level number, New game number, game id, Continue factory)
+replaces `SNAKE_LEVEL`. Continue's `shown`, `opening()`, Top score and Level returns (`NOTE_ENDS`,
+`onStore`) read the relevant game's state. Continue's board stands until a key, which then
+reaches the game. Snake II's existing goldens pass unchanged; add both-order scenarios proving
+that suspending Space impact preserves Snake II's Continue and vice versa, with each board
+resuming its own state. Pairs II's Time trial and Puzzle identifiers are provisional: the
+scratch cross-mode clearing observation does not establish whether modes share storage or have
+an explicit invalidation rule. Resolve that in 24c before implementing their suspension scope.
 
 **D11 - Game-over endings are data (new; extends plan 23 D13).** `gameOver()` takes an ending:
 `score` (`Game over!` / `Your score:` / N), `top-score` (fireworks, then `TOP SCORE:` / N), and
@@ -358,7 +370,7 @@ export type StockGameId =
   | "pairs-time-trial"
   | "pairs-puzzle";
 export interface StockGames {
-  suspended: { readonly game: StockGameId; readonly state: unknown } | undefined; // or per game (S2)
+  suspended: Partial<Record<StockGameId, unknown>>; // D10; Pairs II mode scope unresolved
   seed(): number; // the u32 for New game
   readonly ansi: AnsiRandom; // phone-wide (D6)
   readonly cues: StockCueSink;
@@ -375,6 +387,12 @@ export type GameEnding =
 ```
 
 ## Golden pipeline additions
+
+**Plan 29 dependency:** the pipeline29 worker owns the shared resource-registration repair.
+Tasks 4-5 wait for that verified change, then inspect and use its actual registration contract.
+Do not assume a future API, edit the shared repair here or treat a planned interface as landed.
+Task 0's LCD capture repair can proceed independently. Imported/generated assets still wait
+for the canonical-level gate below; no hand edits to goldens or generated files.
 
 ### `input` with releases (`scripts/golden-format.ts`)
 
@@ -455,14 +473,16 @@ stills first (Deviation in Task 3).
 
 **Files (all under `$REF`, gitignored):** `captures/scripts/gen_v639_plan24.py`,
 `captures/scripts/v639-plan24-<section>.cap`, `captures/6.39/plan24/**`, a new section in
-`captures/README.md`. Do not modify existing captures, scripts or `scratch-plan24/`.
+`captures/README.md`. Repair the existing plan24 generator in place. Preserve existing captures
+and audit interrupted artifacts before rerunning their sections; write repair probes to new
+plan24 evidence directories. Do not modify other plans' scripts/captures or `scratch-plan24/`.
 
 - [ ] Read `$REF/captures/README.md`, `captures/scripts/gen_v639_plan23.py` (its `Drive`, `Bot`,
       seed search and section runner are the model) and the scratch scripts in
       `captures/scratch-plan24/space-impact/` (`si.py` has a tick-locked driver, `Sync`, and a
       RAM tracer).
-- [ ] Write `gen_v639_plan24.py` with subcommands `run` (`-j 2` workers, `--only <section>`), `bot`,
-      `ocr`, `check`, `seeds` and `list`. Every section starts with `include v639-setup.inc`,
+- [ ] Repair and complete `gen_v639_plan24.py` with subcommands `run` (`-j 2` workers,
+      `--only <section>`), `bot`, `ocr`, `check`, `seeds` and `list`. Every section starts with `include v639-setup.inc`,
       `key c`, `run 2s` (clock 10:10 unless S7), records audio around every gameplay recording,
       and writes `keys.csv` (`tick,key,press_ms,release_ms`, tick = the last tick frame before the
       edge). Keys in recordings are raw edges placed by tick (investigation item 4). Navigation:
@@ -475,7 +495,9 @@ stills first (Deviation in Task 3).
       delivered?), Top score and New game while suspended. **The slot:** suspend Space impact,
       then (a) open Snake II's menu, (b) start and suspend a Snake II game, (c) open Pairs II's
       mode list, (d) go to standby and back; after each, shot Space impact's menu (Continue?) and
-      Snake II's. Repeat with Snake II suspended first. Record the rule that decides D10.
+      Snake II's. Repeat with Snake II suspended first; include Bantumi menu visits. Confirm
+      simultaneous Continue and independent resumed boards per D10; preserve Pairs II cross-mode
+      uncertainty for 24c.
 - [ ] **S3 no keys:** a virgin game with no keys to the menu after game over (≈45 s), audio.
 - [ ] **S4 keys:** tick-locked, each key tapped on tick 40 (after the shield) and held for 20 ticks:
       0-9, `*`, `#`, ▲, ▼; two direction keys between ticks; 1 held 40 ticks (the repeat-fire cap);
@@ -484,10 +506,35 @@ stills first (Deviation in Task 3).
 - [ ] **S5 the full run:** the look-ahead bot of D4 (`bot`): fork per tick, candidate inputs
       (stay, up, down, back, forward, fire, special) over a horizon of 8-16 ticks, scored by lives
       lost then by score; `exit` back and play the best. It reads lives, score and phase from the
-      LCD (HUD digits and icons learned from S3), with peek only as an assertion that the LCD read
-      agrees. Play levels 0-7 to the end of the game, then the game-over screens and the menu.
+      LCD (HUD digits and icons learned from canonical S3). Derive phase, level transitions,
+      play/release/continue/stop decisions and recording splits from LCD frames and their history,
+      including exits, deaths, continue countdown, fireworks and menu. Track level identity from
+      an observed New game and counted LCD-confirmed exits; reset only on an observed restart.
+      Unknown or ambiguous LCD states fail with frames and a diagnostic, never a RAM fallback.
+      Peek only cross-checks the decoded observation after control decisions are made; its values
+      cannot enter candidate scoring, phase/level tracking, stop predicates or recording cuts.
+      Play levels 0-7 to the end of the game, then the game-over screens and the menu.
       Record the whole run (one recording per level, split at the level-exit frame, plus `end`).
       Budget ≈8-9 min emulated for the game; the search may take hours of wall time (one worker).
+- [ ] **Capture-driver proof before S5:** replay stored LCD sequences for play, death, continue,
+      exit, next-level entry and ending through the controller with RAM diagnostics disabled,
+      truthful and deliberately conflicting. All produce identical key edges, candidate choices,
+      phase/level decisions, stop reasons and recording boundaries. Collect the controller decisions
+      before evaluating diagnostic assertions; conflicting diagnostics must be reported as failed
+      cross-checks without substituting RAM values. Only diagnostic outcomes differ.
+      Add negative checks for ambiguous LCDs and a source/data-flow audit proving no peek return
+      reaches control or split logic (including helpers, variety stop predicates and replay cuts).
+      Run a short unmodified live fork/search probe with diagnostics disabled and repeat with
+      diagnostics enabled: keys, LCD hashes and boundaries agree. Save commands, results and
+      per-decision LCD evidence under REF. No emulator RAM writes, pokes or firmware calls.
+- [ ] **Canonical-level gate:** before any imports, resource generation, level reconstruction or
+      engine implementation, finish and validate S5's complete unmodified levels 0-7, exits and
+      final ending, plus the required S6 variety evidence. Each cut has LCD-derived boundaries,
+      continuous tick/key/audio provenance and a replayable command stream; adjacent cuts chain
+      without gaps. Scratch progress and interrupted streams are not complete level captures.
+      `check` must fail when a level, exit, ending, required variety observation or control proof
+      is missing. Report actual elapsed time, evaluation counts and coverage at interruptions;
+      keep Task 0 incomplete until every required section passes.
 - [ ] **S6 variety:** four bot runs from S5's level starts (`fork` at each level's first frame in
       the S5 process, so later levels need no replay): `bonus` (take every orb: all four kinds,
       the life re-roll at 5 lives if reachable), `specials` (use the wall and the beam on enemies
@@ -499,6 +546,10 @@ stills first (Deviation in Task 3).
       14.10.2026 (`setup_lines` of plan 23); a no-key game to the first random event the LCD
       shows (enemy fire in level 0 after ≈41 s, or the 64 s bonus orb). Peek `0x10da5c` (u32)
       after New game at each, and at the plan 23 C9 clocks (12:00, 00:01, 10:11) for the fit.
+      A first random event is only a starting point: extend recorded unmodified play until each
+      designated seed-recovery dataset uniquely identifies its effective seed. Track no-draw and
+      ambiguous traces separately with independent clock proof references (Task 6). The clock/date
+      fit is not accepted until every existing Snake II seed golden is reproduced from the LCD.
 - [ ] **S8 ANSI chain:** peek `0x111bf0` at power-on, then after each of: a Space impact game over,
       a Snake II game over, a Pairs II game, a Bantumi game, the Games › Settings pages, a level-1
       random-row spawn. Two Space impact games in one power cycle through level 1 (S5's keys
@@ -517,6 +568,48 @@ stills first (Deviation in Task 3).
       rule, the seed fit (D5), the ANSI formula and its advancers (D6), the tick, shield, respawn,
       continue and exit timings, the interval spread, the bot's wall time, the objects seen per
       level, and any section that failed.
+
+### Task 0 evidence and outcome (partial attempt, 2026-10-14)
+
+Source: `$REF/captures/6.39/plan24/resume-handoff.json`, `identifiability/result.json`,
+`slot/text.json`, the corresponding raw PNGs and `captures/scripts/gen_v639_plan24.py`.
+This reconciliation changes documentation only; it neither completes Task 0 nor starts Tasks 1-6.
+
+- **Seed identifiability:** 10:10 starts and ends at u32 `0xd4538d78`; 19:48 starts and ends at
+  `0xd45414f0`. The tap-5 traces through tick 52 have the same 53 tick-frame hashes (initial
+  gameplay frame plus 52 ticks), with no RNG draws. A byte comparison also finds all 54 raw
+  recording PNG files identical, including the parent/menu frame. Distinct seeds producing
+  the same observation prove unique seed recovery from that recording is impossible. This is
+  a noninformative trace, not evidence that the two seeds are equal or that H14 is wrong.
+- **Suspension:** `slot/text.json` has 28 OCR images. All four
+  `{snake-suspended,si-suspended}/after-other-suspended/{snake,si}-menu.png` images show Continue;
+  the raw LCDs confirm it. Other-game menu, Bantumi menu, Pairs II mode-list and standby visits
+  preserve the suspended game. D10 selects per-game state. Pairs II cross-mode scope remains
+  UNVERIFIED; the scratch observation is retained for 24c to investigate.
+- **Capture-driver discrepancy:** `Bot.play` takes the returned RAM assertion state and uses
+  `st["phase"]` and `st["level"]` to update control state, release keys and split recordings.
+  Its inherited assertions-only claim is false. Repair all control paths to use LCD observations
+  and prove RAM independence before continuing the bot. RAM remains diagnostic evidence only.
+- **Actual bot evidence:** the prior scratch attempt used 491.5 s wall time and reached level 2;
+  it is planning evidence only. The resumed attempt used 272 s (0.0756 h). The handoff reports
+  **zero canonical complete-level recordings**, zero imports and no repository changes/commits.
+  Neither run proves the planned levels 0-7 corpus exists. The hours-scale budget remains a
+  forecast, not measured completion.
+- **Partial inventory:** the handoff lists completed sections `splash-1010`, `splash-1948`,
+  `splash-0759`, `splash-2359`, `pause`, `nokeys`, `seed-1200`, `seed-1011`, `slot`; these are
+  section-run reports, not acceptance of all S1-S10 requirements. `full`, `sound` and `keys`
+  were interrupted. Some `after` recordings exist. Preserve and audit them before retrying;
+  do not overwrite valid evidence or infer missing coverage from a section name.
+- **Residual gates:** no complete u32 clock/date fit, no proof against all Snake II seed goldens,
+  no fitted ANSI chain or settled advancers, no complete S5/S6 corpus, and incomplete keys/sound
+  coverage. Snake II's fallback remains unchanged. Plan 29's shared resource registration must
+  be verified before Tasks 4-5 use it. H1-H22 remain hypotheses except facts explicitly supported
+  here; timings, object coverage and full sound/variety outcomes still need the Task 0 report.
+
+The former Task 6 uniqueness requirement is reconciled, not satisfied: informative datasets
+still require uniqueness; noninformative replay requires independent clock-seed proof. Resume
+Task 0 at the LCD capture-driver repair and RAM-independence checks, then finish canonical
+captures and report the remaining gates. All Task 0 checkboxes remain unchecked.
 
 ### Task 1 - Contracts and documentation
 
@@ -547,12 +640,14 @@ module, `src/widgets/game-over.ts`, `src/widgets/level-bar.ts`, `src/firmware/cu
 - [ ] TDD `random.ts`: Snake II's generator unchanged for seeds below 0xfff1; a u32 seed's first
       step in 32-bit arithmetic (the investigation's two u32s give 44530's and 13689's first
       draws); `snake-rng.test.ts`'s recovered seeds still reproduce every placement.
-- [ ] TDD `seed.ts`: the Task 0 fit (D5) against every S7 and plan 23 C9 seed, or the fallback with
+- [ ] TDD `seed.ts`: the Task 0 fit (D5) against every informative S7 dataset and every Snake II
+      seed golden (all placements and C9 clocks/dates, including overflow), or the fallback with
       the evidence in the test names. Snake II's New game uses it.
-- [ ] TDD the holder (D10, the rule Task 0 S2 chose): suspend and Continue for a fake game id; what
-      clears the slot; power-off clears it; `GAME_LEVELS` gives each listed level its Continue
+- [ ] TDD the holder (D10, the rule Task 0 S2 chose): suspend and Continue for a fake game id; per-game
+      isolation in both Snake II/Space impact suspend orderings; captured clearing rules; power-off
+      clears all suspended states; `GAME_LEVELS` gives each listed level its Continue
       entry (`shown`, `opening()`, positional numbers), Top score and Level returns. Snake II's
-      goldens and `snake-game.test.ts` pass unchanged; add a Snake II test for the slot rule.
+      goldens and `snake-game.test.ts` pass unchanged; add scenarios for independent suspension.
 - [ ] TDD `gameOver(ending)` (D11): `score` and `top-score` reproduce Snake II's game-over goldens;
       `won`/`draw`/`lost` throw "resource missing (plan 24b)" until 24b adds them.
 - [ ] TDD `levelPage` (D14): Snake II's Level goldens pass with `max: 9`; a `max: 5` page clamps at
@@ -590,15 +685,20 @@ entry), `tests/golden-format.test.ts`,
       `goldens/index/14.json`), and the acceptance slice lists it as a todo until Task 13.
 - [ ] Integrity: `game/space-impact/*` timelines have a numeric `trigger-frame`; tick stills are
       ascending `t<tick>`; every `input` tick exists in its golden.
-- [ ] Run the importer twice; no diff. Record counts and bytes (D3 budget guide).
+- [ ] Before importing anything, require Task 0's canonical-level gate and control proof to pass.
+      Run the importer twice; no diff. Record counts and bytes (D3 budget guide).
 - [ ] Commit: `feat(nokia-os): import Space impact gameplay captures as goldens`.
 
 ### Task 4 - Space impact resources from goldens (TDD)
 
-**Files:** `scripts/space-impact-resources.ts` (new), `scripts/extract-resources.ts` (one line),
+**Files:** `scripts/space-impact-resources.ts` (new), shared resource registration (one line
+through the pipeline delivered by plan 29),
 `src/resources/generated/space-impact.ts` (generated), `src/resources/index.ts` (one export
 block), `tests/space-impact-resources.test.ts` (new).
 
+- [ ] Confirm Task 0's canonical-level gate and plan 29's verified registration repair before
+      generating resources. Inspect the landed registration contract; use one owned registration
+      line without redesigning shared extraction here.
 - [ ] Crop table (golden, image, rectangle, sprite id) for the ship, shield, shot, missile, wall
       frames, beam, explosion frames, every enemy and boss frame, bonus orbs, enemy bullets and boss
       projectiles, the HUD heart, special icons (missile, wall, beam), HUD digits, continue-screen
@@ -622,6 +722,7 @@ block), `tests/space-impact-resources.test.ts` (new).
 `src/resources/generated/space-impact-levels.ts` (generated), `src/resources/index.ts` (one export
 block), `tests/support/space-impact-decode.ts` (new), `tests/space-impact-levels.test.ts` (new).
 
+- [ ] Confirm the canonical-level gate and the verified plan 29 pipeline before reconstruction.
 - [ ] TDD the decoder on synthetic frames painted from Task 4's sprites: HUD values, the ship,
       every object (type by picture, frame, box), terrain scroll; it rejects frames it cannot read.
 - [ ] The tracker follows each object across a level golden's stills (positions per tick by
@@ -631,8 +732,8 @@ block), `tests/support/space-impact-decode.ts` (new), `tests/space-impact-levels
       and kills in the score), y-path tables (y by x) and boss behaviour per level (H5, H6, H12,
       H13).
 - [ ] Fire chances: each firing object type's N is fitted with Task 6's generator over the
-      recovered seed: the smallest N consistent with every captured fire event and every
-      non-event. Ambiguous N are reported (Open question 2).
+      uniquely recovered or independently proved clock seed (Task 6): the smallest N consistent
+      with every captured fire event and every non-event. Ambiguous N are reported (Open question 2).
 - [ ] TDD: freshness; every level's script re-spawns every tracked object at its captured tick
       and place; every y-path reproduces its tracks.
 - [ ] Commit: `feat(nokia-os): reconstruct Space impact levels from goldens`.
@@ -645,8 +746,23 @@ events draw, in which order), `tests/space-impact-rng.test.ts` (new).
 - [ ] TDD the draw order per tick (H14) on synthetic object lists: fire rolls in object order,
       explosion frames, bonus kinds; the bonus re-roll at 5 lives.
 - [ ] `space-impact-seeds.ts` searches the 65,521 effective seeds for each golden's decoded random
-      events; exactly one seed per golden must fit, and it must equal `gameSeed` of the golden's
-      clock (D5). If none fits, stop and report: H14 is wrong.
+      events and reports candidate count and the observations used. Classify datasets before
+      accepting recovery: an informative seed-recovery dataset must reduce the effective seeds
+      to exactly one. Its first draw and subsequent chain must match those of the clock-derived
+      u32 seed, with the u32 seed's wrapping first step (D5). Keep the recovered effective seed
+      distinct from the u32 clock seed; effective recovery alone cannot identify the original u32.
+      Multiple candidates require more informative LCD observations; do not select an arbitrary
+      candidate or weaken uniqueness.
+      A noninformative trace (no draws, or insufficient observable random outcomes) may replay
+      using a clock seed independently proved by informative datasets for that clock/date; record
+      the proof dataset and unresolved candidate set in its note. If no such proof exists, seed
+      acceptance stays blocked. If no candidate fits, stop and report the draw-order/model mismatch.
+- [ ] Regression: the two identifiability traces through tick 52 have 53 identical LCD frames
+      at distinct unchanged seeds. Both replay exactly without claiming unique recovery; a
+      deliberately ambiguous informative dataset fails recovery, and a uniquely identifying
+      dataset succeeds. Validate the clock function against every Snake II seed golden before
+      replacing its fallback, regardless of success on Space impact. A passing noninformative
+      replay is no evidence for that replacement.
 - [ ] The ANSI generator (D6): the Task 0 S8 formula reproduces every random-row spawn of every
       golden with the chain position its note gives.
 - [ ] Commit: `feat(nokia-os): Space impact random numbers reproduced from captured games`.
@@ -673,7 +789,8 @@ events draw, in which order), `tests/space-impact-rng.test.ts` (new).
 
 - [ ] TDD H5, H6, H7 (objects), H9, H10, H14 with synthetic states from Task 5's data.
 - [ ] Trace test: for every level golden of levels 0-3 and the variety goldens there, drive the
-      engine from the recovered seed, the ANSI position and `input` (one step per tick) and compare
+      engine from the uniquely recovered or independently proved clock seed (Task 6), the ANSI
+      position and `input` (one step per tick) and compare
       the decoded state of every tick still (HUD, ship, objects, terrain).
 - [ ] Commit: `feat(nokia-os): Space impact waves, enemy fire, bonuses and specials`.
 
@@ -841,8 +958,11 @@ sounds → 9 acceptance `tests/acceptance/24b-bantumi.test.ts` → 10 closeout.
 - **Level page:** 7 bars, ▲ clamps at 7, ▼ at 1, OK stores per mode with no note, C discards.
 - **Pause:** `Continue / New game / Level / Top score / Score IDs / Instructions` (six entries,
   numbered by position); Continue waits for a key, which reaches the game; Continue during the deal
-  skips to play; a suspended game survives standby. **One slot across modes** (D10; Task 0 S2 of
-  plan 24 settles it for all games). Re-entering Pairs II opens the mode list on the last mode used.
+  skips to play; a suspended game survives standby. **Cross-mode scope UNVERIFIED:**
+  scratch probes show clearing across modes, but canonical S2 establishes independent Snake II/Space
+  impact state only (D10). 24c must capture
+  both mode orderings and distinguish menu-entry invalidation from shared storage.
+  Re-entering Pairs II opens the mode list on the last mode used.
 - **Sound:** pair found 740/1480/880 Hz (10/10/21 units), miss 523, 740, 494, 698, 466 (7 units
   each) and 659 (14); the fireworks tune; no vibration.
 
@@ -872,8 +992,8 @@ scores, Continue) → 7 sounds → 8 acceptance `tests/acceptance/24c-pairs-ii.t
 - **Plan 25:** `Lights` during play for every game.
 - **Plan 28:** reuse `levelPage`, `gameOver(ending)` and the suspend slot for SDK games; whichever
   plan lands second rebases (D14).
-- **Snake II:** if Task 2's seed fit holds, plan 23's seed fallback is gone; if S2 shows one slot,
-  Snake II's Continue follows it (both in Task 2).
+- **Snake II:** Task 2 replaces plan 23's seed fallback only after every Snake II seed golden passes
+  D5's clock-fit proof. D10 requires independent Snake II and Space impact Continue entries.
 - **Portfolio integration (not sequenced):** unchanged.
 
 ## Open questions for Lachlan
@@ -891,11 +1011,12 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
 4. **ANSI chain (D6):** reproduced phone-wide, so a second game in a power cycle differs from the
    first where the captures do. Reverse by resetting it per game (simpler; wrong for second games).
 5. **Seed function (D5):** replaces Snake II's minutes-of-the-day fallback if Task 0's u32 fit
-   reproduces every recovered seed. Reverse by keeping the fallback (tests inject seeds either
-   way).
-6. **One suspend slot (D10):** if Task 0 confirms it, starting or opening another game drops a
-   suspended Snake II game, as the firmware does. Reverse by keeping per-game slots (a visible
-   deviation from the firmware).
+   reproduces every Snake II seed golden's LCD placements and every informative S7 dataset
+   (including overflow). Noninformative replays do not prove the fit. Otherwise keep the fallback
+   and inject independently established seeds for tests.
+6. **Per-game suspension (D10):** canonical S2 selects independent state for Snake II and Space
+   impact. Opening another game does not clear Continue. Pairs II cross-mode scope remains
+   unresolved; do not extrapolate its scratch observation to all games.
 7. **Splash stars (H18):** generated from the clock seed, so the title differs per clock as on the
    phone. Reverse by keeping plan 14's fixed 10:10 frames.
 8. **Score IDs:** not reproduced (plan 23 Open question 4).
