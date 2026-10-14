@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/timeout/virgin/hold-8000
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/timeout/virgin/hold-8000
 source-sha256: 6f3b1d5fdb16658b1e08509461aa832c2f7c5b6c394005a4bb8fc8ee78de5ce3
 state: virgin
 power-on: 69192
+start: -100
+end: 25031
 keys: 0:c+8000
 note: C held 8000 ms at standby.
 omitted: none

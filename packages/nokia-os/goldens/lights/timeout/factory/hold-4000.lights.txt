@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/timeout/factory/hold-4000
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/timeout/factory/hold-4000
 source-sha256: 7733294c510cc4337d33647df562c2f27272af29a58c01b5c6bee50df0c2e915
 state: factory
 power-on: 61261
+start: -100
+end: 21031
 keys: 0:c+4001
 note: C held 4000 ms at standby.
 omitted: none

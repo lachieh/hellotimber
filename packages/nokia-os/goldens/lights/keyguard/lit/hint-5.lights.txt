@@ -5,6 +5,8 @@ source: captures/6.39/plan25/keyguard/lit/hint-5
 source-sha256: 83ac2fe324f3500d3ce532972065a641d11bcde9977a7167f7b5284c6fc8577b
 state: virgin
 power-on: 72277
+start: -100
+end: 17091
 keys: 0:5
 note: While the lock's own light is on (locked ≈3.5 s after Menu).
 omitted: none

@@ -5,7 +5,8 @@
 //
 // Statuses (plan 29's pending workflow): a golden whose screens belong to a later plan names it
 // (`pending:18`, `pending:22`); every other golden is `pending:25` until the plan 25 task that
-// drives it promotes it here (Tasks 4 and 7-9).
+// drives it promotes it here (Tasks 4 and 7-9). Task 4 asserts the timeout, key, boot and
+// power-key lights goldens (tests/support/lights.ts `lightsScenario`).
 import type { CaptureSetEntry, PlanCaptureSet } from "../capture-set.ts";
 import type { GoldenStatus } from "../golden-format.ts";
 import type { LightName, LightsCaptureIo, LightsGolden, LightsRow } from "../lights-format.ts";
@@ -20,6 +21,7 @@ import type { TreeCaptureIo } from "../tree-capture-set.ts";
 
 const P = "plan25";
 const OWN: GoldenStatus = "pending:25";
+const ASSERTED: GoldenStatus = "asserted";
 const MESSAGES: GoldenStatus = "pending:18";
 const CALLS: GoldenStatus = "pending:22";
 /** Recordings this close (same images, every frame start within it) share one golden. */
@@ -79,10 +81,15 @@ export function parseLightsCsv(text: string, where: string): { powerOnMs: number
 
 /**
  * A lights golden: each light's changes, aligned on the first key-down (else the recording's
- * start), with the power-on that far before time 0. A light already on at the start gets a row
- * there (every light is off before its first row).
+ * start), with the power-on that far before time 0 and the recording's end (its last LCD frame's,
+ * the LED log having started with it). A light already on at the start gets a row there (every
+ * light is off before its first row).
  */
-export function buildLightsGolden(entry: LightsCaptureEntry, io: LightsCaptureIo): LightsGolden {
+export function buildLightsGolden(
+  entry: LightsCaptureEntry,
+  io: LightsCaptureIo,
+  frames: TreeCaptureIo,
+): LightsGolden {
   const logText = io.lights(entry.dir);
   if (logText === undefined) {
     throw new LightsCaptureError(entry.id, `missing ${entry.dir}.lights.csv`);
@@ -91,6 +98,9 @@ export function buildLightsGolden(entry: LightsCaptureEntry, io: LightsCaptureIo
   if (keysText === undefined)
     throw new LightsCaptureError(entry.id, `missing ${entry.dir}/keys.csv`);
   const log = parseLightsCsv(logText, `${entry.dir}.lights.csv`);
+  const last = frames.recording(entry.dir)?.at(-1);
+  if (last === undefined)
+    throw new LightsCaptureError(entry.id, `missing ${entry.dir}/timings.csv`);
   const rawKeys = parseKeysCsv(keysText, `${entry.dir}/keys.csv`);
   const zero = rawKeys[0]?.downMs ?? 0;
   const { keys } = alignOnKeys([], rawKeys);
@@ -110,6 +120,8 @@ export function buildLightsGolden(entry: LightsCaptureEntry, io: LightsCaptureIo
     sourceSha256: io.sha256(entry.dir),
     state: entry.state,
     powerOnMs: Math.round(log.powerOnMs + zero),
+    startMs: -Math.round(zero),
+    endMs: Math.round(last.startMs + last.durationMs - zero),
     ...(keys ? { keys } : {}),
     note: entry.note,
     omitted: [],
@@ -117,12 +129,15 @@ export function buildLightsGolden(entry: LightsCaptureEntry, io: LightsCaptureIo
   };
 }
 
+/** Task 4 drives these families; the rest wait for Task 8 (or plans 18 and 22). */
+const DRIVEN = /^lights\/(timeout|keys|boot)\/|^lights\/power-key\/(standby|menu|list)$/;
+
 const lights = (
   id: string,
   state: string,
   note: string,
   dir = `${P}/${id}`,
-  status: GoldenStatus = OWN,
+  status: GoldenStatus = DRIVEN.test(id) ? ASSERTED : OWN,
 ): LightsCaptureEntry => ({ id, dir, state, status, note });
 
 const range = (from: number, to: number, step: number): number[] =>
@@ -538,7 +553,7 @@ export const keyguardAndBacklight: PlanCaptureSet = {
   plan: "25",
   resources,
   lcd: (io) => keyguardLcdSet(io.frames),
-  lights: (io) => LIGHTS_ENTRIES.map((entry) => buildLightsGolden(entry, io.lights)),
+  lights: (io) => LIGHTS_ENTRIES.map((entry) => buildLightsGolden(entry, io.lights, io.frames)),
   sounds: (io) => KEYGUARD_SOUNDS.map((entry) => buildSoundGolden(entry, io.sound)),
   notImported: {
     "plan25/stats.txt, plan25/text.json": "Task 0's analysis and OCR",

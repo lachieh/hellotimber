@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/power-key/menu
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/power-key/menu
 source-sha256: 5372d7a0ada835076eb42e4b2f1e8a057e74a63f178638dec1a1abff6ed6967f
 state: factory
 power-on: 73472
+start: -100
+end: 16631
 keys: 0:power
 note: The power key's short press, dark, at the carousel.
 omitted: none

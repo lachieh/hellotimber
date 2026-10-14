@@ -5,6 +5,8 @@ source: captures/6.39/plan25/keyguard/lit/unlock-alone
 source-sha256: 4b9f066bd086c094fe9be021c86a02ad723ca647b68bb7612e7b14f8e3910f74
 state: virgin
 power-on: 72277
+start: -100
+end: 17091
 keys: 0:navi
 note: While the lock's own light is on (locked ≈3.5 s after Menu).
 omitted: none

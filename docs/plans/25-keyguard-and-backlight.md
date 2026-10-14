@@ -414,6 +414,10 @@ omitted: none
 13897  keypad  off
 ```
 
+Deviation (Task 4): two more required headers follow `power-on`: `start: <ms>` (the recording's
+start in golden time, ≤ 0; a light already lit there is a row at `start`) and `end: <ms>` (the
+recording's stop). Every light is off before its first row.
+
 Rules, enforced with `file:line` errors (plan 16's sound format, same header order and key
 syntax, reusing its parsing helpers where `sound-format.ts` exports them): `power-on` is the
 integer ms from the power-on to time 0; `light` is `display` or `keypad`; state `on` or `off`;
@@ -697,17 +701,41 @@ with the kernel's power edges; the boot activity at the self-test's first frame)
 (export the two types: one line), `tests/lights-port.test.ts` (new), `tests/support/lights.ts`
 (new: `recordLights`, `expectLightsTimeline`, aligned on `power-on`).
 
-- [ ] TDD `tests/support/lights.ts` itself: the failure text for an early edge, a missing and an
+- [x] TDD `tests/support/lights.ts` itself: the failure text for an early edge, a missing and an
       extra event (as plan 16 Task 5 tested `expectSoundTimeline`).
-- [ ] TDD the contract rules (Contract changes): ordering, no duplicates, off at power-on until
+- [x] TDD the contract rules (Contract changes): ordering, no duplicates, off at power-on until
       the boot lights, power-off, no port = same screens (every existing acceptance file still
       passes).
-- [ ] Drive `lights/timeout/*`, `lights/hold/*`, `lights/keys/*`, `lights/boot/*` and
+- [x] Drive `lights/timeout/*`, `lights/hold/*`, `lights/keys/*`, `lights/boot/*` and
       `lights/power-key/menu` from a rig powered on `power-on` ms before the first key, edges within
       `LIGHT_EDGE_TOLERANCE_MS` (Task 0's spread, provisionally 5 ms) after alignment; on edges
       against the key-down (D2: latency not reproduced, `KEY_LIGHT_LATENCY_MAX_MS` from Task 0).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): lights port for the display and keypad LEDs`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): lights port for the display and keypad LEDs`.
+
+**Task 4 completion.** `src/firmware/phone.ts` (shared) changed in exactly these places: the
+`StockLights`/`StockLightsPort` import; `StockPhoneConfig.lights?: StockLightsPort` (documented as
+`sound` is); one `StockLights` per phone after the sounder, emitting to `config.lights`; the
+power-edge subscriber calls `lights.powerOn(now)` / `lights.powerOff()` beside the sounder and,
+while booting, `lights.activity()` at the first boot frame after the blank one (268 ms) and when
+standby first shows; `send` calls `lights.activity()` on every key-down of a powered phone; `tick`
+ends with `lights.tick()`. `src/index.ts` exports the two port types (one line). 107 lights goldens
+are asserted, each with a scenario (`lightsScenario`, 2 known gaps); 13 contract and support tests.
+
+Deviation: the firmware's second boot activity is its clock prompt; nokia-os has no clock wizard
+and reaches standby at the same point of the boot (factory 10.1 s; after the code and `Hi`), so
+standby's arrival is the activity (`lights/boot/{power-on,gate,welcome}` pass within 5 ms).
+
+Deviation: the lights golden format gained two required headers after `power-on`: `start:` (the
+recording's start in golden time, ≤ 0; a light lit there is a row at `start`) and `end:` (its
+stop, from the last LCD frame): without them a golden could not say "lit throughout" or "no edge
+until the end". `tests/support/lights.ts` drives its own phone (`lightsRig`, idle stretches in
+20 ms steps; edges are exact at any step) rather than `tests/support/rig.ts`'s 1 ms rig, and
+promotion follows plan 29: Task 4's goldens are asserted now with their acceptance scenarios.
+
+Deviation: known gaps: `lights/timeout/virgin/tap-02` (the tick's ±3 ms, Task 3) and
+`lights/boot/power-off` (the kernel switches off 800 ms into the power key's hold, the firmware
+≈1017 ms: plan 17's power key). `lights/power-key/game` and `lights/screen-saver` wait for Task 8.
 
 ### Task 5 - The keyguard engine (pure, TDD)
 

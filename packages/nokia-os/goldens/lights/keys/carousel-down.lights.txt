@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/keys/carousel-down
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/keys/carousel-down
 source-sha256: fd8cf6e60fff73e491318c9a66896eda71c70fe56c356b609b80a27d7af556b5
 state: factory
 power-on: 73472
+start: -100
+end: 16590
 keys: 0:down
 note: down in the menu carousel (Phone book), dark.
 omitted: none

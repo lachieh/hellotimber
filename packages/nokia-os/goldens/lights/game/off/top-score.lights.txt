@@ -5,6 +5,8 @@ source: captures/6.39/plan25/lights/game/off/top-score
 source-sha256: 09ac63be85951e34f871bb620ebb1b9ede388bdc50584d9eae1f248c5013c2f6
 state: factory
 power-on: 137691
+start: 0
+end: 25919
 keys: 0:navi 2039:8 4582:4 5213:2 5848:6
 note: Snake II level 1, Games › Settings › Lights Off: New game, one meal, a crash (a new top score), 20 s.
 omitted: none

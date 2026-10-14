@@ -5,6 +5,8 @@ source: captures/6.39/plan25/lights/game/on/over
 source-sha256: 897f33df1448002b9320d4ee249e546240ed6b1fad000333b1371271f79193d0
 state: factory
 power-on: 160459
+start: 0
+end: 24543
 keys: 0:navi 2039:8 3310:4 3945:2
 note: Snake II level 1, Games › Settings › Lights On: New game, 3 s of play, a crash, 20 s.
 omitted: none

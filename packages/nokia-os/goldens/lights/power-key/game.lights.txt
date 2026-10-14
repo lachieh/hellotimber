@@ -5,6 +5,8 @@ source: captures/6.39/plan25/lights/power-key/game
 source-sha256: f1110f6d6fb3b31c5041aace3497bce6f22f3fa576c344323e6f08552ea42c73
 state: factory
 power-on: 186848
+start: 0
+end: 13171
 keys: 0:navi 5041:power
 note: Snake II level 1 under Lights Off: New game, the power key at 5 s.
 omitted: none

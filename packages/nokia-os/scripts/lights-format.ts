@@ -40,6 +40,12 @@ export interface LightsGolden {
   readonly state: string;
   /** Whole ms from the power-on to time 0. */
   readonly powerOnMs: number;
+  /**
+   * When the recording started and stopped (golden time): the rows hold every change between, a
+   * light lit at the start as a row at `startMs`.
+   */
+  readonly startMs: number;
+  readonly endMs: number;
   readonly keys?: readonly LightsKey[];
   readonly note?: string;
   readonly omitted: readonly LightsOmission[];
@@ -76,6 +82,8 @@ export function serializeLightsGolden(golden: LightsGolden): string {
     `source-sha256: ${golden.sourceSha256}`,
     `state: ${golden.state}`,
     `power-on: ${golden.powerOnMs}`,
+    `start: ${golden.startMs}`,
+    `end: ${golden.endMs}`,
   ];
   if (golden.keys !== undefined) {
     out.push(
@@ -135,6 +143,12 @@ export function parseLightsGolden(text: string, file: string): LightsGolden {
   if (!INTEGER.test(powerOn.value)) {
     fail(powerOn.line, `power-on must be a non-negative integer (ms), got "${powerOn.value}"`);
   }
+  const start = header("start", false)!;
+  if (!SIGNED.test(start.value) || Number(start.value) > 0) {
+    fail(start.line, `start must be an integer ≤ 0 (ms), got "${start.value}"`);
+  }
+  const end = header("end", false)!;
+  if (!SIGNED.test(end.value)) fail(end.line, `end must be an integer (ms), got "${end.value}"`);
   const keysLine = header("keys", true);
   const keys = keysLine ? parseKeys(keysLine.value, (m) => fail(keysLine.line, m)) : undefined;
   const note = header("note", true);
@@ -166,6 +180,13 @@ export function parseLightsGolden(text: string, file: string): LightsGolden {
     last.set(row.light, row.on);
     rows.push(row);
   }
+  if (rows[0] !== undefined && rows[0].ms < Number(start.value)) {
+    fail(start.line, `start ${start.value} comes after the first row (${rows[0].ms})`);
+  }
+  const lastRow = rows.at(-1);
+  if (lastRow !== undefined && lastRow.ms > Number(end.value)) {
+    fail(end.line, `end ${end.value} comes before the last row (${lastRow.ms})`);
+  }
   if (lines.slice(index).some((line) => line !== ""))
     fail(
       lines.findIndex((line, i) => i >= index && line !== ""),
@@ -179,6 +200,8 @@ export function parseLightsGolden(text: string, file: string): LightsGolden {
     sourceSha256: sha.value,
     state: state.value,
     powerOnMs: Number(powerOn.value),
+    startMs: Number(start.value),
+    endMs: Number(end.value),
     ...(keys !== undefined ? { keys } : {}),
     ...(note ? { note: note.value } : {}),
     omitted: omitted!,

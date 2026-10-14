@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/power-key/standby
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/power-key/standby
 source-sha256: d159a58c370b5b9bf4a9218aadfdbf9156be34bc9f1d2a0276b7cb3782d496f4
 state: factory
 power-on: 59655
+start: -100
+end: 16630
 keys: 0:power
 note: The power key's short press, dark, at standby (the profile list is plan 17's).
 omitted: none

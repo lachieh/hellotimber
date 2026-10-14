@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/boot/power-on
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/boot/power-on
 source-sha256: e12db9bb45cd8904b34a8cfbde9cd93ab06c274927b41002899bef4354d3eb5b
 state: factory
 power-on: 0
+start: 0
+end: 40030
 note: Power-on to 40 s, no key (L4).
 omitted: none
 

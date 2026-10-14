@@ -5,6 +5,8 @@ source: captures/6.39/plan25/lights/arrival/call
 source-sha256: 6383963e68a40cd33ee23bc874d204da5a533a904758f056606b5daf5bb0e19a
 state: virgin
 power-on: 73557
+start: -6101
+end: 20151
 keys: 0:navi 3060:navi
 note: An incoming call at a dark standby, answered with Navi at 6 s, ended with Navi 3 s later.
 omitted: none

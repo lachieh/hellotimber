@@ -5,6 +5,8 @@ source: captures/6.39/plan25/keyguard/emergency/112
 source-sha256: 97062a4c2296531236cf367a2a34b48c789d8541ca708106036077d72b9712e3
 state: virgin
 power-on: 81478
+start: -100
+end: 7091
 keys: 0:1 500:1 1000:2
 note: 1 1 2 500 ms apart on a dark locked standby (K6).
 omitted: none

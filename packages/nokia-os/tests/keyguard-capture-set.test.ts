@@ -43,12 +43,21 @@ t_ms,lcd_led,kbd_led
 15591.6,0,0
 `;
 const KEYS = "key,down_ms,up_ms\nc,100.0,160.0\nc,1100.4,2700.5\n";
+/** A recording whose last frame ends at 17 100.4 ms. */
+const FRAMES: TreeCaptureIo = {
+  recording: () => [
+    { image: "a", startMs: 1, durationMs: 117 },
+    { image: "b", startMs: 118, durationMs: 16982.4 },
+  ],
+  scrollImages: () => undefined,
+};
 
 describe("lights goldens from LED logs", () => {
   it("aligns the rows of each light on the first key-down, with power-on from the comment", () => {
     const golden = buildLightsGolden(
       ENTRY,
       lightsIo({ [`${ENTRY.dir}.lights.csv`]: LOG, [`${ENTRY.dir}/keys.csv`]: KEYS }),
+      FRAMES,
     );
     expect(golden).toMatchObject({
       id: ENTRY.id,
@@ -56,6 +65,8 @@ describe("lights goldens from LED logs", () => {
       source: "captures/6.39/plan25/lights/timeout/factory/tap-03",
       state: "factory",
       powerOnMs: 61834,
+      startMs: -100,
+      endMs: 17000,
       keys: [
         { ms: 0, key: "c" },
         { ms: 1000, key: "c", holdMs: 1600 },
@@ -80,8 +91,10 @@ describe("lights goldens from LED logs", () => {
         [`${ENTRY.dir}.lights.csv`]: lit,
         [`${ENTRY.dir}/keys.csv`]: "key,down_ms,up_ms\nmenu,20.0,60.0\n",
       }),
+      FRAMES,
     );
     expect(golden.powerOnMs).toBe(1020);
+    expect(golden.endMs).toBe(17080);
     expect(golden.keys).toEqual([{ ms: 0, key: "navi" }]);
     expect(golden.rows).toEqual([
       { ms: -20, light: "display", on: true },
@@ -98,6 +111,7 @@ describe("lights goldens from LED logs", () => {
         [`${ENTRY.dir}.lights.csv`]: LOG,
         [`${ENTRY.dir}/keys.csv`]: "key,down_ms,up_ms\n",
       }),
+      FRAMES,
     );
     expect(golden.keys).toBeUndefined();
     expect(golden.powerOnMs).toBe(61734);
@@ -105,17 +119,26 @@ describe("lights goldens from LED logs", () => {
   });
 
   it("throws naming the recording when a file or a column is missing", () => {
-    expect(() => buildLightsGolden(ENTRY, lightsIo({ [`${ENTRY.dir}/keys.csv`]: KEYS }))).toThrow(
-      `${ENTRY.id}: missing ${ENTRY.dir}.lights.csv`,
-    );
-    expect(() => buildLightsGolden(ENTRY, lightsIo({ [`${ENTRY.dir}.lights.csv`]: LOG }))).toThrow(
-      `${ENTRY.id}: missing ${ENTRY.dir}/keys.csv`,
-    );
+    const noFrames: TreeCaptureIo = { recording: () => undefined, scrollImages: () => undefined };
+    expect(() =>
+      buildLightsGolden(
+        ENTRY,
+        lightsIo({ [`${ENTRY.dir}.lights.csv`]: LOG, [`${ENTRY.dir}/keys.csv`]: KEYS }),
+        noFrames,
+      ),
+    ).toThrow(`${ENTRY.id}: missing ${ENTRY.dir}/timings.csv`);
+    expect(() =>
+      buildLightsGolden(ENTRY, lightsIo({ [`${ENTRY.dir}/keys.csv`]: KEYS }), FRAMES),
+    ).toThrow(`${ENTRY.id}: missing ${ENTRY.dir}.lights.csv`);
+    expect(() =>
+      buildLightsGolden(ENTRY, lightsIo({ [`${ENTRY.dir}.lights.csv`]: LOG }), FRAMES),
+    ).toThrow(`${ENTRY.id}: missing ${ENTRY.dir}/keys.csv`);
     const noPowerOn = LOG.replace("# power_on_ms=61734.2\n", "");
     expect(() =>
       buildLightsGolden(
         ENTRY,
         lightsIo({ [`${ENTRY.dir}.lights.csv`]: noPowerOn, [`${ENTRY.dir}/keys.csv`]: KEYS }),
+        FRAMES,
       ),
     ).toThrow(`${ENTRY.dir}.lights.csv:1: expected "# power_on_ms=<ms>"`);
     const noColumn = LOG.replace("15591.6,0,0", "15591.6,0");
@@ -123,6 +146,7 @@ describe("lights goldens from LED logs", () => {
       buildLightsGolden(
         ENTRY,
         lightsIo({ [`${ENTRY.dir}.lights.csv`]: noColumn, [`${ENTRY.dir}/keys.csv`]: KEYS }),
+        FRAMES,
       ),
     ).toThrow(`${ENTRY.dir}.lights.csv:6: bad row "15591.6,0"`);
   });
@@ -243,9 +267,18 @@ describe("plan 25's capture set", () => {
     ]) {
       expect(status(id), id).toBe("pending:22");
     }
-    for (const id of ["keyguard/lock", "keyguard/hint", "lights/timeout/factory/tap-00"]) {
+    for (const id of ["keyguard/lock", "keyguard/hint", "lights/game/off/play"]) {
       expect(status(id), id).toBe("pending:25");
     }
+    // Task 4 drives the timeout, key, boot and power-key lights goldens.
+    for (const id of [
+      "lights/timeout/factory/tap-00",
+      "lights/boot/gate",
+      "lights/power-key/menu",
+    ]) {
+      expect(status(id), id).toBe("asserted");
+    }
+    expect(status("lights/power-key/game")).toBe("pending:25");
   });
 
   it("imports the keyguard sound recordings", () => {

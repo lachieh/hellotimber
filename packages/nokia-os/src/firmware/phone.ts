@@ -9,6 +9,7 @@ import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { stockBootGates } from "./boot";
 import { createStockSettings } from "./settings";
+import { StockLights, type StockLightsPort } from "./features/backlight";
 import type { StockSoundPort } from "../sound/port";
 import { SoundSequencer } from "../sound/sequencer";
 import { StockSounder, type KeyDownOptions } from "../sound/sounder";
@@ -36,6 +37,11 @@ export interface StockPhoneConfig extends StockPorts {
    * stamped with the kernel time it happens at. Default: nowhere.
    */
   sound?: StockSoundPort;
+  /**
+   * Plan 25: the display and keypad LEDs. Every change arrives from `tick()` stamped with the
+   * kernel time it happens at. Default: nowhere.
+   */
+  lights?: StockLightsPort;
 }
 
 /**
@@ -104,6 +110,11 @@ export function createStockPhoneWith(
   const port = config.sound;
   const sequencer = new SoundSequencer((event) => port?.change(event));
   const sounder = new StockSounder(sequencer, settings, () => now);
+  const lightsPort = config.lights;
+  const lights = new StockLights(
+    (event) => lightsPort?.change(event),
+    () => now,
+  );
   const clockGames = createStockGames(ports, () => now);
   const games = {
     ...clockGames,
@@ -127,13 +138,30 @@ export function createStockPhoneWith(
     shortcutEntry: { openDelayMs: STOCK_SHORTCUT_OPEN_DELAY_MS, invalid: invalidShortcut(sounder) },
   });
   // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
+  // Plan 25: the light tick runs from the power-on; the boot lights the LEDs at the self-test's
+  // first frame and again where the firmware shows its clock prompt (nokia-os: standby).
   let poweredOn = false;
+  let booting = false;
   phone.subscribe((snapshot) => {
     if (!snapshot.poweredOn) games.snake = undefined;
-    if (snapshot.poweredOn === poweredOn) return;
-    poweredOn = snapshot.poweredOn;
-    if (poweredOn) sounder.powerOn({ boot: !skip });
-    else sounder.powerOff();
+    if (snapshot.poweredOn !== poweredOn) {
+      poweredOn = snapshot.poweredOn;
+      booting = poweredOn;
+      if (poweredOn) {
+        sounder.powerOn({ boot: !skip });
+        lights.powerOn(now);
+      } else {
+        sounder.powerOff();
+        lights.powerOff();
+      }
+    }
+    if (!booting) return;
+    const { screen } = snapshot;
+    if (screen.kind === "boot" && screen.frame > 0 && !lights.display) lights.activity();
+    if (screen.kind === "standby") {
+      booting = false;
+      lights.activity();
+    }
   });
   const send = (event: KeyEvent): void => {
     if (event.type === "up") {
@@ -142,6 +170,7 @@ export function createStockPhoneWith(
       return;
     }
     const on = poweredOn;
+    if (on) lights.activity();
     const options = on ? keyDownOptions(event.key, phone) : undefined;
     phone.send(event);
     // The beep follows the key's handling: a widget may set this key's level or replace it.
@@ -160,6 +189,7 @@ export function createStockPhoneWith(
       phone.tick(nowMs);
       sounder.tick();
       sequencer.advance(now);
+      lights.tick();
     },
     navigate: (path) => phone.navigate(path),
     setNotice: (notice) => phone.setNotice(notice),

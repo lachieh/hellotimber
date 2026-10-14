@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/timeout/factory/fine-340
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/timeout/factory/fine-340
 source-sha256: 5a56b21968cedcd9b1bb45cf3f0443fd5ef2d25dffb788bd2108954082da9ef8
 state: factory
 power-on: 61802
+start: -100
+end: 17091
 keys: 0:c
 note: C at standby 340 ms after a light tick: pins the timeout (D2).
 omitted: none

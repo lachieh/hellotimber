@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/keys/standby-menu
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/keys/standby-menu
 source-sha256: b68712a1cc8cd5aeeacc0f02113a0265a76e9ebb2959e6e9aef4ba5f9a409b29
 state: factory
 power-on: 59655
+start: -100
+end: 16590
 keys: 0:navi
 note: menu at standby with the LEDs off.
 omitted: none

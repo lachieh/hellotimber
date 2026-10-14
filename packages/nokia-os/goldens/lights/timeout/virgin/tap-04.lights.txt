@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/timeout/virgin/tap-04
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/timeout/virgin/tap-04
 source-sha256: ef1c8f961a693876b0cdf9fdb247b70523eb866a8563b9c7f03b45c7e046da95
 state: virgin
 power-on: 69889
+start: -100
+end: 17091
 keys: 0:c
 note: C at standby with the LEDs off, 496 ms after a light tick (Task 0 L).
 omitted: none

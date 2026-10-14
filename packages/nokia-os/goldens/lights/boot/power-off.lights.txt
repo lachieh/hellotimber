@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/boot/power-off
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/boot/power-off
 source-sha256: 66cd991462d08fa0f046102b7facd34b121842220aecf0b4d0e1faad960a9449
 state: factory
 power-on: 59655
+start: -100
+end: 3641
 keys: 0:c 2060:power+1550
 note: C at a dark standby, then the power key held until the LCD blanks.
 omitted: none

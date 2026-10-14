@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/keys/standby-down
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/keys/standby-down
 source-sha256: 602c275278b7bd2f4df257bff93a15629bec3fec59744abef7cedcb4267c588a
 state: factory
 power-on: 59655
+start: -100
+end: 16590
 keys: 0:down
 note: down at standby with the LEDs off.
 omitted: none

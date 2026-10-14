@@ -5,6 +5,8 @@ source: captures/6.39/plan25/lights/game/off/pause-c
 source-sha256: b9674ee9befafe1272a236303e734f3cba77325e3d47a67fa85d03d767f85aba
 state: factory
 power-on: 137691
+start: 0
+end: 34968
 keys: 0:navi 2039:8 2756:c 22817:navi 24878:6
 note: Snake II level 1, Games › Settings › Lights Off: New game, C between ticks 4 and 5 (pause), Continue 20 s later, 6.
 omitted: none

@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/keys/list-5
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/keys/list-5
 source-sha256: 572ad915a6a1f1b4a8a14eed8180dfa1d285cf158dce461da184fdde5eafb729
 state: factory
 power-on: 93345
+start: -100
+end: 16590
 keys: 0:5
 note: 5 in Phone book's list, dark.
 omitted: none

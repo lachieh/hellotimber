@@ -5,6 +5,8 @@ source: captures/6.39/plan25/lights/arrival/call-ringout
 source-sha256: 14f37faba8a334befa1ad8cd1908e3863ee653c508cc76e123893c6c99705c7d
 state: virgin
 power-on: 67456
+start: 0
+end: 75130
 note: An incoming call at a dark standby, left to ring 75 s.
 omitted: none
 

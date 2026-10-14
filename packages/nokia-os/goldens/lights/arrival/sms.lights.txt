@@ -5,6 +5,8 @@ source: captures/6.39/plan25/lights/arrival/sms
 source-sha256: 3df845959216b265a5c4e9399b4f65899ae3d1354fd85f1693b3f4aa98c7b900
 state: virgin
 power-on: 67456
+start: 0
+end: 17131
 note: An SMS arriving at a dark standby.
 omitted: none
 

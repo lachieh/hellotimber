@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/power-key/list
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/power-key/list
 source-sha256: ede96932b5eb9e999009597e1d84f5ad46d645376729fcfac2c557a7fa225c6f
 state: factory
 power-on: 93345
+start: -100
+end: 16631
 keys: 0:power
 note: The power key's short press, dark, at Phone book's list.
 omitted: none

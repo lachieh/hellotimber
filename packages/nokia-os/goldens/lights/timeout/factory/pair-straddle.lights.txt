@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/timeout/factory/pair-straddle
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/timeout/factory/pair-straddle
 source-sha256: c0541a275a5761ada4d9c96e92e0a5eb9bc0bb8fca4a28703a35d9440192206c
 state: factory
 power-on: 62945
+start: -100
+end: 18091
 keys: 0:c 1000:c
 note: C 500 ms before and after a light tick.
 omitted: none

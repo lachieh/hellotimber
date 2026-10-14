@@ -5,6 +5,8 @@ source: captures/6.39/plan25/keyguard/lock
 source-sha256: be61d87476f3428d4c74c0310580a3062cd2c2ce3ff5f1ce06d5cbe819540734
 state: virgin
 power-on: 67556
+start: -100
+end: 17391
 keys: 0:navi 300:*
 note: Menu, then * at 300 ms, dark (K1).
 omitted: none

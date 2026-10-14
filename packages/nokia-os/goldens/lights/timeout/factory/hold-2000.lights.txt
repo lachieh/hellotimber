@@ -1,10 +1,12 @@
 lights-golden 1
 id: lights/timeout/factory/hold-2000
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/timeout/factory/hold-2000
 source-sha256: e36e38e4e48bfaa869db82079d9b656db1a95cadec7b45cf8a33ecb310dcd388
 state: factory
 power-on: 61261
+start: -100
+end: 19031
 keys: 0:c+2000
 note: C held 2000 ms at standby.
 omitted: none
