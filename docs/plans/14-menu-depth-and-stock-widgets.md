@@ -1,0 +1,861 @@
+# Plan 14 - Menu tree depth and stock widgets
+
+> **For agentic workers:** execute task-by-task; tick checkboxes; commit per task.
+> If this plan contradicts VISION.md, AGENTS.md, or the code, STOP and report.
+
+**Prerequisites:** plan 13 complete (`@hellotimber/nokia-os` with level 0/1, goldens, painter).
+**Ground truth:** the v6.39 emulator corpus at
+`REF=/Volumes/SSD/Projects/lachieh/hellotimber/nokia-3310` (gitignored, main checkout only):
+`$REF/captures/6.39/tree.json` (the crawled tree), `$REF/captures/6.39/tree/` (per-node crawl
+captures, reference only), and the canonical plan 14 captures that Task 0 writes to
+`$REF/captures/6.39/plan14/`. `docs/specs/nokia-3310-menu-tree.md` is the human-readable form of
+`tree.json`. Read `$REF/captures/README.md` and plan 13 in full before starting.
+**Status:** not started.
+
+## Goal
+
+Make the stock v6.39 menu tree navigable end to end in `@hellotimber/nokia-os`, pixel- and
+timing-faithful to the captures:
+
+- every menu level below level 1 from `docs/specs/nokia-3310-menu-tree.md`, in order, with hidden
+  menu-number gaps, both presentations, the level's softkey and its opening selection;
+- the stateful, circular rows window (`menu/01-phone-book.sub-up` becomes asserted; ▼ wrap from
+  the last item captured and asserted);
+- the generic stock widgets the leaves need: option lists (single choice, unset state,
+  multi-select marks), timed notes, static notes, progress notes, confirm queries, info pages and
+  info screens, level bars, text pages, game splash intros, and number/code/text input prompts
+  as far as their first screen;
+- an in-memory settings store so option-list choices persist and pages show them;
+- a golden pipeline that scales to the whole tree: a rule-based asserted set, generic
+  key-driven scenarios, and a coverage guard over every tree node.
+
+Leaves that are whole applications keep opening the plan 13 placeholder, each tagged with the
+plan that owns it ("Leaf ownership"). The website does not change. How the portfolio uses the
+stock OS is decided later.
+
+## Why this plan exists (measured gap)
+
+| Area                    | nokia-os after plan 13                          | v6.39 captures                                                                                                                                                                                                                                                                                                    |
+| ----------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Depth                   | levels 0-1; every level-1 item a placeholder    | 279 numbered nodes, depth 6, 94 option lists (675 choices), 58 submenus                                                                                                                                                                                                                                           |
+| Rows window             | stateless `max(0, selected - 2)`                | stateful and circular: ▲ above the window puts the selection on the top row; ▲ from the first item shows `Voice tags / Search / Service Nos.`; ▼ past the last continues circularly (`tree/01-phone-book/02-service-nos/open/000.png`: `Voice tags / Search / Service Nos.` with the selection on the bottom row) |
+| Opening selection       | always the first child                          | levels and option lists open on the current value; with more than 3 items the window starts at it (`Maximum time / 1 hour / 6 hours`, `Off / Topic index / Topics`), with 3 or fewer it starts at 0 (`Name list / Name, number / Large font`)                                                                     |
+| Softkey                 | kernel lists always `Select`                    | 19 of 58 submenus read `OK` (Info service, Screen saver, divert levels, every profile); option lists `OK`, `Quit` (unset), `Mark`/`Unmark` (multi-select); info pages `Back`                                                                                                                                      |
+| Option lists            | none                                            | rows with the current value highlighted (no radio glyph); an unset virgin-EEPROM value opens with no rows, indicator `5-1-0`, softkey `Quit`; multi-select rows have ☑/☐ marks at x 1..5 and a band from x 8                                                                                                      |
+| Notes                   | none                                            | large-font text from x 0 at tops 3/18/33 plus an icon at the right: an animated tick (`Done`, 3 steps), a dotted `!` (information), an octagon (`Not allowed`); some notes start with a ~110 ms blank frame; durations ≈1.45 s or ≈2.9 s                                                                          |
+| Pages after a choice    | static snapshot                                 | the page shows the new value (`Type of view` → `Name list`; `Incoming call alert` → `Ringing`), so choices must persist                                                                                                                                                                                           |
+| Progress notes, prompts | none                                            | `Requesting` with a looping hatched bar (~271 ms per step) and `Quit`; prompts with a mode icon (pen + `abc`, key, phone book), a label, an entry box or value, and `OK`/`Search`/`Assign`/`Start`                                                                                                                |
+| Games                   | placeholders                                    | each game opens with an animated splash, then a rows menu (New game, Level, Mazes, Top score, Score IDs, Instructions)                                                                                                                                                                                            |
+| Golden scale            | 46 hand-listed fixtures, hand-written scenarios | ~230 fixtures needed; hand-written scenarios and a hand-listed capture set do not scale                                                                                                                                                                                                                           |
+
+## Scope and non-goals
+
+In scope: the Goal items; additive, opt-in kernel seams; the generated stock tree data; resources
+derived from goldens; documentation.
+
+Out of scope (owned by the plans named in "Leaf ownership"): text entry and editing beyond a
+prompt's first screen, code verification, sound (tone previews while scrolling Ringing tone are
+silent), persistence across power cycles and factory defaults (plan 15), profile activation and
+the standby profile indicator (plan 17), message/phone book/call data, gameplay, the calculator,
+the stopwatch, language switching, keyguard and backlight, and any website integration.
+
+## Decisions
+
+Each decision states what changes relative to the brief and to plan 13.
+
+**D1 - Stock widgets are nokia-os flow applications that render `custom` frames; kernel
+submenus stay kernel submenus (new).** Option lists, notes, prompts and the rest are
+`PhoneApplication`s built by nokia-os. Each runs a small internal stack of widgets (a "flow"):
+an option list replaces itself with its `Done` note, the note's end pops back past the list to
+the page, info pages push an option list and get it back. The kernel list cannot express these
+screens: `OK`/`Quit` softkeys that change with state, an unset list with no rows and index `-0`,
+two-level returns, multi-select marks. Kernel submenus keep what needs the kernel: paths,
+shortcuts, presentation, page values, the rows window. Widgets paint with the same nokia-os
+painters and share the window rule through a phone-core helper, so one rule draws every rows
+list. Plan 13 D2 ("ScreenModels do not carry Bitmaps for menu graphics") is about the kernel's
+own models and still holds: a widget's `custom` frame is nokia-os painting its own application.
+
+**D2 - phone-core gains five opt-in seams; nothing changes for hosts that do not use them
+(revises plan 13 D2's softkey deferral).** (1) `PhoneConfig.rowsWindow` turns on the circular
+rows window and adds `windowTop` to rows list models; `rowsWindowTop()` exports the rule. (2)
+`SubmenuOptions.softkey` (default `Select`). (3) `SubmenuOptions.opening()` chooses the child
+selected on entry. (4) `SubmenuOptions.intro` runs an application before a level's list (game
+splash). (5) `ApplicationContext.exit({ to: "standby" })`. Plan 13 deferred softkeys because
+stock and kernel labels coincided; the tree shows `OK` on 19 submenus, so the deferral ends here.
+
+**D3 - The rows window rule (D2.1), from the captures.** With `count <= rows` the window is
+always 0. Otherwise the window keeps its position while the selection stays inside it (indices
+taken modulo `count`); when the selection moves to the item just after the window's last row, the
+window scrolls so the selection is on the bottom row; when it moves anywhere else outside the
+window (▲ above it, the wrap from the first item, a jump), the selection goes on the top row.
+Entering a level puts the window at `selected` (`count > rows`) or 0. The window survives a
+child opening and closing (the frame stays on the stack) and is rebuilt when the level is
+entered again. Task 0 probes confirm or correct the return, re-entry and shortcut cases before
+Task 4 is written.
+
+**D4 - The stock tree is generated data; behaviour bindings are hand-written (new).**
+`scripts/import-tree.ts` reads `$REF/captures/6.39/tree.json` plus Task 0's OCR text
+(`plan14/text.json`) and writes `src/firmware/generated/stock-tree.ts`: numbers, slugs, labels
+with firmware line breaks, presentations, softkeys, opening selections, leaf kinds and texts,
+option labels, defaults and results, value hints. It drops firmware string ids, capture paths
+and OCR metadata. `src/firmware/bindings.ts` maps tree nodes to behaviour (setting keys,
+placeholders and their owner plans, note styles, aliases). The hand-written `STOCK_LEVELS` table in
+`src/firmware/menu.ts` is deleted, and level 1 comes from the generated tree. A test proves the
+generated level 1 equals plan 13's `LEVEL1` transcription.
+
+**D5 - Golden sources are Task 0's canonical recaptures, not the crawl's per-node captures
+(new).** The crawl's `item.png` window states depend on the crawler's route, and its `open/` and
+`after/` recordings are short and not contiguous (Done: `open` ends at 1290 ms, `after` starts at
+an unknown later time). Task 0 recaptures every list as a ▼ scroll from entry, and every leaf and
+first-occurrence option choice as one recording from before the key to the settled screen. It
+also captures the probes this plan's decisions depend on. `tree/` stays reference only.
+
+**D6 - The asserted set is selected by rules, deduplicated, and every node is accounted for
+(new).** See "Golden selection". It amounts to about 230 fixtures (≈200 asserted, ≈30 pending)
+and ≈700 images, about 3 MB of text grids. Grids compress about 25× in git (plan 13's 1.27 MB of
+goldens gzip to 51 KB), so the pack grows by roughly 150 KB. Images are not deduplicated across
+fixtures, so each fixture stays readable on its own.
+
+**D7 - Generated goldens carry their scenario; the coverage guard walks the tree (extends plan
+13 D7).** A golden header may declare `scenario: list|options|open|leaf|choose` and the tree
+nodes it `covers`. The acceptance runner derives the key presses from the generated tree, so no
+generated golden needs a hand-written scenario. Plan 13's goldens and the probes keep hand-written
+scenarios. The guard fails unless every node of the stock tree (entries and option choices) is
+covered by an asserted golden, by a pending golden whose plan matches the node's placeholder
+owner, or by a declared same-as subtree whose structure is proven equal.
+
+**D8 - Timing: align on the first changed frame; reproduce durations, not entry latency
+(refines plan 13 D9).** The firmware redraws 50-110 ms after a Select (75 ms for Service Nos., 61
+ms for Done), and the delay depends on the screen. A widget timeline golden therefore sets
+`trigger-frame` to the first frame that differs from frame 0. Frames shown after that,
+including the 110 ms blank before an information note, are reproduced as captured, within ±2 ms.
+The key-to-redraw latency is not reproduced (Open question 4). Per-leaf durations come from the
+goldens: identical notes share a golden only when every step matches within ±2 ms. Otherwise each
+gets its own golden and its own generated timeline (Screen saver's `Done` lasts ≈2.9 s, the
+option-list `Done` ≈1.45 s).
+
+**D9 - Settings: an internal in-memory store behind a narrow port (new; brings forward part of
+plan 15).** Pages must show choices (D5 evidence), so deferral would leave every choice
+invisible. `src/firmware/settings.ts` defines `StockSettings` (`choice`/`choose` for
+single-choice settings, `marks`/`toggle` for multi-select, `text` for non-option values) and
+`createMemorySettings(initial)`. Initial state is the captured virgin EEPROM (D10): option-list
+defaults from the tree, `null` for lists that open unset, and value hints as display text until
+the first choice. A page's value is the chosen option's label, else the value hint. Tones entries
+alias the General profile's Personalise settings, because General is the active profile and
+plan 17 makes the active profile switchable (Task 0 probe P11 confirms the sharing). The store
+is not exported. Plan 15 adds the host persistence port, factory defaults and the public API, so
+a storage contract is not fixed before it has a consumer.
+
+**D10 - The virgin-EEPROM state is the asserted initial state (continues plan 13 Open question
+3).** Unset tone lists (`-0`, no rows, `Quit`), `Top score: 45`, junk score IDs (`ç`, `ÆG`),
+the SIM's message centre `+1234567890` and voice mailbox `793000333`, `50 free` memory, and the
+other captured values are reproduced as captured and listed as artefacts. Plan 15 decides
+factory defaults. Two crawl artefacts are not reproduced. The Info service topic names drawn as
+U+E000 boxes keep the Topics subtree a placeholder (plan 18). Profiles slot 6 keeps plan 13's
+`(empty)` label (UNVERIFIED).
+
+**D11 - Input prompts stop at their first screen.** Text, number and code prompts paint their
+first screen, including a blinking cursor if Task 0 captures one, as a timeline. C closes the
+prompt and the other keys are inert. The plans in "Leaf ownership" add entry, editing,
+verification and results.
+
+**D12 - Game menus belong to this plan; gameplay stays with plans 23/24 (changes plan 13's
+follow-up text for 23/24).** The brief asks for level bars and text pages, and only the game
+menus use them. Snake II, Space impact, Bantumi and Pairs II become rows submenus with a splash
+`intro` (D2.4). Their Level, Mazes, Top score, Score IDs and Instructions leaves are stock
+widgets. New game opens the placeholder. Plans 23/24 keep the splash art (generated here),
+gameplay and the scores that gameplay writes. Task 14 updates the plan table rows 23/24.
+
+**D13 - Text comes from the corpus's exact OCR; glyph bitmaps come only from goldens (extends
+plan 13 D8).** Plan 13 transcribed every text run by hand. With ~700 images that does not
+scale, so Task 0 runs `$REF/tools/menutree/ocr.py` (exact template matching: a glyph matches
+only where its whole box equals the LCD) over every captured image used here and writes the runs
+to `plan14/text.json`. `import-tree.ts` turns them into the stock tree's text and into
+`scripts/generated/tree-text-runs.ts`, which the harvester reads beside plan 13's manual
+`text-runs.ts`. The extracted firmware fonts that the OCR uses are never copied: every in-repo
+glyph is still harvested from golden pixels, and the harvester's consistency checks and the
+pixel acceptance reject a wrong reading.
+
+**D14 - Shortcut display and shortcuts into deeper levels follow the Task 0 probes.** Plan 13 D5
+left the indicator after a typed digit UNVERIFIED and expected the crawl to settle it. The crawl
+navigated with ▼ only, so Task 0 records Menu 1, Menu 1 8, Menu 1 8 1, Menu 1 8 1 2 (into an
+option list), Menu 1 1 0 (two-digit 1-10), and Menu 8 1 (splash). Task 5 implements what they
+show. Anything that needs more than the D2 seams is recorded as a Deviation with its own kernel
+test, or as UNVERIFIED in the spec.
+
+**D15 - The website and nokia-os's public API do not change.** phone-core changes are additive
+and opt-in. The website sets none of them, so its models, routes and pixels are unchanged.
+`stockMenu`, `createStockPhone`, `paintStockScreen` and `StockPhoneConfig` keep their
+signatures. `stockMenu` now holds the whole tree. `missingStockGlyphs`'s font union grows only if
+Task 6 finds a firmware face beyond the four (an additive type change).
+
+## Ground truth and artefacts
+
+| Source (`$REF/captures/6.39/`)     | Contents                                                                                          | Use                                                  |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `tree.json`                        | the crawled tree: numbers, labels, list styles, softkeys, leaf kinds and texts, options, defaults | structure for `import-tree.ts` (D4)                  |
+| `tree/**`                          | per-node crawl captures (`item`, `screen`, `open/`, `after/`, `then`)                             | reference only (D5)                                  |
+| `plan14/scroll/<number>/` (Task 0) | every submenu and option list, ▼ from entry through the wrap                                      | `.sub`, `.options`, `.open` goldens                  |
+| `plan14/open/<number>/` (Task 0)   | every leaf and every first-occurrence option choice: Select/OK, then 5 s (6 s for splashes)       | `.leaf`, `.choose` goldens                           |
+| `plan14/probe/<name>/` (Task 0)    | window, shortcut, note-key, progress, confirm, prompt, unset, profile-sharing and game probes     | `probe/*` goldens and decision checks                |
+| `plan14/text.json` (Task 0)        | OCR runs `{ text, font, x, y, inverted }` for every image above                                   | stock tree text, generated harvest runs (D13)        |
+| `menu-scroll-up/01-phone-book/`    | plan 13 Task 11 capture                                                                           | `menu/01-phone-book.sub-up`: `pending:14` → asserted |
+
+New artefacts (added to the spec §10 artefact table in Task 14; never behaviour beyond the
+virgin initial state of D10):
+
+| Artefact                                                                      | Cause                                 | Handling                                         |
+| ----------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------ |
+| Unset tone lists (`-0`, no rows, `Quit`) with a page value (`Level 1`)        | invalid stored index in virgin EEPROM | virgin initial state (D10)                       |
+| `Top score: 45`, score IDs `ç` / `ÆG`, `Shakes` `1 player`, Club Nokia ID `T` | uninitialised game EEPROM             | virgin initial state                             |
+| `+1234567890`, `793000333`, `SIM card: 50 free`                               | emulator SIM                          | virgin initial state                             |
+| Info service topic names (U+E000 boxes)                                       | uninitialised EEPROM                  | Topics subtree stays a placeholder (plan 18)     |
+| `Requesting` / `Searching` never finish                                       | emulator network                      | the progress note loops until Quit (as captured) |
+| Picture messages, Templates, Smileys, Screen saver › Screen saver do nothing  | no preloaded content in virgin EEPROM | placeholders (plan 18)                           |
+
+## Package boundaries
+
+Unchanged from plan 13. `nokia-os` → `phone-core` (runtime) and `phone-screen` (runtime LCD
+toolkit). `phone-core` stays Nokia-agnostic: the window rule, softkey, opening selection, intro
+and exit target are generic list/application concepts with no stock labels, slugs or timings.
+Scripts import only `node:*`, sibling `scripts/*.ts` and import-free generated data files, with
+explicit `.ts` extensions (plan 13 convention).
+
+## Contract changes
+
+Task 1 writes these into `VISION.md`.
+
+### `@hellotimber/phone-core` (additive, opt-in)
+
+```ts
+export interface SubmenuOptions<Metadata = unknown> {
+  presentation?: MenuPresentation; // unchanged
+  detail?(child: MenuEntry<Metadata>): string | undefined; // unchanged
+  /** Softkey label on this level. Default "Select". */
+  softkey?: string;
+  /**
+   * The child selected when the level is entered by Select, a shortcut digit or a path that ends
+   * at the level; re-read on every entry. Undefined or not a child = the first child.
+   */
+  opening?(): MenuEntry<Metadata> | undefined; // method syntax: keeps SubmenuEntry covariant
+  /**
+   * Runs when the level is entered with Select (see Task 5 for shortcuts), before its list.
+   * While it runs the path is the level's path; its exit() reveals the list. Paths that land on
+   * the level, and returns from a child, skip it.
+   */
+  intro?: PhoneApplication;
+}
+
+export interface PhoneConfig<Metadata = unknown> {
+  // ...plan 13 fields unchanged...
+  /** Rows submenus keep a stateful circular window of this many rows (plan 14 D3). Default: off. */
+  rowsWindow?: number; // positive integer
+}
+
+// ScreenModel `list` addition (omitted unless PhoneConfig.rowsWindow is set and the level is rows):
+//   windowTop?: number; // index of the item on the first visible row
+
+/** The rows-window rule (D3). `previousTop` undefined = entering the level. */
+export function rowsWindowTop(
+  previousTop: number | undefined,
+  selected: number,
+  count: number,
+  rows: number,
+): number;
+
+export interface ApplicationContext {
+  /** Leave the application: back to the launching stack (default) or straight to standby. */
+  exit(options?: { to?: "standby" }): void;
+  open(application: PhoneApplication): void; // unchanged
+}
+```
+
+Rules: `softkey` must be non-empty. `opening` is evaluated with the level's children only. An
+`intro` must not be the level's own child application. `exit({ to: "standby" })` deactivates
+with reason `exit` and leaves the menus as C-hold does. An application may call `exit()` inside
+`createSession`. The kernel then returns to the stack without rendering the application (Task 5
+pins this with a test).
+
+### `@hellotimber/nokia-os` (public API unchanged)
+
+`stockMenu` holds the whole tree. Internals added (not exported): `src/firmware/generated/stock-tree.ts`,
+`src/firmware/bindings.ts`, `src/firmware/settings.ts` (`StockSettings`, `createMemorySettings`),
+`src/widgets/**` (flow host and widgets), `src/display/widgets/**` (widget painters),
+`src/resources/generated/widgets.ts` (sprites and timelines).
+
+```ts
+// src/firmware/settings.ts (internal until plan 15)
+export interface StockSettings {
+  /** Chosen option index of a single-choice setting; null = never written (virgin EEPROM). */
+  choice(key: string): number | null;
+  choose(key: string, index: number): void;
+  /** Multi-select marks, one per option. */
+  marks(key: string): readonly boolean[];
+  toggle(key: string, index: number): void;
+  /** Free-text values shown on pages (virgin snapshot, e.g. "+1234567890"). */
+  text(key: string): string | undefined;
+}
+export function createMemorySettings(initial: StockSettingsSnapshot): StockSettings;
+```
+
+## Stock tree data (`src/firmware/generated/stock-tree.ts`)
+
+Import-free, JSON-style literal (excluded from oxfmt like the other generated files), header
+`// GENERATED by scripts/import-tree.ts from tree.json and plan14/text.json - do not edit`.
+The shape is indicative; Task 3 fixes the exact types and records any change as a Deviation.
+
+```ts
+export const STOCK_TREE: readonly StockTreeNode[] = [
+  /* 12 top-level nodes in carousel order */
+];
+
+type StockTreeNode = {
+  readonly number: string; // "1-8-1"; the last segment is the menu order (hidden gaps kept)
+  readonly slug: string; // kebab-case; plan 13 slugs kept (write, snake, empty-2, ...)
+  readonly label: string; // firmware lines joined with "\n" (pages), one line (rows)
+  readonly valueHint?: string; // the page value as captured (virgin)
+  readonly opens: StockScreenSpec;
+  readonly children?: readonly StockTreeNode[]; // submenus only
+};
+
+type StockScreenSpec =
+  | {
+      kind: "submenu";
+      presentation: "rows" | "pages";
+      softkey: string;
+      opening?: string;
+      intro?: true;
+    }
+  | {
+      kind: "option-list";
+      softkey: string;
+      opening: number | null;
+      multi?: true;
+      options: readonly { label: string; result: StockResult }[];
+    }
+  | {
+      kind: "info-pages";
+      softkey: string;
+      pages: readonly { label: string; value?: string; result?: StockResult }[];
+    }
+  | { kind: "text-pages"; pages: readonly (readonly string[])[] }
+  | { kind: StockLeafKind; lines: readonly string[]; softkey?: string; then?: "back" | "standby" };
+
+type StockResult =
+  | { kind: StockLeafKind; lines: readonly string[]; softkey?: string; then?: "back" | "standby" }
+  | { kind: "returns-immediately" | "not-probed" };
+// StockLeafKind: the spec's leaf screen kinds ("timed-note", "static-note", "progress-note",
+// "confirm-query", "info-screen", "text-input", "number-input", "code-prompt", "level-bar",
+// "text-editor", "application", "symbol-table", "no-response", "returns-immediately", "standby").
+```
+
+Line breaks come from the OCR runs' rows (pages at tops 7/16/25, notes at 3/18/33, and so on);
+`import-tree.ts` refuses a node whose runs do not spell its `tree.json` label (whitespace aside) and
+names it. Overrides for such cases live in `scripts/tree-overrides.ts`, each with a comment
+naming the capture.
+
+## Golden pipeline additions
+
+### Header keys (`scripts/golden-format.ts`)
+
+Two optional keys follow `omitted`, in this order, both present or both absent:
+
+```text
+scenario: leaf
+covers: 1-2 1-4-1 1-4-2 1-5 1-6 1-7
+```
+
+`scenario` is one of `list`, `options`, `open`, `leaf`, `choose`. `covers` is a space-separated
+list of tree node numbers (entries such as `1-8-1`, option choices such as `1-8-1-2`). A golden
+with neither key needs a hand-written scenario (plan 13 goldens and probes). Version stays
+`lcd-golden 1`.
+
+### Golden selection (`scripts/tree-capture-set.ts`)
+
+Rules, applied to `tree.json` in tree order; the importer appends the result to plan 13's capture
+set. Ids are `tree/<NN-top-slug>/<number>.<kind>`; probes are `probe/<name>`.
+
+| Rule | Selects                                                                                                                                              | Golden                                                                                       | Scenario     |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------ |
+| S1   | every submenu outside a same-as subtree                                                                                                              | `<n>.sub` from `plan14/scroll/<n>`: one image per child, ▼ from the opening item             | `list`       |
+| S2   | the first option list (tree order) of each signature (labels, opening, softkey)                                                                      | `<n>.options` from `plan14/scroll/<n>`                                                       | `options`    |
+| S3   | every other option list outside a same-as subtree                                                                                                    | `<n>.open`: the first image of its scroll                                                    | `open`       |
+| S4   | every non-list leaf outside a same-as subtree; leaves whose recordings match (same images, every step within ±2 ms after alignment) share one golden | `<first n>.leaf` timeline from `plan14/open/<n>`, `trigger-frame` = first changed frame (D8) | `leaf`       |
+| S5   | per S2 list: the option one ▼ from the opening item, plus every option whose result differs from its siblings'                                       | `<n-k>.choose` timeline from `plan14/open/<n-k>`; equal recordings share (as S4)             | `choose`     |
+| S6   | same-as subtrees: below `7-2` and `7-4` (as `7-1`), below `12-3`…`12-6` Personalise (as `12-2`); their own level lists stay under S1                 | none; `SAME_AS` table, proven by a structure test                                            | -            |
+| S7   | probes (Task 0 list)                                                                                                                                 | `probe/<name>` (still or timeline)                                                           | hand-written |
+| S8   | placeholder leaves (owner table)                                                                                                                     | S4 golden with `status: pending:<plan>`                                                      | `leaf`       |
+
+`tree-capture-set.ts` holds `SAME_AS` and `PLACEHOLDER_OWNERS` (node number or prefix → plan).
+Task 13 proves both equal the firmware bindings' tables. A source with a missing capture fails
+the import and names the node. Nothing is skipped silently.
+
+### Generic scenarios and the coverage guard (`tests/support/drive.ts`, `tests/acceptance.test.ts`)
+
+`goto(rig, number)` drives real keys from a settled standby until the node is highlighted in its
+parent: Menu, ▼ to the top-level item, then for each level Select and ▼ (from the opening item,
+by visible position), waiting out an `intro` when a level has one. `open(rig, number)` is `goto`
+plus Select. For an option choice it opens the list and ▼ to
+the option, starting from the unset state when the list is unset (P10). Per covered node:
+
+- `list` / `options`: `open` the node; image 1; ▼ before each later image.
+- `open`: `open` the node; image 1.
+- `leaf`: highlight the node in its parent, then `record` with Select as the trigger; `expectTimeline`.
+- `choose`: `goto` the option (opens its list and ▼ to it), `record` with OK (Navi) as the trigger.
+
+The guard (one `describe`): every asserted golden has a generic or hand-written scenario; every
+node of `STOCK_TREE` (entries and option choices) is covered by an asserted golden, or by a
+`pending:<plan>` golden whose plan equals its placeholder owner, or lies inside a `SAME_AS`
+subtree whose structure equals its model's, or (option choices only) by its list's `.options`
+golden. Pending goldens are `it.todo` naming their plan, as in plan 13.
+
+## Stock widget catalogue
+
+Observations to start from (measured from `tree/` samples during planning). The goldens are
+authoritative; Task 6/7 correct this table and the spec when they disagree.
+
+| Widget              | Layout                                                                                                                                                            | Keys and timing                                                                                                                                                 | Examples                                                  |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Option list         | rows layout (band x 0..77, text x 2, tops 8/18/28), rail, indicator `<list>-<k>`; current value highlighted, no radio glyph                                       | ▲/▼ circular window (D3); OK applies; C back to the page; softkey `OK` (`Quit` while unset: no rows, indicator `-0`)                                            | 1-8-1 Type of view, 5-2 Ringing volume (unset)            |
+| Multi-select        | ☑ (filled 5×5) / ☐ (dotted) at x 1..5; band from x 8, text x 10                                                                                                   | softkey toggles (`Unmark` on a marked row, `Mark` otherwise); C leaves (P14)                                                                                    | 2-8-5 Language                                            |
+| Timed note          | text in the large face from x 0, tops 3/18/33; icon at x ≈63..83, y ≈1..23: tick (3 steps: box 710 ms, half 216 ms, full), dotted `!`, octagon                    | auto-dismiss: ≈1.45 s (confirmations), ≈2.9 s (information/errors), per-golden durations (D8); some start with a ≈110 ms blank; then back (or standby: 6-2-4-1) | Done, No phone numbers, Not allowed, Clock hidden         |
+| Static note         | as a timed note without an icon or softkey                                                                                                                        | stays until a key (P12); then back                                                                                                                              | 8-1-4 Top score                                           |
+| Progress note       | hatched bar x 0..83, y 7..14, animated (~271 ms per step, looping); text top 18; softkey `Quit`                                                                   | Quit/C (P7)                                                                                                                                                     | Requesting, Searching                                     |
+| Confirm query       | small-face lines from x 0, tops 2/12/22; softkey `OK` or `Yes`                                                                                                    | OK → result; C → back (P8)                                                                                                                                      | Level 5, Club Nokia ID, Reminders Erase All               |
+| Info pages / screen | page layout (label lines 7/16/25, value in the thin face right-aligned, top 29), rail, indicator; softkey per page (`Back`, `Select`)                             | ▲/▼ pages; `Back` exits; a page with a result opens it                                                                                                          | 4-5, 4-6, 4-8, Score IDs; 1-8-2 Memory status             |
+| Input prompt        | mode icon top-left (pen + `abc`, key, phone book), label in the small face top 7, entry box (text) or value line (number); softkey `OK`/`Search`/`Assign`/`Start` | first screen only (D11); cursor blink if captured (P9); C back                                                                                                  | 1-1 Search, 1-9 Speed dials, 6-4 Restore factory settings |
+| Level bar           | `Level:` top-left; 9 bars rising left to right, y ≈13..36; softkey `OK`                                                                                           | per P12 (virgin: ▲/▼ do not change it)                                                                                                                          | 8-1-2 Level                                               |
+| Text pages          | three small-face lines from x 0; softkey `More`                                                                                                                   | `More` pages; after the last page back (P12)                                                                                                                    | 8-1-6 Instructions                                        |
+| Splash (intro)      | full-frame animated game title                                                                                                                                    | ~250 ms frames, then the game's rows menu (P12: skip key, shortcut)                                                                                             | 8-1 Snake II                                              |
+
+## Leaf ownership
+
+Leaves in scope get stock widgets. These open the placeholder (C exits; pending goldens name the
+plan):
+
+| Nodes                                            | What the firmware opens              | Owner |
+| ------------------------------------------------ | ------------------------------------ | ----- |
+| 2-1 Write messages, 2-10 Service command editor  | text editor                          | 18    |
+| 2-4 Picture messages, 2-5 Templates, 2-6 Smileys | nothing (virgin)                     | 18    |
+| 2-8-4-1…3 Topics Select/Edit/Erase               | lists of box-glyph names (virgin)    | 18    |
+| 3 Chat                                           | number prompt (`menu/03-chat.sub`)   | 18    |
+| 5-4-1…7 Composer slots                           | composer editor                      | 16    |
+| 5-9-4, 12-n-2-9-4 Screen saver › Screen saver    | nothing (virgin)                     | 18    |
+| 6-2-1 choices Русский, Български, Українська     | native-language note, then that UI   | 15    |
+| 6-2-3 Welcome note                               | text editor                          | 15    |
+| 8-1-1, 8-2-1, 8-3-1, 8-4-1-1, 8-4-2-1 New game   | gameplay                             | 23/24 |
+| 9 Calculator                                     | calculator                           | 20    |
+| 11-4 Stopwatch                                   | stopwatch                            | 21    |
+| 12-n-1 Activate                                  | note, standby with profile indicator | 17    |
+
+In scope but finished later (first screen or virgin behaviour now; the plan named adds the
+rest): Phone book prompts and "No phone numbers" notes (19); message centre, voice mailbox,
+Inbox/Outbox notes (18); Call register notes and info pages (22); divert and barring
+`Requesting` and code prompts (22, 15); Clock prompts and notes, Reminders (21); Rename (17);
+Closed user group, security prompts, Network selection (15); game menus' scores (23/24).
+`10-2` View all (returns immediately, nothing to show) is a no-op leaf: an application that exits
+inside `createSession`.
+
+## Conventions for every task
+
+- Run commands from the repo root with `mise exec --`.
+- TDD: write the failing test first wherever the task names tests.
+- After each task: `mise exec -- vp check --fix` and the named test commands. Any task that
+  touches `phone-core` or `phone-screen` also runs `mise exec -- vp run -r test` and
+  `mise exec -- vp run website#build`.
+- Commit rule: run `mise exec -- vp check --fix` yourself, stage files by explicit path, then
+  `git commit --no-verify -m "<message>"`. Never `git add -A`/`git add .`. Never stage
+  `TODOS.md` (Lachlan's untracked notes).
+- Never hand-edit `goldens/**`, `src/resources/generated/**`, `src/firmware/generated/**` or
+  `scripts/generated/**`: change the generator or its input tables and regenerate. Each generator
+  runs twice with no diff (idempotence) before its commit.
+- Tests never read `$REF`. Generators that read `$REF` fail with a clear message when it is
+  missing.
+- No new dependencies.
+- When reality differs from this plan, follow the captures, then append a `Deviation:` paragraph
+  under the task (what changed, the evidence, what later tasks must know). If a deviation breaks
+  a contract in VISION.md, stop and report instead.
+- Parallelism (max 3 concurrent agents): Task 0 gates everything. Then Task 1. Then lanes
+  A (2 → 3 → 6 → 7), B (4 → 5) and C (8, after 3). Task 9 needs 4, 7 and 8. Tasks 10 and 11 run
+  in parallel after 9 (11 also needs 5). Then 12 → 13 → 14.
+
+## Tasks
+
+### Task 0 - Canonical REF captures, probes and OCR (no repository changes)
+
+**Files (all under `$REF`, gitignored):** `captures/scripts/gen_v639_plan14.py`,
+`captures/scripts/v639-plan14.cap`, `captures/6.39/plan14/**`, a new section in
+`captures/README.md`.
+
+- [ ] Read `$REF/captures/README.md` (harness commands incl. `fork`, `exit`, `hex`) and
+      `$REF/tools/menutree/` (`crawl.py` already navigates every node, including carousel
+      animations that drop keys; reuse its navigation). Do not modify existing captures or scripts.
+- [ ] Write `gen_v639_plan14.py`. It reads `tree.json` and emits `v639-plan14.cap`
+      (`include v639-setup.inc`, `key c`, `run 2s`, then per item: navigate to the parent,
+      `fork`, act, `exit`):
+  - **C1 scroll:** every submenu and option list (all of them, including same-as copies):
+    open it, `scroll plan14/scroll/<number> down <count + 2>`, which captures past the wrap.
+    Use `max` ≥ 45 for Ringing tone (42 items).
+  - **C2 open:** every non-list leaf, and every option of the first occurrence of each option
+    list signature (S2): highlight it, `record plan14/open/<number> start`, `key menu`, `run 5s`
+    (6 s for game entries and static notes), `record stop`.
+  - **Probes** (`plan14/probe/<name>/`, records or shots as fits):
+    P1 `wrap-down`: Phone book ▼×9, then 3 more ▼ with a shot each;
+    P2 `wrap-small`: the same past the wrap for Reminders (3), Phone book › Erase (2), Games (5,
+    hidden 8-5), Profiles (6);
+    P3 `return`: Phone book ▼×4 (Erase), Select, C; Phone book ▲ (Voice tags), Select, C; Phone
+    book ▼×4 then Select on Edit (note) and wait for the return. Shot after each;
+    P4 `reenter`: Phone book ▼×5, C, Select;
+    P5 `shortcut`: record 4 s each of Menu 1; Menu 1 8; Menu 1 8 1; Menu 1 8 1 2; Menu 1 1 0;
+    Menu 1 9 then C (shot); Menu 8 1; Menu 8 1 2;
+    P6 `note-keys`: Service Nos. note with C at 500 ms; Type of view › Name list `Done` with ▼ at
+    300 ms (records);
+    P7 `progress`: 7-6 for 10 s, then Quit (record); 6-2-4-2 Searching for 10 s, then C;
+    P8 `confirm`: 5-2 ▼ to Level 5, OK, then C (record); again with OK (record); 8-6-4 OK and C;
+    10-3 All, Yes;
+    P9 `prompts`: record 5 s each of 1-1, 1-9, 6-4, 11-5 (cursor blink?), then C;
+    P10 `unset`: 5-2 opened, ▼×6 with shots; reopened, ▲×6 with shots; Quit in the unset state;
+    P11 `profile-share`: Tones › Ringing volume → Level 3; shots of Profiles › General ›
+    Personalise › Ringing volume and Profiles › Silent › Personalise › Ringing volume;
+    P12 `games`: each game Select with a 6 s record (splash timing); Snake II with a key at
+    300 ms into the splash; Level ▲, ▼, OK (record); Top score for 8 s, then a key; every
+    Instructions text paged with `key menu` until it leaves (shots);
+    P13 `set-delay`: 7-3-4 choose 5 seconds (record 6 s);
+    P14 `multiselect`: Language Unmark on All, ▼, Mark, then C (records);
+    P15 `prepaid`: 4-8 Select on Credit info display (scroll), then on Recharge status (scroll).
+- [ ] Run it with the virgin-EEPROM image into `captures/6.39` (see the README's v6.39 command).
+- [ ] OCR: run `tools/menutree/ocr.py` over every image under `plan14/` and write
+      `plan14/text.json`: `{ "<relative png path>": [{ "text", "font", "x", "y", "inverted" }] }`,
+      with fonts named as `ocr.py` names them. Report which faces appear (`tiny6`, `plain8`,
+      `bold8`, `plain13`, `bold13`, `large13`).
+- [ ] Check: every scroll wraps back to its first image; every `open` recording starts with the
+      parent screen and ends settled (or loops, for progress notes); list any node with a
+      missing capture and why.
+- [ ] Append "Plan 14 supplementary captures" to `$REF/captures/README.md`.
+- [ ] No commit. Report the probe outcomes (each P-number in one line), note classes with their
+      durations after alignment, the faces found, and any node whose capture failed. Record the
+      outcome under this task as plan 13 did for its Task 0.
+
+### Task 1 - Contracts and documentation
+
+**Files:** `VISION.md`, `docs/specs/nokia-3310.md`, `docs/plans/README.md`, this plan.
+
+- [ ] Apply Task 0's outcome to D3, D14 and the contracts above (Deviation lines where it
+      changes them). If a probe needs a kernel seam beyond D2, add it to "Contract changes" now.
+- [ ] VISION: the phone-core additions exactly as in "Contract changes" (SubmenuOptions,
+      `rowsWindow`, `windowTop`, `rowsWindowTop`, `ApplicationContext.exit` options), the
+      kernel-policy paragraph (window rule, opening, intro), and `stockMenu`'s comment (whole tree).
+- [ ] Spec §10: add "Deeper levels and stock widgets (plan 14)". Cover the window rule with
+      evidence, opening selection, softkeys, widget catalogue headings, and the probe outcomes. Mark
+      everything not yet asserted as "(plan 14, in progress)". Replace the "How ▼ wraps … is
+      UNVERIFIED" sentence with the P1 result.
+- [ ] Plans README: row 14 `in progress`.
+- [ ] No runtime code. `mise exec -- vp check --fix`.
+- [ ] Commit: `docs: define menu depth, rows window and stock widget contracts (plan 14)`.
+
+### Task 2 - Golden header keys, tree capture set and import (TDD)
+
+**Files:** `scripts/golden-format.ts`, `scripts/tree-capture-set.ts` (new),
+`scripts/import-captures.ts`, `tests/golden-format.test.ts`, `tests/tree-capture-set.test.ts`
+(new), `tests/fixtures/tree-mini.json` (new, hand-written, not REF data),
+`tests/goldens-integrity.test.ts`, `goldens/**`.
+
+- [ ] TDD `golden-format.ts`: optional `scenario`/`covers` after `omitted` (order, both or
+      neither, known scenario names, covers non-empty and well-formed numbers); round trip;
+      plan 13 fixtures still parse unchanged.
+- [ ] TDD `tree-capture-set.ts` on `tree-mini.json` (a dozen nodes: a rows and a pages submenu, a
+      hidden-number gap, two option lists with one signature, an unset list, a note pair with
+      equal recordings, a placeholder leaf, a same-as subtree): rules S1-S8, ids, `covers`, and
+      grouping by recording equality, which the test feeds through an injected recording loader.
+      Unknown leaf kinds and missing captures throw and name the node.
+- [ ] Wire the importer: `CAPTURE_SET` (plan 13) + `treeCaptureSet(tree.json, captures root)`;
+      `index.json` entries gain `covers` when present. Move `menu/01-phone-book.sub-up` to
+      `asserted` and add `probe/*` rows (S7) with notes naming their probe.
+- [ ] Integrity test: tree goldens with `scenario` have `covers`; `leaf`/`choose` timelines have a
+      numeric `trigger-frame`; no node number is covered twice by asserted goldens of the same
+      scenario kind.
+- [ ] Run the importer against REF twice; the second run leaves `goldens/` unchanged. Record the
+      fixture counts (asserted/pending, images, bytes) in the completion notes.
+- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [ ] Commit: `feat(nokia-os): import the v6.39 menu tree as rule-selected goldens`.
+
+### Task 3 - Generated stock tree data (TDD)
+
+**Files:** `scripts/import-tree.ts` (new), `scripts/tree-model.ts` (new, pure),
+`scripts/tree-overrides.ts` (new), `src/firmware/generated/stock-tree.ts` (generated),
+`scripts/generated/tree-text-runs.ts` (generated), `package.json` (script `import-tree`), root
+`vite.config.ts` (fmt ignore for the generated files), `tests/tree-model.test.ts` (new),
+`tests/stock-tree.test.ts` (new).
+
+- [ ] TDD `tree-model.ts` (pure) on `tree-mini.json` plus synthetic OCR runs: labels from runs
+      joined with `\n` by row band per widget layout; refuse runs that do not spell the
+      `tree.json` label and name the node; parse `tree.json` result strings
+      (`timed-note "Done", then back`, `confirm-query "…" [OK]`, `returns immediately`,
+      `not probed`) into `StockResult`; slugs via plan 13's `slugOf` with collision suffixes and
+      the plan 13 overrides (`write`, `snake`, `empty-2`); value hints; opening selections;
+      `intro` for game entries (`splash_first`); drop `text_ids`, `label_source`, capture paths.
+- [ ] Map OCR faces to stock fonts (`bold8` → small, `large13` → large, `tiny6` → digits,
+      `plain8` → thin). If `bold13`/`plain13` appear, map them to new faces `tall`/`tallThin`
+      and record a Deviation for Task 6.
+- [ ] `import-tree.ts`: reads `$REF/captures/6.39/tree.json` and `plan14/text.json`; writes
+      `stock-tree.ts` and `tree-text-runs.ts` (runs per golden id and image, the font mapped,
+      `left`/`right` bounds per layout, as plan 13 Task 7's runs). Package script `import-tree`.
+- [ ] TDD `stock-tree.test.ts` (reads the generated file only): 12 top-level nodes; level 1
+      equals plan 13's `LEVEL1` (labels with breaks, presentations, numbers); numbers unique and
+      consistent with their parents; hidden gaps 6-2-5, 6-3-3, 7-5, 8-5 and 12-n-2-4 kept; every
+      option list's `opening` is null or in range; slugs unique among siblings.
+- [ ] Run `import-tree` twice; no diff. Review the generated file. Spot-check ten labels against
+      `docs/specs/nokia-3310-menu-tree.md` and report.
+- [ ] Commit: `feat(nokia-os): generate the stock menu tree data from the v6.39 crawl`.
+
+### Task 4 - phone-core: circular rows window (TDD)
+
+**Files:** `packages/phone-core/src/{machine.ts,types.ts,index.ts}`, `src/window.ts` (new),
+README; tests `window.test.ts` (new), `rows-window.test.ts` (new).
+
+- [ ] TDD `rowsWindowTop` (pure): every D3 case. Entry (`count <= rows` → 0, else `selected`);
+      ▼ inside; ▼ to the item after the bottom row; ▲ inside; ▲ above; ▼ wrap from last
+      (`[8, 9, 0]` for 10 items); ▲ wrap from first (`[9, 0, 1]`); jumps; `count` 1, 2, 3, 4.
+      Apply every Task 0 correction (P1-P5).
+- [ ] TDD machine: with `rowsWindow: 3`, rows list models carry `windowTop` following the rule
+      for ▲/▼, child open/close (kept), re-entry (rebuilt), path navigation and shortcuts
+      (per P3-P5); pages levels and configs without `rowsWindow` produce models identical to
+      today's (existing exact-model tests unchanged).
+- [ ] Export `rowsWindowTop`; document it in the README.
+- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`, `vp check --fix`.
+- [ ] Commit: `feat(phone-core): stateful circular rows window`.
+
+### Task 5 - phone-core: submenu softkey, opening, intro and exit to standby (TDD)
+
+**Files:** `packages/phone-core/src/{menu.ts,machine.ts,application.ts,types.ts,index.ts}`,
+README; tests `submenu-options.test.ts` (new), `intro.test.ts` (new), `applications.test.ts`.
+
+- [ ] TDD `softkey`: emitted as `list.softkey`; default `Select`; empty string throws.
+- [ ] TDD `opening`: selection on Select-entry, shortcut entry and path landing on the level;
+      re-read each entry; a non-child or undefined result falls back to the first child;
+      `windowTop` follows D3's entry rule.
+- [ ] TDD `intro`: runs on Select-entry with the level's path; its exit shows the list; C and
+      other keys go to the intro; returns from a child and `navigate()` skip it; shortcuts per
+      P5/P12 (Deviation if they differ from "Select only"); power-off and navigation deactivate
+      it once.
+- [ ] TDD `exit({ to: "standby" })` from an application and from an intro; `exit()` called inside
+      `createSession` returns to the stack, renders nothing, deactivates once.
+- [ ] Existing tests pass unchanged; website models unchanged.
+- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`, `vp check --fix`.
+- [ ] Commit: `feat(phone-core): submenu softkey, opening selection, intro and exit to standby`.
+
+### Task 6 - Stock fonts from the tree goldens (TDD)
+
+**Files:** `scripts/harvest-glyphs.ts`, `scripts/glyph-overrides.ts`,
+`scripts/extract-resources.ts`, `src/resources/generated/fonts.ts`, `src/resources/index.ts`,
+`tests/harvest.test.ts`, `tests/resources.test.ts`, this plan's widget catalogue, spec §10.
+
+- [ ] Measure each widget layout from the goldens (band tops, left edges, icon boxes, softkey
+      row) and correct the "Stock widget catalogue" table. The generated text runs use these
+      bounds. Fix them in `tree-model.ts` if needed and regenerate.
+- [ ] Feed `scripts/generated/tree-text-runs.ts` to the harvester beside `text-runs.ts`. Resolve
+      reported issues with overrides that name their golden. Never edit generated runs; fix the
+      overrides table or the model. Add new faces if Task 3 mapped any (`StockFontName`,
+      `missingStockGlyphs` union).
+- [ ] TDD `resources.test.ts`: freshness still holds; every string the stock tree renders (labels,
+      option labels, value hints, leaf lines, info pages, text pages, softkeys) has no missing
+      glyphs in its face, except text owned by placeholders.
+- [ ] Run `extract-resources` twice; no diff.
+- [ ] Commit: `feat(nokia-os): harvest stock glyphs from the menu-tree goldens`.
+
+### Task 7 - Widget sprites and timelines from goldens (TDD)
+
+**Files:** `scripts/extract-resources.ts`, `scripts/widget-sprites.ts` (new: crop table),
+`src/resources/generated/widgets.ts` (generated), `src/resources/index.ts`,
+`tests/resources.test.ts`.
+
+- [ ] Crop table (golden id, image, rectangle, sprite id): note icons (each tick step, `!`,
+      octagon, and others found), progress bar frames, prompt mode icons, ☑/☐ marks, level-bar
+      art, the four game splashes' frames.
+- [ ] Timelines: from each `leaf`/`choose`/probe timeline golden, the sprite frame sequence
+      with durations from the trigger frame (D8), including the terminal step before the parent
+      returns. Equal sequences share an id. Emit `WIDGET_TIMELINE_BY_NODE` (node number →
+      timeline id) from the goldens' `covers`. Progress bars carry `loopFrom`.
+- [ ] TDD: freshness; every sprite is binary and inside its golden's ink; every timeline is
+      finite except progress loops; every `leaf` golden of an in-scope note, progress note or
+      splash has a timeline.
+- [ ] Run twice; no diff.
+- [ ] Commit: `feat(nokia-os): derive stock widget sprites and timelines from goldens`.
+
+### Task 8 - Settings store and page values (TDD)
+
+**Files:** `src/firmware/settings.ts` (new), `src/firmware/bindings.ts` (new: setting keys and
+aliases first), `src/firmware/settings-snapshot.ts` (deleted), `src/firmware/menu.ts` (detail
+reader only), `tests/settings.test.ts` (new), `tests/firmware-menu.test.ts`.
+
+- [ ] TDD `createMemorySettings`: `choice` null until written; `choose` validates the index;
+      `marks`/`toggle`; `text`; separate instances do not share state.
+- [ ] Virgin snapshot from `STOCK_TREE`: each option list's `opening` (null for unset lists),
+      multi-select marks as captured, value hints as display text, free-text values (message
+      centre, voice mailbox, memory status, scores). Setting key = the list's slug path.
+      Aliases: Tones 5-1…5-9 ↔ `profiles/general/personalise/*` (P11 decides; Deviation if
+      not shared).
+- [ ] Page detail: chosen label, else the value hint, else nothing; Clock settings and Date
+      setting still read the host ports. Replace `settings-snapshot.ts` (subtract) and keep
+      every plan 13 level-1 page value test green.
+- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [ ] Commit: `feat(nokia-os): in-memory stock settings with virgin-EEPROM state`.
+
+### Task 9 - Flow host, rows window painting and list widgets (TDD against goldens)
+
+**Files:** `src/widgets/flow.ts` (new), `src/widgets/option-list.ts` (new),
+`src/widgets/multi-select.ts` (new), `src/display/list-rows.ts`, `src/display/paint.ts`,
+`src/display/widgets/{options.ts,multi.ts}` (new), `src/firmware/phone.ts` (`rowsWindow: 3`),
+`tests/flow.test.ts`, `tests/widgets-lists.test.ts` (new), `tests/paint-lists.test.ts`.
+
+- [ ] TDD flow host (`StockFlowApplication`): a stack of widgets; `push`, `replace`,
+      `back(levels)` (empty → `context.exit()`), `standby()` (→ `exit({ to: "standby" })`);
+      keys act on short-press release as in the placeholder; tick drives the top widget; render
+      returns a cached `custom` frame painted by `paintWidget`, repainted only when the model changes.
+- [ ] Rows painter takes `windowTop` (circular rows). Kernel lists use `screen.windowTop`. Remove
+      the `max(0, selected - 2)` rule (subtract). Plan 13's literal list models in
+      `paint-lists.test.ts` gain the `windowTop` the kernel now emits; their `.sub` goldens still pass.
+- [ ] TDD option list: opening per the store; D3 window; indicator `<path>-<k>` and `-0` unset;
+      softkey `OK`/`Quit`; OK writes the store and runs the option's result (`replace` with its
+      widget); C back. Unset ▼/▲ per P10.
+- [ ] TDD multi-select: marks from the store; softkey `Mark`/`Unmark` toggles; C leaves (P14).
+- [ ] Painting tests: the literal widget models equal every image of one `.options` golden per
+      layout variant (single, unset, multi) and `menu/01-phone-book.sub-up`.
+- [ ] Commit: `feat(nokia-os): flow host, circular rows window and option lists`.
+
+### Task 10 - Notes, progress notes and confirm queries (TDD against goldens)
+
+**Files:** `src/widgets/{note.ts,progress.ts,confirm.ts}` (new),
+`src/display/widgets/{note.ts,progress.ts,confirm.ts}` (new), `src/firmware/bindings.ts`
+(`NOTE_STYLES` by note text), `tests/widgets-notes.test.ts` (new).
+
+- [ ] TDD timed note: text lines in the measured face; icon sprite per its timeline frame;
+      ends with `back()` (or `standby()`) after the generated timeline; key behaviour per P6.
+- [ ] TDD static note (stays until a key; P12), progress note (looping bar; Quit/C per P7),
+      confirm query (OK → result, C → back per P8; softkey from the tree).
+- [ ] Painting tests against one golden per note style, the progress loop images and each
+      confirm query's first image.
+- [ ] Commit: `feat(nokia-os): stock timed, static and progress notes and confirm queries`.
+
+### Task 11 - Info pages, prompts, level bar, text pages and game splash (TDD against goldens)
+
+**Files:** `src/widgets/{info-pages.ts,info-screen.ts,prompt.ts,level-bar.ts,text-pages.ts,splash.ts}`
+(new), matching painters in `src/display/widgets/`, `tests/widgets-info.test.ts` (new).
+
+- [ ] TDD info pages (per-page softkey; `Back` exits; a page with a result pushes it, and the
+      flow returns to the pages after it), info screen (`Back`).
+- [ ] TDD prompts: first screen for text, number and code prompts (icon, label lines, value or
+      box, softkey); cursor timeline if P9 found one; C back; other keys inert (D11).
+- [ ] TDD level bar (P12 keys), text pages (`More` through every page captured in P12, then back),
+      splash intro application (timeline, skip key and end per P12; exits to reveal the list).
+- [ ] Painting tests against the first image of each kind's goldens.
+- [ ] Commit: `feat(nokia-os): stock info pages, input prompts, level bars, text pages and splashes`.
+
+### Task 12 - Firmware composition: the whole tree (TDD)
+
+**Files:** `src/firmware/menu.ts`, `src/firmware/bindings.ts`, `src/firmware/placeholder.ts`,
+`src/firmware/phone.ts`, `tests/firmware-menu.test.ts`, `tests/firmware-phone.test.ts`.
+
+- [ ] Build `createStockMenu(ports)` from `STOCK_TREE`: submenus with presentation, `softkey`,
+      `opening` (from the store), `detail` (Task 8), `intro` (splash) and hidden numbers; leaves as
+      flow applications from `bindings.ts` (default widget by kind; placeholders per "Leaf
+      ownership" with their plan; `10-2` no-op; leaf setters such as Info service On/Off and
+      Screen saver On/Off; 6-2-4-1 `standby()`). Delete `STOCK_LEVELS` (subtract).
+- [ ] `PlaceholderApplication` gains `ownerPlan` (shown nowhere on screen; asserted by tests).
+      Export `PLACEHOLDER_OWNERS` and `SAME_AS` from bindings for Task 13.
+- [ ] TDD: every `STOCK_TREE` node maps to a menu entry or a flow; paths unique and kebab-case;
+      every placeholder has an owner; level 1 unchanged against plan 13; `createStockPhone` sets
+      `rowsWindow: 3`; standby ▲/▼ still open the plan 13 targets (now prompt/note widgets).
+- [ ] Run the full nokia-os suite: plan 13's acceptance must stay green.
+- [ ] Commit: `feat(nokia-os): compose the whole v6.39 menu tree with stock widgets`.
+
+### Task 13 - Acceptance at scale and the coverage guard
+
+**Files:** `tests/support/drive.ts` (new), `tests/support/rig.ts`, `tests/acceptance.test.ts`,
+`tests/drive.test.ts` (new).
+
+- [ ] TDD `goto` against a small synthetic stock-tree menu: key sequences for rows, pages,
+      hidden gaps, opening selections, intros and option choices (including unset).
+- [ ] Generic scenarios per "Generic scenarios"; hand-written scenarios for `probe/*` and
+      `menu/01-phone-book.sub-up`. The rig skips repainting when a `custom` frame object is
+      unchanged (performance; no behaviour change).
+- [ ] Coverage guard per "Generic scenarios and the coverage guard", including `SAME_AS`
+      structural equality (same shape, labels equal except profile names) and the equality of
+      the importer's and the bindings' `PLACEHOLDER_OWNERS`/`SAME_AS`.
+- [ ] Every asserted golden passes; timelines within ±2 ms after alignment. Report the suite's
+      run time.
+- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
+- [ ] Commit: `test(nokia-os): drive the whole menu tree against its goldens`.
+
+### Task 14 - Demo, README, verification gate and closeout
+
+**Files:** `packages/nokia-os/{README.md,demo/main.ts}`, `docs/specs/nokia-3310.md`,
+`docs/plans/README.md`, this plan.
+
+- [ ] Demo: the golden overlay lists the new goldens (grouped by top-level menu); verify with
+      `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`: an option-list
+      choice with its `Done` note and the updated page, a progress note, a game splash, ▲ wrap in
+      Phone book. Screenshots in the completion notes.
+- [ ] README: the tree data pipeline (`import-captures` → `import-tree` → `extract-resources` →
+      test), the settings store's scope (D9), leaf ownership.
+- [ ] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
+      `git diff --stat <commit before Task 1> -- website/` is empty.
+- [ ] Spec §10: replace "(plan 14, in progress)" markers with verified facts; list what stays
+      UNVERIFIED; add the new artefacts.
+- [ ] Plans README: row 14 `done`; rows 23/24 "Builds" read gameplay and scores only (D12).
+- [ ] Completion notes; status `done`.
+- [ ] Commit: `docs: complete menu depth and stock widgets (plan 14)`.
+
+## Follow-up plan adjustments
+
+- **15 - Storage port and Settings:** starts from D9's internal store. It adds the host
+  persistence port and exports it, adds factory defaults (replacing the virgin snapshot when
+  configured), code verification, language switching (the three non-English choices) and the
+  welcome note.
+- **17 - Profiles:** Activate, the standby profile indicator, and switching the active profile
+  that Tones aliases (D9).
+- **18, 19, 21, 22:** take over the prompts and empty-state notes listed in "Leaf ownership".
+  Each replaces a first-screen widget with the full flow.
+- **23, 24:** gameplay and score writing only; the game menus, splashes and widgets exist (D12).
+
+## Open questions for Lachlan
+
+Resolved provisionally so execution is not blocked; each is cheap to reverse.
+
+1. **Virgin vs factory state (D10):** the virgin-EEPROM state (unset tone lists, `Top score: 45`,
+   junk score IDs) is the asserted initial state, as plan 13 did for page values. Reverse in plan
+   15 by swapping the initial snapshot; the goldens stay as evidence of the virgin state.
+2. **Game menus in plan 14 (D12):** included, because the brief's level bars and text pages exist
+   only there. Reverse by moving Tasks 7/11's splash and game widgets to plans 23/24.
+3. **Profiles › Activate (12-n-1):** placeholder for plan 17, because activating Silent, Discreet
+   or Loud changes standby (profile icon) and a half-done Activate would show a wrong standby.
+4. **Entry latency (D8):** the 50-110 ms between Select and the firmware's redraw is not
+   reproduced; timelines align on the first new frame. Revisit if the website adopts nokia-os and
+   the latency is perceptible.
+5. **Settings store visibility (D9):** internal until plan 15 defines persistence.
+6. **Tones ↔ General profile (D9):** shared storage, confirmed or corrected by P11.
+7. **Chat (3):** stays a placeholder as the brief says. Its first screen is a number prompt that
+   Task 11 builds, so plan 18 can adopt it.
+8. **Repo size (D6):** ~3 MB of text goldens (≈150 KB packed) is accepted; if not, a run-length
+   golden format is a separate, mechanical change.
+
+## Done means
+
+- Every navigable node of the v6.39 tree exists in `stockMenu` in order with hidden-number gaps,
+  presentations, softkeys and opening selections; placeholders name their owner plan.
+- Rows lists use the circular window everywhere (kernel levels and widget lists);
+  `menu/01-phone-book.sub-up` and the ▼-wrap probe are asserted.
+- Option lists, multi-select, timed/static/progress notes, confirm queries, info pages/screens,
+  prompts (first screen), level bars, text pages and splashes are stock widgets checked
+  pixel-exactly against goldens, with timelines within ±2 ms after alignment.
+- Choices persist in the in-memory store and pages show them; the initial state is the captured
+  virgin EEPROM.
+- The coverage guard proves every tree node is asserted, pending with a matching owner, or inside
+  a proven same-as subtree; generated data and resources are fresh and idempotent.
+- phone-core is still Nokia-agnostic, the website is byte-for-byte unchanged in behaviour, and
+  `vp check`, `vp run -r test` and `vp run website#build` pass.
+- VISION, the spec and the plans README match what shipped.
+
+## Completion notes
+
+(Filled in as tasks complete.)
