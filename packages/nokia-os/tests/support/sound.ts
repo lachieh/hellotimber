@@ -92,8 +92,8 @@ const isOn = (state: SoundState): boolean => state.kind !== "off";
 type Check =
   /** A key started or stopped it: the golden lags the key by its latency. */
   | { readonly kind: "key"; readonly slackMs: number }
-  /** A program's first edge after a key (or the recording's start). */
-  | { readonly kind: "onset" }
+  /** A program's first edge after a key (or the recording's start, or idle outputs: cues). */
+  | { readonly kind: "onset"; readonly toleranceMs: number }
   /** A later edge of the program that row `anchor` started. */
   | { readonly kind: "after"; readonly anchor: number; readonly toleranceMs: number };
 
@@ -111,6 +111,12 @@ export interface SoundTolerance {
   readonly drift?: boolean;
   /** Compare only these outputs (a scenario says why the others are not comparable). */
   readonly outputs?: readonly SoundOutputName[];
+  /**
+   * Game cues (D13): the rows are programs the game starts on its ticks, not keys. A row that
+   * starts an output while every compared output is off is a cue's onset, matched within this
+   * tolerance (GAME_TICK_TOLERANCE_MS); the cue's later edges ±2 ms of it. Keys are ignored.
+   */
+  readonly cueOnsetMs?: number;
   /**
    * When the capture stopped recording while a program played: later events are not compared,
    * and within PASS_DRIFT of it an edge may fall on either side of the end.
@@ -143,7 +149,8 @@ function withoutStopRace(rows: readonly SoundRow[]): SoundRow[] {
 
 /** Classifies each golden row (see the module notes in plan 16 "Scenarios"). */
 function checksOf(golden: SoundGolden, tolerance: SoundTolerance): Check[] {
-  const keys = golden.keys ?? [];
+  const cues = tolerance.cueOnsetMs !== undefined;
+  const keys = cues ? [] : (golden.keys ?? []);
   const cycle = tolerance.cycleMs ?? golden.loop?.periodMs;
   const state = new Map<SoundOutputName, SoundState>();
   const run = new Map<
@@ -166,7 +173,7 @@ function checksOf(golden: SoundGolden, tolerance: SoundTolerance): Check[] {
     if (anchor === undefined || fresh) {
       anchor = i;
       fresh = false;
-      return { kind: "onset" };
+      return { kind: "onset", toleranceMs: tolerance.cueOnsetMs ?? SOUND_ONSET_TOLERANCE_MS };
     }
     return after(i, SOUND_EDGE_TOLERANCE_MS);
   };
@@ -178,6 +185,7 @@ function checksOf(golden: SoundGolden, tolerance: SoundTolerance): Check[] {
     const near = [...keys]
       .reverse()
       .find((k) => k.ms <= row.ms && row.ms <= k.ms + (k.holdMs ?? 0) + KEY_LATENCY_MAX_MS);
+    if (cues && [...state.values()].every((s) => !isOn(s))) fresh = true;
     const was = state.get(row.output) ?? { kind: "off" };
     state.set(row.output, row.state);
     const current = run.get(row.output);
@@ -288,8 +296,8 @@ export function expectSoundTimeline(
       if (delta < -KEY_LATENCY_MAX_MS - check.slackMs || delta > check.slackMs)
         marks.push("✗ timing");
     } else if (check.kind === "onset") {
-      text = `onset ±${SOUND_ONSET_TOLERANCE_MS}`;
-      if (Math.abs(delta) > SOUND_ONSET_TOLERANCE_MS) marks.push("✗ timing");
+      text = `onset ±${check.toleranceMs}`;
+      if (Math.abs(delta) > check.toleranceMs) marks.push("✗ timing");
     } else {
       const base = matched[check.anchor];
       const relative = base === undefined ? NaN : delta - (base.ms - golden.rows[check.anchor]!.ms);

@@ -577,10 +577,12 @@ Level page while suspended removes Continue.
 games are silent apart from the 900 Hz keypad beeps): a meal sounds 2637 Hz for one or two timer
 units, the crash three ≈15 ms 440 Hz beeps. With Shakes On the vibrator runs ≈480 ms per meal and
 from the crash. The edges lead the tick's redraw by 11-14 ms (40-55 ms when a meal's buzzer
-delays it); nokia-os emits each cue with its frame, and plan 16 plays them.
+delays it); nokia-os emits each cue with its frame, and plan 16 plays them (see "Tones and
+sound": a new top score's fireworks tune starts 2045 ms after the crash, 21 ms before the death
+steps end; keys on the game-over screens make no beep).
 
 **UNVERIFIED** (not captured; nokia-os follows the RE notes or its own choice): the seed function
-(above); the top-score sound; eating the large creature (its collection bit, and no large
+(above); eating the large creature (its collection bit, and no large
 creature after it); a creature spawn that finds no place (its cells kept, hidden); Continue on a
 game suspended during its blink (the blink resumes at the first key); ▲ or ▼ during Top score
 while suspended; the timer unit (≈7.745 ms) on hardware. **Not reproduced:** the Score IDs
@@ -625,8 +627,11 @@ saver missing` play 1750 Hz on the tone generator (≈290 ms); `Code error`, `No
 code request on` the buzzer at 1000 Hz (≈285 ms). Other notes are silent. The tone replaces the
   key's beep; Off silences that key.
 - **Snake II:** meal 2636.9 Hz for one timer unit, crash three 15 ms 440 Hz pulses, a top score
-  the fireworks tune; sound needs Warning tones and Sounds On, the ≈480 ms vibrator Shakes and
-  Vibrating alert On. Factory Games settings are On.
+  the fireworks tune (587/880 Hz, twice) 2045 ms after the crash, 21 ms before the death steps
+  end; sound needs Warning tones and Sounds On, the ≈480 ms vibrator Shakes and Vibrating alert
+  On. Keys on the game-over note make no beep (Navi and C there UNVERIFIED). The captured cues lag
+  the session's by 47-54 ms (the New game redraw latency, not reproduced); intervals between cues
+  match within a tick's tolerance. Factory Games settings are On.
 - **Power:** the power-on plays 900 Hz for 124 ms 2425 ms in (also with Keypad tones Off); the power
   key's long press plays it again and stops previews.
 

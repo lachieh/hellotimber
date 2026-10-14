@@ -9,6 +9,7 @@ import type { StockSettings } from "../firmware/settings";
 import { blinkSnake, newSnakeGame, snakeKey, snakeRender, stepSnake } from "../games/snake/engine";
 import type { SnakeState } from "../games/snake/model";
 import {
+  GAME_CUES,
   SNAKE_DEATH_STEPS,
   SNAKE_FIRST_TICK,
   SNAKE_GRACE_MS,
@@ -110,9 +111,17 @@ class SnakeGameWidget implements Widget {
 
   tick(dtMs: number, flow: Flow): void {
     let left = dtMs;
-    while (left > 0) {
+    // Until the time left falls inside the current phase (a phase ending exactly now ends now).
+    for (;;) {
       const phase = this.#phase;
       if (phase.kind === "waiting") return;
+      const fireworksIn = this.#fireworksIn(phase);
+      if (fireworksIn !== undefined && fireworksIn <= left && fireworksIn <= phase.leftMs) {
+        phase.leftMs -= fireworksIn;
+        left -= fireworksIn;
+        this.#games.cues.cue({ kind: "top-score" }, this.#games.now() - left);
+        continue;
+      }
       if (left < phase.leftMs) {
         phase.leftMs -= left;
         return;
@@ -143,8 +152,26 @@ class SnakeGameWidget implements Widget {
   }
 
   /**
+   * How long until a new top score's fireworks tune (plan 16 D13): it starts
+   * `GAME_CUES.topScoreAfterCrashMs` after the crash, 21 ms before the death steps end (Task 0,
+   * `sound/game/snake-top-score`). Derived from the death's progress, so a suspended death cues
+   * it once, at the same point. Undefined when nothing is due.
+   */
+  #fireworksIn(phase: Phase): number | undefined {
+    if (phase.kind !== "dying" || phase.step >= SNAKE_DEATH_STEPS.length) return undefined;
+    if ((this.#state.score & 0xffff) <= this.#settings.number(SNAKE_SETTINGS.topScore)) {
+      return undefined;
+    }
+    let elapsed = SNAKE_DEATH_STEPS[phase.step]!.durationMs - phase.leftMs;
+    for (let i = 0; i < phase.step; i++) elapsed += SNAKE_DEATH_STEPS[i]!.durationMs;
+    const due = GAME_CUES.topScoreAfterCrashMs - elapsed;
+    return due > 0 ? due : undefined;
+  }
+
+  /**
    * The end of a death step: the next one, or the game-over screen. A new top score is written
-   * when the steps end, and its fireworks come SNAKE_TOP_SCORE_MS later (H14). False once over.
+   * when the steps end, and its fireworks screen comes SNAKE_TOP_SCORE_MS later (H14). False
+   * once over.
    */
   #blink(phase: Extract<Phase, { kind: "dying" }>, flow: Flow): boolean {
     const next = phase.step + 1;
@@ -158,12 +185,18 @@ class SnakeGameWidget implements Widget {
     const topScore = score > this.#settings.number(SNAKE_SETTINGS.topScore);
     if (next === SNAKE_DEATH_STEPS.length && topScore) {
       this.#settings.setNumber(SNAKE_SETTINGS.topScore, score);
-      this.#games.cues.cue({ kind: "top-score" }, this.#games.now());
       this.#phase = { kind: "dying", step: next, leftMs: SNAKE_TOP_SCORE_MS };
       this.#topScore = true;
       return true;
     }
-    flow.replace(gameOver({ topScore: this.#topScore, score: String(score), select: "new-game" }));
+    flow.replace(
+      gameOver({
+        topScore: this.#topScore,
+        score: String(score),
+        select: "new-game",
+        games: this.#games,
+      }),
+    );
     return false;
   }
 

@@ -8,6 +8,7 @@ import type { StockSettings } from "../firmware/settings";
 import {
   BEEP_ONCE_LEVELS,
   BOOT_TONE,
+  GAME_CUES,
   KEYPAD_BEEP,
   MESSAGE_PREVIEW_DELAY_MS,
   MESSAGE_TONES,
@@ -32,6 +33,11 @@ export const C_HOLD_BEEP_MS = 480;
 /** Tones › Warning tones (the active profile's): On, Off; unset in the virgin EEPROM. */
 const WARNING_TONES_KEY = "tones/warning-tones";
 const WARNING_TONES_ON = 0;
+
+/** Games › Settings › Sounds and Shakes (shared by the games): Off, On. */
+const SOUNDS_KEY = "games/settings/sounds";
+const SHAKES_KEY = "games/settings/shakes";
+const GAMES_ON = 1;
 
 /** Incoming call alert's options (5-3, 12-n-2-3). */
 const ALERT = { ringing: 0, ascending: 1, ringOnce: 2, beepOnce: 3, off: 4 } as const;
@@ -148,8 +154,11 @@ export class StockSounder implements StockCueSink {
   #preview: SoundPlay | undefined;
   /** When the last key went down (a preview counts its delay from it). */
   #lastKeyMs: number | undefined;
-  /** When a note with a warning tone last opened (the key going down then makes no beep). */
-  #noteAtMs: number | undefined;
+  /**
+   * When a note with a warning tone last opened, or a game-over screen silenced a key: the key
+   * going down then makes no beep.
+   */
+  #silentAtMs: number | undefined;
   /** The last key's beep and when it started. */
   #beep: { readonly play: SoundPlay; readonly atMs: number } | undefined;
   /** The Keypad tones option the next key-down beeps at, instead of the stored one. */
@@ -171,8 +180,9 @@ export class StockSounder implements StockCueSink {
     this.#lastKeyMs = now;
     const level = this.#keyLevel;
     this.#keyLevel = undefined;
-    // A note's warning tone opened by this key replaces its beep (D12).
-    if ((options.beeps ?? true) && this.#noteAtMs !== now) this.#keyBeep(now, level?.option);
+    // A note's warning tone opened by this key replaces its beep (D12); a game-over screen
+    // silences it.
+    if ((options.beeps ?? true) && this.#silentAtMs !== now) this.#keyBeep(now, level?.option);
     const repeats = key === "up" || key === "down";
     const first = repeats ? LEVEL_REPEAT.firstMs : key === "c" ? C_HOLD_BEEP_MS : undefined;
     const next = (options.holdBeeps ?? true) && first !== undefined ? now + first : undefined;
@@ -312,10 +322,7 @@ export class StockSounder implements StockCueSink {
     const program = NOTE_SOUNDS[lines.join(" ")];
     if (program === undefined) return;
     const now = this.#now();
-    this.#noteAtMs = now;
-    if (this.#beep !== undefined && this.#beep.atMs === now) {
-      this.#sequencer.cancel(this.#beep.play, now);
-    }
+    this.#silenceKey(now);
     if (this.#settings.choice(WARNING_TONES_KEY) === WARNING_TONES_ON) {
       this.#sequencer.play(program, now);
     }
@@ -326,8 +333,35 @@ export class StockSounder implements StockCueSink {
     return this.#sequencer.play(program, this.#now());
   }
 
-  /** Game cues (plan 23 D8): plan 16 Task 8 plays them. */
-  cue(_cue: StockCue, _atMs: number): void {}
+  /**
+   * A game cue at kernel time `atMs` (D13, Task 0 G): the meal, the crash and the top score play
+   * their captured programs with Warning tones On and Games › Settings › Sounds On; a shake runs
+   * the vibrator for its `ms` with Shakes On and the active profile's Vibrating alert On; a
+   * silent key makes the key going down then beep nothing.
+   */
+  cue(cue: StockCue, atMs: number): void {
+    if (cue.kind === "silent-key") {
+      this.#silenceKey(atMs);
+      return;
+    }
+    if (cue.kind === "vibrate") {
+      if (this.#settings.choice(SHAKES_KEY) !== GAMES_ON || !this.#vibrates()) return;
+      this.#sequencer.play({ id: "game/vibrate", steps: [{ ms: cue.ms, vibrator: true }] }, atMs);
+      return;
+    }
+    if (this.#settings.choice(WARNING_TONES_KEY) !== WARNING_TONES_ON) return;
+    if (this.#settings.choice(SOUNDS_KEY) !== GAMES_ON) return;
+    const program = { eat: GAME_CUES.eat, crash: GAME_CUES.crash, "top-score": GAME_CUES.topScore };
+    this.#sequencer.play(program[cue.kind], atMs);
+  }
+
+  /** The key going down at `atMs` makes no beep (its beep, if it has started, stops). */
+  #silenceKey(atMs: number): void {
+    this.#silentAtMs = atMs;
+    if (this.#beep !== undefined && this.#beep.atMs === atMs) {
+      this.#sequencer.cancel(this.#beep.play, atMs);
+    }
+  }
 
   /** The active profile's Vibrating alert (Tones, through `settingAlias`) is On. */
   #vibrates(): boolean {

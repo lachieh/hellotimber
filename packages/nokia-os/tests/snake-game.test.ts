@@ -1,18 +1,16 @@
 // Snake II's game screen (plan 23 Task 10): the session around the engine, driven on a 1 ms
 // clock without the kernel (tests/support/flow-rig.ts) and compared with the gameplay goldens:
-// ticks, the grace, the death blink, game over, suspend and Continue, and the cues.
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+// ticks, the grace, the death blink, game over, suspend and Continue, and the cues (their sound
+// and vibration against the captures: tests/sound-games.test.ts and the `sound/game/*` goldens).
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
 import { isBoardFrame } from "../scripts/game-capture-set.ts";
-import type { CueEdge, CueRecording } from "../scripts/snake-cues.ts";
 import type { StockCue } from "../src/firmware/cues";
 import { createMemorySettings, virginSettings } from "../src/firmware/settings";
 import { snakeRender, stepSnake } from "../src/games/snake/engine";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { paintWidget } from "../src/display/widgets";
-import { SNAKE_PERIODS } from "../src/resources";
+import { GAME_CUES, SNAKE_PERIODS } from "../src/resources";
 import { gameOver } from "../src/widgets/game-over";
 import { snakeGame, SNAKE_SETTINGS, type StockGames } from "../src/widgets/snake";
 import { flowRig, type FlowRecording, type FlowRig } from "./support/flow-rig.ts";
@@ -25,7 +23,6 @@ import {
   tickSchedule,
   type SnakeTrace,
 } from "./support/game.ts";
-import { GAME_TICK_TOLERANCE_MS } from "./support/golden.ts";
 import { decodeBoard } from "./support/snake-decode.ts";
 import { loadGolden } from "./support/goldens.ts";
 
@@ -175,10 +172,50 @@ describe("the crash, the death blink and game over (H6, H11, H14)", () => {
     expect(recording.frames[first]!.startMs - crash).toBe(2066 + 45);
     expectGameTimeline(from(recording, first), id, gameRows(id, 1), { returns: true });
     expect(settings.number(SNAKE_SETTINGS.topScore)).toBe(105);
+    // The fireworks tune starts 2045 ms after the crash (plan 16 Task 0: sound/game/snake-top-score),
+    // 21 ms before the death steps end.
     expect(cues.at(-1)).toEqual({
       cue: { kind: "top-score" },
-      atMs: recording.frames[first]!.startMs - 45,
+      atMs: crash + GAME_CUES.topScoreAfterCrashMs,
     });
+    expect(cues.filter((c) => c.cue.kind === "top-score")).toHaveLength(1);
+  });
+
+  it("cues the fireworks once, at their point of the death, across a suspend (plan 16 D13)", () => {
+    const t = trace("bot-long");
+    const crash = (() => {
+      const { rig, cues } = gameRig({ level: 1 });
+      play(rig, t, 300_000);
+      return cues.find((c) => c.cue.kind === "crash")!.atMs;
+    })();
+    const after = GAME_CUES.topScoreAfterCrashMs;
+    // Suspended before the fireworks' cue (1000 ms into the death) or after it (2050 ms).
+    for (const suspendAt of [1000, 2050]) {
+      const first = gameRig({ level: 1 });
+      play(first.rig, t, crash + suspendAt);
+      first.rig.press("navi");
+      expect(first.games.snake?.death, `${suspendAt}`).toBeDefined();
+      const cues: StampedCue[] = [];
+      let resumed: FlowRig | undefined;
+      const games: StockGames = {
+        ...first.games,
+        cues: { cue: (cue, atMs) => void cues.push({ cue, atMs }) },
+        now: () => resumed!.now,
+      };
+      resumed = flowRig(() => snakeGame({ games, settings: first.settings, start: "continue" }));
+      resumed.press("up");
+      resumed.advance(3000);
+      const fireworks = (list: readonly StampedCue[]) =>
+        list.filter((c) => c.cue.kind === "top-score").map((c) => c.atMs);
+      const where = `suspended ${suspendAt} ms into the death`;
+      if (suspendAt < after) {
+        expect(fireworks(first.cues), where).toEqual([]);
+        expect(fireworks(cues), where).toEqual([after - suspendAt]);
+      } else {
+        expect(fireworks(first.cues), where).toEqual([crash + after]);
+        expect(fireworks(cues), where).toEqual([]);
+      }
+    }
   });
 });
 
@@ -192,6 +229,23 @@ describe("game-over keys (C12)", () => {
     expect(rig.exits).toEqual([]);
     rig.advance(3000);
     expect(rig.exits.map((e) => e.options)).toEqual([{ select: "new-game", row: "top" }]);
+  });
+
+  it("silences every key it gets (plan 16 Task 0: `sound/game/snake-keys`' 3 on the note)", () => {
+    const cues: StampedCue[] = [];
+    const games = { cues: { cue: (cue: StockCue, atMs: number) => void cues.push({ cue, atMs }) } };
+    let now = 0;
+    const rig = flowRig(() =>
+      gameOver({
+        topScore: false,
+        score: "0",
+        select: "new-game",
+        games: { ...games, now: () => now },
+      }),
+    );
+    now = 120;
+    for (const key of ["3", "down", "navi"] as const) press(rig, key);
+    expect(cues).toEqual([0, 1, 2].map(() => ({ cue: { kind: "silent-key" }, atMs: 120 })));
   });
 
   it("skips to the game menu on Navi or C (key-down), during the fireworks or the note", () => {
@@ -282,65 +336,4 @@ describe("cues (D8)", () => {
       { kind: "vibrate", ms: 480 },
     ]);
   });
-});
-
-describe("cues against the captured buzzer and vibrator (D8, Task 0 C10)", () => {
-  const FIXTURE: { recordings: readonly CueRecording[] } = JSON.parse(
-    readFileSync(join(import.meta.dirname, "fixtures/snake-cues.json"), "utf8"),
-  );
-  /** Which recorded game each C10 recording replays. */
-  const GAMES: Readonly<Record<string, { game: string; level: number }>> = {
-    "warning-on": { game: "bot-short", level: 2 },
-    "sounds-off": { game: "bot-short", level: 2 },
-    "shakes-on": { game: "bot-long", level: 1 },
-    "shakes-off": { game: "bot-long", level: 1 },
-  };
-  /**
-   * With Warning tones On a meal's redraw waits for the buzzer: the tick's frame comes 40-55 ms
-   * after its edges (11-14 ms elsewhere). The session draws the tick with its cues, so there only
-   * the tick and the kinds are compared (the redraw delay is not modelled, D6).
-   */
-  const REDRAW_AFTER_BUZZER = new Set(["warning-on/game"]);
-
-  const kindOf = (edge: CueEdge): StockCue["kind"] =>
-    edge.kind === "vibra" ? "vibrate" : edge.hz === 440 ? "crash" : "eat";
-
-  for (const recording of FIXTURE.recordings) {
-    it(recording.id, () => {
-      const [setup, part] = recording.id.split("/") as [string, "game" | "death"];
-      const { game, level } = GAMES[setup]!;
-      const t = trace(game);
-      const { rig, cues } = gameRig({ level, seed: t.seed });
-      const schedule = tickSchedule(t, 400);
-      // The game recordings run 15 ticks (bot-short) or end after the meal on tick 7 (bot-long).
-      play(rig, t, part === "death" ? 300_000 : schedule[15]! + 1);
-      // The crash's three beeps are one cue.
-      const edges = recording.edges.filter(
-        (e, i) =>
-          !(
-            kindOf(e) === "crash" && recording.edges.slice(0, i).some((p) => kindOf(p) === "crash")
-          ),
-      );
-      const crash = cues.find((c) => c.cue.kind === "crash")?.atMs;
-      for (const edge of edges) {
-        const where = `${recording.id}: ${edge.kind} at ${edge.onMs} ms (tick ${edge.tick})`;
-        const frameMs = edge.tick === "death" ? crash : schedule[edge.tick];
-        expect(frameMs, `${where}: no such frame`).toBeDefined();
-        const cue = cues.find((c) => c.cue.kind === kindOf(edge) && c.atMs === frameMs);
-        expect(cue, `${where}: no ${kindOf(edge)} cue with its frame`).toBeDefined();
-        if (!REDRAW_AFTER_BUZZER.has(recording.id)) {
-          // The session's cue comes with its frame (lead 0); the captures' 11-14 ms before it.
-          expect(Math.abs(edge.leadMs), where).toBeLessThanOrEqual(GAME_TICK_TOLERANCE_MS);
-        }
-        if (cue!.cue.kind === "vibrate" && edge.durationMs !== null) {
-          expect(Math.abs(cue!.cue.ms - edge.durationMs), where).toBeLessThanOrEqual(
-            GAME_TICK_TOLERANCE_MS,
-          );
-        }
-      }
-      // Shakes Off shows no edge: the engine still emits every cue; the settings decide what
-      // plays (Shakes gates the vibrator, Sounds and Warning tones the buzzer; plan 16).
-      if (edges.length === 0) expect(cues.some((c) => c.cue.kind === "vibrate")).toBe(true);
-    });
-  }
 });

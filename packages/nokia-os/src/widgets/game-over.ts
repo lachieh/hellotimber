@@ -6,6 +6,7 @@ import type { GameOverModel } from "../display/widgets";
 import { WIDGET_TIMELINE_BY_NAME, WIDGET_TIMELINES, type StockWidgetTimeline } from "../resources";
 import type { Flow, Widget } from "./flow";
 import { Playback } from "./playback";
+import type { StockGames } from "./snake";
 
 export interface GameOverOptions {
   /** A new top score: the fireworks and `TOP SCORE:`; else `Your score:`. */
@@ -13,6 +14,11 @@ export interface GameOverOptions {
   readonly score: string;
   /** Where the game menu returns: the child selected, on the window's top row (Task 0 H14). */
   readonly select: string;
+  /**
+   * Where the screen's silent keys go (plan 16 Task 0: keys on the game-over note make no beep,
+   * `sound/game/snake-keys`; Navi and C UNVERIFIED). Default: nowhere.
+   */
+  readonly games?: Pick<StockGames, "cues" | "now">;
 }
 
 function named(name: string): StockWidgetTimeline {
@@ -24,7 +30,7 @@ function named(name: string): StockWidgetTimeline {
 /**
  * Plays the screen's timeline (`game-over-fireworks` or `game-over-note`), then returns to the
  * game menu. Navi or C skips to the menu at once; other keys are ignored (Task 0 C12). Keys act
- * on key-down, like the game's.
+ * on key-down, like the game's, and make no beep (plan 16).
  */
 class GameOverWidget implements Widget {
   readonly #options: GameOverOptions;
@@ -52,6 +58,8 @@ class GameOverWidget implements Widget {
   }
 
   onKeyDown(key: PhoneKey, flow: Flow): void {
+    const games = this.#options.games;
+    games?.cues.cue({ kind: "silent-key" }, games.now());
     if (key === "navi" || key === "c") this.#end(flow);
   }
 

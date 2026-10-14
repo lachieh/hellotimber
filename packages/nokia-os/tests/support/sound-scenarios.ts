@@ -10,10 +10,14 @@ import { RINGING_TONES } from "../../src/resources";
 import { settingKey } from "../../src/firmware/bindings";
 import { goto, open } from "./drive.ts";
 import { INDEX, treePath } from "./tree.ts";
-import { keys } from "./probes.ts";
+import { expect } from "vite-plus/test";
+import { SNAKE_SETTINGS } from "../../src/widgets/snake";
+import { GAME_TICK_TOLERANCE_MS } from "./golden.ts";
+import { keys, SNAKE } from "./probes.ts";
 import { seededStorage, standbyRig, stockRig, type Rig } from "./rig.ts";
 import {
   expectSoundTimeline,
+  KEY_LATENCY_MAX_MS,
   loadSoundGolden,
   playSound,
   type PlayOptions,
@@ -445,6 +449,88 @@ function gotoFactory(rig: Rig, number: string, settings: StockSettings): void {
   const chosen = settings.choice(settingKey(listPath!));
   const downs = chosen === null ? target + 1 : (target - chosen + count) % count;
   for (let i = 0; i < downs; i++) rig.press("down");
+}
+
+// G: Snake II's cues (D13) at level 1 with the captures' seed (rig.ts SEED_1010, plan 23 Task 5:
+// `game/meal`'s first food at (14, 8)) and their top score, 0.
+const SOUNDS = "games/settings/sounds";
+const SHAKES = "games/settings/shakes";
+Object.assign(SOUND_SCENARIOS, {
+  "sound/game/snake-meal": (id: string) => snakeSound(id, {}),
+  // The 8 comes 150 ms after Navi: in the capture Navi's beep starts 40 ms late and the 8 runs it
+  // on; nokia-os beeps at the key (D8), where it has ended (as `sound/preview/rapid`). The beeps
+  // compare from the 4.
+  "sound/game/snake-crash": (id: string) => snakeSound(id, {}, "", 700),
+  "sound/game/snake-top-score": (id: string) => snakeSound(id, {}),
+  "sound/game/snake-keys": (id: string) => snakeSound(id, {}),
+  "sound/game/snake-sounds-off": (id: string) => snakeSound(id, { [SOUNDS]: 0 }),
+  "sound/game/snake-warning-off": (id: string) => snakeSound(id, { "tones/warning-tones": 1 }),
+  "sound/game/snake-shakes-on-vibra-off": (id: string) => snakeSound(id, { [VIBRA]: OFF }),
+  "sound/game/snake-shakes-off-vibra-on": (id: string) => snakeSound(id, { [SHAKES]: 0 }),
+  "sound/game/snake-shakes-off-vibra-off": (id: string) =>
+    snakeSound(id, { [SHAKES]: 0, [VIBRA]: OFF }),
+  // Snake II › Top score: its note is silent (OK's beep only).
+  "sound/game/snake-top-score-page": (id: string) => snakeSound(id, {}, "down*3"),
+});
+
+/**
+ * The session's ticks run from the New game key (plan 23 D6: no key-to-redraw latency), while the
+ * capture's game ran from its New game redraw, 56-83 ms after the key: its cues lag the session's
+ * by that latency less their lead over the tick's redraw (47-54 ms in `sound/game/*`), within the
+ * key latency nokia-os does not reproduce.
+ */
+const NEW_GAME_LATENCY_MAX_MS = KEY_LATENCY_MAX_MS;
+
+/**
+ * Snake II's menu (New game highlighted; `menu`: ▼ to another entry) at level 1 over the factory
+ * state with `choices`, its last key 300 ms before the golden's first (the DSP awake, as after the
+ * capture's level setting), then the golden's keys. The key beeps compare as keys; the cues (the
+ * buzzer and the vibrator) align on the golden's first cue and keep GAME_TICK_TOLERANCE_MS.
+ */
+function snakeSound(id: string, choices: SettingChoices, menu = "", beepsFromMs = 0): void {
+  const storage = soundStorage("factory", choices);
+  const settings = createStockSettings(new StockEeprom(storage));
+  settings.setNumber(SNAKE_SETTINGS.level, 1);
+  settings.setNumber(SNAKE_SETTINGS.topScore, 0);
+  const rig = standbyRig({ storage });
+  rig.press("c", 1500);
+  rig.advance(1000);
+  keys(rig, `${SNAKE} down up ${menu}`);
+  const golden = loadSoundGolden(id);
+  const recorded = playSound(rig, golden);
+  const beeps = {
+    ...golden,
+    keys: golden.keys?.filter((k) => k.ms >= beepsFromMs),
+    rows: golden.rows.filter((r) => r.ms >= beepsFromMs),
+  };
+  expectSoundTimeline(
+    {
+      ...recorded,
+      events: recorded.events.filter((e) => e.atMs >= recorded.originMs + beepsFromMs),
+    },
+    beeps,
+    `${id}: ${golden.note}${beepsFromMs > 0 ? ` (beeps from ${beepsFromMs} ms)` : ""}`,
+    { outputs: ["tone"] },
+  );
+  const isCue = (output: string): boolean => output !== "tone";
+  const ours = recorded.events.find((e) => isCue(e.output));
+  const theirs = golden.rows.find((row) => isCue(row.output));
+  if (ours === undefined || theirs === undefined) {
+    expect(ours, `${id}: a cue where the golden has none`).toBeUndefined();
+    expect(theirs, `${id}: no cue where the golden has one`).toBeUndefined();
+    return;
+  }
+  const lag = theirs.ms - (ours.atMs - recorded.originMs);
+  expect(lag, `${id}: the capture's first cue after the session's`).toBeGreaterThanOrEqual(0);
+  expect(lag, `${id}: the capture's first cue after the session's`).toBeLessThanOrEqual(
+    NEW_GAME_LATENCY_MAX_MS,
+  );
+  expectSoundTimeline(
+    { ...recorded, originMs: recorded.originMs - lag },
+    golden,
+    `${id}: ${golden.note} (cues aligned on the first, ${lag} ms later in the capture)`,
+    { outputs: ["buzzer", "vibrator"], cueOnsetMs: GAME_TICK_TOLERANCE_MS },
+  );
 }
 
 /** The animated power-on of a factory phone; time 0 is the kernel's power-on (long press). */

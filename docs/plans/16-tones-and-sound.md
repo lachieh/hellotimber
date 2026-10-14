@@ -12,7 +12,7 @@ README, which this plan edits too: do not start Task 1 before plan 15 is `done`.
 23 supplementary captures"), plans 13, 14, 15 and 23 in full before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan16/`. The planning probes in
 `$REF/captures/scratch-plan16/` are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-7 done).
+**Status:** in progress (Tasks 0-8 done).
 
 ## Goal
 
@@ -1010,17 +1010,33 @@ tones list OK also beeps at the highlighted option (`sound/note/5-6-*`: OK on Of
 `tests/snake-game.test.ts`, `tests/sound-games.test.ts` (new), `scripts/snake-cues.ts` (deleted),
 `tests/fixtures/snake-cues.json` (deleted), `package.json` (the `snake-cues` script removed).
 
-- [ ] TDD `cue`: `eat`, `crash` and `top-score` play `GAME_CUES` with Warning tones On and Games ›
+- [x] TDD `cue`: `eat`, `crash` and `top-score` play `GAME_CUES` with Warning tones On and Games ›
       Settings › Sounds as Task 0 found; `vibrate` runs the vibrator for its `ms` per the Shakes ×
       Vibrating alert matrix.
-- [ ] Migrate plan 23's cue-time checks from `snake-cues.json` to the `sound/game/*` goldens
+- [x] Migrate plan 23's cue-time checks from `snake-cues.json` to the `sound/game/*` goldens
       (subtract the script, fixture and package script). Cue edges within
       `GAME_TICK_TOLERANCE_MS`; the meal's redraw delay with Warning tones On stays unmodelled
       (plan 23 Task 10).
-- [ ] `top-score` is emitted at the time Task 0 shows (it was UNVERIFIED); update the cue comment
+- [x] `top-score` is emitted at the time Task 0 shows (it was UNVERIFIED); update the cue comment
       and the spec's UNVERIFIED list.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): play Snake II's sound and vibration cues`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): play Snake II's sound and vibration cues`.
+
+Deviation (Task 8): the fireworks tune starts 2045 ms after the crash in `sound/game/snake-top-score`,
+21 ms before the death steps end where plan 23 cued it, beyond `GAME_TICK_TOLERANCE_MS`; the
+generator emits `GAME_CUES.topScoreAfterCrashMs` (2045, Task 3's files regenerated twice with no
+diff) and the session cues `top-score` at that point of the death, derived from the death's
+progress so a suspended death cues it once. Keys on the game-over screens make no beep (`game/keys`:
+a 3 on the note), a new `silent-key` cue the game-over screen sends for every key (Navi and C there
+UNVERIFIED); `StockSounder` handles it as a note's tone silences its key. The captured cues lag the
+session's by 47-54 ms (the capture's New game redraw latency, 56-83 ms, less the cue's lead over its
+tick's redraw; plan 23 D6 does not reproduce it), so the `sound/game/*` scenarios compare the key
+beeps as keys and align the buzzer and vibrator on the golden's first cue (that lag within
+`KEY_LATENCY_MAX_MS`), each later cue's onset within `GAME_TICK_TOLERANCE_MS` and its edges ±2 ms
+(`SoundTolerance.cueOnsetMs`). `sound/game/snake-crash` compares beeps from its 4: its 8 comes 150 ms
+after Navi, whose late beep the capture runs on (as `sound/preview/rapid`). The game sound goldens
+replay at level 1 with the captures' seed (44530, `game/meal`'s first food at (14, 8)) and top score
+0, as the factory captures had.
 
 ### Task 9 - Acceptance and the coverage guard
 

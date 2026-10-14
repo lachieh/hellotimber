@@ -336,6 +336,8 @@ export interface SoundResourceData {
     readonly eat: SoundProgramData;
     readonly crash: SoundProgramData;
     readonly topScore: SoundProgramData;
+    /** The fireworks tune starts this long after the crash's first pulse (D13). */
+    readonly topScoreAfterCrashMs: number;
     readonly vibrateMs: number;
   };
   readonly bootTone: { readonly atMs: number; readonly program: SoundProgramData };
@@ -629,7 +631,8 @@ function gameCues(load: (id: string) => SoundGolden): SoundResourceData["gameCue
     "game/top-score",
     fireworks.map((r) => ({ ...r, ms: r.ms - fireworks[0]!.ms })),
   );
-  return { eat, crash, topScore, vibrateMs };
+  const topScoreAfterCrashMs = fireworks[0]!.ms - top[crashAt]!.ms;
+  return { eat, crash, topScore, topScoreAfterCrashMs, vibrateMs };
 }
 
 function bootTone(golden: SoundGolden): SoundResourceData["bootTone"] {
