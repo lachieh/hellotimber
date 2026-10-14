@@ -8,6 +8,7 @@ export { calculatorFeature } from "./calculator";
 export { chatFeature } from "./chat";
 export { clockFeature } from "./clock";
 export { gamesFeature } from "./games";
+export { keyguardFeature } from "./keyguard";
 export { snakeFeature } from "./games-snake";
 export { languagesFeature } from "./languages";
 export { messagesFeature } from "./messages";

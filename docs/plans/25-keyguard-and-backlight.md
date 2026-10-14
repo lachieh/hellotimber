@@ -742,17 +742,44 @@ Deviation: known gaps: `lights/timeout/virgin/tap-02` (the tick's ±3 ms, Task 3
 **Files:** `src/firmware/features/keyguard.ts` (the pure `KeyguardEngine`; the wiring arrives in
 Task 7), `tests/keyguard-engine.test.ts` (new).
 
-- [ ] TDD from Task 0's outcome, with an injected clock and no widget: the lock chord and its
+- [x] TDD from Task 0's outcome, with an injected clock and no widget: the lock chord and its
       window (`lock-gap/*`), what cancels it; the locked state; every key's hint and its expiry; a
       key during a hint; Unlock alone and its window (`unlock-gap/*`); unlock; the emergency buffer
       and display (every `emergency/*` case, `1 1 3`, `1 1 2 2`, C); `pass()` and `resume()`;
       `arrivedWhileLocked()`; which events are light activity (D3) as an output of each step, so
       Task 8 wires them without rules of its own.
-- [ ] Every duration comes from a constant named after its golden, filled by the widget-timeline
+- [x] Every duration comes from a constant named after its golden, filled by the widget-timeline
       generator's per-plan registration (Task 6), never typed by hand; the engine test uses the
       generated values.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the keyguard state machine`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the keyguard state machine`.
+
+**Task 5 completion.** `KeyguardEngine` (`src/firmware/features/keyguard.ts`): states as D4,
+`keyDown(key, atStandby)` returns `{ consumed, activity, silent }` (D3 and D12 as outputs),
+`keyUp` swallows the key-ups of the keys it took, `view` says which screen shows since when (the
+hint with `scroll` for C/▲/▼, the emergency display with its number), `pass`/`resume`/
+`arrivedWhileLocked` as D8, `reset` for a power-off. `KEYGUARD_TIMES` reads the six generated
+timelines by name. 28 tests.
+
+Deviation: the widget timelines the engine needs exist only once their sprites are registered,
+so Task 5 registers them (Task 6's sprite harvest moved here): in
+`scripts/resource-inputs/25-keyguard-and-backlight.ts`, sprite batch 250 (the key icon, the four
+lock-note icons, the seven hint icons, and two markers that only time their screens: `Now press
+*`'s text and the emergency display's `Call`) and timeline batch 250 with kinds `keyguard-lock`,
+`keyguard-hint`, `keyguard-now-press`, `keyguard-emergency` and plan 14's `note` for `Keypad active`
+(it matches `Done`'s `note/tick-box`, `note/tick-half` and `note/tick` sprites exactly). Named
+timelines: `keypad-locked`, `keyguard-hint`, `keyguard-hint-scroll`, `keyguard-now-press`,
+`keypad-active`, `keyguard-emergency`; `tests/resources.test.ts`'s exact list of named timelines
+gains these six (a shared line other plans also extend). The extractor keeps no frame before a
+probe's first sprite, so the standby without ladders before the hint (27 ms; 25 ms for C, ▲, ▼)
+and the 21 ms partial before `Keypad active` are constants checked against their golden frames,
+and the lock window (2925 ms) against `lock-gap/2920` and `2930`. `keyguard-hint-scroll` lacks the
+23 ms end partial of the C/▲/▼ recordings (longer than the extractor's 20 ms partial limit), so
+it ends 23 ms early: Task 7 either reproduces it or lists `keyguard/hint/up` as a known gap.
+
+UNVERIFIED engine rules (no capture): Unlock during the hint unlocks as at the locked standby; a
+key during `Keypad active` ends it; the digits typed while locked are forgotten when the locked
+standby returns; keys other than C, Unlock and digits during the emergency display show the hint.
 
 ### Task 6 - Keyguard sprites and painter (TDD against goldens)
 
