@@ -580,7 +580,7 @@ contract correction.
 - [x] Fix the already-stale phone-core README example that imports removed `nokia3310Menu`.
       Replace it with a minimal standalone `PhoneMenu` example.
 - [x] Verify docs formatting: `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define object menu and application contracts`.
+- [x] Commit (landed by layer, see git log): `docs: define object menu and application contracts`.
 
 ### Task 2 - Golden characterization tests before the rewrite
 
@@ -598,7 +598,7 @@ values become unreadable.
 - [x] Pin exact current ScreenModel outputs for representative submenu, list, reader, action,
       app, and app-error states.
 - [x] Run `mise exec -- vp run -r test` and expect PASS before structural code changes.
-- [ ] Commit: `test: characterize menu paths and app lifecycle`.
+- [x] Commit (landed by layer, see git log): `test: characterize menu paths and app lifecycle`.
 
 ### Task 3 - phone-core immutable menu domain (TDD)
 
@@ -618,7 +618,7 @@ values become unreadable.
 - [x] Export the classes from the package barrel.
 - [x] Keep the old DTO machine compiling during this additive task; no adapter is public API.
 - [x] Run `mise exec -- vp run @hellotimber/phone-core#test`.
-- [ ] Commit: `feat(phone-core): immutable object menu domain`.
+- [x] Commit (landed by layer, see git log): `feat(phone-core): immutable object menu domain`.
 
 ### Task 4 - phone-core list sources and stable snapshots (TDD)
 
@@ -631,7 +631,7 @@ values become unreadable.
       cutover in Task 7, where old and new representations cannot drift.
 - [x] Do not add store subscriptions or browser concepts.
 - [x] Run `mise exec -- vp run @hellotimber/phone-core#test`.
-- [ ] Commit: `feat(phone-core): stable object-backed list sources`.
+- [x] Commit (landed by layer, see git log): `feat(phone-core): stable object-backed list sources`.
 
 ### Task 5 - Application definitions, sessions, and lifecycle (TDD)
 
@@ -648,7 +648,7 @@ values become unreadable.
       second public registry API; the vertical machine cutover is Task 7.
 - [x] Run `mise exec -- vp run @hellotimber/phone-core#test` and
       `mise exec -- vp run website#test`.
-- [ ] Commit: `feat(phone-core): object application sessions and lifecycle`.
+- [x] Commit (landed by layer, see git log): `feat(phone-core): object application sessions and lifecycle`.
 
 ### Task 6 - Website application definitions and Calculator (TDD)
 
@@ -672,7 +672,7 @@ values become unreadable.
       browser globals.
 - [x] Run `mise exec -- vp run website#test`, `mise exec -- vp run -r test`, and
       `mise exec -- vp run website#build`.
-- [ ] Commit: `feat(website): object applications and Calculator session`.
+- [x] Commit (landed by layer, see git log): `feat(website): object applications and Calculator session`.
 
 ### Task 7 - Vertical cutover to PhoneMenu (TDD/parity gate)
 
@@ -700,7 +700,7 @@ fixtures/tests; `website/src/content/menu.ts`, content types, `phone/phone.ts`, 
       must now launch `CalculatorApplication`.
 - [x] Prove the full menu can be imported and traversed in a node environment.
 - [x] Run `mise exec -- vp run -r test` and `mise exec -- vp run website#build`.
-- [ ] Commit: `feat(phone-core): run firmware on PhoneMenu object graph`.
+- [x] Commit (landed by layer, see git log): `feat(phone-core): run firmware on PhoneMenu object graph`.
 
 ### Task 8 - Router, SEO, and panel visitors
 
@@ -718,7 +718,7 @@ their tests.
 - [x] Assert every valid path resolves and unknown paths still become real 404/standby fallback
       through the existing bridge behavior.
 - [x] Run `mise exec -- vp run website#test` and `mise exec -- vp run website#build`.
-- [ ] Commit: `feat(website): derive routes and panels from PhoneMenu visitors`.
+- [x] Commit (landed by layer, see git log): `feat(website): derive routes and panels from PhoneMenu visitors`.
 
 ### Task 9 - Remove the old DTO/registry architecture
 
@@ -737,7 +737,7 @@ app modules, old site-tree helpers, tests, and comments.
 - [x] Confirm phone-core has no forbidden runtime imports and still works standalone.
 - [x] Run `mise exec -- vp run -r test`, `mise exec -- vp run website#build`, and
       `mise exec -- vp check --fix`.
-- [ ] Commit: `refactor(phone-core): remove legacy menu DTO and app registry`.
+- [x] Commit (landed by layer, see git log): `refactor(phone-core): remove legacy menu DTO and app registry`.
 
 ### Task 10 - Full integration QA and documentation closeout
 
@@ -756,7 +756,7 @@ app modules, old site-tree helpers, tests, and comments.
 - [x] Update this plan with any deviations and evidence; mark all completed boxes only after
       gates pass.
 - [x] Change plan 11 status in `docs/plans/README.md` from `not started` to `done`.
-- [ ] Commit: `docs: mark object menu model complete`.
+- [x] Commit (landed by layer, see git log): `docs: mark object menu model complete`.
 
 ## Completion evidence
 
