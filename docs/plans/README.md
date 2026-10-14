@@ -28,7 +28,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 16  | [Tones and sound](./16-tones-and-sound.md)                  | sound port, sequencer; keypad, warning, game tones; tone previews (Composer: 27)           | 13, 14, 15, 23                | in progress |
 | 17  | Profiles                                                    | profile activation and personalisation; power-key profile list                             | 15, 16                        | not started |
 | 18  | [Messages I: text entry and SMS](./18-messages-and-chat.md) | multi-tap entry, editor/prompts, Welcome note, Write/Send/Save, Inbox/Outbox, network port | 14, 15                        | not started |
-| 18b | Messages II: T9                                             | T9 predictive text and its dictionary (harvested from captures), Matches, Insert word      | 18                            | not started |
+| 18b | [Messages II: T9](./18b-t9-predictive-text.md)              | T9 predictive text, open-list English dictionary, Matches, Insert word, user words         | 18                            | not started |
 | 18c | Messages III: Chat and content                              | Chat (`menu/03-chat.sub` asserted), Templates, Smileys, Picture messages, Topics           | 18, 18b                       | not started |
 | 19  | Phone book                                                  | SIM/phone memory, Search, Add name, Edit, Erase, Speed dials                               | 14, 15                        | not started |
 | 20  | Calculator restyle                                          | stock calculator screens (`menu/09-calculator.sub` asserted)                               | 14                            | not started |
