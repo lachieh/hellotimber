@@ -24,7 +24,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 12  | [LCD pixel authenticity](./12-lcd-pixel-authenticity.md) | reference standby/menu pixels + visible hierarchical shortcuts                     | 01-11                         | done        |
 | 13  | [Nokia OS foundation](./13-nokia-os-foundation.md)       | `@hellotimber/nokia-os`: stock v6.39 firmware, painter and LCD goldens             | 01-12                         | done        |
 | 14  | [menu tree depth](./14-menu-depth-and-stock-widgets.md)  | whole v6.39 menu tree incl. game menus; stock widgets; rows window; settings store | 13                            | done        |
-| 15  | [storage and settings](./15-storage-and-settings.md)     | host storage port, EEPROM records, security code, boot gates, factory restore      | 13, 14                        | in progress |
+| 15  | [storage and settings](./15-storage-and-settings.md)     | host storage port, EEPROM records, security code, boot gates, factory restore      | 13, 14                        | done        |
 | 16  | Tones and sound sequencer                                | tone sequencer, keypad/warning tones, ringing tones, Composer                      | 13, 15                        | not started |
 | 17  | Profiles                                                 | profile activation and personalisation; power-key profile list                     | 15, 16                        | not started |
 | 18  | Messages and Chat                                        | stock text entry, messages, Chat (`menu/03-chat.sub` asserted)                     | 14, 15                        | not started |

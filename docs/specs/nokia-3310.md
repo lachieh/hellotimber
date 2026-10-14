@@ -405,47 +405,51 @@ wrap (D3 gives the bottom row).
 
 **Capture artefacts (never reproduced as behaviour):**
 
-| Artefact                                                                     | Cause                           | Handling                                                        |
-| ---------------------------------------------------------------------------- | ------------------------------- | --------------------------------------------------------------- |
-| Operator `Orange F`                                                          | emulator synthetic PLMN 208-01  | host `carrier`; used only as a test input                       |
-| Clock frozen at `10:10`                                                      | emulator RTC                    | host `clock()`; used only as a test input                       |
-| Date on Clock → Date setting                                                 | date typed during setup         | host `date()`                                                   |
-| Security-code prompt, `Code accepted`, time/date wizard                      | virgin EEPROM                   | not reproduced                                                  |
-| First standby `Snooze` prompt and `0000000000`                               | virgin EEPROM alarm state       | not imported                                                    |
-| Profiles slot 6 (two boxes)                                                  | uninitialised EEPROM name       | label and Rename value are two U+E000 boxes                     |
-| Page values (`Level 1`, `No tone`, `Off`, ...)                               | virgin-EEPROM settings          | in-memory store's initial state until plan 15                   |
-| Unset tone lists (`-0`, no rows, `Quit`), `Level 1`                          | invalid stored index            | virgin initial state (plan 14 D10)                              |
-| `Top score: 45`, score IDs `ç`/`ÆG`, `Shakes` `1 player`                     | uninitialised game EEPROM       | virgin initial state                                            |
-| Club Nokia ID `T`                                                            | uninitialised game EEPROM       | virgin initial state                                            |
-| `+1234567890`, `793000333`, `SIM card: 50 free`                              | emulator SIM                    | virgin initial state                                            |
-| Info service topic names (six U+E000 boxes)                                  | uninitialised EEPROM            | Topics stay a placeholder (plan 18)                             |
-| `Requesting` / `Searching` never finish                                      | emulator network                | the bar loops until Quit or C                                   |
-| Picture messages, Templates, Smileys, Screen saver › Screen saver do nothing | no preloaded content            | placeholders (plan 18)                                          |
-| Snake II level 175 (nine bars; one cell per timer unit; +175 per meal)       | virgin EEPROM                   | the virgin state (plan 23 D2); plan 15 decides factory defaults |
-| Identical first food in every game at one clock setting                      | emulator RTC frozen; clock seed | "seed from the clock" (plan 23 D4); `10:10` is a test input     |
-| Timer unit ≈7.745 ms (the firmware assumes 7.97 ms)                          | emulator timebase               | reproduced as captured; UNVERIFIED on hardware                  |
-| Key-to-game latency ≈30-45 ms, Navi-to-menu ≈100 ms                          | firmware key scan and redraw    | not reproduced (plan 23 D6)                                     |
-| Silent games (Tones › Warning tones unset)                                   | virgin EEPROM                   | virgin state; cues still emitted (plan 23 D8)                   |
+| Artefact                                                                     | Cause                           | Handling                                                    |
+| ---------------------------------------------------------------------------- | ------------------------------- | ----------------------------------------------------------- |
+| Operator `Orange F`                                                          | emulator synthetic PLMN 208-01  | host `carrier`; used only as a test input                   |
+| Clock frozen at `10:10`                                                      | emulator RTC                    | host `clock()`; used only as a test input                   |
+| Date on Clock → Date setting                                                 | date typed during setup         | host `date()`                                               |
+| Security-code prompt, `Code accepted`, time/date wizard                      | virgin EEPROM                   | not reproduced                                              |
+| First standby `Snooze` prompt and `0000000000`                               | virgin EEPROM alarm state       | not imported                                                |
+| Profiles slot 6 (two boxes)                                                  | uninitialised EEPROM name       | label and Rename value are two U+E000 boxes                 |
+| Page values (`Level 1`, `No tone`, `Off`, ...)                               | virgin-EEPROM settings          | in-memory store's initial state until plan 15               |
+| Unset tone lists (`-0`, no rows, `Quit`), `Level 1`                          | invalid stored index            | virgin initial state (plan 14 D10)                          |
+| `Top score: 45`, score IDs `ç`/`ÆG`, `Shakes` `1 player`                     | uninitialised game EEPROM       | virgin initial state                                        |
+| Club Nokia ID `T`                                                            | uninitialised game EEPROM       | virgin initial state                                        |
+| `+1234567890`, `793000333`, `SIM card: 50 free`                              | emulator SIM                    | virgin initial state                                        |
+| Info service topic names (six U+E000 boxes)                                  | uninitialised EEPROM            | Topics stay a placeholder (plan 18)                         |
+| `Requesting` / `Searching` never finish                                      | emulator network                | the bar loops until Quit or C                               |
+| Picture messages, Templates, Smileys, Screen saver › Screen saver do nothing | no preloaded content            | placeholders (plan 18)                                      |
+| Snake II level 175 (nine bars; one cell per timer unit; +175 per meal)       | virgin EEPROM                   | the virgin state (plan 23 D2); Restore returns it to virgin |
+| Identical first food in every game at one clock setting                      | emulator RTC frozen; clock seed | "seed from the clock" (plan 23 D4); `10:10` is a test input |
+| Timer unit ≈7.745 ms (the firmware assumes 7.97 ms)                          | emulator timebase               | reproduced as captured; UNVERIFIED on hardware              |
+| Key-to-game latency ≈30-45 ms, Navi-to-menu ≈100 ms                          | firmware key scan and redraw    | not reproduced (plan 23 D6)                                 |
+| Silent games (Tones › Warning tones unset)                                   | virgin EEPROM                   | virgin state; cues still emitted (plan 23 D8)               |
 
 Factory restore could not be captured either (`Code error` for `12345`), so the page values and
-Profiles slot 6 above remain virgin-EEPROM values. _(plan 15, in progress: Restore is captured
-now; see the next section.)_
+Profiles slot 6 above remain virgin-EEPROM values. Plan 15 captured Restore on a re-provisioned
+image; the factory state is in the next section.
 
 Plan 15 adds these artefacts:
 
 | Artefact                                                       | Cause                                                        | Handling                                                    |
 | -------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
 | In-menu `Code error` for the correct code (virgin image)       | the virgin PMM's code record is enciphered under another key | never recorded as behaviour; wrong-code goldens use `00000` |
-| Security prompt at every virgin power-on, Phone security `Off` | the same stale code record                                   | not reproduced; the gate follows Phone security and the SIM |
+| Security prompt at every virgin power-on, Phone security `Off` | the same stale code record                                   | its pixels are the gate's; it follows Phone security + SIM  |
 | Clock wizard after the welcome note and after the hands        | virgin EEPROM, emulator RTC                                  | cut from the boot goldens (omitted frames)                  |
 | v5.79 code `62628`                                             | the v5.79 image's code block decrypts to it                  | used only to drive the v5.79 captures                       |
 | Lockout length ≈290 s                                          | emulated time                                                | reproduced as captured; UNVERIFIED on hardware              |
 
 ### Security code, boot gates and storage (plan 15)
 
-_(plan 15, in progress: nothing in this section is asserted by goldens yet.)_ Source: the plan 15
-captures (`captures/6.39/plan15/`, `captures/6.39/boot-clean/`, `captures/5.79/plan15/`; the
-`captures/README.md` section "Plan 15 supplementary captures").
+Source: the plan 15 captures (`captures/6.39/plan15/`, `captures/6.39/boot-clean/`,
+`captures/5.79/plan15/`; the `captures/README.md` section "Plan 15 supplementary captures"),
+asserted by nokia-os's `boot/security-*`, `boot/welcome-note*`, `probe/code-*`, `probe/accept-*`
+and `probe/persist-reboot` goldens. The boot goldens compare within ±25 ms: their self-test
+replays `boot/power-on`'s recording, whose first frame (power key to the first draw) other boots
+show as 245-270 ms. `boot/security-lockout-4` is a known gap: its `Code accepted` and hands are
+26-28 ms off `boot/security-gate`'s.
 
 **Why the emulator rejected the code.** The virgin PMM stores the security-code record
 enciphered under another key. The firmware reloads it into RAM when the clock wizard is left, and
@@ -459,11 +463,13 @@ power-on although Phone security reads `Off`.
 appends a `*` in the small face from x 0, top 29; the entry holds 10 digits and ignores an 11th.
 C deletes the last digit; C held 1 s clears the entry. C on an empty entry returns to the page at
 once in a menu and does nothing at the power-on prompt. OK with a wrong code, with fewer than 5
-digits or with none shows `Code error` (octagon, 2889-2911 ms), then the empty prompt again.
+digits or with none shows `Code error` (octagon, 2889-2911 ms; nokia-os plays 2904 ms in menus
+and 2889 ms at power-on), then the empty prompt again.
 Five consecutive wrong codes lock every code entry, the correct one included, for ≈290 s of
 emulated time; each entry during the lockout gets `Code error` and restarts it; no other note is
 shown; the lockout survives power-off; an accepted code outside it resets the count. The count is
-shared by the power-on prompt and the menus.
+shared by the power-on prompt and the menus. UNVERIFIED: whether entries shorter than 5 digits
+count toward the five (nokia-os counts every rejected OK).
 
 **Post-acceptance flows (v6.39).** No in-menu flow shows `Code accepted`. Phone security (6-3-5):
 the `Off`/`On` list opens at once on the stored value; OK shows a `Done` tick, then the page.
@@ -482,7 +488,13 @@ at a space (`Welcome to` / `my phone`), then standby. Under the gate the note en
 `Code accepted` appears (`Hi` 4930.7 ms); without the gate it follows the self-test after a 7 ms
 partial draw and lasts 5079.5 ms. The gate-free boot (`boot-clean/power-on`, after a Restore) is
 the self-test, then the hands at irregular steps (132, 360, 302, 292, 366, 287, 320 ms, the last
-held 3951 ms); after the gate the hands keep regular ≈255 ms steps (last 4215.6 ms).
+held 3951 ms); after the gate the hands keep regular ≈255 ms steps (308, 255, 255, 257, 255,
+256 ms, last 4215.6 ms), then standby. With a note under the gate, `Code accepted` runs
+689/247/491 ms before the note (the hands' version: 689/232/582 ms). Every power-on that passes
+records its SIM. nokia-os's `boot: "skip"` asks for the code at power-on and goes to standby
+after `Code accepted`, with no hands and no note. UNVERIFIED: keys during `Code accepted`, the
+hands and the note (nokia-os ignores them); a note needing a third line (nokia-os draws it at top 37) or with a word wider than the LCD (nokia-os breaks it where it stops fitting); characters the
+large face lacks (nokia-os leaves them out).
 
 **Virgin and factory states.** Empty storage is the virgin EEPROM, the state the plan 13/14/23
 goldens assert. Restore factory settings writes the factory state: Ringing tone `Nokia tune`,
@@ -491,7 +503,9 @@ tones `Level 2`, Warning tones `On`, Vibrating alert `On`, Screen saver Timeout 
 profile's own values, Own number sending `Set by network`, Set delay `30 seconds`, Phone security
 `Off`, the profile names, Info service topics (`Add topic` only) and languages (`All`); every
 other list keeps its virgin opening. Restore keeps the welcome note, the security code, the
-language and the Top scores.
+language and the Top scores. Snake II's top score being kept is v5.79 evidence (`1297` before and
+after); Snake II's level returns to virgin, UNVERIFIED (no capture shows it after a Restore).
+Info service topics shrinking to `Add topic` is left to plan 18, which owns the topics.
 
 ### Snake II (plan 23)
 

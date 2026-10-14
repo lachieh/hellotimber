@@ -335,15 +335,6 @@ const KNOWN_GAPS: Readonly<Record<string, string>> = {
     "(2948 configured, +28 ms)",
 };
 
-/**
- * Plan 15 Task 2 shim: the asserted goldens plan 15 imported before the behaviour that drives
- * them exists (Tasks 5-8 write their scenarios). Listed as todos until then; Task 10 deletes it.
- */
-const PLAN15_PREFIXES = ["boot/security-", "boot/welcome-note"];
-function awaitsPlan15Scenario(id: string): boolean {
-  return SCENARIOS[id] === undefined && PLAN15_PREFIXES.some((prefix) => id.startsWith(prefix));
-}
-
 /** The scenario of an asserted golden: hand-written (plan 13, probes) or generic (tree). */
 function scenarioOf(id: string, covers: readonly string[] | undefined): (() => void) | undefined {
   const scenario = SCENARIOS[id];
@@ -356,10 +347,6 @@ describe("stock phone against every asserted v6.39 golden", () => {
   for (const { id, status, covers } of INDEX) {
     if (status !== "asserted") {
       it.todo(`${id} (${status.replace("pending:", "pending: plan ")})`);
-      continue;
-    }
-    if (awaitsPlan15Scenario(id)) {
-      it.todo(`${id} (awaits its plan 15 scenario)`);
       continue;
     }
     const scenario = scenarioOf(id, covers);
@@ -435,9 +422,7 @@ describe("coverage guard (plan 14 D7)", () => {
 
   it("has a scenario for every asserted golden", () => {
     expect(
-      asserted
-        .filter((e) => scenarioOf(e.id, e.covers) === undefined && !awaitsPlan15Scenario(e.id))
-        .map((e) => e.id),
+      asserted.filter((e) => scenarioOf(e.id, e.covers) === undefined).map((e) => e.id),
     ).toEqual([]);
   });
 

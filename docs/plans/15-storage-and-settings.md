@@ -10,7 +10,7 @@ stock widgets and the internal in-memory settings store).
 `$REF/captures/README.md`, `$REF/captures/6.39/boot-clean/NOT-ACHIEVED.md`, plan 13 and plan 14 in
 full before starting. Task 0 writes this plan's captures to `$REF/captures/6.39/plan15/` and
 `$REF/captures/5.79/plan15/`.
-**Status:** in progress.
+**Status:** done.
 
 ## Goal
 
@@ -1014,15 +1014,27 @@ Screenshots: `/tmp/nokia-os-p15-*.png` (02-14).
 **Files:** `tests/acceptance.test.ts`, this plan, `docs/plans/README.md`,
 `docs/specs/nokia-3310.md`.
 
-- [ ] Delete `awaitsPlan15Scenario`; every asserted golden has a scenario and passes (timelines
+- [x] Delete `awaitsPlan15Scenario`; every asserted golden has a scenario and passes (timelines
       within ±2 ms after alignment; probes per plan 14's closeout decision 2).
-- [ ] The coverage guard still accounts for every tree node; no golden or placeholder names plan 15.
-- [ ] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`, `mise exec -- vp run website#build`;
+- [x] The coverage guard still accounts for every tree node; no golden or placeholder names plan 15.
+- [x] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`, `mise exec -- vp run website#build`;
       `git diff --stat <commit before Task 1> -- website/` is empty.
-- [ ] Spec §10: replace "(plan 15, in progress)" with verified facts; list what stays UNVERIFIED
+- [x] Spec §10: replace "(plan 15, in progress)" with verified facts; list what stays UNVERIFIED
       (composed flows, factory values from v5.79, the gate-free boot with a welcome note).
-- [ ] Plans README row 15 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete storage port, security code and Settings (plan 15)`.
+- [x] Plans README row 15 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete storage port, security code and Settings (plan 15)`.
+
+Completion note (Task 10): `awaitsPlan15Scenario` is gone; every asserted golden has a scenario.
+511 fixtures: 476 asserted and 35 pending (`pending:18` 11, `:17` 6, `:16` 4, `:22` 4, `:24` 4,
+`:26` 3, `:21` 2, `:20` 1). None is `pending:15`, and no placeholder names plan 15. 467 asserted
+goldens pass. 9 are known gaps: plan 14's six, `game/snake/keys-c-hold`,
+`probe/accept-6-3-5-on`, and `boot/security-lockout-4` (Task 8). The coverage guard accounts for
+every tree node. `vp check`, `vp run -r test` (nokia-os: 2245 passed, 9 expected failures, 35
+todo) and `vp run website#build` pass. `git diff --stat 0498eae -- website/` is empty. Spec §10
+states the verified facts and lists what stays UNVERIFIED: keys during the boot notes and the
+hands, long or partly undrawable welcome notes, short entries counting toward the lockout, and
+Snake II's level after Restore. No flow is composed (`COMPOSED_FLOWS` was never needed), and no
+factory value comes from v5.79. Only the kept Snake II top score is v5.79 evidence.
 
 ## Follow-up plan adjustments
 
