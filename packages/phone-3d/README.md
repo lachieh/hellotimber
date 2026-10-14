@@ -62,9 +62,14 @@ inside your own `<Canvas>` instead.
 | `screenCanvas`  | `HTMLCanvasElement`                                   | yes      | Texture source; native 84×48 recommended (NearestFilter upscales)   |
 | `screenVersion` | `number`                                              | yes      | Bump after drawing — triggers a texture re-upload on the next frame |
 | `onKey`         | `(key: Nokia3310Key, action: "down" \| "up") => void` | no       | Fired by pointer interaction with the key meshes                    |
-| `backlightOn`   | `boolean`                                             | no       | Default `true`; off = silver keys, dim LCD, no green glow           |
+| `backlightOn`   | `boolean`                                             | no       | The display LEDs. Default `true`; off = dim LCD, no green glow      |
+| `keypadLightOn` | `boolean`                                             | no       | The keypad LEDs (legend + NaviKey glow). Default: `backlightOn`     |
 | `pressedKeys`   | `ReadonlySet<Nokia3310Key>`                           | no       | Visually depress keys from outside (e.g. keyboard input)            |
 | `screenBgColor` | `string`                                              | no       | LCD surround fill; pass your screen renderer's background color     |
+
+The real phone drives its two LED lines separately (the keypad stays dark under
+keyguard while the display lights). A host maps its light events to the two
+props; a host that passes only `backlightOn` gets a keypad that follows it.
 
 `PhoneStage` additionally accepts `className` (applied to the canvas wrapper div —
 size it with CSS; the canvas tracks its container).
@@ -80,7 +85,7 @@ vp install
 cd packages/phone-3d && vp dev
 ```
 
-Test pattern screen, key-press log, backlight toggle. Hold a digit key on your
+Test pattern screen, key-press log, display and keypad light toggles. Hold a digit key on your
 keyboard to see `pressedKeys` depress the 3D keys.
 
 ## Tests

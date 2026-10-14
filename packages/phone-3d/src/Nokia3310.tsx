@@ -13,7 +13,7 @@ import {
   SCREEN_LIT_PIXEL_TINT,
 } from "./materials";
 import type { MaterialSpec } from "./materials";
-import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL, DEFAULT_SCREEN_BG } from "./types";
+import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL, DEFAULT_SCREEN_BG, resolveLights } from "./types";
 import type { Nokia3310Key, Nokia3310Props } from "./types";
 
 /** World height the stage is framed against (plan 03 convention). */
@@ -57,13 +57,15 @@ export function Nokia3310({
   screenCanvas,
   screenVersion,
   onKey,
-  backlightOn = true,
+  backlightOn,
+  keypadLightOn,
   pressedKeys,
   screenBgColor = DEFAULT_SCREEN_BG,
   modelUrl = DEFAULT_MODEL_URL,
   dracoPath = DEFAULT_DRACO_PATH,
 }: Nokia3310Props) {
   const { scene } = useGLTF(modelUrl, dracoPath);
+  const { display: displayOn, keypad: keypadOn } = resolveLights({ backlightOn, keypadLightOn });
 
   // Clone per mount (StrictMode/dual mounts must not fight over one graph).
   const model = useMemo(() => scene.clone(true), [scene]);
@@ -176,8 +178,8 @@ export function Nokia3310({
   // layers read as one LCD in either backlight state.
   useEffect(() => {
     if (lcd === null || nodes.screen === null) return;
-    const pixelTint = new THREE.Color(backlightOn ? SCREEN_LIT_PIXEL_TINT : SCREEN_DIM_PIXEL_TINT);
-    const surroundTint = new THREE.Color(backlightOn ? "#ffffff" : SCREEN_DIM_TINT);
+    const pixelTint = new THREE.Color(displayOn ? SCREEN_LIT_PIXEL_TINT : SCREEN_DIM_PIXEL_TINT);
+    const surroundTint = new THREE.Color(displayOn ? "#ffffff" : SCREEN_DIM_TINT);
     const pixels = lcd.material as THREE.MeshBasicMaterial;
     pixels.map = texture;
     pixels.color.copy(pixelTint);
@@ -185,7 +187,7 @@ export function Nokia3310({
     const surround = nodes.screen.material as THREE.MeshBasicMaterial;
     surround.color.set(screenBgColor).multiply(surroundTint);
     surround.needsUpdate = true;
-  }, [lcd, nodes, texture, backlightOn, screenBgColor]);
+  }, [lcd, nodes, texture, displayOn, screenBgColor]);
 
   const versionRef = useRef(screenVersion);
   versionRef.current = screenVersion;
@@ -198,7 +200,7 @@ export function Nokia3310({
   });
 
   // Soft LCD glow behind the glass when lit.
-  const glow = backlightOn ? LCD_GLOW_INTENSITY : 0;
+  const glow = displayOn ? LCD_GLOW_INTENSITY : 0;
 
   // ── central pointer routing: one raycast surface, name → key ──────────────
   const keyFromEvent = (obj: THREE.Object3D | null): THREE.Mesh | null => {
@@ -258,7 +260,7 @@ export function Nokia3310({
             key={key}
             id={key}
             mesh={mesh}
-            backlightOn={backlightOn}
+            lightOn={keypadOn}
             pressed={pressedKeys?.has(key) ?? false}
             travel={fit.size.y * 0.004}
             onKey={onKey}
