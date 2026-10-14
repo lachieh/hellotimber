@@ -25,6 +25,7 @@ import { note, type NoteEnd, type NoteOptions } from "../widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
 import { progress } from "../widgets/progress";
 import { promptFromLayout } from "../widgets/prompt";
+import { snakeGame, type StockGames } from "../widgets/snake";
 import { splashIntro } from "../widgets/splash";
 import { textPages } from "../widgets/text-pages";
 import {
@@ -49,15 +50,17 @@ import {
   REQUEST_NOT_CONFIRMED,
   settingKey,
   slugOf,
+  SNAKE_LEVEL,
   type PromptLayout,
 } from "./bindings";
-import type {
-  StockLeafScreen,
-  StockOption,
-  StockPage,
-  StockResult,
-  StockScreenSpec,
-  StockTreeNode,
+import {
+  STOCK_TREE,
+  type StockLeafScreen,
+  type StockOption,
+  type StockPage,
+  type StockResult,
+  type StockScreenSpec,
+  type StockTreeNode,
 } from "./generated/stock-tree";
 import { PlaceholderApplication } from "./placeholder";
 import type { StockSettings } from "./settings";
@@ -134,18 +137,33 @@ function blinkOf(number: string, layout: PromptLayout): StockWidgetTimeline | un
   return ownTimeline(number) ?? timelineById(CURSOR_STYLE, `the cursor at ${number}`);
 }
 
-/** Builds the stock leaves of one menu over one settings store. */
+/** The slug of the tree node after `number` among its siblings (circular). */
+function nextSibling(number: string): string {
+  const segments = number.split("-");
+  let level: readonly StockTreeNode[] = STOCK_TREE;
+  for (const segment of segments.slice(0, -1)) {
+    level = level.find((n) => n.number.split("-").at(-1) === segment)?.children ?? [];
+  }
+  const index = level.findIndex((n) => n.number === number);
+  if (index < 0) throw new Error(`No tree node ${number}.`);
+  return level[(index + 1) % level.length]!.slug;
+}
+
+/** Builds the stock leaves of one menu over one settings store and one games holder. */
 export class LeafBinder {
   readonly #settings: StockSettings;
+  readonly #games: StockGames;
 
-  constructor(settings: StockSettings) {
+  constructor(settings: StockSettings, games: StockGames) {
     this.#settings = settings;
+    this.#games = games;
   }
 
   /** The application a leaf node opens. */
   application(place: LeafPlace): PhoneApplication {
     const node = place.path[place.path.length - 1]!;
     const id = `stock:${place.path.map((n) => n.slug).join("/")}`;
+    if (node.number === SNAKE_LEVEL.newGame) return this.#snake(id, "new");
     const owner = placeholderOwner(node.number);
     if (owner !== undefined) {
       const path = place.path.map((n) => n.slug).join("/");
@@ -169,6 +187,18 @@ export class LeafBinder {
       this.#settings.choose(key, index);
       return make();
     });
+  }
+
+  /** Snake II's Continue (plan 23 D10): resumes the suspended game. */
+  snakeContinue(levelPath: readonly StockTreeNode[]): PhoneApplication {
+    const slugs = [...levelPath.map((n) => n.slug), SNAKE_LEVEL.continue.slug];
+    return this.#snake(`stock:${slugs.join("/")}`, "continue");
+  }
+
+  #snake(id: string, start: "new" | "continue"): PhoneApplication {
+    const games = this.#games;
+    const settings = this.#settings;
+    return new StockFlowApplication(id, () => snakeGame({ games, settings, start }));
   }
 
   /** A game level's splash intro (D12). */
@@ -218,6 +248,16 @@ export class LeafBinder {
         }
         const end: NoteEnd = noteEnd(number) ?? (screen.after === "standby" ? "standby" : "back");
         const keys = moves ?? noteMoves(number);
+        // Snake II's notes return to the first entry: Continue while a game is suspended
+        // (Task 0 C8: Top score → `Score IDs / Instructions / Continue`).
+        const games = this.#games;
+        const endNow = (): NoteEnd =>
+          typeof end === "object" &&
+          end.select !== undefined &&
+          number.startsWith(`${SNAKE_LEVEL.number}-`) &&
+          games.snake !== undefined
+            ? { ...end, select: SNAKE_LEVEL.continue.slug }
+            : end;
         // A line that shows a numeric setting (Top score) reads it when the note opens.
         const shown = numberLine(number);
         const settings = this.#settings;
@@ -231,7 +271,7 @@ export class LeafBinder {
           note({
             lines: linesNow(),
             ...(timeline === undefined ? {} : { timeline }),
-            end,
+            end: endNow(),
             ...(keys === undefined ? {} : { moves: keys }),
           });
       }
@@ -276,7 +316,16 @@ export class LeafBinder {
         const key = NUMERIC_LEVELS[number];
         if (key !== undefined) {
           const settings = this.#settings;
-          return () => snakeLevel({ settings, key, softkey: sk });
+          const games = this.#games;
+          // OK while a game is suspended discards it; the selection stays on Level's row,
+          // now the next entry (Task 0 C8: `8-1-3`, Mazes).
+          const after = nextSibling(number);
+          const discard = (): string | undefined => {
+            if (games.snake === undefined) return undefined;
+            games.snake = undefined;
+            return after;
+          };
+          return () => snakeLevel({ settings, key, softkey: sk, onStore: discard });
         }
         const bars = LEVEL_BARS[modelNumber(number)];
         if (bars === undefined) throw new Error(`No level bars for ${number}.`);

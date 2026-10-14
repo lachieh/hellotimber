@@ -987,23 +987,57 @@ pending:22.
 `src/firmware/cues.ts` (new), `src/firmware/{leaves.ts,menu.ts,bindings.ts,phone.ts}`,
 `tests/snake-game.test.ts` (new), `tests/flow.test.ts`, `tests/firmware-menu.test.ts`.
 
-- [ ] TDD flow `onKeyDown` (D7): forwarded only to widgets that declare it; release handling
+- [x] TDD flow `onKeyDown` (D7): forwarded only to widgets that declare it; release handling
       unchanged for the rest.
-- [ ] TDD the game widget: seeds from the clock port (Task 5) at New game; ticks at
+- [x] TDD the game widget: seeds from the clock port (Task 5) at New game; ticks at
       `SNAKE_PERIODS[level]` after `SNAKE_FIRST_TICK[level]`; grace/death/blink timings; cues to
       the sink with kernel times; game over → the game-over widget (D13): fireworks + `TOP
 SCORE:` when the score beats the stored top score (which it then writes), else `Your
 score:`; then `back(…, { select: "new-game", row })` per C11/C12; keys during the
       note per C12.
-- [ ] Suspend (H15, D10): Navi stores the engine state in the phone's game holder and exits with
+- [x] Suspend (H15, D10): Navi stores the engine state in the phone's game holder and exits with
       `select: "continue"`; Snake II's level gets the orders of D10, `shown` (Continue while a
       game is suspended), `opening()` (Continue when suspended) and the intro rule from C8;
       Continue reseeds (C8), shows the board and waits for a key; New game discards the suspended
       game. The holder is per `createStockPhone` (like the settings store) and power-off clears it.
-- [ ] Remove `8-1-1` from `PLACEHOLDER_OWNERS`; `createStockMenu` binds New game and Continue to the
+- [x] Remove `8-1-1` from `PLACEHOLDER_OWNERS`; `createStockMenu` binds New game and Continue to the
       game; internal `createStockPhoneWith(config, { seed? })` for tests if D4's fallback applies
       (not exported from `src/index.ts`).
-- [ ] Commit: `feat(nokia-os): playable Snake II with game over, top score and Continue`.
+- [x] Commit: `feat(nokia-os): playable Snake II with game over, top score and Continue`.
+
+Outcome: `src/widgets/snake.ts` runs the engine at `SNAKE_FIRST_TICK`/`SNAKE_PERIODS`, the grace
+and `SNAKE_DEATH_STEPS`, stamps cues with the kernel time (`StockGames.now`, which
+`createStockPhoneWith` takes from `tick`), and replaces itself with `src/widgets/game-over.ts`
+(fireworks + `TOP SCORE:` when the score beats the stored top score, which it writes; else
+`Your score:`), which returns with `select: "new-game", row: "top"`. The widget tests replay
+`ticks-l1`..`l9`, `maze-1/3/4` (to the menu), `bot-short.death` and `bot-long.death` (105
+written, no blink) pixel for pixel. The Snake II level gets Continue (order 1, the tree's
+children 2..7), `shown` and `opening()` from the phone's games holder (`createStockGames`, per
+phone; power-off clears it through `subscribe`); the phone tests cover suspend, Continue,
+re-entry through the splash, New game discarding, standby keeping and power-off losing the
+game, Top score and Level while suspended. `8-1-1` left both `PLACEHOLDER_OWNERS` tables;
+`ASSERTED_EARLY` still cuts its golden to 40 frames (a re-import changes nothing of plan 23's).
+Deviation: Continue does not reseed (Task 0 C8 and D4 outcome), although this task's text says
+it does. Every key of the game screen acts on key-down, Navi and C included (they suspend at
+once, as the captures show the menu while C is still held). The kernel swallows the keys held
+when an application exits, so a C held through the suspend does not go on to standby
+(`keys-c-hold`): a phone-core matter for Task 11 to record. Top score's return selects Continue
+while a game is suspended (`NOTE_ENDS` stays `new-game`; the binder swaps it), and OK on the
+Level page while suspended discards the game and selects the next entry (Mazes), as captured.
+The `top-score` cue is emitted when the fireworks start (UNVERIFIED). Continue on a game
+suspended during its blink resumes the blink at the first key (UNVERIFIED: not captured).
+Without a clock port New game seeds 0 (the minutes-of-day fallback at 00:00).
+Deviation (cue fixture): `scripts/snake-cues.ts` (REF reader; `snake-cues` script) writes
+`tests/fixtures/snake-cues.json`: each C10 buzzer and vibrator edge with the tick whose frame
+follows it (or the death's first hidden frame) and its lead over that frame. The session emits
+a cue with its frame; the captures' edges lead it by 11-14 ms, within the game tolerance, except
+with Warning tones On, where a meal's redraw waits 40-55 ms for the buzzer (not modelled, D6;
+the test checks only the tick and kind there). Vibration runs 477-480 ms (480 in the cue).
+Deviation (timing comparison, `tests/support/game.ts`): ticks are compared interval by interval
+(±16 ms); the crash interval holds the blocked tick and the grace, so it allows 32 ms (the first
+hidden frame comes 88-110 ms after the blocked tick, the saving move 93 ms); the death steps,
+the game-over screens and the return are aligned on the death's first frame with ±16 ms, since
+across the nine captured deaths the blink steps run 222-251 ms and the note 2925-2954 ms.
 
 ### Task 11 - Acceptance and the coverage guard
 

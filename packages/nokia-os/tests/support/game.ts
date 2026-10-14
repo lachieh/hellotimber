@@ -2,11 +2,20 @@
 // game's level, maze and recovered seed (Task 5), and the engine state at every board the golden
 // shows, driven by the golden's `input`.
 import type { PhoneKey } from "@hellotimber/phone-core";
+import { expect } from "vite-plus/test";
+import { isBoardFrame } from "../../scripts/game-capture-set.ts";
+import { findGoldenImage } from "../../scripts/golden-format.ts";
 import { newSnakeGame, snakeKey, snakeRender, stepSnake } from "../../src/games/snake/engine";
 import type { SnakeState } from "../../src/games/snake/model";
-import { SNAKE_MAZES } from "../../src/resources";
+import { SNAKE_FIRST_TICK, SNAKE_GRACE_MS, SNAKE_MAZES, SNAKE_PERIODS } from "../../src/resources";
+import {
+  GAME_TICK_TOLERANCE_MS,
+  lcdMismatch,
+  TIMING_TOLERANCE_MS,
+  type RecordedFrame,
+} from "./golden";
 import { loadGolden } from "./goldens";
-import { goldenBoards, type TickBoard } from "./snake-decode";
+import { decodeBoard, goldenBoards, type TickBoard } from "./snake-decode";
 import { INDEX } from "./tree";
 
 export interface SnakeTrace {
@@ -122,4 +131,143 @@ export function replayBoards(trace: SnakeTrace): ReplayedBoard[] {
     }
     return { ...board, state: replay.state, engineTick: replay.tick };
   });
+}
+
+/**
+ * The crash interval (the last tick's frame to the first hidden frame) holds two firmware timer
+ * events, the blocked tick and the grace tick, each within GAME_TICK_TOLERANCE_MS: the first
+ * hidden frame comes 88-110 ms after the blocked tick in the captures, the saving move 93 ms.
+ */
+export const CRASH_TOLERANCE_MS = 2 * GAME_TICK_TOLERANCE_MS;
+
+/** How a game timeline row's start is compared (D6). */
+export type GameRowTiming =
+  /** With the interval from the previous row (ticks; never cumulatively). */
+  | { readonly kind: "interval"; readonly toleranceMs: number }
+  /** With the time since row `anchor` (the death and what follows it). */
+  | { readonly kind: "aligned"; readonly anchor: number; readonly toleranceMs: number };
+
+/** One frame of a game timeline and how its start is compared. */
+export interface GameRow {
+  readonly startMs: number;
+  readonly pixels: Uint8Array;
+  readonly image: string;
+  readonly timing: GameRowTiming;
+}
+
+/**
+ * A gameplay timeline's rows from its trigger, as the session must show them (D6). A tick redraw
+ * in two bursts counts once, with the first burst's start and the second's pixels. Tick
+ * intervals allow GAME_TICK_TOLERANCE_MS; the crash interval CRASH_TOLERANCE_MS. The death
+ * steps, the game-over screens and the return are aligned on the death's first frame (the
+ * first hidden snake, or the game-over screen when the snake does not blink) and allow
+ * GAME_TICK_TOLERANCE_MS: across the nine captured deaths the blink steps run 222-251 ms and
+ * the note 2925-2954 ms, so ±2 ms does not hold.
+ */
+export function gameRows(id: string, level: number, maze = 0): GameRow[] {
+  const golden = loadGolden(id);
+  const trigger = golden.triggerFrame;
+  if (!golden.timeline || typeof trigger !== "number") throw new Error(`${id}: not a timeline`);
+  const period = SNAKE_PERIODS[level]!;
+  const rows: GameRow[] = [];
+  let anchor: number | undefined;
+  let lastTick: number | undefined;
+  for (const row of golden.timeline.slice(trigger)) {
+    const pixels = findGoldenImage(golden, row.image).pixels;
+    const board = isBoardFrame(pixels);
+    const entry = (timing: GameRowTiming): GameRow => ({
+      startMs: row.startMs,
+      pixels,
+      image: row.image,
+      timing,
+    });
+    if (anchor !== undefined) {
+      rows.push(entry({ kind: "aligned", anchor, toleranceMs: GAME_TICK_TOLERANCE_MS }));
+      continue;
+    }
+    const hidden =
+      board &&
+      decodeBoard(pixels, SNAKE_MAZES[maze], `${id} image ${row.image}`).segments.length === 0;
+    if (hidden || (!board && lastTick !== undefined)) {
+      // The death begins: the snake hidden, or (no blink) the game-over screen.
+      anchor = rows.length;
+      rows.push(entry({ kind: "interval", toleranceMs: CRASH_TOLERANCE_MS }));
+      continue;
+    }
+    if (board) {
+      const last = lastTick === undefined ? undefined : rows[lastTick]!;
+      if (last && row.startMs - last.startMs < Math.min(20, period / 2)) {
+        // The second burst of a split redraw (Task 0): the tick shows these pixels.
+        rows[lastTick!] = { ...last, pixels, image: row.image };
+        continue;
+      }
+      lastTick = rows.length;
+      rows.push(entry({ kind: "interval", toleranceMs: GAME_TICK_TOLERANCE_MS }));
+      continue;
+    }
+    rows.push(entry({ kind: "interval", toleranceMs: TIMING_TOLERANCE_MS }));
+  }
+  return rows;
+}
+
+/**
+ * Compares a recording made from the trigger with `gameRows`: pixels exactly, starts per each
+ * row's timing (D6). With `returns`, the last row is the screen the flow returns to (drawn by
+ * the kernel): the flow must exit when it starts.
+ */
+export function expectGameTimeline(
+  recording: { readonly frames: readonly RecordedFrame[]; readonly exitMs?: number },
+  id: string,
+  rows: readonly GameRow[],
+  options: { readonly returns: boolean },
+): void {
+  const shown = options.returns ? rows.slice(0, -1) : rows;
+  const starts = recording.frames.map((f) => f.startMs);
+  if (options.returns) {
+    expect(recording.frames.length, `${id}: extra frames before the return`).toBe(shown.length);
+    expect(recording.exitMs, `${id}: the flow never exited`).toBeDefined();
+    starts[shown.length] = recording.exitMs!;
+  }
+  rows.forEach((row, i) => {
+    const context = `${id} image ${row.image} (row ${i} from the trigger)`;
+    if (i < shown.length) {
+      const frame = recording.frames[i];
+      expect(frame, `${context}: never shown`).toBeDefined();
+      const mismatch = lcdMismatch(
+        frame!.pixels,
+        { id, image: { name: row.image, pixels: row.pixels } },
+        context,
+      );
+      if (mismatch !== undefined) throw new Error(mismatch);
+    }
+    if (i === 0) return;
+    const from = row.timing.kind === "interval" ? i - 1 : row.timing.anchor;
+    const ours = starts[i]! - starts[from]!;
+    const golden = row.startMs - rows[from]!.startMs;
+    expect(
+      Math.abs(ours - golden),
+      `${context}: ${ours} ms after row ${from}, golden ${golden} ms`,
+    ).toBeLessThanOrEqual(row.timing.toleranceMs);
+  });
+}
+
+/**
+ * When each engine tick of a replayed game comes, from the New game frame: the first after
+ * SNAKE_FIRST_TICK, then one per period, and a grace after a blocked step (D6, H6). Index n is
+ * tick n (tick 0, the New game frame, at 0).
+ */
+export function tickSchedule(trace: SnakeTrace, ticks: number): number[] {
+  const keys = inputByTick(`game/snake/${trace.id}`);
+  const period = SNAKE_PERIODS[trace.level]!;
+  let state = newSnakeGame(trace);
+  const times = [0];
+  let next = SNAKE_FIRST_TICK[trace.level]!;
+  for (let tick = 1; tick <= ticks; tick++) {
+    times.push(times[tick - 1]! + next);
+    state = (keys.get(tick - 1) ?? []).reduce(snakeKey, state);
+    const { state: after, events } = stepSnake(state);
+    state = after;
+    next = events.some((e) => e.kind === "crashed") ? SNAKE_GRACE_MS : period;
+  }
+  return times;
 }

@@ -95,13 +95,20 @@ describe("stockMenu", () => {
     }
   });
 
+  /** A level's entries that come from the tree: all but Snake II's Continue (plan 23 D10). */
+  const treeEntries = (entries: readonly MenuEntry[]) =>
+    entries.filter((e) => e.slug.value !== "continue");
+
   it("holds every node of the generated tree in order, with hidden numbers kept", () => {
-    const visit = (nodes: readonly StockTreeNode[], entries: readonly MenuEntry[]): void => {
+    const visit = (nodes: readonly StockTreeNode[], all: readonly MenuEntry[]): void => {
+      const entries = treeEntries(all);
       expect(entries.map((e) => e.slug.value)).toEqual(nodes.map((n) => n.slug));
+      // Snake II's level orders its entries after Continue (1): New game 2 … Instructions 7.
+      const offset = entries.length === all.length ? 0 : 1;
       nodes.forEach((node, i) => {
         const entry = entries[i]!;
         expect(entry.label, node.number).toBe(node.label);
-        expect(entry.order.value, node.number).toBe(Number(node.number.split("-").at(-1)));
+        expect(entry.order.value, node.number).toBe(Number(node.number.split("-").at(-1)) + offset);
         const spec = node.opens;
         if (spec.kind === "submenu") {
           const level = submenu(entry);
@@ -122,7 +129,8 @@ describe("stockMenu", () => {
 
   it("opens every leaf as a stock flow, the placeholder of its owner plan, or an exit", () => {
     const kinds = new Map<string, string>();
-    const visit = (nodes: readonly StockTreeNode[], entries: readonly MenuEntry[]): void => {
+    const visit = (nodes: readonly StockTreeNode[], all: readonly MenuEntry[]): void => {
+      const entries = treeEntries(all);
       nodes.forEach((node, i) => {
         const entry = entries[i]!;
         if (entry instanceof SubmenuEntry) {
@@ -149,10 +157,10 @@ describe("stockMenu", () => {
       stockMenu.entries.map((slot) => slot.entry),
     );
     // The "Leaf ownership" table: Chat, Calculator, Composer, New game, Activate, Stopwatch, ...
-    for (const number of ["3", "9", "2-1", "5-4-3", "8-1-1", "8-4-2-1", "11-4", "12-5-1"]) {
+    for (const number of ["3", "9", "2-1", "5-4-3", "8-4-2-1", "11-4", "12-5-1"]) {
       expect(kinds.get(number), number).toBe("placeholder");
     }
-    for (const number of ["1-1", "1-2", "1-8-1", "4-5", "8-1-2", "8-1-6", "10-2", "8-6-4"]) {
+    for (const number of ["1-1", "1-2", "1-8-1", "4-5", "8-1-1", "8-1-2", "8-1-6", "10-2"]) {
       expect(kinds.get(number), number).toBe("stock");
     }
   });
@@ -168,7 +176,9 @@ describe("stockMenu", () => {
         count(node.children ?? []);
       });
     count(STOCK_TREE);
-    expect(paths.length).toBe(1 + nodes);
+    // The menu itself, every node, and Snake II's Continue (plan 23 D10).
+    expect(paths.length).toBe(1 + nodes + 1);
+    expect(paths).toContain("menu/games/snake/continue");
     for (const path of [
       "menu/phone-book/search",
       "menu/phone-book/send-bcard",
@@ -296,12 +306,12 @@ describe("PlaceholderApplication", () => {
       stockMenu.entries.map((slot) => slot.entry),
       "menu",
     );
+    expect(owners["menu/games/snake/new-game"]).toBeUndefined();
     expect(owners).toMatchObject({
       "menu/messages/write": "18",
       "menu/chat": "18",
       "menu/tones/composer/empty-4": "16",
       "menu/settings/phone-settings/welcome-note": "15",
-      "menu/games/snake/new-game": "23",
       "menu/games/bantumi/new-game": "24",
       "menu/calculator": "20",
       "menu/clock/stopwatch": "21",

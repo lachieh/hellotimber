@@ -1,9 +1,11 @@
 import { createPhone, type Phone } from "@hellotimber/phone-core";
 import { VISIBLE_ROWS } from "../display/list-rows";
 import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
-import { invalidShortcut } from "./leaves";
-import { createStockMenu } from "./menu";
 import { STOCK_SHORTCUT_WINDOW_MS, type StockPorts } from "./bindings";
+import type { StockCueSink } from "./cues";
+import { invalidShortcut } from "./leaves";
+import { createStockGames, createStockMenu } from "./menu";
+import { createMemorySettings, virginSettings } from "./settings";
 
 export interface StockPhoneConfig extends StockPorts {
   /** Operator line. Every glyph must exist in the stock small font (validated; throws). */
@@ -30,8 +32,30 @@ export const STOCK_MENU_OPEN_DELAY_MS = 39;
  */
 export const STOCK_SHORTCUT_OPEN_DELAY_MS = 1460;
 
+/** Internal options for tests and plan 16 (not exported from the package). */
+export interface StockPhoneInternals {
+  /**
+   * The seed every New game takes, instead of the clock's (D4: the stock phone seeds from the
+   * minutes of the day, UNVERIFIED; tests inject the seeds recovered from the captures).
+   */
+  readonly seed?: number;
+  /** Where the games' cues go, stamped with the kernel time (D8; default: nowhere). */
+  readonly cues?: StockCueSink;
+}
+
 /** A phone-core phone running the stock v6.39 firmware. It starts powered off. */
 export function createStockPhone(config: StockPhoneConfig): Phone {
+  return createStockPhoneWith(config);
+}
+
+/**
+ * `createStockPhone` with internal options. The phone owns its settings store and its games
+ * holder (the suspended game), which power-off clears.
+ */
+export function createStockPhoneWith(
+  config: StockPhoneConfig,
+  internals: StockPhoneInternals = {},
+): Phone {
   const missing = missingStockGlyphs(config.carrier, "small");
   if (missing.length > 0) {
     throw new Error(
@@ -41,8 +65,16 @@ export function createStockPhone(config: StockPhoneConfig): Phone {
     );
   }
   const { clock, date } = config;
-  return createPhone({
-    menu: createStockMenu({ clock, date }),
+  let now = 0;
+  const ports = { clock, date };
+  const clockGames = createStockGames(ports, () => now);
+  const games = {
+    ...clockGames,
+    ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
+    ...(internals.cues === undefined ? {} : { cues: internals.cues }),
+  };
+  const phone = createPhone({
+    menu: createStockMenu(ports, createMemorySettings(virginSettings()), games),
     carrier: config.carrier,
     ...(clock === undefined ? {} : { clock }),
     bootTimeline: BOOT_TIMELINE,
@@ -55,4 +87,27 @@ export function createStockPhone(config: StockPhoneConfig): Phone {
     // Stock shortcut digits: menu numbers, delayed opening, Invalid shortcut (plan 14 D14).
     shortcutEntry: { openDelayMs: STOCK_SHORTCUT_OPEN_DELAY_MS, invalid: invalidShortcut() },
   });
+  // Power-off loses the suspended game (it survives standby, Task 0 C8).
+  phone.subscribe((snapshot) => {
+    if (!snapshot.poweredOn) games.snake = undefined;
+  });
+  return {
+    send: (event) => phone.send(event),
+    pressKey: (key, holdMs) => phone.pressKey(key, holdMs),
+    tick(nowMs) {
+      // The kernel time the games stamp their cues with.
+      now = Math.max(now, nowMs);
+      phone.tick(nowMs);
+    },
+    navigate: (path) => phone.navigate(path),
+    setNotice: (notice) => phone.setNotice(notice),
+    get path() {
+      return phone.path;
+    },
+    get screen() {
+      return phone.screen;
+    },
+    subscribe: (callback) => phone.subscribe(callback),
+    on: (event, callback) => phone.on(event, callback),
+  };
 }

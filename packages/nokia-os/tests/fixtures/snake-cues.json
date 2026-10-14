@@ -1,0 +1,130 @@
+{
+  "source": "captures/6.39/plan23/sound",
+  "note": "Plan 23 Task 0 C10: buzzer and vibrator edges by game tick (scripts/snake-cues.ts).",
+  "recordings": [
+    {
+      "id": "warning-on/game",
+      "note": "Tones › Warning tones On, a level-2 game (bot-short's): meals on ticks 7 and 13.",
+      "edges": [
+        {
+          "kind": "vibra",
+          "onMs": 3200.5,
+          "durationMs": 480,
+          "tick": 7,
+          "leadMs": 41
+        },
+        {
+          "kind": "buzzer",
+          "hz": 2637,
+          "onMs": 3201.5,
+          "durationMs": 6,
+          "tick": 7,
+          "leadMs": 40
+        },
+        {
+          "kind": "vibra",
+          "onMs": 5988.9,
+          "durationMs": 479,
+          "tick": 13,
+          "leadMs": 55
+        },
+        {
+          "kind": "buzzer",
+          "hz": 2637,
+          "onMs": 5989.9,
+          "durationMs": 20,
+          "tick": 13,
+          "leadMs": 54
+        }
+      ]
+    },
+    {
+      "id": "warning-on/death",
+      "note": "Warning tones On: bot-short's death; the crash's three 440 Hz beeps and the vibrator.",
+      "edges": [
+        {
+          "kind": "vibra",
+          "onMs": -14,
+          "durationMs": 480,
+          "tick": "death",
+          "leadMs": 14
+        },
+        {
+          "kind": "buzzer",
+          "hz": 440,
+          "onMs": -13,
+          "durationMs": 15,
+          "tick": "death",
+          "leadMs": 13
+        },
+        {
+          "kind": "buzzer",
+          "hz": 440,
+          "onMs": 23,
+          "durationMs": 9,
+          "tick": "death",
+          "leadMs": -23
+        },
+        {
+          "kind": "buzzer",
+          "hz": 440,
+          "onMs": 48,
+          "durationMs": 15,
+          "tick": "death",
+          "leadMs": -48
+        }
+      ]
+    },
+    {
+      "id": "sounds-off/game",
+      "note": "Games › Settings › Sounds Off (virgin tones): bot-short's game; vibrator only.",
+      "edges": [
+        {
+          "kind": "vibra",
+          "onMs": 3213.5,
+          "durationMs": 479,
+          "tick": 7,
+          "leadMs": 11
+        },
+        {
+          "kind": "vibra",
+          "onMs": 6000.9,
+          "durationMs": 480,
+          "tick": 13,
+          "leadMs": 12
+        }
+      ]
+    },
+    {
+      "id": "sounds-off/death",
+      "note": "Sounds Off: bot-short's death; vibrator only.",
+      "edges": [
+        {
+          "kind": "vibra",
+          "onMs": -11,
+          "durationMs": 477,
+          "tick": "death",
+          "leadMs": 11
+        }
+      ]
+    },
+    {
+      "id": "shakes-on/game",
+      "note": "Shakes On, a level-1 game (bot-long's first meal on tick 7); the recording ends first.",
+      "edges": [
+        {
+          "kind": "vibra",
+          "onMs": 4420.7,
+          "durationMs": null,
+          "tick": 7,
+          "leadMs": 13
+        }
+      ]
+    },
+    {
+      "id": "shakes-off/game",
+      "note": "Shakes Off, the same level-1 meal: no edge.",
+      "edges": []
+    }
+  ]
+}

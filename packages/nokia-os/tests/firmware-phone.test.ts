@@ -1,5 +1,7 @@
 import type { Phone, PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
+import type { StockCue } from "../src/firmware/cues";
+import { createStockPhoneWith } from "../src/firmware/phone";
 import { createStockPhone, type StockPhoneConfig } from "../src/index";
 import { BOOT_TIMELINE } from "../src/resources";
 
@@ -253,5 +255,139 @@ describe("the whole tree on the stock phone (plan 14 Task 12)", () => {
       expect(phone.screen).toMatchObject({ kind: "custom", appId: `stock:games/snake/${slug}` });
       phone.navigate("standby");
     }
+  });
+});
+
+describe("Snake II: New game, suspend and Continue (plan 23 D10, Task 0 C8)", () => {
+  /** A powered-on phone with 10:10's seed, at Snake II's game menu (splash skipped). */
+  function atSnake(cues: { cue: StockCue; atMs: number }[] = []) {
+    const phone = createStockPhoneWith(
+      { carrier: "Orange F", boot: "skip" },
+      { seed: 44530, cues: { cue: (cue, atMs) => void cues.push({ cue, atMs }) } },
+    );
+    let now = 0;
+    phone.tick(now);
+    phone.pressKey("power", 1000);
+    const advance = (ms: number): void => {
+      for (const end = now + ms; now < end; ) phone.tick((now = Math.min(now + 1, end)));
+    };
+    const press = (...keys: PhoneKey[]): void => {
+      for (const key of keys) {
+        phone.send({ type: "down", key });
+        advance(1);
+        phone.send({ type: "up", key });
+        advance(1);
+      }
+    };
+    advance(1000);
+    phone.navigate("menu/games/snake");
+    return { phone, advance, press, now: () => now };
+  }
+  const list = (phone: Phone) => {
+    const screen = phone.screen;
+    if (screen.kind !== "list") throw new Error(`expected a list, got ${screen.kind}`);
+    return screen;
+  };
+
+  it("lists New game first (8-1-1) and no Continue while no game is suspended", () => {
+    const { phone } = atSnake();
+    expect(list(phone).items.slice(0, 2)).toEqual(["New game", "Level"]);
+    expect(list(phone).items).not.toContain("Continue");
+  });
+
+  it("Navi during play suspends: Continue heads the list, selected on the top row (8-1-1)", () => {
+    const { phone, advance, press } = atSnake();
+    press("navi");
+    expect(phone.screen).toMatchObject({ kind: "custom", appId: "stock:games/snake/new-game" });
+    advance(1500);
+    press("navi");
+    expect(phone.path).toBe("menu/games/snake");
+    const screen = list(phone);
+    expect(screen.items).toEqual([
+      "Continue",
+      "New game",
+      "Level",
+      "Mazes",
+      "Top score",
+      "Score IDs",
+      "Instructions",
+    ]);
+    expect(screen).toMatchObject({ selected: 0, windowTop: 0 });
+    expect(screen.itemOrders).toBeUndefined();
+    press("down");
+    expect(list(phone).selected).toBe(1);
+  });
+
+  it("Continue resumes the board; C goes to Games and re-entry opens on Continue", () => {
+    const { phone, advance, press } = atSnake();
+    press("navi");
+    advance(1500);
+    const board = phone.screen;
+    press("c");
+    expect(list(phone).items[0]).toBe("Continue");
+    press("c");
+    expect(phone.path).toBe("menu/games");
+    press("navi");
+    advance(3000);
+    expect(list(phone)).toMatchObject({ title: "Snake II", selected: 0 });
+    press("navi");
+    expect(phone.screen).toMatchObject({ kind: "custom", appId: "stock:games/snake/continue" });
+    if (phone.screen.kind !== "custom" || board.kind !== "custom") throw new Error("custom");
+    expect(phone.screen.frame.pixels).toEqual(board.frame.pixels);
+  });
+
+  it("New game discards the suspended game; power-off loses it, standby keeps it", () => {
+    const { phone, advance, press } = atSnake();
+    press("navi");
+    advance(700);
+    press("navi");
+    phone.navigate("standby");
+    phone.navigate("menu/games/snake");
+    expect(list(phone).items[0]).toBe("Continue");
+    press("down", "navi");
+    expect(phone.screen).toMatchObject({ kind: "custom", appId: "stock:games/snake/new-game" });
+    press("c");
+    expect(list(phone).items[0]).toBe("Continue");
+    phone.pressKey("power", 1000);
+    advance(10);
+    phone.pressKey("power", 1000);
+    advance(10);
+    phone.navigate("menu/games/snake");
+    expect(list(phone).items[0]).toBe("New game");
+  });
+
+  it("Top score while suspended returns to Continue; Level OK discards the game (C8)", () => {
+    const { phone, advance, press } = atSnake();
+    press("navi");
+    advance(700);
+    press("navi");
+    press("down", "down", "down", "down", "navi");
+    expect(phone.screen).toMatchObject({ kind: "custom", appId: "stock:games/snake/top-score" });
+    advance(6000);
+    expect(list(phone)).toMatchObject({ selected: 0 });
+    expect(list(phone).items[0]).toBe("Continue");
+    press("down", "down", "navi");
+    expect(phone.screen).toMatchObject({ kind: "custom", appId: "stock:games/snake/level" });
+    press("navi");
+    const screen = list(phone);
+    expect(screen.items[0]).toBe("New game");
+    expect(screen.items[screen.selected]).toBe("Mazes");
+  });
+
+  it("stamps the game's cues with the kernel time", () => {
+    const cues: { cue: StockCue; atMs: number }[] = [];
+    const { phone, advance, press, now } = atSnake(cues);
+    // The virgin level 175 on Maze 1 (No maze is wall-less): set Maze 1, then New game runs
+    // straight into the right wall within a second.
+    press("down", "down", "navi", "down", "navi");
+    advance(3000);
+    expect(list(phone).items[list(phone).selected]).toBe("Mazes");
+    press("up", "up", "navi");
+    expect(phone.screen).toMatchObject({ kind: "custom", appId: "stock:games/snake/new-game" });
+    const start = now();
+    advance(1000);
+    expect(cues.map((c) => c.cue.kind)).toEqual(["crash", "vibrate"]);
+    expect(cues[0]!.atMs).toBeGreaterThan(start);
+    expect(cues[0]!.atMs).toBeLessThan(start + 1000);
   });
 });

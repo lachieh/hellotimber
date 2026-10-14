@@ -26,6 +26,11 @@ export interface SnakeLevelOptions {
   /** The numeric setting the page edits (`games/snake/level`). */
   readonly key: string;
   readonly softkey: string;
+  /**
+   * Runs when OK stores the level; a slug it returns is selected in the level returned to
+   * (Snake II: OK while a game is suspended discards it, plan 23 Task 0 C8).
+   */
+  readonly onStore?: () => string | undefined;
 }
 
 /**
@@ -69,7 +74,8 @@ class SnakeLevelWidget implements Widget {
     if (key === this.#held?.key) this.#held = undefined;
     if (key === "navi") {
       this.#options.settings.setNumber(this.#options.key, this.#level);
-      flow.back();
+      const select = this.#options.onStore?.();
+      flow.back(1, select === undefined ? {} : { select });
     } else if (key === "c") {
       flow.back();
     }

@@ -76,7 +76,6 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "6-2-1-4": "15", // Български
   "6-2-1-5": "15", // Українська
   "6-2-3": "15", // Welcome note: text editor
-  "8-1-1": "23", // Snake II › New game: gameplay
   "8-2-1": "24", // Space impact › New game
   "8-3-1": "24", // Bantumi › New game
   "8-4-1-1": "24", // Pairs II › Time trial › New game
@@ -119,9 +118,9 @@ export const SHARE_TOLERANCE_MS = 2;
 export const MAX_PENDING_FRAMES = 40;
 
 /**
- * Placeholder leaves whose golden is asserted while the leaf still opens the placeholder, by
- * number → the plan that asserts it, keeping MAX_PENDING_FRAMES frames: Snake II's New game at
- * the virgin level (plan 23 "Capture set"; plan 23 Task 11 runs it).
+ * Leaves whose recording keeps only MAX_PENDING_FRAMES frames although asserted, by number → the
+ * plan whose game goldens assert the rest: Snake II's New game at the virgin level (plan 23
+ * "Capture set"; its 694 frames are one cell per ≈8 ms).
  */
 export const ASSERTED_EARLY: Readonly<Record<string, string>> = { "8-1-1": "23" };
 

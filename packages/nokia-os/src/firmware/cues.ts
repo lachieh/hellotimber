@@ -14,3 +14,6 @@ export type StockCue =
 export interface StockCueSink {
   cue(cue: StockCue, atMs: number): void;
 }
+
+/** The default sink: cues go nowhere until plan 16 plays them. */
+export const NO_CUES: StockCueSink = { cue() {} };

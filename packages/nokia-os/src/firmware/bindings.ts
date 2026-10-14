@@ -259,6 +259,17 @@ export const LEVEL_BARS: Readonly<Record<string, string>> = {
   "8-4-2-2": "level/8-4",
 };
 
+/**
+ * Snake II's game menu (plan 23 D10, Task 0 C8): New game opens the game, and while a game is
+ * suspended a Continue entry heads the list (`Continue / New game / Level / …`, numbered by
+ * position `8-1-1`..`8-1-7`) and the level opens on it.
+ */
+export const SNAKE_LEVEL = {
+  number: "8-1",
+  newGame: "8-1-1",
+  continue: { slug: "continue", label: "Continue" },
+} as const;
+
 /** Level pages that edit a numeric setting (plan 23 D11): Snake II's, by node number. */
 export const NUMERIC_LEVELS: Readonly<Record<string, string>> = {
   "8-1-2": "games/snake/level",
@@ -331,7 +342,6 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "6-2-1-4": "15", // Български
   "6-2-1-5": "15", // Українська
   "6-2-3": "15", // Welcome note: text editor
-  "8-1-1": "23", // Snake II › New game: gameplay
   "8-2-1": "24", // Space impact › New game
   "8-3-1": "24", // Bantumi › New game
   "8-4-1-1": "24", // Pairs II › Time trial › New game
