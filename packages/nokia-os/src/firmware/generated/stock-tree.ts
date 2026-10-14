@@ -994,7 +994,8 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
            "result": {
             "kind": "text-input",
             "lines": [
-             "Topic number: / p9"
+             "Topic number:",
+             "p9"
             ],
             "softkey": "OK"
            }
@@ -1194,7 +1195,9 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
          "result": {
           "kind": "no-response",
           "lines": [
-           "Hebrew / Czech / Polish"
+           "Hebrew",
+           "Czech",
+           "Polish"
           ],
           "softkey": "Mark"
          }
@@ -2688,7 +2691,8 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
          "result": {
           "kind": "timed-note",
           "lines": [
-           "Заверше- / но"
+           "Заверше-",
+           "но"
           ],
           "after": "back"
          }
@@ -3609,7 +3613,8 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
          "result": {
           "kind": "timed-note",
           "lines": [
-           "No maze / selected"
+           "No maze",
+           "selected"
           ],
           "after": "back"
          }
@@ -3619,7 +3624,8 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
          "result": {
           "kind": "timed-note",
           "lines": [
-           "Maze 1 / selected"
+           "Maze 1",
+           "selected"
           ],
           "after": "back"
          }
@@ -3629,7 +3635,8 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
          "result": {
           "kind": "timed-note",
           "lines": [
-           "Maze 2 / selected"
+           "Maze 2",
+           "selected"
           ],
           "after": "back"
          }
@@ -3639,7 +3646,8 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
          "result": {
           "kind": "timed-note",
           "lines": [
-           "Maze 3 / selected"
+           "Maze 3",
+           "selected"
           ],
           "after": "back"
          }
@@ -3649,7 +3657,8 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
          "result": {
           "kind": "timed-note",
           "lines": [
-           "Maze 4 / selected"
+           "Maze 4",
+           "selected"
           ],
           "after": "back"
          }
@@ -3659,7 +3668,8 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
          "result": {
           "kind": "timed-note",
           "lines": [
-           "Maze 5 / selected"
+           "Maze 5",
+           "selected"
           ],
           "after": "back"
          }
@@ -9914,7 +9924,7 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
         "number": "12-6-2-10",
         "slug": "rename",
         "label": "Rename",
-        "valueHint": "",
+        "valueHint": "(empty)",
         "opens": {
          "kind": "text-input",
          "lines": []

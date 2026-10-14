@@ -11,6 +11,11 @@ export const TREE_OVERRIDES: TreeOverrides = {
     // keeps the label "(empty)", UNVERIFIED until the profiles plan (D10).
     "12-6": "(empty)",
   },
+  valueHints: {
+    // plan14/scroll/12-6-2 (Rename): slot 6's name draws as two boxes like its label above; the
+    // page shows the same "(empty)" (D10).
+    "12-6-2-10": "(empty)",
+  },
   optionLabels: {
     // plan14/scroll/2-8-4-1/01 (and 2-8-4-2, 2-8-4-3): each topic is six boxes (D10; Topics stays
     // a placeholder for plan 18).

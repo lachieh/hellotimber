@@ -4,7 +4,7 @@
 //
 // Layout facts used to place runs (plan 13 "Stock display observations"):
 // - small: 8-row cells (7-row capitals, 1 descender row); large: 13 rows (11-row capitals);
-//   digits: 6 rows; thin: 7 rows.
+//   digits: 6 rows; thin: 8 rows (7-row capitals, 1 descender row).
 // - pages: label lines at tops 7/16/25 from x 0; the value (thin) at top 29, right-aligned.
 // - rows: text tops 8/18/28; the selected row is inverted on a band x 0..77; window
 //   max(0, selected - 2).
@@ -16,7 +16,7 @@ export const FONT_HEIGHTS: Readonly<Record<FontName, number>> = {
   small: 8,
   large: 13,
   digits: 6,
-  thin: 7,
+  thin: 8,
 };
 
 const softkey = (text: string): TextRun => ({ font: "small", text, top: 40 });

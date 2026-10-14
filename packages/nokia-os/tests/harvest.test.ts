@@ -99,7 +99,7 @@ describe("harvestGlyphs", () => {
     ]);
   });
 
-  it("splits touching glyphs where a split override says the next glyph starts", () => {
+  it("splits touching glyphs where a touch override gives the first glyph's ink width", () => {
     // "BA" with no blank column between B (ink x 5..6) and A (ink x 7..9).
     const touching = sample("BA", ["#####", "###.#", "#.#.#"]);
     const unsplit = harvestGlyphs([touching], [], METRICS);
@@ -109,7 +109,7 @@ describe("harvestGlyphs", () => {
     const split = harvestGlyphs(
       [touching],
       [
-        { kind: "split", source: "toy BA", font: "small", text: "BA", at: [7] },
+        { kind: "touch", font: "small", pair: "BA", width: 2 },
         { kind: "advance", font: "small", char: "A", advance: 4 },
       ],
       METRICS,
@@ -118,18 +118,23 @@ describe("harvestGlyphs", () => {
     expect(split.fonts.small.glyphs.B).toEqual(["##", "##", "#."]);
   });
 
-  it("reports a split override that does not fall inside a segment", () => {
+  it("applies a touch override to every run with the pair, in any position, and only there", () => {
     const result = harvestGlyphs(
-      [sample("A", A)],
       [
-        { kind: "split", source: "toy A", font: "small", text: "A", at: [5] },
+        // "ABA": A at 5..7, B at 9..10 touching A at 11..13.
+        sample("ABA", ["###.#####", "#.#.###.#", "#.#.#.#.#"]),
+        // "B A": a space separates the pair, so nothing is split.
+        sample("B A", ["##...###", "##...#.#", "#....#.#"]),
+      ],
+      [
+        { kind: "touch", font: "small", pair: "BA", width: 2 },
         { kind: "advance", font: "small", char: "A", advance: 4 },
       ],
       METRICS,
     );
-    expect(result.issues).toEqual([
-      { kind: "unused-split", source: "toy A", font: "small", text: "A", at: 5 },
-    ]);
+    expect(result.issues).toEqual([]);
+    expect(result.fonts.small.glyphs.B).toEqual(["##", "##", "#."]);
+    expect(result.fonts.small.glyphs[" "]).toEqual(["...", "...", "..."]);
   });
 
   it("reports conflicting bitmaps for one character", () => {

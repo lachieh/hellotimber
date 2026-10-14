@@ -47,13 +47,15 @@ export type GlyphOverride =
       readonly char: string;
       readonly advance: number;
     }
-  /** Glyphs that touch in one run: a new glyph's ink starts at each `at` column. */
+  /**
+   * A pair of characters whose glyphs always touch (no blank column between them): wherever the
+   * pair is written with no space, the second glyph's ink starts `width` columns after the first's.
+   */
   | {
-      readonly kind: "split";
-      readonly source: string;
+      readonly kind: "touch";
       readonly font: FontName;
-      readonly text: string;
-      readonly at: readonly number[];
+      readonly pair: string;
+      readonly width: number;
     };
 
 export type HarvestIssue =
@@ -64,13 +66,6 @@ export type HarvestIssue =
       readonly text: string;
       readonly expected: number;
       readonly found: number;
-    }
-  | {
-      readonly kind: "unused-split";
-      readonly source: string;
-      readonly font: FontName;
-      readonly text: string;
-      readonly at: number;
     }
   | {
       readonly kind: "bitmap-conflict";
@@ -150,7 +145,7 @@ class Tally<V> {
 function readRun(
   sample: RunSample,
   height: number,
-  splits: readonly number[],
+  touching: ReadonlyMap<string, number>,
   issues: HarvestIssue[],
 ): { observations: [string, Observation][]; pairs: Pair[] } | undefined {
   const { run, pixels, source } = sample;
@@ -168,18 +163,18 @@ function readRun(
     if (last && last[1] === x - 1) last[1] = x;
     else segments.push([x, x]);
   }
-  for (const at of splits) {
-    const i = segments.findIndex(([x0, x1]) => x0 < at && at <= x1);
-    if (i < 0) {
-      issues.push({ kind: "unused-split", source, font: run.font, text: run.text, at });
-      return undefined;
-    }
-    const [x0, x1] = segments[i]!;
-    segments.splice(i, 1, [x0, at - 1], [at, x1]);
-  }
-
   const chars = Array.from(run.text);
   const glyphChars = chars.filter((ch) => ch !== " ");
+  // Touching pairs: split the first glyph's segment where the second glyph's ink starts.
+  for (let i = 0, g = 0; i < chars.length - 1; i++) {
+    if (chars[i] === " ") continue;
+    const width = touching.get(chars[i]! + chars[i + 1]!);
+    const segment = segments[g];
+    if (width !== undefined && segment && segment[0] + width <= segment[1]) {
+      segments.splice(g, 1, [segment[0], segment[0] + width - 1], [segment[0] + width, segment[1]]);
+    }
+    g++;
+  }
   if (segments.length !== glyphChars.length) {
     issues.push({
       kind: "segment-count",
@@ -238,17 +233,12 @@ export function harvestGlyphs(
     const height = heights[font];
     const bitmaps = new Map<string, Tally<readonly string[]>>();
     const pairs: Pair[] = [];
+    const touching = new Map<string, number>();
+    for (const o of overrides)
+      if (o.kind === "touch" && o.font === font) touching.set(o.pair, o.width);
     for (const sample of samples) {
       if (sample.run.font !== font) continue;
-      const splits = overrides.flatMap((o) =>
-        o.kind === "split" &&
-        o.source === sample.source &&
-        o.font === font &&
-        o.text === sample.run.text
-          ? o.at
-          : [],
-      );
-      const read = readRun(sample, height, splits, issues);
+      const read = readRun(sample, height, touching, issues);
       if (!read) continue;
       for (const [ch, observation] of read.observations) {
         if (!bitmaps.has(ch)) bitmaps.set(ch, new Tally());
@@ -349,8 +339,6 @@ export function formatIssue(issue: HarvestIssue): string {
   switch (issue.kind) {
     case "segment-count":
       return `${issue.source}: ${issue.font} "${issue.text}" has ${issue.found} glyph segments, expected ${issue.expected}`;
-    case "unused-split":
-      return `${issue.source}: ${issue.font} "${issue.text}" has no segment to split at x ${issue.at}`;
     case "bitmap-conflict":
       return `${issue.font} '${issue.char}': ${issue.variants.length} different bitmaps (${issue.variants
         .map((v) => `[${v.rows.join("/")}] in ${v.sources.join(", ")}`)

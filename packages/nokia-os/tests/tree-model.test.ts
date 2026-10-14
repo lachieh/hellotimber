@@ -211,12 +211,14 @@ describe("stock tree model", () => {
     expect([...keys].sort()).toEqual(["children", "label", "number", "opens", "slug", "valueHint"]);
   });
 
-  it("applies label and kind overrides", () => {
+  it("applies label, value hint and kind overrides", () => {
     const fixed = buildStockTree(TREE.root.children, TEXT, {
       labels: { "12-2": "(empty)" },
+      valueHints: { "5-1": "(empty)" },
       kinds: { "1-5": "static-note" },
     });
     expect(find(fixed, "12-2").label).toBe("(empty)");
+    expect(find(fixed, "5-1").valueHint).toBe("(empty)");
     expect(find(fixed, "1-5").opens.kind).toBe("static-note");
   });
 
@@ -244,6 +246,12 @@ describe("result summaries", () => {
       kind: "confirm-query",
       lines: ["Are you sure?"],
       softkey: "Yes",
+    });
+    // tree.json writes the firmware's line breaks as " / " (8-1-3-2 `Maze 1` / `selected`).
+    expect(parseResult('timed-note "Maze 1 / selected", then back', "x")).toEqual({
+      kind: "timed-note",
+      lines: ["Maze 1", "selected"],
+      after: "back",
     });
     expect(parseResult("returns immediately", "x")).toEqual({ kind: "returns-immediately" });
     expect(parseResult("not probed", "x")).toEqual({ kind: "not-probed" });
@@ -290,6 +298,23 @@ describe("harvester runs", () => {
     expect(() => harvestRuns([run("x", "bold13", 0, 0)], "probe/x a")).toThrow(
       'probe/x a: OCR face "bold13" has no stock font',
     );
+  });
+
+  it("drop art read as text: runs with no letter or digit, or only I/l/i/' readings", () => {
+    expect(
+      harvestRuns(
+        [
+          run("' '", "large13", 65, 3), // the Clock pages' icon
+          run("'I", "bold8", 11, 11), // splash art
+          run("_.", "plain8", 43, 0), // splash art
+          run(".\u2026\u2026", "plain8", 17, 17), // gameplay dots
+          run("\ue000\ue000\ue000", "plain8", 2, 8), // uninitialised-EEPROM boxes
+          run("Are you", "bold8", 0, 4),
+          run("12", "large13", 61, 24),
+        ],
+        "x",
+      ).map((r) => r.text),
+    ).toEqual(["Are you", "12"]);
   });
 
   it("join runs on one row into a line", () => {

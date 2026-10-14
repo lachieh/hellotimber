@@ -12,8 +12,8 @@ function poweredOn(config: Partial<StockPhoneConfig> = {}): Phone {
 
 describe("createStockPhone", () => {
   it("rejects a carrier the small font cannot draw and names the characters", () => {
-    expect(() => createStockPhone({ carrier: "Zap-1 Zone" })).toThrow(
-      'Carrier "Zap-1 Zone" has characters the stock small font lacks: "Z", "-", "1".',
+    expect(() => createStockPhone({ carrier: "Zap & Zone@" })).toThrow(
+      'Carrier "Zap & Zone@" has characters the stock small font lacks: "Z", "&", "@".',
     );
     expect(() => createStockPhone({ carrier: "Telstra" })).not.toThrow();
   });

@@ -500,19 +500,19 @@ golden. Pending goldens are `it.todo` naming their plan, as in plan 13.
 Observations to start from (measured from `tree/` samples during planning). The goldens are
 authoritative; Task 6/7 correct this table and the spec when they disagree.
 
-| Widget              | Layout                                                                                                                                                            | Keys and timing                                                                                                                                                 | Examples                                                  |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| Option list         | rows layout (band x 0..77, text x 2, tops 8/18/28), rail, indicator `<list>-<k>`; current value highlighted, no radio glyph                                       | ▲/▼ circular window (D3); OK applies; C back to the page; softkey `OK` (`Quit` while unset: no rows, indicator `-0`)                                            | 1-8-1 Type of view, 5-2 Ringing volume (unset)            |
-| Multi-select        | ☑ (filled 5×5) / ☐ (dotted) at x 1..5; band from x 8, text x 10                                                                                                   | softkey toggles (`Unmark` on a marked row, `Mark` otherwise); C leaves (P14)                                                                                    | 2-8-5 Language                                            |
-| Timed note          | text in the large face from x 0, tops 3/18/33; icon at x ≈63..83, y ≈1..23: tick (3 steps: box 710 ms, half 216 ms, full), dotted `!`, octagon                    | auto-dismiss: ≈1.45 s (confirmations), ≈2.9 s (information/errors), per-golden durations (D8); some start with a ≈110 ms blank; then back (or standby: 6-2-4-1) | Done, No phone numbers, Not allowed, Clock hidden         |
-| Static note         | as a timed note without an icon or softkey                                                                                                                        | stays until a key (P12); then back                                                                                                                              | 8-1-4 Top score                                           |
-| Progress note       | hatched bar x 0..83, y 7..14, animated (~271 ms per step, looping); text top 18; softkey `Quit`                                                                   | Quit/C (P7)                                                                                                                                                     | Requesting, Searching                                     |
-| Confirm query       | small-face lines from x 0, tops 2/12/22; softkey `OK` or `Yes`                                                                                                    | OK → result; C → back (P8)                                                                                                                                      | Level 5, Club Nokia ID, Reminders Erase All               |
-| Info pages / screen | page layout (label lines 7/16/25, value in the thin face right-aligned, top 29), rail, indicator; softkey per page (`Back`, `Select`)                             | ▲/▼ pages; `Back` exits; a page with a result opens it                                                                                                          | 4-5, 4-6, 4-8, Score IDs; 1-8-2 Memory status             |
-| Input prompt        | mode icon top-left (pen + `abc`, key, phone book), label in the small face top 7, entry box (text) or value line (number); softkey `OK`/`Search`/`Assign`/`Start` | first screen only (D11); cursor blink if captured (P9); C back                                                                                                  | 1-1 Search, 1-9 Speed dials, 6-4 Restore factory settings |
-| Level bar           | `Level:` top-left; 9 bars rising left to right, y ≈13..36; softkey `OK`                                                                                           | per P12 (virgin: ▲/▼ do not change it)                                                                                                                          | 8-1-2 Level                                               |
-| Text pages          | three small-face lines from x 0; softkey `More`                                                                                                                   | `More` pages; after the last page back (P12)                                                                                                                    | 8-1-6 Instructions                                        |
-| Splash (intro)      | full-frame animated game title                                                                                                                                    | ~250 ms frames, then the game's rows menu (P12: skip key, shortcut)                                                                                             | 8-1 Snake II                                              |
+| Widget              | Layout                                                                                                                                                                 | Keys and timing                                                                                                                                                 | Examples                                                  |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Option list         | rows layout (band x 0..77, text x 2, tops 8/18/28), rail, indicator `<list>-<k>`; current value highlighted, no radio glyph                                            | ▲/▼ circular window (D3); OK applies; C back to the page; softkey `OK` (`Quit` while unset: no rows, indicator `-0`)                                            | 1-8-1 Type of view, 5-2 Ringing volume (unset)            |
+| Multi-select        | ☑ (filled 5×5) / ☐ (dotted) at x 1..5; band from x 8, text x 10                                                                                                        | softkey toggles (`Unmark` on a marked row, `Mark` otherwise); C leaves (P14)                                                                                    | 2-8-5 Language                                            |
+| Timed note          | text in the large face from x 0, tops 3/18/33; icon within x 63..83, y 3..22: tick (3 steps: dotted box, half, full), dotted `!`, octagon                              | auto-dismiss: ≈1.45 s (confirmations), ≈2.9 s (information/errors), per-golden durations (D8); some start with a ≈110 ms blank; then back (or standby: 6-2-4-1) | Done, No phone numbers, Not allowed, Clock hidden         |
+| Static note         | as a timed note without an icon or softkey                                                                                                                             | stays until a key (P12); then back                                                                                                                              | 8-1-4 Top score                                           |
+| Progress note       | hatched bar x 0..83, y 7..14, animated (~271 ms per step, looping); text top 18; softkey `Quit`                                                                        | Quit/C (P7)                                                                                                                                                     | Requesting, Searching                                     |
+| Confirm query       | small-face lines from x 0, tops 2/12/22; softkey `OK` or `Yes`                                                                                                         | OK → result; C → back (P8)                                                                                                                                      | Level 5, Club Nokia ID, Reminders Erase All               |
+| Info pages / screen | pages: label lines 7/16/25, value thin, last cell ending x 78, top 29, rail, indicator; screen: small lines 7/16/25, no rail; softkey per page (`Back`, `Select`)      | ▲/▼ pages; `Back` exits; a page with a result opens it                                                                                                          | 4-5, 4-6, 4-8, Score IDs; 1-8-2 Memory status             |
+| Input prompt        | mode icon y 0..5 from x 1, label small top 7; entry frame x 0..83, y 16..36, value large top 23 ending x 82 (or large top 16 from x 0); `OK`/`Search`/`Assign`/`Start` | first screen only (D11); cursor blink if captured (P9); C back                                                                                                  | 1-1 Search, 1-9 Speed dials, 6-4 Restore factory settings |
+| Level bar           | `Level:` small at x 5, top 0; bars rising left to right within x 5..74, y 13..36; softkey `OK`                                                                         | per P12 (virgin: ▲/▼ do not change it)                                                                                                                          | 8-1-2 Level                                               |
+| Text pages          | three thin-face lines from x 0 at tops 7/16/25, no rail; softkey `More`                                                                                                | `More` pages; after the last page back (P12)                                                                                                                    | 8-1-6 Instructions                                        |
+| Splash (intro)      | full-frame animated game title                                                                                                                                         | ~250 ms frames, then the game's rows menu (P12: skip key, shortcut)                                                                                             | 8-1 Snake II                                              |
 
 Deviation (Task 0 probes; layout corrections stay with Tasks 6/7): Option list: OK on a 7-3-4
 Set delay choice returns at once to the Call divert page (two levels, no note). Multi-select: the
@@ -902,18 +902,48 @@ Task 12; the standby number entry after it stays out of scope.
 `scripts/extract-resources.ts`, `src/resources/generated/fonts.ts`, `src/resources/index.ts`,
 `tests/harvest.test.ts`, `tests/resources.test.ts`, this plan's widget catalogue, spec §10.
 
-- [ ] Measure each widget layout from the goldens (band tops, left edges, icon boxes, softkey
+- [x] Measure each widget layout from the goldens (band tops, left edges, icon boxes, softkey
       row) and correct the "Stock widget catalogue" table. The generated text runs use these
       bounds. Fix them in `tree-model.ts` if needed and regenerate.
-- [ ] Feed `scripts/generated/tree-text-runs.ts` to the harvester beside `text-runs.ts`. Resolve
+- [x] Feed `scripts/generated/tree-text-runs.ts` to the harvester beside `text-runs.ts`. Resolve
       reported issues with overrides that name their golden. Never edit generated runs; fix the
       overrides table or the model. Add new faces if Task 3 mapped any (`StockFontName`,
       `missingStockGlyphs` union).
-- [ ] TDD `resources.test.ts`: freshness still holds; every string the stock tree renders (labels,
+- [x] TDD `resources.test.ts`: freshness still holds; every string the stock tree renders (labels,
       option labels, value hints, leaf lines, info pages, text pages, softkeys) has no missing
       glyphs in its face, except text owned by placeholders.
-- [ ] Run `extract-resources` twice; no diff.
-- [ ] Commit: `feat(nokia-os): harvest stock glyphs from the menu-tree goldens`.
+- [x] Run `extract-resources` twice; no diff.
+- [x] Commit: `feat(nokia-os): harvest stock glyphs from the menu-tree goldens`.
+
+Deviation: the thin face is 8 rows, not 7 (game instructions show its descender row: `grow`,
+`pots.`); `FONT_HEIGHTS.thin` is 8 and plan 13's thin glyphs gain a blank bottom row. Bearings join
+plan 13's: small `1`, large `1` and large `:` sit one column into their cells (`Level 1`, `10:10`,
+`13.10.2026`). The large `R` touches every following `e` (`Reminders`, `Received`, `Request`), so
+the per-source `split` override became a `touch` pair override (`Re`, R's ink 8 columns) that
+applies wherever the pair occurs; the `unused-split` issue is gone. Unknown advances follow the
+ink-plus-one rule (17 overrides, each naming its golden).
+Deviation: fixes to Task 2/3 inputs, regenerated: `tree-model.ts` drops art read as text from the
+harvester runs (runs with no letter or digit, or only `I`/`l`/`i`/`'` readings: the Clock pages'
+icon read as `' '`, splash and Bantumi gameplay dots, the U+E000 boxes); `parseResult` splits
+tree.json's `/` line breaks (`Maze 1` / `selected`, `Заверше-` / `но`, `Topic number:` / `p9`);
+`tree-overrides.ts` gains `valueHints` (12-6-2-10 Rename shows `(empty)`, like slot 6's label, D10).
+S5 picked "the most common result" even when no result repeats, so the first option of 4-4, 7-1-1,
+8-1-3, 10-3 and 11-2-3 had no `.choose` golden and the large `A` of `All call lists erased` was in
+no golden; S5 now chooses every option when no result repeats (5 new `.choose` goldens: 365
+fixtures, 334 asserted, 31 pending). `tests/firmware-phone.test.ts` uses a carrier the small face
+still cannot draw (`Zap & Zone@`).
+Deviation: the glyph test (`resources.test.ts`) assigns faces per string kind as measured: titles
+large; labels, option labels, page labels, softkeys, confirm/progress/info-screen/level-bar lines
+small; value hints and page values thin; note lines large; prompt lines small through the last line
+ending in `:`, then large; text pages thin. `no-response` lines are not drawn. Placeholder-owned
+nodes (`PLACEHOLDER_OWNERS`) are skipped below their label.
+
+Completion (Task 6): glyphs small 103, large 66, digits 12, thin 77 (Latin, the Cyrillic of the
+language list and its notes, `çêñüÆ`). Gaps for later text entry: small lacks `Z j " ; / @ & * # %
+= _ < > $ £`; large lacks `B E F H J K O Q U V W X Y Z j 8 , ? ' " + ; / @ & * # % = _ < > $ £`
+(note the digit `8`: number entry with an 8 cannot draw until a golden shows one); thin lacks
+`B C H J Q V W X Z j q z ? ! " - + ; / @ & % = _ < > $ £`. Plans 18/19 (editors, number entry)
+need captures with these characters.
 
 ### Task 7 - Widget sprites and timelines from goldens (TDD)
 

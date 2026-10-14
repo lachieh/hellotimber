@@ -2,7 +2,8 @@
 //
 //   mise exec -- vp run @hellotimber/nokia-os#extract-resources
 //
-// - fonts: glyphs harvested from the text runs in scripts/text-runs.ts (+ glyph-overrides.ts);
+// - fonts: glyphs harvested from the text runs in scripts/text-runs.ts (plan 13, by hand) and
+//   scripts/generated/tree-text-runs.ts (plan 14, from the corpus OCR), + glyph-overrides.ts;
 // - menu icons: per carousel `.anim` golden, the icon frames cropped to the union ink box of
 //   x 0..79, y 20..39, and their timeline (plus the Clock's per-reveal timelines);
 // - boot: the full-frame images and timeline of boot/power-on;
@@ -15,6 +16,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { MENU_SLUGS } from "./capture-set.ts";
+import { TREE_TEXT_RUNS } from "./generated/tree-text-runs.ts";
 import { GLYPH_OVERRIDES } from "./glyph-overrides.ts";
 import { findGoldenImage, LCD_WIDTH, parseGolden, type Golden } from "./golden-format.ts";
 import {
@@ -196,7 +198,7 @@ function loadGolden(goldensDir: string, id: string): Golden {
 
 function harvestFonts(goldensDir: string): Record<FontName, HarvestedFont> {
   const samples: RunSample[] = [];
-  for (const [id, images] of Object.entries(TEXT_RUNS)) {
+  for (const [id, images] of [...Object.entries(TEXT_RUNS), ...Object.entries(TREE_TEXT_RUNS)]) {
     const golden = loadGolden(goldensDir, id);
     for (const [name, runs] of Object.entries(images)) {
       const { pixels } = findGoldenImage(golden, name);
@@ -206,7 +208,8 @@ function harvestFonts(goldensDir: string): Record<FontName, HarvestedFont> {
   const { fonts, issues } = harvestGlyphs(samples, GLYPH_OVERRIDES, FONT_HEIGHTS);
   if (issues.length > 0) {
     throw new Error(
-      `glyph harvest reported ${issues.length} issue(s); fix scripts/text-runs.ts or add a ` +
+      `glyph harvest reported ${issues.length} issue(s); fix scripts/text-runs.ts (or the OCR ` +
+        `runs' model, scripts/tree-model.ts) or add a ` +
         `scripts/glyph-overrides.ts entry:\n${issues.map((i) => `  ${formatIssue(i)}`).join("\n")}`,
     );
   }

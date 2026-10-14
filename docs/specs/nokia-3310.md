@@ -266,13 +266,16 @@ the Menu press (2985 ms into the capture minus the 37 ms trigger); the shortcut 
 from the Menu press and after each digit. What follows a typed digit is described under "Deeper
 levels and stock widgets (plan 14)".
 
-**Fonts:** four faces, harvested from the goldens: `small` (labels, operator, softkeys; 2-px stems,
-7-row capitals plus descenders, 8-row cells), `large` (carousel title, 11-row capitals, 13-row
-cells), `digits` (indicator and standby clock, 6 rows), `thin` (page values, 7 rows, 1-px stems,
-5-column digit cells). In every face a glyph's cell is its ink plus one blank column, except the
-digit bearings and the large `R`, whose leg touches the next letter. `digits` and `thin` hold
-every digit (Task 11 captured the clock at 19:48 and 07:59); the firmware keeps the hour's
-leading zero (`07:59`).
+**Fonts:** four faces, harvested from the goldens: `small` (labels, operator, softkeys, prompts'
+labels; 2-px stems, 7-row capitals plus descenders, 8-row cells), `large` (carousel title, notes,
+entry values; 11-row capitals, 13-row cells), `digits` (indicator and standby clock, 6 rows),
+`thin` (page values and game instructions; 7-row capitals plus a descender row, 8-row cells, 1-px
+stems, 5-column digit cells). The whole v6.39 menu tree uses only these four (plan 14 Task 0).
+In every face a glyph's cell is its ink plus one blank column, except the `1` in every face and
+the large `:`, which sit one column into their cells, and the large `R`, whose leg touches a
+following `e`. Digits are tabular in each face (small 6, large 8, digits 6, thin 5 columns).
+`digits` and `thin` hold every digit (Task 11 captured the clock at 19:48 and 07:59); the
+firmware keeps the hour's leading zero (`07:59`).
 
 **Standby:** signal bars at x 0, rows 0-6 (w4), 8-14 (w3), 16-22 (w2), 24-29 (w2); antenna icon at
 (0,31); battery mirrored, icon 4×6 at (80,31); operator centred at `floor((84 - width) / 2)`, top
@@ -325,7 +328,16 @@ opened submenu shows `<path>-` and three dots for ≈1.47 s, then its index. `Me
 Snake II splash first; a digit during a splash only skips it. Entering Screen saver shows `5-9`
 and three dots for ≈2.9 s.
 
-**Stock widgets (plan 14, in progress).** Layouts are measured by plan 14 Tasks 6/7; behaviour:
+**Stock widgets (plan 14, in progress).** Layouts measured from the plan 14 goldens (Task 6): notes
+draw large text from x 0 at tops 3/18/33 and their icon within x 63..83, y 3..22; progress notes a
+hatched bar x 0..83, y 7..14, `small` text at top 18; confirm queries `small` lines from x 0 at
+tops 2/12/22 (or 4/13); info pages the page layout with the value in `thin` (last cell ending at
+x 78, top 29) and the rail; info screens (`SIM card:`) `small` lines at tops 7/16/25 with no
+rail; prompts a mode icon at y 0..5 from x 1, the label in `small` at top 7, and either an entry
+frame x 0..83, y 16..36 with the value in `large` at top 23 ending at x 82 (time, date, numbers)
+or the value in `large` at top 16 from x 0 (Speed dials `(empty)`); the level bar `Level:` in
+`small` at x 5, top 0, with bars within x 5..74, y 13..36; text pages `thin` lines from x 0 at
+tops 7/16/25, softkey `More`, no rail. Behaviour:
 
 - _Option lists_: rows with the current value highlighted (no radio glyph); OK applies and shows
   the result, then the page with the new value. Some return without a note (Set delay goes back

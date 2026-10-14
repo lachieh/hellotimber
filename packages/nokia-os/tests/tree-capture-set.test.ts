@@ -144,6 +144,34 @@ describe("tree capture set (plan 14 S1-S8)", () => {
     });
   });
 
+  it("chooses every option when no result repeats (each differs from its siblings')", () => {
+    // 4-4 Erase recent call lists: All / Missed / Dialled / Received each name their own list.
+    // Type of view with a distinct result per option, opening on its first option (which is then
+    // not the one ▼ from the opening state).
+    const tree: TreeJson = JSON.parse(JSON.stringify(TREE), (_key, value: unknown) => {
+      const n = /^1-3-1-(\d)$/.exec((value as { number?: unknown } | null)?.number as string)?.[1];
+      return n === undefined
+        ? value
+        : {
+            ...(value as object),
+            result: `timed-note "View ${n} set", then back`,
+            highlighted_on_entry: n === "1",
+          };
+    });
+    const recorded = {
+      "1-3-1-2": frames(["options-2", 60], ["set-2", 1450], ["page-name-list", 3000]),
+      "1-3-1-3": frames(["options-3", 60], ["set-3", 1450], ["page-name-list", 3000]),
+    };
+    const chosen = [...byId(treeCaptureSet(tree, io(recorded), TABLES)).keys()].filter((id) =>
+      id.endsWith(".choose"),
+    );
+    expect(chosen.filter((id) => id.includes("/1-3-1-")).sort()).toEqual([
+      "tree/01-phone-book/1-3-1-1.choose",
+      "tree/01-phone-book/1-3-1-2.choose",
+      "tree/01-phone-book/1-3-1-3.choose",
+    ]);
+  });
+
   it("does not share recordings whose steps differ by more than 2 ms", () => {
     const late = frames(["list-1-5", 55], ["no-numbers", 2903], ["list-1-5", 2000]);
     const split = byId(treeCaptureSet(TREE, io({ "1-5": late }), TABLES));

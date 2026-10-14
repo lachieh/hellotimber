@@ -2,7 +2,9 @@ import { SubmenuEntry } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { extractResources, inferLoop, toTimeline } from "../scripts/extract-resources.ts";
+import { TREE_TEXT_RUNS } from "../scripts/generated/tree-text-runs.ts";
 import { TEXT_RUNS } from "../scripts/text-runs.ts";
+import { placeholderOwner } from "../scripts/tree-capture-set.ts";
 import { missingStockGlyphs, stockMenu } from "../src/index";
 import {
   BOOT_FRAMES,
@@ -16,6 +18,100 @@ import { BOOT_DATA } from "../src/resources/generated/boot";
 import { STOCK_FONT_DATA } from "../src/resources/generated/fonts";
 import { MENU_ICON_DATA } from "../src/resources/generated/menu-icons";
 import { STATUS_DATA } from "../src/resources/generated/status";
+import {
+  STOCK_TREE,
+  type StockResult,
+  type StockScreenSpec,
+  type StockTreeNode,
+} from "../src/firmware/generated/stock-tree";
+
+interface ShownText {
+  readonly text: string;
+  readonly font: StockFontName;
+  readonly where: string;
+}
+
+/**
+ * The faces a leaf screen draws its lines in (measured from the tree goldens): notes in large;
+ * prompts' label lines (through the last one ending in ":") in small and their value in large;
+ * the other widgets in small. Screens that show nothing of their own have no lines.
+ */
+function leafText(screen: StockScreenSpec | StockResult, where: string): ShownText[] {
+  if (!("lines" in screen)) return [];
+  const softkey =
+    screen.softkey === undefined ? [] : [{ text: screen.softkey, font: "small" as const, where }];
+  switch (screen.kind) {
+    case "no-response":
+    case "returns-immediately":
+    case "standby":
+      return softkey;
+    case "timed-note":
+    case "static-note":
+      return [...screen.lines.map((text) => ({ text, font: "large" as const, where })), ...softkey];
+    case "text-input":
+    case "number-input":
+    case "code-prompt": {
+      const labels = screen.lines.reduce((last, line, i) => (line.endsWith(":") ? i : last), -1);
+      return [
+        ...screen.lines.map((text, i) => ({
+          text,
+          font: i <= labels ? ("small" as const) : ("large" as const),
+          where,
+        })),
+        ...softkey,
+      ];
+    }
+    default:
+      return [...screen.lines.map((text) => ({ text, font: "small" as const, where })), ...softkey];
+  }
+}
+
+/** Every string the stock tree shows, in its face, except text owned by placeholders. */
+function stockTreeText(): ShownText[] {
+  const out: ShownText[] = [];
+  const shown = (number: string): boolean => placeholderOwner(number) === undefined;
+  const visit = (node: StockTreeNode, parent: StockTreeNode | undefined): void => {
+    const where = node.number;
+    for (const text of node.label.split("\n"))
+      out.push({ text, font: parent ? "small" : "large", where });
+    if (node.valueHint !== undefined) out.push({ text: node.valueHint, font: "thin", where });
+    const spec = node.opens;
+    if (!shown(node.number)) return;
+    switch (spec.kind) {
+      case "submenu":
+        out.push({ text: spec.softkey, font: "small", where });
+        break;
+      case "option-list":
+        out.push({ text: spec.softkey, font: "small", where });
+        spec.options.forEach((option, i) => {
+          const number = `${node.number}-${i + 1}`;
+          out.push({ text: option.label, font: "small", where: number });
+          if (shown(number)) out.push(...leafText(option.result, number));
+        });
+        break;
+      case "info-pages":
+        spec.pages.forEach((page, i) => {
+          const number = `${node.number}-${i + 1}`;
+          for (const text of page.label.split("\n"))
+            out.push({ text, font: "small", where: number });
+          if (page.value !== undefined) out.push({ text: page.value, font: "thin", where: number });
+          out.push({ text: page.softkey, font: "small", where: number });
+          if (page.result) out.push(...leafText(page.result, number));
+        });
+        break;
+      case "text-pages":
+        for (const page of spec.pages)
+          for (const text of page) out.push({ text, font: "thin", where });
+        out.push({ text: "More", font: "small", where });
+        break;
+      default:
+        out.push(...leafText(spec, where));
+    }
+    for (const child of node.children ?? []) visit(child, node);
+  };
+  for (const top of STOCK_TREE) visit(top, undefined);
+  return out;
+}
 
 describe("generated resources", () => {
   it("equal a fresh extraction from the committed goldens", () => {
@@ -40,7 +136,7 @@ describe("generated resources", () => {
   });
 
   it("render every transcribed label, value and softkey", () => {
-    for (const images of Object.values(TEXT_RUNS)) {
+    for (const images of [...Object.values(TEXT_RUNS), ...Object.values(TREE_TEXT_RUNS)]) {
       for (const runs of Object.values(images)) {
         for (const run of runs)
           expect(missingStockGlyphs(run.text, run.font), run.text).toEqual([]);
@@ -48,6 +144,30 @@ describe("generated resources", () => {
     }
     for (const softkey of ["Menu", "Select"])
       expect(missingStockGlyphs(softkey, "small")).toEqual([]);
+  });
+
+  it("render every string the stock tree shows in its face, except text owned by placeholders", () => {
+    const missing = stockTreeText().flatMap(({ text, font, where }) => {
+      const chars = missingStockGlyphs(text, font);
+      return chars.length === 0 ? [] : [`${where}: ${font} "${text}" lacks ${chars.join(" ")}`];
+    });
+    expect(missing).toEqual([]);
+  });
+
+  it("render the stock widgets' soft keys", () => {
+    for (const softkey of [
+      "OK",
+      "Quit",
+      "Mark",
+      "Unmark",
+      "Back",
+      "More",
+      "Yes",
+      "Search",
+      "Assign",
+      "Start",
+    ])
+      expect(missingStockGlyphs(softkey, "small"), softkey).toEqual([]);
   });
 
   it("render every stockMenu label: carousel titles in large, level-1 labels in small", () => {
@@ -61,8 +181,8 @@ describe("generated resources", () => {
 
   it("names missing characters once, in order, and ignores line breaks", () => {
     expect(missingStockGlyphs("Show call\nduration", "small")).toEqual([]);
-    expect(missingStockGlyphs("zebra zoo!", "small")).toEqual(["z", "!"]);
-    expect(missingStockGlyphs("12", "large" satisfies StockFontName)).toEqual(["1", "2"]);
+    expect(missingStockGlyphs("jam & jazz@", "small")).toEqual(["j", "&", "@"]);
+    expect(missingStockGlyphs("&@", "large" satisfies StockFontName)).toEqual(["&", "@"]);
   });
 
   it("renders any live time and date: every digit in the standby digits and thin page fonts", () => {

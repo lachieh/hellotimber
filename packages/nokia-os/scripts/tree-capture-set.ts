@@ -377,10 +377,11 @@ export function treeCaptureSet(
       } ▼ per image.`,
     );
     // S5: the entry one ▼ from the opening state, plus every entry whose result differs from its
-    // siblings' (the most common result).
+    // siblings' (the most common result; when no result repeats, every entry differs).
     const counts = new Map<string, number>();
     for (const option of options) counts.set(option.result, (counts.get(option.result) ?? 0) + 1);
-    const common = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]![0];
+    const [mode, modeCount] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]!;
+    const common = modeCount > 1 ? mode : undefined;
     const next = opening === null ? 0 : (opening + 1) % options.length;
     options.forEach((option, i) => {
       if (i === next || option.result !== common) record(option.number, option.label, "choose");

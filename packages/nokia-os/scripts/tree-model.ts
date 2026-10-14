@@ -40,6 +40,8 @@ export interface TreeText {
 export interface TreeOverrides {
   /** Labels the pixels cannot give, by node number (with the capture that shows why). */
   readonly labels?: Readonly<Record<string, string>>;
+  /** Page values the pixels cannot give, by node number (with the capture that shows why). */
+  readonly valueHints?: Readonly<Record<string, string>>;
   /** Option labels by list number (every option of that list). */
   readonly optionLabels?: Readonly<Record<string, string>>;
   /** Leaf kinds the crawl misread, by node number. */
@@ -182,8 +184,9 @@ export const LEAF_KINDS: readonly StockLeafKind[] = [
 
 /**
  * A `tree.json` result summary (`timed-note "Done", then back`, `confirm-query "…" [OK]`,
- * `returns immediately`, `not probed`, `option-list`) as a StockResult. Its text is one line
- * here; `buildStockTree` replaces it with the captured line breaks when a recording shows them.
+ * `returns immediately`, `not probed`, `option-list`) as a StockResult. Its text is split on
+ * tree.json's ` / ` line breaks only; `buildStockTree` replaces the lines with the captured line
+ * breaks when a recording shows them.
  */
 export function parseResult(summary: string, where: string): StockResult {
   if (summary === "returns immediately") return { kind: "returns-immediately" };
@@ -197,7 +200,7 @@ export function parseResult(summary: string, where: string): StockResult {
   const text = match[2];
   return {
     kind,
-    lines: text === undefined || text === "" ? [] : [text],
+    lines: text === undefined || text === "" ? [] : text.split(" / "),
     ...(match[3] !== undefined ? { softkey: match[3] } : {}),
     ...(match[4] !== undefined ? { after: match[4] as "back" | "standby" } : {}),
   };
@@ -435,11 +438,12 @@ export function buildStockTree(
           : undefined;
       opens = { kind, ...leafScreen(node.number, kind), ...(after !== undefined ? { after } : {}) };
     }
+    const hint = overrides.valueHints?.[node.number] ?? valueHint;
     return {
       number: node.number,
       slug,
       label,
-      ...(valueHint !== undefined ? { valueHint } : {}),
+      ...(hint !== undefined ? { valueHint: hint } : {}),
       opens,
       ...(children !== undefined ? { children } : {}),
     };
@@ -454,12 +458,18 @@ export function buildStockTree(
 // ---------------------------------------------------------------- harvester runs (D13)
 
 /**
- * Harvester text runs for one golden image from its OCR runs, with exact column bounds. Lone
- * `I`/`l`/`i`/`'` readings are dropped (NOISE): no stock text is one, and art reads as them.
+ * Art the OCR reads as text: a run with no letter or digit (splash and gameplay dots, the
+ * uninitialised-EEPROM boxes U+E000) or made only of `I`/`l`/`i`/`'` readings (the Clock pages'
+ * icon reads `' '`). No stock text is either.
  */
+function isArt(text: string): boolean {
+  return !/[\p{L}\p{N}]/u.test(text) || /^[Il|iİ' ]+$/.test(text);
+}
+
+/** Harvester text runs for one golden image from its OCR runs, with exact column bounds. */
 export function harvestRuns(runs: readonly OcrRun[], where: string): TextRun[] {
   return runs
-    .filter((run) => run.text.trim() !== "" && !NOISE.test(run.text.trim()))
+    .filter((run) => !isArt(run.text))
     .map((run) => ({
       font: stockFont(run.font, where),
       text: run.text,
