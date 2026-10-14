@@ -115,6 +115,10 @@ unsubscribe();
   });
   ```
 
+- `label(child)` (opt-in) gives the text a child shows in the level's list and as its own
+  level's title, re-read on every tick (a change emits one snapshot): undefined, or a reader that
+  throws, shows the child's label; an empty string throws, as labels do. Paths and slugs keep the
+  child's slug: `label: (child) => (child === general ? profileName() : undefined)`.
 - `context.exit(options?)`: `exit()` returns to the menu; `exit({ to: "standby" })` leaves the
   menus as C-hold does; `exit({ levels: 2 })` also closes the enclosing level, and
   `exit({ select: "slug" })` selects that child of the level returned to, on the bottom row of a

@@ -297,9 +297,13 @@ function tickSignature<Metadata>(m: Machine<Metadata>): string {
       }
       if (frame?.kind === "submenu") {
         const shown = shownKeyOf(frame.entry);
-        return `detail:${JSON.stringify(submenuDetail(frame))}:${entering(m)}:${shown}`;
+        const labels = JSON.stringify([
+          frameTitle(m.mode.stack, frame),
+          ...frame.entry.shownChildren().map((child) => frame.entry.labelOf(child)),
+        ]);
+        return `detail:${JSON.stringify(submenuDetail(frame))}:${entering(m)}:${shown}:${labels}`;
       }
-      return "";
+      return frame === undefined ? "" : `title:${frameTitle(m.mode.stack, frame)}`;
     }
     default:
       return "";
@@ -313,6 +317,20 @@ function shownNavFrame<Metadata>(
   const top = stack[stack.length - 1];
   const shown = top?.kind === "action" ? stack[stack.length - 2] : top;
   return shown?.kind === "action" ? undefined : shown;
+}
+
+/**
+ * The title of a level, list or reader frame: the text its parent level's label reader gives it
+ * (SubmenuOptions.label), else its entry's label. A list item's frame is titled by the item.
+ */
+function frameTitle<Metadata>(
+  stack: readonly NavFrame<Metadata>[],
+  frame: DisplayNavFrame<Metadata>,
+): string {
+  if (frame.kind === "carousel") return "";
+  if (frame.kind === "item") return frame.item.label;
+  const parent = stack[stack.indexOf(frame) - 1];
+  return parent?.kind === "submenu" ? parent.entry.labelOf(frame.entry) : frame.entry.label;
 }
 
 /** The selected child's value from the submenu's detail reader, when it returns a string. */
@@ -650,7 +668,7 @@ function renderScreen<Metadata>(m: Machine<Metadata>): ScreenModel {
       return standbyScreen(m, false);
     case "nav": {
       const frame = shownNavFrame(m.mode.stack);
-      return frame === undefined ? { kind: "off" } : renderFrame(m, frame);
+      return frame === undefined ? { kind: "off" } : renderFrame(m, m.mode.stack, frame);
     }
     case "app": {
       const { session } = m.mode.activation;
@@ -681,8 +699,10 @@ function renderScreen<Metadata>(m: Machine<Metadata>): ScreenModel {
 
 function activationLabel<Metadata>(activation: AppActivation<Metadata>): string {
   const { origin, stack, definition } = activation;
-  if (origin.kind === "entry") return origin.entry.label;
   const top = stack[stack.length - 1];
+  if (origin.kind === "entry") {
+    return top?.kind === "submenu" ? top.entry.labelOf(origin.entry) : origin.entry.label;
+  }
   return origin.kind === "intro" && top?.kind === "submenu" ? top.entry.label : definition.id;
 }
 
@@ -741,6 +761,7 @@ function standbyScreen<Metadata>(m: Machine<Metadata>, leaving: boolean): Screen
 
 function renderFrame<Metadata>(
   m: Machine<Metadata>,
+  stack: readonly NavFrame<Metadata>[],
   frame: DisplayNavFrame<Metadata>,
 ): ScreenModel {
   switch (frame.kind) {
@@ -768,8 +789,8 @@ function renderFrame<Metadata>(
         frame.entry.numbersByPosition || orders.every((value, index) => value === index + 1);
       return {
         kind: "list",
-        title: frame.entry.label,
-        items: shown.map((entry) => entry.label),
+        title: frameTitle(stack, frame),
+        items: shown.map((entry) => frame.entry.labelOf(entry)),
         ...(positional ? {} : { itemOrders: orders }),
         selected: shown.indexOf(frame.entry.children.entries[frame.selected]!),
         softkey: frame.entry.softkey,
@@ -785,7 +806,7 @@ function renderFrame<Metadata>(
       const { index } = selectedListItem(frame, items);
       return {
         kind: "list",
-        title: frame.entry.label,
+        title: frameTitle(stack, frame),
         items: items.map((item) => item.label),
         selected: index,
         softkey: "Select",
@@ -803,7 +824,7 @@ function renderFrame<Metadata>(
     case "reader":
       return {
         kind: "reader",
-        title: frame.entry.label,
+        title: frameTitle(stack, frame),
         lines: wrapLines(frame.entry.body),
         scrollTop: frame.scrollTop,
         menuIndicator: menuIndicator(m),
