@@ -255,11 +255,18 @@ describe("menu icons", () => {
     }
   });
 
-  it("gives only the Clock per-reveal timelines (previous from ▲, return from C)", () => {
+  it("gives per-reveal timelines to Clock (previous from ▲, return from C) and Reminders (return from View all)", () => {
     const withReveals = Object.entries(MENU_ICON_DATA)
       .filter(([, data]) => data.reveals)
-      .map(([id, data]) => [id, Object.keys(data.reveals!).sort()]);
-    expect(withReveals).toEqual([["clock", ["previous", "return"]]]);
+      .map(([id, data]) => [id, Object.keys(data.reveals!).sort()] as const)
+      .sort(([a], [b]) => a.localeCompare(b));
+    expect(withReveals).toEqual([
+      ["clock", ["previous", "return"]],
+      ["reminders", ["return"]],
+    ]);
+    // tree/10-reminders/10-2.leaf: the icon holds 1382 ms after View all, then animates.
+    expect(stockMenuGraphic("reminders").timelineFor("return")!.frameAt(1381)).toBe(0);
+    expect(stockMenuGraphic("reminders").timelineFor("return")!.frameAt(1382)).not.toBe(0);
     const clock = stockMenuGraphic("clock");
     expect(clock.timelineFor("next")!.frameAt(1399)).toBe(0);
     expect(clock.timelineFor("next")!.frameAt(1400)).toBe(1);

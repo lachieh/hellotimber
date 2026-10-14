@@ -279,4 +279,13 @@ export const TEXT_RUNS: Readonly<Record<string, Readonly<Record<string, readonly
     ],
   },
   "menu/09-calculator.sub": { "01": [softkey("Options")] },
+  // Profiles slot 6's uninitialised name: two U+E000 undefined-character boxes (D10), as a row
+  // label (small rows) and as its Rename page value (thin). The OCR reads them as art, so the
+  // generated tree runs skip them.
+  "probe/wrap-small-profiles-down": {
+    "06": [{ font: "small", text: "\uE000\uE000", top: 18, left: 2, right: 11 }],
+  },
+  "tree/12-profiles/12-6-2.sub": {
+    "09": [{ font: "thin", text: "\uE000\uE000", top: 29, left: 68, right: 77 }],
+  },
 };

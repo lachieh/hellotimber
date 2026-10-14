@@ -44,6 +44,21 @@ export interface StockPorts {
   date?: () => string | undefined;
 }
 
+/**
+ * The Clock settings page under 12-hour Time format: `10:10` reads `10:10 am`
+ * (`tree/11-clock/11-2-3-2.choose` image e). Other hours are UNVERIFIED (12-hour clock rules).
+ */
+export function twelveHourClock(hhmm: string): string {
+  const match = /^(\d{1,2}):(\d{2})$/.exec(hhmm);
+  if (match === null) return hhmm;
+  const hours = Number(match[1]);
+  const shown = hours % 12 === 0 ? 12 : hours % 12;
+  return `${String(shown).padStart(2, "0")}:${match[2]} ${hours < 12 ? "am" : "pm"}`;
+}
+
+/** The Time format setting and its 12-hour option (11-2-3, option 2). */
+export const TIME_FORMAT = { key: "clock/clock-settings/time-format", twelveHour: 1 } as const;
+
 /** Pages whose value is the host's (plan 13 D6), by setting key. */
 export const HOST_VALUES: Readonly<Record<string, keyof StockPorts>> = {
   "clock/clock-settings": "clock",
@@ -313,7 +328,9 @@ export function placeholderOwner(number: string): string | undefined {
  * Opening Screen saver on the stored value after On is UNVERIFIED (virgin: Off, its first child).
  */
 export const SETTER_LEVELS: Readonly<Record<string, readonly string[]>> = {
-  "2-8": ["on", "off"], // Info service On/Off
+  // Info service On/Off/Topic index: Topic index also sets the page value
+  // (`tree/02-messages/2-8-3.leaf` image f: `Topic index`).
+  "2-8": ["on", "off", "topic-index"],
   "5-9": ["off", "on"], // Tones › Screen saver
   "12-*-2-9": ["off", "on"], // Profiles › Personalise › Screen saver
 };
@@ -333,8 +350,33 @@ export function setterLevel(number: string): readonly string[] | undefined {
  */
 export const EXIT_LEVELS: Readonly<Record<string, number>> = { "7-3-4": 2, "10-2": 2 };
 
-/** Notes that end by selecting a child of the level returned to (P12: Top score → New game). */
-export const NOTE_END_SELECT: Readonly<Record<string, string>> = { "Top score:": "new-game" };
+/**
+ * Notes that end somewhere other than the screen below, by node pattern (a leaf, or an option
+ * choice `<list>-<k>`): `levels` closes that many levels (the setters and Clock settings return
+ * to their page: `tree/02-messages/2-8-1.leaf` image f, `tree/05-tones/5-9-2.leaf` image e,
+ * `tree/11-clock/11-2-1.leaf` and `11-2-3-1.choose` image e), `select` selects a child of the
+ * level returned to (Snake II's Top score returns to New game, P12).
+ */
+export const NOTE_ENDS: Readonly<Record<string, { levels?: number; select?: string }>> = {
+  "2-8-1": { levels: 2 },
+  "2-8-2": { levels: 2 },
+  "2-8-3": { levels: 2 },
+  "5-9-1": { levels: 2 },
+  "5-9-2": { levels: 2 },
+  "12-*-2-9-1": { levels: 2 },
+  "12-*-2-9-2": { levels: 2 },
+  "11-2-1": { levels: 2 },
+  "11-2-3-*": { levels: 2 },
+  "8-1-4": { select: "new-game" },
+};
+
+/** How the note at node `number` ends, if not plainly back (`NOTE_ENDS`). */
+export function noteEnd(number: string): { levels?: number; select?: string } | undefined {
+  for (const [pattern, end] of Object.entries(NOTE_ENDS)) {
+    if (matchesPattern(number, pattern)) return end;
+  }
+  return undefined;
+}
 
 /**
  * What confirming a query shows, by its first line, beyond the tree's record (P8): Level 5 stores

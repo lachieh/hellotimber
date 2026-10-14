@@ -8,7 +8,12 @@ import type {
   PhoneApplicationSession,
   PhoneKey,
 } from "@hellotimber/phone-core";
-import { WIDGET_TIMELINE_BY_NAME, WIDGET_TIMELINE_BY_NODE, WIDGET_TIMELINES } from "../resources";
+import {
+  missingStockGlyphs,
+  WIDGET_TIMELINE_BY_NAME,
+  WIDGET_TIMELINE_BY_NODE,
+  WIDGET_TIMELINES,
+} from "../resources";
 import type { StockWidgetTimeline } from "../resources";
 import { confirmQuery } from "../widgets/confirm";
 import { StockFlowApplication, type Flow, type Widget } from "../widgets/flow";
@@ -30,7 +35,7 @@ import {
   INVALID_SHORTCUT,
   LEVEL_BARS,
   modelNumber,
-  NOTE_END_SELECT,
+  noteEnd,
   noteTimelineId,
   optionListNumbering,
   PAGE_RESULTS,
@@ -111,9 +116,11 @@ function layoutOf(number: string, screen: StockLeafScreen, value?: string): Prom
     return layout;
   }
   // Rename (12-n-2-10) edits that profile's name; the counter is what is left of its 10
-  // characters (Silent: 4). Other profiles' prompts were not captured (UNVERIFIED).
+  // characters (Silent: 4). Other profiles' prompts were not captured (UNVERIFIED); slot 6's
+  // boxes have no large-face glyph in any golden, so its entry starts empty.
   const max = Number(layout.counter) + layout.value.length;
-  return { ...layout, value, counter: String(max - value.length) };
+  const drawable = missingStockGlyphs(value, layout.font ?? "large").length === 0;
+  return { ...layout, value: drawable ? value : "", counter: String(max - value.length) };
 }
 
 /** The cursor blink of a prompt: its own recording's, else the representative one (P9). */
@@ -206,9 +213,7 @@ export class LeafBinder {
         if (timeline === undefined && screen.kind === "timed-note") {
           throw new Error(`No widget timeline for the note at ${number}.`);
         }
-        const select = NOTE_END_SELECT[lines[0] ?? ""];
-        const end: NoteEnd =
-          select !== undefined ? { select } : screen.after === "standby" ? "standby" : "back";
+        const end: NoteEnd = noteEnd(number) ?? (screen.after === "standby" ? "standby" : "back");
         return () =>
           note({
             lines,
@@ -302,7 +307,11 @@ export class LeafBinder {
     const labels = spec.options.map((option) => option.label);
     if (spec.multi) {
       const opening = spec.opening ?? 0;
-      return () => multiSelect({ key, labels, opening, settings });
+      // A row whose OK had no response in the crawl stays as it is (Polish).
+      const inert = spec.options.flatMap((option, i) =>
+        option.result.kind === "no-response" ? [i] : [],
+      );
+      return () => multiSelect({ key, labels, opening, settings, inert });
     }
     const exitLevels = EXIT_LEVELS[number];
     const choices = spec.options.map((option, i): ((flow: Flow) => void) => {

@@ -9026,7 +9026,7 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
    {
     "number": "12-6",
     "slug": "empty-2",
-    "label": "(empty)",
+    "label": "",
     "opens": {
      "kind": "submenu",
      "presentation": "rows",
@@ -9924,7 +9924,7 @@ export const STOCK_TREE: readonly StockTreeNode[] = [
         "number": "12-6-2-10",
         "slug": "rename",
         "label": "Rename",
-        "valueHint": "(empty)",
+        "valueHint": "",
         "opens": {
          "kind": "text-input",
          "lines": []

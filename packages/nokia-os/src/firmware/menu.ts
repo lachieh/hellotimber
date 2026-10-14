@@ -14,7 +14,14 @@ import {
   type SubmenuOptions,
 } from "@hellotimber/phone-core";
 import { stockMenuGraphic } from "../resources";
-import { HOST_VALUES, settingKey, setterLevel, type StockPorts } from "./bindings";
+import {
+  HOST_VALUES,
+  settingKey,
+  setterLevel,
+  TIME_FORMAT,
+  twelveHourClock,
+  type StockPorts,
+} from "./bindings";
 import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
 import { LeafBinder, type LeafPlace } from "./leaves";
 import {
@@ -30,10 +37,16 @@ interface Builder {
   readonly leaves: LeafBinder;
 }
 
-/** The value a stock page shows: the host's for the Clock pages, else the settings' (D9). */
+/**
+ * The value a stock page shows: the host's for the Clock pages (the clock in the chosen Time
+ * format), else the settings' (D9).
+ */
 function pageDetail(key: string, ports: StockPorts, settings: StockSettings): string | undefined {
   const port = HOST_VALUES[key];
-  return port === undefined ? stockPageValue(settings, key) : ports[port]?.();
+  if (port === undefined) return stockPageValue(settings, key);
+  const value = ports[port]?.();
+  const twelveHour = settings.choice(TIME_FORMAT.key) === TIME_FORMAT.twelveHour;
+  return port === "clock" && twelveHour && value !== undefined ? twelveHourClock(value) : value;
 }
 
 /**

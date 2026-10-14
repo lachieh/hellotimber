@@ -196,17 +196,20 @@ describe("the whole tree on the stock phone (plan 14 Task 12)", () => {
     expect(phone.screen).toMatchObject({ kind: "list", selected: 1, detail: "Level 5" });
   });
 
-  it("sets Info service with its On/Off leaves; the level opens on the stored value", () => {
+  it("sets Info service with its leaves: the note returns to the page, which shows the value", () => {
     const { phone, advance, press } = clocked();
     phone.navigate("menu/messages/info-service");
     expect(phone.screen).toMatchObject({ kind: "list", selected: 1, softkey: "OK" });
     press("up", "navi");
     advance(1500);
-    expect(phone.screen).toMatchObject({ kind: "list", selected: 0 });
-    press("c");
+    expect(phone.path).toBe("menu/messages");
     expect(phone.screen).toMatchObject({ kind: "list", selected: 7, detail: "On" });
+    // The level opens on the stored value.
     press("navi");
     expect(phone.screen).toMatchObject({ kind: "list", selected: 0 });
+    press("down", "down", "navi");
+    advance(1500);
+    expect(phone.screen).toMatchObject({ kind: "list", selected: 7, detail: "Topic index" });
   });
 
   it("returns two levels after a Set delay choice and after View all (P13, Task 0)", () => {

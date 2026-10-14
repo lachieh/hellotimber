@@ -42,7 +42,7 @@ describe("generated stock tree", () => {
       expect(top.opens.kind === "submenu" && top.opens.presentation, level.slug).toBe(
         level.presentation,
       );
-      // Plan 13's golden omits Profiles slot 6; the tree keeps it as "(empty)" (D10).
+      // Plan 13's golden omits Profiles slot 6; the tree keeps its uninitialised name (D10).
       expect(
         children.slice(0, level.labels.length).map((child) => child.label),
         level.slug,
@@ -56,7 +56,8 @@ describe("generated stock tree", () => {
         expect(children[Number(image) - 1]!.valueHint, `${level.slug} ${image}`).toBe(value);
       }
     });
-    expect(find("12-6").label).toBe("(empty)");
+    // Two U+E000 undefined-character boxes (probe/wrap-small-profiles-down, D10).
+    expect(find("12-6").label).toBe("\uE000\uE000");
   });
 
   it("numbers every node uniquely under its parent's number", () => {

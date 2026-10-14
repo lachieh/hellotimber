@@ -169,7 +169,7 @@ describe("virgin-EEPROM settings (D10)", () => {
 
   it("stores setter levels as choices: Info service and Screen saver On/Off (Task 12)", () => {
     const virgin = virginSettings();
-    expect(virgin.choices["messages/info-service"]).toEqual({ options: 2, chosen: 1 });
+    expect(virgin.choices["messages/info-service"]).toEqual({ options: 3, chosen: 1 });
     expect(virgin.choices["profiles/general/personalise/screen-saver"]).toEqual({
       options: 2,
       chosen: 0,

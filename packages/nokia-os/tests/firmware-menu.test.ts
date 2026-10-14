@@ -70,8 +70,8 @@ describe("stockMenu", () => {
       const children = level1.children.entries;
       const labels = children.map((child) => child.label);
       if (level.slug === "12-profiles") {
-        // The golden omits slot 6 (uninitialised EEPROM name); the menu keeps it for the rail.
-        expect(labels).toEqual([...level.labels, "(empty)"]);
+        // The golden omits slot 6, whose uninitialised name is two U+E000 boxes (D10).
+        expect(labels).toEqual([...level.labels, "\uE000\uE000"]);
       } else {
         expect(labels).toEqual(level.labels);
       }

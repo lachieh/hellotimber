@@ -2375,6 +2375,72 @@ export const MENU_ICON_DATA: Readonly<Record<string, { readonly x: number; reado
           "durationMs": 6117
         }
       ]
+    },
+    "reveals": {
+      "return": {
+        "steps": [
+          {
+            "frame": 0,
+            "durationMs": 1382
+          },
+          {
+            "frame": 1,
+            "durationMs": 246
+          },
+          {
+            "frame": 2,
+            "durationMs": 240
+          },
+          {
+            "frame": 3,
+            "durationMs": 218
+          },
+          {
+            "frame": 4,
+            "durationMs": 233
+          },
+          {
+            "frame": 5,
+            "durationMs": 232
+          },
+          {
+            "frame": 6,
+            "durationMs": 232
+          },
+          {
+            "frame": 7,
+            "durationMs": 233
+          },
+          {
+            "frame": 8,
+            "durationMs": 233
+          },
+          {
+            "frame": 9,
+            "durationMs": 232
+          },
+          {
+            "frame": 10,
+            "durationMs": 232
+          },
+          {
+            "frame": 11,
+            "durationMs": 240
+          },
+          {
+            "frame": 12,
+            "durationMs": 233
+          },
+          {
+            "frame": 13,
+            "durationMs": 232
+          },
+          {
+            "frame": 0,
+            "durationMs": 1121
+          }
+        ]
+      }
     }
   },
   "clock": {

@@ -10,8 +10,11 @@ export type NoteEnd =
   | "back"
   /** Straight to standby (Restore… `Done`, Request not confirmed). */
   | "standby"
-  /** Back, selecting this child in the level returned to (Top score: `new-game`). */
-  | { readonly select: string };
+  /**
+   * Back past `levels` levels (default 1: Info service's notes return to the Messages page, 2),
+   * selecting the child `select` in the level returned to (Top score: `new-game`).
+   */
+  | { readonly levels?: number; readonly select?: string };
 
 export interface NoteOptions {
   /** Firmware lines, drawn in the large face. */
@@ -70,7 +73,7 @@ class NoteWidget implements Widget {
     const end = this.#options.end ?? "back";
     if (end === "back") flow.back();
     else if (end === "standby") flow.standby();
-    else flow.back(1, { select: end.select });
+    else flow.back(end.levels ?? 1, end.select === undefined ? {} : { select: end.select });
   }
 }
 

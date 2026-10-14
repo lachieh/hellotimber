@@ -12,6 +12,8 @@ export interface MultiSelectOptions {
   /** Selected on entry. */
   readonly opening: number;
   readonly settings: StockSettings;
+  /** Rows the soft key does not toggle (Language › Polish: `tree/02-messages/2-8-5-17.choose`). */
+  readonly inert?: readonly number[];
 }
 
 /** Asked by C after a change (probe/multiselect image after-c). */
@@ -51,8 +53,11 @@ class MultiSelectWidget implements Widget {
 
   onKey(key: PhoneKey, flow: Flow): void {
     if (key === "c") this.#leave(flow);
-    else if (key === "navi") this.#marks[this.#selected] = !this.#marks[this.#selected];
-    else this.#cursor = moveRows(this.#cursor, key, this.#options.labels.length) ?? this.#cursor;
+    else if (key === "navi") {
+      if (!this.#options.inert?.includes(this.#selected)) {
+        this.#marks[this.#selected] = !this.#marks[this.#selected];
+      }
+    } else this.#cursor = moveRows(this.#cursor, key, this.#options.labels.length) ?? this.#cursor;
   }
 
   #leave(flow: Flow): void {

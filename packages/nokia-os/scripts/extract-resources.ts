@@ -59,6 +59,9 @@ const SETTLED_MS = 1000;
 /** Goldens that give a graphic a timeline for one reveal (Task 4 deviation). */
 const REVEAL_GOLDENS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "11-clock": { previous: "menu/revisit.anim", return: "menu/return.anim" },
+  // View all returns to the carousel (plan 14 Task 0); the Reminders icon restarts with its own
+  // timing (`tree/10-reminders/10-2.leaf`, not `menu/10-reminders.anim`).
+  "10-reminders": { return: "tree/10-reminders/10-2.leaf" },
 };
 
 export interface TimelineStepData {

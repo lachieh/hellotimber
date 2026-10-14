@@ -5,7 +5,13 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vite-plus/test";
-import type { Golden } from "../scripts/golden-format.ts";
+import type { Golden, GoldenScenario } from "../scripts/golden-format.ts";
+import {
+  PLACEHOLDER_OWNERS as IMPORTER_PLACEHOLDER_OWNERS,
+  SAME_AS as IMPORTER_SAME_AS,
+} from "../scripts/tree-capture-set.ts";
+import { PLACEHOLDER_OWNERS, placeholderOwner, SAME_AS } from "../src/firmware/bindings";
+import { STOCK_TREE, type StockTreeNode } from "../src/firmware/generated/stock-tree";
 import type { StockPhoneConfig } from "../src/index";
 import {
   expectLcd,
@@ -14,12 +20,15 @@ import {
   TIMING_TOLERANCE_MS,
   type RecordedTimeline,
 } from "./support/golden.ts";
+import { goto, open } from "./support/drive.ts";
+import { PROBE_SCENARIOS } from "./support/probes.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";
-import { createRig, frameAt, type Rig } from "./support/rig.ts";
+import { frameAt, standbyRig, stockRig, type Rig } from "./support/rig.ts";
 
 interface IndexEntry {
   id: string;
   status: string;
+  covers?: string[];
 }
 
 const INDEX: IndexEntry[] = JSON.parse(
@@ -28,27 +37,6 @@ const INDEX: IndexEntry[] = JSON.parse(
 
 /** The kernel's long press: power turns the phone on this long after the key goes down. */
 const LONG_PRESS_MS = 800;
-
-/**
- * The emulator's operator, clock and setup date are artefacts used as test inputs (D11). The
- * Task 11 captures set the clock to 19:48 and 07:59 instead of 10:10.
- */
-function stockRig(config: Partial<StockPhoneConfig> = {}): Rig {
-  return createRig({
-    carrier: "Orange F",
-    clock: () => "10:10",
-    date: () => "13.10.2026",
-    ...config,
-  });
-}
-
-/** A phone at standby, booted with `boot: "skip"`, every timer settled. */
-function standbyRig(config: Partial<StockPhoneConfig> = {}): Rig {
-  const rig = stockRig({ boot: "skip", ...config });
-  rig.press("power", 1000);
-  rig.advance(1000);
-  return rig;
-}
 
 /** Menu, then ▼ to carousel item `number` (1-based), with the icon settled. */
 function carouselRig(number: number): Rig {
@@ -220,6 +208,7 @@ const SCENARIOS: Record<string, (id: string) => void> = {
   "menu/11-clock.sub-1948": (id) => levelOne(id, 11, { clock: () => "19:48" }),
   "menu/11-clock.sub-0759": (id) => levelOne(id, 11, { clock: () => "07:59" }),
 };
+Object.assign(SCENARIOS, PROBE_SCENARIOS);
 SLUGS.forEach((slug, i) => {
   SCENARIOS[`menu/${slug}`] = (id) => carouselStill(id, i + 1);
   SCENARIOS[`menu/${slug}.anim`] = (id) => carouselAnim(id, i + 1);
@@ -229,35 +218,299 @@ SLUGS.forEach((slug, i) => {
   }
 });
 
+/** After `goto`, the kernel's and the widgets' timers settle before the trigger. */
+const SETTLE_MS = 3000;
+
 /**
- * Asserted plan 14 goldens whose scenarios land with the stock widgets: the generic tree
- * scenarios and the probe scenarios in plan 14 Task 13. Until then they are todos; Task 13
- * deletes this bridge.
+ * `golden` with every row that shows frame 0's image (the parent screen before the trigger, and
+ * the same screen when the note returns) replaced by `parent`: a shared golden's image `a` is its
+ * first covered node's parent, so the other covered nodes compare against their own (Task 2
+ * deviation).
  */
-function awaitsPlan14Scenario(id: string): boolean {
-  return id.startsWith("tree/") || id.startsWith("probe/");
+function withOwnParent(golden: Golden, parent: Uint8Array): Golden {
+  const rows = golden.timeline!;
+  const frame0 = rows[(golden.triggerFrame as number) - 1]!.image;
+  const name = "own-parent";
+  return {
+    ...golden,
+    images: [...golden.images, { name, pixels: parent }],
+    timeline: rows.map((row) => (row.image === frame0 ? { ...row, image: name } : row)),
+  };
+}
+
+/** Opens `number` and compares one image per ▼ (`list`, `options`) or the first (`open`). */
+function treeStills(id: string, number: string, scenario: "list" | "options" | "open"): void {
+  const golden = loadGolden(id);
+  const rig = standbyRig();
+  open(rig, number);
+  const images = scenario === "open" ? golden.images.slice(0, 1) : golden.images;
+  images.forEach((image, i) => {
+    if (i > 0) rig.press("down");
+    rig.advance(10);
+    expectLcd(rig.paint(), { id, image }, `open ${number}, ▼×${i}`);
+  });
+}
+
+/**
+ * Highlights `number` in its parent (an option in its open list), settles, then records Select
+ * (OK) as the trigger. The first covered node also matches frame 0; the others compare frame 0's
+ * rows with their own parent screen.
+ */
+function treeTimeline(id: string, number: string, first: boolean): void {
+  const golden = loadGolden(id);
+  const rig = standbyRig();
+  goto(rig, number);
+  rig.advance(SETTLE_MS);
+  const parent = rig.paint().pixels;
+  const context = `${number} highlighted, Select`;
+  if (golden.triggerFrame === 0) {
+    // The key changes nothing (Polish): the screen stays as long as the recording ran.
+    const still = golden.timeline![0]!;
+    if (first) expectLcd({ pixels: parent }, goldenImage(id, still.image), `${number} highlighted`);
+    const recording = rig.record(still.durationMs, () => rig.press("navi"));
+    expect(recording.frames.length, `${context}: the screen changed`).toBe(1);
+    return;
+  }
+  const frame0 = golden.timeline![(golden.triggerFrame as number) - 1]!.image;
+  if (first) expectLcd({ pixels: parent }, goldenImage(id, frame0), `${number} highlighted`);
+  const recording = recordTimeline(rig, golden, () => rig.press("navi"));
+  expectTimeline(recording, first ? golden : withOwnParent(golden, parent), context);
+}
+
+/** The generic scenario of a generated tree golden (plan 14 D7), per covered node. */
+function treeScenario(id: string, covers: readonly string[]): void {
+  const golden = loadGolden(id);
+  const scenario: GoldenScenario | undefined = golden.scenario;
+  if (scenario === undefined) throw new Error(`${id} declares no scenario.`);
+  covers.forEach((number, i) => {
+    if (scenario === "leaf" || scenario === "choose") treeTimeline(id, number, i === 0);
+    else treeStills(id, number, scenario);
+  });
+}
+
+const SCREEN_SAVER_WINDOW =
+  "entering Screen saver shows its number and dots for ≈2.9 s (D14); needs a kernel seam";
+const TOP_SCORE_WINDOW =
+  "Top score returns with the window rebuilt at Top score (`Top score / Score IDs / " +
+  "Instructions`); the kernel's exit({ select }) puts the child on the bottom row";
+const LATENCY =
+  "kernel timers run from the key, the firmware's from its jittered redraw (a typed entry " +
+  "opens 1431-1477 ms after its digit's redraw; `8` draws a 16 ms partial frame), D8";
+const STANDBY_DIGITS =
+  "after Invalid shortcut, digits and C at standby start a number (out of scope, D14)";
+const TOP_SCORE_JITTER =
+  "this recording's Top score steps run 3-16 ms off tree/08-games/8-1-4.leaf, whose timeline " +
+  "the note plays (same Select path)";
+
+/**
+ * Asserted goldens whose scenario cannot pass yet, each with its reason: a kernel seam beyond
+ * plan 14's contracts, capture jitter between recordings of the same path that exceeds ±2 ms,
+ * the key-to-redraw latency D8 does not reproduce, or behaviour outside plan 14. Their scenarios
+ * run as expected failures, so a gap that starts passing must leave this table.
+ */
+const KNOWN_GAPS: Readonly<Record<string, string>> = {
+  "tree/05-tones/5-9.sub": SCREEN_SAVER_WINDOW,
+  "tree/05-tones/5-9-1.leaf": SCREEN_SAVER_WINDOW,
+  "tree/12-profiles/12-1-2-9.sub": SCREEN_SAVER_WINDOW,
+  "tree/12-profiles/12-1-2-9-1.leaf": SCREEN_SAVER_WINDOW,
+  "tree/12-profiles/12-2-2-9.sub": SCREEN_SAVER_WINDOW,
+  "tree/12-profiles/12-2-2-9-1.leaf": SCREEN_SAVER_WINDOW,
+  "tree/08-games/8-2-2.leaf": TOP_SCORE_WINDOW,
+  "tree/08-games/8-4-1-3.leaf": TOP_SCORE_WINDOW,
+  "tree/08-games/8-4-2-3.leaf": TOP_SCORE_WINDOW,
+  "probe/games-top-score-wait": TOP_SCORE_JITTER,
+  "probe/games-top-score-c-2s": TOP_SCORE_JITTER,
+  "probe/games-top-score-down-2s": `${TOP_SCORE_JITTER}; ▼ also returns to New game and then moves to Level (two moves)`,
+  "probe/games-splash-skip-c":
+    "the first splash step lasts 252 ms here, 248 ms in probe/games-splash-8-1 (same Select path)",
+  "probe/games-splash-skip-down":
+    "the first splash step lasts 252 ms here, 248 ms in probe/games-splash-8-1 (same Select path)",
+  "probe/games-splash-skip-menu":
+    "the first splash step lasts 252 ms here, 248 ms in probe/games-splash-8-1 (same Select path)",
+  "probe/progress-6-2-4-2-c":
+    "this recording's bar steps run 7-22 ms off tree/06-settings/6-2-4-2.leaf's (same path)",
+  "probe/note-keys-done-down-300":
+    "the 16 ms partial draw before Done covers fewer LCD bytes than in tree/01-phone-book/1-8-1-1.choose",
+  "probe/reenter":
+    "Phone book's carousel return (after C) has no captured timeline; ≈2.1 s later the icon shows another frame",
+  "probe/confirm-10-3-2-yes":
+    "after Erase › All the firmware hides View all and Erase (image d): reminder data, plan 21",
+  "probe/shortcut-m1": LATENCY,
+  "probe/shortcut-m1-1-0": LATENCY,
+  "probe/shortcut-m1-2": LATENCY,
+  "probe/shortcut-m1-wait-9": LATENCY,
+  "probe/shortcut-m8-1": LATENCY,
+  "probe/shortcut-m8-1-2": LATENCY,
+  "probe/shortcut-m8-6": LATENCY,
+  "probe/shortcut-m8-6-3": LATENCY,
+  "probe/shortcut-m1-8-1": STANDBY_DIGITS,
+  "probe/shortcut-m1-8-1-2": STANDBY_DIGITS,
+  "probe/shortcut-m1-9-c": STANDBY_DIGITS,
+};
+
+/** The scenario of an asserted golden: hand-written (plan 13, probes) or generic (tree). */
+function scenarioOf(id: string, covers: readonly string[] | undefined): (() => void) | undefined {
+  const scenario = SCENARIOS[id];
+  if (scenario !== undefined) return () => scenario(id);
+  if (covers !== undefined) return () => treeScenario(id, covers);
+  return undefined;
 }
 
 describe("stock phone against every asserted v6.39 golden", () => {
-  for (const { id, status } of INDEX) {
+  for (const { id, status, covers } of INDEX) {
     if (status !== "asserted") {
       it.todo(`${id} (${status.replace("pending:", "pending: plan ")})`);
       continue;
     }
-    if (awaitsPlan14Scenario(id) && SCENARIOS[id] === undefined) {
-      it.todo(`${id} (asserted; scenario lands in plan 14 Task 13)`);
+    const scenario = scenarioOf(id, covers);
+    const gap = KNOWN_GAPS[id];
+    if (gap !== undefined && scenario !== undefined) {
+      it.fails(`${id} (known gap: ${gap})`, scenario);
       continue;
     }
-    const scenario = SCENARIOS[id];
     it(id, () => {
       if (scenario === undefined) throw new Error(`no scenario for ${id}`);
-      scenario(id);
+      scenario();
     });
   }
+
+  it("lists only asserted goldens as known gaps", () => {
+    const asserted = new Set(INDEX.filter((e) => e.status === "asserted").map((e) => e.id));
+    expect(Object.keys(KNOWN_GAPS).filter((id) => !asserted.has(id))).toEqual([]);
+  });
 
   it("has no scenario for a golden that is missing or not asserted", () => {
     const asserted = new Set(INDEX.filter((e) => e.status === "asserted").map((e) => e.id));
     expect(Object.keys(SCENARIOS).filter((id) => !asserted.has(id))).toEqual([]);
+  });
+});
+
+/** Every number of the stock tree: entries, option choices and info pages (`<list>-<k>`). */
+function treeNumbers(nodes: readonly StockTreeNode[] = STOCK_TREE): string[] {
+  return nodes.flatMap((node) => {
+    const spec = node.opens;
+    const choices =
+      spec.kind === "option-list"
+        ? spec.options.length
+        : spec.kind === "info-pages"
+          ? spec.pages.length
+          : 0;
+    return [
+      node.number,
+      ...Array.from({ length: choices }, (_, i) => `${node.number}-${i + 1}`),
+      ...treeNumbers(node.children ?? []),
+    ];
+  });
+}
+
+function treeNode(number: string): StockTreeNode | undefined {
+  let level: readonly StockTreeNode[] = STOCK_TREE;
+  let found: StockTreeNode | undefined;
+  for (const segment of number.split("-")) {
+    found = level.find((n) => n.number.split("-").at(-1) === segment);
+    if (found === undefined) return undefined;
+    level = found.children ?? [];
+  }
+  return found;
+}
+
+/** A subtree's shape without numbers; profile names (Rename's value) compared as "the profile". */
+function shape(node: StockTreeNode, profile: string | undefined): unknown {
+  const { number: _number, valueHint, children, ...rest } = node;
+  return {
+    ...rest,
+    valueHint: valueHint !== undefined && valueHint === profile ? "<profile>" : valueHint,
+    children: children?.map((child) => shape(child, profile)),
+  };
+}
+
+describe("coverage guard (plan 14 D7)", () => {
+  const asserted = INDEX.filter((e) => e.status === "asserted");
+  const plan13Menus: Readonly<Record<string, string>> = Object.fromEntries(
+    SLUGS.map((slug, i) => [`menu/${slug}.sub`, String(i + 1)]),
+  );
+  /** Golden → the tree nodes it covers (plan 13's level lists cover the top-level nodes). */
+  const coversOf = (e: IndexEntry): readonly string[] =>
+    e.covers ?? (plan13Menus[e.id] === undefined ? [] : [plan13Menus[e.id]!]);
+
+  it("has a scenario for every asserted golden", () => {
+    expect(
+      asserted.filter((e) => scenarioOf(e.id, e.covers) === undefined).map((e) => e.id),
+    ).toEqual([]);
+  });
+
+  it("accounts for every node of the stock tree", () => {
+    const passing = new Set<string>();
+    const gapsOnly = new Set<string>();
+    for (const e of asserted) {
+      for (const number of coversOf(e)) (KNOWN_GAPS[e.id] ? gapsOnly : passing).add(number);
+    }
+    const pendingFor = new Map<string, string[]>();
+    for (const e of INDEX.filter((x) => x.status.startsWith("pending:"))) {
+      for (const number of coversOf(e)) {
+        pendingFor.set(number, [...(pendingFor.get(number) ?? []), e.status.slice(8)]);
+      }
+    }
+    const sameAsRoot = (number: string) =>
+      Object.keys(SAME_AS).find((root) => number.startsWith(`${root}-`));
+    // An option choice or info page is covered by its list's `.options`/`.open` golden (S2/S3:
+    // the list's entries; the choice's result is the list signature's `.choose`), asserted, or
+    // pending for the plan that owns the choice (Topics, plan 18).
+    const listCovered = (number: string): boolean => {
+      const list = number.split("-").slice(0, -1).join("-");
+      const node = treeNode(list);
+      if (node?.opens.kind !== "option-list" && node?.opens.kind !== "info-pages") return false;
+      const owner = placeholderOwner(number);
+      return INDEX.some(
+        (e) =>
+          /\.(options|open)$/.test(e.id) &&
+          e.covers?.includes(list) &&
+          ((e.status === "asserted" && !KNOWN_GAPS[e.id]) || e.status === `pending:${owner}`),
+      );
+    };
+    const unaccounted: string[] = [];
+    const gapNodes: string[] = [];
+    for (const number of treeNumbers()) {
+      if (passing.has(number) || sameAsRoot(number) !== undefined) continue;
+      const owner = placeholderOwner(number);
+      if (owner !== undefined && pendingFor.get(number)?.includes(owner)) continue;
+      if (listCovered(number)) continue;
+      if (gapsOnly.has(number)) gapNodes.push(number);
+      else unaccounted.push(number);
+    }
+    expect(unaccounted, "tree nodes no golden accounts for").toEqual([]);
+    // Nodes whose only goldens are known gaps (KNOWN_GAPS): listed so they cannot grow silently.
+    expect(gapNodes).toEqual([
+      "5-9",
+      "5-9-1",
+      "8-2-2",
+      "8-4-1-3",
+      "8-4-2-3",
+      "12-1-2-9",
+      "12-1-2-9-1",
+      "12-2-2-9",
+      "12-2-2-9-1",
+    ]);
+  });
+
+  it("proves every same-as subtree equal to its model (labels aside from profile names)", () => {
+    for (const [copy, model] of Object.entries(SAME_AS)) {
+      const a = treeNode(copy)!;
+      const b = treeNode(model)!;
+      // Profiles' Personalise: the profile's own name (Rename's value) may differ.
+      const profileOf = (n: string) => treeNode(n.split("-").slice(0, 2).join("-"))?.label;
+      const profileA = copy.startsWith("12-") ? profileOf(copy) : undefined;
+      const profileB = model.startsWith("12-") ? profileOf(model) : undefined;
+      expect(
+        (a.children ?? []).map((child) => shape(child, profileA)),
+        `${copy} as ${model}`,
+      ).toEqual((b.children ?? []).map((child) => shape(child, profileB)));
+    }
+  });
+
+  it("shares the importer's placeholder owners and same-as table with the firmware bindings", () => {
+    expect(PLACEHOLDER_OWNERS).toEqual(IMPORTER_PLACEHOLDER_OWNERS);
+    expect(SAME_AS).toEqual(IMPORTER_SAME_AS);
   });
 });
 

@@ -7,14 +7,10 @@ const TOPIC = "\uE000".repeat(6);
 
 export const TREE_OVERRIDES: TreeOverrides = {
   labels: {
-    // plan14/scroll/12/06: slot 6 draws two undefined-character boxes (virgin EEPROM); plan 13
-    // keeps the label "(empty)", UNVERIFIED until the profiles plan (D10).
-    "12-6": "(empty)",
-  },
-  valueHints: {
-    // plan14/scroll/12-6-2 (Rename): slot 6's name draws as two boxes like its label above; the
-    // page shows the same "(empty)" (D10).
-    "12-6-2-10": "(empty)",
+    // plan14/scroll/12/06 and probe/wrap-small/profiles-down/05: slot 6's uninitialised name
+    // draws as two U+E000 undefined-character boxes (virgin EEPROM, D10); the crawl wrote them
+    // as "□□". Its Rename page value is the same two boxes (tree.json already has them).
+    "12-6": "\uE000\uE000",
   },
   optionLabels: {
     // plan14/scroll/2-8-4-1/01 (and 2-8-4-2, 2-8-4-3): each topic is six boxes (D10; Topics stays

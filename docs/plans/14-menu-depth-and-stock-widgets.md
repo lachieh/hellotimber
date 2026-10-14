@@ -1229,18 +1229,73 @@ them, probe/confirm-10-3-2-yes image d; reminder data is plan 21's).
 **Files:** `tests/support/drive.ts` (new), `tests/support/rig.ts`, `tests/acceptance.test.ts`,
 `tests/drive.test.ts` (new).
 
-- [ ] TDD `goto` against a small synthetic stock-tree menu: key sequences for rows, pages,
+- [x] TDD `goto` against a small synthetic stock-tree menu: key sequences for rows, pages,
       hidden gaps, opening selections, intros and option choices (including unset).
-- [ ] Generic scenarios per "Generic scenarios"; hand-written scenarios for `probe/*` and
+- [x] Generic scenarios per "Generic scenarios"; hand-written scenarios for `probe/*` and
       `menu/01-phone-book.sub-up`. The rig skips repainting when a `custom` frame object is
       unchanged (performance; no behaviour change).
-- [ ] Coverage guard per "Generic scenarios and the coverage guard", including `SAME_AS`
+- [x] Coverage guard per "Generic scenarios and the coverage guard", including `SAME_AS`
       structural equality (same shape, labels equal except profile names) and the equality of
       the importer's and the bindings' `PLACEHOLDER_OWNERS`/`SAME_AS`.
 - [ ] Every asserted golden passes; timelines within ±2 ms after alignment. Report the suite's
-      run time.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
-- [ ] Commit: `test(nokia-os): drive the whole menu tree against its goldens`.
+      run time. (Not met: 30 known gaps, below.)
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
+- [x] Commit: `test(nokia-os): drive the whole menu tree against its goldens`.
+
+Not met: "Every asserted golden passes". 30 asserted goldens (9 tree, 21 probe) cannot pass
+within plan 14's contracts; `tests/acceptance.test.ts` lists each in `KNOWN_GAPS` with its reason
+and runs its scenario as an expected failure (`it.fails`), so a gap that starts passing must
+leave the table. The decisions they need are in "Completion notes". By cause:
+
+- Kernel seams beyond the contracts (9 tree + 1 probe). Entering Screen saver (5-9, 12-1-2-9,
+  12-2-2-9) shows `5-9` and dots for ≈2.9 s before `5-9-1` (D14); no seam draws a level's
+  number in the awaiting form on Select-entry (`5-9.sub`, `5-9-1.leaf` and the profile copies).
+  Space impact's and Pairs II's Top score return with the window rebuilt at Top score (`Top score /
+Score IDs / Instructions`, `8-2-2.leaf`, `8-4-1-3.leaf`, `8-4-2-3.leaf`), which the kernel's
+  `exit({ select })` (bottom row) cannot express; one rule fits all three games and Snake II:
+  rebuild the window at the launching child, then move to `select` by the D3 rule. ▼ during
+  Snake II's Top score returns to New game and then moves to Level (two moves,
+  `probe/games-top-score-down-2s`).
+- Capture jitter between recordings of the same path, beyond ±2 ms (8 probes): the splash-skip
+  probes' first step (252 vs 248 ms; the Select path is the same, so no per-path timeline can
+  apply), the three Top score probes (3-16 ms off `8-1-4.leaf`), Searching's bar
+  (`progress-6-2-4-2-c`, 7-22 ms), Done's 16 ms partial draw (`note-keys-done-down-300`, fewer
+  bytes), and `reenter` (Phone book's carousel return after C has no captured timeline).
+- Key-to-redraw latency, which D8 does not reproduce (8 shortcut probes): kernel timers run from
+  the key, the firmware's from a redraw that lags it by ≈50-125 ms, so a typed entry opens 1431-1477
+  ms after its digit's redraw, and `8` draws a 16 ms partial frame first.
+- Out of plan 14 (4 probes): digits and C at standby after Invalid shortcut start a number
+  (`shortcut-m1-8-1`, `-m1-8-1-2`, `-m1-9-c`); after Reminders › Erase › All the level hides View
+  all and Erase (`confirm-10-3-2-yes` image d, plan 21's reminder data).
+
+Deviation: `tests/support/drive.ts` plans keys as data (`gotoSteps`/`openSteps`, tested on a
+synthetic tree in `tests/drive.test.ts`) and drives the rig (`goto`/`open`). Generic `leaf` and
+`choose` scenarios settle 3 s after `goto`, compare frame 0 with the golden for the first covered
+node and with their own parent screen for the others (rows showing frame 0's image), and a golden
+with `trigger-frame: 0` (2-8-5-17 Polish: OK changes nothing) asserts that the screen stays.
+Probes live in `tests/support/probes.ts`: stills replay the capture keys (a tap is 592 ms);
+timelines press each later key on the tick its effect starts in the golden (D8), through a new
+`schedule` argument of `rig.record`. `stockRig`/`standbyRig` moved to `tests/support/rig.ts`.
+The guard also accepts an option choice or info page through its list's `.open` golden (S3 lists
+have no `.options`) and through a list golden pending for the choice's owner (Topics, plan 18),
+and pins the nodes whose only goldens are known gaps (5-9, 5-9-1, 8-2-2, 8-4-1-3, 8-4-2-3,
+12-1-2-9, 12-1-2-9-1, 12-2-2-9, 12-2-2-9-1).
+Deviation: the run found binding errors, fixed from the goldens: Info service's three leaves
+(Topic index is its third value), Screen saver's Off/On, Hide clock and the Time format choices
+end two levels up, on their page (`NOTE_ENDS`, replacing `NOTE_END_SELECT`; `NoteEnd` takes
+`{ levels, select }`); only Snake II's Top score selects New game; choosing 12-hour Time format
+shows `10:10 am` on Clock settings (`twelveHourClock`); Language › Polish's OK does nothing
+(`multiSelect` `inert` rows); View all's return to the carousel has its own Reminders icon timeline
+(`extract-resources.ts` `REVEAL_GOLDENS`, from `10-2.leaf`); Profiles slot 6's name is two U+E000
+boxes as a row label and as its Rename page value (probe/wrap-small-profiles-\*,
+`12-6-2.sub`), so `tree-overrides.ts` drops `(empty)` (D10's UNVERIFIED label is now captured) and
+`text-runs.ts` gains the two box runs that harvest the small and thin glyphs. Generators rerun
+twice, no diff.
+
+Completion (Task 13): 334 asserted goldens: 304 pass (pixel-exact; timelines within ±2 ms), 30
+are known gaps; 31 pending. Every one of the stock tree's 279 nodes and their option choices is
+accounted for (9 only by known gaps). `vp run @hellotimber/nokia-os#test`: 1,327 passed, 30
+expected failures, 31 todo, ≈8 s (acceptance ≈6.6 s).
 
 ### Task 14 - Demo, README, verification gate and closeout
 

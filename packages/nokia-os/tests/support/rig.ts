@@ -25,7 +25,11 @@ export interface Rig {
    * but the golden starts a frame there. The trigger time is the rig time when `trigger`
    * returns (without a trigger: when recording starts).
    */
-  record(durationMs: number, trigger?: () => void): RecordedTimeline;
+  record(
+    durationMs: number,
+    trigger?: () => void,
+    schedule?: readonly { readonly atMs: number; readonly run: () => void }[],
+  ): RecordedTimeline;
 }
 
 export function createRig(config: StockPhoneConfig): Rig {
@@ -33,9 +37,14 @@ export function createRig(config: StockPhoneConfig): Rig {
   let now = 0;
   phone.tick(now);
 
+  // A stock flow returns the same `custom` frame object until its widget changes, so a frame
+  // already painted is reused (performance only: the pixels are the frame's).
+  let painted: { frame: object; fb: Framebuffer } | undefined;
   const paintScreen = (screen: ScreenModel): Framebuffer => {
+    if (screen.kind === "custom" && painted?.frame === screen.frame) return painted.fb;
     const fb = new Framebuffer();
     paintStockScreen(fb, screen);
+    if (screen.kind === "custom") painted = { frame: screen.frame, fb };
     return fb;
   };
 
@@ -59,7 +68,7 @@ export function createRig(config: StockPhoneConfig): Rig {
       for (let i = 0; i < ms; i++) phone.tick(++now);
     },
     paint: () => paintScreen(phone.screen),
-    record(durationMs, trigger) {
+    record(durationMs, trigger, schedule = []) {
       const frames: RecordedFrame[] = [{ startMs: now, pixels: rig.paint().pixels }];
       const powerFrames = new Set<RecordedFrame>();
       let poweredOn = phone.screen.kind !== "off";
@@ -81,7 +90,12 @@ export function createRig(config: StockPhoneConfig): Rig {
         trigger();
       }
       const triggerMs = now;
-      rig.advance(durationMs);
+      // Scheduled actions run on the tick `atMs` after the trigger, in order.
+      const pending = [...schedule].sort((a, b) => a.atMs - b.atMs);
+      for (let t = 1; t <= durationMs; t++) {
+        rig.advance(1);
+        while (pending.length > 0 && pending[0]!.atMs <= t) pending.shift()!.run();
+      }
       unsubscribe();
       return { triggerMs, endMs: now, frames };
     },
@@ -100,4 +114,25 @@ export function frameAt(recording: RecordedTimeline, atMs: number): RecordedFram
   let shown = recording.frames[0]!;
   for (const frame of recording.frames) if (frame.startMs <= atMs) shown = frame;
   return shown;
+}
+
+/**
+ * The emulator's operator, clock and setup date are artefacts used as test inputs (D11). The
+ * Task 11 captures set the clock to 19:48 and 07:59 instead of 10:10.
+ */
+export function stockRig(config: Partial<StockPhoneConfig> = {}): Rig {
+  return createRig({
+    carrier: "Orange F",
+    clock: () => "10:10",
+    date: () => "13.10.2026",
+    ...config,
+  });
+}
+
+/** A phone at standby, booted with `boot: "skip"`, every timer settled. */
+export function standbyRig(config: Partial<StockPhoneConfig> = {}): Rig {
+  const rig = stockRig({ boot: "skip", ...config });
+  rig.press("power", 1000);
+  rig.advance(1000);
+  return rig;
 }
