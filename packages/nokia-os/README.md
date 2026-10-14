@@ -99,31 +99,43 @@ change the script or its input tables and run it again (each run twice gives no 
 
 ```sh
 REF=/path/to/nokia-3310
-# 1. Import captures into goldens/ (84×48 '#'/'.' text grids with timings, plus index.json).
+# 1. Import captures into goldens/ (84×48 '#'/'.' text grids with timings, plus one index per
+#    plan, goldens/index/<NN>.json).
 mise exec -- vp run @hellotimber/nokia-os#import-captures $REF
 # 2. Generate the stock menu tree (src/firmware/generated/stock-tree.ts) from tree.json and the
 #    corpus OCR, plus the harvester's text runs (scripts/generated/tree-text-runs.ts).
 mise exec -- vp run @hellotimber/nokia-os#import-tree $REF
 # 3. Derive fonts, icons, boot frames, status art, widget sprites and widget timelines, and
-#    Snake II's pictures, mazes and timings, into src/resources/generated/.
-mise exec -- vp run @hellotimber/nokia-os#extract-resources
+#    Snake II's pictures, mazes and timings, into src/resources/generated/ (`regenerate` runs
+#    every generator that needs no $REF; resolve a conflict in generated files with it).
+mise exec -- vp run @hellotimber/nokia-os#regenerate
 # 4. Test: pixel and timing acceptance against every asserted golden, the tree coverage guard,
 #    and freshness checks.
 mise exec -- vp run @hellotimber/nokia-os#test
 ```
 
-`scripts/capture-set.ts` (plan 13) and `scripts/tree-capture-set.ts` (the menu tree, by rule:
-one golden per submenu, option-list signature, leaf response and probe) decide which captures
-become goldens and whether each is `asserted` or `pending:<plan>`. Tree goldens declare a
-`scenario` and the nodes they `covers`; `tests/support/drive.ts` derives their key presses from
-the generated tree, and `tests/support/probes.ts` holds the probes' hand-written scenarios.
-`tests/acceptance.test.ts` drives the phone on a virtual 1 ms clock through a scenario for every
-asserted golden and fails if one has none; timelines are compared after aligning on the first
-changed frame, within ±2 ms (probes that replay another recording's timings or press later keys:
-`PROBE_TOLERANCE_MS`, 25 ms). Its `KNOWN_GAPS` table lists the asserted goldens nokia-os cannot
-reproduce, each with its reason (they run as expected failures). The coverage guard proves
-that every tree node and option choice is covered by an asserted golden, a golden pending for the
-plan that owns the node, or a same-as subtree equal to its model. Tests never read the corpus.
+Each plan's capture set, `scripts/capture-sets/<NN>-<slug>.ts` (the menu tree's by rule in
+`scripts/tree-capture-set.ts`: one golden per submenu, option-list signature, leaf response and
+probe), decides which captures become goldens and whether each is `asserted` or `pending:<plan>`,
+and the importer indexes them in `goldens/index/<NN>.json`. Tree goldens declare a `scenario` and
+the nodes they `covers`; `tests/support/drive.ts` derives their key presses from the generated
+tree. Each plan's `tests/acceptance/<NN>-<slug>.test.ts` drives the phone on a virtual 1 ms clock
+through a scenario for every asserted golden of its index and fails if one has none; timelines
+are compared after aligning on the first changed frame, within ±2 ms (probes that replay another
+recording's timings or press later keys: `PROBE_TOLERANCE_MS`, 25 ms). Its `knownGaps` list the
+asserted goldens nokia-os cannot reproduce, each with its reason (they run as expected failures).
+The coverage guard (`tests/acceptance/coverage-guard.test.ts`) collects every plan's file and
+proves that every tree node and option choice is covered by an asserted golden, a golden pending
+for the plan that owns the node, or a same-as subtree equal to its model. Tests never read the
+corpus.
+
+**Firmware features.** The generated tree binds to behaviour through feature modules,
+`src/firmware/features/<slug>.ts` (one per menu area or behaviour, registered in
+`features/index.ts` and composed by `src/firmware/stock.ts`): the screens each implements by tree
+node, the leaves it leaves to a later plan's placeholder, the generic widgets' tables (prompt
+layouts, note styles and ends, query results, setter levels), its settings (virgin and factory
+values, aliases) and its EEPROM records. The demo's controls are panels the same way
+(`demo/panels/`).
 
 ## Storage, settings and the security code
 
@@ -249,7 +261,7 @@ requestAnimationFrame(loop);
 - **Outputs.** `buzzer`: 13 MHz / the firmware's divider, `volume` the MAD2 volume register
   (0-194 seen, higher is louder). `tone`: the DSP tone generator on the earpiece path, `volume`
   its level word (`0x9108`/`0x9104`/`0x9100` for Keypad tones Level 1/2/3; a lower low nibble is
-  louder). `vibrator`: on or off. The demo's gain table (`demo/main.ts`) is a choice.
+  louder). `vibrator`: on or off. The demo's gain table (`demo/panels/sound.ts`) is a choice.
 - **What is evidence.** Sound is verified as event timelines, never waveforms: the emulator logs
   each output's register changes every 1 ms, and `goldens/sound/**/*.sound.txt` hold those rows
   aligned on the recording's first key. The captures' WAV files are the emulator's own synthesis

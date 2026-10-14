@@ -124,11 +124,50 @@ v6.39 firmware. The capture corpus (`nokia-3310/` in the main checkout, called `
 plan 13) is gitignored and **never committed**; nothing from `$REF/extracted` is ever copied.
 
 - `vp run @hellotimber/nokia-os#import-captures <REF>` turns captures into committed text-grid
-  fixtures under `packages/nokia-os/goldens/` plus `goldens/index.json`.
-- `vp run @hellotimber/nokia-os#extract-resources` regenerates `src/resources/generated/`
-  (fonts, icons, boot frames, status art) from those goldens.
+  fixtures under `packages/nokia-os/goldens/` plus one index per plan, `goldens/index/<NN>.json`.
+- `vp run @hellotimber/nokia-os#regenerate` regenerates `src/resources/generated/` (fonts, icons,
+  boot frames, status art, widgets, Snake II, sounds) from those goldens.
 - Never hand-edit `goldens/**` or `src/resources/generated/**`: change the importer, its
   capture-set table or the extractor inputs and regenerate. Tests never read `$REF`.
+
+## Parallel plan conventions (nokia-os)
+
+Plans 17+ run in parallel git worktrees. Each plan owns its own files below and touches shared
+files only through one registration line, so branches merge without conflicts. Paths are under
+`packages/nokia-os/` unless they start with `docs/`.
+
+1. **Capture set:** `scripts/capture-sets/<NN>-<slug>.ts` exports a `PlanCaptureSet`
+   (`plan: "<NN>"`, `lcd`/`ticks`/`sounds` entries, `notImported`), registered by one
+   `export { … } from` line in `scripts/capture-sets/index.ts`. Its goldens are indexed in
+   `goldens/index/<NN>.json`, which no other plan's import changes. A golden another plan's set
+   lists as `pending:<NN>` stays in that plan's index: flip its status there (tree and sound
+   note goldens: delete your group from `PLACEHOLDER_OWNERS` in `scripts/tree-capture-set.ts`,
+   grouped by owner plan; the matching feature drops the same `placeholders`).
+2. **Acceptance:** `tests/acceptance/<NN>-<slug>.test.ts` calls `acceptancePlan({ plan, scenarios,
+knownGaps, timeoutsMs })` once and registers no other tests; it runs the goldens of
+   `goldens/index/<NN>.json`. `tests/acceptance/coverage-guard.test.ts` collects every plan file
+   and checks them together (one plan file per index file, scenarios and known gaps per plan, tree
+   coverage). Adding a plan is adding this file; shared helpers go in `tests/support/`.
+3. **Firmware:** behaviour lives in `src/firmware/features/<slug>.ts`, one `StockFeature` per menu
+   area or behaviour (`screens` by tree node number, `leads`, `optionLists`, `placeholders`,
+   `sameAs`, `widgets` tables, `settings` tables, `records`; see `features/feature.ts`). Extend
+   the feature of the area you implement (replace its placeholders with `screens`); a new feature
+   is a new file plus one `export { … } from` line in `features/index.ts`. `src/firmware/stock.ts`
+   composes them and throws on a node bound twice. Keep `src/firmware/generated/stock-tree.ts` as
+   generated.
+4. **Generated resources** (`src/resources/generated/**`) are shared outputs of every plan's
+   goldens. On a merge conflict there, take either side, merge the inputs, then run
+   `mise exec -- vp run @hellotimber/nokia-os#regenerate` (deterministic; the resources test fails
+   while a file differs from what it writes). Conflicts in `goldens/index/<NN>.json` only arise
+   within one plan: rerun `import-captures`.
+5. **Specs:** firmware facts go in `docs/specs/stock/<area>.md` (foundation, menu-depth,
+   storage-and-settings, sound, snake-ii, …); `docs/specs/nokia-3310.md` §10 is an index with one
+   row per file.
+6. **Demo:** a feature's demo controls are a `DemoPanel` in `demo/panels/<slug>.ts` plus one
+   `export { … } from` line in `demo/panels/index.ts`; `demo/main.ts` stays the shell.
+7. **Commits:** run `mise exec -- vp check --fix` (repeat `vp fmt` until stable), then
+   `git commit --no-verify` with only your files staged (other agents may share the worktree:
+   prefer `git commit -- <paths>`). Never `git stash`. Never stage `TODOS.md`.
 
 ## Testing conventions
 

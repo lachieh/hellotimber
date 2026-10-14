@@ -548,7 +548,7 @@ nokia-os does not reproduce, so beep and note onsets are compared against the ke
 window. Edges of a program's captured pass replay exactly; a later pass of the same recording
 matches within 25 ms plus 1.2 % of its offset (D6 deviation).
 
-`tests/acceptance.test.ts` reads `index.json` entries of kind `sound` and requires a scenario for
+`tests/acceptance.test.ts` (now `tests/acceptance/16-tones-and-sound.test.ts`) reads `index.json` entries of kind `sound` and requires a scenario for
 each asserted one (`SOUND_SCENARIOS`), as for LCD goldens.
 
 ## Conventions for every task

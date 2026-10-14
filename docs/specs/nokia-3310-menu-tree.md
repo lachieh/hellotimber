@@ -1011,7 +1011,7 @@ reminder "Hi", alarm 07:00, composed tone "A". The Phone book view setting is th
 
 > Previews (plan 16): in the factory state ▲/▼ in Ringing tone, Ringing volume and Message alert
 > tone play the highlighted entry ≈991 ms later; the virgin EEPROM crawled here leaves them silent.
-> See `docs/specs/nokia-3310.md` §10 "Tones and sound (plan 16)".
+> See [`docs/specs/stock/sound.md`](stock/sound.md).
 
 - `5-1` **Ringing tone** → option-list, key **Quit**
   - entries: Ring ring · Low · Mosquito · Bee · City bird · Hopping down · Kick · Playground · That's it! · Improvisation · Rocket · Croak · Nokia tune · Mozart 40 · Badinerie · Attraction · Dawn · Polite · Tick tick · Samba rumble · Jumping · Lamb · Toreador · Matilda · Merry Xmas · Auld lang syne · Hurdy-gurdy · Groovy Blue · Sunny walks · The Buffoon · Indifference · Barn dance · Mangrove · Knick-knack · Get cool · A · (empty) · (empty) · (empty) · (empty) · (empty) · (empty)
@@ -1160,7 +1160,7 @@ then on no 5-digit code verifies. The emulator's own oracle (`build/dct3_boot_tr
 `SECCODE=1`) and calling the firmware's set-code routine with `12345` at standby fixed it, and
 plan 15 captured what follows the code for `6-3-5` Phone security, `6-3-6-1` Change security code,
 `6-4` Restore factory settings and `4-5-5` Clear timers (`captures/6.39/plan15/accept/`; see the
-spec's §10 "Security code, boot gates and storage"). A wrong code's `Code error` (≈2.9 s) returns
+spec [`stock/storage-and-settings.md`](stock/storage-and-settings.md)). A wrong code's `Code error` (≈2.9 s) returns
 to the empty `Security code:` prompt, not to the list: the crawl's return to the list was the
 crawler pressing C on that empty prompt. Phone book › Erase › Erase all, and the PIN, PIN2 and
 barring-password prompts (`6-3-1`, `6-3-6-3`, `6-3-6-4`, call barring) were not entered.

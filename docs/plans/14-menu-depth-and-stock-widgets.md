@@ -117,7 +117,7 @@ first ▲ its last item on the top row (`Level 5 / Level 1 / Level 2`).
 (`plan14/text.json`) and writes `src/firmware/generated/stock-tree.ts`: numbers, slugs, labels
 with firmware line breaks, presentations, softkeys, opening selections, leaf kinds and texts,
 option labels, defaults and results, value hints. It drops firmware string ids, capture paths
-and OCR metadata. `src/firmware/bindings.ts` maps tree nodes to behaviour (setting keys,
+and OCR metadata. `src/firmware/bindings.ts` (now the feature modules `src/firmware/features/<slug>.ts`, composed by `src/firmware/stock.ts`) maps tree nodes to behaviour (setting keys,
 placeholders and their owner plans, note styles, aliases). The hand-written `STOCK_LEVELS` table in
 `src/firmware/menu.ts` is deleted, and level 1 comes from the generated tree. A test proves the
 generated level 1 equals plan 13's `LEVEL1` transcription.
@@ -482,6 +482,9 @@ Task 13 proves both equal the firmware bindings' tables. A source with a missing
 the import and names the node. Nothing is skipped silently.
 
 ### Generic scenarios and the coverage guard (`tests/support/drive.ts`, `tests/acceptance.test.ts`)
+
+> Now `tests/support/acceptance.ts` (the generic tree scenario) and
+> `tests/acceptance/coverage-guard.test.ts` (AGENTS.md "Parallel plan conventions").
 
 `goto(rig, number)` drives real keys from a settled standby until the node is highlighted in its
 parent: Menu, ▼ to the top-level item, then for each level Select and ▼ (from the opening item,

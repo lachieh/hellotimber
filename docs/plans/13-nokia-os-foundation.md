@@ -123,7 +123,7 @@ after a key press (see Open questions).
 
 **D7 - Goldens are text grids imported from REF by a script, and tests never read REF.** Each
 fixture is an 84x48 `#`/`.` grid with timing metadata, committed under `packages/nokia-os/goldens/`.
-A generated `index.json` lists every fixture as `asserted` or `pending:<plan>`. Capture artefacts
+A generated index (now one file per plan, `goldens/index/<NN>.json`) lists every fixture as `asserted` or `pending:<plan>`. Capture artefacts
 are never imported: the importer's capture-set table records why they are omitted. A single
 acceptance test file maps every asserted golden id to a scenario, and it fails if an asserted id
 has no scenario (coverage guard).
@@ -405,6 +405,8 @@ Rules, enforced by `scripts/golden-format.ts` with `file:line` errors:
 
 ### Capture set (`scripts/capture-set.ts`)
 
+> Now `scripts/capture-sets/13-foundation.ts`, one capture set per plan (AGENTS.md "Parallel plan conventions").
+
 A declarative table that the importer executes. Fixture ids and sources:
 
 | Fixture id                    | Source (prefer → fallback)                                                             | Kind     | Status                         |
@@ -440,7 +442,7 @@ mise exec -- vp run @hellotimber/nokia-os#import-captures /Volumes/SSD/Projects/
   index 1 are lit. No new dependency.
 - Fails with a clear message if `$REF/captures/6.39` is missing. Falls back per row and reports
   each fallback.
-- Writes the fixtures and `goldens/index.json`:
+- Writes the fixtures and `goldens/index.json` (now `goldens/index/<NN>.json`, one per plan):
   `[{ id, file, status, kind, images, frames }]`, sorted by id.
 - Idempotent: running it twice leaves `git status --porcelain packages/nokia-os/goldens` empty.
 
@@ -501,7 +503,7 @@ and frame 0's duration is not compared.
   with their start times, like the harness `record` command. Painting happens only on snapshots,
   so 10 s of 1 ms ticks stays cheap.
 
-`tests/acceptance.test.ts` reads `goldens/index.json`. It requires a scenario for every
+`tests/acceptance.test.ts` (now `tests/acceptance/<NN>-<slug>.test.ts`, one per plan (AGENTS.md "Parallel plan conventions")) reads `goldens/index.json`. It requires a scenario for every
 `asserted` id in its `SCENARIOS` map and fails with `no scenario for <id>` otherwise. It
 registers `it.todo` for each `pending` id.
 
