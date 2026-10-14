@@ -878,18 +878,36 @@ boot `welcome` phase, which the stock phone never emits.
 **Files:** `src/firmware/{menu.ts,placeholder.ts,settings-snapshot.ts,phone.ts}`, `src/index.ts`,
 `tests/firmware-menu.test.ts`, `tests/firmware-phone.test.ts`.
 
-- [ ] TDD `stockMenu`: 12 top-level entries in order with the graphics from Task 7 (each with a
+- [x] TDD `stockMenu`: 12 top-level entries in order with the graphics from Task 7 (each with a
       timeline), level-1 children per the table, presentations, `\n` line breaks, and no other
       levels. Paths are unique and kebab-case.
-- [ ] `PlaceholderApplication`: renders a `custom` frame (dotted border plus label in `small`).
+- [x] `PlaceholderApplication`: renders a `custom` frame (dotted border plus label in `small`).
       C exits to the parent, other keys are swallowed, and the path stays at the leaf.
-- [ ] `settings-snapshot.ts`: the `detail` values per the table. Clock settings and Date
+- [x] `settings-snapshot.ts`: the `detail` values per the table. Clock settings and Date
       setting read the host ports.
-- [ ] TDD `createStockPhone`: rejects a carrier with missing glyphs and names the characters;
+- [x] TDD `createStockPhone`: rejects a carrier with missing glyphs and names the characters;
       `boot: "skip"` reaches standby immediately; animated boot uses the Task 7 timeline;
       standby ▲/▼ use the stock standby keys; the clock and date ports drive standby and the
       Clock page details.
-- [ ] Commit: `feat(nokia-os): stock v6.39 menu, placeholders and phone factory`.
+- [x] Commit: `feat(nokia-os): stock v6.39 menu, placeholders and phone factory`.
+
+Deviation: hidden entries keep their numbers through a kernel change, committed separately as
+`feat(phone-core): submenu levels keep hidden entries' menu numbers`: a submenu `MenuLevel` may
+skip an order (top-level orders stay contiguous), so Call divert's and Games' last entries are
+`new MenuOrder(6)` after 1-4. Shortcuts resolve by number (Menu 7 6 opens Cancel all diverts;
+7 5 is ignored); ▲/▼, selection and the rail use the visible position. The list model gains
+`itemOrders`, emitted only when a level's numbers are not 1..n, so website models are unchanged.
+VISION and the phone-core README record it.
+Deviation: `stockMenu` is `createStockMenu()` without host ports; `createStockPhone` builds its
+own menu with the config's `clock`/`date`, which feed the Clock settings and Date setting page
+details. Slugs derive from labels (line breaks as spaces, apostrophes dropped) except where the
+website's slug is reused (`write`, `snake`); Profiles slot 6 is `empty-2` (label `(empty)`,
+UNVERIFIED). The placeholder frame painter is `src/display/placeholder.ts` (listed under Task
+10), because the placeholder application renders it; its label lines are centred at a 9-row
+pitch. `scripts/text-runs.ts` exports `LEVEL1`, and `tests/firmware-menu.test.ts` checks
+`stockMenu` titles, presentations, labels, menu numbers and page values against it (Profiles
+adds slot 6, which the goldens omit); `resources.test.ts` checks every `stockMenu` label renders
+(titles in `large`, level-1 labels in `small`).
 
 ### Task 10 - Stock painter II: carousel, rail, rows, pages and placeholder (TDD against goldens)
 

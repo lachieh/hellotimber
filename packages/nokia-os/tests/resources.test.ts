@@ -1,8 +1,9 @@
+import { SubmenuEntry } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { extractResources, inferLoop, toTimeline } from "../scripts/extract-resources.ts";
 import { TEXT_RUNS } from "../scripts/text-runs.ts";
-import { missingStockGlyphs } from "../src/index";
+import { missingStockGlyphs, stockMenu } from "../src/index";
 import {
   BOOT_FRAMES,
   BOOT_TIMELINE,
@@ -47,6 +48,15 @@ describe("generated resources", () => {
     }
     for (const softkey of ["Menu", "Select"])
       expect(missingStockGlyphs(softkey, "small")).toEqual([]);
+  });
+
+  it("render every stockMenu label: carousel titles in large, level-1 labels in small", () => {
+    for (const { entry } of stockMenu.entries) {
+      expect(missingStockGlyphs(entry.label, "large"), entry.label).toEqual([]);
+      const children = entry instanceof SubmenuEntry ? entry.children.entries : [];
+      for (const child of children)
+        expect(missingStockGlyphs(child.label, "small"), child.label).toEqual([]);
+    }
   });
 
   it("names missing characters once, in order, and ignores line breaks", () => {

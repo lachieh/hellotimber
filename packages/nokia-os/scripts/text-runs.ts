@@ -48,7 +48,7 @@ function rows(items: readonly string[], selected: number): TextRun[] {
   });
 }
 
-interface Level1 {
+export interface Level1 {
   readonly slug: string;
   readonly title: string;
   readonly presentation: "rows" | "pages";
@@ -64,7 +64,7 @@ interface Level1 {
   readonly numbers?: readonly number[];
 }
 
-const LEVEL1: readonly Level1[] = [
+export const LEVEL1: readonly Level1[] = [
   {
     slug: "01-phone-book",
     title: "Phone book",
