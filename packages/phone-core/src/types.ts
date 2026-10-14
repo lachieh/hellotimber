@@ -54,6 +54,12 @@ export interface MenuIndicator {
 export interface StandbyIndicators {
   voicemail?: boolean;
   message?: boolean;
+  /** Plan 21: an alarm is set. */
+  alarm?: boolean;
+  /** Plan 21: a countdown runs. */
+  timer?: boolean;
+  /** Plan 21: the stopwatch runs. */
+  stopwatch?: boolean;
 }
 
 export type ScreenModel =
@@ -167,10 +173,25 @@ export interface PhoneConfig<Metadata = unknown> {
    */
   bootGates?: readonly BootGate[];
   /**
-   * Plan 18: standby indicators (message, voicemail), re-read on every tick like `clock`; a
-   * change emits one snapshot. Emitted on the standby model only when a field is true. Default: none.
+   * Plan 18: standby indicators (message, voicemail; plan 21: alarm, timer, stopwatch), re-read
+   * on every tick like `clock`; a change emits one snapshot. Emitted on the standby model only
+   * when a field is true. Default: none.
    */
   standbyIndicators?: () => StandbyIndicators | undefined;
+  /**
+   * Plan 21: polled on every tick while the phone is on and not booting. An application it
+   * returns interrupts whatever is shown: the interrupted mode is held (no keys, no ticks), the
+   * path is unchanged, navigate() is recorded and applied after it. Its exit() restores the held
+   * mode; exit({ to: "standby" }) deactivates the held mode (reason `navigate`) and shows standby;
+   * levels/select/row throw. Default: none.
+   */
+  interruption?: () => PhoneApplication | undefined;
+  /**
+   * Plan 21: polled on every tick while the phone is off. An application it returns powers the
+   * phone on without the boot (empty stack, path `standby`); its exit() powers the phone off
+   * again; exit({ to: "standby" }) runs the normal power-on (boot and gates). Default: none.
+   */
+  wake?: () => PhoneApplication | undefined;
 }
 
 /** Plan 15: an application that may hold the boot at an offset into it. */

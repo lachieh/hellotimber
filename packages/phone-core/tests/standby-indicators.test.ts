@@ -28,6 +28,37 @@ describe("standby indicators", () => {
     }
   });
 
+  it("emits the plan 21 flags (alarm, timer, stopwatch) only when true", () => {
+    let indicators: StandbyIndicators | undefined = { alarm: true, timer: false, stopwatch: true };
+    const phone = bootedPhone({ standbyIndicators: () => indicators });
+    expect(phone.screen).toMatchObject({ indicators: { alarm: true, stopwatch: true } });
+    expect(phone.screen).not.toHaveProperty("indicators.timer");
+    indicators = { message: true, alarm: true, timer: true, stopwatch: true, voicemail: true };
+    phone.tick(10);
+    expect(phone.screen).toEqual(
+      expect.objectContaining({
+        indicators: { voicemail: true, message: true, alarm: true, timer: true, stopwatch: true },
+      }),
+    );
+    indicators = { alarm: false, timer: false, stopwatch: false };
+    phone.tick(20);
+    expect(phone.screen).not.toHaveProperty("indicators");
+  });
+
+  it("emits one snapshot when a plan 21 flag changes", () => {
+    let indicators: StandbyIndicators | undefined = { alarm: true };
+    const phone = bootedPhone({ standbyIndicators: () => indicators });
+    const snaps: PhoneSnapshot[] = [];
+    phone.subscribe((snap) => snaps.push(snap));
+    phone.tick(100);
+    expect(snaps).toHaveLength(0);
+    indicators = { alarm: true, stopwatch: true };
+    phone.tick(200);
+    phone.tick(300);
+    expect(snaps).toHaveLength(1);
+    expect(snaps[0]!.screen).toMatchObject({ indicators: { alarm: true, stopwatch: true } });
+  });
+
   it("emits exactly one snapshot when the value changes between ticks, none when it does not", () => {
     let indicators: StandbyIndicators | undefined;
     const phone = bootedPhone({ standbyIndicators: () => indicators });
