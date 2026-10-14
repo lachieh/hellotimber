@@ -1,0 +1,103 @@
+# Keyguard and lights (plan 25, in progress)
+
+Part of the stock firmware's ground truth ([index](../nokia-3310.md#10-firmware-ground-truth-v639-captures)): the goldens under `packages/nokia-os/goldens/` are authoritative; where this file and a golden disagree, fix this file.
+
+Source: plan 25's planning probes (`$REF/captures/scratch-plan25/`, K1-K8 and L1-L9 in
+`docs/plans/25-keyguard-and-backlight.md`) and its Task 0 captures (`$REF/captures/6.39/plan25/`,
+211 recordings). The capture harness copy `tools/harness-p25` logs both LED lines (`emu_led_lcd`,
+`emu_led_kbd`: the `leds` bits 0 and 1) every 1 ms in `<recording>.lights.csv`, with the time
+since the power-on; LCD recordings sample `leds` only at redraws. Times below are from the
+key-down unless stated.
+
+## Lights
+
+- **Two lines, one switch.** The display LEDs (LCD backlight) and the keypad LEDs always switch
+  together in v6.39: on in the same 1 ms grain, off at most one grain apart. `leds` is only 0 or
+  3 in every recording.
+- **On.** A light activity lights both 14-33 ms after its key-down (mostly 17-19 ms; not
+  reproduced: nokia-os lights at the key-down).
+- **The light tick.** Every timeout off edge (122 edges, ticks 12-94) lies within 2.9 ms of
+  power-on + 2 ms + k × **1982.61 ms**. The tick is anchored at the power-on (the emulator's
+  cycle 0), not at the boot's end. (The planning probes' 1982.60 ms over 13 edges agrees.)
+- **Off.** At the **first tick at least D after the last light activity**, D ∈ (13619.6, 13627.6]
+  ms (nokia-os: 13624 ms). The dark therefore comes 13.62-15.61 s after a key. Taps 8 ms apart
+  straddle D (`lights/timeout/factory/fine-*`), so "the n-th tick after the key" is not the rule.
+- **Holds and releases.** A key held 0.2-16 s goes dark with the same edge as a tap: only the
+  key-down counts. A key while lit restarts D.
+- **Activity** (lights on, D restarted): a key-down at an unlocked phone (every key, the power
+  key's short press included: at standby it also opens the profile list, elsewhere it changes no
+  pixel); the power key's short press on a locked phone; the self-test's first boot frame (245-272
+  ms after power-on) and the boot's clock prompt (the LEDs time out from the prompt: factory dark
+  at 23.79 s, virgin with the security code 31.72 s); an SMS arriving at an unlocked phone (with
+  its `1 message received` notice); an incoming call, locked or not, whose ringing holds the LEDs
+  on (75 s seen, no timeout); Unlock then `*`; the emergency display; Snake II's pause, Continue,
+  the death's end and the top score's `Game over!` screen.
+- **Not activity:** a key-up; a hold's duration; keys on a locked phone (the hint, Unlock alone, a
+  second Unlock, a digit or C after Unlock); the `*` that locks (the LEDs time out from the Menu
+  key-down); an SMS arriving at a locked phone; a timed screen ending (the lock note, the hint,
+  the emergency display); Screen saver On (no screen saver can show: no picture is stored in the
+  virgin or factory image).
+- **Games › Settings › Lights** (factory: Off). While Snake II is playing, Off holds both LEDs off
+  (38 ms after New game; play keys and the power key change nothing) and On holds them on (30 s
+  of play, no timeout). The pause (Navi or C) and the death's end release the hold with activity;
+  Continue is activity and the hold returns (Off: dark again 20 ms later). Outside play the
+  timeout applies (On: the pause and game-over screens time out).
+- **Power-off.** The power key held at a lit standby: the profile list, then the LCD blanks and
+  the LEDs go off together 1017 ms into the hold.
+
+## Keyguard
+
+- **Lock.** Menu at standby, then `*` within (2920, 2930] ms of the Menu key-down (nokia-os:
+  2925 ms; plan 14's carousel dots turn 2948 ms after Menu, a redraw later). ▼, a digit or C
+  before the `*` cancels it; a later `*` reaches standby number entry (`*`, `Call`; plan 22).
+  `Keypad locked` (large, two lines) with a keypad icon crossed out over four steps,
+  442/232/240/1971 ms, then a 9 ms partial draw and the locked standby. The lock plays the
+  1750 Hz warning tone (0x9105, 293 ms) in place of the `*`'s beep.
+- **Locked standby.** The key icon at the top left (before the envelope when a message waits),
+  ladders, operator, clock, soft key `Unlock`.
+- **Hint.** Every key on a locked phone (0-9, `*`, `#`, ▲, ▼, C, held keys, the power key) shows
+  standby without ladders, then `Press` / `Unlock` / `and then *` (large, three lines) with a
+  keypad and a pressing finger over eight steps, 564/595/179/202/194/195/579/401 ms, a 8-23 ms
+  partial draw, the locked standby. A key during the hint restarts it from its first step. Keys
+  are silent; the LEDs do not change (except the power key's, which lights them). Holding the
+  power key 10 s does not switch a locked phone off.
+- **Unlock.** Unlock (Navi) shows `Now` / `press *` (bold small face) in place of the operator and
+  the soft key for 1448 ms; a second Unlock restarts it. `*` within it (≤ 1440 ms of the Unlock
+  key-down unlocks, ≥ 1450 ms does not) shows `Keypad active` with `Done`'s dotted box and tick
+  (683/232/521 ms, partial draws of 21 and 9 ms), then the normal standby; the `*` beeps and lights
+  the LEDs. A digit or C during `Now press *` shows the hint.
+- **Emergency.** Digits typed on a locked phone are buffered (each shows the hint). When the
+  buffer ends in `112` (`112`, `2112`, `0112`; not `911`, `999`, `000`, `08`, `110`, `113`, `1122`)
+  the phone shows `112` in the large digits, right-aligned, with `Call`, the key icon, ladders and
+  clock, for 3878.6 ms, and lights the LEDs. C ends it at once; another digit shows the hint;
+  Call (Navi) shows `Attempting emergency call` / `End` (plan 22).
+- **Arrivals.** An SMS on a locked phone shows its notice with `Unlock` and stays dark. An
+  incoming call on a locked phone rings as on an unlocked one (`0412345678`, `calling` blinking
+  every ≈480 ms, `Answer`); Navi answers, Navi (`End`) or C ends it; then `Keypad locked` again
+  (446/232/232/1979 ms) and the locked standby.
+- **Key-down.** The lock note, the hint, `Now press *` and the emergency display all draw while
+  their key is still held.
+- **Power cycle.** A cold power-on (the emulator's battery pull) comes up unlocked.
+
+## Artefacts and UNVERIFIED
+
+| Item                                                                   | Handling                                               |
+| ---------------------------------------------------------------------- | ------------------------------------------------------ |
+| `leds` in `timings.csv` sampled only at LCD redraws                    | the 1 ms `.lights.csv` logs (plan 25's harness copy)   |
+| 14-33 ms from a key-down to the LEDs; 25-69 ms keyguard redraw latency | not reproduced (plan 25 D2, D11)                       |
+| 6-23 ms partial frames at the end of keyguard screens                  | partial draws, as plan 14's                            |
+| No screen saver picture in the virgin or factory image                 | the screen saver and the lights stay independent (D15) |
+| No CCONT power cut reported after the power key's hold                 | the blank LCD and dark LEDs mark the power-off         |
+| Operator `Orange F`, caller `0412345678`, clock 10:10                  | test inputs                                            |
+
+UNVERIFIED: the LED rise and fall times (the captures are binary); charging (no charger model);
+the car kit's `Lights` (no PPH-1); the screen saver with a picture (plan 18c); the alarm's LED
+blink (plan 21); emergency numbers other than those tried; whether a call in progress holds the
+LEDs on.
+
+## The website's backlight
+
+The website keeps its own backlight (`settings.backlight`, its idle screen saver in
+`website/src/phone/phone.ts`), unrelated to the stock firmware's light tick. It is replaced when
+the website adopts nokia-os and drives phone-3d's `backlightOn` and `keypadLightOn` from the
+lights port (portfolio integration, not sequenced).

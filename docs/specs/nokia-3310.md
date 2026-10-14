@@ -120,7 +120,7 @@ Sources: manual p.19 keys, p.28, p.34–38, p.32 ([scroll keys verbatim](https:/
 - **Scroll keys elsewhere (verified):** browse menus/settings; **the manual describes cursor left (▲) and right (▼); v6.39 captures show the reverse (see §10)**; during a call they adjust earpiece volume.
 - **Power key short-press in standby = profile switcher** (verified). **Long-press `#`: no documented function on the 3310** (silent-profile toggle via # arrived on later models) — UNVERIFIED/absent, recommend no-op.
 - **Long-press `1` in standby = dial voice mailbox** (verified, speed-dial section). Long-press `2`–`9` = speed dial if enabled (verified).
-- **Keyguard (verified, p.32):** lock = press **`Menu` then `*` "quickly"** (within ~1.5 s); unlock = press **`Unlock` (NaviKey) then `*`** quickly; keyguard icon shown; answering calls still works; emergency 112 possible while locked.
+- **Keyguard (superseded for v6.39 by [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md): the lock window is ≈2.9 s, the ≈1.45 s window is the unlock's; the notes are `Keypad locked`, `Press Unlock and then *`, `Now press *`, `Keypad active`) (verified, p.32):** lock = press **`Menu` then `*` "quickly"** (within ~1.5 s); unlock = press **`Unlock` (NaviKey) then `*`** quickly; keyguard icon shown; answering calls still works; emergency 112 possible while locked.
 - **Text entry (manual-sourced):** This summary describes the manual. For measured v6.39
   rules that supersede its cursor direction, held `0`/`#`, case and timeout claims, see
   [§10](#10-firmware-ground-truth-v639-captures) and [stock text entry](stock/text-entry-and-sms.md).
@@ -181,7 +181,7 @@ Sources: manual Tones chapter p.65–69, Composer pages ([helpdoc composer](http
 
 Sources as cited inline.
 
-- **Green backlight** for display and keypad (Wikipedia, verified; blue only on the Singapore/Malaysia 3315 variant). Backlight turns on with any keypress and times out after ~15 s of inactivity (15 s figure verified for the power-key light function, p.18; general timeout UNVERIFIED but same best guess).
+- **Green backlight** for display and keypad (Wikipedia, verified; blue only on the Singapore/Malaysia 3315 variant). Backlight turns on with any keypress and times out after ~15 s of inactivity (superseded for v6.39 by [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md): 13.6-15.6 s, on a 1982.61 ms light tick) (15 s figure verified for the power-key light function, p.18; general timeout UNVERIFIED but same best guess).
 - **Screen contrast setting:** **UNVERIFIED location** — not present in the documented Settings tree above; the 3310's contrast is famously adjustable via the hidden `*#*#` style codes/service menu rather than a user menu. Best guess: omit from menu, optionally emulate as hidden code.
 - **Vibrating alert** = user option (Tones 5-8, verified); games can "shake" only when it's enabled (verified).
 - **Signal/battery as side-mounted four-bar stacks** (verified concept; four-bar count and exact tapered pixels reconstructed from the home-screen photograph). On charge, battery bars scroll/animate (standard Nokia behavior, UNVERIFIED).
@@ -203,15 +203,16 @@ in-repo as golden text grids under `packages/nokia-os/goldens/`. The goldens are
 where a spec file and a golden disagree, fix the spec. The facts live in one file per area under
 [`docs/specs/stock/`](stock/); a plan adds its area's file and one row here.
 
-| Area                                                       | File                                                           | Plan |
-| ---------------------------------------------------------- | -------------------------------------------------------------- | ---- |
-| Main menu, carousel, rail, indicator, fonts, standby, boot | [stock/foundation.md](stock/foundation.md)                     | 13   |
-| Deeper levels, stock widgets, shortcuts, capture artefacts | [stock/menu-depth.md](stock/menu-depth.md)                     | 14   |
-| Security code, boot gates, storage, virgin/factory states  | [stock/storage-and-settings.md](stock/storage-and-settings.md) | 15   |
-| Tones and sound                                            | [stock/sound.md](stock/sound.md)                               | 16   |
-| Text entry and SMS (plan 18, in progress)                  | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)     | 18   |
-| Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                     | 20   |
-| Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                         | 23   |
+| Area                                                       | File                                                               | Plan |
+| ---------------------------------------------------------- | ------------------------------------------------------------------ | ---- |
+| Main menu, carousel, rail, indicator, fonts, standby, boot | [stock/foundation.md](stock/foundation.md)                         | 13   |
+| Deeper levels, stock widgets, shortcuts, capture artefacts | [stock/menu-depth.md](stock/menu-depth.md)                         | 14   |
+| Security code, boot gates, storage, virgin/factory states  | [stock/storage-and-settings.md](stock/storage-and-settings.md)     | 15   |
+| Tones and sound                                            | [stock/sound.md](stock/sound.md)                                   | 16   |
+| Text entry and SMS (plan 18, in progress)                  | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)         | 18   |
+| Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                         | 20   |
+| Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                             | 23   |
+| Keyguard and lights (plan 25, in progress)                 | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |
 
 ---
 

@@ -13,7 +13,7 @@ Tasks 12-14 (phone-3d) need only Task 1.
 "Plan 16 supplementary captures") and plans 13-16 and 23 before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan25/`. The planning probes in
 `$REF/captures/scratch-plan25/` are evidence for this plan only and are never imported.
-**Status:** not started.
+**Status:** in progress (Tasks 0-6 done; Tasks 7-15 not started).
 
 ## Goal
 
@@ -129,6 +129,12 @@ the rule is "first tick at least D after" or "the n-th tick after", from 1 ms ed
 between a key-down and the LEDs (L1) is not reproduced: nokia-os lights at the key-down, as it
 beeps there (plan 16 D8).
 
+Deviation (Task 0): `LIGHT_TICK_MS` = 1982.61, the tick runs from the power-on plus
+`LIGHT_TICK_PHASE_MS` = 2 (122 off edges, ticks 12-94, within 2.9 ms); `LIGHT_TIMEOUT_MS` = 13624
+(D ∈ (13619.6, 13627.6]); the rule is "the first tick at least D after the last activity" (the
+n-th-tick rule is falsified). `LIGHT_EDGE_TOLERANCE_MS` = 5 (the tick's ±3 ms plus the one-grain
+gap between the two lines); `KEY_LIGHT_LATENCY_MAX_MS` = 33 (measured 14-33 ms).
+
 **D3 - What counts as light activity (new; from K and L).** Lights on and the timeout restarted:
 a key-down while unlocked (every key, the power key's short press included; L5), the self-test's
 first boot frame (L4), a message arriving at an unlocked phone (L7), an incoming call, locked or
@@ -136,6 +142,18 @@ not (K8), and Unlock then `*` (K5). Not activity: a key-up, a held key's duratio
 while locked (K3, K4, K6), a message arriving while locked (K7). Task 0 completes the table (a note
 expiring, the game-over screen, a timed note returning, the emergency display) and every row is a
 test.
+
+Deviation (Task 0): the activity table, every row a test. **Activity** (lights on, D restarted):
+a key-down while unlocked, every key including the power key's short press (L5); **the power
+key's short press while locked** (the hint, and the LEDs on: `hint/pwr`); the self-test's first
+frame and **the boot's clock prompt** (L4: the LEDs time out from the prompt, not the self-test);
+a message arriving at an unlocked phone (L7); an incoming call, locked or not (K8), **and its
+ringing holds the LEDs on** (75 s, no timeout); Unlock then `*` (K5); **the emergency display**
+(the `2` of `112` lights a dark phone); the game rows of D7. **Not activity:** a key-up, a hold's
+duration, every other key while locked (the hint, Unlock alone, a second Unlock, a digit or C
+after Unlock), **the `*` that locks** (the LEDs time out from the Menu key-down: `keyguard/lock`),
+a message while locked (K7), a timed screen ending (the lock note, the hint, the emergency
+display returning to the locked standby), the screen saver (L8).
 
 **D4 - The keyguard is a nokia-os standby mode over the kernel; phone-core does not change (new).**
 `src/firmware/features/keyguard.ts` owns a pure `KeyguardEngine` (states `unlocked`, `locking`,
@@ -149,6 +167,11 @@ other plan needs it, and plan 13 keeps the kernel free of Nokia rules. If plan 1
 (`standbyIndicators`, notice applications) make a seam cheaper when Task 7 starts, Task 7 records a
 Deviation instead.
 
+Deviation (Task 0): the wrapper never lets the kernel see a locked phone's power key, so a
+locked phone cannot be switched off with it, as captured (held 10 s: the hint only). A cold
+power-on (the kernel's, or a battery pull) is unlocked: the keyguard lives in RAM
+(`keyguard/power-cycle`).
+
 **D5 - The lock and unlock windows and screens are the captured ones (corrects the brief and the
 spec).** Lock: Menu at standby, then `*` before the carousel's shortcut window ends (2948 ms,
 plan 14; Task 0 confirms the end between 2.0 and 3.0 s and whether ▲/▼ or a digit in between cancel
@@ -157,12 +180,23 @@ it). Notes and texts: `Keypad locked`, `Press Unlock and then *`, `Now press *`,
 Unlock window: `*` while `Now press *` shows (≈1.45 s, K4). Every timeline is generated from its
 golden (plan 14's widget-timeline mechanism), never hand-typed.
 
+Deviation (Task 0): the lock window is `KEYGUARD_LOCK_WINDOW_MS` = 2925 ms from the Menu
+key-down (`*` at 2920 ms locks, at 2930 ms does not), not the 2948 ms of plan 14's dots; ▼, a
+digit or C before the `*` cancels it (the `*` then reaches the kernel: standby number entry, plan
+22). The unlock window is the `Now press *` timeline itself (1448 ms; `*` at 1440 ms unlocks, at
+1450 ms shows the hint); a second Unlock restarts it; a digit or C during it shows the hint.
+
 **D6 - Emergency numbers pass the keyguard as the firmware shows (new).** While locked, digits are
 buffered silently (each shows the hint, K6); when the buffer ends with an emergency number the
 engine shows it with `Call` for the captured time (≈3.87 s), then clears. Task 0 finds the set
 (`112`, `911`, `999`, `000`, `08`, `110` tried) and what C, another digit and Call do. Call hands
 the number to plan 22 (`KeyguardCalls.dial`); until plan 22 exists, Call's golden is `pending:22`
 and nokia-os keeps the display (a known gap named in the acceptance file).
+
+Deviation (Task 0): of `112 911 999 000 08 110 113` only `112` passes, matched on the last three
+digits typed (`2112` and `0112` show it too, `1122` does not); the display lasts 3878.6 ms
+(generated), C ends it at once, another digit shows the hint, Call shows `Attempting emergency
+call` / `End` (`keyguard/emergency-call`, `pending:22`).
 
 **D7 - Games › Settings › Lights forces the LEDs during play (new; completes plan 23's Lights).**
 While a game session is playing (not paused, not on a game-over or top-score screen), Lights Off
@@ -171,11 +205,21 @@ apply. The rule reads the stored setting through the settings store and the sess
 plan 23's `StockGames` holder (read only); plan 24's games reuse it. Task 0 records pause, Continue,
 the game-over screen and the top-score fireworks.
 
+Deviation (Task 0): Snake II's pause (Navi or C during play: the same) and Continue are key-downs
+and light activity; under Lights Off, Continue lights and the force puts the LEDs off again 20 ms
+later; under Lights On the pause and the game-over screens time out normally. The death's end
+(the fireworks or `Game over`) releases the force with activity, and the top score's `Game over!`
+screen is activity again. The power key during play does nothing under Lights Off.
+
 **D8 - Calls and messages reach a locked phone through hooks (new; for plans 18 and 22).** The
 engine exposes `pass()` (an incoming call: lights on, keys to the kernel until the call ends) and
 `resume()` (the call ended: `Keypad locked` again, K8), and `arrivedWhileLocked()` (a message:
 no lights, K7). Plans 18 and 22 call them; plan 25 drives them in tests only. The locked standby's
 soft key is `Unlock` whatever the kernel's notice says (K7).
+
+Deviation (Task 0): `pass()` is light activity and the ringing holds the LEDs on until the call
+is answered or ends (plan 22 calls `force("on")` and `force(null)`); `resume()` shows `Keypad
+locked` again (446/232/232/1979 ms, the lock note's timeline) and then the locked standby.
 
 **D9 - Lights goldens are event timelines (new; plan 16 D6's format, simplified).** A lights golden
 lists LED edges `t_ms light on|off` relative to the recording's first key-down, with the keys and
@@ -194,10 +238,17 @@ hint and unlock respond at the key-down when Task 0 shows the firmware drawing b
 (K1's 61 ms and K3's 25-40 ms suggest key-down); otherwise at the release, with a Deviation. The
 redraw latency itself is not reproduced; goldens align on the first changed frame.
 
+Deviation (Task 0): confirmed: the lock note, the hint, `Now press *` and the emergency display
+draw while their key is still held (key-down).
+
 **D12 - Keyguard sounds through plan 16's sounder, unchanged (plan 16 D8/D12).** Locked keys beep
 as Task 0's sound captures show (or are silent: a `silent-key` as plan 16 Task 8 did); keyguard
 notes with a captured tone join `NOTE_SOUNDS` by their text through plan 16's generator. If a
 golden needs sounder behaviour beyond that, stop and report: the sounder is plan 16's file.
+
+Deviation (Task 0): `Keypad locked` plays the 1750 Hz warning tone (0x9105, 293 ms) in place of
+the `*`'s beep: it joins `NOTE_SOUNDS` by its text; locked keys (the hint), C, Unlock alone and
+the emergency display are silent (`silent-key`); the unlocking `*` beeps as any key.
 
 **D13 - phone-3d gets a keypad light input; the host wires nokia-os to it (new; contract change).**
 `Nokia3310Props` gains `keypadLightOn?: boolean` (default: `backlightOn`), and `backlightOn` is
@@ -460,68 +511,104 @@ digits failed). Every recording is `record <name> start` plus `lights <name>` be
 key, with raw `press`/`release` edges, and writes `keys.csv` as plan 16's did. Navigation is checked
 against the LCD before each recording.
 
-- [ ] **H harness:** `lights <name>` / `lights off` writes `<name>.lights.csv`
+- [x] **H harness:** `lights <name>` / `lights off` writes `<name>.lights.csv`
       (`t_ms,lcd_led,kbd_led`, a row at the start and whenever either changes, polled after every
       1 ms grain, beside `audio_pump`) and a first comment line `# power_on_ms=<emulated ms since
 the last power-on at the start>`. `record`'s output must stay byte-identical: verify with
       plan 13's clock script before and after. Update the README's command and output rows.
-- [ ] **L timeout:** virgin and factory: C at standby at 16 phases of the light tick (steps of
+- [x] **L timeout:** virgin and factory: C at standby at 16 phases of the light tick (steps of
       124 ms over 1982.6 ms), each after the LEDs are off; C held 0.2, 0.5, 1, 2, 4, 8 and 16 s;
       two taps 1 s apart straddling a tick; ▲/▼ in a list, Menu, Navi on a page, digits in Menu
       shortcuts, C held to standby (`lights/keys/<key>`); a key pressed while the LEDs are still on
       (does it restart D?). Report the period and anchor (from the power-on edge, the boot's
       start or its end), D, and whether the rule is "first tick ≥ D" or "n-th tick".
-- [ ] **B boot:** factory power-on to 40 s; virgin with the security gate (keys in the gate);
+- [x] **B boot:** factory power-on to 40 s; virgin with the security gate (keys in the gate);
       with a welcome note; power-off while lit (`lights/boot/*`).
-- [ ] **P power key:** short press in the carousel, in a list, in a game, at standby
+- [x] **P power key:** short press in the carousel, in a list, in a game, at standby
       (`lights/power-key/*`), each after the LEDs went off.
-- [ ] **K keyguard (LCD + lights):** `lock` (Menu, `*` at 300 ms); `lock-gap/<ms>` for 2000,
+- [x] **K keyguard (LCD + lights):** `lock` (Menu, `*` at 300 ms); `lock-gap/<ms>` for 2000,
       2500, 2800, 2900, 2940, 2960, 3000 ms; Menu then ▼ then `*`, Menu then `1` then `*`;
       `carousel-star`; `standby` still; `hint/<key>` for every key (C held 1.5 s and 4 s, ▲ held,
       the power key's short press); `unlock-alone` (Unlock, 3 s); `unlock` (Unlock, `*` at 300 ms);
       `unlock-gap/<ms>` for 1300-1550 ms in 50 ms steps; Unlock then a digit; Unlock twice;
       everything while the LEDs are on and while they are off.
-- [ ] **E emergency:** `112`, `911`, `999`, `000`, `08`, `110` while locked (`emergency/<n>`);
+- [x] **E emergency:** `112`, `911`, `999`, `000`, `08`, `110` while locked (`emergency/<n>`);
       `1 1 3`; `1 1 2 2`; C during the display; Call on `112` (`emergency-call`: record what the
       firmware does, up to 15 s).
-- [ ] **A arrivals:** `sms` at an unlocked and a locked standby; `callin` at a locked and an
+- [x] **A arrivals:** `sms` at an unlocked and a locked standby; `callin` at a locked and an
       unlocked standby: answered and ended, rejected (C), and left to ring out; the LEDs and screens
       of each (`keyguard/{call,sms}`, `lights/arrival/*`); `standby-message` still.
-- [ ] **G games:** factory, Snake II with Lights Off and On: New game, play keys for 30 s, pause
+- [x] **G games:** factory, Snake II with Lights Off and On: New game, play keys for 30 s, pause
       (C) and Continue, a crash and its game-over screen, a new top score's fireworks
       (`lights/game/*`).
-- [ ] **S sound** (factory, `audio` + `keys.csv` as plan 16): lock, a key on the locked standby,
+- [x] **S sound** (factory, `audio` + `keys.csv` as plan 16): lock, a key on the locked standby,
       Unlock alone, unlock, an emergency number (`sound/keyguard/*`).
-- [ ] **V screen saver:** factory, Screen saver On, 60 s at standby; 5-9-4 Screen saver
+- [x] **V screen saver:** factory, Screen saver On, 60 s at standby; 5-9-4 Screen saver
       (`lights/screen-saver`; the note if any).
-- [ ] OCR every image (plan 15's command with `OUT='plan25'`) into `plan25/text.json`.
-- [ ] `gen_v639_plan25.py check`: every recording has `timings.csv`, `.lights.csv` and
+- [x] OCR every image (plan 15's command with `OUT='plan25'`) into `plan25/text.json`.
+- [x] `gen_v639_plan25.py check`: every recording has `timings.csv`, `.lights.csv` and
       `keys.csv`; every lights recording's off edges fit the fitted tick within 2 ms.
-- [ ] Append "Plan 25 supplementary captures" to `$REF/captures/README.md`.
-- [ ] No commit. Record the outcome under this task: the tick (period, anchor), D and the rule,
+- [x] Append "Plan 25 supplementary captures" to `$REF/captures/README.md`.
+- [x] No commit. Record the outcome under this task: the tick (period, anchor), D and the rule,
       the activity table (D3, every row), the lock and unlock windows, the keyguard timelines and
       key-down/release behaviour (D11), the emergency set and Call, arrivals while locked, the game
       rule (D7) outside play, the sounds, and any section that failed.
+
+**Task 0 outcome (2026-10-14).** Generator `$REF/captures/scripts/gen_v639_plan25.py` (14 sections,
+`v639-plan25-<section>.cap` command logs), 211 recordings under `$REF/captures/6.39/plan25/`, each
+with `timings.csv`, `.lights.csv` and `keys.csv`; `check` passes; `stats.txt` holds every LED edge
+with its activity window; `text.json` OCRs 2247 images. Raw numbers are below; the decisions they
+change carry `Deviation:` lines.
+
+Deviation: the harness change is in a copy, `$REF/tools/harness-p25/` (other agents run
+`tools/harness` concurrently): `dct3cap.c` gains `lights <name>` / `lights off` and stops advancing
+time once the phone parks after a power-off (it spun forever before). `v639-plan13-clock.cap`
+gives the same 44 files (SHA-256) from `tools/harness` and from the copy, before and after both
+changes. **Fold the copy into `tools/harness` later** (then delete it); until then the README's
+"Script format" and "Output format" tables stay unchanged and the commands are documented in its
+"Plan 25 supplementary captures" section. `check` allows 3 ms about the tick, not 2 (measured
+spread 2.9 ms).
+
+| Item             | Outcome                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Light tick       | every timeout off edge (122, ticks 12-94) lies within 2.9 ms of power-on + 2 + k × **1982.61 ms**; the anchor is the power-on (`dct3_web_boot`, cycle 0), not the boot's end                                                                                                                                                                                                                                                       |
+| Rule and D       | the LEDs go off at the **first tick at least D after the last light activity**, D ∈ (13619.6, 13627.6] ms (`fine-252` dark, `fine-260` lit at the next tick; virgin `tap-02` stayed lit at 13631 ms: the tick's ±3 ms). The n-th-tick rule is falsified (taps 124 ms apart straddle the threshold). D = **13624 ms**                                                                                                               |
+| Holds, releases  | C held 0.2-16 s: the same edge as a tap (key-down only); a key while lit restarts D (`relight-*`); two taps straddling a tick: the second counts                                                                                                                                                                                                                                                                                   |
+| On edges         | 14-33 ms after the key-down (mostly 17-19), both lines in the same 1 ms grain; off edges at most one grain apart (`boot/power-on`: keypad 1 ms before display). `leds` is only 0 or 3                                                                                                                                                                                                                                              |
+| Boot             | LEDs on with the self-test's first frame (245-272 ms); the clock prompt is light activity (factory off 23.79 s, virgin with the gate and the `Hi` welcome image 31.72 s); the power key held at standby: profile list, then LCD blank and LEDs off together 1017 ms into the hold (the emulator reports no CCONT cut there)                                                                                                        |
+| Power key        | short press lights at standby (profile list, plan 17), in the carousel and a list (no pixel changes); during Snake II under Lights Off: nothing (dark, the game runs on)                                                                                                                                                                                                                                                           |
+| Lock window      | Menu then `*` locks with `*` ≤ 2920 ms after the Menu key-down, not at ≥ 2930 (`lock-gap/*`): **(2920, 2930] ms**, 20-28 ms before plan 14's 2948 ms dots; ▼, a digit or C between cancels (`*` then opens standby number entry: `*`, `Call`)                                                                                                                                                                                      |
+| Lock timeline    | `Keypad locked` 69 ms after the `*` key-down (drawn while `*` is held: key-down), 442/232/240/1971 ms (2885 ms), 9 ms partial, the locked standby; the locking `*` is **not** light activity (the LEDs time out from Menu)                                                                                                                                                                                                         |
+| Locked keys      | every key (0-9, `*`, `#`, ▲, ▼, C, C held 1.5/4 s, ▲ held) shows `Press Unlock and then *`: standby without ladders 25-34 ms after the key-down, then 564/595/179/202/194/195/579/401 ms (2909 ms), 8-23 ms partial(s), the locked standby; silent and dark; drawn at key-down (5 held 600 ms); a key during it restarts it from the first step (`hint-during`, `hint-late`)                                                       |
+| Power key locked | the hint **and the LEDs on** (`hint/pwr`); held 10 s: the hint only, no power-off (`power-cycle/power-key-held`); a cold power-on (battery pull: `saveflash`, reboot) is unlocked                                                                                                                                                                                                                                                  |
+| Unlock           | Unlock (key-down, also held 800 ms) shows `Now press *` in place of the operator and soft key for 1448 ms; a second Unlock restarts it; **`*` ≤ 1440 ms after the Unlock key-down unlocks, ≥ 1450 shows the hint** (`unlock-gap/*`): the window is the `Now press *` display; a digit or C during it shows the hint; none of these light                                                                                           |
+| Unlocked         | `*` → 21 ms partial, `Keypad active` 683/232/521 ms (`Done`'s box and tick), 9 ms partial, standby (`Menu`); LEDs on at the `*` (activity, + 22 ms)                                                                                                                                                                                                                                                                                |
+| Emergency        | of `112 911 999 000 08 110 113 1122` only a buffer **ending in `112`** (`2112`, `0112` too) shows `112` (large digits, right-aligned) and `Call` for **3878.6 ms**, lighting the LEDs at the `2` (activity); the digits before it show the hint; C during it: the locked standby at once; another digit: the hint (the LEDs stay lit); Navi (Call): `Attempting emergency call`, `End` (plan 22); after it Unlock then `*` unlocks |
+| Arrivals         | SMS unlocked: lights with `1 message received`, `Read`; SMS locked: dark, `1 message received`, `Unlock`; a call, locked or not: lights at the ringing screen and holds them through ringing (75 s, no timeout), Navi answers, Navi (`End`) or C ends; locked: `Keypad locked` again after the call (446/232/232/1979 ms), then the locked standby; the LEDs time out from the end                                                 |
+| Games › Lights   | factory Off: off 38 ms after New game, dark through play keys and the power key; the pause (Navi or C, the same) lights (activity), Continue lights then forces off 20 ms later; the death's end (fireworks or `Game over`) lights (activity) and the top score's `Game over!` screen is activity. On: lit through 30 s of play (no timeout); the pause and game over time out normally; Continue lights and holds                 |
+| Sound            | the lock plays 1750 Hz, 0x9105, 293 ms (a warning tone, in place of `*`'s beep); locked keys, C, Unlock alone and `112` are silent; the unlocking `*` beeps 900 Hz                                                                                                                                                                                                                                                                 |
+| Screen saver     | factory Screen saver On: no screen saver in 60 s, the timeout unchanged; Menu 5 9 4 opens a `Use` list                                                                                                                                                                                                                                                                                                                             |
+| Failed sections  | none in the final run (the first `boot` run waited for a CCONT power-off the emulator never reported; the generator now waits for the blank LCD)                                                                                                                                                                                                                                                                                   |
 
 ### Task 1 - Contracts and documentation
 
 **Files:** `VISION.md`, `docs/specs/stock/keyguard-and-backlight.md` (new),
 `docs/specs/nokia-3310.md` (the conflicting lines only), `docs/plans/README.md` (row 25), this plan.
 
-- [ ] Apply Task 0's outcome to D2, D3, D5-D8 and D11 (Deviation lines where it changes them) and
+- [x] Apply Task 0's outcome to D2, D3, D5-D8 and D11 (Deviation lines where it changes them) and
       fix the contract names.
-- [ ] VISION: `StockLightEvent`, `StockLightsPort`, `StockPhoneConfig.lights` and the rules; a
+- [x] VISION: `StockLightEvent`, `StockLightsPort`, `StockPhoneConfig.lights` and the rules; a
       **Lights (plan 25)** paragraph beside **Sound (plan 16)**; phone-3d's `keypadLightOn` and the
       meaning of `backlightOn`; the nokia-os package row mentions the keyguard and lights.
-- [ ] `docs/specs/stock/keyguard-and-backlight.md`: K1-K8, L1-L9 and Task 0's outcome as the stock
+- [x] `docs/specs/stock/keyguard-and-backlight.md`: K1-K8, L1-L9 and Task 0's outcome as the stock
       behaviour (keyguard flow and screens, windows, emergency, arrivals, the light tick and rule,
       the activity table, games, power key, boot), the artefacts table, UNVERIFIED items, and the
       contrast with the website's backlight. Marked "(plan 25, in progress)".
-- [ ] `docs/specs/nokia-3310.md`: mark as superseded, with a link, the keyguard bullet (window
+- [x] `docs/specs/nokia-3310.md`: mark as superseded, with a link, the keyguard bullet (window
       "~1.5 s"; the notes) and the backlight bullet ("~15 s"); nothing else.
-- [ ] Plans README row 25 `in progress`.
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define the stock keyguard and lights port (plan 25)`.
+- [x] Plans README row 25 `in progress`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define the stock keyguard and lights port (plan 25)`.
 
 ### Task 2 - Lights golden format, capture set and goldens (TDD)
 
