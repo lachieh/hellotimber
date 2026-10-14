@@ -1,6 +1,6 @@
 // The generated stock tree (plan 14 Task 3): checked as data, without REF.
 import { describe, expect, it } from "vite-plus/test";
-import { LEVEL1 } from "../scripts/text-runs.ts";
+import { LEVEL1 } from "../scripts/resource-inputs/13-foundation.ts";
 import { STOCK_TREE, type StockTreeNode } from "../src/firmware/generated/stock-tree.ts";
 
 function walk(

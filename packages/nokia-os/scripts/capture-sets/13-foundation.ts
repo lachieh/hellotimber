@@ -1,3 +1,4 @@
+import { resources } from "../resource-inputs/13-foundation.ts";
 // Plan 13's goldens (docs/plans/13-nokia-os-foundation.md "Capture set"): the boot, standby, the
 // menu carousel, its animations and level-one lists.
 import type { CaptureSetEntry, PlanCaptureSet } from "../capture-set.ts";
@@ -188,6 +189,7 @@ function clockTimeEntries(): CaptureSetEntry[] {
 
 export const foundation: PlanCaptureSet = {
   plan: "13",
+  resources,
   lcd: () => ENTRIES,
   notImported: {
     "setup/": "virgin-EEPROM time and date wizard",

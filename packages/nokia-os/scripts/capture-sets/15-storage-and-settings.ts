@@ -1,3 +1,4 @@
+import { resources } from "../resource-inputs/15-storage-and-settings.ts";
 // Plan 15's goldens (docs/plans/15-storage-and-settings.md "Golden pipeline additions"; paths
 // under plan15/): the boot gates and welcome notes, and the security-code probes.
 import type { CaptureSetEntry, PlanCaptureSet } from "../capture-set.ts";
@@ -232,6 +233,7 @@ const PROBE_TIMELINES: readonly ProbeSpec[] = [
 
 export const storageAndSettings: PlanCaptureSet = {
   plan: "15",
+  resources,
   lcd: (io) => [
     ...plan15BootEntries(),
     ...probeCaptureSet(io.frames, {

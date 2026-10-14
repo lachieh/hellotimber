@@ -2,14 +2,14 @@
 //
 //   mise exec -- vp run @hellotimber/nokia-os#extract-resources
 //
-// - fonts: glyphs harvested from the text runs in scripts/text-runs.ts (plan 13, by hand) and
-//   scripts/generated/tree-text-runs.ts (plan 14, from the corpus OCR), + glyph-overrides.ts;
+// - fonts: plan-owned text runs (including generated tree OCR) and glyph resolutions,
+//   registered through PlanCaptureSet.resources;
 // - menu icons: per carousel `.anim` golden, the icon frames cropped to the union ink box of
 //   x 0..79, y 20..39, and their timeline (plus the Clock's per-reveal timelines);
 // - boot: the full-frame images and timeline of boot/power-on, and the hands of
 //   boot/security-gate (plan 15);
 // - status: the signal and battery ladders and icons cropped from standby/standby;
-// - widgets (plan 14): the sprites of scripts/widget-sprites.ts, and the widget timelines of the
+// - widgets (plan 14): the sprites of registered widget resources, and the widget timelines of the
 //   tree goldens (notes, progress notes, blinking prompts) and of the probes it names (splashes,
 //   the notes that follow a key, the game-over screens), aligned on their trigger frame (D8);
 // - snake (plan 23): the Snake II pictures, mazes and timing of scripts/snake-resources.ts;
@@ -23,10 +23,10 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { MENU_SLUGS } from "./capture-set.ts";
+import { captureSets } from "./capture-registry.ts";
+import { MENU_SLUGS, type PlanCaptureSet } from "./capture-set.ts";
+import { composeResourceDeclarations, type ResourceInputs } from "./resource-declarations.ts";
 import { readGoldenIndex } from "./golden-index.ts";
-import { TREE_TEXT_RUNS } from "./generated/tree-text-runs.ts";
-import { GLYPH_OVERRIDES } from "./glyph-overrides.ts";
 import {
   findGoldenImage,
   LCD_WIDTH,
@@ -35,6 +35,7 @@ import {
   type Golden,
 } from "./golden-format.ts";
 import {
+  FONT_HEIGHTS,
   formatIssue,
   harvestGlyphs,
   type FontName,
@@ -44,14 +45,6 @@ import {
 import { extractSnakeResources, type SnakeResourceData } from "./snake-resources.ts";
 import { parseSoundGolden } from "./sound-format.ts";
 import { extractSoundResources, type SoundResourceData } from "./sound-programs.ts";
-import { FONT_HEIGHTS, TEXT_RUNS } from "./text-runs.ts";
-import {
-  PROBE_TIMELINES,
-  TIMELINE_GROUPS,
-  WIDGET_SPRITES,
-  type SpriteGroup,
-  type TimelineKind,
-} from "./widget-sprites.ts";
 import {
   STOCK_TREE,
   type StockResult,
@@ -154,7 +147,7 @@ export interface WidgetData {
   readonly timelines: Readonly<Record<string, WidgetTimelineData>>;
   /** Tree node number → timeline id (from the goldens' `covers`; splashes by their game). */
   readonly byNode: Readonly<Record<string, string>>;
-  /** Named probe timelines (scripts/widget-sprites.ts `PROBE_TIMELINES`). */
+  /** Explicit probe timelines registered by name. */
   readonly byName: Readonly<Record<string, string>>;
 }
 
@@ -272,21 +265,21 @@ function loadGolden(goldensDir: string, id: string): Golden {
   return parseGolden(readFileSync(join(goldensDir, file), "utf8"), file);
 }
 
-function harvestFonts(goldensDir: string): Record<FontName, HarvestedFont> {
+function harvestFonts(goldensDir: string, inputs: ResourceInputs): Record<FontName, HarvestedFont> {
   const samples: RunSample[] = [];
-  for (const [id, images] of [...Object.entries(TEXT_RUNS), ...Object.entries(TREE_TEXT_RUNS)]) {
+  for (const [id, images] of Object.entries(inputs.textRuns)) {
     const golden = loadGolden(goldensDir, id);
     for (const [name, runs] of Object.entries(images)) {
       const { pixels } = findGoldenImage(golden, name);
       for (const run of runs) samples.push({ source: `${id} ${name}`, run, pixels });
     }
   }
-  const { fonts, issues } = harvestGlyphs(samples, GLYPH_OVERRIDES, FONT_HEIGHTS);
+  const { fonts, issues } = harvestGlyphs(samples, inputs.glyphOverrides, FONT_HEIGHTS);
   if (issues.length > 0) {
     throw new Error(
-      `glyph harvest reported ${issues.length} issue(s); fix scripts/text-runs.ts (or the OCR ` +
+      `glyph harvest reported ${issues.length} issue(s); fix the plan's resource text runs (or the OCR ` +
         `runs' model, scripts/tree-model.ts) or add a ` +
-        `scripts/glyph-overrides.ts entry:\n${issues.map((i) => `  ${formatIssue(i)}`).join("\n")}`,
+        `plan-owned glyph override entry:\n${issues.map((i) => `  ${formatIssue(i)}`).join("\n")}`,
     );
   }
   return fonts as Record<FontName, HarvestedFont>;
@@ -440,7 +433,7 @@ function extractStatus(goldensDir: string): StatusData {
 const PARTIAL_MS = 20;
 
 /** The widget kind a tree node's screen animates with, if any. */
-function widgetKind(screen: StockScreenSpec | StockResult): TimelineKind | undefined {
+function widgetKind(screen: StockScreenSpec | StockResult): string | undefined {
   switch (screen.kind) {
     case "timed-note":
     case "static-note":
@@ -570,7 +563,7 @@ function toWidgetTimeline(steps: readonly Step[], loopFrom?: number): WidgetTime
   return { frames, steps: out, ...(loopFrom === undefined ? {} : { loopFrom }) };
 }
 
-function extractWidgets(goldensDir: string): WidgetData {
+function extractWidgets(goldensDir: string, inputs: ResourceInputs): WidgetData {
   const goldens = new Map<string, Golden>();
   const golden = (id: string): Golden => {
     let found = goldens.get(id);
@@ -582,23 +575,17 @@ function extractWidgets(goldensDir: string): WidgetData {
   };
 
   const sprites: Record<string, Sprite> = {};
-  const groups = new Map<SpriteGroup, { id: string; region: Region; art: string }[]>();
-  for (const entry of WIDGET_SPRITES) {
-    if (sprites[entry.id]) throw new Error(`widget sprite "${entry.id}" is listed twice`);
+  const groups = new Map<string, { id: string; region: Region; art: string }[]>();
+  for (const entry of inputs.sprites) {
     const art = crop(findGoldenImage(golden(entry.golden), entry.image).pixels, entry);
-    if (!art.some((row) => row.includes("#"))) {
-      throw new Error(
-        `widget sprite "${entry.id}": no ink in ${entry.golden} image "${entry.image}"`,
-      );
-    }
     sprites[entry.id] = { x: entry.x0, y: entry.y0, art };
     groups.set(entry.group, [
       ...(groups.get(entry.group) ?? []),
       { id: entry.id, region: entry, art: art.join("\n") },
     ]);
   }
-  const spriteIn = (pixels: Uint8Array, kind: TimelineKind): string | undefined => {
-    for (const group of TIMELINE_GROUPS[kind]) {
+  const spriteIn = (pixels: Uint8Array, kind: string): string | undefined => {
+    for (const group of inputs.timelineGroups[kind] ?? []) {
       for (const sprite of groups.get(group) ?? []) {
         if (crop(pixels, sprite.region).join("\n") === sprite.art) return sprite.id;
       }
@@ -613,7 +600,7 @@ function extractWidgets(goldensDir: string): WidgetData {
    */
   const segment = (
     id: string,
-    kind: TimelineKind,
+    kind: string,
     start: "trigger" | "first-sprite",
     fromFrame?: number,
   ): Step[] => {
@@ -736,10 +723,8 @@ function extractWidgets(goldensDir: string): WidgetData {
   }
 
   const byName: Record<string, string> = {};
-  for (const probe of PROBE_TIMELINES) {
+  for (const probe of inputs.probes) {
     const key = probe.node ?? probe.name;
-    if (key === undefined)
-      throw new Error(`${probe.golden}: a probe timeline needs a node or a name`);
     const looping = probe.kind === "progress";
     const steps = segment(probe.golden, probe.kind, "first-sprite", probe.fromFrame);
     const id = add(key, steps, looping);
@@ -749,13 +734,19 @@ function extractWidgets(goldensDir: string): WidgetData {
   return { sprites, timelines, byNode, byName };
 }
 
-export function extractResources(goldensDir: string = GOLDENS_DIR): ExtractedResources {
+export function extractResources(
+  goldensDir: string = GOLDENS_DIR,
+  sets: readonly PlanCaptureSet[] = captureSets(),
+): ExtractedResources {
+  const inputs = composeResourceDeclarations(sets, readGoldenIndex(goldensDir), (id) =>
+    loadGolden(goldensDir, id),
+  );
   return {
-    fonts: harvestFonts(goldensDir),
+    fonts: harvestFonts(goldensDir, inputs),
     menuIcons: extractMenuIcons(goldensDir),
     boot: extractBoot(goldensDir),
     status: extractStatus(goldensDir),
-    widgets: extractWidgets(goldensDir),
+    widgets: extractWidgets(goldensDir, inputs),
     snake: extractSnakeResources(
       (id) => loadGolden(goldensDir, id),
       (id) => parseTickGolden(readFileSync(join(goldensDir, `${id}.ticks.txt`), "utf8"), id),

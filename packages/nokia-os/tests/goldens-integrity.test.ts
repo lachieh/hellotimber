@@ -19,6 +19,7 @@ import {
 import * as CAPTURE_SETS from "../scripts/capture-sets/index.ts";
 import {
   indexedPlans,
+  PLAN_NUMBER,
   readGoldenIndex,
   readPlanIndex,
   type GoldenIndexEntry,
@@ -106,9 +107,12 @@ describe("committed goldens", () => {
   it("names a later plan for every pending fixture", () => {
     const pending = index.filter((entry) => entry.status !== "asserted");
     for (const entry of pending) {
-      const plan = /^pending:(\d+)$/.exec(entry.status);
-      expect(plan, `${entry.id}: ${entry.status}`).not.toBeNull();
-      expect(Number(plan![1])).toBeGreaterThan(13);
+      const plan = entry.status.slice("pending:".length);
+      expect(
+        entry.status.startsWith("pending:") && PLAN_NUMBER.test(plan),
+        `${entry.id}: ${entry.status}`,
+      ).toBe(true);
+      expect(Number.parseInt(plan, 10)).toBeGreaterThan(13);
     }
   });
 });

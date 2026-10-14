@@ -3,6 +3,7 @@
 // `scripts/capture-sets/index.ts`; the importer executes them and nothing else decides what is
 // imported. Paths are relative to `$REF/captures/6.39`.
 // See docs/plans/13-nokia-os-foundation.md "Capture set" and "Ground truth and artefacts".
+import type { ResourceDeclarations } from "./resource-declarations.ts";
 import type { GameCaptureIo, TickFixtureSpec } from "./game-capture-set.ts";
 import type {
   GoldenKeyPress,
@@ -101,6 +102,8 @@ export interface CaptureIo {
 export interface PlanCaptureSet {
   /** The plan number, as the file name starts (`13`, `18b`). */
   readonly plan: string;
+  /** Evidence derived only from committed LCD goldens. */
+  readonly resources?: ResourceDeclarations;
   /** LCD goldens: stills and timelines. */
   readonly lcd?: (io: CaptureIo) => readonly CaptureSetEntry[];
   /** Tick fixtures (`<id>.ticks.txt`). */

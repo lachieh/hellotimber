@@ -19,12 +19,11 @@ import type {
   PlanCaptureSet,
   SourceChoice,
 } from "./capture-set.ts";
-import * as CAPTURE_SETS from "./capture-sets/index.ts";
+import { captureSets } from "./capture-registry.ts";
 import type { GameCaptureIo, GameKeyRow } from "./game-capture-set.ts";
 import {
   GOLDEN_INDEX_DIR,
   indexedPlans,
-  PLAN_NUMBER,
   planIndexPath,
   serializePlanIndex,
   type GoldenIndexEntry,
@@ -58,19 +57,6 @@ interface TimingRow {
 }
 
 const LCD_MODES: Record<string, LcdMode> = { "0": "blank", "2": "normal", "3": "inverse" };
-
-/** The registered capture sets in plan order; each plan number once. */
-function captureSets(): PlanCaptureSet[] {
-  const sets = Object.values(CAPTURE_SETS) as PlanCaptureSet[];
-  for (const set of sets) {
-    if (!PLAN_NUMBER.test(set.plan)) fail(`capture set plan "${set.plan}" is not a plan number`);
-    if (sets.filter((other) => other.plan === set.plan).length > 1) {
-      fail(`two capture sets for plan ${set.plan}`);
-    }
-  }
-  const order = (plan: string): number => Number.parseInt(plan, 10);
-  return sets.sort((a, b) => order(a.plan) - order(b.plan) || (a.plan < b.plan ? -1 : 1));
-}
 
 function main(): void {
   const ref = process.argv[2];
