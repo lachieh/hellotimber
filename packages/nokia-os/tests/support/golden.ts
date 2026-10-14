@@ -11,6 +11,25 @@ import {
 /** Allowed difference between a frame's aligned golden start and its actual start (D9). */
 export const TIMING_TOLERANCE_MS = 2;
 
+/**
+ * The tolerance of probe timelines that replay another recording's timings or press keys after
+ * the trigger (plan 14 closeout decision 2): separate recordings of one path differ by 3-22 ms
+ * (splash, Top score, Searching's bar, the shortcut window), and the firmware's timers run from
+ * the key while the captures only show its redraw, 50-125 ms later.
+ */
+export const PROBE_TOLERANCE_MS = 25;
+
+/** How `expectTimeline` compares frame starts. */
+export interface TimelineTolerance {
+  /** Allowed |Δ| of every timed frame start and of the last frame's hold. Default ±2 ms. */
+  readonly toleranceMs?: number;
+  /**
+   * Golden rows whose start is not compared: the first redraw after a key pressed ahead of it,
+   * whose key-to-redraw latency is not reproduced (D8). Their pixels still must match.
+   */
+  readonly untimedRows?: ReadonlySet<number>;
+}
+
 const LEGEND =
   "legend: '#' ink in both  '.' clear in both  '+' ink only in actual  '-' ink only in golden";
 const WINDOW_PAD = 4;
@@ -144,7 +163,12 @@ const signed = (value: number): string => (value > 0 ? `+${ms(value)}` : ms(valu
  * `trigger-frame: N` the recording's trigger is matched to golden frame N's start; with
  * `before-recording` the first change (frame 1) is matched and frame 0's duration is not compared.
  */
-export function expectTimeline(recorded: RecordedTimeline, golden: Golden, context: string): void {
+export function expectTimeline(
+  recorded: RecordedTimeline,
+  golden: Golden,
+  context: string,
+  { toleranceMs = TIMING_TOLERANCE_MS, untimedRows = new Set() }: TimelineTolerance = {},
+): void {
   const rows = golden.timeline;
   if (!rows || golden.triggerFrame === undefined) {
     throw new Error(`${golden.id} is not a timeline golden with a trigger-frame`);
@@ -177,9 +201,9 @@ export function expectTimeline(recorded: RecordedTimeline, golden: Golden, conte
     }
     const actualStart = frame.startMs - actualOrigin;
     const marks: string[] = [];
-    const timed = !(beforeRecording && i === 0);
+    const timed = !(beforeRecording && i === 0) && !untimedRows.has(i);
     const delta = actualStart - goldenStart;
-    if (timed && Math.abs(delta) > TIMING_TOLERANCE_MS) marks.push("✗ timing");
+    if (timed && Math.abs(delta) > toleranceMs) marks.push("✗ timing");
     const image = findGoldenImage(golden, row.image);
     const mismatch = lcdMismatch(
       frame.pixels,
@@ -197,7 +221,7 @@ export function expectTimeline(recorded: RecordedTimeline, golden: Golden, conte
     lines.push(cells.trimEnd());
   }
 
-  const last = lastFrameCheck(recorded, actual, rows, firstRow);
+  const last = lastFrameCheck(recorded, actual, rows, firstRow, toleranceMs);
   if (!last.ok) failed = true;
   lines.push(` last: ${last.text}  ${last.ok ? "ok" : "✗"}`);
 
@@ -206,7 +230,7 @@ export function expectTimeline(recorded: RecordedTimeline, golden: Golden, conte
     ? "golden frame 1 = first change"
     : `golden frame ${firstRow} = trigger`;
   const out = [
-    `Timeline mismatch: ${golden.id} (aligned: ${alignment}; tolerance ±${TIMING_TOLERANCE_MS} ms)`,
+    `Timeline mismatch: ${golden.id} (aligned: ${alignment}; tolerance ±${toleranceMs} ms)`,
     `scenario: ${context}`,
     ...lines,
   ];
@@ -219,6 +243,7 @@ function lastFrameCheck(
   actual: readonly RecordedFrame[],
   rows: NonNullable<Golden["timeline"]>,
   firstRow: number,
+  toleranceMs: number,
 ): { text: string; ok: boolean } {
   const lastRow = rows[rows.length - 1]!;
   const index = rows.length - 1 - firstRow;
@@ -229,13 +254,13 @@ function lastFrameCheck(
   if (next) {
     const held = next.startMs - frame.startMs;
     const ok = lastRow.lowerBound
-      ? held >= lastRow.durationMs - TIMING_TOLERANCE_MS
-      : Math.abs(held - lastRow.durationMs) <= TIMING_TOLERANCE_MS;
+      ? held >= lastRow.durationMs - toleranceMs
+      : Math.abs(held - lastRow.durationMs) <= toleranceMs;
     return { text: `${holds}; actual changed after ${held} ms`, ok };
   }
   const held = recorded.endMs - frame.startMs;
   // Without a change, an exact duration can never be confirmed; a lower bound needs the
   // recording to run at least that long.
-  const ok = lastRow.lowerBound && held >= lastRow.durationMs - TIMING_TOLERANCE_MS;
+  const ok = lastRow.lowerBound && held >= lastRow.durationMs - toleranceMs;
   return { text: `${holds}; actual held ≥ ${held} ms`, ok };
 }

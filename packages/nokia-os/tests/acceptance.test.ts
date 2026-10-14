@@ -292,50 +292,33 @@ function treeScenario(id: string, covers: readonly string[]): void {
   });
 }
 
-const LATENCY =
-  "kernel timers run from the key, the firmware's from its jittered redraw (a typed entry " +
-  "opens 1431-1477 ms after its digit's redraw; `8` draws a 16 ms partial frame), D8";
-const STANDBY_DIGITS =
-  "after Invalid shortcut, digits and C at standby start a number (out of scope, D14)";
-const TOP_SCORE_JITTER =
-  "this recording's Top score steps run 3-16 ms off tree/08-games/8-1-4.leaf, whose timeline " +
-  "the note plays (same Select path)";
+const PARTIAL_8 =
+  "`8` first draws a 16 ms partial frame (image d: the first 27 bytes of the Games screen over " +
+  "Phone book's), a redraw in progress that the kernel does not reproduce (closeout decision 2: " +
+  "no key-to-redraw latency) and exact pixels cannot skip";
+const ON_OVER_GAMES =
+  "while 8-6 is opening the firmware draws Settings' first page value (`On`) over the Games " +
+  "list (image f)";
 
 /**
- * Asserted goldens whose scenario cannot pass yet, each with its reason: a kernel seam beyond
- * plan 14's contracts, capture jitter between recordings of the same path that exceeds ±2 ms,
- * the key-to-redraw latency D8 does not reproduce, or behaviour outside plan 14. Their scenarios
- * run as expected failures, so a gap that starts passing must leave this table.
+ * Asserted goldens whose scenario cannot pass, each with its reason: separate recordings of one
+ * path that disagree beyond what the comparison allows (partial draws caught at different
+ * points, timer spreads beyond PROBE_TOLERANCE_MS), or a firmware quirk behind one. Their
+ * scenarios run as expected failures, so a gap that starts passing must leave this table.
  */
 const KNOWN_GAPS: Readonly<Record<string, string>> = {
-  "probe/games-top-score-wait": TOP_SCORE_JITTER,
-  "probe/games-top-score-c-2s": TOP_SCORE_JITTER,
-  "probe/games-top-score-down-2s": `${TOP_SCORE_JITTER}; ▼ also returns to New game and then moves to Level (two moves)`,
-  "probe/games-splash-skip-c":
-    "the first splash step lasts 252 ms here, 248 ms in probe/games-splash-8-1 (same Select path)",
-  "probe/games-splash-skip-down":
-    "the first splash step lasts 252 ms here, 248 ms in probe/games-splash-8-1 (same Select path)",
-  "probe/games-splash-skip-menu":
-    "the first splash step lasts 252 ms here, 248 ms in probe/games-splash-8-1 (same Select path)",
-  "probe/progress-6-2-4-2-c":
-    "this recording's bar steps run 7-22 ms off tree/06-settings/6-2-4-2.leaf's (same path)",
   "probe/note-keys-done-down-300":
-    "the 16 ms partial draw before Done covers fewer LCD bytes than in tree/01-phone-book/1-8-1-1.choose",
-  "probe/reenter":
-    "Phone book's carousel return (after C) has no captured timeline; ≈2.1 s later the icon shows another frame",
-  "probe/confirm-10-3-2-yes":
-    "after Erase › All the firmware hides View all and Erase (image d): reminder data, plan 21",
-  "probe/shortcut-m1": LATENCY,
-  "probe/shortcut-m1-1-0": LATENCY,
-  "probe/shortcut-m1-2": LATENCY,
-  "probe/shortcut-m1-wait-9": LATENCY,
-  "probe/shortcut-m8-1": LATENCY,
-  "probe/shortcut-m8-1-2": LATENCY,
-  "probe/shortcut-m8-6": LATENCY,
-  "probe/shortcut-m8-6-3": LATENCY,
-  "probe/shortcut-m1-8-1": STANDBY_DIGITS,
-  "probe/shortcut-m1-8-1-2": STANDBY_DIGITS,
-  "probe/shortcut-m1-9-c": STANDBY_DIGITS,
+    "Done's 16 ms partial draw covers fewer LCD bytes than the 15 ms one of " +
+    "tree/01-phone-book/1-8-1-1.choose (same path), whose timeline the note plays",
+  "probe/shortcut-m1-wait-9":
+    "Speed dials opens 1502 ms after the 9's redraw (1427-1477 ms in the other shortcut " +
+    "probes, 1460 configured): -42 ms; the captures record redraws, not key times",
+  "probe/shortcut-m8-1": PARTIAL_8,
+  "probe/shortcut-m8-1-2": `${PARTIAL_8}; Snake II opens 1427 ms after the 1's redraw (-33 ms)`,
+  "probe/shortcut-m8-6": `${PARTIAL_8}; ${ON_OVER_GAMES}`,
+  "probe/shortcut-m8-6-3":
+    `${PARTIAL_8}; ${ON_OVER_GAMES}; the window ends 2920 ms after the 3's redraw ` +
+    "(2948 configured, +28 ms)",
 };
 
 /** The scenario of an asserted golden: hand-written (plan 13, probes) or generic (tree). */

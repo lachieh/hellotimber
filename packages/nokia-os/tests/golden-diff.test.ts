@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it } from "vite-plus/test";
 import { LCD_HEIGHT, LCD_WIDTH, type Golden } from "../scripts/golden-format.ts";
-import { expectLcd, expectTimeline, type RecordedTimeline } from "./support/golden.ts";
+import {
+  expectLcd,
+  expectTimeline,
+  PROBE_TOLERANCE_MS,
+  type RecordedTimeline,
+} from "./support/golden.ts";
 
 function pixels(...lit: [number, number][]): Uint8Array {
   const out = new Uint8Array(LCD_WIDTH * LCD_HEIGHT);
@@ -304,6 +309,41 @@ describe("expectTimeline", () => {
       "scenario: s; timeline frame 2",
       "2 px differ (1 extra, 1 missing); first at (x=0, y=0); differences in x=0..2, y=0..2",
     ]);
+  });
+
+  it("widens the tolerance and skips untimed rows on request (probes)", () => {
+    // c 24 ms early, the last b 40 ms late: within ±25 ms only with row 3 untimed.
+    const jittered = recording([
+      [1000, imgB],
+      [1169, imgC],
+      [1426, imgB],
+    ]);
+    expect(() => expectTimeline(jittered, timeline, "s")).toThrow(/tolerance ±2 ms/);
+    const message = failure(() =>
+      expectTimeline(jittered, timeline, "s", { toleranceMs: PROBE_TOLERANCE_MS }),
+    );
+    expect(message).toMatch(/tolerance ±25 ms/);
+    expect(message).toMatch(/\+40\.0 +ok +✗ timing/);
+    expect(message).not.toMatch(/-24\.0 +ok +✗/);
+    expect(() =>
+      expectTimeline(jittered, timeline, "s", {
+        toleranceMs: PROBE_TOLERANCE_MS,
+        untimedRows: new Set([3]),
+      }),
+    ).not.toThrow();
+    // An untimed row still compares its pixels.
+    expect(() =>
+      expectTimeline(
+        recording([
+          [1000, imgB],
+          [1193, imgC],
+          [1402, imgC],
+        ]),
+        timeline,
+        "s",
+        { untimedRows: new Set([3]) },
+      ),
+    ).toThrow(/✗ pixels/);
   });
 
   it("aligns before-recording fixtures on the first change and skips frame 0's timing", () => {

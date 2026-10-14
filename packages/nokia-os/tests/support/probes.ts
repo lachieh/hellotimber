@@ -2,11 +2,22 @@
 // keys from `$REF/captures/scripts/v639-plan14.cap` (see the golden's note): stills compare one
 // image per step; timelines press the trigger, then each later key on the tick its effect starts
 // in the golden (D8: the key-to-redraw latency is not reproduced).
+//
+// Timing (plan 14 closeout decision 2): the timeline is anchored on the trigger key. A probe
+// that replays another recording's timings, or presses keys after the trigger, compares frame
+// starts within PROBE_TOLERANCE_MS (each such scenario says why); every other probe keeps ±2 ms.
+// Pixels are always exact.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { expect } from "vite-plus/test";
-import { expectLcd, expectTimeline } from "./golden.ts";
+import {
+  expectLcd,
+  expectTimeline,
+  lcdMismatch,
+  PROBE_TOLERANCE_MS,
+  type TimelineTolerance,
+} from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
-import { standbyRig, type Rig } from "./rig.ts";
+import { frameAt, standbyRig, type Rig } from "./rig.ts";
 
 /** One harness tap (`key`): ≈42 ms down, the 250 ms settle and the 300 ms key gap. */
 const TAP_MS = 592;
@@ -35,24 +46,61 @@ function after(script: string): Rig {
 
 /**
  * A still probe: `steps[i]` runs before image `i` is compared (the probe's images in order).
+ * With `toleranceMs` an image may have been on screen up to that long before or after its step
+ * ends (a shot timed from a key the firmware times from its redraw).
  */
-function stills(id: string, rig: Rig, steps: readonly string[]): void {
+function stills(id: string, rig: Rig, steps: readonly string[], toleranceMs = 0): void {
   const golden = loadGolden(id);
   expect(steps.length, `${id}: one step per image`).toBe(golden.images.length);
   golden.images.forEach((image, i) => {
-    keys(rig, steps[i]!);
-    expectLcd(rig.paint(), { id, image }, `${id}: ${steps.slice(0, i + 1).join(" | ")}`);
+    const context = `${id}: ${steps.slice(0, i + 1).join(" | ")}`;
+    if (toleranceMs === 0) {
+      keys(rig, steps[i]!);
+      expectLcd(rig.paint(), { id, image }, context);
+      return;
+    }
+    const recording = rig.record(toleranceMs, () => keys(rig, steps[i]!));
+    const at = recording.triggerMs;
+    const shown = [
+      frameAt(recording, at - toleranceMs),
+      ...recording.frames.filter(
+        (frame) => frame.startMs > at - toleranceMs && frame.startMs <= at + toleranceMs,
+      ),
+    ];
+    if (shown.some((frame) => lcdMismatch(frame.pixels, { id, image }, context) === undefined)) {
+      return;
+    }
+    expectLcd(frameAt(recording, at), { id, image }, `${context} (±${toleranceMs} ms)`);
   });
 }
 
-/** A later key: pressed on the tick golden row `row` starts (its effect), or at `ms`. */
-type Later = readonly [row: number, key: PhoneKey] | readonly [{ ms: number }, PhoneKey];
+/**
+ * The firmware redraws 50-125 ms after a key (D8). A key pressed ahead of its first redraw is
+ * pressed by the lower bound, and that redraw's start is not compared.
+ */
+const KEY_TO_REDRAW_MS = 50;
+
+/**
+ * A later key: pressed on the tick golden row `row` starts (its effect), at `ms`, or `ahead` of
+ * the row it draws first (KEY_TO_REDRAW_MS before it; the row is then untimed). A key goes ahead
+ * when its effect pre-empts a timer step that would fall inside its redraw latency.
+ */
+type Later =
+  | readonly [row: number, key: PhoneKey]
+  | readonly [{ ms: number }, PhoneKey]
+  | readonly [{ ahead: number }, PhoneKey];
 
 /**
  * A timeline probe from `rig`: frame 0 must be on screen, then the trigger key and the later
  * keys; the recording runs until the golden's last row has been held as long as it was.
  */
-function timeline(id: string, rig: Rig, trigger: PhoneKey, later: readonly Later[] = []): void {
+function timeline(
+  id: string,
+  rig: Rig,
+  trigger: PhoneKey,
+  later: readonly Later[] = [],
+  { toleranceMs }: Pick<TimelineTolerance, "toleranceMs"> = {},
+): void {
   const golden = loadGolden(id);
   const rows = golden.timeline!;
   const t = golden.triggerFrame as number;
@@ -60,13 +108,27 @@ function timeline(id: string, rig: Rig, trigger: PhoneKey, later: readonly Later
   const origin = rows[t]!.startMs;
   const last = rows[rows.length - 1]!;
   const span = last.startMs + last.durationMs - origin + 100;
-  const schedule = later.map(([at, key]) => ({
-    atMs: typeof at === "number" ? rows[at]!.startMs - origin : at.ms,
-    run: () => rig.press(key),
-  }));
+  const untimedRows = new Set<number>();
+  const schedule = later.map(([at, key]) => {
+    let atMs: number;
+    if (typeof at === "number") atMs = rows[at]!.startMs - origin;
+    else if ("ms" in at) atMs = at.ms;
+    else {
+      untimedRows.add(at.ahead);
+      atMs = rows[at.ahead]!.startMs - origin - KEY_TO_REDRAW_MS;
+    }
+    return { atMs, run: () => rig.press(key) };
+  });
   const recording = rig.record(span, () => rig.press(trigger), schedule);
-  expectTimeline(recording, golden, `${id}: ${trigger}, then ${later.map((l) => l[1]).join(", ")}`);
+  const context = `${id}: ${trigger}, then ${later.map((l) => l[1]).join(", ")}`;
+  expectTimeline(recording, golden, context, {
+    untimedRows,
+    ...(toleranceMs === undefined ? {} : { toleranceMs }),
+  });
 }
+
+/** Probe timelines compared within PROBE_TOLERANCE_MS (see the file header). */
+const JITTER = { toleranceMs: PROBE_TOLERANCE_MS } as const;
 
 const SNAKE = "navi down*7 navi navi wait:7000";
 const PHONE_BOOK = "navi navi";
@@ -109,82 +171,123 @@ export const PROBE_SCENARIOS: Record<string, (id: string) => void> = {
     stills(id, standbyRig(), [`${PHONE_BOOK} down*3`, "navi", "c"]),
   "probe/return-wrapped": (id) => stills(id, standbyRig(), [`${PHONE_BOOK} up`, "navi", "c"]),
   "probe/return-note": (id) => timeline(id, after(`${PHONE_BOOK} down*4`), "navi"),
+  // Image 02 is shot 2.1 s after C, 9 ms after Phone book's icon steps (its timeline from
+  // menu/01-phone-book.anim); the firmware times the step from its redraw after C.
   "probe/reenter": (id) =>
-    stills(id, standbyRig(), [`${PHONE_BOOK} down*5`, "c wait:1500", "navi"]),
+    stills(id, standbyRig(), [`${PHONE_BOOK} down*5`, "c wait:1500", "navi"], PROBE_TOLERANCE_MS),
 
-  "probe/shortcut-m1": (id) => timeline(id, standbyRig(), "navi", [[3, "1"]]),
+  // Shortcut probes press digits after Menu: the window (2920-2948 ms) and the opening delay
+  // (1427-1502 ms between redraws) differ between recordings, so they compare within ±25 ms.
+  "probe/shortcut-m1": (id) => timeline(id, standbyRig(), "navi", [[3, "1"]], JITTER),
   "probe/shortcut-m1-8": (id) =>
-    timeline(id, standbyRig(), "navi", [
-      [3, "1"],
-      [5, "8"],
-    ]),
-  "probe/shortcut-m1-8-1": (id) =>
-    timeline(id, standbyRig(), "navi", [
-      [3, "1"],
-      [5, "8"],
-      [6, "1"],
-    ]),
-  "probe/shortcut-m1-8-1-2": (id) =>
-    timeline(id, standbyRig(), "navi", [
-      [3, "1"],
-      [5, "8"],
-      [6, "1"],
-      [7, "2"],
-    ]),
+    timeline(
+      id,
+      standbyRig(),
+      "navi",
+      [
+        [3, "1"],
+        [5, "8"],
+      ],
+      JITTER,
+    ),
   "probe/shortcut-m1-1-0": (id) =>
-    timeline(id, standbyRig(), "navi", [
-      [3, "1"],
-      [5, "1"],
-      [6, "0"],
-    ]),
+    timeline(
+      id,
+      standbyRig(),
+      "navi",
+      [
+        [3, "1"],
+        [5, "1"],
+        [6, "0"],
+      ],
+      JITTER,
+    ),
   "probe/shortcut-m1-2": (id) =>
-    timeline(id, standbyRig(), "navi", [
-      [3, "1"],
-      [5, "2"],
-    ]),
+    timeline(
+      id,
+      standbyRig(),
+      "navi",
+      [
+        [3, "1"],
+        [5, "2"],
+      ],
+      JITTER,
+    ),
   "probe/shortcut-m8-1": (id) =>
-    timeline(id, standbyRig(), "navi", [
-      [3, "8"],
-      [5, "1"],
-    ]),
+    timeline(
+      id,
+      standbyRig(),
+      "navi",
+      [
+        [3, "8"],
+        [5, "1"],
+      ],
+      JITTER,
+    ),
   "probe/shortcut-m8-1-2": (id) =>
-    timeline(id, standbyRig(), "navi", [
-      [3, "8"],
-      [5, "1"],
-      [8, "2"],
-    ]),
+    timeline(
+      id,
+      standbyRig(),
+      "navi",
+      [
+        [3, "8"],
+        [5, "1"],
+        [8, "2"],
+      ],
+      JITTER,
+    ),
   "probe/shortcut-m8-6": (id) =>
-    timeline(id, standbyRig(), "navi", [
-      [3, "8"],
-      [5, "6"],
-    ]),
+    timeline(
+      id,
+      standbyRig(),
+      "navi",
+      [
+        [3, "8"],
+        [5, "6"],
+      ],
+      JITTER,
+    ),
   "probe/shortcut-m8-6-3": (id) =>
-    timeline(id, standbyRig(), "navi", [
-      [3, "8"],
-      [5, "6"],
-      [6, "3"],
-    ]),
+    timeline(
+      id,
+      standbyRig(),
+      "navi",
+      [
+        [3, "8"],
+        [5, "6"],
+        [6, "3"],
+      ],
+      JITTER,
+    ),
   "probe/shortcut-m1-wait-9": (id) =>
-    timeline(id, standbyRig(), "navi", [
-      [3, "1"],
-      [16, "9"],
-    ]),
-  "probe/shortcut-m1-9-c": (id) =>
-    timeline(id, standbyRig(), "navi", [
-      [3, "1"],
-      [5, "9"],
-      [8, "c"],
-    ]),
-
+    timeline(
+      id,
+      standbyRig(),
+      "navi",
+      [
+        [3, "1"],
+        [16, "9"],
+      ],
+      JITTER,
+    ),
   "probe/note-keys-service-nos-c-500": (id) =>
     timeline(id, after(`${PHONE_BOOK} down`), "navi", [[3, "c"]]),
+  // Done plays tree/01-phone-book/1-8-1-1.choose's timeline.
   "probe/note-keys-done-down-300": (id) =>
-    timeline(id, after(`${PHONE_BOOK} down*7 navi navi down`), "navi", [[3, "down"]]),
+    timeline(id, after(`${PHONE_BOOK} down*7 navi navi down`), "navi", [[3, "down"]], JITTER),
 
   "probe/progress-7-6-quit": (id) =>
     timeline(id, after("navi down*6 navi down*4"), "navi", [[41, "navi"]]),
+  // Searching plays tree/06-settings/6-2-4-2.leaf's bar (7-22 ms off this recording's). C comes
+  // before the bar step due at 10593 ms, which never shows: it goes ahead of its redraw.
   "probe/progress-6-2-4-2-c": (id) =>
-    timeline(id, after("navi down*5 navi down navi down*3 navi down"), "navi", [[40, "c"]]),
+    timeline(
+      id,
+      after("navi down*5 navi down navi down*3 navi down"),
+      "navi",
+      [[{ ahead: 40 }, "c"]],
+      JITTER,
+    ),
 
   "probe/confirm-5-2-5-c": (id) =>
     timeline(id, after("navi down*4 navi down navi down*5"), "navi", [[2, "c"]]),
@@ -194,9 +297,6 @@ export const PROBE_SCENARIOS: Record<string, (id: string) => void> = {
     timeline(id, after("navi down*7 navi down*4 navi down*3"), "navi", [[2, "c"]]),
   "probe/confirm-8-6-4-ok": (id) =>
     timeline(id, after("navi down*7 navi down*4 navi down*3"), "navi", [[2, "navi"]]),
-  "probe/confirm-10-3-2-yes": (id) =>
-    timeline(id, after("navi down*9 navi down*2 navi down"), "navi", [[2, "navi"]]),
-
   "probe/prompts-1-1": (id) => timeline(id, after(PHONE_BOOK), "navi", [[2, "c"]]),
   "probe/prompts-1-9": (id) => timeline(id, after(`${PHONE_BOOK} down*8`), "navi", [[2, "c"]]),
   "probe/prompts-6-4": (id) => timeline(id, after("navi down*5 navi down*3"), "navi", [[2, "c"]]),
@@ -246,7 +346,8 @@ export const PROBE_SCENARIOS: Record<string, (id: string) => void> = {
       ] as const
     ).map(([name, key]) => [
       `probe/games-splash-skip-${name}`,
-      (id: string) => timeline(id, after("navi down*7 navi"), "navi", [[3, key]]),
+      // The splash plays probe/games-splash-8-1's timeline (first step 248 ms, here 252 ms).
+      (id: string) => timeline(id, after("navi down*7 navi"), "navi", [[3, key]], JITTER),
     ]),
   ),
   "probe/games-level-keys": (id) =>
@@ -256,10 +357,12 @@ export const PROBE_SCENARIOS: Record<string, (id: string) => void> = {
       [2, "navi"],
     ]),
   "probe/games-level-c": (id) => timeline(id, after(`${SNAKE} down`), "navi", [[2, "c"]]),
-  "probe/games-top-score-wait": (id) => timeline(id, after(`${SNAKE} down*3`), "navi"),
-  "probe/games-top-score-c-2s": (id) => timeline(id, after(`${SNAKE} down*3`), "navi", [[13, "c"]]),
+  // Top score plays tree/08-games/8-1-4.leaf's timeline (3-16 ms off these recordings').
+  "probe/games-top-score-wait": (id) => timeline(id, after(`${SNAKE} down*3`), "navi", [], JITTER),
+  "probe/games-top-score-c-2s": (id) =>
+    timeline(id, after(`${SNAKE} down*3`), "navi", [[13, "c"]], JITTER),
   "probe/games-top-score-down-2s": (id) =>
-    timeline(id, after(`${SNAKE} down*3`), "navi", [[13, "down"]]),
+    timeline(id, after(`${SNAKE} down*3`), "navi", [[13, "down"]], JITTER),
   ...Object.fromEntries(
     Object.entries(INSTRUCTIONS).map(([number, path]) => [
       `probe/games-instructions-${number}`,

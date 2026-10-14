@@ -1,6 +1,6 @@
 lcd-golden 1
 id: probe/shortcut-m1-8-1-2
-status: asserted
+status: pending:22
 source: captures/6.39/plan14/probe/shortcut/m1-8-1-2
 source-sha256: dae5d9b96a8c7d09698332f1d9848b4ae488a007d6efb4fd0866c5e67033db38
 trigger-frame: 1

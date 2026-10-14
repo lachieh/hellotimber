@@ -338,7 +338,7 @@
   {
     "id": "probe/confirm-10-3-2-yes",
     "file": "probe/confirm-10-3-2-yes.lcd.txt",
-    "status": "asserted",
+    "status": "pending:21",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -714,7 +714,7 @@
   {
     "id": "probe/shortcut-m1-8-1",
     "file": "probe/shortcut-m1-8-1.lcd.txt",
-    "status": "asserted",
+    "status": "pending:22",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -722,7 +722,7 @@
   {
     "id": "probe/shortcut-m1-8-1-2",
     "file": "probe/shortcut-m1-8-1-2.lcd.txt",
-    "status": "asserted",
+    "status": "pending:22",
     "kind": "timeline",
     "images": 8,
     "frames": 8
@@ -730,7 +730,7 @@
   {
     "id": "probe/shortcut-m1-9-c",
     "file": "probe/shortcut-m1-9-c.lcd.txt",
-    "status": "asserted",
+    "status": "pending:22",
     "kind": "timeline",
     "images": 8,
     "frames": 10

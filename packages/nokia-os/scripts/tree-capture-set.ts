@@ -467,6 +467,13 @@ interface ProbeSpec {
   readonly shots?: readonly string[];
   /** Stills: shots left out, with the reason. */
   readonly omitted?: Readonly<Record<string, string>>;
+  /**
+   * Default asserted. `pending:<plan>` for a probe whose behaviour a later plan owns (plan 14
+   * closeout decision 3): digits and C at standby after Invalid shortcut start a number
+   * (standby number entry, plan 22); Reminders after Erase › All hides View all and Erase
+   * (reminder data, plan 21).
+   */
+  readonly status?: GoldenStatus;
 }
 
 const PROBE_DIR = "plan14/probe";
@@ -582,8 +589,12 @@ const PROBE_TIMELINES: readonly ProbeSpec[] = [
     [
       ["m1", "Menu 1: waits for a second digit, then opens Phone book."],
       ["m1-8", "Menu 1 8: Invalid shortcut, then standby."],
-      ["m1-8-1", "Menu 1 8 1: Invalid shortcut, then the digit starts a number at standby."],
-      ["m1-8-1-2", "Menu 1 8 1 2: Invalid shortcut, then the number 12."],
+      [
+        "m1-8-1",
+        "Menu 1 8 1: Invalid shortcut, then the digit starts a number at standby.",
+        "pending:22",
+      ],
+      ["m1-8-1-2", "Menu 1 8 1 2: Invalid shortcut, then the number 12.", "pending:22"],
       ["m1-1-0", "Menu 1 1 0: Clock (11), then 11-0 and Invalid shortcut when the window ends."],
       ["m1-2", "Menu 1 2: Profiles (12) opens after the delay, then 12- and dots."],
       ["m8-1", "Menu 8 1: the Snake II splash, the Games list at 8-1, then the game menu."],
@@ -594,12 +605,13 @@ const PROBE_TIMELINES: readonly ProbeSpec[] = [
         "m1-wait-9",
         "Menu 1, wait (Phone book opens), 9: Speed dials on the top row, then its prompt.",
       ],
-      ["m1-9-c/rec", "Menu 1 9: Invalid shortcut, then C at standby."],
-    ] as const
-  ).map(([dir, note]) => ({
+      ["m1-9-c/rec", "Menu 1 9: Invalid shortcut, then C at standby.", "pending:22"],
+    ] as readonly (readonly [string, string, GoldenStatus?])[]
+  ).map(([dir, note, status]) => ({
     name: `shortcut-${dir.replace("/rec", "")}`,
     dir: `shortcut/${dir}`,
     note: `P5: ${note}`,
+    ...(status === undefined ? {} : { status }),
   })),
   {
     name: "note-keys-done-down-300",
@@ -645,6 +657,7 @@ const PROBE_TIMELINES: readonly ProbeSpec[] = [
     name: "confirm-10-3-2-yes",
     dir: "confirm/10-3-2-yes",
     note: "P8: Reminders › Erase › All OK, then Yes.",
+    status: "pending:21",
   },
   ...(["1-1", "1-9", "6-4", "11-5"] as const).map((number) => ({
     name: `prompts-${number}`,
@@ -696,7 +709,7 @@ const PROBE_TIMELINES: readonly ProbeSpec[] = [
   },
 ];
 
-/** S7: every probe golden (hand-written scenarios, plan 14 Task 13), asserted. */
+/** S7: every probe golden (hand-written scenarios, plan 14 Task 13), asserted unless pending. */
 export function probeCaptureSet(io: TreeCaptureIo): CaptureSetEntry[] {
   const entries: CaptureSetEntry[] = [];
   for (const probe of PROBE_STILLS) {
@@ -707,7 +720,7 @@ export function probeCaptureSet(io: TreeCaptureIo): CaptureSetEntry[] {
     entries.push({
       id: `probe/${probe.name}`,
       kind: "still",
-      status: "asserted",
+      status: probe.status ?? "asserted",
       prefer: {
         source: probe.shots
           ? { kind: "shots", files: probe.shots.map((shot) => `${dir}/${shot}.png`) }
@@ -725,7 +738,7 @@ export function probeCaptureSet(io: TreeCaptureIo): CaptureSetEntry[] {
     entries.push({
       id: `probe/${probe.name}`,
       kind: "timeline",
-      status: "asserted",
+      status: probe.status ?? "asserted",
       prefer: {
         source: { kind: "recording", dir },
         triggerFrame: firstChangedFrame(frames),

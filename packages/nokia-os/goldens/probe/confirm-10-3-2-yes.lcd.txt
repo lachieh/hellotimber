@@ -1,6 +1,6 @@
 lcd-golden 1
 id: probe/confirm-10-3-2-yes
-status: asserted
+status: pending:21
 source: captures/6.39/plan14/probe/confirm/10-3-2-yes
 source-sha256: 1b5064307ecbdafc18e3e1e4cb9a0f37b0a7f7e5e7a9c4c1ebeb09ea1dafcc3c
 trigger-frame: 1
