@@ -630,6 +630,18 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         "##.##.####...###"
       ]
     },
+    "prompt/abc-lower": {
+      "x": 14,
+      "y": 0,
+      "art": [
+        "......##........",
+        "......##........",
+        ".####.####...###",
+        "##.##.##.##.##..",
+        "##.##.##.##.##..",
+        ".####.####...###"
+      ]
+    },
     "prompt/phone-book": {
       "x": 1,
       "y": 0,

@@ -79,6 +79,8 @@ export interface FlowRecording {
  */
 export function recordFlow(rig: FlowRig, durationMs: number): FlowRecording {
   const start = rig.now;
+  // The trigger itself may have closed the flow (a `Back` page): nothing of it is shown.
+  if (rig.exits.length > 0) return { frames: [], exitMs: rig.exits[0]!.atMs - start };
   const frames = [{ startMs: 0, pixels: rig.frame() }];
   for (let t = 0; t < durationMs && rig.exits.length === 0; t++) {
     rig.advance(1);

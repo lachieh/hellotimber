@@ -1131,14 +1131,49 @@ image of every confirm-query probe.
 **Files:** `src/widgets/{info-pages.ts,info-screen.ts,prompt.ts,level-bar.ts,text-pages.ts,splash.ts}`
 (new), matching painters in `src/display/widgets/`, `tests/widgets-info.test.ts` (new).
 
-- [ ] TDD info pages (per-page softkey; `Back` exits; a page with a result pushes it, and the
+- [x] TDD info pages (per-page softkey; `Back` exits; a page with a result pushes it, and the
       flow returns to the pages after it), info screen (`Back`).
-- [ ] TDD prompts: first screen for text, number and code prompts (icon, label lines, value or
+- [x] TDD prompts: first screen for text, number and code prompts (icon, label lines, value or
       box, softkey); cursor timeline if P9 found one; C back; other keys inert (D11).
-- [ ] TDD level bar (P12 keys), text pages (`More` through every page captured in P12, then back),
+- [x] TDD level bar (P12 keys), text pages (`More` through every page captured in P12, then back),
       splash intro application (timeline, skip key and end per P12; exits to reveal the list).
-- [ ] Painting tests against the first image of each kind's goldens.
-- [ ] Commit: `feat(nokia-os): stock info pages, input prompts, level bars, text pages and splashes`.
+- [x] Painting tests against the first image of each kind's goldens.
+- [x] Commit: `feat(nokia-os): stock info pages, input prompts, level bars, text pages and splashes`.
+
+Deviation: one module per widget as listed, plus `src/widgets/playback.ts` (Task 10) and
+`promptFromLayout` in `src/widgets/prompt.ts`; the splash intro is `splashIntro(id, timeline)`
+in `src/widgets/splash.ts` (a `StockFlowApplication`). Prompts differ per node beyond the
+catalogue, so `bindings.ts` gains `PROMPT_LAYOUTS` (measured on the first image of every prompt
+golden) and `promptLayout(number, kind)` (code prompts share the pen and label-only layout):
+mode icons (`pen`, `Abc`, lower-case `abc`, phone book), the counter top right in the digits face
+and the label of the prompts the tree has no lines for (Add name `16` `Name:`, message centre
+`20`/`30` `Centre number:`, Reminders `35` `Remind about:`, Rename `4` `New name:` with
+`Silent`), and the entry: `value` below the label (Speed dials), or a box from below the label to
+y 36 (top 16, or 25 under a two-line label) holding `text` entry (large from x 2, two rows below
+the box's top, cursor after it), a right-aligned value ending at x 83 on the box's bottom (large,
+or small for `+1234567890`) with the cursor at its `end` (x 82) or `start` (time and date), or
+none (Search). The cursor fills the last cell's blank column. `splitPromptLines` splits the
+tree's lines (label through the last line ending in `:`). Rename's lower-case `abc` is a new crop
+in `scripts/widget-sprites.ts` (`prompt/abc-lower`, `tree/12-profiles/12-2-2-10.leaf` b).
+Deviation: `bindings.ts` also gains `LEVEL_BARS` (node → bars sprite) and `PAGE_RESULTS` (P15:
+4-8-1 opens an On/Off list on its page value, 4-8-4 opens `Last recharge:`/`Expiry date:` pages
+valued `0`), which the tree records only by kind. Info pages take each page's value as a
+function (a choice made from a page shows at once) and push results through a flow whose
+indicator adds the page's number (`4-8-1-2`). Text pages, level bars and info screens: the soft
+key/More and C as P12; other keys inert. A splash ends with `back()`, any key skips it at once.
+For Task 13: the splash-skip probes' first step lasts 252 ms against the 8-1 splash recording's
+248 ms (capture jitter), so their scenario cannot hold ±2 ms on that row with the shared splash
+timeline; Club Nokia ID's prompt (`probe/confirm-8-6-4-ok`) has no blink timeline of its own.
+
+Completion (Task 11): pixel-exact, and timing-exact (±2 ms) for timelines, through the flow host:
+every asserted info-pages `.options`/`.open` golden (4-5, 4-6, 4-8, 8-1-5, 8-2-3, 8-4-1-4,
+8-4-2-4, ▼ per image) and every asserted info-page `.choose` (Back pages exit on the key; Not
+allowed returns to the pages; Clear timers' code prompt; Credit info display's On/Off list;
+Recharge status' pages), `probe/prepaid-credit-info-display`; Memory status (1-8-2); every
+asserted prompt golden (17: text, number, time, date, code; the cursor blinks through each whole
+recording) and Club Nokia ID's prompt images; the three level-bar goldens and P12's level keys;
+the five Instructions probes (More cycles) and leaves, and `games-instructions-c`; the four
+splash probes to the game menu, and the three skip probes (pixels and the exit at the key).
 
 ### Task 12 - Firmware composition: the whole tree (TDD)
 

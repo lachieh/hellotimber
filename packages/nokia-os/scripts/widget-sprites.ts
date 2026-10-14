@@ -103,7 +103,7 @@ export const WIDGET_SPRITES: readonly SpriteCrop[] = [
     ["b", "c", "d", "e", "f", "g", "h", "i", "j", "k"],
     PROGRESS_BAR,
   ),
-  // Prompt mode icons: the pen of every prompt, `abc` beside it on text prompts (Search › Name:),
+  // Prompt mode icons: the pen of every prompt, `Abc` beside it on text prompts (Search › Name:),
   // the phone book on Speed dials (Key 2:).
   {
     id: "prompt/pen",
@@ -119,6 +119,17 @@ export const WIDGET_SPRITES: readonly SpriteCrop[] = [
     id: "prompt/abc",
     group: "prompt-icon",
     golden: "tree/01-phone-book/1-1.leaf",
+    image: "b",
+    x0: 14,
+    x1: 29,
+    y0: 0,
+    y1: 5,
+  },
+  // The lower-case `abc` of a name being edited (Profiles › Silent › Rename).
+  {
+    id: "prompt/abc-lower",
+    group: "prompt-icon",
+    golden: "tree/12-profiles/12-2-2-10.leaf",
     image: "b",
     x0: 14,
     x1: 29,

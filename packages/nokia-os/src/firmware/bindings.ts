@@ -114,3 +114,121 @@ export function noteTimelineId(
 ): string | undefined {
   return byNode[number] ?? NOTE_STYLES[lines.join(" ")];
 }
+
+/** How a prompt's first screen is laid out, measured on its golden (D11). */
+export interface PromptLayout {
+  /** Mode icons: `pen`, `abc` (`Abc`), `abc-lower`, `phone-book`. */
+  readonly icons: readonly ("pen" | "abc" | "abc-lower" | "phone-book")[];
+  /** Characters left, top right (prompts whose tree node has no lines, Task 8). */
+  readonly counter?: string;
+  /** Label lines when the tree node has none. */
+  readonly label?: readonly string[];
+  /** The value when the tree node has no lines. */
+  readonly value?: string;
+  /** `none`: a code prompt; `value`: below the label; else a box (see `PromptEntry`). */
+  readonly entry: "none" | "value" | "text" | "end" | "start" | "box";
+  /** The value's face in a box (default large). */
+  readonly font?: "small";
+  /** When the tree node has none. */
+  readonly softkey?: string;
+}
+
+const PEN_BOX_END: PromptLayout = { icons: ["pen"], entry: "end" };
+const PEN_BOX_START: PromptLayout = { icons: ["pen"], entry: "start" };
+
+/**
+ * Prompt layouts by node number, from the first image of each prompt golden: icons, counter and
+ * label of the prompts the tree has no lines for, and where the entry and its cursor are.
+ * `box` is a frame without a cursor (Search does not blink, P9).
+ */
+export const PROMPT_LAYOUTS: Readonly<Record<string, PromptLayout>> = {
+  "1-1": { icons: ["pen", "abc"], entry: "box" },
+  "1-3": { icons: ["pen", "abc"], counter: "16", label: ["Name:"], entry: "text", softkey: "OK" },
+  "1-9": { icons: ["phone-book"], entry: "value" },
+  "2-7-1-1": {
+    icons: ["pen"],
+    counter: "20",
+    label: ["Centre number:"],
+    value: "+1234567890",
+    entry: "end",
+    font: "small",
+    softkey: "OK",
+  },
+  "2-7-2-1": {
+    icons: ["pen"],
+    counter: "30",
+    label: ["Centre number:"],
+    entry: "end",
+    softkey: "Search",
+  },
+  "2-9": PEN_BOX_END,
+  "6-3-4-2": PEN_BOX_END,
+  "7-1-1-2": PEN_BOX_END,
+  "7-2-1-2": PEN_BOX_END,
+  "7-3-1-2": PEN_BOX_END,
+  "7-4-1-2": PEN_BOX_END,
+  "10-1": {
+    icons: ["pen", "abc"],
+    counter: "35",
+    label: ["Remind about:"],
+    entry: "text",
+    softkey: "OK",
+  },
+  "11-1": PEN_BOX_START,
+  "11-2-2": PEN_BOX_START,
+  "11-3": PEN_BOX_START,
+  "11-5": PEN_BOX_START,
+  // The name being edited is the profile's (Silent: 10 - 6 characters left).
+  "12-2-2-10": {
+    icons: ["pen", "abc-lower"],
+    counter: "4",
+    label: ["New name:"],
+    value: "Silent",
+    entry: "text",
+    softkey: "OK",
+  },
+};
+
+/** Code prompts (security code, PIN, PIN2, barring password): the pen and the label only. */
+const CODE_PROMPT: PromptLayout = { icons: ["pen"], entry: "none" };
+
+/** The prompt layout of node `number`; code prompts share one. */
+export function promptLayout(number: string, kind: string): PromptLayout | undefined {
+  return PROMPT_LAYOUTS[number] ?? (kind === "code-prompt" ? CODE_PROMPT : undefined);
+}
+
+/**
+ * Splits a prompt's firmware lines (D10): the label runs through the last line ending in `:`
+ * (`Group` / `number:`), the rest is the value (`793000333`).
+ */
+export function splitPromptLines(lines: readonly string[]): {
+  label: readonly string[];
+  value: string;
+} {
+  let end = lines.length;
+  while (end > 0 && !lines[end - 1]!.endsWith(":")) end--;
+  return { label: lines.slice(0, end), value: lines.slice(end).join(" ") };
+}
+
+/** The level bar each game's Level shows (virgin EEPROM; Pairs II's two modes share one). */
+export const LEVEL_BARS: Readonly<Record<string, string>> = {
+  "8-1-2": "level/8-1",
+  "8-3-2": "level/8-3",
+  "8-4-1-2": "level/8-4",
+  "8-4-2-2": "level/8-4",
+};
+
+/**
+ * Info-page results the tree records only by kind (P15): Prepaid credit's Credit info display
+ * opens an On/Off option list on its page value, Recharge status two info pages.
+ */
+export const PAGE_RESULTS = {
+  "4-8-1": { kind: "option-list", labels: ["On", "Off"], softkey: "OK" },
+  "4-8-4": {
+    kind: "info-pages",
+    pages: [
+      { label: "Last recharge:", value: "0", softkey: "Back" },
+      { label: "Expiry date:", value: "0", softkey: "Back" },
+    ],
+  },
+} as const;
