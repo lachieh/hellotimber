@@ -10,7 +10,8 @@
 captures, reference only), and the canonical plan 14 captures that Task 0 writes to
 `$REF/captures/6.39/plan14/`. `docs/specs/nokia-3310-menu-tree.md` is the human-readable form of
 `tree.json`. Read `$REF/captures/README.md` and plan 13 in full before starting.
-**Status:** in progress.
+**Status:** done, with 30 asserted goldens left as known gaps that need decisions (Task 13,
+"Completion notes").
 
 ## Goal
 
@@ -1302,19 +1303,26 @@ expected failures, 31 todo, ≈8 s (acceptance ≈6.6 s).
 **Files:** `packages/nokia-os/{README.md,demo/main.ts}`, `docs/specs/nokia-3310.md`,
 `docs/plans/README.md`, this plan.
 
-- [ ] Demo: the golden overlay lists the new goldens (grouped by top-level menu); verify with
+- [x] Demo: the golden overlay lists the new goldens (grouped by top-level menu); verify with
       `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`: an option-list
       choice with its `Done` note and the updated page, a progress note, a game splash, ▲ wrap in
       Phone book. Screenshots in the completion notes.
-- [ ] README: the tree data pipeline (`import-captures` → `import-tree` → `extract-resources` →
+- [x] README: the tree data pipeline (`import-captures` → `import-tree` → `extract-resources` →
       test), the settings store's scope (D9), leaf ownership.
-- [ ] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
+- [x] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
       `git diff --stat <commit before Task 1> -- website/` is empty.
-- [ ] Spec §10: replace "(plan 14, in progress)" markers with verified facts; list what stays
+- [x] Spec §10: replace "(plan 14, in progress)" markers with verified facts; list what stays
       UNVERIFIED; add the new artefacts.
-- [ ] Plans README: row 14 `done`; rows 23/24 "Builds" read gameplay and scores only (D12).
-- [ ] Completion notes; status `done`.
-- [ ] Commit: `docs: complete menu depth and stock widgets (plan 14)`.
+- [x] Plans README: row 14 `done`; rows 23/24 "Builds" read gameplay and scores only (D12).
+- [x] Completion notes; status `done`.
+- [x] Commit: `docs: complete menu depth and stock widgets (plan 14)`.
+
+Deviation: the demo was verified with Skip boot, through the keyboard
+(`agent-browser`; screenshots are not committed): Settings › Phone settings › Cell info display
+(6-2-2) page `Off`, its option list opened on Off with ▲ to On, the `Done` note, the page then
+showing `On`; the Snake II splash and its game menu (`8-1-1`); Cancel all diverts' `Requesting`
+bar; ▲ from Search in Phone book (`Voice tags / Search / Service Nos.`). The overlay groups 1,761
+golden images under 14 groups. `git diff --stat c9bd5b9 -- website/` is empty.
 
 ## Follow-up plan adjustments
 
@@ -1368,4 +1376,34 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
 
 ## Completion notes
 
-(Filled in as tasks complete.)
+Commits: Task 12 `b9b5175`, Task 13 `893c9ca`, Task 14 this commit (tasks 0-11: see `git log`).
+
+- The whole v6.39 tree (279 nodes, 12 top-level) is `stockMenu`, built from the generated tree by
+  `src/firmware/menu.ts` and `src/firmware/leaves.ts`, with `createStockPhone` setting
+  `rowsWindow: 3` and `shortcutEntry` (1460 ms, `Invalid shortcut`). Placeholders carry
+  `ownerPlan`. The website does not change (no diff under `website/`).
+- Goldens: 365 fixtures, 334 asserted and 31 pending. 304 asserted goldens pass pixel for pixel
+  and, for timelines, within ±2 ms after alignment; 30 are known gaps (`KNOWN_GAPS` in
+  `tests/acceptance.test.ts`, run as expected failures). The coverage guard accounts for every
+  tree node and option choice; 9 nodes (5-9, 5-9-1, 8-2-2, 8-4-1-3, 8-4-2-3, 12-1-2-9,
+  12-1-2-9-1, 12-2-2-9, 12-2-2-9-1) are covered only by known gaps and are pinned in the guard.
+- Generated data and resources are fresh and idempotent (`import-tree`, `extract-resources` run
+  twice, no diff). `vp check`, `vp run -r test` and `vp run website#build` pass; the nokia-os
+  suite runs in ≈8 s.
+
+Decisions for Lachlan (the known gaps, Task 13):
+
+1. Two kernel seams would close 9 tree goldens and one probe: a submenu option that shows the
+   level's number in the awaiting form for the shortcut window on Select-entry (Screen saver), and
+   `exit({ select })` rebuilding the window at the launching child before moving to `select` by
+   the D3 rule (Top score in all four games; Snake II's documented `Score IDs / Instructions / New
+game` still holds). ▼ during Snake II's Top score needs one more step (return to New game, then
+   move). Both change VISION's kernel contract, so they were not made here.
+2. Timing the probes cannot hold at ±2 ms: the firmware redraws 50-125 ms after a key and runs its
+   timers from the key (Open question 4), and separate recordings of one path differ by 3-22 ms
+   (splash skip, Top score, Searching, partial draws). Options: model the latency, relax the
+   tolerance for multi-key probes, or mark those probes pending.
+3. Out of plan 14: standby number entry after `Invalid shortcut` (3 probes) and the Reminders level
+   after Erase › All (plan 21).
+
+Still UNVERIFIED: see spec §10 "Deeper levels and stock widgets (plan 14)".

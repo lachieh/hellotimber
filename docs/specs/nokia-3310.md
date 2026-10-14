@@ -226,7 +226,7 @@ animated icon. Verified (Task 0 probes, asserted in `packages/nokia-os/tests/acc
 | 9   | Calculator    | application  | (calculator)                                                                                                                                          |
 | 10  | Reminders     | rows         | Add new, View all, Erase                                                                                                                              |
 | 11  | Clock         | pages        | Alarm/clock, Clock/settings, Date setting, Stopwatch, Countdown/timer, Auto update of/date and time                                                   |
-| 12  | Profiles      | rows         | General, Silent, Discreet, Loud, (empty), slot 6 (UNVERIFIED label; see artefacts)                                                                    |
+| 12  | Profiles      | rows         | General, Silent, Discreet, Loud, (empty), slot 6 (two U+E000 boxes: uninitialised name; see artefacts)                                                |
 
 There is no auto-wrap: firmware text carries explicit breaks (`Show call` / `duration`).
 
@@ -237,15 +237,13 @@ does nothing, yet the rail places them 5th of 5 (it uses the visible position an
 **Two submenu presentations.**
 
 - _Rows_ (Phone book and application lists: Games, Reminders, Profiles): three rows; the selected
-  row is an inverted band x 0..77, y `7+10r`..`16+10r`; text at x 2, top y `8+10r`. Scrolling
-  down from the first item, the selection moves down to the bottom row and then stays there
-  (window `max(0, selected-2)`). Scrolling **up** (captured in Task 11, `pending:14`) the window
-  keeps its position: ▲ moves the selection within it, ▲ above it puts the selection on the top
-  row, and ▲ from the first item wraps to the last item drawn on top of the first two
-  (`Voice tags / Search / Service Nos.`). The window is circular and stateful; nokia-os does not
-  reproduce scrolling up yet (plan 14). ▼ from the last item continues circularly with the
+  row is an inverted band x 0..77, y `7+10r`..`16+10r`; text at x 2, top y `8+10r`. The window
+  of three rows is circular and stateful (see "Rows window" below): ▼ from the first item moves
+  the selection to the bottom row and then scrolls; ▲ above the window puts the selection on the
+  top row, and ▲ from the first item wraps to the last item drawn on top of the first two
+  (`Voice tags / Search / Service Nos.`); ▼ from the last item continues circularly with the
   selection on the bottom row (`Speed dials / Voice tags / Search`, then `Voice tags / Search /
-Service Nos.`; plan 14 P1).
+Service Nos.`).
 - _Pages_ (native menus: Messages, Call register, Tones, Settings, Call divert, Clock): one item per
   screen; label lines from x 0 at tops y 7/16/25 (a line must end before x 80); the current value
   (e.g. `Off`, `Level 1`, the time) in the thin font, top y 29, its last cell ending at x 78 (ink
@@ -299,9 +297,11 @@ threshold is not captured).
 
 Source: the plan 14 recaptures (`captures/6.39/plan14/`, generator
 `captures/scripts/gen_v639_plan14.py`) and `docs/specs/nokia-3310-menu-tree.md`. Everything here
-is observed; items not yet reproduced by nokia-os are marked (plan 14, in progress).
+is observed and reproduced by nokia-os pixel for pixel, and within ±2 ms after aligning on the
+first changed frame, against the plan 14 goldens, except the items listed under "Not reproduced
+yet" (plan 14 Task 13's known gaps).
 
-**Rows window (plan 14, in progress).** With 3 or fewer items the window never moves. Otherwise it
+**Rows window.** With 3 or fewer items the window never moves. Otherwise it
 keeps its position while the selection stays inside it (indices modulo the count); moving to the
 item just after the bottom row scrolls so the selection is on the bottom row; any other move
 outside the window (▲ above it, ▲ from the first item, a shortcut) puts the selection on the top
@@ -309,7 +309,7 @@ row. Evidence: ▼ past the last item (`Speed dials / Voice tags / Search`), ▲
 (`Voice tags / Search / Service Nos.`), Games and Profiles both ways. The window survives a child
 submenu or a timed note and is rebuilt (opening item on top) when the level is entered again.
 
-**Opening selection and softkeys (plan 14, in progress).** Levels and option lists open on their
+**Opening selection and softkeys.** Levels and option lists open on their
 current value; with more than 3 items the window starts at it (`Maximum time / 1 hour / 6
 hours`), otherwise at 0. 19 submenus read `OK` instead of `Select` (Info service, Screen saver,
 the divert levels, every profile); option lists read `OK`; info pages `Back` (or `Select` on a
@@ -319,16 +319,19 @@ first item, its first ▲ the last item on the top row, and closing it without a
 unset. Tones settings are the General profile's (choosing in one shows in the other); the other
 profiles are independent.
 
-**Shortcut digits (plan 14, in progress).** Digits form menu numbers: at the top level `1` waits
-≈2.95 s for a second digit (10, 11, 12), showing `1` and three dots, then means Phone book; `1 1`
-is Clock, `1 2` Profiles; `1 8` and `1 9` show `Invalid shortcut` (≈2.9 s), then standby, where
-further digits start a phone number (UNVERIFIED beyond the first screen). A digit that selects an
-entry shows the typed path (`8-6`, `1-9`) without the softkey and opens it ≈1.46 s later; an
-opened submenu shows `<path>-` and three dots for ≈1.47 s, then its index. `Menu 8 1` plays the
-Snake II splash first; a digit during a splash only skips it. Entering Screen saver shows `5-9`
-and three dots for ≈2.9 s.
+**Shortcut digits.** Digits form menu numbers: at the top level `1` waits ≈2.95 s for a second
+digit (10, 11, 12), showing `1` and three dots, then means Phone book; `1 1` is Clock, `1 2`
+Profiles; `1 8` and `1 9` show `Invalid shortcut` (≈2.9 s), then standby, where further digits
+start a phone number (not reproduced). A digit that selects an entry shows the typed path (`8-6`,
+`1-9`) without the softkey and opens it 1431-1477 ms after the digit's redraw (nokia-os: 1460 ms
+after the key); an opened submenu shows `<path>-` and three dots for ≈1.47 s, then its index.
+`Menu 8 1` plays the Snake II splash first; a digit during a splash only skips it. Entering
+Screen saver (5-9 and every profile's 12-n-2-9) shows `5-9` and three dots for ≈2.9 s (not
+reproduced). The firmware redraws 50-125 ms after a key and runs its timers from the key, so
+these delays measured between redraws jitter by tens of milliseconds; nokia-os redraws at the
+key.
 
-**Stock widgets (plan 14, in progress).** Layouts measured from the plan 14 goldens (Task 6): notes
+**Stock widgets.** Layouts measured from the plan 14 goldens (Task 6): notes
 draw large text from x 0 at tops 3/18/33 and their icon within x 63..83, y 3..22; progress notes a
 hatched bar x 0..83, y 7..14, `small` text at top 18; confirm queries `small` lines from x 0 at
 tops 2/12/22 (or 4/13); info pages the page layout with the value in `thin` (last cell ending at
@@ -341,7 +344,13 @@ tops 7/16/25, softkey `More`, no rail. Behaviour:
 
 - _Option lists_: rows with the current value highlighted (no radio glyph); OK applies and shows
   the result, then the page with the new value. Some return without a note (Set delay goes back
-  two levels to the Call divert page).
+  two levels to the Call divert page). Message settings › Set n lists number their entries `1`..
+  `6`; the Call divert lists show their parent's path (`7-3-1`). Language › Polish: OK does
+  nothing.
+- _Setter levels_: Info service (On, Off, Topic index) and Screen saver (Off, On) set their page
+  value with a leaf and a note, then return to the page (two levels up); the level opens on the
+  stored value. Hide clock and the Time format choices also return to the Clock page; 12-hour
+  shows the clock as `10:10 am`.
 - _Multi-select_: ☑/☐ marks at x 1..5, band from x 8, text at x 10; the softkey toggles
   (`Unmark` on a marked row); C after a change asks `Save changes?` [Yes].
 - _Timed notes_: large text from x 0 at tops 3/18/33 plus an icon. Tick confirmations (`Done`,
@@ -352,7 +361,9 @@ tops 7/16/25, softkey `More`, no rail. Behaviour:
 - _Progress notes_: `Requesting`/`Searching` with a hatched bar looping ≈271 ms per step and
   `Quit`. C returns at once; Quit after 10 s on `Requesting` shows `Request not confirmed`, then
   standby. The emulator's network never answers (artefact).
-- _Confirm queries_: small-face lines; C returns to the list; OK/Yes runs the result.
+- _Confirm queries_: small-face lines; C returns to the list; OK/Yes runs the result (Level 5
+  stores only then and shows `Done`; Erase › All shows `Reminder memory empty`; Club Nokia ID
+  asks `Club Nokia ID:`).
 - _Prompts_: a mode icon, a label, an entry box or value, softkey `OK`/`Search`/`Assign`/`Start`.
   Text and number prompts blink a cursor every ≈480 ms; Search, Speed dials and code prompts do
   not.
@@ -360,21 +371,46 @@ tops 7/16/25, softkey `More`, no rail. Behaviour:
 - _Games_: each game opens with an animated splash (Snake II ≈2.56 s, Space impact ≈2.48 s,
   Bantumi ≈3.46 s, Pairs II ≈3.06 s), skipped by any key. Level: `Level:` and bars, ▲/▼ inert.
   Instructions: `More` pages cycle; C leaves. Top score: an animated note that returns by itself
-  after ≈5.84 s (or on a key) with New game selected.
-- _View all_ (Reminders, nothing stored) returns straight to the carousel.
+  after ≈5.84 s (or on a key). Snake II returns with New game selected (`Score IDs / Instructions
+/ New game`); Space impact and Pairs II return with the window rebuilt at Top score (`Top score /
+Score IDs / Instructions`).
+- _View all_ (Reminders, nothing stored) returns straight to the carousel; the Reminders icon then
+  holds 1382 ms before animating (its own return timing).
+
+**Not reproduced yet** (plan 14 Task 13 known gaps; each golden runs as an expected failure):
+Screen saver's `5-9` and dots on entry and the Space impact/Pairs II Top score window (both need
+kernel seams); ▼ during Snake II's Top score (returns to New game, then moves to Level); capture
+jitter between recordings of the same path beyond ±2 ms (splash skip 252 vs 248 ms, Top score,
+Searching, Done's 16 ms partial draw, Phone book's carousel return after C); the key-to-redraw
+latency of shortcut digits; standby number entry after Invalid shortcut; the Reminders level
+after Erase › All (only `Add new`; plan 21).
+
+**UNVERIFIED** (no capture; nokia-os's choice): ▲/▼ during a note on rows levels (nokia-os only
+dismisses; P6 probed pages), C on `Requesting`, other keys on notes, OK on a page's list
+(Prepaid credit's On/Off does not store), Screen saver's opening after On, Rename in Discreet,
+Loud and the empty slots (`10 - length` characters left), digits during an option list or a
+splash shortcut, `0 1` as a shortcut, the 12-hour clock beyond `10:10 am`, a 4-item list's ▲
+wrap (D3 gives the bottom row).
 
 **Capture artefacts (never reproduced as behaviour):**
 
-| Artefact                                                | Cause                          | Handling                                            |
-| ------------------------------------------------------- | ------------------------------ | --------------------------------------------------- |
-| Operator `Orange F`                                     | emulator synthetic PLMN 208-01 | host `carrier`; used only as a test input           |
-| Clock frozen at `10:10`                                 | emulator RTC                   | host `clock()`; used only as a test input           |
-| Date on Clock → Date setting                            | date typed during setup        | host `date()`                                       |
-| Security-code prompt, `Code accepted`, time/date wizard | virgin EEPROM                  | not reproduced                                      |
-| First standby `Snooze` prompt and `0000000000`          | virgin EEPROM alarm state      | not imported                                        |
-| Profiles slot 6 (two boxes)                             | uninitialised EEPROM name      | slot exists (it changes the rail); label UNVERIFIED |
-| Page values (`Level 1`, `No tone`, `Off`, ...)          | virgin-EEPROM settings         | in-memory store's initial state until plan 15       |
-| Snake II speed                                          | emulator/EEPROM                | out of scope                                        |
+| Artefact                                                                     | Cause                          | Handling                                      |
+| ---------------------------------------------------------------------------- | ------------------------------ | --------------------------------------------- |
+| Operator `Orange F`                                                          | emulator synthetic PLMN 208-01 | host `carrier`; used only as a test input     |
+| Clock frozen at `10:10`                                                      | emulator RTC                   | host `clock()`; used only as a test input     |
+| Date on Clock → Date setting                                                 | date typed during setup        | host `date()`                                 |
+| Security-code prompt, `Code accepted`, time/date wizard                      | virgin EEPROM                  | not reproduced                                |
+| First standby `Snooze` prompt and `0000000000`                               | virgin EEPROM alarm state      | not imported                                  |
+| Profiles slot 6 (two boxes)                                                  | uninitialised EEPROM name      | label and Rename value are two U+E000 boxes   |
+| Page values (`Level 1`, `No tone`, `Off`, ...)                               | virgin-EEPROM settings         | in-memory store's initial state until plan 15 |
+| Unset tone lists (`-0`, no rows, `Quit`), `Level 1`                          | invalid stored index           | virgin initial state (plan 14 D10)            |
+| `Top score: 45`, score IDs `ç`/`ÆG`, `Shakes` `1 player`                     | uninitialised game EEPROM      | virgin initial state                          |
+| Club Nokia ID `T`                                                            | uninitialised game EEPROM      | virgin initial state                          |
+| `+1234567890`, `793000333`, `SIM card: 50 free`                              | emulator SIM                   | virgin initial state                          |
+| Info service topic names (six U+E000 boxes)                                  | uninitialised EEPROM           | Topics stay a placeholder (plan 18)           |
+| `Requesting` / `Searching` never finish                                      | emulator network               | the bar loops until Quit or C                 |
+| Picture messages, Templates, Smileys, Screen saver › Screen saver do nothing | no preloaded content           | placeholders (plan 18)                        |
+| Snake II speed                                                               | emulator/EEPROM                | out of scope                                  |
 
 Factory restore could not be captured either (`Code error` for `12345`), so the page values and
 Profiles slot 6 above remain virgin-EEPROM values.

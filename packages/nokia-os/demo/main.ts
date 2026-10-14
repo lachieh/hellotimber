@@ -1,5 +1,5 @@
-// Standalone demo: the stock v6.39 firmware on a 2D canvas, driven by the keyboard or buttons,
-// with a dev-only overlay of the committed goldens.
+// Standalone demo: the stock v6.39 firmware (the whole menu tree, plan 14) on a 2D canvas,
+// driven by the keyboard or buttons, with a dev-only overlay of the committed goldens.
 import type { Phone, PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { createScreenRenderer, Framebuffer, type ScreenRenderer } from "@hellotimber/phone-screen";
 import { LCD_HEIGHT, LCD_WIDTH, parseGolden, type GoldenImage } from "../scripts/golden-format.ts";
@@ -174,13 +174,27 @@ function createGoldenOverlay(): GoldenOverlay {
     import: "default",
     eager: true,
   });
+  // Grouped by top-level menu for the tree goldens (`tree/05-tones`), else by kind (`menu`,
+  // `probe`, ...), in id order.
   const images = new Map<string, GoldenImage>();
-  for (const [path, text] of Object.entries(files)) {
-    const parsed = parseGolden(text, path.replace("../goldens/", ""));
+  const groups = new Map<string, HTMLOptGroupElement>();
+  const parsedGoldens = Object.entries(files)
+    .map(([path, text]) => parseGolden(text, path.replace("../goldens/", "")))
+    .sort((a, b) => a.id.localeCompare(b.id, "en", { numeric: true }));
+  for (const parsed of parsedGoldens) {
+    const parts = parsed.id.split("/");
+    const group = parts[0] === "tree" ? `${parts[0]}/${parts[1]}` : parts[0]!;
+    let optgroup = groups.get(group);
+    if (optgroup === undefined) {
+      optgroup = document.createElement("optgroup");
+      optgroup.label = group;
+      groups.set(group, optgroup);
+      select.append(optgroup);
+    }
     for (const image of parsed.images) {
       const label = `${parsed.id} "${image.name}" (${parsed.status})`;
       images.set(label, image);
-      select.add(new Option(label, label));
+      optgroup.append(new Option(label, label));
     }
   }
 
