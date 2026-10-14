@@ -12,7 +12,7 @@ README, which this plan edits too: do not start Task 1 before plan 15 is `done`.
 23 supplementary captures"), plans 13, 14, 15 and 23 in full before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan16/`. The planning probes in
 `$REF/captures/scratch-plan16/` are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-8 done).
+**Status:** in progress (Tasks 0-9 done).
 
 ## Goal
 
@@ -1042,13 +1042,31 @@ replay at level 1 with the captures' seed (44530, `game/meal`'s first food at (1
 
 **Files:** `tests/acceptance.test.ts`, `tests/support/sound.ts`, `tests/support/probes.ts`.
 
-- [ ] `SOUND_SCENARIOS`: one per asserted sound golden (most reuse Tasks 5-8's drivers); delete
+- [x] `SOUND_SCENARIOS`: one per asserted sound golden (most reuse Tasks 5-8's drivers); delete
       `awaitsPlan16Scenario`; the guard fails for an asserted sound golden without a scenario.
-- [ ] Every asserted LCD golden still passes (sound changes no pixel); known gaps unchanged.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
+- [x] Every asserted LCD golden still passes (sound changes no pixel); known gaps unchanged.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
       `mise exec -- vp check --fix`. Report the suite's run time (keep it under ≈25 s; previews
       compare two passes, not more).
-- [ ] Commit: `test(nokia-os): drive every sound golden`.
+- [x] Commit: `test(nokia-os): drive every sound golden`.
+
+**Completion note (Task 9).** `awaitsPlan16Scenario` is gone: all 299 asserted sound goldens have
+scenarios (the last 10 were Task 8's `sound/game/*`), and the coverage guard fails for any asserted
+golden without one. 842 goldens: 775 asserted (476 LCD, 299 sound), 67 pending (35 LCD, 32 sound).
+Known gaps unchanged: 15 expected failures (plan 14's 6, `game/snake/keys-c-hold`,
+`probe/accept-6-3-5-on`, `boot/security-lockout-4`, and Tasks 5-7's 6 sound gaps). The nokia-os
+suite runs in ≈15.7 s (was ≈34 s; target ≈25 s).
+
+Deviation (Task 9, run time): two changes beyond the listed files. A CPU profile of the slow Snake II
+scenarios showed half the time in `FlowSession.render` serialising the game board to JSON on every
+1 ms tick: `src/widgets/flow.ts` now skips the comparison when a widget returns the model it
+returned before, and `src/widgets/snake.ts` returns one model per state (pixels unchanged; Snake
+scenarios ≈2.4× faster). The rest of the per-tick cost is phone-core's menu numbering, which this
+plan does not change. And `tests/acceptance.test.ts` was one 22 s file, the suite's critical path:
+the scenarios, known gaps and `describeGoldens` move to `tests/support/acceptance.ts`, and three
+slice files (`acceptance-games`, `acceptance-sound-tones`, `acceptance-sound`) run their goldens in
+parallel with the main file, which keeps the rest and the coverage guard. Only `game/snake/periods`
+(166 levels on one phone, ≈1.6 s, ≈5× any other scenario) gets an explicit timeout (20 s).
 
 ### Task 10 - Demo: WebAudio and the vibration indicator
 

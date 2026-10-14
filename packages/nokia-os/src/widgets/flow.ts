@@ -75,7 +75,14 @@ class FlowSession implements PhoneApplicationSession, Flow {
   readonly #context: ApplicationContext;
   readonly #stack: Widget[];
   #closed = false;
-  #shown: { model: string; screen: Extract<ScreenModel, { kind: "custom" }> } | undefined;
+  /** The model last painted (and its JSON, which decides a repaint), and its screen. */
+  #shown:
+    | {
+        readonly model: WidgetModel;
+        readonly json: string;
+        readonly screen: Extract<ScreenModel, { kind: "custom" }>;
+      }
+    | undefined;
 
   constructor(appId: string, context: ApplicationContext, root: Widget) {
     this.#appId = appId;
@@ -101,13 +108,19 @@ class FlowSession implements PhoneApplicationSession, Flow {
     if (top === undefined && this.#shown !== undefined) return this.#shown.screen;
     if (top === undefined) throw new Error(`Stock flow ${this.#appId} has nothing to show.`);
     const model = top.render(this);
-    const key = JSON.stringify(model);
-    if (this.#shown?.model !== key) {
-      const fb = new Framebuffer();
-      paintWidget(fb, model, this.#shown?.screen.frame.pixels);
-      const frame = { width: fb.width, height: fb.height, pixels: fb.pixels };
-      this.#shown = { model: key, screen: { kind: "custom", appId: this.#appId, frame } };
+    // The kernel renders every tick: a widget that returns the model it returned before (the
+    // game board between steps) skips the comparison.
+    const shown = this.#shown;
+    if (shown?.model === model) return shown.screen;
+    const json = JSON.stringify(model);
+    if (shown?.json === json) {
+      this.#shown = { ...shown, model };
+      return shown.screen;
     }
+    const fb = new Framebuffer();
+    paintWidget(fb, model, shown?.screen.frame.pixels);
+    const frame = { width: fb.width, height: fb.height, pixels: fb.pixels };
+    this.#shown = { model, json, screen: { kind: "custom", appId: this.#appId, frame } };
     return this.#shown.screen;
   }
 

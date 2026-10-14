@@ -63,6 +63,8 @@ class SnakeGameWidget implements Widget {
   readonly #settings: StockSettings;
   #state: SnakeState;
   #phase: Phase;
+  /** The last model and the state it shows. */
+  #model: { readonly state: SnakeState; readonly model: SnakeModel } | undefined;
   /** The game ended with a new top score (written when the death steps end). */
   #topScore = false;
 
@@ -90,7 +92,14 @@ class SnakeGameWidget implements Widget {
   }
 
   render(): SnakeModel {
-    return { kind: "snake", board: snakeRender(this.#state) };
+    // The same model while the state stands (the flow repaints only a new one).
+    if (this.#model?.state !== this.#state) {
+      this.#model = {
+        state: this.#state,
+        model: { kind: "snake", board: snakeRender(this.#state) },
+      };
+    }
+    return this.#model.model;
   }
 
   onKeyDown(key: PhoneKey, flow: Flow): void {
