@@ -4,7 +4,6 @@
 // and ignores the release of a key it did not see go down, so a key that changes the screen
 // never acts again on the screen it opened.
 import type { MenuIndicator, PhoneKey } from "@hellotimber/phone-core";
-import { VISIBLE_ROWS } from "../display/list-rows";
 import type { OptionsModel } from "../display/widgets";
 import type { CalculatorModel } from "../display/widgets/calculator";
 import {
@@ -33,7 +32,7 @@ import type { Flow, Widget } from "./flow";
 import { infoPages } from "./info-pages";
 import { note, type NoteSound } from "./note";
 import { Playback } from "./playback";
-import { rowsIndicator } from "./rows";
+import { moveRows, openRows, rowsIndicator, type RowsCursor } from "./rows";
 
 /**
  * How long C is held before it clears (D8): the captured clears redraw 532.1 and 544.0 ms after
@@ -222,19 +221,23 @@ class CalculatorWidget implements Widget {
 
 /**
  * Options (D4, D5): a rows list opening on its first entry, numbered by position, soft key OK;
- * keys act as they go down. ▲/▼ move circularly; the window follows the move's direction, so ▲
- * from the first of four entries puts the last on the top row (`options/operator-up`), where
- * the kernel's direction-blind window (`rowsWindowTop`) would scroll it onto the bottom row.
+ * keys act as they go down. ▲/▼ move circularly in the shared rows window (D3), so ▲ from the
+ * first of four entries puts the last on the top row (`options/operator-up`).
  */
 class OptionsWidget implements Widget {
   readonly #labels: readonly string[];
   readonly #choose: (index: number, flow: Flow) => void;
-  #selected = 0;
-  #windowTop = 0;
+  #cursor: RowsCursor;
 
   constructor(labels: readonly string[], choose: (index: number, flow: Flow) => void) {
     this.#labels = labels;
     this.#choose = choose;
+    this.#cursor = openRows(0, labels.length);
+  }
+
+  /** Options always has a selection: it opens on its first entry. */
+  get #selected(): number {
+    return this.#cursor.selected ?? 0;
   }
 
   render(flow: Flow): OptionsModel {
@@ -242,24 +245,16 @@ class OptionsWidget implements Widget {
       kind: "options",
       items: this.#labels,
       selected: this.#selected,
-      windowTop: this.#windowTop,
+      windowTop: this.#cursor.windowTop,
       indicator: rowsIndicator(flow.indicator(), this.#selected, "option"),
       softkey: "OK",
     };
   }
 
   onKeyDown(key: PhoneKey, flow: Flow): void {
-    const count = this.#labels.length;
-    if (key === "down" || key === "up") {
-      const step = key === "down" ? 1 : count - 1;
-      this.#selected = (this.#selected + step) % count;
-      if (count <= VISIBLE_ROWS) return;
-      const offset = (this.#selected - this.#windowTop + count) % count;
-      if (offset >= VISIBLE_ROWS) {
-        this.#windowTop =
-          key === "up" ? this.#selected : (this.#selected - VISIBLE_ROWS + 1 + count) % count;
-      }
-    } else if (key === "navi") this.#choose(this.#selected, flow);
+    const moved = moveRows(this.#cursor, key, this.#labels.length);
+    if (moved !== undefined) this.#cursor = moved;
+    else if (key === "navi") this.#choose(this.#selected, flow);
     else if (key === "c") flow.back();
     // D9: digits, `*` and `#` leave for standby number entry with their DTMF pairs. That
     // handoff is plan 22's (`calculator/keys-options-*`, `options-dtmf-confirm-*`,

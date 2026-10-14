@@ -55,7 +55,7 @@ function walk(
   const states = [{ selected, windowTop }];
   for (const key of keys) {
     selected = (selected + (key === "down" ? 1 : count - 1)) % count;
-    windowTop = rowsWindowTop(windowTop, selected, count, ROWS);
+    windowTop = rowsWindowTop(windowTop, selected, count, ROWS, key);
     states.push({ selected, windowTop });
   }
   return states;
