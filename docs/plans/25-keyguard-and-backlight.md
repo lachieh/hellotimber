@@ -682,7 +682,7 @@ types), `tests/lights-model.test.ts` (new).
 Deviation: every file under `features/` must be a registered `StockFeature` (`tests/features.test.ts`),
 so `backlight.ts` registers an empty `backlightFeature` now (one line in `features/index.ts`); Task 8
 fills it. `tests/support/lights.ts` starts here (the golden loader, `LIGHT_EDGE_TOLERANCE_MS` = 5,
-`KEY_LIGHT_LATENCY_MAX_MS` = 33); Task 4 adds the rig helpers. The model test replays all 101
+`KEY_LIGHT_LATENCY_MAX_MS` = 33); Task 4 adds the rig helpers. The model test replays all 103
 timeout, key, power-key and screen-saver goldens; `lights/timeout/virgin/tap-02` is an expected
 failure: the tick's ±3 ms (its key-down lies 13631.1 ms before the fitted tick and the LEDs stayed
 lit, while `factory/tap-02` at 13631.6 ms and `factory/fine-252` at 13627.6 ms went dark), so no D
