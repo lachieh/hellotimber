@@ -669,15 +669,25 @@ end partial draws stay in the goldens (plan 14's `cut`/`edges` widget steps repr
 **Files:** `src/firmware/features/backlight.ts` (new: `StockLights`, the constants, the port
 types), `tests/lights-model.test.ts` (new).
 
-- [ ] TDD with an injected clock: `powerOn(t)` anchors the tick; `activity()` lights both and
+- [x] TDD with an injected clock: `powerOn(t)` anchors the tick; `activity()` lights both and
       restarts the timeout; the off edge is the first tick that satisfies Task 0's rule, for every
       `lights/timeout/*` and `lights/hold/*` case (expected `t_ms` transcribed from the goldens, and
       their `power-on`); `force("off"|"on")` overrides and `force(null)` releases into the D2 rule
       (on-release edges per Task 0's game section); `powerOff()` emits off for each lit light.
-- [ ] TDD tick independence: advancing 1 ms at a time and in one 60 s jump emit the same events;
+- [x] TDD tick independence: advancing 1 ms at a time and in one 60 s jump emit the same events;
       `atMs` never exceeds the time reached and never decreases; no duplicate states.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the stock light timer`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the stock light timer`.
+
+Deviation: every file under `features/` must be a registered `StockFeature` (`tests/features.test.ts`),
+so `backlight.ts` registers an empty `backlightFeature` now (one line in `features/index.ts`); Task 8
+fills it. `tests/support/lights.ts` starts here (the golden loader, `LIGHT_EDGE_TOLERANCE_MS` = 5,
+`KEY_LIGHT_LATENCY_MAX_MS` = 33); Task 4 adds the rig helpers. The model test replays all 101
+timeout, key, power-key and screen-saver goldens; `lights/timeout/virgin/tap-02` is an expected
+failure: the tick's ±3 ms (its key-down lies 13631.1 ms before the fitted tick and the LEDs stayed
+lit, while `factory/tap-02` at 13631.6 ms and `factory/fine-252` at 13627.6 ms went dark), so no D
+fits all three. Snake II's pause lights 36 ms after its key-down (the game's key scan), beyond the
+33 ms of a standby key.
 
 ### Task 4 - The lights port (TDD)
 
