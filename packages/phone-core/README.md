@@ -82,4 +82,32 @@ unsubscribe();
   rowsWindowTop(0, 9, 10, 3); // 9: ▲ from the first item shows items 9, 0, 1
   ```
 
+- Submenu options beyond `presentation` and `detail` are opt-in: `softkey` (default `Select`)
+  labels the level's list; `opening()` picks the child selected whenever the level is entered
+  (Select, shortcut, a path ending at the level; undefined or not a child = the first child);
+  `intro` is an application run on Select-entry before the list. While the intro runs the path
+  is the level's; its `exit()` reveals the list. Paths, per-digit shortcuts and returns from a
+  child skip it.
+
+  ```ts
+  new SubmenuEntry(slug, order, "Snake II", level, undefined, {
+    softkey: "Select",
+    opening: () => level.bySlug("new-game"),
+    intro: splash, // a PhoneApplication
+  });
+  ```
+
+- `context.exit(options?)`: `exit()` returns to the menu; `exit({ to: "standby" })` leaves the
+  menus as C-hold does; `exit({ levels: 2 })` also closes the enclosing level, and
+  `exit({ select: "slug" })` selects that child of the level returned to (on the bottom row of a
+  rows window). Invalid `levels`/`select` throw. `exit()` inside `createSession` returns without
+  rendering the application. `context.menuIndicator?.()` gives an application its menu numbers
+  and the shortcut state, for applications that draw their own indicator.
+- `shortcutEntry: { openDelayMs, invalid }` (default off) switches Menu+digit shortcuts from one
+  digit per level to menu numbers: digits 0-9 accumulate at each level; a number that prefixes a
+  longer one (`1` with 10-12) or is all zeros waits for `shortcutWindowMs`, then resolves; a
+  number that selects an entry shows it with `opening: true` on the model (the painter hides the
+  soft key) and opens it `openDelayMs` later; a submenu with an `intro` runs it at once; no
+  match opens the `invalid` application, whose exit goes to standby. While a digit is awaited
+  the indicator carries `typed` (the digits so far, `""` for none).
 - `Bitmap` convention: one byte per pixel, row-major, `pixels.length === width * height`.

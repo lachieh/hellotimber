@@ -842,19 +842,59 @@ for an empty level.
 **Files:** `packages/phone-core/src/{menu.ts,machine.ts,application.ts,types.ts,index.ts}`,
 README; tests `submenu-options.test.ts` (new), `intro.test.ts` (new), `applications.test.ts`.
 
-- [ ] TDD `softkey`: emitted as `list.softkey`; default `Select`; empty string throws.
-- [ ] TDD `opening`: selection on Select-entry, shortcut entry and path landing on the level;
+- [x] TDD `softkey`: emitted as `list.softkey`; default `Select`; empty string throws.
+- [x] TDD `opening`: selection on Select-entry, shortcut entry and path landing on the level;
       re-read each entry; a non-child or undefined result falls back to the first child;
       `windowTop` follows D3's entry rule.
-- [ ] TDD `intro`: runs on Select-entry with the level's path; its exit shows the list; C and
+- [x] TDD `intro`: runs on Select-entry with the level's path; its exit shows the list; C and
       other keys go to the intro; returns from a child and `navigate()` skip it; shortcuts per
       P5/P12 (Deviation if they differ from "Select only"); power-off and navigation deactivate
       it once.
-- [ ] TDD `exit({ to: "standby" })` from an application and from an intro; `exit()` called inside
+- [x] TDD `exit({ to: "standby" })` from an application and from an intro; `exit()` called inside
       `createSession` returns to the stack, renders nothing, deactivates once.
-- [ ] Existing tests pass unchanged; website models unchanged.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`, `vp check --fix`.
-- [ ] Commit: `feat(phone-core): submenu softkey, opening selection, intro and exit to standby`.
+- [x] Existing tests pass unchanged; website models unchanged.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`, `vp check --fix`.
+- [x] Commit: `feat(phone-core): submenu softkey, opening selection, intro and exit to standby`.
+
+Deviation: tests live in `submenu-options.test.ts`, `intro.test.ts`, `shortcut-entry.test.ts`
+(new, the P5 facts with D = 1460 ms, W = 2948 ms as test config) and `apps.test.ts` (there is no
+`applications.test.ts`). `shortcutEntry` is implemented here (D14 deviation) with these choices,
+each pinned by a kernel test:
+
+- Digits are matched as numbers at the level they apply to: the pending entry's children while
+  an entry is opening (`8 6` opens Games implicitly with Settings selected), else the shown level.
+  All-zero digits wait like a prefix (P5 `1 1 0` shows `11-0` and dots until the window ends);
+  `0 1` meaning 1 is UNVERIFIED. A digit with no candidate opens `invalid` at once, also when an
+  application opened by a shortcut is showing (UNVERIFIED).
+- A selected entry shows in its level with `opening: true` (and the entry on the top row) and
+  opens `openDelayMs` after its digit; a submenu with an intro runs it at once (P5 `8 1`). Per-
+  digit shortcuts (plan 13 mode) skip intros, like paths. While a shortcut intro runs it takes
+  every key (a digit only skips it) and the timers wait; when it ends the parent shows the entry
+  opening again, the window restarts, and an opening that fell due during the intro happens at
+  the window end (P5 `8 1`: ≈2.92 s of `8-1` without a soft key, then `8-1-1`; `8 1 2`: opens
+  1.46 s after the `1`, then `8-1-` and dots until 2.95 s after the `2`).
+- The window restarts at every digit, at a resolve (from the deadline, so a late tick does not
+  shift it) and when a shortcut intro ends. Its end resolves waiting digits; the indicator keeps
+  the resolved digits with the dots until the entry opens (P5 `m1` image h: `1` and dots, no
+  soft key).
+- The indicator needs one field beyond the D2 seams: `MenuIndicator.typed` (digits typed toward
+  the next number, `""` for none) marks the awaiting form `<segments>-<typed>` plus dots; the
+  list painter must not append the selection number when it is present. An application opened
+  by a shortcut shows `8-6-3-` and dots until the window ends (P5 `8 6 3` image h), so
+  `ApplicationContext` gains an optional `menuIndicator()` (optional only so hosts that wrap
+  contexts, like the website's chat flow, still type-check). VISION records both.
+- `exit({ select })` puts the selected child on the bottom row of a rows window (P12
+  `games-top-score-wait` image m), not by the D3 move rule; `levels` counts every frame of the
+  launching stack including the carousel. An intro's exit with `levels`/`select` returns like
+  an application's; a plain exit of a shortcut intro keeps the shortcut.
+- `SubmenuEntry` exposes `softkey`, `intro` and `openingChild()` (the machine reads them).
+  Exceptions thrown by an `opening()` reader are not contained (as `detail`).
+
+For Tasks 9-13: stock painters must hide the soft key when `opening` is set, draw `typed` per
+the rule above (top level: `segments` empty, so `1` and dots), and widgets that paint their own
+indicator read `context.menuIndicator?.()`. nokia-os configures `shortcutEntry` (openDelayMs
+≈1460 from the probes, `invalid` = the Invalid shortcut note whose exit goes to standby) in
+Task 12; the standby number entry after it stays out of scope.
 
 ### Task 6 - Stock fonts from the tree goldens (TDD)
 

@@ -36,6 +36,13 @@ export interface MenuIndicator {
   awaitingNext: boolean;
   /** Present only while the shortcut window is open and no digit has been accepted. */
   awaitingFirst?: true;
+  /**
+   * PhoneConfig.shortcutEntry only: present while a digit is awaited at a level. It holds the
+   * digits typed toward that level's next menu number ("" = none yet); `segments` then end at the
+   * level the digits belong to, and the painter draws `segments-typed` with the awaiting mark and
+   * adds no selection number (`12-` and dots, `11-0` and dots, `1` and dots).
+   */
+  typed?: string;
 }
 
 export interface StandbyIndicators {
@@ -68,6 +75,8 @@ export type ScreenModel =
       /** Visible frame of the slot graphic's timeline; present iff the graphic has a timeline. */
       iconFrame?: number;
       menuIndicator: MenuIndicator;
+      /** PhoneConfig.shortcutEntry only: a typed entry is about to open (no soft key is drawn). */
+      opening?: true;
     }
   | {
       kind: "list";
@@ -84,6 +93,8 @@ export type ScreenModel =
       detail?: string;
       /** Index of the item on the first visible row; rows submenus with PhoneConfig.rowsWindow only. */
       windowTop?: number;
+      /** PhoneConfig.shortcutEntry only: a typed entry is about to open (no soft key is drawn). */
+      opening?: true;
     }
   | {
       kind: "reader";
@@ -129,6 +140,16 @@ export interface PhoneConfig<Metadata = unknown> {
    * `windowTop` (see `rowsWindowTop`). Positive integer. Default: off (no `windowTop`).
    */
   rowsWindow?: number;
+  /**
+   * Stock shortcut digits (default off: one digit per level, orders 1-9). Digits 0-9 form menu
+   * numbers at each level: a number that is a prefix of a longer one (or all zeros) waits for
+   * `shortcutWindowMs` and then resolves; a number that selects an entry shows it at once
+   * (`opening: true`) and opens it `openDelayMs` later (a submenu with an intro runs it at once);
+   * digits that match no number open `invalid`, whose exit goes to standby. The window restarts
+   * at each digit, at a resolve and when a shortcut intro ends; an opening that falls due during
+   * an intro waits for the window end.
+   */
+  shortcutEntry?: { openDelayMs: number; invalid: PhoneApplication };
 }
 
 export interface PhoneSnapshot {
@@ -156,5 +177,6 @@ export interface Phone {
   subscribe(cb: (snap: PhoneSnapshot) => void): () => void;
   on<K extends keyof PhoneEventMap>(ev: K, cb: PhoneEventMap[K]): () => void;
 }
+import type { PhoneApplication } from "./application";
 import type { PhoneMenu } from "./menu";
 import type { Timeline } from "./timeline";

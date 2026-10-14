@@ -1,9 +1,10 @@
+import { PhoneApplication } from "./application";
 import type {
   ApplicationContext,
   DeactivationReason,
-  PhoneApplication,
   PhoneApplicationSession,
 } from "./application";
+import { SubmenuEntry } from "./menu";
 import type {
   ActionEntry,
   ApplicationEntry,
@@ -12,7 +13,6 @@ import type {
   MenuEntry,
   MenuEntryVisitor,
   ReaderEntry,
-  SubmenuEntry,
 } from "./menu";
 import { childrenOf, normalizePath, parsePath, resolveIds } from "./paths";
 import { Timeline } from "./timeline";
@@ -70,8 +70,17 @@ type NavFrame<Metadata> =
 type DisplayNavFrame<Metadata> = Exclude<NavFrame<Metadata>, { kind: "action" }>;
 type SubmenuFrame<Metadata> = Extract<NavFrame<Metadata>, { kind: "submenu" }>;
 
+/**
+ * What launched an application: a menu entry (its slug ends the path), a level's intro (the
+ * level's frame tops the stack, so the path is the level's) or the stock invalid-shortcut note.
+ */
+type ActivationOrigin<Metadata> =
+  | { kind: "entry"; entry: ApplicationEntry<Metadata> }
+  | { kind: "intro"; viaShortcut: boolean }
+  | { kind: "invalid" };
+
 interface AppActivation<Metadata> {
-  origin: ApplicationEntry<Metadata>;
+  origin: ActivationOrigin<Metadata>;
   definition: PhoneApplication;
   session: PhoneApplicationSession | null;
   activationToken: object;
@@ -95,6 +104,31 @@ interface HeldKey {
 
 type Notice = { text: string; softkey: string; path?: string };
 
+type ExitOptions = Parameters<ApplicationContext["exit"]>[0];
+
+/** Plan 13 shortcuts: one digit (1-9) per level, each entering its entry at once. */
+interface DigitShortcut<Metadata> {
+  kind: "digits";
+  entries: MenuEntry<Metadata>[];
+  nextLevel: readonly MenuEntry<Metadata>[];
+  deadline: number;
+}
+
+/** PhoneConfig.shortcutEntry: digits form menu numbers; a selected entry opens after a delay. */
+interface StockShortcut<Metadata> {
+  kind: "stock";
+  /** Digits typed toward the next menu number at the current level. */
+  digits: string;
+  /** End of the digit window. */
+  deadline: number;
+  /** The typed entry (the selection of the shown level) and when it opens. */
+  pending: { entry: MenuEntry<Metadata>; openAt: number } | null;
+  /** Digits resolved at the window end, still shown until their entry opens. */
+  resolvedDigits: string | undefined;
+}
+
+type Shortcut<Metadata> = DigitShortcut<Metadata> | StockShortcut<Metadata>;
+
 /** Clamp an index into [0, length-1] (0 for an empty list). */
 function clampIndex(index: number, length: number): number {
   return length === 0 ? 0 : Math.min(Math.max(0, index), length - 1);
@@ -115,11 +149,8 @@ interface Machine<Metadata> {
   /** Standby-scoped notice — survives menu round-trips until read/cleared. */
   notice: Notice | null;
   held: Map<PhoneKey, HeldKey>;
-  shortcut: {
-    entries: MenuEntry<Metadata>[];
-    nextLevel: readonly MenuEntry<Metadata>[];
-    deadline: number;
-  } | null;
+  shortcut: Shortcut<Metadata> | null;
+  shortcutEntry: { openDelayMs: number; invalid: PhoneApplication } | undefined;
   runDepth: number;
   notifying: boolean;
   deferredRuns: (() => void)[];
@@ -346,41 +377,73 @@ function stackOrders<Metadata>(stack: readonly NavFrame<Metadata>[]): number[] {
   return orders;
 }
 
-function menuIndicator<Metadata>(m: Machine<Metadata>): MenuIndicator {
-  let segments: number[];
+function originSlugs<Metadata>(origin: ActivationOrigin<Metadata>): string[] {
+  return origin.kind === "entry" ? [origin.entry.slug.value] : [];
+}
+
+function originOrders<Metadata>(origin: ActivationOrigin<Metadata>): number[] {
+  return origin.kind === "entry" ? [origin.entry.order.value] : [];
+}
+
+/** Menu numbers from the root to the shown level (or application), without the carousel's. */
+function levelOrders<Metadata>(m: Machine<Metadata>): number[] {
   if (m.mode.kind === "app") {
-    segments = [...stackOrders(m.mode.activation.stack), m.mode.activation.origin.order.value];
-  } else if (m.mode.kind === "nav") {
-    segments = stackOrders(m.mode.stack);
-    if (segments.length === 0) {
-      const carousel = m.mode.stack[0];
-      if (carousel?.kind !== "carousel") throw new Error("Navigation stack has no carousel.");
-      segments = [m.config.menu.entries[carousel.index]!.entry.order.value];
-    }
-  } else {
-    segments = [];
+    const { stack, origin } = m.mode.activation;
+    return [...stackOrders(stack), ...originOrders(origin)];
   }
+  return m.mode.kind === "nav" ? stackOrders(m.mode.stack) : [];
+}
+
+/** levelOrders, or the carousel slot's number when the carousel is shown. */
+function positionOrders<Metadata>(m: Machine<Metadata>): number[] {
+  const segments = levelOrders(m);
+  if (m.mode.kind !== "nav" || segments.length > 0) return segments;
+  const carousel = m.mode.stack[0];
+  if (carousel?.kind !== "carousel") throw new Error("Navigation stack has no carousel.");
+  return [m.config.menu.entries[carousel.index]!.entry.order.value];
+}
+
+function menuIndicator<Metadata>(m: Machine<Metadata>): MenuIndicator {
+  const shortcut = m.shortcut;
+  if (shortcut?.kind === "stock") return stockIndicator(m, shortcut);
   return {
-    segments,
-    awaitingNext: m.shortcut !== null && m.shortcut.entries.length > 0,
-    ...(m.shortcut !== null && m.shortcut.entries.length === 0
-      ? { awaitingFirst: true as const }
-      : {}),
+    segments: positionOrders(m),
+    awaitingNext: shortcut !== null && shortcut.entries.length > 0,
+    ...(shortcut !== null && shortcut.entries.length === 0 ? { awaitingFirst: true as const } : {}),
   };
 }
 
+/**
+ * The stock indicator: the typed path (`8`, `8-6`), the awaiting form `<segments>-<typed>` and
+ * dots while a digit is awaited (`1`, `12-`, `11-0`), or the first-digit dots after Menu.
+ */
+function stockIndicator<Metadata>(m: Machine<Metadata>, s: StockShortcut<Metadata>): MenuIndicator {
+  if (s.resolvedDigits !== undefined) {
+    return { segments: levelOrders(m), awaitingNext: true, typed: s.resolvedDigits };
+  }
+  if (s.pending !== null) {
+    if (s.digits === "") return { segments: positionOrders(m), awaitingNext: false };
+    return {
+      segments: [...levelOrders(m), s.pending.entry.order.value],
+      awaitingNext: true,
+      typed: s.digits,
+    };
+  }
+  const top = m.mode.kind === "nav" ? m.mode.stack[m.mode.stack.length - 1] : undefined;
+  if (s.digits === "" && top?.kind === "carousel") {
+    return { segments: positionOrders(m), awaitingNext: false, awaitingFirst: true };
+  }
+  return { segments: levelOrders(m), awaitingNext: true, typed: s.digits };
+}
+
 function currentPath<Metadata>(m: Machine<Metadata>): string {
-  if (m.mode.kind === "nav") {
-    const slugs = stackSlugs(m.mode.stack);
-    return slugs.length === 0 ? "menu" : `menu/${slugs.join("/")}`;
-  }
-  if (m.mode.kind === "app") {
-    return `menu/${[
-      ...stackSlugs(m.mode.activation.stack),
-      m.mode.activation.origin.slug.value,
-    ].join("/")}`;
-  }
-  return "standby";
+  let slugs: string[];
+  if (m.mode.kind === "nav") slugs = stackSlugs(m.mode.stack);
+  else if (m.mode.kind === "app") {
+    const { stack, origin } = m.mode.activation;
+    slugs = [...stackSlugs(stack), ...originSlugs(origin)];
+  } else return "standby";
+  return slugs.length === 0 ? "menu" : `menu/${slugs.join("/")}`;
 }
 
 /** Greedy word-wrap at `width` chars; hard-breaks longer words; '\n' = paragraph. */
@@ -449,11 +512,12 @@ function renderScreen<Metadata>(m: Machine<Metadata>): ScreenModel {
       return frame === undefined ? { kind: "off" } : renderFrame(m, frame);
     }
     case "app": {
-      const { origin, session } = m.mode.activation;
+      const { session } = m.mode.activation;
+      const title = activationLabel(m.mode.activation);
       if (session === null) {
         return {
           kind: "reader",
-          title: origin.label,
+          title,
           lines: ["App error"],
           scrollTop: 0,
           menuIndicator: menuIndicator(m),
@@ -464,7 +528,7 @@ function renderScreen<Metadata>(m: Machine<Metadata>): ScreenModel {
       } catch {
         return {
           kind: "reader",
-          title: origin.label,
+          title,
           lines: ["App error"],
           scrollTop: 0,
           menuIndicator: menuIndicator(m),
@@ -472,6 +536,18 @@ function renderScreen<Metadata>(m: Machine<Metadata>): ScreenModel {
       }
     }
   }
+}
+
+function activationLabel<Metadata>(activation: AppActivation<Metadata>): string {
+  const { origin, stack, definition } = activation;
+  if (origin.kind === "entry") return origin.entry.label;
+  const top = stack[stack.length - 1];
+  return origin.kind === "intro" && top?.kind === "submenu" ? top.entry.label : definition.id;
+}
+
+/** A stock shortcut's typed entry is about to open: the shown level drops its soft key. */
+function stockOpening<Metadata>(m: Machine<Metadata>): { opening?: true } {
+  return m.shortcut?.kind === "stock" && m.shortcut.pending !== null ? { opening: true } : {};
 }
 
 function standbyScreen<Metadata>(m: Machine<Metadata>, leaving: boolean): ScreenModel {
@@ -504,6 +580,7 @@ function renderFrame<Metadata>(
         iconId: slot.graphic.id,
         ...(iconFrame === undefined ? {} : { iconFrame }),
         menuIndicator: menuIndicator(m),
+        ...stockOpening(m),
       };
     }
     case "submenu": {
@@ -516,11 +593,12 @@ function renderFrame<Metadata>(
         items: entries.map((entry) => entry.label),
         ...(orders.every((value, index) => value === index + 1) ? {} : { itemOrders: orders }),
         selected: frame.selected,
-        softkey: "Select",
+        softkey: frame.entry.softkey,
         menuIndicator: menuIndicator(m),
         ...(frame.entry.presentation === "pages" ? { presentation: "pages" as const } : {}),
         ...(detail === undefined ? {} : { detail }),
         ...(frame.windowTop === undefined ? {} : { windowTop: frame.windowTop }),
+        ...stockOpening(m),
       };
     }
     case "list": {
@@ -594,7 +672,7 @@ function isActive<Metadata>(
 
 function startApplication<Metadata>(
   m: Machine<Metadata>,
-  origin: ApplicationEntry<Metadata>,
+  origin: ActivationOrigin<Metadata>,
   definition: PhoneApplication,
   stack: NavFrame<Metadata>[],
 ): void {
@@ -611,13 +689,27 @@ function startApplication<Metadata>(
   m.mode = { kind: "app", activation };
   m.dirty = true;
   const context: ApplicationContext = {
-    exit(): void {
+    exit(options?: ExitOptions): void {
+      const plan = exitPlan(m, activation, options);
       run(m, () => {
         if (!isActive(m, activation, token)) return;
-        cancelShortcut(m);
         swallowHeldReleases(m);
         deactivate(activation, "exit");
-        returnToStack(m, activation.stack);
+        if (plan === "standby") {
+          m.mode = { kind: "standby" };
+          m.shortcut = null;
+          m.dirty = true;
+          return;
+        }
+        if (plan.plain && origin.kind === "intro" && origin.viaShortcut) {
+          if (m.shortcut?.kind === "stock") {
+            endShortcutIntro(m, m.shortcut, activation.stack);
+            return;
+          }
+        }
+        cancelShortcut(m);
+        plan.apply();
+        returnToStack(m, plan.stack);
       });
     },
     open(nextDefinition: PhoneApplication): void {
@@ -627,6 +719,13 @@ function startApplication<Metadata>(
         deactivate(activation, "replace");
         startApplication(m, activation.origin, nextDefinition, activation.stack);
       });
+    },
+    menuIndicator(): MenuIndicator {
+      if (m.mode.kind === "app" && m.mode.activation === activation) return menuIndicator(m);
+      return {
+        segments: [...stackOrders(activation.stack), ...originOrders(activation.origin)],
+        awaitingNext: false,
+      };
     },
   };
 
@@ -639,6 +738,80 @@ function startApplication<Metadata>(
   } catch {
     // A current activation renders its null session as App error.
   }
+}
+
+/**
+ * Validates exit options against the activation's stack (throwing at the caller) and returns
+ * where the exit goes: standby, or a stack `levels - 1` frames shorter, with `apply` selecting
+ * `select` in its top level.
+ */
+function exitPlan<Metadata>(
+  m: Machine<Metadata>,
+  activation: AppActivation<Metadata>,
+  options: ExitOptions = {},
+): "standby" | { stack: NavFrame<Metadata>[]; apply: () => void; plain: boolean } {
+  if (options.to !== undefined && options.to !== "standby") {
+    throw new Error(`exit "to" must be "standby" (received ${String(options.to)}).`);
+  }
+  if (activation.origin.kind === "invalid" || options.to === "standby") return "standby";
+  const base = activation.stack;
+  const levels = options.levels ?? 1;
+  if (!Number.isInteger(levels) || levels < 1 || levels > base.length) {
+    throw new Error(
+      `exit levels must be an integer from 1 to ${base.length} (received ${levels}).`,
+    );
+  }
+  const stack = levels === 1 ? base : base.slice(0, base.length - levels + 1);
+  const { select } = options;
+  let apply = (): void => {};
+  if (select !== undefined) {
+    const top = stack[stack.length - 1]!;
+    const entries =
+      top.kind === "carousel"
+        ? m.config.menu.entries.map((slot) => slot.entry)
+        : top.kind === "submenu"
+          ? top.entry.children.entries
+          : [];
+    const index = entries.findIndex((entry) => entry.slug.value === select);
+    if (index < 0)
+      throw new Error(`exit select "${select}" is not a child of the level returned to.`);
+    apply = () => {
+      if (top.kind === "carousel") top.index = index;
+      else if (top.kind === "submenu") selectOnBottomRow(m, top, index);
+    };
+  }
+  return { stack, apply, plain: levels === 1 && select === undefined };
+}
+
+/**
+ * Selects a child for an application's exit. With a rows window the child goes on the bottom
+ * row (Top score returns to `Score IDs / Instructions / New game`, plan 14 P12).
+ */
+function selectOnBottomRow<Metadata>(
+  m: Machine<Metadata>,
+  frame: SubmenuFrame<Metadata>,
+  index: number,
+): void {
+  frame.selected = index;
+  if (frame.windowTop === undefined || m.rowsWindow === undefined) return;
+  const count = frame.entry.children.entries.length;
+  frame.windowTop = count <= m.rowsWindow ? 0 : wrapIndex(index - m.rowsWindow + 1, count);
+}
+
+/** Runs a level's intro before its list; the intro's stack ends with the level's frame. */
+function startIntro<Metadata>(
+  m: Machine<Metadata>,
+  level: SubmenuEntry<Metadata>,
+  stack: readonly NavFrame<Metadata>[],
+  viaShortcut: boolean,
+): void {
+  const frame = submenuFrame(m, level, openingIndex(level));
+  startApplication(m, { kind: "intro", viaShortcut }, level.intro!, [...stack, frame]);
+}
+
+function openingIndex<Metadata>(level: SubmenuEntry<Metadata>): number {
+  const child = level.openingChild();
+  return child === undefined ? 0 : level.children.entries.indexOf(child);
 }
 
 function togglePower<Metadata>(m: Machine<Metadata>): void {
@@ -684,11 +857,12 @@ function tickBoot<Metadata>(m: Machine<Metadata>): void {
 function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
   if (event.type === "down") {
     if (m.held.has(event.key)) return;
-    const shortcutCaptured = m.shortcut !== null && shortcutNumber(event.key) !== null;
+    const shortcutCaptured = capturedDigit(m, event.key) !== null;
     m.held.set(event.key, { downAt: m.now, longFired: false, shortcutCaptured });
     if (m.mode.kind !== "off") emit(m, "sound", { kind: "key", id: "beep" });
     if (shortcutCaptured) return;
-    if (m.shortcut !== null) cancelShortcut(m);
+    // A shortcut intro takes every key; the shortcut resumes when it ends.
+    if (m.shortcut !== null && !shortcutIntroRunning(m)) cancelShortcut(m);
     forwardToApp(m, event);
     return;
   }
@@ -696,15 +870,15 @@ function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
   const held = m.held.get(event.key);
   m.held.delete(event.key);
   if (held?.shortcutCaptured) {
-    if (!held.longFired && m.shortcut !== null) {
-      shortcutDigit(m, shortcutNumber(event.key)!);
-    }
+    const digit = capturedDigit(m, event.key);
+    if (!held.longFired && digit !== null) shortcutDigit(m, digit);
     return;
   }
   if (m.mode.kind === "app") {
     const activation = m.mode.activation;
     if (activation.session === null) {
       if (held !== undefined && !held.longFired && event.key === "c") {
+        cancelShortcut(m);
         returnToStack(m, activation.stack);
       }
     } else {
@@ -737,7 +911,9 @@ function handleTick<Metadata>(m: Machine<Metadata>, nowMs: number): void {
     }
   }
   if (m.mode.kind === "boot") tickBoot(m);
-  if (m.shortcut !== null && m.now >= m.shortcut.deadline) cancelShortcut(m);
+  const shortcut = m.shortcut;
+  if (shortcut?.kind === "digits" && m.now >= shortcut.deadline) cancelShortcut(m);
+  else if (shortcut?.kind === "stock" && !shortcutIntroRunning(m)) tickStockShortcut(m, shortcut);
   if (m.mode.kind !== "app" || m.mode.activation.session === null) return;
   try {
     m.mode.activation.session.tick(dtMs);
@@ -884,21 +1060,41 @@ function enterMenu<Metadata>(m: Machine<Metadata>): void {
   const carousel = carouselFrame(m, 0, "enter");
   carousel.revealedAt += m.menuOpenDelayMs;
   m.mode = { kind: "nav", stack: [carousel] };
-  m.shortcut = {
-    entries: [],
-    nextLevel: m.config.menu.entries.map((slot) => slot.entry),
-    deadline: m.now + m.shortcutWindowMs,
-  };
+  const deadline = m.now + m.shortcutWindowMs;
+  m.shortcut =
+    m.shortcutEntry === undefined
+      ? {
+          kind: "digits",
+          entries: [],
+          nextLevel: m.config.menu.entries.map((slot) => slot.entry),
+          deadline,
+        }
+      : { kind: "stock", digits: "", deadline, pending: null, resolvedDigits: undefined };
   m.dirty = true;
 }
 
-function shortcutNumber(key: PhoneKey): number | null {
-  return key >= "1" && key <= "9" ? Number(key) : null;
+/** The digit a key types into the open shortcut window, or null when the key is not captured. */
+function capturedDigit<Metadata>(m: Machine<Metadata>, key: PhoneKey): number | null {
+  if (m.shortcut === null || !/^[0-9]$/.test(key)) return null;
+  if (m.shortcut.kind === "digits") return key === "0" ? null : Number(key);
+  return shortcutIntroRunning(m) ? null : Number(key);
+}
+
+function shortcutIntroRunning<Metadata>(m: Machine<Metadata>): boolean {
+  return (
+    m.mode.kind === "app" &&
+    m.mode.activation.origin.kind === "intro" &&
+    m.mode.activation.origin.viaShortcut
+  );
 }
 
 function shortcutDigit<Metadata>(m: Machine<Metadata>, digit: number): void {
   const shortcut = m.shortcut;
   if (shortcut === null) return;
+  if (shortcut.kind === "stock") {
+    stockDigit(m, shortcut, digit);
+    return;
+  }
   const entry = shortcut.nextLevel.find((candidate) => candidate.order.value === digit);
   if (entry === undefined) return;
 
@@ -915,6 +1111,165 @@ function cancelShortcut<Metadata>(m: Machine<Metadata>): void {
   m.dirty = true;
 }
 
+type NumberMatch<Metadata> =
+  | { kind: "entry"; entry: MenuEntry<Metadata> }
+  | { kind: "wait"; exact: MenuEntry<Metadata> | undefined }
+  | { kind: "none" };
+
+/**
+ * Matches typed digits as a menu number among `level`'s entries. A number that is also the
+ * prefix of a longer one waits (`1` with 10-12), as do leading zeros; no candidate is none.
+ */
+function matchNumber<Metadata>(
+  level: readonly MenuEntry<Metadata>[],
+  digits: string,
+): NumberMatch<Metadata> {
+  const number = digits.replace(/^0+/, "");
+  if (number === "")
+    return level.length > 0 ? { kind: "wait", exact: undefined } : { kind: "none" };
+  const exact = level.find((entry) => String(entry.order.value) === number);
+  const longer = level.some((entry) => {
+    const text = String(entry.order.value);
+    return text.length > number.length && text.startsWith(number);
+  });
+  if (exact !== undefined && !longer) return { kind: "entry", entry: exact };
+  return exact !== undefined || longer ? { kind: "wait", exact } : { kind: "none" };
+}
+
+/** The entries the next typed number selects among. */
+function stockLevel<Metadata>(
+  m: Machine<Metadata>,
+  s: StockShortcut<Metadata>,
+): readonly MenuEntry<Metadata>[] {
+  if (s.pending !== null) return childrenOf(s.pending.entry);
+  if (m.mode.kind !== "nav") return [];
+  const top = m.mode.stack[m.mode.stack.length - 1];
+  if (top?.kind === "carousel") return m.config.menu.entries.map((slot) => slot.entry);
+  return top?.kind === "submenu" ? top.entry.children.entries : [];
+}
+
+function stockDigit<Metadata>(
+  m: Machine<Metadata>,
+  s: StockShortcut<Metadata>,
+  digit: number,
+): void {
+  const digits = `${s.digits}${digit}`;
+  const match = matchNumber(stockLevel(m, s), digits);
+  if (match.kind === "none") {
+    openInvalidShortcut(m);
+    return;
+  }
+  s.resolvedDigits = undefined;
+  s.deadline = m.now + m.shortcutWindowMs;
+  m.dirty = true;
+  if (match.kind === "wait") {
+    s.digits = digits;
+    return;
+  }
+  s.digits = "";
+  selectTyped(m, s, match.entry);
+}
+
+/**
+ * Shows a typed entry selected in its level (opening that level first when it is the pending
+ * entry itself), due to open after the delay; a submenu with an intro runs it at once.
+ */
+function selectTyped<Metadata>(
+  m: Machine<Metadata>,
+  s: StockShortcut<Metadata>,
+  entry: MenuEntry<Metadata>,
+  at = m.now,
+): void {
+  if (m.mode.kind !== "nav") return;
+  const stack = m.mode.stack;
+  const parent = s.pending?.entry;
+  if (parent instanceof SubmenuEntry) {
+    stack.push(submenuFrame(m, parent, parent.children.entries.indexOf(entry)));
+  } else {
+    const top = stack[stack.length - 1]!;
+    if (top.kind === "carousel") {
+      top.index = entry.order.value - 1;
+      revealCarousel(m, top, "enter");
+    } else if (top.kind === "submenu") {
+      top.selected = top.entry.children.entries.indexOf(entry);
+      enterWindow(m, top);
+    }
+  }
+  s.pending = { entry, openAt: at + m.shortcutEntry!.openDelayMs };
+  m.dirty = true;
+  if (entry instanceof SubmenuEntry && entry.intro !== undefined) startIntro(m, entry, stack, true);
+}
+
+/** Fires every timer due by now in time order (an opening first on a tie). */
+function tickStockShortcut<Metadata>(m: Machine<Metadata>, s: StockShortcut<Metadata>): void {
+  while (m.shortcut === s && !shortcutIntroRunning(m)) {
+    const openAt = s.pending?.openAt ?? Infinity;
+    if (Math.min(openAt, s.deadline) > m.now) return;
+    if (openAt <= s.deadline) openPending(m, s);
+    else endStockWindow(m, s);
+  }
+}
+
+/** Opens the typed entry (without its intro, which ran when it was typed). */
+function openPending<Metadata>(m: Machine<Metadata>, s: StockShortcut<Metadata>): void {
+  const entry = s.pending!.entry;
+  s.pending = null;
+  s.resolvedDigits = undefined;
+  m.dirty = true;
+  openEntry(m, entry, false);
+}
+
+/**
+ * The window ends: pending digits resolve to their number (or Invalid shortcut), timed from the
+ * deadline rather than the tick that noticed it; else an opening still due happens now, and
+ * the shortcut closes.
+ */
+function endStockWindow<Metadata>(m: Machine<Metadata>, s: StockShortcut<Metadata>): void {
+  if (s.digits !== "") {
+    const match = matchNumber(stockLevel(m, s), s.digits);
+    const target = match.kind === "wait" ? match.exact : undefined;
+    if (target === undefined) {
+      openInvalidShortcut(m);
+      return;
+    }
+    const typed = s.digits;
+    const due = s.deadline;
+    s.digits = "";
+    s.deadline = due + m.shortcutWindowMs;
+    selectTyped(m, s, target, due);
+    if (m.mode.kind === "nav") s.resolvedDigits = typed;
+    return;
+  }
+  if (s.pending !== null) openPending(m, s);
+  if (m.shortcut === s) cancelShortcut(m);
+}
+
+/**
+ * A shortcut intro ended: show its level's parent with the typed entry still opening. The window
+ * restarts; an opening that fell due during the intro waits for the window end.
+ */
+function endShortcutIntro<Metadata>(
+  m: Machine<Metadata>,
+  s: StockShortcut<Metadata>,
+  stack: readonly NavFrame<Metadata>[],
+): void {
+  returnToStack(m, stack.slice(0, -1));
+  s.deadline = m.now + m.shortcutWindowMs;
+  if (s.pending !== null && s.pending.openAt <= m.now) s.pending.openAt = s.deadline;
+}
+
+function openInvalidShortcut<Metadata>(m: Machine<Metadata>): void {
+  const stack =
+    m.mode.kind === "nav"
+      ? m.mode.stack
+      : m.mode.kind === "app"
+        ? m.mode.activation.stack
+        : [carouselFrame(m, 0, "enter")];
+  m.shortcut = null;
+  deactivateActive(m, "navigate");
+  startApplication(m, { kind: "invalid" }, m.shortcutEntry!.invalid, stack);
+}
+
 function buildNavStack<Metadata>(
   m: Machine<Metadata>,
   entries: readonly MenuEntry<Metadata>[],
@@ -922,7 +1277,8 @@ function buildNavStack<Metadata>(
 ): void {
   if (!preserveShortcut) m.shortcut = null;
   const stack: NavFrame<Metadata>[] = [carouselFrame(m, 0, "enter")];
-  for (const entry of entries) {
+  for (const [position, entry] of entries.entries()) {
+    const last = position === entries.length - 1;
     const parent = stack[stack.length - 1]!;
     // Position within the parent level: a submenu level may skip a hidden entry's number.
     if (parent.kind === "carousel") parent.index = entry.order.value - 1;
@@ -933,7 +1289,7 @@ function buildNavStack<Metadata>(
 
     const destination = entry.accept<"continue" | "application" | "action">({
       visitSubmenu(submenu) {
-        stack.push(submenuFrame(m, submenu, 0));
+        stack.push(submenuFrame(m, submenu, last ? openingIndex(submenu) : 0));
         return "continue";
       },
       visitList(list) {
@@ -950,7 +1306,7 @@ function buildNavStack<Metadata>(
       },
       visitApplication(application) {
         m.mode = { kind: "nav", stack };
-        startApplication(m, application, application.application, stack);
+        startApplication(m, { kind: "entry", entry: application }, application.application, stack);
         return "application";
       },
     });
@@ -968,32 +1324,39 @@ function buildNavStack<Metadata>(
 function enterEntry<Metadata>(m: Machine<Metadata>, entry: MenuEntry<Metadata>): void {
   if (m.mode.kind !== "nav") return;
   m.shortcut = null;
+  openEntry(m, entry, true);
+}
+
+/** Opens `entry` on top of the navigation stack; `runIntro` runs a level's intro first. */
+function openEntry<Metadata>(
+  m: Machine<Metadata>,
+  entry: MenuEntry<Metadata>,
+  runIntro: boolean,
+): void {
+  if (m.mode.kind !== "nav") return;
+  const stack = m.mode.stack;
   const visitor: MenuEntryVisitor<Metadata, void> = {
     visitSubmenu(submenu) {
-      if (m.mode.kind === "nav") {
-        m.mode.stack.push(submenuFrame(m, submenu, 0));
-        m.dirty = true;
+      if (runIntro && submenu.intro !== undefined) {
+        startIntro(m, submenu, stack, false);
+        return;
       }
+      stack.push(submenuFrame(m, submenu, openingIndex(submenu)));
+      m.dirty = true;
     },
     visitList(list) {
-      if (m.mode.kind === "nav") {
-        m.mode.stack.push({ kind: "list", entry: list, selectedId: null, fallbackIndex: 0 });
-        m.dirty = true;
-      }
+      stack.push({ kind: "list", entry: list, selectedId: null, fallbackIndex: 0 });
+      m.dirty = true;
     },
     visitReader(reader) {
-      if (m.mode.kind === "nav") {
-        m.mode.stack.push({ kind: "reader", entry: reader, scrollTop: 0 });
-        m.dirty = true;
-      }
+      stack.push({ kind: "reader", entry: reader, scrollTop: 0 });
+      m.dirty = true;
     },
     visitAction(action) {
       emit(m, "action", action.action);
     },
     visitApplication(application) {
-      if (m.mode.kind === "nav") {
-        startApplication(m, application, application.application, m.mode.stack);
-      }
+      startApplication(m, { kind: "entry", entry: application }, application.application, stack);
     },
   };
   entry.accept(visitor);
@@ -1049,6 +1412,23 @@ function positiveInteger(name: string, value: number | undefined): number | unde
   return value;
 }
 
+function resolveShortcutEntry<Metadata>(
+  config: PhoneConfig<Metadata>,
+): Machine<Metadata>["shortcutEntry"] {
+  const { shortcutEntry } = config;
+  if (shortcutEntry === undefined) return undefined;
+  const { openDelayMs, invalid } = shortcutEntry;
+  if (!Number.isInteger(openDelayMs) || openDelayMs < 0) {
+    throw new Error(
+      `shortcutEntry.openDelayMs must be a non-negative integer (received ${openDelayMs}).`,
+    );
+  }
+  if (!(invalid instanceof PhoneApplication)) {
+    throw new Error("shortcutEntry.invalid must be an application definition.");
+  }
+  return { openDelayMs, invalid };
+}
+
 function nonNegativeInteger(name: string, value: number | undefined, fallback: number): number {
   if (value === undefined) return fallback;
   if (!Number.isInteger(value) || value < 0) {
@@ -1078,6 +1458,7 @@ export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): 
     notice: null,
     held: new Map(),
     shortcut: null,
+    shortcutEntry: resolveShortcutEntry(config),
     runDepth: 0,
     notifying: false,
     deferredRuns: [],

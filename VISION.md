@@ -163,6 +163,12 @@ export interface MenuIndicator {
   awaitingNext: boolean;
   /** Present only while the shortcut window is open and no digit has been accepted. */
   awaitingFirst?: true;
+  /**
+   * Plan 14, shortcutEntry only: present while a digit is awaited at a level; the digits typed
+   * toward its next number ("" = none). `segments` then end at that level and the painter draws
+   * `segments-typed` plus the awaiting dots without adding a selection number (`12-`, `11-0`, `1`).
+   */
+  typed?: string;
 }
 
 export interface StandbyIndicators {
@@ -306,8 +312,12 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
   );
   readonly children: MenuLevel<Metadata>;
   readonly presentation: MenuPresentation;
+  readonly softkey: string; // plan 14: options.softkey ?? "Select"
+  readonly intro: PhoneApplication | undefined; // plan 14
   /** The options' detail reader for `child` (re-read on every tick); undefined unless it returns a string. */
   detailOf(child: MenuEntry<Metadata>): string | undefined;
+  /** Plan 14: the child selected on entry: options.opening()'s child, else the first child. */
+  openingChild(): MenuEntry<Metadata> | undefined;
 }
 
 export class ListEntry<Metadata = unknown> extends MenuEntry<Metadata> {
@@ -390,6 +400,12 @@ export interface ApplicationContext {
    */
   exit(options?: { to?: "standby"; levels?: number; select?: string }): void;
   open(application: PhoneApplication): void;
+  /**
+   * Plan 14 (Task 5 deviation): the indicator for this application's position, including the
+   * shortcutEntry state (`typed` while a digit is awaited), for applications that paint their own
+   * indicator. Always provided by the kernel; optional so hosts may wrap contexts.
+   */
+  menuIndicator?(): MenuIndicator;
 }
 
 export interface PhoneApplicationSession {
@@ -514,7 +530,18 @@ above it, the wrap from the first item, a jump). Entering a level puts the windo
 level is entered again. `rowsWindowTop` exports the rule. _Opening selection_: a level's
 `opening()` picks the child selected on every entry (Select, shortcut, path landing). _Intro_: a
 level's `intro` application runs on Select-entry before the list. _Softkey_: a level's `softkey`
-replaces `Select` in its list model.
+replaces `Select` in its list model. _Exit_: `exit({ select })` puts the selected child on the
+bottom row of a rows window (Top score returns to `Score IDs / Instructions / New game`).
+_Shortcut entry_ (`shortcutEntry`): digits 0-9 form menu numbers at the level the digits apply
+to (the pending entry's children while an entry is opening, else the shown level). A number that
+prefixes a longer one, or is all zeros, waits; the window end resolves it (or opens `invalid`)
+and the indicator keeps the typed digits until the entry opens. A number with no candidate opens
+`invalid` at once. A selected entry shows in its level (`opening: true`, the entry on the top
+row of a rows window; a pending parent opens implicitly) and opens `openDelayMs` later; a
+submenu with an intro runs it at once, keys go to the intro, and timers wait until it ends. When
+it ends, its parent shows the entry opening again, the window restarts, and an opening that
+fell due meanwhile waits for the window end. The window restarts at every digit and resolve;
+the window end opens an entry still pending and closes the shortcut.
 
 `TopLevelEntry` is a presentation slot, not a path segment. It adds the required
 `MenuGraphic` for each carousel position around exactly one semantic entry. Nested entries

@@ -118,11 +118,29 @@ export interface SubmenuOptions<Metadata = unknown> {
    * Method syntax keeps SubmenuEntry covariant in Metadata, like the other entry kinds.
    */
   detail?(child: MenuEntry<Metadata>): string | undefined;
+  /** Softkey label on this level. Default "Select"; must be non-empty. */
+  softkey?: string;
+  /**
+   * The child selected when the level is entered by Select, a shortcut digit or a path that ends
+   * at the level; re-read on every entry. Undefined or not a child = the first child.
+   */
+  opening?(): MenuEntry<Metadata> | undefined;
+  /**
+   * Runs when the level is entered with Select (and when a `shortcutEntry` digit selects it),
+   * before its list. While it runs the path is the level's path; its exit() reveals the list.
+   * Paths that land on the level, per-digit shortcuts and returns from a child skip it. Must not
+   * be the level's own child application.
+   */
+  intro?: PhoneApplication;
 }
 
 export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
   readonly children: MenuLevel<Metadata>;
   readonly presentation: MenuPresentation;
+  /** Softkey label on this level's list. */
+  readonly softkey: string;
+  /** Application run before the list on Select-entry; undefined = none. */
+  readonly intro: PhoneApplication | undefined;
   readonly #options: SubmenuOptions<Metadata>;
 
   constructor(
@@ -142,8 +160,27 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
     if (options.detail !== undefined && typeof options.detail !== "function") {
       throw new Error("Submenu detail must be a function.");
     }
+    const softkey = options.softkey ?? "Select";
+    if (typeof softkey !== "string" || softkey.trim() === "") {
+      throw new Error("Submenu softkey must be a non-empty string.");
+    }
+    if (options.opening !== undefined && typeof options.opening !== "function") {
+      throw new Error("Submenu opening must be a function.");
+    }
+    const { intro } = options;
+    if (intro !== undefined) {
+      if (!(intro instanceof PhoneApplication)) {
+        throw new Error("Submenu intro must be an application definition.");
+      }
+      const own = children.entries.some(
+        (child) => child instanceof ApplicationEntry && child.application === intro,
+      );
+      if (own) throw new Error("Submenu intro must not be one of the level's own applications.");
+    }
     this.children = children;
     this.presentation = presentation;
+    this.softkey = softkey;
+    this.intro = intro;
     this.#options = { ...options };
     Object.freeze(this);
   }
@@ -152,6 +189,14 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
   detailOf(child: MenuEntry<Metadata>): string | undefined {
     const value = this.#options.detail?.(child);
     return typeof value === "string" ? value : undefined;
+  }
+
+  /** The child selected on entry: the opening reader's child, else the first child. */
+  openingChild(): MenuEntry<Metadata> | undefined {
+    const child = this.#options.opening?.();
+    return child !== undefined && this.children.entries.includes(child)
+      ? child
+      : this.children.entries[0];
   }
 
   accept<Result>(visitor: MenuEntryVisitor<Metadata, Result>): Result {
