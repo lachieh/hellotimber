@@ -32,7 +32,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 20  | Calculator restyle                                       | stock calculator screens (`menu/09-calculator.sub` asserted)                       | 14                            | not started |
 | 21  | Clock and Reminders                                      | alarm, clock/date settings, stopwatch, countdown, reminders                        | 14, 15                        | not started |
 | 22  | Call register and Call divert                            | standby number entry and dialling; call lists, durations and costs, divert flows   | 14, 15                        | not started |
-| 23  | Games I: Snake II                                        | Snake II gameplay and the scores it writes (menu, widgets: 14)                     | 14                            | not started |
+| 23  | [Games I: Snake II](./23-games-snake-ii.md)              | Snake II gameplay and the scores it writes (menu, widgets: 14)                     | 14 (15 for persistence)       | not started |
 | 24  | Games II: Space Impact, Bantumi, Pairs II                | gameplay and the scores it writes (menus: 14)                                      | 14                            | not started |
 | 25  | Keyguard and backlight                                   | keyguard, backlight/keypad LED timing, phone-3d signal                             | 13                            | not started |
 
