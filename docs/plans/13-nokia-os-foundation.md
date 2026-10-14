@@ -668,19 +668,23 @@ tens digit at the window's first column and at every multiple of 10, and `LCD_DI
 **Files:** `scripts/png.ts`, `scripts/capture-set.ts`, `scripts/import-captures.ts`,
 `tests/png.test.ts`, `tests/goldens-integrity.test.ts`, `goldens/**`.
 
-- [ ] TDD `png.ts` against PNGs built inside the test with `node:zlib` (1-bit and 8-bit palette,
+- [x] TDD `png.ts` against PNGs built inside the test with `node:zlib` (1-bit and 8-bit palette,
       every filter type, rejection of interlaced and truecolour images).
-- [ ] Encode the capture-set table above. Each entry carries id, source, fallback, frame
+- [x] Encode the capture-set table above. Each entry carries id, source, fallback, frame
       selection, status, note and omitted reasons.
-- [ ] Implement the importer per "Importer CLI". Compute `source-sha256`. Deduplicate timeline
+- [x] Implement the importer per "Importer CLI". Compute `source-sha256`. Deduplicate timeline
       images. Use cumulative rounding.
-- [ ] TDD `goldens-integrity.test.ts`: every index entry parses and is 84x48; ids are unique;
+- [x] TDD `goldens-integrity.test.ts`: every index entry parses and is 84x48; ids are unique;
       no fixture file is missing from the index; asserted timelines have a `trigger-frame`;
       every `pending` status names a plan.
-- [ ] Run the importer against REF twice; the second run must produce no diff.
-- [ ] Note in this plan's completion notes which rows used fallbacks.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import v6.39 LCD captures as committed goldens`.
+- [x] Run the importer against REF twice; the second run must produce no diff.
+- [x] Note in this plan's completion notes which rows used fallbacks.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): import v6.39 LCD captures as committed goldens`.
+
+Deviation: single `shot` stills name their image after the file stem (`01-standby`,
+`01-phone-book`); the plan only fixes names for timelines (`a`, `b`, …) and `.sub` (`01`, …).
+`menu/return.anim` uses `trigger-frame: 2` (the C press); frame 1 is the Select into Clock.
 
 ### Task 4 - phone-core: timelines for menu graphics and boot (TDD)
 
@@ -952,3 +956,12 @@ each is cheap to reverse. Lachlan may override any of them.
   website tests pass, and the only website edits are the Task 5 config and assertions.
 - `vp check`, `vp run -r test` and `vp run website#build` pass, and VISION, AGENTS, the spec and the
   plans README match what shipped.
+
+## Completion notes
+
+- Task 3 (importer): 41 fixtures, 39 asserted and 2 pending (`menu/03-chat.sub` → plan 18,
+  `menu/09-calculator.sub` → plan 20). Fallbacks: only `boot/power-on`, which uses the D12
+  composition (`boot/power-on` 000-003 + `boot/welcome` 004-010) because Task 0 could not produce
+  `boot-clean/`. Every `menu/NN-<slug>.anim` uses `menu-anim-long/` (no `before-recording`
+  fallback), and both probes (`menu/revisit.anim`, `menu/return.anim`) are present. The `.sub`
+  goldens are the virgin-EEPROM captures (factory restore was unavailable); Profiles omits `06`.
