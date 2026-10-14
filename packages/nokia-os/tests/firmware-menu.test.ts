@@ -11,6 +11,7 @@ import { LEVEL1 } from "../scripts/text-runs.ts";
 import { paintDottedBorder } from "../src/display/unsupported";
 import { createStockMenu } from "../src/firmware/menu";
 import { PlaceholderApplication } from "../src/firmware/placeholder";
+import { createMemorySettings, virginSettings } from "../src/firmware/settings";
 import { stockMenu } from "../src/index";
 import { STOCK_FONTS } from "../src/resources";
 
@@ -113,6 +114,18 @@ describe("stockMenu", () => {
       "menu/profiles/empty-2",
     ])
       expect(paths).toContain(path);
+  });
+
+  it("shows choices from the settings store on its pages (Tones share the General profile's)", () => {
+    const settings = createMemorySettings(virginSettings());
+    const tones = submenu(createStockMenu({}, settings).entries[4]!.entry);
+    const volume = tones.children.entries[1]!;
+    expect(tones.detailOf(volume)).toBe("Level 1");
+    settings.choose("profiles/general/personalise/ringing-volume", 2);
+    expect(tones.detailOf(volume)).toBe("Level 3");
+    // A fresh menu has its own store.
+    const fresh = submenu(createStockMenu().entries[4]!.entry);
+    expect(fresh.detailOf(fresh.children.entries[1]!)).toBe("Level 1");
   });
 
   it("returns no page value without host ports for the Clock and Date pages", () => {

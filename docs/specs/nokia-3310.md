@@ -373,7 +373,7 @@ tops 7/16/25, softkey `More`, no rail. Behaviour:
 | Security-code prompt, `Code accepted`, time/date wizard | virgin EEPROM                  | not reproduced                                      |
 | First standby `Snooze` prompt and `0000000000`          | virgin EEPROM alarm state      | not imported                                        |
 | Profiles slot 6 (two boxes)                             | uninitialised EEPROM name      | slot exists (it changes the rail); label UNVERIFIED |
-| Page values (`Level 1`, `No tone`, `Off`, ...)          | virgin-EEPROM settings         | static snapshot until the storage plan              |
+| Page values (`Level 1`, `No tone`, `Off`, ...)          | virgin-EEPROM settings         | in-memory store's initial state until plan 15       |
 | Snake II speed                                          | emulator/EEPROM                | out of scope                                        |
 
 Factory restore could not be captured either (`Code error` for `12345`), so the page values and

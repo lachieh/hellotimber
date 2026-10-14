@@ -1,7 +1,7 @@
 import { createPhone, type Phone } from "@hellotimber/phone-core";
 import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
 import { createStockMenu } from "./menu";
-import type { StockPorts } from "./settings-snapshot";
+import type { StockPorts } from "./bindings";
 
 export interface StockPhoneConfig extends StockPorts {
   /** Operator line. Every glyph must exist in the stock small font (validated; throws). */

@@ -994,18 +994,40 @@ named). `widgets.ts` is 244 KB (splash frames are full-frame). A second run chan
 aliases first), `src/firmware/settings-snapshot.ts` (deleted), `src/firmware/menu.ts` (detail
 reader only), `tests/settings.test.ts` (new), `tests/firmware-menu.test.ts`.
 
-- [ ] TDD `createMemorySettings`: `choice` null until written; `choose` validates the index;
+- [x] TDD `createMemorySettings`: `choice` null until written; `choose` validates the index;
       `marks`/`toggle`; `text`; separate instances do not share state.
-- [ ] Virgin snapshot from `STOCK_TREE`: each option list's `opening` (null for unset lists),
+- [x] Virgin snapshot from `STOCK_TREE`: each option list's `opening` (null for unset lists),
       multi-select marks as captured, value hints as display text, free-text values (message
       centre, voice mailbox, memory status, scores). Setting key = the list's slug path.
       Aliases: Tones 5-1…5-9 ↔ `profiles/general/personalise/*` (P11 decides; Deviation if
       not shared).
-- [ ] Page detail: chosen label, else the value hint, else nothing; Clock settings and Date
+- [x] Page detail: chosen label, else the value hint, else nothing; Clock settings and Date
       setting still read the host ports. Replace `settings-snapshot.ts` (subtract) and keep
       every plan 13 level-1 page value test green.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): in-memory stock settings with virgin-EEPROM state`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): in-memory stock settings with virgin-EEPROM state`.
+
+Deviation: a key's virgin text is its page value until the key's first choice (or toggle), which
+removes it; the page then shows the chosen label. "Chosen label, else the value hint" would show
+`On` for Games › Settings › Shakes, whose list opens on On while its page reads `1 player`
+(uninitialised EEPROM, D10). Only pages that show a value have one: nodes with a value hint, and
+lists that open unset (their page shows the choice once made: Incoming call alert → `Ringing`,
+`tree/05-tones/5-3-1.choose`). Lists that open on an entry without a page value (Erase recent call
+lists) show none. Checked against the final page of every `.choose` golden.
+Deviation: `StockSettingsSnapshot` is `{ choices: { key: { options, chosen } }, marks, texts,
+aliases }`; aliased keys (Tones → `profiles/general/personalise/*`, 9 keys, not Composer) are
+stored once under their target, and the virgin builder throws if an alias's virgin values differ.
+Free texts are the value hints, info page values (`<list key>/<page label slug>`, e.g.
+`games/snake/score-ids/top-score-id`) and `VIRGIN_TEXTS` in bindings.ts (message centre,
+voice mailbox, memory status free/used, the four top scores). `StockPorts` and `HOST_VALUES`
+(Clock settings, Date setting) moved to bindings.ts; `createStockMenu(ports, settings)` takes the
+store (default: a fresh virgin store per menu). The store has no setter for texts: Task 12's leaf
+setters (Info service, Screen saver On/Off) need one, or model those pages as choices.
+For later tasks: prompts whose first screen shows a character counter (Add name, message centre,
+Reminders › Add new, Rename) have no `lines` in the tree data (Task 3 reads leaf text only up to
+the first frame with a `digits` run), so Task 11 takes their labels from the goldens. Choosing
+12-hour in Time format changes the Clock settings page to `10:10 am`
+(`tree/11-clock/11-2-3-2.choose`).
 
 ### Task 9 - Flow host, rows window painting and list widgets (TDD against goldens)
 

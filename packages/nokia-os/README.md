@@ -97,4 +97,4 @@ The emulator's virgin EEPROM and synthetic network leave marks that the OS does 
 | Security-code prompt, `Code accepted`, clock wizard | not reproduced; boot is self-test + hands          |
 | First standby `Snooze` prompt                       | not imported                                       |
 | Profiles slot 6 name                                | labelled `(empty)` (UNVERIFIED)                    |
-| Page values (`Level 1`, `Off`, …)                   | a static virgin-EEPROM settings snapshot           |
+| Page values (`Level 1`, `Off`, …)                   | initial state of the in-memory settings store      |

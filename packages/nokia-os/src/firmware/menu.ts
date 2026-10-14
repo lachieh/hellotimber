@@ -13,8 +13,14 @@ import {
   type MenuPresentation,
 } from "@hellotimber/phone-core";
 import { stockMenuGraphic } from "../resources";
+import { HOST_VALUES, type StockPorts } from "./bindings";
 import { PlaceholderApplication } from "./placeholder";
-import { stockDetail, type StockPorts } from "./settings-snapshot";
+import {
+  createMemorySettings,
+  stockPageValue,
+  virginSettings,
+  type StockSettings,
+} from "./settings";
 
 /** A level-1 entry: its label, plus a slug or menu number when they are not derived. */
 type ChildSpec = string | { label: string; slug?: string; order?: number };
@@ -203,7 +209,18 @@ function placeholder(slug: string, order: number, label: string, path: string): 
   );
 }
 
-function topEntry(spec: TopSpec, order: number, ports: StockPorts): MenuEntry {
+/** The value a stock page shows: the host's for the Clock pages, else the settings' (D9). */
+function pageDetail(key: string, ports: StockPorts, settings: StockSettings): string | undefined {
+  const port = HOST_VALUES[key];
+  return port === undefined ? stockPageValue(settings, key) : ports[port]?.();
+}
+
+function topEntry(
+  spec: TopSpec,
+  order: number,
+  ports: StockPorts,
+  settings: StockSettings,
+): MenuEntry {
   if (spec.submenu === undefined) return placeholder(spec.slug, order, spec.label, spec.slug);
   const children = spec.submenu.children.map((child, i) => {
     const { label, slug, order: number } = typeof child === "string" ? { label: child } : child;
@@ -218,16 +235,23 @@ function topEntry(spec: TopSpec, order: number, ports: StockPorts): MenuEntry {
     undefined,
     {
       presentation: spec.submenu.presentation,
-      detail: (child) => stockDetail(spec.slug, child.slug.value, ports),
+      detail: (child) => pageDetail(`${spec.slug}/${child.slug.value}`, ports, settings),
     },
   );
 }
 
-/** The stock menu, with Clock pages reading `ports` for their clock and date values. */
-export function createStockMenu(ports: StockPorts = {}): PhoneMenu {
+/**
+ * The stock menu, with Clock pages reading `ports` for their clock and date values and the other
+ * pages reading `settings` (default: a fresh store in the virgin-EEPROM state).
+ */
+export function createStockMenu(
+  ports: StockPorts = {},
+  settings: StockSettings = createMemorySettings(virginSettings()),
+): PhoneMenu {
   return new PhoneMenu(
     STOCK_LEVELS.map(
-      (spec, i) => new TopLevelEntry(topEntry(spec, i + 1, ports), stockMenuGraphic(spec.slug)),
+      (spec, i) =>
+        new TopLevelEntry(topEntry(spec, i + 1, ports, settings), stockMenuGraphic(spec.slug)),
     ),
   );
 }
