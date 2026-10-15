@@ -1,6 +1,7 @@
 import { createPhone } from "@hellotimber/phone-core";
 import type { Phone, PhoneKey } from "@hellotimber/phone-core";
 import { createScreenRenderer } from "@hellotimber/phone-screen";
+import { paintStockScreen } from "@hellotimber/nokia-os";
 import type { ScreenRenderer } from "@hellotimber/phone-screen";
 import { SITE_STANDBY_KEYS, siteMenu } from "../content/menu";
 import { getSettings } from "../settings";
@@ -48,7 +49,9 @@ export function getPhoneRuntime(): PhoneRuntime {
 
   // 84×48 native canvas; NearestFilter upscaling happens on the 3D mesh.
   // The saved Welcome note shows during boot (deviation 5: renderer-lifetime).
-  const renderer = createScreenRenderer({ welcomeText: getSettings().welcomeNote || "Welcome!" });
+  // Render the LCD with the stock v6.39 painter from @hellotimber/nokia-os so this
+  // website actually consumes that package and its verified fonts/icons/screens.
+  const renderer = createScreenRenderer({ paint: paintStockScreen, scale: 6 });
   renderer.render(phone.screen);
   phone.subscribe((snap) => renderer.render(snap.screen));
 
