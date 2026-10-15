@@ -104,11 +104,12 @@ describe("Info service topics (2-8-4)", () => {
     topics.add("100", "ONE");
     topics.add("100", "TWO");
     topics.edit(0, "12", "NEWS");
-    topics.mark(1, true);
+    topics.mark(1, false);
     const reread = new StockTopics(new StockEeprom(storage, [...RECORDS]));
+    // A new topic is marked (`topics/factory-select-1`); Edit keeps the mark.
     expect(reread.list()).toEqual([
-      { number: "12", name: "NEWS", marked: false },
-      { number: "100", name: "TWO", marked: true },
+      { number: "12", name: "NEWS", marked: true },
+      { number: "100", name: "TWO", marked: false },
     ]);
     reread.erase(0);
     expect(reread.list().map((t) => t.name)).toEqual(["TWO"]);

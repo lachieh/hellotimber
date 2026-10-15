@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/factory-level-1
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics-factory/level-1
 source-sha256: 74d0e52453700373bdc5710997a2e5941711ff76635c2e7a6b3e92d9bb32094d
 note: The level with one topic.

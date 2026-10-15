@@ -94,23 +94,28 @@ function entryOf(
 
   // A feature's lead entry heads the level while it is shown, and the level opens on it then
   // (Snake II's Continue, plan 23 D10); the tree's children follow it (orders 2.., slugs
-  // unchanged), numbered by position.
+  // unchanged), numbered by position. A lead `after` a child follows that child instead (plan
+  // 18c: Topics' Add topic after Select).
   const lead = LEADS[node.number];
+  const treeChildren = node.children ?? [];
+  const leadAt =
+    lead?.after === undefined ? 0 : treeChildren.findIndex((c) => c.slug === lead.after) + 1;
+  if (lead?.after !== undefined && leadAt === 0) {
+    throw new Error(`${node.number}: no child "${lead.after}" for its lead to follow.`);
+  }
   const leadEntry =
     lead === undefined
       ? undefined
       : new ApplicationEntry(
           new MenuSlug(lead.slug),
-          new MenuOrder(1),
+          new MenuOrder(leadAt + 1),
           lead.label,
           b.leaves.lead(path, lead),
         );
-  const children = [
-    ...(leadEntry === undefined ? [] : [leadEntry]),
-    ...(node.children ?? []).map((child, i) =>
-      entryOf([...path, child], i, b, leadEntry === undefined ? 0 : 1),
-    ),
-  ];
+  const children = treeChildren.map((child, i) =>
+    entryOf([...path, child], i, b, leadEntry !== undefined && i >= leadAt ? 1 : 0),
+  );
+  if (leadEntry !== undefined) children.splice(leadAt, 0, leadEntry);
   const key = settingKey(path);
   const setter = setterLevel(node.number);
   const bySlug = (s: string | undefined) => children.find((child) => child.slug.value === s);
@@ -140,9 +145,14 @@ function entryOf(
         }
       : {}),
     ...(opening === undefined ? {} : { opening }),
-    ...(lead === undefined
+    ...(lead === undefined && level?.shown === undefined
       ? {}
-      : { shown: (child: MenuEntry) => child !== leadEntry || b.leaves.leadShown(lead) }),
+      : {
+          shown: (child: MenuEntry) =>
+            child === leadEntry
+              ? b.leaves.leadShown(lead!)
+              : (level?.shown?.(child.slug.value) ?? true),
+        }),
     ...(spec.intro ? { intro: b.leaves.intro(node, path.map((n) => n.slug).join("/")) } : {}),
     ...(showsEntryIndicator(node.number) ? { entryIndicatorMs: STOCK_SHORTCUT_WINDOW_MS } : {}),
     ...(level?.label === undefined

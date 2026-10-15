@@ -4327,6 +4327,63 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
       ],
       "loopFrom": 9
     },
+    "2-10": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 475
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 494
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
+    },
     "2-2": {
       "frames": [
         {
@@ -4742,6 +4799,120 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
           "durationMs": 525
         }
       ]
+    },
+    "2-8-4-2-2": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 479
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 488
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
+    },
+    "2-8-4-2-4": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 476
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 487
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
     },
     "2-9": {
       "frames": [
@@ -9888,6 +10059,7 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "1-7": "1-7",
     "1-8-1-1": "1-8-1-1",
     "2-1": "2-1",
+    "2-10": "2-10",
     "2-2": "2-2",
     "2-3": "2-3",
     "2-7-1-1": "2-7-1-1",
@@ -9899,6 +10071,8 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "2-8-1": "2-8-1",
     "2-8-2": "2-8-2",
     "2-8-3": "2-8-3",
+    "2-8-4-2-2": "2-8-4-2-2",
+    "2-8-4-2-4": "2-8-4-2-4",
     "2-9": "2-9",
     "4-1": "4-1",
     "4-2": "4-1",

@@ -546,7 +546,7 @@
   {
     "id": "content/restore-topics",
     "file": "content/restore-topics.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -978,7 +978,7 @@
   {
     "id": "service-command/after",
     "file": "service-command/after.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -986,7 +986,7 @@
   {
     "id": "service-command/open",
     "file": "service-command/open.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -994,7 +994,7 @@
   {
     "id": "service-command/send",
     "file": "service-command/send.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 14,
     "frames": 59
@@ -1002,7 +1002,7 @@
   {
     "id": "service-command/typed",
     "file": "service-command/typed.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -1010,7 +1010,7 @@
   {
     "id": "topics/add-name-ok",
     "file": "topics/add-name-ok.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1018,7 +1018,7 @@
   {
     "id": "topics/add-number-ok",
     "file": "topics/add-number-ok.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1026,7 +1026,7 @@
   {
     "id": "topics/add-open",
     "file": "topics/add-open.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1034,7 +1034,7 @@
   {
     "id": "topics/after-erase",
     "file": "topics/after-erase.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -1042,7 +1042,7 @@
   {
     "id": "topics/edit",
     "file": "topics/edit.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -1050,7 +1050,7 @@
   {
     "id": "topics/edit-after-list",
     "file": "topics/edit-after-list.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -1058,7 +1058,7 @@
   {
     "id": "topics/edit-name-ok",
     "file": "topics/edit-name-ok.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1066,7 +1066,7 @@
   {
     "id": "topics/edit-number-ok",
     "file": "topics/edit-number-ok.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 6
@@ -1074,7 +1074,7 @@
   {
     "id": "topics/edit-number-typed-ok",
     "file": "topics/edit-number-typed-ok.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1082,7 +1082,7 @@
   {
     "id": "topics/edit-open",
     "file": "topics/edit-open.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1090,7 +1090,7 @@
   {
     "id": "topics/erase-1",
     "file": "topics/erase-1.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1098,7 +1098,7 @@
   {
     "id": "topics/erase-last",
     "file": "topics/erase-last.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1106,7 +1106,7 @@
   {
     "id": "topics/factory-add-ok",
     "file": "topics/factory-add-ok.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1114,7 +1114,7 @@
   {
     "id": "topics/factory-add-open",
     "file": "topics/factory-add-open.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1122,7 +1122,7 @@
   {
     "id": "topics/factory-adds",
     "file": "topics/factory-adds.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -1130,7 +1130,7 @@
   {
     "id": "topics/factory-edit-full",
     "file": "topics/factory-edit-full.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -1138,7 +1138,7 @@
   {
     "id": "topics/factory-level",
     "file": "topics/factory-level.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -1146,7 +1146,7 @@
   {
     "id": "topics/factory-level-1",
     "file": "topics/factory-level-1.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -1154,7 +1154,7 @@
   {
     "id": "topics/factory-level-full",
     "file": "topics/factory-level-full.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1162,7 +1162,7 @@
   {
     "id": "topics/factory-level-unnamed",
     "file": "topics/factory-level-unnamed.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -1170,7 +1170,7 @@
   {
     "id": "topics/factory-name-empty-ok",
     "file": "topics/factory-name-empty-ok.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1178,7 +1178,7 @@
   {
     "id": "topics/factory-number-0-ok",
     "file": "topics/factory-number-0-ok.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 8
@@ -1186,7 +1186,7 @@
   {
     "id": "topics/factory-number-1000-ok",
     "file": "topics/factory-number-1000-ok.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -1194,7 +1194,7 @@
   {
     "id": "topics/factory-number-999-ok",
     "file": "topics/factory-number-999-ok.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1202,7 +1202,7 @@
   {
     "id": "topics/factory-number-empty-ok",
     "file": "topics/factory-number-empty-ok.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 6
@@ -1210,7 +1210,7 @@
   {
     "id": "topics/factory-numbers",
     "file": "topics/factory-numbers.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -1218,7 +1218,7 @@
   {
     "id": "topics/factory-select-1",
     "file": "topics/factory-select-1.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -1226,7 +1226,7 @@
   {
     "id": "topics/factory-select-full",
     "file": "topics/factory-select-full.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -1234,7 +1234,7 @@
   {
     "id": "topics/level-after-add",
     "file": "topics/level-after-add.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1242,7 +1242,7 @@
   {
     "id": "topics/level-after-erase",
     "file": "topics/level-after-erase.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -1250,7 +1250,7 @@
   {
     "id": "topics/level-empty",
     "file": "topics/level-empty.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -1258,7 +1258,7 @@
   {
     "id": "topics/select-c",
     "file": "topics/select-c.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1266,7 +1266,7 @@
   {
     "id": "topics/select-mark",
     "file": "topics/select-mark.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1274,7 +1274,7 @@
   {
     "id": "topics/select-mark-again",
     "file": "topics/select-mark-again.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1282,7 +1282,7 @@
   {
     "id": "topics/select-open",
     "file": "topics/select-open.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -1290,7 +1290,7 @@
   {
     "id": "topics/select-reopen",
     "file": "topics/select-reopen.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1298,7 +1298,7 @@
   {
     "id": "topics/select-unmark",
     "file": "topics/select-unmark.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2

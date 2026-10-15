@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/factory-add-ok
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics-factory/add-ok
 source-sha256: 903feafb544bdb16a5e63b33f149d95c220683a4d08a6e3a0bfe803e2d906b49
 trigger-frame: 1

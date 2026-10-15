@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/select-open
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics/select-open.png
 source-sha256: 2af936e94f59d89181ae6c03e2e8f100f72a821b9189575ac7a75b3891ef0b3a
 note: Select's list (virgin marks).

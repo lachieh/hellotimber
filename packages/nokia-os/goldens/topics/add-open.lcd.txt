@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/add-open
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics/add-open
 source-sha256: a42c553824b4add795e3c76740ccd9d67a08397d97258d7ec4e29aa8b37d3d8e
 trigger-frame: 1

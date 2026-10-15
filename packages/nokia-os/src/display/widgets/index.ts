@@ -23,6 +23,7 @@ import { paintOptions, type OptionsModel } from "./options";
 import { paintProgress, type ProgressModel } from "./progress";
 import { paintStandbyFrame, type StandbyFrameModel } from "../profiles";
 import { paintPrompt, type PromptModel } from "./prompt";
+import { paintServiceRequest, type ServiceRequestModel } from "./service-request";
 import { paintShortcutChoice, type ShortcutChoiceModel } from "./shortcut-choice";
 import { paintSnake, type SnakeModel } from "./snake";
 import { paintSplash, type SplashModel } from "./splash";
@@ -44,6 +45,7 @@ export { welcomeNoteLines } from "./note";
 export type { OptionsModel } from "./options";
 export type { ProgressModel } from "./progress";
 export type { PromptEntry, PromptModel } from "./prompt";
+export type { ServiceRequestModel } from "./service-request";
 export type { ShortcutChoiceModel } from "./shortcut-choice";
 export type { SnakeModel } from "./snake";
 export type { SplashModel } from "./splash";
@@ -100,7 +102,8 @@ export type WidgetModel =
   | MessagePageModel
   | StandbyFrameModel
   | ShortcutChoiceModel
-  | ContentListModel;
+  | ContentListModel
+  | ServiceRequestModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -182,6 +185,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "content-list":
       paintContentList(fb, model);
+      return;
+    case "service-request":
+      paintServiceRequest(fb, model);
       return;
     case "standby-draw":
       paintStandby(fb, {

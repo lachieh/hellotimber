@@ -1,6 +1,6 @@
 lcd-golden 1
 id: service-command/after
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/service/after-send.png + captures/6.39/plan18c/service/after-send-key.png + captures/6.39/plan18c/service/after-send-c.png
 source-sha256: 0253a19ed6acc3ac1c355c2e5e9bb308157fce7e667df5e3e702cc94fe032536
 note: Standby after the request; Menu; C.

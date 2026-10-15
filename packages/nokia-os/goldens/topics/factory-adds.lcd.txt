@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/factory-adds
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics-factory/add-2-name.png + captures/6.39/plan18c/topics-factory/add-2-after.png + captures/6.39/plan18c/topics-factory/add-3-name.png + captures/6.39/plan18c/topics-factory/add-3-after.png + captures/6.39/plan18c/topics-factory/add-4-name.png + captures/6.39/plan18c/topics-factory/add-4-after.png + captures/6.39/plan18c/topics-factory/add-5-name.png + captures/6.39/plan18c/topics-factory/add-5-after.png
 source-sha256: 156490b9bce01faa5496693e843b977ef348a6865cf0059c3dbc91b31a031131
 note: Topics 2-5 added (100 twice): the name prompt, the level after each.

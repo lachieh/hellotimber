@@ -1,6 +1,6 @@
 lcd-golden 1
 id: service-command/send
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/service/send
 source-sha256: b9d4623781cf6ca52406c68206e7c8045a84c3fa2e10eec86ef42faea937799a
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/edit
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics/edit-number.png + captures/6.39/plan18c/topics/edit-number-typed.png + captures/6.39/plan18c/topics/edit-name.png + captures/6.39/plan18c/topics/edit-name-cleared.png + captures/6.39/plan18c/topics/edit-name-typed.png + captures/6.39/plan18c/topics/edit-after.png
 source-sha256: 9d83ff89b55042e7c083de4f69af73841c9685933120a66c22cdeb1490e4f976
 note: Edit's prompts; the name cleared with C, NEWS typed; the level after `Saved`.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/after-erase
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics/after-erase-2.png + captures/6.39/plan18c/topics/after-erase-3.png + captures/6.39/plan18c/topics/after-erase-4.png + captures/6.39/plan18c/topics/after-erase-5.png
 source-sha256: 7b36ca25858bb8a27e9012a3eaaf44a40fc2a22a4daab7ac6d3d9ac0aabb1951
 note: After each further Erase.

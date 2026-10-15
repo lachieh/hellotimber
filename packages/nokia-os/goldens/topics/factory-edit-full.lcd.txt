@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/factory-edit-full
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics-factory/edit-full
 source-sha256: 8176a7740cd7233322af04664c68e5f45c678a63d9f6a3f95d8f57fa39ae9509
 note: Edit with five.

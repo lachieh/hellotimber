@@ -799,17 +799,27 @@ plan acceptance/support; one-line Inbox-option/widget/painter registrations.
 `tests/info-service.test.ts` (new), plan acceptance/support; one-line feature registration
 if not already present and owned topic/service-command placeholder removals.
 
-- [ ] Gate on the split owner's table transfer; retain existing Info service On/Off/Topic index
+- [x] Gate on the split owner's table transfer; retain existing Info service On/Off/Topic index
       and Language behaviour. Do not edit their shared owner tables in this task.
-- [ ] Failing tests drive virgin Select/Edit/Erase and factory Add topic. Match box counts,
+      Deviation (no transfer made): `features/info-service.ts` binds Topics and 2-10 only; Info
+      service's setter levels, notes and Languages stay in `features/messages.ts`, which loses
+      just the owned placeholder lines.
+- [x] Failing tests drive virgin Select/Edit/Erase and factory Add topic. Match box counts,
       junk prefill, selection marks, invalid/empty/duplicate/max/full handling, dynamic menu order,
       persisted records and Restore. Use plan 18 number/text widgets with I's measured policies.
-- [ ] Service editor follows X's actual mode/header/counter/options/Send/Quit/cancel results.
-      `Requesting` is a hypothesis until X captures it; reuse its existing progress widget only
-      if the pixels match. No host USSD or cell-broadcast API added without captured behaviour.
-- [ ] Add `topics/*`, `service-command/*` scenarios and export old tree drivers to their owner.
-- [ ] Verify package test and manual `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): implement Info topics and the Service command editor`.
+      Virgin topics 1 and 5 are marked; a new topic is marked (`topics/factory-select-1`). The
+      dynamic level uses two additive menu hooks: `LeadEntry.after` (Add topic follows Select)
+      and `LevelOptions.shown` (Add topic alone when empty). `Topic number:` shows `OK` while
+      empty (`NumberEntryOptions.emptySoftkey`); the name limit is UNVERIFIED (10).
+- [x] Service editor follows X's actual mode/header/counter/options/Send/Quit/cancel results.
+      `Requesting` is plan 14's progress note plus standby's clock (`service-request` painter),
+      then `Not done`, then standby. Quit is not captured. No host USSD or cell-broadcast API.
+- [x] Add `topics/*`, `service-command/*` scenarios and export old tree drivers to their owner.
+      All 163 plan 18c goldens are asserted; plan 14's `tree/02-messages/2-8-4-*` and `2-10.leaf`
+      run through the generic tree scenarios once their placeholder groups are gone. The import
+      regrouped `sound/note/2-10` into plan 16's `sound/note/1-3` (an equal recording).
+- [x] Verify package test and manual `vp check --fix`.
+- [x] Commit: `feat(nokia-os): implement Info topics and the Service command editor`.
 
 ### Task 10 - Acceptance and ownership closeout
 

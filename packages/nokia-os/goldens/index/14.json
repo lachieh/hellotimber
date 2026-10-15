@@ -788,7 +788,7 @@
   {
     "id": "tree/02-messages/2-10.leaf",
     "file": "tree/02-messages/2-10.leaf.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 13,
@@ -1067,7 +1067,7 @@
   {
     "id": "tree/02-messages/2-8-4-1-2.choose",
     "file": "tree/02-messages/2-8-4-1-2.choose.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2,
@@ -1078,7 +1078,7 @@
   {
     "id": "tree/02-messages/2-8-4-1.options",
     "file": "tree/02-messages/2-8-4-1.options.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5,
@@ -1089,7 +1089,7 @@
   {
     "id": "tree/02-messages/2-8-4-2-2.choose",
     "file": "tree/02-messages/2-8-4-2-2.choose.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 13,
@@ -1100,7 +1100,7 @@
   {
     "id": "tree/02-messages/2-8-4-2-4.choose",
     "file": "tree/02-messages/2-8-4-2-4.choose.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 13,
@@ -1111,7 +1111,7 @@
   {
     "id": "tree/02-messages/2-8-4-2.options",
     "file": "tree/02-messages/2-8-4-2.options.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5,
@@ -1122,7 +1122,7 @@
   {
     "id": "tree/02-messages/2-8-4-3.open",
     "file": "tree/02-messages/2-8-4-3.open.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1,

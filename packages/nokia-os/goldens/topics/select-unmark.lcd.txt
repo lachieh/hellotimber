@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/select-unmark
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics/select-unmark
 source-sha256: 6bc5017124ee5d675f3c985f2301b5608f36d90326318000bf1d2f376a406cf5
 trigger-frame: 1

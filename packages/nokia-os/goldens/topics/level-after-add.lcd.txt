@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/level-after-add
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics/level-after-add
 source-sha256: 89eb7e49e0c18aaba2b8b7e36b24ce83d02b91a53025ba59c7e218e3ced12378
 note: The full level again.

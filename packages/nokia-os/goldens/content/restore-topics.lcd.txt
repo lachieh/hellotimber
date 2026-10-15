@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/restore-topics
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/restore/topics.png
 source-sha256: 5d3f5f5466a2dabb6568b4b580646f4931d8d3484aaf946166fbf7b2aa592dfb
 note: After Restore factory settings: Info service › Topics is `Add topic`.

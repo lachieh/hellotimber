@@ -208,8 +208,9 @@ describe("input prompts against every asserted prompt golden (first screen, curs
         : undefined
       : treePath(number).at(-1)!.opens;
     // A prompt a feature implements with no plan 14 layout is that feature's widget (plan 18's
-    // number entries, plan 17's Rename), driven by its plan's scenarios.
-    if (SCREENS[number] !== undefined && screen !== undefined && "lines" in screen) {
+    // number entries, plan 17's Rename, plan 18c's Topics), driven by its plan's scenarios.
+    const bound = path.some((_, i) => SCREENS[path.slice(0, i + 1).join("-")] !== undefined);
+    if (bound && screen !== undefined && "lines" in screen) {
       if (promptLayout(number, screen.kind) === undefined) return [];
     }
     return screen !== undefined && "lines" in screen && PROMPT_KINDS.has(screen.kind)

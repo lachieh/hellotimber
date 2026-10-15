@@ -77,10 +77,6 @@ export const messagesFeature: StockFeature = {
   name: "messages",
   placeholders: {
     "2-4": "18c", // Picture messages: nothing in the virgin EEPROM
-    "2-8-4-1-**": "18c", // Topics: lists of box-glyph names (virgin EEPROM)
-    "2-8-4-2-**": "18c",
-    "2-8-4-3-**": "18c",
-    "2-10": "18c", // Service command editor
   },
   screens: {
     // Write messages: the editor, in T9 while Dictionary is English (plan 18b).

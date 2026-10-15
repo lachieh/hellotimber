@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/factory-select-full
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics-factory/select-full
 source-sha256: 8a2e5b539724b39df0d7f356e869878cd7c21f8274f3520773495770f8242997
 note: Select with five.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: service-command/open
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/service/open
 source-sha256: 4f600e86e57e00bab0cb6b6b0c33f32821627fe0cac589e58c40faa7e90dd5c0
 trigger-frame: 1

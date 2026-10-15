@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/erase-last
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics/erase-last
 source-sha256: 124e79f85ccd5754bf2bfb46999ca1807e4038bccf5be598dec9b4542e7dc2bb
 trigger-frame: 1

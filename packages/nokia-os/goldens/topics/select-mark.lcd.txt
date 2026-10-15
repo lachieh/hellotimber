@@ -1,6 +1,6 @@
 lcd-golden 1
 id: topics/select-mark
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/topics/select-mark
 source-sha256: 09dc8b0fd4d1e0ef8f4cc5da7e95626a001fdf57d818db0553aec94c214ce770
 trigger-frame: 1

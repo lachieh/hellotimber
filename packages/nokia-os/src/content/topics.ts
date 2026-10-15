@@ -1,6 +1,6 @@
 // Info service › Topics (2-8-4), plan 18c D11 as Task 0 I measured it. The virgin EEPROM holds
 // five junk topics: names of six U+E000 boxes, empty numbers but topic 4's `p9` (plan 14's
-// `tree/02-messages/2-8-4-*` goldens, `topics/edit`), the first one marked. Restore factory
+// `tree/02-messages/2-8-4-*` goldens, `topics/edit`), topics 1 and 5 marked. Restore factory
 // settings empties the list (plan 15's factory scroll, `content/restore-topics`). Five topics at
 // most: Add topic shows while there is room (`topics/level-after-erase`, `-after-add`).
 //
@@ -29,7 +29,7 @@ const BOXES = "\uE000".repeat(6);
 export const VIRGIN_TOPICS: readonly Topic[] = ["", "", "", "p9", ""].map((number, i) => ({
   number,
   name: BOXES,
-  marked: i === 0,
+  marked: i === 0 || i === 4,
 }));
 
 function isObject(value: unknown): value is Record<string, unknown> {
@@ -88,10 +88,10 @@ export class StockTopics {
     return topic;
   }
 
-  /** Add topic: at the end, unmarked. */
+  /** Add topic: at the end, marked (`topics/factory-select-1`). */
   add(number: string, name: string): void {
     if (this.full()) throw new Error(`The topic list is full (${TOPIC_CAPACITY}).`);
-    this.#write([...this.list(), { number, name, marked: false }]);
+    this.#write([...this.list(), { number, name, marked: true }]);
   }
 
   /** Edit: the topic's number and name, its mark kept. */

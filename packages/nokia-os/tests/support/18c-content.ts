@@ -104,6 +104,14 @@ export const CONTENT_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
   "chat/inbox-after": { toleranceMs: 45 },
   // The carousel's icon steps after Exit run from the return (D8 key latency).
   "chat/exit": { toleranceMs: 15 },
+  // Topics' notes play their timelines from `topics/add-name-ok`, `topics/erase-1`.
+  "topics/erase-last": OTHER_RECORDING,
+  "topics/factory-add-ok": OTHER_RECORDING,
+  "topics/factory-name-empty-ok": OTHER_RECORDING,
+  // `Topic name:` draws 72 ms after OK, in part first (18 ms): the rows key placement skips.
+  "topics/factory-number-1000-ok": { keyAt: { 0: 72 } },
+  // Requesting's bar is 7-6's (plan 14), its steps 5-12 ms later in this recording.
+  "service-command/send": OTHER_RECORDING,
 };
 
 /** Every asserted plan 18c golden's scenario: its capture replayed. */
