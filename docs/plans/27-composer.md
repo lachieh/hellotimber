@@ -15,7 +15,7 @@ before Task 2; if it has not, stop and report.
 "Plan 16 supplementary captures") and plans 13-16 and 18 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan27/`. The planning probes in `$REF/captures/scratch-plan27/`
 (`NOTES.md` lists them) are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0, 1 and 6 done).
+**Status:** in progress (Tasks 0-4 and 6 done).
 
 ## Goal
 
@@ -733,20 +733,49 @@ D4), `src/resources/generated/composer.ts` and `sounds.ts` (generated), `src/res
 (export lines), `src/composer/program.ts` (new), `tests/composer-programs.test.ts` (new),
 `tests/resources.test.ts` (pinned counts only).
 
-- [ ] TDD `composer-programs.ts` on synthetic goldens: pitches from buzzer frequencies; per tempo
+- [x] TDD `composer-programs.ts` on synthetic goldens: pitches from buzzer frequencies; per tempo
       and value the sounding and gap times; the rest rule; a value missing at a tempo throws
       naming the golden.
-- [ ] Generate `COMPOSER_DATA` (`PITCHES`, `TEMPI`, `DURATIONS`, `COMPOSER_TIMINGS` for the hold
+- [x] Generate `COMPOSER_DATA` (`PITCHES`, `TEMPI`, `DURATIONS`, `COMPOSER_TIMINGS` for the hold
       threshold and held C) with comments naming their goldens; the composer pitch goldens join
       `VOLUME_RULE`'s fit (no existing table entry changes; the new frequencies appear).
-- [ ] TDD `program.ts`: `toneProgram` re-renders every `sound/composer/tempo-*` and `pitch-*`
+- [x] TDD `program.ts`: `toneProgram` re-renders every `sound/composer/tempo-*` and `pitch-*`
       golden exactly (±2 ms within a recording); `notePreview` the entry goldens; levels per D4;
       `userRingingTone` per Task 0's D9 rule against the `preview-*` goldens (or the documented
       approximation, D9).
-- [ ] Freshness test; run `extract-resources` twice (no diff); plan 16's resources tests unchanged
+- [x] Freshness test; run `extract-resources` twice (no diff); plan 16's resources tests unchanged
       except the frequency count.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): Composer pitches, tempi and programs from sound goldens`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): Composer pitches, tempi and programs from sound goldens`.
+
+**Task 4 completion.** `scripts/composer-programs.ts` derives `COMPOSER_DATA`
+(`src/resources/generated/composer.ts`): the 16 tempi's periods in timer units (7.745 ms) plain
+and dotted from the sweep (40 and 225 BPM the median of the Level 1, 3 and 4 sweeps), the gap (2
+units), the 36 pitches, the dot (771 ms, `sound/composer/hold-note-3-800`) and C's clear (465 ms,
+`composer/hold-c-*`), the saved tones' preview delay (1013 ms), the Ringing volume list's span
+(5315 ms), D9's level step (4146 ms) and the unset volume's register (3); `addComposerVolumes`
+joins the pitch goldens to `VOLUME_RULE` (3729.2 and 3951.4 Hz added at Levels 1-4, no entry
+changed). Two registrations in `extract-resources.ts` (the volume tables, the `composer.ts`
+module); `src/resources/index.ts` exports `COMPOSER_TEMPI`, `COMPOSER_PERIODS`,
+`COMPOSER_PITCHES`, `COMPOSER_TIMINGS`, `COMPOSER_SOUND`. `src/composer/program.ts`:
+`toneProgram`, `notePreview`, `userRingingTone`, `toneMs`, `noteHz`. 12 tests: the generator on
+synthetic goldens, and the programs against all 16 sweeps, the Level 1 sweep, the pitch tone at
+Levels 1-4 and unset (frequencies and registers exact, onsets within plan 16's drift, lengths
+within two units), the entry note, Level 5/Ascending and the ringing tone's shape. `regenerate`
+twice: the second up to date; `tests/resources.test.ts` pins `COMPOSER_DATA` in its freshness test.
+
+Deviation: an unset Ringing volume plays every pitch at register 3 (`pitch-virgin`), not Level
+1's table; it is `COMPOSER_SOUND.unsetVolume`.
+
+Deviation: the repeat times of held ▲/▼ (778 ms, then 196 ms) are the hand fit of
+`composer/hold-up`/`hold-down` recorded in the generator, not a derivation (the cursor's position
+per frame needs the layout); Task 8's widget test checks them against those goldens.
+
+Deviation (Internal API): `toneProgram(tone, level, { ascending })` takes the alert type's
+Ascending (Play steps up a level per step), and `userRingingTone(tone, slot)` takes the slot (its
+slug) and returns plan 16's tone shape plus `previewDelayMs` (1013 ms: the captured onsets spread
+991-1035 ms, wider than the built-in tones' 991 ± 25). `sound/composer/pitch-level-5` did not jump
+in its 4.5 s while D9's nearest step does at 4146 ms: its last notes differ (a known gap, Task 11).
 
 ### Task 5 - Composer record and slots (TDD)
 

@@ -8,6 +8,7 @@ import {
   type PixelFont,
 } from "@hellotimber/phone-screen";
 import { BOOT_DATA } from "./generated/boot";
+import { COMPOSER_DATA } from "./generated/composer";
 import { STOCK_FONT_DATA } from "./generated/fonts";
 import { MENU_ICON_DATA } from "./generated/menu-icons";
 import { SNAKE_DATA } from "./generated/snake";
@@ -267,3 +268,32 @@ export const SEND_LINK_MS: number = TEXT_DATA.messages.sendLinkMs;
 export const RECEIVE_LINK_MS: number = TEXT_DATA.messages.receiveLinkMs;
 /** `Saving message` shows its first bar frame this long before `Message saved`. */
 export const SAVING_MS: number = TEXT_DATA.messages.savingMs;
+
+// ---------------------------------------------------------------- Composer (plan 27)
+
+/** The Tempo list's BPM labels, in list order. */
+export const COMPOSER_TEMPI: readonly number[] = COMPOSER_DATA.tempi;
+/**
+ * Note periods in timer units (`COMPOSER_UNIT_MS`) by tempo and value, plain and dotted, from the
+ * tempo sweep (scripts/composer-programs.ts); a note sounds for its period less `gapUnits`.
+ */
+export const COMPOSER_PERIODS = {
+  unitMs: COMPOSER_DATA.unitMs,
+  gapUnits: COMPOSER_DATA.gapUnits,
+  byTempo: COMPOSER_DATA.periods,
+} as const;
+/** c1, #c1 … b3: the buzzer's 36 frequencies. */
+export const COMPOSER_PITCHES: readonly number[] = COMPOSER_DATA.pitches;
+/** The editor's hold times from a key-down: the dot, C's clear, ▲/▼'s repeats. */
+export const COMPOSER_TIMINGS = COMPOSER_DATA.timings;
+/**
+ * Saved tones as ringing tones (D9): their preview delay, the Ringing volume list's span, the
+ * step between level changes (Level 5, Ascending; nearest behaviour) and the unset volume's
+ * register.
+ */
+export const COMPOSER_SOUND = {
+  previewDelayMs: COMPOSER_DATA.previewDelayMs,
+  volumeListMs: COMPOSER_DATA.volumeListMs,
+  levelStepMs: COMPOSER_DATA.levelStepMs,
+  unsetVolume: COMPOSER_DATA.unsetVolume,
+} as const;

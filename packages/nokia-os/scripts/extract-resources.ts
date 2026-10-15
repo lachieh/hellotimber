@@ -15,7 +15,9 @@
 // - snake (plan 23): the Snake II pictures, mazes and timing of scripts/snake-resources.ts;
 // - sounds (plan 16): the tone programs and volume rules of scripts/sound-programs.ts, from the
 //   sound goldens;
-// - text (plan 18): the multi-tap and SMS timings of scripts/messages-resources.ts.
+// - text (plan 18): the multi-tap and SMS timings of scripts/messages-resources.ts;
+// - composer (plan 27): the Composer's periods, pitches and timings of scripts/composer-programs.ts,
+//   whose pitch goldens also join the sounds' volume tables (D4).
 //
 // Writes src/resources/generated/*.ts. Idempotent. `extractResources` is also run in-process by
 // tests/resources.test.ts to prove the committed files are fresh. Runs under Node's type
@@ -43,6 +45,7 @@ import {
   type HarvestedFont,
   type RunSample,
 } from "./harvest-glyphs.ts";
+import { addComposerVolumes, extractComposerData, type ComposerData } from "./composer-programs.ts";
 import { extractMessagesResources, type MessagesResourceData } from "./messages-resources.ts";
 import { extractSnakeResources, type SnakeResourceData } from "./snake-resources.ts";
 import { parseSoundGolden } from "./sound-format.ts";
@@ -162,6 +165,7 @@ export interface ExtractedResources {
   readonly snake: SnakeResourceData;
   readonly sounds: SoundResourceData;
   readonly text: MessagesResourceData;
+  readonly composer: ComposerData;
 }
 
 // ---------------------------------------------------------------- pixels
@@ -744,6 +748,14 @@ export function extractResources(
   const inputs = composeResourceDeclarations(sets, readGoldenIndex(goldensDir), (id) =>
     loadGolden(goldensDir, id),
   );
+  const loadSound = (id: string) =>
+    parseSoundGolden(readFileSync(join(goldensDir, `${id}.sound.txt`), "utf8"), id);
+  const ids = readGoldenIndex(goldensDir).map((entry) => entry.id);
+  const sounds = extractSoundResources(
+    loadSound,
+    ids.filter((id) => id.startsWith("sound/")),
+  );
+  const volumeTables = addComposerVolumes(sounds.volumeTables, loadSound);
   return {
     fonts: harvestFonts(goldensDir, inputs),
     menuIcons: extractMenuIcons(goldensDir),
@@ -754,13 +766,9 @@ export function extractResources(
       (id) => loadGolden(goldensDir, id),
       (id) => parseTickGolden(readFileSync(join(goldensDir, `${id}.ticks.txt`), "utf8"), id),
     ),
-    sounds: extractSoundResources(
-      (id) => parseSoundGolden(readFileSync(join(goldensDir, `${id}.sound.txt`), "utf8"), id),
-      readGoldenIndex(goldensDir)
-        .filter((entry) => entry.kind === "sound")
-        .map((entry) => entry.id),
-    ),
+    sounds: { ...sounds, volumeTables },
     text: extractMessagesResources((id) => loadGolden(goldensDir, id)),
+    composer: extractComposerData(loadSound, (id) => loadGolden(goldensDir, id), ids, volumeTables),
   };
 }
 
@@ -818,6 +826,11 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
       "TEXT_DATA",
       "{ readonly text: { readonly commitMs: number; readonly blinkMs: number; readonly clearAfterDeleteMs: number; readonly numberModeHoldMs: number; readonly digitHoldMs: number }; readonly messages: { readonly sendLinkMs: number; readonly receiveLinkMs: number; readonly savingMs: number } }",
       resources.text,
+    ),
+    "composer.ts": module(
+      "COMPOSER_DATA",
+      "{ readonly tempi: readonly number[]; readonly unitMs: number; readonly gapUnits: number; readonly periods: Readonly<Record<string, Readonly<Record<string, { readonly plain: number; readonly dotted: number }>>>>; readonly pitches: readonly number[]; readonly timings: { readonly dotMs: number; readonly clearMs: number; readonly repeatFirstMs: number; readonly repeatEveryMs: number }; readonly previewDelayMs: number; readonly volumeListMs: number; readonly levelStepMs: number; readonly unsetVolume: number }",
+      resources.composer,
     ),
     "snake.ts": module(
       "SNAKE_DATA",
