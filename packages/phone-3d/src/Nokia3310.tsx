@@ -2,18 +2,27 @@ import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { LED_X, backlightLightmap, unlitLightmap } from "./backlight";
 import Key from "./Key";
+import {
+  INK_SHADOW_BLUR,
+  INK_SHADOW_OFFSET,
+  INK_SHADOW_OPACITY,
+  INK_SHADOW_SCALE,
+  inkMask,
+  shadowMask,
+} from "./lcd-ink";
+import type { Mask } from "./lcd-ink";
 import { KEY_NODES, SCREEN_APERTURE, SCREEN_SCALE, STATIC_NODES } from "./layout";
 import {
   BACKLIGHT_COLOR,
   LCD_GLOW_INTENSITY,
   MATERIALS,
-  SCREEN_DIM_PIXEL_TINT,
   SCREEN_DIM_TINT,
   SCREEN_LIT_PIXEL_TINT,
 } from "./materials";
 import type { MaterialSpec } from "./materials";
-import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL, DEFAULT_SCREEN_BG } from "./types";
+import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL, DEFAULT_SCREEN_BG, resolveLights } from "./types";
 import type { Nokia3310Key, Nokia3310Props } from "./types";
 
 /** World height the stage is framed against (plan 03 convention). */
@@ -46,6 +55,57 @@ function visibleApertureRect(
   return { cx: (x0 + x1) / 2, cy: (yTop + yBot) / 2, w: x1 - x0, h: yTop - yBot, z: bb.max.z };
 }
 
+type ApertureRect = NonNullable<ReturnType<typeof visibleApertureRect>>;
+
+/** Planar UVs over the visible aperture (0–1 across it; the hidden margins
+ *  fall outside and clamp), so a lightmap lines up with what the eye sees. */
+function apertureUvs(geometry: THREE.BufferGeometry, rect: ApertureRect): THREE.BufferGeometry {
+  const g = geometry.clone();
+  const pos = g.getAttribute("position");
+  const uv = new Float32Array(pos.count * 2);
+  for (let i = 0; i < pos.count; i++) {
+    uv[i * 2] = (pos.getX(i) - (rect.cx - rect.w / 2)) / rect.w;
+    uv[i * 2 + 1] = (pos.getY(i) - (rect.cy - rect.h / 2)) / rect.h;
+  }
+  g.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
+  return g;
+}
+
+/** Texels across the lit lightmap (its height follows the aperture's aspect). */
+const LIGHTMAP_WIDTH = 84;
+
+/** A lightmap texture: sRGB-encoded light levels, row 0 at the top. */
+function lightmapTexture(data: Uint8Array, width: number, height: number): THREE.DataTexture {
+  const t = new THREE.DataTexture(data, width, height, THREE.RGBAFormat, THREE.UnsignedByteType);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.magFilter = THREE.LinearFilter;
+  t.minFilter = THREE.LinearFilter;
+  t.flipY = true;
+  t.needsUpdate = true;
+  return t;
+}
+
+/** A coverage mask as a texture. three's alphaMap samples the green channel,
+ *  so every channel carries the coverage. */
+function maskTexture(width: number, height: number, filter: THREE.MagnificationTextureFilter) {
+  const t = new THREE.DataTexture(new Uint8Array(width * height * 4), width, height);
+  t.magFilter = filter;
+  t.minFilter = filter;
+  t.flipY = true; // row 0 is the screen's top; the planes have v-up UVs
+  t.needsUpdate = true;
+  return t;
+}
+
+function writeMask(texture: THREE.DataTexture, mask: Mask): void {
+  const rgba = texture.image.data as Uint8Array;
+  mask.data.forEach((v, i) => rgba.fill(v, i * 4, i * 4 + 4));
+  texture.needsUpdate = true;
+}
+
+/** MeshBasicMaterial divides lightmap texels by π; this makes a full texel
+ *  reproduce the material's own colour (the pre-plan-25 lit look). */
+const FULL_LIGHTMAP = Math.PI;
+
 /**
  * The Nokia 3310 — model v3: a sourced, surgically prepared GLB (every key a
  * named node; see docs/plans/10-phone-model-v3-sourced.md). This component
@@ -57,13 +117,15 @@ export function Nokia3310({
   screenCanvas,
   screenVersion,
   onKey,
-  backlightOn = true,
+  backlightOn,
+  keypadLightOn,
   pressedKeys,
   screenBgColor = DEFAULT_SCREEN_BG,
   modelUrl = DEFAULT_MODEL_URL,
   dracoPath = DEFAULT_DRACO_PATH,
 }: Nokia3310Props) {
   const { scene } = useGLTF(modelUrl, dracoPath);
+  const { display: displayOn, keypad: keypadOn } = resolveLights({ backlightOn, keypadLightOn });
 
   // Clone per mount (StrictMode/dual mounts must not fight over one graph).
   const model = useMemo(() => scene.clone(true), [scene]);
@@ -132,27 +194,77 @@ export function Nokia3310({
   }, [screenCanvas]);
   useEffect(() => () => texture.dispose(), [texture]);
 
-  // Two layers: the model's oversized display plane becomes the LCD SURROUND
-  // (filled with screenBgColor so it reads as one continuous screen — same
-  // contract as the v1 era), and a smaller child plane carries the pixels
-  // (SCREEN_SCALE of the visible aperture).
+  // The LCD, back to front: the model's oversized display plane is the lit
+  // LCD (screenBgColor under the display LEDs' lightmap, laid over the visible
+  // aperture), then the ink's soft drop shadow, then the ink itself (the host
+  // canvas's foreground pixels, cut out by a mask) a hair above it, so the
+  // pixels seem to float over the backlight like an early monochrome LCD. The
+  // ink layers cover SCREEN_SCALE of the aperture; the canvas's background is
+  // never drawn (the lit plane is the background).
   const lcd = useMemo(() => {
     if (nodes.screen === null) return null;
     nodes.screen.material = new THREE.MeshBasicMaterial({ toneMapped: false });
     const rect = visibleApertureRect(nodes.screen);
     if (rect === null) return null;
-    const existing = nodes.screen.getObjectByName("lcd_pixels");
-    if (existing instanceof THREE.Mesh) return existing; // StrictMode re-run
-    const plane = new THREE.Mesh(
-      new THREE.PlaneGeometry(rect.w * SCREEN_SCALE, rect.h * SCREEN_SCALE),
-      new THREE.MeshBasicMaterial({ map: texture, toneMapped: false }),
+    nodes.screen.geometry = apertureUvs(nodes.screen.geometry, rect);
+    const height = Math.max(1, Math.round((LIGHTMAP_WIDTH * rect.h) / rect.w));
+    const lightmaps = {
+      lit: lightmapTexture(backlightLightmap(LIGHTMAP_WIDTH, height), LIGHTMAP_WIDTH, height),
+      unlit: lightmapTexture(unlitLightmap(), 1, 1),
+    };
+    // LED positions in the model's parent space: just above the aperture's
+    // top edge, a little in front of the glass so they spill onto the bezel.
+    nodes.screen.updateWorldMatrix(true, false);
+    const toModel = model.matrixWorld
+      .clone()
+      .invert()
+      .multiply(nodes.screen.matrixWorld)
+      .premultiply(model.matrix);
+    const leds = LED_X.map((fx) =>
+      new THREE.Vector3(
+        rect.cx - rect.w / 2 + fx * rect.w,
+        rect.cy + rect.h / 2,
+        rect.z + rect.h * 0.15,
+      ).applyMatrix4(toModel),
     );
-    plane.name = "lcd_pixels";
-    plane.position.set(rect.cx, rect.cy, rect.z + 0.0005);
-    nodes.screen.add(plane);
 
+    const { width, height: rows } = screenCanvas;
+    const masks = {
+      ink: maskTexture(width, rows, THREE.NearestFilter),
+      shadow: maskTexture(width * INK_SHADOW_SCALE, rows * INK_SHADOW_SCALE, THREE.LinearFilter),
+    };
+    const plane = new THREE.PlaneGeometry(rect.w * SCREEN_SCALE, rect.h * SCREEN_SCALE);
+    const shadow = new THREE.Mesh(
+      plane,
+      new THREE.MeshBasicMaterial({
+        color: "#000000",
+        alphaMap: masks.shadow,
+        transparent: true,
+        opacity: INK_SHADOW_OPACITY,
+        depthWrite: false,
+        toneMapped: false,
+      }),
+    );
+    shadow.name = "lcd_shadow";
+    const pixel = (rect.w * SCREEN_SCALE) / width;
+    shadow.position.set(
+      rect.cx + pixel * INK_SHADOW_OFFSET,
+      rect.cy - pixel * INK_SHADOW_OFFSET,
+      rect.z + 0.0003,
+    );
+    const ink = new THREE.Mesh(
+      plane,
+      new THREE.MeshBasicMaterial({
+        map: texture,
+        alphaMap: masks.ink,
+        alphaTest: 0.5,
+        toneMapped: false,
+      }),
+    );
+    ink.name = "lcd_ink";
+    ink.position.set(rect.cx, rect.cy, rect.z + 0.0005);
     const glass = new THREE.Mesh(
-      plane.geometry,
+      plane,
       new THREE.MeshPhysicalMaterial({
         color: "#ffffff",
         transparent: true,
@@ -167,38 +279,61 @@ export function Nokia3310({
     );
     glass.name = "lcd_glass";
     glass.position.set(rect.cx, rect.cy, rect.z + 0.001);
-    nodes.screen.add(glass);
-    return plane;
-  }, [nodes, texture]);
-
-  // Tint/dim reacts to props without rebuilding materials. The surround is
-  // screenBgColor multiplied by the same dim tint as the pixels, so both
-  // layers read as one LCD in either backlight state.
+    return { layers: [shadow, ink, glass], ink, lightmaps, masks, leds };
+  }, [model, nodes, texture, screenCanvas]);
+  // Attach the layers in an effect: StrictMode runs the memo twice and keeps
+  // one result, so only the kept layers may join the scene.
   useEffect(() => {
     if (lcd === null || nodes.screen === null) return;
-    const pixelTint = new THREE.Color(backlightOn ? SCREEN_LIT_PIXEL_TINT : SCREEN_DIM_PIXEL_TINT);
-    const surroundTint = new THREE.Color(backlightOn ? "#ffffff" : SCREEN_DIM_TINT);
-    const pixels = lcd.material as THREE.MeshBasicMaterial;
-    pixels.map = texture;
-    pixels.color.copy(pixelTint);
-    pixels.needsUpdate = true;
-    const surround = nodes.screen.material as THREE.MeshBasicMaterial;
-    surround.color.set(screenBgColor).multiply(surroundTint);
-    surround.needsUpdate = true;
-  }, [lcd, nodes, texture, backlightOn, screenBgColor]);
+    const screen = nodes.screen;
+    screen.add(...lcd.layers);
+    return () => {
+      screen.remove(...lcd.layers);
+      for (const t of [...Object.values(lcd.lightmaps), ...Object.values(lcd.masks)]) t.dispose();
+    };
+  }, [lcd, nodes]);
 
+  // The display light swaps the lit plane's lightmap: lit, the three LEDs'
+  // gradient; unlit, the uniform daylight level. The ink blocks the backlight,
+  // so it only dims with it. Reacts without rebuilding materials.
+  useEffect(() => {
+    if (lcd === null || nodes.screen === null) return;
+    const ink = lcd.ink.material as THREE.MeshBasicMaterial;
+    ink.color.set(displayOn ? SCREEN_LIT_PIXEL_TINT : SCREEN_DIM_TINT);
+    const surround = nodes.screen.material as THREE.MeshBasicMaterial;
+    surround.color.set(screenBgColor);
+    surround.lightMap = displayOn ? lcd.lightmaps.lit : lcd.lightmaps.unlit;
+    surround.lightMapIntensity = FULL_LIGHTMAP;
+    surround.needsUpdate = true;
+  }, [lcd, nodes, displayOn, screenBgColor]);
+
+  // Each new screen (or background colour) re-uploads the canvas and
+  // re-derives the ink and shadow masks from its pixels.
   const versionRef = useRef(screenVersion);
   versionRef.current = screenVersion;
   const uploadedRef = useRef(-1);
+  useEffect(() => {
+    uploadedRef.current = -1;
+  }, [lcd, screenBgColor]);
+  const scratch = useMemo(() => document.createElement("canvas"), []);
   useFrame(() => {
-    if (uploadedRef.current !== versionRef.current) {
-      texture.needsUpdate = true;
-      uploadedRef.current = versionRef.current;
-    }
+    if (uploadedRef.current === versionRef.current) return;
+    uploadedRef.current = versionRef.current;
+    texture.needsUpdate = true;
+    if (lcd === null) return;
+    // Read through a 2D scratch canvas: the host's canvas may hold any context.
+    scratch.width = screenCanvas.width;
+    scratch.height = screenCanvas.height;
+    const ctx = scratch.getContext("2d", { willReadFrequently: true });
+    if (ctx === null) return;
+    ctx.drawImage(screenCanvas, 0, 0);
+    const ink = inkMask(ctx.getImageData(0, 0, scratch.width, scratch.height), screenBgColor);
+    writeMask(lcd.masks.ink, ink);
+    writeMask(lcd.masks.shadow, shadowMask(ink, INK_SHADOW_SCALE, INK_SHADOW_BLUR));
   });
 
-  // Soft LCD glow behind the glass when lit.
-  const glow = backlightOn ? LCD_GLOW_INTENSITY : 0;
+  // The LEDs' green spill onto the bezel when lit: one weak light per LED.
+  const glow = displayOn ? LCD_GLOW_INTENSITY / LED_X.length : 0;
 
   // ── central pointer routing: one raycast surface, name → key ──────────────
   const keyFromEvent = (obj: THREE.Object3D | null): THREE.Mesh | null => {
@@ -258,21 +393,23 @@ export function Nokia3310({
             key={key}
             id={key}
             mesh={mesh}
-            backlightOn={backlightOn}
+            lightOn={keypadOn}
             pressed={pressedKeys?.has(key) ?? false}
             travel={fit.size.y * 0.004}
             onKey={onKey}
           />
         ))}
-        {nodes.screen !== null && glow > 0 && (
-          <pointLight
-            color={BACKLIGHT_COLOR}
-            intensity={glow * fit.size.y * 0.15}
-            distance={fit.size.y * 0.25}
-            decay={2}
-            position={[0, fit.center.y + fit.size.y * 0.11, fit.center.z + fit.size.z]}
-          />
-        )}
+        {glow > 0 &&
+          lcd?.leds.map((led, i) => (
+            <pointLight
+              key={i}
+              color={BACKLIGHT_COLOR}
+              intensity={glow * fit.size.y * 0.15}
+              distance={fit.size.y * 0.25}
+              decay={2}
+              position={led}
+            />
+          ))}
       </group>
     </group>
   );

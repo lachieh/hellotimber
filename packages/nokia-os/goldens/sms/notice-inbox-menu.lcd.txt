@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/notice-inbox-menu
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/notice/inbox-menu
 source-sha256: c9362c1a4fce61a1d7546872c93084475d53084b6cb1edb68dc828094b3145d4
 trigger-frame: 1

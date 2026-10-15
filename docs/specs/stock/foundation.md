@@ -19,8 +19,9 @@ animated icon. Verified (Task 0 probes, asserted in `packages/nokia-os/tests/acc
 - Timings are reproduced as captured, jitter included (for example 208/179 ms around a ~194 ms
   period). The Clock icon's timeline depends on how its slot was revealed. Frame starts after
   the key: ▼ 1400, 1619, 1850, 2083, 2315, 2547, 2780, 3012 ms; ▲ 1385, 1617, 1849, …, 3011 ms;
-  C (return) 1386, 1628, 1858, …, 3020 ms. No single timeline fits all three within ±2 ms, so
-  the Clock graphic carries one timeline per reveal; every other icon has one timeline.
+  C (return) 1386, 1628, 1858, …, 3020 ms. The Clock graphic carries one timeline per reveal
+  (plan 13 fitted them to ±2 ms; the fidelity standard in `AGENTS.md` would accept one); every
+  other icon has one timeline.
 
 **Level-1 labels (v6.39 wording, checked against the goldens; `/` = firmware line break):**
 

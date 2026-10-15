@@ -12,7 +12,6 @@ import { goto, open } from "./drive.ts";
 import { INDEX, treePath } from "./tree.ts";
 import { expect } from "vite-plus/test";
 import { SNAKE_SETTINGS } from "../../src/widgets/snake";
-import { GAME_TICK_TOLERANCE_MS } from "./golden.ts";
 import { keys, SNAKE } from "./probes.ts";
 import { seededStorage, standbyRig, stockRig, type Rig } from "./rig.ts";
 import {
@@ -210,10 +209,11 @@ export const SOUND_SCENARIOS: Record<string, (id: string) => void> = {
     virginToneList(id, { [VOLUME]: level(3), [ALERT]: 0, [VIBRA]: 0 }),
   "sound/preview/first-down": (id) => virginToneList(id, { [VOLUME]: level(3), [ALERT]: 0 }),
   "sound/preview/first-down-back": (id) => virginToneList(id, { [VOLUME]: level(3), [ALERT]: 0 }),
-  "sound/preview/virgin-message": (id) =>
-    expectSound(id, soundRig("virgin"), `navi 5 5 ${SETTLE}`, { drift: true }),
+  "sound/preview/virgin-message": (id) => expectSound(id, soundRig("virgin"), `navi 5 5 ${SETTLE}`),
   // B: holding the power key stops the preview; power-off plays the power-on tone.
   "sound/boot/power-off": (id) => powerOff(id),
+  // Plan 17: the power key's list opens at standby (its beep), C returns (its beep).
+  "sound/boot/power-key": (id) => expectSound(id, soundRig("factory")),
   // B: the power-on tone 2425 ms into the boot (time 0: the phone turns on), Keypad tones or not.
   "sound/boot/power-on": (id) => powerOnSound(id, {}),
   "sound/boot/power-on-keypad-off": (id) => powerOnSound(id, { [KEYPAD]: 0 }),
@@ -248,39 +248,30 @@ function toneList(
   const golden = loadSoundGolden(id);
   const from = opened ? index : golden.keys?.[0]?.key === "up" ? index + 1 : index - 1;
   const rig = soundRig("factory", { [TONE]: from, ...choices });
-  const cycleMs = RINGING_TONES[index]?.cycleMs;
-  // The tone's own Level 4 recording is its program; any other drifts.
-  const drift = id !== `sound/ringing-tone/${RINGING_TONES[index]?.slug}`;
-  expectSound(id, rig, `navi 5 1 ${SETTLE}`, {
-    drift,
-    ...(cycleMs === undefined ? {} : { cycleMs }),
-    ...options,
-  });
+  expectSound(id, rig, `navi 5 1 ${SETTLE}`, options);
 }
 
 /** Nokia tune's preview: ▼ from Croak. */
 function nokiaTune(id: string, choices: SettingChoices, options: SoundTolerance = {}): void {
   const rig = soundRig("factory", { [TONE]: CROAK, ...choices });
-  expectSound(id, rig, `navi 5 1 ${SETTLE}`, { drift: true, ...options });
+  expectSound(id, rig, `navi 5 1 ${SETTLE}`, options);
 }
 
 /** Tones › Ringing volume opened on option `from`, then the golden's keys. */
 function volumeList(id: string, from: number, choices: SettingChoices): void {
   const rig = soundRig("factory", { ...choices, [VOLUME]: from });
-  expectSound(id, rig, `navi 5 2 ${SETTLE}`, { drift: true });
+  expectSound(id, rig, `navi 5 2 ${SETTLE}`);
 }
 
 /** Tones › Message alert tone opened on option `from`, then the golden's keys. */
 function messageList(id: string, from: number, choices: SettingChoices): void {
   const rig = soundRig("factory", { ...choices, [MESSAGE]: from });
-  // The four message goldens the programs come from replay exactly; the others drift.
-  const source = /^sound\/message-tone\/(standard|special|beep-once|ascending)$/.test(id);
-  expectSound(id, rig, `navi 5 5 ${SETTLE}`, { drift: !source });
+  expectSound(id, rig, `navi 5 5 ${SETTLE}`);
 }
 
 /** The virgin Ringing tone list (unset), with `choices` set first. */
 function virginToneList(id: string, choices: SettingChoices): void {
-  expectSound(id, soundRig("virgin", choices), `navi 5 1 ${SETTLE}`, { drift: true });
+  expectSound(id, soundRig("virgin", choices), `navi 5 1 ${SETTLE}`);
 }
 
 /**
@@ -303,7 +294,7 @@ function personalise(
   const rig = soundRig("factory", { ...choices, ...opening });
   open(rig, list === "ringing-tone" ? `12-${n}-2-1` : `12-${n}-2-5`);
   rig.advance(1500);
-  expectSound(id, rig, "", { drift: true });
+  expectSound(id, rig, "");
 }
 
 /** ▼ onto Nokia tune, then the power key held until the phone is off (time 0: the ▼). */
@@ -323,7 +314,6 @@ function powerOff(id: string): void {
     },
     before,
     `${id}: the preview up to the power key`,
-    { drift: true },
   );
   const off = recorded.originMs + powerKey + 800;
   const firmwareOff = golden.rows.find((row) => row.ms >= powerKey + 1000)!.ms;
@@ -367,24 +357,11 @@ Object.assign(SOUND_SCENARIOS, {
   "sound/note/invalid-shortcut-keypad-l3": (id: string) =>
     expectSound(id, soundRig("factory", { [KEYPAD]: 3 })),
   // Menu 6 4, 00000, OK: `Code error` on the buzzer in place of OK's beep.
-  // The capture types the code 1960 ms after Menu 6 4's 4, which the kernel's shortcut window
-  // (2948 ms, phone-core) still takes as a digit: the scenario opens 6-4 by its menu path and
-  // compares from the first 0.
-  "sound/note/code-error": (id: string) => {
-    const rig = soundRig("factory");
-    open(rig, "6-4");
-    rig.advance(NAV_SETTLE_MS);
-    expectSoundFrom(id, rig, 2880);
-  },
-  // Warning tones Off: both error notes silent, and so are the keys that opened them (Menu 1 9
-  // and C held as captured; then 6-4 by its menu path, as for `code-error`).
-  "sound/note/warning-off": (id: string) => {
-    const rig = soundRig("factory", { "tones/warning-tones": 1 });
-    expectSoundUntil(id, rig, 7931);
-    open(rig, "6-4");
-    rig.advance(NAV_SETTLE_MS);
-    expectSoundFrom(id, rig, 10812);
-  },
+  "sound/note/code-error": (id: string) => expectSound(id, soundRig("factory")),
+  // Warning tones Off: both error notes silent, and so are the keys that opened them (Menu 1 9,
+  // C held, Menu 6 4).
+  "sound/note/warning-off": (id: string) =>
+    expectSound(id, soundRig("factory", { "tones/warning-tones": 1 })),
   // Call divert › Cancel all diverts: Requesting, Quit, `Request not confirmed` (silent).
   "sound/note/request-not-confirmed": (id: string) => {
     const rig = soundRig("factory");
@@ -404,30 +381,6 @@ Object.assign(SOUND_SCENARIOS, {
 
 /** The wait after a scenario's own navigation, before the golden's first key. */
 const NAV_SETTLE_MS = 500;
-
-/** Golden `id` from its time `fromMs` on (its earlier keys done another way), as time 0. */
-function expectSoundFrom(id: string, rig: Rig, fromMs: number): void {
-  const golden = loadSoundGolden(id);
-  const part = {
-    ...golden,
-    keys: (golden.keys ?? [])
-      .filter((k) => k.ms >= fromMs)
-      .map((k) => ({ ...k, ms: k.ms - fromMs })),
-    rows: golden.rows.filter((r) => r.ms >= fromMs).map((r) => ({ ...r, ms: r.ms - fromMs })),
-  };
-  expectSoundTimeline(playSound(rig, part), part, `${id}: from ${fromMs} ms`);
-}
-
-/** Golden `id`'s keys and rows before `untilMs`. */
-function expectSoundUntil(id: string, rig: Rig, untilMs: number): void {
-  const golden = loadSoundGolden(id);
-  const part = {
-    ...golden,
-    keys: (golden.keys ?? []).filter((k) => k.ms < untilMs),
-    rows: golden.rows.filter((r) => r.ms < untilMs),
-  };
-  expectSoundTimeline(playSound(rig, part, { tailMs: 1000 }), part, `${id}: until ${untilMs} ms`);
-}
 
 /**
  * Highlights tree node or option `number` from a settled factory standby. An option of a
@@ -485,7 +438,7 @@ const NEW_GAME_LATENCY_MAX_MS = KEY_LATENCY_MAX_MS;
  * Snake II's menu (New game highlighted; `menu`: ▼ to another entry) at level 1 over the factory
  * state with `choices`, its last key 300 ms before the golden's first (the DSP awake, as after the
  * capture's level setting), then the golden's keys. The key beeps compare as keys; the cues (the
- * buzzer and the vibrator) align on the golden's first cue and keep GAME_TICK_TOLERANCE_MS.
+ * buzzer and the vibrator) align on the golden's first cue.
  */
 function snakeSound(id: string, choices: SettingChoices, menu = "", beepsFromMs = 0): void {
   const storage = soundStorage("factory", choices);
@@ -529,7 +482,7 @@ function snakeSound(id: string, choices: SettingChoices, menu = "", beepsFromMs 
     { ...recorded, originMs: recorded.originMs - lag },
     golden,
     `${id}: ${golden.note} (cues aligned on the first, ${lag} ms later in the capture)`,
-    { outputs: ["buzzer", "vibrator"], cueOnsetMs: GAME_TICK_TOLERANCE_MS },
+    { outputs: ["buzzer", "vibrator"], cues: true },
   );
 }
 

@@ -18,6 +18,7 @@ export type {
   DeactivationReason,
   ExitOptions,
   PhoneApplicationSession,
+  ShortcutLevel,
 } from "./application";
 export {
   ActionEntry,

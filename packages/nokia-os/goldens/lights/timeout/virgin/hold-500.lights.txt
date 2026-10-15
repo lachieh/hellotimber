@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/timeout/virgin/hold-500
+status: asserted
+source: captures/6.39/plan25/lights/timeout/virgin/hold-500
+source-sha256: 9bbc66b28e85939f5bb21a51362ecea98c5897826d7276f1eacea56054a515c0
+state: virgin
+power-on: 69192
+start: -100
+end: 17531
+keys: 0:c+500
+note: C held 500 ms at standby.
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+14078  display off
+14078  keypad  off

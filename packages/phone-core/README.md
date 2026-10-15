@@ -115,10 +115,18 @@ unsubscribe();
   });
   ```
 
-- `label(child)` (opt-in) gives the text a child shows in the level's list and as its own
-  level's title, re-read on every tick (a change emits one snapshot): undefined, or a reader that
-  throws, shows the child's label; an empty string throws, as labels do. Paths and slugs keep the
-  child's slug: `label: (child) => (child === general ? profileName() : undefined)`.
+- `label(child)` (opt-in) is the text a child shows in its level's list and as its own level's
+  title (a renamed profile, a Composer slot named by its saved tone), re-read on every tick (one
+  snapshot per change); undefined keeps the child's label, and a reader that throws or returns a
+  blank string shows the child's label. Slugs and paths do not change. `entry.labelOf(child)`
+  gives the level's text for a child (a blank one throws):
+
+  ```ts
+  new SubmenuEntry(slug("composer"), order, "Composer", slots, undefined, {
+    label: (child) => savedName(child.slug.value), // undefined: "(empty)"
+  });
+  ```
+
 - `context.exit(options?)`: `exit()` returns to the menu; `exit({ to: "standby" })` leaves the
   menus as C-hold does; `exit({ levels: 2 })` also closes the enclosing level, and
   `exit({ select: "slug" })` selects that child of the level returned to, on the bottom row of a
@@ -149,9 +157,27 @@ unsubscribe();
   });
   ```
 
-- `standbyIndicators: () => ({ message?, voicemail?, alarm?, timer?, stopwatch? })` (default
-  none) is re-read on every tick like `clock()`; the standby model carries `indicators` with the
-  fields that are true, and a changed value emits one snapshot.
+- `standbyIndicators: () => ({ message?, voicemail?, silent?, alarm?, timer?, stopwatch? })`
+  (default none) is re-read on
+  every tick like `clock()`; the standby model carries `indicators` with the fields that are
+  true, and a changed value emits one snapshot.
+- `standbyLine: (shownMs) => string | undefined` (default none) is a second standby line, re-read
+  on every tick with the time since standby was last entered (the boot's end, a return from the
+  menus or an application, a notice cleared). The standby model (and the standby Menu leaves for
+  `menuOpenDelayMs`) carries `line` when it returns a string; a reader that throws shows none. A
+  profile name that appears two seconds after standby:
+
+  ```ts
+  createPhone({ menu, standbyLine: (shownMs) => (shownMs >= 1900 ? profileName() : undefined) });
+  ```
+
+- `standbyPower: application` (default none) opens on the power key's key-down at standby, as a
+  standby application (empty stack, path `standby`, `exit()` returns to standby). It receives
+  every later key, the release of the press that opened it and the power key's own presses
+  included; the power key's long press still powers off. It opens over a standby notice (which
+  stays), and when the running application leaves for standby on the power key's down (a note
+  shown at standby); in the menus, other applications and the boot the short press does nothing.
+  Any application can switch the phone off with `context.powerOff?.()` (reason `power-off`).
 - `interruption: () => PhoneApplication | undefined` (default none) is polled on every tick while
   the phone is on, after the tick's timers, except during the boot, a boot gate's application, a
   wake activation or another interruption. An application it returns runs above whatever is

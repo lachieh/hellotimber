@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/star-tap
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/tap-star
 source-sha256: cd1717cfc21194b613547ab175a88ec8de6d9cd4795cf17dd6fb91e84711ca36
 trigger-frame: 1

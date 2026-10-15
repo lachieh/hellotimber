@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/template
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/template
 source-sha256: 57d8427b0fd81c771263aa4462e4cc9413e8c4291024142ffd1632f4cfdfe1e4
 trigger-frame: 0

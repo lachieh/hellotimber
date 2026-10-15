@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/send-to-many
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/send-to-many
 source-sha256: 0d1b63a8ec0d1b59ea36b26c84b858650d2198570240337ab7fd1d1feb447bb7
 trigger-frame: 1

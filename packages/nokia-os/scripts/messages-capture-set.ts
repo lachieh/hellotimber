@@ -3,8 +3,8 @@
 // captures (`captures/6.39/plan15/welcome/`), plus the glyph sheets built from Task 0's
 // manifests.
 //
-// Every fixture is `pending:18` until a later task of plan 18 gives it a scenario and promotes it
-// here (plan 29 "Pending workflow"). Reads captures only through the injected
+// Every fixture is asserted (Task 12: each has its scenario in tests/support/messages.ts) but the
+// ones a later plan implements (`MESSAGES_LATER`). Reads captures only through the injected
 // `MessagesCaptureIo`, so tests run it on synthetic recordings. Paths are relative to
 // `$REF/captures/6.39`. Pure: imports only sibling scripts.
 import type { CaptureSetEntry } from "./capture-set.ts";
@@ -46,8 +46,28 @@ export class MessagesCaptureError extends Error {
   }
 }
 
-/** Every plan 18 fixture's status until its scenario exists (plan 29 "Pending workflow"). */
-export const MESSAGES_STATUS: GoldenStatus = "pending:18";
+/**
+ * Fixtures whose screens a later plan implements, by that plan (plan 18 Task 11): Inbox's Chat
+ * (`Chat name:`, plan 18c); Use number's call screen and the received notice's ▲, ▼, digit and #
+ * (the call register, the phone book and standby number entry: plan 22, which also needs the
+ * kernel to route a notice's keys, D12).
+ */
+export const MESSAGES_LATER: Readonly<Record<string, string>> = {
+  "sms/inbox-option-chat": "18c",
+  "sms/inbox-option-use-number": "22",
+  "sms/inbox-option-use-number-odd": "22",
+  "sms/outbox-use-number-found": "22",
+  "sms/notice-up": "22",
+  "sms/notice-down": "22",
+  "sms/notice-digit": "22",
+  "sms/notice-hash": "22",
+};
+
+/** Asserted (plan 18 Task 12: each has its scenario), unless a later plan implements it. */
+function statusOf(id: string): GoldenStatus {
+  const later = MESSAGES_LATER[id];
+  return later === undefined ? "asserted" : `pending:${later}`;
+}
 
 const BASE = "plan18";
 
@@ -1177,7 +1197,7 @@ export function glyphEntries(io: MessagesCaptureIo): CaptureSetEntry[] {
   const still = (face: GlyphFace, shots: readonly GlyphShot[], what: string): CaptureSetEntry => ({
     id: `glyphs/${face}`,
     kind: "still",
-    status: MESSAGES_STATUS,
+    status: statusOf(`glyphs/${face}`),
     prefer: {
       source: { kind: "shots", files: shots.map((shot) => `${BASE}/glyphs/${face}/${shot.file}`) },
       note: manifestNote(
@@ -1257,7 +1277,7 @@ export function recordingEntry(io: MessagesCaptureIo, row: RecordingRow): Captur
   return {
     id: row.id,
     kind: "timeline",
-    status: MESSAGES_STATUS,
+    status: statusOf(row.id),
     prefer: {
       source:
         row.to === undefined
@@ -1280,7 +1300,7 @@ function shotsEntry(row: ShotsRow): CaptureSetEntry {
   return {
     id: row.id,
     kind: "still",
-    status: MESSAGES_STATUS,
+    status: statusOf(row.id),
     prefer: {
       source: { kind: "shots", files: row.shots.map((shot) => `${dir}/${shot}.png`) },
       note: row.note,
@@ -1300,7 +1320,7 @@ function scrollEntry(io: MessagesCaptureIo, row: ScrollRow): CaptureSetEntry {
     return {
       id: row.id,
       kind: "still",
-      status: MESSAGES_STATUS,
+      status: statusOf(row.id),
       prefer: { source: { kind: "scroll", dir }, note: row.note },
     };
   }
@@ -1313,7 +1333,7 @@ function scrollEntry(io: MessagesCaptureIo, row: ScrollRow): CaptureSetEntry {
   return {
     id: row.id,
     kind: "still",
-    status: MESSAGES_STATUS,
+    status: statusOf(row.id),
     prefer: {
       source: {
         kind: "shots",

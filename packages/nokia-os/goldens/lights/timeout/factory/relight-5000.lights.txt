@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/timeout/factory/relight-5000
+status: asserted
+source: captures/6.39/plan25/lights/timeout/factory/relight-5000
+source-sha256: e47f4345068c48f29682d21c9c7e9435c259ce406d7eef81910c908e75b82f3f
+state: factory
+power-on: 61261
+start: -100
+end: 22091
+keys: 0:c 5001:c
+note: C, then C 5000 ms later while the LEDs are on.
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+20028  display off
+20028  keypad  off

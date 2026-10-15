@@ -1,6 +1,6 @@
 lcd-golden 1
 id: welcome/plan15-erase
-status: pending:18
+status: asserted
 source: captures/6.39/plan15/welcome/erase
 source-sha256: 073c2c89d68f5a4152eae1ec03da1ad29a53e5d61027c3ca7109d6543860c73e
 trigger-frame: 1

@@ -42,14 +42,19 @@ export interface AcceptancePlan {
    */
   readonly scenarios: Readonly<Record<string, Scenario>>;
   /**
-   * Asserted goldens whose scenario cannot pass, each with its reason: separate recordings of one
-   * path that disagree beyond what the comparison allows (partial draws caught at different
-   * points, timer spreads beyond PROBE_TOLERANCE_MS), or a firmware quirk behind one. Their
-   * scenarios run as expected failures, so a gap that starts passing must leave this table.
+   * Asserted goldens whose scenario cannot pass, each with its reason: a difference the fidelity
+   * standard counts (a pixel, a frame of two display frames or longer, timing beyond its
+   * tolerance), or a firmware quirk behind one. Their scenarios run as expected failures, so a gap
+   * that starts passing must leave this table.
    */
   readonly knownGaps?: Readonly<Record<string, string>>;
   /** Scenarios that may outlast the default 5 s timeout on a loaded machine, by golden id. */
   readonly timeoutsMs?: Readonly<Record<string, number>>;
+  /**
+   * The tree nodes a hand-written golden covers, by golden id (plan 18: the leaves its features
+   * bind), for the coverage guard; generated tree goldens declare their own `covers`.
+   */
+  readonly covers?: Readonly<Record<string, readonly string[]>>;
 }
 
 /** How long after the trigger a timeline golden ends (the last frame's end, or lower bound). */

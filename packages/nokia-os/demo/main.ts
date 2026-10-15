@@ -134,10 +134,16 @@ requestAnimationFrame(frame);
 
 // --- keys ---------------------------------------------------------------------------------
 
+/**
+ * The Power button: held 1 s while the phone is off (power on), a short press while it is on
+ * (plan 17: the profile list at standby, where Switch off! switches off). The P key holds as
+ * long as it is held.
+ */
 function pressPower(): void {
   const pressed = phone;
+  const holdMs = pressed?.screen.kind === "off" ? POWER_HOLD_MS : 100;
   pressed?.send({ type: "down", key: "power" });
-  setTimeout(() => pressed?.send({ type: "up", key: "power" }), POWER_HOLD_MS);
+  setTimeout(() => pressed?.send({ type: "up", key: "power" }), holdMs);
 }
 
 window.addEventListener("keydown", (event) => {
@@ -145,7 +151,7 @@ window.addEventListener("keydown", (event) => {
     return;
   }
   if (event.key === "p" || event.key === "P") {
-    if (!event.repeat) pressPower();
+    if (!event.repeat) phone?.send({ type: "down", key: "power" });
     event.preventDefault();
     return;
   }
@@ -156,6 +162,10 @@ window.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("keyup", (event) => {
+  if (event.key === "p" || event.key === "P") {
+    phone?.send({ type: "up", key: "power" });
+    return;
+  }
   const key = KEYBOARD[event.key];
   if (key !== undefined) phone?.send({ type: "up", key });
 });

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/input
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/input/send-by-set.png + captures/6.39/plan18/text/input/set-1.png + captures/6.39/plan18/text/input/routing-00.png + captures/6.39/plan18/text/input/routing-01.png + captures/6.39/plan18/text/input/routing-case.png + captures/6.39/plan18/text/input/routing-typed.png
 source-sha256: 2ac535d18c6b29505cbdc304d5dce7fa2e9df5bf657a9037845ba1d2419fdb1b
 note: Options › Send by set, Set 1's list, then Alphanumeric's Routing address: empty, A, after # cycles (AElj), typed.

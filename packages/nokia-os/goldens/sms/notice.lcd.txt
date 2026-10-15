@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/notice
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/notice/count-1.png + captures/6.39/plan18/sms/notice/count-2.png + captures/6.39/plan18/sms/notice/count-3.png + captures/6.39/plan18/sms/notice/indicator-after-c.png + captures/6.39/plan18/sms/notice/menu-after-c.png + captures/6.39/plan18/sms/notice/standby-down-after-c.png + captures/6.39/plan18/sms/notice/standby-after-menu.png
 source-sha256: bc3a41f16d8e981371387368af1e1a84f52d19fe11b2a61246aae28c4e29e517
 note: Standby after 1, 2 and 3 arrivals; after C on the notice (the envelope stays); Menu after it (Phone book); ▼ after it (No phone numbers); standby after Menu and back (no notice).

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vite-plus/test";
 import type { StockCue } from "../src/firmware/cues";
 import { createStockPhoneWith } from "../src/firmware/phone";
 import { createStockPhone, type StockPhoneConfig, type StockSoundEvent } from "../src/index";
-import { BOOT_TIMELINE, BOOT_TONE } from "../src/resources";
+import { BOOT_TIMELINE, BOOT_TONE, KEYPAD_BEEP } from "../src/resources";
 import { LEVEL_REPEAT } from "../src/widgets/level-bar";
 import { soundStorage } from "./support/sound-scenarios.ts";
 
@@ -470,9 +470,10 @@ describe("the sound port (plan 16 D4)", () => {
   it("plays the power-off tone at power-off and nothing after it", () => {
     const { events } = run(1);
     const off = events.findIndex((e) => e.event.atMs === 20800);
+    // Plan 17 (Task 0 B): as long as a key beep with the DSP awake, as it is here.
     expect(events.slice(off).map((e) => e.event)).toEqual([
       { output: "tone", atMs: 20800, hz: BOOT_TONE.program.steps[0]!.tone!.hz, volume: 0x9105 },
-      { output: "tone", atMs: 20800 + BOOT_TONE.program.steps[0]!.ms, hz: null },
+      { output: "tone", atMs: 20800 + KEYPAD_BEEP.awakeMs, hz: null },
     ]);
   });
 

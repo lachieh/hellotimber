@@ -1,7 +1,7 @@
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { paintWidget } from "../src/display/widgets";
-import { noteTimelineId, NOTE_STYLES, optionListNumbering } from "../src/firmware/stock";
+import { noteTimelineId, NOTE_STYLES, optionListNumbering, SCREENS } from "../src/firmware/stock";
 import type {
   StockLeafScreen,
   StockResult,
@@ -88,8 +88,11 @@ const asserted = (suffix: string) =>
   INDEX.filter((e) => e.status === "asserted" && e.id.endsWith(suffix) && e.covers);
 
 describe("notes and progress notes against every asserted .leaf golden that opens one", () => {
+  // A leaf a feature binds is its feature's screen (plan 17: Activate's note ends in standby with
+  // the profile's line, the kernel's), driven by its plan's scenarios instead.
   const cases = asserted(".leaf").flatMap((entry) => {
     const number = entry.covers![0]!;
+    if (SCREENS[number] !== undefined) return [];
     const screen = treePath(number).at(-1)!.opens;
     return isNoteScreen(screen) ? [{ id: entry.id, number, screen }] : [];
   });

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/outbox-list
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/outbox/list
 source-sha256: 76ab5cf0eaefd5d29874aa8ad43a2d793249a3154088171564276d7dcf27634e
 note: The Outbox list of three saved messages, ▼ per image.

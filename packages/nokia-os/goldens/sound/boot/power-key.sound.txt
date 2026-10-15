@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/boot/power-key
-status: pending:17
+status: asserted
 source: captures/6.39/plan16/boot/power-key
 source-sha256: d725dfa54d71b9b81678c06ec5d3e526ccd09e6b3142ada684b7db7688868026
 state: factory

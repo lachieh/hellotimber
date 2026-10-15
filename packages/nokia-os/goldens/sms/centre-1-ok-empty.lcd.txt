@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/centre-1-ok-empty
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/centre-1/ok-empty
 source-sha256: f7a3a2f1887a4c70a48503f251e37fb346bad81c2fa2c33d26f28dac99f4b819
 trigger-frame: 1

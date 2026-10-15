@@ -68,9 +68,9 @@ export class StockClock {
     this.#minute = this.#index();
   }
 
-  /** The clock record (the alarm's state lives there too). */
-  state(): ClockState {
-    return this.#eeprom.read(CLOCK_RECORD);
+  /** The clock record (the alarm's state lives there too), read on every tick: not a copy. */
+  state(): Readonly<ClockState> {
+    return this.#eeprom.peek(CLOCK_RECORD);
   }
 
   /** Writes fields of the clock record. */
@@ -78,15 +78,30 @@ export class StockClock {
     this.#eeprom.write(CLOCK_RECORD as EepromRecord<ClockState>, { ...this.state(), ...change });
   }
 
-  /** The host's time, without the offset; undefined when the host gives none (or a malformed one). */
-  #hostTime(): PhoneTime | undefined {
-    return parseHostTime(this.#host.clock?.(), this.#host.date?.());
-  }
+  /** now()'s last inputs and result: it is read several times on every tick. */
+  #memo:
+    | {
+        clock: string | undefined;
+        date: string | undefined;
+        offset: number;
+        time: PhoneTime | undefined;
+      }
+    | undefined;
 
-  /** The phone's time: the host's plus the stored offset (D1). */
+  /** The phone's time: the host's plus the stored offset (D1); undefined when the host gives no
+   * time (or a malformed one). */
   now(): PhoneTime | undefined {
-    const host = this.#hostTime();
-    return host === undefined ? undefined : addMinutes(host, this.state().offsetMinutes);
+    const clock = this.#host.clock?.();
+    const date = this.#host.date?.();
+    const offset = this.state().offsetMinutes;
+    const memo = this.#memo;
+    if (memo !== undefined && memo.clock === clock && memo.date === date && memo.offset === offset) {
+      return memo.time;
+    }
+    const host = parseHostTime(clock, date);
+    const time = host === undefined ? undefined : addMinutes(host, offset);
+    this.#memo = { clock, date, offset, time };
+    return time;
   }
 
   #index(): number | undefined {

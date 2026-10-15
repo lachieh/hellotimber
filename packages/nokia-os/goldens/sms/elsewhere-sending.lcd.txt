@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/elsewhere-sending
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/elsewhere/sending
 source-sha256: 9b58331d9bcb808f4c56cdf5dc8c6a9466ca6302ffdf5495cb65d7d31c5f9a91
 trigger-frame: 1

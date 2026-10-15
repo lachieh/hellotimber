@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/outbox-erase
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/outbox/plain/erase
 source-sha256: 579e2da1284afd32ac3584250e0e9d00408bcd24f47a13b28c1cdebe84437722
 trigger-frame: 1

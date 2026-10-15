@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/inbox-option-use-number
-status: pending:18
+status: pending:22
 source: captures/6.39/plan18/sms/inbox/option/use-number
 source-sha256: 566b294b6b5a1c789ad8b2ac8ca1050b1b33f9e02a54051cb060e3d08ab6d19e
 trigger-frame: 1

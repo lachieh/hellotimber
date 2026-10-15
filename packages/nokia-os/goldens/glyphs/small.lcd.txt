@@ -1,6 +1,6 @@
 lcd-golden 1
 id: glyphs/small
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/glyphs/small/152.png + captures/6.39/plan18/glyphs/small/153.png + captures/6.39/plan18/glyphs/small/154.png + captures/6.39/plan18/glyphs/small/155.png + captures/6.39/plan18/glyphs/small/156.png + captures/6.39/plan18/glyphs/small/157.png + captures/6.39/plan18/glyphs/small/158.png + captures/6.39/plan18/glyphs/small/159.png + captures/6.39/plan18/glyphs/small/160.png + captures/6.39/plan18/glyphs/small/162.png + captures/6.39/plan18/glyphs/small/167.png + captures/6.39/plan18/glyphs/small/168.png + captures/6.39/plan18/glyphs/small/171.png + captures/6.39/plan18/glyphs/small/172.png + captures/6.39/plan18/glyphs/small/173.png + captures/6.39/plan18/glyphs/small/174.png + captures/6.39/plan18/glyphs/small/175.png + captures/6.39/plan18/glyphs/small/177.png + captures/6.39/plan18/glyphs/small/178.png
 source-sha256: c436162bd12f16fdc0ee5a5c1649a9c2ca8b5913f0ab3a35563085570b7a36b8
 note: Glyph sheet (small): each character only the symbol table types, inserted with Use into the editor; manifest ["¥","€","¤","=","§","¡","¿",">","<","%","_","\"",")","(","*","#","+",";",":"]

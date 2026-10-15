@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/send-by-set-set-2-list
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/send-by-set/set-2-highlighted.png + captures/6.39/plan18/sms/send-by-set/set-2-scroll/01.png + captures/6.39/plan18/sms/send-by-set/set-2-scroll/02.png
 source-sha256: fa3815ee85cd97d166e123475280413e79ab8f89cc748c1ad1806f1e166f3861
 note: Send by set with Set 2 highlighted, and Set 2's Numeric/Alphanumeric list.

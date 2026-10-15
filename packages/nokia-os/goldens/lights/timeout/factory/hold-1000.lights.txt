@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/timeout/factory/hold-1000
+status: asserted
+source: captures/6.39/plan25/lights/timeout/factory/hold-1000
+source-sha256: 50bff6d0e773d23f7b1020762fd5a2c187d2ce658e75eebd3b2a7aa1d879e972
+state: factory
+power-on: 61261
+start: -100
+end: 18031
+keys: 0:c+1000
+note: C held 1000 ms at standby.
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+14078  display off
+14078  keypad  off

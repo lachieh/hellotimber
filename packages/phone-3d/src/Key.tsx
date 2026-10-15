@@ -2,7 +2,7 @@ import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { cellPlaneGeometry, legendTexture } from "./atlas";
-import { LEGEND_GLOW_COLOR, LEGEND_GLOW_INTENSITY, MATERIALS, PRINT_DARK } from "./materials";
+import { LEGEND_GLOW_COLOR, MATERIALS, PRINT_DARK, legendEmission } from "./materials";
 import type { MaterialSpec } from "./materials";
 import type { Nokia3310Key } from "./types";
 
@@ -26,7 +26,8 @@ export interface KeyProps {
   id: Nokia3310Key;
   /** The adopted GLB node — geometry/position live in the mesh. */
   mesh: THREE.Mesh;
-  backlightOn: boolean;
+  /** The keypad LEDs: the legend (or NaviKey bar) glows while on. */
+  lightOn: boolean;
   /** Externally-driven depress (keyboard input mirrored into the keypad). */
   pressed: boolean;
   /** Depress travel in model units (scale-relative, computed by the loader). */
@@ -40,7 +41,7 @@ export interface KeyProps {
  * Pointer events are routed by the loader (one handler on the model root);
  * this component only animates. `pointerHeldRef` is flipped by that router.
  */
-export default function Key({ id, mesh, backlightOn, pressed, travel, onKey }: KeyProps) {
+export default function Key({ id, mesh, lightOn, pressed, travel, onKey }: KeyProps) {
   void onKey; // events are routed centrally; prop kept for API symmetry
   const baseZ = useRef<number | null>(null);
   const pointerHeldRef = useRef(false);
@@ -118,7 +119,11 @@ export default function Key({ id, mesh, backlightOn, pressed, travel, onKey }: K
     const rate = Math.min(1, dt * 25);
     mesh.position.z += (target - mesh.position.z) * rate;
     const lm = legend?.material as THREE.MeshStandardMaterial | undefined;
-    if (lm) lm.emissiveIntensity = backlightOn ? LEGEND_GLOW_INTENSITY : 0;
+    if (lm) {
+      const glow = legendEmission(id === "navi" ? "naviBar" : "legend", lightOn);
+      lm.emissive.set(glow.color);
+      lm.emissiveIntensity = glow.intensity;
+    }
   });
 
   return null;

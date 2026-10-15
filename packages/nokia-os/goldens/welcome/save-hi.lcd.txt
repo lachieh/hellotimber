@@ -1,6 +1,6 @@
 lcd-golden 1
 id: welcome/save-hi
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/welcome/save-hi
 source-sha256: 960a313cf1f94eba031a4234df677cc291cc5e8292394fb3d5fa27fbd65e3f7a
 trigger-frame: 1

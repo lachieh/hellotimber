@@ -1,6 +1,6 @@
 lcd-golden 1
 id: welcome/c-on-empty
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/welcome/c-on-empty
 source-sha256: 19d942e74020fd876989404f6e1b53c316ce83afa8fad72e045df9abcd06bfdd
 trigger-frame: 1

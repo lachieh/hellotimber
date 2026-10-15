@@ -719,7 +719,6 @@ const LISTED: readonly SoundCaptureEntry[] = [
     "boot/power-key",
     "boot/power-key",
     "A short power-key press at standby (the profile list), C.",
-    { status: "pending:17" },
   ),
 ];
 

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/notice-count-read
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/notice/count-read
 source-sha256: 5ad4ad2e510451164e686b8b21d8f5b2eccea7a3dbe436fc1431008de0837f2e
 trigger-frame: 1

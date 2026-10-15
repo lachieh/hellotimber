@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/hold-digit
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/hold-2/sentence
 source-sha256: 4e45062ca7ab4cddd88acc814e287dfb71e13d89a1fbda8857e205ea39b69ddc
 trigger-frame: 1

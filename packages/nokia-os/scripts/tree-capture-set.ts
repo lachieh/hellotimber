@@ -61,13 +61,6 @@ export const SAME_AS: Readonly<Record<string, string>> = {
  * deletes only its own group; equal to the firmware features' placeholders (coverage guard).
  */
 export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
-  // Plan 17: Profiles.
-  "12-*-1": "17", // Profiles › Activate
-
-  // Plan 18: Messages I (Write messages and Welcome note until plan 18 Tasks 8 and 10 bind them).
-  "2-1": "18", // Write messages: text editor
-  "6-2-3": "18", // Welcome note: text editor (plan 15 D12; plan 15 owns the stored note)
-
   // Plan 18c: Chat and content (plan 18 D1).
   "2-4": "18c", // Picture messages: nothing in the virgin EEPROM
   "2-5": "18c", // Templates
@@ -90,9 +83,6 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "6-2-1-3": "26", // Русский: native-language note, then that UI (plan 15 D12)
   "6-2-1-4": "26", // Български
   "6-2-1-5": "26", // Українська
-
-  // Plan 27: Composer.
-  "5-4-*": "27", // Composer slots (plan 16 D14)
 };
 
 /** Leaf screen kinds a stock widget or placeholder handles; anything else is an import error. */
@@ -134,6 +124,12 @@ export const MAX_PENDING_FRAMES = 40;
  */
 export const ASSERTED_EARLY: Readonly<Record<string, string>> = { "8-1-1": "23" };
 
+/**
+ * Bound leaves whose recording shows a later plan's screen, by number → that plan (plan 18 D3
+ * held Write messages' T9 editor here until plan 18b brought T9; none now).
+ */
+export const PENDING_LATER: Readonly<Record<string, string>> = {};
+
 // ---------------------------------------------------------------- io
 
 /** One distinct LCD state of a `record` directory; `image` identifies the pixels. */
@@ -154,6 +150,7 @@ export interface TreeCaptureTables {
   readonly sameAs?: Readonly<Record<string, string>>;
   readonly placeholders?: Readonly<Record<string, string>>;
   readonly assertedEarly?: Readonly<Record<string, string>>;
+  readonly pendingLater?: Readonly<Record<string, string>>;
 }
 
 export class TreeCaptureError extends Error {
@@ -297,8 +294,9 @@ export function treeCaptureSet(
   const sameAs = tables.sameAs ?? SAME_AS;
   const placeholders = tables.placeholders ?? PLACEHOLDER_OWNERS;
   const assertedEarly = tables.assertedEarly ?? ASSERTED_EARLY;
+  const pendingLater = tables.pendingLater ?? PENDING_LATER;
   const statusOf = (number: string): GoldenStatus => {
-    const plan = placeholderOwner(number, placeholders);
+    const plan = placeholderOwner(number, placeholders) ?? pendingLater[number];
     return plan === undefined || number in assertedEarly ? "asserted" : `pending:${plan}`;
   };
   const entries: CaptureSetEntry[] = [];

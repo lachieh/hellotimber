@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/full-persist-outbox-open
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/full-persist/outbox-after
 source-sha256: 28e3b51919360197200e648d02ad1a5e6e7b1a2f668f0c75ed56ce0ed7d9fec7
 trigger-frame: 1

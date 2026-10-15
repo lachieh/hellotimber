@@ -1,11 +1,11 @@
 sound-golden 1
 id: sound/note/2-1
-status: pending:18
+status: asserted
 source: captures/6.39/plan16/notes/2-1
 source-sha256: 5c05d3cbafc3bcb4828afc71dc2f4ca4df964d1d8eb196ccfdfb26fd370c5c48
 state: factory
 keys: 0:navi
-note: OK on 2-1 (factory).
+note: OK on 2-1, 4-8-1, 5-1-5, 5-1-21, 5-1-28, 5-1-37, 5-1-38, 5-1-39, 5-1-40, 5-2-5, 5-5-1, 5-5-3, 7-2-2, 7-2-3, 11-5 (factory).
 omitted: none
 
 @events

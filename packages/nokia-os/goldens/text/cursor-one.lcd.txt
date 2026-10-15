@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/cursor-one
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/cursor/one/end.png + captures/6.39/plan18/text/cursor/one/up-1.png + captures/6.39/plan18/text/cursor/one/up-2.png + captures/6.39/plan18/text/cursor/one/up-3.png + captures/6.39/plan18/text/cursor/one/up-4.png + captures/6.39/plan18/text/cursor/one/up-5.png + captures/6.39/plan18/text/cursor/one/up-6.png + captures/6.39/plan18/text/cursor/one/up-7.png + captures/6.39/plan18/text/cursor/one/down-1.png + captures/6.39/plan18/text/cursor/one/down-2.png + captures/6.39/plan18/text/cursor/one/down-3.png + captures/6.39/plan18/text/cursor/one/down-4.png + captures/6.39/plan18/text/cursor/one/down-5.png + captures/6.39/plan18/text/cursor/one/down-6.png + captures/6.39/plan18/text/cursor/one/down-7.png + captures/6.39/plan18/text/cursor/one/middle.png + captures/6.39/plan18/text/cursor/one/middle-typed-pending.png + captures/6.39/plan18/text/cursor/one/middle-typed.png + captures/6.39/plan18/text/cursor/one/middle-c.png
 source-sha256: 0f96b97fcca6650ab715625cfac54b7f06192de4fe68a1c830f4c75867cce197
 note: Hello typed (4 4 · 3 3 · 5 5 5 · 5 5 5 · 6 6 6), then ▲ ×7 and ▼ ×7 (one shot each; ▲ moves right and wraps), ▼ ×3 to the middle, 9 9 typed there (pending, then committed), C.

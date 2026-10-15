@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/full-persist-outbox
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/full-persist/outbox-after-list
 source-sha256: 44b508854313741ab84ce0a328f2c75263307fd737d8e8fa67345acaebfb45d3
 note: The five-message Outbox list after a cold reboot within one process (pixel-identical to before).

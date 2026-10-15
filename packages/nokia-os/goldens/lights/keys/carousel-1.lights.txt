@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/keys/carousel-1
+status: asserted
+source: captures/6.39/plan25/lights/keys/carousel-1
+source-sha256: 2e58d708bbc33cc3b18c6e8e3a93b014a5f86a108c2bec136d4bce11773d1731
+state: factory
+power-on: 73472
+start: -100
+end: 16590
+keys: 0:1
+note: 1 in the menu carousel (Phone book), dark.
+omitted: none
+
+@events
+# t_ms light   state
+19     display on
+19     keypad  on
+13765  display off
+13765  keypad  off

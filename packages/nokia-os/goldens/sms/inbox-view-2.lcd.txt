@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/inbox-view-2
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/inbox/view-2/list.png + captures/6.39/plan18/sms/inbox/view-2/00.png + captures/6.39/plan18/sms/inbox/view-2/down-01.png + captures/6.39/plan18/sms/inbox/view-2/down-02.png + captures/6.39/plan18/sms/inbox/view-2/down-03.png + captures/6.39/plan18/sms/inbox/view-2/down-04.png + captures/6.39/plan18/sms/inbox/view-2/down-05.png + captures/6.39/plan18/sms/inbox/view-2/up-1.png + captures/6.39/plan18/sms/inbox/view-2/up-2.png + captures/6.39/plan18/sms/inbox/view-2/up-3.png + captures/6.39/plan18/sms/inbox/view-2/up-4.png + captures/6.39/plan18/sms/inbox/view-2/up-5.png + captures/6.39/plan18/sms/inbox/view-2/list-after.png
 source-sha256: 1a781b7535592380867469942e42853cdaab7588e6c2605c5d75e5d248364ea2
 note: A long message: the list, Read, ▼ ×5 (whole text pages, Sender, Sent, wrap), ▲ ×5, C back to the list.

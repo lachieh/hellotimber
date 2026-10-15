@@ -10,7 +10,7 @@ import { timelineById, timelineByName } from "../src/firmware/timelines";
 import { WIDGET_TIMELINE_BY_NODE } from "../src/resources";
 import { note } from "../src/widgets/note";
 import { accepts, timeEntry, validValue, type EntryMask } from "../src/widgets/time-entry";
-import { expectLcd, PROBE_TOLERANCE_MS } from "./support/golden.ts";
+import { expectLcd } from "./support/golden.ts";
 import { expectFlowTimeline, flowRig } from "./support/flow-rig.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";
 
@@ -135,8 +135,7 @@ function expectEntryFlow(id: string, root: () => ReturnType<typeof timeEntry>, r
   expectFlowTimeline(
     { frames, ...(exit === undefined ? {} : { exitMs: exit.atMs }) },
     golden,
-    // The cursor's blink steps vary 477-495 ms between recordings (one firmware timer).
-    { returns, toleranceMs: PROBE_TOLERANCE_MS },
+    { returns },
   );
 }
 

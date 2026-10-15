@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/profiles/effects-general-invalid
+status: asserted
+source: captures/6.39/plan17/effects/general/invalid
+source-sha256: e58534074979f9d1b4339b65d8913206ad4973ba0a4aa7793b5e9c1c4fdd1875
+state: factory
+keys: 0:navi 300:1 600:9
+note: general active: Menu 1 9: Invalid shortcut.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+33     tone     900 v=0x9104
+176    tone     off
+322    tone     900 v=0x9104
+462    tone     off
+621    tone     1750 v=0x9105
+911    tone     off

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/counter-limit-key
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/counter-limit-key
 source-sha256: f67ba11c393dbc0404fb39bf55be14c236b2a72957bf59821f156a550ee0ae16
 trigger-frame: 1

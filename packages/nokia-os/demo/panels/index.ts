@@ -2,6 +2,10 @@
 // controls as `demo/panels/<slug>.ts` exporting a `DemoPanel` and one `export` line here.
 // Nothing else may be exported here.
 export { goldensPanel } from "./goldens";
+export { lightsPanel } from "./lights";
+export { messagesPanel } from "./messages";
 export { phonePanel } from "./phone";
+export { profilesPanel } from "./profiles";
 export { soundPanel } from "./sound";
 export { storagePanel } from "./storage";
+export { t9Panel } from "./t9";

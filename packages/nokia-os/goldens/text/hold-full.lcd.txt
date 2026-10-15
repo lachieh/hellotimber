@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/hold-full
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/holds-extended/full-committed-key
 source-sha256: e570c09b9d17ca177c8fe3099751a8e94740c86358dca7e9f55e5ee22e8d8040
 trigger-frame: 1

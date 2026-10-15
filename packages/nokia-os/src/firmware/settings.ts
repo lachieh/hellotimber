@@ -6,7 +6,8 @@ import type { StockTreeNode } from "./generated/stock-tree";
 import { setterLevel, settingAlias, STOCK_SETTINGS } from "./stock";
 import { settingKey, slugOf, treePaths } from "./tree";
 
-const { codeSettings, factoryDefaults, hostValues, restoreKeeps, typedTexts } = STOCK_SETTINGS;
+const { codeSettings, factoryDefaults, factoryTexts, hostValues, restoreKeeps, typedTexts } =
+  STOCK_SETTINGS;
 
 export interface StockSettings {
   /** Chosen option index of a single-choice setting; null = never written (virgin EEPROM). */
@@ -43,7 +44,11 @@ export interface StockSettingsSnapshot {
   readonly texts: Readonly<Record<string, string>>;
   /** Numeric values: non-negative integers. */
   readonly numbers: Readonly<Record<string, number>>;
-  /** Keys that read and write another key (D9: Tones are the General profile's). */
+  /**
+   * Keys that read and write another key, by their virgin target (D9: Tones are the General
+   * profile's). A store resolves them again against its stored choices (plan 17 D1: Tones are the
+   * active profile's).
+   */
   readonly aliases: Readonly<Record<string, string>>;
 }
 
@@ -112,7 +117,14 @@ function settingsOver(
   };
   load(stored);
 
-  const resolve = (key: string): string => initial.aliases[key] ?? key;
+  // A stock alias follows the stored choices it reads (plan 17 D1: Tones are the active
+  // profile's); any other alias of the snapshot (a test's) is fixed.
+  const chosen = (key: string): number | null => choices.get(key)?.chosen ?? null;
+  const resolve = (key: string): string => {
+    const target = initial.aliases[key];
+    if (target === undefined) return key;
+    return target === settingAlias(key) ? settingAlias(key, chosen) : target;
+  };
   const single = (key: string): { options: number; chosen: number | null } => {
     const found = choices.get(resolve(key));
     if (!found) throw new Error(`No single-choice setting "${key}".`);
@@ -268,6 +280,10 @@ export function virginSettings(): StockSettingsSnapshot {
       }
     }
   }
+  for (const { key, labels, chosen } of STOCK_SETTINGS.choices) {
+    if (key in choices) throw new Error(`Setting "${key}" is a tree setting too.`);
+    choices[key] = { options: labels.length, chosen };
+  }
   for (const entry of STOCK_SETTINGS.virginTexts) {
     if ("text" in entry) {
       texts[entry.key] = entry.text;
@@ -322,15 +338,16 @@ export function stockPageValue(settings: StockSettings, key: string): string | u
 }
 
 /** The option labels of every option list and single choice, by key (aliases included). */
-const OPTION_LABELS: ReadonlyMap<string, readonly string[]> = new Map(
-  [...treePaths()].flatMap((path) => {
+const OPTION_LABELS: ReadonlyMap<string, readonly string[]> = new Map([
+  ...[...treePaths()].flatMap((path) => {
     const node = path[path.length - 1]!;
     const spec = node.opens;
     const labels =
       spec.kind === "option-list" ? spec.options.map((o) => o.label) : choiceLabels(node);
     return labels === undefined ? [] : [[settingKey(path), labels] as const];
   }),
-);
+  ...STOCK_SETTINGS.choices.map(({ key, labels }) => [key, labels] as const),
+]);
 
 let virginCache: StockSettingsSnapshot | undefined;
 /** The virgin snapshot, computed once. */
@@ -402,12 +419,15 @@ function factoryTables(): Pick<SettingsOverrides, "choices" | "marks"> {
 
 /**
  * The factory state (D5): virgin choices and marks under the factory defaults, and only the
- * texts and numbers Restore keeps.
+ * choices, texts and numbers Restore keeps (plan 18b: the Dictionary, `sms/restore`).
  */
 function factorySettings(current: SettingsOverrides): SettingsOverrides {
+  const factory = factoryTables();
+  const texts = Object.fromEntries(factoryTexts.map(({ key, text }) => [key, text]));
   return {
-    ...factoryTables(),
-    texts: only(current.texts, restoreKeeps),
+    ...factory,
+    choices: { ...factory.choices, ...only(current.choices, restoreKeeps) },
+    texts: { ...texts, ...only(current.texts, restoreKeeps) },
     numbers: only(current.numbers, restoreKeeps),
   };
 }
@@ -461,10 +481,34 @@ export const SETTINGS_RECORD: EepromRecord<SettingsOverrides> = {
   factory: factorySettings,
 };
 
-/** The phone's settings over its EEPROM (D3): every write is stored at once. */
-export function createStockSettings(eeprom: StockEeprom): StockSettings {
+/**
+ * The phone's settings over its EEPROM (D3): every write is stored at once. `virginChoices`
+ * replaces virgin choices for this phone (plan 18b D5: Dictionary off without a T9 dictionary);
+ * Restore factory settings returns to them.
+ */
+export function createStockSettings(
+  eeprom: StockEeprom,
+  virginChoices: Readonly<Record<string, number>> = {},
+): StockSettings {
+  const base = virgin();
+  const initial: StockSettingsSnapshot =
+    Object.keys(virginChoices).length === 0
+      ? base
+      : {
+          ...base,
+          choices: {
+            ...base.choices,
+            ...Object.fromEntries(
+              Object.entries(virginChoices).map(([key, chosen]) => {
+                const setting = base.choices[key];
+                if (setting === undefined) throw new Error(`No single-choice setting "${key}".`);
+                return [key, { ...setting, chosen }];
+              }),
+            ),
+          },
+        };
   return settingsOver(
-    virgin(),
+    initial,
     eeprom.read(SETTINGS_RECORD),
     (overrides) => eeprom.write(SETTINGS_RECORD, overrides),
     () => {

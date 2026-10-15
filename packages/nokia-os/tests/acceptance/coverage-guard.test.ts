@@ -46,6 +46,10 @@ describe("acceptance plans", () => {
     const own = readPlanIndex(GOLDENS, plan.plan);
     const asserted = new Set(own.filter((e) => e.status === "asserted").map((e) => e.id));
 
+    it(`plan ${plan.plan}: declares covers only for its asserted goldens`, () => {
+      expect(Object.keys(plan.covers ?? {}).filter((id) => !asserted.has(id))).toEqual([]);
+    });
+
     it(`plan ${plan.plan}: lists only its asserted goldens as known gaps`, () => {
       expect(Object.keys(plan.knownGaps ?? {}).filter((id) => !asserted.has(id))).toEqual([]);
     });
@@ -113,9 +117,14 @@ describe("coverage guard (plan 14 D7)", () => {
   const plan13Menus: Readonly<Record<string, string>> = Object.fromEntries(
     MENU_SLUGS.map((slug, i) => [`menu/${slug}.sub`, String(i + 1)]),
   );
-  /** Golden → the tree nodes it covers (plan 13's level lists cover the top-level nodes). */
+  /**
+   * Golden → the tree nodes it covers (plan 13's level lists cover the top-level nodes; a plan
+   * declares what its hand-written goldens cover).
+   */
   const coversOf = (e: IndexEntry): readonly string[] =>
-    e.covers ?? (plan13Menus[e.id] === undefined ? [] : [plan13Menus[e.id]!]);
+    e.covers ??
+    PLAN_OF.get(e.id)?.covers?.[e.id] ??
+    (plan13Menus[e.id] === undefined ? [] : [plan13Menus[e.id]!]);
 
   it("has a scenario for every asserted golden", () => {
     expect(asserted.filter((e) => scenarioFor(e) === undefined).map((e) => e.id)).toEqual([]);

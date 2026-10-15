@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/inbox-erase-last
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/inbox/erase-last
 source-sha256: bf8dc6e98ac8fd554a217745987c3c7ea0bd4addf4623224a73311ff19054b01
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/send-by-set-alphanumeric
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/send-by-set/set-1-alphanumeric
 source-sha256: af127decb84e65fd72eb0e9a3b16abaeb33473851767e672cd5f50dc858107d0
 trigger-frame: 1

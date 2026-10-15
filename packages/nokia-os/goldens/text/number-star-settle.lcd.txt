@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/number-star-settle
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/number/star-settle
 source-sha256: d15ef5d23316f7933eb0d0698beed2214cf844d6f6be9a3e7a3952afac863e10
 trigger-frame: 1

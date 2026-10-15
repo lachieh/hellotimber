@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/hold-threshold-1450
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/hold-threshold/1450
 source-sha256: cc3af7153dbfcc45e4cb1ebffa652105ef592bb92b53728f9ab8b027d0446dd8
 trigger-frame: 1

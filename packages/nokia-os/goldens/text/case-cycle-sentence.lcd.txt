@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/case-cycle-sentence
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/case-cycle/sentence
 source-sha256: 7a74cb3b5aaac64e519b8ccaff16e55fa77dcad4ca5cf2eb528375db11f89432
 note: # pressed nine times after Ab. and a space: Abc → ABC → abc → Abc.

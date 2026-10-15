@@ -12,6 +12,7 @@ function App() {
   const [log, setLog] = useState<string[]>([]);
   const [pressedKeys, setPressedKeys] = useState<ReadonlySet<Nokia3310Key>>(new Set());
   const [backlightOn, setBacklightOn] = useState(true);
+  const [keypadLightOn, setKeypadLightOn] = useState(true);
   const previewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,17 +66,29 @@ function App() {
         screenVersion={version}
         onKey={handleKey}
         backlightOn={backlightOn}
+        keypadLightOn={keypadLightOn}
         pressedKeys={pressedKeys}
       />
       <aside className="sidebar">
-        <h2>backlight</h2>
+        <h2>lights</h2>
         <label>
           <input
+            id="display-light"
             type="checkbox"
             checked={backlightOn}
             onChange={(e) => setBacklightOn(e.target.checked)}
           />{" "}
-          backlight on
+          display light (backlightOn)
+        </label>
+        <br />
+        <label>
+          <input
+            id="keypad-light"
+            type="checkbox"
+            checked={keypadLightOn}
+            onChange={(e) => setKeypadLightOn(e.target.checked)}
+          />{" "}
+          keypad light (keypadLightOn)
         </label>
         <h2>test pattern (version {version})</h2>
         <div ref={previewRef} />

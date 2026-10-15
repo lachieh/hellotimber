@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/full-persist-inbox
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/full-persist/inbox-after-list
 source-sha256: 3f80f8a6acb0cf6812ad1494a93f6e54d8e2ccb7c66ee1d5ade9981f945f478f
 note: The ten-message Inbox list after a cold reboot within one process (pixel-identical to before).

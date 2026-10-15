@@ -5,9 +5,9 @@ import {
   LEGEND_GLOW_COLOR,
   LEGEND_GLOW_INTENSITY,
   MATERIALS,
+  legendEmission,
   PRINT_DARK,
   PRINT_LIGHT,
-  SCREEN_DIM_PIXEL_TINT,
   SCREEN_DIM_TINT,
   SCREEN_LIT_PIXEL_TINT,
 } from "../src/materials";
@@ -25,7 +25,6 @@ describe("MATERIALS", () => {
     }
     expect(BACKLIGHT_COLOR).toMatch(HEX);
     expect(LEGEND_GLOW_COLOR).toMatch(HEX);
-    expect(SCREEN_DIM_PIXEL_TINT).toMatch(HEX);
     expect(SCREEN_DIM_TINT).toMatch(HEX);
     expect(SCREEN_LIT_PIXEL_TINT).toMatch(HEX);
   });
@@ -45,6 +44,37 @@ describe("MATERIALS", () => {
       expect(i).toBeGreaterThan(0);
       expect(i).toBeLessThanOrEqual(2);
     }
-    expect(LEGEND_GLOW_INTENSITY).toBeLessThanOrEqual(1);
+  });
+});
+
+/** WCAG relative luminance of a #rrggbb colour (linear sRGB). */
+function luminance(hex: string): number {
+  const [r, g, b] = [1, 3, 5].map((i) => {
+    const c = Number.parseInt(hex.slice(i, i + 2), 16) / 255;
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+describe("keypad light emission", () => {
+  // Before plan 25 the legends and the NaviKey bar glowed #496847 × 0.6, which
+  // reads at about a tenth of a real 3310's keypad lights (TODOS.md).
+  const before = luminance("#496847") * 0.6;
+
+  it.each(["legend", "naviBar"] as const)("lit %s glows at least 8× the old keypad", (part) => {
+    const { color, intensity } = legendEmission(part, true);
+    expect(color).toMatch(HEX);
+    expect(luminance(color) * intensity).toBeGreaterThanOrEqual(8 * before);
+  });
+
+  it.each(["legend", "naviBar"] as const)("unlit %s does not glow", (part) => {
+    expect(legendEmission(part, false).intensity).toBe(0);
+  });
+
+  it("the legend glow constants are the lit legend emission", () => {
+    expect(legendEmission("legend", true)).toEqual({
+      color: LEGEND_GLOW_COLOR,
+      intensity: LEGEND_GLOW_INTENSITY,
+    });
   });
 });

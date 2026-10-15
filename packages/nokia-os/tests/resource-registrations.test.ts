@@ -8,7 +8,7 @@ import { extractResources, GOLDENS_DIR } from "../scripts/extract-resources.ts";
 import { readGoldenIndex } from "../scripts/golden-index.ts";
 import { loadGolden } from "./support/goldens.ts";
 
-/** A whole extraction reads every golden (≈2 s alone; much longer on a loaded machine). */
+/** Two full extractions per test: seconds alone, longer beside the other packages' tests. */
 const EXTRACTION_TIMEOUT_MS = 30_000;
 
 const index = readGoldenIndex(GOLDENS_DIR);
@@ -45,18 +45,14 @@ const consumer: PlanCaptureSet = {
 };
 
 describe("plan resource registrations", () => {
-  it(
-    "passes a registered crop and new timeline kind through real extraction",
-    { timeout: EXTRACTION_TIMEOUT_MS },
-    () => {
-      const result = extractResources(GOLDENS_DIR, [...captureSets(), consumer]);
-      expect(result.widgets.sprites["consumer/tick"]?.art.some((row) => row.includes("#"))).toBe(
-        true,
-      );
-      const timeline = result.widgets.timelines[result.widgets.byName["consumer-confirmation"]!];
-      expect(timeline?.frames).toContainEqual({ kind: "sprite", sprite: "consumer/tick" });
-    },
-  );
+  it("passes a registered crop and new timeline kind through real extraction", () => {
+    const result = extractResources(GOLDENS_DIR, [...captureSets(), consumer]);
+    expect(result.widgets.sprites["consumer/tick"]?.art.some((row) => row.includes("#"))).toBe(
+      true,
+    );
+    const timeline = result.widgets.timelines[result.widgets.byName["consumer-confirmation"]!];
+    expect(timeline?.frames).toContainEqual({ kind: "sprite", sprite: "consumer/tick" });
+  });
   it("rejects competing sprite ownership even when recipes are identical", () => {
     expect(() =>
       compose([
@@ -91,7 +87,6 @@ describe("plan resource registrations", () => {
 
 it(
   "takes a plan-owned glyph specimen and its bearing through font extraction",
-  { timeout: EXTRACTION_TIMEOUT_MS },
   () => {
     const sets = captureSets();
     const foundation = sets.find((set) => set.plan === "13")!;
@@ -129,6 +124,7 @@ it(
     ]);
     expect(result.fonts.small.glyphs["1"]).toEqual(extractResources().fonts.small.glyphs["1"]);
   },
+  EXTRACTION_TIMEOUT_MS,
 );
 
 it("allows resource evidence from an honestly pending LCD golden", () => {
@@ -252,10 +248,10 @@ it("rejects bad text bands, non-LCD fixtures and invalid probe frames", () => {
 
 it(
   "sorts batches independently of plan enumeration and preserves all existing bytes",
-  { timeout: EXTRACTION_TIMEOUT_MS },
   () => {
     expect(extractResources(GOLDENS_DIR, captureSets().reverse())).toEqual(extractResources());
   },
+  EXTRACTION_TIMEOUT_MS,
 );
 
 it("requires one index registration for every plan capture module and resource input", async () => {
@@ -304,30 +300,26 @@ it("does not execute capture callbacks when composing registered evidence", () =
   expect(() => captureSets([{ plan: "oops" }])).toThrow(/not a plan number/);
 });
 
-it(
-  "rejects a missing fixture file without modifying generated output",
-  { timeout: EXTRACTION_TIMEOUT_MS },
-  () => {
-    const generated = join(import.meta.dirname, "../src/resources/generated");
-    const bytes = () =>
-      readdirSync(generated).map((file) => readFileSync(join(generated, file), "utf8"));
-    const before = bytes();
-    expect(() =>
-      composeResourceDeclarations([consumer], index, () => {
-        throw new Error("fixture file missing");
-      }),
-    ).toThrow(/fixture file missing/);
-    expect(() =>
-      extractResources(GOLDENS_DIR, [
-        ...captureSets(),
-        {
-          plan: "29",
-          resources: {
-            spriteBatches: [{ order: 290, entries: [{ ...crop, golden: "missing/fixture" }] }],
-          },
+it("rejects a missing fixture file without modifying generated output", () => {
+  const generated = join(import.meta.dirname, "../src/resources/generated");
+  const bytes = () =>
+    readdirSync(generated).map((file) => readFileSync(join(generated, file), "utf8"));
+  const before = bytes();
+  expect(() =>
+    composeResourceDeclarations([consumer], index, () => {
+      throw new Error("fixture file missing");
+    }),
+  ).toThrow(/fixture file missing/);
+  expect(() =>
+    extractResources(GOLDENS_DIR, [
+      ...captureSets(),
+      {
+        plan: "29",
+        resources: {
+          spriteBatches: [{ order: 290, entries: [{ ...crop, golden: "missing/fixture" }] }],
         },
-      ]),
-    ).toThrow(/not an indexed LCD/);
-    expect(bytes()).toEqual(before);
-  },
-);
+      },
+    ]),
+  ).toThrow(/not an indexed LCD/);
+  expect(bytes()).toEqual(before);
+});

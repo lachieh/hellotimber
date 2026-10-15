@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/centre-1
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/centre-1/00.png + captures/6.39/plan18/sms/centre-1/typed-1.png + captures/6.39/plan18/sms/centre-1/cleared.png + captures/6.39/plan18/sms/centre-1/typed.png + captures/6.39/plan18/sms/centre-1/reopened.png
 source-sha256: 9ef40306a42da96b7bc4fafeb4f53c9a979a552ca27bf7010b89879e62dafbc8
 note: Set 1's Message centre number (2-7-1-1): as it opens (the SIM's +1234567890), a digit appended, cleared (Search), 0419000000 typed, reopened after the save.

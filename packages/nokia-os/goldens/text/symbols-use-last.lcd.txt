@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/symbols-use-last
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/symbols/use-last
 source-sha256: 7153d4cc8646b3d08a3a315495833b3ed88a54cecced1e702e5eb4b5b72b81ea
 trigger-frame: 1

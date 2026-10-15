@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/outbox-forward
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/outbox/plain/forward
 source-sha256: 556a5025852cc657c9cd8de745490274517f7068a1a090f89356c02b83b3f483
 trigger-frame: 1

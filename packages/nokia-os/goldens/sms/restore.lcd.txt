@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/restore
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/restore/editor.png + captures/6.39/plan18/sms/restore/prompt.png
 source-sha256: c542a2253aa1de9b784aaad69c89a39b597ad2af06b11fd2f862458c256c96ac
 note: Before Restore factory settings: the editor; Restore's security code prompt.

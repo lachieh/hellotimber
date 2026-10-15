@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/sim-same-outbox
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/sim/same-sim-new-process/outbox
 source-sha256: b6f36ebf1f4ab7cde85a9e873cb7251396d054f05bc87c83a567d63e6cde2fb0
 trigger-frame: 1

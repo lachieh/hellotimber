@@ -23,7 +23,7 @@ import type { SoundProgram } from "../../src/sound/program";
 import { goto } from "../support/drive.ts";
 import { TAP_DOWN_MS } from "../support/calculator.ts";
 import { STOPWATCH_BLINK_MS } from "../../src/firmware/features/clock/stopwatch";
-import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "../support/golden.ts";
+import { expectLcd, expectTimeline } from "../support/golden.ts";
 import { loadSoundGolden } from "../support/sound.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
 import type { Rig } from "../support/rig.ts";
@@ -251,9 +251,7 @@ const expireKey =
         { atMs: at + holdMs, run: () => c.rig.release(key) },
       ],
     );
-    expectTimeline(recorded, golden, `${id}: ${key} on frame 2`, {
-      toleranceMs: PROBE_TOLERANCE_MS,
-    });
+    expectTimeline(recorded, golden, `${id}: ${key} on frame 2`);
   };
 
 /** Where the expiry finds the phone (the generator's `countdown-expiry`). */
@@ -493,10 +491,7 @@ const SCENARIOS: Record<string, Scenario> = {
         toStandby(c.rig);
         const golden = loadSoundGolden(id);
         c.rig.advance(endsAt - golden.rows[0]!.ms - c.rig.now);
-        clockSound(id, c.rig, () => {}, {
-          cycleMs: loopMs(CLOCK_ALERTS.programs.countdown),
-          drift: state === "virgin",
-        });
+        clockSound(id, c.rig, () => {});
       },
     ]),
   ),
@@ -528,9 +523,7 @@ const SCENARIOS: Record<string, Scenario> = {
       (id: string) => {
         const c = clockRig();
         setAlarm(c.rig, "1011");
-        // The kernel's shortcut opens 11-1 17 ms later than v6.39 (plan 14's timing), and the
-        // rows' scroll mark settles 12 ms later still.
-        clockScenario(id, c.rig, { toleranceMs: 35 });
+        clockScenario(id, c.rig);
       },
     ]),
   ),
@@ -612,11 +605,7 @@ const SCENARIOS: Record<string, Scenario> = {
       (id: string) => {
         const c = clockRig({ state });
         setAlarm(c.rig, "1011");
-        clockSound(id, c.rig, () => (c.host.clock = "10:11"), {
-          cycleMs: loopMs(CLOCK_ALERTS.programs.alarm),
-          // The program is the factory capture's: the virgin one is another recording.
-          drift: state === "virgin",
-        });
+        clockSound(id, c.rig, () => (c.host.clock = "10:11"));
       },
     ]),
   ),
@@ -765,13 +754,6 @@ acceptancePlan({
       "C held on the Stopwatch page: v6.39 goes back a level as C goes down and reaches standby " +
       "≈475 ms later; the kernel's long press (phone-core LONG_PRESS_MS, plan 14) at 800 ms",
     ...Object.fromEntries(
-      ["c", "5", "up"].map((key) => [
-        `clock/countdown/expire-key-${key}`,
-        "standby after the alert is drawn in two redraws 15 ms apart (`Orange`, then `F`); " +
-          "nokia-os draws it whole (the same exit with OK or C held draws it at once)",
-      ]),
-    ),
-    ...Object.fromEntries(
       [...Object.keys(EXPIRE_ELSEWHERE), "note"].map((where) => [
         `clock/countdown/expire-elsewhere-${where}-standby`,
         "C held: v6.39 goes back a level as C goes down and reaches standby ≈475 ms later; " +
@@ -804,10 +786,6 @@ acceptancePlan({
           "The ring after standby is checked from the standby frame in tests/clock-alarm.test.ts",
       ]),
     ),
-    "clock/settings/format-choose-12":
-      "12-hour clock selected plays plan 14's recording of it (tree/11-clock/11-2-3-2.choose, " +
-      "owner of node 11-2-3-2's timeline): this capture's steps run 20 ms longer and end on a " +
-      "15 ms partial frame",
   },
   // Each image builds a phone and navigates to it (20 images); the rings run 135 s each.
   timeoutsMs: {

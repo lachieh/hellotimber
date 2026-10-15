@@ -1,6 +1,6 @@
 lcd-golden 1
 id: glyphs/digits
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/glyphs/digits/001.png + captures/6.39/plan18/glyphs/digits/002.png + captures/6.39/plan18/glyphs/digits/003.png + captures/6.39/plan18/glyphs/digits/004.png + captures/6.39/plan18/glyphs/digits/005.png
 source-sha256: fa00999c34e7194e60532c6caad07fe37cc13701aeee6676468ecf96c903a9dc
 note: Editor header specimens (bold six-row mode and counter, cropped by plan 18 Task 3); manifest ["Abc","ABC","abc","123","counter after 175 characters"]

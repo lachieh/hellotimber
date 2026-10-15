@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/inbox-option-reply
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/inbox/option/reply
 source-sha256: a2e503487329d6109f416bbeb0b200f1706c5e3f165713316a20bd685fda5e69
 trigger-frame: 1

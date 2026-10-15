@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/keyguard/emergency-call
+status: pending:22
+source: captures/6.39/plan25/keyguard/emergency-call
+source-sha256: 1a68059336980af0198263b8e5a8ecbcc597da2d64d8c1223579b4e0592c7ccc
+state: virgin
+power-on: 81478
+start: -100
+end: 17091
+keys: 0:1 500:1 1000:2 2000:navi
+note: 1 1 2, then Call (Navi) 1 s into the display.
+omitted: none
+
+@events
+# t_ms light   state
+1018   display on
+1018   keypad  on

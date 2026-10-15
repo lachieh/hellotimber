@@ -90,6 +90,19 @@ describe("stock standby", () => {
   });
 });
 
+describe("plan 18: the received notice and the message indicator", () => {
+  it("draws the notice's lines from x 6 in place of the operator, Read, and the envelope", () => {
+    const notice = { text: "1\nmessage\nreceived", softkey: "Read" };
+    const screen = { ...STANDBY, notice, indicators: { message: true } };
+    expectLcd(paint(screen), goldenImage("sms/notice", "count-1"), "1 message received");
+  });
+
+  it("draws the envelope left of the operator while a message is unread", () => {
+    const screen = { ...STANDBY, indicators: { message: true } };
+    expectLcd(paint(screen), goldenImage("sms/notice", "indicator-after-c"), "the envelope");
+  });
+});
+
 describe("custom and unsupported screens", () => {
   it("blits a custom frame verbatim", () => {
     const art = Array.from({ length: 48 }, (_, y) =>

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/options
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/options-empty
 source-sha256: 03f759ae7ee4ec2fef1589c2c5be7a424a6b99cce2ce56bace1a399d1ffeec44
 note: The multi-tap editor's Options (nine entries), ▼ per image.

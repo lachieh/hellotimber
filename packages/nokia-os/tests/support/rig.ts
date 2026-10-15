@@ -15,6 +15,7 @@ import {
   type StockStorage,
 } from "../../src/index";
 import type { RecordedFrame, RecordedTimeline } from "./golden.ts";
+import { T9_FIXTURE } from "./t9-fixture.ts";
 
 export interface Rig {
   readonly phone: Phone;
@@ -26,8 +27,11 @@ export interface Rig {
   press(key: PhoneKey, holdMs?: number): void;
   hold(key: PhoneKey): void;
   release(key: PhoneKey): void;
-  /** Ticks the phone every 1 ms for `ms`. */
-  advance(ms: number): void;
+  /**
+   * Ticks the phone every `stepMs` (default 1 ms) for `ms`. Coarser steps (replays between
+   * their events) let timers fire up to a step late.
+   */
+  advance(ms: number, stepMs?: number): void;
   /** The current screen, painted by the stock painter. */
   paint(): Framebuffer;
   /**
@@ -85,8 +89,12 @@ export function createRig(config: StockPhoneConfig, internals: StockPhoneInterna
     release(key) {
       phone.send({ type: "up", key });
     },
-    advance(ms) {
-      for (let i = 0; i < ms; i++) phone.tick(++now);
+    advance(ms, stepMs = 1) {
+      const end = now + ms;
+      while (now < end) {
+        now = Math.min(end, now + stepMs);
+        phone.tick(now);
+      }
     },
     paint: () => paintScreen(phone.screen),
     record(durationMs, trigger, schedule = []) {
@@ -140,7 +148,9 @@ export function frameAt(recording: RecordedTimeline, atMs: number): RecordedFram
 
 /**
  * The emulator's operator, clock and setup date are artefacts used as test inputs (D11). The
- * Task 11 captures set the clock to 19:48 and 07:59 instead of 10:10.
+ * Task 11 captures set the clock to 19:48 and 07:59 instead of 10:10. The phone has a T9
+ * dictionary, as the virgin firmware writes in T9 (plan 18b D5: the hand-made fixture; scenarios
+ * whose screens show candidate lists pass `englishT9`, and `t9: {}` makes a phone without one).
  */
 export function stockRig(
   config: Partial<StockPhoneConfig> = {},
@@ -151,6 +161,7 @@ export function stockRig(
       carrier: "Orange F",
       clock: () => "10:10",
       date: () => "13.10.2026",
+      t9: { english: T9_FIXTURE },
       ...config,
     },
     internals,

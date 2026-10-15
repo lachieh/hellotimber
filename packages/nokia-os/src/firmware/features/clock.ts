@@ -306,15 +306,17 @@ export const clockFeature: StockFeature = {
         });
       }),
   },
-  labels: {
+  levels: {
     // Hide clock reads Show clock while the clock is hidden or there is no time to show
     // (plan21 settings/list-show, no-time/clock-settings).
-    "11-2": (services, child) => {
-      const clock = phoneClock(services);
-      return child === "hide-clock" && (clock.hidden() || clock.now() === undefined)
-        ? "Show clock"
-        : undefined;
-    },
+    "11-2": (services) => ({
+      label: (child) => {
+        const clock = phoneClock(services);
+        return child === "hide-clock" && (clock.hidden() || clock.now() === undefined)
+          ? "Show clock"
+          : undefined;
+      },
+    }),
   },
   widgets: {
     promptLayouts: {

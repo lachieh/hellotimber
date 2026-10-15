@@ -10,11 +10,11 @@ export interface GoldenIndexEntry {
   readonly id: string;
   readonly file: string;
   readonly status: string;
-  readonly kind: "still" | "timeline" | "ticks" | "sound";
+  readonly kind: "still" | "timeline" | "ticks" | "sound" | "lights";
   /** LCD goldens and tick fixtures (0). */
   readonly images?: number;
   readonly frames?: number;
-  /** Sound goldens. */
+  /** Sound and lights goldens. */
   readonly events?: number;
   /** Generated tree goldens (plan 14 D7): the tree nodes covered. */
   readonly covers?: readonly string[];

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/case-numeric-back
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/case-cycle/sentence-numeric-back
 source-sha256: 6831c777d33c729b7e75d6426c764d22a12c45007855d90ba0d175fdf4010096
 trigger-frame: 1

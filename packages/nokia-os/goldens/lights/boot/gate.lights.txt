@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/boot/gate
+status: asserted
+source: captures/6.39/plan25/lights/boot/gate
+source-sha256: 5a1700ad4951d1c805c5d336a5c51b33694697fff562b25a0e47afbc1161b947
+state: virgin
+power-on: 8001
+start: -8001
+end: 32030
+keys: 0:1 400:2 800:3 1200:4 1600:5 2000:navi
+note: Power-on, the code 12345 typed at 8 s, to 40 s.
+omitted: none
+
+@events
+# t_ms light   state
+-7756  display on
+-7756  keypad  on
+23722  display off
+23722  keypad  off

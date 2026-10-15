@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/symbols
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/symbols/00.png + captures/6.39/plan18/text/symbols/after-pending.png + captures/6.39/plan18/text/symbols/use-first-before.png + captures/6.39/plan18/text/symbols/use-middle-before.png + captures/6.39/plan18/text/symbols/use-last-before.png
 source-sha256: 08f4b013f727935a9c309a17d8e56344fb62bcd5b8bd770e271eb9fe56785ae0
 note: The symbol table from the empty editor (first cell selected); from a pending character; before Use on the first, a middle and the last cell.

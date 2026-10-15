@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/key-0-upper
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/keys/0/upper/01.png + captures/6.39/plan18/text/keys/0/upper/02.png
 source-sha256: d472518b131d908841272bd385e15a0297aa7278008a785f122b9c41b7561c18
 note: Key 0 pressed 2 times in ABC from the empty editor (a shot per press, the character pending). Abc (sentence start) shows the same characters (text/key-modes has its header).

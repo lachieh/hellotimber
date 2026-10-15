@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/profiles/power-general-list
+status: asserted
+source: captures/6.39/plan17/power/general/list
+source-sha256: 6cfee46f71c0d2d3fc1be7b509557f62ccf1a95d36bf082c0bc6700bc892a30c
+state: factory
+keys: 0:power
+note: general active: the power key at standby beeps at the keypad level.
+omitted: none
+
+@events
+# t_ms output   state
+51     tone     900 v=0x9104
+197    tone     off

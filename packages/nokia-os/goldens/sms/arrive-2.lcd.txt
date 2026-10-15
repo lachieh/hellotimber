@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/arrive-2
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/arrive/2
 source-sha256: 370292e709fda8d30d02fdef9b21ae287dd0f09a313e2b697127ba45b5ca1c22
 trigger-frame: 1

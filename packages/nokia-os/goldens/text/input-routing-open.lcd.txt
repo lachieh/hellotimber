@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/input-routing-open
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/input/routing-open
 source-sha256: ee5070e768774167568162a754ace3b0f76cf6183fb7510086ed3839a09922bd
 trigger-frame: 1

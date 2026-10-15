@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/editor
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/editor-multitap.png + captures/6.39/plan18/text/editor-reopened.png + captures/6.39/plan18/text/dictionary-list-off.png
 source-sha256: 60479e50f07a2bc6c82be2ce30eeeb997b7451aa445c4c442ac5ca50c82f3462
 note: The empty multi-tap editor after Dictionary off; reopened after C held; Options › Dictionary on Dictionary off.

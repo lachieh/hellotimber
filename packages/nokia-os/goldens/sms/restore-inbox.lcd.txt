@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/restore-inbox
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/restore/inbox
 source-sha256: 6ff01943a6629021453848624fa9d5abb72934375840425c6338a9c2b7f38890
 trigger-frame: 1

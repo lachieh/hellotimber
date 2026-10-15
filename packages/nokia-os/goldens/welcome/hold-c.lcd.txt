@@ -1,6 +1,6 @@
 lcd-golden 1
 id: welcome/hold-c
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/welcome/hold-c
 source-sha256: 00575bd8c7582dd95300eb2522c0f832dcada495525dc5cd46cc41c5e7215805
 trigger-frame: 1

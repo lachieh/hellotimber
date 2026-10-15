@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/timeout/virgin/hold-16000
+status: asserted
+source: captures/6.39/plan25/lights/timeout/virgin/hold-16000
+source-sha256: 21d489a94f9c1d5c8cbc7eaf7c443efa917a34376bb11ca7966c5f68ca5fdb34
+state: virgin
+power-on: 69192
+start: -100
+end: 33031
+keys: 0:c+16000
+note: C held 16000 ms at standby.
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+14078  display off
+14078  keypad  off

@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/keys/list-c-held
+status: asserted
+source: captures/6.39/plan25/lights/keys/list-c-held
+source-sha256: 533c5709dfde0ad2d8711a4e4d55a8d7e334c3590572880f2965a25d0f72a327
+state: factory
+power-on: 93345
+start: -100
+end: 18031
+keys: 0:c+1500
+note: c-held in Phone book's list, dark.
+omitted: none
+
+@events
+# t_ms light   state
+19     display on
+19     keypad  on
+13716  keypad  off
+13717  display off

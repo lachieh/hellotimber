@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/inbox-list-one-read
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/inbox/list-one-read
 source-sha256: 2c3e37b6a11820d02944ed782a9cad4f27b1444d4cb2284456bda41e5285df0e
 note: The Inbox list after one message was read (its envelope opened), ▼ per image.

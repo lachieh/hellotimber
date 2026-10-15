@@ -233,15 +233,15 @@ describe("placeholder patterns", () => {
     expect(matchesPattern("2-8-4-1", "2-8-4-1-**")).toBe(true);
     expect(matchesPattern("2-8-4-1-3", "2-8-4-1-**")).toBe(true);
     expect(matchesPattern("2-8-4", "2-8-4-1-**")).toBe(false);
-    expect(placeholderOwner("5-4-7")).toBe("27");
+    expect(placeholderOwner("5-4-7")).toBeUndefined();
     expect(placeholderOwner("5-4")).toBeUndefined();
     expect(placeholderOwner("12-6-2-9-4")).toBe("18c");
   });
 });
 
 describe("plan 15 placeholder owners (D12)", () => {
-  it("re-owns the Welcome note editor to plan 18 and the Cyrillic languages to plan 26", () => {
-    expect(placeholderOwner("6-2-3")).toBe("18");
+  it("re-owns the Cyrillic languages to plan 26; plan 18 binds the Welcome note editor", () => {
+    expect(placeholderOwner("6-2-3")).toBeUndefined();
     expect(["6-2-1-3", "6-2-1-4", "6-2-1-5"].map((n) => placeholderOwner(n))).toEqual([
       "26",
       "26",

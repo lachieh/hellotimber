@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/case-cycle-empty
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/case-cycle/empty
 source-sha256: 3ed447ef81b722400ec55ad655abe47b3e2d74d678bf15fed7834631fa854c8e
 note: # pressed nine times in the empty editor (a shot before and after each): Abc → ABC → abc → Abc.

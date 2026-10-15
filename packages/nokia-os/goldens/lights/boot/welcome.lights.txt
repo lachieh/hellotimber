@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/boot/welcome
+status: asserted
+source: captures/6.39/plan25/lights/boot/welcome
+source-sha256: f2e4011ece5fd46e6f48dd408e72ffa48901198ed9cdb4f186b2609a96dc4c8d
+state: v639-plan15-welcome-hi
+power-on: 8001
+start: -8001
+end: 32030
+keys: 0:1 400:2 800:3 1200:4 1600:5 2000:navi
+note: Power-on with the welcome note Hi, the code at 8 s, to 40 s.
+omitted: none
+
+@events
+# t_ms light   state
+-7747  display on
+-7747  keypad  on
+23722  display off
+23722  keypad  off

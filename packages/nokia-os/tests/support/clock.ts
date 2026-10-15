@@ -14,7 +14,7 @@ import {
   expectLcd,
   expectTimeline,
   lcdMismatch,
-  PROBE_TOLERANCE_MS,
+  TWO_FRAMES_MS,
   type GoldenImageRef,
   type RecordedTimeline,
 } from "./golden.ts";
@@ -144,7 +144,6 @@ export function clockScenario(
   id: string,
   rig: Rig,
   options: {
-    readonly toleranceMs?: number;
     /**
      * Compare at each golden frame's middle instead of frame by frame (`sampleTimeline`): for
      * the ring, whose bell and text timers redraw together or 10-20 ms apart by chance.
@@ -217,14 +216,12 @@ export function clockScenario(
     sampleTimeline(recorded, id, origin, context, options.stopwatch === true);
     return;
   }
-  expectTimeline(recorded, golden, context, {
-    toleranceMs: options.toleranceMs ?? PROBE_TOLERANCE_MS,
-  });
+  expectTimeline(recorded, golden, context);
 }
 
 /**
  * Checks `recorded` against golden `id` at the middle of every golden frame at least
- * 2 × PROBE_TOLERANCE_MS long (rows timed from `origin`, the trigger's): each must show that
+ * 2 × TWO_FRAMES_MS long (rows timed from `origin`, the trigger's): each must show that
  * frame's image there. Frames split or merged by a few ms pass; a drift or a wrong picture
  * longer than the tolerance does not.
  */
@@ -239,7 +236,7 @@ function sampleTimeline(
   const failures: string[] = [];
   let checked = 0;
   for (const [i, row] of rows.entries()) {
-    if (i === 0 || row.durationMs < 2 * PROBE_TOLERANCE_MS) continue;
+    if (i === 0 || row.durationMs < 2 * TWO_FRAMES_MS) continue;
     const at = row.startMs + row.durationMs / 2 - origin;
     const shown = frameAt(recorded, recorded.triggerMs + at);
     checked++;
@@ -275,14 +272,13 @@ function alignOnNextChange(rig: Rig, leadMs: number, first: GoldenImageRef): voi
 /**
  * Sound golden `id` (an alert's sound) from `rig`: `trigger` runs `atMs` after time 0 (the
  * capture's minute edge or expiry, just before the golden's first event), then the golden's
- * rows play out; compared as plan 16's goldens are, its later passes within PASS_DRIFT (`drift`:
- * every edge, the golden being another recording than the program's).
+ * rows play out; compared by the fidelity standard (tests/support/sound.ts).
  */
 export function clockSound(
   id: string,
   rig: Rig,
   trigger: () => void,
-  options: { readonly atMs?: number; readonly cycleMs?: number; readonly drift?: boolean } = {},
+  options: { readonly atMs?: number } = {},
 ): void {
   const golden = loadSoundGolden(id);
   const origin = rig.now;
@@ -294,10 +290,6 @@ export function clockSound(
     { originMs: origin, endMs: rig.now, events: rig.sounds.slice(seen) },
     golden,
     `${id}: ${golden.note ?? ""}`,
-    {
-      ...(options.cycleMs === undefined ? {} : { cycleMs: options.cycleMs }),
-      ...(options.drift ? { drift: true } : {}),
-    },
   );
 }
 

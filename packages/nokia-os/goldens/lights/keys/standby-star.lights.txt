@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/keys/standby-star
+status: asserted
+source: captures/6.39/plan25/lights/keys/standby-star
+source-sha256: e19542dbda8efa24ef6e8c1cf1e097a45d3614ff64dbd5c69bf9cd07b84d88f0
+state: factory
+power-on: 59655
+start: -100
+end: 16590
+keys: 0:*
+note: star at standby with the LEDs off.
+omitted: none
+
+@events
+# t_ms light   state
+13     display on
+13     keypad  on
+13704  display off
+13704  keypad  off

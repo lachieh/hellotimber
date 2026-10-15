@@ -77,6 +77,24 @@ h1 {
   border-color: #ffcf5a;
 }
 
+/* The lights (plan 25): an LCD and a KEYS lamp; the LCD dims while the display LEDs are off. */
+.lamp {
+  padding: 4px 8px;
+  color: #516250;
+  font-size: 12px;
+  border: 1px solid #3a4739;
+}
+
+.lamp.on {
+  color: #151a16;
+  background: #b8f08a;
+  border-color: #b8f08a;
+}
+
+.lcd.unlit canvas {
+  filter: brightness(0.55);
+}
+
 .lcd.shaking {
   animation: shake 70ms linear infinite;
 }

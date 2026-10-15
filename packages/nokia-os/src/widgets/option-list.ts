@@ -1,4 +1,4 @@
-import type { PhoneKey } from "@hellotimber/phone-core";
+import type { PhoneKey, ShortcutLevel } from "@hellotimber/phone-core";
 import type { OptionsModel } from "../display/widgets";
 import type { StockSettings } from "../firmware/settings";
 import type { Flow, Widget } from "./flow";
@@ -15,8 +15,18 @@ export interface OptionListOptions {
   readonly softkey: string;
   /** What the indicator shows before the option's number (default: the list's path). */
   readonly numbering?: ListNumbering;
+  /**
+   * Plan 18: the numbers the indicator shows before the option's, whatever the kernel's position
+   * (an editor's Options › Send by set: `6-2`).
+   */
+  readonly indicatorPrefix?: readonly number[];
   /** OK on option `index`. */
   choose(index: number, flow: Flow): void;
+  /**
+   * A stock shortcut digit numbered option `index` (Menu 8 6 3, then 1). With it the list is a
+   * menu level to the shortcut while the window is open over it; without it digits are keys.
+   */
+  shortcut?(index: number, flow: Flow): void;
   /**
    * Every key-down, with the option ▲/▼ is about to highlight (other keys: the highlighted one;
    * null while unset). Plan 16: the Keypad tones list beeps ▲/▼ at that option's level.
@@ -55,9 +65,17 @@ export class OptionListWidget implements Widget {
       items: this.#options.labels,
       selected,
       windowTop,
-      indicator: rowsIndicator(flow.indicator(), selected, this.#options.numbering),
+      indicator: this.#indicator(flow),
       softkey: selected === null ? UNSET_SOFTKEY : this.#options.softkey,
     };
+  }
+
+  #indicator(flow: Flow) {
+    const { selected } = this.#cursor;
+    const { indicatorPrefix: prefix, numbering } = this.#options;
+    const position = flow.indicator();
+    if (prefix === undefined) return rowsIndicator(position, selected, numbering);
+    return { ...position, segments: [...prefix, selected === null ? 0 : selected + 1] };
   }
 
   onKeyDown(key: PhoneKey): void {
@@ -81,6 +99,15 @@ export class OptionListWidget implements Widget {
 
   close(): void {
     this.#options.close?.();
+  }
+
+  shortcutLevel(flow: Flow): ShortcutLevel | undefined {
+    const options = this.#options;
+    if (options.shortcut === undefined) return undefined;
+    return {
+      count: options.labels.length,
+      choose: (number) => options.shortcut?.(number - 1, flow),
+    };
   }
 }
 

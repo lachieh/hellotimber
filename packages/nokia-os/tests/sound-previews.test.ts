@@ -3,6 +3,7 @@
 // (tests/support/sound-scenarios.ts).
 import { describe, expect, it } from "vite-plus/test";
 import { StockEeprom } from "../src/firmware/eeprom";
+import { activateProfile } from "../src/firmware/features/profiles";
 import { createStockSettings } from "../src/firmware/settings";
 import type { StockSoundEvent } from "../src/index";
 import { MESSAGE_TONES, RINGING_TONES } from "../src/resources";
@@ -15,7 +16,7 @@ function factorySounder(choices: SettingChoices = {}) {
   const sequencer = new SoundSequencer((event) => events.push(event));
   const settings = createStockSettings(new StockEeprom(soundStorage("factory", choices)));
   const sounder = new StockSounder(sequencer, settings, () => 0);
-  return { events, sequencer, sounder };
+  return { events, sequencer, sounder, settings };
 }
 
 const NOKIA_TUNE = RINGING_TONES[12]!;
@@ -80,6 +81,16 @@ describe("messageAlert (plan 18's received message, D11)", () => {
     expect(buzzerOnsets(events)).toHaveLength(
       MESSAGE_TONES.standard!.steps.filter((s) => s.buzzer).length,
     );
+  });
+
+  it("plays the active profile's alert through the Tones settings (plan 17 D1)", () => {
+    const { events, sequencer, sounder, settings } = factorySounder();
+    activateProfile(settings, "silent");
+    expect(sounder.messageAlert("tones")).toBeUndefined();
+    activateProfile(settings, "general");
+    expect(sounder.messageAlert("tones")).toBeDefined();
+    sequencer.advance(10_000);
+    expect(events[0]).toEqual({ output: "buzzer", atMs: 0, hz: 1499.9, volume: 25 });
   });
 
   it("is silent for No tone (Silent's factory alert)", () => {

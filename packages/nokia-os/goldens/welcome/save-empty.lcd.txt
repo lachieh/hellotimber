@@ -1,6 +1,6 @@
 lcd-golden 1
 id: welcome/save-empty
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/welcome/save-empty
 source-sha256: 78c5ba2a59ef329109831061ac2274176a23dcbb82854984898ed9923892b912
 trigger-frame: 1

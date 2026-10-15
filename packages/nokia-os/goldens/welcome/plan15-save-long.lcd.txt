@@ -1,6 +1,6 @@
 lcd-golden 1
 id: welcome/plan15-save-long
-status: pending:18
+status: asserted
 source: captures/6.39/plan15/welcome/save-long
 source-sha256: 6ab0df4b92e87b03abc69fa440a150f3f3a6bf29c9e042758d7a0105338df359
 trigger-frame: 1

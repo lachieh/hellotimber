@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/key-4-lower
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/keys/4/lower/01.png + captures/6.39/plan18/text/keys/4/lower/02.png + captures/6.39/plan18/text/keys/4/lower/03.png + captures/6.39/plan18/text/keys/4/lower/04.png + captures/6.39/plan18/text/keys/4/lower/05.png + captures/6.39/plan18/text/keys/4/lower/06.png + captures/6.39/plan18/text/keys/4/lower/07.png + captures/6.39/plan18/text/keys/4/lower/08.png + captures/6.39/plan18/text/keys/4/lower/09.png + captures/6.39/plan18/text/keys/4/lower/10.png
 source-sha256: c4ef87a274dead413580665e29d23219271b5927fc289f8bdfd356991ddc6f98
 note: Key 4 pressed 10 times in abc from the empty editor (a shot per press, the character pending). Abc (sentence start) shows the same characters (text/key-modes has its header).

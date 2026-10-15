@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/inbox-options
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/inbox/options
 source-sha256: 79b87ded34a4434cdfeaa82c75388f0657027ad7e5b0aefb135e2ebdbcb476ce
 note: A received message's Options (seven entries), ▼ per image.

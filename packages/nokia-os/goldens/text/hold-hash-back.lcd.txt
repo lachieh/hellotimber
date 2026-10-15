@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/hold-hash-back
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/hold-hash-back
 source-sha256: c87b3e5b6ef9cfbde7431d8ed82f2933b8dccefe9d4d261803d2534879c87ed6
 trigger-frame: 1

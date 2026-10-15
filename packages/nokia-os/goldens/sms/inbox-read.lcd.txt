@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/inbox-read
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/inbox/read
 source-sha256: e1c45d40724b1c8a6107d082ef4259fbbd83639ae70e265d5f75cb2a3fb086bb
 trigger-frame: 1

@@ -7,7 +7,12 @@
 // `OK` once it holds a character. The cursor blinks as in the editor.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { PromptModel } from "../display/widgets";
-import { TEXT_TIMINGS, WIDGET_TIMELINE_BY_NAME, WIDGET_TIMELINES } from "../resources";
+import {
+  TEXT_TIMINGS,
+  WIDGET_TIMELINE_BY_NAME,
+  WIDGET_TIMELINES,
+  type StockWidgetTimeline,
+} from "../resources";
 import {
   textClear,
   textDelete,
@@ -18,6 +23,8 @@ import {
 } from "../text/multitap";
 import type { Flow, Widget } from "./flow";
 import { note } from "./note";
+import { Playback } from "./playback";
+import { blinkShown } from "./text-entry";
 
 /** `*`'s dial characters in press order (`text/number` star-1..4). */
 export const DIAL_CYCLE: readonly string[] = ["*", "+", "p", "w"];
@@ -32,12 +39,16 @@ export interface NumberEntryOptions {
   readonly label: readonly string[];
   /** Default NUMBER_LIMIT. */
   readonly limit?: number;
+  /** Draw the digits left, top right (default); the voice mailbox prompt has none (`sms/voice-mailbox`). */
+  readonly counter?: boolean;
   /** The number to edit (a stored centre or voice mailbox number); default empty. */
   readonly number?: string;
   /** OK with the number. */
   readonly done: (number: string, flow: Flow) => void;
   /** Search on the empty entry; default the virgin phone book's `No phone numbers` note. */
   readonly search?: (flow: Flow) => void;
+  /** The cursor's blink from the node's own recording (plan 14 P9); default every 480 ms. */
+  readonly blink?: StockWidgetTimeline;
 }
 
 /** The characters an entry's counter counts (all but `+`). */
@@ -60,6 +71,7 @@ class NumberEntryWidget implements Widget {
   #now = 0;
   /** Held C: when its deletion happened, until it clears or comes up. */
   #clearFrom: number | undefined;
+  readonly #blink: Playback | undefined;
 
   constructor(options: NumberEntryOptions) {
     this.#options = options;
@@ -72,6 +84,7 @@ class NumberEntryWidget implements Widget {
       pending: null,
       letters: "Abc",
     };
+    this.#blink = options.blink === undefined ? undefined : new Playback(options.blink);
   }
 
   render(): PromptModel {
@@ -80,14 +93,16 @@ class NumberEntryWidget implements Widget {
     return {
       kind: "prompt",
       icons: ["prompt/pen"],
-      counter: String(this.#limit - counted(state.text)),
+      ...(this.#options.counter === false
+        ? {}
+        : { counter: String(this.#limit - counted(state.text)) }),
       label: this.#options.label,
       entry: {
         kind: "number",
         text: state.text,
         ...(state.pending === null ? { cursor: state.cursor } : {}),
       },
-      cursor: Math.floor(this.#now / TEXT_TIMINGS.blinkMs) % 2 === 0,
+      cursor: blinkShown(this.#blink, this.#now),
       softkey: empty ? "Search" : "OK",
     };
   }
@@ -147,6 +162,7 @@ class NumberEntryWidget implements Widget {
 
   tick(dtMs: number): void {
     this.#now += dtMs;
+    this.#blink?.advance(dtMs);
     const from = this.#clearFrom;
     if (from !== undefined && this.#now - from >= TEXT_TIMINGS.clearAfterDeleteMs) {
       this.#clearFrom = undefined;

@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/keys/list-menu
+status: asserted
+source: captures/6.39/plan25/lights/keys/list-menu
+source-sha256: 00f1b0031d701f5b1eb01fc00e172070c9370b42656bad9f333a940354bd8de7
+state: factory
+power-on: 93345
+start: -100
+end: 16590
+keys: 0:navi
+note: menu in Phone book's list, dark.
+omitted: none
+
+@events
+# t_ms light   state
+19     display on
+19     keypad  on
+13716  keypad  off
+13717  display off

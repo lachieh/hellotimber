@@ -16,7 +16,9 @@
 // - sounds (plan 16): the tone programs and volume rules of scripts/sound-programs.ts, from the
 //   sound goldens;
 // - text (plan 18): the multi-tap and SMS timings of scripts/messages-resources.ts;
-// - clock (plan 21): the alerts' bells, blink, sounds and limits of scripts/clock-resources.ts.
+// - clock (plan 21): the alerts' bells, blink, sounds and limits of scripts/clock-resources.ts;
+// - composer (plan 27): the Composer's periods, pitches and timings of scripts/composer-programs.ts,
+//   whose pitch goldens also join the sounds' volume tables (D4).
 //
 // Writes src/resources/generated/*.ts. Idempotent. `extractResources` is also run in-process by
 // tests/resources.test.ts to prove the committed files are fresh. Runs under Node's type
@@ -45,6 +47,7 @@ import {
   type RunSample,
 } from "./harvest-glyphs.ts";
 import { extractClockResources, type ClockResourceData } from "./clock-resources.ts";
+import { addComposerVolumes, extractComposerData, type ComposerData } from "./composer-programs.ts";
 import { extractMessagesResources, type MessagesResourceData } from "./messages-resources.ts";
 import { extractSnakeResources, type SnakeResourceData } from "./snake-resources.ts";
 import { parseSoundGolden } from "./sound-format.ts";
@@ -165,6 +168,7 @@ export interface ExtractedResources {
   readonly sounds: SoundResourceData;
   readonly text: MessagesResourceData;
   readonly clock: ClockResourceData;
+  readonly composer: ComposerData;
 }
 
 // ---------------------------------------------------------------- pixels
@@ -449,6 +453,8 @@ function widgetKind(screen: StockScreenSpec | StockResult): string | undefined {
     case "text-input":
     case "number-input":
     case "code-prompt":
+    // Plan 18: an editor's first screen blinks its cursor as a prompt's does.
+    case "text-editor":
       return "prompt";
     default:
       return undefined;
@@ -747,6 +753,21 @@ export function extractResources(
   const inputs = composeResourceDeclarations(sets, readGoldenIndex(goldensDir), (id) =>
     loadGolden(goldensDir, id),
   );
+  const parsedSounds = new Map<string, ReturnType<typeof parseSoundGolden>>();
+  const loadSound = (id: string) => {
+    let found = parsedSounds.get(id);
+    if (found === undefined) {
+      found = parseSoundGolden(readFileSync(join(goldensDir, `${id}.sound.txt`), "utf8"), id);
+      parsedSounds.set(id, found);
+    }
+    return found;
+  };
+  const ids = readGoldenIndex(goldensDir).map((entry) => entry.id);
+  const sounds = extractSoundResources(
+    loadSound,
+    ids.filter((id) => id.startsWith("sound/")),
+  );
+  const volumeTables = addComposerVolumes(sounds.volumeTables, loadSound);
   return {
     fonts: harvestFonts(goldensDir, inputs),
     menuIcons: extractMenuIcons(goldensDir),
@@ -757,17 +778,13 @@ export function extractResources(
       (id) => loadGolden(goldensDir, id),
       (id) => parseTickGolden(readFileSync(join(goldensDir, `${id}.ticks.txt`), "utf8"), id),
     ),
-    sounds: extractSoundResources(
-      (id) => parseSoundGolden(readFileSync(join(goldensDir, `${id}.sound.txt`), "utf8"), id),
-      readGoldenIndex(goldensDir)
-        .filter((entry) => entry.kind === "sound")
-        .map((entry) => entry.id),
-    ),
+    sounds: { ...sounds, volumeTables },
     text: extractMessagesResources((id) => loadGolden(goldensDir, id)),
     clock: extractClockResources(
       (id) => loadGolden(goldensDir, id),
       (id) => parseSoundGolden(readFileSync(join(goldensDir, `${id}.sound.txt`), "utf8"), id),
     ),
+    composer: extractComposerData(loadSound, (id) => loadGolden(goldensDir, id), ids, volumeTables),
   };
 }
 
@@ -830,6 +847,11 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
       "CLOCK_DATA",
       `{ readonly bells: { readonly sprites: readonly string[]; readonly stepMs: number }; readonly ring: { readonly bellsFirstMs: number; readonly textFirstMs: number; readonly textMs: number }; readonly programs: Readonly<Record<"countdown" | "reminder" | "alarm", ${TYPES.program}>>; readonly ascend: { readonly stepMs: number; readonly firstMs: Readonly<Record<"countdown" | "reminder" | "alarm", number>> }; readonly countdownSoundMs: number; readonly alarmRingMs: number }`,
       resources.clock,
+    ),
+    "composer.ts": module(
+      "COMPOSER_DATA",
+      "{ readonly tempi: readonly number[]; readonly unitMs: number; readonly gapUnits: number; readonly periods: Readonly<Record<string, Readonly<Record<string, { readonly plain: number; readonly dotted: number }>>>>; readonly pitches: readonly number[]; readonly timings: { readonly dotMs: number; readonly clearMs: number; readonly repeatFirstMs: number; readonly repeatEveryMs: number; readonly blinkFirstMs: number; readonly blinkStepMs: number }; readonly previewDelayMs: number; readonly volumeListMs: number; readonly levelStepMs: number; readonly unsetVolume: number }",
+      resources.composer,
     ),
     "snake.ts": module(
       "SNAKE_DATA",

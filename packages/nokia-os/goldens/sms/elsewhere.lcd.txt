@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/elsewhere
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/elsewhere/editor-c.png + captures/6.39/plan18/sms/elsewhere/editor-then-standby.png + captures/6.39/plan18/sms/elsewhere/menu-then-standby.png + captures/6.39/plan18/sms/elsewhere/snake-level-1-then-standby.png
 source-sha256: 82c51a2c8eaddc8500b1aa10bf456f98769247b4e427b81775482396eefbb756
 note: After an arrival in the editor, a menu and Snake II: back at standby, the envelope without a received notice.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/outbox-open
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/outbox/open
 source-sha256: 1fd3d630279a5d524ef39b750b4617a2eafa7b9bfb2e2aaa7f5b345f0c3b9ca8
 trigger-frame: 1

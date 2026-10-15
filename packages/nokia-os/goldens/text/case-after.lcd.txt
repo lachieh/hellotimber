@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/case-after
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/case/after-dot.png + captures/6.39/plan18/text/case/after-dot-2.png + captures/6.39/plan18/text/case/after-question.png + captures/6.39/plan18/text/case/after-question-2.png + captures/6.39/plan18/text/case/after-exclaim.png + captures/6.39/plan18/text/case/after-exclaim-2.png
 source-sha256: 8b89adcb763ded8781d740fa435bc09504d075648223944501d22e2031fc4cc9
 note: Ab then . ? ! and a space: the next letter is upper case again (sentence case).

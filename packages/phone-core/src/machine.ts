@@ -4,6 +4,7 @@ import type {
   DeactivationReason,
   ExitOptions,
   PhoneApplicationSession,
+  ShortcutLevel,
 } from "./application";
 import { SubmenuEntry } from "./menu";
 import type {
@@ -88,6 +89,8 @@ type ActivationOrigin<Metadata> =
   | { kind: "gate"; boot: HeldBoot }
   /** Plan 18: a standby notice's application (PhoneConfig setNotice `open`). */
   | { kind: "notice" }
+  /** Plan 17: the power key's standby application (PhoneConfig.standbyPower). */
+  | { kind: "power" }
   /** Plan 21: PhoneConfig.interruption's application, above the mode it holds. */
   | { kind: "interruption"; held: HeldMode<Metadata> }
   /** Plan 21: PhoneConfig.wake's application, on a phone powered on without the boot. */
@@ -96,7 +99,7 @@ type ActivationOrigin<Metadata> =
 /** Applications with an empty stack whose exit takes no levels, select or row. */
 type StandbyOrigin<Metadata> = Extract<
   ActivationOrigin<Metadata>,
-  { kind: "gate" | "notice" | "interruption" | "wake" }
+  { kind: "gate" | "notice" | "power" | "interruption" | "wake" }
 >;
 
 /** The mode an interruption holds, untouched until it ends. */
@@ -192,6 +195,12 @@ interface Machine<Metadata> {
   mode: Mode<Metadata>;
   /** Standby-scoped notice — survives menu round-trips until read/cleared. */
   notice: Notice | null;
+  /**
+   * The standby mode object last seen and when it was entered (PhoneConfig.standbyLine's
+   * `shownMs`): every entry into standby makes a new mode object.
+   */
+  standbyMode: Mode<Metadata> | null;
+  standbySince: number;
   held: Map<PhoneKey, HeldKey>;
   shortcut: Shortcut<Metadata> | null;
   shortcutEntry: { openDelayMs: number; invalid: PhoneApplication } | undefined;
@@ -247,6 +256,7 @@ function runOnce<Metadata>(m: Machine<Metadata>, fn: () => void): void {
   } finally {
     m.runDepth -= 1;
   }
+  noteStandbyEntry(m);
   const after = currentPath(m);
   if (after !== before) {
     m.dirty = true;
@@ -273,6 +283,19 @@ function runOnce<Metadata>(m: Machine<Metadata>, fn: () => void): void {
   }
 }
 
+/** Records when standby was entered: a standby mode object not seen before. */
+function noteStandbyEntry<Metadata>(m: Machine<Metadata>): void {
+  if (m.mode.kind !== "standby" || m.mode === m.standbyMode) return;
+  m.standbyMode = m.mode;
+  m.standbySince = m.now;
+}
+
+/** Re-enters standby (a notice cleared): the standby line's time restarts. */
+function reenterStandby<Metadata>(m: Machine<Metadata>): void {
+  if (m.mode.kind === "standby") m.mode = { kind: "standby" };
+  m.dirty = true;
+}
+
 /**
  * Screen state that changes with time or host values but has no other change trigger: timeline
  * frames, the carousel opening after its delay, the standby clock and a submenu detail. Comparing
@@ -285,23 +308,20 @@ function tickSignature<Metadata>(m: Machine<Metadata>): string {
         ? ""
         : `boot:${m.bootTimeline.frameAt(m.now - m.mode.startedAt)}`;
     case "standby":
-      return `standby:${JSON.stringify(m.config.clock?.())}:${JSON.stringify(standbyIndicators(m))}`;
+      return `standby:${standbySignature(m)}`;
     case "nav": {
       const frame = shownNavFrame(m.mode.stack);
       if (frame?.kind === "carousel") {
         if (m.now < frame.revealedAt) {
-          return `opening:${JSON.stringify(m.config.clock?.())}:${JSON.stringify(standbyIndicators(m))}`;
+          return `opening:${standbySignature(m)}`;
         }
         const iconFrame = carouselIconFrame(m, frame);
         return iconFrame === undefined ? "" : `icon:${frame.index}:${iconFrame}`;
       }
       if (frame?.kind === "submenu") {
         const shown = shownKeyOf(frame.entry);
-        const labels = JSON.stringify([
-          frameTitle(m.mode.stack, frame),
-          ...frame.entry.shownChildren().map((child) => frame.entry.labelOf(child)),
-        ]);
-        return `detail:${JSON.stringify(submenuDetail(frame))}:${entering(m)}:${shown}:${labels}`;
+        const labels = shownChildrenOf(m, frame).map((child) => labelIn(frame.entry, child));
+        return `detail:${JSON.stringify(submenuDetail(frame))}:${entering(m)}:${shown}:${JSON.stringify(labels)}:${frameTitle(m.mode.stack, frame)}`;
       }
       return frame === undefined ? "" : `title:${frameTitle(m.mode.stack, frame)}`;
     }
@@ -319,10 +339,16 @@ function shownNavFrame<Metadata>(
   return shown?.kind === "action" ? undefined : shown;
 }
 
-/**
- * The title of a level, list or reader frame: the text its parent level's label reader gives it
- * (SubmenuOptions.label), else its entry's label. A list item's frame is titled by the item.
- */
+/** The text `child` shows in `level` (SubmenuOptions.label); a failing reader shows its own. */
+function labelIn<Metadata>(level: SubmenuEntry<Metadata>, child: MenuEntry<Metadata>): string {
+  try {
+    return level.labelOf(child);
+  } catch {
+    return child.label;
+  }
+}
+
+/** The label a level, list or reader frame shows as its title: as its parent level labels it. */
 function frameTitle<Metadata>(
   stack: readonly NavFrame<Metadata>[],
   frame: DisplayNavFrame<Metadata>,
@@ -330,7 +356,7 @@ function frameTitle<Metadata>(
   if (frame.kind === "carousel") return "";
   if (frame.kind === "item") return frame.item.label;
   const parent = stack[stack.indexOf(frame) - 1];
-  return parent?.kind === "submenu" ? parent.entry.labelOf(frame.entry) : frame.entry.label;
+  return parent?.kind === "submenu" ? labelIn(parent.entry, frame.entry) : frame.entry.label;
 }
 
 /** The selected child's value from the submenu's detail reader, when it returns a string. */
@@ -699,10 +725,11 @@ function renderScreen<Metadata>(m: Machine<Metadata>): ScreenModel {
 
 function activationLabel<Metadata>(activation: AppActivation<Metadata>): string {
   const { origin, stack, definition } = activation;
-  const top = stack[stack.length - 1];
   if (origin.kind === "entry") {
-    return top?.kind === "submenu" ? top.entry.labelOf(origin.entry) : origin.entry.label;
+    const parent = stack[stack.length - 1];
+    return parent?.kind === "submenu" ? labelIn(parent.entry, origin.entry) : origin.entry.label;
   }
+  const top = stack[stack.length - 1];
   return origin.kind === "intro" && top?.kind === "submenu" ? top.entry.label : definition.id;
 }
 
@@ -716,15 +743,33 @@ function standbyIndicators<Metadata>(m: Machine<Metadata>): StandbyIndicators | 
   const read = m.config.standbyIndicators?.();
   if (read === undefined) return undefined;
   const shown: StandbyIndicators = {};
-  for (const flag of ["voicemail", "message", "alarm", "timer", "stopwatch"] as const) {
+  for (const flag of ["voicemail", "message", "silent", "alarm", "timer", "stopwatch"] as const) {
     if (read[flag] === true) shown[flag] = true;
   }
   return Object.keys(shown).length === 0 ? undefined : shown;
 }
 
+/** The host's second standby line (PhoneConfig.standbyLine); a failing reader shows none. */
+function standbyLine<Metadata>(m: Machine<Metadata>): string | undefined {
+  const reader = m.config.standbyLine;
+  if (reader === undefined) return undefined;
+  try {
+    const line = reader(m.now - m.standbySince);
+    return typeof line === "string" ? line : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Standby's host values that change with time: the clock, the indicators and the line. */
+function standbySignature<Metadata>(m: Machine<Metadata>): string {
+  const values = [m.config.clock?.(), standbyIndicators(m), standbyLine(m)];
+  return JSON.stringify(values);
+}
+
 /**
- * Applications with an empty stack: plan 15's boot gates, plan 18's notice applications and plan
- * 21's interruptions and wake applications. All but an interruption (which shows the path of the
+ * Applications with an empty stack: plan 15's boot gates, plan 18's notice applications, plan
+ * 17's power key application and plan 21's interruptions and wake applications. All but an interruption (which shows the path of the
  * mode it holds) have the path `standby`.
  */
 function isStandbyOrigin<Metadata>(
@@ -733,20 +778,28 @@ function isStandbyOrigin<Metadata>(
   return (
     origin.kind === "gate" ||
     origin.kind === "notice" ||
+    origin.kind === "power" ||
     origin.kind === "interruption" ||
     origin.kind === "wake"
   );
 }
 
+/** A standby application outside the boot (a notice's, the power key's): exit() is standby. */
+function isStandbyOverlay<Metadata>(origin: ActivationOrigin<Metadata>): boolean {
+  return origin.kind === "notice" || origin.kind === "power";
+}
+
 const STANDBY_APPLICATION_NAMES: Record<StandbyOrigin<unknown>["kind"], string> = {
   gate: "a boot gate",
   notice: "a notice's application",
+  power: "the power key's application",
   interruption: "an interruption",
   wake: "a wake application",
 };
 
 function standbyScreen<Metadata>(m: Machine<Metadata>, leaving: boolean): ScreenModel {
   const indicators = standbyIndicators(m);
+  const line = standbyLine(m);
   return {
     kind: "standby",
     carrier: m.carrier,
@@ -754,6 +807,7 @@ function standbyScreen<Metadata>(m: Machine<Metadata>, leaving: boolean): Screen
     signal: 4,
     battery: 4,
     ...(indicators === undefined ? {} : { indicators }),
+    ...(line === undefined ? {} : { line }),
     ...(m.notice === null ? {} : { notice: { text: m.notice.text, softkey: m.notice.softkey } }),
     ...(leaving ? { leaving: true as const } : {}),
   };
@@ -790,7 +844,7 @@ function renderFrame<Metadata>(
       return {
         kind: "list",
         title: frameTitle(stack, frame),
-        items: shown.map((entry) => frame.entry.labelOf(entry)),
+        items: shown.map((entry) => labelIn(frame.entry, entry)),
         ...(positional ? {} : { itemOrders: orders }),
         selected: shown.indexOf(frame.entry.children.entries[frame.selected]!),
         softkey: frame.entry.softkey,
@@ -927,6 +981,11 @@ function startApplication<Metadata>(
         startApplication(m, activation.origin, nextDefinition, activation.stack);
       });
     },
+    powerOff(): void {
+      run(m, () => {
+        if (isActive(m, activation, token)) switchOff(m);
+      });
+    },
     menuIndicator(): MenuIndicator {
       if (m.mode.kind === "app" && m.mode.activation === activation) return menuIndicator(m);
       return {
@@ -973,9 +1032,10 @@ function leaveStandbyApplication<Metadata>(
       return;
     case "wake":
       if (toStandby) powerOn(m, origin.targetPath);
-      else powerOff(m);
+      else switchOff(m);
       return;
     case "notice":
+    case "power":
       m.mode = { kind: "standby" };
       m.dirty = true;
   }
@@ -1088,7 +1148,7 @@ function openingIndex<Metadata>(level: SubmenuEntry<Metadata>): number {
 
 function togglePower<Metadata>(m: Machine<Metadata>): void {
   if (m.mode.kind === "off") powerOn(m, null);
-  else powerOff(m);
+  else switchOff(m);
 }
 
 function powerOn<Metadata>(m: Machine<Metadata>, targetPath: string | null): void {
@@ -1102,7 +1162,7 @@ function powerOn<Metadata>(m: Machine<Metadata>, targetPath: string | null): voi
   tickBoot(m);
 }
 
-function powerOff<Metadata>(m: Machine<Metadata>): void {
+function switchOff<Metadata>(m: Machine<Metadata>): void {
   const mode = m.mode;
   deactivateActive(m, "power-off");
   if (mode.kind === "app" && mode.activation.origin.kind === "interruption") {
@@ -1204,9 +1264,18 @@ function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
     m.held.set(event.key, { downAt: m.now, longFired: false, shortcutCaptured });
     if (m.mode.kind !== "off") emit(m, "sound", { kind: "key", id: "beep" });
     if (shortcutCaptured) return;
+    if (event.key === "power" && opensStandbyPower(m)) {
+      startApplication(m, { kind: "power" }, m.config.standbyPower!, []);
+      return;
+    }
     // A shortcut intro takes every key; the shortcut resumes when it ends.
     if (m.shortcut !== null && !shortcutIntroRunning(m)) cancelShortcut(m);
     forwardToApp(m, event);
+    // An application that leaves for standby on the power key's down (a note shown at standby,
+    // plan 17 B6) lets the same press open the power key's application.
+    if (event.key === "power" && opensStandbyPower(m)) {
+      startApplication(m, { kind: "power" }, m.config.standbyPower!, []);
+    }
     return;
   }
 
@@ -1233,6 +1302,11 @@ function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
   }
   if (held === undefined || held.longFired) return;
   onShortPress(m, event.key);
+}
+
+/** The power key's key-down opens PhoneConfig.standbyPower at standby (a notice stays). */
+function opensStandbyPower<Metadata>(m: Machine<Metadata>): boolean {
+  return m.config.standbyPower !== undefined && m.mode.kind === "standby";
 }
 
 function forwardToApp<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
@@ -1427,7 +1501,7 @@ function standbyShortPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void 
     }
     if (key === "c") {
       m.notice = null;
-      m.dirty = true;
+      reenterStandby(m);
       return;
     }
   }
@@ -1558,11 +1632,65 @@ function enterMenu<Metadata>(m: Machine<Metadata>): void {
   m.dirty = true;
 }
 
-/** The digit a key types into the open shortcut window, or null when the key is not captured. */
+/**
+ * The digit a key types into the open shortcut window, or null when the key is not captured.
+ * Stock shortcuts leave digits to a showing application (a shortcut intro, or the application
+ * the shortcut opened: v6.39 Calculator and Write messages take them) unless it is a shortcut
+ * level (an option list).
+ */
 function capturedDigit<Metadata>(m: Machine<Metadata>, key: PhoneKey): number | null {
   if (m.shortcut === null || !/^[0-9]$/.test(key)) return null;
   if (m.shortcut.kind === "digits") return key === "0" ? null : Number(key);
-  return shortcutIntroRunning(m) ? null : Number(key);
+  return m.mode.kind === "app" && appShortcutLevel(m) === undefined ? null : Number(key);
+}
+
+/** The shown application's options while it is a stock shortcut level (see ShortcutLevel). */
+function appShortcutLevel<Metadata>(m: Machine<Metadata>): ShortcutLevel | undefined {
+  if (m.mode.kind !== "app" || m.shortcut?.kind !== "stock") return undefined;
+  try {
+    return m.mode.activation.session?.shortcutLevel?.();
+  } catch {
+    // Application failures are isolated from firmware navigation.
+    return undefined;
+  }
+}
+
+/** A shortcut level's options as numbered candidates: option n is number n. */
+function levelNumbers(level: ShortcutLevel): readonly { entry: number; number: number }[] {
+  return Array.from({ length: level.count }, (_, i) => ({ entry: i + 1, number: i + 1 }));
+}
+
+/** A digit at a shortcut level: matched among its options as at a menu level. */
+function levelDigit<Metadata>(
+  m: Machine<Metadata>,
+  s: StockShortcut<Metadata>,
+  level: ShortcutLevel,
+  digit: number,
+): void {
+  const digits = `${s.digits}${digit}`;
+  const match = matchNumber(levelNumbers(level), digits);
+  if (match.kind === "none") {
+    openInvalidShortcut(m);
+    return;
+  }
+  if (match.kind === "wait") {
+    s.digits = digits;
+    s.deadline = m.now + m.shortcutWindowMs;
+    m.dirty = true;
+    return;
+  }
+  chooseInLevel(m, level, match.entry);
+}
+
+/** The typed number chose an option: the shortcut closes and the application acts on it. */
+function chooseInLevel<Metadata>(m: Machine<Metadata>, level: ShortcutLevel, number: number): void {
+  cancelShortcut(m);
+  try {
+    level.choose(number);
+  } catch {
+    // Application input failures are isolated from firmware navigation.
+  }
+  m.dirty = true;
 }
 
 function shortcutIntroRunning<Metadata>(m: Machine<Metadata>): boolean {
@@ -1596,16 +1724,19 @@ function cancelShortcut<Metadata>(m: Machine<Metadata>): void {
   m.dirty = true;
 }
 
-type NumberMatch<Metadata> =
-  | { kind: "entry"; entry: MenuEntry<Metadata> }
-  | { kind: "wait"; exact: MenuEntry<Metadata> | undefined }
+type NumberMatch<Entry> =
+  | { kind: "entry"; entry: Entry }
+  | { kind: "wait"; exact: Entry | undefined }
   | { kind: "none" };
 
 /**
  * Matches typed digits as a menu number among `level`'s entries. A number that is also the
  * prefix of a longer one waits (`1` with 10-12), as do leading zeros; no candidate is none.
  */
-function matchNumber<Metadata>(level: Numbered<Metadata>, digits: string): NumberMatch<Metadata> {
+function matchNumber<Entry>(
+  level: readonly { entry: Entry; number: number }[],
+  digits: string,
+): NumberMatch<Entry> {
   const number = digits.replace(/^0+/, "");
   if (number === "")
     return level.length > 0 ? { kind: "wait", exact: undefined } : { kind: "none" };
@@ -1635,6 +1766,17 @@ function stockDigit<Metadata>(
   s: StockShortcut<Metadata>,
   digit: number,
 ): void {
+  // A digit while a leaf is about to open opens it at once and is spent (v6.39: Menu 9 5),
+  // unless the leaf is a shortcut level, which takes it (Menu 8 6 3 1).
+  if (s.pending !== null && !(s.pending.entry instanceof SubmenuEntry)) {
+    openPending(m, s);
+    if (m.shortcut !== s || appShortcutLevel(m) === undefined) return;
+  }
+  const level = appShortcutLevel(m);
+  if (level !== undefined) {
+    levelDigit(m, s, level, digit);
+    return;
+  }
   const digits = `${s.digits}${digit}`;
   const match = matchNumber(stockLevel(m, s), digits);
   if (match.kind === "none") {
@@ -1707,6 +1849,13 @@ function openPending<Metadata>(m: Machine<Metadata>, s: StockShortcut<Metadata>)
  * the shortcut closes.
  */
 function endStockWindow<Metadata>(m: Machine<Metadata>, s: StockShortcut<Metadata>): void {
+  const level = appShortcutLevel(m);
+  if (s.digits !== "" && level !== undefined) {
+    const match = matchNumber(levelNumbers(level), s.digits);
+    if (match.kind === "wait" && match.exact !== undefined) chooseInLevel(m, level, match.exact);
+    else openInvalidShortcut(m);
+    return;
+  }
   if (s.digits !== "") {
     const match = matchNumber(stockLevel(m, s), s.digits);
     const target = match.kind === "wait" ? match.exact : undefined;
@@ -1894,9 +2043,9 @@ function handleNavigate<Metadata>(m: Machine<Metadata>, path: string): void {
     m.mode.activation.origin.boot.targetPath = target === "standby" ? null : target;
     return;
   }
-  // A notice's application shows the path `standby` but is not standby: leave it.
-  const noticeApp = m.mode.kind === "app" && m.mode.activation.origin.kind === "notice";
-  if (target === currentPath(m) && !noticeApp) return;
+  // A notice's or the power key's application shows the path `standby` but is not standby.
+  const overlay = m.mode.kind === "app" && isStandbyOverlay(m.mode.activation.origin);
+  if (target === currentPath(m) && !overlay) return;
   applyPath(m, target);
 }
 
@@ -1980,6 +2129,12 @@ export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): 
     SHORTCUT_WINDOW_MS,
   );
   if (shortcutWindowMs === 0) throw new Error("shortcutWindowMs must be a positive integer.");
+  if (config.standbyPower !== undefined && !(config.standbyPower instanceof PhoneApplication)) {
+    throw new Error("standbyPower must be an application definition.");
+  }
+  if (config.standbyLine !== undefined && typeof config.standbyLine !== "function") {
+    throw new Error("standbyLine must be a function.");
+  }
   const m: Machine<Metadata> = {
     config,
     carrier: config.carrier ?? "",
@@ -1992,6 +2147,8 @@ export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): 
     now: 0,
     mode: { kind: "off" },
     notice: null,
+    standbyMode: null,
+    standbySince: 0,
     held: new Map(),
     shortcut: null,
     shortcutEntry: resolveShortcutEntry(config),
@@ -2024,8 +2181,10 @@ export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): 
         throw new Error("A notice takes a path or an open application, not both.");
       }
       run(m, () => {
+        const cleared = notice === null && m.notice !== null;
         m.notice = notice === null ? null : { ...notice };
         m.dirty = true;
+        if (cleared) reenterStandby(m);
       });
     },
     get path(): string {

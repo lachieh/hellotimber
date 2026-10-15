@@ -5,6 +5,7 @@
 // See docs/plans/13-nokia-os-foundation.md "Capture set" and "Ground truth and artefacts".
 import type { ResourceDeclarations } from "./resource-declarations.ts";
 import type { GameCaptureIo, TickFixtureSpec } from "./game-capture-set.ts";
+import type { LightsCaptureIo, LightsGolden } from "./lights-format.ts";
 import {
   IMAGE_NAME,
   type GoldenKeyPress,
@@ -120,6 +121,8 @@ export interface CaptureIo {
   readonly sound: SoundCaptureIo;
   /** A JSON file's contents (a capture manifest), or undefined when it is missing. */
   readonly json: (path: string) => unknown;
+  /** Plan 25: LED logs and keys (lights goldens). */
+  readonly lights: LightsCaptureIo;
 }
 
 /**
@@ -138,6 +141,8 @@ export interface PlanCaptureSet {
   readonly ticks?: (io: CaptureIo) => readonly TickFixtureSpec[];
   /** Sound goldens (`<id>.sound.txt`). */
   readonly sounds?: (io: CaptureIo) => readonly SoundGolden[];
+  /** Plan 25: lights goldens (`<id>.lights.txt`). */
+  readonly lights?: (io: CaptureIo) => readonly LightsGolden[];
   /** Captures and artefacts deliberately not imported, with the reason (printed by the importer). */
   readonly notImported?: Readonly<Record<string, string>>;
 }

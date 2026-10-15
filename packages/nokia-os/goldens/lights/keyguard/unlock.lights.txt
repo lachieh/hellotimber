@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/keyguard/unlock
+status: asserted
+source: captures/6.39/plan25/keyguard/unlock
+source-sha256: 166cd800b016b37e2825a511f82f1c5c70f4880fdddee38531e16a0bdb7bc711
+state: virgin
+power-on: 81478
+start: -100
+end: 17391
+keys: 0:navi 300:*
+note: Unlock, then * at 300 ms, dark (K5).
+omitted: none
+
+@events
+# t_ms light   state
+322    display on
+322    keypad  on
+15672  display off
+15672  keypad  off

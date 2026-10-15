@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/delete
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/delete/00.png + captures/6.39/plan18/text/delete/c-pending.png + captures/6.39/plan18/text/delete/c-1.png + captures/6.39/plan18/text/delete/c-2.png
 source-sha256: 7eda918f1c7902567d38cc3a133e60e96f9fabeb62518961a87cdf11ace6dd6a
 note: Hello with o pending: C deletes the pending o, then the committed l and l (C deletes left of the cursor).
