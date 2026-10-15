@@ -51,7 +51,7 @@ export function getPhoneRuntime(): PhoneRuntime {
   // The saved Welcome note shows during boot (deviation 5: renderer-lifetime).
   // Render the LCD with the stock v6.39 painter from @hellotimber/nokia-os so this
   // website actually consumes that package and its verified fonts/icons/screens.
-  const renderer = createScreenRenderer({ paint: paintStockScreen, scale: 6 });
+  const renderer = createScreenRenderer({ paint: paintStockScreen });
   renderer.render(phone.screen);
   phone.subscribe((snap) => renderer.render(snap.screen));
 
