@@ -5,8 +5,9 @@
 // free-running TEXT_TIMINGS.blinkMs timer from the entry's start: keys and commits never restart
 // it (`text/commit` and `text/hold-digit` keep the phase they had before the key).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import { TEXT_TIMINGS } from "../resources";
+import { TEXT_TIMINGS, type StockWidgetTimeline } from "../resources";
 import { isTextKey } from "../text/keys";
+import { Playback } from "./playback";
 import {
   emptyText,
   textClear,
@@ -37,6 +38,11 @@ export interface TextEntryOptions {
   readonly cursor?: number;
   readonly mode?: TextMode;
   /**
+   * The cursor's blink as a node's own recording shows it (a loop of `cursor`/`plain` steps,
+   * plan 14 P9: Welcome note's); default TEXT_TIMINGS.blinkMs steps.
+   */
+  readonly blink?: StockWidgetTimeline;
+  /**
    * Plan 17: the blink restarts, the cursor shown, when a pending character commits (Rename's
    * prompt: `profiles/rename-*-type`). Default off: the editor's blink never restarts.
    */
@@ -50,10 +56,21 @@ interface Held {
   upAt?: number;
   /** Its hold has acted (123 entered, the text cleared). */
   fired: boolean;
+  /** `#` in 123 typed itself at its down; its hold takes it back (`text/hold-hash-back`). */
+  typed?: boolean;
 }
 
 /** What a key-down asks of the screen around the entry. */
 export type EntryRequest = "empty-c" | "symbols" | undefined;
+
+/**
+ * Whether a free-running blink shows the cursor `nowMs` after it started: by the node's own
+ * recording (`blink`, already advanced to now), else every TEXT_TIMINGS.blinkMs, shown first.
+ */
+export function blinkShown(blink: Playback | undefined, nowMs: number): boolean {
+  if (blink !== undefined) return blink.frame.kind === "cursor";
+  return Math.floor(nowMs / TEXT_TIMINGS.blinkMs) % 2 === 0;
+}
 
 /** One multi-tap entry: its state, its clock, its holds and its cursor blink. */
 export class TextEntry {
@@ -68,6 +85,7 @@ export class TextEntry {
   #hash: Held | undefined;
   /** C held after a deletion: when that deletion happened. */
   #clear: Held | undefined;
+  readonly #blink: Playback | undefined;
 
   constructor(options: TextEntryOptions) {
     this.limit = options.limit;
@@ -78,6 +96,7 @@ export class TextEntry {
       text,
       cursor: options.cursor ?? Array.from(text).length,
     };
+    this.#blink = options.blink === undefined ? undefined : new Playback(options.blink);
   }
 
   get state(): TextState {
@@ -91,7 +110,12 @@ export class TextEntry {
 
   /** The blink's step: the cursor shows (while nothing is pending). */
   get cursorShown(): boolean {
-    return Math.floor((this.#now - this.#blinkFrom) / TEXT_TIMINGS.blinkMs) % 2 === 0;
+    return blinkShown(this.#blink, this.#now - this.#blinkFrom);
+  }
+
+  /** The pending character commits (a screen opens over the entry: Options). */
+  commit(): void {
+    this.#state = textTick(this.#state, Number.POSITIVE_INFINITY);
   }
 
   control(): EditorControl {
@@ -114,10 +138,12 @@ export class TextEntry {
       return undefined;
     }
     switch (key) {
-      case "#":
-        this.#hash = { key, downAt: this.#now, fired: false };
-        if (this.#state.mode === "123") this.#state = textKey(this.#state, "#", this.#now, limit);
+      case "#": {
+        const typed = this.#state.mode === "123";
+        this.#hash = { key, downAt: this.#now, fired: false, typed };
+        if (typed) this.#state = textKey(this.#state, "#", this.#now, limit);
         return undefined;
+      }
       case "*":
         return "symbols";
       case "up":
@@ -148,11 +174,14 @@ export class TextEntry {
 
   tick(dtMs: number): void {
     this.#now += dtMs;
+    this.#blink?.advance(dtMs);
     const now = this.#now;
     const hash = this.#hash;
     if (hash !== undefined && !hash.fired && now - hash.downAt >= TEXT_TIMINGS.numberModeHoldMs) {
       hash.fired = true;
-      this.#state = textHold(this.#state, "#", now, this.limit);
+      // Held in 123, # leaves 123 without the # its down typed (`text/hold-hash-back` row 4).
+      const typed = hash.typed === true ? textDelete(this.#state) : this.#state;
+      this.#state = textHold(typed, "#", now, this.limit);
     }
     const clear = this.#clear;
     if (

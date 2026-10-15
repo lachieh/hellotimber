@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/inbox-option-chat
-status: pending:18
+status: pending:18c
 source: captures/6.39/plan18/sms/inbox/option/chat
 source-sha256: 04b29806a2385b5bce6fce624a85a3f19e6c0edb03fc752862d06ef41709b133
 trigger-frame: 1

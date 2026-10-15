@@ -1,13 +1,21 @@
 import type { Framebuffer } from "@hellotimber/phone-screen";
 import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
+import { paintStandby } from "../standby";
 import { paintCalculator, type CalculatorModel } from "./calculator";
 import { paintConfirm, type ConfirmModel } from "./confirm";
 import { paintEditor, type EditorModel } from "./editor";
 import { paintGameOver, type GameOverModel } from "./game-over";
 import { paintInfoPage, type InfoPageModel } from "./info-pages";
 import { paintInfoScreen, type InfoScreenModel } from "./info-screen";
+import { paintKeyguard, type KeyguardModel } from "./keyguard";
 import { paintLevelBar, type LevelBarModel } from "./level-bar";
+import {
+  paintMessageList,
+  paintMessagePage,
+  type MessageListModel,
+  type MessagePageModel,
+} from "./message";
 import { paintMulti, type MultiModel } from "./multi";
 import { paintNote, paintWelcomeNote, type NoteModel, type WelcomeNoteModel } from "./note";
 import { paintOptions, type OptionsModel } from "./options";
@@ -24,7 +32,9 @@ export type { EditorModel } from "./editor";
 export type { GameOverModel } from "./game-over";
 export type { InfoPageModel } from "./info-pages";
 export type { InfoScreenModel } from "./info-screen";
+export type { KeyguardModel } from "./keyguard";
 export type { LevelBarModel } from "./level-bar";
+export type { MessageListModel, MessagePageModel } from "./message";
 export type { MultiModel } from "./multi";
 export type { NoteModel, WelcomeNoteModel } from "./note";
 export { welcomeNoteLines } from "./note";
@@ -40,6 +50,16 @@ export type { TextPageModel } from "./text-pages";
 export interface PlaceholderModel {
   readonly kind: "placeholder";
   readonly label: string;
+}
+
+/**
+ * Plan 18: standby's first draw on the way back to it, without the operator (`sms/exit` frame
+ * 1, 83 ms): the ladders, the icons and `Menu`.
+ */
+export interface StandbyDrawModel {
+  readonly kind: "standby-draw";
+  /** The clock standby shows (the host's), if any. */
+  readonly clock?: string;
 }
 
 /** A full-frame boot image inside a boot gate (plan 15: the 42 ms blank, the hands). */
@@ -70,6 +90,10 @@ export type WidgetModel =
   | SymbolsModel
   | PlaceholderModel
   | CalculatorModel
+  | KeyguardModel
+  | StandbyDrawModel
+  | MessageListModel
+  | MessagePageModel
   | StandbyFrameModel;
 
 /**
@@ -137,6 +161,24 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "standby-frame":
       paintStandbyFrame(fb, model);
+      return;
+    case "keyguard":
+      paintKeyguard(fb, model, previous);
+      return;
+    case "message-list":
+      paintMessageList(fb, model);
+      return;
+    case "message-page":
+      paintMessagePage(fb, model);
+      return;
+    case "standby-draw":
+      paintStandby(fb, {
+        kind: "standby",
+        carrier: "",
+        signal: 4,
+        battery: 4,
+        ...(model.clock === undefined ? {} : { clock: model.clock }),
+      });
       return;
   }
 }

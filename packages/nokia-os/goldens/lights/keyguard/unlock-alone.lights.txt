@@ -1,0 +1,15 @@
+lights-golden 1
+id: lights/keyguard/unlock-alone
+status: asserted
+source: captures/6.39/plan25/keyguard/unlock-alone
+source-sha256: 292ff1ca822bfa42899a9e714a8dc9ca929ecd071d73adb233d18d44b1711ca6
+state: virgin
+power-on: 81478
+start: -100
+end: 4091
+keys: 0:navi
+note: Unlock alone on a dark locked standby (K4).
+omitted: none
+
+@events
+# t_ms light   state

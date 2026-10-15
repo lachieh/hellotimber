@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/inbox-details
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/inbox/option/details-pages
 source-sha256: 23ad55ca1fa4dffd78eae97c43a2ffab82d51929b51b5ef72de82619372cbabc
 note: Details: Sender, Message centre and Time pages.

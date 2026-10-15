@@ -519,7 +519,7 @@ export const profilesFeature: StockFeature = {
         target: (choice) => profileAlias(TONES, PROFILE_SLUGS[choice(ACTIVE_PROFILE_KEY) ?? 0]!),
       },
     ],
-    choices: [{ key: ACTIVE_PROFILE_KEY, options: PROFILE_SLUGS.length }],
+    choices: [{ key: ACTIVE_PROFILE_KEY, labels: PROFILE_SLUGS, chosen: null }],
     // Restore gives slot 6 the name (empty), not the virgin boxes (plan 15 Task 0c).
     factoryTexts: [
       {

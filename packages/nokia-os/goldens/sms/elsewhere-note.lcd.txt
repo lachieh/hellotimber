@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/elsewhere-note
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/elsewhere/note
 source-sha256: 2592227369e00e7236ec559dc70e4d39a74e4f9ea8462b3ed5d7956ae387c3ef
 trigger-frame: 1

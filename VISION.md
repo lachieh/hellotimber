@@ -89,13 +89,13 @@ are independent and reusable; **only `website/` composes them**.
                    └───────────────────┘
 ```
 
-| Package                     | Responsibility                                                                                                                                                                                                                                                                                                          | Dependencies                                                       |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                                                                                 | none                                                               |
-| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                            | `phone-core` (type-only)                                           |
-| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                              | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
-| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                | none                                                               |
-| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18, in progress), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
+| Package                     | Responsibility                                                                                                                                                                                                                                                                                                                                                                                           | Dependencies                                                       |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                                                                                                                                                                  | none                                                               |
+| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                                                                                                             | `phone-core` (type-only)                                           |
+| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                                                                                                               | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
+| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                                                                                                 | none                                                               |
+| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18, in progress), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, keyguard and display/keypad LED events on the light tick (plan 25, in progress), standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
 
 The website does **not** consume `@hellotimber/nokia-os` yet (plan 13). How portfolio content
 integrates with the stock OS is decided later. Until then the website keeps phone-screen's own
@@ -749,6 +749,8 @@ export interface StockPhoneConfig {
   sim?: string;
   /** Plan 16: the phone's buzzer, tone generator and vibrator. Default: nowhere. */
   sound?: StockSoundPort;
+  /** Plan 25: the display and keypad LEDs. Default: nowhere. */
+  lights?: StockLightsPort;
   /** Plan 18, in progress: SMS host port. Default: createSyntheticNetwork(). */
   network?: StockNetworkPort;
 }
@@ -813,6 +815,19 @@ export interface StockSoundPort {
   change(event: StockSoundEvent): void;
 }
 
+/** Plan 25: one change of the phone's lights at kernel time `atMs`. */
+export interface StockLightEvent {
+  /** `display`: the LCD backlight LEDs; `keypad`: the keypad LEDs (MAD2's two LED lines). */
+  readonly light: "display" | "keypad";
+  readonly atMs: number;
+  readonly on: boolean;
+}
+
+/** Plan 25: where the phone's lights go. Events arrive in `atMs` order from `tick()`. */
+export interface StockLightsPort {
+  change(event: StockLightEvent): void;
+}
+
 /** Plan 15: the phone's EEPROM, as the Web Storage subset (`window.localStorage` fits). */
 export interface StockStorage {
   getItem(key: string): string | null;
@@ -853,6 +868,20 @@ outputs and stops the vibrator if they were active; a phone with no port behaves
 nokia-os touches no audio API. Its sound programs are generated from committed sound goldens
 (event timelines of captured buzzer, tone and vibrator registers; never audio). See
 `docs/plans/16-tones-and-sound.md`.
+
+**Lights (plan 25, in progress; contract ahead of runtime).** nokia-os's LEDs go through
+`StockPhoneConfig.lights`, as its sound goes through `sound`: the phone emits every change of the
+display LEDs and the keypad LEDs from `tick()` once kernel time reaches it, stamped with its own
+`atMs`, so the output is the same at any tick rate. The two lights are separate events although
+v6.39 always switches them together (the hardware has two lines; phone-3d renders them
+differently). Rules: `atMs` never exceeds the emitting tick's kernel time and never decreases; a
+light's consecutive events differ; both lights are off at power-on until the boot lights them,
+and power-off emits `on: false` for each light that is on; a phone with no port behaves
+identically. The LEDs go off on the firmware's 1982.61 ms light tick (from power-on), at the first
+tick at least 13.62 s after the last light activity. nokia-os touches no DOM or light API. The
+keyguard (Menu then `*`) is nokia-os's own standby mode; phone-core does not change. See
+`docs/plans/25-keyguard-and-backlight.md` and
+[stock keyguard and lights](docs/specs/stock/keyguard-and-backlight.md).
 
 **SMS network (plan 18, in progress; contract ahead of runtime).** The host supplies delivery
 and outcomes. The phone uses kernel time and preserves the typed number/address and text.
@@ -910,7 +939,10 @@ export interface Nokia3310Props {
   screenCanvas: HTMLCanvasElement; // texture source
   screenVersion: number; // bump → texture.needsUpdate
   onKey?: (key: Nokia3310Key, action: "down" | "up") => void;
+  /** The display LEDs: LCD backlight and its glow. Default true. */
   backlightOn?: boolean;
+  /** Plan 25 (in progress): the keypad LEDs (legend and NaviKey glow). Default: `backlightOn`. */
+  keypadLightOn?: boolean;
   pressedKeys?: ReadonlySet<Nokia3310Key>; // visually depress keys (e.g. kbd input)
   screenBgColor?: string; // LCD fill behind/around the texture (default classic green)
   modelUrl?: string; // host-served GLB (default "/models/nokia3310-v3.glb")
@@ -921,6 +953,10 @@ export function Nokia3310(props: Nokia3310Props): React.JSX.Element;
 /** Convenience scene: Canvas + lighting + resize + subtle idle motion. */
 export function PhoneStage(props: Nokia3310Props & { className?: string }): React.JSX.Element;
 ```
+
+phone-3d does not know nokia-os: a host maps nokia-os's `StockLightEvent`s to `backlightOn`
+(display) and `keypadLightOn` (keypad). The website passes only `backlightOn`, so its keypad
+follows it (plan 25 D13).
 
 ### `@hellotimber/snake`
 

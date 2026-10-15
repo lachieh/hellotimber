@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/delete-empty
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/delete-empty
 source-sha256: 6380980bd4d8ed66438315d2c9f2cf3d58b6fcea0f9a08eda83171df2cf66943
 trigger-frame: 1

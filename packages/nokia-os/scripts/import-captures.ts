@@ -3,7 +3,8 @@
 //   mise exec -- vp run @hellotimber/nokia-os#import-captures /path/to/nokia-3310
 //
 // Executes every plan's capture set (scripts/capture-sets/index.ts: LCD goldens, tick fixtures and
-// sound goldens), writes goldens/<id>.lcd.txt, <id>.ticks.txt and <id>.sound.txt and one index
+// sound goldens, plan 25's lights goldens), writes goldens/<id>.lcd.txt, <id>.ticks.txt,
+// <id>.sound.txt and <id>.lights.txt and one index
 // per plan (goldens/index/<NN>.json, scripts/golden-index.ts), and deletes fixtures and index
 // files the sets no longer produce. Idempotent: a second run changes nothing.
 // Runs under Node's type stripping: imports only node:* and sibling scripts with .ts extensions.
@@ -41,6 +42,7 @@ import {
   type LcdMode,
   type TickGolden,
 } from "./golden-format.ts";
+import { parseLightsGolden, serializeLightsGolden, type LightsCaptureIo } from "./lights-format.ts";
 import { decodeLcdPng } from "./png.ts";
 import type { SoundCaptureIo } from "./sound-capture-set.ts";
 import { parseSoundGolden, serializeSoundGolden } from "./sound-format.ts";
@@ -74,6 +76,7 @@ function main(): void {
     sound: soundIo(root),
     json: (path) =>
       existsSync(join(root, path)) ? JSON.parse(readFileSync(join(root, path), "utf8")) : undefined,
+    lights: lightsIo(root),
   };
 
   const sets = captureSets();
@@ -94,6 +97,7 @@ function main(): void {
     readonly lcd: readonly CaptureSetEntry[];
     readonly ticks: ReturnType<NonNullable<PlanCaptureSet["ticks"]>>;
     readonly sounds: ReturnType<NonNullable<PlanCaptureSet["sounds"]>>;
+    readonly lights: ReturnType<NonNullable<PlanCaptureSet["lights"]>>;
   }[];
   try {
     planned = sets.map((set) => ({
@@ -101,6 +105,7 @@ function main(): void {
       lcd: set.lcd?.(io) ?? [],
       ticks: set.ticks?.(io) ?? [],
       sounds: set.sounds?.(io) ?? [],
+      lights: set.lights?.(io) ?? [],
     }));
     // Shot names are checked before anything is written.
     for (const { lcd } of planned) {
@@ -113,7 +118,7 @@ function main(): void {
   } catch (error) {
     return fail((error as Error).message);
   }
-  for (const { set, lcd, ticks, sounds } of planned) {
+  for (const { set, lcd, ticks, sounds, lights } of planned) {
     indexes.set(set.plan, []);
     for (const entry of lcd) {
       const choice = chooseSource(root, entry);
@@ -176,6 +181,19 @@ function main(): void {
         file,
         status: golden.status,
         kind: "sound",
+        events: golden.rows.length,
+      });
+    }
+
+    for (const golden of lights) {
+      const text = serializeLightsGolden(golden);
+      const file = `${golden.id}.lights.txt`;
+      parseLightsGolden(text, file); // the importer never writes an invalid fixture
+      write(set.plan, file, text, {
+        id: golden.id,
+        file,
+        status: golden.status,
+        kind: "lights",
         events: golden.rows.length,
       });
     }
@@ -456,6 +474,22 @@ function soundIo(root: string): SoundCaptureIo {
   };
 }
 
+/** Reads plan 25 LED logs: `<dir>.lights.csv`, `<dir>/keys.csv`. */
+function lightsIo(root: string): LightsCaptureIo {
+  const text = (path: string): string | undefined =>
+    existsSync(join(root, path)) ? readFileSync(join(root, path), "utf8") : undefined;
+  return {
+    lights: (dir) => text(`${dir}.lights.csv`),
+    keys: (dir) => text(`${dir}/keys.csv`),
+    sha256(dir) {
+      const hash = createHash("sha256");
+      hash.update(readFileSync(join(root, `${dir}.lights.csv`)));
+      hash.update(readFileSync(join(root, dir, "keys.csv")));
+      return hash.digest("hex");
+    },
+  };
+}
+
 function sourceLabel(source: CaptureSource): string {
   if (source.kind === "shots") {
     return shotImages(source.files)
@@ -502,7 +536,7 @@ function listFixtures(dir: string): string[] {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) out.push(...listFixtures(path));
-    else if (/\.(lcd|ticks|sound)\.txt$/.test(entry.name)) out.push(path);
+    else if (/\.(lcd|ticks|sound|lights)\.txt$/.test(entry.name)) out.push(path);
   }
   return out;
 }

@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/timeout/virgin/pair-straddle
+status: asserted
+source: captures/6.39/plan25/lights/timeout/virgin/pair-straddle
+source-sha256: 1cf5807d2afa419b05e35a7e7746f20bf12bb61d4b6025a65aa28764fc721f5c
+state: virgin
+power-on: 70876
+start: -100
+end: 18091
+keys: 0:c 1000:c
+note: C 500 ms before and after a light tick.
+omitted: none
+
+@events
+# t_ms light   state
+14     display on
+14     keypad  on
+16359  display off
+16359  keypad  off

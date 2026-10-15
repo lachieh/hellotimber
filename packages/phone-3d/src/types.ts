@@ -25,7 +25,10 @@ export interface Nokia3310Props {
   /** Bump to trigger texture.needsUpdate (re-upload) on the next frame. */
   screenVersion: number;
   onKey?: (key: Nokia3310Key, action: "down" | "up") => void;
+  /** The display LEDs: LCD backlight and its glow. Default true. */
   backlightOn?: boolean;
+  /** Plan 25: the keypad LEDs (legend and NaviKey glow). Default: `backlightOn`. */
+  keypadLightOn?: boolean;
   /** Visually depress keys driven externally (e.g. keyboard input). */
   pressedKeys?: ReadonlySet<Nokia3310Key>;
   /** Colour of the LCD surround fill around the pixel plane. Pass the same
@@ -35,6 +38,17 @@ export interface Nokia3310Props {
   modelUrl?: string;
   /** Directory containing the Draco decoder (draco_decoder.wasm + .js). */
   dracoPath?: string;
+}
+
+/** The phone's two LED lines, resolved from the props: the display LEDs
+ *  (`backlightOn`, default on) and the keypad LEDs (`keypadLightOn`, default
+ *  following the display). */
+export function resolveLights(props: Pick<Nokia3310Props, "backlightOn" | "keypadLightOn">): {
+  display: boolean;
+  keypad: boolean;
+} {
+  const display = props.backlightOn ?? true;
+  return { display, keypad: props.keypadLightOn ?? display };
 }
 
 /** Default asset locations the host is expected to serve (see README). */

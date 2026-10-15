@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/timeout/factory/tap-12
+status: asserted
+source: captures/6.39/plan25/lights/timeout/factory/tap-12
+source-sha256: 78033b0db5ac86d098632ef62f271b80534e476d775d1f8058a0a58b72f8f447
+state: factory
+power-on: 62950
+start: -100
+end: 17091
+keys: 0:c
+note: C at standby with the LEDs off, 1488 ms after a light tick (Task 0 L).
+omitted: none
+
+@events
+# t_ms light   state
+18     display on
+18     keypad  on
+14375  display off
+14375  keypad  off

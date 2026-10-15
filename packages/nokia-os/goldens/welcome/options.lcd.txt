@@ -1,6 +1,6 @@
 lcd-golden 1
 id: welcome/options
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/welcome/options
 source-sha256: a373a0e09dffcec195a7e8453e2fae1a0a05ff9f972bfec84bacc68d5105d52b
 note: Welcome note's Options: Save, Erase.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/restore-outbox
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/restore/outbox
 source-sha256: b84a6d9fc92b9094556a957714d719d4c19678663899d06e58d666a455d6ae09
 trigger-frame: 1

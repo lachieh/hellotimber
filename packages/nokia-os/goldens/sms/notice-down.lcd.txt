@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/notice-down
-status: pending:18
+status: pending:22
 source: captures/6.39/plan18/sms/notice/down
 source-sha256: 8c33bba23f2885a27ea10c8ee56532c8758dd1e289c03d97a3b1a099f780ed36
 trigger-frame: 1

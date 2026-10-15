@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/timeout/factory/fine-300
+status: asserted
+source: captures/6.39/plan25/lights/timeout/factory/fine-300
+source-sha256: 1edb5f176d68ca746c148909dd2727178b976fd6d60120253ff163af8ea48575
+state: factory
+power-on: 61762
+start: -100
+end: 17090
+keys: 0:c
+note: C at standby 300 ms after a light tick: pins the timeout (D2).
+omitted: none
+
+@events
+# t_ms light   state
+13     display on
+13     keypad  on
+15563  display off
+15563  keypad  off

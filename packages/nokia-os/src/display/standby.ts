@@ -1,6 +1,6 @@
 import type { ScreenModel } from "@hellotimber/phone-core";
 import { textWidth, type Framebuffer } from "@hellotimber/phone-screen";
-import { STATUS_SPRITES, STOCK_FONTS, type StockSprite } from "../resources";
+import { STATUS_SPRITES, STOCK_FONTS, WIDGET_SPRITES, type StockSprite } from "../resources";
 import { paintProfileStandby } from "./profiles";
 
 /** Softkey labels are centred: x = floor((84 - advance width) / 2), top y 40. */
@@ -8,6 +8,9 @@ export const SOFTKEY_TOP = 40;
 const CARRIER_TOP = 8;
 /** The clock's last digit cell ends here, left of the battery ladder (its ink ends at x 76). */
 const CLOCK_END = 78;
+/** Plan 18: a notice's lines, small from x 6 at tops 7/16/25 (`sms/notice` count-1). */
+const NOTICE_LEFT = 6;
+const NOTICE_TOPS = [7, 16, 25] as const;
 
 function paintSprites(fb: Framebuffer, sprites: readonly StockSprite[]): void {
   for (const { bitmap, x, y } of sprites) fb.blitBitmap(bitmap, x, y);
@@ -17,7 +20,9 @@ function paintSprites(fb: Framebuffer, sprites: readonly StockSprite[]): void {
  * Standby: signal ladder and antenna on the left, battery ladder and icon on the right, operator
  * centred, clock top right, `Menu`. Level n shows the bottom n bars (levels below 4 are
  * UNVERIFIED: the kernel always reports 4). While `leaving` (the 39 ms after Menu) the ladders
- * and icons are erased. Standby notices and indicators are not part of the stock OS yet.
+ * and icons are erased. Plan 18: the message indicator is the envelope top left of the operator
+ * (`message/envelope`); a notice (`1` / `message` / `received`, a line per `\n`) replaces the
+ * operator line and its soft key `Menu` (`sms/notice`).
  */
 export function paintStandby(
   fb: Framebuffer,
@@ -29,11 +34,23 @@ export function paintStandby(
     paintSprites(fb, STATUS_SPRITES.batteryBars.slice(4 - screen.battery));
     paintSprites(fb, [STATUS_SPRITES.batteryIcon]);
   }
-  fb.drawTextCentered(STOCK_FONTS.small, screen.carrier, CARRIER_TOP);
+  if (screen.indicators?.message === true) {
+    const { bitmap, x, y } = WIDGET_SPRITES["message/envelope"]!;
+    fb.blitBitmap(bitmap, x, y);
+  }
+  const notice = screen.notice;
+  if (notice === undefined) fb.drawTextCentered(STOCK_FONTS.small, screen.carrier, CARRIER_TOP);
+  else {
+    const lines = notice.text.split("\n");
+    if (lines.length > NOTICE_TOPS.length) {
+      throw new Error(`A standby notice holds ${NOTICE_TOPS.length} lines: ${notice.text}`);
+    }
+    lines.forEach((line, i) => fb.drawText(STOCK_FONTS.small, line, NOTICE_LEFT, NOTICE_TOPS[i]!));
+  }
   paintProfileStandby(fb, screen);
   if (screen.clock !== undefined) {
     const x = CLOCK_END - textWidth(STOCK_FONTS.digits, screen.clock);
     fb.drawText(STOCK_FONTS.digits, screen.clock, x, 0);
   }
-  fb.drawTextCentered(STOCK_FONTS.small, "Menu", SOFTKEY_TOP);
+  fb.drawTextCentered(STOCK_FONTS.small, notice?.softkey ?? "Menu", SOFTKEY_TOP);
 }

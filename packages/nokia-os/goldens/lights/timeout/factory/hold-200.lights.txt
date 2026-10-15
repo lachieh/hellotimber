@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/timeout/factory/hold-200
+status: asserted
+source: captures/6.39/plan25/lights/timeout/factory/hold-200
+source-sha256: 868e4d4b2d8b2beeb937e7185418ea43564310c3c12ca8bcaa52334e3b403a89
+state: factory
+power-on: 61261
+start: -100
+end: 17231
+keys: 0:c
+note: C held 200 ms at standby.
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+14078  display off
+14078  keypad  off

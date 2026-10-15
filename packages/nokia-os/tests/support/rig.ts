@@ -26,8 +26,11 @@ export interface Rig {
   press(key: PhoneKey, holdMs?: number): void;
   hold(key: PhoneKey): void;
   release(key: PhoneKey): void;
-  /** Ticks the phone every 1 ms for `ms`. */
-  advance(ms: number): void;
+  /**
+   * Ticks the phone every `stepMs` (default 1 ms) for `ms`. Coarser steps (replays between
+   * their events) let timers fire up to a step late.
+   */
+  advance(ms: number, stepMs?: number): void;
   /** The current screen, painted by the stock painter. */
   paint(): Framebuffer;
   /**
@@ -85,8 +88,12 @@ export function createRig(config: StockPhoneConfig, internals: StockPhoneInterna
     release(key) {
       phone.send({ type: "up", key });
     },
-    advance(ms) {
-      for (let i = 0; i < ms; i++) phone.tick(++now);
+    advance(ms, stepMs = 1) {
+      const end = now + ms;
+      while (now < end) {
+        now = Math.min(end, now + stepMs);
+        phone.tick(now);
+      }
     },
     paint: () => paintScreen(phone.screen),
     record(durationMs, trigger, schedule = []) {

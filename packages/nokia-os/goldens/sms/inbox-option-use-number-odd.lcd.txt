@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/inbox-option-use-number-odd
-status: pending:18
+status: pending:22
 source: captures/6.39/plan18/sms/inbox/option/use-number-odd
 source-sha256: 70e5b3fd9ee1b36d291dd6178744697859c2f1c15c4eee1a51d44a516a49b180
 trigger-frame: 1

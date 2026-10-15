@@ -1,5 +1,6 @@
 import { Framebuffer } from "@hellotimber/phone-screen";
 import type { PhoneKey } from "@hellotimber/phone-core";
+import { LONG_PRESS_MS } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
 import { paintWidget } from "../src/display/widgets";
 import { TEXT_TIMINGS } from "../src/resources";
@@ -149,10 +150,16 @@ describe("the editor widget's keys", () => {
     expect(text(rig)).toBe("H");
   });
 
-  it("goes back on C when the text is empty", () => {
+  it("goes back as C comes up on the empty text, and to standby while C is held", () => {
     const rig = flowRig(smsEditor());
     rig.session.onKey({ type: "down", key: "c" });
-    expect(rig.exits).toHaveLength(1);
+    expect(rig.exits).toHaveLength(0);
+    rig.session.onKey({ type: "up", key: "c" });
+    expect(rig.exits).toEqual([{ atMs: 0, options: undefined }]);
+    const held = flowRig(smsEditor());
+    held.session.onKey({ type: "down", key: "c" });
+    held.advance(LONG_PRESS_MS);
+    expect(held.exits).toEqual([{ atMs: LONG_PRESS_MS, options: { to: "standby" } }]);
   });
 
   it("changes the case on a tapped # (on release) and enters 123 on a held one", () => {

@@ -280,8 +280,9 @@ export function virginSettings(): StockSettingsSnapshot {
       }
     }
   }
-  for (const { key, options } of STOCK_SETTINGS.choices) {
-    choices[key] = { options, chosen: null };
+  for (const { key, labels, chosen } of STOCK_SETTINGS.choices) {
+    if (key in choices) throw new Error(`Setting "${key}" is a tree setting too.`);
+    choices[key] = { options: labels.length, chosen };
   }
   for (const entry of STOCK_SETTINGS.virginTexts) {
     if ("text" in entry) {
@@ -337,15 +338,16 @@ export function stockPageValue(settings: StockSettings, key: string): string | u
 }
 
 /** The option labels of every option list and single choice, by key (aliases included). */
-const OPTION_LABELS: ReadonlyMap<string, readonly string[]> = new Map(
-  [...treePaths()].flatMap((path) => {
+const OPTION_LABELS: ReadonlyMap<string, readonly string[]> = new Map([
+  ...[...treePaths()].flatMap((path) => {
     const node = path[path.length - 1]!;
     const spec = node.opens;
     const labels =
       spec.kind === "option-list" ? spec.options.map((o) => o.label) : choiceLabels(node);
     return labels === undefined ? [] : [[settingKey(path), labels] as const];
   }),
-);
+  ...STOCK_SETTINGS.choices.map(({ key, labels }) => [key, labels] as const),
+]);
 
 let virginCache: StockSettingsSnapshot | undefined;
 /** The virgin snapshot, computed once. */

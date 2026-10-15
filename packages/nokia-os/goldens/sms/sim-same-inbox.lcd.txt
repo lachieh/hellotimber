@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/sim-same-inbox
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/sim/same-sim-new-process/inbox
 source-sha256: 974575a8a3e0e632700506c770d96c68de6531158989d03faa5268b2f9168464
 trigger-frame: 1

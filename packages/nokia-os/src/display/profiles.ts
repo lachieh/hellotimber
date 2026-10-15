@@ -10,15 +10,17 @@ export const PROFILE_LINE_TOP = 18;
 
 /**
  * The profile line and the silent icon (top left, x 7..13, `profiles/icon`). Both stay while
- * Menu erases the ladders (`profiles/standby-menu`).
+ * Menu erases the ladders (`profiles/standby-menu`). A plan 18 notice replaces the line (its lines
+ * cover top 18), and the message envelope, drawn at the silent icon's place, hides the icon (no
+ * capture shows both: UNVERIFIED).
  */
 export function paintProfileStandby(
   fb: Framebuffer,
   screen: Extract<ScreenModel, { kind: "standby" }>,
 ): void {
-  if (screen.line !== undefined)
+  if (screen.line !== undefined && screen.notice === undefined)
     fb.drawTextCentered(STOCK_FONTS.small, screen.line, PROFILE_LINE_TOP);
-  if (screen.indicators?.silent) {
+  if (screen.indicators?.silent === true && screen.indicators.message !== true) {
     const { bitmap, x, y } = WIDGET_SPRITES["profiles/silent"]!;
     fb.blitBitmap(bitmap, x, y);
   }

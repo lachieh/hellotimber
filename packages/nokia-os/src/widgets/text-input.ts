@@ -7,6 +7,7 @@ import type { PromptModel } from "../display/widgets";
 import { shownMode, type TextMode } from "../text/multitap";
 import { MODE_SPRITES, openSymbols } from "./editor";
 import type { Flow, Widget } from "./flow";
+import { HeldC } from "./held-c";
 import { TextEntry } from "./text-entry";
 
 export interface TextInputOptions {
@@ -30,6 +31,7 @@ export interface TextInputOptions {
 class TextInputWidget implements Widget {
   readonly #options: TextInputOptions;
   readonly #entry: TextEntry;
+  readonly #emptyC = new HeldC();
 
   constructor(options: TextInputOptions) {
     this.#options = options;
@@ -61,17 +63,19 @@ class TextInputWidget implements Widget {
 
   onKeyDown(key: PhoneKey, flow: Flow): void {
     const request = this.#entry.keyDown(key);
-    if (request === "empty-c") flow.back();
+    if (request === "empty-c") this.#emptyC.down();
     if (request === "symbols") openSymbols(flow, this.#entry.control());
   }
 
   onKey(key: PhoneKey, flow: Flow): void {
     this.#entry.keyUp(key);
     if (key === "navi") this.#options.done(this.#entry.text, flow);
+    if (key === "c") this.#emptyC.up(flow);
   }
 
-  tick(dtMs: number): void {
+  tick(dtMs: number, flow: Flow): void {
     this.#entry.tick(dtMs);
+    this.#emptyC.tick(dtMs, flow);
   }
 }
 

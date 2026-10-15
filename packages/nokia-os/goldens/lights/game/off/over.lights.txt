@@ -1,0 +1,23 @@
+lights-golden 1
+id: lights/game/off/over
+status: asserted
+source: captures/6.39/plan25/lights/game/off/over
+source-sha256: 496df52d73037fa1534b9074fd8bd01bebf964159e16960829701dccf4e38c7e
+state: factory
+power-on: 137691
+start: 0
+end: 24543
+keys: 0:navi 2039:8 3308:4 3943:2
+note: Snake II level 1, Games › Settings › Lights Off: New game, 3 s of play, a crash, 20 s.
+omitted: none
+
+@events
+# t_ms light   state
+0      display on
+0      keypad  on
+38     display off
+38     keypad  off
+7247   display on
+7247   keypad  on
+20918  display off
+20918  keypad  off

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/input-set-1-list
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/input/set-1-list
 source-sha256: 47b59d47a0969084bfa7f196f502d6004622f477e70796c40ba7b1704e2b2c14
 note: Send by set › Set 1's list (Numeric, Alphanumeric), ▼ per image.

@@ -40,11 +40,12 @@ export function emptyText(mode: TextMode = "Abc"): TextState {
 }
 
 /**
- * The text before `at` ends a sentence: it is empty or blank, or ends with `.`, `?` or `!` and
- * any spaces (`text/case-after`; a letter typed straight after the mark is unverified).
+ * The text before `at` ends a sentence: it is empty or blank, or ends with `.`, `?` or `!` and a
+ * space or more (`text/case-after`); straight after the mark it does not (`text/symbols-use-first`
+ * frame 1: `Hi.` shows abc).
  */
 function sentenceStart(text: string, at: number): boolean {
-  return /(^|[.?!]) *$/.test(text.slice(0, at));
+  return /(^|[.?!] ) *$/.test(text.slice(0, at));
 }
 
 /** Where the next character goes: the pending character's place, else the cursor. */

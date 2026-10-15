@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/symbols-use-middle
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/symbols/use-middle
 source-sha256: 8ca93ce8b08bdafa92f15f2e35c6d3de07472a836c8a551f17bc8b815c671b26
 trigger-frame: 1

@@ -207,8 +207,8 @@ describe("input prompts against every asserted prompt golden (first screen, curs
         ? parent.options[Number(path.at(-1)) - 1]!.result
         : undefined
       : treePath(number).at(-1)!.opens;
-    // A prompt a feature implements with no plan 14 layout is that feature's (plan 17: Rename is
-    // plan 18's text input), driven by its plan's scenarios.
+    // A prompt a feature implements with no plan 14 layout is that feature's widget (plan 18's
+    // number entries, plan 17's Rename), driven by its plan's scenarios.
     if (SCREENS[number] !== undefined && screen !== undefined && "lines" in screen) {
       if (promptLayout(number, screen.kind) === undefined) return [];
     }
@@ -218,7 +218,7 @@ describe("input prompts against every asserted prompt golden (first screen, curs
   });
 
   it("covers text, number, time and code prompts", () => {
-    expect(cases.length).toBeGreaterThanOrEqual(16);
+    expect(cases.length).toBeGreaterThanOrEqual(15);
   });
 
   for (const { id, number, screen } of cases) {

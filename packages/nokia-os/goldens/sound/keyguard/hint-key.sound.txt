@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/keyguard/hint-key
+status: asserted
+source: captures/6.39/plan25/sound/keyguard/hint-key
+source-sha256: d2165aa4ce9c22425b46abb561f711ac356e5c2586121a3dd08d877e993cfd00
+state: factory
+keys: 0:5
+note: 5 on a locked standby: silent.
+omitted: none
+
+@events
+# t_ms output   state

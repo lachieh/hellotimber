@@ -3,6 +3,7 @@
 // text out and paints the editor's screen.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { EditorModel } from "../display/widgets";
+import type { StockWidgetTimeline } from "../resources";
 import {
   cursorLine,
   EDITOR_LINE_WIDTH,
@@ -14,6 +15,7 @@ import {
 import { shownMode, type TextMode, type TextState } from "../text/multitap";
 import type { Flow, Widget } from "./flow";
 import { symbolTable } from "./symbol-table";
+import { HeldC } from "./held-c";
 import { TextEntry, type EditorControl } from "./text-entry";
 
 export type { EditorControl } from "./text-entry";
@@ -37,6 +39,8 @@ export interface EditorSpec {
   readonly symbols?: (flow: Flow, editor: EditorControl) => void;
   /** C on the empty text: back to the screen below (default), or nothing. */
   readonly onEmptyC?: "back" | "inert";
+  /** The cursor's blink from the node's own recording (`TextEntryOptions.blink`). */
+  readonly blink?: StockWidgetTimeline;
 }
 
 /** Characters left and parts: one part up to 160, then 153 per part (`text/counter`). */
@@ -122,6 +126,7 @@ class EditorWidget implements Widget {
   readonly #spec: EditorSpec;
   readonly #entry: TextEntry;
   #top = 0;
+  readonly #emptyC = new HeldC();
 
   constructor(spec: EditorSpec) {
     this.#spec = spec;
@@ -130,6 +135,7 @@ class EditorWidget implements Widget {
       ...(spec.text === undefined ? {} : { text: spec.text }),
       ...(spec.cursor === undefined ? {} : { cursor: spec.cursor }),
       ...(spec.mode === undefined ? {} : { mode: spec.mode }),
+      ...(spec.blink === undefined ? {} : { blink: spec.blink }),
     });
   }
 
@@ -142,17 +148,24 @@ class EditorWidget implements Widget {
 
   onKeyDown(key: PhoneKey, flow: Flow): void {
     const request = this.#entry.keyDown(key);
-    if (request === "empty-c" && (this.#spec.onEmptyC ?? "back") === "back") flow.back();
+    if (request === "empty-c" && (this.#spec.onEmptyC ?? "back") === "back") this.#emptyC.down();
     if (request === "symbols") (this.#spec.symbols ?? openSymbols)(flow, this.#entry.control());
   }
 
   onKey(key: PhoneKey, flow: Flow): void {
     this.#entry.keyUp(key);
-    if (key === "navi") this.#spec.options(flow, this.#entry.control());
+    if (key === "navi") {
+      // Options commits a pending character (`sms/inbox-option-reply-send`: the reply's A,
+      // typed less than a commit before, is committed when the editor shows again).
+      this.#entry.commit();
+      this.#spec.options(flow, this.#entry.control());
+    }
+    if (key === "c") this.#emptyC.up(flow);
   }
 
-  tick(dtMs: number): void {
+  tick(dtMs: number, flow: Flow): void {
     this.#entry.tick(dtMs);
+    this.#emptyC.tick(dtMs, flow);
   }
 }
 
