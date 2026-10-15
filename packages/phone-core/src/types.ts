@@ -69,7 +69,10 @@ export type ScreenModel =
       indicators?: StandbyIndicators;
       /** Standby-scoped notice, e.g. "1 message received" + Read. */
       notice?: { text: string; softkey: string };
-      /** Present only during PhoneConfig.menuOpenDelayMs, after Menu and before the carousel. */
+      /**
+       * Present only during PhoneConfig.menuOpenDelayMs (after Menu, before the carousel) and
+       * PhoneConfig.standbyKeyDelayMs (after a standby key, before its target).
+       */
       leaving?: true;
     }
   | {
@@ -135,8 +138,19 @@ export interface PhoneConfig<Metadata = unknown> {
   bootMs?: number; // 0 skips boot; otherwise defaults to bootTimeline?.durationMs ?? 3000
   /** Finite boot animation; when set, boot lasts its durationMs. */
   bootTimeline?: Timeline;
-  /** Paths opened by ▲/▼ in standby; unknown/absent = no-op. */
-  standbyKeys?: { up?: string; down?: string };
+  /**
+   * Paths (or, plan 19, applications) opened by ▲/▼ in standby; unknown/absent = no-op. An
+   * application runs as a standby application (plan 18 D11 rules: empty stack, path stays
+   * `standby`, `menuIndicator()` has no segments, `exit()` returns to standby, `levels`/`select`/
+   * `row` throw).
+   */
+  standbyKeys?: { up?: string | PhoneApplication; down?: string | PhoneApplication };
+  /**
+   * Plan 19: after a standby key, standby stays on screen with `leaving: true` this long before
+   * its target opens (as `menuOpenDelayMs` for Menu); a key meanwhile opens the target at once
+   * and goes to it. Default 0; non-negative integer.
+   */
+  standbyKeyDelayMs?: number;
   /** Menu in standby: standby stays on screen (`leaving: true`) this long before the carousel. Default 0. */
   menuOpenDelayMs?: number;
   /** Length of the Menu+digit shortcut window, from the Menu press and after each digit. Default 3000. */

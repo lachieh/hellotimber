@@ -666,17 +666,22 @@ memory`'s bar), `speed-dial-saved`, `speed-dial-erased`, `tone-done`, `nothing-t
 `standby-keys.test.ts` (new). Shared: phone-core; plan 18 Task 4's standby-application activation is
 reused, not duplicated.
 
-- [ ] TDD `standbyKeys` with an application: ▼ runs it as a standby application (path `standby`,
+- [x] TDD `standbyKeys` with an application: ▼ runs it as a standby application (path `standby`,
       empty stack, `menuIndicator()` without segments, `exit()` to standby, `levels`/`select`/`row`
       throw); a path still navigates as before; power-off deactivates it once; `navigate()` while it
       runs deactivates it (`navigate`); an exception in `createSession` shows `App error`.
-- [ ] TDD `standbyKeyDelayMs`: standby with `leaving: true` for that long, then the target; keys
+- [x] TDD `standbyKeyDelayMs`: standby with `leaving: true` for that long, then the target; keys
       during the delay per Task 0 S (kernel default: C returns to standby, other keys are ignored);
       invalid values throw.
-- [ ] Existing tests pass unchanged; configs without the seams produce identical models.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
+- [x] Existing tests pass unchanged; configs without the seams produce identical models.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
       `vp check --fix`.
-- [ ] Commit: `feat(phone-core): standby keys that open applications`.
+- [x] Commit: `feat(phone-core): standby keys that open applications`.
+
+Deviation: **Task 4:** a key during the delay opens the target at once and goes to it (Task 0 S:
+`standby/lead-c`, `lead-down`), so the power key's long press in the delay powers off what it
+opened. The notice's activation origin is renamed `standby` (notice and standby key applications
+share it); `src/index.ts` needs no change (no new export).
 
 ### Task 5 - SIM card, entries and the phone book record (pure, TDD)
 

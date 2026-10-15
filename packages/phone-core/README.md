@@ -62,8 +62,10 @@ unsubscribe();
   new TopLevelEntry(entry, new MenuGraphic("games", icon));
   ```
 
-- Host policy is configuration, not kernel code: `standbyKeys` (paths for ▲/▼ in standby),
-  `carrier` (default `""`), `shortcutWindowMs` (default 3000), and `menuOpenDelayMs`
+- Host policy is configuration, not kernel code: `standbyKeys` (paths or applications for ▲/▼
+  in standby), `standbyKeyDelayMs` (default 0: standby stays on screen with `leaving: true` that
+  long before a standby key's target opens; a key meanwhile opens the target at once and goes
+  to it), `carrier` (default `""`), `shortcutWindowMs` (default 3000), and `menuOpenDelayMs`
   (default 0: standby stays on screen with `leaving: true` before the carousel). The standby
   `clock()` and submenu `detail` readers are re-read on every tick; a changed value emits one
   snapshot. Submenus choose `presentation: "rows" | "pages"`.
@@ -155,6 +157,13 @@ unsubscribe();
 
   ```ts
   phone.setNotice({ text: "1 message received", softkey: "Read", open: inbox });
+  ```
+
+- A standby key whose target is an application runs it as the same kind of standby application
+  (plan 19: the stock firmware's ▼ opens the phone book's name list, which is no menu node):
+
+  ```ts
+  createPhone({ menu, standbyKeys: { up: "menu/call-register/dialled-numbers", down: names } });
   ```
 
 - `Bitmap` convention: one byte per pixel, row-major, `pixels.length === width * height`.
