@@ -37,9 +37,10 @@ key-down unless stated.
   key-down); an SMS arriving at a locked phone; a timed screen ending (the lock note, the hint,
   the emergency display); Screen saver On (no screen saver can show: no picture is stored in the
   virgin or factory image).
-- **Games › Settings › Lights** (Off in the captures' factory image `v639-plan15-restored.fls`;
-  plan 15's in-session Restore scroll `plan15/factory/scroll/8-6-2` shows On, and so does
-  nokia-os's factory state). While Snake II is playing, Off holds both LEDs off
+- **Games › Settings › Lights** (factory Off: Restore stores Off, which the captures' factory
+  image `v639-plan15-restored.fls` shows after its power cycle; the session that restored keeps
+  its old value until then, so plan 15's in-session scroll `plan15/factory/scroll/8-6-2` shows
+  On; see [storage-and-settings.md](storage-and-settings.md)). While Snake II is playing, Off holds both LEDs off
   (38 ms after New game; play keys and the power key change nothing) and On holds them on (30 s
   of play, no timeout). The pause (Navi or C) and the death's end release the hold with activity;
   Continue is activity and the hold returns (Off: dark again 20 ms later). Outside play the
@@ -122,7 +123,7 @@ LEDs on; Unlock during the hint (nokia-os: unlocks as at the locked standby); a 
 being forgotten when the locked standby returns; keys other than C, Unlock and digits during the
 emergency display (the hint); Continue on a game whose death had begun (nokia-os: no hold); the
 death's end lighting 27 ms before the game-over redraw in `lights/game/off/over` (nokia-os
-lights at the screen); which image is the factory state for Games › Settings › Lights.
+lights at the screen).
 
 ## What nokia-os reproduces
 
