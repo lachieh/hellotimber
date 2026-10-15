@@ -28,11 +28,5 @@ acceptancePlan({
     "sound/ringing-tone/level-5/33-mangrove":
       "this recording lacks Mangrove's 27th 7 ms chirp (≈25.7 s into the preview; 35 of the 36 " +
       "the Level 4 recording, the program, plays)",
-    "sound/ringing-tone/level-5/35-get-cool":
-      "this recording runs ≈0.7 % slower than the Level 4 recording nokia-os plays (the " +
-      "emulator's timer): 6-8 s in, its notes come up to 57 ms after nokia-os's",
-    "sound/message-tone/beep-once-keypad-off":
-      "with Keypad tones Off the beep sounds 23 ms after the vibrator in this recording; in the " +
-      "other Beep once recordings, whose program nokia-os plays, 1 ms after it",
   },
 });

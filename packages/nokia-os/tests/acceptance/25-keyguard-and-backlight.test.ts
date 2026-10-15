@@ -167,10 +167,6 @@ const scenarios: Record<string, Scenario> = {
 };
 
 /** Games › Settings › Lights Off at New game and Continue (D7). */
-const LIGHTS_OFF_LATE =
-  "the LEDs go dark at Select's release in nokia-os (the tap's 60 ms, plan 23's flow host) and " +
-  "38 ms after the key-down in the firmware: 22 ms late, over one display frame";
-
 acceptancePlan({
   plan: "25",
   scenarios,
@@ -179,30 +175,14 @@ acceptancePlan({
       "the light tick's ±3 ms: this key-down lies 13631.1 ms before the fitted tick and the LEDs " +
       "stayed lit, while factory/tap-02 (13631.6 ms) and factory/fine-252 (13627.6 ms) went dark",
     ...Object.fromEntries(
-      [
-        "keyguard/hint-during",
-        ...["000", "110", "113", "911", "999"].map((n) => `keyguard/emergency/${n}`),
-      ].map((id) => [
-        id,
-        "partial draws caught at different points: this restarted hint closes with a 17 ms draw " +
-          "(a display frame, so it counts) and a 9 ms one, where keyguard/hint, hint-late and " +
-          "emergency/08 show the one 8-9 ms draw",
-      ]),
-    ),
-    ...Object.fromEntries(
       ["off", "on"].flatMap((lights) =>
         ["over", "top-score"].map((end) => [
           `lights/game/${lights}/${end}`,
           "the capture's bot steered live from its board (another seed, a game started 22 ms " +
             "earlier): its keys do not crash nokia-os's snake, so the death's end never lights " +
-            `(tests/lights-rules.test.ts lights a crash of nokia-os's own)${
-              lights === "off" ? `; ${LIGHTS_OFF_LATE}` : ""
-            }`,
+            "(tests/lights-rules.test.ts lights a crash of nokia-os's own)",
         ]),
       ),
-    ),
-    ...Object.fromEntries(
-      ["pause-c", "pause-nav", "play"].map((end) => [`lights/game/off/${end}`, LIGHTS_OFF_LATE]),
     ),
     "keyguard/lock-cancel/digit":
       "`*` during the carousel's shortcut entry: the firmware ignores it and Phone book opens " +

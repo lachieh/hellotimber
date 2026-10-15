@@ -1,10 +1,12 @@
 import { afterEach, describe, expect, it } from "vite-plus/test";
 import { LCD_HEIGHT, LCD_WIDTH, type Golden } from "../scripts/golden-format.ts";
+import { expectGameTimeline } from "./support/game.ts";
 import {
   expectLcd,
   expectTimeline,
-  FRAME_MS,
+  periodToleranceMs,
   timingToleranceMs,
+  TWO_FRAMES_MS,
   type RecordedTimeline,
 } from "./support/golden.ts";
 
@@ -202,8 +204,8 @@ describe("expectTimeline", () => {
       expectTimeline(
         recording([
           [1000, imgB],
-          [1210, imgC],
-          [1411, imgB],
+          [1227, imgC],
+          [1436, imgB],
         ]),
         timeline,
         "Menu, ▼×4",
@@ -215,8 +217,8 @@ describe("expectTimeline", () => {
         "scenario: Menu, ▼×4",
         HEADER,
         "     1 b               0.0           0.0     0.0  ok",
-        "     2 c             193.0         210.0   +17.0  ok",
-        "     3 b             386.0         411.0   +25.0  ok       ✗ timing",
+        "     2 c             193.0         227.0   +34.0  ok",
+        "     3 b             386.0         436.0   +50.0  ok       ✗ timing",
         " last: golden ends ≥ 886.0 ms; actual held to ≥ 1000.0 ms  ok",
       ].join("\n"),
     );
@@ -314,13 +316,13 @@ describe("expectTimeline", () => {
   });
 
   it("skips untimed rows on request (probes), still comparing their pixels", () => {
-    // The last b 40 ms late: within the standard only with row 3 untimed.
+    // The last b 50 ms late: within the standard only with row 3 untimed.
     const late = recording([
       [1000, imgB],
       [1180, imgC],
-      [1426, imgB],
+      [1436, imgB],
     ]);
-    expect(failure(() => expectTimeline(late, timeline, "s"))).toMatch(/\+40\.0 +ok +✗ timing/);
+    expect(failure(() => expectTimeline(late, timeline, "s"))).toMatch(/\+50\.0 +ok +✗ timing/);
     expect(() => expectTimeline(late, timeline, "s", { untimedRows: new Set([3]) })).not.toThrow();
     expect(() =>
       expectTimeline(
@@ -354,7 +356,7 @@ describe("expectTimeline", () => {
         recording([
           [1000, imgA],
           [1400, imgB],
-          [1620, imgC],
+          [1640, imgC],
           [1786, imgB],
         ]),
         fallback,
@@ -367,14 +369,16 @@ describe("expectTimeline", () => {
       HEADER,
       "     0 a             -75.0        -400.0     n/a  ok",
       "     1 b               0.0           0.0     0.0  ok",
-      "     2 c             193.0         220.0   +27.0  ok       ✗ timing",
+      "     2 c             193.0         240.0   +47.0  ok       ✗ timing",
       "     3 b             386.0         386.0     0.0  ok",
     ]);
   });
 });
 
-// The fidelity standard (AGENTS.md): settled pixels exact, starts within one display frame (17
-// ms), or 50 ms from 1 s after the trigger, and frames under 17 ms neither required nor forbidden.
+// The fidelity standard (AGENTS.md): settled pixels exact; a one-off instant within two display
+// frames (34 ms), growing as 10 % of its time to 100 ms from 1 s; a long sequence may also drift
+// 2 % of its time; frames under 34 ms neither required nor forbidden; game ticks within 20 % of
+// their period.
 describe("the fidelity standard", () => {
   const imgP = pixels([3, 3]);
   const row = (frame: number, image: string, startMs: number, durationMs: number) => ({
@@ -403,47 +407,107 @@ describe("the fidelity standard", () => {
     [1193, imgC],
     [1386, imgB],
   ];
+  /** a, b (the trigger) held `atMs`, then c held ≥ 500 ms: one change, `atMs` after the key. */
+  const oneChange = (atMs: number): Golden => ({
+    ...timeline,
+    timeline: [
+      row(0, "a", 1, 75),
+      row(1, "b", 76, atMs),
+      { ...row(2, "c", 76 + atMs, 500), lowerBound: true },
+    ],
+  });
+  const cAt = (ms: number) =>
+    recording(
+      [
+        [1000, imgB],
+        [1000 + ms, imgC],
+      ],
+      1000 + ms + 600,
+    );
 
-  it("allows one display frame, growing as 5 % of the elapsed time to 50 ms from 1 s", () => {
-    expect([0, 193, 340, 500, 900, 1000, 2900, -1200].map(timingToleranceMs)).toEqual([
-      17, 17, 17, 25, 45, 50, 50, 50,
+  it("allows two display frames, growing as 10 % of the elapsed time to 100 ms from 1 s", () => {
+    expect([0, 193, 340, 500, 900, 1000, 2900, -1200].map((t) => timingToleranceMs(t))).toEqual([
+      34, 34, 34, 50, 90, 100, 100, 100,
     ]);
-    expect(FRAME_MS).toBe(17);
+    expect(TWO_FRAMES_MS).toBe(34);
+    // A sequence 8 s long may also have drifted 2 %: 160 ms.
+    expect(timingToleranceMs(8000, 8000)).toBe(260);
   });
 
-  it("ignores a 16 ms partial frame in the golden, shown or not", () => {
-    const golden = withPartial(16);
+  it("matches a one-off change within its tolerance, not beyond", () => {
+    for (const [at, ok, late] of [
+      [193, 34, 35],
+      [500, 50, 51],
+      [1450, 100, 101],
+    ] as const) {
+      expect(() => expectTimeline(cAt(at + ok), oneChange(at), "s")).not.toThrow();
+      expect(() => expectTimeline(cAt(at - ok), oneChange(at), "s")).not.toThrow();
+      expect(failure(() => expectTimeline(cAt(at + late), oneChange(at), "s"))).toMatch(
+        /c .*✗ timing/,
+      );
+    }
+    // A real defect: 150 ms late at 200 ms.
+    expect(failure(() => expectTimeline(cAt(350), oneChange(200), "s"))).toMatch(
+      /\+150\.0 +ok +✗ timing/,
+    );
+  });
+
+  it("lets a long animation drift 2 % of its time, not run 5 % slow", () => {
+    // b and c in turn every 500 ms for 8 s after the trigger.
+    const steps = Array.from({ length: 17 }, (_, k) => k);
+    const animation: Golden = {
+      ...timeline,
+      timeline: [
+        row(0, "a", 1, 75),
+        ...steps.map((k) => ({
+          ...row(k + 1, k % 2 === 0 ? "b" : "c", 76 + k * 500, 500),
+          lowerBound: k === 16,
+        })),
+      ],
+    };
+    const played = (rate: number) =>
+      recording(
+        steps.map((k) => [1000 + Math.round(k * 500 * rate), k % 2 === 0 ? imgB : imgC]),
+        12_000,
+      );
+    // 0.7 % slow: 57 ms behind after 8 s.
+    expect(() => expectTimeline(played(1.007), animation, "s")).not.toThrow();
+    expect(failure(() => expectTimeline(played(1.05), animation, "s"))).toMatch(/✗ timing/);
+  });
+
+  it("ignores a 33 ms partial frame in the golden, shown or not", () => {
+    const golden = withPartial(33);
     expect(() => expectTimeline(recording(plain), golden, "s")).not.toThrow();
     const shown = recording([
       [1000, imgB],
       [1193, imgP],
-      [1209, imgC],
+      [1226, imgC],
       [1386, imgB],
     ]);
     expect(() => expectTimeline(shown, golden, "s")).not.toThrow();
   });
 
   it("pairs a golden partial draw with the same picture shown longer", () => {
-    // p for 9 ms in the golden, 23 ms here (starting 14 ms earlier): c still starts in time.
+    // p for 9 ms in the golden, 40 ms here (starting 33 ms earlier): c still starts in time.
     const longer = recording([
       [1000, imgB],
-      [1179, imgP],
-      [1202, imgC],
+      [1160, imgP],
+      [1200, imgC],
       [1386, imgB],
     ]);
     expect(() => expectTimeline(longer, withPartial(9), "s")).not.toThrow();
-    // Not in the golden at all, a 23 ms frame is a difference.
+    // Not in the golden at all, a 40 ms frame is a difference.
     expect(failure(() => expectTimeline(longer, timeline, "s"))).toMatch(/✗ pixels/);
   });
 
   it("ignores a partial draw at the trigger", () => {
-    // b's first 16 ms are a partial draw p in the golden; the recording draws b at once.
+    // b's first 33 ms are a partial draw p in the golden; the recording draws b at once.
     const golden: Golden = {
       ...withPartial(16),
       timeline: [
         row(0, "a", 1, 75),
-        row(1, "p", 76, 16),
-        row(2, "b", 92, 177),
+        row(1, "p", 76, 33),
+        row(2, "b", 109, 160),
         row(3, "c", 269, 193),
         { ...row(4, "b", 462, 500), lowerBound: true },
       ],
@@ -451,86 +515,31 @@ describe("the fidelity standard", () => {
     expect(() => expectTimeline(recording(plain), golden, "s")).not.toThrow();
   });
 
-  it("does not ignore a 30 ms frame in the golden", () => {
-    expect(failure(() => expectTimeline(recording(plain), withPartial(30), "s"))).toMatch(
+  it("does not ignore a 40 ms frame in the golden", () => {
+    expect(failure(() => expectTimeline(recording(plain), withPartial(40), "s"))).toMatch(
       /     2 p .*✗ pixels/,
     );
   });
 
-  it("ignores a 16 ms partial frame in the recording, not a 30 ms one", () => {
+  it("ignores a 33 ms partial frame in the recording, not a 40 ms one", () => {
     const partial = (ms: number) =>
       recording([
         [1000, imgB],
-        [1177 - ms + 16, imgP],
+        [1193 - ms, imgP],
         [1193, imgC],
         [1386, imgB],
       ]);
-    expect(() => expectTimeline(partial(16), timeline, "s")).not.toThrow();
+    expect(() => expectTimeline(partial(33), timeline, "s")).not.toThrow();
     // A partial draw that returns to the frame before it is no change at all.
     const flicker = recording([
       [1000, imgB],
       [1100, imgP],
-      [1110, imgB],
+      [1130, imgB],
       [1193, imgC],
       [1386, imgB],
     ]);
     expect(() => expectTimeline(flicker, timeline, "s")).not.toThrow();
-    expect(failure(() => expectTimeline(partial(30), timeline, "s"))).toMatch(/✗ pixels/);
-  });
-
-  it("fails a short step's start 18 or 20 ms off, passes 20 ms from 400 ms on", () => {
-    for (const late of [18, 20]) {
-      const off = recording([
-        [1000, imgB],
-        [1193 + late, imgC],
-        [1386, imgB],
-      ]);
-      expect(failure(() => expectTimeline(off, timeline, "s"))).toMatch(/c .*✗ timing/);
-    }
-    // a b c b with b's second showing 400 ms after the trigger: 20 ms late is within 5 %.
-    const later: Golden = {
-      ...timeline,
-      timeline: timeline.timeline!.map((r) =>
-        r.frame === 2 ? { ...r, durationMs: 207 } : r.frame === 3 ? { ...r, startMs: 476 } : r,
-      ),
-    };
-    const late = recording([
-      [1000, imgB],
-      [1193, imgC],
-      [1420, imgB],
-    ]);
-    expect(() => expectTimeline(late, later, "s")).not.toThrow();
-    const later25 = recording([
-      [1000, imgB],
-      [1193, imgC],
-      [1425, imgB],
-    ]);
-    expect(failure(() => expectTimeline(later25, later, "s"))).toMatch(/\+25\.0 +ok +✗ timing/);
-  });
-
-  it("allows 50 ms once a frame starts 1 s or more after the trigger", () => {
-    // a, b (the trigger) held 1450 ms, then c held ≥ 500 ms.
-    const note: Golden = {
-      ...timeline,
-      timeline: [
-        row(0, "a", 1, 75),
-        row(1, "b", 76, 1450),
-        { ...row(2, "c", 1526, 500), lowerBound: true },
-      ],
-    };
-    const cAt = (late: number) =>
-      recording(
-        [
-          [1000, imgB],
-          [2450 + late, imgC],
-        ],
-        3200,
-      );
-    expect(() => expectTimeline(cAt(20), note, "s")).not.toThrow();
-    expect(() => expectTimeline(cAt(45), note, "s")).not.toThrow();
-    expect(() => expectTimeline(cAt(-45), note, "s")).not.toThrow();
-    expect(failure(() => expectTimeline(cAt(60), note, "s"))).toMatch(/\+60\.0 +ok +✗ timing/);
-    expect(failure(() => expectTimeline(cAt(100), note, "s"))).toMatch(/\+100\.0 +ok +✗ timing/);
+    expect(failure(() => expectTimeline(partial(40), timeline, "s"))).toMatch(/✗ pixels/);
   });
 
   it("still fails a wrong pixel in a settled frame", () => {
@@ -541,6 +550,35 @@ describe("the fidelity standard", () => {
     ]);
     expect(failure(() => expectTimeline(wrong, timeline, "s"))).toMatch(
       /1 px differ \(1 extra, 0 missing\)/,
+    );
+  });
+
+  it("still fails a missing settled frame", () => {
+    const skipped = recording([
+      [1000, imgB],
+      [1386, imgB],
+    ]);
+    expect(failure(() => expectTimeline(skipped, timeline, "s"))).toMatch(/✗ never shown/);
+  });
+
+  it("holds a game's ticks to 20 % of their period", () => {
+    expect([60, 85, 200, 1860].map(periodToleranceMs)).toEqual([17, 17, 40, 372]);
+    // Four boards a 200 ms period apart (one pixel moving), and a recording of them `ms` apart.
+    const rows = [0, 1, 2, 3].map((k) => ({
+      startMs: k * 200,
+      pixels: pixels([k, 0]),
+      image: `t${k}`,
+      tick: true,
+      timing: { kind: "interval" as const },
+    }));
+    const ticks = (ms: number) => ({
+      frames: rows.map((r, k) => ({ startMs: k * ms, pixels: r.pixels })),
+    });
+    expect(() => expectGameTimeline(ticks(240), "g", rows)).not.toThrow();
+    expect(() => expectGameTimeline(ticks(160), "g", rows)).not.toThrow();
+    // A period 30 % off is a speed a player feels.
+    expect(() => expectGameTimeline(ticks(260), "g", rows)).toThrow(
+      /260 ms after row 0, golden 200 ms/,
     );
   });
 });

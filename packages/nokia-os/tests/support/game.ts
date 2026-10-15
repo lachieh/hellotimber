@@ -20,8 +20,9 @@ import { goto } from "./drive";
 import {
   expectLcd,
   expectTimeline,
-  timingToleranceMs,
   lcdMismatch,
+  periodToleranceMs,
+  timingToleranceMs,
   type RecordedFrame,
   type RecordedTimeline,
 } from "./golden";
@@ -168,8 +169,9 @@ export interface GameRow {
 /**
  * A gameplay timeline's rows from its trigger, as the session must show them (D6). A tick redraw
  * in two bursts counts once, with the first burst's start and the second's pixels. Each row's
- * start is compared by the fidelity standard (`timingToleranceMs`) from its reference: a tick, the
- * crash and the game-over screens from the row before (never cumulatively); the death steps from
+ * start is compared by the fidelity standard from its reference: a tick from the row before by
+ * `periodToleranceMs` (the game's rhythm), the crash and the game-over screens from the row before
+ * by `timingToleranceMs` (never cumulatively); the death steps from
  * the first hidden snake (across the nine captured deaths they run 222-251 ms); the game-over
  * note from the first game-over screen. The fireworks pictures after the first are compared by
  * pixels and order only: their steps differ between recordings by up to 37 ms (62 ms summed),
@@ -313,7 +315,7 @@ export function expectGameTimeline(
     expect(
       Math.abs(ours - golden),
       `${id} image ${row.image} (row ${i}): ${ours} ms after row ${from}, golden ${golden} ms`,
-    ).toBeLessThanOrEqual(timingToleranceMs(golden));
+    ).toBeLessThanOrEqual(row.tick ? periodToleranceMs(golden) : timingToleranceMs(golden));
   });
 }
 
@@ -619,7 +621,7 @@ function periodsScenario(): void {
     const spread = Math.max(...row.intervalsMs) - Math.min(...row.intervalsMs);
     row.intervalsMs.forEach((ms, i) => {
       const ours = starts[i + 2]! - starts[i + 1]!;
-      const tolerance = Math.max(timingToleranceMs(ms), spread);
+      const tolerance = Math.max(periodToleranceMs(ms), spread);
       expect(Math.abs(ours - ms), `${where}: interval ${i + 1}`).toBeLessThanOrEqual(tolerance);
     });
     if (row.level === 10) break;

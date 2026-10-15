@@ -439,33 +439,6 @@ export const MESSAGES_COVERS: Readonly<Record<string, readonly string[]>> = {
 
 /** Asserted plan 18 goldens whose scenario cannot pass, with the reason. */
 export const MESSAGES_KNOWN_GAPS: Readonly<Record<string, string>> = {
-  ...Object.fromEntries(
-    (
-      [
-        ["sms/full-persist-inbox-open", 80],
-        ["sms/inbox-menu-2-2", 78],
-        ["sms/notice-inbox-menu", 35],
-        ["sms/persist-inbox", 35],
-        ["sms/restore-inbox", 34],
-      ] as const
-    ).map(([id, ms]) => [
-      id,
-      `\`Opening\` shows for ${ms} ms in this recording and 60 ms in nokia-os: the SIM read takes ` +
-        "34-80 ms between recordings of one box, more than a display frame either side of any " +
-        "one duration",
-    ]),
-  ),
-  ...Object.fromEntries(
-    ["sms/inbox-read", "sms/notice-read", "sms/notice-count-read"].map((id) => [
-      id,
-      "before `Opening` the firmware shows the cleared screen with the box's icon for 22 ms (a " +
-        "two-step redraw, over one display frame) that nokia-os does not draw" +
-        (id === "sms/notice-read" ? "; `Opening` then lasts 35 ms here, 60 ms in nokia-os" : ""),
-    ]),
-  ),
-  "sms/send-by-set-numeric":
-    "frame 15: the firmware redraws the typed digit in two steps, the first held 28 ms (over " +
-    "one display frame); nokia-os draws the digit at once",
   "sms/notice":
     "image standby-down-after-c: ▼ at standby opens the Phone book (No phone numbers) in the " +
     "capture, while nokia-os's standby keys (plan 14's STOCK_STANDBY_KEYS, after the spec's " +

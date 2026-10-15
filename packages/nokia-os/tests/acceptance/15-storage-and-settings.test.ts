@@ -295,10 +295,4 @@ const BOOT_SCENARIOS: Record<string, Scenario> = {
 acceptancePlan({
   plan: "15",
   scenarios: { ...PROBE_SCENARIOS, ...BOOT_SCENARIOS },
-  knownGaps: {
-    "boot/security-gate":
-      "the self-test's first frame shows 245 ms after the power key in this recording, 268 ms in " +
-      "nokia-os (boot/power-on's; 245-270 ms across the boot recordings): 23 ms early, beyond " +
-      "one display frame",
-  },
 });

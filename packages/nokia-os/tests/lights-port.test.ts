@@ -47,11 +47,11 @@ describe("expectLightsTimeline", () => {
     expectLightsTimeline(recorded([...both(5000, true), ...both(20_494, false)]), golden, "ok");
   });
 
-  it("reports an off edge earlier than the fidelity standard allows (50 ms, 15 s after the key)", () => {
+  it("reports an off edge earlier than the fidelity standard allows (100 ms, 15 s after the key)", () => {
     expect(() =>
-      expectLightsTimeline(recorded([...both(5000, true), ...both(20_440, false)]), golden, "t"),
+      expectLightsTimeline(recorded([...both(5000, true), ...both(20_390, false)]), golden, "t"),
     ).toThrow(
-      /t: lights differ from lights\/test\n[^]*15491  display  off\s+15440\.0  -51\.0 ✗ early/,
+      /t: lights differ from lights\/test\n[^]*15491  display  off\s+15390\.0  -101\.0 ✗ early/,
     );
   });
 

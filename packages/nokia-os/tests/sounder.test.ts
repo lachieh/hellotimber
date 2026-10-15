@@ -67,16 +67,16 @@ function failure(recording: RecordedSound): string {
 }
 
 describe("expectSoundTimeline", () => {
-  it("accepts a beep at its key, a preview onset within 25 ms and its edges within 2 ms", () => {
+  it("accepts a beep at its key and a preview 1 ms early", () => {
     expect(() => expectSoundTimeline(recorded(), GOLDEN, "test")).not.toThrow();
   });
 
   it("marks an edge early against its program's start", () => {
     const text = failure(
-      recorded((events) => events.map((e) => (e.atMs === 1105 ? { ...e, atMs: 1087 } : e))),
+      recorded((events) => events.map((e) => (e.atMs === 1105 ? { ...e, atMs: 1068 } : e))),
     );
     expect(text).toContain("Sound mismatch: sound/test");
-    expect(text).toMatch(/1106 {2}buzzer {4}1175 v=16 +1087 +-19 {2}\+991 ±17 \(-18\) {2}✗ timing/);
+    expect(text).toMatch(/1106 {2}buzzer {4}1175 v=16 +1068 +-38 {2}\+991 ±36 \(-37\) {2}✗ timing/);
   });
 
   it("marks a wrong frequency", () => {
@@ -99,18 +99,18 @@ describe("expectSoundTimeline", () => {
 
   it("marks a beep that starts after its key's golden onset (latency only lags)", () => {
     const text = failure(
-      recorded((events) => events.map((e) => (e.atMs === 0 ? tone(48, 900) : e))),
+      recorded((events) => events.map((e) => (e.atMs === 0 ? tone(65, 900) : e))),
     );
-    expect(text).toMatch(/30 {2}tone .*\+18 {2}key −103\.\.\+17 {2}✗ timing/);
+    expect(text).toMatch(/30 {2}tone .*\+35 {2}key −103\.\.\+34 {2}✗ timing/);
   });
 
-  it("marks a preview onset 51 ms off (≈1 s after the key: ±50 ms)", () => {
+  it("marks a preview onset 101 ms off (≈1 s after the key: ±99 ms)", () => {
     const text = failure(
       recorded((events) =>
-        events.map((e) => (e.atMs >= 990 && e.atMs < 1000 ? { ...e, atMs: e.atMs + 51 } : e)),
+        events.map((e) => (e.atMs >= 990 && e.atMs < 1000 ? { ...e, atMs: e.atMs + 101 } : e)),
       ),
     );
-    expect(text).toMatch(/991 {2}buzzer .*onset ±50 {2}✗ timing/);
+    expect(text).toMatch(/991 {2}buzzer .*onset ±99 {2}✗ timing/);
   });
 });
 

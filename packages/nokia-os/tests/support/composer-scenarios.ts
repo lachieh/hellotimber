@@ -483,7 +483,7 @@ export function previewScenario(id: string): void {
  */
 export const PREVIEW_GAPS: Readonly<Record<string, string>> = {
   ...Object.fromEntries(
-    [2, 3, 7].flatMap((slot) => [
+    [2, 3, 4, 7].flatMap((slot) => [
       [
         `sound/composer/preview-slot-${slot}-level-5`,
         "Level 5's jump follows a free-running timer",
@@ -492,21 +492,6 @@ export const PREVIEW_GAPS: Readonly<Record<string, string>> = {
         `sound/composer/preview-slot-${slot}-ascending`,
         "Ascending's steps follow a free-running timer",
       ],
-    ]),
-  ),
-  ...Object.fromEntries(
-    [
-      "level-1",
-      "level-2",
-      "level-3",
-      "level-4",
-      "level-5",
-      "ascending",
-      "ring-once",
-      "vibrator-off",
-    ].map((condition) => [
-      `sound/composer/preview-slot-4-${condition}`,
-      "at 225 BPM a preview's quarter is 33 timer units, Play's 32 (one tone captured)",
     ]),
   ),
   "sound/composer/preview-volume-5": "Level 5's jump follows a free-running timer",

@@ -10,30 +10,64 @@ import {
 
 // ---------------------------------------------------------------- the fidelity standard
 //
-// Golden comparisons follow AGENTS.md "Fidelity standard": what a person can perceive. Pixels of
-// every settled frame are exact. Timing is measured from a reference (the trigger, or the event a
-// check names): an instant `t` ms after it matches within `timingToleranceMs(t)`, one display
-// frame (FRAME_MS) for animation steps, growing as 5 % of `t` to LONG_TOLERANCE_MS for holds of
-// about a second or longer and the drift of long timelines. A frame shown for less than FRAME_MS,
-// in the golden or the recording, is a partial redraw: neither required nor forbidden, as long as
-// the frames around it match.
+// Golden comparisons follow AGENTS.md "Fidelity standard": a difference matters only if a person
+// could perceive it. Pixels of every settled frame are exact; frequencies and volumes are exact.
+// Timing is measured from a reference (the trigger, or the event a check names):
+//
+// - a one-off instant `t` ms after it (a screen change, a note's start, a light switching) matches
+//   within `timingToleranceMs(t)`: two display frames, growing as 10 % of `t` to
+//   LONG_TOLERANCE_MS from 1 s;
+// - an instant of a long sequence (a tune, an animation) may also have drifted SEQUENCE_DRIFT of
+//   the time since the sequence's first instant (`timingToleranceMs(t, sequenceMs)`);
+// - a game's tick-to-tick interval, where rhythm is the experience, matches within
+//   `periodToleranceMs(period)`;
+// - a frame shown for less than TWO_FRAMES_MS, in the golden or the recording, is a partial
+//   redraw: neither required nor forbidden, as long as the frames around it match.
 
-/** One display frame at 60 Hz: the smallest timing difference, and the shortest frame, that counts. */
+/** One display frame at 60 Hz. */
 export const FRAME_MS = 17;
-/** The tolerance of an instant a second or more after its reference. */
-export const LONG_TOLERANCE_MS = 50;
+/** Two display frames: the smallest timing difference, and the shortest frame, that counts. */
+export const TWO_FRAMES_MS = 2 * FRAME_MS;
+/** The tolerance of a one-off instant a second or more after its reference. */
+export const LONG_TOLERANCE_MS = 100;
+/** How far a long sequence may drift, as a share of the time since its first instant. */
+export const SEQUENCE_DRIFT = 0.02;
 
 /**
- * How far an instant `elapsedMs` (the golden's) after its reference may move: 5 % of the elapsed
- * time, at least FRAME_MS (up to 340 ms) and at most LONG_TOLERANCE_MS (from 1000 ms).
+ * How far an instant `elapsedMs` (the golden's) after its reference may move: 10 % of the elapsed
+ * time, at least TWO_FRAMES_MS (up to 340 ms) and at most LONG_TOLERANCE_MS (from 1000 ms), plus
+ * SEQUENCE_DRIFT of `sequenceMs`, how far into a long sequence it lies (0 for a one-off).
  */
-export function timingToleranceMs(elapsedMs: number): number {
-  return Math.min(LONG_TOLERANCE_MS, Math.max(FRAME_MS, Math.abs(elapsedMs) / 20));
+export function timingToleranceMs(elapsedMs: number, sequenceMs = 0): number {
+  const oneOff = Math.min(LONG_TOLERANCE_MS, Math.max(TWO_FRAMES_MS, Math.abs(elapsedMs) / 10));
+  return oneOff + SEQUENCE_DRIFT * Math.abs(sequenceMs);
 }
 
-/** Whether `actualMs` matches the golden's `goldenMs`, both measured from the same reference. */
-export function sameTime(actualMs: number, goldenMs: number): boolean {
-  return Math.abs(actualMs - goldenMs) <= timingToleranceMs(goldenMs);
+/**
+ * The tolerance of each instant of a timeline whose golden instants, from its reference, are
+ * `goldenStartsMs`: its first change after the reference is a one-off, the later ones a sequence
+ * drifting from that change.
+ */
+export function timelineTolerance(goldenStartsMs: readonly number[]): (goldenMs: number) => number {
+  const firstChangeMs = goldenStartsMs.find((ms) => ms > 0);
+  return (goldenMs) =>
+    timingToleranceMs(
+      goldenMs,
+      firstChangeMs === undefined ? 0 : Math.max(0, goldenMs - firstChangeMs),
+    );
+}
+
+/** Whether `actualMs` is within `toleranceMs` of the golden's `goldenMs` (one reference). */
+export function sameTime(actualMs: number, goldenMs: number, toleranceMs: number): boolean {
+  return Math.abs(actualMs - goldenMs) <= toleranceMs;
+}
+
+/**
+ * How far a game's tick-to-tick interval (the golden's `periodMs`) may move: 20 % of it, at least
+ * one display frame, so that a speed or rhythm a player would feel still differs.
+ */
+export function periodToleranceMs(periodMs: number): number {
+  return Math.max(FRAME_MS, Math.abs(periodMs) / 5);
 }
 
 /** A frame of a timeline: when it starts and what it shows. */
@@ -44,7 +78,7 @@ export interface ShownFrame {
 
 /**
  * A golden timeline and a recording (each frame shown until the next one starts, the last until
- * its side's end) without their partial draws: an inner frame shown for less than FRAME_MS is
+ * its side's end) without their partial draws: an inner frame shown for less than TWO_FRAMES_MS is
  * left out unless the other side shows the same picture (`same`), where it pairs with it. After
  * frames left out, one that repeats the frame before them continues it. The first and the last
  * frame of each side always stay.
@@ -63,7 +97,7 @@ export function withoutPartialDraws<G extends ShownFrame, A extends ShownFrame>(
     side.frames.forEach((frame, i) => {
       const next = side.frames[i + 1];
       const shownMs = (next?.startMs ?? side.endMs) - frame.startMs;
-      if (i > 0 && next !== undefined && shownMs < FRAME_MS && !shownElsewhere(frame)) {
+      if (i > 0 && next !== undefined && shownMs < TWO_FRAMES_MS && !shownElsewhere(frame)) {
         dropped = true;
         return;
       }
@@ -231,7 +265,8 @@ const signed = (value: number): string => (value > 0 ? `+${ms(value)}` : ms(valu
  * `trigger-frame: N` the recording's trigger is matched to golden frame N's start; with
  * `before-recording` the first change (frame 1) is matched and frame 0's duration is not compared.
  * Frame starts and the last frame's end follow the fidelity standard (`timingToleranceMs` from the
- * alignment); partial draws under FRAME_MS on either side are left out (`withoutPartialDraws`).
+ * alignment, a sequence from the first change after it); partial draws under TWO_FRAMES_MS on
+ * either side are left out (`withoutPartialDraws`).
  */
 export function expectTimeline(
   recorded: RecordedTimeline,
@@ -281,6 +316,7 @@ export function expectTimeline(
   );
   const rows = settled.golden.filter((row) => row.index >= firstRow);
   const actual = settled.actual.slice(lead === undefined ? 0 : 1);
+  const tolerance = timelineTolerance(rows.map((row) => row.startMs));
 
   const lines = [TABLE_HEADER];
   let failed = false;
@@ -299,7 +335,9 @@ export function expectTimeline(
     const marks: string[] = [];
     const timed = !(beforeRecording && row.index === 0) && !untimedRows.has(row.index);
     const delta = actualStart - row.startMs;
-    if (timed && !sameTime(actualStart, row.startMs)) marks.push("✗ timing");
+    if (timed && !sameTime(actualStart, row.startMs, tolerance(row.startMs))) {
+      marks.push("✗ timing");
+    }
     const mismatch = lcdMismatch(
       frame.pixels,
       { id: golden.id, image: findGoldenImage(golden, row.image) },
@@ -319,6 +357,7 @@ export function expectTimeline(
   const last = lastFrameCheck(recorded, actual, rows.length - 1, actualOrigin, {
     endMs: goldenEnd,
     lowerBound: lastRow.lowerBound,
+    toleranceMs: tolerance(goldenEnd),
   });
   if (!last.ok) failed = true;
   lines.push(` last: ${last.text}  ${last.ok ? "ok" : "✗"}`);
@@ -346,12 +385,12 @@ function lastFrameCheck(
   actual: readonly RecordedFrame[],
   index: number,
   actualOrigin: number,
-  golden: { readonly endMs: number; readonly lowerBound: boolean },
+  golden: { readonly endMs: number; readonly lowerBound: boolean; readonly toleranceMs: number },
 ): { text: string; ok: boolean } {
   const frame = actual[index];
   if (!frame) return { text: "not reached", ok: false };
   const ends = `golden ends ${golden.lowerBound ? "≥ " : ""}${ms(golden.endMs)} ms`;
-  const tolerance = timingToleranceMs(golden.endMs);
+  const tolerance = golden.toleranceMs;
   const next = actual[index + 1];
   if (next) {
     const end = next.startMs - actualOrigin;

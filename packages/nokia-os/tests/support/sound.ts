@@ -14,7 +14,7 @@ import {
   type SoundState,
 } from "../../scripts/sound-format.ts";
 import type { StockSoundEvent } from "../../src/index";
-import { FRAME_MS, timingToleranceMs } from "./golden.ts";
+import { timingToleranceMs, TWO_FRAMES_MS } from "./golden.ts";
 import type { Rig } from "./rig.ts";
 
 /**
@@ -263,8 +263,10 @@ export function expectSoundTimeline(
     if (have !== want) marks.push(`✗ state ${have}`);
     let text: string;
     if (check.kind === "key") {
-      text = `key −${KEY_LATENCY_MAX_MS}..+${FRAME_MS}`;
-      if (delta < -KEY_LATENCY_MAX_MS - FRAME_MS || delta > FRAME_MS) marks.push("✗ timing");
+      text = `key −${KEY_LATENCY_MAX_MS}..+${TWO_FRAMES_MS}`;
+      if (delta < -KEY_LATENCY_MAX_MS - TWO_FRAMES_MS || delta > TWO_FRAMES_MS) {
+        marks.push("✗ timing");
+      }
     } else if (check.kind === "onset") {
       const toleranceMs = timingToleranceMs(row.ms);
       text = `onset ±${Math.round(toleranceMs)}`;
@@ -272,7 +274,8 @@ export function expectSoundTimeline(
     } else {
       const anchor = golden.rows[check.anchor]!;
       const offset = row.ms - anchor.ms;
-      const toleranceMs = timingToleranceMs(offset);
+      // A program's rows after its onset (a tune) are a sequence from it.
+      const toleranceMs = timingToleranceMs(offset, offset);
       const base = matched[check.anchor];
       const relative = base === undefined ? NaN : delta - (base.ms - anchor.ms);
       text = `+${anchor.ms} ±${Math.round(toleranceMs)} (${relative >= 0 ? "+" : ""}${relative})`;

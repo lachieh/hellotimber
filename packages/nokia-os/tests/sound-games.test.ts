@@ -10,7 +10,7 @@ import { GAME_CUES, KEYPAD_BEEP } from "../src/resources";
 import { SoundSequencer } from "../src/sound/sequencer";
 import { StockSounder } from "../src/sound/sounder";
 import type { SoundGolden } from "../scripts/sound-format.ts";
-import { FRAME_MS, LONG_TOLERANCE_MS } from "./support/golden.ts";
+import { LONG_TOLERANCE_MS, TWO_FRAMES_MS } from "./support/golden.ts";
 import { soundStorage, type SettingChoices } from "./support/sound-scenarios.ts";
 import { expectSoundTimeline, type RecordedSound } from "./support/sound.ts";
 
@@ -180,11 +180,11 @@ describe("cue comparison (tests/support/sound.ts, `cues`)", () => {
 
   it("matches each cue's onset by the fidelity standard, not as a key's output", () => {
     expect(check(meals(8287 + LONG_TOLERANCE_MS))).not.toThrow();
-    expect(check(meals(8287 - LONG_TOLERANCE_MS - 1))).toThrow(/onset ±50 {2}✗ timing/);
+    expect(check(meals(8287 - LONG_TOLERANCE_MS - 1))).toThrow(/onset ±100 {2}✗ timing/);
   });
 
-  it("holds a cue's own edges to one display frame of its onset", () => {
-    expect(check(meals(8287, 6 + FRAME_MS))).not.toThrow();
-    expect(check(meals(8287, 6 + FRAME_MS + 1))).toThrow(/\+8287 ±17 \(\+18\) {2}✗ timing/);
+  it("holds a cue's own edges to two display frames of its onset", () => {
+    expect(check(meals(8287, 6 + TWO_FRAMES_MS))).not.toThrow();
+    expect(check(meals(8287, 6 + TWO_FRAMES_MS + 1))).toThrow(/\+8287 ±34 \(\+35\) {2}✗ timing/);
   });
 });

@@ -20,7 +20,7 @@ import { loadGolden } from "./goldens.ts";
 import { standbyRig, type Rig } from "./rig.ts";
 import type { Golden } from "../../scripts/golden-format.ts";
 import { findGoldenImage } from "../../scripts/golden-format.ts";
-import { lcdMismatch, sameTime, withoutPartialDraws } from "./golden.ts";
+import { lcdMismatch, sameTime, timelineTolerance, withoutPartialDraws } from "./golden.ts";
 
 /**
  * Asserted T9 goldens the implementation cannot reproduce, with the reason (plan 18b Task 8:
@@ -176,7 +176,7 @@ export function expectT9Still(target: T9Target, golden: Golden, context: string)
  * A timeline golden against a recording (plan 18b): the frame before the trigger is the golden's
  * row before `trigger-frame`; the changes from the trigger are its rows, aligned on the first
  * (a key's redraw latency is not reproduced, plan 14 D8), each later row starting by the
- * fidelity standard. Frames under FRAME_MS on either side are left out.
+ * fidelity standard. Frames under TWO_FRAMES_MS on either side are left out.
  */
 export function expectT9Timeline(
   recording: T9Recording,
@@ -217,6 +217,7 @@ export function expectT9Timeline(
     },
     { frames: recorded, endMs: Infinity },
   );
+  const tolerance = timelineTolerance(settled.map((row) => row.startMs - origin));
   settled.forEach((row, i) => {
     const frame = changes[i];
     const where = `${context}: row ${row.index} (image ${row.image})`;
@@ -225,7 +226,7 @@ export function expectT9Timeline(
     if (mismatch !== undefined) throw new Error(mismatch);
     const expected = row.startMs - origin;
     const actual = frame.startMs - changes[0]!.startMs;
-    if (!sameTime(actual, expected)) {
+    if (!sameTime(actual, expected, tolerance(expected))) {
       throw new Error(`${where}: starts at ${actual} ms, golden ${expected} ms`);
     }
   });

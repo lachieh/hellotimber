@@ -43,10 +43,9 @@ export interface AcceptancePlan {
   readonly scenarios: Readonly<Record<string, Scenario>>;
   /**
    * Asserted goldens whose scenario cannot pass, each with its reason: a difference the fidelity
-   * standard counts (a pixel, a frame of a display frame or longer, timing beyond its tolerance),
-   * often separate recordings of one path that disagree by more than it allows, or a firmware
-   * quirk behind one. Their scenarios run as expected failures, so a gap that starts passing must
-   * leave this table.
+   * standard counts (a pixel, a frame of two display frames or longer, timing beyond its
+   * tolerance), or a firmware quirk behind one. Their scenarios run as expected failures, so a gap
+   * that starts passing must leave this table.
    */
   readonly knownGaps?: Readonly<Record<string, string>>;
   /** Scenarios that may outlast the default 5 s timeout on a loaded machine, by golden id. */

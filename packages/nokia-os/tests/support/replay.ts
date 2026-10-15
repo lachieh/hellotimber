@@ -25,7 +25,7 @@ import {
   lcdMismatch,
   samePixels,
   sameTime,
-  timingToleranceMs,
+  timelineTolerance,
   withoutPartialDraws,
   type RecordedTimeline,
 } from "./golden.ts";
@@ -699,7 +699,7 @@ function withoutBlinks(steps: readonly Step[]): Step[] {
 /**
  * Compares a recording with every row of a timeline golden, both from the recording's start, by
  * the fidelity standard (golden.ts): frame starts from the recording's start (or the last anchor
- * row), frames under FRAME_MS on either side left out.
+ * row), a sequence from the first change, frames under TWO_FRAMES_MS on either side left out.
  */
 export function expectFromStart(
   recorded: RecordedTimeline,
@@ -712,7 +712,8 @@ export function expectFromStart(
   const origin = Math.min(rows[0]!.startMs, 1);
   const last = rows.at(-1)!;
   const lastEnd = last.startMs - origin + last.durationMs;
-  // Partial draws under FRAME_MS on either side are neither required nor forbidden: the
+  const tolerance = timelineTolerance(rows.map((row) => row.startMs - origin));
+  // Partial draws under TWO_FRAMES_MS on either side are neither required nor forbidden: the
   // firmware's two-step redraws (`text/hold-digit` frame 3, 6 ms; `text/number-hold-2` frame 1,
   // 9 ms), the replay's edges before standby.
   const settled = withoutPartialDraws(
@@ -738,14 +739,14 @@ export function expectFromStart(
   let expected: Step[] = settled.golden;
   // Frames that start after the golden stopped recording are not compared.
   let actual: Step[] = settled.actual.filter(
-    (step, i) => i === 0 || step.startMs < lastEnd - timingToleranceMs(lastEnd),
+    (step, i) => i === 0 || step.startMs < lastEnd - tolerance(lastEnd),
   );
   if (options.fromRow !== undefined) {
     // The frame on screen when the row starts (it may have shown since earlier) is the row's.
     const from = rows[options.fromRow]!.startMs - origin;
     let at = 0;
     actual.forEach((step, k) => {
-      if (step.startMs <= from + timingToleranceMs(from)) at = k;
+      if (step.startMs <= from + tolerance(from)) at = k;
     });
     expected = expected.filter((step) => step.row! >= options.fromRow!);
     actual = actual.slice(at);
@@ -779,7 +780,7 @@ export function expectFromStart(
     const late = frame.startMs - expectedMs;
     const ok =
       anchor === undefined
-        ? sameTime(frame.startMs - shift, step.startMs)
+        ? sameTime(frame.startMs - shift, step.startMs, tolerance(step.startMs))
         : Math.abs(late) <= anchor;
     if (timed && !ok) marks.push("✗ timing");
     if (anchor !== undefined) shift = frame.startMs - step.startMs;

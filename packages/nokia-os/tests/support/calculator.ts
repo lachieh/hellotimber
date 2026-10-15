@@ -10,7 +10,7 @@ import {
 } from "../../scripts/capture-sets/20-calculator.ts";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
 import { expect } from "vite-plus/test";
-import { expectLcd, expectTimeline, lcdMismatch, timingToleranceMs } from "./golden.ts";
+import { expectLcd, expectTimeline, lcdMismatch, timelineTolerance } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { standbyRig, type Rig } from "./rig.ts";
 import { expectSoundTimeline, loadSoundGolden, playSound } from "./sound.ts";
@@ -301,7 +301,8 @@ export function keyAlignedScenario(id: string, rig: Rig, key: PhoneKey): void {
   // The golden's last frame was cut off by the recording's end: a blink within the tolerance
   // of that end may fall either side of it and is not compared.
   const lastEnd = last.startMs + last.durationMs;
-  const end = recording.triggerMs + lastEnd - timingToleranceMs(lastEnd);
+  const tolerance = timelineTolerance(rows.slice(t).map((row) => row.startMs));
+  const end = recording.triggerMs + lastEnd - tolerance(lastEnd);
   const after = recording.frames.filter(
     (frame) => frame.startMs >= recording.triggerMs && frame.startMs < end,
   );
@@ -317,7 +318,7 @@ export function keyAlignedScenario(id: string, rig: Rig, key: PhoneKey): void {
     expect(
       Math.abs(actual - row.startMs),
       `${context}: at ${actual} ms, golden ${row.startMs} ms`,
-    ).toBeLessThanOrEqual(timingToleranceMs(row.startMs));
+    ).toBeLessThanOrEqual(tolerance(row.startMs));
   });
   expect(frames.length, `${id}: frames after the golden's last`).toBe(
     rows.length - (t === 0 ? 0 : 1),

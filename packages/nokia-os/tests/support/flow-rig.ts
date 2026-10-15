@@ -11,7 +11,7 @@ import { expect } from "vite-plus/test";
 import type { Golden } from "../../scripts/golden-format.ts";
 import { findGoldenImage } from "../../scripts/golden-format.ts";
 import { StockFlowApplication, type Widget } from "../../src/widgets/flow";
-import { lcdMismatch, sameTime } from "./golden.ts";
+import { lcdMismatch, sameTime, timelineTolerance } from "./golden.ts";
 
 export type ExitOptions = Parameters<ApplicationContext["exit"]>[0];
 
@@ -116,6 +116,7 @@ export function expectFlowTimeline(
   }
   const origin = rows[trigger]!.startMs;
   const widgetRows = rows.slice(trigger, options.returns ? rows.length - 1 : rows.length);
+  const tolerance = timelineTolerance(rows.slice(trigger).map((row) => row.startMs - origin));
   widgetRows.forEach((row, i) => {
     const frame = recording.frames[i];
     const context = `${golden.id} row ${trigger + i} (image ${row.image})`;
@@ -128,7 +129,7 @@ export function expectFlowTimeline(
     if (mismatch !== undefined) throw new Error(mismatch);
     const expected = row.startMs - origin;
     expect(
-      sameTime(frame!.startMs, expected),
+      sameTime(frame!.startMs, expected, tolerance(expected)),
       `${context}: starts at ${frame!.startMs} ms, golden ${expected} ms`,
     ).toBe(true);
   });
@@ -139,7 +140,7 @@ export function expectFlowTimeline(
   );
   expect(recording.exitMs, `${golden.id}: the flow never exited`).toBeDefined();
   expect(
-    sameTime(recording.exitMs!, last.startMs - origin),
+    sameTime(recording.exitMs!, last.startMs - origin, tolerance(last.startMs - origin)),
     `${golden.id}: exits at ${recording.exitMs} ms, golden returns at ${last.startMs - origin} ms`,
   ).toBe(true);
 }

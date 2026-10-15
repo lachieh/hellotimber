@@ -10,7 +10,7 @@ import {
   recordTimeline,
   type Scenario,
 } from "../support/acceptance.ts";
-import { expectLcd, expectTimeline, FRAME_MS, lcdMismatch } from "../support/golden.ts";
+import { expectLcd, expectTimeline, lcdMismatch, timingToleranceMs } from "../support/golden.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
 import { frameAt, standbyRig, stockRig, type Rig } from "../support/rig.ts";
 
@@ -60,14 +60,19 @@ function carouselStill(id: string, n: number): void {
   const slug = SLUGS[n - 1]!;
   const { rig, trigger, context } = revealCarouselItem(n);
   const at = STILL_AT_MS[slug];
-  const recording = rig.record(at + FRAME_MS + 1, trigger);
+  const toleranceMs = timingToleranceMs(at);
+  const recording = rig.record(at + toleranceMs + 1, trigger);
   const golden = goldenImage(id, slug);
-  // Within one display frame of a frame boundary either neighbouring frame may have been on
-  // screen (the fidelity standard).
-  const shown = new Set(
-    [at - FRAME_MS, at, at + FRAME_MS].map((t) => frameAt(recording, recording.triggerMs + t)),
-  );
-  if ([...shown].some((frame) => lcdMismatch(frame.pixels, golden, context) === undefined)) return;
+  // A frame boundary may move by the fidelity standard's tolerance, so any frame on screen within
+  // it of the shot may be the shot's.
+  const from = recording.triggerMs + at - toleranceMs;
+  const shown = [
+    frameAt(recording, from),
+    ...recording.frames.filter(
+      (frame) => frame.startMs > from && frame.startMs <= from + 2 * toleranceMs,
+    ),
+  ];
+  if (shown.some((frame) => lcdMismatch(frame.pixels, golden, context) === undefined)) return;
   expectLcd(frameAt(recording, recording.triggerMs + at), golden, `${context}, ${at} ms later`);
 }
 

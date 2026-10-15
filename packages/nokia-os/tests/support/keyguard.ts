@@ -11,7 +11,7 @@ import { expect } from "vite-plus/test";
 import type { StockLightEvent } from "../../src/firmware/features/backlight";
 import { KEYGUARD_TIMES } from "../../src/firmware/features/keyguard";
 import { createSyntheticNetwork, type StockPhoneConfig } from "../../src/index";
-import { expectLcd, expectTimeline } from "./golden.ts";
+import { expectLcd, expectTimeline, withoutPartialDraws } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { deliverAndLand, LIGHT_EDGE_TOLERANCE_MS } from "./lights.ts";
 import { seededStorage, standbyRig, type Rig } from "./rig.ts";
@@ -89,20 +89,33 @@ export function keyguardTimeline(id: string, keyguardCase: KeyguardCase): void {
   const context = `${id}: ${[key, ...later.map((l) => l[1])].join(", ")} from a ${from} phone`;
   expectTimeline(recording, golden, context);
   // D10: each row's `leds` are the lights the phone reported as the frame started (both LEDs
-  // switch together: 3 or 0), but at a lights edge within LIGHT_EDGE_TOLERANCE_MS of it.
-  const shown = [
-    recording.frames[0]!,
-    ...recording.frames.filter((frame) => frame.startMs >= recording.triggerMs),
-  ];
+  // switch together: 3 or 0), but at a lights edge within LIGHT_EDGE_TOLERANCE_MS of it. Rows and
+  // frames pair as expectTimeline pairs them, without partial draws.
+  const settled = withoutPartialDraws(
+    {
+      frames: rows.slice(t - 1).map((row) => ({
+        ...row,
+        pixels: goldenImage(id, row.image).image.pixels,
+      })),
+      endMs: last.startMs + last.durationMs,
+    },
+    {
+      frames: [
+        recording.frames[0]!,
+        ...recording.frames.filter((frame) => frame.startMs >= recording.triggerMs),
+      ],
+      endMs: recording.endMs,
+    },
+  );
   const display = lights.filter((event) => event.light === "display");
-  const leds = rows.slice(t - 1).map((row, i) => {
-    const at = shown[i]!.startMs;
+  const leds = settled.golden.map((row, i) => {
+    const at = settled.actual[i]!.startMs;
     const near = display.some((event) => Math.abs(event.atMs - at) <= LIGHT_EDGE_TOLERANCE_MS);
     const lit = display.filter((event) => event.atMs <= at).at(-1)?.on ?? false;
     return near ? row.leds : lit ? 3 : 0;
   });
   expect(leds, `${context}: leds by row from frame ${t - 1}`).toEqual(
-    rows.slice(t - 1).map((row) => row.leds),
+    settled.golden.map((row) => row.leds),
   );
 }
 
