@@ -1,6 +1,8 @@
 // Clock (menu 11; plan 21 implements the alarm, the settings, the stopwatch and the countdown):
 // the host's clock and date on their pages, the prompts' layouts and the setters' returns.
 import type { PromptLayout } from "../../widgets/prompt";
+import type { EepromRecord } from "../eeprom";
+import { CLOCK_RECORD } from "./clock/record";
 import type { StockFeature } from "./feature";
 
 const PEN_BOX_START: PromptLayout = { icons: ["pen"], entry: "start" };
@@ -36,6 +38,8 @@ export const clockFeature: StockFeature = {
     // image e).
     noteEnds: { "11-2-1": { levels: 2 }, "11-2-3-*": { levels: 2 } },
   },
+  // Plan 21 D7: the alarm, its snooze, the time offset and Hide clock.
+  records: [CLOCK_RECORD as EepromRecord<unknown>],
   settings: {
     // The Clock pages show the host's values (plan 13 D6): the clock in the chosen Time format.
     hostValues: {

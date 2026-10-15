@@ -871,18 +871,23 @@ starts or ends is not delivered on its release (a half-pressed Navi must not ans
 alerts), `src/firmware/features/clock.ts` (`records`), `tests/clock-time.test.ts` (new),
 `tests/clock-service.test.ts` (new).
 
-- [ ] TDD `time.ts`: parse valid and invalid host strings (`24:00`, `9:5`, `31.02.2026`, empty);
+- [x] TDD `time.ts`: parse valid and invalid host strings (`24:00`, `9:5`, `31.02.2026`, empty);
       `addMinutes` across midnight, month ends, leap years; `formatClock` in both formats as Task 0
       recorded (leading zeros, `am`/`pm` spellings, standby vs page forms); `formatDate`.
-- [ ] TDD `CLOCK_RECORD`: virgin value (no alarm, offset 0, nothing running); round trip; malformed
+- [x] TDD `CLOCK_RECORD`: virgin value (no alarm, offset 0, nothing running); round trip; malformed
       fields dropped; `factory` per Task 0 F.
-- [ ] TDD `StockClock` over a scripted host clock and kernel time: `now()` = host + offset;
+- [x] TDD `StockClock` over a scripted host clock and kernel time: `now()` = host + offset;
       `setTime`/`setDate` keep the other half and persist; `ports` return the phone's strings and
       `undefined` while hidden or unparsable; minute edges detected once per minute change at any
       tick rate (1 ms ticks and one 10 min jump agree on how many edges fire: one); a backwards
       jump fires none.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): phone time over the host clock, with a stored offset`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): phone time over the host clock, with a stored offset`.
+
+Deviation: `StockClock` takes the host ports as `host` (no sounder or clock function yet: the
+alert tasks add what they need) and keeps Hide clock in the record (D7's deviation);
+`standbyClock()` is the standby reader, `ports` the phone-time readers the menu and the games
+read. `CLOCK_RECORD.factory` shows the clock again and keeps the alarm and the offset.
 
 ### Task 6 - The time and date entry widget (TDD against goldens)
 
