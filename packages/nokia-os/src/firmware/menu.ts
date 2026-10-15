@@ -24,7 +24,7 @@ import { createMemoryStorage, StockEeprom } from "./eeprom";
 import type { StockPorts } from "./ports";
 import { StockSecurity } from "./security";
 import { createStockSettings, stockPageValue, type StockSettings } from "./settings";
-import { LEADS, setterLevel, showsEntryIndicator, STOCK_SETTINGS } from "./stock";
+import { LABELS, LEADS, setterLevel, showsEntryIndicator, STOCK_SETTINGS } from "./stock";
 import { settingKey } from "./tree";
 import { SoundSequencer } from "../sound/sequencer";
 import { StockSounder } from "../sound/sounder";
@@ -36,6 +36,7 @@ interface Builder {
   readonly ports: StockPorts;
   readonly settings: StockSettings;
   readonly leaves: LeafBinder;
+  readonly services: StockServices;
 }
 
 /**
@@ -118,7 +119,11 @@ function entryOf(
         : spec.opening !== undefined
           ? () => bySlug(spec.opening)
           : undefined;
+  const labels = LABELS[node.number];
   const options: SubmenuOptions = {
+    ...(labels === undefined
+      ? {}
+      : { label: (child: MenuEntry) => labels(b.services, child.slug.value) }),
     presentation: spec.presentation,
     softkey: spec.softkey,
     ...(spec.presentation === "pages"
@@ -169,7 +174,12 @@ export function createStockMenu(
   eeprom: StockEeprom = new StockEeprom(createMemoryStorage()),
 ): PhoneMenu {
   const services = stockServices(ports, settings, games, security, sounder, eeprom);
-  const builder: Builder = { ports, settings: services.settings, leaves: new LeafBinder(services) };
+  const builder: Builder = {
+    ports,
+    settings: services.settings,
+    leaves: new LeafBinder(services),
+    services,
+  };
   return new PhoneMenu(
     STOCK_TREE.map(
       (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),

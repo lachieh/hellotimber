@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/settings/format-choose-24
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/settings/format-choose-24
 source-sha256: 649d1c5c7d3151c536c71abf770b3b5e60329ad77f78535746d1252b2b4f661b
 trigger-frame: 1

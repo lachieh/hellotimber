@@ -53,6 +53,9 @@ import {
   type StockTreeNode,
 } from "../src/firmware/generated/stock-tree";
 
+/** A whole extraction reads every golden (≈2 s alone; much longer on a loaded machine). */
+const EXTRACTION_TIMEOUT_MS = 30_000;
+
 const INPUTS = composeResourceDeclarations(
   captureSets(),
   readGoldenIndex(join(import.meta.dirname, "../goldens")),
@@ -149,28 +152,36 @@ function stockTreeText(): ShownText[] {
 }
 
 describe("generated resources", () => {
-  it("equal a fresh extraction from the committed goldens", () => {
-    expect({
-      fonts: STOCK_FONT_DATA,
-      menuIcons: MENU_ICON_DATA,
-      boot: BOOT_DATA,
-      status: STATUS_DATA,
-      widgets: WIDGET_DATA,
-      snake: SNAKE_DATA,
-      sounds: SOUND_DATA,
-      text: TEXT_DATA,
-      clock: CLOCK_DATA,
-    }).toEqual(extractResources());
-  });
+  it(
+    "equal a fresh extraction from the committed goldens",
+    { timeout: EXTRACTION_TIMEOUT_MS },
+    () => {
+      expect({
+        fonts: STOCK_FONT_DATA,
+        menuIcons: MENU_ICON_DATA,
+        boot: BOOT_DATA,
+        status: STATUS_DATA,
+        widgets: WIDGET_DATA,
+        snake: SNAKE_DATA,
+        sounds: SOUND_DATA,
+        text: TEXT_DATA,
+        clock: CLOCK_DATA,
+      }).toEqual(extractResources());
+    },
+  );
 
-  it("are byte for byte what `regenerate` writes (resolve a conflict by regenerating)", () => {
-    const dir = join(import.meta.dirname, "../src/resources/generated");
-    const files = generatedFiles(extractResources());
-    expect(readdirSync(dir).sort()).toEqual(Object.keys(files).sort());
-    for (const [file, text] of Object.entries(files)) {
-      expect(readFileSync(join(dir, file), "utf8") === text, file).toBe(true);
-    }
-  });
+  it(
+    "are byte for byte what `regenerate` writes (resolve a conflict by regenerating)",
+    { timeout: EXTRACTION_TIMEOUT_MS },
+    () => {
+      const dir = join(import.meta.dirname, "../src/resources/generated");
+      const files = generatedFiles(extractResources());
+      expect(readdirSync(dir).sort()).toEqual(Object.keys(files).sort());
+      for (const [file, text] of Object.entries(files)) {
+        expect(readFileSync(join(dir, file), "utf8") === text, file).toBe(true);
+      }
+    },
+  );
 
   it("have binary glyphs of one height per font", () => {
     for (const [name, font] of Object.entries(STOCK_FONT_DATA)) {
@@ -404,24 +415,30 @@ describe("widget sprites and timelines", () => {
     });
   }
 
-  it("crops every listed sprite from its golden: binary art with ink, lit only where the golden is", () => {
-    for (const crop of CROPS) {
-      const sprite = WIDGET_DATA.sprites[crop.id]!;
-      expect([sprite.x, sprite.y], crop.id).toEqual([crop.x0, crop.y0]);
-      expect(sprite.art, crop.id).toHaveLength(crop.y1 - crop.y0 + 1);
-      expect(sprite.art.join(""), crop.id).toMatch(/^[#.]*#[#.]*$/);
-      const { pixels } = loadGolden(crop.golden).images.find((image) => image.name === crop.image)!;
-      sprite.art.forEach((row, dy) => {
-        expect(row, crop.id).toHaveLength(crop.x1 - crop.x0 + 1);
-        Array.from(row).forEach((ch, dx) => {
-          expect(ch === "#", `${crop.id} (${dx}, ${dy})`).toBe(
-            pixels[(crop.y0 + dy) * 84 + crop.x0 + dx] === 1,
-          );
+  it(
+    "crops every listed sprite from its golden: binary art with ink, lit only where the golden is",
+    { timeout: EXTRACTION_TIMEOUT_MS },
+    () => {
+      for (const crop of CROPS) {
+        const sprite = WIDGET_DATA.sprites[crop.id]!;
+        expect([sprite.x, sprite.y], crop.id).toEqual([crop.x0, crop.y0]);
+        expect(sprite.art, crop.id).toHaveLength(crop.y1 - crop.y0 + 1);
+        expect(sprite.art.join(""), crop.id).toMatch(/^[#.]*#[#.]*$/);
+        const { pixels } = loadGolden(crop.golden).images.find(
+          (image) => image.name === crop.image,
+        )!;
+        sprite.art.forEach((row, dy) => {
+          expect(row, crop.id).toHaveLength(crop.x1 - crop.x0 + 1);
+          Array.from(row).forEach((ch, dx) => {
+            expect(ch === "#", `${crop.id} (${dx}, ${dy})`).toBe(
+              pixels[(crop.y0 + dy) * 84 + crop.x0 + dx] === 1,
+            );
+          });
         });
-      });
-      expect(WIDGET_SPRITES[crop.id]!.bitmap.width, crop.id).toBe(crop.x1 - crop.x0 + 1);
-    }
-  });
+        expect(WIDGET_SPRITES[crop.id]!.bitmap.width, crop.id).toBe(crop.x1 - crop.x0 + 1);
+      }
+    },
+  );
 
   it("references only known sprites, and loops only progress bars and prompt cursors", () => {
     for (const [id, data] of Object.entries(WIDGET_DATA.timelines)) {

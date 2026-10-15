@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/auto-update/open
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/auto-update/open
 source-sha256: 612b89d80763797a17ac9c3185c3f1cae44f4630215c88d8f833c12ef7e1211f
 trigger-frame: 1

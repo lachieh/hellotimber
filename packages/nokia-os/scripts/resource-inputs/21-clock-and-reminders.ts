@@ -10,6 +10,11 @@ const BELLS = { x0: 5, x1: 78, y0: 26, y1: 35 } as const;
 
 export const resources: ResourceDeclarations = {
   textRuns: {
+    // Auto update's page after Confirm first: its value in the thin face (C, f, i, r, s drawn
+    // nowhere else in it).
+    "clock/auto-update/choose-confirm": {
+      f: [{ font: "thin", text: "Confirm first", top: 29, left: 28, right: 79 }],
+    },
     // View all's header: the reminder's number, and its alarm's time and date in the digits
     // face, right-aligned (the face's `.` and space are drawn nowhere else).
     "reminders/view-3-keys": {
@@ -159,6 +164,8 @@ export const resources: ResourceDeclarations = {
         { golden: "clock/countdown/stop", kind: "note", name: "timer-stopped" },
         { golden: "reminders/add-alarm-off", kind: "note", name: "reminder-set" },
         { golden: "reminders/erase-one-yes", kind: "note", name: "reminder-erased" },
+        // Auto update › Confirm first's Done (no tree recording of its own: plan 14 has 11-6-1's).
+        { golden: "clock/auto-update/choose-confirm", kind: "note", node: "11-6-2" },
       ],
     },
   ],

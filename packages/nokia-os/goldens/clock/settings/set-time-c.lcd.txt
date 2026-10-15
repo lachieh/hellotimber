@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/settings/set-time-c
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/settings/set-time-c
 source-sha256: 5a3121efe57797da42fdef4fa265804e3a316cc1c17e88b907a9f17747f74400
 trigger-frame: 1

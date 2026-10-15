@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/no-time/clock-pages
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/no-time/clock-pages
 source-sha256: 15f2b2381684595582c61d7082422211d9b228f5a0c7e174532acd687cc5cbb8
 note: No time: the Clock pages.

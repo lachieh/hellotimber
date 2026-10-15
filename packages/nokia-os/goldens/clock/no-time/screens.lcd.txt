@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/no-time/screens
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/no-time/standby-first.png + captures/6.39/plan21/no-time/standby.png
 source-sha256: c072937481e6ee1ddd4569940aaf68cbbe7d28adb9e7f3d23deb6655b3665e26
 note: No time: standby.

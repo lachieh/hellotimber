@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/no-time/auto-update
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/no-time/auto-update
 source-sha256: c84194b8568c4561b10ab9dfb01f071232dee3fc297db45872e292653a18f50a
 trigger-frame: 1

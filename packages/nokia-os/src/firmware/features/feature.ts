@@ -185,4 +185,11 @@ export interface StockFeature {
   readonly settings?: StockSettingsTables;
   /** EEPROM records this feature owns (plan 15 D2); Restore and erase see them all. */
   readonly records?: readonly EepromRecord<unknown>[];
+  /**
+   * Plan 21: labels that change with the phone's state, by the level's node number: the text a
+   * child (by slug) shows now, undefined for its tree label (Hide clock reads Show clock).
+   */
+  readonly labels?: Readonly<
+    Record<string, (services: StockServices, child: string) => string | undefined>
+  >;
 }

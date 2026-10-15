@@ -1,9 +1,11 @@
 // The phone's clock (plan 21): phone time over the host clock plus a stored offset (D1), the
 // standby clock reader (D10), and minute edges (D2), observed on kernel ticks. Alerts, the
 // countdown and the stopwatch are added by their own modules over this service.
+import type { StandbyIndicators } from "@hellotimber/phone-core";
 import type { EepromRecord, StockEeprom } from "../../eeprom";
 import type { StockPorts } from "../../ports";
 import type { StockSettings } from "../../settings";
+import { StockAlerts } from "./alerts";
 import { CLOCK_RECORD, type ClockState } from "./record";
 import {
   addMinutes,
@@ -22,6 +24,8 @@ export interface StockClockDeps {
   readonly host: StockPorts;
   readonly settings: StockSettings;
   readonly eeprom: StockEeprom;
+  /** The kernel time (the phone's `tick`); default 0 (a menu without a phone). */
+  readonly now?: () => number;
 }
 
 /** One minute edge (D2): the phone time's minute changed forwards. */
@@ -40,8 +44,14 @@ export class StockClock {
    * 24-hour `HH:MM` and `DD.MM.YYYY` of `now()`, undefined without a time.
    */
   readonly ports: StockPorts;
+  /** The kernel time. */
+  readonly kernelNow: () => number;
+  /** Alerts waiting for standby (D3). */
+  readonly alerts: StockAlerts;
 
   constructor(deps: StockClockDeps) {
+    this.kernelNow = deps.now ?? (() => 0);
+    this.alerts = new StockAlerts(this.kernelNow);
     this.#host = deps.host;
     this.#settings = deps.settings;
     this.#eeprom = deps.eeprom;
@@ -120,6 +130,11 @@ export class StockClock {
     this.#shift(minuteIndex({ ...now, day, month, year }) - minuteIndex(now));
   }
 
+  /** Phone time minus host time (Set the time, Date setting). */
+  offsetMinutes(): number {
+    return this.#state().offsetMinutes;
+  }
+
   /** Clears the offset (Auto update, D13); returns whether the phone's time changed. */
   clearOffset(): boolean {
     const offset = this.#state().offsetMinutes;
@@ -132,6 +147,20 @@ export class StockClock {
     this.#write({ offsetMinutes: this.#state().offsetMinutes + minutes });
     // Setting the time or the date fires nothing (D2): the next edge counts from here.
     this.#minute = this.#index();
+  }
+
+  /** Standby's indicators (D10): set by the alarm, the countdown and the stopwatch. */
+  indicators(): StandbyIndicators {
+    const flags: Record<string, boolean> = {};
+    for (const source of this.#indicatorSources) Object.assign(flags, source());
+    return flags;
+  }
+
+  readonly #indicatorSources: (() => StandbyIndicators)[] = [];
+
+  /** Adds a source of standby indicators (the alarm, the countdown, the stopwatch). */
+  addIndicators(source: () => StandbyIndicators): void {
+    this.#indicatorSources.push(source);
   }
 
   /** Called on each forwards minute edge, with the new minute. */

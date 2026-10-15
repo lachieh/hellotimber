@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/auto-update/choose-off
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/auto-update/choose-off
 source-sha256: 5b5b0ad56fb3abed288a4c80ef5ecf655606059c05eaa23b789e3d4e6edb6d73
 trigger-frame: 1

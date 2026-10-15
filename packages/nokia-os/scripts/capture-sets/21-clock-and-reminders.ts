@@ -23,7 +23,12 @@ export interface ClockRecording {
 }
 
 /** Goldens whose scenarios pass (each task adds its own): asserted; every other is pending:21. */
-export const ASSERTED: readonly RegExp[] = [];
+export const ASSERTED: readonly RegExp[] = [
+  // Task 7: Clock settings, Date setting, no time, Auto update's list
+  /^clock\/(settings|date)\//,
+  /^clock\/no-time\/(screens|clock-pages|date|auto-update|clock-settings|set-time)$/,
+  /^clock\/auto-update\/(open|list|choose-.*)$/,
+];
 
 export function statusOf(id: string): GoldenStatus {
   return ASSERTED.some((pattern) => pattern.test(id)) ? "asserted" : "pending:21";

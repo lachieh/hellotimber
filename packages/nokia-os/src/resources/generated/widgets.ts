@@ -9349,6 +9349,36 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
           "durationMs": 1043
         }
       ]
+    },
+    "11-6-2": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 689
+        },
+        {
+          "frame": 1,
+          "durationMs": 247
+        },
+        {
+          "frame": 2,
+          "durationMs": 546
+        }
+      ]
     }
   },
   "byNode": {
@@ -9439,7 +9469,8 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "8-1": "8-1",
     "8-2": "8-2",
     "8-3": "8-3",
-    "8-4": "8-4"
+    "8-4": "8-4",
+    "11-6-2": "11-6-2"
   },
   "byName": {
     "request-not-confirmed": "request-not-confirmed",

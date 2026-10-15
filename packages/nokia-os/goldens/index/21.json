@@ -362,7 +362,7 @@
   {
     "id": "clock/auto-update/choose-confirm",
     "file": "clock/auto-update/choose-confirm.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -370,7 +370,7 @@
   {
     "id": "clock/auto-update/choose-off",
     "file": "clock/auto-update/choose-off.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -378,7 +378,7 @@
   {
     "id": "clock/auto-update/choose-on",
     "file": "clock/auto-update/choose-on.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -386,7 +386,7 @@
   {
     "id": "clock/auto-update/list",
     "file": "clock/auto-update/list.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -394,7 +394,7 @@
   {
     "id": "clock/auto-update/open",
     "file": "clock/auto-update/open.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -658,7 +658,7 @@
   {
     "id": "clock/date/00002026",
     "file": "clock/date/00002026.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 15,
     "frames": 19
@@ -666,7 +666,7 @@
   {
     "id": "clock/date/0110200",
     "file": "clock/date/0110200.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 17,
     "frames": 19
@@ -674,7 +674,7 @@
   {
     "id": "clock/date/1913",
     "file": "clock/date/1913.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 11,
     "frames": 12
@@ -682,7 +682,7 @@
   {
     "id": "clock/date/29022026",
     "file": "clock/date/29022026.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 16,
     "frames": 22
@@ -690,7 +690,7 @@
   {
     "id": "clock/date/29022028",
     "file": "clock/date/29022028.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 20,
     "frames": 21
@@ -698,7 +698,7 @@
   {
     "id": "clock/date/31022026",
     "file": "clock/date/31022026.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 16,
     "frames": 22
@@ -706,7 +706,7 @@
   {
     "id": "clock/date/31042026",
     "file": "clock/date/31042026.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 16,
     "frames": 22
@@ -714,7 +714,7 @@
   {
     "id": "clock/date/3210",
     "file": "clock/date/3210.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 11,
     "frames": 15
@@ -722,7 +722,7 @@
   {
     "id": "clock/date/c",
     "file": "clock/date/c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -730,7 +730,7 @@
   {
     "id": "clock/date/keys",
     "file": "clock/date/keys.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 16,
     "frames": 19
@@ -738,7 +738,7 @@
   {
     "id": "clock/date/prompt",
     "file": "clock/date/prompt.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -746,7 +746,7 @@
   {
     "id": "clock/date/screens",
     "file": "clock/date/screens.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -762,7 +762,7 @@
   {
     "id": "clock/no-time/auto-update",
     "file": "clock/no-time/auto-update.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -770,7 +770,7 @@
   {
     "id": "clock/no-time/clock-pages",
     "file": "clock/no-time/clock-pages.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -778,7 +778,7 @@
   {
     "id": "clock/no-time/clock-settings",
     "file": "clock/no-time/clock-settings.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -794,7 +794,7 @@
   {
     "id": "clock/no-time/date",
     "file": "clock/no-time/date.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -810,7 +810,7 @@
   {
     "id": "clock/no-time/screens",
     "file": "clock/no-time/screens.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -818,7 +818,7 @@
   {
     "id": "clock/no-time/set-time",
     "file": "clock/no-time/set-time.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -906,7 +906,7 @@
   {
     "id": "clock/settings/format",
     "file": "clock/settings/format.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 20,
     "frames": 20
@@ -914,7 +914,7 @@
   {
     "id": "clock/settings/format-choose-12",
     "file": "clock/settings/format-choose-12.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -922,7 +922,7 @@
   {
     "id": "clock/settings/format-choose-24",
     "file": "clock/settings/format-choose-24.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -930,7 +930,7 @@
   {
     "id": "clock/settings/hide",
     "file": "clock/settings/hide.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -938,7 +938,7 @@
   {
     "id": "clock/settings/screens",
     "file": "clock/settings/screens.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -946,7 +946,7 @@
   {
     "id": "clock/settings/set-time-0",
     "file": "clock/settings/set-time-0.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -954,7 +954,7 @@
   {
     "id": "clock/settings/set-time-123",
     "file": "clock/settings/set-time-123.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 10,
     "frames": 10
@@ -962,7 +962,7 @@
   {
     "id": "clock/settings/set-time-1260",
     "file": "clock/settings/set-time-1260.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 10,
     "frames": 11
@@ -970,7 +970,7 @@
   {
     "id": "clock/settings/set-time-1959",
     "file": "clock/settings/set-time-1959.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 12,
     "frames": 12
@@ -978,7 +978,7 @@
   {
     "id": "clock/settings/set-time-2400",
     "file": "clock/settings/set-time-2400.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 10,
     "frames": 11
@@ -986,7 +986,7 @@
   {
     "id": "clock/settings/set-time-2500",
     "file": "clock/settings/set-time-2500.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 10,
     "frames": 11
@@ -994,7 +994,7 @@
   {
     "id": "clock/settings/set-time-c",
     "file": "clock/settings/set-time-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -1002,7 +1002,7 @@
   {
     "id": "clock/settings/set-time-c-typed",
     "file": "clock/settings/set-time-c-typed.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 8
@@ -1010,7 +1010,7 @@
   {
     "id": "clock/settings/set-time-keys",
     "file": "clock/settings/set-time-keys.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 13,
     "frames": 13
@@ -1018,7 +1018,7 @@
   {
     "id": "clock/settings/set-time-prompt",
     "file": "clock/settings/set-time-prompt.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -1026,7 +1026,7 @@
   {
     "id": "clock/settings/show",
     "file": "clock/settings/show.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3

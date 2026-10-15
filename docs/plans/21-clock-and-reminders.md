@@ -918,18 +918,33 @@ between recordings, so flows compare within PROBE_TOLERANCE_MS.
 `src/display/standby.ts` (one call), `src/firmware/phone.ts` (the registrations in "Shared-file
 edits"), `tests/clock-settings.test.ts` (new), `tests/paint-standby.test.ts`.
 
-- [ ] Hide clock / Show clock: the label reader (D9), the notes, standby without the clock; Set the
+- [x] Hide clock / Show clock: the label reader (D9), the notes, standby without the clock; Set the
       time and Date setting through `timeEntry` → `setTime`/`setDate`, their notes and the page;
       Time format on standby (D10) and on the page (plan 14's `twelveHourClock` replaced by
       `formatClock`, subtract).
-- [ ] Auto update (D13) at the end of power-on (`StockClock.powerOn`): the note, the query and its
+- [x] Auto update (D13) at the end of power-on (`StockClock.powerOn`): the note, the query and its
       answers, with `Done` on choosing as before.
-- [ ] `phone.ts`: the phone-time ports, `standbyIndicators` (plus plan 18's and plan 17's flags if
+- [x] `phone.ts`: the phone-time ports, `standbyIndicators` (plus plan 18's and plan 17's flags if
       they exist: merge, do not replace), `clock.powerOn()`.
-- [ ] Standby painter: the indicators at Task 0's positions; plan 13's standby goldens unchanged.
-- [ ] TDD through keys against `clock/settings/*`, `clock/date/*`, `clock/no-time/*` and
+- [x] Standby painter: the indicators at Task 0's positions; plan 13's standby goldens unchanged.
+- [x] TDD through keys against `clock/settings/*`, `clock/date/*`, `clock/no-time/*` and
       `clock/auto-update/*`; the plan 14 Clock goldens still pass.
-- [ ] Commit: `feat(nokia-os): Clock settings, Date setting and Auto update over the host clock`.
+- [x] Commit: `feat(nokia-os): Clock settings, Date setting and Auto update over the host clock`.
+
+Deviation: the clock service is one per phone, registered by `phone.ts` and found by feature
+bindings through the phone's EEPROM (`clock/registry.ts`), so `StockServices` is unchanged. Labels
+that change with the phone (Hide clock / Show clock) use a minimal feature table, `labels` (by
+level, child slug → text), merged in `stock.ts` and passed to plan 17's `SubmenuOptions.label`
+in `menu.ts` (plan 17 may replace the table with its own; reconcile at merge). Without a time the
+entry reads `Show clock` too (plan21 no-time/clock-settings). The alerts' queue
+(`clock/alerts.ts`) lands here: an alert shows only at standby (D3's deviation), ≈85 ms after
+standby is drawn when it fell due elsewhere. Auto update's note and query are such alerts after
+power-on (UNVERIFIED place: the capture shows the note during the boot, after the security
+code). Clock hidden plays plan 14's own recording (`tree/11-clock/11-2-1.leaf`); Auto update ›
+Confirm first's `Done` gets this plan's recording as node 11-6-2's timeline; the thin face gains
+`C f i r s` (its page value). `clock/settings/format-choose-12` is a known gap: its note is plan
+14's recording of 11-2-3-2, 20 ms shorter, without this capture's 15 ms partial last frame. The
+whole-extraction resource tests get a 30 s timeout (≈2 s alone; they timed out under load).
 
 ### Task 8 - Alarm clock (TDD against goldens)
 

@@ -1,12 +1,11 @@
 import type { ScreenModel } from "@hellotimber/phone-core";
-import { textWidth, type Framebuffer } from "@hellotimber/phone-screen";
+import type { Framebuffer } from "@hellotimber/phone-screen";
 import { STATUS_SPRITES, STOCK_FONTS, type StockSprite } from "../resources";
+import { paintClock, paintClockIndicators } from "./clock-indicators";
 
 /** Softkey labels are centred: x = floor((84 - advance width) / 2), top y 40. */
 export const SOFTKEY_TOP = 40;
 const CARRIER_TOP = 8;
-/** The clock's last digit cell ends here, left of the battery ladder (its ink ends at x 76). */
-const CLOCK_END = 78;
 
 function paintSprites(fb: Framebuffer, sprites: readonly StockSprite[]): void {
   for (const { bitmap, x, y } of sprites) fb.blitBitmap(bitmap, x, y);
@@ -29,9 +28,7 @@ export function paintStandby(
     paintSprites(fb, [STATUS_SPRITES.batteryIcon]);
   }
   fb.drawTextCentered(STOCK_FONTS.small, screen.carrier, CARRIER_TOP);
-  if (screen.clock !== undefined) {
-    const x = CLOCK_END - textWidth(STOCK_FONTS.digits, screen.clock);
-    fb.drawText(STOCK_FONTS.digits, screen.clock, x, 0);
-  }
+  if (screen.clock !== undefined) paintClock(fb, screen.clock);
+  paintClockIndicators(fb, screen);
   fb.drawTextCentered(STOCK_FONTS.small, "Menu", SOFTKEY_TOP);
 }

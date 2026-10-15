@@ -78,6 +78,11 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = merged(
 /** Screens implemented by a feature, by node number. */
 export const SCREENS: Readonly<Record<string, ScreenBinding>> = merged("Screen", (f) => f.screens);
 
+/** Plan 21: state-dependent child labels, by the level's node number. */
+export const LABELS: Readonly<
+  Record<string, (services: StockServices, child: string) => string | undefined>
+> = merged("Labels", (f) => f.labels);
+
 /** Entries heading submenu levels, by the level's node number. */
 export const LEADS: Readonly<Record<string, LeadEntry>> = merged("Lead entry", (f) => f.leads);
 

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/settings/set-time-prompt
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/settings/set-time-prompt
 source-sha256: 21c7a336665ea0d3a2941a1564ddb07a460b901a4b52c83adc130cdb64d722d5
 trigger-frame: 1

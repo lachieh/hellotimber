@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/settings/set-time-keys
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/settings/set-time-keys
 source-sha256: b4c040aff23c04c4fe742fba7805ce87f2e3c9b0d23bd02d4ed0551ea970cb38
 trigger-frame: 1

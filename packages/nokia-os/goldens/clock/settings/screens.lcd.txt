@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/settings/screens
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/settings/standby-hidden.png + captures/6.39/plan21/settings/page-hidden.png + captures/6.39/plan21/settings/list-show.png + captures/6.39/plan21/settings/standby-shown.png + captures/6.39/plan21/settings/standby-0959.png
 source-sha256: 3bcecfab7f37ffef2fb176ee5c2f2f1cc1f70a1ea7796b24f732c13c3ec35100
 note: Hide clock: standby, the page, the list (Show clock); Show clock: standby; Set the time 09:59: standby.

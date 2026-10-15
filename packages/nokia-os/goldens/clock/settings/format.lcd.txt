@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/settings/format
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/settings/format/24-0005-standby.png + captures/6.39/plan21/settings/format/24-0005-page.png + captures/6.39/plan21/settings/format/12-0005-standby.png + captures/6.39/plan21/settings/format/12-0005-page.png + captures/6.39/plan21/settings/format/24-0941-standby.png + captures/6.39/plan21/settings/format/24-0941-page.png + captures/6.39/plan21/settings/format/12-0941-standby.png + captures/6.39/plan21/settings/format/12-0941-page.png + captures/6.39/plan21/settings/format/24-1200-standby.png + captures/6.39/plan21/settings/format/24-1200-page.png + captures/6.39/plan21/settings/format/12-1200-standby.png + captures/6.39/plan21/settings/format/12-1200-page.png + captures/6.39/plan21/settings/format/24-1307-standby.png + captures/6.39/plan21/settings/format/24-1307-page.png + captures/6.39/plan21/settings/format/12-1307-standby.png + captures/6.39/plan21/settings/format/12-1307-page.png + captures/6.39/plan21/settings/format/24-2359-standby.png + captures/6.39/plan21/settings/format/24-2359-page.png + captures/6.39/plan21/settings/format/12-2359-standby.png + captures/6.39/plan21/settings/format/12-2359-page.png
 source-sha256: 9d88e4f3a28bfef10327523fc8017860b976d00a2f28e9b7bab96a3365498a37
 note: settime then tominute at each time: standby and the Clock settings page in 24-hour, then 12-hour.

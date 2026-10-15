@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/no-time/clock-settings
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/no-time/clock-settings
 source-sha256: 3b01a32aa94ae8968b5a4718dbee35e27c061aa4934aa0b794a5e0eed9291210
 trigger-frame: 1

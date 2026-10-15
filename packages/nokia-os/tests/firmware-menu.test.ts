@@ -244,12 +244,12 @@ describe("stockMenu", () => {
     expect(exits).toEqual([{ select: "new-game" }]);
   });
 
-  it("returns no page value without host ports for the Clock and Date pages", () => {
+  it("shows no time on the Clock and Date pages without host ports (plan 21 no-time)", () => {
     const clock = submenu(stockMenu.entries[10]!.entry);
     expect(clock.children.entries.map((child) => clock.detailOf(child))).toEqual([
       "Off",
-      undefined,
-      undefined,
+      "--:--",
+      "--.--.----",
       undefined,
       "Off",
       "Off",

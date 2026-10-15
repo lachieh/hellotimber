@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/date/c
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/date/c
 source-sha256: cce2f9f73a80a20c10270f6a2d8d55afdee4017522c1e0d9aeeb236eeedfc43a
 trigger-frame: 1

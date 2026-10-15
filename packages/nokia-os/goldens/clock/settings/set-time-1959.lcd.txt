@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/settings/set-time-1959
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/settings/set-time-1959
 source-sha256: 45041e83a4bd535d82454e0a7ad5b1b9cfab0a6f28773ff3f04c88383597b7c9
 trigger-frame: 1

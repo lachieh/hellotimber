@@ -4,11 +4,14 @@ import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
 import type { StockCueSink } from "./cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { invalidShortcut } from "./leaves";
-import { createStockGames, createStockMenu, STOCK_SHORTCUT_WINDOW_MS } from "./menu";
+import { createStockGames, createStockMenu, STOCK_SHORTCUT_WINDOW_MS, stockServices } from "./menu";
 import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { stockBootGates } from "./boot";
 import { createStockSettings } from "./settings";
+import { autoUpdate } from "./features/clock";
+import { registerClock } from "./features/clock/registry";
+import { StockClock } from "./features/clock/service";
 import type { StockSoundPort } from "../sound/port";
 import { SoundSequencer } from "../sound/sequencer";
 import { StockSounder, type KeyDownOptions } from "../sound/sounder";
@@ -100,7 +103,11 @@ export function createStockPhoneWith(
   let now = 0;
   const security = new StockSecurity(eeprom, settings, { now: () => now, sim });
   const skip = config.boot === "skip";
-  const ports = { clock, date };
+  // Plan 21 D1: the phone's time is the host's clock plus its own offset; the menu, its pages
+  // and the games read the phone's time.
+  const phoneTime = new StockClock({ host: { clock, date }, settings, eeprom, now: () => now });
+  registerClock(eeprom, phoneTime);
+  const ports = phoneTime.ports;
   const port = config.sound;
   const sequencer = new SoundSequencer((event) => port?.change(event));
   const sounder = new StockSounder(sequencer, settings, () => now);
@@ -113,7 +120,11 @@ export function createStockPhoneWith(
   const phone = createPhone({
     menu: createStockMenu(ports, settings, games, security, sounder, eeprom),
     carrier: config.carrier,
-    ...(clock === undefined ? {} : { clock }),
+    // Plan 21 D10: standby shows the phone's time, hidden or 12-hour as Clock settings say.
+    clock: () => phoneTime.standbyClock(),
+    standbyIndicators: () => phoneTime.indicators(),
+    // Plan 21 D3: the clock's alerts, when the phone shows standby.
+    interruption: () => phoneTime.alerts.interruption(standbySince),
     bootTimeline: BOOT_TIMELINE,
     ...(skip ? { bootMs: 0 } : {}),
     // Plan 15 D9: the security code and the welcome note hold the boot after the self-test.
@@ -126,14 +137,19 @@ export function createStockPhoneWith(
     // Stock shortcut digits: menu numbers, delayed opening, Invalid shortcut (plan 14 D14).
     shortcutEntry: { openDelayMs: STOCK_SHORTCUT_OPEN_DELAY_MS, invalid: invalidShortcut(sounder) },
   });
+  // When standby was last drawn (kernel time), while it is on screen (plan 21 D3).
+  let standbySince: number | undefined;
   // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
   let poweredOn = false;
   phone.subscribe((snapshot) => {
     if (!snapshot.poweredOn) games.snake = undefined;
     if (snapshot.poweredOn === poweredOn) return;
     poweredOn = snapshot.poweredOn;
-    if (poweredOn) sounder.powerOn({ boot: !skip });
-    else sounder.powerOff();
+    if (poweredOn) {
+      sounder.powerOn({ boot: !skip });
+      // Plan 21 D13: Auto update of date and time at the end of power-on.
+      autoUpdate(stockServices(ports, settings, games, security, sounder, eeprom));
+    } else sounder.powerOff();
   });
   const send = (event: KeyEvent): void => {
     if (event.type === "up") {
@@ -157,6 +173,10 @@ export function createStockPhoneWith(
     tick(nowMs) {
       // The kernel time the games stamp their cues and the sounder its sounds with.
       now = Math.max(now, nowMs);
+      phoneTime.tick();
+      const screen = phone.screen;
+      if (screen.kind !== "standby" || screen.leaving) standbySince = undefined;
+      else standbySince ??= now;
       phone.tick(nowMs);
       sounder.tick();
       sequencer.advance(now);
