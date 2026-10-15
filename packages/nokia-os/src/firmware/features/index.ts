@@ -6,6 +6,7 @@ export { callRegisterFeature } from "./call-register";
 export { calculatorFeature } from "./calculator";
 export { chatFeature } from "./chat";
 export { clockFeature } from "./clock";
+export { composerFeature } from "./composer";
 export { gamesFeature } from "./games";
 export { snakeFeature } from "./games-snake";
 export { languagesFeature } from "./languages";

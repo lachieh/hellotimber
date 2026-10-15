@@ -15,7 +15,7 @@ before Task 2; if it has not, stop and report.
 "Plan 16 supplementary captures") and plans 13-16 and 18 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan27/`. The planning probes in `$REF/captures/scratch-plan27/`
 (`NOTES.md` lists them) are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-4 and 6 done).
+**Status:** in progress (Tasks 0-6 done).
 
 ## Goal
 
@@ -782,14 +782,25 @@ in its 4.5 s while D9's nearest step does at 4146 ms: its last notes differ (a k
 **Files:** `src/composer/store.ts` (new), `src/firmware/records.ts` (one line),
 `tests/composer-store.test.ts` (new), `tests/eeprom.test.ts` (pinned record list, if any).
 
-- [ ] TDD `COMPOSER_RECORD`: virgin (seven empty slots, tempo 112), encode/decode (tokens as
+- [x] TDD `COMPOSER_RECORD`: virgin (seven empty slots, tempo 112), encode/decode (tokens as
       notation strings), a slot with an invalid token or name dropped, version, `factory` per
       Task 0 (empty slots, tempo reset); the stored JSON pinned by a snapshot.
-- [ ] TDD `StockComposer`: `save` writes at once; `slot` reads it back over a second store on the
+- [x] TDD `StockComposer`: `save` writes at once; `slot` reads it back over a second store on the
       same storage; `newTempo` per K13; `ringingToneLabel`/`userRingingTone` map option indices
       35-41 to slots 1-7 and return undefined for empty slots and other indices.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): Composer EEPROM record`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): Composer EEPROM record`.
+
+**Task 5 completion.** `src/composer/store.ts`: `COMPOSER_RECORD` (`nokia-os/composer`, version 1:
+seven slots of `{ name, tempo, tokens }`, tokens as notation; a stale name, tempo or token drops its
+slot; `factory` empties every slot) and `StockComposer` (`slot`, `save`, `newTempo`, `setNewTempo`,
+`ringingToneLabel`, `userRingingTone` for options 35-41). 9 tests, the stored JSON pinned.
+
+Deviation: the record is registered by the new composer feature's `records` (plan 20's
+precedent: `src/firmware/records.ts` composes features' records), so `features/composer.ts` and
+its line in `features/index.ts` start here; `records.ts` and `tests/eeprom.test.ts` need no line.
+Per Task 0 M the record holds no new-tone tempo: `StockComposer` keeps it in RAM (112 at
+construction, the last set or saved after).
 
 ### Task 6 - The slot labels' kernel seam (conditional on plan 17 Task 4)
 
