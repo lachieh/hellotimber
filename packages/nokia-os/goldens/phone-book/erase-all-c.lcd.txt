@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/erase-all-c
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/erase/all-c
 source-sha256: f4746ddc82b268d455fe74ac3f898af1ce90893607f774d6af62be69ac3712bf
 trigger-frame: 1

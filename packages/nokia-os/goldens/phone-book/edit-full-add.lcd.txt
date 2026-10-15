@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/edit-full-add
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/edit/full-add
 source-sha256: decdc7fbd752ba27a57bb1505c4c5b9b01bea721c03f5559df7450525f29f26b
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/edit-unchanged
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/edit/unchanged
 source-sha256: a22c27edae1fcbde778a79dd16e556d621a8043e8e0912ad4a59fd66851694a3
 trigger-frame: 1

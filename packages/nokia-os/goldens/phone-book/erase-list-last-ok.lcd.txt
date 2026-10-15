@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/erase-list-last-ok
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/erase/list-last-ok
 source-sha256: f69f4c2328697c14d51a3850398a49763b71361efa4c84407e32cab27e444708
 trigger-frame: 1

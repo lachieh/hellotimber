@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/phone-book/tone-preview-down
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/tone/preview-down
 source-sha256: 08215c5e96905a9a3404e91b9e1ae469ddf88599d8e34d45a121f66d71ffe68d
 state: factory

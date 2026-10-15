@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/phone-book/erased
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/notes/erased
 source-sha256: 94c65df4fec42f12470d007e3ba38b3ca47530900e20870de52ac776944b91f5
 state: factory

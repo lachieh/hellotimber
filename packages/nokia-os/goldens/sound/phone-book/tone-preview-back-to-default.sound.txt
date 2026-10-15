@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/phone-book/tone-preview-back-to-default
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/tone/preview-back-to-default
 source-sha256: 47b6d80321f06fa33d7b650e97dd2797b331a39fa8302355ea0ee33acb0c4f41
 state: factory

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/tone-ok-third
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/tone/ok-third
 source-sha256: 0fa6b706b211c781ac485d9c35299f3b0356aee4dad092ae3fe9db06aecb9620
 trigger-frame: 1

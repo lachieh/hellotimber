@@ -107,13 +107,15 @@ describe("compareNames", () => {
     ["ü", "u", 0],
     [" Lead", "Lead", 0],
     ["A b", "Ab", -1],
-    ["Ab", "Ab ", -1],
+    ["Ab", "Ab ", 0],
     ["Azz", "A1", -1],
     ["Zoe", "1st", -1],
     ["9", "-dash", -1],
     ["-dash", ".dot", -1],
     [".dot", "_u", -1],
-    ["an", "anna", -1],
+    // A prefix sorts equal (SIM order decides: phone-book/edit-after).
+    ["an", "anna", 0],
+    ["annab", "Ånna", 0],
   ] as const)("compares %j with %j as %i", (a, b, sign) => {
     expect(Math.sign(compareNames(a, b))).toBe(sign);
     expect(Math.sign(compareNames(b, a))).toBe(-sign || 0);

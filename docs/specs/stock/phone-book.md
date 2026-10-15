@@ -36,7 +36,8 @@ that frame twice (at the press and ≈530 ms later).
 2. Characters compare in this order: space; letters case-insensitively, accents folded to their
    letter (`Ä Å à → a`, `É → e`, `Ñ → n`, `Ö Ø → o`, `ü → u`); digits; then every other character
    by its code (`-` < `.` < `_`).
-3. A name that is a prefix of another comes first.
+3. A name that is a prefix of another sorts equal to it (SIM order decides: after Edit › Replace
+   `annab` at `anna`'s location 2 comes before `Ånna` at 14; added at location 24, after it).
 4. Equal keys keep SIM order (`Zed`, `zed`; `Ånna`, `Anna`, `anna`; `Ben`, `ben`, `Ben`).
 
 Folding for the accented letters not in the `sort` fixture (`Æ`, `Ç`, `ß`, …) follows the same rule

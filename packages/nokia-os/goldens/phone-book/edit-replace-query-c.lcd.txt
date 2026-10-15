@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/edit-replace-query-c
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/edit/replace-query-c
 source-sha256: 459464a7b2867e0d485c27af51db3b100fed129677fe7c0b469a282695025140
 trigger-frame: 1

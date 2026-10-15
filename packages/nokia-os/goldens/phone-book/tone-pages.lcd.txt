@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/tone-pages
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/tone/page-01.png + captures/6.39/plan19/tone/page-02.png + captures/6.39/plan19/tone/page-03.png + captures/6.39/plan19/tone/page-16.png + captures/6.39/plan19/tone/page-20.png + captures/6.39/plan19/tone/page-23.png + captures/6.39/plan19/tone/page-24.png + captures/6.39/plan19/tone/page-up.png
 source-sha256: 40a6e3c18b46a906c7c2f95892ee817d1a69ac1007e8de557609502c831084e8
 note: SIM content: Assign tone's pages: the first, ▼ to anna, Ånna, Lisa Ann Wilson, the wide name, 1st, the wrap, then ▲.

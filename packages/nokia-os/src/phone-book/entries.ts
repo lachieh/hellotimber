@@ -3,8 +3,8 @@
 //
 // The firmware's order: leading spaces are skipped; characters compare as space, then letters
 // case-insensitively with accents folded to their letter, then digits, then every other
-// character by its code; a name that is a prefix of another comes first; equal keys keep SIM
-// order (`phone-book/view-sort`). Search and the list's letter keys land on the first name at
+// character by its code; a name that is a prefix of another sorts equal to it; equal keys keep
+// SIM order (`phone-book/view-sort`, `phone-book/edit-after`). Search and the list's letter keys land on the first name at
 // or after the query, else the first name.
 import type { StockContact } from "./sim-card";
 
@@ -55,14 +55,19 @@ function sortKey(name: string): number[] {
   return Array.from(name.replace(/^ +/, ""), weight);
 }
 
-/** The firmware's order of two names: negative, zero (equal keys) or positive. */
+/**
+ * The firmware's order of two names: negative, zero (equal keys) or positive. Only the shorter
+ * name's length is compared: a prefix sorts equal to the longer name, and SIM order decides
+ * (`phone-book/edit-after`: `annab` at `anna`'s location 2 comes before `Ånna` at 14 after
+ * Edit › Replace, after it at location 24 after Edit › Add).
+ */
 export function compareNames(a: string, b: string): number {
   const x = sortKey(a);
   const y = sortKey(b);
   for (let i = 0; i < Math.min(x.length, y.length); i++) {
     if (x[i] !== y[i]) return x[i]! - y[i]!;
   }
-  return x.length - y.length;
+  return 0;
 }
 
 /**

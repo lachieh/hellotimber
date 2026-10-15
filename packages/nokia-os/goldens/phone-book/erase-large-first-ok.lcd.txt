@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/erase-large-first-ok
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/erase/large-first-ok
 source-sha256: e9db888769e82f4d49d0ff8b980ded60dd1f18e95e6fde0de7117a8eb744f8d0
 trigger-frame: 1

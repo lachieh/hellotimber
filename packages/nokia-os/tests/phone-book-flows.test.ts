@@ -3,7 +3,11 @@
 import { describe, expect, it } from "vite-plus/test";
 import { PHONE_BOOK_SIMS } from "../scripts/capture-sets/19-phone-book.ts";
 import { KEYGUARD_HINT_LEAD_MS, KEYGUARD_TIMES } from "../src/firmware/features/keyguard";
-import { createMemoryStorage, type StockSimCard } from "../src/index";
+import { StockEeprom } from "../src/firmware/eeprom";
+import { createStockSettings } from "../src/firmware/settings";
+import { createMemoryStorage, type StockSimCard, type StockStorage } from "../src/index";
+import { normaliseSim } from "../src/phone-book/sim-card";
+import { StockPhoneBook } from "../src/phone-book/store";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";
 import { lockedRig } from "./support/keyguard.ts";
@@ -115,6 +119,128 @@ describe("Memory status (D14)", () => {
       rig.paint(),
       goldenImage("phone-book/memory-content", "b"),
       "SIM card: / 27 free / 23 in use",
+    );
+  });
+});
+
+/** The content SIM's phone book over `storage`, as the phone reads it. */
+function bookOf(storage: StockStorage): StockPhoneBook {
+  return new StockPhoneBook(new StockEeprom(storage), normaliseSim(CONTENT));
+}
+
+describe("Erase (Task 8 E)", () => {
+  it("erases the highlighted name: its speed dial goes, its location keeps its tone", () => {
+    const storage = createMemoryStorage();
+    const book = bookOf(storage);
+    const first = book.entries()[0]!;
+    book.assign(3, first.location);
+    book.setTone(first.location, 5);
+    const rig = standbyRig({ storage, sim: CONTENT });
+    phoneBook(rig, 4); // Erase
+    rig.press("navi"); // One by one
+    rig.advance(1500);
+    rig.press("navi"); // Erase on the first name
+    rig.advance(500);
+    rig.press("navi"); // OK on Erase?
+    rig.advance(4000);
+    const after = bookOf(storage);
+    expect(after.at(first.location)).toBeUndefined();
+    expect(after.isAssigned(3)).toBe(false);
+    expect(after.tone(first.location)).toBe(5);
+    expect(after.used()).toBe(book.used() - 1);
+  });
+
+  it("erases every name after the security code (factory: 12345)", () => {
+    const storage = createMemoryStorage();
+    createStockSettings(new StockEeprom(storage)).restoreFactory();
+    const rig = standbyRig({ storage, sim: CONTENT });
+    phoneBook(rig, 4);
+    rig.press("down");
+    rig.press("navi"); // Erase all
+    rig.advance(500);
+    rig.press("navi"); // OK on Are you sure?
+    rig.advance(500);
+    for (const digit of "12345") rig.press(digit as never);
+    rig.press("navi");
+    rig.advance(6000);
+    expect(bookOf(storage).used()).toBe(0);
+  });
+});
+
+describe("Edit (Task 8 D)", () => {
+  /** Edit on anna (the second name), `annab`, OK, OK: Replace / Add. */
+  function editAnna(rig: ReturnType<typeof standbyRig>): void {
+    phoneBook(rig, 5);
+    rig.press("down"); // anna
+    rig.press("navi");
+    rig.advance(500);
+    type(rig, "2 2"); // b
+    rig.press("navi");
+    rig.advance(500);
+    rig.press("navi");
+    rig.advance(500);
+  }
+
+  it("Replace keeps the location: its tone follows the new name", () => {
+    const storage = createMemoryStorage();
+    const book = bookOf(storage);
+    const anna = book.entries().find((entry) => entry.name === "anna")!;
+    book.setTone(anna.location, 2);
+    const rig = standbyRig({ storage, sim: CONTENT });
+    editAnna(rig);
+    rig.press("navi"); // Replace
+    rig.advance(4000);
+    const after = bookOf(storage);
+    expect(after.at(anna.location)).toMatchObject({ name: "annab", number: anna.number });
+    expect(after.tone(anna.location)).toBe(2);
+  });
+
+  it("Add keeps the old entry and saves the new name in the first free location", () => {
+    const storage = createMemoryStorage();
+    const used = bookOf(storage).used();
+    const rig = standbyRig({ storage, sim: CONTENT });
+    editAnna(rig);
+    rig.press("down");
+    rig.press("navi"); // Add
+    rig.advance(4000);
+    const after = bookOf(storage);
+    expect(after.used()).toBe(used + 1);
+    expect(after.entries().map((entry) => entry.name)).toEqual(
+      expect.arrayContaining(["anna", "annab"]),
+    );
+  });
+});
+
+describe("Assign tone (Task 8 T)", () => {
+  it("stores the chosen tone; Default clears it", () => {
+    const storage = createMemoryStorage();
+    const first = bookOf(storage).entries()[0]!;
+    const rig = standbyRig({ storage, sim: CONTENT });
+    phoneBook(rig, 6);
+    rig.press("navi"); // Assign: the list on Default
+    rig.advance(500);
+    rig.press("down"); // Ring ring
+    rig.press("navi");
+    rig.advance(3000);
+    expect(bookOf(storage).tone(first.location)).toBe(1);
+    rig.press("navi"); // the list on Ring ring
+    rig.advance(500);
+    rig.press("up"); // Default
+    rig.press("navi");
+    rig.advance(3000);
+    expect(bookOf(storage).tone(first.location)).toBeNull();
+  });
+
+  it("previews No tone as a 1750 Hz beep after the list's preview delay", () => {
+    const rig = standbyRig({ sim: CONTENT });
+    phoneBook(rig, 6);
+    rig.press("navi");
+    rig.advance(500);
+    const seen = rig.sounds.length;
+    rig.press("up"); // No tone
+    rig.advance(1500);
+    expect(rig.sounds.slice(seen)).toContainEqual(
+      expect.objectContaining({ output: "tone", hz: 1750 }),
     );
   });
 });

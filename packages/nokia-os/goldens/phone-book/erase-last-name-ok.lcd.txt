@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/erase-last-name-ok
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/erase/last-name-ok
 source-sha256: a2cf42b46e7181b37629839a26e4a137f057182112e7d084910f5c856c85af7d
 trigger-frame: 1

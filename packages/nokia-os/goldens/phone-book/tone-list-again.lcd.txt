@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/tone-list-again
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/tone/list-again
 source-sha256: 7f6204ac55182dc6cc85386c2e355a816d8ab234320ae7ab9edcbd7fa7be98bf
 trigger-frame: 1

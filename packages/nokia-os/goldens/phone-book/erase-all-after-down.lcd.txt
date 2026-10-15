@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/erase-all-after-down
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/erase/all-after-down
 source-sha256: 634c00952adf1d4fee73b54c43b85db2b225cf6f21d1a1987b8e31931b37180c
 trigger-frame: 1

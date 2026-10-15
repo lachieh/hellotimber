@@ -866,17 +866,41 @@ recordings (±25, `PROBE_TOLERANCE_MS`), `No phone numbers` (±60: 2850-2938 ms 
 **Files:** `src/firmware/features/phone-book.ts` (its Erase, Edit and Assign tone section),
 `tests/phone-book-flows.test.ts`.
 
-- [ ] 1-4-1 One by one: the list with `Erase` → `Erase?` (a confirm query; C back) → `Erased` → the
+- [x] 1-4-1 One by one: the list with `Erase` → `Erase?` (a confirm query; C back) → `Erased` → the
       list on the next entry, or what Task 0 E shows after the last one.
-- [ ] 1-4-2 Erase all: `Are you sure?` → plan 15's `codeEntry` (wrong code and lockout shared) →
+- [x] 1-4-2 Erase all: `Are you sure?` → plan 15's `codeEntry` (wrong code and lockout shared) →
       `Erasing memory` → `Memory erased` → the level; the empty SIM's note as captured.
-- [ ] 1-5 Edit: the list with `Edit` → `Name:` (prefilled, counter) → `Phone number:` (prefilled) →
+- [x] 1-5 Edit: the list with `Edit` → `Name:` (prefilled, counter) → `Phone number:` (prefilled) →
       `Replace`/`Add` (a list with no stored value) when the name changed → `Saved` (or `Memory
 full` → `Replace?` for Add); the list position afterwards.
-- [ ] 1-6 Assign tone: the name pages with `Assign` → the ringing tone list with `Default` first and
+- [x] 1-6 Assign tone: the name pages with `Assign` → the ringing tone list with `Default` first and
       the captured numbering → previews (D12) → OK stores and shows `Done` → the page.
-- [ ] TDD through keys against `phone-book/erase-*`, `edit-*`, `tone-*` and `sound/phone-book/tone-*`.
-- [ ] Commit: `feat(nokia-os): Erase, Edit and Assign tone`.
+- [x] TDD through keys against `phone-book/erase-*`, `edit-*`, `tone-*` and `sound/phone-book/tone-*`.
+- [x] Commit: `feat(nokia-os): Erase, Edit and Assign tone`.
+
+Deviation: **Task 8 (files):** the flows live in `src/phone-book/manage.ts` (Task 7's
+`flows.ts` holds the shared screens); `features/phone-book.ts` binds `1-4-1`, `1-4-2`, `1-5`, `1-6`.
+Plan 16's sounder gains one additive method, `previewProgram` (Assign tone's `No tone` preview:
+1750 Hz for 339 ms on word 0x9104 at the list's preview delay, `NO_TONE_PREVIEW`).
+
+Deviation: **Task 8 (measured behaviour):** a name that is a prefix of another sorts _equal_ to it
+and SIM order decides (`phone-book/edit-after`: after Edit › Replace `annab` at `anna`'s location 2
+comes before `Ånna` at 14; added at location 24, after it). Task 0's "a prefix comes first" had no
+capture that told the two apart; `compareNames` and the spec follow the capture. Erase all's `Are
+you sure?` sits at tops 2/12 (plan 14's confirm query: 4/13), drawn as a phone book query; Edit's
+`Replace` / `Add` are plan 14's rows and rail with no indicator (the Service Nos. model). The tone
+list is `No tone`, `Default`, then Tones › Ringing tone's 42 entries as the tree lists them (5-1).
+
+Deviation: **Task 8 (scenario tolerances):** Edit › Add writes a new SIM location: `Saved` comes
+361 ms after OK's down, past the replay's 300-ms latency window, so OK acts on its row
+(`keysOnRows`). `Erased`, `Saved`, `Memory full` and `Done` play one recording's timeline (±25;
+`tone-ok-no-tone`'s half tick 697 ms after the box, 670-672 elsewhere: ±30), `Nothing to save`
+after Edit and `No phone numbers` of One by one ±60. Assign tone's previews are other recordings of
+plan 16's programs (`drift`); two start while the previous preview sounds, whose start-state rows
+are not edges (the key's stop is compared).
+
+**Task 8 completion note:** 63 more plan 19 goldens are asserted (53 LCD, 10 sound: `erased`,
+`memory-erased`, `done` and the seven previews), no new known gaps.
 
 ### Task 9 - Speed dials and Voice tags (TDD)
 

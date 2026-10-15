@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/edit-empty-name
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/edit/empty-name
 source-sha256: 41e5719e169cc37c41d587f9a2f2936d3bdae3f5b85e81d09b3df6abacc30660
 trigger-frame: 1

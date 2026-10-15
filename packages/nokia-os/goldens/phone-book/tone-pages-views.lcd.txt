@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/tone-pages-views
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/tone/list-page-01.png + captures/6.39/plan19/tone/list-page-02.png + captures/6.39/plan19/tone/number-page-01.png + captures/6.39/plan19/tone/number-page-02.png
 source-sha256: 339d900eb3b8784accf144bcf5e77532cb814eec973557422a395e2afca85003
 note: SIM content: Assign tone's first two pages in Name list and Name, number views (the same pages).

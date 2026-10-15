@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/edit-open
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/edit/open
 source-sha256: 665f8472128e2d45272b98ce7331913cb409a080c90da6b3c43fcdc33f706f8b
 trigger-frame: 1

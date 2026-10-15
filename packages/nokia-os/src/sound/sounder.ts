@@ -281,6 +281,16 @@ export class StockSounder implements StockCueSink {
     );
   }
 
+  /**
+   * Plan 19: `program` as the highlighted entry's preview, `PREVIEW_DELAY_MS` after the key (the
+   * preview playing stops): Assign tone's `No tone`.
+   */
+  previewProgram(program: SoundProgram): void {
+    this.stopPreview();
+    const key = this.#lastKeyMs ?? this.#now();
+    this.#preview = this.#sequencer.play(program, key + PREVIEW_DELAY_MS);
+  }
+
   /** Stops the preview (C, OK, leaving the list, another ▲/▼). */
   stopPreview(): void {
     if (this.#preview !== undefined) this.#sequencer.cancel(this.#preview, this.#now());

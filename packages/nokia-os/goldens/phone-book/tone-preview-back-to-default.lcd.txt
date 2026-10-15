@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/tone-preview-back-to-default
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/tone/preview-back-to-default
 source-sha256: 60316297048364289fd63547d97ca68699fe2c218c68bae11ad7438677c1a96b
 trigger-frame: 1

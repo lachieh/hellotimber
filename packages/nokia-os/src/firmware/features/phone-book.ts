@@ -2,6 +2,7 @@
 // over the inserted SIM's `StockPhoneBook` (`services.phoneBook`). With an empty SIM the leaves
 // keep plan 14's notes and first screens (D13).
 import { addName, memoryStatus, search, serviceNumbers } from "../../phone-book/flows";
+import { assignTone, edit, eraseAll, eraseOneByOne } from "../../phone-book/manage";
 import { PHONE_BOOK_RECORD } from "../../phone-book/store";
 import type { EepromRecord } from "../eeprom";
 import type { StockFeature } from "./feature";
@@ -13,6 +14,10 @@ export const phoneBookFeature: StockFeature = {
     // Plan 14's note while the SIM has no service numbers.
     "1-2": (services) => () => serviceNumbers(services),
     "1-3": (services) => () => addName(services),
+    "1-4-1": (services) => () => eraseOneByOne(services),
+    "1-4-2": (services) => () => eraseAll(services),
+    "1-5": (services) => () => edit(services),
+    "1-6": (services) => () => assignTone(services),
     "1-8-2": (services) => () => memoryStatus(services),
   },
   // Plan 19 D3: the SIM's locations by SIM identity, speed dials and assigned tones.

@@ -26,7 +26,14 @@ import {
   type ReplayContext,
   type TimelineOptions,
 } from "./replay.ts";
-import { expectSoundTimeline, KEY_LATENCY_MAX_MS, loadSoundGolden, playSound } from "./sound.ts";
+import type { SoundGolden } from "../../scripts/sound-format.ts";
+import {
+  expectSoundTimeline,
+  KEY_LATENCY_MAX_MS,
+  loadSoundGolden,
+  playSound,
+  type SoundTolerance,
+} from "./sound.ts";
 import { standbyRig } from "./rig.ts";
 
 /** Plan 19's capture logs on a stock phone with each log's SIM (`standbyRig` stands for the setup). */
@@ -65,13 +72,19 @@ function standbyKey(
   extra: TimelineOptions = {},
   laterRows: readonly number[] = [],
 ): (id: string) => TimelineOptions {
+  // The leading frame lasts 22-37 ms between presses (STANDBY_KEY_DELAY_MS is the median, 23).
+  return keysOnRows([1, ...laterRows], { toleranceMs: LEAD_SPREAD_MS, ...extra });
+}
+
+/** The recording's keys act on rows `rows` (one per key, in order), with `extra`'s options. */
+function keysOnRows(
+  rows: readonly number[],
+  extra: TimelineOptions = {},
+): (id: string) => TimelineOptions {
   return (id) => {
-    const rows = loadGolden(id).timeline!;
-    const at = (row: number) => rows[row]!.startMs - Math.min(rows[0]!.startMs, 1);
-    const keyAt: Record<number, number> = { 0: at(1) };
-    laterRows.forEach((row, i) => (keyAt[i + 1] = at(row)));
-    // The leading frame lasts 22-37 ms between presses (STANDBY_KEY_DELAY_MS is the median, 23).
-    return { toleranceMs: LEAD_SPREAD_MS, ...extra, keyAt };
+    const timeline = loadGolden(id).timeline!;
+    const at = (row: number) => timeline[row]!.startMs - Math.min(timeline[0]!.startMs, 1);
+    return { ...extra, keyAt: Object.fromEntries(rows.map((row, i) => [i, at(row)])) };
   };
 }
 
@@ -87,6 +100,12 @@ const LIST_EXIT_SPREAD: TimelineOptions = { toleranceMs: 6 };
  * speed-empty 2850).
  */
 const NO_PHONE_NUMBERS: TimelineOptions = { toleranceMs: 60 };
+
+/**
+ * A warning-tone note in another flow than its recording's: `Nothing to save` lasts 2880 ms after
+ * Edit (`edit-empty-both`), 2939 after Add name (its timeline), as `No phone numbers` spreads.
+ */
+const WARNING_NOTE = NO_PHONE_NUMBERS;
 
 /** The scenario options of plan 19's goldens that are not the default, by the task that promoted them. */
 export const PHONE_BOOK_OPTIONS: Readonly<
@@ -122,9 +141,54 @@ export const PHONE_BOOK_OPTIONS: Readonly<
       "view-choose-large-font",
       "view-choose-name-list",
       "view-choose-name-number",
+      // Task 8. Erased, Saved, Memory full and Done after Erase, Edit and Assign tone.
+      "erase-list-middle-ok",
+      "erase-list-last-ok",
+      "edit-both-replace",
+      "edit-empty-number",
+      "edit-full-add",
+      "edit-full-add-replace",
+      "edit-number-only",
+      "edit-replace",
+      "edit-unchanged",
     ].map((id) => [`phone-book/${id}`, OTHER_RECORDING]),
   ),
+  "phone-book/erase-one-by-one-empty": NO_PHONE_NUMBERS,
+  "phone-book/erase-all-after-down": standbyKey(),
+  "phone-book/edit-empty-both": WARNING_NOTE,
+  // Done's half tick comes 670-672 ms after its box in four recordings, 697 in this one.
+  "phone-book/tone-ok-no-tone": { toleranceMs: 30 },
+  // Edit › Add writes a new SIM location: `Saved` comes 361 ms after OK's down, past the
+  // replay's latency window (Replace: 285 ms); OK acts on its row.
+  "phone-book/edit-add": keysOnRows([1], OTHER_RECORDING),
 };
+
+/**
+ * Sound goldens that are another recording of their program (plan 16's sound tolerance): Assign
+ * tone's previews play the tones Tones › Ringing tone's recordings gave.
+ */
+const PHONE_BOOK_SOUND_OPTIONS: Readonly<Record<string, SoundTolerance>> = Object.fromEntries(
+  ["down", "down-2", "down-3", "up", "back-to-default", "no-tone", "wrap"].map((move) => [
+    `sound/phone-book/tone-preview-${move}`,
+    { drift: true },
+  ]),
+);
+
+/**
+ * A golden whose recording started while the previous preview sounded (`tone-preview-no-tone`,
+ * `-back-to-default`): its rows at the first sample (≤ 1 ms) are that program's state, not an
+ * edge; the replay's preview sounds then too, and the key's stop is compared.
+ */
+function withoutStartState(golden: SoundGolden): SoundGolden {
+  return {
+    ...golden,
+    rows: golden.rows.filter((row) => !(row.ms <= 1 && isSounding(row.state))),
+  };
+}
+
+function isSounding(state: SoundGolden["rows"][number]["state"]): boolean {
+  return state.kind === "sounding" || state.kind === "on";
+}
 
 /**
  * A sound golden's scenario: its capture log replayed up to its recording's start, then the
@@ -137,7 +201,7 @@ export function phoneBookSoundScenario(id: string): void {
   if (located === undefined) throw new Error(`${id}: no record ${entry.dir} in the logs.`);
   const replay = new Replay(PHONE_BOOK_REPLAY);
   replay.reach(located.path);
-  const golden = loadSoundGolden(id);
+  const golden = withoutStartState(loadSoundGolden(id));
   // The firmware beeps the key that saves or erases once the SIM write is done (Saved: 192 ms
   // after OK); nokia-os beeps at the key: the key is pressed at its beep.
   const first = golden.rows[0];
@@ -152,12 +216,10 @@ export function phoneBookSoundScenario(id: string): void {
   const keys = (golden.keys ?? []).map((key, i) => (i === 0 ? { ...key, ms: key.ms + beep } : key));
   const played = playSound(replay.rig, { ...golden, keys });
   // A late beep is the DSP's awake or woken one (140-145 ms) as the replay's key timing has it.
-  expectSoundTimeline(
-    played,
-    golden,
-    `${id}: ${golden.note ?? ""}`,
-    beep > 0 ? { drift: true } : {},
-  );
+  expectSoundTimeline(played, golden, `${id}: ${golden.note ?? ""}`, {
+    ...PHONE_BOOK_SOUND_OPTIONS[id],
+    ...(beep > 0 ? { drift: true } : {}),
+  });
   replay.end();
 }
 
