@@ -706,6 +706,10 @@ well). Seed data: contacts **A** and **B**, dialled call 0400000001, saved messa
 reminder "Hi", alarm 07:00, composed tone "A". The Phone book view setting is the default
 **Large font**, so names show one per screen with the action as the key.
 
+The Phone book's behaviour with names (views, sorting, every flow and its timings) is in
+[stock/phone-book.md](stock/phone-book.md) (plan 19); the two-contact crawl below is its first
+reference.
+
 ### Phone book › Search
 
 - `1-1` **Search** → text-input, "Name:", key **OK**

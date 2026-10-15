@@ -9,6 +9,7 @@
 // table must not overlap (tests/features.test.ts).
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockMessaging } from "../../messages/service";
+import type { StockPhoneBook } from "../../phone-book/store";
 import type { StockSounder } from "../../sound/sounder";
 import type { StockT9 } from "../../text/t9/service";
 import type { Widget } from "../../widgets/flow";
@@ -36,6 +37,8 @@ export interface StockServices {
   readonly eeprom: StockEeprom;
   /** Plan 18: the phone's SMS (its `messages` record over `eeprom`, the network port). */
   readonly messaging: StockMessaging;
+  /** Plan 19: the inserted SIM's phone book (its `phone-book` record over `eeprom`). */
+  readonly phoneBook: StockPhoneBook;
   /** Plan 18b: the host's T9 dictionaries and the user words. */
   readonly t9: StockT9;
 }
@@ -52,13 +55,21 @@ export interface ScreenPlace {
   readonly numbering: ListNumbering;
 }
 
-/** A screen a feature implements: the first widget of the flow the node opens. */
-export type ScreenBinding = (services: StockServices, place: ScreenPlace) => () => Widget;
+/**
+ * A screen a feature implements: the first widget of the flow the node opens; undefined = no
+ * response (a leaf only: the menu stays as it was, plan 18c's virgin Templates).
+ */
+export type ScreenBinding = (
+  services: StockServices,
+  place: ScreenPlace,
+) => () => Widget | undefined;
 
 /** An entry a feature puts at the head of a submenu level (Snake II's Continue, plan 23 D10). */
 export interface LeadEntry {
   readonly slug: string;
   readonly label: string;
+  /** The tree child it follows instead of heading the level (plan 18c: Topics' Add topic). */
+  readonly after?: string;
   /** Whether the entry is listed now; the level opens on it while it is. */
   readonly shown: (services: StockServices) => boolean;
   /** The flow it opens. */
@@ -77,6 +88,8 @@ export interface LevelOptions {
   readonly label?: (slug: string, order: number) => string | undefined;
   /** The slug of the child the level opens on; undefined = the captured opening. */
   readonly opening?: () => string | undefined;
+  /** Whether the tree child `slug` is listed now (plan 18c: Topics with no topic); default all. */
+  readonly shown?: (slug: string) => boolean;
 }
 
 /** A level's options over one phone's services. */

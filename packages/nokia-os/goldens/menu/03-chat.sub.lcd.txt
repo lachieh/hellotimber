@@ -1,9 +1,9 @@
 lcd-golden 1
 id: menu/03-chat.sub
-status: pending:18c
+status: asserted
 source: captures/6.39/menu/03-chat/sub
 source-sha256: 3c7283bc4e084e5bf146b73368d5fa799ddbf624416d9d276848c0eedb86bf0d
-note: Chat's first screens; the Chat plan (18c) asserts them.
+note: Chat's first screens: Select, then ▼ (the phone book's answer, plan 19).
 omitted: none
 
 @image 01

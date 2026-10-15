@@ -24,6 +24,10 @@ import { StockFlowApplication } from "../widgets/flow";
 import { createSyntheticNetwork, type StockNetworkPort } from "../messages/network";
 import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
+import { standbyList } from "../phone-book/flows";
+import { normaliseSim, type StockSimCard } from "../phone-book/sim-card";
+import { StockPhoneBook } from "../phone-book/store";
+import { STANDBY_KEY_DELAY_MS } from "../phone-book/timings";
 import { stockBootGates } from "./boot";
 import {
   activationBeep,
@@ -56,10 +60,12 @@ export interface StockPhoneConfig extends StockPorts {
    */
   storage?: StockStorage;
   /**
-   * Plan 15: the inserted SIM card's identity. With Phone security On, power-on asks for the
-   * security code when this SIM is not among the last five used. Default "sim-1"; non-empty.
+   * Plan 15: the inserted SIM card's identity (with Phone security On, power-on asks for the
+   * security code when this SIM is not among the last five used), or (plan 19 D2) the whole SIM
+   * card: its phone book and service numbers. Default "sim-1": the emulator SIM (50 locations,
+   * 16-character names, empty). An invalid card throws, naming the field and the location.
    */
-  sim?: string;
+  sim?: string | StockSimCard;
   /**
    * Plan 16: the phone's buzzer, tone generator and vibrator. Every change arrives from `tick()`
    * stamped with the kernel time it happens at. Default: nowhere.
@@ -84,12 +90,12 @@ export interface StockPhoneConfig extends StockPorts {
 }
 
 /**
- * Stock standby ▲/▼: the phone book name search and the dialled-numbers list (placeholders until
- * the Phone book and Call register plans).
+ * Stock standby ▲: the dialled numbers (plan 22's; its `No last dialled numbers` is the
+ * `pending:22` golden `phone-book/standby-up`). ▼ opens the phone book's name list, a standby
+ * application (plan 19 D5, S1: the captures correct the spec's arrows, which plan 14 copied).
  */
 export const STOCK_STANDBY_KEYS = {
-  up: "menu/phone-book/search",
-  down: "menu/call-register/dialled-numbers",
+  up: "menu/call-register/dialled-numbers",
 } as const;
 
 /** The envelope's blink while the SIM's message slots are full (`sms/full-arrival`: 478-482 ms). */
@@ -138,10 +144,8 @@ export function createStockPhoneWith(
         .join(", ")}.`,
     );
   }
-  const sim = config.sim ?? STOCK_DEFAULT_SIM;
-  if (typeof sim !== "string" || sim === "") {
-    throw new Error(`The SIM must be a non-empty string (received ${JSON.stringify(sim)}).`);
-  }
+  const simCard = normaliseSim(config.sim ?? STOCK_DEFAULT_SIM);
+  const sim = simCard.id;
   const { clock, date } = config;
   const eeprom = new StockEeprom(config.storage ?? createMemoryStorage());
   const t9 = stockT9(eeprom, config.t9?.english);
@@ -188,11 +192,32 @@ export function createStockPhoneWith(
     config.network ?? createSyntheticNetwork(),
   );
   messaging.connect();
-  const services = stockServices(ports, settings, games, security, sounder, eeprom, messaging, t9);
+  const phoneBook = new StockPhoneBook(eeprom, simCard);
+  const services = stockServices(
+    ports,
+    settings,
+    games,
+    security,
+    sounder,
+    eeprom,
+    messaging,
+    t9,
+    phoneBook,
+  );
   // Plan 17 D7: the power key's list, over the same services as the menu's leaves.
   const power = new PowerListState();
   const phone = createPhone({
-    menu: createStockMenu(ports, settings, games, security, sounder, eeprom, messaging, t9),
+    menu: createStockMenu(
+      ports,
+      settings,
+      games,
+      security,
+      sounder,
+      eeprom,
+      messaging,
+      t9,
+      phoneBook,
+    ),
     // Plan 18 D11: the envelope while Inbox holds unread messages, blinking while every slot is
     // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED). Plan 17 D6: the silent
     // icon while the active profile's Incoming call alert is Off.
@@ -210,7 +235,12 @@ export function createStockPhoneWith(
     ...(skip ? { bootMs: 0 } : {}),
     // Plan 15 D9: the security code and the welcome note hold the boot after the self-test.
     bootGates: stockBootGates({ security, settings, skip, sound: (lines) => sounder.note(lines) }),
-    standbyKeys: STOCK_STANDBY_KEYS,
+    // Plan 19 D5: ▼ opens the name list after standby's 23 ms leaving frame (so does ▲).
+    standbyKeys: {
+      ...STOCK_STANDBY_KEYS,
+      down: new StockFlowApplication("stock:phone-book", () => standbyList(services)),
+    },
+    standbyKeyDelayMs: STANDBY_KEY_DELAY_MS,
     menuOpenDelayMs: STOCK_MENU_OPEN_DELAY_MS,
     shortcutWindowMs: STOCK_SHORTCUT_WINDOW_MS,
     // Rows levels keep the stateful circular window of the stock painter (plan 14 D3).

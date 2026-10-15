@@ -28,9 +28,9 @@ describe("plan 18's coverage", () => {
   it("asserts a golden for every multi-tap Options entry; later owners are named", () => {
     for (const option of EDITOR_OPTIONS)
       expect(ASSERTED.has(option.golden), option.label).toBe(true);
+    // Plan 19 implements Send to many with names (`phone-book/pick-send-to-many*`).
     // The Cyrillic dictionaries are plan 26's (plan 18b D11).
     expect(EDITOR_OPTIONS.filter((o) => o.owner !== undefined).map((o) => o.owner)).toEqual([
-      "19",
       "18c",
       "18c",
       "26",

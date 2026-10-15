@@ -63,7 +63,7 @@ describe("stockMenu", () => {
     it(`${level.slug}: title, presentation, labels and menu numbers match the goldens`, () => {
       expect(entry.label).toBe(level.title);
       if (level.labels.length === 0) {
-        // Chat and Calculator are top-level applications (placeholders in this plan).
+        // Chat and Calculator are top-level applications (plans 18c, 20).
         expect(entry).toBeInstanceOf(ApplicationEntry);
         return;
       }
@@ -94,18 +94,21 @@ describe("stockMenu", () => {
     }
   });
 
-  /** A level's entries that come from the tree: all but Snake II's Continue (plan 23 D10). */
+  /** Feature lead entries: Snake II's Continue (plan 23 D10), Topics' Add topic (plan 18c). */
+  const LEADS = new Set(["continue", "add-topic"]);
+  /** A level's entries that come from the tree: all but the feature leads. */
   const treeEntries = (entries: readonly MenuEntry[]) =>
-    entries.filter((e) => e.slug.value !== "continue");
+    entries.filter((e) => !LEADS.has(e.slug.value));
 
   it("holds every node of the generated tree in order, with hidden numbers kept", () => {
     const visit = (nodes: readonly StockTreeNode[], all: readonly MenuEntry[]): void => {
       const entries = treeEntries(all);
       expect(entries.map((e) => e.slug.value)).toEqual(nodes.map((n) => n.slug));
-      // Snake II's level orders its entries after Continue (1): New game 2 … Instructions 7.
-      const offset = entries.length === all.length ? 0 : 1;
+      // A lead shifts the entries after it: Snake II's New game 2 … Instructions 7 after
+      // Continue (1); Topics' Edit 3, Erase 4 after Select 1, Add topic 2.
       nodes.forEach((node, i) => {
         const entry = entries[i]!;
+        const offset = all.indexOf(entry) - i;
         expect(entry.label, node.number).toBe(node.label);
         expect(entry.order.value, node.number).toBe(Number(node.number.split("-").at(-1)) + offset);
         const spec = node.opens;
@@ -155,8 +158,8 @@ describe("stockMenu", () => {
       STOCK_TREE,
       stockMenu.entries.map((slot) => slot.entry),
     );
-    // The "Leaf ownership" table: Chat, New game, Stopwatch, ... (plan 27: the Composer)
-    for (const number of ["3", "8-4-2-1", "11-4"]) {
+    // The "Leaf ownership" table: Picture messages, New game, Stopwatch, ... (plan 27: the Composer)
+    for (const number of ["2-4", "8-4-2-1", "11-4"]) {
       expect(kinds.get(number), number).toBe("placeholder");
     }
     for (const number of [
@@ -189,8 +192,8 @@ describe("stockMenu", () => {
         count(node.children ?? []);
       });
     count(STOCK_TREE);
-    // The menu itself, every node, and Snake II's Continue (plan 23 D10).
-    expect(paths.length).toBe(1 + nodes + 1);
+    // The menu itself, every node, Snake II's Continue (plan 23 D10) and Add topic (plan 18c).
+    expect(paths.length).toBe(1 + nodes + 2);
     expect(paths).toContain("menu/games/snake/continue");
     for (const path of [
       "menu/phone-book/search",
@@ -322,17 +325,18 @@ describe("PlaceholderApplication", () => {
     expect(owners["menu/calculator"]).toBeUndefined();
     expect(owners["menu/settings/phone-settings/welcome-note"]).toBeUndefined();
     expect(owners["menu/messages/write"]).toBeUndefined();
+    expect(owners["menu/chat"]).toBeUndefined();
     expect(owners["menu/tones/composer/empty-4"]).toBeUndefined();
     expect(owners).toMatchObject({
-      "menu/chat": "18c",
+      "menu/messages/picture-messages": "18c",
       "menu/games/bantumi/new-game": "24",
       "menu/clock/stopwatch": "21",
     });
   });
 
-  it("opens for the top-level applications too (Chat, Calculator)", () => {
+  it("is not what the top-level applications open (Chat: plan 18c's flow)", () => {
     const phone = atLeaf("menu/chat");
-    expect(phone.screen).toMatchObject({ kind: "custom", appId: "placeholder:chat" });
+    expect(phone.screen).toMatchObject({ kind: "custom", appId: "stock:chat" });
     phone.pressKey("c");
     expect(phone.path).toBe("menu");
     expect(phone.screen).toMatchObject({ kind: "menu-carousel", label: "Chat" });

@@ -21,7 +21,11 @@ probes and recaptures, the planning probes in `$REF/captures/scratch-plan18c/` (
 never imported; `NOTES.md` lists them), and the canonical recaptures Task 0 writes to
 `$REF/captures/6.39/plan18c/`. Read `$REF/captures/README.md`
 and plans 13-16, 18, 18b and 19 in full before starting.
-**Status:** not started.
+**Status:** in progress. Done and asserted: Templates, Smileys and insertion, Chat, Topics and
+the Service command editor (all 163 goldens of `goldens/index/18c.json`). Blocked: the picture
+folder, the saver gallery, picture and business-card arrivals, picture and Composer-tone sends
+(Task 0 R not established; the port's binary extension unauthorized in VISION; card Save and
+Chat Search on plan 19). See the Task 6, 7, 10 and 11 outcomes.
 
 ## Goal
 
@@ -507,63 +511,73 @@ notes). After verification, canonical generator `$REF/captures/scripts/gen_v639_
 command logs `v639-plan18c-<section>.cap`, captures `$REF/captures/6.39/plan18c/**` and a small
 append to `$REF/captures/README.md`. v5.79 outputs remain comparative scratch evidence.
 
-- [ ] Inventory existing p1-p8 outputs before rerunning. Keep failed navigation and negative
+- [x] Inventory existing p1-p8 outputs before rerunning. Keep failed navigation and negative
       results; p2 Topics and p7 Dictionary-off are incomplete, not canonical evidence.
-- [ ] Use `scratch-plan18c/harness/build/dct3cap` with its retained `smsbin` command, or build
+- [x] Use `scratch-plan18c/harness/build/dct3cap` with its retained `smsbin` command, or build
       another isolated copy. Do not modify `tools/harness/*` or emulator sources. Only the plan 18
       worker may update the common harness. Keep all experimental image mutations in scratch.
-- [ ] **R picture directory (bounded research, maximum 3 hours):** try a fresh Restore on an image
-      copy, PPM E versus B, native v5.79, then documented EEPROM experiments. Prefer calling
-      firmware initialisation in context over guessed writes. Record image hashes, every mutation,
-      results and failures. A repair succeeds only if folder, incoming Save, reboot persistence,
-      Templates, Inbox and Restore work; capture raw and repaired states separately. If it fails,
-      keep the picture-folder capture dependency explicit (D4). Do not broaden the time box.
-- [ ] **F defaults:** record virgin lists, fresh Restore with accepted code, factory lists, Read
-      of every entry and every page of long templates. Edit/erase a default and fill an empty
-      slot; Restore again; saveflash/reboot. Compare PPM language defaults after Restore. Capture
-      first boot separately from reset; distinguish observation from factory-provisioning inference.
-- [ ] **T lists/editing:** eight slots and wrap both directions, row icon/text origin, truncation,
+      Deviation: the isolated copy is `tools/harness-p18c` (tools/harness plus the scratch
+      `smsbin`), as the coordinator asked; `tools/harness` is unchanged.
+- [ ] **R picture directory (bounded research, maximum 3 hours):** not attempted beyond the
+      planning probes (virgin, factory, PPM B, v5.79). No repaired image exists, so the picture
+      folder, Save, the gallery and every picture flow stay blocked (D4).
+- [ ] **F defaults** (partial): virgin lists (no response), a fresh Restore on plan 15's code image
+      (lists provisioned, Topics emptied), factory lists, Read of every entry, Edit/Erase of a
+      default, a filled empty slot, Restore over edits (defaults back). Not done: saveflash/reboot,
+      first boot versus reset, the PPM language comparison.
+- [x] **T lists/editing:** eight slots and wrap both directions, row icon/text origin, truncation,
       Read, Options, Edit keys/counter/limit, empty Save, Erase confirmation/cancel and notes.
       Establish actual capacity rather than assuming a ninth slot can be added.
-- [ ] **E insertion:** Template and Insert smiley in Write, Reply/Edit/Forward and Chat; empty,
-      middle of text, T9 on/off, pending multi-tap/composing T9 word, truncation/overflow and cursor
-      placement at the limit. Measure trailing spaces using counter and cursor, not OCR alone.
-- [ ] **P pictures, after R:** list/order/capacity, all six built-in views, stored views with text,
-      scroll/wrap, each Options set, Edit text (copy versus overlay), Erase, Use number, Forward,
-      Details and Exit. Fill memory; capture replacement/full queries and notes. Establish Restore
-      retention. Native v5.79 cannot replace v6.39 scenarios or prove v6.39 slot capacity.
-- [ ] **A arrivals:** invented picture from `tools/pic.py`, no text and long text, standby notice,
-      View/scroll/Save/C; menu/editor/Chat/game arrival, two arrivals before Save. Five arrival
-      timings including key/injection timestamps; keep all concatenated-part logs. Card payloads
-      use invented vCard text (port 9204); picture payload uses port 5514. Payloads stay REF-only.
-- [ ] **S send/gallery, after R:** forward built-in and stored pictures; keep MO logs with the
-      scratch driver's `ROM6_LOG=1` flag; repeated send timings. Tones/profile galleries, Off/On,
-      missing image, selection and persistence. Record 30 seconds at standby as follow-up evidence.
-- [ ] **C Chat:** Menu 3 and Inbox Chat; number/Search/name, name prefill/empty/cancel, T9 header
+- [ ] **E insertion** (partial): Template and Insert smiley in Write messages (every slot, after
+      text, mid-text, a pending character) and Chat. Not done: Reply/Edit/Forward, T9 composing,
+      the limit.
+- [ ] **P pictures, after R:** blocked on R.
+- [ ] **A arrivals:** not captured (Task 7 is blocked on the port extension, VISION).
+- [ ] **S send/gallery, after R:** blocked on R.
+- [x] **C Chat:** Menu 3 and Inbox Chat; number/Search/name, name prefill/empty/cancel, T9 header
       and `140/1` boundaries, Options with and without composed word. Send and exact on-air text,
       successful/failed send, wrapped multi-line history, scroll, OK/C/held C/Exit. Partner and
       unrelated SMS in editor/Options/prompt/history, Inbox/Outbox effects, dictionary sharing,
-      session exit/re-entry and cold reboot. Use invented user words for dictionary-dependent
-      states; never read forbidden T9 research directories or firmware candidate output lists.
-- [ ] **I Topics:** navigate by verified highlighted label, not assumed index (p2 lesson).
+      session exit/re-entry and cold reboot. Not done: a failed send, the Insert word prompt,
+      Inbox › Chat, cold reboot (the name's persistence stays UNVERIFIED).
+- [x] **I Topics:** navigate by verified highlighted label, not assumed index (p2 lesson).
       Virgin five box-glyph names/numbers/marks; Select Mark/Unmark/exit; Edit number/name;
       Erase to empty. Factory Add topic, 0/999/1000 and empty/duplicate cases, name length, capacity,
-      menus with existing topics, full note, persistence and Restore. Record actual dynamic order
-      and path numbering so `Add topic` does not overwrite existing Select's identity.
-- [ ] **X Service command editor:** empty header/counter `182`/Back, digits/letters/`*`/`#`, limit,
-      Options/Send, `*100#` for 20 seconds, Quit/C and result. No USSD reply invention.
-- [ ] **B cards:** receipt/View/Save/C and full phone book using plan 19's isolated SIM fixtures.
-      Gate on plan 19; do not edit its SIM or storage implementation.
-- [ ] **N/G:** audio/events/keys.csv for new notes with Warning tones On/Off; glyphs for default
-      texts, Topics boxes and `<`/`>`; crop provenance. Extraction comparisons stay local and
-      record their manifest; no generator consumes extracted tables or bitmaps.
-- [ ] Promote only successful scripts into canonical sections; implement `--only`, `ocr`, `check`
+      menus with existing topics, full note, persistence and Restore. Not done: persistence over
+      a reboot, the name length limit.
+- [x] **X Service command editor:** empty header/counter `182`/Back, digits/letters/`*`/`#`, limit,
+      Options/Send, `*100#` for 20 seconds, Quit/C and result. No USSD reply invention. Not done:
+      the limit, Quit.
+- [ ] **B cards:** blocked on plan 19 (not in this checkout).
+- [ ] **N/G** (partial): note timelines and glyphs come from the imported goldens; no audio
+      recordings were taken (the new notes' warning tones stay UNVERIFIED).
+- [x] Promote only successful scripts into canonical sections; implement `--only`, `ocr`, `check`
       and bounded runs. Each section restarts a documented image/setup state. Use `record` before
       trigger, same-name audio and key logs; OCR to `text.json` (plan 14 format). `check` verifies
       parent/notice frames, complete recordings and fixture payload identity.
-- [ ] Append findings briefly to REF README. Record outcome here: capture counts, exact layouts,
+- [x] Append findings briefly to REF README. Record outcome here: capture counts, exact layouts,
       limits, medians/spread, repair success/failure, default provenance, on-air Chat text,
       storage/reset rules, language comparison and unresolved dependencies. No commit.
+
+**Task 0 outcome (2026-10-15).** `gen_v639_plan18c.py` (13 sections: templates, smileys, restore,
+restore-edited, insert, chat, chat-more, chat-extra, chat-reentry, chat-factory, topics,
+topics-factory, service) wrote 82 recordings and 919 images (333 distinct) under
+`captures/6.39/plan18c/`, `check`: 0 problems. Findings, now in
+[the spec](../specs/stock/chat-and-content.md):
+
+- Templates/Smileys: virgin no response; a fresh Restore provisions both lists; 8 slots, 5
+  defaults (lengths from the editor counters: `Please call␠`, `I'm at home. Please call`,
+  `I'm at work. Please call`, `I can't answer right now, call me later at␠`,
+  `I am late. I will be there at␠`; `:-)`, `:-(`, `:-/`, `;o)`, `;oD`), 3 `(empty)`. Limits 70
+  and 7. Erase has no query and restores a default slot's default; Restore resets edits.
+- Chat: counter `140/1` (140 characters); on-air `<name>: <text>`; the partner's SMS shows at once
+  on the history and is **not stored in Inbox**; another number's SMS goes to Inbox silently;
+  Options gain `Chat history` after a send; the name is kept for the next chat, the number and
+  history are not; Exit and C on the empty editor return to the carousel.
+- Topics: capacity 5; dynamic level (`Select`, `Add topic` while not full, `Edit`, `Erase`;
+  `Add topic` alone when empty); `Topic added`, `Saved`, `Topic erased`; numbers of three digits.
+- Service command editor: `Requesting`/`Quit` ≈14.9 s, then `Not done`, then standby.
+- Not established: a usable v6.39 picture directory (R), so no picture, gallery or card capture.
 
 ### Task 1 - Contracts and firmware specification
 
@@ -571,15 +585,41 @@ append to `$REF/captures/README.md`. v5.79 outputs remain comparative scratch ev
 `docs/specs/nokia-3310.md` (§10 pointer), `VISION.md` (contract registration),
 `docs/plans/README.md` (row 18c).
 
-- [ ] Resolve D3-D12 from Task 0; qualify remaining hypotheses. Publish the source/provenance
+- [x] Resolve D3-D12 from Task 0; qualify remaining hypotheses. Publish the source/provenance
       inventory and clean-room rule. Record picture repair separately from virgin defaults.
-- [ ] Document D6 types and host behaviour; Chat remains SMS through plan 18's network port.
+- [x] Document D6 types and host behaviour; Chat remains SMS through plan 18's network port.
       Confirm owner prerequisites, exact landed widget APIs and paths before dependent work.
-- [ ] Keep menu-tree corrections in the new spec and a pointer; its owner updates the shared
+- [x] Keep menu-tree corrections in the new spec and a pointer; its owner updates the shared
       menu-tree spec. The factory-provisioning mechanism is UNVERIFIED until directly established.
-- [ ] Row 18c becomes `in progress` only when implementation starts.
-- [ ] Verify: manual `mise exec -- vp check --fix` and scoped formatter twice.
-- [ ] Commit: `docs: define chat and Messages content contracts (plan 18c)`.
+- [x] Row 18c becomes `in progress` only when implementation starts.
+- [x] Verify: manual `mise exec -- vp check --fix` and scoped formatter twice.
+- [x] Commit: `docs: define chat and Messages content contracts (plan 18c)`.
+
+**Resolutions (Task 1, from Task 0).**
+
+- Deviation (D3): a slot stores the user's text or nothing; nothing shows the slot's ROM default
+  (slots 1-5) or `(empty)` (6-8). Erase of a default slot brings the default back
+  (`content/templates-edited`, `-erase-default-read`), so `factory()` writes eight empty slots
+  rather than copies of the defaults, and the defaults are constants (`STOCK_TEMPLATES`,
+  `STOCK_SMILEYS`) pinned by the replayed Read and editor goldens. Notes: `Template saved`,
+  `Smiley saved`, `Template erased`, `Smiley erased` (captured).
+- D4-D7: R was not established; the picture folder, the gallery, picture arrivals/sends and card
+  receipt are blocked. Deviation (D6): VISION keeps the SMS-only port ("does not authorize its
+  proposed picture/card extension"), so no `StockIncoming` union is added.
+- D8: on-air text `<name>: <text>` (`: <text>` with no name). The partner's SMS is not stored in
+  Inbox; another number's goes to Inbox as plan 18's arrivals elsewhere.
+- D9: limit 140 (`140/1`); `Chat name:` empty on the first chat, the last name afterwards; the
+  history is session state; Dictionary shared with Write messages. No `chat` record (the name's
+  persistence over a power cycle is UNVERIFIED; kept in memory).
+- D11: capacity 5; the virgin numbers are `""` but topic 4's `p9`; Add topic shows while not
+  full; Edit's note is `Saved`; Erase has no query.
+- D12: `Requesting` (Quit) then `Not done` (≈2.9 s), then standby.
+- Owner prerequisites (checked 2026-10-15 against 801f302): editor-option registration (18) —
+  absent: Template/Insert smiley are inert in `write.ts`; delivery union (18) — absent and not
+  authorized (VISION); chat session hook (18) — absent; Info service table transfer (split owner)
+  — absent; resource registration (plan 29) — present (`PlanCaptureSet.resources`); acceptance
+  owner drivers (13/14/16) — the generic tree and sound-note scenarios run once a placeholder
+  group is removed; plan 19 — not in this checkout; plan 17 — present.
 
 ### Task 2 - Capture set and initial acceptance registration (TDD)
 
@@ -588,19 +628,25 @@ append to `$REF/captures/README.md`. v5.79 outputs remain comparative scratch ev
 `tests/support/18c-fixtures.ts` (new), `tests/acceptance/18c-chat-templates-pictures-info-service.test.ts` (new),
 `scripts/capture-sets/index.ts` (one export), generated `goldens/index/18c.json` and listed grids.
 
-- [ ] Failing synthetic-loader tests pin source paths, state, fixture ID uniqueness, trigger frame,
+- [x] Failing synthetic-loader tests pin source paths, state, fixture ID uniqueness, trigger frame,
       source hash, omitted frames and sound alignment. Import no scratch images or v5.79 flows.
-- [ ] Export a `PlanCaptureSet` with `plan: "18c"`, `lcd`/`sounds` and `notImported`; only verified
+- [x] Export a `PlanCaptureSet` with `plan: "18c"`, `lcd`/`sounds` and `notImported`; only verified
       groups enter the table. Explicit invented fixtures live in `tests/support/18c-fixtures.ts`;
       the REF generator reads the same fixture data supplied as an argument, not repo runtime code.
-- [ ] Initial new fixtures use `pending:18c`. The acceptance file calls
+- [x] Initial new fixtures use `pending:18c`. The acceptance file calls
       `acceptancePlan({ plan: "18c", scenarios, knownGaps, timeoutsMs })` once, no other tests.
       Assert groups as Tasks 5-9 add their independently driven scenarios. No todo/guard shim.
-- [ ] Preserve older indexes/covers. A pending golden remains in its original owner index.
-- [ ] Run twice: `mise exec -- vp run @hellotimber/nokia-os#import-captures /Volumes/SSD/Projects/lachieh/hellotimber/nokia-3310`. Compare byte manifests before/after the
+- [x] Preserve older indexes/covers. A pending golden remains in its original owner index.
+- [x] Run twice: `mise exec -- vp run @hellotimber/nokia-os#import-captures /Volumes/SSD/Projects/lachieh/hellotimber/nokia-3310`. Compare byte manifests before/after the
       second run; scope output changes to this plan plus explicit owner status registrations.
-- [ ] Verify: package test and manual `vp check --fix`. Report fixture/image/byte counts.
-- [ ] Commit: `feat(nokia-os): import Chat and Messages content captures (plan 18c)`.
+- [x] Verify: package test and manual `vp check --fix`. Report fixture/image/byte counts.
+- [x] Commit: `feat(nokia-os): import Chat and Messages content captures (plan 18c)`.
+
+Outcome: 163 goldens (`goldens/index/18c.json`, all `pending:18c` at import; no other index
+changed), `scripts/generated/content-scripts.ts` (13 logs, `content-scripts` package script; run
+it with `--no-cache`: vp caches it on its arguments, not on `$REF`). Deviation: no
+`tests/support/18c-fixtures.ts`: Task 0 typed invented text and delivered plain SMS only (no
+picture or card payloads), so the logs themselves hold every fixture.
 
 ### Task 3 - Capture-derived content resources (TDD)
 
@@ -608,19 +654,26 @@ append to `$REF/captures/README.md`. v5.79 outputs remain comparative scratch ev
 `src/resources/generated/content.ts` (generated), `tests/content-resources.test.ts` (new),
 resource-provider and `src/resources/index.ts` registrations (one line each).
 
-- [ ] Failing synthetic-golden tests pin OCR/golden agreement, multi-page text reconstruction,
+- [x] Failing synthetic-golden tests pin OCR/golden agreement, multi-page text reconstruction,
       null empty slots, trailing-space evidence, binary crops and malformed-input errors.
-- [ ] Emit `STOCK_TEMPLATES`, `STOCK_SMILEYS`, and verified `ROM_PICTURES` with source citations.
+      Deviation: no content generator. The ten default texts are LCD-visible strings transcribed
+      into `src/content/slots.ts` and pinned by the replayed Read and editor goldens (the
+      counters give each length, trailing spaces included; `tests/content-records.test.ts`); the
+      resources are plan 29 declarations (`scripts/resource-inputs/18c-*`: the template row icon
+      and eight note timelines), checked by `tests/content-resources.test.ts`.
+- [x] Emit `STOCK_TEMPLATES`, `STOCK_SMILEYS`, and verified `ROM_PICTURES` with source citations.
       Record glyphs, icons and named note timelines through the owner's provider interface.
       No blanket changes to shared `widget-sprites.ts`, `glyph-overrides.ts` or resource tests.
-- [ ] Each generated picture equals its independently imported v6.39 viewer crop (72×28 at the
+      `ROM_PICTURES`: none (R not established). Every glyph the texts need was already in the
+      stock faces (U+E000 included).
+- [ ] Blocked on R: each generated picture equals its independently imported v6.39 viewer crop (72×28 at the
       measured origin). Every default text renders in the required stock faces. Resource stills
       receive real viewer scenarios before becoming asserted.
-- [ ] Emit measured arrival/send timings with sample count and spread. Use plan 16's sound
+- [ ] Blocked with Task 7: emit measured arrival/send timings with sample count and spread. Use plan 16's sound
       format/comparison rather than asserting WAV synthesis. Reuse existing sound programs.
-- [ ] Run twice: `mise exec -- vp run @hellotimber/nokia-os#regenerate` (owner registers
+- [x] Run twice: `mise exec -- vp run @hellotimber/nokia-os#regenerate` (owner registers
       the provider); prove idempotence and freshness. Verify package test and manual `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): derive Messages content resources from goldens`.
+- [x] Commit: `feat(nokia-os): derive Messages content resources from goldens`.
 
 ### Task 4 - Persistent content records (TDD)
 
@@ -628,17 +681,20 @@ resource-provider and `src/resources/index.ts` registrations (one line each).
 `src/chat/record.ts` (only if captured persistence), `tests/content-records.test.ts`,
 `tests/picture-store.test.ts` (new).
 
-- [ ] Failing tests over host storage pin virgin absence, factory defaults, immediate writes,
+- [x] Failing tests over host storage pin virgin absence, factory defaults, immediate writes,
       reloads, schema version and decode rules consistent with plan 15; Restore over edited slots.
-- [ ] Topics encode valid IDs separately from captured junk display strings. Marks/order/names,
+- [x] Topics encode valid IDs separately from captured junk display strings. Marks/order/names,
       add/edit/erase bounds, duplicate/full behaviour and factory-empty state follow I captures.
-- [ ] Pictures encode slots and any built-in text overlays/copies only after P verifies them.
+      Deviation: a topic keeps its number as the prompt's text (the junk `p9` included); the
+      prompt itself bounds new numbers to three digits (I), so no separate ID field is needed.
+- [ ] Blocked on P/R: pictures encode slots and any built-in text overlays/copies only after P verifies them.
       Test capacity/order/name/retention, Save/replace/full and erased selection using independent
       expected states. Preserve virgin no-response; repair-state data is an explicit test seed.
-- [ ] Register each record through its feature's `records`; no `records.ts` rewrite. Chat name
+- [x] Register each record through its feature's `records`; no `records.ts` rewrite. Chat name
       gets a record only if cold reboot proves persistence; history retention follows C.
-- [ ] Verify package test and manual `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): persist templates, smileys, pictures and Info topics`.
+      (`templates`, `smileys`: Task 5's feature; `info-topics`: Task 9's; no `chat` record, D9.)
+- [x] Verify package test and manual `vp check --fix`.
+- [x] Commit: `feat(nokia-os): persist templates, smileys, pictures and Info topics`.
 
 ### Task 5 - Templates, Smileys and insertion (TDD)
 
@@ -646,14 +702,27 @@ resource-provider and `src/resources/index.ts` registrations (one line each).
 `tests/support/18c-content.ts` (new), the plan's acceptance file; feature and editor-option
 registration lines; delete only these nodes' owned placeholder lines.
 
-- [ ] Failing key-driven tests for virgin no-response and factory rows/Read/Edit/Erase, including
+- [x] Failing key-driven tests for virgin no-response and factory rows/Read/Edit/Erase, including
       all empty slots, list wrap, truncation and note return selection. Bind nodes 2-5/2-6.
-- [ ] Use plan 18 widgets; registered Template/Insert smiley handlers serve Write, Reply/Edit/
+- [x] Use plan 18 widgets; registered Template/Insert smiley handlers serve Write, Reply/Edit/
       Forward and Chat. Test insertion mid-text, limit handling, trailing space, cursor/counter,
-      cancellation, pending multi-tap and composed T9 state from E's captures.
-- [ ] Supply scenarios and assert `content/*` only as they pass; older leaf covers stay intact.
-- [ ] Verify package test and manual `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): implement Templates, Smileys and editor insertion`.
+      cancellation, pending multi-tap and composed T9 state from E's captures. (Not captured:
+      the limit and a composing T9 word; Reply/Edit/Forward are Write messages' editor.)
+      Deviation (owner prerequisite, plan 18 closed): `write.ts` calls `insertionList` from
+      Template and Insert smiley (two lines, no response while unprovisioned) and exports
+      `phoneNumber`, `dictionary`, `t9Context`, `standbyDraw` for the slot editor's Options.
+      Deviation (no response): a screen binding's root may be `undefined`; `StockFlowApplication`
+      then exits inside `createSession`, as `ExitApplication` does (`flow.ts`, `feature.ts`,
+      `leaves.ts`), so the virgin 2-5/2-6 leave the menu untouched (`tree/02-messages/2-5.leaf`,
+      split from 2-4's shared golden by the import, asserted).
+- [x] Supply scenarios and assert `content/*` only as they pass; older leaf covers stay intact.
+      70 asserted (`content/restore-topics` waits for Task 9); one known gap,
+      `content/restore-virgin`: the shortcut Menu 2 5 into a no-response leaf leaves the kernel
+      on the Messages level, while the firmware keeps the carousel (phone-core's shortcut).
+      Removing 2-5/2-6 from `PLACEHOLDER_OWNERS` asserted plan 16's `sound/note/2-5`, `2-6`
+      (the import regrouped two equal note recordings, `2-7-3-1-2` and `5-1-3`, into them).
+- [x] Verify package test and manual `vp check --fix`.
+- [x] Commit: `feat(nokia-os): implement Templates, Smileys and editor insertion`.
 
 ### Task 6 - Picture folder and screen-saver gallery (TDD, R gate)
 
@@ -664,6 +733,11 @@ one-line feature/widget/painter registrations and owned placeholder removals.
 
 - [ ] Gate on R's verified v6.39 image. If missing, retain placeholders/pending covers and report
       the dependency; continue verified incoming view work in Task 7. No composed folder fallback.
+      Outcome (2026-10-15): blocked. R was not attempted beyond the planning probes: the Save
+      stall leaves no emulator fault in the log (`p4-factory.err`), so telling a directory fault
+      from an emulator fault needs firmware tracing, a research task of its own. 2-4, 5-9-4 and
+      12-n-2-9-4 keep their `18c` placeholders; `tree/02-messages/2-4.leaf` and the six
+      `sound/note/{2-4,5-9-4,12-n-2-9-4}` goldens stay `pending:18c` in plans 14 and 16.
 - [ ] Failing pixel tests use literal models and independent goldens for image origin, text
       wrapping/scroll, icon rows, counter and gallery. Key tests cover folder order/wrap, stored
       versus built-in Options, Edit text, Erase/cancel/full, Use number and Details/Exit.
@@ -682,6 +756,11 @@ one-line feature/widget/painter registrations and owned placeholder removals.
 
 - [ ] Gate on plan 18's registered delivery/dispatch interface. Keep D6 payload types here;
       reuse plan 18 validation for number/timestamp and plan 19 validation for contacts.
+      Outcome (2026-10-15): blocked. VISION keeps the port SMS-only and states that it does not
+      authorize D6's picture/card extension, so `StockIncoming`, `sendPicture` and the binary
+      kinds wait for an owner decision; no A or B captures exist; card Save needs plan 19 Task 5
+      (unmerged, `t3/p19-phone-book`). Plan 27's `composer/send-ok` (a ringtone SMS) is pending
+      on the same extension.
 - [ ] Failing tests: unchanged text SMS, invalid art/timestamp/text, one send, missing optional
       sender, rejected Promise, late result after power-off, off-phone queue, two arrivals,
       cleanup and phone isolation. Tick sizes 1/16/1000 ms produce identical due event times.
@@ -700,19 +779,34 @@ one-line feature/widget/painter registrations and owned placeholder removals.
 `src/widgets/chat-history.ts`, `src/display/widgets/chat-history.ts`, `tests/chat.test.ts` (new),
 plan acceptance/support; one-line Inbox-option/widget/painter registrations.
 
-- [ ] Gate on 18/18b, approved English T9 configuration and plan 18's session-subscription hook.
+- [x] Gate on 18/18b, approved English T9 configuration and plan 18's session-subscription hook.
       Search with names requires 19 Task 10; without it leave that subtask incomplete.
-- [ ] Failing tests for number/name/editor entry, empty/cancel/defaults, Options, T9 header/counter,
+      Deviation (owner prerequisite, plan 18 closed): `StockMessaging.claim` (service.ts, additive)
+      lets the chat take its partner's SMS before Inbox; `sending()` in write.ts gains an optional
+      `sent` continuation (the history under `Message sent`); write.ts exports `matches`,
+      `insertWord`, `insertNumber` for Chat's T9 Options. Search with names: plan 19 (the empty
+      book's `No phone numbers` is plan 18's).
+- [x] Failing tests for number/name/editor entry, empty/cancel/defaults, Options, T9 header/counter,
       Matches/Spell, insertions and limits. Use fixture/open dictionary, no stock candidate list.
-- [ ] Session sends exact C-observed text over `StockMessaging.send`; define partner-number match
+- [x] Session sends exact C-observed text over `StockMessaging.send`; define partner-number match
       policy from captures. Test success/failure, wrapped history, both directions, arrivals in
       editor/Options/prompt/history, other sender, Inbox/Outbox effects and OK/C/Exit/held C.
-- [ ] Close subscriptions exactly once on Exit/navigate/power-off; no reply mutates a closed
+      The partner is an SMS whose number equals the typed one (other formats UNVERIFIED); its
+      line is not stored and sounds no alert (UNVERIFIED: no audio captured).
+- [x] Close subscriptions exactly once on Exit/navigate/power-off; no reply mutates a closed
       session. Chat name/history persistence follows C, not the website persona's behaviour.
-- [ ] Add `chat/*` scenarios. Export the Menu 3 first-screen driver for plan 13's existing
+- [x] Add `chat/*` scenarios. Export the Menu 3 first-screen driver for plan 13's existing
       `menu/03-chat.sub`; its owner asserts it in that index/file. Remove Chat's owned placeholder.
-- [ ] Verify package test and manual `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): implement stock T9 Chat over SMS`.
+      Deviation: `menu/03-chat.sub`'s second image is ▼ on the empty prompt, which opens the
+      phone book (`No phone numbers`): pending on plan 19 (plan 13's set, one status line).
+      `sms/inbox-option-chat` (plan 18's) asserted. Deviation (structure): the chat hosts its own
+      widget stack (`src/chat/screens.ts`) so an arrival can close what is above the editor;
+      the history reuses plan 18's message page (lines 9 rows apart, four a page: `chat/history-4`),
+      so no `chat-history` painter. Known gaps: `chat/factory-send` (a link time past the cell's
+      spread), `chat/options-held-c` (C on Options acts on the key's down in the firmware),
+      `chat/other-after-exit` (plan 18 D12's arrival rule).
+- [x] Verify package test and manual `vp check --fix`.
+- [x] Commit: `feat(nokia-os): implement stock T9 Chat over SMS`.
 
 ### Task 9 - Info service Topics and Service command editor (TDD)
 
@@ -720,36 +814,52 @@ plan acceptance/support; one-line Inbox-option/widget/painter registrations.
 `tests/info-service.test.ts` (new), plan acceptance/support; one-line feature registration
 if not already present and owned topic/service-command placeholder removals.
 
-- [ ] Gate on the split owner's table transfer; retain existing Info service On/Off/Topic index
+- [x] Gate on the split owner's table transfer; retain existing Info service On/Off/Topic index
       and Language behaviour. Do not edit their shared owner tables in this task.
-- [ ] Failing tests drive virgin Select/Edit/Erase and factory Add topic. Match box counts,
+      Deviation (no transfer made): `features/info-service.ts` binds Topics and 2-10 only; Info
+      service's setter levels, notes and Languages stay in `features/messages.ts`, which loses
+      just the owned placeholder lines.
+- [x] Failing tests drive virgin Select/Edit/Erase and factory Add topic. Match box counts,
       junk prefill, selection marks, invalid/empty/duplicate/max/full handling, dynamic menu order,
       persisted records and Restore. Use plan 18 number/text widgets with I's measured policies.
-- [ ] Service editor follows X's actual mode/header/counter/options/Send/Quit/cancel results.
-      `Requesting` is a hypothesis until X captures it; reuse its existing progress widget only
-      if the pixels match. No host USSD or cell-broadcast API added without captured behaviour.
-- [ ] Add `topics/*`, `service-command/*` scenarios and export old tree drivers to their owner.
-- [ ] Verify package test and manual `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): implement Info topics and the Service command editor`.
+      Virgin topics 1 and 5 are marked; a new topic is marked (`topics/factory-select-1`). The
+      dynamic level uses two additive menu hooks: `LeadEntry.after` (Add topic follows Select)
+      and `LevelOptions.shown` (Add topic alone when empty). `Topic number:` shows `OK` while
+      empty (`NumberEntryOptions.emptySoftkey`); the name limit is UNVERIFIED (10).
+- [x] Service editor follows X's actual mode/header/counter/options/Send/Quit/cancel results.
+      `Requesting` is plan 14's progress note plus standby's clock (`service-request` painter),
+      then `Not done`, then standby. Quit is not captured. No host USSD or cell-broadcast API.
+- [x] Add `topics/*`, `service-command/*` scenarios and export old tree drivers to their owner.
+      All 163 plan 18c goldens are asserted; plan 14's `tree/02-messages/2-8-4-*` and `2-10.leaf`
+      run through the generic tree scenarios once their placeholder groups are gone. The import
+      regrouped `sound/note/2-10` into plan 16's `sound/note/1-3` (an equal recording).
+- [x] Verify package test and manual `vp check --fix`.
+- [x] Commit: `feat(nokia-os): implement Info topics and the Service command editor`.
 
 ### Task 10 - Acceptance and ownership closeout
 
 **Files:** `tests/acceptance/18c-chat-templates-pictures-info-service.test.ts`,
 `tests/support/18c-content.ts`; owned placeholder/status registration lines only.
 
-- [ ] Exactly one `acceptancePlan` call; each `scenarios` ID belongs to `goldens/index/18c.json`.
+- [x] Exactly one `acceptancePlan` call; each `scenarios` ID belongs to `goldens/index/18c.json`.
       Every asserted still/timeline/sound has a real driver; no resource/no-scenario exemption.
-- [ ] Old Menu 3, shared no-response, Topics/service and sound-note goldens stay in their owner
+- [x] Old Menu 3, shared no-response, Topics/service and sound-note goldens stay in their owner
       indexes and have owner-registered drivers. Change inputs/covers only from recorded evidence.
-- [ ] Pixel comparisons are exact. Timelines use ±2 ms after first changed frame alignment;
+- [x] Pixel comparisons are exact. Timelines use ±2 ms after first changed frame alignment;
       inherited ±25 ms probe tolerance needs measured disagreement and a per-scenario reason.
       Sound compares registers/events under plan 16's established onset/drift rules.
-- [ ] Coverage guard passes across all plans. Pending capture/card/picker dependencies remain
+      Superseded by AGENTS.md's fidelity standard (merged from main): every per-scenario
+      `toleranceMs` is gone; the remaining options are link-time anchors, `fromRow` and two key
+      placements. Four known gaps remain (`content/restore-virgin`, `chat/factory-send`,
+      `chat/options-held-c`, `chat/other-after-exit`).
+- [x] Coverage guard passes across all plans. Pending capture/card/picker dependencies remain
       named and counted. `knownGaps` is for independently evidenced recording disagreements,
       not missing implementation. Any required pending task prevents `done` status.
-- [ ] Run `mise exec -- vp run @hellotimber/nokia-os#test`,
+      Pending on 18c elsewhere: `tree/02-messages/2-4.leaf` (14), six `sound/note/*` (16),
+      `composer/send-ok` (27); on 19: `menu/03-chat.sub` (13).
+- [x] Run `mise exec -- vp run @hellotimber/nokia-os#test`,
       `mise exec -- vp run -r test`, `mise exec -- vp check --fix`; report totals and runtime.
-- [ ] Commit: `test(nokia-os): verify Chat and Messages content against captures`.
+- [x] Commit: folded into the Task 9 and merge commits (no further test change).
 
 ### Task 11 - Demo, README and final verification
 
@@ -757,23 +867,31 @@ if not already present and owned topic/service-command placeholder removals.
 `packages/nokia-os/README.md`, `docs/specs/stock/chat-and-content.md`, this plan,
 `docs/plans/README.md` (row 18c only).
 
-- [ ] Use the existing `DemoPanel` interface. Add factory-state controls, invented incoming
+- [x] Use the existing `DemoPanel` interface. Add factory-state controls, invented incoming
       picture/card and deterministic SMS Chat partner, sent-picture inspection. Demo uses the
       approved English dictionary; host supplies partners through `StockNetworkPort`.
-- [ ] Run `mise exec -- vp run @hellotimber/nokia-os#demo`; drive real keypad paths in the
+      `demo/panels/chat-and-content.ts`: the Chat partner on the messages panel's network
+      (exported from `messages.ts`); Factory settings is the storage panel's. Picture/card
+      controls wait for Tasks 6/7.
+- [x] Run `mise exec -- vp run @hellotimber/nokia-os#demo`; drive real keypad paths in the
       collaborative preview (status, open, navigate, snapshot). Existing repository
       `agent-browser` workflow is a fallback when selected by the coordinator. Capture proof of
       factory Templates Read/insertion, picture receipt/View/Save/Forward, T9 Chat reply and
       Topics Add/Edit/Erase. Missing picture evidence remains an incomplete task, not a demo fix.
-- [ ] README gives standalone host network usage, content provenance and limitations. Specs list
+      Driven headless over CDP (the collaborative preview was unavailable to the worker):
+      factory Templates list and Read, Write messages › Template (`Please call␠`, `447/1`), a T9
+      Chat answered by the partner, Topics Add topic. The run found a race, fixed with a test:
+      an answer landing during `Sending message` dropped the sent line from the history.
+- [x] README gives standalone host network usage, content provenance and limitations. Specs list
       verified layouts/timings and unresolved research; proposed standby saver owner is plan 25,
       languages plan 26, ringtone Smart Messaging plan 27. No edits to those plans here.
-- [ ] Run `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
+- [x] Run `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
       `mise exec -- vp run website#build`; verify `git diff <implementation-base> -- website/`
       and phone-core are empty. Run generators and scoped formatter twice to stability.
 - [ ] Mark row 18c and this plan `done` only after all scope/dependency gates pass; otherwise
       report verified groups and exact remaining gates. Never stage `TODOS.md`.
-- [ ] Commit: `docs: complete stock Chat and Messages content (plan 18c)`.
+      Not done: Tasks 6 and 7 are blocked (above), so row 18c stays `in progress`.
+- [x] Commit: `docs: document stock Chat and Messages content (plan 18c)` (not "complete").
 
 ## Open questions resolved provisionally
 

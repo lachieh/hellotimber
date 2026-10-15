@@ -19,7 +19,9 @@ sound port (plan 16; see "Sound"); the display and keypad LEDs through a lights 
 keyguard locks the keypad (plan 25; see "Lights and the keyguard"). Multi-tap text entry, the
 Welcome note editor, Write messages, Inbox and Outbox work over a host network port (plan 18; see
 "Text entry and SMS"), and Write messages writes in T9 with an English dictionary built from an
-open word list (plan 18b; see "T9 predictive text"). Leaves that are whole applications open a marked
+open word list (plan 18b; see "T9 predictive text"). The SIM card's phone book (names, Service
+Nos., speed dials, assigned tones, Send b'card) works over the SIM a host inserts (plan 19; see
+"The phone book"). Leaves that are whole applications open a marked
 placeholder (a dotted border the firmware never draws) naming the plan that owns them; see "Leaf
 ownership".
 
@@ -42,7 +44,7 @@ const phone = createStockPhone({
   },
   boot: "animated", // or "skip" (tests, reduced motion; the security code is still asked for)
   storage: window.localStorage, // the EEPROM; default: a fresh in-memory storage per phone
-  sim: "sim-1", // the inserted SIM card (default "sim-1")
+  sim: "sim-1", // the inserted SIM card, an id or a whole StockSimCard (default "sim-1", empty)
   network: createSyntheticNetwork(), // SMS in and out (the default; see "Text entry and SMS")
   // T9 English (see "T9 predictive text"); without it Write messages is multi-tap.
   t9: { english: (await import("@hellotimber/nokia-os/t9-english")).englishT9 },
@@ -93,10 +95,14 @@ eight sound events (`atMs output state`) under the status line, so a headless ru
 without hearing it. An `LCD` and a `KEYS` lamp show the lights port (the LCD dims while the display
 LEDs are off) and the last eight lights events are listed too. The phone's network is a synthetic
 one: a **Receive SMS** form (sender and text, time-stamped by the browser's clock) delivers a
-message, and the messages the phone sent are listed beside it. The T9 English dictionary loads as
+message, and the messages the phone sent are listed beside it. A **Chat partner** answers every
+Chat line sent to its number (`Hi <name>, you said "<line>"`), as a host's chat contact would. The T9 English dictionary loads as
 a chunk of its own after the page and restarts the phone with it (the status line shows `T9:
 English (30000 words)`); unticking **T9 English dictionary** restarts the phone without one, as a
-host that leaves it out (Write messages is then multi-tap). In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
+host that leaves it out (Write messages is then multi-tap). The **SIM phone book** select
+restarts the phone with an empty SIM (the SIM select's), a sample SIM (a handful of invented names
+and two service numbers) or a full one (50 names); the status line shows the SIM's id and its
+names and free locations, and ▼ at standby opens the list. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
 difference; the list groups the goldens by top-level menu (`tree/05-tones`) and kind (`menu`,
 `probe`, `game`).
 
@@ -444,10 +450,74 @@ function httpNetwork(endpoint: string): StockNetworkPort {
 }
 ```
 
-**Later plans.** 18c adds Chat over the same messaging service, Templates, Smileys, Picture messages
-(a binary extension of the port), Info service topics and the Service command editor. Phone book
-names (19), dialling a message's number and the received notice's ▲/▼/digit keys (22) are
-theirs; the message alert plays the active profile's tone (plan 17).
+**Business cards.** Send b'card (plan 19) goes through the same port's optional
+`sendBusinessCard({ to, card: { name, number } })`; a port without it settles `"sent"` after the
+link time, and `createSyntheticNetwork().cards` lists the cards sent.
+
+**Later plans.** Chat, Templates, Smileys, Info service topics and the Service command editor are
+plan 18c's (below). Dialling a message's number and the received notice's ▲/▼/digit keys are plan
+22's; the message alert plays the active profile's tone (plan 17).
+
+## Chat and Messages content
+
+Plan 18c adds Chat, Templates, Smileys, Info service › Topics and the Service command editor,
+checked against 163 goldens of emulator captures (`content/*`, `chat/*`, `topics/*`,
+`service-command/*`) and specified in
+[`docs/specs/stock/chat-and-content.md`](../../docs/specs/stock/chat-and-content.md). The public
+API does not change.
+
+- **Templates and Smileys** (Messages 5 and 6) are the `templates` and `smileys` EEPROM records:
+  eight slots each, a slot holding the user's text or nothing. The virgin EEPROM has neither list
+  (the menu entries do nothing, as on the captured phone); Restore factory settings provisions
+  them, and an empty slot shows the firmware's default (five templates, five smileys) or
+  `(empty)`. Read, Edit (70 characters, 7 for a smiley) and Erase work as captured, and every
+  editor's Options › Template and Insert smiley insert a slot's text at the cursor.
+- **Info service › Topics** is the `info-topics` record: the virgin EEPROM's five junk topics
+  (box-glyph names), an empty list after Restore; Select, Add topic (at most five), Edit and Erase.
+- **The Service command editor** sends nothing anywhere: `Requesting` for ≈14.9 s, then `Not done`,
+  as the emulator, which answers no USSD.
+
+**Chat over the network port.** Chat (menu 3, and Inbox › Options › Chat) needs no API of its
+own. Each line goes out through `StockNetworkPort.send` as an SMS to the chat's number whose
+text is `<chat name>: <line>` (`: <line>` with no name). While a chat runs, an SMS that the host
+delivers from exactly that number is the partner's line: it shows on the chat's history at once
+and is not stored in Inbox. An SMS from any other number lands in Inbox as usual. So a host that
+gives the phone someone to chat with only answers SMS, for example:
+
+```ts
+import { createStockPhone, createSyntheticNetwork } from "@hellotimber/nokia-os";
+
+const network = createSyntheticNetwork();
+const phone = createStockPhone({ network });
+const PARTNER = "0412345678"; // the number the user types at Chat's `Phone number:`
+
+let answered = 0;
+function answerChats(): void {
+  for (const sms of network.sent.slice(answered)) {
+    const line = /^([^:]*): ([\s\S]*)$/.exec(sms.text);
+    if (sms.number === PARTNER && line !== null) {
+      const text = `Hi ${line[1]}, you said "${line[2]}"`; // an LLM's reply, say
+      network.deliver({
+        number: PARTNER,
+        text,
+        sentAt: { year: 2026, month: 10, day: 15, hour: 9, minute: 0, second: 0 },
+      });
+    }
+  }
+  answered = network.sent.length;
+}
+// Call answerChats() after each phone.tick(), or answer from your own StockNetworkPort's send.
+```
+
+The partner's SMS lands the usual receive link time (≈2.32 s) after `deliver`; an answer that
+lands before the phone shows `Message sent` waits for it, and the history then lists the answer
+above the sent line. Nothing of a chat is stored but the name, which the next chat offers
+(kept in memory: its persistence over a power cycle is UNVERIFIED).
+
+**Not implemented (no verified v6.39 captures).** Picture messages (Messages 4), Screen saver ›
+Screen saver, receiving business cards and sending a Composer tone stay placeholders of plan 18c:
+the v6.39 emulator opens no picture folder and stalls on saving a picture, and the network port's
+binary (picture, card, ringtone) extension is not part of the contract.
 
 ## T9 predictive text
 
@@ -499,6 +569,45 @@ const phone = createStockPhone({ carrier: "Telstra", t9: { english: englishT9 } 
   golden stays a known gap: after a word and a space a short `*` leaves one pixel lit on the
   underline row, a rule nothing explains yet.
 
+## The phone book
+
+The names live on the SIM card a host inserts (`StockPhoneConfig.sim`), as on the real phone (no
+phone memory): its id, its locations (default 50, the emulator SIM's), its name length (default 16)
+and its initial entries, plus its service numbers. A host passes its own contacts:
+
+```ts
+import { createStockPhone, type StockSimCard } from "@hellotimber/nokia-os";
+
+const sim: StockSimCard = {
+  id: "my-sim",
+  phoneBook: {
+    entries: [
+      { name: "Ada", number: "0412000001" },
+      null, // a free location
+      { name: "Grace Hopper", number: "+61412000002" },
+    ],
+  },
+  serviceNumbers: [{ name: "Voice mail", number: "101" }],
+};
+const phone = createStockPhone({ storage: window.localStorage, sim });
+```
+
+`createStockPhone` throws for an invalid SIM (an empty id, fewer than one location or name
+character, more entries than locations, a name too long for the SIM or a number it cannot hold),
+naming the field and the location. **Persistence (D3):** the phone keeps each SIM's names, speed
+dials and assigned tones in its EEPROM (the `phone-book` record) by SIM id. The host's entries are
+read only until the phone first changes that SIM's names; from then on the EEPROM's copy is the
+SIM's (so the same id with other entries shows the phone's edits), and another SIM id has its own
+phone book. Erasing the EEPROM returns to the host's entries.
+
+Standby ▼ opens the list (▲ opens the dialled numbers, plan 22's); Search, Service Nos., Add name,
+Erase, Edit, Assign tone (with previews), Send b'card, Options (Type of view, Memory status), Speed
+dials and Voice tags (`Voice system error`: the emulator has no voice DSP) follow the v6.39
+captures; Write messages' number prompts pick a number with `Search`, and Send to many sends to a
+chosen name. **Later plans:** plan 22 adds calls (every `Call` soft key, held 2-9 speed dialling,
+caller names and assigned ringing tones through `StockPhoneBook.speedDial`, `byNumber` and `tone`);
+18c adds receiving business cards (`Business card received`, `Save business card?`).
+
 ## Plan-owned resource evidence
 
 Each `PlanCaptureSet` can declare `resources`, normally imported from its own
@@ -533,8 +642,7 @@ exemption is needed.
 ## Leaf ownership
 
 Leaves that are whole applications open the placeholder, tagged with the plan that owns them:
-Service command editor, Picture messages, Templates, Smileys, Topics, Chat and Screen saver ›
-Screen saver (18c); Composer slots (27); the three
+Picture messages and Screen saver › Screen saver (18c); the three
 native languages (26); the other games' New game (24); Calculator (20); Stopwatch (21). Prompts and empty-state notes show their first screen until the plans for Phone book (19), Clock and Reminders (21) and Call register and Call divert (22) take them
 over.
 

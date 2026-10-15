@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/note/nothing-to-save
+status: asserted
+source: captures/6.39/plan19/notes/nothing-to-save
+source-sha256: 9b82b82753b675b5ee1d21ce8e63da35f9cee0a1470a1d63476cc6d22d50ee16
+state: factory
+keys: 0:navi
+note: "Nothing to save" (Warning tones On) after OK on Add name's empty Phone number: (SIM content).
+omitted: none
+
+@events
+# t_ms output   state
+38     tone     1750 v=0x9105
+330    tone     off

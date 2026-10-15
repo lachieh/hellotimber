@@ -1,0 +1,27 @@
+sound-golden 1
+id: sound/phone-book/tone-preview-down-3
+status: asserted
+source: captures/6.39/plan19/tone/preview-down-3
+source-sha256: d2597f2d0363eda3ca996288452b974297cde7e3406590ffb6542299d010650b
+state: factory
+keys: 0:down
+note: Assign tone's list, down-3: the key's beep and the highlighted entry's preview ≈990 ms later (SIM content).
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+46     tone     900 v=0x9104
+170    tone     off
+991    vibrator on
+992    buzzer   2683.7 v=22
+1083   buzzer   2852.8 v=29
+1176   buzzer   2683.7 v=22
+1269   buzzer   2852.8 v=29
+1362   buzzer   2683.7 v=22
+1455   buzzer   2852.8 v=29
+1548   buzzer   2683.7 v=22
+1641   buzzer   2852.8 v=29
+1734   buzzer   2683.7 v=22
+1827   buzzer   2852.8 v=29
+1919   vibrator off
+1920   buzzer   off

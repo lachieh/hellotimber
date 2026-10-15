@@ -4,6 +4,7 @@
 import { RECEIVE_LINK_MS, SEND_LINK_MS } from "../resources";
 import {
   checkIncomingSms,
+  type StockBusinessCard,
   type StockIncomingSms,
   type StockNetworkPort,
   type StockSendOutcome,
@@ -17,6 +18,12 @@ export type ArrivalResult = "stored" | "full";
 export interface ArrivalListener {
   (sms: StockIncomingSms, result: ArrivalResult): void;
 }
+
+/**
+ * Plan 18c (D10): takes an arrival before Inbox, true when it consumed it (Chat's partner: its
+ * lines show in the chat and are not stored, `chat/inbox-after`).
+ */
+export type ArrivalClaim = (sms: StockIncomingSms) => boolean;
 
 interface Sending {
   readonly dueAt: number;
@@ -47,6 +54,7 @@ export class StockMessaging {
   #waiting: StockIncomingSms[] = [];
   #ready = false;
   readonly #listeners = new Set<ArrivalListener>();
+  readonly #claims = new Set<ArrivalClaim>();
   #connected = false;
 
   constructor(store: StockMessages, network: StockNetworkPort, centre: () => string = () => "") {
@@ -77,11 +85,45 @@ export class StockMessaging {
    * has settled it and SEND_LINK_MS has passed, at a `tick`. Power-off drops it unsettled.
    */
   send(sms: StockSms, settled: (outcome: StockSendOutcome) => void): void {
-    const sending: Sending = { dueAt: this.#now + SEND_LINK_MS, outcome: undefined, settled };
+    this.#start(
+      SEND_LINK_MS,
+      () => this.#network.send({ number: sms.number, text: sms.text }),
+      settled,
+    );
+  }
+
+  /**
+   * Plan 19 (D10): sends a business card as `send` does, settled no sooner than `linkMs` (Send
+   * b'card's). A port without `sendBusinessCard` settles `"sent"` (the emulator's network).
+   */
+  sendBusinessCard(
+    card: StockBusinessCard,
+    linkMs: number,
+    settled: (outcome: StockSendOutcome) => void,
+  ): void {
+    const port = this.#network;
+    const copy: StockBusinessCard = {
+      to: card.to,
+      card: { name: card.card.name, number: card.card.number },
+    };
+    this.#start(
+      linkMs,
+      () => (port.sendBusinessCard === undefined ? "sent" : port.sendBusinessCard(copy)),
+      settled,
+    );
+  }
+
+  /** A send that settles once `call`'s outcome is in and `linkMs` has passed, at a `tick`. */
+  #start(
+    linkMs: number,
+    call: () => StockSendOutcome | Promise<StockSendOutcome>,
+    settled: (outcome: StockSendOutcome) => void,
+  ): void {
+    const sending: Sending = { dueAt: this.#now + linkMs, outcome: undefined, settled };
     this.#sending.push(sending);
     let result: StockSendOutcome | Promise<StockSendOutcome>;
     try {
-      result = this.#network.send({ number: sms.number, text: sms.text });
+      result = call();
     } catch {
       sending.outcome = "failed";
       return;
@@ -96,6 +138,17 @@ export class StockMessaging {
         },
       );
     } else sending.outcome = outcomeOf(result);
+  }
+
+  /**
+   * Plan 18c: arrivals go to `claim` first while it is registered; one it consumes is neither
+   * stored nor announced (no notice, no alert: UNVERIFIED for the alert).
+   */
+  claim(claim: ArrivalClaim): () => void {
+    this.#claims.add(claim);
+    return () => {
+      this.#claims.delete(claim);
+    };
   }
 
   /** Arrivals land here (the received notice, the alert): stored or refused. */
@@ -115,6 +168,7 @@ export class StockMessaging {
     }
     while (this.#arriving.length > 0 && this.#arriving[0]!.dueAt <= this.#now) {
       const { sms } = this.#arriving.shift()!;
+      if (Array.from(this.#claims).some((claim) => claim(sms))) continue;
       const result = this.store.receive(sms, this.#centre());
       for (const listener of Array.from(this.#listeners)) listener(sms, result);
     }

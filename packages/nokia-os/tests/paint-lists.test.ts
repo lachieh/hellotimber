@@ -74,8 +74,9 @@ describe("stock submenu lists against every asserted level-1 golden", () => {
       entry.id.startsWith("menu/") &&
       entry.id.endsWith(".sub") &&
       entry.status === "asserted" &&
-      // Calculator's first screen is its application (plan 20), not a list.
-      entry.id !== "menu/09-calculator.sub",
+      // Calculator's and Chat's first screens are applications (plans 20, 18c), not lists.
+      entry.id !== "menu/09-calculator.sub" &&
+      entry.id !== "menu/03-chat.sub",
   );
 
   it("covers the ten asserted level-1 sequences", () => {
