@@ -5,6 +5,7 @@ import { DICTIONARY_KEY, DICTIONARY_LABELS, VIRGIN_OVERRIDES } from "../../messa
 import { MESSAGES_RECORD } from "../../messages/store";
 import { openBox } from "../../messages/read";
 import { smsEditor } from "../../messages/write";
+import { T9_USER_RECORD } from "../../text/t9/user";
 import { interlude, softkeyAlone } from "../../widgets/interlude";
 import type { EepromRecord } from "../eeprom";
 import { note } from "../../widgets/note";
@@ -104,8 +105,8 @@ export const messagesFeature: StockFeature = {
     // The setters return to their page (`tree/02-messages/2-8-1.leaf` image f).
     noteEnds: { "2-8-1": { levels: 2 }, "2-8-2": { levels: 2 }, "2-8-3": { levels: 2 } },
   },
-  // The SIM's Inbox and Outbox (D7): Restore keeps them.
-  records: [MESSAGES_RECORD as EepromRecord<unknown>],
+  // The SIM's Inbox and Outbox (D7) and the T9 user words (plan 18b D7): Restore keeps them.
+  records: [MESSAGES_RECORD as EepromRecord<unknown>, T9_USER_RECORD as EepromRecord<unknown>],
   settings: {
     // Write messages' Dictionary (D3: VIRGIN_OVERRIDES).
     choices: [

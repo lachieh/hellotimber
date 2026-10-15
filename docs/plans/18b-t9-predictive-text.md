@@ -508,12 +508,16 @@ case-insensitively, first kept (a user word equal to a dictionary word is listed
 
 **Files:** `src/text/t9/user.ts` (new), `src/firmware/records.ts`, `tests/t9-user.test.ts` (new).
 
-- [ ] TDD `T9_USER_RECORD` (plan 15 D2): v1 shape pinned by a snapshot; decode drops malformed
+- [x] TDD `T9_USER_RECORD` (plan 15 D2): v1 shape pinned by a snapshot; decode drops malformed
       entries; add, duplicate, the 840 budget and oldest-first eviction (D7); kept by
       `restoreFactory()` (D7, provisional).
-- [ ] Engine integration: exact user words after the first built-in candidate, oldest first;
+- [x] Engine integration: exact user words after the first built-in candidate, oldest first;
       completions at the end; a user word alone is the whole list (spec 11).
-- [ ] Commit: `feat(nokia-os): T9 user dictionary record`.
+- [x] Commit: `feat(nokia-os): T9 user dictionary record`.
+
+Deviation: the record is registered by the messages feature (`records`, AGENTS.md "Parallel plan
+conventions" 3), which `src/firmware/records.ts` already collects; that file is unchanged. A
+stored word is non-empty without spaces; decoding re-applies the budget.
 
 ### Task 6 - Editor in T9 mode (TDD against goldens)
 
