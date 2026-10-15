@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/sim-same
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/sim/same-list.png + captures/6.39/plan19/sim/same-key-3.png
 source-sha256: 77a42fc4268eb9ebcc7a30e489b8316488d3b59b7351b6c05e352812a6ea089e
 note: SIM content again on the saved image (a new process: the fixture's names; Key 3 still Carl).

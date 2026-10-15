@@ -216,6 +216,30 @@ function isSounding(state: SoundGolden["rows"][number]["state"]): boolean {
 }
 
 /**
+ * The Phone book nodes plan 19's goldens show with names on the SIM, for the coverage guard (plan
+ * 14's tree goldens cover the same nodes with the virgin empty SIM).
+ */
+export const PHONE_BOOK_COVERS: Readonly<Record<string, readonly string[]>> = {
+  "phone-book/search-c": ["1-1"],
+  "phone-book/service-open": ["1-2"],
+  "phone-book/add-saved": ["1-3"],
+  "phone-book/erase-one-by-one": ["1-4-1"],
+  "phone-book/erase-all": ["1-4-2"],
+  "phone-book/edit-open": ["1-5"],
+  "phone-book/tone-list": ["1-6"],
+  "phone-book/bcard-send": ["1-7"],
+  "phone-book/view-choose-name-list": ["1-8-1-1"],
+  "phone-book/view-choose-name-number": ["1-8-1-2"],
+  "phone-book/view-choose-large-font": ["1-8-1-3"],
+  "phone-book/memory-content": ["1-8-2"],
+  "phone-book/speed-keys": ["1-9"],
+  "phone-book/voice-add": ["1-10-1"],
+  "phone-book/voice-playback": ["1-10-2"],
+  "phone-book/voice-change": ["1-10-3"],
+  "phone-book/voice-erase": ["1-10-4"],
+};
+
+/**
  * A sound golden's scenario: its capture log replayed up to its recording's start, then the
  * golden's keys pressed and the phone's sound events compared (plan 16's rules).
  */

@@ -5,6 +5,7 @@
 // Goldens are pending until the task that implements them is done (plan 29 "Pending workflow").
 import { acceptancePlan } from "../support/acceptance.ts";
 import {
+  PHONE_BOOK_COVERS,
   PHONE_BOOK_KNOWN_GAPS,
   PHONE_BOOK_SCENARIOS,
   PHONE_BOOK_TIMEOUTS_MS,
@@ -15,4 +16,5 @@ acceptancePlan({
   scenarios: PHONE_BOOK_SCENARIOS,
   knownGaps: PHONE_BOOK_KNOWN_GAPS,
   timeoutsMs: PHONE_BOOK_TIMEOUTS_MS,
+  covers: PHONE_BOOK_COVERS,
 });

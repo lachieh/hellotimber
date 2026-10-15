@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/persist-before
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/persist/before-list.png + captures/6.39/plan19/persist/before-key-3.png + captures/6.39/plan19/persist/before-tone-dave.png
 source-sha256: 2692937d02b2d9ec7e9ca2204c70c68b9f09c66d31595df429b47177a4b0ba1f
 note: SIM content: after Add Zoe, Edit anna → annab, Erase Ben, Key 3 → Carl, Dave's tone Low: the list, Key 3, Dave's page.

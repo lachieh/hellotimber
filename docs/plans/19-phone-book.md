@@ -974,17 +974,32 @@ and plan 18's `Message sent` from other recordings (±25).
 **Files:** `tests/acceptance/19-phone-book.test.ts`, `tests/support/rig.ts` (shared: a `sim`
 pass-through only if the rig does not already forward the whole `StockPhoneConfig`).
 
-- [ ] A hand-written scenario for every asserted `phone-book/*` golden and every new sound golden
+- [x] A hand-written scenario for every asserted `phone-book/*` golden and every new sound golden
       (navigate as the capture did, the fixture's SIM as a `StockSimCard`, keys on the ticks their
       redraws start); delete `awaitsPlan19Scenario`.
-- [ ] Coverage guard: every Phone book tree node (1-1 … 1-10-4 and the 1-8-1 choices) is covered by
+- [x] Coverage guard: every Phone book tree node (1-1 … 1-10-4 and the 1-8-1 choices) is covered by
       an asserted golden in both states it has (empty SIM: plan 14's; with names: this plan's), or
       by a `pending:22` golden for a call; no golden or placeholder names plan 19.
-- [ ] Every asserted golden passes (pixels exact; timelines ±2 ms, or the stated tolerance where a
+- [x] Every asserted golden passes (pixels exact; timelines ±2 ms, or the stated tolerance where a
       scenario replays another recording's timing). New `KNOWN_GAPS` need a reason.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report
       the suite's run time.
-- [ ] Commit: `test(nokia-os): drive the phone book against its goldens`.
+- [x] Commit: `test(nokia-os): drive the phone book against its goldens`.
+
+Deviation: **Task 11 (scenarios):** as Task 7 records, every scenario replays its capture's own
+command log (`tests/support/phone-book.ts`) rather than a hand-written key script; there was no
+`awaitsPlan19Scenario` to delete (plan 29's pending workflow kept the goldens `pending:19`), and
+`tests/support/rig.ts` already forwards the whole `StockPhoneConfig`. The coverage guard is the
+shared `coverage-guard.test.ts` with `PHONE_BOOK_COVERS` (the nodes plan 19's goldens show with
+names) plus `tests/phone-book-coverage.test.ts` (both states of every menu 1 node; nothing
+`pending:19` in goldens, placeholders or `EDITOR_OPTIONS`; only calls left `pending:22`).
+
+**Task 11 completion note:** all 224 plan 19 goldens are asserted (206 LCD, 18 sound; 6 call
+goldens stay `pending:22`), three known gaps (`standby-list-hold-c`, `search-prompt-hold-c`,
+`speed-restore`). Run time: plan 19's acceptance file 97 s alone; `vp run @hellotimber/nokia-os#test`
+2 min 13 s wall. Under a heavily loaded machine plan 18's
+longest replays can pass vitest's 5 s default (`sms/full-arrival`: 5.5 s once at load 21); they
+pass at normal load.
 
 ### Task 12 - Demo, README, verification gate and closeout
 

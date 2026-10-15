@@ -666,7 +666,7 @@
   {
     "id": "phone-book/persist-after",
     "file": "phone-book/persist-after.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 7,
     "frames": 7
@@ -674,7 +674,7 @@
   {
     "id": "phone-book/persist-before",
     "file": "phone-book/persist-before.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1034,7 +1034,7 @@
   {
     "id": "phone-book/sim-same",
     "file": "phone-book/sim-same.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1042,7 +1042,7 @@
   {
     "id": "phone-book/sim-second",
     "file": "phone-book/sim-second.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 16,
     "frames": 16

@@ -286,7 +286,7 @@ export const PHONE_BOOK_SIMS: Readonly<Record<PhoneBookSimName, PhoneBookSim>> =
  * `pending:19` until that task is listed here (plan 29's pending workflow). Task 11 asserts the
  * rest.
  */
-export const DONE_TASKS: ReadonlySet<number> = new Set<number>([7, 8, 9, 10]);
+export const DONE_TASKS: ReadonlySet<number> = new Set<number>([7, 8, 9, 10, 11]);
 
 /** The plan 19 task that implements a golden. */
 type Task = 7 | 8 | 9 | 10 | 11;
