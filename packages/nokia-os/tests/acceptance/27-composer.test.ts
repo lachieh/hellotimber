@@ -107,8 +107,5 @@ acceptancePlan({
       STILL_IDS.map((id) => [id, LONG_STILLS.includes(id) ? 600_000 : 120_000]),
     ),
     ...Object.fromEntries(SOUND_IDS.map((id) => [id, 60_000])),
-    // ≈3 s alone, past vitest's 5 s default when the whole workspace's suites share the machine.
-    "composer/open-saved": 60_000,
-    "composer/open-saved-2": 60_000,
   },
 });
