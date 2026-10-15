@@ -16,7 +16,7 @@ plan 14 goldens already committed for Phone book (virgin EEPROM, empty SIM), the
 `$REF/captures/scratch-plan19/` (evidence only, never imported; `NOTES.md` lists them), and the
 canonical recaptures Task 0 writes to `$REF/captures/6.39/plan19/`. Read `$REF/captures/README.md`
 and plans 13, 14, 15, 16 and 18 in full before starting.
-**Status:** in progress.
+**Status:** done.
 
 ## Goal
 
@@ -1008,20 +1008,38 @@ pass at normal load.
 **Files:** `packages/nokia-os/{README.md,demo/{index.html,main.ts,style.css}}`,
 `docs/specs/stock/phone-book.md`, `docs/plans/README.md`, this plan.
 
-- [ ] Demo: a SIM select (`Empty SIM`, `Sample SIM` with a handful of invented names and two service
+- [x] Demo: a SIM select (`Empty SIM`, `Sample SIM` with a handful of invented names and two service
       numbers, `Full SIM`) restarting the phone with that `StockSimCard`; the status line shows the
       SIM id and its used/free count. Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and
       `agent-browser` (headless, Skip boot, the `[role=status]` line): ▼ at standby (the list),
       Search `C`, Add name `Zoe` and `Saved`, Type of view › Name list, Erase one by one, Speed dials
       Assign.
-- [ ] README: the SIM card port (a host passing its own contacts; the persistence rule, D3), what
+- [x] README: the SIM card port (a host passing its own contacts; the persistence rule, D3), what
       plan 22 adds (calls), what 18c adds (receiving cards).
-- [ ] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
+- [x] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
       `git diff --stat <commit before Task 1> -- website/` is empty.
-- [ ] `docs/specs/stock/phone-book.md`: replace "(plan 19, in progress)" with verified facts; list
+- [x] `docs/specs/stock/phone-book.md`: replace "(plan 19, in progress)" with verified facts; list
       what stays UNVERIFIED.
-- [ ] Plans README: row 19 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete the phone book (plan 19)`.
+- [x] Plans README: row 19 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete the phone book (plan 19)`.
+
+Deviation: **Task 12 (verification):** `agent-browser` is not installed in this environment; the
+demo was driven headless through Chrome's DevTools protocol instead (Skip boot, the Sample SIM,
+the `[role=status]` line and LCD screenshots): ▼ at standby (the list with `Call`), Search `C`
+(`Cy`), Add name `Zoe` (`Saved`, the status line 9 names / 41 free), Type of view › Name list (▼
+then shows three rows), Erase one by one (`Erase?`, back to 8 names) and Speed dials › Assign
+(`Speed dial key 2 saved`, `Key 2:` / `Alan`).
+
+Deviation: **Task 12 (fidelity standard):** merging `main` brought AGENTS.md's fidelity standard,
+which removes per-test tolerances. Plan 19's scenario options lost every `toleranceMs` and sound
+`drift` (other recordings' notes, `No phone numbers`, Speed dial saves, the list exit and the
+standby lead's spread, Assign tone's previews); only key placement (`keyAt`) remains. Every plan 19
+golden passes under the standard; the known gaps are unchanged.
+
+**Task 12 completion note:** the demo's SIM phone book panel, the README's "The phone book"
+section and the specs are done. Plan 19 asserts all 224 of its goldens (206 LCD, 18 sound) with
+three known gaps (`standby-list-hold-c`, `search-prompt-hold-c`, `speed-restore`); 6 call goldens
+stay `pending:22`. `git diff main -- website/` is empty.
 
 ## Follow-up plan adjustments
 

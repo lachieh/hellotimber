@@ -3,8 +3,9 @@
 Source: plan 19 Task 0's v6.39 emulator captures under `$REF/captures/6.39/plan19/` (eight
 invented SIM fixtures passed to the emulator as `SWSIM_FS`), documented in
 [plan 19](../../plans/19-phone-book.md#task-0---canonical-ref-captures-no-repository-changes),
-and plan 14's empty-SIM goldens (`tree/01-phone-book/*`). Facts marked "(plan 19, in progress)"
-are measured on the captures but not yet asserted by a golden scenario.
+and plan 14's empty-SIM goldens (`tree/01-phone-book/*`). Every fact below is asserted by a plan
+19 golden scenario (`tests/acceptance/19-phone-book.test.ts`: 206 LCD and 18 sound goldens) unless
+it is marked UNVERIFIED or listed under "Known gaps".
 
 ## The SIM is the phone book
 
@@ -47,8 +48,7 @@ artefact); nokia-os sorts `@` by its code.
 ## The name list
 
 Three views, chosen by Options › Type of view (virgin: Large font). Every flow that opens it
-starts on the first name (a found name after Search). ▲/▼ move one name and wrap. (plan 19, in
-progress)
+starts on the first name (a found name after Search). ▲/▼ move one name and wrap.
 
 - **Large font:** the phone-book icon top left, the name in the large face from x 1, top 7,
   broken by character onto a second line (`Abcdefghijklm` / `nop`), the flow's soft key.
@@ -176,3 +176,27 @@ with `OK`: OK fills the prompt with the name's number (an empty SIM: `No phone n
 Send to many with names draws `OK` alone for 146 ms, then the name list with `Send`: Send sends the
 text to the name's number (`Sending message`, `Message sent`, the list again); C returns to the
 editor.
+
+## Known gaps
+
+Three asserted goldens differ in ways the fidelity standard counts:
+
+- `phone-book/standby-list-hold-c`, `phone-book/search-prompt-hold-c`: C held. The firmware's own
+  long press redraws standby (its operator-less frame) ≈530-545 ms after the down; phone-core's
+  long press comes at 800 ms and draws standby at once.
+- `phone-book/speed-restore`: its log opens Call register › Missed calls and holds C there; plan
+  22's placeholder does not leave for standby on a held C, so the replay's later keys land in Call
+  register (Restore keeping speed dials and tones is covered by `tests/phone-book-store.test.ts`).
+
+Six call goldens (`Call` from a list, held 2-9 and 1, standby ▲) stay `pending:22`.
+
+## UNVERIFIED
+
+- Accent folding for letters outside the `sort` fixture (`Æ`, `Ç`, `ß`, …), by analogy.
+- Whether the phone forgets speed dials and assigned tones when the SIM changes (nokia-os keeps
+  them per SIM identity).
+- A name wider than the large face on a Speed dials key page (nokia-os: the small face).
+- `Sending b'card`'s link time on a live network (the synthetic cell's 3240 ms).
+- SIM writes surviving a real power cycle with the same card (the harness never writes the
+  fixture back; nokia-os keeps the SIM in the EEPROM under its identity).
+- Receiving a business card (plan 18c) and every call (plan 22).

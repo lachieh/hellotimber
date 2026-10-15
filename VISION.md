@@ -986,7 +986,7 @@ composition, never a captured fact. The provisional per-SIM messages record has 
 Inbox/Outbox slots, retains Save but not Send, and survives Restore; SIM ownership remains
 inconclusive. See [stock text entry and SMS](docs/specs/stock/text-entry-and-sms.md).
 
-**SIM card (plan 19, in progress).** The host's `sim` is the inserted card: a string is the
+**SIM card (plan 19).** The host's `sim` is the inserted card: a string is the
 emulator SIM under that identity; a `StockSimCard` adds its phone book (locations, name length,
 initial entries by location) and service numbers, and is the contacts seam a portfolio
 integration uses. `createStockPhone` throws for an invalid card (an empty id, `locations` or
