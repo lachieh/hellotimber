@@ -3,12 +3,25 @@
 // every effect of a profile (keypad tones, warning tones, previews, the vibrator, game shakes)
 // follows it with no plan 16 change (D11). Names are the Rename texts (D2). Each profile's
 // Personalise is General's subtree; Screen saver's setter level; the factory values.
-import type { Phone, PhoneKey } from "@hellotimber/phone-core";
-import { WIDGET_TIMELINE_BY_NODE } from "../../resources";
-import type { Widget } from "../../widgets/flow";
+import {
+  Timeline,
+  type Phone,
+  type PhoneApplication,
+  type PhoneKey,
+  type ScreenModel,
+} from "@hellotimber/phone-core";
+import type { WidgetModel } from "../../display/widgets";
+import type { StandbyFrameModel } from "../../display/profiles";
+import {
+  WIDGET_TIMELINE_BY_NODE,
+  type StockWidgetTimeline,
+  type WidgetFrame,
+} from "../../resources";
+import { StockFlowApplication, type Flow, type Widget } from "../../widgets/flow";
 import { note } from "../../widgets/note";
+import { OptionListWidget } from "../../widgets/option-list";
 import type { StockSettings } from "../settings";
-import { timelineById } from "../timelines";
+import { timelineById, timelineByName } from "../timelines";
 import type { FactoryDefault, StockFeature, StockServices } from "./feature";
 
 /** The six v6.39 slots in order (P11: no Meeting, Outdoor or Pager profile). */
@@ -162,11 +175,242 @@ export function activationBeep(
   phone: Phone,
   key: PhoneKey,
   settings: StockSettings,
+  power?: PowerListState,
 ): number | null | undefined {
-  const slug = activatedBy(phone, key);
+  const entry = power === undefined ? undefined : chosenEntry(power, key);
+  const slug =
+    entry === undefined || entry === 0 ? activatedBy(phone, key) : PROFILE_SLUGS[entry - 1];
   return slug === undefined
     ? undefined
     : settings.choice(`profiles/${slug}/personalise/keypad-tones`);
+}
+
+// ---------------------------------------------------------------- the power key's list (D7)
+
+/** The power list's leading frame, standby with the ladders erased (29-30 ms, Task 0 B). */
+export const POWER_LIST_LEAD_MS = 29;
+/** C on the list: standby without the operator for 84-88 ms before standby (Task 0 B). */
+export const POWER_LIST_RETURN_MS = 86;
+/**
+ * `0` waits this long from its key-down, then `Invalid shortcut` (`power-general-digit-0`): its
+ * warning tone sounds 2931 ms after the key and the note is drawn at 2979 ms; nokia-os opens the
+ * note (both at once) between them.
+ */
+export const POWER_LIST_ZERO_MS = 2955;
+
+/** The standby model the power key left (its leading and C frames draw it). */
+export type StandbyScreen = Extract<ScreenModel, { kind: "standby" }>;
+
+/**
+ * What the wrapper and the power list share: the standby the power key went down on, and the
+ * list's highlighted entry while it is open (the activation beep reads it, D4).
+ */
+export class PowerListState {
+  /** The standby model when the power key went down. */
+  standby: StandbyScreen | undefined;
+  /** The highlighted entry (0 Switch off!, 1 General … 6 slot 6) while the list is open. */
+  selected: number | undefined;
+}
+
+/** The entry a key-down chooses in the open power list: OK on the highlight, or a digit 1-7. */
+function chosenEntry(state: PowerListState, key: PhoneKey): number | undefined {
+  if (state.selected === undefined) return undefined;
+  if (key === "navi") return state.selected;
+  const digit = /^[1-7]$/.test(key) ? Number(key) : undefined;
+  return digit === undefined ? undefined : digit - 1;
+}
+
+/**
+ * `widget`, chosen on a key's down: that key's release is the choice's, not the widget's (a note
+ * would end on it).
+ */
+function afterDown(key: PhoneKey, widget: Widget): Widget {
+  let released = false;
+  return {
+    render: (flow) => widget.render(flow),
+    onKeyDown: (k, flow) => widget.onKeyDown?.(k, flow),
+    onKey(k, flow) {
+      if (k === key && !released) {
+        released = true;
+        return;
+      }
+      widget.onKey?.(k, flow);
+    },
+    tick: (dtMs, flow) => widget.tick?.(dtMs, flow),
+    close: () => widget.close?.(),
+  };
+}
+
+/** A standby frame the list shows for `ms`, then `next`. */
+class StandbyFrameWidget implements Widget {
+  readonly #model: StandbyFrameModel;
+  #left: number;
+  readonly #next: (flow: Flow) => void;
+
+  constructor(model: StandbyFrameModel, ms: number, next: (flow: Flow) => void) {
+    this.#model = model;
+    this.#left = ms;
+    this.#next = next;
+  }
+
+  render(): WidgetModel {
+    return this.#model;
+  }
+
+  tick(dtMs: number, flow: Flow): void {
+    this.#left -= dtMs;
+    if (this.#left <= 0) this.#next(flow);
+  }
+}
+
+/**
+ * The list (D7): `Switch off!` and the six names, opening on `Switch off!`, no indicator, the
+ * circular rows window. ▲/▼ and the power key move on their release (the press that opened the
+ * list is not one of them); OK and the digits choose on their key-down (1 Switch off!, 2-7 a
+ * profile, 8 and 9 `Invalid shortcut`, 0 after POWER_LIST_ZERO_MS); C returns to standby.
+ */
+class PowerListWidget implements Widget {
+  readonly #services: StockServices;
+  readonly #state: PowerListState;
+  readonly #list: OptionListWidget;
+  readonly #invalid: StockWidgetTimeline;
+  #powerDown = false;
+  #zeroLeft: number | undefined;
+
+  constructor(services: StockServices, state: PowerListState, invalid: StockWidgetTimeline) {
+    this.#services = services;
+    this.#state = state;
+    this.#invalid = invalid;
+    const labels = [
+      "Switch off!",
+      ...PROFILE_SLUGS.map((slug) => profileName(services.settings, slug)),
+    ];
+    this.#list = new OptionListWidget({
+      labels,
+      opening: 0,
+      softkey: "OK",
+      numbering: "none",
+      choose: () => {},
+      highlight: (index) => {
+        state.selected = index;
+      },
+    });
+    state.selected = 0;
+  }
+
+  render(flow: Flow): WidgetModel {
+    return this.#list.render(flow);
+  }
+
+  onKeyDown(key: PhoneKey, flow: Flow): void {
+    if (key === "power") {
+      this.#powerDown = true;
+      return;
+    }
+    if (key === "c") {
+      flow.replace(this.#returning());
+      return;
+    }
+    if (key === "8" || key === "9") {
+      flow.replace(afterDown(key, this.#invalidNote()));
+      return;
+    }
+    if (key === "0") {
+      this.#zeroLeft = POWER_LIST_ZERO_MS;
+      return;
+    }
+    const entry = chosenEntry(this.#state, key);
+    if (entry === undefined) return;
+    if (entry === 0) flow.powerOff?.();
+    else flow.replace(afterDown(key, activateLeaf(this.#services, PROFILE_SLUGS[entry - 1]!)()));
+  }
+
+  onKey(key: PhoneKey, flow: Flow): void {
+    if (key === "up" || key === "down") this.#list.onKey(key, flow);
+    else if (key === "power" && this.#powerDown) {
+      this.#powerDown = false;
+      this.#list.onKey("down", flow);
+    }
+  }
+
+  tick(dtMs: number, flow: Flow): void {
+    if (this.#zeroLeft === undefined) return;
+    this.#zeroLeft -= dtMs;
+    if (this.#zeroLeft <= 0) {
+      this.#zeroLeft = undefined;
+      // After the window it is the menus' `Invalid shortcut` (no second partial draw).
+      flow.replace(this.#invalidNote(timelineByName("invalid-shortcut")));
+    }
+  }
+
+  close(): void {
+    this.#state.selected = undefined;
+  }
+
+  /** C: standby without the operator for POWER_LIST_RETURN_MS, then standby. */
+  #returning(): Widget {
+    const screen = this.#state.standby;
+    if (screen === undefined)
+      return new StandbyFrameWidget(BLANK_STANDBY, 0, (flow) => flow.back());
+    return new StandbyFrameWidget(
+      { kind: "standby-frame", screen, frame: "returning" },
+      POWER_LIST_RETURN_MS,
+      (flow) => flow.back(),
+    );
+  }
+
+  #invalidNote(timeline: StockWidgetTimeline = this.#invalid): Widget {
+    return note({
+      lines: ["Invalid", "shortcut"],
+      timeline,
+      end: "standby",
+      sound: this.#services.noteSound,
+    });
+  }
+}
+
+const BLANK_STANDBY: StandbyFrameModel = {
+  kind: "standby-frame",
+  screen: { kind: "standby", carrier: "", signal: 4, battery: 4 },
+  frame: "returning",
+};
+
+/**
+ * `Invalid shortcut` as the power list shows it: the note (2886 ms), the edges step toward
+ * standby (8 ms), then its first 31 LCD bytes (15 ms), standby (`profiles/power-general-digit-8`;
+ * the step durations of the generated `power-invalid-shortcut`, whose frames the extractor split
+ * against their neighbours, Task 3).
+ */
+function powerInvalidTimeline(): StockWidgetTimeline {
+  const steps = timelineByName("power-invalid-shortcut").timeline.steps;
+  const frames: WidgetFrame[] = [
+    { kind: "sprite", sprite: "note/error" },
+    { kind: "edges", x0: 5, x1: 78 },
+    { kind: "cut", bytes: 31 },
+  ] as WidgetFrame[];
+  return {
+    frames,
+    timeline: new Timeline(steps.map((step, i) => ({ frame: i, durationMs: step.durationMs }))),
+  };
+}
+
+/**
+ * phone-core's `standbyPower` (D7): the power key's list as a standby application. It opens on
+ * the key-down with standby's ladders erased for POWER_LIST_LEAD_MS (`state.standby`, the model
+ * the wrapper saw), then the list.
+ */
+export function powerList(services: StockServices, state: PowerListState): PhoneApplication {
+  const invalid = powerInvalidTimeline();
+  return new StockFlowApplication("stock:power-list", () => {
+    const list = (): Widget => new PowerListWidget(services, state, invalid);
+    const screen = state.standby;
+    if (screen === undefined) return list();
+    return new StandbyFrameWidget(
+      { kind: "standby-frame", screen, frame: "leaving" },
+      POWER_LIST_LEAD_MS,
+      (flow) => flow.replace(list()),
+    );
+  });
 }
 
 /** Tones' alias target with `active` the active profile (D1): `tones/x` → its Personalise `x`. */

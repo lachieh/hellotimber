@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-general-down
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/general/down-1.png + captures/6.39/plan17/power/general/down-2.png + captures/6.39/plan17/power/general/down-3.png + captures/6.39/plan17/power/general/down-4.png + captures/6.39/plan17/power/general/down-5.png + captures/6.39/plan17/power/general/down-6.png + captures/6.39/plan17/power/general/down-7.png + captures/6.39/plan17/power/general/down-8.png
 source-sha256: c7ecaa48150d773e582da604aa785b3681c1b6891b4371a1eacf1877b8403926
 note: general active: the list, then ▼ 1-8 times (the circular window).

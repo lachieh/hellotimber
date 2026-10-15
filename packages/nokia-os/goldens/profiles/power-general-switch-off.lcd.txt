@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-general-switch-off
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/general/switch-off
 source-sha256: f2c87fa7179d80e08c1eaa6caf3ee30a36116c270d450c5997184f0566bec49c
 trigger-frame: 1

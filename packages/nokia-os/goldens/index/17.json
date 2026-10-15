@@ -122,23 +122,23 @@
   {
     "id": "profiles/persist-after-boot",
     "file": "profiles/persist-after-boot.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
-    "images": 25,
-    "frames": 25
+    "images": 24,
+    "frames": 24
   },
   {
     "id": "profiles/persist-after-restore",
     "file": "profiles/persist-after-restore.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
-    "images": 25,
-    "frames": 25
+    "images": 24,
+    "frames": 24
   },
   {
     "id": "profiles/power-during-note",
     "file": "profiles/power-during-note.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -146,7 +146,7 @@
   {
     "id": "profiles/power-general-c",
     "file": "profiles/power-general-c.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -154,7 +154,7 @@
   {
     "id": "profiles/power-general-digit-0",
     "file": "profiles/power-general-digit-0.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -162,7 +162,7 @@
   {
     "id": "profiles/power-general-digit-1",
     "file": "profiles/power-general-digit-1.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -170,7 +170,7 @@
   {
     "id": "profiles/power-general-digit-2",
     "file": "profiles/power-general-digit-2.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -178,7 +178,7 @@
   {
     "id": "profiles/power-general-digit-3",
     "file": "profiles/power-general-digit-3.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -186,15 +186,15 @@
   {
     "id": "profiles/power-general-digit-4",
     "file": "profiles/power-general-digit-4.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
-    "images": 7,
-    "frames": 7
+    "images": 6,
+    "frames": 6
   },
   {
     "id": "profiles/power-general-digit-5",
     "file": "profiles/power-general-digit-5.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -202,7 +202,7 @@
   {
     "id": "profiles/power-general-digit-6",
     "file": "profiles/power-general-digit-6.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -210,7 +210,7 @@
   {
     "id": "profiles/power-general-digit-7",
     "file": "profiles/power-general-digit-7.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -218,7 +218,7 @@
   {
     "id": "profiles/power-general-digit-8",
     "file": "profiles/power-general-digit-8.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -226,7 +226,7 @@
   {
     "id": "profiles/power-general-digit-9",
     "file": "profiles/power-general-digit-9.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -234,7 +234,7 @@
   {
     "id": "profiles/power-general-digit-hash",
     "file": "profiles/power-general-digit-hash.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 1,
     "frames": 1
@@ -242,7 +242,7 @@
   {
     "id": "profiles/power-general-digit-star",
     "file": "profiles/power-general-digit-star.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 1,
     "frames": 1
@@ -250,7 +250,7 @@
   {
     "id": "profiles/power-general-down",
     "file": "profiles/power-general-down.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -258,7 +258,7 @@
   {
     "id": "profiles/power-general-held",
     "file": "profiles/power-general-held.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -266,7 +266,7 @@
   {
     "id": "profiles/power-general-idle",
     "file": "profiles/power-general-idle.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -274,7 +274,7 @@
   {
     "id": "profiles/power-general-list",
     "file": "profiles/power-general-list.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -282,15 +282,15 @@
   {
     "id": "profiles/power-general-ok-discreet",
     "file": "profiles/power-general-ok-discreet.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
-    "images": 8,
-    "frames": 8
+    "images": 7,
+    "frames": 7
   },
   {
     "id": "profiles/power-general-ok-empty",
     "file": "profiles/power-general-ok-empty.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -298,7 +298,7 @@
   {
     "id": "profiles/power-general-ok-empty-2",
     "file": "profiles/power-general-ok-empty-2.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -306,7 +306,7 @@
   {
     "id": "profiles/power-general-ok-general",
     "file": "profiles/power-general-ok-general.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -314,7 +314,7 @@
   {
     "id": "profiles/power-general-ok-loud",
     "file": "profiles/power-general-ok-loud.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -322,7 +322,7 @@
   {
     "id": "profiles/power-general-ok-silent",
     "file": "profiles/power-general-ok-silent.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -330,7 +330,7 @@
   {
     "id": "profiles/power-general-power-keys",
     "file": "profiles/power-general-power-keys.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -338,7 +338,7 @@
   {
     "id": "profiles/power-general-switch-off",
     "file": "profiles/power-general-switch-off.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -346,7 +346,7 @@
   {
     "id": "profiles/power-general-up",
     "file": "profiles/power-general-up.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -354,7 +354,7 @@
   {
     "id": "profiles/power-silent-c",
     "file": "profiles/power-silent-c.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -362,7 +362,7 @@
   {
     "id": "profiles/power-silent-digit-1",
     "file": "profiles/power-silent-digit-1.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -370,7 +370,7 @@
   {
     "id": "profiles/power-silent-digit-3",
     "file": "profiles/power-silent-digit-3.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -378,7 +378,7 @@
   {
     "id": "profiles/power-silent-down",
     "file": "profiles/power-silent-down.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -386,7 +386,7 @@
   {
     "id": "profiles/power-silent-list",
     "file": "profiles/power-silent-list.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -394,7 +394,7 @@
   {
     "id": "profiles/power-silent-ok-general",
     "file": "profiles/power-silent-ok-general.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -402,7 +402,7 @@
   {
     "id": "profiles/power-silent-power-keys",
     "file": "profiles/power-silent-power-keys.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -410,7 +410,7 @@
   {
     "id": "profiles/power-silent-switch-off",
     "file": "profiles/power-silent-switch-off.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -418,7 +418,7 @@
   {
     "id": "profiles/power-silent-up",
     "file": "profiles/power-silent-up.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -426,7 +426,7 @@
   {
     "id": "profiles/power-virgin-down",
     "file": "profiles/power-virgin-down.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 7,
     "frames": 7
@@ -434,7 +434,7 @@
   {
     "id": "profiles/power-virgin-list",
     "file": "profiles/power-virgin-list.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -986,119 +986,119 @@
   {
     "id": "sound/profiles/power-general-digit-0",
     "file": "sound/profiles/power-general-digit-0.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/profiles/power-general-digit-1",
     "file": "sound/profiles/power-general-digit-1.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/power-general-digit-3",
     "file": "sound/profiles/power-general-digit-3.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/profiles/power-general-digit-8",
     "file": "sound/profiles/power-general-digit-8.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/power-general-digit-star",
     "file": "sound/profiles/power-general-digit-star.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/power-general-list",
     "file": "sound/profiles/power-general-list.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/power-general-ok-discreet",
     "file": "sound/profiles/power-general-ok-discreet.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/power-general-ok-empty",
     "file": "sound/profiles/power-general-ok-empty.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/power-general-ok-empty-2",
     "file": "sound/profiles/power-general-ok-empty-2.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/power-general-ok-general",
     "file": "sound/profiles/power-general-ok-general.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/power-general-ok-loud",
     "file": "sound/profiles/power-general-ok-loud.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/power-general-ok-silent",
     "file": "sound/profiles/power-general-ok-silent.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/profiles/power-general-power-keys",
     "file": "sound/profiles/power-general-power-keys.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 8
   },
   {
     "id": "sound/profiles/power-general-switch-off",
     "file": "sound/profiles/power-general-switch-off.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/power-silent-list",
     "file": "sound/profiles/power-silent-list.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/profiles/power-silent-power-keys",
     "file": "sound/profiles/power-silent-power-keys.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/profiles/power-silent-switch-off",
     "file": "sound/profiles/power-silent-switch-off.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },

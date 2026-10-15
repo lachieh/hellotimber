@@ -1,60 +1,10 @@
 lcd-golden 1
 id: profiles/persist-after-restore
-status: pending:17
-source: captures/6.39/plan17/persist/after-restore/standby.png + captures/6.39/plan17/persist/after-restore/profiles-0.png + captures/6.39/plan17/persist/after-restore/profiles-1.png + captures/6.39/plan17/persist/after-restore/profiles-2.png + captures/6.39/plan17/persist/after-restore/profiles-3.png + captures/6.39/plan17/persist/after-restore/profiles-4.png + captures/6.39/plan17/persist/after-restore/profiles-5.png + captures/6.39/plan17/persist/after-restore/profiles-6.png + captures/6.39/plan17/persist/after-restore/power-0.png + captures/6.39/plan17/persist/after-restore/power-1.png + captures/6.39/plan17/persist/after-restore/power-2.png + captures/6.39/plan17/persist/after-restore/power-3.png + captures/6.39/plan17/persist/after-restore/power-4.png + captures/6.39/plan17/persist/after-restore/power-5.png + captures/6.39/plan17/persist/after-restore/power-6.png + captures/6.39/plan17/persist/after-restore/power-7.png + captures/6.39/plan17/persist/after-restore/tones-1.png + captures/6.39/plan17/persist/after-restore/tones-2.png + captures/6.39/plan17/persist/after-restore/tones-3.png + captures/6.39/plan17/persist/after-restore/tones-4.png + captures/6.39/plan17/persist/after-restore/tones-5.png + captures/6.39/plan17/persist/after-restore/tones-6.png + captures/6.39/plan17/persist/after-restore/tones-7.png + captures/6.39/plan17/persist/after-restore/tones-8.png + captures/6.39/plan17/persist/after-restore/tones-9.png
-source-sha256: df42ebfd493655d3d678cc947acc70d05bb84ac573fc99854c7f2d46f6a6687d
-note: Then Restore factory settings: the same screens (General active, names reset).
+status: asserted
+source: captures/6.39/plan17/persist/after-restore/profiles-0.png + captures/6.39/plan17/persist/after-restore/profiles-1.png + captures/6.39/plan17/persist/after-restore/profiles-2.png + captures/6.39/plan17/persist/after-restore/profiles-3.png + captures/6.39/plan17/persist/after-restore/profiles-4.png + captures/6.39/plan17/persist/after-restore/profiles-5.png + captures/6.39/plan17/persist/after-restore/profiles-6.png + captures/6.39/plan17/persist/after-restore/power-0.png + captures/6.39/plan17/persist/after-restore/power-1.png + captures/6.39/plan17/persist/after-restore/power-2.png + captures/6.39/plan17/persist/after-restore/power-3.png + captures/6.39/plan17/persist/after-restore/power-4.png + captures/6.39/plan17/persist/after-restore/power-5.png + captures/6.39/plan17/persist/after-restore/power-6.png + captures/6.39/plan17/persist/after-restore/power-7.png + captures/6.39/plan17/persist/after-restore/tones-1.png + captures/6.39/plan17/persist/after-restore/tones-2.png + captures/6.39/plan17/persist/after-restore/tones-3.png + captures/6.39/plan17/persist/after-restore/tones-4.png + captures/6.39/plan17/persist/after-restore/tones-5.png + captures/6.39/plan17/persist/after-restore/tones-6.png + captures/6.39/plan17/persist/after-restore/tones-7.png + captures/6.39/plan17/persist/after-restore/tones-8.png + captures/6.39/plan17/persist/after-restore/tones-9.png
+source-sha256: 84450d3b02047988af997bb4c24f4db8bce72bcb82ac4120c60b4f3d0a358516
+note: Then Restore factory settings: the same lists and pages (General active, names reset).
 omitted: none
-
-@image standby
-.....................................................##...###.......##...###....####
-....................................................###..##.##.##..###..##.##...####
-.....................................................##..##.##.##...##..##.##...####
-.....................................................##..##.##......##..##.##...####
-.....................................................##..##.##.##...##..##.##...####
-.....................................................##...###..##...##...###....####
-................................................................................####
-....................................................................................
-....................####..................................#####..................###
-...................##..##.................................##.....................###
-...................##..##.##.#..###..####...####..###.....####...................###
-...................##..##.####....##.##.##.##.##.##.##....##.....................###
-...................##..##.##....####.##.##.##.##.#####....##.....................###
-...................##..##.##...##.##.##.##..####.##.......##.....................###
-....................####..##....####.##.##....##..####....##.....................###
-............................................###.....................................
-..................................................................................##
-..................................................................................##
-..................................................................................##
-..................................................................................##
-..................................................................................##
-..................................................................................##
-..................................................................................##
-....................................................................................
-..................................................................................##
-..................................................................................##
-..................................................................................##
-..................................................................................##
-..................................................................................##
-..................................................................................##
-....................................................................................
-#####............................................................................##.
-#.#.#...........................................................................####
-.###............................................................................#..#
-..#.............................................................................#..#
-..#.............................................................................#..#
-..#.............................................................................####
-....................................................................................
-....................................................................................
-....................................................................................
-.............................#.....#................................................
-.............................##...##................................................
-.............................###.###..###..####..##.##..............................
-.............................#######.##.##.##.##.##.##..............................
-.............................##.#.##.#####.##.##.##.##..............................
-.............................##...##.##....##.##.##.##..............................
-.............................##...##..####.##.##..####..............................
-....................................................................................
 
 @image profiles-0
 .................................................................##..####...........

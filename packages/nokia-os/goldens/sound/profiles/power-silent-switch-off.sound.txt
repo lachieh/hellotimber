@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/power-silent-switch-off
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/silent/switch-off
 source-sha256: 52622f3441056b5bf98f4520fb254c3902cd15de2553d5b7d82f1a2b57fc26d5
 state: factory

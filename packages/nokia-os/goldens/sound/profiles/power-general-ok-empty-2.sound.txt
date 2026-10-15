@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/power-general-ok-empty-2
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/general/ok-empty-2
 source-sha256: 0bb8f7df9b3f7767cd089ed75b6a87cb451d94db926782bc7601a8631bb843e4
 state: factory

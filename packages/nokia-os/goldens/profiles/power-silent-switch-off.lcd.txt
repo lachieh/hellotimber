@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-silent-switch-off
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/silent/switch-off
 source-sha256: 47f5511420b75818961060466ef5438a90445ac4dfee1b41085f218b9dfb557b
 trigger-frame: 1

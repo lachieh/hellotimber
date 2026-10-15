@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-general-idle
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/general/idle
 source-sha256: 03b6012bf542a7603d46012dcb17be40453fe37c9a2c87475794dc36b9b9cc23
 trigger-frame: 1

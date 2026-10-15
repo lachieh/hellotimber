@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/power-general-power-keys
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/general/power-keys
 source-sha256: 2a31d02204ac4967d9a7c716f33156a4eead28b99068085c5bd043d3471a3fba
 state: factory

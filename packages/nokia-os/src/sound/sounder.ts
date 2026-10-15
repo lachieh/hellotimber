@@ -41,6 +41,7 @@ export const C_HOLD_BEEP_MS = 480;
 /** Tones › Warning tones (the active profile's): On, Off; unset in the virgin EEPROM. */
 const WARNING_TONES_KEY = "tones/warning-tones";
 const WARNING_TONES_ON = 0;
+const WARNING_TONES_OFF = 1;
 
 /** Games › Settings › Sounds and Shakes (shared by the games): Off, On. */
 const SOUNDS_KEY = "games/settings/sounds";
@@ -232,6 +233,10 @@ export class StockSounder implements StockCueSink {
    */
   powerOff(): void {
     const now = this.#now();
+    // Plan 17 (Task 0 B): the power-off tone is a key beep's length at the boot tone's level:
+    // ≈145 ms with the DSP awake (Switch off! after the power list's beep), ≈124 ms when it
+    // wakes the DSP (the power key held during a preview).
+    const awake = this.#dspAwake(now);
     for (const play of this.#scheduled) this.#sequencer.cancel(play, now);
     this.#scheduled = [];
     this.#preview = undefined;
@@ -239,7 +244,13 @@ export class StockSounder implements StockCueSink {
     this.#keyLevel = undefined;
     this.#beep = undefined;
     this.#sequencer.stop(["buzzer", "tone", "vibrator"], now);
-    this.#sequencer.play(BOOT_TONE.program, now);
+    // A warning-class tone (its level is the warning tones' 0x9105): Silent's Switch off! is
+    // silent (`sound/profiles/power-silent-switch-off`; Warning tones Off, UNVERIFIED against
+    // Keypad tones, also Off there).
+    if (this.#settings.choice(WARNING_TONES_KEY) === WARNING_TONES_OFF) return;
+    const tone = BOOT_TONE.program.steps[0]!.tone!;
+    const ms = awake ? KEYPAD_BEEP.awakeMs : KEYPAD_BEEP.wokenMs;
+    this.#sequencer.play(beepProgram(tone.volume, ms), now);
   }
 
   /**

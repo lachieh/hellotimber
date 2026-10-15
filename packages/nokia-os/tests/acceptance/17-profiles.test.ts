@@ -7,10 +7,13 @@ import type { PhoneKey } from "@hellotimber/phone-core";
 import { PROFILE_SLUGS } from "../../src/firmware/features/profiles";
 import { acceptancePlan, type Scenario } from "../support/acceptance.ts";
 import { recordingScenario, type RecordingKey } from "../support/calculator.ts";
-import { expectLcd, PROBE_TOLERANCE_MS } from "../support/golden.ts";
+import { StockEeprom } from "../../src/firmware/eeprom";
+import { createStockSettings } from "../../src/firmware/settings";
+import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "../support/golden.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
 import { keys } from "../support/probes.ts";
 import {
+  ACTIVATE_TOLERANCE_MS,
   cutRecordingScenario,
   profilesRig,
   profilesStorage,
@@ -150,8 +153,8 @@ const TASK_6: Record<string, Scenario> = {
         const rig = profilesRig();
         toLevel(rig, slug);
         // Discreet's golden ends 15 ms into its name (the artefact that follows is cut, D10).
-        if (slug === "discreet") cutRecordingScenario(id, rig, "navi", PROBE_TOLERANCE_MS);
-        else recordingScenario(id, rig, key("navi"), [], PROBE_TOLERANCE_MS);
+        if (slug === "discreet") cutRecordingScenario(id, rig, "navi", ACTIVATE_TOLERANCE_MS);
+        else recordingScenario(id, rig, key("navi"), [], ACTIVATE_TOLERANCE_MS);
       },
     ]),
   ),
@@ -161,7 +164,7 @@ const TASK_6: Record<string, Scenario> = {
       (id: string) => {
         const rig = profilesRig(profilesStorage({ active: slug }));
         toLevel(rig, "general");
-        recordingScenario(id, rig, key("navi"), [], PROBE_TOLERANCE_MS);
+        recordingScenario(id, rig, key("navi"), [], ACTIVATE_TOLERANCE_MS);
       },
     ]),
   ),
@@ -319,6 +322,220 @@ const TASK_6: Record<string, Scenario> = {
   ),
 };
 
+// ---------------------------------------------------------------- Task 7: the power key
+
+/** Opens the power list at standby and lets it settle (the capture's `power_list()`). */
+function openPowerList(rig: Rig): void {
+  rig.press("power");
+  rig.advance(1000);
+}
+
+/**
+ * A timeline whose key changes nothing at once (`trigger-frame: 0`): frame 0 is on screen at
+ * the key, aligned on it.
+ */
+function unchangedAtKey(id: string, rig: Rig, k: PhoneKey): void {
+  const golden = loadGolden(id);
+  const rows = golden.timeline!;
+  expectLcd(rig.paint(), goldenImage(id, rows[0]!.image), `${id}: before the key`);
+  const last = rows[rows.length - 1]!;
+  const recording = rig.record(last.startMs + last.durationMs + 100, () => rig.press(k));
+  const [first, ...rest] = recording.frames;
+  expectTimeline(
+    { ...recording, frames: [{ ...first!, startMs: recording.triggerMs }, ...rest] },
+    golden,
+    `${id}: ${k}`,
+    { toleranceMs: PROBE_TOLERANCE_MS },
+  );
+}
+
+const DIGIT_KEYS: Readonly<Record<string, PhoneKey>> = { star: "*", hash: "#" };
+
+/** The rig of a `persist-*` still: Silenth, Ab, slot 6 active; after Restore, the factory. */
+function persistRig(restored: boolean): Rig {
+  const storage = profilesStorage({
+    names: { silent: "Silenth", "empty-2": "Ab" },
+    active: "empty-2",
+  });
+  if (restored) createStockSettings(new StockEeprom(storage)).restoreFactory();
+  return profilesRig(storage);
+}
+
+/** Standby, the Profiles level ▼×0-6, the power list ▼×0-7, Tones pages 1-9 (`everywhere`). */
+const EVERYWHERE: readonly ((rig: Rig) => void)[] = [
+  (r) => r.advance(1000),
+  (r) => shortcut(r, 1, 2),
+  ...Array.from({ length: 6 }, () => down(-92)),
+  (r) => {
+    toStandby(r);
+    openPowerList(r);
+  },
+  ...Array.from({ length: 7 }, () => down(-92)),
+  (r) => {
+    r.press("c");
+    r.advance(2592);
+    shortcut(r, 5);
+  },
+  ...Array.from({ length: 8 }, () => down(108)),
+];
+
+const TASK_7: Record<string, Scenario> = {
+  ...Object.fromEntries(
+    (["general", "silent"] as const).flatMap((who) => {
+      // The factory setup leaves the DSP awake (General); Silent was activated 9 s before.
+      const rig = () =>
+        profilesRig(profilesStorage(who === "general" ? {} : { active: who }), {
+          settle: who === "general" ? 0 : 2000,
+        });
+      const listed = () => {
+        const r = rig();
+        openPowerList(r);
+        return r;
+      };
+      return [
+        [`profiles/power-${who}-list`, (id: string) => recordingScenario(id, rig(), key("power"))],
+        [
+          `profiles/power-${who}-power-keys`,
+          (id: string) =>
+            recordingScenario(id, rig(), key("power"), [
+              key("power", 3),
+              key("power", 4),
+              key("power", 5),
+            ]),
+        ],
+        // C: standby without the operator for 86 ms (84-88 ms captured), then standby and, for
+        // Silent, its name.
+        [
+          `profiles/power-${who}-c`,
+          (id: string) => recordingScenario(id, listed(), key("c"), [], PROBE_TOLERANCE_MS),
+        ],
+        [
+          `profiles/power-${who}-switch-off`,
+          (id: string) => recordingScenario(id, listed(), key("navi")),
+        ],
+        [
+          `profiles/power-${who}-down`,
+          (id: string) =>
+            stepStills(
+              id,
+              listed(),
+              Array.from({ length: 8 }, () => down(-92)),
+            ),
+        ],
+        [
+          `profiles/power-${who}-up`,
+          (id: string) =>
+            stepStills(
+              id,
+              listed(),
+              Array.from({ length: 8 }, () => (r: Rig) => {
+                r.press("up");
+                r.advance(500);
+              }),
+            ),
+        ],
+        [`sound/profiles/power-${who}-list`, (id: string) => expectSound(id, rig())],
+        [`sound/profiles/power-${who}-power-keys`, (id: string) => expectSound(id, rig())],
+        [`sound/profiles/power-${who}-switch-off`, (id: string) => expectSound(id, listed())],
+      ];
+    }),
+  ),
+  // OK on each entry (▼ taps 342 ms apart, 600 ms): Activate's note (the slot's virgin
+  // timeline: PROBE_TOLERANCE_MS), standby and the name.
+  ...Object.fromEntries(
+    PROFILE_SLUGS.flatMap((slug, i) => {
+      const listed = () => {
+        const r = profilesRig();
+        openPowerList(r);
+        for (let k = 0; k <= i; k++) {
+          r.press("down");
+          r.advance(342);
+        }
+        r.advance(600 - 342);
+        return r;
+      };
+      return [
+        [
+          `profiles/power-general-ok-${slug}`,
+          (id: string) =>
+            slug === "discreet"
+              ? cutRecordingScenario(id, listed(), "navi", ACTIVATE_TOLERANCE_MS)
+              : recordingScenario(id, listed(), key("navi"), [], ACTIVATE_TOLERANCE_MS),
+        ],
+        [`sound/profiles/power-general-ok-${slug}`, (id: string) => expectSound(id, listed())],
+      ];
+    }),
+  ),
+  "profiles/power-silent-ok-general": (id) => {
+    const rig = profilesRig(profilesStorage({ active: "silent" }));
+    openPowerList(rig);
+    rig.press("down");
+    rig.advance(600);
+    recordingScenario(id, rig, key("navi"), [], ACTIVATE_TOLERANCE_MS);
+  },
+  ...Object.fromEntries(
+    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "star", "hash"].map((digit) => [
+      `profiles/power-general-digit-${digit}`,
+      (id: string) => {
+        const rig = profilesRig();
+        openPowerList(rig);
+        const k = (DIGIT_KEYS[digit] ?? digit) as PhoneKey;
+        if (digit === "0" || digit === "star" || digit === "hash") unchangedAtKey(id, rig, k);
+        else if (digit === "4") cutRecordingScenario(id, rig, k, ACTIVATE_TOLERANCE_MS);
+        else recordingScenario(id, rig, key(k), [], ACTIVATE_TOLERANCE_MS);
+      },
+    ]),
+  ),
+  ...Object.fromEntries(
+    ["1", "3"].map((digit) => [
+      `profiles/power-silent-digit-${digit}`,
+      (id: string) => {
+        const rig = profilesRig(profilesStorage({ active: "silent" }));
+        openPowerList(rig);
+        recordingScenario(id, rig, key(digit as PhoneKey), [], ACTIVATE_TOLERANCE_MS);
+      },
+    ]),
+  ),
+  ...Object.fromEntries(
+    ["1", "3", "8", "0", "star"].map((digit) => [
+      `sound/profiles/power-general-digit-${digit}`,
+      (id: string) => {
+        const rig = profilesRig();
+        openPowerList(rig);
+        // 0's `Invalid shortcut` tone is the menus' program (another recording: PASS_DRIFT).
+        expectSound(id, rig, "", digit === "0" ? { drift: true } : {});
+      },
+    ]),
+  ),
+  "profiles/power-general-held": (id) =>
+    recordingScenario(id, profilesRig(), key("power", 0, 1500)),
+  "profiles/power-general-idle": (id) => recordingScenario(id, profilesRig(), key("power")),
+  // Select on Silent's Activate, the power key 760 ms into the note: the list, at once.
+  "profiles/power-during-note": (id) => {
+    const rig = profilesRig();
+    toLevel(rig, "silent");
+    recordingScenario(id, rig, key("navi"), [key("power", 3)], ACTIVATE_TOLERANCE_MS);
+  },
+  "profiles/power-virgin-list": (id) =>
+    recordingScenario(
+      id,
+      profilesRig(profilesStorage({ virgin: true }), { virgin: true }),
+      key("power"),
+    ),
+  "profiles/power-virgin-down": (id) => {
+    const rig = profilesRig(profilesStorage({ virgin: true }), { virgin: true });
+    rig.press("power");
+    rig.advance(3000);
+    stepStills(
+      id,
+      rig,
+      Array.from({ length: 7 }, () => down(-92)),
+    );
+  },
+  "profiles/persist-after-boot": (id) => stepStills(id, persistRig(false), EVERYWHERE.slice(1)),
+  "profiles/persist-after-restore": (id) => stepStills(id, persistRig(true), EVERYWHERE.slice(1)),
+};
+
 /**
  * The effects section's phone before one of its recordings: after the activation, 3 s, then the
  * recordings before it (`keys`: Menu ▼ ▼ ▲ C at 600 ms steps, 1 s, 1 s; `invalid`: Menu 1 9,
@@ -337,11 +554,15 @@ function effectsRig(seed: ProfilesSeed, after?: "keys" | "invalid"): Rig {
 
 acceptancePlan({
   plan: "17",
-  scenarios: { ...TASK_6 },
+  scenarios: { ...TASK_6, ...TASK_7 },
   knownGaps: {
-    "profiles/activate-empty":
-      "the note's tick is 27 ms shorter here than in the virgin 12-5-1 recording whose timeline " +
-      "slot 5 plays (1974 against 1987 ms); every other slot's recordings agree within 25 ms",
+    "sound/profiles/power-general-power-keys":
+      "in the list the power key beeps 121-123 ms after its down (63 ms after its release; the " +
+      "opening press 51 ms after its down), beyond the key latency the sound check allows; " +
+      "nokia-os beeps at the down",
+    "profiles/power-general-held":
+      "the firmware switches off 1033 ms after the power key goes down; the kernel's long press " +
+      "is 800 ms (plan 16's boot/power-off agrees, 1046 ms)",
     "profiles/standby-carousel-c":
       "a key's return to standby first draws the ladders without the operator for 95 ms (84-95 " +
       "ms in every such recording), a kernel-wide redraw nokia-os does not reproduce; the name " +

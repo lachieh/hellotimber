@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-silent-list
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/silent/list
 source-sha256: aea6be20bb4c4bb72fce4e2cb1bba2c8f59204d023c77249f27c12d77dfbdda6
 trigger-frame: 1

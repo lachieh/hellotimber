@@ -147,3 +147,10 @@ export function activateTreeScenario(id: string, number: string): void {
     toleranceMs: PROBE_TOLERANCE_MS,
   });
 }
+
+/**
+ * How far a factory Activate golden may drift from the virgin per-slot note timeline it replays
+ * (a stated tolerance, plan 17 Task 9): the firmware's box step varies 678-700 ms, its tick
+ * 1958-1989 ms and the name's delay 1898-1930 ms between recordings of one slot.
+ */
+export const ACTIVATE_TOLERANCE_MS = 35;

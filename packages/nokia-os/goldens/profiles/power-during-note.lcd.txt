@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-during-note
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/elsewhere/note
 source-sha256: a3ce5ec07547d6be43d7cb90d391813045d4e6a362f459040612d31dd8d92638
 trigger-frame: 1

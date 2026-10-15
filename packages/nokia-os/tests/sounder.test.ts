@@ -191,7 +191,9 @@ describe("keypad tones (D8)", () => {
     rig.press("power");
     rig.advance(1000);
     expect(tones(rig.sounds, t0)[0]).toEqual([0, 900]);
+    // Plan 17: the press opened the power key's list; C leaves it for standby (86 ms later).
     rig.press("c");
+    rig.advance(200);
     rig.press("navi");
     rig.advance(1000);
     const t1 = rig.now;

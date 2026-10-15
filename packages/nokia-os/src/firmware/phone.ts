@@ -4,11 +4,17 @@ import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
 import type { StockCueSink } from "./cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { invalidShortcut } from "./leaves";
-import { createStockGames, createStockMenu, STOCK_SHORTCUT_WINDOW_MS } from "./menu";
+import { createStockGames, createStockMenu, STOCK_SHORTCUT_WINDOW_MS, stockServices } from "./menu";
 import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { stockBootGates } from "./boot";
-import { activationBeep, standbyProfileLine, standbySilent } from "./features/profiles";
+import {
+  activationBeep,
+  powerList,
+  PowerListState,
+  standbyProfileLine,
+  standbySilent,
+} from "./features/profiles";
 import { createStockSettings } from "./settings";
 import type { StockSoundPort } from "../sound/port";
 import { SoundSequencer } from "../sound/sequencer";
@@ -111,6 +117,9 @@ export function createStockPhoneWith(
     ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
     cues: internals.cues ?? sounder,
   };
+  // Plan 17 D7: the power key's list, over the same services as the menu's leaves.
+  const power = new PowerListState();
+  const services = stockServices(ports, settings, games, security, sounder, eeprom);
   const phone = createPhone({
     menu: createStockMenu(ports, settings, games, security, sounder, eeprom),
     carrier: config.carrier,
@@ -129,6 +138,7 @@ export function createStockPhoneWith(
     // Plan 17: the active profile's line under the operator (D5) and the silent icon (D6).
     standbyLine: standbyProfileLine(settings),
     standbyIndicators: () => (standbySilent(settings) ? { silent: true } : undefined),
+    standbyPower: powerList(services, power),
   });
   // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
   let poweredOn = false;
@@ -146,13 +156,19 @@ export function createStockPhoneWith(
       return;
     }
     const on = poweredOn;
-    const options = on ? keyDownOptions(event.key, phone) : undefined;
+    const options = on ? keyDownOptions(event.key, phone, power) : undefined;
     // Plan 17 D4: a key that activates a profile beeps at that profile's level.
-    const activation = on ? activationBeep(phone, event.key, settings) : undefined;
+    const activation = on ? activationBeep(phone, event.key, settings, power) : undefined;
+    // D7: the power key's list draws the standby it opened over.
+    if (event.key === "power") {
+      const screen = phone.screen;
+      power.standby = screen.kind === "standby" ? screen : undefined;
+    }
     phone.send(event);
     if (activation !== undefined) sounder.keyBeepLevel(activation);
-    // The beep follows the key's handling: a widget may set this key's level or replace it.
-    if (options !== undefined) sounder.keyDown(event.key, options);
+    // The beep follows the key's handling: a widget may set this key's level or replace it. A
+    // key that switched the phone off has none: the power-off tone plays (Switch off!, P5).
+    if (options !== undefined && poweredOn) sounder.keyDown(event.key, options);
   };
   const wrapper: Phone = {
     send,
@@ -187,8 +203,11 @@ export function createStockPhoneWith(
  * (`boot/power-key`; not in the Ringing tone list, `boot/power-off`), and C in the menu
  * carousel leaves the menu at its key-down, so it has no long press to beep at.
  */
-function keyDownOptions(key: PhoneKey, phone: Phone): KeyDownOptions {
-  if (key === "power") return { beeps: phone.screen.kind === "standby", holdBeeps: false };
+function keyDownOptions(key: PhoneKey, phone: Phone, power: PowerListState): KeyDownOptions {
+  // Plan 17: and in the power key's list, where it moves the highlight.
+  const listed = power.selected !== undefined;
+  if (key === "power")
+    return { beeps: phone.screen.kind === "standby" || listed, holdBeeps: false };
   if (key === "c" && phone.screen.kind === "menu-carousel") return { holdBeeps: false };
   return {};
 }

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-general-up
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/general/up-1.png + captures/6.39/plan17/power/general/up-2.png + captures/6.39/plan17/power/general/up-3.png + captures/6.39/plan17/power/general/up-4.png + captures/6.39/plan17/power/general/up-5.png + captures/6.39/plan17/power/general/up-6.png + captures/6.39/plan17/power/general/up-7.png + captures/6.39/plan17/power/general/up-8.png
 source-sha256: c4f0bdab82fbcaf756ab9cf594663176d3bf587eb508029f0dfd9fd09eaec918
 note: general active: the list, then ▲ 1-8 times.

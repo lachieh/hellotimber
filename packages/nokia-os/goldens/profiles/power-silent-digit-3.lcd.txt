@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-silent-digit-3
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/silent/digit-3
 source-sha256: 13b5d7f54be725d8d231f3a6fb355cc4ee205f23c3bd22cd04428092859c9a04
 trigger-frame: 1

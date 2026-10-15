@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-general-digit-5
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/general/digit-5
 source-sha256: 4706c6547454435fc1f1db914d7d149bfe8b4fcb8882626927cefbc70185d81e
 trigger-frame: 1

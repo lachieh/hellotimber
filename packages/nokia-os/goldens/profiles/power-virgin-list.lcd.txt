@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-virgin-list
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename-virgin/power-list
 source-sha256: 542dfefd6cee2d5b91d9368d87fbdfc22978a659bb9d8dafedd174273f607b7e
 trigger-frame: 1

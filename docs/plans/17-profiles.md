@@ -675,18 +675,49 @@ values into the factory storage (`tests/support/profiles.ts`) instead of replayi
 keys; the scenarios' `toStandby` taps C before holding it on an option list (nokia-os closes a list
 on C's release; the firmware leaves for standby on C held, an existing kernel difference).
 
-
 ### Task 7 - The power key's profile list (TDD against goldens)
 
 **Files:** `src/firmware/features/profiles.ts` (`powerList`), `src/widgets/option-list.ts`
 (`numbering: "none"`, one line), the phone registration, `tests/profiles-power.test.ts` (new).
 
-- [ ] `powerList` (D7): `Switch off!` + six names (D2), opening `Switch off!`, ▲/▼ and the power
+- [x] `powerList` (D7): `Switch off!` + six names (D2), opening `Switch off!`, ▲/▼ and the power
       key-down move, digits choose by position (Task 0 B), OK runs Activate's flow or `powerOff()`,
       C exits; the leading and C frames as Task 3 decided.
-- [ ] TDD against `profiles/power-*` and `sound/boot/power-key`, `sound/profiles/power-*`; power long
+- [x] TDD against `profiles/power-*` and `sound/boot/power-key`, `sound/profiles/power-*`; power long
       press from the list powers off; the short press elsewhere changes nothing (B6).
-- [ ] Commit: `feat(nokia-os): the power key's profile list`.
+- [x] Commit: `feat(nokia-os): the power key's profile list`.
+
+Deviation: **Task 7 (API and files):** `powerList(services, state)` takes a `PowerListState` the
+wrapper shares (the standby model the power key went down on, for the leading frame; the
+highlighted entry, for `activationBeep(phone, key, settings, state)` and the key's beep). The list
+reuses `OptionListWidget` (`numbering: "none"`, `widgets/rows.ts`) inside a widget that keeps the
+captured key timing: OK and the digits choose on their down (the choice swallows that key's
+release), C leaves on its down, ▲/▼ and the power key move on their release (not the press that
+opened it). The leading and C frames are a `standby-frame` widget model (`display/profiles.ts`, one
+case in `display/widgets/index.ts`): standby with the ladders erased for 29 ms, standby without
+the operator and the line for 86 ms (84-88 captured). `Flow.powerOff?()` (`widgets/flow.ts`)
+reaches `ApplicationContext.powerOff()`. `8`/`9` play `Invalid shortcut` with the power list's
+own steps (2886/8/15 ms, the note painter's `cut` with no step after it now draws toward standby,
+`display/widgets/note.ts`); `0` plays the menus' `invalid-shortcut` 2955 ms after its down
+(its tone sounds at 2931 ms and its redraw at 2979 ms; one moment between them).
+
+Deviation: **Task 7 (sound, shared files):** the power-off tone is a key beep's length at the boot
+tone's level (≈145 ms with the DSP awake, ≈124 ms waking it) and silent with Warning tones Off
+(Silent's Switch off!; UNVERIFIED against Keypad tones, also Off there): `sound/sounder.ts`
+`powerOff`. A key that switched the phone off does not beep (`phone.ts`), and the power key beeps
+in the list as at standby. `sound/boot/power-key` is asserted (`scripts/sound-capture-set.ts`) with
+a scenario in `tests/support/sound-scenarios.ts`; `tests/sounder.test.ts` lets the list close before
+its Menu and `tests/firmware-phone.test.ts` expects the awake power-off tone.
+
+Deviation: **Task 7 (goldens):** the Discreet choices cut before the artefact (`power-general-ok-
+discreet` at its name, `power-general-digit-4` at standby: there the name and the overwritten line
+come together); `persist-after-{boot,restore}` drop their standby image (the in-process reboot came
+up without the network). Known gaps: `power-general-held` (the firmware switches off 1033 ms after
+the down, the kernel's long press is 800 ms) and `sound/profiles/power-general-power-keys` (in the
+list the power key beeps 121-123 ms after its down). Every factory Activate golden (the menus', the
+power list's OK and digits) compares within `ACTIVATE_TOLERANCE_MS` (35, a stated tolerance: the
+firmware's box 678-700 ms, tick 1958-1989 ms and name delay 1898-1930 ms vary between recordings),
+which also retires Task 6's `activate-empty` gap.
 
 ### Task 8 - Rename (TDD against goldens; needs plan 18 Task 7)
 

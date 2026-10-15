@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-general-power-keys
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/general/power-keys
 source-sha256: e76367dc9f7e9e825510b2644e62a80d1a1cf4a7c4bcc473ea68dea8bf94e635
 trigger-frame: 1

@@ -316,11 +316,11 @@ describe("plan 17 goldens", () => {
     expect(parseManifestNote(golden.note)).toHaveLength(golden.images.length);
   });
 
-  it("keeps plan 17 pending elsewhere only on the power key's sound until Task 7", () => {
+  it("leaves no plan 17 golden pending outside its own index", () => {
     const elsewhere = index.filter(
       (entry) => entry.status === "pending:17" && !own.some((e) => e.id === entry.id),
     );
     expect(Object.values(PLACEHOLDER_OWNERS)).not.toContain("17");
-    expect(elsewhere.map((entry) => entry.id)).toEqual(["sound/boot/power-key"]);
+    expect(elsewhere.map((entry) => entry.id)).toEqual([]);
   });
 });

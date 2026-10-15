@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/power-general-switch-off
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/general/switch-off
 source-sha256: d995b1f4a37b3b7be76c339ff8c1a543f9376398db65d1b754b8d9ed4554413c
 state: factory

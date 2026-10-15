@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/power-general-list
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/general/list
 source-sha256: 6cfee46f71c0d2d3fc1be7b509557f62ccf1a95d36bf082c0bc6700bc892a30c
 state: factory

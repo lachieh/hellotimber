@@ -19,7 +19,7 @@ import { resources, THIN_GLYPH_PAGES } from "../resource-inputs/17-profiles.ts";
 export { THIN_GLYPH_PAGES };
 
 /** The tasks whose scenarios exist: their rows are asserted. */
-export const ASSERTED_TASKS: ReadonlySet<ProfilesTask> = new Set<ProfilesTask>([6]);
+export const ASSERTED_TASKS: ReadonlySet<ProfilesTask> = new Set<ProfilesTask>([6, 7]);
 
 /** The plan 17 task that drives a row: 6 Activate and standby, 7 the power key, 8 Rename. */
 export type ProfilesTask = 6 | 7 | 8;
@@ -86,6 +86,13 @@ const EFFECTS = {
   keys: "Menu, ▼, ▼, ▲, C in the carousel",
   invalid: "Menu 1 9: Invalid shortcut",
   preview: "Tones › Ringing tone, ▼ (a preview), ▲",
+} as const;
+
+/** Discreet's activations end 15 ms into its name: the artefact that follows is cut (D10). */
+const DISCREET_CUT = {
+  to: 6,
+  omittedReason:
+    "Discreet's operator line overwritten 15 ms after its name: the restored image's uninitialised screen saver picture; D10",
 } as const;
 
 export const TIMELINES: readonly TimelineRow[] = [
@@ -161,6 +168,7 @@ export const TIMELINES: readonly TimelineRow[] = [
       dir: `${P}/power/general/ok-${slug}`,
       task: 7,
       note: `General active: the list, ▼×${i + 1}, OK on ${slug}: Activate's note and standby.`,
+      ...(slug === "discreet" ? DISCREET_CUT : {}),
     }),
   ),
   {
@@ -176,6 +184,8 @@ export const TIMELINES: readonly TimelineRow[] = [
       task: 7,
       note: `General active: the list, then ${digit}: ${DIGIT_EFFECT[digit]}.`,
       ...(digit === "0" || digit === "star" || digit === "hash" ? { trigger: 0 } : {}),
+      // Here the name and the overwritten operator line come in one frame: cut before both.
+      ...(digit === "4" ? { ...DISCREET_CUT, to: 5 } : {}),
     }),
   ),
   ...["1", "3"].map(
@@ -336,8 +346,8 @@ export const SILENT_TEXT_CASES = [
   "silent-general-values",
 ] as const;
 
-const everywhere = (dir: string): ShotFile[] => [
-  `${dir}/standby.png`,
+const everywhere = (dir: string, standby = true): ShotFile[] => [
+  ...(standby ? [`${dir}/standby.png`] : []),
   ...Array.from({ length: 7 }, (_, i) => `${dir}/profiles-${i}.png`),
   ...Array.from({ length: 8 }, (_, i) => `${dir}/power-${i}.png`),
   ...Array.from({ length: 9 }, (_, i) => `${dir}/tones-${i + 1}.png`),
@@ -394,15 +404,15 @@ export const STILLS: readonly StillRow[] = [
   },
   {
     id: "profiles/persist-after-boot",
-    files: everywhere(`${P}/persist/after-boot`),
+    files: everywhere(`${P}/persist/after-boot`, false),
     task: 7,
-    note: "Silenth and Ab renamed, slot 6 active, power cycle: standby, the Profiles level ▼×0-6, the power list ▼×0-7, Tones pages 1-9.",
+    note: "Silenth and Ab renamed, slot 6 active, power cycle: the Profiles level ▼×0-6, the power list ▼×0-7, Tones pages 1-9.",
   },
   {
     id: "profiles/persist-after-restore",
-    files: everywhere(`${P}/persist/after-restore`),
+    files: everywhere(`${P}/persist/after-restore`, false),
     task: 7,
-    note: "Then Restore factory settings: the same screens (General active, names reset).",
+    note: "Then Restore factory settings: the same lists and pages (General active, names reset).",
   },
   {
     id: "profiles/discreet-screen-saver-off",
@@ -636,7 +646,8 @@ export const profiles: PlanCaptureSet = {
       "plan 14's shortcut timing (the typed leaf opens at the last digit); only the digit's beep is imported",
     "plan17/power/elsewhere/{notice,carousel,rows,pages,option-list,prompt,snake-menu}":
       "the short press elsewhere: nothing changes (Task 7 tests it); the notice needs plan 18's painter",
-    "plan17/persist/boot": "an in-process reboot without the network (no operator): evidence only",
+    "plan17/persist/boot, plan17/persist/after-{boot,restore}/standby.png":
+      "an in-process reboot without the network (no operator; after Restore no signal ladder): evidence only",
     "plan17/glyphs/thin/prompt-*.png, manifest.json":
       "the typed names' prompts (the cursor hides the last character); the manifest is transcribed as THIN_GLYPH_PAGES",
     "plan17/tones/*/ ringing previews, plan17/effects/*/ LCD":

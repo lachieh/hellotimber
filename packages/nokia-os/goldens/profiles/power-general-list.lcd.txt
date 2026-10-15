@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-general-list
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/power/general/list
 source-sha256: e70919df3e56f716025cf7f229d44ce4ae63e017131d95464b65863ee33f086a
 trigger-frame: 1

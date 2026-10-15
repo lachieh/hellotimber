@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/power-virgin-down
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename-virgin/power-1.png + captures/6.39/plan17/rename-virgin/power-2.png + captures/6.39/plan17/rename-virgin/power-3.png + captures/6.39/plan17/rename-virgin/power-4.png + captures/6.39/plan17/rename-virgin/power-5.png + captures/6.39/plan17/rename-virgin/power-6.png + captures/6.39/plan17/rename-virgin/power-7.png
 source-sha256: 07cab23b0733fa7b74f406598cd51bc4b0320822daf3b20977761f61540cda25
 note: Virgin EEPROM: the list, then ▼ 1-7 times.
