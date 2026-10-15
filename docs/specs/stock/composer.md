@@ -1,9 +1,9 @@
-# Stock v6.39 Composer (plan 27, in progress)
+# Stock v6.39 Composer (plan 27)
 
 Part of the stock firmware's ground truth ([index](../nokia-3310.md#10-firmware-ground-truth-v639-captures)):
 the goldens under `packages/nokia-os/goldens/` are authoritative; where this file and a golden
 disagree, fix this file. Source: plan 27 Task 0 (`$REF/captures/6.39/plan27/`, 418 still cases and
-253 recordings from `gen_v639_plan27.py`; the planning probes K1-K13 in
+263 recordings from `gen_v639_plan27.py`; the planning probes K1-K13 in
 [plan 27](../../plans/27-composer.md)). Paths below are under `plan27/`.
 
 ## Slots and editor
@@ -11,7 +11,7 @@ disagree, fix this file. Source: plan 27 Task 0 (`$REF/captures/6.39/plan27/`, 4
 - Tones › Composer (5-4) is a rows list of seven slots, `(empty)` or the saved tone's name
   (`slots/*`), indicator `5-4-k`, soft key `Select`, opening on slot 1 every time.
 - The editor: a three-note icon top left, the tokens left (`50` … `0`) top right, the notation in the
-  small face from x 0 on lines with tops 8, 18 and 28, soft key `Back` while empty, else `Options`.
+  small face from x 1 on lines with tops 8, 18 and 28, soft key `Back` while empty, else `Options`.
   Back or C on an empty editor, and Options › Exit, return to the Tones page `Composer`; unsaved
   edits are lost. A saved slot opens on its tone with the cursor at the end.
 
@@ -55,9 +55,10 @@ UNVERIFIED (neither a phase kept while covered nor one inverted at each showing 
   cold boot; Restore factory settings keeps it (`newtempo/*`, `persist/new-tempo`,
   `restore/new-tempo`).
 - Play: soft key `Stop`, the tone once on the buzzer, then `Options`. C and Stop end it at once (the
-  sounding note cut; C deletes nothing); C held then goes to standby. ▲/▼ move the cursor and 0
+  sounding note cut; C deletes nothing); C held then goes to standby ≈474 ms after Play's stop. ▲/▼ move the cursor and 0
   inserts a rest while it plays on; a note key, 8, 9, `*` and `#` edit and their note replaces it;
-  any key turns the soft key back to `Options`. Clear screen empties the editor at once.
+  any key turns the soft key back to `Options`; the OK that starts Play beeps nothing. Clear
+  screen empties the editor at once.
 
 ## Sound
 
@@ -84,7 +85,8 @@ UNVERIFIED (neither a phase kept while covered nor one inverted at each showing 
   `#` and `*` do not). A name too wide for the large face is drawn in the small face on two lines
   (`save/keys/fifteen`; nokia-os draws the large face only, plan 18's prompt).
 - Send: the same prompt, then `Phone number:` (counter 30, `Search` → `No phone numbers`); C on the
-  empty number → the editor, its header still showing the prompt's pen (`send/keys/number-c`); OK → `Sending message` (≈3.2 s) → `Message sent` → the editor. The
+  empty number → the editor, its header still showing the prompt's pen (`send/keys/number-c`);
+  OK → `Sending message` (≈3.2 s) → `Message sent` → the editor. The
   transmission is a binary Smart Messaging SMS (UDH port 5505); nokia-os stops at the number (plan
   18c, D11).
 
@@ -110,6 +112,22 @@ settings empties the slots and resets the ringing tone to `Nokia tune`.
 | Key-to-redraw and key-to-sound latency (≈20-90 ms)     | firmware key scan                | not reproduced (plan 14 D8, plan 16 D8) |
 | Loudness of the registers                              | the emulator renders no volume   | the port carries registers (plan 16)    |
 | A note key re-entered at another key's down and up     | keyboard scan (key rollover)     | reproduced for C                        |
+
+## UNVERIFIED and known gaps
+
+nokia-os reproduces every Composer golden but these (`tests/acceptance/27-composer.test.ts` lists
+each with its cause):
+
+- Level 5's jump and Ascending's steps in a long Play or preview (a free-running timer: nokia-os
+  steps every ≈3.9 s from the tone's start); the 225 BPM preview quarter (33 units); the Ringing
+  volume list's vibrator running past a short tone's end; a ≈1 ms 32nd after a dotted 32nd at 225
+  BPM.
+- The cursor's blink phase on some showings after a Save, on the virgin phone's Play, after C on
+  Send's empty number and after `No phone numbers`; held ▲/▼'s repeat phase.
+- Two-pass redraws the firmware shows for ≈14-112 ms (standby's operator name, `Tone name:`'s soft
+  key, the frame before `Phone number:`, a cursor caught mid-redraw); names wider than the large
+  face (plan 18's prompt).
+- Send's transmission (plan 18c).
 
 ## The website's composer (contrast, unchanged)
 

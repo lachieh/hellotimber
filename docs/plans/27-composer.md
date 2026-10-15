@@ -15,7 +15,7 @@ before Task 2; if it has not, stop and report.
 "Plan 16 supplementary captures") and plans 13-16 and 18 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan27/`. The planning probes in `$REF/captures/scratch-plan27/`
 (`NOTES.md` lists them) are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-12 done).
+**Status:** done.
 
 ## Goal
 
@@ -538,7 +538,8 @@ opens on slot 1; OK on a tempo returns to Options on Tempo, not the editor.
 #### Task 0 outcome — 2026-10-14
 
 51 sections of `$REF/captures/scripts/gen_v639_plan27.py` (each `v639-plan27-<section>.cap`);
-`check` passes: **418 still cases, 253 recordings, 3724 images (458 distinct) OCRed in
+`check` passes: **418 still cases, 263 recordings (252 in `recordings.json`, 11 driven by their
+sections' own keys), 3744 images (460 distinct) OCRed in
 `plan27/text.json`** (faces bold8, large13, plain8, tiny6). `cases.json` holds `{ name, from, state,
 slot, setup, keys, setupKeys }` (`from`: `editor`, `slots` or `standby`; every editor still waits
 for the cursor's shown phase, the wait being its last `+<ms>` key); `recordings.json` lists the
@@ -662,8 +663,9 @@ both `PLACEHOLDER_OWNERS` tables (one line each), `tests/composer-capture-set.te
       pipeline additions"; stills named by `COMPOSER_CASES` in case order; a case with no image, or
       an image with no case, throws naming both; sound rows reuse plan 16's normalisation with
       `state: factory` (`virgin` where noted); `composer/send-ok` is `pending:18c`.
-- [ ] Drop `5-4-*` from both owner tables: the four `tree/05-tones/5-4-*.leaf` and
-      `sound/note/5-4-{1,2}` goldens become asserted; no golden is `pending:27`.
+- [x] Drop `5-4-*` from both owner tables: the four `tree/05-tones/5-4-*.leaf` and
+      `sound/note/5-4-{1,2}` goldens become asserted; no golden is `pending:27`. (Done in Task 8
+      with the drivers, see the deviation below; no golden is `pending:27` since Task 12.)
 - [x] Text runs from `plan27/text.json` reach the glyph harvester through the capture set; run
       `extract-resources` twice (no diff): the small face gains `#` and what else the notation needs.
 - [x] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
@@ -1065,16 +1067,16 @@ scenarios (`composer-save`, `composer-ringing` import them).
 
 **Files:** this plan, `docs/plans/README.md` (row 27), `docs/specs/stock/composer.md`.
 
-- [ ] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
+- [x] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
       `mise exec -- vp run website#build`; `git diff --stat <commit before Task 1> -- website/` is
       empty.
-- [ ] Demo check (no demo edit): `mise exec -- vp run @hellotimber/nokia-os#demo` with
+- [x] Demo check (no demo edit): `mise exec -- vp run @hellotimber/nokia-os#demo` with
       `agent-browser` (Factory settings, Skip boot): Menu 5 4, Select, `1 2 3`, Options › Play (the
       event log shows 523/587/659 Hz), Save as `A`; Tones › Ringing tone ▼ to entry 36 shows `A`
       and previews it. Screenshots in the completion note.
-- [ ] Spec: replace "(plan 27, in progress)" with verified facts; list what stays UNVERIFIED.
-- [ ] Plans README row 27 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete the stock Composer (plan 27)`.
+- [x] Spec: replace "(plan 27, in progress)" with verified facts; list what stays UNVERIFIED.
+- [x] Plans README row 27 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete the stock Composer (plan 27)`.
 
 ## Follow-up plan adjustments
 
@@ -1139,3 +1141,13 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
 - phone-core changes only by plan 17's seam if Task 6 added it; the website is unchanged;
   `vp check`, `vp run -r test` and `vp run website#build` pass; the spec and the plans README match
   what shipped.
+
+**Task 13 completion.** `mise exec -- vp check --fix`, `mise exec -- vp run -r test` (nokia-os:
+80 files, 5280 passed, 50 expected failures, 284 todos; 6 min 53 s for the workspace) and
+`mise exec -- vp run website#build` pass; `git diff --stat f315e64 -- website/` is empty. Demo
+(port 5427, `agent-browser`, Factory settings, Skip boot): Menu 5 4, Select, `1 2 3`, Options ›
+Play logged `buzzer 523`, `587`, `659` 519 ms apart; Save as `A` showed `Tone saved`; Tones ›
+Ringing tone ▼ to `5-1-36` showed `A` highlighted and previewed it (523/587/659 with the vibrator,
+≈1 s after the key). Screenshots: `/tmp/nokia-os-p27-editor.png`, `-play.png`, `-tone-name.png`,
+`-tone-saved.png`, `-tones.png`, `-ringing-tone.png`. The spec drops "in progress" and lists what
+stays UNVERIFIED; the plans README row is `done`.

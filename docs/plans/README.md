@@ -41,7 +41,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 24c | Games IV: Pairs II                                                              | Time trial and Puzzle: seeded boards, 7-bar Level pages, two top scores                               | 24 (Tasks 1-3)                            | not started |
 | 25  | [Keyguard and backlight](./25-keyguard-and-backlight.md)                        | keyguard, LEDs on the light tick, host lights port, phone-3d keypad light and LCD look                | 13, 14, 15, 16, 23                        | not started |
 | 26  | Languages                                                                       | Русский, Български, Українська UI (Cyrillic screens and notes)                                        | 14, 15                                    | not started |
-| 27  | [Composer](./27-composer.md)                                                    | Tones › Composer: note editor, Play, Tempo, Save; saved tones as Ringing tones 36-42                  | 16, 18 (17 label seam)                    | in progress |
+| 27  | [Composer](./27-composer.md)                                                    | Tones › Composer: note editor, Play, Tempo, Save; saved tones as Ringing tones 36-42                  | 16, 18 (17 label seam)                    | done        |
 | 28  | [Game SDK and user games](./28-game-sdk-and-user-games.md)                      | game SDK, shell services, 2048, sandboxed user JS/Wasm games, extra games in Games                    | 13, 14, 15, 16, 23                        | not started |
 
 Plans 01–04 are parallel-safe: no shared files, no cross-package imports at runtime
