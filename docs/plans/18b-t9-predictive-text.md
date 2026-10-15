@@ -10,7 +10,7 @@
 follows this plan (Chat's editor is T9 by default).
 **Ground truth:** `docs/specs/t9-behaviour.md` (the behaviour and the firmware dictionary's
 architecture, written for this plan) and the goldens Task 2 imports from the dirty-room captures.
-**Status:** in progress (Tasks 0 and 2 done by the dirty room; the clean room does 1 and 3-9).
+**Status:** done (clean room, 2026-10-14); the goldens' promotion awaits the bridge's re-import (Task 8 deviation).
 
 ## Goal
 
@@ -632,7 +632,8 @@ deviation), and the importer reads `$REF/captures/plan18b/`, which the clean roo
 and the integrity expectations in a last commit; `tests/t9-promotion.test.ts` plays every
 golden promoted but not yet reimported, so the promotion is known to pass first (303 `t9/*`
 goldens: 302 match, `g-star-free/07-star-after-space` is the known gap; Write messages' tree
-golden matches every pixel). The bridge then runs `import-captures` twice and commits the status
+golden matches every pixel, but its crawl's cursor steps 476-492 ms where `t9/first/03-blink`, the
+same path, steps 479-481: a known gap in plan 14's file, timing only). The bridge then runs `import-captures` twice and commits the status
 flips. `sms/restore` (plan 18) shows that Restore factory settings keeps the Dictionary: the
 messages feature lists it in `restoreKeeps`, which now covers choices too.
 
@@ -641,17 +642,40 @@ messages feature lists it in `restoreKeeps`, which now covers choices too.
 **Files:** `packages/nokia-os/{README.md,demo/main.ts}`, `docs/specs/nokia-3310.md`,
 `docs/plans/README.md`, this plan.
 
-- [ ] Demo: `const { englishT9 } = await import("@hellotimber/nokia-os/t9-english")`, then
+- [x] Demo: `const { englishT9 } = await import("@hellotimber/nokia-os/t9-english")`, then
       `createStockPhone({ ..., t9: { english: englishT9 } })`. Check with
       `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser` (headless: drive
       through the `[role=status]` line, Skip boot): Write messages in T9, type `4 6 8 6`, `*`
       through the list, `0`, a no-match key and Spell, Insert word, Dictionary off and on. Report
       the dictionary chunk's size from `vp build` of the demo.
-- [ ] README: T9, the dictionary entry point and its licence, what is not reproduced (spec 15).
-- [ ] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
+- [x] README: T9, the dictionary entry point and its licence, what is not reproduced (spec 15).
+- [x] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
       `git diff --stat <commit before Task 1> -- website/` is empty.
-- [ ] Spec §10 and this plan: verified facts, UNVERIFIED items, status `done`; plans README row.
-- [ ] Commit: `docs: complete T9 predictive text (plan 18b)`.
+- [x] Spec §10 and this plan: verified facts, UNVERIFIED items, status `done`; plans README row.
+- [x] Commit: `docs: complete T9 predictive text (plan 18b)`.
+
+Outcome (2026-10-14): `vp build` of the demo emits the dictionary as its own chunk,
+`english-*.js` 246.05 kB (117.01 kB gzipped; no dictionary word in the main chunk). Headless
+(`agent-browser`, Skip boot, the LCD read from its canvas): `Hello world into` typed in T9,
+`*` through `goto`, `invo`, `houn` to `inun?` and Spell, a no-match `7` (`into?`, Spell), the
+Spell prompt typing `intos`, the learned word offered again, Dictionary off (note, multi-tap
+`h`) and English (`T9 dictionary activated`, the T9 header back). `vp check`, `vp run -r test`
+(≈60 s) and `vp run website#build` pass; the website is unchanged.
+
+Deviation: the demo loads the dictionary in a panel (`demo/panels/t9.ts`, AGENTS.md "Parallel
+plan conventions" 6: `demo/main.ts` stays the shell): the import starts at mount and restarts the
+(switched-off) phone with the dictionary once it arrives; a box restarts it without one.
+
+Verified by the goldens once reimported: every finding T1-T10 (T10 corrected: English shows a
+note), the T9 header, underline, `?`/Spell, no-match, key 1, case, word stops, Matches, Insert
+word, Spell, user words (second place, completions last, oldest first), the Dictionary list and
+its notes, Dictionary off across a cold boot. UNVERIFIED and chosen here: the user dictionary's
+840 budget and its persistence across power cycles (D7, Open questions 4-5), Restore keeping user
+words, key-1 compositions (D10), held `*` while composing (ignored), Insert number and Insert
+symbol (the crawl only), the held-`*` threshold, Matches' C (back to Options), re-entry of a word
+its lists lack (none), `abc` chosen at a sentence start not lasting past the next sentence end.
+Open for the dirty room: the lit pixel after a short `*` at a word start
+(`g-star-free/07-star-after-space`, a known gap).
 
 ## Follow-up plan adjustments
 

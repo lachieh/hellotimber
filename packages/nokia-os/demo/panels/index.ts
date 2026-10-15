@@ -7,3 +7,4 @@ export { messagesPanel } from "./messages";
 export { phonePanel } from "./phone";
 export { soundPanel } from "./sound";
 export { storagePanel } from "./storage";
+export { t9Panel } from "./t9";

@@ -1,4 +1,4 @@
-# T9 predictive text (plan 18b, in progress)
+# T9 predictive text (plan 18b)
 
 Source: plan 18b Task 0's v6.39 emulator captures (`$REF/captures/plan18b/`, dirty room only),
 imported as committed goldens (`goldens/index/18b.json`: `t9/*`) by plan 18b Task 2. The behaviour
@@ -23,3 +23,26 @@ therefore differ from the firmware (T9 behaviour, section 15).
 | T8  | Matches lists the other candidates then the current; Insert word/Spell prompt is plan 18's text input; user words join the lists                | 10, 11    |
 | T9  | User words: second place when exact (oldest first), completions at the end; a byte budget (≈840), oldest dropped; kept when the text is cleared | 11        |
 | T10 | No commit timeout; no T9-specific sound; Dictionary off persists across power cycles; English on shows `T9 dictionary activated` (corrected)    | 4, 10, 12 |
+
+## What the goldens verify (plan 18b Tasks 6-8)
+
+`@hellotimber/nokia-os` plays every `t9/*` golden's keys on a stock phone with the open-list
+dictionary: 302 of 303 match pixel for pixel (stills in either cursor-blink phase, recordings
+±2 ms; the Dictionary off note ±25 ms against plan 18's recording of it, one blink step ±5 ms).
+Beyond the spec they show:
+
+- The underline covers the typed letters' cells without the last one's blank column (key 1's `1`
+  from x 1 to x 5), on the line's tenth row. A user word's completion is not underlined; its
+  untyped letters and the `?` wrap as a word of their own, kept on the line while they fit its
+  whole width (`inun?` ending at x 81 stays; `Into` + `s?` breaks after `Into`).
+- No `?` display shows the cursor; in 123 the header is multi-tap's (plain pen, `123` from x 14);
+  the symbol table opened from the T9 editor has the T9 header.
+- The mode text after any key-1 or letter key is `abc`; the empty editor and the text's start show
+  `Abc`; a held digit leaves the mode; a held digit undoes its press and types the digit (`5`,
+  held `0`: `50`).
+- English chosen in the Dictionary list shows `T9 dictionary activated` (the tick note, ≈656/232/
+  488 ms), then the T9 editor; after a note the editor's cursor blink starts over, shown.
+- Restore factory settings keeps the Dictionary choice (`sms/restore`, plan 18).
+
+Unexplained (known gap): after `Into ` a short `*` leaves one lit pixel at the cursor's column on
+the underline row (`g-star-free/07-star-after-space`); the empty editor's second `*` shows none.

@@ -212,7 +212,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Security code, boot gates, storage, virgin/factory states  | [stock/storage-and-settings.md](stock/storage-and-settings.md)     | 15   |
 | Tones and sound                                            | [stock/sound.md](stock/sound.md)                                   | 16   |
 | Text entry and SMS                                         | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)         | 18   |
-| T9 predictive text (plan 18b, in progress)                 | [stock/t9-predictive-text.md](stock/t9-predictive-text.md)         | 18b  |
+| T9 predictive text                                         | [stock/t9-predictive-text.md](stock/t9-predictive-text.md)         | 18b  |
 | Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                         | 20   |
 | Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                             | 23   |
 | Keyguard and lights                                        | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |

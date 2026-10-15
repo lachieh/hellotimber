@@ -18,7 +18,8 @@ settings and Clear timers, and gates the power-on with Phone security On. Snake 
 sound port (plan 16; see "Sound"); the display and keypad LEDs through a lights port, and the
 keyguard locks the keypad (plan 25; see "Lights and the keyguard"). Multi-tap text entry, the
 Welcome note editor, Write messages, Inbox and Outbox work over a host network port (plan 18; see
-"Text entry and SMS"). Leaves that are whole applications open a marked
+"Text entry and SMS"), and Write messages writes in T9 with an English dictionary built from an
+open word list (plan 18b; see "T9 predictive text"). Leaves that are whole applications open a marked
 placeholder (a dotted border the firmware never draws) naming the plan that owns them; see "Leaf
 ownership".
 
@@ -43,6 +44,8 @@ const phone = createStockPhone({
   storage: window.localStorage, // the EEPROM; default: a fresh in-memory storage per phone
   sim: "sim-1", // the inserted SIM card (default "sim-1")
   network: createSyntheticNetwork(), // SMS in and out (the default; see "Text entry and SMS")
+  // T9 English (see "T9 predictive text"); without it Write messages is multi-tap.
+  t9: { english: (await import("@hellotimber/nokia-os/t9-english")).englishT9 },
 });
 
 const renderer = createScreenRenderer({ paint: paintStockScreen, scale: 6 });
@@ -88,7 +91,10 @@ eight sound events (`atMs output state`) under the status line, so a headless ru
 without hearing it. An `LCD` and a `KEYS` lamp show the lights port (the LCD dims while the display
 LEDs are off) and the last eight lights events are listed too. The phone's network is a synthetic
 one: a **Receive SMS** form (sender and text, time-stamped by the browser's clock) delivers a
-message, and the messages the phone sent are listed beside it. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
+message, and the messages the phone sent are listed beside it. The T9 English dictionary loads as
+a chunk of its own after the page and restarts the phone with it (the status line shows `T9:
+English (30000 words)`); unticking **T9 English dictionary** restarts the phone without one, as a
+host that leaves it out (Write messages is then multi-tap). In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
 difference; the list groups the goldens by top-level menu (`tree/05-tones`) and kind (`menu`,
 `probe`, `game`).
 
@@ -330,7 +336,7 @@ then *` silently and dark (the power key lights); Unlock then `*` within `Now pr
 Plan 18 adds the firmware's multi-tap text entry and the SMS features built on it, checked against
 196 goldens of emulator captures (`text/*`, `sms/*`, `welcome/*`, `glyphs/*`).
 
-- **Text entry.** Write messages opens the multi-tap editor (Dictionary off: T9 is plan 18b's):
+- **Text entry.** With Dictionary off, Write messages opens the multi-tap editor (T9: plan 18b, below):
   every key's character cycle including the accented letters, the 1452 ms commit, sentence case
   after `. `, `? `, `! ` and the `#` case cycle, `123` on held `#`, held digits, the `*` symbol
   table (31 symbols, ▲/▼ wrap, Use inserts), ▲ right and ▼ left, C delete and held-C clear, the
@@ -401,11 +407,60 @@ function httpNetwork(endpoint: string): StockNetworkPort {
 }
 ```
 
-**Later plans.** 18b adds T9 (the dictionary, Matches, Insert word, Spell) and makes T9 the virgin
-default again; 18c adds Chat over the same messaging service, Templates, Smileys, Picture messages
+**Later plans.** 18c adds Chat over the same messaging service, Templates, Smileys, Picture messages
 (a binary extension of the port), Info service topics and the Service command editor. Phone book
 names (19), dialling a message's number and the received notice's ▲/▼/digit keys (22) and the
 profiles' message alert (17) are theirs.
+
+## T9 predictive text
+
+Plan 18b adds the firmware's T9 to the SMS editor (Write messages, Reply, Edit, Forward), checked
+against 303 goldens of emulator captures (`t9/*`) and specified in
+[`docs/specs/t9-behaviour.md`](../../docs/specs/t9-behaviour.md). With an English dictionary the
+virgin phone writes in T9, as the firmware does:
+
+```ts
+import { createStockPhone } from "@hellotimber/nokia-os";
+
+// A separate entry point: bundlers emit it as its own chunk (≈246 kB, ≈117 kB gzipped), fetched
+// once, and hosts that never open Write messages can leave it out.
+const { englishT9 } = await import("@hellotimber/nokia-os/t9-english");
+const phone = createStockPhone({ carrier: "Telstra", t9: { english: englishT9 } });
+```
+
+- **Keys.** One press per letter: the composing word (underlined, each letter's case fixed when
+  typed) shows the best candidate; `*` cycles the list, the last candidate with `?` and the soft
+  key Spell; `0` ends the word and adds a space; key 1 gives punctuation alone, a word with each
+  mark after a word, and contractions (`don't`); a key no word follows drops silently after one
+  key and shows `?` after more; `#` toggles `Abc`/`abc` between words and `abc`/`ABC` in one,
+  held `#` is `123`; held digits type the digit; C shortens the word and re-enters the word before
+  a deleted space; ▲/▼ stop at word starts and ends (an end re-enters the word); held `*` opens
+  the symbol table. There is no commit timeout.
+- **Options.** Twelve entries (thirteen with Matches while a word composes): Matches (the other
+  candidates, then the current, Use), Insert word, Insert number, Insert symbol and Dictionary
+  (Dictionary off shows `T9 dictionary deactivated`, English `T9 dictionary activated`;
+  Русский and Български open plan 26's placeholders). Spell and Insert word open the
+  `Insert word:` prompt (multi-tap, the message's counter); OK inserts the word and learns it.
+- **User words.** The `t9-user` EEPROM record (version 1) keeps the learned words oldest first,
+  each with its case, `{"words":["Hovo","intos"]}`: an exact user word comes second in its list,
+  longer ones complete at the end; the store holds words while Σ(length + 1) ≤ 840 and drops the
+  oldest. It is written at once, so learned words survive a power cycle, and Restore factory
+  settings keeps it (as it keeps the Dictionary choice).
+- **Without a dictionary** (no `config.t9.english`) the phone behaves as after plan 18: the
+  virgin Dictionary is off, Write messages is multi-tap and English opens a placeholder owned by
+  `config` (the host). `createT9Dictionary("english", source)` builds a dictionary from the
+  generated format (`#<w>` weight lines, words after them) for hosts and tests.
+- **The dictionary** is built by `scripts/build-t9-dictionary.ts` from the MIT-licensed
+  [IlyaSemenov/wikipedia-word-frequency](https://github.com/IlyaSemenov/wikipedia-word-frequency)
+  English counts (pinned commit and SHA-256): its 30,000 most frequent lower-case words, weighted
+  `floor(4 log2(count))`. Provenance, filter and licence:
+  [`src/text/t9/THIRD_PARTY.md`](src/text/t9/THIRD_PARTY.md). No firmware dictionary content is
+  in the repository.
+- **Not reproduced** (spec 15): which words the firmware knows and their order, its nonsense
+  stems, its single-key letter order where it differs, and its exact compositions after key 1
+  (nokia-os lists the dictionary's contractions, then the word joined by `'`, then by `.`). One
+  golden stays a known gap: after a word and a space a short `*` leaves one pixel lit on the
+  underline row, a rule nothing explains yet.
 
 ## Plan-owned resource evidence
 
