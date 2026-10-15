@@ -27,6 +27,13 @@ const DEFAULT_NAMES: Readonly<Record<Exclude<ProfileSlug, "general">, string>> =
 
 const TONES = "tones/";
 
+/**
+ * Standby draws the active profile's name this long after standby is entered (D5): the median of
+ * `profiles/activate-*` and `tree/12-profiles/12-n-1.leaf` (1898-1913 ms after a note's end; every
+ * entry, a key's return included, lies within 1898-1930 ms of standby's own frame, Task 0).
+ */
+export const PROFILE_LINE_DELAY_MS = 1912;
+
 /** The active profile (D1). */
 export function activeProfile(settings: StockSettings): ProfileSlug {
   return PROFILE_SLUGS[settings.choice(ACTIVE_PROFILE_KEY) ?? 0]!;

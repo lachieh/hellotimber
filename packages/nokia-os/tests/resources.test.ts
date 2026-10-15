@@ -873,6 +873,15 @@ describe("text entry and SMS resources (plan 18)", () => {
       "large R",
       "small 1",
       "thin 1",
+      // Plan 17 (the Rename pages): accents that fill their cell, so the next glyph touches them.
+      "thin Ã",
+      "thin Ì",
+      "thin Î",
+      "thin Ï",
+      "thin ì",
+      "thin î",
+      "thin ï",
+      "thin ñ",
     ]);
   });
 

@@ -14,6 +14,9 @@ import {
 } from "../sound-capture-set.ts";
 import type { SoundGolden } from "../sound-format.ts";
 import { firstChangedFrame, type TreeCaptureIo } from "../tree-capture-set.ts";
+import { resources, THIN_GLYPH_PAGES } from "../resource-inputs/17-profiles.ts";
+
+export { THIN_GLYPH_PAGES };
 
 /** The tasks whose scenarios exist: their rows are asserted. */
 export const ASSERTED_TASKS: ReadonlySet<ProfilesTask> = new Set<ProfilesTask>([]);
@@ -481,17 +484,6 @@ export const STILLS: readonly StillRow[] = [
   },
 ];
 
-/** The thin glyph pages' characters (`plan17/glyphs/thin/manifest.json`, Task 0 G). */
-export const THIN_GLYPH_PAGES: readonly string[] = [
-  "BCÄÀÁÂÃÇÈÉ",
-  "ËÊHÎÏÌÍİĞJ",
-  "ÖÔÒÓØÑQVÜÙ",
-  "ÛÚWXZ",
-  "äàáâãæèéëê",
-  "îïìíığjöôò",
-  "óøñqßüùûúz",
-];
-
 // ---------------------------------------------------------------- sound
 
 export interface SoundRow {
@@ -631,6 +623,7 @@ export function profilesSounds(io: SoundCaptureIo): SoundGolden[] {
 
 export const profiles: PlanCaptureSet = {
   plan: "17",
+  resources,
   lcd: (io: CaptureIo) => profilesLcd(io.frames),
   sounds: (io) => profilesSounds(io.sound),
   notImported: {

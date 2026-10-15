@@ -2935,6 +2935,18 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         "...................................................................................."
       ]
     },
+    "profiles/silent": {
+      "x": 7,
+      "y": 0,
+      "art": [
+        "....#..",
+        ".#..##.",
+        "..#.###",
+        ".####.#",
+        "#####..",
+        ".###.#."
+      ]
+    },
     "editor/mode-upper": {
       "x": 14,
       "y": 0,
@@ -8053,6 +8065,301 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
+    "12-1-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 683
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 1981
+        },
+        {
+          "frame": 3,
+          "durationMs": 9
+        }
+      ]
+    },
+    "12-2-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 683
+        },
+        {
+          "frame": 1,
+          "durationMs": 233
+        },
+        {
+          "frame": 2,
+          "durationMs": 1982
+        },
+        {
+          "frame": 3,
+          "durationMs": 9
+        }
+      ]
+    },
+    "12-3-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 681
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 1982
+        },
+        {
+          "frame": 3,
+          "durationMs": 9
+        }
+      ]
+    },
+    "12-4-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 678
+        },
+        {
+          "frame": 1,
+          "durationMs": 233
+        },
+        {
+          "frame": 2,
+          "durationMs": 1974
+        },
+        {
+          "frame": 3,
+          "durationMs": 8
+        }
+      ]
+    },
+    "12-5-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 691
+        },
+        {
+          "frame": 1,
+          "durationMs": 233
+        },
+        {
+          "frame": 2,
+          "durationMs": 1987
+        },
+        {
+          "frame": 3,
+          "durationMs": 9
+        }
+      ]
+    },
+    "12-6-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 678
+        },
+        {
+          "frame": 1,
+          "durationMs": 240
+        },
+        {
+          "frame": 2,
+          "durationMs": 1971
+        },
+        {
+          "frame": 3,
+          "durationMs": 8
+        }
+      ]
+    },
+    "rename-done": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 695
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 534
+        }
+      ]
+    },
+    "power-invalid-shortcut": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/error"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 30
+        },
+        {
+          "kind": "cut",
+          "bytes": 31
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 2886
+        },
+        {
+          "frame": 1,
+          "durationMs": 8
+        },
+        {
+          "frame": 2,
+          "durationMs": 15
+        }
+      ]
+    },
     "t9-dictionary-deactivated": {
       "frames": [
         {
@@ -8596,7 +8903,13 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "8-1": "8-1",
     "8-2": "8-2",
     "8-3": "8-3",
-    "8-4": "8-4"
+    "8-4": "8-4",
+    "12-1-1": "12-1-1",
+    "12-2-1": "12-2-1",
+    "12-3-1": "12-3-1",
+    "12-4-1": "12-4-1",
+    "12-5-1": "12-5-1",
+    "12-6-1": "12-6-1"
   },
   "byName": {
     "request-not-confirmed": "request-not-confirmed",
@@ -8613,6 +8926,8 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "invalid-shortcut": "invalid-shortcut",
     "game-over-note": "game-over-note",
     "game-over-fireworks": "game-over-fireworks",
+    "rename-done": "rename-done",
+    "power-invalid-shortcut": "power-invalid-shortcut",
     "t9-dictionary-deactivated": "t9-dictionary-deactivated",
     "message-saved": "message-saved",
     "centre-number-saved": "centre-number-saved",

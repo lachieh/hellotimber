@@ -31,7 +31,7 @@ choice is stored when the note opens; the key that activates beeps at the new pr
 key's down during the note opens the power list.
 
 **Standby.** For every active profile but General the name is drawn centred in the small face under
-the operator (top 18), 1909-1913 ms after standby is drawn at a note's end (1916-1921 ms after other
+the operator (top 18), 1898-1913 ms after standby is drawn at a note's end (1916-1921 ms after other
 notes, 1926-1930 ms after the operator's redraw on a key's return). A key's return to standby (C,
 C held, a notice's C, the power list's C) first shows the ladders without the operator for
 84-95 ms. Menu's 29-39 ms frame with the ladders erased keeps the operator, the clock, the name and

@@ -533,16 +533,39 @@ changes nothing (identical tree hash); no other plan's golden changed.
 **Files:** `scripts/extract-resources.ts`, `scripts/widget-sprites.ts`, `scripts/glyph-overrides.ts`,
 `src/resources/generated/**` (generated), `src/resources/index.ts`, `tests/resources.test.ts`.
 
-- [ ] Harvest the thin sheet and the new goldens' runs (the large U+E000 box of slot 6's prompt, the
+- [x] Harvest the thin sheet and the new goldens' runs (the large U+E000 box of slot 6's prompt, the
       standby line). Resolve reports with overrides naming their golden.
-- [ ] Crops: the standby icon; the power list's leading frame and C's frame if they are not plain
+- [x] Crops: the standby icon; the power list's leading frame and C's frame if they are not plain
       models (D7). Timelines: each `Selected profile:` note (its own recordings), Rename's `Done`,
       `PROFILE_LINE_DELAY_MS` per D5 (medians with the spread in a comment).
-- [ ] Measure the standby line's top and centring and the icon's place from the goldens.
-- [ ] TDD: freshness; every default name renders in small, large and thin; every typeable character
+- [x] Measure the standby line's top and centring and the icon's place from the goldens.
+- [x] TDD: freshness; every default name renders in small, large and thin; every typeable character
       renders in thin or is reported (plan 15's welcome-note rule).
-- [ ] Run `extract-resources` twice; no diff.
-- [ ] Commit: `feat(nokia-os): harvest profile glyphs, icon and timings`.
+- [x] Run `extract-resources` twice; no diff.
+- [x] Commit: `feat(nokia-os): harvest profile glyphs, icon and timings`.
+
+Deviation: **Task 3 (paths, plan 29):** plan 17's evidence is `PlanCaptureSet.resources` in
+`scripts/resource-inputs/17-profiles.ts` (text runs, glyph overrides, sprite batch 170, timeline
+batch 170); `scripts/widget-sprites.ts` and `scripts/glyph-overrides.ts` no longer exist and
+`extract-resources.ts` needs no change. The thin face gains the 63 typeable characters it lacked
+from `profiles/glyphs-thin` (seven pages, runs at top 29 right-aligned to x 79): eight pairs touch
+(`ÎÏ`, `ÏÌ`, `ÌÍ`, their lower case, `ÃÇ`, `ñq`: `touch` overrides with widths from the OCR cells
+of `plan17/text.json`) and seven page-final characters take the stock `spacing`; the eight
+accented glyphs that fill their cell join the resources test's spacing exceptions. The large face
+gains U+E000 (slot 6's virgin note, `tree/12-profiles/12-6-1.leaf` image d). Sprite:
+`profiles/silent` (x 7..13, y 0..5). Timelines: the six Activate notes by node (`12-n-1`, from
+the tree goldens, still `pending:17`: explicit probes), `rename-done` and `power-invalid-shortcut`.
+The power list's leading frame (standby with the ladders erased) and its C frame (the ladders
+without the operator) are plain standby models the power list paints, not crops (D7). The
+measured constant `PROFILE_LINE_DELAY_MS` (1912, the median of eleven Activate goldens, spread
+1898-1913) lives in `features/profiles.ts`, pinned by `tests/profiles-resources.test.ts` against
+the goldens (no generator); the standby line's place (small face, top 18, centred) is Task 6's
+painter, tested against the goldens.
+
+Deviation: **Task 3 (`power-invalid-shortcut`):** its extracted frames decompose the two partial
+draws against their neighbours (`edges` 5..30, then a 31-byte `cut`), which the note painter
+cannot replay toward standby; Task 7 keeps the step durations (2886/8/15 ms) and draws the
+partials toward standby (`edges` 5..78, then the first 31 bytes of standby).
 
 ### Task 4 - phone-core: standby line, label reader, power key, powerOff (TDD)
 
