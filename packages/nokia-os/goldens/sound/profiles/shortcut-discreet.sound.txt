@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/shortcut-discreet
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/shortcut/discreet
 source-sha256: c8ce9fc1d3d392959a64cf182fe844794badd8beafe3364a062d6ba0ac7ad007
 state: factory

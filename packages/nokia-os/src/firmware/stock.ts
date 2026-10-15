@@ -7,6 +7,7 @@ import type {
   FactoryDefault,
   FactoryText,
   LeadEntry,
+  LevelBinding,
   NoteEndBinding,
   OptionListHooks,
   ScreenBinding,
@@ -82,6 +83,9 @@ export const SCREENS: Readonly<Record<string, ScreenBinding>> = merged("Screen",
 
 /** Entries heading submenu levels, by the level's node number. */
 export const LEADS: Readonly<Record<string, LeadEntry>> = merged("Lead entry", (f) => f.leads);
+
+/** Labels and openings of submenu levels, by the level's node number (plan 17). */
+export const LEVELS: Readonly<Record<string, LevelBinding>> = merged("Level", (f) => f.levels);
 
 export const PROMPT_LAYOUTS: Readonly<Record<string, PromptLayout>> = widgets(
   "Prompt layout",

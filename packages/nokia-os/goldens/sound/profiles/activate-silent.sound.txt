@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/activate-silent
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/activate/silent
 source-sha256: ca677f57060b344aa4b7231f2885591337d68ca49cc04cbdb3ebd94299edb316
 state: factory

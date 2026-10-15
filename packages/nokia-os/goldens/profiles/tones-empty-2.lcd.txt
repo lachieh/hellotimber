@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/tones-empty-2
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/tones/empty-2/page-1.png + captures/6.39/plan17/tones/empty-2/page-2.png + captures/6.39/plan17/tones/empty-2/page-3.png + captures/6.39/plan17/tones/empty-2/page-4.png + captures/6.39/plan17/tones/empty-2/page-5.png + captures/6.39/plan17/tones/empty-2/page-6.png + captures/6.39/plan17/tones/empty-2/page-7.png + captures/6.39/plan17/tones/empty-2/page-8.png + captures/6.39/plan17/tones/empty-2/page-9.png + captures/6.39/plan17/tones/empty-2/keypad-list.png + captures/6.39/plan17/tones/empty-2/volume-list.png
 source-sha256: 491c4f5fc8cd991f8fa53d50e677370ad0daffa627f522caa2ec54eb67155503
 note: empty-2 active: Tones pages 1-9 (Menu 5, ▼), then Tones › Keypad tones and › Ringing volume opened.

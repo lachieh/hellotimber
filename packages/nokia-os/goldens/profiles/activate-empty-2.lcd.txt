@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/activate-empty-2
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/activate/empty-2
 source-sha256: 704fdfceb1ea46459098ee6101e82193ddda988b19ce284f1d70af8c0b6cbedc
 trigger-frame: 1

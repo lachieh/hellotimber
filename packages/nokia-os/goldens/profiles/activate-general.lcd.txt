@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/activate-general
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/activate/general
 source-sha256: 7a337a431aba88b98f7506b3d6c253a7ef34b8ad8197caf1973d46f25645f82e
 trigger-frame: 1

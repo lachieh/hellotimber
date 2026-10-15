@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/effects-discreet-keys
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/effects/discreet/keys
 source-sha256: ee5776383a274c613db652fc08467e861d572454e962a93835f072c00fda3f61
 state: factory

@@ -157,10 +157,21 @@ describe("stockMenu", () => {
       stockMenu.entries.map((slot) => slot.entry),
     );
     // The "Leaf ownership" table: Chat, Composer, New game, Activate, Stopwatch, ...
-    for (const number of ["3", "2-1", "5-4-3", "8-4-2-1", "11-4", "12-5-1"]) {
+    for (const number of ["3", "2-1", "5-4-3", "8-4-2-1", "11-4"]) {
       expect(kinds.get(number), number).toBe("placeholder");
     }
-    for (const number of ["1-1", "1-2", "1-8-1", "4-5", "8-1-1", "8-1-2", "8-1-6", "9", "10-2"]) {
+    for (const number of [
+      "1-1",
+      "1-2",
+      "1-8-1",
+      "4-5",
+      "8-1-1",
+      "8-1-2",
+      "8-1-6",
+      "9",
+      "10-2",
+      "12-5-1",
+    ]) {
       expect(kinds.get(number), number).toBe("stock");
     }
   });
@@ -315,7 +326,6 @@ describe("PlaceholderApplication", () => {
       "menu/settings/phone-settings/welcome-note": "18",
       "menu/games/bantumi/new-game": "24",
       "menu/clock/stopwatch": "21",
-      "menu/profiles/loud/activate": "17",
     });
   });
 

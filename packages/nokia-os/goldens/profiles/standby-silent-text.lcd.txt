@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/standby-silent-text
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/match/general-silent-values/standby.png + captures/6.39/plan17/match/general-silent-values-volume-4/standby.png + captures/6.39/plan17/match/general-silent-values-renamed/standby.png + captures/6.39/plan17/match/general-alert-message-keypad-warning-off/standby.png + captures/6.39/plan17/match/general-alert-message-vibra-off/standby.png + captures/6.39/plan17/match/general-alert-message-vibra-keypad-off/standby.png + captures/6.39/plan17/match/general-alert-message-vibra-warning-off/standby.png + captures/6.39/plan17/match/general-silent-values-but-alert/standby.png + captures/6.39/plan17/match/general-silent-values-but-message/standby.png + captures/6.39/plan17/match/general-volume-3/standby.png + captures/6.39/plan17/match/general-discreet-values/standby.png + captures/6.39/plan17/match/loud-silent-values/standby.png + captures/6.39/plan17/match/empty-2-silent-values/standby.png + captures/6.39/plan17/match/silent-general-values/standby.png
 source-sha256: d6b234a43f00367c624cc835c0cd31afafc846f9723202232077f7acba908241
 note: Standby with General (Loud, slot 6, Silent) given another profile's values: General reads `Silent` while its alert, message tone, keypad and warning tones are all off.

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/effects-general-preview
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/effects/general/preview
 source-sha256: 08642b71888251a4b8018050ca8b0e9b38775c8aac43369f68f9751d8e19800f
 state: factory

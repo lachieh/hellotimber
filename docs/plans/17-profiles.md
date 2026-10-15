@@ -634,16 +634,47 @@ stores: `profiles/active`, six options, virgin unset) and `factoryTexts` (Restor
 `src/display/profiles.ts` (new), the leaves/menu/phone/standby registrations,
 `tests/profiles-activate.test.ts` (new).
 
-- [ ] `activateLeaf` (D3) bound to 12-n-1; the Profiles level's `label` and `opening` (D8).
-- [ ] `standbyProfileLine` and `standbySilent` wired into `createPhone`; the painter draws the line
+- [x] `activateLeaf` (D3) bound to 12-n-1; the Profiles level's `label` and `opening` (D8).
+- [x] `standbyProfileLine` and `standbySilent` wired into `createPhone`; the painter draws the line
       and the icon as measured (D5, D6); Discreet's line per D10.
-- [ ] `activationBeep` (D4) wired in the wrapper.
-- [ ] TDD through keys against `tree/12-profiles/12-n-1.leaf`, `profiles/activate-*`,
+- [x] `activationBeep` (D4) wired in the wrapper.
+- [x] TDD through keys against `tree/12-profiles/12-n-1.leaf`, `profiles/activate-*`,
       `profiles/standby-*`, `profiles/icon-*`, `profiles/tones-*`, `profiles/persist-*`,
       `profiles/restore`, `sound/note/12-n-1`, `sound/profiles/{activate,effects}-*` (pixels exact,
       timelines ±2 ms after alignment; standby-entry delays within the spread Task 3 records).
-- [ ] Plan 13's standby goldens unchanged (General: no line, no icon).
-- [ ] Commit: `feat(nokia-os): Activate, the standby profile line and icon`.
+- [x] Plan 13's standby goldens unchanged (General: no line, no icon).
+- [x] Commit: `feat(nokia-os): Activate, the standby profile line and icon`.
+
+Deviation: **Task 6 (API):** `activateLeaf(services, slug)` is the 12-n-1 `ScreenBinding`'s widget
+factory (`() => Widget`), bound through the feature's `screens`; `activationBeep(phone, key,
+settings)` takes the key going down. The Profiles level's label and opening come through a new
+generic feature table, `levels` (`LevelOptions { label?(slug), opening?() }`, by level node:
+`features/feature.ts`, `LEVELS` in `stock.ts`, one spread in `menu.ts`), not an import of the
+profiles feature. Notes gain `powerLeaves` (`widgets/note.ts`): Activate's note leaves for standby
+on the power key's down, where the kernel opens `standbyPower` (B6). The standby painter calls
+`paintProfileStandby` (`display/profiles.ts`): the line centred in the small face at top 18 and the
+`profiles/silent` sprite, both kept on Menu's `leaving` frame. `phone.ts` sets `standbyLine`,
+`standbyIndicators` (`silent`) and calls `activationBeep` before `sounder.keyDown`.
+
+Deviation: **Task 6 (shared tests, one assertion each):** `12-*-1` left both owner tables, so the
+six `tree/12-profiles/12-n-1.leaf` and `sound/note/12-n-1` goldens are asserted (plan 16's importer
+folds equal note recordings: 12-1-1, 12-2-1 and 12-6-1's sound now share other notes' goldens).
+`tests/firmware-menu.test.ts` lists 12-5-1 as stock; `tests/widgets-notes.test.ts` skips leaves a
+feature binds (Activate's note ends in the kernel's standby with its line);
+`tests/acceptance/14-menu-depth.test.ts` gives `tree/12-profiles/12-5-1.leaf` a hand-written
+scenario within PROBE_TOLERANCE_MS (its name comes at 1898 ms; the coverage guard admits no tree
+golden as a known gap). `profiles/persist-after-{boot,restore}` move to Task 7 (they show the
+power list).
+
+Deviation: **Task 6 (scenarios):** the factory Activate goldens play the virgin per-slot note
+timelines (another recording) within PROBE_TOLERANCE_MS; `profiles/activate-empty` is a known gap
+(its tick is 27 ms shorter than 12-5-1's), `profiles/standby-carousel-c` too (the key return's
+operator-less redraw, Task 0). Cut goldens (`activate-discreet`, `standby-menu`) hold their last
+frame as a lower bound (`cutRecordingScenario`). Stills seed the active profile, names and Tones
+values into the factory storage (`tests/support/profiles.ts`) instead of replaying the settings'
+keys; the scenarios' `toStandby` taps C before holding it on an option list (nokia-os closes a list
+on C's release; the firmware leaves for standby on C held, an existing kernel difference).
+
 
 ### Task 7 - The power key's profile list (TDD against goldens)
 

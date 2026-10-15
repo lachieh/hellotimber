@@ -2,6 +2,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { shotImages, type CaptureSetEntry } from "../../scripts/capture-set.ts";
 import {
+  ASSERTED_TASKS,
   profiles,
   profilesLcd,
   profilesSounds,
@@ -67,7 +68,11 @@ describe("profiles capture set", () => {
   });
 
   it("is pending:17 until its task's scenarios exist", () => {
-    for (const entry of profilesLcd(frames())) expect(entry.status, entry.id).toBe("pending:17");
+    const rows = new Map([...TIMELINES, ...STILLS].map((row) => [row.id, row.task] as const));
+    for (const entry of profilesLcd(frames())) {
+      const asserted = ASSERTED_TASKS.has(rows.get(entry.id)!);
+      expect(entry.status, entry.id).toBe(asserted ? "asserted" : "pending:17");
+    }
   });
 
   it("aligns a timeline on its first changed frame, or as its row says", () => {
@@ -129,7 +134,12 @@ describe("profiles capture set", () => {
     };
     const goldens = profilesSounds(io);
     expect(goldens.map((g) => g.id)).toEqual(SOUNDS.map((row) => row.id));
-    expect(goldens.every((g) => g.state === "factory" && g.status === "pending:17")).toBe(true);
+    expect(goldens.every((g) => g.state === "factory")).toBe(true);
+    goldens.forEach((golden, i) =>
+      expect(golden.status, golden.id).toBe(
+        ASSERTED_TASKS.has(SOUNDS[i]!.task) ? "asserted" : "pending:17",
+      ),
+    );
     expect(goldens[0]!.keys).toHaveLength(1);
   });
 

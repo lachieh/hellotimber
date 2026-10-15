@@ -19,7 +19,7 @@ import { resources, THIN_GLYPH_PAGES } from "../resource-inputs/17-profiles.ts";
 export { THIN_GLYPH_PAGES };
 
 /** The tasks whose scenarios exist: their rows are asserted. */
-export const ASSERTED_TASKS: ReadonlySet<ProfilesTask> = new Set<ProfilesTask>([]);
+export const ASSERTED_TASKS: ReadonlySet<ProfilesTask> = new Set<ProfilesTask>([6]);
 
 /** The plan 17 task that drives a row: 6 Activate and standby, 7 the power key, 8 Rename. */
 export type ProfilesTask = 6 | 7 | 8;
@@ -316,7 +316,6 @@ const ICON_CASES = [
   "silent-vibra-on",
   "silent-volume-4",
   "loud-alert-off",
-  "discreet-alert-off",
 ] as const;
 
 /** The `match/<case>/standby.png` stills: when General's line reads `Silent` (Task 0 A3). */
@@ -396,13 +395,13 @@ export const STILLS: readonly StillRow[] = [
   {
     id: "profiles/persist-after-boot",
     files: everywhere(`${P}/persist/after-boot`),
-    task: 6,
+    task: 7,
     note: "Silenth and Ab renamed, slot 6 active, power cycle: standby, the Profiles level ▼×0-6, the power list ▼×0-7, Tones pages 1-9.",
   },
   {
     id: "profiles/persist-after-restore",
     files: everywhere(`${P}/persist/after-restore`),
-    task: 6,
+    task: 7,
     note: "Then Restore factory settings: the same screens (General active, names reset).",
   },
   {
@@ -629,7 +628,7 @@ export const profiles: PlanCaptureSet = {
   notImported: {
     "plan17/standby/{level-c-c,level-c-held,list-c-held,power-c,notice-c,boot}":
       "evidence for D5 (the name's delay per entry): key returns repeat standby-carousel-c's operator-less redraw; the notice is plan 18's painter; the power-on follows the clock wizard nokia-os does not have",
-    "plan17/discreet/* (but screen-saver-off frame 0)":
+    "plan17/discreet/* (but screen-saver-off frame 0), plan17/icon/discreet-alert-off.png":
       "Discreet's overwritten operator line: an uninitialised screen saver picture (D10, an artefact)",
     "plan17/match/*/{profiles,*-volume,tones-volume,power,standby-undone}.png":
       "evidence for the General `Silent` rule (Task 0 A3): the lists show the values as Tones does",

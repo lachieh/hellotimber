@@ -8,6 +8,7 @@ import { createStockGames, createStockMenu, STOCK_SHORTCUT_WINDOW_MS } from "./m
 import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { stockBootGates } from "./boot";
+import { activationBeep, standbyProfileLine, standbySilent } from "./features/profiles";
 import { createStockSettings } from "./settings";
 import type { StockSoundPort } from "../sound/port";
 import { SoundSequencer } from "../sound/sequencer";
@@ -125,6 +126,9 @@ export function createStockPhoneWith(
     rowsWindow: VISIBLE_ROWS,
     // Stock shortcut digits: menu numbers, delayed opening, Invalid shortcut (plan 14 D14).
     shortcutEntry: { openDelayMs: STOCK_SHORTCUT_OPEN_DELAY_MS, invalid: invalidShortcut(sounder) },
+    // Plan 17: the active profile's line under the operator (D5) and the silent icon (D6).
+    standbyLine: standbyProfileLine(settings),
+    standbyIndicators: () => (standbySilent(settings) ? { silent: true } : undefined),
   });
   // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
   let poweredOn = false;
@@ -143,7 +147,10 @@ export function createStockPhoneWith(
     }
     const on = poweredOn;
     const options = on ? keyDownOptions(event.key, phone) : undefined;
+    // Plan 17 D4: a key that activates a profile beeps at that profile's level.
+    const activation = on ? activationBeep(phone, event.key, settings) : undefined;
     phone.send(event);
+    if (activation !== undefined) sounder.keyBeepLevel(activation);
     // The beep follows the key's handling: a widget may set this key's level or replace it.
     if (options !== undefined) sounder.keyDown(event.key, options);
   };

@@ -2,7 +2,7 @@
   {
     "id": "profiles/activate-discreet",
     "file": "profiles/activate-discreet.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -10,7 +10,7 @@
   {
     "id": "profiles/activate-empty",
     "file": "profiles/activate-empty.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -18,7 +18,7 @@
   {
     "id": "profiles/activate-empty-2",
     "file": "profiles/activate-empty-2.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -26,7 +26,7 @@
   {
     "id": "profiles/activate-general",
     "file": "profiles/activate-general.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -34,7 +34,7 @@
   {
     "id": "profiles/activate-general-from-discreet",
     "file": "profiles/activate-general-from-discreet.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -42,7 +42,7 @@
   {
     "id": "profiles/activate-general-from-empty",
     "file": "profiles/activate-general-from-empty.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -50,7 +50,7 @@
   {
     "id": "profiles/activate-general-from-empty-2",
     "file": "profiles/activate-general-from-empty-2.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -58,7 +58,7 @@
   {
     "id": "profiles/activate-general-from-loud",
     "file": "profiles/activate-general-from-loud.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -66,7 +66,7 @@
   {
     "id": "profiles/activate-general-from-silent",
     "file": "profiles/activate-general-from-silent.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -74,7 +74,7 @@
   {
     "id": "profiles/activate-loud",
     "file": "profiles/activate-loud.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -82,7 +82,7 @@
   {
     "id": "profiles/activate-silent",
     "file": "profiles/activate-silent.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -90,7 +90,7 @@
   {
     "id": "profiles/discreet-screen-saver-off",
     "file": "profiles/discreet-screen-saver-off.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -106,15 +106,15 @@
   {
     "id": "profiles/icon",
     "file": "profiles/icon.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
-    "images": 18,
-    "frames": 18
+    "images": 17,
+    "frames": 17
   },
   {
     "id": "profiles/opening",
     "file": "profiles/opening.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 13,
     "frames": 13
@@ -730,7 +730,7 @@
   {
     "id": "profiles/restore",
     "file": "profiles/restore.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -738,7 +738,7 @@
   {
     "id": "profiles/standby-carousel-c",
     "file": "profiles/standby-carousel-c.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -746,7 +746,7 @@
   {
     "id": "profiles/standby-menu",
     "file": "profiles/standby-menu.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -754,7 +754,7 @@
   {
     "id": "profiles/standby-silent-text",
     "file": "profiles/standby-silent-text.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 14,
     "frames": 14
@@ -762,7 +762,7 @@
   {
     "id": "profiles/tones-discreet",
     "file": "profiles/tones-discreet.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 11,
     "frames": 11
@@ -770,7 +770,7 @@
   {
     "id": "profiles/tones-empty",
     "file": "profiles/tones-empty.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 11,
     "frames": 11
@@ -778,7 +778,7 @@
   {
     "id": "profiles/tones-empty-2",
     "file": "profiles/tones-empty-2.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 11,
     "frames": 11
@@ -786,7 +786,7 @@
   {
     "id": "profiles/tones-general",
     "file": "profiles/tones-general.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 11,
     "frames": 11
@@ -794,7 +794,7 @@
   {
     "id": "profiles/tones-loud",
     "file": "profiles/tones-loud.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 11,
     "frames": 11
@@ -802,7 +802,7 @@
   {
     "id": "profiles/tones-silent",
     "file": "profiles/tones-silent.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 11,
     "frames": 11
@@ -810,7 +810,7 @@
   {
     "id": "profiles/tones-write",
     "file": "profiles/tones-write.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -818,168 +818,168 @@
   {
     "id": "sound/profiles/activate-discreet",
     "file": "sound/profiles/activate-discreet.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/activate-empty",
     "file": "sound/profiles/activate-empty.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/activate-empty-2",
     "file": "sound/profiles/activate-empty-2.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/activate-general",
     "file": "sound/profiles/activate-general.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/activate-loud",
     "file": "sound/profiles/activate-loud.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/profiles/activate-silent",
     "file": "sound/profiles/activate-silent.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/profiles/effects-discreet-invalid",
     "file": "sound/profiles/effects-discreet-invalid.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/profiles/effects-discreet-keys",
     "file": "sound/profiles/effects-discreet-keys.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/profiles/effects-discreet-preview",
     "file": "sound/profiles/effects-discreet-preview.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/profiles/effects-empty-2-invalid",
     "file": "sound/profiles/effects-empty-2-invalid.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/profiles/effects-empty-2-keys",
     "file": "sound/profiles/effects-empty-2-keys.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/profiles/effects-empty-2-preview",
     "file": "sound/profiles/effects-empty-2-preview.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 54
   },
   {
     "id": "sound/profiles/effects-empty-invalid",
     "file": "sound/profiles/effects-empty-invalid.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/profiles/effects-empty-keys",
     "file": "sound/profiles/effects-empty-keys.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/profiles/effects-empty-preview",
     "file": "sound/profiles/effects-empty-preview.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/profiles/effects-general-invalid",
     "file": "sound/profiles/effects-general-invalid.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/profiles/effects-general-keys",
     "file": "sound/profiles/effects-general-keys.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/profiles/effects-general-preview",
     "file": "sound/profiles/effects-general-preview.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 54
   },
   {
     "id": "sound/profiles/effects-loud-invalid",
     "file": "sound/profiles/effects-loud-invalid.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/profiles/effects-loud-keys",
     "file": "sound/profiles/effects-loud-keys.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/profiles/effects-loud-preview",
     "file": "sound/profiles/effects-loud-preview.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 54
   },
   {
     "id": "sound/profiles/effects-silent-invalid",
     "file": "sound/profiles/effects-silent-invalid.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/profiles/effects-silent-keys",
     "file": "sound/profiles/effects-silent-keys.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/profiles/effects-silent-preview",
     "file": "sound/profiles/effects-silent-preview.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
@@ -1105,21 +1105,21 @@
   {
     "id": "sound/profiles/shortcut-discreet",
     "file": "sound/profiles/shortcut-discreet.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/profiles/shortcut-loud",
     "file": "sound/profiles/shortcut-loud.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/profiles/shortcut-silent",
     "file": "sound/profiles/shortcut-silent.sound.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "sound",
     "events": 8
   }

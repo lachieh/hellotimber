@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/standby-menu
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/standby/menu-c 000-004
 source-sha256: 5b1d5d242c1e2950fc45e31f26c187c4d955926ed59095ed6b343966d266efe7
 trigger-frame: 1

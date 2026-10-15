@@ -59,6 +59,17 @@ export interface LeadEntry {
   readonly open: (services: StockServices) => () => Widget;
 }
 
+/** What a feature adds to a submenu level (plan 17: the Profiles level's names and opening). */
+export interface LevelOptions {
+  /** The text the child with slug `slug` shows in the level (and as its title); undefined = its label. */
+  readonly label?: (slug: string) => string | undefined;
+  /** The slug of the child the level opens on; undefined = the captured opening. */
+  readonly opening?: () => string | undefined;
+}
+
+/** A level's options over one phone's services. */
+export type LevelBinding = (services: StockServices) => LevelOptions;
+
 /** What a feature adds to an option list (plan 16: key beeps and previews). */
 export interface OptionListHooks {
   /** A key went down on the list; `highlighted` is the option it now highlights. */
@@ -198,6 +209,8 @@ export interface StockFeature {
   readonly screens?: Readonly<Record<string, ScreenBinding>>;
   /** Entries this feature heads submenu levels with, by the level's node number. */
   readonly leads?: Readonly<Record<string, LeadEntry>>;
+  /** Labels and openings this feature gives submenu levels, by the level's node number. */
+  readonly levels?: Readonly<Record<string, LevelBinding>>;
   /** Hooks for the option list of setting `key`, if this feature has any. */
   readonly optionLists?: (key: string, services: StockServices) => OptionListHooks | undefined;
   readonly widgets?: StockWidgetTables;

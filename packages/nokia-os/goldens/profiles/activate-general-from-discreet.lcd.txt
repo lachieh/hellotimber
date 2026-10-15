@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/activate-general-from-discreet
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/activate/general-from-discreet
 source-sha256: fb7b147db117da3eb9e69070c1882a356e5c1ae2b9583ed6cd36b7eaf5247919
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/activate-general-from-silent
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/activate/general-from-silent
 source-sha256: 43efa845011da37ef998404057d77f356fc239e54705c924f4463740de0e9cd4
 trigger-frame: 1

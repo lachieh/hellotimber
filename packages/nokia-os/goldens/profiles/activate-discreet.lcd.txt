@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/activate-discreet
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/activate/discreet 000-006
 source-sha256: 7521116bc0c91f0e3c5140a8e5f900584ef722870c863100f6ca180c1a6db75f
 trigger-frame: 1

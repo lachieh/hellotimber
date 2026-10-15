@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/effects-loud-preview
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/effects/loud/preview
 source-sha256: bd6030e3dd0e801ac81215304c86b7d5805b05e5571de7fb20ba2ceaaaf04ee8
 state: factory

@@ -3,8 +3,13 @@
 // every effect of a profile (keypad tones, warning tones, previews, the vibrator, game shakes)
 // follows it with no plan 16 change (D11). Names are the Rename texts (D2). Each profile's
 // Personalise is General's subtree; Screen saver's setter level; the factory values.
+import type { Phone, PhoneKey } from "@hellotimber/phone-core";
+import { WIDGET_TIMELINE_BY_NODE } from "../../resources";
+import type { Widget } from "../../widgets/flow";
+import { note } from "../../widgets/note";
 import type { StockSettings } from "../settings";
-import type { FactoryDefault, StockFeature } from "./feature";
+import { timelineById } from "../timelines";
+import type { FactoryDefault, StockFeature, StockServices } from "./feature";
 
 /** The six v6.39 slots in order (P11: no Meeting, Outdoor or Pager profile). */
 export const PROFILE_SLUGS = ["general", "silent", "discreet", "loud", "empty", "empty-2"] as const;
@@ -64,6 +69,106 @@ export function renameProfile(settings: StockSettings, slug: ProfileSlug, name: 
   settings.setText(renameKey(slug), name === "" ? DEFAULT_NAMES[slug] : name);
 }
 
+/** A profile's node number (`12-<n>`). */
+function slotNumber(slug: ProfileSlug): string {
+  return `12-${PROFILE_SLUGS.indexOf(slug) + 1}`;
+}
+
+function isProfile(slug: string): slug is ProfileSlug {
+  return (PROFILE_SLUGS as readonly string[]).includes(slug);
+}
+
+/**
+ * Activate (D3): the choice is stored when the note opens, so its beep (D4) and its standby
+ * follow it; `Selected` / `profile:` / the name with the slot's own tick timeline, the edges
+ * step, standby. The power key's down leaves for standby, where it opens the power list (B6).
+ */
+export function activateLeaf(services: StockServices, slug: ProfileSlug): () => Widget {
+  const number = `${slotNumber(slug)}-1`;
+  const id = WIDGET_TIMELINE_BY_NODE[number];
+  if (id === undefined) throw new Error(`No widget timeline for Activate ${number}.`);
+  const timeline = timelineById(id, `Activate ${number}`);
+  return () => {
+    activateProfile(services.settings, slug);
+    return note({
+      lines: ["Selected", "profile:", profileName(services.settings, slug)],
+      timeline,
+      end: "standby",
+      sound: services.noteSound,
+      powerLeaves: true,
+    });
+  };
+}
+
+/** Option indices of the Tones lists the standby rules read (the tree's option order). */
+const ALERT_OFF = 4; // Ringing, Ascending, Ring once, Beep once, Off
+const NO_TONE = 0; // No tone, Standard, Special, Beep once, Ascending
+const KEYPAD_OFF = 0; // Off, Level 1, Level 2, Level 3
+const WARNING_OFF = 1; // On, Off
+
+/** The active profile's Incoming call alert is Off: standby's icon (D6, Task 0 A3). */
+export function standbySilent(settings: StockSettings): boolean {
+  return settings.choice("tones/incoming-call-alert") === ALERT_OFF;
+}
+
+/**
+ * The text of standby's profile line: the active profile's name; for General none, unless its
+ * alert, message tone, keypad tones and warning tones are all off, when the firmware writes
+ * `Silent` (Task 0 A3: not Silent's stored name).
+ */
+export function standbyProfileText(settings: StockSettings): string | undefined {
+  const active = activeProfile(settings);
+  if (active !== "general") return profileName(settings, active);
+  const silent =
+    standbySilent(settings) &&
+    settings.choice("tones/message-alert-tone") === NO_TONE &&
+    settings.choice("tones/keypad-tones") === KEYPAD_OFF &&
+    settings.choice("tones/warning-tones") === WARNING_OFF;
+  return silent ? "Silent" : undefined;
+}
+
+/** phone-core's `standbyLine` (D5): the profile line once standby has shown for the delay. */
+export function standbyProfileLine(
+  settings: StockSettings,
+): (shownMs: number) => string | undefined {
+  return (shownMs) => (shownMs < PROFILE_LINE_DELAY_MS ? undefined : standbyProfileText(settings));
+}
+
+/** The profile a key-down activates: Navi on Activate, or a menu-number digit onto it. */
+function activatedBy(phone: Phone, key: PhoneKey): ProfileSlug | undefined {
+  const screen = phone.screen;
+  if (screen.kind !== "list") return undefined;
+  const segments = screen.menuIndicator?.segments ?? [];
+  // Menu 1 2 n, then 1 (D4, Task 0 A6): the digit selects Activate in profile n's level, while
+  // the typed profile is still opening (the Profiles level, `opening`) or once it has opened
+  // with the shortcut window still awaiting a digit.
+  if (key === "1") {
+    if (phone.path === "menu/profiles" && screen.opening === true) {
+      return PROFILE_SLUGS[screen.selected];
+    }
+    const awaiting = screen.menuIndicator?.typed === "" && segments.length === 2;
+    return awaiting && segments[0] === 12 ? PROFILE_SLUGS[segments[1]! - 1] : undefined;
+  }
+  const match = /^menu\/profiles\/([a-z0-9-]+)$/.exec(phone.path);
+  if (key !== "navi" || match === null || !isProfile(match[1]!)) return undefined;
+  return screen.selected === 0 ? match[1] : undefined;
+}
+
+/**
+ * The Keypad tones option the key going down beeps at when it activates a profile (D4: the
+ * firmware switches before the beep): that profile's; undefined when the key activates none.
+ */
+export function activationBeep(
+  phone: Phone,
+  key: PhoneKey,
+  settings: StockSettings,
+): number | null | undefined {
+  const slug = activatedBy(phone, key);
+  return slug === undefined
+    ? undefined
+    : settings.choice(`profiles/${slug}/personalise/keypad-tones`);
+}
+
 /** Tones' alias target with `active` the active profile (D1): `tones/x` → its Personalise `x`. */
 export function profileAlias(key: string, active: ProfileSlug): string {
   return key.startsWith(TONES) ? `profiles/${active}/personalise/${key.slice(TONES.length)}` : key;
@@ -110,8 +215,21 @@ export const profilesFeature: StockFeature = {
   // Every profile's Personalise is General's (plan 14 S6).
   sameAs: { "12-3-2": "12-2-2", "12-4-2": "12-2-2", "12-5-2": "12-2-2", "12-6-2": "12-2-2" },
   placeholders: {
-    "12-*-1": "17", // Profiles › Activate
     "12-*-2-9-4": "18c", // Personalise › Screen saver › Screen saver: nothing in the virgin EEPROM
+  },
+  // Activate (D3).
+  screens: Object.fromEntries(
+    PROFILE_SLUGS.map((slug) => [
+      `${slotNumber(slug)}-1`,
+      (services: StockServices) => activateLeaf(services, slug),
+    ]),
+  ),
+  // The Profiles level lists the stored names and opens on the active profile (D8, Task 0 A5).
+  levels: {
+    "12": ({ settings }) => ({
+      label: (slug) => (isProfile(slug) ? profileName(settings, slug) : undefined),
+      opening: () => activeProfile(settings),
+    }),
   },
   widgets: {
     promptLayouts: {

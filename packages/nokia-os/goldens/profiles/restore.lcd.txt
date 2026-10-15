@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/restore
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/persist/restore
 source-sha256: 34caf8e0c30054efbc6a074dec4a4c28e3ac942588ded9f579b30fd283ea1b15
 trigger-frame: 1

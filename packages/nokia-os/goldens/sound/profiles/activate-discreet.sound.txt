@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/activate-discreet
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/activate/discreet
 source-sha256: 3dc26bde8a040328c73c7f2442c04ea8bfdac2c0cbb55a5d434fadf7916b35f9
 state: factory

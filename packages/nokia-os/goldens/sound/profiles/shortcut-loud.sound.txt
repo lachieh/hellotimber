@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/shortcut-loud
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/shortcut/loud
 source-sha256: 8acea89049fd39b7b050c3e9f27f74cf4e3f38bcf819077982a8ea49305adadf
 state: factory

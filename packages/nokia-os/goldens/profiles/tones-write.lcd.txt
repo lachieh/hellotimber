@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/tones-write
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/tones/write/page.png + captures/6.39/plan17/tones/write/silent-list.png + captures/6.39/plan17/tones/write/general-list.png + captures/6.39/plan17/tones/write/tones-list.png
 source-sha256: 32af1f0467e6673dbaff2cf0afd6d3e0db572b47b44e2e52fc1368474f25ba2e
 note: Silent active, Tones › Keypad tones → Level 3: the page, then Silent's, General's and Tones' lists.

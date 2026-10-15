@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/standby-carousel-c
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/standby/carousel-c
 source-sha256: cf2dc04fe63e1a414e48d2e44fd56e95f14a53d5ae4fb6cc9435ff98a822be8f
 trigger-frame: 1

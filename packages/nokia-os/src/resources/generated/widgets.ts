@@ -7194,6 +7194,45 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
+    "12-1-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 683
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 1981
+        },
+        {
+          "frame": 3,
+          "durationMs": 9
+        }
+      ]
+    },
     "12-1-2-9-1": {
       "frames": [
         {
@@ -7251,6 +7290,45 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 2,
           "durationMs": 1992
+        }
+      ]
+    },
+    "12-2-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 683
+        },
+        {
+          "frame": 1,
+          "durationMs": 233
+        },
+        {
+          "frame": 2,
+          "durationMs": 1982
+        },
+        {
+          "frame": 3,
+          "durationMs": 9
         }
       ]
     },
@@ -7368,6 +7446,162 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 2,
           "durationMs": 2000
+        }
+      ]
+    },
+    "12-3-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 681
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 1982
+        },
+        {
+          "frame": 3,
+          "durationMs": 9
+        }
+      ]
+    },
+    "12-4-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 678
+        },
+        {
+          "frame": 1,
+          "durationMs": 233
+        },
+        {
+          "frame": 2,
+          "durationMs": 1974
+        },
+        {
+          "frame": 3,
+          "durationMs": 8
+        }
+      ]
+    },
+    "12-5-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 691
+        },
+        {
+          "frame": 1,
+          "durationMs": 233
+        },
+        {
+          "frame": 2,
+          "durationMs": 1987
+        },
+        {
+          "frame": 3,
+          "durationMs": 9
+        }
+      ]
+    },
+    "12-6-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 678
+        },
+        {
+          "frame": 1,
+          "durationMs": 240
+        },
+        {
+          "frame": 2,
+          "durationMs": 1971
+        },
+        {
+          "frame": 3,
+          "durationMs": 8
         }
       ]
     },
@@ -8065,240 +8299,6 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
-    "12-1-1": {
-      "frames": [
-        {
-          "kind": "sprite",
-          "sprite": "note/tick-box"
-        },
-        {
-          "kind": "sprite",
-          "sprite": "note/tick-half"
-        },
-        {
-          "kind": "sprite",
-          "sprite": "note/tick"
-        },
-        {
-          "kind": "edges",
-          "x0": 5,
-          "x1": 78
-        }
-      ],
-      "steps": [
-        {
-          "frame": 0,
-          "durationMs": 683
-        },
-        {
-          "frame": 1,
-          "durationMs": 232
-        },
-        {
-          "frame": 2,
-          "durationMs": 1981
-        },
-        {
-          "frame": 3,
-          "durationMs": 9
-        }
-      ]
-    },
-    "12-2-1": {
-      "frames": [
-        {
-          "kind": "sprite",
-          "sprite": "note/tick-box"
-        },
-        {
-          "kind": "sprite",
-          "sprite": "note/tick-half"
-        },
-        {
-          "kind": "sprite",
-          "sprite": "note/tick"
-        },
-        {
-          "kind": "edges",
-          "x0": 5,
-          "x1": 78
-        }
-      ],
-      "steps": [
-        {
-          "frame": 0,
-          "durationMs": 683
-        },
-        {
-          "frame": 1,
-          "durationMs": 233
-        },
-        {
-          "frame": 2,
-          "durationMs": 1982
-        },
-        {
-          "frame": 3,
-          "durationMs": 9
-        }
-      ]
-    },
-    "12-3-1": {
-      "frames": [
-        {
-          "kind": "sprite",
-          "sprite": "note/tick-box"
-        },
-        {
-          "kind": "sprite",
-          "sprite": "note/tick-half"
-        },
-        {
-          "kind": "sprite",
-          "sprite": "note/tick"
-        },
-        {
-          "kind": "edges",
-          "x0": 5,
-          "x1": 78
-        }
-      ],
-      "steps": [
-        {
-          "frame": 0,
-          "durationMs": 681
-        },
-        {
-          "frame": 1,
-          "durationMs": 232
-        },
-        {
-          "frame": 2,
-          "durationMs": 1982
-        },
-        {
-          "frame": 3,
-          "durationMs": 9
-        }
-      ]
-    },
-    "12-4-1": {
-      "frames": [
-        {
-          "kind": "sprite",
-          "sprite": "note/tick-box"
-        },
-        {
-          "kind": "sprite",
-          "sprite": "note/tick-half"
-        },
-        {
-          "kind": "sprite",
-          "sprite": "note/tick"
-        },
-        {
-          "kind": "edges",
-          "x0": 5,
-          "x1": 78
-        }
-      ],
-      "steps": [
-        {
-          "frame": 0,
-          "durationMs": 678
-        },
-        {
-          "frame": 1,
-          "durationMs": 233
-        },
-        {
-          "frame": 2,
-          "durationMs": 1974
-        },
-        {
-          "frame": 3,
-          "durationMs": 8
-        }
-      ]
-    },
-    "12-5-1": {
-      "frames": [
-        {
-          "kind": "sprite",
-          "sprite": "note/tick-box"
-        },
-        {
-          "kind": "sprite",
-          "sprite": "note/tick-half"
-        },
-        {
-          "kind": "sprite",
-          "sprite": "note/tick"
-        },
-        {
-          "kind": "edges",
-          "x0": 5,
-          "x1": 78
-        }
-      ],
-      "steps": [
-        {
-          "frame": 0,
-          "durationMs": 691
-        },
-        {
-          "frame": 1,
-          "durationMs": 233
-        },
-        {
-          "frame": 2,
-          "durationMs": 1987
-        },
-        {
-          "frame": 3,
-          "durationMs": 9
-        }
-      ]
-    },
-    "12-6-1": {
-      "frames": [
-        {
-          "kind": "sprite",
-          "sprite": "note/tick-box"
-        },
-        {
-          "kind": "sprite",
-          "sprite": "note/tick-half"
-        },
-        {
-          "kind": "sprite",
-          "sprite": "note/tick"
-        },
-        {
-          "kind": "edges",
-          "x0": 5,
-          "x1": 78
-        }
-      ],
-      "steps": [
-        {
-          "frame": 0,
-          "durationMs": 678
-        },
-        {
-          "frame": 1,
-          "durationMs": 240
-        },
-        {
-          "frame": 2,
-          "durationMs": 1971
-        },
-        {
-          "frame": 3,
-          "durationMs": 8
-        }
-      ]
-    },
     "rename-done": {
       "frames": [
         {
@@ -8895,21 +8895,21 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "11-3": "11-3",
     "11-5": "11-5",
     "11-6-1": "11-6-1",
+    "12-1-1": "12-1-1",
     "12-1-2-9-1": "12-1-2-9-1",
     "12-1-2-9-2": "12-1-2-9-2",
+    "12-2-1": "12-2-1",
     "12-2-2-10": "12-2-2-10",
     "12-2-2-9-1": "12-2-2-9-1",
     "12-2-2-9-2": "12-2-2-9-2",
-    "8-1": "8-1",
-    "8-2": "8-2",
-    "8-3": "8-3",
-    "8-4": "8-4",
-    "12-1-1": "12-1-1",
-    "12-2-1": "12-2-1",
     "12-3-1": "12-3-1",
     "12-4-1": "12-4-1",
     "12-5-1": "12-5-1",
-    "12-6-1": "12-6-1"
+    "12-6-1": "12-6-1",
+    "8-1": "8-1",
+    "8-2": "8-2",
+    "8-3": "8-3",
+    "8-4": "8-4"
   },
   "byName": {
     "request-not-confirmed": "request-not-confirmed",

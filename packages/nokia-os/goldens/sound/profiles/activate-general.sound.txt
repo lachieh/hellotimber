@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/activate-general
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/activate/general
 source-sha256: 350658fec57e8b025583eed0abcc627066aaa3977611388b67b776486e45e96b
 state: factory

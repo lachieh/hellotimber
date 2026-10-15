@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/effects-loud-invalid
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/effects/loud/invalid
 source-sha256: 4422184a097cb2067b2514ea35b3a3fb4f23e909cce34bdde0d9632c10d3dbbe
 state: factory

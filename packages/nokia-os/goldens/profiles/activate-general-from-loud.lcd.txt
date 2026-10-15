@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/activate-general-from-loud
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/activate/general-from-loud
 source-sha256: 1fa74f111006132a93e40c8f23d6132b2a4189c6cf04a315738237d9d0500269
 trigger-frame: 1

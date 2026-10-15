@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/effects-general-invalid
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/effects/general/invalid
 source-sha256: e58534074979f9d1b4339b65d8913206ad4973ba0a4aa7793b5e9c1c4fdd1875
 state: factory

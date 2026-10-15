@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/effects-general-keys
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/effects/general/keys
 source-sha256: bb6cd7fc09afb013fa5697e22918de3ed19b7b0aee7136101505c81a5a0e0309
 state: factory

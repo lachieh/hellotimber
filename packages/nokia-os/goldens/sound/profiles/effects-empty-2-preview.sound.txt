@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/effects-empty-2-preview
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/effects/empty-2/preview
 source-sha256: f2e9159198f67ffcc647b87d6dfca0f4bc227d6b0b60d342f642c61e9234e24a
 state: factory

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/tones-silent
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/tones/silent/page-1.png + captures/6.39/plan17/tones/silent/page-2.png + captures/6.39/plan17/tones/silent/page-3.png + captures/6.39/plan17/tones/silent/page-4.png + captures/6.39/plan17/tones/silent/page-5.png + captures/6.39/plan17/tones/silent/page-6.png + captures/6.39/plan17/tones/silent/page-7.png + captures/6.39/plan17/tones/silent/page-8.png + captures/6.39/plan17/tones/silent/page-9.png + captures/6.39/plan17/tones/silent/keypad-list.png + captures/6.39/plan17/tones/silent/volume-list.png
 source-sha256: 1b415d682fd0727f1d57df7e689f02a6ad80f7d8ebfde1e316a028e17271ab5b
 note: silent active: Tones pages 1-9 (Menu 5, ▼), then Tones › Keypad tones and › Ringing volume opened.

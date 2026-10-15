@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/profiles/shortcut-silent
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/shortcut/silent
 source-sha256: 78b21bcb67aabd371ff9f19aff680e4640902d5578b99fe135d3c2e6ae3f2b1c
 state: factory
