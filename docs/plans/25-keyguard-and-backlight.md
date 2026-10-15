@@ -13,7 +13,7 @@ Tasks 12-14 (phone-3d) need only Task 1.
 "Plan 16 supplementary captures") and plans 13-16 and 23 before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan25/`. The planning probes in
 `$REF/captures/scratch-plan25/` are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-10 and 12-14 done; Tasks 11 and 15 not started).
+**Status:** in progress (Tasks 0-14 done; Task 15 not started).
 
 ## Goal
 
@@ -979,14 +979,24 @@ event's `hz`); fixed in this commit.
 **Files:** `packages/nokia-os/demo/{index.html,main.ts,style.css}` (the lights lines only),
 `packages/nokia-os/README.md`.
 
-- [ ] A `StockLightsPort` in the demo: a `LCD` and a `KEYS` lamp beside `VIBRA`, and the LCD
+- [x] A `StockLightsPort` in the demo: a `LCD` and a `KEYS` lamp beside `VIBRA`, and the LCD
       canvas dimmed (a CSS filter) while the display LEDs are off; the event log shows lights events.
-- [ ] Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`: a key lights
+- [x] Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`: a key lights
       both lamps; ≈14-16 s later both go dark; Menu then `*` shows `Keypad locked`; a digit shows the
       hint with the lamps dark; Unlock then `*` lights them. Screenshots in the completion note.
-- [ ] README: the lights port (the phone-3d adapter from "Contract changes"), the light tick, the
+- [x] README: the lights port (the phone-3d adapter from "Contract changes"), the light tick, the
       keyguard, and what later plans add.
-- [ ] Commit: `feat(nokia-os): lights and keyguard in the demo`.
+- [x] Commit: `feat(nokia-os): lights and keyguard in the demo`.
+
+**Task 11 completion.** Headless `agent-browser` on port 5393: power-on lit both lamps at 1965 ms
+(`/tmp/nokia-os-p25-lit.png`), dark at 25 474 ms (`-dark.png`, the LCD dimmed); Menu then `*`
+showed `Keypad locked` and lit them (`-lock.png`); 17 s later `5` showed the hint with the lamps
+dark (`-hint.png`); Unlock then `*` showed `Keypad active` and lit them (`-unlock.png`), then
+standby. README: "Lights and the keyguard".
+
+Deviation: the demo's lights are a panel (`demo/panels/lights.ts` and one line in
+`demo/panels/index.ts`, AGENTS.md's demo convention) with its lamp styles in `demo/style.css`;
+`demo/main.ts` and `index.html` do not change.
 
 ### Task 12 - phone-3d: keypad light input and brighter keypad (TDD)
 

@@ -15,7 +15,8 @@ four game splashes. Choices persist in an EEPROM over a host storage port and pa
 (plan 15); the security code guards Phone security, Change security code, Restore factory
 settings and Clear timers, and gates the power-on with Phone security On. Snake II is playable
 (plan 23; see "Snake II"). The buzzer, the tone generator and the vibrator reach the host through a
-sound port (plan 16; see "Sound"). Leaves that are whole applications open a marked
+sound port (plan 16; see "Sound"); the display and keypad LEDs through a lights port, and the
+keyguard locks the keypad (plan 25; see "Lights and the keyguard"). Leaves that are whole applications open a marked
 placeholder (a dotted border the firmware never draws) naming the plan that owns them; see "Leaf
 ownership".
 
@@ -58,8 +59,9 @@ setTimeout(() => phone.send({ type: "up", key: "power" }), 1000); // a long pres
 `missingStockGlyphs(text, font)` lists the characters a stock font cannot draw, so a host can
 validate an operator name before calling `createStockPhone`.
 
-With `@hellotimber/phone-3d`, pass `renderer.canvas` as the screen texture source and forward
-the model's key callbacks to `phone.send(...)`. nokia-os never imports phone-3d.
+With `@hellotimber/phone-3d`, pass `renderer.canvas` as the screen texture source, forward the
+model's key callbacks to `phone.send(...)`, and drive its lights from the lights port (see
+"Lights and the keyguard"). nokia-os never imports phone-3d.
 
 ## Demo
 
@@ -80,7 +82,8 @@ state (the virgin phone is nearly silent; see "Sound"). The demo plays the sound
 WebAudio once a key or click has started audio (a **Mute** box silences it), lights a `VIBRA` lamp
 and shakes the LCD while the vibrator runs (the lamp only with reduced motion), and lists the last
 eight sound events (`atMs output state`) under the status line, so a headless run can check sound
-without hearing it. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
+without hearing it. An `LCD` and a `KEYS` lamp show the lights port (the LCD dims while the display
+LEDs are off) and the last eight lights events are listed too. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
 difference; the list groups the goldens by top-level menu (`tree/05-tones`) and kind (`menu`,
 `probe`, `game`).
 
@@ -277,6 +280,43 @@ requestAnimationFrame(loop);
 - **Later plans.** The incoming call's ringing and DTMF (22), the message alert (18), alarms and
   reminders (21), profile switching (17), the other games' sounds (24) and the Composer (27) play
   through the same sequencer.
+
+## Lights and the keyguard
+
+The phone reports every change of its display LEDs and keypad LEDs to `StockPhoneConfig.lights`, a
+`StockLightsPort`, as `StockLightEvent`s (`light`, `atMs`, `on`) from `tick()`, as the sound port
+does. Both lights are off until the boot lights them; power-off turns off the lit ones. v6.39
+always switches the two together; the port keeps them apart because the hardware has two lines and
+phone-3d renders them differently. A host maps them to phone-3d's props:
+
+```tsx
+const [lights, setLights] = useState({ display: false, keypad: false });
+const phone = useMemo(
+  () =>
+    createStockPhone({
+      carrier,
+      lights: { change: (e) => setLights((l) => ({ ...l, [e.light]: e.on })) },
+    }),
+  [],
+);
+<Nokia3310 backlightOn={lights.display} keypadLightOn={lights.keypad} {...rest} />;
+```
+
+- **The light tick.** A key-down (and the boot's first frame, standby's arrival, Unlock then `*`;
+  an arriving message or call once plans 18 and 22 land) lights both LEDs; they go dark on the first tick of the
+  firmware's 1982.61 ms light tick, counted from the power-on, at least 13 624 ms after the last
+  activity: 13.6-15.6 s after a key, never a fixed 15 s. A key's release and how long it is held
+  count for nothing.
+- **Games › Settings › Lights.** During Snake II's play Lights Off holds the LEDs off and Lights On
+  holds them on with no timeout; the pause and the game-over screen release them.
+- **The keyguard.** Menu then `*` within 2925 ms locks the keypad (`Keypad locked`, its warning
+  tone); the locked standby shows a key icon and `Unlock`. Every other key shows `Press Unlock and
+then *` silently and dark (the power key lights); Unlock then `*` within `Now press *` (1448 ms)
+  unlocks (`Keypad active`). Digits ending in `112` show the emergency number with `Call`. The
+  keyguard lives in RAM: a power-on is unlocked.
+- **Later plans.** Arriving messages (18) and calls (22) light the phone and pass a locked one;
+  Call on `112` dials (22); the alarm blinks the LEDs (21); the other games follow the Lights rule
+  (24). See `docs/specs/stock/keyguard-and-backlight.md`.
 
 ## Plan-owned resource evidence
 
