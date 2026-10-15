@@ -7,10 +7,22 @@ import type { StockSettings } from "../../settings";
 import { StockClock } from "./service";
 
 const CLOCKS = new WeakMap<StockEeprom, StockClock>();
+/** The same clocks by the phone's settings store (the pages' value readers get only that). */
+const BY_SETTINGS = new WeakMap<StockSettings, StockClock>();
 
-/** Makes `clock` the clock of the phone whose EEPROM is `eeprom`. */
-export function registerClock(eeprom: StockEeprom, clock: StockClock): void {
+/** Makes `clock` the clock of the phone whose EEPROM is `eeprom` and settings `settings`. */
+export function registerClock(
+  eeprom: StockEeprom,
+  settings: StockSettings,
+  clock: StockClock,
+): void {
   CLOCKS.set(eeprom, clock);
+  BY_SETTINGS.set(settings, clock);
+}
+
+/** The clock of the phone whose settings store this is, if one was built. */
+export function clockOfSettings(settings: StockSettings): StockClock | undefined {
+  return BY_SETTINGS.get(settings);
 }
 
 /** The clock of the phone whose services these are. */
@@ -26,7 +38,7 @@ export function phoneClock(services: {
       settings: services.settings,
       eeprom: services.eeprom,
     });
-    CLOCKS.set(services.eeprom, clock);
+    registerClock(services.eeprom, services.settings, clock);
   }
   return clock;
 }

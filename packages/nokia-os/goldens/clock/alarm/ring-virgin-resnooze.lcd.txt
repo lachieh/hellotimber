@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/alarm/ring-virgin-resnooze
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/ring-virgin-resnooze
 source-sha256: f32edf8c3d2911ad8eb983862b6880862f5a862a57fed50cd178615bc3d2cccd
 trigger-frame: 1

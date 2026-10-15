@@ -68,12 +68,14 @@ export class StockClock {
     this.#minute = this.#index();
   }
 
-  #state(): ClockState {
+  /** The clock record (the alarm's state lives there too). */
+  state(): ClockState {
     return this.#eeprom.read(CLOCK_RECORD);
   }
 
-  #write(change: Partial<ClockState>): void {
-    this.#eeprom.write(CLOCK_RECORD as EepromRecord<ClockState>, { ...this.#state(), ...change });
+  /** Writes fields of the clock record. */
+  update(change: Partial<ClockState>): void {
+    this.#eeprom.write(CLOCK_RECORD as EepromRecord<ClockState>, { ...this.state(), ...change });
   }
 
   /** The host's time, without the offset; undefined when the host gives none (or a malformed one). */
@@ -84,7 +86,7 @@ export class StockClock {
   /** The phone's time: the host's plus the stored offset (D1). */
   now(): PhoneTime | undefined {
     const host = this.#hostTime();
-    return host === undefined ? undefined : addMinutes(host, this.#state().offsetMinutes);
+    return host === undefined ? undefined : addMinutes(host, this.state().offsetMinutes);
   }
 
   #index(): number | undefined {
@@ -99,18 +101,18 @@ export class StockClock {
 
   /** The clock as standby shows it (D10): undefined while hidden or without a time. */
   standbyClock(): string | undefined {
-    if (this.#state().hidden) return undefined;
+    if (this.state().hidden) return undefined;
     const now = this.now();
     return now === undefined ? undefined : formatClock(now, this.twelveHour());
   }
 
   /** Clock settings › Hide clock / Show clock. */
   hidden(): boolean {
-    return this.#state().hidden;
+    return this.state().hidden;
   }
 
   setHidden(hidden: boolean): void {
-    this.#write({ hidden });
+    this.update({ hidden });
   }
 
   /**
@@ -132,19 +134,19 @@ export class StockClock {
 
   /** Phone time minus host time (Set the time, Date setting). */
   offsetMinutes(): number {
-    return this.#state().offsetMinutes;
+    return this.state().offsetMinutes;
   }
 
   /** Clears the offset (Auto update, D13); returns whether the phone's time changed. */
   clearOffset(): boolean {
-    const offset = this.#state().offsetMinutes;
+    const offset = this.state().offsetMinutes;
     if (offset === 0) return false;
     this.#shift(-offset);
     return true;
   }
 
   #shift(minutes: number): void {
-    this.#write({ offsetMinutes: this.#state().offsetMinutes + minutes });
+    this.update({ offsetMinutes: this.state().offsetMinutes + minutes });
     // Setting the time or the date fires nothing (D2): the next edge counts from here.
     this.#minute = this.#index();
   }

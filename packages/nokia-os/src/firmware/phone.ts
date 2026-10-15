@@ -10,6 +10,7 @@ import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { stockBootGates } from "./boot";
 import { createStockSettings } from "./settings";
 import { autoUpdate } from "./features/clock";
+import { phoneAlarm } from "./features/clock/alarm";
 import { registerClock } from "./features/clock/registry";
 import { StockClock } from "./features/clock/service";
 import type { StockSoundPort } from "../sound/port";
@@ -106,7 +107,7 @@ export function createStockPhoneWith(
   // Plan 21 D1: the phone's time is the host's clock plus its own offset; the menu, its pages
   // and the games read the phone's time.
   const phoneTime = new StockClock({ host: { clock, date }, settings, eeprom, now: () => now });
-  registerClock(eeprom, phoneTime);
+  registerClock(eeprom, settings, phoneTime);
   const ports = phoneTime.ports;
   const port = config.sound;
   const sequencer = new SoundSequencer((event) => port?.change(event));
@@ -117,6 +118,9 @@ export function createStockPhoneWith(
     ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
     cues: internals.cues ?? sounder,
   };
+  // Plan 21: the clock's features over this phone's services (the alarm's minute listener).
+  const services = stockServices(ports, settings, games, security, sounder, eeprom);
+  const alarm = phoneAlarm(services);
   const phone = createPhone({
     menu: createStockMenu(ports, settings, games, security, sounder, eeprom),
     carrier: config.carrier,
@@ -125,6 +129,8 @@ export function createStockPhoneWith(
     standbyIndicators: () => phoneTime.indicators(),
     // Plan 21 D3: the clock's alerts, when the phone shows standby.
     interruption: () => phoneTime.alerts.interruption(standbySince),
+    // Plan 21 D4: the alarm switches a powered-off phone on.
+    wake: () => alarm.wake(),
     bootTimeline: BOOT_TIMELINE,
     ...(skip ? { bootMs: 0 } : {}),
     // Plan 15 D9: the security code and the welcome note hold the boot after the self-test.
@@ -145,10 +151,11 @@ export function createStockPhoneWith(
     if (!snapshot.poweredOn) games.snake = undefined;
     if (snapshot.poweredOn === poweredOn) return;
     poweredOn = snapshot.poweredOn;
+    alarm.power(poweredOn);
     if (poweredOn) {
       sounder.powerOn({ boot: !skip });
       // Plan 21 D13: Auto update of date and time at the end of power-on.
-      autoUpdate(stockServices(ports, settings, games, security, sounder, eeprom));
+      autoUpdate(services);
     } else sounder.powerOff();
   });
   const send = (event: KeyEvent): void => {

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/alarm/prompt
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/prompt
 source-sha256: adef3a900c89ecf31f657dfa902582eefb9b28f8a3b3ae08bc3a92887d350ea6
 trigger-frame: 1

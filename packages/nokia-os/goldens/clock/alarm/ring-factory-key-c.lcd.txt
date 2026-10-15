@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/alarm/ring-factory-key-c
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/ring-factory-key-c
 source-sha256: 720f3909661fda8a9c640f8c624b586cac810e32140f30577b5b3fe7d98b7eef
 trigger-frame: 1

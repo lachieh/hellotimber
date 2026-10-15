@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/alarm/ring-virgin-standby
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/ring-virgin-standby
 source-sha256: 3e545ca4deed2e024937722c6a4209416780d94305b6b061f137c5346fe561d9
 trigger-frame: 1

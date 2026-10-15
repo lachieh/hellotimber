@@ -7,10 +7,18 @@ import {
   type ClockRecording,
 } from "../../scripts/capture-sets/21-clock-and-reminders.ts";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
-import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "./golden.ts";
+import {
+  expectLcd,
+  expectTimeline,
+  lcdMismatch,
+  PROBE_TOLERANCE_MS,
+  type GoldenImageRef,
+  type RecordedTimeline,
+} from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
-import { seededStorage, standbyRig, type Rig } from "./rig.ts";
+import { frameAt, seededStorage, standbyRig, type Rig } from "./rig.ts";
 import { play } from "./calculator.ts";
+import { expectSoundTimeline, loadSoundGolden } from "./sound.ts";
 
 export { play };
 
@@ -68,6 +76,35 @@ export function toReminders(rig: Rig, row = 0): void {
   play(rig, `menu +300 up up up +2000 menu +1500 ${"down ".repeat(row)}${SETTLE}`);
 }
 
+/** Standby → the alarm set to `hhmm` (the generator's `set_alarm`) → standby. */
+export function setAlarm(rig: Rig, hhmm: string): void {
+  toClock(rig, 0);
+  play(rig, "menu +2500");
+  const screen = rig.phone.screen;
+  if (screen.kind !== "custom") throw new Error("Alarm clock opened no prompt or list.");
+  if (rig.paint().pixels.length > 0 && isOnOffList(rig)) play(rig, "menu +2500");
+  play(rig, `${hhmm.split("").join(" ")} menu +4000`);
+  toStandby(rig);
+}
+
+/** Whether the screen is the alarm's On/Off rows (its soft key OK over two rows). */
+function isOnOffList(rig: Rig): boolean {
+  // The prompt draws a box from y 16; the rows do not.
+  const pixels = rig.paint().pixels;
+  let row = 0;
+  for (let x = 0; x < 84; x++) row += pixels[36 * 84 + x]!;
+  return row < 80;
+}
+
+/** Advances `rig` until it shows `image` (at most `maxMs`; throws if it never does). */
+export function untilShows(rig: Rig, image: GoldenImageRef, maxMs = 10_000): void {
+  for (let t = 0; t <= maxMs; t++) {
+    if (lcdMismatch(rig.paint().pixels, image, "") === undefined) return;
+    rig.advance(1);
+  }
+  throw new Error(`${image.id} ${image.image.name} was never shown within ${maxMs} ms.`);
+}
+
 /** Any screen → standby (C held, as the generator's `to_standby`). */
 export function toStandby(rig: Rig): void {
   play(rig, "c@1500 +1500");
@@ -99,7 +136,18 @@ export function clockScenario(
   rig: Rig,
   options: {
     readonly toleranceMs?: number;
-    readonly edge?: { readonly host: HostClock; readonly clock: string; readonly date?: string };
+    /**
+     * Compare at each golden frame's middle instead of frame by frame (`sampleTimeline`): for
+     * the ring, whose bell and text timers redraw together or 10-20 ms apart by chance.
+     */
+    readonly sampled?: boolean;
+    readonly edge?: {
+      readonly host: HostClock;
+      readonly clock: string;
+      readonly date?: string;
+      /** Later minutes the host's clock moves to, ms after the trigger (`run_synced`'s settime). */
+      readonly later?: readonly { readonly atMs: number; readonly clock: string }[];
+    };
   } = {},
 ): void {
   const golden = loadGolden(id);
@@ -108,11 +156,12 @@ export function clockScenario(
   const keys = recording.keys.map(([key, down, hold]) => ({ key: phoneKey(key), down, hold }));
   const before = golden.triggerFrame === "before-recording";
   const triggerRow = before ? 1 : (golden.triggerFrame as number);
-  const origin = rows[triggerRow]!.startMs;
+  // Before-recording: the recording starts frame 0's duration before its first change.
+  const origin = rows[triggerRow]!.startMs - (before ? Math.round(rows[0]!.durationMs) : 0);
   // Without a key, the trigger is the clock's minute edge (or the recording's first change).
   const keyed = !before && options.edge === undefined && keys.length > 0;
   const later = keyed ? keys.slice(1) : keys;
-  if (before) alignOnNextChange(rig, rows[0]!.durationMs);
+  if (before) alignOnNextChange(rig, rows[0]!.durationMs, goldenImage(id, rows[0]!.image));
   else expectLcd(rig.paint(), goldenImage(id, rows[0]!.image), `${id}: before the trigger`);
   const schedule = later.flatMap(({ key, down, hold }) => {
     const row = rows.find((r) => r.startMs > down && r.startMs <= down + 150);
@@ -124,6 +173,10 @@ export function clockScenario(
       { atMs: down0 + Math.round(hold), run: () => rig.release(key) },
     ];
   });
+  const edge = options.edge;
+  for (const { atMs, clock } of edge?.later ?? []) {
+    schedule.push({ atMs, run: () => (edge!.host.clock = clock) });
+  }
   const first = keys[0];
   if (keyed && first !== undefined && first.hold > HELD_MS) {
     schedule.push({ atMs: Math.round(first.hold), run: () => rig.release(first.key) });
@@ -142,22 +195,88 @@ export function clockScenario(
   const recorded = before
     ? rig.record(span, undefined, schedule)
     : rig.record(span, trigger, schedule);
-  expectTimeline(
-    recorded,
-    golden,
-    `${id}: ${keys.map((k) => `${k.key}@${k.down}`).join(" ") || "no keys"}`,
-    { toleranceMs: options.toleranceMs ?? PROBE_TOLERANCE_MS },
-  );
+  const context = `${id}: ${keys.map((k) => `${k.key}@${k.down}`).join(" ") || "no keys"}`;
+  if (options.sampled) {
+    sampleTimeline(recorded, id, origin, context);
+    return;
+  }
+  expectTimeline(recorded, golden, context, {
+    toleranceMs: options.toleranceMs ?? PROBE_TOLERANCE_MS,
+  });
 }
 
 /**
- * Advances `rig` so that its screen's next change comes `leadMs` from now: waits for one change
- * (a cursor blink edge), then for the blink's step less `leadMs` (the captures' blink steps are
- * ≈480 ms).
+ * Checks `recorded` against golden `id` at the middle of every golden frame at least
+ * 2 × PROBE_TOLERANCE_MS long (rows timed from `origin`, the trigger's): each must show that
+ * frame's image there. Frames split or merged by a few ms pass; a drift or a wrong picture
+ * longer than the tolerance does not.
  */
-function alignOnNextChange(rig: Rig, leadMs: number): void {
+function sampleTimeline(
+  recorded: RecordedTimeline,
+  id: string,
+  origin: number,
+  context: string,
+): void {
+  const rows = loadGolden(id).timeline!;
+  const failures: string[] = [];
+  let checked = 0;
+  for (const [i, row] of rows.entries()) {
+    if (i === 0 || row.durationMs < 2 * PROBE_TOLERANCE_MS) continue;
+    const at = row.startMs + row.durationMs / 2 - origin;
+    const shown = frameAt(recorded, recorded.triggerMs + at);
+    checked++;
+    const mismatch = lcdMismatch(shown.pixels, goldenImage(id, row.image), `${context} row ${i}`);
+    if (mismatch !== undefined) failures.push(`row ${i} (${row.image} at ${at.toFixed(0)} ms)`);
+    if (failures.length === 1 && mismatch !== undefined) failures.push(mismatch);
+  }
+  if (failures.length > 0) {
+    throw new Error(
+      `Sampled timeline mismatch: ${id}: ${failures.length - 1} of ${checked} frames\n${failures.join("\n")}`,
+    );
+  }
+}
+
+/**
+ * Advances `rig` so that its screen's next change comes `leadMs` from now: waits for a change
+ * (a cursor blink edge) to the recording's first image `first`, then for the blink's step less
+ * `leadMs` (the captures' blink steps are ≈480 ms).
+ */
+function alignOnNextChange(rig: Rig, leadMs: number, first: GoldenImageRef): void {
   const pixels = () => rig.paint().pixels;
-  const start = pixels();
-  for (let i = 0; i < 2000 && pixels().every((v, j) => v === start[j]); i++) rig.advance(1);
+  const changed = (from: Uint8Array) => !pixels().every((v, j) => v === from[j]);
+  for (let edges = 0; edges < 3; edges++) {
+    const from = pixels();
+    for (let i = 0; i < 2000 && !changed(from); i++) rig.advance(1);
+    if (lcdMismatch(pixels(), first, "") === undefined) break;
+  }
   rig.advance(Math.max(0, 480 - Math.round(leadMs)));
+}
+
+/**
+ * Sound golden `id` (an alert's sound) from `rig`: `trigger` runs `atMs` after time 0 (the
+ * capture's minute edge or expiry, just before the golden's first event), then the golden's
+ * rows play out; compared as plan 16's goldens are, its later passes within PASS_DRIFT (`drift`:
+ * every edge, the golden being another recording than the program's).
+ */
+export function clockSound(
+  id: string,
+  rig: Rig,
+  trigger: () => void,
+  options: { readonly atMs?: number; readonly cycleMs?: number; readonly drift?: boolean } = {},
+): void {
+  const golden = loadSoundGolden(id);
+  const origin = rig.now;
+  const seen = rig.sounds.length;
+  rig.advance(options.atMs ?? Math.max(0, golden.rows[0]!.ms - 1));
+  trigger();
+  rig.advance(origin + golden.rows.at(-1)!.ms + 500 - rig.now);
+  expectSoundTimeline(
+    { originMs: origin, endMs: rig.now, events: rig.sounds.slice(seen) },
+    golden,
+    `${id}: ${golden.note ?? ""}`,
+    {
+      ...(options.cycleMs === undefined ? {} : { cycleMs: options.cycleMs }),
+      ...(options.drift ? { drift: true } : {}),
+    },
+  );
 }

@@ -28,9 +28,27 @@ export const ASSERTED: readonly RegExp[] = [
   /^clock\/(settings|date)\//,
   /^clock\/no-time\/(screens|clock-pages|date|auto-update|clock-settings|set-time)$/,
   /^clock\/auto-update\/(open|list|choose-.*)$/,
+  // Task 8: the alarm clock
+  /^clock\/alarm\/(prompt|set|on-off-open|on|change|on-c|off|on-off-c|off-prompt|on-off|screens)$/,
+  /^clock\/alarm\/shortcut-/,
+  /^sound\/clock\/alarm-/,
+  /^clock\/alarm\/ring-(factory|virgin)-(standby|key-.*|snooze-stop|screens)$/,
+  /^clock\/alarm\/ring-elsewhere-(menu-page|(menu-page|menu-list|editor|snake)-standby)$/,
+  /^clock\/alarm\/ring-(factory|virgin)-(auto-)?resnooze$/,
 ];
 
+/**
+ * Goldens another plan's behaviour decides: the power key's profile list (plan 17) shows before
+ * the long press switches the phone off.
+ */
+export const PENDING_ELSEWHERE: Readonly<Record<string, GoldenStatus>> = {
+  "clock/alarm/power-off": "pending:17",
+  "clock/stopwatch/power-off": "pending:17",
+};
+
 export function statusOf(id: string): GoldenStatus {
+  const elsewhere = PENDING_ELSEWHERE[id];
+  if (elsewhere !== undefined) return elsewhere;
   return ASSERTED.some((pattern) => pattern.test(id)) ? "asserted" : "pending:21";
 }
 
@@ -85,7 +103,6 @@ export const CLOCK_RECORDINGS: readonly ClockRecording[] = [
   { id: "clock/alarm/on-off-open", dir: "alarm/on-off-open", keys: [["menu", 0.0, 60.0]] },
   { id: "clock/alarm/power-off", dir: "alarm/power-off", keys: [["power", 0.0, 1800.3]] },
   { id: "clock/alarm/prompt", dir: "alarm/prompt", keys: [["menu", 0.0, 60.0]] },
-  { id: "clock/alarm/ring-elsewhere-editor", dir: "alarm/ring-elsewhere-editor", keys: [] },
   {
     id: "clock/alarm/ring-elsewhere-editor-standby",
     dir: "alarm/ring-elsewhere-editor-standby",
@@ -101,11 +118,6 @@ export const CLOCK_RECORDINGS: readonly ClockRecording[] = [
     id: "clock/alarm/ring-elsewhere-menu-page-standby",
     dir: "alarm/ring-elsewhere-menu-page-standby",
     keys: [["c", 0.0, 1500.2]],
-  },
-  {
-    id: "clock/alarm/ring-elsewhere-snake",
-    dir: "alarm/ring-elsewhere-snake",
-    keys: [["menu", 0.0, 60.0]],
   },
   {
     id: "clock/alarm/ring-elsewhere-snake-standby",
@@ -1350,6 +1362,8 @@ export const clockAndReminders: PlanCaptureSet = {
       "boots through the clock wizard (`Time not set`, `Time:`/`Date:`): nokia-os has no clock wizard; the host clock is the RTC (D1)",
     "plan21/alarm/standby-minute, countdown/standby-run, reminders/alert-before, alarm/ring-elsewhere-menu-list, reminders/alert-elsewhere-menu-page, alert-elsewhere-menu-list, alert-elsewhere-option-list, countdown/expire-elsewhere-menu-page, expire-elsewhere-menu-list, reminders/view-1-keys":
       "a single unchanged frame (no trigger): the screen does not change at the event (alerts wait for standby)",
+    "plan21/alarm/ring-elsewhere-editor, ring-elsewhere-snake":
+      "20 s of plan 18's editor and plan 23's Snake II under the alarm's minute: the ring waits for standby (their -standby recordings)",
     "plan21/persist/boot": "a boot through the clock wizard (no clock wizard in nokia-os, D1)",
     "plan21/countdown/expire-elsewhere-stopwatch":
       "the running stopwatch's digits (D5's tolerance) for 20 s; the countdown waits for standby as on every other screen",

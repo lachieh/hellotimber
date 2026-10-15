@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/clock/alarm-factory
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/ring-factory-standby
 source-sha256: 381ac8940f465b67ca5a5b31bc69326aedcc2031922eac536b3ff28c61adeec3
 state: factory

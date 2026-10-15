@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/alarm/ring-virgin-key-c-held
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/ring-virgin-key-c-held
 source-sha256: 393166d0eeffd3dd6298e867fb74590b8a39ccd15312a74e3e95f1503c17d8ba
 trigger-frame: 1

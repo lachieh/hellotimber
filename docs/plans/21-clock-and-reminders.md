@@ -952,18 +952,52 @@ whole-extraction resource tests get a 30 s timeout (≈2 s alone; they timed out
 level, the ringing flow, the wake flow), `src/firmware/features/clock/service.ts` (alerts),
 `tests/clock-alarm.test.ts` (new).
 
-- [ ] 11-1 per D9: `timeEntry` when off; the On/Off rows widget when set; `Alarm on`/`Alarm off`;
+- [x] 11-1 per D9: `timeEntry` when off; the On/Off rows widget when set; `Alarm on`/`Alarm off`;
       the page value (the time, or `Off`); the standby icon.
-- [ ] Ringing (D2, D3): the minute edge of the alarm time interrupts with the ringing flow (Task 0c's
+- [x] Ringing (D2, D3): the minute edge of the alarm time interrupts with the ringing flow (Task 0c's
       goldens, or the D12 composition from the reminder and countdown alerts with `\u0001Alarm!\n%U`
       0x0e3 transcribed, listed in `COMPOSED_FLOWS`); Snooze, Stop, any key, the one-minute
       auto-snooze, the re-ring after `SNOOZE_MINUTES`; the sound (D11) stops with the screen.
-- [ ] Wake (D4, D12): while off, the alarm minute wakes the phone into the ringing flow; Stop →
+- [x] Wake (D4, D12): while off, the alarm minute wakes the phone into the ringing flow; Stop →
       `Activate phone for calls?` (0x0e6) Yes → the normal power-on, No → off; Snooze → off until
       the snooze (UNVERIFIED, composed).
-- [ ] TDD through keys against `clock/alarm/*` (and `ring-*` if captured) and `sound/clock/alarm-*`;
+- [x] TDD through keys against `clock/alarm/*` (and `ring-*` if captured) and `sound/clock/alarm-*`;
       composed screens unit-tested only (no golden asserts them).
-- [ ] Commit: `feat(nokia-os): the alarm clock, its alert and snooze`.
+- [x] Commit: `feat(nokia-os): the alarm clock, its alert and snooze`.
+
+Deviation: the ring answers a key as it goes down (`ring-*-key-c-held`: 54 ms into the hold), so
+the screens it leaves for take only keys that went down on them (`Snooze active`, the wake's
+query). Stop on `Snooze active` clears the ladders 20 ms before `Snooze off`. The ring's bells
+step from 224 ms, the second step held to the text's first (464 ms); the text goes off at 925 ms
+and blinks every 480.96 ms after (118-119 steps in both rings; the first shown phase is shorter),
+a text step within 8 ms of a bell step drawn with it. Both timers jitter ±15 ms in the captures and
+redraw together or 10-20 ms apart by chance (factory 918 ms together, virgin 913/931 apart), so
+the 135 s rings and the 400 s re-rings are compared at each golden frame's middle (`clockScenario`
+`sampled`), not frame by frame.
+
+Deviation: an alert that waited for standby shows at once on the return to standby, after 91 ms of
+standby without its operator line (standby itself is never drawn; `ALERT_LEAD_IN_MS`, the
+`StandbyFrame` that also ends an alert); `ALERT_AT_STANDBY_MS` is gone. The deferred ring has no
+bells and shows its text from its first frame. `ring-elsewhere-{menu-page,menu-list,editor,snake}-
+standby` are known gaps: C held in a menu goes back a level on key-down and reaches standby ≈475
+ms later on v6.39, at the kernel's 800 ms long press here (plan 14); `tests/clock-alarm.test.ts`
+checks the ring from the standby frame. `ring-elsewhere-editor` and `-snake` (20 s of plan 18's
+editor and plan 23's game) are not imported.
+
+Deviation: Snooze rings 6 minute edges after the snooze (`ALARM_SNOOZE_MINUTES`, both re-rings rang
+at RTC 10:17 after 10:11:00.2 and 10:11:58). The re-ring recordings' standby digits ran one minute
+behind their RTC after the alarm's minute (the generator's settime at each edge), so they showed
+10:16 at the re-ring: `ring-*-resnooze` and `ring-*-auto-resnooze` are known gaps; the ring
+recordings' scenarios move the host clock as their standby showed it. Menu 1 1 1 then 1 or 2 stay
+known gaps (11-1 is an application, where the kernel's shortcut ends: the On/Off rows take no
+digit); Menu 1 1 1 passes within 35 ms (the kernel's shortcut opens 11-1 17 ms late).
+`clock/alarm/power-off` is pending plan 17 (the power key's profile list).
+
+Deviation: the alerts' volume does not climb every `ascendStepMs`: one ≈3973 ms timer, fitted to the
+three factory captures, raises a level on the first note starting at or after `firstMs + k ×
+stepMs` (alarm 4810, countdown 3719, reminder 2912 ms after the sound starts; `CLOCK_ALERTS.ascend`).
+`reminder-factory`'s second alert rose 395 ms later than its first (UNVERIFIED why). The
+sequencer's volume changes are whole milliseconds (a fractional change time looped forever).
 
 ### Task 9 - Countdown timer (TDD against goldens)
 

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/alarm/off
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/off
 source-sha256: 299950298bd6fb7deb7f8f1790a2e946b26c298650ec08776986730abc2e38dc
 trigger-frame: 1

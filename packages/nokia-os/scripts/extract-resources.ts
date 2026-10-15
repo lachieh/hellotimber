@@ -828,7 +828,7 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
     ),
     "clock.ts": module(
       "CLOCK_DATA",
-      `{ readonly bells: { readonly sprites: readonly string[]; readonly stepMs: number }; readonly ring: { readonly bellsFirstMs: number; readonly textFirstMs: number; readonly textMs: number }; readonly programs: Readonly<Record<"countdown" | "reminder" | "alarm", ${TYPES.program}>>; readonly ascendStepMs: number; readonly countdownSoundMs: number; readonly alarmRingMs: number }`,
+      `{ readonly bells: { readonly sprites: readonly string[]; readonly stepMs: number }; readonly ring: { readonly bellsFirstMs: number; readonly textFirstMs: number; readonly textMs: number }; readonly programs: Readonly<Record<"countdown" | "reminder" | "alarm", ${TYPES.program}>>; readonly ascend: { readonly stepMs: number; readonly firstMs: Readonly<Record<"countdown" | "reminder" | "alarm", number>> }; readonly countdownSoundMs: number; readonly alarmRingMs: number }`,
       resources.clock,
     ),
     "snake.ts": module(

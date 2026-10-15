@@ -2,7 +2,7 @@
   {
     "id": "clock/alarm/change",
     "file": "clock/alarm/change.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 13,
     "frames": 14
@@ -10,7 +10,7 @@
   {
     "id": "clock/alarm/off",
     "file": "clock/alarm/off.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -18,7 +18,7 @@
   {
     "id": "clock/alarm/off-prompt",
     "file": "clock/alarm/off-prompt.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -26,7 +26,7 @@
   {
     "id": "clock/alarm/on",
     "file": "clock/alarm/on.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -34,7 +34,7 @@
   {
     "id": "clock/alarm/on-c",
     "file": "clock/alarm/on-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -42,7 +42,7 @@
   {
     "id": "clock/alarm/on-off",
     "file": "clock/alarm/on-off.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -50,7 +50,7 @@
   {
     "id": "clock/alarm/on-off-c",
     "file": "clock/alarm/on-off-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -58,7 +58,7 @@
   {
     "id": "clock/alarm/on-off-open",
     "file": "clock/alarm/on-off-open.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -66,7 +66,7 @@
   {
     "id": "clock/alarm/power-off",
     "file": "clock/alarm/power-off.lcd.txt",
-    "status": "pending:21",
+    "status": "pending:17",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -74,23 +74,15 @@
   {
     "id": "clock/alarm/prompt",
     "file": "clock/alarm/prompt.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
   },
   {
-    "id": "clock/alarm/ring-elsewhere-editor",
-    "file": "clock/alarm/ring-elsewhere-editor.lcd.txt",
-    "status": "pending:21",
-    "kind": "timeline",
-    "images": 2,
-    "frames": 42
-  },
-  {
     "id": "clock/alarm/ring-elsewhere-editor-standby",
     "file": "clock/alarm/ring-elsewhere-editor-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 22
@@ -98,7 +90,7 @@
   {
     "id": "clock/alarm/ring-elsewhere-menu-list-standby",
     "file": "clock/alarm/ring-elsewhere-menu-list-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 22
@@ -106,7 +98,7 @@
   {
     "id": "clock/alarm/ring-elsewhere-menu-page",
     "file": "clock/alarm/ring-elsewhere-menu-page.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -114,23 +106,15 @@
   {
     "id": "clock/alarm/ring-elsewhere-menu-page-standby",
     "file": "clock/alarm/ring-elsewhere-menu-page-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 22
   },
   {
-    "id": "clock/alarm/ring-elsewhere-snake",
-    "file": "clock/alarm/ring-elsewhere-snake.lcd.txt",
-    "status": "pending:21",
-    "kind": "timeline",
-    "images": 4,
-    "frames": 4
-  },
-  {
     "id": "clock/alarm/ring-elsewhere-snake-standby",
     "file": "clock/alarm/ring-elsewhere-snake-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 22
@@ -138,7 +122,7 @@
   {
     "id": "clock/alarm/ring-factory-auto-resnooze",
     "file": "clock/alarm/ring-factory-auto-resnooze.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 28,
     "frames": 374
@@ -146,7 +130,7 @@
   {
     "id": "clock/alarm/ring-factory-key-5",
     "file": "clock/alarm/ring-factory-key-5.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -154,7 +138,7 @@
   {
     "id": "clock/alarm/ring-factory-key-c",
     "file": "clock/alarm/ring-factory-key-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -162,7 +146,7 @@
   {
     "id": "clock/alarm/ring-factory-key-c-held",
     "file": "clock/alarm/ring-factory-key-c-held.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -170,7 +154,7 @@
   {
     "id": "clock/alarm/ring-factory-key-hash",
     "file": "clock/alarm/ring-factory-key-hash.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -178,7 +162,7 @@
   {
     "id": "clock/alarm/ring-factory-key-snooze",
     "file": "clock/alarm/ring-factory-key-snooze.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -186,7 +170,7 @@
   {
     "id": "clock/alarm/ring-factory-key-up",
     "file": "clock/alarm/ring-factory-key-up.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -194,7 +178,7 @@
   {
     "id": "clock/alarm/ring-factory-resnooze",
     "file": "clock/alarm/ring-factory-resnooze.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 28,
     "frames": 319
@@ -202,7 +186,7 @@
   {
     "id": "clock/alarm/ring-factory-screens",
     "file": "clock/alarm/ring-factory-screens.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -210,7 +194,7 @@
   {
     "id": "clock/alarm/ring-factory-snooze-stop",
     "file": "clock/alarm/ring-factory-snooze-stop.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -218,7 +202,7 @@
   {
     "id": "clock/alarm/ring-factory-standby",
     "file": "clock/alarm/ring-factory-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 23,
     "frames": 363
@@ -226,7 +210,7 @@
   {
     "id": "clock/alarm/ring-virgin-auto-resnooze",
     "file": "clock/alarm/ring-virgin-auto-resnooze.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 31,
     "frames": 374
@@ -234,7 +218,7 @@
   {
     "id": "clock/alarm/ring-virgin-key-5",
     "file": "clock/alarm/ring-virgin-key-5.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -242,7 +226,7 @@
   {
     "id": "clock/alarm/ring-virgin-key-c",
     "file": "clock/alarm/ring-virgin-key-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -250,7 +234,7 @@
   {
     "id": "clock/alarm/ring-virgin-key-c-held",
     "file": "clock/alarm/ring-virgin-key-c-held.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -258,7 +242,7 @@
   {
     "id": "clock/alarm/ring-virgin-key-hash",
     "file": "clock/alarm/ring-virgin-key-hash.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -266,7 +250,7 @@
   {
     "id": "clock/alarm/ring-virgin-key-snooze",
     "file": "clock/alarm/ring-virgin-key-snooze.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -274,7 +258,7 @@
   {
     "id": "clock/alarm/ring-virgin-key-up",
     "file": "clock/alarm/ring-virgin-key-up.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -282,7 +266,7 @@
   {
     "id": "clock/alarm/ring-virgin-resnooze",
     "file": "clock/alarm/ring-virgin-resnooze.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 25,
     "frames": 313
@@ -290,7 +274,7 @@
   {
     "id": "clock/alarm/ring-virgin-screens",
     "file": "clock/alarm/ring-virgin-screens.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -298,7 +282,7 @@
   {
     "id": "clock/alarm/ring-virgin-snooze-stop",
     "file": "clock/alarm/ring-virgin-snooze-stop.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -306,7 +290,7 @@
   {
     "id": "clock/alarm/ring-virgin-standby",
     "file": "clock/alarm/ring-virgin-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 24,
     "frames": 366
@@ -314,7 +298,7 @@
   {
     "id": "clock/alarm/screens",
     "file": "clock/alarm/screens.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -322,7 +306,7 @@
   {
     "id": "clock/alarm/set",
     "file": "clock/alarm/set.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 13,
     "frames": 13
@@ -330,7 +314,7 @@
   {
     "id": "clock/alarm/shortcut-111",
     "file": "clock/alarm/shortcut-111.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 8
@@ -338,7 +322,7 @@
   {
     "id": "clock/alarm/shortcut-1111",
     "file": "clock/alarm/shortcut-1111.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 18
@@ -346,7 +330,7 @@
   {
     "id": "clock/alarm/shortcut-1112",
     "file": "clock/alarm/shortcut-1112.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 10,
     "frames": 10
@@ -1114,7 +1098,7 @@
   {
     "id": "clock/stopwatch/power-off",
     "file": "clock/stopwatch/power-off.lcd.txt",
-    "status": "pending:21",
+    "status": "pending:17",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1978,14 +1962,14 @@
   {
     "id": "sound/clock/alarm-factory",
     "file": "sound/clock/alarm-factory.sound.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "sound",
     "events": 550
   },
   {
     "id": "sound/clock/alarm-virgin",
     "file": "sound/clock/alarm-virgin.sound.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "sound",
     "events": 500
   },

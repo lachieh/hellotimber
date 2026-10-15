@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/alarm/ring-elsewhere-menu-page
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/ring-elsewhere-menu-page
 source-sha256: 1c15337549b9e94f7fa9688a2c61f956495ef3fcbcd3a8c8b3b7088f9935e0ca
 trigger-frame: 1

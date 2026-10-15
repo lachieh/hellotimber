@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/alarm/shortcut-111
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/shortcut-111
 source-sha256: f29f00f3c7888eafd71b25d8acda4864b6e265edc4ad78b3f35477d82d62d7a5
 trigger-frame: 1

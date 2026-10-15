@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/alarm/ring-elsewhere-editor-standby
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/ring-elsewhere-editor-standby
 source-sha256: 79b694c12927abe4d85c70538c5014c2cd36c2d7f5635d500cafc8f17b02922c
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/alarm/power-off
-status: pending:21
+status: pending:17
 source: captures/6.39/plan21/alarm/power-off
 source-sha256: bf3311e203a1d6ffca61af35427b3f9e18bb90ba071fd9ab6daf72bc6706e9c4
 trigger-frame: 1

@@ -8,8 +8,10 @@ export interface AlarmTime {
 }
 
 export interface ClockState {
-  /** The alarm clock's time, null while Off. */
+  /** The alarm clock's time (kept while Off: its prompt shows it), null in the virgin EEPROM. */
   readonly alarm: AlarmTime | null;
+  /** Whether the alarm is set (On); it clears when the alarm rings (a one-shot, Task 0). */
+  readonly alarmOn: boolean;
   /** A snoozed alarm rings again at this minute (minuteIndex of phone time), null otherwise. */
   readonly snooze: { readonly dueMinute: number } | null;
   /** Phone time minus host time, in minutes (Set the time, Date setting; D1). */
@@ -37,7 +39,13 @@ function decodeSnooze(value: unknown): ClockState["snooze"] {
   return isInt(dueMinute, -1e9, 1e9) ? { dueMinute } : null;
 }
 
-const VIRGIN: ClockState = { alarm: null, snooze: null, offsetMinutes: 0, hidden: false };
+const VIRGIN: ClockState = {
+  alarm: null,
+  alarmOn: false,
+  snooze: null,
+  offsetMinutes: 0,
+  hidden: false,
+};
 
 /**
  * `nokia-os/clock`: virgin no alarm, no offset, the clock shown. Restore factory settings shows
@@ -50,8 +58,10 @@ export const CLOCK_RECORD: EepromRecord<ClockState> = {
   decode(data) {
     if (!isPlainObject(data)) throw new Error("not an object.");
     // Malformed fields fall back to their virgin value (plan 15 D2: stale content is dropped).
+    const alarm = decodeAlarm(data["alarm"]);
     return {
-      alarm: decodeAlarm(data["alarm"]),
+      alarm,
+      alarmOn: alarm !== null && data["alarmOn"] === true,
       snooze: decodeSnooze(data["snooze"]),
       offsetMinutes: isInt(data["offsetMinutes"], -1e9, 1e9) ? data["offsetMinutes"] : 0,
       hidden: data["hidden"] === true,
@@ -60,6 +70,7 @@ export const CLOCK_RECORD: EepromRecord<ClockState> = {
   factory: (current) => ({ ...current, hidden: false }),
   encode: (value) => ({
     alarm: value.alarm,
+    alarmOn: value.alarmOn,
     snooze: value.snooze,
     offsetMinutes: value.offsetMinutes,
     hidden: value.hidden,

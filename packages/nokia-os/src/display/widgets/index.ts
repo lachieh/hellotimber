@@ -2,6 +2,7 @@ import type { Framebuffer } from "@hellotimber/phone-screen";
 import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
 import { paintCalculator, type CalculatorModel } from "./calculator";
+import { paintAlert, type AlertModel } from "./alert";
 import { paintConfirm, type ConfirmModel } from "./confirm";
 import { paintEditor, type EditorModel } from "./editor";
 import { paintGameOver, type GameOverModel } from "./game-over";
@@ -34,6 +35,7 @@ export type { SnakeModel } from "./snake";
 export type { SplashModel } from "./splash";
 export type { SymbolsModel } from "./symbols";
 export type { TextPageModel } from "./text-pages";
+export type { AlertModel } from "./alert";
 
 /** A choice a later plan implements (D13), inside a flow: the placeholder frame of `label`. */
 export interface PlaceholderModel {
@@ -68,7 +70,8 @@ export type WidgetModel =
   | EditorModel
   | SymbolsModel
   | PlaceholderModel
-  | CalculatorModel;
+  | CalculatorModel
+  | AlertModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -132,6 +135,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "calculator":
       paintCalculator(fb, model);
+      return;
+    case "alert":
+      paintAlert(fb, model);
       return;
   }
 }

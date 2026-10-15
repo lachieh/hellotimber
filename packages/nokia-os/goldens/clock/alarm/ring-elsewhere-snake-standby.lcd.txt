@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/alarm/ring-elsewhere-snake-standby
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/ring-elsewhere-snake-standby
 source-sha256: f84892e0cdacde5971090a6e3931191f9c32fb0a08ebe3058aba595b5d7fd596
 trigger-frame: 1

@@ -12,10 +12,12 @@ import type { EepromRecord } from "../eeprom";
 import { timelineById, timelineByName } from "../timelines";
 import { WIDGET_TIMELINE_BY_NODE } from "../../resources";
 import { CLOCK_RECORD } from "./clock/record";
-import { phoneClock } from "./clock/registry";
+import { clockOfSettings, phoneClock } from "./clock/registry";
 import { TIME_FORMAT } from "./clock/service";
 import { formatClock, formatDate, parseHostTime } from "./clock/time";
-import type { StockFeature, StockServices } from "./feature";
+import type { ScreenPlace, StockFeature, StockServices } from "./feature";
+import { phoneAlarm } from "./clock/alarm";
+import { OptionListWidget } from "../../widgets/option-list";
 
 export { TIME_FORMAT };
 
@@ -159,12 +161,55 @@ export function autoUpdate(services: StockServices): void {
   }
 }
 
+/** `Set alarm time:` on `initial`, then `Alarm on` and the page (`levels` back). */
+function alarmEntry(services: StockServices, levels: number): Widget {
+  const alarm = phoneAlarm(services);
+  const time = alarm.time() ?? { hour: 0, minute: 0 };
+  return clockEntry(services, {
+    label: "Set alarm time:",
+    mask: "hh:mm",
+    initial: formatClock({ year: 2000, month: 1, day: 1, ...time }, false),
+    node: "11-1",
+    done: (value, flow) => {
+      alarm.set({ hour: Number(value.slice(0, 2)), minute: Number(value.slice(3)) });
+      flow.replace(clockNote(services, ["Alarm", "on"], "alarm-on", { levels }));
+    },
+  });
+}
+
+/**
+ * Alarm clock (11-1, D9): the prompt while the alarm is Off; while it is set, `On` / `Off`
+ * rows (`11-1-1`, `11-1-2`): On opens the prompt on its time, Off says `Alarm off`.
+ */
+function alarmClock(services: StockServices, place: ScreenPlace): () => Widget {
+  return () =>
+    needsClock(services, () => {
+      const alarm = phoneAlarm(services);
+      if (!alarm.on()) return alarmEntry(services, 1);
+      return new OptionListWidget({
+        labels: ["On", "Off"],
+        opening: 0,
+        softkey: "OK",
+        numbering: place.numbering,
+        choose: (index, flow) => {
+          if (index === 0) {
+            flow.push(alarmEntry(services, 2));
+            return;
+          }
+          alarm.off();
+          flow.replace(clockNote(services, ["Alarm", "off"], "alarm-off"));
+        },
+      });
+    });
+}
+
 export const clockFeature: StockFeature = {
   name: "clock",
   placeholders: {
     "11-4": "21", // Stopwatch
   },
   screens: {
+    "11-1": (services, place) => alarmClock(services, place),
     // Hide clock / Show clock (plan21 settings/hide, show): the note, then the Clock settings page.
     "11-2-1": (services) => () => {
       const clock = phoneClock(services);
@@ -221,8 +266,19 @@ export const clockFeature: StockFeature = {
   },
   settings: {
     // The Clock pages show the phone's time (D1): the clock in the chosen Time format, the date;
-    // without a time `--:--` and `--.--.----` (plan21 no-time/clock-pages).
+    // without a time `--:--` and `--.--.----` (plan21 no-time/clock-pages); the alarm's time or
+    // Off.
     hostValues: {
+      "clock/alarm-clock": (_ports, settings) => {
+        const state = clockOfSettings(settings)?.state();
+        const alarm = state?.alarm;
+        return state?.alarmOn && alarm
+          ? formatClock(
+              { year: 2000, month: 1, day: 1, ...alarm },
+              settings.choice(TIME_FORMAT.key) === TIME_FORMAT.twelveHour,
+            )
+          : "Off";
+      },
       "clock/clock-settings": (ports, settings) => {
         const now = parseHostTime(ports.clock?.(), ports.date?.() ?? "01.01.2000");
         if (now === undefined) return "--:--";

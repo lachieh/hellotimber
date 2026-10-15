@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/alarm/ring-factory-resnooze
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/ring-factory-resnooze
 source-sha256: 9203ff1e2e5d6a9ae861d881439d48754141da2437181b737800bde668dcf8c2
 trigger-frame: 1

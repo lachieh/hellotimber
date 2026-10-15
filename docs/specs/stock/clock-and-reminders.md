@@ -41,7 +41,9 @@ power-on). Captures move the clock with `settime` and run to the next edge with 
 No alert interrupts anything (plan21 `*/expire-elsewhere-*`, `*/alert-elsewhere-*`,
 `alarm/ring-elsewhere-*`): a reminder, the countdown's expiry and the ringing alarm that fall due
 on a menu page, a list, a note, an option list, the editor, Snake II or the running stopwatch
-appear when the phone next shows standby (C held: standby is drawn ≈85 ms, then the alert).
+appear when the phone next shows standby (C held: standby without its operator line for ≈91
+ms, then the alert; standby itself is not drawn). A key that ends an alert leaves the same frame
+for ≈90 ms before standby.
 Snake II pauses at the event. Alerts keep the standby layout: ladders, clock and indicators; the
 operator line is replaced.
 
@@ -57,9 +59,14 @@ operator line is replaced.
   then silence; the screen stays until a key; any key ends it; the page then reads `Off`.
 - **Alarm** (`alarm/ring-*`, Task 0c): `Alarm!` and the current time blinking, the bells row,
   `Snooze`, lights flashing; untouched ≈58 s (one minute of firmware time), then an automatic
-  snooze. Snooze: a `Snooze active` standby screen with `Stop` (Stop: `Snooze off`, standby); it
-  rings again 5 minutes later rounded up to a whole minute. Any other key stops it. Once it has
-  rung, the alarm is Off (a one-shot).
+  snooze. Snooze: a `Snooze active` standby screen with `Stop` (Stop: the ladders cleared, 20 ms,
+  then `Snooze off`, standby); it rings again 5 minutes later rounded up to a whole minute. Any
+  other key stops it, as the key goes down. Once it has rung, the alarm is Off (a one-shot). The
+  bells step at 224 ms and with the text's first showing (464 ms), then every ≈233 ms; the text
+  goes off at ≈925 ms and toggles every ≈481 ms. A ring shown on the return to standby has no
+  bells and shows its text at once. Its sound: two-pulse bursts of 2683.7 Hz every 2345 ms (factory:
+  with the vibrator), at Level 1 rising to the Ringing volume on the first notes ≈4.8 s, then
+  every ≈4 s (countdown ≈3.7 s, reminder ≈2.9 s; one ≈3973 ms timer, the first rise per alert).
 
 ## Clock settings, Date setting, Auto update
 
@@ -92,7 +99,8 @@ still holding `h`/`m`/`d`/`y`, or on an impossible date, shows `Invalid time` / 
 
 - Alarm clock without an alarm: the prompt (`00:00`) → `Alarm on` (tick) → the page; standby
   gains the alarm icon left of the clock. With an alarm: `On` / `Off` rows (`11-1-1`, `11-1-2`;
-  Menu 1 1 1 1 and 1 1 1 2 reach them), On → the prompt on the stored time, Off → `Alarm off`.
+  Menu 1 1 1 1 and 1 1 1 2 reach them, not reproduced: 11-1 is an application in nokia-os), On →
+  the prompt on the stored time, Off → `Alarm off`.
 - Countdown: `Set timer:` `hh:mm` → Start → `Timer running` (tick) → the page shows the time left
   rounded up to a minute; `00:00` → `Timer stopped`. While running: `Change time` / `Stop timer`
   (`11-5-1`, `11-5-2`). The timer icon sits left of the alarm icon. The countdown is RAM.

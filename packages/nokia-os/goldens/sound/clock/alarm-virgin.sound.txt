@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/clock/alarm-virgin
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/alarm/ring-virgin-standby
 source-sha256: 635e397e1d02cf265dff9fdcfd3ed87cde94aba791452594da87259740f2e57d
 state: virgin

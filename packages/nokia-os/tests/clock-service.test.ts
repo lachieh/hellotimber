@@ -29,6 +29,7 @@ describe("CLOCK_RECORD", () => {
   it("is virgin: no alarm, no snooze, no offset, the clock shown", () => {
     expect(CLOCK_RECORD.initial()).toEqual({
       alarm: null,
+      alarmOn: false,
       snooze: null,
       offsetMinutes: 0,
       hidden: false,
@@ -38,6 +39,7 @@ describe("CLOCK_RECORD", () => {
   it("keeps the alarm and the time on Restore factory settings, and shows the clock", () => {
     const state = {
       alarm: { hour: 10, minute: 11 },
+      alarmOn: true,
       snooze: null,
       offsetMinutes: 50,
       hidden: true,
@@ -48,6 +50,7 @@ describe("CLOCK_RECORD", () => {
   it("round-trips and drops malformed fields", () => {
     const value = {
       alarm: { hour: 10, minute: 11 },
+      alarmOn: true,
       snooze: { dueMinute: 1234 },
       offsetMinutes: -61,
       hidden: true,
