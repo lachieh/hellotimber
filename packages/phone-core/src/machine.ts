@@ -4,6 +4,7 @@ import type {
   DeactivationReason,
   ExitOptions,
   PhoneApplicationSession,
+  ShortcutLevel,
 } from "./application";
 import { SubmenuEntry } from "./menu";
 import type {
@@ -1447,13 +1448,63 @@ function enterMenu<Metadata>(m: Machine<Metadata>): void {
 
 /**
  * The digit a key types into the open shortcut window, or null when the key is not captured.
- * Stock shortcuts leave digits to a showing application: a shortcut intro, or the application
- * the shortcut opened (v6.39: Calculator and Write messages take them).
+ * Stock shortcuts leave digits to a showing application (a shortcut intro, or the application
+ * the shortcut opened: v6.39 Calculator and Write messages take them) unless it is a shortcut
+ * level (an option list).
  */
 function capturedDigit<Metadata>(m: Machine<Metadata>, key: PhoneKey): number | null {
   if (m.shortcut === null || !/^[0-9]$/.test(key)) return null;
   if (m.shortcut.kind === "digits") return key === "0" ? null : Number(key);
-  return m.mode.kind === "app" ? null : Number(key);
+  return m.mode.kind === "app" && appShortcutLevel(m) === undefined ? null : Number(key);
+}
+
+/** The shown application's options while it is a stock shortcut level (see ShortcutLevel). */
+function appShortcutLevel<Metadata>(m: Machine<Metadata>): ShortcutLevel | undefined {
+  if (m.mode.kind !== "app" || m.shortcut?.kind !== "stock") return undefined;
+  try {
+    return m.mode.activation.session?.shortcutLevel?.();
+  } catch {
+    // Application failures are isolated from firmware navigation.
+    return undefined;
+  }
+}
+
+/** A shortcut level's options as numbered candidates: option n is number n. */
+function levelNumbers(level: ShortcutLevel): readonly { entry: number; number: number }[] {
+  return Array.from({ length: level.count }, (_, i) => ({ entry: i + 1, number: i + 1 }));
+}
+
+/** A digit at a shortcut level: matched among its options as at a menu level. */
+function levelDigit<Metadata>(
+  m: Machine<Metadata>,
+  s: StockShortcut<Metadata>,
+  level: ShortcutLevel,
+  digit: number,
+): void {
+  const digits = `${s.digits}${digit}`;
+  const match = matchNumber(levelNumbers(level), digits);
+  if (match.kind === "none") {
+    openInvalidShortcut(m);
+    return;
+  }
+  if (match.kind === "wait") {
+    s.digits = digits;
+    s.deadline = m.now + m.shortcutWindowMs;
+    m.dirty = true;
+    return;
+  }
+  chooseInLevel(m, level, match.entry);
+}
+
+/** The typed number chose an option: the shortcut closes and the application acts on it. */
+function chooseInLevel<Metadata>(m: Machine<Metadata>, level: ShortcutLevel, number: number): void {
+  cancelShortcut(m);
+  try {
+    level.choose(number);
+  } catch {
+    // Application input failures are isolated from firmware navigation.
+  }
+  m.dirty = true;
 }
 
 function shortcutIntroRunning<Metadata>(m: Machine<Metadata>): boolean {
@@ -1487,16 +1538,19 @@ function cancelShortcut<Metadata>(m: Machine<Metadata>): void {
   m.dirty = true;
 }
 
-type NumberMatch<Metadata> =
-  | { kind: "entry"; entry: MenuEntry<Metadata> }
-  | { kind: "wait"; exact: MenuEntry<Metadata> | undefined }
+type NumberMatch<Entry> =
+  | { kind: "entry"; entry: Entry }
+  | { kind: "wait"; exact: Entry | undefined }
   | { kind: "none" };
 
 /**
  * Matches typed digits as a menu number among `level`'s entries. A number that is also the
  * prefix of a longer one waits (`1` with 10-12), as do leading zeros; no candidate is none.
  */
-function matchNumber<Metadata>(level: Numbered<Metadata>, digits: string): NumberMatch<Metadata> {
+function matchNumber<Entry>(
+  level: readonly { entry: Entry; number: number }[],
+  digits: string,
+): NumberMatch<Entry> {
   const number = digits.replace(/^0+/, "");
   if (number === "")
     return level.length > 0 ? { kind: "wait", exact: undefined } : { kind: "none" };
@@ -1526,9 +1580,15 @@ function stockDigit<Metadata>(
   s: StockShortcut<Metadata>,
   digit: number,
 ): void {
-  // A digit while a leaf is about to open opens it at once and is spent (v6.39: Menu 9 5).
+  // A digit while a leaf is about to open opens it at once and is spent (v6.39: Menu 9 5),
+  // unless the leaf is a shortcut level, which takes it (Menu 8 6 3 1).
   if (s.pending !== null && !(s.pending.entry instanceof SubmenuEntry)) {
     openPending(m, s);
+    if (m.shortcut !== s || appShortcutLevel(m) === undefined) return;
+  }
+  const level = appShortcutLevel(m);
+  if (level !== undefined) {
+    levelDigit(m, s, level, digit);
     return;
   }
   const digits = `${s.digits}${digit}`;
@@ -1603,6 +1663,13 @@ function openPending<Metadata>(m: Machine<Metadata>, s: StockShortcut<Metadata>)
  * the shortcut closes.
  */
 function endStockWindow<Metadata>(m: Machine<Metadata>, s: StockShortcut<Metadata>): void {
+  const level = appShortcutLevel(m);
+  if (s.digits !== "" && level !== undefined) {
+    const match = matchNumber(levelNumbers(level), s.digits);
+    if (match.kind === "wait" && match.exact !== undefined) chooseInLevel(m, level, match.exact);
+    else openInvalidShortcut(m);
+    return;
+  }
   if (s.digits !== "") {
     const match = matchNumber(stockLevel(m, s), s.digits);
     const target = match.kind === "wait" ? match.exact : undefined;

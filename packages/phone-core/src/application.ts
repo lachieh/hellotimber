@@ -37,11 +37,29 @@ export interface ApplicationContext {
   powerOff?(): void;
 }
 
+/**
+ * PhoneConfig.shortcutEntry: an application's options numbered 1..count as a menu level (v6.39:
+ * an option list).
+ */
+export interface ShortcutLevel {
+  readonly count: number;
+  /** The typed number chose option `number` (1-based); the shortcut has closed. */
+  choose(number: number): void;
+}
+
 export interface PhoneApplicationSession {
   onKey(event: KeyEvent): void;
   tick(dtMs: number): void;
   render(): ScreenModel;
   onDeactivate?(reason: DeactivationReason): void;
+  /**
+   * PhoneConfig.shortcutEntry: the application's options while it is a menu level to the stock
+   * shortcut (undefined: it is not). Digits typed while the shortcut window is open over it, or
+   * while it is about to open, are then matched as numbers among them, as at a menu level, and
+   * do not reach `onKey`: an option's number chooses it, digits that number none open
+   * `invalid`.
+   */
+  shortcutLevel?(): ShortcutLevel | undefined;
 }
 
 export abstract class PhoneApplication {
