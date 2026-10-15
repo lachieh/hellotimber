@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/profiles/shortcut-loud
+status: pending:17
+source: captures/6.39/plan17/shortcut/loud
+source-sha256: 8acea89049fd39b7b050c3e9f27f74cf4e3f38bcf819077982a8ea49305adadf
+state: factory
+keys: 0:navi 300:1 600:2 900:4 1200:1
+note: Menu 1 2 4 1: the last digit beeps at loud's level.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+42     tone     900 v=0x9104
+189    tone     off
+320    tone     900 v=0x9104
+460    tone     off
+631    tone     900 v=0x9104
+778    tone     off
+943    tone     900 v=0x9104
+1087   tone     off
+1255   tone     900 v=0x9100
+1397   tone     off

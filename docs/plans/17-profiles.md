@@ -490,18 +490,43 @@ a pointer only), `docs/specs/nokia-3310-menu-tree.md`, `docs/plans/README.md`, t
 `tests/capture-sets/17-profiles.test.ts` (new), `tests/goldens-integrity.test.ts`, the acceptance
 todo shim, `goldens/**`.
 
-- [ ] TDD the capture set on synthetic recordings (injected loader): ids, kinds, cut points
+- [x] TDD the capture set on synthetic recordings (injected loader): ids, kinds, cut points
       (welcome note and wizard omitted with reasons), `trigger-frame` on the first changed frame,
       sound rows, glyph sheets with their manifest note.
 - [ ] Drop `12-*-1` from both owner tables: the six `tree/12-profiles/12-n-1.leaf` and
       `sound/note/12-n-1` goldens and `sound/boot/power-key` become asserted.
-- [ ] Integrity: no golden is `pending:17`; the owner tables are equal; glyph sheets match their
+- [x] Integrity: no golden is `pending:17`; the owner tables are equal; glyph sheets match their
       manifests.
-- [ ] Acceptance: asserted goldens without a scenario are todos (`awaitsPlan17Scenario`; Task 9
+- [x] Acceptance: asserted goldens without a scenario are todos (`awaitsPlan17Scenario`; Task 9
       deletes it).
-- [ ] Run `import-captures` twice; the second changes nothing. Record counts and bytes.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import profile goldens (plan 17)`.
+- [x] Run `import-captures` twice; the second changes nothing. Record counts and bytes.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import profile goldens (plan 17)`.
+
+Deviation: **Task 2 (paths, plan 29 conventions):** the table is `scripts/capture-sets/17-profiles.ts`
+(registered by one line in `scripts/capture-sets/index.ts`), tested by
+`tests/capture-sets/17-profiles.test.ts` with an injected recording loader; its goldens are indexed
+in `goldens/index/17.json` and run by `tests/acceptance/17-profiles.test.ts`. `scripts/import-
+captures.ts` needs no line (the registry discovers the set).
+
+Deviation: **Task 2 (status, plan 29 pending workflow):** every new golden is `pending:17` and no
+`awaitsPlan17Scenario` shim exists; each row names the task (6, 7, 8) whose scenarios promote it
+(`ASSERTED_TASKS`). `12-*-1` stays in both owner tables until Task 6 binds Activate (the six
+`tree/12-profiles/12-n-1.leaf` and `sound/note/12-n-1` goldens would otherwise be asserted with a
+placeholder behind them), and `sound/boot/power-key` stays `pending:17` until Task 7. The
+integrity check "no golden is `pending:17`" moves to Task 9; Task 2 checks that plan 17 is
+pending elsewhere only on those goldens.
+
+Deviation: **Task 2 (selection):** stills are grouped per screen family (`profiles/icon`,
+`profiles/tones-<slug>`, `profiles/opening`, the power ▼/▲ shots, `persist-after-*`), one image per
+shot; the standby entries that repeat `standby-carousel-c`'s operator-less redraw, the notice
+(plan 18's painter), the shortcut's LCD (plan 14's timing), the B6 "nothing happens" recordings
+and Discreet's artefact are listed in `notImported` with reasons. The thin glyph sheet's note ends
+`; manifest [...]` (plan 18's form), one page per image.
+
+**Task 2 completion note:** 146 plan 17 fixtures: 102 LCD (25 stills, 77 timelines; 651 images)
+and 44 sound goldens, 2.76 MB of text grids, all `pending:17`. A second `import-captures` run
+changes nothing (identical tree hash); no other plan's golden changed.
 
 ### Task 3 - Glyphs, sprites and timings (TDD)
 

@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/profiles/power-general-ok-silent
+status: pending:17
+source: captures/6.39/plan17/power/general/ok-silent
+source-sha256: d507df5d76cb2a5db1b1c4a6f4ea3e92a4c6f313b17a06c771d4b20735e23f4a
+state: factory
+keys: 0:navi
+note: General active: OK on silent in the power list beeps at silent's level.
+omitted: none
+
+@events
+# t_ms output   state

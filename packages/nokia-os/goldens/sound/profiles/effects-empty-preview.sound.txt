@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/profiles/effects-empty-preview
+status: pending:17
+source: captures/6.39/plan17/effects/empty/preview
+source-sha256: c166d5f5c184c48190b0639aff7e187be1c90e284133d804897775adee927ebf
+state: factory
+keys: 0:down 5061:up
+note: empty active: Tones › Ringing tone, ▼ (a preview), ▲.
+omitted: none
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+173    tone     off
+5114   tone     900 v=0x9104
+5238   tone     off
+6052   buzzer   1109 v=12
+6052   vibrator on

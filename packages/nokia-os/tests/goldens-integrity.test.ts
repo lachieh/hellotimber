@@ -306,3 +306,25 @@ describe("plan 18 goldens", () => {
     }
   });
 });
+
+describe("plan 17 goldens", () => {
+  const own = readPlanIndex(GOLDENS, "17");
+
+  it("lists the thin glyph sheet's pages in its note, one per image", () => {
+    const entry = own.find((e) => e.id === "profiles/glyphs-thin")!;
+    const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+    expect(parseManifestNote(golden.note)).toHaveLength(golden.images.length);
+  });
+
+  it("keeps plan 17 pending elsewhere only on Activate (12-*-1) until its scenarios land", () => {
+    const elsewhere = index.filter(
+      (entry) => entry.status === "pending:17" && !own.some((e) => e.id === entry.id),
+    );
+    expect(PLACEHOLDER_OWNERS["12-*-1"]).toBe("17");
+    for (const entry of elsewhere) {
+      expect(entry.id, entry.id).toMatch(
+        /^(tree\/12-profiles\/12-\d-1\.leaf|sound\/note\/12-\d-1|sound\/boot\/power-key)$/,
+      );
+    }
+  });
+});

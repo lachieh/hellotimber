@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/profiles/shortcut-discreet
+status: pending:17
+source: captures/6.39/plan17/shortcut/discreet
+source-sha256: c8ce9fc1d3d392959a64cf182fe844794badd8beafe3364a062d6ba0ac7ad007
+state: factory
+keys: 0:navi 300:1 600:2 900:3 1200:1
+note: Menu 1 2 3 1: the last digit beeps at discreet's level.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+42     tone     900 v=0x9104
+189    tone     off
+320    tone     900 v=0x9104
+460    tone     off
+631    tone     900 v=0x9104
+778    tone     off
+946    tone     900 v=0x9104
+1087   tone     off
+1255   tone     900 v=0x9108
+1397   tone     off

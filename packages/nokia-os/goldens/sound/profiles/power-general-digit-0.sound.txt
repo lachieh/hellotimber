@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/profiles/power-general-digit-0
+status: pending:17
+source: captures/6.39/plan17/power/general/digit-0
+source-sha256: 97dd621627fc7b6218ad1cb55b9cd4ac3dae0bf299de785bc21a090b166bcd03
+state: factory
+keys: 0:0
+note: General active: 0 in the power list: Invalid shortcut after the shortcut window, then standby.
+omitted: none
+
+@events
+# t_ms output   state
+17     tone     900 v=0x9104
+159    tone     off
+2931   tone     1750 v=0x9105
+3226   tone     off

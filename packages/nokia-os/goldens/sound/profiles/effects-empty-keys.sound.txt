@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/profiles/effects-empty-keys
+status: pending:17
+source: captures/6.39/plan17/effects/empty/keys
+source-sha256: 00fe2187299f71cedcaec5959010c7cb829e79600f1d8c323c0e3912d442a710
+state: factory
+keys: 0:navi 660:down 1320:down 1980:up 2640:c
+note: empty active: Menu, ▼, ▼, ▲, C in the carousel.
+omitted: none
+
+@events
+# t_ms output   state
+55     tone     900 v=0x9104
+179    tone     off
+684    tone     900 v=0x9104
+829    tone     off
+1341   tone     900 v=0x9104
+1488   tone     off
+1999   tone     900 v=0x9104
+2146   tone     off
+2661   tone     900 v=0x9104
+2804   tone     off

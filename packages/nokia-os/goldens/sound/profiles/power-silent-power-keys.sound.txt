@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/profiles/power-silent-power-keys
+status: pending:17
+source: captures/6.39/plan17/power/silent/power-keys
+source-sha256: 3fb5430ff25bce49d88673129d1c38a30529d55b09bacf0cd723577f83498cc3
+state: factory
+keys: 0:power 1060:power 1820:power 2580:power
+note: silent active: four power presses: each beeps.
+omitted: none
+
+@events
+# t_ms output   state

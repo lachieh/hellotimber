@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/profiles/activate-discreet
+status: pending:17
+source: captures/6.39/plan17/activate/discreet
+source-sha256: 3dc26bde8a040328c73c7f2442c04ea8bfdac2c0cbb55a5d434fadf7916b35f9
+state: factory
+keys: 0:navi
+note: General active: Select on discreet's Activate: the key beeps at discreet's Keypad tones level.
+omitted: none
+
+@events
+# t_ms output   state
+49     tone     900 v=0x9108
+194    tone     off

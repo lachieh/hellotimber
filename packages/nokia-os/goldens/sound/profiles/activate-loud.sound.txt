@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/profiles/activate-loud
+status: pending:17
+source: captures/6.39/plan17/activate/loud
+source-sha256: c5ba71cb9bda9e0905595c2be8f9756ebb7986f8783f02d315b5c4c87936edfd
+state: factory
+keys: 0:navi
+note: General active: Select on loud's Activate: the key beeps at loud's Keypad tones level.
+omitted: none
+
+@events
+# t_ms output   state
+44     tone     900 v=0x9100
+189    tone     off

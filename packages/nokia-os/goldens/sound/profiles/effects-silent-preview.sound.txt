@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/profiles/effects-silent-preview
+status: pending:17
+source: captures/6.39/plan17/effects/silent/preview
+source-sha256: a51836f1b376dcac0837c48e0b9b79efa8617c8b6c3a992c191c3d059d2b6ed6
+state: factory
+keys: 0:down 5061:up
+note: silent active: Tones › Ringing tone, ▼ (a preview), ▲.
+omitted: none
+
+@events
+# t_ms output   state

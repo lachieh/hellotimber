@@ -1,0 +1,20 @@
+sound-golden 1
+id: sound/profiles/shortcut-silent
+status: pending:17
+source: captures/6.39/plan17/shortcut/silent
+source-sha256: 78b21bcb67aabd371ff9f19aff680e4640902d5578b99fe135d3c2e6ae3f2b1c
+state: factory
+keys: 0:navi 300:1 600:2 900:2 1200:1
+note: Menu 1 2 2 1: the last digit beeps at silent's level.
+omitted: 1 (level rewrite)
+
+@events
+# t_ms output   state
+42     tone     900 v=0x9104
+189    tone     off
+320    tone     900 v=0x9104
+460    tone     off
+631    tone     900 v=0x9104
+778    tone     off
+947    tone     900 v=0x9104
+1087   tone     off

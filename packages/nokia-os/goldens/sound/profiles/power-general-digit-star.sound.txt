@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/profiles/power-general-digit-star
+status: pending:17
+source: captures/6.39/plan17/power/general/digit-star
+source-sha256: c855ee48fd39aa2ae5569b5a0890cdaa970b63276a6d7880418fac447e54d9f8
+state: factory
+keys: 0:*
+note: General active: star in the power list: nothing.
+omitted: none
+
+@events
+# t_ms output   state
+17     tone     900 v=0x9104
+159    tone     off

@@ -1,0 +1,66 @@
+sound-golden 1
+id: sound/profiles/effects-loud-preview
+status: pending:17
+source: captures/6.39/plan17/effects/loud/preview
+source-sha256: bd6030e3dd0e801ac81215304c86b7d5805b05e5571de7fb20ba2ceaaaf04ee8
+state: factory
+keys: 0:down 5061:up
+note: loud active: Tones › Ringing tone, ▼ (a preview), ▲.
+omitted: none
+
+@events
+# t_ms output   state
+25     tone     900 v=0x9100
+173    tone     off
+987    buzzer   622 v=11
+987    vibrator on
+1102   buzzer   587 v=11
+1187   buzzer   off
+1210   buzzer   587 v=11
+1326   buzzer   off
+1326   vibrator off
+1443   buzzer   622 v=11
+1443   vibrator on
+1559   buzzer   587 v=11
+1646   buzzer   off
+1667   buzzer   587 v=11
+1783   buzzer   off
+1783   vibrator off
+1899   vibrator on
+1900   buzzer   622 v=11
+2016   buzzer   587 v=11
+2101   buzzer   off
+2124   buzzer   587 v=11
+2240   buzzer   off
+2240   vibrator off
+2356   buzzer   932 v=17
+2588   buzzer   off
+2821   buzzer   932 v=17
+2821   vibrator on
+2937   buzzer   880 v=14
+3053   buzzer   784 v=13
+3170   buzzer   off
+3286   vibrator off
+3287   buzzer   784 v=13
+3403   buzzer   698 v=13
+3519   buzzer   622 v=11
+3635   buzzer   off
+3751   buzzer   622 v=11
+3751   vibrator on
+3867   buzzer   587 v=11
+3983   buzzer   523 v=11
+4099   buzzer   off
+4216   buzzer   523 v=11
+4216   vibrator off
+4448   buzzer   off
+4680   vibrator on
+4681   buzzer   587 v=11
+4796   buzzer   523 v=11
+4882   buzzer   off
+4905   buzzer   523 v=11
+5021   buzzer   off
+5021   vibrator off
+5106   tone     900 v=0x9100
+5238   tone     off
+6052   buzzer   1319 v=16
+6052   vibrator on

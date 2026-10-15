@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/profiles/effects-loud-invalid
+status: pending:17
+source: captures/6.39/plan17/effects/loud/invalid
+source-sha256: 4422184a097cb2067b2514ea35b3a3fb4f23e909cce34bdde0d9632c10d3dbbe
+state: factory
+keys: 0:navi 300:1 600:9
+note: loud active: Menu 1 9: Invalid shortcut.
+omitted: none
+
+@events
+# t_ms output   state
+33     tone     900 v=0x9100
+176    tone     off
+322    tone     900 v=0x9100
+463    tone     off
+622    tone     1750 v=0x9105
+912    tone     off

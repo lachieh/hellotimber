@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/profiles/effects-loud-keys
+status: pending:17
+source: captures/6.39/plan17/effects/loud/keys
+source-sha256: 3130e096ec8eeed0af20a7bc3a0981684f5e4fd7fc4b39cdecdf3f75a4075dd7
+state: factory
+keys: 0:navi 660:down 1320:down 1980:up 2640:c
+note: loud active: Menu, ▼, ▼, ▲, C in the carousel.
+omitted: none
+
+@events
+# t_ms output   state
+55     tone     900 v=0x9100
+179    tone     off
+684    tone     900 v=0x9100
+829    tone     off
+1341   tone     900 v=0x9100
+1488   tone     off
+1999   tone     900 v=0x9100
+2146   tone     off
+2661   tone     900 v=0x9100
+2804   tone     off

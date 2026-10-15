@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/profiles/power-silent-list
+status: pending:17
+source: captures/6.39/plan17/power/silent/list
+source-sha256: e687bb67b30ccbc82d487ca58ee6c760fa939b28a514a0821548ddfee258260c
+state: factory
+keys: 0:power
+note: silent active: the power key at standby beeps at the keypad level.
+omitted: none
+
+@events
+# t_ms output   state
