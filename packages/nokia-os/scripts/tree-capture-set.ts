@@ -134,11 +134,10 @@ export const MAX_PENDING_FRAMES = 40;
 export const ASSERTED_EARLY: Readonly<Record<string, string>> = { "8-1-1": "23" };
 
 /**
- * Bound leaves whose recording shows a later plan's screen, by number → that plan: Write
- * messages opens the T9 editor in the virgin EEPROM, which plan 18 replaces with multi-tap
- * (Dictionary off) until plan 18b brings T9 (plan 18 D3).
+ * Bound leaves whose recording shows a later plan's screen, by number → that plan (plan 18 D3
+ * held Write messages' T9 editor here until plan 18b brought T9; none now).
  */
-export const PENDING_LATER: Readonly<Record<string, string>> = { "2-1": "18b" };
+export const PENDING_LATER: Readonly<Record<string, string>> = {};
 
 // ---------------------------------------------------------------- io
 

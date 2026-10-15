@@ -46,18 +46,25 @@ function io(overrides: Partial<T9CaptureIo> = {}): T9CaptureIo {
 }
 
 describe("t9CaptureSet", () => {
-  const entries = t9CaptureSet(io());
+  const entries = t9CaptureSet(io(), new Set());
   const byId = new Map(entries.map((entry) => [entry.id, entry]));
 
   it("lists every kept step of every table scenario once, pending on 18b", () => {
     expect(new Set(entries.map((e) => e.id)).size).toBe(entries.length);
-    expect(T9_PROMOTED.size).toBe(0);
     for (const e of entries) {
       expect(e.id).toMatch(/^t9\/[a-z0-9-]+\/\d\d-[a-z0-9-]+$/);
       expect(e.status, e.id).toBe("pending:18b");
     }
     const scenarios = new Set(entries.map((e) => e.id.split("/")[1]));
     expect([...scenarios]).toEqual(T9_SCENARIOS.map((row) => row.scenario));
+  });
+
+  it("asserts the promoted goldens (T9_PROMOTED, plan 29's pending workflow)", () => {
+    const promoted = t9CaptureSet(io(), new Set(["t9/g-compose/01-step"]));
+    expect(promoted.find((e) => e.id === "t9/g-compose/01-step")?.status).toBe("asserted");
+    expect(promoted.filter((e) => e.status === "asserted")).toHaveLength(1);
+    expect(() => t9CaptureSet(io(), new Set(["t9/nowhere/01-x"]))).toThrow(/promoted but not/);
+    for (const id of T9_PROMOTED) expect(id).toMatch(/^t9\/[a-z0-9-]+\/\d\d-[a-z0-9-]+$/);
   });
 
   it("makes a shot step a still named after its file, in lower case", () => {

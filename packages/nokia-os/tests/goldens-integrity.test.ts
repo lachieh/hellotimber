@@ -285,10 +285,12 @@ describe("plan 18 goldens", () => {
       [],
     );
     expect(Object.values(PLACEHOLDER_OWNERS).filter((plan) => plan === "18")).toEqual([]);
-    // Write messages' T9 first screen waits for plan 18b (D3).
+    // Write messages' T9 first screen: plan 18b asserts it.
     expect(index.find((entry) => entry.id === "tree/02-messages/2-1.leaf")?.status).toBe(
-      "pending:18b",
+      "asserted",
     );
+    // Plan 18b leaves no golden pending on it.
+    expect(index.filter((entry) => entry.status === "pending:18b").map((e) => e.id)).toEqual([]);
   });
 
   it("re-owns Chat, the content leaves and their goldens to plan 18c (D1)", () => {

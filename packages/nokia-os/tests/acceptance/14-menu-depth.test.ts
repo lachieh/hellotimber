@@ -7,6 +7,7 @@ import { newGameLeafScenario } from "../support/game.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
 import { after, JITTER, keys, SNAKE, stills, timeline } from "../support/probes.ts";
 import { standbyRig, type Rig } from "../support/rig.ts";
+import { WRITE_MESSAGES_LEAF_GAP } from "../support/t9.ts";
 
 const PHONE_BOOK = "navi navi";
 
@@ -295,6 +296,7 @@ acceptancePlan({
   plan: "14",
   scenarios: SCENARIOS,
   knownGaps: {
+    "tree/02-messages/2-1.leaf": WRITE_MESSAGES_LEAF_GAP,
     "probe/note-keys-done-down-300":
       "Done's 16 ms partial draw covers fewer LCD bytes than the 15 ms one of " +
       "tree/01-phone-book/1-8-1-1.choose (same path), whose timeline the note plays",

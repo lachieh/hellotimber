@@ -8,7 +8,7 @@ import { readPlanIndex } from "../scripts/golden-index.ts";
 import { T9_PROMOTED } from "../scripts/t9-capture-set.ts";
 import { PENDING_LATER } from "../scripts/tree-capture-set.ts";
 import { GOLDENS, scenarioOf } from "./support/acceptance.ts";
-import { t9Scenario, T9_KNOWN_GAPS } from "./support/t9.ts";
+import { t9Scenario, T9_KNOWN_GAPS, WRITE_MESSAGES_LEAF_GAP } from "./support/t9.ts";
 
 const OWN = readPlanIndex(GOLDENS, "18b");
 const WAITING = OWN.filter((entry) => T9_PROMOTED.has(entry.id) && entry.status !== "asserted");
@@ -28,7 +28,7 @@ describe("T9 goldens promoted, awaiting the re-import", () => {
   }
 
   if (LEAF.status !== "asserted" && PENDING_LATER["2-1"] === undefined) {
-    it(LEAF.id, () => {
+    it.fails(`${LEAF.id} (known gap: ${WRITE_MESSAGES_LEAF_GAP})`, () => {
       const scenario = scenarioOf({ plan: "14", scenarios: {} }, LEAF.id, LEAF.covers);
       expect(scenario).toBeDefined();
       scenario!();

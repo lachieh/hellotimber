@@ -677,6 +677,28 @@ its lists lack (none), `abc` chosen at a sentence start not lasting past the nex
 Open for the dirty room: the lit pixel after a short `*` at a word start
 (`g-star-free/07-star-after-space`, a known gap).
 
+### Hand-off: promoting the goldens (bridge)
+
+The last clean-room commit (`test(nokia-os): promote the T9 goldens (plan 18b)`) lists all 303
+`t9/*` ids in `T9_PROMOTED`, empties the tree table's `PENDING_LATER` (Write messages' leaf),
+expects both asserted in `tests/goldens-integrity.test.ts`, and gives the leaf its known gap in
+plan 14's acceptance file (`WRITE_MESSAGES_LEAF_GAP`: pixels match, the crawl's blink spreads
+476-492 ms). Until the bridge re-imports, exactly three tests fail (the two integrity checks and
+the coverage guard's "known gaps only for asserted goldens"); `tests/t9-promotion.test.ts` plays
+every promoted golden meanwhile (303 + the leaf, two known gaps). The bridge then runs, from the
+repository root:
+
+```sh
+mise exec -- vp run @hellotimber/nokia-os#import-captures <REF>   # twice: the second changes nothing
+mise exec -- vp run @hellotimber/nokia-os#regenerate              # the leaf's blink joins widgets.ts
+mise exec -- vp run @hellotimber/nokia-os#test
+```
+
+Expected flips: `goldens/index/18b.json` and the 303 `goldens/t9/**/*.lcd.txt` from `pending:18b`
+to `asserted`; `goldens/index/14.json` and `goldens/tree/02-messages/2-1.leaf.lcd.txt` likewise;
+`src/resources/generated/widgets.ts` gains the leaf's node timeline (58 lines). Simulated in the
+clean room by flipping the status lines locally (not committed): the whole suite passes.
+
 ## Follow-up plan adjustments
 
 - **18c - Chat:** Chat's editor in T9 by default (plan 18 S12) reuses this plan's editor mode.

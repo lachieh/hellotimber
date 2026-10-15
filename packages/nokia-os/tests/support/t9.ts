@@ -46,6 +46,16 @@ export const T9_TOLERANCES: Readonly<Record<string, number>> = {
   "t9/insert-word-empty/05-after": 5,
 };
 
+/**
+ * Write messages' tree golden (plan 14's index, promoted with plan 18b): every pixel matches, but
+ * the crawl's cursor blink steps 476-492 ms where `t9/first/03-blink`, the same path, steps
+ * 479-481 ms and the editor steps 480 (TEXT_TIMINGS); the generic tree scenario allows ±2 ms.
+ */
+export const WRITE_MESSAGES_LEAF_GAP =
+  "every pixel matches; the crawl's cursor blink steps 476-492 ms (frame 4: 492) where " +
+  "t9/first/03-blink, the same path, steps 479-481 ms and the editor every 480 ms: a timer " +
+  "spread beyond the tree scenario's ±2 ms (plan 18b)";
+
 export const TAP_DOWN_MS = 60;
 export const TAP_GAP_MS = 340;
 
