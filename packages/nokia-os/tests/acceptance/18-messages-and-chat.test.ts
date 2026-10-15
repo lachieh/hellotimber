@@ -3,6 +3,11 @@
 // scripts/generated/messages-scripts.ts) on a virgin phone and compares each shot, scroll and
 // recording; the table is MESSAGES_SCENARIOS (tests/support/messages.ts).
 import { acceptancePlan } from "../support/acceptance.ts";
-import { MESSAGES_KNOWN_GAPS, MESSAGES_SCENARIOS } from "../support/messages.ts";
+import { MESSAGES_COVERS, MESSAGES_KNOWN_GAPS, MESSAGES_SCENARIOS } from "../support/messages.ts";
 
-acceptancePlan({ plan: "18", scenarios: MESSAGES_SCENARIOS, knownGaps: MESSAGES_KNOWN_GAPS });
+acceptancePlan({
+  plan: "18",
+  scenarios: MESSAGES_SCENARIOS,
+  knownGaps: MESSAGES_KNOWN_GAPS,
+  covers: MESSAGES_COVERS,
+});

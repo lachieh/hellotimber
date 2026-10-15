@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/dictionary-off
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/dictionary-off
 source-sha256: c92787b543f3231dc71df49d09db42251f3f15094801d3cce4050523396ef5fe
 trigger-frame: 1

@@ -4,7 +4,8 @@
 // are timed here with TEXT_TIMINGS, not the kernel's long press. The cursor blinks on a
 // free-running TEXT_TIMINGS.blinkMs timer from the entry's start: keys and commits never restart
 // it (`text/commit` and `text/hold-digit` keep the phase they had before the key).
-import type { PhoneKey } from "@hellotimber/phone-core";
+import { LONG_PRESS_MS, type PhoneKey } from "@hellotimber/phone-core";
+import type { Flow } from "./flow";
 import { TEXT_TIMINGS, type StockWidgetTimeline } from "../resources";
 import { isTextKey } from "../text/keys";
 import { Playback } from "./playback";
@@ -51,6 +52,8 @@ interface Held {
   upAt?: number;
   /** Its hold has acted (123 entered, the text cleared). */
   fired: boolean;
+  /** `#` in 123 typed itself at its down; its hold takes it back (`text/hold-hash-back`). */
+  typed?: boolean;
 }
 
 /** What a key-down asks of the screen around the entry. */
@@ -122,10 +125,12 @@ export class TextEntry {
       return undefined;
     }
     switch (key) {
-      case "#":
-        this.#hash = { key, downAt: this.#now, fired: false };
-        if (this.#state.mode === "123") this.#state = textKey(this.#state, "#", this.#now, limit);
+      case "#": {
+        const typed = this.#state.mode === "123";
+        this.#hash = { key, downAt: this.#now, fired: false, typed };
+        if (typed) this.#state = textKey(this.#state, "#", this.#now, limit);
         return undefined;
+      }
       case "*":
         return "symbols";
       case "up":
@@ -161,7 +166,9 @@ export class TextEntry {
     const hash = this.#hash;
     if (hash !== undefined && !hash.fired && now - hash.downAt >= TEXT_TIMINGS.numberModeHoldMs) {
       hash.fired = true;
-      this.#state = textHold(this.#state, "#", now, this.limit);
+      // Held in 123, # leaves 123 without the # its down typed (`text/hold-hash-back` row 4).
+      const typed = hash.typed === true ? textDelete(this.#state) : this.#state;
+      this.#state = textHold(typed, "#", now, this.limit);
     }
     const clear = this.#clear;
     if (
@@ -184,5 +191,34 @@ export class TextEntry {
       isTextKey(pending.key) && held >= TEXT_TIMINGS.digitHoldMs
         ? textHold(this.#state, pending.key, now, this.limit)
         : textTick(this.#state, now);
+  }
+}
+
+/**
+ * C on an empty entry: back to the screen below as it comes up (`text/delete-empty`: the page 13
+ * ms after the up), or, held for the kernel's long press, standby. The firmware leaves for the
+ * page at the down and its menu's long press goes on to standby (the captures' `hold c` from an
+ * empty editor); a kernel application cannot hand a held key to the menu (phone-core).
+ */
+export class EmptyC {
+  #heldMs: number | undefined;
+
+  /** C went down on the empty text. */
+  down(): void {
+    this.#heldMs = 0;
+  }
+
+  up(flow: Flow): void {
+    if (this.#heldMs === undefined) return;
+    this.#heldMs = undefined;
+    flow.back();
+  }
+
+  tick(dtMs: number, flow: Flow): void {
+    if (this.#heldMs === undefined) return;
+    this.#heldMs += dtMs;
+    if (this.#heldMs < LONG_PRESS_MS) return;
+    this.#heldMs = undefined;
+    flow.standby();
   }
 }

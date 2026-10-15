@@ -15,6 +15,7 @@ exports[`SETTINGS_RECORD (D3) > pins the keys a record can hold (a renamed slug 
     "games/settings/shakes",
     "games/settings/sounds",
     "games/snake/mazes",
+    "messages/dictionary",
     "messages/info-service",
     "messages/info-service/topics/edit",
     "messages/info-service/topics/erase",

@@ -64,9 +64,6 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   // Plan 17: Profiles.
   "12-*-1": "17", // Profiles › Activate
 
-  // Plan 18: Messages I (Write messages until plan 18 Task 10 binds it).
-  "2-1": "18", // Write messages: text editor
-
   // Plan 18c: Chat and content (plan 18 D1).
   "2-4": "18c", // Picture messages: nothing in the virgin EEPROM
   "2-5": "18c", // Templates
@@ -136,6 +133,13 @@ export const MAX_PENDING_FRAMES = 40;
  */
 export const ASSERTED_EARLY: Readonly<Record<string, string>> = { "8-1-1": "23" };
 
+/**
+ * Bound leaves whose recording shows a later plan's screen, by number → that plan: Write
+ * messages opens the T9 editor in the virgin EEPROM, which plan 18 replaces with multi-tap
+ * (Dictionary off) until plan 18b brings T9 (plan 18 D3).
+ */
+export const PENDING_LATER: Readonly<Record<string, string>> = { "2-1": "18b" };
+
 // ---------------------------------------------------------------- io
 
 /** One distinct LCD state of a `record` directory; `image` identifies the pixels. */
@@ -156,6 +160,7 @@ export interface TreeCaptureTables {
   readonly sameAs?: Readonly<Record<string, string>>;
   readonly placeholders?: Readonly<Record<string, string>>;
   readonly assertedEarly?: Readonly<Record<string, string>>;
+  readonly pendingLater?: Readonly<Record<string, string>>;
 }
 
 export class TreeCaptureError extends Error {
@@ -299,8 +304,9 @@ export function treeCaptureSet(
   const sameAs = tables.sameAs ?? SAME_AS;
   const placeholders = tables.placeholders ?? PLACEHOLDER_OWNERS;
   const assertedEarly = tables.assertedEarly ?? ASSERTED_EARLY;
+  const pendingLater = tables.pendingLater ?? PENDING_LATER;
   const statusOf = (number: string): GoldenStatus => {
-    const plan = placeholderOwner(number, placeholders);
+    const plan = placeholderOwner(number, placeholders) ?? pendingLater[number];
     return plan === undefined || number in assertedEarly ? "asserted" : `pending:${plan}`;
   };
   const entries: CaptureSetEntry[] = [];

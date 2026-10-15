@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/wrap-long-word
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/wrap/long-word/13.png + captures/6.39/plan18/text/wrap/long-word/14.png + captures/6.39/plan18/text/wrap/long-word/26.png + captures/6.39/plan18/text/wrap/long-word/27.png + captures/6.39/plan18/text/wrap/long-word/32.png + captures/6.39/plan18/text/wrap/long-word/33.png + captures/6.39/plan18/text/wrap/long-word/34.png
 source-sha256: 65f44d2c37f600dfc8c81a846c72ec7d0e03b7466ec52a33b7f7d302dd9aab31
 note: A word longer than a line, one key per shot: it breaks at the line end, then a space and a new word.

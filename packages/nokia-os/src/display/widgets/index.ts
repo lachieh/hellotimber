@@ -1,6 +1,7 @@
 import type { Framebuffer } from "@hellotimber/phone-screen";
 import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
+import { paintStandby } from "../standby";
 import { paintCalculator, type CalculatorModel } from "./calculator";
 import { paintConfirm, type ConfirmModel } from "./confirm";
 import { paintEditor, type EditorModel } from "./editor";
@@ -41,6 +42,16 @@ export interface PlaceholderModel {
   readonly label: string;
 }
 
+/**
+ * Plan 18: standby's first draw on the way back to it, without the operator (`sms/exit` frame
+ * 1, 83 ms): the ladders, the icons and `Menu`.
+ */
+export interface StandbyDrawModel {
+  readonly kind: "standby-draw";
+  /** The clock standby shows (the host's), if any. */
+  readonly clock?: string;
+}
+
 /** A full-frame boot image inside a boot gate (plan 15: the 42 ms blank, the hands). */
 export interface BootFrameModel {
   readonly kind: "boot-frame";
@@ -68,7 +79,8 @@ export type WidgetModel =
   | EditorModel
   | SymbolsModel
   | PlaceholderModel
-  | CalculatorModel;
+  | CalculatorModel
+  | StandbyDrawModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -132,6 +144,15 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "calculator":
       paintCalculator(fb, model);
+      return;
+    case "standby-draw":
+      paintStandby(fb, {
+        kind: "standby",
+        carrier: "",
+        signal: 4,
+        battery: 4,
+        ...(model.clock === undefined ? {} : { clock: model.clock }),
+      });
       return;
   }
 }

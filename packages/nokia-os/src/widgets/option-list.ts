@@ -15,6 +15,11 @@ export interface OptionListOptions {
   readonly softkey: string;
   /** What the indicator shows before the option's number (default: the list's path). */
   readonly numbering?: ListNumbering;
+  /**
+   * Plan 18: the numbers the indicator shows before the option's, whatever the kernel's position
+   * (an editor's Options › Send by set: `6-2`).
+   */
+  readonly indicatorPrefix?: readonly number[];
   /** OK on option `index`. */
   choose(index: number, flow: Flow): void;
   /**
@@ -55,9 +60,17 @@ export class OptionListWidget implements Widget {
       items: this.#options.labels,
       selected,
       windowTop,
-      indicator: rowsIndicator(flow.indicator(), selected, this.#options.numbering),
+      indicator: this.#indicator(flow),
       softkey: selected === null ? UNSET_SOFTKEY : this.#options.softkey,
     };
+  }
+
+  #indicator(flow: Flow) {
+    const { selected } = this.#cursor;
+    const { indicatorPrefix: prefix, numbering } = this.#options;
+    const position = flow.indicator();
+    if (prefix === undefined) return rowsIndicator(position, selected, numbering);
+    return { ...position, segments: [...prefix, selected === null ? 0 : selected + 1] };
   }
 
   onKeyDown(key: PhoneKey): void {

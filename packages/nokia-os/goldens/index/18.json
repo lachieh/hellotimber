@@ -162,7 +162,7 @@
   {
     "id": "sms/erase",
     "file": "sms/erase.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 12
@@ -170,7 +170,7 @@
   {
     "id": "sms/erase-empty",
     "file": "sms/erase-empty.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 13
@@ -178,7 +178,7 @@
   {
     "id": "sms/exit",
     "file": "sms/exit.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -418,7 +418,7 @@
   {
     "id": "sms/insert-smiley",
     "file": "sms/insert-smiley.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 1,
     "frames": 1
@@ -650,7 +650,7 @@
   {
     "id": "sms/save",
     "file": "sms/save.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 15
@@ -658,7 +658,7 @@
   {
     "id": "sms/save-empty",
     "file": "sms/save-empty.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 14
@@ -666,7 +666,7 @@
   {
     "id": "sms/send",
     "file": "sms/send.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 20,
     "frames": 23
@@ -674,7 +674,7 @@
   {
     "id": "sms/send-by-set-alphanumeric",
     "file": "sms/send-by-set-alphanumeric.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 23,
     "frames": 41
@@ -682,7 +682,7 @@
   {
     "id": "sms/send-by-set-numeric",
     "file": "sms/send-by-set-numeric.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 38,
     "frames": 56
@@ -690,7 +690,7 @@
   {
     "id": "sms/send-by-set-set-2",
     "file": "sms/send-by-set-set-2.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -698,7 +698,7 @@
   {
     "id": "sms/send-by-set-set-2-list",
     "file": "sms/send-by-set-set-2-list.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -706,7 +706,7 @@
   {
     "id": "sms/send-prompt",
     "file": "sms/send-prompt.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -714,7 +714,7 @@
   {
     "id": "sms/send-to-many",
     "file": "sms/send-to-many.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 7
@@ -770,7 +770,7 @@
   {
     "id": "sms/template",
     "file": "sms/template.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 1,
     "frames": 1
@@ -802,7 +802,7 @@
   {
     "id": "text/blink",
     "file": "text/blink.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 11
@@ -810,7 +810,7 @@
   {
     "id": "text/case-after",
     "file": "text/case-after.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -818,7 +818,7 @@
   {
     "id": "text/case-cycle-empty",
     "file": "text/case-cycle-empty.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -826,7 +826,7 @@
   {
     "id": "text/case-cycle-sentence",
     "file": "text/case-cycle-sentence.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -834,7 +834,7 @@
   {
     "id": "text/case-cycle-space",
     "file": "text/case-cycle-space.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -842,7 +842,7 @@
   {
     "id": "text/case-cycle-word",
     "file": "text/case-cycle-word.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -850,7 +850,7 @@
   {
     "id": "text/case-numeric-back",
     "file": "text/case-numeric-back.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 13
@@ -858,7 +858,7 @@
   {
     "id": "text/case-numeric-back-after",
     "file": "text/case-numeric-back-after.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -866,7 +866,7 @@
   {
     "id": "text/commit",
     "file": "text/commit.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -874,7 +874,7 @@
   {
     "id": "text/commit-blink",
     "file": "text/commit-blink.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 11
@@ -882,7 +882,7 @@
   {
     "id": "text/commit-gap",
     "file": "text/commit-gap.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -890,7 +890,7 @@
   {
     "id": "text/commit-other",
     "file": "text/commit-other.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -898,7 +898,7 @@
   {
     "id": "text/counter",
     "file": "text/counter.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 20,
     "frames": 20
@@ -906,7 +906,7 @@
   {
     "id": "text/counter-limit-key",
     "file": "text/counter-limit-key.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 8
@@ -914,7 +914,7 @@
   {
     "id": "text/cursor-one",
     "file": "text/cursor-one.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 19,
     "frames": 19
@@ -922,7 +922,7 @@
   {
     "id": "text/cursor-three",
     "file": "text/cursor-three.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 22,
     "frames": 22
@@ -930,7 +930,7 @@
   {
     "id": "text/delete",
     "file": "text/delete.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -938,7 +938,7 @@
   {
     "id": "text/delete-empty",
     "file": "text/delete-empty.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -946,7 +946,7 @@
   {
     "id": "text/delete-hold",
     "file": "text/delete-hold.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 11
@@ -954,7 +954,7 @@
   {
     "id": "text/delete-hold-short",
     "file": "text/delete-hold-short.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 7
@@ -962,7 +962,7 @@
   {
     "id": "text/dictionary-off",
     "file": "text/dictionary-off.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 16,
     "frames": 20
@@ -970,7 +970,7 @@
   {
     "id": "text/editor",
     "file": "text/editor.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -978,7 +978,7 @@
   {
     "id": "text/hold-digit",
     "file": "text/hold-digit.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 8
@@ -986,7 +986,7 @@
   {
     "id": "text/hold-digit-after",
     "file": "text/hold-digit-after.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -994,7 +994,7 @@
   {
     "id": "text/hold-digit-lower",
     "file": "text/hold-digit-lower.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 7
@@ -1002,7 +1002,7 @@
   {
     "id": "text/hold-digit-pending",
     "file": "text/hold-digit-pending.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 8
@@ -1010,7 +1010,7 @@
   {
     "id": "text/hold-full",
     "file": "text/hold-full.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 8
@@ -1018,7 +1018,7 @@
   {
     "id": "text/hold-hash",
     "file": "text/hold-hash.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 9
@@ -1026,7 +1026,7 @@
   {
     "id": "text/hold-hash-back",
     "file": "text/hold-hash-back.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 10
@@ -1034,7 +1034,7 @@
   {
     "id": "text/hold-hash-back-after",
     "file": "text/hold-hash-back-after.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -1042,7 +1042,7 @@
   {
     "id": "text/hold-numeric",
     "file": "text/hold-numeric.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -1050,7 +1050,7 @@
   {
     "id": "text/hold-one",
     "file": "text/hold-one.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 8
@@ -1058,7 +1058,7 @@
   {
     "id": "text/hold-star-after",
     "file": "text/hold-star-after.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -1066,7 +1066,7 @@
   {
     "id": "text/hold-threshold-1450",
     "file": "text/hold-threshold-1450.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 7
@@ -1074,7 +1074,7 @@
   {
     "id": "text/hold-threshold-1475",
     "file": "text/hold-threshold-1475.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 7
@@ -1082,7 +1082,7 @@
   {
     "id": "text/hold-zero",
     "file": "text/hold-zero.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 8
@@ -1090,7 +1090,7 @@
   {
     "id": "text/holds-full-before",
     "file": "text/holds-full-before.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1098,7 +1098,7 @@
   {
     "id": "text/input",
     "file": "text/input.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -1106,7 +1106,7 @@
   {
     "id": "text/input-routing-ok",
     "file": "text/input-routing-ok.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 20,
     "frames": 35
@@ -1114,7 +1114,7 @@
   {
     "id": "text/input-routing-open",
     "file": "text/input-routing-open.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -1122,7 +1122,7 @@
   {
     "id": "text/input-send-by-set-list",
     "file": "text/input-send-by-set-list.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1130,7 +1130,7 @@
   {
     "id": "text/input-set-1-list",
     "file": "text/input-set-1-list.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1138,7 +1138,7 @@
   {
     "id": "text/key-0-lower",
     "file": "text/key-0-lower.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1146,7 +1146,7 @@
   {
     "id": "text/key-0-upper",
     "file": "text/key-0-upper.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1154,7 +1154,7 @@
   {
     "id": "text/key-1-lower",
     "file": "text/key-1-lower.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -1162,7 +1162,7 @@
   {
     "id": "text/key-1-upper",
     "file": "text/key-1-upper.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 11,
     "frames": 11
@@ -1170,7 +1170,7 @@
   {
     "id": "text/key-2-lower",
     "file": "text/key-2-lower.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 11,
     "frames": 11
@@ -1178,7 +1178,7 @@
   {
     "id": "text/key-2-upper",
     "file": "text/key-2-upper.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 11,
     "frames": 11
@@ -1186,7 +1186,7 @@
   {
     "id": "text/key-3-lower",
     "file": "text/key-3-lower.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -1194,7 +1194,7 @@
   {
     "id": "text/key-3-upper",
     "file": "text/key-3-upper.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -1202,7 +1202,7 @@
   {
     "id": "text/key-4-lower",
     "file": "text/key-4-lower.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -1210,7 +1210,7 @@
   {
     "id": "text/key-4-upper",
     "file": "text/key-4-upper.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -1218,7 +1218,7 @@
   {
     "id": "text/key-5-lower",
     "file": "text/key-5-lower.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -1226,7 +1226,7 @@
   {
     "id": "text/key-5-upper",
     "file": "text/key-5-upper.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -1234,7 +1234,7 @@
   {
     "id": "text/key-6-lower",
     "file": "text/key-6-lower.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -1242,7 +1242,7 @@
   {
     "id": "text/key-6-upper",
     "file": "text/key-6-upper.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -1250,7 +1250,7 @@
   {
     "id": "text/key-7-lower",
     "file": "text/key-7-lower.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 7,
     "frames": 7
@@ -1258,7 +1258,7 @@
   {
     "id": "text/key-7-upper",
     "file": "text/key-7-upper.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -1266,7 +1266,7 @@
   {
     "id": "text/key-8-lower",
     "file": "text/key-8-lower.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -1274,7 +1274,7 @@
   {
     "id": "text/key-8-upper",
     "file": "text/key-8-upper.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -1282,7 +1282,7 @@
   {
     "id": "text/key-9-lower",
     "file": "text/key-9-lower.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -1290,7 +1290,7 @@
   {
     "id": "text/key-9-upper",
     "file": "text/key-9-upper.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -1298,7 +1298,7 @@
   {
     "id": "text/key-modes",
     "file": "text/key-modes.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1306,7 +1306,7 @@
   {
     "id": "text/number",
     "file": "text/number.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 44,
     "frames": 44
@@ -1314,7 +1314,7 @@
   {
     "id": "text/number-c-on-empty",
     "file": "text/number-c-on-empty.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1322,7 +1322,7 @@
   {
     "id": "text/number-hold-2",
     "file": "text/number-hold-2.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 10
@@ -1330,7 +1330,7 @@
   {
     "id": "text/number-hold-c",
     "file": "text/number-hold-c.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 11
@@ -1338,7 +1338,7 @@
   {
     "id": "text/number-hold-hash",
     "file": "text/number-hold-hash.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 10
@@ -1346,7 +1346,7 @@
   {
     "id": "text/number-hold-star",
     "file": "text/number-hold-star.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1354,7 +1354,7 @@
   {
     "id": "text/number-search-empty",
     "file": "text/number-search-empty.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1362,7 +1362,7 @@
   {
     "id": "text/number-star-settle",
     "file": "text/number-star-settle.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 3
@@ -1370,7 +1370,7 @@
   {
     "id": "text/options",
     "file": "text/options.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 9,
     "frames": 9
@@ -1378,7 +1378,7 @@
   {
     "id": "text/star-hold",
     "file": "text/star-hold.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1386,7 +1386,7 @@
   {
     "id": "text/star-tap",
     "file": "text/star-tap.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1394,7 +1394,7 @@
   {
     "id": "text/symbols",
     "file": "text/symbols.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -1402,7 +1402,7 @@
   {
     "id": "text/symbols-c",
     "file": "text/symbols-c.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -1410,7 +1410,7 @@
   {
     "id": "text/symbols-down",
     "file": "text/symbols-down.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 31,
     "frames": 31
@@ -1418,7 +1418,7 @@
   {
     "id": "text/symbols-up",
     "file": "text/symbols-up.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -1426,7 +1426,7 @@
   {
     "id": "text/symbols-use-first",
     "file": "text/symbols-use-first.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1434,7 +1434,7 @@
   {
     "id": "text/symbols-use-last",
     "file": "text/symbols-use-last.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1442,7 +1442,7 @@
   {
     "id": "text/symbols-use-middle",
     "file": "text/symbols-use-middle.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1450,7 +1450,7 @@
   {
     "id": "text/wrap-long-word",
     "file": "text/wrap-long-word.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 7,
     "frames": 7
@@ -1458,7 +1458,7 @@
   {
     "id": "text/wrap-spaces",
     "file": "text/wrap-spaces.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -1466,7 +1466,7 @@
   {
     "id": "text/wrap-words",
     "file": "text/wrap-words.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 14,
     "frames": 14

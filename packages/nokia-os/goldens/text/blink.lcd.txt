@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/blink
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/blink
 source-sha256: 6707df4f59b7e6f57fe541952c311d6b8ca3e372073f4798abf848479ea09d4f
 trigger-frame: 1

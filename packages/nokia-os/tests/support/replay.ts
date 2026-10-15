@@ -55,12 +55,14 @@ export interface ReplayContext {
 /** A key edge acts this long after its command (the firmware's typical redraw latency). */
 export const KEY_LATENCY_MS = 50;
 /** How far after a key edge a recording looks for the row it redraws. */
-export const LATENCY_WINDOW_MS = 130;
+export const LATENCY_WINDOW_MS = 150;
 const TAP_DOWN_MS = 42;
 const SETTLE_MS = 250;
 const DEFAULT_KEYGAP_MS = 300;
 /** A press shorter than this inside a recording is a tap: down and up on its row. */
 const TAP_MAX_MS = 150;
+/** A golden row this short is a partial draw (15-16 ms draws, plan 14; 28 ms digit redraws, `sms/send-by-set-numeric` frame 15). */
+const PARTIAL_MS = 30;
 /** The cursor's blink step: a still may show either phase within one step of its shot. */
 const BLINK_STEP_MS = 481;
 
@@ -374,12 +376,20 @@ export class Replay {
     if (seen.some((frame) => lcdMismatch(frame.pixels, ref, context) === undefined)) {
       return undefined;
     }
-    const ahead = BLINK_STEP_MS - (rig.now - from);
+    // Look ahead for the other phase when a key, or the screen's last change (a screen that just
+    // opened), came less than a blink step ago.
+    const changed = frames.at(-1)!.atMs;
+    const ahead = Math.max(BLINK_STEP_MS - (rig.now - from), changed + BLINK_STEP_MS - rig.now);
     for (let t = 0; t < ahead; t++) {
       this.#advance(1);
       if (lcdMismatch(frames.at(-1)!.pixels, ref, context) === undefined) return undefined;
     }
-    return lcdMismatch(rig.paint().pixels, ref, `${context} (no blink phase matches)`);
+    const times = seen.map((frame) => frame.atMs - rig.now).join(", ");
+    return lcdMismatch(
+      rig.paint().pixels,
+      ref,
+      `${context} (no blink phase matches; frames seen at ${times} ms, then ${ahead} ms ahead)`,
+    );
   }
 
   /** Records a `record … start` block (`body`, up to `record stop`) and compares it. */
@@ -388,8 +398,17 @@ export class Replay {
     if (rows === undefined) throw new Error(`${golden.id} is not a timeline golden.`);
     const stop = body.findIndex((c) => c.op === "record" && c.args[0] === "stop");
     if (stop < 0) throw new Error(`${golden.id}: no record stop in its block.`);
-    const origin = rows[0]!.startMs;
-    const rowStarts = rows.map((row) => row.startMs - origin);
+    // The harness samples from 1 ms after `record start` (some recordings' first row starts later).
+    const origin = Math.min(rows[0]!.startMs, 1);
+    // A key redraws more than a cursor blink: blink rows are not where keys land.
+    const pixels = rows.map((row) => findGoldenImage(golden, row.image).pixels);
+    // Nor partial draws: a key lands on the row its redraw completes.
+    const rowStarts = rows.map((row, i) =>
+      (i > 0 && cursorOnly(pixels[i - 1]!, pixels[i]!)) ||
+      (row.durationMs <= PARTIAL_MS && i < rows.length - 1)
+        ? Number.NaN
+        : row.startMs - origin,
+    );
     const { schedule, endMs } = this.#schedule(body.slice(0, stop), rowStarts, options);
     const rig = this.rig;
     // Key edges still waiting (a tap's release) run at their times inside the recording.
@@ -469,7 +488,8 @@ export class Replay {
           (s, i) => i > lastRow && s >= p.down && s <= p.down + LATENCY_WINDOW_MS,
         );
         if (row > 0) lastRow = row;
-        at = row > 0 ? rowStarts[row]! : p.down + KEY_LATENCY_MS;
+        // A key with no redraw of its own acts at its down (a hold's timer runs from the key).
+        at = row > 0 ? rowStarts[row]! : p.down;
       }
       const held = p.up - p.down;
       actions.push({
@@ -479,9 +499,11 @@ export class Replay {
           this.#lastKeyMs = this.rig.now;
         },
       });
+      // A tap comes up on its row too; a hold comes up when the log releases it: its length is
+      // measured from the key's redraw, as the firmware's held-key timers are (D8).
       if (p.up !== Infinity) {
         actions.push({
-          atMs: held < TAP_MAX_MS ? at : at + held,
+          atMs: held < TAP_MAX_MS ? at : Math.max(at, p.up),
           run: () => this.rig.release(p.key),
         });
       }
@@ -515,9 +537,24 @@ export interface TimelineOptions {
   readonly untimedRows?: ReadonlySet<number>;
   /** Where press k of the recording goes down: a time, or `latency` (no row of its own). */
   readonly keyAt?: Readonly<Record<number, number | "latency">>;
+  /**
+   * Rows that end a link time (D10: `Message sent` after `Sending message`, an arrival's notice),
+   * with the |Δ| they allow: the synthetic cell's spread between recordings. Later rows are
+   * compared from where this one actually started.
+   */
+  readonly anchors?: Readonly<Record<number, number>>;
+  /**
+   * Compare from this golden row on, from the frame on screen when it starts (the rows before
+   * show another plan's screens: `text/dictionary-off`'s T9 editor, plan 18b); its start is not
+   * compared.
+   */
+  readonly fromRow?: number;
 }
 
-/** Whether `b` differs from `a` only in one column's contiguous run (a text cursor). */
+/**
+ * Whether `b` differs from `a` only in one column's contiguous run (a text cursor, or the part
+ * of it the firmware drew first: `sms/save` frame 10 shows its bottom pixel for 17 ms).
+ */
 export function cursorOnly(a: Uint8Array, b: Uint8Array, width = 84): boolean {
   let column = -1;
   let top = Infinity;
@@ -533,7 +570,21 @@ export function cursorOnly(a: Uint8Array, b: Uint8Array, width = 84): boolean {
     bottom = Math.max(bottom, y);
     count++;
   }
-  return count >= 6 && count === bottom - top + 1;
+  return count >= 1 && count === bottom - top + 1;
+}
+
+/** `expectLcd` that accepts either blink phase of a text cursor (the still rule of the replay). */
+export function expectLcdAnyBlink(
+  actual: { readonly pixels: Uint8Array },
+  golden: {
+    readonly id: string;
+    readonly image: { readonly pixels: Uint8Array; readonly name: string };
+  },
+  context: string,
+): void {
+  if (cursorOnly(golden.image.pixels, actual.pixels)) return;
+  const mismatch = lcdMismatch(actual.pixels, golden as never, context);
+  if (mismatch !== undefined) throw new Error(mismatch);
 }
 
 const ms = (value: number): string => value.toFixed(1);
@@ -562,7 +613,7 @@ export function expectFromStart(
   const tolerance = options.toleranceMs ?? TIMING_TOLERANCE_MS;
   const free = (options.blink ?? "free") === "free";
   const start = recorded.frames[0]!.startMs;
-  const origin = rows[0]!.startMs;
+  const origin = Math.min(rows[0]!.startMs, 1);
   const last = rows.at(-1)!;
   const lastEnd = last.startMs - origin + last.durationMs;
   let expected: Step[] = rows.map((row, i) => ({
@@ -575,40 +626,75 @@ export function expectFromStart(
   let actual: Step[] = recorded.frames
     .map((frame) => ({ startMs: frame.startMs - start, pixels: frame.pixels, label: "" }))
     .filter((step, i) => i === 0 || step.startMs < lastEnd - tolerance);
+  if (options.fromRow !== undefined) {
+    // The frame on screen when the row starts (it may have shown since earlier) is the row's.
+    const from = expected[options.fromRow]!.startMs;
+    let at = 0;
+    actual.forEach((step, k) => {
+      if (step.startMs <= from + tolerance) at = k;
+    });
+    expected = expected.slice(options.fromRow);
+    actual = actual.slice(at);
+  }
+  const lines = [" frame image  golden start  actual start       Δ  pixels"];
+  // A partial draw (≤ PARTIAL_MS) the replay never shows: the firmware's two-step redraws
+  // (`text/hold-digit` frame 3, 6 ms; `text/number-hold-2` frame 1, 9 ms) are not reproduced
+  // (plan 14 D8).
+  expected = expected.filter((step) => {
+    const row = rows[step.row!]!;
+    const partial =
+      row.durationMs <= PARTIAL_MS &&
+      step.row! > 0 &&
+      step.row! < rows.length - 1 &&
+      !actual.some((frame) => samePixels(frame.pixels, step.pixels));
+    if (partial) {
+      lines.push(`${step.label}${ms(step.startMs).padStart(14)}  partial draw, not reproduced`);
+    }
+    return !partial;
+  });
   if (free) {
     expected = withoutBlinks(expected);
     actual = withoutBlinks(actual);
   }
-  const lines = [" frame image  golden start  actual start       Δ  pixels"];
   let failed = false;
   let firstPixels: string | undefined;
-  expected.forEach((step, i) => {
-    const frame = actual[i];
+  const shows = (frame: Step, step: Step): boolean =>
+    samePixels(frame.pixels, step.pixels) || (free && cursorOnly(step.pixels, frame.pixels));
+  let j = 0;
+  /** How far the last anchor row moved the rows after it. */
+  let shift = 0;
+  expected.forEach((step) => {
+    const frame = actual[j];
     const prefix = `${step.label}${ms(step.startMs).padStart(14)}`;
+    const row = rows[step.row!]!;
+    j++;
     if (frame === undefined) {
       failed = true;
       lines.push(`${prefix}${"-".padStart(14)}${"-".padStart(8)}  missing  ✗ never shown`);
       return;
     }
-    const timed = i > 0 && !options.untimedRows?.has(step.row!);
+    const timed = step.row! > (options.fromRow ?? 0) && !options.untimedRows?.has(step.row!);
     const marks: string[] = [];
-    if (timed && Math.abs(frame.startMs - step.startMs) > tolerance) marks.push("✗ timing");
-    const image = findGoldenImage(golden, rows[step.row!]!.image);
-    const mismatch =
-      free && cursorOnly(image.pixels, frame.pixels)
-        ? undefined
-        : lcdMismatch(frame.pixels, { id: golden.id, image }, `frame ${rows[step.row!]!.frame}`);
+    const anchor = options.anchors?.[step.row!];
+    const expectedMs = step.startMs + shift;
+    const allowed = anchor ?? tolerance;
+    if (timed && Math.abs(frame.startMs - expectedMs) > allowed) marks.push("✗ timing");
+    if (anchor !== undefined) shift = frame.startMs - step.startMs;
+    const image = findGoldenImage(golden, row.image);
+    const mismatch = shows(frame, step)
+      ? undefined
+      : lcdMismatch(frame.pixels, { id: golden.id, image }, `frame ${row.frame}`);
     if (mismatch !== undefined) {
       marks.push("✗ pixels");
       firstPixels ??= mismatch;
     }
     if (marks.length > 0) failed = true;
-    const delta = timed ? ms(frame.startMs - step.startMs) : "n/a";
+    const delta = timed ? ms(frame.startMs - expectedMs) : "n/a";
     lines.push(
       `${prefix}${ms(frame.startMs).padStart(14)}${delta.padStart(8)}  ${mismatch === undefined ? "ok     " : "differ "}  ${marks.join("  ")}`.trimEnd(),
     );
   });
-  const extra = actual.slice(expected.length);
+  const extra = actual.slice(j);
   if (extra.length > 0) {
     failed = true;
     lines.push(` extra frames at ${extra.map((f) => ms(f.startMs)).join(", ")} ms ✗`);

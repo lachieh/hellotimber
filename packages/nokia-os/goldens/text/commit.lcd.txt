@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/commit
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/commit
 source-sha256: 73e3297cb64def50711afbad82a4f88ec0c599d2e08df6560fae72803b019a2e
 trigger-frame: 1

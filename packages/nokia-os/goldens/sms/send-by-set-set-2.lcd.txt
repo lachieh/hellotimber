@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/send-by-set-set-2
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/send-by-set/set-2
 source-sha256: 390c0ac0b45b736babacc3b538932a4bb736c5e7bb1858ea4e99191a639b9f1d
 trigger-frame: 1

@@ -1,8 +1,10 @@
-// Messages (menu 2; plan 18 implements the editor and SMS): the message centre and voice mailbox
-// numbers, Message settings' virgin values, Info service's setter level and topics, and the
-// leaves plans 18 and 18c own (placeholders until then).
+// Messages (menu 2; plan 18): Write messages, the message centre and voice mailbox numbers,
+// Message settings' virgin values, Info service's setter level and topics, and the leaves plan
+// 18c owns (placeholders until then).
+import { DICTIONARY_KEY, DICTIONARY_LABELS, VIRGIN_OVERRIDES } from "../../messages/bindings";
 import { MESSAGES_RECORD } from "../../messages/store";
-import type { Widget } from "../../widgets/flow";
+import { smsEditor } from "../../messages/write";
+import { interlude, softkeyAlone } from "../../widgets/interlude";
 import type { EepromRecord } from "../eeprom";
 import { note } from "../../widgets/note";
 import { numberEntry } from "../../widgets/number-entry";
@@ -21,18 +23,6 @@ const SET_2_CENTRE_KEY = "messages/message-settings/set-2/message-centre-number"
  */
 export const CENTRE_SAVE_SOFTKEY_MS = 128;
 
-/** The page's soft key alone on a blank screen for `ms`, then `next`. */
-function softkeyFirst(ms: number, next: () => Widget): Widget {
-  let left = ms;
-  return {
-    render: () => ({ kind: "info-screen", lines: [], softkey: "Select" }),
-    tick(dtMs, flow) {
-      left -= dtMs;
-      if (left <= 0) flow.replace(next());
-    },
-  };
-}
-
 /**
  * Message centre number (2-7-1-1, 2-7-2-1, plan 18 Task 8): number entry on the stored number
  * (`sms/centre-1` 00: Set 1's SIM centre; Set 2 none). OK stores it and shows `Centre number
@@ -49,9 +39,10 @@ const centreNumber: ScreenBinding = ({ settings, noteSound }, { key, number }) =
       number: settings.text(key) ?? "",
       done(number, flow) {
         settings.setText(key, number);
+        const lines = ["Centre", "number", "saved"];
         flow.replace(
-          softkeyFirst(CENTRE_SAVE_SOFTKEY_MS, () =>
-            note({ lines: ["Centre", "number", "saved"], timeline: saved, sound: noteSound }),
+          interlude(softkeyAlone("Select"), CENTRE_SAVE_SOFTKEY_MS, (inner) =>
+            inner.replace(note({ lines, timeline: saved, sound: noteSound })),
           ),
         );
       },
@@ -83,7 +74,6 @@ const voiceMailbox: ScreenBinding = ({ settings, noteSound }, { key, number }) =
 export const messagesFeature: StockFeature = {
   name: "messages",
   placeholders: {
-    "2-1": "18", // Write messages: text editor
     "2-4": "18c", // Picture messages: nothing in the virgin EEPROM
     "2-5": "18c", // Templates
     "2-6": "18c", // Smileys
@@ -93,6 +83,8 @@ export const messagesFeature: StockFeature = {
     "2-10": "18c", // Service command editor
   },
   screens: {
+    // Write messages: the multi-tap editor (D3: Dictionary off until plan 18b).
+    "2-1": (services) => () => smsEditor(services),
     "2-7-1-1": centreNumber,
     "2-7-2-1": centreNumber,
     "2-9": voiceMailbox,
@@ -111,6 +103,14 @@ export const messagesFeature: StockFeature = {
   // The SIM's Inbox and Outbox (D7): Restore keeps them.
   records: [MESSAGES_RECORD as EepromRecord<unknown>],
   settings: {
+    // Write messages' Dictionary (D3: VIRGIN_OVERRIDES).
+    choices: [
+      {
+        key: DICTIONARY_KEY,
+        labels: DICTIONARY_LABELS,
+        chosen: VIRGIN_OVERRIDES[DICTIONARY_KEY]!,
+      },
+    ],
     virginTexts: [
       // tree/02-messages/2-7-1-1.leaf "c": the SIM's message centre (an emulator artefact). The
       // tree has no lines for this prompt.

@@ -148,8 +148,18 @@ export type FactoryDefault = {
   readonly capture: string;
 } & ({ readonly label: string } | { readonly marked: readonly string[] });
 
+/** A single-choice setting no tree node lists (plan 18: an editor's Dictionary). */
+export interface VirginChoice {
+  readonly key: string;
+  readonly labels: readonly string[];
+  /** The virgin choice; null = unset. */
+  readonly chosen: number | null;
+}
+
 /** What a feature adds to the settings store (plan 14 D9, plan 15). */
 export interface StockSettingsTables {
+  /** Single-choice settings that are not tree option lists, with their virgin choice. */
+  readonly choices?: readonly VirginChoice[];
   /** Keys under `prefix` read and write the same key under `target` (Tones → a profile's). */
   readonly aliases?: readonly { readonly prefix: string; readonly target: string }[];
   /** Pages whose value is the host's, by setting key: what the page shows. */

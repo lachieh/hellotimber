@@ -8,6 +8,7 @@
 //
 // A tap is 392 ms in the captures (≈42 ms down, the emulator's 250 ms settle, a 100 ms key gap).
 import { MESSAGES_CAPTURE_SCRIPTS } from "../../scripts/generated/messages-scripts.ts";
+import { MESSAGES_ASSERTED } from "../../scripts/messages-capture-set.ts";
 import type { TextMode, TextState } from "../../src/text/multitap";
 import { PROBE_TOLERANCE_MS } from "./golden.ts";
 import { replayScenario, type ReplayContext, type TimelineOptions } from "./replay.ts";
@@ -185,23 +186,53 @@ export function replayTrace(trace: TextTrace, limit = SMS_LIMIT): TraceShot[] {
  */
 export const SETUP_MS = 8000 + 6 * 592 + 9000 + 5 * 592 + 4000 + 9 * 592 + 20000 + 592 + 2000;
 
-/**
- * The T9 editor's Options › Dictionary › Dictionary off (Options' eighth entry; the list opens
- * on English), as the multi-tap editor nokia-os opens with (D3) does it: Dictionary is Options'
- * fifth entry and its list opens on Dictionary off.
- */
-const T9_DICTIONARY_OFF = [
-  ...Array.from({ length: 7 }, () => "key down"),
-  "key menu",
-  "run 1200ms",
-  "key up",
-  "key menu",
+/** A tap as a recording presses it: down, 60 ms, up, then `gap`. */
+const pressed = (key: string, gap: string): string[] => [
+  `press ${key}`,
+  "run 60ms",
+  `release ${key}`,
+  `run ${gap}`,
 ];
-const MULTITAP_DICTIONARY_OFF = [
-  ...Array.from({ length: 4 }, () => "key down"),
-  "key menu",
-  "run 1200ms",
-  "key menu",
+
+/**
+ * The T9 editor's Options › Dictionary › Dictionary off (Dictionary is Options' eighth entry; its
+ * list opens on English, ▲ to Dictionary off), as taps and as a recording's presses
+ * (`text/dictionary-off`), and the same done in the multi-tap editor nokia-os opens with (D3):
+ * Dictionary is Options' fifth entry and its list opens on Dictionary off.
+ */
+const DICTIONARY_OFF_REWRITES: readonly (readonly [readonly string[], readonly string[]])[] = [
+  [
+    [
+      ...Array.from({ length: 7 }, () => "key down"),
+      "key menu",
+      "run 1200ms",
+      "key up",
+      "key menu",
+    ],
+    // Three ▼ and the ▲ become waits as long as their taps (392 ms at the logs' 100 ms key gap),
+    // so everything after keeps the capture's times.
+    [
+      ...Array.from({ length: 4 }, () => "key down"),
+      "run 1176ms",
+      "key menu",
+      "run 1200ms",
+      "run 392ms",
+      "key menu",
+    ],
+  ],
+  [
+    [
+      ...Array.from({ length: 7 }, () => pressed("down", "300ms")).flat(),
+      ...pressed("menu", "1500ms"),
+      ...pressed("up", "600ms"),
+    ],
+    [
+      ...Array.from({ length: 4 }, () => pressed("down", "300ms")).flat(),
+      "run 1080ms",
+      ...pressed("menu", "1500ms"),
+      "run 660ms",
+    ],
+  ],
 ];
 
 /**
@@ -218,9 +249,12 @@ export function messagesRewrite(lines: readonly string[]): string[] {
       while (i < lines.length && !(lines[i] === "run 2s" && lines[i - 1] === "key c")) i++;
       continue;
     }
-    if (T9_DICTIONARY_OFF.every((line, k) => lines[i + k] === line)) {
-      out.push(...MULTITAP_DICTIONARY_OFF);
-      i += T9_DICTIONARY_OFF.length - 1;
+    const rewrite = DICTIONARY_OFF_REWRITES.find(([t9]) =>
+      t9.every((line, k) => lines[i + k] === line),
+    );
+    if (rewrite !== undefined) {
+      out.push(...rewrite[1]);
+      i += rewrite[0].length - 1;
     } else out.push(lines[i]!);
   }
   return out;
@@ -242,32 +276,78 @@ export function messagesScenario(options: TimelineOptions = {}): (id: string) =>
 /** A recording of a note whose timeline another recording of the same note gave (D8). */
 const OTHER_RECORDING: TimelineOptions = { toleranceMs: PROBE_TOLERANCE_MS };
 
+/**
+ * The synthetic cell's link-time spread around the medians the phone uses (D10): five sends
+ * 2574.3-2790.4 ms around 2662.4, five arrivals 2141.3-2464.4 ms around 2324.3.
+ */
+export const SEND_LINK_SPREAD_MS = 130;
+export const RECEIVE_LINK_SPREAD_MS = 185;
+
+/** A send's recording: the bar's steps are 7-6's (PROBE_TOLERANCE_MS), `Message sent` at `row`. */
+const sendRecording = (row: number): TimelineOptions => ({
+  toleranceMs: PROBE_TOLERANCE_MS,
+  anchors: { [row]: SEND_LINK_SPREAD_MS },
+});
+
+/**
+ * A held key's timer runs from its down in the firmware; the replay puts the down on the key's
+ * first redraw (D8), here the `#` that 123 types (`text/hold-hash-back`: 1026 ms vs 1010 + 49).
+ */
+const HOLD_FROM_REDRAW: TimelineOptions = { toleranceMs: 35 };
+
+/**
+ * The scenario options of plan 18's goldens that are not the default (`messagesScenario()`), by
+ * the task that promoted them.
+ */
+export const MESSAGES_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
+  // Task 8. Welcome note erased plays welcome/erase-empty's timeline; plan 15's recordings of
+  // the notes play plan 18's; No phone numbers plays text/number-search-empty's.
+  "welcome/save-empty": OTHER_RECORDING,
+  "welcome/plan15-erase": OTHER_RECORDING,
+  "welcome/plan15-save-long": OTHER_RECORDING,
+  "sms/centre-1-ok-empty": OTHER_RECORDING,
+  // Task 10.
+  // Rows 0-9 are the virgin T9 editor and its Options (plan 18b, D3): the replay's multi-tap
+  // editor reaches the Dictionary list on Dictionary off directly; compared from there.
+  "text/dictionary-off": { fromRow: 10 },
+  // The commit runs 1449-1452 ms after the letter's redraw between recordings (TEXT_TIMINGS is
+  // text/commit's 1452.2).
+  "text/hold-digit": OTHER_RECORDING,
+  "text/hold-digit-pending": OTHER_RECORDING,
+  "text/hold-one": OTHER_RECORDING,
+  "text/hold-zero": OTHER_RECORDING,
+  "text/hold-hash-back": HOLD_FROM_REDRAW,
+  "text/case-numeric-back": HOLD_FROM_REDRAW,
+  "text/number-hold-2": OTHER_RECORDING,
+  "text/number-hold-hash": OTHER_RECORDING,
+  "sms/save-empty": OTHER_RECORDING,
+  // No phone numbers plays text/number-search-empty's 2914 ms; this recording's runs 2883 ms.
+  "sms/send-to-many": { toleranceMs: 35 },
+  "text/input-routing-ok": sendRecording(11),
+  "sms/send-by-set-numeric": sendRecording(32),
+  "sms/send-by-set-alphanumeric": sendRecording(17),
+};
+
 /** Every asserted plan 18 golden's scenario (tests/acceptance/18-messages-and-chat.test.ts). */
-export const MESSAGES_SCENARIOS: Readonly<Record<string, (id: string) => void>> = {
-  // Task 8: Welcome note, the message centre and voice mailbox numbers.
-  "welcome/editor": messagesScenario(),
-  "welcome/face": messagesScenario(),
-  "welcome/options": messagesScenario(),
-  "welcome/save-hi": messagesScenario(),
-  // Welcome note erased plays welcome/erase-empty's timeline.
-  "welcome/save-empty": messagesScenario(OTHER_RECORDING),
-  "welcome/erase-empty": messagesScenario(),
-  "welcome/c-on-empty": messagesScenario(),
-  "welcome/hold-c": messagesScenario(),
-  "welcome/37th-key": messagesScenario(),
-  "welcome/plan15": messagesScenario(),
-  // Plan 15's recordings of the same notes (plan 18's are the timelines).
-  "welcome/plan15-erase": messagesScenario(OTHER_RECORDING),
-  "welcome/plan15-save-long": messagesScenario(OTHER_RECORDING),
-  "sms/centre-1": messagesScenario(),
-  "sms/centre-1-ok": messagesScenario(),
-  // No phone numbers plays text/number-search-empty's timeline.
-  "sms/centre-1-ok-empty": messagesScenario(OTHER_RECORDING),
-  "sms/centre-2": messagesScenario(),
-  "sms/centre-2-ok": messagesScenario(),
-  "sms/voice-mailbox": messagesScenario(),
-  "sms/voice-mailbox-ok": messagesScenario(),
+export const MESSAGES_SCENARIOS: Readonly<Record<string, (id: string) => void>> =
+  Object.fromEntries(
+    [...MESSAGES_ASSERTED].map((id) => [id, messagesScenario(MESSAGES_OPTIONS[id])]),
+  );
+
+/** The leaves plan 18's features bind, by a golden that shows each (the coverage guard). */
+export const MESSAGES_COVERS: Readonly<Record<string, readonly string[]>> = {
+  "text/editor": ["2-1"],
+  "welcome/editor": ["6-2-3"],
+  "sms/centre-1": ["2-7-1-1"],
+  "sms/centre-2": ["2-7-2-1"],
+  "sms/voice-mailbox": ["2-9"],
 };
 
 /** Asserted plan 18 goldens whose scenario cannot pass, with the reason. */
-export const MESSAGES_KNOWN_GAPS: Readonly<Record<string, string>> = {};
+export const MESSAGES_KNOWN_GAPS: Readonly<Record<string, string>> = {
+  "text/commit-gap":
+    "the 1450 ms key gap's second 2 reached the firmware after the first A's commit (1452 ms " +
+    "after its redraw): the capture's gap includes key-scan latency that varies between keys, " +
+    "while the replay gives every key the same (D8), so its second key cycles A to B; the " +
+    "1400 ms shots match",
+};

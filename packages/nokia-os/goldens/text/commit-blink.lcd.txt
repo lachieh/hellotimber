@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/commit-blink
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/commit-blink
 source-sha256: c3cc0e6fa090951803f2808370594ee46f41e89edfe9a43c01ffaf8eb568a105
 trigger-frame: 1

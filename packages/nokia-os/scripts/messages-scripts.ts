@@ -8,8 +8,8 @@
 // comments, indentation and `hex` (a read that takes no emulated time). The setup include
 // becomes `include setup`; image paths keep their file name only. Tests replay these streams
 // (tests/support/messages.ts), so they never read `$REF`. The glyph sheet sections are left out
-// (their goldens are resources, not scenarios), as are the T9 probes (plan 18b evidence) and
-// the failure attempts (no golden, D14).
+// (their goldens are resources, not scenarios), as are the T9 insertion probes (plan 18b
+// evidence), the failure attempts (no golden, D14) and the receive limits (not imported).
 //
 // Idempotent. Runs under Node's type stripping: imports only node:*.
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -25,13 +25,11 @@ const LEFT_OUT = new Set([
   "glyphs-large",
   "glyphs-small",
   "insert-t9",
-  "keys-sentence",
   "fail-boot",
   "fail-centre",
   "fail-set2",
   "fail-stall",
   "receive-limits",
-  "options-virgin",
 ]);
 
 function fail(message: string): never {

@@ -1165,7 +1165,7 @@ exported with the port's types. A one-digit day in `Sent:` is padded (UNVERIFIED
 `COMPOSED_FLOWS`, `VIRGIN_OVERRIDES`), `src/firmware/leaves.ts`, `src/firmware/settings.ts`
 (the dictionary choice), `tests/messages-write.test.ts` (new).
 
-- [ ] 2-1: the editor (sms counter, 459 limit or as Task 0 shows), the multi-tap Options list as
+- [x] 2-1: the editor (sms counter, 459 limit or as Task 0 shows), the multi-tap Options list as
       Task 0 recorded (S9 has the T9 list), the indicator showing the option number. Bind: Send (number entry → `Sending message`
       → `Message sent` → the editor, or the failure note, D14), Send to many (the virgin note; with
       phone book names: plan 19's placeholder), Template and Insert smiley (the captured no-response;
@@ -1173,13 +1173,52 @@ exported with the port's types. A one-digit day in `Sent:` is padded (UNVERIFIED
       (Dictionary off with its note; English/Русский/Български → placeholder owned by `18b`), Send by
       set (Set 1 option list → number entry or `Routing address:` text input; Set 2's item view),
       Save (store → `Message saved`, or `Message memory full`), Erase (as captured), Exit (standby).
-- [ ] `messages/dictionary` setting with `VIRGIN_OVERRIDES` (D3); the settings record's pinned key
+- [x] `messages/dictionary` setting with `VIRGIN_OVERRIDES` (D3); the settings record's pinned key
       snapshot (plan 15 D3) gains it (version bump only if Task 5 of plan 15's rule requires it).
-- [ ] TDD through keys against `sms/send*`, `sms/save*`, `sms/send-by-set*`, `text/dictionary-off`
+- [x] TDD through keys against `sms/send*`, `sms/save*`, `sms/send-by-set*`, `text/dictionary-off`
       (pixels exact, timelines ±2 ms; link-time rows with the stated tolerance if Task 0's spread
       exceeds it, plan 14 closeout decision 2).
-- [ ] Remove `2-1` from both placeholder tables (if Task 2 has not).
-- [ ] Commit: `feat(nokia-os): Write messages with send, save and the stock Options`.
+- [x] Remove `2-1` from both placeholder tables (if Task 2 has not).
+- [x] Commit: `feat(nokia-os): Write messages with send, save and the stock Options`.
+
+Deviation: **Task 10 (paths and tables):** `src/messages/write.ts` (the SMS editor, `smsEditor`, and
+its Options) and `src/messages/bindings.ts` (`EDITOR_OPTIONS`, `COMPOSED_FLOWS`,
+`VIRGIN_OVERRIDES`, `DICTIONARY_LABELS`) are bound by the messages feature's screen `2-1`; no
+`leaves.ts`/`settings.ts` tables. The Dictionary choice is a new kind of feature setting
+(`StockSettingsTables.choices`: a single choice no tree node lists, with its virgin value), so
+`feature.ts`, `stock.ts` and `settings.ts` gain one table; the key snapshot gains
+`messages/dictionary`. `2-1` leaves the placeholder tables; `tree-capture-set.ts` gains
+`PENDING_LATER` (`2-1` → `18b`) for the T9 first screen, while `sound/note/2-1` (OK's beep) is
+asserted. `OptionListWidget` gains `indicatorPrefix` (Send by set's `6-k`), `ProgressModel` two-line
+text (`Sending` / `message`), and a `standby-draw` widget model (`sms/exit` frame 1).
+
+Deviation: **Task 10 (measured behaviour):** short firmware screens between two others are
+reproduced (`src/widgets/interlude.ts`): Exit draws standby without its operator for 83 ms; Send to
+many draws its note's `OK` alone for 168 ms; Save shows a blank LCD for 32 ms and `Saving message`
+(the bar's first frame) for 88 ms, or a 68 ms blank before `Message memory full`; a Send by set
+set draws its list's `OK` for 115 ms. `Sending message` loops plan 14's Requesting bar under two
+lines. Set 2 without a message centre asks for one (`Message centre` / `number:`, Search: Task 0
+evidence `sms/fail/set-2`, not imported); OK stores it and sends (UNVERIFIED). Routing address holds
+20 characters (UNVERIFIED). C on an empty editor or text input acts as it comes up (`text/delete-empty`:
+the page 13 ms after the up) and, held for the kernel's long press, goes to standby (`EmptyC`: the
+firmware leaves at the down and its menu's long press goes on to standby; a kernel application
+cannot hand a held key to the menu). `#` held in 123 takes back the `#` its down typed
+(`text/hold-hash-back` row 4). A sentence starts only after `.`, `?` or `!` and a space: straight
+after the mark the case stays (`text/symbols-use-first` frame 1: `Hi.` shows abc). The composed
+failure note plays `Code error`'s error-note timeline (UNVERIFIED, D14).
+
+Deviation: **Task 10 (acceptance):** Task 10 promotes every `text/*` golden and the Write messages
+`sms/*` goldens (98). `text/commit-gap` is a known gap (its 1450 ms shot: the firmware read the
+second key after the 1452 ms commit, the replay's uniform key latency 2 ms before). The replay's
+comparison skips the firmware's partial draws it does not make (≤ 30 ms rows: two-step redraws of a
+held digit, a digit's redraw), aligns a key on the first non-blink, non-partial row after it and
+measures a hold from there (D8), compares `text/dictionary-off` from its Dictionary list (its rows
+0-9 are the T9 editor, plan 18b), and lets the rows that end a send's link time differ by the
+synthetic cell's spread (`SEND_LINK_SPREAD_MS`, D10) before comparing the rows after them from
+there. Recordings that replay another recording's note or commit timing keep PROBE_TOLERANCE_MS; the
+holds of `#` in 123 ±35 ms (the firmware times them from the key's down, the replay from its
+redraw). `AcceptancePlan.covers` (and the coverage guard) let a plan say which tree nodes its
+hand-written goldens cover: `text/editor` covers `2-1`.
 
 ### Task 11 - Inbox, Outbox, reading and arrivals (TDD)
 

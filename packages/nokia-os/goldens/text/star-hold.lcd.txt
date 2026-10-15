@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/star-hold
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/hold-star/sentence
 source-sha256: b563c56872f41ac4ec1cb30793127c6b3c50a8e981c0aac5a360b845935f0e00
 trigger-frame: 1

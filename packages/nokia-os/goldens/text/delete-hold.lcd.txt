@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/delete-hold
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/delete-hold
 source-sha256: 99bbcbb0d4de5b4ae7682271bec660aa1ac3a7f46e06c5e8f820d4f5386ca841
 trigger-frame: 1
