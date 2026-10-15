@@ -10,7 +10,7 @@
 follows this plan (Chat's editor is T9 by default).
 **Ground truth:** `docs/specs/t9-behaviour.md` (the behaviour and the firmware dictionary's
 architecture, written for this plan) and the goldens Task 2 imports from the dirty-room captures.
-**Status:** not started (Task 0 done by the planning agent).
+**Status:** in progress (Tasks 0 and 2 done by the dirty room; the clean room does 1 and 3-9).
 
 ## Goal
 
@@ -406,14 +406,17 @@ the clean room. If Task 2 finds a scenario missing or broken, it reports to the 
 **Files:** `VISION.md`, `docs/specs/nokia-3310.md`, `docs/specs/nokia-3310-menu-tree.md`,
 `docs/plans/README.md`, this plan.
 
-- [ ] VISION: the contract changes above; the nokia-os row gains "T9 English (open dictionary)".
+- [x] VISION: the contract changes above; the nokia-os row gains "T9 English (open dictionary)".
       Settle the non-goal "T9 dictionaries beyond what the UI bit needs": it stays a website
       non-goal; nokia-os ships one open-list English dictionary (this plan).
-- [ ] Spec §6: point "Text entry" to `docs/specs/t9-behaviour.md` for predictive text. Spec §10:
+- [x] Spec §6: point "Text entry" to `docs/specs/t9-behaviour.md` for predictive text. Spec §10:
       a "T9 (plan 18b, in progress)" entry with the findings table above.
-- [ ] Menu-tree spec: Dictionary list order and behaviour (spec 10.4).
-- [ ] Plans README: row 18b links this file, `in progress`.
-- [ ] Commit: `docs: define T9 predictive text contracts (plan 18b)`.
+- [x] Menu-tree spec: Dictionary list order and behaviour (spec 10.4).
+- [x] Plans README: row 18b links this file, `in progress`.
+- [x] Commit: `docs: define T9 predictive text contracts (plan 18b)`.
+
+Deviation: spec §10 is an index with one row per area file (AGENTS.md "Parallel plan conventions"
+5), so the findings table lives in `docs/specs/stock/t9-predictive-text.md` and §10 gains its row.
 
 ### Task 2 - Import the T9 goldens (dirty-room bridge, D1)
 

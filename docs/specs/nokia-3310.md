@@ -126,7 +126,9 @@ Sources: manual p.19 keys, p.28, p.34–38, p.32 ([scroll keys verbatim](https:/
   [§10](#10-firmware-ground-truth-v639-captures) and [stock text entry](stock/text-entry-and-sms.md).
   - Two modes: **predictive text input** (T9-style dictionary; one keypress per letter; word matched against dictionary; dictionary language selectable; can be set off via Options → `Dictionary`) and **traditional multi-tap**.
   - Multi-tap: press key repeatedly until the character appears; **`0` = space** (verified); **`1` cycles punctuation/special characters**; **`*` opens the special-character picker** (grid of symbols; scroll, press `Use`) (verified); **short press `#` switches upper/lower case** (verified); **press-and-hold a digit key inserts that number; press-and-hold `0` toggles letter/number mode (`123` indicator shown)** (verified); same-key consecutive letters: press ▼ (cursor right) or wait one second (verified); `C` deletes left, hold-`C` clears all.
-  - In predictive mode, accept word with `0` (space) — UNVERIFIED detail, standard Nokia behavior.
+  - In predictive mode, accept word with `0` (space). For the measured v6.39 predictive text (T9:
+    candidate lists, `*`, `?`/Spell, key 1, case, word stops, Matches, Insert word, user words) see
+    [T9 behaviour](t9-behaviour.md) and [stock T9](stock/t9-predictive-text.md).
   - Dialing screen: `*` pressed repeatedly cycles `*`/`+`/`p`/`w` for international prefix and dialing pauses — UNVERIFIED exact cycle, standard Nokia behavior.
 
 ---
@@ -210,6 +212,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Security code, boot gates, storage, virgin/factory states  | [stock/storage-and-settings.md](stock/storage-and-settings.md)     | 15   |
 | Tones and sound                                            | [stock/sound.md](stock/sound.md)                                   | 16   |
 | Text entry and SMS                                         | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)         | 18   |
+| T9 predictive text (plan 18b, in progress)                 | [stock/t9-predictive-text.md](stock/t9-predictive-text.md)         | 18b  |
 | Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                         | 20   |
 | Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                             | 23   |
 | Keyguard and lights                                        | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |
