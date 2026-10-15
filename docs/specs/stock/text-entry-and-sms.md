@@ -5,8 +5,8 @@ Source: plan 18 Task 0's v6.39 emulator captures under
 [plan 18](../../plans/18-messages-and-chat.md#task-0---canonical-ref-captures-no-repository-changes),
 imported as 196 committed goldens (`goldens/index/18.json`: `text/*`, `sms/*`, `welcome/*`,
 `glyphs/*`). `@hellotimber/nokia-os` reproduces them: 188 are asserted pixel for pixel and on
-their timing rows by replaying the captures' own command logs (8 of them known gaps, listed
-below), 7 wait for plan 22 and 1 for plan 18c. The facts below are verified by those goldens
+their timing rows by replaying the captures' own command logs, by the fidelity standard of
+`AGENTS.md` (17 of them known gaps, listed below), 7 wait for plan 22 and 1 for plan 18c. The facts below are verified by those goldens
 unless marked UNVERIFIED; "Shipped behaviour" lists the rules the implementation adds.
 
 ## Multi-tap entry
@@ -124,7 +124,8 @@ The default synthetic network accepts all sends without loopback. Hosts deliver 
 service-centre timestamps; outgoing recipient fields preserve typed numbers/routing addresses.
 Additional host latency extends Sending beyond the median minimum. These synthetic-cell
 end-to-end delays do not isolate a firmware-only timer and are UNVERIFIED on a live network.
-Preserve each captured timeline's durations; cross-recording spread exceeds ±2 ms.
+Preserve each captured timeline's durations; cross-recording spread can exceed a display frame
+(`Opening`: 34-80 ms).
 
 Full 160-character delivery, faithful Unicode reception and alphanumeric senders are UNVERIFIED.
 The helper truncates the requested 160-character attempt to 120 septets, uses ASCII packing
@@ -166,7 +167,11 @@ Phone book in the capture; the kernel's standby keys put the dialled numbers the
 `sms/notice-c` (an 88 ms standby frame without operator), `sms/elsewhere` (C held in a moving
 game, plan 23's kernel gap), `sms/time-format` (the standby clock in 12-hour format, plan 21) and
 `sms/sim-same-new-process`, `-inbox`, `-outbox` (the emulator loses its SIM overlay in a new
-process; the record keeps the messages).
+process; the record keeps the messages). Beyond one display frame: `Opening` lasting 34-80 ms
+between recordings where nokia-os shows it 60 ms (`sms/full-persist-inbox-open`,
+`inbox-menu-2-2`, `notice-inbox-menu`, `persist-inbox`, `restore-inbox`), the 22 ms cleared screen
+before `Opening` (`sms/inbox-read`, `notice-read`, `notice-count-read`) and a typed digit's 28 ms
+first redraw step (`sms/send-by-set-numeric`), both two-step redraws nokia-os draws at once.
 
 UNVERIFIED: the `Message sending failed` note and its ≈2.9 s (composed, never captured); the
 blinking envelope's phase; `No number found on this screen`'s length (2883 ms in one recording)

@@ -4,8 +4,8 @@ Part of the stock firmware's ground truth ([index](../nokia-3310.md#10-firmware-
 
 Source: plan 16 Task 0 (`$REF/captures/6.39/plan16/`, 631 recordings; the planning probes
 S1-S10 in `docs/plans/16-tones-and-sound.md`), imported as 331 sound goldens (299 asserted, each
-driven by a scenario; 6 known gaps). The emulator logs register changes of three
-outputs every 1 ms: the **buzzer** (13 MHz / a 16-bit divider, enable bit, volume register MAD2
+driven by a scenario and compared by the fidelity standard of `AGENTS.md`; 8 known gaps). The
+emulator logs register changes of three outputs every 1 ms: the **buzzer** (13 MHz / a 16-bit divider, enable bit, volume register MAD2
 PUP 0x1E), the DSP **tone generator** (earpiece path; oscillator register / 4 Hz, a second
 oscillator for DTMF, level word at 0x100A8) and the **vibrator**. Sound goldens assert those
 events, never audio (the WAV is the emulator's synthesis and ignores both volume registers).
@@ -42,7 +42,7 @@ code request on` the buzzer at 1000 Hz (≈285 ms). Other notes are silent. The 
   end; sound needs Warning tones and Sounds On, the ≈480 ms vibrator Shakes and Vibrating alert
   On. Keys on the game-over note make no beep (Navi and C there UNVERIFIED). The captured cues lag
   the session's by 47-54 ms (the New game redraw latency, not reproduced); intervals between cues
-  match within a tick's tolerance. Factory Games settings are On.
+  match by the fidelity standard. Factory Games settings are On.
 - **Power:** the power-on plays 900 Hz for 124 ms 2425 ms in (also with Keypad tones Off); the power
   key's long press plays it again and stops previews.
 
@@ -51,7 +51,7 @@ code request on` the buzzer at 1000 Hz (≈285 ms). Other notes are silent. The 
 | WAV timbre (low-passed square, sine tones, 3.4 ms envelope)                    | the emulator's synthesiser             | never asserted or imported                           |
 | 1 ms states (`buzzer_on=1, hz=0`, stale frequency, mute word, vibrator glitch) | two-step register writes; 1 ms polling | dropped by the importer, counted under `omitted`     |
 | key-to-beep latency 12-103 ms; tone lead over a note's redraw                  | firmware key scan and draw latency     | not reproduced                                       |
-| edge jitter between passes (median 11 ms, ≤ 48 ms), second pass ≈1 % slower    | emulator timer and DSP power state     | later passes compared with a tolerance               |
+| edge jitter between passes (median 11 ms, ≤ 48 ms), second pass ≈1 % slower    | emulator timer and DSP power state     | compared by the fidelity standard                    |
 | silent previews and warning tones in the virgin state                          | unset tone settings                    | the virgin initial state, asserted by virgin goldens |
 | timer unit ≈7.745 ms                                                           | emulator timebase                      | durations as captured; UNVERIFIED on hardware        |
 | game cues 47-54 ms after the session's (the New game redraw latency)           | firmware key scan and draw latency     | cues aligned on the first; intervals compared        |
@@ -66,7 +66,9 @@ register); the message `Beep once` word at Levels 2-3 (stepped between Level 1's
 preview ends inside its first pass (it repeats what was captured), and Ring once and Beep once as
 they ring; Navi and C on the game-over screens (silent like the other keys); the power key's
 power-off tone at the kernel's 800 ms long press (≈1046 ms in the capture). **Not reproduced:**
-the keypad beep of 77 ms when a key lands ≈70 ms before the DSP powers down (one capture), and the
-key-to-output latencies above. DTMF at standby (`sound/keypad/keys`, `hold`) is plan 22's: digits
+the keypad beep of 77 ms when a key lands ≈70 ms before the DSP powers down (one capture), the
+key-to-output latencies above, Beep once's beep 23 ms after the vibrator with Keypad tones Off
+(1 ms in the other recordings) and one Level 5 recording of Get cool running ≈0.7 % slow (up to
+57 ms behind by 8 s). DTMF at standby (`sound/keypad/keys`, `hold`) is plan 22's: digits
 there beep 900 Hz until number entry exists, and the dialling tones need the event's second
 oscillator (a contract extension then).

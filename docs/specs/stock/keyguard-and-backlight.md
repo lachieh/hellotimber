@@ -128,16 +128,18 @@ lights at the screen).
 ## What nokia-os reproduces
 
 Every plan 25 golden not pending on plan 22 is asserted (193 of 210): the keyguard's LCD
-timelines and stills pixel for pixel, their `leds` per row, the lights goldens' edges within
-5 ms after power-on alignment, and the keyguard's sounds. The four message arrivals (asserted with
+timelines and stills pixel for pixel, their `leds` per row, the lights goldens' edges after
+power-on alignment and the keyguard's sounds by the fidelity standard of `AGENTS.md` (the light
+model's own tests hold its off edges to 5 ms). The four message arrivals (asserted with
 plan 18's merge) are aligned on the arrival: the captures do not log the delivery and the link
 time spreads 2141-2464 ms, so they pin what an arrival lights and paints, not its latency. Known gaps (expected failures, causes in
-`tests/acceptance/25-keyguard-and-backlight.test.ts`): a restarted hint closing with two partial
-draws (`hint-during`, `emergency/{000,110,113,911,999}`), `Keypad locked` timer spreads of
-15-29 ms (`lock-gap/{2500,2900,2910,2920}`), `*` during the carousel's shortcut entry
-(`lock-cancel/digit`, plan 14's kernel), the light tick's ±3 ms (`timeout/virgin/tap-02`), the
-power key's long press (`boot/power-off`, plan 17) and Snake II deaths the captured bot's keys do
-not reproduce (`game/{off,on}/{over,top-score}`).
+`tests/acceptance/25-keyguard-and-backlight.test.ts`): a restarted hint closing with a 17 ms
+partial draw (`hint-during`, `emergency/{000,110,113,911,999}`), `*` during the carousel's
+shortcut entry (`lock-cancel/digit`, plan 14's kernel), the light tick's ±3 ms
+(`timeout/virgin/tap-02`), the power key's long press (`boot/power-off`, plan 17), Snake II
+deaths the captured bot's keys do not reproduce (`game/{off,on}/{over,top-score}`) and Games ›
+Lights Off darkening the LEDs at Select's release, 22 ms after the firmware
+(`game/off/{pause-c,pause-nav,play}`).
 
 ## The website's backlight
 

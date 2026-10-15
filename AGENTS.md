@@ -130,6 +130,32 @@ plan 13) is gitignored and **never committed**; nothing from `$REF/extracted` is
 - Never hand-edit `goldens/**` or `src/resources/generated/**`: change the importer, its
   capture-set table or the extractor inputs and regenerate. Tests never read `$REF`.
 
+## Fidelity standard
+
+"Strict repro" means human-perceivable fidelity, not millisecond-exact timing (Lachlan,
+2026-10-15): a difference that does not change the phone at a human-perceivable level does not
+matter. Every golden comparison applies one rule, implemented in
+`packages/nokia-os/tests/support/golden.ts` (`timingToleranceMs`, `withoutPartialDraws`):
+
+- **Pixels:** every settled frame is pixel-exact. No pixel tolerance.
+- **Timing:** an instant `t` ms after its reference (the trigger; a sound program's onset; the
+  previous tick for game intervals; the last key-down for lights) matches within
+  `clamp(t / 20, 17, 50)` ms: one display frame (17 ms) for animation steps, growing as 5 % of
+  `t` to 50 ms for holds of about a second or longer (notes, delays, boot holds, light timeouts)
+  and drift across long timelines.
+- **Partial redraws:** a frame shown for less than 17 ms, in the golden or the recording, is
+  neither required nor forbidden, as long as the frames around it match.
+- **Sound:** frequencies and volume registers are exact; edge times follow the timing rule.
+- **Gameplay timing** (a game's speed, a grace window that decides survival) follows the same
+  rule interval by interval, so it still counts.
+
+Key-to-redraw, key-to-sound and key-to-light latency stay outside the rule (plan 14 D8, plan 16
+D8, plan 25 D2). A difference the rule counts is a known gap with its reason, never a widened
+per-test tolerance. Plans must not add complexity, known gaps or per-test tolerances to chase
+differences the rule calls imperceptible, nor impose arbitrary API limits for them. This
+supersedes the tolerance text of earlier plans (±2 ms, `PROBE_TOLERANCE_MS`, game tick and sound
+edge tolerances).
+
 ## Parallel plan conventions (nokia-os)
 
 Plans 17+ run in parallel git worktrees. Each plan owns its own files below and touches shared

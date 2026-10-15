@@ -66,7 +66,7 @@ UNVERIFIED (neither a phase kept while covered nor one inverted at each showing 
   octave (to 3951.4 Hz). Periods are integer timer units of ≈7.745 ms per tempo and value, plain
   and dotted (`sound/tempo/<bpm>`; 112 BPM quarter: 67 units = 519 ms, not 536); a note sounds for
   its period less ≈15.5 ms; a rest is silent for its period. Single notes jitter by ±1 unit and a
-  recording can run ≈1 % long, so comparisons use plan 16's drift tolerance.
+  recording can run ≈1 % long, within the fidelity standard of `AGENTS.md`.
 - Volume: the Ringing volume's `VOLUME_RULE` tables (Levels 1-4), Level 5 Level 4's at first,
   Ascending and an unset volume Level 1's; Incoming call alert, Keypad tones, Warning tones and
   Vibrating alert change nothing; no vibrator. In a long Play, Level 5 jumps to the fifth table and
@@ -108,7 +108,7 @@ settings empties the slots and resets the ringing tone to `Nokia tune`.
 | Artefact                                               | Cause                            | Handling                                |
 | ------------------------------------------------------ | -------------------------------- | --------------------------------------- |
 | Every Send accepted (`CP/RP ACK`), nothing looped back | the emulator's synthetic network | plan 18c's synthetic network            |
-| Durations as multiples of ≈7.745 ms, ±1 unit jitter    | emulator timebase (plan 23)      | the captured table; drift tolerance     |
+| Durations as multiples of ≈7.745 ms, ±1 unit jitter    | emulator timebase (plan 23)      | the captured table; fidelity standard   |
 | Key-to-redraw and key-to-sound latency (≈20-90 ms)     | firmware key scan                | not reproduced (plan 14 D8, plan 16 D8) |
 | Loudness of the registers                              | the emulator renders no volume   | the port carries registers (plan 16)    |
 | A note key re-entered at another key's down and up     | keyboard scan (key rollover)     | reproduced for C                        |
@@ -122,11 +122,10 @@ each with its cause):
   steps every ≈3.9 s from the tone's start); the 225 BPM preview quarter (33 units); the Ringing
   volume list's vibrator running past a short tone's end; a ≈1 ms 32nd after a dotted 32nd at 225
   BPM.
-- The cursor's blink phase on some showings after a Save, on the virgin phone's Play, after C on
-  Send's empty number and after `No phone numbers`; held ▲/▼'s repeat phase.
-- Two-pass redraws the firmware shows for ≈14-112 ms (standby's operator name, `Tone name:`'s soft
-  key, the frame before `Phone number:`, a cursor caught mid-redraw); names wider than the large
-  face (plan 18's prompt).
+- The cursor's blink phase on some showings after a Save, on the virgin phone's Play and after C on
+  Send's empty number; held ▲/▼'s repeat phase.
+- Two-pass redraws the firmware shows for ≈82-112 ms (standby's operator name, the frame before
+  `Phone number:`); names wider than the large face (plan 18's prompt).
 - Send's transmission (plan 18c).
 
 ## The website's composer (contrast, unchanged)

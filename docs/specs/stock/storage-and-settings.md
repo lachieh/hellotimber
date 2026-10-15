@@ -5,10 +5,9 @@ Part of the stock firmware's ground truth ([index](../nokia-3310.md#10-firmware-
 Source: the plan 15 captures (`captures/6.39/plan15/`, `captures/6.39/boot-clean/`,
 `captures/5.79/plan15/`; the `captures/README.md` section "Plan 15 supplementary captures"),
 asserted by nokia-os's `boot/security-*`, `boot/welcome-note*`, `probe/code-*`, `probe/accept-*`
-and `probe/persist-reboot` goldens. The boot goldens compare within ±25 ms: their self-test
-replays `boot/power-on`'s recording, whose first frame (power key to the first draw) other boots
-show as 245-270 ms. `boot/security-lockout-4` is a known gap: its `Code accepted` and hands are
-26-28 ms off `boot/security-gate`'s.
+and `probe/persist-reboot` goldens, by the fidelity standard of `AGENTS.md`. The boots' self-test
+replays `boot/power-on`'s recording, whose first frame (power key to the first draw, 268 ms) other
+boots show as 245-270 ms: `boot/security-gate`'s 245 ms is a known gap (23 ms early).
 
 **Why the emulator rejected the code.** The virgin PMM stores the security-code record
 enciphered under another key. The firmware reloads it into RAM when the clock wizard is left, and

@@ -4,10 +4,9 @@ Part of the stock firmware's ground truth ([index](../nokia-3310.md#10-firmware-
 
 Source: the plan 14 recaptures (`captures/6.39/plan14/`, generator
 `captures/scripts/gen_v639_plan14.py`) and `docs/specs/nokia-3310-menu-tree.md`. Everything here
-is observed and reproduced by nokia-os pixel for pixel, and within ±2 ms after aligning on the
-first changed frame, against the plan 14 goldens (probes that replay another recording's timings
-or press keys after the trigger: ±25 ms), except the items listed under "Not reproduced" (plan 14
-closeout's known gaps).
+is observed and reproduced by nokia-os pixel for pixel, with timing by the fidelity standard of
+`AGENTS.md` after aligning on the first changed frame, against the plan 14 goldens, except the
+items listed under "Not reproduced" (known gaps).
 
 **Rows window.** With 3 or fewer items the window never moves. Otherwise it
 keeps its position while the selection stays inside it (indices modulo the count); ▼ to the
@@ -115,12 +114,11 @@ Score IDs`).
 - _View all_ (Reminders, nothing stored) returns straight to the carousel; the Reminders icon then
   holds 1382 ms before animating (its own return timing).
 
-**Not reproduced** (plan 14 closeout known gaps; each golden runs as an expected failure): partial
-draws, redraws in progress that nokia-os does not draw (a 16 ms draw after `Menu 8`; Done's 16 ms
-draw after Type of view, which covers fewer bytes than in another recording of the same path);
-shortcut delays outside ±25 ms of nokia-os's (Speed dials opening 1502 ms after `9`, Snake II 1427
-ms after `1`, the window ending 2920 ms after `3`); Settings' `On` drawn over the Games list while
-`8-6` opens. Owned by later plans (pending goldens): standby number entry after Invalid shortcut
+**Not reproduced** (known gaps; each golden runs as an expected failure): Settings' `On` drawn
+over the Games list while `8-6` opens. Within the fidelity standard and not gaps: partial draws
+under a display frame (a 16 ms draw after `Menu 8`; Done's 16 ms draw after Type of view) and the
+shortcut delays' spread between recordings (Speed dials opening 1427-1502 ms after `9`, the window
+ending 2920-2948 ms after `3`). Owned by later plans (pending goldens): standby number entry after Invalid shortcut
 (plan 22) and the Reminders level after Erase › All (only `Add new`; plan 21).
 
 **UNVERIFIED** (no capture; nokia-os's choice): ▲/▼ during a note on rows levels (nokia-os only

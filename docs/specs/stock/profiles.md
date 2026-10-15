@@ -87,8 +87,7 @@ Asserted goldens nokia-os does not match yet, each named in the plan 17 acceptan
 - In the power list the power key beeps 121-123 ms after its down; nokia-os beeps at the down
   (`sound/profiles/power-general-power-keys`).
 - Rename's cursor phase after several multi-tap commits (`rename-limit`, `rename-limit-extra`,
-  `rename-limit-ok`, `rename-symbols`) and a stray cursor column in one virgin recording
-  (`rename-open-12-3`).
+  `rename-limit-ok`, `rename-symbols`).
 
 ## UNVERIFIED
 
