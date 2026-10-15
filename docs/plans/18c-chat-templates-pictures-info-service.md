@@ -19,7 +19,8 @@ probes and recaptures, the planning probes in `$REF/captures/scratch-plan18c/` (
 never imported; `NOTES.md` lists them), and the canonical recaptures Task 0 writes to
 `$REF/captures/6.39/plan18c/`. Read `$REF/captures/README.md`
 and plans 13-16, 18, 18b and 19 in full before starting.
-**Status:** not started.
+**Status:** in progress (Templates, Smileys, Chat, Topics and the Service command editor; picture,
+saver-gallery and business-card work blocked, see Task 0 outcome).
 
 ## Goal
 
@@ -505,63 +506,73 @@ notes). After verification, canonical generator `$REF/captures/scripts/gen_v639_
 command logs `v639-plan18c-<section>.cap`, captures `$REF/captures/6.39/plan18c/**` and a small
 append to `$REF/captures/README.md`. v5.79 outputs remain comparative scratch evidence.
 
-- [ ] Inventory existing p1-p8 outputs before rerunning. Keep failed navigation and negative
+- [x] Inventory existing p1-p8 outputs before rerunning. Keep failed navigation and negative
       results; p2 Topics and p7 Dictionary-off are incomplete, not canonical evidence.
-- [ ] Use `scratch-plan18c/harness/build/dct3cap` with its retained `smsbin` command, or build
+- [x] Use `scratch-plan18c/harness/build/dct3cap` with its retained `smsbin` command, or build
       another isolated copy. Do not modify `tools/harness/*` or emulator sources. Only the plan 18
       worker may update the common harness. Keep all experimental image mutations in scratch.
-- [ ] **R picture directory (bounded research, maximum 3 hours):** try a fresh Restore on an image
-      copy, PPM E versus B, native v5.79, then documented EEPROM experiments. Prefer calling
-      firmware initialisation in context over guessed writes. Record image hashes, every mutation,
-      results and failures. A repair succeeds only if folder, incoming Save, reboot persistence,
-      Templates, Inbox and Restore work; capture raw and repaired states separately. If it fails,
-      keep the picture-folder capture dependency explicit (D4). Do not broaden the time box.
-- [ ] **F defaults:** record virgin lists, fresh Restore with accepted code, factory lists, Read
-      of every entry and every page of long templates. Edit/erase a default and fill an empty
-      slot; Restore again; saveflash/reboot. Compare PPM language defaults after Restore. Capture
-      first boot separately from reset; distinguish observation from factory-provisioning inference.
-- [ ] **T lists/editing:** eight slots and wrap both directions, row icon/text origin, truncation,
+      Deviation: the isolated copy is `tools/harness-p18c` (tools/harness plus the scratch
+      `smsbin`), as the coordinator asked; `tools/harness` is unchanged.
+- [ ] **R picture directory (bounded research, maximum 3 hours):** not attempted beyond the
+      planning probes (virgin, factory, PPM B, v5.79). No repaired image exists, so the picture
+      folder, Save, the gallery and every picture flow stay blocked (D4).
+- [ ] **F defaults** (partial): virgin lists (no response), a fresh Restore on plan 15's code image
+      (lists provisioned, Topics emptied), factory lists, Read of every entry, Edit/Erase of a
+      default, a filled empty slot, Restore over edits (defaults back). Not done: saveflash/reboot,
+      first boot versus reset, the PPM language comparison.
+- [x] **T lists/editing:** eight slots and wrap both directions, row icon/text origin, truncation,
       Read, Options, Edit keys/counter/limit, empty Save, Erase confirmation/cancel and notes.
       Establish actual capacity rather than assuming a ninth slot can be added.
-- [ ] **E insertion:** Template and Insert smiley in Write, Reply/Edit/Forward and Chat; empty,
-      middle of text, T9 on/off, pending multi-tap/composing T9 word, truncation/overflow and cursor
-      placement at the limit. Measure trailing spaces using counter and cursor, not OCR alone.
-- [ ] **P pictures, after R:** list/order/capacity, all six built-in views, stored views with text,
-      scroll/wrap, each Options set, Edit text (copy versus overlay), Erase, Use number, Forward,
-      Details and Exit. Fill memory; capture replacement/full queries and notes. Establish Restore
-      retention. Native v5.79 cannot replace v6.39 scenarios or prove v6.39 slot capacity.
-- [ ] **A arrivals:** invented picture from `tools/pic.py`, no text and long text, standby notice,
-      View/scroll/Save/C; menu/editor/Chat/game arrival, two arrivals before Save. Five arrival
-      timings including key/injection timestamps; keep all concatenated-part logs. Card payloads
-      use invented vCard text (port 9204); picture payload uses port 5514. Payloads stay REF-only.
-- [ ] **S send/gallery, after R:** forward built-in and stored pictures; keep MO logs with the
-      scratch driver's `ROM6_LOG=1` flag; repeated send timings. Tones/profile galleries, Off/On,
-      missing image, selection and persistence. Record 30 seconds at standby as follow-up evidence.
-- [ ] **C Chat:** Menu 3 and Inbox Chat; number/Search/name, name prefill/empty/cancel, T9 header
+- [ ] **E insertion** (partial): Template and Insert smiley in Write messages (every slot, after
+      text, mid-text, a pending character) and Chat. Not done: Reply/Edit/Forward, T9 composing,
+      the limit.
+- [ ] **P pictures, after R:** blocked on R.
+- [ ] **A arrivals:** not captured (Task 7 is blocked on the port extension, VISION).
+- [ ] **S send/gallery, after R:** blocked on R.
+- [x] **C Chat:** Menu 3 and Inbox Chat; number/Search/name, name prefill/empty/cancel, T9 header
       and `140/1` boundaries, Options with and without composed word. Send and exact on-air text,
       successful/failed send, wrapped multi-line history, scroll, OK/C/held C/Exit. Partner and
       unrelated SMS in editor/Options/prompt/history, Inbox/Outbox effects, dictionary sharing,
-      session exit/re-entry and cold reboot. Use invented user words for dictionary-dependent
-      states; never read forbidden T9 research directories or firmware candidate output lists.
-- [ ] **I Topics:** navigate by verified highlighted label, not assumed index (p2 lesson).
+      session exit/re-entry and cold reboot. Not done: a failed send, the Insert word prompt,
+      Inbox › Chat, cold reboot (the name's persistence stays UNVERIFIED).
+- [x] **I Topics:** navigate by verified highlighted label, not assumed index (p2 lesson).
       Virgin five box-glyph names/numbers/marks; Select Mark/Unmark/exit; Edit number/name;
       Erase to empty. Factory Add topic, 0/999/1000 and empty/duplicate cases, name length, capacity,
-      menus with existing topics, full note, persistence and Restore. Record actual dynamic order
-      and path numbering so `Add topic` does not overwrite existing Select's identity.
-- [ ] **X Service command editor:** empty header/counter `182`/Back, digits/letters/`*`/`#`, limit,
-      Options/Send, `*100#` for 20 seconds, Quit/C and result. No USSD reply invention.
-- [ ] **B cards:** receipt/View/Save/C and full phone book using plan 19's isolated SIM fixtures.
-      Gate on plan 19; do not edit its SIM or storage implementation.
-- [ ] **N/G:** audio/events/keys.csv for new notes with Warning tones On/Off; glyphs for default
-      texts, Topics boxes and `<`/`>`; crop provenance. Extraction comparisons stay local and
-      record their manifest; no generator consumes extracted tables or bitmaps.
-- [ ] Promote only successful scripts into canonical sections; implement `--only`, `ocr`, `check`
+      menus with existing topics, full note, persistence and Restore. Not done: persistence over
+      a reboot, the name length limit.
+- [x] **X Service command editor:** empty header/counter `182`/Back, digits/letters/`*`/`#`, limit,
+      Options/Send, `*100#` for 20 seconds, Quit/C and result. No USSD reply invention. Not done:
+      the limit, Quit.
+- [ ] **B cards:** blocked on plan 19 (not in this checkout).
+- [ ] **N/G** (partial): note timelines and glyphs come from the imported goldens; no audio
+      recordings were taken (the new notes' warning tones stay UNVERIFIED).
+- [x] Promote only successful scripts into canonical sections; implement `--only`, `ocr`, `check`
       and bounded runs. Each section restarts a documented image/setup state. Use `record` before
       trigger, same-name audio and key logs; OCR to `text.json` (plan 14 format). `check` verifies
       parent/notice frames, complete recordings and fixture payload identity.
-- [ ] Append findings briefly to REF README. Record outcome here: capture counts, exact layouts,
+- [x] Append findings briefly to REF README. Record outcome here: capture counts, exact layouts,
       limits, medians/spread, repair success/failure, default provenance, on-air Chat text,
       storage/reset rules, language comparison and unresolved dependencies. No commit.
+
+**Task 0 outcome (2026-10-15).** `gen_v639_plan18c.py` (13 sections: templates, smileys, restore,
+restore-edited, insert, chat, chat-more, chat-extra, chat-reentry, chat-factory, topics,
+topics-factory, service) wrote 82 recordings and 919 images (333 distinct) under
+`captures/6.39/plan18c/`, `check`: 0 problems. Findings, now in
+[the spec](../specs/stock/chat-and-content.md):
+
+- Templates/Smileys: virgin no response; a fresh Restore provisions both lists; 8 slots, 5
+  defaults (lengths from the editor counters: `Please call␠`, `I'm at home. Please call`,
+  `I'm at work. Please call`, `I can't answer right now, call me later at␠`,
+  `I am late. I will be there at␠`; `:-)`, `:-(`, `:-/`, `;o)`, `;oD`), 3 `(empty)`. Limits 70
+  and 7. Erase has no query and restores a default slot's default; Restore resets edits.
+- Chat: counter `140/1` (140 characters); on-air `<name>: <text>`; the partner's SMS shows at once
+  on the history and is **not stored in Inbox**; another number's SMS goes to Inbox silently;
+  Options gain `Chat history` after a send; the name is kept for the next chat, the number and
+  history are not; Exit and C on the empty editor return to the carousel.
+- Topics: capacity 5; dynamic level (`Select`, `Add topic` while not full, `Edit`, `Erase`;
+  `Add topic` alone when empty); `Topic added`, `Saved`, `Topic erased`; numbers of three digits.
+- Service command editor: `Requesting`/`Quit` ≈14.9 s, then `Not done`, then standby.
+- Not established: a usable v6.39 picture directory (R), so no picture, gallery or card capture.
 
 ### Task 1 - Contracts and firmware specification
 
@@ -569,15 +580,41 @@ append to `$REF/captures/README.md`. v5.79 outputs remain comparative scratch ev
 `docs/specs/nokia-3310.md` (§10 pointer), `VISION.md` (contract registration),
 `docs/plans/README.md` (row 18c).
 
-- [ ] Resolve D3-D12 from Task 0; qualify remaining hypotheses. Publish the source/provenance
+- [x] Resolve D3-D12 from Task 0; qualify remaining hypotheses. Publish the source/provenance
       inventory and clean-room rule. Record picture repair separately from virgin defaults.
-- [ ] Document D6 types and host behaviour; Chat remains SMS through plan 18's network port.
+- [x] Document D6 types and host behaviour; Chat remains SMS through plan 18's network port.
       Confirm owner prerequisites, exact landed widget APIs and paths before dependent work.
-- [ ] Keep menu-tree corrections in the new spec and a pointer; its owner updates the shared
+- [x] Keep menu-tree corrections in the new spec and a pointer; its owner updates the shared
       menu-tree spec. The factory-provisioning mechanism is UNVERIFIED until directly established.
-- [ ] Row 18c becomes `in progress` only when implementation starts.
-- [ ] Verify: manual `mise exec -- vp check --fix` and scoped formatter twice.
-- [ ] Commit: `docs: define chat and Messages content contracts (plan 18c)`.
+- [x] Row 18c becomes `in progress` only when implementation starts.
+- [x] Verify: manual `mise exec -- vp check --fix` and scoped formatter twice.
+- [x] Commit: `docs: define chat and Messages content contracts (plan 18c)`.
+
+**Resolutions (Task 1, from Task 0).**
+
+- Deviation (D3): a slot stores the user's text or nothing; nothing shows the slot's ROM default
+  (slots 1-5) or `(empty)` (6-8). Erase of a default slot brings the default back
+  (`content/templates-edited`, `-erase-default-read`), so `factory()` writes eight empty slots
+  rather than copies of the defaults, and the defaults are constants (`STOCK_TEMPLATES`,
+  `STOCK_SMILEYS`) pinned by the replayed Read and editor goldens. Notes: `Template saved`,
+  `Smiley saved`, `Template erased`, `Smiley erased` (captured).
+- D4-D7: R was not established; the picture folder, the gallery, picture arrivals/sends and card
+  receipt are blocked. Deviation (D6): VISION keeps the SMS-only port ("does not authorize its
+  proposed picture/card extension"), so no `StockIncoming` union is added.
+- D8: on-air text `<name>: <text>` (`: <text>` with no name). The partner's SMS is not stored in
+  Inbox; another number's goes to Inbox as plan 18's arrivals elsewhere.
+- D9: limit 140 (`140/1`); `Chat name:` empty on the first chat, the last name afterwards; the
+  history is session state; Dictionary shared with Write messages. No `chat` record (the name's
+  persistence over a power cycle is UNVERIFIED; kept in memory).
+- D11: capacity 5; the virgin numbers are `""` but topic 4's `p9`; Add topic shows while not
+  full; Edit's note is `Saved`; Erase has no query.
+- D12: `Requesting` (Quit) then `Not done` (≈2.9 s), then standby.
+- Owner prerequisites (checked 2026-10-15 against 801f302): editor-option registration (18) —
+  absent: Template/Insert smiley are inert in `write.ts`; delivery union (18) — absent and not
+  authorized (VISION); chat session hook (18) — absent; Info service table transfer (split owner)
+  — absent; resource registration (plan 29) — present (`PlanCaptureSet.resources`); acceptance
+  owner drivers (13/14/16) — the generic tree and sound-note scenarios run once a placeholder
+  group is removed; plan 19 — not in this checkout; plan 17 — present.
 
 ### Task 2 - Capture set and initial acceptance registration (TDD)
 
