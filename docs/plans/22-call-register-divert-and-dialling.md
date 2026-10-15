@@ -803,26 +803,37 @@ duplicates and the thresholds' far sides are not imported). `import-captures` tw
 per-plan files if the split provides them), `scripts/generated/**`, `src/resources/generated/**`
 (regenerated), `src/resources/index.ts` (accessors), `tests/resources.test.ts`.
 
-- [ ] Text runs for the new images from `plan22/text.json`; the harvester's reports resolved with
+- [x] Text runs for the new images from `plan22/text.json`; the harvester's reports resolved with
       overrides that name their golden. Glyphs needed: `+ p w * #` in the large and small faces,
       every digit in the small face at the entry's size, the thin digits of long numbers.
-- [ ] Sprites: the call icon (solid, checkered), the missed-call notice icon, Volume's bars (each
+- [x] Sprites: the call icon (solid, checkered), the missed-call notice icon, Volume's bars (each
       step), the `Erased` bin frames (shared with plan 19 if it landed: one sprite set), the
       `Calling` dots if not text.
-- [ ] Widget timelines: `Calling` dots, the alerting/blank/connected steps, End's short screen,
+- [x] Widget timelines: `Calling` dots, the alerting/blank/connected steps, End's short screen,
       the network end, the incoming blink, Volume's hold, the in-call digits' `Options` hold, every
       new note (`Invalid phone number`, `Speed dial number not saved`, `No last dialled numbers`,
       `Invalid location`, `<n> new numbers`, `No new numbers`, `Erased`, `Attempting emergency
 call`). Link times `CALL_SETUP_LINK_MS`, `RING_LINK_MS`, `RELEASE_LINK_MS` (D10) as medians with
       the spread in a comment; the entry's thresholds (`*` commit, held C, held keys) as
       `DIAL_TIMINGS`.
-- [ ] Sound programs (plan 16's generator): `DTMF` (pairs, tap length, release tail, onset), the
+- [x] Sound programs (plan 16's generator): `DTMF` (pairs, tap length, release tail, onset), the
       ringback, the network-end beeps, the Volume beep, the ringing alert types and their vibrator
       patterns (D9), the new notes' `NOTE_SOUNDS`.
-- [ ] TDD freshness; every new sprite is binary and inside its golden's ink; every new string
+- [x] TDD freshness; every new sprite is binary and inside its golden's ink; every new string
       renders in its face (`missingStockGlyphs`); every program re-renders its golden.
-- [ ] Run `regenerate` twice; no diff.
-- [ ] Commit: `feat(nokia-os): harvest call glyphs, sprites, timelines and sound programs`.
+- [x] Run `regenerate` twice; no diff.
+- [x] Commit: `feat(nokia-os): harvest call glyphs, sprites, timelines and sound programs`.
+
+Deviation (Task 3): every glyph the screens need was already harvested (large and small
+`+ p w * #`, thin digits). The sprites are the handset, the call icon solid and checkered, and
+Volume's ten bar levels (`resource-inputs/22-calls.ts`); the missed-call notice has no icon (a
+plain standby notice, `ring/notice-1`). Note timelines come from the generator (`invalid-location`,
+`speed-dial-not-saved`, `invalid-phone-number`, `no-last-dialled-numbers`, `new-numbers`,
+`no-new-numbers`, `call-erased`, `muted`, `all-call-lists-erased`), and the warning tones of five
+notes join `NOTE_SOUNDS`. The call sounds (DTMF pairs and tail, ringback, the network's end, the
+Volume beep, Beep once and Off's ringing) are measured constants in `src/calls/sounds.ts`, played
+against their sound goldens by the acceptance scenarios, not generated programs; the call
+timings are constants beside their widgets, each citing its golden.
 
 ### Task 4 - phone-core: standby entry and key hand-over (TDD)
 

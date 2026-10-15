@@ -749,16 +749,21 @@ describe("sound programs and rules (plan 16 Task 3)", () => {
       expect(renderProgram(program, rows[0]!.ms), slug).toEqual(rows);
     }
     expect(Object.keys(SOUND_DATA.noteSounds).sort()).toEqual([
+      "1 new number",
       "Code error",
       "Dividing by zero not allowed",
+      "Invalid location",
+      "Invalid phone number",
       "Invalid shortcut",
       "Keypad locked",
+      "No new numbers",
       "No phone numbers",
       "No voice tags saved",
       "Not allowed",
       "Out of range",
       "Screen saver missing",
       "Set PIN code request on",
+      "Speed dial number not saved",
     ]);
     expect(SOUND_DATA.noteSounds["Invalid shortcut"]!.steps).toEqual([
       { ms: 289, tone: { hz: 1750, volume: 0x9105 } },

@@ -14,6 +14,7 @@ import {
   type SoundCaptureIo,
 } from "../sound-capture-set.ts";
 import type { SoundGolden } from "../sound-format.ts";
+import { resources } from "../resource-inputs/22-calls.ts";
 
 const P = "plan22";
 const ASSERTED: GoldenStatus = "asserted";
@@ -1160,6 +1161,7 @@ export function callsLcd(io?: CaptureIo): CaptureSetEntry[] {
 
 export const calls: PlanCaptureSet = {
   plan: "22",
+  resources,
   lcd: (io) => callsLcd(io),
   sounds: (io) => callSounds(io.sound),
   notImported: {
