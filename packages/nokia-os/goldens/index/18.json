@@ -2,7 +2,7 @@
   {
     "id": "glyphs/digits",
     "file": "glyphs/digits.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -10,7 +10,7 @@
   {
     "id": "glyphs/large",
     "file": "glyphs/large.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 149,
     "frames": 149
@@ -18,7 +18,7 @@
   {
     "id": "glyphs/small",
     "file": "glyphs/small.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 19,
     "frames": 19

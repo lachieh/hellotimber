@@ -1261,7 +1261,7 @@ on this screen` with No phone numbers' timeline (UNVERIFIED: 2883 ms here). Open
 phone's Set 1 centre when the message arrived. Options commits a pending character (the reply's
 `A`). The message alert (D15) is `messageAlert("tones")`, General's, until plan 17's profiles.
 
-Deviation: **Task 11 (goldens):** promoted 66; re-owned to `pending:18c` Inbox's Chat
+Deviation: **Task 11 (goldens):** promoted 68; re-owned to `pending:18c` Inbox's Chat
 (`sms/inbox-option-chat`) and to `pending:22` Use number's call screen
 (`sms/inbox-option-use-number`, `-odd`, `sms/outbox-use-number-found`) and the received notice's ▲,
 ▼, digit and # (`sms/notice-up`, `-down`, `-digit`, `-hash`: the call register, the phone book and
@@ -1287,18 +1287,38 @@ draws only one side makes are skipped.
 **Files:** `tests/support/messages.ts` (new), `tests/support/rig.ts` (`network` option and a
 `deliver(sms, atMs)` helper), `tests/acceptance.test.ts`.
 
-- [ ] A hand-written scenario for every `text/*`, `welcome/*` and `sms/*` golden (navigate as the
+- [x] A hand-written scenario for every `text/*`, `welcome/*` and `sms/*` golden (navigate as the
       capture did, Dictionary off first, keys on the ticks their redraws start, deliveries at the
       capture's injection time); `glyphs/*` are excluded from scenarios (resources).
-- [ ] Coverage guard: no node is covered only by a `pending:18` golden; the nodes plan 18 binds
+- [x] Coverage guard: no node is covered only by a `pending:18` golden; the nodes plan 18 binds
       (2-1, 2-2, 2-3, 2-7-1-1, 2-7-2-1, 2-9, 6-2-3) are covered by asserted goldens; the editor
       Options entries in `EDITOR_OPTIONS` each have an asserted golden or a named owner (`18b`, `18c`,
       `19`, `22`). Delete `awaitsPlan18Scenario`.
-- [ ] Every asserted golden passes (pixels exact; timelines ±2 ms, or the stated tolerance where a
+- [x] Every asserted golden passes (pixels exact; timelines ±2 ms, or the stated tolerance where a
       scenario replays another recording's timing). New `KNOWN_GAPS` need a reason.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report the
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report the
       suite's run time (keep it under ≈25 s).
-- [ ] Commit: `test(nokia-os): drive text entry and SMS against their goldens`.
+- [x] Commit: `test(nokia-os): drive text entry and SMS against their goldens`.
+
+Deviation: **Task 12 (paths and mechanism):** the scenarios are not hand-written key lists but
+replays of Task 0's own command logs (`tests/support/replay.ts`, from Task 8), configured per golden
+by `MESSAGES_OPTIONS` and derived for every asserted plan 18 golden (`MESSAGES_SCENARIOS`);
+`tests/acceptance/18-messages-and-chat.test.ts` calls `acceptancePlan` with them, `MESSAGES_KNOWN_GAPS`
+and `MESSAGES_COVERS`. The capture set asserts every fixture but `MESSAGES_LATER`'s (no
+`MESSAGES_ASSERTED` list, no `pending:18` anywhere). The glyph sheets are asserted with painter
+scenarios: each image's character drawn by the stock fonts on its screen (the Name: box, the
+editor's first line, the editor header) matches within the sheet's region. The plan-18 coverage
+checks are `tests/messages-coverage.test.ts` (bound leaves, Options entries, hand-ons);
+`tests/goldens-integrity.test.ts` checks no golden is `pending:18`. The rig needs no new helper:
+replays pass a synthetic network through `StockPhoneConfig.network` and deliver through it.
+
+**Task 12 completion note:** plan 18's index holds 196 goldens: 188 asserted (8 of them known gaps:
+`text/commit-gap`, `sms/notice`, `sms/notice-c`, `sms/elsewhere`, `sms/time-format`,
+`sms/sim-same-new-process`, `-inbox`, `-outbox`), 7 `pending:22`, 1 `pending:18c`; elsewhere
+`tree/02-messages/2-1.leaf` is `pending:18b`. Plan 18's acceptance file runs in ≈10 s alone; the
+whole nokia-os suite takes ≈40 s on 8 threads (it was ≈37 s before Task 8), over the ≈25 s guide:
+the replays are as cheap as the logs allow (20 ms steps between commands, 1 ms inside
+recordings, each golden read once).
 
 ### Task 13 - Demo, README, verification gate and closeout
 

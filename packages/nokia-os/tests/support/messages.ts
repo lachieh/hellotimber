@@ -8,7 +8,15 @@
 //
 // A tap is 392 ms in the captures (≈42 ms down, the emulator's 250 ms settle, a 100 ms key gap).
 import { MESSAGES_CAPTURE_SCRIPTS } from "../../scripts/generated/messages-scripts.ts";
-import { MESSAGES_ASSERTED } from "../../scripts/messages-capture-set.ts";
+import { parseManifestNote } from "../../scripts/messages-capture-set.ts";
+import { readPlanIndex } from "../../scripts/golden-index.ts";
+import { Framebuffer } from "@hellotimber/phone-screen";
+import { paintWidget, type WidgetModel } from "../../src/display/widgets";
+import { editorModel } from "../../src/widgets/editor";
+import { GOLDENS } from "./acceptance.ts";
+import { lcdMismatch } from "./golden.ts";
+import { loadGolden } from "./goldens.ts";
+import { cursorOnly } from "./replay.ts";
 import type { TextMode, TextState } from "../../src/text/multitap";
 import { PROBE_TOLERANCE_MS } from "./golden.ts";
 import { replayScenario, type ReplayContext, type TimelineOptions } from "./replay.ts";
@@ -456,15 +464,117 @@ export const MESSAGES_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
   "sms/restore-ok": OTHER_RECORDING,
 };
 
-/** Every asserted plan 18 golden's scenario (tests/acceptance/18-messages-and-chat.test.ts). */
+// ---------------------------------------------------------------- glyph sheets
+
+/** Rows `y0..y1`, columns `x0..x1` of an 84-column frame; the rest clear. */
+function crop(pixels: Uint8Array, x0: number, x1: number, y0: number, y1: number): Uint8Array {
+  const out = new Uint8Array(84 * 48);
+  for (let y = y0; y <= y1; y++) {
+    for (let x = x0; x <= x1; x++) out[y * 84 + x] = pixels[y * 84 + x]!;
+  }
+  return out;
+}
+
+const SMS_SPEC = { counter: "sms", limit: SMS_LIMIT, layout: "sms", softkey: "Options" } as const;
+
+/** The editor holding `text` (the cursor at its end), the cursor shown or hidden. */
+function editorFrame(text: string, mode: TextMode, cursorShown: boolean): Uint8Array {
+  const state: TextState = { ...emptyText(mode), text, cursor: Array.from(text).length };
+  const fb = new Framebuffer();
+  paintWidget(fb, editorModel(state, SMS_SPEC, 0, cursorShown).model);
+  return fb.pixels;
+}
+
+interface GlyphSheet {
+  /** The region compared: x0, x1, y0, y1. */
+  readonly region: readonly [number, number, number, number];
+  /** The screens the stock painter draws for image `image` (`char` typed), either blink phase. */
+  frames(char: string, image: number): Uint8Array[];
+}
+
+/**
+ * Where each glyph sheet's character is drawn (`scripts/messages-capture-set.ts` `glyphEntries`)
+ * and the screen the stock painter draws for it.
+ */
+const GLYPH_SHEETS: Readonly<Record<string, GlyphSheet>> = {
+  // The Name: prompt's box (plan 19's Add name as a vehicle) with the character pending.
+  "glyphs/large": {
+    region: [1, 82, 18, 36],
+    frames(char) {
+      const model: WidgetModel = {
+        kind: "prompt",
+        icons: ["prompt/pen"],
+        label: ["Name:"],
+        entry: { kind: "text", text: char },
+        cursor: false,
+        softkey: "OK",
+      };
+      const fb = new Framebuffer();
+      paintWidget(fb, model);
+      return [fb.pixels];
+    },
+  },
+  // The editor's first text line after Use inserted the symbol.
+  "glyphs/small": {
+    region: [0, 83, 7, 17],
+    frames: (char) => [editorFrame(char, "Abc", true), editorFrame(char, "Abc", false)],
+  },
+  // The editor's header: empty in Abc, ABC, abc and 123, then after 175 characters (abc, 284/2).
+  "glyphs/digits": {
+    region: [0, 83, 0, 5],
+    frames(_label, image) {
+      const modes: readonly TextMode[] = ["Abc", "ABC", "abc", "123"];
+      const mode = modes[image];
+      return [
+        mode === undefined
+          ? editorFrame("a".repeat(175), "Abc", false)
+          : editorFrame("", mode, false),
+      ];
+    },
+  },
+};
+
+/**
+ * A glyph sheet (D6): each image's character, drawn by the stock fonts on the screen the capture
+ * typed it into, shows as the capture shows it within the sheet's region (the rest is the
+ * vehicle's: plan 19's prompt, the editor around it).
+ */
+function glyphScenario(id: string): void {
+  const golden = loadGolden(id);
+  const chars = parseManifestNote(golden.note);
+  const sheet = GLYPH_SHEETS[id];
+  if (chars === undefined || sheet === undefined) throw new Error(`${id} is not a glyph sheet.`);
+  const [x0, x1, y0, y1] = sheet.region;
+  golden.images.forEach((image, i) => {
+    const want = crop(image.pixels, x0, x1, y0, y1);
+    const ref = { id, image: { ...image, pixels: want } };
+    const context = `${id} image ${image.name}: ${JSON.stringify(chars[i])}`;
+    const frames = sheet.frames(chars[i]!, i).map((pixels) => crop(pixels, x0, x1, y0, y1));
+    if (frames.some((pixels) => lcdMismatch(pixels, ref, context) === undefined)) return;
+    if (frames.some((pixels) => cursorOnly(want, pixels))) return;
+    throw new Error(lcdMismatch(frames[0]!, ref, context));
+  });
+}
+
+/**
+ * Every asserted plan 18 golden's scenario (tests/acceptance/18-messages-and-chat.test.ts): its
+ * capture replayed, or a glyph sheet's fonts.
+ */
 export const MESSAGES_SCENARIOS: Readonly<Record<string, (id: string) => void>> =
   Object.fromEntries(
-    [...MESSAGES_ASSERTED].map((id) => [id, messagesScenario(MESSAGES_OPTIONS[id])]),
+    readPlanIndex(GOLDENS, "18")
+      .filter((entry) => entry.status === "asserted")
+      .map(({ id }) => [
+        id,
+        id.startsWith("glyphs/") ? glyphScenario : messagesScenario(MESSAGES_OPTIONS[id]),
+      ]),
   );
 
 /** The leaves plan 18's features bind, by a golden that shows each (the coverage guard). */
 export const MESSAGES_COVERS: Readonly<Record<string, readonly string[]>> = {
   "text/editor": ["2-1"],
+  "sms/inbox-list": ["2-2"],
+  "sms/outbox-list": ["2-3"],
   "welcome/editor": ["6-2-3"],
   "sms/centre-1": ["2-7-1-1"],
   "sms/centre-2": ["2-7-2-1"],

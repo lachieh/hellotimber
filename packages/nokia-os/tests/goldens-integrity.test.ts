@@ -266,12 +266,11 @@ describe("plan 18 goldens", () => {
   const load = (entry: IndexEntry): Golden =>
     parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
 
-  it("leaves no plan 18 placeholder and nothing pending on plan 18 outside its own index", () => {
-    const elsewhere = index.filter(
-      (entry) => entry.status === "pending:18" && !own.some((e) => e.id === entry.id),
+  it("leaves no golden pending on plan 18 and no plan 18 placeholder (Task 12)", () => {
+    expect(index.filter((entry) => entry.status === "pending:18").map((entry) => entry.id)).toEqual(
+      [],
     );
     expect(Object.values(PLACEHOLDER_OWNERS).filter((plan) => plan === "18")).toEqual([]);
-    expect(elsewhere.map((entry) => entry.id)).toEqual([]);
     // Write messages' T9 first screen waits for plan 18b (D3).
     expect(index.find((entry) => entry.id === "tree/02-messages/2-1.leaf")?.status).toBe(
       "pending:18b",

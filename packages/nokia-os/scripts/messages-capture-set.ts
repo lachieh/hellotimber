@@ -3,8 +3,8 @@
 // captures (`captures/6.39/plan15/welcome/`), plus the glyph sheets built from Task 0's
 // manifests.
 //
-// Every fixture is `pending:18` until a later task of plan 18 gives it a scenario and promotes it
-// here (plan 29 "Pending workflow"). Reads captures only through the injected
+// Every fixture is asserted (Task 12: each has its scenario in tests/support/messages.ts) but the
+// ones a later plan implements (`MESSAGES_LATER`). Reads captures only through the injected
 // `MessagesCaptureIo`, so tests run it on synthetic recordings. Paths are relative to
 // `$REF/captures/6.39`. Pure: imports only sibling scripts.
 import type { CaptureSetEntry } from "./capture-set.ts";
@@ -46,204 +46,6 @@ export class MessagesCaptureError extends Error {
   }
 }
 
-/** A plan 18 fixture's status until its scenario exists (plan 29 "Pending workflow"). */
-export const MESSAGES_STATUS: GoldenStatus = "pending:18";
-
-/**
- * The fixtures whose scenario exists (tests/support/messages.ts `MESSAGES_SCENARIOS`), by the
- * task that promoted them: asserted. The rest stay pending until their task promotes them.
- */
-export const MESSAGES_ASSERTED: ReadonlySet<string> = new Set([
-  // Task 8: Welcome note, the message centre and voice mailbox numbers.
-  "welcome/editor",
-  "welcome/face",
-  "welcome/options",
-  "welcome/save-hi",
-  "welcome/save-empty",
-  "welcome/erase-empty",
-  "welcome/c-on-empty",
-  "welcome/hold-c",
-  "welcome/37th-key",
-  "welcome/plan15",
-  "welcome/plan15-erase",
-  "welcome/plan15-save-long",
-  "sms/centre-1",
-  "sms/centre-1-ok",
-  "sms/centre-1-ok-empty",
-  "sms/centre-2",
-  "sms/centre-2-ok",
-  "sms/voice-mailbox",
-  "sms/voice-mailbox-ok",
-  // Task 11: Inbox, Outbox, reading and arrivals.
-  "sms/arrive-1",
-  "sms/arrive-2",
-  "sms/arrive-3",
-  "sms/arrive-4",
-  "sms/arrive-5",
-  "sms/elsewhere",
-  "sms/elsewhere-editor",
-  "sms/elsewhere-menu",
-  "sms/elsewhere-messages-menu",
-  "sms/elsewhere-note",
-  "sms/elsewhere-sending",
-  "sms/elsewhere-snake",
-  "sms/full",
-  "sms/full-arrival",
-  "sms/full-persist-inbox",
-  "sms/full-persist-inbox-open",
-  "sms/full-persist-outbox",
-  "sms/full-persist-outbox-open",
-  "sms/full-save",
-  "sms/inbox",
-  "sms/inbox-details",
-  "sms/inbox-erase-last",
-  "sms/inbox-list",
-  "sms/inbox-list-one-read",
-  "sms/inbox-menu-2-2",
-  "sms/inbox-menu-2-2-list",
-  "sms/inbox-option-details",
-  "sms/inbox-option-details-odd",
-  "sms/inbox-option-edit",
-  "sms/inbox-option-erase",
-  "sms/inbox-option-forward",
-  "sms/inbox-option-reply",
-  "sms/inbox-option-reply-send",
-  "sms/inbox-option-typed",
-  "sms/inbox-options",
-  "sms/inbox-read",
-  "sms/inbox-view-1",
-  "sms/inbox-view-2",
-  "sms/notice",
-  "sms/notice-c",
-  "sms/notice-count-list",
-  "sms/notice-count-read",
-  "sms/notice-inbox-menu",
-  "sms/notice-read",
-  "sms/outbox",
-  "sms/outbox-edit",
-  "sms/outbox-erase",
-  "sms/outbox-erase-last",
-  "sms/outbox-forward",
-  "sms/outbox-list",
-  "sms/outbox-open",
-  "sms/outbox-options",
-  "sms/outbox-read",
-  "sms/outbox-use-number",
-  "sms/persist",
-  "sms/persist-inbox",
-  "sms/persist-outbox",
-  "sms/restore",
-  "sms/restore-inbox",
-  "sms/restore-ok",
-  "sms/restore-outbox",
-  "sms/sim-same-inbox",
-  "sms/sim-same-new-process",
-  "sms/sim-same-outbox",
-  "sms/sim-second",
-  "sms/sim-second-inbox",
-  "sms/sim-second-outbox",
-  "sms/time-format",
-  // Task 10: text entry, Write messages and its Options.
-  "sms/erase",
-  "sms/erase-empty",
-  "sms/exit",
-  "sms/insert-smiley",
-  "sms/save",
-  "sms/save-empty",
-  "sms/send",
-  "sms/send-by-set-alphanumeric",
-  "sms/send-by-set-numeric",
-  "sms/send-by-set-set-2",
-  "sms/send-by-set-set-2-list",
-  "sms/send-prompt",
-  "sms/send-to-many",
-  "sms/template",
-  "text/blink",
-  "text/case-after",
-  "text/case-cycle-empty",
-  "text/case-cycle-sentence",
-  "text/case-cycle-space",
-  "text/case-cycle-word",
-  "text/case-numeric-back",
-  "text/case-numeric-back-after",
-  "text/commit",
-  "text/commit-blink",
-  "text/commit-gap",
-  "text/commit-other",
-  "text/counter",
-  "text/counter-limit-key",
-  "text/cursor-one",
-  "text/cursor-three",
-  "text/delete",
-  "text/delete-empty",
-  "text/delete-hold",
-  "text/delete-hold-short",
-  "text/dictionary-off",
-  "text/editor",
-  "text/hold-digit",
-  "text/hold-digit-after",
-  "text/hold-digit-lower",
-  "text/hold-digit-pending",
-  "text/hold-full",
-  "text/hold-hash",
-  "text/hold-hash-back",
-  "text/hold-hash-back-after",
-  "text/hold-numeric",
-  "text/hold-one",
-  "text/hold-star-after",
-  "text/hold-threshold-1450",
-  "text/hold-threshold-1475",
-  "text/hold-zero",
-  "text/holds-full-before",
-  "text/input",
-  "text/input-routing-ok",
-  "text/input-routing-open",
-  "text/input-send-by-set-list",
-  "text/input-set-1-list",
-  "text/key-0-lower",
-  "text/key-0-upper",
-  "text/key-1-lower",
-  "text/key-1-upper",
-  "text/key-2-lower",
-  "text/key-2-upper",
-  "text/key-3-lower",
-  "text/key-3-upper",
-  "text/key-4-lower",
-  "text/key-4-upper",
-  "text/key-5-lower",
-  "text/key-5-upper",
-  "text/key-6-lower",
-  "text/key-6-upper",
-  "text/key-7-lower",
-  "text/key-7-upper",
-  "text/key-8-lower",
-  "text/key-8-upper",
-  "text/key-9-lower",
-  "text/key-9-upper",
-  "text/key-modes",
-  "text/number",
-  "text/number-c-on-empty",
-  "text/number-hold-2",
-  "text/number-hold-c",
-  "text/number-hold-hash",
-  "text/number-hold-star",
-  "text/number-search-empty",
-  "text/number-star-settle",
-  "text/options",
-  "text/star-hold",
-  "text/star-tap",
-  "text/symbols",
-  "text/symbols-c",
-  "text/symbols-down",
-  "text/symbols-up",
-  "text/symbols-use-first",
-  "text/symbols-use-last",
-  "text/symbols-use-middle",
-  "text/wrap-long-word",
-  "text/wrap-spaces",
-  "text/wrap-words",
-]);
-
 /**
  * Fixtures whose screens a later plan implements, by that plan (plan 18 Task 11): Inbox's Chat
  * (`Chat name:`, plan 18c); Use number's call screen and the received notice's ▲, ▼, digit and #
@@ -261,10 +63,10 @@ export const MESSAGES_LATER: Readonly<Record<string, string>> = {
   "sms/notice-hash": "22",
 };
 
+/** Asserted (plan 18 Task 12: each has its scenario), unless a later plan implements it. */
 function statusOf(id: string): GoldenStatus {
   const later = MESSAGES_LATER[id];
-  if (later !== undefined) return `pending:${later}`;
-  return MESSAGES_ASSERTED.has(id) ? "asserted" : MESSAGES_STATUS;
+  return later === undefined ? "asserted" : `pending:${later}`;
 }
 
 const BASE = "plan18";
@@ -1395,7 +1197,7 @@ export function glyphEntries(io: MessagesCaptureIo): CaptureSetEntry[] {
   const still = (face: GlyphFace, shots: readonly GlyphShot[], what: string): CaptureSetEntry => ({
     id: `glyphs/${face}`,
     kind: "still",
-    status: MESSAGES_STATUS,
+    status: statusOf(`glyphs/${face}`),
     prefer: {
       source: { kind: "shots", files: shots.map((shot) => `${BASE}/glyphs/${face}/${shot.file}`) },
       note: manifestNote(
