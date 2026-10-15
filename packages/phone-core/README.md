@@ -159,6 +159,9 @@ unsubscribe();
   phone.setNotice({ text: "1 message received", softkey: "Read", open: inbox });
   ```
 
+- A key held when an application exits (or is replaced) keeps its long press but loses its
+  release: C held on a screen that leaves at C's down still reaches standby, as the stock
+  firmware's menus do, and the level returned to sees no C tap.
 - A standby key whose target is an application runs it as the same kind of standby application
   (plan 19: the stock firmware's ▼ opens the phone book's name list, which is no menu node):
 

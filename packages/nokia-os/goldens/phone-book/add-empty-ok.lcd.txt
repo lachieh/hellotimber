@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-empty-ok
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/empty-ok
 source-sha256: d53265cf42f36287fa3aee6172b3ee844e81e0bb6c0dea573c5dc206ca179b32
 trigger-frame: 1

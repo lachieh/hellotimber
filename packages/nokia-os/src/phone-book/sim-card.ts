@@ -43,6 +43,14 @@ export const SIM_NAME_LENGTH = 16;
 /** `EF_ADN`'s 10 BCD bytes: `Phone number:` counts 20 (Task 0 A). */
 export const SIM_NUMBER_DIGITS = 20;
 
+/** GSM 03.38's extension table: each of these takes two bytes of a SIM name (`€`, Task 0 A). */
+const GSM_EXTENSION = new Set(Array.from("€[]{}~^\\|"));
+
+/** The bytes a name takes on the SIM (`Name:`'s counter counts them: `E€` leaves 13 of 16). */
+export function simNameLength(name: string): number {
+  return Array.from(name).reduce((n, char) => n + (GSM_EXTENSION.has(char) ? 2 : 1), 0);
+}
+
 /** The SIM's number characters: `w` is refused (`Invalid char. for SIM card`, Task 0 A). */
 const NUMBER = new RegExp(`^\\+?[0-9*#p]{0,${SIM_NUMBER_DIGITS}}$`);
 
@@ -60,7 +68,7 @@ export function simContactProblem(contact: StockContact, nameLength: number): st
     return "needs a name and a number (strings)";
   }
   if (name === "" && number === "") return "has neither a name nor a number";
-  if (Array.from(name).length > nameLength) {
+  if (simNameLength(name) > nameLength) {
     return `name ${JSON.stringify(name)} is longer than the SIM's ${nameLength} characters`;
   }
   for (const face of ["small", "large"] as const) {

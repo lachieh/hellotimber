@@ -34,7 +34,16 @@ export type PromptEntry =
    * Plan 18: an editable text in the box, large from x 2 (Routing address, Name); the cursor
    * before character `cursor`, absent while a character is pending.
    */
-  | { readonly kind: "text"; readonly text: string; readonly cursor?: number }
+  | {
+      readonly kind: "text";
+      readonly text: string;
+      readonly cursor?: number;
+      /**
+       * Plan 19: wider than the large face's box, the text drops to small-face lines of up to
+       * 81 columns from x 2, two rows into the box and 9 rows apart (`phone-book/add-limits`).
+       */
+      readonly smallWhenWide?: true;
+    }
   /**
    * Plan 18: an editable number, right-aligned in the box: large while it fits, else small rows
    * of up to 78 columns filled from its end (`text/number`); the cursor before `cursor`.
@@ -154,6 +163,27 @@ function paintFrame(fb: Framebuffer, top: number): void {
   fb.fillRect(fb.width - 1, top, 1, BOX_BOTTOM - top + 1, 1);
 }
 
+/**
+ * Plan 19: the widest text the large face shows in the box: `Adgjmptwad` (71 columns) is large,
+ * `Adgjmptwadg` (78) small (`plan19/add/limit-10`, `-11`); between them UNVERIFIED.
+ */
+const TEXT_LARGE_WIDTH = 72;
+/** Plan 19: a small-face line in the box holds 81 columns (`Adgjmptwadgjm`, 80; not 86). */
+const TEXT_SMALL_WIDTH = 81;
+const TEXT_SMALL_PITCH = 9;
+
+/** Plan 19: `text` in small-face lines of up to TEXT_SMALL_WIDTH columns, broken by character. */
+function smallTextLines(text: string): string[] {
+  const font = STOCK_FONTS.small;
+  const lines: string[] = [""];
+  for (const char of text) {
+    const line = lines[lines.length - 1]!;
+    if (line !== "" && textWidth(font, line + char) > TEXT_SMALL_WIDTH) lines.push(char);
+    else lines[lines.length - 1] = line + char;
+  }
+  return lines;
+}
+
 /** Plan 18: an editable text, large from x 2 and 2 rows into the box; the cursor 15 rows. */
 function paintTextEntry(
   fb: Framebuffer,
@@ -162,11 +192,53 @@ function paintTextEntry(
   cursorShown: boolean,
 ): void {
   paintFrame(fb, top);
+  if (entry.smallWhenWide && textWidth(STOCK_FONTS.large, entry.text) > TEXT_LARGE_WIDTH) {
+    paintSmallText(fb, entry, top, cursorShown);
+    return;
+  }
   const font = STOCK_FONTS.large;
   fb.drawText(font, entry.text, TEXT_INSET, top + TEXT_INSET);
   if (!cursorShown || entry.cursor === undefined) return;
   const before = Array.from(entry.text).slice(0, entry.cursor).join("");
   fb.fillRect(TEXT_INSET + textWidth(font, before) - 1, top + 1, 1, TEXT_CURSOR_ROWS, 1);
+}
+
+/**
+ * Plan 19: a wide text in small-face lines; the cursor 10 rows from a row above its line, in the
+ * blank column after the character before it (`phone-book/add-limits` limit-17th: x 19 after
+ * `ptw`; `add-wide` wide-10: x 10 after `m`).
+ */
+function paintSmallText(
+  fb: Framebuffer,
+  entry: Extract<PromptEntry, { kind: "text" }>,
+  top: number,
+  cursorShown: boolean,
+): void {
+  const font = STOCK_FONTS.small;
+  const lines = smallTextLines(entry.text);
+  let seen = 0;
+  lines.forEach((line, i) => {
+    const lineTop = top + TEXT_INSET + i * TEXT_SMALL_PITCH;
+    fb.drawText(font, line, TEXT_INSET, lineTop);
+    const count = Array.from(line).length;
+    const cursor = entry.cursor;
+    const last = i === lines.length - 1;
+    if (cursorShown && cursor !== undefined && cursor >= seen) {
+      if (cursor < seen + count || (cursor === seen + count && last)) {
+        const before = Array.from(line)
+          .slice(0, cursor - seen)
+          .join("");
+        fb.fillRect(
+          TEXT_INSET + textWidth(font, before) - 1,
+          lineTop - 1,
+          1,
+          TEXT_SMALL_PITCH + 1,
+          1,
+        );
+      }
+    }
+    seen += count;
+  });
 }
 
 /**

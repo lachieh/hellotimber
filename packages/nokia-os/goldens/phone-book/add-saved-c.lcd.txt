@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-saved-c
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/zoe-saved-c
 source-sha256: 6b8f584853155cd6ef71ce3a49b8eccfc1168b25af66a870fc870e75e3e78cb8
 trigger-frame: 1

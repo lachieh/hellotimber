@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/search-sort-a-umlaut
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/sort/search-a-umlaut
 source-sha256: 719dff4bcf3953f5cc759b0b90f3ec17ed69a210567ab01d6063b1c12b2f0e03
 trigger-frame: 1

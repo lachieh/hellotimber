@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/search-prompt-c
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/search/prompt-c
 source-sha256: 994f00446123d7eb8caf46d0347dc60ca8e7bf8d36faa2e5a319d7578ba514d8
 trigger-frame: 1

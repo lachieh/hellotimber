@@ -18,3 +18,4 @@ export type {
   StockTimestamp,
   SyntheticNetwork,
 } from "./messages/network";
+export type { StockContact, StockSimCard } from "./phone-book/sim-card";

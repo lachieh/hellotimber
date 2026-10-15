@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/phone-book/saved
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/notes/saved
 source-sha256: a78820ff0cb78a0406a6f9a58c02fb838f3fda785882cf027d6858b962c3b186
 state: factory

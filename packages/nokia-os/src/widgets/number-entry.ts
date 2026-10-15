@@ -47,6 +47,11 @@ export interface NumberEntryOptions {
   readonly done: (number: string, flow: Flow) => void;
   /** Search on the empty entry; default the virgin phone book's `No phone numbers` note. */
   readonly search?: (flow: Flow) => void;
+  /**
+   * Plan 19: the soft key is `OK` even while the entry is empty, and OK gives "" (Add name and
+   * Edit's `Phone number:`, `phone-book/add-empty-ok`).
+   */
+  readonly emptyOk?: boolean;
   /** The cursor's blink from the node's own recording (plan 14 P9); default every 480 ms. */
   readonly blink?: StockWidgetTimeline;
 }
@@ -103,7 +108,7 @@ class NumberEntryWidget implements Widget {
         ...(state.pending === null ? { cursor: state.cursor } : {}),
       },
       cursor: blinkShown(this.#blink, this.#now),
-      softkey: empty ? "Search" : "OK",
+      softkey: empty && this.#options.emptyOk !== true ? "Search" : "OK",
     };
   }
 
@@ -156,8 +161,9 @@ class NumberEntryWidget implements Widget {
     if (key === "c") this.#clearFrom = undefined;
     if (key !== "navi") return;
     const number = textTick(this.#state, Number.POSITIVE_INFINITY).text;
-    if (number === "") (this.#options.search ?? noPhoneNumbers)(flow);
-    else this.#options.done(number, flow);
+    if (number === "" && this.#options.emptyOk !== true) {
+      (this.#options.search ?? noPhoneNumbers)(flow);
+    } else this.#options.done(number, flow);
   }
 
   tick(dtMs: number): void {

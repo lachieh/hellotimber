@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/memory-content
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/options/memory-content
 source-sha256: 01a8252bd86acfd3e9c45c6f8d25a0b84f3c764b439449f7b8e4048fb81f6581
 trigger-frame: 1

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/phone-book/nothing-to-save-off
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/notes/nothing-to-save-off
 source-sha256: 17e8a8ad6acc21f17385ad13b4bcf7d4f2d644196da9217b32425f8e7d021cb6
 state: factory

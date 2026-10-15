@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-nothing-to-save
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/nothing-to-save
 source-sha256: cb11ea1f61d07f3a08ae17c4b96a3296f35eb733aa7664b68615d1486b9d124e
 trigger-frame: 1

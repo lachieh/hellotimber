@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-chars
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/chars-typed.png + captures/6.39/plan19/add/chars-number.png + captures/6.39/plan19/add/chars-euro.png
 source-sha256: 92c86af6f039f8cc32dcf902525d406394273fd64a7cdf57454f452be9ef3890
 note: SIM content: Name: A1é.- (a held 1, key 1's punctuation), Phone number: +0p1*2#3; Name: E€ (€ from the symbol table).

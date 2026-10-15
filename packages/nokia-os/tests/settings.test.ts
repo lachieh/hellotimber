@@ -136,8 +136,6 @@ describe("virgin-EEPROM settings (D10)", () => {
     expect(virgin.texts).toMatchObject({
       "messages/message-settings/set-1/message-centre-number": "+1234567890",
       "messages/voice-mailbox-number": "793000333",
-      "phone-book/options/memory-status/free": "50 free",
-      "phone-book/options/memory-status/used": "0 in use",
       "games/pairs-ii/puzzle/top-score": "0",
       "games/snake/score-ids/last-score-id": "ç",
       "games/snake/score-ids/top-score-id": "ÆG",

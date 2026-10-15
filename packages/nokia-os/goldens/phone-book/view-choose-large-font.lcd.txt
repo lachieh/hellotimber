@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/view-choose-large-font
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/options/choose-large-font-ok
 source-sha256: 07cbc8b7e8e08df1f0ff13bfc7c016c0f4cd6eaf74668781c477e8a56fe6051a
 trigger-frame: 1

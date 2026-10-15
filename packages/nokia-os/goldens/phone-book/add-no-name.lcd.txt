@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-no-name
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/no-name
 source-sha256: d6b882e4fd5edb42022b4689916caa9996495505ded46b944ff84a4636d44ed4
 trigger-frame: 1

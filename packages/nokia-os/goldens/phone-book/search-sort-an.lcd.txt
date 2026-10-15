@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/search-sort-an
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/sort/search-an
 source-sha256: 7c54f4df6f2d4c2fcd4b3e7c679a91c132dc7e8f1dadb7bb820f3f682dc5c295
 trigger-frame: 1

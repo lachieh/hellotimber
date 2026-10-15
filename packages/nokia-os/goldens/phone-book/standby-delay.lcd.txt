@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/standby-delay
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/standby/delay-05
 source-sha256: a2facd29fc33e73f9d32c725269fe19dd4c1d2586627885ead1dc6c99774451d
 trigger-frame: 1

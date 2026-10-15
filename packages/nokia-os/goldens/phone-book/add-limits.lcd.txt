@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-limits
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/limit-15.png + captures/6.39/plan19/add/limit-16.png + captures/6.39/plan19/add/limit-17th.png + captures/6.39/plan19/add/limit-17th-later.png + captures/6.39/plan19/add/digits-19.png + captures/6.39/plan19/add/digits-20.png + captures/6.39/plan19/add/digits-21st.png
 source-sha256: 42a0acc76368db84f27828aa776de1b31929df841e69f848257be3660832688f
 note: SIM content: Name: after 15 and 16 fast keys (16 committed), a 17th key; Phone number: after 19, 20 digits and a 21st.

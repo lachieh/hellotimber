@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-fullrev
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/fullrev-down.png + captures/6.39/plan19/add/fullrev-up.png
 source-sha256: d0a9c2cd7fdee1acd489fba678f8f18b5ff928936235af90e3c791165028a87d
 note: SIM fullrev (the names in reverse SIM order): Replace? after ▼ (N01), then ▲ ▲ (the wrap to N49): sorted.

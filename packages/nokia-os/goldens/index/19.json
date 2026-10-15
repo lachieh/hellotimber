@@ -2,7 +2,7 @@
   {
     "id": "phone-book/add-chars",
     "file": "phone-book/add-chars.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -10,7 +10,7 @@
   {
     "id": "phone-book/add-chars-saved",
     "file": "phone-book/add-chars-saved.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -18,7 +18,7 @@
   {
     "id": "phone-book/add-duplicate",
     "file": "phone-book/add-duplicate.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -26,7 +26,7 @@
   {
     "id": "phone-book/add-duplicate-c",
     "file": "phone-book/add-duplicate-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -34,7 +34,7 @@
   {
     "id": "phone-book/add-duplicate-ok",
     "file": "phone-book/add-duplicate-ok.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -42,7 +42,7 @@
   {
     "id": "phone-book/add-empty-ok",
     "file": "phone-book/add-empty-ok.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -50,7 +50,7 @@
   {
     "id": "phone-book/add-empty-sim",
     "file": "phone-book/add-empty-sim.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -58,7 +58,7 @@
   {
     "id": "phone-book/add-euro-saved",
     "file": "phone-book/add-euro-saved.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -66,7 +66,7 @@
   {
     "id": "phone-book/add-full",
     "file": "phone-book/add-full.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -74,7 +74,7 @@
   {
     "id": "phone-book/add-full-replace",
     "file": "phone-book/add-full-replace.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -82,7 +82,7 @@
   {
     "id": "phone-book/add-full-replace-c",
     "file": "phone-book/add-full-replace-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -90,7 +90,7 @@
   {
     "id": "phone-book/add-fullrev",
     "file": "phone-book/add-fullrev.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -98,7 +98,7 @@
   {
     "id": "phone-book/add-fullrev-replace",
     "file": "phone-book/add-fullrev-replace.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -106,7 +106,7 @@
   {
     "id": "phone-book/add-invalid-char",
     "file": "phone-book/add-invalid-char.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -114,7 +114,7 @@
   {
     "id": "phone-book/add-limit-saved",
     "file": "phone-book/add-limit-saved.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -122,7 +122,7 @@
   {
     "id": "phone-book/add-limits",
     "file": "phone-book/add-limits.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 7,
     "frames": 7
@@ -130,7 +130,7 @@
   {
     "id": "phone-book/add-name-c",
     "file": "phone-book/add-name-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -138,7 +138,7 @@
   {
     "id": "phone-book/add-name-c-empty",
     "file": "phone-book/add-name-c-empty.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -146,7 +146,7 @@
   {
     "id": "phone-book/add-name-hold-c",
     "file": "phone-book/add-name-hold-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 9
@@ -154,7 +154,7 @@
   {
     "id": "phone-book/add-no-name",
     "file": "phone-book/add-no-name.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -162,7 +162,7 @@
   {
     "id": "phone-book/add-no-number",
     "file": "phone-book/add-no-number.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -170,7 +170,7 @@
   {
     "id": "phone-book/add-nothing-to-save",
     "file": "phone-book/add-nothing-to-save.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -178,7 +178,7 @@
   {
     "id": "phone-book/add-number-c-empty",
     "file": "phone-book/add-number-c-empty.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -186,7 +186,7 @@
   {
     "id": "phone-book/add-saved",
     "file": "phone-book/add-saved.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -194,7 +194,7 @@
   {
     "id": "phone-book/add-saved-c",
     "file": "phone-book/add-saved-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -202,7 +202,7 @@
   {
     "id": "phone-book/add-saved-down",
     "file": "phone-book/add-saved-down.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -226,7 +226,7 @@
   {
     "id": "phone-book/add-wide",
     "file": "phone-book/add-wide.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -234,7 +234,7 @@
   {
     "id": "phone-book/add-zoe",
     "file": "phone-book/add-zoe.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -242,7 +242,7 @@
   {
     "id": "phone-book/add-zoe-ok",
     "file": "phone-book/add-zoe-ok.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -602,7 +602,7 @@
   {
     "id": "phone-book/letters-commit",
     "file": "phone-book/letters-commit.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -610,7 +610,7 @@
   {
     "id": "phone-book/letters-large",
     "file": "phone-book/letters-large.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 14,
     "frames": 14
@@ -618,7 +618,7 @@
   {
     "id": "phone-book/letters-list",
     "file": "phone-book/letters-list.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 18,
     "frames": 18
@@ -626,7 +626,7 @@
   {
     "id": "phone-book/memory-content",
     "file": "phone-book/memory-content.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -634,7 +634,7 @@
   {
     "id": "phone-book/memory-empty",
     "file": "phone-book/memory-empty.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -642,7 +642,7 @@
   {
     "id": "phone-book/memory-empty-after-add",
     "file": "phone-book/memory-empty-after-add.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -650,7 +650,7 @@
   {
     "id": "phone-book/memory-full",
     "file": "phone-book/memory-full.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -722,7 +722,7 @@
   {
     "id": "phone-book/search-1",
     "file": "phone-book/search-1.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -730,7 +730,7 @@
   {
     "id": "phone-book/search-9",
     "file": "phone-book/search-9.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -738,7 +738,7 @@
   {
     "id": "phone-book/search-a",
     "file": "phone-book/search-a.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -746,7 +746,7 @@
   {
     "id": "phone-book/search-a-umlaut",
     "file": "phone-book/search-a-umlaut.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -754,7 +754,7 @@
   {
     "id": "phone-book/search-a-upn-up",
     "file": "phone-book/search-a-upn-up.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -762,7 +762,7 @@
   {
     "id": "phone-book/search-an",
     "file": "phone-book/search-an.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -770,7 +770,7 @@
   {
     "id": "phone-book/search-an-up",
     "file": "phone-book/search-an-up.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -778,7 +778,7 @@
   {
     "id": "phone-book/search-b",
     "file": "phone-book/search-b.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -786,7 +786,7 @@
   {
     "id": "phone-book/search-bo",
     "file": "phone-book/search-bo.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -794,7 +794,7 @@
   {
     "id": "phone-book/search-bz",
     "file": "phone-book/search-bz.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -802,7 +802,7 @@
   {
     "id": "phone-book/search-c",
     "file": "phone-book/search-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -810,7 +810,7 @@
   {
     "id": "phone-book/search-empty-ok",
     "file": "phone-book/search-empty-ok.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -818,7 +818,7 @@
   {
     "id": "phone-book/search-empty-sim",
     "file": "phone-book/search-empty-sim.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -826,7 +826,7 @@
   {
     "id": "phone-book/search-gi",
     "file": "phone-book/search-gi.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -834,7 +834,7 @@
   {
     "id": "phone-book/search-l",
     "file": "phone-book/search-l.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -842,7 +842,7 @@
   {
     "id": "phone-book/search-list-c",
     "file": "phone-book/search-list-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -850,7 +850,7 @@
   {
     "id": "phone-book/search-list-view-c",
     "file": "phone-book/search-list-view-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -858,7 +858,7 @@
   {
     "id": "phone-book/search-list-view-gi",
     "file": "phone-book/search-list-view-gi.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -866,7 +866,7 @@
   {
     "id": "phone-book/search-list-view-w",
     "file": "phone-book/search-list-view-w.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -874,7 +874,7 @@
   {
     "id": "phone-book/search-m",
     "file": "phone-book/search-m.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -882,7 +882,7 @@
   {
     "id": "phone-book/search-prompt",
     "file": "phone-book/search-prompt.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -890,7 +890,7 @@
   {
     "id": "phone-book/search-prompt-c",
     "file": "phone-book/search-prompt-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -898,7 +898,7 @@
   {
     "id": "phone-book/search-prompt-hold-c",
     "file": "phone-book/search-prompt-hold-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -906,7 +906,7 @@
   {
     "id": "phone-book/search-sort-1",
     "file": "phone-book/search-sort-1.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -914,7 +914,7 @@
   {
     "id": "phone-book/search-sort-a",
     "file": "phone-book/search-sort-a.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -922,7 +922,7 @@
   {
     "id": "phone-book/search-sort-a-umlaut",
     "file": "phone-book/search-sort-a-umlaut.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -930,7 +930,7 @@
   {
     "id": "phone-book/search-sort-an",
     "file": "phone-book/search-sort-an.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -938,7 +938,7 @@
   {
     "id": "phone-book/search-sort-b",
     "file": "phone-book/search-sort-b.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -946,7 +946,7 @@
   {
     "id": "phone-book/search-sort-o",
     "file": "phone-book/search-sort-o.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -954,7 +954,7 @@
   {
     "id": "phone-book/search-sort-space",
     "file": "phone-book/search-sort-space.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -962,7 +962,7 @@
   {
     "id": "phone-book/search-sort-z",
     "file": "phone-book/search-sort-z.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -970,7 +970,7 @@
   {
     "id": "phone-book/search-space",
     "file": "phone-book/search-space.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -978,7 +978,7 @@
   {
     "id": "phone-book/search-w",
     "file": "phone-book/search-w.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -986,7 +986,7 @@
   {
     "id": "phone-book/search-z",
     "file": "phone-book/search-z.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -994,7 +994,7 @@
   {
     "id": "phone-book/search-zz",
     "file": "phone-book/search-zz.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1002,7 +1002,7 @@
   {
     "id": "phone-book/service-c",
     "file": "phone-book/service-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1018,7 +1018,7 @@
   {
     "id": "phone-book/service-open",
     "file": "phone-book/service-open.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1026,7 +1026,7 @@
   {
     "id": "phone-book/service-scroll",
     "file": "phone-book/service-scroll.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -1322,7 +1322,7 @@
   {
     "id": "phone-book/standby-delay",
     "file": "phone-book/standby-delay.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1330,7 +1330,7 @@
   {
     "id": "phone-book/standby-down-empty",
     "file": "phone-book/standby-down-empty.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 5
@@ -1338,7 +1338,7 @@
   {
     "id": "phone-book/standby-down-large",
     "file": "phone-book/standby-down-large.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1346,7 +1346,7 @@
   {
     "id": "phone-book/standby-down-list",
     "file": "phone-book/standby-down-list.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1354,7 +1354,7 @@
   {
     "id": "phone-book/standby-down-list-c",
     "file": "phone-book/standby-down-list-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1362,7 +1362,7 @@
   {
     "id": "phone-book/standby-down-number",
     "file": "phone-book/standby-down-number.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1370,7 +1370,7 @@
   {
     "id": "phone-book/standby-lead-c",
     "file": "phone-book/standby-lead-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 5
@@ -1378,7 +1378,7 @@
   {
     "id": "phone-book/standby-lead-down",
     "file": "phone-book/standby-lead-down.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1386,7 +1386,7 @@
   {
     "id": "phone-book/standby-list-c",
     "file": "phone-book/standby-list-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1402,7 +1402,7 @@
   {
     "id": "phone-book/standby-list-hold-c",
     "file": "phone-book/standby-list-hold-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -1562,7 +1562,7 @@
   {
     "id": "phone-book/view-choose-large-font",
     "file": "phone-book/view-choose-large-font.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1570,7 +1570,7 @@
   {
     "id": "phone-book/view-choose-name-list",
     "file": "phone-book/view-choose-name-list.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1578,7 +1578,7 @@
   {
     "id": "phone-book/view-choose-name-number",
     "file": "phone-book/view-choose-name-number.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1586,7 +1586,7 @@
   {
     "id": "phone-book/view-large",
     "file": "phone-book/view-large.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 24,
     "frames": 24
@@ -1594,7 +1594,7 @@
   {
     "id": "phone-book/view-list",
     "file": "phone-book/view-list.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 30,
     "frames": 30
@@ -1602,7 +1602,7 @@
   {
     "id": "phone-book/view-number",
     "file": "phone-book/view-number.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 24,
     "frames": 24
@@ -1610,7 +1610,7 @@
   {
     "id": "phone-book/view-sort",
     "file": "phone-book/view-sort.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 33,
     "frames": 33
@@ -1698,14 +1698,14 @@
   {
     "id": "sound/note/memory-full",
     "file": "sound/note/memory-full.sound.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/note/nothing-to-save",
     "file": "sound/note/nothing-to-save.sound.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
@@ -1740,14 +1740,14 @@
   {
     "id": "sound/phone-book/nothing-to-save-off",
     "file": "sound/phone-book/nothing-to-save-off.sound.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/phone-book/saved",
     "file": "sound/phone-book/saved.sound.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },

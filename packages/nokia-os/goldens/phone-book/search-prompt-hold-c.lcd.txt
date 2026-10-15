@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/search-prompt-hold-c
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/search/prompt-hold-c
 source-sha256: 1359e1227d9ee4d8eb2dfaf33d0b3ff673f2c88fc435c93c5b1e9d9bbb8a1bd9
 trigger-frame: 1

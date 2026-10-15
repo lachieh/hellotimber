@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/memory-empty-after-add
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/options/memory-empty-after-add
 source-sha256: 51ee1f8194024c2d77f4ca2e26a3d44f1301f678108559297ff616d1140a656e
 trigger-frame: 1

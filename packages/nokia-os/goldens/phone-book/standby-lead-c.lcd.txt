@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/standby-lead-c
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/standby/lead-c
 source-sha256: 8e7bb32a19292ee284dbc8c6777d66e366bac3787fbb6d53b0f11755b5403ccf
 trigger-frame: 1

@@ -579,7 +579,9 @@ that moves the carousel opens it at once, C returns to standby).
 **Kernel policy (plan 19, in progress).** A standby key may open an application, run as a standby
 application like a notice's, after an optional leaving delay (`standbyKeyDelayMs`) during which
 standby shows `leaving: true`; a key in the delay opens the target at once and goes to it. Both
-are opt-in and carry no Nokia labels or timings; the website sets neither.
+are opt-in and carry no Nokia labels or timings; the website sets neither. A key held when an
+application exits keeps its long press (C held from a screen that leaves at C's down reaches
+standby) while its release is swallowed.
 
 **Kernel policy (plan 18, in progress).** Standby indicators are host readers re-read per tick.
 A notice may open an application at standby with an empty navigation stack. Neither interface

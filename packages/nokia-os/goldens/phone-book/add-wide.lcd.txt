@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-wide
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/wide-09.png + captures/6.39/plan19/add/wide-10.png + captures/6.39/plan19/add/wide-11.png + captures/6.39/plan19/add/wide-16.png
 source-sha256: 65a163c107c3d358ebc2b1ab08c85015645a2b3d7c87a5f3b9d783c6f13f93c3
 note: SIM content: Name: with 9, 10, 11 and 16 Ms (each committed): the box drops to two lines.

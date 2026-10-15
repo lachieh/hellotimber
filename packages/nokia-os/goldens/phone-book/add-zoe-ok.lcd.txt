@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-zoe-ok
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/zoe-ok
 source-sha256: a99ac0e23c4cbc20afd85785c0a7f51fb834df18c341aecf0beebe4400d19a72
 trigger-frame: 1

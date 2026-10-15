@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/standby-down-large
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/standby/down-large
 source-sha256: e04a9ad77c245922cff7bf526539f1d2996d74536f8fc08c29784780112bc755
 trigger-frame: 1

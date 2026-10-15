@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/standby-down-number
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/standby/down-number
 source-sha256: 0040a860bbe3a13b00486d41394be560c8a0196235af7d8f350782737864345c
 trigger-frame: 1

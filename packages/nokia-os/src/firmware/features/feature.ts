@@ -9,6 +9,7 @@
 // table must not overlap (tests/features.test.ts).
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockMessaging } from "../../messages/service";
+import type { StockPhoneBook } from "../../phone-book/store";
 import type { StockSounder } from "../../sound/sounder";
 import type { Widget } from "../../widgets/flow";
 import type { ListNumbering } from "../../widgets/rows";
@@ -35,6 +36,8 @@ export interface StockServices {
   readonly eeprom: StockEeprom;
   /** Plan 18: the phone's SMS (its `messages` record over `eeprom`, the network port). */
   readonly messaging: StockMessaging;
+  /** Plan 19: the inserted SIM's phone book (its `phone-book` record over `eeprom`). */
+  readonly phoneBook: StockPhoneBook;
 }
 
 /** The tree node a bound screen opens for. */

@@ -245,14 +245,10 @@ describe("nameList in a flow (D6)", () => {
     expect(chosen).toEqual([at(1)]);
   });
 
-  it("goes back on C and to standby on C held", () => {
-    const rig = list("large");
-    rig.press("c");
-    expect(rig.exits).toEqual([{ atMs: 0, options: undefined }]);
+  it("goes back at C's down", () => {
     const held = list("large");
     held.session.onKey({ type: "down", key: "c" });
-    held.advance(900);
-    expect(held.exits.map((e) => e.options)).toEqual([{ to: "standby" }]);
+    expect(held.exits).toEqual([{ atMs: 0, options: undefined }]);
     const custom: string[] = [];
     const own = list("large", { back: () => void custom.push("back") });
     own.press("c");

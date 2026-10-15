@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/search-empty-sim
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/search/empty-sim
 source-sha256: 4394fa3549048426eb6956e44aabb981978d94686515606c702ae7fea2cb6ede
 trigger-frame: 1

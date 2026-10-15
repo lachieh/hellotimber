@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/view-choose-name-list
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/options/choose-name-list-ok
 source-sha256: 10d55c1dbbfb11ff3978ef2b1c5d897cc2555261735236fd5df4daded4309f39
 trigger-frame: 1

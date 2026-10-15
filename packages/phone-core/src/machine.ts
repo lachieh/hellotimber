@@ -127,6 +127,11 @@ interface HeldKey {
   downAt: number;
   longFired: boolean;
   shortcutCaptured: boolean;
+  /**
+   * Held across an application's exit (or replacement): its release is not a short press, but
+   * its long press still fires (C held from a screen that leaves at C's down reaches standby).
+   */
+  swallowed?: true;
 }
 
 type Notice = { text: string; softkey: string; path?: string; open?: PhoneApplication };
@@ -780,7 +785,7 @@ function renderFrame<Metadata>(
 }
 
 function swallowHeldReleases<Metadata>(m: Machine<Metadata>): void {
-  for (const held of m.held.values()) held.longFired = true;
+  for (const held of m.held.values()) held.swallowed = true;
 }
 
 function deactivate<Metadata>(
@@ -1144,13 +1149,13 @@ function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
   m.held.delete(event.key);
   if (held?.shortcutCaptured) {
     const digit = capturedDigit(m, event.key);
-    if (!held.longFired && digit !== null) shortcutDigit(m, digit);
+    if (!held.longFired && !held.swallowed && digit !== null) shortcutDigit(m, digit);
     return;
   }
   if (m.mode.kind === "app") {
     const activation = m.mode.activation;
     if (activation.session === null) {
-      if (held !== undefined && !held.longFired && event.key === "c") {
+      if (held !== undefined && !held.longFired && !held.swallowed && event.key === "c") {
         cancelShortcut(m);
         if (activation.origin.kind === "standby") goStandby(m);
         else returnToStack(m, activation.stack);
@@ -1160,7 +1165,7 @@ function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
     }
     return;
   }
-  if (held === undefined || held.longFired) return;
+  if (held === undefined || held.longFired || held.swallowed) return;
   onShortPress(m, event.key);
 }
 

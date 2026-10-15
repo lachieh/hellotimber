@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-invalid-char
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/chars-w
 source-sha256: 9eb2a356ba97c7ea7ca491b642a0580b5e9c062fd0e55a9cec3476ef701073c0
 trigger-frame: 1

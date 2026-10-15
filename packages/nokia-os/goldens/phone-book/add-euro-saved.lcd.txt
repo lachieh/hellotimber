@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-euro-saved
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/chars-euro-saved
 source-sha256: 9c95fbcde6912167df60ab19c5d63891f58dcbd1648c1fa2ea62c4c6903923ac
 trigger-frame: 1

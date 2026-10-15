@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-empty-sim
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/empty-sim
 source-sha256: bb217d01958d710075d9ed35dfc99855dd2a9c29b2efd8240010307d574466ed
 trigger-frame: 1

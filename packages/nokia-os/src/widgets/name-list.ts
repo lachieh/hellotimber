@@ -8,7 +8,7 @@
 // first name at or after it (`searchIndex`). In Name list view a target inside the window keeps
 // the window, else the highlight keeps its row (`phone-book/letters-list`). 0, 1, * and # do
 // nothing.
-import { LONG_PRESS_MS, rowsWindowTop, type PhoneKey } from "@hellotimber/phone-core";
+import { rowsWindowTop, type PhoneKey } from "@hellotimber/phone-core";
 import type { NameListModel } from "../display/widgets";
 import { searchIndex, shownName, type PhoneBookEntry } from "../phone-book/entries";
 import { TEXT_TIMINGS } from "../resources";
@@ -46,8 +46,8 @@ export interface NameListOptions {
   /** The soft key: the highlighted entry. */
   readonly choose: (entry: PhoneBookEntry, flow: Flow, list: NameListControl) => void;
   /**
-   * C (at its release; held for the kernel's long press: standby, as plan 18's lists): default
-   * the screen below.
+   * C, at its down (the firmware leaves while C is still held: `phone-book/standby-list-hold-c`
+   * closes the list 48 ms after the down): default the screen below.
    */
   readonly back?: (flow: Flow) => void;
 }
@@ -59,8 +59,6 @@ class NameListWidget implements Widget, NameListControl {
   #now = 0;
   /** The letter key cycling: its key, the cycle index, since when. */
   #letter: { key: TextKey; index: number; sinceMs: number } | undefined;
-  /** How long C has been held, while it is. */
-  #heldC: number | undefined;
 
   constructor(options: NameListOptions) {
     this.#options = options;
@@ -139,6 +137,9 @@ class NameListWidget implements Widget, NameListControl {
       return { kind: "name-list", view: "list", rows, selected: this.#row(), softkey };
     }
     const name = entry === undefined ? "" : shownName(entry);
+    if (view === "large" && entry !== undefined && entry.name === "") {
+      return { kind: "name-list", view: "large", name: "", number: entry.number, softkey };
+    }
     if (view === "large") return { kind: "name-list", view: "large", name, softkey };
     const shown =
       entry === undefined ? "" : (value?.(entry) ?? (entry.name === "" ? "" : entry.number));
@@ -151,31 +152,20 @@ class NameListWidget implements Widget, NameListControl {
     };
   }
 
-  onKeyDown(key: PhoneKey): void {
-    if (key === "c") this.#heldC = 0;
+  onKeyDown(key: PhoneKey, flow: Flow): void {
+    if (key === "c") (this.#options.back ?? ((inner: Flow) => inner.back()))(flow);
     else if (key === "up" || key === "down") this.#move(key);
     else if (LETTER_KEYS.has(key)) this.#typeLetter(key as TextKey);
   }
 
   onKey(key: PhoneKey, flow: Flow): void {
-    if (key === "c") {
-      if (this.#heldC === undefined) return;
-      this.#heldC = undefined;
-      (this.#options.back ?? ((inner: Flow) => inner.back()))(flow);
-      return;
-    }
     if (key !== "navi") return;
     const entry = this.entry;
     if (entry !== undefined) this.#options.choose(entry, flow, this);
   }
 
-  tick(dtMs: number, flow: Flow): void {
+  tick(dtMs: number): void {
     this.#now += dtMs;
-    if (this.#heldC === undefined) return;
-    this.#heldC += dtMs;
-    if (this.#heldC < LONG_PRESS_MS) return;
-    this.#heldC = undefined;
-    flow.standby();
   }
 }
 

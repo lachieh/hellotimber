@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/standby-lead-down
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/standby/lead-down
 source-sha256: f59980a138ac73eaf61aa8a4c430df6349dffa6a14107d19060403627f9d6842
 trigger-frame: 1

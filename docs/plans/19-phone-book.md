@@ -809,20 +809,57 @@ line: the `StockSimCard` and `StockContact` types). Shared, beyond one line:
 `tests/firmware-phone.test.ts` (the standby-key test: ▼ the list, ▲ Dialled numbers). New:
 `tests/phone-book-flows.test.ts`.
 
-- [ ] Standby ▼: the name list with `Call` (Call → plan 22's placeholder widget); C and C held per
+- [x] Standby ▼: the name list with `Call` (Call → plan 22's placeholder widget); C and C held per
       Task 0 S; an empty SIM's `No phone numbers`, then standby.
-- [ ] 1-1 Search: plan 18's `textInput` on the existing prompt layout; OK → the list at
+- [x] 1-1 Search: plan 18's `textInput` on the existing prompt layout; OK → the list at
       `searchIndex`; an empty SIM → `No phone numbers` → the level (plan 14's golden still passes).
-- [ ] 1-2 Service Nos.: the SIM's numbers, else the existing note.
-- [ ] 1-3 Add name: `textInput` (the SIM's limit and counter) → `numberEntry` (limit 20, `OK`) →
+- [x] 1-2 Service Nos.: the SIM's numbers, else the existing note.
+- [x] 1-3 Add name: `textInput` (the SIM's limit and counter) → `numberEntry` (limit 20, `OK`) →
       `Saved` → the list on the new entry with `Call`; `Nothing to save`; `Memory full` → `Replace?`
       (OK replaces location 1, or what Task 0 A shows; C → `Name:` with the text kept).
-- [ ] 1-8-2 Memory status computed (D14); 1-8-1 Type of view unchanged, now read by the list.
-- [ ] TDD through keys against `phone-book/standby-*`, `search-*`, `service-*`, `add-*`, `memory-*`,
+- [x] 1-8-2 Memory status computed (D14); 1-8-1 Type of view unchanged, now read by the list.
+- [x] TDD through keys against `phone-book/standby-*`, `search-*`, `service-*`, `add-*`, `memory-*`,
       `view-choose-*` (pixels exact; timelines ±2 ms; recording spreads per plan 14 closeout
       decision 2).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): standby name list, Search, Add name and Memory status`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): standby name list, Search, Add name and Memory status`.
+
+Deviation: **Task 7 (paths and wiring):** the flows are `src/phone-book/flows.ts` (the feature binds
+1-1, 1-2, 1-3 and 1-8-2 to them); the standby list is `StockFlowApplication("stock:phone-book")`
+on `standbyKeys.down`; `STOCK_STANDBY_KEYS` keeps only ▲. `StockServices` gains `phoneBook`
+(`feature.ts`, `menu.ts`'s `stockServices`/`createStockMenu`). The Memory status virgin texts
+were the phone book feature's `settings.virginTexts` (plan 29), now deleted; 1-8-2 is bound.
+
+Deviation: **Task 7 (acceptance lever, built here):** as plan 18's Task 8, the scenarios replay Task
+0's own command logs: `scripts/phone-book-scripts.ts` (`vp run @hellotimber/nokia-os#phone-book-scripts
+<REF>`) transcribes them with each log's SIM and setup into `scripts/generated/phone-book-scripts.ts`;
+`tests/support/phone-book.ts` replays them (factory logs seed the factory state) and drives the
+sound goldens from each recording's start. A task's goldens are asserted by adding it to the
+capture set's `DONE_TASKS` (now `{7}`); `memory-small`'s log passes through Speed dials, so it is
+Task 9's.
+
+Deviation: **Task 7 (measured behaviour):** the name prompts (`Name:` of Search, Add name, Edit)
+change the header's mode when the next character is typed, not at a commit (one letter keeps
+`Abc`; empty: `Abc`) and leave at C's down; a SIM name's `€` counts two (GSM extension);
+Add name's `Name:` drops to small-face lines of 81 columns once the text is wider than 72 (large
+holds `Adgjmptwad`, 71; not `Adgjmptwadg`, 78), the cursor 10 rows high in the blank column after
+the character before it; the name list leaves at C's down; a name-less entry shows its number
+large and right-aligned at top 24 (as View number); Service Nos. opens through a blank LCD (69 ms)
+and its first row alone (34 ms). Plan 18's widgets gain additive options for these
+(`numberEntry` `emptyOk`; `textInput` `smallWhenWide`, `noCursor`, `blink`, `typedCase`,
+`counted`, `leaveAtDown`; the prompt's text entry `smallWhenWide`).
+
+Deviation: **Task 7 (phone-core, generic):** a key held when an application exits keeps its long
+press and only its release is swallowed (it used to lose both), so C held from a screen that leaves
+at C's down reaches standby as the firmware's menus do (`packages/phone-core/tests/held-across-exit.test.ts`).
+This fixes plan 18's flagged gap: `sms/elsewhere` leaves its known gaps, and so does `sms/notice`
+(▼ at standby now opens the phone book, as captured).
+
+**Task 7 completion note:** 91 plan 19 goldens are asserted (Task 7's), two of them known gaps
+(`standby-list-hold-c`, `search-prompt-hold-c`: the firmware's own long press redraws standby
+≈530 ms after C's down; the kernel's comes at 800 ms). Scenario tolerances: the leading frame's
+spread (±15 ms), standby's operator-less draw (±6), the tick notes' and `Done`'s spread between
+recordings (±25, `PROBE_TOLERANCE_MS`), `No phone numbers` (±60: 2850-2938 ms between recordings).
 
 ### Task 8 - Erase, Edit and Assign tone (TDD)
 

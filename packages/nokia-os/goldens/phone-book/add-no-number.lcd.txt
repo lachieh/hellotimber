@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-no-number
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/no-number
 source-sha256: 9dce650bdbd50e9d55106d81562b2c542c0e7611c91c48c1fdfaf4c90def4c4d
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/letters-commit
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/letters/list/commit
 source-sha256: e1d2de7565fd3027ad494c517c76bb391aa47c7c4f4c51655b8ca47aee9fe124
 trigger-frame: 1

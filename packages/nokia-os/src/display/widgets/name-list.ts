@@ -12,6 +12,14 @@ const LCD_WIDTH = 84;
 const LARGE_LEFT = 1;
 const LARGE_TOPS = [7, 22] as const;
 
+/**
+ * A number in the large face, right-aligned: its last line at top 24, the one before at top 10
+ * (Speed dials' View number, `phone-book/speed-view-long`; a name-less entry in Large font,
+ * `phone-book/add-no-name` e).
+ */
+const LARGE_NUMBER_TOPS = [10, 24] as const;
+const LARGE_NUMBER_WIDTH = 80;
+
 /** Name, number and the tone page: the name in the small face from x 0 at tops 7 and 16. */
 const NAME_TOPS = [7, 16] as const;
 /** The value (a number, a tone) right-aligned on the lines below, the last at top 29. */
@@ -29,11 +37,12 @@ const ELLIPSIS = "...";
 const ELLIPSIS_LEFT = 74;
 
 export type NameListModel =
-  /** Large font: the name (or a name-less entry's number). */
+  /** Large font: the name, or a name-less entry's number (as View number shows it). */
   | {
       readonly kind: "name-list";
       readonly view: "large";
       readonly name: string;
+      readonly number?: string;
       readonly softkey: string;
     }
   /** Name, number, and the Assign tone page (`value` the tone). */
@@ -52,6 +61,40 @@ export type NameListModel =
       readonly selected: number;
       readonly softkey: string;
     };
+
+/**
+ * The phone book's queries and voice screens: small-face lines from x 0 at their tops, an
+ * optional icon, the soft key (`Replace?` / a name at 4/15/25, `Are you` / `sure?` at 2/12,
+ * `Please` / `speak now` with its face).
+ */
+export interface PhoneBookQueryModel {
+  readonly kind: "phone-book-query";
+  readonly lines: readonly string[];
+  readonly tops: readonly number[];
+  /** A widget sprite drawn at its captured position. */
+  readonly sprite?: string;
+  readonly softkey: string;
+}
+
+/** `Replace?`, `Erase?` and the like: the query at top 4, the name below it at 15 and 25. */
+export function nameQuery(query: string, name: string, softkey = "OK"): PhoneBookQueryModel {
+  const lines = [query, ...nameLines(STOCK_FONTS.small, name, LCD_WIDTH).slice(0, 2)];
+  return { kind: "phone-book-query", lines, tops: [4, 15, 25].slice(0, lines.length), softkey };
+}
+
+export function paintPhoneBookQuery(fb: Framebuffer, model: PhoneBookQueryModel): void {
+  model.lines.forEach((line, i) => {
+    const top = model.tops[i];
+    if (top === undefined) throw new Error(`Query line ${JSON.stringify(line)} has no top.`);
+    fb.drawText(STOCK_FONTS.small, line, 0, top);
+  });
+  if (model.sprite !== undefined) {
+    const sprite = WIDGET_SPRITES[model.sprite];
+    if (sprite === undefined) throw new Error(`No stock widget sprite "${model.sprite}".`);
+    fb.blitBitmap(sprite.bitmap, sprite.x, sprite.y);
+  }
+  fb.drawTextCentered(STOCK_FONTS.small, model.softkey, SOFTKEY_TOP);
+}
 
 /** Service Nos.: plan 14's rows and rail, no icon (`phone-book/service-*`). */
 export interface ServiceListModel {
@@ -128,6 +171,17 @@ export function cutRow(font: PixelFont, name: string): string | undefined {
   return chars.join("");
 }
 
+/** A number in the large face, right-aligned on the lines from top 24 up (View number). */
+export function paintLargeNumber(fb: Framebuffer, number: string): void {
+  const { large } = STOCK_FONTS;
+  const lines = breakFromEnd(large, number, LARGE_NUMBER_WIDTH, LARGE_NUMBER_TOPS.length);
+  const tops = LARGE_NUMBER_TOPS.slice(LARGE_NUMBER_TOPS.length - lines.length);
+  // The last cell's blank column is x 82 (`l24@4-83`: ink to x 81), as plan 18's values.
+  lines.forEach((line, i) =>
+    fb.drawText(large, line, LCD_WIDTH - 1 - textWidth(large, line), tops[i]!),
+  );
+}
+
 function icon(fb: Framebuffer): void {
   const sprite = WIDGET_SPRITES["prompt/phone-book"];
   if (sprite === undefined) throw new Error('No stock widget sprite "prompt/phone-book".');
@@ -137,7 +191,9 @@ function icon(fb: Framebuffer): void {
 export function paintNameList(fb: Framebuffer, model: NameListModel): void {
   const { small, large } = STOCK_FONTS;
   icon(fb);
-  if (model.view === "large") {
+  if (model.view === "large" && model.name === "" && model.number !== undefined) {
+    paintLargeNumber(fb, model.number);
+  } else if (model.view === "large") {
     const lines = nameLines(large, model.name, LCD_WIDTH - LARGE_LEFT);
     lines
       .slice(0, LARGE_TOPS.length)

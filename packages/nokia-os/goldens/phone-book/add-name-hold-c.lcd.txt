@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-name-hold-c
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/name-hold-c
 source-sha256: 57c961d85c2d8edfdd78c9f93a50aada215c9970280c89aa5fcb640eb814cd89
 trigger-frame: 1

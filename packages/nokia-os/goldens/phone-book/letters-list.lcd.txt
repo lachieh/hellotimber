@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/letters-list
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/letters/list/2-1.png + captures/6.39/plan19/letters/list/2-2.png + captures/6.39/plan19/letters/list/2-3.png + captures/6.39/plan19/letters/list/2-4.png + captures/6.39/plan19/letters/list/2-5.png + captures/6.39/plan19/letters/list/3-1.png + captures/6.39/plan19/letters/list/3-4.png + captures/6.39/plan19/letters/list/3-5.png + captures/6.39/plan19/letters/list/4-1.png + captures/6.39/plan19/letters/list/4-2.png + captures/6.39/plan19/letters/list/4-3.png + captures/6.39/plan19/letters/list/4-4.png + captures/6.39/plan19/letters/list/4-5.png + captures/6.39/plan19/letters/list/7-2.png + captures/6.39/plan19/letters/list/7-5.png + captures/6.39/plan19/letters/list/9-2.png + captures/6.39/plan19/letters/list/inert-0.png + captures/6.39/plan19/letters/list/inert-hash.png
 source-sha256: 3074092b2f109e9e399d677a4b9984b788baf673a6ba4f3b5a23515a2e681035
 note: SIM content, Name list: the same letter keys (the window after each jump).

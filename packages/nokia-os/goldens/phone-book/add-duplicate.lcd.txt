@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-duplicate
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/duplicate
 source-sha256: d8ec66541a6f4128275f757a966df8339b879c139c589438ca3828b7c28951ff
 trigger-frame: 1

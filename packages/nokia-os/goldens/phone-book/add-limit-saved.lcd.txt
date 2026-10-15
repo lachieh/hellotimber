@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-limit-saved
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/limit-saved
 source-sha256: dfcbf4a36adef76e78b9a60db47fe32d267fe475330c79f96b0736f1f9f2af8a
 trigger-frame: 1
