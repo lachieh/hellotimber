@@ -53,6 +53,9 @@ import {
   type StockTreeNode,
 } from "../src/firmware/generated/stock-tree";
 
+/** A whole extraction reads every golden: ≈2 s alone, longer under the full suite's load. */
+const EXTRACTION_TIMEOUT_MS = 30_000;
+
 const INPUTS = composeResourceDeclarations(
   captureSets(),
   readGoldenIndex(join(import.meta.dirname, "../goldens")),
@@ -149,28 +152,36 @@ function stockTreeText(): ShownText[] {
 }
 
 describe("generated resources", () => {
-  it("equal a fresh extraction from the committed goldens", () => {
-    expect({
-      fonts: STOCK_FONT_DATA,
-      menuIcons: MENU_ICON_DATA,
-      boot: BOOT_DATA,
-      status: STATUS_DATA,
-      widgets: WIDGET_DATA,
-      snake: SNAKE_DATA,
-      sounds: SOUND_DATA,
-      text: TEXT_DATA,
-      composer: COMPOSER_DATA,
-    }).toEqual(extractResources());
-  });
+  it(
+    "equal a fresh extraction from the committed goldens",
+    { timeout: EXTRACTION_TIMEOUT_MS },
+    () => {
+      expect({
+        fonts: STOCK_FONT_DATA,
+        menuIcons: MENU_ICON_DATA,
+        boot: BOOT_DATA,
+        status: STATUS_DATA,
+        widgets: WIDGET_DATA,
+        snake: SNAKE_DATA,
+        sounds: SOUND_DATA,
+        text: TEXT_DATA,
+        composer: COMPOSER_DATA,
+      }).toEqual(extractResources());
+    },
+  );
 
-  it("are byte for byte what `regenerate` writes (resolve a conflict by regenerating)", () => {
-    const dir = join(import.meta.dirname, "../src/resources/generated");
-    const files = generatedFiles(extractResources());
-    expect(readdirSync(dir).sort()).toEqual(Object.keys(files).sort());
-    for (const [file, text] of Object.entries(files)) {
-      expect(readFileSync(join(dir, file), "utf8") === text, file).toBe(true);
-    }
-  });
+  it(
+    "are byte for byte what `regenerate` writes (resolve a conflict by regenerating)",
+    { timeout: EXTRACTION_TIMEOUT_MS },
+    () => {
+      const dir = join(import.meta.dirname, "../src/resources/generated");
+      const files = generatedFiles(extractResources());
+      expect(readdirSync(dir).sort()).toEqual(Object.keys(files).sort());
+      for (const [file, text] of Object.entries(files)) {
+        expect(readFileSync(join(dir, file), "utf8") === text, file).toBe(true);
+      }
+    },
+  );
 
   it("have binary glyphs of one height per font", () => {
     for (const [name, font] of Object.entries(STOCK_FONT_DATA)) {
@@ -411,13 +422,12 @@ describe("widget sprites and timelines", () => {
       expect(sprite.art, crop.id).toHaveLength(crop.y1 - crop.y0 + 1);
       expect(sprite.art.join(""), crop.id).toMatch(/^[#.]*#[#.]*$/);
       const { pixels } = loadGolden(crop.golden).images.find((image) => image.name === crop.image)!;
+      // One comparison per row (a per-pixel expect outlasts the timeout on a loaded machine).
       sprite.art.forEach((row, dy) => {
-        expect(row, crop.id).toHaveLength(crop.x1 - crop.x0 + 1);
-        Array.from(row).forEach((ch, dx) => {
-          expect(ch === "#", `${crop.id} (${dx}, ${dy})`).toBe(
-            pixels[(crop.y0 + dy) * 84 + crop.x0 + dx] === 1,
-          );
-        });
+        const lit = Array.from({ length: crop.x1 - crop.x0 + 1 }, (_, dx) =>
+          pixels[(crop.y0 + dy) * 84 + crop.x0 + dx] === 1 ? "#" : ".",
+        ).join("");
+        expect(row, `${crop.id} row ${dy}`).toBe(lit);
       });
       expect(WIDGET_SPRITES[crop.id]!.bitmap.width, crop.id).toBe(crop.x1 - crop.x0 + 1);
     }
@@ -742,6 +752,7 @@ describe("sound programs and rules (plan 16 Task 3)", () => {
       "Code error",
       "Dividing by zero not allowed",
       "Invalid shortcut",
+      "Keypad locked",
       "No phone numbers",
       "No voice tags saved",
       "Not allowed",
@@ -847,7 +858,7 @@ describe("text entry and SMS resources (plan 18)", () => {
     expect(fb.drawText(STOCK_FONTS.digits, "459/1", 0, 0)).toBe(28);
   });
 
-  it("gives every glyph its ink plus one blank column, but `1` and large `.` and `R`", () => {
+  it("gives every glyph its ink plus one blank column, but `1` and large `.`, `K` and `R`", () => {
     const spaced = new Set(
       INPUTS.glyphOverrides.flatMap((o) => (o.kind === "spacing" ? [`${o.font} ${o.char}`] : [])),
     );
@@ -872,9 +883,19 @@ describe("text entry and SMS resources (plan 18)", () => {
       "digits 1",
       "large .",
       "large 1",
+      "large K",
       "large R",
       "small 1",
       "thin 1",
+      // Plan 17 (the Rename pages): accents that fill their cell, so the next glyph touches them.
+      "thin Ã",
+      "thin Ì",
+      "thin Î",
+      "thin Ï",
+      "thin ì",
+      "thin î",
+      "thin ï",
+      "thin ñ",
     ]);
   });
 

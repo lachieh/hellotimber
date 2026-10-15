@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/cursor-three
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/cursor/three/end.png + captures/6.39/plan18/text/cursor/three/up-01.png + captures/6.39/plan18/text/cursor/three/up-02.png + captures/6.39/plan18/text/cursor/three/up-11.png + captures/6.39/plan18/text/cursor/three/up-12.png + captures/6.39/plan18/text/cursor/three/up-13.png + captures/6.39/plan18/text/cursor/three/up-23.png + captures/6.39/plan18/text/cursor/three/up-24.png + captures/6.39/plan18/text/cursor/three/up-25.png + captures/6.39/plan18/text/cursor/three/up-37.png + captures/6.39/plan18/text/cursor/three/up-38.png + captures/6.39/plan18/text/cursor/three/down-01.png + captures/6.39/plan18/text/cursor/three/down-02.png + captures/6.39/plan18/text/cursor/three/down-13.png + captures/6.39/plan18/text/cursor/three/down-14.png + captures/6.39/plan18/text/cursor/three/down-26.png + captures/6.39/plan18/text/cursor/three/down-27.png + captures/6.39/plan18/text/cursor/three/down-38.png + captures/6.39/plan18/text/cursor/three/down-39.png + captures/6.39/plan18/text/cursor/three/down-40.png + captures/6.39/plan18/text/cursor/three/middle.png + captures/6.39/plan18/text/cursor/three/middle-typed.png
 source-sha256: 83fb638ca1f3299841667c81792e080bd5ca0e91500afebf8e4741058dcbd17e
 note: Adgjm adgjm ×6 then b (three lines; keys 2 3 4 5 6 0 ×6, 2 2), then ▲ ×40 and ▼ ×40 (a shot per key; these are the starts, the line changes and the wraps), ▼ ×12 to the middle, 9 9 typed there.

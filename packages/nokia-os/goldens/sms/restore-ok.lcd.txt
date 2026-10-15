@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/restore-ok
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/restore/ok
 source-sha256: a3b65bceb045082db1ec9088d92fe9b559937adfeb77354d56b28b1ade1ca71e
 trigger-frame: 1

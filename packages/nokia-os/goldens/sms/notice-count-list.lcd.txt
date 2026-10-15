@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/notice-count-list
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/notice/count-list
 source-sha256: 865d742ce411a443f861ad39fce351ffd3ad9b8e32a40e9de7d79ea938e22a49
 note: Read on the 3 messages received notice: the Inbox list, ▼ per image.

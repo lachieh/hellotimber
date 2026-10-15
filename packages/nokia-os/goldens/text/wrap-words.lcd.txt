@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/wrap-words
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/wrap/words/01.png + captures/6.39/plan18/text/wrap/words/05.png + captures/6.39/plan18/text/wrap/words/13.png + captures/6.39/plan18/text/wrap/words/14.png + captures/6.39/plan18/text/wrap/words/15.png + captures/6.39/plan18/text/wrap/words/27.png + captures/6.39/plan18/text/wrap/words/28.png + captures/6.39/plan18/text/wrap/words/29.png + captures/6.39/plan18/text/wrap/words/42.png + captures/6.39/plan18/text/wrap/words/43.png + captures/6.39/plan18/text/wrap/words/44.png + captures/6.39/plan18/text/wrap/words/58.png + captures/6.39/plan18/text/wrap/words/59.png + captures/6.39/plan18/text/wrap/words/60.png
 source-sha256: 04ff8fa16d5dcf87e4c4478fc774f0032719e6827b733076f4be2da6f080e445
 note: Words of 3-7 letters typed one key per shot (a space after each word): the word that does not fit moves to the next line; the third line full, the view scrolls by one line.

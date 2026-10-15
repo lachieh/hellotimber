@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/outbox-use-number-found
-status: pending:18
+status: pending:22
 source: captures/6.39/plan18/sms/outbox/number/use-number
 source-sha256: 51ceebcf2b376972524f83b400087eb74a26792dbac9d36d16df76d4cf596191
 trigger-frame: 1

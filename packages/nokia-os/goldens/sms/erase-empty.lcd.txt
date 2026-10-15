@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/erase-empty
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/erase-empty
 source-sha256: 38cc06a2b5ba5da21c47ee81fcbe3b2a0c848dc0e8cc1be4fc46831c20b35857
 trigger-frame: 1

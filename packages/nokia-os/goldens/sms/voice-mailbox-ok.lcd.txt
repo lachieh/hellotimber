@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/voice-mailbox-ok
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/voice-mailbox/ok
 source-sha256: f14828cb59c5ed21f7d4d5c09850f6d48d7d403f00c1b93652cfb354918cb438
 trigger-frame: 1

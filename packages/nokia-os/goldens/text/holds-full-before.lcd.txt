@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/holds-full-before
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/holds-extended/full-committed-before.png + captures/6.39/plan18/text/holds-extended/numeric-empty-hash.png
 source-sha256: 404b74ac0e7b9c1c95c827a7e28fb05110004077effad95491042ade2a78c295
 note: A full 459-character message with its last character committed; the empty editor in 123 after #.

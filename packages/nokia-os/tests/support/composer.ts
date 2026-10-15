@@ -190,11 +190,41 @@ export function composerCase(name: string): ComposerCase {
   return found;
 }
 
-/** A case replayed on a fresh phone, then compared with its still. */
-export function composerStill(c: ComposerCase): void {
-  const rig = composerRig(c.state);
-  playComposer(rig, setupKeys(c));
-  playComposer(rig, c.keys);
+/**
+ * The phone a still fixture's previous case left (`composerStill`'s `chain`): a case whose keys
+ * extend it from the same start continues it, as `playComposer` plays tokens one after another
+ * (`cursor/up/NN` is `cursor/up/NN-1` and one more `up +350`: 52 replays of 50 tokens otherwise).
+ */
+export interface StillChain {
+  last?: { readonly case: ComposerCase; readonly rig: Rig };
+}
+
+/** Whether `c` starts where `previous` did and its keys continue `previous`'s. */
+function continues(previous: ComposerCase, c: ComposerCase): boolean {
+  const sameStart =
+    previous.state === c.state &&
+    previous.from === c.from &&
+    previous.slot === c.slot &&
+    previous.setup === c.setup;
+  return sameStart && (previous.keys === "" || c.keys.startsWith(`${previous.keys} `));
+}
+
+/**
+ * A case replayed on a fresh phone (or continuing `chain`'s, which it then holds), then compared
+ * with its still.
+ */
+export function composerStill(c: ComposerCase, chain?: StillChain): void {
+  const last = chain?.last;
+  let rig: Rig;
+  if (last !== undefined && continues(last.case, c)) {
+    rig = last.rig;
+    playComposer(rig, c.keys.slice(last.case.keys.length));
+  } else {
+    rig = composerRig(c.state);
+    playComposer(rig, setupKeys(c));
+    playComposer(rig, c.keys);
+  }
+  if (chain !== undefined) chain.last = { case: c, rig };
   const { id, image } = stillFixtureOf(c.name);
   expectLcd(
     rig.paint(),

@@ -8,6 +8,9 @@ import { extractResources, GOLDENS_DIR } from "../scripts/extract-resources.ts";
 import { readGoldenIndex } from "../scripts/golden-index.ts";
 import { loadGolden } from "./support/goldens.ts";
 
+/** Two full extractions per test: seconds alone, longer beside the other packages' tests. */
+const EXTRACTION_TIMEOUT_MS = 30_000;
+
 const index = readGoldenIndex(GOLDENS_DIR);
 const compose = (sets: readonly PlanCaptureSet[]) =>
   composeResourceDeclarations(sets, index, loadGolden);
@@ -82,43 +85,47 @@ describe("plan resource registrations", () => {
   });
 });
 
-it("takes a plan-owned glyph specimen and its bearing through font extraction", () => {
-  const sets = captureSets();
-  const foundation = sets.find((set) => set.plan === "13")!;
-  const resources = foundation.resources!;
-  const specimen = resources.textRuns!["menu/05-tones.sub"]!;
-  const textRuns = Object.fromEntries(
-    Object.entries(resources.textRuns!).filter(([id]) => id !== "menu/05-tones.sub"),
-  );
-  const override = resources.glyphOverrides!.find(
-    (entry) => entry.kind === "bearing" && entry.font === "small" && entry.char === "1",
-  )!;
-  const moved = sets.map((set) =>
-    set.plan === "13"
-      ? {
-          ...set,
-          resources: {
-            ...resources,
-            textRuns,
-            glyphOverrides: resources.glyphOverrides!.filter((entry) => entry !== override),
-          },
-        }
-      : set,
-  );
-  // Plan 18's goldens also harvest small "1", so removing plan 13's specimen alone no longer
-  // fails extraction; the registration moved to another plan must still give the same glyph.
-  const result = extractResources(GOLDENS_DIR, [
-    ...moved,
-    {
-      plan: "29",
-      resources: {
-        textRuns: { "menu/05-tones.sub": specimen },
-        glyphOverrides: [override],
+it(
+  "takes a plan-owned glyph specimen and its bearing through font extraction",
+  () => {
+    const sets = captureSets();
+    const foundation = sets.find((set) => set.plan === "13")!;
+    const resources = foundation.resources!;
+    const specimen = resources.textRuns!["menu/05-tones.sub"]!;
+    const textRuns = Object.fromEntries(
+      Object.entries(resources.textRuns!).filter(([id]) => id !== "menu/05-tones.sub"),
+    );
+    const override = resources.glyphOverrides!.find(
+      (entry) => entry.kind === "bearing" && entry.font === "small" && entry.char === "1",
+    )!;
+    const moved = sets.map((set) =>
+      set.plan === "13"
+        ? {
+            ...set,
+            resources: {
+              ...resources,
+              textRuns,
+              glyphOverrides: resources.glyphOverrides!.filter((entry) => entry !== override),
+            },
+          }
+        : set,
+    );
+    // Plan 18's goldens also harvest small "1", so removing plan 13's specimen alone no longer
+    // fails extraction; the registration moved to another plan must still give the same glyph.
+    const result = extractResources(GOLDENS_DIR, [
+      ...moved,
+      {
+        plan: "29",
+        resources: {
+          textRuns: { "menu/05-tones.sub": specimen },
+          glyphOverrides: [override],
+        },
       },
-    },
-  ]);
-  expect(result.fonts.small.glyphs["1"]).toEqual(extractResources().fonts.small.glyphs["1"]);
-});
+    ]);
+    expect(result.fonts.small.glyphs["1"]).toEqual(extractResources().fonts.small.glyphs["1"]);
+  },
+  EXTRACTION_TIMEOUT_MS,
+);
 
 it("allows resource evidence from an honestly pending LCD golden", () => {
   const pending = index.find((entry) => entry.id === "menu/03-chat.sub")!;
@@ -239,9 +246,13 @@ it("rejects bad text bands, non-LCD fixtures and invalid probe frames", () => {
   ).toThrow(/invalid fromFrame/);
 });
 
-it("sorts batches independently of plan enumeration and preserves all existing bytes", () => {
-  expect(extractResources(GOLDENS_DIR, captureSets().reverse())).toEqual(extractResources());
-});
+it(
+  "sorts batches independently of plan enumeration and preserves all existing bytes",
+  () => {
+    expect(extractResources(GOLDENS_DIR, captureSets().reverse())).toEqual(extractResources());
+  },
+  EXTRACTION_TIMEOUT_MS,
+);
 
 it("requires one index registration for every plan capture module and resource input", async () => {
   const scripts = join(import.meta.dirname, "../scripts");

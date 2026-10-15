@@ -120,13 +120,15 @@ Sources: manual p.19 keys, p.28, p.34–38, p.32 ([scroll keys verbatim](https:/
 - **Scroll keys elsewhere (verified):** browse menus/settings; **the manual describes cursor left (▲) and right (▼); v6.39 captures show the reverse (see §10)**; during a call they adjust earpiece volume.
 - **Power key short-press in standby = profile switcher** (verified). **Long-press `#`: no documented function on the 3310** (silent-profile toggle via # arrived on later models) — UNVERIFIED/absent, recommend no-op.
 - **Long-press `1` in standby = dial voice mailbox** (verified, speed-dial section). Long-press `2`–`9` = speed dial if enabled (verified).
-- **Keyguard (verified, p.32):** lock = press **`Menu` then `*` "quickly"** (within ~1.5 s); unlock = press **`Unlock` (NaviKey) then `*`** quickly; keyguard icon shown; answering calls still works; emergency 112 possible while locked.
+- **Keyguard (superseded for v6.39 by [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md): the lock window is ≈2.9 s, the ≈1.45 s window is the unlock's; the notes are `Keypad locked`, `Press Unlock and then *`, `Now press *`, `Keypad active`) (verified, p.32):** lock = press **`Menu` then `*` "quickly"** (within ~1.5 s); unlock = press **`Unlock` (NaviKey) then `*`** quickly; keyguard icon shown; answering calls still works; emergency 112 possible while locked.
 - **Text entry (manual-sourced):** This summary describes the manual. For measured v6.39
   rules that supersede its cursor direction, held `0`/`#`, case and timeout claims, see
   [§10](#10-firmware-ground-truth-v639-captures) and [stock text entry](stock/text-entry-and-sms.md).
   - Two modes: **predictive text input** (T9-style dictionary; one keypress per letter; word matched against dictionary; dictionary language selectable; can be set off via Options → `Dictionary`) and **traditional multi-tap**.
   - Multi-tap: press key repeatedly until the character appears; **`0` = space** (verified); **`1` cycles punctuation/special characters**; **`*` opens the special-character picker** (grid of symbols; scroll, press `Use`) (verified); **short press `#` switches upper/lower case** (verified); **press-and-hold a digit key inserts that number; press-and-hold `0` toggles letter/number mode (`123` indicator shown)** (verified); same-key consecutive letters: press ▼ (cursor right) or wait one second (verified); `C` deletes left, hold-`C` clears all.
-  - In predictive mode, accept word with `0` (space) — UNVERIFIED detail, standard Nokia behavior.
+  - In predictive mode, accept word with `0` (space). For the measured v6.39 predictive text (T9:
+    candidate lists, `*`, `?`/Spell, key 1, case, word stops, Matches, Insert word, user words) see
+    [T9 behaviour](t9-behaviour.md) and [stock T9](stock/t9-predictive-text.md).
   - Dialing screen: `*` pressed repeatedly cycles `*`/`+`/`p`/`w` for international prefix and dialing pauses — UNVERIFIED exact cycle, standard Nokia behavior.
 
 ---
@@ -168,11 +170,11 @@ Sources: [helpdoc Games](https://nokia-3310.helpdoc.net/en/12-games-menu-8/) (li
 
 Sources: manual Tones chapter p.65–69, Composer pages ([helpdoc composer](https://nokia-3310.helpdoc.net/en/9-tones-menu-5/composer/creating-a-new-ringing-tone/), verified), [Wikipedia](https://en.wikipedia.org/wiki/Nokia_3310).
 
-- **Key beeps:** `Keypad tones` volume setting (off or levels); short square-wave beep per keypress, muted in Silent profile (profile mutes all tones — verified).
+- **Key beeps:** `Keypad tones` volume setting (off or levels); short square-wave beep per keypress, muted in Silent profile (profile mutes all tones — verified). _History (plan 17): on v6.39 a profile is its settings; Silent is silent because its Keypad, Warning and alert settings are off, and Silent with Keypad tones Level 3 beeps ([stock/profiles.md](stock/profiles.md))._
 - **Ringtones:** ~**35 built-in monophonic ringing tones** plus space for **7 user/downloaded tones** (Wikipedia, verified secondary). Default tone: **Nokia tune** (Francisco Tárrega, _Gran Vals_ excerpt) — **UNVERIFIED as factory default, best guess yes; it is in the tone list**.
 - **Incoming call alert modes (verified):** Ringing / Ascending / Ring once / Beep once / Off. Ringing volume: leveled setting (count UNVERIFIED, best guess 5 levels). Separate `Message alert tone`; `Warning and game tones` toggle; `Vibrating alert` on/off.
 - **Composer (Menu 5-4; manual-sourced history — the v6.39 facts are [stock/composer.md](stock/composer.md): 8 is shorter and 9 longer, both cycling; ▲ moves right; `#` sharpens c, d, f, g, a only; a held note key dots after ≈0.8 s; 50 tokens; Options include `Send`; tempi 40-225 BPM; each slot has its fixed Ringing tone entry 36-42):** notes entered with number keys (**1–7 = c, d, e, f, g, a, b**); **8 = shorten duration (−), 9 = lengthen (+)** (default duration 1/4); **0 = insert rest** of same duration as previous note; **`*` = set octave** (octave shown as digit after note, e.g. `e1`); **`#` = sharp** (shown as `#` before note, e.g. `#f`); **press-and-hold a note key = dotted note (+50% length, shown as dot, e.g. `8.a`)**; ▲/▼ move cursor; `C` deletes; Options → `Play`, `Save` (name it; appended to end of ringing-tone list), `Tempo` (bpm), `Clear screen`, `Exit`. _(Exact key-glyph assignments for 8/9/0/\*/# were stripped from the scan; mapping above matches the manual's ordering and the standard Nokia composer — treat 1–7 note mapping as high confidence, 8/9 assignment as minor-UNVERIFIED.)_ Notation format (RTTTL-like, manual example verbatim): `16.a2 16d2 16#f2 16a1 16d2 16#f2 8a2 1- 8-` — i.e. `[duration][.][#][note][octave]`, `-` = rest. Tones can also be received via SMS.
-- **Profiles (VERIFIED list): General (default), Silent, Discreet, Loud, + one replaceable "(empty)" slot** for a received/downloaded profile. Quick access: short-press power button. Each profile personalizes the Tones-menu items (ringing tone, volumes, vibrating alert, screensaver, etc.).
+- **Profiles (VERIFIED list): General (default), Silent, Discreet, Loud, + one replaceable "(empty)" slot** for a received/downloaded profile (v6.39 has two such slots, [stock/profiles.md](stock/profiles.md)). Quick access: short-press power button. Each profile personalizes the Tones-menu items (ringing tone, volumes, vibrating alert, screensaver, etc.).
 - **No startup/shutdown jingle** (see §3, UNVERIFIED).
 
 ---
@@ -181,7 +183,7 @@ Sources: manual Tones chapter p.65–69, Composer pages ([helpdoc composer](http
 
 Sources as cited inline.
 
-- **Green backlight** for display and keypad (Wikipedia, verified; blue only on the Singapore/Malaysia 3315 variant). Backlight turns on with any keypress and times out after ~15 s of inactivity (15 s figure verified for the power-key light function, p.18; general timeout UNVERIFIED but same best guess).
+- **Green backlight** for display and keypad (Wikipedia, verified; blue only on the Singapore/Malaysia 3315 variant). Backlight turns on with any keypress and times out after ~15 s of inactivity (superseded for v6.39 by [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md): 13.6-15.6 s, on a 1982.61 ms light tick) (15 s figure verified for the power-key light function, p.18; general timeout UNVERIFIED but same best guess).
 - **Screen contrast setting:** **UNVERIFIED location** — not present in the documented Settings tree above; the 3310's contrast is famously adjustable via the hidden `*#*#` style codes/service menu rather than a user menu. Best guess: omit from menu, optionally emulate as hidden code.
 - **Vibrating alert** = user option (Tones 5-8, verified); games can "shake" only when it's enabled (verified).
 - **Signal/battery as side-mounted four-bar stacks** (verified concept; four-bar count and exact tapered pixels reconstructed from the home-screen photograph). On charge, battery bars scroll/animate (standard Nokia behavior, UNVERIFIED).
@@ -203,16 +205,19 @@ in-repo as golden text grids under `packages/nokia-os/goldens/`. The goldens are
 where a spec file and a golden disagree, fix the spec. The facts live in one file per area under
 [`docs/specs/stock/`](stock/); a plan adds its area's file and one row here.
 
-| Area                                                       | File                                                           | Plan |
-| ---------------------------------------------------------- | -------------------------------------------------------------- | ---- |
-| Main menu, carousel, rail, indicator, fonts, standby, boot | [stock/foundation.md](stock/foundation.md)                     | 13   |
-| Deeper levels, stock widgets, shortcuts, capture artefacts | [stock/menu-depth.md](stock/menu-depth.md)                     | 14   |
-| Security code, boot gates, storage, virgin/factory states  | [stock/storage-and-settings.md](stock/storage-and-settings.md) | 15   |
-| Tones and sound                                            | [stock/sound.md](stock/sound.md)                               | 16   |
-| Text entry and SMS (plan 18, in progress)                  | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)     | 18   |
-| Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                     | 20   |
-| Composer (plan 27)                                         | [stock/composer.md](stock/composer.md)                         | 27   |
-| Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                         | 23   |
+| Area                                                       | File                                                               | Plan |
+| ---------------------------------------------------------- | ------------------------------------------------------------------ | ---- |
+| Main menu, carousel, rail, indicator, fonts, standby, boot | [stock/foundation.md](stock/foundation.md)                         | 13   |
+| Deeper levels, stock widgets, shortcuts, capture artefacts | [stock/menu-depth.md](stock/menu-depth.md)                         | 14   |
+| Security code, boot gates, storage, virgin/factory states  | [stock/storage-and-settings.md](stock/storage-and-settings.md)     | 15   |
+| Tones and sound                                            | [stock/sound.md](stock/sound.md)                                   | 16   |
+| Text entry and SMS                                         | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)         | 18   |
+| Profiles                                                   | [stock/profiles.md](stock/profiles.md)                             | 17   |
+| T9 predictive text                                         | [stock/t9-predictive-text.md](stock/t9-predictive-text.md)         | 18b  |
+| Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                         | 20   |
+| Composer                                                   | [stock/composer.md](stock/composer.md)                             | 27   |
+| Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                             | 23   |
+| Keyguard and lights                                        | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |
 
 ---
 

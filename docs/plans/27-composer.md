@@ -829,6 +829,17 @@ the tick signature includes the labels, so a change emits one snapshot. Tests:
 `packages/phone-core/tests/submenu-label.test.ts` (9). VISION and the phone-core README document
 it. Plan 17 Task 4 reuses it (its `label` tests are these).
 
+_Merge with plan 17 (t3/e37f068c at 801f302):_ plan 17 Task 4 landed the same seam in parallel
+(same `label` signature and `labelOf`); the merge keeps one hook, plan 17's: `labelOf` throws on
+a blank string and lets a reader's exception through, and the kernel (`labelIn`) contains both, so
+a blank or failing reader shows the child's own label (this plan's "an empty string throws" from
+`navigate` is dropped). `submenu-label.test.ts` holds both suites (Profiles, then Composer slots). Plan 18's text input
+now leaves an empty prompt on C's up (`HeldC`); `Tone name:` takes C on its empty name at the down
+itself (`save/c-held-empty`: Options 66 ms in), so Options' 482 ms hold still goes to standby.
+Acceptance: a still fixture's case whose keys extend the previous case's from the same start
+continues its phone (`StillChain` in `tests/support/composer.ts`): `cursor-up`/`cursor-down`'s 52
+images each no longer replay 50 tokens from power-on (≈17 s, was ≈300 s of the file's run).
+
 ### Task 7 - Composer painter, icon and glyphs (TDD against goldens)
 
 **Files:** `src/display/widgets/composer.ts` (new), `src/display/widgets/index.ts` (two lines),
@@ -905,7 +916,9 @@ them a hand scenario comparing within `PROBE_TOLERANCE_MS` (three entries, the o
 
 Deviation (registry): the feature registry gains `levelLabels` (feature.ts, composed as
 `LEVEL_LABELS` in stock.ts, read by `LeafBinder.levelLabel` and one spread in menu.ts's
-`entryOf`), the "level's label" registration this plan names; `ListNumbering` gains `none` (plan
+`entryOf`), the "level's label" registration this plan names (merged with plan 17 into plan 17's
+`levels` table: `LevelOptions.label(slug, order)`, the Composer reading the slot by `order`, the
+Profiles level by `slug`; `levelLabels`, `LEVEL_LABELS` and `levelLabel` are gone); `ListNumbering` gains `none` (plan
 17 Task 7 had not landed). Options and Tempo act as keys go down (plan 20's precedent: the key that
 opens them must not reach them on its release). `extract-resources.ts` caches parsed sound goldens
 (the composer tables read some twice). Save and Send open placeholders until Task 9.

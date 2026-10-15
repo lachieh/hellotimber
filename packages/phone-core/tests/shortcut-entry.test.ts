@@ -36,12 +36,16 @@ const order = (value: number): MenuOrder => new MenuOrder(value);
 class RecordingApplication extends PhoneApplication {
   readonly keys: KeyEvent[] = [];
   readonly deactivations: DeactivationReason[] = [];
+  /** The option numbers chosen through its shortcut level. */
+  readonly chosen: number[] = [];
   starts = 0;
   context: ApplicationContext | undefined;
 
   constructor(
     id: string,
     private readonly endMs: number,
+    /** With a count, its sessions are a shortcut level of that many options (an option list). */
+    private readonly options?: number,
   ) {
     super(id);
   }
@@ -61,6 +65,14 @@ class RecordingApplication extends PhoneApplication {
       },
       render: (): ScreenModel => ({ kind: "confirm", text: this.id, softkey: "" }),
       onDeactivate: (reason) => this.deactivations.push(reason),
+      ...(this.options === undefined
+        ? {}
+        : {
+            shortcutLevel: () => ({
+              count: this.options!,
+              choose: (number: number) => this.chosen.push(number),
+            }),
+          }),
     };
   }
 }
@@ -181,12 +193,16 @@ function stockShapedMenu(
   );
 }
 
-function stockRig(overrides: Partial<PhoneConfig> = {}, intro?: PhoneApplication): Rig {
+function stockRig(
+  overrides: Partial<PhoneConfig> = {},
+  intro?: PhoneApplication,
+  shakesOptions?: number,
+): Rig {
   const apps = {
     invalid: new RecordingApplication("invalid-shortcut", 2900),
     splash: new RecordingApplication("splash", SPLASH_MS),
     speedDials: new RecordingApplication("speed-dials", Infinity),
-    shakes: new RecordingApplication("shakes", Infinity),
+    shakes: new RecordingApplication("shakes", Infinity, shakesOptions),
   };
   const phone = bootedPhone({
     menu: stockShapedMenu(apps, intro ?? apps.splash),
@@ -368,6 +384,134 @@ describe("stock shortcut entry (PhoneConfig.shortcutEntry, plan 14 D14)", () => 
     });
     at(1800 + WINDOW_MS);
     expect(shakes.context?.menuIndicator?.()).toEqual({ segments: [8, 6, 3], awaitingNext: false });
+  });
+
+  it("an application the shortcut opened takes the digits typed into it (Menu 9, Menu 2 1)", () => {
+    // v6.39: Calculator takes a 5 typed 6 ms after it shows; Write messages takes 4, 5 and 6
+    // typed 0.4-4.1 s after it opens, within the window (2026-10-14 probes s2, t1).
+    const { phone, speedDials, invalid, at } = stockRig();
+    at(600);
+    phone.pressKey("1");
+    at(600 + WINDOW_MS + OPEN_DELAY_MS);
+    at(5600);
+    phone.pressKey("9");
+    at(5600 + OPEN_DELAY_MS);
+    expect(phone.path).toBe("menu/phone-book/speed-dials");
+    at(5600 + OPEN_DELAY_MS + 6);
+    phone.pressKey("5");
+    expect(speedDials.keys).toEqual([
+      { type: "down", key: "5" },
+      { type: "up", key: "5" },
+    ]);
+    expect(invalid.starts).toBe(0);
+  });
+
+  it("a digit while a leaf is about to open opens it at once and is spent (Menu 9 5)", () => {
+    // v6.39: Calculator shows `0` 47 ms after the 5 (probe t2); Write messages opens empty on a
+    // 4 typed while it was about to open (probe s1-late).
+    const { phone, speedDials, invalid, at } = stockRig();
+    at(600);
+    phone.pressKey("1");
+    at(600 + WINDOW_MS + OPEN_DELAY_MS);
+    at(5600);
+    phone.pressKey("9");
+    at(5600 + 500);
+    expect(phone.path).toBe("menu/phone-book");
+    phone.pressKey("5");
+    expect(phone.path).toBe("menu/phone-book/speed-dials");
+    expect(speedDials.starts).toBe(1);
+    expect(speedDials.keys).toEqual([]);
+    expect(invalid.starts).toBe(0);
+    at(5600 + OPEN_DELAY_MS);
+    expect(speedDials.starts).toBe(1);
+  });
+
+  /** Menu 8 6 3 with Shakes an option list of `options` options, open 900 ms (window open). */
+  function shakesList(options: number): Rig {
+    const rig = stockRig({}, undefined, options);
+    rig.at(600);
+    rig.phone.pressKey("8");
+    rig.at(1200);
+    rig.phone.pressKey("6");
+    rig.at(1800);
+    rig.phone.pressKey("3");
+    rig.at(1800 + OPEN_DELAY_MS + 900);
+    expect(rig.phone.path).toBe("menu/games/settings/shakes");
+    return rig;
+  }
+
+  it("an application that is a shortcut level takes a digit as an option's number (Menu 8 6 3, 1)", () => {
+    // v6.39: Shakes' option list takes a 1 typed 8 ms after it shows: Off is stored (probe t3).
+    const { phone, shakes, invalid } = shakesList(2);
+    phone.pressKey("1");
+    expect(shakes.chosen).toEqual([1]);
+    expect(shakes.keys).toEqual([]);
+    expect(invalid.starts).toBe(0);
+    // The window closed with the choice: the next digit is the application's key.
+    expect(shakes.context?.menuIndicator?.()).toEqual({ segments: [8, 6, 3], awaitingNext: false });
+    phone.pressKey("2");
+    expect(shakes.chosen).toEqual([1]);
+    expect(shakes.keys.map((event) => event.key)).toEqual(["2", "2"]);
+  });
+
+  it("a number past a shortcut level's options opens Invalid shortcut (Menu 8 6 3, 3)", () => {
+    const { phone, shakes, invalid } = shakesList(2);
+    phone.pressKey("3");
+    expect(invalid.starts).toBe(1);
+    expect(shakes.chosen).toEqual([]);
+    expect(shakes.deactivations).toEqual(["navigate"]);
+  });
+
+  it("a digit while a shortcut level is about to open opens it and chooses (Menu 8 6 3 1)", () => {
+    // v6.39: the 1 typed while Shakes is opening does what a 1 in its list does (probe u1).
+    const { phone, shakes, invalid, at } = stockRig({}, undefined, 2);
+    at(600);
+    phone.pressKey("8");
+    at(1200);
+    phone.pressKey("6");
+    at(1800);
+    phone.pressKey("3");
+    at(2400);
+    phone.pressKey("1");
+    expect(phone.path).toBe("menu/games/settings/shakes");
+    expect(shakes.starts).toBe(1);
+    expect(shakes.chosen).toEqual([1]);
+    expect(shakes.keys).toEqual([]);
+    expect(invalid.starts).toBe(0);
+  });
+
+  it("after the window a shortcut level gets digits as keys (Menu 8 6 3, late 1)", () => {
+    const { phone, shakes, at } = shakesList(2);
+    at(1800 + WINDOW_MS);
+    phone.pressKey("1");
+    expect(shakes.chosen).toEqual([]);
+    expect(shakes.keys.map((event) => event.key)).toEqual(["1", "1"]);
+  });
+
+  it("a shortcut level's numbers match as a menu level's do (UNVERIFIED past 9 options)", () => {
+    // A number that prefixes a longer one waits, then resolves at the window end.
+    const twelve = shakesList(12);
+    twelve.phone.pressKey("1");
+    expect(twelve.shakes.chosen).toEqual([]);
+    expect(twelve.shakes.context?.menuIndicator?.()).toEqual({
+      segments: [8, 6, 3],
+      awaitingNext: true,
+      typed: "1",
+    });
+    twelve.phone.pressKey("2");
+    expect(twelve.shakes.chosen).toEqual([12]);
+
+    const waited = shakesList(12);
+    waited.phone.pressKey("1");
+    waited.at(1800 + OPEN_DELAY_MS + 900 + WINDOW_MS);
+    expect(waited.shakes.chosen).toEqual([1]);
+    expect(waited.invalid.starts).toBe(0);
+
+    const zero = shakesList(2);
+    zero.phone.pressKey("0");
+    zero.at(1800 + OPEN_DELAY_MS + 900 + WINDOW_MS);
+    expect(zero.shakes.chosen).toEqual([]);
+    expect(zero.invalid.starts).toBe(1);
   });
 
   it("a digit in an open level puts its entry on the top row, then opens it (P5 m1-wait-9)", () => {

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/full
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/full/inbox-10.png + captures/6.39/plan18/sms/full/outbox-5.png + captures/6.39/plan18/sms/full/after-16.png
 source-sha256: 6baecf6a140b8b09c82c7ab835b1c8b6df55d67f19c3168476b7762e0c914a08
 note: The Inbox list of ten incoming and the Outbox list of five saved messages (15 slots); a sixteenth arrival: No space for new messages.

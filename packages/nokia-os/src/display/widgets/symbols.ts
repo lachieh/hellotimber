@@ -7,7 +7,12 @@ import { SOFTKEY_TOP } from "../standby";
 export interface SymbolsModel {
   readonly kind: "symbols";
   readonly selected: number;
+  /** Opened from the T9 editor: its header, the T9 pen and the mode text 7 columns on (plan 18b). */
+  readonly t9?: boolean;
 }
+
+/** The T9 header's mode text lies this far right of the multi-tap header's (`t9/g-star-free`). */
+const T9_HEADER_SHIFT = 7;
 
 /** Cells per row; rows of 11, 11 and 9. */
 export const SYMBOL_COLUMNS = 11;
@@ -28,10 +33,10 @@ function cell(k: number): { x: number; y: number } {
  * its box, the selected box solid with its symbol clear, and `Use`.
  */
 export function paintSymbols(fb: Framebuffer, model: SymbolsModel): void {
-  for (const id of ["prompt/pen", "editor/mode-symbols"]) {
-    const sprite = WIDGET_SPRITES[id]!;
-    fb.blitBitmap(sprite.bitmap, sprite.x, sprite.y);
-  }
+  const pen = WIDGET_SPRITES[model.t9 ? "editor/t9-pen" : "prompt/pen"]!;
+  fb.blitBitmap(pen.bitmap, pen.x, pen.y);
+  const mode = WIDGET_SPRITES["editor/mode-symbols"]!;
+  fb.blitBitmap(mode.bitmap, mode.x + (model.t9 ? T9_HEADER_SHIFT : 0), mode.y);
   SYMBOLS.forEach((symbol, k) => {
     if (k === model.selected) return;
     const { x, y } = cell(k);

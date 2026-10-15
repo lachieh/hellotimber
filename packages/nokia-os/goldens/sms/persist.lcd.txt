@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/persist
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/persist/editor.png + captures/6.39/plan18/sms/persist/standby.png
 source-sha256: e0d251a68f1e3f25a08b9498e0b6c5fa7c21b7a6637fd40331f204b08848a852
 note: Before saveflash: the editor with the saved text; standby after the cold reboot.

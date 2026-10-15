@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/timeout/factory/relight-13800
+status: asserted
+source: captures/6.39/plan25/lights/timeout/factory/relight-13800
+source-sha256: 1c7d37b84162d93a54ed5b5fcad8e31544adccbde782d4d0dcf9d69e733c68c4
+state: factory
+power-on: 61261
+start: -100
+end: 30891
+keys: 0:c 13800:c
+note: C, then C 13800 ms later while the LEDs are on.
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+27960  display off
+27960  keypad  off

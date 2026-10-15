@@ -25,6 +25,8 @@ import {
   type GoldenIndexEntry,
 } from "../scripts/golden-index.ts";
 import { parseManifestNote } from "../scripts/messages-capture-set.ts";
+import { T9_PROMOTED } from "../scripts/t9-capture-set.ts";
+import { parseLightsGolden } from "../scripts/lights-format.ts";
 import { parseSoundGolden } from "../scripts/sound-format.ts";
 
 const GOLDENS = join(import.meta.dirname, "../goldens");
@@ -37,7 +39,7 @@ function fixtureFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) return fixtureFiles(path);
-    return /\.(lcd|ticks|sound)\.txt$/.test(entry.name) ? [relative(GOLDENS, path)] : [];
+    return /\.(lcd|ticks|sound|lights)\.txt$/.test(entry.name) ? [relative(GOLDENS, path)] : [];
   });
 }
 
@@ -61,7 +63,9 @@ describe("committed goldens", () => {
     expect(fixtureFiles(GOLDENS).sort()).toEqual(index.map((entry) => entry.file).sort());
   });
 
-  for (const entry of index.filter((e) => e.kind !== "ticks" && e.kind !== "sound")) {
+  for (const entry of index.filter(
+    (e) => e.kind !== "ticks" && e.kind !== "sound" && e.kind !== "lights",
+  )) {
     it(`${entry.id} parses, is 84x48 and matches its index entry`, () => {
       const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
       expect(golden.id).toBe(entry.id);
@@ -93,7 +97,7 @@ describe("committed goldens", () => {
     const seen = new Map<string, string>();
     const twice: string[] = [];
     for (const entry of index) {
-      if (entry.status !== "asserted" || entry.kind === "ticks" || entry.kind === "sound") continue;
+      if (entry.status !== "asserted" || !["still", "timeline"].includes(entry.kind)) continue;
       const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
       for (const number of golden.covers ?? []) {
         const key = `${golden.scenario} ${number}`;
@@ -104,6 +108,16 @@ describe("committed goldens", () => {
     }
     expect(twice).toEqual([]);
   });
+
+  for (const entry of index.filter((e) => e.kind === "lights")) {
+    it(`${entry.id} parses and matches its index entry (plan 25)`, () => {
+      const golden = parseLightsGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+      expect(golden.id).toBe(entry.id);
+      expect(entry.file).toBe(`${entry.id}.lights.txt`);
+      expect(golden.status).toBe(entry.status);
+      expect(golden.rows).toHaveLength(entry.events!);
+    });
+  }
 
   it("names a later plan for every pending fixture", () => {
     const pending = index.filter((entry) => entry.status !== "asserted");
@@ -228,7 +242,7 @@ describe("game goldens (plan 23)", () => {
 });
 
 describe("sound goldens (plan 16)", () => {
-  const sounds = index.filter((entry) => entry.kind === "sound");
+  const sounds = readPlanIndex(GOLDENS, "16").filter((entry) => entry.kind === "sound");
   const STATES = /^(virgin|factory|v639-[a-z0-9-]+)$/;
 
   for (const entry of sounds) {
@@ -266,21 +280,17 @@ describe("plan 18 goldens", () => {
   const load = (entry: IndexEntry): Golden =>
     parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
 
-  it("leaves plan 18 pending elsewhere only on the leaves it still owns (2-1, 6-2-3)", () => {
-    const elsewhere = index.filter(
-      (entry) => entry.status === "pending:18" && !own.some((e) => e.id === entry.id),
+  it("leaves no golden pending on plan 18 and no plan 18 placeholder (Task 12)", () => {
+    expect(index.filter((entry) => entry.status === "pending:18").map((entry) => entry.id)).toEqual(
+      [],
     );
-    const owned = Object.entries(PLACEHOLDER_OWNERS)
-      .filter(([, plan]) => plan === "18")
-      .map(([number]) => number);
-    expect(owned.sort()).toEqual(["2-1", "6-2-3"]);
-    for (const entry of elsewhere) {
-      const numbers = entry.covers ?? [entry.id.slice(entry.id.lastIndexOf("/") + 1)];
-      expect(
-        numbers.every((number) => owned.includes(number)),
-        entry.id,
-      ).toBe(true);
-    }
+    expect(Object.values(PLACEHOLDER_OWNERS).filter((plan) => plan === "18")).toEqual([]);
+    // Write messages' T9 first screen: plan 18b asserts it.
+    expect(index.find((entry) => entry.id === "tree/02-messages/2-1.leaf")?.status).toBe(
+      "asserted",
+    );
+    // Plan 18b leaves no golden pending on it.
+    expect(index.filter((entry) => entry.status === "pending:18b").map((e) => e.id)).toEqual([]);
   });
 
   it("re-owns Chat, the content leaves and their goldens to plan 18c (D1)", () => {
@@ -304,5 +314,53 @@ describe("plan 18 goldens", () => {
       expect(chars, entry.id).toHaveLength(golden.images.length);
       if (entry.id !== "glyphs/digits") expect(new Set(chars).size, entry.id).toBe(chars!.length);
     }
+  });
+});
+
+describe("plan 18b goldens", () => {
+  const own = readPlanIndex(GOLDENS, "18b");
+
+  it("holds only t9/ goldens, pending on 18b until promoted with their scenario", () => {
+    expect(own.length).toBeGreaterThan(0);
+    for (const entry of own) {
+      expect(entry.id).toMatch(/^t9\/[a-z0-9-]+\/\d\d-[a-z0-9-]+$/);
+      expect(entry.status, entry.id).toBe(T9_PROMOTED.has(entry.id) ? "asserted" : "pending:18b");
+    }
+    const ids = new Set(own.map((entry) => entry.id));
+    expect(index.filter((e) => e.id.startsWith("t9/") && !ids.has(e.id))).toEqual([]);
+  });
+
+  it("reads every golden from captures/plan18b/ only", () => {
+    for (const entry of own) {
+      const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+      for (const part of golden.source.split(" + ")) {
+        expect(part, entry.id).toMatch(
+          /^captures\/plan18b\/[a-z0-9-]+\/\d\d-[A-Za-z0-9-]+(\.png)?$/,
+        );
+      }
+    }
+  });
+});
+
+describe("plan 17 goldens", () => {
+  const own = readPlanIndex(GOLDENS, "17");
+
+  it("lists the thin glyph sheet's pages in its note, one per image", () => {
+    const entry = own.find((e) => e.id === "profiles/glyphs-thin")!;
+    const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+    expect(parseManifestNote(golden.note)).toHaveLength(golden.images.length);
+  });
+
+  it("asserts every plan 17 golden (Task 9: no golden is pending:17)", () => {
+    expect(index.filter((entry) => entry.status === "pending:17").map((e) => e.id)).toEqual([]);
+    expect(own.length).toBeGreaterThan(100);
+  });
+
+  it("leaves no plan 17 golden pending outside its own index", () => {
+    const elsewhere = index.filter(
+      (entry) => entry.status === "pending:17" && !own.some((e) => e.id === entry.id),
+    );
+    expect(Object.values(PLACEHOLDER_OWNERS)).not.toContain("17");
+    expect(elsewhere.map((entry) => entry.id)).toEqual([]);
   });
 });

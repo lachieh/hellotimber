@@ -535,11 +535,15 @@ function toneName(
     },
     onKeyDown: (key, flow) => {
       if (/^[0-9]$/.test(key)) blinkMs = 0;
-      const back: Flow["back"] = (levels, options) => {
-        if (key === "c") editor.backOnC();
-        flow.back(levels, options);
-      };
-      input.onKeyDown?.(key, { ...flowMethods(flow), back });
+      // C on the empty name goes back to Options at its down (`save/c-held-empty`: Options 66 ms
+      // in), where plan 18's text input leaves on the up; Options times the hold (K11).
+      const model = input.render(flow) as PromptModel;
+      if (key === "c" && model.entry?.kind === "text" && model.entry.text === "") {
+        editor.backOnC();
+        flow.back();
+        return;
+      }
+      input.onKeyDown?.(key, flow);
     },
     onKey: (key, flow) => input.onKey?.(key, flow),
     tick: (dtMs, flow) => {

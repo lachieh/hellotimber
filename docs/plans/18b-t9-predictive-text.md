@@ -10,7 +10,7 @@
 follows this plan (Chat's editor is T9 by default).
 **Ground truth:** `docs/specs/t9-behaviour.md` (the behaviour and the firmware dictionary's
 architecture, written for this plan) and the goldens Task 2 imports from the dirty-room captures.
-**Status:** not started (Task 0 done by the planning agent).
+**Status:** done (clean room, 2026-10-14); the goldens' promotion awaits the bridge's re-import (Task 8 deviation).
 
 ## Goal
 
@@ -83,18 +83,18 @@ by the spec's section 7, with the exact composition order left open.
 Behaviour was then captured in `$REF/captures/plan18b/` (60 scenarios). Findings are in the spec;
 the ones that shape this plan:
 
-| #   | Finding                                                                                                                                         | Spec      |
-| --- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| T1  | Write messages opens in T9 English; the T9 header has its own icon and the mode text from x 21                                                  | 1         |
-| T2  | Lists: words, then stems, ranked by frequency (94% of lists strictly); no frequencies stored, rank only                                         | 3, 14     |
-| T3  | `?` + Spell on the last candidate reached by `*`; one-entry lists; one-key lists never                                                          | 4.2       |
-| T4  | No-match: silent drop after one key; `?` state after two or more; three `*` behaviours by list size; `0` and `C` end it                         | 6         |
-| T5  | Key 1: punctuation list alone; word + 8 marks after a word; contractions; compositions                                                          | 7         |
-| T6  | `#` toggles two states, which depend on the cursor; case fixed per letter; ABC lasts one word                                                   | 8         |
-| T7  | ▲/▼ stop at word starts and ends; a stop at a word end re-enters the word; `C` re-enters across a deleted space                                 | 9         |
-| T8  | Matches lists the other candidates then the current; Insert word/Spell prompt is plan 18's text input; user words join the lists                | 10, 11    |
-| T9  | User words: second place when exact (oldest first), completions at the end; a byte budget (≈840), oldest dropped; kept when the text is cleared | 11        |
-| T10 | No commit timeout; no T9-specific sound; Dictionary off persists across power cycles; English on has no note                                    | 4, 10, 12 |
+| #   | Finding                                                                                                                                             | Spec      |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| T1  | Write messages opens in T9 English; the T9 header has its own icon and the mode text from x 21                                                      | 1         |
+| T2  | Lists: words, then stems, ranked by frequency (94% of lists strictly); no frequencies stored, rank only                                             | 3, 14     |
+| T3  | `?` + Spell on the last candidate reached by `*`; one-entry lists; one-key lists never                                                              | 4.2       |
+| T4  | No-match: silent drop after one key; `?` state after two or more; three `*` behaviours by list size; `0` and `C` end it                             | 6         |
+| T5  | Key 1: punctuation list alone; word + 8 marks after a word; contractions; compositions                                                              | 7         |
+| T6  | `#` toggles two states, which depend on the cursor; case fixed per letter; ABC lasts one word                                                       | 8         |
+| T7  | ▲/▼ stop at word starts and ends; a stop at a word end re-enters the word; `C` re-enters across a deleted space                                     | 9         |
+| T8  | Matches lists the other candidates then the current; Insert word/Spell prompt is plan 18's text input; user words join the lists                    | 10, 11    |
+| T9  | User words: second place when exact (oldest first), completions at the end; a byte budget (≈840), oldest dropped; kept when the text is cleared     | 11        |
+| T10 | No commit timeout; no T9-specific sound; Dictionary off persists across power cycles; English on has no note (corrected in Task 7: it shows a note) | 4, 10, 12 |
 
 ## Scope and non-goals
 
@@ -406,14 +406,17 @@ the clean room. If Task 2 finds a scenario missing or broken, it reports to the 
 **Files:** `VISION.md`, `docs/specs/nokia-3310.md`, `docs/specs/nokia-3310-menu-tree.md`,
 `docs/plans/README.md`, this plan.
 
-- [ ] VISION: the contract changes above; the nokia-os row gains "T9 English (open dictionary)".
+- [x] VISION: the contract changes above; the nokia-os row gains "T9 English (open dictionary)".
       Settle the non-goal "T9 dictionaries beyond what the UI bit needs": it stays a website
       non-goal; nokia-os ships one open-list English dictionary (this plan).
-- [ ] Spec §6: point "Text entry" to `docs/specs/t9-behaviour.md` for predictive text. Spec §10:
+- [x] Spec §6: point "Text entry" to `docs/specs/t9-behaviour.md` for predictive text. Spec §10:
       a "T9 (plan 18b, in progress)" entry with the findings table above.
-- [ ] Menu-tree spec: Dictionary list order and behaviour (spec 10.4).
-- [ ] Plans README: row 18b links this file, `in progress`.
-- [ ] Commit: `docs: define T9 predictive text contracts (plan 18b)`.
+- [x] Menu-tree spec: Dictionary list order and behaviour (spec 10.4).
+- [x] Plans README: row 18b links this file, `in progress`.
+- [x] Commit: `docs: define T9 predictive text contracts (plan 18b)`.
+
+Deviation: spec §10 is an index with one row per area file (AGENTS.md "Parallel plan conventions"
+5), so the findings table lives in `docs/specs/stock/t9-predictive-text.md` and §10 gains its row.
 
 ### Task 2 - Import the T9 goldens (dirty-room bridge, D1)
 
@@ -421,15 +424,35 @@ the clean room. If Task 2 finds a scenario missing or broken, it reports to the 
 `tests/t9-capture-set.test.ts` (new), `tests/goldens-integrity.test.ts`, `goldens/**`,
 `tests/acceptance.test.ts` (todo shim only).
 
-- [ ] TDD `t9-capture-set.ts` on synthetic recordings (injected loader, as
+- [x] TDD `t9-capture-set.ts` on synthetic recordings (injected loader, as
       `game-capture-set.test.ts`): ids, kinds, step subsets, two-shot steps, timelines with
       `trigger-frame` on the first changed frame.
-- [ ] The table exactly as "Golden pipeline additions".
-- [ ] Integrity: every `t9/*` golden is asserted; no source path outside `plan18b/`.
-- [ ] `tests/acceptance.test.ts`: list the new goldens without a scenario as todos
-      (`awaitsPlan18bScenario`; Task 8 deletes it).
-- [ ] Run `import-captures` twice; no diff. Record counts and bytes here.
-- [ ] Commit: `feat(nokia-os): import T9 goldens (plan 18b)`.
+- [x] The table exactly as "Golden pipeline additions".
+- [x] Integrity: every `t9/*` golden is asserted; no source path outside `plan18b/`. (Pending
+      until promoted: see Deviation.)
+- [x] `tests/acceptance.test.ts`: list the new goldens without a scenario as todos
+      (`awaitsPlan18bScenario`; Task 8 deletes it). (Replaced by the plan file: see Deviation.)
+- [x] Run `import-captures` twice; no diff. Record counts and bytes here.
+- [x] Commit: `feat(nokia-os): import T9 goldens (plan 18b)`.
+
+Outcome (2026-10-14, bridge agent): 303 goldens from the 32 table scenarios, 294 stills (25 of
+them two-shot) and 9 timelines, 349 images; `goldens/t9/` holds 1,551,480 bytes and
+`goldens/index/18b.json` 54,283 bytes. Two importer runs give identical bytes; no other golden
+and no generated resource changed (no regeneration needed).
+
+Deviation: the parallel-plan conventions (AGENTS.md) and plan 29's pending workflow replace three
+items above. The table is `scripts/t9-capture-set.ts`, registered through
+`scripts/capture-sets/18b-t9-predictive-text.ts` and one line in `capture-sets/index.ts`. Every
+golden is imported `pending:18b`: a golden becomes asserted when its scenario lands, by adding its
+id to `T9_PROMOTED` and reimporting (Tasks 6-8); the integrity test checks exactly that and that
+every source lies under `captures/plan18b/`. There is no `awaitsPlan18bScenario` shim:
+`tests/acceptance/18b-t9-predictive-text.test.ts` declares no scenarios yet and the harness lists
+the pending goldens as todos. Golden ids and image names are the capture labels in lower case
+(the golden grammar allows no capitals). Each golden's note gives its row's description and every
+key pressed from the scenario's base (the manifest's commands, in the key vocabulary of the table
+file's header), so Tasks 6-8 can drive a scenario from its goldens. The importer reads plan 18b
+paths as `../plan18b/` from its root and writes them as `captures/plan18b/...`.
+`plan18b/g-persist-poweroff/` (not in the table above) is not imported: a known bad run.
 
 ### Task 3 - Dictionary build and data (TDD)
 
@@ -437,13 +460,19 @@ the clean room. If Task 2 finds a scenario missing or broken, it reports to the 
 `src/text/t9/THIRD_PARTY.md` (new), `tests/t9-build.test.ts` (new), `package.json`
 (`build-t9-dictionary` script).
 
-- [ ] TDD the filter and format on an in-memory sample (a dozen invented lines): case, apostrophe
+- [x] TDD the filter and format on an in-memory sample (a dozen invented lines): case, apostrophe
       rules, single letters, length, top-N cut, weight lines only on change, deterministic output.
-- [ ] Run it on the pinned file (D2): `node scripts/build-t9-dictionary.ts <path-or-url>`; SHA-256
+- [x] Run it on the pinned file (D2): `node scripts/build-t9-dictionary.ts <path-or-url>`; SHA-256
       mismatch fails. Record word count, file size and gzip size here.
-- [ ] `THIRD_PARTY.md`: source, commit, SHA-256, the MIT licence text, the Wikipedia provenance
+- [x] `THIRD_PARTY.md`: source, commit, SHA-256, the MIT licence text, the Wikipedia provenance
       note, the filter.
-- [ ] Commit: `feat(nokia-os): T9 English dictionary from an open word list`.
+- [x] Commit: `feat(nokia-os): T9 English dictionary from an open word list`.
+
+Outcome (2026-10-14, clean room): the pinned file's SHA-256 matched; 30,000 words (the 30,000th
+kept word is line 31,090 of the list, count 3,115), weights 46-109 in 57 weight lines;
+`generated/english.ts` is 246,754 bytes, 117,437 bytes gzipped (`gzip -9`). Built from a local
+copy and from the raw URL: identical bytes, a second run reports "up to date". The generated
+directory is excluded from `vp fmt` (root `vite.config.ts`), as the other generated sources are.
 
 ### Task 4 - T9 engine (pure, TDD from the spec)
 
@@ -451,28 +480,44 @@ the clean room. If Task 2 finds a scenario missing or broken, it reports to the 
 `tests/t9-engine.test.ts` (new), `tests/support/t9-fixture.ts` (new: a hand-made dictionary of
 about 30 common words with invented weights).
 
-- [ ] `createT9Dictionary`/`T9Index`: parse (errors name the line), index by key sequence, stems
+- [x] `createT9Dictionary`/`T9Index`: parse (errors name the line), index by key sequence, stems
       with summed weights; building `englishT9` takes under 150 ms in the test environment.
-- [ ] TDD each spec rule with the fixture: ranking (3.1); 32-entry cap; one-key lists and the
+- [x] TDD each spec rule with the fixture: ranking (3.1); 32-entry cap; one-key lists and the
       digit (3.4); `?` on the last `*` display, one-entry lists, one-key lists (4.2); no-match:
       silent drop after one key, the state after two, ignored keys, the three `*` cases, `0`,
       `C` (6); key 1 alone, after a word (eight marks, dictionary extras, the `?` after
       duplicates), contractions first and D10 compositions (7); per-letter case and the two-state
       `#` (8); re-entry from a word (9); the 33rd key.
-- [ ] A property test: for random words of the fixture, typing `keysOf(word)` and pressing `*`
+- [x] A property test: for random words of the fixture, typing `keysOf(word)` and pressing `*`
       at most 32 times reaches the word.
-- [ ] Commit: `feat(nokia-os): T9 predictive text engine`.
+- [x] Commit: `feat(nokia-os): T9 predictive text engine`.
+
+Deviation: the internal API grows where the spec needs state the listed signatures cannot carry.
+`T9Composing.fixed` holds the word as shown when key 1 was last pressed in it (spec 7: `into.`
+is the shown word with a mark, and the word before an apostrophe heads the compositions);
+`t9Key` takes the new letter's case (`upper`, spec 8: fixed per letter when typed);
+`T9Display.keyed` counts the typed letters of a shown user-word completion (only they are
+underlined); `t9Candidates` takes `fixed`; `t9FromWord(word, dict, user)` returns null when the
+word's lists lack it (no re-entry for a word typed in multi-tap); `keysOf` returns undefined for a
+character no key types; `t9Matches`/`t9Use` serve Options › Matches; `t9Index(dict)` exposes the
+opaque dictionary's index. `0` and `#` act on the editor's text and mode, so their rules (5, 8)
+are tested with the editor in Task 6 (`tests/t9-editing.test.ts`). Candidates are deduplicated
+case-insensitively, first kept (a user word equal to a dictionary word is listed once).
 
 ### Task 5 - User dictionary record (TDD)
 
 **Files:** `src/text/t9/user.ts` (new), `src/firmware/records.ts`, `tests/t9-user.test.ts` (new).
 
-- [ ] TDD `T9_USER_RECORD` (plan 15 D2): v1 shape pinned by a snapshot; decode drops malformed
+- [x] TDD `T9_USER_RECORD` (plan 15 D2): v1 shape pinned by a snapshot; decode drops malformed
       entries; add, duplicate, the 840 budget and oldest-first eviction (D7); kept by
       `restoreFactory()` (D7, provisional).
-- [ ] Engine integration: exact user words after the first built-in candidate, oldest first;
+- [x] Engine integration: exact user words after the first built-in candidate, oldest first;
       completions at the end; a user word alone is the whole list (spec 11).
-- [ ] Commit: `feat(nokia-os): T9 user dictionary record`.
+- [x] Commit: `feat(nokia-os): T9 user dictionary record`.
+
+Deviation: the record is registered by the messages feature (`records`, AGENTS.md "Parallel plan
+conventions" 3), which `src/firmware/records.ts` already collects; that file is unchanged. A
+stored word is non-empty without spaces; decoding re-applies the budget.
 
 ### Task 6 - Editor in T9 mode (TDD against goldens)
 
@@ -480,15 +525,39 @@ about 30 common words with invented weights).
 `src/resources/**` (only via generators: the T9 header icon from plan 18 Task 3's crop table, if
 it was not cropped there), `tests/widgets-editor-t9.test.ts` (new).
 
-- [ ] `TextState.t9` (D8); the editor dispatches to the T9 engine when the setting is English.
-- [ ] Painter: T9 header (icon, mode text at x 21), underline under the composing word, `?` after
+- [x] `TextState.t9` (D8); the editor dispatches to the T9 engine when the setting is English.
+- [x] Painter: T9 header (icon, mode text at x 21), underline under the composing word, `?` after
       it, soft key `Spell`, counter counting the composing word. TDD against the `g-compose`,
       `g-nomatch*`, `single`, `punct-alone`, `g-punct-word` stills.
-- [ ] Keys: `*`, `0`, `1`, `#`, held `#`, held digits, `C`, held `C`, ▲/▼ word stops and
+- [x] Keys: `*`, `0`, `1`, `#`, held `#`, held digits, `C`, held `C`, ▲/▼ word stops and
       re-entry. TDD through keys against `g-case*`, `digits`, `case-word`, `g-delete*`,
       `g-cursor-*`, `apostrophe`.
-- [ ] No commit timeout: the `g-compose` idle timeline passes (blink only) within ±2 ms.
-- [ ] Commit: `feat(nokia-os): T9 mode in the text editor`.
+- [x] No commit timeout: the `g-compose` idle timeline passes (blink only) within ±2 ms.
+- [x] Commit: `feat(nokia-os): T9 mode in the text editor`.
+
+Outcome: `tests/widgets-editor-t9.test.ts` drives the SMS editor with `englishT9` from each
+editor-only golden's note (20 scenarios, 139 goldens): 138 match (stills in either blink phase,
+`g-compose/05-idle` within ±2 ms) and `g-star-free/07-star-after-space` is a known gap (below).
+`tests/t9-editing.test.ts` pins `0`, `#`, holds, C, word stops and insertions on the fixture.
+
+Deviation: what the goldens show beyond the spec, now implemented. The underline covers the
+typed letters' cells without the last one's blank column, not the ink (`punct-alone/09-p-star8`:
+`1` is underlined from x 1 to x 5); a completion's untyped letters and the `?` wrap as a word of
+their own, and only the typed letters are underlined (`g-spell/16-prefix-star5`: `Into` on the
+first line, `s?` on the next); no `?` still shows the cursor, so the cursor hides while `?`
+shows; in 123 the header is multi-tap's (plain pen, `123` from x 14, `g-case/09-num`); the
+symbol table opened from the T9 editor has the T9 header (`g-star-free/04-held-star-empty`). The
+mode is explicit in T9 (spec 8): `Abc` capitalises the next letter and becomes `abc`; a word end,
+C to a word start, ▲/▼ and an insertion set `Abc` at a sentence start and `abc` elsewhere, so
+the empty editor and the text's start show `Abc` (`g-delete/05-c4`, `g-cursor-down/04-d3`); key
+1 counts as a letter (`punct-alone/01-p1` shows `abc`); held digits leave the mode
+(`digits/01-held5`). A held digit undoes its press and types the digit (`digits`: `5`, then held
+`0` gives `50`, held `1` `501`); held `*` opens the symbols after
+`T9_SYMBOLS_HOLD_MS` (held-#'s 1010 ms, UNVERIFIED). Re-entry needs the word in its own lists
+(spec 9 leaves other words open). Known gap: after `Into ` a short `*` leaves one lit pixel at
+the cursor's column on the underline row (`g-star-free/07`); the spec says `*` does nothing
+there and the empty editor's second `*` shows none, so the rule is unknown: reported, not
+reproduced.
 
 ### Task 7 - Options, prompts and the virgin default (TDD)
 
@@ -496,47 +565,139 @@ it was not cropped there), `tests/widgets-editor-t9.test.ts` (new).
 `src/widgets/` (Matches list), `src/firmware/phone.ts` (`config.t9`), `src/index.ts`,
 `package.json` (`exports` `./t9-english`), `tests/messages-t9.test.ts` (new).
 
-- [ ] Options: the 12/13-entry T9 lists and the 9-entry multi-tap list; Matches (rotation, `Use`,
+- [x] Options: the 12/13-entry T9 lists and the 9-entry multi-tap list; Matches (rotation, `Use`,
       C); Insert word and Spell through plan 18's `textInput` with the `Insert word:` layout; OK
       stores the user word (the whole word at the cursor, spec 10.3); empty OK and C return.
-- [ ] Dictionary: off (the note, plan 18), English on (no note), persistence; Русский and
+- [x] Dictionary: off (the note, plan 18), English on (no note), persistence; Русский and
       Български → placeholder owned by `26` (D11) in both owner tables.
-- [ ] D5/D6: `config.t9.english` present → virgin T9; absent → plan 18 behaviour, English entry's
+- [x] D5/D6: `config.t9.english` present → virgin T9; absent → plan 18 behaviour, English entry's
       placeholder owned by `config`. `tree/02-messages/2-1.leaf` → asserted.
-- [ ] TDD through keys against `options-empty`, `g-options`, `g-matches*`, `g-spell`,
+- [x] TDD through keys against `options-empty`, `g-options`, `g-matches*`, `g-spell`,
       `g-insert-word`, `g-userwords-two`, `insert-word-empty`, `g-star-free`, `dictionary-*`,
       `g-persist-dict`.
-- [ ] Commit: `feat(nokia-os): T9 options, user words and the virgin T9 default`.
+- [x] Commit: `feat(nokia-os): T9 options, user words and the virgin T9 default`.
+
+Outcome: `tests/messages-t9.test.ts` drives a stock phone with `englishT9` from each golden's note
+for the 12 scenarios beyond the editor and `g-delete/06-c5` (165 goldens): all match, the two
+Dictionary off notes within ±25 ms (the timeline plan 18 extracted from another recording,
+649/247/497 against 657/232/504) and `insert-word-empty/05-after` within ±5 ms (a 484/476-ms
+blink step); and checks the virgin defaults, the Cyrillic and host placeholders, user words
+across a power cycle, Insert number and Insert symbol.
+
+Deviation: `English` shows a note. `t9/dictionary-off-on/19-on` shows `T9 / dictionary /
+activated` with the tick note's phases (656/232/488 ms) before the T9 editor, where spec 10.4
+and finding T10 said "no note"; the golden decides (spec §10), so the note plays a new named
+timeline `t9-dictionary-activated` registered by `scripts/resource-inputs/18b-t9-predictive-text.ts`
+(and the menu-tree crawl saw it for English chosen while on). The spec, the stock file and the
+menu-tree note are corrected. After the note the editor's cursor blink starts over, shown
+(`05-off`, `19-on`: a whole 476-477-ms step with the cursor): flows now call a widget's `reveal()`
+when the screens above it close, and the editor restarts its blink there (plan 18's goldens still
+pass). The virgin choice is English in the feature table (`VIRGIN_DICTIONARY`);
+`VIRGIN_OVERRIDES` is gone, replaced by `NO_T9_VIRGIN_CHOICES`, which `createStockSettings`
+applies for a phone without a dictionary (Restore returns to it). `StockServices.t9` carries the
+dictionary and the user words; the placeholder owners are `DICTIONARY_OWNERS` (Русский,
+Български: `26`; English without a dictionary: `config`) and the Dictionary entry of both
+Options tables names `26`. Insert number (plan 18's number entry) and Insert symbol (the symbol
+table with the T9 header) follow the menu-tree crawl only (UNVERIFIED). The Insert word prompt's
+counter is the message's (`459/1` less the text beside the word); its limit is the message's
+room. Matches is pushed over Options: Use returns to the editor, C to Options (UNVERIFIED).
+`tree/02-messages/2-1.leaf` is promoted with the other goldens at the hand-off (Task 8).
 
 ### Task 8 - Acceptance and the coverage guard
 
 **Files:** `tests/support/messages.ts`, `tests/support/rig.ts` (`t9` option, default the fixture
 dictionary; `englishT9` where a golden needs it), `tests/acceptance.test.ts`.
 
-- [ ] A hand-written scenario for every imported `t9/*` golden, with `englishT9` (the goldens'
+- [x] A hand-written scenario for every imported `t9/*` golden, with `englishT9` (the goldens'
       lists are the ones the open list shares).
-- [ ] Coverage guard: no golden or placeholder names `18b`; delete `awaitsPlan18bScenario`.
-- [ ] Every asserted golden passes (pixels exact; timelines ±2 ms). New `KNOWN_GAPS` need a reason.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report
+- [x] Coverage guard: no golden or placeholder names `18b`; delete `awaitsPlan18bScenario`.
+- [x] Every asserted golden passes (pixels exact; timelines ±2 ms). New `KNOWN_GAPS` need a reason.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report
       the suite's run time.
-- [ ] Commit: `test(nokia-os): drive T9 against its goldens`.
+- [x] Commit: `test(nokia-os): drive T9 against its goldens`.
+
+Outcome: one scenario serves every golden (`tests/support/t9.ts` `t9Scenario`): it reads the keys
+from the golden's note and plays them on a stock phone with `englishT9` from the Write messages
+page or its empty editor (taps of 60 + 340 ms; `save flash`/`cold boot` as a second phone over a
+copy of the storage), compares a still in either blink phase and a recording from its trigger.
+The acceptance file registers it for every asserted golden. `tests/support/rig.ts` gives every
+phone the fixture dictionary (D5: the virgin phone writes in T9); plan 18's capture replays now
+run their logs' own T9 Dictionary off (the multi-tap rewrite and `text/dictionary-off`'s
+`fromRow` are gone: its T9 rows match too), and plan 18's write/read unit tests ask for a phone
+without a dictionary (`t9: {}`). The full nokia-os suite runs in ≈75 s (95 files).
+
+Deviation: promotion is a hand-off. Promoting a golden means reimporting (`T9_PROMOTED`, Task 2's
+deviation), and the importer reads `$REF/captures/plan18b/`, which the clean room may not run
+(D1). The clean room lands the scenarios, `T9_PROMOTED`, the tree table's `PENDING_LATER` change
+and the integrity expectations in a last commit; `tests/t9-promotion.test.ts` plays every
+golden promoted but not yet reimported, so the promotion is known to pass first (303 `t9/*`
+goldens: 302 match, `g-star-free/07-star-after-space` is the known gap; Write messages' tree
+golden matches every pixel, but its crawl's cursor steps 476-492 ms where `t9/first/03-blink`, the
+same path, steps 479-481: a known gap in plan 14's file, timing only). The bridge then runs `import-captures` twice and commits the status
+flips. `sms/restore` (plan 18) shows that Restore factory settings keeps the Dictionary: the
+messages feature lists it in `restoreKeeps`, which now covers choices too.
 
 ### Task 9 - Demo, README, verification gate and closeout
 
 **Files:** `packages/nokia-os/{README.md,demo/main.ts}`, `docs/specs/nokia-3310.md`,
 `docs/plans/README.md`, this plan.
 
-- [ ] Demo: `const { englishT9 } = await import("@hellotimber/nokia-os/t9-english")`, then
+- [x] Demo: `const { englishT9 } = await import("@hellotimber/nokia-os/t9-english")`, then
       `createStockPhone({ ..., t9: { english: englishT9 } })`. Check with
       `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser` (headless: drive
       through the `[role=status]` line, Skip boot): Write messages in T9, type `4 6 8 6`, `*`
       through the list, `0`, a no-match key and Spell, Insert word, Dictionary off and on. Report
       the dictionary chunk's size from `vp build` of the demo.
-- [ ] README: T9, the dictionary entry point and its licence, what is not reproduced (spec 15).
-- [ ] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
+- [x] README: T9, the dictionary entry point and its licence, what is not reproduced (spec 15).
+- [x] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
       `git diff --stat <commit before Task 1> -- website/` is empty.
-- [ ] Spec §10 and this plan: verified facts, UNVERIFIED items, status `done`; plans README row.
-- [ ] Commit: `docs: complete T9 predictive text (plan 18b)`.
+- [x] Spec §10 and this plan: verified facts, UNVERIFIED items, status `done`; plans README row.
+- [x] Commit: `docs: complete T9 predictive text (plan 18b)`.
+
+Outcome (2026-10-14): `vp build` of the demo emits the dictionary as its own chunk,
+`english-*.js` 246.05 kB (117.01 kB gzipped; no dictionary word in the main chunk). Headless
+(`agent-browser`, Skip boot, the LCD read from its canvas): `Hello world into` typed in T9,
+`*` through `goto`, `invo`, `houn` to `inun?` and Spell, a no-match `7` (`into?`, Spell), the
+Spell prompt typing `intos`, the learned word offered again, Dictionary off (note, multi-tap
+`h`) and English (`T9 dictionary activated`, the T9 header back). `vp check`, `vp run -r test`
+(≈60 s) and `vp run website#build` pass; the website is unchanged.
+
+Deviation: the demo loads the dictionary in a panel (`demo/panels/t9.ts`, AGENTS.md "Parallel
+plan conventions" 6: `demo/main.ts` stays the shell): the import starts at mount and restarts the
+(switched-off) phone with the dictionary once it arrives; a box restarts it without one.
+
+Verified by the goldens once reimported: every finding T1-T10 (T10 corrected: English shows a
+note), the T9 header, underline, `?`/Spell, no-match, key 1, case, word stops, Matches, Insert
+word, Spell, user words (second place, completions last, oldest first), the Dictionary list and
+its notes, Dictionary off across a cold boot. UNVERIFIED and chosen here: the user dictionary's
+840 budget and its persistence across power cycles (D7, Open questions 4-5), Restore keeping user
+words, key-1 compositions (D10), held `*` while composing (ignored), Insert number and Insert
+symbol (the crawl only), the held-`*` threshold, Matches' C (back to Options), re-entry of a word
+its lists lack (none), `abc` chosen at a sentence start not lasting past the next sentence end.
+Open for the dirty room: the lit pixel after a short `*` at a word start
+(`g-star-free/07-star-after-space`, a known gap).
+
+### Hand-off: promoting the goldens (bridge)
+
+The last clean-room commit (`test(nokia-os): promote the T9 goldens (plan 18b)`) lists all 303
+`t9/*` ids in `T9_PROMOTED`, empties the tree table's `PENDING_LATER` (Write messages' leaf),
+expects both asserted in `tests/goldens-integrity.test.ts`, and gives the leaf its known gap in
+plan 14's acceptance file (`WRITE_MESSAGES_LEAF_GAP`: pixels match, the crawl's blink spreads
+476-492 ms). Until the bridge re-imports, exactly three tests fail (the two integrity checks and
+the coverage guard's "known gaps only for asserted goldens"); `tests/t9-promotion.test.ts` plays
+every promoted golden meanwhile (303 + the leaf, two known gaps). The bridge then runs, from the
+repository root:
+
+```sh
+mise exec -- vp run @hellotimber/nokia-os#import-captures <REF>   # twice: the second changes nothing
+mise exec -- vp run @hellotimber/nokia-os#regenerate              # the leaf's blink joins widgets.ts
+mise exec -- vp run @hellotimber/nokia-os#test
+```
+
+Expected flips: `goldens/index/18b.json` and the 303 `goldens/t9/**/*.lcd.txt` from `pending:18b`
+to `asserted`; `goldens/index/14.json` and `goldens/tree/02-messages/2-1.leaf.lcd.txt` likewise;
+`src/resources/generated/widgets.ts` gains the leaf's node timeline (58 lines). Simulated in the
+clean room by flipping the status lines locally (not committed): the whole suite passes.
 
 ## Follow-up plan adjustments
 

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/insert-smiley
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/insert-smiley
 source-sha256: 91c9a0280536db28737f339e086498b74900da254ab553843c28f0edcd139db7
 trigger-frame: 0

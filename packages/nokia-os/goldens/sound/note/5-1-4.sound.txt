@@ -5,7 +5,7 @@ source: captures/6.39/plan16/notes/5-1-4
 source-sha256: 26f65fef4ddafa57e14e1bbcb36448c8e6b7c0ccef56d40ac767b6ed8c8b20d8
 state: factory
 keys: 0:navi
-note: OK on 5-1-4, 5-1-22, 5-4-2, 5-4-7, 5-7-2 (factory).
+note: OK on 5-1-4, 5-1-22, 5-4-2, 5-4-7, 5-7-2, 6-2-3 (factory).
 omitted: none
 
 @events

@@ -80,7 +80,7 @@ export function paintPartial(
  * Standby as a widget's partial draw sees it: the ladders and icons at the screen's edges (the
  * kernel always reports full signal and battery; the operator and clock lie inside x 5..78).
  */
-function standbyEdges(): Framebuffer {
+export function standbyEdges(): Framebuffer {
   const fb = new Framebuffer();
   paintStandby(fb, { kind: "standby", carrier: "", signal: 4, battery: 4 });
   return fb;
@@ -93,8 +93,11 @@ function standbyEdges(): Framebuffer {
 export function paintNote(fb: Framebuffer, model: NoteModel, previous?: Uint8Array): void {
   const { frame, lines } = model;
   if (frame?.kind === "cut" || frame?.kind === "edges") {
-    const target = frame.kind === "edges" ? standbyEdges() : new Framebuffer();
-    if (frame.kind === "cut") paintNoteScreen(target, lines, model.next);
+    // A cut with no step after it goes on drawing toward standby (plan 17: the power list's
+    // `Invalid shortcut`, an edges step and then a 31-byte cut).
+    const towardStandby = frame.kind === "edges" || model.next === undefined;
+    const target = towardStandby ? standbyEdges() : new Framebuffer();
+    if (!towardStandby) paintNoteScreen(target, lines, model.next);
     paintPartial(fb, frame, previous, target);
     return;
   }

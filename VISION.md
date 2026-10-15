@@ -31,7 +31,9 @@ order, key semantics, timings, sounds — is a hard requirement, specified in
 
 - The portfolio website simulating telephony (calls/SMS over a network) or SIM features.
   nokia-os accepts SMS through a host network port; the host owns the network.
-- T9 dictionaries beyond what the UI bit needs (plan 18b settles dictionary scope/source).
+- T9 dictionaries beyond what the UI bit needs, on the website. nokia-os ships one English T9
+  dictionary built from an openly licensed word-frequency list (plan 18b); the website adopts it
+  only when it adopts nokia-os.
 - Mobile-first 3D performance heroics. It should run fine on a laptop; on small
   screens the HTML panels carry the content.
 - Pixel-perfect photogrammetry of the shell. Convincing > exact; the screen behavior
@@ -89,13 +91,13 @@ are independent and reusable; **only `website/` composes them**.
                    └───────────────────┘
 ```
 
-| Package                     | Responsibility                                                                                                                                                                                                                                                                                                          | Dependencies                                                       |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                                                                                 | none                                                               |
-| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                            | `phone-core` (type-only)                                           |
-| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                              | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
-| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                | none                                                               |
-| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18, in progress), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
+| Package                     | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                   | Dependencies                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                                                                                                                                                                                                          | none                                                               |
+| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                                                                                                                                                     | `phone-core` (type-only)                                           |
+| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                                                                                                                                                       | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
+| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                                                                                                                                         | none                                                               |
+| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18, in progress), T9 English (open dictionary, plan 18b), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, keyguard and display/keypad LED events on the light tick (plan 25, in progress), standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
 
 The website does **not** consume `@hellotimber/nokia-os` yet (plan 13). How portfolio content
 integrates with the stock OS is decided later. Until then the website keeps phone-screen's own
@@ -181,6 +183,8 @@ export interface MenuIndicator {
 export interface StandbyIndicators {
   voicemail?: boolean;
   message?: boolean;
+  /** Plan 17: the host's "silent" icon (stock: drawn top-left while the active profile is silent). */
+  silent?: boolean;
 }
 
 export type ScreenModel =
@@ -193,6 +197,7 @@ export type ScreenModel =
       signal: 0 | 1 | 2 | 3 | 4;
       battery: 0 | 1 | 2 | 3 | 4;
       indicators?: StandbyIndicators;
+      line?: string; // plan 17: PhoneConfig.standbyLine's text, present only when it returns one
       notice?: { text: string; softkey: string }; // e.g. "1 message received" + Read
       leaving?: true; // only during PhoneConfig.menuOpenDelayMs, between Menu and the carousel
     }
@@ -311,10 +316,10 @@ export interface SubmenuOptions<Metadata = unknown> {
    */
   shown?(child: MenuEntry<Metadata>): boolean; // method syntax: keeps SubmenuEntry covariant
   /**
-   * Plan 17 (added by plan 27 Task 6): the text `child` shows in this level's list and as its own
-   * level's title; re-read on every tick (a change emits one snapshot). Undefined = the child's
-   * label. Must be non-empty (an empty string throws); an exception the reader throws is
-   * contained and the child's own label shows. Slugs and paths do not change.
+   * Plan 17: the text `child` shows in this level's list and as its own level's title; re-read on
+   * every tick (a change emits one snapshot). Undefined (or a non-string) = the child's label;
+   * paths and slugs do not change. `SubmenuEntry.labelOf(child)` throws for a blank label; the
+   * kernel shows the child's own label then, and when the reader throws.
    */
   label?(child: MenuEntry<Metadata>): string | undefined; // method syntax: keeps SubmenuEntry covariant
 }
@@ -441,6 +446,11 @@ export interface ApplicationContext {
    * indicator. Always provided by the kernel; optional so hosts may wrap contexts.
    */
   menuIndicator?(): MenuIndicator;
+  /**
+   * Plan 17: powers the phone off (deactivation reason `power-off`), as the power long press does.
+   * Always provided by the kernel; optional so hosts may wrap contexts; stale activations no-op.
+   */
+  powerOff?(): void;
 }
 
 export interface PhoneApplicationSession {
@@ -456,6 +466,20 @@ export interface PhoneConfig<Metadata = unknown> {
   clock?: () => string | undefined; // host supplies time; re-read on each tick
   /** Plan 18: re-read per tick; change emits one snapshot; standby includes only true fields. */
   standbyIndicators?: () => StandbyIndicators | undefined;
+  /**
+   * Plan 17: a second standby line under the operator, re-read on every tick with the time since
+   * standby was last entered (boot end, a return from the menus or an application, a notice
+   * cleared); a change emits one snapshot. An exception omits it. Default: none.
+   */
+  standbyLine?: (shownMs: number) => string | undefined;
+  /**
+   * Plan 17: opened on the power key's key-down at standby as a standby application (plan 18's
+   * activation: empty stack, path `standby`, `exit()` returns to standby, `levels`/`select`/`row`
+   * throw), also over a notice and when the running application's handling of that key-down
+   * leaves for standby. The power long press still powers off. Elsewhere the short press does
+   * nothing.
+   */
+  standbyPower?: PhoneApplication;
   bootMs?: number; // 0 skips boot; otherwise defaults to bootTimeline?.durationMs ?? 3000
   /** Finite boot animation; when set, boot length = its durationMs. */
   bootTimeline?: Timeline;
@@ -571,6 +595,17 @@ the kernel defaults are host config with website-preserving defaults: `shortcutW
 the screen is the standby model with `leaving: true`, and the carousel's timeline and the
 shortcut window are timed from the carousel opening and the Menu press respectively; a key
 that moves the carousel opens it at once, C returns to standby).
+
+**Kernel policy (plan 17).** Every plan 17 seam is opt-in and generic; the website
+sets none. _Standby line_: `standbyLine(shownMs)` is re-read per tick; `shownMs` restarts whenever
+standby is entered (a new standby state: boot end, C, C held, an application's exit, a standby
+application's exit, a cleared notice), and the line also rides on Menu's `leaving` model. _Labels_:
+`SubmenuOptions.label` renames a child in its level's list and its own title without touching paths
+or slugs. _Power key_: `standbyPower` opens on the power key's down at standby (the release and later
+keys reach it; the long press still powers off) and `ApplicationContext.powerOff()` switches off
+from any application. nokia-os uses them for profile names under the operator, stored profile
+names in Profiles, and the power key's profile list; its Tones are the active profile's
+Personalise settings (docs/plans/17-profiles.md).
 
 **Kernel policy (plan 18, in progress).** Standby indicators are host readers re-read per tick.
 A notice may open an application at standby with an empty navigation stack. Neither interface
@@ -724,9 +759,30 @@ export interface StockPhoneConfig {
   sim?: string;
   /** Plan 16: the phone's buzzer, tone generator and vibrator. Default: nowhere. */
   sound?: StockSoundPort;
+  /** Plan 25: the display and keypad LEDs. Default: nowhere. */
+  lights?: StockLightsPort;
   /** Plan 18, in progress: SMS host port. Default: createSyntheticNetwork(). */
   network?: StockNetworkPort;
+  /**
+   * Plan 18b: T9 dictionaries. With `english`, Write messages starts in T9 English as the virgin
+   * firmware does. Without it, T9 English is unavailable (Dictionary off, plan 18 behaviour).
+   */
+  t9?: { readonly english?: T9Dictionary };
 }
+
+/** Plan 18b: a T9 language dictionary (opaque; build it with `createT9Dictionary`). */
+export interface T9Dictionary {
+  readonly language: "english";
+  /** Number of words. */
+  readonly size: number;
+}
+
+/**
+ * Plan 18b: a dictionary from the generated format: words in descending frequency, one per line,
+ * `#<w>` lines setting the weight 2^(w/4) of the words after them. Throws on a malformed line,
+ * naming it.
+ */
+export function createT9Dictionary(language: "english", source: string): T9Dictionary;
 
 /** Plan 18: one SMS as the phone sees it: a typed recipient number/address and text. */
 export interface StockSms {
@@ -788,6 +844,19 @@ export interface StockSoundPort {
   change(event: StockSoundEvent): void;
 }
 
+/** Plan 25: one change of the phone's lights at kernel time `atMs`. */
+export interface StockLightEvent {
+  /** `display`: the LCD backlight LEDs; `keypad`: the keypad LEDs (MAD2's two LED lines). */
+  readonly light: "display" | "keypad";
+  readonly atMs: number;
+  readonly on: boolean;
+}
+
+/** Plan 25: where the phone's lights go. Events arrive in `atMs` order from `tick()`. */
+export interface StockLightsPort {
+  change(event: StockLightEvent): void;
+}
+
 /** Plan 15: the phone's EEPROM, as the Web Storage subset (`window.localStorage` fits). */
 export interface StockStorage {
   getItem(key: string): string | null;
@@ -829,6 +898,30 @@ nokia-os touches no audio API. Its sound programs are generated from committed s
 (event timelines of captured buzzer, tone and vibrator registers; never audio). See
 `docs/plans/16-tones-and-sound.md`.
 
+**Lights (plan 25, in progress; contract ahead of runtime).** nokia-os's LEDs go through
+`StockPhoneConfig.lights`, as its sound goes through `sound`: the phone emits every change of the
+display LEDs and the keypad LEDs from `tick()` once kernel time reaches it, stamped with its own
+`atMs`, so the output is the same at any tick rate. The two lights are separate events although
+v6.39 always switches them together (the hardware has two lines; phone-3d renders them
+differently). Rules: `atMs` never exceeds the emitting tick's kernel time and never decreases; a
+light's consecutive events differ; both lights are off at power-on until the boot lights them,
+and power-off emits `on: false` for each light that is on; a phone with no port behaves
+identically. The LEDs go off on the firmware's 1982.61 ms light tick (from power-on), at the first
+tick at least 13.62 s after the last light activity. nokia-os touches no DOM or light API. The
+keyguard (Menu then `*`) is nokia-os's own standby mode; phone-core does not change. See
+`docs/plans/25-keyguard-and-backlight.md` and
+[stock keyguard and lights](docs/specs/stock/keyguard-and-backlight.md).
+
+**T9 (plan 18b).** The English T9 dictionary is a separate entry point,
+`@hellotimber/nokia-os/t9-english` (`export const englishT9: T9Dictionary`, indexed on first
+lookup), generated from the MIT-licensed IlyaSemenov/wikipedia-word-frequency list by a committed
+build script (provenance and licence in `packages/nokia-os/src/text/t9/THIRD_PARTY.md`). Hosts
+pass it as `StockPhoneConfig.t9.english`, typically after `await import(...)` so bundlers emit it
+as its own chunk. With it the virgin phone writes in T9 English; without it nokia-os behaves as
+after plan 18 (Dictionary off, English a placeholder). User words are an EEPROM record and
+survive a power cycle. No firmware dictionary content is in the repository. See
+`docs/plans/18b-t9-predictive-text.md` and [T9 behaviour](docs/specs/t9-behaviour.md).
+
 **SMS network (plan 18, in progress; contract ahead of runtime).** The host supplies delivery
 and outcomes. The phone uses kernel time and preserves the typed number/address and text.
 Synthetic sends succeed without loopback; `deliver` broadcasts to subscribers and `sent` records
@@ -844,6 +937,13 @@ inconclusive. See [stock text entry and SMS](docs/specs/stock/text-entry-and-sms
 
 Plan 18c's delivery-kind/editor/session registration requirements await owner reconciliation;
 this SMS-only contract does not authorize its proposed picture/card extension.
+
+**Profiles (plan 17).** A profile is its Personalise settings plus a name. The active
+profile is a stored choice in the settings record (General when never written, and after Restore),
+and Tones read and write its Personalise settings, so every audible effect follows it. The public
+API is unchanged; standby shows the active profile's name and the silent icon through phone-core's
+`standbyLine` and `standbyIndicators`, the Profiles level shows stored names through `label`, and the
+power key's list is `standbyPower`. See [stock profiles](docs/specs/stock/profiles.md).
 
 **Storage (plan 15).** The phone's memory is a host `StockStorage`, synchronous and written at
 once on every change, as EEPROM writes are. nokia-os keeps one versioned JSON record per owner
@@ -878,7 +978,10 @@ export interface Nokia3310Props {
   screenCanvas: HTMLCanvasElement; // texture source
   screenVersion: number; // bump → texture.needsUpdate
   onKey?: (key: Nokia3310Key, action: "down" | "up") => void;
+  /** The display LEDs: LCD backlight and its glow. Default true. */
   backlightOn?: boolean;
+  /** Plan 25 (in progress): the keypad LEDs (legend and NaviKey glow). Default: `backlightOn`. */
+  keypadLightOn?: boolean;
   pressedKeys?: ReadonlySet<Nokia3310Key>; // visually depress keys (e.g. kbd input)
   screenBgColor?: string; // LCD fill behind/around the texture (default classic green)
   modelUrl?: string; // host-served GLB (default "/models/nokia3310-v3.glb")
@@ -889,6 +992,10 @@ export function Nokia3310(props: Nokia3310Props): React.JSX.Element;
 /** Convenience scene: Canvas + lighting + resize + subtle idle motion. */
 export function PhoneStage(props: Nokia3310Props & { className?: string }): React.JSX.Element;
 ```
+
+phone-3d does not know nokia-os: a host maps nokia-os's `StockLightEvent`s to `backlightOn`
+(display) and `keypadLightOn` (keypad). The website passes only `backlightOn`, so its keypad
+follows it (plan 25 D13).
 
 ### `@hellotimber/snake`
 

@@ -28,6 +28,7 @@ import {
   recordingChoices,
   replayComposerKeys,
   setupKeys,
+  type StillChain,
 } from "./composer.ts";
 import { open } from "./drive.ts";
 import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "./golden.ts";
@@ -204,11 +205,11 @@ function restoreStill(c: ComposerCase): void {
 }
 
 /** Any Task 0 case's still. */
-export function caseStill(c: ComposerCase): void {
+export function caseStill(c: ComposerCase, chain?: StillChain): void {
   if (c.name.startsWith("ringing/")) return ringingStill(c);
   if (c.name.startsWith("persist/")) return persistStill(c);
   if (c.name.startsWith("restore/")) return restoreStill(c);
-  composerStill(c);
+  composerStill(c, chain);
 }
 
 // ---------------------------------------------------------------- still fixtures
@@ -237,10 +238,12 @@ export function stillFixtureScenario(id: string): void {
   const cases = COMPOSER_CASES.filter((c) => stillFixtureOf(c.name).id === id);
   if (cases.length === 0) throw new Error(`No composer case for ${id}.`);
   const failures: string[] = [];
+  // a case extending the previous one's keys continues its phone (composerStill)
+  const chain: StillChain = {};
   for (const c of cases) {
     const gap = COMPOSER_IMAGE_GAPS[c.name];
     try {
-      caseStill(c);
+      caseStill(c, chain);
       if (gap !== undefined) failures.push(`${c.name} passes: drop its gap (${gap})`);
     } catch (error) {
       if (gap === undefined) failures.push(String(error instanceof Error ? error.message : error));

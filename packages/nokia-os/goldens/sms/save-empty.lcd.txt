@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/save-empty
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/save-empty
 source-sha256: 40ba165a06591f15a0afbbf998b189c02ece0982167a3101e3d84b78d722c0f3
 trigger-frame: 1

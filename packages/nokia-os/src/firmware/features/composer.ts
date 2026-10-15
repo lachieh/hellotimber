@@ -69,10 +69,10 @@ export const composerFeature: StockFeature = {
     ]),
   ),
   // D13: a slot shows its saved tone's name, else the tree's `(empty)`.
-  levelLabels: {
+  levels: {
     [COMPOSER_LEVEL]: (services) => {
       const composer = composerOf(services);
-      return (order) => composer.slot(order)?.name;
+      return { label: (_slug, order) => composer.slot(order)?.name };
     },
   },
   // Restore factory settings empties every slot (K13).

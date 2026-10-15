@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/keys/carousel-c
+status: asserted
+source: captures/6.39/plan25/lights/keys/carousel-c
+source-sha256: 0979faddac98cd0441facc467d24ff5191f6693795e8b426a252521a197326bd
+state: factory
+power-on: 73472
+start: -100
+end: 16590
+keys: 0:c
+note: c in the menu carousel (Phone book), dark.
+omitted: none
+
+@events
+# t_ms light   state
+19     display on
+19     keypad  on
+13766  display off
+13766  keypad  off

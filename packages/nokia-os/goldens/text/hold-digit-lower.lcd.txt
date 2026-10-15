@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/hold-digit-lower
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/hold-2/lower
 source-sha256: ad3db48b76d52a0bada74fbcb9ce0afbf1edb43260e15599a27ce274ef9f09ec
 trigger-frame: 1

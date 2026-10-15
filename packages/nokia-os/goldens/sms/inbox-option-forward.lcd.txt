@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/inbox-option-forward
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/inbox/option/forward
 source-sha256: 043ab1a6a5786fbdfbd5f1c593c10d5db3a258b9d59f6220b639c0d50ebfccbc
 trigger-frame: 1

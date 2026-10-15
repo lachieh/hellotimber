@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/profiles/activate-empty-2
+status: asserted
+source: captures/6.39/plan17/activate/empty-2
+source-sha256: 350658fec57e8b025583eed0abcc627066aaa3977611388b67b776486e45e96b
+state: factory
+keys: 0:navi
+note: General active: Select on empty-2's Activate: the key beeps at empty-2's Keypad tones level.
+omitted: none
+
+@events
+# t_ms output   state
+42     tone     900 v=0x9104
+189    tone     off

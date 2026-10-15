@@ -116,9 +116,10 @@ unsubscribe();
   ```
 
 - `label(child)` (opt-in) is the text a child shows in its level's list and as its own level's
-  title, re-read on every tick (one snapshot per change); undefined keeps the child's label, an
-  empty string throws, and an exception the reader throws leaves the child's label. Slugs and
-  paths do not change (a Composer slot named by its saved tone):
+  title (a renamed profile, a Composer slot named by its saved tone), re-read on every tick (one
+  snapshot per change); undefined keeps the child's label, and a reader that throws or returns a
+  blank string shows the child's label. Slugs and paths do not change. `entry.labelOf(child)`
+  gives the level's text for a child (a blank one throws):
 
   ```ts
   new SubmenuEntry(slug("composer"), order, "Composer", slots, undefined, {
@@ -156,9 +157,26 @@ unsubscribe();
   });
   ```
 
-- `standbyIndicators: () => ({ message?, voicemail? })` (default none) is re-read on every tick
-  like `clock()`; the standby model carries `indicators` with the fields that are true, and a
-  changed value emits one snapshot.
+- `standbyIndicators: () => ({ message?, voicemail?, silent? })` (default none) is re-read on
+  every tick like `clock()`; the standby model carries `indicators` with the fields that are
+  true, and a changed value emits one snapshot.
+- `standbyLine: (shownMs) => string | undefined` (default none) is a second standby line, re-read
+  on every tick with the time since standby was last entered (the boot's end, a return from the
+  menus or an application, a notice cleared). The standby model (and the standby Menu leaves for
+  `menuOpenDelayMs`) carries `line` when it returns a string; a reader that throws shows none. A
+  profile name that appears two seconds after standby:
+
+  ```ts
+  createPhone({ menu, standbyLine: (shownMs) => (shownMs >= 1900 ? profileName() : undefined) });
+  ```
+
+- `standbyPower: application` (default none) opens on the power key's key-down at standby, as a
+  standby application (empty stack, path `standby`, `exit()` returns to standby). It receives
+  every later key, the release of the press that opened it and the power key's own presses
+  included; the power key's long press still powers off. It opens over a standby notice (which
+  stays), and when the running application leaves for standby on the power key's down (a note
+  shown at standby); in the menus, other applications and the boot the short press does nothing.
+  Any application can switch the phone off with `context.powerOff?.()` (reason `power-off`).
 - `setNotice({ text, softkey, path? | open? })` shows a standby notice; C clears it. Navi goes to
   `path`, or runs the `open` application as a standby application: the stack is empty, the path
   stays `standby`, `menuIndicator()` has no segments and `exit()` returns to standby (`levels`,

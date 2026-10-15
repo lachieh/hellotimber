@@ -290,8 +290,10 @@ is composing is UNVERIFIED.
 - `Dictionary off` shows `T9 / dictionary / deactivated` (large, tick icon; ≈657/232/504 ms
   phases as plan 18 S2) and switches the editor to multi-tap. The choice survives a power cycle.
   Text typed so far stays (verified with no composing word).
-- `English` (from off) switches back to T9 at once: no note, the editor is redrawn within ≈90 ms
-  with the T9 header.
+- `English` (from off) shows `T9 / dictionary / activated`, the same tick note with ≈656/232/488
+  ms phases, then the editor with the T9 header (`t9/dictionary-off-on/19-on`; corrected by plan
+  18b from "no note": the golden shows the note). The menu-tree crawl saw the same note for
+  English chosen while English was on.
 - `Русский` and `Български` switch T9 to those dictionaries: the header's mode text becomes the
   Cyrillic one and the keys spell Cyrillic. Out of scope for 18b (section 13).
 
@@ -321,6 +323,8 @@ is composing is UNVERIFIED.
   ms after the key; plan 14 D8: key-to-redraw latency is not reproduced).
 - Cursor blink ≈480 ms per phase, also while composing.
 - No commit timeout (4.1). No timer runs in the no-match state.
+- The editor's cursor blink restarts, shown, when the editor is drawn again after a screen above
+  it closes (`t9/dictionary-off-on/05-off`: a whole 476-ms step with the cursor after the note).
 - No T9-specific sound. Every key press, including `*`, a no-match key and Spell, gives the same
   keypad tone (900 Hz for ≈142 ms at the virgin level) that plan 16 plays for any key; there is no
   error beep for a no-match key (`g-audio`).

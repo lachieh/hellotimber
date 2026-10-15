@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/erase
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/erase
 source-sha256: 425e235ebd57570af7a6b26006a3faf1713810c3908a346c0f7c5101ae6c1e03
 trigger-frame: 1

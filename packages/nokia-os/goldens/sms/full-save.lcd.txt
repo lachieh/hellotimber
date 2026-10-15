@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/full-save
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/full/save-16
 source-sha256: 6a346851a7dbe02f32e48caa77a811a112785afc717fcb6f84bcea956c297568
 trigger-frame: 1

@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/profiles/power-general-ok-loud
+status: asserted
+source: captures/6.39/plan17/power/general/ok-loud
+source-sha256: 9ca7515d19f71e2461f6b52217f1ad2f07851da504b8838d375745e93df555e5
+state: factory
+keys: 0:navi
+note: General active: OK on loud in the power list beeps at loud's level.
+omitted: none
+
+@events
+# t_ms output   state
+40     tone     900 v=0x9100
+187    tone     off

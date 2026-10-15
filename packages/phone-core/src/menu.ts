@@ -148,10 +148,9 @@ export interface SubmenuOptions<Metadata = unknown> {
    */
   shown?(child: MenuEntry<Metadata>): boolean;
   /**
-   * Plan 17 (plan 27 Task 6): the text `child` shows in this level's list and as its own level's
-   * title; re-read on every tick (a change emits one snapshot). Undefined = the child's label. An
-   * empty string throws, as entry labels do; an exception the reader throws is contained (the
-   * child's own label shows). Slugs and paths do not change. Method syntax keeps SubmenuEntry
+   * Plan 17: the text `child` shows in this level's list and as its own level's title (a stored
+   * profile name); re-read on every tick (a change emits one snapshot). Undefined or a non-string
+   * = the child's label. Paths and slugs do not change. Method syntax keeps SubmenuEntry
    * covariant in Metadata.
    */
   label?(child: MenuEntry<Metadata>): string | undefined;
@@ -230,20 +229,15 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
   }
 
   /**
-   * The text `child` shows (SubmenuOptions.label): the reader's string, else the child's label.
-   * Throws on an empty string; a reader's own exception leaves the child's label.
+   * The text `child` shows in this level (SubmenuOptions.label, else its own label). Throws when
+   * the reader returns a blank string, as an empty entry label does.
    */
   labelOf(child: MenuEntry<Metadata>): string {
-    let value: string | undefined;
-    try {
-      value = this.#options.label?.(child);
-    } catch {
-      return child.label;
-    }
+    const value = this.#options.label?.(child);
     if (typeof value !== "string") return child.label;
     if (value.trim() === "") {
       throw new Error(
-        `Submenu "${this.slug.value}" label for "${child.slug.value}" must be non-empty.`,
+        `Submenu "${this.slug.value}" labels "${child.slug.value}" with a blank label.`,
       );
     }
     return value;

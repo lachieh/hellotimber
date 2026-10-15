@@ -237,6 +237,36 @@ const PROBE_TIMELINES: readonly ProbeSpec[] = [
   },
 ];
 
+// 2026-10-14 probes (`$REF/captures/scratch-inv/shortcut/t.cap`, `u.cap`): digits in an option
+// list the stock shortcut opened, after a factory setup each.
+const SHORTCUT_LIST_TIMELINES: readonly ProbeSpec[] = [
+  {
+    name: "shortcut-m8-6-3-then-1",
+    dir: "t3-863-1-check",
+    note:
+      "Menu 8 6 3, 1 in the list's window: Off is stored and drawn alone at the bottom right, " +
+      "then standby; Games › Settings › Shakes shows Off.",
+  },
+  {
+    name: "shortcut-m8-6-3-then-3",
+    dir: "t4-863-3",
+    note: "Menu 8 6 3, 3 in the list's window: Invalid shortcut, then standby.",
+  },
+  {
+    name: "shortcut-m8-6-3-1",
+    dir: "u1-8631-pending",
+    note:
+      "Menu 8 6 3 1 typed before the list opens: as 1 in the list; Games › Settings › Shakes " +
+      "shows Off.",
+  },
+  {
+    name: "shortcut-m8-6-3-late-1",
+    dir: "t5-863-1-late-in-window",
+    note: "Menu 8 6 3, 1 just after the list's window ends: the digit starts a number at standby.",
+    status: "pending:22",
+  },
+];
+
 export const menuDepth: PlanCaptureSet = {
   plan: "14",
   resources,
@@ -245,6 +275,11 @@ export const menuDepth: PlanCaptureSet = {
       base: "plan14/probe",
       stills: PROBE_STILLS,
       timelines: PROBE_TIMELINES,
+    }),
+    ...probeCaptureSet(io.frames, {
+      base: "../scratch-inv/shortcut/out",
+      stills: [],
+      timelines: SHORTCUT_LIST_TIMELINES,
     }),
     ...treeCaptureSet(io.tree, io.frames),
   ],

@@ -2,6 +2,7 @@
 // persistent record with the factory state (plan 15 Task 5, D3, D5).
 import { describe, expect, it } from "vite-plus/test";
 import { WELCOME_NOTE_KEY } from "../src/firmware/features/settings";
+import { DICTIONARY_KEY } from "../src/messages/bindings";
 import { PHONE_SECURITY_KEY } from "../src/firmware/security";
 import { settingAlias, STOCK_SETTINGS } from "../src/firmware/stock";
 
@@ -391,7 +392,9 @@ describe("factory state (D5)", () => {
   it("cites a v6.39 capture for every default, and every label is one of its list's", () => {
     for (const entry of FACTORY_DEFAULTS) {
       expect(entry.evidence, entry.key).toBe("v6.39");
-      expect(entry.capture, entry.key).toMatch(/^plan15\/factory\/scroll\/[\d-]+\/01\.png$/);
+      expect(entry.capture, entry.key).toMatch(
+        /^(?:plan15\/factory\/scroll\/[\d-]+\/01\.png|plan25\/lights\/game\/off\/play\.lights\.csv)$/,
+      );
     }
     expect(() => SETTINGS_RECORD.factory!(SETTINGS_RECORD.initial())).not.toThrow();
   });
@@ -429,22 +432,41 @@ describe("factory state (D5)", () => {
     expect(stockPageValue(settings, PHONE_SECURITY_KEY)).toBe("Off");
   });
 
-  it("leaves Games › Settings › Sounds and Shakes On (plan 16 Task 0: the factory image's games sound and shake)", () => {
-    // Plan 15's factory table read Off for both (a v5.79 reading); the v6.39 factory image plays
-    // Snake II's sounds and shakes, so the factory state keeps their virgin On.
+  it("sets Games › Settings › Lights Off and leaves Sounds and Shakes On", () => {
+    // Plan 16 Task 0: the factory image plays Snake II's sounds and shakes (plan 15's table read
+    // Off for both, a v5.79 reading). Restore writes Lights Off: the factory image opens it on Off
+    // after a power cycle, while the session that restored still shows the value it had (plan 15's
+    // in-session scroll read On; see docs/specs/stock/storage-and-settings.md).
     const storage = createMemoryStorage();
     const eeprom = new StockEeprom(storage);
     eeprom.write(SETTINGS_RECORD, SETTINGS_RECORD.factory!(written()));
     const settings = createStockSettings(eeprom);
     expect(settings.label("games/settings/sounds")).toBe("On");
     expect(settings.label("games/settings/shakes")).toBe("On");
-    expect(FACTORY_DEFAULTS.some((entry) => entry.key.startsWith("games/settings/"))).toBe(false);
+    expect(settings.label("games/settings/lights")).toBe("Off");
+    expect(
+      FACTORY_DEFAULTS.filter((entry) => entry.key.startsWith("games/settings/")).map((e) => e.key),
+    ).toEqual(["games/settings/lights"]);
   });
 
-  it("keeps RESTORE_KEEPS (the welcome note, the top score) and resets other texts", () => {
+  it("keeps RESTORE_KEEPS (the welcome note, the top score, the Dictionary) and resets the rest", () => {
+    const { storage, settings } = persistent();
+    settings.choose(DICTIONARY_KEY, 0);
+    settings.choose("tones/keypad-tones", 0);
+    const kept = SETTINGS_RECORD.factory!(new StockEeprom(storage).read(SETTINGS_RECORD));
+    expect(kept.choices[DICTIONARY_KEY]).toBe(0);
+    expect(kept.choices["tones/keypad-tones"]).toBeUndefined();
     const factory = SETTINGS_RECORD.factory!(written());
-    expect(factory.texts).toEqual({ [WELCOME_NOTE_KEY]: "Hi" });
+    // Plan 17 D2: Restore names slot 6 `(empty)` (FACTORY_TEXTS), not its virgin boxes.
+    expect(factory.texts).toEqual({
+      [WELCOME_NOTE_KEY]: "Hi",
+      "profiles/empty-2/personalise/rename": "(empty)",
+    });
     expect(factory.numbers).toEqual({ "games/snake/top-score": 105 });
-    expect([...RESTORE_KEEPS].sort()).toEqual(["games/snake/top-score", WELCOME_NOTE_KEY]);
+    expect([...RESTORE_KEEPS].sort()).toEqual([
+      "games/snake/top-score",
+      DICTIONARY_KEY,
+      WELCOME_NOTE_KEY,
+    ]);
   });
 });

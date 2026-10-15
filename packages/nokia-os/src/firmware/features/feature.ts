@@ -8,7 +8,9 @@
 // also matches the node itself and everything below (`tree.ts` `matchesPattern`). Patterns of one
 // table must not overlap (tests/features.test.ts).
 import type { PhoneKey } from "@hellotimber/phone-core";
+import type { StockMessaging } from "../../messages/service";
 import type { StockSounder } from "../../sound/sounder";
+import type { StockT9 } from "../../text/t9/service";
 import type { Widget } from "../../widgets/flow";
 import type { ListNumbering } from "../../widgets/rows";
 import type { NoteSound } from "../../widgets/note";
@@ -32,6 +34,10 @@ export interface StockServices {
   readonly noteSound: NoteSound;
   /** The phone's EEPROM, for the records a feature registers (`records`, plan 15 D2). */
   readonly eeprom: StockEeprom;
+  /** Plan 18: the phone's SMS (its `messages` record over `eeprom`, the network port). */
+  readonly messaging: StockMessaging;
+  /** Plan 18b: the host's T9 dictionaries and the user words. */
+  readonly t9: StockT9;
 }
 
 /** The tree node a bound screen opens for. */
@@ -58,6 +64,23 @@ export interface LeadEntry {
   /** The flow it opens. */
   readonly open: (services: StockServices) => () => Widget;
 }
+
+/**
+ * What a feature adds to a submenu level (plan 17: the Profiles level's names and opening; plan 27:
+ * the Composer slots' tone names).
+ */
+export interface LevelOptions {
+  /**
+   * The text the child with slug `slug` and menu order `order` (its node number's last segment)
+   * shows in the level and as its title (phone-core `SubmenuOptions.label`); undefined = its label.
+   */
+  readonly label?: (slug: string, order: number) => string | undefined;
+  /** The slug of the child the level opens on; undefined = the captured opening. */
+  readonly opening?: () => string | undefined;
+}
+
+/** A level's options over one phone's services. */
+export type LevelBinding = (services: StockServices) => LevelOptions;
 
 /** What a feature adds to an option list (plan 16: key beeps and previews). */
 export interface OptionListHooks {
@@ -141,14 +164,42 @@ export type VirginNumber =
 export type FactoryDefault = {
   readonly key: string;
   readonly evidence: "v6.39";
-  /** The scroll image under `$REF/captures/6.39/` that shows it. */
+  /** The capture under `$REF/captures/6.39/` that shows it (a scroll image or a recording). */
   readonly capture: string;
 } & ({ readonly label: string } | { readonly marked: readonly string[] });
 
+/** A factory text read from a v6.39 capture after Restore (plan 17 D2: slot 6's name). */
+export interface FactoryText {
+  readonly key: string;
+  readonly text: string;
+  readonly evidence: "v6.39";
+  /** The image under `$REF/captures/6.39/` that shows it. */
+  readonly capture: string;
+}
+
+/**
+ * Where an alias points: a fixed prefix, or one read from the stored choices (plan 17 D1: Tones
+ * are the active profile's). `choice` reads a single-choice setting's stored index.
+ */
+export type AliasTarget = string | ((choice: (key: string) => number | null) => string);
+
+/** A single-choice setting no tree node lists (plan 18: an editor's Dictionary; plan 17: the active profile). */
+export interface VirginChoice {
+  readonly key: string;
+  readonly labels: readonly string[];
+  /** The virgin choice; null = unset. */
+  readonly chosen: number | null;
+}
+
 /** What a feature adds to the settings store (plan 14 D9, plan 15). */
 export interface StockSettingsTables {
+  /**
+   * Single-choice settings that are not tree option lists, with their virgin choice (plan 18: an
+   * editor's Dictionary; plan 17: the active profile).
+   */
+  readonly choices?: readonly VirginChoice[];
   /** Keys under `prefix` read and write the same key under `target` (Tones → a profile's). */
-  readonly aliases?: readonly { readonly prefix: string; readonly target: string }[];
+  readonly aliases?: readonly { readonly prefix: string; readonly target: AliasTarget }[];
   /** Pages whose value is the host's, by setting key: what the page shows. */
   readonly hostValues?: Readonly<
     Record<string, (ports: StockPorts, settings: StockSettings) => string | undefined>
@@ -161,10 +212,12 @@ export interface StockSettingsTables {
   readonly typedTexts?: readonly string[];
   /** Code-prompt leaves that store a single choice, by node number: the option labels. */
   readonly codeSettings?: Readonly<Record<string, readonly string[]>>;
-  /** Texts and numbers Restore factory settings keeps (every other returns to virgin). */
+  /** Choices, texts and numbers Restore factory settings keeps (every other returns to virgin). */
   readonly restoreKeeps?: readonly string[];
   /** What Restore factory settings writes over the virgin choices and marks. */
   readonly factoryDefaults?: readonly FactoryDefault[];
+  /** Texts Restore factory settings writes instead of their virgin value (plan 17 D2). */
+  readonly factoryTexts?: readonly FactoryText[];
 }
 
 /** One feature of the stock firmware. Every field is optional; tables merge across features. */
@@ -179,14 +232,8 @@ export interface StockFeature {
   readonly screens?: Readonly<Record<string, ScreenBinding>>;
   /** Entries this feature heads submenu levels with, by the level's node number. */
   readonly leads?: Readonly<Record<string, LeadEntry>>;
-  /**
-   * Plan 27: the text a submenu level's children show (phone-core `SubmenuOptions.label`), by the
-   * level's node number: a reader of each child's order (its node number's last segment) that
-   * returns undefined for the tree's label.
-   */
-  readonly levelLabels?: Readonly<
-    Record<string, (services: StockServices) => (order: number) => string | undefined>
-  >;
+  /** Labels and openings this feature gives submenu levels, by the level's node number. */
+  readonly levels?: Readonly<Record<string, LevelBinding>>;
   /** Hooks for the option list of setting `key`, if this feature has any. */
   readonly optionLists?: (key: string, services: StockServices) => OptionListHooks | undefined;
   readonly widgets?: StockWidgetTables;

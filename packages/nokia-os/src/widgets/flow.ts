@@ -7,6 +7,7 @@ import type {
   PhoneApplicationSession,
   PhoneKey,
   ScreenModel,
+  ShortcutLevel,
 } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { paintWidget, type WidgetModel } from "../display/widgets";
@@ -27,6 +28,8 @@ export interface Flow {
   back(levels?: number, options?: { select?: string; row?: "top" | "bottom" }): void;
   /** Leave the menus for standby. */
   standby(): void;
+  /** Switch the phone off (plan 17: the power key's Switch off!); absent outside a phone. */
+  powerOff?(): void;
   /** The menu indicator for the flow's position, as the kernel reports it. */
   indicator(): MenuIndicator;
 }
@@ -47,6 +50,14 @@ export interface Widget {
    * stops its preview).
    */
   close?(): void;
+  /** The widget is on top again: the screens pushed above it closed (`back`). */
+  reveal?(): void;
+  /**
+   * The widget's options while it is a menu level to the stock shortcut (an option list): the
+   * kernel then matches digits typed in the shortcut window among them (phone-core
+   * `PhoneApplicationSession.shortcutLevel`). Asked of the top widget.
+   */
+  shortcutLevel?(flow: Flow): ShortcutLevel | undefined;
 }
 
 const NO_INDICATOR: MenuIndicator = { segments: [], awaitingNext: false };
@@ -101,6 +112,10 @@ class FlowSession implements PhoneApplicationSession, Flow {
 
   tick(dtMs: number): void {
     this.#top?.tick?.(dtMs, this);
+  }
+
+  shortcutLevel(): ShortcutLevel | undefined {
+    return this.#top?.shortcutLevel?.(this);
   }
 
   render(): ScreenModel {
@@ -163,7 +178,10 @@ class FlowSession implements PhoneApplicationSession, Flow {
     for (const widget of this.#stack.splice(this.#stack.length - popped).reverse()) {
       widget.close?.();
     }
-    if (this.#stack.length > 0) return;
+    if (this.#stack.length > 0) {
+      this.#top?.reveal?.();
+      return;
+    }
     const beyond = levels - popped;
     const exit = {
       ...(beyond === 0 ? {} : { levels: beyond + 1 }),
@@ -179,6 +197,11 @@ class FlowSession implements PhoneApplicationSession, Flow {
     this.#context.exit({ to: "standby" });
     this.#closed = true;
     this.#closeAll();
+  }
+
+  powerOff(): void {
+    if (this.#closed) return;
+    this.#context.powerOff?.();
   }
 
   indicator(): MenuIndicator {

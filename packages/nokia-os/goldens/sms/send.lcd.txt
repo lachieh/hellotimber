@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/send
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/send/3
 source-sha256: 1a5ff5873b4579639cad32345a828a66c9cb329787b54f7353789602f7828756
 trigger-frame: 1

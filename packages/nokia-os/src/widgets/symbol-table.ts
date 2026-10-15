@@ -9,14 +9,16 @@ import type { Flow, Widget } from "./flow";
 
 class SymbolTableWidget implements Widget {
   readonly #insert: (symbol: string) => void;
+  readonly #t9: boolean;
   #selected = 0;
 
-  constructor(insert: (symbol: string) => void) {
+  constructor(insert: (symbol: string) => void, t9: boolean) {
     this.#insert = insert;
+    this.#t9 = t9;
   }
 
   render(): SymbolsModel {
-    return { kind: "symbols", selected: this.#selected };
+    return { kind: "symbols", selected: this.#selected, ...(this.#t9 ? { t9: true } : {}) };
   }
 
   onKey(key: PhoneKey, flow: Flow): void {
@@ -30,7 +32,13 @@ class SymbolTableWidget implements Widget {
   }
 }
 
-/** The symbol table; Use calls `insert` with the selected symbol. */
-export function symbolTable(insert: (symbol: string) => void): Widget {
-  return new SymbolTableWidget(insert);
+/**
+ * The symbol table; Use calls `insert` with the selected symbol. From the T9 editor it has the
+ * T9 header (plan 18b, `t9/g-star-free/04-held-star-empty`).
+ */
+export function symbolTable(
+  insert: (symbol: string) => void,
+  options: { t9?: boolean } = {},
+): Widget {
+  return new SymbolTableWidget(insert, options.t9 ?? false);
 }

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/exit
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/exit
 source-sha256: d5cad83dc6518729534a675daafbbcaa531875f109134a0b67496ad79153a99c
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/elsewhere-snake
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/elsewhere/snake-level-1
 source-sha256: 09f17abc01846f740fe164f7004ae0754283c92d5c6ae1cb0239a81a421115ae
 trigger-frame: 1

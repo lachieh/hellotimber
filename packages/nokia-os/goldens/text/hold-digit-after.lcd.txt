@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/hold-digit-after
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/hold-2/sentence-after.png + captures/6.39/plan18/text/hold-2/lower-after.png
 source-sha256: a4c68da173fef55f8542108755c5649fc262ceff3c1fc7af2eac45603d963953
 note: Key 2 held in Abc and abc, settled: the digit 2.

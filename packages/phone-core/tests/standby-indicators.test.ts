@@ -21,6 +21,12 @@ describe("standby indicators", () => {
     expect(phone.screen).toEqual(expect.objectContaining({ indicators: { message: true } }));
   });
 
+  it("emits the silent icon (plan 17) like the other indicators", () => {
+    const phone = bootedPhone({ standbyIndicators: () => ({ silent: true, voicemail: false }) });
+    expect(phone.screen).toMatchObject({ kind: "standby", indicators: { silent: true } });
+    expect((phone.screen as { indicators: object }).indicators).toEqual({ silent: true });
+  });
+
   it("emits no field for {} or false fields, nor for undefined", () => {
     for (const value of [{}, { message: false }, { message: false, voicemail: false }, undefined]) {
       const phone = bootedPhone({ standbyIndicators: () => value });

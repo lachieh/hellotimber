@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/key-9-lower
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/keys/9/lower/01.png + captures/6.39/plan18/text/keys/9/lower/02.png + captures/6.39/plan18/text/keys/9/lower/03.png + captures/6.39/plan18/text/keys/9/lower/04.png + captures/6.39/plan18/text/keys/9/lower/05.png
 source-sha256: 4116057a6d3eff63eb514b57064f3c3519ebe559ca1b3acfb5841a35bea9037c
 note: Key 9 pressed 5 times in abc from the empty editor (a shot per press, the character pending). Abc (sentence start) shows the same characters (text/key-modes has its header).
