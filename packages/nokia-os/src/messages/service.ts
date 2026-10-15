@@ -4,6 +4,7 @@
 import { RECEIVE_LINK_MS, SEND_LINK_MS } from "../resources";
 import {
   checkIncomingSms,
+  type StockBusinessCard,
   type StockIncomingSms,
   type StockNetworkPort,
   type StockSendOutcome,
@@ -77,11 +78,45 @@ export class StockMessaging {
    * has settled it and SEND_LINK_MS has passed, at a `tick`. Power-off drops it unsettled.
    */
   send(sms: StockSms, settled: (outcome: StockSendOutcome) => void): void {
-    const sending: Sending = { dueAt: this.#now + SEND_LINK_MS, outcome: undefined, settled };
+    this.#start(
+      SEND_LINK_MS,
+      () => this.#network.send({ number: sms.number, text: sms.text }),
+      settled,
+    );
+  }
+
+  /**
+   * Plan 19 (D10): sends a business card as `send` does, settled no sooner than `linkMs` (Send
+   * b'card's). A port without `sendBusinessCard` settles `"sent"` (the emulator's network).
+   */
+  sendBusinessCard(
+    card: StockBusinessCard,
+    linkMs: number,
+    settled: (outcome: StockSendOutcome) => void,
+  ): void {
+    const port = this.#network;
+    const copy: StockBusinessCard = {
+      to: card.to,
+      card: { name: card.card.name, number: card.card.number },
+    };
+    this.#start(
+      linkMs,
+      () => (port.sendBusinessCard === undefined ? "sent" : port.sendBusinessCard(copy)),
+      settled,
+    );
+  }
+
+  /** A send that settles once `call`'s outcome is in and `linkMs` has passed, at a `tick`. */
+  #start(
+    linkMs: number,
+    call: () => StockSendOutcome | Promise<StockSendOutcome>,
+    settled: (outcome: StockSendOutcome) => void,
+  ): void {
+    const sending: Sending = { dueAt: this.#now + linkMs, outcome: undefined, settled };
     this.#sending.push(sending);
     let result: StockSendOutcome | Promise<StockSendOutcome>;
     try {
-      result = this.#network.send({ number: sms.number, text: sms.text });
+      result = call();
     } catch {
       sending.outcome = "failed";
       return;

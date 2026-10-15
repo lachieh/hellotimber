@@ -174,6 +174,9 @@ export const PHONE_BOOK_OPTIONS: Readonly<
   "phone-book/voice-erase": OTHER_RECORDING,
   "phone-book/voice-playback": OTHER_RECORDING,
   "phone-book/voice-change": OTHER_RECORDING,
+  // Task 10. The sending bar is plan 14's 7-6 recording; Message sent is plan 18's.
+  "phone-book/bcard-ok": OTHER_RECORDING,
+  "phone-book/pick-send-to-many-send": OTHER_RECORDING,
   // Edit › Add writes a new SIM location: `Saved` comes 361 ms after OK's down, past the
   // replay's latency window (Replace: 285 ms); OK acts on its row.
   "phone-book/edit-add": keysOnRows([1], OTHER_RECORDING),

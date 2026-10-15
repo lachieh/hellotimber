@@ -13,6 +13,8 @@ import { numberEntry } from "../widgets/number-entry";
 import { OptionListWidget } from "../widgets/option-list";
 import { Playback } from "../widgets/playback";
 import { textInput } from "../widgets/text-input";
+import { names, pickNumber } from "../phone-book/flows";
+import { SEND_TO_MANY_LIST_OK_MS } from "../phone-book/timings";
 import { COMPOSED_FLOWS, DICTIONARY_KEY, DICTIONARY_LABELS, EDITOR_OPTIONS } from "./bindings";
 import type { StockSms } from "./network";
 
@@ -118,6 +120,11 @@ function phoneNumber(
       set2 && (services.settings.text(SET_2_CENTRE_KEY) ?? "") === ""
         ? flow.push(set2Centre(services, text, typed, above + 1))
         : send(services, flow, above, typed, text),
+    // Plan 19: Search picks a name's number from the phone book.
+    search: (flow) =>
+      pickNumber(services, flow, (picked, inner) =>
+        inner.replace(phoneNumber(services, text, picked, above, set2)),
+      ),
   });
 }
 
@@ -262,22 +269,39 @@ function standbyDraw({ ports }: StockServices): WidgetModel {
   return { kind: "standby-draw", ...(clock === undefined ? {} : { clock }) };
 }
 
+/**
+ * Options › Send to many: `OK` alone, then the empty SIM's `No phone numbers` (`sms/send-to-many`)
+ * or (plan 19) the name list with `Send`: Send sends the text to the name's number (`Sending
+ * message`, `Message sent`, the list again); C returns to the editor
+ * (`phone-book/pick-send-to-many*`).
+ */
+function sendToMany(services: StockServices, text: string): Widget {
+  if (services.phoneBook.entries().length === 0) {
+    return interlude(softkeyAlone("OK"), SEND_TO_MANY_SOFTKEY_MS, (inner) =>
+      inner.replace(
+        note({
+          lines: ["No phone", "numbers"],
+          timeline: timelineByName("no-phone-numbers"),
+          sound: services.noteSound,
+        }),
+      ),
+    );
+  }
+  return interlude(softkeyAlone("OK"), SEND_TO_MANY_LIST_OK_MS, (inner) =>
+    inner.replace(
+      names(services, {
+        softkey: "Send",
+        choose: (entry, list) => list.push(sending(services, { number: entry.number, text })),
+      }),
+    ),
+  );
+}
+
 /** The multi-tap editor's Options (`text/options`), over the editor whose text is `entry`'s. */
 function editorOptions(services: StockServices, entry: EditorControl, draft: SmsDraft): Widget {
   const actions: Readonly<Record<string, (flow: Flow) => void>> = {
     Send: (flow) => flow.replace(phoneNumber(services, entry.text, draft.number ?? "", 1, false)),
-    "Send to many": (flow) =>
-      flow.replace(
-        interlude(softkeyAlone("OK"), SEND_TO_MANY_SOFTKEY_MS, (inner) =>
-          inner.replace(
-            note({
-              lines: ["No phone", "numbers"],
-              timeline: timelineByName("no-phone-numbers"),
-              sound: services.noteSound,
-            }),
-          ),
-        ),
-      ),
+    "Send to many": (flow) => flow.replace(sendToMany(services, entry.text)),
     // No response in the captured state (`sms/template`, `sms/insert-smiley`).
     Template: () => {},
     "Insert smiley": () => {},

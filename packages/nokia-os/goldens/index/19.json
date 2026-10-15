@@ -250,7 +250,7 @@
   {
     "id": "phone-book/bcard-ok",
     "file": "phone-book/bcard-ok.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 18,
     "frames": 20
@@ -258,7 +258,7 @@
   {
     "id": "phone-book/bcard-prompt-c",
     "file": "phone-book/bcard-prompt-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -266,7 +266,7 @@
   {
     "id": "phone-book/bcard-search",
     "file": "phone-book/bcard-search.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -274,7 +274,7 @@
   {
     "id": "phone-book/bcard-search-select",
     "file": "phone-book/bcard-search-select.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -282,7 +282,7 @@
   {
     "id": "phone-book/bcard-send",
     "file": "phone-book/bcard-send.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -682,7 +682,7 @@
   {
     "id": "phone-book/pick-send-search",
     "file": "phone-book/pick-send-search.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -690,7 +690,7 @@
   {
     "id": "phone-book/pick-send-search-select",
     "file": "phone-book/pick-send-search-select.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -698,7 +698,7 @@
   {
     "id": "phone-book/pick-send-to-many",
     "file": "phone-book/pick-send-to-many.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -706,7 +706,7 @@
   {
     "id": "phone-book/pick-send-to-many-c",
     "file": "phone-book/pick-send-to-many-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -714,7 +714,7 @@
   {
     "id": "phone-book/pick-send-to-many-send",
     "file": "phone-book/pick-send-to-many-send.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 18,
     "frames": 19
@@ -1712,7 +1712,7 @@
   {
     "id": "sound/phone-book/bcard",
     "file": "sound/phone-book/bcard.sound.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/bcard-search
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/bcard/search
 source-sha256: 61a0cc6145215584f4aaa8fd25eb95c19e0cb301612b51dc0aeca896103fdfa2
 trigger-frame: 1

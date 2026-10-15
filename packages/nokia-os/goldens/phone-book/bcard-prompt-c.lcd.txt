@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/bcard-prompt-c
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/bcard/prompt-c
 source-sha256: ba8b729455ab9bf2f7c44745884dcbf3061f091407cfb0214901fd2972c353b7
 trigger-frame: 1

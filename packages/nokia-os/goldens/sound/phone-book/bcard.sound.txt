@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/phone-book/bcard
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/notes/business-card-sent
 source-sha256: 8a8ef27f96415a827d5ed0a26934f84230499e57b802c9c6aebf9506e0969607
 state: factory

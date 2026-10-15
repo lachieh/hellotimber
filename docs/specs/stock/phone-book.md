@@ -122,8 +122,8 @@ inherits it.
 
 ## Send b'card
 
-The list with `Send` → a 33 ms frame with only `OK` → `Phone number:` (counter 30, `Search`: the
-name list with `OK`, then the chosen number filled) → OK → `Sending b'card` (plan 18's bar) for
+The list with `Send` → the list's icon and `OK` alone for 114 ms → `Phone number:` (counter 30,
+`Search`: the name list with `OK`, then the chosen number filled) → OK → `Sending b'card` (plan 18's bar) for
 the link time, **3240 ms** (3237-3359 over six sends, the synthetic cell; UNVERIFIED live) →
 `Business card sent` (six frames, ≈1.37 s) → the list on the name.
 
@@ -168,3 +168,11 @@ warning tone (none with Warning tones Off).
 | ▼ past a small SIM's last speed-dial key hangs       | the emulator SIM's reply to a missing record | not reproduced                                |
 | `Code error` for `12345` in menus (virgin image)     | plan 15's stale code record                  | Erase all's success is a factory capture      |
 | A name starting with GSM `@` breaks the order        | byte 0x00 ends the firmware's string compare | not reproduced (`@` sorts by its code)        |
+
+## Pickers
+
+Write messages' number prompts (Send, Send by set › Numeric) answer `Search` with the name list
+with `OK`: OK fills the prompt with the name's number (an empty SIM: `No phone numbers`). Options ›
+Send to many with names draws `OK` alone for 146 ms, then the name list with `Send`: Send sends the
+text to the name's number (`Sending message`, `Message sent`, the list again); C returns to the
+editor.

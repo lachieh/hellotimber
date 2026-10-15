@@ -11,6 +11,7 @@ export { missingStockGlyphs } from "./resources";
 export type { StockFontName } from "./resources";
 export { createSyntheticNetwork } from "./messages/network";
 export type {
+  StockBusinessCard,
   StockIncomingSms,
   StockNetworkPort,
   StockSendOutcome,

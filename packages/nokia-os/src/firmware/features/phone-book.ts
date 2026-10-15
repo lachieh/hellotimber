@@ -1,6 +1,7 @@
 // Phone book (menu 1; plan 19): the SIM's names behind standby ▼ and the Phone book's leaves,
 // over the inserted SIM's `StockPhoneBook` (`services.phoneBook`). With an empty SIM the leaves
 // keep plan 14's notes and first screens (D13).
+import { sendBusinessCard } from "../../phone-book/bcard";
 import { addName, memoryStatus, search, serviceNumbers } from "../../phone-book/flows";
 import { assignTone, edit, eraseAll, eraseOneByOne } from "../../phone-book/manage";
 import { addVoiceTag, speedDials } from "../../phone-book/speed";
@@ -19,6 +20,7 @@ export const phoneBookFeature: StockFeature = {
     "1-4-2": (services) => () => eraseAll(services),
     "1-5": (services) => () => edit(services),
     "1-6": (services) => () => assignTone(services),
+    "1-7": (services) => () => sendBusinessCard(services),
     "1-8-2": (services) => () => memoryStatus(services),
     "1-9": (services) => () => speedDials(services),
     "1-10-1": (services) => () => addVoiceTag(services),

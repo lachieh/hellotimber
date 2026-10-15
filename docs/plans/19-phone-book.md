@@ -944,14 +944,30 @@ register; Restore keeping speed dials and tones is pinned by `tests/phone-book-s
 network), `src/index.ts` (one line: `StockBusinessCard`), plan 18's `EDITOR_OPTIONS` and its
 `numberEntry` Search hook (one line each: the picker), `tests/phone-book-bcard.test.ts` (new).
 
-- [ ] 1-7: the list with `Send` → the leading frame → `numberEntry` (`Search` → the list with
+- [x] 1-7: the list with `Send` → the leading frame → `numberEntry` (`Search` → the list with
       `Select` → the number filled) → `Sending b'card` for `max(BCARD_LINK_MS, settle)` → `Business
 card sent` → the list; `"failed"` → plan 18's failure note.
-- [ ] `createSyntheticNetwork().cards`; a port without `sendBusinessCard` settles `"sent"` (D10).
-- [ ] `pickNumber(flow, done)`: the name list with `Select` for plan 18's number prompts' `Search`;
+- [x] `createSyntheticNetwork().cards`; a port without `sendBusinessCard` settles `"sent"` (D10).
+- [x] `pickNumber(flow, done)`: the name list with `Select` for plan 18's number prompts' `Search`;
       Send to many with names (the list with `Send`) replacing plan 18's owner-19 placeholder.
-- [ ] TDD through keys against `phone-book/bcard-*`, `sound/phone-book/bcard`, `phone-book/pick-*`.
-- [ ] Commit: `feat(nokia-os): Send b'card and phone book pickers`.
+- [x] TDD through keys against `phone-book/bcard-*`, `sound/phone-book/bcard`, `phone-book/pick-*`.
+- [x] Commit: `feat(nokia-os): Send b'card and phone book pickers`.
+
+Deviation: **Task 10 (files):** Send b'card lives in `src/phone-book/bcard.ts`, `pickNumber` in
+`src/phone-book/flows.ts`; plan 18's messaging service gains `sendBusinessCard(card, linkMs,
+settled)` beside `send` (one shared `#start`). Plan 18's Send to many moves into a `sendToMany`
+function of `write.ts` (the empty SIM's note unchanged); `EDITOR_OPTIONS` drops its `owner: "19"`
+and plan 18's coverage test its `"19"`.
+
+Deviation: **Task 10 (measured behaviour):** Send's leading frame keeps the list's icon with `OK`
+alone for 114 ms (S12's 33 ms is the list's frame before it, `phone-book/bcard-send`); Send to many
+with names draws `OK` alone for 146 ms (plan 18's 168 is the empty SIM's). Search on an empty SIM
+keeps plan 18's `No phone numbers`.
+
+Deviation: **Task 10 (scenarios):** `bcard-ok` and `pick-send-to-many-send` play plan 14's bar
+and plan 18's `Message sent` from other recordings (±25).
+
+**Task 10 completion note:** 11 more plan 19 goldens are asserted (10 LCD, 1 sound), no known gaps.
 
 ### Task 11 - Acceptance and the coverage guard
 

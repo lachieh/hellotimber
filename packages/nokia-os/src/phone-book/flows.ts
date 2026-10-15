@@ -18,7 +18,7 @@ import {
   type NameListView,
 } from "../widgets/name-list";
 import { note } from "../widgets/note";
-import { numberEntry } from "../widgets/number-entry";
+import { noPhoneNumbers, numberEntry } from "../widgets/number-entry";
 import { textInput } from "../widgets/text-input";
 import { searchIndex, type PhoneBookEntry } from "./entries";
 import { SIM_NUMBER_DIGITS, simNameLength, simNumberProblem, type StockContact } from "./sim-card";
@@ -353,4 +353,29 @@ export function memoryStatus(services: StockServices): Widget {
     ],
     softkey: "Back",
   });
+}
+
+/**
+ * A number from the phone book (plan 18's number prompts' `Search`, Send b'card's): the name list
+ * with `OK`; OK closes it and gives the entry's number to `done` on the prompt below. An empty
+ * SIM: plan 18's `No phone numbers` (`text/number-search-empty`).
+ */
+export function pickNumber(
+  services: StockServices,
+  flow: Flow,
+  done: (number: string, flow: Flow) => void,
+): void {
+  if (services.phoneBook.entries().length === 0) {
+    noPhoneNumbers(flow);
+    return;
+  }
+  flow.push(
+    names(services, {
+      softkey: "OK",
+      choose(entry, inner) {
+        inner.back();
+        done(entry.number, inner);
+      },
+    }),
+  );
 }

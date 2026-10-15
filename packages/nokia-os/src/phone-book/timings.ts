@@ -51,3 +51,15 @@ export const VOICE_ERROR_BEEPS: SoundProgram = {
     { ms: 147, tone: { hz: 675, volume: 0x99b5 } },
   ],
 };
+
+/**
+ * Send on a name draws the list's icon and `OK` alone this long before `Phone number:`
+ * (`phone-book/bcard-send` frame 1: 114 ms).
+ */
+export const BCARD_OK_MS = 114;
+
+/**
+ * Write messages › Options › Send to many with names draws `OK` alone this long before the list
+ * (`phone-book/pick-send-to-many` frame 1: 146 ms; plan 18's 168 before the empty SIM's note).
+ */
+export const SEND_TO_MANY_LIST_OK_MS = 146;

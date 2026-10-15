@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/pick-send-to-many-send
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/pick/send-to-many-send
 source-sha256: d4842e7a19f4b1a8650317c45af0e883ed9b630980530e25861d4a7fd1e69e17
 trigger-frame: 1
