@@ -702,18 +702,29 @@ Holds of keys other than 3 below 1500 ms are not imported (key 3's and every key
 **Files:** `src/composer/{notation,editor,layout}.ts` (new), `tests/composer-notation.test.ts`,
 `tests/composer-editor.test.ts`, `tests/composer-layout.test.ts` (new).
 
-- [ ] TDD `notation.ts`: `formatToken`/`parseTokens` round trips for every form Task 0 shows
+- [x] TDD `notation.ts`: `formatToken`/`parseTokens` round trips for every form Task 0 shows
       (`4c1`, `1.d2`, `16#f3`, `32.#a1`, `8-`); invalid tokens (`4#e1`, `3c1`, `4c4`) throw naming
       them.
-- [ ] TDD `editor.ts` from `COMPOSER_CASES` (expected tokens transcribed from the goldens'
+- [x] TDD `editor.ts` from `COMPOSER_CASES` (expected tokens transcribed from the goldens'
       notation, independent of the code): each key's effect, inheritance, the 8/9 cycles, `*`,
       `#` on the five sharpable notes only, 0, held keys, C and held C, the cursor's wrap, the
       50-token limit and the keys that still edit there, and `sound` for every edit that sounds
       (K8).
-- [ ] TDD `layout.ts` against every still's notation lines and cursor (the OCR runs): character
+- [x] TDD `layout.ts` against every still's notation lines and cursor (the OCR runs): character
       wrap at the small face's widths, three lines, the scroll rule Task 0 found, the cursor's x.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): Composer notation and editor engine`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): Composer notation and editor engine`.
+
+**Task 3 completion.** `src/composer/notation.ts` (`formatToken`, `formatTokens`, `parseTokens`,
+`COMPOSER_LIMIT`), `editor.ts` (`composerKeyDown`, `composerHeld`, `isNoteKey`, `EMPTY_COMPOSER`)
+and `layout.ts` (`composerLines`, `smallWidth`, `COMPOSER_LINE_WIDTH` = 83). 99 tests: 79 entry
+and limit cases whose keys are checked against `COMPOSER_CASES` and whose notation and cursor are
+transcribed from the images, the 15 lines of the 50-token tone, the 82/83/84 px edges, the cursor's
+x and the view's tops through `cursor/up` and `cursor/down`. `tests/support/composer.ts` replays
+harness keys through the engine with the measured hold times (Task 4 generates them).
+
+Deviation (Task 0 U): the layout wraps at token boundaries, not by character, so `composerLines`
+has no character wrap; the hold times live in the widget (Task 8), the engine only applies a hold.
 
 ### Task 4 - Composer sound tables and programs (TDD)
 
