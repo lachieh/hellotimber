@@ -1,4 +1,4 @@
-# Keyguard and lights (plan 25, in progress)
+# Keyguard and lights (plan 25)
 
 Part of the stock firmware's ground truth ([index](../nokia-3310.md#10-firmware-ground-truth-v639-captures)): the goldens under `packages/nokia-os/goldens/` are authoritative; where this file and a golden disagree, fix this file.
 
@@ -37,11 +37,15 @@ key-down unless stated.
   key-down); an SMS arriving at a locked phone; a timed screen ending (the lock note, the hint,
   the emergency display); Screen saver On (no screen saver can show: no picture is stored in the
   virgin or factory image).
-- **Games › Settings › Lights** (factory: Off). While Snake II is playing, Off holds both LEDs off
+- **Games › Settings › Lights** (Off in the captures' factory image `v639-plan15-restored.fls`;
+  plan 15's in-session Restore scroll `plan15/factory/scroll/8-6-2` shows On, and so does
+  nokia-os's factory state). While Snake II is playing, Off holds both LEDs off
   (38 ms after New game; play keys and the power key change nothing) and On holds them on (30 s
   of play, no timeout). The pause (Navi or C) and the death's end release the hold with activity;
   Continue is activity and the hold returns (Off: dark again 20 ms later). Outside play the
-  timeout applies (On: the pause and game-over screens time out).
+  timeout applies (On: the pause and game-over screens time out). nokia-os ends the hold at the
+  game-over screen, the crash plus the death steps (2066 ms; a top score's fireworks 45 ms later)
+  and counts the fireworks' `Game over!` title 2872 ms later as activity again.
 - **Power-off.** The power key held at a lit standby: the profile list, then the LCD blanks and
   the LEDs go off together 1017 ms into the hold.
 
@@ -58,7 +62,12 @@ key-down unless stated.
 - **Hint.** Every key on a locked phone (0-9, `*`, `#`, ▲, ▼, C, held keys, the power key) shows
   standby without ladders, then `Press` / `Unlock` / `and then *` (large, three lines) with a
   keypad and a pressing finger over eight steps, 564/595/179/202/194/195/579/401 ms, a 8-23 ms
-  partial draw, the locked standby. A key during the hint restarts it from its first step. Keys
+  partial draw, the locked standby. After C, ▲, ▼ and the power key (`hint/up`, `hint/pwr`) the
+  lead is 25 ms, the first step 8 ms longer and the last 23 ms shorter, closed by the same partial
+  image held 23 ms; another recording of the power key (`power-key-held`) times as the digits'
+  (UNVERIFIED: likely the timer's phase, not the key). The lead shows only when the key leaves a
+  screen with ladders (the locked standby, `Now press *`, the emergency display, each without its
+  ladders); a key during the hint restarts it from its first step at once. Keys
   are silent; the LEDs do not change (except the power key's, which lights them). Holding the
   power key 10 s does not switch a locked phone off.
 - **Unlock.** Unlock (Navi) shows `Now` / `press *` (bold small face) in place of the operator and
@@ -83,14 +92,14 @@ key-down unless stated.
 
 Every position below paints its golden pixel for pixel (`tests/keyguard-paint.test.ts`).
 
-| Screen            | Layout                                                                                                                                                                                                  |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Locked standby    | standby (ladders, operator, clock) with the key icon at x 7-19, y 0-5, and `Unlock` (small, centred, top 40) in place of `Menu`; before the hint it shows without ladders for 27 ms (25 ms for C, ▲, ▼) |
-| `Keypad locked`   | large lines from x 0 at tops 3 and 18; the keypad icon in x 62-83, y 0-25, crossed out over four steps; a 9 ms partial draw (`edges` 5-78) before the locked standby                                    |
-| Hint              | large lines at tops 3, 18 and 33; the keypad and finger in x 62-83, y 0-25 (seven images over eight steps, the first repeated last); an 8 ms partial draw (23 ms after C, ▲, ▼)                         |
-| `Now press *`     | the locked standby without the operator line: the small face from x 6 at tops 7 and 16; `Unlock` kept. As `*` unlocks, the same without ladders for 21 ms                                               |
-| `Keypad active`   | large lines at tops 3 and 18 with `Done`'s dotted box and tick (plan 14's `note/tick-box`, `note/tick-half`, `note/tick`)                                                                               |
-| Emergency display | the locked standby's icons and clock, no operator; the number in the large face at top 24, its last cell ending at x 76; `Call` (small, centred, top 40)                                                |
+| Screen            | Layout                                                                                                                                                                                                                    |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Locked standby    | standby (ladders, operator, clock) with the key icon at x 7-19, y 0-5, and `Unlock` (small, centred, top 40) in place of `Menu`; before the hint it shows without ladders for 27 ms (25 ms for C, ▲, ▼ and the power key) |
+| `Keypad locked`   | large lines from x 0 at tops 3 and 18; the keypad icon in x 62-83, y 0-25, crossed out over four steps; a 9 ms partial draw (`edges` 5-78) before the locked standby                                                      |
+| Hint              | large lines at tops 3, 18 and 33; the keypad and finger in x 62-83, y 0-25 (seven images over eight steps, the first repeated last); an 8 ms partial draw (23 ms after C, ▲, ▼ and the power key)                         |
+| `Now press *`     | the locked standby without the operator line: the small face from x 6 at tops 7 and 16; `Unlock` kept. As `*` unlocks, the same without ladders for 21 ms                                                                 |
+| `Keypad active`   | large lines at tops 3 and 18 with `Done`'s dotted box and tick (plan 14's `note/tick-box`, `note/tick-half`, `note/tick`)                                                                                                 |
+| Emergency display | the locked standby's icons and clock, no operator; the number in the large face at top 24, its last cell ending at x 76; `Call` (small, centred, top 40)                                                                  |
 
 ## Artefacts and UNVERIFIED
 
@@ -106,7 +115,24 @@ Every position below paints its golden pixel for pixel (`tests/keyguard-paint.te
 UNVERIFIED: the LED rise and fall times (the captures are binary); charging (no charger model);
 the car kit's `Lights` (no PPH-1); the screen saver with a picture (plan 18c); the alarm's LED
 blink (plan 21); emergency numbers other than those tried; whether a call in progress holds the
-LEDs on.
+LEDs on; Unlock during the hint (nokia-os: unlocks as at the locked standby); a key during
+`Keypad active` (ends it) or `Keypad locked` (the hint, no lead); the digits typed while locked
+being forgotten when the locked standby returns; keys other than C, Unlock and digits during the
+emergency display (the hint); Continue on a game whose death had begun (nokia-os: no hold); the
+death's end lighting 27 ms before the game-over redraw in `lights/game/off/over` (nokia-os
+lights at the screen); which image is the factory state for Games › Settings › Lights.
+
+## What nokia-os reproduces
+
+Every plan 25 golden not pending on plans 18 or 22 is asserted (189 of 210): the keyguard's LCD
+timelines and stills pixel for pixel, their `leds` per row, the lights goldens' edges within
+5 ms after power-on alignment, and the keyguard's sounds. Known gaps (expected failures, causes in
+`tests/acceptance/25-keyguard-and-backlight.test.ts`): a restarted hint closing with two partial
+draws (`hint-during`, `emergency/{000,110,113,911,999}`), `Keypad locked` timer spreads of
+15-29 ms (`lock-gap/{2500,2900,2910,2920}`), `*` during the carousel's shortcut entry
+(`lock-cancel/digit`, plan 14's kernel), the light tick's ±3 ms (`timeout/virgin/tap-02`), the
+power key's long press (`boot/power-off`, plan 17) and Snake II deaths the captured bot's keys do
+not reproduce (`game/{off,on}/{over,top-score}`).
 
 ## The website's backlight
 

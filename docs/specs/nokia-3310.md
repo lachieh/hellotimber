@@ -212,7 +212,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Text entry and SMS (plan 18, in progress)                  | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)         | 18   |
 | Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                         | 20   |
 | Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                             | 23   |
-| Keyguard and lights (plan 25, in progress)                 | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |
+| Keyguard and lights (plan 25)                              | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |
 
 ---
 

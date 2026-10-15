@@ -13,7 +13,7 @@ Tasks 12-14 (phone-3d) need only Task 1.
 "Plan 16 supplementary captures") and plans 13-16 and 23 before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan25/`. The planning probes in
 `$REF/captures/scratch-plan25/` are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-14 done; Task 15 not started).
+**Status:** done (Tasks 0-15).
 
 ## Goal
 
@@ -1080,13 +1080,20 @@ the canvas texture cut out by the mask.
 
 **Files:** this plan, `docs/plans/README.md` (row 25), `docs/specs/stock/keyguard-and-backlight.md`.
 
-- [ ] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
+- [x] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
       `mise exec -- vp run website#build`; `git diff --stat <commit before Task 1> -- website/` is
       empty; phone-core is unchanged.
-- [ ] Spec: replace "(plan 25, in progress)" with verified facts; list what stays UNVERIFIED (LED
+- [x] Spec: replace "(plan 25, in progress)" with verified facts; list what stays UNVERIFIED (LED
       rise time, charging, the screen saver, the car kit, anything Task 0 could not capture).
-- [ ] Plans README row 25 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete the keyguard and lights (plan 25)`.
+- [x] Plans README row 25 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete the keyguard and lights (plan 25)`.
+
+**Task 15 completion.** `vp check`, `vp run -r test` (every package) and `vp run website#build`
+pass. `git diff --stat bf8dd31^ -- website/` is empty. phone-core changed only through the merges
+of plans 18 and the rows-window fix (`614ee1d`); no plan 25 commit touches it. The spec drops
+"in progress", records the power key's hint class, the hint's lead rule, the factory Lights
+discrepancy, the Task 5/7/8 UNVERIFIED rules and what nokia-os reproduces (189 of 210 goldens
+asserted, 17 known gaps).
 
 ## Follow-up plan adjustments
 
