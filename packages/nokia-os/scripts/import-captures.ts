@@ -10,7 +10,7 @@
 // Runs under Node's type stripping: imports only node:* and sibling scripts with .ts extensions.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, posix, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   shotImages,
@@ -490,21 +490,26 @@ function lightsIo(root: string): LightsCaptureIo {
   };
 }
 
+/** A capture path as goldens name it: under `captures/`, normalized (plan 18b's `../plan18b/`). */
+function capturePath(path: string): string {
+  return posix.normalize(`${CAPTURES}/${path}`);
+}
+
 function sourceLabel(source: CaptureSource): string {
   if (source.kind === "shots") {
     return shotImages(source.files)
-      .map((shot) => `${CAPTURES}/${shot.file}`)
+      .map((shot) => capturePath(shot.file))
       .join(" + ");
   }
   if (source.kind === "frames") {
-    return [...new Set(source.frames.map((f) => f.dir))].map((d) => `${CAPTURES}/${d}`).join(" + ");
+    return [...new Set(source.frames.map((f) => f.dir))].map(capturePath).join(" + ");
   }
   if (source.kind === "composite") {
     return source.parts
-      .map((p) => `${CAPTURES}/${p.dir} ${pad3(p.from)}-${pad3(p.to)}`)
+      .map((p) => `${capturePath(p.dir)} ${pad3(p.from)}-${pad3(p.to)}`)
       .join(" + ");
   }
-  return `${CAPTURES}/${describe(source)}`;
+  return capturePath(describe(source));
 }
 
 function basename(path: string): string {

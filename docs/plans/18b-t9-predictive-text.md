@@ -421,15 +421,35 @@ the clean room. If Task 2 finds a scenario missing or broken, it reports to the 
 `tests/t9-capture-set.test.ts` (new), `tests/goldens-integrity.test.ts`, `goldens/**`,
 `tests/acceptance.test.ts` (todo shim only).
 
-- [ ] TDD `t9-capture-set.ts` on synthetic recordings (injected loader, as
+- [x] TDD `t9-capture-set.ts` on synthetic recordings (injected loader, as
       `game-capture-set.test.ts`): ids, kinds, step subsets, two-shot steps, timelines with
       `trigger-frame` on the first changed frame.
-- [ ] The table exactly as "Golden pipeline additions".
-- [ ] Integrity: every `t9/*` golden is asserted; no source path outside `plan18b/`.
-- [ ] `tests/acceptance.test.ts`: list the new goldens without a scenario as todos
-      (`awaitsPlan18bScenario`; Task 8 deletes it).
-- [ ] Run `import-captures` twice; no diff. Record counts and bytes here.
-- [ ] Commit: `feat(nokia-os): import T9 goldens (plan 18b)`.
+- [x] The table exactly as "Golden pipeline additions".
+- [x] Integrity: every `t9/*` golden is asserted; no source path outside `plan18b/`. (Pending
+      until promoted: see Deviation.)
+- [x] `tests/acceptance.test.ts`: list the new goldens without a scenario as todos
+      (`awaitsPlan18bScenario`; Task 8 deletes it). (Replaced by the plan file: see Deviation.)
+- [x] Run `import-captures` twice; no diff. Record counts and bytes here.
+- [x] Commit: `feat(nokia-os): import T9 goldens (plan 18b)`.
+
+Outcome (2026-10-14, bridge agent): 303 goldens from the 32 table scenarios, 294 stills (25 of
+them two-shot) and 9 timelines, 349 images; `goldens/t9/` holds 1,551,480 bytes and
+`goldens/index/18b.json` 54,283 bytes. Two importer runs give identical bytes; no other golden
+and no generated resource changed (no regeneration needed).
+
+Deviation: the parallel-plan conventions (AGENTS.md) and plan 29's pending workflow replace three
+items above. The table is `scripts/t9-capture-set.ts`, registered through
+`scripts/capture-sets/18b-t9-predictive-text.ts` and one line in `capture-sets/index.ts`. Every
+golden is imported `pending:18b`: a golden becomes asserted when its scenario lands, by adding its
+id to `T9_PROMOTED` and reimporting (Tasks 6-8); the integrity test checks exactly that and that
+every source lies under `captures/plan18b/`. There is no `awaitsPlan18bScenario` shim:
+`tests/acceptance/18b-t9-predictive-text.test.ts` declares no scenarios yet and the harness lists
+the pending goldens as todos. Golden ids and image names are the capture labels in lower case
+(the golden grammar allows no capitals). Each golden's note gives its row's description and every
+key pressed from the scenario's base (the manifest's commands, in the key vocabulary of the table
+file's header), so Tasks 6-8 can drive a scenario from its goldens. The importer reads plan 18b
+paths as `../plan18b/` from its root and writes them as `captures/plan18b/...`.
+`plan18b/g-persist-poweroff/` (not in the table above) is not imported: a known bad run.
 
 ### Task 3 - Dictionary build and data (TDD)
 

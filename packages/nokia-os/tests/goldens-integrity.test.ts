@@ -25,6 +25,7 @@ import {
   type GoldenIndexEntry,
 } from "../scripts/golden-index.ts";
 import { parseManifestNote } from "../scripts/messages-capture-set.ts";
+import { T9_PROMOTED } from "../scripts/t9-capture-set.ts";
 import { parseLightsGolden } from "../scripts/lights-format.ts";
 import { parseSoundGolden } from "../scripts/sound-format.ts";
 
@@ -310,6 +311,31 @@ describe("plan 18 goldens", () => {
       const chars = parseManifestNote(golden.note);
       expect(chars, entry.id).toHaveLength(golden.images.length);
       if (entry.id !== "glyphs/digits") expect(new Set(chars).size, entry.id).toBe(chars!.length);
+    }
+  });
+});
+
+describe("plan 18b goldens", () => {
+  const own = readPlanIndex(GOLDENS, "18b");
+
+  it("holds only t9/ goldens, pending on 18b until promoted with their scenario", () => {
+    expect(own.length).toBeGreaterThan(0);
+    for (const entry of own) {
+      expect(entry.id).toMatch(/^t9\/[a-z0-9-]+\/\d\d-[a-z0-9-]+$/);
+      expect(entry.status, entry.id).toBe(T9_PROMOTED.has(entry.id) ? "asserted" : "pending:18b");
+    }
+    const ids = new Set(own.map((entry) => entry.id));
+    expect(index.filter((e) => e.id.startsWith("t9/") && !ids.has(e.id))).toEqual([]);
+  });
+
+  it("reads every golden from captures/plan18b/ only", () => {
+    for (const entry of own) {
+      const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+      for (const part of golden.source.split(" + ")) {
+        expect(part, entry.id).toMatch(
+          /^captures\/plan18b\/[a-z0-9-]+\/\d\d-[A-Za-z0-9-]+(\.png)?$/,
+        );
+      }
     }
   });
 });
