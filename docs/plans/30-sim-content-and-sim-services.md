@@ -1,0 +1,709 @@
+# Plan 30 - SIM content and SIM services
+
+> **Fidelity standard (2026-10-15):** `AGENTS.md` "Fidelity standard" governs every comparison in
+> this plan.
+
+> **For agentic workers:** execute task-by-task; tick checkboxes; commit per task.
+> If this plan contradicts VISION.md, AGENTS.md, the spec or the code, STOP and report.
+
+**Prerequisites:** plans 13-18, 18b and 23 done. Plan 19 done (`StockSimCard`, `StockContact`,
+`StockPhoneBook`, the `phone-book` record and its persistence rule). Plan 22 through its Task 8
+(`StockTelephone.dial`, `StockNetworkPort.dial`, the Calling flow, `*#06#`) before Task 7's SET
+UP CALL and Task 8's IMEI; plan 21 through its Task 11 (`StockReminders`, `REMINDERS_RECORD`)
+before Task 8's reminder preload; plan 18c's Chat (D8) for Task 5's chat sender names. Each use
+is conditional and names its fallback (D15). The per-plan file split has landed.
+**Structural convention:** acceptance tests in `packages/nokia-os/tests/acceptance/30-sim-content.test.ts`;
+behaviour in `packages/nokia-os/src/firmware/features/sim-services.ts` (new) plus pure modules
+under `src/sim/`; the capture set in `packages/nokia-os/scripts/capture-sets/30-sim-content.ts`
+(goldens indexed in `goldens/index/30.json`); spec facts in `docs/specs/stock/sim-services.md`.
+Shared files change by one-line registrations except the edits listed under "Shared-file edits".
+**Ground truth:** the v6.39 emulator corpus at
+`REF=/Volumes/SSD/Projects/lachieh/hellotimber/nokia-3310` (gitignored, main checkout only): plan
+18's SMS goldens and `captures/6.39/plan18/`, plan 19's SIM fixtures (`captures/6.39/plan19/sims/`)
+and the canonical captures Task 0 writes to `$REF/captures/6.39/plan30/`. The emulator SIM has no
+SIM Toolkit; Task 0 adds one to the harness (D4). Read `$REF/captures/README.md`, plans 18, 19 and
+22 in full, and `tools/nokia-dct3-emulator/third_party/swsim/README.md` before starting.
+**Status:** not started.
+
+## Goal
+
+Give `@hellotimber/nokia-os` the stock v6.39 features a host needs to supply its own content
+through the SIM card, the way an operator's SIM did in 2000, so a host (plan 31's portfolio)
+writes data and implements nothing else:
+
+- **SMS stored on the SIM** (`EF_SMS`): host-supplied messages appear in the Inbox, read or
+  unread, with their sender and service-centre time stamp, in a SIM of the host's capacity;
+- **sender names**: an SMS from a number in the phone book is listed and read under that name, as
+  the firmware does (Task 0 N; plan 18 lists numbers only);
+- **SIM services** (Menu 13): present only when the SIM has a SIM Toolkit menu (`SET UP MENU`);
+  its items open the SIM's screens through stock widgets: text pages (`DISPLAY TEXT`), item lists
+  (`SELECT ITEM`) and calls the SIM asks to place (`SET UP CALL`), which go out through plan 22's
+  network port, so a host maps a number to whatever it wants (plan 31: a link);
+- **host identity and preload**: the phone's IMEI for `*#06#`, and a documented **preload** of
+  phone-memory content a user could have typed (Welcome note, Reminders), applied once when the
+  record does not exist;
+- **glyph and size validation** of every host string at creation, by the face that draws it;
+- **screen text for hosts**: a plain-text description of every screen, including the stock
+  widgets' `custom` frames, for a host's accessibility mirror and headless QA;
+- goldens for everything the emulator can show, composed flows (UNVERIFIED) only where it cannot.
+
+The website does not change (D16). Plan 31 consumes this plan.
+
+## Why this plan exists (measured gap)
+
+| Area                        | nokia-os after plans 13-22                                                                    | v6.39 / GSM evidence                                                                                                                                                                                   |
+| --------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Messages on the SIM         | Inbox holds only what arrives over the network port (plan 18); the SIM card carries no SMS    | GSM 11.11 `EF_SMS` (6F3C) holds received messages with a status byte (read/unread); the emulator SIM has 15 records (plan 18 S14) and the 3310 reads them (plan 18 D7: 15 shared slots)                |
+| Sender names                | Inbox and `Sender:` show the number                                                           | Nokia phones of the period show the phone book name for a known number (UNVERIFIED for v6.39; Task 0 N)                                                                                                |
+| SIM services                | absent; the stock tree has 12 entries (`nokia-3310-menu-tree.md` "Hidden": 13 needs STK)      | firmware main-menu table entry 14 with a dynamic label and its own 15-frame icon (`extracted/6.39/menu/main_menu.json`); strings `SIM services` 0x3f2, `Allow SIM card to call?` 0x3ec, `Enter:` 0x3ef |
+| Confirm SIM service actions | 6-2-6 stores `Asked`/`Not asked` and nothing reads it                                         | the setting that decides whether a SIM's send/call requests are confirmed (strings 0x3f3-0x3f9)                                                                                                        |
+| `*#06#`                     | `Serial No.` with `?` glyphs (plan 22 S8: the virgin EEPROM has no IMEI)                      | a real phone shows its IMEI; plan 22 Open question 8 reserves a host IMEI                                                                                                                              |
+| Phone-memory content        | a host can only reach the Welcome note or Reminders by typing them                            | a used phone carries them; no SIM file holds them                                                                                                                                                      |
+| Host screen text            | `custom` frames are pixels only; the demo's status line shows the screen kind and application | plan 31's `[role=status]` mirror must say what a note, list or editor shows                                                                                                                            |
+
+## Planning investigation (2026-10-15)
+
+Desk research only; no capture was run. Task 0 captures everything.
+
+| #   | Finding                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Evidence                                                              |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| R1  | **The emulator's SIM can run a SIM Toolkit, switched off.** swSIM ships proactive scaffolding (`src/proactive.c`: `SET UP MENU`, `SELECT ITEM`, `DISPLAY TEXT`, `SET UP CALL`, `GET INPUT`, …; a default applet). `sim_swsim.c` keeps `app_default_enable = false` because the 3310's `TERMINAL RESPONSE` under the GSM class (`A0 14`) hits the same GSM-CLA gap the README's other local patches closed, and the session loops.                                                                    | `third_party/swsim/{sim_swsim.c:32-36,README.md,include/proactive.h}` |
+| R2  | **The 3310 announces toolkit support at boot**: it sends `TERMINAL PROFILE`, which the harness answers `90 00` and ignores. Its bytes say which proactive commands v6.39 implements; nobody has recorded them.                                                                                                                                                                                                                                                                                       | `src/mad2/mad2_sim.c:772`, swSIM README patch 1                       |
+| R3  | **Firmware strings name the toolkit screens** (cross-check only): `SIM services` 0x3f2, `Confirm SIM service actions` 0x3f3 with `Not asked`/`Asked`, `Valid length from %0N to %1N`, `Enter:` and its `(one character)`, `(one digit 0-9)`, `(number)` variants (GET INKEY/INPUT), `Allow SIM card to call?`, `Allow SIM card to send a message?`, `Allow SIM card to send a request to the network?`, `Allow SIM action?`. No browser string: there is no `LAUNCH BROWSER` on a phone without WAP. | `extracted/6.39/text/english.txt` 0x3ec-0x3f9                         |
+| R4  | **SIM services is the hidden 14th main-menu record**: label "dynamic text" (not the 0x3f2 string), icon records 212-226. The label is probably the SIM's `SET UP MENU` alpha identifier; UNVERIFIED.                                                                                                                                                                                                                                                                                                 | `extracted/6.39/menu/main_menu.json` entry 14                         |
+| R5  | **The emulator SIM's files**: `EF_SMS` 6F3C (15 records), `EF_LND` 6F44 (last numbers dialled), `EF_SDN` 6F49 (plan 19's service numbers), `EF_SST` 6F38 (the service table that must allocate the toolkit). Plan 19's `tools/sim.py` already writes SIM fixtures from `gsm.json`.                                                                                                                                                                                                                   | `third_party/swsim/gsm.json`, `captures/scratch-plan19/NOTES.md`      |
+| R6  | **Plan 18's messages record is per SIM identity** (`{"sims":{"sim-1":{"inbox":[…]}}}`) and plan 19's phone book reads the host's entries only while the record holds no copy of that SIM. SIM messages fit the same rule with no new record.                                                                                                                                                                                                                                                         | `packages/nokia-os/README.md` "Records", plan 19 D3                   |
+| R7  | **Reminders and the Welcome note are phone memory** (plan 21's `reminders` record, plan 15's settings key `settings/phone-settings/welcome-note`). No SIM file carries them, and there is no SIM file for alarms or call lists other than `EF_LND`.                                                                                                                                                                                                                                                  | plan 21 D7, plan 15 D2, GSM 11.11 file list                           |
+
+## Scope and non-goals
+
+In scope: the Goal items; public nokia-os contract additions (D2, D3, D5, D9, D10, D12); a harness
+addition and captures; goldens, glyphs, sprites, timelines; composed flows where captures cannot
+exist; documentation.
+
+Out of scope (owner in brackets): what a host does with a number it is asked to dial (the host;
+plan 31 maps numbers to links); `GET INKEY`, `GET INPUT`, `PLAY TONE`, `SEND SHORT MESSAGE`,
+`SEND SS`/`USSD`, `SET UP EVENT LIST`, `REFRESH`, `PROVIDE LOCAL INFORMATION`, timers and every
+other proactive command (not sequenced, D4); `LAUNCH BROWSER` (the 3310 has none, R3); SIM data
+download and cell broadcast; call-register seeding (D8); templates, pictures and the phone book's
+own screens (18c, 19); any website change (31).
+
+## Decisions
+
+Each decision states what changes relative to plans 13-22 and the brief.
+
+**D1 - Host content goes where the real phone kept it (the brief's rule, made concrete).** A host
+supplies content in one of three places, chosen per item by where a v6.39 phone stored it:
+
+| Content                                  | Where a 3310 keeps it                     | This plan                                                 |
+| ---------------------------------------- | ----------------------------------------- | --------------------------------------------------------- |
+| contacts, service numbers                | SIM `EF_ADN`, `EF_SDN`                    | plan 19's `StockSimCard` (unchanged)                      |
+| received SMS                             | SIM `EF_SMS`                              | `StockSimCard.messages` (D2)                              |
+| SIM services menu and screens            | the SIM's toolkit applet                  | `StockSimCard.toolkit` (D3)                               |
+| last numbers dialled                     | SIM `EF_LND` if v6.39 reads it (Task 0 L) | `StockSimCard.lastDialled` only if Task 0 L shows it (D8) |
+| IMEI                                     | the phone                                 | `StockPhoneConfig.imei` (D9)                              |
+| Welcome note, Reminders                  | phone memory, typed by the user           | `StockPhoneConfig.preload`, applied once (D10)            |
+| missed/received calls, durations, alarms | phone memory, made by events              | none: a host cannot fake events (D8)                      |
+
+**D2 - SMS on the SIM (`EF_SMS`, contract change).** `StockSimCard.messages` holds the SIM's
+message slots (`slots`, default 15, the emulator SIM) and the received messages in them (sender,
+text, service-centre time stamp, `read`). Until the `messages` record holds a copy of that SIM's
+inbox (plan 18 D7, plan 19 D3's rule), the Inbox shows the host's messages; the first write (a
+read flag, an erase, an arrival) stores the whole inbox under the SIM's identity. Unread SIM
+messages light the standby envelope and, at power-on, show what Task 0 M records (a notice or the
+envelope only). Text must be one SMS: GSM 7-bit default alphabet only, at most 160 septets (the
+extension table's characters count two), and drawable in the small face; the sender is a number
+(`+` and 1-20 digits). An SMS needing UCS-2 or concatenation is refused at creation (Open question
+6). Whether the capacity follows the SIM's record count is Task 0 M's (slots 10, 15 and 30); if the
+firmware caps it, `slots` above the cap throws.
+
+**D3 - SIM services is the SIM's toolkit menu, declared as data (contract change).**
+`StockSimCard.toolkit` describes what the SIM applet would send: the `SET UP MENU` title and items,
+and for each item what the SIM does when it is chosen, as a small tree of steps: show text
+(`DISPLAY TEXT`), offer a list (`SELECT ITEM`), ask to place a call (`SET UP CALL`). nokia-os plays
+the applet: choosing an item runs its steps as a proactive session through stock widgets and ends
+it (`END SESSION`) where the tree ends. A SIM with no `toolkit` (the default) shows no Menu 13,
+so every plan 13-22 golden is unchanged. Considered: a host callback applet (`select(id,
+session)`, the real envelope/proactive model): it lets a host do anything at any time, cannot be
+validated at creation or listed for routes and sitemaps, and no portfolio need asks for it.
+Rejected for now; the data form is a subset a callback form could later run.
+
+**D4 - Three proactive commands, captured on a patched SIM (scope; fidelity).** Task 0 enables
+swSIM's proactive layer in the harness (a build-copy patch closing the `A0 12`/`A0 14` GSM-CLA gap,
+`EF_SST` allocating the toolkit, and a scripted applet `CAP_STK=<script.json>`), records the 3310's
+`TERMINAL PROFILE` and captures `SET UP MENU`, `DISPLAY TEXT`, `SELECT ITEM` and `SET UP CALL` as
+the phone draws them. If the harness cannot complete a proactive session, the screens are
+**composed** from stock widgets (plan 15 D8 and plan 18 D14's policy: `COMPOSED_FLOWS`, each
+UNVERIFIED, firmware strings as cross-check only): the level as a stock rows list with the
+captured rows window, text as plan 14's text pages in the small face with `OK`, a list as an
+option list with `Select`, and the call confirm as a confirm query `Allow SIM card to call?`. The
+carousel icon has no capture then: it is a known gap with a clean-room icon drawn for the plan
+(policy: `AGENTS.md`, plan 18c "Content policy"), never cropped from `$REF/extracted`. The other
+proactive commands are not sequenced (Open question 4).
+
+**D5 - SIM services in the menu (contract change: `stockMenuFor`).** The menu depends on the SIM,
+so `stockMenu` (the emulator SIM's 12 entries, unchanged) gains a sibling,
+`stockMenuFor(sim: string | StockSimCard): PhoneMenu`, which validates the SIM (D12) and appends
+Menu 13 when it has a toolkit. Its slug is `sim-services`; each `SET UP MENU` item is an entry
+`menu/sim-services/<id>` (the host's kebab-case `id`, the stable route key) in the presentation,
+numbering (`13-n`), soft key and opening selection Task 0 K records; a `SELECT ITEM` list or text
+page inside an item is that entry's application state and has no path (VISION: deep state stays
+phone-internal). `createStockPhone` uses `stockMenuFor(config.sim)`. The carousel label is what
+Task 0 K shows: the toolkit's title if v6.39 uses the alpha identifier (R4), else `SIM services`.
+
+**D6 - SET UP CALL goes through plan 22 and is dialled inside the confirming key's event
+(contract rule).** A call step shows the confirmation Task 0 K records (with the step's alpha
+identifier if it has one; Settings › Phone settings › Confirm SIM service actions decides only what
+Task 0 C shows it decides) and, on OK, enters plan 22's Calling flow with the step's number, so
+the call reaches `StockNetworkPort.dial` and the call register as any call does. **Rule (pinned by
+a test, for this flow and plan 22's):** the phone calls `dial` synchronously inside the `send()` of
+the key event that places the call, so a browser host keeps the user activation it needs to open
+a window. If plan 22 places calls later than its key event, Task 7 records the Deviation in plan
+22 and moves the port call (not the screens) to the key event.
+
+**D7 - Sender names from the phone book (behaviour; Task 0 N).** If Task 0 N shows v6.39 naming a
+known sender, the Inbox list, `Sender:`, Details, the received notice (if it names anyone) and
+Chat's `>` lines use `StockPhoneBook.byNumber` with the comparison Task 0 N records (exact digits,
+or the last n digits). If it does not, nothing changes and D7 is recorded as a finding.
+
+**D8 - No call-register or event seeding (decision).** Missed, received and dialled calls,
+durations and alarms record events the phone saw; a host that wants them plays the events (plan
+22's synthetic network rings and dials). The only SIM-borne call data is `EF_LND`: if Task 0 L
+shows v6.39 listing `EF_LND`'s numbers under Dialled numbers, `StockSimCard.lastDialled` supplies
+them under plan 19 D3's persistence rule; if the firmware keeps its own list (plan 22 D13), the
+field does not exist.
+
+**D9 - The phone's IMEI (contract change; completes plan 22 Open question 8).**
+`StockPhoneConfig.imei?: string`, 15 digits with a valid Luhn check digit (throws otherwise).
+`*#06#` shows it in the layout Task 0 I captures (an IMEI written to a disposable image), else in
+plan 22's captured `Serial No.` layout with the digits in place of the `?` glyphs (composed,
+UNVERIFIED). Absent: plan 22's virgin screen.
+
+**D10 - Preload: phone memory a user could have typed, applied once (contract change).**
+`StockPhoneConfig.preload?: { welcomeNote?: string; reminders?: readonly StockReminderPreload[] }`.
+When the phone is created and the record that holds an item does not exist in storage (`settings`
+without the welcome-note key; no `reminders` record), the item is written as if typed: the Welcome
+note through plan 18's key, reminders through plan 21's `StockReminders.add` in order (text and an
+optional alarm date and time). An existing record is never touched, so a visitor's edits survive
+and Restore factory settings behaves as plan 15/21 decided. Every preloaded string must be
+typeable (plan 18's `TYPEABLE`) and within its editor's limit (Welcome note 36, reminder text plan
+21's limit, at most plan 21's capacity), and drawable; anything else throws. Without plan 21 Task
+11, `reminders` throws `preload.reminders needs plan 21` (D15).
+
+**D11 - Screen text for hosts (contract change).** `describeStockScreen(screen: ScreenModel):
+string` describes any snapshot's screen in plain English: standby (operator, clock, profile line,
+notice and soft key), the carousel (label, `n of 12/13`), levels (selected row or page and its
+value, soft key), and every stock widget's `custom` frame from the widget model that painted it
+(a note's lines, a list's selected row and position, an editor's text and counter, a prompt's label
+and entry, the name list's entry, call screens). Each widget model kind gets a describer; an
+exhaustive switch makes a new kind without one a type error. The description is attached to the
+frame object (a module `WeakMap` from frame to text), so snapshots and their equality do not change
+and phone-core does not change. It is accessibility and QA text, not pixels: no golden asserts it.
+
+**D12 - Every host string is validated at creation, by the face that draws it (extends plan 19
+D2).** `normaliseSim` (plan 19) also validates `messages` (D2), `toolkit` (labels and titles in the
+faces Task 0 K shows drawing them, a label width or length limit as measured, text pages in small,
+numbers per plan 19's rules, ids kebab-case and unique among siblings, at most 255 items per list
+and a depth limit of 4), and `createStockPhone` validates `imei` and `preload`. A bad value throws
+naming the field path and the characters `missingStockGlyphs` reports, e.g.
+`SIM card "lachlan-1": toolkit.items[1].steps[0].text has characters the stock small font lacks:
+"…"`. `stockMenuFor` runs the same validation, so a host's build fails before a visitor sees it.
+
+**D13 - Notes, timings and sounds come from the goldens (plan 14 D8, plan 16 D12).** New screens
+(the toolkit level, text pages, item lists, the call confirm, any `SIM card busy` or
+`Not supported by SIM card` note Task 0 reaches) get generated timelines and their warning tones
+through `NOTE_SOUNDS`. Composed flows (D4) take the timings of the stock widget they reuse.
+
+**D14 - Persistence (reuses plans 18 and 19).** SIM messages follow D2's rule inside plan 18's
+`messages` record (no new record). The toolkit is read-only SIM data: it is never stored, and a
+host that changes it changes Menu 13 at the next creation. Preloaded items are ordinary records
+once written. No record is added by this plan.
+
+**D15 - Dependencies are conditional, each with its fallback.**
+
+| Needs                                            | From              | If it has not landed                                                                                    |
+| ------------------------------------------------ | ----------------- | ------------------------------------------------------------------------------------------------------- |
+| `StockSimCard`, `normaliseSim`, `StockPhoneBook` | plan 19           | blocked: this plan extends them (plan 19 is done on `t3/p19-phone-book`)                                |
+| `StockTelephone.dial`, `StockNetworkPort.dial`   | plan 22 Tasks 6-8 | a call step opens a placeholder owned by `22`; D6's rule is pinned when 22 lands (its Task 8 adopts it) |
+| `*#06#` (`immediateCode`)                        | plan 22 Task 7    | `imei` is validated and stored; the screen is plan 22's when it lands                                   |
+| `StockReminders`                                 | plan 21 Task 11   | `preload.reminders` throws naming plan 21; `welcomeNote` works                                          |
+| Chat's history lines                             | plan 18c (Chat)   | D7 covers the Inbox, `Sender:` and Details only; Chat follows when 18c lands                            |
+
+**D16 - The website does not change.** `git diff --stat <commit before Task 1> -- website/` is
+empty at the end. Plan 31 integrates.
+
+## Ground truth and artefacts
+
+| Source (`$REF/captures/`)           | Contents                                                      | Use                                         |
+| ----------------------------------- | ------------------------------------------------------------- | ------------------------------------------- |
+| plan 18 `sms/*` goldens (committed) | arrivals, Inbox, reading, Details                             | stay asserted (an empty SIM inbox)          |
+| `6.39/plan19/sims/*.json`           | SIM fixtures with `EF_ADN`/`EF_SDN`                           | the base for Task 0's SIM fixtures          |
+| `6.39/plan30/sims/*.json` (Task 0)  | SIM fixtures with `EF_SMS`, `EF_LND`, `EF_SST` and the applet | capture inputs, restated in the capture set |
+| `6.39/plan30/<section>/` (Task 0)   | canonical captures, LCD and audio                             | goldens                                     |
+| `6.39/plan30/terminal-profile.txt`  | the 3310's `TERMINAL PROFILE` bytes, decoded                  | spec (which commands v6.39 implements)      |
+| `6.39/plan30/text.json` (Task 0)    | OCR runs (plan 14 format)                                     | text runs, label checks                     |
+
+New artefacts (spec, Task 1):
+
+| Artefact                                      | Cause                                          | Handling                                                    |
+| --------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------- |
+| the scripted applet and its fixed item texts  | the harness plays the SIM                      | test inputs; the host's toolkit is data (D3)                |
+| proactive timing (fetch, terminal response)   | the harness answers at once                    | the phone's own timing as captured; UNVERIFIED on real SIMs |
+| composed toolkit screens (if Task 0 K fails)  | no proactive session completes in the emulator | `COMPOSED_FLOWS`, UNVERIFIED (D4)                           |
+| a clean-room Menu 13 icon (if Task 0 K fails) | no capture of the carousel entry               | known gap, named in the acceptance file (D4)                |
+
+## Package boundaries
+
+Unchanged from plans 13-22. nokia-os gains no dependency, touches no network, browser or audio API
+and has no concept of a URL: a toolkit call step is a number, and the host's `dial` decides what it
+means. phone-core does not change (D5 builds Menu 13 from existing entries; D11 attaches text
+outside the snapshot). If Task 7 finds the kernel cannot present the toolkit level, stop and report.
+
+## Contract changes
+
+Task 1 writes these into `VISION.md`.
+
+### `@hellotimber/nokia-os` (additive)
+
+```ts
+/** Plan 30: one received SMS stored on the SIM (`EF_SMS`). */
+export interface StockSimMessage {
+  /** The originator: `+` and 1-20 digits (plan 19's number rules, no `* # p`). */
+  readonly number: string;
+  /** One SMS: GSM 7-bit default alphabet, at most 160 septets, drawable in the small face. */
+  readonly text: string;
+  /** The service centre's time stamp (plan 18's `StockTimestamp`). */
+  readonly sentAt: StockTimestamp;
+  /** `EF_SMS` status: read (default) or unread. */
+  readonly read?: boolean;
+}
+
+/** Plan 30: what the SIM applet does when an item is chosen (D3). */
+export type StockToolkitStep =
+  /** `DISPLAY TEXT`: a text page; OK goes on to the next step, C ends the session. */
+  | { readonly kind: "text"; readonly text: string }
+  /** `SELECT ITEM`: a list; choosing an item runs its steps. */
+  | {
+      readonly kind: "select";
+      readonly title?: string;
+      readonly items: readonly StockToolkitItem[];
+    }
+  /** `SET UP CALL`: the phone confirms (with `confirm` as the alpha identifier) and dials `number`. */
+  | { readonly kind: "call"; readonly number: string; readonly confirm?: string };
+
+export interface StockToolkitItem {
+  /** Kebab-case, unique among its siblings; top-level items are route keys (`menu/sim-services/<id>`). */
+  readonly id: string;
+  readonly label: string;
+  /** Run in order; the session ends after the last (back to the item's list). */
+  readonly steps: readonly StockToolkitStep[];
+}
+
+/** Plan 30: the SIM's toolkit menu (`SET UP MENU`). */
+export interface StockSimToolkit {
+  /** The alpha identifier (the carousel label if v6.39 shows it, D5). */
+  readonly title: string;
+  readonly items: readonly StockToolkitItem[];
+}
+
+export interface StockSimCard {
+  // ...plan 19 unchanged...
+  /** Plan 30: `EF_SMS`. Default: 15 slots, none used. */
+  readonly messages?: { readonly slots?: number; readonly entries?: readonly StockSimMessage[] };
+  /** Plan 30: the SIM applet's menu. Default: none (no Menu 13). */
+  readonly toolkit?: StockSimToolkit;
+  // `lastDialled?: readonly string[]` (EF_LND) exists only if Task 0 L shows v6.39 reads it (D8).
+}
+
+/** Plan 30: a reminder as the user could have typed it (D10). */
+export interface StockReminderPreload {
+  readonly text: string;
+  /** Optional alarm, phone time ("DD.MM.YYYY", "HH:MM"). */
+  readonly alarm?: { readonly date: string; readonly time: string };
+}
+
+export interface StockPhoneConfig {
+  // ...plans 13-22 unchanged, except:
+  /** Plan 30: 15 digits, Luhn-valid. `*#06#` shows it (D9). Default: none (the virgin screen). */
+  imei?: string;
+  /** Plan 30: phone-memory content written once, only where its record does not exist (D10). */
+  preload?: {
+    readonly welcomeNote?: string;
+    readonly reminders?: readonly StockReminderPreload[];
+  };
+}
+
+/** Plan 30: the stock menu for a SIM (Menu 13 when it has a toolkit). Validates the SIM (D12). */
+export function stockMenuFor(sim: string | StockSimCard): PhoneMenu;
+
+/** Plan 30: plain-text description of a screen, for accessibility mirrors and headless QA (D11). */
+export function describeStockScreen(screen: ScreenModel): string;
+```
+
+Rules (Tasks 4, 6-9 pin each with a test): an invalid SIM, IMEI or preload throws from
+`createStockPhone` and `stockMenuFor`, naming the field path; the host's SIM messages are read only
+while the `messages` record holds no copy of that SIM's inbox; `stockMenu` equals
+`stockMenuFor("sim-1")`; a toolkit call step reaches `StockNetworkPort.dial` inside the confirming
+`send()` (D6); a preload never overwrites a stored record; `describeStockScreen` returns a
+non-empty string for every screen a phone emits.
+
+## Internal API for later plans
+
+```ts
+// src/sim/messages.ts (pure)
+export function gsmSeptets(text: string): number | undefined; // undefined: not GSM 7-bit
+export function simMessagesProblem(messages: unknown, where: string): string | undefined;
+
+// src/sim/toolkit.ts (pure)
+export function normaliseToolkit(toolkit: unknown, where: string): StockSimToolkit; // throws (D12)
+export function toolkitPaths(toolkit: StockSimToolkit): readonly string[]; // "menu/sim-services/<id>"
+
+// src/sim/session.ts
+export class ToolkitSession {
+  constructor(
+    item: StockToolkitItem,
+    deps: { telephone?: StockTelephone; settings: StockSettings },
+  );
+  widget(): Widget; // the flow's root, running the steps (D3, D6)
+}
+
+// src/display/describe.ts
+export function describeStockScreen(screen: ScreenModel): string;
+export function attachDescription(frame: Bitmap, text: string): void; // flow.ts calls it
+```
+
+## Shared-file edits
+
+| File                                                   | Edit                                                                                                |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| `src/firmware/features/index.ts`                       | one line: `simServicesFeature`                                                                      |
+| `scripts/capture-sets/index.ts`                        | one line: the plan 30 set                                                                           |
+| `src/phone-book/sim-card.ts` (plan 19's)               | `StockSimCard` gains `messages`/`toolkit`; `normaliseSim` calls the two validators (≈15 lines)      |
+| `src/messages/store.ts`, `src/messages/read.ts` (18's) | the SIM's messages as the inbox until the first write (D2, ≈20 lines); sender names (D7, ≈10 lines) |
+| `src/firmware/menu.ts`                                 | `createStockMenu(sim)` behind `stockMenuFor`; Menu 13 appended (≈25 lines)                          |
+| `src/firmware/phone.ts`                                | `stockMenuFor(config.sim)`, `imei`, `preload` (≈20 lines)                                           |
+| `src/widgets/flow.ts`                                  | one call: `attachDescription(frame, describeWidget(model))` (D11)                                   |
+| `src/calls/*` (plan 22's)                              | `imei` into `*#06#` (≈5 lines); D6's synchronous `dial`, only if plan 22 placed it later            |
+| `src/index.ts`                                         | one line each: the new types, `stockMenuFor`, `describeStockScreen`                                 |
+| `demo/panels/index.ts`                                 | one line: the SIM content panel                                                                     |
+
+## Golden pipeline additions
+
+The capture set is `scripts/capture-sets/30-sim-content.ts`, an explicit table like plan 19's. It
+exports `SIM_CONTENT_SIMS`: every Task 0 SIM fixture as a `StockSimCard` (messages, toolkit mirrored
+from the applet script), checked against `plan30/sims/*.json` by Task 0's `check`. Ids,
+`status: asserted` unless noted (`composed:` rows only if Task 0 K fails):
+
+| Fixture id(s)                       | Source (`$REF/captures/6.39/plan30/`) | Kind               | Asserts                                                                          |
+| ----------------------------------- | ------------------------------------- | ------------------ | -------------------------------------------------------------------------------- |
+| `sim/sms-boot-*`                    | `sms/boot/*`                          | timelines          | power-on with read, unread and no SIM messages: notice, envelope (D2)            |
+| `sim/sms-inbox-*`, `sim/sms-read-*` | `sms/inbox/*`, `sms/read/*`           | stills / timelines | list order, icons, reading, `Sender:`, `Sent:`, Details, Erase, the record after |
+| `sim/sms-slots-*`                   | `sms/slots/*`                         | timelines          | 10, 15, 30 slots: arrivals until `No space for new messages`                     |
+| `sim/names-*`                       | `names/*`                             | stills             | a sender in the phone book: list, `Sender:`, Details, notice, Chat `>` (D7)      |
+| `sim/lnd-*`                         | `lnd/*`                               | stills             | Dialled numbers and standby ▲ with `EF_LND` filled (D8)                          |
+| `sim/stk-carousel-*`                | `stk/carousel/*`                      | timelines          | Menu 13: label, icon animation, `13`, ▲/▼ wrap past it, `Menu 1 3`               |
+| `sim/stk-level-*`                   | `stk/level/*`                         | timelines / stills | the items: presentation, rows window, numbers, soft key, long labels, C, held C  |
+| `sim/stk-text-*`                    | `stk/text/*`                          | timelines          | `DISPLAY TEXT`: short, long, paging, OK, C, held C, a following step             |
+| `sim/stk-select-*`                  | `stk/select/*`                        | timelines          | `SELECT ITEM`: title, rows, Select, C, nested                                    |
+| `sim/stk-call-*`, `sound/stk/*`     | `stk/call/*`                          | timelines / sound  | `SET UP CALL` confirm with and without alpha, OK, C, Confirm SIM service actions |
+| `sim/imei-*`                        | `imei/*`                              | stills             | `*#06#` with an IMEI (D9)                                                        |
+| `sound/note/<name>`                 | `notes/*`                             | sound              | warning tones of the new notes                                                   |
+
+## Conventions for every task
+
+- Run commands from the repo root with `mise exec --`.
+- TDD: write the failing test first wherever the task names tests.
+- After each task: `mise exec -- vp check --fix` (repeat `mise exec -- vp fmt` until stable) and
+  the named test commands.
+- Commit rule: `mise exec -- vp check --fix` yourself, then
+  `git commit --no-verify -m "<message>" -- <paths>`. Never `git add -A`/`git add .`, never
+  `git stash`. Never stage `TODOS.md`.
+- Never hand-edit `goldens/**`, `src/resources/generated/**`, `src/firmware/generated/**` or
+  `scripts/generated/**`; change the generator or its tables and regenerate
+  (`mise exec -- vp run @hellotimber/nokia-os#regenerate`). Each generator runs twice with no diff.
+- Tests never read `$REF`. Generators that read `$REF` fail clearly when it is missing. Nothing from
+  `$REF/extracted` is copied; firmware strings are cross-checks only.
+- No new dependencies.
+- When reality differs from this plan, follow the captures and append a `Deviation:` paragraph
+  under the task. If a deviation breaks a contract in VISION.md, stop and report.
+- Parallelism (max 3 concurrent agents): Task 0 gates everything, then Task 1. Then lanes A
+  (2 → 3), B (4 → 5) and C (6, 9). Task 7 needs 3 and 6; Task 8 needs 4; Task 10 needs 5, 7, 8 and
+  9; then 11.
+
+## Tasks
+
+### Task 0 - SIM fixtures, the toolkit harness and canonical REF captures (no repository changes)
+
+**Files (all under `$REF`, gitignored):** `tools/harness/{build.sh,swsim-stk.patch,stk-applet.c}`,
+`captures/scripts/gen_v639_plan30.py`, `captures/scripts/v639-plan30-<section>.cap`,
+`captures/6.39/plan30/**` (SIM fixtures in `plan30/sims/`), a "Plan 30 supplementary captures"
+section in `captures/README.md`, `firmware/work/v639-plan30-*.fls`.
+
+- [ ] Read `$REF/captures/README.md`, plan 19's `scratch-plan19/NOTES.md` and `tools/sim.py`, the
+      swSIM README and `src/proactive.c`. Do not modify existing captures, scripts or emulator
+      sources; `build.sh` applies patches to a build-directory copy (plan 22's pattern). With no
+      `CAP_STK`, output is byte-identical to the stock harness (rerun the plan 13 clock script).
+- [ ] **Harness K0:** `swsim-stk.patch` answers `FETCH` (`A0 12`) and `TERMINAL RESPONSE` (`A0 14`)
+      under the GSM class as the README's patches 1-4 did for other commands; `stk-applet.c` replaces
+      the default applet with one that reads `CAP_STK=<script.json>` (the `StockSimToolkit` shape:
+      `SET UP MENU`, then per `ENVELOPE (MENU SELECTION)` the item's steps as `DISPLAY TEXT`,
+      `SELECT ITEM`, `SET UP CALL`, then `END SESSION`) and logs every command and response; the
+      fixture's `EF_SST` allocates the proactive services. Record the 3310's `TERMINAL PROFILE`
+      decoded per GSM 11.14 into `plan30/terminal-profile.txt`. If no session completes after a
+      bounded effort (record what was tried), stop K, write the outcome and continue with M-I;
+      Tasks 2-7 then follow D4's composed branch.
+- [ ] `gen_v639_plan30.py` (`sims`, `run -j 3`, `--only`, `ocr`, `check`) driving
+      `tools/menutree/emu.py` like plans 19 and 22. Fixtures (invented, restated in the capture set):
+      `sms` (`EF_SMS` with read and unread messages from numbers in and out of `EF_ADN`, 160-septet
+      and extension-character texts, two time stamps), `slots10`, `slots30`, `lnd` (`EF_LND` with
+      three numbers), `stk` (the applet script below), `empty` (plan 19's).
+- [ ] **M SIM messages** (`plan30/sms/`, virgin): power-on with unread messages (notice? envelope?
+      sound on factory), Inbox order and icons, reading every message (`Sender:`, `Sent:`), Details,
+      Erase (then reboot in one process: the SIM after the write), an arrival into a SIM with free and
+      with no free slots at 10, 15 and 30 slots (does capacity follow the SIM?), Restore factory
+      settings with SIM messages.
+- [ ] **N sender names:** an arrival and a SIM message from a number in `EF_ADN` (exact, with and
+      without `+61`/leading `0`, and differing in the last digit): the notice, the list, `Sender:`,
+      Details, Reply's number, Chat's `>` line (if 18c's Chat runs in the harness).
+- [ ] **L last numbers dialled:** Dialled numbers and standby ▲ with `lnd`; after a call (plan 22's
+      harness commands): does `EF_LND` change (read the SIM after `saveflash`)?
+- [ ] **K toolkit** (if K0 succeeded): the carousel with Menu 13 (label for titles `SIM services`,
+      `LACHLAN` and a 14-character title; icon frames; ▲/▼ past 12 and 1; `Menu 1 3` and the
+      shortcut window); the level with 1, 3 and 12 items, labels of 10/16/24 characters; each item's
+      first screen; `DISPLAY TEXT` short, 160 and 240 characters (paging, scroll, OK, C, held C,
+      timeout); `SELECT ITEM` with and without a title, nested two deep, Select, C, held C;
+      `SET UP CALL` with and without an alpha identifier, with Confirm SIM service actions `Asked`
+      and `Not asked` (OK, C, then plan 22's Calling); a selection while the phone is in a call;
+      the session's end (where the phone returns); audio of every new note (factory).
+- [ ] **I IMEI:** write an IMEI into a disposable image (the emulator's PMM/EEPROM IMEI field, as
+      plan 15 wrote the security code) and capture `*#06#`; if impossible, record why.
+- [ ] OCR every new image into `plan30/text.json`.
+- [ ] `check`: every recording starts on its parent; `plan30/sims/*.json` equal the capture set's
+      `SIM_CONTENT_SIMS` (the repo file as an argument); every audio recording has `keys.csv`.
+- [ ] Append "Plan 30 supplementary captures" to `$REF/captures/README.md`. No commit. Record the
+      outcome under this task: the harness result and the terminal profile, the SIM message rules
+      (boot, order, capacity, persistence), the name rule, `EF_LND`, every toolkit layout and flow
+      with timings, the IMEI screen, what failed.
+
+### Task 1 - Contracts and documentation
+
+**Files:** `VISION.md`, `docs/specs/stock/sim-services.md` (new), `docs/specs/nokia-3310.md` (§10:
+one row; §5 item 13 a pointer), `docs/specs/nokia-3310-menu-tree.md` ("Hidden": 13 now with a
+toolkit SIM), `docs/plans/README.md` (row 30), this plan.
+
+- [ ] Apply Task 0's outcome to D2-D13 and the contracts (Deviation lines where it changes them).
+- [ ] VISION: the nokia-os contracts exactly as in "Contract changes"; the nokia-os row mentions SIM
+      content and SIM services; the D1 table as the rule for host content.
+- [ ] `docs/specs/stock/sim-services.md`: SIM messages, sender names, `EF_LND`, the toolkit screens
+      and terminal profile, the IMEI screen, the artefacts above; unasserted facts marked
+      "(plan 30, in progress)".
+- [ ] Plans README: row 30 `in progress`. No runtime code. `mise exec -- vp check --fix`.
+- [ ] Commit: `docs: define SIM content and SIM services contracts (plan 30)`.
+
+### Task 2 - Goldens and the capture set (TDD)
+
+**Files:** `scripts/capture-sets/30-sim-content.ts` (new), the capture-set index (one line),
+`tests/capture-sets/30-sim-content.test.ts` (new), `tests/acceptance/30-sim-content.test.ts` (new:
+the todo shim only), `goldens/**`, `goldens/index/30.json` (generated).
+
+- [ ] TDD the capture set on synthetic recordings (an injected loader, as plan 19's): ids, kinds,
+      cut points, `trigger-frame`, `note:` naming the SIM fixture, sound rows in plan 16's format.
+- [ ] `SIM_CONTENT_SIMS` in a JSON-style block; a test validates each against D2/D12's rules.
+- [ ] If Task 0 K failed: no `sim/stk-*` golden exists; the set lists the composed flows instead
+      (`COMPOSED_FLOWS` rows with their reason), and `sim/stk-*` coverage is the acceptance file's
+      known gap (D4).
+- [ ] Register the set (one line). Run `import-captures` twice; no diff the second time. Record
+      fixture counts and bytes (budget guide: ≤ 1.5 MB of new text grids).
+- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [ ] Commit: `feat(nokia-os): import SIM content and SIM services goldens (plan 30)`.
+
+### Task 3 - Glyphs, sprites and timelines (TDD)
+
+**Files:** `scripts/resource-inputs/30-sim-content.ts` (new; plan 29's registrations),
+`src/resources/generated/**` (regenerated), `tests/resources.test.ts` (new cases only).
+
+- [ ] Text runs for the new images; overrides naming their golden. Every fixture string renders in
+      the face its screen uses.
+- [ ] Sprites: the Menu 13 icon frames (from `sim/stk-carousel-*`; or, on D4's composed branch, the
+      clean-room icon in a separate, labelled source file whose header names it non-stock), any new
+      note icon, the toolkit level's marks.
+- [ ] Timelines (`WIDGET_TIMELINE_BY_NAME`): the carousel slot's animation, the level's opening, the
+      text page and list openings, the call confirm, each new note.
+- [ ] TDD freshness; every sprite binary and inside its golden's ink; every timeline finite.
+- [ ] `mise exec -- vp run @hellotimber/nokia-os#regenerate` twice; no diff.
+- [ ] Commit: `feat(nokia-os): SIM services glyphs, icon and timelines`.
+
+### Task 4 - SIM messages (pure and store, TDD)
+
+**Files:** `src/sim/messages.ts` (new), `src/phone-book/sim-card.ts` and `src/messages/store.ts`
+("Shared-file edits"), `tests/sim-messages.test.ts` (new).
+
+- [ ] TDD `gsmSeptets`: the default alphabet (1), the extension table (2), anything else
+      `undefined`; 160 septets accepted, 161 refused.
+- [ ] TDD `simMessagesProblem` and `normaliseSim`'s messages: `slots` positive and at most Task 0
+      M's cap; entries at most `slots`; each number, text, time stamp (plan 18's ranges) and `read`;
+      errors naming `messages.entries[i].<field>`.
+- [ ] TDD the store: with no stored copy of this SIM, `inbox()` is the SIM's messages in Task 0 M's
+      order with their read flags; `unread()` counts them; the first `markRead`, `erase` or
+      `receive` writes the whole inbox under the SIM id; another SIM id sees its own; capacity is
+      `slots` (`receive` returns `"full"` past it); Restore keeps them (plan 18 D7).
+- [ ] Power-on with unread SIM messages does what Task 0 M recorded (envelope, notice).
+- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [ ] Commit: `feat(nokia-os): SMS stored on the SIM card`.
+
+### Task 5 - Sender names (TDD against goldens)
+
+**Files:** `src/messages/read.ts` ("Shared-file edits"), plan 18c's chat screens (one call, if
+landed), `tests/sim-names.test.ts` (new).
+
+- [ ] If Task 0 N found no names: record the finding in the spec, delete this task's rows from the
+      capture set (none were imported), skip to the commit with docs only.
+- [ ] Otherwise TDD the list, `Sender:`, Details, the notice and Chat's `>` lines through
+      `StockPhoneBook.byNumber` with Task 0 N's number comparison, against `sim/names-*`; plan 18's
+      goldens (numbers not in the phone book) still pass.
+- [ ] Commit: `feat(nokia-os): name SMS senders from the phone book`.
+
+### Task 6 - The toolkit model and `stockMenuFor` (pure, TDD)
+
+**Files:** `src/sim/toolkit.ts` (new), `src/phone-book/sim-card.ts`, `src/firmware/menu.ts`,
+`src/index.ts` (one line), `tests/sim-toolkit.test.ts` (new).
+
+- [ ] TDD `normaliseToolkit` (D12): title and labels in their faces and limits; ids kebab-case and
+      unique per list; steps non-empty; a `select` with 1-255 items; depth ≤ 4; call numbers per
+      plan 19; `confirm` in its face; field-path errors.
+- [ ] TDD `stockMenuFor`: `"sim-1"` and a SIM without a toolkit equal `stockMenu` (paths, labels,
+      numbers); a toolkit SIM adds `menu/sim-services` and one path per top-level item, in order;
+      the carousel label per D5; an invalid SIM throws as `createStockPhone` does.
+- [ ] `createStockPhone` builds its menu with `stockMenuFor(config.sim)`; every existing test passes.
+- [ ] Commit: `feat(nokia-os): the SIM toolkit model and stockMenuFor`.
+
+### Task 7 - SIM services screens (TDD against goldens, or composed)
+
+**Files:** `src/firmware/features/sim-services.ts` (new), `src/sim/session.ts` (new), the features
+index (one line), plan 22's telephone only for D6's rule, `tests/sim-services.test.ts` (new).
+
+- [ ] The carousel slot (icon timeline, label, `13`) and the level (presentation, numbers, soft key,
+      opening selection, rows window) against `sim/stk-carousel-*` and `sim/stk-level-*`.
+- [ ] `ToolkitSession`: text steps as Task 0 K's text page (or plan 14's text pages, composed), OK
+      to the next step, C ending the session where Task 0 K returns; select steps as its list (or
+      an option list with `Select`, composed); call steps as its confirm (or the confirm query
+      `Allow SIM card to call?`, composed) honouring Confirm SIM service actions as Task 0 C shows,
+      then plan 22's Calling flow; the session's end.
+- [ ] D6's rule: a test drives `send({ type: "down", key: "navi" })` on the confirm and asserts the
+      port's `dial` was called before `send` returned, here and for plan 22's `Call` from the name
+      list; without plan 22, call steps open the `22` placeholder (D15).
+- [ ] TDD through keys against `sim/stk-*` and `sound/stk/*`; composed flows against their stock
+      widgets' existing goldens.
+- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [ ] Commit: `feat(nokia-os): SIM services through the SIM toolkit`.
+
+### Task 8 - IMEI and preload (TDD)
+
+**Files:** `src/firmware/phone.ts`, plan 22's `*#06#` code (≈5 lines), `src/firmware/preload.ts`
+(new), `tests/preload.test.ts` (new), `tests/imei.test.ts` (new).
+
+- [ ] TDD `imei`: 15 digits, Luhn; `*#06#` against `sim/imei-*` (or composed per D9).
+- [ ] TDD `preload`: the Welcome note written when the settings record lacks its key (then shown at
+      power-on as plan 15 does), never over a stored note, not after Erase; reminders added in order
+      when no `reminders` record exists, never otherwise; limits and typeable characters (D10);
+      without plan 21, `preload.reminders` throws naming it.
+- [ ] Commit: `feat(nokia-os): host IMEI and phone-memory preload`.
+
+### Task 9 - Screen text (TDD)
+
+**Files:** `src/display/describe.ts` (new), `src/widgets/flow.ts` (one call), each widget model
+module (a `describe` beside its model), `src/index.ts` (one line), `tests/describe.test.ts` (new).
+
+- [ ] TDD `describeStockScreen` for off, boot, standby (operator, clock, profile line, notice,
+      indicators), the carousel and both level presentations.
+- [ ] A describer per widget model kind (exhaustive switch; the test enumerates the widget-model
+      union): notes, queries, prompts and entries (label, text, counter), option lists, the editor,
+      the symbol table, the name list, call screens, Snake II (`Snake II, score 12`), placeholders
+      (`<label> (not implemented)`), toolkit screens.
+- [ ] A property test: driving every asserted golden's scenario of plans 14, 18 and 19, every
+      emitted screen has a non-empty description.
+- [ ] Commit: `feat(nokia-os): describe stock screens for hosts`.
+
+### Task 10 - Acceptance and the coverage guard
+
+**Files:** `tests/acceptance/30-sim-content.test.ts`, `tests/support/sim-content.ts` (new).
+
+- [ ] `acceptancePlan({ plan: "30", scenarios, knownGaps, timeoutsMs })`: a hand-written scenario for
+      every golden in `goldens/index/30.json`; delete the todo shim. Known gaps only with a reason
+      (D4's composed icon, if any).
+- [ ] Coverage guard: no golden or placeholder names `30`; Menu 13 (when present) is covered.
+- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
+- [ ] Commit: `test(nokia-os): drive SIM content and SIM services against their goldens`.
+
+### Task 11 - Demo, README, verification gate and closeout
+
+**Files:** `packages/nokia-os/demo/panels/sim.ts` (new), `demo/panels/index.ts` (one line),
+`packages/nokia-os/README.md`, `docs/specs/stock/sim-services.md`, `docs/plans/README.md`, this plan.
+
+- [ ] Demo: a "Sample SIM" with three SIM messages (one unread), a toolkit (`Info`: a text page;
+      `Places`: a list of two items, one a call step) and the status line from
+      `describeStockScreen`; the demo's dial log shows the numbers the toolkit dialled. Verify with
+      `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser` (headless, Skip boot,
+      the `[role=status]` line): the Inbox, Menu 13, a text page, a list, a call step's confirm and
+      dial.
+- [ ] README: "SIM content" (messages, toolkit, the persistence rule, validation), "Host identity
+      and preload", "Screen text"; the D1 table.
+- [ ] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
+      `git diff --stat <commit before Task 1> -- website/` is empty.
+- [ ] Spec: replace "(plan 30, in progress)" with verified facts; list what stays UNVERIFIED.
+- [ ] Plans README: row 30 `done`. Completion notes; status `done`.
+- [ ] Commit: `docs: complete SIM content and SIM services (plan 30)`.
+
+## Follow-up plan adjustments
+
+- **19 - Phone book:** `StockSimCard` gains `messages` and `toolkit`; `normaliseSim` validates them.
+- **18 - Messages I:** the inbox starts from the SIM's messages (D2); senders are named (D7).
+- **18c - Chat:** `>` lines name the partner (D7).
+- **21 - Reminders:** `StockReminders.add` is called by the preload (D10); no behaviour change.
+- **22 - Calls:** `dial` is called inside the placing key's `send()` (D6); `*#06#` shows `imei`
+  (D9, its Open question 8 resolved); toolkit call steps use its Calling flow.
+- **31 - Portfolio on the stock firmware:** consumes every contract above.
+
+## Open questions for Lachlan
+
+Resolved provisionally so execution is not blocked; each is cheap to reverse.
+
+1. **Toolkit as data (D3):** the host declares menu items and steps; nokia-os plays the applet.
+   Reverse: a callback applet (`select(id, session)`), which can do anything but cannot be validated
+   or routed ahead of time.
+2. **Composed toolkit screens if the harness fails (D4):** stock widgets, UNVERIFIED, with a
+   clean-room Menu 13 icon as a known gap. Reverse: no SIM services until a capture exists (plan 31
+   then has no home for what does not fit).
+3. **SIM messages persistence (D2):** the host's messages until the phone first writes the inbox,
+   then the stored copy (plan 19's rule). Reverse: always the host's messages (a visitor's erase and
+   read flags do not survive a reload).
+4. **Three proactive commands (D4):** text, list, call. Reverse: add `GET INPUT` (a SIM item could
+   ask a question) or `SEND SHORT MESSAGE` later, each with its captures.
+5. **Preload (D10):** Welcome note and reminders, written once where no record exists. Reverse: no
+   preload (a host's "now" items must live on the SIM as messages instead).
+6. **One SMS per SIM message (D2):** GSM 7-bit, 160 septets. Reverse: UCS-2 (70 characters) and
+   concatenated messages, if Task 0 M shows the firmware reading them from the SIM.
+7. **IMEI composition (D9):** if the emulator cannot carry an IMEI, the digits replace plan 22's `?`
+   glyphs in its captured layout (composed). Reverse: no `imei` until captured.
+8. **`EF_LND` (D8):** only if v6.39 reads it. Reverse: never (dialled numbers stay phone events).
+
+## Conflicts found while planning
+
+- VISION's non-goals exclude "SIM features" on the website; this plan adds them to nokia-os only.
+  Plan 31 narrows the non-goal when the website adopts them.
+- Plan 18 lists senders by number; if Task 0 N shows names, plan 18's screens were incomplete for
+  known numbers (its goldens used unknown numbers, so none changes).
+- Plan 22 D16 says "Portfolio integration stays unsequenced"; it is now plans 30 and 31.
+- VISION's table and plan 07 use `menu/sim-services` as the website's 404 easter egg; in v6.39 Menu
+  13 exists only with a toolkit SIM (this plan); plan 31 decides the 404.
+
+## Done means
+
+- A host's `StockSimCard` supplies SIM messages and a toolkit; the Inbox, sender names (if the
+  firmware shows them), Menu 13 and its text pages, lists and calls match their goldens (or their
+  documented composed flows); a toolkit call reaches `StockNetworkPort.dial` inside the key event.
+- `imei` and `preload` work as D9 and D10 state; every host string is validated at creation.
+- `describeStockScreen` describes every screen; `stockMenuFor` lists the SIM's paths.
+- The default SIM reproduces every plan 13-22 golden; no golden or placeholder names plan 30.
+- The website is unchanged; `vp check`, `vp run -r test` and `vp run website#build` pass; VISION,
+  the specs and the plans README match what shipped.
