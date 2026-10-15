@@ -3824,6 +3824,18 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         ".####..####.##.##"
       ]
     },
+    "composer/icon": {
+      "x": 1,
+      "y": 0,
+      "art": [
+        "...#....#....##.",
+        "...#....#....#.#",
+        "...#....#....#..",
+        ".###..###..###..",
+        "#..#.####.####..",
+        ".##...##...##..."
+      ]
+    },
     "capture/tree/02-messages/2-2.leaf/b": {
       "x": 0,
       "y": 0,
@@ -5250,6 +5262,234 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
           "durationMs": 544
         }
       ]
+    },
+    "5-4-1": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 477
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 478
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
+    },
+    "5-4-3": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 478
+        },
+        {
+          "frame": 1,
+          "durationMs": 488
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
+    },
+    "5-4-4": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 476
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 487
+        },
+        {
+          "frame": 1,
+          "durationMs": 481
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
+    },
+    "5-4-5": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 478
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 491
+        },
+        {
+          "frame": 1,
+          "durationMs": 476
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
     },
     "5-5-2": {
       "frames": [
@@ -10043,6 +10283,66 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
           "durationMs": 3879
         }
       ]
+    },
+    "composer-tone-saved": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 686
+        },
+        {
+          "frame": 1,
+          "durationMs": 244
+        },
+        {
+          "frame": 2,
+          "durationMs": 525
+        }
+      ]
+    },
+    "composer-tempo-done": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 690
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 556
+        }
+      ]
     }
   },
   "byNode": {
@@ -10087,6 +10387,13 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "5-1-1": "5-1-1",
     "5-2-1": "5-2-1",
     "5-3-1": "5-3-1",
+    "5-4-1": "5-4-1",
+    "5-4-2": "5-4-1",
+    "5-4-6": "5-4-1",
+    "5-4-7": "5-4-1",
+    "5-4-3": "5-4-3",
+    "5-4-4": "5-4-4",
+    "5-4-5": "5-4-5",
     "5-5-2": "5-5-2",
     "5-6-1": "5-6-1",
     "5-7-1": "5-7-1",
@@ -10192,6 +10499,8 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "keyguard-hint-scroll": "keyguard-hint-scroll",
     "keyguard-now-press": "keyguard-now-press",
     "keypad-active": "keypad-active",
-    "keyguard-emergency": "keyguard-emergency"
+    "keyguard-emergency": "keyguard-emergency",
+    "composer-tone-saved": "composer-tone-saved",
+    "composer-tempo-done": "composer-tempo-done"
   }
 };

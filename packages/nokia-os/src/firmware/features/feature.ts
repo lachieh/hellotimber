@@ -73,10 +73,16 @@ export interface LeadEntry {
   readonly open: (services: StockServices) => () => Widget;
 }
 
-/** What a feature adds to a submenu level (plan 17: the Profiles level's names and opening). */
+/**
+ * What a feature adds to a submenu level (plan 17: the Profiles level's names and opening; plan 27:
+ * the Composer slots' tone names).
+ */
 export interface LevelOptions {
-  /** The text the child with slug `slug` shows in the level (and as its title); undefined = its label. */
-  readonly label?: (slug: string) => string | undefined;
+  /**
+   * The text the child with slug `slug` and menu order `order` (its node number's last segment)
+   * shows in the level and as its title (phone-core `SubmenuOptions.label`); undefined = its label.
+   */
+  readonly label?: (slug: string, order: number) => string | undefined;
   /** The slug of the child the level opens on; undefined = the captured opening. */
   readonly opening?: () => string | undefined;
   /** Whether the tree child `slug` is listed now (plan 18c: Topics with no topic); default all. */

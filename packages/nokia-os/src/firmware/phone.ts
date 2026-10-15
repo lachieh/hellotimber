@@ -10,6 +10,7 @@ import { VISIBLE_ROWS } from "../display/list-rows";
 import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
 import type { StockCueSink } from "./cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
+import { composerOf } from "./features/composer";
 import { invalidShortcut } from "./leaves";
 import {
   createStockGames,
@@ -152,7 +153,11 @@ export function createStockPhoneWith(
   const ports = { clock, date };
   const port = config.sound;
   const sequencer = new SoundSequencer((event) => port?.change(event));
-  const sounder = new StockSounder(sequencer, settings, () => now);
+  // Plan 27 (D8): the Composer's saved tones are Ringing tone options 35-41.
+  const composer = composerOf({ eeprom });
+  const sounder = new StockSounder(sequencer, settings, () => now, {
+    userTones: (index) => composer.userRingingTone(index),
+  });
   const lightsPort = config.lights;
   const lights = new StockLights(
     (event) => lightsPort?.change(event),

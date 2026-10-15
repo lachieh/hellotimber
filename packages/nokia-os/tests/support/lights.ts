@@ -11,13 +11,17 @@ import { createStockSettings } from "../../src/firmware/settings";
 import { createStockPhoneWith, type StockPhoneConfig } from "../../src/firmware/phone";
 import { createSyntheticNetwork, type StockStorage } from "../../src/index";
 import { RECEIVE_LINK_MS } from "../../src/resources";
+import { timingToleranceMs } from "./golden.ts";
 import { SEED_1010, seededStorage } from "./rig.ts";
 
 const GOLDENS = join(import.meta.dirname, "../../goldens");
 
 /**
- * How far an off edge may stray from the golden after power-on alignment: the captured edges lie
- * within 2.9 ms of the fitted light tick, and the two lines may switch one 1 ms grain apart.
+ * How far the light model's off edges stray from the captured ones after power-on alignment: the
+ * captured edges lie within 2.9 ms of the fitted light tick, and the two lines may switch one
+ * 1 ms grain apart. Stricter than the fidelity standard on purpose, for the model's own tests
+ * (tests/lights-model.test.ts): an error in the fitted tick adds up tick after tick, beyond what
+ * any one recording shows. Acceptance compares lights by the fidelity standard.
  */
 export const LIGHT_EDGE_TOLERANCE_MS = 5;
 
@@ -157,27 +161,16 @@ export function replayLights(
 }
 
 export interface LightsTolerance {
-  /** An on edge no key caused (the boot's frames): |Δ| within this (default LIGHT_EDGE_TOLERANCE_MS). */
-  readonly onToleranceMs?: number;
-  /** An off edge |Δ| within this (default LIGHT_EDGE_TOLERANCE_MS). */
-  readonly offToleranceMs?: number;
   /** How long after its key-down an on edge may lag (default KEY_LIGHT_LATENCY_MAX_MS). */
   readonly keyLatencyMaxMs?: number;
-  /**
-   * An off edge within KEY_OFF_WINDOW_MS after a key-down (a game starting under Lights Off):
-   * |Δ| within this (default: `offToleranceMs`).
-   */
-  readonly keyOffToleranceMs?: number;
 }
-
-/** How long after a key-down an off edge counts as that key's (`keyOffToleranceMs`). */
-const KEY_OFF_WINDOW_MS = 100;
 
 /**
  * Compares each light's events with the golden's rows in order. An on edge within
  * KEY_LIGHT_LATENCY_MAX_MS after a key-down may lag that key (the firmware's latency, D2); any
- * other edge must lie within its tolerance. Only the recording's span counts: a light lit at its
- * start is a row there, and events after its end are not compared.
+ * other edge follows the fidelity standard, timed from the last key-down before it (or time 0:
+ * the power-on of a boot golden). Only the recording's span counts: a light lit at its start is a
+ * row there, and events after its end are not compared.
  * Fails with a table of every row.
  */
 export function expectLightsTimeline(
@@ -186,10 +179,7 @@ export function expectLightsTimeline(
   context: string,
   tolerance: LightsTolerance = {},
 ): void {
-  const onTolerance = tolerance.onToleranceMs ?? LIGHT_EDGE_TOLERANCE_MS;
-  const offTolerance = tolerance.offToleranceMs ?? LIGHT_EDGE_TOLERANCE_MS;
   const keyLatency = tolerance.keyLatencyMaxMs ?? KEY_LIGHT_LATENCY_MAX_MS;
-  const keyOffTolerance = tolerance.keyOffToleranceMs ?? offTolerance;
   const keys = golden.keys ?? [];
   const lines = ["  golden  light    state    actual       Δ"];
   let failed = false;
@@ -215,15 +205,12 @@ export function expectLightsTimeline(
       const delta = actual.ms - row.ms;
       const marks: string[] = [];
       if (actual.on !== row.on) marks.push(`✗ state ${actual.on ? "on" : "off"}`);
-      const after = (window: number) => keys.some((k) => k.ms <= row.ms && row.ms - k.ms <= window);
-      const byKey = row.on && after(keyLatency);
-      const offByKey = !row.on && after(KEY_OFF_WINDOW_MS);
-      if (byKey) {
+      const keyMs = Math.max(-Infinity, ...keys.filter((k) => k.ms <= row.ms).map((k) => k.ms));
+      const since = row.ms - Math.max(0, keyMs);
+      if (row.on && row.ms - keyMs <= keyLatency) {
         if (delta > 0) marks.push("✗ after the golden");
         else if (delta < -keyLatency) marks.push("✗ early");
-      } else if (
-        Math.abs(delta) > (row.on ? onTolerance : offByKey ? keyOffTolerance : offTolerance)
-      ) {
+      } else if (Math.abs(delta) > timingToleranceMs(since)) {
         marks.push(delta < 0 ? "✗ early" : "✗ late");
       }
       if (marks.length > 0) failed = true;
@@ -273,17 +260,11 @@ function leadOf(id: string): readonly (readonly [ms: number, key: PhoneKey])[] {
 }
 
 /**
- * The game recordings' tolerances (D7): Snake II's pause lights 36 ms after its key-down (the
+ * The game recordings' key latency (D7): Snake II's pause lights 36 ms after its key-down (the
  * game's key scan), and the force at New game and Continue comes at Select's release in nokia-os
  * (plan 23: the tap's 60 ms), 36-38 ms after the key-down in the firmware.
  */
-export const GAME_LIGHTS_TOLERANCE: LightsTolerance = {
-  keyLatencyMaxMs: 40,
-  keyOffToleranceMs: 25,
-};
-
-/** The boot frames' on edge: 268 ms after the power-on in nokia-os, 245-272 ms captured. */
-export const BOOT_LIGHT_TOLERANCE_MS = 25;
+export const GAME_LIGHTS_TOLERANCE: LightsTolerance = { keyLatencyMaxMs: 40 };
 
 /**
  * A lights golden's scenario: a phone in the golden's state (factory unless it is a boot golden:
@@ -320,12 +301,7 @@ export function lightsScenario(id: string): void {
     }
   }
   const recorded = replayLights(rig, golden, { stepMs: boot ? 1 : game ? 1 : 20 });
-  expectLightsTimeline(
-    recorded,
-    golden,
-    id,
-    boot ? { onToleranceMs: BOOT_LIGHT_TOLERANCE_MS } : game ? GAME_LIGHTS_TOLERANCE : {},
-  );
+  expectLightsTimeline(recorded, golden, id, game ? GAME_LIGHTS_TOLERANCE : {});
 }
 
 // ---------------------------------------------------------------- message arrivals (L7, K7)

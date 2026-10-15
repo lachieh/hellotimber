@@ -653,6 +653,14 @@ shows no child throws, naming the level. `exit({ select })` may select a child t
 when the application started and is shown now (Snake II's Continue after Navi). A hidden child's
 number is the position it would take among the shown ones.
 
+**Kernel policy (plan 17 seam, added by plan 27).** _Read labels_ (`SubmenuOptions.label`, opt-in,
+generic; the website sets none): a level with `label` shows each child as the reader's text in its
+list and as the title of the child's own level (a submenu, list or reader), and an application
+the child opens is titled by it too; `SubmenuEntry.labelOf(child)` returns it. The reader is
+re-read on every tick and a change emits one snapshot; it returns undefined for the child's own
+label, an empty string throws, and an exception it throws is contained (the child's label shows).
+Slugs, paths and numbers do not change. nokia-os's Composer slots show their saved tones' names.
+
 **Kernel policy (plan 15).** _Boot gates_ (`bootGates`, opt-in, generic; the website sets none,
 so its models are unchanged): gates must be in ascending `atMs` (equal offsets run in order) and
 each `atMs` an integer in `0..bootMs`, else `createPhone` throws. With `bootMs: 0` the gates run

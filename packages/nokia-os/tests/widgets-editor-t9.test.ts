@@ -1,7 +1,8 @@
 // Plan 18b Task 6: the SMS editor in T9 mode against the T9 goldens that stay in the editor,
 // driven key by key from each golden's note (tests/support/t9.ts) with the shipped English
 // dictionary (the goldens' key sequences are ones the open list shares with the firmware, D9).
-// Stills compare either cursor-blink phase; the idle recording compares its blink (±2 ms).
+// Stills compare either cursor-blink phase; the idle recording compares its blink (the fidelity
+// standard).
 import { describe, expect, it } from "vite-plus/test";
 import { readPlanIndex } from "../scripts/golden-index.ts";
 import { englishT9 } from "../src/text/t9/english";
@@ -16,7 +17,6 @@ import {
   parseT9Note,
   playT9,
   T9_KNOWN_GAPS,
-  T9_TOLERANCES,
   type T9Recording,
   type T9Target,
 } from "./support/t9.ts";
@@ -95,8 +95,7 @@ describe("the T9 editor against its goldens", () => {
         });
         const context = `${id}: ${golden.note}`;
         if (golden.timeline === undefined) expectT9Still(target, golden, context);
-        else
-          expectT9Timeline(recording!, golden, context, { keyed, toleranceMs: T9_TOLERANCES[id] });
+        else expectT9Timeline(recording!, golden, context, { keyed });
       },
     );
   }

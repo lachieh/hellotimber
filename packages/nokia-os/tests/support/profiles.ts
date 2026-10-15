@@ -11,9 +11,7 @@ import {
 import { createStockSettings } from "../../src/firmware/settings";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
 import type { PhoneKey } from "@hellotimber/phone-core";
-import { recordTimeline } from "./acceptance.ts";
-import { goto } from "./drive.ts";
-import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "./golden.ts";
+import { expectLcd, expectTimeline } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { keys } from "./probes.ts";
 import { seededStorage, standbyRig, type Rig } from "./rig.ts";
@@ -103,12 +101,7 @@ export function toStandby(rig: Rig): void {
  * artefact or an unreproduced draw): its last frame was still on screen at the cut, so it holds
  * at least as long as the golden says.
  */
-export function cutRecordingScenario(
-  id: string,
-  rig: Rig,
-  trigger: PhoneKey,
-  toleranceMs?: number,
-): void {
+export function cutRecordingScenario(id: string, rig: Rig, trigger: PhoneKey): void {
   const golden = loadGolden(id);
   const rows = golden.timeline!;
   const cut = {
@@ -121,37 +114,5 @@ export function cutRecordingScenario(
   const recording = rig.record(last.startMs + last.durationMs - rows[t]!.startMs + 100, () =>
     rig.press(trigger),
   );
-  expectTimeline(
-    recording,
-    cut,
-    `${id}: ${trigger}`,
-    toleranceMs === undefined ? {} : { toleranceMs },
-  );
+  expectTimeline(recording, cut, `${id}: ${trigger}`);
 }
-
-/**
- * The generic tree `leaf` scenario (virgin: `number` highlighted, Select) compared within
- * PROBE_TOLERANCE_MS, for a profiles leaf that plays another recording's timing: 12-5-1's
- * standby name comes at 1898 ms (PROFILE_LINE_DELAY_MS is the median, 1912), and Rename's cursor
- * is plan 18's free-running 480 ms blink (this recording's steps run 479-493 ms).
- */
-export function toleratedTreeScenario(id: string, number: string): void {
-  const golden = loadGolden(id);
-  const rig = standbyRig();
-  goto(rig, number);
-  rig.advance(592);
-  const rows = golden.timeline!;
-  const t = golden.triggerFrame as number;
-  expectLcd(rig.paint(), goldenImage(id, rows[t - 1]!.image), `${number} highlighted`);
-  const recording = recordTimeline(rig, golden, () => rig.press("navi"));
-  expectTimeline(recording, golden, `${number} highlighted, Select`, {
-    toleranceMs: PROBE_TOLERANCE_MS,
-  });
-}
-
-/**
- * How far a factory Activate golden may drift from the virgin per-slot note timeline it replays
- * (a stated tolerance, plan 17 Task 9): the firmware's box step varies 678-700 ms, its tick
- * 1958-1989 ms and the name's delay 1898-1930 ms between recordings of one slot.
- */
-export const ACTIVATE_TOLERANCE_MS = 35;

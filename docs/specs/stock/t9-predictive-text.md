@@ -27,8 +27,8 @@ therefore differ from the firmware (T9 behaviour, section 15).
 ## What the goldens verify (plan 18b Tasks 6-8)
 
 `@hellotimber/nokia-os` plays every `t9/*` golden's keys on a stock phone with the open-list
-dictionary: 302 of 303 match pixel for pixel (stills in either cursor-blink phase, recordings
-±2 ms; the Dictionary off note ±25 ms against plan 18's recording of it, one blink step ±5 ms).
+dictionary: 302 of 303 match pixel for pixel (stills in either cursor-blink phase, recordings by
+the fidelity standard of `AGENTS.md`).
 Beyond the spec they show:
 
 - The underline covers the typed letters' cells without the last one's blank column (key 1's `1`

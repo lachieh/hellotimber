@@ -115,6 +115,18 @@ unsubscribe();
   });
   ```
 
+- `label(child)` (opt-in) is the text a child shows in its level's list and as its own level's
+  title (a renamed profile, a Composer slot named by its saved tone), re-read on every tick (one
+  snapshot per change); undefined keeps the child's label, and a reader that throws or returns a
+  blank string shows the child's label. Slugs and paths do not change. `entry.labelOf(child)`
+  gives the level's text for a child (a blank one throws):
+
+  ```ts
+  new SubmenuEntry(slug("composer"), order, "Composer", slots, undefined, {
+    label: (child) => savedName(child.slug.value), // undefined: "(empty)"
+  });
+  ```
+
 - `context.exit(options?)`: `exit()` returns to the menu; `exit({ to: "standby" })` leaves the
   menus as C-hold does; `exit({ levels: 2 })` also closes the enclosing level, and
   `exit({ select: "slug" })` selects that child of the level returned to, on the bottom row of a
@@ -165,10 +177,6 @@ unsubscribe();
   stays), and when the running application leaves for standby on the power key's down (a note
   shown at standby); in the menus, other applications and the boot the short press does nothing.
   Any application can switch the phone off with `context.powerOff?.()` (reason `power-off`).
-- `SubmenuOptions.label(child)` (opt-in) is the text a child shows in its level's list and as its
-  own level's title (a renamed profile), re-read on every tick; undefined keeps the child's label,
-  and a reader that throws or returns a blank string shows the child's label. Paths and slugs do
-  not change. `entry.labelOf(child)` gives the level's text for a child (a blank one throws).
 - `setNotice({ text, softkey, path? | open? })` shows a standby notice; C clears it. Navi goes to
   `path`, or runs the `open` application as a standby application: the stack is empty, the path
   stays `standby`, `menuIndicator()` has no segments and `exit()` returns to standby (`levels`,

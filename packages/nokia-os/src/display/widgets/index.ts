@@ -3,6 +3,7 @@ import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
 import { paintStandby } from "../standby";
 import { paintCalculator, type CalculatorModel } from "./calculator";
+import { paintComposer, type ComposerModel } from "./composer";
 import { paintConfirm, type ConfirmModel } from "./confirm";
 import { paintContentList, type ContentListModel } from "./content-list";
 import { paintEditor, type EditorModel } from "./editor";
@@ -30,6 +31,7 @@ import { paintSplash, type SplashModel } from "./splash";
 import { paintSymbols, type SymbolsModel } from "./symbols";
 import { paintTextPage, type TextPageModel } from "./text-pages";
 
+export type { ComposerModel } from "./composer";
 export type { ConfirmModel } from "./confirm";
 export type { ContentListModel } from "./content-list";
 export type { EditorModel } from "./editor";
@@ -96,6 +98,7 @@ export type WidgetModel =
   | SymbolsModel
   | PlaceholderModel
   | CalculatorModel
+  | ComposerModel
   | KeyguardModel
   | StandbyDrawModel
   | MessageListModel
@@ -167,6 +170,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "calculator":
       paintCalculator(fb, model);
+      return;
+    case "composer":
+      paintComposer(fb, model);
       return;
     case "standby-frame":
       paintStandbyFrame(fb, model);

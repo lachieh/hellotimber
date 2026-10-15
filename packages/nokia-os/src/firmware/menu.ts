@@ -141,6 +141,7 @@ function entryOf(
     ...(spec.presentation === "pages"
       ? {
           detail: (child: MenuEntry) =>
+            b.leaves.pageValue(`${key}/${child.slug.value}`) ??
             pageDetail(`${key}/${child.slug.value}`, b.ports, b.settings),
         }
       : {}),
@@ -157,7 +158,7 @@ function entryOf(
     ...(showsEntryIndicator(node.number) ? { entryIndicatorMs: STOCK_SHORTCUT_WINDOW_MS } : {}),
     ...(level?.label === undefined
       ? {}
-      : { label: (child: MenuEntry) => level.label!(child.slug.value) }),
+      : { label: (child: MenuEntry) => level.label!(child.slug.value, child.order.value) }),
   };
   return new SubmenuEntry(slug, order, node.label, new MenuLevel(children), undefined, options);
 }
