@@ -558,16 +558,27 @@ on the power key's down (Task 0 B6). A blank label from the reader throws from
 "Shared-file edits", `tests/profiles-state.test.ts` (new), `tests/settings.test.ts` (snapshot),
 `tests/persistence.test.ts`.
 
-- [ ] TDD `activeProfile`/`activateProfile`: virgin General; a record without the key decodes to
+- [x] TDD `activeProfile`/`activateProfile`: virgin General; a record without the key decodes to
       General; persists at once.
-- [ ] TDD D1: with each profile active, every `tones/*` key (but Composer) reads and writes that
+- [x] TDD D1: with each profile active, every `tones/*` key (but Composer) reads and writes that
       profile's Personalise key; Personalise keys stay their own; switching back restores reads.
-- [ ] TDD names (D2): virgin names (slot 6's boxes), `renameProfile` (10 characters max, throws
+- [x] TDD names (D2): virgin names (slot 6's boxes), `renameProfile` (10 characters max, throws
       beyond), empty → default; Restore: General active, names reset, slot 6 `(empty)`.
-- [ ] Pinned record keys gain `profiles/active`; every existing settings, sound and acceptance test
+- [x] Pinned record keys gain `profiles/active`; every existing settings, sound and acceptance test
       still passes (General active = plan 14's alias).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the active profile and profile names`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the active profile and profile names`.
+
+Deviation: **Task 5 (files, the per-plan split):** `src/firmware/bindings.ts` no longer exists;
+its tables live in the features and `stock.ts`. The profiles feature's alias is
+`{ prefix: "tones/", target: (choice) => profileAlias(...) }`: `StockSettingsTables.aliases` takes
+an `AliasTarget` (a prefix, or a function of the stored choices), `settingAlias(key, choice?)`
+resolves it (default: every choice unset, the virgin General), and the store re-resolves a stock
+alias against its own choices on every read and write (a test snapshot's fixed alias stays
+fixed). Two generic tables join the settings tables: `choices` (single choices no menu list
+stores: `profiles/active`, six options, virgin unset) and `factoryTexts` (Restore's slot 6 name,
+`(empty)`, with its capture). The record's pinned keys gain `profiles/active`; no version bump.
+`renameProfile(…, "")` writes the slot's factory name (Task 0 R5: `(empty)` for slots 5 and 6).
 
 ### Task 6 - Activate, standby name, icon and effects (TDD against goldens)
 

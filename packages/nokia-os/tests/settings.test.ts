@@ -443,7 +443,11 @@ describe("factory state (D5)", () => {
 
   it("keeps RESTORE_KEEPS (the welcome note, the top score) and resets other texts", () => {
     const factory = SETTINGS_RECORD.factory!(written());
-    expect(factory.texts).toEqual({ [WELCOME_NOTE_KEY]: "Hi" });
+    // Plan 17 D2: Restore names slot 6 `(empty)` (FACTORY_TEXTS), not its virgin boxes.
+    expect(factory.texts).toEqual({
+      [WELCOME_NOTE_KEY]: "Hi",
+      "profiles/empty-2/personalise/rename": "(empty)",
+    });
     expect(factory.numbers).toEqual({ "games/snake/top-score": 105 });
     expect([...RESTORE_KEEPS].sort()).toEqual(["games/snake/top-score", WELCOME_NOTE_KEY]);
   });

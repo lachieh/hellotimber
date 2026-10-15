@@ -145,10 +145,27 @@ export type FactoryDefault = {
   readonly capture: string;
 } & ({ readonly label: string } | { readonly marked: readonly string[] });
 
+/** A factory text read from a v6.39 capture after Restore (plan 17 D2: slot 6's name). */
+export interface FactoryText {
+  readonly key: string;
+  readonly text: string;
+  readonly evidence: "v6.39";
+  /** The image under `$REF/captures/6.39/` that shows it. */
+  readonly capture: string;
+}
+
+/**
+ * Where an alias points: a fixed prefix, or one read from the stored choices (plan 17 D1: Tones
+ * are the active profile's). `choice` reads a single-choice setting's stored index.
+ */
+export type AliasTarget = string | ((choice: (key: string) => number | null) => string);
+
 /** What a feature adds to the settings store (plan 14 D9, plan 15). */
 export interface StockSettingsTables {
   /** Keys under `prefix` read and write the same key under `target` (Tones → a profile's). */
-  readonly aliases?: readonly { readonly prefix: string; readonly target: string }[];
+  readonly aliases?: readonly { readonly prefix: string; readonly target: AliasTarget }[];
+  /** Single-choice settings no menu list stores (plan 17: the active profile), virgin unset. */
+  readonly choices?: readonly { readonly key: string; readonly options: number }[];
   /** Pages whose value is the host's, by setting key: what the page shows. */
   readonly hostValues?: Readonly<
     Record<string, (ports: StockPorts, settings: StockSettings) => string | undefined>
@@ -165,6 +182,8 @@ export interface StockSettingsTables {
   readonly restoreKeeps?: readonly string[];
   /** What Restore factory settings writes over the virgin choices and marks. */
   readonly factoryDefaults?: readonly FactoryDefault[];
+  /** Texts Restore factory settings writes instead of their virgin value (plan 17 D2). */
+  readonly factoryTexts?: readonly FactoryText[];
 }
 
 /** One feature of the stock firmware. Every field is optional; tables merge across features. */
