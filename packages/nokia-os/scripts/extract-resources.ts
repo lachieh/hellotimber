@@ -15,7 +15,8 @@
 // - snake (plan 23): the Snake II pictures, mazes and timing of scripts/snake-resources.ts;
 // - sounds (plan 16): the tone programs and volume rules of scripts/sound-programs.ts, from the
 //   sound goldens;
-// - text (plan 18): the multi-tap and SMS timings of scripts/messages-resources.ts.
+// - text (plan 18): the multi-tap and SMS timings of scripts/messages-resources.ts;
+// - clock (plan 21): the alerts' bells, blink, sounds and limits of scripts/clock-resources.ts.
 //
 // Writes src/resources/generated/*.ts. Idempotent. `extractResources` is also run in-process by
 // tests/resources.test.ts to prove the committed files are fresh. Runs under Node's type
@@ -43,6 +44,7 @@ import {
   type HarvestedFont,
   type RunSample,
 } from "./harvest-glyphs.ts";
+import { extractClockResources, type ClockResourceData } from "./clock-resources.ts";
 import { extractMessagesResources, type MessagesResourceData } from "./messages-resources.ts";
 import { extractSnakeResources, type SnakeResourceData } from "./snake-resources.ts";
 import { parseSoundGolden } from "./sound-format.ts";
@@ -162,6 +164,7 @@ export interface ExtractedResources {
   readonly snake: SnakeResourceData;
   readonly sounds: SoundResourceData;
   readonly text: MessagesResourceData;
+  readonly clock: ClockResourceData;
 }
 
 // ---------------------------------------------------------------- pixels
@@ -761,6 +764,10 @@ export function extractResources(
         .map((entry) => entry.id),
     ),
     text: extractMessagesResources((id) => loadGolden(goldensDir, id)),
+    clock: extractClockResources(
+      (id) => loadGolden(goldensDir, id),
+      (id) => parseSoundGolden(readFileSync(join(goldensDir, `${id}.sound.txt`), "utf8"), id),
+    ),
   };
 }
 
@@ -818,6 +825,11 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
       "TEXT_DATA",
       "{ readonly text: { readonly commitMs: number; readonly blinkMs: number; readonly clearAfterDeleteMs: number; readonly numberModeHoldMs: number; readonly digitHoldMs: number }; readonly messages: { readonly sendLinkMs: number; readonly receiveLinkMs: number; readonly savingMs: number } }",
       resources.text,
+    ),
+    "clock.ts": module(
+      "CLOCK_DATA",
+      `{ readonly bells: { readonly sprites: readonly string[]; readonly stepMs: number }; readonly ring: { readonly bellsFirstMs: number; readonly textFirstMs: number; readonly textMs: number }; readonly programs: Readonly<Record<"countdown" | "reminder" | "alarm", ${TYPES.program}>>; readonly ascendStepMs: number; readonly countdownSoundMs: number; readonly alarmRingMs: number }`,
+      resources.clock,
     ),
     "snake.ts": module(
       "SNAKE_DATA",

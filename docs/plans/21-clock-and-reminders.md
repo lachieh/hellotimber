@@ -810,45 +810,59 @@ recordings, 6458 images (1459 distinct).
 (regenerated), `src/resources/index.ts` (one line), `tests/clock-resources.test.ts` (new),
 `tests/resources.test.ts`.
 
-- [ ] Crop rows: the standby alarm, timer and stopwatch indicators; the reminder icon; the
+- [x] Crop rows: the standby alarm, timer and stopwatch indicators; the reminder icon; the
       alarm-clock note icon (`Time is set`); the countdown's bell pictures; the alarm screen's art
       if 0c captured it.
-- [ ] Named timelines: `Alarm on`, `Alarm off`, `Time is set`, `Date is set`, `Clock hidden`, `Clock
+- [x] Named timelines: `Alarm on`, `Alarm off`, `Time is set`, `Date is set`, `Clock hidden`, `Clock
 displayed`, `Timer running`, `Timer stopped`, `Reminder set`, `Reminder erased`, `Alarm
 postponed for 10 min` (its partial leading and trailing frames as `cut`/`edges` steps, plan 14
       Task 7), `Date and time updated`, the bells' loop, the error notes Task 0 found.
-- [ ] `clock-resources.ts`: `ALERT_PROGRAMS` (countdown, reminder, alarm if captured) from the
+- [x] `clock-resources.ts`: `ALERT_PROGRAMS` (countdown, reminder, alarm if captured) from the
       `sound/clock/*` goldens with plan 16's `sound-programs.ts` functions (round trip: the program
       re-renders its golden), `STOPWATCH_CADENCE` (D5's fitted redraw steps), `SNOOZE_MINUTES`,
       `ALERT_LIMITS` (auto-stop and auto-snooze times), each with a comment naming its goldens.
-- [ ] TDD: freshness; every new sprite binary and inside its golden's ink; every string the clock
+- [x] TDD: freshness; every new sprite binary and inside its golden's ink; every string the clock
       and reminder screens draw renders in its face (`0:00:00.00`'s digits in `large`, the 12-hour
       forms in `digits`).
-- [ ] Run `mise exec -- vp run @hellotimber/nokia-os#regenerate` twice; no diff.
-- [ ] Commit: `feat(nokia-os): derive clock and reminder sprites, timelines and alert programs`.
+- [x] Run `mise exec -- vp run @hellotimber/nokia-os#regenerate` twice; no diff.
+- [x] Commit: `feat(nokia-os): derive clock and reminder sprites, timelines and alert programs`.
+
+Deviation: plan 29's registrations replace `widget-sprites.ts` and the text-run tables: the crops,
+the digits face's `.` and space (View all's header) and the named notes are
+`scripts/resource-inputs/21-clock-and-reminders.ts`; `clock-resources.ts` writes
+`generated/clock.ts` (`CLOCK_ALERTS`): the bell row (nine pictures, 233.2 ms), the ringing
+alarm's blink (480.7 ms, first at 464 ms), one Level 1 cycle of each alert's sound (looped),
+the ascent (one Ringing volume level per 3910 ms), the countdown's sound limit (29156 ms) and the
+alarm's ring (58398 ms). The snooze minutes (10, 5 rounded up) and the stopwatch's 100 ms redraw
+are nominal constants in the clock modules, not measurements; `Date and time updated` reuses the
+tick timeline (its boot recording never returns to its parent).
 
 ### Task 4 - phone-core: interruptions, wake and the indicator flags (TDD)
 
 **Files:** `packages/phone-core/src/{types.ts,machine.ts,application.ts,index.ts}`, README; tests
 `interruption.test.ts` (new), `wake.test.ts` (new).
 
-- [ ] TDD `interruption`: polled each tick while on (never during boot, a gate or a wake
+- [x] TDD `interruption`: polled each tick while on (never during boot, a gate or a wake
       activation); the held mode keeps its path, frames, rows window and session; keys and ticks
       reach only the interruption; `exit()` restores the held screen exactly (same model);
       `exit({ to: "standby" })` deactivates the held session once (`navigate`); `navigate()` during
       it is applied after; the power long press deactivates both once (`power-off`); one
       interruption at a time; poll and `createSession` exceptions contained; snapshots only on
       visible changes.
-- [ ] TDD `wake`: polled each tick while off; the application powers the phone on without the boot,
+- [x] TDD `wake`: polled each tick while off; the application powers the phone on without the boot,
       path `standby`; `exit()` powers off; `exit({ to: "standby" })` runs the boot with its gates;
       the power key during it; exceptions contained.
-- [ ] `StandbyIndicators` gains `alarm`, `timer`, `stopwatch` (emitted only when true, plan 18 D11's
+- [x] `StandbyIndicators` gains `alarm`, `timer`, `stopwatch` (emitted only when true, plan 18 D11's
       rule); if plan 18 Task 4 or plan 17 Task 4 has not landed, add `standbyIndicators` and
       `SubmenuOptions.label` exactly as those plans specify.
-- [ ] Existing tests pass unchanged; configs without the seams produce identical models.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
+- [x] Existing tests pass unchanged; configs without the seams produce identical models.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
       `vp check --fix`.
-- [ ] Commit: `feat(phone-core): interruptions and wake applications`.
+- [x] Commit: `feat(phone-core): interruptions and wake applications`.
+
+Deviation: the submenu label reader (plan 17 D8) landed in its own commit (`SubmenuOptions.label`)
+so the orchestrator can reconcile it with plan 17's. A key held when an interruption or wake
+starts or ends is not delivered on its release (a half-pressed Navi must not answer an alert).
 
 ### Task 5 - Phone time, the clock record and minute edges (pure, TDD)
 

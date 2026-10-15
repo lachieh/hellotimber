@@ -35,6 +35,7 @@ import {
   type StockFontName,
 } from "../src/resources";
 import { TEXT_DATA } from "../src/resources/generated/text";
+import { CLOCK_DATA } from "../src/resources/generated/clock";
 import { BOOT_DATA } from "../src/resources/generated/boot";
 import { STOCK_FONT_DATA } from "../src/resources/generated/fonts";
 import { MENU_ICON_DATA } from "../src/resources/generated/menu-icons";
@@ -158,6 +159,7 @@ describe("generated resources", () => {
       snake: SNAKE_DATA,
       sounds: SOUND_DATA,
       text: TEXT_DATA,
+      clock: CLOCK_DATA,
     }).toEqual(extractResources());
   });
 

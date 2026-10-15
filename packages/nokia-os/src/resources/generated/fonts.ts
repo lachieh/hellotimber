@@ -4304,6 +4304,14 @@ export const STOCK_FONT_DATA: Readonly<Record<"small" | "large" | "digits" | "th
         "...##.",
         ".###.."
       ],
+      " ": [
+        "...",
+        "...",
+        "...",
+        "...",
+        "...",
+        "..."
+      ],
       "-": [
         "...",
         "...",
@@ -4311,6 +4319,14 @@ export const STOCK_FONT_DATA: Readonly<Record<"small" | "large" | "digits" | "th
         "##.",
         "...",
         "..."
+      ],
+      ".": [
+        "...",
+        "...",
+        "...",
+        "...",
+        "##.",
+        "##."
       ],
       "/": [
         "..#.",
