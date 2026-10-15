@@ -282,7 +282,7 @@ manifest to equal the package's, so the menu the host builds is the menu the cod
 
 **D15 - The demo exposes extra and user games (new).** The nokia-os demo gains a Games panel:
 
-- an "Extra games" checkbox (2048), off by default (Open question 2);
+- an "Extra games" checkbox (2048), on by default (Open question 2, decided by Lachlan);
 - "Install game…" from a file, or from a URL that the demo page fetches, never the game;
 - the list of installed games with Remove;
 - "Copy replay" for the last SDK session;
@@ -310,7 +310,7 @@ layer (game-over, fireworks, Level page, Top score, splash), which this plan gen
 runtime. A later port would be acceptable only if every existing golden passes unchanged through
 the SDK path. That is recorded as a follow-up, not scheduled.
 
-**D17 - New dependencies (flagged per AGENTS.md).** Both are added to the pnpm `catalog:`.
+**D17 - New dependencies (flagged per AGENTS.md; approved by Lachlan 2026-10-15).** Both are added to the pnpm `catalog:`.
 
 - `ses` ^2.3.0 (Apache-2.0, about 48 KB gzip as UMD) is a runtime dependency of
   `nokia-games-sandbox`. Its `dist/ses.umd.min.js` text is prepended to the worker blob and never
@@ -1134,14 +1134,15 @@ Deviation changed a contract detail).
 
 ## Open questions for Lachlan
 
-Resolved provisionally so execution is not blocked; each is cheap to reverse.
+Resolved provisionally so execution is not blocked; each is cheap to reverse. Lachlan decided
+questions 1, 2, 3 and 10 on 2026-10-15 (marked below); the rest stay provisional.
 
-1. **Where extra games appear (D3):** after Pairs II. The first fills the hidden `8-5`, and
+1. **Where extra games appear (D3) — decided: after Pairs II.** The first fills the hidden `8-5`, and
    Settings moves only from the second game on. Reverse with a `More games` submenu at `8-5`,
    which keeps Settings at `8-6` always but puts every extra game one level deeper.
-2. **Demo default (D15):** extra games off until the toggle is ticked, so the demo opens on the
-   strict stock phone. Reverse by defaulting the toggle on.
-3. **Menu animation (D2):** the splash, with no icons. Reverse by adding an optional `icon` that
+2. **Demo default (D15) — decided: on.** The demo's "Extra games" toggle starts ticked, so 2048
+   is in the Games menu immediately; unticking it gives the strict stock phone.
+3. **Menu animation (D2) — decided: the splash only, with no icons.** Reverse by adding an optional `icon` that
    only hosts (not the phone) display.
 4. **Continue (D5):** Snake II's rule (the board stands until a key) for every suspendable game.
 5. **Navi/C without `suspend`:** they quit to the game menu without a game-over screen.
@@ -1153,7 +1154,8 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
    and its goldens.
 9. **`Game\nerror` (D5):** a composed note for failed games. Reverse by using the stock
    `Not allowed` note.
-10. **Sandbox scope (D7):** SES and the CSP layer both, although Wasm alone needs neither SES nor
+10. **Sandbox scope (D7) — decided: JS and Wasm user games, so SES and the CSP layer both** (`ses`
+    and `watr` approved), although Wasm alone needs neither SES nor
     `'unsafe-eval'`. Reverse to "Wasm only" if JS user games are not wanted: `ses` goes, and so
     does `'unsafe-eval'`.
 11. **Safari (F11):** UNVERIFIED. If its self-test fails, user games are unavailable there.
