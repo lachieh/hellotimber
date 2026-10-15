@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/hold-zero
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/zero
 source-sha256: 27bb3553b3d0ee8fcbade9e987dbbfb16cbfab770feb553d11b5972dcd146e4c
 trigger-frame: 1

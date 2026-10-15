@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-gate-alert-off
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/gate-alert-off
 source-sha256: 4acc4a550a38f0268ed25d664faf08d8d81dce03ad1da2186bb433017d1023e3
 state: factory

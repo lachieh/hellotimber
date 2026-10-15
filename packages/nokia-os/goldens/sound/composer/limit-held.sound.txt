@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/limit-held
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/limit/held
 source-sha256: eb3fcc27abf9bc74b34921372e8eab7603c8a4839f645ebcfe8b54189b7f8315
 state: factory

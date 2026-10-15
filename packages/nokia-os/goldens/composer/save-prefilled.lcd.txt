@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/save-prefilled
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/save/prefilled
 source-sha256: b704808a9ac4aa023d37abc23a8aad9248ab833c6c8f505997408db5c2623025
 trigger-frame: 1

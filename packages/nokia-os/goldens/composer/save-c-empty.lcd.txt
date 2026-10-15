@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/save-c-empty
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/save/c-empty
 source-sha256: 6987500a5d0226f1f1eadf84216fcc4681b9da552d2dfbc2a11d297fe88ae359
 trigger-frame: 1

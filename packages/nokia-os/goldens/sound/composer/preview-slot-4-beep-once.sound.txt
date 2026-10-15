@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/preview-slot-4-beep-once
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/preview/slot-4-beep-once
 source-sha256: 09d85a5bb6468c36dae3583a4a7272e2e5a38e26e506d8f7126109a0f3545f0c
 state: factory

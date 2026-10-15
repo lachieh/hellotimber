@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/entry-octaves-virgin
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/entry/octaves-virgin
 source-sha256: b2a8cd908320297f1f53e336f413d34d5a9f8474be892b5ec74c001f5b879fab
 state: virgin

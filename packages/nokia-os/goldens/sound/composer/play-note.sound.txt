@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-note
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/note
 source-sha256: c864a69845388bc48f53b9880bcfbdc92aa6620cda48cec5d2cd0198fbbb43bf
 state: factory

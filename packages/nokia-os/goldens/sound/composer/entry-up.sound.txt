@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/entry-up
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/entry/up
 source-sha256: 527e2aea56156ec7f0707200455ec40914cb3b104742bc513a1047735360d8e1
 state: factory

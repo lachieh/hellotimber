@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/hold-c-during
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/c-during
 source-sha256: 66925556803197eaaa5ebacf2276dda871b9364fe6b2e412826c33bb28f58cef
 trigger-frame: 1

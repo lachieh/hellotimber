@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-entry-ring-once
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/entry-ring-once
 source-sha256: 1a91e96dab6c6be22ef315d9da059032d0fd31f42f1dd8368b183d5c245458ce
 state: factory

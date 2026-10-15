@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-gate-ring-once
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/gate-ring-once
 source-sha256: 727a2e5319c0a915e794d12150d5b112efca7f4826653e11ef266057214a6185
 state: factory

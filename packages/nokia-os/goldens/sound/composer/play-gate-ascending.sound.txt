@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-gate-ascending
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/gate-ascending
 source-sha256: 24793746d6875d5c87f981cb410e18b202709a0434c74e60a38c9dddfadf49cc
 state: factory

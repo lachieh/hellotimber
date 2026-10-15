@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/restore
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/restore/before-slots.png + captures/6.39/plan27/restore/ringing-page.png + captures/6.39/plan27/restore/slot-1.png + captures/6.39/plan27/restore/new-tempo.png + captures/6.39/plan27/restore/before-page.png
 source-sha256: 17e985866a7de0b854731dee92583625e8748b6f64f4d353722c3d31eda31df5
 note: After Restore factory settings: the page, the empty slot, the new tone's tempo. Each image's keys are its COMPOSER_CASES entry.

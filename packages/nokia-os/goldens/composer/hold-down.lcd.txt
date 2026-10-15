@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/hold-down
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/down
 source-sha256: 0f217f483bf96f2d62d77c3c75633ff8020e2377bb8e1106336679e7fdd1677f
 trigger-frame: 1

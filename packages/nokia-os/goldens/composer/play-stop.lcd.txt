@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/play-stop
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/stop
 source-sha256: 4ec85495c6121d66d5e18786bf3b5d0b2d4688fec9cdb99b85d5fb0832fdcec7
 trigger-frame: 1

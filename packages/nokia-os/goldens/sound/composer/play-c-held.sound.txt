@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-c-held
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/c-held
 source-sha256: 86ba1c4b80161beede024f6723f319611d87fc0291ce90f487c697cf7a40e064
 state: factory

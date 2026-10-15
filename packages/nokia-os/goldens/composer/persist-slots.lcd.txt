@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/persist-slots
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/persist/slots/00.png + captures/6.39/plan27/persist/slots/01.png + captures/6.39/plan27/persist/slots/02.png + captures/6.39/plan27/persist/slots/03.png + captures/6.39/plan27/persist/slots/04.png + captures/6.39/plan27/persist/slots/05.png + captures/6.39/plan27/persist/slots/06.png + captures/6.39/plan27/persist/slots/07.png
 source-sha256: 0c2550f950bb7d67e175b30fade9cc4d5940cf3e2d2325a1b423e831ecc1838a
 note: The slot list after a cold boot. Each image's keys are its COMPOSER_CASES entry.

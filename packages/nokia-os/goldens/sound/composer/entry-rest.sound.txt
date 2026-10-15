@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/entry-rest
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/entry/rest
 source-sha256: b7174525572419c8498dba5216545a3e46694b275a5335650d79d3e612a5abf4
 state: factory

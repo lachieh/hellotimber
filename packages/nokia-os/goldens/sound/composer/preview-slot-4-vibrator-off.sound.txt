@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/preview-slot-4-vibrator-off
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/preview/slot-4-vibrator-off
 source-sha256: 0879b5b8b440902540e4f19bfc2352c53e3257cf3d6db32fb70ed713c21b5e5e
 state: factory

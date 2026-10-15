@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-down
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/down
 source-sha256: 52b5b3009a054a292a1c27a8e430fef52623f5936574b7f951819e79259bb5a7
 state: factory

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-long-level-5
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/long-level-5
 source-sha256: 9934c9402d9af9ee823a94854066efc50039e00b17eee14dab1eb9c7c65ac947
 state: factory

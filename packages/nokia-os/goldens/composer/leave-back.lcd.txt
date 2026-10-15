@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/leave-back
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/leave/back
 source-sha256: b501d4b3b8fc73a1438cbd2136f3b71aae725283e54e01feb8bc909f6b49a60c
 trigger-frame: 1

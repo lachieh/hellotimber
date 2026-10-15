@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/play-down
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/down
 source-sha256: a08788ea783874583d32bb08f236ef924454092d5912cf49e20801ee3687c162
 trigger-frame: 1

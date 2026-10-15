@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-entry-alert-off
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/entry-alert-off
 source-sha256: 4cdae1087a8ad7ec63f5b4f55c3fb003910d9a1f3dc0db1185b21150ffc67ab4
 state: factory

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/persist
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/persist/before-slots.png + captures/6.39/plan27/persist/ringing-page.png + captures/6.39/plan27/persist/slot-1.png + captures/6.39/plan27/persist/slot-1-tempo.png + captures/6.39/plan27/persist/slot-2.png + captures/6.39/plan27/persist/slot-2-tempo.png + captures/6.39/plan27/persist/slot-3.png + captures/6.39/plan27/persist/slot-3-tempo.png + captures/6.39/plan27/persist/slot-4.png + captures/6.39/plan27/persist/new-tempo.png
 source-sha256: c48a520c67d2af6224dbde71a1748057c0f95bc61c443f6ac116f542399b01e8
 note: After a cold boot: saved tones, their tempi, the new tone's tempo, the ringing tone page. Each image's keys are its COMPOSER_CASES entry.

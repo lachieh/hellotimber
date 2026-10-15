@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/play-sharp
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/sharp
 source-sha256: 9c4075803a25c100a589982a16097d883cefdd15cbbc77bc9bb5c2ecdcc2c95b
 trigger-frame: 1

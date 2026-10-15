@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/entry-tempo-list
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/entry/tempo-list
 source-sha256: 58244c9f65d6fbf00a1d137726be444393a7050793826815b22fce7d5a847ea9
 state: factory

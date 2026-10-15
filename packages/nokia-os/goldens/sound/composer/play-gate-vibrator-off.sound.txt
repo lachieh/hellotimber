@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-gate-vibrator-off
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/gate-vibrator-off
 source-sha256: 7e2a944c2aa4d96192cf805f994c0da68e369c537075b9a23b745287cee16958
 state: factory

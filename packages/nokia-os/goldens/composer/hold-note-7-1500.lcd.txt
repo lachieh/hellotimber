@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/hold-note-7-1500
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/note-7-1500
 source-sha256: a71d67a5ded03d3046cb2ac754ac2711c6a06fac55a122073458e26aaae05d14
 trigger-frame: 1

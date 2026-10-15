@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/hold-c-300
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/c-300
 source-sha256: dda5f391fbe5e2832adf7ae8066c013575a369bad1ebd3506343414bc0208a58
 trigger-frame: 1

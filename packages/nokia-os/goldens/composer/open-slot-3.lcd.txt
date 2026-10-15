@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/open-slot-3
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/open/slot-3
 source-sha256: bc7f33ca4bb3f96e9885f9ad69a9a95755b9d5adee3b62c85a65562c8fbe02df
 trigger-frame: 1

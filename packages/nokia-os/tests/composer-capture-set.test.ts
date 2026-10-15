@@ -62,11 +62,11 @@ const PIPELINE_LCD = [
 describe("composer capture set", () => {
   const lcd = byId(composerLcd());
 
-  it("lists every LCD row of the golden pipeline table, pending until its scenario", () => {
+  it("lists every LCD row of the golden pipeline table, asserted (Task 12)", () => {
     for (const id of PIPELINE_LCD) expect(lcd.has(id), id).toBe(true);
     for (const entry of lcd.values()) {
       expect(entry.status, entry.id).toBe(
-        entry.id === "composer/send-ok" ? "pending:18c" : "pending:27",
+        entry.id === "composer/send-ok" ? "pending:18c" : "asserted",
       );
     }
     expect(composer.plan).toBe("27");
@@ -133,7 +133,7 @@ describe("composer capture set", () => {
     };
     const golden = composerSounds(io).find((g) => g.id === "sound/composer/entry-note")!;
     expect(golden.state).toBe("factory");
-    expect(golden.status).toBe("pending:27");
+    expect(golden.status).toBe("asserted");
     expect(golden.rows.map((r) => [r.ms, r.output])).toEqual([
       [23, "buzzer"],
       [526, "buzzer"],

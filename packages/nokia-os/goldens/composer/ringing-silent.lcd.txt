@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/ringing-silent
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/ringing/silent/00.png + captures/6.39/plan27/ringing/silent/01.png + captures/6.39/plan27/ringing/silent/02.png + captures/6.39/plan27/ringing/silent/03.png + captures/6.39/plan27/ringing/silent/04.png + captures/6.39/plan27/ringing/silent/05.png + captures/6.39/plan27/ringing/silent/06.png + captures/6.39/plan27/ringing/silent/07.png + captures/6.39/plan27/ringing/silent/08.png + captures/6.39/plan27/ringing/silent/09.png
 source-sha256: a0a13f41fdd942ef39a2b3cb29e0e08dc0d6dc60dff5992c857484abb46df7f3
 note: Silent's Personalise › Ringing tone, entries 34-42. Each image's keys are its COMPOSER_CASES entry.

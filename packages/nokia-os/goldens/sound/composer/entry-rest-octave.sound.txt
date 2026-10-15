@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/entry-rest-octave
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/entry/rest-octave
 source-sha256: 869c4a76096e8683504dc742854d6b648e411c5576fdf70a8d22861a9f499738
 state: factory

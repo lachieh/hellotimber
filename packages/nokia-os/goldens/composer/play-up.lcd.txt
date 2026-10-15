@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/play-up
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/up
 source-sha256: 86bf6b3e1ed1d1928c68456898d5826191af7e97af71f1a44a4f8e3b4df0f87f
 trigger-frame: 1

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/hold-zero
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/zero
 source-sha256: 39c17ebf851cbe7e8d9ca55d9a05cc7208b715c886bd82e98e84f78f9f8acc03
 state: factory

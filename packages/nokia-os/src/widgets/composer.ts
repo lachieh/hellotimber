@@ -41,9 +41,9 @@ const EXIT = 5;
 
 /**
  * C held during Play: Play stops at its down; still down this long after, the phone goes to
- * standby (`play/c-held`: 533 ms after the key-down).
+ * standby (`play/c-held`: standby 474 ms after Play's stop shows).
  */
-export const PLAY_C_HELD_STANDBY_MS = 533;
+export const PLAY_C_HELD_STANDBY_MS = 474;
 
 /**
  * C held on an empty `Tone name:`: Options show at its down; still down this long after, the
@@ -164,6 +164,8 @@ export class ComposerEditor implements Widget {
   /** Covered by Options or a list: the next tick restarts the blink and puts the cursor at the end. */
   #covered = false;
   #showsSaved = false;
+  /** Reshown by a render since the last tick. */
+  #reshown = false;
   #penLeft = false;
   /** When C on an empty `Tone name:` went back to Options (its hold goes to standby). */
   #backOnC: number | undefined;
@@ -188,6 +190,11 @@ export class ComposerEditor implements Widget {
   }
 
   render(): ComposerModel {
+    // back on top (Options closed): the first frame already shows the restarted blink
+    if (this.#covered) {
+      this.#reshow();
+      this.#reshown = true;
+    }
     const layout = composerLines(this.#state.tokens, this.#state.cursor, this.#top);
     const playing = this.#play !== undefined;
     return {
@@ -254,11 +261,10 @@ export class ComposerEditor implements Widget {
   tick(dtMs: number, flow: Flow): void {
     this.#now += dtMs;
     if (this.#covered) {
-      this.#covered = false;
-      this.#services.blink.shown = this.#showsSaved;
-      this.#showsSaved = false;
-      this.#blinkMs = COMPOSER_TIMINGS.blinkStepMs - COMPOSER_TIMINGS.blinkFirstMs;
-      this.#toEnd();
+      this.#reshow();
+    } else if (this.#reshown) {
+      // shown again since the last tick (its render): the blink starts from there
+      this.#reshown = false;
     } else {
       this.#blinkMs += dtMs;
       while (this.#blinkMs >= COMPOSER_TIMINGS.blinkStepMs) {
@@ -274,6 +280,15 @@ export class ComposerEditor implements Widget {
 
   close(): void {
     this.#stopPlay();
+  }
+
+  /** Shown again after a cover: the blink restarts (Task 0), the cursor at the end. */
+  #reshow(): void {
+    this.#covered = false;
+    this.#services.blink.shown = this.#showsSaved;
+    this.#showsSaved = false;
+    this.#blinkMs = COMPOSER_TIMINGS.blinkStepMs - COMPOSER_TIMINGS.blinkFirstMs;
+    this.#toEnd();
   }
 
   /** Clear screen (Options): every token goes at once. */
@@ -319,9 +334,10 @@ export class ComposerEditor implements Widget {
   }
 
   cover(widget: Widget, flow: Flow): void {
-    this.#covered = true;
     this.#penLeft = false;
+    // the flow renders the editor once more as it leaves it: covered from then on
     flow.push(widget);
+    this.#covered = true;
   }
 
   #level(): number | null {
@@ -478,7 +494,8 @@ export class ComposerEditor implements Widget {
       numbering: "none",
       choose: (index, flow) => {
         this.setTempo(COMPOSER_TEMPI[index]!);
-        flow.replace(note({ lines: ["Done"], timeline: done }));
+        // the Select that chose acts on its down: its release is not the note's
+        flow.replace(ownKeys(note({ lines: ["Done"], timeline: done })));
       },
     });
   }

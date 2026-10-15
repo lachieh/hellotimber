@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/entry-octave
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/entry/octave
 source-sha256: 8268847fb1d1eaaf58a7a126c8ec99a9047ef24dfb747f1120996038a7a33147
 state: factory

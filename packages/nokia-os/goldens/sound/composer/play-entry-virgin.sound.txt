@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-entry-virgin
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/entry-virgin
 source-sha256: 01e7b3db07aebed5c1d392f4dcf5880d528f14aeace953ee29d2e6f09dd61392
 state: virgin

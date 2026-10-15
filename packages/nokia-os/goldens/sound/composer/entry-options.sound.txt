@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/entry-options
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/entry/options
 source-sha256: 3ebd56cd159bdf99ef9a7a8d66bc901fc38f92b98da96b6c82c2a26965271d66
 state: factory

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/hold-hash
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/hash
 source-sha256: 9fc210c7305f08fed3dcc7bfaa73cf467a38d39ed1032ad926d52c0aa86648c4
 trigger-frame: 1

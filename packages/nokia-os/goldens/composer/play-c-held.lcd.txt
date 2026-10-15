@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/play-c-held
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/c-held
 source-sha256: 87fc176cdd1fcee4c3f550f3dd01f37fec535cc56f602a5995c2323b7697d108
 trigger-frame: 1

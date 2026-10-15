@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/hold-up
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/up
 source-sha256: 0bfc0936b3ef828c2c11ae765fab4ad5bad4d0423e39221d62d47006c9280170
 state: factory

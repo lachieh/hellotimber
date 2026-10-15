@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/send-number
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/send/number
 source-sha256: a6e1d459f03684b750fcf0c3f4676733ffa148572a45fd74b9629359ad3643e1
 trigger-frame: 1

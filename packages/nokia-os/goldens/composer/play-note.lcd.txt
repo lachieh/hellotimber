@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/play-note
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/note
 source-sha256: 525e5a346e78124718aee59622b8d4e4e819c601e72c96b19ee26ab3777ce65b
 trigger-frame: 1

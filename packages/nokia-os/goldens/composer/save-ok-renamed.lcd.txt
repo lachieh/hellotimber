@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/save-ok-renamed
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/save/ok-renamed
 source-sha256: 7fc5a7910c1eb5ef448989d78195d941320e3bfe9e22b79ba66c9896f915f0ab
 trigger-frame: 1

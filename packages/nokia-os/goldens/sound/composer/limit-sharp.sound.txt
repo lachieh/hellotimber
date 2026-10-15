@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/limit-sharp
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/limit/sharp
 source-sha256: 7533d5e5af6f7ccd7e5ae892556f9b79bf5eece216ade2c326e100cd2bd40894
 state: factory

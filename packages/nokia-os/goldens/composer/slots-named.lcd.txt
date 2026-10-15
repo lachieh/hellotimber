@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/slots-named
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/slots/named/00.png + captures/6.39/plan27/slots/named/01.png + captures/6.39/plan27/slots/named/02.png + captures/6.39/plan27/slots/named/03.png + captures/6.39/plan27/slots/named/04.png + captures/6.39/plan27/slots/named/05.png + captures/6.39/plan27/slots/named/06.png + captures/6.39/plan27/slots/named/07.png
 source-sha256: 7fa7d8a62262cb9c4d3d8c46ba84f69cf25de6ee80dc26a52b736be299c1cdbb
 note: Tones saved as A (slot 1), B (2) and G (7): the list through the wrap. Each image's keys are its COMPOSER_CASES entry.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/play-rest
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/rest
 source-sha256: 05dc3b6c01d58b4464ad82638a760950c79089004c7efb83b798ee8e90983bf2
 trigger-frame: 1

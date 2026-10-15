@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/preview-slot-4-ring-once
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/preview/slot-4-ring-once
 source-sha256: ba0ccd99f5bed697933c66fc5f92210cf5f4e15a50d764323a309b2f247c0683
 state: factory

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/returns-play-end
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/returns/play-end
 source-sha256: 9cf8e6b97469d63878b40e11e8566246dbca4d5899a82f9c46c7445839d2595c
 trigger-frame: 1

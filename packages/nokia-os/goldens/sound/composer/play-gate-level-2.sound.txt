@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-gate-level-2
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/gate-level-2
 source-sha256: 0a2c42287d11f6a90acc706cff02c0e08f6297ac826ae0d7b8bb6951db2e810a
 state: factory

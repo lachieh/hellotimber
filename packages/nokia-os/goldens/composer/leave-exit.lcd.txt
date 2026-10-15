@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/leave-exit
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/leave/exit
 source-sha256: fe08211677f84c5d675b1edb310a5ba6f23a4a4ec28e4c5bf0c00f0927994c4b
 trigger-frame: 1

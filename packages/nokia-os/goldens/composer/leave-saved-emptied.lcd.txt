@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/leave-saved-emptied
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/leave/saved-emptied
 source-sha256: a6ac723ce830ed5496d8c57cf56d0cdb6615b1e89c8c59311b3b0f7f1b0e9ab5
 trigger-frame: 1

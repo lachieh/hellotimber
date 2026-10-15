@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/play-shorter
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/shorter
 source-sha256: fe9fd652e805893cc265d40733d9bb216876f118bbe300f0e7a232ea8ffc7a69
 trigger-frame: 1

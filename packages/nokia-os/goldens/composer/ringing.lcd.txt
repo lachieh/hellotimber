@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/ringing
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/ringing/page.png + captures/6.39/plan27/ringing/page-tones.png + captures/6.39/plan27/ringing/stored-open.png + captures/6.39/plan27/ringing/overwritten-open.png
 source-sha256: 558a25dccfc467953114ef3d19c585c0b7acacbfef3b41702542114e25cba0c5
 note: The Ringing tone page with a saved tone, the list opening on it, an overwritten slot. Each image's keys are its COMPOSER_CASES entry.

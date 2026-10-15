@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/limit-insert
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/limit/insert
 source-sha256: a108dcbae2caf2a565e0a9794c347f563779fdc2e424cdd3e32db20e49696a92
 state: factory

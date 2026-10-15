@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/slots
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/slots/virgin-up.png + captures/6.39/plan27/slots/factory-up.png + captures/6.39/plan27/slots/named-up.png
 source-sha256: ec7a0b0f68be3c4c09e566e5449896a8ac452bba4d68ee236e94e033763e071c
 note: The slot list: ▲ from slot 1 (virgin, factory, named). Each image's keys are its COMPOSER_CASES entry.

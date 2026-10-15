@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/entry-dotted
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/entry/dotted
 source-sha256: c7f25606b719007ef139b138b845aadc4837ae172e5de4ece324280de253bca3
 state: factory

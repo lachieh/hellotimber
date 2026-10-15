@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-cursor-start
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/cursor-start
 source-sha256: 2d677c083a71fd7b3f57220c3014d5ced61199b714ef5186aef7f6d5a7b8323f
 state: factory

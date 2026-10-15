@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/entry-c-empty
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/entry/c-empty
 source-sha256: e1d2b1c6bf946b8d3ce64a4cca9075806c464e7150ac3bed01f63872ab5c5aca
 state: factory

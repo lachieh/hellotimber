@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/returns-options-c
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/returns/options-c
 source-sha256: 6d366a95d0505869c57864906796f04a2db583511188f4717a8c12ae607b8b7c
 trigger-frame: 1

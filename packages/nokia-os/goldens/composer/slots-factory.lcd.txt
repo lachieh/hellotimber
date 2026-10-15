@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/slots-factory
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/slots/factory/00.png + captures/6.39/plan27/slots/factory/01.png + captures/6.39/plan27/slots/factory/02.png + captures/6.39/plan27/slots/factory/03.png + captures/6.39/plan27/slots/factory/04.png + captures/6.39/plan27/slots/factory/05.png + captures/6.39/plan27/slots/factory/06.png + captures/6.39/plan27/slots/factory/07.png
 source-sha256: 70274565eccb34036d1db63f59e98b016b2d99659efdb6aaf6ac68ba58e9dee3
 note: The factory slot list on slot 1, then ▼ ×7 through the wrap. Each image's keys are its COMPOSER_CASES entry.

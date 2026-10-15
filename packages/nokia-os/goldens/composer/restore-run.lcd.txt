@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/restore-run
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/restore/run
 source-sha256: e48dfdab1b3e9b48031e67743777908df796d5a147360b5374362aa28b8e1b2c
 trigger-frame: 1

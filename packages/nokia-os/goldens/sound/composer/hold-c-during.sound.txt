@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/hold-c-during
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/c-during
 source-sha256: 685c47ec09daab22734b876a1a021e47ba6ae5ffc52db91774f64b0646bf9d0e
 state: factory

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/hold-note-3-900
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/note-3-900
 source-sha256: b7ae7d979ae2bde0cd9a596388ed898d813e0bd59cfe58ac119bfe6432d7ab72
 state: factory

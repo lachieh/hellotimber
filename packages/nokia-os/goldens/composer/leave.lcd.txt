@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/leave
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/leave/exit-reopen.png + captures/6.39/plan27/leave/exit-reopen-slot.png + captures/6.39/plan27/leave/options-c.png + captures/6.39/plan27/leave/saved-open.png + captures/6.39/plan27/leave/saved-emptied-reopen.png + captures/6.39/plan27/leave/saved-cleared-reopen.png + captures/6.39/plan27/leave/saved-exit-edited.png
 source-sha256: c40ae212260f319ab78733f34b99937f3a7f2a45d8bd2952fc242210922ace15
 note: The editor after Exit, Clear screen, C on a saved slot; the slot reopened. Each image's keys are its COMPOSER_CASES entry.

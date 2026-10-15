@@ -1,6 +1,6 @@
 // Plan 27's goldens (docs/plans/27-composer.md "Golden pipeline additions"; paths under plan27/):
 // the Composer's stills, named by COMPOSER_CASES (Task 0's cases.json, transcribed), its timelines
-// and its sound goldens. Each is imported `pending:27` until its scenario passes
+// and its sound goldens. Each is asserted since its scenario passes
 // (tests/acceptance/27-composer.test.ts); Send's transmission is `pending:18c` (D11).
 //
 // Pure: imports only sibling scripts, reads captures through the injected io.
@@ -4145,8 +4145,8 @@ export const COMPOSER_RECORDING_KEYS: readonly ComposerRecordingKeys[] = [
   },
 ];
 
-/** Every fixture is pending until Task 12's scenario passes (plan 29's pending workflow). */
-const PENDING = "pending:27" as const satisfies GoldenStatus;
+/** Task 12: every fixture is asserted (its scenario in tests/acceptance/27-composer.test.ts). */
+const ASSERTED = "asserted" as const satisfies GoldenStatus;
 /** D11: Send's transmission (the binary Smart Messaging SMS) is plan 18c's. */
 const SEND_PENDING = "pending:18c" as const satisfies GoldenStatus;
 
@@ -4247,7 +4247,7 @@ export function composerStills(
     return {
       id,
       kind: "still",
-      status: PENDING,
+      status: ASSERTED,
       prefer: {
         source: { kind: "shots", files: shots },
         note: `${note} Each image's keys are its COMPOSER_CASES entry.`,
@@ -4309,7 +4309,7 @@ export function composerTimelines(): CaptureSetEntry[] {
     .map((dir) => ({
       id: composerTimelineId(dir),
       kind: "timeline",
-      status: dir === "send/ok" ? SEND_PENDING : PENDING,
+      status: dir === "send/ok" ? SEND_PENDING : ASSERTED,
       prefer: {
         source: { kind: "recording", dir: `plan27/${dir}` },
         triggerFrame: 1,
@@ -4336,7 +4336,7 @@ export const COMPOSER_SOUNDS: readonly SoundCaptureEntry[] = recordingDirs()
       id: composerSoundId(dir),
       dir: `plan27/${dir}`,
       state: row?.state === "virgin" ? "virgin" : "factory",
-      status: PENDING,
+      status: ASSERTED,
       note: `plan27/${dir}: ${recordingNote(dir)}`,
     };
   });

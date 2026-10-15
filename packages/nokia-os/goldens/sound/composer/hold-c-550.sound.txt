@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/hold-c-550
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/c-550
 source-sha256: df48ac033faf8ec6636e511a16b721d119ea4accfe685d102704e7882ea8763f
 state: factory

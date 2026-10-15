@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-entry-beep-once
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/entry-beep-once
 source-sha256: a0d87994ab21a8b74b741e21e6ec06225014559a802fea18aa4c1c2a78f49cf4
 state: factory

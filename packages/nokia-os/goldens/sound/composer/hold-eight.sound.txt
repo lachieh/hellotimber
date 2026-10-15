@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/hold-eight
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/eight
 source-sha256: 5f7a310cbdd41b28132200b7c64b152e0087b240c03a0ad7f6ea3c08987f4303
 state: factory

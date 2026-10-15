@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/options
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/options/up.png + captures/6.39/plan27/options/c.png
 source-sha256: d42329ca1262fd21949580ace17faceca378353bf5d058c53d33bd85a0a0dc49
 note: ▲ from Play; C on Options. Each image's keys are its COMPOSER_CASES entry.

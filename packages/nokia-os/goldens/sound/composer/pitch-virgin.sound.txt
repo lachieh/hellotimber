@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/pitch-virgin
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/pitch/virgin
 source-sha256: 1dec191511722cd5b24fdd770ac440a23c77ba58aa7a5600df614da910288d3a
 state: virgin

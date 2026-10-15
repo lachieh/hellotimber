@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-entry-level-2
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/entry-level-2
 source-sha256: f73fa78c8489b4e23f52ea92c7260b4bbc546f26c17b057be93c9ab351ab636d
 state: factory

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/tempo-160
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/tempo/160
 source-sha256: 4b558d68c15fc64edea4a15b24117186e58959ee576caf3582c203b75ac6ef4f
 state: factory

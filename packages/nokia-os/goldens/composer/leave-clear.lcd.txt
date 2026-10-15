@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/leave-clear
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/leave/clear
 source-sha256: 93f2041d221fff0fa1f24572e7e4f2c659d98d913b1aedb50efd99bdb292f3ec
 trigger-frame: 1

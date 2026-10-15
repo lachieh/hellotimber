@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/tempo
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/tempo/from-112-up.png + captures/6.39/plan27/tempo/from-40-up.png + captures/6.39/plan27/tempo/from-225-up.png + captures/6.39/plan27/tempo/c.png + captures/6.39/plan27/tempo/c-c.png + captures/6.39/plan27/tempo/after-40.png + captures/6.39/plan27/tempo/done-112.png
 source-sha256: 9f832777de230a7bf814106bc0d932138dd7f2d17ffe6151d9e87558ea0d97a0
 note: C on Tempo, the list after a set tempo, Done. Each image's keys are its COMPOSER_CASES entry.

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/preview-slot-7-off
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/preview/slot-7-off
 source-sha256: def67c5af0d7c834458a1c3190c6a90430328e7f7e4b784df5bad1e1c4bdbf9c
 state: factory

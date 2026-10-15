@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/entry-note
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/entry/note
 source-sha256: 73bc28a3ac5e831012724ab1d43b11166b84579539bc880fbdc2afea2f4bde90
 state: factory

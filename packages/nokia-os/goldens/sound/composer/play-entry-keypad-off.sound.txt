@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-entry-keypad-off
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/entry-keypad-off
 source-sha256: 959870aa6ab8f11ce3acf41f85a11dc4191a53cb729d9715363b3dccbab92626
 state: factory

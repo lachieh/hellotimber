@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/preview-slot-4-ascending
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/preview/slot-4-ascending
 source-sha256: 18676b893fa9621cdc32661bacea413b56180e3900c6e61bac5d3be3dc9d1173
 state: factory

@@ -2,7 +2,7 @@
   {
     "id": "composer/cursor-down",
     "file": "composer/cursor-down.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 52,
     "frames": 52
@@ -10,7 +10,7 @@
   {
     "id": "composer/cursor-up",
     "file": "composer/cursor-up.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 52,
     "frames": 52
@@ -18,7 +18,7 @@
   {
     "id": "composer/entry",
     "file": "composer/entry.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 82,
     "frames": 82
@@ -26,7 +26,7 @@
   {
     "id": "composer/hold-c",
     "file": "composer/hold-c.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 10
@@ -34,7 +34,7 @@
   {
     "id": "composer/hold-c-300",
     "file": "composer/hold-c-300.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -42,7 +42,7 @@
   {
     "id": "composer/hold-c-350",
     "file": "composer/hold-c-350.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -50,7 +50,7 @@
   {
     "id": "composer/hold-c-400",
     "file": "composer/hold-c-400.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -58,7 +58,7 @@
   {
     "id": "composer/hold-c-450",
     "file": "composer/hold-c-450.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -66,7 +66,7 @@
   {
     "id": "composer/hold-c-500",
     "file": "composer/hold-c-500.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 8
@@ -74,7 +74,7 @@
   {
     "id": "composer/hold-c-550",
     "file": "composer/hold-c-550.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 8
@@ -82,7 +82,7 @@
   {
     "id": "composer/hold-c-600",
     "file": "composer/hold-c-600.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 8
@@ -90,7 +90,7 @@
   {
     "id": "composer/hold-c-650",
     "file": "composer/hold-c-650.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 8
@@ -98,7 +98,7 @@
   {
     "id": "composer/hold-c-700",
     "file": "composer/hold-c-700.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 8
@@ -106,7 +106,7 @@
   {
     "id": "composer/hold-c-after-dot",
     "file": "composer/hold-c-after-dot.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 11
@@ -114,7 +114,7 @@
   {
     "id": "composer/hold-c-during",
     "file": "composer/hold-c-during.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 11
@@ -122,7 +122,7 @@
   {
     "id": "composer/hold-down",
     "file": "composer/hold-down.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 15
@@ -130,7 +130,7 @@
   {
     "id": "composer/hold-eight",
     "file": "composer/hold-eight.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -138,7 +138,7 @@
   {
     "id": "composer/hold-hash",
     "file": "composer/hold-hash.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 8
@@ -146,7 +146,7 @@
   {
     "id": "composer/hold-nine",
     "file": "composer/hold-nine.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -154,7 +154,7 @@
   {
     "id": "composer/hold-note-1-1500",
     "file": "composer/hold-note-1-1500.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 9
@@ -162,7 +162,7 @@
   {
     "id": "composer/hold-note-2-1500",
     "file": "composer/hold-note-2-1500.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 9
@@ -170,7 +170,7 @@
   {
     "id": "composer/hold-note-3-1500",
     "file": "composer/hold-note-3-1500.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 9
@@ -178,7 +178,7 @@
   {
     "id": "composer/hold-note-3-600",
     "file": "composer/hold-note-3-600.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -186,7 +186,7 @@
   {
     "id": "composer/hold-note-3-700",
     "file": "composer/hold-note-3-700.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -194,7 +194,7 @@
   {
     "id": "composer/hold-note-3-750",
     "file": "composer/hold-note-3-750.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -202,7 +202,7 @@
   {
     "id": "composer/hold-note-3-800",
     "file": "composer/hold-note-3-800.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 8
@@ -210,7 +210,7 @@
   {
     "id": "composer/hold-note-3-850",
     "file": "composer/hold-note-3-850.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 8
@@ -218,7 +218,7 @@
   {
     "id": "composer/hold-note-3-900",
     "file": "composer/hold-note-3-900.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 8
@@ -226,7 +226,7 @@
   {
     "id": "composer/hold-note-4-1500",
     "file": "composer/hold-note-4-1500.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 9
@@ -234,7 +234,7 @@
   {
     "id": "composer/hold-note-5-1500",
     "file": "composer/hold-note-5-1500.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 9
@@ -242,7 +242,7 @@
   {
     "id": "composer/hold-note-6-1500",
     "file": "composer/hold-note-6-1500.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 9
@@ -250,7 +250,7 @@
   {
     "id": "composer/hold-note-7-1500",
     "file": "composer/hold-note-7-1500.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 9
@@ -258,7 +258,7 @@
   {
     "id": "composer/hold-star",
     "file": "composer/hold-star.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -266,7 +266,7 @@
   {
     "id": "composer/hold-up",
     "file": "composer/hold-up.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 14
@@ -274,7 +274,7 @@
   {
     "id": "composer/hold-zero",
     "file": "composer/hold-zero.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -282,7 +282,7 @@
   {
     "id": "composer/layout",
     "file": "composer/layout.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 29,
     "frames": 29
@@ -290,7 +290,7 @@
   {
     "id": "composer/leave",
     "file": "composer/leave.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 7,
     "frames": 7
@@ -298,7 +298,7 @@
   {
     "id": "composer/leave-back",
     "file": "composer/leave-back.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -306,7 +306,7 @@
   {
     "id": "composer/leave-c",
     "file": "composer/leave-c.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -314,7 +314,7 @@
   {
     "id": "composer/leave-clear",
     "file": "composer/leave-clear.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -322,7 +322,7 @@
   {
     "id": "composer/leave-clear-back",
     "file": "composer/leave-clear-back.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -330,7 +330,7 @@
   {
     "id": "composer/leave-exit",
     "file": "composer/leave-exit.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -338,7 +338,7 @@
   {
     "id": "composer/leave-saved-cleared",
     "file": "composer/leave-saved-cleared.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -346,7 +346,7 @@
   {
     "id": "composer/leave-saved-emptied",
     "file": "composer/leave-saved-emptied.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -354,7 +354,7 @@
   {
     "id": "composer/limit",
     "file": "composer/limit.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -362,7 +362,7 @@
   {
     "id": "composer/newtempo",
     "file": "composer/newtempo.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -370,7 +370,7 @@
   {
     "id": "composer/open",
     "file": "composer/open.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -378,7 +378,7 @@
   {
     "id": "composer/open-saved",
     "file": "composer/open-saved.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -386,7 +386,7 @@
   {
     "id": "composer/open-saved-2",
     "file": "composer/open-saved-2.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -394,7 +394,7 @@
   {
     "id": "composer/open-slot-1",
     "file": "composer/open-slot-1.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -402,7 +402,7 @@
   {
     "id": "composer/open-slot-3",
     "file": "composer/open-slot-3.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -410,7 +410,7 @@
   {
     "id": "composer/open-slot-7",
     "file": "composer/open-slot-7.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -418,7 +418,7 @@
   {
     "id": "composer/options",
     "file": "composer/options.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -426,7 +426,7 @@
   {
     "id": "composer/options-list",
     "file": "composer/options-list.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 7,
     "frames": 7
@@ -434,7 +434,7 @@
   {
     "id": "composer/persist",
     "file": "composer/persist.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -442,7 +442,7 @@
   {
     "id": "composer/persist-slots",
     "file": "composer/persist-slots.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -450,7 +450,7 @@
   {
     "id": "composer/play-c",
     "file": "composer/play-c.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 18
@@ -458,7 +458,7 @@
   {
     "id": "composer/play-c-held",
     "file": "composer/play-c-held.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 9
@@ -466,7 +466,7 @@
   {
     "id": "composer/play-cursor-start",
     "file": "composer/play-cursor-start.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 16
@@ -474,7 +474,7 @@
   {
     "id": "composer/play-down",
     "file": "composer/play-down.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 18
@@ -482,7 +482,7 @@
   {
     "id": "composer/play-eight",
     "file": "composer/play-eight.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 16
@@ -490,7 +490,7 @@
   {
     "id": "composer/play-note",
     "file": "composer/play-note.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 18
@@ -498,7 +498,7 @@
   {
     "id": "composer/play-octave",
     "file": "composer/play-octave.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 18
@@ -506,7 +506,7 @@
   {
     "id": "composer/play-rest",
     "file": "composer/play-rest.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 18
@@ -514,7 +514,7 @@
   {
     "id": "composer/play-sharp",
     "file": "composer/play-sharp.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 18
@@ -522,7 +522,7 @@
   {
     "id": "composer/play-short",
     "file": "composer/play-short.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 10
@@ -530,7 +530,7 @@
   {
     "id": "composer/play-shorter",
     "file": "composer/play-shorter.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 18
@@ -538,7 +538,7 @@
   {
     "id": "composer/play-stop",
     "file": "composer/play-stop.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 18
@@ -546,7 +546,7 @@
   {
     "id": "composer/play-up",
     "file": "composer/play-up.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 18
@@ -554,7 +554,7 @@
   {
     "id": "composer/play-virgin",
     "file": "composer/play-virgin.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 10
@@ -562,7 +562,7 @@
   {
     "id": "composer/restore",
     "file": "composer/restore.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -570,7 +570,7 @@
   {
     "id": "composer/restore-run",
     "file": "composer/restore-run.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -578,7 +578,7 @@
   {
     "id": "composer/restore-slots",
     "file": "composer/restore-slots.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -586,7 +586,7 @@
   {
     "id": "composer/returns",
     "file": "composer/returns.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -594,7 +594,7 @@
   {
     "id": "composer/returns-options-c",
     "file": "composer/returns-options-c.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 8
@@ -602,7 +602,7 @@
   {
     "id": "composer/returns-play-end",
     "file": "composer/returns-play-end.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 16
@@ -610,7 +610,7 @@
   {
     "id": "composer/ringing",
     "file": "composer/ringing.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -618,7 +618,7 @@
   {
     "id": "composer/ringing-choose",
     "file": "composer/ringing-choose.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -626,7 +626,7 @@
   {
     "id": "composer/ringing-general",
     "file": "composer/ringing-general.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -634,7 +634,7 @@
   {
     "id": "composer/ringing-silent",
     "file": "composer/ringing-silent.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -642,7 +642,7 @@
   {
     "id": "composer/ringing-tones",
     "file": "composer/ringing-tones.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -650,7 +650,7 @@
   {
     "id": "composer/save",
     "file": "composer/save.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -658,7 +658,7 @@
   {
     "id": "composer/save-back-empty",
     "file": "composer/save-back-empty.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -666,7 +666,7 @@
   {
     "id": "composer/save-c-empty",
     "file": "composer/save-c-empty.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -674,7 +674,7 @@
   {
     "id": "composer/save-c-held-empty",
     "file": "composer/save-c-held-empty.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -682,7 +682,7 @@
   {
     "id": "composer/save-c-held-prefilled",
     "file": "composer/save-c-held-prefilled.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 12
@@ -690,7 +690,7 @@
   {
     "id": "composer/save-c-typed",
     "file": "composer/save-c-typed.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -698,7 +698,7 @@
   {
     "id": "composer/save-keys",
     "file": "composer/save-keys.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 13,
     "frames": 13
@@ -706,7 +706,7 @@
   {
     "id": "composer/save-ok",
     "file": "composer/save-ok.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -714,7 +714,7 @@
   {
     "id": "composer/save-ok-pending",
     "file": "composer/save-ok-pending.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -722,7 +722,7 @@
   {
     "id": "composer/save-ok-renamed",
     "file": "composer/save-ok-renamed.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -730,7 +730,7 @@
   {
     "id": "composer/save-open",
     "file": "composer/save-open.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -738,7 +738,7 @@
   {
     "id": "composer/save-prefilled",
     "file": "composer/save-prefilled.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -746,7 +746,7 @@
   {
     "id": "composer/send-keys",
     "file": "composer/send-keys.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -754,7 +754,7 @@
   {
     "id": "composer/send-name",
     "file": "composer/send-name.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -762,7 +762,7 @@
   {
     "id": "composer/send-name-back",
     "file": "composer/send-name-back.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -770,7 +770,7 @@
   {
     "id": "composer/send-name-c",
     "file": "composer/send-name-c.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -778,7 +778,7 @@
   {
     "id": "composer/send-number",
     "file": "composer/send-number.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 8
@@ -786,7 +786,7 @@
   {
     "id": "composer/send-number-c",
     "file": "composer/send-number-c.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -794,7 +794,7 @@
   {
     "id": "composer/send-number-search",
     "file": "composer/send-number-search.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -810,7 +810,7 @@
   {
     "id": "composer/slots",
     "file": "composer/slots.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -818,7 +818,7 @@
   {
     "id": "composer/slots-factory",
     "file": "composer/slots-factory.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -826,7 +826,7 @@
   {
     "id": "composer/slots-named",
     "file": "composer/slots-named.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -834,7 +834,7 @@
   {
     "id": "composer/slots-virgin",
     "file": "composer/slots-virgin.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -842,7 +842,7 @@
   {
     "id": "composer/tempo",
     "file": "composer/tempo.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 7,
     "frames": 7
@@ -850,7 +850,7 @@
   {
     "id": "composer/tempo-done-225",
     "file": "composer/tempo-done-225.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -858,7 +858,7 @@
   {
     "id": "composer/tempo-done-40",
     "file": "composer/tempo-done-40.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -866,7 +866,7 @@
   {
     "id": "composer/tempo-from-112",
     "file": "composer/tempo-from-112.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 17,
     "frames": 17
@@ -874,7 +874,7 @@
   {
     "id": "composer/tempo-from-225",
     "file": "composer/tempo-from-225.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 17,
     "frames": 17
@@ -882,7 +882,7 @@
   {
     "id": "composer/tempo-from-40",
     "file": "composer/tempo-from-40.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "still",
     "images": 17,
     "frames": 17
@@ -890,1344 +890,1344 @@
   {
     "id": "sound/composer/entry-back",
     "file": "sound/composer/entry-back.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/entry-c",
     "file": "sound/composer/entry-c.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/entry-c-empty",
     "file": "sound/composer/entry-c-empty.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/entry-c-held",
     "file": "sound/composer/entry-c-held.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/entry-dotted",
     "file": "sound/composer/entry-dotted.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/entry-down",
     "file": "sound/composer/entry-down.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/entry-longer",
     "file": "sound/composer/entry-longer.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/entry-note",
     "file": "sound/composer/entry-note.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/entry-notes-fast",
     "file": "sound/composer/entry-notes-fast.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/entry-octave",
     "file": "sound/composer/entry-octave.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/entry-octaves",
     "file": "sound/composer/entry-octaves.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/entry-octaves-level-1",
     "file": "sound/composer/entry-octaves-level-1.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/entry-octaves-level-2",
     "file": "sound/composer/entry-octaves-level-2.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/entry-octaves-level-3",
     "file": "sound/composer/entry-octaves-level-3.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/entry-octaves-level-4",
     "file": "sound/composer/entry-octaves-level-4.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/entry-octaves-level-5",
     "file": "sound/composer/entry-octaves-level-5.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/entry-octaves-virgin",
     "file": "sound/composer/entry-octaves-virgin.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/entry-options",
     "file": "sound/composer/entry-options.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/entry-options-keys",
     "file": "sound/composer/entry-options-keys.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/entry-rest",
     "file": "sound/composer/entry-rest.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/entry-rest-octave",
     "file": "sound/composer/entry-rest-octave.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/entry-rest-shorter",
     "file": "sound/composer/entry-rest-shorter.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/entry-sharp",
     "file": "sound/composer/entry-sharp.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/entry-sharp-e",
     "file": "sound/composer/entry-sharp-e.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/entry-shorter",
     "file": "sound/composer/entry-shorter.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/entry-tempo-list",
     "file": "sound/composer/entry-tempo-list.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 14
   },
   {
     "id": "sound/composer/entry-up",
     "file": "sound/composer/entry-up.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-c",
     "file": "sound/composer/hold-c.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-c-300",
     "file": "sound/composer/hold-c-300.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-c-350",
     "file": "sound/composer/hold-c-350.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-c-400",
     "file": "sound/composer/hold-c-400.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-c-450",
     "file": "sound/composer/hold-c-450.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-c-500",
     "file": "sound/composer/hold-c-500.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-c-550",
     "file": "sound/composer/hold-c-550.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-c-600",
     "file": "sound/composer/hold-c-600.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-c-650",
     "file": "sound/composer/hold-c-650.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-c-700",
     "file": "sound/composer/hold-c-700.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-c-after-dot",
     "file": "sound/composer/hold-c-after-dot.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/hold-c-during",
     "file": "sound/composer/hold-c-during.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/hold-down",
     "file": "sound/composer/hold-down.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-eight",
     "file": "sound/composer/hold-eight.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/hold-hash",
     "file": "sound/composer/hold-hash.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-nine",
     "file": "sound/composer/hold-nine.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/hold-note-1-1500",
     "file": "sound/composer/hold-note-1-1500.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/hold-note-2-1500",
     "file": "sound/composer/hold-note-2-1500.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/hold-note-3-1500",
     "file": "sound/composer/hold-note-3-1500.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/hold-note-3-600",
     "file": "sound/composer/hold-note-3-600.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/hold-note-3-700",
     "file": "sound/composer/hold-note-3-700.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/hold-note-3-750",
     "file": "sound/composer/hold-note-3-750.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/hold-note-3-800",
     "file": "sound/composer/hold-note-3-800.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/hold-note-3-850",
     "file": "sound/composer/hold-note-3-850.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/hold-note-3-900",
     "file": "sound/composer/hold-note-3-900.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/hold-note-4-1500",
     "file": "sound/composer/hold-note-4-1500.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/hold-note-5-1500",
     "file": "sound/composer/hold-note-5-1500.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/hold-note-6-1500",
     "file": "sound/composer/hold-note-6-1500.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/hold-note-7-1500",
     "file": "sound/composer/hold-note-7-1500.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/hold-star",
     "file": "sound/composer/hold-star.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/hold-up",
     "file": "sound/composer/hold-up.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/hold-zero",
     "file": "sound/composer/hold-zero.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/limit-delete-note",
     "file": "sound/composer/limit-delete-note.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/limit-held",
     "file": "sound/composer/limit-held.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/limit-insert",
     "file": "sound/composer/limit-insert.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/limit-longer",
     "file": "sound/composer/limit-longer.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/limit-note",
     "file": "sound/composer/limit-note.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/limit-octave",
     "file": "sound/composer/limit-octave.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/limit-rest",
     "file": "sound/composer/limit-rest.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/composer/limit-sharp",
     "file": "sound/composer/limit-sharp.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/limit-shorter",
     "file": "sound/composer/limit-shorter.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/pitch-level-1",
     "file": "sound/composer/pitch-level-1.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 72
   },
   {
     "id": "sound/composer/pitch-level-2",
     "file": "sound/composer/pitch-level-2.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 72
   },
   {
     "id": "sound/composer/pitch-level-3",
     "file": "sound/composer/pitch-level-3.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 72
   },
   {
     "id": "sound/composer/pitch-level-4",
     "file": "sound/composer/pitch-level-4.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 72
   },
   {
     "id": "sound/composer/pitch-level-5",
     "file": "sound/composer/pitch-level-5.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 72
   },
   {
     "id": "sound/composer/pitch-virgin",
     "file": "sound/composer/pitch-virgin.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 72
   },
   {
     "id": "sound/composer/play-c",
     "file": "sound/composer/play-c.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 8
   },
   {
     "id": "sound/composer/play-c-held",
     "file": "sound/composer/play-c-held.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 8
   },
   {
     "id": "sound/composer/play-cursor-start",
     "file": "sound/composer/play-cursor-start.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 16
   },
   {
     "id": "sound/composer/play-down",
     "file": "sound/composer/play-down.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 16
   },
   {
     "id": "sound/composer/play-eight",
     "file": "sound/composer/play-eight.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 16
   },
   {
     "id": "sound/composer/play-entry-alert-off",
     "file": "sound/composer/play-entry-alert-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/play-entry-ascending",
     "file": "sound/composer/play-entry-ascending.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/play-entry-beep-once",
     "file": "sound/composer/play-entry-beep-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/play-entry-keypad-off",
     "file": "sound/composer/play-entry-keypad-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/play-entry-level-1",
     "file": "sound/composer/play-entry-level-1.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/play-entry-level-2",
     "file": "sound/composer/play-entry-level-2.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/play-entry-level-3",
     "file": "sound/composer/play-entry-level-3.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/play-entry-level-5",
     "file": "sound/composer/play-entry-level-5.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/play-entry-ring-once",
     "file": "sound/composer/play-entry-ring-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/play-entry-vibrator-off",
     "file": "sound/composer/play-entry-vibrator-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/play-entry-virgin",
     "file": "sound/composer/play-entry-virgin.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/play-entry-warning-off",
     "file": "sound/composer/play-entry-warning-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/composer/play-gate-alert-off",
     "file": "sound/composer/play-gate-alert-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/play-gate-ascending",
     "file": "sound/composer/play-gate-ascending.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/play-gate-beep-once",
     "file": "sound/composer/play-gate-beep-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/play-gate-keypad-off",
     "file": "sound/composer/play-gate-keypad-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/play-gate-level-1",
     "file": "sound/composer/play-gate-level-1.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/play-gate-level-2",
     "file": "sound/composer/play-gate-level-2.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/play-gate-level-3",
     "file": "sound/composer/play-gate-level-3.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/play-gate-level-5",
     "file": "sound/composer/play-gate-level-5.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/play-gate-ring-once",
     "file": "sound/composer/play-gate-ring-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/play-gate-vibrator-off",
     "file": "sound/composer/play-gate-vibrator-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/play-gate-warning-off",
     "file": "sound/composer/play-gate-warning-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/play-long-ascending",
     "file": "sound/composer/play-long-ascending.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 58
   },
   {
     "id": "sound/composer/play-long-level-4",
     "file": "sound/composer/play-long-level-4.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 56
   },
   {
     "id": "sound/composer/play-long-level-5",
     "file": "sound/composer/play-long-level-5.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 57
   },
   {
     "id": "sound/composer/play-note",
     "file": "sound/composer/play-note.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 9
   },
   {
     "id": "sound/composer/play-octave",
     "file": "sound/composer/play-octave.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 9
   },
   {
     "id": "sound/composer/play-rest",
     "file": "sound/composer/play-rest.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 16
   },
   {
     "id": "sound/composer/play-sharp",
     "file": "sound/composer/play-sharp.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 9
   },
   {
     "id": "sound/composer/play-short",
     "file": "sound/composer/play-short.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/play-shorter",
     "file": "sound/composer/play-shorter.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 9
   },
   {
     "id": "sound/composer/play-stop",
     "file": "sound/composer/play-stop.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 8
   },
   {
     "id": "sound/composer/play-up",
     "file": "sound/composer/play-up.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 16
   },
   {
     "id": "sound/composer/play-virgin",
     "file": "sound/composer/play-virgin.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/composer/preview-general-slot-3",
     "file": "sound/composer/preview-general-slot-3.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 33
   },
   {
     "id": "sound/composer/preview-overwritten",
     "file": "sound/composer/preview-overwritten.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 8
   },
   {
     "id": "sound/composer/preview-silent-slot-3",
     "file": "sound/composer/preview-silent-slot-3.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/preview-slot-1-ascending",
     "file": "sound/composer/preview-slot-1-ascending.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/composer/preview-slot-1-beep-once",
     "file": "sound/composer/preview-slot-1-beep-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/preview-slot-1-level-1",
     "file": "sound/composer/preview-slot-1-level-1.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/composer/preview-slot-1-level-2",
     "file": "sound/composer/preview-slot-1-level-2.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/composer/preview-slot-1-level-3",
     "file": "sound/composer/preview-slot-1-level-3.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/composer/preview-slot-1-level-4",
     "file": "sound/composer/preview-slot-1-level-4.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/composer/preview-slot-1-level-5",
     "file": "sound/composer/preview-slot-1-level-5.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/composer/preview-slot-1-off",
     "file": "sound/composer/preview-slot-1-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/preview-slot-1-ring-once",
     "file": "sound/composer/preview-slot-1-ring-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/composer/preview-slot-1-vibrator-off",
     "file": "sound/composer/preview-slot-1-vibrator-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 8
   },
   {
     "id": "sound/composer/preview-slot-2-ascending",
     "file": "sound/composer/preview-slot-2-ascending.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 22
   },
   {
     "id": "sound/composer/preview-slot-2-beep-once",
     "file": "sound/composer/preview-slot-2-beep-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/preview-slot-2-level-1",
     "file": "sound/composer/preview-slot-2-level-1.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 20
   },
   {
     "id": "sound/composer/preview-slot-2-level-2",
     "file": "sound/composer/preview-slot-2-level-2.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 20
   },
   {
     "id": "sound/composer/preview-slot-2-level-3",
     "file": "sound/composer/preview-slot-2-level-3.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 20
   },
   {
     "id": "sound/composer/preview-slot-2-level-4",
     "file": "sound/composer/preview-slot-2-level-4.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 20
   },
   {
     "id": "sound/composer/preview-slot-2-level-5",
     "file": "sound/composer/preview-slot-2-level-5.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 23
   },
   {
     "id": "sound/composer/preview-slot-2-off",
     "file": "sound/composer/preview-slot-2-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/preview-slot-2-ring-once",
     "file": "sound/composer/preview-slot-2-ring-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 22
   },
   {
     "id": "sound/composer/preview-slot-2-vibrator-off",
     "file": "sound/composer/preview-slot-2-vibrator-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 18
   },
   {
     "id": "sound/composer/preview-slot-3-ascending",
     "file": "sound/composer/preview-slot-3-ascending.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 70
   },
   {
     "id": "sound/composer/preview-slot-3-beep-once",
     "file": "sound/composer/preview-slot-3-beep-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/preview-slot-3-level-1",
     "file": "sound/composer/preview-slot-3-level-1.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 70
   },
   {
     "id": "sound/composer/preview-slot-3-level-2",
     "file": "sound/composer/preview-slot-3-level-2.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 70
   },
   {
     "id": "sound/composer/preview-slot-3-level-3",
     "file": "sound/composer/preview-slot-3-level-3.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 70
   },
   {
     "id": "sound/composer/preview-slot-3-level-4",
     "file": "sound/composer/preview-slot-3-level-4.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 70
   },
   {
     "id": "sound/composer/preview-slot-3-level-5",
     "file": "sound/composer/preview-slot-3-level-5.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 70
   },
   {
     "id": "sound/composer/preview-slot-3-off",
     "file": "sound/composer/preview-slot-3-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/preview-slot-3-ring-once",
     "file": "sound/composer/preview-slot-3-ring-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 70
   },
   {
     "id": "sound/composer/preview-slot-3-vibrator-off",
     "file": "sound/composer/preview-slot-3-vibrator-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 62
   },
   {
     "id": "sound/composer/preview-slot-4-ascending",
     "file": "sound/composer/preview-slot-4-ascending.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 48
   },
   {
     "id": "sound/composer/preview-slot-4-beep-once",
     "file": "sound/composer/preview-slot-4-beep-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/preview-slot-4-level-1",
     "file": "sound/composer/preview-slot-4-level-1.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 48
   },
   {
     "id": "sound/composer/preview-slot-4-level-2",
     "file": "sound/composer/preview-slot-4-level-2.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 48
   },
   {
     "id": "sound/composer/preview-slot-4-level-3",
     "file": "sound/composer/preview-slot-4-level-3.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 48
   },
   {
     "id": "sound/composer/preview-slot-4-level-4",
     "file": "sound/composer/preview-slot-4-level-4.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 48
   },
   {
     "id": "sound/composer/preview-slot-4-level-5",
     "file": "sound/composer/preview-slot-4-level-5.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 48
   },
   {
     "id": "sound/composer/preview-slot-4-off",
     "file": "sound/composer/preview-slot-4-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/preview-slot-4-ring-once",
     "file": "sound/composer/preview-slot-4-ring-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 48
   },
   {
     "id": "sound/composer/preview-slot-4-vibrator-off",
     "file": "sound/composer/preview-slot-4-vibrator-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 42
   },
   {
     "id": "sound/composer/preview-slot-7-ascending",
     "file": "sound/composer/preview-slot-7-ascending.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 110
   },
   {
     "id": "sound/composer/preview-slot-7-beep-once",
     "file": "sound/composer/preview-slot-7-beep-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/preview-slot-7-level-1",
     "file": "sound/composer/preview-slot-7-level-1.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 110
   },
   {
     "id": "sound/composer/preview-slot-7-level-2",
     "file": "sound/composer/preview-slot-7-level-2.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 110
   },
   {
     "id": "sound/composer/preview-slot-7-level-3",
     "file": "sound/composer/preview-slot-7-level-3.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 110
   },
   {
     "id": "sound/composer/preview-slot-7-level-4",
     "file": "sound/composer/preview-slot-7-level-4.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 110
   },
   {
     "id": "sound/composer/preview-slot-7-level-5",
     "file": "sound/composer/preview-slot-7-level-5.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 110
   },
   {
     "id": "sound/composer/preview-slot-7-off",
     "file": "sound/composer/preview-slot-7-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/composer/preview-slot-7-ring-once",
     "file": "sound/composer/preview-slot-7-ring-once.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 110
   },
   {
     "id": "sound/composer/preview-slot-7-vibrator-off",
     "file": "sound/composer/preview-slot-7-vibrator-off.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 102
   },
   {
     "id": "sound/composer/preview-volume-1",
     "file": "sound/composer/preview-volume-1.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 12
   },
   {
     "id": "sound/composer/preview-volume-2",
     "file": "sound/composer/preview-volume-2.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 12
   },
   {
     "id": "sound/composer/preview-volume-3",
     "file": "sound/composer/preview-volume-3.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 12
   },
   {
     "id": "sound/composer/preview-volume-4",
     "file": "sound/composer/preview-volume-4.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 12
   },
   {
     "id": "sound/composer/preview-volume-5",
     "file": "sound/composer/preview-volume-5.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 13
   },
   {
     "id": "sound/composer/tempo-100",
     "file": "sound/composer/tempo-100.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-112",
     "file": "sound/composer/tempo-112.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-125",
     "file": "sound/composer/tempo-125.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-140",
     "file": "sound/composer/tempo-140.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-160",
     "file": "sound/composer/tempo-160.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-180",
     "file": "sound/composer/tempo-180.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-200",
     "file": "sound/composer/tempo-200.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-225",
     "file": "sound/composer/tempo-225.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 34
   },
   {
     "id": "sound/composer/tempo-40",
     "file": "sound/composer/tempo-40.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-45",
     "file": "sound/composer/tempo-45.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-50",
     "file": "sound/composer/tempo-50.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-56",
     "file": "sound/composer/tempo-56.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-63",
     "file": "sound/composer/tempo-63.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-70",
     "file": "sound/composer/tempo-70.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-80",
     "file": "sound/composer/tempo-80.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-90",
     "file": "sound/composer/tempo-90.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-l1-225",
     "file": "sound/composer/tempo-l1-225.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-l1-40",
     "file": "sound/composer/tempo-l1-40.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-l3-225",
     "file": "sound/composer/tempo-l3-225.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   },
   {
     "id": "sound/composer/tempo-l3-40",
     "file": "sound/composer/tempo-l3-40.sound.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "sound",
     "events": 36
   }

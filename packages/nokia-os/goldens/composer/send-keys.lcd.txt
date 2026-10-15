@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/send-keys
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/send/keys/number.png + captures/6.39/plan27/send/keys/number-c.png
 source-sha256: 3c4eb5de6277f340ff6521e5a58520c3c9f35532dfdcde7cf0c682e081af7431
 note: The Phone number prompt typed, C on it. Each image's keys are its COMPOSER_CASES entry.

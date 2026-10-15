@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/save-open
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/save/open
 source-sha256: 5dc07a14c75bd2d2f329cf6bbcc4be06e84d83e8883b03431aabf7b4cfaa783e
 trigger-frame: 1

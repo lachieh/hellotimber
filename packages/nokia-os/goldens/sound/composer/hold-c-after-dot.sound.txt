@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/hold-c-after-dot
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/c-after-dot
 source-sha256: c0db1595f5896382bb442c7a1b674fa8839383710e20ec49885ce17f264119ea
 state: factory

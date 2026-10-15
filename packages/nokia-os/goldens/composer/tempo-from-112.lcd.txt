@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/tempo-from-112
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/tempo/from-112/00.png + captures/6.39/plan27/tempo/from-112/01.png + captures/6.39/plan27/tempo/from-112/02.png + captures/6.39/plan27/tempo/from-112/03.png + captures/6.39/plan27/tempo/from-112/04.png + captures/6.39/plan27/tempo/from-112/05.png + captures/6.39/plan27/tempo/from-112/06.png + captures/6.39/plan27/tempo/from-112/07.png + captures/6.39/plan27/tempo/from-112/08.png + captures/6.39/plan27/tempo/from-112/09.png + captures/6.39/plan27/tempo/from-112/10.png + captures/6.39/plan27/tempo/from-112/11.png + captures/6.39/plan27/tempo/from-112/12.png + captures/6.39/plan27/tempo/from-112/13.png + captures/6.39/plan27/tempo/from-112/14.png + captures/6.39/plan27/tempo/from-112/15.png + captures/6.39/plan27/tempo/from-112/16.png
 source-sha256: 60f87bf38c1c9167055e97c517e83a7d370a85b996c17dbe0c6de0660603ffe6
 note: Tempo opened on 112 BPM, ▼ ×16. Each image's keys are its COMPOSER_CASES entry.

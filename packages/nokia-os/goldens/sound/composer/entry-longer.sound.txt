@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/entry-longer
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/entry/longer
 source-sha256: b4f3ff646c4c05c8abe2d632080326f08e669eaa5ac99b9c27e47eecabc99f15
 state: factory

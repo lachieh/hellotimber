@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-eight
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/eight
 source-sha256: 7ad08b9679e86624053baeac2ba4f69c283d5932ee2af0d978784b976fe75cc6
 state: factory

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/hold-up
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/up
 source-sha256: cc2cc6aab4a1dc8892d91a20361f81272af58771a59f2451705de48d7cef08c4
 trigger-frame: 1

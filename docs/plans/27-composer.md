@@ -15,7 +15,7 @@ before Task 2; if it has not, stop and report.
 "Plan 16 supplementary captures") and plans 13-16 and 18 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan27/`. The planning probes in `$REF/captures/scratch-plan27/`
 (`NOTES.md` lists them) are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-11 done).
+**Status:** in progress (Tasks 0-12 done).
 
 ## Goal
 
@@ -1028,15 +1028,38 @@ edges use plan 16's drift tolerance (`drift: true`, D3's ±1 unit jitter and ≈
 
 **Files:** `tests/acceptance/27-composer.test.ts`, `tests/support/composer.ts`.
 
-- [ ] One scenario per asserted composer golden (LCD and sound), replaying `COMPOSER_CASES` for
+- [x] One scenario per asserted composer golden (LCD and sound), replaying `COMPOSER_CASES` for
       stills and the recordings' keys for timelines; the four tree leaves and two `sound/note`
       goldens included. Delete Task 2's pending-scenario entry; the coverage guard fails for an
       asserted composer golden without a scenario and for nodes 5-4-1…7 if uncovered.
-- [ ] Known gaps, if any, are listed with their cause in this file, as plan 16's are.
-- [ ] Every other plan's goldens still pass.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
+- [x] Known gaps, if any, are listed with their cause in this file, as plan 16's are.
+- [x] Every other plan's goldens still pass.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
       `mise exec -- vp check --fix`. Report this file's run time.
-- [ ] Commit: `test(nokia-os): drive every Composer golden`.
+- [x] Commit: `test(nokia-os): drive every Composer golden`.
+
+**Task 12 completion.** `scripts/capture-sets/27-composer.ts` asserts every fixture (Send's
+transmission stays `pending:18c`); `import-captures` re-run (status lines only). The thin face
+gains `B` (`composer/persist` `ringing-page`, regenerated) for the stored saved tone's page value.
+`tests/support/composer-scenarios.ts` holds the scenarios: stills per capture directory
+(`stillFixtureScenario` replays each image's case; `persist` over a cold boot, `restore` through
+Menu 6 4, `ringing-*` from storage), timelines (`timelineScenario`: the recording's state,
+settings, setup, `before`, then its keys as raw edges, the blink's phase aligned on the capture's
+first cursor toggle, a key acting on its release or invisibly aligned on its first change),
+`ringing/choose`, `restore/run`, the previews; `composerSound` the other sound goldens.
+`tests/acceptance/27-composer.test.ts`: 302 asserted goldens, 272 pass, 30 known gaps (each with
+its cause there: D9's level timer and the 225 BPM preview quarter (15 previews, 3 Play/pitch),
+`tempo-225`'s 1 ms 32nd, `preview-overwritten`'s vibrator, two-pass redraws and transitional
+frames (5), auto-repeat phase (2), blink phases with no rule (3)), and 7 still images inside their
+fixtures (`COMPOSER_IMAGE_GAPS`: the two long names, five blink phases after a Save). The file
+runs in ≈300 s. The tree leaves 5-4-1 … 5-4-7 stay plan 14's goldens (5-4-3/4/5 by its hand
+scenario) and `sound/note/5-4-1` plan 16's.
+
+Deviation (found by the timelines): every return to the editor restarts its blink at the frame it
+shows (the flow renders the editor as it pushes Options, so it is covered after the push); `Done`
+ignores the release of the Select that chose (it acts on key-down); C held during Play goes to
+standby 474 ms after Play's stop shows (`play/c-held`, was 533); the unit tests share the
+scenarios (`composer-save`, `composer-ringing` import them).
 
 ### Task 13 - Verification gate and closeout
 

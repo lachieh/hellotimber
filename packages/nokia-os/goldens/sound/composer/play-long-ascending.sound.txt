@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-long-ascending
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/long-ascending
 source-sha256: 5e889fd670e5c8a26f77b89955d066357e3b15680f939b76eb8387d663e0011c
 state: factory

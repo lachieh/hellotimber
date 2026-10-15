@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-stop
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/stop
 source-sha256: 20ed1e185df9cffedd9850655a1fc5478c1211dac976d04db7e3e443af113347
 state: factory

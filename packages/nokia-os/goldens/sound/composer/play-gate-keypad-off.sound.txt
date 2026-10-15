@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-gate-keypad-off
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/gate-keypad-off
 source-sha256: f8d1de30116f9194752df8b1b16ae9e9798212d3e44f374c7a2ff06c10323993
 state: factory

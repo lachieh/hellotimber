@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/hold-nine
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/hold/nine
 source-sha256: c0a8c2ed609cb3e3acd5f94f03f9fd586b1624c50a9e123970be27e4561d799c
 trigger-frame: 1

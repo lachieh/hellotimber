@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/save-c-typed
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/save/c-typed
 source-sha256: d4fa77aed6e04cc56370865e5e592ef670b822e42ce436b0804e47aebee8e577
 trigger-frame: 1

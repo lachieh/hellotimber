@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/send-name-back
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/send/name-back
 source-sha256: 7041bc712929bcd67bd552ed508e8121fae45093aa695293f4e9c24c7f1c22d1
 trigger-frame: 1

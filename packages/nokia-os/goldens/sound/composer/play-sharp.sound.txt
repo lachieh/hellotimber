@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-sharp
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/sharp
 source-sha256: dba29aeae6a328fcb76e5b3e19a52305e2e84173c85800aff036c180e8fd8106
 state: factory

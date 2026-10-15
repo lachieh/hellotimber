@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/preview-slot-1-level-3
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/preview/slot-1-level-3
 source-sha256: db62a4d2760c3db3addcfa2d243389e8c56c606581bf2096c7608d5af6838d73
 state: factory

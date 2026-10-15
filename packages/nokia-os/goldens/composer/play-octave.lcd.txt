@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/play-octave
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/octave
 source-sha256: 31aeede367a1b5a000f4cf2e5127774e8afc770750d839a4f33cc6b0bff20447
 trigger-frame: 1

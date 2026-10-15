@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/entry-octaves-level-3
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/entry/octaves-level-3
 source-sha256: 8bf687e800d276b7369e78035e54b8ba096d665943657de74b403701e2259364
 state: factory

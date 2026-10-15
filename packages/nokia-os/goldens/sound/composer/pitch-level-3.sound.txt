@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/pitch-level-3
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/pitch/level-3
 source-sha256: a21800d5abac3d8c8b0dbbc0e0c4d1d20bf03782513520c9e28a99f1fdc27f3b
 state: factory

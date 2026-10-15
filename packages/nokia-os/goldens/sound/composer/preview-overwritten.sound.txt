@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/preview-overwritten
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/sound/preview/overwritten
 source-sha256: 465e9b5c93e1a42490fe35455de257ebe294428f68e40967d5510d83def546f5
 state: factory

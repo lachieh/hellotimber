@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/save-keys
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/save/keys/empty.png + captures/6.39/plan27/save/keys/a.png + captures/6.39/plan27/save/keys/a-commit.png + captures/6.39/plan27/save/keys/fifteen.png + captures/6.39/plan27/save/keys/sixteen.png + captures/6.39/plan27/save/keys/symbols.png + captures/6.39/plan27/save/keys/digits.png + captures/6.39/plan27/save/keys/case.png + captures/6.39/plan27/save/keys/c.png + captures/6.39/plan27/save/keys/star.png + captures/6.39/plan27/save/keys/prefilled.png + captures/6.39/plan27/save/keys/prefilled-edit.png + captures/6.39/plan27/save/keys/prefilled-append.png
 source-sha256: 2a039a8f313050bf93c0f92525eb1facf6ae356ed4be5335526f0bcf5eaa8991
 note: The Tone name prompt: empty, typed, 15 and 16 characters, symbols, prefilled. Each image's keys are its COMPOSER_CASES entry.

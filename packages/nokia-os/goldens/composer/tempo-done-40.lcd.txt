@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/tempo-done-40
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/tempo/done-40
 source-sha256: 78453e8b3ad3102010f4714ac07436d97fc9675e1b7d5565c4af40a4a91b3c7d
 trigger-frame: 1

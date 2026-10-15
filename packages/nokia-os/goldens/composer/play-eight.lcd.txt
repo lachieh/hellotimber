@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/play-eight
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/eight
 source-sha256: 07c98cf6ac91cee9f1ad0670c9a95a34acbb7044bfd3126bf6ecbfa0bc30d570
 trigger-frame: 1

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-octave
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/octave
 source-sha256: 1862e8502be70db1ecd5efa0fb90f34144244e0eaa2d061c85d0b5a41f41d4b5
 state: factory

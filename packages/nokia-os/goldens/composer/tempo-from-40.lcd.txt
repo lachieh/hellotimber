@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/tempo-from-40
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/tempo/from-40/00.png + captures/6.39/plan27/tempo/from-40/01.png + captures/6.39/plan27/tempo/from-40/02.png + captures/6.39/plan27/tempo/from-40/03.png + captures/6.39/plan27/tempo/from-40/04.png + captures/6.39/plan27/tempo/from-40/05.png + captures/6.39/plan27/tempo/from-40/06.png + captures/6.39/plan27/tempo/from-40/07.png + captures/6.39/plan27/tempo/from-40/08.png + captures/6.39/plan27/tempo/from-40/09.png + captures/6.39/plan27/tempo/from-40/10.png + captures/6.39/plan27/tempo/from-40/11.png + captures/6.39/plan27/tempo/from-40/12.png + captures/6.39/plan27/tempo/from-40/13.png + captures/6.39/plan27/tempo/from-40/14.png + captures/6.39/plan27/tempo/from-40/15.png + captures/6.39/plan27/tempo/from-40/16.png
 source-sha256: dbebbf2a4b2d5036726ce80460778a339ecf0b66856e0afdda7608f47e2f8ac2
 note: Tempo after 40 BPM was set, ▼ ×16. Each image's keys are its COMPOSER_CASES entry.

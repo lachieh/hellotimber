@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/play-virgin
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/virgin
 source-sha256: 9b01a3c081be1f5660be9f7faf6165218d8558eacf55598499cc3656f37bb10f
 trigger-frame: 1

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/play-c
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/play/c
 source-sha256: 209b05c08625f3c2f02a9ba5370a77331020e9c38a2dc8f3a413d0c0c1d8455d
 state: factory

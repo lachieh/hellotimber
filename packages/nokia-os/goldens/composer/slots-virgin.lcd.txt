@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/slots-virgin
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/slots/virgin/00.png + captures/6.39/plan27/slots/virgin/01.png + captures/6.39/plan27/slots/virgin/02.png + captures/6.39/plan27/slots/virgin/03.png + captures/6.39/plan27/slots/virgin/04.png + captures/6.39/plan27/slots/virgin/05.png + captures/6.39/plan27/slots/virgin/06.png + captures/6.39/plan27/slots/virgin/07.png
 source-sha256: 70274565eccb34036d1db63f59e98b016b2d99659efdb6aaf6ac68ba58e9dee3
 note: The virgin slot list on slot 1, then ▼ ×7 through the wrap. Each image's keys are its COMPOSER_CASES entry.

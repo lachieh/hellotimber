@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/composer/limit-delete-note
-status: pending:27
+status: asserted
 source: captures/6.39/plan27/limit/delete-note
 source-sha256: c166073dafd62fe6815ab9187f94ac36137fe7ad8161f97e48c50dc12570009c
 state: factory
