@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/edit-follow
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/edit/follow-tone-after-replace.png + captures/6.39/plan19/edit/follow-speed-after-replace.png + captures/6.39/plan19/edit/follow-speed-after-erase.png + captures/6.39/plan19/edit/follow-tone-pages-17.png + captures/6.39/plan19/edit/follow-speed-after-add.png
 source-sha256: 996d6aa48f77b7a2d64d9b014b05bd8477290511e1e18851d7d109c0eebe85e5
 note: SIM content: Ånna's tone (Low) and speed dial key 3 after Edit › Replace (Ånnax); key 3 after Ånnax is erased; the tone page and key 3 after New fills its location.

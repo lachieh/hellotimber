@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/add-small-refill
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/add/small-refill
 source-sha256: 37d0dae26caa43c9bb83d0b17afc62dc6eff5972353e999274c364a6c971f7e1
 trigger-frame: 1

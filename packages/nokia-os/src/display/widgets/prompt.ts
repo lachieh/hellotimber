@@ -28,7 +28,12 @@ const MASK_TOP = 29;
  * - `mask`: a code entry, one `*` per digit typed (plan 15 D7).
  */
 export type PromptEntry =
-  | { readonly kind: "value"; readonly text: string }
+  | {
+      readonly kind: "value";
+      readonly text: string;
+      /** Plan 19: Speed dials' name wider than the large face's line (default large). */
+      readonly font?: "small";
+    }
   | { readonly kind: "mask"; readonly digits: number }
   /**
    * Plan 18: an editable text in the box, large from x 2 (Routing address, Name); the cursor
@@ -122,7 +127,9 @@ export function paintPrompt(fb: Framebuffer, model: PromptModel): void {
     );
   }
   const below = tall ? NUMBER_TALL_BOX_TOP : LABEL_TOP + model.label.length * LINE_PITCH;
-  if (entry?.kind === "value") fb.drawText(STOCK_FONTS.large, entry.text, 0, below);
+  if (entry?.kind === "value") {
+    fb.drawText(STOCK_FONTS[entry.font ?? "large"], entry.text, 0, below);
+  }
   if (entry?.kind === "box") paintBox(fb, entry, below, model.cursor);
   if (entry?.kind === "text") paintTextEntry(fb, entry, below, model.cursor);
   if (entry?.kind === "number") paintNumber(fb, entry, below, model.cursor);

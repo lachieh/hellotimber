@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/voice-quit
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/voice/quit
 source-sha256: 70cdace97b1a96124497a900e55777a5a631e9ec7ee9fde496db8eae365dcbae
 trigger-frame: 1

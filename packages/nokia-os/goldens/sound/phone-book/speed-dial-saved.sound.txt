@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/phone-book/speed-dial-saved
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/notes/speed-dial-saved
 source-sha256: 61cd8291837ad3ab4f6fed9a50396be6264e44f46a9b805f17d667b3a68110e7
 state: factory

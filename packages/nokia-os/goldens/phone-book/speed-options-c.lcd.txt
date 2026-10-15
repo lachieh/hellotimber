@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/speed-options-c
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/speed/options-c
 source-sha256: 5178be9d340e71f17a3a315d29c83c392c3920ca966d378445091b5444a2697d
 trigger-frame: 1

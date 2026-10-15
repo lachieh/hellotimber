@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/voice-playback
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/voice/playback
 source-sha256: eb2e1c624a39e246b01ef0ee1f476011ac977d44432ab94280df90cb9626e61f
 trigger-frame: 1

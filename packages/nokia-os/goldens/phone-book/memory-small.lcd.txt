@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/memory-small
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/options/memory-small
 source-sha256: d918d9a0b9c1afbc31c57c3160a89cf95eb598a07a3e24191193b4191691b64d
 trigger-frame: 1

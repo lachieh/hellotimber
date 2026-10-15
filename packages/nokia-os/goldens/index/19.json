@@ -210,7 +210,7 @@
   {
     "id": "phone-book/add-small-keys",
     "file": "phone-book/add-small-keys.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -218,7 +218,7 @@
   {
     "id": "phone-book/add-small-refill",
     "file": "phone-book/add-small-refill.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -338,7 +338,7 @@
   {
     "id": "phone-book/edit-follow",
     "file": "phone-book/edit-follow.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -658,7 +658,7 @@
   {
     "id": "phone-book/memory-small",
     "file": "phone-book/memory-small.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1050,7 +1050,7 @@
   {
     "id": "phone-book/speed-assign-2",
     "file": "phone-book/speed-assign-2.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1058,7 +1058,7 @@
   {
     "id": "phone-book/speed-assign-2-saved",
     "file": "phone-book/speed-assign-2-saved.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1066,7 +1066,7 @@
   {
     "id": "phone-book/speed-assign-3",
     "file": "phone-book/speed-assign-3.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1074,7 +1074,7 @@
   {
     "id": "phone-book/speed-assign-3-saved",
     "file": "phone-book/speed-assign-3-saved.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1082,7 +1082,7 @@
   {
     "id": "phone-book/speed-assign-4",
     "file": "phone-book/speed-assign-4.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1090,7 +1090,7 @@
   {
     "id": "phone-book/speed-assign-4-saved",
     "file": "phone-book/speed-assign-4-saved.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -1098,7 +1098,7 @@
   {
     "id": "phone-book/speed-assign-5",
     "file": "phone-book/speed-assign-5.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1106,7 +1106,7 @@
   {
     "id": "phone-book/speed-assign-5-saved",
     "file": "phone-book/speed-assign-5-saved.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1114,7 +1114,7 @@
   {
     "id": "phone-book/speed-assign-6",
     "file": "phone-book/speed-assign-6.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1122,7 +1122,7 @@
   {
     "id": "phone-book/speed-assign-6-saved",
     "file": "phone-book/speed-assign-6-saved.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1130,7 +1130,7 @@
   {
     "id": "phone-book/speed-assign-7",
     "file": "phone-book/speed-assign-7.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1138,7 +1138,7 @@
   {
     "id": "phone-book/speed-assign-7-saved",
     "file": "phone-book/speed-assign-7-saved.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1146,7 +1146,7 @@
   {
     "id": "phone-book/speed-assign-8",
     "file": "phone-book/speed-assign-8.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1154,7 +1154,7 @@
   {
     "id": "phone-book/speed-assign-8-saved",
     "file": "phone-book/speed-assign-8-saved.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1162,7 +1162,7 @@
   {
     "id": "phone-book/speed-assign-9",
     "file": "phone-book/speed-assign-9.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1170,7 +1170,7 @@
   {
     "id": "phone-book/speed-assign-9-saved",
     "file": "phone-book/speed-assign-9-saved.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1178,7 +1178,7 @@
   {
     "id": "phone-book/speed-change",
     "file": "phone-book/speed-change.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1186,7 +1186,7 @@
   {
     "id": "phone-book/speed-change-select",
     "file": "phone-book/speed-change-select.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1194,7 +1194,7 @@
   {
     "id": "phone-book/speed-empty",
     "file": "phone-book/speed-empty.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 3
@@ -1202,7 +1202,7 @@
   {
     "id": "phone-book/speed-erase",
     "file": "phone-book/speed-erase.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1210,7 +1210,7 @@
   {
     "id": "phone-book/speed-erase-c",
     "file": "phone-book/speed-erase-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1218,7 +1218,7 @@
   {
     "id": "phone-book/speed-erase-ok",
     "file": "phone-book/speed-erase-ok.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 11
@@ -1226,7 +1226,7 @@
   {
     "id": "phone-book/speed-erased-name",
     "file": "phone-book/speed-erased-name.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1234,7 +1234,7 @@
   {
     "id": "phone-book/speed-keys",
     "file": "phone-book/speed-keys.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 11,
     "frames": 11
@@ -1242,7 +1242,7 @@
   {
     "id": "phone-book/speed-options",
     "file": "phone-book/speed-options.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1250,7 +1250,7 @@
   {
     "id": "phone-book/speed-options-c",
     "file": "phone-book/speed-options-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1258,7 +1258,7 @@
   {
     "id": "phone-book/speed-restore",
     "file": "phone-book/speed-restore.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -1266,7 +1266,7 @@
   {
     "id": "phone-book/speed-small",
     "file": "phone-book/speed-small.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1274,7 +1274,7 @@
   {
     "id": "phone-book/speed-small-assign",
     "file": "phone-book/speed-small-assign.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1282,7 +1282,7 @@
   {
     "id": "phone-book/speed-two",
     "file": "phone-book/speed-two.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -1290,7 +1290,7 @@
   {
     "id": "phone-book/speed-view",
     "file": "phone-book/speed-view.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1298,7 +1298,7 @@
   {
     "id": "phone-book/speed-view-back",
     "file": "phone-book/speed-view-back.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1306,7 +1306,7 @@
   {
     "id": "phone-book/speed-view-intl",
     "file": "phone-book/speed-view-intl.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1314,7 +1314,7 @@
   {
     "id": "phone-book/speed-view-long",
     "file": "phone-book/speed-view-long.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1618,7 +1618,7 @@
   {
     "id": "phone-book/voice-add",
     "file": "phone-book/voice-add.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1626,7 +1626,7 @@
   {
     "id": "phone-book/voice-add-select",
     "file": "phone-book/voice-add-select.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1634,7 +1634,7 @@
   {
     "id": "phone-book/voice-change",
     "file": "phone-book/voice-change.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 3
@@ -1642,7 +1642,7 @@
   {
     "id": "phone-book/voice-erase",
     "file": "phone-book/voice-erase.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 3
@@ -1650,7 +1650,7 @@
   {
     "id": "phone-book/voice-list-add",
     "file": "phone-book/voice-list-add.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1658,7 +1658,7 @@
   {
     "id": "phone-book/voice-number-add",
     "file": "phone-book/voice-number-add.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1666,7 +1666,7 @@
   {
     "id": "phone-book/voice-playback",
     "file": "phone-book/voice-playback.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 3
@@ -1674,7 +1674,7 @@
   {
     "id": "phone-book/voice-press-start-c",
     "file": "phone-book/voice-press-start-c.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1682,7 +1682,7 @@
   {
     "id": "phone-book/voice-quit",
     "file": "phone-book/voice-quit.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1690,7 +1690,7 @@
   {
     "id": "phone-book/voice-start",
     "file": "phone-book/voice-start.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 10
@@ -1754,14 +1754,14 @@
   {
     "id": "sound/phone-book/speed-dial-erased",
     "file": "sound/phone-book/speed-dial-erased.sound.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/phone-book/speed-dial-saved",
     "file": "sound/phone-book/speed-dial-saved.sound.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
@@ -1817,7 +1817,7 @@
   {
     "id": "sound/phone-book/voice-system-error",
     "file": "sound/phone-book/voice-system-error.sound.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "sound",
     "events": 9
   }

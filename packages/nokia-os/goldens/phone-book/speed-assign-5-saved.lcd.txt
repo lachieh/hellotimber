@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/speed-assign-5-saved
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/speed/assign-5-saved
 source-sha256: 5a489edfbb184db1c3da7ff695b90423cbd4a75547a3f0f64b56e27736278106
 trigger-frame: 1

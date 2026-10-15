@@ -19,9 +19,11 @@ import {
 import { paintMulti, type MultiModel } from "./multi";
 import {
   paintNameList,
+  paintPhoneBookNumber,
   paintPhoneBookQuery,
   paintServiceList,
   type NameListModel,
+  type PhoneBookNumberModel,
   type PhoneBookQueryModel,
   type ServiceListModel,
 } from "./name-list";
@@ -43,7 +45,12 @@ export type { KeyguardModel } from "./keyguard";
 export type { LevelBarModel } from "./level-bar";
 export type { MessageListModel, MessagePageModel } from "./message";
 export type { MultiModel } from "./multi";
-export type { NameListModel, PhoneBookQueryModel, ServiceListModel } from "./name-list";
+export type {
+  NameListModel,
+  PhoneBookNumberModel,
+  PhoneBookQueryModel,
+  ServiceListModel,
+} from "./name-list";
 export type { NoteModel, WelcomeNoteModel } from "./note";
 export { welcomeNoteLines } from "./note";
 export type { OptionsModel } from "./options";
@@ -104,7 +111,8 @@ export type WidgetModel =
   | MessagePageModel
   | NameListModel
   | ServiceListModel
-  | PhoneBookQueryModel;
+  | PhoneBookQueryModel
+  | PhoneBookNumberModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -186,6 +194,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "phone-book-query":
       paintPhoneBookQuery(fb, model);
+      return;
+    case "phone-book-number":
+      paintPhoneBookNumber(fb, model);
       return;
     case "standby-draw":
       paintStandby(fb, {

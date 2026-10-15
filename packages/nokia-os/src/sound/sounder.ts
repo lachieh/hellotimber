@@ -171,6 +171,8 @@ export class StockSounder implements StockCueSink {
   #beep: { readonly play: SoundPlay; readonly atMs: number } | undefined;
   /** The Keypad tones option the next key-down beeps at, instead of the stored one. */
   #keyLevel: { readonly option: number | null } | undefined;
+  /** Plan 19: what the next key-down plays in place of its beep. */
+  #keyProgram: SoundProgram | undefined;
 
   constructor(sequencer: SoundSequencer, settings: StockSettings, now: () => number) {
     this.#sequencer = sequencer;
@@ -188,9 +190,14 @@ export class StockSounder implements StockCueSink {
     this.#lastKeyMs = now;
     const level = this.#keyLevel;
     this.#keyLevel = undefined;
+    const program = this.#keyProgram;
+    this.#keyProgram = undefined;
     // A note's warning tone opened by this key replaces its beep (D12); a game-over screen
     // silences it.
-    if ((options.beeps ?? true) && this.#silentAtMs !== now) this.#keyBeep(now, level?.option);
+    if ((options.beeps ?? true) && this.#silentAtMs !== now) {
+      if (program === undefined) this.#keyBeep(now, level?.option);
+      else this.#beep = { play: this.#sequencer.play(program, now), atMs: now };
+    }
     const repeats = key === "up" || key === "down";
     const first = repeats ? LEVEL_REPEAT.firstMs : key === "c" ? C_HOLD_BEEP_MS : undefined;
     const next = (options.holdBeeps ?? true) && first !== undefined ? now + first : undefined;
@@ -203,6 +210,14 @@ export class StockSounder implements StockCueSink {
    */
   keyBeepLevel(option: number | null): void {
     this.#keyLevel = { option };
+  }
+
+  /**
+   * Plan 19: the key going down plays `program` in place of its beep (Voice tags' Start: the
+   * voice DSP's 900 Hz words).
+   */
+  keyBeepProgram(program: SoundProgram): void {
+    this.#keyProgram = program;
   }
 
   keyUp(key: PhoneKey): void {
@@ -237,6 +252,7 @@ export class StockSounder implements StockCueSink {
     this.#preview = undefined;
     this.#held.clear();
     this.#keyLevel = undefined;
+    this.#keyProgram = undefined;
     this.#beep = undefined;
     this.#sequencer.stop(["buzzer", "tone", "vibrator"], now);
     this.#sequencer.play(BOOT_TONE.program, now);

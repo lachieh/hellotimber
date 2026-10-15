@@ -134,7 +134,10 @@ the link time, **3240 ms** (3237-3359 over six sends, the synthetic cell; UNVERI
 ▼ there hangs the emulator's page, an artefact). Assign → the list with `Select` → `Speed dial
 key n saved` (tick, ≈1.40 s) → the key with `Options`: View number (the number in the large
 face, `Back`), Change (the list again), Erase (`Erase?` → `Speed dial key n erased`, the bin,
-≈2.84 s → the key's fallback with `Assign`). Assign with no names: `No phone numbers`. Held 2-9
+≈2.84 s → the key's fallback with `Assign`). Assign with no names: `No phone numbers`. View
+number's digits end at x 82 (the name list's large numbers at x 81). C held on a key, its Options
+or View number goes to standby. A name wider than the large face on a key page is not captured;
+nokia-os draws it in the small face (UNVERIFIED). Held 2-9
 at standby dials the key's entry when Settings › Call settings › Speed dialling is On, else opens
 number entry; held 1 dials the voice mailbox (plan 22).
 
@@ -144,6 +147,8 @@ The emulator has no voice DSP. Add voice tag: the list with `Add voice tag` → 
 then` / `speak after tone` (`Start`) → `Please` / `speak now` (an icon animating in seven frames
 ≈190 ms apart, `Quit`) → ≈2.27 s later `Voice system error` (≈2.84 s, 675 Hz DSP beeps) → the
 list. Quit and C return to the list. Playback, Change and Erase show `No voice tags saved`.
+Start's key beep is the voice DSP's (900 Hz on word 0x7008 for 14 ms, then 0x99B4), and the error's
+three beeps are 675 Hz on 0x99B5 (145, 217, 147 ms, 39 and 38 ms apart).
 
 ## Notes and sounds
 

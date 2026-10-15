@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/speed-change
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/speed/change
 source-sha256: 5096359b69e743a010c9f199b03647829634add3104a6cdb0bc53fedd3320e20
 trigger-frame: 1

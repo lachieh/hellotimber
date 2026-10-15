@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/voice-start
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/voice/start
 source-sha256: 7a3ba2de193fc10560e5798b9aded3c8561655fc56154a7867ffcd887e188f2b
 trigger-frame: 1

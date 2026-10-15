@@ -244,3 +244,76 @@ describe("Assign tone (Task 8 T)", () => {
     );
   });
 });
+
+describe("Speed dials (Task 9 K)", () => {
+  /** Menu, Phone book, Speed dials: Key 2. */
+  function speedDials(rig: ReturnType<typeof standbyRig>): void {
+    phoneBook(rig, 9);
+  }
+
+  it("assigns a name to a key, then Erase falls back to SIM location n", () => {
+    const storage = createMemoryStorage();
+    const rig = standbyRig({ storage, sim: CONTENT });
+    speedDials(rig);
+    rig.press("down"); // Key 3 (Ben, SIM location 3)
+    rig.press("navi"); // Assign: the list
+    rig.advance(500);
+    rig.press("navi"); // Select the first name
+    rig.advance(3000);
+    const first = bookOf(storage).entries()[0]!;
+    expect(bookOf(storage).speedDial(3)).toEqual(first);
+    rig.press("navi"); // Options
+    rig.advance(300);
+    rig.press("up"); // Erase (the list wraps)
+    rig.press("navi");
+    rig.advance(300);
+    rig.press("navi"); // OK on Erase?
+    rig.advance(4000);
+    expect(bookOf(storage).isAssigned(3)).toBe(false);
+    expect(bookOf(storage).speedDial(3)?.name).toBe("Ben");
+  });
+
+  it("stops the keys at the SIM's last location", () => {
+    const sim: StockSimCard = {
+      id: "small",
+      phoneBook: { locations: 3, entries: [{ name: "Zed", number: "1" }] },
+    };
+    const rig = standbyRig({ sim });
+    speedDials(rig);
+    const key2 = rig.paint();
+    rig.press("down"); // Key 3
+    rig.press("down"); // Key 2 again
+    rig.advance(100);
+    expect(rig.paint().pixels).toEqual(key2.pixels);
+  });
+
+  it("goes to standby on a held C", () => {
+    const rig = standbyRig({ sim: CONTENT });
+    speedDials(rig);
+    rig.press("c", 1200);
+    rig.advance(500);
+    expect(rig.phone.path).toBe("standby");
+  });
+});
+
+describe("Voice tags (Task 9 G, D9)", () => {
+  it("Start shows Please speak now, then Voice system error, then the list", () => {
+    const rig = standbyRig({ sim: CONTENT });
+    phoneBook(rig, 10);
+    rig.press("navi"); // Add voice tag: the list
+    rig.advance(500);
+    const list = rig.paint().pixels;
+    rig.press("navi"); // Press Start, then
+    rig.advance(500);
+    rig.press("navi"); // Start: Please speak now
+    rig.advance(1000);
+    expect(rig.paint().pixels).not.toEqual(list);
+    const sounds = rig.sounds.length;
+    rig.advance(1500); // Voice system error with its 675 Hz beeps
+    expect(rig.sounds.slice(sounds)).toContainEqual(
+      expect.objectContaining({ output: "tone", hz: 675 }),
+    );
+    rig.advance(3000);
+    expect(rig.paint().pixels).toEqual(list);
+  });
+});

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/speed-keys
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/speed/key-2.png + captures/6.39/plan19/speed/down-3.png + captures/6.39/plan19/speed/down-4.png + captures/6.39/plan19/speed/down-5.png + captures/6.39/plan19/speed/down-6.png + captures/6.39/plan19/speed/down-7.png + captures/6.39/plan19/speed/down-8.png + captures/6.39/plan19/speed/down-9.png + captures/6.39/plan19/speed/down-10.png + captures/6.39/plan19/speed/up-1.png + captures/6.39/plan19/speed/up-2.png
 source-sha256: 8cbeecbc6e952d1af321c4ad7187b0cca944dbee9d6bed40f0fa318d220e7497
 note: SIM content: Speed dials from Key 2: ▼ to Key 9 and the wrap, then ▲ back past it (each key shows SIM location n).

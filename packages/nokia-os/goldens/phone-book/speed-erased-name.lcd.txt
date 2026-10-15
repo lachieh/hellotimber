@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/speed-erased-name
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/speed/key-6-dave.png + captures/6.39/plan19/speed/key-6-erased.png
 source-sha256: c063e686b8810f403740d658c3bc548592890ff659770604847ec206a9ee6812
 note: SIM content: Key 6 assigned to Dave; after Dave is erased, Key 6 shows its fallback (Eve) with Assign.

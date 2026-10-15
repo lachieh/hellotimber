@@ -96,6 +96,18 @@ export function paintPhoneBookQuery(fb: Framebuffer, model: PhoneBookQueryModel)
   fb.drawTextCentered(STOCK_FONTS.small, model.softkey, SOFTKEY_TOP);
 }
 
+/** Speed dials' View number: the number large and right-aligned, no icon (`phone-book/speed-view`). */
+export interface PhoneBookNumberModel {
+  readonly kind: "phone-book-number";
+  readonly number: string;
+  readonly softkey: string;
+}
+
+export function paintPhoneBookNumber(fb: Framebuffer, model: PhoneBookNumberModel): void {
+  paintLargeNumber(fb, model.number, LCD_WIDTH);
+  fb.drawTextCentered(STOCK_FONTS.small, model.softkey, SOFTKEY_TOP);
+}
+
 /** Service Nos.: plan 14's rows and rail, no icon (`phone-book/service-*`). */
 export interface ServiceListModel {
   readonly kind: "service-list";
@@ -172,14 +184,13 @@ export function cutRow(font: PixelFont, name: string): string | undefined {
 }
 
 /** A number in the large face, right-aligned on the lines from top 24 up (View number). */
-export function paintLargeNumber(fb: Framebuffer, number: string): void {
+export function paintLargeNumber(fb: Framebuffer, number: string, right = LCD_WIDTH - 1): void {
   const { large } = STOCK_FONTS;
   const lines = breakFromEnd(large, number, LARGE_NUMBER_WIDTH, LARGE_NUMBER_TOPS.length);
   const tops = LARGE_NUMBER_TOPS.slice(LARGE_NUMBER_TOPS.length - lines.length);
-  // The last cell's blank column is x 82 (`l24@4-83`: ink to x 81), as plan 18's values.
-  lines.forEach((line, i) =>
-    fb.drawText(large, line, LCD_WIDTH - 1 - textWidth(large, line), tops[i]!),
-  );
+  // The name list's last cell's blank column is x 82 (`l24@4-83`: ink to x 81), as plan 18's
+  // values; View number's is x 83 (`phone-book/speed-view`: ink to x 82).
+  lines.forEach((line, i) => fb.drawText(large, line, right - textWidth(large, line), tops[i]!));
 }
 
 function icon(fb: Framebuffer): void {

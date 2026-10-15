@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/voice-erase
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/voice/erase
 source-sha256: ebefe2a66f30b1545bbff8abf012eb7dfdcdf6914ed560ed16f71dc14b5dd822
 trigger-frame: 1

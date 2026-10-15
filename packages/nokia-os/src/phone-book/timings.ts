@@ -24,3 +24,30 @@ export const NO_TONE_PREVIEW: SoundProgram = {
   id: "phone-book/no-tone",
   steps: [{ ms: 339, tone: { hz: 1750, volume: 0x9104 } }],
 };
+
+/**
+ * Voice tags' Start beeps on the voice DSP's words: 900 Hz on 0x7008 for 14 ms, then 0x99B4
+ * (`sound/phone-book/voice-system-error` 33-178 ms; the keypad beep's 145 ms).
+ */
+export const VOICE_START_BEEP: SoundProgram = {
+  id: "phone-book/voice-start",
+  steps: [
+    { ms: 14, tone: { hz: 900, volume: 0x7008 } },
+    { ms: 131, tone: { hz: 900, volume: 0x99b4 } },
+  ],
+};
+
+/**
+ * `Voice system error`'s three 675 Hz DSP beeps on word 0x99B5 from the note's start
+ * (`sound/phone-book/voice-system-error`: 2310-2455, 2494-2711, 2749-2896 ms).
+ */
+export const VOICE_ERROR_BEEPS: SoundProgram = {
+  id: "phone-book/voice-system-error",
+  steps: [
+    { ms: 145, tone: { hz: 675, volume: 0x99b5 } },
+    { ms: 39, tone: null },
+    { ms: 217, tone: { hz: 675, volume: 0x99b5 } },
+    { ms: 38, tone: null },
+    { ms: 147, tone: { hz: 675, volume: 0x99b5 } },
+  ],
+};

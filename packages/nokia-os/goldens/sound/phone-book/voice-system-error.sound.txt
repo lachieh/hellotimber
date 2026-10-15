@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/phone-book/voice-system-error
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/notes/voice-system-error
 source-sha256: 9bdcc0ad7a75fd2b0182c1856820274600184c8db5c711edbd0003624ac991bb
 state: factory

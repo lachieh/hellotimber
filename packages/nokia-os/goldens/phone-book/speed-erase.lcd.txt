@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/speed-erase
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/speed/erase
 source-sha256: aab83504c79fd6dfb54ca776055765e4a8928524e345f47b5a564b4897410532
 trigger-frame: 1

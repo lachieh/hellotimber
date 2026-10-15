@@ -95,11 +95,17 @@ const LEAD_SPREAD_MS = 15;
 const LIST_EXIT_SPREAD: TimelineOptions = { toleranceMs: 6 };
 
 /**
- * `No phone numbers` plays one recording's timeline; the note lasts 2850-2938 ms between
+ * `No phone numbers` plays one recording's timeline (2914 ms); the note lasts 2850-2938 ms between
  * recordings (standby-down-empty 2901, search-empty-sim 2881, service-empty 2938,
  * speed-empty 2850).
  */
-const NO_PHONE_NUMBERS: TimelineOptions = { toleranceMs: 60 };
+const NO_PHONE_NUMBERS: TimelineOptions = { toleranceMs: 65 };
+
+/**
+ * `Speed dial key n saved` plays speed-assign-2-saved's timeline (1396 ms); it lasts 1380-1427 ms
+ * over the nine other saves.
+ */
+const SPEED_DIAL_SAVED: TimelineOptions = { toleranceMs: 35 };
 
 /**
  * A warning-tone note in another flow than its recording's: `Nothing to save` lasts 2880 ms after
@@ -158,6 +164,16 @@ export const PHONE_BOOK_OPTIONS: Readonly<
   "phone-book/edit-empty-both": WARNING_NOTE,
   // Done's half tick comes 670-672 ms after its box in four recordings, 697 in this one.
   "phone-book/tone-ok-no-tone": { toleranceMs: 30 },
+  // Task 9.
+  ...Object.fromEntries(
+    [3, 4, 5, 6, 7, 8, 9].map((key) => [`phone-book/speed-assign-${key}-saved`, SPEED_DIAL_SAVED]),
+  ),
+  "phone-book/speed-change-select": SPEED_DIAL_SAVED,
+  "phone-book/speed-empty": NO_PHONE_NUMBERS,
+  // No voice tags saved plays plan 14's recording of its node (1-10-2).
+  "phone-book/voice-erase": OTHER_RECORDING,
+  "phone-book/voice-playback": OTHER_RECORDING,
+  "phone-book/voice-change": OTHER_RECORDING,
   // Edit › Add writes a new SIM location: `Saved` comes 361 ms after OK's down, past the
   // replay's latency window (Replace: 285 ms); OK acts on its row.
   "phone-book/edit-add": keysOnRows([1], OTHER_RECORDING),
@@ -173,6 +189,12 @@ const PHONE_BOOK_SOUND_OPTIONS: Readonly<Record<string, SoundTolerance>> = Objec
     { drift: true },
   ]),
 );
+
+/**
+ * Sound goldens whose first key acts at its beep (the screen it opens draws then: Voice tags'
+ * Start, `Please speak now` and the error's beeps 2273 ms later).
+ */
+const KEY_AT_BEEP: ReadonlySet<string> = new Set(["sound/phone-book/voice-system-error"]);
 
 /**
  * A golden whose recording started while the previous preview sounded (`tone-preview-no-tone`,
@@ -210,7 +232,7 @@ export function phoneBookSoundScenario(id: string): void {
     first.output === "tone" &&
     first.state.kind === "sounding" &&
     first.state.hz === KEY_BEEP_HZ &&
-    first.ms > KEY_LATENCY_MAX_MS
+    (first.ms > KEY_LATENCY_MAX_MS || KEY_AT_BEEP.has(id))
       ? first.ms
       : 0;
   const keys = (golden.keys ?? []).map((key, i) => (i === 0 ? { ...key, ms: key.ms + beep } : key));
@@ -242,6 +264,11 @@ export const PHONE_BOOK_SCENARIOS: Readonly<Record<string, (id: string) => void>
 
 /** Asserted plan 19 goldens whose scenario cannot pass, with the reason. */
 export const PHONE_BOOK_KNOWN_GAPS: Readonly<Record<string, string>> = {
+  "phone-book/speed-restore":
+    "its log opens Call register › Missed calls (Menu 4 1) before the shots and holds C there: " +
+    "plan 22's placeholder does not leave for standby on a held C as the firmware's note does, " +
+    "so the replay's later keys land in Call register (Restore keeping speed dials and tones is " +
+    "tests/phone-book-store.test.ts's)",
   "phone-book/standby-list-hold-c":
     "C held: the list closes at C's down as captured; the firmware then redraws standby (its " +
     "operator-less frame) ≈530 ms after the down, its own long press; the kernel's long press " +

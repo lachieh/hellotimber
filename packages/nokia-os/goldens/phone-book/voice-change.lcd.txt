@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/voice-change
-status: pending:19
+status: asserted
 source: captures/6.39/plan19/voice/change
 source-sha256: 17c6756999c11128af283ba576eee25024cf48dc99f8371afe7ad9fd45cb3d56
 trigger-frame: 1

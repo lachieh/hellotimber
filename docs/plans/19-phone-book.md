@@ -907,16 +907,35 @@ are not edges (the key's stop is compared).
 **Files:** `src/firmware/features/phone-book.ts` (its Speed dials and Voice tags section),
 `tests/phone-book-flows.test.ts`.
 
-- [ ] 1-9: the key page (`Key n:` and the entry's name, large or the small fallback, or `(empty)`)
+- [x] 1-9: the key page (`Key n:` and the entry's name, large or the small fallback, or `(empty)`)
       for keys 2-9 with ▲/▼ wrap; `Assign` (unassigned) → the list with `Select` → `Speed dial key n
 saved` → `Options`; `Options` (assigned) → View number (`Back`), Change (the list again), Erase
       (`Erase?` → `Speed dial key n erased`); no names → `No phone numbers`.
-- [ ] 1-10-1 Add voice tag: the list with `Add voice tag` → `Press Start, then` / `speak after tone`
+- [x] 1-10-1 Add voice tag: the list with `Add voice tag` → `Press Start, then` / `speak after tone`
       (`Start`) → `Please speak now` (`Quit`) → `Voice system error` → the list (D9); 1-10-2…4 keep
       their notes.
-- [ ] `StockPhoneBook.speedDial` for plan 22 (D11); a test pins the fallback.
-- [ ] TDD through keys against `phone-book/speed-*` and `voice-*`.
-- [ ] Commit: `feat(nokia-os): Speed dials and Voice tags`.
+- [x] `StockPhoneBook.speedDial` for plan 22 (D11); a test pins the fallback.
+- [x] TDD through keys against `phone-book/speed-*` and `voice-*`.
+- [x] Commit: `feat(nokia-os): Speed dials and Voice tags`.
+
+Deviation: **Task 9 (files):** the flows live in `src/phone-book/speed.ts`; `features/phone-book.ts`
+binds `1-9` and `1-10-1` (its `1-9` prompt layout goes: the screen is bound; plan 14's prompt
+coverage test counts 12 unbound prompts). Additive shared changes: plan 14's prompt `value` entry
+takes `font: "small"` (a key's wide name, UNVERIFIED), a `phone-book-number` model draws View
+number (digits to x 82, one column right of the name list's), and plan 16's sounder gains
+`keyBeepProgram` (Start's beep on the voice DSP's words; `VOICE_START_BEEP`, `VOICE_ERROR_BEEPS`).
+
+Deviation: **Task 9 (measured behaviour):** C held on a key page, its Options or View number goes
+to standby (plan 18's `HeldC`; the captures' `hold c` from those screens reach standby).
+
+Deviation: **Task 9 (scenarios):** `Speed dial key n saved` plays one recording's timeline (1396
+ms; 1380-1427 over the other nine saves: ±35), `No phone numbers` ±65 (2850-2938 ms against 2914),
+`No voice tags saved` ±25. `voice-system-error`'s Start acts at its beep (the screen draws then).
+New known gap: `speed-restore` (its log opens Call register › Missed calls, plan 22's placeholder,
+and holds C there; the placeholder does not leave for standby, so the later keys land in Call
+register; Restore keeping speed dials and tones is pinned by `tests/phone-book-store.test.ts`).
+
+**Task 9 completion note:** 51 more plan 19 goldens are asserted (48 LCD, 3 sound), one known gap.
 
 ### Task 10 - Send b'card and the pickers other plans use (TDD)
 
