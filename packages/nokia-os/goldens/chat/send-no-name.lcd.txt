@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/send-no-name
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/send-no-name
 source-sha256: 47e0ecc162eca788a61374a7f6936f9eff061c39b348a9ee1de25370e48a90ad
 trigger-frame: 1

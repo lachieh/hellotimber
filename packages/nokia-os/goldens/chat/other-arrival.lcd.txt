@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/other-arrival
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/other-arrival
 source-sha256: 61b17993a89ba13c43841e7c87519439993e3f7e3c39aa5ec9cda95d9d856fc4
 trigger-frame: 1

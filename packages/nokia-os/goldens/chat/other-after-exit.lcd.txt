@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/other-after-exit
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/other-after-exit
 source-sha256: 3d7758249f196bebae833618e2b85a979b4300009c358c1e7c9ef47b02395a44
 trigger-frame: 1

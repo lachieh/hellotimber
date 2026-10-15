@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/erase
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/erase
 source-sha256: 5acb913c186e831a8d8c848c732e75928825ba8d9c66807bbabbc18bd66b7455
 trigger-frame: 1

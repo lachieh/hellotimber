@@ -64,7 +64,7 @@ describe("stockMenu", () => {
     it(`${level.slug}: title, presentation, labels and menu numbers match the goldens`, () => {
       expect(entry.label).toBe(level.title);
       if (level.labels.length === 0) {
-        // Chat and Calculator are top-level applications (placeholders in this plan).
+        // Chat and Calculator are top-level applications (plans 18c, 20).
         expect(entry).toBeInstanceOf(ApplicationEntry);
         return;
       }
@@ -157,7 +157,7 @@ describe("stockMenu", () => {
       stockMenu.entries.map((slot) => slot.entry),
     );
     // The "Leaf ownership" table: Chat, Composer, New game, Activate, Stopwatch, ...
-    for (const number of ["3", "5-4-3", "8-4-2-1", "11-4"]) {
+    for (const number of ["2-4", "5-4-3", "8-4-2-1", "11-4"]) {
       expect(kinds.get(number), number).toBe("placeholder");
     }
     for (const number of [
@@ -323,17 +323,18 @@ describe("PlaceholderApplication", () => {
     expect(owners["menu/calculator"]).toBeUndefined();
     expect(owners["menu/settings/phone-settings/welcome-note"]).toBeUndefined();
     expect(owners["menu/messages/write"]).toBeUndefined();
+    expect(owners["menu/chat"]).toBeUndefined();
     expect(owners).toMatchObject({
-      "menu/chat": "18c",
+      "menu/messages/picture-messages": "18c",
       "menu/tones/composer/empty-4": "27",
       "menu/games/bantumi/new-game": "24",
       "menu/clock/stopwatch": "21",
     });
   });
 
-  it("opens for the top-level applications too (Chat, Calculator)", () => {
+  it("is not what the top-level applications open (Chat: plan 18c's flow)", () => {
     const phone = atLeaf("menu/chat");
-    expect(phone.screen).toMatchObject({ kind: "custom", appId: "placeholder:chat" });
+    expect(phone.screen).toMatchObject({ kind: "custom", appId: "stock:chat" });
     phone.pressKey("c");
     expect(phone.path).toBe("menu");
     expect(phone.screen).toMatchObject({ kind: "menu-carousel", label: "Chat" });

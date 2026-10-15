@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/arrive-options-c
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/arrive-options-c.png
 source-sha256: b4aff1882cee97afaeb1b08d9ccaf76af0abdc5b19d8fe561b04aff41ed97e13
 note: C: the editor.

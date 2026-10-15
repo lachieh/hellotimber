@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/open
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/open
 source-sha256: df0a0e102fb7141bbeb6f46f1070a1a9c5e314ec8d0eef9bc5b1e3ed13cedc68
 trigger-frame: 1

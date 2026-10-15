@@ -764,19 +764,34 @@ one-line feature/widget/painter registrations and owned placeholder removals.
 `src/widgets/chat-history.ts`, `src/display/widgets/chat-history.ts`, `tests/chat.test.ts` (new),
 plan acceptance/support; one-line Inbox-option/widget/painter registrations.
 
-- [ ] Gate on 18/18b, approved English T9 configuration and plan 18's session-subscription hook.
+- [x] Gate on 18/18b, approved English T9 configuration and plan 18's session-subscription hook.
       Search with names requires 19 Task 10; without it leave that subtask incomplete.
-- [ ] Failing tests for number/name/editor entry, empty/cancel/defaults, Options, T9 header/counter,
+      Deviation (owner prerequisite, plan 18 closed): `StockMessaging.claim` (service.ts, additive)
+      lets the chat take its partner's SMS before Inbox; `sending()` in write.ts gains an optional
+      `sent` continuation (the history under `Message sent`); write.ts exports `matches`,
+      `insertWord`, `insertNumber` for Chat's T9 Options. Search with names: plan 19 (the empty
+      book's `No phone numbers` is plan 18's).
+- [x] Failing tests for number/name/editor entry, empty/cancel/defaults, Options, T9 header/counter,
       Matches/Spell, insertions and limits. Use fixture/open dictionary, no stock candidate list.
-- [ ] Session sends exact C-observed text over `StockMessaging.send`; define partner-number match
+- [x] Session sends exact C-observed text over `StockMessaging.send`; define partner-number match
       policy from captures. Test success/failure, wrapped history, both directions, arrivals in
       editor/Options/prompt/history, other sender, Inbox/Outbox effects and OK/C/Exit/held C.
-- [ ] Close subscriptions exactly once on Exit/navigate/power-off; no reply mutates a closed
+      The partner is an SMS whose number equals the typed one (other formats UNVERIFIED); its
+      line is not stored and sounds no alert (UNVERIFIED: no audio captured).
+- [x] Close subscriptions exactly once on Exit/navigate/power-off; no reply mutates a closed
       session. Chat name/history persistence follows C, not the website persona's behaviour.
-- [ ] Add `chat/*` scenarios. Export the Menu 3 first-screen driver for plan 13's existing
+- [x] Add `chat/*` scenarios. Export the Menu 3 first-screen driver for plan 13's existing
       `menu/03-chat.sub`; its owner asserts it in that index/file. Remove Chat's owned placeholder.
-- [ ] Verify package test and manual `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): implement stock T9 Chat over SMS`.
+      Deviation: `menu/03-chat.sub`'s second image is ▼ on the empty prompt, which opens the
+      phone book (`No phone numbers`): pending on plan 19 (plan 13's set, one status line).
+      `sms/inbox-option-chat` (plan 18's) asserted. Deviation (structure): the chat hosts its own
+      widget stack (`src/chat/screens.ts`) so an arrival can close what is above the editor;
+      the history reuses plan 18's message page (lines 9 rows apart, four a page: `chat/history-4`),
+      so no `chat-history` painter. Known gaps: `chat/factory-send` (a link time past the cell's
+      spread), `chat/options-held-c` (C on Options acts on the key's down in the firmware),
+      `chat/other-after-exit` (plan 18 D12's arrival rule).
+- [x] Verify package test and manual `vp check --fix`.
+- [x] Commit: `feat(nokia-os): implement stock T9 Chat over SMS`.
 
 ### Task 9 - Info service Topics and Service command editor (TDD)
 

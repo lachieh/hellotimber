@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/name-c
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/name-c
 source-sha256: fa4fb56d80b54125847cb1888a23174afef88219b2920627b2d5bf294bc6e4b0
 trigger-frame: 1

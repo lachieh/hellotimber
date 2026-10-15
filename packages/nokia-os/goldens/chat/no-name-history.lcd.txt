@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/no-name-history
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/no-name-history.png
 source-sha256: 770d2a70964bc03fc3b1208ecbaeec7bb5d69acb0bf717c6dac535d227c971ad
 note: Its history line.

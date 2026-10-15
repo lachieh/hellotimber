@@ -485,6 +485,7 @@ export const ASSERTED: readonly string[] = [
   "content/restore-templates",
   "content/restore-smileys",
   "content/restore-edited",
+  "chat",
 ];
 
 /** The status of golden `id`: pending on the plan PENDING names, asserted once promoted. */

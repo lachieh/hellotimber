@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/exit
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/exit
 source-sha256: db2dc8f97116a44af09910324d1618f07f43badf29679b8504916be96ccc6d6d
 trigger-frame: 1

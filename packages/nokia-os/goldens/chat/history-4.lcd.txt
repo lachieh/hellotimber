@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/history-4
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/history-4/00.png + captures/6.39/plan18c/chat/history-4/down-1.png + captures/6.39/plan18c/chat/history-4/down-2.png + captures/6.39/plan18c/chat/history-4/down-3.png + captures/6.39/plan18c/chat/history-4/up-1.png + captures/6.39/plan18c/chat/history-4/up-2.png + captures/6.39/plan18c/chat/history-4/up-3.png
 source-sha256: 5624b958c236cd12593c5d026dfc15c0dbfe9d96f226c8f1cda0958f0a78eab9
 note: A long partner line wraps; ▼ scrolls to the end, ▲ to the top.

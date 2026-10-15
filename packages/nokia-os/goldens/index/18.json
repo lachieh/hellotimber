@@ -298,7 +298,7 @@
   {
     "id": "sms/inbox-option-chat",
     "file": "sms/inbox-option-chat.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10

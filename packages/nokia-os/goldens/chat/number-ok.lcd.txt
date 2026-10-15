@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/number-ok
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/number-ok
 source-sha256: 795013d32f3b56c917abef104f85f67f0a032f52aa701242e3de904e606517e2
 trigger-frame: 1

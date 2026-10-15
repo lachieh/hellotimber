@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/factory
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat-factory/editor.png + captures/6.39/plan18c/chat-factory/template-inserted.png + captures/6.39/plan18c/chat-factory/smiley-inserted.png
 source-sha256: faf5ec5e278d7b9ea7cd48f5be5e76be8fd7fb2cd2f47a5fca48e8eca9aa8656
 note: The factory image (Dictionary off): Template and Insert smiley in Chat.

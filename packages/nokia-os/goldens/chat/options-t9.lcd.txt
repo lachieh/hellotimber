@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/options-t9
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/options-t9
 source-sha256: 6fe52ee1cb07bbbc7856fd57f407b3c3193935cad2ff99250975ca9b88303900
 note: Options in T9 with no word: ten entries.

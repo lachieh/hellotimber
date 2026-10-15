@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/own-long
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/own-long.png
 source-sha256: 924ab17df332d9c967cac3299c8ea8bd5c707a3fb96693c3c470405e377e285c
 note: A long own line wraps.

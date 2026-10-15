@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/dictionary-off
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/dictionary-off
 source-sha256: fa114e52e2271fc52a88882b6c0171a7777b2017342503961b1aa0d174e4bd7c
 trigger-frame: 1

@@ -162,7 +162,7 @@ const SCENARIOS: Record<string, Scenario> = {
 SLUGS.forEach((slug, i) => {
   SCENARIOS[`menu/${slug}`] = (id) => carouselStill(id, i + 1);
   SCENARIOS[`menu/${slug}.anim`] = (id) => carouselAnim(id, i + 1);
-  // Chat opens a placeholder; its captured first screens are pending goldens.
+  // Chat's ▼ on its empty prompt opens the phone book: pending on plan 19.
   if (slug !== "03-chat") {
     SCENARIOS[`menu/${slug}.sub`] = (id) => levelOne(id, i + 1);
   }

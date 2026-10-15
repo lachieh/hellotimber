@@ -67,7 +67,6 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "2-8-4-2-**": "18c",
   "2-8-4-3-**": "18c",
   "2-10": "18c", // Service command editor
-  "3": "18c", // Chat
   "5-9-4": "18c", // Screen saver › Screen saver: nothing in the virgin EEPROM
   "12-*-2-9-4": "18c",
 

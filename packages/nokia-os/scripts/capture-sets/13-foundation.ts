@@ -68,10 +68,12 @@ function menuEntries(): CaptureSetEntry[] {
       entries.push({
         id: `menu/${slug}.sub`,
         kind: "still",
-        status: "pending:18c",
+        // Plan 18c implements Chat's `Phone number:` (image 01); ▼ on the empty prompt opens
+        // the phone book (image 02: the virgin book's `No phone numbers`), plan 19's.
+        status: "pending:19",
         prefer: {
           source: { kind: "scroll", dir: `menu/${slug}/sub` },
-          note: "Chat's first screens; the Chat plan (18c) asserts them.",
+          note: "Chat's first screens: Select, then ▼ (the phone book's answer, plan 19).",
         },
       });
       return;

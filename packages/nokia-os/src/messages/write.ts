@@ -65,9 +65,14 @@ const SENDING_BAR = "7-6";
 /**
  * `Sending message` (D9, D10): the Requesting bar looping under `Sending` / `message` with no
  * soft key, until the send settles; then `Message sent` (or the composed failure note, D14) and
- * back to the editor below. Keys do nothing while it sends.
+ * back to the editor below (`sent`: what a sent message shows instead, plan 18c's Chat). Keys do
+ * nothing while it sends.
  */
-function sending(services: StockServices, sms: StockSms): Widget {
+export function sending(
+  services: StockServices,
+  sms: StockSms,
+  sent?: (flow: Flow, note: Widget) => void,
+): Widget {
   const bar = new Playback(timelineById(SENDING_BAR, "Sending message's bar"));
   let outcome: "sent" | "failed" | undefined;
   services.messaging.send(sms, (settled) => {
@@ -83,7 +88,7 @@ function sending(services: StockServices, sms: StockSms): Widget {
       bar.advance(dtMs);
       if (outcome === undefined) return;
       const failed = COMPOSED_FLOWS.sendFailed;
-      flow.replace(
+      const shown =
         outcome === "sent"
           ? note({
               lines: ["Message", "sent"],
@@ -94,8 +99,10 @@ function sending(services: StockServices, sms: StockSms): Widget {
               lines: failed.lines,
               timeline: timelineByName(failed.timeline),
               sound: services.noteSound,
-            }),
-      );
+            });
+      // Plan 18c: Chat shows its history under `Message sent`.
+      if (outcome === "sent" && sent !== undefined) sent(flow, shown);
+      else flow.replace(shown);
     },
   };
 }
@@ -215,7 +222,7 @@ export function t9Context(services: StockServices): T9Context | undefined {
  * Options › Matches (spec 10.2, `t9/g-matches`): the composing word's other candidates, then
  * itself; Use shows the chosen one, still composing, in the editor; C goes back to Options.
  */
-function matches(t9: T9EditorControl): Widget {
+export function matches(t9: T9EditorControl): Widget {
   return new OptionListWidget({
     labels: t9.matches(),
     opening: 0,
@@ -235,7 +242,7 @@ function matches(t9: T9EditorControl): Widget {
  * of the composing word) and stores the word around the cursor as a user word; OK or C on the
  * empty prompt goes back (`t9/insert-word-empty`).
  */
-function insertWord(services: StockServices, entry: EditorControl, spell: boolean): Widget {
+export function insertWord(services: StockServices, entry: EditorControl, spell: boolean): Widget {
   const t9 = entry.t9!;
   const used = Array.from(spell ? t9.textBesideWord : entry.text).length;
   return textInput({
@@ -254,7 +261,7 @@ function insertWord(services: StockServices, entry: EditorControl, spell: boolea
  * Options › Insert number (the menu-tree crawl: `Insert number:` with OK; UNVERIFIED beyond it):
  * plan 18's number entry; OK inserts the number at the cursor.
  */
-function insertNumber(entry: EditorControl): Widget {
+export function insertNumber(entry: EditorControl): Widget {
   return numberEntry({
     label: ["Insert number:"],
     done(number, flow) {
@@ -377,9 +384,9 @@ function editorOptions(services: StockServices, entry: EditorControl, draft: Sms
     // Plan 18c: the lists Restore factory settings provides; no response on the virgin EEPROM
     // (`sms/template`, `sms/insert-smiley`).
     Template: (flow) =>
-      replaceWith(flow, insertionList(services, "templates", number("Template"), entry)),
+      replaceWith(flow, insertionList(services, "templates", [number("Template")], entry)),
     "Insert smiley": (flow) =>
-      replaceWith(flow, insertionList(services, "smileys", number("Insert smiley"), entry)),
+      replaceWith(flow, insertionList(services, "smileys", [number("Insert smiley")], entry)),
     Matches: (flow) => flow.push(matches(t9!)),
     "Insert word": (flow) => flow.replace(insertWord(services, entry, false)),
     "Insert number": (flow) => flow.replace(insertNumber(entry)),

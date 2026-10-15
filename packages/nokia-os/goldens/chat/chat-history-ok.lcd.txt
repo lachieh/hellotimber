@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/chat-history-ok
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/chat-history-ok
 source-sha256: d1cef7d23bcfc6712470c9d0eff8eabfc1ef78161da825ce2cffa841e8b899ab
 trigger-frame: 1

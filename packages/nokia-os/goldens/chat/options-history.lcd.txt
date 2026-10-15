@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/options-history
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/options-history
 source-sha256: c32c318ae9daa531d5907aefda6a520f7711933bfe5f3a9ff71415af5495a1aa
 note: Options once a line was sent: Chat history.

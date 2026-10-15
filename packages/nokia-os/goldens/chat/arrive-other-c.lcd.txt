@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/arrive-other-c
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/arrive-other-c.png
 source-sha256: aa4d54cba41ad65edc09882cb257f620660e8473e4af595208ce2331cef246cd
 note: C on the empty editor: Chat on the carousel.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/options-held-c
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/options-held-c
 source-sha256: 921358f2da0269ee546e56eb0007086015dcb6e1776ef68c3057bfaf49adf7c9
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/inbox-after
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/inbox-after
 source-sha256: ce369c21be50a6133849f298926a69d3f17026a983117363c4a4751aa5e12ef7
 trigger-frame: 1

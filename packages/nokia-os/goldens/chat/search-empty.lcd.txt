@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/search-empty
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/search-empty
 source-sha256: 194e89a9ca83e7f754c289779feca002bfabd5b58acdf9f67d7faacba002db11
 trigger-frame: 1

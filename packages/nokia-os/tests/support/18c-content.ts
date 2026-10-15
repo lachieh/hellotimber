@@ -11,7 +11,7 @@ import { createStockSettings } from "../../src/firmware/settings";
 import { DICTIONARY_KEY } from "../../src/messages/bindings";
 import { createSyntheticNetwork, type StockStorage, type SyntheticNetwork } from "../../src/index";
 import { GOLDENS } from "./acceptance.ts";
-import { captureStamp, SETUP_MS } from "./messages.ts";
+import { captureStamp, RECEIVE_LINK_SPREAD_MS, SEND_LINK_SPREAD_MS, SETUP_MS } from "./messages.ts";
 import { PROBE_TOLERANCE_MS } from "./golden.ts";
 import { replayScenario, type ReplayContext, type TimelineOptions } from "./replay.ts";
 import { standbyRig, type Rig } from "./rig.ts";
@@ -84,6 +84,26 @@ export const CONTENT_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
   // The bin's lid steps run 6-29 ms later here than in `content/templates-erase-default` (its
   // fourth step 29 ms): the widest drift between the three Erase recordings.
   "content/templates-erase-user": { toleranceMs: 30 },
+  // Chat. The carousel's Chat icon animates: its phase when the recording starts depends on key
+  // latencies the replay does not reproduce (D8); compared from the prompt on.
+  "chat/open": { fromRow: 1 },
+  // The T9 editor draws 122 ms after OK, first in part (27 ms), then its cursor: rows the
+  // replay's key placement skips, so the key goes down on that first draw.
+  "chat/name-ok": { keyAt: { 0: 122 } },
+  "chat/dictionary-off": OTHER_RECORDING,
+  "chat/search-empty": OTHER_RECORDING,
+  // Sends (plan 18 D10): the bar's steps (7-6's), `Message sent` within the synthetic cell's
+  // spread, then its envelope's steps up to 37 ms off `sms/send`'s (the timeline's recording).
+  "chat/send": { toleranceMs: 40, anchors: { 11: SEND_LINK_SPREAD_MS } },
+  "chat/send-no-name": { toleranceMs: 40, anchors: { 11: SEND_LINK_SPREAD_MS } },
+  // The partner's line lands RECEIVE_LINK_MS after the delivery, within the cell's spread.
+  "chat/reply": { anchors: { 1: RECEIVE_LINK_SPREAD_MS } },
+  "chat/arrive-editor": { anchors: { 6: RECEIVE_LINK_SPREAD_MS } },
+  "chat/arrive-options": { anchors: { 1: RECEIVE_LINK_SPREAD_MS } },
+  // Opening lasts 35-78 ms between recordings (plan 18's OPENING).
+  "chat/inbox-after": { toleranceMs: 45 },
+  // The carousel's icon steps after Exit run from the return (D8 key latency).
+  "chat/exit": { toleranceMs: 15 },
 };
 
 /** Every asserted plan 18c golden's scenario: its capture replayed. */
@@ -94,7 +114,9 @@ export const CONTENT_SCENARIOS: Readonly<Record<string, (id: string) => void>> =
 );
 
 /** The tree nodes plan 18c's features bind, by a golden that shows each (the coverage guard). */
-export const CONTENT_COVERS: Readonly<Record<string, readonly string[]>> = {};
+export const CONTENT_COVERS: Readonly<Record<string, readonly string[]>> = {
+  "chat/open": ["3"],
+};
 
 /** Asserted plan 18c goldens whose scenario cannot pass, with the reason. */
 export const CONTENT_KNOWN_GAPS: Readonly<Record<string, string>> = {
@@ -103,4 +125,17 @@ export const CONTENT_KNOWN_GAPS: Readonly<Record<string, string>> = {
     "window's Messages carousel stays; nokia-os's kernel enters the Messages level before it " +
     "opens the leaf (phone-core's shortcut), so the leaf's no response leaves that level on " +
     "screen (Select on Templates in the level, `tree/02-messages/2-5.leaf`, matches)",
+  "chat/factory-send":
+    "this send's link took ≈2.99 s (Message sent at 2992 ms, the bar first drawn full), past " +
+    "the synthetic cell's measured spread (2574-2790 ms, plan 18 D10) that nokia-os settles " +
+    "within; chat/send and chat/send-no-name match",
+  "chat/options-held-c":
+    "C held on Options: the firmware closes Options on the key's down and reaches standby " +
+    "561 ms after it; plan 18's option list closes on the key's up and phone-core's long " +
+    "press is 800 ms",
+  "chat/other-after-exit":
+    "another number's SMS during Chat: the firmware announces it once standby is reached after " +
+    "the chat (and first draws standby without its operator for 88 ms, as plan 18's " +
+    "sms/notice-c); nokia-os follows plan 18 D12, where a key after an arrival away from " +
+    "standby leaves only the envelope",
 };

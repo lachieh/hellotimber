@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/factory-template-open
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat-factory/template-open
 source-sha256: a4c967d16b8cd82e9a853de94882c66ba54b787ed8e25d068f81134f4e48b0b2
 trigger-frame: 1

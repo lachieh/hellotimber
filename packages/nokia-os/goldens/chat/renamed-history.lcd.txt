@@ -1,6 +1,6 @@
 lcd-golden 1
 id: chat/renamed-history
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/chat/renamed-history.png
 source-sha256: 51e6769fd0673816183cf6a0e9460fa376c0f69d92092010d70138d909b289b3
 note: A line sent under the new name.

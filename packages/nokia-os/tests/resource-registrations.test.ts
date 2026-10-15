@@ -128,21 +128,21 @@ it(
 );
 
 it("allows resource evidence from an honestly pending LCD golden", () => {
-  const pending = index.find((entry) => entry.id === "menu/03-chat.sub")!;
+  const pending = index.find((entry) => entry.id === "tree/02-messages/2-4.leaf")!;
   expect(pending.status).toBe("pending:18c");
   const inputs = compose([
     {
       plan: "18c",
       resources: {
         textRuns: {
-          "menu/03-chat.sub": {
-            "01": [{ font: "small", text: "Phone number:", top: 7, right: 79 }],
+          "tree/02-messages/2-4.leaf": {
+            a: [{ font: "small", text: "Picture", top: 18 }],
           },
         },
       },
     },
   ]);
-  expect(inputs.textRuns["menu/03-chat.sub"]!["01"]![0]!.text).toBe("Phone number:");
+  expect(inputs.textRuns["tree/02-messages/2-4.leaf"]!["a"]![0]!.text).toBe("Picture");
   expect(pending.status).toBe("pending:18c");
 });
 

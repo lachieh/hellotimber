@@ -22,13 +22,14 @@ export function slotRows(slots: StockTextSlots): () => readonly string[] {
 }
 
 /**
- * The list Template (`kind` templates) or Insert smiley opens from Options entry `option`, over
- * the editor `entry`; undefined on the virgin EEPROM (no response, `sms/template`).
+ * The list Template (`kind` templates) or Insert smiley opens over the editor `entry`, its
+ * indicator `prefix` then the slot (Write messages: the entry, `3-1`; Chat: its path too,
+ * `3-2-1`); undefined on the virgin EEPROM (no response, `sms/template`).
  */
 export function insertionList(
   services: StockServices,
   kind: TextSlotsKind,
-  option: number,
+  prefix: readonly number[],
   entry: EditorControl,
 ): Widget | undefined {
   const slots = new StockTextSlots(services.eeprom, kind);
@@ -39,7 +40,7 @@ export function insertionList(
     ...(icon === undefined ? {} : { icon }),
     opening: 0,
     softkey: "Select",
-    indicatorPrefix: [option],
+    indicatorPrefix: prefix,
     choose(index, flow) {
       const text = slots.text(index);
       if (text !== null) entry.insert(text);
