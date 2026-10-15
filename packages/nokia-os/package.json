@@ -16,6 +16,8 @@
     "extract-resources": "node scripts/extract-resources.ts",
     "messages-text-runs": "node scripts/messages-text-runs.ts",
     "messages-scripts": "node scripts/messages-scripts.ts",
+    "phone-book-text-runs": "node scripts/phone-book-text-runs.ts",
+    "phone-book-scripts": "node scripts/phone-book-scripts.ts",
     "build-t9-dictionary": "node scripts/build-t9-dictionary.ts"
   },
   "dependencies": {

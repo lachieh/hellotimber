@@ -2,6 +2,8 @@
 // entries. Submenus keep their presentation, soft key, opening selection, page values and game
 // splash; leaves open stock widget flows, a feature's screens or the placeholder of the plan that
 // owns them (`leaves.ts`, `stock.ts`, `features/`).
+import { normaliseSim } from "../phone-book/sim-card";
+import { StockPhoneBook } from "../phone-book/store";
 import {
   ApplicationEntry,
   MenuLevel,
@@ -187,8 +189,19 @@ export function createStockMenu(
   eeprom: StockEeprom = new StockEeprom(createMemoryStorage()),
   messaging?: StockMessaging,
   t9?: StockT9,
+  phoneBook?: StockPhoneBook,
 ): PhoneMenu {
-  const services = stockServices(ports, settings, games, security, sounder, eeprom, messaging, t9);
+  const services = stockServices(
+    ports,
+    settings,
+    games,
+    security,
+    sounder,
+    eeprom,
+    messaging,
+    t9,
+    phoneBook,
+  );
   const builder: Builder = {
     ports,
     settings: services.settings,
@@ -212,6 +225,7 @@ export function stockServices(
   eeprom: StockEeprom,
   messaging?: StockMessaging,
   t9: StockT9 = stockT9(eeprom),
+  phoneBook?: StockPhoneBook,
 ): StockServices {
   const store = settings ?? createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES);
   const sound = sounder ?? new StockSounder(new SoundSequencer(() => {}), store, () => games.now());
@@ -226,6 +240,7 @@ export function stockServices(
     eeprom,
     messaging: messaging ?? stockMessaging(eeprom, store, code.sim, createSyntheticNetwork()),
     t9,
+    phoneBook: phoneBook ?? new StockPhoneBook(eeprom, normaliseSim(code.sim)),
   };
 }
 

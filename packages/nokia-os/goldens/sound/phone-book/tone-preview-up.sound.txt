@@ -1,0 +1,57 @@
+sound-golden 1
+id: sound/phone-book/tone-preview-up
+status: asserted
+source: captures/6.39/plan19/tone/preview-up
+source-sha256: 2210e916782fcbea3f0051f575a05118917b1056b4e746a44ef35950a6ae96a1
+state: factory
+keys: 0:up
+note: Assign tone's list, up: the key's beep and the highlighted entry's preview ≈990 ms later (SIM content).
+omitted: 3 (stale frequency)
+
+@events
+# t_ms output   state
+54     tone     900 v=0x9104
+178    tone     off
+999    vibrator on
+1000   buzzer   440 v=10
+1030   buzzer   587 v=11
+1061   buzzer   440 v=10
+1092   buzzer   587 v=11
+1123   buzzer   440 v=10
+1154   buzzer   587 v=11
+1185   buzzer   440 v=10
+1216   buzzer   587 v=11
+1247   buzzer   440 v=10
+1277   buzzer   587 v=11
+1308   buzzer   440 v=10
+1339   buzzer   587 v=11
+1370   buzzer   440 v=10
+1401   buzzer   587 v=11
+1432   buzzer   440 v=10
+1463   buzzer   587 v=11
+1494   buzzer   440 v=10
+1525   buzzer   587 v=11
+1556   buzzer   440 v=10
+1587   buzzer   587 v=11
+1618   buzzer   440 v=10
+1649   buzzer   587 v=11
+1680   buzzer   440 v=10
+1711   buzzer   587 v=11
+1742   buzzer   440 v=10
+1773   buzzer   587 v=11
+1804   buzzer   440 v=10
+1835   buzzer   587 v=11
+1866   buzzer   440 v=10
+1897   buzzer   587 v=11
+1928   buzzer   440 v=10
+1959   buzzer   587 v=11
+1990   buzzer   440 v=10
+2023   buzzer   587 v=11
+2052   buzzer   440 v=10
+2083   buzzer   587 v=11
+2114   buzzer   440 v=10
+2145   buzzer   587 v=11
+2176   buzzer   440 v=10
+2207   buzzer   587 v=11
+2237   vibrator off
+2238   buzzer   off

@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/phone-book/tone-preview-no-tone
+status: asserted
+source: captures/6.39/plan19/tone/preview-no-tone
+source-sha256: e53a7c4bf55fa71794bf52ad4574f4c0dce36c64081cc6fdf1024ba8f363f2eb
+state: factory
+keys: 0:up
+note: Assign tone's list, no-tone: the key's beep and the highlighted entry's preview ≈990 ms later (SIM content).
+omitted: none
+
+@events
+# t_ms output   state
+1      vibrator on
+33     vibrator off
+53     tone     900 v=0x9104
+177    tone     off
+999    tone     1750 v=0x9104
+1338   tone     off

@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/phone-book/nothing-to-save-off
+status: asserted
+source: captures/6.39/plan19/notes/nothing-to-save-off
+source-sha256: 17e8a8ad6acc21f17385ad13b4bcf7d4f2d644196da9217b32425f8e7d021cb6
+state: factory
+keys: 0:navi
+note: Nothing to save with Warning tones Off: silent but for OK's beep (SIM content).
+omitted: none
+
+@events
+# t_ms output   state

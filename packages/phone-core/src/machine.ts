@@ -87,8 +87,11 @@ type ActivationOrigin<Metadata> =
   | { kind: "intro"; viaShortcut: boolean }
   | { kind: "invalid" }
   | { kind: "gate"; boot: HeldBoot }
-  /** Plan 18: a standby notice's application (PhoneConfig setNotice `open`). */
-  | { kind: "notice" }
+  /**
+   * A standby application: plan 18's notice application (PhoneConfig setNotice `open`) or plan
+   * 19's standby key application (PhoneConfig standbyKeys).
+   */
+  | { kind: "standby" }
   /** Plan 17: the power key's standby application (PhoneConfig.standbyPower). */
   | { kind: "power" };
 
@@ -115,7 +118,11 @@ interface AppActivation<Metadata> {
 type Mode<Metadata> =
   | { kind: "off" }
   | { kind: "boot"; startedAt: number; targetPath: string | null; nextGate: number }
-  | { kind: "standby" }
+  | {
+      kind: "standby";
+      /** PhoneConfig.standbyKeyDelayMs: a standby key's target, opened at `at`. */
+      leaving?: { target: StandbyKeyTarget; at: number };
+    }
   | { kind: "nav"; stack: NavFrame<Metadata>[] }
   | { kind: "app"; activation: AppActivation<Metadata> };
 
@@ -123,9 +130,19 @@ interface HeldKey {
   downAt: number;
   longFired: boolean;
   shortcutCaptured: boolean;
+  /**
+   * Held across an application's exit (or replacement): its release is not a short press, but
+   * its long press still fires (C held from a screen that leaves at C's down reaches standby).
+   */
+  swallowed?: true;
 }
 
 type Notice = { text: string; softkey: string; path?: string; open?: PhoneApplication };
+
+/** What a standby key opens: a path's resolved entries, or an application. */
+type StandbyKeyTarget =
+  | { kind: "path"; path: string }
+  | { kind: "application"; app: PhoneApplication };
 
 /** A level's entries with their menu numbers (orders, or positions under SubmenuOptions.shown). */
 type Numbered<Metadata> = readonly { entry: MenuEntry<Metadata>; number: number }[];
@@ -165,6 +182,7 @@ interface Machine<Metadata> {
   bootTimeline: Timeline | undefined;
   bootGates: readonly BootGate[];
   menuOpenDelayMs: number;
+  standbyKeyDelayMs: number;
   shortcutWindowMs: number;
   /** Rows per circular window (PhoneConfig.rowsWindow); undefined = no window state. */
   rowsWindow: number | undefined;
@@ -286,7 +304,7 @@ function tickSignature<Metadata>(m: Machine<Metadata>): string {
         ? ""
         : `boot:${m.bootTimeline.frameAt(m.now - m.mode.startedAt)}`;
     case "standby":
-      return `standby:${standbySignature(m)}`;
+      return `standby:${m.mode.leaving !== undefined}:${standbySignature(m)}`;
     case "nav": {
       const frame = shownNavFrame(m.mode.stack);
       if (frame?.kind === "carousel") {
@@ -662,7 +680,7 @@ function renderScreen<Metadata>(m: Machine<Metadata>): ScreenModel {
       };
     }
     case "standby":
-      return standbyScreen(m, false);
+      return standbyScreen(m, m.mode.leaving !== undefined);
     case "nav": {
       const frame = shownNavFrame(m.mode.stack);
       return frame === undefined ? { kind: "off" } : renderFrame(m, m.mode.stack, frame);
@@ -740,15 +758,16 @@ function standbySignature<Metadata>(m: Machine<Metadata>): string {
 
 /**
  * Applications that run at standby with the path `standby` and an empty stack: plan 15's boot
- * gates, plan 18's notice applications and plan 17's power key application.
+ * gates, plan 18's notice applications, plan 19's standby key applications and plan 17's power
+ * key application.
  */
 function isStandbyApplication<Metadata>(activation: AppActivation<Metadata>): boolean {
   return activation.origin.kind === "gate" || isStandbyOverlay(activation.origin);
 }
 
-/** A standby application outside the boot (a notice's, the power key's): exit() is standby. */
+/** A standby application outside the boot (a notice's, a standby key's, the power key's). */
 function isStandbyOverlay<Metadata>(origin: ActivationOrigin<Metadata>): boolean {
-  return origin.kind === "notice" || origin.kind === "power";
+  return origin.kind === "standby" || origin.kind === "power";
 }
 
 function standbyScreen<Metadata>(m: Machine<Metadata>, leaving: boolean): ScreenModel {
@@ -841,7 +860,7 @@ function renderFrame<Metadata>(
 }
 
 function swallowHeldReleases<Metadata>(m: Machine<Metadata>): void {
-  for (const held of m.held.values()) held.longFired = true;
+  for (const held of m.held.values()) held.swallowed = true;
 }
 
 function deactivate<Metadata>(
@@ -912,7 +931,7 @@ function startApplication<Metadata>(
       if (isStandbyOverlay(origin)) {
         gateExitsToStandby(
           options,
-          origin.kind === "notice" ? "a notice's application" : "the power key's application",
+          origin.kind === "standby" ? "a standby application" : "the power key's application",
         );
         run(m, () => {
           if (!isActive(m, activation, token)) return;
@@ -1193,6 +1212,10 @@ function finishBoot<Metadata>(m: Machine<Metadata>, targetPath: string | null): 
 }
 
 function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
+  // A key during a standby key's delay opens its target at once and goes to it.
+  if (event.type === "down" && m.mode.kind === "standby" && m.mode.leaving !== undefined) {
+    openStandbyKey(m, m.mode.leaving.target);
+  }
   if (event.type === "down") {
     if (m.held.has(event.key)) return;
     const shortcutCaptured = capturedDigit(m, event.key) !== null;
@@ -1218,13 +1241,13 @@ function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
   m.held.delete(event.key);
   if (held?.shortcutCaptured) {
     const digit = capturedDigit(m, event.key);
-    if (!held.longFired && digit !== null) shortcutDigit(m, digit);
+    if (!held.longFired && !held.swallowed && digit !== null) shortcutDigit(m, digit);
     return;
   }
   if (m.mode.kind === "app") {
     const activation = m.mode.activation;
     if (activation.session === null) {
-      if (held !== undefined && !held.longFired && event.key === "c") {
+      if (held !== undefined && !held.longFired && !held.swallowed && event.key === "c") {
         cancelShortcut(m);
         if (isStandbyOverlay(activation.origin)) goStandby(m);
         else returnToStack(m, activation.stack);
@@ -1234,7 +1257,7 @@ function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
     }
     return;
   }
-  if (held === undefined || held.longFired) return;
+  if (held === undefined || held.longFired || held.swallowed) return;
   onShortPress(m, event.key);
 }
 
@@ -1265,6 +1288,9 @@ function handleTick<Metadata>(m: Machine<Metadata>, nowMs: number): void {
   }
   const before = m.mode.kind === "app" ? m.mode.activation : null;
   if (m.mode.kind === "boot") tickBoot(m);
+  if (m.mode.kind === "standby" && m.mode.leaving !== undefined && m.now >= m.mode.leaving.at) {
+    openStandbyKey(m, m.mode.leaving.target);
+  }
   // A gate opened by this tick has had its share of the tick (openGate).
   if (
     m.mode.kind === "app" &&
@@ -1309,7 +1335,7 @@ function standbyShortPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void 
       const { path: target, open } = m.notice;
       m.notice = null;
       m.dirty = true;
-      if (open !== undefined) startApplication(m, { kind: "notice" }, open, []);
+      if (open !== undefined) startApplication(m, { kind: "standby" }, open, []);
       else if (target !== undefined) applyPath(m, target);
       return;
     }
@@ -1321,8 +1347,36 @@ function standbyShortPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void 
   }
   const standbyKeys = m.config.standbyKeys;
   if (key === "navi") enterMenu(m);
-  else if (key === "up" && standbyKeys?.up !== undefined) tryApplyPath(m, standbyKeys.up);
-  else if (key === "down" && standbyKeys?.down !== undefined) tryApplyPath(m, standbyKeys.down);
+  else if (key === "up" && standbyKeys?.up !== undefined) standbyKey(m, standbyKeys.up);
+  else if (key === "down" && standbyKeys?.down !== undefined) standbyKey(m, standbyKeys.down);
+}
+
+/**
+ * A standby key's target: an application (run as a standby application) or a path (an unknown
+ * one is a no-op), opened now or, with PhoneConfig.standbyKeyDelayMs, after standby has shown
+ * `leaving` that long.
+ */
+function standbyKey<Metadata>(m: Machine<Metadata>, target: string | PhoneApplication): void {
+  let resolved: StandbyKeyTarget;
+  if (typeof target === "string") {
+    const parsed = parsePath(target);
+    if (parsed === null || parsed.kind === "standby") return;
+    if (resolveIds(m.config.menu, parsed.ids) === null) return;
+    resolved = { kind: "path", path: target };
+  } else resolved = { kind: "application", app: target };
+  if (m.standbyKeyDelayMs === 0) {
+    openStandbyKey(m, resolved);
+    return;
+  }
+  m.mode = { kind: "standby", leaving: { target: resolved, at: m.now + m.standbyKeyDelayMs } };
+  m.dirty = true;
+}
+
+function openStandbyKey<Metadata>(m: Machine<Metadata>, target: StandbyKeyTarget): void {
+  m.mode = { kind: "standby" };
+  m.dirty = true;
+  if (target.kind === "application") startApplication(m, { kind: "standby" }, target.app, []);
+  else tryApplyPath(m, target.path);
 }
 
 function navShortPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void {
@@ -1846,9 +1900,11 @@ function handleNavigate<Metadata>(m: Machine<Metadata>, path: string): void {
     m.mode.activation.origin.boot.targetPath = target === "standby" ? null : target;
     return;
   }
-  // A notice's or the power key's application shows the path `standby` but is not standby.
+  // A standby application (a notice's, a standby key's, the power key's) shows the path `standby`
+  // but is not standby: leave it; so is a standby key's delay.
   const overlay = m.mode.kind === "app" && isStandbyOverlay(m.mode.activation.origin);
-  if (target === currentPath(m) && !overlay) return;
+  const leaving = m.mode.kind === "standby" && m.mode.leaving !== undefined;
+  if (target === currentPath(m) && !overlay && !leaving) return;
   applyPath(m, target);
 }
 
@@ -1945,6 +2001,7 @@ export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): 
     bootTimeline: config.bootTimeline,
     bootGates: resolveBootGates(config, bootMs),
     menuOpenDelayMs: nonNegativeInteger("menuOpenDelayMs", config.menuOpenDelayMs, 0),
+    standbyKeyDelayMs: nonNegativeInteger("standbyKeyDelayMs", config.standbyKeyDelayMs, 0),
     shortcutWindowMs,
     rowsWindow: positiveInteger("rowsWindow", config.rowsWindow),
     now: 0,

@@ -218,7 +218,9 @@ describe("input prompts against every asserted prompt golden (first screen, curs
   });
 
   it("covers text, number, time and code prompts", () => {
-    expect(cases.length).toBeGreaterThanOrEqual(15);
+    // Plan 19 binds Search, Add name and Speed dials (1-1, 1-3, 1-9): their prompts are the
+    // phone book's.
+    expect(cases.length).toBeGreaterThanOrEqual(12);
   });
 
   for (const { id, number, screen } of cases) {

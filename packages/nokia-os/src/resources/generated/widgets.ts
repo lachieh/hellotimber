@@ -3411,6 +3411,46 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         "....###............."
       ]
     },
+    "please-speak-1": {
+      "x": 62,
+      "y": 4,
+      "art": [
+        ".........########.....",
+        ".......##........##...",
+        "......#............#..",
+        ".....#.....##.......#.",
+        "....####...##.......#.",
+        ".#.....#.............#",
+        "##..#..#######.......#",
+        "##.##.......#........#",
+        "##.##.....##.........#",
+        "##.##...##..........#.",
+        "##..#.##............#.",
+        ".#....#............#..",
+        ".......##........##...",
+        ".........########....."
+      ]
+    },
+    "please-speak-2": {
+      "x": 62,
+      "y": 4,
+      "art": [
+        ".........########.....",
+        ".......##........##...",
+        "......#............#..",
+        ".....#.....##.......#.",
+        "....####...##.......#.",
+        ".......#.............#",
+        "......#..............#",
+        ".....#......#........#",
+        "....########.........#",
+        ".....#..............#.",
+        ".....#..............#.",
+        "......#............#..",
+        ".......##........##...",
+        ".........########....."
+      ]
+    },
     "keyguard/key": {
       "x": 7,
       "y": 0,
@@ -9540,6 +9580,576 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
+    "saved": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 684
+        },
+        {
+          "frame": 1,
+          "durationMs": 235
+        },
+        {
+          "frame": 2,
+          "durationMs": 1927
+        }
+      ]
+    },
+    "replaced": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 683
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 1928
+        }
+      ]
+    },
+    "nothing-to-save": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/info"
+        },
+        {
+          "kind": "cut",
+          "bytes": 266
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 2924
+        },
+        {
+          "frame": 1,
+          "durationMs": 15
+        }
+      ]
+    },
+    "memory-full": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/info"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 2833
+        }
+      ]
+    },
+    "invalid-sim-char": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/info"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 2919
+        }
+      ]
+    },
+    "speed-dial-saved": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 688
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 476
+        }
+      ]
+    },
+    "tone-done": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 670
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 501
+        }
+      ]
+    },
+    "memory-erased": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 690
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 2003
+        }
+      ]
+    },
+    "voice-system-error": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/error"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 2837
+        }
+      ]
+    },
+    "erased": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "erased-1"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-2"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-3"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-4"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-5"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-6"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 219
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 232
+        },
+        {
+          "frame": 3,
+          "durationMs": 234
+        },
+        {
+          "frame": 4,
+          "durationMs": 245
+        },
+        {
+          "frame": 5,
+          "durationMs": 218
+        },
+        {
+          "frame": 2,
+          "durationMs": 232
+        },
+        {
+          "frame": 1,
+          "durationMs": 233
+        },
+        {
+          "frame": 0,
+          "durationMs": 1071
+        }
+      ]
+    },
+    "last-name-erased": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "erased-1"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-2"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-3"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-4"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-5"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-6"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 216
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 233
+        },
+        {
+          "frame": 3,
+          "durationMs": 237
+        },
+        {
+          "frame": 4,
+          "durationMs": 242
+        },
+        {
+          "frame": 5,
+          "durationMs": 218
+        },
+        {
+          "frame": 2,
+          "durationMs": 232
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 0,
+          "durationMs": 1068
+        }
+      ]
+    },
+    "speed-dial-erased": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "erased-1"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-2"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-3"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-4"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-5"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-6"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 215
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 233
+        },
+        {
+          "frame": 3,
+          "durationMs": 235
+        },
+        {
+          "frame": 4,
+          "durationMs": 242
+        },
+        {
+          "frame": 5,
+          "durationMs": 242
+        },
+        {
+          "frame": 2,
+          "durationMs": 218
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 0,
+          "durationMs": 993
+        }
+      ]
+    },
+    "erasing-memory": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "progress-1"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "progress-2"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "progress-3"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "progress-4"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "progress-5"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "progress-6"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "progress-7"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 360
+        },
+        {
+          "frame": 1,
+          "durationMs": 388
+        },
+        {
+          "frame": 2,
+          "durationMs": 383
+        },
+        {
+          "frame": 3,
+          "durationMs": 423
+        },
+        {
+          "frame": 4,
+          "durationMs": 352
+        },
+        {
+          "frame": 5,
+          "durationMs": 345
+        },
+        {
+          "frame": 6,
+          "durationMs": 217
+        }
+      ]
+    },
+    "bcard-sent": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "message-sent-1"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "message-sent-2"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "message-sent-3"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "message-sent-4"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "message-sent-5"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "message-sent-6"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 214
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 232
+        },
+        {
+          "frame": 3,
+          "durationMs": 234
+        },
+        {
+          "frame": 4,
+          "durationMs": 230
+        },
+        {
+          "frame": 5,
+          "durationMs": 230
+        }
+      ]
+    },
+    "please-speak": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "please-speak-1"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "please-speak-2"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 175
+        },
+        {
+          "frame": 1,
+          "durationMs": 208
+        },
+        {
+          "frame": 0,
+          "durationMs": 179
+        },
+        {
+          "frame": 1,
+          "durationMs": 202
+        },
+        {
+          "frame": 0,
+          "durationMs": 193
+        },
+        {
+          "frame": 1,
+          "durationMs": 197
+        },
+        {
+          "frame": 0,
+          "durationMs": 1119
+        }
+      ]
+    },
     "calculator-out-of-range": {
       "frames": [
         {
@@ -10049,6 +10659,21 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "message-sent": "message-sent",
     "message-erased": "message-erased",
     "t9-dictionary-activated": "t9-dictionary-activated",
+    "saved": "saved",
+    "replaced": "replaced",
+    "nothing-to-save": "nothing-to-save",
+    "memory-full": "memory-full",
+    "invalid-sim-char": "invalid-sim-char",
+    "speed-dial-saved": "speed-dial-saved",
+    "tone-done": "tone-done",
+    "memory-erased": "memory-erased",
+    "voice-system-error": "voice-system-error",
+    "erased": "erased",
+    "last-name-erased": "last-name-erased",
+    "speed-dial-erased": "speed-dial-erased",
+    "erasing-memory": "erasing-memory",
+    "bcard-sent": "bcard-sent",
+    "please-speak": "please-speak",
     "calculator-out-of-range": "calculator-out-of-range",
     "calculator-divide-by-zero": "calculator-divide-by-zero",
     "calculator-rate-saved": "calculator-rate-saved",
