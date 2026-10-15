@@ -14,7 +14,7 @@ plan 14 goldens already committed for Messages, the crawl's `tree/02-messages/` 
 `$REF/captures/scratch-plan18/` (evidence only, never imported; `NOTES.md` there lists them), and
 the canonical recaptures Task 0 writes to `$REF/captures/6.39/plan18/`. Read
 `$REF/captures/README.md` and plans 13, 14, 15 and 23 in full before starting.
-**Status:** in progress (Task 0 complete; Task 1 contracts documented).
+**Status:** done.
 
 ## Goal
 
@@ -1325,19 +1325,46 @@ recordings, each golden read once).
 **Files:** `packages/nokia-os/{README.md,demo/{index.html,main.ts,style.css}}`,
 `docs/specs/nokia-3310.md`, `docs/plans/README.md`, this plan.
 
-- [ ] Demo: `network: createSyntheticNetwork()`; a "Receive SMS" form (number, text; the timestamp
+- [x] Demo: `network: createSyntheticNetwork()`; a "Receive SMS" form (number, text; the timestamp
       from the browser's clock) calling `deliver`; a list of sent SMS; the golden overlay lists the
       new goldens. Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`
       (headless: drive through the `[role=status]` line, Skip boot): Dictionary off, type `Hi` with
       multi-tap, Send to a number (`Sending message`, `Message sent`), Save, Outbox; receive an SMS
       (notice, Read, the view, Details); Welcome note Save, power cycle, the note at boot.
-- [ ] README: text entry, the network port (a sketch of a host port backed by an HTTP endpoint, no
+- [x] README: text entry, the network port (a sketch of a host port backed by an HTTP endpoint, no
       LLM code), the messages record, what 18b and 18c add.
-- [ ] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
+- [x] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
       `git diff --stat <commit before Task 1> -- website/` is empty.
-- [ ] Spec §10: replace "(plan 18, in progress)" with verified facts; list what stays UNVERIFIED.
-- [ ] Plans README: row 18 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete text entry and SMS (plan 18)`.
+- [x] Spec §10: replace "(plan 18, in progress)" with verified facts; list what stays UNVERIFIED.
+- [x] Plans README: row 18 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete text entry and SMS (plan 18)`.
+
+Deviation: **Task 13 (paths, parallel plan conventions):** the demo is a panel,
+`demo/panels/messages.ts` (`messagesPanel`, plan 18: `config` gives every phone one page-wide
+`createSyntheticNetwork()`, a **Receive SMS** form delivers with the browser's local time, the sent
+SMS are listed and counted in the status line) plus one export line in `demo/panels/index.ts`;
+`demo/{index.html,main.ts,style.css}` are unchanged. The golden overlay lists the new goldens
+already (it globs `goldens/**`). Verified headless on port 5418 with `agent-browser`: Skip boot,
+Write messages (Dictionary off), `Hi OK€` typed with multi-tap (sentence case, `#` to ABC, a
+symbol from `*`), Send to a typed number (`Sending message`, `Message sent`, the network's list),
+Save (`Message saved`), Outbox (`Message`, the text); Receive SMS (`1 message received` with the
+envelope ≈2.3 s later), Read, the list, the view, Details (Sender, Message centre); Welcome note
+`Hello` saved, power cycle with the boot, the note before standby.
+
+Deviation: **Task 13 (verification gate):** under the full `vp run -r test` load the four
+resource-registration tests and the two resource-freshness tests that run a whole extraction
+passed alone (≈2 s each) but exceeded Vitest's 5 s default, now that plan 18's goldens feed it;
+they take `{ timeout: EXTRACTION_TIMEOUT_MS }` (30 s). Nothing else changed.
+
+**Completion note:** Tasks 8-13 shipped the Welcome note editor, the editable centre and voice
+mailbox numbers, the `messages` record and network port, Write messages with its Options, Inbox,
+Outbox and arrivals, and the replayed acceptance: 196 goldens, 188 asserted (8 known gaps), 7
+`pending:22`, 1 `pending:18c`, with `tree/02-messages/2-1.leaf` `pending:18b`. `website/` is
+unchanged since before Task 1. Findings for other plans: phone-core's stock shortcut keeps its
+window open over an application it opened and takes the digits typed into it; the received
+notice's ▲/▼/digit/# need a kernel route for a notice's keys (D12, plan 22); the capture's ▼ at
+standby opens the Phone book, against `STOCK_STANDBY_KEYS`; C held across an application's exit
+is swallowed (plan 23's gap); the standby clock's 12-hour format belongs to plan 21.
 
 ## Follow-up plan adjustments
 

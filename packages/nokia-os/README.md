@@ -15,14 +15,15 @@ four game splashes. Choices persist in an EEPROM over a host storage port and pa
 (plan 15); the security code guards Phone security, Change security code, Restore factory
 settings and Clear timers, and gates the power-on with Phone security On. Snake II is playable
 (plan 23; see "Snake II"). The buzzer, the tone generator and the vibrator reach the host through a
-sound port (plan 16; see "Sound"). Leaves that are whole applications open a marked
+sound port (plan 16; see "Sound"). Multi-tap text entry, the Welcome note editor, Write messages,
+Inbox and Outbox work over a host network port (plan 18; see "Text entry and SMS"). Leaves that are whole applications open a marked
 placeholder (a dotted border the firmware never draws) naming the plan that owns them; see "Leaf
 ownership".
 
 ## Usage
 
 ```ts
-import { createStockPhone, paintStockScreen } from "@hellotimber/nokia-os";
+import { createStockPhone, createSyntheticNetwork, paintStockScreen } from "@hellotimber/nokia-os";
 import { createScreenRenderer } from "@hellotimber/phone-screen";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -39,6 +40,7 @@ const phone = createStockPhone({
   boot: "animated", // or "skip" (tests, reduced motion; the security code is still asked for)
   storage: window.localStorage, // the EEPROM; default: a fresh in-memory storage per phone
   sim: "sim-1", // the inserted SIM card (default "sim-1")
+  network: createSyntheticNetwork(), // SMS in and out (the default; see "Text entry and SMS")
 });
 
 const renderer = createScreenRenderer({ paint: paintStockScreen, scale: 6 });
@@ -80,7 +82,9 @@ state (the virgin phone is nearly silent; see "Sound"). The demo plays the sound
 WebAudio once a key or click has started audio (a **Mute** box silences it), lights a `VIBRA` lamp
 and shakes the LCD while the vibrator runs (the lamp only with reduced motion), and lists the last
 eight sound events (`atMs output state`) under the status line, so a headless run can check sound
-without hearing it. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
+without hearing it. The phone's network is a synthetic one: a **Receive SMS** form (sender and
+text, time-stamped by the browser's clock) delivers a message, and the messages the phone sent are
+listed beside it. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
 difference; the list groups the goldens by top-level menu (`tree/05-tones`) and kind (`menu`,
 `probe`, `game`).
 
@@ -274,9 +278,91 @@ requestAnimationFrame(loop);
   beep, but ringing previews and warning tones are silent. The factory state (Restore factory
   settings, or the demo's button) sounds: Ringing tone, Ringing volume and Message alert tone
   previews, warning tones on error notes, Snake II's sounds and shakes.
-- **Later plans.** The incoming call's ringing and DTMF (22), the message alert (18), alarms and
-  reminders (21), profile switching (17), the other games' sounds (24) and the Composer (27) play
+- **Later plans.** An arriving SMS plays the Message alert tone (plan 18, General's settings until
+  profiles). The incoming call's ringing and DTMF (22), alarms and reminders (21), profile switching (17), the other games' sounds (24) and the Composer (27) play
   through the same sequencer.
+
+## Text entry and SMS
+
+Plan 18 adds the firmware's multi-tap text entry and the SMS features built on it, checked against
+196 goldens of emulator captures (`text/*`, `sms/*`, `welcome/*`, `glyphs/*`).
+
+- **Text entry.** Write messages opens the multi-tap editor (Dictionary off: T9 is plan 18b's):
+  every key's character cycle including the accented letters, the 1452 ms commit, sentence case
+  after `. `, `? `, `! ` and the `#` case cycle, `123` on held `#`, held digits, the `*` symbol
+  table (31 symbols, ▲/▼ wrap, Use inserts), ▲ right and ▼ left, C delete and held-C clear, the
+  `459/1` characters-left counter in three parts, word wrap, scrolling and the 480 ms cursor
+  blink. The same editor is the Welcome note (36 characters, large text while two lines fit). The
+  reusable widgets later plans bind are `editor`, `textInput` (one-line names, Rename, Tone name)
+  and `numberEntry` (numbers: `*` cycles `* + p w`, 30 digits, Search on empty).
+- **Messages.** Write messages and its nine Options (Send to a typed number, Save to Outbox,
+  Erase, Exit, Dictionary, Send by set with Numeric/Alphanumeric and Set 2's centre prompt;
+  Send to many, Template and Insert smiley show what the firmware shows without a phone book or
+  content). Inbox and Outbox list, read (four lines a page, then `Sender:` and `Sent:`), and offer
+  the stock Options (Erase, Reply, Edit, Forward, Details; Chat and Use number's dialling are
+  later plans'). Arrivals show `1 message received` (Read) and the envelope at standby, wait for
+  standby elsewhere, and are refused with `No space for new messages` when the SIM's 15 slots are
+  used (the envelope blinks). Message centre numbers and the voice mailbox number are editable.
+- **Records.** The `messages` EEPROM record (version 1) holds each SIM's Inbox and Outbox:
+  `{"sims":{"sim-1":{"inbox":[{number,text,sentAt,centre,read}],"outbox":[{text,number?}]}}}`.
+  Restore factory settings keeps it. The Welcome note, the centres, the voice mailbox and the
+  Dictionary choice live in the `settings` record.
+
+**The network port.** `StockPhoneConfig.network` is the only way an SMS enters or leaves the
+phone. It carries numbers (or routing addresses), text and an incoming message's local time stamp,
+and nothing of the radio protocol. `send` may return a promise: the phone shows `Sending message`
+until it settles and the measured link time (≈2.66 s) has passed, then `Message sent`, or a
+failure note for `"failed"` or a rejection. Arrivals land ≈2.32 s after `deliver`; ones delivered
+while the phone is off land once it reaches standby. The default, `createSyntheticNetwork()`,
+accepts every send and never loops one back, as the emulator's network does:
+
+```ts
+import { createStockPhone, createSyntheticNetwork } from "@hellotimber/nokia-os";
+
+const network = createSyntheticNetwork();
+const phone = createStockPhone({ carrier: "Telstra", network });
+const now = new Date();
+network.deliver({
+  number: "0412345678",
+  text: "Hello from the network",
+  sentAt: {
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    day: now.getDate(),
+    hour: now.getHours(),
+    minute: now.getMinutes(),
+    second: now.getSeconds(),
+  },
+});
+network.sent; // [{ number, text }, …] what the phone sent
+```
+
+A host backs the port with its own service. A sketch over an HTTP endpoint (the endpoint and its
+replies are the host's; `deliver` validates each field and throws naming a bad one):
+
+```ts
+import type { StockIncomingSms, StockNetworkPort } from "@hellotimber/nokia-os";
+
+function httpNetwork(endpoint: string): StockNetworkPort {
+  return {
+    async send(sms) {
+      const response = await fetch(endpoint, { method: "POST", body: JSON.stringify(sms) });
+      return response.ok ? "sent" : "failed";
+    },
+    subscribe(deliver) {
+      const events = new EventSource(`${endpoint}/incoming`);
+      events.onmessage = (event) => deliver(JSON.parse(event.data) as StockIncomingSms);
+      return () => events.close();
+    },
+  };
+}
+```
+
+**Later plans.** 18b adds T9 (the dictionary, Matches, Insert word, Spell) and makes T9 the virgin
+default again; 18c adds Chat over the same messaging service, Templates, Smileys, Picture messages
+(a binary extension of the port), Info service topics and the Service command editor. Phone book
+names (19), dialling a message's number and the received notice's ▲/▼/digit keys (22) and the
+profiles' message alert (17) are theirs.
 
 ## Plan-owned resource evidence
 
@@ -312,11 +398,10 @@ exemption is needed.
 ## Leaf ownership
 
 Leaves that are whole applications open the placeholder, tagged with the plan that owns them:
-Write messages, Service command editor, Picture messages, Templates, Smileys, Topics, Chat and
-Screen saver › Screen saver and the Welcome note editor (18); Composer slots (27); the three
+Service command editor, Picture messages, Templates, Smileys, Topics, Chat and Screen saver ›
+Screen saver (18c); Composer slots (27); the three
 native languages (26); the other games' New game (24); Calculator (20); Stopwatch (21); Profiles ›
-Activate (17). Prompts and empty-state notes show their first screen until the plans for Messages
-(18), Phone book (19), Clock and Reminders (21) and Call register and Call divert (22) take them
+Activate (17). Prompts and empty-state notes show their first screen until the plans for Phone book (19), Clock and Reminders (21) and Call register and Call divert (22) take them
 over.
 
 ## Capture artefacts
@@ -335,3 +420,6 @@ The emulator's virgin EEPROM and synthetic network leave marks that the OS does 
 | Unset tone lists, `Top score: 45`, score IDs   | the virgin EEPROM (empty storage)                  |
 | Snake II level 175 (one cell per ≈7.7 ms)      | the virgin EEPROM; Restore returns it to virgin    |
 | `Requesting` / `Searching` never finish        | the bar loops until Quit or C                      |
+| Network: every send succeeds, no loopback      | `createSyntheticNetwork`; hosts decide outcomes    |
+| SMS sender `12345` for `Nokia`, 120 septets    | replays map the helper's encoding; not reproduced  |
+| Messages lost in a new emulator process        | the `messages` record persists them (D7 policy)    |

@@ -40,8 +40,8 @@ describe("plan 18's coverage", () => {
     const pending = OWN.filter((e) => e.status !== "asserted");
     expect(pending.map((e) => [e.id, e.status])).toEqual(
       Object.entries(MESSAGES_LATER)
-        .map(([id, plan]) => [id, `pending:${plan}`])
-        .sort(),
+        .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+        .map(([id, plan]) => [id, `pending:${plan}`]),
     );
   });
 });

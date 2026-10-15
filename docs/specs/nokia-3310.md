@@ -209,7 +209,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Deeper levels, stock widgets, shortcuts, capture artefacts | [stock/menu-depth.md](stock/menu-depth.md)                     | 14   |
 | Security code, boot gates, storage, virgin/factory states  | [stock/storage-and-settings.md](stock/storage-and-settings.md) | 15   |
 | Tones and sound                                            | [stock/sound.md](stock/sound.md)                               | 16   |
-| Text entry and SMS (plan 18, in progress)                  | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)     | 18   |
+| Text entry and SMS                                         | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)     | 18   |
 | Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                     | 20   |
 | Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                         | 23   |
 

@@ -1,12 +1,13 @@
-# Text entry and SMS (plan 18, in progress)
+# Text entry and SMS (plan 18)
 
 Source: plan 18 Task 0's v6.39 emulator captures under
 `$REF/captures/6.39/plan18/`, documented in
-[plan 18](../../plans/18-messages-and-chat.md#task-0---canonical-ref-captures-no-repository-changes).
-The parent independently reran the generator check: 194 recordings, zero problems, two
-no-response notes (Template and Insert smiley). Task 2 has not imported these captures into
-committed goldens. These are measured firmware facts and planned contracts, not shipped SMS
-behaviour. Existing plan 14 tree goldens still describe first screens.
+[plan 18](../../plans/18-messages-and-chat.md#task-0---canonical-ref-captures-no-repository-changes),
+imported as 196 committed goldens (`goldens/index/18.json`: `text/*`, `sms/*`, `welcome/*`,
+`glyphs/*`). `@hellotimber/nokia-os` reproduces them: 188 are asserted pixel for pixel and on
+their timing rows by replaying the captures' own command logs (8 of them known gaps, listed
+below), 7 wait for plan 22 and 1 for plan 18c. The facts below are verified by those goldens
+unless marked UNVERIFIED; "Shipped behaviour" lists the rules the implementation adds.
 
 ## Multi-tap entry
 
@@ -137,4 +138,39 @@ Do not describe these as three proven failures or as successful empty-centre sen
 `Message\nsending\nfailed` error note and ≈2.9 s duration are an **UNVERIFIED composition**.
 Host rejection mapping and queuing deliveries while powered off until standby are contract
 policies, not observed emulator behaviour. Other SIM capacities and persisted SIM ownership
-remain UNVERIFIED. T9 and content extensions belong to 18b/18c; Task 1 adds no runtime code.
+remain UNVERIFIED. T9 and content extensions belong to 18b/18c.
+
+## Shipped behaviour
+
+- **Editor timing.** The cursor blinks on a free-running 480 ms timer from the editor's first
+  frame (each node's own blink timeline); commits redraw at the next key or at 1452 ms. Options
+  commits a pending character. Held `#` in `123` removes the `#` the tap typed.
+- **Short screens.** Saving draws a blank frame (32 ms) and `Saving message` (88 ms) before
+  `Message saved`; `Message memory full` follows a 68 ms blank; the centre prompts' Select shows
+  their list for 128 ms; Erase shows `Erasing message` for 261 ms; opening Inbox or Outbox shows
+  its node's own `Opening` step (35-78 ms between recordings).
+- **C.** C on an empty editor, a message list or a message's pages goes back as it comes up and
+  to standby when held for the long press.
+- **Arrivals.** The notice's count is the unread messages; an arrival away from standby is noticed
+  at the next standby unless a key goes down first; the envelope blinks every 480 ms while all 15
+  slots are used. Details' Message centre is the phone's Set 1 centre when the message arrived.
+- **Storage.** The `messages` record (version 1) keeps each SIM's Inbox and Outbox; Restore keeps
+  it. The Welcome note, centres, voice mailbox and the Dictionary choice are settings.
+
+## Known gaps and what stays UNVERIFIED
+
+Known gaps (asserted goldens the implementation does not yet match, each with an owner):
+`text/commit-gap` (a 1450 ms key gap whose second key reached the firmware after the commit:
+key-scan latency the replay does not vary), `sms/notice` (▼ at standby opens the
+Phone book in the capture; the kernel's standby keys put the dialled numbers there; plans 19/22),
+`sms/notice-c` (an 88 ms standby frame without operator), `sms/elsewhere` (C held in a moving
+game, plan 23's kernel gap), `sms/time-format` (the standby clock in 12-hour format, plan 21) and
+`sms/sim-same-new-process`, `-inbox`, `-outbox` (the emulator loses its SIM overlay in a new
+process; the record keeps the messages).
+
+UNVERIFIED: the `Message sending failed` note and its ≈2.9 s (composed, never captured); the
+blinking envelope's phase; `No number found on this screen`'s length (2883 ms in one recording)
+and the "three or more digits" rule Use number applies to saved text; how many characters `€`
+and the other GSM extension symbols take from the counter (one each here); keying the slots by
+SIM; host latency beyond the measured link times; delivery of more than 120 septets and of
+Unicode text.

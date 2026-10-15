@@ -8,6 +8,9 @@ import { extractResources, GOLDENS_DIR } from "../scripts/extract-resources.ts";
 import { readGoldenIndex } from "../scripts/golden-index.ts";
 import { loadGolden } from "./support/goldens.ts";
 
+/** A whole extraction reads every golden: ≈2 s alone, longer under the full suite's load. */
+const EXTRACTION_TIMEOUT_MS = 30_000;
+
 const index = readGoldenIndex(GOLDENS_DIR);
 const compose = (sets: readonly PlanCaptureSet[]) =>
   composeResourceDeclarations(sets, index, loadGolden);
@@ -42,14 +45,18 @@ const consumer: PlanCaptureSet = {
 };
 
 describe("plan resource registrations", () => {
-  it("passes a registered crop and new timeline kind through real extraction", () => {
-    const result = extractResources(GOLDENS_DIR, [...captureSets(), consumer]);
-    expect(result.widgets.sprites["consumer/tick"]?.art.some((row) => row.includes("#"))).toBe(
-      true,
-    );
-    const timeline = result.widgets.timelines[result.widgets.byName["consumer-confirmation"]!];
-    expect(timeline?.frames).toContainEqual({ kind: "sprite", sprite: "consumer/tick" });
-  });
+  it(
+    "passes a registered crop and new timeline kind through real extraction",
+    { timeout: EXTRACTION_TIMEOUT_MS },
+    () => {
+      const result = extractResources(GOLDENS_DIR, [...captureSets(), consumer]);
+      expect(result.widgets.sprites["consumer/tick"]?.art.some((row) => row.includes("#"))).toBe(
+        true,
+      );
+      const timeline = result.widgets.timelines[result.widgets.byName["consumer-confirmation"]!];
+      expect(timeline?.frames).toContainEqual({ kind: "sprite", sprite: "consumer/tick" });
+    },
+  );
   it("rejects competing sprite ownership even when recipes are identical", () => {
     expect(() =>
       compose([
@@ -82,43 +89,47 @@ describe("plan resource registrations", () => {
   });
 });
 
-it("takes a plan-owned glyph specimen and its bearing through font extraction", () => {
-  const sets = captureSets();
-  const foundation = sets.find((set) => set.plan === "13")!;
-  const resources = foundation.resources!;
-  const specimen = resources.textRuns!["menu/05-tones.sub"]!;
-  const textRuns = Object.fromEntries(
-    Object.entries(resources.textRuns!).filter(([id]) => id !== "menu/05-tones.sub"),
-  );
-  const override = resources.glyphOverrides!.find(
-    (entry) => entry.kind === "bearing" && entry.font === "small" && entry.char === "1",
-  )!;
-  const moved = sets.map((set) =>
-    set.plan === "13"
-      ? {
-          ...set,
-          resources: {
-            ...resources,
-            textRuns,
-            glyphOverrides: resources.glyphOverrides!.filter((entry) => entry !== override),
-          },
-        }
-      : set,
-  );
-  // Plan 18's goldens also harvest small "1", so removing plan 13's specimen alone no longer
-  // fails extraction; the registration moved to another plan must still give the same glyph.
-  const result = extractResources(GOLDENS_DIR, [
-    ...moved,
-    {
-      plan: "29",
-      resources: {
-        textRuns: { "menu/05-tones.sub": specimen },
-        glyphOverrides: [override],
+it(
+  "takes a plan-owned glyph specimen and its bearing through font extraction",
+  { timeout: EXTRACTION_TIMEOUT_MS },
+  () => {
+    const sets = captureSets();
+    const foundation = sets.find((set) => set.plan === "13")!;
+    const resources = foundation.resources!;
+    const specimen = resources.textRuns!["menu/05-tones.sub"]!;
+    const textRuns = Object.fromEntries(
+      Object.entries(resources.textRuns!).filter(([id]) => id !== "menu/05-tones.sub"),
+    );
+    const override = resources.glyphOverrides!.find(
+      (entry) => entry.kind === "bearing" && entry.font === "small" && entry.char === "1",
+    )!;
+    const moved = sets.map((set) =>
+      set.plan === "13"
+        ? {
+            ...set,
+            resources: {
+              ...resources,
+              textRuns,
+              glyphOverrides: resources.glyphOverrides!.filter((entry) => entry !== override),
+            },
+          }
+        : set,
+    );
+    // Plan 18's goldens also harvest small "1", so removing plan 13's specimen alone no longer
+    // fails extraction; the registration moved to another plan must still give the same glyph.
+    const result = extractResources(GOLDENS_DIR, [
+      ...moved,
+      {
+        plan: "29",
+        resources: {
+          textRuns: { "menu/05-tones.sub": specimen },
+          glyphOverrides: [override],
+        },
       },
-    },
-  ]);
-  expect(result.fonts.small.glyphs["1"]).toEqual(extractResources().fonts.small.glyphs["1"]);
-});
+    ]);
+    expect(result.fonts.small.glyphs["1"]).toEqual(extractResources().fonts.small.glyphs["1"]);
+  },
+);
 
 it("allows resource evidence from an honestly pending LCD golden", () => {
   const pending = index.find((entry) => entry.id === "menu/03-chat.sub")!;
@@ -239,9 +250,13 @@ it("rejects bad text bands, non-LCD fixtures and invalid probe frames", () => {
   ).toThrow(/invalid fromFrame/);
 });
 
-it("sorts batches independently of plan enumeration and preserves all existing bytes", () => {
-  expect(extractResources(GOLDENS_DIR, captureSets().reverse())).toEqual(extractResources());
-});
+it(
+  "sorts batches independently of plan enumeration and preserves all existing bytes",
+  { timeout: EXTRACTION_TIMEOUT_MS },
+  () => {
+    expect(extractResources(GOLDENS_DIR, captureSets().reverse())).toEqual(extractResources());
+  },
+);
 
 it("requires one index registration for every plan capture module and resource input", async () => {
   const scripts = join(import.meta.dirname, "../scripts");
@@ -289,26 +304,30 @@ it("does not execute capture callbacks when composing registered evidence", () =
   expect(() => captureSets([{ plan: "oops" }])).toThrow(/not a plan number/);
 });
 
-it("rejects a missing fixture file without modifying generated output", () => {
-  const generated = join(import.meta.dirname, "../src/resources/generated");
-  const bytes = () =>
-    readdirSync(generated).map((file) => readFileSync(join(generated, file), "utf8"));
-  const before = bytes();
-  expect(() =>
-    composeResourceDeclarations([consumer], index, () => {
-      throw new Error("fixture file missing");
-    }),
-  ).toThrow(/fixture file missing/);
-  expect(() =>
-    extractResources(GOLDENS_DIR, [
-      ...captureSets(),
-      {
-        plan: "29",
-        resources: {
-          spriteBatches: [{ order: 290, entries: [{ ...crop, golden: "missing/fixture" }] }],
+it(
+  "rejects a missing fixture file without modifying generated output",
+  { timeout: EXTRACTION_TIMEOUT_MS },
+  () => {
+    const generated = join(import.meta.dirname, "../src/resources/generated");
+    const bytes = () =>
+      readdirSync(generated).map((file) => readFileSync(join(generated, file), "utf8"));
+    const before = bytes();
+    expect(() =>
+      composeResourceDeclarations([consumer], index, () => {
+        throw new Error("fixture file missing");
+      }),
+    ).toThrow(/fixture file missing/);
+    expect(() =>
+      extractResources(GOLDENS_DIR, [
+        ...captureSets(),
+        {
+          plan: "29",
+          resources: {
+            spriteBatches: [{ order: 290, entries: [{ ...crop, golden: "missing/fixture" }] }],
+          },
         },
-      },
-    ]),
-  ).toThrow(/not an indexed LCD/);
-  expect(bytes()).toEqual(before);
-});
+      ]),
+    ).toThrow(/not an indexed LCD/);
+    expect(bytes()).toEqual(before);
+  },
+);
