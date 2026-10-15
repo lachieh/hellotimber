@@ -13,7 +13,7 @@ Tasks 12-14 (phone-3d) need only Task 1.
 "Plan 16 supplementary captures") and plans 13-16 and 23 before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan25/`. The planning probes in
 `$REF/captures/scratch-plan25/` are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-9 and 12-14 done; Tasks 10, 11 and 15 not started).
+**Status:** in progress (Tasks 0-10 and 12-14 done; Tasks 11 and 15 not started).
 
 ## Goal
 
@@ -953,13 +953,26 @@ under the kernel.
 **Files:** `tests/acceptance/25-keyguard-and-backlight.test.ts`, `tests/support/keyguard.ts`,
 `tests/support/lights.ts`.
 
-- [ ] One scenario per asserted plan 25 golden (LCD, lights, sound). Delete Task 2's
+- [x] One scenario per asserted plan 25 golden (LCD, lights, sound). Delete Task 2's
       pending-scenario entry; the coverage guard fails for an asserted plan 25 golden without one.
-- [ ] Known gaps, if any, are listed with their cause (the emergency Call until plan 22).
-- [ ] Every other plan's goldens still pass.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
+- [x] Known gaps, if any, are listed with their cause (the emergency Call until plan 22).
+- [x] Every other plan's goldens still pass.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
       `mise exec -- vp check --fix`. Report the file's run time.
-- [ ] Commit: `test(nokia-os): drive every keyguard and lights golden`.
+- [x] Commit: `test(nokia-os): drive every keyguard and lights golden`.
+
+**Task 10 completion.** `goldens/index/25.json`: 210 goldens, 189 asserted (139 lights, 62
+timelines and 3 stills less the 21 pending, 6 sound), 17 `pending:22` and 4 `pending:18`, none
+`pending:25` (`tests/keyguard-capture-set.test.ts` guards it). The acceptance file runs 172
+scenarios, 17 known gaps as expected failures and 21 todos in ≈9.4 s of tests (11.3 s with
+transform and import). Known gaps: `lights/timeout/virgin/tap-02`, `lights/boot/power-off` (Task
+4), `keyguard/hint-during`, `keyguard/emergency/{000,110,113,911,999}`,
+`keyguard/lock-gap/{2500,2900,2910,2920}`, `keyguard/lock-cancel/digit` (Task 7),
+`lights/game/{off,on}/{over,top-score}` (Task 8); the emergency Call (`keyguard/emergency-call`)
+is `pending:22`, not a gap. `vp run -r test`: every package passes.
+
+Deviation: Task 9's commit left a type error in `tests/keyguard-sound.test.ts` (a filtered sound
+event's `hz`); fixed in this commit.
 
 ### Task 11 - Demo lamp and README
 

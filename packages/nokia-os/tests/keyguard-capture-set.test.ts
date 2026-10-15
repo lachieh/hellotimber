@@ -253,7 +253,7 @@ describe("plan 25's capture set", () => {
     expect(LIGHTS_ENTRIES.length).toBe(lights.size);
   });
 
-  it("leaves plan 18's and plan 22's screens pending on them, the rest on plan 25 until driven", () => {
+  it("leaves plan 18's and plan 22's screens pending on them and asserts the rest", () => {
     expect(status("keyguard/standby-message")).toBe("pending:18");
     expect(status("keyguard/sms")).toBe("pending:18");
     expect(status("lights/arrival/sms-locked")).toBe("pending:18");
@@ -284,6 +284,9 @@ describe("plan 25's capture set", () => {
       expect(status(id), id).toBe("asserted");
     }
     expect(status("lights/power-key/game")).toBe("asserted");
+    // Task 10: every golden of plan 25's own is driven.
+    const statuses = [...lcd.values(), ...lights.values()].map((g) => g.status);
+    expect(statuses.filter((s) => s === "pending:25")).toEqual([]);
   });
 
   it("imports the keyguard sound recordings", () => {

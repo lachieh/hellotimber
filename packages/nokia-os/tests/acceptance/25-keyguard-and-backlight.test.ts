@@ -1,7 +1,7 @@
-// Plan 25's acceptance (docs/plans/25-keyguard-and-backlight.md "Acceptance"): the keyguard's LCD
-// goldens, the lights goldens and the keyguard's sound goldens. Plan 25 goldens are imported
-// `pending:25` (plan 29's workflow) and listed as todos until the task that drives one adds its
-// scenario here and promotes it in scripts/capture-sets/25-keyguard-and-backlight.ts.
+// Plan 25's acceptance (docs/plans/25-keyguard-and-backlight.md Task 10): one scenario per
+// asserted golden: the keyguard's LCD goldens (their `leds` too, D10), the lights goldens and the
+// keyguard's sound goldens. The goldens pending on plans 18 and 22 (message and call screens) are
+// todos; known gaps name their cause.
 import { readPlanIndex } from "../../scripts/golden-index.ts";
 import { acceptancePlan, GOLDENS, type Scenario } from "../support/acceptance.ts";
 import { expectLcd } from "../support/golden.ts";

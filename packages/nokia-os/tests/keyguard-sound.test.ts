@@ -23,8 +23,10 @@ describe("the lock (D12)", () => {
     const at = rig.now;
     rig.press("*");
     rig.advance(1000);
-    const tones = rig.sounds.slice(from).filter((e) => e.output === "tone");
-    expect(tones.map((e) => [e.atMs - at, e.hz])).toEqual([
+    const tones = rig.sounds
+      .slice(from)
+      .flatMap((e) => (e.output === "tone" ? [[e.atMs - at, e.hz]] : []));
+    expect(tones).toEqual([
       [0, 1750],
       [293, null],
     ]);

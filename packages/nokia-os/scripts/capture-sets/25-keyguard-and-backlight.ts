@@ -4,10 +4,9 @@
 // `$REF/captures/6.39/plan25/`.
 //
 // Statuses (plan 29's pending workflow): a golden whose screens belong to a later plan names it
-// (`pending:18`, `pending:22`); every other golden is `pending:25` until the plan 25 task that
-// drives it promotes it here (Tasks 4 and 7-9). Task 4 asserts the timeout, key, boot and
-// power-key lights goldens (tests/support/lights.ts `lightsScenario`), Task 7 the keyguard's LCD
-// goldens (tests/support/keyguard.ts `keyguardTimeline`), Task 8 the other lights goldens.
+// (`pending:18`, `pending:22`); every other golden is asserted, driven by this plan's acceptance
+// scenarios (tests/support/lights.ts `lightsScenario`, tests/support/keyguard.ts
+// `keyguardTimeline` and `keyguardSound`).
 import type { CaptureSetEntry, PlanCaptureSet } from "../capture-set.ts";
 import type { GoldenStatus } from "../golden-format.ts";
 import type { LightName, LightsCaptureIo, LightsGolden, LightsRow } from "../lights-format.ts";
