@@ -1,0 +1,21 @@
+sound-golden 1
+id: sound/composer/play-note
+status: pending:27
+source: captures/6.39/plan27/play/note
+source-sha256: c864a69845388bc48f53b9880bcfbdc92aa6620cda48cec5d2cd0198fbbb43bf
+state: factory
+keys: 0:navi 1740:5
+note: plan27/play/note: slot 1's editor: 1 2 3 4 5 6 7 1 menu, then menu +1440 5.
+omitted: 1 (buzzer gap)
+
+@events
+# t_ms output   state
+26     buzzer   523 v=11
+528    buzzer   off
+543    buzzer   587 v=11
+1047   buzzer   off
+1062   buzzer   659 v=12
+1565   buzzer   off
+1581   buzzer   698 v=13
+1761   buzzer   784 v=13
+2262   buzzer   off

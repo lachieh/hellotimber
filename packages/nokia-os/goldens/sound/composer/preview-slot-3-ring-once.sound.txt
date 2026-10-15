@@ -1,0 +1,82 @@
+sound-golden 1
+id: sound/composer/preview-slot-3-ring-once
+status: pending:27
+source: captures/6.39/plan27/sound/preview/slot-3-ring-once
+source-sha256: 5176783109d334d47326dc633a53b3fabe1fcd1ba2075f4c3ff93ad901be68e5
+state: factory
+keys: 0:down
+note: plan27/sound/preview/slot-3-ring-once: the Ringing tone list, ▼ onto slot 3's entry.
+omitted: 3 (divider rewrite)
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+179    tone     off
+1013   buzzer   523 v=11
+1013   vibrator on
+1510   buzzer   off
+1526   buzzer   587 v=11
+2029   buzzer   off
+2045   buzzer   659 v=12
+2548   buzzer   off
+2564   buzzer   698 v=13
+3067   buzzer   off
+3082   vibrator off
+3083   buzzer   784 v=13
+3587   buzzer   off
+3602   buzzer   880 v=14
+4105   buzzer   off
+4121   buzzer   988 v=16
+4624   buzzer   off
+4640   buzzer   523 v=11
+5143   buzzer   off
+5159   buzzer   587 v=11
+5159   vibrator on
+5662   buzzer   off
+5678   buzzer   659 v=12
+6181   buzzer   off
+6196   buzzer   698 v=13
+6700   buzzer   off
+6729   buzzer   784 v=13
+7229   buzzer   off
+7242   buzzer   880 v=14
+7242   vibrator off
+7745   buzzer   off
+7761   buzzer   988 v=16
+8264   buzzer   off
+8279   buzzer   523 v=11
+8783   buzzer   off
+8798   buzzer   587 v=11
+9301   buzzer   off
+9317   buzzer   659 v=12
+9317   vibrator on
+9820   buzzer   off
+9836   buzzer   698 v=13
+10340  buzzer   off
+10356  buzzer   784 v=13
+10859  buzzer   off
+10874  buzzer   880 v=14
+11378  buzzer   off
+11393  buzzer   988 v=16
+11393  vibrator off
+11896  buzzer   off
+11912  buzzer   523 v=11
+12415  buzzer   off
+12431  buzzer   587 v=11
+12934  buzzer   off
+12950  buzzer   659 v=12
+13453  buzzer   off
+13468  vibrator on
+13469  buzzer   698 v=13
+13972  buzzer   off
+13990  buzzer   784 v=13
+14490  buzzer   off
+14506  buzzer   880 v=14
+15009  buzzer   off
+15025  buzzer   988 v=16
+15528  buzzer   off
+15544  buzzer   523 v=11
+15544  vibrator off
+16047  buzzer   off
+16063  buzzer   587 v=11
+16566  buzzer   off

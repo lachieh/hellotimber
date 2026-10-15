@@ -1,0 +1,20 @@
+sound-golden 1
+id: sound/composer/preview-overwritten
+status: pending:27
+source: captures/6.39/plan27/sound/preview/overwritten
+source-sha256: 465e9b5c93e1a42490fe35455de257ebe294428f68e40967d5510d83def546f5
+state: factory
+keys: 0:down
+note: plan27/sound/preview/overwritten: see COMPOSER_OTHER_RECORDINGS' scenario.
+omitted: none
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+170    tone     off
+1007   buzzer   784 v=13
+1007   vibrator on
+2439   buzzer   off
+2455   buzzer   784 v=13
+3888   buzzer   off
+5841   vibrator off

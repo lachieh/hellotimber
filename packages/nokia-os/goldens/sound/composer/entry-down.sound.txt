@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/composer/entry-down
+status: pending:27
+source: captures/6.39/plan27/sound/entry/down
+source-sha256: acb6ea88b3db0bcac33cc234763707a3398291ae61b045236921886bba878352
+state: factory
+keys: 0:down
+note: plan27/sound/entry/down: slot 1's editor: 1 2 3, then down.
+omitted: none
+
+@events
+# t_ms output   state

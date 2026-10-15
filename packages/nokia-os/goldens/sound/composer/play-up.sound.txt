@@ -1,0 +1,28 @@
+sound-golden 1
+id: sound/composer/play-up
+status: pending:27
+source: captures/6.39/plan27/play/up
+source-sha256: 3774a951f59fc8ccc32dad7912a597c683b59864be6365e7857c99128f38eb19
+state: factory
+keys: 0:navi 1740:up
+note: plan27/play/up: slot 1's editor: 1 2 3 4 5 6 7 1 menu, then menu +1440 up.
+omitted: none
+
+@events
+# t_ms output   state
+26     buzzer   523 v=11
+528    buzzer   off
+543    buzzer   587 v=11
+1047   buzzer   off
+1062   buzzer   659 v=12
+1565   buzzer   off
+1581   buzzer   698 v=13
+2084   buzzer   off
+2100   buzzer   784 v=13
+2603   buzzer   off
+2619   buzzer   880 v=14
+3123   buzzer   off
+3138   buzzer   988 v=16
+3642   buzzer   off
+3657   buzzer   523 v=11
+4160   buzzer   off

@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/composer/limit-held
+status: pending:27
+source: captures/6.39/plan27/limit/held
+source-sha256: eb3fcc27abf9bc74b34921372e8eab7603c8a4839f645ebcfe8b54189b7f8315
+state: factory
+keys: 0:3+1500
+note: plan27/limit/held: slot 1's editor (limit): 3@1500.
+omitted: none
+
+@events
+# t_ms output   state

@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/composer/limit-note
+status: pending:27
+source: captures/6.39/plan27/limit/note
+source-sha256: fc19670085c6290419499147591981d845c48271f1f3c78e61ce615b08c52fac
+state: factory
+keys: 0:2
+note: plan27/limit/note: slot 1's editor (limit): 2.
+omitted: none
+
+@events
+# t_ms output   state

@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/composer/entry-sharp
+status: pending:27
+source: captures/6.39/plan27/sound/entry/sharp
+source-sha256: a59e2b8fea415af9b2f8cce61ab71614f6d84e8c7f074c6815eef1d349dd8f74
+state: factory
+keys: 0:#
+note: plan27/sound/entry/sharp: slot 1's editor: 1 2 3, then #.
+omitted: none
+
+@events
+# t_ms output   state

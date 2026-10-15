@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/composer/play-gate-alert-off
+status: pending:27
+source: captures/6.39/plan27/play/gate-alert-off
+source-sha256: 4acc4a550a38f0268ed25d664faf08d8d81dce03ad1da2186bb433017d1023e3
+state: factory
+keys: 0:navi
+note: plan27/play/gate-alert-off: slot 1's editor: 1 2 3 menu, then menu.
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+26     buzzer   523 v=11
+523    buzzer   off
+539    buzzer   587 v=11
+1042   buzzer   off
+1057   buzzer   659 v=12
+1561   buzzer   off

@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/composer/entry-shorter
+status: pending:27
+source: captures/6.39/plan27/sound/entry/shorter
+source-sha256: 27f6dbdbd72b8ee86a0f8846a060215506a3c40d0bcd188d73d67790f2e9bc7d
+state: factory
+keys: 0:8
+note: plan27/sound/entry/shorter: slot 1's editor: 1 2 3, then 8.
+omitted: none
+
+@events
+# t_ms output   state
+21     buzzer   659 v=12
+261    buzzer   off

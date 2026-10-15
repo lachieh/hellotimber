@@ -1,0 +1,48 @@
+sound-golden 1
+id: sound/composer/tempo-l1-225
+status: pending:27
+source: captures/6.39/plan27/sound/tempo/l1-225
+source-sha256: aacf9d594a243293753bcd0dfc154480ab44e48e06697254b14a4c54087385c3
+state: factory
+keys: 0:navi
+note: plan27/sound/tempo/l1-225: slot 1's editor (values): menu down down menu +600 down down down down down down menu +2500 c menu, then menu.
+omitted: none
+
+@events
+# t_ms output   state
+59     buzzer   523 v=3
+293    buzzer   off
+309    buzzer   659 v=3
+680    buzzer   off
+696    buzzer   784 v=4
+936    buzzer   off
+1199   buzzer   523 v=3
+1307   buzzer   off
+1323   buzzer   659 v=3
+1493   buzzer   off
+1517   buzzer   784 v=4
+1625   buzzer   off
+1767   buzzer   523 v=3
+1803   buzzer   off
+1819   buzzer   659 v=3
+1896   buzzer   off
+1912   buzzer   784 v=4
+1950   buzzer   off
+2028   buzzer   523 v=3
+2035   buzzer   off
+2051   buzzer   659 v=3
+2082   buzzer   off
+2097   buzzer   784 v=4
+2105   buzzer   off
+2144   buzzer   523 v=3
+3167   buzzer   off
+3182   buzzer   659 v=3
+4731   buzzer   off
+4747   buzzer   784 v=4
+5774   buzzer   off
+6814   buzzer   523 v=3
+7310   buzzer   off
+7325   buzzer   659 v=3
+8092   buzzer   off
+8107   buzzer   784 v=4
+8603   buzzer   off

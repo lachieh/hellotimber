@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/composer/play-entry-ring-once
+status: pending:27
+source: captures/6.39/plan27/play/entry-ring-once
+source-sha256: 1a91e96dab6c6be22ef315d9da059032d0fd31f42f1dd8368b183d5c245458ce
+state: factory
+keys: 0:1 300:2 600:3
+note: plan27/play/entry-ring-once: slot 1's editor: 1 2 3.
+omitted: 1 (buzzer gap)
+
+@events
+# t_ms output   state
+22     buzzer   523 v=11
+324    buzzer   587 v=11
+619    buzzer   659 v=12
+1121   buzzer   off

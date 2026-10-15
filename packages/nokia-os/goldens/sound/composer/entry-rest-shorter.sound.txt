@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/composer/entry-rest-shorter
+status: pending:27
+source: captures/6.39/plan27/sound/entry/rest-shorter
+source-sha256: 4923c8557ff8fbc1d21ff0f6c475f711113ab4c349b2dc5020ee039a01c2afe2
+state: factory
+keys: 0:0 300:8
+note: plan27/sound/entry/rest-shorter: slot 1's editor: 1 2 3, then 0 8.
+omitted: none
+
+@events
+# t_ms output   state

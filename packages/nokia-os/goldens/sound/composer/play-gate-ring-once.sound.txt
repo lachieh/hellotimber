@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/composer/play-gate-ring-once
+status: pending:27
+source: captures/6.39/plan27/play/gate-ring-once
+source-sha256: 727a2e5319c0a915e794d12150d5b112efca7f4826653e11ef266057214a6185
+state: factory
+keys: 0:navi
+note: plan27/play/gate-ring-once: slot 1's editor: 1 2 3 menu, then menu.
+omitted: none
+
+@events
+# t_ms output   state
+28     buzzer   523 v=11
+525    buzzer   off
+540    buzzer   587 v=11
+1043   buzzer   off
+1059   buzzer   659 v=12
+1562   buzzer   off

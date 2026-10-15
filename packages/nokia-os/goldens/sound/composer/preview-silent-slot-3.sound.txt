@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/composer/preview-silent-slot-3
+status: pending:27
+source: captures/6.39/plan27/sound/preview/silent-slot-3
+source-sha256: fc28fc731c6e70cfde6c01a61710f5bef4022e412a756b55caf7bc743b0d8eb1
+state: factory
+keys: 0:down
+note: plan27/sound/preview/silent-slot-3: see COMPOSER_OTHER_RECORDINGS' scenario.
+omitted: none
+
+@events
+# t_ms output   state
+28     tone     900 v=0x9104
+168    tone     off

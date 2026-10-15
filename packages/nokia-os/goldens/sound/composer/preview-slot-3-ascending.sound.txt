@@ -1,0 +1,82 @@
+sound-golden 1
+id: sound/composer/preview-slot-3-ascending
+status: pending:27
+source: captures/6.39/plan27/sound/preview/slot-3-ascending
+source-sha256: 5768b7d4d1de22da083cf4f1e85fb1a871cd4c1e266fbb1b379fd25dd0a1b513
+state: factory
+keys: 0:down
+note: plan27/sound/preview/slot-3-ascending: the Ringing tone list, ▼ onto slot 3's entry.
+omitted: none
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+175    tone     off
+1009   buzzer   523 v=3
+1009   vibrator on
+1506   buzzer   off
+1522   buzzer   587 v=3
+2025   buzzer   off
+2041   buzzer   659 v=3
+2544   buzzer   off
+2560   buzzer   698 v=3
+3063   buzzer   off
+3082   vibrator off
+3083   buzzer   784 v=4
+3584   buzzer   off
+3598   buzzer   880 v=3
+4102   buzzer   off
+4117   buzzer   988 v=4
+4620   buzzer   off
+4636   buzzer   523 v=3
+5139   buzzer   off
+5155   buzzer   587 v=5
+5155   vibrator on
+5658   buzzer   off
+5674   buzzer   659 v=5
+6177   buzzer   off
+6192   buzzer   698 v=6
+6696   buzzer   off
+6711   buzzer   784 v=6
+7214   buzzer   off
+7230   buzzer   880 v=6
+7230   vibrator off
+7733   buzzer   off
+7749   buzzer   988 v=7
+8252   buzzer   off
+8268   buzzer   523 v=4
+8771   buzzer   off
+8786   buzzer   587 v=7
+9290   buzzer   off
+9305   vibrator on
+9306   buzzer   659 v=7
+9808   buzzer   off
+9824   buzzer   698 v=8
+10328  buzzer   off
+10344  buzzer   784 v=9
+10847  buzzer   off
+10863  buzzer   880 v=8
+11366  buzzer   off
+11381  vibrator off
+11382  buzzer   988 v=11
+11885  buzzer   off
+11900  buzzer   523 v=6
+12404  buzzer   off
+12419  buzzer   587 v=7
+12922  buzzer   off
+12938  buzzer   659 v=12
+13441  buzzer   off
+13457  buzzer   698 v=13
+13457  vibrator on
+13960  buzzer   off
+13976  buzzer   784 v=13
+14479  buzzer   off
+14494  buzzer   880 v=14
+14998  buzzer   off
+15013  buzzer   988 v=16
+15516  buzzer   off
+15532  buzzer   523 v=11
+15532  vibrator off
+16035  buzzer   off
+16051  buzzer   587 v=11
+16554  buzzer   off

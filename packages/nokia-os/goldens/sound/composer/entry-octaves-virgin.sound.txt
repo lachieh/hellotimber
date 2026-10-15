@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/composer/entry-octaves-virgin
+status: pending:27
+source: captures/6.39/plan27/sound/entry/octaves-virgin
+source-sha256: b2a8cd908320297f1f53e336f413d34d5a9f8474be892b5ec74c001f5b879fab
+state: virgin
+keys: 0:1 300:* 600:*
+note: plan27/sound/entry/octaves-virgin: slot 1's editor: 1 * *.
+omitted: 2 (buzzer gap), 1 (divider rewrite)
+
+@events
+# t_ms output   state
+35     buzzer   523 v=3
+322    buzzer   1047 v=3
+624    buzzer   2093.1 v=3
+1126   buzzer   off

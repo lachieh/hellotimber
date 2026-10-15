@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/composer/entry-back
+status: pending:27
+source: captures/6.39/plan27/sound/entry/back
+source-sha256: f26573323b48192afd3a0f61970279dd467ca550f32175acfee84518a66e7f91
+state: factory
+keys: 0:navi
+note: plan27/sound/entry/back: slot 1's editor: menu.
+omitted: none
+
+@events
+# t_ms output   state

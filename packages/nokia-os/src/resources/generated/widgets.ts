@@ -3399,6 +3399,18 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         "....###............."
       ]
     },
+    "composer/icon": {
+      "x": 1,
+      "y": 0,
+      "art": [
+        "...#....#....##.",
+        "...#....#....#.#",
+        "...#....#....#..",
+        ".###..###..###..",
+        "#..#.####.####..",
+        ".##...##...##..."
+      ]
+    },
     "capture/tree/02-messages/2-2.leaf/b": {
       "x": 0,
       "y": 0,
@@ -8506,6 +8518,66 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
           "durationMs": 523
         }
       ]
+    },
+    "composer-tone-saved": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 686
+        },
+        {
+          "frame": 1,
+          "durationMs": 244
+        },
+        {
+          "frame": 2,
+          "durationMs": 525
+        }
+      ]
+    },
+    "composer-tempo-done": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 690
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 556
+        }
+      ]
     }
   },
   "byNode": {
@@ -8627,6 +8699,8 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "message-erased": "message-erased",
     "calculator-out-of-range": "calculator-out-of-range",
     "calculator-divide-by-zero": "calculator-divide-by-zero",
-    "calculator-rate-saved": "calculator-rate-saved"
+    "calculator-rate-saved": "calculator-rate-saved",
+    "composer-tone-saved": "composer-tone-saved",
+    "composer-tempo-done": "composer-tempo-done"
   }
 };

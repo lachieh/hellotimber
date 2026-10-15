@@ -1,0 +1,45 @@
+sound-golden 1
+id: sound/composer/preview-general-slot-3
+status: pending:27
+source: captures/6.39/plan27/sound/preview/general-slot-3
+source-sha256: abe3305a49f0b7f88ba7d0ee8fa4cfef35e2e17122252de590b477e0658e3fdc
+state: factory
+keys: 0:down
+note: plan27/sound/preview/general-slot-3: see COMPOSER_OTHER_RECORDINGS' scenario.
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+27     tone     900 v=0x9104
+167    tone     off
+1018   vibrator on
+1019   buzzer   523 v=11
+2451   buzzer   off
+2474   buzzer   587 v=11
+3908   buzzer   off
+3924   buzzer   659 v=12
+5356   buzzer   off
+5372   buzzer   698 v=13
+6804   buzzer   off
+6820   buzzer   784 v=13
+6820   vibrator off
+8252   buzzer   off
+8268   buzzer   880 v=14
+9700   buzzer   off
+9716   buzzer   988 v=16
+11149  buzzer   off
+11165  buzzer   523 v=11
+12597  buzzer   off
+12613  buzzer   587 v=11
+12613  vibrator on
+14045  buzzer   off
+14061  buzzer   659 v=12
+15494  buzzer   off
+15509  buzzer   698 v=13
+16942  buzzer   off
+16958  buzzer   784 v=13
+18390  buzzer   off
+18406  buzzer   880 v=14
+18406  vibrator off
+19838  buzzer   off
+19854  buzzer   988 v=16

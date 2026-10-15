@@ -1,0 +1,84 @@
+sound-golden 1
+id: sound/composer/pitch-level-5
+status: pending:27
+source: captures/6.39/plan27/sound/pitch/level-5
+source-sha256: ab7631646fb446456aea1eee79efe040546d0892dc5d2c09861af7854343c83e
+state: factory
+keys: 0:navi
+note: plan27/sound/pitch/level-5: slot 1's editor: 1 8 8 1 # 2 2 # 3 4 4 # 5 5 # 6 6 # 7 1 * 1 # 2 2 # 3 4 4 # 5 5 # 6 6 # 7 1 * 1 # 2 2 # 3 4 4 # 5 5 # 6 6 # 7 menu, then menu.
+omitted: 3 (divider rewrite)
+
+@events
+# t_ms output   state
+52     buzzer   523 v=11
+155    buzzer   off
+171    buzzer   554 v=11
+279    buzzer   off
+294    buzzer   587 v=11
+403    buzzer   off
+418    buzzer   622 v=11
+527    buzzer   off
+542    buzzer   659 v=12
+651    buzzer   off
+666    buzzer   698 v=13
+774    buzzer   off
+790    buzzer   740 v=12
+898    buzzer   off
+914    buzzer   784 v=13
+1022   buzzer   off
+1038   buzzer   831 v=12
+1146   buzzer   off
+1162   buzzer   880 v=14
+1270   buzzer   off
+1286   buzzer   932 v=17
+1394   buzzer   off
+1409   buzzer   988 v=16
+1518   buzzer   off
+1533   buzzer   1047 v=14
+1642   buzzer   off
+1657   buzzer   1109 v=17
+1766   buzzer   off
+1781   buzzer   1175 v=16
+1889   buzzer   off
+1905   buzzer   1245 v=14
+2013   buzzer   off
+2029   buzzer   1319 v=16
+2137   buzzer   off
+2153   buzzer   1396.9 v=21
+2261   buzzer   off
+2277   buzzer   1480 v=24
+2385   buzzer   off
+2401   buzzer   1568 v=25
+2509   buzzer   off
+2525   buzzer   1660.9 v=21
+2634   buzzer   off
+2648   buzzer   1760.1 v=17
+2757   buzzer   off
+2772   buzzer   1864.9 v=21
+2884   buzzer   off
+2896   buzzer   1976 v=30
+3005   buzzer   off
+3020   buzzer   2093.1 v=34
+3134   buzzer   off
+3144   buzzer   2216.9 v=28
+3253   buzzer   off
+3269   buzzer   2349.1 v=22
+3385   buzzer   off
+3401   buzzer   2489 v=17
+3509   buzzer   off
+3524   buzzer   2636.9 v=18
+3636   buzzer   off
+3648   buzzer   2793.9 v=25
+3757   buzzer   off
+3772   buzzer   2959.9 v=36
+3886   buzzer   off
+3896   buzzer   3136.3 v=49
+4004   buzzer   off
+4020   buzzer   3322.3 v=65
+4136   buzzer   off
+4152   buzzer   3520.2 v=58
+4260   buzzer   off
+4276   buzzer   3729.2 v=66
+4387   buzzer   off
+4399   buzzer   3951.4 v=62
+4508   buzzer   off

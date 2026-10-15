@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/composer/play-entry-keypad-off
+status: pending:27
+source: captures/6.39/plan27/play/entry-keypad-off
+source-sha256: 959870aa6ab8f11ce3acf41f85a11dc4191a53cb729d9715363b3dccbab92626
+state: factory
+keys: 0:1 300:2 600:3
+note: plan27/play/entry-keypad-off: slot 1's editor: 1 2 3.
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+20     buzzer   523 v=11
+322    buzzer   587 v=11
+624    buzzer   659 v=12
+1126   buzzer   off

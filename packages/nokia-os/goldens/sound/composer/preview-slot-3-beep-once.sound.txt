@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/composer/preview-slot-3-beep-once
+status: pending:27
+source: captures/6.39/plan27/sound/preview/slot-3-beep-once
+source-sha256: 3676be3de80caa3c29925cc39cc5d48bb596b937b54740743cf70a244ec98eaa
+state: factory
+keys: 0:down
+note: plan27/sound/preview/slot-3-beep-once: the Ringing tone list, ▼ onto slot 3's entry.
+omitted: none
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9104
+179    tone     off

@@ -1,0 +1,54 @@
+sound-golden 1
+id: sound/composer/preview-slot-4-vibrator-off
+status: pending:27
+source: captures/6.39/plan27/sound/preview/slot-4-vibrator-off
+source-sha256: 0879b5b8b440902540e4f19bfc2352c53e3257cf3d6db32fb70ed713c21b5e5e
+state: factory
+keys: 0:down
+note: plan27/sound/preview/slot-4-vibrator-off: the Ringing tone list, ▼ onto slot 4's entry.
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+173    tone     off
+1001   buzzer   523 v=11
+1234   buzzer   off
+1249   buzzer   587 v=11
+1489   buzzer   off
+1505   buzzer   659 v=12
+1745   buzzer   off
+1760   buzzer   698 v=13
+2000   buzzer   off
+2016   buzzer   784 v=13
+2256   buzzer   off
+2272   buzzer   880 v=14
+2511   buzzer   off
+2527   buzzer   988 v=16
+2767   buzzer   off
+2783   buzzer   523 v=11
+3023   buzzer   off
+3038   buzzer   587 v=11
+3279   buzzer   off
+3295   buzzer   659 v=12
+3535   buzzer   off
+3550   buzzer   698 v=13
+3790   buzzer   off
+3806   buzzer   784 v=13
+4046   buzzer   off
+4061   buzzer   880 v=14
+4301   buzzer   off
+4317   buzzer   988 v=16
+4557   buzzer   off
+4572   buzzer   523 v=11
+4812   buzzer   off
+4828   buzzer   587 v=11
+5068   buzzer   off
+5083   buzzer   659 v=12
+5323   buzzer   off
+5339   buzzer   698 v=13
+5579   buzzer   off
+5594   buzzer   784 v=13
+5834   buzzer   off
+5850   buzzer   880 v=14
+6090   buzzer   off

@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/composer/hold-hash
+status: pending:27
+source: captures/6.39/plan27/hold/hash
+source-sha256: 525c7d6d695ae99585c3d0ae23bc6af212f73fc17cfed98058581f17246dd9c4
+state: factory
+keys: 0:#+1500
+note: plan27/hold/hash: slot 1's editor: 1 2 3, then #@1500.
+omitted: none
+
+@events
+# t_ms output   state

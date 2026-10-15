@@ -1,0 +1,28 @@
+sound-golden 1
+id: sound/composer/play-cursor-start
+status: pending:27
+source: captures/6.39/plan27/play/cursor-start
+source-sha256: 2d677c083a71fd7b3f57220c3014d5ced61199b714ef5186aef7f6d5a7b8323f
+state: factory
+keys: 0:navi
+note: plan27/play/cursor-start: slot 1's editor: 1 2 3 4 5 6 7 1 down down down menu, then menu.
+omitted: none
+
+@events
+# t_ms output   state
+31     buzzer   523 v=11
+533    buzzer   off
+549    buzzer   587 v=11
+1052   buzzer   off
+1068   buzzer   659 v=12
+1571   buzzer   off
+1587   buzzer   698 v=13
+2090   buzzer   off
+2108   buzzer   784 v=13
+2609   buzzer   off
+2624   buzzer   880 v=14
+3129   buzzer   off
+3144   buzzer   988 v=16
+3647   buzzer   off
+3663   buzzer   523 v=11
+4166   buzzer   off

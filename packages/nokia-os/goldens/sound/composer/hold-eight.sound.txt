@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/composer/hold-eight
+status: pending:27
+source: captures/6.39/plan27/hold/eight
+source-sha256: 5f7a310cbdd41b28132200b7c64b152e0087b240c03a0ad7f6ea3c08987f4303
+state: factory
+keys: 0:8+1500
+note: plan27/hold/eight: slot 1's editor: 1 2 3, then 8@1500.
+omitted: none
+
+@events
+# t_ms output   state
+21     buzzer   659 v=12
+261    buzzer   off

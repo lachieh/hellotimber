@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/composer/play-gate-beep-once
+status: pending:27
+source: captures/6.39/plan27/play/gate-beep-once
+source-sha256: b4c5884af45e52d6e56bc70ab7f3ec8cc885185b3ee1f0a1bbafd611d8bfeaf8
+state: factory
+keys: 0:navi
+note: plan27/play/gate-beep-once: slot 1's editor: 1 2 3 menu, then menu.
+omitted: none
+
+@events
+# t_ms output   state
+31     buzzer   523 v=11
+527    buzzer   off
+543    buzzer   587 v=11
+1046   buzzer   off
+1062   buzzer   659 v=12
+1565   buzzer   off

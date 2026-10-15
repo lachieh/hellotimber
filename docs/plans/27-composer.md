@@ -658,20 +658,44 @@ number:` (counter 30, `Search` → `No phone numbers` → the prompt); C on the 
 both `PLACEHOLDER_OWNERS` tables (one line each), `tests/composer-capture-set.test.ts` (new),
 `goldens/**` (generated).
 
-- [ ] TDD the capture set on synthetic sources (injected loader, no REF): every row of "Golden
+- [x] TDD the capture set on synthetic sources (injected loader, no REF): every row of "Golden
       pipeline additions"; stills named by `COMPOSER_CASES` in case order; a case with no image, or
       an image with no case, throws naming both; sound rows reuse plan 16's normalisation with
       `state: factory` (`virgin` where noted); `composer/send-ok` is `pending:18c`.
 - [ ] Drop `5-4-*` from both owner tables: the four `tree/05-tones/5-4-*.leaf` and
       `sound/note/5-4-{1,2}` goldens become asserted; no golden is `pending:27`.
-- [ ] Text runs from `plan27/text.json` reach the glyph harvester through the capture set; run
+- [x] Text runs from `plan27/text.json` reach the glyph harvester through the capture set; run
       `extract-resources` twice (no diff): the small face gains `#` and what else the notation needs.
-- [ ] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
+- [x] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
       completion note.
-- [ ] Until Task 12, the composer goldens without a scenario are todos through the split's
+- [x] Until Task 12, the composer goldens without a scenario are todos through the split's
       pending-scenario mechanism (one entry in this plan's acceptance file, deleted in Task 12).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import Composer captures (plan 27)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import Composer captures (plan 27)`.
+
+**Task 2 completion.** `scripts/capture-sets/27-composer.ts` (registered by one line) holds
+`COMPOSER_CASES` (Task 0's 418 cases, transcribed with their start, state, slot and setup),
+`COMPOSER_SETUPS` (the named setups' keys from standby) and `COMPOSER_RECORDING_KEYS` (the
+recordings' keys); `scripts/resource-inputs/27-composer.ts` crops the editor's icon
+(`composer/icon`) and names the `Tone saved` and Tempo `Done` notes (`composer-tone-saved`,
+`composer-tempo-done`). `import-captures` writes **303 plan 27 goldens** (30 stills holding the 418
+cases, 81 timelines, 192 sound goldens; 302 `pending:27`, `composer/send-ok` `pending:18c`;
+3 385 759 bytes); a second run leaves every byte unchanged and no other plan's golden or index
+changes. `regenerate` twice: the first wrote `widgets.ts` (the icon and the two note timelines,
+686/244/525 ms and the Done's), the second was up to date.
+
+Deviation: the importing plan has no pending-scenario mechanism (as plan 20 found), so the
+Composer goldens are imported `pending:27` and Task 12 promotes them; `tests/acceptance/
+27-composer.test.ts` registers the plan with no scenarios until then.
+
+Deviation: `5-4-*` stays in both owner tables until Task 8 binds the slots: dropping it now would
+assert the four `tree/05-tones/5-4-*.leaf` goldens and `sound/note/5-4-{1,2}` against the
+placeholder. Task 8 drops it with its drivers.
+
+Deviation: no glyph changes: `#`, `.`, `-` and the digits are already in the small face (plans 14
+and 18), so the capture set registers no text run; ids are the recordings' paths
+(`composer/hold-note-3-800`, `sound/composer/tempo-112`, `sound/composer/preview-slot-3-level-5`).
+Holds of keys other than 3 below 1500 ms are not imported (key 3's and every key's 1500 ms are).
 
 ### Task 3 - Notation, editor and layout engine (pure, TDD)
 

@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/composer/play-gate-keypad-off
+status: pending:27
+source: captures/6.39/plan27/play/gate-keypad-off
+source-sha256: f8d1de30116f9194752df8b1b16ae9e9798212d3e44f374c7a2ff06c10323993
+state: factory
+keys: 0:navi
+note: plan27/play/gate-keypad-off: slot 1's editor: 1 2 3 menu, then menu.
+omitted: none
+
+@events
+# t_ms output   state
+26     buzzer   523 v=11
+522    buzzer   off
+538    buzzer   587 v=11
+1041   buzzer   off
+1057   buzzer   659 v=12
+1560   buzzer   off

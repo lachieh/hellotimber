@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/composer/hold-c-550
+status: pending:27
+source: captures/6.39/plan27/hold/c-550
+source-sha256: df48ac033faf8ec6636e511a16b721d119ea4accfe685d102704e7882ea8763f
+state: factory
+keys: 0:c+550
+note: plan27/hold/c-550: slot 1's editor: 1 2 3 4 5, then c@550.
+omitted: none
+
+@events
+# t_ms output   state

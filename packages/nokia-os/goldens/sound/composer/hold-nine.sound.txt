@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/composer/hold-nine
+status: pending:27
+source: captures/6.39/plan27/hold/nine
+source-sha256: a217306125f3b634436aa0dd83c9a30fd749cee9c4113182469b467462031802
+state: factory
+keys: 0:9+1500
+note: plan27/hold/nine: slot 1's editor: 1 2 3, then 9@1500.
+omitted: none
+
+@events
+# t_ms output   state
+21     buzzer   659 v=12
+1043   buzzer   off

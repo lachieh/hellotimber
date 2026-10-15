@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/composer/hold-note-7-1500
+status: pending:27
+source: captures/6.39/plan27/hold/note-7-1500
+source-sha256: 0637248e0145be34eab2a6f87bf590171600a703dc7e1e223b3dc959bc7832d7
+state: factory
+keys: 0:7+1500
+note: plan27/hold/note-7-1500: slot 1's editor: 7@1500.
+omitted: none
+
+@events
+# t_ms output   state
+23     buzzer   988 v=16
+526    buzzer   off
+794    buzzer   988 v=16
+1556   buzzer   off

@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/composer/entry-sharp-e
+status: pending:27
+source: captures/6.39/plan27/sound/entry/sharp-e
+source-sha256: 5cc2d0eb466ad41befab44d35c504884ab27307280a02c97b2f94db05143edb3
+state: factory
+keys: 0:3 300:#
+note: plan27/sound/entry/sharp-e: slot 1's editor: 1 2 3, then 3 #.
+omitted: none
+
+@events
+# t_ms output   state
+22     buzzer   659 v=12
+524    buzzer   off

@@ -1,0 +1,122 @@
+sound-golden 1
+id: sound/composer/preview-slot-7-level-4
+status: pending:27
+source: captures/6.39/plan27/sound/preview/slot-7-level-4
+source-sha256: edc12da15adbb052251b4d2f41e918e98289f6a13991f694f85fabe6a8d9d6e6
+state: factory
+keys: 0:down
+note: plan27/sound/preview/slot-7-level-4: the Ringing tone list, ▼ onto slot 7's entry.
+omitted: 2 (divider rewrite)
+
+@events
+# t_ms output   state
+29     tone     900 v=0x9104
+169    tone     off
+1024   buzzer   523 v=11
+1024   vibrator on
+1725   buzzer   off
+1741   buzzer   587 v=11
+2445   buzzer   off
+2461   buzzer   659 v=12
+3166   buzzer   off
+3182   buzzer   698 v=13
+3887   buzzer   off
+3902   buzzer   784 v=13
+4607   buzzer   off
+4622   buzzer   880 v=14
+5327   buzzer   off
+5343   buzzer   988 v=16
+6047   buzzer   off
+6070   buzzer   523 v=11
+6775   buzzer   off
+6790   vibrator off
+6791   buzzer   587 v=11
+7495   buzzer   off
+7511   buzzer   659 v=12
+8215   buzzer   off
+8231   buzzer   698 v=13
+8935   buzzer   off
+8951   buzzer   784 v=13
+9655   buzzer   off
+9671   buzzer   880 v=14
+10377  buzzer   off
+10392  buzzer   988 v=16
+11097  buzzer   off
+11112  buzzer   523 v=11
+11829  buzzer   off
+11840  buzzer   587 v=11
+12545  buzzer   off
+12560  vibrator on
+12561  buzzer   659 v=12
+13265  buzzer   off
+13281  buzzer   698 v=13
+13985  buzzer   off
+14001  buzzer   784 v=13
+14705  buzzer   off
+14721  buzzer   880 v=14
+15425  buzzer   off
+15441  buzzer   988 v=16
+16146  buzzer   off
+16161  buzzer   523 v=11
+16867  buzzer   off
+16882  buzzer   587 v=11
+17588  buzzer   off
+17602  buzzer   659 v=12
+18307  buzzer   off
+18322  vibrator off
+18323  buzzer   698 v=13
+19027  buzzer   off
+19043  buzzer   784 v=13
+19747  buzzer   off
+19763  buzzer   880 v=14
+20467  buzzer   off
+20483  buzzer   988 v=16
+21188  buzzer   off
+21203  buzzer   523 v=11
+21908  buzzer   off
+21923  buzzer   587 v=11
+22628  buzzer   off
+22643  buzzer   659 v=12
+23348  buzzer   off
+23364  buzzer   698 v=13
+24069  buzzer   off
+24098  buzzer   784 v=13
+24098  vibrator on
+24797  buzzer   off
+24813  buzzer   880 v=14
+25517  buzzer   off
+25533  buzzer   988 v=16
+26237  buzzer   off
+26253  buzzer   523 v=11
+26957  buzzer   off
+26973  buzzer   587 v=11
+27678  buzzer   off
+27693  buzzer   659 v=12
+28398  buzzer   off
+28413  buzzer   698 v=13
+29118  buzzer   off
+29133  buzzer   784 v=13
+29838  buzzer   off
+29856  buzzer   880 v=14
+29856  vibrator off
+30559  buzzer   off
+30575  buzzer   988 v=16
+31279  buzzer   off
+31295  buzzer   523 v=11
+31999  buzzer   off
+32015  buzzer   587 v=11
+32720  buzzer   off
+32735  buzzer   659 v=12
+33440  buzzer   off
+33455  buzzer   698 v=13
+34160  buzzer   off
+34175  buzzer   784 v=13
+34880  buzzer   off
+34896  buzzer   880 v=14
+35600  buzzer   off
+35616  buzzer   988 v=16
+35616  vibrator on
+36320  buzzer   off
+36336  buzzer   523 v=11
+37040  buzzer   off
+37057  vibrator off

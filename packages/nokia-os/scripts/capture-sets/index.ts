@@ -7,4 +7,5 @@ export { storageAndSettings } from "./15-storage-and-settings.ts";
 export { messagesAndChat } from "./18-messages-and-chat.ts";
 export { tonesAndSound } from "./16-tones-and-sound.ts";
 export { calculator } from "./20-calculator.ts";
+export { composer } from "./27-composer.ts";
 export { snakeII } from "./23-snake-ii.ts";

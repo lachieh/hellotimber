@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/composer/entry-octaves-level-3
+status: pending:27
+source: captures/6.39/plan27/sound/entry/octaves-level-3
+source-sha256: 8bf687e800d276b7369e78035e54b8ba096d665943657de74b403701e2259364
+state: factory
+keys: 0:1 300:* 600:*
+note: plan27/sound/entry/octaves-level-3: slot 1's editor: 1 * *.
+omitted: none
+
+@events
+# t_ms output   state
+23     buzzer   523 v=6
+325    buzzer   1047 v=10
+619    buzzer   2093.1 v=25
+1122   buzzer   off

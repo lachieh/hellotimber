@@ -1,0 +1,48 @@
+sound-golden 1
+id: sound/composer/tempo-40
+status: pending:27
+source: captures/6.39/plan27/sound/tempo/40
+source-sha256: 02c86f6bafff2d087eafe05e1f4dcc0e2634050f5c2ca3d475a5bae0288afd3d
+state: factory
+keys: 0:navi
+note: plan27/sound/tempo/40: slot 1's editor (values): menu down down menu +600 down down down down down down down menu +2500 c menu, then menu.
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+53     buzzer   523 v=11
+1484   buzzer   off
+1499   buzzer   659 v=12
+3653   buzzer   off
+3668   buzzer   784 v=13
+5101   buzzer   off
+6564   buzzer   523 v=11
+7269   buzzer   off
+7284   buzzer   659 v=12
+8353   buzzer   off
+8369   buzzer   784 v=13
+9073   buzzer   off
+9809   buzzer   523 v=11
+10150  buzzer   off
+10166  buzzer   659 v=12
+10693  buzzer   off
+10708  buzzer   784 v=13
+11049  buzzer   off
+11420  buzzer   523 v=11
+11575  buzzer   off
+11591  buzzer   659 v=12
+11846  buzzer   off
+11862  buzzer   784 v=13
+12017  buzzer   off
+12203  buzzer   523 v=11
+17993  buzzer   off
+18003  buzzer   659 v=12
+26693  buzzer   off
+26708  buzzer   784 v=13
+32493  buzzer   off
+38310  buzzer   523 v=11
+41190  buzzer   off
+41206  buzzer   659 v=12
+45543  buzzer   off
+45559  buzzer   784 v=13
+48447  buzzer   off

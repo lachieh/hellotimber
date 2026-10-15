@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/composer/limit-octave
+status: pending:27
+source: captures/6.39/plan27/limit/octave
+source-sha256: e6051516bd8acbff7e6e32e12e58dc75f61e5b625b55b8613879f20824b35089
+state: factory
+keys: 0:*
+note: plan27/limit/octave: slot 1's editor (limit): *.
+omitted: none
+
+@events
+# t_ms output   state
+45     buzzer   1047 v=14
+547    buzzer   off

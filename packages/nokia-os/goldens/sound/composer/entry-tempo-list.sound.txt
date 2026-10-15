@@ -1,0 +1,26 @@
+sound-golden 1
+id: sound/composer/entry-tempo-list
+status: pending:27
+source: captures/6.39/plan27/sound/entry/tempo-list
+source-sha256: 58244c9f65d6fbf00a1d137726be444393a7050793826815b22fce7d5a847ea9
+state: factory
+keys: 0:navi 300:down 600:down 900:navi 1800:down 2100:up 2400:c 2700:c
+note: plan27/sound/entry/tempo-list: slot 1's editor: 1 2 3, then menu down down menu +600 down up c c.
+omitted: 2 (level rewrite)
+
+@events
+# t_ms output   state
+354    tone     900 v=0x9104
+478    tone     off
+640    tone     900 v=0x9104
+788    tone     off
+930    tone     900 v=0x9104
+1074   tone     off
+1826   tone     900 v=0x9104
+1972   tone     off
+2142   tone     900 v=0x9104
+2282   tone     off
+2430   tone     900 v=0x9104
+2576   tone     off
+2728   tone     900 v=0x9104
+2871   tone     off

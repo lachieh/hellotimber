@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/composer/entry-rest-octave
+status: pending:27
+source: captures/6.39/plan27/sound/entry/rest-octave
+source-sha256: 869c4a76096e8683504dc742854d6b648e411c5576fdf70a8d22861a9f499738
+state: factory
+keys: 0:0 300:*
+note: plan27/sound/entry/rest-octave: slot 1's editor: 1 2 3, then 0 *.
+omitted: none
+
+@events
+# t_ms output   state

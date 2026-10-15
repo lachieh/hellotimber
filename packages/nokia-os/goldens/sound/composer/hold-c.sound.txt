@@ -1,0 +1,12 @@
+sound-golden 1
+id: sound/composer/hold-c
+status: pending:27
+source: captures/6.39/plan27/hold/c
+source-sha256: b8342d182d4345afd54feb3a831bd142bcc7e6206930bc4707bce56ed56ac297
+state: factory
+keys: 0:c+1500
+note: plan27/hold/c: slot 1's editor: 1 2 3, then c@1500.
+omitted: none
+
+@events
+# t_ms output   state

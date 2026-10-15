@@ -1,0 +1,68 @@
+sound-golden 1
+id: sound/composer/play-long-level-4
+status: pending:27
+source: captures/6.39/plan27/play/long-level-4
+source-sha256: 25d33b97439381ccc04b0c53760b94b8203695b1f90de43eebab7054a29f0eff
+state: factory
+keys: 0:navi
+note: plan27/play/long-level-4: slot 1's editor: 1 2 3 4 5 6 7 1 2 3 4 5 6 7 1 2 3 4 5 6 7 1 2 3 4 5 6 7 menu down down menu +600 down down down down down down down menu +2500 c menu, then menu.
+omitted: 5 (divider rewrite)
+
+@events
+# t_ms output   state
+54     buzzer   523 v=11
+1480   buzzer   off
+1495   buzzer   587 v=11
+2928   buzzer   off
+2943   buzzer   659 v=12
+4381   buzzer   off
+4392   buzzer   698 v=13
+5825   buzzer   off
+5841   buzzer   784 v=13
+7273   buzzer   off
+7288   buzzer   880 v=14
+8721   buzzer   off
+8737   buzzer   988 v=16
+10170  buzzer   off
+10186  buzzer   523 v=11
+11618  buzzer   off
+11643  buzzer   587 v=11
+13074  buzzer   off
+13089  buzzer   659 v=12
+14522  buzzer   off
+14537  buzzer   698 v=13
+15970  buzzer   off
+15985  buzzer   784 v=13
+17419  buzzer   off
+17435  buzzer   880 v=14
+18867  buzzer   off
+18882  buzzer   988 v=16
+20315  buzzer   off
+20330  buzzer   523 v=11
+21763  buzzer   off
+21779  buzzer   587 v=11
+23211  buzzer   off
+23227  buzzer   659 v=12
+24662  buzzer   off
+24676  buzzer   698 v=13
+26108  buzzer   off
+26124  buzzer   784 v=13
+27556  buzzer   off
+27572  buzzer   880 v=14
+29004  buzzer   off
+29020  buzzer   988 v=16
+30452  buzzer   off
+30468  buzzer   523 v=11
+31901  buzzer   off
+31924  buzzer   587 v=11
+33349  buzzer   off
+33365  buzzer   659 v=12
+34797  buzzer   off
+34813  buzzer   698 v=13
+36245  buzzer   off
+36261  buzzer   784 v=13
+37694  buzzer   off
+37710  buzzer   880 v=14
+39142  buzzer   off
+39158  buzzer   988 v=16
+40590  buzzer   off

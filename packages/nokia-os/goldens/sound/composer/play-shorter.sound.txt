@@ -1,0 +1,21 @@
+sound-golden 1
+id: sound/composer/play-shorter
+status: pending:27
+source: captures/6.39/plan27/play/shorter
+source-sha256: 2aa16f7970b531a6927d3db870f80a5350806be7baf7e8a5d0acdf440be9cd50
+state: factory
+keys: 0:navi 1740:8
+note: plan27/play/shorter: slot 1's editor: 1 2 3 4 5 6 7 1 menu, then menu +1440 8.
+omitted: 1 (buzzer gap)
+
+@events
+# t_ms output   state
+26     buzzer   523 v=11
+528    buzzer   off
+543    buzzer   587 v=11
+1047   buzzer   off
+1062   buzzer   659 v=12
+1565   buzzer   off
+1581   buzzer   698 v=13
+1760   buzzer   523 v=11
+1999   buzzer   off

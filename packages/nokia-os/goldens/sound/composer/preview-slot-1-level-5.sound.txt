@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/composer/preview-slot-1-level-5
+status: pending:27
+source: captures/6.39/plan27/sound/preview/slot-1-level-5
+source-sha256: d705c9b4e7931199c912b8e5ea34bafe26e1cfa541d0f41279776d1b83612834
+state: factory
+keys: 0:down
+note: plan27/sound/preview/slot-1-level-5: the Ringing tone list, ▼ onto slot 1's entry.
+omitted: none
+
+@events
+# t_ms output   state
+26     tone     900 v=0x9104
+173    tone     off
+992    buzzer   523 v=11
+992    vibrator on
+1490   buzzer   off
+1505   buzzer   587 v=11
+2008   buzzer   off
+2024   buzzer   659 v=12
+2527   buzzer   off
+2544   vibrator off

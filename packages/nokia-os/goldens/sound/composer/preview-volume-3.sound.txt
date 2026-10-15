@@ -1,0 +1,24 @@
+sound-golden 1
+id: sound/composer/preview-volume-3
+status: pending:27
+source: captures/6.39/plan27/sound/preview/volume-3
+source-sha256: d1f716185e225f4d3dae4ebb11f1893647054ad5d2ce1859b13e1906bb8264ae
+state: factory
+keys: 0:down
+note: plan27/sound/preview/volume-3: see COMPOSER_OTHER_RECORDINGS' scenario.
+omitted: 1 (divider rewrite), 1 (level rewrite)
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9104
+166    tone     off
+1016   buzzer   523 v=6
+1016   vibrator on
+2453   buzzer   off
+2465   buzzer   587 v=7
+3899   buzzer   off
+3914   buzzer   659 v=7
+5347   buzzer   off
+5363   buzzer   698 v=8
+6331   buzzer   off
+6332   vibrator off

@@ -1,0 +1,84 @@
+sound-golden 1
+id: sound/composer/pitch-virgin
+status: pending:27
+source: captures/6.39/plan27/sound/pitch/virgin
+source-sha256: 1dec191511722cd5b24fdd770ac440a23c77ba58aa7a5600df614da910288d3a
+state: virgin
+keys: 0:navi
+note: plan27/sound/pitch/virgin: slot 1's editor: 1 8 8 1 # 2 2 # 3 4 4 # 5 5 # 6 6 # 7 1 * 1 # 2 2 # 3 4 4 # 5 5 # 6 6 # 7 1 * 1 # 2 2 # 3 4 4 # 5 5 # 6 6 # 7 menu, then menu.
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+51     buzzer   523 v=3
+154    buzzer   off
+170    buzzer   554 v=3
+278    buzzer   off
+294    buzzer   587 v=3
+402    buzzer   off
+418    buzzer   622 v=3
+526    buzzer   off
+542    buzzer   659 v=3
+650    buzzer   off
+666    buzzer   698 v=3
+774    buzzer   off
+790    buzzer   740 v=3
+898    buzzer   off
+913    buzzer   784 v=3
+1022   buzzer   off
+1037   buzzer   831 v=3
+1146   buzzer   off
+1161   buzzer   880 v=3
+1270   buzzer   off
+1285   buzzer   932 v=3
+1393   buzzer   off
+1409   buzzer   988 v=3
+1517   buzzer   off
+1533   buzzer   1047 v=3
+1641   buzzer   off
+1657   buzzer   1109 v=3
+1765   buzzer   off
+1781   buzzer   1175 v=3
+1889   buzzer   off
+1905   buzzer   1245 v=3
+2013   buzzer   off
+2029   buzzer   1319 v=3
+2137   buzzer   off
+2152   buzzer   1396.9 v=3
+2261   buzzer   off
+2276   buzzer   1480 v=3
+2385   buzzer   off
+2400   buzzer   1568 v=3
+2509   buzzer   off
+2524   buzzer   1660.9 v=3
+2632   buzzer   off
+2648   buzzer   1760.1 v=3
+2756   buzzer   off
+2772   buzzer   1864.9 v=3
+2880   buzzer   off
+2896   buzzer   1976 v=3
+3004   buzzer   off
+3020   buzzer   2093.1 v=3
+3128   buzzer   off
+3144   buzzer   2216.9 v=3
+3253   buzzer   off
+3268   buzzer   2349.1 v=3
+3377   buzzer   off
+3392   buzzer   2489 v=3
+3501   buzzer   off
+3516   buzzer   2636.9 v=3
+3625   buzzer   off
+3640   buzzer   2793.9 v=3
+3748   buzzer   off
+3764   buzzer   2959.9 v=3
+3872   buzzer   off
+3888   buzzer   3136.3 v=3
+3996   buzzer   off
+4012   buzzer   3322.3 v=3
+4120   buzzer   off
+4136   buzzer   3520.2 v=3
+4244   buzzer   off
+4260   buzzer   3729.2 v=3
+4368   buzzer   off
+4384   buzzer   3951.4 v=3
+4492   buzzer   off

@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/composer/preview-slot-2-off
+status: pending:27
+source: captures/6.39/plan27/sound/preview/slot-2-off
+source-sha256: f7b3456336cdc2141910fd15add0941bdd129c3e1d07f5ecf76029512eb5c6ea
+state: factory
+keys: 0:down
+note: plan27/sound/preview/slot-2-off: the Ringing tone list, ▼ onto slot 2's entry.
+omitted: none
+
+@events
+# t_ms output   state
+30     tone     900 v=0x9104
+177    tone     off

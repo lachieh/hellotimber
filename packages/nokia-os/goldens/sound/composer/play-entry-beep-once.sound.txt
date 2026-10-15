@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/composer/play-entry-beep-once
+status: pending:27
+source: captures/6.39/plan27/play/entry-beep-once
+source-sha256: a0d87994ab21a8b74b741e21e6ec06225014559a802fea18aa4c1c2a78f49cf4
+state: factory
+keys: 0:1 300:2 600:3
+note: plan27/play/entry-beep-once: slot 1's editor: 1 2 3.
+omitted: 1 (divider rewrite)
+
+@events
+# t_ms output   state
+25     buzzer   523 v=11
+319    buzzer   587 v=11
+621    buzzer   659 v=12
+1123   buzzer   off
