@@ -193,6 +193,21 @@ unsubscribe();
   off, deactivating the interruption and a held application once each (`power-off`). A poll or
   `createSession` that throws skips that tick's interruption. Keys held when it begins or ends
   are not delivered on release.
+- `standbyEntry: { keys, open(key) }` (default none, plan 22) starts a standby application with
+  the key that opened it, as the stock firmware's number entry starts with the first digit. At
+  standby a listed key's down runs `open(key)` (empty stack, path `standby`, `exit()` back to
+  standby, a notice cleared) and forwards that down, and later its up, to it. In menu levels a
+  listed key that no open shortcut window takes leaves the menus first; at the menu carousel so
+  does a stock window's first key that begins no menu number (`0`, `*`, `#`). An application hands
+  a held key over with `context.exit({ to: "standby", key })` (a note that ends on a digit).
+  `keys` must not hold `navi`, `c` or `power`:
+
+  ```ts
+  createPhone({ menu, standbyEntry: { keys: ["0", "1", "2", "*", "#"], open: () => dialler } });
+  ```
+
+- An interrupted application's session may implement `onInterrupted()` (plan 22): it is called
+  once when an interruption starts holding it (Snake II suspends its game for a call).
 - `wake: () => PhoneApplication | undefined` (default none) is polled on every tick while the
   phone is off. An application it returns switches the phone on without the boot: the path is
   `standby`, the stack empty and the screen the application's. `exit()` switches the phone off

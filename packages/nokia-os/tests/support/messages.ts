@@ -447,10 +447,6 @@ export const MESSAGES_KNOWN_GAPS: Readonly<Record<string, string>> = {
   "sms/notice-c":
     "C on the received notice: the firmware draws standby without its operator for 88 ms first " +
     "(as Exit's 83 ms); the kernel clears a notice to the whole standby at once (phone-core)",
-  "sms/elsewhere":
-    "image snake-level-1-then-standby: C held in a moving Snake II game, then C, reaches " +
-    "standby in the capture; the kernel swallows a key held across the game's exit (plan 23's " +
-    "game/snake/keys-c-hold gap), so the replay stays in the games; the other three images match",
   "sms/time-format":
     "image standby: standby's clock in the 12-hour Time format (`10:10` with its mark) is the " +
     "clock plan's; nokia-os's standby draws the host's clock as given; the Sent: pages match",
