@@ -18,6 +18,8 @@ export default defineConfig({
       // Plan 14: the stock tree and the tree text runs, written by scripts/import-tree.ts.
       "packages/nokia-os/src/firmware/generated/**",
       "packages/nokia-os/scripts/generated/**",
+      // Plan 18b: the T9 English dictionary, written by scripts/build-t9-dictionary.ts.
+      "packages/nokia-os/src/text/t9/generated/**",
     ],
   },
   lint: {

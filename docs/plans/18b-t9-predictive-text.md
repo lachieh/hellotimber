@@ -460,13 +460,19 @@ paths as `../plan18b/` from its root and writes them as `captures/plan18b/...`.
 `src/text/t9/THIRD_PARTY.md` (new), `tests/t9-build.test.ts` (new), `package.json`
 (`build-t9-dictionary` script).
 
-- [ ] TDD the filter and format on an in-memory sample (a dozen invented lines): case, apostrophe
+- [x] TDD the filter and format on an in-memory sample (a dozen invented lines): case, apostrophe
       rules, single letters, length, top-N cut, weight lines only on change, deterministic output.
-- [ ] Run it on the pinned file (D2): `node scripts/build-t9-dictionary.ts <path-or-url>`; SHA-256
+- [x] Run it on the pinned file (D2): `node scripts/build-t9-dictionary.ts <path-or-url>`; SHA-256
       mismatch fails. Record word count, file size and gzip size here.
-- [ ] `THIRD_PARTY.md`: source, commit, SHA-256, the MIT licence text, the Wikipedia provenance
+- [x] `THIRD_PARTY.md`: source, commit, SHA-256, the MIT licence text, the Wikipedia provenance
       note, the filter.
-- [ ] Commit: `feat(nokia-os): T9 English dictionary from an open word list`.
+- [x] Commit: `feat(nokia-os): T9 English dictionary from an open word list`.
+
+Outcome (2026-10-14, clean room): the pinned file's SHA-256 matched; 30,000 words (the 30,000th
+kept word is line 31,090 of the list, count 3,115), weights 46-109 in 57 weight lines;
+`generated/english.ts` is 246,754 bytes, 117,437 bytes gzipped (`gzip -9`). Built from a local
+copy and from the raw URL: identical bytes, a second run reports "up to date". The generated
+directory is excluded from `vp fmt` (root `vite.config.ts`), as the other generated sources are.
 
 ### Task 4 - T9 engine (pure, TDD from the spec)
 

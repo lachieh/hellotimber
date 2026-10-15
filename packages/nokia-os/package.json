@@ -14,7 +14,8 @@
     "import-tree": "node scripts/import-tree.ts",
     "extract-resources": "node scripts/extract-resources.ts",
     "messages-text-runs": "node scripts/messages-text-runs.ts",
-    "messages-scripts": "node scripts/messages-scripts.ts"
+    "messages-scripts": "node scripts/messages-scripts.ts",
+    "build-t9-dictionary": "node scripts/build-t9-dictionary.ts"
   },
   "dependencies": {
     "@hellotimber/phone-core": "workspace:*",
