@@ -63,8 +63,14 @@ const WEIGHT = /^#(\d+)$/;
 interface Trie {
   /** Ids of the words whose keys pass through this node, in list order. */
   readonly ids: number[];
-  readonly next: Map<string, Trie>;
+  /** The node after each key, by its digit. */
+  readonly next: (Trie | undefined)[];
 }
+
+/** A dictionary character's key digit, by char code (a-z, the apostrophe). */
+const KEY_DIGIT: Readonly<Record<number, number>> = Object.fromEntries(
+  Object.entries(LETTER_KEYS).map(([ch, key]) => [ch.charCodeAt(0), Number(key)]),
+);
 
 class Dictionary implements T9Dictionary {
   readonly language: "english";
@@ -91,17 +97,19 @@ class Dictionary implements T9Dictionary {
 
   #trie(): Trie {
     if (this.#root !== undefined) return this.#root;
-    const root: Trie = { ids: [], next: new Map() };
-    this.#words.forEach((word, id) => {
+    const root: Trie = { ids: [], next: [] };
+    const words = this.#words;
+    for (let id = 0; id < words.length; id++) {
+      const word = words[id]!;
       let node = root;
-      for (const ch of word) {
-        const key = LETTER_KEYS[ch]!;
-        let child = node.next.get(key);
-        if (child === undefined) node.next.set(key, (child = { ids: [], next: new Map() }));
+      for (let i = 0; i < word.length; i++) {
+        const key = KEY_DIGIT[word.charCodeAt(i)]!;
+        let child = node.next[key];
+        if (child === undefined) node.next[key] = child = { ids: [], next: [] };
         child.ids.push(id);
         node = child;
       }
-    });
+    }
     this.#root = root;
     return root;
   }
@@ -110,7 +118,7 @@ class Dictionary implements T9Dictionary {
     const known = this.#lists.get(keys);
     if (known !== undefined) return known;
     let node: Trie | undefined = this.#trie();
-    for (const key of keys) node = node?.next.get(key);
+    for (const key of keys) node = node?.next[Number(key)];
     const n = keys.length;
     const exact: number[] = [];
     const sums = new Map<string, { sum: number; first: number }>();
