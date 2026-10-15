@@ -480,17 +480,29 @@ directory is excluded from `vp fmt` (root `vite.config.ts`), as the other genera
 `tests/t9-engine.test.ts` (new), `tests/support/t9-fixture.ts` (new: a hand-made dictionary of
 about 30 common words with invented weights).
 
-- [ ] `createT9Dictionary`/`T9Index`: parse (errors name the line), index by key sequence, stems
+- [x] `createT9Dictionary`/`T9Index`: parse (errors name the line), index by key sequence, stems
       with summed weights; building `englishT9` takes under 150 ms in the test environment.
-- [ ] TDD each spec rule with the fixture: ranking (3.1); 32-entry cap; one-key lists and the
+- [x] TDD each spec rule with the fixture: ranking (3.1); 32-entry cap; one-key lists and the
       digit (3.4); `?` on the last `*` display, one-entry lists, one-key lists (4.2); no-match:
       silent drop after one key, the state after two, ignored keys, the three `*` cases, `0`,
       `C` (6); key 1 alone, after a word (eight marks, dictionary extras, the `?` after
       duplicates), contractions first and D10 compositions (7); per-letter case and the two-state
       `#` (8); re-entry from a word (9); the 33rd key.
-- [ ] A property test: for random words of the fixture, typing `keysOf(word)` and pressing `*`
+- [x] A property test: for random words of the fixture, typing `keysOf(word)` and pressing `*`
       at most 32 times reaches the word.
-- [ ] Commit: `feat(nokia-os): T9 predictive text engine`.
+- [x] Commit: `feat(nokia-os): T9 predictive text engine`.
+
+Deviation: the internal API grows where the spec needs state the listed signatures cannot carry.
+`T9Composing.fixed` holds the word as shown when key 1 was last pressed in it (spec 7: `into.`
+is the shown word with a mark, and the word before an apostrophe heads the compositions);
+`t9Key` takes the new letter's case (`upper`, spec 8: fixed per letter when typed);
+`T9Display.keyed` counts the typed letters of a shown user-word completion (only they are
+underlined); `t9Candidates` takes `fixed`; `t9FromWord(word, dict, user)` returns null when the
+word's lists lack it (no re-entry for a word typed in multi-tap); `keysOf` returns undefined for a
+character no key types; `t9Matches`/`t9Use` serve Options › Matches; `t9Index(dict)` exposes the
+opaque dictionary's index. `0` and `#` act on the editor's text and mode, so their rules (5, 8)
+are tested with the editor in Task 6 (`tests/t9-editing.test.ts`). Candidates are deduplicated
+case-insensitively, first kept (a user word equal to a dictionary word is listed once).
 
 ### Task 5 - User dictionary record (TDD)
 
