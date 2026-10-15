@@ -18,7 +18,8 @@ settings and Clear timers, and gates the power-on with Phone security On. Snake 
 sound port (plan 16; see "Sound"); the display and keypad LEDs through a lights port, and the
 keyguard locks the keypad (plan 25; see "Lights and the keyguard"). Multi-tap text entry, the
 Welcome note editor, Write messages, Inbox and Outbox work over a host network port (plan 18; see
-"Text entry and SMS"). Leaves that are whole applications open a marked
+"Text entry and SMS"). The SIM card's phone book (names, Service Nos., speed dials, assigned tones,
+Send b'card) works over the SIM a host inserts (plan 19; see "The phone book"). Leaves that are whole applications open a marked
 placeholder (a dotted border the firmware never draws) naming the plan that owns them; see "Leaf
 ownership".
 
@@ -41,7 +42,7 @@ const phone = createStockPhone({
   },
   boot: "animated", // or "skip" (tests, reduced motion; the security code is still asked for)
   storage: window.localStorage, // the EEPROM; default: a fresh in-memory storage per phone
-  sim: "sim-1", // the inserted SIM card (default "sim-1")
+  sim: "sim-1", // the inserted SIM card, an id or a whole StockSimCard (default "sim-1", empty)
   network: createSyntheticNetwork(), // SMS in and out (the default; see "Text entry and SMS")
 });
 
@@ -88,7 +89,10 @@ eight sound events (`atMs output state`) under the status line, so a headless ru
 without hearing it. An `LCD` and a `KEYS` lamp show the lights port (the LCD dims while the display
 LEDs are off) and the last eight lights events are listed too. The phone's network is a synthetic
 one: a **Receive SMS** form (sender and text, time-stamped by the browser's clock) delivers a
-message, and the messages the phone sent are listed beside it. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
+message, and the messages the phone sent are listed beside it. The **SIM phone book** select
+restarts the phone with an empty SIM (the SIM select's), a sample SIM (a handful of invented names
+and two service numbers) or a full one (50 names); the status line shows the SIM's id and its
+names and free locations, and ▼ at standby opens the list. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
 difference; the list groups the goldens by top-level menu (`tree/05-tones`) and kind (`menu`,
 `probe`, `game`).
 
@@ -401,11 +405,53 @@ function httpNetwork(endpoint: string): StockNetworkPort {
 }
 ```
 
+**Business cards.** Send b'card (plan 19) goes through the same port's optional
+`sendBusinessCard({ to, card: { name, number } })`; a port without it settles `"sent"` after the
+link time, and `createSyntheticNetwork().cards` lists the cards sent.
+
 **Later plans.** 18b adds T9 (the dictionary, Matches, Insert word, Spell) and makes T9 the virgin
 default again; 18c adds Chat over the same messaging service, Templates, Smileys, Picture messages
-(a binary extension of the port), Info service topics and the Service command editor. Phone book
-names (19), dialling a message's number and the received notice's ▲/▼/digit keys (22) and the
+(a binary extension of the port), Info service topics and the Service command editor. Dialling a message's number and the received notice's ▲/▼/digit keys (22) and the
 profiles' message alert (17) are theirs.
+
+## The phone book
+
+The names live on the SIM card a host inserts (`StockPhoneConfig.sim`), as on the real phone (no
+phone memory): its id, its locations (default 50, the emulator SIM's), its name length (default 16)
+and its initial entries, plus its service numbers. A host passes its own contacts:
+
+```ts
+import { createStockPhone, type StockSimCard } from "@hellotimber/nokia-os";
+
+const sim: StockSimCard = {
+  id: "my-sim",
+  phoneBook: {
+    entries: [
+      { name: "Ada", number: "0412000001" },
+      null, // a free location
+      { name: "Grace Hopper", number: "+61412000002" },
+    ],
+  },
+  serviceNumbers: [{ name: "Voice mail", number: "101" }],
+};
+const phone = createStockPhone({ storage: window.localStorage, sim });
+```
+
+`createStockPhone` throws for an invalid SIM (an empty id, fewer than one location or name
+character, more entries than locations, a name too long for the SIM or a number it cannot hold),
+naming the field and the location. **Persistence (D3):** the phone keeps each SIM's names, speed
+dials and assigned tones in its EEPROM (the `phone-book` record) by SIM id. The host's entries are
+read only until the phone first changes that SIM's names; from then on the EEPROM's copy is the
+SIM's (so the same id with other entries shows the phone's edits), and another SIM id has its own
+phone book. Erasing the EEPROM returns to the host's entries.
+
+Standby ▼ opens the list (▲ opens the dialled numbers, plan 22's); Search, Service Nos., Add name,
+Erase, Edit, Assign tone (with previews), Send b'card, Options (Type of view, Memory status), Speed
+dials and Voice tags (`Voice system error`: the emulator has no voice DSP) follow the v6.39
+captures; Write messages' number prompts pick a number with `Search`, and Send to many sends to a
+chosen name. **Later plans:** plan 22 adds calls (every `Call` soft key, held 2-9 speed dialling,
+caller names and assigned ringing tones through `StockPhoneBook.speedDial`, `byNumber` and `tone`);
+18c adds receiving business cards (`Business card received`, `Save business card?`).
 
 ## Plan-owned resource evidence
 
