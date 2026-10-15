@@ -733,21 +733,36 @@ share it); `src/index.ts` needs no change (no new export).
 line: `PHONE_BOOK_RECORD`), `tests/phone-book-store.test.ts` (new), `tests/phone-book-entries.test.ts`
 (new).
 
-- [ ] TDD `normaliseSim(sim)`: a string is `{ id }` with the defaults; validation per D2 with
+- [x] TDD `normaliseSim(sim)`: a string is `{ id }` with the defaults; validation per D2 with
       messages naming the field and the location.
-- [ ] TDD `entries.ts`: `compareNames` per Task 0's order (case-insensitive; accents, digits, spaces
+- [x] TDD `entries.ts`: `compareNames` per Task 0's order (case-insensitive; accents, digits, spaces
       and equal names as recorded); `searchIndex` per D6 (every Task 0 Q and L case as a row).
-- [ ] TDD `PHONE_BOOK_RECORD` (plan 15 D2): `{ sims: { [id]: { locations: (Contact | null)[] } },
+- [x] TDD `PHONE_BOOK_RECORD` (plan 15 D2): `{ sims: { [id]: { locations: (Contact | null)[] } },
 speedDials: { [key]: location }, tones: { [id]: { [location]: tone } } }` with sorted keys;
       decode drops malformed parts; no `factory` (a test runs `restoreFactory()`, unless Task 0 K
       said otherwise); the stored JSON shape pinned by a snapshot.
-- [ ] TDD `StockPhoneBook`: the host's entries until the first write, then the record; `add` fills
+- [x] TDD `StockPhoneBook`: the host's entries until the first write, then the record; `add` fills
       the location Task 0 A shows and returns `"full"` at capacity; `replace`, `erase`, `eraseAll`;
       `free`/`used`; `speedDial` with the location fallback (S13) and Task 0 K's rule for empty or
       erased locations; tones following Replace and dropped by Erase (Task 0 D, T); `byNumber`; two
       phones over one storage see the same SIM; another SIM id sees its own.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): SIM card port and phone book record`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): SIM card port and phone book record`.
+
+Deviation: **Task 5 (paths and wiring):** as plan 18's messages record, `PHONE_BOOK_RECORD` is the
+phone book feature's (`features/phone-book.ts` `records`), not a line in `src/firmware/records.ts`
+(which composes the features' records). `normaliseSim`, `simContactProblem` and
+`simNumberProblem` live in `src/phone-book/sim-card.ts` with the `StockContact`/`StockSimCard`
+types.
+
+Deviation: **Task 5 (record and API, Task 0):** the record is `{ sims: { [id]: { locations } },
+speedDials: { [id]: { [key]: location } }, tones: { [id]: { [location]: tone } } }`: speed dials
+are per SIM (D4's deviation). A tone is 0 for No tone or k for Tones › Ringing tone's entry k;
+`tone()` is null for Default. `erase` drops the speed dials assigned to the location and keeps
+its tone; `eraseAll` drops every speed dial (the tones staying is UNVERIFIED). `StockPhoneBook`
+adds `at(location)`, `simId` and `nameLength`; `entries.ts` adds `shownName` (a name-less entry
+shows and sorts by its number, UNVERIFIED where it sorts). `speedDial` falls back to location n
+(an assignment whose location is empty cannot exist: Erase drops it).
 
 ### Task 6 - The name list widget and painters (TDD against goldens)
 
