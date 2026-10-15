@@ -152,7 +152,8 @@ Every golden comparison applies one rule, implemented in
 - **Game rhythm:** a game's tick-to-tick interval (Snake's movement period) matches within
   `max(17, 20 % of the period)` ms, so a speed or rhythm a player would feel still fails.
   Gameplay outcomes (whether a grace window saves the snake, scores, positions) are exact.
-- **Sound:** frequencies and volume registers are exact; edge times follow the timing rules.
+- **Sound:** events shorter than 34 ms on either side are optional and merge into neighbours; sustained frequencies and volume registers stay exact, with edge times following the timing rules.
+- **Firmware races:** accept bounded alternatives only when two committed real recordings of the same path demonstrate them; otherwise keep the known gap.
 - **Recordings of one path:** timing that varies between two recordings of the same
   real-firmware path is imperceptible by definition; the timing rules must cover the variation
   the golden set shows.

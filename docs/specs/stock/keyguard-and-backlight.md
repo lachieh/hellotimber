@@ -135,7 +135,8 @@ plan 18's merge) are aligned on the arrival: the captures do not log the deliver
 time spreads 2141-2464 ms, so they pin what an arrival lights and paints, not its latency. Known gaps (expected failures, causes in
 `tests/acceptance/25-keyguard-and-backlight.test.ts`): `*` during the carousel's shortcut entry
 (`lock-cancel/digit`, plan 14's kernel), the light tick's ±3 ms deciding whether the LEDs go dark
-(`timeout/virgin/tap-02`), the power key's long press (`boot/power-off`, plan 17) and Snake II
+(`timeout/virgin/tap-02`; the contrasting factory captures use a different initial state
+or tick offset, so they do not prove alternatives for the same path), the power key's long press (`boot/power-off`, plan 17) and Snake II
 deaths the captured bot's keys do not reproduce (`game/{off,on}/{over,top-score}`). Within the
 fidelity standard and not gaps: a restarted hint's closing partial draws (17 and 9 ms in
 `hint-during`, `emergency/{000,110,113,911,999}`) and Games › Lights Off darkening the LEDs at

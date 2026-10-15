@@ -116,12 +116,12 @@ settings empties the slots and resets the ringing tone to `Nokia tune`.
 ## UNVERIFIED and known gaps
 
 nokia-os reproduces every Composer golden but these (`tests/acceptance/27-composer.test.ts` lists
-each with its cause):
+each with its cause; 20 remaining known gaps):
 
 - Level 5's jump and Ascending's steps in a long Play or preview (a free-running timer: nokia-os
   steps every ≈3.9 s from the tone's start); the Ringing
-  volume list's vibrator running past a short tone's end; a ≈1 ms 32nd after a dotted 32nd at 225
-  BPM.
+  volume list's vibrator running past a short tone's end. The ≈1 ms 32nd after a dotted 32nd
+  at 225 BPM is optional under the sound fidelity rule and is no longer a gap.
 - The cursor's blink phase on some showings after a Save, on the virgin phone's Play and after C on
   Send's empty number; held ▲/▼'s repeat phase.
 - Two-pass redraws the firmware shows for ≈82-112 ms (standby's operator name, the frame before

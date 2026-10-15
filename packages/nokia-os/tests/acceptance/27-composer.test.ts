@@ -43,7 +43,7 @@ const SCENARIOS: Record<string, Scenario> = {
   ...Object.fromEntries(
     SOUND_IDS.filter((id) => !id.startsWith("sound/composer/preview-")).map((id) => [
       id,
-      (golden: string) => composerSound(golden, { otherRecording: true }),
+      (golden: string) => composerSound(golden),
     ]),
   ),
   ...Object.fromEntries(
@@ -95,9 +95,6 @@ acceptancePlan({
       "Level 5's jump follows a free-running timer (D9); nokia-os jumps at levelStepMs",
     "sound/composer/play-long-ascending":
       "Ascending's steps follow a free-running timer (D9); nokia-os steps every levelStepMs",
-    "sound/composer/tempo-225":
-      "at 225 BPM a 32nd after a dotted 32nd sounds ≈1 ms in the capture (dropped from the " +
-      "golden by normalisation); nokia-os sounds it for one timer unit (period less 2 units)",
     ...Object.fromEntries(
       Object.entries(PREVIEW_GAPS).map(([id, why]) => [
         id,

@@ -311,9 +311,8 @@ const TASK_6: Record<string, Scenario> = {
           (id: string) => {
             const rig = effectsRig(seed, "invalid");
             shortcut(rig, 5, 1);
-            // The preview is the Nokia tune program (another recording: PASS_DRIFT_RATIO), and the
-            // capture stopped 1 s after ▲, before ▲'s own preview of Nokia tune began.
-            expectSound(id, rig, "", { otherRecording: true, endMs: 6090 });
+            // The capture stopped 1 s after ▲, before ▲'s own preview of Nokia tune began.
+            expectSound(id, rig, "", { endMs: 6090 });
           },
         ],
       ];
@@ -497,8 +496,7 @@ const TASK_7: Record<string, Scenario> = {
       (id: string) => {
         const rig = profilesRig();
         openPowerList(rig);
-        // 0's `Invalid shortcut` tone is the menus' program (another recording: PASS_DRIFT_RATIO).
-        expectSound(id, rig, "", digit === "0" ? { otherRecording: true } : {});
+        expectSound(id, rig, "");
       },
     ]),
   ),

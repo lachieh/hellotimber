@@ -1,7 +1,7 @@
 // Sound assertions against sound goldens (plan 16 "Scenarios and the coverage guard"): drive a
 // golden's keys on a rig, collect the port's events, and compare them row by row with failure
 // output in the style of `expectTimeline`. Frequencies and volumes are exact; edge times follow
-// the fidelity standard (golden.ts, AGENTS.md).
+// the fidelity standard (golden.ts, AGENTS.md), and events too short to hear are left out.
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { PhoneKey } from "@hellotimber/phone-core";
@@ -88,12 +88,6 @@ type Check =
   | { readonly kind: "after"; readonly anchor: number };
 
 export interface SoundTolerance {
-  /**
-   * The golden is another recording of a program built from a different golden (a tone at
-   * another level, in another list or profile; Task 0: recordings of one tone differ by a median
-   * 11 ms, at most 48): a final pulse of up to STOP_RACE_MS on either side is not compared.
-   */
-  readonly otherRecording?: boolean;
   /** Compare only these outputs (a scenario says why the others are not comparable). */
   readonly outputs?: readonly SoundOutputName[];
   /**
@@ -109,27 +103,90 @@ export interface SoundTolerance {
   readonly endMs?: number;
 }
 
-/**
- * A preview's stop races its next edge (Task 0: "the last note may differ"): another recording
- * may end with a pulse of up to this length (a note or a vibrator pulse) that the program's
- * recording lacks, or lack one it has.
+/** Pair states in order before removing short events. Sustained pairs take priority over
+ * short repetitions of the same pitch. No sustained event is removed by its counterpart.
  */
-export const STOP_RACE_MS = 3;
-
-/** `rows` without a final on-then-off pulse of at most STOP_RACE_MS on any output. */
-function withoutStopRace(rows: readonly SoundRow[]): SoundRow[] {
-  const drop = new Set<SoundRow>();
+function withoutShortEvents<G extends SoundRow, A extends SoundRow>(
+  golden: readonly G[],
+  actual: readonly A[],
+): { golden: G[]; actual: A[] } {
+  const paired = new Set<SoundRow>();
   for (const output of ["buzzer", "tone", "vibrator"] as const) {
-    const own = rows.filter((row) => row.output === output);
-    const [on, off] = own.slice(-2);
-    if (on && off && isOn(on.state) && !isOn(off.state) && off.ms - on.ms <= STOP_RACE_MS) {
-      if (own.length === 2 || !isOn(own.at(-3)!.state)) {
-        drop.add(on);
-        drop.add(off);
+    const g = golden.filter((row) => row.output === output);
+    const a = actual.filter((row) => row.output === output);
+    const states = (rows: readonly SoundRow[]) =>
+      rows.map((row) => formatSoundState(output, row.state));
+    const gs = states(g);
+    const as = states(a);
+    const sustained = (rows: readonly SoundRow[], i: number): boolean =>
+      rows[i + 1] === undefined || rows[i + 1]!.ms - rows[i]!.ms >= TWO_FRAMES_MS;
+    const width = a.length + 1;
+    const scores = new Uint32Array((g.length + 1) * width);
+    const costs = new Float64Array(scores.length);
+    const cost = (i: number, j: number): number => costs[i * width + j]!;
+    const score = (i: number, j: number): number => scores[i * width + j]!;
+    const weight = (i: number, j: number): number =>
+      1 + Number(sustained(g, i)) + Number(sustained(a, j));
+    for (let i = g.length - 1; i >= 0; i--) {
+      for (let j = a.length - 1; j >= 0; j--) {
+        const options = [
+          { score: score(i + 1, j), cost: cost(i + 1, j) },
+          { score: score(i, j + 1), cost: cost(i, j + 1) },
+          ...(gs[i] === as[j]
+            ? [
+                {
+                  score: weight(i, j) + score(i + 1, j + 1),
+                  cost: Math.abs(g[i]!.ms - a[j]!.ms) + cost(i + 1, j + 1),
+                },
+              ]
+            : []),
+        ];
+        const best = options.reduce((best, option) =>
+          option.score > best.score || (option.score === best.score && option.cost < best.cost)
+            ? option
+            : best,
+        );
+        scores[i * width + j] = best.score;
+        costs[i * width + j] = best.cost;
       }
     }
+    let i = 0;
+    let j = 0;
+    while (i < g.length && j < a.length) {
+      if (
+        gs[i] === as[j] &&
+        score(i, j) === weight(i, j) + score(i + 1, j + 1) &&
+        cost(i, j) === Math.abs(g[i]!.ms - a[j]!.ms) + cost(i + 1, j + 1)
+      ) {
+        paired.add(g[i]!);
+        paired.add(a[j]!);
+        i++;
+        j++;
+      } else if (score(i, j) === score(i + 1, j) && cost(i, j) === cost(i + 1, j)) i++;
+      else j++;
+    }
   }
-  return rows.filter((row) => !drop.has(row));
+  const settle = <R extends SoundRow>(rows: readonly R[]): R[] => {
+    const kept = new Set<R>();
+    for (const output of ["buzzer", "tone", "vibrator"] as const) {
+      const own = rows.filter((row) => row.output === output);
+      let held = formatSoundState(output, { kind: "off" });
+      let dropped = false;
+      own.forEach((row, i) => {
+        const next = own[i + 1];
+        const state = formatSoundState(output, row.state);
+        if (next !== undefined && next.ms - row.ms < TWO_FRAMES_MS && !paired.has(row)) {
+          dropped = true;
+          return;
+        }
+        if (!(dropped && state === held)) kept.add(row);
+        held = state;
+        dropped = false;
+      });
+    }
+    return rows.filter((row) => kept.has(row));
+  };
+  return { golden: settle(golden), actual: settle(actual) };
 }
 
 /** Classifies each golden row (see the module notes in plan 16 "Scenarios"). */
@@ -201,7 +258,8 @@ const HEADER = "  golden  output    state                 actual       Δ  check
 /**
  * Compares a recording with a sound golden: per output the same states in the same order
  * (frequencies and volumes exact), each row's time by its check (`checksOf`), and no event
- * beyond the golden's.
+ * beyond the golden's. Events shorter than TWO_FRAMES_MS on either side are left out
+ * (`withoutShortEvents`).
  */
 export function expectSoundTimeline(
   recorded: RecordedSound,
@@ -211,18 +269,17 @@ export function expectSoundTimeline(
 ): void {
   const keep = (row: SoundRow): boolean =>
     tolerance.outputs === undefined || tolerance.outputs.includes(row.output);
-  let actualRows = recorded.events
+  const recordedRows = recorded.events
     .map((event) => ({
       ms: event.atMs - recorded.originMs,
       output: event.output,
       state: stateOf(event),
     }))
     .filter(keep);
-  if (tolerance.otherRecording === true) {
-    actualRows = withoutStopRace(actualRows);
-    golden = { ...golden, rows: withoutStopRace(golden.rows) };
-  }
-  golden = { ...golden, rows: golden.rows.filter(keep) };
+  const goldenRows = golden.rows.filter(keep);
+  const settled = withoutShortEvents(goldenRows, recordedRows);
+  let actualRows = settled.actual;
+  golden = { ...golden, rows: settled.golden };
   const end = tolerance.endMs;
   const nearEnd = (ms: number): boolean => end !== undefined && ms >= end - timingToleranceMs(end);
   if (end !== undefined)

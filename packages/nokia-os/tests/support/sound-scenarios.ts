@@ -209,8 +209,7 @@ export const SOUND_SCENARIOS: Record<string, (id: string) => void> = {
     virginToneList(id, { [VOLUME]: level(3), [ALERT]: 0, [VIBRA]: 0 }),
   "sound/preview/first-down": (id) => virginToneList(id, { [VOLUME]: level(3), [ALERT]: 0 }),
   "sound/preview/first-down-back": (id) => virginToneList(id, { [VOLUME]: level(3), [ALERT]: 0 }),
-  "sound/preview/virgin-message": (id) =>
-    expectSound(id, soundRig("virgin"), `navi 5 5 ${SETTLE}`, { otherRecording: true }),
+  "sound/preview/virgin-message": (id) => expectSound(id, soundRig("virgin"), `navi 5 5 ${SETTLE}`),
   // B: holding the power key stops the preview; power-off plays the power-on tone.
   "sound/boot/power-off": (id) => powerOff(id),
   // Plan 17: the power key's list opens at standby (its beep), C returns (its beep).
@@ -249,35 +248,30 @@ function toneList(
   const golden = loadSoundGolden(id);
   const from = opened ? index : golden.keys?.[0]?.key === "up" ? index + 1 : index - 1;
   const rig = soundRig("factory", { [TONE]: from, ...choices });
-  // The tone's own Level 4 recording is its program; any other is another recording.
-  const otherRecording = id !== `sound/ringing-tone/${RINGING_TONES[index]?.slug}`;
-  expectSound(id, rig, `navi 5 1 ${SETTLE}`, { otherRecording, ...options });
+  expectSound(id, rig, `navi 5 1 ${SETTLE}`, options);
 }
 
 /** Nokia tune's preview: ▼ from Croak. */
 function nokiaTune(id: string, choices: SettingChoices, options: SoundTolerance = {}): void {
   const rig = soundRig("factory", { [TONE]: CROAK, ...choices });
-  expectSound(id, rig, `navi 5 1 ${SETTLE}`, { otherRecording: true, ...options });
+  expectSound(id, rig, `navi 5 1 ${SETTLE}`, options);
 }
 
 /** Tones › Ringing volume opened on option `from`, then the golden's keys. */
 function volumeList(id: string, from: number, choices: SettingChoices): void {
   const rig = soundRig("factory", { ...choices, [VOLUME]: from });
-  expectSound(id, rig, `navi 5 2 ${SETTLE}`, { otherRecording: true });
+  expectSound(id, rig, `navi 5 2 ${SETTLE}`);
 }
 
 /** Tones › Message alert tone opened on option `from`, then the golden's keys. */
 function messageList(id: string, from: number, choices: SettingChoices): void {
   const rig = soundRig("factory", { ...choices, [MESSAGE]: from });
-  // The four message goldens the programs come from replay exactly; the others are other
-  // recordings.
-  const source = /^sound\/message-tone\/(standard|special|beep-once|ascending)$/.test(id);
-  expectSound(id, rig, `navi 5 5 ${SETTLE}`, { otherRecording: !source });
+  expectSound(id, rig, `navi 5 5 ${SETTLE}`);
 }
 
 /** The virgin Ringing tone list (unset), with `choices` set first. */
 function virginToneList(id: string, choices: SettingChoices): void {
-  expectSound(id, soundRig("virgin", choices), `navi 5 1 ${SETTLE}`, { otherRecording: true });
+  expectSound(id, soundRig("virgin", choices), `navi 5 1 ${SETTLE}`);
 }
 
 /**
@@ -300,7 +294,7 @@ function personalise(
   const rig = soundRig("factory", { ...choices, ...opening });
   open(rig, list === "ringing-tone" ? `12-${n}-2-1` : `12-${n}-2-5`);
   rig.advance(1500);
-  expectSound(id, rig, "", { otherRecording: true });
+  expectSound(id, rig, "");
 }
 
 /** ▼ onto Nokia tune, then the power key held until the phone is off (time 0: the ▼). */
@@ -320,7 +314,6 @@ function powerOff(id: string): void {
     },
     before,
     `${id}: the preview up to the power key`,
-    { otherRecording: true },
   );
   const off = recorded.originMs + powerKey + 800;
   const firmwareOff = golden.rows.find((row) => row.ms >= powerKey + 1000)!.ms;

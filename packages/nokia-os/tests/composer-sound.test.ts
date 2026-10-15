@@ -20,8 +20,6 @@ export const SOUND_GAPS: Readonly<Record<string, string>> = {
     "Level 5's jump follows a free-running timer (D9: nokia-os at levelStepMs)",
   "sound/composer/play-long-ascending":
     "Ascending's steps follow a free-running timer (D9: nokia-os every levelStepMs)",
-  "sound/composer/tempo-225":
-    "a 32nd after a dotted 32nd sounds ≈1 ms at 225 BPM (dropped from the golden), one unit here",
 };
 
 describe("the Composer's sound goldens on the phone", () => {
@@ -31,6 +29,6 @@ describe("the Composer's sound goldens on the phone", () => {
   });
   for (const id of IDS) {
     if (id in SOUND_GAPS) continue;
-    it(id, () => composerSound(id, { otherRecording: true }), 60_000);
+    it(id, () => composerSound(id), 60_000);
   }
 });

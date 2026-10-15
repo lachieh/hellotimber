@@ -428,14 +428,12 @@ const PREVIEW_CONDITIONS: Readonly<Record<string, Readonly<Record<string, number
   "vibrator-off": { [VIBRA]: 1 },
 };
 
-/** Sound golden `id`'s keys on `rig` (after `setup`), compared as a later recording. */
+/** Sound golden `id`'s keys on `rig` (after `setup`), compared with the golden. */
 function expectPreview(id: string, rig: Rig, setup: string): void {
   const golden = loadSoundGolden(id);
   if (setup !== "") keys(rig, setup);
   const recorded = playSound(rig, golden);
-  expectSoundTimeline(recorded, golden, `${id}: ${setup}, then ${golden.note ?? ""}`, {
-    otherRecording: true,
-  });
+  expectSoundTimeline(recorded, golden, `${id}: ${setup}, then ${golden.note ?? ""}`);
 }
 
 /** A `sound/composer/preview-*` golden. */
