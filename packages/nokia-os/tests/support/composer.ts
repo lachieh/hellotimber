@@ -2,11 +2,14 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import {
   COMPOSER_CASES,
+  COMPOSER_RECORDING_KEYS,
   COMPOSER_SETUPS,
+  composerSoundId,
   OPEN_COMPOSER,
   openSlot,
   stillFixtureOf,
   type ComposerCase,
+  type ComposerRecordingKeys,
 } from "../../scripts/capture-sets/27-composer.ts";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
 import type { ComposerModel } from "../../src/display/widgets";
@@ -15,6 +18,16 @@ import { goto } from "./drive.ts";
 import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { seededStorage, standbyRig, type Rig } from "./rig.ts";
+import type { SoundGolden } from "../../scripts/sound-format.ts";
+import { soundStorage } from "./sound-scenarios.ts";
+import {
+  expectSoundTimeline,
+  KEY_LATENCY_MAX_MS,
+  loadSoundGolden,
+  playSound,
+  type RecordedSound,
+  type SoundTolerance,
+} from "./sound.ts";
 import { composerLines } from "../../src/composer/layout";
 import { COMPOSER_LIMIT } from "../../src/composer/notation";
 import {
@@ -187,5 +200,102 @@ export function composerStill(c: ComposerCase): void {
     rig.paint(),
     goldenImage(id, image),
     `${c.name}: ${c.setup ?? c.from}, ${c.keys || "(no key)"}`,
+  );
+}
+
+/** The recording behind sound golden `id` (`COMPOSER_RECORDING_KEYS`). */
+export function composerRecording(id: string): ComposerRecordingKeys {
+  const found = COMPOSER_RECORDING_KEYS.find((r) => composerSoundId(r.dir) === id);
+  if (found === undefined) throw new Error(`No composer recording for ${id}.`);
+  return found;
+}
+
+/** Settings a recording's directory names (`play/gate-ring-once`, `sound/pitch/level-2`). */
+const CONDITIONS: Readonly<Record<string, Readonly<Record<string, number>>>> = {
+  "alert-off": { "tones/incoming-call-alert": 4 },
+  "ring-once": { "tones/incoming-call-alert": 2 },
+  "beep-once": { "tones/incoming-call-alert": 3 },
+  ascending: { "tones/incoming-call-alert": 1 },
+  "keypad-off": { "tones/keypad-tones": 0 },
+  "warning-off": { "tones/warning-tones": 1 },
+  "vibrator-off": { "tones/vibrating-alert": 1 },
+  "level-1": { "tones/ringing-volume": 0 },
+  "level-2": { "tones/ringing-volume": 1 },
+  "level-3": { "tones/ringing-volume": 2 },
+  "level-4": {},
+  "level-5": { "tones/ringing-volume": 4 },
+  l1: { "tones/ringing-volume": 0 },
+  l3: { "tones/ringing-volume": 2 },
+};
+
+/** The settings recording `dir` was made with (its section's `choose`, `set_volume`). */
+export function recordingChoices(dir: string): Readonly<Record<string, number>> {
+  const named =
+    /^play\/(?:gate|entry|long)-(.+)$/.exec(dir)?.[1] ??
+    /^sound\/(?:pitch|entry\/octaves)-?\/?(level-\d)$/.exec(dir)?.[1] ??
+    /^sound\/tempo\/(l\d)-\d+$/.exec(dir)?.[1];
+  if (named === undefined || named === "virgin") return {};
+  const choices = CONDITIONS[named];
+  if (choices === undefined) throw new Error(`No settings for recording ${dir}.`);
+  return choices;
+}
+
+/**
+ * The buzzer and vibrator events of each key's segment moved by that key's sound latency (the
+ * golden's first buzzer row after the key less the phone's): nokia-os does not reproduce the
+ * firmware's key-to-sound latency (D5, plan 16 D8), so a program a key starts is compared from
+ * its onset. The keypad beeps keep their times.
+ */
+function alignKeySounds(recorded: RecordedSound, golden: SoundGolden): RecordedSound {
+  const keys = golden.keys ?? [];
+  const shifts = keys.map((key, i) => {
+    const end = keys[i + 1]?.ms ?? Infinity;
+    const row = golden.rows.find(
+      (r) =>
+        r.output === "buzzer" &&
+        r.ms >= key.ms &&
+        r.ms < Math.min(end, key.ms + KEY_LATENCY_MAX_MS),
+    );
+    const event = recorded.events.find(
+      (e) =>
+        e.output === "buzzer" &&
+        e.atMs - recorded.originMs >= key.ms &&
+        e.atMs - recorded.originMs < end,
+    );
+    if (row === undefined || event === undefined) return { from: key.ms, end, by: 0 };
+    return { from: key.ms, end, by: row.ms - (event.atMs - recorded.originMs) };
+  });
+  return {
+    ...recorded,
+    events: recorded.events.map((e) => {
+      if (e.output === "tone") return e;
+      const t = e.atMs - recorded.originMs;
+      const shift = shifts.find((s) => t >= s.from && t < s.end);
+      return shift === undefined ? e : { ...e, atMs: e.atMs + shift.by };
+    }),
+  };
+}
+
+/**
+ * Sound golden `id` replayed: a fresh phone in the recording's state and settings, its setup and
+ * `before` taps, then the golden's keys from time 0, compared with plan 16's tolerances from each
+ * key's sound onset (`alignKeySounds`).
+ */
+export function composerSound(id: string, tolerance: SoundTolerance = {}): void {
+  const r = composerRecording(id);
+  const storage = soundStorage(
+    r.state === "factory" ? "factory" : "virgin",
+    recordingChoices(r.dir),
+  );
+  const rig = composerRig(r.state, storage);
+  playComposer(rig, setupKeys(r));
+  playComposer(rig, r.before);
+  const golden = loadSoundGolden(id);
+  const recorded = alignKeySounds(playSound(rig, golden), golden);
+  expectSoundTimeline(
+    recorded,
+    golden,
+    `${id}: ${r.setup ?? r.from}, ${r.before || "-"}, then ${golden.note ?? ""}`,
+    tolerance,
   );
 }

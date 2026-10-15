@@ -419,6 +419,8 @@ export class ComposerEditor implements Widget {
       choose: (index, inner) => {
         switch (index) {
           case PLAY:
+            // Task 0 (`play/*`): the OK that starts Play beeps nothing; the tone is its sound.
+            services.sounder.cue({ kind: "silent-key" }, services.now());
             inner.back();
             this.play();
             return;
