@@ -74,6 +74,75 @@ export const MESSAGES_ASSERTED: ReadonlySet<string> = new Set([
   "sms/centre-2-ok",
   "sms/voice-mailbox",
   "sms/voice-mailbox-ok",
+  // Task 11: Inbox, Outbox, reading and arrivals.
+  "sms/arrive-1",
+  "sms/arrive-2",
+  "sms/arrive-3",
+  "sms/arrive-4",
+  "sms/arrive-5",
+  "sms/elsewhere",
+  "sms/elsewhere-editor",
+  "sms/elsewhere-menu",
+  "sms/elsewhere-messages-menu",
+  "sms/elsewhere-note",
+  "sms/elsewhere-sending",
+  "sms/elsewhere-snake",
+  "sms/full",
+  "sms/full-arrival",
+  "sms/full-persist-inbox",
+  "sms/full-persist-inbox-open",
+  "sms/full-persist-outbox",
+  "sms/full-persist-outbox-open",
+  "sms/full-save",
+  "sms/inbox",
+  "sms/inbox-details",
+  "sms/inbox-erase-last",
+  "sms/inbox-list",
+  "sms/inbox-list-one-read",
+  "sms/inbox-menu-2-2",
+  "sms/inbox-menu-2-2-list",
+  "sms/inbox-option-details",
+  "sms/inbox-option-details-odd",
+  "sms/inbox-option-edit",
+  "sms/inbox-option-erase",
+  "sms/inbox-option-forward",
+  "sms/inbox-option-reply",
+  "sms/inbox-option-reply-send",
+  "sms/inbox-option-typed",
+  "sms/inbox-options",
+  "sms/inbox-read",
+  "sms/inbox-view-1",
+  "sms/inbox-view-2",
+  "sms/notice",
+  "sms/notice-c",
+  "sms/notice-count-list",
+  "sms/notice-count-read",
+  "sms/notice-inbox-menu",
+  "sms/notice-read",
+  "sms/outbox",
+  "sms/outbox-edit",
+  "sms/outbox-erase",
+  "sms/outbox-erase-last",
+  "sms/outbox-forward",
+  "sms/outbox-list",
+  "sms/outbox-open",
+  "sms/outbox-options",
+  "sms/outbox-read",
+  "sms/outbox-use-number",
+  "sms/persist",
+  "sms/persist-inbox",
+  "sms/persist-outbox",
+  "sms/restore",
+  "sms/restore-inbox",
+  "sms/restore-ok",
+  "sms/restore-outbox",
+  "sms/sim-same-inbox",
+  "sms/sim-same-new-process",
+  "sms/sim-same-outbox",
+  "sms/sim-second",
+  "sms/sim-second-inbox",
+  "sms/sim-second-outbox",
+  "sms/time-format",
   // Task 10: text entry, Write messages and its Options.
   "sms/erase",
   "sms/erase-empty",
@@ -175,7 +244,26 @@ export const MESSAGES_ASSERTED: ReadonlySet<string> = new Set([
   "text/wrap-words",
 ]);
 
+/**
+ * Fixtures whose screens a later plan implements, by that plan (plan 18 Task 11): Inbox's Chat
+ * (`Chat name:`, plan 18c); Use number's call screen and the received notice's ▲, ▼, digit and #
+ * (the call register, the phone book and standby number entry: plan 22, which also needs the
+ * kernel to route a notice's keys, D12).
+ */
+export const MESSAGES_LATER: Readonly<Record<string, string>> = {
+  "sms/inbox-option-chat": "18c",
+  "sms/inbox-option-use-number": "22",
+  "sms/inbox-option-use-number-odd": "22",
+  "sms/outbox-use-number-found": "22",
+  "sms/notice-up": "22",
+  "sms/notice-down": "22",
+  "sms/notice-digit": "22",
+  "sms/notice-hash": "22",
+};
+
 function statusOf(id: string): GoldenStatus {
+  const later = MESSAGES_LATER[id];
+  if (later !== undefined) return `pending:${later}`;
   return MESSAGES_ASSERTED.has(id) ? "asserted" : MESSAGES_STATUS;
 }
 

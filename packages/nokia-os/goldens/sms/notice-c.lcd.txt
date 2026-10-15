@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/notice-c
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/notice/c
 source-sha256: a92c969f090d23c16a23070ecd3bfd4670326aa826df3ba1e02660ae0386b599
 trigger-frame: 1

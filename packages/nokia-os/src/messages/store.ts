@@ -158,6 +158,11 @@ export class StockMessages {
     } else this.#write({ ...own, outbox: own.outbox.filter((_, i) => i !== index) });
   }
 
+  /** Every slot is used (the standby envelope blinks, `sms/full-arrival`). */
+  full(): boolean {
+    return this.#full(this.#own());
+  }
+
   /** How many Inbox messages are unread (the standby envelope while any are). */
   unread(): number {
     return this.#own().inbox.filter((m) => !m.read).length;

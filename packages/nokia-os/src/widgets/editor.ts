@@ -15,7 +15,8 @@ import {
 import { shownMode, type TextMode, type TextState } from "../text/multitap";
 import type { Flow, Widget } from "./flow";
 import { symbolTable } from "./symbol-table";
-import { EmptyC, TextEntry, type EditorControl } from "./text-entry";
+import { HeldC } from "./held-c";
+import { TextEntry, type EditorControl } from "./text-entry";
 
 export type { EditorControl } from "./text-entry";
 
@@ -125,7 +126,7 @@ class EditorWidget implements Widget {
   readonly #spec: EditorSpec;
   readonly #entry: TextEntry;
   #top = 0;
-  readonly #emptyC = new EmptyC();
+  readonly #emptyC = new HeldC();
 
   constructor(spec: EditorSpec) {
     this.#spec = spec;
@@ -153,7 +154,12 @@ class EditorWidget implements Widget {
 
   onKey(key: PhoneKey, flow: Flow): void {
     this.#entry.keyUp(key);
-    if (key === "navi") this.#spec.options(flow, this.#entry.control());
+    if (key === "navi") {
+      // Options commits a pending character (`sms/inbox-option-reply-send`: the reply's A,
+      // typed less than a commit before, is committed when the editor shows again).
+      this.#entry.commit();
+      this.#spec.options(flow, this.#entry.control());
+    }
     if (key === "c") this.#emptyC.up(flow);
   }
 

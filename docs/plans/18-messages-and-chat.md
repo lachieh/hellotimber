@@ -1226,19 +1226,61 @@ hand-written goldens cover: `text/editor` covers `2-1`.
 `src/firmware/leaves.ts`, `src/firmware/phone.ts` (indicators, notice), `src/display/standby.ts`
 (notice and indicator painting), `tests/messages-read.test.ts` (new), `tests/paint-standby.test.ts`.
 
-- [ ] 2-2/2-3: `Opening`, then the empty note (plan 14's goldens still pass) or the list (envelope
+- [x] 2-2/2-3: `Opening`, then the empty note (plan 14's goldens still pass) or the list (envelope
       icons, `Read`, the rows window); Read → the view (D13; ▼/▲ wrap); Options per Task 0 (Inbox: Erase,
       Reply, Chat → placeholder `18c`, Edit, Use number → plan 22's placeholder or the captured
       `No number found on this screen`, Forward, Details; Outbox: Erase, Edit, Use number, Forward);
       Erase's query and notes (`No more messages in inbox/outbox`); Reply sends to the sender.
-- [ ] Arrivals (D11, D12): the store's `receive`; `setNotice({ text, softkey: "Read", open: inbox })`
+- [x] Arrivals (D11, D12): the store's `receive`; `setNotice({ text, softkey: "Read", open: inbox })`
       with the captured texts; `standbyIndicators` from `unread()`; what Task 0 I recorded for keys
       on the notice and arrivals elsewhere; the message alert (D15).
-- [ ] Standby painter: the stock notice layout and the envelope indicator against `sms/arrive*`;
+- [x] Standby painter: the stock notice layout and the envelope indicator against `sms/arrive*`;
       plan 13's standby goldens unchanged.
-- [ ] TDD through keys against `sms/arrive*`, `sms/inbox*`, `sms/read*`, `sms/outbox*`, `sms/full*`,
+- [x] TDD through keys against `sms/arrive*`, `sms/inbox*`, `sms/read*`, `sms/outbox*`, `sms/full*`,
       `sms/persist*` (two phones over one storage) and `sms/sim*` (the `sim` config).
-- [ ] Commit: `feat(nokia-os): Inbox, Outbox, message reading and arrivals`.
+- [x] Commit: `feat(nokia-os): Inbox, Outbox, message reading and arrivals`.
+
+Deviation: **Task 11 (paths):** Inbox and Outbox, a message's pages and Options are
+`src/messages/read.ts` (`openBox`), bound by the messages feature's screens `2-2` and `2-3`; the
+models and painters `src/display/widgets/message.ts` (`message-list`, `message-page`). Arrivals are
+`stockArrivals` in `src/firmware/phone.ts`; the notice's lines are the kernel notice's text split at
+`\n` (`1` / `message` / `received`), its count the unread messages (`sms/inbox` notice-4 after
+three dismissals). `src/widgets/held-c.ts` (`HeldC`) is C on the screens it leaves: back as it
+comes up, standby when held for the long press (the editor's empty C of Task 10, a list, pages):
+the firmware's menu long press, which a kernel application cannot reach.
+
+Deviation: **Task 11 (measured behaviour):** an arrival away from standby waits for the next
+standby and shows the notice then, unless a key goes down first (`sms/elsewhere-note`: the arrival
+during Invalid shortcut is noticed when the note ends; `elsewhere-menu`, `-editor`: C to standby
+shows the envelope only). A full SIM refuses the message with `No space for new messages` (OK) and
+the envelope blinks every 480 ms while every slot is used (phase UNVERIFIED). Erase shows
+`Erasing message` for 261 ms, then `Erased` and the list with the next message on top, or `No more
+messages in …` and the page. Use number without a number in a saved message shows `No number found
+on this screen` with No phone numbers' timeline (UNVERIFIED: 2883 ms here). Opening a box shows
+2-2's or 2-3's own `Opening` step (35-78 ms between recordings). Details' Message centre is the
+phone's Set 1 centre when the message arrived. Options commits a pending character (the reply's
+`A`). The message alert (D15) is `messageAlert("tones")`, General's, until plan 17's profiles.
+
+Deviation: **Task 11 (goldens):** promoted 66; re-owned to `pending:18c` Inbox's Chat
+(`sms/inbox-option-chat`) and to `pending:22` Use number's call screen
+(`sms/inbox-option-use-number`, `-odd`, `sms/outbox-use-number-found`) and the received notice's ▲,
+▼, digit and # (`sms/notice-up`, `-down`, `-digit`, `-hash`: the call register, the phone book and
+standby number entry, which also need the kernel to route a notice's keys, D12) through
+`MESSAGES_LATER`. Known gaps: `sms/notice` (its `standby-down-after-c` shows ▼ at standby opening
+the Phone book, while plan 14's `STOCK_STANDBY_KEYS` put the dialled numbers on ▼ after the spec's
+help text: a conflict for the standby plans), `sms/notice-c` (the firmware's 88 ms standby without
+operator), `sms/elsewhere` (C held in a moving game, plan 23's kernel gap), `sms/time-format`
+(standby's 12-hour clock), and `sms/sim-same-*` (the emulator's lost SIM overlay, D7).
+
+Deviation: **Task 11 (replay):** the generator records each log's boot image and SMS epoch
+(`image`, `epoch`) and each `scroll`'s shot count; the replay boots an image another log saved
+(`sim-*` from `persist`), runs a scroll's keys on the way past it, delivers `sms` through the
+replayed phone's synthetic network (sender `Nokia` as the emulator's `12345`, time stamps from the
+epoch plus the emulated time and the emulator's 2.2 s start-up), and opens Write messages with
+Menu, ▼, Select, Select where the logs typed Menu 2 1: phone-core's stock shortcut keeps its window
+open over the application it opened and takes the digits typed into it (a kernel finding for the
+shortcut's owner). Blink-free comparison also leaves out the full SIM's blinking envelope; partial
+draws only one side makes are skipped.
 
 ### Task 12 - Acceptance and the coverage guard
 

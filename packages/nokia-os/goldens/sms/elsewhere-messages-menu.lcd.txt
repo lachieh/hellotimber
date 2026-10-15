@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/elsewhere-messages-menu
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/elsewhere/messages-menu
 source-sha256: b5838256a70143093226c25be382d39e3d60a29c205751b39e96f1398436725a
 trigger-frame: 1

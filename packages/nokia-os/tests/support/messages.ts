@@ -12,7 +12,12 @@ import { MESSAGES_ASSERTED } from "../../scripts/messages-capture-set.ts";
 import type { TextMode, TextState } from "../../src/text/multitap";
 import { PROBE_TOLERANCE_MS } from "./golden.ts";
 import { replayScenario, type ReplayContext, type TimelineOptions } from "./replay.ts";
-import { standbyRig } from "./rig.ts";
+import { standbyRig, type Rig } from "./rig.ts";
+import {
+  createSyntheticNetwork,
+  type StockTimestamp,
+  type SyntheticNetwork,
+} from "../../src/index";
 import {
   emptyText,
   textDelete,
@@ -236,6 +241,20 @@ const DICTIONARY_OFF_REWRITES: readonly (readonly [readonly string[], readonly s
 ];
 
 /**
+ * Menu, ▼ to Messages, Select (its first page, Write messages), Select: 2968 ms of taps and
+ * waits, then 2858 ms so that the whole takes the log's Menu 2 1 and polls (5826 ms).
+ */
+const WRITE_MESSAGES_BY_SELECT: readonly string[] = [
+  "key menu",
+  "run 400ms",
+  "key down",
+  "key menu",
+  "run 1000ms",
+  "key menu",
+  "run 2858ms",
+];
+
+/**
  * A block's commands as a stock phone replays them: each T9 Dictionary off replaced by the
  * multi-tap one, and a reboot's power-on (plan 15's logs record the boot, then type the setup's
  * code, time and date) replaced by the setup.
@@ -249,6 +268,21 @@ export function messagesRewrite(lines: readonly string[]): string[] {
       while (i < lines.length && !(lines[i] === "run 2s" && lines[i - 1] === "key c")) i++;
       continue;
     }
+    // Menu 2 1, then the log polled the LCD every 250 ms (5 polls) for Write messages. The stock
+    // shortcut opens 2-1 once Messages' `1` can no longer become `10` (plan 14 D14), and its
+    // window stays open over the editor, taking the digits typed into it (phone-core): the replay
+    // opens Write messages with Menu, ▼, Select, Select instead, the next key as late as the log's.
+    if (
+      lines[i] === "key menu" &&
+      lines[i + 1] === "run 400ms" &&
+      lines[i + 2] === "key 2 1" &&
+      lines[i + 3] === "run 3000ms" &&
+      lines.slice(i + 4, i + 9).every((line) => line === "run 250ms")
+    ) {
+      out.push(...WRITE_MESSAGES_BY_SELECT);
+      i += 8;
+      continue;
+    }
     const rewrite = DICTIONARY_OFF_REWRITES.find(([t9]) =>
       t9.every((line, k) => lines[i + k] === line),
     );
@@ -260,12 +294,63 @@ export function messagesRewrite(lines: readonly string[]): string[] {
   return out;
 }
 
+/**
+ * The emulator's clock runs this far ahead of the logs' emulated time (its start-up before the
+ * setup's first command): `sms/inbox-view-1` down-02 (`10:11:20`) and `sms/inbox-details` 03
+ * (`10:11:33`) bound it to 1888-2504 ms.
+ */
+const CAPTURE_CLOCK_OFFSET_MS = 2200;
+
+/**
+ * The captures' SMS time stamps: the harness's `CAP_EPOCH` (the logs' `epoch`: 13 October 2026,
+ * 10:10:00 UTC, as the phone shows it) plus the emulated time since power-on.
+ */
+export function captureStamp(epochMs: number, capMs: number): StockTimestamp {
+  const ms = capMs + CAPTURE_CLOCK_OFFSET_MS;
+  const at = new Date(epochMs + Math.floor(ms / 1000) * 1000);
+  return {
+    year: at.getUTCFullYear(),
+    month: at.getUTCMonth() + 1,
+    day: at.getUTCDate(),
+    hour: at.getUTCHours(),
+    minute: at.getUTCMinutes(),
+    second: at.getUTCSeconds(),
+  };
+}
+
+/**
+ * The emulator's SMS helper as the phone receives it: an alphanumeric sender arrives as `12345`
+ * (Task 0 I: `Nokia`, an emulator artefact).
+ */
+const CAPTURE_SENDERS: Readonly<Record<string, string>> = { Nokia: "12345" };
+
+/** Logs run with another SIM inserted (`sim-2`: plan 15's second SIM fixture, D7). */
+const CAPTURE_SIMS: Readonly<Record<string, string>> = { "plan18/sim-2": "sim-2" };
+
+/** Each replayed phone's synthetic network, which the logs' `sms` commands deliver through. */
+const NETWORKS = new WeakMap<Rig, SyntheticNetwork>();
+
 /** Plan 18's capture logs on a virgin stock phone (`standbyRig` stands for the setup). */
 export const MESSAGES_REPLAY: ReplayContext = {
   scripts: MESSAGES_CAPTURE_SCRIPTS,
   rewrite: messagesRewrite,
-  setup: (storage) => standbyRig({ storage }),
+  setup(storage, script) {
+    const network = createSyntheticNetwork();
+    const rig = standbyRig({
+      storage,
+      network,
+      ...(script in CAPTURE_SIMS ? { sim: CAPTURE_SIMS[script] } : {}),
+    });
+    NETWORKS.set(rig, network);
+    return rig;
+  },
   setupMs: SETUP_MS,
+  sms(rig, from, text, capMs, epochMs) {
+    const network = NETWORKS.get(rig);
+    if (network === undefined) throw new Error("No network for this phone.");
+    const sentAt = captureStamp(epochMs, capMs);
+    network.deliver({ number: CAPTURE_SENDERS[from] ?? from, text, sentAt });
+  },
 };
 
 /** The scenario of plan 18 golden `id`: its capture replayed (tests/support/replay.ts). */
@@ -288,6 +373,9 @@ const sendRecording = (row: number): TimelineOptions => ({
   toleranceMs: PROBE_TOLERANCE_MS,
   anchors: { [row]: SEND_LINK_SPREAD_MS },
 });
+
+/** A box's recording: `Opening` lasts 35-78 ms between recordings (the SIM read). */
+const OPENING: TimelineOptions = { toleranceMs: 45 };
 
 /**
  * A held key's timer runs from its down in the firmware; the replay puts the down on the key's
@@ -326,6 +414,46 @@ export const MESSAGES_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
   "text/input-routing-ok": sendRecording(11),
   "sms/send-by-set-numeric": sendRecording(32),
   "sms/send-by-set-alphanumeric": sendRecording(17),
+  // Task 11. Arrivals: the notice lands RECEIVE_LINK_MS after the delivery, within the spread.
+  ...Object.fromEntries(
+    [1, 2, 3, 4, 5].map((n) => [`sms/arrive-${n}`, { anchors: { 1: RECEIVE_LINK_SPREAD_MS } }]),
+  ),
+  "sms/inbox-option-reply-send": sendRecording(11),
+  "sms/elsewhere-sending": sendRecording(11),
+  // Opening lasts 35-78 ms between recordings (2-2's own: 60 ms, 2-3's: 45 ms).
+  "sms/inbox-menu-2-2": OPENING,
+  "sms/notice-read": OPENING,
+  "sms/notice-count-read": OPENING,
+  "sms/notice-inbox-menu": OPENING,
+  "sms/inbox-read": OPENING,
+  "sms/outbox-open": OPENING,
+  "sms/persist-inbox": OPENING,
+  "sms/persist-outbox": OPENING,
+  "sms/restore-inbox": OPENING,
+  "sms/restore-outbox": OPENING,
+  "sms/full-persist-inbox-open": OPENING,
+  "sms/full-persist-outbox-open": OPENING,
+  "sms/sim-second-inbox": OPENING,
+  "sms/sim-second-outbox": OPENING,
+  "sms/sim-same-inbox": OPENING,
+  "sms/sim-same-outbox": OPENING,
+  // Erasing message, Erased and No more messages replay sms/inbox-option-erase's timelines.
+  "sms/outbox-erase": OTHER_RECORDING,
+  "sms/outbox-erase-last": OTHER_RECORDING,
+  "sms/inbox-erase-last": OTHER_RECORDING,
+  // No number found plays No phone numbers' timeline (2914 ms; this recording 2883 ms).
+  "sms/outbox-use-number": { toleranceMs: 35 },
+  // The shortcut window's end (the indicator) varies 2920-2948 ms (plan 14 P5): not timed.
+  "sms/elsewhere-menu": { untimedRows: new Set([1]) },
+  "sms/elsewhere-messages-menu": { untimedRows: new Set([1]) },
+  // The game's ticks run from its start, whose key latency the replay approximates: the first
+  // tick sets their phase.
+  "sms/elsewhere-snake": { anchors: { 1: 60 } },
+  // A sixteenth arrival on a full SIM is refused 2601 ms after the delivery, past the arrivals'
+  // spread (RECEIVE_LINK_MS 2324): its link time is the synthetic cell's (D10), not compared.
+  "sms/full-arrival": { anchors: { 6: 300 } },
+  // Settings restored plays plan 15's timeline (probe/accept-c7-restore).
+  "sms/restore-ok": OTHER_RECORDING,
 };
 
 /** Every asserted plan 18 golden's scenario (tests/acceptance/18-messages-and-chat.test.ts). */
@@ -345,6 +473,30 @@ export const MESSAGES_COVERS: Readonly<Record<string, readonly string[]>> = {
 
 /** Asserted plan 18 goldens whose scenario cannot pass, with the reason. */
 export const MESSAGES_KNOWN_GAPS: Readonly<Record<string, string>> = {
+  "sms/notice":
+    "image standby-down-after-c: ▼ at standby opens the Phone book (No phone numbers) in the " +
+    "capture, while nokia-os's standby keys (plan 14's STOCK_STANDBY_KEYS, after the spec's " +
+    "help text) put the dialled numbers on ▼; D12 keeps that configuration; the other six " +
+    "images match",
+  "sms/notice-c":
+    "C on the received notice: the firmware draws standby without its operator for 88 ms first " +
+    "(as Exit's 83 ms); the kernel clears a notice to the whole standby at once (phone-core)",
+  "sms/elsewhere":
+    "image snake-level-1-then-standby: C held in a moving Snake II game, then C, reaches " +
+    "standby in the capture; the kernel swallows a key held across the game's exit (plan 23's " +
+    "game/snake/keys-c-hold gap), so the replay stays in the games; the other three images match",
+  "sms/time-format":
+    "image standby: standby's clock in the 12-hour Time format (`10:10` with its mark) is the " +
+    "clock plan's; nokia-os's standby draws the host's clock as given; the Sent: pages match",
+  ...Object.fromEntries(
+    ["sms/sim-same-new-process", "sms/sim-same-inbox", "sms/sim-same-outbox"].map((id) => [
+      id,
+      "a new emulator process with the same SIM fixture: the emulator's saveflash keeps phone " +
+        "flash but not its in-memory SIM overlay, so the messages are gone (Task 0 F); nokia-os " +
+        "keeps them in the EEPROM record of that SIM (D7), so the replay over the saved image " +
+        "still has them",
+    ]),
+  ),
   "text/commit-gap":
     "the 1450 ms key gap's second 2 reached the firmware after the first A's commit (1452 ms " +
     "after its redraw): the capture's gap includes key-scan latency that varies between keys, " +

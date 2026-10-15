@@ -41,8 +41,20 @@ function fail(message: string): never {
  * A log's commands: no comments, blank lines or `hex`; image paths shortened; the setup include,
  * and the setup's commands where a log inlines them (after a reboot), as `include setup`.
  */
-export function transcribe(log: string, setup: readonly string[]): string[] {
+export function transcribe(
+  log: string,
+  setup: readonly string[],
+  count: (prefix: string) => number = () => 0,
+): string[] {
   const out: string[] = [];
+  // The header names the image the log boots and the SMS clock's epoch (the last one given).
+  const image = /^# firmware: \S*\/(\S+)$/m.exec(log)?.[1];
+  if (image !== undefined && !image.includes("virgin")) out.push(`image ${image}`);
+  const epoch = /^# dct3cap args:.*$/m
+    .exec(log)?.[0]
+    .match(/CAP_EPOCH=\d+/g)
+    ?.at(-1);
+  if (epoch !== undefined) out.push(`epoch ${epoch.slice("CAP_EPOCH=".length)}`);
   for (const raw of log.split("\n")) {
     const line = raw.trim().replace(/\s+/g, " ");
     if (line === "" || line.startsWith("#") || line === "hex") continue;
@@ -52,6 +64,8 @@ export function transcribe(log: string, setup: readonly string[]): string[] {
       out.push("include setup");
     } else if (command === "reboot" || command === "saveflash") {
       out.push(`${command} ${basename(args[0] ?? "")}`);
+    } else if (command === "scroll") {
+      out.push(`${line} =${count(args[0]!)}`);
     } else out.push(line);
     const tail = out.slice(-setup.length);
     if (setup.length > 0 && tail.join("\n") === setup.join("\n")) {
@@ -79,15 +93,21 @@ function main(): void {
   const include = join(dir, "v639-setup.inc");
   if (!existsSync(include)) fail(`missing ${include}`);
   const setup = transcribe(readFileSync(include, "utf8"), []);
+  // A scroll's shots: the `NN.png` files it wrote under captures/6.39.
+  const count = (prefix: string): number => {
+    const shots = join(resolve(root), "captures/6.39", prefix);
+    if (!existsSync(shots)) fail(`missing scroll ${shots}`);
+    return readdirSync(shots).filter((name) => /^\d\d\.png$/.test(name)).length;
+  };
   const scripts: Record<string, string[]> = {};
   for (const file of readdirSync(dir).sort()) {
     const section = /^v639-plan18-(.+)\.cap$/.exec(file)?.[1];
     if (section === undefined || LEFT_OUT.has(section)) continue;
-    scripts[`plan18/${section}`] = transcribe(readFileSync(join(dir, file), "utf8"), setup);
+    scripts[`plan18/${section}`] = transcribe(readFileSync(join(dir, file), "utf8"), setup, count);
   }
   const plan15 = join(dir, "v639-plan15.cap");
   if (!existsSync(plan15)) fail(`missing ${plan15}`);
-  scripts["plan15/welcome"] = plan15Welcome(transcribe(readFileSync(plan15, "utf8"), setup));
+  scripts["plan15/welcome"] = plan15Welcome(transcribe(readFileSync(plan15, "utf8"), setup, count));
   const body = Object.entries(scripts)
     .map(([name, lines]) => `  ${JSON.stringify(name)}: ${JSON.stringify(lines.join("\n"))},`)
     .join("\n");

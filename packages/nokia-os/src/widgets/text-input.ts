@@ -7,7 +7,8 @@ import type { PromptModel } from "../display/widgets";
 import { shownMode, type TextMode } from "../text/multitap";
 import { MODE_SPRITES, openSymbols } from "./editor";
 import type { Flow, Widget } from "./flow";
-import { EmptyC, TextEntry } from "./text-entry";
+import { HeldC } from "./held-c";
+import { TextEntry } from "./text-entry";
 
 export interface TextInputOptions {
   /** The label lines (`Routing address:`). */
@@ -28,7 +29,7 @@ export interface TextInputOptions {
 class TextInputWidget implements Widget {
   readonly #options: TextInputOptions;
   readonly #entry: TextEntry;
-  readonly #emptyC = new EmptyC();
+  readonly #emptyC = new HeldC();
 
   constructor(options: TextInputOptions) {
     this.#options = options;

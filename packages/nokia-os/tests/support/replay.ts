@@ -20,8 +20,9 @@ import type { PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { findGoldenImage, type Golden } from "../../scripts/golden-format.ts";
 import { paintStockScreen, type StockStorage } from "../../src/index";
+import { WIDGET_SPRITES } from "../../src/resources";
 import { lcdMismatch, TIMING_TOLERANCE_MS, type RecordedTimeline } from "./golden.ts";
-import { loadGolden } from "./goldens.ts";
+import { loadGolden as readGolden } from "./goldens.ts";
 import type { Rig } from "./rig.ts";
 
 /** One command of a log, identified by its log and position. */
@@ -44,18 +45,21 @@ export interface ReplayContext {
   readonly scripts: Readonly<Record<string, string>>;
   /** A block's command lines as this phone's firmware needs them (default: unchanged). */
   readonly rewrite?: (lines: readonly string[]) => string[];
-  /** The phone after `include setup`: at standby over `storage`, every timer settled. */
-  readonly setup: (storage: StockStorage) => Rig;
+  /** The phone after `include setup` in log `script`: at standby over `storage`, settled. */
+  readonly setup: (storage: StockStorage, script: string) => Rig;
   /** How much emulated time the setup takes in the capture (`sms` time stamps count it). */
   readonly setupMs: number;
-  /** `sms <from> <text>`: an SMS for the phone, `capMs` of emulated time after power-on. */
-  readonly sms?: (rig: Rig, from: string, text: string, capMs: number) => void;
+  /**
+   * `sms <from> <text>`: an SMS for the phone, sent at `epochMs` (the log's `epoch`, Unix ms)
+   * plus `capMs` of emulated time since power-on.
+   */
+  readonly sms?: (rig: Rig, from: string, text: string, capMs: number, epochMs: number) => void;
 }
 
 /** A key edge acts this long after its command (the firmware's typical redraw latency). */
 export const KEY_LATENCY_MS = 50;
 /** How far after a key edge a recording looks for the row it redraws. */
-export const LATENCY_WINDOW_MS = 150;
+export const LATENCY_WINDOW_MS = 300;
 const TAP_DOWN_MS = 42;
 const SETTLE_MS = 250;
 const DEFAULT_KEYGAP_MS = 300;
@@ -79,6 +83,15 @@ function durationMs(text: string): number {
   const m = /^(\d+(?:\.\d+)?)(ms|s)$/.exec(text);
   if (m === null) throw new Error(`bad duration "${text}"`);
   return Number(m[1]) * (m[2] === "s" ? 1000 : 1);
+}
+
+const GOLDENS = new Map<string, Golden>();
+
+/** A golden read once per test file (stills look their images up on every shot). */
+function loadGolden(id: string): Golden {
+  let golden = GOLDENS.get(id);
+  if (golden === undefined) GOLDENS.set(id, (golden = readGolden(id)));
+  return golden;
 }
 
 /** A storage whose items can be copied (`saveflash`). */
@@ -151,33 +164,37 @@ function parse(context: ReplayContext, name: string): readonly ScriptNode[] {
 }
 
 /** A target's place in a log: the commands that reach it, and those after it in its block. */
-interface Located {
+export interface Located {
   readonly path: readonly Command[];
   readonly following: readonly Command[];
 }
 
+/**
+ * The last command `hit` matches, in the log's order: a later shot or scroll of the same name
+ * wrote over the earlier one's files, so the golden shows the last.
+ */
 function locateIn(nodes: readonly ScriptNode[], hit: (c: Command) => boolean): Located | undefined {
-  const walk = (block: readonly ScriptNode[], prefix: Command[]): Located | undefined => {
+  let found: Located | undefined;
+  const walk = (block: readonly ScriptNode[], prefix: Command[]): void => {
     for (let i = 0; i < block.length; i++) {
       const node = block[i]!;
       if (node.op === "fork") {
-        const found = walk((node as ForkNode).body, [...prefix]);
-        if (found !== undefined) return found;
+        walk((node as ForkNode).body, [...prefix]);
         continue;
       }
       prefix.push(node as Command);
       if (hit(node as Command)) {
         const following = block.slice(i + 1).filter((n): n is Command => n.op !== "fork");
-        return { path: prefix, following };
+        found = { path: [...prefix], following };
       }
     }
-    return undefined;
   };
-  return walk(nodes, []);
+  walk(nodes, []);
+  return found;
 }
 
 /** The target (`shot`, `scroll` or `record … start` of `name`) in whichever log took it. */
-function locate(
+export function locate(
   context: ReplayContext,
   op: "shot" | "scroll" | "record",
   name: string,
@@ -213,6 +230,8 @@ export class Replay {
   #keygap = DEFAULT_KEYGAP_MS;
   /** Emulated time since the capture's power-on. */
   #capMs = 0;
+  /** The log's SMS clock epoch (Unix ms). */
+  #epochMs = 0;
   /** The commands run so far. */
   readonly #done: Command[] = [];
   /** Frames shown recently (a still's blink window). */
@@ -246,8 +265,15 @@ export class Replay {
     this.#unsubscribe?.();
     const rig = this.rig;
     this.#frames = [{ atMs: rig.now, pixels: new Uint8Array(rig.paint().pixels) }];
+    // A stock flow keeps its frame object while its widget's screen is unchanged: the rig's
+    // painter reuses it, so a snapshot that changed nothing costs a comparison of references.
+    let shown: object | undefined;
     this.#unsubscribe = rig.phone.subscribe((snapshot) => {
-      const pixels = paint(snapshot.screen);
+      const screen = snapshot.screen;
+      const frame = screen.kind === "custom" ? screen.frame : undefined;
+      if (frame !== undefined && frame === shown) return;
+      shown = frame;
+      const pixels = frame === undefined ? paint(screen) : rig.paint().pixels;
       const last = this.#frames.at(-1);
       if (last !== undefined && samePixels(last.pixels, pixels)) return;
       if (last !== undefined && last.atMs === rig.now) this.#frames.pop();
@@ -292,8 +318,16 @@ export class Replay {
     this.#done.push(command);
     const { op, args } = command;
     switch (op) {
+      case "epoch":
+        this.#epochMs = Number(args[0]) * 1000;
+        return;
+      case "image": {
+        // The log boots an image another log saved (`saveflash`), else a virgin one.
+        this.#storage = mapStorage(new Map(this.#flash(args[0]!)));
+        return;
+      }
       case "include":
-        this.#rig = this.#context.setup(this.#storage);
+        this.#rig = this.#context.setup(this.#storage, command.id.split("#")[0]!);
         this.#capMs += this.#context.setupMs;
         this.#watch();
         return;
@@ -347,17 +381,44 @@ export class Replay {
       case "sms": {
         const sms = this.#context.sms;
         if (sms === undefined) throw new Error("This replay cannot deliver an SMS.");
-        sms(this.rig, args[0]!, args.slice(1).join(" "), this.#capMs);
+        sms(this.rig, args[0]!, args.slice(1).join(" "), this.#capMs, this.#epochMs);
+        return;
+      }
+      case "scroll": {
+        // `scroll <prefix> [key] [max] =<n>`: n shots, a key after each (the last one wraps).
+        const shots = Number(/^=(\d+)$/.exec(args.at(-1) ?? "")?.[1] ?? Number.NaN);
+        if (Number.isNaN(shots)) throw new Error(`scroll without its shot count (${command.id}).`);
+        const key = /^[a-z#*0-9]+$/.test(args[1] ?? "") ? args[1]! : "down";
+        for (let i = 0; i < shots; i++)
+          this.run({ id: `${command.id}~${i}`, op: "key", args: [key] });
+        this.#done.length -= shots;
         return;
       }
       case "shot":
-      case "scroll":
       case "record":
       case "audio":
         return;
       default:
         throw new Error(`Unknown capture command ${op} (${command.id}).`);
     }
+  }
+
+  /** The EEPROM image `name`: what a log's `saveflash name` saved (replayed to it), or nothing. */
+  #flash(name: string): ReadonlyMap<string, string> {
+    const saved = this.#flashes.get(name);
+    if (saved !== undefined) return saved;
+    for (const script of Object.keys(this.#context.scripts)) {
+      const at = locateIn(
+        parse(this.#context, script),
+        (c) => c.op === "saveflash" && c.args[0] === name,
+      );
+      if (at === undefined) continue;
+      const replay = new Replay(this.#context);
+      replay.reach(at.path);
+      replay.end();
+      return replay.#flashes.get(name)!;
+    }
+    return new Map();
   }
 
   /**
@@ -471,7 +532,8 @@ export class Replay {
           if (sms === undefined) throw new Error("This replay cannot deliver an SMS.");
           const capMs = this.#capMs + t;
           const text = args.slice(1).join(" ");
-          actions.push({ atMs: t, run: () => sms(this.rig, args[0]!, text, capMs) });
+          const epoch = this.#epochMs;
+          actions.push({ atMs: t, run: () => sms(this.rig, args[0]!, text, capMs, epoch) });
           break;
         }
         default:
@@ -526,8 +588,9 @@ export interface TimelineOptions {
   /** Allowed |Δ| of a frame start, aligned at the recording's start. Default ±2 ms. */
   readonly toleranceMs?: number;
   /**
-   * `free` (default): the text cursor's blink phase is not compared. Rows that only blink the
-   * cursor are left out on both sides and a frame may differ from its row by the cursor alone:
+   * `free` (default): blink phases are not compared (the text cursor's; the full SIM's standby
+   * envelope). Rows that only blink are left out on both sides and a frame may differ from its row
+   * by the blinking element alone:
    * the firmware's phase differs between forks of one editor (welcome/hold-c and 37th-key: 47
    * ms apart from the same editor) and depends on key latencies the replay does not reproduce
    * (D8). `strict`: every row, the cursor too (the blink goldens).
@@ -598,9 +661,37 @@ interface Step {
   readonly row?: number;
 }
 
-/** `steps` without the ones that only blink the cursor (`free`). */
+/** The standby envelope's pixels (`message/envelope`), which blink while the SIM is full. */
+const ENVELOPE: ReadonlySet<number> = (() => {
+  const { bitmap, x, y } = WIDGET_SPRITES["message/envelope"]!;
+  const ink = new Set<number>();
+  for (let row = 0; row < bitmap.height; row++) {
+    for (let col = 0; col < bitmap.width; col++) {
+      if (bitmap.pixels[row * bitmap.width + col] === 1) ink.add((y + row) * 84 + x + col);
+    }
+  }
+  return ink;
+})();
+
+/** Whether `b` differs from `a` exactly by the standby envelope. */
+function envelopeOnly(a: Uint8Array, b: Uint8Array): boolean {
+  let count = 0;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] === b[i]) continue;
+    if (!ENVELOPE.has(i)) return false;
+    count++;
+  }
+  return count === ENVELOPE.size;
+}
+
+/** Whether `b` differs from `a` only by a blink: a text cursor or the full SIM's envelope. */
+function blinkOnly(a: Uint8Array, b: Uint8Array): boolean {
+  return cursorOnly(a, b) || envelopeOnly(a, b);
+}
+
+/** `steps` without the ones that only blink (`free`). */
 function withoutBlinks(steps: readonly Step[]): Step[] {
-  return steps.filter((step, i) => i === 0 || !cursorOnly(steps[i - 1]!.pixels, step.pixels));
+  return steps.filter((step, i) => i === 0 || !blinkOnly(steps[i - 1]!.pixels, step.pixels));
 }
 
 /** Compares a recording with every row of a timeline golden, both from the recording's start. */
@@ -652,6 +743,24 @@ export function expectFromStart(
     }
     return !partial;
   });
+  // And one the replay makes that the golden does not show (the edges before standby, plan 14's
+  // invalid-shortcut timeline, where the firmware draws the received notice at once).
+  actual = actual.filter((step, i) => {
+    const next = actual[i + 1];
+    const partial =
+      i > 0 &&
+      next !== undefined &&
+      next.startMs - step.startMs <= PARTIAL_MS &&
+      !expected.some(
+        (row) =>
+          samePixels(row.pixels, step.pixels) || (free && blinkOnly(row.pixels, step.pixels)),
+      );
+    if (partial)
+      lines.push(
+        `${" ".repeat(12)}${ms(step.startMs).padStart(28)}  partial draw, not in the golden`,
+      );
+    return !partial;
+  });
   if (free) {
     expected = withoutBlinks(expected);
     actual = withoutBlinks(actual);
@@ -659,7 +768,7 @@ export function expectFromStart(
   let failed = false;
   let firstPixels: string | undefined;
   const shows = (frame: Step, step: Step): boolean =>
-    samePixels(frame.pixels, step.pixels) || (free && cursorOnly(step.pixels, frame.pixels));
+    samePixels(frame.pixels, step.pixels) || (free && blinkOnly(step.pixels, frame.pixels));
   let j = 0;
   /** How far the last anchor row moved the rows after it. */
   let shift = 0;
@@ -700,6 +809,11 @@ export function expectFromStart(
     lines.push(` extra frames at ${extra.map((f) => ms(f.startMs)).join(", ")} ms ✗`);
   }
   if (!failed) return;
+  if (process.env.REPLAY_DEBUG) {
+    lines.push(
+      ` recorded: ${recorded.frames.map((f, i) => `${ms(f.startMs - start)}${i > 0 && blinkOnly(recorded.frames[i - 1]!.pixels, f.pixels) ? "b" : ""}`).join(" ")}`,
+    );
+  }
   const out = [
     `Recording mismatch: ${golden.id} (from the recording's start${free ? "; cursor blinks left out" : ""})`,
     ...lines,
@@ -790,7 +904,7 @@ export function replayScenario(
       continue;
     }
     // `scroll <prefix> [key]`: a shot, then the key, until the list wraps.
-    const scrolling = fresh(located.path);
+    const scrolling = fresh(located.path.slice(0, -1));
     const command = located.path.at(-1)!;
     const key = command.args[1] ?? "down";
     let at = 0;

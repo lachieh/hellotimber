@@ -3,6 +3,7 @@
 // 18c owns (placeholders until then).
 import { DICTIONARY_KEY, DICTIONARY_LABELS, VIRGIN_OVERRIDES } from "../../messages/bindings";
 import { MESSAGES_RECORD } from "../../messages/store";
+import { openBox } from "../../messages/read";
 import { smsEditor } from "../../messages/write";
 import { interlude, softkeyAlone } from "../../widgets/interlude";
 import type { EepromRecord } from "../eeprom";
@@ -85,6 +86,9 @@ export const messagesFeature: StockFeature = {
   screens: {
     // Write messages: the multi-tap editor (D3: Dictionary off until plan 18b).
     "2-1": (services) => () => smsEditor(services),
+    // Inbox and Outbox: the lists, or plan 14's notes while they are empty.
+    "2-2": (services) => () => openBox(services, "inbox"),
+    "2-3": (services) => () => openBox(services, "outbox"),
     "2-7-1-1": centreNumber,
     "2-7-2-1": centreNumber,
     "2-9": voiceMailbox,

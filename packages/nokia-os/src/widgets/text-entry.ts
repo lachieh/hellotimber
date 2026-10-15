@@ -4,8 +4,7 @@
 // are timed here with TEXT_TIMINGS, not the kernel's long press. The cursor blinks on a
 // free-running TEXT_TIMINGS.blinkMs timer from the entry's start: keys and commits never restart
 // it (`text/commit` and `text/hold-digit` keep the phase they had before the key).
-import { LONG_PRESS_MS, type PhoneKey } from "@hellotimber/phone-core";
-import type { Flow } from "./flow";
+import type { PhoneKey } from "@hellotimber/phone-core";
 import { TEXT_TIMINGS, type StockWidgetTimeline } from "../resources";
 import { isTextKey } from "../text/keys";
 import { Playback } from "./playback";
@@ -105,6 +104,11 @@ export class TextEntry {
     return blinkShown(this.#blink, this.#now);
   }
 
+  /** The pending character commits (a screen opens over the entry: Options). */
+  commit(): void {
+    this.#state = textTick(this.#state, Number.POSITIVE_INFINITY);
+  }
+
   control(): EditorControl {
     return {
       text: this.#state.text,
@@ -191,34 +195,5 @@ export class TextEntry {
       isTextKey(pending.key) && held >= TEXT_TIMINGS.digitHoldMs
         ? textHold(this.#state, pending.key, now, this.limit)
         : textTick(this.#state, now);
-  }
-}
-
-/**
- * C on an empty entry: back to the screen below as it comes up (`text/delete-empty`: the page 13
- * ms after the up), or, held for the kernel's long press, standby. The firmware leaves for the
- * page at the down and its menu's long press goes on to standby (the captures' `hold c` from an
- * empty editor); a kernel application cannot hand a held key to the menu (phone-core).
- */
-export class EmptyC {
-  #heldMs: number | undefined;
-
-  /** C went down on the empty text. */
-  down(): void {
-    this.#heldMs = 0;
-  }
-
-  up(flow: Flow): void {
-    if (this.#heldMs === undefined) return;
-    this.#heldMs = undefined;
-    flow.back();
-  }
-
-  tick(dtMs: number, flow: Flow): void {
-    if (this.#heldMs === undefined) return;
-    this.#heldMs += dtMs;
-    if (this.#heldMs < LONG_PRESS_MS) return;
-    this.#heldMs = undefined;
-    flow.standby();
   }
 }

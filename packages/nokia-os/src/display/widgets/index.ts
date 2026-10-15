@@ -9,6 +9,12 @@ import { paintGameOver, type GameOverModel } from "./game-over";
 import { paintInfoPage, type InfoPageModel } from "./info-pages";
 import { paintInfoScreen, type InfoScreenModel } from "./info-screen";
 import { paintLevelBar, type LevelBarModel } from "./level-bar";
+import {
+  paintMessageList,
+  paintMessagePage,
+  type MessageListModel,
+  type MessagePageModel,
+} from "./message";
 import { paintMulti, type MultiModel } from "./multi";
 import { paintNote, paintWelcomeNote, type NoteModel, type WelcomeNoteModel } from "./note";
 import { paintOptions, type OptionsModel } from "./options";
@@ -25,6 +31,7 @@ export type { GameOverModel } from "./game-over";
 export type { InfoPageModel } from "./info-pages";
 export type { InfoScreenModel } from "./info-screen";
 export type { LevelBarModel } from "./level-bar";
+export type { MessageListModel, MessagePageModel } from "./message";
 export type { MultiModel } from "./multi";
 export type { NoteModel, WelcomeNoteModel } from "./note";
 export { welcomeNoteLines } from "./note";
@@ -80,7 +87,9 @@ export type WidgetModel =
   | SymbolsModel
   | PlaceholderModel
   | CalculatorModel
-  | StandbyDrawModel;
+  | StandbyDrawModel
+  | MessageListModel
+  | MessagePageModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -144,6 +153,12 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "calculator":
       paintCalculator(fb, model);
+      return;
+    case "message-list":
+      paintMessageList(fb, model);
+      return;
+    case "message-page":
+      paintMessagePage(fb, model);
       return;
     case "standby-draw":
       paintStandby(fb, {
