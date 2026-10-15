@@ -4,19 +4,11 @@
 // key on the tick its effect starts in the golden (D8: the key-to-redraw latency is not
 // reproduced).
 //
-// Timing (plan 14 closeout decision 2): the timeline is anchored on the trigger key. A probe
-// that replays another recording's timings, or presses keys after the trigger, compares frame
-// starts within PROBE_TOLERANCE_MS (each such scenario says why); every other probe keeps ±2 ms.
-// Pixels are always exact.
+// Timing: the timeline is anchored on the trigger key and compared by the fidelity standard
+// (golden.ts, AGENTS.md). Pixels are always exact.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { expect } from "vite-plus/test";
-import {
-  expectLcd,
-  expectTimeline,
-  lcdMismatch,
-  PROBE_TOLERANCE_MS,
-  type TimelineTolerance,
-} from "./golden.ts";
+import { expectLcd, expectTimeline, FRAME_MS, lcdMismatch } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { frameAt, standbyRig, type Rig } from "./rig.ts";
 
@@ -56,10 +48,11 @@ export function after(script: string): Rig {
 
 /**
  * A still probe: `steps[i]` runs before image `i` is compared (the probe's images in order).
- * With `toleranceMs` an image may have been on screen up to that long before or after its step
- * ends (a shot timed from a key the firmware times from its redraw).
+ * With `nearFrame` an image may have been on screen up to FRAME_MS before or after its step ends
+ * (a shot timed from a key the firmware times from its redraw).
  */
-export function stills(id: string, rig: Rig, steps: readonly string[], toleranceMs = 0): void {
+export function stills(id: string, rig: Rig, steps: readonly string[], nearFrame = false): void {
+  const toleranceMs = nearFrame ? FRAME_MS : 0;
   const golden = loadGolden(id);
   expect(steps.length, `${id}: one step per image`).toBe(golden.images.length);
   golden.images.forEach((image, i) => {
@@ -113,11 +106,7 @@ export function timeline(
   rig: Rig,
   trigger: PhoneKey,
   later: readonly Later[] = [],
-  {
-    toleranceMs,
-    triggerRow,
-    lastRow,
-  }: Pick<TimelineTolerance, "toleranceMs"> & { triggerRow?: number; lastRow?: number } = {},
+  { triggerRow, lastRow }: { triggerRow?: number; lastRow?: number } = {},
 ): void {
   const loaded = loadGolden(id);
   const cut = loaded.timeline!.slice(0, lastRow === undefined ? undefined : lastRow + 1);
@@ -146,14 +135,8 @@ export function timeline(
   });
   const recording = rig.record(span, () => rig.press(trigger), schedule);
   const context = `${id}: ${trigger}, then ${later.map((l) => l[1]).join(", ")}`;
-  expectTimeline(recording, golden, context, {
-    untimedRows,
-    ...(toleranceMs === undefined ? {} : { toleranceMs }),
-  });
+  expectTimeline(recording, golden, context, { untimedRows });
 }
-
-/** Probe timelines compared within PROBE_TOLERANCE_MS (see the file header). */
-export const JITTER = { toleranceMs: PROBE_TOLERANCE_MS } as const;
 
 export const SNAKE = "navi down*7 navi navi wait:7000";
 

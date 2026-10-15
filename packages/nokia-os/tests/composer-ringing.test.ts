@@ -24,7 +24,7 @@ import {
   ringingStorage,
 } from "./support/composer-scenarios.ts";
 import { open } from "./support/drive.ts";
-import { expectTimeline, PROBE_TOLERANCE_MS } from "./support/golden.ts";
+import { expectTimeline } from "./support/golden.ts";
 import { loadGolden } from "./support/goldens.ts";
 import { keys } from "./support/probes.ts";
 import type { Rig } from "./support/rig.ts";
@@ -68,7 +68,7 @@ describe("names in the Ringing tone lists (D8, K12)", () => {
     keys(rig, `navi 5 1 wait:1500 down*${entryOf(3) - NOKIA_TUNE}`);
     const golden = loadGolden("composer/ringing-choose");
     const recording = recordTimeline(rig, golden, () => rig.press("navi"));
-    expectTimeline(recording, golden, "ringing/choose", { toleranceMs: PROBE_TOLERANCE_MS });
+    expectTimeline(recording, golden, "ringing/choose");
     still(rig, "ringing/page");
     keys(rig, "c~1500 wait:1000 navi wait:400 5 wait:4500");
     still(rig, "ringing/page-tones");

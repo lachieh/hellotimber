@@ -148,8 +148,10 @@ function programNotes(
 }
 
 /**
- * Notes compared (D3 deviation): frequencies and registers exactly, each onset within plan 16's
- * drift (25 ms + 1.2 % of its offset from the first) and each note's length within two units.
+ * Notes compared (D3 deviation): frequencies and registers exactly, each onset within 25 ms + 1.2 %
+ * of its offset from the first (a program is the median of its recordings; a single recording runs
+ * up to 1.2 % slow, the emulator's timer) and each note's length within two units. This checks the
+ * derivation; acceptance compares the sounds by the fidelity standard.
  */
 function expectNotes(id: string, program: SoundProgram, volumes = true): void {
   const want = buzzerNotes(loadSoundGolden(id));

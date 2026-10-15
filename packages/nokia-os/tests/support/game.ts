@@ -20,15 +20,13 @@ import { goto } from "./drive";
 import {
   expectLcd,
   expectTimeline,
-  GAME_TICK_TOLERANCE_MS,
+  timingToleranceMs,
   lcdMismatch,
-  PROBE_TOLERANCE_MS,
-  TIMING_TOLERANCE_MS,
   type RecordedFrame,
   type RecordedTimeline,
 } from "./golden";
 import { goldenImage, loadGolden } from "./goldens";
-import { JITTER, keys, SNAKE, stills, TAP_MS, timeline } from "./probes";
+import { keys, SNAKE, stills, TAP_MS, timeline } from "./probes";
 import { SEED_1010, standbyRig, type Rig } from "./rig";
 import { decodeBoard, goldenBoards, type TickBoard } from "./snake-decode";
 import { INDEX } from "./tree";
@@ -148,19 +146,12 @@ export function replayBoards(trace: SnakeTrace): ReplayedBoard[] {
   });
 }
 
-/**
- * The crash interval (the last tick's frame to the first hidden frame) holds two firmware timer
- * events, the blocked tick and the grace tick, each within GAME_TICK_TOLERANCE_MS: the first
- * hidden frame comes 88-110 ms after the blocked tick in the captures, the saving move 93 ms.
- */
-export const CRASH_TOLERANCE_MS = 2 * GAME_TICK_TOLERANCE_MS;
-
 /** How a game timeline row's start is compared (D6). */
 export type GameRowTiming =
   /** With the interval from the previous row (ticks; never cumulatively). */
-  | { readonly kind: "interval"; readonly toleranceMs: number }
+  | { readonly kind: "interval" }
   /** With the time since row `anchor` (the death blink, the game-over note). */
-  | { readonly kind: "aligned"; readonly anchor: number; readonly toleranceMs: number }
+  | { readonly kind: "aligned"; readonly anchor: number }
   /** Pixels and order only (the fireworks pictures after the first). */
   | { readonly kind: "untimed" };
 
@@ -176,16 +167,13 @@ export interface GameRow {
 
 /**
  * A gameplay timeline's rows from its trigger, as the session must show them (D6). A tick redraw
- * in two bursts counts once, with the first burst's start and the second's pixels. Tick
- * intervals allow GAME_TICK_TOLERANCE_MS, the crash interval CRASH_TOLERANCE_MS. The death steps
- * are aligned on the first hidden snake and allow GAME_TICK_TOLERANCE_MS: across the nine
- * captured deaths the blink steps run 222-251 ms, so ±2 ms does not hold. The game-over screens
- * replay bot-short's and bot-long's recordings and allow PROBE_TOLERANCE_MS (plan 14 closeout
- * decision 2: the notes of other recordings differ by up to 15 ms): the first one from the
- * death, the note from the first one, the return from the note. The fireworks pictures after
- * the first are compared by pixels and order only: their steps differ between recordings by up
- * to 37 ms (62 ms summed), although the sequence takes 2871-2872 ms in both. Other screens keep
- * ±2 ms.
+ * in two bursts counts once, with the first burst's start and the second's pixels. Each row's
+ * start is compared by the fidelity standard (`timingToleranceMs`) from its reference: a tick, the
+ * crash and the game-over screens from the row before (never cumulatively); the death steps from
+ * the first hidden snake (across the nine captured deaths they run 222-251 ms); the game-over
+ * note from the first game-over screen. The fireworks pictures after the first are compared by
+ * pixels and order only: their steps differ between recordings by up to 37 ms (62 ms summed),
+ * although the sequence takes 2871-2872 ms in both.
  */
 export function gameRows(id: string, level: number, maze = 0): GameRow[] {
   const golden = loadGolden(id);
@@ -211,33 +199,30 @@ export function gameRows(id: string, level: number, maze = 0): GameRow[] {
       // The game-over screens (with no blink, the death begins with them) and the return.
       if (overAt === undefined) {
         overAt = rows.length;
-        const crash = anchor === undefined && rows.at(-1)?.tick === true;
-        rows.push(
-          entry({ kind: "interval", toleranceMs: crash ? CRASH_TOLERANCE_MS : PROBE_TOLERANCE_MS }),
-        );
+        rows.push(entry({ kind: "interval" }));
       } else if (noteAt === undefined && showsNote(pixels)) {
         noteAt = rows.length;
-        rows.push(entry({ kind: "aligned", anchor: overAt, toleranceMs: PROBE_TOLERANCE_MS }));
+        rows.push(entry({ kind: "aligned", anchor: overAt }));
       } else if (noteAt === undefined) {
         rows.push(entry({ kind: "untimed" }));
       } else {
-        rows.push(entry({ kind: "interval", toleranceMs: PROBE_TOLERANCE_MS }));
+        rows.push(entry({ kind: "interval" }));
       }
       continue;
     }
     if (anchor !== undefined) {
-      rows.push(entry({ kind: "aligned", anchor, toleranceMs: GAME_TICK_TOLERANCE_MS }));
+      rows.push(entry({ kind: "aligned", anchor }));
       continue;
     }
     if (!board) {
-      rows.push(entry({ kind: "interval", toleranceMs: TIMING_TOLERANCE_MS }));
+      rows.push(entry({ kind: "interval" }));
       continue;
     }
     const where = `${id} image ${row.image}`;
     if (decodeBoard(pixels, SNAKE_MAZES[maze], where).segments.length === 0) {
       // The death begins: the snake hidden.
       anchor = rows.length;
-      rows.push(entry({ kind: "interval", toleranceMs: CRASH_TOLERANCE_MS }));
+      rows.push(entry({ kind: "interval" }));
       continue;
     }
     const last = lastTick === undefined ? undefined : rows[lastTick]!;
@@ -247,7 +232,7 @@ export function gameRows(id: string, level: number, maze = 0): GameRow[] {
       continue;
     }
     lastTick = rows.length;
-    rows.push(entry({ kind: "interval", toleranceMs: GAME_TICK_TOLERANCE_MS }, true));
+    rows.push(entry({ kind: "interval" }, true));
   }
   return rows;
 }
@@ -328,7 +313,7 @@ export function expectGameTimeline(
     expect(
       Math.abs(ours - golden),
       `${id} image ${row.image} (row ${i}): ${ours} ms after row ${from}, golden ${golden} ms`,
-    ).toBeLessThanOrEqual(row.timing.toleranceMs);
+    ).toBeLessThanOrEqual(timingToleranceMs(golden));
   });
 }
 
@@ -539,7 +524,7 @@ function gameOverKey(id: string, game: string, key: PhoneKey, keyMs: number): vo
     // Ignored: the note ends by itself, when the capture's did.
     const ends = ours + (b!.startMs - a!.startMs) - at;
     expect(Math.abs(after!.startMs - ends), `${id}: the note's end`).toBeLessThanOrEqual(
-      PROBE_TOLERANCE_MS,
+      timingToleranceMs(ends),
     );
   }
 }
@@ -575,7 +560,7 @@ function afterGame(id: string, game: string): void {
 function afterTopScore(id: string, game: string): void {
   const rig = toGameMenu(game);
   keys(rig, "down*3");
-  timeline(id, rig, "navi", [], JITTER);
+  timeline(id, rig, "navi", []);
 }
 
 /** A level-1 game suspended with Navi after tick `tick`: the game menu on Continue. */
@@ -626,15 +611,15 @@ function periodsScenario(): void {
     const where = `level ${row.level}`;
     expect(starts[0], `${where}: the New game frame`).toBe(0);
     expect(Math.abs(starts[1]! - row.firstMs), `${where}: first tick`).toBeLessThanOrEqual(
-      GAME_TICK_TOLERANCE_MS,
+      timingToleranceMs(row.firstMs),
     );
     // A level whose captured intervals differ among themselves by more than the tolerance (118
     // and 134: two intervals 29 ms apart; 26: a late tick, 17 ms long) cannot come within it of
     // each with one period: there the level's own spread is allowed.
     const spread = Math.max(...row.intervalsMs) - Math.min(...row.intervalsMs);
-    const tolerance = Math.max(GAME_TICK_TOLERANCE_MS, spread);
     row.intervalsMs.forEach((ms, i) => {
       const ours = starts[i + 2]! - starts[i + 1]!;
+      const tolerance = Math.max(timingToleranceMs(ms), spread);
       expect(Math.abs(ours - ms), `${where}: interval ${i + 1}`).toBeLessThanOrEqual(tolerance);
     });
     if (row.level === 10) break;
@@ -706,13 +691,10 @@ export const SNAKE_SCENARIOS: Record<string, (id: string) => void> = {
     const rows = golden.timeline!;
     const last = rows.at(-1)!;
     const span = last.startMs + last.durationMs - rows[1]!.startMs;
-    // The repeat runs 482-496 ms apart: the game tolerance (D6).
     const recording = rig.record(span + 100, () => rig.hold("up"), [
       { atMs: 2000, run: () => rig.release("up") },
     ]);
-    expectTimeline(recording, golden, "Level at 5, ▲ held 2 s", {
-      toleranceMs: GAME_TICK_TOLERANCE_MS,
-    });
+    expectTimeline(recording, golden, "Level at 5, ▲ held 2 s");
   },
 
   // New game at every level (D2, D6) and on every maze.
@@ -800,17 +782,17 @@ export const SNAKE_SCENARIOS: Record<string, (id: string) => void> = {
   "game/snake/pause-reenter": (id) => {
     const rig = suspended();
     keys(rig, "c");
-    timeline(id, rig, "navi", [], JITTER);
+    timeline(id, rig, "navi", []);
   },
   "game/snake/pause-from-standby": (id) => {
     const rig = suspended();
     keys(rig, "c*3 wait:2000 navi down*7 navi");
-    timeline(id, rig, "navi", [], JITTER);
+    timeline(id, rig, "navi", []);
   },
   "game/snake/pause-top-score": (id) => {
     const rig = suspended();
     keys(rig, "down*4");
-    timeline(id, rig, "navi", [], JITTER);
+    timeline(id, rig, "navi", []);
   },
   "game/snake/pause-level": (id) => {
     const rig = suspended();

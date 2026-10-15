@@ -15,7 +15,7 @@ import { OptionListWidget } from "../src/widgets/option-list";
 import { promptFromLayout, splitPromptLines } from "../src/widgets/prompt";
 import { splash, splashIntro } from "../src/widgets/splash";
 import { textPages } from "../src/widgets/text-pages";
-import { expectLcd, GAME_TICK_TOLERANCE_MS } from "./support/golden.ts";
+import { expectLcd } from "./support/golden.ts";
 import { expectFlowTimeline, flowRig, recordFlow } from "./support/flow-rig.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";
 import { indicatorOf, INDEX, treePath } from "./support/tree.ts";
@@ -359,11 +359,8 @@ describe("Snake II's Level page (plan 23 D11, C1)", () => {
     rig.session.onKey({ type: "down", key: "up" });
     const recording = recordFlow(rig, 2000);
     rig.session.onKey({ type: "up", key: "up" });
-    // The repeat runs 482-496 ms apart: compared with the game tolerance (D6).
-    expectFlowTimeline(recording, loadGolden(id), {
-      returns: false,
-      toleranceMs: GAME_TICK_TOLERANCE_MS,
-    });
+    // The repeat runs 482-496 ms apart.
+    expectFlowTimeline(recording, loadGolden(id), { returns: false });
     rig.advance(1000);
     expect(rig.frame()).toEqual(recording.frames.at(-1)!.pixels);
   });

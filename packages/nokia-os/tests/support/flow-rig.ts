@@ -11,7 +11,7 @@ import { expect } from "vite-plus/test";
 import type { Golden } from "../../scripts/golden-format.ts";
 import { findGoldenImage } from "../../scripts/golden-format.ts";
 import { StockFlowApplication, type Widget } from "../../src/widgets/flow";
-import { lcdMismatch, TIMING_TOLERANCE_MS } from "./golden.ts";
+import { lcdMismatch, sameTime } from "./golden.ts";
 
 export type ExitOptions = Parameters<ApplicationContext["exit"]>[0];
 
@@ -101,15 +101,14 @@ function samePixels(a: Uint8Array, b: Uint8Array): boolean {
  * Compares a flow recording started at the golden's trigger with the golden's widget rows:
  * from `trigger-frame` up to, but not including, the last row when `returns` (the screen the
  * flow returns to, which the kernel draws), else every row from the trigger. Pixels must match;
- * starts within ±2 ms (or `toleranceMs`) of the golden's (aligned on the trigger); with `returns` the flow must
- * exit when the last row starts, ±2 ms.
+ * starts follow the fidelity standard (aligned on the trigger); with `returns` the flow must exit
+ * when the last row starts.
  */
 export function expectFlowTimeline(
   recording: FlowRecording,
   golden: Golden,
-  options: { returns: boolean; toleranceMs?: number },
+  options: { returns: boolean },
 ): void {
-  const tolerance = options.toleranceMs ?? TIMING_TOLERANCE_MS;
   const rows = golden.timeline;
   const trigger = golden.triggerFrame;
   if (rows === undefined || typeof trigger !== "number") {
@@ -129,9 +128,9 @@ export function expectFlowTimeline(
     if (mismatch !== undefined) throw new Error(mismatch);
     const expected = row.startMs - origin;
     expect(
-      Math.abs(frame!.startMs - expected),
+      sameTime(frame!.startMs, expected),
       `${context}: starts at ${frame!.startMs} ms, golden ${expected} ms`,
-    ).toBeLessThanOrEqual(tolerance);
+    ).toBe(true);
   });
   if (!options.returns) return;
   const last = rows[rows.length - 1]!;
@@ -140,7 +139,7 @@ export function expectFlowTimeline(
   );
   expect(recording.exitMs, `${golden.id}: the flow never exited`).toBeDefined();
   expect(
-    Math.abs(recording.exitMs! - (last.startMs - origin)),
+    sameTime(recording.exitMs!, last.startMs - origin),
     `${golden.id}: exits at ${recording.exitMs} ms, golden returns at ${last.startMs - origin} ms`,
-  ).toBeLessThanOrEqual(tolerance);
+  ).toBe(true);
 }

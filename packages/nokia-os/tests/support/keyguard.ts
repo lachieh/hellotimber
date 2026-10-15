@@ -11,7 +11,7 @@ import { expect } from "vite-plus/test";
 import type { StockLightEvent } from "../../src/firmware/features/backlight";
 import { KEYGUARD_TIMES } from "../../src/firmware/features/keyguard";
 import { createSyntheticNetwork, type StockPhoneConfig } from "../../src/index";
-import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "./golden.ts";
+import { expectLcd, expectTimeline } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { deliverAndLand, LIGHT_EDGE_TOLERANCE_MS } from "./lights.ts";
 import { seededStorage, standbyRig, type Rig } from "./rig.ts";
@@ -62,17 +62,11 @@ export interface KeyguardCase {
   /** The first key and how long it is held. */
   readonly trigger: readonly [key: PhoneKey, holdMs?: number];
   readonly later?: readonly KeyguardKey[];
-  /**
-   * Compare frame starts within PROBE_TOLERANCE_MS (default: when keys follow the trigger, plan
-   * 14's rule): the firmware runs those keys' timers from redraws whose latency differs from the
-   * trigger's, and replays its notes with spreads of 5-15 ms a step.
-   */
-  readonly jitter?: boolean;
 }
 
 /** Replays `keyguardCase` and compares it with the timeline golden `id`. */
 export function keyguardTimeline(id: string, keyguardCase: KeyguardCase): void {
-  const { from, trigger, later = [], jitter = later.length > 0 } = keyguardCase;
+  const { from, trigger, later = [] } = keyguardCase;
   const golden = loadGolden(id);
   const rows = golden.timeline!;
   const t = golden.triggerFrame as number;
@@ -93,7 +87,7 @@ export function keyguardTimeline(id: string, keyguardCase: KeyguardCase): void {
   }
   const recording = rig.record(span, () => rig.hold(key), schedule);
   const context = `${id}: ${[key, ...later.map((l) => l[1])].join(", ")} from a ${from} phone`;
-  expectTimeline(recording, golden, context, jitter ? { toleranceMs: PROBE_TOLERANCE_MS } : {});
+  expectTimeline(recording, golden, context);
   // D10: each row's `leds` are the lights the phone reported as the frame started (both LEDs
   // switch together: 3 or 0), but at a lights edge within LIGHT_EDGE_TOLERANCE_MS of it.
   const shown = [

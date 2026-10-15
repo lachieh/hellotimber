@@ -23,7 +23,7 @@ import { standbyRig } from "../support/rig.ts";
  */
 const DIGITS_112 = [[{ ms: 500 }, "1"] as const, [3, "2"] as const];
 const KEYGUARD: Readonly<Record<string, KeyguardCase>> = {
-  "keyguard/lock": { from: "standby", trigger: ["navi"], later: [[3, "*"]], jitter: false },
+  "keyguard/lock": { from: "standby", trigger: ["navi"], later: [[3, "*"]] },
   "keyguard/lock-star-held": { from: "standby", trigger: ["navi"], later: [[3, "*", 600]] },
   "keyguard/lock-gap/2000": { from: "standby", trigger: ["navi"], later: [[8, "*"]] },
   // The `*` pre-empts a carousel step the kernel draws 8 ms before the note: its own time.
@@ -50,10 +50,10 @@ const KEYGUARD: Readonly<Record<string, KeyguardCase>> = {
   "keyguard/hint-late": { from: "dark", trigger: ["5"], later: [[{ ms: 2746 }, "6"]] },
   // Another recording of the power key's hint: it times as the digits' (8 ms later steps, the
   // 9 ms closing partial) where keyguard/hint/pwr times as C's, ▲'s and ▼'s.
-  "keyguard/power-key-held": { from: "lit", trigger: ["power", 10_000], jitter: true },
+  "keyguard/power-key-held": { from: "lit", trigger: ["power", 10_000] },
   "keyguard/unlock-alone": { from: "dark", trigger: ["navi"] },
   "keyguard/unlock-held": { from: "dark", trigger: ["navi", 800] },
-  "keyguard/unlock": { from: "dark", trigger: ["navi"], later: [[2, "*"]], jitter: false },
+  "keyguard/unlock": { from: "dark", trigger: ["navi"], later: [[2, "*"]] },
   "keyguard/unlock-star-held": { from: "dark", trigger: ["navi"], later: [[2, "*", 600]] },
   "keyguard/unlock-digit": { from: "dark", trigger: ["navi"], later: [[2, "5"]] },
   "keyguard/unlock-c": { from: "dark", trigger: ["navi"], later: [[2, "c"]] },
@@ -124,7 +124,7 @@ const KEYGUARD: Readonly<Record<string, KeyguardCase>> = {
   ),
   "keyguard/emergency/08": { from: "dark", trigger: ["0"], later: [[{ ms: 530 }, "8"]] },
   // Another recording of the hint (lit): its steps spread up to 22 ms from keyguard/hint's.
-  "keyguard/lit/hint-5": { from: "lit", trigger: ["5"], jitter: true },
+  "keyguard/lit/hint-5": { from: "lit", trigger: ["5"] },
   "keyguard/lit/unlock-alone": { from: "lit", trigger: ["navi"] },
   "keyguard/lit/unlock": { from: "lit", trigger: ["navi"], later: [[2, "*"]] },
   "keyguard/lit/emergency-112": { from: "lit", trigger: ["1"], later: DIGITS_112 },
@@ -166,6 +166,11 @@ const scenarios: Record<string, Scenario> = {
     expectLcd(standbyRig().paint(), goldenImage(id, "standby"), "after a cold power-on"),
 };
 
+/** Games › Settings › Lights Off at New game and Continue (D7). */
+const LIGHTS_OFF_LATE =
+  "the LEDs go dark at Select's release in nokia-os (the tap's 60 ms, plan 23's flow host) and " +
+  "38 ms after the key-down in the firmware: 22 ms late, over one display frame";
+
 acceptancePlan({
   plan: "25",
   scenarios,
@@ -179,16 +184,9 @@ acceptancePlan({
         ...["000", "110", "113", "911", "999"].map((n) => `keyguard/emergency/${n}`),
       ].map((id) => [
         id,
-        "partial draws caught at different points: this restarted hint closes with two (17 and " +
-          "9 ms) where keyguard/hint, hint-late and emergency/08 show the one 8-9 ms draw",
-      ]),
-    ),
-    ...Object.fromEntries(
-      ["2500", "2900", "2910", "2920"].map((ms) => [
-        `keyguard/lock-gap/${ms}`,
-        "timer spread: this recording's Keypad locked runs 2901-2915 ms where keyguard/lock's " +
-          "runs 2886 ms (2900: a 23 ms closing partial), so it ends more than " +
-          "PROBE_TOLERANCE_MS after the replayed one",
+        "partial draws caught at different points: this restarted hint closes with a 17 ms draw " +
+          "(a display frame, so it counts) and a 9 ms one, where keyguard/hint, hint-late and " +
+          "emergency/08 show the one 8-9 ms draw",
       ]),
     ),
     ...Object.fromEntries(
@@ -197,9 +195,14 @@ acceptancePlan({
           `lights/game/${lights}/${end}`,
           "the capture's bot steered live from its board (another seed, a game started 22 ms " +
             "earlier): its keys do not crash nokia-os's snake, so the death's end never lights " +
-            "(tests/lights-rules.test.ts lights a crash of nokia-os's own)",
+            `(tests/lights-rules.test.ts lights a crash of nokia-os's own)${
+              lights === "off" ? `; ${LIGHTS_OFF_LATE}` : ""
+            }`,
         ]),
       ),
+    ),
+    ...Object.fromEntries(
+      ["pause-c", "pause-nav", "play"].map((end) => [`lights/game/off/${end}`, LIGHTS_OFF_LATE]),
     ),
     "keyguard/lock-cancel/digit":
       "`*` during the carousel's shortcut entry: the firmware ignores it and Phone book opens " +

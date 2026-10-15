@@ -1,6 +1,7 @@
 // Sound assertions against sound goldens (plan 16 "Scenarios and the coverage guard"): drive a
 // golden's keys on a rig, collect the port's events, and compare them row by row with failure
-// output in the style of `expectTimeline`.
+// output in the style of `expectTimeline`. Frequencies and volumes are exact; edge times follow
+// the fidelity standard (golden.ts, AGENTS.md).
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { PhoneKey } from "@hellotimber/phone-core";
@@ -13,25 +14,14 @@ import {
   type SoundState,
 } from "../../scripts/sound-format.ts";
 import type { StockSoundEvent } from "../../src/index";
+import { FRAME_MS, timingToleranceMs } from "./golden.ts";
 import type { Rig } from "./rig.ts";
 
-/** A program's onset (a preview, a timed tone) against its golden time (D6: 985-1014 ms around 991). */
-export const SOUND_ONSET_TOLERANCE_MS = 25;
-/** Edges within one program, against the program's own start (D6). */
-export const SOUND_EDGE_TOLERANCE_MS = 2;
 /**
  * The captured key-down → output latency nokia-os does not reproduce (D8, D12; Task 0: 12-103
  * ms): an output a key starts or stops may lag the key by this much in the golden.
  */
 export const KEY_LATENCY_MAX_MS = 103;
-/**
- * The length of a tone a key starts varies with the DSP's state and the firmware's timers (Task
- * 0: keypad beeps 139-155 ms awake around the generated 145, 123-139 woken around 124; warning
- * tones 287-294 around 289).
- */
-export const KEY_TONE_TOLERANCE_MS = 10;
-/** A later pass of a recording drifts from its first (D6 deviation): 25 ms plus 1.2 % of its offset. */
-export const PASS_DRIFT = { ms: 25, ratio: 0.012 } as const;
 
 const GOLDENS = join(import.meta.dirname, "../../goldens");
 
@@ -91,35 +81,30 @@ const isOn = (state: SoundState): boolean => state.kind !== "off";
 /** How a golden row's time is checked (Δ = actual − golden). */
 type Check =
   /** A key started or stopped it: the golden lags the key by its latency. */
-  | { readonly kind: "key"; readonly slackMs: number }
+  | { readonly kind: "key" }
   /** A program's first edge after a key (or the recording's start, or idle outputs: cues). */
-  | { readonly kind: "onset"; readonly toleranceMs: number }
+  | { readonly kind: "onset" }
   /** A later edge of the program that row `anchor` started. */
-  | { readonly kind: "after"; readonly anchor: number; readonly toleranceMs: number };
+  | { readonly kind: "after"; readonly anchor: number };
 
 export interface SoundTolerance {
   /**
-   * The tone's cycle when the golden repeats it without an `@loop` (a tone's preview recorded at
-   * another level): edges past the first cycle drift as a later pass (PASS_DRIFT).
-   */
-  readonly cycleMs?: number;
-  /**
    * The golden is another recording of a program built from a different golden (a tone at
-   * another level, in another list or profile): every edge after its onset drifts as between
-   * passes (PASS_DRIFT; Task 0: recordings of one tone differ by a median 11 ms, at most 48).
+   * another level, in another list or profile; Task 0: recordings of one tone differ by a median
+   * 11 ms, at most 48): a final pulse of up to STOP_RACE_MS on either side is not compared.
    */
-  readonly drift?: boolean;
+  readonly otherRecording?: boolean;
   /** Compare only these outputs (a scenario says why the others are not comparable). */
   readonly outputs?: readonly SoundOutputName[];
   /**
    * Game cues (D13): the rows are programs the game starts on its ticks, not keys. A row that
-   * starts an output while every compared output is off is a cue's onset, matched within this
-   * tolerance (GAME_TICK_TOLERANCE_MS); the cue's later edges ±2 ms of it. Keys are ignored.
+   * starts an output while every compared output is off is a cue's onset, its later edges
+   * compared from it. Keys are ignored.
    */
-  readonly cueOnsetMs?: number;
+  readonly cues?: boolean;
   /**
    * When the capture stopped recording while a program played: later events are not compared,
-   * and within PASS_DRIFT of it an edge may fall on either side of the end.
+   * and within the fidelity standard of it an edge may fall on either side of the end.
    */
   readonly endMs?: number;
 }
@@ -149,9 +134,8 @@ function withoutStopRace(rows: readonly SoundRow[]): SoundRow[] {
 
 /** Classifies each golden row (see the module notes in plan 16 "Scenarios"). */
 function checksOf(golden: SoundGolden, tolerance: SoundTolerance): Check[] {
-  const cues = tolerance.cueOnsetMs !== undefined;
+  const cues = tolerance.cues === true;
   const keys = cues ? [] : (golden.keys ?? []);
-  const cycle = tolerance.cycleMs ?? golden.loop?.periodMs;
   const state = new Map<SoundOutputName, SoundState>();
   const run = new Map<
     SoundOutputName,
@@ -161,21 +145,14 @@ function checksOf(golden: SoundGolden, tolerance: SoundTolerance): Check[] {
   let fresh = true;
   let keyIndex = 0;
   const checks: Check[] = [];
-  const after = (i: number, toleranceMs: number): Check => {
-    const offset = golden.rows[i]!.ms - golden.rows[anchor!]!.ms;
-    const drift =
-      tolerance.drift === true || (cycle !== undefined && offset >= cycle)
-        ? PASS_DRIFT.ms + PASS_DRIFT.ratio * offset
-        : 0;
-    return { kind: "after", anchor: anchor!, toleranceMs: Math.max(toleranceMs, drift) };
-  };
+  const after = (): Check => ({ kind: "after", anchor: anchor! });
   const program = (i: number): Check => {
     if (anchor === undefined || fresh) {
       anchor = i;
       fresh = false;
-      return { kind: "onset", toleranceMs: tolerance.cueOnsetMs ?? SOUND_ONSET_TOLERANCE_MS };
+      return { kind: "onset" };
     }
-    return after(i, SOUND_EDGE_TOLERANCE_MS);
+    return after();
   };
   golden.rows.forEach((row, i) => {
     while (keyIndex < keys.length && keys[keyIndex]!.ms <= row.ms) {
@@ -192,7 +169,7 @@ function checksOf(golden: SoundGolden, tolerance: SoundTolerance): Check[] {
     if (!isOn(was)) {
       if (near !== undefined) {
         run.set(row.output, { kind: "key", row: i, keyMs: near.ms });
-        checks.push({ kind: "key", slackMs: SOUND_EDGE_TOLERANCE_MS });
+        checks.push({ kind: "key" });
       } else {
         run.set(row.output, { kind: "program" });
         checks.push(program(i));
@@ -201,22 +178,19 @@ function checksOf(golden: SoundGolden, tolerance: SoundTolerance): Check[] {
     }
     if (current?.kind === "key") {
       const extended = keys.some((k) => k.ms > current.keyMs && k.ms < row.ms);
-      if (isOn(row.state) && near !== undefined && near.ms > current.keyMs) {
-        checks.push({ kind: "key", slackMs: SOUND_EDGE_TOLERANCE_MS });
-      } else if (extended) {
-        checks.push({ kind: "key", slackMs: KEY_TONE_TOLERANCE_MS });
+      if ((isOn(row.state) && near !== undefined && near.ms > current.keyMs) || extended) {
+        checks.push({ kind: "key" });
       } else {
-        const toleranceMs = isOn(row.state) ? SOUND_EDGE_TOLERANCE_MS : KEY_TONE_TOLERANCE_MS;
-        checks.push({ kind: "after", anchor: current.row, toleranceMs });
+        checks.push({ kind: "after", anchor: current.row });
       }
       return;
     }
     // A program row: a key stops it, else it follows its onset.
     const anchorMs = anchor === undefined ? -Infinity : golden.rows[anchor]!.ms;
     if (!isOn(row.state) && near !== undefined && near.ms > anchorMs) {
-      checks.push({ kind: "key", slackMs: SOUND_EDGE_TOLERANCE_MS });
+      checks.push({ kind: "key" });
     } else {
-      checks.push(isOn(row.state) && fresh ? program(i) : after(i, SOUND_EDGE_TOLERANCE_MS));
+      checks.push(isOn(row.state) && fresh ? program(i) : after());
     }
   });
   return checks;
@@ -244,19 +218,16 @@ export function expectSoundTimeline(
       state: stateOf(event),
     }))
     .filter(keep);
-  if (tolerance.drift === true) {
+  if (tolerance.otherRecording === true) {
     actualRows = withoutStopRace(actualRows);
     golden = { ...golden, rows: withoutStopRace(golden.rows) };
   }
   golden = { ...golden, rows: golden.rows.filter(keep) };
   const end = tolerance.endMs;
-  const nearEnd = (ms: number): boolean =>
-    end !== undefined && ms >= end - PASS_DRIFT.ms - PASS_DRIFT.ratio * end;
+  const nearEnd = (ms: number): boolean => end !== undefined && ms >= end - timingToleranceMs(end);
   if (end !== undefined)
     actualRows = actualRows.filter(
-      (row) =>
-        row.ms <= end ||
-        (nearEnd(row.ms) && row.ms <= end + PASS_DRIFT.ms + PASS_DRIFT.ratio * end),
+      (row) => row.ms <= end || (nearEnd(row.ms) && row.ms <= end + timingToleranceMs(end)),
     );
   const actual = new Map<SoundOutputName, SoundRow[]>();
   for (const row of actualRows) {
@@ -292,17 +263,20 @@ export function expectSoundTimeline(
     if (have !== want) marks.push(`✗ state ${have}`);
     let text: string;
     if (check.kind === "key") {
-      text = `key −${KEY_LATENCY_MAX_MS}..+${check.slackMs}`;
-      if (delta < -KEY_LATENCY_MAX_MS - check.slackMs || delta > check.slackMs)
-        marks.push("✗ timing");
+      text = `key −${KEY_LATENCY_MAX_MS}..+${FRAME_MS}`;
+      if (delta < -KEY_LATENCY_MAX_MS - FRAME_MS || delta > FRAME_MS) marks.push("✗ timing");
     } else if (check.kind === "onset") {
-      text = `onset ±${check.toleranceMs}`;
-      if (Math.abs(delta) > check.toleranceMs) marks.push("✗ timing");
+      const toleranceMs = timingToleranceMs(row.ms);
+      text = `onset ±${Math.round(toleranceMs)}`;
+      if (Math.abs(delta) > toleranceMs) marks.push("✗ timing");
     } else {
+      const anchor = golden.rows[check.anchor]!;
+      const offset = row.ms - anchor.ms;
+      const toleranceMs = timingToleranceMs(offset);
       const base = matched[check.anchor];
-      const relative = base === undefined ? NaN : delta - (base.ms - golden.rows[check.anchor]!.ms);
-      text = `+${golden.rows[check.anchor]!.ms} ±${Math.round(check.toleranceMs)} (${relative >= 0 ? "+" : ""}${relative})`;
-      if (!(Math.abs(relative) <= check.toleranceMs)) marks.push("✗ timing");
+      const relative = base === undefined ? NaN : delta - (base.ms - anchor.ms);
+      text = `+${anchor.ms} ±${Math.round(toleranceMs)} (${relative >= 0 ? "+" : ""}${relative})`;
+      if (!(Math.abs(relative) <= toleranceMs)) marks.push("✗ timing");
     }
     if (marks.length > 0) failed = true;
     lines.push(

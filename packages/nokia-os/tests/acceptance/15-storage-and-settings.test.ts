@@ -6,7 +6,7 @@ import { createMemoryStorage, type StockStorage } from "../../src/index";
 import { acceptancePlan, type Scenario } from "../support/acceptance.ts";
 import { expectLcd, expectTimeline } from "../support/golden.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
-import { after, digitsAt, JITTER, keys, stills, timeline, type Later } from "../support/probes.ts";
+import { after, digitsAt, keys, stills, timeline, type Later } from "../support/probes.ts";
 import { seededStorage, standbyRig, stockRig, type Rig } from "../support/rig.ts";
 
 /** Tones › Keypad tones and Settings › Phone settings › Cell info display, as plan 15 A7 keys. */
@@ -70,7 +70,7 @@ const PROBE_SCENARIOS: Record<string, Scenario> = {
   "probe/persist-reboot": persistReboot,
 
   // Plan 15 0c: accepted codes (v6.39 with the re-provisioned code). Each note plays its own
-  // recording's timeline, so only the notes recorded elsewhere compare within ±25 ms (JITTER).
+  // recording's timeline, or another recording's where it was recorded elsewhere.
   "probe/accept-6-3-5-on": (id) =>
     timeline(id, after(CODE_LEAVES["6-3-5"]!), "navi", [
       ...digitsAt(3, "12345"),
@@ -87,37 +87,25 @@ const PROBE_SCENARIOS: Record<string, Scenario> = {
     ]),
   // Code error plays probe/code-wrong-6-4's timeline (2904 ms; here 2911 ms).
   "probe/accept-6-3-6-1-mismatch": (id) =>
-    timeline(
-      id,
-      after(CODE_LEAVES["6-3-6-1"]!),
-      "navi",
-      [
-        ...digitsAt(2, "12345"),
-        [7, "navi"],
-        ...digitsAt(8, "11111"),
-        [13, "navi"],
-        ...digitsAt(14, "22222"),
-        [19, "navi"],
-      ],
-      JITTER,
-    ),
+    timeline(id, after(CODE_LEAVES["6-3-6-1"]!), "navi", [
+      ...digitsAt(2, "12345"),
+      [7, "navi"],
+      ...digitsAt(8, "11111"),
+      [13, "navi"],
+      ...digitsAt(14, "22222"),
+      [19, "navi"],
+    ]),
   // New codes of 4, 6, 0 and 10 digits; Code error as above (2910-2918 ms here).
   "probe/accept-6-3-6-1-lengths": (id) =>
-    timeline(
-      id,
-      after(ENTER_NEW),
-      "1",
-      [
-        ...digitsAt(2, "234"),
-        [5, "navi"],
-        ...digitsAt(7, "123456"),
-        [13, "navi"],
-        [15, "navi"],
-        ...digitsAt(17, "1234567890"),
-        [27, "navi"],
-      ],
-      JITTER,
-    ),
+    timeline(id, after(ENTER_NEW), "1", [
+      ...digitsAt(2, "234"),
+      [5, "navi"],
+      ...digitsAt(7, "123456"),
+      [13, "navi"],
+      [15, "navi"],
+      ...digitsAt(17, "1234567890"),
+      [27, "navi"],
+    ]),
   "probe/accept-6-3-6-1-match": (id) =>
     timeline(id, after(ENTER_NEW), "1", [
       ...digitsAt(2, "1111"),
@@ -127,31 +115,19 @@ const PROBE_SCENARIOS: Record<string, Scenario> = {
     ]),
   // Code error as above (2919 ms here).
   "probe/accept-6-4-old-code": (id) =>
-    timeline(
-      id,
-      after(`${CODE_11111} ${CODE_LEAVES["6-4"]}`),
-      "navi",
-      [...digitsAt(2, "12345"), [7, "navi"]],
-      JITTER,
-    ),
+    timeline(id, after(`${CODE_11111} ${CODE_LEAVES["6-4"]}`), "navi", [
+      ...digitsAt(2, "12345"),
+      [7, "navi"],
+    ]),
   // Settings restored plays probe/accept-c7-restore's timeline (18 ms off this recording's).
   "probe/accept-6-4-new-code": (id) =>
-    timeline(
-      id,
-      after(`${CODE_11111} ${RESTORE_PROMPT}`),
-      "1",
-      [...digitsAt(2, "1111"), [6, "navi"]],
-      JITTER,
-    ),
+    timeline(id, after(`${CODE_11111} ${RESTORE_PROMPT}`), "1", [
+      ...digitsAt(2, "1111"),
+      [6, "navi"],
+    ]),
   // As above (15 ms off).
   "probe/accept-6-4-restore": (id) =>
-    timeline(
-      id,
-      after(CODE_LEAVES["6-4"]!),
-      "navi",
-      [...digitsAt(2, "12345"), [7, "navi"]],
-      JITTER,
-    ),
+    timeline(id, after(CODE_LEAVES["6-4"]!), "navi", [...digitsAt(2, "12345"), [7, "navi"]]),
   "probe/accept-c7-restore": (id) =>
     timeline(id, after(`${CODE_11111} ${securityOn("11111")} ${CODE_LEAVES["6-4"]}`), "navi", [
       ...digitsAt(2, "11111"),
@@ -204,10 +180,10 @@ const POWER_LONG_PRESS_MS = 800;
 
 /**
  * A boot golden from the power key (trigger frame 0), with `later` keys on the ticks their
- * golden rows start. Every boot scenario compares within PROBE_TOLERANCE_MS: its self-test
- * replays boot/power-on's recording, whose first frame (power key to the first draw, 268 ms)
- * these recordings show as 245-270 ms, and whose steps the gate-free welcome note's recording
- * shows 8 ms longer; the gate's notes replay boot/security-gate's and boot/welcome-note's.
+ * golden rows start. Its self-test replays boot/power-on's recording, whose first frame (power
+ * key to the first draw, 268 ms) these recordings show as 245-270 ms, and whose steps the
+ * gate-free welcome note's recording shows 8 ms longer; the gate's notes replay
+ * boot/security-gate's and boot/welcome-note's.
  */
 function bootTimeline(id: string, storage: StockStorage, later: readonly Later[] = []): Rig {
   const golden = loadGolden(id);
@@ -230,12 +206,7 @@ function bootTimeline(id: string, storage: StockStorage, later: readonly Later[]
     },
     schedule,
   );
-  expectTimeline(
-    recording,
-    golden,
-    `${id}: power on, then ${later.map((l) => l[1]).join(" ")}`,
-    JITTER,
-  );
+  expectTimeline(recording, golden, `${id}: power on, then ${later.map((l) => l[1]).join(" ")}`);
   return rig;
 }
 
@@ -305,19 +276,19 @@ const BOOT_SCENARIOS: Record<string, Scenario> = {
   "boot/security-gate-ok-123": (id) => {
     const rig = atGatePrompt();
     keys(rig, "1 2 3");
-    timeline(id, rig, "navi", [], JITTER);
+    timeline(id, rig, "navi", []);
   },
-  "boot/security-gate-ok-empty": (id) => timeline(id, atGatePrompt(), "navi", [], JITTER),
+  "boot/security-gate-ok-empty": (id) => timeline(id, atGatePrompt(), "navi", []),
   // A3: six 00000 then 12345; the fifth wrong code locks every entry. Code error as above
   // (2890-2907 ms here).
   "boot/security-lockout": (id) => {
     const [first, ...later] = entriesAt(1, [...Array(6).fill("00000"), "12345"]);
-    timeline(id, atGatePrompt(), first![1], later, JITTER);
+    timeline(id, atGatePrompt(), first![1], later);
   },
   // Four 00000 then 12345: accepted, the hands. Code error as above (2890-2904 ms here).
   "boot/security-lockout-4": (id) => {
     const [first, ...later] = entriesAt(1, [...Array(4).fill("00000"), "12345"]);
-    timeline(id, atGatePrompt(), first![1], later, JITTER);
+    timeline(id, atGatePrompt(), first![1], later);
   },
 };
 
@@ -325,14 +296,9 @@ acceptancePlan({
   plan: "15",
   scenarios: { ...PROBE_SCENARIOS, ...BOOT_SCENARIOS },
   knownGaps: {
-    "probe/accept-6-3-5-on":
-      "the prompt first draws a 15 ms partial frame (image b: the soft key row still shows " +
-      "Select's last letter), a redraw in progress that the kernel does not reproduce (closeout " +
-      "decision 2); probe/accept-6-3-5-off's prompt, the same path, has none",
-    "boot/security-lockout-4":
-      "Code accepted and the hands play boot/security-gate's timeline (689/232/582 ms, then a " +
-      "308 ms first hands step); this recording's are 678/232/575 and 299 ms, so the hands start " +
-      "26-28 ms late, a spread between two recordings of one path beyond PROBE_TOLERANCE_MS. The " +
-      "fact it records, four wrong codes do not lock, passes up to Code accepted",
+    "boot/security-gate":
+      "the self-test's first frame shows 245 ms after the power key in this recording, 268 ms in " +
+      "nokia-os (boot/power-on's; 245-270 ms across the boot recordings): 23 ms early, beyond " +
+      "one display frame",
   },
 });

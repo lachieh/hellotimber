@@ -19,7 +19,6 @@ import { stockMenu } from "../src/index";
 import { STOCK_FONTS } from "../src/resources";
 import { StockFlowApplication } from "../src/widgets/flow";
 import { expectFlowTimeline } from "./support/flow-rig.ts";
-import { PROBE_TOLERANCE_MS } from "./support/golden.ts";
 import { loadGolden } from "./support/goldens.ts";
 
 const SLUGS = [
@@ -234,7 +233,7 @@ describe("stockMenu", () => {
     });
     // Played from the trigger as `game/snake/after-long-top-score` (Top score after the long
     // game, 105), up to the game menu it returns to. The note plays tree 8-1-4's timeline,
-    // a few ms off other recordings (plan 14 closeout): the probe tolerance.
+    // a few ms off other recordings (plan 14 closeout).
     const frames: { startMs: number; pixels: Uint8Array }[] = [];
     let exitMs: number | undefined;
     for (let t = 0; t < 8000; t++) {
@@ -253,7 +252,6 @@ describe("stockMenu", () => {
     const golden = loadGolden("game/snake/after-long-top-score");
     expectFlowTimeline({ frames, ...(exitMs === undefined ? {} : { exitMs }) }, golden, {
       returns: true,
-      toleranceMs: PROBE_TOLERANCE_MS,
     });
     expect(exits).toEqual([{ select: "new-game" }]);
   });

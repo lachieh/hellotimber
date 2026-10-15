@@ -43,7 +43,7 @@ const SCENARIOS: Record<string, Scenario> = {
   ...Object.fromEntries(
     SOUND_IDS.filter((id) => !id.startsWith("sound/composer/preview-")).map((id) => [
       id,
-      (golden: string) => composerSound(golden, { drift: true }),
+      (golden: string) => composerSound(golden, { otherRecording: true }),
     ]),
   ),
   ...Object.fromEntries(
@@ -82,21 +82,12 @@ acceptancePlan({
     "composer/play-virgin":
       "the cursor shows at Play's start in the virgin capture where the factory one hides it " +
       "(the blink's phase on a return after Options: no rule fits both)",
-    "composer/returns-options-c":
-      "a 16 ms frame caught mid-redraw (the cursor's last row missing) in the capture, then the " +
-      "blink restarts from it",
-    "composer/save-c-held-prefilled":
-      "C's deletion shows the soft key `OK` for 14 ms before `Back` (a two-pass redraw), and the " +
-      "prompt's blink runs from that redraw",
     "composer/send-number":
       "a 112 ms transitional frame (the Composer's icon and `OK`) before `Phone number:` in the " +
       "capture; nokia-os shows the prompt at once",
     "composer/send-number-c":
       "the editor's first blink step after C on Send's empty number is 418 ms in the capture, " +
       "not the 478 of every other showing",
-    "composer/send-number-search":
-      "the prompt's blink after `No phone numbers` runs 28 ms early in the capture (its restart " +
-      "after the note), beyond PROBE_TOLERANCE_MS",
     "sound/composer/pitch-level-5":
       "Level 5's jump to the fifth table follows a free-running timer, not the tone (Task 0: " +
       "3627-5309 ms); nokia-os jumps at levelStepMs (D9's nearest behaviour, UNVERIFIED)",

@@ -20,7 +20,7 @@ import { loadGolden } from "./goldens.ts";
 import { standbyRig, type Rig } from "./rig.ts";
 import type { Golden } from "../../scripts/golden-format.ts";
 import { findGoldenImage } from "../../scripts/golden-format.ts";
-import { lcdMismatch, PROBE_TOLERANCE_MS } from "./golden.ts";
+import { lcdMismatch, sameTime, withoutPartialDraws } from "./golden.ts";
 
 /**
  * Asserted T9 goldens the implementation cannot reproduce, with the reason (plan 18b Task 8:
@@ -33,28 +33,6 @@ export const T9_KNOWN_GAPS: Readonly<Record<string, string>> = {
     "nothing there, and the empty editor's second * (03-star-empty2) shows no such pixel, so its " +
     "rule (an empty composing word toggled by *?) is unknown: not reproduced, reported",
 };
-
-/**
- * Timelines compared with a wider tolerance than ±2 ms, each with its reason. The Dictionary off
- * note plays the timeline plan 18 extracted from `text/dictionary-off`, another recording of the
- * same note (649/247/497 ms there, 657/232/504 here; plan 14's PROBE_TOLERANCE_MS).
- */
-export const T9_TOLERANCES: Readonly<Record<string, number>> = {
-  "t9/dictionary-off-on/05-off": PROBE_TOLERANCE_MS,
-  "t9/g-persist-dict/05-off": PROBE_TOLERANCE_MS,
-  // The cursor's blink steps 484 then 476 ms here (the firmware's jitter around 480 ms).
-  "t9/insert-word-empty/05-after": 5,
-};
-
-/**
- * Write messages' tree golden (plan 14's index, promoted with plan 18b): every pixel matches, but
- * the crawl's cursor blink steps 476-492 ms where `t9/first/03-blink`, the same path, steps
- * 479-481 ms and the editor steps 480 (TEXT_TIMINGS); the generic tree scenario allows ±2 ms.
- */
-export const WRITE_MESSAGES_LEAF_GAP =
-  "every pixel matches; the crawl's cursor blink steps 476-492 ms (frame 4: 492) where " +
-  "t9/first/03-blink, the same path, steps 479-481 ms and the editor every 480 ms: a timer " +
-  "spread beyond the tree scenario's ±2 ms (plan 18b)";
 
 export const TAP_DOWN_MS = 60;
 export const TAP_GAP_MS = 340;
@@ -197,14 +175,14 @@ export function expectT9Still(target: T9Target, golden: Golden, context: string)
 /**
  * A timeline golden against a recording (plan 18b): the frame before the trigger is the golden's
  * row before `trigger-frame`; the changes from the trigger are its rows, aligned on the first
- * (a key's redraw latency is not reproduced, plan 14 D8), each later row starting within
- * `toleranceMs` of the golden's.
+ * (a key's redraw latency is not reproduced, plan 14 D8), each later row starting by the
+ * fidelity standard. Frames under FRAME_MS on either side are left out.
  */
 export function expectT9Timeline(
   recording: T9Recording,
   golden: Golden,
   context: string,
-  { keyed, toleranceMs = 2 }: { readonly keyed: boolean; readonly toleranceMs?: number },
+  { keyed }: { readonly keyed: boolean },
 ): void {
   const rows = golden.timeline;
   const trigger = golden.triggerFrame;
@@ -223,19 +201,32 @@ export function expectT9Timeline(
     if (at > 0) first = at;
   }
   const start = recording.frames[first - 1]!;
-  const changes = recording.frames.slice(first);
   const before = lcdMismatch(start!.pixels, image(rows[trigger - 1]!.image), `${context}: before`);
   if (before !== undefined) throw new Error(before);
-  rows.slice(trigger).forEach((row, i) => {
+  const origin = rows[trigger]!.startMs;
+  const last = rows[rows.length - 1]!;
+  const recorded = recording.frames.slice(first);
+  const { golden: settled, actual: changes } = withoutPartialDraws(
+    {
+      frames: rows.slice(trigger).map((row, i) => ({
+        ...row,
+        index: trigger + i,
+        pixels: image(row.image).image.pixels,
+      })),
+      endMs: last.startMs + last.durationMs,
+    },
+    { frames: recorded, endMs: Infinity },
+  );
+  settled.forEach((row, i) => {
     const frame = changes[i];
-    const where = `${context}: row ${trigger + i} (image ${row.image})`;
+    const where = `${context}: row ${row.index} (image ${row.image})`;
     if (frame === undefined) throw new Error(`${where}: never shown`);
     const mismatch = lcdMismatch(frame.pixels, image(row.image), where);
     if (mismatch !== undefined) throw new Error(mismatch);
-    const expected = row.startMs - rows[trigger]!.startMs;
+    const expected = row.startMs - origin;
     const actual = frame.startMs - changes[0]!.startMs;
-    if (Math.abs(actual - expected) > toleranceMs) {
-      throw new Error(`${where}: starts at ${actual} ms, golden ${expected} ms (±${toleranceMs})`);
+    if (!sameTime(actual, expected)) {
+      throw new Error(`${where}: starts at ${actual} ms, golden ${expected} ms`);
     }
   });
 }
@@ -319,11 +310,7 @@ export function t9Scenario(id: string): void {
   const context = `${id}: ${golden.note}`;
   if (golden.timeline === undefined) expectT9Still(target, golden, context);
   else {
-    const toleranceMs = T9_TOLERANCES[id];
-    expectT9Timeline(recording!, golden, context, {
-      keyed,
-      ...(toleranceMs === undefined ? {} : { toleranceMs }),
-    });
+    expectT9Timeline(recording!, golden, context, { keyed });
   }
 }
 

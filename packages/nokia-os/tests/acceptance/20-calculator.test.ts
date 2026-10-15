@@ -18,7 +18,6 @@ import {
   soundCalculator,
   stillScenario,
 } from "../support/calculator.ts";
-import { PROBE_TOLERANCE_MS } from "../support/golden.ts";
 import { standbyRig, type Rig } from "../support/rig.ts";
 
 /** The calculator's first screen on a virgin phone, then `keys`. */
@@ -72,28 +71,21 @@ const SCENARIOS: Record<string, Scenario> = {
     ),
   // The carousel's Calculator icon plays plan 13's recording of it (menu/09-calculator.anim);
   // this recording's steps run within 16 ms of it.
-  "calculator/exit": (id) =>
-    recordingScenario(id, calculatorAt(), key("c"), [], PROBE_TOLERANCE_MS),
+  "calculator/exit": (id) => recordingScenario(id, calculatorAt(), key("c"), []),
   // 5 6 7, C held 2 s, 1, * and # held 1.2 s, C held 2 s on `1 + 0.` and on `0`; each key on the
   // row its effect starts. The clear follows C's deletion by CALCULATOR_HOLD_MS (the capture:
-  // 471 and 478 ms), within PROBE_TOLERANCE_MS.
+  // 471 and 478 ms).
   "calculator/clear-held": (id) =>
-    recordingScenario(
-      id,
-      calculatorAt(),
-      key("5"),
-      [
-        key("6", 2),
-        key("7", 3),
-        key("c", 4, 2000),
-        key("1", 6, 1200),
-        key("*", 7, 1200),
-        key("#", 8, 1200),
-        key("c", 9, 2000),
-        key("c", 11, 2000),
-      ],
-      PROBE_TOLERANCE_MS,
-    ),
+    recordingScenario(id, calculatorAt(), key("5"), [
+      key("6", 2),
+      key("7", 3),
+      key("c", 4, 2000),
+      key("1", 6, 1200),
+      key("*", 7, 1200),
+      key("#", 8, 1200),
+      key("c", 9, 2000),
+      key("c", 11, 2000),
+    ]),
   "calculator/operator-slow": (id) =>
     recordingScenario(id, calculatorAt("1 2"), key("*"), [key("*", 2), key("*", 3)]),
   ...Object.fromEntries(
@@ -125,27 +117,15 @@ const SCENARIOS: Record<string, Scenario> = {
   // Dividing by zero not allowed plays calculator/divide-by-zero's timeline (2890 ms; 2875 ms
   // in this recording).
   "calculator/in-foreign-rate-0": (id) =>
-    recordingScenario(
-      id,
-      calculatorAt("1 0 menu down down down down down down"),
-      key("navi"),
-      [],
-      PROBE_TOLERANCE_MS,
-    ),
-  // The cursor's blink is the representative prompt cursor (2-9), within PROBE_TOLERANCE_MS of
-  // these recordings (their steps vary 477-494 ms).
+    recordingScenario(id, calculatorAt("1 0 menu down down down down down down"), key("navi"), []),
+  // The cursor's blink is the representative prompt cursor (2-9), within the fidelity standard
+  // of these recordings (their steps vary 477-494 ms).
   "calculator/rate-prompt-foreign": (id) =>
-    recordingScenario(id, calculatorAt("menu up menu"), key("navi"), [], PROBE_TOLERANCE_MS),
+    recordingScenario(id, calculatorAt("menu up menu"), key("navi"), []),
   "calculator/rate-prompt-domestic": (id) =>
-    recordingScenario(id, calculatorAt("menu up menu down"), key("navi"), [], PROBE_TOLERANCE_MS),
+    recordingScenario(id, calculatorAt("menu up menu down"), key("navi"), []),
   "calculator/rate-blink-keys": (id) =>
-    recordingScenario(
-      id,
-      calculatorAt("menu up menu"),
-      key("navi"),
-      [key("5", 3), key("6", 6)],
-      PROBE_TOLERANCE_MS,
-    ),
+    recordingScenario(id, calculatorAt("menu up menu"), key("navi"), [key("5", 3), key("6", 6)]),
   // The entry's blink phase before OK follows the harness's tap timing (see stillScenario):
   // 100 ms more puts nokia-os's blink in the captured phase (the cursor shown).
   "calculator/rate-saved": (id) =>
@@ -155,15 +135,14 @@ const SCENARIOS: Record<string, Scenario> = {
       // Settings restored plays plan 15's `settings-restored` timeline (probe/accept-c7-restore).
       [
         `calculator/persist-${prefix}-run`,
-        (id: string) =>
-          recordingScenario(id, restorePrompt(prefix), key("navi"), [], PROBE_TOLERANCE_MS),
+        (id: string) => recordingScenario(id, restorePrompt(prefix), key("navi"), []),
       ],
       [
         `calculator/persist-${prefix}-prompt-foreign`,
         (id: string) => {
           const rig = restored(prefix);
           play(rig, "menu up menu");
-          recordingScenario(id, rig, key("navi"), [], PROBE_TOLERANCE_MS);
+          recordingScenario(id, rig, key("navi"), []);
         },
       ],
       [
@@ -171,7 +150,7 @@ const SCENARIOS: Record<string, Scenario> = {
         (id: string) => {
           const rig = restored(prefix);
           play(rig, "menu up menu down");
-          recordingScenario(id, rig, key("navi"), [], PROBE_TOLERANCE_MS);
+          recordingScenario(id, rig, key("navi"), []);
         },
       ],
     ]),
@@ -179,13 +158,7 @@ const SCENARIOS: Record<string, Scenario> = {
   // OK on the entry: Rate saved plays calculator/rate-saved's timeline (694/232/523 ms; here
   // 700/248/513 ms).
   "calculator/keys-rate-menu": (id) =>
-    recordingScenario(
-      id,
-      soundCalculator("factory", `${FOREIGN} 1`),
-      key("navi"),
-      [],
-      PROBE_TOLERANCE_MS,
-    ),
+    recordingScenario(id, soundCalculator("factory", `${FOREIGN} 1`), key("navi"), []),
   ...Object.fromEntries(
     [..."0123456789".split(""), "star", "hash", "up", "down", "c"].map((slug) => {
       const pressed =

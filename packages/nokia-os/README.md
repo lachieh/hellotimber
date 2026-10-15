@@ -137,8 +137,9 @@ and the importer indexes them in `goldens/index/<NN>.json`. Tree goldens declare
 the nodes they `covers`; `tests/support/drive.ts` derives their key presses from the generated
 tree. Each plan's `tests/acceptance/<NN>-<slug>.test.ts` drives the phone on a virtual 1 ms clock
 through a scenario for every asserted golden of its index and fails if one has none; timelines
-are compared after aligning on the first changed frame, within ±2 ms (probes that replay another
-recording's timings or press later keys: `PROBE_TOLERANCE_MS`, 25 ms). Its `knownGaps` list the
+are compared after aligning on the first changed frame, by the fidelity standard of `AGENTS.md`
+(settled pixels exact; frame starts within 17 ms, or 5 % of the time since the trigger up to
+50 ms; partial draws under 17 ms neither required nor forbidden). Its `knownGaps` list the
 asserted goldens nokia-os cannot reproduce, each with its reason (they run as expected failures).
 The coverage guard (`tests/acceptance/coverage-guard.test.ts`) collects every plan's file and
 proves that every tree node and option choice is covered by an asserted golden, a golden pending

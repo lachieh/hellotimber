@@ -10,7 +10,7 @@ import {
 } from "../../scripts/capture-sets/20-calculator.ts";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
 import { expect } from "vite-plus/test";
-import { expectLcd, expectTimeline, lcdMismatch, PROBE_TOLERANCE_MS } from "./golden.ts";
+import { expectLcd, expectTimeline, lcdMismatch, timingToleranceMs } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { standbyRig, type Rig } from "./rig.ts";
 import { expectSoundTimeline, loadSoundGolden, playSound } from "./sound.ts";
@@ -252,14 +252,13 @@ export interface RecordingKey {
 /**
  * A timeline golden from `rig`: frame `trigger-frame - 1` on screen, the trigger key (held
  * `holdMs`), then each later key down on the row its effect starts (D8: no redraw latency) and
- * up after its hold. Frame starts within `toleranceMs` of the golden's, aligned on the trigger.
+ * up after its hold. Frame starts are aligned on the trigger.
  */
 export function recordingScenario(
   id: string,
   rig: Rig,
   trigger: RecordingKey,
   later: readonly RecordingKey[] = [],
-  toleranceMs?: number,
 ): void {
   const golden = loadGolden(id);
   const rows = golden.timeline!;
@@ -283,18 +282,13 @@ export function recordingScenario(
     schedule,
   );
   const keys = [trigger, ...later].map((k) => `${k.key}${k.holdMs ? `~${k.holdMs}` : ""}`);
-  expectTimeline(
-    recording,
-    golden,
-    `${id}: ${keys.join(", ")}`,
-    toleranceMs === undefined ? {} : { toleranceMs },
-  );
+  expectTimeline(recording, golden, `${id}: ${keys.join(", ")}`);
 }
 
 /**
  * A rate entry key recording (`calculator/keys-rate-*`): the cursor's blink runs from the prompt
  * and not from the key, so frames are compared at their time after the key (golden time 0), the
- * key's own redraw at the key (its latency not reproduced), within PROBE_TOLERANCE_MS (the
+ * key's own redraw at the key (its latency not reproduced), by the fidelity standard (the
  * firmware's blink steps vary 477-494 ms between recordings).
  */
 export function keyAlignedScenario(id: string, rig: Rig, key: PhoneKey): void {
@@ -306,7 +300,8 @@ export function keyAlignedScenario(id: string, rig: Rig, key: PhoneKey): void {
   const recording = rig.record(last.startMs + last.durationMs, () => rig.press(key));
   // The golden's last frame was cut off by the recording's end: a blink within the tolerance
   // of that end may fall either side of it and is not compared.
-  const end = recording.triggerMs + last.startMs + last.durationMs - PROBE_TOLERANCE_MS;
+  const lastEnd = last.startMs + last.durationMs;
+  const end = recording.triggerMs + lastEnd - timingToleranceMs(lastEnd);
   const after = recording.frames.filter(
     (frame) => frame.startMs >= recording.triggerMs && frame.startMs < end,
   );
@@ -322,7 +317,7 @@ export function keyAlignedScenario(id: string, rig: Rig, key: PhoneKey): void {
     expect(
       Math.abs(actual - row.startMs),
       `${context}: at ${actual} ms, golden ${row.startMs} ms`,
-    ).toBeLessThanOrEqual(PROBE_TOLERANCE_MS);
+    ).toBeLessThanOrEqual(timingToleranceMs(row.startMs));
   });
   expect(frames.length, `${id}: frames after the golden's last`).toBe(
     rows.length - (t === 0 ? 0 : 1),

@@ -12,7 +12,6 @@ import { goto, open } from "./drive.ts";
 import { INDEX, treePath } from "./tree.ts";
 import { expect } from "vite-plus/test";
 import { SNAKE_SETTINGS } from "../../src/widgets/snake";
-import { GAME_TICK_TOLERANCE_MS } from "./golden.ts";
 import { keys, SNAKE } from "./probes.ts";
 import { seededStorage, standbyRig, stockRig, type Rig } from "./rig.ts";
 import {
@@ -211,7 +210,7 @@ export const SOUND_SCENARIOS: Record<string, (id: string) => void> = {
   "sound/preview/first-down": (id) => virginToneList(id, { [VOLUME]: level(3), [ALERT]: 0 }),
   "sound/preview/first-down-back": (id) => virginToneList(id, { [VOLUME]: level(3), [ALERT]: 0 }),
   "sound/preview/virgin-message": (id) =>
-    expectSound(id, soundRig("virgin"), `navi 5 5 ${SETTLE}`, { drift: true }),
+    expectSound(id, soundRig("virgin"), `navi 5 5 ${SETTLE}`, { otherRecording: true }),
   // B: holding the power key stops the preview; power-off plays the power-on tone.
   "sound/boot/power-off": (id) => powerOff(id),
   // Plan 17: the power key's list opens at standby (its beep), C returns (its beep).
@@ -250,39 +249,35 @@ function toneList(
   const golden = loadSoundGolden(id);
   const from = opened ? index : golden.keys?.[0]?.key === "up" ? index + 1 : index - 1;
   const rig = soundRig("factory", { [TONE]: from, ...choices });
-  const cycleMs = RINGING_TONES[index]?.cycleMs;
-  // The tone's own Level 4 recording is its program; any other drifts.
-  const drift = id !== `sound/ringing-tone/${RINGING_TONES[index]?.slug}`;
-  expectSound(id, rig, `navi 5 1 ${SETTLE}`, {
-    drift,
-    ...(cycleMs === undefined ? {} : { cycleMs }),
-    ...options,
-  });
+  // The tone's own Level 4 recording is its program; any other is another recording.
+  const otherRecording = id !== `sound/ringing-tone/${RINGING_TONES[index]?.slug}`;
+  expectSound(id, rig, `navi 5 1 ${SETTLE}`, { otherRecording, ...options });
 }
 
 /** Nokia tune's preview: ▼ from Croak. */
 function nokiaTune(id: string, choices: SettingChoices, options: SoundTolerance = {}): void {
   const rig = soundRig("factory", { [TONE]: CROAK, ...choices });
-  expectSound(id, rig, `navi 5 1 ${SETTLE}`, { drift: true, ...options });
+  expectSound(id, rig, `navi 5 1 ${SETTLE}`, { otherRecording: true, ...options });
 }
 
 /** Tones › Ringing volume opened on option `from`, then the golden's keys. */
 function volumeList(id: string, from: number, choices: SettingChoices): void {
   const rig = soundRig("factory", { ...choices, [VOLUME]: from });
-  expectSound(id, rig, `navi 5 2 ${SETTLE}`, { drift: true });
+  expectSound(id, rig, `navi 5 2 ${SETTLE}`, { otherRecording: true });
 }
 
 /** Tones › Message alert tone opened on option `from`, then the golden's keys. */
 function messageList(id: string, from: number, choices: SettingChoices): void {
   const rig = soundRig("factory", { ...choices, [MESSAGE]: from });
-  // The four message goldens the programs come from replay exactly; the others drift.
+  // The four message goldens the programs come from replay exactly; the others are other
+  // recordings.
   const source = /^sound\/message-tone\/(standard|special|beep-once|ascending)$/.test(id);
-  expectSound(id, rig, `navi 5 5 ${SETTLE}`, { drift: !source });
+  expectSound(id, rig, `navi 5 5 ${SETTLE}`, { otherRecording: !source });
 }
 
 /** The virgin Ringing tone list (unset), with `choices` set first. */
 function virginToneList(id: string, choices: SettingChoices): void {
-  expectSound(id, soundRig("virgin", choices), `navi 5 1 ${SETTLE}`, { drift: true });
+  expectSound(id, soundRig("virgin", choices), `navi 5 1 ${SETTLE}`, { otherRecording: true });
 }
 
 /**
@@ -305,7 +300,7 @@ function personalise(
   const rig = soundRig("factory", { ...choices, ...opening });
   open(rig, list === "ringing-tone" ? `12-${n}-2-1` : `12-${n}-2-5`);
   rig.advance(1500);
-  expectSound(id, rig, "", { drift: true });
+  expectSound(id, rig, "", { otherRecording: true });
 }
 
 /** ▼ onto Nokia tune, then the power key held until the phone is off (time 0: the ▼). */
@@ -325,7 +320,7 @@ function powerOff(id: string): void {
     },
     before,
     `${id}: the preview up to the power key`,
-    { drift: true },
+    { otherRecording: true },
   );
   const off = recorded.originMs + powerKey + 800;
   const firmwareOff = golden.rows.find((row) => row.ms >= powerKey + 1000)!.ms;
@@ -450,7 +445,7 @@ const NEW_GAME_LATENCY_MAX_MS = KEY_LATENCY_MAX_MS;
  * Snake II's menu (New game highlighted; `menu`: ▼ to another entry) at level 1 over the factory
  * state with `choices`, its last key 300 ms before the golden's first (the DSP awake, as after the
  * capture's level setting), then the golden's keys. The key beeps compare as keys; the cues (the
- * buzzer and the vibrator) align on the golden's first cue and keep GAME_TICK_TOLERANCE_MS.
+ * buzzer and the vibrator) align on the golden's first cue.
  */
 function snakeSound(id: string, choices: SettingChoices, menu = "", beepsFromMs = 0): void {
   const storage = soundStorage("factory", choices);
@@ -494,7 +489,7 @@ function snakeSound(id: string, choices: SettingChoices, menu = "", beepsFromMs 
     { ...recorded, originMs: recorded.originMs - lag },
     golden,
     `${id}: ${golden.note} (cues aligned on the first, ${lag} ms later in the capture)`,
-    { outputs: ["buzzer", "vibrator"], cueOnsetMs: GAME_TICK_TOLERANCE_MS },
+    { outputs: ["buzzer", "vibrator"], cues: true },
   );
 }
 

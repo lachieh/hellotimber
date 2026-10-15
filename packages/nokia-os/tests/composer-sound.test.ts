@@ -31,6 +31,6 @@ describe("the Composer's sound goldens on the phone", () => {
   });
   for (const id of IDS) {
     if (id in SOUND_GAPS) continue;
-    it(id, () => composerSound(id, { drift: true }), 60_000);
+    it(id, () => composerSound(id, { otherRecording: true }), 60_000);
   }
 });

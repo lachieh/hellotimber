@@ -1,8 +1,8 @@
 // Plan 17's acceptance (docs/plans/17-profiles.md Tasks 6-9): every asserted profiles golden.
 // Each scenario rebuilds the capture's state (gen_v639_plan17.py: plan 15's factory image, the
-// active profile, names and Tones values seeded) and replays its keys. Timelines that replay
-// another recording's timing (the Activate notes are the virgin tree recordings' timelines)
-// compare within PROBE_TOLERANCE_MS; stills compare pixels exactly.
+// active profile, names and Tones values seeded) and replays its keys. Timelines (some replay
+// another recording's timing: the Activate notes are the virgin tree recordings' timelines)
+// compare by the fidelity standard (tests/support/golden.ts); stills compare pixels exactly.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { PROFILE_SLUGS, type ProfileSlug } from "../../src/firmware/features/profiles";
 import { MULTITAP_KEYS } from "../../src/text/keys";
@@ -11,12 +11,11 @@ import { acceptancePlan, type Scenario } from "../support/acceptance.ts";
 import { recordingScenario, type RecordingKey } from "../support/calculator.ts";
 import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockSettings } from "../../src/firmware/settings";
-import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "../support/golden.ts";
+import { expectLcd, expectTimeline } from "../support/golden.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
 import { goto } from "../support/drive.ts";
 import { keys } from "../support/probes.ts";
 import {
-  ACTIVATE_TOLERANCE_MS,
   cutRecordingScenario,
   profilesRig,
   profilesStorage,
@@ -157,8 +156,8 @@ const TASK_6: Record<string, Scenario> = {
         const rig = profilesRig();
         toLevel(rig, slug);
         // Discreet's golden ends 15 ms into its name (the artefact that follows is cut, D10).
-        if (slug === "discreet") cutRecordingScenario(id, rig, "navi", ACTIVATE_TOLERANCE_MS);
-        else recordingScenario(id, rig, key("navi"), [], ACTIVATE_TOLERANCE_MS);
+        if (slug === "discreet") cutRecordingScenario(id, rig, "navi");
+        else recordingScenario(id, rig, key("navi"), []);
       },
     ]),
   ),
@@ -168,24 +167,20 @@ const TASK_6: Record<string, Scenario> = {
       (id: string) => {
         const rig = profilesRig(profilesStorage({ active: slug }));
         toLevel(rig, "general");
-        recordingScenario(id, rig, key("navi"), [], ACTIVATE_TOLERANCE_MS);
+        recordingScenario(id, rig, key("navi"), []);
       },
     ]),
   ),
   // Silent active: Menu keeps the name (and the icon) while it erases the ladders.
   // The carousel's Phone book icon replays plan 13's recording of it (menu/01-phone-book.anim).
   "profiles/standby-menu": (id) =>
-    cutRecordingScenario(
-      id,
-      profilesRig(profilesStorage({ active: "silent" })),
-      "navi",
-      PROBE_TOLERANCE_MS,
-    ),
+    cutRecordingScenario(id, profilesRig(profilesStorage({ active: "silent" })), "navi"),
   "profiles/standby-carousel-c": (id) => {
     const rig = profilesRig(profilesStorage({ active: "silent" }));
     rig.press("navi");
-    rig.advance(1500);
-    recordingScenario(id, rig, key("c"), [], PROBE_TOLERANCE_MS);
+    // C while Phone book's icon shows frame 0's step (1170-1340 ms after Menu).
+    rig.advance(1250);
+    recordingScenario(id, rig, key("c"), []);
   },
   // Silenth and Ab renamed, slot 6 active: Restore factory settings (6-4), 12345, OK.
   "profiles/restore": (id) => {
@@ -199,7 +194,7 @@ const TASK_6: Record<string, Scenario> = {
     // first digit the firmware kept).
     shortcut(rig, 6, 4);
     keys(rig, "wait:1500 1 2 3 4 5");
-    recordingScenario(id, rig, key("navi"), [], PROBE_TOLERANCE_MS);
+    recordingScenario(id, rig, key("navi"), []);
   },
   "profiles/icon": (id) => seededStills(id, ICON_SEEDS),
   "profiles/standby-silent-text": (id) => seededStills(id, SILENT_TEXT_SEEDS),
@@ -316,9 +311,9 @@ const TASK_6: Record<string, Scenario> = {
           (id: string) => {
             const rig = effectsRig(seed, "invalid");
             shortcut(rig, 5, 1);
-            // The preview is the Nokia tune program (another recording: PASS_DRIFT), and the
+            // The preview is the Nokia tune program (another recording: PASS_DRIFT_RATIO), and the
             // capture stopped 1 s after ▲, before ▲'s own preview of Nokia tune began.
-            expectSound(id, rig, "", { drift: true, endMs: 6090 });
+            expectSound(id, rig, "", { otherRecording: true, endMs: 6090 });
           },
         ],
       ];
@@ -349,7 +344,6 @@ function unchangedAtKey(id: string, rig: Rig, k: PhoneKey): void {
     { ...recording, frames: [{ ...first!, startMs: recording.triggerMs }, ...rest] },
     golden,
     `${id}: ${k}`,
-    { toleranceMs: PROBE_TOLERANCE_MS },
   );
 }
 
@@ -409,10 +403,7 @@ const TASK_7: Record<string, Scenario> = {
         ],
         // C: standby without the operator for 86 ms (84-88 ms captured), then standby and, for
         // Silent, its name.
-        [
-          `profiles/power-${who}-c`,
-          (id: string) => recordingScenario(id, listed(), key("c"), [], PROBE_TOLERANCE_MS),
-        ],
+        [`profiles/power-${who}-c`, (id: string) => recordingScenario(id, listed(), key("c"), [])],
         [
           `profiles/power-${who}-switch-off`,
           (id: string) => recordingScenario(id, listed(), key("navi")),
@@ -445,7 +436,7 @@ const TASK_7: Record<string, Scenario> = {
     }),
   ),
   // OK on each entry (▼ taps 342 ms apart, 600 ms): Activate's note (the slot's virgin
-  // timeline: PROBE_TOLERANCE_MS), standby and the name.
+  // timeline), standby and the name.
   ...Object.fromEntries(
     PROFILE_SLUGS.flatMap((slug, i) => {
       const listed = () => {
@@ -463,8 +454,8 @@ const TASK_7: Record<string, Scenario> = {
           `profiles/power-general-ok-${slug}`,
           (id: string) =>
             slug === "discreet"
-              ? cutRecordingScenario(id, listed(), "navi", ACTIVATE_TOLERANCE_MS)
-              : recordingScenario(id, listed(), key("navi"), [], ACTIVATE_TOLERANCE_MS),
+              ? cutRecordingScenario(id, listed(), "navi")
+              : recordingScenario(id, listed(), key("navi"), []),
         ],
         [`sound/profiles/power-general-ok-${slug}`, (id: string) => expectSound(id, listed())],
       ];
@@ -475,7 +466,7 @@ const TASK_7: Record<string, Scenario> = {
     openPowerList(rig);
     rig.press("down");
     rig.advance(600);
-    recordingScenario(id, rig, key("navi"), [], ACTIVATE_TOLERANCE_MS);
+    recordingScenario(id, rig, key("navi"), []);
   },
   ...Object.fromEntries(
     ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "star", "hash"].map((digit) => [
@@ -485,8 +476,8 @@ const TASK_7: Record<string, Scenario> = {
         openPowerList(rig);
         const k = (DIGIT_KEYS[digit] ?? digit) as PhoneKey;
         if (digit === "0" || digit === "star" || digit === "hash") unchangedAtKey(id, rig, k);
-        else if (digit === "4") cutRecordingScenario(id, rig, k, ACTIVATE_TOLERANCE_MS);
-        else recordingScenario(id, rig, key(k), [], ACTIVATE_TOLERANCE_MS);
+        else if (digit === "4") cutRecordingScenario(id, rig, k);
+        else recordingScenario(id, rig, key(k), []);
       },
     ]),
   ),
@@ -496,7 +487,7 @@ const TASK_7: Record<string, Scenario> = {
       (id: string) => {
         const rig = profilesRig(profilesStorage({ active: "silent" }));
         openPowerList(rig);
-        recordingScenario(id, rig, key(digit as PhoneKey), [], ACTIVATE_TOLERANCE_MS);
+        recordingScenario(id, rig, key(digit as PhoneKey), []);
       },
     ]),
   ),
@@ -506,8 +497,8 @@ const TASK_7: Record<string, Scenario> = {
       (id: string) => {
         const rig = profilesRig();
         openPowerList(rig);
-        // 0's `Invalid shortcut` tone is the menus' program (another recording: PASS_DRIFT).
-        expectSound(id, rig, "", digit === "0" ? { drift: true } : {});
+        // 0's `Invalid shortcut` tone is the menus' program (another recording: PASS_DRIFT_RATIO).
+        expectSound(id, rig, "", digit === "0" ? { otherRecording: true } : {});
       },
     ]),
   ),
@@ -518,7 +509,7 @@ const TASK_7: Record<string, Scenario> = {
   "profiles/power-during-note": (id) => {
     const rig = profilesRig();
     toLevel(rig, "silent");
-    recordingScenario(id, rig, key("navi"), [key("power", 3)], ACTIVATE_TOLERANCE_MS);
+    recordingScenario(id, rig, key("navi"), [key("power", 3)]);
   },
   "profiles/power-virgin-list": (id) =>
     recordingScenario(
@@ -595,9 +586,6 @@ function pressesOf(text: string): [PhoneKey, number][] {
   });
 }
 
-/** Rename's prompt recordings blink on plan 18's free-running 480 ms cursor timer (D9). */
-const BLINK = PROBE_TOLERANCE_MS;
-
 const TASK_8: Record<string, Scenario> = {
   // Virgin: Select on 12-n-2-10 (plan 14's recordings of the other profiles' prompts).
   ...Object.fromEntries(
@@ -607,7 +595,7 @@ const TASK_8: Record<string, Scenario> = {
         const rig = standbyRig();
         goto(rig, `12-${n}-2-10`);
         rig.advance(592);
-        recordingScenario(id, rig, key("navi"), [], BLINK);
+        recordingScenario(id, rig, key("navi"), []);
       },
     ]),
   ),
@@ -636,16 +624,16 @@ const TASK_8: Record<string, Scenario> = {
       return [
         [
           `profiles/rename-${slug}-open`,
-          (id: string) => recordingScenario(id, page(), key("navi"), [], BLINK),
+          (id: string) => recordingScenario(id, page(), key("navi"), []),
         ],
         [
           `profiles/rename-${slug}-type`,
           // The second 9 on the row its x appears (the commit is timed from that redraw).
-          (id: string) => recordingScenario(id, prompt(), key("9"), [key("9", 2)], BLINK),
+          (id: string) => recordingScenario(id, prompt(), key("9"), [key("9", 2)]),
         ],
         [
           `profiles/rename-${slug}-ok`,
-          (id: string) => recordingScenario(id, typed(), key("navi"), [], BLINK),
+          (id: string) => recordingScenario(id, typed(), key("navi"), []),
         ],
       ];
     }),
@@ -662,7 +650,7 @@ const TASK_8: Record<string, Scenario> = {
         (id: string) => {
           const rig = profilesRig(profilesStorage({ names: { [slug]: name } }));
           toLevel(rig, slug);
-          recordingScenario(id, rig, key("navi"), [], ACTIVATE_TOLERANCE_MS);
+          recordingScenario(id, rig, key("navi"), []);
         },
       ],
       [
@@ -717,7 +705,7 @@ const TASK_8: Record<string, Scenario> = {
     rig.advance(300);
     rig.press("3");
     rig.advance(2530);
-    recordingScenario(id, rig, key("navi"), [], BLINK);
+    recordingScenario(id, rig, key("navi"), []);
   },
   // Loud's prompt: C (deletes), C held 1.5 s (clears), C on the empty entry (the page).
   "profiles/rename-c-keys": (id) => {
@@ -729,7 +717,6 @@ const TASK_8: Record<string, Scenario> = {
       key("c"),
       // Each later C on the row its deletion appears.
       [key("c", 4, 1500), key("c", 11)],
-      BLINK,
     );
   },
   ...Object.fromEntries(
@@ -739,7 +726,7 @@ const TASK_8: Record<string, Scenario> = {
         (id: string) => {
           const rig = profilesRig();
           clearedPrompt(rig, slug);
-          recordingScenario(id, rig, key("navi"), [], BLINK);
+          recordingScenario(id, rig, key("navi"), []);
         },
       ],
     ]),
@@ -750,7 +737,7 @@ const TASK_8: Record<string, Scenario> = {
       (id: string) => {
         const rig = profilesRig(profilesStorage({ virgin: true }), { virgin: true });
         clearedPrompt(rig, slug);
-        recordingScenario(id, rig, key("navi"), [], BLINK);
+        recordingScenario(id, rig, key("navi"), []);
       },
     ]),
   ),
@@ -789,13 +776,12 @@ const TASK_8: Record<string, Scenario> = {
     // The keys' downs (rename/symbols/keys.csv), less *'s 66 ms redraw (the trigger).
     const at = (ms: number) => ({ ms: ms - 66 });
     const downs = Array.from({ length: 16 }, (_, i) => key("down", at(1060 + 300 * i)));
-    recordingScenario(
-      id,
-      rig,
-      key("*"),
-      [...downs, key("navi", at(6461)), key("2", at(8021)), key("2", at(8321))],
-      BLINK,
-    );
+    recordingScenario(id, rig, key("*"), [
+      ...downs,
+      key("navi", at(6461)),
+      key("2", at(8021)),
+      key("2", at(8321)),
+    ]);
   },
   "profiles/rename-symbols-after": (id) => {
     const rig = profilesRig(profilesStorage({ names: { silent: "a_b" } }));
@@ -849,9 +835,6 @@ acceptancePlan({
     "profiles/rename-limit-extra": RENAME_BLINK,
     "profiles/rename-limit-ok": RENAME_BLINK,
     "profiles/rename-symbols": RENAME_BLINK,
-    "profiles/rename-open-12-3":
-      "1917 ms into this virgin recording a 15 ms frame shows one stray column of the cursor " +
-      "and the blink restarts from it (465 ms later than the other prompts' blink)",
     "sound/profiles/power-general-power-keys":
       "in the list the power key beeps 121-123 ms after its down (63 ms after its release; the " +
       "opening press 51 ms after its down), beyond the key latency the sound check allows; " +

@@ -18,7 +18,6 @@ import { lcdMismatch } from "./golden.ts";
 import { loadGolden } from "./goldens.ts";
 import { cursorOnly } from "./replay.ts";
 import type { TextMode, TextState } from "../../src/text/multitap";
-import { PROBE_TOLERANCE_MS } from "./golden.ts";
 import { replayScenario, type ReplayContext, type TimelineOptions } from "./replay.ts";
 import { standbyRig, type Rig } from "./rig.ts";
 import {
@@ -282,9 +281,6 @@ export function messagesScenario(options: TimelineOptions = {}): (id: string) =>
   return (id) => replayScenario(MESSAGES_REPLAY, id, options);
 }
 
-/** A recording of a note whose timeline another recording of the same note gave (D8). */
-const OTHER_RECORDING: TimelineOptions = { toleranceMs: PROBE_TOLERANCE_MS };
-
 /**
  * The synthetic cell's link-time spread around the medians the phone uses (D10): five sends
  * 2574.3-2790.4 ms around 2662.4, five arrivals 2141.3-2464.4 ms around 2324.3.
@@ -292,46 +288,17 @@ const OTHER_RECORDING: TimelineOptions = { toleranceMs: PROBE_TOLERANCE_MS };
 export const SEND_LINK_SPREAD_MS = 130;
 export const RECEIVE_LINK_SPREAD_MS = 185;
 
-/** A send's recording: the bar's steps are 7-6's (PROBE_TOLERANCE_MS), `Message sent` at `row`. */
+/** A send's recording: the bar's steps are 7-6's, `Message sent` at `row`. */
 const sendRecording = (row: number): TimelineOptions => ({
-  toleranceMs: PROBE_TOLERANCE_MS,
   anchors: { [row]: SEND_LINK_SPREAD_MS },
 });
-
-/** A box's recording: `Opening` lasts 35-78 ms between recordings (the SIM read). */
-const OPENING: TimelineOptions = { toleranceMs: 45 };
-
-/**
- * A held key's timer runs from its down in the firmware; the replay puts the down on the key's
- * first redraw (D8), here the `#` that 123 types (`text/hold-hash-back`: 1026 ms vs 1010 + 49).
- */
-const HOLD_FROM_REDRAW: TimelineOptions = { toleranceMs: 35 };
 
 /**
  * The scenario options of plan 18's goldens that are not the default (`messagesScenario()`), by
  * the task that promoted them.
  */
 export const MESSAGES_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
-  // Task 8. Welcome note erased plays welcome/erase-empty's timeline; plan 15's recordings of
-  // the notes play plan 18's; No phone numbers plays text/number-search-empty's.
-  "welcome/save-empty": OTHER_RECORDING,
-  "welcome/plan15-erase": OTHER_RECORDING,
-  "welcome/plan15-save-long": OTHER_RECORDING,
-  "sms/centre-1-ok-empty": OTHER_RECORDING,
   // Task 10.
-  // The commit runs 1449-1452 ms after the letter's redraw between recordings (TEXT_TIMINGS is
-  // text/commit's 1452.2).
-  "text/hold-digit": OTHER_RECORDING,
-  "text/hold-digit-pending": OTHER_RECORDING,
-  "text/hold-one": OTHER_RECORDING,
-  "text/hold-zero": OTHER_RECORDING,
-  "text/hold-hash-back": HOLD_FROM_REDRAW,
-  "text/case-numeric-back": HOLD_FROM_REDRAW,
-  "text/number-hold-2": OTHER_RECORDING,
-  "text/number-hold-hash": OTHER_RECORDING,
-  "sms/save-empty": OTHER_RECORDING,
-  // No phone numbers plays text/number-search-empty's 2914 ms; this recording's runs 2883 ms.
-  "sms/send-to-many": { toleranceMs: 35 },
   "text/input-routing-ok": sendRecording(11),
   "sms/send-by-set-numeric": sendRecording(32),
   "sms/send-by-set-alphanumeric": sendRecording(17),
@@ -341,30 +308,8 @@ export const MESSAGES_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
   ),
   "sms/inbox-option-reply-send": sendRecording(11),
   "sms/elsewhere-sending": sendRecording(11),
-  // Opening lasts 35-78 ms between recordings (2-2's own: 60 ms, 2-3's: 45 ms).
-  "sms/inbox-menu-2-2": OPENING,
-  "sms/notice-read": OPENING,
-  "sms/notice-count-read": OPENING,
-  "sms/notice-inbox-menu": OPENING,
-  "sms/inbox-read": OPENING,
-  "sms/outbox-open": OPENING,
-  "sms/persist-inbox": OPENING,
-  "sms/persist-outbox": OPENING,
-  "sms/restore-inbox": OPENING,
-  "sms/restore-outbox": OPENING,
-  "sms/full-persist-inbox-open": OPENING,
-  "sms/full-persist-outbox-open": OPENING,
-  "sms/sim-second-inbox": OPENING,
-  "sms/sim-second-outbox": OPENING,
-  "sms/sim-same-inbox": OPENING,
-  "sms/sim-same-outbox": OPENING,
-  // Erasing message, Erased and No more messages replay sms/inbox-option-erase's timelines.
-  "sms/outbox-erase": OTHER_RECORDING,
-  "sms/outbox-erase-last": OTHER_RECORDING,
-  "sms/inbox-erase-last": OTHER_RECORDING,
-  // No number found plays No phone numbers' timeline (2914 ms; this recording 2883 ms).
-  "sms/outbox-use-number": { toleranceMs: 35 },
-  // The shortcut window's end (the indicator) varies 2920-2948 ms (plan 14 P5): not timed.
+  // The shortcut window's end (the indicator) varies 2920-2948 ms (plan 14 P5) and the replay
+  // redraws it from the key, not the window: not timed.
   "sms/elsewhere-menu": { untimedRows: new Set([1]) },
   "sms/elsewhere-messages-menu": { untimedRows: new Set([1]) },
   // The game's ticks run from its start, whose key latency the replay approximates: the first
@@ -373,8 +318,6 @@ export const MESSAGES_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
   // A sixteenth arrival on a full SIM is refused 2601 ms after the delivery, past the arrivals'
   // spread (RECEIVE_LINK_MS 2324): its link time is the synthetic cell's (D10), not compared.
   "sms/full-arrival": { anchors: { 6: 300 } },
-  // Settings restored plays plan 15's timeline (probe/accept-c7-restore).
-  "sms/restore-ok": OTHER_RECORDING,
 };
 
 // ---------------------------------------------------------------- glyph sheets
@@ -496,6 +439,33 @@ export const MESSAGES_COVERS: Readonly<Record<string, readonly string[]>> = {
 
 /** Asserted plan 18 goldens whose scenario cannot pass, with the reason. */
 export const MESSAGES_KNOWN_GAPS: Readonly<Record<string, string>> = {
+  ...Object.fromEntries(
+    (
+      [
+        ["sms/full-persist-inbox-open", 80],
+        ["sms/inbox-menu-2-2", 78],
+        ["sms/notice-inbox-menu", 35],
+        ["sms/persist-inbox", 35],
+        ["sms/restore-inbox", 34],
+      ] as const
+    ).map(([id, ms]) => [
+      id,
+      `\`Opening\` shows for ${ms} ms in this recording and 60 ms in nokia-os: the SIM read takes ` +
+        "34-80 ms between recordings of one box, more than a display frame either side of any " +
+        "one duration",
+    ]),
+  ),
+  ...Object.fromEntries(
+    ["sms/inbox-read", "sms/notice-read", "sms/notice-count-read"].map((id) => [
+      id,
+      "before `Opening` the firmware shows the cleared screen with the box's icon for 22 ms (a " +
+        "two-step redraw, over one display frame) that nokia-os does not draw" +
+        (id === "sms/notice-read" ? "; `Opening` then lasts 35 ms here, 60 ms in nokia-os" : ""),
+    ]),
+  ),
+  "sms/send-by-set-numeric":
+    "frame 15: the firmware redraws the typed digit in two steps, the first held 28 ms (over " +
+    "one display frame); nokia-os draws the digit at once",
   "sms/notice":
     "image standby-down-after-c: ▼ at standby opens the Phone book (No phone numbers) in the " +
     "capture, while nokia-os's standby keys (plan 14's STOCK_STANDBY_KEYS, after the spec's " +

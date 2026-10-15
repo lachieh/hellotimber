@@ -13,10 +13,8 @@ import {
 } from "../../scripts/capture-sets/27-composer.ts";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
 import type { ComposerModel } from "../../src/display/widgets";
-import { recordTimeline } from "./acceptance.ts";
-import { goto } from "./drive.ts";
-import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "./golden.ts";
-import { goldenImage, loadGolden } from "./goldens.ts";
+import { expectLcd } from "./golden.ts";
+import { goldenImage } from "./goldens.ts";
 import { seededStorage, standbyRig, type Rig } from "./rig.ts";
 import type { SoundGolden } from "../../scripts/sound-format.ts";
 import { soundStorage } from "./sound-scenarios.ts";
@@ -100,25 +98,6 @@ export function composerModel(state: ComposerState, top: number): ComposerModel 
     counter: String(COMPOSER_LIMIT - state.tokens.length),
     softkey: state.tokens.length === 0 ? "Back" : "Options",
   };
-}
-
-/**
- * Select on an empty slot (plan 14's `tree/05-tones/5-4-k.leaf`): the editor and its blink, the
- * frames within PROBE_TOLERANCE_MS (the firmware's blink runs a step 7-11 ms late now and then;
- * nokia-os steps evenly, plan 27 Task 8).
- */
-export function composerLeafScenario(id: string): void {
-  const golden = loadGolden(id);
-  const number = /5-4-\d/.exec(id)![0];
-  const rig = standbyRig();
-  goto(rig, number);
-  rig.advance(592);
-  const t = golden.triggerFrame as number;
-  expectLcd(rig.paint(), goldenImage(id, golden.timeline![t - 1]!.image), `${number} highlighted`);
-  const recording = recordTimeline(rig, golden, () => rig.press("navi"));
-  expectTimeline(recording, golden, `${number} highlighted, Select`, {
-    toleranceMs: PROBE_TOLERANCE_MS,
-  });
 }
 
 // ---------------------------------------------------------------- the phone (Tasks 8-12)

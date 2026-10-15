@@ -31,7 +31,7 @@ import {
   type StillChain,
 } from "./composer.ts";
 import { open } from "./drive.ts";
-import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "./golden.ts";
+import { expectLcd, expectTimeline } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { keys } from "./probes.ts";
 import { seededStorage, standbyRig, type Rig } from "./rig.ts";
@@ -321,9 +321,7 @@ function expectRecording(id: string, rig: Rig, script: string, context: string):
   const onRelease = content === recorded.triggerMs + first.holdMs;
   const triggerMs = invisible ? firstChange : onRelease ? content : undefined;
   const recording = triggerMs === undefined ? recorded : { ...recorded, triggerMs };
-  expectTimeline(recording, golden, `${id}: ${context}, then ${script}`, {
-    toleranceMs: PROBE_TOLERANCE_MS,
-  });
+  expectTimeline(recording, golden, `${id}: ${context}, then ${script}`);
 }
 
 /** Whether `b` differs from `a` in one column only (a cursor's toggle). */
@@ -403,7 +401,7 @@ export function ringingChooseScenario(id: string): void {
   keys(rig, `navi 5 1 wait:1500 down*${entryOf(3) - NOKIA_TUNE}`);
   const golden = loadGolden(id);
   const recording = recordTimeline(rig, golden, () => rig.press("navi"));
-  expectTimeline(recording, golden, "ringing/choose", { toleranceMs: PROBE_TOLERANCE_MS });
+  expectTimeline(recording, golden, "ringing/choose");
 }
 
 /** `composer/restore-run`: OK on Restore factory settings' code with two tones saved. */
@@ -436,7 +434,7 @@ function expectPreview(id: string, rig: Rig, setup: string): void {
   if (setup !== "") keys(rig, setup);
   const recorded = playSound(rig, golden);
   expectSoundTimeline(recorded, golden, `${id}: ${setup}, then ${golden.note ?? ""}`, {
-    drift: true,
+    otherRecording: true,
   });
 }
 

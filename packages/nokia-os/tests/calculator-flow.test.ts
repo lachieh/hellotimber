@@ -9,6 +9,7 @@ import { createMemoryStorage, StockEeprom } from "../src/firmware/eeprom";
 import { timelineById, timelineByName } from "../src/firmware/timelines";
 import { CALCULATOR_HOLD_MS, calculator, type CalculatorServices } from "../src/widgets/calculator";
 import { flowRig, type FlowRig } from "./support/flow-rig.ts";
+import { FRAME_MS } from "./support/golden.ts";
 import { play } from "./support/calculator.ts";
 import { standbyRig } from "./support/rig.ts";
 
@@ -105,9 +106,9 @@ describe("calculator screen (D8)", () => {
   it("clears 532-544 ms after C goes down in the capture: 471-478 ms after its deletion", () => {
     // `calculator/clear-held`: the deletion redraws 61 and 66 ms after C goes down, the clear
     // 532.1 and 544.0 ms after; keys act at their down here, so the clear follows the deletion
-    // by the captured gap within PROBE_TOLERANCE_MS.
+    // by the captured gap within one display frame (the fidelity standard).
     for (const gap of [532.1 - 61, 544.0 - 66]) {
-      expect(Math.abs(CALCULATOR_HOLD_MS - gap)).toBeLessThan(25);
+      expect(Math.abs(CALCULATOR_HOLD_MS - gap)).toBeLessThanOrEqual(FRAME_MS);
     }
   });
 

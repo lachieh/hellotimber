@@ -10,7 +10,7 @@ import { GAME_CUES, KEYPAD_BEEP } from "../src/resources";
 import { SoundSequencer } from "../src/sound/sequencer";
 import { StockSounder } from "../src/sound/sounder";
 import type { SoundGolden } from "../scripts/sound-format.ts";
-import { GAME_TICK_TOLERANCE_MS } from "./support/golden.ts";
+import { FRAME_MS, LONG_TOLERANCE_MS } from "./support/golden.ts";
 import { soundStorage, type SettingChoices } from "./support/sound-scenarios.ts";
 import { expectSoundTimeline, type RecordedSound } from "./support/sound.ts";
 
@@ -143,7 +143,7 @@ describe("game shakes (D13: Shakes On and Vibrating alert On)", () => {
   });
 });
 
-describe("cue comparison (tests/support/sound.ts, `cueOnsetMs`)", () => {
+describe("cue comparison (tests/support/sound.ts, `cues`)", () => {
   const ON = { kind: "sounding", hz: 2636.9, volume: 6 } as const;
   const OFF = { kind: "off" } as const;
   /** Two meals 3810 ms apart, a key between them that the cues ignore. */
@@ -176,14 +176,15 @@ describe("cue comparison (tests/support/sound.ts, `cueOnsetMs`)", () => {
     ],
   });
   const check = (recording: RecordedSound) => () =>
-    expectSoundTimeline(recording, golden, "test", { cueOnsetMs: GAME_TICK_TOLERANCE_MS });
+    expectSoundTimeline(recording, golden, "test", { cues: true });
 
-  it("matches each cue's onset within the game tick tolerance, not as a key's output", () => {
-    expect(check(meals(8287 + GAME_TICK_TOLERANCE_MS))).not.toThrow();
-    expect(check(meals(8287 - GAME_TICK_TOLERANCE_MS - 1))).toThrow(/onset ±16 {2}✗ timing/);
+  it("matches each cue's onset by the fidelity standard, not as a key's output", () => {
+    expect(check(meals(8287 + LONG_TOLERANCE_MS))).not.toThrow();
+    expect(check(meals(8287 - LONG_TOLERANCE_MS - 1))).toThrow(/onset ±50 {2}✗ timing/);
   });
 
-  it("holds a cue's own edges to ±2 ms of its onset", () => {
-    expect(check(meals(8287, 9))).toThrow(/\+8287 ±2 \(\+3\) {2}✗ timing/);
+  it("holds a cue's own edges to one display frame of its onset", () => {
+    expect(check(meals(8287, 6 + FRAME_MS))).not.toThrow();
+    expect(check(meals(8287, 6 + FRAME_MS + 1))).toThrow(/\+8287 ±17 \(\+18\) {2}✗ timing/);
   });
 });

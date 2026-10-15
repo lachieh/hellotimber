@@ -8,30 +8,92 @@ import {
   type GoldenImage,
 } from "../../scripts/golden-format.ts";
 
-/** Allowed difference between a frame's aligned golden start and its actual start (D9). */
-export const TIMING_TOLERANCE_MS = 2;
+// ---------------------------------------------------------------- the fidelity standard
+//
+// Golden comparisons follow AGENTS.md "Fidelity standard": what a person can perceive. Pixels of
+// every settled frame are exact. Timing is measured from a reference (the trigger, or the event a
+// check names): an instant `t` ms after it matches within `timingToleranceMs(t)`, one display
+// frame (FRAME_MS) for animation steps, growing as 5 % of `t` to LONG_TOLERANCE_MS for holds of
+// about a second or longer and the drift of long timelines. A frame shown for less than FRAME_MS,
+// in the golden or the recording, is a partial redraw: neither required nor forbidden, as long as
+// the frames around it match.
+
+/** One display frame at 60 Hz: the smallest timing difference, and the shortest frame, that counts. */
+export const FRAME_MS = 17;
+/** The tolerance of an instant a second or more after its reference. */
+export const LONG_TOLERANCE_MS = 50;
 
 /**
- * The tolerance of probe timelines that replay another recording's timings or press keys after
- * the trigger (plan 14 closeout decision 2): separate recordings of one path differ by 3-22 ms
- * (splash, Top score, Searching's bar, the shortcut window), and the firmware's timers run from
- * the key while the captures only show its redraw, 50-125 ms later.
+ * How far an instant `elapsedMs` (the golden's) after its reference may move: 5 % of the elapsed
+ * time, at least FRAME_MS (up to 340 ms) and at most LONG_TOLERANCE_MS (from 1000 ms).
  */
-export const PROBE_TOLERANCE_MS = 25;
+export function timingToleranceMs(elapsedMs: number): number {
+  return Math.min(LONG_TOLERANCE_MS, Math.max(FRAME_MS, Math.abs(elapsedMs) / 20));
+}
+
+/** Whether `actualMs` matches the golden's `goldenMs`, both measured from the same reference. */
+export function sameTime(actualMs: number, goldenMs: number): boolean {
+  return Math.abs(actualMs - goldenMs) <= timingToleranceMs(goldenMs);
+}
+
+/** A frame of a timeline: when it starts and what it shows. */
+export interface ShownFrame {
+  readonly startMs: number;
+  readonly pixels: Uint8Array;
+}
 
 /**
- * Snake II tick intervals (plan 23 D6, Task 0): two timer units. Intervals spread ±5 ms at
- * level 1 and ±15 ms at levels 3-9; compared interval by interval, never cumulatively.
+ * A golden timeline and a recording (each frame shown until the next one starts, the last until
+ * its side's end) without their partial draws: an inner frame shown for less than FRAME_MS is
+ * left out unless the other side shows the same picture (`same`), where it pairs with it. After
+ * frames left out, one that repeats the frame before them continues it. The first and the last
+ * frame of each side always stay.
  */
-export const GAME_TICK_TOLERANCE_MS = 16;
+export function withoutPartialDraws<G extends ShownFrame, A extends ShownFrame>(
+  golden: { readonly frames: readonly G[]; readonly endMs: number },
+  actual: { readonly frames: readonly A[]; readonly endMs: number },
+  same: (golden: Uint8Array, actual: Uint8Array) => boolean = samePixels,
+): { golden: G[]; actual: A[] } {
+  const settle = <T extends ShownFrame>(
+    side: { readonly frames: readonly T[]; readonly endMs: number },
+    shownElsewhere: (frame: T) => boolean,
+  ): T[] => {
+    const out: T[] = [];
+    let dropped = false;
+    side.frames.forEach((frame, i) => {
+      const next = side.frames[i + 1];
+      const shownMs = (next?.startMs ?? side.endMs) - frame.startMs;
+      if (i > 0 && next !== undefined && shownMs < FRAME_MS && !shownElsewhere(frame)) {
+        dropped = true;
+        return;
+      }
+      // Only frames left out between them make two equal frames one: a recording's power-on
+      // starts a frame as blank as the one before it.
+      if (!(dropped && out.length > 0 && samePixels(out.at(-1)!.pixels, frame.pixels))) {
+        out.push(frame);
+      }
+      dropped = false;
+    });
+    return out;
+  };
+  return {
+    golden: settle(golden, (g) => actual.frames.some((a) => same(g.pixels, a.pixels))),
+    actual: settle(actual, (a) => golden.frames.some((g) => same(g.pixels, a.pixels))),
+  };
+}
 
-/** How `expectTimeline` compares frame starts. */
+/** Whether two LCD buffers show the same pixels. */
+export function samePixels(a: Uint8Array, b: Uint8Array): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
+
+/** How `expectTimeline` compares frame starts beyond the fidelity standard. */
 export interface TimelineTolerance {
-  /** Allowed |Δ| of every timed frame start and of the last frame's hold. Default ±2 ms. */
-  readonly toleranceMs?: number;
   /**
    * Golden rows whose start is not compared: the first redraw after a key pressed ahead of it,
-   * whose key-to-redraw latency is not reproduced (D8). Their pixels still must match.
+   * whose key-to-redraw latency is not reproduced (plan 14 D8). Their pixels still must match.
    */
   readonly untimedRows?: ReadonlySet<number>;
 }
@@ -165,55 +227,82 @@ const ms = (value: number): string => value.toFixed(1);
 const signed = (value: number): string => (value > 0 ? `+${ms(value)}` : ms(value));
 
 /**
- * Compare a recording with a timeline golden after aligning on the transition (D9): with
+ * Compare a recording with a timeline golden after aligning on the transition (plan 13 D9): with
  * `trigger-frame: N` the recording's trigger is matched to golden frame N's start; with
  * `before-recording` the first change (frame 1) is matched and frame 0's duration is not compared.
+ * Frame starts and the last frame's end follow the fidelity standard (`timingToleranceMs` from the
+ * alignment); partial draws under FRAME_MS on either side are left out (`withoutPartialDraws`).
  */
 export function expectTimeline(
   recorded: RecordedTimeline,
   golden: Golden,
   context: string,
-  { toleranceMs = TIMING_TOLERANCE_MS, untimedRows = new Set() }: TimelineTolerance = {},
+  { untimedRows = new Set() }: TimelineTolerance = {},
 ): void {
-  const rows = golden.timeline;
-  if (!rows || golden.triggerFrame === undefined) {
+  const timeline = golden.timeline;
+  if (!timeline || golden.triggerFrame === undefined) {
     throw new Error(`${golden.id} is not a timeline golden with a trigger-frame`);
   }
   const beforeRecording = golden.triggerFrame === "before-recording";
   const firstRow = beforeRecording ? 0 : (golden.triggerFrame as number);
   const alignRow = beforeRecording ? 1 : firstRow;
-  const actual = beforeRecording
-    ? recorded.frames
-    : recorded.frames.filter((frame) => frame.startMs >= recorded.triggerMs);
-  const goldenOrigin = rows[Math.min(alignRow, rows.length - 1)]!.startMs;
+  const goldenOrigin = timeline[Math.min(alignRow, timeline.length - 1)]!.startMs;
+  const lastRow = timeline[timeline.length - 1]!;
+  const goldenEnd = lastRow.startMs + lastRow.durationMs - goldenOrigin;
   const actualOrigin = beforeRecording
     ? (recorded.frames[1]?.startMs ?? recorded.frames[0]?.startMs ?? 0)
     : recorded.triggerMs;
+  // From the frame before the trigger on both sides, so that a partial draw at the trigger is
+  // an inner frame too.
+  const fromRow = Math.max(0, firstRow - 1);
+  const lead =
+    beforeRecording || firstRow === 0
+      ? undefined
+      : recorded.frames.filter((frame) => frame.startMs < recorded.triggerMs).at(-1);
+  const settled = withoutPartialDraws(
+    {
+      frames: timeline.slice(fromRow).map((row, i) => ({
+        ...row,
+        index: fromRow + i,
+        startMs: row.startMs - goldenOrigin,
+        pixels: findGoldenImage(golden, row.image).pixels,
+      })),
+      endMs: goldenEnd,
+    },
+    {
+      frames: beforeRecording
+        ? recorded.frames
+        : [
+            ...(lead === undefined ? [] : [lead]),
+            ...recorded.frames.filter((frame) => frame.startMs >= recorded.triggerMs),
+          ],
+      endMs: recorded.endMs,
+    },
+  );
+  const rows = settled.golden.filter((row) => row.index >= firstRow);
+  const actual = settled.actual.slice(lead === undefined ? 0 : 1);
 
   const lines = [TABLE_HEADER];
   let failed = false;
   let firstPixelFailure: string | undefined;
-  for (let i = firstRow; i < rows.length; i++) {
-    const row = rows[i]!;
-    const frame = actual[i - firstRow];
-    const goldenStart = row.startMs - goldenOrigin;
-    const prefix = `${String(row.frame).padStart(6)} ${row.image.padEnd(5)}${ms(goldenStart).padStart(14)}`;
+  rows.forEach((row, i) => {
+    const frame = actual[i];
+    const prefix = `${String(row.frame).padStart(6)} ${row.image.padEnd(5)}${ms(row.startMs).padStart(14)}`;
     if (!frame) {
       failed = true;
       lines.push(
         `${prefix}${"-".padStart(14)}${"-".padStart(8)}  ${"missing".padEnd(7)}  ✗ never shown`,
       );
-      continue;
+      return;
     }
     const actualStart = frame.startMs - actualOrigin;
     const marks: string[] = [];
-    const timed = !(beforeRecording && i === 0) && !untimedRows.has(i);
-    const delta = actualStart - goldenStart;
-    if (timed && Math.abs(delta) > toleranceMs) marks.push("✗ timing");
-    const image = findGoldenImage(golden, row.image);
+    const timed = !(beforeRecording && row.index === 0) && !untimedRows.has(row.index);
+    const delta = actualStart - row.startMs;
+    if (timed && !sameTime(actualStart, row.startMs)) marks.push("✗ timing");
     const mismatch = lcdMismatch(
       frame.pixels,
-      { id: golden.id, image },
+      { id: golden.id, image: findGoldenImage(golden, row.image) },
       `${context}; timeline frame ${row.frame}`,
     );
     if (mismatch !== undefined) {
@@ -225,9 +314,12 @@ export function expectTimeline(
       `${prefix}${ms(actualStart).padStart(14)}${(timed ? signed(delta) : "n/a").padStart(8)}  ` +
       `${(mismatch === undefined ? "ok" : "differ").padEnd(7)}  ${marks.join("  ")}`;
     lines.push(cells.trimEnd());
-  }
+  });
 
-  const last = lastFrameCheck(recorded, actual, rows, firstRow, toleranceMs);
+  const last = lastFrameCheck(recorded, actual, rows.length - 1, actualOrigin, {
+    endMs: goldenEnd,
+    lowerBound: lastRow.lowerBound,
+  });
   if (!last.ok) failed = true;
   lines.push(` last: ${last.text}  ${last.ok ? "ok" : "✗"}`);
 
@@ -236,7 +328,7 @@ export function expectTimeline(
     ? "golden frame 1 = first change"
     : `golden frame ${firstRow} = trigger`;
   const out = [
-    `Timeline mismatch: ${golden.id} (aligned: ${alignment}; tolerance ±${toleranceMs} ms)`,
+    `Timeline mismatch: ${golden.id} (aligned: ${alignment}; fidelity standard)`,
     `scenario: ${context}`,
     ...lines,
   ];
@@ -244,29 +336,31 @@ export function expectTimeline(
   throw new Error(out.join("\n"));
 }
 
+/**
+ * Whether the last golden frame ends as the golden's does (`endMs` from the alignment): when the
+ * recording changes next, within the fidelity standard (a lower bound: not earlier); when it
+ * does not, a lower bound needs the recording to run that long and an exact end is unconfirmed.
+ */
 function lastFrameCheck(
   recorded: RecordedTimeline,
   actual: readonly RecordedFrame[],
-  rows: NonNullable<Golden["timeline"]>,
-  firstRow: number,
-  toleranceMs: number,
+  index: number,
+  actualOrigin: number,
+  golden: { readonly endMs: number; readonly lowerBound: boolean },
 ): { text: string; ok: boolean } {
-  const lastRow = rows[rows.length - 1]!;
-  const index = rows.length - 1 - firstRow;
   const frame = actual[index];
   if (!frame) return { text: "not reached", ok: false };
-  const holds = `golden holds ${lastRow.lowerBound ? "≥ " : ""}${lastRow.durationMs} ms`;
+  const ends = `golden ends ${golden.lowerBound ? "≥ " : ""}${ms(golden.endMs)} ms`;
+  const tolerance = timingToleranceMs(golden.endMs);
   const next = actual[index + 1];
   if (next) {
-    const held = next.startMs - frame.startMs;
-    const ok = lastRow.lowerBound
-      ? held >= lastRow.durationMs - toleranceMs
-      : Math.abs(held - lastRow.durationMs) <= toleranceMs;
-    return { text: `${holds}; actual changed after ${held} ms`, ok };
+    const end = next.startMs - actualOrigin;
+    const ok = golden.lowerBound
+      ? end >= golden.endMs - tolerance
+      : Math.abs(end - golden.endMs) <= tolerance;
+    return { text: `${ends}; actual changed at ${ms(end)} ms`, ok };
   }
-  const held = recorded.endMs - frame.startMs;
-  // Without a change, an exact duration can never be confirmed; a lower bound needs the
-  // recording to run at least that long.
-  const ok = lastRow.lowerBound && held >= lastRow.durationMs - toleranceMs;
-  return { text: `${holds}; actual held ≥ ${held} ms`, ok };
+  const end = recorded.endMs - actualOrigin;
+  const ok = golden.lowerBound && end >= golden.endMs - tolerance;
+  return { text: `${ends}; actual held to ≥ ${ms(end)} ms`, ok };
 }

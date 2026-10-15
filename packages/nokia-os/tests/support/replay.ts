@@ -21,7 +21,14 @@ import { Framebuffer } from "@hellotimber/phone-screen";
 import { findGoldenImage, type Golden } from "../../scripts/golden-format.ts";
 import { paintStockScreen, type StockStorage } from "../../src/index";
 import { WIDGET_SPRITES } from "../../src/resources";
-import { lcdMismatch, TIMING_TOLERANCE_MS, type RecordedTimeline } from "./golden.ts";
+import {
+  lcdMismatch,
+  samePixels,
+  sameTime,
+  timingToleranceMs,
+  withoutPartialDraws,
+  type RecordedTimeline,
+} from "./golden.ts";
 import { loadGolden as readGolden } from "./goldens.ts";
 import type { Rig } from "./rig.ts";
 
@@ -65,7 +72,10 @@ const SETTLE_MS = 250;
 const DEFAULT_KEYGAP_MS = 300;
 /** A press shorter than this inside a recording is a tap: down and up on its row. */
 const TAP_MAX_MS = 150;
-/** A golden row this short is a partial draw (15-16 ms draws, plan 14; 28 ms digit redraws, `sms/send-by-set-numeric` frame 15). */
+/**
+ * A key does not land on a golden row this short: a partial draw (15-16 ms draws, plan 14; 28 ms
+ * digit redraws, `sms/send-by-set-numeric` frame 15) is not where a redraw completes.
+ */
 const PARTIAL_MS = 30;
 /** The cursor's blink step: a still may show either phase within one step of its shot. */
 const BLINK_STEP_MS = 481;
@@ -108,12 +118,6 @@ function mapStorage(items = new Map<string, string>()): StockStorage & {
       items.delete(key);
     },
   };
-}
-
-function samePixels(a: Uint8Array, b: Uint8Array): boolean {
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
-  return true;
 }
 
 function paint(screen: ScreenModel): Uint8Array {
@@ -585,8 +589,6 @@ export class Replay {
 // ---------------------------------------------------------------- comparing
 
 export interface TimelineOptions {
-  /** Allowed |Δ| of a frame start, aligned at the recording's start. Default ±2 ms. */
-  readonly toleranceMs?: number;
   /**
    * `free` (default): blink phases are not compared (the text cursor's; the full SIM's standby
    * envelope). Rows that only blink are left out on both sides and a frame may differ from its row
@@ -694,73 +696,61 @@ function withoutBlinks(steps: readonly Step[]): Step[] {
   return steps.filter((step, i) => i === 0 || !blinkOnly(steps[i - 1]!.pixels, step.pixels));
 }
 
-/** Compares a recording with every row of a timeline golden, both from the recording's start. */
+/**
+ * Compares a recording with every row of a timeline golden, both from the recording's start, by
+ * the fidelity standard (golden.ts): frame starts from the recording's start (or the last anchor
+ * row), frames under FRAME_MS on either side left out.
+ */
 export function expectFromStart(
   recorded: RecordedTimeline,
   golden: Golden,
   options: TimelineOptions = {},
 ): void {
   const rows = golden.timeline!;
-  const tolerance = options.toleranceMs ?? TIMING_TOLERANCE_MS;
   const free = (options.blink ?? "free") === "free";
   const start = recorded.frames[0]!.startMs;
   const origin = Math.min(rows[0]!.startMs, 1);
   const last = rows.at(-1)!;
   const lastEnd = last.startMs - origin + last.durationMs;
-  let expected: Step[] = rows.map((row, i) => ({
-    startMs: row.startMs - origin,
-    pixels: findGoldenImage(golden, row.image).pixels,
-    label: `${String(row.frame).padStart(6)} ${row.image.padEnd(5)}`,
-    row: i,
-  }));
+  // Partial draws under FRAME_MS on either side are neither required nor forbidden: the
+  // firmware's two-step redraws (`text/hold-digit` frame 3, 6 ms; `text/number-hold-2` frame 1,
+  // 9 ms), the replay's edges before standby.
+  const settled = withoutPartialDraws(
+    {
+      frames: rows.map((row, i) => ({
+        startMs: row.startMs - origin,
+        pixels: findGoldenImage(golden, row.image).pixels,
+        label: `${String(row.frame).padStart(6)} ${row.image.padEnd(5)}`,
+        row: i,
+      })),
+      endMs: lastEnd,
+    },
+    {
+      frames: recorded.frames.map((frame) => ({
+        startMs: frame.startMs - start,
+        pixels: frame.pixels,
+        label: "",
+      })),
+      endMs: recorded.endMs - start,
+    },
+    (g, a) => samePixels(g, a) || (free && blinkOnly(g, a)),
+  );
+  let expected: Step[] = settled.golden;
   // Frames that start after the golden stopped recording are not compared.
-  let actual: Step[] = recorded.frames
-    .map((frame) => ({ startMs: frame.startMs - start, pixels: frame.pixels, label: "" }))
-    .filter((step, i) => i === 0 || step.startMs < lastEnd - tolerance);
+  let actual: Step[] = settled.actual.filter(
+    (step, i) => i === 0 || step.startMs < lastEnd - timingToleranceMs(lastEnd),
+  );
   if (options.fromRow !== undefined) {
     // The frame on screen when the row starts (it may have shown since earlier) is the row's.
-    const from = expected[options.fromRow]!.startMs;
+    const from = rows[options.fromRow]!.startMs - origin;
     let at = 0;
     actual.forEach((step, k) => {
-      if (step.startMs <= from + tolerance) at = k;
+      if (step.startMs <= from + timingToleranceMs(from)) at = k;
     });
-    expected = expected.slice(options.fromRow);
+    expected = expected.filter((step) => step.row! >= options.fromRow!);
     actual = actual.slice(at);
   }
   const lines = [" frame image  golden start  actual start       Δ  pixels"];
-  // A partial draw (≤ PARTIAL_MS) the replay never shows: the firmware's two-step redraws
-  // (`text/hold-digit` frame 3, 6 ms; `text/number-hold-2` frame 1, 9 ms) are not reproduced
-  // (plan 14 D8).
-  expected = expected.filter((step) => {
-    const row = rows[step.row!]!;
-    const partial =
-      row.durationMs <= PARTIAL_MS &&
-      step.row! > 0 &&
-      step.row! < rows.length - 1 &&
-      !actual.some((frame) => samePixels(frame.pixels, step.pixels));
-    if (partial) {
-      lines.push(`${step.label}${ms(step.startMs).padStart(14)}  partial draw, not reproduced`);
-    }
-    return !partial;
-  });
-  // And one the replay makes that the golden does not show (the edges before standby, plan 14's
-  // invalid-shortcut timeline, where the firmware draws the received notice at once).
-  actual = actual.filter((step, i) => {
-    const next = actual[i + 1];
-    const partial =
-      i > 0 &&
-      next !== undefined &&
-      next.startMs - step.startMs <= PARTIAL_MS &&
-      !expected.some(
-        (row) =>
-          samePixels(row.pixels, step.pixels) || (free && blinkOnly(row.pixels, step.pixels)),
-      );
-    if (partial)
-      lines.push(
-        `${" ".repeat(12)}${ms(step.startMs).padStart(28)}  partial draw, not in the golden`,
-      );
-    return !partial;
-  });
   if (free) {
     expected = withoutBlinks(expected);
     actual = withoutBlinks(actual);
@@ -786,8 +776,12 @@ export function expectFromStart(
     const marks: string[] = [];
     const anchor = options.anchors?.[step.row!];
     const expectedMs = step.startMs + shift;
-    const allowed = anchor ?? tolerance;
-    if (timed && Math.abs(frame.startMs - expectedMs) > allowed) marks.push("✗ timing");
+    const late = frame.startMs - expectedMs;
+    const ok =
+      anchor === undefined
+        ? sameTime(frame.startMs - shift, step.startMs)
+        : Math.abs(late) <= anchor;
+    if (timed && !ok) marks.push("✗ timing");
     if (anchor !== undefined) shift = frame.startMs - step.startMs;
     const image = findGoldenImage(golden, row.image);
     const mismatch = shows(frame, step)
