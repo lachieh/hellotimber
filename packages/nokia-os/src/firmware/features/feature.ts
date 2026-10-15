@@ -10,6 +10,7 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockMessaging } from "../../messages/service";
 import type { StockSounder } from "../../sound/sounder";
+import type { StockT9 } from "../../text/t9/service";
 import type { Widget } from "../../widgets/flow";
 import type { ListNumbering } from "../../widgets/rows";
 import type { NoteSound } from "../../widgets/note";
@@ -35,6 +36,8 @@ export interface StockServices {
   readonly eeprom: StockEeprom;
   /** Plan 18: the phone's SMS (its `messages` record over `eeprom`, the network port). */
   readonly messaging: StockMessaging;
+  /** Plan 18b: the host's T9 dictionaries and the user words. */
+  readonly t9: StockT9;
 }
 
 /** The tree node a bound screen opens for. */

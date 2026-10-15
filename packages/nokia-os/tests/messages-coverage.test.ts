@@ -25,14 +25,15 @@ describe("plan 18's coverage", () => {
     expect([...covered].sort()).toEqual([...BOUND].sort());
   });
 
-  it("asserts a golden for every multi-tap Options entry; T9's and content's owners are named", () => {
+  it("asserts a golden for every multi-tap Options entry; later owners are named", () => {
     for (const option of EDITOR_OPTIONS)
       expect(ASSERTED.has(option.golden), option.label).toBe(true);
+    // The Cyrillic dictionaries are plan 26's (plan 18b D11).
     expect(EDITOR_OPTIONS.filter((o) => o.owner !== undefined).map((o) => o.owner)).toEqual([
       "19",
       "18c",
       "18c",
-      "18b",
+      "26",
     ]);
   });
 

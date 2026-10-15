@@ -1,7 +1,7 @@
 // Messages (menu 2; plan 18): Write messages, the message centre and voice mailbox numbers,
 // Message settings' virgin values, Info service's setter level and topics, and the leaves plan
 // 18c owns (placeholders until then).
-import { DICTIONARY_KEY, DICTIONARY_LABELS, VIRGIN_OVERRIDES } from "../../messages/bindings";
+import { DICTIONARY_KEY, DICTIONARY_LABELS, VIRGIN_DICTIONARY } from "../../messages/bindings";
 import { MESSAGES_RECORD } from "../../messages/store";
 import { openBox } from "../../messages/read";
 import { smsEditor } from "../../messages/write";
@@ -85,7 +85,7 @@ export const messagesFeature: StockFeature = {
     "2-10": "18c", // Service command editor
   },
   screens: {
-    // Write messages: the multi-tap editor (D3: Dictionary off until plan 18b).
+    // Write messages: the editor, in T9 while Dictionary is English (plan 18b).
     "2-1": (services) => () => smsEditor(services),
     // Inbox and Outbox: the lists, or plan 14's notes while they are empty.
     "2-2": (services) => () => openBox(services, "inbox"),
@@ -108,14 +108,9 @@ export const messagesFeature: StockFeature = {
   // The SIM's Inbox and Outbox (D7) and the T9 user words (plan 18b D7): Restore keeps them.
   records: [MESSAGES_RECORD as EepromRecord<unknown>, T9_USER_RECORD as EepromRecord<unknown>],
   settings: {
-    // Write messages' Dictionary (D3: VIRGIN_OVERRIDES).
-    choices: [
-      {
-        key: DICTIONARY_KEY,
-        labels: DICTIONARY_LABELS,
-        chosen: VIRGIN_OVERRIDES[DICTIONARY_KEY]!,
-      },
-    ],
+    // Write messages' Dictionary: English, as the firmware (plan 18b D6); a phone without a T9
+    // dictionary starts with Dictionary off (`NO_T9_VIRGIN_CHOICES`, D5).
+    choices: [{ key: DICTIONARY_KEY, labels: DICTIONARY_LABELS, chosen: VIRGIN_DICTIONARY }],
     virginTexts: [
       // tree/02-messages/2-7-1-1.leaf "c": the SIM's message centre (an emulator artefact). The
       // tree has no lines for this prompt.

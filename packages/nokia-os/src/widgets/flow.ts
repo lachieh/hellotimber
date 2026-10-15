@@ -47,6 +47,8 @@ export interface Widget {
    * stops its preview).
    */
   close?(): void;
+  /** The widget is on top again: the screens pushed above it closed (`back`). */
+  reveal?(): void;
 }
 
 const NO_INDICATOR: MenuIndicator = { segments: [], awaitingNext: false };
@@ -163,7 +165,10 @@ class FlowSession implements PhoneApplicationSession, Flow {
     for (const widget of this.#stack.splice(this.#stack.length - popped).reverse()) {
       widget.close?.();
     }
-    if (this.#stack.length > 0) return;
+    if (this.#stack.length > 0) {
+      this.#top?.reveal?.();
+      return;
+    }
     const beyond = levels - popped;
     const exit = {
       ...(beyond === 0 ? {} : { levels: beyond + 1 }),

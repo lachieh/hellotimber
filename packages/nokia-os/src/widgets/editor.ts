@@ -228,6 +228,10 @@ class EditorWidget implements Widget {
     this.#request(this.#entry.tick(dtMs), flow);
     this.#emptyC.tick(dtMs, flow);
   }
+
+  reveal(): void {
+    this.#entry.restartBlink();
+  }
 }
 
 /** `*`'s default: the symbol table, Use inserting into the entry (plan 18 S5; T9: plan 18b). */

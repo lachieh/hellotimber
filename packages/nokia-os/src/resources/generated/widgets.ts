@@ -8906,6 +8906,36 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
+    "t9-dictionary-activated": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 656
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 488
+        }
+      ]
+    },
     "calculator-out-of-range": {
       "frames": [
         {
@@ -9338,6 +9368,7 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "message-memory-full": "message-memory-full",
     "message-sent": "message-sent",
     "message-erased": "message-erased",
+    "t9-dictionary-activated": "t9-dictionary-activated",
     "calculator-out-of-range": "calculator-out-of-range",
     "calculator-divide-by-zero": "calculator-divide-by-zero",
     "calculator-rate-saved": "calculator-rate-saved",

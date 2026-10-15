@@ -16,6 +16,7 @@ import {
   parseT9Note,
   playT9,
   T9_KNOWN_GAPS,
+  T9_TOLERANCES,
   type T9Recording,
   type T9Target,
 } from "./support/t9.ts";
@@ -87,12 +88,15 @@ describe("the T9 editor against its goldens", () => {
         expect(base).toBe("editor");
         const target = editorTarget();
         let recording: T9Recording | undefined;
-        playT9(target, steps, (recorded) => {
+        let keyed = false;
+        playT9(target, steps, (recorded, step) => {
           recording = recorded;
+          keyed = step.kind === "record" && step.key !== undefined;
         });
         const context = `${id}: ${golden.note}`;
         if (golden.timeline === undefined) expectT9Still(target, golden, context);
-        else expectT9Timeline(recording!, golden, context);
+        else
+          expectT9Timeline(recording!, golden, context, { keyed, toleranceMs: T9_TOLERANCES[id] });
       },
     );
   }

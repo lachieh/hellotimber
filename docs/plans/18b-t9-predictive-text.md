@@ -83,18 +83,18 @@ by the spec's section 7, with the exact composition order left open.
 Behaviour was then captured in `$REF/captures/plan18b/` (60 scenarios). Findings are in the spec;
 the ones that shape this plan:
 
-| #   | Finding                                                                                                                                         | Spec      |
-| --- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| T1  | Write messages opens in T9 English; the T9 header has its own icon and the mode text from x 21                                                  | 1         |
-| T2  | Lists: words, then stems, ranked by frequency (94% of lists strictly); no frequencies stored, rank only                                         | 3, 14     |
-| T3  | `?` + Spell on the last candidate reached by `*`; one-entry lists; one-key lists never                                                          | 4.2       |
-| T4  | No-match: silent drop after one key; `?` state after two or more; three `*` behaviours by list size; `0` and `C` end it                         | 6         |
-| T5  | Key 1: punctuation list alone; word + 8 marks after a word; contractions; compositions                                                          | 7         |
-| T6  | `#` toggles two states, which depend on the cursor; case fixed per letter; ABC lasts one word                                                   | 8         |
-| T7  | ▲/▼ stop at word starts and ends; a stop at a word end re-enters the word; `C` re-enters across a deleted space                                 | 9         |
-| T8  | Matches lists the other candidates then the current; Insert word/Spell prompt is plan 18's text input; user words join the lists                | 10, 11    |
-| T9  | User words: second place when exact (oldest first), completions at the end; a byte budget (≈840), oldest dropped; kept when the text is cleared | 11        |
-| T10 | No commit timeout; no T9-specific sound; Dictionary off persists across power cycles; English on has no note                                    | 4, 10, 12 |
+| #   | Finding                                                                                                                                             | Spec      |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| T1  | Write messages opens in T9 English; the T9 header has its own icon and the mode text from x 21                                                      | 1         |
+| T2  | Lists: words, then stems, ranked by frequency (94% of lists strictly); no frequencies stored, rank only                                             | 3, 14     |
+| T3  | `?` + Spell on the last candidate reached by `*`; one-entry lists; one-key lists never                                                              | 4.2       |
+| T4  | No-match: silent drop after one key; `?` state after two or more; three `*` behaviours by list size; `0` and `C` end it                             | 6         |
+| T5  | Key 1: punctuation list alone; word + 8 marks after a word; contractions; compositions                                                              | 7         |
+| T6  | `#` toggles two states, which depend on the cursor; case fixed per letter; ABC lasts one word                                                       | 8         |
+| T7  | ▲/▼ stop at word starts and ends; a stop at a word end re-enters the word; `C` re-enters across a deleted space                                     | 9         |
+| T8  | Matches lists the other candidates then the current; Insert word/Spell prompt is plan 18's text input; user words join the lists                    | 10, 11    |
+| T9  | User words: second place when exact (oldest first), completions at the end; a byte budget (≈840), oldest dropped; kept when the text is cleared     | 11        |
+| T10 | No commit timeout; no T9-specific sound; Dictionary off persists across power cycles; English on has no note (corrected in Task 7: it shows a note) | 4, 10, 12 |
 
 ## Scope and non-goals
 
@@ -565,17 +565,43 @@ reproduced.
 `src/widgets/` (Matches list), `src/firmware/phone.ts` (`config.t9`), `src/index.ts`,
 `package.json` (`exports` `./t9-english`), `tests/messages-t9.test.ts` (new).
 
-- [ ] Options: the 12/13-entry T9 lists and the 9-entry multi-tap list; Matches (rotation, `Use`,
+- [x] Options: the 12/13-entry T9 lists and the 9-entry multi-tap list; Matches (rotation, `Use`,
       C); Insert word and Spell through plan 18's `textInput` with the `Insert word:` layout; OK
       stores the user word (the whole word at the cursor, spec 10.3); empty OK and C return.
-- [ ] Dictionary: off (the note, plan 18), English on (no note), persistence; Русский and
+- [x] Dictionary: off (the note, plan 18), English on (no note), persistence; Русский and
       Български → placeholder owned by `26` (D11) in both owner tables.
-- [ ] D5/D6: `config.t9.english` present → virgin T9; absent → plan 18 behaviour, English entry's
+- [x] D5/D6: `config.t9.english` present → virgin T9; absent → plan 18 behaviour, English entry's
       placeholder owned by `config`. `tree/02-messages/2-1.leaf` → asserted.
-- [ ] TDD through keys against `options-empty`, `g-options`, `g-matches*`, `g-spell`,
+- [x] TDD through keys against `options-empty`, `g-options`, `g-matches*`, `g-spell`,
       `g-insert-word`, `g-userwords-two`, `insert-word-empty`, `g-star-free`, `dictionary-*`,
       `g-persist-dict`.
-- [ ] Commit: `feat(nokia-os): T9 options, user words and the virgin T9 default`.
+- [x] Commit: `feat(nokia-os): T9 options, user words and the virgin T9 default`.
+
+Outcome: `tests/messages-t9.test.ts` drives a stock phone with `englishT9` from each golden's note
+for the 12 scenarios beyond the editor and `g-delete/06-c5` (165 goldens): all match, the two
+Dictionary off notes within ±25 ms (the timeline plan 18 extracted from another recording,
+649/247/497 against 657/232/504) and `insert-word-empty/05-after` within ±5 ms (a 484/476-ms
+blink step); and checks the virgin defaults, the Cyrillic and host placeholders, user words
+across a power cycle, Insert number and Insert symbol.
+
+Deviation: `English` shows a note. `t9/dictionary-off-on/19-on` shows `T9 / dictionary /
+activated` with the tick note's phases (656/232/488 ms) before the T9 editor, where spec 10.4
+and finding T10 said "no note"; the golden decides (spec §10), so the note plays a new named
+timeline `t9-dictionary-activated` registered by `scripts/resource-inputs/18b-t9-predictive-text.ts`
+(and the menu-tree crawl saw it for English chosen while on). The spec, the stock file and the
+menu-tree note are corrected. After the note the editor's cursor blink starts over, shown
+(`05-off`, `19-on`: a whole 476-477-ms step with the cursor): flows now call a widget's `reveal()`
+when the screens above it close, and the editor restarts its blink there (plan 18's goldens still
+pass). The virgin choice is English in the feature table (`VIRGIN_DICTIONARY`);
+`VIRGIN_OVERRIDES` is gone, replaced by `NO_T9_VIRGIN_CHOICES`, which `createStockSettings`
+applies for a phone without a dictionary (Restore returns to it). `StockServices.t9` carries the
+dictionary and the user words; the placeholder owners are `DICTIONARY_OWNERS` (Русский,
+Български: `26`; English without a dictionary: `config`) and the Dictionary entry of both
+Options tables names `26`. Insert number (plan 18's number entry) and Insert symbol (the symbol
+table with the T9 header) follow the menu-tree crawl only (UNVERIFIED). The Insert word prompt's
+counter is the message's (`459/1` less the text beside the word); its limit is the message's
+room. Matches is pushed over Options: Use returns to the editor, C to Options (UNVERIFIED).
+`tree/02-messages/2-1.leaf` is promoted with the other goldens at the hand-off (Task 8).
 
 ### Task 8 - Acceptance and the coverage guard
 

@@ -32,6 +32,8 @@ import { createSyntheticNetwork, type StockNetworkPort } from "../messages/netwo
 import { StockMessaging } from "../messages/service";
 import { StockMessages } from "../messages/store";
 import { SET_1_CENTRE_KEY } from "./features/messages";
+import { NO_T9_VIRGIN_CHOICES } from "../messages/bindings";
+import { stockT9, type StockT9 } from "../text/t9/service";
 
 /** The first-digit dots turn into the menu number 2948 ms after Menu (menu/01-phone-book.anim). */
 export const STOCK_SHORTCUT_WINDOW_MS = 2948;
@@ -163,7 +165,8 @@ export function createStockGames(ports: StockPorts = {}, now: () => number = () 
  * in-memory EEPROM), previews and note tones going to `sounder` (default: a sounder whose
  * sequencer nothing advances: silent), features' records in `eeprom` (default: an empty
  * in-memory EEPROM, the virgin state) and SMS through `messaging` (default: the security's SIM's
- * messages over `eeprom` and a synthetic network nothing ticks).
+ * messages over `eeprom` and a synthetic network nothing ticks), and T9 from `t9` (default: no
+ * dictionary, the user words over `eeprom`; plan 18b).
  */
 export function createStockMenu(
   ports: StockPorts = {},
@@ -173,8 +176,9 @@ export function createStockMenu(
   sounder?: StockSounder,
   eeprom: StockEeprom = new StockEeprom(createMemoryStorage()),
   messaging?: StockMessaging,
+  t9?: StockT9,
 ): PhoneMenu {
-  const services = stockServices(ports, settings, games, security, sounder, eeprom, messaging);
+  const services = stockServices(ports, settings, games, security, sounder, eeprom, messaging, t9);
   const builder: Builder = { ports, settings: services.settings, leaves: new LeafBinder(services) };
   return new PhoneMenu(
     STOCK_TREE.map(
@@ -192,8 +196,9 @@ export function stockServices(
   sounder: StockSounder | undefined,
   eeprom: StockEeprom,
   messaging?: StockMessaging,
+  t9: StockT9 = stockT9(eeprom),
 ): StockServices {
-  const store = settings ?? createStockSettings(eeprom);
+  const store = settings ?? createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES);
   const sound = sounder ?? new StockSounder(new SoundSequencer(() => {}), store, () => games.now());
   const code = security ?? new StockSecurity(new StockEeprom(createMemoryStorage()), store);
   return {
@@ -205,6 +210,7 @@ export function stockServices(
     noteSound: (lines) => sound.note(lines),
     eeprom,
     messaging: messaging ?? stockMessaging(eeprom, store, code.sim, createSyntheticNetwork()),
+    t9,
   };
 }
 

@@ -10,10 +10,14 @@
 // goldens, and no T9 screen depends on it (no commit timeout, spec 4.1) except the cursor's blink
 // phase, so stills compare against either blink phase.
 import type { PhoneKey } from "@hellotimber/phone-core";
+import type { StockPhoneConfig, StockStorage } from "../../src/index";
 import { TEXT_TIMINGS } from "../../src/resources";
+import { englishT9 } from "../../src/text/t9/english";
+import { goto } from "./drive.ts";
+import { standbyRig, type Rig } from "./rig.ts";
 import type { Golden } from "../../scripts/golden-format.ts";
 import { findGoldenImage } from "../../scripts/golden-format.ts";
-import { lcdMismatch } from "./golden.ts";
+import { lcdMismatch, PROBE_TOLERANCE_MS } from "./golden.ts";
 
 /**
  * Asserted T9 goldens the implementation cannot reproduce, with the reason (plan 18b Task 8:
@@ -25,6 +29,18 @@ export const T9_KNOWN_GAPS: Readonly<Record<string, string>> = {
     "cursor's column (x 22, y 16) in the blink's dark phase; the spec says a short * does " +
     "nothing there, and the empty editor's second * (03-star-empty2) shows no such pixel, so its " +
     "rule (an empty composing word toggled by *?) is unknown: not reproduced, reported",
+};
+
+/**
+ * Timelines compared with a wider tolerance than ±2 ms, each with its reason. The Dictionary off
+ * note plays the timeline plan 18 extracted from `text/dictionary-off`, another recording of the
+ * same note (649/247/497 ms there, 657/232/504 here; plan 14's PROBE_TOLERANCE_MS).
+ */
+export const T9_TOLERANCES: Readonly<Record<string, number>> = {
+  "t9/dictionary-off-on/05-off": PROBE_TOLERANCE_MS,
+  "t9/g-persist-dict/05-off": PROBE_TOLERANCE_MS,
+  // The cursor's blink steps 484 then 476 ms here (the firmware's jitter around 480 ms).
+  "t9/insert-word-empty/05-after": 5,
 };
 
 export const TAP_DOWN_MS = 60;
@@ -122,7 +138,8 @@ export function playT9(
       case "record": {
         const frames = [{ startMs: 0, pixels: target.frame() }];
         const keyAt = step.key === undefined ? undefined : 1;
-        for (let t = 1; t <= step.ms; t++) {
+        // Two blink steps longer: a blink-only recording aligns on the phase the golden starts in.
+        for (let t = 1; t <= step.ms + 2 * TEXT_TIMINGS.blinkMs; t++) {
           if (t === keyAt) target.down(step.key!);
           if (keyAt !== undefined && t === keyAt + TAP_DOWN_MS) target.up(step.key!);
           target.advance(1);
@@ -165,24 +182,35 @@ export function expectT9Still(target: T9Target, golden: Golden, context: string)
 }
 
 /**
- * A timeline golden against a recording (plan 18b): the recording's first frame is the screen
- * before the trigger (the golden's row before `trigger-frame`); its changes are the rows from the
- * trigger on, aligned on the first change (a key's redraw latency is not reproduced, plan 14
- * D8), each later row starting within `toleranceMs` of the golden's.
+ * A timeline golden against a recording (plan 18b): the frame before the trigger is the golden's
+ * row before `trigger-frame`; the changes from the trigger are its rows, aligned on the first
+ * (a key's redraw latency is not reproduced, plan 14 D8), each later row starting within
+ * `toleranceMs` of the golden's.
  */
 export function expectT9Timeline(
   recording: T9Recording,
   golden: Golden,
   context: string,
-  toleranceMs = 2,
+  { keyed, toleranceMs = 2 }: { readonly keyed: boolean; readonly toleranceMs?: number },
 ): void {
   const rows = golden.timeline;
   const trigger = golden.triggerFrame;
   if (rows === undefined || typeof trigger !== "number" || trigger < 1) {
     throw new Error(`${golden.id} is not a timeline golden with a numeric trigger-frame.`);
   }
-  const [start, ...changes] = recording.frames;
   const image = (name: string) => ({ id: golden.id, image: findGoldenImage(golden, name) });
+  // A recording without a key starts at an arbitrary blink phase: it aligns on the first change
+  // that shows the golden's trigger row.
+  let first = 1;
+  if (!keyed) {
+    const at = recording.frames.findIndex(
+      (frame, i) =>
+        i > 0 && lcdMismatch(frame.pixels, image(rows[trigger]!.image), "") === undefined,
+    );
+    if (at > 0) first = at;
+  }
+  const start = recording.frames[first - 1]!;
+  const changes = recording.frames.slice(first);
   const before = lcdMismatch(start!.pixels, image(rows[trigger - 1]!.image), `${context}: before`);
   if (before !== undefined) throw new Error(before);
   rows.slice(trigger).forEach((row, i) => {
@@ -197,4 +225,62 @@ export function expectT9Timeline(
       throw new Error(`${where}: starts at ${actual} ms, golden ${expected} ms (±${toleranceMs})`);
     }
   });
+}
+
+// ---------------------------------------------------------------- the phone
+
+/** The Write messages page settles this long before the scenario's first key. */
+const PAGE_SETTLE_MS = 1500;
+/** The editor's first draw after Select. */
+const EDITOR_SETTLE_MS = 600;
+
+/** A storage whose items can be copied (`save flash`). */
+function copyableStorage(items = new Map<string, string>()): StockStorage & {
+  readonly items: Map<string, string>;
+} {
+  return {
+    items,
+    getItem: (k) => items.get(k) ?? null,
+    setItem: (k, v) => void items.set(k, String(v)),
+    removeItem: (k) => void items.delete(k),
+  };
+}
+
+/**
+ * A stock phone at the scenario's base, with `config` (default: the shipped English
+ * dictionary): standby, Menu, ▼ to Messages, Select (the Write messages page), and for the
+ * editor base, Select. `save flash` copies its storage; `cold boot` starts a second phone over the
+ * copy and brings it to the page (`g-persist-dict`: the rig's two phones over one storage).
+ */
+export function t9PhoneTarget(
+  base: "editor" | "page",
+  config: Partial<StockPhoneConfig> = { t9: { english: englishT9 } },
+): T9Target & { readonly rig: () => Rig } {
+  let storage = copyableStorage();
+  let saved: Map<string, string> | undefined;
+  const boot = (): Rig => {
+    const rig = standbyRig({ ...config, storage });
+    goto(rig, "2-1");
+    rig.advance(PAGE_SETTLE_MS);
+    return rig;
+  };
+  let rig = boot();
+  if (base === "editor") {
+    rig.press("navi", TAP_DOWN_MS);
+    rig.advance(EDITOR_SETTLE_MS);
+  }
+  return {
+    rig: () => rig,
+    down: (key) => rig.hold(key),
+    up: (key) => rig.release(key),
+    advance: (ms) => rig.advance(ms),
+    frame: () => rig.paint().pixels,
+    saveFlash() {
+      saved = new Map(storage.items);
+    },
+    coldBoot() {
+      storage = copyableStorage(new Map(saved ?? storage.items));
+      rig = boot();
+    },
+  };
 }

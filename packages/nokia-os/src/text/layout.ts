@@ -61,7 +61,8 @@ export function pendingSlot(state: TextState, font: StockFontName): PendingSlot 
 /**
  * `text` wrapped into lines of `width` columns (see the header for the rules). `wordBreak` is a
  * character where a word may break as at a space (plan 18b: a T9 completion's untyped letters and
- * its `?` wrap on their own).
+ * its `?` wrap on their own, and stay on the line while they fit its whole width:
+ * `t9/g-userwords-two/21-star6` keeps `inun?` ending at x 81).
  */
 export function wrapText(
   text: string,
@@ -93,8 +94,10 @@ export function wrapText(
     while (end < chars.length && chars[end] !== " " && (end === i || end !== wordBreak)) {
       word += widthOf(end++);
     }
-    if (x > 0 && x + word > width - WORD_MARGIN) breakAt(i);
-    if (x + word <= width - WORD_MARGIN) {
+    // The part after `wordBreak` (a T9 completion's tail and `?`) needs only the line's width.
+    const margin = i === wordBreak ? 0 : WORD_MARGIN;
+    if (x > 0 && x + word > width - margin) breakAt(i);
+    if (x + word <= width - margin) {
       x += word;
       i = end;
       continue;

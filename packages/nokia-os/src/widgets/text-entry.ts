@@ -76,8 +76,10 @@ export interface T9EditorControl {
   useMatch(index: number): void;
   /** The text without the composing word (the Insert word prompt counts with it). */
   readonly textBesideWord: string;
-  /** The prompt's case: a sentence starts where its text goes. */
+  /** Insert word's case: a sentence starts at the cursor. */
   readonly sentenceStart: boolean;
+  /** Spell's case: a sentence starts where the composing word does. */
+  readonly wordSentenceStart: boolean;
   /** Insert word's OK: `word` at the cursor; returns the whole word there (the user word). */
   insertWord(word: string): string;
   /** Spell's OK: `word` in place of the composing word; returns the whole word there. */
@@ -136,7 +138,10 @@ export class TextEntry {
   #clear: Held | undefined;
   /** T9: `*` pressed with no composing word. */
   #star: Held | undefined;
-  readonly #blink: Playback | undefined;
+  #blink: Playback | undefined;
+  readonly #blinkTimeline: StockWidgetTimeline | undefined;
+  /** When the cursor's blink (re)started. */
+  #blinkFrom = 0;
   readonly #t9: (() => T9Context | undefined) | undefined;
   /** The state follows the T9 rules (the context was present at the last look). */
   #t9On: boolean;
@@ -149,6 +154,7 @@ export class TextEntry {
       text,
       cursor: options.cursor ?? Array.from(text).length,
     };
+    this.#blinkTimeline = options.blink;
     this.#blink = options.blink === undefined ? undefined : new Playback(options.blink);
     this.#t9 = options.t9;
     this.#t9On = false;
@@ -166,7 +172,17 @@ export class TextEntry {
 
   /** The blink's step: the cursor shows (while nothing is pending). */
   get cursorShown(): boolean {
-    return blinkShown(this.#blink, this.#now);
+    return blinkShown(this.#blink, this.#now - this.#blinkFrom);
+  }
+
+  /**
+   * The entry is drawn again after a screen above it closed: its cursor blink starts over, shown
+   * (plan 18b: `t9/dictionary-off-on/05-off` shows the editor's cursor for a whole step after the
+   * note).
+   */
+  restartBlink(): void {
+    this.#blinkFrom = this.#now;
+    if (this.#blinkTimeline !== undefined) this.#blink = new Playback(this.#blinkTimeline);
   }
 
   /**
@@ -228,7 +244,8 @@ export class TextEntry {
         this.#state = t9UseMatch(this.#state, index, live(), this.limit);
       },
       textBesideWord: state.text.slice(0, start) + state.text.slice(state.cursor),
-      sentenceStart: sentenceStart(state.text, start),
+      sentenceStart: sentenceStart(state.text, state.cursor),
+      wordSentenceStart: sentenceStart(state.text, start),
       insertWord: (text) => {
         this.#state = t9InsertText(this.#state, text, this.limit);
         return wordAroundCursor(this.#state);

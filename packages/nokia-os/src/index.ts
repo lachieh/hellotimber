@@ -18,3 +18,6 @@ export type {
   StockTimestamp,
   SyntheticNetwork,
 } from "./messages/network";
+// Plan 18b: T9 dictionaries (the English one is the `@hellotimber/nokia-os/t9-english` entry).
+export { createT9Dictionary } from "./text/t9/dictionary";
+export type { T9Dictionary } from "./text/t9/dictionary";

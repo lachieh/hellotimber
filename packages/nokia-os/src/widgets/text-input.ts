@@ -15,8 +15,12 @@ export interface TextInputOptions {
   readonly label: readonly string[];
   /** The most characters the text holds. */
   readonly limit: number;
-  /** Draw the characters left, top right (Add name's `16`); default none (Routing address). */
-  readonly counter?: boolean;
+  /**
+   * Draw the characters left, top right (Add name's `16`); default none (Routing address). A
+   * function draws its text for the typed length (plan 18b: Insert word counts the message's
+   * characters, `459/1`).
+   */
+  readonly counter?: boolean | ((length: number) => string);
   readonly text?: string;
   /** The entry's first mode (Routing address starts in ABC, `text/input` routing-00). */
   readonly mode?: TextMode;
@@ -24,6 +28,15 @@ export interface TextInputOptions {
   readonly softkey?: string;
   /** OK with the text. */
   readonly done: (text: string, flow: Flow) => void;
+}
+
+function counterOf(
+  counter: TextInputOptions["counter"],
+  limit: number,
+  length: number,
+): { counter?: string } {
+  if (typeof counter === "function") return { counter: counter(length) };
+  return counter ? { counter: String(limit - length) } : {};
 }
 
 class TextInputWidget implements Widget {
@@ -46,7 +59,7 @@ class TextInputWidget implements Widget {
     return {
       kind: "prompt",
       icons: ["prompt/pen", MODE_SPRITES[shownMode(state)]],
-      ...(this.#options.counter ? { counter: String(this.#options.limit - length) } : {}),
+      ...counterOf(this.#options.counter, this.#options.limit, length),
       label: this.#options.label,
       entry: {
         kind: "text",

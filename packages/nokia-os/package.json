@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./t9-english": "./src/text/t9/english.ts",
     "./package.json": "./package.json"
   },
   "scripts": {

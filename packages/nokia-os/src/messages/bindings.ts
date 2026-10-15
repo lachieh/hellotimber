@@ -1,6 +1,7 @@
 // Plan 18's tables for Write messages (Task 10): the multi-tap editor's Options as Task 0
 // recorded them (with the golden that shows each, or the plan that owns it), the flows composed
-// without a capture, and the virgin values plan 18 overrides.
+// without a capture, and the virgin values plan 18 overrides. Plan 18b adds the T9 editor's
+// Options and the Dictionary's virgin choice with and without a T9 dictionary.
 
 /** One entry of the multi-tap editor's Options (`text/options`: nine). */
 export interface EditorOption {
@@ -22,15 +23,48 @@ export const EDITOR_OPTIONS: readonly EditorOption[] = [
   // No response in the captured state; templates are plan 18c's.
   { label: "Template", golden: "sms/template", owner: "18c" },
   { label: "Insert smiley", golden: "sms/insert-smiley", owner: "18c" },
-  // Dictionary off and its note; English, Русский and Български are plan 18b's.
-  { label: "Dictionary", golden: "text/dictionary-off", owner: "18b" },
+  // Dictionary off and its note, English (plan 18b); Русский and Български are plan 26's (18b D11).
+  { label: "Dictionary", golden: "text/dictionary-off", owner: "26" },
   { label: "Send by set", golden: "sms/send-by-set-numeric" },
   { label: "Save", golden: "sms/save" },
   { label: "Erase", golden: "sms/erase" },
   { label: "Exit", golden: "sms/exit" },
 ];
 
-/** The Dictionary list (`text/dictionary-off` frame 10); the T9 entries are plan 18b's. */
+/** One entry of the T9 editor's Options (plan 18b, spec 10.1). */
+export interface T9EditorOption {
+  readonly label: string;
+  /** The golden that shows what OK on it does; none: UNVERIFIED (the crawl's tree only). */
+  readonly golden?: string;
+  /** The plan that owns what it does beyond the captures. */
+  readonly owner?: string;
+  /** Listed only while a word is composing (Matches). */
+  readonly composing?: true;
+}
+
+/**
+ * The T9 editor's Options, in order (spec 10.1: `t9/options-empty` twelve, `t9/g-options`
+ * thirteen with Matches after Insert smiley while a word is composing).
+ */
+export const T9_EDITOR_OPTIONS: readonly T9EditorOption[] = [
+  { label: "Send", golden: "sms/send" },
+  { label: "Send to many", golden: "sms/send-to-many", owner: "19" },
+  { label: "Template", golden: "sms/template", owner: "18c" },
+  { label: "Insert smiley", golden: "sms/insert-smiley", owner: "18c" },
+  { label: "Matches", golden: "t9/g-matches/10-used", composing: true },
+  { label: "Insert word", golden: "t9/g-insert-word/07-after-ok" },
+  // The menu-tree crawl: `Insert number:` with OK, and the symbol table (no golden, UNVERIFIED).
+  { label: "Insert number" },
+  { label: "Insert symbol" },
+  // Русский and Български are plan 26's (18b D11).
+  { label: "Dictionary", golden: "t9/dictionary-off-on/19-on", owner: "26" },
+  { label: "Send by set", golden: "sms/send-by-set-numeric" },
+  { label: "Save", golden: "sms/save" },
+  { label: "Erase", golden: "sms/erase" },
+  { label: "Exit", golden: "sms/exit" },
+];
+
+/** The Dictionary list (`text/dictionary-off` frame 10, `t9/dictionary-list`). */
 export const DICTIONARY_LABELS: readonly string[] = [
   "Dictionary off",
   "English",
@@ -41,13 +75,25 @@ export const DICTIONARY_LABELS: readonly string[] = [
 /** Messages › Write messages' Dictionary choice. */
 export const DICTIONARY_KEY = "messages/dictionary";
 
+/** The virgin phone writes with the English T9 dictionary (`tree/02-messages/2-1.leaf`, 18b D6). */
+export const VIRGIN_DICTIONARY = DICTIONARY_LABELS.indexOf("English");
+
 /**
- * Virgin values plan 18 overrides (D3): the virgin phone writes with the English T9 dictionary
- * (`tree/02-messages/2-1.leaf`, `text/dictionary-off` frame 9); without T9 (plan 18b) the editor
- * starts with Dictionary off. Plan 18b removes this.
+ * The virgin choices of a phone without a T9 dictionary (plan 18b D5): Dictionary off, the editor
+ * multi-tap, as after plan 18 (its D3).
  */
-export const VIRGIN_OVERRIDES: Readonly<Record<string, number>> = {
+export const NO_T9_VIRGIN_CHOICES: Readonly<Record<string, number>> = {
   [DICTIONARY_KEY]: DICTIONARY_LABELS.indexOf("Dictionary off"),
+};
+
+/**
+ * The Dictionary entries that open a later owner's placeholder: the Cyrillic dictionaries (plan
+ * 26, 18b D11), and English on a phone without a T9 dictionary (the host's `config.t9`, D5).
+ */
+export const DICTIONARY_OWNERS: Readonly<Record<string, string>> = {
+  Русский: "26",
+  Български: "26",
+  English: "config",
 };
 
 /**

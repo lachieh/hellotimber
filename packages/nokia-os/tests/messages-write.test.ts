@@ -3,7 +3,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
-import { DICTIONARY_KEY, EDITOR_OPTIONS } from "../src/messages/bindings";
+import { DICTIONARY_KEY, EDITOR_OPTIONS, NO_T9_VIRGIN_CHOICES } from "../src/messages/bindings";
 import { MESSAGE_SLOTS, StockMessages } from "../src/messages/store";
 import { SEND_LINK_MS } from "../src/resources";
 import {
@@ -105,14 +105,14 @@ describe("Write messages (2-1)", () => {
     expect(rig.phone.path).toBe("standby");
   });
 
-  it("stores the Dictionary choice: Dictionary off by default (D3)", () => {
+  it("stores the Dictionary choice: Dictionary off by default without T9 (D3, 18b D5)", () => {
     const storage = createMemoryStorage();
     const rig = standbyRig({ storage });
-    const settings = () => createStockSettings(new StockEeprom(storage));
+    const settings = () => createStockSettings(new StockEeprom(storage), NO_T9_VIRGIN_CHOICES);
     expect(settings().choice(DICTIONARY_KEY)).toBe(0);
     keys(rig, `${WRITE} ${option("Dictionary")} wait:500`);
     expectLcd(rig.paint(), goldenImage("text/editor", "dictionary-list-off"), "on Dictionary off");
-    // The T9 dictionaries are plan 18b's.
+    // English without a T9 dictionary is the host's (plan 18b D5).
     keys(rig, "down navi wait:300");
     expect(rig.phone.screen).toMatchObject({ kind: "custom" });
   });

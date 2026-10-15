@@ -466,10 +466,34 @@ export const SETTINGS_RECORD: EepromRecord<SettingsOverrides> = {
   factory: factorySettings,
 };
 
-/** The phone's settings over its EEPROM (D3): every write is stored at once. */
-export function createStockSettings(eeprom: StockEeprom): StockSettings {
+/**
+ * The phone's settings over its EEPROM (D3): every write is stored at once. `virginChoices`
+ * replaces virgin choices for this phone (plan 18b D5: Dictionary off without a T9 dictionary);
+ * Restore factory settings returns to them.
+ */
+export function createStockSettings(
+  eeprom: StockEeprom,
+  virginChoices: Readonly<Record<string, number>> = {},
+): StockSettings {
+  const base = virgin();
+  const initial: StockSettingsSnapshot =
+    Object.keys(virginChoices).length === 0
+      ? base
+      : {
+          ...base,
+          choices: {
+            ...base.choices,
+            ...Object.fromEntries(
+              Object.entries(virginChoices).map(([key, chosen]) => {
+                const setting = base.choices[key];
+                if (setting === undefined) throw new Error(`No single-choice setting "${key}".`);
+                return [key, { ...setting, chosen }];
+              }),
+            ),
+          },
+        };
   return settingsOver(
-    virgin(),
+    initial,
     eeprom.read(SETTINGS_RECORD),
     (overrides) => eeprom.write(SETTINGS_RECORD, overrides),
     () => {

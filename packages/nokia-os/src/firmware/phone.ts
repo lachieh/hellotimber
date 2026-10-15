@@ -28,6 +28,9 @@ import { createStockSettings } from "./settings";
 import { StockLightRules, StockLights, type StockLightsPort } from "./features/backlight";
 import { KeyguardOverlay } from "./features/keyguard";
 import type { StockSoundPort } from "../sound/port";
+import { NO_T9_VIRGIN_CHOICES } from "../messages/bindings";
+import type { T9Dictionary } from "../text/t9/dictionary";
+import { stockT9 } from "../text/t9/service";
 import { SoundSequencer } from "../sound/sequencer";
 import { StockSounder, type KeyDownOptions } from "../sound/sounder";
 
@@ -65,6 +68,11 @@ export interface StockPhoneConfig extends StockPorts {
    * nothing delivered unless the host calls its `deliver`).
    */
   network?: StockNetworkPort;
+  /**
+   * Plan 18b: T9 dictionaries. With `english`, Write messages starts in T9 English as the virgin
+   * firmware does. Without it, T9 English is unavailable (Dictionary off, plan 18 behaviour).
+   */
+  t9?: { readonly english?: T9Dictionary };
 }
 
 /**
@@ -128,7 +136,9 @@ export function createStockPhoneWith(
   }
   const { clock, date } = config;
   const eeprom = new StockEeprom(config.storage ?? createMemoryStorage());
-  const settings = createStockSettings(eeprom);
+  const t9 = stockT9(eeprom, config.t9?.english);
+  // Plan 18b D5: without a T9 dictionary the virgin editor is multi-tap (Dictionary off).
+  const settings = createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES);
   let now = 0;
   const security = new StockSecurity(eeprom, settings, { now: () => now, sim });
   const skip = config.boot === "skip";
@@ -167,7 +177,7 @@ export function createStockPhoneWith(
   );
   messaging.connect();
   const phone = createPhone({
-    menu: createStockMenu(ports, settings, games, security, sounder, eeprom, messaging),
+    menu: createStockMenu(ports, settings, games, security, sounder, eeprom, messaging, t9),
     // Plan 18 D11: the envelope while Inbox holds unread messages, blinking while every slot is
     // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED).
     standbyIndicators: () => {
@@ -197,7 +207,7 @@ export function createStockPhoneWith(
   // Plan 25 K7, L7: an arrival lights the phone, but not a locked one.
   const arrivals = stockArrivals(
     phone,
-    stockServices(ports, settings, games, security, sounder, eeprom, messaging),
+    stockServices(ports, settings, games, security, sounder, eeprom, messaging, t9),
     () => {
       const engine = keyguard.engine;
       if ((engine.locked ? engine.arrivedWhileLocked() : { activity: true }).activity) {

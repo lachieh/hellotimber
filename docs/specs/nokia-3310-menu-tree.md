@@ -150,8 +150,8 @@ subtrees are written out once and then referred to.
         - Order and behaviour (plan 18b, [T9 behaviour](t9-behaviour.md) 10.4): `Dictionary off`,
           `English`, `Русский`, `Български`; the list opens on the current choice and wraps. The
           choice is stored and shared by every editor that offers it, and survives a power cycle.
-          From Dictionary off, `English` switches the editor back to T9 at once with no note (the
-          `T9 dictionary activated` notes below were crawled with English already on).
+          `English` shows the `T9 dictionary activated` tick note from Dictionary off too
+          (`t9/dictionary-off-on/19-on`), then the editor in T9.
         - `2-1/Options-8-1` **Dictionary off** → tick-note, "T9 dictionary deactivated" (≈1.39 s); then back to the editor
           - **Options** → returns-immediately, "Send / Send to many / Template", key **OK**
         - `2-1/Options-8-2` **English** → timed-note, "T9 dictionary activated"; then back to the list after ≈4.3 s

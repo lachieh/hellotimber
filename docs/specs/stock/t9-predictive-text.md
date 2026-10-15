@@ -22,4 +22,4 @@ therefore differ from the firmware (T9 behaviour, section 15).
 | T7  | ▲/▼ stop at word starts and ends; a stop at a word end re-enters the word; `C` re-enters across a deleted space                                 | 9         |
 | T8  | Matches lists the other candidates then the current; Insert word/Spell prompt is plan 18's text input; user words join the lists                | 10, 11    |
 | T9  | User words: second place when exact (oldest first), completions at the end; a byte budget (≈840), oldest dropped; kept when the text is cleared | 11        |
-| T10 | No commit timeout; no T9-specific sound; Dictionary off persists across power cycles; English on has no note                                    | 4, 10, 12 |
+| T10 | No commit timeout; no T9-specific sound; Dictionary off persists across power cycles; English on shows `T9 dictionary activated` (corrected)    | 4, 10, 12 |

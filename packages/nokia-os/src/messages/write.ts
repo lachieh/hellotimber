@@ -1,11 +1,15 @@
 // Write messages (2-1, plan 18 Task 10): the multi-tap SMS editor and its Options as Task 0
 // recorded them (`text/options`, `sms/*`), sending through the phone's network port (D9) and
-// saving to Outbox (D8). Reply, Edit and Forward (Task 11) open the same editor.
+// saving to Outbox (D8). Reply, Edit and Forward (Task 11) open the same editor. Plan 18b: while
+// Dictionary is English (and the host gave a T9 dictionary) the editor writes in T9, with the T9
+// Options (Matches, Insert word, Insert number, Insert symbol) and the Spell prompt.
 import type { StockServices } from "../firmware/features/feature";
 import { timelineById, timelineByName } from "../firmware/timelines";
 import type { WidgetModel } from "../display/widgets";
 import { SAVING_MS } from "../resources";
-import { editor, type EditorControl } from "../widgets/editor";
+import type { T9Context } from "../text/t9/editing";
+import { editor, smsCounter, type EditorControl, type T9EditorControl } from "../widgets/editor";
+import { symbolTable } from "../widgets/symbol-table";
 import type { Flow, Widget } from "../widgets/flow";
 import { BLANK, interlude, softkeyAlone } from "../widgets/interlude";
 import { note } from "../widgets/note";
@@ -13,7 +17,14 @@ import { numberEntry } from "../widgets/number-entry";
 import { OptionListWidget } from "../widgets/option-list";
 import { Playback } from "../widgets/playback";
 import { textInput } from "../widgets/text-input";
-import { COMPOSED_FLOWS, DICTIONARY_KEY, DICTIONARY_LABELS, EDITOR_OPTIONS } from "./bindings";
+import {
+  COMPOSED_FLOWS,
+  DICTIONARY_KEY,
+  DICTIONARY_LABELS,
+  DICTIONARY_OWNERS,
+  EDITOR_OPTIONS,
+  T9_EDITOR_OPTIONS,
+} from "./bindings";
 import type { StockSms } from "./network";
 
 /** An SMS holds 459 characters in three parts (`text/counter` 459: `0/3`). */
@@ -147,34 +158,102 @@ function placeholder(label: string): Widget {
   };
 }
 
+const ENGLISH = DICTIONARY_LABELS.indexOf("English");
+
 /**
- * Options › Dictionary (`text/dictionary-off`): the list opens on the stored dictionary
- * (Dictionary off, D3); Dictionary off shows `T9 dictionary deactivated`, then the editor; the
- * T9 dictionaries are plan 18b's.
+ * Options › Dictionary (`text/dictionary-off`, `t9/dictionary-list`, `t9/dictionary-off-on`): the
+ * list opens on the stored dictionary. Dictionary off shows `T9 dictionary deactivated`, English
+ * `T9 dictionary activated` (the same tick note; plan 18b: the golden shows it where the spec
+ * said none), then the editor in its new mode. The Cyrillic dictionaries are plan 26's
+ * placeholders, and English is the host's (`config.t9`, D5) without a T9 dictionary.
  */
 function dictionary(services: StockServices): Widget {
   const { settings, noteSound } = services;
-  const deactivated = timelineByName("t9-dictionary-deactivated");
+  const notes = [
+    { lines: ["T9", "dictionary", "deactivated"], timeline: "t9-dictionary-deactivated" },
+    { lines: ["T9", "dictionary", "activated"], timeline: "t9-dictionary-activated" },
+  ] as const;
   return new OptionListWidget({
     labels: DICTIONARY_LABELS,
     opening: settings.choice(DICTIONARY_KEY),
     softkey: "OK",
     numbering: "option",
     choose(index, flow) {
-      if (index !== 0) {
-        flow.push(placeholder(DICTIONARY_LABELS[index]!));
+      const label = DICTIONARY_LABELS[index]!;
+      const owned = index === ENGLISH && services.t9.english !== undefined ? undefined : label;
+      if (owned !== undefined && DICTIONARY_OWNERS[owned] !== undefined) {
+        flow.push(placeholder(label));
         return;
       }
       settings.choose(DICTIONARY_KEY, index);
+      const shown = notes[index === 0 ? 0 : 1];
       // The list closes, its note replaces Options, then the editor.
       flow.back();
       flow.replace(
-        note({
-          lines: ["T9", "dictionary", "deactivated"],
-          timeline: deactivated,
-          sound: noteSound,
-        }),
+        note({ lines: shown.lines, timeline: timelineByName(shown.timeline), sound: noteSound }),
       );
+    },
+  });
+}
+
+/** The editor's T9 context: the host's English dictionary while Dictionary is English (18b). */
+function t9Context(services: StockServices): T9Context | undefined {
+  const english = services.t9.english;
+  if (english === undefined || services.settings.choice(DICTIONARY_KEY) !== ENGLISH) {
+    return undefined;
+  }
+  return { dictionary: english, user: services.t9.userWords() };
+}
+
+/**
+ * Options › Matches (spec 10.2, `t9/g-matches`): the composing word's other candidates, then
+ * itself; Use shows the chosen one, still composing, in the editor; C goes back to Options.
+ */
+function matches(t9: T9EditorControl): Widget {
+  return new OptionListWidget({
+    labels: t9.matches(),
+    opening: 0,
+    softkey: "Use",
+    numbering: "option",
+    choose(index, flow) {
+      t9.useMatch(index);
+      flow.back(2);
+    },
+  });
+}
+
+/**
+ * The `Insert word:` prompt (spec 10.3; Options › Insert word, and Spell): plan 18's text input
+ * with the multi-tap header, its case the editor's at the word, its counter the message's
+ * (`t9/g-insert-word/04-typed`: `455/1` for `Hovo`). OK with text inserts it (Spell: in place
+ * of the composing word) and stores the word around the cursor as a user word; OK or C on the
+ * empty prompt goes back (`t9/insert-word-empty`).
+ */
+function insertWord(services: StockServices, entry: EditorControl, spell: boolean): Widget {
+  const t9 = entry.t9!;
+  const used = Array.from(spell ? t9.textBesideWord : entry.text).length;
+  return textInput({
+    label: ["Insert word:"],
+    limit: SMS_LIMIT - used,
+    counter: (length) => smsCounter(used + length, SMS_LIMIT),
+    mode: (spell ? t9.wordSentenceStart : t9.sentenceStart) ? "Abc" : "abc",
+    done(text, flow) {
+      if (text !== "") services.t9.learn(spell ? t9.spell(text) : t9.insertWord(text));
+      flow.back();
+    },
+  });
+}
+
+/**
+ * Options › Insert number (the menu-tree crawl: `Insert number:` with OK; UNVERIFIED beyond it):
+ * plan 18's number entry; OK inserts the number at the cursor.
+ */
+function insertNumber(entry: EditorControl): Widget {
+  return numberEntry({
+    label: ["Insert number:"],
+    done(number, flow) {
+      entry.insert(number);
+      flow.back();
     },
   });
 }
@@ -183,8 +262,8 @@ function dictionary(services: StockServices): Widget {
  * Options › Send by set (`text/input`, `sms/send-by-set-*`): Set 1, Set 2 (indicator `6-k`), each
  * opening Numeric (a number prompt) and Alphanumeric (`Routing address:`, a text input in ABC).
  */
-function sendBySet(services: StockServices, text: string): Widget {
-  const prefix = [EDITOR_OPTIONS.findIndex((o) => o.label === "Send by set") + 1];
+function sendBySet(services: StockServices, text: string, number: number): Widget {
+  const prefix = [number];
   const kinds = (set2: boolean): Widget =>
     new OptionListWidget({
       labels: ["Numeric", "Alphanumeric"],
@@ -262,8 +341,18 @@ function standbyDraw({ ports }: StockServices): WidgetModel {
   return { kind: "standby-draw", ...(clock === undefined ? {} : { clock }) };
 }
 
-/** The multi-tap editor's Options (`text/options`), over the editor whose text is `entry`'s. */
+/**
+ * The editor's Options over the editor whose text is `entry`'s: multi-tap's nine
+ * (`text/options`), or T9's twelve, thirteen with Matches while a word composes (plan 18b).
+ */
 function editorOptions(services: StockServices, entry: EditorControl, draft: SmsDraft): Widget {
+  const t9 = entry.t9;
+  const labels =
+    t9 === undefined
+      ? EDITOR_OPTIONS.map((option) => option.label)
+      : T9_EDITOR_OPTIONS.filter((option) => !option.composing || t9.composing).map(
+          (option) => option.label,
+        );
   const actions: Readonly<Record<string, (flow: Flow) => void>> = {
     Send: (flow) => flow.replace(phoneNumber(services, entry.text, draft.number ?? "", 1, false)),
     "Send to many": (flow) =>
@@ -281,8 +370,14 @@ function editorOptions(services: StockServices, entry: EditorControl, draft: Sms
     // No response in the captured state (`sms/template`, `sms/insert-smiley`).
     Template: () => {},
     "Insert smiley": () => {},
+    Matches: (flow) => flow.push(matches(t9!)),
+    "Insert word": (flow) => flow.replace(insertWord(services, entry, false)),
+    "Insert number": (flow) => flow.replace(insertNumber(entry)),
+    "Insert symbol": (flow) =>
+      flow.replace(symbolTable((symbol) => entry.insert(symbol), { t9: true })),
     Dictionary: (flow) => flow.push(dictionary(services)),
-    "Send by set": (flow) => flow.push(sendBySet(services, entry.text)),
+    "Send by set": (flow) =>
+      flow.push(sendBySet(services, entry.text, labels.indexOf("Send by set") + 1)),
     Save: (flow) => save(services, flow, entry.text, draft.number),
     Erase: (flow) => {
       entry.clear();
@@ -294,11 +389,11 @@ function editorOptions(services: StockServices, entry: EditorControl, draft: Sms
       ),
   };
   return new OptionListWidget({
-    labels: EDITOR_OPTIONS.map((option) => option.label),
+    labels,
     opening: 0,
     softkey: "OK",
     numbering: "option",
-    choose: (index, flow) => actions[EDITOR_OPTIONS[index]!.label]!(flow),
+    choose: (index, flow) => actions[labels[index]!]!(flow),
   });
 }
 
@@ -311,5 +406,7 @@ export function smsEditor(services: StockServices, draft: SmsDraft = {}): Widget
     softkey: "Options",
     ...(draft.text === undefined ? {} : { text: draft.text }),
     options: (flow, entry) => flow.push(editorOptions(services, entry, draft)),
+    t9: () => t9Context(services),
+    spell: (flow, entry) => flow.push(insertWord(services, entry, true)),
   });
 }
