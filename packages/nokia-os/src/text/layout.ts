@@ -58,12 +58,17 @@ export function pendingSlot(state: TextState, font: StockFontName): PendingSlot 
   return { at: state.cursor - 1, width: Math.max(...chars.map((char) => advance(font, char))) };
 }
 
-/** `text` wrapped into lines of `width` columns (see the header for the rules). */
+/**
+ * `text` wrapped into lines of `width` columns (see the header for the rules). `wordBreak` is a
+ * character where a word may break as at a space (plan 18b: a T9 completion's untyped letters and
+ * its `?` wrap on their own).
+ */
 export function wrapText(
   text: string,
   font: StockFontName,
   width: number,
   pending?: PendingSlot,
+  wordBreak?: number,
 ): readonly TextLine[] {
   const chars = Array.from(text);
   const widthOf = (i: number): number =>
@@ -85,7 +90,9 @@ export function wrapText(
     }
     let end = i;
     let word = 0;
-    while (end < chars.length && chars[end] !== " ") word += widthOf(end++);
+    while (end < chars.length && chars[end] !== " " && (end === i || end !== wordBreak)) {
+      word += widthOf(end++);
+    }
     if (x > 0 && x + word > width - WORD_MARGIN) breakAt(i);
     if (x + word <= width - WORD_MARGIN) {
       x += word;

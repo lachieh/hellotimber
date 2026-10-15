@@ -6,6 +6,7 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { TEXT_TIMINGS } from "../resources";
 import { isTextKey, MULTITAP_KEYS, type TextKey } from "./keys";
+import type { T9Composing } from "./t9/engine";
 
 /**
  * The entry mode: `Abc` is sentence case (upper at a sentence start, shown `abc` elsewhere),
@@ -28,8 +29,16 @@ export interface TextState {
     readonly index: number;
     readonly sinceMs: number;
   } | null;
-  /** In 123: the letter mode a held # returns to (ABC stays ABC, the rest sentence case). */
-  readonly letters?: "Abc" | "ABC";
+  /**
+   * In 123: the letter mode a held # returns to (multi-tap: ABC stays ABC, the rest sentence
+   * case; T9 returns to the mode it left, plan 18b).
+   */
+  readonly letters?: Exclude<TextMode, "123">;
+  /**
+   * Plan 18b D8: the T9 composing word, which ends at the cursor (its shown candidate is in
+   * `text`); absent or null in multi-tap and between words.
+   */
+  readonly t9?: T9Composing | null;
 }
 
 /** An empty entry in `mode` (the editor starts in sentence case). */
@@ -44,7 +53,7 @@ export function emptyText(mode: TextMode = "Abc"): TextState {
  * space or more (`text/case-after`); straight after the mark it does not (`text/symbols-use-first`
  * frame 1: `Hi.` shows abc).
  */
-function sentenceStart(text: string, at: number): boolean {
+export function sentenceStart(text: string, at: number): boolean {
   return /(^|[.?!] ) *$/.test(text.slice(0, at));
 }
 

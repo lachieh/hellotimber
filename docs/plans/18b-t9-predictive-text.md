@@ -525,15 +525,39 @@ stored word is non-empty without spaces; decoding re-applies the budget.
 `src/resources/**` (only via generators: the T9 header icon from plan 18 Task 3's crop table, if
 it was not cropped there), `tests/widgets-editor-t9.test.ts` (new).
 
-- [ ] `TextState.t9` (D8); the editor dispatches to the T9 engine when the setting is English.
-- [ ] Painter: T9 header (icon, mode text at x 21), underline under the composing word, `?` after
+- [x] `TextState.t9` (D8); the editor dispatches to the T9 engine when the setting is English.
+- [x] Painter: T9 header (icon, mode text at x 21), underline under the composing word, `?` after
       it, soft key `Spell`, counter counting the composing word. TDD against the `g-compose`,
       `g-nomatch*`, `single`, `punct-alone`, `g-punct-word` stills.
-- [ ] Keys: `*`, `0`, `1`, `#`, held `#`, held digits, `C`, held `C`, ▲/▼ word stops and
+- [x] Keys: `*`, `0`, `1`, `#`, held `#`, held digits, `C`, held `C`, ▲/▼ word stops and
       re-entry. TDD through keys against `g-case*`, `digits`, `case-word`, `g-delete*`,
       `g-cursor-*`, `apostrophe`.
-- [ ] No commit timeout: the `g-compose` idle timeline passes (blink only) within ±2 ms.
-- [ ] Commit: `feat(nokia-os): T9 mode in the text editor`.
+- [x] No commit timeout: the `g-compose` idle timeline passes (blink only) within ±2 ms.
+- [x] Commit: `feat(nokia-os): T9 mode in the text editor`.
+
+Outcome: `tests/widgets-editor-t9.test.ts` drives the SMS editor with `englishT9` from each
+editor-only golden's note (20 scenarios, 139 goldens): 138 match (stills in either blink phase,
+`g-compose/05-idle` within ±2 ms) and `g-star-free/07-star-after-space` is a known gap (below).
+`tests/t9-editing.test.ts` pins `0`, `#`, holds, C, word stops and insertions on the fixture.
+
+Deviation: what the goldens show beyond the spec, now implemented. The underline covers the
+typed letters' cells without the last one's blank column, not the ink (`punct-alone/09-p-star8`:
+`1` is underlined from x 1 to x 5); a completion's untyped letters and the `?` wrap as a word of
+their own, and only the typed letters are underlined (`g-spell/16-prefix-star5`: `Into` on the
+first line, `s?` on the next); no `?` still shows the cursor, so the cursor hides while `?`
+shows; in 123 the header is multi-tap's (plain pen, `123` from x 14, `g-case/09-num`); the
+symbol table opened from the T9 editor has the T9 header (`g-star-free/04-held-star-empty`). The
+mode is explicit in T9 (spec 8): `Abc` capitalises the next letter and becomes `abc`; a word end,
+C to a word start, ▲/▼ and an insertion set `Abc` at a sentence start and `abc` elsewhere, so
+the empty editor and the text's start show `Abc` (`g-delete/05-c4`, `g-cursor-down/04-d3`); key
+1 counts as a letter (`punct-alone/01-p1` shows `abc`); held digits leave the mode
+(`digits/01-held5`). A held digit undoes its press and types the digit (`digits`: `5`, then held
+`0` gives `50`, held `1` `501`); held `*` opens the symbols after
+`T9_SYMBOLS_HOLD_MS` (held-#'s 1010 ms, UNVERIFIED). Re-entry needs the word in its own lists
+(spec 9 leaves other words open). Known gap: after `Into ` a short `*` leaves one lit pixel at
+the cursor's column on the underline row (`g-star-free/07`); the spec says `*` does nothing
+there and the empty editor's second `*` shows none, so the rule is unknown: reported, not
+reproduced.
 
 ### Task 7 - Options, prompts and the virgin default (TDD)
 
