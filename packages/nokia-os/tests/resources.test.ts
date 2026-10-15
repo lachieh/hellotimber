@@ -740,6 +740,7 @@ describe("sound programs and rules (plan 16 Task 3)", () => {
       "Code error",
       "Dividing by zero not allowed",
       "Invalid shortcut",
+      "Keypad locked",
       "No phone numbers",
       "No voice tags saved",
       "Not allowed",

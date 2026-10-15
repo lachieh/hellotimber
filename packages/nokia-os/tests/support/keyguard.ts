@@ -14,7 +14,8 @@ import type { StockPhoneConfig } from "../../src/index";
 import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { LIGHT_EDGE_TOLERANCE_MS } from "./lights.ts";
-import { standbyRig, type Rig } from "./rig.ts";
+import { seededStorage, standbyRig, type Rig } from "./rig.ts";
+import { expectSoundTimeline, loadSoundGolden, playSound } from "./sound.ts";
 
 /** Menu, then `*` this long after it: the captures' lock (`keyguard/lock`). */
 const LOCK_STAR_MS = 300;
@@ -109,4 +110,18 @@ export function keyguardTimeline(id: string, keyguardCase: KeyguardCase): void {
   expect(leds, `${context}: leds by row from frame ${t - 1}`).toEqual(
     rows.slice(t - 1).map((row) => row.leds),
   );
+}
+
+/**
+ * A keyguard sound golden (D12): the capture's factory phone, dark and its DSP asleep (the
+ * script waited for the LEDs to go off), at standby for the lock's note, else locked; then the
+ * golden's keys from time 0.
+ */
+export function keyguardSound(id: string): void {
+  const golden = loadSoundGolden(id);
+  const config = { storage: seededStorage({ factory: true }) };
+  const rig =
+    id === "sound/note/keypad-locked" ? darkStandbyRig(config) : lockedRig("dark", config);
+  const recorded = playSound(rig, golden);
+  expectSoundTimeline(recorded, golden, `${id}: ${golden.note ?? "its keys"}`);
 }

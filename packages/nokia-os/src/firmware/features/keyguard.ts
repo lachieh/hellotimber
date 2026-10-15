@@ -8,6 +8,7 @@
 import type { Phone, PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { paintWidget, type KeyguardModel } from "../../display/widgets";
+import { KEYPAD_LOCKED_LINES } from "../../display/widgets/keyguard";
 import type { StockWidgetTimeline } from "../../resources";
 import { timelineByName } from "../timelines";
 import type { StockFeature } from "./feature";
@@ -395,30 +396,41 @@ export function keyguardModel(
  * Frames are `custom` screens painted by the stock painter, repainted only when their model
  * changes (each sees the frame shown before: the notes' partial draws start from it).
  */
+export interface KeyguardOverlayOptions extends KeyguardOptions {
+  /** Plays a note's warning tone by its lines (plan 16 D12): `Keypad locked`'s 1750 Hz. */
+  readonly noteSound?: (lines: readonly string[]) => void;
+}
+
 export class KeyguardOverlay {
   readonly engine: KeyguardEngine;
   readonly #kernel: Phone;
   readonly #now: () => number;
+  readonly #noteSound: ((lines: readonly string[]) => void) | undefined;
   /** The kernel's standby last seen (the locked standby composes it). */
   #standby: Standby | undefined;
   #shown: { readonly json: string; readonly screen: ScreenModel & { kind: "custom" } } | undefined;
 
-  constructor(kernel: Phone, options: KeyguardOptions) {
+  constructor(kernel: Phone, options: KeyguardOverlayOptions) {
     this.#kernel = kernel;
     this.#now = options.now;
+    this.#noteSound = options.noteSound;
     this.engine = new KeyguardEngine(options);
   }
 
   /**
    * A powered phone's key-down. Menu at standby (no notice: Navi reads it) opens the lock
-   * window; the locking `*` returns the kernel's carousel to standby underneath the lock note.
+   * window; the locking `*` returns the kernel's carousel to standby underneath the lock note,
+   * whose warning tone plays in place of the `*`'s beep (D12).
    */
   keyDown(key: PhoneKey): KeyguardOutcome {
     const screen = this.#kernel.screen;
     const atStandby = screen.kind === "standby" && screen.notice === undefined;
     const wasLocked = this.engine.locked;
     const outcome = this.engine.keyDown(key, atStandby);
-    if (!wasLocked && this.engine.locked) this.#kernel.navigate("standby");
+    if (!wasLocked && this.engine.locked) {
+      this.#kernel.navigate("standby");
+      this.#noteSound?.(KEYPAD_LOCKED_LINES);
+    }
     return outcome;
   }
 

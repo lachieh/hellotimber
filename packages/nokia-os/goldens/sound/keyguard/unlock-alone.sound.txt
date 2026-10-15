@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/keyguard/unlock-alone
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/sound/keyguard/unlock-alone
 source-sha256: 838840032ab42a5af95a253ded895c284bf925cfcd27ff26a45fd4786a6bab2a
 state: factory

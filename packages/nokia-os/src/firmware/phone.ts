@@ -157,7 +157,10 @@ export function createStockPhoneWith(
     shortcutEntry: { openDelayMs: STOCK_SHORTCUT_OPEN_DELAY_MS, invalid: invalidShortcut(sounder) },
   });
   // Plan 25 D4: the keyguard over the kernel, which stays at standby underneath it.
-  const keyguard = new KeyguardOverlay(phone, { now: () => now });
+  const keyguard = new KeyguardOverlay(phone, {
+    now: () => now,
+    noteSound: (lines) => sounder.note(lines),
+  });
   // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
   // Plan 25: the light tick runs from the power-on; the boot lights the LEDs at the self-test's
   // first frame and again where the firmware shows its clock prompt (nokia-os: standby).

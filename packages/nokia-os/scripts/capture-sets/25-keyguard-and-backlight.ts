@@ -21,7 +21,6 @@ import {
 import type { TreeCaptureIo } from "../tree-capture-set.ts";
 
 const P = "plan25";
-const OWN: GoldenStatus = "pending:25";
 const ASSERTED: GoldenStatus = "asserted";
 const MESSAGES: GoldenStatus = "pending:18";
 const CALLS: GoldenStatus = "pending:22";
@@ -536,16 +535,24 @@ const KEYGUARD_SOUNDS: readonly SoundCaptureEntry[] = [
   ["emergency", "1 1 2 on a dark locked standby: silent."],
   ["hint-key", "5 on a locked standby: silent."],
   ["hint-key-c", "C on a locked standby: silent."],
-  ["lock", "Menu, then * at 300 ms: Menu's beep, then the lock's warning tone."],
   ["unlock", "Unlock, then * at 300 ms: the *'s beep."],
   ["unlock-alone", "Unlock alone: silent."],
-].map(([name, note]) => ({
-  id: `sound/keyguard/${name}`,
-  dir: `${P}/sound/keyguard/${name}`,
-  state: "factory",
-  status: OWN,
-  note: note!,
-}));
+]
+  .map(([name, note]) => ({ id: `sound/keyguard/${name}`, name: name!, note: note! }))
+  // The lock's note: a `sound/note/` golden quoting its text, so its warning tone joins
+  // NOTE_SOUNDS (plan 16's generator, D12).
+  .concat({
+    id: "sound/note/keypad-locked",
+    name: "lock",
+    note: "\"Keypad locked\" (Warning tones On): Menu, then * at 300 ms: Menu's beep, then the lock's warning tone.",
+  })
+  .map(({ id, name, note }) => ({
+    id,
+    dir: `${P}/sound/keyguard/${name}`,
+    state: "factory",
+    status: ASSERTED,
+    note,
+  }));
 
 export const keyguardAndBacklight: PlanCaptureSet = {
   plan: "25",

@@ -13,7 +13,7 @@ Tasks 12-14 (phone-3d) need only Task 1.
 "Plan 16 supplementary captures") and plans 13-16 and 23 before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan25/`. The planning probes in
 `$REF/captures/scratch-plan25/` are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-8 and 12-14 done; Tasks 9-11 and 15 not started).
+**Status:** in progress (Tasks 0-9 and 12-14 done; Tasks 10, 11 and 15 not started).
 
 ## Goal
 
@@ -924,13 +924,29 @@ Deviation: the lights rig records the games' cues instead of sounding them (`lig
 **Files:** `tests/keyguard-sound.test.ts` (new), `tests/support/keyguard.ts`; plan 16's generator
 input only if a keyguard note sounds (`NOTE_SOUNDS` by quoted note text; regenerate twice).
 
-- [ ] Drive `sound/keyguard/*` from the factory state (`seededStorage({ factory: true })`) with
+- [x] Drive `sound/keyguard/*` from the factory state (`seededStorage({ factory: true })`) with
       plan 16's `playSound`/`expectSoundTimeline` and tolerances: the lock, a locked key, Unlock
       alone, unlock and an emergency number.
-- [ ] A locked key that the capture shows silent uses plan 16's `silent-key` cue path from the
+- [x] A locked key that the capture shows silent uses plan 16's `silent-key` cue path from the
       overlay; anything else the sounder cannot do: stop and report (D12).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): keyguard beeps and tones`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): keyguard beeps and tones`.
+
+**Task 9 completion.** The six keyguard sound goldens are asserted with scenarios
+(`tests/support/keyguard.ts` `keyguardSound`: the factory phone dark, its DSP asleep, at standby
+or locked); `tests/keyguard-sound.test.ts` (3 tests: the tone in place of the `*`'s beep, silent
+with Warning tones Off, locked keys silent held and with the power key). The overlay plays
+`Keypad locked`'s lines through `sounder.note` when it locks (`KeyguardOverlayOptions.noteSound`).
+
+Deviation: the lock's recording is imported as `sound/note/keypad-locked` (its note quotes
+`"Keypad locked"`), not `sound/keyguard/lock`: plan 16's generator takes warning tones from
+`sound/note/` goldens, so `NOTE_SOUNDS` gains `Keypad locked` (1750 Hz, 0x9105, 293 ms) by
+regeneration. `tests/resources.test.ts`'s exact list of note sounds gains that line (a shared
+list other plans extend).
+
+Deviation: no `silent-key` cue: the wrapper never hands a key the keyguard swallows silently to
+the sounder (neither its key-down nor a held beep), which is what the cue achieves for widgets
+under the kernel.
 
 ### Task 10 - Acceptance
 

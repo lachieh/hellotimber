@@ -1495,43 +1495,43 @@
   {
     "id": "sound/keyguard/emergency",
     "file": "sound/keyguard/emergency.sound.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/keyguard/hint-key",
     "file": "sound/keyguard/hint-key.sound.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/keyguard/hint-key-c",
     "file": "sound/keyguard/hint-key-c.sound.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
-    "id": "sound/keyguard/lock",
-    "file": "sound/keyguard/lock.sound.txt",
-    "status": "pending:25",
-    "kind": "sound",
-    "events": 4
-  },
-  {
     "id": "sound/keyguard/unlock",
     "file": "sound/keyguard/unlock.sound.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/keyguard/unlock-alone",
     "file": "sound/keyguard/unlock-alone.sound.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
+  },
+  {
+    "id": "sound/note/keypad-locked",
+    "file": "sound/note/keypad-locked.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 4
   }
 ]

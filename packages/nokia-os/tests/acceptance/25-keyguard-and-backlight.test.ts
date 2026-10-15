@@ -6,7 +6,12 @@ import { readPlanIndex } from "../../scripts/golden-index.ts";
 import { acceptancePlan, GOLDENS, type Scenario } from "../support/acceptance.ts";
 import { expectLcd } from "../support/golden.ts";
 import { goldenImage } from "../support/goldens.ts";
-import { keyguardTimeline, lockedRig, type KeyguardCase } from "../support/keyguard.ts";
+import {
+  keyguardSound,
+  keyguardTimeline,
+  lockedRig,
+  type KeyguardCase,
+} from "../support/keyguard.ts";
 import { lightsScenario } from "../support/lights.ts";
 import { standbyRig } from "../support/rig.ts";
 
@@ -134,6 +139,12 @@ const scenarios: Record<string, Scenario> = {
       id,
       () => keyguardTimeline(id, keyguardCase),
     ]),
+  ),
+  // Task 9: the keyguard's sounds (D12).
+  ...Object.fromEntries(
+    readPlanIndex(GOLDENS, "25")
+      .filter((entry) => entry.kind === "sound")
+      .map((entry) => [entry.id, keyguardSound]),
   ),
   "keyguard/standby": (id) =>
     expectLcd(lockedRig().paint(), goldenImage(id, "standby"), "the locked standby"),

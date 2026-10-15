@@ -299,9 +299,9 @@ describe("plan 25's capture set", () => {
       "sound/keyguard/emergency",
       "sound/keyguard/hint-key",
       "sound/keyguard/hint-key-c",
-      "sound/keyguard/lock",
       "sound/keyguard/unlock",
       "sound/keyguard/unlock-alone",
+      "sound/note/keypad-locked",
     ]);
   });
 });
