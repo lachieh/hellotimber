@@ -1,81 +1,24 @@
-// Plan 18b Task 7: the T9 editor's Options, Matches, the Insert word and Spell prompts, user
-// words, the Dictionary list and the virgin T9 default, on a stock phone. The goldens of the
-// scenarios that leave the editor are driven from their notes (tests/support/t9.ts) with the
-// shipped English dictionary; the rest are behaviours the goldens do not show.
+// Plan 18b Task 7: the virgin T9 default, the Dictionary's placeholders and notes, user words
+// across a power cycle, Insert number and Insert symbol, on a stock phone: what the goldens do
+// not show. The goldens themselves are the acceptance's (tests/support/t9.ts `t9Scenario`;
+// before their promotion, tests/t9-promotion.test.ts).
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { readPlanIndex } from "../scripts/golden-index.ts";
 import { DICTIONARY_KEY } from "../src/messages/bindings";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import { createMemoryStorage } from "../src/index";
 import { englishT9 } from "../src/text/t9/english";
 import { T9_USER_RECORD } from "../src/text/t9/user";
-import { GOLDENS } from "./support/acceptance.ts";
 import { paintWidget } from "../src/display/widgets";
 import { emptyText, type TextState } from "../src/text/multitap";
 import type { T9Display } from "../src/text/t9";
 import { editorModel } from "../src/widgets/editor";
 import { expectLcd } from "./support/golden.ts";
-import { goldenImage, loadGolden } from "./support/goldens.ts";
+import { goldenImage } from "./support/goldens.ts";
 import { keys } from "./support/probes.ts";
 import { expectLcdAnyBlink } from "./support/replay.ts";
 import { standbyRig, type Rig } from "./support/rig.ts";
-import {
-  expectT9Still,
-  expectT9Timeline,
-  parseT9Note,
-  playT9,
-  t9PhoneTarget,
-  T9_KNOWN_GAPS,
-  T9_TOLERANCES,
-  type T9Recording,
-} from "./support/t9.ts";
-
-/** The scenarios beyond the editor: Options, prompts, the Dictionary, the page, persistence. */
-const PHONE_SCENARIOS = [
-  "first",
-  "options-empty",
-  "g-options",
-  "g-matches",
-  "g-matches-single",
-  "g-spell",
-  "g-insert-word",
-  "g-userwords-two",
-  "insert-word-empty",
-  "dictionary-list",
-  "dictionary-off-on",
-  "g-persist-dict",
-];
-
-const IDS = readPlanIndex(GOLDENS, "18b")
-  .map((entry) => entry.id)
-  .filter((id) => PHONE_SCENARIOS.includes(id.split("/")[1]!) || id === "t9/g-delete/06-c5");
-
-/** Plays golden `id`'s note on a stock phone with the English dictionary and compares it. */
-export function t9PhoneScenario(id: string): void {
-  const golden = loadGolden(id);
-  const { base, steps } = parseT9Note(golden.note ?? "");
-  const target = t9PhoneTarget(base);
-  let recording: T9Recording | undefined;
-  let keyed = false;
-  playT9(target, steps, (recorded, step) => {
-    recording = recorded;
-    keyed = step.kind === "record" && step.key !== undefined;
-  });
-  const context = `${id}: ${golden.note}`;
-  if (golden.timeline === undefined) expectT9Still(target, golden, context);
-  else expectT9Timeline(recording!, golden, context, { keyed, toleranceMs: T9_TOLERANCES[id] });
-}
-
-describe("the T9 phone against its goldens", () => {
-  for (const id of IDS) {
-    const gap = T9_KNOWN_GAPS[id];
-    (gap === undefined ? it : it.fails)(gap === undefined ? id : `${id} (known gap)`, () =>
-      t9PhoneScenario(id),
-    );
-  }
-});
 
 const T9 = { t9: { english: englishT9 } } as const;
 /** Menu, ▼ to Messages, Select (Write messages), Select. */

@@ -199,55 +199,6 @@ export function replayTrace(trace: TextTrace, limit = SMS_LIMIT): TraceShot[] {
  */
 export const SETUP_MS = 8000 + 6 * 592 + 9000 + 5 * 592 + 4000 + 9 * 592 + 20000 + 592 + 2000;
 
-/** A tap as a recording presses it: down, 60 ms, up, then `gap`. */
-const pressed = (key: string, gap: string): string[] => [
-  `press ${key}`,
-  "run 60ms",
-  `release ${key}`,
-  `run ${gap}`,
-];
-
-/**
- * The T9 editor's Options › Dictionary › Dictionary off (Dictionary is Options' eighth entry; its
- * list opens on English, ▲ to Dictionary off), as taps and as a recording's presses
- * (`text/dictionary-off`), and the same done in the multi-tap editor nokia-os opens with (D3):
- * Dictionary is Options' fifth entry and its list opens on Dictionary off.
- */
-const DICTIONARY_OFF_REWRITES: readonly (readonly [readonly string[], readonly string[]])[] = [
-  [
-    [
-      ...Array.from({ length: 7 }, () => "key down"),
-      "key menu",
-      "run 1200ms",
-      "key up",
-      "key menu",
-    ],
-    // Three ▼ and the ▲ become waits as long as their taps (392 ms at the logs' 100 ms key gap),
-    // so everything after keeps the capture's times.
-    [
-      ...Array.from({ length: 4 }, () => "key down"),
-      "run 1176ms",
-      "key menu",
-      "run 1200ms",
-      "run 392ms",
-      "key menu",
-    ],
-  ],
-  [
-    [
-      ...Array.from({ length: 7 }, () => pressed("down", "300ms")).flat(),
-      ...pressed("menu", "1500ms"),
-      ...pressed("up", "600ms"),
-    ],
-    [
-      ...Array.from({ length: 4 }, () => pressed("down", "300ms")).flat(),
-      "run 1080ms",
-      ...pressed("menu", "1500ms"),
-      "run 660ms",
-    ],
-  ],
-];
-
 /**
  * Menu, ▼ to Messages, Select (its first page, Write messages), Select: 2968 ms of taps and
  * waits, then 2858 ms so that the whole takes the log's Menu 2 1 and polls (5826 ms).
@@ -263,9 +214,9 @@ const WRITE_MESSAGES_BY_SELECT: readonly string[] = [
 ];
 
 /**
- * A block's commands as a stock phone replays them: each T9 Dictionary off replaced by the
- * multi-tap one, and a reboot's power-on (plan 15's logs record the boot, then type the setup's
- * code, time and date) replaced by the setup.
+ * A block's commands as a stock phone replays them: a reboot's power-on (plan 15's logs record
+ * the boot, then type the setup's code, time and date) replaced by the setup. The logs' T9
+ * Dictionary off runs as captured: the phone writes in T9 (plan 18b).
  */
 export function messagesRewrite(lines: readonly string[]): string[] {
   const out: string[] = [];
@@ -291,13 +242,7 @@ export function messagesRewrite(lines: readonly string[]): string[] {
       i += 8;
       continue;
     }
-    const rewrite = DICTIONARY_OFF_REWRITES.find(([t9]) =>
-      t9.every((line, k) => lines[i + k] === line),
-    );
-    if (rewrite !== undefined) {
-      out.push(...rewrite[1]);
-      i += rewrite[0].length - 1;
-    } else out.push(lines[i]!);
+    out.push(lines[i]!);
   }
   return out;
 }
@@ -403,9 +348,6 @@ export const MESSAGES_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
   "welcome/plan15-save-long": OTHER_RECORDING,
   "sms/centre-1-ok-empty": OTHER_RECORDING,
   // Task 10.
-  // Rows 0-9 are the virgin T9 editor and its Options (plan 18b, D3): the replay's multi-tap
-  // editor reaches the Dictionary list on Dictionary off directly; compared from there.
-  "text/dictionary-off": { fromRow: 10 },
   // The commit runs 1449-1452 ms after the letter's redraw between recordings (TEXT_TIMINGS is
   // text/commit's 1452.2).
   "text/hold-digit": OTHER_RECORDING,

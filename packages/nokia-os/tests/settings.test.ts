@@ -2,6 +2,7 @@
 // persistent record with the factory state (plan 15 Task 5, D3, D5).
 import { describe, expect, it } from "vite-plus/test";
 import { WELCOME_NOTE_KEY } from "../src/firmware/features/settings";
+import { DICTIONARY_KEY } from "../src/messages/bindings";
 import { PHONE_SECURITY_KEY } from "../src/firmware/security";
 import { settingAlias, STOCK_SETTINGS } from "../src/firmware/stock";
 
@@ -441,10 +442,20 @@ describe("factory state (D5)", () => {
     expect(FACTORY_DEFAULTS.some((entry) => entry.key.startsWith("games/settings/"))).toBe(false);
   });
 
-  it("keeps RESTORE_KEEPS (the welcome note, the top score) and resets other texts", () => {
+  it("keeps RESTORE_KEEPS (the welcome note, the top score, the Dictionary) and resets the rest", () => {
+    const { storage, settings } = persistent();
+    settings.choose(DICTIONARY_KEY, 0);
+    settings.choose("tones/keypad-tones", 0);
+    const kept = SETTINGS_RECORD.factory!(new StockEeprom(storage).read(SETTINGS_RECORD));
+    expect(kept.choices[DICTIONARY_KEY]).toBe(0);
+    expect(kept.choices["tones/keypad-tones"]).toBeUndefined();
     const factory = SETTINGS_RECORD.factory!(written());
     expect(factory.texts).toEqual({ [WELCOME_NOTE_KEY]: "Hi" });
     expect(factory.numbers).toEqual({ "games/snake/top-score": 105 });
-    expect([...RESTORE_KEEPS].sort()).toEqual(["games/snake/top-score", WELCOME_NOTE_KEY]);
+    expect([...RESTORE_KEEPS].sort()).toEqual([
+      "games/snake/top-score",
+      DICTIONARY_KEY,
+      WELCOME_NOTE_KEY,
+    ]);
   });
 });

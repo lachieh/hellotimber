@@ -608,13 +608,33 @@ room. Matches is pushed over Options: Use returns to the editor, C to Options (U
 **Files:** `tests/support/messages.ts`, `tests/support/rig.ts` (`t9` option, default the fixture
 dictionary; `englishT9` where a golden needs it), `tests/acceptance.test.ts`.
 
-- [ ] A hand-written scenario for every imported `t9/*` golden, with `englishT9` (the goldens'
+- [x] A hand-written scenario for every imported `t9/*` golden, with `englishT9` (the goldens'
       lists are the ones the open list shares).
-- [ ] Coverage guard: no golden or placeholder names `18b`; delete `awaitsPlan18bScenario`.
-- [ ] Every asserted golden passes (pixels exact; timelines ±2 ms). New `KNOWN_GAPS` need a reason.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report
+- [x] Coverage guard: no golden or placeholder names `18b`; delete `awaitsPlan18bScenario`.
+- [x] Every asserted golden passes (pixels exact; timelines ±2 ms). New `KNOWN_GAPS` need a reason.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report
       the suite's run time.
-- [ ] Commit: `test(nokia-os): drive T9 against its goldens`.
+- [x] Commit: `test(nokia-os): drive T9 against its goldens`.
+
+Outcome: one scenario serves every golden (`tests/support/t9.ts` `t9Scenario`): it reads the keys
+from the golden's note and plays them on a stock phone with `englishT9` from the Write messages
+page or its empty editor (taps of 60 + 340 ms; `save flash`/`cold boot` as a second phone over a
+copy of the storage), compares a still in either blink phase and a recording from its trigger.
+The acceptance file registers it for every asserted golden. `tests/support/rig.ts` gives every
+phone the fixture dictionary (D5: the virgin phone writes in T9); plan 18's capture replays now
+run their logs' own T9 Dictionary off (the multi-tap rewrite and `text/dictionary-off`'s
+`fromRow` are gone: its T9 rows match too), and plan 18's write/read unit tests ask for a phone
+without a dictionary (`t9: {}`). The full nokia-os suite runs in ≈75 s (95 files).
+
+Deviation: promotion is a hand-off. Promoting a golden means reimporting (`T9_PROMOTED`, Task 2's
+deviation), and the importer reads `$REF/captures/plan18b/`, which the clean room may not run
+(D1). The clean room lands the scenarios, `T9_PROMOTED`, the tree table's `PENDING_LATER` change
+and the integrity expectations in a last commit; `tests/t9-promotion.test.ts` plays every
+golden promoted but not yet reimported, so the promotion is known to pass first (303 `t9/*`
+goldens: 302 match, `g-star-free/07-star-after-space` is the known gap; Write messages' tree
+golden matches every pixel). The bridge then runs `import-captures` twice and commits the status
+flips. `sms/restore` (plan 18) shows that Restore factory settings keeps the Dictionary: the
+messages feature lists it in `restoreKeeps`, which now covers choices too.
 
 ### Task 9 - Demo, README, verification gate and closeout
 

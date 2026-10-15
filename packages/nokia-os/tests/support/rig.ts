@@ -15,6 +15,7 @@ import {
   type StockStorage,
 } from "../../src/index";
 import type { RecordedFrame, RecordedTimeline } from "./golden.ts";
+import { T9_FIXTURE } from "./t9-fixture.ts";
 
 export interface Rig {
   readonly phone: Phone;
@@ -147,7 +148,9 @@ export function frameAt(recording: RecordedTimeline, atMs: number): RecordedFram
 
 /**
  * The emulator's operator, clock and setup date are artefacts used as test inputs (D11). The
- * Task 11 captures set the clock to 19:48 and 07:59 instead of 10:10.
+ * Task 11 captures set the clock to 19:48 and 07:59 instead of 10:10. The phone has a T9
+ * dictionary, as the virgin firmware writes in T9 (plan 18b D5: the hand-made fixture; scenarios
+ * whose screens show candidate lists pass `englishT9`, and `t9: {}` makes a phone without one).
  */
 export function stockRig(
   config: Partial<StockPhoneConfig> = {},
@@ -158,6 +161,7 @@ export function stockRig(
       carrier: "Orange F",
       clock: () => "10:10",
       date: () => "13.10.2026",
+      t9: { english: T9_FIXTURE },
       ...config,
     },
     internals,

@@ -407,11 +407,13 @@ function factoryTables(): Pick<SettingsOverrides, "choices" | "marks"> {
 
 /**
  * The factory state (D5): virgin choices and marks under the factory defaults, and only the
- * texts and numbers Restore keeps.
+ * choices, texts and numbers Restore keeps (plan 18b: the Dictionary, `sms/restore`).
  */
 function factorySettings(current: SettingsOverrides): SettingsOverrides {
+  const factory = factoryTables();
   return {
-    ...factoryTables(),
+    ...factory,
+    choices: { ...factory.choices, ...only(current.choices, restoreKeeps) },
     texts: only(current.texts, restoreKeeps),
     numbers: only(current.numbers, restoreKeeps),
   };

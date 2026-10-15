@@ -120,6 +120,9 @@ export const messagesFeature: StockFeature = {
     ],
     // Set 2 has no centre in the virgin SIM (`sms/centre-2` 00: Search).
     typedTexts: [SET_2_CENTRE_KEY],
+    // Restore factory settings keeps the Dictionary (`sms/restore`: Dictionary off, Restore, then
+    // the multi-tap editor; plan 18b).
+    restoreKeeps: [DICTIONARY_KEY],
     // Info service › Languages after Restore (`plan15/factory/scroll/2-8-5`). Info service ›
     // Topics also shrinks to `Add topic` (plan 18c owns the topics).
     factoryDefaults: [

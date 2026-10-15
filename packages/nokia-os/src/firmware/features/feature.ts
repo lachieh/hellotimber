@@ -177,7 +177,7 @@ export interface StockSettingsTables {
   readonly typedTexts?: readonly string[];
   /** Code-prompt leaves that store a single choice, by node number: the option labels. */
   readonly codeSettings?: Readonly<Record<string, readonly string[]>>;
-  /** Texts and numbers Restore factory settings keeps (every other returns to virgin). */
+  /** Choices, texts and numbers Restore factory settings keeps (every other returns to virgin). */
   readonly restoreKeeps?: readonly string[];
   /** What Restore factory settings writes over the virgin choices and marks. */
   readonly factoryDefaults?: readonly FactoryDefault[];

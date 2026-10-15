@@ -13,7 +13,10 @@ import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockPhoneConfig, StockStorage } from "../../src/index";
 import { TEXT_TIMINGS } from "../../src/resources";
 import { englishT9 } from "../../src/text/t9/english";
+import { readPlanIndex } from "../../scripts/golden-index.ts";
+import { GOLDENS } from "./acceptance.ts";
 import { goto } from "./drive.ts";
+import { loadGolden } from "./goldens.ts";
 import { standbyRig, type Rig } from "./rig.ts";
 import type { Golden } from "../../scripts/golden-format.ts";
 import { findGoldenImage } from "../../scripts/golden-format.ts";
@@ -284,3 +287,44 @@ export function t9PhoneTarget(
     },
   };
 }
+
+// ---------------------------------------------------------------- acceptance (Task 8)
+
+/**
+ * Golden `id`'s scenario: its note played on a stock phone with the shipped English dictionary
+ * (the goldens' key sequences are ones the open list shares with the firmware, D9), from the
+ * Write messages page or its empty T9 editor; a still compared in either blink phase, a
+ * recording from its trigger.
+ */
+export function t9Scenario(id: string): void {
+  const golden = loadGolden(id);
+  const { base, steps } = parseT9Note(golden.note ?? "");
+  const target = t9PhoneTarget(base);
+  let recording: T9Recording | undefined;
+  let keyed = false;
+  playT9(target, steps, (recorded, step) => {
+    recording = recorded;
+    keyed = step.kind === "record" && step.key !== undefined;
+  });
+  const context = `${id}: ${golden.note}`;
+  if (golden.timeline === undefined) expectT9Still(target, golden, context);
+  else {
+    const toleranceMs = T9_TOLERANCES[id];
+    expectT9Timeline(recording!, golden, context, {
+      keyed,
+      ...(toleranceMs === undefined ? {} : { toleranceMs }),
+    });
+  }
+}
+
+const ASSERTED = readPlanIndex(GOLDENS, "18b").filter((entry) => entry.status === "asserted");
+
+/** The scenario of every asserted plan 18b golden (tests/acceptance/18b-t9-predictive-text). */
+export const T9_SCENARIOS: Readonly<Record<string, (id: string) => void>> = Object.fromEntries(
+  ASSERTED.map(({ id }) => [id, t9Scenario]),
+);
+
+/** The known gaps among the asserted goldens. */
+export const T9_ASSERTED_KNOWN_GAPS: Readonly<Record<string, string>> = Object.fromEntries(
+  ASSERTED.flatMap(({ id }) => (T9_KNOWN_GAPS[id] === undefined ? [] : [[id, T9_KNOWN_GAPS[id]!]])),
+);

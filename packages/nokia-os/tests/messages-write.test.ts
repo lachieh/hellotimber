@@ -1,5 +1,6 @@
 // Plan 18 Task 10: Write messages (2-1) and its Options through the stock phone's keys: Send over
-// the network port, Save to Outbox, Erase, Exit, Dictionary, Send by set (D3, D8, D9, D14).
+// the network port, Save to Outbox, Erase, Exit, Dictionary, Send by set (D3, D8, D9, D14), on a
+// phone without a T9 dictionary, which writes in multi-tap (plan 18b D5; T9: messages-t9).
 import { describe, expect, it } from "vite-plus/test";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
@@ -18,6 +19,9 @@ import { expectLcdAnyBlink } from "./support/replay.ts";
 import { keys } from "./support/probes.ts";
 import { standbyRig } from "./support/rig.ts";
 
+/** A phone without a T9 dictionary: plan 18's multi-tap editor (plan 18b D5). */
+const MULTITAP = { t9: {} } as const;
+
 /** Menu, ▼ to Messages, Select (Write messages), Select. */
 const WRITE = "navi wait:300 down navi wait:500 navi wait:500";
 /** Hi in multi-tap. */
@@ -34,7 +38,7 @@ function outbox(storage: StockStorage) {
 
 describe("Write messages (2-1)", () => {
   it("opens the multi-tap editor (Dictionary off, D3) with the nine multi-tap Options", () => {
-    const rig = standbyRig();
+    const rig = standbyRig(MULTITAP);
     keys(rig, WRITE);
     expectLcdAnyBlink(rig.paint(), goldenImage("text/editor", "editor-multitap"), "the editor");
     expect(EDITOR_OPTIONS.map((o) => o.label)).toEqual([
@@ -55,7 +59,7 @@ describe("Write messages (2-1)", () => {
   it("sends through the network port, keeps the text and stores nothing (D8, D9)", () => {
     const network = createSyntheticNetwork();
     const storage = createMemoryStorage();
-    const rig = standbyRig({ storage, network });
+    const rig = standbyRig({ ...MULTITAP, storage, network });
     keys(rig, `${WRITE} ${HI} ${option("Send")} 0 4 1 2 3 4 5 6 7 8 navi`);
     expect(network.sent).toEqual([{ number: "0412345678", text: "Hi" }]);
     keys(rig, `wait:${SEND_LINK_MS + 2000}`);
@@ -69,7 +73,7 @@ describe("Write messages (2-1)", () => {
       send: () => new Promise((resolve) => (settle = resolve)),
       subscribe: () => () => {},
     };
-    const rig = standbyRig({ network });
+    const rig = standbyRig({ ...MULTITAP, network });
     keys(rig, `${WRITE} ${HI} ${option("Send")} 1 navi wait:${SEND_LINK_MS + 1000}`);
     // Still `Sending message` (one of the bar's steps, `sms/send` frames 1-10).
     const sending = loadGolden("sms/send").images.slice(1, 11);
@@ -86,19 +90,19 @@ describe("Write messages (2-1)", () => {
 
   it("saves to Outbox (Message saved), and says Message memory full with every slot used", () => {
     const storage = createMemoryStorage();
-    const rig = standbyRig({ storage });
+    const rig = standbyRig({ ...MULTITAP, storage });
     keys(rig, `${WRITE} ${HI} ${option("Save")} wait:2500`);
     expect(outbox(storage)).toEqual([{ text: "Hi" }]);
     const store = new StockMessages(new StockEeprom(storage), "sim-1");
     for (let i = 1; i < MESSAGE_SLOTS; i++) store.save(`saved ${i}`);
-    const full = standbyRig({ storage });
+    const full = standbyRig({ ...MULTITAP, storage });
     keys(full, `${WRITE} ${HI} ${option("Save")} wait:500`);
     expectLcd(full.paint(), goldenImage("sms/full-save", "c"), "Message memory full");
     expect(outbox(storage)).toHaveLength(MESSAGE_SLOTS);
   });
 
   it("erases the text at once; Exit goes to standby", () => {
-    const rig = standbyRig();
+    const rig = standbyRig(MULTITAP);
     keys(rig, `${WRITE} ${HI} ${option("Erase")} wait:500`);
     expectLcdAnyBlink(rig.paint(), goldenImage("text/editor", "editor-multitap"), "erased");
     keys(rig, `${option("Exit")} wait:500`);
@@ -107,7 +111,7 @@ describe("Write messages (2-1)", () => {
 
   it("stores the Dictionary choice: Dictionary off by default without T9 (D3, 18b D5)", () => {
     const storage = createMemoryStorage();
-    const rig = standbyRig({ storage });
+    const rig = standbyRig({ ...MULTITAP, storage });
     const settings = () => createStockSettings(new StockEeprom(storage), NO_T9_VIRGIN_CHOICES);
     expect(settings().choice(DICTIONARY_KEY)).toBe(0);
     keys(rig, `${WRITE} ${option("Dictionary")} wait:500`);
@@ -120,7 +124,7 @@ describe("Write messages (2-1)", () => {
   it("sends by set: Alphanumeric to the routing address; Set 2 asks for a centre first", () => {
     const network = createSyntheticNetwork();
     const storage = createMemoryStorage();
-    const rig = standbyRig({ storage, network });
+    const rig = standbyRig({ ...MULTITAP, storage, network });
     keys(rig, `${WRITE} ${HI} ${option("Send by set")} wait:500 navi wait:500 down navi`);
     keys(rig, "2 wait:1500 3 3 navi");
     expect(network.sent).toEqual([{ number: "AE", text: "Hi" }]);
