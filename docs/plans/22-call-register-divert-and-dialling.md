@@ -25,7 +25,7 @@ plan 14 goldens already committed for Call register, the crawl's
 `$REF/captures/scratch-plan22/` (evidence only, never imported; `NOTES.md` there lists them and the
 scratch harness), and the canonical captures Task 0 writes to `$REF/captures/6.39/plan22/`. Read
 `$REF/captures/README.md` and plans 13, 14, 15, 16, 18, 19 and 23 in full before starting.
-**Status:** not started.
+**Status:** in progress.
 
 ## Goal
 
@@ -197,6 +197,12 @@ promotes it (D15): every dialled call alerts and connects at once; `ring(number)
 incoming call; it records what was dialled. A port without `dial` behaves like the synthetic
 network. Times are the phone's.
 
+Deviation (Task 1, Lachlan's portfolio use): `dial` receives a `StockOutgoingCall` (`number`, the
+phone book `name` when known, `emergency`) instead of a bare number, so a host can act on the
+call the moment Calling appears (the website opens a link for certain numbers); `released()`
+before `alerting()` refuses the call, which the phone shows as the network's end (S14). The
+synthetic network's `dialled` lists these calls.
+
 **D6 - Dial strings are one pure module (new).** `src/calls/dial-string.ts` owns the dial
 characters and what a typed string means: the `*` cycle and its commit (S3), the 60-character
 first-in-first-out entry (S2), the layout break points (S1), what Call does with it (S9: speed
@@ -260,6 +266,11 @@ keeps the register, user guide), and Erase recent call lists and Clear timers wr
 decides persistence across a clean power-off (S30); if the lists are lost there, power-off clears
 them and this is a Deviation. Changing Phone security erasing the lists (plan 15's follow-up, user
 guide) is checked by Task 0 F too.
+
+Deviation (Task 0 F): the lists are RAM. A clean power-off and a reboot empty them; only the
+duration totals persist, and Restore factory settings zeroes them (keeping the lists). `calls` (v1)
+holds the totals and the last call's duration; the lists live in the phone's `StockCallLog` for a
+power cycle (Phone security's erase is moot).
 
 **D14 - Dependencies are conditional, each with its fallback.**
 
@@ -390,8 +401,8 @@ export interface StockIncomingCall {
 
 export interface StockNetworkPort {
   // ...plans 18-19 unchanged...
-  /** Plan 22: the phone dials `number` (as S9 cuts it). Absent: the synthetic network's behaviour. */
-  dial?(number: string, phone: StockCallControl): StockCallLink;
+  /** Plan 22: the phone places `call` (number cut as S9, name, emergency). Absent: synthetic. */
+  dial?(call: StockOutgoingCall, phone: StockCallControl): StockCallLink;
   /** Plan 22: called once by createStockPhone; the host calls `ring` for each incoming call. */
   subscribeCalls?(
     ring: (call: StockIncomingCall, link: StockCallLink) => StockCallControl,
@@ -400,7 +411,8 @@ export interface StockNetworkPort {
 
 // createSyntheticNetwork() gains:
 //   ring(number: string): { hangUp(): void; readonly state: "ringing" | "connected" | "ended" };
-//   readonly dialled: readonly string[];
+//   readonly dialled: readonly StockOutgoingCall[];
+// StockOutgoingCall: { number: string; name?: string; emergency: boolean } (Task 1 Deviation).
 // Its dial() alerts and connects at once; its calls end only when the phone or the test ends them.
 
 /** Plan 16's event, extended: a sounding tone may have a second frequency (DTMF). */
@@ -560,9 +572,9 @@ file. Sources are under `$REF/captures/6.39/plan22/`.
 `captures/6.39/plan22/**`, `firmware/work/v639-plan22-*.fls`, a "Plan 22 supplementary captures"
 section in `captures/README.md` (and its command table).
 
-- [ ] Read `$REF/captures/README.md`, `captures/scratch-plan22/NOTES.md` and its `tools/*.py` and
+- [x] Read `$REF/captures/README.md`, `captures/scratch-plan22/NOTES.md` and its `tools/*.py` and
       `harness/`. Do not modify existing captures or scripts.
-- [ ] Harness: promote the scratch commands into `tools/harness` (which already has `callin` and
+- [x] Harness: promote the scratch commands into `tools/harness` (which already has `callin` and
       `sms`; merge by hand if another plan changed it): `answer`, `hangup [cause]`, `callstate`, and the
       switches `CAP_MO_HOLD=1` and `CAP_TCH=1` (the scratch `SCRATCH_*` names; `CAP_TCH` also
       assigns a traffic channel to MT calls at CALL CONFIRMED, which the scratch copy does not:
@@ -570,71 +582,165 @@ section in `captures/README.md` (and its command table).
       build-directory copy of `src/mad2/dsp/dsp_rom6.c` (as it already copies `main.c`); the
       emulator's sources stay untouched; with no switch set, output is byte-identical to the stock
       harness (rerun the plan 13 clock script and compare). Keep `SCRATCH_SS` out (22b promotes it).
-- [ ] `gen_v639_plan22.py` (`run -j 3`, `--only`, `ocr`, `check`), driving `tools/menutree/emu.py`
+- [x] `gen_v639_plan22.py` (`run -j 3`, `--only`, `ocr`, `check`), driving `tools/menutree/emu.py`
       like plans 16, 19 and 23; LCD sections on the virgin image (`v639-setup.inc`), sound sections
       on the factory image (`v639-factory-setup.inc`), every call with `CAP_TCH=1` except the
       sections named "stock".
-- [ ] **E entry** (`plan22/entry/`): every length 1-47 with all of `0-9 + p w * #` appearing in
+- [x] **E entry** (`plan22/entry/`): every length 1-47 with all of `0-9 + p w * #` appearing in
       both faces; the `*` cycle with commits at 1300-1600 ms in 50 ms steps; `#` taps; 60/61/70
       characters and deleting back; C, held C at 400-550 ms in 25 ms steps; ▲/▼ through the soft
       keys, held; Save (with and without a name typed), Convert (virgin rate), digits and C on each
       soft key; power and C back; 70 s idle.
-- [ ] **H holds and codes** (`plan22/entry/hold/`, `recall/`, `code/`): held 0-9, `*`, `#` from 400
+- [x] **H holds and codes** (`plan22/entry/hold/`, `recall/`, `code/`): held 0-9, `*`, `#` from 400
       to 1000 ms (thresholds) on an empty entry and inside one, with Speed dialling unset, Off and
       On (with plan 19's fixture SIM if it exists, else the voice mailbox only); the factory held
       `1`'s 1750 Hz tone at ≈507 ms (what note?); `1#`…`50#`, `0#`, `51#`, with the empty SIM and a
       SIM with names; `*#06#`, `*#0000#`, other `*#…#` codes typed (record what each does).
-- [ ] **S handover** (`plan22/handover/`): a digit, `*` and `#` on every widget kind (each note
+- [x] **S handover** (`plan22/handover/`): a digit, `*` and `#` on every widget kind (each note
       class, option list, info pages, confirm query, prompts, level bar, text pages, splash,
       progress note), on a list entered by Select and by shortcut (inside and after the window),
       the carousel before and after its window with every first key, the missed-call notice, the
       `Invalid shortcut` note; record which keys start an entry.
-- [ ] **D dial** (`plan22/dial/`): Call on 1 digit (with Speed dialling On and a key assigned, if
+- [x] **D dial** (`plan22/dial/`): Call on 1 digit (with Speed dialling On and a key assigned, if
       a fixture allows), `12`, `04`, a 10/20/28/32/33-digit number, `+61412345678`, `0412+345`,
       `0412345678p123` and `w123` (what happens after the connect: DTMF sent? record 20 s with
       audio), `112`, `911`; End while calling, alerting (`CAP_MO_HOLD`) and connected; C while
       calling and alerting; the network's end (`hangup 16`) while calling, alerting and connected;
       five calls for the link-time medians; the `stock` variant once (no traffic channel) for the
       artefact table.
-- [ ] **M in call** (`plan22/in-call/`): ▲/▼ to both ends and held; every digit, `*`, `#` tapped
+- [x] **M in call** (`plan22/in-call/`): ▲/▼ to both ends and held; every digit, `*`, `#` tapped
       and held (audio); C, C held; Options and each entry (Send DTMF's flow to its end; End all
       calls; End active call); power; a 70 s call; a call ended by each of End, C-then-Options, the
       network.
-- [ ] **T incoming** (`plan22/ring/`, factory for sound, virgin for LCD): ringing ≥ 2 cycles for
+- [x] **T incoming** (`plan22/ring/`, factory for sound, virgin for LCD): ringing ≥ 2 cycles for
       each alert type (Ringing, Ascending, Ring once, Beep once, Off) with Vibrating alert On and
       Off; the five tones whose preview ends inside its first pass (plan 16 D11) ringing whole; the
       ringing screen for 3-, 10-, 14-, 15-, 20-digit numbers and a name; Answer, C, held C; ▲/▼, a
       digit, `#`, `*`, Navi held, power while ringing; missed (`hangup` before Answer) at standby
       and over a menu; the notice with 1, 2 and 11 missed calls; C, `List`, a digit, ▲/▼ on it.
-- [ ] **I interrupt** (`plan22/interrupt/`): a ring over a menu level, an option list, a timed note,
+- [x] **I interrupt** (`plan22/interrupt/`): a ring over a menu level, an option list, a timed note,
       a progress note, the standby entry, the editor (Write messages), a Snake II game in play (is
       it suspended?), the Calculator, a security-code prompt; for each, Answer + End, C and missed:
       what is on screen afterwards; a timed note longer than the call and one shorter (does the held
       note keep ticking or catch up? plan 21 D3). A ring during a call and during Calling (queued?).
       The countdown timer (plan 21's capturable alert) expiring during a call, and a ring during
       its alert: which wins, and what each shows after.
-- [ ] **R register** (`plan22/register/`): fill each list past capacity; every entry view (number,
+- [x] **R register** (`plan22/register/`): fill each list past capacity; every entry view (number,
       long number, name) and Options entry with its result; Time of call with 24- and 12-hour
       Time format; opening Missed calls with unread and read entries; standby ▲ with none, one and
       twenty dialled numbers (▲/▼, Navi, C, held C); Erase recent call lists with content.
-- [ ] **X durations** (`plan22/durations/`): connected calls of 0.5, 1.4, 1.6, 59.6, 60.4 and 3600 s
+- [x] **X durations** (`plan22/durations/`): connected calls of 0.5, 1.4, 1.6, 59.6, 60.4 and 3600 s
       (dialled and received), each page after each (the rounding rule); Clear timers (re-provisioned
       code image) after them.
-- [ ] **F persistence** (`plan22/persist/`): lists and durations after `saveflash` + `reboot`, after
+- [x] **F persistence** (`plan22/persist/`): lists and durations after `saveflash` + `reboot`, after
       a clean power-off (power held) before `saveflash`, after Restore factory settings, after
       Phone security On and Off, and with a second SIM.
-- [ ] **N notes and sound** (`plan22/sound/`, `notes/`): DTMF per key, tap and 1 s hold, at Keypad
+- [x] **N notes and sound** (`plan22/sound/`, `notes/`): DTMF per key, tap and 1 s hold, at Keypad
       tones Off/1/2/3 and virgin; the ringback, the network-end beeps, the Volume beep; warning
       tones of `Invalid phone number`, `Speed dial number not saved`, `No last dialled numbers`,
       `Invalid location`, `<n> new numbers`, `No new numbers`, `Erased`, `Attempting emergency
 call`.
-- [ ] OCR every new image into `plan22/text.json` (plan 14's format and command).
-- [ ] `check`: every recording starts on its parent screen; every call section's log shows the
+- [x] OCR every new image into `plan22/text.json` (plan 14's format and command).
+- [x] `check`: every recording starts on its parent screen; every call section's log shows the
       expected protocol events; LCD frames of `CAP_TCH` and stock calls agree before the connect.
-- [ ] Append "Plan 22 supplementary captures" to `$REF/captures/README.md`.
-- [ ] No commit. Record the outcome under this task: the harness change, every threshold and link
+- [x] Append "Plan 22 supplementary captures" to `$REF/captures/README.md`.
+- [x] No commit. Record the outcome under this task: the harness change, every threshold and link
       time with its spread, the handover table, the interrupt table, the duration rounding,
       persistence, Send DTMF, the alert-type matrix and anything that failed.
+
+#### Task 0 outcome — 2026-10-15
+
+31 sections of `$REF/captures/scripts/gen_v639_plan22.py` (each `v639-plan22-<section>.cap`, its
+network log `plan22/logs/<section>.log`); `check` passes: **197 still cases (`cases.json`), 290
+recordings with audio and `keys.csv`, 2765 images (493 distinct) OCRed in `plan22/text.json`**. The
+REF README's "Plan 22 supplementary captures" is appended. Paths below are under `plan22/`.
+
+- **Harness (Deviation).** The call commands live in the copy `tools/harness-p22/` (as plans 21,
+  25 and 27 did; `tools/harness` stays untouched while other plans run it): `answer`,
+  `hangup [cause]`, `callstate`, `CAP_TCH=1`, `CAP_MO_HOLD=1`, from `rom6-calls.patch` over a
+  build copy of `dsp_rom6.c`; byte-identical to `tools/harness` with no switch (plan 13 clock
+  script, 44 files). `CAP_TCH` assigns the MO call's TCH before CONNECT and the MT call's **once
+  answered** (assigning it at CALL CONFIRMED left the cell unreachable after two missed calls).
+  Artefact: a call connected for under ≈3 s leaves standby without its signal ladder for seconds
+  after it (the TCH's first measurement period); sections keep calls connected ≥ 4 s and the
+  goldens stop before any such frame.
+- **Entry (S1-S5 confirmed, with these additions).** `+` may stand anywhere (`entry/length/33`).
+  A `*` pending commits at ≈1427 ms by vanishing for 480 ms and coming back (`entry/star-commit`:
+  1485-1965 ms, the multi-tap commit blink). The first digit hides the operator 56 ms after its
+  down (`entry/first-digit`); C deletes ≈45 ms after its down; C on the last character draws
+  standby without the operator for 88 ms; held C deletes at its down and clears at ≥ 500 ms held
+  (475 ms: no), drawn at 521 ms, `Menu` without the operator for 93 ms. ▲/▼ cycle `Call` →
+  `Save` → `Convert`, held: again at 787 ms then every ≈480 ms; a digit or C on `Save`/`Convert`
+  edits the number and keeps that soft key. Save opens `Name:` (plan 19's add flow); Convert at the
+  virgin rate shows plan 20's `Dividing by zero not allowed` then the entry with `Call`; the power
+  key opens plan 17's profile list and C returns to the entry. No timeout (70 s).
+- **Holds and codes.** Held `1` on an empty entry dials the voice mailbox (`793000333`) at 500 ms
+  (475 ms: a `1`); every other key held is a tap (Speed dialling unset, virgin). **`#` after
+  digits looks up the SIM location at its down** (no hold, no Call): `1#`…`50#` `No phone numbers`
+  (the emulator SIM has 50 empty locations), `0#`, `51#`, `250#` `Invalid location`, each ≈2.9 s
+  then standby; a digit on the note starts a new entry, C and Navi leave for standby. So `123#`
+  never dials (S9's `#`-ended service strings need a non-digit before the `#`, 22b). `*#06#`
+  (`Serial No.` / `????????????` / `??4`) and `*#0000#` (`V 06.39` / `23-12-04` / `NHM-5`) answer
+  ≈20 ms after the `#`; C and Navi leave for standby.
+- **Hand-over (S10).** A digit, `*` or `#` on a timed note (`No numbers`), a list entered with
+  Navi, a list after its shortcut window, an option list, the carousel after its window, and the
+  missed-call notice start the entry with that key (the screen is replaced at once). On the notice
+  ▲ shows `No last dialled numbers` and ▼ the phone book's `No phone numbers`, then the notice.
+- **Dialling (D10 link times, deterministic over five calls).** Navi: `Calling.` at 53 ms, the
+  number at 154 ms, dots every ≈500 ms; alerting: a 76 ms blank at 2253, `Call 1` at 2329; with
+  the TCH the connect redraws (a 73 ms blank at 2898, `Call 1` at 2971). End: a blank `End` frame
+  ≈80 ms, `Menu` without the operator ≈85 ms, then standby. C while calling changes nothing; C
+  when connected toggles `End`/`Options` (a 75-81 ms blank first). One digit → `Speed dial number
+not saved` (≈2.9 s) → standby; 2 digits dial; `04` → `Requesting`/`Quit` (22b); 33 or more
+  digits → `Invalid phone number` → the entry; `112` → `Attempting emergency call`/`End`;
+  `0412345678p123`: dials the number, and once connected shows `p123`/`Exit` 2.4 s, then
+  `Sending` the DTMF `123`.
+- **The network's end.** Connected: a blank `End` 87 ms, the checkered `Call 1` 1471 ms, `Menu`
+  87 ms, standby. Ringing: a blank 80 ms, the checkered `Call 1` 664 ms, `Menu`, the missed-call
+  notice. Every cause looks alike (scratch S14).
+- **In a call (S15 revised).** ▲/▼ show `Volume` 1.9 s after the last press (bars step); digits,
+  `*`, `#` show in the large face (the clock kept, the ladders gone) with `Options` for ≈5.7 s, then
+  `End`, **and stay shown** for the rest of the call. **Options has six rows**: `End active call`,
+  `Hold`, `New call`, `Send DTMF`, `Phone book`, `Mute`; Hold and New call hold a call (22b), Send
+  DTMF opens a `Phone number:` prompt, Phone book plan 19's menu, Mute the `Muted` note (the bin
+  animation's timing) and then `Muted` small at (6, 21) on the call screen. No timer (70 s).
+- **Incoming (S17-S21).** The ringing screen 1982 ms after the network's ring (number thin,
+  right-aligned at top 8; 15+ digits: two left-aligned lines from x 8 at tops 8/17; `+` dropped),
+  `calling` blinking 480/480. Answer (or Navi held): a blank `End` 174 ms, `Call 1`, a 76 ms blank
+  ≈800 ms later as the TCH comes. C (or C held) rejects: blank `End` 93 ms, `Menu` 82 ms, standby.
+  Keys while ringing change nothing on screen; ▲/▼ show Volume. Missed: the notice `<n>` /
+  `missed` / `call(s)` with `List` (counting calls: 11 calls show `11`); List shows
+  `<n> new number(s)` counting **distinct numbers** (two calls from one number: `1 new number`),
+  then `Missed 1:`.
+- **Interruptions (D4).** Reject and missed return to the screen below (a menu, an option list,
+  the editor, the Calculator, the entry; a timed note under the ring has ended); **an answered
+  call ends at standby** (over a menu, the Calculator, Snake II), except over the entry, which
+  shows its digits with `End` during the call and returns with `Call`. A Snake II game in play is
+  **suspended to its menu (`Continue`)** by the ring: Task 4 adds `onInterrupted()`. A ring during
+  a call is not paged until the call ends (it rang 2.5 s after standby).
+- **Register (S23-S25).** Options rows: `Call`, `Send SMS`, `Time of call`, `Edit number`, `Save`,
+  `Erase` (opening on Call). Time of call `13.10.2026` / `10:10:00` (12-hour: `10:10:00 am`).
+  Edit number: `Phone number:` with the number, OK → the standby entry with it. Erase → `Erase?`
+  / number → `Erased` with the bin animation → the list. Missed 10, Received 10, Dialled 20 (the
+  oldest dropped); a redialled number moves to the top. Erase recent call lists erases what it says.
+  A call made from the list ends at standby.
+- **Durations (D12).** Counted from the connect: `00:00:00` until ≈820 ms, then one more every
+  ≈980 ms of emulated time (`durations/fit`: 0.81 s → 0, 1.31 → 1, 1.81 → 2, 2.31 → 2, 2.81 →
+  3, 3.31 → 3, 3.81 → 4, 60.81 → 62, 61.81 → 63). Clear timers zeroes every page; **Restore
+  factory settings zeroes them too** and keeps the lists.
+- **Persistence (D13 Deviation).** The three lists are RAM: empty after a clean power-off and after
+  a reboot from a saved image. The durations persist (`persist/reboot-duration`).
+- **Sound.** DTMF at standby: the pair from ≈20-38 ms after the key-down for ≈140 ms (a tap) or
+  to ≈1056 ms (held 1 s), at the Keypad tones word (Level 1/2/3: 0x9108/0x9104/0x9100, Off:
+  silent, virgin 0x9100 after waking the DSP); C and ▲/▼ beep 900 Hz. The ringback 425 Hz from
+  ≈2218 ms, ≈1016 ms on / ≈3820 off, stopping at the connect; the network's end three 1000 Hz
+  beeps (≈290 ms on, ≈480 ms period) from ≈104 ms; Volume at the top beeps 1125 Hz. Ringing per
+  alert type at the factory Nokia tune: Ringing and Ascending (rising buzzer registers) repeat,
+  Ring once plays once, Beep once is one 3000 Hz beep (volume 18) and the vibrator, Off only the
+  vibrator; the virgin phone rings silently.
+- **Not done / gaps.** `hangup` before the network has the SETUP (`dial/net-end-calling`) is
+  ignored by the harness; Hold, New call and the conference flows are 22b's; Speed dialling On was
+  not captured (plan 19's fixtures hold it).
 
 ### Task 1 - Contracts and documentation
 
@@ -642,23 +748,23 @@ call`.
 row; §4, §6, §9 history notes), `docs/specs/nokia-3310-menu-tree.md`, `docs/plans/README.md`, this
 plan.
 
-- [ ] Apply Task 0's outcome to D2-D13 and the contracts (Deviation lines where it changes them).
-- [ ] VISION: the two phone-core seams and the nokia-os call port and `hz2` exactly as in
+- [x] Apply Task 0's outcome to D2-D13 and the contracts (Deviation lines where it changes them).
+- [x] VISION: the two phone-core seams and the nokia-os call port and `hz2` exactly as in
       "Contract changes"; a plan 22 kernel-policy paragraph (standby entry, the key hand-over; calls
       use plan 21's interruptions); the nokia-os row mentions calls. If plan 18 has not narrowed the non-goal
       "Simulating telephony", narrow it to the website (nokia-os simulates nothing: the host owns
       the network).
-- [ ] `docs/specs/stock/calls.md`: "Number entry, calls and the call register (plan 22)" with the
+- [x] `docs/specs/stock/calls.md`: "Number entry, calls and the call register (plan 22)" with the
       S-findings as verified by Task 0, the artefacts above, everything "(plan 22, in progress)";
       §10's index row.
-- [ ] Spec §4/§6/§9 (manual-sourced): mark `Call` after a digit, ▼ = redial list, the `*` cycle
+- [x] Spec §4/§6/§9 (manual-sourced): mark `Call` after a digit, ▼ = redial list, the `*` cycle
       and the in-call scroll keys as history and point to `stock/calls.md`.
-- [ ] Menu-tree spec: Dialled numbers › Options › Erase shows `Erased` (not `Dialled numbers
+- [x] Menu-tree spec: Dialled numbers › Options › Erase shows `Erased` (not `Dialled numbers
 erased`); "Needs incoming traffic": the harness can inject calls; 4-5's values count connected
       calls (the stock emulator never connects speech).
-- [ ] Plans README: row 22 `in progress`.
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define number entry, call and register contracts (plan 22)`.
+- [x] Plans README: row 22 `in progress`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define number entry, call and register contracts (plan 22)`.
 
 ### Task 2 - Goldens and the capture set (TDD)
 

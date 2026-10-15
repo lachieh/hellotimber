@@ -30,7 +30,7 @@ order, key semantics, timings, sounds — is a hard requirement, specified in
 ## Non-goals
 
 - The portfolio website simulating telephony (calls/SMS over a network) or SIM features.
-  nokia-os accepts SMS through a host network port; the host owns the network.
+  nokia-os accepts SMS and calls through a host network port (plans 18, 22); the host owns the network.
 - T9 dictionaries beyond what the UI bit needs, on the website. nokia-os ships one English T9
   dictionary built from an openly licensed word-frequency list (plan 18b); the website adopts it
   only when it adopts nokia-os.
@@ -91,13 +91,13 @@ are independent and reusable; **only `website/` composes them**.
                    └───────────────────┘
 ```
 
-| Package                     | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                   | Dependencies                                                       |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                                                                                                                                                                                                          | none                                                               |
-| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                                                                                                                                                     | `phone-core` (type-only)                                           |
-| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                                                                                                                                                       | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
-| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                                                                                                                                         | none                                                               |
-| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18, in progress), T9 English (open dictionary, plan 18b), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, keyguard and display/keypad LED events on the light tick (plan 25, in progress), standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
+| Package                     | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Dependencies                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                                                                                                                                                                                                                                                                                               | none                                                               |
+| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                                                                                                                                                                                                                                          | `phone-core` (type-only)                                           |
+| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                                                                                                                                                                                                                                            | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
+| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                                                                                                                                                                                                                              | none                                                               |
+| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18, in progress), number entry, calls and the call register over the same port (plan 22, in progress), T9 English (open dictionary, plan 18b), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, keyguard and display/keypad LED events on the light tick (plan 25, in progress), standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
 
 The website does **not** consume `@hellotimber/nokia-os` yet (plan 13). How portfolio content
 integrates with the stock OS is decided later. Until then the website keeps phone-screen's own
@@ -427,6 +427,12 @@ export interface ExitOptions {
   levels?: number;
   select?: string;
   row?: "top" | "bottom"; // plan 14 closeout: where `select` lands in a rows window
+  /**
+   * Plan 22: with `to: "standby"`, the held key `key` then starts `standbyEntry` as if it had
+   * gone down at standby. Throws without `to: "standby"` (and from a boot gate, an interruption
+   * or a wake application); ignored when `key` is not listed.
+   */
+  key?: PhoneKey;
 }
 
 export interface ApplicationContext {
@@ -458,6 +464,8 @@ export interface PhoneApplicationSession {
   tick(dtMs: number): void;
   render(): ScreenModel;
   onDeactivate?(reason: DeactivationReason): void;
+  /** Plan 22: an interruption (plan 21) began holding this session. Called once; errors ignored. */
+  onInterrupted?(): void;
 }
 
 export interface PhoneConfig<Metadata = unknown> {
@@ -480,6 +488,16 @@ export interface PhoneConfig<Metadata = unknown> {
    * nothing.
    */
   standbyPower?: PhoneApplication;
+  /**
+   * Plan 22: keys that start a standby application with themselves. At standby the key-down of a
+   * listed key runs `open(key)` as a standby application (plan 18: empty stack, path `standby`,
+   * `menuIndicator()` without segments, `exit()` to standby; a notice is cleared) and forwards that
+   * key-down (and its up) to it. In menu levels a listed key that no open shortcut window takes
+   * leaves the menus (as held C) and does the same; at the carousel so does a stock window's first
+   * key that begins no menu number. Not consulted during the boot, a boot gate, an application or
+   * an interruption. `keys` must not hold `navi`, `c` or `power` (throws). Default: none.
+   */
+  standbyEntry?: { keys: readonly PhoneKey[]; open(key: PhoneKey): PhoneApplication };
   bootMs?: number; // 0 skips boot; otherwise defaults to bootTimeline?.durationMs ?? 3000
   /** Finite boot animation; when set, boot length = its durationMs. */
   bootTimeline?: Timeline;
@@ -606,6 +624,14 @@ keys reach it; the long press still powers off) and `ApplicationContext.powerOff
 from any application. nokia-os uses them for profile names under the operator, stored profile
 names in Profiles, and the power key's profile list; its Tones are the active profile's
 Personalise settings (docs/plans/17-profiles.md).
+
+**Kernel policy (plan 22, in progress).** Both plan 22 seams are opt-in and generic; the website
+sets none. _Standby entry_: `standbyEntry` starts a standby application with the key that opened
+it (the stock number entry types its first digit and sounds its DTMF while the key is held);
+applications hand a held key over with `exit({ to: "standby", key })` (a note or option list that
+a digit leaves for the entry). _Interrupted sessions_: plan 21's interruptions call the held
+session's `onInterrupted()` once (Snake II suspends its game for a call). nokia-os's calls use plan
+21's interruption seam; phone-core has no telephony concept.
 
 **Kernel policy (plan 18, in progress).** Standby indicators are host readers re-read per tick.
 A notice may open an application at standby with an empty navigation stack. Neither interface
@@ -761,7 +787,7 @@ export interface StockPhoneConfig {
   sound?: StockSoundPort;
   /** Plan 25: the display and keypad LEDs. Default: nowhere. */
   lights?: StockLightsPort;
-  /** Plan 18, in progress: SMS host port. Default: createSyntheticNetwork(). */
+  /** Plan 18: SMS host port; plan 22: calls too. Default: createSyntheticNetwork(). */
   network?: StockNetworkPort;
   /**
    * Plan 18b: T9 dictionaries. With `english`, Write messages starts in T9 English as the virgin
@@ -812,15 +838,65 @@ export interface StockNetworkPort {
   send(sms: StockSms): StockSendOutcome | Promise<StockSendOutcome>;
   /** Called once by `createStockPhone`; the host calls `deliver` for each incoming SMS. */
   subscribe(deliver: (sms: StockIncomingSms) => void): () => void;
+  /**
+   * Plan 22: the phone places a call (Calling is on screen). Absent: the synthetic network's
+   * behaviour. The host reports the call's progress on `phone`; the returned link hears the user.
+   */
+  dial?(call: StockOutgoingCall, phone: StockCallControl): StockCallLink;
+  /** Plan 22: called once by createStockPhone; the host calls `ring` for each incoming call. */
+  subscribeCalls?(
+    ring: (call: StockIncomingCall, link: StockCallLink) => StockCallControl,
+  ): () => void;
+}
+
+/** Plan 22: an outgoing call as the phone places it, at the moment Calling appears. */
+export interface StockOutgoingCall {
+  /** The number dialled: the entry cut at a later `+` or the first `p`/`w`. */
+  readonly number: string;
+  /** The phone book name saved for the number, when the phone book knows one. */
+  readonly name?: string;
+  /** `112` and the like: `Attempting emergency call`. */
+  readonly emergency: boolean;
+}
+
+/** Plan 22: an incoming call as the network presents it (digits; a leading `+` is dropped). */
+export interface StockIncomingCall {
+  readonly number: string;
+}
+
+/** Plan 22: the host's side of one call; the phone calls these, each at most once. */
+export interface StockCallLink {
+  /** Incoming calls only: the user answered. */
+  answer(): void;
+  /** The user ended the call, or rejected it while it rang (End, C, power-off). */
+  hangUp(): void;
+}
+
+/** Plan 22: the phone's side of one call; the host calls these, applied at the phone's next tick. */
+export interface StockCallControl {
+  /** Outgoing: the far end is ringing (`Call 1`, the ringback). */
+  alerting(): void;
+  /** Outgoing: the far end answered (the ringback stops, the duration starts). */
+  connected(): void;
+  /**
+   * The far end or the network ended the call, or refused it before it alerted: the phone shows
+   * its network end (the checkered `Call 1`, three beeps) and returns to standby; an incoming
+   * call released before Answer is a missed call.
+   */
+  released(): void;
 }
 
 /**
  * Plan 18: the emulator's network: every send is "sent", nothing loops back. `deliver` injects
- * an incoming SMS into every subscribed phone; `sent` lists what phones sent, in order.
+ * an incoming SMS into every subscribed phone; `sent` lists what phones sent, in order. Plan 22:
+ * every dialled call alerts and connects at once and lasts until the phone or `ring`'s handle
+ * ends it; `ring(number)` rings every subscribed phone; `dialled` lists what phones dialled.
  */
 export function createSyntheticNetwork(): StockNetworkPort & {
   deliver(sms: StockIncomingSms): void;
   readonly sent: readonly StockSms[];
+  ring(number: string): { hangUp(): void; readonly state: "ringing" | "connected" | "ended" };
+  readonly dialled: readonly StockOutgoingCall[];
 };
 
 /**
@@ -834,6 +910,8 @@ export type StockSoundEvent =
       readonly output: "buzzer" | "tone";
       readonly atMs: number;
       readonly hz: number; // > 0: sounding at this frequency (buzzer: 13 MHz / divider)
+      /** Plan 22: the tone generator's second oscillator (DTMF); absent for single tones. */
+      readonly hz2?: number;
       readonly volume: number;
     }
   | { readonly output: "buzzer" | "tone"; readonly atMs: number; readonly hz: null } // silent
@@ -937,6 +1015,17 @@ inconclusive. See [stock text entry and SMS](docs/specs/stock/text-entry-and-sms
 
 Plan 18c's delivery-kind/editor/session registration requirements await owner reconciliation;
 this SMS-only contract does not authorize its proposed picture/card extension.
+
+**Calls (plan 22, in progress).** nokia-os simulates no network: calls go through
+`StockNetworkPort.dial` and `subscribeCalls`, and the host owns what a call does. Each call is a
+pair of narrow objects, the phone's `StockCallControl` and the host's `StockCallLink`. The phone
+applies host events at its next tick, after its own link times (alerting ≥ 2253 ms after Call, a
+ring's screen 1982 ms after `ring`), and keeps durations and the call lists itself. Rules: a host
+event for a call that has ended is ignored; `alerting` after `connected` is ignored; a ring while
+the phone is off or booting is released at once; a ring during a call waits until the call ends;
+power-off hangs every call up. The call lists are RAM (a power cycle empties them, as v6.39
+does); the duration totals are the `calls` EEPROM record. See
+[stock calls](docs/specs/stock/calls.md).
 
 **Profiles (plan 17).** A profile is its Personalise settings plus a name. The active
 profile is a stored choice in the settings record (General when never written, and after Restore),

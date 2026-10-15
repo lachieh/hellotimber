@@ -246,7 +246,7 @@ subtrees are written out once and then referred to.
     - entries: **All** ▸ · Missed · Dialled · Received
     - All: timed-note "All call lists erased", then back
     - Missed: timed-note "Missed calls erased", then back
-    - Dialled: timed-note "Dialled numbers erased", then back
+    - Dialled: timed-note "Dialled numbers erased", then back (plan 22: these notes erase the lists; see [stock/calls.md](stock/calls.md))
     - Received: timed-note "Received calls erased", then back
   - `4-5` **Show call duration** → info-pages, key **Back**
     - entries: **Last call duration** ▸ [00:00:00] · All calls' duration [00:00:00] · Received calls' duration [00:00:00] · Dialled calls' duration [00:00:00] · Clear timers
@@ -978,7 +978,7 @@ reminder "Hi", alarm 07:00, composed tone "A". The Phone book view setting is th
     - `4-3/Options-3` **Save** → text-input, "Name:", key **OK**
       - **pressing OK** → text-input, "Phone number: / 040000000", key **OK**
     - `4-3/Options-4` **Erase** → item-view, "Erase? / 0400000001", key **OK**
-      - **pressing OK** → timed-note, "Dialled numbers erased"; then back to the list after ≈2.9 s
+      - **pressing OK** → timed-note, "Erased" (the bin animation, plan 22; not "Dialled numbers erased"); then the list renumbered
     - `4-3/Options-5` **Call** → progress-note, "Calling.. / 0400000001", key **End**; then "I Call 1" [End]
     - `4-3/Options-6` **Send SMS** → text-editor, key **Options**
       - **Options** → submenu (3-row list)
@@ -1180,8 +1180,10 @@ templates and smileys, so their lists are missing here.
 **Incoming traffic (plan 18, in progress).** The harness can inject SMS. Task 0 verifies
 Inbox lists, reading pages, Details, Options and received notices; see
 [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md). The earlier empty Inbox crawl
-is virgin-state evidence, not an injection limitation. Missed/Received calls need their own
-incoming-call verification in plan 22; SMS evidence does not establish their views or Options.
+is virgin-state evidence, not an injection limitation. Plan 22's harness injects calls too
+(`callin`, `answer`, `hangup`): Missed and Received calls fill, and 4-5's values count connected
+calls only (the stock emulator never connects speech; plan 22 assigns a traffic channel). See
+[stock/calls.md](stock/calls.md).
 
 **Network operations.** "Requesting" (call waiting, barring and divert Activate/Cancel/Status,
 `7-6`) and "Searching" (`6-2-4-2`) never finished within the observation window on the
