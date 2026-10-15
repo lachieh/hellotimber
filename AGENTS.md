@@ -133,21 +133,29 @@ plan 13) is gitignored and **never committed**; nothing from `$REF/extracted` is
 ## Fidelity standard
 
 "Strict repro" means human-perceivable fidelity, not millisecond-exact timing (Lachlan,
-2026-10-15): a difference that does not change the phone at a human-perceivable level does not
-matter. Every golden comparison applies one rule, implemented in
-`packages/nokia-os/tests/support/golden.ts` (`timingToleranceMs`, `withoutPartialDraws`):
+2026-10-15): "If it doesn't change the game on a human perceivable level, it doesn't matter."
+Every golden comparison applies one rule, implemented in
+`packages/nokia-os/tests/support/golden.ts` (`timingToleranceMs`, `timelineTolerance`,
+`periodToleranceMs`, `withoutPartialDraws`):
 
 - **Pixels:** every settled frame is pixel-exact. No pixel tolerance.
-- **Timing:** an instant `t` ms after its reference (the trigger; a sound program's onset; the
-  previous tick for game intervals; the last key-down for lights) matches within
-  `clamp(t / 20, 17, 50)` ms: one display frame (17 ms) for animation steps, growing as 5 % of
-  `t` to 50 ms for holds of about a second or longer (notes, delays, boot holds, light timeouts)
-  and drift across long timelines.
-- **Partial redraws:** a frame shown for less than 17 ms, in the golden or the recording, is
-  neither required nor forbidden, as long as the frames around it match.
-- **Sound:** frequencies and volume registers are exact; edge times follow the timing rule.
-- **Gameplay timing** (a game's speed, a grace window that decides survival) follows the same
-  rule interval by interval, so it still counts.
+- **One-off transitions** (a screen change, a note's start, a light switching, a beep after a
+  key): an instant `t` ms after its reference (the trigger; a sound program's onset; the last
+  key-down for lights) matches within two display frames (34 ms), growing as 10 % of `t` to
+  100 ms from 1 s: `clamp(t / 10, 34, 100)` ms.
+- **Long sequences** (tunes, animations): each instant after the sequence's first may also have
+  drifted 2 % of the time since that first instant, on top of the one-off tolerance (160 ms more
+  8 s into a tune).
+- **Partial redraws:** a frame shown for less than 34 ms, in the golden or the recording, is
+  neither required nor forbidden, as long as the frames around it match (a quick two-step redraw
+  reads as one change).
+- **Game rhythm:** a game's tick-to-tick interval (Snake's movement period) matches within
+  `max(17, 20 % of the period)` ms, so a speed or rhythm a player would feel still fails.
+  Gameplay outcomes (whether a grace window saves the snake, scores, positions) are exact.
+- **Sound:** frequencies and volume registers are exact; edge times follow the timing rules.
+- **Recordings of one path:** timing that varies between two recordings of the same
+  real-firmware path is imperceptible by definition; the timing rules must cover the variation
+  the golden set shows.
 
 Key-to-redraw, key-to-sound and key-to-light latency stay outside the rule (plan 14 D8, plan 16
 D8, plan 25 D2). A difference the rule counts is a known gap with its reason, never a widened

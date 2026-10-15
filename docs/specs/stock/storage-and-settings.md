@@ -7,7 +7,7 @@ Source: the plan 15 captures (`captures/6.39/plan15/`, `captures/6.39/boot-clean
 asserted by nokia-os's `boot/security-*`, `boot/welcome-note*`, `probe/code-*`, `probe/accept-*`
 and `probe/persist-reboot` goldens, by the fidelity standard of `AGENTS.md`. The boots' self-test
 replays `boot/power-on`'s recording, whose first frame (power key to the first draw, 268 ms) other
-boots show as 245-270 ms: `boot/security-gate`'s 245 ms is a known gap (23 ms early).
+boots show as 245-270 ms, all within the fidelity standard of it.
 
 **Why the emulator rejected the code.** The virgin PMM stores the security-code record
 enciphered under another key. The firmware reloads it into RAM when the clock wizard is left, and

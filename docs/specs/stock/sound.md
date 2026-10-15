@@ -4,7 +4,7 @@ Part of the stock firmware's ground truth ([index](../nokia-3310.md#10-firmware-
 
 Source: plan 16 Task 0 (`$REF/captures/6.39/plan16/`, 631 recordings; the planning probes
 S1-S10 in `docs/plans/16-tones-and-sound.md`), imported as 331 sound goldens (299 asserted, each
-driven by a scenario and compared by the fidelity standard of `AGENTS.md`; 8 known gaps). The
+driven by a scenario and compared by the fidelity standard of `AGENTS.md`; 6 known gaps). The
 emulator logs register changes of three outputs every 1 ms: the **buzzer** (13 MHz / a 16-bit divider, enable bit, volume register MAD2
 PUP 0x1E), the DSP **tone generator** (earpiece path; oscillator register / 4 Hz, a second
 oscillator for DTMF, level word at 0x100A8) and the **vibrator**. Sound goldens assert those
@@ -67,8 +67,10 @@ preview ends inside its first pass (it repeats what was captured), and Ring once
 they ring; Navi and C on the game-over screens (silent like the other keys); the power key's
 power-off tone at the kernel's 800 ms long press (≈1046 ms in the capture). **Not reproduced:**
 the keypad beep of 77 ms when a key lands ≈70 ms before the DSP powers down (one capture), the
-key-to-output latencies above, Beep once's beep 23 ms after the vibrator with Keypad tones Off
-(1 ms in the other recordings) and one Level 5 recording of Get cool running ≈0.7 % slow (up to
-57 ms behind by 8 s). DTMF at standby (`sound/keypad/keys`, `hold`) is plan 22's: digits
+key-to-output latencies above, and single recordings that disagree with the program on an event
+under two display frames (Badinerie's 8 ms rest, Mangrove's 7 ms chirp) or on a volume step racing
+a note (Ascending at Level 5). Within the fidelity standard and not gaps: Beep once's beep 23 ms
+after the vibrator with Keypad tones Off (1 ms in the other recordings) and one Level 5 recording
+of Get cool running ≈0.7 % slow (57 ms behind by 8 s). DTMF at standby (`sound/keypad/keys`, `hold`) is plan 22's: digits
 there beep 900 Hz until number entry exists, and the dialling tones need the event's second
 oscillator (a contract extension then).

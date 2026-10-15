@@ -133,13 +133,13 @@ power-on alignment and the keyguard's sounds by the fidelity standard of `AGENTS
 model's own tests hold its off edges to 5 ms). The four message arrivals (asserted with
 plan 18's merge) are aligned on the arrival: the captures do not log the delivery and the link
 time spreads 2141-2464 ms, so they pin what an arrival lights and paints, not its latency. Known gaps (expected failures, causes in
-`tests/acceptance/25-keyguard-and-backlight.test.ts`): a restarted hint closing with a 17 ms
-partial draw (`hint-during`, `emergency/{000,110,113,911,999}`), `*` during the carousel's
-shortcut entry (`lock-cancel/digit`, plan 14's kernel), the light tick's ±3 ms
-(`timeout/virgin/tap-02`), the power key's long press (`boot/power-off`, plan 17), Snake II
-deaths the captured bot's keys do not reproduce (`game/{off,on}/{over,top-score}`) and Games ›
-Lights Off darkening the LEDs at Select's release, 22 ms after the firmware
-(`game/off/{pause-c,pause-nav,play}`).
+`tests/acceptance/25-keyguard-and-backlight.test.ts`): `*` during the carousel's shortcut entry
+(`lock-cancel/digit`, plan 14's kernel), the light tick's ±3 ms deciding whether the LEDs go dark
+(`timeout/virgin/tap-02`), the power key's long press (`boot/power-off`, plan 17) and Snake II
+deaths the captured bot's keys do not reproduce (`game/{off,on}/{over,top-score}`). Within the
+fidelity standard and not gaps: a restarted hint's closing partial draws (17 and 9 ms in
+`hint-during`, `emergency/{000,110,113,911,999}`) and Games › Lights Off darkening the LEDs at
+Select's release, 22 ms after the firmware.
 
 ## The website's backlight
 

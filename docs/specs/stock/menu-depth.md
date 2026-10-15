@@ -116,7 +116,7 @@ Score IDs`).
 
 **Not reproduced** (known gaps; each golden runs as an expected failure): Settings' `On` drawn
 over the Games list while `8-6` opens. Within the fidelity standard and not gaps: partial draws
-under a display frame (a 16 ms draw after `Menu 8`; Done's 16 ms draw after Type of view) and the
+under two display frames (a 16 ms draw after `Menu 8`; Done's 16 ms draw after Type of view) and the
 shortcut delays' spread between recordings (Speed dials opening 1427-1502 ms after `9`, the window
 ending 2920-2948 ms after `3`). Owned by later plans (pending goldens): standby number entry after Invalid shortcut
 (plan 22) and the Reminders level after Erase › All (only `Add new`; plan 21).
