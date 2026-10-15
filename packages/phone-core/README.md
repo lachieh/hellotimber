@@ -159,9 +159,9 @@ unsubscribe();
   });
   ```
 
-- `standbyIndicators: () => ({ message?, voicemail?, silent? })` (default none) is re-read on
-  every tick like `clock()`; the standby model carries `indicators` with the fields that are
-  true, and a changed value emits one snapshot.
+- `standbyIndicators: () => ({ message?, voicemail?, silent?, alarm?, timer?, stopwatch? })`
+  (default none) is re-read on every tick like `clock()`; the standby model carries
+  `indicators` with the fields that are true, and a changed value emits one snapshot.
 - `standbyLine: (shownMs) => string | undefined` (default none) is a second standby line, re-read
   on every tick with the time since standby was last entered (the boot's end, a return from the
   menus or an application, a notice cleared). The standby model (and the standby Menu leaves for
@@ -179,6 +179,35 @@ unsubscribe();
   stays), and when the running application leaves for standby on the power key's down (a note
   shown at standby); in the menus, other applications and the boot the short press does nothing.
   Any application can switch the phone off with `context.powerOff?.()` (reason `power-off`).
+- `interruption: () => PhoneApplication | undefined` (default none) is polled on every tick while
+  the phone is on, after the tick's timers, except during the boot, a boot gate's application, a
+  wake activation or another interruption. An application it returns runs above whatever is
+  shown, which is held untouched: standby (with its notice), a menu level (selection, rows
+  window, shortcut window) or an application and its session get no keys and no ticks, their
+  timers stand still, and the path does not change. `navigate()` meanwhile records its target
+  (the last one wins), applied when the interruption ends. `exit()` restores the held mode as it
+  was; `exit({ to: "standby" })` deactivates a held application (reason `navigate`), leaves the
+  menus and shows standby; `levels`, `select` and `row` throw. `open()` replaces the interruption
+  in place and the hold goes on; `menuIndicator()` has no segments. The power long press powers
+  off, deactivating the interruption and a held application once each (`power-off`). A poll or
+  `createSession` that throws skips that tick's interruption. Keys held when it begins or ends
+  are not delivered on release.
+- `wake: () => PhoneApplication | undefined` (default none) is polled on every tick while the
+  phone is off. An application it returns switches the phone on without the boot: the path is
+  `standby`, the stack empty and the screen the application's. `exit()` switches the phone off
+  again (reason `exit`); `exit({ to: "standby" })` runs the normal power-on (the boot and its
+  gates), applying a target `navigate()` recorded meanwhile. Keys reach the application except
+  the power long press, which powers off (`power-off`). A poll or `createSession` that throws
+  leaves the phone off. An alarm clock that wakes the phone:
+
+  ```ts
+  const phone = createPhone({
+    menu,
+    interruption: () => (alarmDue() ? ringing : undefined),
+    wake: () => (alarmDue() ? ringing : undefined),
+  });
+  ```
+
 - `setNotice({ text, softkey, path? | open? })` shows a standby notice; C clears it. Navi goes to
   `path`, or runs the `open` application as a standby application: the stack is empty, the path
   stays `standby`, `menuIndicator()` has no segments and `exit()` returns to standby (`levels`,

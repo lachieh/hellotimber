@@ -93,7 +93,27 @@ type ActivationOrigin<Metadata> =
    */
   | { kind: "standby" }
   /** Plan 17: the power key's standby application (PhoneConfig.standbyPower). */
-  | { kind: "power" };
+  | { kind: "power" }
+  /** Plan 21: PhoneConfig.interruption's application, above the mode it holds. */
+  | { kind: "interruption"; held: HeldMode<Metadata> }
+  /** Plan 21: PhoneConfig.wake's application, on a phone powered on without the boot. */
+  | { kind: "wake"; targetPath: string | null };
+
+/** Applications with an empty stack whose exit takes no levels, select or row. */
+type StandbyOrigin<Metadata> = Extract<
+  ActivationOrigin<Metadata>,
+  { kind: "gate" | "standby" | "power" | "interruption" | "wake" }
+>;
+
+/** The mode an interruption holds, untouched until it ends. */
+interface HeldMode<Metadata> {
+  mode: Extract<Mode<Metadata>, { kind: "standby" | "nav" | "app" }>;
+  shortcut: Shortcut<Metadata> | null;
+  /** When the hold began; its timers resume shifted by the time held. */
+  since: number;
+  /** The last navigate() target recorded during the interruption. */
+  targetPath: string | null;
+}
 
 /** A boot held by a gate (PhoneConfig.bootGates): where it resumes and what follows. */
 interface HeldBoot {
@@ -135,6 +155,8 @@ interface HeldKey {
    * its long press still fires (C held from a screen that leaves at C's down reaches standby).
    */
   swallowed?: true;
+  /** Pressed before an interruption or wake began or ended: its release reaches no one. */
+  detached?: true;
 }
 
 type Notice = { text: string; softkey: string; path?: string; open?: PhoneApplication };
@@ -611,10 +633,17 @@ function stockIndicator<Metadata>(m: Machine<Metadata>, s: StockShortcut<Metadat
 }
 
 function currentPath<Metadata>(m: Machine<Metadata>): string {
+  return modePath(m.mode);
+}
+
+/** A mode's path; an interruption shows the path of the mode it holds. */
+function modePath<Metadata>(mode: Mode<Metadata>): string {
   let slugs: string[];
-  if (m.mode.kind === "nav") slugs = stackSlugs(m.mode.stack);
-  else if (m.mode.kind === "app" && !isStandbyApplication(m.mode.activation)) {
-    const { stack, origin } = m.mode.activation;
+  if (mode.kind === "nav") slugs = stackSlugs(mode.stack);
+  else if (mode.kind === "app" && mode.activation.origin.kind === "interruption") {
+    return modePath(mode.activation.origin.held.mode);
+  } else if (mode.kind === "app" && !isStandbyOrigin(mode.activation.origin)) {
+    const { stack, origin } = mode.activation;
     slugs = [...stackSlugs(stack), ...originSlugs(origin)];
   } else return "standby";
   return slugs.length === 0 ? "menu" : `menu/${slugs.join("/")}`;
@@ -732,9 +761,9 @@ function standbyIndicators<Metadata>(m: Machine<Metadata>): StandbyIndicators | 
   const read = m.config.standbyIndicators?.();
   if (read === undefined) return undefined;
   const shown: StandbyIndicators = {};
-  if (read.voicemail === true) shown.voicemail = true;
-  if (read.message === true) shown.message = true;
-  if (read.silent === true) shown.silent = true;
+  for (const flag of ["voicemail", "message", "silent", "alarm", "timer", "stopwatch"] as const) {
+    if (read[flag] === true) shown[flag] = true;
+  }
   return Object.keys(shown).length === 0 ? undefined : shown;
 }
 
@@ -757,18 +786,34 @@ function standbySignature<Metadata>(m: Machine<Metadata>): string {
 }
 
 /**
- * Applications that run at standby with the path `standby` and an empty stack: plan 15's boot
- * gates, plan 18's notice applications, plan 19's standby key applications and plan 17's power
- * key application.
+ * Applications with an empty stack: plan 15's boot gates, plan 18's notice applications, plan
+ * 19's standby key applications, plan 17's power key application and plan 21's interruptions and
+ * wake applications. All but an interruption (which shows the path of the mode it holds) have the
+ * path `standby`.
  */
-function isStandbyApplication<Metadata>(activation: AppActivation<Metadata>): boolean {
-  return activation.origin.kind === "gate" || isStandbyOverlay(activation.origin);
+function isStandbyOrigin<Metadata>(
+  origin: ActivationOrigin<Metadata>,
+): origin is StandbyOrigin<Metadata> {
+  return (
+    origin.kind === "gate" ||
+    isStandbyOverlay(origin) ||
+    origin.kind === "interruption" ||
+    origin.kind === "wake"
+  );
 }
 
 /** A standby application outside the boot (a notice's, a standby key's, the power key's). */
 function isStandbyOverlay<Metadata>(origin: ActivationOrigin<Metadata>): boolean {
   return origin.kind === "standby" || origin.kind === "power";
 }
+
+const STANDBY_APPLICATION_NAMES: Record<StandbyOrigin<unknown>["kind"], string> = {
+  gate: "a boot gate",
+  standby: "a standby application",
+  power: "the power key's application",
+  interruption: "an interruption",
+  wake: "a wake application",
+};
 
 function standbyScreen<Metadata>(m: Machine<Metadata>, leaving: boolean): ScreenModel {
   const indicators = standbyIndicators(m);
@@ -917,28 +962,10 @@ function startApplication<Metadata>(
   m.dirty = true;
   const context: ApplicationContext = {
     exit(options?: ExitOptions): void {
-      if (origin.kind === "gate") {
-        const toStandby = gateExitsToStandby(options);
+      if (isStandbyOrigin(origin)) {
+        const toStandby = gateExitsToStandby(options, STANDBY_APPLICATION_NAMES[origin.kind]);
         run(m, () => {
-          if (!isActive(m, activation, token)) return;
-          swallowHeldReleases(m);
-          deactivate(activation, "exit");
-          if (toStandby) finishBoot(m, origin.boot.targetPath);
-          else resumeBoot(m, origin.boot);
-        });
-        return;
-      }
-      if (isStandbyOverlay(origin)) {
-        gateExitsToStandby(
-          options,
-          origin.kind === "standby" ? "a standby application" : "the power key's application",
-        );
-        run(m, () => {
-          if (!isActive(m, activation, token)) return;
-          swallowHeldReleases(m);
-          deactivate(activation, "exit");
-          m.mode = { kind: "standby" };
-          m.dirty = true;
+          if (isActive(m, activation, token)) leaveStandbyApplication(m, activation, toStandby);
         });
         return;
       }
@@ -1001,8 +1028,40 @@ function startApplication<Metadata>(
 }
 
 /**
- * Validates a standby application's exit options (a boot gate's, a notice's): only
- * `to: "standby"` (for a gate, end the boot) is allowed.
+ * A standby application exits (or C leaves its App error): a gate resumes the boot (`toStandby`:
+ * ends it), a notice's application returns to standby, an interruption restores the mode it holds
+ * (`toStandby`: leaves it for standby) and a wake application powers off (`toStandby`: powers on).
+ */
+function leaveStandbyApplication<Metadata>(
+  m: Machine<Metadata>,
+  activation: AppActivation<Metadata>,
+  toStandby: boolean,
+): void {
+  swallowHeldReleases(m);
+  deactivate(activation, "exit");
+  const { origin } = activation;
+  switch (origin.kind) {
+    case "gate":
+      if (toStandby) finishBoot(m, origin.boot.targetPath);
+      else resumeBoot(m, origin.boot);
+      return;
+    case "interruption":
+      endInterruption(m, origin.held, toStandby);
+      return;
+    case "wake":
+      if (toStandby) powerOn(m, origin.targetPath);
+      else switchOff(m);
+      return;
+    case "standby":
+    case "power":
+      m.mode = { kind: "standby" };
+      m.dirty = true;
+  }
+}
+
+/**
+ * Validates a standby application's exit options (a boot gate's, a notice's, an interruption's,
+ * a wake application's): only `to: "standby"` (for a gate, end the boot) is allowed.
  */
 function gateExitsToStandby(options: ExitOptions = {}, who = "a boot gate"): boolean {
   if (options.to !== undefined && options.to !== "standby") {
@@ -1122,7 +1181,12 @@ function powerOn<Metadata>(m: Machine<Metadata>, targetPath: string | null): voi
 }
 
 function switchOff<Metadata>(m: Machine<Metadata>): void {
+  const mode = m.mode;
   deactivateActive(m, "power-off");
+  if (mode.kind === "app" && mode.activation.origin.kind === "interruption") {
+    const held = mode.activation.origin.held.mode;
+    if (held.kind === "app") deactivate(held.activation, "power-off");
+  }
   m.mode = { kind: "off" };
   m.shortcut = null;
   m.dirty = true;
@@ -1244,12 +1308,13 @@ function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
     if (!held.longFired && !held.swallowed && digit !== null) shortcutDigit(m, digit);
     return;
   }
+  if (held?.detached) return;
   if (m.mode.kind === "app") {
     const activation = m.mode.activation;
     if (activation.session === null) {
       if (held !== undefined && !held.longFired && !held.swallowed && event.key === "c") {
         cancelShortcut(m);
-        if (isStandbyOverlay(activation.origin)) goStandby(m);
+        if (isStandbyOrigin(activation.origin)) leaveStandbyApplication(m, activation, false);
         else returnToStack(m, activation.stack);
       }
     } else {
@@ -1280,6 +1345,12 @@ function forwardToApp<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
 function handleTick<Metadata>(m: Machine<Metadata>, nowMs: number): void {
   const dtMs = Math.max(0, nowMs - m.now);
   m.now = Math.max(m.now, nowMs);
+  runTimers(m, dtMs);
+  if (m.mode.kind === "off") pollWake(m);
+  else if (interruptible(m)) pollInterruption(m);
+}
+
+function runTimers<Metadata>(m: Machine<Metadata>, dtMs: number): void {
   for (const [key, held] of m.held) {
     if (!held.longFired && m.now - held.downAt >= LONG_PRESS_MS) {
       held.longFired = true;
@@ -1314,6 +1385,120 @@ function handleTick<Metadata>(m: Machine<Metadata>, nowMs: number): void {
     // Application timer failures are isolated from firmware navigation.
   }
   m.dirty = true;
+}
+
+/** Plan 21: an interruption may begin (on, not booting, no gate, wake or interruption running). */
+function interruptible<Metadata>(m: Machine<Metadata>): boolean {
+  if (m.config.interruption === undefined) return false;
+  if (m.mode.kind === "standby" || m.mode.kind === "nav") return true;
+  return (
+    m.mode.kind === "app" &&
+    !["gate", "interruption", "wake"].includes(m.mode.activation.origin.kind)
+  );
+}
+
+/**
+ * Asks the host for an interruption; one holds the mode shown. A poll or createSession that
+ * throws is skipped for this tick, leaving the mode untouched.
+ */
+function pollInterruption<Metadata>(m: Machine<Metadata>): void {
+  const application = pollHost(m.config.interruption);
+  const mode = m.mode;
+  if (application === undefined || mode.kind === "off" || mode.kind === "boot") return;
+  const held: HeldMode<Metadata> = { mode, shortcut: m.shortcut, since: m.now, targetPath: null };
+  const wasDirty = m.dirty;
+  m.shortcut = null;
+  const origin: ActivationOrigin<Metadata> = { kind: "interruption", held };
+  if (startPolled(m, origin, application)) return;
+  m.mode = mode;
+  m.shortcut = held.shortcut;
+  m.dirty = wasDirty;
+}
+
+/** Asks the host for a wake application; one powers the phone on without the boot. */
+function pollWake<Metadata>(m: Machine<Metadata>): void {
+  const application = pollHost(m.config.wake);
+  if (application === undefined) return;
+  const wasDirty = m.dirty;
+  if (startPolled(m, { kind: "wake", targetPath: null }, application)) return;
+  m.mode = { kind: "off" };
+  m.dirty = wasDirty;
+}
+
+/** A host seam's application, or undefined when it has none, returns no application or throws. */
+function pollHost(
+  poll: (() => PhoneApplication | undefined) | undefined,
+): PhoneApplication | undefined {
+  if (poll === undefined) return undefined;
+  try {
+    const application = poll();
+    return application instanceof PhoneApplication ? application : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Starts a polled application; false when its createSession threw (the caller restores the
+ * mode). Keys held now are detached: their releases reach neither it nor what follows it.
+ */
+function startPolled<Metadata>(
+  m: Machine<Metadata>,
+  origin: ActivationOrigin<Metadata>,
+  application: PhoneApplication,
+): boolean {
+  startApplication(m, origin, application, []);
+  const mode = m.mode;
+  if (
+    mode.kind === "app" &&
+    mode.activation.origin === origin &&
+    mode.activation.session === null
+  ) {
+    return false;
+  }
+  detachHeldKeys(m);
+  return true;
+}
+
+function detachHeldKeys<Metadata>(m: Machine<Metadata>): void {
+  for (const held of m.held.values()) held.detached = true;
+}
+
+/**
+ * An interruption ended: the held mode comes back as it was, its timers shifted by the time held
+ * (`toStandby`: its application is deactivated with `navigate` and standby shows). A navigate()
+ * recorded meanwhile is then applied.
+ */
+function endInterruption<Metadata>(
+  m: Machine<Metadata>,
+  held: HeldMode<Metadata>,
+  toStandby: boolean,
+): void {
+  if (toStandby) {
+    if (held.mode.kind === "app") deactivate(held.mode.activation, "navigate");
+    m.mode = { kind: "standby" };
+    m.shortcut = null;
+  } else {
+    shiftHeldTimers(held, m.now - held.since);
+    m.mode = held.mode;
+    m.shortcut = held.shortcut;
+  }
+  detachHeldKeys(m);
+  m.dirty = true;
+  if (held.targetPath !== null) handleNavigate(m, held.targetPath);
+}
+
+/** Moves the held mode's deadlines and timeline starts on by `heldMs`, as if no time had passed. */
+function shiftHeldTimers<Metadata>(held: HeldMode<Metadata>, heldMs: number): void {
+  const { mode, shortcut, since } = held;
+  const stack = mode.kind === "nav" ? mode.stack : mode.kind === "app" ? mode.activation.stack : [];
+  for (const frame of stack) {
+    if (frame.kind === "carousel") frame.revealedAt += heldMs;
+    else if (frame.kind === "submenu" && frame.enteringUntil > since) frame.enteringUntil += heldMs;
+  }
+  if (shortcut === null) return;
+  shortcut.deadline += heldMs;
+  if (shortcut.kind === "stock" && shortcut.pending !== null) shortcut.pending.openAt += heldMs;
 }
 
 function onShortPress<Metadata>(m: Machine<Metadata>, key: PhoneKey): void {
@@ -1888,6 +2073,17 @@ function wrapIndex(index: number, total: number): number {
 
 function handleNavigate<Metadata>(m: Machine<Metadata>, path: string): void {
   const target = normalizePath(path);
+  if (m.mode.kind === "app") {
+    const { origin } = m.mode.activation;
+    if (origin.kind === "interruption") {
+      origin.held.targetPath = target;
+      return;
+    }
+    if (origin.kind === "wake") {
+      origin.targetPath = target === "standby" ? null : target;
+      return;
+    }
+  }
   if (m.mode.kind === "off") {
     if (target !== "standby") powerOn(m, target);
     return;
