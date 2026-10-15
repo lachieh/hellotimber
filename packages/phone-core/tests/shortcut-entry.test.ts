@@ -370,6 +370,46 @@ describe("stock shortcut entry (PhoneConfig.shortcutEntry, plan 14 D14)", () => 
     expect(shakes.context?.menuIndicator?.()).toEqual({ segments: [8, 6, 3], awaitingNext: false });
   });
 
+  it("an application the shortcut opened takes the digits typed into it (Menu 9, Menu 2 1)", () => {
+    // v6.39: Calculator takes a 5 typed 6 ms after it shows; Write messages takes 4, 5 and 6
+    // typed 0.4-4.1 s after it opens, within the window (2026-10-14 probes s2, t1).
+    const { phone, speedDials, invalid, at } = stockRig();
+    at(600);
+    phone.pressKey("1");
+    at(600 + WINDOW_MS + OPEN_DELAY_MS);
+    at(5600);
+    phone.pressKey("9");
+    at(5600 + OPEN_DELAY_MS);
+    expect(phone.path).toBe("menu/phone-book/speed-dials");
+    at(5600 + OPEN_DELAY_MS + 6);
+    phone.pressKey("5");
+    expect(speedDials.keys).toEqual([
+      { type: "down", key: "5" },
+      { type: "up", key: "5" },
+    ]);
+    expect(invalid.starts).toBe(0);
+  });
+
+  it("a digit while a leaf is about to open opens it at once and is spent (Menu 9 5)", () => {
+    // v6.39: Calculator shows `0` 47 ms after the 5 (probe t2); Write messages opens empty on a
+    // 4 typed while it was about to open (probe s1-late).
+    const { phone, speedDials, invalid, at } = stockRig();
+    at(600);
+    phone.pressKey("1");
+    at(600 + WINDOW_MS + OPEN_DELAY_MS);
+    at(5600);
+    phone.pressKey("9");
+    at(5600 + 500);
+    expect(phone.path).toBe("menu/phone-book");
+    phone.pressKey("5");
+    expect(phone.path).toBe("menu/phone-book/speed-dials");
+    expect(speedDials.starts).toBe(1);
+    expect(speedDials.keys).toEqual([]);
+    expect(invalid.starts).toBe(0);
+    at(5600 + OPEN_DELAY_MS);
+    expect(speedDials.starts).toBe(1);
+  });
+
   it("a digit in an open level puts its entry on the top row, then opens it (P5 m1-wait-9)", () => {
     const { phone, speedDials, at } = stockRig();
     at(600);

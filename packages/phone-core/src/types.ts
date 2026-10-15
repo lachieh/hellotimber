@@ -151,9 +151,10 @@ export interface PhoneConfig<Metadata = unknown> {
    * numbers at each level: a number that is a prefix of a longer one (or all zeros) waits for
    * `shortcutWindowMs` and then resolves; a number that selects an entry shows it at once
    * (`opening: true`) and opens it `openDelayMs` later (a submenu with an intro runs it at once);
-   * digits that match no number open `invalid`, whose exit goes to standby. The window restarts
-   * at each digit, at a resolve and when a shortcut intro ends; an opening that falls due during
-   * an intro waits for the window end.
+   * digits that match no number open `invalid`, whose exit goes to standby. A digit while a
+   * leaf is about to open opens it at once and is spent; an application the shortcut opened
+   * takes the digits typed into it. The window restarts at each digit, at a resolve and when a
+   * shortcut intro ends; an opening that falls due during an intro waits for the window end.
    */
   shortcutEntry?: { openDelayMs: number; invalid: PhoneApplication };
   /**

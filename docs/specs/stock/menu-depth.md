@@ -39,7 +39,18 @@ Profiles; `1 8` and `1 9` show `Invalid shortcut` (≈2.9 s), then standby, wher
 start a phone number (not reproduced). A digit that selects an entry shows the typed path (`8-6`,
 `1-9`) without the softkey and opens it 1427-1502 ms after the digit's redraw (nokia-os: 1460 ms
 after the key); an opened submenu shows `<path>-` and three dots for ≈1.47 s, then its index.
-`Menu 8 1` plays the Snake II splash first; a digit during a splash only skips it. Entering
+`Menu 8 1` plays the Snake II splash first; a digit during a splash only skips it. An
+application the shortcut opened takes the digits typed into it at once (Calculator: `Menu 9`,
+then `5` 6 ms after it shows reads `5`; Write messages: `Menu 2 1`, then `4 5 6` 0.4-4.1 s after
+it opens types `gjm`), and a digit while a leaf is about to open opens it at once and is spent
+(`Menu 9 5`: Calculator shows `0` 47 ms after the `5`). An option list is a level to the
+firmware: after `Menu 8 6 3` it shows `8-6-3-` and dots, and a digit in that window that numbers
+an option stores it (`1`: Shakes Off), draws only the option's label at the bottom right for
+≈1.92 s and goes to standby; one that numbers none shows `Invalid shortcut`, then standby
+(`Menu 8 6 3 1` typed before the list opens does the same as `1` in it). After the window a digit
+in an option list starts a phone number at standby (2026-10-14 probes,
+`$REF/captures/scratch-inv/shortcut/`). nokia-os passes the digits to the option list, which
+ignores them (not reproduced). Entering
 Screen saver with Select (5-9 and every profile's 12-n-2-9) shows the level's path with a dash
 and three dots (`5-9-`, `12-1-2-9-`) for ≈2.9 s before the selection's number (the firmware
 opens a digit window there; nokia-os: the 2948 ms shortcut window); the list works meanwhile (▼
@@ -110,8 +121,7 @@ ms after `1`, the window ending 2920 ms after `3`); Settings' `On` drawn over th
 dismisses; P6 probed pages), C on `Requesting`, other keys on notes, OK on a page's list
 (Prepaid credit's On/Off does not store), Screen saver's opening after On, Screen saver's entry
 indicator after a shortcut or a path, digits during it, ▲ during Snake II's Top score, Rename in Discreet,
-Loud and the empty slots (`10 - length` characters left), digits during an option list or a
-splash shortcut, `0 1` as a shortcut, the 12-hour clock beyond `10:10 am`.
+Loud and the empty slots (`10 - length` characters left), digits during a splash shortcut, `0 1` as a shortcut, the 12-hour clock beyond `10:10 am`.
 
 **Capture artefacts (never reproduced as behaviour):**
 

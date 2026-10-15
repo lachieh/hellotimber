@@ -1350,11 +1350,15 @@ function enterMenu<Metadata>(m: Machine<Metadata>): void {
   m.dirty = true;
 }
 
-/** The digit a key types into the open shortcut window, or null when the key is not captured. */
+/**
+ * The digit a key types into the open shortcut window, or null when the key is not captured.
+ * Stock shortcuts leave digits to a showing application: a shortcut intro, or the application
+ * the shortcut opened (v6.39: Calculator and Write messages take them).
+ */
 function capturedDigit<Metadata>(m: Machine<Metadata>, key: PhoneKey): number | null {
   if (m.shortcut === null || !/^[0-9]$/.test(key)) return null;
   if (m.shortcut.kind === "digits") return key === "0" ? null : Number(key);
-  return shortcutIntroRunning(m) ? null : Number(key);
+  return m.mode.kind === "app" ? null : Number(key);
 }
 
 function shortcutIntroRunning<Metadata>(m: Machine<Metadata>): boolean {
@@ -1427,6 +1431,11 @@ function stockDigit<Metadata>(
   s: StockShortcut<Metadata>,
   digit: number,
 ): void {
+  // A digit while a leaf is about to open opens it at once and is spent (v6.39: Menu 9 5).
+  if (s.pending !== null && !(s.pending.entry instanceof SubmenuEntry)) {
+    openPending(m, s);
+    return;
+  }
   const digits = `${s.digits}${digit}`;
   const match = matchNumber(stockLevel(m, s), digits);
   if (match.kind === "none") {

@@ -249,20 +249,6 @@ const DICTIONARY_OFF_REWRITES: readonly (readonly [readonly string[], readonly s
 ];
 
 /**
- * Menu, ▼ to Messages, Select (its first page, Write messages), Select: 2968 ms of taps and
- * waits, then 2858 ms so that the whole takes the log's Menu 2 1 and polls (5826 ms).
- */
-const WRITE_MESSAGES_BY_SELECT: readonly string[] = [
-  "key menu",
-  "run 400ms",
-  "key down",
-  "key menu",
-  "run 1000ms",
-  "key menu",
-  "run 2858ms",
-];
-
-/**
  * A block's commands as a stock phone replays them: each T9 Dictionary off replaced by the
  * multi-tap one, and a reboot's power-on (plan 15's logs record the boot, then type the setup's
  * code, time and date) replaced by the setup.
@@ -274,21 +260,6 @@ export function messagesRewrite(lines: readonly string[]): string[] {
       out.push(lines[i]!, "include setup");
       // The setup ends with C and 2 s at standby.
       while (i < lines.length && !(lines[i] === "run 2s" && lines[i - 1] === "key c")) i++;
-      continue;
-    }
-    // Menu 2 1, then the log polled the LCD every 250 ms (5 polls) for Write messages. The stock
-    // shortcut opens 2-1 once Messages' `1` can no longer become `10` (plan 14 D14), and its
-    // window stays open over the editor, taking the digits typed into it (phone-core): the replay
-    // opens Write messages with Menu, ▼, Select, Select instead, the next key as late as the log's.
-    if (
-      lines[i] === "key menu" &&
-      lines[i + 1] === "run 400ms" &&
-      lines[i + 2] === "key 2 1" &&
-      lines[i + 3] === "run 3000ms" &&
-      lines.slice(i + 4, i + 9).every((line) => line === "run 250ms")
-    ) {
-      out.push(...WRITE_MESSAGES_BY_SELECT);
-      i += 8;
       continue;
     }
     const rewrite = DICTIONARY_OFF_REWRITES.find(([t9]) =>
