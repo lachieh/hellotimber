@@ -439,11 +439,11 @@ from the applet script), checked against `plan30/sims/*.json` by Task 0's `check
 `captures/6.39/plan30/**` (SIM fixtures in `plan30/sims/`), a "Plan 30 supplementary captures"
 section in `captures/README.md`, `firmware/work/v639-plan30-*.fls`.
 
-- [ ] Read `$REF/captures/README.md`, plan 19's `scratch-plan19/NOTES.md` and `tools/sim.py`, the
+- [x] Read `$REF/captures/README.md`, plan 19's `scratch-plan19/NOTES.md` and `tools/sim.py`, the
       swSIM README and `src/proactive.c`. Do not modify existing captures, scripts or emulator
       sources; `build.sh` applies patches to a build-directory copy (plan 22's pattern). With no
       `CAP_STK`, output is byte-identical to the stock harness (rerun the plan 13 clock script).
-- [ ] **Harness K0:** `swsim-stk.patch` answers `FETCH` (`A0 12`) and `TERMINAL RESPONSE` (`A0 14`)
+- [x] **Harness K0:** `swsim-stk.patch` answers `FETCH` (`A0 12`) and `TERMINAL RESPONSE` (`A0 14`)
       under the GSM class as the README's patches 1-4 did for other commands; `stk-applet.c` replaces
       the default applet with one that reads `CAP_STK=<script.json>` (the `StockSimToolkit` shape:
       `SET UP MENU`, then per `ENVELOPE (MENU SELECTION)` the item's steps as `DISPLAY TEXT`,
@@ -452,22 +452,22 @@ section in `captures/README.md`, `firmware/work/v639-plan30-*.fls`.
       decoded per GSM 11.14 into `plan30/terminal-profile.txt`. If no session completes after a
       bounded effort (record what was tried), stop K, write the outcome and continue with M-I;
       Tasks 2-7 then follow D4's composed branch.
-- [ ] `gen_v639_plan30.py` (`sims`, `run -j 3`, `--only`, `ocr`, `check`) driving
+- [x] `gen_v639_plan30.py` (`sims`, `run -j 3`, `--only`, `ocr`, `check`) driving
       `tools/menutree/emu.py` like plans 19 and 22. Fixtures (invented, restated in the capture set):
       `sms` (`EF_SMS` with read and unread messages from numbers in and out of `EF_ADN`, 160-septet
       and extension-character texts, two time stamps), `slots10`, `slots30`, `lnd` (`EF_LND` with
       three numbers), `stk` (the applet script below), `empty` (plan 19's).
-- [ ] **M SIM messages** (`plan30/sms/`, virgin): power-on with unread messages (notice? envelope?
+- [x] **M SIM messages** (`plan30/sms/`, virgin): power-on with unread messages (notice? envelope?
       sound on factory), Inbox order and icons, reading every message (`Sender:`, `Sent:`), Details,
       Erase (then reboot in one process: the SIM after the write), an arrival into a SIM with free and
       with no free slots at 10, 15 and 30 slots (does capacity follow the SIM?), Restore factory
       settings with SIM messages.
-- [ ] **N sender names:** an arrival and a SIM message from a number in `EF_ADN` (exact, with and
+- [x] **N sender names:** an arrival and a SIM message from a number in `EF_ADN` (exact, with and
       without `+61`/leading `0`, and differing in the last digit): the notice, the list, `Sender:`,
       Details, Reply's number, Chat's `>` line (if 18c's Chat runs in the harness).
-- [ ] **L last numbers dialled:** Dialled numbers and standby ▲ with `lnd`; after a call (plan 22's
+- [x] **L last numbers dialled:** Dialled numbers and standby ▲ with `lnd`; after a call (plan 22's
       harness commands): does `EF_LND` change (read the SIM after `saveflash`)?
-- [ ] **K toolkit** (if K0 succeeded): the carousel with Menu 13 (label for titles `SIM services`,
+- [x] **K toolkit** (if K0 succeeded): the carousel with Menu 13 (label for titles `SIM services`,
       `LACHLAN` and a 14-character title; icon frames; ▲/▼ past 12 and 1; `Menu 1 3` and the
       shortcut window); the level with 1, 3 and 12 items, labels of 10/16/24 characters; each item's
       first screen; `DISPLAY TEXT` short, 160 and 240 characters (paging, scroll, OK, C, held C,
@@ -475,15 +475,122 @@ section in `captures/README.md`, `firmware/work/v639-plan30-*.fls`.
       `SET UP CALL` with and without an alpha identifier, with Confirm SIM service actions `Asked`
       and `Not asked` (OK, C, then plan 22's Calling); a selection while the phone is in a call;
       the session's end (where the phone returns); audio of every new note (factory).
-- [ ] **I IMEI:** write an IMEI into a disposable image (the emulator's PMM/EEPROM IMEI field, as
+- [x] **I IMEI:** write an IMEI into a disposable image (the emulator's PMM/EEPROM IMEI field, as
       plan 15 wrote the security code) and capture `*#06#`; if impossible, record why.
-- [ ] OCR every new image into `plan30/text.json`.
-- [ ] `check`: every recording starts on its parent; `plan30/sims/*.json` equal the capture set's
+- [x] OCR every new image into `plan30/text.json`.
+- [x] `check`: every recording starts on its parent; `plan30/sims/*.json` equal the capture set's
       `SIM_CONTENT_SIMS` (the repo file as an argument); every audio recording has `keys.csv`.
-- [ ] Append "Plan 30 supplementary captures" to `$REF/captures/README.md`. No commit. Record the
+- [x] Append "Plan 30 supplementary captures" to `$REF/captures/README.md`. No commit. Record the
       outcome under this task: the harness result and the terminal profile, the SIM message rules
       (boot, order, capacity, persistence), the name rule, `EF_LND`, every toolkit layout and flow
       with timings, the IMEI screen, what failed.
+
+**Task 0 outcome (2026-10-15).** Generator `$REF/captures/scripts/gen_v639_plan30.py` (32 sections),
+harness `$REF/tools/harness-p30/` (README "Plan 30 supplementary captures"), output
+`$REF/captures/6.39/plan30/`: 219 recordings (all with audio and `keys.csv`), 1,718 base images, all
+OCRed into `text.json`, `check`: 0 problems (13 single-frame notes, below). Timings are ms after the
+key-down of the recorded key.
+
+Deviation (files): the harness pieces live in `tools/harness-p30/{build.sh,swsim-stk.patch,stk-applet.c}`,
+not `tools/harness/` (plans 21/22's copy pattern; `tools/harness` and `harness-p22` are untouched). The copy
+starts from plan 22's (`answer`, `hangup`, `CAP_TCH`) and adds a `reprovision` command. With no `CAP_STK`
+or `CAP_STK_LOG` the plan 13 clock script writes the same 44 files (SHA-256) as `tools/harness`.
+
+- **Harness K0: succeeded at the first attempt.** `swsim-stk.patch` routes FETCH `A0 12`, TERMINAL
+  RESPONSE `A0 14` and ENVELOPE `A0 C2` under the GSM class; `stk-applet.c` (`CAP_STK=<script.json>`)
+  plays the StockSimToolkit shape. Full sessions complete: SET UP MENU, ENVELOPE (MENU SELECTION),
+  DISPLAY TEXT or SELECT ITEM (nested two deep), TERMINAL RESPONSE, then the next step or the session
+  end. The fixture needs `EF_SST` services 27 and 29 and **`EF_PHASE` 03**: with the emulator SIM
+  (phase 2) the 3310 sends no TERMINAL PROFILE at all. The applet re-issues the parent SELECT ITEM on
+  result 11 (a harness choice). **SET UP CALL fails** (below): no `stk/call/*` screen after the
+  confirm is usable as a golden.
+- **Terminal profile** (`plan30/terminal-profile.txt`): `4F 67 FF 7F 11` (5 bytes). Download: profile,
+  SMS-PP, CB, menu selection, USSD in call control. Other: command result, call control (with cell
+  id), UCS2 entry and display; no MO SMS control, no 9.1.3 alpha handling, no extension text. Proactive:
+  DISPLAY TEXT, GET INKEY, GET INPUT, MORE TIME, PLAY TONE, POLL INTERVAL, POLLING OFF, REFRESH, SELECT
+  ITEM, SEND SMS, SEND SS, SEND USSD, SET UP CALL, SET UP MENU, PROVIDE LOCAL INFORMATION (not NMR).
+  Events: SET UP EVENT LIST and location status only. No timers, no LAUNCH BROWSER, no idle-mode text
+  (R3 holds).
+- **M SIM messages.** v6.39 reads every `EF_SMS` record at power-on and lists them as the Inbox.
+  Order: **unread first, then read, each in SIM slot order; time stamps play no part**
+  (`sms/order`). An arrival takes the first free slot, so it is listed by that slot among the unread.
+  Power-on: unread SIM messages show **only the standby envelope**: no notice and no tone, virgin or
+  factory (`sms/boot/*`); read-only messages show no envelope. Reading writes the record's status byte
+  `03` to `01` on the SIM (UPDATE RECORD); Erase (`Erase message?`, OK) writes status `00` and leaves
+  the rest of the record. Both survive a cold power-on with the same SIM (`sms/erase/reboot-*`): the
+  inbox state lives on the SIM, not in phone memory. **Capacity follows the SIM:** with 10, 15 and 30
+  records the last free slot takes one arrival (`1 message received`); the next arrival shows
+  `No space for new messages` (OK) and `EF_SMSS` is written `04 FE` (memory-full flag); no cap was hit at 30. Restore factory settings keeps every SIM message. Reading shows text pages of 4 lines
+  (`Options`), then `Sender:` (name line and number line, or the number alone), then `Sent:`
+  `13-Oct-2026` / `08:05:00`; ▼ wraps from `Sent:` to the first page. Options: Erase, Reply, Chat,
+  Edit, Use number, Forward, Details (`Sender:`, `Message centre:`, `Time:`; `Back`). The Inbox list's
+  top-right counter reads like `2-2-1` (menu path and position). A 160-septet text reads in full.
+  **Extension-table characters `[ ] { } ~ | ^` draw as `?`**; `€` and `\` draw (D2's drawable check
+  must refuse the former, or the screen must show `?`).
+- **N sender names: v6.39 names known senders** wherever it shows a sender: the Inbox list, `Sender:`
+  (name, then number) and Details (`Sender:` name and number). The arrival notice names nobody
+  (`4 messages received` counts every unread message; `Read` opens the Inbox list). Chat opens
+  `Chat name:` empty (no name pre-filled). Reply's Send opens the SMS-centre `Set` list in the virgin image,
+  so Reply's number was not reached. **Rule (`names/digits`, `names/*`): two numbers match when their
+  last 9 digits are equal, or all digits of the shorter one when it has fewer than 9; the type of
+  number (`+`) and any leading digits beyond those are ignored** (`61412345678`, `5412345678`,
+  `0061412345678`, `412345678` and `2345678` all name Ann 0412345678; a difference in any of the last
+  9 digits, as in `0312345678` or `0412345679`, does not; `23456` names Sam 123456). Gap: when two
+  phone-book numbers share their last 9 digits (Bob 0412345678, Intl +61412345678), the SIM message
+  from `+61412345678` names Intl, network arrivals `5412345678`, `412345678` and `61412345678` name
+  nobody and `44412345678` names Bob: unresolved; Task 5 should treat a shared 9-digit suffix as a
+  known gap. Network originators lose their `+` in the harness (`sms` takes digits only), so the
+  international form is covered by SIM messages only. Chat's `>` lines were not captured.
+- **L `EF_LND`: v6.39 never reads or writes it.** With three numbers in `EF_LND`, standby ▲ shows
+  `No last dialled numbers` and Call register › Dialled numbers `No numbers`; no APDU in any section
+  selects 6F44, and a call (`lnd/call`) lists `Dialled 1: 0411222333` with no UPDATE on 6F44. (After
+  that call, the image saved 4 s later shows `No last dialled numbers` again after a reboot: the
+  phone's own list had not reached flash; plan 22's concern.) **D8: `StockSimCard.lastDialled` does
+  not exist.**
+- **K toolkit layouts and flows** (`stk/*`, toolkit `main` unless named):
+  - Carousel: the entry is **Menu 14** (the counter reads `14`; ▲ from Phone book wraps to it, ▲
+    again gives Profiles `12`, ▼ from 14 wraps to Phone book); there is no 13 (`Menu 1 3` gives an
+    `Invalid shortcut` note at 430 ms for ≈2.9 s, then standby). `Menu 1 4` opens the level (the SIM
+    services page at 436 ms, the level at 1901 ms). **The label is the SET UP MENU alpha identifier**
+    in the carousel's large face: `SIM services`, `LACHLAN`; the 14-character `Portfolio menu` shows
+    `Portfolio` only. Icon: a SIM card and hand, 11 frames (61 ms, held 1377 ms, then steps of
+    ≈232-449 ms), settling at 3769 ms; it restarts on every arrival (▲, ▼, C from the level). D5's
+    numbering `13-n` becomes `14-n`.
+  - Level: a 3-row rows list with a scroll bar, soft key `OK`, **no title and no item counter**,
+    opening on item 1 (91 ms after Select); ▼ wraps 12 to 1; labels longer than the row (≈13
+    characters: `Sixteen char ...`, `Twenty-four ...`) are cut with ` ...`; 10 characters fit. C goes
+    to the carousel (66 ms), held C to standby (≈530-615 ms).
+  - Every SIM screen opens with a `Wait` note with a hatched bar at ≈55-80 ms, then the SIM's screen
+    at ≈90-115 ms (≈300 ms for 160 and ≈390 ms for 240 characters).
+  - DISPLAY TEXT: bold face, 4 lines a page, soft key `OK`, no scroll bar; ▼ pages (160 characters: 3
+    pages, 240: 4); ▲, ▼ and digits on a one-page text change nothing. OK (result 00) returns to the
+    level at ≈65-90 ms with the item still selected; C (result 11) shows `Wait`, then the level
+    (≈145-200 ms); held C (result 10) goes to standby (≈530-630 ms). A wait-for-user text (qualifier
+    0x80) times out after ≈54 s (result 12) to the level; a clear-after-delay text (0x00) clears after
+    ≈3.58 s (result 00). Two texts: OK on the first shows the second (via a 25 ms level frame).
+  - SELECT ITEM: the level's rows list with `OK`; **the alpha identifier (title) is not drawn**;
+    nesting works; OK opens the chosen item's next screen; C returns to the parent list (the harness
+    re-issues it) or the level; held C goes to standby.
+  - SET UP CALL: **not captured.** The phone FETCHes it, sends one STATUS and shows a blank screen with
+    only an edit-mode indicator and `OK`; OK and digits do nothing, C answers result 22 (user did not
+    accept) for the alpha variant; no call setup reaches the network. Tried (bounded): qualifiers 0, 2
+    and 4, a `+` number, a 3-digit number, with and without alpha, Confirm SIM service actions `Asked`
+    and `Not asked`, with `CAP_TCH=1`. Tasks 2-7 follow **D4's composed branch for the call confirm
+    only** (`Allow SIM card to call?`, UNVERIFIED); carousel, level, text and list are asserted.
+  - Confirm SIM service actions (6-2-6) opens on `Not asked` in the virgin image; `Asked` shows `Done`.
+  - During a call the in-call Options are End active call, Hold, New call, Send DTMF, Phone book and
+    Mute: **no Menu entry, so SIM services cannot be reached in a call**.
+  - Sound: no new tones; every toolkit screen, timeout and C plays only the key beep (`sound/stk/*`).
+- **I IMEI: captured.** `reprovision` (the emulator's identity provisioning through the firmware's MBUS
+  handlers) writes the 3310 model's minted IMEI `490154203310018`; `*#06#` then shows `Serial No.`
+  over `4901542033` / `10018` (two lines in place of the virgin `?` glyphs), live and from
+  `firmware/work/v639-plan30-imei.fls`. Only this one IMEI can be written (the model's pinned value):
+  D9's layout is asserted for it; other digits use the same layout with other glyphs.
+- **Pending or failed:** SET UP CALL and the Calling flow after it (above); Chat `>` lines; Reply's
+  prefilled number (behind the virgin SMS-centre `Set` list); the shared 9-digit suffix case.
+  Single-frame notes in `check`: the frozen call screen's keys, a one-item level's ▲, keys on a
+  one-page text. Two `stk-call*` processes logged a firmware wild-PC post-mortem that the call probes
+  do not reproduce.
 
 ### Task 1 - Contracts and documentation
 
