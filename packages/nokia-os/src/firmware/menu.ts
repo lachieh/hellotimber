@@ -24,7 +24,7 @@ import { createMemoryStorage, StockEeprom } from "./eeprom";
 import type { StockPorts } from "./ports";
 import { StockSecurity } from "./security";
 import { createStockSettings, stockPageValue, type StockSettings } from "./settings";
-import { LEADS, setterLevel, showsEntryIndicator, STOCK_SETTINGS } from "./stock";
+import { LEADS, LEVELS, setterLevel, showsEntryIndicator, STOCK_SETTINGS } from "./stock";
 import { settingKey } from "./tree";
 import { SoundSequencer } from "../sound/sequencer";
 import { StockSounder } from "../sound/sounder";
@@ -41,6 +41,7 @@ export const STOCK_SHORTCUT_WINDOW_MS = 2948;
 interface Builder {
   readonly ports: StockPorts;
   readonly settings: StockSettings;
+  readonly services: StockServices;
   readonly leaves: LeafBinder;
 }
 
@@ -113,17 +114,22 @@ function entryOf(
   const key = settingKey(path);
   const setter = setterLevel(node.number);
   const bySlug = (s: string | undefined) => children.find((child) => child.slug.value === s);
+  // A feature's level options (plan 17: the Profiles level shows the stored names and opens on
+  // the active profile).
+  const level = LEVELS[node.number]?.(b.services);
   const opening =
-    lead !== undefined
-      ? () => (b.leaves.leadShown(lead) ? leadEntry : undefined)
-      : setter !== undefined
-        ? () => {
-            const chosen = b.settings.choice(key);
-            return bySlug(chosen === null ? undefined : setter[chosen]);
-          }
-        : spec.opening !== undefined
-          ? () => bySlug(spec.opening)
-          : undefined;
+    level?.opening !== undefined
+      ? () => bySlug(level.opening!())
+      : lead !== undefined
+        ? () => (b.leaves.leadShown(lead) ? leadEntry : undefined)
+        : setter !== undefined
+          ? () => {
+              const chosen = b.settings.choice(key);
+              return bySlug(chosen === null ? undefined : setter[chosen]);
+            }
+          : spec.opening !== undefined
+            ? () => bySlug(spec.opening)
+            : undefined;
   const options: SubmenuOptions = {
     presentation: spec.presentation,
     softkey: spec.softkey,
@@ -139,6 +145,9 @@ function entryOf(
       : { shown: (child: MenuEntry) => child !== leadEntry || b.leaves.leadShown(lead) }),
     ...(spec.intro ? { intro: b.leaves.intro(node, path.map((n) => n.slug).join("/")) } : {}),
     ...(showsEntryIndicator(node.number) ? { entryIndicatorMs: STOCK_SHORTCUT_WINDOW_MS } : {}),
+    ...(level?.label === undefined
+      ? {}
+      : { label: (child: MenuEntry) => level.label!(child.slug.value) }),
   };
   return new SubmenuEntry(slug, order, node.label, new MenuLevel(children), undefined, options);
 }
@@ -179,7 +188,12 @@ export function createStockMenu(
   t9?: StockT9,
 ): PhoneMenu {
   const services = stockServices(ports, settings, games, security, sounder, eeprom, messaging, t9);
-  const builder: Builder = { ports, settings: services.settings, leaves: new LeafBinder(services) };
+  const builder: Builder = {
+    ports,
+    settings: services.settings,
+    services,
+    leaves: new LeafBinder(services),
+  };
   return new PhoneMenu(
     STOCK_TREE.map(
       (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),

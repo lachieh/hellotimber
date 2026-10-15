@@ -420,13 +420,12 @@ describe("widget sprites and timelines", () => {
       expect(sprite.art, crop.id).toHaveLength(crop.y1 - crop.y0 + 1);
       expect(sprite.art.join(""), crop.id).toMatch(/^[#.]*#[#.]*$/);
       const { pixels } = loadGolden(crop.golden).images.find((image) => image.name === crop.image)!;
+      // One comparison per row (a per-pixel expect outlasts the timeout on a loaded machine).
       sprite.art.forEach((row, dy) => {
-        expect(row, crop.id).toHaveLength(crop.x1 - crop.x0 + 1);
-        Array.from(row).forEach((ch, dx) => {
-          expect(ch === "#", `${crop.id} (${dx}, ${dy})`).toBe(
-            pixels[(crop.y0 + dy) * 84 + crop.x0 + dx] === 1,
-          );
-        });
+        const lit = Array.from({ length: crop.x1 - crop.x0 + 1 }, (_, dx) =>
+          pixels[(crop.y0 + dy) * 84 + crop.x0 + dx] === 1 ? "#" : ".",
+        ).join("");
+        expect(row, `${crop.id} row ${dy}`).toBe(lit);
       });
       expect(WIDGET_SPRITES[crop.id]!.bitmap.width, crop.id).toBe(crop.x1 - crop.x0 + 1);
     }
@@ -886,6 +885,15 @@ describe("text entry and SMS resources (plan 18)", () => {
       "large R",
       "small 1",
       "thin 1",
+      // Plan 17 (the Rename pages): accents that fill their cell, so the next glyph touches them.
+      "thin Ã",
+      "thin Ì",
+      "thin Î",
+      "thin Ï",
+      "thin ì",
+      "thin î",
+      "thin ï",
+      "thin ñ",
     ]);
   });
 

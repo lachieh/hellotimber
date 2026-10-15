@@ -1,12 +1,16 @@
 // Plan 14's acceptance (docs/plans/14-menu-depth-and-stock-widgets.md "Coverage guard", Task
 // 13): the generated tree goldens run the generic tree scenario (tests/support/acceptance.ts);
 // the Task 0 probes (S7) run the hand-written scenarios below.
+import type { PhoneKey } from "@hellotimber/phone-core";
+import { StockEeprom } from "../../src/firmware/eeprom";
+import { createStockSettings } from "../../src/firmware/settings";
 import { acceptancePlan, type Scenario } from "../support/acceptance.ts";
 import { expectLcd, PROBE_TOLERANCE_MS } from "../support/golden.ts";
 import { newGameLeafScenario } from "../support/game.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
-import { after, JITTER, keys, SNAKE, stills, timeline } from "../support/probes.ts";
-import { standbyRig, type Rig } from "../support/rig.ts";
+import { after, JITTER, keys, SNAKE, stills, timeline, type Later } from "../support/probes.ts";
+import { toleratedTreeScenario } from "../support/profiles.ts";
+import { seededStorage, standbyRig, type Rig } from "../support/rig.ts";
 import { WRITE_MESSAGES_LEAF_GAP } from "../support/t9.ts";
 
 const PHONE_BOOK = "navi navi";
@@ -19,6 +23,41 @@ const INSTRUCTIONS: Readonly<Record<string, string>> = {
   "8-4-1-5": "navi down*7 navi down*3 navi wait:7000 navi down*4 navi",
   "8-4-2-5": "navi down*7 navi down*3 navi wait:7000 down navi down*4 navi",
 };
+
+/**
+ * A rig at standby in the factory image's state (`v639-factory-setup.inc`) after `script`. The
+ * image was saved after a Restore and power-cycled: its Shakes page reads the `On` Restore wrote
+ * (docs/specs/stock/storage-and-settings.md), where nokia-os keeps the virgin page text until a
+ * choice, so the rig stores it.
+ */
+function factoryAfter(script: string): Rig {
+  const storage = seededStorage({ factory: true });
+  createStockSettings(new StockEeprom(storage)).choose("games/settings/shakes", 1);
+  const rig = standbyRig({ storage });
+  keys(rig, script);
+  return rig;
+}
+
+/**
+ * A Menu 8 6 3 digit probe: its timeline from `triggerRow` (the digit's first redraw) to
+ * `lastRow` (Games › Settings selected), then Select, ▼×2, Select: Shakes' list as image `list`.
+ */
+function shakesCheck(
+  id: string,
+  rig: Rig,
+  triggerRow: number,
+  lastRow: number,
+  list: string,
+  later: readonly Later[],
+): void {
+  timeline(id, rig, "1", later, { ...JITTER, triggerRow, lastRow });
+  keys(rig, "navi down*2 navi");
+  expectLcd(rig.paint(), goldenImage(id, list), `${id}: Shakes' list after the check`);
+}
+
+/** `key` on `count` consecutive golden rows from `from`. */
+const rowKeys = (from: number, key: PhoneKey, count: number): Later[] =>
+  Array.from({ length: count }, (_, i) => [from + i, key]);
 
 const wrap = (base: string, key: "down" | "up", count: number): string[] => [
   base,
@@ -34,6 +73,11 @@ const WRAPS: Readonly<Record<string, string>> = {
 };
 
 const SCENARIOS: Record<string, Scenario> = {
+  // Plan 17: this recording's standby name comes 1898 ms after standby, the others' 1909-1913
+  // ms (D5, PROFILE_LINE_DELAY_MS 1912); Rename is plan 18's text input, whose cursor blinks
+  // every 480 ms (D9; here 479-493 ms): within PROBE_TOLERANCE_MS.
+  "tree/12-profiles/12-5-1.leaf": (id) => toleratedTreeScenario(id, "12-5-1"),
+  "tree/12-profiles/12-2-2-10.leaf": (id) => toleratedTreeScenario(id, "12-2-2-10"),
   // Snake II's New game: asserted early with plan 23's game comparison (ASSERTED_EARLY).
   "tree/08-games/8-1-1.leaf": newGameLeafScenario,
   "probe/wrap-down": (id) => stills(id, standbyRig(), wrap(`${PHONE_BOOK} down*9`, "down", 4)),
@@ -139,6 +183,37 @@ const SCENARIOS: Record<string, Scenario> = {
       ],
       JITTER,
     ),
+  // Digits in Shakes' option list opened by Menu 8 6 3 (2026-10-14 probes, each after the factory
+  // setup: Shakes On). The frames before the digit are probe/shortcut-m8-6-3's (a known gap), so
+  // the digit is matched to its first redraw from a rig showing the screen before it. The check
+  // afterwards goes Menu, ▼×7, Select, ▼×4 (Games › Settings), Select, ▼×2, Select to Shakes'
+  // list, which opens on Off; the Settings pages are left out (they show the factory image's
+  // Lights `Off`, which nokia-os's page does not) and the list is compared alone.
+  "probe/shortcut-m8-6-3-then-1": (id) =>
+    shakesCheck(id, factoryAfter("navi 8 6 3 wait:1000"), 8, 29, "ad", [
+      [11, "navi"],
+      ...rowKeys(13, "down", 7),
+      // Select ends the carousel's icon animation: ahead of its next step.
+      [{ ahead: 25 }, "navi"],
+      ...rowKeys(26, "down", 4),
+    ]),
+  // Invalid shortcut shows 2872 ms here and 2903 ms after Menu 1 8 (its timeline,
+  // probe/shortcut-m1-8): the comparison ends at the note.
+  "probe/shortcut-m8-6-3-then-3": (id) =>
+    timeline(id, factoryAfter("navi 8 6 3 wait:1000"), "3", [], {
+      ...JITTER,
+      triggerRow: 8,
+      lastRow: 8,
+    }),
+  // The 1 typed 640 ms after the 3, while Shakes is about to open. Its label shows 1934 ms (1913
+  // after a 1 in the list): within PROBE_TOLERANCE_MS.
+  "probe/shortcut-m8-6-3-1": (id) =>
+    shakesCheck(id, factoryAfter("navi 8 6 3"), 7, 28, "ab", [
+      [10, "navi"],
+      ...rowKeys(12, "down", 7),
+      [{ ahead: 24 }, "navi"],
+      ...rowKeys(25, "down", 4),
+    ]),
   "probe/shortcut-m1-wait-9": (id) =>
     timeline(
       id,

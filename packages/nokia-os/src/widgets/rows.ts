@@ -36,7 +36,7 @@ export function moveRows(cursor: RowsCursor, key: PhoneKey, count: number): Rows
  * (`5-2-1`), its parent level's path (Call divert lists: `7-3-1` on 7-3-4), or nothing (Message
  * settings › Set n lists: `6`). See `optionListNumbering` in src/firmware/stock.ts.
  */
-export type ListNumbering = "path" | "parent" | "option";
+export type ListNumbering = "path" | "parent" | "option" | "none";
 
 /**
  * A widget list's indicator: the kernel's position, cut per `numbering`, plus the selected
@@ -49,6 +49,8 @@ export function rowsIndicator(
   numbering: ListNumbering = "path",
 ): MenuIndicator {
   if (position.typed !== undefined || position.awaitingFirst) return position;
+  // Plan 17: the power key's list shows no indicator.
+  if (numbering === "none") return { segments: [], awaitingNext: false };
   const prefix =
     numbering === "path"
       ? position.segments

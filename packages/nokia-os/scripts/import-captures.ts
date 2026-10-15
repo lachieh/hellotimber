@@ -509,6 +509,7 @@ function sourceLabel(source: CaptureSource): string {
       .map((p) => `${capturePath(p.dir)} ${pad3(p.from)}-${pad3(p.to)}`)
       .join(" + ");
   }
+  // A probe outside the 6.39 tree (`../scratch-inv/...`) is labelled by its own path.
   return capturePath(describe(source));
 }
 

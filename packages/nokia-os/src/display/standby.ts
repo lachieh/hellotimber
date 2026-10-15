@@ -1,6 +1,7 @@
 import type { ScreenModel } from "@hellotimber/phone-core";
 import { textWidth, type Framebuffer } from "@hellotimber/phone-screen";
 import { STATUS_SPRITES, STOCK_FONTS, WIDGET_SPRITES, type StockSprite } from "../resources";
+import { paintProfileStandby } from "./profiles";
 
 /** Softkey labels are centred: x = floor((84 - advance width) / 2), top y 40. */
 export const SOFTKEY_TOP = 40;
@@ -46,6 +47,7 @@ export function paintStandby(
     }
     lines.forEach((line, i) => fb.drawText(STOCK_FONTS.small, line, NOTICE_LEFT, NOTICE_TOPS[i]!));
   }
+  paintProfileStandby(fb, screen);
   if (screen.clock !== undefined) {
     const x = CLOCK_END - textWidth(STOCK_FONTS.digits, screen.clock);
     fb.drawText(STOCK_FONTS.digits, screen.clock, x, 0);

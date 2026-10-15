@@ -207,11 +207,12 @@ describe("input prompts against every asserted prompt golden (first screen, curs
         ? parent.options[Number(path.at(-1)) - 1]!.result
         : undefined
       : treePath(number).at(-1)!.opens;
-    // A node a feature binds (plan 18's number entries) is its feature's widget, tested there.
-    return screen !== undefined &&
-      "lines" in screen &&
-      PROMPT_KINDS.has(screen.kind) &&
-      SCREENS[number] === undefined
+    // A prompt a feature implements with no plan 14 layout is that feature's widget (plan 18's
+    // number entries, plan 17's Rename), driven by its plan's scenarios.
+    if (SCREENS[number] !== undefined && screen !== undefined && "lines" in screen) {
+      if (promptLayout(number, screen.kind) === undefined) return [];
+    }
+    return screen !== undefined && "lines" in screen && PROMPT_KINDS.has(screen.kind)
       ? [{ id: entry.id, number, screen }]
       : [];
   });

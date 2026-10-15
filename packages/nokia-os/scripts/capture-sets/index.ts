@@ -4,6 +4,7 @@
 export { foundation } from "./13-foundation.ts";
 export { menuDepth } from "./14-menu-depth.ts";
 export { storageAndSettings } from "./15-storage-and-settings.ts";
+export { profiles } from "./17-profiles.ts";
 export { messagesAndChat } from "./18-messages-and-chat.ts";
 export { t9PredictiveText } from "./18b-t9-predictive-text.ts";
 export { tonesAndSound } from "./16-tones-and-sound.ts";

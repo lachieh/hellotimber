@@ -99,6 +99,11 @@ export interface TextEntryOptions {
   readonly blink?: StockWidgetTimeline;
   /** Plan 18b: the T9 dictionary and user words while T9 is on; undefined: multi-tap. */
   readonly t9?: () => T9Context | undefined;
+  /**
+   * Plan 17: the blink restarts, the cursor shown, when a pending character commits (Rename's
+   * prompt: `profiles/rename-*-type`). Default off: the editor's blink never restarts.
+   */
+  readonly restartBlinkOnCommit?: boolean;
 }
 
 /** A key held down: when, and when it came up (undefined while it is down). */
@@ -129,6 +134,7 @@ export function blinkShown(blink: Playback | undefined, nowMs: number): boolean 
 /** One multi-tap or T9 entry: its state, its clock, its holds and its cursor blink. */
 export class TextEntry {
   readonly limit: number;
+  readonly #restartBlink: boolean;
   #state: TextState;
   #now = 0;
   /** The last character key pressed, for a held digit at its commit. */
@@ -140,7 +146,10 @@ export class TextEntry {
   #star: Held | undefined;
   #blink: Playback | undefined;
   readonly #blinkTimeline: StockWidgetTimeline | undefined;
-  /** When the cursor's blink (re)started. */
+  /**
+   * When the cursor's blink (re)started: the entry's start, a commit with restartBlinkOnCommit,
+   * or `restartBlink`.
+   */
   #blinkFrom = 0;
   readonly #t9: (() => T9Context | undefined) | undefined;
   /** The state follows the T9 rules (the context was present at the last look). */
@@ -148,6 +157,7 @@ export class TextEntry {
 
   constructor(options: TextEntryOptions) {
     this.limit = options.limit;
+    this.#restartBlink = options.restartBlinkOnCommit ?? false;
     const text = options.text ?? "";
     this.#state = {
       ...emptyText(options.mode ?? "Abc"),
@@ -378,6 +388,7 @@ export class TextEntry {
       isTextKey(pending.key) && held >= TEXT_TIMINGS.digitHoldMs
         ? textHold(this.#state, pending.key, now, this.limit)
         : textTick(this.#state, now);
+    if (this.#restartBlink && this.#state.pending === null) this.#blinkFrom = now;
     return undefined;
   }
 

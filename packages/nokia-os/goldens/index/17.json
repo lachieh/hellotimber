@@ -1,0 +1,1126 @@
+[
+  {
+    "id": "profiles/activate-discreet",
+    "file": "profiles/activate-discreet.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/activate-empty",
+    "file": "profiles/activate-empty.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/activate-empty-2",
+    "file": "profiles/activate-empty-2.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/activate-general",
+    "file": "profiles/activate-general.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "profiles/activate-general-from-discreet",
+    "file": "profiles/activate-general-from-discreet.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "profiles/activate-general-from-empty",
+    "file": "profiles/activate-general-from-empty.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "profiles/activate-general-from-empty-2",
+    "file": "profiles/activate-general-from-empty-2.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "profiles/activate-general-from-loud",
+    "file": "profiles/activate-general-from-loud.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "profiles/activate-general-from-silent",
+    "file": "profiles/activate-general-from-silent.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "profiles/activate-loud",
+    "file": "profiles/activate-loud.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/activate-silent",
+    "file": "profiles/activate-silent.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/discreet-screen-saver-off",
+    "file": "profiles/discreet-screen-saver-off.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "profiles/glyphs-thin",
+    "file": "profiles/glyphs-thin.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/icon",
+    "file": "profiles/icon.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 17,
+    "frames": 17
+  },
+  {
+    "id": "profiles/opening",
+    "file": "profiles/opening.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 13,
+    "frames": 13
+  },
+  {
+    "id": "profiles/persist-after-boot",
+    "file": "profiles/persist-after-boot.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 24,
+    "frames": 24
+  },
+  {
+    "id": "profiles/persist-after-restore",
+    "file": "profiles/persist-after-restore.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 24,
+    "frames": 24
+  },
+  {
+    "id": "profiles/power-during-note",
+    "file": "profiles/power-during-note.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "profiles/power-general-c",
+    "file": "profiles/power-general-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "profiles/power-general-digit-0",
+    "file": "profiles/power-general-digit-0.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "profiles/power-general-digit-1",
+    "file": "profiles/power-general-digit-1.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "profiles/power-general-digit-2",
+    "file": "profiles/power-general-digit-2.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "profiles/power-general-digit-3",
+    "file": "profiles/power-general-digit-3.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/power-general-digit-4",
+    "file": "profiles/power-general-digit-4.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "profiles/power-general-digit-5",
+    "file": "profiles/power-general-digit-5.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/power-general-digit-6",
+    "file": "profiles/power-general-digit-6.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/power-general-digit-7",
+    "file": "profiles/power-general-digit-7.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/power-general-digit-8",
+    "file": "profiles/power-general-digit-8.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/power-general-digit-9",
+    "file": "profiles/power-general-digit-9.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/power-general-digit-hash",
+    "file": "profiles/power-general-digit-hash.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "profiles/power-general-digit-star",
+    "file": "profiles/power-general-digit-star.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "profiles/power-general-down",
+    "file": "profiles/power-general-down.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "profiles/power-general-held",
+    "file": "profiles/power-general-held.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "profiles/power-general-idle",
+    "file": "profiles/power-general-idle.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "profiles/power-general-list",
+    "file": "profiles/power-general-list.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "profiles/power-general-ok-discreet",
+    "file": "profiles/power-general-ok-discreet.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/power-general-ok-empty",
+    "file": "profiles/power-general-ok-empty.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/power-general-ok-empty-2",
+    "file": "profiles/power-general-ok-empty-2.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/power-general-ok-general",
+    "file": "profiles/power-general-ok-general.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "profiles/power-general-ok-loud",
+    "file": "profiles/power-general-ok-loud.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/power-general-ok-silent",
+    "file": "profiles/power-general-ok-silent.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/power-general-power-keys",
+    "file": "profiles/power-general-power-keys.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "profiles/power-general-switch-off",
+    "file": "profiles/power-general-switch-off.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "profiles/power-general-up",
+    "file": "profiles/power-general-up.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "profiles/power-silent-c",
+    "file": "profiles/power-silent-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "profiles/power-silent-digit-1",
+    "file": "profiles/power-silent-digit-1.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "profiles/power-silent-digit-3",
+    "file": "profiles/power-silent-digit-3.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/power-silent-down",
+    "file": "profiles/power-silent-down.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "profiles/power-silent-list",
+    "file": "profiles/power-silent-list.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "profiles/power-silent-ok-general",
+    "file": "profiles/power-silent-ok-general.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "profiles/power-silent-power-keys",
+    "file": "profiles/power-silent-power-keys.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "profiles/power-silent-switch-off",
+    "file": "profiles/power-silent-switch-off.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "profiles/power-silent-up",
+    "file": "profiles/power-silent-up.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "profiles/power-virgin-down",
+    "file": "profiles/power-virgin-down.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/power-virgin-list",
+    "file": "profiles/power-virgin-list.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "profiles/rename-c-keys",
+    "file": "profiles/rename-c-keys.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 12
+  },
+  {
+    "id": "profiles/rename-discreet-ok",
+    "file": "profiles/rename-discreet-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/rename-discreet-open",
+    "file": "profiles/rename-discreet-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "profiles/rename-discreet-type",
+    "file": "profiles/rename-discreet-type.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 6
+  },
+  {
+    "id": "profiles/rename-empty-2-activate",
+    "file": "profiles/rename-empty-2-activate.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/rename-empty-2-empty-ok",
+    "file": "profiles/rename-empty-2-empty-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/rename-empty-2-everywhere",
+    "file": "profiles/rename-empty-2-everywhere.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 17,
+    "frames": 17
+  },
+  {
+    "id": "profiles/rename-empty-2-ok",
+    "file": "profiles/rename-empty-2-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/rename-empty-2-open",
+    "file": "profiles/rename-empty-2-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "profiles/rename-empty-2-type",
+    "file": "profiles/rename-empty-2-type.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 6
+  },
+  {
+    "id": "profiles/rename-empty-empty-ok",
+    "file": "profiles/rename-empty-empty-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/rename-empty-ok",
+    "file": "profiles/rename-empty-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/rename-empty-open",
+    "file": "profiles/rename-empty-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "profiles/rename-empty-profiles",
+    "file": "profiles/rename-empty-profiles.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "profiles/rename-empty-type",
+    "file": "profiles/rename-empty-type.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 6
+  },
+  {
+    "id": "profiles/rename-limit",
+    "file": "profiles/rename-limit.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "profiles/rename-limit-extra",
+    "file": "profiles/rename-limit-extra.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 7
+  },
+  {
+    "id": "profiles/rename-limit-ok",
+    "file": "profiles/rename-limit-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/rename-loud-ok",
+    "file": "profiles/rename-loud-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/rename-loud-open",
+    "file": "profiles/rename-loud-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "profiles/rename-loud-type",
+    "file": "profiles/rename-loud-type.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 6
+  },
+  {
+    "id": "profiles/rename-open-12-3",
+    "file": "profiles/rename-open-12-3.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 14
+  },
+  {
+    "id": "profiles/rename-open-12-4",
+    "file": "profiles/rename-open-12-4.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 13
+  },
+  {
+    "id": "profiles/rename-open-12-5",
+    "file": "profiles/rename-open-12-5.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 13
+  },
+  {
+    "id": "profiles/rename-open-12-6",
+    "file": "profiles/rename-open-12-6.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 13
+  },
+  {
+    "id": "profiles/rename-silent-activate",
+    "file": "profiles/rename-silent-activate.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "profiles/rename-silent-empty-ok",
+    "file": "profiles/rename-silent-empty-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/rename-silent-everywhere",
+    "file": "profiles/rename-silent-everywhere.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 17,
+    "frames": 17
+  },
+  {
+    "id": "profiles/rename-silent-ok",
+    "file": "profiles/rename-silent-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/rename-silent-open",
+    "file": "profiles/rename-silent-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "profiles/rename-silent-type",
+    "file": "profiles/rename-silent-type.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 6
+  },
+  {
+    "id": "profiles/rename-symbols",
+    "file": "profiles/rename-symbols.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 23,
+    "frames": 25
+  },
+  {
+    "id": "profiles/rename-symbols-after",
+    "file": "profiles/rename-symbols-after.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "profiles/rename-virgin-empty-2-empty-ok",
+    "file": "profiles/rename-virgin-empty-2-empty-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/rename-virgin-empty-empty-ok",
+    "file": "profiles/rename-virgin-empty-empty-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/rename-virgin-empty-profiles",
+    "file": "profiles/rename-virgin-empty-profiles.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "profiles/restore",
+    "file": "profiles/restore.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/standby-carousel-c",
+    "file": "profiles/standby-carousel-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "profiles/standby-menu",
+    "file": "profiles/standby-menu.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "profiles/standby-silent-text",
+    "file": "profiles/standby-silent-text.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 14,
+    "frames": 14
+  },
+  {
+    "id": "profiles/tones-discreet",
+    "file": "profiles/tones-discreet.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 11,
+    "frames": 11
+  },
+  {
+    "id": "profiles/tones-empty",
+    "file": "profiles/tones-empty.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 11,
+    "frames": 11
+  },
+  {
+    "id": "profiles/tones-empty-2",
+    "file": "profiles/tones-empty-2.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 11,
+    "frames": 11
+  },
+  {
+    "id": "profiles/tones-general",
+    "file": "profiles/tones-general.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 11,
+    "frames": 11
+  },
+  {
+    "id": "profiles/tones-loud",
+    "file": "profiles/tones-loud.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 11,
+    "frames": 11
+  },
+  {
+    "id": "profiles/tones-silent",
+    "file": "profiles/tones-silent.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 11,
+    "frames": 11
+  },
+  {
+    "id": "profiles/tones-write",
+    "file": "profiles/tones-write.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "sound/profiles/activate-discreet",
+    "file": "sound/profiles/activate-discreet.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/activate-empty",
+    "file": "sound/profiles/activate-empty.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/activate-empty-2",
+    "file": "sound/profiles/activate-empty-2.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/activate-general",
+    "file": "sound/profiles/activate-general.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/activate-loud",
+    "file": "sound/profiles/activate-loud.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/activate-silent",
+    "file": "sound/profiles/activate-silent.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 0
+  },
+  {
+    "id": "sound/profiles/effects-discreet-invalid",
+    "file": "sound/profiles/effects-discreet-invalid.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 4
+  },
+  {
+    "id": "sound/profiles/effects-discreet-keys",
+    "file": "sound/profiles/effects-discreet-keys.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 10
+  },
+  {
+    "id": "sound/profiles/effects-discreet-preview",
+    "file": "sound/profiles/effects-discreet-preview.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 4
+  },
+  {
+    "id": "sound/profiles/effects-empty-2-invalid",
+    "file": "sound/profiles/effects-empty-2-invalid.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 6
+  },
+  {
+    "id": "sound/profiles/effects-empty-2-keys",
+    "file": "sound/profiles/effects-empty-2-keys.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 10
+  },
+  {
+    "id": "sound/profiles/effects-empty-2-preview",
+    "file": "sound/profiles/effects-empty-2-preview.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 54
+  },
+  {
+    "id": "sound/profiles/effects-empty-invalid",
+    "file": "sound/profiles/effects-empty-invalid.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 6
+  },
+  {
+    "id": "sound/profiles/effects-empty-keys",
+    "file": "sound/profiles/effects-empty-keys.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 10
+  },
+  {
+    "id": "sound/profiles/effects-empty-preview",
+    "file": "sound/profiles/effects-empty-preview.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 6
+  },
+  {
+    "id": "sound/profiles/effects-general-invalid",
+    "file": "sound/profiles/effects-general-invalid.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 6
+  },
+  {
+    "id": "sound/profiles/effects-general-keys",
+    "file": "sound/profiles/effects-general-keys.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 10
+  },
+  {
+    "id": "sound/profiles/effects-general-preview",
+    "file": "sound/profiles/effects-general-preview.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 54
+  },
+  {
+    "id": "sound/profiles/effects-loud-invalid",
+    "file": "sound/profiles/effects-loud-invalid.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 6
+  },
+  {
+    "id": "sound/profiles/effects-loud-keys",
+    "file": "sound/profiles/effects-loud-keys.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 10
+  },
+  {
+    "id": "sound/profiles/effects-loud-preview",
+    "file": "sound/profiles/effects-loud-preview.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 54
+  },
+  {
+    "id": "sound/profiles/effects-silent-invalid",
+    "file": "sound/profiles/effects-silent-invalid.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 0
+  },
+  {
+    "id": "sound/profiles/effects-silent-keys",
+    "file": "sound/profiles/effects-silent-keys.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 0
+  },
+  {
+    "id": "sound/profiles/effects-silent-preview",
+    "file": "sound/profiles/effects-silent-preview.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 0
+  },
+  {
+    "id": "sound/profiles/power-general-digit-0",
+    "file": "sound/profiles/power-general-digit-0.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 4
+  },
+  {
+    "id": "sound/profiles/power-general-digit-1",
+    "file": "sound/profiles/power-general-digit-1.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/power-general-digit-3",
+    "file": "sound/profiles/power-general-digit-3.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 0
+  },
+  {
+    "id": "sound/profiles/power-general-digit-8",
+    "file": "sound/profiles/power-general-digit-8.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/power-general-digit-star",
+    "file": "sound/profiles/power-general-digit-star.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/power-general-list",
+    "file": "sound/profiles/power-general-list.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/power-general-ok-discreet",
+    "file": "sound/profiles/power-general-ok-discreet.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/power-general-ok-empty",
+    "file": "sound/profiles/power-general-ok-empty.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/power-general-ok-empty-2",
+    "file": "sound/profiles/power-general-ok-empty-2.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/power-general-ok-general",
+    "file": "sound/profiles/power-general-ok-general.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/power-general-ok-loud",
+    "file": "sound/profiles/power-general-ok-loud.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/power-general-ok-silent",
+    "file": "sound/profiles/power-general-ok-silent.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 0
+  },
+  {
+    "id": "sound/profiles/power-general-power-keys",
+    "file": "sound/profiles/power-general-power-keys.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 8
+  },
+  {
+    "id": "sound/profiles/power-general-switch-off",
+    "file": "sound/profiles/power-general-switch-off.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/profiles/power-silent-list",
+    "file": "sound/profiles/power-silent-list.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 0
+  },
+  {
+    "id": "sound/profiles/power-silent-power-keys",
+    "file": "sound/profiles/power-silent-power-keys.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 0
+  },
+  {
+    "id": "sound/profiles/power-silent-switch-off",
+    "file": "sound/profiles/power-silent-switch-off.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 0
+  },
+  {
+    "id": "sound/profiles/shortcut-discreet",
+    "file": "sound/profiles/shortcut-discreet.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 10
+  },
+  {
+    "id": "sound/profiles/shortcut-loud",
+    "file": "sound/profiles/shortcut-loud.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 10
+  },
+  {
+    "id": "sound/profiles/shortcut-silent",
+    "file": "sound/profiles/shortcut-silent.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 8
+  }
+]

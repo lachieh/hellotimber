@@ -20,7 +20,7 @@ listed under "Shared-file edits", each named with its reason.
 14, 15, 16 and 18 in full before starting. The planning probes are in
 `$REF/captures/scratch-plan17/` (`NOTES.md`, `probe-{a,b,c,d}.cap`, `out-{a,b,c,d}/`): evidence for
 this plan only, never imported. Task 0 writes the canonical captures to `$REF/captures/6.39/plan17/`.
-**Status:** not started.
+**Status:** done. Eight asserted goldens stay known gaps (Task 9 completion note).
 
 ## Goal
 
@@ -235,7 +235,8 @@ export interface SubmenuOptions<Metadata = unknown> {
   // ...unchanged...
   /**
    * Plan 17: the text `child` shows in this level's list and as its own level's title; re-read on
-   * every tick (a change emits one snapshot). Undefined = the child's label. Must be non-empty.
+   * every tick (a change emits one snapshot). Undefined = the child's label. Must be non-empty:
+   * `SubmenuEntry.labelOf(child)` throws for a blank one, and the kernel then shows the child's own.
    */
   label?(child: MenuEntry<Metadata>): string | undefined; // method syntax: keeps SubmenuEntry covariant
 }
@@ -251,7 +252,9 @@ export interface PhoneConfig<Metadata = unknown> {
   /**
    * Plan 17: opened on the power key's key-down at standby as a standby application (plan 18
    * D11: empty stack, path `standby`, `exit()` returns to standby, `levels`/`select`/`row`
-   * throw). The power long press still powers off. Elsewhere the short press does nothing.
+   * throw), also over a notice and when the running application's handling of that key-down
+   * leaves for standby (B6). The power long press still powers off. Elsewhere the short press
+   * does nothing.
    */
   standbyPower?: PhoneApplication;
 }
@@ -266,8 +269,13 @@ export interface ApplicationContext {
 `standbyIndicators` (the reader) is plan 18 D11's; if plan 18 Task 4 has not landed, Task 4 here
 adds it exactly as plan 18 specifies. Rules (Task 4 pins each): configs without the seams produce
 identical models; `standbyLine` and `label` throw nothing into the kernel (an exception is contained
-like `detail`'s, and the line or label is omitted); `standbyPower` is ignored while a notice is
-shown (Task 0 B6 may change this; record a Deviation) and during boot gates.
+like `detail`'s, and the line or label is omitted); `standbyPower` is ignored during boot gates.
+
+Deviation: **Contract (Task 0 B6):** `standbyPower` opens over a standby notice (the notice stays)
+and when the running application leaves for standby on the power key's down (the Activate note).
+Plan 18 already shipped `standbyIndicators` and the standby application activation (`setNotice({
+open })`); Task 4 reuses both (the power application is a second standby application, with the
+notice's exit rules).
 
 ### `@hellotimber/nokia-os`
 
@@ -370,7 +378,7 @@ Concurrent sessions use the harness: write only these paths. Factory sections st
 virgin sections with `v639-setup.inc`. Every recording is `audio` + `record` of the same name with
 `keys.csv` (plan 16's convention), raw key edges inside recordings.
 
-- [ ] **A activation and standby:** Activate each of the six slots from General (factory) and General
+- [x] **A activation and standby:** Activate each of the six slots from General (factory) and General
       from each; standby recorded 8 s after each (`activate/<slug>`). **A1** the name's delay for
       each way into standby: the note's end, C from the carousel, C from a level, C held from an
       option list, the power list's C, power-on (`reboot` from a saved image, then the wizard cut),
@@ -384,45 +392,95 @@ virgin sections with `v639-setup.inc`. Every recording is `audio` + `record` of 
       Silent renamed `Discreet`, recorded 20 s each (`discreet/*`). **A5** the Profiles level's
       opening: Menu 1 2 with each profile active, before and after a power cycle, and after visiting
       another profile's level (P3). **A6** `Menu 1 2 n 1` with audio (the digit's beep level).
-- [ ] **B power key:** at standby with General and with Silent active: the key-down list (record),
+- [x] **B power key:** at standby with General and with Silent active: the key-down list (record),
       scroll ▼ and ▲ through the wrap (shots), the power key as ▼ (three presses), each digit 1-9 and
       0, `*`, `#` (records; does `1` switch off?), C, OK on each profile, OK on `Switch off!` (audio;
       the run ends there), power held 1.5 s at standby (does the list flash before power-off?),
       60 s idle. **B6** the short press during the `Selected profile:` note, during a notice, in the
       carousel, a rows level, a pages level, an option list, a prompt and Snake II (records).
-- [ ] **R rename:** each of slots 2-6: the prompt, one letter, OK (record from OK to the page), the
+- [x] **R rename:** each of slots 2-6: the prompt, one letter, OK (record from OK to the page), the
       Profiles list, the power list, the note and standby with the new name; the limit (fill to 10,
       an 11th key); C, held C, C on empty; an empty name OK (record; **R5** slot 6 and `(empty)`
       slot 5 too, virgin and factory: which default?); a name with `*`-table symbols; a name the
       small face lacks (e.g. `Zz/@`) in the list, standby and the note.
-- [ ] **G thin glyphs:** Rename pages whose values spell every character of plan 18's typeable set
+- [x] **G thin glyphs:** Rename pages whose values spell every character of plan 18's typeable set
       (10 per name, ≈12 names; `manifest.json` `{ file, face: "thin", chars }`), for the harvester.
-- [ ] **P persistence:** rename two slots, activate one, `saveflash`, `reboot`: standby, the Profiles
+- [x] **P persistence:** rename two slots, activate one, `saveflash`, `reboot`: standby, the Profiles
       list and the power list; then Restore factory settings: the same three and Tones' pages.
-- [ ] **E effects (audio):** for each profile active: keys in the carousel, `Invalid shortcut`, a
+- [x] **E effects (audio):** for each profile active: keys in the carousel, `Invalid shortcut`, a
       Ringing tone preview in Tones, a Snake II meal with Shakes On (`effects/<slug>`).
-- [ ] OCR every new image into `plan17/text.json` (plan 14's format and command).
-- [ ] `check`: every recording starts on its parent; every manifest char is read back.
-- [ ] Append "Plan 17 supplementary captures" to `$REF/captures/README.md`.
-- [ ] No commit. Record the outcome under this task: delays per entry (D5), the icon rule (D6),
+- [x] OCR every new image into `plan17/text.json` (plan 14's format and command).
+- [x] `check`: every recording starts on its parent; every manifest char is read back.
+- [x] Append "Plan 17 supplementary captures" to `$REF/captures/README.md`.
+- [x] No commit. Record the outcome under this task: delays per entry (D5), the icon rule (D6),
       Discreet's line (D10), the opening rule (Open question 1), the power list's keys and long
       press, Rename's empty default, the beep of a digit shortcut onto Activate.
+
+#### Task 0 outcome (2026-10-14)
+
+`$REF/captures/6.39/plan17/`: 999 images (296 distinct), 118 recordings with `keys.csv`, audio
+and events, every image OCRed (`text.json`); `gen_v639_plan17.py check` passes. Sections and
+paths are in `$REF/captures/README.md` "Plan 17 supplementary captures".
+
+| Question                           | Outcome                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Evidence (`plan17/`)                            |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Activate (P1)                      | Every slot: `Selected` / `profile:` / name, tick 678-700 / 218-240 / 1958-1989 ms, an 8-10 ms edges step, standby with the operator only; the name 1909-1913 ms after that standby frame (11 recordings). General shows no name. The virgin `plan14/open/12-n-1` agree (1911 ms).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | `activate/*`, `rename/*/activate`, `discreet/*` |
+| Name delay per entry (D5)          | Relative to the standby frame that draws the operator: a note's end 1909-1913 ms; the power list's choice 1921 ms; `Date is set` (power-on) 1916 ms; a key's return (C from the carousel, Menu then C, C twice or C held on a level, C held on a list, the power list's C, a notice's C) 1926-1930 ms after the operator's redraw, which follows 84-95 ms of the ladders without the operator (and without the name). Spread 1909-1930: one constant.                                                                                                                                                                                                                                                                                                                                                                         | `standby/*`, `power/*/ok-*`                     |
+| Power-on                           | After a power cycle the name returns with standby (`standby/boot`, Silent: 1916 ms after `Date is set` ends). `persist/boot` came up with no network (no operator, no signal ladder) and drew the name at once in its line: an in-process reboot artefact, evidence only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `standby/boot`, `persist/boot`                  |
+| Standby icon (D6)                  | Shown exactly while the active profile's Incoming call alert is Off (General, Silent, Loud, Discreet with alert Off; never with Ringing or Beep once), whatever the other settings. P9's contrary probes chose the list's opening value (a probe error).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `icon/*`                                        |
+| General's `Silent` text (new)      | With General active and Incoming call alert Off, Message alert tone No tone, Keypad tones Off and Warning tones Off, standby shows the text `Silent` in the name line, not Silent's stored name (`Quiet` after a rename); any of the four on removes it; volume and vibrator do not matter. Another active profile shows its own name with the same values.                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | `match/*`                                       |
+| Discreet's line (D10)              | Discreet's operator line is overwritten 12-15 ms after its name appears (or ≈2.3 s into a later standby) and stays: with Discreet's own Screen saver On, whatever its name and tones; Screen saver Off removes it; Silent renamed `Discreet` never shows it. Its pixels are garbage: an uninitialised screen-saver picture of the restored image. Not reproduced (an artefact).                                                                                                                                                                                                                                                                                                                                                                                                                                               | `discreet/*`                                    |
+| Profiles opening (Open question 1) | The level opens on the active profile: each profile, after a visit, after a power cycle (Silent, Discreet). P3's General after a power cycle is not reproduced.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | `opening/*`                                     |
+| Tones (P2)                         | Pages 1-9 and the Keypad tones / Ringing volume lists show the active profile's values; Tones › Keypad tones Level 3 with Silent active writes Silent's (General's stays Level 2).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | `tones/*`                                       |
+| Power key (P4, P5)                 | Key-down at standby: 29-30 ms of standby with the ladders and the signal/battery icons erased (operator, name, clock and silent icon kept), then the list on `Switch off!` (General and Silent active), soft key `OK`, no indicator. ▼/▲ and the power key's presses move (circular window); digits choose by position: `1` switches off (24-40 ms), `2`-`7` choose that profile, `8`, `9` show `Invalid shortcut` at once and `0` after 2.98 s (2886 ms note, an 8 ms then a 15 ms partial draw, standby); `*` and `#` do nothing. C: 84-88 ms of the ladders without the operator, then standby. 60 s idle changes nothing. Held at standby: the list, then off ≈1033 ms after the down (with the power-off tone). Keys beep at the keypad level; Switch off! plays the power-off tone (900 Hz 0x9105) instead of the beep. | `power/*`                                       |
+| Power key elsewhere (B6)           | During the `Selected profile:` note (activation stored) and on a standby notice the press opens the list (the same erased frame first); in the carousel, a rows or pages level, an option list, a prompt and the Snake II menu it does nothing.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | `power/elsewhere/*`                             |
+| Activation beep (D4, A6)           | The activating key beeps at the new profile's Keypad tones level: Navi on Activate, OK and digits in the power list, and the last digit of `Menu 1 2 n 1` (Silent: none; Discreet 0x9108; Loud 0x9100).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | `activate/*`, `power/*`, `shortcut/*`           |
+| Rename (P6)                        | `New name:` with the name and the cursor at its end (480 ms blink), `abc`; the counter is 10 − length; at 0 an 11th key is ignored. OK → `Done` (tick 687-700 / 218-240 / 534-545 ms) → the Rename page. C deletes, C held clears (mode `Abc`), C on empty returns to the page with the name kept. OK on an empty name restores the factory name: Silent, `(empty)` for slot 5 and for slot 6, factory and virgin (R5). The name shows in the Profiles list, the level, the power list, the note, standby and the Rename page (thin face), and survives a power cycle; Restore resets names and the active profile (slot 6 → `(empty)`).                                                                                                                                                                                      | `rename/*`, `rename-virgin/*`, `persist/*`      |
+| Effects (P8)                       | Per active profile: keys beep at its level (Silent none, Discreet 0x9108, Loud 0x9100), `Invalid shortcut` plays 1750 Hz only with Warning tones On, the Ringing tone preview follows its alert (Discreet's Beep once: none).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | `effects/*`                                     |
+
+Deviation: **Task 0 E:** no Snake II meal per profile: game sounds and shakes read Warning tones,
+Vibrating alert and Games' settings through the aliased `tones/*` keys, which plan 16's
+`game/snake-{warning-off,shakes-on-vibra-off}` goldens already pin; nothing profile-specific is
+left to capture.
+
+Deviation: **Task 0 R:** no "name the small face lacks": plan 18 gave small and large every
+typeable character. The thin face (the Rename page) lacked 63; `glyphs/thin` spells them.
+
+Deviation: **D5 (one constant, from the standby frame):** the name appears 1909-1930 ms after
+standby's own frame, so `PROFILE_LINE_DELAY_MS` is one constant (1911, the note-end median) on
+the kernel's standby entry. A key's return to standby first shows the ladders without the
+operator for 84-95 ms, a kernel-wide partial draw nokia-os does not reproduce (as plan 20's
+`HELD_AFTER_NOTE`); only the power list, which owns its C, draws it.
+
+Deviation: **D6:** the icon rule is Incoming call alert Off alone (P9 corrected).
+
+Deviation: **D2/D5 (General's `Silent` text, new):** with General active and its alert, message
+tone, keypad tones and warning tones all off, the standby line is the firmware's text `Silent`.
+
+Deviation: **D7 (power key):** the list opens over a standby notice and during the Activate note
+(B6); the kernel opens `standbyPower` there too (see Task 4). Digits follow the menu-number rule
+above (`1` is Switch off!). The power key's long press switches off ≈1033 ms after the down; the
+kernel's long press stays 800 ms (kernel-wide, plan 16's `boot/power-off` agrees with 1046 ms), so
+`profiles/power-held` is a known gap.
+
+Deviation: **D10:** Discreet's operator line is an artefact (Discreet's uninitialised screen
+saver picture); `discreet/*` is not imported except `profiles/activate-discreet` cut before it.
 
 ### Task 1 - Contracts and documentation
 
 **Files:** `VISION.md`, `docs/specs/stock/profiles.md` (new), `docs/specs/nokia-3310.md` (§8, §10:
 a pointer only), `docs/specs/nokia-3310-menu-tree.md`, `docs/plans/README.md`, this plan.
 
-- [ ] Apply Task 0's outcome to D2-D10 and Open questions (Deviation lines where it changes them).
-- [ ] VISION: the five phone-core seams exactly as in "Contract changes", a plan 17 kernel-policy
+- [x] Apply Task 0's outcome to D2-D10 and Open questions (Deviation lines where it changes them).
+- [x] VISION: the five phone-core seams exactly as in "Contract changes", a plan 17 kernel-policy
       paragraph (standby line timing, label reader, power key standby application, `powerOff`),
       and that nokia-os's Tones follow the active profile.
-- [ ] `docs/specs/stock/profiles.md`: P1-P11 as verified by Task 0, the artefacts, everything
+- [x] `docs/specs/stock/profiles.md`: P1-P11 as verified by Task 0, the artefacts, everything
       "(plan 17, in progress)". Spec §8: mark the manual's "profile mutes all tones" as history
       (profiles are their settings). Menu-tree spec: General has no Rename; slot 6's factory name.
-- [ ] Plans README row 17 `in progress`.
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define profile, standby line and power-key contracts (plan 17)`.
+- [x] Plans README row 17 `in progress`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define profile, standby line and power-key contracts (plan 17)`.
 
 ### Task 2 - Goldens and re-owned placeholders (TDD)
 
@@ -432,56 +490,115 @@ a pointer only), `docs/specs/nokia-3310-menu-tree.md`, `docs/plans/README.md`, t
 `tests/capture-sets/17-profiles.test.ts` (new), `tests/goldens-integrity.test.ts`, the acceptance
 todo shim, `goldens/**`.
 
-- [ ] TDD the capture set on synthetic recordings (injected loader): ids, kinds, cut points
+- [x] TDD the capture set on synthetic recordings (injected loader): ids, kinds, cut points
       (welcome note and wizard omitted with reasons), `trigger-frame` on the first changed frame,
       sound rows, glyph sheets with their manifest note.
 - [ ] Drop `12-*-1` from both owner tables: the six `tree/12-profiles/12-n-1.leaf` and
       `sound/note/12-n-1` goldens and `sound/boot/power-key` become asserted.
-- [ ] Integrity: no golden is `pending:17`; the owner tables are equal; glyph sheets match their
+- [x] Integrity: no golden is `pending:17`; the owner tables are equal; glyph sheets match their
       manifests.
-- [ ] Acceptance: asserted goldens without a scenario are todos (`awaitsPlan17Scenario`; Task 9
+- [x] Acceptance: asserted goldens without a scenario are todos (`awaitsPlan17Scenario`; Task 9
       deletes it).
-- [ ] Run `import-captures` twice; the second changes nothing. Record counts and bytes.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import profile goldens (plan 17)`.
+- [x] Run `import-captures` twice; the second changes nothing. Record counts and bytes.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import profile goldens (plan 17)`.
+
+Deviation: **Task 2 (paths, plan 29 conventions):** the table is `scripts/capture-sets/17-profiles.ts`
+(registered by one line in `scripts/capture-sets/index.ts`), tested by
+`tests/capture-sets/17-profiles.test.ts` with an injected recording loader; its goldens are indexed
+in `goldens/index/17.json` and run by `tests/acceptance/17-profiles.test.ts`. `scripts/import-
+captures.ts` needs no line (the registry discovers the set).
+
+Deviation: **Task 2 (status, plan 29 pending workflow):** every new golden is `pending:17` and no
+`awaitsPlan17Scenario` shim exists; each row names the task (6, 7, 8) whose scenarios promote it
+(`ASSERTED_TASKS`). `12-*-1` stays in both owner tables until Task 6 binds Activate (the six
+`tree/12-profiles/12-n-1.leaf` and `sound/note/12-n-1` goldens would otherwise be asserted with a
+placeholder behind them), and `sound/boot/power-key` stays `pending:17` until Task 7. The
+integrity check "no golden is `pending:17`" moves to Task 9; Task 2 checks that plan 17 is
+pending elsewhere only on those goldens.
+
+Deviation: **Task 2 (selection):** stills are grouped per screen family (`profiles/icon`,
+`profiles/tones-<slug>`, `profiles/opening`, the power ▼/▲ shots, `persist-after-*`), one image per
+shot; the standby entries that repeat `standby-carousel-c`'s operator-less redraw, the notice
+(plan 18's painter), the shortcut's LCD (plan 14's timing), the B6 "nothing happens" recordings
+and Discreet's artefact are listed in `notImported` with reasons. The thin glyph sheet's note ends
+`; manifest [...]` (plan 18's form), one page per image.
+
+**Task 2 completion note:** 146 plan 17 fixtures: 102 LCD (25 stills, 77 timelines; 651 images)
+and 44 sound goldens, 2.76 MB of text grids, all `pending:17`. A second `import-captures` run
+changes nothing (identical tree hash); no other plan's golden changed.
 
 ### Task 3 - Glyphs, sprites and timings (TDD)
 
 **Files:** `scripts/extract-resources.ts`, `scripts/widget-sprites.ts`, `scripts/glyph-overrides.ts`,
 `src/resources/generated/**` (generated), `src/resources/index.ts`, `tests/resources.test.ts`.
 
-- [ ] Harvest the thin sheet and the new goldens' runs (the large U+E000 box of slot 6's prompt, the
+- [x] Harvest the thin sheet and the new goldens' runs (the large U+E000 box of slot 6's prompt, the
       standby line). Resolve reports with overrides naming their golden.
-- [ ] Crops: the standby icon; the power list's leading frame and C's frame if they are not plain
+- [x] Crops: the standby icon; the power list's leading frame and C's frame if they are not plain
       models (D7). Timelines: each `Selected profile:` note (its own recordings), Rename's `Done`,
       `PROFILE_LINE_DELAY_MS` per D5 (medians with the spread in a comment).
-- [ ] Measure the standby line's top and centring and the icon's place from the goldens.
-- [ ] TDD: freshness; every default name renders in small, large and thin; every typeable character
+- [x] Measure the standby line's top and centring and the icon's place from the goldens.
+- [x] TDD: freshness; every default name renders in small, large and thin; every typeable character
       renders in thin or is reported (plan 15's welcome-note rule).
-- [ ] Run `extract-resources` twice; no diff.
-- [ ] Commit: `feat(nokia-os): harvest profile glyphs, icon and timings`.
+- [x] Run `extract-resources` twice; no diff.
+- [x] Commit: `feat(nokia-os): harvest profile glyphs, icon and timings`.
+
+Deviation: **Task 3 (paths, plan 29):** plan 17's evidence is `PlanCaptureSet.resources` in
+`scripts/resource-inputs/17-profiles.ts` (text runs, glyph overrides, sprite batch 170, timeline
+batch 170); `scripts/widget-sprites.ts` and `scripts/glyph-overrides.ts` no longer exist and
+`extract-resources.ts` needs no change. The thin face gains the 63 typeable characters it lacked
+from `profiles/glyphs-thin` (seven pages, runs at top 29 right-aligned to x 79): eight pairs touch
+(`ÎÏ`, `ÏÌ`, `ÌÍ`, their lower case, `ÃÇ`, `ñq`: `touch` overrides with widths from the OCR cells
+of `plan17/text.json`) and seven page-final characters take the stock `spacing`; the eight
+accented glyphs that fill their cell join the resources test's spacing exceptions. The large face
+gains U+E000 (slot 6's virgin note, `tree/12-profiles/12-6-1.leaf` image d). Sprite:
+`profiles/silent` (x 7..13, y 0..5). Timelines: the six Activate notes by node (`12-n-1`, from
+the tree goldens, still `pending:17`: explicit probes), `rename-done` and `power-invalid-shortcut`.
+The power list's leading frame (standby with the ladders erased) and its C frame (the ladders
+without the operator) are plain standby models the power list paints, not crops (D7). The
+measured constant `PROFILE_LINE_DELAY_MS` (1912, the median of eleven Activate goldens, spread
+1898-1913) lives in `features/profiles.ts`, pinned by `tests/profiles-resources.test.ts` against
+the goldens (no generator); the standby line's place (small face, top 18, centred) is Task 6's
+painter, tested against the goldens.
+
+Deviation: **Task 3 (`power-invalid-shortcut`):** its extracted frames decompose the two partial
+draws against their neighbours (`edges` 5..30, then a 31-byte `cut`), which the note painter
+cannot replay toward standby; Task 7 keeps the step durations (2886/8/15 ms) and draws the
+partials toward standby (`edges` 5..78, then the first 31 bytes of standby).
 
 ### Task 4 - phone-core: standby line, label reader, power key, powerOff (TDD)
 
 **Files:** `packages/phone-core/src/{types.ts,machine.ts,menu.ts,application.ts,index.ts}`, README;
 tests `standby-line.test.ts`, `submenu-label.test.ts`, `standby-power.test.ts` (new).
 
-- [ ] TDD `standbyLine`: absent → models unchanged; `shownMs` restarts at boot end, at every return to
+- [x] TDD `standbyLine`: absent → models unchanged; `shownMs` restarts at boot end, at every return to
       standby (C, C held, application `exit({ to: "standby" })`, a standby application's exit); a
       change emits one snapshot; an exception omits the line.
-- [ ] TDD `label`: list items and the child level's title follow the reader; re-read per tick; one
+- [x] TDD `label`: list items and the child level's title follow the reader; re-read per tick; one
       snapshot per change; empty string throws (as labels do); paths and slugs unchanged.
-- [ ] TDD `standbyPower`: opens on the key-down at standby as a standby application (add plan 18
+- [x] TDD `standbyPower`: opens on the key-down at standby as a standby application (add plan 18
       D11's activation if absent: empty stack, path `standby`, `exit()` → standby,
       `levels`/`select`/`row` throw); key events reach it, the power key's too; its long press
       powers off (deactivated once with `power-off`); not opened in nav, app, boot or while a notice
       shows; navigate() deactivates it.
-- [ ] TDD `ApplicationContext.powerOff()`: deactivates with `power-off`, the phone is off; stale
+- [x] TDD `ApplicationContext.powerOff()`: deactivates with `power-off`, the phone is off; stale
       activations are no-ops.
-- [ ] `StandbyIndicators.silent` (and the reader if plan 18 Task 4 has not landed).
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
+- [x] `StandbyIndicators.silent` (and the reader if plan 18 Task 4 has not landed).
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
       `vp check --fix`.
-- [ ] Commit: `feat(phone-core): standby line, submenu labels, power key application and powerOff`.
+- [x] Commit: `feat(phone-core): standby line, submenu labels, power key application and powerOff`.
+
+Deviation: **Task 4 (reuse):** plan 18 Task 4 had already added `PhoneConfig.standbyIndicators`
+and the standby application activation (`setNotice({ open })`); the power key's application is a
+second standby application with the notice's exit rules (`exit()` → standby, `levels`/`select`/
+`row` throw, C on its `App error` reader → standby, `navigate()` leaves it), and
+`StandbyIndicators.silent` extends plan 18's reader. `src/index.ts` needs no change. The standby
+line's `shownMs` restarts with every new standby state (boot end, C, C held, an application's or
+standby application's exit, a cleared notice, `setNotice(null)` included) and rides on Menu's
+`leaving` model. `standbyPower` opens over a notice and after an application leaves for standby
+on the power key's down (Task 0 B6). A blank label from the reader throws from
+`SubmenuEntry.labelOf`; the kernel shows the child's own label then, as when the reader throws.
 
 ### Task 5 - Active profile, aliases and names (TDD)
 
@@ -489,16 +606,27 @@ tests `standby-line.test.ts`, `submenu-label.test.ts`, `standby-power.test.ts` (
 "Shared-file edits", `tests/profiles-state.test.ts` (new), `tests/settings.test.ts` (snapshot),
 `tests/persistence.test.ts`.
 
-- [ ] TDD `activeProfile`/`activateProfile`: virgin General; a record without the key decodes to
+- [x] TDD `activeProfile`/`activateProfile`: virgin General; a record without the key decodes to
       General; persists at once.
-- [ ] TDD D1: with each profile active, every `tones/*` key (but Composer) reads and writes that
+- [x] TDD D1: with each profile active, every `tones/*` key (but Composer) reads and writes that
       profile's Personalise key; Personalise keys stay their own; switching back restores reads.
-- [ ] TDD names (D2): virgin names (slot 6's boxes), `renameProfile` (10 characters max, throws
+- [x] TDD names (D2): virgin names (slot 6's boxes), `renameProfile` (10 characters max, throws
       beyond), empty → default; Restore: General active, names reset, slot 6 `(empty)`.
-- [ ] Pinned record keys gain `profiles/active`; every existing settings, sound and acceptance test
+- [x] Pinned record keys gain `profiles/active`; every existing settings, sound and acceptance test
       still passes (General active = plan 14's alias).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the active profile and profile names`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the active profile and profile names`.
+
+Deviation: **Task 5 (files, the per-plan split):** `src/firmware/bindings.ts` no longer exists;
+its tables live in the features and `stock.ts`. The profiles feature's alias is
+`{ prefix: "tones/", target: (choice) => profileAlias(...) }`: `StockSettingsTables.aliases` takes
+an `AliasTarget` (a prefix, or a function of the stored choices), `settingAlias(key, choice?)`
+resolves it (default: every choice unset, the virgin General), and the store re-resolves a stock
+alias against its own choices on every read and write (a test snapshot's fixed alias stays
+fixed). Two generic tables join the settings tables: `choices` (single choices no menu list
+stores: `profiles/active`, six options, virgin unset) and `factoryTexts` (Restore's slot 6 name,
+`(empty)`, with its capture). The record's pinned keys gain `profiles/active`; no version bump.
+`renameProfile(…, "")` writes the slot's factory name (Task 0 R5: `(empty)` for slots 5 and 6).
 
 ### Task 6 - Activate, standby name, icon and effects (TDD against goldens)
 
@@ -506,71 +634,177 @@ tests `standby-line.test.ts`, `submenu-label.test.ts`, `standby-power.test.ts` (
 `src/display/profiles.ts` (new), the leaves/menu/phone/standby registrations,
 `tests/profiles-activate.test.ts` (new).
 
-- [ ] `activateLeaf` (D3) bound to 12-n-1; the Profiles level's `label` and `opening` (D8).
-- [ ] `standbyProfileLine` and `standbySilent` wired into `createPhone`; the painter draws the line
+- [x] `activateLeaf` (D3) bound to 12-n-1; the Profiles level's `label` and `opening` (D8).
+- [x] `standbyProfileLine` and `standbySilent` wired into `createPhone`; the painter draws the line
       and the icon as measured (D5, D6); Discreet's line per D10.
-- [ ] `activationBeep` (D4) wired in the wrapper.
-- [ ] TDD through keys against `tree/12-profiles/12-n-1.leaf`, `profiles/activate-*`,
+- [x] `activationBeep` (D4) wired in the wrapper.
+- [x] TDD through keys against `tree/12-profiles/12-n-1.leaf`, `profiles/activate-*`,
       `profiles/standby-*`, `profiles/icon-*`, `profiles/tones-*`, `profiles/persist-*`,
       `profiles/restore`, `sound/note/12-n-1`, `sound/profiles/{activate,effects}-*` (pixels exact,
       timelines ±2 ms after alignment; standby-entry delays within the spread Task 3 records).
-- [ ] Plan 13's standby goldens unchanged (General: no line, no icon).
-- [ ] Commit: `feat(nokia-os): Activate, the standby profile line and icon`.
+- [x] Plan 13's standby goldens unchanged (General: no line, no icon).
+- [x] Commit: `feat(nokia-os): Activate, the standby profile line and icon`.
+
+Deviation: **Task 6 (API):** `activateLeaf(services, slug)` is the 12-n-1 `ScreenBinding`'s widget
+factory (`() => Widget`), bound through the feature's `screens`; `activationBeep(phone, key,
+settings)` takes the key going down. The Profiles level's label and opening come through a new
+generic feature table, `levels` (`LevelOptions { label?(slug), opening?() }`, by level node:
+`features/feature.ts`, `LEVELS` in `stock.ts`, one spread in `menu.ts`), not an import of the
+profiles feature. Notes gain `powerLeaves` (`widgets/note.ts`): Activate's note leaves for standby
+on the power key's down, where the kernel opens `standbyPower` (B6). The standby painter calls
+`paintProfileStandby` (`display/profiles.ts`): the line centred in the small face at top 18 and the
+`profiles/silent` sprite, both kept on Menu's `leaving` frame. `phone.ts` sets `standbyLine`,
+`standbyIndicators` (`silent`) and calls `activationBeep` before `sounder.keyDown`.
+
+Deviation: **Task 6 (shared tests, one assertion each):** `12-*-1` left both owner tables, so the
+six `tree/12-profiles/12-n-1.leaf` and `sound/note/12-n-1` goldens are asserted (plan 16's importer
+folds equal note recordings: 12-1-1, 12-2-1 and 12-6-1's sound now share other notes' goldens).
+`tests/firmware-menu.test.ts` lists 12-5-1 as stock; `tests/widgets-notes.test.ts` skips leaves a
+feature binds (Activate's note ends in the kernel's standby with its line);
+`tests/acceptance/14-menu-depth.test.ts` gives `tree/12-profiles/12-5-1.leaf` a hand-written
+scenario within PROBE_TOLERANCE_MS (its name comes at 1898 ms; the coverage guard admits no tree
+golden as a known gap). `profiles/persist-after-{boot,restore}` move to Task 7 (they show the
+power list).
+
+Deviation: **Task 6 (scenarios):** the factory Activate goldens play the virgin per-slot note
+timelines (another recording) within PROBE_TOLERANCE_MS; `profiles/activate-empty` is a known gap
+(its tick is 27 ms shorter than 12-5-1's), `profiles/standby-carousel-c` too (the key return's
+operator-less redraw, Task 0). Cut goldens (`activate-discreet`, `standby-menu`) hold their last
+frame as a lower bound (`cutRecordingScenario`). Stills seed the active profile, names and Tones
+values into the factory storage (`tests/support/profiles.ts`) instead of replaying the settings'
+keys; the scenarios' `toStandby` taps C before holding it on an option list (nokia-os closes a list
+on C's release; the firmware leaves for standby on C held, an existing kernel difference).
 
 ### Task 7 - The power key's profile list (TDD against goldens)
 
 **Files:** `src/firmware/features/profiles.ts` (`powerList`), `src/widgets/option-list.ts`
 (`numbering: "none"`, one line), the phone registration, `tests/profiles-power.test.ts` (new).
 
-- [ ] `powerList` (D7): `Switch off!` + six names (D2), opening `Switch off!`, ▲/▼ and the power
+- [x] `powerList` (D7): `Switch off!` + six names (D2), opening `Switch off!`, ▲/▼ and the power
       key-down move, digits choose by position (Task 0 B), OK runs Activate's flow or `powerOff()`,
       C exits; the leading and C frames as Task 3 decided.
-- [ ] TDD against `profiles/power-*` and `sound/boot/power-key`, `sound/profiles/power-*`; power long
+- [x] TDD against `profiles/power-*` and `sound/boot/power-key`, `sound/profiles/power-*`; power long
       press from the list powers off; the short press elsewhere changes nothing (B6).
-- [ ] Commit: `feat(nokia-os): the power key's profile list`.
+- [x] Commit: `feat(nokia-os): the power key's profile list`.
+
+Deviation: **Task 7 (API and files):** `powerList(services, state)` takes a `PowerListState` the
+wrapper shares (the standby model the power key went down on, for the leading frame; the
+highlighted entry, for `activationBeep(phone, key, settings, state)` and the key's beep). The list
+reuses `OptionListWidget` (`numbering: "none"`, `widgets/rows.ts`) inside a widget that keeps the
+captured key timing: OK and the digits choose on their down (the choice swallows that key's
+release), C leaves on its down, ▲/▼ and the power key move on their release (not the press that
+opened it). The leading and C frames are a `standby-frame` widget model (`display/profiles.ts`, one
+case in `display/widgets/index.ts`): standby with the ladders erased for 29 ms, standby without
+the operator and the line for 86 ms (84-88 captured). `Flow.powerOff?()` (`widgets/flow.ts`)
+reaches `ApplicationContext.powerOff()`. `8`/`9` play `Invalid shortcut` with the power list's
+own steps (2886/8/15 ms, the note painter's `cut` with no step after it now draws toward standby,
+`display/widgets/note.ts`); `0` plays the menus' `invalid-shortcut` 2955 ms after its down
+(its tone sounds at 2931 ms and its redraw at 2979 ms; one moment between them).
+
+Deviation: **Task 7 (sound, shared files):** the power-off tone is a key beep's length at the boot
+tone's level (≈145 ms with the DSP awake, ≈124 ms waking it) and silent with Warning tones Off
+(Silent's Switch off!; UNVERIFIED against Keypad tones, also Off there): `sound/sounder.ts`
+`powerOff`. A key that switched the phone off does not beep (`phone.ts`), and the power key beeps
+in the list as at standby. `sound/boot/power-key` is asserted (`scripts/sound-capture-set.ts`) with
+a scenario in `tests/support/sound-scenarios.ts`; `tests/sounder.test.ts` lets the list close before
+its Menu and `tests/firmware-phone.test.ts` expects the awake power-off tone.
+
+Deviation: **Task 7 (goldens):** the Discreet choices cut before the artefact (`power-general-ok-
+discreet` at its name, `power-general-digit-4` at standby: there the name and the overwritten line
+come together); `persist-after-{boot,restore}` drop their standby image (the in-process reboot came
+up without the network). Known gaps: `power-general-held` (the firmware switches off 1033 ms after
+the down, the kernel's long press is 800 ms) and `sound/profiles/power-general-power-keys` (in the
+list the power key beeps 121-123 ms after its down). Every factory Activate golden (the menus', the
+power list's OK and digits) compares within `ACTIVATE_TOLERANCE_MS` (35, a stated tolerance: the
+firmware's box 678-700 ms, tick 1958-1989 ms and name delay 1898-1930 ms vary between recordings),
+which also retires Task 6's `activate-empty` gap.
 
 ### Task 8 - Rename (TDD against goldens; needs plan 18 Task 7)
 
 **Files:** `src/firmware/features/profiles.ts` (`renameLeaf`), the leaves registration and
 subtraction, `tests/profiles-rename.test.ts` (new).
 
-- [ ] `renameLeaf` (D9): plan 18's `textInput` on the measured layout with the profile's name, limit
+- [x] `renameLeaf` (D9): plan 18's `textInput` on the measured layout with the profile's name, limit
       10; OK → `renameProfile` → `Done` → the page.
-- [ ] TDD against `tree/12-profiles/12-2-2-10.leaf`, `profiles/rename-open-*`, `profiles/rename-*`:
+- [x] TDD against `tree/12-profiles/12-2-2-10.leaf`, `profiles/rename-open-*`, `profiles/rename-*`:
       typing, the limit, empty → default, C keys, the name in the list, power list, note, standby.
-- [ ] Subtract `layoutOf`'s Rename branch and the `PROMPT_LAYOUTS` entry it replaced.
-- [ ] Commit: `feat(nokia-os): Rename profiles`.
+- [x] Subtract `layoutOf`'s Rename branch and the `PROMPT_LAYOUTS` entry it replaced.
+- [x] Commit: `feat(nokia-os): Rename profiles`.
+
+Deviation: **Task 8 (API and files):** `renameLeaf(services, slug)` is the 12-n-2-10 binding's
+widget factory (the feature's `screens`): plan 18's `textInput` (label `New name:`, limit 10,
+counter, the stored name, OK → `renameProfile` → `Done` on the `rename-done` timeline → the page).
+The Rename prompt restarts its cursor blink at a commit (`profiles/rename-*-type`: the cursor shows
+at the commit and toggles 477-480 ms later), an opt-in `restartBlinkOnCommit` of plan 18's
+`TextEntry`/`textInput` (`widgets/text-entry.ts`, `widgets/text-input.ts`; default off, the editor
+unchanged). `layoutOf`'s Rename branch, its `value` plumbing and `PROMPT_LAYOUTS["12-2-2-10"]` are
+gone. Shared tests: `tests/widgets-info.test.ts` skips feature-bound prompts with no plan 14
+layout; `tests/acceptance/14-menu-depth.test.ts` gives `tree/12-profiles/12-2-2-10.leaf` the
+tolerant tree scenario (plan 18's free-running 480 ms blink against this recording's 479-493 ms).
+
+Deviation: **Task 8 (goldens):** the prompt recordings compare within PROBE_TOLERANCE_MS (their
+blink); later keys go down on the row their effect starts. Known gaps: `rename-open-12-3` (a 15 ms
+stray cursor column in the virgin recording restarts its blink) and `rename-limit`,
+`rename-limit-extra`, `rename-limit-ok`, `rename-symbols` (after a run of commits at the captures'
+pace the firmware's cursor is in the other blink phase: one column differs). `rename-limit-extra`
+aligns on the key (trigger-frame 0: at the limit the key changes nothing).
 
 ### Task 9 - Acceptance and the coverage guard
 
 **Files:** `tests/acceptance/17-profiles.test.ts` (new), `tests/support/profiles.ts` (new),
 `tests/support/rig.ts` (a seeded active profile and names, if needed).
 
-- [ ] A scenario for every asserted `profiles/*` and `sound/profiles/*` golden; delete
+- [x] A scenario for every asserted `profiles/*` and `sound/profiles/*` golden; delete
       `awaitsPlan17Scenario`; the guard fails for an asserted golden without one; no node is covered
       only by a `pending:17` golden.
-- [ ] Every asserted golden passes (pixels exact; timelines ±2 ms, or a stated tolerance where a
+- [x] Every asserted golden passes (pixels exact; timelines ±2 ms, or a stated tolerance where a
       scenario replays another recording's timing). New `KNOWN_GAPS` need a reason.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
       `mise exec -- vp check --fix`. Report the suite's run time.
-- [ ] Commit: `test(nokia-os): drive profiles against their goldens`.
+- [x] Commit: `test(nokia-os): drive profiles against their goldens`.
+
+Deviation: **Task 9 (order):** the scenarios landed with Tasks 6-8, each promoting its rows
+(`ASSERTED_TASKS`); the helpers are `tests/support/profiles.ts` (seeded factory/virgin storage, the
+captures' navigation, `cutRecordingScenario`, `toleratedTreeScenario`, `ACTIVATE_TOLERANCE_MS`), not
+`rig.ts`. Task 9 adds the integrity check that no golden is `pending:17`.
+
+**Task 9 completion note:** 146 plan 17 goldens (102 LCD, 44 sound) asserted, plus the six
+`tree/12-profiles/12-n-1.leaf`, the four remaining `sound/note/12-n-1` goldens and
+`sound/boot/power-key` of plans 14 and 16. Known gaps (8, each with its reason in the acceptance
+file): `standby-carousel-c` (the key return's operator-less redraw), `power-general-held` (the
+kernel's 800 ms long press), `sound/profiles/power-general-power-keys` (the list's power key beeps
+121-123 ms after its down), `rename-open-12-3` (a stray cursor column), and four Rename blink
+phases. `mise exec -- vp run @hellotimber/nokia-os#test`: 75 files, 4517 passed, 28 expected
+failures, 276 todos (other plans' pending goldens), 48 s wall; `vp run -r test` passes in every
+workspace.
 
 ### Task 10 - Demo, README, verification gate and closeout
 
 **Files:** `packages/nokia-os/{README.md,demo/main.ts}`, `docs/specs/stock/profiles.md`,
 `docs/plans/README.md`, this plan.
 
-- [ ] Demo: the status line shows the active profile. Verify with
+- [x] Demo: the status line shows the active profile. Verify with
       `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser` (headless, Skip boot,
       through `[role=status]`): Activate Silent (note, standby line), Tones › Keypad tones shows
       Silent's, the power key's list, choose General, Rename Loud, power cycle.
-- [ ] README: profiles as settings plus names, the active profile's alias, what later plans read.
-- [ ] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
+- [x] README: profiles as settings plus names, the active profile's alias, what later plans read.
+- [x] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
       `mise exec -- vp run website#build`; `git diff --stat <commit before Task 1> -- website/` is
       empty.
-- [ ] Spec: replace "(plan 17, in progress)" with verified facts; list what stays UNVERIFIED.
-- [ ] Plans README row 17 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete profiles (plan 17)`.
+- [x] Spec: replace "(plan 17, in progress)" with verified facts; list what stays UNVERIFIED.
+- [x] Plans README row 17 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete profiles (plan 17)`.
+
+**Task 10 completion note:** the demo's status line names the active profile, the standby line
+and the silent icon (`demo/panels/profiles.ts`). The Power button taps while the phone is on and
+holds 1 s while it is off, and `P` holds as long as the key does (Deviation: the demo held every
+power press 1 s, which now switches off from the list). Verified headless with `agent-browser` on
+port 5317 (Factory settings, Skip boot): Activate Silent (note, `Silent` line, icon), Tones ›
+Keypad tones opens on Silent's `Off` (5-6-1; on the virgin EEPROM blank at 5-6-0, as
+`tree/12-profiles/12-2-2-6.open`), the power list, General from it (no line), Rename Loud to
+`Loudh`, `Loudh` from the list by its digit, then Switch off! and power-on still showing `Loudh`.
+Screenshots `/tmp/nokia-os-p17-*.png`. `vp check`, `vp run -r test` and `vp run website#build`
+pass; `git diff --stat f315e64 -- website/` is empty.
 
 ## Follow-up plan adjustments
 
@@ -601,6 +835,12 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
    Task 0 R5.
 6. **Meeting/Outdoor/Pager (D13):** absent on v6.39; nothing to build.
 7. **Rename timing (D9):** waits for plan 18 Task 7; the rest of plan 17 ships first.
+
+Resolved by Task 0: (1) the active profile, always (`opening/*`); (2) Incoming call alert Off
+alone (`icon/*`); (3) not reproduced: Discreet's uninitialised screen saver picture
+(`discreet/*`); (4) reproduced through the wrapper hook, the shortcut digit included
+(`shortcut/*`); (5) `(empty)` for slots 5 and 6, virgin and factory (`rename-virgin/*`); (7) plan
+18 Task 7 has landed on this branch.
 
 ## Conflicts found while planning
 

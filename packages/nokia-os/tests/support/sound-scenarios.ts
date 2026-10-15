@@ -214,6 +214,8 @@ export const SOUND_SCENARIOS: Record<string, (id: string) => void> = {
     expectSound(id, soundRig("virgin"), `navi 5 5 ${SETTLE}`, { drift: true }),
   // B: holding the power key stops the preview; power-off plays the power-on tone.
   "sound/boot/power-off": (id) => powerOff(id),
+  // Plan 17: the power key's list opens at standby (its beep), C returns (its beep).
+  "sound/boot/power-key": (id) => expectSound(id, soundRig("factory")),
   // B: the power-on tone 2425 ms into the boot (time 0: the phone turns on), Keypad tones or not.
   "sound/boot/power-on": (id) => powerOnSound(id, {}),
   "sound/boot/power-on-keypad-off": (id) => powerOnSound(id, { [KEYPAD]: 0 }),
@@ -367,24 +369,11 @@ Object.assign(SOUND_SCENARIOS, {
   "sound/note/invalid-shortcut-keypad-l3": (id: string) =>
     expectSound(id, soundRig("factory", { [KEYPAD]: 3 })),
   // Menu 6 4, 00000, OK: `Code error` on the buzzer in place of OK's beep.
-  // The capture types the code 1960 ms after Menu 6 4's 4, which the kernel's shortcut window
-  // (2948 ms, phone-core) still takes as a digit: the scenario opens 6-4 by its menu path and
-  // compares from the first 0.
-  "sound/note/code-error": (id: string) => {
-    const rig = soundRig("factory");
-    open(rig, "6-4");
-    rig.advance(NAV_SETTLE_MS);
-    expectSoundFrom(id, rig, 2880);
-  },
-  // Warning tones Off: both error notes silent, and so are the keys that opened them (Menu 1 9
-  // and C held as captured; then 6-4 by its menu path, as for `code-error`).
-  "sound/note/warning-off": (id: string) => {
-    const rig = soundRig("factory", { "tones/warning-tones": 1 });
-    expectSoundUntil(id, rig, 7931);
-    open(rig, "6-4");
-    rig.advance(NAV_SETTLE_MS);
-    expectSoundFrom(id, rig, 10812);
-  },
+  "sound/note/code-error": (id: string) => expectSound(id, soundRig("factory")),
+  // Warning tones Off: both error notes silent, and so are the keys that opened them (Menu 1 9,
+  // C held, Menu 6 4).
+  "sound/note/warning-off": (id: string) =>
+    expectSound(id, soundRig("factory", { "tones/warning-tones": 1 })),
   // Call divert › Cancel all diverts: Requesting, Quit, `Request not confirmed` (silent).
   "sound/note/request-not-confirmed": (id: string) => {
     const rig = soundRig("factory");
@@ -404,30 +393,6 @@ Object.assign(SOUND_SCENARIOS, {
 
 /** The wait after a scenario's own navigation, before the golden's first key. */
 const NAV_SETTLE_MS = 500;
-
-/** Golden `id` from its time `fromMs` on (its earlier keys done another way), as time 0. */
-function expectSoundFrom(id: string, rig: Rig, fromMs: number): void {
-  const golden = loadSoundGolden(id);
-  const part = {
-    ...golden,
-    keys: (golden.keys ?? [])
-      .filter((k) => k.ms >= fromMs)
-      .map((k) => ({ ...k, ms: k.ms - fromMs })),
-    rows: golden.rows.filter((r) => r.ms >= fromMs).map((r) => ({ ...r, ms: r.ms - fromMs })),
-  };
-  expectSoundTimeline(playSound(rig, part), part, `${id}: from ${fromMs} ms`);
-}
-
-/** Golden `id`'s keys and rows before `untilMs`. */
-function expectSoundUntil(id: string, rig: Rig, untilMs: number): void {
-  const golden = loadSoundGolden(id);
-  const part = {
-    ...golden,
-    keys: (golden.keys ?? []).filter((k) => k.ms < untilMs),
-    rows: golden.rows.filter((r) => r.ms < untilMs),
-  };
-  expectSoundTimeline(playSound(rig, part, { tailMs: 1000 }), part, `${id}: until ${untilMs} ms`);
-}
 
 /**
  * Highlights tree node or option `number` from a settled factory standby. An option of a

@@ -522,7 +522,7 @@ subtrees are written out once and then referred to.
     - entries: On · Confirm first · **Off** ▸
     - each: timed-note "Done", then back
 - `12` **Profiles** → submenu (3-row list, one entry per screen)
-  - `12-1` **General** → submenu (3-row list)
+  - `12-1` **General** → submenu (3-row list); General's Personalise has no Rename (it stops at 9)
     - `12-1-1` **Activate** → timed-note, "Selected / profile: / General"; then standby
     - `12-1-2` **Personalise** → submenu (one entry per screen)
       - `12-1-2-1` **Ringing tone** → option-list, key **Quit**
@@ -652,7 +652,8 @@ subtrees are written out once and then referred to.
           - opens with nothing highlighted (index -0): no current value in the virgin EEPROM
         - `12-5-2-9-4` **Screen saver** → no-response (the screen stays as it was for 3.5 s)
       - `12-5-2-10` **Rename** [(empty)] → text-input, "New name: / (empty)", key **OK**
-  - `12-6` **□□** → submenu (3-row list)
+  - `12-6` **□□** → submenu (3-row list); Restore factory settings and an empty Rename name it
+    `(empty)` (plan 17, [stock profiles](stock/profiles.md))
     - `12-6-1` **Activate** → timed-note, "Selected / profile: / "; then standby
     - `12-6-2` **Personalise** → submenu (one entry per screen)
       - `12-6-2-1` **Ringing tone** → option-list, key **Quit**
@@ -694,7 +695,8 @@ subtrees are written out once and then referred to.
           - each: timed-note "Timeout selected", then back
           - opens with nothing highlighted (index -0): no current value in the virgin EEPROM
         - `12-6-2-9-4` **Screen saver** → no-response (the screen stays as it was for 3.5 s)
-      - `12-6-2-10` **Rename** [] → text-input, "New name: / ", key **OK**
+      - `12-6-2-10` **Rename** [□□] → text-input, "New name: / □□" (the large face's two boxes,
+        counter 8), key **OK**
 
 ## With content
 
