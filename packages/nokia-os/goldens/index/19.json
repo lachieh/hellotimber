@@ -1472,6 +1472,14 @@
     "frames": 5
   },
   {
+    "id": "phone-book/tone-ok-third",
+    "file": "phone-book/tone-ok-third.lcd.txt",
+    "status": "pending:19",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
     "id": "phone-book/tone-pages",
     "file": "phone-book/tone-pages.lcd.txt",
     "status": "pending:19",

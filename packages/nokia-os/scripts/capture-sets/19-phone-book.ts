@@ -8,6 +8,7 @@
 // Pure: imports only sibling scripts, reads captures through the injected io.
 import type { CaptureIo, CaptureSetEntry, PlanCaptureSet } from "../capture-set.ts";
 import type { GoldenStatus } from "../golden-format.ts";
+import { resources } from "../resource-inputs/19-phone-book.ts";
 import {
   buildSoundGolden,
   type SoundCaptureEntry,
@@ -1192,6 +1193,13 @@ const ROWS: readonly Row[] = [
     note: "SIM content: OK on No tone: Done, the page with No tone.",
   },
   {
+    id: "phone-book/tone-ok-third",
+    dir: "tone/ok-third",
+    sim: "content",
+    task: 8,
+    note: "SIM content: OK on Mosquito (1-6-5): Done, then the page with Mosquito.",
+  },
+  {
     id: "phone-book/tone-list-again",
     dir: "tone/list-again",
     sim: "content",
@@ -1705,7 +1713,7 @@ export const PHONE_BOOK_NOT_IMPORTED: Readonly<Record<string, string>> = {
     "the same notes and flows in another view or position",
   "plan19/edit/{add-query,add-selected,*-typed,both-query,number-c,name-cleared,number-cleared,number-typed,empty-name-ok,unchanged-down-*,replace-down-2..3,add-down-3,follow-* but the edit-follow shots,list}":
     "intermediate screens of the imported flows",
-  "plan19/tone/{ok-default,ok-third,page-after*,no-tone-list,preview-up-default,list-last,default-again,page-04..15,17..19,21,22,25,26}":
+  "plan19/tone/{ok-default,page-after*,no-tone-list,preview-up-default,list-last,default-again,page-04..15,17..19,21,22,25,26}":
     "the same rules on other tones and pages",
   "plan19/bcard/{again-*,search-ok,typed,typed-c,list}":
     "the link-time probes (Task 0: 3237-3359 ms) and their prompts; bcard-ok holds the flow",
@@ -1724,6 +1732,7 @@ export const PHONE_BOOK_NOT_IMPORTED: Readonly<Record<string, string>> = {
 
 export const phoneBook: PlanCaptureSet = {
   plan: "19",
+  resources,
   lcd: (io) => lcdEntries(io),
   sounds: (io) => phoneBookSounds(io.sound),
   notImported: PHONE_BOOK_NOT_IMPORTED,

@@ -14,6 +14,8 @@ import { composeResourceDeclarations } from "../scripts/resource-declarations.ts
 import { readGoldenIndex } from "../scripts/golden-index.ts";
 
 import { placeholderOwner } from "../scripts/tree-capture-set.ts";
+import { PHONE_BOOK_SIMS } from "../scripts/capture-sets/19-phone-book.ts";
+import { BCARD_LINK_MS, STANDBY_KEY_DELAY_MS } from "../src/phone-book/timings";
 
 import { loadGolden } from "./support/goldens";
 import { missingStockGlyphs, stockMenu } from "../src/index";
@@ -413,26 +415,34 @@ describe("widget sprites and timelines", () => {
     });
   }
 
-  it("crops every listed sprite from its golden: binary art with ink, lit only where the golden is", () => {
-    for (const crop of CROPS) {
-      const sprite = WIDGET_DATA.sprites[crop.id]!;
-      expect([sprite.x, sprite.y], crop.id).toEqual([crop.x0, crop.y0]);
-      expect(sprite.art, crop.id).toHaveLength(crop.y1 - crop.y0 + 1);
-      expect(sprite.art.join(""), crop.id).toMatch(/^[#.]*#[#.]*$/);
-      const { pixels } = loadGolden(crop.golden).images.find((image) => image.name === crop.image)!;
-      sprite.art.forEach((row, dy) => {
-        expect(row, crop.id).toHaveLength(crop.x1 - crop.x0 + 1);
-        Array.from(row).forEach((ch, dx) => {
-          expect(ch === "#", `${crop.id} (${dx}, ${dy})`).toBe(
-            pixels[(crop.y0 + dy) * 84 + crop.x0 + dx] === 1,
-          );
+  it(
+    "crops every listed sprite from its golden: binary art with ink, lit only where the golden is",
+    () => {
+      for (const crop of CROPS) {
+        const sprite = WIDGET_DATA.sprites[crop.id]!;
+        expect([sprite.x, sprite.y], crop.id).toEqual([crop.x0, crop.y0]);
+        expect(sprite.art, crop.id).toHaveLength(crop.y1 - crop.y0 + 1);
+        expect(sprite.art.join(""), crop.id).toMatch(/^[#.]*#[#.]*$/);
+        const { pixels } = loadGolden(crop.golden).images.find(
+          (image) => image.name === crop.image,
+        )!;
+        sprite.art.forEach((row, dy) => {
+          expect(row, crop.id).toHaveLength(crop.x1 - crop.x0 + 1);
+          Array.from(row).forEach((ch, dx) => {
+            expect(ch === "#", `${crop.id} (${dx}, ${dy})`).toBe(
+              pixels[(crop.y0 + dy) * 84 + crop.x0 + dx] === 1,
+            );
+          });
         });
-      });
-      expect(WIDGET_SPRITES[crop.id]!.bitmap.width, crop.id).toBe(crop.x1 - crop.x0 + 1);
-    }
-  });
+        expect(WIDGET_SPRITES[crop.id]!.bitmap.width, crop.id).toBe(crop.x1 - crop.x0 + 1);
+      }
+    },
+    EXTRACTION_TIMEOUT_MS,
+  );
 
   it("references only known sprites, and loops only progress bars and prompt cursors", () => {
+    // Plan 19: Erasing memory's bar steps through once and ends (phone-book/erase-all-erasing).
+    const singlePass = new Set([WIDGET_TIMELINE_BY_NAME["erasing-memory"]]);
     for (const [id, data] of Object.entries(WIDGET_DATA.timelines)) {
       for (const frame of data.frames) {
         if (frame.kind === "sprite" || frame.kind === "image")
@@ -443,7 +453,7 @@ describe("widget sprites and timelines", () => {
           frame.kind === "sprite" ? frame.sprite.split("-")[0] : frame.kind,
         ),
       );
-      const loops = kinds.has("progress") || kinds.has("cursor");
+      const loops = (kinds.has("progress") && !singlePass.has(id)) || kinds.has("cursor");
       expect(data.loopFrom !== undefined, id).toBe(loops);
       expect(Number.isFinite(WIDGET_TIMELINES[id]!.timeline.durationMs), id).toBe(!loops);
     }
@@ -978,5 +988,86 @@ describe("text entry and SMS resources (plan 18)", () => {
     const sent = WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NAME["message-sent"]!]!;
     expect(sent.timeline.durationMs).toBe(1403);
     expect(sent.frames).toHaveLength(7);
+  });
+});
+
+describe("phone book resources (plan 19)", () => {
+  /** The pixels of `image` of golden `id` in a sprite's box. */
+  const cropOf = (id: string, image: string, sprite: string): string[] => {
+    const { x, y, art } = WIDGET_DATA.sprites[sprite]!;
+    const golden = loadGolden(id);
+    const pixels = golden.images.find((i) => i.name === image)!.pixels;
+    return art.map((row, r) =>
+      Array.from(row, (_, c) => (pixels[(y + r) * 84 + x + c] === 1 ? "#" : ".")).join(""),
+    );
+  };
+
+  it("draws every SIM fixture's names and numbers in the small and large faces (D2)", () => {
+    for (const [name, sim] of Object.entries(PHONE_BOOK_SIMS)) {
+      const contacts = [...(sim.phoneBook?.entries ?? []), ...(sim.serviceNumbers ?? [])];
+      for (const contact of contacts) {
+        if (contact === null) continue;
+        for (const face of ["small", "large"] as const) {
+          for (const text of [contact.name, contact.number]) {
+            expect(missingStockGlyphs(text, face), `${name}: ${text} (${face})`).toEqual([]);
+          }
+        }
+      }
+    }
+  });
+
+  it("shows the phone book icon of the prompts at the top left of the name list", () => {
+    for (const image of ["down-00", "down-02"]) {
+      expect(cropOf("phone-book/view-large", image, "prompt/phone-book"), image).toEqual(
+        WIDGET_DATA.sprites["prompt/phone-book"]!.art,
+      );
+    }
+  });
+
+  it("crops Please speak now's two faces", () => {
+    expect(cropOf("phone-book/voice-start", "b", "please-speak-1")).not.toEqual(
+      cropOf("phone-book/voice-start", "c", "please-speak-1"),
+    );
+    expect(WIDGET_DATA.sprites["please-speak-2"]!.art.join("")).toContain("#");
+  });
+
+  it("names the phone book's notes, each a finite timeline", () => {
+    for (const name of [
+      "saved",
+      "replaced",
+      "nothing-to-save",
+      "memory-full",
+      "invalid-sim-char",
+      "speed-dial-saved",
+      "tone-done",
+      "memory-erased",
+      "erasing-memory",
+      "voice-system-error",
+      "erased",
+      "last-name-erased",
+      "speed-dial-erased",
+      "bcard-sent",
+      "please-speak",
+    ]) {
+      const id = WIDGET_TIMELINE_BY_NAME[name];
+      expect(id, name).toBeDefined();
+      expect(Number.isFinite(WIDGET_TIMELINES[id!]!.timeline.durationMs), name).toBe(true);
+    }
+    // Saved: the tick's three steps for ≈2.85 s (phone-book/add-saved: 684, 235, 1927 ms).
+    const saved = WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NAME.saved!]!;
+    expect(saved.frames.map((f) => (f.kind === "sprite" ? f.sprite : f.kind))).toEqual([
+      "note/tick-box",
+      "note/tick-half",
+      "note/tick",
+    ]);
+    // Erasing memory's bar steps once through (seven steps, 2468 ms) and ends.
+    const erasing = WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NAME["erasing-memory"]!]!;
+    expect(erasing.frames).toHaveLength(7);
+    expect(erasing.timeline.durationMs).toBe(2468);
+  });
+
+  it("keeps Task 0's medians: the standby keys' delay and Send b'card's link time", () => {
+    expect(STANDBY_KEY_DELAY_MS).toBe(23);
+    expect(BCARD_LINK_MS).toBe(3240);
   });
 });

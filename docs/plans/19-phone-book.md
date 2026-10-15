@@ -665,21 +665,44 @@ compare, each ≈4 KB per image. `import-captures` run twice: no diff.
 `scripts/glyph-overrides.ts`, `src/resources/generated/**` (generated), `tests/resources.test.ts`
 (new cases only).
 
-- [ ] Text runs for the new images from `plan19/text.json`; resolve harvester reports with overrides
+- [x] Text runs for the new images from `plan19/text.json`; resolve harvester reports with overrides
       naming their golden. Every fixture name renders in `small` and `large`, every number in `small`
       and `large` (D2's validation relies on it).
-- [ ] Crops: the name-list icon (assert equal to `prompt/phone-book`, else a new sprite), the
+- [x] Crops: the name-list icon (assert equal to `prompt/phone-book`, else a new sprite), the
       ellipsis, the Service Nos. slider rail, the bin animation, the `Please speak now` icon frames,
       the `Business card sent` frames (compared with plan 18's `Message sent` frames; shared if
       equal), any new note icon.
-- [ ] Named timelines (`WIDGET_TIMELINE_BY_NAME`): `saved`, `erased`, `memory-erased` (with `Erasing
+- [x] Named timelines (`WIDGET_TIMELINE_BY_NAME`): `saved`, `erased`, `memory-erased` (with `Erasing
 memory`'s bar), `speed-dial-saved`, `speed-dial-erased`, `tone-done`, `nothing-to-save`,
       `memory-full`, `sending-bcard`, `bcard-sent`, `please-speak`, `voice-system-error`; the
       standby leaving frame (`STANDBY_KEY_DELAY_MS`) and `BCARD_LINK_MS` (medians, the spread in a
       comment).
-- [ ] TDD freshness; every sprite binary and inside its golden's ink; every timeline finite.
-- [ ] Run `extract-resources` twice; no diff.
-- [ ] Commit: `feat(nokia-os): phone book glyphs, sprites and timelines`.
+- [x] TDD freshness; every sprite binary and inside its golden's ink; every timeline finite.
+- [x] Run `extract-resources` twice; no diff.
+- [x] Commit: `feat(nokia-os): phone book glyphs, sprites and timelines`.
+
+Deviation: **Task 3 (paths, plan 29):** the evidence is `PlanCaptureSet.resources` in
+`scripts/resource-inputs/19-phone-book.ts` (`scripts/widget-sprites.ts` and
+`scripts/glyph-overrides.ts` no longer exist). The text runs of every plan 19 golden image but
+plan 22's call screens are generated from `plan19/text.json` by `scripts/phone-book-text-runs.ts`
+(`vp run @hellotimber/nokia-os#phone-book-text-runs <REF>`, a package script) into
+`scripts/generated/phone-book-text-runs.ts`, as plan 18's. The glyph harvest adds `Å` (small and
+large) and needs one override (large `Ki` touch, as `Ke`).
+
+Deviation: **Task 3 (sprites and timelines):** the name list's icon is `prompt/phone-book`; the
+notes reuse plan 14's tick, `!` and octagon, plan 18's bin (`erased-*`) and envelope
+(`message-sent-*`, for `Business card sent`), and plan 14's hatched bar (`Sending b'card` loops
+the Requesting bar as plan 18's `Sending message` does). The only new sprites are
+`please-speak-1..2`. The ellipsis and Service Nos.' rail are Task 6's (its painters show whether
+they are glyphs or plan 14's rail). Named timelines: `saved`, `replaced`, `nothing-to-save`,
+`memory-full`, `invalid-sim-char`, `speed-dial-saved`, `tone-done`, `memory-erased`,
+`erasing-memory` (a single pass of the bar: the loop rule test allows it), `erased`,
+`last-name-erased`, `speed-dial-erased`, `bcard-sent`, `please-speak`, `voice-system-error`.
+`STANDBY_KEY_DELAY_MS` (23) and `BCARD_LINK_MS` (3240) are Task 0's medians over captures the
+goldens hold one of each, so they are constants in `src/phone-book/timings.ts`. The tone page
+draws the tone in the small face (no thin glyph); `phone-book/tone-ok-third` (Mosquito) is
+imported for it. The sprite-crop test takes `EXTRACTION_TIMEOUT_MS`, as plan 18's extraction
+tests do.
 
 ### Task 4 - phone-core: standby keys that open applications (TDD)
 
