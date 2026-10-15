@@ -88,16 +88,21 @@ Nothing was read from `$REF/extracted`, `$REF/t9` or `$REF/captures/plan18b`.
 - `Chat name` edits the name; `Erase` empties the editor; `Exit` returns to Chat on the carousel;
   C on the empty editor too. The number and the history are not kept between chats.
 - Persistence of the name over a power cycle: UNVERIFIED (session state).
+- A partner's SMS that lands while `Sending message` shows (a host that answers at once): not
+  captured. nokia-os keeps `Sending message`, then shows the history with the answer above the
+  sent line (UNVERIFIED).
 
 ## Info service › Topics (2-8-4)
 
 - **Virgin:** five junk topics: names of six U+E000 boxes, numbers empty but topic 4's `p9`,
-  topic 1 marked; the level shows `Select`, `Edit`, `Erase`.
+  topics 1 and 5 marked (`tree/02-messages/2-8-4-1-2.choose`); the level shows `Select`, `Edit`,
+  `Erase`.
 - **Factory** (Restore): no topics, the level is `Add topic` alone (`content/restore-topics`).
 - The level lists `Select`, `Add topic` (while fewer than **5** topics), `Edit`, `Erase`; with no
   topics only `Add topic`.
 - **Add topic:** `Topic number:` (three digits at most; OK on the empty number does nothing),
-  then `Topic name:` (ABC; an empty name is accepted), `Topic added`, the level.
+  then `Topic name:` (ABC; an empty name is accepted; its limit is UNVERIFIED), `Topic added`,
+  the level. A new topic is marked (`topics/factory-select-1`).
 - **Edit:** the topic's number then name, `Saved`, the level on Edit.
 - **Erase:** no query; `Topic erased`, the level.
 - **Select:** plan 14's multi-select over the topics; C asks `Save changes?`.
@@ -116,4 +121,7 @@ emulator answers no USSD (Task 0 X).
   plan 18c placeholders (D4). v5.79's folder is comparative evidence only.
 - **Incoming and outgoing picture messages, business cards:** the network port's picture and
   card kinds (D6) await the owner's contract reconciliation (VISION); card Save needs plan 19.
-- **Chat Search with names, card Save:** plan 19.
+- **Sending a Composer tone** (plan 27's `composer/send-ok`, `pending:18c`): a binary Smart
+  Messaging SMS, the same unauthorized port extension.
+- **Chat Search with names, card Save:** plan 19 (`menu/03-chat.sub`'s Search image is
+  `pending:19`).

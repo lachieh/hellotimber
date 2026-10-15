@@ -21,8 +21,11 @@ probes and recaptures, the planning probes in `$REF/captures/scratch-plan18c/` (
 never imported; `NOTES.md` lists them), and the canonical recaptures Task 0 writes to
 `$REF/captures/6.39/plan18c/`. Read `$REF/captures/README.md`
 and plans 13-16, 18, 18b and 19 in full before starting.
-**Status:** in progress (Templates, Smileys, Chat, Topics and the Service command editor; picture,
-saver-gallery and business-card work blocked, see Task 0 outcome).
+**Status:** in progress. Done and asserted: Templates, Smileys and insertion, Chat, Topics and
+the Service command editor (all 163 goldens of `goldens/index/18c.json`). Blocked: the picture
+folder, the saver gallery, picture and business-card arrivals, picture and Composer-tone sends
+(Task 0 R not established; the port's binary extension unauthorized in VISION; card Save and
+Chat Search on plan 19). See the Task 6, 7, 10 and 11 outcomes.
 
 ## Goal
 
@@ -730,6 +733,11 @@ one-line feature/widget/painter registrations and owned placeholder removals.
 
 - [ ] Gate on R's verified v6.39 image. If missing, retain placeholders/pending covers and report
       the dependency; continue verified incoming view work in Task 7. No composed folder fallback.
+      Outcome (2026-10-15): blocked. R was not attempted beyond the planning probes: the Save
+      stall leaves no emulator fault in the log (`p4-factory.err`), so telling a directory fault
+      from an emulator fault needs firmware tracing, a research task of its own. 2-4, 5-9-4 and
+      12-n-2-9-4 keep their `18c` placeholders; `tree/02-messages/2-4.leaf` and the six
+      `sound/note/{2-4,5-9-4,12-n-2-9-4}` goldens stay `pending:18c` in plans 14 and 16.
 - [ ] Failing pixel tests use literal models and independent goldens for image origin, text
       wrapping/scroll, icon rows, counter and gallery. Key tests cover folder order/wrap, stored
       versus built-in Options, Edit text, Erase/cancel/full, Use number and Details/Exit.
@@ -748,6 +756,11 @@ one-line feature/widget/painter registrations and owned placeholder removals.
 
 - [ ] Gate on plan 18's registered delivery/dispatch interface. Keep D6 payload types here;
       reuse plan 18 validation for number/timestamp and plan 19 validation for contacts.
+      Outcome (2026-10-15): blocked. VISION keeps the port SMS-only and states that it does not
+      authorize D6's picture/card extension, so `StockIncoming`, `sendPicture` and the binary
+      kinds wait for an owner decision; no A or B captures exist; card Save needs plan 19 Task 5
+      (unmerged, `t3/p19-phone-book`). Plan 27's `composer/send-ok` (a ringtone SMS) is pending
+      on the same extension.
 - [ ] Failing tests: unchanged text SMS, invalid art/timestamp/text, one send, missing optional
       sender, rejected Promise, late result after power-off, off-phone queue, two arrivals,
       cleanup and phone isolation. Tick sizes 1/16/1000 ms produce identical due event times.
@@ -828,19 +841,25 @@ if not already present and owned topic/service-command placeholder removals.
 **Files:** `tests/acceptance/18c-chat-templates-pictures-info-service.test.ts`,
 `tests/support/18c-content.ts`; owned placeholder/status registration lines only.
 
-- [ ] Exactly one `acceptancePlan` call; each `scenarios` ID belongs to `goldens/index/18c.json`.
+- [x] Exactly one `acceptancePlan` call; each `scenarios` ID belongs to `goldens/index/18c.json`.
       Every asserted still/timeline/sound has a real driver; no resource/no-scenario exemption.
-- [ ] Old Menu 3, shared no-response, Topics/service and sound-note goldens stay in their owner
+- [x] Old Menu 3, shared no-response, Topics/service and sound-note goldens stay in their owner
       indexes and have owner-registered drivers. Change inputs/covers only from recorded evidence.
-- [ ] Pixel comparisons are exact. Timelines use ±2 ms after first changed frame alignment;
+- [x] Pixel comparisons are exact. Timelines use ±2 ms after first changed frame alignment;
       inherited ±25 ms probe tolerance needs measured disagreement and a per-scenario reason.
       Sound compares registers/events under plan 16's established onset/drift rules.
-- [ ] Coverage guard passes across all plans. Pending capture/card/picker dependencies remain
+      Superseded by AGENTS.md's fidelity standard (merged from main): every per-scenario
+      `toleranceMs` is gone; the remaining options are link-time anchors, `fromRow` and two key
+      placements. Four known gaps remain (`content/restore-virgin`, `chat/factory-send`,
+      `chat/options-held-c`, `chat/other-after-exit`).
+- [x] Coverage guard passes across all plans. Pending capture/card/picker dependencies remain
       named and counted. `knownGaps` is for independently evidenced recording disagreements,
       not missing implementation. Any required pending task prevents `done` status.
-- [ ] Run `mise exec -- vp run @hellotimber/nokia-os#test`,
+      Pending on 18c elsewhere: `tree/02-messages/2-4.leaf` (14), six `sound/note/*` (16),
+      `composer/send-ok` (27); on 19: `menu/03-chat.sub` (13).
+- [x] Run `mise exec -- vp run @hellotimber/nokia-os#test`,
       `mise exec -- vp run -r test`, `mise exec -- vp check --fix`; report totals and runtime.
-- [ ] Commit: `test(nokia-os): verify Chat and Messages content against captures`.
+- [x] Commit: folded into the Task 9 and merge commits (no further test change).
 
 ### Task 11 - Demo, README and final verification
 
@@ -848,23 +867,31 @@ if not already present and owned topic/service-command placeholder removals.
 `packages/nokia-os/README.md`, `docs/specs/stock/chat-and-content.md`, this plan,
 `docs/plans/README.md` (row 18c only).
 
-- [ ] Use the existing `DemoPanel` interface. Add factory-state controls, invented incoming
+- [x] Use the existing `DemoPanel` interface. Add factory-state controls, invented incoming
       picture/card and deterministic SMS Chat partner, sent-picture inspection. Demo uses the
       approved English dictionary; host supplies partners through `StockNetworkPort`.
-- [ ] Run `mise exec -- vp run @hellotimber/nokia-os#demo`; drive real keypad paths in the
+      `demo/panels/chat-and-content.ts`: the Chat partner on the messages panel's network
+      (exported from `messages.ts`); Factory settings is the storage panel's. Picture/card
+      controls wait for Tasks 6/7.
+- [x] Run `mise exec -- vp run @hellotimber/nokia-os#demo`; drive real keypad paths in the
       collaborative preview (status, open, navigate, snapshot). Existing repository
       `agent-browser` workflow is a fallback when selected by the coordinator. Capture proof of
       factory Templates Read/insertion, picture receipt/View/Save/Forward, T9 Chat reply and
       Topics Add/Edit/Erase. Missing picture evidence remains an incomplete task, not a demo fix.
-- [ ] README gives standalone host network usage, content provenance and limitations. Specs list
+      Driven headless over CDP (the collaborative preview was unavailable to the worker):
+      factory Templates list and Read, Write messages › Template (`Please call␠`, `447/1`), a T9
+      Chat answered by the partner, Topics Add topic. The run found a race, fixed with a test:
+      an answer landing during `Sending message` dropped the sent line from the history.
+- [x] README gives standalone host network usage, content provenance and limitations. Specs list
       verified layouts/timings and unresolved research; proposed standby saver owner is plan 25,
       languages plan 26, ringtone Smart Messaging plan 27. No edits to those plans here.
-- [ ] Run `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
+- [x] Run `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
       `mise exec -- vp run website#build`; verify `git diff <implementation-base> -- website/`
       and phone-core are empty. Run generators and scoped formatter twice to stability.
 - [ ] Mark row 18c and this plan `done` only after all scope/dependency gates pass; otherwise
       report verified groups and exact remaining gates. Never stage `TODOS.md`.
-- [ ] Commit: `docs: complete stock Chat and Messages content (plan 18c)`.
+      Not done: Tasks 6 and 7 are blocked (above), so row 18c stays `in progress`.
+- [x] Commit: `docs: document stock Chat and Messages content (plan 18c)` (not "complete").
 
 ## Open questions resolved provisionally
 
