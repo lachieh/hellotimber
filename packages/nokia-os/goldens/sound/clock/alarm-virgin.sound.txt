@@ -1,0 +1,511 @@
+sound-golden 1
+id: sound/clock/alarm-virgin
+status: pending:21
+source: captures/6.39/plan21/alarm/ring-virgin-standby
+source-sha256: 635e397e1d02cf265dff9fdcfd3ed87cde94aba791452594da87259740f2e57d
+state: virgin
+note: The alarm rings at standby (virgin), untouched until its automatic snooze.
+omitted: 11 (divider rewrite)
+
+@events
+# t_ms output   state
+1031   buzzer   2683.7 v=6
+1119   buzzer   off
+1213   buzzer   2683.7 v=6
+1305   buzzer   off
+1398   buzzer   2683.7 v=6
+1500   buzzer   off
+1592   buzzer   2683.7 v=6
+1685   buzzer   off
+1778   buzzer   2683.7 v=6
+1871   buzzer   off
+1964   buzzer   2683.7 v=6
+2056   buzzer   off
+2150   buzzer   2683.7 v=6
+2251   buzzer   off
+2343   buzzer   2683.7 v=6
+2436   buzzer   off
+2529   buzzer   2683.7 v=6
+2622   buzzer   off
+2715   buzzer   2683.7 v=6
+2808   buzzer   off
+3382   buzzer   2683.7 v=6
+3475   buzzer   off
+3568   buzzer   2683.7 v=6
+3660   buzzer   off
+3754   buzzer   2683.7 v=6
+3846   buzzer   off
+3939   buzzer   2683.7 v=6
+4032   buzzer   off
+4125   buzzer   2683.7 v=6
+4218   buzzer   off
+4311   buzzer   2683.7 v=6
+4404   buzzer   off
+4505   buzzer   2683.7 v=6
+4597   buzzer   off
+4690   buzzer   2683.7 v=6
+4783   buzzer   off
+4876   buzzer   2683.7 v=6
+4969   buzzer   off
+5062   buzzer   2683.7 v=6
+5155   buzzer   off
+5736   buzzer   2683.7 v=6
+5829   buzzer   off
+5922   buzzer   2683.7 v=6
+6014   buzzer   off
+6107   buzzer   2683.7 v=6
+6200   buzzer   off
+6293   buzzer   2683.7 v=6
+6386   buzzer   off
+6479   buzzer   2683.7 v=6
+6572   buzzer   off
+6665   buzzer   2683.7 v=6
+6758   buzzer   off
+6851   buzzer   2683.7 v=6
+6944   buzzer   off
+7037   buzzer   2683.7 v=6
+7129   buzzer   off
+7223   buzzer   2683.7 v=6
+7315   buzzer   off
+7408   buzzer   2683.7 v=6
+7509   buzzer   off
+8082   buzzer   2683.7 v=6
+8175   buzzer   off
+8268   buzzer   2683.7 v=6
+8361   buzzer   off
+8454   buzzer   2683.7 v=6
+8547   buzzer   off
+8640   buzzer   2683.7 v=6
+8732   buzzer   off
+8825   buzzer   2683.7 v=6
+8918   buzzer   off
+9011   buzzer   2683.7 v=6
+9104   buzzer   off
+9197   buzzer   2683.7 v=6
+9290   buzzer   off
+9383   buzzer   2683.7 v=6
+9476   buzzer   off
+9569   buzzer   2683.7 v=6
+9662   buzzer   off
+9763   buzzer   2683.7 v=6
+9855   buzzer   off
+10428  buzzer   2683.7 v=6
+10521  buzzer   off
+10614  buzzer   2683.7 v=6
+10708  buzzer   off
+10801  buzzer   2683.7 v=6
+10894  buzzer   off
+10987  buzzer   2683.7 v=6
+11080  buzzer   off
+11173  buzzer   2683.7 v=6
+11265  buzzer   off
+11359  buzzer   2683.7 v=6
+11451  buzzer   off
+11544  buzzer   2683.7 v=6
+11637  buzzer   off
+11730  buzzer   2683.7 v=6
+11823  buzzer   off
+11916  buzzer   2683.7 v=6
+12016  buzzer   off
+12110  buzzer   2683.7 v=6
+12202  buzzer   off
+12776  buzzer   2683.7 v=6
+12868  buzzer   off
+12961  buzzer   2683.7 v=6
+13054  buzzer   off
+13147  buzzer   2683.7 v=6
+13240  buzzer   off
+13333  buzzer   2683.7 v=6
+13426  buzzer   off
+13519  buzzer   2683.7 v=6
+13612  buzzer   off
+13705  buzzer   2683.7 v=6
+13798  buzzer   off
+13891  buzzer   2683.7 v=6
+13983  buzzer   off
+14077  buzzer   2683.7 v=6
+14169  buzzer   off
+14270  buzzer   2683.7 v=6
+14363  buzzer   off
+14456  buzzer   2683.7 v=6
+14549  buzzer   off
+15122  buzzer   2683.7 v=6
+15215  buzzer   off
+15308  buzzer   2683.7 v=6
+15401  buzzer   off
+15494  buzzer   2683.7 v=6
+15586  buzzer   off
+15679  buzzer   2683.7 v=6
+15772  buzzer   off
+15865  buzzer   2683.7 v=6
+15958  buzzer   off
+16051  buzzer   2683.7 v=6
+16144  buzzer   off
+16237  buzzer   2683.7 v=6
+16330  buzzer   off
+16423  buzzer   2683.7 v=6
+16523  buzzer   off
+16609  buzzer   2683.7 v=6
+16701  buzzer   off
+16794  buzzer   2683.7 v=6
+16887  buzzer   off
+17461  buzzer   2683.7 v=6
+17553  buzzer   off
+17646  buzzer   2683.7 v=6
+17739  buzzer   off
+17832  buzzer   2683.7 v=6
+17925  buzzer   off
+18025  buzzer   2683.7 v=6
+18112  buzzer   off
+18205  buzzer   2683.7 v=6
+18298  buzzer   off
+18391  buzzer   2683.7 v=6
+18483  buzzer   off
+18576  buzzer   2683.7 v=6
+18669  buzzer   off
+18762  buzzer   2683.7 v=6
+18855  buzzer   off
+18948  buzzer   2683.7 v=6
+19041  buzzer   off
+19134  buzzer   2683.7 v=6
+19227  buzzer   off
+19800  buzzer   2683.7 v=6
+19893  buzzer   off
+19986  buzzer   2683.7 v=6
+20079  buzzer   off
+20172  buzzer   2683.7 v=6
+20264  buzzer   off
+20358  buzzer   2683.7 v=6
+20450  buzzer   off
+20543  buzzer   2683.7 v=6
+20636  buzzer   off
+20729  buzzer   2683.7 v=6
+20822  buzzer   off
+20915  buzzer   2683.7 v=6
+21008  buzzer   off
+21101  buzzer   2683.7 v=6
+21194  buzzer   off
+21287  buzzer   2683.7 v=6
+21380  buzzer   off
+21473  buzzer   2683.7 v=6
+21565  buzzer   off
+22139  buzzer   2683.7 v=6
+22231  buzzer   off
+22324  buzzer   2683.7 v=6
+22417  buzzer   off
+22510  buzzer   2683.7 v=6
+22603  buzzer   off
+22696  buzzer   2683.7 v=6
+22789  buzzer   off
+22882  buzzer   2683.7 v=6
+22975  buzzer   off
+23068  buzzer   2683.7 v=6
+23161  buzzer   off
+23254  buzzer   2683.7 v=6
+23346  buzzer   off
+23439  buzzer   2683.7 v=6
+23533  buzzer   off
+23625  buzzer   2683.7 v=6
+23718  buzzer   off
+23811  buzzer   2683.7 v=6
+23904  buzzer   off
+24477  buzzer   2683.7 v=6
+24570  buzzer   off
+24663  buzzer   2683.7 v=6
+24756  buzzer   off
+24849  buzzer   2683.7 v=6
+24942  buzzer   off
+25036  buzzer   2683.7 v=6
+25127  buzzer   off
+25220  buzzer   2683.7 v=6
+25313  buzzer   off
+25406  buzzer   2683.7 v=6
+25500  buzzer   off
+25593  buzzer   2683.7 v=6
+25686  buzzer   off
+25788  buzzer   2683.7 v=6
+25880  buzzer   off
+25973  buzzer   2683.7 v=6
+26065  buzzer   off
+26158  buzzer   2683.7 v=6
+26251  buzzer   off
+26824  buzzer   2683.7 v=6
+26917  buzzer   off
+27010  buzzer   2683.7 v=6
+27103  buzzer   off
+27196  buzzer   2683.7 v=6
+27290  buzzer   off
+27382  buzzer   2683.7 v=6
+27475  buzzer   off
+27568  buzzer   2683.7 v=6
+27661  buzzer   off
+27754  buzzer   2683.7 v=6
+27846  buzzer   off
+27939  buzzer   2683.7 v=6
+28041  buzzer   off
+28133  buzzer   2683.7 v=6
+28226  buzzer   off
+28319  buzzer   2683.7 v=6
+28412  buzzer   off
+28505  buzzer   2683.7 v=6
+28597  buzzer   off
+29171  buzzer   2683.7 v=6
+29263  buzzer   off
+29356  buzzer   2683.7 v=6
+29449  buzzer   off
+29543  buzzer   2683.7 v=6
+29635  buzzer   off
+29728  buzzer   2683.7 v=6
+29821  buzzer   off
+29914  buzzer   2683.7 v=6
+30007  buzzer   off
+30100  buzzer   2683.7 v=6
+30193  buzzer   off
+30294  buzzer   2683.7 v=6
+30386  buzzer   off
+30479  buzzer   2683.7 v=6
+30572  buzzer   off
+30665  buzzer   2683.7 v=6
+30758  buzzer   off
+30851  buzzer   2683.7 v=6
+30944  buzzer   off
+31525  buzzer   2683.7 v=6
+31617  buzzer   off
+31710  buzzer   2683.7 v=6
+31803  buzzer   off
+31896  buzzer   2683.7 v=6
+31989  buzzer   off
+32082  buzzer   2683.7 v=6
+32175  buzzer   off
+32268  buzzer   2683.7 v=6
+32361  buzzer   off
+32454  buzzer   2683.7 v=6
+32547  buzzer   off
+32640  buzzer   2683.7 v=6
+32733  buzzer   off
+32826  buzzer   2683.7 v=6
+32919  buzzer   off
+33012  buzzer   2683.7 v=6
+33105  buzzer   off
+33198  buzzer   2683.7 v=6
+33299  buzzer   off
+33872  buzzer   2683.7 v=6
+33965  buzzer   off
+34058  buzzer   2683.7 v=6
+34151  buzzer   off
+34244  buzzer   2683.7 v=6
+34336  buzzer   off
+34429  buzzer   2683.7 v=6
+34522  buzzer   off
+34615  buzzer   2683.7 v=6
+34708  buzzer   off
+34801  buzzer   2683.7 v=6
+34894  buzzer   off
+34987  buzzer   2683.7 v=6
+35080  buzzer   off
+35173  buzzer   2683.7 v=6
+35266  buzzer   off
+35359  buzzer   2683.7 v=6
+35451  buzzer   off
+35552  buzzer   2683.7 v=6
+35645  buzzer   off
+36218  buzzer   2683.7 v=6
+36311  buzzer   off
+36404  buzzer   2683.7 v=6
+36497  buzzer   off
+36590  buzzer   2683.7 v=6
+36683  buzzer   off
+36776  buzzer   2683.7 v=6
+36869  buzzer   off
+36962  buzzer   2683.7 v=6
+37055  buzzer   off
+37147  buzzer   2683.7 v=6
+37240  buzzer   off
+37333  buzzer   2683.7 v=6
+37426  buzzer   off
+37519  buzzer   2683.7 v=6
+37612  buzzer   off
+37705  buzzer   2683.7 v=6
+37805  buzzer   off
+37899  buzzer   2683.7 v=6
+37991  buzzer   off
+38565  buzzer   2683.7 v=6
+38657  buzzer   off
+38750  buzzer   2683.7 v=6
+38843  buzzer   off
+38936  buzzer   2683.7 v=6
+39029  buzzer   off
+39122  buzzer   2683.7 v=6
+39215  buzzer   off
+39308  buzzer   2683.7 v=6
+39401  buzzer   off
+39494  buzzer   2683.7 v=6
+39587  buzzer   off
+39680  buzzer   2683.7 v=6
+39772  buzzer   off
+39865  buzzer   2683.7 v=6
+39958  buzzer   off
+40059  buzzer   2683.7 v=6
+40152  buzzer   off
+40245  buzzer   2683.7 v=6
+40339  buzzer   off
+40912  buzzer   2683.7 v=6
+41005  buzzer   off
+41098  buzzer   2683.7 v=6
+41190  buzzer   off
+41283  buzzer   2683.7 v=6
+41376  buzzer   off
+41469  buzzer   2683.7 v=6
+41562  buzzer   off
+41655  buzzer   2683.7 v=6
+41748  buzzer   off
+41841  buzzer   2683.7 v=6
+41934  buzzer   off
+42027  buzzer   2683.7 v=6
+42120  buzzer   off
+42213  buzzer   2683.7 v=6
+42313  buzzer   off
+42399  buzzer   2683.7 v=6
+42491  buzzer   off
+42584  buzzer   2683.7 v=6
+42677  buzzer   off
+43250  buzzer   2683.7 v=6
+43343  buzzer   off
+43436  buzzer   2683.7 v=6
+43529  buzzer   off
+43622  buzzer   2683.7 v=6
+43715  buzzer   off
+43815  buzzer   2683.7 v=6
+43901  buzzer   off
+43994  buzzer   2683.7 v=6
+44087  buzzer   off
+44180  buzzer   2683.7 v=6
+44272  buzzer   off
+44365  buzzer   2683.7 v=6
+44458  buzzer   off
+44551  buzzer   2683.7 v=6
+44644  buzzer   off
+44737  buzzer   2683.7 v=6
+44830  buzzer   off
+44923  buzzer   2683.7 v=6
+45016  buzzer   off
+45589  buzzer   2683.7 v=6
+45682  buzzer   off
+45775  buzzer   2683.7 v=6
+45868  buzzer   off
+45961  buzzer   2683.7 v=6
+46053  buzzer   off
+46154  buzzer   2683.7 v=6
+46247  buzzer   off
+46340  buzzer   2683.7 v=6
+46433  buzzer   off
+46526  buzzer   2683.7 v=6
+46619  buzzer   off
+46712  buzzer   2683.7 v=6
+46804  buzzer   off
+46905  buzzer   2683.7 v=6
+46998  buzzer   off
+47091  buzzer   2683.7 v=6
+47184  buzzer   off
+47277  buzzer   2683.7 v=6
+47370  buzzer   off
+47944  buzzer   2683.7 v=6
+48037  buzzer   off
+48130  buzzer   2683.7 v=6
+48223  buzzer   off
+48322  buzzer   2683.7 v=6
+48408  buzzer   off
+48501  buzzer   2683.7 v=6
+48594  buzzer   off
+48687  buzzer   2683.7 v=6
+48780  buzzer   off
+48873  buzzer   2683.7 v=6
+48966  buzzer   off
+49073  buzzer   2683.7 v=6
+49160  buzzer   off
+49253  buzzer   2683.7 v=6
+49345  buzzer   off
+49438  buzzer   2683.7 v=6
+49531  buzzer   off
+49624  buzzer   2683.7 v=6
+49717  buzzer   off
+50298  buzzer   2683.7 v=6
+50391  buzzer   off
+50484  buzzer   2683.7 v=6
+50577  buzzer   off
+50670  buzzer   2683.7 v=6
+50762  buzzer   off
+50855  buzzer   2683.7 v=6
+50948  buzzer   off
+51041  buzzer   2683.7 v=6
+51134  buzzer   off
+51227  buzzer   2683.7 v=6
+51326  buzzer   off
+51413  buzzer   2683.7 v=6
+51506  buzzer   off
+51599  buzzer   2683.7 v=6
+51692  buzzer   off
+51785  buzzer   2683.7 v=6
+51877  buzzer   off
+51971  buzzer   2683.7 v=6
+52077  buzzer   off
+52644  buzzer   2683.7 v=6
+52737  buzzer   off
+52830  buzzer   2683.7 v=6
+52923  buzzer   off
+53016  buzzer   2683.7 v=6
+53109  buzzer   off
+53202  buzzer   2683.7 v=6
+53295  buzzer   off
+53388  buzzer   2683.7 v=6
+53480  buzzer   off
+53580  buzzer   2683.7 v=6
+53666  buzzer   off
+53759  buzzer   2683.7 v=6
+53852  buzzer   off
+53945  buzzer   2683.7 v=6
+54038  buzzer   off
+54131  buzzer   2683.7 v=6
+54224  buzzer   off
+54332  buzzer   2683.7 v=6
+54425  buzzer   off
+54998  buzzer   2683.7 v=6
+55091  buzzer   off
+55185  buzzer   2683.7 v=6
+55278  buzzer   off
+55371  buzzer   2683.7 v=6
+55464  buzzer   off
+55557  buzzer   2683.7 v=6
+55650  buzzer   off
+55743  buzzer   2683.7 v=6
+55835  buzzer   off
+55928  buzzer   2683.7 v=6
+56021  buzzer   off
+56114  buzzer   2683.7 v=6
+56207  buzzer   off
+56300  buzzer   2683.7 v=6
+56393  buzzer   off
+56486  buzzer   2683.7 v=6
+56584  buzzer   off
+56672  buzzer   2683.7 v=6
+56765  buzzer   off
+57338  buzzer   2683.7 v=6
+57431  buzzer   off
+57524  buzzer   2683.7 v=6
+57616  buzzer   off
+57709  buzzer   2683.7 v=6
+57802  buzzer   off
+57895  buzzer   2683.7 v=6
+57988  buzzer   off
+58087  buzzer   2683.7 v=6
+58174  buzzer   off
+58267  buzzer   2683.7 v=6
+58360  buzzer   off
+58453  buzzer   2683.7 v=6
+58546  buzzer   off
+58639  buzzer   2683.7 v=6
+58731  buzzer   off
+58838  buzzer   2683.7 v=6
+58925  buzzer   off
+59018  buzzer   2683.7 v=6
+59111  buzzer   off

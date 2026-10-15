@@ -1,0 +1,2020 @@
+[
+  {
+    "id": "clock/alarm/change",
+    "file": "clock/alarm/change.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 14
+  },
+  {
+    "id": "clock/alarm/off",
+    "file": "clock/alarm/off.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "clock/alarm/off-prompt",
+    "file": "clock/alarm/off-prompt.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "clock/alarm/on",
+    "file": "clock/alarm/on.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "clock/alarm/on-c",
+    "file": "clock/alarm/on-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "clock/alarm/on-off",
+    "file": "clock/alarm/on-off.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/alarm/on-off-c",
+    "file": "clock/alarm/on-off-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/alarm/on-off-open",
+    "file": "clock/alarm/on-off-open.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/alarm/power-off",
+    "file": "clock/alarm/power-off.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "clock/alarm/prompt",
+    "file": "clock/alarm/prompt.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "clock/alarm/ring-elsewhere-editor",
+    "file": "clock/alarm/ring-elsewhere-editor.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 42
+  },
+  {
+    "id": "clock/alarm/ring-elsewhere-editor-standby",
+    "file": "clock/alarm/ring-elsewhere-editor-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 22
+  },
+  {
+    "id": "clock/alarm/ring-elsewhere-menu-list-standby",
+    "file": "clock/alarm/ring-elsewhere-menu-list-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 22
+  },
+  {
+    "id": "clock/alarm/ring-elsewhere-menu-page",
+    "file": "clock/alarm/ring-elsewhere-menu-page.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/alarm/ring-elsewhere-menu-page-standby",
+    "file": "clock/alarm/ring-elsewhere-menu-page-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 22
+  },
+  {
+    "id": "clock/alarm/ring-elsewhere-snake",
+    "file": "clock/alarm/ring-elsewhere-snake.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "clock/alarm/ring-elsewhere-snake-standby",
+    "file": "clock/alarm/ring-elsewhere-snake-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 22
+  },
+  {
+    "id": "clock/alarm/ring-factory-auto-resnooze",
+    "file": "clock/alarm/ring-factory-auto-resnooze.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 28,
+    "frames": 374
+  },
+  {
+    "id": "clock/alarm/ring-factory-key-5",
+    "file": "clock/alarm/ring-factory-key-5.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/alarm/ring-factory-key-c",
+    "file": "clock/alarm/ring-factory-key-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/alarm/ring-factory-key-c-held",
+    "file": "clock/alarm/ring-factory-key-c-held.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/alarm/ring-factory-key-hash",
+    "file": "clock/alarm/ring-factory-key-hash.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/alarm/ring-factory-key-snooze",
+    "file": "clock/alarm/ring-factory-key-snooze.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/alarm/ring-factory-key-up",
+    "file": "clock/alarm/ring-factory-key-up.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/alarm/ring-factory-resnooze",
+    "file": "clock/alarm/ring-factory-resnooze.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 28,
+    "frames": 319
+  },
+  {
+    "id": "clock/alarm/ring-factory-screens",
+    "file": "clock/alarm/ring-factory-screens.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "clock/alarm/ring-factory-snooze-stop",
+    "file": "clock/alarm/ring-factory-snooze-stop.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "clock/alarm/ring-factory-standby",
+    "file": "clock/alarm/ring-factory-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 23,
+    "frames": 363
+  },
+  {
+    "id": "clock/alarm/ring-virgin-auto-resnooze",
+    "file": "clock/alarm/ring-virgin-auto-resnooze.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 31,
+    "frames": 374
+  },
+  {
+    "id": "clock/alarm/ring-virgin-key-5",
+    "file": "clock/alarm/ring-virgin-key-5.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/alarm/ring-virgin-key-c",
+    "file": "clock/alarm/ring-virgin-key-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/alarm/ring-virgin-key-c-held",
+    "file": "clock/alarm/ring-virgin-key-c-held.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/alarm/ring-virgin-key-hash",
+    "file": "clock/alarm/ring-virgin-key-hash.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/alarm/ring-virgin-key-snooze",
+    "file": "clock/alarm/ring-virgin-key-snooze.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/alarm/ring-virgin-key-up",
+    "file": "clock/alarm/ring-virgin-key-up.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/alarm/ring-virgin-resnooze",
+    "file": "clock/alarm/ring-virgin-resnooze.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 25,
+    "frames": 313
+  },
+  {
+    "id": "clock/alarm/ring-virgin-screens",
+    "file": "clock/alarm/ring-virgin-screens.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "clock/alarm/ring-virgin-snooze-stop",
+    "file": "clock/alarm/ring-virgin-snooze-stop.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "clock/alarm/ring-virgin-standby",
+    "file": "clock/alarm/ring-virgin-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 24,
+    "frames": 366
+  },
+  {
+    "id": "clock/alarm/screens",
+    "file": "clock/alarm/screens.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/alarm/set",
+    "file": "clock/alarm/set.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 13
+  },
+  {
+    "id": "clock/alarm/shortcut-111",
+    "file": "clock/alarm/shortcut-111.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "clock/alarm/shortcut-1111",
+    "file": "clock/alarm/shortcut-1111.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 9,
+    "frames": 18
+  },
+  {
+    "id": "clock/alarm/shortcut-1112",
+    "file": "clock/alarm/shortcut-1112.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "clock/auto-update/boot-on-hour",
+    "file": "clock/auto-update/boot-on-hour.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 24,
+    "frames": 26
+  },
+  {
+    "id": "clock/auto-update/choose-confirm",
+    "file": "clock/auto-update/choose-confirm.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "clock/auto-update/choose-off",
+    "file": "clock/auto-update/choose-off.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "clock/auto-update/choose-on",
+    "file": "clock/auto-update/choose-on.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "clock/auto-update/list",
+    "file": "clock/auto-update/list.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/auto-update/open",
+    "file": "clock/auto-update/open.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/countdown/0",
+    "file": "clock/countdown/0.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 10
+  },
+  {
+    "id": "clock/countdown/0000",
+    "file": "clock/countdown/0000.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 14,
+    "frames": 15
+  },
+  {
+    "id": "clock/countdown/006",
+    "file": "clock/countdown/006.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 13
+  },
+  {
+    "id": "clock/countdown/2359",
+    "file": "clock/countdown/2359.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 15,
+    "frames": 15
+  },
+  {
+    "id": "clock/countdown/2400",
+    "file": "clock/countdown/2400.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 15
+  },
+  {
+    "id": "clock/countdown/9959",
+    "file": "clock/countdown/9959.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 12
+  },
+  {
+    "id": "clock/countdown/change",
+    "file": "clock/countdown/change.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "clock/countdown/change-keys",
+    "file": "clock/countdown/change-keys.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 12,
+    "frames": 13
+  },
+  {
+    "id": "clock/countdown/expire-elsewhere-editor",
+    "file": "clock/countdown/expire-elsewhere-editor.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 42
+  },
+  {
+    "id": "clock/countdown/expire-elsewhere-editor-standby",
+    "file": "clock/countdown/expire-elsewhere-editor-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 51
+  },
+  {
+    "id": "clock/countdown/expire-elsewhere-menu-list-standby",
+    "file": "clock/countdown/expire-elsewhere-menu-list-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 12,
+    "frames": 50
+  },
+  {
+    "id": "clock/countdown/expire-elsewhere-menu-page-standby",
+    "file": "clock/countdown/expire-elsewhere-menu-page-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 12,
+    "frames": 50
+  },
+  {
+    "id": "clock/countdown/expire-elsewhere-note",
+    "file": "clock/countdown/expire-elsewhere-note.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "clock/countdown/expire-elsewhere-note-standby",
+    "file": "clock/countdown/expire-elsewhere-note-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 12,
+    "frames": 50
+  },
+  {
+    "id": "clock/countdown/expire-elsewhere-snake",
+    "file": "clock/countdown/expire-elsewhere-snake.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "clock/countdown/expire-elsewhere-snake-standby",
+    "file": "clock/countdown/expire-elsewhere-snake-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 12,
+    "frames": 50
+  },
+  {
+    "id": "clock/countdown/expire-elsewhere-stopwatch-standby",
+    "file": "clock/countdown/expire-elsewhere-stopwatch-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/countdown/expire-key-5",
+    "file": "clock/countdown/expire-key-5.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "clock/countdown/expire-key-c",
+    "file": "clock/countdown/expire-key-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "clock/countdown/expire-key-c-held",
+    "file": "clock/countdown/expire-key-c-held.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "clock/countdown/expire-key-ok",
+    "file": "clock/countdown/expire-key-ok.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "clock/countdown/expire-key-up",
+    "file": "clock/countdown/expire-key-up.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "clock/countdown/expire-standby",
+    "file": "clock/countdown/expire-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 12,
+    "frames": 433
+  },
+  {
+    "id": "clock/countdown/expire-virgin",
+    "file": "clock/countdown/expire-virgin.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 12,
+    "frames": 176
+  },
+  {
+    "id": "clock/countdown/keys",
+    "file": "clock/countdown/keys.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 15,
+    "frames": 15
+  },
+  {
+    "id": "clock/countdown/list",
+    "file": "clock/countdown/list.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/countdown/list-c",
+    "file": "clock/countdown/list-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/countdown/open-running",
+    "file": "clock/countdown/open-running.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/countdown/prompt",
+    "file": "clock/countdown/prompt.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "clock/countdown/prompt-c",
+    "file": "clock/countdown/prompt-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 4
+  },
+  {
+    "id": "clock/countdown/screens",
+    "file": "clock/countdown/screens.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "clock/countdown/stop",
+    "file": "clock/countdown/stop.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "clock/date/00002026",
+    "file": "clock/date/00002026.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 15,
+    "frames": 19
+  },
+  {
+    "id": "clock/date/0110200",
+    "file": "clock/date/0110200.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 17,
+    "frames": 19
+  },
+  {
+    "id": "clock/date/1913",
+    "file": "clock/date/1913.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 11,
+    "frames": 12
+  },
+  {
+    "id": "clock/date/29022026",
+    "file": "clock/date/29022026.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 16,
+    "frames": 22
+  },
+  {
+    "id": "clock/date/29022028",
+    "file": "clock/date/29022028.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 20,
+    "frames": 21
+  },
+  {
+    "id": "clock/date/31022026",
+    "file": "clock/date/31022026.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 16,
+    "frames": 22
+  },
+  {
+    "id": "clock/date/31042026",
+    "file": "clock/date/31042026.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 16,
+    "frames": 22
+  },
+  {
+    "id": "clock/date/3210",
+    "file": "clock/date/3210.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 11,
+    "frames": 15
+  },
+  {
+    "id": "clock/date/c",
+    "file": "clock/date/c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 4
+  },
+  {
+    "id": "clock/date/keys",
+    "file": "clock/date/keys.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 16,
+    "frames": 19
+  },
+  {
+    "id": "clock/date/prompt",
+    "file": "clock/date/prompt.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "clock/date/screens",
+    "file": "clock/date/screens.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "clock/no-time/alarm",
+    "file": "clock/no-time/alarm.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 6
+  },
+  {
+    "id": "clock/no-time/auto-update",
+    "file": "clock/no-time/auto-update.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/no-time/clock-pages",
+    "file": "clock/no-time/clock-pages.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "clock/no-time/clock-settings",
+    "file": "clock/no-time/clock-settings.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/no-time/countdown",
+    "file": "clock/no-time/countdown.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 11
+  },
+  {
+    "id": "clock/no-time/date",
+    "file": "clock/no-time/date.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 6
+  },
+  {
+    "id": "clock/no-time/reminder",
+    "file": "clock/no-time/reminder.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 16
+  },
+  {
+    "id": "clock/no-time/screens",
+    "file": "clock/no-time/screens.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/no-time/set-time",
+    "file": "clock/no-time/set-time.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "clock/no-time/stopwatch",
+    "file": "clock/no-time/stopwatch.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/persist/after-reboot-clock-pages",
+    "file": "clock/persist/after-reboot-clock-pages.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "clock/persist/after-reboot-reminders",
+    "file": "clock/persist/after-reboot-reminders.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/persist/before-clock-pages",
+    "file": "clock/persist/before-clock-pages.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "clock/persist/screens",
+    "file": "clock/persist/screens.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "clock/restore/after-clock-pages",
+    "file": "clock/restore/after-clock-pages.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "clock/restore/after-reminders",
+    "file": "clock/restore/after-reminders.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/restore/before-clock-pages",
+    "file": "clock/restore/before-clock-pages.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "clock/restore/run",
+    "file": "clock/restore/run.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "clock/restore/screens",
+    "file": "clock/restore/screens.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "clock/settings/format",
+    "file": "clock/settings/format.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 20,
+    "frames": 20
+  },
+  {
+    "id": "clock/settings/format-choose-12",
+    "file": "clock/settings/format-choose-12.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "clock/settings/format-choose-24",
+    "file": "clock/settings/format-choose-24.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "clock/settings/hide",
+    "file": "clock/settings/hide.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "clock/settings/screens",
+    "file": "clock/settings/screens.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "clock/settings/set-time-0",
+    "file": "clock/settings/set-time-0.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "clock/settings/set-time-123",
+    "file": "clock/settings/set-time-123.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "clock/settings/set-time-1260",
+    "file": "clock/settings/set-time-1260.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 11
+  },
+  {
+    "id": "clock/settings/set-time-1959",
+    "file": "clock/settings/set-time-1959.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 12,
+    "frames": 12
+  },
+  {
+    "id": "clock/settings/set-time-2400",
+    "file": "clock/settings/set-time-2400.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 11
+  },
+  {
+    "id": "clock/settings/set-time-2500",
+    "file": "clock/settings/set-time-2500.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 11
+  },
+  {
+    "id": "clock/settings/set-time-c",
+    "file": "clock/settings/set-time-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 4
+  },
+  {
+    "id": "clock/settings/set-time-c-typed",
+    "file": "clock/settings/set-time-c-typed.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 8
+  },
+  {
+    "id": "clock/settings/set-time-keys",
+    "file": "clock/settings/set-time-keys.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 13
+  },
+  {
+    "id": "clock/settings/set-time-prompt",
+    "file": "clock/settings/set-time-prompt.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "clock/settings/show",
+    "file": "clock/settings/show.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/stopwatch/c-held-again",
+    "file": "clock/stopwatch/c-held-again.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 14
+  },
+  {
+    "id": "clock/stopwatch/c-held-running",
+    "file": "clock/stopwatch/c-held-running.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/stopwatch/c-running",
+    "file": "clock/stopwatch/c-running.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/stopwatch/c-stopped",
+    "file": "clock/stopwatch/c-stopped.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/stopwatch/exit",
+    "file": "clock/stopwatch/exit.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "clock/stopwatch/open",
+    "file": "clock/stopwatch/open.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/stopwatch/options",
+    "file": "clock/stopwatch/options.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/stopwatch/options-c",
+    "file": "clock/stopwatch/options-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/stopwatch/options-c-c",
+    "file": "clock/stopwatch/options-c-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/stopwatch/options-open",
+    "file": "clock/stopwatch/options-open.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/stopwatch/power-off",
+    "file": "clock/stopwatch/power-off.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/stopwatch/reentry",
+    "file": "clock/stopwatch/reentry.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 40,
+    "frames": 40
+  },
+  {
+    "id": "clock/stopwatch/reentry-after-exit",
+    "file": "clock/stopwatch/reentry-after-exit.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/stopwatch/reentry-standby",
+    "file": "clock/stopwatch/reentry-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 40,
+    "frames": 40
+  },
+  {
+    "id": "clock/stopwatch/reentry-stopped",
+    "file": "clock/stopwatch/reentry-stopped.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "clock/stopwatch/reset",
+    "file": "clock/stopwatch/reset.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/stopwatch/resume",
+    "file": "clock/stopwatch/resume.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 62,
+    "frames": 62
+  },
+  {
+    "id": "clock/stopwatch/run",
+    "file": "clock/stopwatch/run.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 161,
+    "frames": 161
+  },
+  {
+    "id": "clock/stopwatch/standby",
+    "file": "clock/stopwatch/standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 61
+  },
+  {
+    "id": "clock/stopwatch/start-after-reset",
+    "file": "clock/stopwatch/start-after-reset.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 40,
+    "frames": 40
+  },
+  {
+    "id": "clock/stopwatch/stop",
+    "file": "clock/stopwatch/stop.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "clock/stopwatch/stop-again",
+    "file": "clock/stopwatch/stop-again.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/add-alarm-off",
+    "file": "reminders/add-alarm-off.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "reminders/add-c-empty",
+    "file": "reminders/add-c-empty.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/add-c-text",
+    "file": "reminders/add-c-text.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 6
+  },
+  {
+    "id": "reminders/add-choice-c",
+    "file": "reminders/add-choice-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "reminders/add-date-01012027",
+    "file": "reminders/add-date-01012027.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 17,
+    "frames": 26
+  },
+  {
+    "id": "reminders/add-date-12102026",
+    "file": "reminders/add-date-12102026.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 24
+  },
+  {
+    "id": "reminders/add-date-29022028",
+    "file": "reminders/add-date-29022028.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 17,
+    "frames": 26
+  },
+  {
+    "id": "reminders/add-date-31022026",
+    "file": "reminders/add-date-31022026.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 15,
+    "frames": 20
+  },
+  {
+    "id": "reminders/add-date-c",
+    "file": "reminders/add-date-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/add-date-open",
+    "file": "reminders/add-date-open.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "reminders/add-open",
+    "file": "reminders/add-open.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "reminders/add-save",
+    "file": "reminders/add-save.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 14,
+    "frames": 14
+  },
+  {
+    "id": "reminders/add-text-ok",
+    "file": "reminders/add-text-ok.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/add-time-0",
+    "file": "reminders/add-time-0.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 8
+  },
+  {
+    "id": "reminders/add-time-0900",
+    "file": "reminders/add-time-0900.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 14,
+    "frames": 14
+  },
+  {
+    "id": "reminders/add-time-1010",
+    "file": "reminders/add-time-1010.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 14,
+    "frames": 14
+  },
+  {
+    "id": "reminders/add-time-2500",
+    "file": "reminders/add-time-2500.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 13
+  },
+  {
+    "id": "reminders/add-time-c",
+    "file": "reminders/add-time-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 9
+  },
+  {
+    "id": "reminders/add-time-open",
+    "file": "reminders/add-time-open.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "reminders/alarm-choice",
+    "file": "reminders/alarm-choice.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/alert-elsewhere-editor",
+    "file": "reminders/alert-elsewhere-editor.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 32
+  },
+  {
+    "id": "reminders/alert-elsewhere-editor-standby",
+    "file": "reminders/alert-elsewhere-editor-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "reminders/alert-elsewhere-menu-list-standby",
+    "file": "reminders/alert-elsewhere-menu-list-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "reminders/alert-elsewhere-menu-page-standby",
+    "file": "reminders/alert-elsewhere-menu-page-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "reminders/alert-elsewhere-note",
+    "file": "reminders/alert-elsewhere-note.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "reminders/alert-elsewhere-note-standby",
+    "file": "reminders/alert-elsewhere-note-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "reminders/alert-elsewhere-option-list-standby",
+    "file": "reminders/alert-elsewhere-option-list-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "reminders/alert-elsewhere-snake",
+    "file": "reminders/alert-elsewhere-snake.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "reminders/alert-elsewhere-snake-standby",
+    "file": "reminders/alert-elsewhere-snake-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "reminders/alert-jump-over",
+    "file": "reminders/alert-jump-over.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/alert-key-5",
+    "file": "reminders/alert-key-5.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "reminders/alert-key-c",
+    "file": "reminders/alert-key-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "reminders/alert-key-c-held",
+    "file": "reminders/alert-key-c-held.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "reminders/alert-key-power",
+    "file": "reminders/alert-key-power.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "reminders/alert-key-snooze",
+    "file": "reminders/alert-key-snooze.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "reminders/alert-key-up",
+    "file": "reminders/alert-key-up.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "reminders/alert-over-countdown",
+    "file": "reminders/alert-over-countdown.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 23,
+    "frames": 139
+  },
+  {
+    "id": "reminders/alert-resnooze-1020",
+    "file": "reminders/alert-resnooze-1020.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/alert-resnooze-1021",
+    "file": "reminders/alert-resnooze-1021.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/alert-resnooze-1022",
+    "file": "reminders/alert-resnooze-1022.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/alert-standby",
+    "file": "reminders/alert-standby.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/alert-two",
+    "file": "reminders/alert-two.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 10
+  },
+  {
+    "id": "reminders/alert-virgin",
+    "file": "reminders/alert-virgin.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "reminders/erase-all",
+    "file": "reminders/erase-all.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "reminders/erase-all-c",
+    "file": "reminders/erase-all-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/erase-all-yes",
+    "file": "reminders/erase-all-yes.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "reminders/erase-one",
+    "file": "reminders/erase-one.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/erase-one-down",
+    "file": "reminders/erase-one-down.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/erase-one-next",
+    "file": "reminders/erase-one-next.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/erase-one-ok",
+    "file": "reminders/erase-one-ok.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/erase-one-yes",
+    "file": "reminders/erase-one-yes.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 11
+  },
+  {
+    "id": "reminders/erase-open",
+    "file": "reminders/erase-open.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/full-add",
+    "file": "reminders/full-add.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/full-no",
+    "file": "reminders/full-no.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/full-screens",
+    "file": "reminders/full-screens.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/full-view",
+    "file": "reminders/full-view.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/full-yes",
+    "file": "reminders/full-yes.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/level-empty",
+    "file": "reminders/level-empty.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "reminders/level-virgin",
+    "file": "reminders/level-virgin.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "reminders/power-on-minute",
+    "file": "reminders/power-on-minute.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/power-on-screens",
+    "file": "reminders/power-on-screens.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "reminders/text",
+    "file": "reminders/text.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "reminders/view-1",
+    "file": "reminders/view-1.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-1-c",
+    "file": "reminders/view-1-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-1-edit",
+    "file": "reminders/view-1-edit.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 13
+  },
+  {
+    "id": "reminders/view-1-edit-ok",
+    "file": "reminders/view-1-edit-ok.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-1-erase",
+    "file": "reminders/view-1-erase.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-1-options",
+    "file": "reminders/view-1-options.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-1-options-c",
+    "file": "reminders/view-1-options-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-1-options-list",
+    "file": "reminders/view-1-options-list.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "reminders/view-1-send",
+    "file": "reminders/view-1-send.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 15
+  },
+  {
+    "id": "reminders/view-2",
+    "file": "reminders/view-2.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-2-c",
+    "file": "reminders/view-2-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-2-edit",
+    "file": "reminders/view-2-edit.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 13
+  },
+  {
+    "id": "reminders/view-2-edit-ok",
+    "file": "reminders/view-2-edit-ok.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-2-erase",
+    "file": "reminders/view-2-erase.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-2-keys",
+    "file": "reminders/view-2-keys.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 5
+  },
+  {
+    "id": "reminders/view-2-options",
+    "file": "reminders/view-2-options.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-2-options-c",
+    "file": "reminders/view-2-options-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-2-options-list",
+    "file": "reminders/view-2-options-list.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "reminders/view-2-send",
+    "file": "reminders/view-2-send.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 15
+  },
+  {
+    "id": "reminders/view-3",
+    "file": "reminders/view-3.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-3-c",
+    "file": "reminders/view-3-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-3-edit",
+    "file": "reminders/view-3-edit.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 13
+  },
+  {
+    "id": "reminders/view-3-edit-ok",
+    "file": "reminders/view-3-edit-ok.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-3-erase",
+    "file": "reminders/view-3-erase.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-3-keys",
+    "file": "reminders/view-3-keys.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 5
+  },
+  {
+    "id": "reminders/view-3-options",
+    "file": "reminders/view-3-options.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-3-options-c",
+    "file": "reminders/view-3-options-c.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/view-3-options-list",
+    "file": "reminders/view-3-options-list.lcd.txt",
+    "status": "pending:21",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "reminders/view-3-send",
+    "file": "reminders/view-3-send.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 15
+  },
+  {
+    "id": "reminders/virgin-erase-all",
+    "file": "reminders/virgin-erase-all.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "reminders/virgin-erase-all-yes",
+    "file": "reminders/virgin-erase-all-yes.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "reminders/virgin-erase-one",
+    "file": "reminders/virgin-erase-one.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "reminders/virgin-erase-open",
+    "file": "reminders/virgin-erase-open.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "reminders/virgin-view",
+    "file": "reminders/virgin-view.lcd.txt",
+    "status": "pending:21",
+    "kind": "timeline",
+    "images": 16,
+    "frames": 17
+  },
+  {
+    "id": "sound/clock/alarm-factory",
+    "file": "sound/clock/alarm-factory.sound.txt",
+    "status": "pending:21",
+    "kind": "sound",
+    "events": 550
+  },
+  {
+    "id": "sound/clock/alarm-virgin",
+    "file": "sound/clock/alarm-virgin.sound.txt",
+    "status": "pending:21",
+    "kind": "sound",
+    "events": 500
+  },
+  {
+    "id": "sound/clock/countdown-factory",
+    "file": "sound/clock/countdown-factory.sound.txt",
+    "status": "pending:21",
+    "kind": "sound",
+    "events": 278
+  },
+  {
+    "id": "sound/clock/countdown-virgin",
+    "file": "sound/clock/countdown-virgin.sound.txt",
+    "status": "pending:21",
+    "kind": "sound",
+    "events": 252
+  },
+  {
+    "id": "sound/clock/reminder-factory",
+    "file": "sound/clock/reminder-factory.sound.txt",
+    "status": "pending:21",
+    "kind": "sound",
+    "events": 82
+  },
+  {
+    "id": "sound/clock/reminder-virgin",
+    "file": "sound/clock/reminder-virgin.sound.txt",
+    "status": "pending:21",
+    "kind": "sound",
+    "events": 146
+  }
+]

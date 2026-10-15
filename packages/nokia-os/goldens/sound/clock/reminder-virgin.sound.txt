@@ -1,0 +1,158 @@
+sound-golden 1
+id: sound/clock/reminder-virgin
+status: pending:21
+source: captures/6.39/plan21/reminders/alert-virgin
+source-sha256: 799b7b5e78bda879ca6e76ea507a4c61f324cc8f832703332a12d36ec1d67338
+state: virgin
+keys: 0:navi
+note: A reminder's alert (virgin) for 20 s, then Snooze.
+omitted: 3 (divider rewrite)
+
+@events
+# t_ms output   state
+-20039 buzzer   2683.7 v=6
+-19947 buzzer   off
+-19854 buzzer   2683.7 v=6
+-19761 buzzer   off
+-19668 buzzer   2683.7 v=6
+-19575 buzzer   off
+-19482 buzzer   2683.7 v=6
+-19389 buzzer   off
+-19296 buzzer   2683.7 v=6
+-19204 buzzer   off
+-18630 buzzer   2683.7 v=6
+-18538 buzzer   off
+-18445 buzzer   2683.7 v=6
+-18352 buzzer   off
+-18259 buzzer   2683.7 v=6
+-18166 buzzer   off
+-18073 buzzer   2683.7 v=6
+-17980 buzzer   off
+-17887 buzzer   2683.7 v=6
+-17794 buzzer   off
+-17220 buzzer   2683.7 v=6
+-17127 buzzer   off
+-17034 buzzer   2683.7 v=6
+-16942 buzzer   off
+-16849 buzzer   2683.7 v=6
+-16756 buzzer   off
+-16663 buzzer   2683.7 v=6
+-16570 buzzer   off
+-16477 buzzer   2683.7 v=6
+-16384 buzzer   off
+-15811 buzzer   2683.7 v=6
+-15718 buzzer   off
+-15625 buzzer   2683.7 v=6
+-15532 buzzer   off
+-15439 buzzer   2683.7 v=6
+-15346 buzzer   off
+-15253 buzzer   2683.7 v=6
+-15161 buzzer   off
+-15068 buzzer   2683.7 v=6
+-14975 buzzer   off
+-14401 buzzer   2683.7 v=6
+-14309 buzzer   off
+-14216 buzzer   2683.7 v=6
+-14123 buzzer   off
+-14030 buzzer   2683.7 v=6
+-13937 buzzer   off
+-13844 buzzer   2683.7 v=6
+-13751 buzzer   off
+-13658 buzzer   2683.7 v=6
+-13565 buzzer   off
+-12992 buzzer   2683.7 v=6
+-12899 buzzer   off
+-12806 buzzer   2683.7 v=6
+-12714 buzzer   off
+-12621 buzzer   2683.7 v=6
+-12528 buzzer   off
+-12435 buzzer   2683.7 v=6
+-12342 buzzer   off
+-12249 buzzer   2683.7 v=6
+-12156 buzzer   off
+-11583 buzzer   2683.7 v=6
+-11490 buzzer   off
+-11397 buzzer   2683.7 v=6
+-11304 buzzer   off
+-11211 buzzer   2683.7 v=6
+-11118 buzzer   off
+-11025 buzzer   2683.7 v=6
+-10933 buzzer   off
+-10839 buzzer   2683.7 v=6
+-10746 buzzer   off
+-10173 buzzer   2683.7 v=6
+-10080 buzzer   off
+-9987  buzzer   2683.7 v=6
+-9894  buzzer   off
+-9801  buzzer   2683.7 v=6
+-9708  buzzer   off
+-9615  buzzer   2683.7 v=6
+-9522  buzzer   off
+-9429  buzzer   2683.7 v=6
+-9336  buzzer   off
+-8763  buzzer   2683.7 v=6
+-8671  buzzer   off
+-8577  buzzer   2683.7 v=6
+-8485  buzzer   off
+-8392  buzzer   2683.7 v=6
+-8299  buzzer   off
+-8206  buzzer   2683.7 v=6
+-8113  buzzer   off
+-8020  buzzer   2683.7 v=6
+-7927  buzzer   off
+-7354  buzzer   2683.7 v=6
+-7261  buzzer   off
+-7168  buzzer   2683.7 v=6
+-7075  buzzer   off
+-6982  buzzer   2683.7 v=6
+-6890  buzzer   off
+-6796  buzzer   2683.7 v=6
+-6704  buzzer   off
+-6611  buzzer   2683.7 v=6
+-6518  buzzer   off
+-5945  buzzer   2683.7 v=6
+-5852  buzzer   off
+-5759  buzzer   2683.7 v=6
+-5666  buzzer   off
+-5573  buzzer   2683.7 v=6
+-5480  buzzer   off
+-5387  buzzer   2683.7 v=6
+-5294  buzzer   off
+-5201  buzzer   2683.7 v=6
+-5109  buzzer   off
+-4528  buzzer   2683.7 v=6
+-4435  buzzer   off
+-4342  buzzer   2683.7 v=6
+-4249  buzzer   off
+-4156  buzzer   2683.7 v=6
+-4063  buzzer   off
+-3969  buzzer   2683.7 v=6
+-3876  buzzer   off
+-3776  buzzer   2683.7 v=6
+-3690  buzzer   off
+-3117  buzzer   2683.7 v=6
+-3025  buzzer   off
+-2931  buzzer   2683.7 v=6
+-2839  buzzer   off
+-2746  buzzer   2683.7 v=6
+-2653  buzzer   off
+-2560  buzzer   2683.7 v=6
+-2467  buzzer   off
+-2374  buzzer   2683.7 v=6
+-2274  buzzer   off
+-1708  buzzer   2683.7 v=6
+-1615  buzzer   off
+-1522  buzzer   2683.7 v=6
+-1429  buzzer   off
+-1336  buzzer   2683.7 v=6
+-1244  buzzer   off
+-1150  buzzer   2683.7 v=6
+-1058  buzzer   off
+-965   buzzer   2683.7 v=6
+-872   buzzer   off
+-299   buzzer   2683.7 v=6
+-206   buzzer   off
+-113   buzzer   2683.7 v=6
+-20    buzzer   off
+42     tone     900 v=0x9100
+166    tone     off

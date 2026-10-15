@@ -655,7 +655,7 @@ Deviation: plan 29 replaced `scripts/widget-sprites.ts` and the text-run tables 
 resource registrations, so Task 3's crops and named timelines go in the capture set's `resources`
 (`scripts/resource-inputs/21-clock-and-reminders.ts`), not in shared tables.
 
-**Outcome (2026-10-14).** 37 sections, about 560 recordings (`gen_v639_plan21.py check`).
+**Outcome (2026-10-14).** 22 sections, 240 recordings, 6458 images (`gen_v639_plan21.py check`: OK).
 
 - **Clock and date words.** Time of day: RAM `0x1117B4`, seconds, BE32 (`settime`). Date:
   `0x10D40C` and `0x10D410`, `{year BE16, month, day}` (`setdate`); the Date setting page shows
@@ -777,20 +777,30 @@ reminder alert, P3), `docs/specs/nokia-3310-menu-tree.md` (two notes), `docs/pla
 capture set marks each golden `pending:21` until its task adds the scenario, and Task 12 asserts
 the last), `goldens/**`.
 
-- [ ] TDD the capture set on synthetic recordings (injected loader, as `game-capture-set.test.ts`):
+- [x] TDD the capture set on synthetic recordings (injected loader, as `game-capture-set.test.ts`):
       ids, kinds, cut points, `trigger-frame` on the first changed frame, sound goldens through plan
       16's importer functions, alert recordings trimmed to the minute edge.
-- [ ] The three goldens other plans hold as `pending:21` stay pending here: Task 10 deletes plan
+- [x] The three goldens other plans hold as `pending:21` stay pending here: Task 10 deletes plan
       21's `PLACEHOLDER_OWNERS` group (`11-4`, in `scripts/tree-capture-set.ts` and the clock
       feature's `placeholders`), which asserts `tree/11-clock/11-4.leaf` and `sound/note/11-4`;
       Task 11 flips `probe/confirm-10-3-2-yes` in `scripts/capture-sets/14-menu-depth.ts`. Each
       reruns `import-captures` twice.
-- [ ] Integrity: `goldens/index/21.json` lists every new golden; ids unique; every sound golden
+- [x] Integrity: `goldens/index/21.json` lists every new golden; ids unique; every sound golden
       parses.
-- [ ] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
+- [x] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
       completion note.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import clock and reminder goldens (plan 21)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import clock and reminder goldens (plan 21)`.
+
+Deviation: alert recordings are imported whole, not trimmed: their scenarios move the host
+clock across the minute on the trigger row. Recordings that start on a prompt (`entry` without an
+opener: the keys wait for the cursor's next blink) use `trigger-frame: before-recording`.
+`clock/stopwatch/run` keeps its first 15 s (frames 0-160; one cadence throughout).
+
+Completion note: 253 goldens in `goldens/index/21.json` (217 timelines, 30 still fixtures, 6
+sound goldens; `goldens/clock` 5.9 MB, `goldens/reminders` 2.0 MB, `goldens/sound/clock` 52 KB),
+all `pending:21`; a second `import-captures` changes nothing. Task 0's corpus: 22 sections, 240
+recordings, 6458 images (1459 distinct).
 
 ### Task 3 - Glyphs, sprites, timelines and alert programs (TDD)
 
