@@ -25,6 +25,8 @@ export class ChatSession {
   readonly #messaging: StockMessaging;
   #name: string;
   readonly #lines: ChatLine[] = [];
+  /** The history's length when the send in progress started. */
+  #sendFrom: number | undefined;
 
   constructor(messaging: StockMessaging, number: string, name: string) {
     this.#messaging = messaging;
@@ -53,9 +55,19 @@ export class ChatSession {
     return `${this.#name}: ${text}`;
   }
 
-  /** `text` was sent: its line on top of the history. */
+  /** A send starts: the partner's lines from now on are newer than its line. */
+  sending(): void {
+    this.#sendFrom = this.#lines.length;
+  }
+
+  /**
+   * `text` was sent: its line on top of the history, below the partner's lines that arrived
+   * while it was sending (a host that answers before `Message sent`; UNVERIFIED).
+   */
   sent(text: string): void {
-    this.#lines.unshift({ from: "me", text: `<${this.#name}: ${text}` });
+    const newer = this.#lines.length - (this.#sendFrom ?? this.#lines.length);
+    this.#lines.splice(newer, 0, { from: "me", text: `<${this.#name}: ${text}` });
+    this.#sendFrom = undefined;
   }
 
   /**

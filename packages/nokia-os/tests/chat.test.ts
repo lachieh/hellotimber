@@ -57,6 +57,36 @@ describe("Chat (menu 3)", () => {
     expect(inbox(storage).map((m) => m.text)).toEqual(["Not the partner"]);
   });
 
+  it("keeps the line it sends when the partner answers before `Message sent`", async () => {
+    // A host that settles its send late and answers at once: the answer lands while `Sending
+    // message` shows. Once sent, the history is as if it had answered later: `>Hey back` on top
+    // of `<Bo: Hi` (the order of the firmware's history; this race is UNVERIFIED).
+    const later = chat();
+    keys(later.rig, SEND_HI);
+    later.network.deliver({ number: PARTNER, text: "Hey back", sentAt: AT });
+    keys(later.rig, "wait:6000");
+
+    const synthetic = createSyntheticNetwork();
+    let settle: (outcome: "sent") => void = () => {};
+    const network = {
+      ...synthetic,
+      send: (sms: { number: string; text: string }) => {
+        void synthetic.send(sms);
+        return new Promise<"sent">((resolve) => (settle = resolve));
+      },
+    };
+    const early = standbyRig({ ...MULTITAP, storage: createMemoryStorage(), network });
+    keys(early, open("2 2 6 6 6"));
+    keys(early, SEND_HI.replace("navi wait:6000", "navi wait:100"));
+    synthetic.deliver({ number: PARTNER, text: "Hey back", sentAt: AT });
+    keys(early, "wait:4000");
+    settle("sent");
+    await Promise.resolve();
+    keys(early, "wait:6000");
+    expect(synthetic.sent).toEqual([{ number: PARTNER, text: "Bo: Hi" }]);
+    expect(Array.from(early.paint().pixels)).toEqual(Array.from(later.rig.paint().pixels));
+  });
+
   it("lets the partner's SMS reach Inbox once the chat has ended", () => {
     const { network, storage, rig } = chat();
     // Options, ▲ (Exit), OK: Chat on the carousel; then standby.

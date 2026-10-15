@@ -98,6 +98,8 @@ class ChatWidget implements Widget, Flow {
   /** The model shown last: what the chat shows while the flow around it leaves it. */
   #shown: WidgetModel | undefined;
   #arrived = false;
+  /** `Sending message` while it shows: a partner's line waits for it (UNVERIFIED). */
+  #inFlight: Widget | undefined;
   #closed = false;
 
   constructor(services: StockServices, session: ChatSession) {
@@ -156,15 +158,17 @@ class ChatWidget implements Widget, Flow {
       Send: (flow) => {
         const text = entry.text;
         const sms = { number: session.number, text: session.airText(text) };
-        flow.replace(
-          sending(services, sms, (inner, note) => {
-            session.sent(text);
-            entry.clear();
-            inner.back();
-            inner.push(new HistoryWidget(session));
-            inner.push(note);
-          }),
-        );
+        session.sending();
+        this.#inFlight = sending(services, sms, (inner, note) => {
+          // The history shows the partner's lines that arrived meanwhile too.
+          this.#arrived = false;
+          session.sent(text);
+          entry.clear();
+          inner.back();
+          inner.push(new HistoryWidget(session));
+          inner.push(note);
+        });
+        flow.replace(this.#inFlight);
       },
       Template: (flow) =>
         insert(flow, insertionList(services, "templates", prefix(flow, "Template"), entry)),
@@ -243,7 +247,8 @@ class ChatWidget implements Widget, Flow {
   tick(dtMs: number, flow: Flow): void {
     this.#outer = flow;
     if (this.#closed) return;
-    if (this.#arrived) this.#showArrival();
+    const sending = this.#inFlight !== undefined && this.#stack.includes(this.#inFlight);
+    if (this.#arrived && !sending) this.#showArrival();
     this.#top.tick?.(dtMs, this);
   }
 
