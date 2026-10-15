@@ -52,6 +52,16 @@ export interface NumberEntryOptions {
    * Edit's `Phone number:`, `phone-book/add-empty-ok`).
    */
   readonly emptyOk?: boolean;
+  /**
+   * The soft key on the empty entry (default `Search`); plan 18c's `Topic number:` shows `OK`,
+   * which does nothing there (`topics/edit-number-ok`).
+   */
+  readonly emptySoftkey?: string;
+  /**
+   * ▼ on the empty entry is Search too (Chat's `Phone number:`, `menu/03-chat.sub` image 02: the
+   * virgin book's `No phone numbers`); default ▼ only moves the cursor.
+   */
+  readonly downSearches?: boolean;
   /** The cursor's blink from the node's own recording (plan 14 P9); default every 480 ms. */
   readonly blink?: StockWidgetTimeline;
 }
@@ -108,7 +118,8 @@ class NumberEntryWidget implements Widget {
         ...(state.pending === null ? { cursor: state.cursor } : {}),
       },
       cursor: blinkShown(this.#blink, this.#now),
-      softkey: empty && this.#options.emptyOk !== true ? "Search" : "OK",
+      softkey:
+        empty && this.#options.emptyOk !== true ? (this.#options.emptySoftkey ?? "Search") : "OK",
     };
   }
 
@@ -159,8 +170,13 @@ class NumberEntryWidget implements Widget {
 
   onKey(key: PhoneKey, flow: Flow): void {
     if (key === "c") this.#clearFrom = undefined;
-    if (key !== "navi") return;
     const number = textTick(this.#state, Number.POSITIVE_INFINITY).text;
+    // On the key's up, as Search: a note pushed on its down would close on that up.
+    if (key === "down" && this.#options.downSearches === true && number === "") {
+      (this.#options.search ?? noPhoneNumbers)(flow);
+      return;
+    }
+    if (key !== "navi") return;
     if (number === "" && this.#options.emptyOk !== true) {
       (this.#options.search ?? noPhoneNumbers)(flow);
     } else this.#options.done(number, flow);

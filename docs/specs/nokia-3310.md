@@ -214,6 +214,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Text entry and SMS                                         | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)         | 18   |
 | Phone book                                                 | [stock/phone-book.md](stock/phone-book.md)                         | 19   |
 | Profiles                                                   | [stock/profiles.md](stock/profiles.md)                             | 17   |
+| Chat, Templates, Smileys, Info topics, service commands    | [stock/chat-and-content.md](stock/chat-and-content.md)             | 18c  |
 | T9 predictive text                                         | [stock/t9-predictive-text.md](stock/t9-predictive-text.md)         | 18b  |
 | Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                         | 20   |
 | Composer                                                   | [stock/composer.md](stock/composer.md)                             | 27   |

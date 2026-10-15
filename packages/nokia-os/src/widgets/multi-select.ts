@@ -11,7 +11,8 @@ export interface MultiSelectOptions {
   readonly labels: readonly string[];
   /** Selected on entry. */
   readonly opening: number;
-  readonly settings: StockSettings;
+  /** Where the marks are stored (plan 18c: Topics keep theirs in their own record). */
+  readonly settings: Pick<StockSettings, "marks" | "toggle">;
   /** Rows the soft key does not toggle (Language › Polish: `tree/02-messages/2-8-5-17.choose`). */
   readonly inert?: readonly number[];
 }

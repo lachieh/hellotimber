@@ -27,6 +27,7 @@ import {
   EDITOR_OPTIONS,
   T9_EDITOR_OPTIONS,
 } from "./bindings";
+import { insertionList } from "../content/insertion";
 import type { StockSms } from "./network";
 
 /** An SMS holds 459 characters in three parts (`text/counter` 459: `0/3`). */
@@ -66,9 +67,14 @@ const SENDING_BAR = "7-6";
 /**
  * `Sending message` (D9, D10): the Requesting bar looping under `Sending` / `message` with no
  * soft key, until the send settles; then `Message sent` (or the composed failure note, D14) and
- * back to the editor below. Keys do nothing while it sends.
+ * back to the editor below (`sent`: what a sent message shows instead, plan 18c's Chat). Keys do
+ * nothing while it sends.
  */
-function sending(services: StockServices, sms: StockSms): Widget {
+export function sending(
+  services: StockServices,
+  sms: StockSms,
+  sent?: (flow: Flow, note: Widget) => void,
+): Widget {
   const bar = new Playback(timelineById(SENDING_BAR, "Sending message's bar"));
   let outcome: "sent" | "failed" | undefined;
   services.messaging.send(sms, (settled) => {
@@ -84,7 +90,7 @@ function sending(services: StockServices, sms: StockSms): Widget {
       bar.advance(dtMs);
       if (outcome === undefined) return;
       const failed = COMPOSED_FLOWS.sendFailed;
-      flow.replace(
+      const shown =
         outcome === "sent"
           ? note({
               lines: ["Message", "sent"],
@@ -95,8 +101,10 @@ function sending(services: StockServices, sms: StockSms): Widget {
               lines: failed.lines,
               timeline: timelineByName(failed.timeline),
               sound: services.noteSound,
-            }),
-      );
+            });
+      // Plan 18c: Chat shows its history under `Message sent`.
+      if (outcome === "sent" && sent !== undefined) sent(flow, shown);
+      else flow.replace(shown);
     },
   };
 }
@@ -117,7 +125,7 @@ function send(
 }
 
 /** The number prompt of Send and of Send by set › Numeric (`text/number`). */
-function phoneNumber(
+export function phoneNumber(
   services: StockServices,
   text: string,
   number: string,
@@ -155,6 +163,11 @@ function set2Centre(services: StockServices, text: string, number: string, above
   });
 }
 
+/** `widget` in place of the top screen; nothing when there is none (no response). */
+function replaceWith(flow: Flow, widget: Widget | undefined): void {
+  if (widget !== undefined) flow.replace(widget);
+}
+
 /** A choice another plan implements, inside the flow (C goes back). */
 function placeholder(label: string): Widget {
   return {
@@ -174,7 +187,7 @@ const ENGLISH = DICTIONARY_LABELS.indexOf("English");
  * said none), then the editor in its new mode. The Cyrillic dictionaries are plan 26's
  * placeholders, and English is the host's (`config.t9`, D5) without a T9 dictionary.
  */
-function dictionary(services: StockServices): Widget {
+export function dictionary(services: StockServices): Widget {
   const { settings, noteSound } = services;
   const notes = [
     { lines: ["T9", "dictionary", "deactivated"], timeline: "t9-dictionary-deactivated" },
@@ -204,7 +217,7 @@ function dictionary(services: StockServices): Widget {
 }
 
 /** The editor's T9 context: the host's English dictionary while Dictionary is English (18b). */
-function t9Context(services: StockServices): T9Context | undefined {
+export function t9Context(services: StockServices): T9Context | undefined {
   const english = services.t9.english;
   if (english === undefined || services.settings.choice(DICTIONARY_KEY) !== ENGLISH) {
     return undefined;
@@ -216,7 +229,7 @@ function t9Context(services: StockServices): T9Context | undefined {
  * Options › Matches (spec 10.2, `t9/g-matches`): the composing word's other candidates, then
  * itself; Use shows the chosen one, still composing, in the editor; C goes back to Options.
  */
-function matches(t9: T9EditorControl): Widget {
+export function matches(t9: T9EditorControl): Widget {
   return new OptionListWidget({
     labels: t9.matches(),
     opening: 0,
@@ -236,7 +249,7 @@ function matches(t9: T9EditorControl): Widget {
  * of the composing word) and stores the word around the cursor as a user word; OK or C on the
  * empty prompt goes back (`t9/insert-word-empty`).
  */
-function insertWord(services: StockServices, entry: EditorControl, spell: boolean): Widget {
+export function insertWord(services: StockServices, entry: EditorControl, spell: boolean): Widget {
   const t9 = entry.t9!;
   const used = Array.from(spell ? t9.textBesideWord : entry.text).length;
   return textInput({
@@ -255,7 +268,7 @@ function insertWord(services: StockServices, entry: EditorControl, spell: boolea
  * Options › Insert number (the menu-tree crawl: `Insert number:` with OK; UNVERIFIED beyond it):
  * plan 18's number entry; OK inserts the number at the cursor.
  */
-function insertNumber(entry: EditorControl): Widget {
+export function insertNumber(entry: EditorControl): Widget {
   return numberEntry({
     label: ["Insert number:"],
     done(number, flow) {
@@ -343,7 +356,7 @@ function save(services: StockServices, flow: Flow, text: string, number?: string
 }
 
 /** Standby's first draw (`sms/exit` frame 1): no operator, the host's clock. */
-function standbyDraw({ ports }: StockServices): WidgetModel {
+export function standbyDraw({ ports }: StockServices): WidgetModel {
   const clock = ports.clock?.();
   return { kind: "standby-draw", ...(clock === undefined ? {} : { clock }) };
 }
@@ -388,12 +401,16 @@ function editorOptions(services: StockServices, entry: EditorControl, draft: Sms
       : T9_EDITOR_OPTIONS.filter((option) => !option.composing || t9.composing).map(
           (option) => option.label,
         );
+  const number = (label: string) => labels.indexOf(label) + 1;
   const actions: Readonly<Record<string, (flow: Flow) => void>> = {
     Send: (flow) => flow.replace(phoneNumber(services, entry.text, draft.number ?? "", 1, false)),
     "Send to many": (flow) => flow.replace(sendToMany(services, entry.text)),
-    // No response in the captured state (`sms/template`, `sms/insert-smiley`).
-    Template: () => {},
-    "Insert smiley": () => {},
+    // Plan 18c: the lists Restore factory settings provides; no response on the virgin EEPROM
+    // (`sms/template`, `sms/insert-smiley`).
+    Template: (flow) =>
+      replaceWith(flow, insertionList(services, "templates", [number("Template")], entry)),
+    "Insert smiley": (flow) =>
+      replaceWith(flow, insertionList(services, "smileys", [number("Insert smiley")], entry)),
     Matches: (flow) => flow.push(matches(t9!)),
     "Insert word": (flow) => flow.replace(insertWord(services, entry, false)),
     "Insert number": (flow) => flow.replace(insertNumber(entry)),

@@ -1000,6 +1000,17 @@ plan 18's send rules (link time 3240 ms). See [stock phone book](docs/specs/stoc
 Plan 18c's delivery-kind/editor/session registration requirements await owner reconciliation;
 this SMS-only contract does not authorize its proposed picture/card extension.
 
+**Chat and Messages content (plan 18c, in progress; no public API change).** Templates, Smileys
+and Info service topics are EEPROM records (`templates`, `smileys`, `info-topics`): the virgin
+EEPROM has no Templates or Smileys list and five junk topics; Restore factory settings provisions
+the lists (eight slots, the firmware's five defaults each) and empties the topics. Chat sends each
+line through the network port's `send` as `<name>: <text>`; an SMS delivered from the chat's
+number while Chat runs is the partner's line (shown in the history, not stored in Inbox), so a
+host that answers chat numbers (the website's LLM contacts) implements only `StockNetworkPort`.
+Picture messages, the screen-saver gallery and business-card receipt are not implemented (no
+verified v6.39 captures; the picture/card port extension stays unauthorized). See
+[stock chat and content](docs/specs/stock/chat-and-content.md).
+
 **Profiles (plan 17).** A profile is its Personalise settings plus a name. The active
 profile is a stored choice in the settings record (General when never written, and after Restore),
 and Tones read and write its Personalise settings, so every audible effect follows it. The public

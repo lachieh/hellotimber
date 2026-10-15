@@ -13,6 +13,7 @@ import { interlude } from "../widgets/interlude";
 import { note } from "../widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
 import { moveRows, rowsIndicator, type RowsCursor } from "../widgets/rows";
+import { chatWith } from "../chat/screens";
 import { messageDate, messageTime } from "./timestamp";
 import { smsEditor } from "./write";
 
@@ -172,8 +173,8 @@ function messageOptions(owner: Box, index: number, message: Shown): Widget {
     Erase: (flow) => flow.push(erase(owner, index)),
     // Reply starts empty; Send's prompt starts with the sender (D8, `sms/inbox-option-typed`).
     Reply: (flow) => flow.replace(smsEditor(services, { number: message.sender ?? "" })),
-    // Chat is plan 18c's (`sms/inbox-option-chat`: Chat name:).
-    Chat: (flow) => flow.replace(placeholder("Chat")),
+    // Plan 18c: a chat with the sender (`sms/inbox-option-chat`: Chat name:).
+    Chat: (flow) => flow.replace(chatWith(services, message.sender ?? "")),
     Edit: (flow) =>
       flow.replace(
         smsEditor(services, {

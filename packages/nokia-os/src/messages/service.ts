@@ -19,6 +19,12 @@ export interface ArrivalListener {
   (sms: StockIncomingSms, result: ArrivalResult): void;
 }
 
+/**
+ * Plan 18c (D10): takes an arrival before Inbox, true when it consumed it (Chat's partner: its
+ * lines show in the chat and are not stored, `chat/inbox-after`).
+ */
+export type ArrivalClaim = (sms: StockIncomingSms) => boolean;
+
 interface Sending {
   readonly dueAt: number;
   outcome: StockSendOutcome | undefined;
@@ -48,6 +54,7 @@ export class StockMessaging {
   #waiting: StockIncomingSms[] = [];
   #ready = false;
   readonly #listeners = new Set<ArrivalListener>();
+  readonly #claims = new Set<ArrivalClaim>();
   #connected = false;
 
   constructor(store: StockMessages, network: StockNetworkPort, centre: () => string = () => "") {
@@ -133,6 +140,17 @@ export class StockMessaging {
     } else sending.outcome = outcomeOf(result);
   }
 
+  /**
+   * Plan 18c: arrivals go to `claim` first while it is registered; one it consumes is neither
+   * stored nor announced (no notice, no alert: UNVERIFIED for the alert).
+   */
+  claim(claim: ArrivalClaim): () => void {
+    this.#claims.add(claim);
+    return () => {
+      this.#claims.delete(claim);
+    };
+  }
+
   /** Arrivals land here (the received notice, the alert): stored or refused. */
   onArrival(listener: ArrivalListener): () => void {
     this.#listeners.add(listener);
@@ -150,6 +168,7 @@ export class StockMessaging {
     }
     while (this.#arriving.length > 0 && this.#arriving[0]!.dueAt <= this.#now) {
       const { sms } = this.#arriving.shift()!;
+      if (Array.from(this.#claims).some((claim) => claim(sms))) continue;
       const result = this.store.receive(sms, this.#centre());
       for (const listener of Array.from(this.#listeners)) listener(sms, result);
     }

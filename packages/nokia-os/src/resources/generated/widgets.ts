@@ -3411,6 +3411,19 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         "....###............."
       ]
     },
+    "content/template": {
+      "x": 1,
+      "y": 8,
+      "art": [
+        "####..",
+        "#..##.",
+        "#..###",
+        "#....#",
+        "#....#",
+        "#....#",
+        "######"
+      ]
+    },
     "please-speak-1": {
       "x": 62,
       "y": 4,
@@ -4366,6 +4379,63 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
       ],
       "loopFrom": 9
     },
+    "2-10": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 475
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 494
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
+    },
     "2-2": {
       "frames": [
         {
@@ -4781,6 +4851,120 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
           "durationMs": 525
         }
       ]
+    },
+    "2-8-4-2-2": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 479
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 488
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
+    },
+    "2-8-4-2-4": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 476
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 487
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
     },
     "2-9": {
       "frames": [
@@ -9580,6 +9764,267 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
+    "template-saved": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 679
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 512
+        }
+      ]
+    },
+    "smiley-saved": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 675
+        },
+        {
+          "frame": 1,
+          "durationMs": 240
+        },
+        {
+          "frame": 2,
+          "durationMs": 522
+        }
+      ]
+    },
+    "template-erased": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "erased-1"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-2"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-3"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-4"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-5"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "erased-6"
+        },
+        {
+          "kind": "cut",
+          "bytes": 458
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 223
+        },
+        {
+          "frame": 1,
+          "durationMs": 243
+        },
+        {
+          "frame": 2,
+          "durationMs": 245
+        },
+        {
+          "frame": 3,
+          "durationMs": 216
+        },
+        {
+          "frame": 4,
+          "durationMs": 233
+        },
+        {
+          "frame": 5,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 232
+        },
+        {
+          "frame": 1,
+          "durationMs": 233
+        },
+        {
+          "frame": 0,
+          "durationMs": 1076
+        },
+        {
+          "frame": 6,
+          "durationMs": 15
+        }
+      ]
+    },
+    "smiley-erased": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/info"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 2906
+        }
+      ]
+    },
+    "topic-added": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 688
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 534
+        }
+      ]
+    },
+    "topic-saved": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 682
+        },
+        {
+          "frame": 1,
+          "durationMs": 240
+        },
+        {
+          "frame": 2,
+          "durationMs": 534
+        }
+      ]
+    },
+    "topic-erased": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 696
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 535
+        }
+      ]
+    },
+    "service-not-done": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/error"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 2901
+        },
+        {
+          "frame": 1,
+          "durationMs": 9
+        }
+      ]
+    },
     "saved": {
       "frames": [
         {
@@ -10150,20 +10595,6 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
-    "calculator-out-of-range": {
-      "frames": [
-        {
-          "kind": "sprite",
-          "sprite": "note/info"
-        }
-      ],
-      "steps": [
-        {
-          "frame": 0,
-          "durationMs": 2906
-        }
-      ]
-    },
     "calculator-divide-by-zero": {
       "frames": [
         {
@@ -10538,6 +10969,7 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "1-7": "1-7",
     "1-8-1-1": "1-8-1-1",
     "2-1": "2-1",
+    "2-10": "2-10",
     "2-2": "2-2",
     "2-3": "2-3",
     "2-7-1-1": "2-7-1-1",
@@ -10549,6 +10981,8 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "2-8-1": "2-8-1",
     "2-8-2": "2-8-2",
     "2-8-3": "2-8-3",
+    "2-8-4-2-2": "2-8-4-2-2",
+    "2-8-4-2-4": "2-8-4-2-4",
     "2-9": "2-9",
     "4-1": "4-1",
     "4-2": "4-1",
@@ -10659,6 +11093,14 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "message-sent": "message-sent",
     "message-erased": "message-erased",
     "t9-dictionary-activated": "t9-dictionary-activated",
+    "template-saved": "template-saved",
+    "smiley-saved": "smiley-saved",
+    "template-erased": "template-erased",
+    "smiley-erased": "smiley-erased",
+    "topic-added": "topic-added",
+    "topic-saved": "topic-saved",
+    "topic-erased": "topic-erased",
+    "service-not-done": "service-not-done",
     "saved": "saved",
     "replaced": "replaced",
     "nothing-to-save": "nothing-to-save",
@@ -10674,7 +11116,7 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "erasing-memory": "erasing-memory",
     "bcard-sent": "bcard-sent",
     "please-speak": "please-speak",
-    "calculator-out-of-range": "calculator-out-of-range",
+    "calculator-out-of-range": "smiley-erased",
     "calculator-divide-by-zero": "calculator-divide-by-zero",
     "calculator-rate-saved": "calculator-rate-saved",
     "keypad-locked": "keypad-locked",
