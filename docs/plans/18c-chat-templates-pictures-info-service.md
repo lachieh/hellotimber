@@ -676,17 +676,20 @@ resource-provider and `src/resources/index.ts` registrations (one line each).
 `src/chat/record.ts` (only if captured persistence), `tests/content-records.test.ts`,
 `tests/picture-store.test.ts` (new).
 
-- [ ] Failing tests over host storage pin virgin absence, factory defaults, immediate writes,
+- [x] Failing tests over host storage pin virgin absence, factory defaults, immediate writes,
       reloads, schema version and decode rules consistent with plan 15; Restore over edited slots.
-- [ ] Topics encode valid IDs separately from captured junk display strings. Marks/order/names,
+- [x] Topics encode valid IDs separately from captured junk display strings. Marks/order/names,
       add/edit/erase bounds, duplicate/full behaviour and factory-empty state follow I captures.
-- [ ] Pictures encode slots and any built-in text overlays/copies only after P verifies them.
+      Deviation: a topic keeps its number as the prompt's text (the junk `p9` included); the
+      prompt itself bounds new numbers to three digits (I), so no separate ID field is needed.
+- [ ] Blocked on P/R: pictures encode slots and any built-in text overlays/copies only after P verifies them.
       Test capacity/order/name/retention, Save/replace/full and erased selection using independent
       expected states. Preserve virgin no-response; repair-state data is an explicit test seed.
-- [ ] Register each record through its feature's `records`; no `records.ts` rewrite. Chat name
+- [x] Register each record through its feature's `records`; no `records.ts` rewrite. Chat name
       gets a record only if cold reboot proves persistence; history retention follows C.
-- [ ] Verify package test and manual `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): persist templates, smileys, pictures and Info topics`.
+      (`templates`, `smileys`: Task 5's feature; `info-topics`: Task 9's; no `chat` record, D9.)
+- [x] Verify package test and manual `vp check --fix`.
+- [x] Commit: `feat(nokia-os): persist templates, smileys, pictures and Info topics`.
 
 ### Task 5 - Templates, Smileys and insertion (TDD)
 
