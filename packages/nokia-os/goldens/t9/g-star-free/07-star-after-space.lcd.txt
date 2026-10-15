@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-star-free/07-star-after-space
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-star-free/07-star-after-space.png
 source-sha256: 8509aeab8dbb6c7a95b6269a04144c03c1d2b31d68f548a6db34ea1b1f6afd82
 note: A short * does nothing with no composing word; held * opens the symbol table; C closes it. From the empty T9 Write messages editor: * · wait 1500 ms · * · * held 1500 ms · c · 4 6 8 6 0 · *.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/first/01-page
-status: pending:18b
+status: asserted
 source: captures/plan18b/first/01-page.png
 source-sha256: d2d8b1268bcc7cd1e645a82d9a149570ba468c9ea3b06edf8956de7c424e9c7a
 note: Write messages page, the T9 editor, 3 s blink. From the Write messages page.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-persist-dict/08-editor-after-reboot
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-persist-dict/08-editor-after-reboot.png
 source-sha256: 46e2ebeb39fed6de905c3d6cfc1c2640a757fde58221aab188613ed9a5c5e792
 note: Dictionary off survives save flash and a cold boot. From the empty T9 Write messages editor: menu · down down down down down down down · menu · up · menu, recording 4000 ms · save flash · cold boot · menu.

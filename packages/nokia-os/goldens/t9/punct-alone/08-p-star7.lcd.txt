@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/punct-alone/08-p-star7
-status: pending:18b
+status: asserted
 source: captures/plan18b/punct-alone/08-p-star7.png
 source-sha256: ca18e0daeb1d7520263fb1c83a5528c9ad0378f1f841a5e1fee8bd723e743679
 note: Key 1 alone and * nine times. From the empty T9 Write messages editor: 1 · * · * · * · * · * · * · *.

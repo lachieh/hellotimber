@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/dictionary-off-on/07-mt-opt1
-status: pending:18b
+status: asserted
 source: captures/plan18b/dictionary-off-on/07-mt-opt1.png
 source-sha256: 0d88aac8e81f6d19f4f543fdb83de774770c20b6bd2eeacf221112d2988a1bf1
 note: Dictionary off (the note), the multi-tap Options list, English on, typing. From the empty T9 Write messages editor: menu · down down down down down down down · menu · up · menu, recording 4000 ms · menu · down.

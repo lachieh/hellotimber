@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/insert-word-empty/05-after
-status: pending:18b
+status: asserted
 source: captures/plan18b/insert-word-empty/05-after
 source-sha256: 7f4073a26c90042352dfb5808a7f5f1073258b206f312f029f474292ff4ad680
 trigger-frame: 1

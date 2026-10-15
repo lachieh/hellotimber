@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-persist-dict/05-off
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-persist-dict/05-off
 source-sha256: 85c7a0744aa48c8dec00a623e1572b9f585d15ff69720784c3998d9065533dc5
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-case-upper/04-space
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-case-upper/04-space.png
 source-sha256: b5bdd9667fd9c22c6dd43dc8373b2d4072adf3a2f7925ded0f0651ce57a44240
 note: # mid-word gives ABC for that word only. From the empty T9 Write messages editor: 4 · # · 6 8 6 · 0.

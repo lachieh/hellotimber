@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/first/03-blink
-status: pending:18b
+status: asserted
 source: captures/plan18b/first/03-blink
 source-sha256: b017bd03630787d01d4f26974233b625cb75a2c1091d335c392c9c8a3d84216a
 trigger-frame: 1

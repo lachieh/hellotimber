@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/insert-word-empty/04-ok-empty
-status: pending:18b
+status: asserted
 source: captures/plan18b/insert-word-empty/04-ok-empty.png
 source-sha256: 258449be4159d31e2cd4413f51d57e994c2f1fc9d398f6f8382aae519dcf5634
 note: OK and C on an empty Insert word prompt. From the empty T9 Write messages editor: menu · down down down down · menu · menu.

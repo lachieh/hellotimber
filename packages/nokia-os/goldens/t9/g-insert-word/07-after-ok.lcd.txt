@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-insert-word/07-after-ok
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-insert-word/07-after-ok
 source-sha256: 0c5284eca0911b501c65fa1f2d203e892fa5952961c8f7e104023e7bbdf199fb
 trigger-frame: 1

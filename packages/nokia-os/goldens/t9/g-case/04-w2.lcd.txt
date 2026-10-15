@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-case/04-w2
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-case/04-w2.png
 source-sha256: 9c9f63cb002f340e48d5806e720f79f330cdc9e9e20d56e0900abfe8edd79b3e
 note: # at word starts, held # number mode and back. From the empty T9 Write messages editor: 4 6 8 6 0 · 4 6 8 6 0 · # · 4 6 8 6 0.

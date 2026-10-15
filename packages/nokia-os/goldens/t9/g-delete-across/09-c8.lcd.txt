@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-delete-across/09-c8
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-delete-across/09-c8.png
 source-sha256: 52351b119223c6bcae28629e3055ccbb49e6814efdf5aeda52929bfae1eeec1b
 note: C back across a space re-enters the previous word. From the empty T9 Write messages editor: 4 6 8 6 0 4 6 8 6 · c · c · c · c · c · c · c · c.

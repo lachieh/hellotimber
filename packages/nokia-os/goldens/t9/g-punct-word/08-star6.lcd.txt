@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-punct-word/08-star6
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-punct-word/08-star6.png
 source-sha256: 33d1cb5d42ce775aa575481657679df73471edb0300bab1b2ae7e429de769f04
 note: A word then key 1, * through the eight marks and the wrap, 0, the next word. From the empty T9 Write messages editor: 4 6 8 6 · 1 · * · * · * · * · * · *.

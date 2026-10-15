@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-spell/06-after-ok
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-spell/06-after-ok
 source-sha256: e82c452ba1820b5245426a32befefe27be1c29c9e2f555719803b083733368b2
 trigger-frame: 1

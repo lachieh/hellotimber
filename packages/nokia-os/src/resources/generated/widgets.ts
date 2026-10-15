@@ -4245,6 +4245,63 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
+    "2-1": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 476
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 492
+        },
+        {
+          "frame": 0,
+          "durationMs": 476
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        }
+      ],
+      "loopFrom": 9
+    },
     "2-2": {
       "frames": [
         {
@@ -9263,6 +9320,7 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "1-6": "1-5",
     "1-7": "1-7",
     "1-8-1-1": "1-8-1-1",
+    "2-1": "2-1",
     "2-2": "2-2",
     "2-3": "2-3",
     "2-7-1-1": "2-7-1-1",

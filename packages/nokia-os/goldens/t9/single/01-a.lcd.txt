@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/single/01-a
-status: pending:18b
+status: asserted
 source: captures/plan18b/single/01-a.png
 source-sha256: 30de9648e4d3150ca869e5575d81d5a1ef722ea22f243eaf54252a3d0e063d2c
 note: One letter key and * four times: letters, the digit, no ?. From the empty T9 Write messages editor: 2.

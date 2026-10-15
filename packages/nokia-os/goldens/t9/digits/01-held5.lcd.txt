@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/digits/01-held5
-status: pending:18b
+status: asserted
 source: captures/plan18b/digits/01-held5.png
 source-sha256: b83c977a2c598dfefceabcfcfb07ca747c8868983efae7407519d451c6fc84b7
 note: Held 5, 0 and 1 insert digits. From the empty T9 Write messages editor: 5 held 1500 ms.

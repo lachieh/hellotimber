@@ -745,7 +745,7 @@
   {
     "id": "tree/02-messages/2-1.leaf",
     "file": "tree/02-messages/2-1.leaf.lcd.txt",
-    "status": "pending:18b",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 13,

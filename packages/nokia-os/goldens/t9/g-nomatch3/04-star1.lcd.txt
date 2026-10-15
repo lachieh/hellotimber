@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-nomatch3/04-star1
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-nomatch3/04-star1.png
 source-sha256: fbdbbb85af7974df499c39ba5caa23f571f61c194a409a6232a8b990b96747bf
 note: No match after a five-entry list; an ignored key; the * cycle. From the empty T9 Write messages editor: 4 6 8 6 · 7 · 2 · *.

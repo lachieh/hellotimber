@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-compose/05-idle
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-compose/05-idle
 source-sha256: ed65e8a23784aad583f77383df65990066be8109b2d8ecc8121b7e8f0653e62e
 trigger-frame: 1

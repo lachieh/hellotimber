@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-matches-single/03-d4
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-matches-single/03-d4.png
 source-sha256: 3c61a7eebfe68e994e49c31fefe6b3d5293eb56ce6c1e2524ffd657b3e466322
 note: Matches offered for a one-entry list. From the empty T9 Write messages editor: 9 4 4 2 4 · menu · down down down down.

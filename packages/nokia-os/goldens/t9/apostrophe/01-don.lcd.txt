@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/apostrophe/01-don
-status: pending:18b
+status: asserted
 source: captures/plan18b/apostrophe/01-don.png
 source-sha256: 684782198f463a9c0596086b6d9674ac918d2b9e2871dee0a58eddb5dd15e17b
 note: A three-key word, key 1, one more key: the contraction as first display. From the empty T9 Write messages editor: 3 6 6.

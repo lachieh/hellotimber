@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-cursor-insert/01-into-into-
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-cursor-insert/01-into-into-.png + captures/plan18b/g-cursor-insert/01-into-into--a.png
 source-sha256: 38ff03f3abca61d02163fe1526ec5816eb63037026b91c52058004b77cbd3020
 note: Typing before a word; both cursor-blink phases. From the empty T9 Write messages editor: 4 6 8 6 0 4 6 8 6 0.

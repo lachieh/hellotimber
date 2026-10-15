@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-cursor-reenter/04-star2
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-cursor-reenter/04-star2.png + captures/plan18b/g-cursor-reenter/04-star2-a.png
 source-sha256: ebd9642abbddc208066fff52ec431b60ef40932447336f6a2f9c1d028e4c1ccf
 note: ▼ onto a word, *, C, 0; both cursor-blink phases. From the empty T9 Write messages editor: 4 6 8 6 0 · down · * · *.

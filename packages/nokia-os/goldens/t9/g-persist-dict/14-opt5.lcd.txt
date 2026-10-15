@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-persist-dict/14-opt5
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-persist-dict/14-opt5.png
 source-sha256: ca9a8ae56bae9356ed8943a8fabe539bbdad0dcd9132dab348174916764fe695
 note: Dictionary off survives save flash and a cold boot. From the empty T9 Write messages editor: menu · down down down down down down down · menu · up · menu, recording 4000 ms · save flash · cold boot · menu · menu · down · down · down · down · down.

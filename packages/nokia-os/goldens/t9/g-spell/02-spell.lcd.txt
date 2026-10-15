@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-spell/02-spell
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-spell/02-spell.png
 source-sha256: 67655ba9378e9c73a2daa7af14a95da5bb253da0ca84bae93f7d4fdc8869cae2
 note: Spell from no-match, typing, OK; the user word then matches and completes. From the empty T9 Write messages editor: 4 6 8 6 7 · menu.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-userwords-two/21-star6
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-userwords-two/21-star6.png
 source-sha256: 84c29d00ddd5ecc13ef6eab89a76b65852076b20ba9380b67bec689691c499b7
 note: Two exact user words on one sequence, oldest first. From the empty T9 Write messages editor: menu · down down down down · menu · 4 4 6 6 6 8 8 8 6 6 6 · wait 1600 ms · menu · 0 · menu · down down down down · menu · 4 4 6 6 6 8 6 · wait 1600 ms · menu · 0 · 4 6 8 6 · * · * · * · * · * · *.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-nomatch-keys/03-nomatch2
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-nomatch-keys/03-nomatch2.png
 source-sha256: 02cdb3440549ae0ab600d15e982148f71e07d94f610d587f6ac3f3f530253bf7
 note: 0 and C in the no-match state. From the empty T9 Write messages editor: 4 6 8 6 7 · 0 · 4 6 8 6 7.

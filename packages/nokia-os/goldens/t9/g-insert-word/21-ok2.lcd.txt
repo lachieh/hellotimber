@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-insert-word/21-ok2
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-insert-word/21-ok2.png
 source-sha256: fd1fb8db31feb5ec43d56e019154a364a285560682731c03e9570f533cd77930
 note: Insert word; an exact user word second; a completion last. From the empty T9 Write messages editor: menu · down down down down · menu · 4 4 6 6 6 8 8 8 6 6 6 · wait 1600 ms · menu · record 2500 ms · 0 · 4 6 8 6 · * · * · * · * · * · * · * · 7 · menu · 4 4 4 6 6 8 6 6 6 7 7 7 7 · wait 1600 ms · menu.

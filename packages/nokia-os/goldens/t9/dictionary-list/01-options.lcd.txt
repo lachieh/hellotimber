@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/dictionary-list/01-options
-status: pending:18b
+status: asserted
 source: captures/plan18b/dictionary-list/01-options.png
 source-sha256: 5e5cf106012a38fddd0440c9c34cfd3e0ec8dcd3d55dfb38a7ab2777ef4b1fbd
 note: Options › Dictionary list: opens on English, wraps (the Cyrillic labels are UI text). From the empty T9 Write messages editor: menu.

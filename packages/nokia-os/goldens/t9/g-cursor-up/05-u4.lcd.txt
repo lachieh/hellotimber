@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-cursor-up/05-u4
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-cursor-up/05-u4.png + captures/plan18b/g-cursor-up/05-u4-a.png
 source-sha256: 055f87867048dd081c8a342f006e186ceb4bb7b6f254e9ebe99cf9bd1302078b
 note: ▲ word stops, both cursor-blink phases. From the empty T9 Write messages editor: 4 6 8 6 0 4 6 8 6 · up · up · up · up.

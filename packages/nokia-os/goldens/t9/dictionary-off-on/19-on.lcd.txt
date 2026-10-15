@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/dictionary-off-on/19-on
-status: pending:18b
+status: asserted
 source: captures/plan18b/dictionary-off-on/19-on
 source-sha256: 85a248fafe58df77dc3ed0f5b37434504c02ffc74d98982eeedd18a5d35db505
 trigger-frame: 1

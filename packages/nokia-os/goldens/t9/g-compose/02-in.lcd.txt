@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-compose/02-in
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-compose/02-in.png
 source-sha256: b5590ba3b7c83317335a94691282d7c826169980f7b35420fea72048f359bd15
 note: A four-key word key by key, 3 s with no commit, * six times through the list and the wrap. From the empty T9 Write messages editor: 4 · 6.

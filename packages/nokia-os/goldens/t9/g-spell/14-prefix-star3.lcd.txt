@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-spell/14-prefix-star3
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-spell/14-prefix-star3.png
 source-sha256: c5841876d3374c3ee23000982b327df3cff09ca897bc3aac39c61d377b3f488f
 note: Spell from no-match, typing, OK; the user word then matches and completes. From the empty T9 Write messages editor: 4 6 8 6 7 · menu · 4 4 4 6 6 8 6 6 6 7 7 7 7 · wait 1600 ms · menu · record 2500 ms · 0 · 4 6 8 6 7 · * · 0 · 4 6 8 6 · * · * · *.

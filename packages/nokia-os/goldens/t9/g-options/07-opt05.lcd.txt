@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-options/07-opt05
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-options/07-opt05.png
 source-sha256: 72af8e0057f8afc367f76cc68e8059f1d577b959004cd0759890c15d2efc61cf
 note: Options with a composing word (13 entries, Matches). From the empty T9 Write messages editor: 4 6 8 6 · menu · down · down · down · down · down.

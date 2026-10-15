@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-case/05-hash2
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-case/05-hash2.png
 source-sha256: e81ac570cd028be23a03f61f947780d1a4c0a992fc80d343c9174826e3388939
 note: # at word starts, held # number mode and back. From the empty T9 Write messages editor: 4 6 8 6 0 · 4 6 8 6 0 · # · 4 6 8 6 0 · #.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/options-empty/12-opt11
-status: pending:18b
+status: asserted
 source: captures/plan18b/options-empty/12-opt11.png
 source-sha256: d5973735aa7233d27f352911786911c93856b2b1b81b73a915ea19b90792c482
 note: Options of the empty T9 editor (12 entries). From the empty T9 Write messages editor: menu · down · down · down · down · down · down · down · down · down · down · down.

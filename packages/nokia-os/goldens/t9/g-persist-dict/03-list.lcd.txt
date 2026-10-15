@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/g-persist-dict/03-list
-status: pending:18b
+status: asserted
 source: captures/plan18b/g-persist-dict/03-list.png
 source-sha256: 704b3beeee37a5cd7a08b46ababb99bf3d3a71e16654eed5a9837fc853f586e1
 note: Dictionary off survives save flash and a cold boot. From the empty T9 Write messages editor: menu · down down down down down down down · menu.

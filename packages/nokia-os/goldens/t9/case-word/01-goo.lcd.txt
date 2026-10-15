@@ -1,6 +1,6 @@
 lcd-golden 1
 id: t9/case-word/01-goo
-status: pending:18b
+status: asserted
 source: captures/plan18b/case-word/01-goo.png
 source-sha256: bd9fc29c65fd7e3c7b671ef64fee55b59daeb3f801de9dc8f470e3b07e8dd2e7
 note: # while composing. From the empty T9 Write messages editor: 4 6 6.
