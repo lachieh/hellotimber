@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/templates-list
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/templates/list
 source-sha256: 4290dc42f5db1a53d5b3ae255acd49a8c8b930274e360dda089987aa0ae78073
 note: Templates' list from the first slot, ▼ per image to the wrap.

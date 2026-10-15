@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-read-c
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/read-c
 source-sha256: 8bfa548c51c10d01f3e8a0851a7304fa8806572b18ca58b7dc61d31dd5dcc8c0
 trigger-frame: 1

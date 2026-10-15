@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/editor-smiley-list
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/insert/smiley-list
 source-sha256: 2cbf7dd63bb78051d18f2a40c31c43e14b4e75fcc11f9bac096a96f23abb59a6
 note: Insert smiley's list, ▼ to the wrap.

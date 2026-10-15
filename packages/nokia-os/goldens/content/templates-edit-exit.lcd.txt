@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/templates-edit-exit
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/templates/edit-exit
 source-sha256: 1bf5bc537d2f8d4ebd4859001faa4b6a858cb307374b0207fcd6237edc449f75
 trigger-frame: 1

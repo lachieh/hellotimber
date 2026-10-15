@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/templates-options-6-list
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/templates/options/06
 source-sha256: b83264c01b5c910b0bffbf65978a37500d911566a4034bbcf3166e941039400d
 note: Slot 6's Options, ▼ to the wrap.

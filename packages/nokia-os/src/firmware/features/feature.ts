@@ -52,8 +52,14 @@ export interface ScreenPlace {
   readonly numbering: ListNumbering;
 }
 
-/** A screen a feature implements: the first widget of the flow the node opens. */
-export type ScreenBinding = (services: StockServices, place: ScreenPlace) => () => Widget;
+/**
+ * A screen a feature implements: the first widget of the flow the node opens; undefined = no
+ * response (a leaf only: the menu stays as it was, plan 18c's virgin Templates).
+ */
+export type ScreenBinding = (
+  services: StockServices,
+  place: ScreenPlace,
+) => () => Widget | undefined;
 
 /** An entry a feature puts at the head of a submenu level (Snake II's Continue, plan 23 D10). */
 export interface LeadEntry {

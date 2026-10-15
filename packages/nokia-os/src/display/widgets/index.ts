@@ -4,6 +4,7 @@ import { placeholderFrame } from "../placeholder";
 import { paintStandby } from "../standby";
 import { paintCalculator, type CalculatorModel } from "./calculator";
 import { paintConfirm, type ConfirmModel } from "./confirm";
+import { paintContentList, type ContentListModel } from "./content-list";
 import { paintEditor, type EditorModel } from "./editor";
 import { paintGameOver, type GameOverModel } from "./game-over";
 import { paintInfoPage, type InfoPageModel } from "./info-pages";
@@ -29,6 +30,7 @@ import { paintSymbols, type SymbolsModel } from "./symbols";
 import { paintTextPage, type TextPageModel } from "./text-pages";
 
 export type { ConfirmModel } from "./confirm";
+export type { ContentListModel } from "./content-list";
 export type { EditorModel } from "./editor";
 export type { GameOverModel } from "./game-over";
 export type { InfoPageModel } from "./info-pages";
@@ -97,7 +99,8 @@ export type WidgetModel =
   | MessageListModel
   | MessagePageModel
   | StandbyFrameModel
-  | ShortcutChoiceModel;
+  | ShortcutChoiceModel
+  | ContentListModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -176,6 +179,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "shortcut-choice":
       paintShortcutChoice(fb, model, previous);
+      return;
+    case "content-list":
+      paintContentList(fb, model);
       return;
     case "standby-draw":
       paintStandby(fb, {

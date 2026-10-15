@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/templates-fill-save
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/templates/fill-save
 source-sha256: c9538eedfbcafc6071edc3c46acebfa6be6e99c463940275ae8e2ac27e67a90b
 trigger-frame: 1

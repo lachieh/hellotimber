@@ -827,11 +827,21 @@
     "frames": 1,
     "covers": [
       "2-4",
-      "2-5",
-      "2-6",
       "5-9-4",
       "12-1-2-9-4",
       "12-2-2-9-4"
+    ]
+  },
+  {
+    "id": "tree/02-messages/2-5.leaf",
+    "file": "tree/02-messages/2-5.leaf.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 1,
+    "frames": 1,
+    "covers": [
+      "2-5",
+      "2-6"
     ]
   },
   {

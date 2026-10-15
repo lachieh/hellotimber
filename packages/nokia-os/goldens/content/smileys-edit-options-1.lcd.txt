@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-edit-options-1
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/edit-options/01
 source-sha256: 17a0616c5ed83d6d640654683cb8d8a0951ed7680bc352f13a90dec5c55da823
 note: The editor's Options with text.

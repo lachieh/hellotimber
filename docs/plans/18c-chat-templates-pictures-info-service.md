@@ -697,14 +697,27 @@ resource-provider and `src/resources/index.ts` registrations (one line each).
 `tests/support/18c-content.ts` (new), the plan's acceptance file; feature and editor-option
 registration lines; delete only these nodes' owned placeholder lines.
 
-- [ ] Failing key-driven tests for virgin no-response and factory rows/Read/Edit/Erase, including
+- [x] Failing key-driven tests for virgin no-response and factory rows/Read/Edit/Erase, including
       all empty slots, list wrap, truncation and note return selection. Bind nodes 2-5/2-6.
-- [ ] Use plan 18 widgets; registered Template/Insert smiley handlers serve Write, Reply/Edit/
+- [x] Use plan 18 widgets; registered Template/Insert smiley handlers serve Write, Reply/Edit/
       Forward and Chat. Test insertion mid-text, limit handling, trailing space, cursor/counter,
-      cancellation, pending multi-tap and composed T9 state from E's captures.
-- [ ] Supply scenarios and assert `content/*` only as they pass; older leaf covers stay intact.
-- [ ] Verify package test and manual `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): implement Templates, Smileys and editor insertion`.
+      cancellation, pending multi-tap and composed T9 state from E's captures. (Not captured:
+      the limit and a composing T9 word; Reply/Edit/Forward are Write messages' editor.)
+      Deviation (owner prerequisite, plan 18 closed): `write.ts` calls `insertionList` from
+      Template and Insert smiley (two lines, no response while unprovisioned) and exports
+      `phoneNumber`, `dictionary`, `t9Context`, `standbyDraw` for the slot editor's Options.
+      Deviation (no response): a screen binding's root may be `undefined`; `StockFlowApplication`
+      then exits inside `createSession`, as `ExitApplication` does (`flow.ts`, `feature.ts`,
+      `leaves.ts`), so the virgin 2-5/2-6 leave the menu untouched (`tree/02-messages/2-5.leaf`,
+      split from 2-4's shared golden by the import, asserted).
+- [x] Supply scenarios and assert `content/*` only as they pass; older leaf covers stay intact.
+      70 asserted (`content/restore-topics` waits for Task 9); one known gap,
+      `content/restore-virgin`: the shortcut Menu 2 5 into a no-response leaf leaves the kernel
+      on the Messages level, while the firmware keeps the carousel (phone-core's shortcut).
+      Removing 2-5/2-6 from `PLACEHOLDER_OWNERS` asserted plan 16's `sound/note/2-5`, `2-6`
+      (the import regrouped two equal note recordings, `2-7-3-1-2` and `5-1-3`, into them).
+- [x] Verify package test and manual `vp check --fix`.
+- [x] Commit: `feat(nokia-os): implement Templates, Smileys and editor insertion`.
 
 ### Task 6 - Picture folder and screen-saver gallery (TDD, R gate)
 

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/templates-read-1
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/templates/read-1
 source-sha256: e4c0c0c6961989daac08b73ac9372884420b116340b4aade7f7990881948ca0e
 trigger-frame: 1

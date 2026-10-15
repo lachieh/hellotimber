@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-fill-save
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/fill-save
 source-sha256: e932f8e74b7945c7fcfaab7aaf1e6d4d382418e62b57a5fa1dac530860a3d948
 trigger-frame: 1

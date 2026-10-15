@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/editor-template-list
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/insert/template-list
 source-sha256: 1e308ca012f536938236aeaaaa93ab248223c0a6b3f96a292b56eb3ddfda4809
 note: Template's list, ▼ to the wrap.

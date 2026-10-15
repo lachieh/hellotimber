@@ -25,6 +25,7 @@ import {
   EDITOR_OPTIONS,
   T9_EDITOR_OPTIONS,
 } from "./bindings";
+import { insertionList } from "../content/insertion";
 import type { StockSms } from "./network";
 
 /** An SMS holds 459 characters in three parts (`text/counter` 459: `0/3`). */
@@ -115,7 +116,7 @@ function send(
 }
 
 /** The number prompt of Send and of Send by set › Numeric (`text/number`). */
-function phoneNumber(
+export function phoneNumber(
   services: StockServices,
   text: string,
   number: string,
@@ -148,6 +149,11 @@ function set2Centre(services: StockServices, text: string, number: string, above
   });
 }
 
+/** `widget` in place of the top screen; nothing when there is none (no response). */
+function replaceWith(flow: Flow, widget: Widget | undefined): void {
+  if (widget !== undefined) flow.replace(widget);
+}
+
 /** A choice another plan implements, inside the flow (C goes back). */
 function placeholder(label: string): Widget {
   return {
@@ -167,7 +173,7 @@ const ENGLISH = DICTIONARY_LABELS.indexOf("English");
  * said none), then the editor in its new mode. The Cyrillic dictionaries are plan 26's
  * placeholders, and English is the host's (`config.t9`, D5) without a T9 dictionary.
  */
-function dictionary(services: StockServices): Widget {
+export function dictionary(services: StockServices): Widget {
   const { settings, noteSound } = services;
   const notes = [
     { lines: ["T9", "dictionary", "deactivated"], timeline: "t9-dictionary-deactivated" },
@@ -197,7 +203,7 @@ function dictionary(services: StockServices): Widget {
 }
 
 /** The editor's T9 context: the host's English dictionary while Dictionary is English (18b). */
-function t9Context(services: StockServices): T9Context | undefined {
+export function t9Context(services: StockServices): T9Context | undefined {
   const english = services.t9.english;
   if (english === undefined || services.settings.choice(DICTIONARY_KEY) !== ENGLISH) {
     return undefined;
@@ -336,7 +342,7 @@ function save(services: StockServices, flow: Flow, text: string, number?: string
 }
 
 /** Standby's first draw (`sms/exit` frame 1): no operator, the host's clock. */
-function standbyDraw({ ports }: StockServices): WidgetModel {
+export function standbyDraw({ ports }: StockServices): WidgetModel {
   const clock = ports.clock?.();
   return { kind: "standby-draw", ...(clock === undefined ? {} : { clock }) };
 }
@@ -353,6 +359,7 @@ function editorOptions(services: StockServices, entry: EditorControl, draft: Sms
       : T9_EDITOR_OPTIONS.filter((option) => !option.composing || t9.composing).map(
           (option) => option.label,
         );
+  const number = (label: string) => labels.indexOf(label) + 1;
   const actions: Readonly<Record<string, (flow: Flow) => void>> = {
     Send: (flow) => flow.replace(phoneNumber(services, entry.text, draft.number ?? "", 1, false)),
     "Send to many": (flow) =>
@@ -367,9 +374,12 @@ function editorOptions(services: StockServices, entry: EditorControl, draft: Sms
           ),
         ),
       ),
-    // No response in the captured state (`sms/template`, `sms/insert-smiley`).
-    Template: () => {},
-    "Insert smiley": () => {},
+    // Plan 18c: the lists Restore factory settings provides; no response on the virgin EEPROM
+    // (`sms/template`, `sms/insert-smiley`).
+    Template: (flow) =>
+      replaceWith(flow, insertionList(services, "templates", number("Template"), entry)),
+    "Insert smiley": (flow) =>
+      replaceWith(flow, insertionList(services, "smileys", number("Insert smiley"), entry)),
     Matches: (flow) => flow.push(matches(t9!)),
     "Insert word": (flow) => flow.replace(insertWord(services, entry, false)),
     "Insert number": (flow) => flow.replace(insertNumber(entry)),

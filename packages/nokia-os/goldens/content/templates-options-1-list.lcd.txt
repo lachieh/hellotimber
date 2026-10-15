@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/templates-options-1-list
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/templates/options/01
 source-sha256: eb560274ea6174ff76e65eeb27b3ffcf6e27a1d75a03c4910d5d530952c48f98
 note: Slot 1's Options, ▼ to the wrap.

@@ -772,14 +772,14 @@
   {
     "id": "sound/note/2-5",
     "file": "sound/note/2-5.sound.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/note/2-6",
     "file": "sound/note/2-6.sound.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
@@ -807,13 +807,6 @@
   {
     "id": "sound/note/2-7-3-1-1",
     "file": "sound/note/2-7-3-1-1.sound.txt",
-    "status": "asserted",
-    "kind": "sound",
-    "events": 2
-  },
-  {
-    "id": "sound/note/2-7-3-1-2",
-    "file": "sound/note/2-7-3-1-2.sound.txt",
     "status": "asserted",
     "kind": "sound",
     "events": 2
@@ -875,13 +868,6 @@
     "events": 2
   },
   {
-    "id": "sound/note/5-1-3",
-    "file": "sound/note/5-1-3.sound.txt",
-    "status": "asserted",
-    "kind": "sound",
-    "events": 2
-  },
-  {
     "id": "sound/note/5-1-4",
     "file": "sound/note/5-1-4.sound.txt",
     "status": "asserted",
@@ -891,6 +877,13 @@
   {
     "id": "sound/note/5-1-42",
     "file": "sound/note/5-1-42.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/note/5-1-6",
+    "file": "sound/note/5-1-6.sound.txt",
     "status": "asserted",
     "kind": "sound",
     "events": 2

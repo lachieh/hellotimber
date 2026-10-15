@@ -183,7 +183,7 @@ export class LeafBinder {
     number: string,
     screen: StockScreenSpec | StockResult,
     key: string,
-  ): (() => Widget) | undefined {
+  ): (() => Widget | undefined) | undefined {
     const binding = SCREENS[number];
     if (binding === undefined) return undefined;
     const place: ScreenPlace = { number, screen, key, numbering: optionListNumbering(number) };
@@ -418,7 +418,12 @@ export class LeafBinder {
     if (owner !== undefined) return (flow) => flow.replace(placeholderWidget(option.label));
     const result: StockResult = option.result;
     const bound = this.#bound(number, result, key);
-    if (bound !== undefined) return (flow) => flow.replace(bound());
+    if (bound !== undefined) {
+      return (flow) => {
+        const widget = bound();
+        if (widget !== undefined) flow.replace(widget);
+      };
+    }
     if (!("lines" in result)) {
       if (result.kind === "returns-immediately") {
         return (flow) => {
@@ -467,7 +472,11 @@ export class LeafBinder {
   }
 
   /** What a page's soft key opens; undefined = back (`Back` pages). */
-  #pageResult(number: string, page: StockPage, pageKey: string): (() => Widget) | undefined {
+  #pageResult(
+    number: string,
+    page: StockPage,
+    pageKey: string,
+  ): (() => Widget | undefined) | undefined {
     const result = page.result;
     if (result === undefined) return undefined;
     const bound = this.#bound(number, result, pageKey);

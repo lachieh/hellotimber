@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-filled
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/fill-typed.png + captures/6.39/plan18c/smileys/filled/list.png + captures/6.39/plan18c/smileys/filled/read.png + captures/6.39/plan18c/smileys/filled/erased-list.png
 source-sha256: 7a30806b2392e3acbaa76c112a4351c621027b4d846a26c661312445abaae69b
 note: Slot 6 filled and saved: the list and Read; Erase empties it again.

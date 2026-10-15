@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-edit-exit
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/edit-exit
 source-sha256: 9c99101ef6fcbd17d3e4a8c5be1ef332262498153dd2cac9ab0e02a81794ec9e
 trigger-frame: 1

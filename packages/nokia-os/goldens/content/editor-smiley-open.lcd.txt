@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/editor-smiley-open
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/insert/smiley-open
 source-sha256: 98298118083bd1e5ccfd082356691df0133ceb68cefd2b33f7215c305310e384
 trigger-frame: 1

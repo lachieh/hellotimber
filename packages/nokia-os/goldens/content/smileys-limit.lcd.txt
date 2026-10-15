@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-limit
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/limit/full.png + captures/6.39/plan18c/smileys/limit/extra.png
 source-sha256: a08bdd474c6b086e2eb9007b46c1232f71d21db29509e5036ba86c65aae209f0
 note: Slot 7's editor typed to its limit, then one key more.

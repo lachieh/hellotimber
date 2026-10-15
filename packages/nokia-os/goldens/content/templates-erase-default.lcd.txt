@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/templates-erase-default
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/templates/erase-default
 source-sha256: 644c2beb66ac08b50ceeaab9bbab2ef1b4ef84f984cc04e436c0e61beaaf5632
 trigger-frame: 1

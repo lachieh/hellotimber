@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-read
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/read/01.png + captures/6.39/plan18c/smileys/read/01-down.png + captures/6.39/plan18c/smileys/read/02.png + captures/6.39/plan18c/smileys/read/02-down.png + captures/6.39/plan18c/smileys/read/03.png + captures/6.39/plan18c/smileys/read/03-down.png + captures/6.39/plan18c/smileys/read/04.png + captures/6.39/plan18c/smileys/read/04-down.png + captures/6.39/plan18c/smileys/read/05.png + captures/6.39/plan18c/smileys/read/05-down.png + captures/6.39/plan18c/smileys/read/06.png + captures/6.39/plan18c/smileys/read/06-down.png + captures/6.39/plan18c/smileys/read/07.png + captures/6.39/plan18c/smileys/read/07-down.png + captures/6.39/plan18c/smileys/read/08.png + captures/6.39/plan18c/smileys/read/08-down.png
 source-sha256: 17fa1ec70ef2e6569fc8460d44100fe8c2d97002513a1229bb64057fd4fb6255
 note: Read of each slot (▼ k-1 from the list), then ▼ (nothing moves).

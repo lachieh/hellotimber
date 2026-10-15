@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/templates-erase-default-read
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/templates/erase-default-read.png
 source-sha256: 7e10903b2f26f62c1aaf234f40d06e66af180a36357f077c1972307309baa6ea
 note: Slot 2 read after its Erase: the default kept.

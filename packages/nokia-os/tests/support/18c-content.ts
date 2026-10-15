@@ -12,6 +12,7 @@ import { DICTIONARY_KEY } from "../../src/messages/bindings";
 import { createSyntheticNetwork, type StockStorage, type SyntheticNetwork } from "../../src/index";
 import { GOLDENS } from "./acceptance.ts";
 import { captureStamp, SETUP_MS } from "./messages.ts";
+import { PROBE_TOLERANCE_MS } from "./golden.ts";
 import { replayScenario, type ReplayContext, type TimelineOptions } from "./replay.ts";
 import { standbyRig, type Rig } from "./rig.ts";
 
@@ -66,8 +67,24 @@ export function contentScenario(options: TimelineOptions = {}): (id: string) => 
   return (id) => replayScenario(CONTENT_REPLAY, id, options);
 }
 
+/**
+ * A note whose timeline another recording of it gave (`template-saved` is `content/templates-save`,
+ * `template-erased` `content/templates-erase-default`, ...): the firmware's steps drift by up to
+ * PROBE_TOLERANCE_MS between recordings (plan 14 D8).
+ */
+const OTHER_RECORDING: TimelineOptions = { toleranceMs: PROBE_TOLERANCE_MS };
+
 /** Scenario options of the goldens that are not the default comparison, by id. */
-export const CONTENT_OPTIONS: Readonly<Record<string, TimelineOptions>> = {};
+export const CONTENT_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
+  "content/templates-fill-save": OTHER_RECORDING,
+  "content/smileys-fill-save": OTHER_RECORDING,
+  "content/templates-erase-edited": OTHER_RECORDING,
+  "content/smileys-erase-edited": OTHER_RECORDING,
+  "content/smileys-erase-user": OTHER_RECORDING,
+  // The bin's lid steps run 6-29 ms later here than in `content/templates-erase-default` (its
+  // fourth step 29 ms): the widest drift between the three Erase recordings.
+  "content/templates-erase-user": { toleranceMs: 30 },
+};
 
 /** Every asserted plan 18c golden's scenario: its capture replayed. */
 export const CONTENT_SCENARIOS: Readonly<Record<string, (id: string) => void>> = Object.fromEntries(
@@ -80,4 +97,10 @@ export const CONTENT_SCENARIOS: Readonly<Record<string, (id: string) => void>> =
 export const CONTENT_COVERS: Readonly<Record<string, readonly string[]>> = {};
 
 /** Asserted plan 18c goldens whose scenario cannot pass, with the reason. */
-export const CONTENT_KNOWN_GAPS: Readonly<Record<string, string>> = {};
+export const CONTENT_KNOWN_GAPS: Readonly<Record<string, string>> = {
+  "content/restore-virgin":
+    "Menu 2 5 (and 2 6) on the virgin EEPROM: the firmware opens nothing and the shortcut " +
+    "window's Messages carousel stays; nokia-os's kernel enters the Messages level before it " +
+    "opens the leaf (phone-core's shortcut), so the leaf's no response leaves that level on " +
+    "screen (Select on Templates in the level, `tree/02-messages/2-5.leaf`, matches)",
+};

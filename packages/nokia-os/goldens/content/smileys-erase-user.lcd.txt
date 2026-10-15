@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-erase-user
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/erase-user
 source-sha256: e52f9ee873faf243a2f0b8f2940089989522b2366d388ad67de52702ee8b2ec9
 trigger-frame: 1

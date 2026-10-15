@@ -477,7 +477,15 @@ export const PENDING: Readonly<Record<string, string>> = {};
  * The id prefixes whose scenarios pass (tests/support/18c-content.ts): asserted. The rest stay
  * `pending:18c` until their task supplies the scenario (Task 2).
  */
-export const ASSERTED: readonly string[] = [];
+export const ASSERTED: readonly string[] = [
+  "content/templates",
+  "content/smileys",
+  "content/editor",
+  "content/restore-virgin",
+  "content/restore-templates",
+  "content/restore-smileys",
+  "content/restore-edited",
+];
 
 /** The status of golden `id`: pending on the plan PENDING names, asserted once promoted. */
 export function statusOf(id: string): GoldenStatus {

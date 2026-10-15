@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/templates-edit-options-1
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/templates/edit-options/01
 source-sha256: 47b4c3d590637d1b85796353023c2e13c7a20a17ef1de7ff07236501b919b7bb
 note: The editor's Options with text.

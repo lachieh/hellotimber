@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-erase-default
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/erase-default
 source-sha256: 4aff64a8d7d01a08a7691752ba58cd33dd0b962f1216f2163b1b7b14d7650550
 trigger-frame: 1

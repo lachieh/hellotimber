@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-edit-options-empty
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/edit-options-empty
 source-sha256: 7c21c4a8c862e04abb23e9cab09e4a41eb69923ef66ffcae7bdf6e5f1e28c141
 note: The empty editor's Options (slot 6 opened): no Save while the text is empty.

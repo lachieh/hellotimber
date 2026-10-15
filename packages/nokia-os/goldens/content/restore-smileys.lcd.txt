@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/restore-smileys
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/restore/smileys
 source-sha256: e2109219dd0b2309cd9e0bfb0ac599a9574944981d5e3b73eb8c5b7e56744549
 note: After Restore factory settings: Smileys.

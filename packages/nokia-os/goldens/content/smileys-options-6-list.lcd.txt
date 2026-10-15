@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-options-6-list
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/options/06
 source-sha256: cd0edc4ffa63b9ce54266b6b3739bb034eca93589c42098756bbace054071549
 note: Slot 6's Options, ▼ to the wrap.

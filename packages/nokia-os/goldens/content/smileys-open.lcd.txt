@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-open
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/open
 source-sha256: e1e662660780e5af3f7068a48feff144bdb68d53564c3df6e30ed8f402e663d8
 trigger-frame: 1

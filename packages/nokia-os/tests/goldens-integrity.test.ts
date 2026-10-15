@@ -294,11 +294,14 @@ describe("plan 18 goldens", () => {
   });
 
   it("re-owns Chat, the content leaves and their goldens to plan 18c (D1)", () => {
-    for (const number of ["2-4", "2-5", "2-6", "2-8-4-1-**", "2-10", "3", "5-9-4", "12-*-2-9-4"])
+    for (const number of ["2-4", "2-8-4-1-**", "2-10", "3", "5-9-4", "12-*-2-9-4"])
       expect(PLACEHOLDER_OWNERS[number], number).toBe("18c");
     const status = new Map(index.map((entry) => [entry.id, entry.status]));
     expect(status.get("menu/03-chat.sub")).toBe("pending:18c");
     expect(status.get("tree/02-messages/2-4.leaf")).toBe("pending:18c");
+    // Plan 18c Task 5: Templates and Smileys (their virgin no response asserted).
+    for (const number of ["2-5", "2-6"]) expect(PLACEHOLDER_OWNERS[number], number).toBeUndefined();
+    expect(status.get("tree/02-messages/2-5.leaf")).toBe("asserted");
   });
 
   it("lists every glyph sheet's characters in its note, one per image", () => {

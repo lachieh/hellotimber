@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/templates-erase-user
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/templates/erase-user
 source-sha256: 307cdfe7345880766cc69b52ee254405f380b5e9427b71bc7194735aebe58009
 trigger-frame: 1

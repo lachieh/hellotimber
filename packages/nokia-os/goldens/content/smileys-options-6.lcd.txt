@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/smileys-options-6
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/smileys/options-6
 source-sha256: 8994f0fa2d0d3ccb49e2c68ce3b98d89a160814a04496c2b8c17f8d53d3a2499
 trigger-frame: 1

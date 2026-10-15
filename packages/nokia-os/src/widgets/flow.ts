@@ -65,19 +65,29 @@ const NO_INDICATOR: MenuIndicator = { segments: [], awaitingNext: false };
 /**
  * A stock leaf: a flow of widgets starting with `root()`, built afresh for every session. It
  * renders `custom` frames, repainted only when the top widget's model changes; the painter sees
- * the frame shown before (a widget's partial draws start from it, D8).
+ * the frame shown before (a widget's partial draws start from it, D8). A root of `undefined` is
+ * no response (plan 18c: the virgin Templates): the session exits at once, nothing drawn.
  */
 export class StockFlowApplication extends PhoneApplication {
-  readonly #root: () => Widget;
+  readonly #root: () => Widget | undefined;
 
-  constructor(id: string, root: () => Widget) {
+  constructor(id: string, root: () => Widget | undefined) {
     super(id);
     this.#root = root;
     Object.freeze(this);
   }
 
   createSession(context: ApplicationContext): PhoneApplicationSession {
-    return new FlowSession(this.id, context, this.#root());
+    const root = this.#root();
+    if (root !== undefined) return new FlowSession(this.id, context, root);
+    context.exit();
+    return {
+      onKey() {},
+      tick() {},
+      render() {
+        throw new Error("A leaf with no response has nothing to show.");
+      },
+    };
   }
 }
 

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/editor-smiley-placement
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/insert/smiley-after-text.png + captures/6.39/plan18c/insert/smiley-mid-text.png + captures/6.39/plan18c/insert/smiley-pending.png
 source-sha256: c89bf0ff1591eb1f310123ba4d80f5fcd0bdbffa86dcb92ce439338a361bcd16
 note: Slot 1 inserted after `hi`, between h and i, and after a pending A.

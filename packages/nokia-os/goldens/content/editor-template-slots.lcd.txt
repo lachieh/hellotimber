@@ -1,6 +1,6 @@
 lcd-golden 1
 id: content/editor-template-slots
-status: pending:18c
+status: asserted
 source: captures/6.39/plan18c/insert/template/01.png + captures/6.39/plan18c/insert/template/02.png + captures/6.39/plan18c/insert/template/03.png + captures/6.39/plan18c/insert/template/04.png + captures/6.39/plan18c/insert/template/05.png + captures/6.39/plan18c/insert/template/06.png + captures/6.39/plan18c/insert/template/07.png + captures/6.39/plan18c/insert/template/08.png
 source-sha256: 13f552bdb23d4612dde08b7d9f2c190420d1ff17da4a2ce1dbd3cc156b6bfad5
 note: Each slot inserted into the empty editor (the counter: its length; (empty) slots: nothing).
