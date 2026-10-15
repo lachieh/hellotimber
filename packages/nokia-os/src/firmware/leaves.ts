@@ -22,6 +22,7 @@ import { progress } from "../widgets/progress";
 import { promptFromLayout, type PromptLayout } from "../widgets/prompt";
 import { splashIntro } from "../widgets/splash";
 import { textPages } from "../widgets/text-pages";
+import { composerOf } from "./features/composer";
 import type { LeadEntry, ScreenPlace, StockServices } from "./features/feature";
 import type {
   StockLeafScreen,
@@ -184,6 +185,22 @@ export class LeafBinder {
   /** The reader of the level at `number`'s children's labels, if a feature has one (plan 27). */
   levelLabel(number: string): ((order: number) => string | undefined) | undefined {
     return LEVEL_LABELS[number]?.(this.#services);
+  }
+
+  /**
+   * Option `index` of setting `key` where it is not the tree's label: a ringing-tone list's
+   * saved Composer tone (options 35-41, plan 27 D8).
+   */
+  optionLabel(key: string, index: number): string | undefined {
+    if (!key.endsWith("/ringing-tone")) return undefined;
+    return composerOf(this.#services).ringingToneLabel(index);
+  }
+
+  /** A page's value where an option's label is not the tree's (see `optionLabel`). */
+  pageValue(key: string): string | undefined {
+    if (!key.endsWith("/ringing-tone")) return undefined;
+    const chosen = this.#services.settings.choice(key);
+    return chosen === null ? undefined : this.optionLabel(key, chosen);
   }
 
   /** A game level's splash intro (D12). */
@@ -381,7 +398,8 @@ export class LeafBinder {
     const hooks = optionListHooks(key, this.#services);
     return () =>
       new OptionListWidget({
-        labels,
+        // Plan 27 (D8): a ringing-tone list names the Composer's saved tones as it opens.
+        labels: labels.map((label, i) => this.optionLabel(key, i) ?? label),
         softkey: spec.softkey,
         opening: settings.choice(key),
         numbering,

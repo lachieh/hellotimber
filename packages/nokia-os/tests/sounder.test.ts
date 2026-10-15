@@ -5,10 +5,10 @@ import type { SoundGolden } from "../scripts/sound-format.ts";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import { SoundSequencer } from "../src/sound/sequencer";
-import { C_HOLD_BEEP_MS, StockSounder } from "../src/sound/sounder";
+import { C_HOLD_BEEP_MS, StockSounder, type UserRingingTones } from "../src/sound/sounder";
 import { LEVEL_REPEAT } from "../src/widgets/level-bar";
 import type { StockSoundEvent } from "../src/index";
-import { KEYPAD_BEEP } from "../src/resources";
+import { KEYPAD_BEEP, RINGING_TONES } from "../src/resources";
 import { seededStorage } from "./support/rig.ts";
 import { soundRig } from "./support/sound-scenarios.ts";
 import { expectSoundTimeline, type RecordedSound } from "./support/sound.ts";
@@ -222,12 +222,17 @@ describe("keypad tones (D8)", () => {
 });
 
 describe("plan 27's sounder hooks (D10)", () => {
-  function sounderRig() {
+  function sounderRig(userTones?: UserRingingTones) {
     const events: StockSoundEvent[] = [];
     const sequencer = new SoundSequencer((event) => events.push(event));
     const settings = createStockSettings(new StockEeprom(seededStorage({ factory: true })));
     let now = 0;
-    const sounder = new StockSounder(sequencer, settings, () => now);
+    const sounder = new StockSounder(
+      sequencer,
+      settings,
+      () => now,
+      userTones === undefined ? {} : { userTones },
+    );
     const at = (ms: number) => {
       now = ms;
       sounder.tick();
@@ -235,6 +240,36 @@ describe("plan 27's sounder hooks (D10)", () => {
     };
     return { events, sounder, at };
   }
+
+  it("(a) user tones fill the Ringing tone options the built-in tones lack, with their delay", () => {
+    const tone = {
+      ...RINGING_TONES[0]!,
+      slug: "user",
+      program: { id: "user", steps: [{ ms: 300, buzzer: { hz: 523, volume: 11 } }] },
+      firstMarkStep: 1,
+      cycleMs: 300,
+      level5At: { note: 0, offsetMs: 0 },
+      ascendingAt: [],
+      previewDelayMs: 1013,
+    };
+    const asked: number[] = [];
+    const rig = sounderRig((index) => {
+      asked.push(index);
+      return index === 35 ? tone : undefined;
+    });
+    rig.sounder.preview("ringing-tone", 35, "tones");
+    rig.at(2000);
+    expect(rig.events.filter((e) => e.output === "buzzer")).toEqual([
+      { output: "buzzer", atMs: 1013, hz: 523, volume: expect.any(Number) },
+      { output: "buzzer", atMs: 1313, hz: null },
+    ]);
+    // a built-in tone is never asked for; an empty user slot stays silent
+    rig.sounder.preview("ringing-tone", 12, "tones");
+    rig.sounder.preview("ringing-tone", 36, "tones");
+    rig.at(4000);
+    expect(asked).toEqual([35, 36]);
+    expect(rig.events.filter((e) => e.output === "buzzer" && e.atMs > 2000)).toEqual([]);
+  });
 
   it("(c) a key silenced at its key-down beeps nothing, also at its long press", () => {
     const silenced = sounderRig();

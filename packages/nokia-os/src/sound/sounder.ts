@@ -56,6 +56,14 @@ const VIBRATING_ON = 0;
 
 type RingingTone = (typeof RINGING_TONES)[number];
 
+/**
+ * Plan 27 (D8, D10 a): the Ringing tone options `RINGING_TONES` lacks (the Composer's saved tones,
+ * 35-41), each with its own preview delay; undefined: an `(empty)` slot.
+ */
+export type UserRingingTones = (
+  index: number,
+) => (RingingTone & { readonly previewDelayMs?: number }) | undefined;
+
 /** The Ringing volume level (1-5) from `atMs` into a program on. */
 interface LevelStep {
   readonly atMs: number;
@@ -172,10 +180,18 @@ export class StockSounder implements StockCueSink {
   /** The Keypad tones option the next key-down beeps at, instead of the stored one. */
   #keyLevel: { readonly option: number | null } | undefined;
 
-  constructor(sequencer: SoundSequencer, settings: StockSettings, now: () => number) {
+  readonly #userTones: UserRingingTones | undefined;
+
+  constructor(
+    sequencer: SoundSequencer,
+    settings: StockSettings,
+    now: () => number,
+    options: { readonly userTones?: UserRingingTones } = {},
+  ) {
     this.#sequencer = sequencer;
     this.#settings = settings;
     this.#now = now;
+    this.#userTones = options.userTones;
   }
 
   /**
@@ -264,10 +280,10 @@ export class StockSounder implements StockCueSink {
       );
       return;
     }
-    const at = key + PREVIEW_DELAY_MS;
     if (list === "ringing-tone") {
-      const tone = RINGING_TONES[index];
+      const tone = this.#toneAt(index);
       if (tone === undefined) return; // an `(empty)` slot
+      const at = key + (tone.previewDelayMs ?? PREVIEW_DELAY_MS);
       this.#preview = this.#ringing(tone, prefix, this.#level(prefix), at, this.#vibrates());
       return;
     }
@@ -278,7 +294,7 @@ export class StockSounder implements StockCueSink {
       tone,
       prefix,
       index + 1,
-      at,
+      key + (tone.previewDelayMs ?? PREVIEW_DELAY_MS),
       this.#vibrates(),
       tone.firstMarkStep,
     );
@@ -390,10 +406,15 @@ export class StockSounder implements StockCueSink {
     return index === null ? null : index + 1;
   }
 
-  /** The profile's stored ringing tone, if one is set and built in. */
-  #tone(prefix: string): RingingTone | undefined {
+  /** The profile's stored ringing tone, if one is set (and built in or saved). */
+  #tone(prefix: string): (RingingTone & { readonly previewDelayMs?: number }) | undefined {
     const index = this.#settings.choice(`${prefix}/ringing-tone`);
-    return index === null ? undefined : RINGING_TONES[index];
+    return index === null ? undefined : this.#toneAt(index);
+  }
+
+  /** Ringing tone option `index`: a built-in tone, else a saved one (plan 27 D8). */
+  #toneAt(index: number): (RingingTone & { readonly previewDelayMs?: number }) | undefined {
+    return RINGING_TONES[index] ?? this.#userTones?.(index);
   }
 
   /**

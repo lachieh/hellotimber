@@ -1,9 +1,21 @@
-// Plan 27's resource evidence (plan 29 registration): the editor's three-note icon and the
-// Composer's named notes. The notation's glyphs (`#`, `.`, `-` and the small digits) are already in
-// the small face from plans 14 and 18, so no text run is needed.
+// Plan 27's resource evidence (plan 29 registration): the editor's three-note icon, the thin `C`
+// of a saved tone's page value and the Composer's named notes. The notation's glyphs (`#`, `.`,
+// `-` and the small digits) are already in the small face from plans 14 and 18.
 import type { ResourceDeclarations } from "../resource-declarations.ts";
 
 export const resources: ResourceDeclarations = {
+  textRuns: {
+    // OK on slot 3's entry: the Ringing tone page shows its name `C`, right-aligned in the thin
+    // face at top 29 (`ringing/choose` e: ink x 73..76).
+    "composer/ringing-choose": {
+      e: [{ font: "thin", text: "C", top: 29, left: 68, right: 77 }],
+    },
+  },
+  glyphOverrides: [
+    // The page value's `C` is only drawn alone and right-aligned: its advance is the thin face's
+    // four ink columns and a blank one, as `G` (UNVERIFIED inside text).
+    { kind: "advance", font: "thin", char: "C", advance: 5 },
+  ],
   spriteBatches: [
     {
       order: 270,

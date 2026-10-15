@@ -96,7 +96,9 @@ plays the tone once and, with Vibrating alert On, runs the vibrator from its sta
 four quarter-note values of the tone, until its end. Ring once previews, Beep once and Off are
 silent. The Ringing volume list plays the stored saved tone for ≈5.3 s. Level 5's jump and
 Ascending's steps follow a free-running timer, not the tone (UNVERIFIED as a rule: nokia-os steps
-3.9 s from the tone's start). Slots, names and tempi survive a power cycle; Restore factory
+3.9 s from the tone's start). At 225 BPM a preview holds each quarter 33 timer units (255.6 ms)
+where Play holds 32 (one tone captured, slot 4: UNVERIFIED as a rule; nokia-os plays Play's
+periods). Slots, names and tempi survive a power cycle; Restore factory
 settings empties the slots and resets the ringing tone to `Nokia tune`.
 
 ## Artefacts

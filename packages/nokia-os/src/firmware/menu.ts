@@ -125,6 +125,7 @@ function entryOf(
     ...(spec.presentation === "pages"
       ? {
           detail: (child: MenuEntry) =>
+            b.leaves.pageValue(`${key}/${child.slug.value}`) ??
             pageDetail(`${key}/${child.slug.value}`, b.ports, b.settings),
         }
       : {}),

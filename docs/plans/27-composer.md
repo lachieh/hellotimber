@@ -15,7 +15,7 @@ before Task 2; if it has not, stop and report.
 "Plan 16 supplementary captures") and plans 13-16 and 18 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan27/`. The planning probes in `$REF/captures/scratch-plan27/`
 (`NOTES.md` lists them) are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-9 done).
+**Status:** in progress (Tasks 0-10 done).
 
 ## Goal
 
@@ -962,16 +962,37 @@ draws the large face only, a known gap for that plan's prompt.
 the page detail (1 line), `src/sound/sounder.ts` (D10 a), `tests/composer-ringing.test.ts` (new),
 `tests/sounder.test.ts` (the hook).
 
-- [ ] Ringing tone lists (Tones and every Personalise) label entries 36-42 with `ringingToneLabel`
+- [x] Ringing tone lists (Tones and every Personalise) label entries 36-42 with `ringingToneLabel`
       when they open; the page value of a stored saved tone is its name.
-- [ ] The sounder's `userTones` resolves indices 35-41 through `StockComposer.userRingingTone`;
+- [x] The sounder's `userTones` resolves indices 35-41 through `StockComposer.userRingingTone`;
       previews in both lists, the Ringing volume list and `ring()` (one test, plan 22's call) play
       it with plan 16's delay, gating, volume and vibrator rules and D9's preview rule; empty slots
       stay silent (`sound/ringing-tone/empty` still passes).
-- [ ] TDD through keys against `composer/ringing-tone-*`, `sound/composer/preview-*` and
+- [x] TDD through keys against `composer/ringing-tone-*`, `sound/composer/preview-*` and
       `volume-list-*`; plan 16's preview goldens unchanged.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): Composer tones in the Ringing tone lists`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): Composer tones in the Ringing tone lists`.
+
+**Task 10 completion.** `LeafBinder.optionLabel`/`pageValue` (leaves.ts) name options 35-41 of
+every `*/ringing-tone` list from `StockComposer.ringingToneLabel` as the list opens, and the page
+detail reads `pageValue` first (menu.ts, one line). The sounder's `userTones` (D10 a, a constructor
+option) fills the options `RINGING_TONES` lacks, each with its `previewDelayMs`; `createStockPhone`
+passes the phone's `StockComposer`. `tests/composer-ringing.test.ts`: the Tones, General and
+Silent lists walked past entries 34-43 (30 stills), OK on slot 3 (`ringing/choose` timeline, the
+page, the Tones page, the list opening on it), an overwritten slot's name, 36 slot previews in
+every alert type and level, both Personalise previews, four Ringing volume previews, an empty
+slot's silence and `ring()` repeating a saved tone; `tests/sounder.test.ts` pins the hook. Plan
+16's sound goldens unchanged (full suite 4873 passed).
+
+Deviation (shared file): `src/firmware/phone.ts` gains the `userTones` wiring (the sounder is built
+there, before any feature binds); the thin face gains `C` (a text run on `composer/ringing-choose`
+and an advance override in `scripts/resource-inputs/27-composer.ts`, regenerated).
+
+Deviation (Task 10 found): the `ringing-all` slot 3 was saved at 40 BPM (a new tone starts at the
+last tempo set, slot 2's). At 225 BPM a preview holds each quarter 33 timer units (255.6 ms) where
+Play holds 32 (`sound/composer/tempo-225`): slot 4's eight sounding previews are known gaps (one
+225 BPM tone was captured, so no rule). Level 5 and Ascending of slots 2, 3 and 7 and
+`preview-volume-5` miss D9's nearest rule: known gaps.
 
 ### Task 11 - Composer sounds (TDD against sound goldens)
 
