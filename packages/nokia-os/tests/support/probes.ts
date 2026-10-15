@@ -102,16 +102,31 @@ export type Later =
 
 /**
  * A timeline probe from `rig`: frame 0 must be on screen, then the trigger key and the later
- * keys; the recording runs until the golden's last row has been held as long as it was.
+ * keys; the recording runs until the golden's last row has been held as long as it was. With
+ * `triggerRow` the trigger is matched to that row instead of the golden's trigger frame, from a
+ * rig already showing the row before it, and the rows before it are not compared (a probe whose
+ * first frames another scenario asserts or a known gap covers). With `lastRow` the comparison
+ * ends there, that row held at least as long as it was (the rig then shows it).
  */
 export function timeline(
   id: string,
   rig: Rig,
   trigger: PhoneKey,
   later: readonly Later[] = [],
-  { toleranceMs }: Pick<TimelineTolerance, "toleranceMs"> = {},
+  {
+    toleranceMs,
+    triggerRow,
+    lastRow,
+  }: Pick<TimelineTolerance, "toleranceMs"> & { triggerRow?: number; lastRow?: number } = {},
 ): void {
-  const golden = loadGolden(id);
+  const loaded = loadGolden(id);
+  const cut = loaded.timeline!.slice(0, lastRow === undefined ? undefined : lastRow + 1);
+  if (lastRow !== undefined) cut[lastRow] = { ...cut[lastRow]!, lowerBound: true };
+  const golden = {
+    ...loaded,
+    timeline: cut,
+    ...(triggerRow === undefined ? {} : { triggerFrame: triggerRow }),
+  };
   const rows = golden.timeline!;
   const t = golden.triggerFrame as number;
   expectLcd(rig.paint(), goldenImage(id, rows[t - 1]!.image), `${id}: before the trigger`);

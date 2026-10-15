@@ -80,7 +80,7 @@ export function paintPartial(
  * Standby as a widget's partial draw sees it: the ladders and icons at the screen's edges (the
  * kernel always reports full signal and battery; the operator and clock lie inside x 5..78).
  */
-function standbyEdges(): Framebuffer {
+export function standbyEdges(): Framebuffer {
   const fb = new Framebuffer();
   paintStandby(fb, { kind: "standby", carrier: "", signal: 4, battery: 4 });
   return fb;

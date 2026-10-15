@@ -49,8 +49,14 @@ an option stores it (`1`: Shakes Off), draws only the option's label at the bott
 ≈1.92 s and goes to standby; one that numbers none shows `Invalid shortcut`, then standby
 (`Menu 8 6 3 1` typed before the list opens does the same as `1` in it). After the window a digit
 in an option list starts a phone number at standby (2026-10-14 probes,
-`$REF/captures/scratch-inv/shortcut/`). nokia-os passes the digits to the option list, which
-ignores them (not reproduced). Entering
+`$REF/captures/scratch-inv/shortcut/`). The label is the thin face at the soft key's top (40),
+its last cell ending at x 84 (`Off`'s ink ends at x 82), for 1913 ms (1934 ms after a digit typed
+while the list was about to open), then the 8 ms partial draw that closes Invalid shortcut
+(edges 5..78) and standby; Shakes' list opens on the stored `Off` afterwards (goldens
+`probe/shortcut-m8-6-3-then-1`, `-then-3`, `-1`, `-late-1`). nokia-os: phone-core matches the
+digits among a shortcut level's options (`PhoneApplicationSession.shortcutLevel`) as at a menu
+level, and every tree option list is one; an option whose OK stores it and shows a timed note or
+returns stores it and shows its label, then standby. Entering
 Screen saver with Select (5-9 and every profile's 12-n-2-9) shows the level's path with a dash
 and three dots (`5-9-`, `12-1-2-9-`) for ≈2.9 s before the selection's number (the firmware
 opens a digit window there; nokia-os: the 2948 ms shortcut window); the list works meanwhile (▼
@@ -122,6 +128,12 @@ dismisses; P6 probed pages), C on `Requesting`, other keys on notes, OK on a pag
 (Prepaid credit's On/Off does not store), Screen saver's opening after On, Screen saver's entry
 indicator after a shortcut or a path, digits during it, ▲ during Snake II's Top score, Rename in Discreet,
 Loud and the empty slots (`10 - length` characters left), digits during a splash shortcut, `0 1` as a shortcut, the 12-hour clock beyond `10:10 am`.
+Digits in a shortcut-opened option list beyond the probes: options whose OK shows a query, a
+prompt, a progress note or a feature's screen (nokia-os does what OK does), lists of 10 or more
+options (nokia-os waits on a prefix such as `1` as a menu level does), `0` (waits, then Invalid
+shortcut), keys while the label shows (ignored), feature-built lists (profiles, messages, security,
+call register: digits stay keys), and multi-select lists and level bars (digits stay keys: no
+probe types one there).
 
 **Capture artefacts (never reproduced as behaviour):**
 

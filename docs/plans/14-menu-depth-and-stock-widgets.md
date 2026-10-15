@@ -881,7 +881,8 @@ each pinned by a kernel test:
   `0 1` meaning 1 is UNVERIFIED. A digit with no candidate opens `invalid` at once. (Corrected
   2026-10-14 by probes, see `docs/specs/stock/menu-depth.md`: an application opened by a
   shortcut takes the digits typed into it, and a digit while a leaf is about to open opens it
-  at once and is spent.)
+  at once and is spent; an option list is a level, whose options the digits number, also when
+  typed while it is about to open: `PhoneApplicationSession.shortcutLevel`.)
 - A selected entry shows in its level with `opening: true` (and the entry on the top row) and
   opens `openDelayMs` after its digit; a submenu with an intro runs it at once (P5 `8 1`). Per-
   digit shortcuts (plan 13 mode) skip intros, like paths. While a shortcut intro runs it takes

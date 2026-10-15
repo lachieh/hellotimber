@@ -440,6 +440,38 @@
     "frames": 9
   },
   {
+    "id": "probe/shortcut-m8-6-3-1",
+    "file": "probe/shortcut-m8-6-3-1.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 28,
+    "frames": 33
+  },
+  {
+    "id": "probe/shortcut-m8-6-3-late-1",
+    "file": "probe/shortcut-m8-6-3-late-1.lcd.txt",
+    "status": "pending:22",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "probe/shortcut-m8-6-3-then-1",
+    "file": "probe/shortcut-m8-6-3-then-1.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 30,
+    "frames": 35
+  },
+  {
+    "id": "probe/shortcut-m8-6-3-then-3",
+    "file": "probe/shortcut-m8-6-3-then-3.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 10,
+    "frames": 11
+  },
+  {
     "id": "probe/unset-down",
     "file": "probe/unset-down.lcd.txt",
     "status": "asserted",

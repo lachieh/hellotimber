@@ -10,7 +10,7 @@
 // Runs under Node's type stripping: imports only node:* and sibling scripts with .ts extensions.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, posix, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   shotImages,
@@ -504,7 +504,8 @@ function sourceLabel(source: CaptureSource): string {
       .map((p) => `${CAPTURES}/${p.dir} ${pad3(p.from)}-${pad3(p.to)}`)
       .join(" + ");
   }
-  return `${CAPTURES}/${describe(source)}`;
+  // A probe outside the 6.39 tree (`../scratch-inv/...`) is labelled by its own path.
+  return posix.normalize(`${CAPTURES}/${describe(source)}`);
 }
 
 function basename(path: string): string {

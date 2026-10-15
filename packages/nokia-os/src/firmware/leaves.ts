@@ -19,6 +19,7 @@ import { multiSelect } from "../widgets/multi-select";
 import { note, type NoteEnd, type NoteOptions } from "../widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
 import { progress } from "../widgets/progress";
+import { shortcutChoice } from "../widgets/shortcut-choice";
 import { promptFromLayout, type PromptLayout } from "../widgets/prompt";
 import { splashIntro } from "../widgets/splash";
 import { textPages } from "../widgets/text-pages";
@@ -355,6 +356,14 @@ export class LeafBinder {
         flow.back(exitLevels);
       };
     });
+    const shortcuts = spec.options.map((option, i) =>
+      this.#shortcutChoice(
+        `${number}-${i + 1}`,
+        option,
+        () => settings.choose(key, i),
+        choices[i]!,
+      ),
+    );
     const numbering = optionListNumbering(number);
     // Plan 16: key beeps and previews, from the feature that hooks this setting (tones).
     const hooks = optionListHooks(key, this.#services);
@@ -365,8 +374,32 @@ export class LeafBinder {
         opening: settings.choice(key),
         numbering,
         choose: (index, flow) => choices[index]!(flow),
+        shortcut: (index, flow) => shortcuts[index]!(flow),
         ...hooks,
       });
+  }
+
+  /**
+   * A stock shortcut digit on one option (an option list is a menu level to the firmware). An
+   * option whose OK stores it and shows a timed note or returns stores it, shows its label for
+   * SHORTCUT_CHOICE_MS and goes to standby (Shakes' `Done` choices, 2026-10-14 probes). Other
+   * options do what OK does (UNVERIFIED: no capture types a digit on them).
+   */
+  #shortcutChoice(
+    number: string,
+    option: StockOption,
+    store: () => void,
+    ok: (flow: Flow) => void,
+  ): (flow: Flow) => void {
+    const { kind } = option.result;
+    const stores = kind === "timed-note" || kind === "returns-immediately";
+    if (!stores || placeholderOwner(number) !== undefined || SCREENS[number] !== undefined) {
+      return ok;
+    }
+    return (flow) => {
+      store();
+      flow.replace(shortcutChoice(option.label));
+    };
   }
 
   /**
