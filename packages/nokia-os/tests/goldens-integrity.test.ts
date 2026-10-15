@@ -316,6 +316,11 @@ describe("plan 17 goldens", () => {
     expect(parseManifestNote(golden.note)).toHaveLength(golden.images.length);
   });
 
+  it("asserts every plan 17 golden (Task 9: no golden is pending:17)", () => {
+    expect(index.filter((entry) => entry.status === "pending:17").map((e) => e.id)).toEqual([]);
+    expect(own.length).toBeGreaterThan(100);
+  });
+
   it("leaves no plan 17 golden pending outside its own index", () => {
     const elsewhere = index.filter(
       (entry) => entry.status === "pending:17" && !own.some((e) => e.id === entry.id),

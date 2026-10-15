@@ -754,14 +754,29 @@ aligns on the key (trigger-frame 0: at the limit the key changes nothing).
 **Files:** `tests/acceptance/17-profiles.test.ts` (new), `tests/support/profiles.ts` (new),
 `tests/support/rig.ts` (a seeded active profile and names, if needed).
 
-- [ ] A scenario for every asserted `profiles/*` and `sound/profiles/*` golden; delete
+- [x] A scenario for every asserted `profiles/*` and `sound/profiles/*` golden; delete
       `awaitsPlan17Scenario`; the guard fails for an asserted golden without one; no node is covered
       only by a `pending:17` golden.
-- [ ] Every asserted golden passes (pixels exact; timelines ±2 ms, or a stated tolerance where a
+- [x] Every asserted golden passes (pixels exact; timelines ±2 ms, or a stated tolerance where a
       scenario replays another recording's timing). New `KNOWN_GAPS` need a reason.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
       `mise exec -- vp check --fix`. Report the suite's run time.
-- [ ] Commit: `test(nokia-os): drive profiles against their goldens`.
+- [x] Commit: `test(nokia-os): drive profiles against their goldens`.
+
+Deviation: **Task 9 (order):** the scenarios landed with Tasks 6-8, each promoting its rows
+(`ASSERTED_TASKS`); the helpers are `tests/support/profiles.ts` (seeded factory/virgin storage, the
+captures' navigation, `cutRecordingScenario`, `toleratedTreeScenario`, `ACTIVATE_TOLERANCE_MS`), not
+`rig.ts`. Task 9 adds the integrity check that no golden is `pending:17`.
+
+**Task 9 completion note:** 146 plan 17 goldens (102 LCD, 44 sound) asserted, plus the six
+`tree/12-profiles/12-n-1.leaf`, the four remaining `sound/note/12-n-1` goldens and
+`sound/boot/power-key` of plans 14 and 16. Known gaps (9, each with its reason in the acceptance
+file): `standby-carousel-c` (the key return's operator-less redraw), `power-general-held` (the
+kernel's 800 ms long press), `sound/profiles/power-general-power-keys` (the list's power key beeps
+121-123 ms after its down), `rename-open-12-3` (a stray cursor column), and four Rename blink
+phases. `mise exec -- vp run @hellotimber/nokia-os#test`: 75 files, 4517 passed, 28 expected
+failures, 276 todos (other plans' pending goldens), 48 s wall; `vp run -r test` passes in every
+workspace.
 
 ### Task 10 - Demo, README, verification gate and closeout
 
