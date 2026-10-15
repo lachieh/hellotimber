@@ -1,0 +1,27 @@
+lights-golden 1
+id: lights/game/off/pause-nav
+status: asserted
+source: captures/6.39/plan25/lights/game/off/pause-nav
+source-sha256: 0c6a4ed5aa2c1be38b045ddc6cfbe8e8acf56db11565d4ac5cc282d80a29ee8a
+state: factory
+power-on: 137691
+start: 0
+end: 34968
+keys: 0:navi 2039:8 2756:navi 22817:navi 24878:6
+note: Snake II level 1, Games › Settings › Lights Off: New game, Navi between ticks 4 and 5 (pause), Continue 20 s later, 6.
+omitted: none
+
+@events
+# t_ms light   state
+0      display on
+0      keypad  on
+38     display off
+38     keypad  off
+2792   display on
+2792   keypad  on
+16954  display off
+16954  keypad  off
+22833  display on
+22833  keypad  on
+22853  display off
+22853  keypad  off

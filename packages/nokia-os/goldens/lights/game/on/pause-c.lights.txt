@@ -1,0 +1,21 @@
+lights-golden 1
+id: lights/game/on/pause-c
+status: asserted
+source: captures/6.39/plan25/lights/game/on/pause-c
+source-sha256: 8df2759d593f858f36f59c46eff0fae8d345200ad311bd4df8ed9c2a48c0fdb3
+state: factory
+power-on: 160459
+start: 0
+end: 34968
+keys: 0:navi 2039:8 2756:c 22817:navi 24878:6
+note: Snake II level 1, Games › Settings › Lights On: New game, C between ticks 4 and 5 (pause), Continue 20 s later, 6.
+omitted: none
+
+@events
+# t_ms light   state
+0      display on
+0      keypad  on
+17977  display off
+17977  keypad  off
+22834  display on
+22834  keypad  on

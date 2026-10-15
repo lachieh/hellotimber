@@ -13,7 +13,7 @@ Tasks 12-14 (phone-3d) need only Task 1.
 "Plan 16 supplementary captures") and plans 13-16 and 23 before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan25/`. The planning probes in
 `$REF/captures/scratch-plan25/` are evidence for this plan only and are never imported.
-**Status:** not started.
+**Status:** done (Tasks 0-15).
 
 ## Goal
 
@@ -129,6 +129,12 @@ the rule is "first tick at least D after" or "the n-th tick after", from 1 ms ed
 between a key-down and the LEDs (L1) is not reproduced: nokia-os lights at the key-down, as it
 beeps there (plan 16 D8).
 
+Deviation (Task 0): `LIGHT_TICK_MS` = 1982.61, the tick runs from the power-on plus
+`LIGHT_TICK_PHASE_MS` = 2 (122 off edges, ticks 12-94, within 2.9 ms); `LIGHT_TIMEOUT_MS` = 13624
+(D ∈ (13619.6, 13627.6]); the rule is "the first tick at least D after the last activity" (the
+n-th-tick rule is falsified). `LIGHT_EDGE_TOLERANCE_MS` = 5 (the tick's ±3 ms plus the one-grain
+gap between the two lines); `KEY_LIGHT_LATENCY_MAX_MS` = 33 (measured 14-33 ms).
+
 **D3 - What counts as light activity (new; from K and L).** Lights on and the timeout restarted:
 a key-down while unlocked (every key, the power key's short press included; L5), the self-test's
 first boot frame (L4), a message arriving at an unlocked phone (L7), an incoming call, locked or
@@ -136,6 +142,18 @@ not (K8), and Unlock then `*` (K5). Not activity: a key-up, a held key's duratio
 while locked (K3, K4, K6), a message arriving while locked (K7). Task 0 completes the table (a note
 expiring, the game-over screen, a timed note returning, the emergency display) and every row is a
 test.
+
+Deviation (Task 0): the activity table, every row a test. **Activity** (lights on, D restarted):
+a key-down while unlocked, every key including the power key's short press (L5); **the power
+key's short press while locked** (the hint, and the LEDs on: `hint/pwr`); the self-test's first
+frame and **the boot's clock prompt** (L4: the LEDs time out from the prompt, not the self-test);
+a message arriving at an unlocked phone (L7); an incoming call, locked or not (K8), **and its
+ringing holds the LEDs on** (75 s, no timeout); Unlock then `*` (K5); **the emergency display**
+(the `2` of `112` lights a dark phone); the game rows of D7. **Not activity:** a key-up, a hold's
+duration, every other key while locked (the hint, Unlock alone, a second Unlock, a digit or C
+after Unlock), **the `*` that locks** (the LEDs time out from the Menu key-down: `keyguard/lock`),
+a message while locked (K7), a timed screen ending (the lock note, the hint, the emergency
+display returning to the locked standby), the screen saver (L8).
 
 **D4 - The keyguard is a nokia-os standby mode over the kernel; phone-core does not change (new).**
 `src/firmware/features/keyguard.ts` owns a pure `KeyguardEngine` (states `unlocked`, `locking`,
@@ -149,6 +167,11 @@ other plan needs it, and plan 13 keeps the kernel free of Nokia rules. If plan 1
 (`standbyIndicators`, notice applications) make a seam cheaper when Task 7 starts, Task 7 records a
 Deviation instead.
 
+Deviation (Task 0): the wrapper never lets the kernel see a locked phone's power key, so a
+locked phone cannot be switched off with it, as captured (held 10 s: the hint only). A cold
+power-on (the kernel's, or a battery pull) is unlocked: the keyguard lives in RAM
+(`keyguard/power-cycle`).
+
 **D5 - The lock and unlock windows and screens are the captured ones (corrects the brief and the
 spec).** Lock: Menu at standby, then `*` before the carousel's shortcut window ends (2948 ms,
 plan 14; Task 0 confirms the end between 2.0 and 3.0 s and whether ▲/▼ or a digit in between cancel
@@ -157,12 +180,23 @@ it). Notes and texts: `Keypad locked`, `Press Unlock and then *`, `Now press *`,
 Unlock window: `*` while `Now press *` shows (≈1.45 s, K4). Every timeline is generated from its
 golden (plan 14's widget-timeline mechanism), never hand-typed.
 
+Deviation (Task 0): the lock window is `KEYGUARD_LOCK_WINDOW_MS` = 2925 ms from the Menu
+key-down (`*` at 2920 ms locks, at 2930 ms does not), not the 2948 ms of plan 14's dots; ▼, a
+digit or C before the `*` cancels it (the `*` then reaches the kernel: standby number entry, plan
+22). The unlock window is the `Now press *` timeline itself (1448 ms; `*` at 1440 ms unlocks, at
+1450 ms shows the hint); a second Unlock restarts it; a digit or C during it shows the hint.
+
 **D6 - Emergency numbers pass the keyguard as the firmware shows (new).** While locked, digits are
 buffered silently (each shows the hint, K6); when the buffer ends with an emergency number the
 engine shows it with `Call` for the captured time (≈3.87 s), then clears. Task 0 finds the set
 (`112`, `911`, `999`, `000`, `08`, `110` tried) and what C, another digit and Call do. Call hands
 the number to plan 22 (`KeyguardCalls.dial`); until plan 22 exists, Call's golden is `pending:22`
 and nokia-os keeps the display (a known gap named in the acceptance file).
+
+Deviation (Task 0): of `112 911 999 000 08 110 113` only `112` passes, matched on the last three
+digits typed (`2112` and `0112` show it too, `1122` does not); the display lasts 3878.6 ms
+(generated), C ends it at once, another digit shows the hint, Call shows `Attempting emergency
+call` / `End` (`keyguard/emergency-call`, `pending:22`).
 
 **D7 - Games › Settings › Lights forces the LEDs during play (new; completes plan 23's Lights).**
 While a game session is playing (not paused, not on a game-over or top-score screen), Lights Off
@@ -171,11 +205,21 @@ apply. The rule reads the stored setting through the settings store and the sess
 plan 23's `StockGames` holder (read only); plan 24's games reuse it. Task 0 records pause, Continue,
 the game-over screen and the top-score fireworks.
 
+Deviation (Task 0): Snake II's pause (Navi or C during play: the same) and Continue are key-downs
+and light activity; under Lights Off, Continue lights and the force puts the LEDs off again 20 ms
+later; under Lights On the pause and the game-over screens time out normally. The death's end
+(the fireworks or `Game over`) releases the force with activity, and the top score's `Game over!`
+screen is activity again. The power key during play does nothing under Lights Off.
+
 **D8 - Calls and messages reach a locked phone through hooks (new; for plans 18 and 22).** The
 engine exposes `pass()` (an incoming call: lights on, keys to the kernel until the call ends) and
 `resume()` (the call ended: `Keypad locked` again, K8), and `arrivedWhileLocked()` (a message:
 no lights, K7). Plans 18 and 22 call them; plan 25 drives them in tests only. The locked standby's
 soft key is `Unlock` whatever the kernel's notice says (K7).
+
+Deviation (Task 0): `pass()` is light activity and the ringing holds the LEDs on until the call
+is answered or ends (plan 22 calls `force("on")` and `force(null)`); `resume()` shows `Keypad
+locked` again (446/232/232/1979 ms, the lock note's timeline) and then the locked standby.
 
 **D9 - Lights goldens are event timelines (new; plan 16 D6's format, simplified).** A lights golden
 lists LED edges `t_ms light on|off` relative to the recording's first key-down, with the keys and
@@ -194,10 +238,17 @@ hint and unlock respond at the key-down when Task 0 shows the firmware drawing b
 (K1's 61 ms and K3's 25-40 ms suggest key-down); otherwise at the release, with a Deviation. The
 redraw latency itself is not reproduced; goldens align on the first changed frame.
 
+Deviation (Task 0): confirmed: the lock note, the hint, `Now press *` and the emergency display
+draw while their key is still held (key-down).
+
 **D12 - Keyguard sounds through plan 16's sounder, unchanged (plan 16 D8/D12).** Locked keys beep
 as Task 0's sound captures show (or are silent: a `silent-key` as plan 16 Task 8 did); keyguard
 notes with a captured tone join `NOTE_SOUNDS` by their text through plan 16's generator. If a
 golden needs sounder behaviour beyond that, stop and report: the sounder is plan 16's file.
+
+Deviation (Task 0): `Keypad locked` plays the 1750 Hz warning tone (0x9105, 293 ms) in place of
+the `*`'s beep: it joins `NOTE_SOUNDS` by its text; locked keys (the hint), C, Unlock alone and
+the emergency display are silent (`silent-key`); the unlocking `*` beeps as any key.
 
 **D13 - phone-3d gets a keypad light input; the host wires nokia-os to it (new; contract change).**
 `Nokia3310Props` gains `keypadLightOn?: boolean` (default: `backlightOn`), and `backlightOn` is
@@ -363,6 +414,10 @@ omitted: none
 13897  keypad  off
 ```
 
+Deviation (Task 4): two more required headers follow `power-on`: `start: <ms>` (the recording's
+start in golden time, ≤ 0; a light already lit there is a row at `start`) and `end: <ms>` (the
+recording's stop). Every light is off before its first row.
+
 Rules, enforced with `file:line` errors (plan 16's sound format, same header order and key
 syntax, reusing its parsing helpers where `sound-format.ts` exports them): `power-on` is the
 integer ms from the power-on to time 0; `light` is `display` or `keypad`; state `on` or `off`;
@@ -460,68 +515,104 @@ digits failed). Every recording is `record <name> start` plus `lights <name>` be
 key, with raw `press`/`release` edges, and writes `keys.csv` as plan 16's did. Navigation is checked
 against the LCD before each recording.
 
-- [ ] **H harness:** `lights <name>` / `lights off` writes `<name>.lights.csv`
+- [x] **H harness:** `lights <name>` / `lights off` writes `<name>.lights.csv`
       (`t_ms,lcd_led,kbd_led`, a row at the start and whenever either changes, polled after every
       1 ms grain, beside `audio_pump`) and a first comment line `# power_on_ms=<emulated ms since
 the last power-on at the start>`. `record`'s output must stay byte-identical: verify with
       plan 13's clock script before and after. Update the README's command and output rows.
-- [ ] **L timeout:** virgin and factory: C at standby at 16 phases of the light tick (steps of
+- [x] **L timeout:** virgin and factory: C at standby at 16 phases of the light tick (steps of
       124 ms over 1982.6 ms), each after the LEDs are off; C held 0.2, 0.5, 1, 2, 4, 8 and 16 s;
       two taps 1 s apart straddling a tick; ▲/▼ in a list, Menu, Navi on a page, digits in Menu
       shortcuts, C held to standby (`lights/keys/<key>`); a key pressed while the LEDs are still on
       (does it restart D?). Report the period and anchor (from the power-on edge, the boot's
       start or its end), D, and whether the rule is "first tick ≥ D" or "n-th tick".
-- [ ] **B boot:** factory power-on to 40 s; virgin with the security gate (keys in the gate);
+- [x] **B boot:** factory power-on to 40 s; virgin with the security gate (keys in the gate);
       with a welcome note; power-off while lit (`lights/boot/*`).
-- [ ] **P power key:** short press in the carousel, in a list, in a game, at standby
+- [x] **P power key:** short press in the carousel, in a list, in a game, at standby
       (`lights/power-key/*`), each after the LEDs went off.
-- [ ] **K keyguard (LCD + lights):** `lock` (Menu, `*` at 300 ms); `lock-gap/<ms>` for 2000,
+- [x] **K keyguard (LCD + lights):** `lock` (Menu, `*` at 300 ms); `lock-gap/<ms>` for 2000,
       2500, 2800, 2900, 2940, 2960, 3000 ms; Menu then ▼ then `*`, Menu then `1` then `*`;
       `carousel-star`; `standby` still; `hint/<key>` for every key (C held 1.5 s and 4 s, ▲ held,
       the power key's short press); `unlock-alone` (Unlock, 3 s); `unlock` (Unlock, `*` at 300 ms);
       `unlock-gap/<ms>` for 1300-1550 ms in 50 ms steps; Unlock then a digit; Unlock twice;
       everything while the LEDs are on and while they are off.
-- [ ] **E emergency:** `112`, `911`, `999`, `000`, `08`, `110` while locked (`emergency/<n>`);
+- [x] **E emergency:** `112`, `911`, `999`, `000`, `08`, `110` while locked (`emergency/<n>`);
       `1 1 3`; `1 1 2 2`; C during the display; Call on `112` (`emergency-call`: record what the
       firmware does, up to 15 s).
-- [ ] **A arrivals:** `sms` at an unlocked and a locked standby; `callin` at a locked and an
+- [x] **A arrivals:** `sms` at an unlocked and a locked standby; `callin` at a locked and an
       unlocked standby: answered and ended, rejected (C), and left to ring out; the LEDs and screens
       of each (`keyguard/{call,sms}`, `lights/arrival/*`); `standby-message` still.
-- [ ] **G games:** factory, Snake II with Lights Off and On: New game, play keys for 30 s, pause
+- [x] **G games:** factory, Snake II with Lights Off and On: New game, play keys for 30 s, pause
       (C) and Continue, a crash and its game-over screen, a new top score's fireworks
       (`lights/game/*`).
-- [ ] **S sound** (factory, `audio` + `keys.csv` as plan 16): lock, a key on the locked standby,
+- [x] **S sound** (factory, `audio` + `keys.csv` as plan 16): lock, a key on the locked standby,
       Unlock alone, unlock, an emergency number (`sound/keyguard/*`).
-- [ ] **V screen saver:** factory, Screen saver On, 60 s at standby; 5-9-4 Screen saver
+- [x] **V screen saver:** factory, Screen saver On, 60 s at standby; 5-9-4 Screen saver
       (`lights/screen-saver`; the note if any).
-- [ ] OCR every image (plan 15's command with `OUT='plan25'`) into `plan25/text.json`.
-- [ ] `gen_v639_plan25.py check`: every recording has `timings.csv`, `.lights.csv` and
+- [x] OCR every image (plan 15's command with `OUT='plan25'`) into `plan25/text.json`.
+- [x] `gen_v639_plan25.py check`: every recording has `timings.csv`, `.lights.csv` and
       `keys.csv`; every lights recording's off edges fit the fitted tick within 2 ms.
-- [ ] Append "Plan 25 supplementary captures" to `$REF/captures/README.md`.
-- [ ] No commit. Record the outcome under this task: the tick (period, anchor), D and the rule,
+- [x] Append "Plan 25 supplementary captures" to `$REF/captures/README.md`.
+- [x] No commit. Record the outcome under this task: the tick (period, anchor), D and the rule,
       the activity table (D3, every row), the lock and unlock windows, the keyguard timelines and
       key-down/release behaviour (D11), the emergency set and Call, arrivals while locked, the game
       rule (D7) outside play, the sounds, and any section that failed.
+
+**Task 0 outcome (2026-10-14).** Generator `$REF/captures/scripts/gen_v639_plan25.py` (14 sections,
+`v639-plan25-<section>.cap` command logs), 211 recordings under `$REF/captures/6.39/plan25/`, each
+with `timings.csv`, `.lights.csv` and `keys.csv`; `check` passes; `stats.txt` holds every LED edge
+with its activity window; `text.json` OCRs 2247 images. Raw numbers are below; the decisions they
+change carry `Deviation:` lines.
+
+Deviation: the harness change is in a copy, `$REF/tools/harness-p25/` (other agents run
+`tools/harness` concurrently): `dct3cap.c` gains `lights <name>` / `lights off` and stops advancing
+time once the phone parks after a power-off (it spun forever before). `v639-plan13-clock.cap`
+gives the same 44 files (SHA-256) from `tools/harness` and from the copy, before and after both
+changes. **Fold the copy into `tools/harness` later** (then delete it); until then the README's
+"Script format" and "Output format" tables stay unchanged and the commands are documented in its
+"Plan 25 supplementary captures" section. `check` allows 3 ms about the tick, not 2 (measured
+spread 2.9 ms).
+
+| Item             | Outcome                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Light tick       | every timeout off edge (122, ticks 12-94) lies within 2.9 ms of power-on + 2 + k × **1982.61 ms**; the anchor is the power-on (`dct3_web_boot`, cycle 0), not the boot's end                                                                                                                                                                                                                                                       |
+| Rule and D       | the LEDs go off at the **first tick at least D after the last light activity**, D ∈ (13619.6, 13627.6] ms (`fine-252` dark, `fine-260` lit at the next tick; virgin `tap-02` stayed lit at 13631 ms: the tick's ±3 ms). The n-th-tick rule is falsified (taps 124 ms apart straddle the threshold). D = **13624 ms**                                                                                                               |
+| Holds, releases  | C held 0.2-16 s: the same edge as a tap (key-down only); a key while lit restarts D (`relight-*`); two taps straddling a tick: the second counts                                                                                                                                                                                                                                                                                   |
+| On edges         | 14-33 ms after the key-down (mostly 17-19), both lines in the same 1 ms grain; off edges at most one grain apart (`boot/power-on`: keypad 1 ms before display). `leds` is only 0 or 3                                                                                                                                                                                                                                              |
+| Boot             | LEDs on with the self-test's first frame (245-272 ms); the clock prompt is light activity (factory off 23.79 s, virgin with the gate and the `Hi` welcome image 31.72 s); the power key held at standby: profile list, then LCD blank and LEDs off together 1017 ms into the hold (the emulator reports no CCONT cut there)                                                                                                        |
+| Power key        | short press lights at standby (profile list, plan 17), in the carousel and a list (no pixel changes); during Snake II under Lights Off: nothing (dark, the game runs on)                                                                                                                                                                                                                                                           |
+| Lock window      | Menu then `*` locks with `*` ≤ 2920 ms after the Menu key-down, not at ≥ 2930 (`lock-gap/*`): **(2920, 2930] ms**, 20-28 ms before plan 14's 2948 ms dots; ▼, a digit or C between cancels (`*` then opens standby number entry: `*`, `Call`)                                                                                                                                                                                      |
+| Lock timeline    | `Keypad locked` 69 ms after the `*` key-down (drawn while `*` is held: key-down), 442/232/240/1971 ms (2885 ms), 9 ms partial, the locked standby; the locking `*` is **not** light activity (the LEDs time out from Menu)                                                                                                                                                                                                         |
+| Locked keys      | every key (0-9, `*`, `#`, ▲, ▼, C, C held 1.5/4 s, ▲ held) shows `Press Unlock and then *`: standby without ladders 25-34 ms after the key-down, then 564/595/179/202/194/195/579/401 ms (2909 ms), 8-23 ms partial(s), the locked standby; silent and dark; drawn at key-down (5 held 600 ms); a key during it restarts it from the first step (`hint-during`, `hint-late`)                                                       |
+| Power key locked | the hint **and the LEDs on** (`hint/pwr`); held 10 s: the hint only, no power-off (`power-cycle/power-key-held`); a cold power-on (battery pull: `saveflash`, reboot) is unlocked                                                                                                                                                                                                                                                  |
+| Unlock           | Unlock (key-down, also held 800 ms) shows `Now press *` in place of the operator and soft key for 1448 ms; a second Unlock restarts it; **`*` ≤ 1440 ms after the Unlock key-down unlocks, ≥ 1450 shows the hint** (`unlock-gap/*`): the window is the `Now press *` display; a digit or C during it shows the hint; none of these light                                                                                           |
+| Unlocked         | `*` → 21 ms partial, `Keypad active` 683/232/521 ms (`Done`'s box and tick), 9 ms partial, standby (`Menu`); LEDs on at the `*` (activity, + 22 ms)                                                                                                                                                                                                                                                                                |
+| Emergency        | of `112 911 999 000 08 110 113 1122` only a buffer **ending in `112`** (`2112`, `0112` too) shows `112` (large digits, right-aligned) and `Call` for **3878.6 ms**, lighting the LEDs at the `2` (activity); the digits before it show the hint; C during it: the locked standby at once; another digit: the hint (the LEDs stay lit); Navi (Call): `Attempting emergency call`, `End` (plan 22); after it Unlock then `*` unlocks |
+| Arrivals         | SMS unlocked: lights with `1 message received`, `Read`; SMS locked: dark, `1 message received`, `Unlock`; a call, locked or not: lights at the ringing screen and holds them through ringing (75 s, no timeout), Navi answers, Navi (`End`) or C ends; locked: `Keypad locked` again after the call (446/232/232/1979 ms), then the locked standby; the LEDs time out from the end                                                 |
+| Games › Lights   | factory Off: off 38 ms after New game, dark through play keys and the power key; the pause (Navi or C, the same) lights (activity), Continue lights then forces off 20 ms later; the death's end (fireworks or `Game over`) lights (activity) and the top score's `Game over!` screen is activity. On: lit through 30 s of play (no timeout); the pause and game over time out normally; Continue lights and holds                 |
+| Sound            | the lock plays 1750 Hz, 0x9105, 293 ms (a warning tone, in place of `*`'s beep); locked keys, C, Unlock alone and `112` are silent; the unlocking `*` beeps 900 Hz                                                                                                                                                                                                                                                                 |
+| Screen saver     | factory Screen saver On: no screen saver in 60 s, the timeout unchanged; Menu 5 9 4 opens a `Use` list                                                                                                                                                                                                                                                                                                                             |
+| Failed sections  | none in the final run (the first `boot` run waited for a CCONT power-off the emulator never reported; the generator now waits for the blank LCD)                                                                                                                                                                                                                                                                                   |
 
 ### Task 1 - Contracts and documentation
 
 **Files:** `VISION.md`, `docs/specs/stock/keyguard-and-backlight.md` (new),
 `docs/specs/nokia-3310.md` (the conflicting lines only), `docs/plans/README.md` (row 25), this plan.
 
-- [ ] Apply Task 0's outcome to D2, D3, D5-D8 and D11 (Deviation lines where it changes them) and
+- [x] Apply Task 0's outcome to D2, D3, D5-D8 and D11 (Deviation lines where it changes them) and
       fix the contract names.
-- [ ] VISION: `StockLightEvent`, `StockLightsPort`, `StockPhoneConfig.lights` and the rules; a
+- [x] VISION: `StockLightEvent`, `StockLightsPort`, `StockPhoneConfig.lights` and the rules; a
       **Lights (plan 25)** paragraph beside **Sound (plan 16)**; phone-3d's `keypadLightOn` and the
       meaning of `backlightOn`; the nokia-os package row mentions the keyguard and lights.
-- [ ] `docs/specs/stock/keyguard-and-backlight.md`: K1-K8, L1-L9 and Task 0's outcome as the stock
+- [x] `docs/specs/stock/keyguard-and-backlight.md`: K1-K8, L1-L9 and Task 0's outcome as the stock
       behaviour (keyguard flow and screens, windows, emergency, arrivals, the light tick and rule,
       the activity table, games, power key, boot), the artefacts table, UNVERIFIED items, and the
       contrast with the website's backlight. Marked "(plan 25, in progress)".
-- [ ] `docs/specs/nokia-3310.md`: mark as superseded, with a link, the keyguard bullet (window
+- [x] `docs/specs/nokia-3310.md`: mark as superseded, with a link, the keyguard bullet (window
       "~1.5 s"; the notes) and the backlight bullet ("~15 s"); nothing else.
-- [ ] Plans README row 25 `in progress`.
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define the stock keyguard and lights port (plan 25)`.
+- [x] Plans README row 25 `in progress`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define the stock keyguard and lights port (plan 25)`.
 
 ### Task 2 - Lights golden format, capture set and goldens (TDD)
 
@@ -532,37 +623,75 @@ writer; stop and report if it needs more), `tests/lights-format.test.ts` (new),
 `tests/keyguard-capture-set.test.ts` (new), `tests/acceptance/25-keyguard-and-backlight.test.ts`
 (new: pending-scenario entries only), `goldens/**` (generated).
 
-- [ ] TDD `lights-format.ts`: round trip; header order; `power-on` a non-negative integer; `keys`
+- [x] TDD `lights-format.ts`: round trip; header order; `power-on` a non-negative integer; `keys`
       as plan 16; light names; states; consecutive equal states rejected; empty goldens; every error
       names `file:line`.
-- [ ] TDD the capture set on synthetic sources (injected loader, no REF): every row of "Golden
+- [x] TDD the capture set on synthetic sources (injected loader, no REF): every row of "Golden
       pipeline additions"; `.lights.csv` → rows per light, aligned on the first key-down, with
       `power-on` from the comment line plus the offset; partial end frames omitted; equal hint
       recordings share `keyguard/hint`; a missing file or column throws naming the recording.
-- [ ] Statuses: the `pending:18` and `pending:22` rows of the table; everything else asserted.
-- [ ] Text runs reach the glyph harvester; run `extract-resources` twice (no diff) and record the
+- [x] Statuses: the `pending:18` and `pending:22` rows of the table; everything else asserted.
+- [x] Text runs reach the glyph harvester; run `extract-resources` twice (no diff) and record the
       glyphs it added (expected: none, or a few large-face capitals).
-- [ ] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
+- [x] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
       completion note.
-- [ ] The acceptance file lists the asserted goldens without a scenario through the split's
+- [x] The acceptance file lists the asserted goldens without a scenario through the split's
       pending-scenario mechanism (one entry, deleted in Task 10).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import keyguard and lights captures (plan 25)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import keyguard and lights captures (plan 25)`.
+
+**Task 2 completion (2026-10-14).** Two commits: the shared tooling first (`feat(nokia-os): lights
+golden kind`: `lights-format.ts`, `PlanCaptureSet.lights`, `CaptureIo.lights` at the end of the
+interface, the importer's `lightsIo` reader at the end of its io object and its writer loop after
+the sounds, the index kind `"lights"`, `goldens-integrity.test.ts`'s fixture regex, LCD filter and
+a lights parse check; a re-import then changed no golden or index file), then plan 25's set. The
+import writes 210 fixtures (2.3 MB) to `goldens/index/25.json`: 62 timelines, 3 stills, 139 lights
+and 6 sound goldens; 189 `pending:25`, 4 `pending:18`, 17 `pending:22` (the other plans: 842,
+unchanged). The second run changes nothing. The keyguard texts add three large glyphs, `K`, `U`
+and `*` (`extract-resources` twice: the second run is up to date), with a `Ke` touch override
+(width 8) and `*`'s advance (8, UNVERIFIED: it only ends a run).
+
+Deviation: plan 29 replaced the "pending-scenario mechanism" and `scripts/widget-sprites.ts`.
+Every golden this plan will assert is imported `pending:25` and listed as a todo by
+`tests/acceptance/25-keyguard-and-backlight.test.ts` (no scenarios yet); the task that drives a
+golden adds its scenario and flips its status in the capture set (lights: Task 4 and 8; LCD: Task
+7; sound: Task 9; Task 10 checks none is left). Resource evidence (text runs, glyph overrides,
+then sprites and timelines) lives in `scripts/resource-inputs/25-keyguard-and-backlight.ts`,
+registered through the capture set's `resources`.
+
+Deviation: fixture ids follow the captures: `lights/timeout/<virgin|factory>/{tap-NN,hold-<ms>,
+pair-straddle,relight-<ms>}`, `lights/timeout/factory/fine-<ms>`, `lights/keys/<place>-<key>`,
+`lights/keyguard/*` from the `keyguard/*` recordings (no separate lights recordings), the hint as
+two shared goldens (`keyguard/hint`: digits, `*`, `#`; `keyguard/hint/up`: ▲, ▼, C and the held
+keys, 6 ms earlier with a 23 ms end partial) plus `keyguard/hint/pwr` (lit). The keyguard notes'
+end partial draws stay in the goldens (plan 14's `cut`/`edges` widget steps reproduce them).
+`tests/goldens-integrity.test.ts`'s "sound goldens (plan 16)" block now reads plan 16's index only
+(it required `plan16/` sources of every sound golden).
 
 ### Task 3 - The lights model (pure, TDD)
 
 **Files:** `src/firmware/features/backlight.ts` (new: `StockLights`, the constants, the port
 types), `tests/lights-model.test.ts` (new).
 
-- [ ] TDD with an injected clock: `powerOn(t)` anchors the tick; `activity()` lights both and
+- [x] TDD with an injected clock: `powerOn(t)` anchors the tick; `activity()` lights both and
       restarts the timeout; the off edge is the first tick that satisfies Task 0's rule, for every
       `lights/timeout/*` and `lights/hold/*` case (expected `t_ms` transcribed from the goldens, and
       their `power-on`); `force("off"|"on")` overrides and `force(null)` releases into the D2 rule
       (on-release edges per Task 0's game section); `powerOff()` emits off for each lit light.
-- [ ] TDD tick independence: advancing 1 ms at a time and in one 60 s jump emit the same events;
+- [x] TDD tick independence: advancing 1 ms at a time and in one 60 s jump emit the same events;
       `atMs` never exceeds the time reached and never decreases; no duplicate states.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the stock light timer`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the stock light timer`.
+
+Deviation: every file under `features/` must be a registered `StockFeature` (`tests/features.test.ts`),
+so `backlight.ts` registers an empty `backlightFeature` now (one line in `features/index.ts`); Task 8
+fills it. `tests/support/lights.ts` starts here (the golden loader, `LIGHT_EDGE_TOLERANCE_MS` = 5,
+`KEY_LIGHT_LATENCY_MAX_MS` = 33); Task 4 adds the rig helpers. The model test replays all 103
+timeout, key, power-key and screen-saver goldens; `lights/timeout/virgin/tap-02` is an expected
+failure: the tick's ±3 ms (its key-down lies 13631.1 ms before the fitted tick and the LEDs stayed
+lit, while `factory/tap-02` at 13631.6 ms and `factory/fine-252` at 13627.6 ms went dark), so no D
+fits all three. Snake II's pause lights 36 ms after its key-down (the game's key scan), beyond the
+33 ms of a standby key.
 
 ### Task 4 - The lights port (TDD)
 
@@ -572,34 +701,85 @@ with the kernel's power edges; the boot activity at the self-test's first frame)
 (export the two types: one line), `tests/lights-port.test.ts` (new), `tests/support/lights.ts`
 (new: `recordLights`, `expectLightsTimeline`, aligned on `power-on`).
 
-- [ ] TDD `tests/support/lights.ts` itself: the failure text for an early edge, a missing and an
+- [x] TDD `tests/support/lights.ts` itself: the failure text for an early edge, a missing and an
       extra event (as plan 16 Task 5 tested `expectSoundTimeline`).
-- [ ] TDD the contract rules (Contract changes): ordering, no duplicates, off at power-on until
+- [x] TDD the contract rules (Contract changes): ordering, no duplicates, off at power-on until
       the boot lights, power-off, no port = same screens (every existing acceptance file still
       passes).
-- [ ] Drive `lights/timeout/*`, `lights/hold/*`, `lights/keys/*`, `lights/boot/*` and
+- [x] Drive `lights/timeout/*`, `lights/hold/*`, `lights/keys/*`, `lights/boot/*` and
       `lights/power-key/menu` from a rig powered on `power-on` ms before the first key, edges within
       `LIGHT_EDGE_TOLERANCE_MS` (Task 0's spread, provisionally 5 ms) after alignment; on edges
       against the key-down (D2: latency not reproduced, `KEY_LIGHT_LATENCY_MAX_MS` from Task 0).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): lights port for the display and keypad LEDs`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): lights port for the display and keypad LEDs`.
+
+**Task 4 completion.** `src/firmware/phone.ts` (shared) changed in exactly these places: the
+`StockLights`/`StockLightsPort` import; `StockPhoneConfig.lights?: StockLightsPort` (documented as
+`sound` is); one `StockLights` per phone after the sounder, emitting to `config.lights`; the
+power-edge subscriber calls `lights.powerOn(now)` / `lights.powerOff()` beside the sounder and,
+while booting, `lights.activity()` at the first boot frame after the blank one (268 ms) and when
+standby first shows; `send` calls `lights.activity()` on every key-down of a powered phone; `tick`
+ends with `lights.tick()`. `src/index.ts` exports the two port types (one line). 107 lights goldens
+are asserted, each with a scenario (`lightsScenario`, 2 known gaps); 13 contract and support tests.
+
+Deviation: the firmware's second boot activity is its clock prompt; nokia-os has no clock wizard
+and reaches standby at the same point of the boot (factory 10.1 s; after the code and `Hi`), so
+standby's arrival is the activity (`lights/boot/{power-on,gate,welcome}` pass within 5 ms).
+
+Deviation: the lights golden format gained two required headers after `power-on`: `start:` (the
+recording's start in golden time, ≤ 0; a light lit there is a row at `start`) and `end:` (its
+stop, from the last LCD frame): without them a golden could not say "lit throughout" or "no edge
+until the end". `tests/support/lights.ts` drives its own phone (`lightsRig`, idle stretches in
+20 ms steps; edges are exact at any step) rather than `tests/support/rig.ts`'s 1 ms rig, and
+promotion follows plan 29: Task 4's goldens are asserted now with their acceptance scenarios.
+
+Deviation: known gaps: `lights/timeout/virgin/tap-02` (the tick's ±3 ms, Task 3) and
+`lights/boot/power-off` (the kernel switches off 800 ms into the power key's hold, the firmware
+≈1017 ms: plan 17's power key). `lights/power-key/game` and `lights/screen-saver` wait for Task 8.
 
 ### Task 5 - The keyguard engine (pure, TDD)
 
 **Files:** `src/firmware/features/keyguard.ts` (the pure `KeyguardEngine`; the wiring arrives in
 Task 7), `tests/keyguard-engine.test.ts` (new).
 
-- [ ] TDD from Task 0's outcome, with an injected clock and no widget: the lock chord and its
+- [x] TDD from Task 0's outcome, with an injected clock and no widget: the lock chord and its
       window (`lock-gap/*`), what cancels it; the locked state; every key's hint and its expiry; a
       key during a hint; Unlock alone and its window (`unlock-gap/*`); unlock; the emergency buffer
       and display (every `emergency/*` case, `1 1 3`, `1 1 2 2`, C); `pass()` and `resume()`;
       `arrivedWhileLocked()`; which events are light activity (D3) as an output of each step, so
       Task 8 wires them without rules of its own.
-- [ ] Every duration comes from a constant named after its golden, filled by the widget-timeline
+- [x] Every duration comes from a constant named after its golden, filled by the widget-timeline
       generator's per-plan registration (Task 6), never typed by hand; the engine test uses the
       generated values.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the keyguard state machine`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the keyguard state machine`.
+
+**Task 5 completion.** `KeyguardEngine` (`src/firmware/features/keyguard.ts`): states as D4,
+`keyDown(key, atStandby)` returns `{ consumed, activity, silent }` (D3 and D12 as outputs),
+`keyUp` swallows the key-ups of the keys it took, `view` says which screen shows since when (the
+hint with `scroll` for C/▲/▼, the emergency display with its number), `pass`/`resume`/
+`arrivedWhileLocked` as D8, `reset` for a power-off. `KEYGUARD_TIMES` reads the six generated
+timelines by name. 28 tests.
+
+Deviation: the widget timelines the engine needs exist only once their sprites are registered,
+so Task 5 registers them (Task 6's sprite harvest moved here): in
+`scripts/resource-inputs/25-keyguard-and-backlight.ts`, sprite batch 250 (the key icon, the four
+lock-note icons, the seven hint icons, and two markers that only time their screens: `Now press
+*`'s text and the emergency display's `Call`) and timeline batch 250 with kinds `keyguard-lock`,
+`keyguard-hint`, `keyguard-now-press`, `keyguard-emergency` and plan 14's `note` for `Keypad active`
+(it matches `Done`'s `note/tick-box`, `note/tick-half` and `note/tick` sprites exactly). Named
+timelines: `keypad-locked`, `keyguard-hint`, `keyguard-hint-scroll`, `keyguard-now-press`,
+`keypad-active`, `keyguard-emergency`; `tests/resources.test.ts`'s exact list of named timelines
+gains these six (a shared line other plans also extend). The extractor keeps no frame before a
+probe's first sprite, so the standby without ladders before the hint (27 ms; 25 ms for C, ▲, ▼)
+and the 21 ms partial before `Keypad active` are constants checked against their golden frames,
+and the lock window (2925 ms) against `lock-gap/2920` and `2930`. `keyguard-hint-scroll` lacks the
+23 ms end partial of the C/▲/▼ recordings (longer than the extractor's 20 ms partial limit), so
+it ends 23 ms early: Task 7 either reproduces it or lists `keyguard/hint/up` as a known gap.
+
+UNVERIFIED engine rules (no capture): Unlock during the hint unlocks as at the locked standby; a
+key during `Keypad active` ends it; the digits typed while locked are forgotten when the locked
+standby returns; keys other than C, Unlock and digits during the emergency display show the hint.
 
 ### Task 6 - Keyguard sprites and painter (TDD against goldens)
 
@@ -607,15 +787,32 @@ Task 7), `tests/keyguard-engine.test.ts` (new).
 and paint switch: two lines), `scripts/widget-sprites.ts` (sprite sources: one-line registration
 per sprite set), `src/resources/generated/**` (regenerated), `tests/keyguard-paint.test.ts` (new).
 
-- [ ] Harvest from the goldens: the key icon, the `Keypad locked` icon frames, the hint's keypad
+- [x] Harvest from the goldens: the key icon, the `Keypad locked` icon frames, the hint's keypad
       and finger frames (the `Keypad active` box and tick are plan 14's `Done` sprites; assert
       they equal). `extract-resources` twice, no diff.
-- [ ] TDD a `keyguard` widget model (`locked-standby` composing the kernel's standby model,
+- [x] TDD a `keyguard` widget model (`locked-standby` composing the kernel's standby model,
       `lock-note`, `hint`, `now-press`, `active-note`, `emergency`) painted against every still and
       every distinct timeline image of the keyguard goldens; measured tops and positions recorded
       in the spec. A text that does not fit throws in tests (plan 13 D10).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): paint the keyguard screens`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): paint the keyguard screens`.
+
+**Task 6 completion.** `src/display/widgets/keyguard.ts` paints a `keyguard` widget model
+(`locked-standby`, `now-press` and `emergency` over the kernel's standby model; `lock-note`,
+`hint` and `active-note` as timeline steps through plan 14's note painter, its `edges` partial
+draws included). `src/display/widgets/index.ts` changed in four lines: the import, the type
+export, the `WidgetModel` union member and the `paintWidget` case. 10 tests paint the locked
+standby (and its ladderless lead), every step of `Keypad locked`, the hint and `Keypad active`
+(with their partial draws, each over the previous frame), `Now press *` (and its ladderless
+frame) and `112` against their golden images; an emergency number that does not fit throws.
+Measured positions are in the spec ("Screens").
+
+Deviation: the sprites were harvested in Task 5 (the engine's timelines need them), and
+`scripts/widget-sprites.ts` no longer exists (plan 29): the registration is plan 25's resource
+module. `Keypad active`'s box and tick are `Done`'s sprites by construction: its timeline is
+plan 14's `note` kind and matched `note/tick-box`, `note/tick-half` and `note/tick` exactly (the
+test asserts the three). The locked standby is drawn with `paintStandby` and its soft-key band
+redrawn with `Unlock` (or `Call`), so `src/display/standby.ts` does not change.
 
 ### Task 7 - The keyguard feature (TDD against goldens)
 
@@ -624,17 +821,51 @@ registration), `src/firmware/phone.ts` (the wrapper's key routing and screen ove
 `tests/keyguard-flow.test.ts` (new), `tests/support/keyguard.ts` (new: lock, unlock, replay a
 case).
 
-- [ ] TDD the overlay with the rig: while the engine is not `unlocked`, key events go to the engine
+- [x] TDD the overlay with the rig: while the engine is not `unlocked`, key events go to the engine
       and `screen`/`subscribe` report its frames; the kernel stays at standby underneath (its clock
       and notice keep updating in the locked standby); the lock chord reaches the engine only from
       the carousel entered by Menu at standby within the window (the kernel's carousel otherwise).
-- [ ] Every `keyguard/*` LCD golden that is asserted passes pixel for pixel and within ±2 ms after
+- [x] Every `keyguard/*` LCD golden that is asserted passes pixel for pixel and within ±2 ms after
       alignment, `leds` compared per D10 once Task 8 lands (until then the `leds` comparison is a
       todo in this plan's acceptance file).
-- [ ] Power-off while locked: the next power-on is unlocked (Task 0 confirms; otherwise a
+- [x] Power-off while locked: the next power-on is unlocked (Task 0 confirms; otherwise a
       Deviation).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the stock keyguard`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the stock keyguard`.
+
+**Task 7 completion.** `KeyguardOverlay` (`src/firmware/features/keyguard.ts`) owns the engine,
+paints its view over the kernel's standby (`keyguardModel`: the lock note, the locked standby, the
+hint with its lead, `Now press *`, `Keypad active`, the emergency display) as `custom` frames, and
+returns the kernel's carousel to standby under the lock note. `src/firmware/phone.ts` changed in
+these places: the overlay's construction, `keyguard.reset()` at power-off, `send` (a powered
+phone's key-down goes to the overlay first; a consumed key and its key-up never reach the kernel;
+light activity and the beep follow the engine's outcome), the wrapper's own subscriber list with a
+`publish()` at the end of every call (the overlay's frames change on its timers too), and `screen`.
+54 keyguard LCD goldens are asserted with scenarios (`tests/support/keyguard.ts`
+`keyguardTimeline`: the captures' keys, a later key on the golden row its effect starts), 11 of them
+known gaps; 8 flow tests (`tests/keyguard-flow.test.ts`).
+
+Deviation: the C/▲/▼ hint's 23 ms closing partial is reproduced: it is the digits' hint's 8 ms
+partial image (`edges`) held `KEYGUARD_HINT_SCROLL_PARTIAL_MS` = 23 (checked against
+`keyguard/hint/up` frame 10), after the generated `keyguard-hint-scroll` steps; `keyguard/hint/up`
+passes at ±2 ms. The power key's hint times as C's, ▲'s and ▼'s (`hint/pwr` equals `hint/up`
+within 1 ms), so the engine's `scroll` keys include it; `keyguard/power-key-held` (lit) times as
+the digits' and passes within PROBE_TOLERANCE_MS.
+
+Deviation: a hint's lead (the screen it leaves, its ladders erased, 25-27 ms) shows only when the
+key leaves a screen with ladders: the locked standby, `Now press *` (`unlock-digit` c) or the
+emergency display (`112-digit` e); a key during the hint restarts it at once on its first image
+(`hint-during`). The engine's hint view carries the lead (`lead: { ms, under }`).
+
+Deviation: the `leds` comparison (D10) waits for Task 8 without a todo entry: a plan acceptance
+file registers no tests but its `acceptancePlan`.
+
+Deviation: known gaps (expected failures with their cause in the acceptance file):
+`keyguard/hint-during` and `emergency/{000,110,113,911,999}` (their restarted hint closes with two
+partials, 17 and 9 ms, where the others show one), `lock-gap/{2500,2900,2910,2920}` (those
+recordings' `Keypad locked` runs 2901-2915 ms against 2886 ms, beyond PROBE_TOLERANCE_MS) and
+`lock-cancel/digit` (`*` during the carousel's shortcut entry: the firmware ignores it and Phone
+book opens when the window ends; plan 14's kernel ends the entry at the `*`).
 
 ### Task 8 - Lights rules across the phone (TDD against lights goldens)
 
@@ -642,55 +873,130 @@ case).
 outputs, the game rule, the power key), the feature list (one-line registration if separate from
 Task 7's), `tests/lights-rules.test.ts` (new).
 
-- [ ] TDD D3's table against `lights/keyguard/*` and `lights/power-key/*`: keys while locked stay
+- [x] TDD D3's table against `lights/keyguard/*` and `lights/power-key/*`: keys while locked stay
       dark, Unlock then `*` lights, the emergency display per Task 0.
-- [ ] TDD D7 against `lights/game/*`: read the Lights setting and the Snake II session state each
+- [x] TDD D7 against `lights/game/*`: read the Lights setting and the Snake II session state each
       tick (read only; no plan 23 file changes); force off/on during play, release at pause, game
       over and top score per Task 0.
-- [ ] `lights/screen-saver`: Screen saver On changes no light edge (D15).
-- [ ] The `leds` column of every plan 25 LCD golden now matches (D10): delete Task 7's todo.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): light the phone as the stock firmware does`.
+- [x] `lights/screen-saver`: Screen saver On changes no light edge (D15).
+- [x] The `leds` column of every plan 25 LCD golden now matches (D10): delete Task 7's todo.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): light the phone as the stock firmware does`.
+
+**Task 8 completion.** The keyguard's activity was wired in Task 7 (the wrapper lights a key-down
+only when the engine's outcome says so). `StockLightRules` (`src/firmware/features/backlight.ts`)
+adds D7: while the kernel's path is Snake II's New game or Continue, Lights Off forces both LEDs
+off and Lights On forces them on; leaving it (the pause) releases them; the death ends on the
+game-over screen at the crash cue + `SNAKE_DEATH_MS` (2066 ms; a top score's fireworks
+`SNAKE_TOP_SCORE_MS` later), which is activity with the force released, and the fireworks'
+`Game over!` title `FIREWORKS_MS` (2872 ms) later is activity again. It reads the setting, the
+games holder (read only) and the games' cues, which the wrapper passes through it. `StockLights`
+gained an optional `atMs` on `activity` and `force` (an edge stamped at the death's end found
+on a later tick). `src/firmware/phone.ts`: the rules' construction (the holder is read through a
+getter), the games' cue sink wrapped by it, `lightRules.update(path)` in `publish()`. All 23 lights
+goldens Task 4 left are asserted with scenarios (`lightsScenario`: locked dark ones lock first,
+the lit ones lock 4.8 s before time 0 as the capture script did, games open Snake II's menu 8 s
+before New game); 7 rule tests (`tests/lights-rules.test.ts`); every keyguard LCD scenario
+compares its rows' `leds` (D10).
+
+Deviation: the captures' factory image (`v639-plan15-restored.fls`, plans 16, 23 and 25) opens
+Games › Settings › Lights on Off, but plan 15's in-session Restore scroll
+(`plan15/factory/scroll/8-6-2/01.png`) and so nokia-os's factory state show On. The game
+scenarios set Lights as each recording had it; plan 15's factory table is not changed here
+(Lachlan: which image is the factory state?).
+
+Deviation: nokia-os starts New game and Continue at Select's release (plan 23, the tap's 60 ms),
+the firmware 36-38 ms after the key-down, and Snake II's pause lights 36 ms after its key-down
+(the game's key scan): the game scenarios compare an off edge within 100 ms of a key within
+25 ms and allow a 40 ms key latency (`GAME_LIGHTS_TOLERANCE`).
+
+Deviation: known gaps `lights/game/{off,on}/{over,top-score}`: the capture's bot steered live
+from its board (another seed, a game started 22 ms earlier), so its keys do not crash
+nokia-os's snake and the death's end never lights; `tests/lights-rules.test.ts` lights a crash of
+nokia-os's own (Maze 1, into the wall) at exactly the crash cue + 2066 ms. The capture lit 27 ms
+before its game-over redraw (`lights/game/off/over` 7247 ms, LCD 7274 ms): UNVERIFIED which
+nokia-os reproduces (it lights at the game-over screen).
+
+Deviation: the lights rig records the games' cues instead of sounding them (`lightsRig.cues`).
 
 ### Task 9 - Keyguard sounds (TDD against sound goldens)
 
 **Files:** `tests/keyguard-sound.test.ts` (new), `tests/support/keyguard.ts`; plan 16's generator
 input only if a keyguard note sounds (`NOTE_SOUNDS` by quoted note text; regenerate twice).
 
-- [ ] Drive `sound/keyguard/*` from the factory state (`seededStorage({ factory: true })`) with
+- [x] Drive `sound/keyguard/*` from the factory state (`seededStorage({ factory: true })`) with
       plan 16's `playSound`/`expectSoundTimeline` and tolerances: the lock, a locked key, Unlock
       alone, unlock and an emergency number.
-- [ ] A locked key that the capture shows silent uses plan 16's `silent-key` cue path from the
+- [x] A locked key that the capture shows silent uses plan 16's `silent-key` cue path from the
       overlay; anything else the sounder cannot do: stop and report (D12).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): keyguard beeps and tones`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): keyguard beeps and tones`.
+
+**Task 9 completion.** The six keyguard sound goldens are asserted with scenarios
+(`tests/support/keyguard.ts` `keyguardSound`: the factory phone dark, its DSP asleep, at standby
+or locked); `tests/keyguard-sound.test.ts` (3 tests: the tone in place of the `*`'s beep, silent
+with Warning tones Off, locked keys silent held and with the power key). The overlay plays
+`Keypad locked`'s lines through `sounder.note` when it locks (`KeyguardOverlayOptions.noteSound`).
+
+Deviation: the lock's recording is imported as `sound/note/keypad-locked` (its note quotes
+`"Keypad locked"`), not `sound/keyguard/lock`: plan 16's generator takes warning tones from
+`sound/note/` goldens, so `NOTE_SOUNDS` gains `Keypad locked` (1750 Hz, 0x9105, 293 ms) by
+regeneration. `tests/resources.test.ts`'s exact list of note sounds gains that line (a shared
+list other plans extend).
+
+Deviation: no `silent-key` cue: the wrapper never hands a key the keyguard swallows silently to
+the sounder (neither its key-down nor a held beep), which is what the cue achieves for widgets
+under the kernel.
 
 ### Task 10 - Acceptance
 
 **Files:** `tests/acceptance/25-keyguard-and-backlight.test.ts`, `tests/support/keyguard.ts`,
 `tests/support/lights.ts`.
 
-- [ ] One scenario per asserted plan 25 golden (LCD, lights, sound). Delete Task 2's
+- [x] One scenario per asserted plan 25 golden (LCD, lights, sound). Delete Task 2's
       pending-scenario entry; the coverage guard fails for an asserted plan 25 golden without one.
-- [ ] Known gaps, if any, are listed with their cause (the emergency Call until plan 22).
-- [ ] Every other plan's goldens still pass.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
+- [x] Known gaps, if any, are listed with their cause (the emergency Call until plan 22).
+- [x] Every other plan's goldens still pass.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
       `mise exec -- vp check --fix`. Report the file's run time.
-- [ ] Commit: `test(nokia-os): drive every keyguard and lights golden`.
+- [x] Commit: `test(nokia-os): drive every keyguard and lights golden`.
+
+**Task 10 completion.** `goldens/index/25.json`: 210 goldens, 189 asserted (139 lights, 62
+timelines and 3 stills less the 21 pending, 6 sound), 17 `pending:22` and 4 `pending:18`, none
+`pending:25` (`tests/keyguard-capture-set.test.ts` guards it). The acceptance file runs 172
+scenarios, 17 known gaps as expected failures and 21 todos in ≈9.4 s of tests (11.3 s with
+transform and import). Known gaps: `lights/timeout/virgin/tap-02`, `lights/boot/power-off` (Task
+4), `keyguard/hint-during`, `keyguard/emergency/{000,110,113,911,999}`,
+`keyguard/lock-gap/{2500,2900,2910,2920}`, `keyguard/lock-cancel/digit` (Task 7),
+`lights/game/{off,on}/{over,top-score}` (Task 8); the emergency Call (`keyguard/emergency-call`)
+is `pending:22`, not a gap. `vp run -r test`: every package passes.
+
+Deviation: Task 9's commit left a type error in `tests/keyguard-sound.test.ts` (a filtered sound
+event's `hz`); fixed in this commit.
 
 ### Task 11 - Demo lamp and README
 
 **Files:** `packages/nokia-os/demo/{index.html,main.ts,style.css}` (the lights lines only),
 `packages/nokia-os/README.md`.
 
-- [ ] A `StockLightsPort` in the demo: a `LCD` and a `KEYS` lamp beside `VIBRA`, and the LCD
+- [x] A `StockLightsPort` in the demo: a `LCD` and a `KEYS` lamp beside `VIBRA`, and the LCD
       canvas dimmed (a CSS filter) while the display LEDs are off; the event log shows lights events.
-- [ ] Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`: a key lights
+- [x] Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`: a key lights
       both lamps; ≈14-16 s later both go dark; Menu then `*` shows `Keypad locked`; a digit shows the
       hint with the lamps dark; Unlock then `*` lights them. Screenshots in the completion note.
-- [ ] README: the lights port (the phone-3d adapter from "Contract changes"), the light tick, the
+- [x] README: the lights port (the phone-3d adapter from "Contract changes"), the light tick, the
       keyguard, and what later plans add.
-- [ ] Commit: `feat(nokia-os): lights and keyguard in the demo`.
+- [x] Commit: `feat(nokia-os): lights and keyguard in the demo`.
+
+**Task 11 completion.** Headless `agent-browser` on port 5393: power-on lit both lamps at 1965 ms
+(`/tmp/nokia-os-p25-lit.png`), dark at 25 474 ms (`-dark.png`, the LCD dimmed); Menu then `*`
+showed `Keypad locked` and lit them (`-lock.png`); 17 s later `5` showed the hint with the lamps
+dark (`-hint.png`); Unlock then `*` showed `Keypad active` and lit them (`-unlock.png`), then
+standby. README: "Lights and the keyguard".
+
+Deviation: the demo's lights are a panel (`demo/panels/lights.ts` and one line in
+`demo/panels/index.ts`, AGENTS.md's demo convention) with its lamp styles in `demo/style.css`;
+`demo/main.ts` and `index.html` do not change.
 
 ### Task 12 - phone-3d: keypad light input and brighter keypad (TDD)
 
@@ -698,64 +1004,96 @@ input only if a keyguard note sounds (`NOTE_SOUNDS` by quoted note text; regener
 `packages/phone-3d/src/demo/main.tsx`, `packages/phone-3d/tests/{types,materials}.test.ts`,
 `packages/phone-3d/README.md`.
 
-- [ ] TDD (types test): `keypadLightOn` is optional and defaults to `backlightOn` (a pure
+- [x] TDD (types test): `keypadLightOn` is optional and defaults to `backlightOn` (a pure
       `resolveLights(props)` helper in `types.ts` returns `{ display, keypad }`).
-- [ ] TDD (materials test): the lit legend emission is about ten times today's (`TODOS.md`: the
+- [x] TDD (materials test): the lit legend emission is about ten times today's (`TODOS.md`: the
       keypad reads at ≈1/10): pin the relative luminance of `LEGEND_GLOW_COLOR` ×
       `LEGEND_GLOW_INTENSITY` against today's value (≥ 8×), the NaviKey bar included; the unlit
       state stays 0.
-- [ ] `Key` reads the keypad light, the LCD the display light; the demo gets a second checkbox.
-- [ ] Visual check: `mise exec -- vp run @hellotimber/phone-3d#dev` with `agent-browser` (headed if
+- [x] `Key` reads the keypad light, the LCD the display light; the demo gets a second checkbox.
+- [x] Visual check: `mise exec -- vp run @hellotimber/phone-3d#dev` with `agent-browser` (headed if
       headless WebGL is unavailable); screenshots lit/unlit in the completion note, or Lachlan's
       sign-off requested there.
-- [ ] `mise exec -- vp run @hellotimber/phone-3d#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(phone-3d): separate keypad light and brighter keypad`.
+- [x] `mise exec -- vp run @hellotimber/phone-3d#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(phone-3d): separate keypad light and brighter keypad`.
+
+**Task 12 completion.** `resolveLights` (`types.ts`); `Key` reads the keypad light, the LCD the
+display light; the demo's second checkbox. Lit legends glow `#7fcf6a` × 1.4, 9.95× the old
+`#496847` × 0.6 in relative luminance; the NaviKey bar `#6fd6b8` × 1.2 (9.33×); unlit both 0.
+Verified headed (agent-browser; WebGL works headed, not headless):
+`/tmp/phone3d-p25-t12-{lit,keypad-off,display-off}.png`.
 
 ### Task 13 - phone-3d: three top LEDs and their gradient (TDD)
 
 **Files:** `packages/phone-3d/src/backlight.ts` (new, pure), `packages/phone-3d/src/Nokia3310.tsx`,
 `packages/phone-3d/src/materials.ts`, `packages/phone-3d/tests/backlight.test.ts` (new).
 
-- [ ] TDD `backlightLightmap(width, height)`: RGBA data lit by three LEDs just above the top edge,
+- [x] TDD `backlightLightmap(width, height)`: RGBA data lit by three LEDs just above the top edge,
       evenly spaced (x = 1/6, 1/2, 5/6 of the width): three local maxima along the top row
       at those x; each column decreasing downward; no pixel below `LIT_FLOOR` (the bottom stays
       readable); deterministic. `unlitLightmap()` is uniform at the unlit level.
-- [ ] The LCD surround and pixel plane use it as a `lightMap` (MeshBasicMaterial; intensity scaled
+- [x] The LCD surround and pixel plane use it as a `lightMap` (MeshBasicMaterial; intensity scaled
       so the brightest texel equals today's lit tint), swapped with the unlit map when the display
       light is off; the green glow point light becomes three weak lights at the LED positions.
-- [ ] Visual check as Task 12 (lit and unlit, straight on and at 30°).
-- [ ] `mise exec -- vp run @hellotimber/phone-3d#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(phone-3d): light the LCD from three top LEDs`.
+- [x] Visual check as Task 12 (lit and unlit, straight on and at 30°).
+- [x] `mise exec -- vp run @hellotimber/phone-3d#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(phone-3d): light the LCD from three top LEDs`.
+
+**Task 13 completion.** `src/backlight.ts`: LEDs at 1/6, 1/2, 5/6 of the width, `LIT_FLOOR` = 0.7;
+three weak point lights replace the green glow light. Screenshots
+`/tmp/phone3d-p25-t13-{lit,unlit}{,-30deg}.png`.
+
+Deviation: three's `MeshBasicMaterial` divides a light map by π, so "the brightest texel equals
+today's lit tint" is `lightMapIntensity` = π over the normalised map. `SCREEN_DIM_PIXEL_TINT` is
+gone (no pixel plane uses it); the demo's test pattern (`src/demo/test-pattern.ts`) became a
+two-colour LCD image, since its old checkerboard colours all counted as ink for Task 14.
 
 ### Task 14 - phone-3d: floating LCD ink with a drop shadow (TDD)
 
 **Files:** `packages/phone-3d/src/lcd-ink.ts` (new, pure), `packages/phone-3d/src/Nokia3310.tsx`,
 `packages/phone-3d/tests/lcd-ink.test.ts` (new), `packages/phone-3d/README.md`.
 
-- [ ] TDD `inkMask(rgba, bg)`: from the host canvas's pixels, alpha 255 where a pixel is ink (the
+- [x] TDD `inkMask(rgba, bg)`: from the host canvas's pixels, alpha 255 where a pixel is ink (the
       colour farther from `screenBgColor` than half the fg-bg distance), 0 elsewhere, for any
       palette; `shadowMask(mask, scale, blur)`: the mask upscaled `scale`× and box-blurred `blur`
       texels, values within 0-255, ink-only input gives the expected blur sums.
-- [ ] The LCD becomes three layers over the lit surround: the shadow (black, mask alpha ×
+- [x] The LCD becomes three layers over the lit surround: the shadow (black, mask alpha ×
       `INK_SHADOW_OPACITY`, offset ≈⅓ LCD pixel right and down), then the ink (the fg colour through
       the mask) a hair above it; the masks re-derive on each `screenVersion` bump. The host canvas's
       background is no longer drawn directly (the surround and lightmap are the background).
-- [ ] Visual check as Task 12: ink sharp, shadow visible but subtle, lit and unlit.
-- [ ] `mise exec -- vp run @hellotimber/phone-3d#test`, `mise exec -- vp run website#build`,
+- [x] Visual check as Task 12: ink sharp, shadow visible but subtle, lit and unlit.
+- [x] `mise exec -- vp run @hellotimber/phone-3d#test`, `mise exec -- vp run website#build`,
       `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(phone-3d): floating LCD ink with a drop shadow`.
+- [x] Commit: `feat(phone-3d): floating LCD ink with a drop shadow`.
+
+**Task 14 completion.** `src/lcd-ink.ts`: the shadow at `INK_SHADOW_OPACITY` = 0.3, offset ⅓ LCD
+pixel right and down, its mask at 3× with a 1-texel box blur; the masks re-derive on each
+`screenVersion` bump. Screenshots `/tmp/phone3d-p25-t14-{lit,unlit,lit-30deg}.png`,
+`/tmp/phone3d-p25-final-{lit,keypad-off}.png`: a top-down gradient with three faint hotspots,
+sharp ink over a subtle shadow, a clearly brighter keypad.
+
+Deviation: `inkMask` takes and returns ImageData-like `{ width, height, data }` (the shadow needs
+the size); the ink colour is the canvas colour farthest from `screenBgColor`, and the ink layer is
+the canvas texture cut out by the mask.
 
 ### Task 15 - Verification gate and closeout
 
 **Files:** this plan, `docs/plans/README.md` (row 25), `docs/specs/stock/keyguard-and-backlight.md`.
 
-- [ ] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
+- [x] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
       `mise exec -- vp run website#build`; `git diff --stat <commit before Task 1> -- website/` is
       empty; phone-core is unchanged.
-- [ ] Spec: replace "(plan 25, in progress)" with verified facts; list what stays UNVERIFIED (LED
+- [x] Spec: replace "(plan 25, in progress)" with verified facts; list what stays UNVERIFIED (LED
       rise time, charging, the screen saver, the car kit, anything Task 0 could not capture).
-- [ ] Plans README row 25 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete the keyguard and lights (plan 25)`.
+- [x] Plans README row 25 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete the keyguard and lights (plan 25)`.
+
+**Task 15 completion.** `vp check`, `vp run -r test` (every package) and `vp run website#build`
+pass. `git diff --stat bf8dd31^ -- website/` is empty. phone-core changed only through the merges
+of plans 18 and the rows-window fix (`614ee1d`); no plan 25 commit touches it. The spec drops
+"in progress", records the power key's hint class, the hint's lead rule, the factory Lights
+discrepancy, the Task 5/7/8 UNVERIFIED rules and what nokia-os reproduces (189 of 210 goldens
+asserted, 17 known gaps).
 
 ## Follow-up plan adjustments
 

@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/timeout/virgin/relight-10000
+status: asserted
+source: captures/6.39/plan25/lights/timeout/virgin/relight-10000
+source-sha256: 14a71596ebd58a16bc2ea61991eaa924af4b9002804e51f36d8ea69c2d794c73
+state: virgin
+power-on: 69192
+start: -100
+end: 27091
+keys: 0:c 10001:c
+note: C, then C 10000 ms later while the LEDs are on.
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+23994  display off
+23994  keypad  off

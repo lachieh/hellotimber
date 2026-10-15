@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/note/keypad-locked
+status: asserted
+source: captures/6.39/plan25/sound/keyguard/lock
+source-sha256: 64db9332d4d3595fc6ce8cabee096f1547170c9eda8c58f1c9dae928c51d7714
+state: factory
+keys: 0:navi 300:*
+note: "Keypad locked" (Warning tones On): Menu, then * at 300 ms: Menu's beep, then the lock's warning tone.
+omitted: none
+
+@events
+# t_ms output   state
+63     tone     900 v=0x9104
+187    tone     off
+320    tone     1750 v=0x9105
+613    tone     off

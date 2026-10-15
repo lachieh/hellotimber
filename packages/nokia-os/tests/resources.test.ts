@@ -740,6 +740,7 @@ describe("sound programs and rules (plan 16 Task 3)", () => {
       "Code error",
       "Dividing by zero not allowed",
       "Invalid shortcut",
+      "Keypad locked",
       "No phone numbers",
       "No voice tags saved",
       "Not allowed",
@@ -845,7 +846,7 @@ describe("text entry and SMS resources (plan 18)", () => {
     expect(fb.drawText(STOCK_FONTS.digits, "459/1", 0, 0)).toBe(28);
   });
 
-  it("gives every glyph its ink plus one blank column, but `1` and large `.` and `R`", () => {
+  it("gives every glyph its ink plus one blank column, but `1` and large `.`, `K` and `R`", () => {
     const spaced = new Set(
       INPUTS.glyphOverrides.flatMap((o) => (o.kind === "spacing" ? [`${o.font} ${o.char}`] : [])),
     );
@@ -870,6 +871,7 @@ describe("text entry and SMS resources (plan 18)", () => {
       "digits 1",
       "large .",
       "large 1",
+      "large K",
       "large R",
       "small 1",
       "thin 1",

@@ -8,3 +8,4 @@ export { messagesAndChat } from "./18-messages-and-chat.ts";
 export { tonesAndSound } from "./16-tones-and-sound.ts";
 export { calculator } from "./20-calculator.ts";
 export { snakeII } from "./23-snake-ii.ts";
+export { keyguardAndBacklight } from "./25-keyguard-and-backlight.ts";

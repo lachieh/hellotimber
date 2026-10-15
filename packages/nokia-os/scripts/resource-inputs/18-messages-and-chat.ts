@@ -42,11 +42,12 @@ function counter(text: string): TextRun[] {
  * Characters the goldens show only alone (a glyph sheet, a key press, a symbol cell, the end of
  * the header's mode text): their advance is their ink plus one blank column, as for every
  * measured glyph of the fonts but the digits and four large ones (`tests/harvest.test.ts`).
+ * Large K is measured inside `Keypad` (plan 25): its leg fills the blank column, as R's does.
  */
 const SPACING: Readonly<Record<FontName, string>> = {
   small: "$%&/;<=>@Z\\_\"'¡£¤¥§¿ÀÁÂÃÄÆÇÈÉÊËÌÍÎÏÑÒÓÔÖØÙÚÛÜßàáâãäæèéëìíîïòóôöøùúûĞğİı€",
   large:
-    "\"$%&'*+,/;<=>?@BFJKQUVXZ\\_¡£¤¥§¿ÀÁÂÃÄÆÇÈÉÊËÌÍÎÏÑÒÓÔÖØÙÚÛÜßàáâãäæçèéêëìíîïñòóôöøùúûüĞğİı€",
+    "\"$%&'*+,/;<=>?@BFJQUVXZ\\_¡£¤¥§¿ÀÁÂÃÄÆÇÈÉÊËÌÍÎÏÑÒÓÔÖØÙÚÛÜßàáâãäæçèéêëìíîïñòóôöøùúûüĞğİı€",
   digits: "",
   thin: '!"$%&+-/;<=>?@\\_¡£¤¥§¿€',
 };

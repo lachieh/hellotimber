@@ -1,0 +1,19 @@
+lights-golden 1
+id: lights/timeout/virgin/tap-10
+status: asserted
+source: captures/6.39/plan25/lights/timeout/virgin/tap-10
+source-sha256: a71f8ebd917c7e1ed13f1b6efe8d6c76be738146436fc201f8b752a02d42bc28
+state: virgin
+power-on: 70633
+start: -100
+end: 17091
+keys: 0:c
+note: C at standby with the LEDs off, 1240 ms after a light tick (Task 0 L).
+omitted: none
+
+@events
+# t_ms light   state
+17     display on
+17     keypad  on
+14622  display off
+14622  keypad  off

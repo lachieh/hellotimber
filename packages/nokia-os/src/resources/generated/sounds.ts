@@ -21814,6 +21814,18 @@ export const SOUND_DATA: { readonly previewDelayMs: number; readonly messagePrev
           }
         }
       ]
+    },
+    "Keypad locked": {
+      "id": "sound/note/keypad-locked",
+      "steps": [
+        {
+          "ms": 293,
+          "tone": {
+            "hz": 1750,
+            "volume": 37125
+          }
+        }
+      ]
     }
   },
   "gameCues": {

@@ -1,4 +1,10 @@
-import { createPhone, type KeyEvent, type Phone, type PhoneKey } from "@hellotimber/phone-core";
+import {
+  createPhone,
+  type KeyEvent,
+  type Phone,
+  type PhoneKey,
+  type PhoneSnapshot,
+} from "@hellotimber/phone-core";
 import { VISIBLE_ROWS } from "../display/list-rows";
 import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
 import type { StockCueSink } from "./cues";
@@ -9,6 +15,8 @@ import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { stockBootGates } from "./boot";
 import { createStockSettings } from "./settings";
+import { StockLightRules, StockLights, type StockLightsPort } from "./features/backlight";
+import { KeyguardOverlay } from "./features/keyguard";
 import type { StockSoundPort } from "../sound/port";
 import { SoundSequencer } from "../sound/sequencer";
 import { StockSounder, type KeyDownOptions } from "../sound/sounder";
@@ -36,6 +44,11 @@ export interface StockPhoneConfig extends StockPorts {
    * stamped with the kernel time it happens at. Default: nowhere.
    */
   sound?: StockSoundPort;
+  /**
+   * Plan 25: the display and keypad LEDs. Every change arrives from `tick()` stamped with the
+   * kernel time it happens at. Default: nowhere.
+   */
+  lights?: StockLightsPort;
 }
 
 /**
@@ -104,11 +117,28 @@ export function createStockPhoneWith(
   const port = config.sound;
   const sequencer = new SoundSequencer((event) => port?.change(event));
   const sounder = new StockSounder(sequencer, settings, () => now);
+  const lightsPort = config.lights;
+  const lights = new StockLights(
+    (event) => lightsPort?.change(event),
+    () => now,
+  );
+  // Plan 25 D7: Games › Settings › Lights during play, timed from the games' own cues; it reads
+  // the suspended game from the holder below.
+  const lightRules = new StockLightRules({
+    lights,
+    settings,
+    games: {
+      get snake() {
+        return games.snake;
+      },
+    },
+    now: () => now,
+  });
   const clockGames = createStockGames(ports, () => now);
   const games = {
     ...clockGames,
     ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
-    cues: internals.cues ?? sounder,
+    cues: lightRules.cues(internals.cues ?? sounder),
   };
   const phone = createPhone({
     menu: createStockMenu(ports, settings, games, security, sounder, eeprom),
@@ -126,26 +156,85 @@ export function createStockPhoneWith(
     // Stock shortcut digits: menu numbers, delayed opening, Invalid shortcut (plan 14 D14).
     shortcutEntry: { openDelayMs: STOCK_SHORTCUT_OPEN_DELAY_MS, invalid: invalidShortcut(sounder) },
   });
+  // Plan 25 D4: the keyguard over the kernel, which stays at standby underneath it.
+  const keyguard = new KeyguardOverlay(phone, {
+    now: () => now,
+    noteSound: (lines) => sounder.note(lines),
+  });
   // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
+  // Plan 25: the light tick runs from the power-on; the boot lights the LEDs at the self-test's
+  // first frame and again where the firmware shows its clock prompt (nokia-os: standby).
   let poweredOn = false;
+  let booting = false;
   phone.subscribe((snapshot) => {
     if (!snapshot.poweredOn) games.snake = undefined;
-    if (snapshot.poweredOn === poweredOn) return;
-    poweredOn = snapshot.poweredOn;
-    if (poweredOn) sounder.powerOn({ boot: !skip });
-    else sounder.powerOff();
+    if (snapshot.poweredOn !== poweredOn) {
+      poweredOn = snapshot.poweredOn;
+      booting = poweredOn;
+      if (poweredOn) {
+        sounder.powerOn({ boot: !skip });
+        lights.powerOn(now);
+      } else {
+        sounder.powerOff();
+        lights.powerOff();
+        keyguard.reset();
+      }
+    }
+    if (!booting) return;
+    const { screen } = snapshot;
+    if (screen.kind === "boot" && screen.frame > 0 && !lights.display) lights.activity();
+    if (screen.kind === "standby") {
+      booting = false;
+      lights.activity();
+    }
   });
+  // Snapshots: the kernel's, with the keyguard's screen while it shows one (D4). The keyguard's
+  // frames change on its own timers too, so every wrapper call ends by publishing a change.
+  const subscribers = new Set<(snapshot: PhoneSnapshot) => void>();
+  let overlay: PhoneSnapshot["screen"] | undefined;
+  const deliver = (snapshot: PhoneSnapshot): void => {
+    for (const callback of subscribers) {
+      try {
+        callback(snapshot);
+      } catch {
+        // Host subscribers cannot be allowed to corrupt firmware state (as the kernel's).
+      }
+    }
+  };
+  phone.subscribe((snapshot) => {
+    overlay = keyguard.screen;
+    deliver(overlay === undefined ? snapshot : { ...snapshot, screen: overlay });
+  });
+  const publish = (): void => {
+    lightRules.update(phone.path);
+    const screen = keyguard.screen;
+    if (screen === overlay) return;
+    overlay = screen;
+    deliver({ path: phone.path, screen: screen ?? phone.screen, poweredOn });
+  };
   const send = (event: KeyEvent): void => {
     if (event.type === "up") {
-      phone.send(event);
+      if (!(poweredOn && keyguard.keyUp(event.key))) phone.send(event);
       sounder.keyUp(event.key);
+      publish();
       return;
     }
-    const on = poweredOn;
-    const options = on ? keyDownOptions(event.key, phone) : undefined;
-    phone.send(event);
-    // The beep follows the key's handling: a widget may set this key's level or replace it.
-    if (options !== undefined) sounder.keyDown(event.key, options);
+    if (!poweredOn) {
+      phone.send(event);
+      publish();
+      return;
+    }
+    const outcome = keyguard.keyDown(event.key);
+    if (outcome.activity) lights.activity();
+    if (outcome.consumed) {
+      if (!outcome.silent) sounder.keyDown(event.key, { holdBeeps: false });
+    } else {
+      const options = keyDownOptions(event.key, phone);
+      phone.send(event);
+      // The beep follows the key's handling: a widget may set this key's level or replace it.
+      sounder.keyDown(event.key, options);
+    }
+    publish();
   };
   const wrapper: Phone = {
     send,
@@ -160,16 +249,29 @@ export function createStockPhoneWith(
       phone.tick(nowMs);
       sounder.tick();
       sequencer.advance(now);
+      lights.tick();
+      publish();
     },
-    navigate: (path) => phone.navigate(path),
-    setNotice: (notice) => phone.setNotice(notice),
+    navigate(path) {
+      phone.navigate(path);
+      publish();
+    },
+    setNotice(notice) {
+      phone.setNotice(notice);
+      publish();
+    },
     get path() {
       return phone.path;
     },
     get screen() {
-      return phone.screen;
+      return keyguard.screen ?? phone.screen;
     },
-    subscribe: (callback) => phone.subscribe(callback),
+    subscribe(callback) {
+      subscribers.add(callback);
+      return () => {
+        subscribers.delete(callback);
+      };
+    },
     on: (event, callback) => phone.on(event, callback),
   };
   return wrapper;

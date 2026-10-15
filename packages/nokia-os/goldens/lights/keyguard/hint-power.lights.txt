@@ -1,0 +1,17 @@
+lights-golden 1
+id: lights/keyguard/hint-power
+status: asserted
+source: captures/6.39/plan25/keyguard/hint/pwr
+source-sha256: 96eab8548abfcf4fdcb947ac89efc91c22c6b8bbbaa21dd851a27edef9b95be1
+state: virgin
+power-on: 81478
+start: -100
+end: 4631
+keys: 0:power
+note: The power key's short press on a dark locked standby: the hint, lit.
+omitted: none
+
+@events
+# t_ms light   state
+12     display on
+12     keypad  on

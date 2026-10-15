@@ -7,6 +7,7 @@ import { paintEditor, type EditorModel } from "./editor";
 import { paintGameOver, type GameOverModel } from "./game-over";
 import { paintInfoPage, type InfoPageModel } from "./info-pages";
 import { paintInfoScreen, type InfoScreenModel } from "./info-screen";
+import { paintKeyguard, type KeyguardModel } from "./keyguard";
 import { paintLevelBar, type LevelBarModel } from "./level-bar";
 import { paintMulti, type MultiModel } from "./multi";
 import { paintNote, paintWelcomeNote, type NoteModel, type WelcomeNoteModel } from "./note";
@@ -23,6 +24,7 @@ export type { EditorModel } from "./editor";
 export type { GameOverModel } from "./game-over";
 export type { InfoPageModel } from "./info-pages";
 export type { InfoScreenModel } from "./info-screen";
+export type { KeyguardModel } from "./keyguard";
 export type { LevelBarModel } from "./level-bar";
 export type { MultiModel } from "./multi";
 export type { NoteModel, WelcomeNoteModel } from "./note";
@@ -68,7 +70,8 @@ export type WidgetModel =
   | EditorModel
   | SymbolsModel
   | PlaceholderModel
-  | CalculatorModel;
+  | CalculatorModel
+  | KeyguardModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -132,6 +135,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "calculator":
       paintCalculator(fb, model);
+      return;
+    case "keyguard":
+      paintKeyguard(fb, model, previous);
       return;
   }
 }

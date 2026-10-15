@@ -25,6 +25,7 @@ import {
   type GoldenIndexEntry,
 } from "../scripts/golden-index.ts";
 import { parseManifestNote } from "../scripts/messages-capture-set.ts";
+import { parseLightsGolden } from "../scripts/lights-format.ts";
 import { parseSoundGolden } from "../scripts/sound-format.ts";
 
 const GOLDENS = join(import.meta.dirname, "../goldens");
@@ -37,7 +38,7 @@ function fixtureFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) return fixtureFiles(path);
-    return /\.(lcd|ticks|sound)\.txt$/.test(entry.name) ? [relative(GOLDENS, path)] : [];
+    return /\.(lcd|ticks|sound|lights)\.txt$/.test(entry.name) ? [relative(GOLDENS, path)] : [];
   });
 }
 
@@ -61,7 +62,9 @@ describe("committed goldens", () => {
     expect(fixtureFiles(GOLDENS).sort()).toEqual(index.map((entry) => entry.file).sort());
   });
 
-  for (const entry of index.filter((e) => e.kind !== "ticks" && e.kind !== "sound")) {
+  for (const entry of index.filter(
+    (e) => e.kind !== "ticks" && e.kind !== "sound" && e.kind !== "lights",
+  )) {
     it(`${entry.id} parses, is 84x48 and matches its index entry`, () => {
       const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
       expect(golden.id).toBe(entry.id);
@@ -93,7 +96,7 @@ describe("committed goldens", () => {
     const seen = new Map<string, string>();
     const twice: string[] = [];
     for (const entry of index) {
-      if (entry.status !== "asserted" || entry.kind === "ticks" || entry.kind === "sound") continue;
+      if (entry.status !== "asserted" || !["still", "timeline"].includes(entry.kind)) continue;
       const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
       for (const number of golden.covers ?? []) {
         const key = `${golden.scenario} ${number}`;
@@ -104,6 +107,16 @@ describe("committed goldens", () => {
     }
     expect(twice).toEqual([]);
   });
+
+  for (const entry of index.filter((e) => e.kind === "lights")) {
+    it(`${entry.id} parses and matches its index entry (plan 25)`, () => {
+      const golden = parseLightsGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+      expect(golden.id).toBe(entry.id);
+      expect(entry.file).toBe(`${entry.id}.lights.txt`);
+      expect(golden.status).toBe(entry.status);
+      expect(golden.rows).toHaveLength(entry.events!);
+    });
+  }
 
   it("names a later plan for every pending fixture", () => {
     const pending = index.filter((entry) => entry.status !== "asserted");
@@ -228,7 +241,7 @@ describe("game goldens (plan 23)", () => {
 });
 
 describe("sound goldens (plan 16)", () => {
-  const sounds = index.filter((entry) => entry.kind === "sound");
+  const sounds = readPlanIndex(GOLDENS, "16").filter((entry) => entry.kind === "sound");
   const STATES = /^(virgin|factory|v639-[a-z0-9-]+)$/;
 
   for (const entry of sounds) {
@@ -267,8 +280,13 @@ describe("plan 18 goldens", () => {
     parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
 
   it("leaves plan 18 pending elsewhere only on the leaves it still owns (2-1, 6-2-3)", () => {
+    // Plan 25's keyguard and lights recordings of message arrivals (K7) wait on plan 18's screens
+    // too; they cover no tree leaf.
     const elsewhere = index.filter(
-      (entry) => entry.status === "pending:18" && !own.some((e) => e.id === entry.id),
+      (entry) =>
+        entry.status === "pending:18" &&
+        !own.some((e) => e.id === entry.id) &&
+        !/^(keyguard|lights)\//.test(entry.id),
     );
     const owned = Object.entries(PLACEHOLDER_OWNERS)
       .filter(([, plan]) => plan === "18")
