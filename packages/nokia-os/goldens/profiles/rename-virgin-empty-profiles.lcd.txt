@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/rename-virgin-empty-profiles
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename-virgin/empty/empty-profiles.png + captures/6.39/plan17/rename-virgin/empty-2/empty-profiles.png
 source-sha256: 20aab08ad4aa328473d9344849d89291f835dc366bfbcffe471c8508eea4bb9b
 note: Virgin: after an empty name's OK: the Profiles level, slots 5 and 6 named (empty).

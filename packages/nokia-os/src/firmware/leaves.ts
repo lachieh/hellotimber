@@ -8,7 +8,7 @@ import type {
   PhoneApplicationSession,
   PhoneKey,
 } from "@hellotimber/phone-core";
-import { missingStockGlyphs, WIDGET_TIMELINE_BY_NODE } from "../resources";
+import { WIDGET_TIMELINE_BY_NODE } from "../resources";
 import type { StockWidgetTimeline } from "../resources";
 import { confirmQuery } from "../widgets/confirm";
 import { StockFlowApplication, type Flow, type Widget } from "../widgets/flow";
@@ -97,21 +97,11 @@ function placeholderWidget(label: string): Widget {
   };
 }
 
-/** A prompt's layout: the measured one, or (Rename in another profile) the model's renamed. */
-function layoutOf(number: string, screen: StockLeafScreen, value?: string): PromptLayout {
-  const own = PROMPT_LAYOUTS[number];
-  const model = modelNumber(number);
-  const layout = own ?? promptLayout(model, screen.kind);
+/** A prompt's layout: its own measured one, or its same-as model's. */
+function layoutOf(number: string, screen: StockLeafScreen): PromptLayout {
+  const layout = PROMPT_LAYOUTS[number] ?? promptLayout(modelNumber(number), screen.kind);
   if (layout === undefined) throw new Error(`No prompt layout for ${number} (${screen.kind}).`);
-  if (own !== undefined || model === number || layout.value === undefined || value === undefined) {
-    return layout;
-  }
-  // Rename (12-n-2-10) edits that profile's name; the counter is what is left of its 10
-  // characters (Silent: 4). Other profiles' prompts were not captured (UNVERIFIED); slot 6's
-  // boxes have no large-face glyph in any golden, so its entry starts empty.
-  const max = Number(layout.counter) + layout.value.length;
-  const drawable = missingStockGlyphs(value, layout.font ?? "large").length === 0;
-  return { ...layout, value: drawable ? value : "", counter: String(max - value.length) };
+  return layout;
 }
 
 /** The cursor blink of a prompt: its own recording's, else the representative one (P9). */
@@ -214,17 +204,12 @@ export class LeafBinder {
         return () => textPages({ pages, softkey: TEXT_PAGES_SOFTKEY });
       }
       default:
-        return this.#screen(number, spec, place.moves, node.valueHint);
+        return this.#screen(number, spec, place.moves);
     }
   }
 
   /** The widget a leaf screen (or an option's or page's result) shows. */
-  #screen(
-    number: string,
-    screen: StockLeafScreen,
-    moves?: NoteOptions["moves"],
-    value?: string,
-  ): () => Widget {
+  #screen(number: string, screen: StockLeafScreen, moves?: NoteOptions["moves"]): () => Widget {
     const { lines, softkey } = screen;
     const services = this.#services;
     const sound = services.noteSound;
@@ -300,7 +285,7 @@ export class LeafBinder {
       // code's are the security feature's screens.
       case "text-input":
       case "number-input": {
-        const layout = layoutOf(number, screen, value);
+        const layout = layoutOf(number, screen);
         const blink = blinkOf(number, layout);
         return () => promptFromLayout(layout, screen, blink);
       }

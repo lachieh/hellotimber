@@ -6,7 +6,7 @@ import { expectLcd, PROBE_TOLERANCE_MS } from "../support/golden.ts";
 import { newGameLeafScenario } from "../support/game.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
 import { after, JITTER, keys, SNAKE, stills, timeline } from "../support/probes.ts";
-import { activateTreeScenario } from "../support/profiles.ts";
+import { toleratedTreeScenario } from "../support/profiles.ts";
 import { standbyRig, type Rig } from "../support/rig.ts";
 
 const PHONE_BOOK = "navi navi";
@@ -34,9 +34,11 @@ const WRAPS: Readonly<Record<string, string>> = {
 };
 
 const SCENARIOS: Record<string, Scenario> = {
-  // Plan 17 (D5): this recording's standby name comes 1898 ms after standby, the others'
-  // 1909-1913 ms (PROFILE_LINE_DELAY_MS 1912): within PROBE_TOLERANCE_MS.
-  "tree/12-profiles/12-5-1.leaf": (id) => activateTreeScenario(id, "12-5-1"),
+  // Plan 17: this recording's standby name comes 1898 ms after standby, the others' 1909-1913
+  // ms (D5, PROFILE_LINE_DELAY_MS 1912); Rename is plan 18's text input, whose cursor blinks
+  // every 480 ms (D9; here 479-493 ms): within PROBE_TOLERANCE_MS.
+  "tree/12-profiles/12-5-1.leaf": (id) => toleratedTreeScenario(id, "12-5-1"),
+  "tree/12-profiles/12-2-2-10.leaf": (id) => toleratedTreeScenario(id, "12-2-2-10"),
   // Snake II's New game: asserted early with plan 23's game comparison (ASSERTED_EARLY).
   "tree/08-games/8-1-1.leaf": newGameLeafScenario,
   "probe/wrap-down": (id) => stills(id, standbyRig(), wrap(`${PHONE_BOOK} down*9`, "down", 4)),

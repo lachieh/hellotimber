@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/rename-discreet-open
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename/discreet/open
 source-sha256: 079ade89d83b9cee8b7cf73912823eb08df110f0efdea748f5498cdec154a0ba
 trigger-frame: 1

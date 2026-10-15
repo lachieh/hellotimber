@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/rename-silent-open
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename/silent/open
 source-sha256: 414ffba367d57d4e03002d4bdbec546fce32483f1a92e205ca1fd6b07e5d596a
 trigger-frame: 1

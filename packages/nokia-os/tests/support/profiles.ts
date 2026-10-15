@@ -130,11 +130,12 @@ export function cutRecordingScenario(
 }
 
 /**
- * The generic tree `leaf` scenario of an Activate golden (virgin: 12-n-1 highlighted, Select)
- * compared within PROBE_TOLERANCE_MS: for the recording whose standby name comes earlier than
- * the others' (12-5-1: 1898 ms; PROFILE_LINE_DELAY_MS is their median, 1912).
+ * The generic tree `leaf` scenario (virgin: `number` highlighted, Select) compared within
+ * PROBE_TOLERANCE_MS, for a profiles leaf that plays another recording's timing: 12-5-1's
+ * standby name comes at 1898 ms (PROFILE_LINE_DELAY_MS is the median, 1912), and Rename's cursor
+ * is plan 18's free-running 480 ms blink (this recording's steps run 479-493 ms).
  */
-export function activateTreeScenario(id: string, number: string): void {
+export function toleratedTreeScenario(id: string, number: string): void {
   const golden = loadGolden(id);
   const rig = standbyRig();
   goto(rig, number);

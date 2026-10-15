@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/rename-symbols
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename/symbols
 source-sha256: 28169683a95cd51f165291fc24ae4bf410ffe57f9358f85a71e1f75e3d4a4545
 trigger-frame: 1

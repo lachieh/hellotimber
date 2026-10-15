@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/rename-loud-type
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename/loud/type
 source-sha256: 14ebace4658c1d806e4046c18b0fb4e44b855b9846c98211fe7515e0728a47b0
 trigger-frame: 1

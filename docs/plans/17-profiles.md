@@ -724,12 +724,30 @@ which also retires Task 6's `activate-empty` gap.
 **Files:** `src/firmware/features/profiles.ts` (`renameLeaf`), the leaves registration and
 subtraction, `tests/profiles-rename.test.ts` (new).
 
-- [ ] `renameLeaf` (D9): plan 18's `textInput` on the measured layout with the profile's name, limit
+- [x] `renameLeaf` (D9): plan 18's `textInput` on the measured layout with the profile's name, limit
       10; OK → `renameProfile` → `Done` → the page.
-- [ ] TDD against `tree/12-profiles/12-2-2-10.leaf`, `profiles/rename-open-*`, `profiles/rename-*`:
+- [x] TDD against `tree/12-profiles/12-2-2-10.leaf`, `profiles/rename-open-*`, `profiles/rename-*`:
       typing, the limit, empty → default, C keys, the name in the list, power list, note, standby.
-- [ ] Subtract `layoutOf`'s Rename branch and the `PROMPT_LAYOUTS` entry it replaced.
-- [ ] Commit: `feat(nokia-os): Rename profiles`.
+- [x] Subtract `layoutOf`'s Rename branch and the `PROMPT_LAYOUTS` entry it replaced.
+- [x] Commit: `feat(nokia-os): Rename profiles`.
+
+Deviation: **Task 8 (API and files):** `renameLeaf(services, slug)` is the 12-n-2-10 binding's
+widget factory (the feature's `screens`): plan 18's `textInput` (label `New name:`, limit 10,
+counter, the stored name, OK → `renameProfile` → `Done` on the `rename-done` timeline → the page).
+The Rename prompt restarts its cursor blink at a commit (`profiles/rename-*-type`: the cursor shows
+at the commit and toggles 477-480 ms later), an opt-in `restartBlinkOnCommit` of plan 18's
+`TextEntry`/`textInput` (`widgets/text-entry.ts`, `widgets/text-input.ts`; default off, the editor
+unchanged). `layoutOf`'s Rename branch, its `value` plumbing and `PROMPT_LAYOUTS["12-2-2-10"]` are
+gone. Shared tests: `tests/widgets-info.test.ts` skips feature-bound prompts with no plan 14
+layout; `tests/acceptance/14-menu-depth.test.ts` gives `tree/12-profiles/12-2-2-10.leaf` the
+tolerant tree scenario (plan 18's free-running 480 ms blink against this recording's 479-493 ms).
+
+Deviation: **Task 8 (goldens):** the prompt recordings compare within PROBE_TOLERANCE_MS (their
+blink); later keys go down on the row their effect starts. Known gaps: `rename-open-12-3` (a 15 ms
+stray cursor column in the virgin recording restarts its blink) and `rename-limit`,
+`rename-limit-extra`, `rename-limit-ok`, `rename-symbols` (after a run of commits at the captures'
+pace the firmware's cursor is in the other blink phase: one column differs). `rename-limit-extra`
+aligns on the key (trigger-frame 0: at the limit the key changes nothing).
 
 ### Task 9 - Acceptance and the coverage guard
 

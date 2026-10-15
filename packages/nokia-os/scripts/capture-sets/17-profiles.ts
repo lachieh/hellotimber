@@ -19,7 +19,7 @@ import { resources, THIN_GLYPH_PAGES } from "../resource-inputs/17-profiles.ts";
 export { THIN_GLYPH_PAGES };
 
 /** The tasks whose scenarios exist: their rows are asserted. */
-export const ASSERTED_TASKS: ReadonlySet<ProfilesTask> = new Set<ProfilesTask>([6, 7]);
+export const ASSERTED_TASKS: ReadonlySet<ProfilesTask> = new Set<ProfilesTask>([6, 7, 8]);
 
 /** The plan 17 task that drives a row: 6 Activate and standby, 7 the power key, 8 Rename. */
 export type ProfilesTask = 6 | 7 | 8;
@@ -261,7 +261,8 @@ export const TIMELINES: readonly TimelineRow[] = [
     id: "profiles/rename-limit-extra",
     dir: `${P}/rename/limit/extra`,
     task: 8,
-    note: "Silent + abc (1 left), 3 twice: d typed (0 left), its second press ignored.",
+    note: "Silent + abcd (0 left), 3 twice: both ignored; the cursor blinks on.",
+    trigger: 0,
   },
   {
     id: "profiles/rename-limit-ok",

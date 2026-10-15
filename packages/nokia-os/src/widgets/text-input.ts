@@ -23,6 +23,8 @@ export interface TextInputOptions {
   readonly softkey?: string;
   /** OK with the text. */
   readonly done: (text: string, flow: Flow) => void;
+  /** Plan 17: a commit restarts the cursor's blink (Rename's prompt). */
+  readonly restartBlinkOnCommit?: boolean;
 }
 
 class TextInputWidget implements Widget {
@@ -35,6 +37,7 @@ class TextInputWidget implements Widget {
       limit: options.limit,
       ...(options.text === undefined ? {} : { text: options.text }),
       ...(options.mode === undefined ? {} : { mode: options.mode }),
+      ...(options.restartBlinkOnCommit ? { restartBlinkOnCommit: true } : {}),
     });
   }
 

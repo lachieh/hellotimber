@@ -36,6 +36,11 @@ export interface TextEntryOptions {
   /** Default the end of `text`. */
   readonly cursor?: number;
   readonly mode?: TextMode;
+  /**
+   * Plan 17: the blink restarts, the cursor shown, when a pending character commits (Rename's
+   * prompt: `profiles/rename-*-type`). Default off: the editor's blink never restarts.
+   */
+  readonly restartBlinkOnCommit?: boolean;
 }
 
 /** A key held down: when, and when it came up (undefined while it is down). */
@@ -53,8 +58,11 @@ export type EntryRequest = "empty-c" | "symbols" | undefined;
 /** One multi-tap entry: its state, its clock, its holds and its cursor blink. */
 export class TextEntry {
   readonly limit: number;
+  readonly #restartBlink: boolean;
   #state: TextState;
   #now = 0;
+  /** When the blink last started (the entry's start, or a commit with restartBlinkOnCommit). */
+  #blinkFrom = 0;
   /** The last character key pressed, for a held digit at its commit. */
   #digit: Held | undefined;
   #hash: Held | undefined;
@@ -63,6 +71,7 @@ export class TextEntry {
 
   constructor(options: TextEntryOptions) {
     this.limit = options.limit;
+    this.#restartBlink = options.restartBlinkOnCommit ?? false;
     const text = options.text ?? "";
     this.#state = {
       ...emptyText(options.mode ?? "Abc"),
@@ -82,7 +91,7 @@ export class TextEntry {
 
   /** The blink's step: the cursor shows (while nothing is pending). */
   get cursorShown(): boolean {
-    return Math.floor(this.#now / TEXT_TIMINGS.blinkMs) % 2 === 0;
+    return Math.floor((this.#now - this.#blinkFrom) / TEXT_TIMINGS.blinkMs) % 2 === 0;
   }
 
   control(): EditorControl {
@@ -166,5 +175,6 @@ export class TextEntry {
       isTextKey(pending.key) && held >= TEXT_TIMINGS.digitHoldMs
         ? textHold(this.#state, pending.key, now, this.limit)
         : textTick(this.#state, now);
+    if (this.#restartBlink && this.#state.pending === null) this.#blinkFrom = now;
   }
 }

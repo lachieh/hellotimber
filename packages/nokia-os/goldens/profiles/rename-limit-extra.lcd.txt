@@ -1,10 +1,10 @@
 lcd-golden 1
 id: profiles/rename-limit-extra
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename/limit/extra
 source-sha256: 66da802a5f8240eb21c68fcb0cc600fd1c6344c3851fd87697c1c564589819ed
-trigger-frame: 1
-note: Silent + abc (1 left), 3 twice: d typed (0 left), its second press ignored.
+trigger-frame: 0
+note: Silent + abcd (0 left), 3 twice: both ignored; the cursor blinks on.
 omitted: none
 
 @image a

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/rename-silent-everywhere
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename/silent/profiles-0.png + captures/6.39/plan17/rename/silent/profiles-1.png + captures/6.39/plan17/rename/silent/profiles-2.png + captures/6.39/plan17/rename/silent/profiles-3.png + captures/6.39/plan17/rename/silent/profiles-4.png + captures/6.39/plan17/rename/silent/profiles-5.png + captures/6.39/plan17/rename/silent/profiles-6.png + captures/6.39/plan17/rename/silent/level.png + captures/6.39/plan17/rename/silent/power-0.png + captures/6.39/plan17/rename/silent/power-1.png + captures/6.39/plan17/rename/silent/power-2.png + captures/6.39/plan17/rename/silent/power-3.png + captures/6.39/plan17/rename/silent/power-4.png + captures/6.39/plan17/rename/silent/power-5.png + captures/6.39/plan17/rename/silent/power-6.png + captures/6.39/plan17/rename/silent/power-7.png + captures/6.39/plan17/rename/silent/page.png
 source-sha256: 06caccbe29bc74c44fdc927e4c3619da10158954ff43770349ec2b0c5822c971
 note: Renamed Silenth: the Profiles level ▼×0-6, the profile's level, the power list ▼×0-7, the Rename page.

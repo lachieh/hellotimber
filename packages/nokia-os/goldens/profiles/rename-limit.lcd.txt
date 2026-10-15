@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/rename-limit
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename/limit/1.png + captures/6.39/plan17/rename/limit/2.png + captures/6.39/plan17/rename/limit/3.png + captures/6.39/plan17/rename/limit/4.png
 source-sha256: e507c2795739dbca90cf248a54cb35132a4b253691b383cc181e4d6aea53f237
 note: Silent's prompt, then a, b, c (each committed): the counter down to 1.

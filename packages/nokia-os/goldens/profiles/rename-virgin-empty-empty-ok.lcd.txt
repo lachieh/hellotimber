@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/rename-virgin-empty-empty-ok
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename-virgin/empty/empty-ok
 source-sha256: a600c38313ac52f84fe4564e290ccc8d4dae0cd90f7d5e56322a6a3dd7a278d0
 trigger-frame: 1

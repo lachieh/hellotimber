@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/rename-open-12-3
-status: pending:17
+status: asserted
 source: captures/6.39/plan14/open/12-3-2-10
 source-sha256: 5a770cc06584f503dd7807a245efcd82e55a260f98c20a89589cf354c8388bab
 trigger-frame: 1

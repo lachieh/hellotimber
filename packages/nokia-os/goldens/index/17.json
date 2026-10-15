@@ -98,7 +98,7 @@
   {
     "id": "profiles/glyphs-thin",
     "file": "profiles/glyphs-thin.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 7,
     "frames": 7
@@ -442,7 +442,7 @@
   {
     "id": "profiles/rename-c-keys",
     "file": "profiles/rename-c-keys.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 12
@@ -450,7 +450,7 @@
   {
     "id": "profiles/rename-discreet-ok",
     "file": "profiles/rename-discreet-ok.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -458,7 +458,7 @@
   {
     "id": "profiles/rename-discreet-open",
     "file": "profiles/rename-discreet-open.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -466,7 +466,7 @@
   {
     "id": "profiles/rename-discreet-type",
     "file": "profiles/rename-discreet-type.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -474,7 +474,7 @@
   {
     "id": "profiles/rename-empty-2-activate",
     "file": "profiles/rename-empty-2-activate.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -482,7 +482,7 @@
   {
     "id": "profiles/rename-empty-2-empty-ok",
     "file": "profiles/rename-empty-2-empty-ok.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -490,7 +490,7 @@
   {
     "id": "profiles/rename-empty-2-everywhere",
     "file": "profiles/rename-empty-2-everywhere.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 17,
     "frames": 17
@@ -498,7 +498,7 @@
   {
     "id": "profiles/rename-empty-2-ok",
     "file": "profiles/rename-empty-2-ok.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -506,7 +506,7 @@
   {
     "id": "profiles/rename-empty-2-open",
     "file": "profiles/rename-empty-2-open.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -514,7 +514,7 @@
   {
     "id": "profiles/rename-empty-2-type",
     "file": "profiles/rename-empty-2-type.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -522,7 +522,7 @@
   {
     "id": "profiles/rename-empty-empty-ok",
     "file": "profiles/rename-empty-empty-ok.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -530,7 +530,7 @@
   {
     "id": "profiles/rename-empty-ok",
     "file": "profiles/rename-empty-ok.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -538,7 +538,7 @@
   {
     "id": "profiles/rename-empty-open",
     "file": "profiles/rename-empty-open.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -546,7 +546,7 @@
   {
     "id": "profiles/rename-empty-profiles",
     "file": "profiles/rename-empty-profiles.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -554,7 +554,7 @@
   {
     "id": "profiles/rename-empty-type",
     "file": "profiles/rename-empty-type.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -562,7 +562,7 @@
   {
     "id": "profiles/rename-limit",
     "file": "profiles/rename-limit.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -570,7 +570,7 @@
   {
     "id": "profiles/rename-limit-extra",
     "file": "profiles/rename-limit-extra.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 7
@@ -578,7 +578,7 @@
   {
     "id": "profiles/rename-limit-ok",
     "file": "profiles/rename-limit-ok.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -586,7 +586,7 @@
   {
     "id": "profiles/rename-loud-ok",
     "file": "profiles/rename-loud-ok.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -594,7 +594,7 @@
   {
     "id": "profiles/rename-loud-open",
     "file": "profiles/rename-loud-open.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -602,7 +602,7 @@
   {
     "id": "profiles/rename-loud-type",
     "file": "profiles/rename-loud-type.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -610,7 +610,7 @@
   {
     "id": "profiles/rename-open-12-3",
     "file": "profiles/rename-open-12-3.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 14
@@ -618,7 +618,7 @@
   {
     "id": "profiles/rename-open-12-4",
     "file": "profiles/rename-open-12-4.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 13
@@ -626,7 +626,7 @@
   {
     "id": "profiles/rename-open-12-5",
     "file": "profiles/rename-open-12-5.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 13
@@ -634,7 +634,7 @@
   {
     "id": "profiles/rename-open-12-6",
     "file": "profiles/rename-open-12-6.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 13
@@ -642,7 +642,7 @@
   {
     "id": "profiles/rename-silent-activate",
     "file": "profiles/rename-silent-activate.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -650,7 +650,7 @@
   {
     "id": "profiles/rename-silent-empty-ok",
     "file": "profiles/rename-silent-empty-ok.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -658,7 +658,7 @@
   {
     "id": "profiles/rename-silent-everywhere",
     "file": "profiles/rename-silent-everywhere.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 17,
     "frames": 17
@@ -666,7 +666,7 @@
   {
     "id": "profiles/rename-silent-ok",
     "file": "profiles/rename-silent-ok.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -674,7 +674,7 @@
   {
     "id": "profiles/rename-silent-open",
     "file": "profiles/rename-silent-open.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -682,7 +682,7 @@
   {
     "id": "profiles/rename-silent-type",
     "file": "profiles/rename-silent-type.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -690,7 +690,7 @@
   {
     "id": "profiles/rename-symbols",
     "file": "profiles/rename-symbols.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 23,
     "frames": 25
@@ -698,7 +698,7 @@
   {
     "id": "profiles/rename-symbols-after",
     "file": "profiles/rename-symbols-after.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -706,7 +706,7 @@
   {
     "id": "profiles/rename-virgin-empty-2-empty-ok",
     "file": "profiles/rename-virgin-empty-2-empty-ok.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -714,7 +714,7 @@
   {
     "id": "profiles/rename-virgin-empty-empty-ok",
     "file": "profiles/rename-virgin-empty-empty-ok.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -722,7 +722,7 @@
   {
     "id": "profiles/rename-virgin-empty-profiles",
     "file": "profiles/rename-virgin-empty-profiles.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2

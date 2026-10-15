@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/rename-c-keys
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename/c-keys
 source-sha256: bc1a12e2bc753b0c47bdd270ccc64547f754ac9bd1f8f75a277ab67177037953
 trigger-frame: 1

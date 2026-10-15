@@ -20,6 +20,7 @@ import {
 import { StockFlowApplication, type Flow, type Widget } from "../../widgets/flow";
 import { note } from "../../widgets/note";
 import { OptionListWidget } from "../../widgets/option-list";
+import { textInput } from "../../widgets/text-input";
 import type { StockSettings } from "../settings";
 import { timelineById, timelineByName } from "../timelines";
 import type { FactoryDefault, StockFeature, StockServices } from "./feature";
@@ -413,6 +414,28 @@ export function powerList(services: StockServices, state: PowerListState): Phone
   });
 }
 
+/**
+ * Rename (D9): plan 18's text input on the profile's name (10 characters, sentence case: `abc`
+ * after the name, `Abc` when empty), OK stores it (an empty name restores the factory one) and
+ * shows `Done`, then the Rename page; C on an empty entry returns to the page unchanged.
+ */
+export function renameLeaf(services: StockServices, slug: ProfileSlug): () => Widget {
+  const done = timelineByName("rename-done");
+  const { settings, noteSound } = services;
+  return () =>
+    textInput({
+      label: ["New name:"],
+      limit: PROFILE_NAME_LIMIT,
+      counter: true,
+      text: profileName(settings, slug),
+      restartBlinkOnCommit: true,
+      done: (text, flow) => {
+        renameProfile(settings, slug, text);
+        flow.replace(note({ lines: ["Done"], timeline: done, sound: noteSound }));
+      },
+    });
+}
+
 /** Tones' alias target with `active` the active profile (D1): `tones/x` → its Personalise `x`. */
 export function profileAlias(key: string, active: ProfileSlug): string {
   return key.startsWith(TONES) ? `profiles/${active}/personalise/${key.slice(TONES.length)}` : key;
@@ -461,13 +484,17 @@ export const profilesFeature: StockFeature = {
   placeholders: {
     "12-*-2-9-4": "18c", // Personalise › Screen saver › Screen saver: nothing in the virgin EEPROM
   },
-  // Activate (D3).
-  screens: Object.fromEntries(
-    PROFILE_SLUGS.map((slug) => [
+  // Activate (D3) and Rename (D9; General has none).
+  screens: Object.fromEntries([
+    ...PROFILE_SLUGS.map((slug) => [
       `${slotNumber(slug)}-1`,
       (services: StockServices) => activateLeaf(services, slug),
     ]),
-  ),
+    ...PROFILE_SLUGS.slice(1).map((slug) => [
+      `${slotNumber(slug)}-2-10`,
+      (services: StockServices) => renameLeaf(services, slug),
+    ]),
+  ]),
   // The Profiles level lists the stored names and opens on the active profile (D8, Task 0 A5).
   levels: {
     "12": ({ settings }) => ({
@@ -476,17 +503,6 @@ export const profilesFeature: StockFeature = {
     }),
   },
   widgets: {
-    promptLayouts: {
-      // The name being edited is the profile's (Silent: 10 - 6 characters left).
-      "12-2-2-10": {
-        icons: ["pen", "abc-lower"],
-        counter: "4",
-        label: ["New name:"],
-        value: "Silent",
-        entry: "text",
-        softkey: "OK",
-      },
-    },
     // Personalise › Screen saver sets its value like Tones' (`tree/12-profiles/12-1-2-9.sub`
     // image 01: the profile's own path in the entry indicator).
     setterLevels: { "12-*-2-9": ["off", "on"] },

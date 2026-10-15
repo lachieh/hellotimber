@@ -1,6 +1,6 @@
 lcd-golden 1
 id: profiles/rename-limit-ok
-status: pending:17
+status: asserted
 source: captures/6.39/plan17/rename/limit/ok
 source-sha256: e6e8ec81847977d5822f50b8426a9930a11bf56c5d3ef436e31f22da7acbc0e1
 trigger-frame: 1

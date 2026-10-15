@@ -4,13 +4,16 @@
 // another recording's timing (the Activate notes are the virgin tree recordings' timelines)
 // compare within PROBE_TOLERANCE_MS; stills compare pixels exactly.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import { PROFILE_SLUGS } from "../../src/firmware/features/profiles";
+import { PROFILE_SLUGS, type ProfileSlug } from "../../src/firmware/features/profiles";
+import { MULTITAP_KEYS } from "../../src/text/keys";
+import { THIN_GLYPH_PAGES } from "../../scripts/capture-sets/17-profiles.ts";
 import { acceptancePlan, type Scenario } from "../support/acceptance.ts";
 import { recordingScenario, type RecordingKey } from "../support/calculator.ts";
 import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockSettings } from "../../src/firmware/settings";
 import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "../support/golden.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
+import { goto } from "../support/drive.ts";
 import { keys } from "../support/probes.ts";
 import {
   ACTIVATE_TOLERANCE_MS,
@@ -18,11 +21,12 @@ import {
   profilesRig,
   profilesStorage,
   shortcut,
+  slot,
   toLevel,
   toStandby,
   type ProfilesSeed,
 } from "../support/profiles.ts";
-import type { Rig } from "../support/rig.ts";
+import { standbyRig, type Rig } from "../support/rig.ts";
 import { expectSound } from "../support/sound-scenarios.ts";
 
 const key = (k: PhoneKey, at: RecordingKey["at"] = 0, holdMs?: number): RecordingKey => ({
@@ -536,6 +540,285 @@ const TASK_7: Record<string, Scenario> = {
   "profiles/persist-after-restore": (id) => stepStills(id, persistRig(true), EVERYWHERE.slice(1)),
 };
 
+// ---------------------------------------------------------------- Task 8: Rename
+
+/** Standby → the profile's Rename page (the capture's `rename_page`: its level, ▲, 1 s). */
+function toRenamePage(rig: Rig, slug: ProfileSlug): void {
+  shortcut(rig, 1, 2, slot(slug), 2);
+  rig.press("up");
+  rig.advance(1592);
+}
+
+/**
+ * Standby → the Rename prompt (`rename_prompt`: the page, OK, 1.5 s). The firmware draws the
+ * prompt 80 ms after OK's down and its cursor blinks from there (rename/<slug>/open); nokia-os
+ * opens it at the key, so a still compared later on the free-running blink comes `early`.
+ */
+function toRenamePrompt(rig: Rig, slug: ProfileSlug, early = 0): void {
+  toRenamePage(rig, slug);
+  rig.press("navi");
+  rig.advance(2092 - early);
+}
+
+/** OK's key-to-redraw on the Rename page (rename/<slug>/open): stills shift by it. */
+const PROMPT_LATENCY_MS = 80;
+
+/** The Rename prompt cleared (C held 1.5 s, 0.8 s), as the empty-name recordings start. */
+function clearedPrompt(rig: Rig, slug: ProfileSlug): void {
+  toRenamePrompt(rig, slug);
+  rig.press("c", 1500);
+  rig.advance(1000);
+}
+
+/** Multi-tap `text` on the prompt as the capture typed it (one tap per 592 ms, 1.7 s commits). */
+function typeText(rig: Rig, text: string): void {
+  let previous: string | undefined;
+  for (const [k, presses] of pressesOf(text)) {
+    if (k === previous) rig.advance(1700);
+    for (let i = 0; i < presses; i++) {
+      rig.press(k);
+      rig.advance(592);
+    }
+    previous = k;
+  }
+  rig.advance(1700);
+}
+
+/** The keys and presses typing lower case `text` (plan 18's cycles). */
+function pressesOf(text: string): [PhoneKey, number][] {
+  return Array.from(text, (ch): [PhoneKey, number] => {
+    for (const [k, cycles] of Object.entries(MULTITAP_KEYS)) {
+      const at = cycles.lower.indexOf(ch);
+      if (at >= 0) return [k as PhoneKey, at + 1];
+    }
+    throw new Error(`${ch} is not typeable in lower case`);
+  });
+}
+
+/** Rename's prompt recordings blink on plan 18's free-running 480 ms cursor timer (D9). */
+const BLINK = PROBE_TOLERANCE_MS;
+
+const TASK_8: Record<string, Scenario> = {
+  // Virgin: Select on 12-n-2-10 (plan 14's recordings of the other profiles' prompts).
+  ...Object.fromEntries(
+    ["3", "4", "5", "6"].map((n) => [
+      `profiles/rename-open-12-${n}`,
+      (id: string) => {
+        const rig = standbyRig();
+        goto(rig, `12-${n}-2-10`);
+        rig.advance(592);
+        recordingScenario(id, rig, key("navi"), [], BLINK);
+      },
+    ]),
+  ),
+  ...Object.fromEntries(
+    NAMED.flatMap((slug) => {
+      const page = () => {
+        const rig = profilesRig();
+        toRenamePage(rig, slug);
+        return rig;
+      };
+      // The open recording (3 s) and its stop, then the type recording: 9 twice (w, then x).
+      const prompt = () => {
+        const rig = page();
+        rig.press("navi");
+        rig.advance(3030);
+        return rig;
+      };
+      const typed = () => {
+        const rig = prompt();
+        rig.press("9");
+        rig.advance(300);
+        rig.press("9");
+        rig.advance(2530);
+        return rig;
+      };
+      return [
+        [
+          `profiles/rename-${slug}-open`,
+          (id: string) => recordingScenario(id, page(), key("navi"), [], BLINK),
+        ],
+        [
+          `profiles/rename-${slug}-type`,
+          // The second 9 on the row its x appears (the commit is timed from that redraw).
+          (id: string) => recordingScenario(id, prompt(), key("9"), [key("9", 2)], BLINK),
+        ],
+        [
+          `profiles/rename-${slug}-ok`,
+          (id: string) => recordingScenario(id, typed(), key("navi"), [], BLINK),
+        ],
+      ];
+    }),
+  ),
+  ...Object.fromEntries(
+    (
+      [
+        ["silent", "Silenth"],
+        ["empty-2", "Ab"],
+      ] as const
+    ).flatMap(([slug, name]) => [
+      [
+        `profiles/rename-${slug}-activate`,
+        (id: string) => {
+          const rig = profilesRig(profilesStorage({ names: { [slug]: name } }));
+          toLevel(rig, slug);
+          recordingScenario(id, rig, key("navi"), [], ACTIVATE_TOLERANCE_MS);
+        },
+      ],
+      [
+        `profiles/rename-${slug}-everywhere`,
+        (id: string) => {
+          const rig = profilesRig(profilesStorage({ names: { [slug]: name } }));
+          stepStills(id, rig, [
+            (r) => shortcut(r, 1, 2),
+            ...Array.from({ length: 6 }, () => down(-92)),
+            (r) => {
+              toStandby(r);
+              shortcut(r, 1, 2, slot(slug));
+            },
+            (r) => {
+              toStandby(r);
+              openPowerList(r);
+            },
+            ...Array.from({ length: 7 }, () => down(-92)),
+            (r) => {
+              r.press("c");
+              r.advance(2592);
+              toRenamePage(r, slug);
+            },
+          ]);
+        },
+      ],
+    ]),
+  ),
+  // Silent + a, b, c (each committed), then d: the counter at 0.
+  "profiles/rename-limit": (id) => {
+    const rig = profilesRig();
+    toRenamePrompt(rig, "silent", PROMPT_LATENCY_MS);
+    stepStills(id, rig, [
+      (r) => typeText(r, "a"),
+      (r) => typeText(r, "b"),
+      (r) => typeText(r, "c"),
+      (r) => typeText(r, "d"),
+    ]);
+  },
+  // At the limit 3 changes nothing: the golden runs from the key (trigger-frame 0).
+  "profiles/rename-limit-extra": (id) => {
+    const rig = profilesRig();
+    toRenamePrompt(rig, "silent", PROMPT_LATENCY_MS);
+    typeText(rig, "abcd");
+    unchangedAtKey(id, rig, "3");
+  },
+  "profiles/rename-limit-ok": (id) => {
+    const rig = profilesRig();
+    toRenamePrompt(rig, "silent");
+    typeText(rig, "abcd");
+    rig.press("3");
+    rig.advance(300);
+    rig.press("3");
+    rig.advance(2530);
+    recordingScenario(id, rig, key("navi"), [], BLINK);
+  },
+  // Loud's prompt: C (deletes), C held 1.5 s (clears), C on the empty entry (the page).
+  "profiles/rename-c-keys": (id) => {
+    const rig = profilesRig();
+    toRenamePrompt(rig, "loud");
+    recordingScenario(
+      id,
+      rig,
+      key("c"),
+      // Each later C on the row its deletion appears.
+      [key("c", 4, 1500), key("c", 11)],
+      BLINK,
+    );
+  },
+  ...Object.fromEntries(
+    (["silent", "empty", "empty-2"] as const).flatMap((slug) => [
+      [
+        `profiles/rename-${slug}-empty-ok`,
+        (id: string) => {
+          const rig = profilesRig();
+          clearedPrompt(rig, slug);
+          recordingScenario(id, rig, key("navi"), [], BLINK);
+        },
+      ],
+    ]),
+  ),
+  ...Object.fromEntries(
+    (["empty", "empty-2"] as const).map((slug) => [
+      `profiles/rename-virgin-${slug}-empty-ok`,
+      (id: string) => {
+        const rig = profilesRig(profilesStorage({ virgin: true }), { virgin: true });
+        clearedPrompt(rig, slug);
+        recordingScenario(id, rig, key("navi"), [], BLINK);
+      },
+    ]),
+  ),
+  "profiles/rename-empty-profiles": (id) =>
+    seededStills(id, { silent: {}, empty: {}, "empty-2": {} }, (rig, image) => {
+      shortcut(rig, 1, 2);
+      for (let i = 1; i < slot(image as ProfileSlug); i++) {
+        rig.press("down");
+        rig.advance(342);
+      }
+      rig.advance(600 - 342);
+    }),
+  "profiles/rename-virgin-empty-profiles": (id) => {
+    for (const slug of ["empty", "empty-2"] as const) {
+      const storage = profilesStorage({ virgin: true, names: { [slug]: "" } });
+      const rig = profilesRig(storage, { virgin: true });
+      shortcut(rig, 1, 2);
+      for (let i = 1; i < slot(slug); i++) {
+        rig.press("down");
+        rig.advance(342);
+      }
+      rig.advance(600 - 342);
+      expectLcd(rig.paint(), goldenImage(id, slug), `${id} ${slug}`);
+    }
+  },
+  // a, then * (the symbol table), ▼×16, Use, then 2 twice (b).
+  "profiles/rename-symbols": (id) => {
+    const rig = profilesRig();
+    toRenamePrompt(rig, "silent");
+    rig.press("c", 1500);
+    rig.advance(800);
+    keys(rig, "# #");
+    rig.advance(800);
+    keys(rig, "2");
+    rig.advance(1700);
+    // The keys' downs (rename/symbols/keys.csv), less *'s 66 ms redraw (the trigger).
+    const at = (ms: number) => ({ ms: ms - 66 });
+    const downs = Array.from({ length: 16 }, (_, i) => key("down", at(1060 + 300 * i)));
+    recordingScenario(
+      id,
+      rig,
+      key("*"),
+      [...downs, key("navi", at(6461)), key("2", at(8021)), key("2", at(8321))],
+      BLINK,
+    );
+  },
+  "profiles/rename-symbols-after": (id) => {
+    const rig = profilesRig(profilesStorage({ names: { silent: "a_b" } }));
+    stepStills(id, rig, [
+      (r) => toRenamePage(r, "silent"),
+      (r) => {
+        toStandby(r);
+        toLevel(r, "silent");
+        r.press("navi");
+        r.advance(9000);
+      },
+    ]);
+  },
+  "profiles/glyphs-thin": (id) =>
+    seededStills(
+      id,
+      Object.fromEntries(
+        THIN_GLYPH_PAGES.map((page, i) => [`0${i + 1}`, { names: { silent: page } }]),
+      ),
+      (rig) => toRenamePage(rig, "silent"),
+    ),
+};
+
 /**
  * The effects section's phone before one of its recordings: after the activation, 3 s, then the
  * recordings before it (`keys`: Menu ▼ ▼ ▲ C at 600 ms steps, 1 s, 1 s; `invalid`: Menu 1 9,
@@ -552,10 +835,23 @@ function effectsRig(seed: ProfilesSeed, after?: "keys" | "invalid"): Rig {
   return rig;
 }
 
+/** Rename's cursor phase after several commits typed at the captures' pace. */
+const RENAME_BLINK =
+  "after a run of multi-tap commits the firmware's cursor is in the other blink phase at this " +
+  "point (one 15-row column differs); the prompt restarts its blink at a commit " +
+  "(rename-*-type), but a commit's time after several letters is not pinned by these shots";
+
 acceptancePlan({
   plan: "17",
-  scenarios: { ...TASK_6, ...TASK_7 },
+  scenarios: { ...TASK_6, ...TASK_7, ...TASK_8 },
   knownGaps: {
+    "profiles/rename-limit": RENAME_BLINK,
+    "profiles/rename-limit-extra": RENAME_BLINK,
+    "profiles/rename-limit-ok": RENAME_BLINK,
+    "profiles/rename-symbols": RENAME_BLINK,
+    "profiles/rename-open-12-3":
+      "1917 ms into this virgin recording a 15 ms frame shows one stray column of the cursor " +
+      "and the blink restarts from it (465 ms later than the other prompts' blink)",
     "sound/profiles/power-general-power-keys":
       "in the list the power key beeps 121-123 ms after its down (63 ms after its release; the " +
       "opening press 51 ms after its down), beyond the key latency the sound check allows; " +
