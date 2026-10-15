@@ -52,6 +52,9 @@ import {
   type StockTreeNode,
 } from "../src/firmware/generated/stock-tree";
 
+/** A whole extraction reads every golden: ≈2 s alone, longer under the full suite's load. */
+const EXTRACTION_TIMEOUT_MS = 30_000;
+
 const INPUTS = composeResourceDeclarations(
   captureSets(),
   readGoldenIndex(join(import.meta.dirname, "../goldens")),
@@ -148,27 +151,35 @@ function stockTreeText(): ShownText[] {
 }
 
 describe("generated resources", () => {
-  it("equal a fresh extraction from the committed goldens", () => {
-    expect({
-      fonts: STOCK_FONT_DATA,
-      menuIcons: MENU_ICON_DATA,
-      boot: BOOT_DATA,
-      status: STATUS_DATA,
-      widgets: WIDGET_DATA,
-      snake: SNAKE_DATA,
-      sounds: SOUND_DATA,
-      text: TEXT_DATA,
-    }).toEqual(extractResources());
-  });
+  it(
+    "equal a fresh extraction from the committed goldens",
+    { timeout: EXTRACTION_TIMEOUT_MS },
+    () => {
+      expect({
+        fonts: STOCK_FONT_DATA,
+        menuIcons: MENU_ICON_DATA,
+        boot: BOOT_DATA,
+        status: STATUS_DATA,
+        widgets: WIDGET_DATA,
+        snake: SNAKE_DATA,
+        sounds: SOUND_DATA,
+        text: TEXT_DATA,
+      }).toEqual(extractResources());
+    },
+  );
 
-  it("are byte for byte what `regenerate` writes (resolve a conflict by regenerating)", () => {
-    const dir = join(import.meta.dirname, "../src/resources/generated");
-    const files = generatedFiles(extractResources());
-    expect(readdirSync(dir).sort()).toEqual(Object.keys(files).sort());
-    for (const [file, text] of Object.entries(files)) {
-      expect(readFileSync(join(dir, file), "utf8") === text, file).toBe(true);
-    }
-  });
+  it(
+    "are byte for byte what `regenerate` writes (resolve a conflict by regenerating)",
+    { timeout: EXTRACTION_TIMEOUT_MS },
+    () => {
+      const dir = join(import.meta.dirname, "../src/resources/generated");
+      const files = generatedFiles(extractResources());
+      expect(readdirSync(dir).sort()).toEqual(Object.keys(files).sort());
+      for (const [file, text] of Object.entries(files)) {
+        expect(readFileSync(join(dir, file), "utf8") === text, file).toBe(true);
+      }
+    },
+  );
 
   it("have binary glyphs of one height per font", () => {
     for (const [name, font] of Object.entries(STOCK_FONT_DATA)) {

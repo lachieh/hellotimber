@@ -1101,7 +1101,9 @@ asserted, 17 known gaps).
   already lights it (L5). While locked the power key shows the hint (K3).
 - **18 - Messages:** an arrival calls `StockLights.activity()` when unlocked and
   `KeyguardEngine.arrivedWhileLocked()` when locked (K7, L7); the locked notice keeps `Unlock`;
-  `keyguard/sms` and `keyguard/standby-message` become asserted. **18c:** the screen saver and the
+  `keyguard/sms` and `keyguard/standby-message` become asserted. Done in plan 18's merge, with
+  `lights/arrival/sms` and `-locked` (aligned on the arrival: the captures do not log the
+  delivery) and the locked envelope right of the key icon (x 23); 193 of 210 asserted. **18c:** the screen saver and the
   lights (D15).
 - **21 - Clock and Reminders:** the alarm's 480 ms LED blink (L9) through `StockLights.force`.
 - **22 - Calls:** an incoming call calls `KeyguardEngine.pass()` and `StockLights.activity()`, its

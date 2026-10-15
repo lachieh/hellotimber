@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/input-send-by-set-list
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/input/send-by-set-list
 source-sha256: 8721482e9bf62e8349ec08906a31e74b62fd2109686c056dee03a4255e7a6f89
 note: Send by set's list (Set 1, Set 2), ▼ per image.

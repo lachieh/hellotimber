@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/sms
-status: pending:18
+status: asserted
 source: captures/6.39/plan25/lights/arrival/sms-locked
 source-sha256: 01b2ce3f4487669282a042a333bfb6a14150e057cd2b871482a0be6e5a04c16b
 trigger-frame: 1

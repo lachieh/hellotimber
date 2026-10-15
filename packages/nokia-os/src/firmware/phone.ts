@@ -5,12 +5,22 @@ import {
   type PhoneKey,
   type PhoneSnapshot,
 } from "@hellotimber/phone-core";
+import type { StockServices } from "./features/feature";
 import { VISIBLE_ROWS } from "../display/list-rows";
 import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
 import type { StockCueSink } from "./cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { invalidShortcut } from "./leaves";
-import { createStockGames, createStockMenu, STOCK_SHORTCUT_WINDOW_MS } from "./menu";
+import {
+  createStockGames,
+  createStockMenu,
+  STOCK_SHORTCUT_WINDOW_MS,
+  stockMessaging,
+  stockServices,
+} from "./menu";
+import { openBox } from "../messages/read";
+import { StockFlowApplication } from "../widgets/flow";
+import { createSyntheticNetwork, type StockNetworkPort } from "../messages/network";
 import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { stockBootGates } from "./boot";
@@ -49,6 +59,12 @@ export interface StockPhoneConfig extends StockPorts {
    * kernel time it happens at. Default: nowhere.
    */
   lights?: StockLightsPort;
+  /**
+   * Plan 18: where SMS go and come from (D9). The phone subscribes once and keeps the
+   * subscription for its lifetime. Default: `createSyntheticNetwork()` (every send accepted,
+   * nothing delivered unless the host calls its `deliver`).
+   */
+  network?: StockNetworkPort;
 }
 
 /**
@@ -59,6 +75,9 @@ export const STOCK_STANDBY_KEYS = {
   up: "menu/phone-book/search",
   down: "menu/call-register/dialled-numbers",
 } as const;
+
+/** The envelope's blink while the SIM's message slots are full (`sms/full-arrival`: 478-482 ms). */
+export const FULL_BLINK_MS = 480;
 
 /** Standby stays on screen (ladders erased) for 39 ms after Menu (menu/01-phone-book.anim b). */
 export const STOCK_MENU_OPEN_DELAY_MS = 39;
@@ -140,8 +159,22 @@ export function createStockPhoneWith(
     ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
     cues: lightRules.cues(internals.cues ?? sounder),
   };
+  const messaging = stockMessaging(
+    eeprom,
+    settings,
+    sim,
+    config.network ?? createSyntheticNetwork(),
+  );
+  messaging.connect();
   const phone = createPhone({
-    menu: createStockMenu(ports, settings, games, security, sounder, eeprom),
+    menu: createStockMenu(ports, settings, games, security, sounder, eeprom, messaging),
+    // Plan 18 D11: the envelope while Inbox holds unread messages, blinking while every slot is
+    // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED).
+    standbyIndicators: () => {
+      const store = messaging.store;
+      if (store.full()) return Math.floor(now / FULL_BLINK_MS) % 2 === 0 ? { message: true } : {};
+      return store.unread() > 0 ? { message: true } : undefined;
+    },
     carrier: config.carrier,
     ...(clock === undefined ? {} : { clock }),
     bootTimeline: BOOT_TIMELINE,
@@ -161,6 +194,17 @@ export function createStockPhoneWith(
     now: () => now,
     noteSound: (lines) => sounder.note(lines),
   });
+  // Plan 25 K7, L7: an arrival lights the phone, but not a locked one.
+  const arrivals = stockArrivals(
+    phone,
+    stockServices(ports, settings, games, security, sounder, eeprom, messaging),
+    () => {
+      const engine = keyguard.engine;
+      if ((engine.locked ? engine.arrivedWhileLocked() : { activity: true }).activity) {
+        lights.activity();
+      }
+    },
+  );
   // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
   // Plan 25: the light tick runs from the power-on; the boot lights the LEDs at the self-test's
   // first frame and again where the firmware shows its clock prompt (nokia-os: standby).
@@ -168,6 +212,11 @@ export function createStockPhoneWith(
   let booting = false;
   phone.subscribe((snapshot) => {
     if (!snapshot.poweredOn) games.snake = undefined;
+    // Plan 18 D9: messages delivered while off land once power-on reaches standby.
+    if (snapshot.poweredOn && snapshot.screen.kind === "standby") {
+      messaging.atStandby();
+      arrivals.atStandby();
+    }
     if (snapshot.poweredOn !== poweredOn) {
       poweredOn = snapshot.poweredOn;
       booting = poweredOn;
@@ -178,6 +227,7 @@ export function createStockPhoneWith(
         sounder.powerOff();
         lights.powerOff();
         keyguard.reset();
+        messaging.poweredOff();
       }
     }
     if (!booting) return;
@@ -219,6 +269,7 @@ export function createStockPhoneWith(
       publish();
       return;
     }
+    arrivals.keyDown();
     if (!poweredOn) {
       phone.send(event);
       publish();
@@ -246,6 +297,7 @@ export function createStockPhoneWith(
     tick(nowMs) {
       // The kernel time the games stamp their cues and the sounder its sounds with.
       now = Math.max(now, nowMs);
+      messaging.tick(now);
       phone.tick(nowMs);
       sounder.tick();
       sequencer.advance(now);
@@ -286,4 +338,48 @@ function keyDownOptions(key: PhoneKey, phone: Phone): KeyDownOptions {
   if (key === "power") return { beeps: phone.screen.kind === "standby", holdBeeps: false };
   if (key === "c" && phone.screen.kind === "menu-carousel") return { holdBeeps: false };
   return {};
+}
+
+/**
+ * Arrivals at the phone (plan 18 D12, Task 0 I): at standby, the alert and `<n> message(s)
+ * received` with Read, which opens the Inbox as a standby application (C back to standby); a
+ * second arrival recounts the unread messages. Away from standby nothing interrupts: the notice
+ * waits for the next standby unless a key goes down first (`sms/elsewhere-note`: the arrival
+ * during Invalid shortcut is noticed once the note ends; `elsewhere-menu`, `-editor`: C to
+ * standby shows the envelope only). A full SIM refuses the message: `No space for new messages`
+ * (`sms/full-arrival`).
+ */
+function stockArrivals(phone: Phone, services: StockServices, arrived: () => void) {
+  const { messaging, sounder } = services;
+  const inbox = new StockFlowApplication("stock:inbox", () => openBox(services, "inbox"));
+  let waiting = false;
+  const received = () => {
+    const unread = messaging.store.unread();
+    const text = `${unread}\nmessage${unread === 1 ? "" : "s"}\nreceived`;
+    phone.setNotice({ text, softkey: "Read", open: inbox });
+  };
+  messaging.onArrival((_sms, result) => {
+    // Light activity (plan 25 L7; UNVERIFIED for a refused arrival and one away from standby,
+    // whose goldens are lit already).
+    arrived();
+    const atStandby = phone.screen.kind === "standby";
+    if (result === "full") {
+      if (atStandby) phone.setNotice({ text: "No space\nfor new\nmessages", softkey: "OK" });
+      return;
+    }
+    // D15: the profile's message alert (General's, the Tones settings, until plan 17's profiles).
+    sounder.messageAlert("tones");
+    if (atStandby) received();
+    else waiting = true;
+  });
+  return {
+    keyDown(): void {
+      waiting = false;
+    },
+    atStandby(): void {
+      if (!waiting) return;
+      waiting = false;
+      received();
+    },
+  };
 }

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/symbols-c
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/symbols/c
 source-sha256: fae6f6a0ed6430924ce1ce28d9cec0f8af07605e0489d1c307d1ccfb978d31c3
 trigger-frame: 1

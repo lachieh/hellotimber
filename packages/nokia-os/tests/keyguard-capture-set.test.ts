@@ -253,10 +253,7 @@ describe("plan 25's capture set", () => {
     expect(LIGHTS_ENTRIES.length).toBe(lights.size);
   });
 
-  it("leaves plan 18's and plan 22's screens pending on them and asserts the rest", () => {
-    expect(status("keyguard/standby-message")).toBe("pending:18");
-    expect(status("keyguard/sms")).toBe("pending:18");
-    expect(status("lights/arrival/sms-locked")).toBe("pending:18");
+  it("leaves plan 22's screens pending on it and asserts the rest", () => {
     for (const id of [
       "keyguard/carousel-star",
       "keyguard/lock-gap/2930",
@@ -268,8 +265,12 @@ describe("plan 25's capture set", () => {
       expect(status(id), id).toBe("pending:22");
     }
     // Task 4 drives the timeout, key, boot and power-key lights goldens, Task 7 the keyguard's LCD
-    // goldens, Task 8 the other lights goldens.
+    // goldens, Task 8 the other lights goldens; the message arrivals since plan 18's merge.
     for (const id of [
+      "keyguard/standby-message",
+      "keyguard/sms",
+      "lights/arrival/sms",
+      "lights/arrival/sms-locked",
       "lights/game/off/play",
       "lights/keyguard/hint",
       "lights/screen-saver",

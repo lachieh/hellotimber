@@ -157,10 +157,22 @@ describe("stockMenu", () => {
       stockMenu.entries.map((slot) => slot.entry),
     );
     // The "Leaf ownership" table: Chat, Composer, New game, Activate, Stopwatch, ...
-    for (const number of ["3", "2-1", "5-4-3", "8-4-2-1", "11-4", "12-5-1"]) {
+    for (const number of ["3", "5-4-3", "8-4-2-1", "11-4", "12-5-1"]) {
       expect(kinds.get(number), number).toBe("placeholder");
     }
-    for (const number of ["1-1", "1-2", "1-8-1", "4-5", "8-1-1", "8-1-2", "8-1-6", "9", "10-2"]) {
+    for (const number of [
+      "1-1",
+      "1-2",
+      "1-8-1",
+      "2-1",
+      "4-5",
+      "6-2-3",
+      "8-1-1",
+      "8-1-2",
+      "8-1-6",
+      "9",
+      "10-2",
+    ]) {
       expect(kinds.get(number), number).toBe("stock");
     }
   });
@@ -308,11 +320,11 @@ describe("PlaceholderApplication", () => {
     );
     expect(owners["menu/games/snake/new-game"]).toBeUndefined();
     expect(owners["menu/calculator"]).toBeUndefined();
+    expect(owners["menu/settings/phone-settings/welcome-note"]).toBeUndefined();
+    expect(owners["menu/messages/write"]).toBeUndefined();
     expect(owners).toMatchObject({
-      "menu/messages/write": "18",
       "menu/chat": "18c",
       "menu/tones/composer/empty-4": "27",
-      "menu/settings/phone-settings/welcome-note": "18",
       "menu/games/bantumi/new-game": "24",
       "menu/clock/stopwatch": "21",
       "menu/profiles/loud/activate": "17",

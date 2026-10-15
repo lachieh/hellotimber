@@ -80,7 +80,9 @@ key-down unless stated.
   the phone shows `112` in the large digits, right-aligned, with `Call`, the key icon, ladders and
   clock, for 3878.6 ms, and lights the LEDs. C ends it at once; another digit shows the hint;
   Call (Navi) shows `Attempting emergency call` / `End` (plan 22).
-- **Arrivals.** An SMS on a locked phone shows its notice with `Unlock` and stays dark. An
+- **Arrivals.** An SMS lights an unlocked phone at its arrival (`lights/arrival/sms`). On a locked
+  phone it shows its notice with the key icon and `Unlock` and stays dark; a waiting message's
+  envelope sits right of the key icon, from x 23 (x 7 unlocked). An
   incoming call on a locked phone rings as on an unlocked one (`0412345678`, `calling` blinking
   every ≈480 ms, `Answer`); Navi answers, Navi (`End`) or C ends it; then `Keypad locked` again
   (446/232/232/1979 ms) and the locked standby.
@@ -124,9 +126,11 @@ lights at the screen); which image is the factory state for Games › Settings �
 
 ## What nokia-os reproduces
 
-Every plan 25 golden not pending on plans 18 or 22 is asserted (189 of 210): the keyguard's LCD
+Every plan 25 golden not pending on plan 22 is asserted (193 of 210): the keyguard's LCD
 timelines and stills pixel for pixel, their `leds` per row, the lights goldens' edges within
-5 ms after power-on alignment, and the keyguard's sounds. Known gaps (expected failures, causes in
+5 ms after power-on alignment, and the keyguard's sounds. The four message arrivals (asserted with
+plan 18's merge) are aligned on the arrival: the captures do not log the delivery and the link
+time spreads 2141-2464 ms, so they pin what an arrival lights and paints, not its latency. Known gaps (expected failures, causes in
 `tests/acceptance/25-keyguard-and-backlight.test.ts`): a restarted hint closing with two partial
 draws (`hint-during`, `emergency/{000,110,113,911,999}`), `Keypad locked` timer spreads of
 15-29 ms (`lock-gap/{2500,2900,2910,2920}`), `*` during the carousel's shortcut entry

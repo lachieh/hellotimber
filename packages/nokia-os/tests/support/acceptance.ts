@@ -50,6 +50,11 @@ export interface AcceptancePlan {
   readonly knownGaps?: Readonly<Record<string, string>>;
   /** Scenarios that may outlast the default 5 s timeout on a loaded machine, by golden id. */
   readonly timeoutsMs?: Readonly<Record<string, number>>;
+  /**
+   * The tree nodes a hand-written golden covers, by golden id (plan 18: the leaves its features
+   * bind), for the coverage guard; generated tree goldens declare their own `covers`.
+   */
+  readonly covers?: Readonly<Record<string, readonly string[]>>;
 }
 
 /** How long after the trigger a timeline golden ends (the last frame's end, or lower bound). */

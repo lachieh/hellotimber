@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/outbox
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/outbox/with-number-typed.png
 source-sha256: b1da30f8789ab431d7de755aba31a2eb9656c961d65ac5d1918f3045dbf1b59f
 note: A saved message's text with a number in it, typed before Save.

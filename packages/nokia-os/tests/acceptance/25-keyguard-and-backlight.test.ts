@@ -1,18 +1,20 @@
 // Plan 25's acceptance (docs/plans/25-keyguard-and-backlight.md Task 10): one scenario per
 // asserted golden: the keyguard's LCD goldens (their `leds` too, D10), the lights goldens and the
-// keyguard's sound goldens. The goldens pending on plans 18 and 22 (message and call screens) are
-// todos; known gaps name their cause.
+// keyguard's sound goldens. The goldens pending on plan 22 (call screens) are todos; known gaps
+// name their cause.
 import { readPlanIndex } from "../../scripts/golden-index.ts";
 import { acceptancePlan, GOLDENS, type Scenario } from "../support/acceptance.ts";
 import { expectLcd } from "../support/golden.ts";
 import { goldenImage } from "../support/goldens.ts";
 import {
+  keyguardArrival,
   keyguardSound,
   keyguardTimeline,
   lockedRig,
+  lockedWithMessage,
   type KeyguardCase,
 } from "../support/keyguard.ts";
-import { lightsScenario } from "../support/lights.ts";
+import { arrivalLights, lightsScenario } from "../support/lights.ts";
 import { standbyRig } from "../support/rig.ts";
 
 /**
@@ -131,9 +133,20 @@ const KEYGUARD: Readonly<Record<string, KeyguardCase>> = {
 const scenarios: Record<string, Scenario> = {
   ...Object.fromEntries(
     readPlanIndex(GOLDENS, "25")
-      .filter((entry) => entry.status === "asserted" && entry.kind === "lights")
+      .filter(
+        (entry) =>
+          entry.status === "asserted" &&
+          entry.kind === "lights" &&
+          !entry.id.startsWith("lights/arrival/"),
+      )
       .map((entry) => [entry.id, lightsScenario]),
   ),
+  // K7, L7: an SMS landing where the recording first changes (the unlocked recording's LED edge,
+  // the locked one's notice, `keyguard/sms` frame 1).
+  "lights/arrival/sms": (id) => arrivalLights(id, 2729),
+  "lights/arrival/sms-locked": (id) => arrivalLights(id, 2477),
+  "keyguard/sms": keyguardArrival,
+  "keyguard/standby-message": lockedWithMessage,
   ...Object.fromEntries(
     Object.entries(KEYGUARD).map(([id, keyguardCase]) => [
       id,

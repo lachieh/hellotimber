@@ -12,6 +12,7 @@ import type {
   StockServices,
   StockSettingsTables,
   StockWidgetTables,
+  VirginChoice,
   VirginNumber,
   VirginText,
 } from "./features/feature";
@@ -98,6 +99,7 @@ const ENTRY_INDICATOR_LEVELS: readonly string[] = joined((f) => f.widgets?.entry
 
 /** The settings store's tables (plan 14 D9, plan 15). */
 export const STOCK_SETTINGS = {
+  choices: joined<VirginChoice>((f) => f.settings?.choices),
   aliases: joined((f) => f.settings?.aliases),
   hostValues: settings("Host value", "hostValues"),
   virginTexts: joined<VirginText>((f) => f.settings?.virginTexts),

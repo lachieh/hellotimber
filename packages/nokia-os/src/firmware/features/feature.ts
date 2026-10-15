@@ -8,6 +8,7 @@
 // also matches the node itself and everything below (`tree.ts` `matchesPattern`). Patterns of one
 // table must not overlap (tests/features.test.ts).
 import type { PhoneKey } from "@hellotimber/phone-core";
+import type { StockMessaging } from "../../messages/service";
 import type { StockSounder } from "../../sound/sounder";
 import type { Widget } from "../../widgets/flow";
 import type { ListNumbering } from "../../widgets/rows";
@@ -32,6 +33,8 @@ export interface StockServices {
   readonly noteSound: NoteSound;
   /** The phone's EEPROM, for the records a feature registers (`records`, plan 15 D2). */
   readonly eeprom: StockEeprom;
+  /** Plan 18: the phone's SMS (its `messages` record over `eeprom`, the network port). */
+  readonly messaging: StockMessaging;
 }
 
 /** The tree node a bound screen opens for. */
@@ -145,8 +148,18 @@ export type FactoryDefault = {
   readonly capture: string;
 } & ({ readonly label: string } | { readonly marked: readonly string[] });
 
+/** A single-choice setting no tree node lists (plan 18: an editor's Dictionary). */
+export interface VirginChoice {
+  readonly key: string;
+  readonly labels: readonly string[];
+  /** The virgin choice; null = unset. */
+  readonly chosen: number | null;
+}
+
 /** What a feature adds to the settings store (plan 14 D9, plan 15). */
 export interface StockSettingsTables {
+  /** Single-choice settings that are not tree option lists, with their virgin choice. */
+  readonly choices?: readonly VirginChoice[];
   /** Keys under `prefix` read and write the same key under `target` (Tones → a profile's). */
   readonly aliases?: readonly { readonly prefix: string; readonly target: string }[];
   /** Pages whose value is the host's, by setting key: what the page shows. */

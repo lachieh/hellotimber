@@ -1,6 +1,6 @@
 lcd-golden 1
 id: text/number-search-empty
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/text/number/search-empty
 source-sha256: 505656fe6f274ead8970890b45a614c6d4ebfeb24a91bfefcb4e41f5bff99d25
 trigger-frame: 1

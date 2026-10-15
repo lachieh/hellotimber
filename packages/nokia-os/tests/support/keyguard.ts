@@ -10,10 +10,10 @@ import type { PhoneKey } from "@hellotimber/phone-core";
 import { expect } from "vite-plus/test";
 import type { StockLightEvent } from "../../src/firmware/features/backlight";
 import { KEYGUARD_TIMES } from "../../src/firmware/features/keyguard";
-import type { StockPhoneConfig } from "../../src/index";
+import { createSyntheticNetwork, type StockPhoneConfig } from "../../src/index";
 import { expectLcd, expectTimeline, PROBE_TOLERANCE_MS } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
-import { LIGHT_EDGE_TOLERANCE_MS } from "./lights.ts";
+import { deliverAndLand, LIGHT_EDGE_TOLERANCE_MS } from "./lights.ts";
 import { seededStorage, standbyRig, type Rig } from "./rig.ts";
 import { expectSoundTimeline, loadSoundGolden, playSound } from "./sound.ts";
 
@@ -124,4 +124,49 @@ export function keyguardSound(id: string): void {
     id === "sound/note/keypad-locked" ? darkStandbyRig(config) : lockedRig("dark", config);
   const recorded = playSound(rig, golden);
   expectSoundTimeline(recorded, golden, `${id}: ${golden.note ?? "its keys"}`);
+}
+
+// ---------------------------------------------------------------- message arrivals (K7)
+
+/**
+ * `keyguard/sms`: an SMS arriving at a dark locked standby shows its notice under the key icon
+ * with `Unlock`, and lights nothing (K7).
+ */
+export function keyguardArrival(id: string): void {
+  const golden = loadGolden(id);
+  const rows = golden.timeline!;
+  const t = golden.triggerFrame as number;
+  const lights: StockLightEvent[] = [];
+  const network = createSyntheticNetwork();
+  const rig = lockedRig("dark", {
+    network,
+    lights: { change: (event) => void lights.push(event) },
+  });
+  expectLcd(rig.paint(), goldenImage(id, rows[t - 1]!.image), `${id}: before the arrival`);
+  const last = rows[rows.length - 1]!;
+  const span = last.startMs + last.durationMs - rows[t]!.startMs + 100;
+  const before = lights.length;
+  const recording = rig.record(span, () => deliverAndLand((ms) => rig.advance(ms), network));
+  expectTimeline(recording, golden, `${id}: an SMS arriving at a dark locked standby`);
+  // D10: dark throughout, as the phone reported it.
+  expect(rows.map((row) => row.leds)).toEqual(rows.map(() => 0));
+  expect(lights.slice(before), `${id}: the arrival lights nothing`).toEqual([]);
+}
+
+/** `keyguard/standby-message`: a received message's notice cleared with C, then locked. */
+export function lockedWithMessage(id: string): void {
+  const network = createSyntheticNetwork();
+  const rig = standbyRig({ network });
+  deliverAndLand((ms) => rig.advance(ms), network);
+  rig.press("c");
+  rig.advance(1000);
+  rig.press("navi");
+  rig.advance(LOCK_STAR_MS);
+  rig.press("*");
+  rig.advance(KEYGUARD_TIMES.lockNoteMs + LIT_AFTER_MS);
+  expectLcd(
+    rig.paint(),
+    goldenImage(id, "standby-message"),
+    "the locked standby, a message waiting",
+  );
 }

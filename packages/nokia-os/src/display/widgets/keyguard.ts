@@ -56,11 +56,29 @@ function sprite(id: string) {
   return found;
 }
 
-/** Standby with the key icon, the soft key `softkey` (`Unlock`, `Call`) and no operator line. */
+/**
+ * The message envelope's left edge on the locked standby: the key icon takes its place at x 7
+ * and the envelope follows it (`keyguard/standby-message`, `keyguard/sms` b).
+ */
+const LOCKED_ENVELOPE_X = 23;
+
+/**
+ * Standby with the key icon, the soft key `softkey` (`Unlock`, `Call`) and no operator line (an
+ * empty `carrier`); a waiting message's envelope moves right of the key icon.
+ */
 function lockedStandby(fb: Framebuffer, standby: Standby, carrier: string, softkey: string): void {
-  paintStandby(fb, { ...standby, carrier });
+  const message = standby.indicators?.message === true;
+  paintStandby(fb, {
+    ...standby,
+    carrier,
+    ...(message ? { indicators: { ...standby.indicators, message: false } } : {}),
+  });
   const key = sprite("keyguard/key");
   fb.blitBitmap(key.bitmap, key.x, key.y);
+  if (message) {
+    const envelope = sprite("message/envelope");
+    fb.blitBitmap(envelope.bitmap, LOCKED_ENVELOPE_X, envelope.y);
+  }
   // Standby's own soft key is `Menu`: the band below the ladders holds nothing else.
   fb.fillRect(0, SOFTKEY_TOP, fb.width, fb.height - SOFTKEY_TOP, 0);
   fb.drawTextCentered(STOCK_FONTS.small, softkey, SOFTKEY_TOP);

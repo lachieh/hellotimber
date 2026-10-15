@@ -279,26 +279,15 @@ describe("plan 18 goldens", () => {
   const load = (entry: IndexEntry): Golden =>
     parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
 
-  it("leaves plan 18 pending elsewhere only on the leaves it still owns (2-1, 6-2-3)", () => {
-    // Plan 25's keyguard and lights recordings of message arrivals (K7) wait on plan 18's screens
-    // too; they cover no tree leaf.
-    const elsewhere = index.filter(
-      (entry) =>
-        entry.status === "pending:18" &&
-        !own.some((e) => e.id === entry.id) &&
-        !/^(keyguard|lights)\//.test(entry.id),
+  it("leaves no golden pending on plan 18 and no plan 18 placeholder (Task 12)", () => {
+    expect(index.filter((entry) => entry.status === "pending:18").map((entry) => entry.id)).toEqual(
+      [],
     );
-    const owned = Object.entries(PLACEHOLDER_OWNERS)
-      .filter(([, plan]) => plan === "18")
-      .map(([number]) => number);
-    expect(owned.sort()).toEqual(["2-1", "6-2-3"]);
-    for (const entry of elsewhere) {
-      const numbers = entry.covers ?? [entry.id.slice(entry.id.lastIndexOf("/") + 1)];
-      expect(
-        numbers.every((number) => owned.includes(number)),
-        entry.id,
-      ).toBe(true);
-    }
+    expect(Object.values(PLACEHOLDER_OWNERS).filter((plan) => plan === "18")).toEqual([]);
+    // Write messages' T9 first screen waits for plan 18b (D3).
+    expect(index.find((entry) => entry.id === "tree/02-messages/2-1.leaf")?.status).toBe(
+      "pending:18b",
+    );
   });
 
   it("re-owns Chat, the content leaves and their goldens to plan 18c (D1)", () => {

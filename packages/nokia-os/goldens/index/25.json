@@ -354,7 +354,7 @@
   {
     "id": "keyguard/sms",
     "file": "keyguard/sms.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -370,7 +370,7 @@
   {
     "id": "keyguard/standby-message",
     "file": "keyguard/standby-message.lcd.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -564,14 +564,14 @@
   {
     "id": "lights/arrival/sms",
     "file": "lights/arrival/sms.lights.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "lights",
     "events": 2
   },
   {
     "id": "lights/arrival/sms-locked",
     "file": "lights/arrival/sms-locked.lights.txt",
-    "status": "pending:18",
+    "status": "asserted",
     "kind": "lights",
     "events": 0
   },

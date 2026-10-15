@@ -9,3 +9,12 @@ export type { StockLightEvent, StockLightsPort } from "./firmware/features/backl
 export { stockMenu } from "./firmware/menu";
 export { missingStockGlyphs } from "./resources";
 export type { StockFontName } from "./resources";
+export { createSyntheticNetwork } from "./messages/network";
+export type {
+  StockIncomingSms,
+  StockNetworkPort,
+  StockSendOutcome,
+  StockSms,
+  StockTimestamp,
+  SyntheticNetwork,
+} from "./messages/network";

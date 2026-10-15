@@ -4,9 +4,10 @@
 // `$REF/captures/6.39/plan25/`.
 //
 // Statuses (plan 29's pending workflow): a golden whose screens belong to a later plan names it
-// (`pending:18`, `pending:22`); every other golden is asserted, driven by this plan's acceptance
-// scenarios (tests/support/lights.ts `lightsScenario`, tests/support/keyguard.ts
-// `keyguardTimeline` and `keyguardSound`).
+// (`pending:22`); every other golden is asserted, driven by this plan's acceptance scenarios
+// (tests/support/lights.ts `lightsScenario` and `arrivalLights`, tests/support/keyguard.ts
+// `keyguardTimeline`, `keyguardArrival`, `lockedWithMessage` and `keyguardSound`). The message
+// arrivals were pending on plan 18 until its merge.
 import type { CaptureSetEntry, PlanCaptureSet } from "../capture-set.ts";
 import type { GoldenStatus } from "../golden-format.ts";
 import type { LightName, LightsCaptureIo, LightsGolden, LightsRow } from "../lights-format.ts";
@@ -21,7 +22,6 @@ import type { TreeCaptureIo } from "../tree-capture-set.ts";
 
 const P = "plan25";
 const ASSERTED: GoldenStatus = "asserted";
-const MESSAGES: GoldenStatus = "pending:18";
 const CALLS: GoldenStatus = "pending:22";
 /** Recordings this close (same images, every frame start within it) share one golden. */
 const SHARE_TOLERANCE_MS = 2;
@@ -286,8 +286,6 @@ export const LIGHTS_ENTRIES: readonly LightsCaptureEntry[] = [
       `lights/arrival/sms${suffix}`,
       "virgin",
       `An SMS arriving at a dark${suffix ? " locked" : ""} standby.`,
-      `${P}/lights/arrival/sms${suffix}`,
-      MESSAGES,
     ),
     ...[
       ["", "answered with Navi at 6 s, ended with Navi 3 s later"],
@@ -436,7 +434,6 @@ export function keyguardLcdSet(frames: TreeCaptureIo): CaptureSetEntry[] {
       "keyguard/standby-message",
       "keyguard/standby-message.png",
       "The locked standby with a message waiting (K2; the envelope is plan 18's).",
-      MESSAGES,
     ),
     ...hintEntries(frames),
     timeline(
@@ -523,7 +520,6 @@ export function keyguardLcdSet(frames: TreeCaptureIo): CaptureSetEntry[] {
       "keyguard/sms",
       "lights/arrival/sms-locked",
       "An SMS arriving at a locked phone (K7): the notice with Unlock, dark.",
-      MESSAGES,
     ),
   ];
 }

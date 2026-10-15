@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sms/inbox-option-details-odd
-status: pending:18
+status: asserted
 source: captures/6.39/plan18/sms/inbox/option/details-odd
 source-sha256: 75b54998f4827f5edf2f7b6007d628b0f2bbc81b7367fbb5a1d4e6cdcc6f0564
 trigger-frame: 1

@@ -14,7 +14,7 @@ plan 14 goldens already committed for Messages, the crawl's `tree/02-messages/` 
 `$REF/captures/scratch-plan18/` (evidence only, never imported; `NOTES.md` there lists them), and
 the canonical recaptures Task 0 writes to `$REF/captures/6.39/plan18/`. Read
 `$REF/captures/README.md` and plans 13, 14, 15 and 23 in full before starting.
-**Status:** in progress (Task 0 complete; Task 1 contracts documented).
+**Status:** done.
 
 ## Goal
 
@@ -1083,17 +1083,44 @@ ABC (`textInput`'s `mode`); a text input's long text does not wrap (unverified).
 **Files:** `src/firmware/leaves.ts`, `src/firmware/bindings.ts` (`WELCOME_EDITOR`, `NUMBER_SAVES`),
 `tests/welcome-editor.test.ts` (new), `tests/settings-flows.test.ts`.
 
-- [ ] 6-2-3: the editor (count style, 36, multi-tap only, Options Save/Erase as captured). Save →
+- [x] 6-2-3: the editor (count style, 36, multi-tap only, Options Save/Erase as captured). Save →
       `setText(WELCOME_NOTE_KEY, text)` and `Welcome note saved` → the page; Erase → `setText(…,
 undefined)` and `Welcome note erased`; the empty cases per Task 0 W. The editor opens on the
       stored note.
-- [ ] TDD through keys: type `Hi`, Save, power off and on: plan 15's welcome-note gate shows `Hi`
+- [x] TDD through keys: type `Hi`, Save, power off and on: plan 15's welcome-note gate shows `Hi`
       (its goldens still pass); Erase, power on: the hands play.
-- [ ] 2-7-1-1, 2-7-2-1, 2-9: number entry on the stored text; OK writes it and plays its note, then
+- [x] 2-7-1-1, 2-7-2-1, 2-9: number entry on the stored text; OK writes it and plays its note, then
       the page (Task 0 M); the virgin values stay as plan 14 captured.
-- [ ] Remove `6-2-3` from both placeholder tables (if Task 2 has not).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): Welcome note editor and editable centre and voice mailbox numbers`.
+- [x] Remove `6-2-3` from both placeholder tables (if Task 2 has not).
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): Welcome note editor and editable centre and voice mailbox numbers`.
+
+Deviation: **Task 8 (paths, plan 29 features):** the Welcome note editor is the settings feature's
+screen `6-2-3` (`src/firmware/features/settings.ts`), the number entries the messages feature's
+screens `2-7-1-1`, `2-7-2-1` and `2-9` (their plan 14 prompt layouts are subtracted); no
+`leaves.ts`/`bindings.ts` tables. The tests are `tests/welcome-editor.test.ts`; the settings record's
+key snapshot gains Set 2's centre (a typed text: the virgin SIM has none, `sms/centre-2` 00).
+
+Deviation: **Task 8 (measured behaviour):** the editor and the number entry blink as their node's
+own recording when it has one (plan 14 P9; irregular 479-490 ms steps that the tree goldens
+`6-2-3.leaf`, `2-7-1-1.leaf`, `2-7-2-1.leaf` and `2-9.leaf` assert), so `extract-resources` treats a
+`text-editor` first screen as a prompt's blink. Before `Centre number saved` the firmware draws the
+page's soft key alone for 128 ms (`sms/centre-1-ok`, `-2-ok` frame 1). The voice mailbox prompt
+has no counter; its limit is the Send prompt's 30 (UNVERIFIED: the capture types 19 digits).
+
+Deviation: **Tasks 8, 12 (acceptance lever, built here):** `scripts/messages-scripts.ts` (package
+script `messages-scripts`) transcribes Task 0's command logs into
+`scripts/generated/messages-scripts.ts`; `tests/support/replay.ts` replays them (forks, taps,
+holds, the setup, reboots) and compares every shot, scroll and recording of a golden. Plan 18's
+scenario table is `MESSAGES_SCENARIOS` in `tests/support/messages.ts`; a golden is promoted by
+listing it in `MESSAGES_ASSERTED` (`scripts/messages-capture-set.ts`) and re-importing. The T9
+Dictionary off of the logs is replayed as the multi-tap one (D3). Recordings compare without the
+cursor's blink phase by default (`blink: "free"`): the firmware's phase differs between forks of
+one editor (`welcome/hold-c` and `welcome/37th-key`: 47 ms from the same snapshot) and a deletion
+shows the cursor at once without restarting the blink (`welcome/hold-c` b, c), so the phase is not
+reproducible from the logs. Task 8 promotes 19 goldens (`welcome/*`, `sms/centre-*`,
+`sms/voice-mailbox*`); a recording that replays another recording's note timeline keeps
+PROBE_TOLERANCE_MS.
 
 ### Task 9 - Messages record, network port and synthetic network (TDD)
 
@@ -1101,20 +1128,36 @@ undefined)` and `Welcome note erased`; the empty cases per Task 0 W. The editor 
 `src/firmware/records.ts`, `src/firmware/phone.ts`, `src/index.ts`, `tests/messages-store.test.ts`
 (new), `tests/messages-network.test.ts` (new).
 
-- [ ] TDD `MESSAGES_RECORD` (plan 15 D2): per-SIM inbox/outbox (D7, or phone-wide per Task 0 F);
+- [x] TDD `MESSAGES_RECORD` (plan 15 D2): per-SIM inbox/outbox (D7, or phone-wide per Task 0 F);
       capacity 15 shared; `full` per Task 0; decode drops malformed entries; no `factory` (Restore
       keeps it; a test runs `restoreFactory()`); the stored JSON shape pinned by a snapshot.
-- [ ] TDD `createSyntheticNetwork`: `send` returns `"sent"` and records `sent`; `deliver` reaches every
+- [x] TDD `createSyntheticNetwork`: `send` returns `"sent"` and records `sent`; `deliver` reaches every
       subscriber; validation errors name the field.
-- [ ] TDD `StockMessaging` with the kernel clock: `send` settles after `max(SEND_LINK_MS, settle)`
+- [x] TDD `StockMessaging` with the kernel clock: `send` settles after `max(SEND_LINK_MS, settle)`
       (sync, resolved and rejected promises, a promise settled after power-off ignored); arrivals
       appear `RECEIVE_LINK_MS` after `deliver`; deliveries while off wait for standby (D9 rule).
-- [ ] `timestamp.ts`: the `Sent:` date and time format (Task 0, both time formats).
-- [ ] `createStockPhone`: builds the store over the phone's EEPROM and SIM, subscribes the network
+- [x] `timestamp.ts`: the `Sent:` date and time format (Task 0, both time formats).
+- [x] `createStockPhone`: builds the store over the phone's EEPROM and SIM, subscribes the network
       (default synthetic), unsubscribes nothing (the phone lives as long as the host keeps it;
       document it). Export `createSyntheticNetwork` and the types from `src/index.ts`.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): messages record and host network port`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): messages record and host network port`.
+
+Deviation: **Task 9 (paths and wiring):** the record is the messages feature's (`records`), not a
+line in `src/firmware/records.ts`; its store is built over `services.eeprom`. `StockServices`
+gains `messaging` (the phone's `StockMessaging`, whose `store` is the `StockMessages`), which
+`createStockMenu` takes as a last parameter (default: the security's SIM over its EEPROM and a
+synthetic network nothing ticks). `createStockPhone` connects it once, ticks it before the kernel,
+calls `atStandby()` on a powered-on standby snapshot and `poweredOff()` on power-off.
+
+Deviation: **Task 9 (internal API):** `InboxMessage` keeps its message `centre` (Details' Message
+centre page: the phone's Set 1 centre when it arrived, `sms/inbox-details` 02; the port carries no
+SMSC), so `receive(sms, centre?)`. `StockMessaging` is `constructor(store, network, centre)` with
+`connect()`, `deliver(sms)` (checked, as the host's callback), `send(sms, settled)`, `tick(now)`,
+`onArrival(listener)` (Task 11: the notice and the alert), `poweredOff()`, `atStandby()` and
+`sending`. A port that throws or answers anything but `"sent"` fails the send.
+`createSyntheticNetwork()` returns `SyntheticNetwork` (`StockNetworkPort` plus `deliver`, `sent`),
+exported with the port's types. A one-digit day in `Sent:` is padded (UNVERIFIED).
 
 ### Task 10 - Write messages and its Options (TDD)
 
@@ -1122,7 +1165,7 @@ undefined)` and `Welcome note erased`; the empty cases per Task 0 W. The editor 
 `COMPOSED_FLOWS`, `VIRGIN_OVERRIDES`), `src/firmware/leaves.ts`, `src/firmware/settings.ts`
 (the dictionary choice), `tests/messages-write.test.ts` (new).
 
-- [ ] 2-1: the editor (sms counter, 459 limit or as Task 0 shows), the multi-tap Options list as
+- [x] 2-1: the editor (sms counter, 459 limit or as Task 0 shows), the multi-tap Options list as
       Task 0 recorded (S9 has the T9 list), the indicator showing the option number. Bind: Send (number entry → `Sending message`
       → `Message sent` → the editor, or the failure note, D14), Send to many (the virgin note; with
       phone book names: plan 19's placeholder), Template and Insert smiley (the captured no-response;
@@ -1130,13 +1173,52 @@ undefined)` and `Welcome note erased`; the empty cases per Task 0 W. The editor 
       (Dictionary off with its note; English/Русский/Български → placeholder owned by `18b`), Send by
       set (Set 1 option list → number entry or `Routing address:` text input; Set 2's item view),
       Save (store → `Message saved`, or `Message memory full`), Erase (as captured), Exit (standby).
-- [ ] `messages/dictionary` setting with `VIRGIN_OVERRIDES` (D3); the settings record's pinned key
+- [x] `messages/dictionary` setting with `VIRGIN_OVERRIDES` (D3); the settings record's pinned key
       snapshot (plan 15 D3) gains it (version bump only if Task 5 of plan 15's rule requires it).
-- [ ] TDD through keys against `sms/send*`, `sms/save*`, `sms/send-by-set*`, `text/dictionary-off`
+- [x] TDD through keys against `sms/send*`, `sms/save*`, `sms/send-by-set*`, `text/dictionary-off`
       (pixels exact, timelines ±2 ms; link-time rows with the stated tolerance if Task 0's spread
       exceeds it, plan 14 closeout decision 2).
-- [ ] Remove `2-1` from both placeholder tables (if Task 2 has not).
-- [ ] Commit: `feat(nokia-os): Write messages with send, save and the stock Options`.
+- [x] Remove `2-1` from both placeholder tables (if Task 2 has not).
+- [x] Commit: `feat(nokia-os): Write messages with send, save and the stock Options`.
+
+Deviation: **Task 10 (paths and tables):** `src/messages/write.ts` (the SMS editor, `smsEditor`, and
+its Options) and `src/messages/bindings.ts` (`EDITOR_OPTIONS`, `COMPOSED_FLOWS`,
+`VIRGIN_OVERRIDES`, `DICTIONARY_LABELS`) are bound by the messages feature's screen `2-1`; no
+`leaves.ts`/`settings.ts` tables. The Dictionary choice is a new kind of feature setting
+(`StockSettingsTables.choices`: a single choice no tree node lists, with its virgin value), so
+`feature.ts`, `stock.ts` and `settings.ts` gain one table; the key snapshot gains
+`messages/dictionary`. `2-1` leaves the placeholder tables; `tree-capture-set.ts` gains
+`PENDING_LATER` (`2-1` → `18b`) for the T9 first screen, while `sound/note/2-1` (OK's beep) is
+asserted. `OptionListWidget` gains `indicatorPrefix` (Send by set's `6-k`), `ProgressModel` two-line
+text (`Sending` / `message`), and a `standby-draw` widget model (`sms/exit` frame 1).
+
+Deviation: **Task 10 (measured behaviour):** short firmware screens between two others are
+reproduced (`src/widgets/interlude.ts`): Exit draws standby without its operator for 83 ms; Send to
+many draws its note's `OK` alone for 168 ms; Save shows a blank LCD for 32 ms and `Saving message`
+(the bar's first frame) for 88 ms, or a 68 ms blank before `Message memory full`; a Send by set
+set draws its list's `OK` for 115 ms. `Sending message` loops plan 14's Requesting bar under two
+lines. Set 2 without a message centre asks for one (`Message centre` / `number:`, Search: Task 0
+evidence `sms/fail/set-2`, not imported); OK stores it and sends (UNVERIFIED). Routing address holds
+20 characters (UNVERIFIED). C on an empty editor or text input acts as it comes up (`text/delete-empty`:
+the page 13 ms after the up) and, held for the kernel's long press, goes to standby (`EmptyC`: the
+firmware leaves at the down and its menu's long press goes on to standby; a kernel application
+cannot hand a held key to the menu). `#` held in 123 takes back the `#` its down typed
+(`text/hold-hash-back` row 4). A sentence starts only after `.`, `?` or `!` and a space: straight
+after the mark the case stays (`text/symbols-use-first` frame 1: `Hi.` shows abc). The composed
+failure note plays `Code error`'s error-note timeline (UNVERIFIED, D14).
+
+Deviation: **Task 10 (acceptance):** Task 10 promotes every `text/*` golden and the Write messages
+`sms/*` goldens (98). `text/commit-gap` is a known gap (its 1450 ms shot: the firmware read the
+second key after the 1452 ms commit, the replay's uniform key latency 2 ms before). The replay's
+comparison skips the firmware's partial draws it does not make (≤ 30 ms rows: two-step redraws of a
+held digit, a digit's redraw), aligns a key on the first non-blink, non-partial row after it and
+measures a hold from there (D8), compares `text/dictionary-off` from its Dictionary list (its rows
+0-9 are the T9 editor, plan 18b), and lets the rows that end a send's link time differ by the
+synthetic cell's spread (`SEND_LINK_SPREAD_MS`, D10) before comparing the rows after them from
+there. Recordings that replay another recording's note or commit timing keep PROBE_TOLERANCE_MS; the
+holds of `#` in 123 ±35 ms (the firmware times them from the key's down, the replay from its
+redraw). `AcceptancePlan.covers` (and the coverage guard) let a plan say which tree nodes its
+hand-written goldens cover: `text/editor` covers `2-1`.
 
 ### Task 11 - Inbox, Outbox, reading and arrivals (TDD)
 
@@ -1144,56 +1226,145 @@ undefined)` and `Welcome note erased`; the empty cases per Task 0 W. The editor 
 `src/firmware/leaves.ts`, `src/firmware/phone.ts` (indicators, notice), `src/display/standby.ts`
 (notice and indicator painting), `tests/messages-read.test.ts` (new), `tests/paint-standby.test.ts`.
 
-- [ ] 2-2/2-3: `Opening`, then the empty note (plan 14's goldens still pass) or the list (envelope
+- [x] 2-2/2-3: `Opening`, then the empty note (plan 14's goldens still pass) or the list (envelope
       icons, `Read`, the rows window); Read → the view (D13; ▼/▲ wrap); Options per Task 0 (Inbox: Erase,
       Reply, Chat → placeholder `18c`, Edit, Use number → plan 22's placeholder or the captured
       `No number found on this screen`, Forward, Details; Outbox: Erase, Edit, Use number, Forward);
       Erase's query and notes (`No more messages in inbox/outbox`); Reply sends to the sender.
-- [ ] Arrivals (D11, D12): the store's `receive`; `setNotice({ text, softkey: "Read", open: inbox })`
+- [x] Arrivals (D11, D12): the store's `receive`; `setNotice({ text, softkey: "Read", open: inbox })`
       with the captured texts; `standbyIndicators` from `unread()`; what Task 0 I recorded for keys
       on the notice and arrivals elsewhere; the message alert (D15).
-- [ ] Standby painter: the stock notice layout and the envelope indicator against `sms/arrive*`;
+- [x] Standby painter: the stock notice layout and the envelope indicator against `sms/arrive*`;
       plan 13's standby goldens unchanged.
-- [ ] TDD through keys against `sms/arrive*`, `sms/inbox*`, `sms/read*`, `sms/outbox*`, `sms/full*`,
+- [x] TDD through keys against `sms/arrive*`, `sms/inbox*`, `sms/read*`, `sms/outbox*`, `sms/full*`,
       `sms/persist*` (two phones over one storage) and `sms/sim*` (the `sim` config).
-- [ ] Commit: `feat(nokia-os): Inbox, Outbox, message reading and arrivals`.
+- [x] Commit: `feat(nokia-os): Inbox, Outbox, message reading and arrivals`.
+
+Deviation: **Task 11 (paths):** Inbox and Outbox, a message's pages and Options are
+`src/messages/read.ts` (`openBox`), bound by the messages feature's screens `2-2` and `2-3`; the
+models and painters `src/display/widgets/message.ts` (`message-list`, `message-page`). Arrivals are
+`stockArrivals` in `src/firmware/phone.ts`; the notice's lines are the kernel notice's text split at
+`\n` (`1` / `message` / `received`), its count the unread messages (`sms/inbox` notice-4 after
+three dismissals). `src/widgets/held-c.ts` (`HeldC`) is C on the screens it leaves: back as it
+comes up, standby when held for the long press (the editor's empty C of Task 10, a list, pages):
+the firmware's menu long press, which a kernel application cannot reach.
+
+Deviation: **Task 11 (measured behaviour):** an arrival away from standby waits for the next
+standby and shows the notice then, unless a key goes down first (`sms/elsewhere-note`: the arrival
+during Invalid shortcut is noticed when the note ends; `elsewhere-menu`, `-editor`: C to standby
+shows the envelope only). A full SIM refuses the message with `No space for new messages` (OK) and
+the envelope blinks every 480 ms while every slot is used (phase UNVERIFIED). Erase shows
+`Erasing message` for 261 ms, then `Erased` and the list with the next message on top, or `No more
+messages in …` and the page. Use number without a number in a saved message shows `No number found
+on this screen` with No phone numbers' timeline (UNVERIFIED: 2883 ms here). Opening a box shows
+2-2's or 2-3's own `Opening` step (35-78 ms between recordings). Details' Message centre is the
+phone's Set 1 centre when the message arrived. Options commits a pending character (the reply's
+`A`). The message alert (D15) is `messageAlert("tones")`, General's, until plan 17's profiles.
+
+Deviation: **Task 11 (goldens):** promoted 68; re-owned to `pending:18c` Inbox's Chat
+(`sms/inbox-option-chat`) and to `pending:22` Use number's call screen
+(`sms/inbox-option-use-number`, `-odd`, `sms/outbox-use-number-found`) and the received notice's ▲,
+▼, digit and # (`sms/notice-up`, `-down`, `-digit`, `-hash`: the call register, the phone book and
+standby number entry, which also need the kernel to route a notice's keys, D12) through
+`MESSAGES_LATER`. Known gaps: `sms/notice` (its `standby-down-after-c` shows ▼ at standby opening
+the Phone book, while plan 14's `STOCK_STANDBY_KEYS` put the dialled numbers on ▼ after the spec's
+help text: a conflict for the standby plans), `sms/notice-c` (the firmware's 88 ms standby without
+operator), `sms/elsewhere` (C held in a moving game, plan 23's kernel gap), `sms/time-format`
+(standby's 12-hour clock), and `sms/sim-same-*` (the emulator's lost SIM overlay, D7).
+
+Deviation: **Task 11 (replay):** the generator records each log's boot image and SMS epoch
+(`image`, `epoch`) and each `scroll`'s shot count; the replay boots an image another log saved
+(`sim-*` from `persist`), runs a scroll's keys on the way past it, delivers `sms` through the
+replayed phone's synthetic network (sender `Nokia` as the emulator's `12345`, time stamps from the
+epoch plus the emulated time and the emulator's 2.2 s start-up), and opens Write messages with
+Menu, ▼, Select, Select where the logs typed Menu 2 1: phone-core's stock shortcut keeps its window
+open over the application it opened and takes the digits typed into it (a kernel finding for the
+shortcut's owner). Blink-free comparison also leaves out the full SIM's blinking envelope; partial
+draws only one side makes are skipped.
 
 ### Task 12 - Acceptance and the coverage guard
 
 **Files:** `tests/support/messages.ts` (new), `tests/support/rig.ts` (`network` option and a
 `deliver(sms, atMs)` helper), `tests/acceptance.test.ts`.
 
-- [ ] A hand-written scenario for every `text/*`, `welcome/*` and `sms/*` golden (navigate as the
+- [x] A hand-written scenario for every `text/*`, `welcome/*` and `sms/*` golden (navigate as the
       capture did, Dictionary off first, keys on the ticks their redraws start, deliveries at the
       capture's injection time); `glyphs/*` are excluded from scenarios (resources).
-- [ ] Coverage guard: no node is covered only by a `pending:18` golden; the nodes plan 18 binds
+- [x] Coverage guard: no node is covered only by a `pending:18` golden; the nodes plan 18 binds
       (2-1, 2-2, 2-3, 2-7-1-1, 2-7-2-1, 2-9, 6-2-3) are covered by asserted goldens; the editor
       Options entries in `EDITOR_OPTIONS` each have an asserted golden or a named owner (`18b`, `18c`,
       `19`, `22`). Delete `awaitsPlan18Scenario`.
-- [ ] Every asserted golden passes (pixels exact; timelines ±2 ms, or the stated tolerance where a
+- [x] Every asserted golden passes (pixels exact; timelines ±2 ms, or the stated tolerance where a
       scenario replays another recording's timing). New `KNOWN_GAPS` need a reason.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report the
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report the
       suite's run time (keep it under ≈25 s).
-- [ ] Commit: `test(nokia-os): drive text entry and SMS against their goldens`.
+- [x] Commit: `test(nokia-os): drive text entry and SMS against their goldens`.
+
+Deviation: **Task 12 (paths and mechanism):** the scenarios are not hand-written key lists but
+replays of Task 0's own command logs (`tests/support/replay.ts`, from Task 8), configured per golden
+by `MESSAGES_OPTIONS` and derived for every asserted plan 18 golden (`MESSAGES_SCENARIOS`);
+`tests/acceptance/18-messages-and-chat.test.ts` calls `acceptancePlan` with them, `MESSAGES_KNOWN_GAPS`
+and `MESSAGES_COVERS`. The capture set asserts every fixture but `MESSAGES_LATER`'s (no
+`MESSAGES_ASSERTED` list, no `pending:18` anywhere). The glyph sheets are asserted with painter
+scenarios: each image's character drawn by the stock fonts on its screen (the Name: box, the
+editor's first line, the editor header) matches within the sheet's region. The plan-18 coverage
+checks are `tests/messages-coverage.test.ts` (bound leaves, Options entries, hand-ons);
+`tests/goldens-integrity.test.ts` checks no golden is `pending:18`. The rig needs no new helper:
+replays pass a synthetic network through `StockPhoneConfig.network` and deliver through it.
+
+**Task 12 completion note:** plan 18's index holds 196 goldens: 188 asserted (8 of them known gaps:
+`text/commit-gap`, `sms/notice`, `sms/notice-c`, `sms/elsewhere`, `sms/time-format`,
+`sms/sim-same-new-process`, `-inbox`, `-outbox`), 7 `pending:22`, 1 `pending:18c`; elsewhere
+`tree/02-messages/2-1.leaf` is `pending:18b`. Plan 18's acceptance file runs in ≈10 s alone; the
+whole nokia-os suite takes ≈40 s on 8 threads (it was ≈37 s before Task 8), over the ≈25 s guide:
+the replays are as cheap as the logs allow (20 ms steps between commands, 1 ms inside
+recordings, each golden read once).
 
 ### Task 13 - Demo, README, verification gate and closeout
 
 **Files:** `packages/nokia-os/{README.md,demo/{index.html,main.ts,style.css}}`,
 `docs/specs/nokia-3310.md`, `docs/plans/README.md`, this plan.
 
-- [ ] Demo: `network: createSyntheticNetwork()`; a "Receive SMS" form (number, text; the timestamp
+- [x] Demo: `network: createSyntheticNetwork()`; a "Receive SMS" form (number, text; the timestamp
       from the browser's clock) calling `deliver`; a list of sent SMS; the golden overlay lists the
       new goldens. Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser`
       (headless: drive through the `[role=status]` line, Skip boot): Dictionary off, type `Hi` with
       multi-tap, Send to a number (`Sending message`, `Message sent`), Save, Outbox; receive an SMS
       (notice, Read, the view, Details); Welcome note Save, power cycle, the note at boot.
-- [ ] README: text entry, the network port (a sketch of a host port backed by an HTTP endpoint, no
+- [x] README: text entry, the network port (a sketch of a host port backed by an HTTP endpoint, no
       LLM code), the messages record, what 18b and 18c add.
-- [ ] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
+- [x] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
       `git diff --stat <commit before Task 1> -- website/` is empty.
-- [ ] Spec §10: replace "(plan 18, in progress)" with verified facts; list what stays UNVERIFIED.
-- [ ] Plans README: row 18 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete text entry and SMS (plan 18)`.
+- [x] Spec §10: replace "(plan 18, in progress)" with verified facts; list what stays UNVERIFIED.
+- [x] Plans README: row 18 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete text entry and SMS (plan 18)`.
+
+Deviation: **Task 13 (paths, parallel plan conventions):** the demo is a panel,
+`demo/panels/messages.ts` (`messagesPanel`, plan 18: `config` gives every phone one page-wide
+`createSyntheticNetwork()`, a **Receive SMS** form delivers with the browser's local time, the sent
+SMS are listed and counted in the status line) plus one export line in `demo/panels/index.ts`;
+`demo/{index.html,main.ts,style.css}` are unchanged. The golden overlay lists the new goldens
+already (it globs `goldens/**`). Verified headless on port 5418 with `agent-browser`: Skip boot,
+Write messages (Dictionary off), `Hi OK€` typed with multi-tap (sentence case, `#` to ABC, a
+symbol from `*`), Send to a typed number (`Sending message`, `Message sent`, the network's list),
+Save (`Message saved`), Outbox (`Message`, the text); Receive SMS (`1 message received` with the
+envelope ≈2.3 s later), Read, the list, the view, Details (Sender, Message centre); Welcome note
+`Hello` saved, power cycle with the boot, the note before standby.
+
+Deviation: **Task 13 (verification gate):** under the full `vp run -r test` load the four
+resource-registration tests and the two resource-freshness tests that run a whole extraction
+passed alone (≈2 s each) but exceeded Vitest's 5 s default, now that plan 18's goldens feed it;
+they take `{ timeout: EXTRACTION_TIMEOUT_MS }` (30 s). Nothing else changed.
+
+**Completion note:** Tasks 8-13 shipped the Welcome note editor, the editable centre and voice
+mailbox numbers, the `messages` record and network port, Write messages with its Options, Inbox,
+Outbox and arrivals, and the replayed acceptance: 196 goldens, 188 asserted (8 known gaps), 7
+`pending:22`, 1 `pending:18c`, with `tree/02-messages/2-1.leaf` `pending:18b`. `website/` is
+unchanged since before Task 1. Findings for other plans: phone-core's stock shortcut keeps its
+window open over an application it opened and takes the digits typed into it; the received
+notice's ▲/▼/digit/# need a kernel route for a notice's keys (D12, plan 22); the capture's ▼ at
+standby opens the Phone book, against `STOCK_STANDBY_KEYS`; C held across an application's exit
+is swallowed (plan 23's gap); the standby clock's 12-hour format belongs to plan 21.
 
 ## Follow-up plan adjustments
 

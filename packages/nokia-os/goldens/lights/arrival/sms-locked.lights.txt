@@ -1,6 +1,6 @@
 lights-golden 1
 id: lights/arrival/sms-locked
-status: pending:18
+status: asserted
 source: captures/6.39/plan25/lights/arrival/sms-locked
 source-sha256: e9a1a34e44340e1764704a2a2d1336daa39f49143e5a22e54f65a0e4b9fc97b1
 state: virgin

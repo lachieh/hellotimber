@@ -9,7 +9,8 @@ import { GAMES_LIGHTS_KEY, type StockLightEvent } from "../../src/firmware/featu
 import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockSettings } from "../../src/firmware/settings";
 import { createStockPhoneWith, type StockPhoneConfig } from "../../src/firmware/phone";
-import type { StockStorage } from "../../src/index";
+import { createSyntheticNetwork, type StockStorage } from "../../src/index";
+import { RECEIVE_LINK_MS } from "../../src/resources";
 import { SEED_1010, seededStorage } from "./rig.ts";
 
 const GOLDENS = join(import.meta.dirname, "../../goldens");
@@ -327,4 +328,57 @@ export function lightsScenario(id: string): void {
     id,
     boot ? { onToleranceMs: BOOT_LIGHT_TOLERANCE_MS } : game ? GAME_LIGHTS_TOLERANCE : {},
   );
+}
+
+// ---------------------------------------------------------------- message arrivals (L7, K7)
+
+/** The SMS the plan 25 arrival captures received (its text and sender are not on screen). */
+export const ARRIVING_SMS = {
+  number: "0412345678",
+  text: "Hello",
+  sentAt: { year: 2026, month: 10, day: 13, hour: 10, minute: 10, second: 0 },
+} as const;
+
+/**
+ * Delivers an SMS through `network` and ticks until it lands (RECEIVE_LINK_MS, rounded up to
+ * the rig's 1 ms ticks): the arrival happens on the last tick, so a recording's trigger is the
+ * arrival. The plan 25 captures do not log the delivery (their `keys.csv` is empty) and the link
+ * time spreads 2141-2464 ms (plan 18 D10), so their goldens are aligned on the arrival.
+ */
+export function deliverAndLand(
+  advance: (ms: number) => void,
+  network: ReturnType<typeof createSyntheticNetwork>,
+): void {
+  network.deliver(ARRIVING_SMS);
+  advance(Math.ceil(RECEIVE_LINK_MS));
+}
+
+/**
+ * `lights/arrival/sms` and `-locked` (L7, K7): an SMS lands at golden time `landsAtMs` on a dark
+ * standby, locked well before for `-locked`. The captures do not log the delivery, so it is
+ * placed for the arrival to land where the recording's first change is (the unlocked one's LED
+ * edge, the locked one's notice in `keyguard/sms`); the goldens pin what the arrival lights and
+ * that its timeout runs from the arrival on the power-on's light tick.
+ */
+export function arrivalLights(id: string, landsAtMs: number): void {
+  const golden = loadLightsGolden(id);
+  const network = createSyntheticNetwork();
+  const rig = lightsRig({ storage: storageFor("factory"), network });
+  rig.powerOn();
+  rig.advance(20_000);
+  if (id.endsWith("-locked")) {
+    for (const key of ["navi", "*"] as const) {
+      rig.hold(key);
+      rig.advance(60);
+      rig.release(key);
+      rig.advance(1500);
+    }
+  }
+  const powered = rig.poweredOnAt!;
+  const origin = powered + golden.powerOnMs;
+  rig.advance(origin + landsAtMs - Math.ceil(RECEIVE_LINK_MS) - rig.now, 20);
+  deliverAndLand((ms) => rig.advance(ms), network);
+  rig.advance(origin + golden.endMs - rig.now, 20);
+  const events = rig.events.filter((e) => e.atMs >= powered);
+  expectLightsTimeline({ originMs: origin, endMs: rig.now, events }, golden, id);
 }
