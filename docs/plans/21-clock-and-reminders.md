@@ -15,7 +15,7 @@ panel, spec file; one-line registrations in shared files).
 content"). The planning probes in `$REF/captures/scratch-plan21/` (scripts `probe-*.cap`,
 `tools/probe_*.py`, outputs `out/`, logs `*.log`) are evidence for this plan only and are never
 imported. Task 0 writes this plan's captures to `$REF/captures/6.39/plan21/`.
-**Status:** not started.
+**Status:** in progress (Task 0 done).
 
 ## Goal
 
@@ -144,6 +144,12 @@ clock was set, P3). A backwards jump re-fires nothing. The alert's kernel time i
 sound `atMs` and its screen start there, so the host's tick rate bounds the jitter (as plan 16's
 contract allows). The kernel never reads a wall clock.
 
+Deviation (Task 0): confirmed for reminders, overdue ones included (a jump over a reminder's
+minute fires it at the next edge). The alarm rings in hardware at its RTC minute (Task 0c), so it
+fires only when a minute edge lands on it; once it rings it is cleared (a one-shot), and its
+snooze is due 5 minutes later rounded up to a whole minute (in minutes: the next minute + 5).
+Two reminders due together alert the later-added first.
+
 **D3 - Alerts interrupt any screen through a generic kernel seam (new; phone-core, opt-in).**
 `PhoneConfig.interruption?: () => PhoneApplication | undefined` is polled on every tick while the
 phone is on and not booting. An application it returns runs as an **interruption activation**
@@ -156,6 +162,12 @@ each alert uses after Stop, Snooze or OK, and whether an alert waits for standby
 menu, a note, a game, an editor or `Sending message`, come from Task 0 (the countdown expiry and the
 reminder alert, both capturable, sections T and R). The website sets no interruption. Plan 22's
 incoming call reuses the seam.
+
+Deviation (Task 0): v6.39 shows no alert over anything: every alert (alarm, countdown, reminder)
+that falls due away from standby waits until the phone next shows standby (≈85 ms after it is
+drawn), and Snake II pauses at the event. nokia-os's `interruption` therefore returns an alert
+only at standby, and the alert's exit returns to it (`exit()`); the seam stays generic (plan 22's
+incoming call does interrupt). The held mode's session is therefore always standby for plan 21.
 
 **D4 - The alarm switches a powered-off phone on through a second seam (new; phone-core,
 opt-in).** `PhoneConfig.wake?: () => PhoneApplication | undefined` is polled on ticks while the
@@ -178,6 +190,12 @@ the cadence and the display rule over a 60 s run). If the captured digits only f
 rule and the stopwatch goldens compare digits with a stated tolerance (a Deviation, as plan 16 D6
 did for pass drift). Snooze periods counted in minutes use the minute edges of D2.
 
+Deviation (Task 0): the stopwatch keeps real time (62 minutes recorded: `1:01:01.48` at
+61 min 1.5 s); its redraw adds 0.1 s every 100 ms of firmware time (≈93 ms emulated) and
+resynchronises with the RTC every ≈1.4 s, so the captured hundredths jump. nokia-os redraws every
+100 ms of kernel time showing the elapsed time; the running stopwatch's goldens compare digits
+within one redraw (a stated tolerance); Stop shows the exact time.
+
 **D6 - Time and date entry is a widget of this plan; text uses plan 18's (new).** `Set alarm time:`,
 `Time:`, `Date:`, `Reminder date:`, `Reminder time:` and `Set timer:` are one widget, `timeEntry`:
 plan 14's first screens (pen icon, label, entry box, value right-aligned in the large face, the
@@ -196,6 +214,11 @@ full. Replace old reminder?`, P16). Hide clock and Time format stay plan 14's se
 Restore factory settings: whatever Task 0 F shows (plan 15's factory image already carries a first
 standby alert, so reminders very likely survive Restore; the alarm's fate is open). Stopwatch state
 is RAM (lost at power-off unless Task 0 shows otherwise).
+
+Deviation (Task 0): the countdown is RAM (lost at power-off); the alarm and the offset survive in
+the record (the emulator loses both with its RTC, an artefact); Hide clock is a record field
+(plan 14 has no key for it); Restore factory settings resets Hide clock and Time format and keeps
+the alarm, the offset, the countdown and the reminders. Reminders' capacity is 10.
 
 **D8 - The virgin reminder is reproduced as a dormant entry (refines plan 13's artefact).** The
 virgin EEPROM holds one junk reminder (`0000000000`, P3): it keeps View all and Erase listed in the
@@ -216,6 +239,10 @@ Task 0 shows the firmware takes them (then a Deviation adds a kernel model). Cou
 likewise opens `timeEntry` when idle and the captured `Change time` / `Stop timer` list while it
 runs. View all lists the reminders as Task 0 records (the with-content crawl shows one reminder's
 text full screen with `Options`: Erase, Edit, Send).
+
+Deviation (Task 0): the firmware takes Menu 1 1 1 1 and 1 1 1 2 into the alarm's On/Off rows,
+so 11-1 is a kernel submenu while an alarm is set (`On`, `Off`) and opens the prompt directly when
+it is not (D9's application entry otherwise unchanged).
 
 **D10 - Standby shows the clock as the phone has it, and three indicators (new).** The kernel's
 `clock` reader becomes nokia-os's: phone time (D1), undefined while Clock settings › Hide clock
@@ -243,12 +270,20 @@ evidence and UNVERIFIED in the spec: the alarm's ringing screen, its tone, Snooz
 auto-snooze if Task 0c fails; the wake flow (D4) in every case. If Lachlan rejects compositions
 (Open question 3), the alarm stores and shows its icon but never rings.
 
+Deviation (Task 0): Task 0c rang the alarm, so the ringing screen, Snooze, Stop and the
+automatic snooze are captured goldens; only the wake flow (D4) is composed.
+
 **D13 - Auto update maps the network's time to the host's (new).** The emulator's network sends its
 time at registration (P14). nokia-os has no network time, and the host clock is the RTC (D1), so
 at the end of each power-on: `On` clears the offset and, when that changed the phone's time, shows
 `Date and time updated` (Task 0 records whether an unchanged time shows it); `Confirm first` asks
 `Update date and time of the phone?` and clears it on Yes; `Off` does nothing. Reverse: Auto update
 stores only.
+
+Deviation (Task 0): On shows `Date and time updated` during the boot (after the security code)
+and the clock wizard is skipped; Confirm first asks `Update date and time of the phone?` at
+standby. The emulator loses the time at every power cycle, so whether an unchanged time shows the
+note stays UNVERIFIED; nokia-os shows it only when clearing the offset changed the time.
 
 **D14 - Reminder Send and received reminders belong to 18c (re-own).** View all › Options › Send
 opens a placeholder owned by `18c` (Smart Messaging: business cards, tones and reminders are sent
@@ -526,35 +561,35 @@ Plan 14's `tree/11-clock/11-4.leaf`, plan 14's `probe/confirm-10-3-2-yes` and pl
 section in `captures/README.md` (and its command table). Task 0c only: a separate harness build
 directory (below). Other agents run the harness concurrently: write only these paths.
 
-- [ ] **H harness commands.** `settime <hh:mm[:ss]>`: poke the software clock (0x1117B4, seconds of
+- [x] **H harness commands.** `settime <hh:mm[:ss]>`: poke the software clock (0x1117B4, seconds of
       the day, big-endian 32-bit; P5) and print the word read back. `tominute [margin]`: run until
       `margin` (default 50 ms) past the next RTC-minute interrupt (emulated time a multiple of
       60 000 ms from the process start; confirm the edge against `ROM6_LOG`/`CCLOG`'s `ACK reg0E
 &= ~20`). Find the software date the same way as P5 (dump RAM around a Date setting change
       `13.10.2026` → `14.10.2026`) and add `setdate <dd.mm.yyyy>` if it is a plain word; else
       record that reminders on other dates are set through Date setting only. Document all three.
-- [ ] **Setup.** Virgin sections: `v639-setup.inc`, `key c`, `run 2s`. Factory sections:
+- [x] **Setup.** Virgin sections: `v639-setup.inc`, `key c`, `run 2s`. Factory sections:
       `v639-factory-setup.inc` (plan 16). Reboots that need the code use
       `firmware/work/v639-plan15-seccode.fls`-derived images (P14). `CAP_EPOCH=1791886200`
       (13.10.2026 10:10 UTC) on every run, so network time is reproducible. Run every section
       through `emu.py` with `fork`, as plans 14, 16 and 23 did (`gen_v639_plan21.py run -j 3`,
       `--only`, `ocr`, `check`); record LCD (`leds` column) and `audio` together.
-- [ ] **S settings** (`settings/`): Hide clock (record), standby (shot), the entry now `Show clock`
+- [x] **S settings** (`settings/`): Hide clock (record), standby (shot), the entry now `Show clock`
       (scroll), Show clock (record); Set the time: the prompt, each digit typed one by one (shots),
       C, C on empty, invalid values (`2500`, `1260`, `0`, three digits then OK), `0959` OK (record
       through the page); Time format both ways with standby and the Clock settings page at
       `settime` 00:05, 09:41, 12:00, 13:07, 23:59 (shots, `tominute` before each so standby redraws).
-- [ ] **D date** (`date/`): Date setting's prompt, digits one by one, invalid dates (`31022026`,
+- [x] **D date** (`date/`): Date setting's prompt, digits one by one, invalid dates (`31022026`,
       `00002026`, `0110200`), `14102026` OK (record), the page.
-- [ ] **N no time** (`no-time/`): a virgin boot with C at the clock wizard's `Time:` and `Date:`
+- [x] **N no time** (`no-time/`): a virgin boot with C at the clock wizard's `Time:` and `Date:`
       (records): standby, the Clock pages, Alarm clock (`Clock needs to be set first`?), Countdown,
       Reminders › Add new's date and time prompts.
-- [ ] **A alarm** (`alarm/`): set from Off (record, P2), the page, standby with the icon (shot),
+- [x] **A alarm** (`alarm/`): set from Off (record, P2), the page, standby with the icon (shot),
       Alarm clock again (the On/Off level, scroll), On → the prompt on the stored time → a new time
       (record), Off (record, `Alarm off`), the page and standby after it; Menu 1 1 1 1 and Menu 1 1 1
       2 with the alarm set (do shortcuts reach the inner list? D9); power-off with the alarm set
       (the power key's screens; record up to the switch-off).
-- [ ] **R reminders** (`reminders/`, virgin and factory): Add new with `Alarm on` (P10) and with
+- [x] **R reminders** (`reminders/`, virgin and factory): Add new with `Alarm on` (P10) and with
       `Alarm off` (record each); `Remind about:` typed text of 1, 20 and 35 characters; the date
       and time prompts' digits one by one, invalid values and past values (`Time for alarm too
 late`?), C at each step (where does it go?); View all with one, two and three reminders
@@ -570,24 +605,24 @@ late`?), C at each step (where does it go?); View all with one, two and three re
       (`saveflash`, `reboot` from it with the clock wizard set past it, or `CAP_EPOCH` and Auto
       update On: `1 reminder received` / `%U reminders received`?). Virgin: the junk reminder's View
       all, One by one and its record after Erase › All (D8).
-- [ ] **T countdown** (`countdown/`, virgin and factory): the prompt's digits, invalid values, Start
+- [x] **T countdown** (`countdown/`, virgin and factory): the prompt's digits, invalid values, Start
       (P13), the page value as it runs (shots every 30 s: does `00:01` count down?), standby's icon,
       Countdown timer while running (the `Change time` / `Stop timer` list, each), expiry (60 s run
       for `00:01`, then 40 s more) at standby, in a menu, on a note, in Snake II, in an editor, in
       Stopwatch while running; keys on the alert (OK, C, a digit, nothing: the 30 s stop?); the
       lights; a countdown running across a power cycle (`saveflash`/`reboot`: still running?).
-- [ ] **W stopwatch** (`stopwatch/`): open (record), Start and 60 s (record, every redraw: the
+- [x] **W stopwatch** (`stopwatch/`): open (record), Start and 60 s (record, every redraw: the
       cadence and the digits for D5), Stop, Options (scroll), Start (resumes from the stop), Reset,
       Exit and re-entry (still running?), C while running, C held while running (standby's
       indicator: flashing?), re-entry from standby, running past a minute and an hour (`run`
       3700 s in one fork, shots each minute), power-off while running.
-- [ ] **U auto update** (`auto-update/`, on a re-provisioned image): each choice's note; `On` then a
+- [x] **U auto update** (`auto-update/`, on a re-provisioned image): each choice's note; `On` then a
       reboot with `CAP_EPOCH` equal to the phone's time and 1 hour away (does an unchanged time show
       the note?); `Confirm first` then a reboot (the query, Yes and No); `Off` then a reboot.
-- [ ] **F persistence and Restore** (`persist/`, `restore/`): alarm, Set the time, a running
+- [x] **F persistence and Restore** (`persist/`, `restore/`): alarm, Set the time, a running
       countdown and two reminders, `saveflash`, `reboot` (what survives); the same then Restore
       factory settings (`12345`) on the re-provisioned image (what Restore keeps, D7).
-- [ ] **0c - time-boxed (3 hours): make the alarm ring.** In a separate build directory
+- [x] **0c - time-boxed (3 hours): make the alarm ring.** In a separate build directory
       (`captures/scratch-plan21/harness/`, never `tools/harness/build`), try in order and stop at
       the first that rings: (1) the planning patch (P8) plus a harness helper that sets the
       emulated RTC's base to the software clock and `RTCALARM=1` (does the firmware now program the
@@ -598,17 +633,119 @@ late`?), C at each step (where does it go?); View all with one, two and three re
       the screen at standby and over the screens of R, Snooze (`Snooze active`? the postponed
       note), Stop, any key, 60 s untouched (auto-snooze), the re-ring after the snooze, in factory
       and virgin states. Record what was tried, either way, in the README section.
-- [ ] `gen_v639_plan21.py check`: every recording starts on its parent; every alert recording
+- [x] `gen_v639_plan21.py check`: every recording starts on its parent; every alert recording
       contains its alert; every sound section has `keys.csv` and v2 events.
-- [ ] OCR every new image into `plan21/text.json` (plan 14's format).
-- [ ] Append "Plan 21 supplementary captures" to `$REF/captures/README.md`: the commands, the P1-P16
+- [x] OCR every new image into `plan21/text.json` (plan 14's format).
+- [x] Append "Plan 21 supplementary captures" to `$REF/captures/README.md`: the commands, the P1-P16
       table, 0c's outcome.
-- [ ] No commit. Record the outcome under this task: the clock and date RAM words, the minute-edge
+- [x] No commit. Record the outcome under this task: the clock and date RAM words, the minute-edge
       rules (alarm, reminders, jumps, overdue at power-on), each alert's layout, sound, lights,
       keys, duration and where it returns (D3), the snooze periods, the stopwatch cadence and
       display rule (D5), the countdown's running page and list, the entry widgets' rules and
       errors (D6), the reminders' capacity and View all's layout, Auto update's behaviour (D13),
       persistence and Restore (D7), 0c's result.
+
+Deviation: the harness commands live in a copy, `$REF/tools/harness-p21/` (tools/harness plus
+`settime`, `setdate`, `tominute`, `rtc` and plan 25's powered-off fix), not in `tools/harness`
+itself, which other plans' agents run concurrently; `v639-plan13-clock.cap` writes the same 44
+files (SHA-256) with both binaries. Fold the commands into `tools/harness` later. Task 0c's build
+is `captures/scratch-plan21/harness/build-0c/` as planned.
+
+Deviation: plan 29 replaced `scripts/widget-sprites.ts` and the text-run tables by per-plan
+resource registrations, so Task 3's crops and named timelines go in the capture set's `resources`
+(`scripts/resource-inputs/21-clock-and-reminders.ts`), not in shared tables.
+
+**Outcome (2026-10-14).** 37 sections, about 560 recordings (`gen_v639_plan21.py check`).
+
+- **Clock and date words.** Time of day: RAM `0x1117B4`, seconds, BE32 (`settime`). Date:
+  `0x10D40C` and `0x10D410`, `{year BE16, month, day}` (`setdate`); the Date setting page shows
+  a text cache only Date setting rewrites, so captures change the date through Date setting.
+  The alarm word is `0x1117B8` (108000 = Off).
+- **0c succeeded.** The firmware arms the CCONT alarm (regs `0x0B` minute, `0x0C` hour) only while
+  the seconds register's bit 7 reads set and the alarm-hour register's bit 7 reads clear; two
+  env-gated emulator patches (`RTC_RUN`, `RTC_ALR7`), `RTCALARM=1` and `rtcbase` make it ring.
+  So the alarm's ringing, snooze and stop are captured, not composed (D12 keeps only the wake
+  flow, which a powered-off emulator still cannot show).
+- **Minute edges (D2).** Standby redraws and due reminders fire on the RTC-minute interrupt; the
+  software clock never advances. A reminder fires at the first edge whose time is at or past its
+  own (`reminders/alert-jump-over`: a jump from 10:10 to 10:25 over a 10:11 reminder fires it),
+  never before (`alert-before`). Setting the time never fires anything by itself. The alarm fires
+  when the RTC reaches its minute (hardware), so a jump over it does not ring (P4).
+- **Alerts wait for standby (D3, Deviation).** No alert interrupts anything: a reminder, the
+  countdown's expiry and the ringing alarm that fall due on a menu page, a list, a note, an option
+  list, the editor, Snake II or the running stopwatch appear when the phone next shows standby
+  (C held: standby is drawn for ≈85 ms, then the alert). Snake II pauses at the event (its menu
+  then offers Continue). Alerts are drawn in the standby layout: ladders, clock and indicators
+  kept, the operator line replaced.
+- **Reminder alert.** A static screen: the text where the operator is, the reminder icon at the
+  right, `Snooze`; no animation, no automatic end (130 s), the buzzer's 2683.7 Hz pulses
+  (factory: with the vibrator) until a key. Snooze: `Alarm postponed for 10 min` (≈1490 ms,
+  clock top right, no ladders), standby; it alerts again at its minute + 10 (`alert-resnooze`:
+  not at +9, at +10). Any other key (C, ▲, a digit, C held, the power key) ends it. Two due in one
+  minute: the later-added first, the other after it is answered. Reminders due while the phone
+  was off alert at the first minute edge after power-on (no `reminders received` note).
+- **Countdown alert.** `Countdown` / `time up`, a row of five bell pictures stepping every
+  ≈232 ms, `OK`; the lights toggle every ≈465 ms; the buzzer pulses for ≈29 s (its volume
+  ascending) and stops; the screen stays (100 s) until a key; any key ends it. The page then
+  reads `Off`. Expiry in the countdown's own Change time prompt corrupts the prompt (evidence
+  only, not imported).
+- **Alarm.** Set: `Set alarm time:` (`00:00`, or the stored time) → `Alarm on` → the page; the
+  standby alarm icon. With an alarm the entry opens `On`/`Off` rows (`11-1-1`, `11-1-2`); shortcuts
+  Menu 1 1 1 1 and 1 1 1 2 reach them (Deviation from D9: the firmware takes them). Ringing:
+  `Alarm!` and the time blinking and the bells row, `Snooze`, lights flashing; untouched ≈58 s
+  (one minute of firmware time), then an automatic snooze. Snooze: a `Snooze active` standby
+  screen with `Stop` (`Snooze off` note on Stop); it rings again 5 minutes later rounded up to a
+  whole minute (Snooze at 10:11:05 → 10:17; the CCONT alarm is rewritten). Any other key stops
+  it. Once it has rung the alarm is Off (the page reads `Off`, the icon goes): a one-shot.
+- **Entry (D6).** One overwrite mask for every prompt: the value right-aligned in the large face,
+  the cursor (≈480 ms blink, its own timer, not restarted by keys) before the next digit; digits
+  replace from the first digit, skipping separators, and after the last the cursor returns to
+  the first. A digit a position cannot take is ignored: hours' tens 0-2 (units 0-3 after 2),
+  minutes' tens 0-5; day tens 0-3 (units 1-9 after 0, 0-1 after 3), month tens 0-1 (units 0-2
+  after 1), year's first digit 2 (6 refused; 1 UNVERIFIED). C goes back at once, with or without
+  digits typed. OK on a mask still holding `h`/`m` placeholders, or on an impossible date
+  (31.02, 29.02.2026, 31.04, month 00), shows `Invalid time` / `Invalid date` (≈2940 ms) and
+  returns to the entry. Past dates and times are accepted (no `too late` notes).
+- **Settings.** Hide clock: `Clock hidden` (tick) → page; standby loses the clock (indicators
+  stay); the entry reads `Show clock`; Show clock: `Clock displayed` (alarm-clock icon,
+  1443 ms). Set the time: `Time is set` (alarm-clock icon, 1455 ms) → page. Time format 12-hour:
+  `12-hour clock selected` → page `10:10 am`; standby draws `hh:mm` and an am/pm dot (top for
+  am, bottom for pm); 12:05 am, 01:07 pm. Date setting: `Date is set` (tick) → page.
+- **No time** (the wizard skipped: `Time not set`): standby without a clock; pages `--:--` and
+  `--.--.----`; Alarm clock, Date setting and Add new show `Clock needs to be set first`
+  (2920 ms), then the `Time:` prompt (`hh:mm`); the stopwatch and the countdown work.
+- **Countdown.** `Set timer:` `hh:mm` → Start → `Timer running` (tick) → the page shows the time
+  left rounded up to a minute (`00:05` at 30 s, `00:04` at 70 s); `00:00` → `Timer stopped`. While
+  running, Select opens `Change time` / `Stop timer` (`11-5-1`/`-2`); Change time's prompt shows
+  the set time; Stop timer → `Timer stopped` → `Off`. The timer icon sits left of the alarm icon.
+- **Stopwatch.** `0:00:00.00` (large) `Start` → `Stop` with a redraw every ≈93 ms (100 ms of
+  firmware time) that adds 0.1 s, resynchronised with the RTC every ≈1.4 s (the hundredths
+  digit jumps); over 62 minutes the display keeps real time (`1:01:01.48` at 61 min 1.5 s). Stop
+  shows the exact time and `Options`: Start (resume), Reset (`0:00:00.00` `Start`), Exit
+  (standby, the time kept). C (running or stopped) and C held while running return to the
+  Stopwatch page only; it keeps running; re-entry shows it. At standby a stopwatch indicator
+  blinks every ≈480 ms. No split or lap timing (D15).
+- **Reminders.** Add new: `Remind about:` (`textInput`, 35 characters) → `Alarm on` / `Alarm off`
+  rows → `Alarm off`: `Reminder set` (tick) → the level; `Alarm on`: `Reminder date:` (today) →
+  `Reminder time:` (`hh:mm`; the cursor blink carries on from the date prompt) → `Reminder set` →
+  the level. C goes back one step (time → date → rows → the text, kept). View all: one reminder
+  per screen, `n hh:mm dd.mm` in the digits face, an icon (alarm or not) and the text, `Options`
+  (`Erase` → `Erase? <text>` / OK, `Edit` → the text prompt with the text, `Send` → `Phone
+number:` Search, 18c); listed by alarm time, those without an alarm last. Erase › One by one:
+  each reminder with `Erase`, ▼ to the next, OK → `Erase? <text>` → `Reminder erased` (animated)
+  → the next; All → `Are you sure?` → `Reminder memory empty` → the level shows Add new only.
+  Capacity 10: Add new then asks `Memory full. Replace old reminder?` (OK: pick one to replace;
+  C: back). The virgin junk reminder: View all returns to the carousel, One by one returns to the
+  level at once, All empties the memory (D8 holds).
+- **Auto update (D13).** On: during the boot, after `Code accepted`, `Date and time updated`
+  (tick) and no clock wizard. Confirm first: the wizard, then at standby `Update date and time of
+the phone?`. Off: the wizard. (In the emulator every power cycle loses the time, so an
+  unchanged time cannot be shown.)
+- **Persistence (D7).** Over a power cycle the reminders, Hide clock and Time format survive; the
+  alarm and the countdown do not (the emulator loses the time at power-off: an artefact for the
+  alarm, whose hardware RTC keeps running; the countdown is RAM). Restore factory settings keeps
+  the alarm, the time, the countdown and the reminders, and resets Time format to 24-hour and
+  Hide clock to shown.
 
 ### Task 1 - Contracts and documentation
 
@@ -617,20 +754,20 @@ late`?), C at each step (where does it go?); View all with one, two and three re
 reminder alert, P3), `docs/specs/nokia-3310-menu-tree.md` (two notes), `docs/plans/README.md` (row
 21), this plan.
 
-- [ ] Apply Task 0's outcome to D2-D13 (Deviation lines where it changes them) and fix the seams'
+- [x] Apply Task 0's outcome to D2-D13 (Deviation lines where it changes them) and fix the seams'
       rules.
-- [ ] VISION: the phone-core seams and the `StandbyIndicators` flags exactly as in "Contract
+- [x] VISION: the phone-core seams and the `StandbyIndicators` flags exactly as in "Contract
       changes"; a plan 21 kernel-policy paragraph (interruptions, wake); `StockPhoneConfig.clock`/
       `date` as the validated real-time clock with the phone's own offset; the nokia-os row
       mentions the clock and alerts.
-- [ ] `docs/specs/stock/clock-and-reminders.md`: the facts of P1-P16 and Task 0 (layouts, timings,
+- [x] `docs/specs/stock/clock-and-reminders.md`: the facts of P1-P16 and Task 0 (layouts, timings,
       rules, sounds, lights), the artefact table, the composed flows, everything "(plan 21, in
       progress)".
-- [ ] Menu-tree spec: the virgin first standby prompt is the junk reminder's alert; the stopwatch's
+- [x] Menu-tree spec: the virgin first standby prompt is the junk reminder's alert; the stopwatch's
       Options; `Show clock`.
-- [ ] Plans README: row 21 `in progress`.
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define clock, alert and wake contracts (plan 21)`.
+- [x] Plans README: row 21 `in progress`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define clock, alert and wake contracts (plan 21)`.
 
 ### Task 2 - Goldens and re-owned placeholders (TDD)
 

@@ -90,7 +90,9 @@ firmware keeps the hour's leading zero (`07:59`).
 (0,31); battery mirrored, icon 4×6 at (80,31); operator centred at `floor((84 - width) / 2)`, top
 y 8; clock in `digits`, its last cell ending at x 78 (ink to x 76), top y 0; `Menu` centred the
 same way, top y 40 (descenders reach y 47). Standby does not blink or change over 10 s. Signal
-and battery levels below full are UNVERIFIED (the emulator always shows full).
+and battery levels below full are UNVERIFIED (the emulator always shows full). The virgin first
+standby prompt (`0000000000`, `Snooze`) is the virgin EEPROM's junk reminder alerting once the
+clock is set (plan 21 P3, [clock-and-reminders.md](clock-and-reminders.md)).
 
 **Carousel:** title in `large`, centred in x 0..77 at `floor((78 - width) / 2)`, top y 7; icon
 within x 10..63, y 23..36; rail; indicator top-right; `Select` centred at y 40.

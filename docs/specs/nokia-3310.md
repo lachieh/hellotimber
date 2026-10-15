@@ -211,6 +211,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Tones and sound                                            | [stock/sound.md](stock/sound.md)                               | 16   |
 | Text entry and SMS (plan 18, in progress)                  | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)     | 18   |
 | Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                     | 20   |
+| Clock, alarm, timers, Reminders (plan 21, in progress)     | [stock/clock-and-reminders.md](stock/clock-and-reminders.md)   | 21   |
 | Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                         | 23   |
 
 ---

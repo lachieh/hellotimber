@@ -95,7 +95,7 @@ are independent and reusable; **only `website/` composes them**.
 | `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                            | `phone-core` (type-only)                                           |
 | `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                              | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
 | `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                | none                                                               |
-| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18, in progress), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
+| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on phone-core: stock menu, SMS through a host network port (plan 18, in progress), clock and alerts (plan 21), placeholder apps, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, a demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
 
 The website does **not** consume `@hellotimber/nokia-os` yet (plan 13). How portfolio content
 integrates with the stock OS is decided later. Until then the website keeps phone-screen's own
@@ -181,6 +181,12 @@ export interface MenuIndicator {
 export interface StandbyIndicators {
   voicemail?: boolean;
   message?: boolean;
+  /** Plan 21: an alarm is set (or snoozed). */
+  alarm?: boolean;
+  /** Plan 21: a countdown runs. */
+  timer?: boolean;
+  /** Plan 21: the stopwatch runs. */
+  stopwatch?: boolean;
 }
 
 export type ScreenModel =
@@ -469,6 +475,20 @@ export interface PhoneConfig<Metadata = unknown> {
   shortcutEntry?: { openDelayMs: number; invalid: PhoneApplication };
   /** Plan 15: applications that hold the boot at offsets into it, in ascending `atMs`. */
   bootGates?: readonly BootGate[];
+  /**
+   * Plan 21: polled on every tick while the phone is on and not booting. An application it
+   * returns interrupts whatever is shown: the interrupted mode is held (no keys, no ticks), the
+   * path is unchanged, navigate() is recorded and applied after it. Its exit() restores the held
+   * mode; exit({ to: "standby" }) deactivates the held mode (reason `navigate`) and shows standby;
+   * levels/select/row throw. Default: none.
+   */
+  interruption?: () => PhoneApplication | undefined;
+  /**
+   * Plan 21: polled on every tick while the phone is off. An application it returns powers the
+   * phone on without the boot (empty stack, path `standby`); its exit() powers the phone off
+   * again; exit({ to: "standby" }) runs the normal power-on (boot and gates). Default: none.
+   */
+  wake?: () => PhoneApplication | undefined;
 }
 
 /** Plan 15: an application that may hold the boot at an offset into it. */
@@ -564,6 +584,15 @@ the kernel defaults are host config with website-preserving defaults: `shortcutW
 the screen is the standby model with `leaving: true`, and the carousel's timeline and the
 shortcut window are timed from the carousel opening and the Menu press respectively; a key
 that moves the carousel opens it at once, C returns to standby).
+
+**Kernel policy (plan 21).** Two opt-in, Nokia-agnostic seams poll host functions, as
+`bootGates` and `standbyIndicators` do. `interruption` runs an application above whatever is
+shown, holding the interrupted mode untouched (one at a time; never during the boot, a boot gate
+or a wake activation); plan 22's incoming call reuses it. `wake` lets a powered-off phone run an
+application without the boot. nokia-os decides when to use them: its alerts (alarm, countdown,
+reminders) wait for standby (the v6.39 firmware shows none over a menu, a note, an editor or a
+game) and its alarm wakes a switched-off phone. Configs without them produce identical models.
+`SubmenuOptions.label` (plan 17 D8) lets a level relabel a child per tick (Show clock).
 
 **Kernel policy (plan 18, in progress).** Standby indicators are host readers re-read per tick.
 A notice may open an application at standby with an empty navigation stack. Neither interface
@@ -694,9 +723,13 @@ import type { ScreenPainter } from "@hellotimber/phone-screen";
 export interface StockPhoneConfig {
   /** Operator line. Every glyph must exist in the stock small font (validated; throws). */
   carrier: string;
-  /** "HH:MM" for standby and Clock → Clock settings; undefined hides the standby clock. */
+  /**
+   * The phone's real-time clock: "HH:MM", 24-hour, re-read on every tick (plan 21: validated;
+   * any other value counts as no time). The phone shows this plus its own offset (Clock settings,
+   * Date setting) and fires alarms and reminders on its minute changes.
+   */
   clock?: () => string | undefined;
-  /** Date text for Clock → Date setting, in the firmware's format as captured. */
+  /** The RTC's date: "DD.MM.YYYY" (plan 21: validated like `clock`). */
   date?: () => string | undefined;
   /** Default "animated". "skip" = bootMs 0 (tests, reduced motion); still runs the security gate. */
   boot?: "animated" | "skip";
