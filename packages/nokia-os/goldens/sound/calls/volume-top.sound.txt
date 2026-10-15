@@ -1,0 +1,17 @@
+sound-golden 1
+id: sound/calls/volume-top
+status: pending:22
+source: captures/6.39/plan22/sound/call/volume-top
+source-sha256: ab7e039580f66b194f63bd816fc7bb0cf5e9b0d02da78061ca37c6f4594f38cc
+state: factory
+keys: 0:up 300:up 600:down 900:up 1200:up
+note: In a call: ▲ at the top beeps 1125 Hz.
+omitted: none
+
+@events
+# t_ms output   state
+25     tone     1125 v=0x99B5
+617    tone     1125 v=0x99B6
+649    tone     off
+1225   tone     1125 v=0x99B5
+1547   tone     off

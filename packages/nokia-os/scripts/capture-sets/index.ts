@@ -9,6 +9,7 @@ export { messagesAndChat } from "./18-messages-and-chat.ts";
 export { t9PredictiveText } from "./18b-t9-predictive-text.ts";
 export { tonesAndSound } from "./16-tones-and-sound.ts";
 export { calculator } from "./20-calculator.ts";
+export { calls } from "./22-calls.ts";
 export { composer } from "./27-composer.ts";
 export { snakeII } from "./23-snake-ii.ts";
 export { keyguardAndBacklight } from "./25-keyguard-and-backlight.ts";

@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/note/calls-invalid-location
+status: pending:22
+source: captures/6.39/plan22/sound/notes/invalid-location
+source-sha256: 33a7118d0fd7762329b991dd3384e6c276007620fa2fd711ceb1a1db13928273
+state: factory
+keys: 0:#
+note: "Invalid location" after 0#.
+omitted: none
+
+@events
+# t_ms output   state
+20     tone     1750 v=0x9105
+310    tone     off

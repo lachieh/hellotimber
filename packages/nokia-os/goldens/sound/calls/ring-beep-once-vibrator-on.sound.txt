@@ -1,0 +1,25 @@
+sound-golden 1
+id: sound/calls/ring-beep-once-vibrator-on
+status: pending:22
+source: captures/6.39/plan22/sound/ring/beep-once-vibrator-on
+source-sha256: bbc237ade7846892b5b69558b1eb46ab64fa9103a6a3f0a5370c267be3e7007b
+state: factory
+note: A ring, Incoming call alert beep-once, Vibrating alert on (Nokia tune, Level 4).
+omitted: none
+
+@events
+# t_ms output   state
+1741   vibrator on
+1742   buzzer   3000.2 v=18
+1830   buzzer   off
+2218   vibrator off
+3187   vibrator on
+3667   vibrator off
+4635   vibrator on
+5115   vibrator off
+6083   vibrator on
+6563   vibrator off
+7531   vibrator on
+8011   vibrator off
+8979   vibrator on
+9459   vibrator off

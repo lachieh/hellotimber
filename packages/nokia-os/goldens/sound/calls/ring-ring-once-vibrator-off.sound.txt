@@ -1,0 +1,25 @@
+sound-golden 1
+id: sound/calls/ring-ring-once-vibrator-off
+status: pending:22
+source: captures/6.39/plan22/sound/ring/ring-once-vibrator-off
+source-sha256: 5b37baf5016b789fb8dcd6843bfc7f48271b1e663a112a97e427f65263ba089b
+state: factory
+note: A ring, Incoming call alert ring-once, Vibrating alert off (Nokia tune, Level 4).
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+1844   buzzer   1319 v=16
+1955   buzzer   1175 v=16
+2071   buzzer   740 v=12
+2311   buzzer   831 v=12
+2551   buzzer   1109 v=17
+2667   buzzer   988 v=16
+2783   buzzer   587 v=11
+3023   buzzer   659 v=12
+3264   buzzer   988 v=16
+3380   buzzer   880 v=14
+3496   buzzer   554 v=11
+3737   buzzer   659 v=12
+3977   buzzer   880 v=14
+4704   buzzer   off

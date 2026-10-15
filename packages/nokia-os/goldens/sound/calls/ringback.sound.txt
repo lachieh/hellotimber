@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/calls/ringback
+status: pending:22
+source: captures/6.39/plan22/sound/call/ringback
+source-sha256: 467459bd2f741ea35e05e87acd2c1290642a819ced4b8e00cabd8285b8d8a693
+state: factory
+keys: 0:navi
+note: Call held alerting 15 s: the ringback (425 Hz).
+omitted: none
+
+@events
+# t_ms output   state
+32     tone     900 v=0x9104
+134    tone     900 v=0x7008
+152    tone     900 v=0x99B5
+176    tone     off
+2218   tone     425 v=0x99B5
+3234   tone     off
+7053   tone     425 v=0x99B5
+8075   tone     off
+11894  tone     425 v=0x99B5
+12916  tone     off

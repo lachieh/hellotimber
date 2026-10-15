@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/calls/emergency
+status: pending:22
+source: captures/6.39/plan22/sound/notes/emergency
+source-sha256: 3b9082072a0dfa3f2d5ef88301d6a9f82c7215e8aa7572f793fa78a765c17ea2
+state: factory
+keys: 0:navi
+note: 112, Call: Attempting emergency call.
+omitted: none
+
+@events
+# t_ms output   state
+24     tone     900 v=0x9104
+89     tone     900 v=0x7008
+112    tone     900 v=0x99B5
+166    tone     off

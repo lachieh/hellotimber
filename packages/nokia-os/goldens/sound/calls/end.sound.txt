@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/calls/end
+status: pending:22
+source: captures/6.39/plan22/sound/call/end
+source-sha256: 9667c774ecb44097a93c6e04547c563eae80e239f399a2eefbf1474907fc8115
+state: factory
+keys: 0:navi
+note: In a call, End.
+omitted: none
+
+@events
+# t_ms output   state
+30     tone     900 v=0x99B5
+110    tone     900 v=0x9104
+123    tone     900 v=0x7000
+177    tone     off

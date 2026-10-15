@@ -772,22 +772,30 @@ erased`); "Needs incoming traffic": the harness can inject calls; 4-5's values c
 `tests/capture-sets/22-calls.test.ts` (new), `tests/acceptance/22-call-register-divert-and-dialling.test.ts`
 (new: the todo shim only), `goldens/**` (generated), `goldens/index/22.json` (generated).
 
-- [ ] TDD the capture set on synthetic recordings (injected loader, as plan 19's): ids, kinds, cut
+- [x] TDD the capture set on synthetic recordings (injected loader, as plan 19's): ids, kinds, cut
       points, `trigger-frame` on the first changed frame (plan 14 D8), sound rows in plan 16's
       format with DTMF pairs as `<hz>+<hz2>` (already in the format), the stock-variant recordings
       listed under `notImported` with the reason (D15).
-- [ ] Register the set (one line). The acceptance file lists the new asserted goldens without a
+- [x] Register the set (one line). The acceptance file lists the new asserted goldens without a
       scenario as todos (`awaitsPlan22Scenario`; Task 10 deletes it).
-- [ ] The `pending:22` goldens of plans 14, 16, 19 and 23 stay pending here: each is flipped in the
+- [x] The `pending:22` goldens of plans 14, 16, 19 and 23 stay pending here: each is flipped in the
       task that adds its scenario (Tasks 5, 7, 8, 9), by its status line in the owning capture set
       and one spread line in the owning plan's acceptance file ("Shared-file edits"), then
       `import-captures` rewrites only that plan's index status.
-- [ ] Integrity: new ids parse; `22.json` is sorted; once Task 10 is done no golden is `pending:22`.
-- [ ] Run `import-captures` twice; the second run changes nothing. Record fixture counts, images
+- [x] Integrity: new ids parse; `22.json` is sorted; once Task 10 is done no golden is `pending:22`.
+- [x] Run `import-captures` twice; the second run changes nothing. Record fixture counts, images
       and bytes (budget guide: ≤ 3 MB of new text grids; stills for entry lengths, timelines only
       where timing matters).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import number entry, call and register goldens (plan 22)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import number entry, call and register goldens (plan 22)`.
+
+Deviation (Task 2): plan 29's pending workflow. Every plan 22 golden is imported `pending:22` and
+promoted (`PROMOTED` in `22-calls.ts`) when its scenario passes; the acceptance file starts empty
+instead of an `awaitsPlan22Scenario` shim. 276 goldens: 226 LCD fixtures (25 still fixtures from
+145 transcribed cases and 25 duration pages, 201 timelines), 50 sound goldens; 3 are 22b's (Hold,
+New call, Send DTMF in a call) and 5 plan 19's (Save, the phone book from ▼ and from a call).
+4.1 MB of text grids (over the 3 MB guide: the Calling animation repeats in every dial golden; the
+duplicates and the thresholds' far sides are not imported). `import-captures` twice: no diff.
 
 ### Task 3 - Glyphs, sprites, timelines and sound programs (TDD)
 

@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/calls/dtmf-hold-star
+status: pending:22
+source: captures/6.39/plan22/sound/dtmf/hold-star
+source-sha256: d40acb2bd91bac6f668cd33513c6d2c0e500574c851abc0cfdfa0eed890ab1f0
+state: factory
+keys: 0:*+1000
+note: * held 1 s at standby: its pair until the release.
+omitted: none
+
+@events
+# t_ms output   state
+30     tone     1209+941 v=0x9104
+1056   tone     off

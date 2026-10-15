@@ -1,0 +1,17 @@
+sound-golden 1
+id: sound/calls/net-end
+status: pending:22
+source: captures/6.39/plan22/sound/call/net-end
+source-sha256: 0638c7a804aaffc156e7735ff87bdc0d6f60041ba8cb78fe726276892d3af5fc
+state: factory
+note: In a call, the network's DISCONNECT: three 1000 Hz beeps.
+omitted: none
+
+@events
+# t_ms output   state
+104    tone     1000 v=0x99B5
+394    tone     off
+580    tone     1000 v=0x99B5
+874    tone     off
+1060   tone     1000 v=0x99B5
+1354   tone     off

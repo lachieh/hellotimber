@@ -1,0 +1,11 @@
+sound-golden 1
+id: sound/calls/ring-virgin
+status: pending:22
+source: captures/6.39/plan22/sound/ring/virgin
+source-sha256: 4ea913655eaeccf52cecdac9c401021eb839a762c4f6f17408af7118d822463e
+state: virgin
+note: A ring on the virgin phone: silent.
+omitted: none
+
+@events
+# t_ms output   state

@@ -1,0 +1,28 @@
+sound-golden 1
+id: sound/calls/ring-missed
+status: pending:22
+source: captures/6.39/plan22/sound/ring/missed
+source-sha256: e73b9061f6ddbea33e402cab6b51e2936c3306723fbe1b68229f4c4f11b9fae3
+state: factory
+note: Ringing, the caller hangs up at 4 s.
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+2061   buzzer   1319 v=16
+2061   vibrator on
+2171   buzzer   1175 v=16
+2288   buzzer   740 v=12
+2528   buzzer   831 v=12
+2767   vibrator off
+2768   buzzer   1109 v=17
+2884   buzzer   988 v=16
+3000   buzzer   587 v=11
+3241   buzzer   659 v=12
+3481   buzzer   988 v=16
+3481   vibrator on
+3597   buzzer   880 v=14
+3713   buzzer   554 v=11
+3953   buzzer   659 v=12
+4167   buzzer   off
+4167   vibrator off

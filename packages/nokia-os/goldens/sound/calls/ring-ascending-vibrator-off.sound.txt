@@ -1,0 +1,51 @@
+sound-golden 1
+id: sound/calls/ring-ascending-vibrator-off
+status: pending:22
+source: captures/6.39/plan22/sound/ring/ascending-vibrator-off
+source-sha256: 8810b5221ceaabd9a38c9e158afbbd5a099ff93bec0340886a4c9bb356245380
+state: factory
+note: A ring, Incoming call alert ascending, Vibrating alert off (Nokia tune, Level 4).
+omitted: 3 (stale frequency)
+
+@events
+# t_ms output   state
+1973   buzzer   1319 v=4
+2082   buzzer   1175 v=6
+2198   buzzer   740 v=3
+2438   buzzer   831 v=4
+2679   buzzer   1109 v=5
+2795   buzzer   988 v=4
+2911   buzzer   587 v=3
+3152   buzzer   659 v=3
+3392   buzzer   988 v=4
+3508   buzzer   880 v=3
+3624   buzzer   554 v=3
+3864   buzzer   659 v=3
+4104   buzzer   880 v=3
+4832   buzzer   off
+7984   buzzer   1319 v=7
+8100   buzzer   1175 v=8
+8216   buzzer   740 v=5
+8456   buzzer   831 v=6
+8696   buzzer   1109 v=8
+8813   buzzer   988 v=7
+8928   buzzer   587 v=5
+9168   buzzer   659 v=5
+9409   buzzer   988 v=7
+9525   buzzer   880 v=6
+9641   buzzer   554 v=5
+9882   buzzer   659 v=5
+10122  buzzer   880 v=6
+10850  buzzer   off
+14001  buzzer   1319 v=10
+14118  buzzer   1175 v=12
+14234  buzzer   740 v=8
+14474  buzzer   831 v=12
+14714  buzzer   1109 v=17
+14830  buzzer   988 v=16
+14946  buzzer   587 v=11
+15186  buzzer   659 v=12
+15426  buzzer   988 v=16
+15542  buzzer   880 v=14
+15659  buzzer   554 v=11
+15899  buzzer   659 v=12

@@ -1,0 +1,40 @@
+sound-golden 1
+id: sound/calls/ring-keys
+status: pending:22
+source: captures/6.39/plan22/sound/call/ring-keys
+source-sha256: 8b4e54067ae606ee7d284c30c31764889f3383442fa802715e3e08b085f20d42
+state: factory
+keys: 0:up 1300:5 2600:# 3901:down
+note: Ringing: ▲, 5, #, ▼ cut the current note.
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+1      vibrator on
+22     vibrator off
+44     tone     1125 v=0x9105
+346    tone     off
+1320   tone     900 v=0x9104
+1461   tone     off
+2621   tone     900 v=0x9104
+2708   vibrator on
+2709   buzzer   1319 v=16
+2762   tone     off
+2824   buzzer   1175 v=16
+2940   buzzer   740 v=12
+3181   buzzer   831 v=12
+3421   buzzer   1109 v=17
+3421   vibrator off
+3538   buzzer   988 v=16
+3654   buzzer   587 v=11
+3894   buzzer   659 v=12
+4134   buzzer   988 v=16
+4134   vibrator on
+4250   buzzer   880 v=14
+4366   buzzer   554 v=11
+4606   buzzer   659 v=12
+4846   buzzer   880 v=14
+4846   vibrator off
+5574   buzzer   off
+5574   vibrator on
+6302   vibrator off
