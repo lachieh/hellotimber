@@ -155,7 +155,7 @@ export type VirginNumber =
 export type FactoryDefault = {
   readonly key: string;
   readonly evidence: "v6.39";
-  /** The scroll image under `$REF/captures/6.39/` that shows it. */
+  /** The capture under `$REF/captures/6.39/` that shows it (a scroll image or a recording). */
   readonly capture: string;
 } & ({ readonly label: string } | { readonly marked: readonly string[] });
 

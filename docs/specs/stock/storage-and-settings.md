@@ -59,12 +59,25 @@ large face lacks (nokia-os leaves them out).
 goldens assert. Restore factory settings writes the factory state: Ringing tone `Nokia tune`,
 Ringing volume `Level 4`, Incoming call alert `Ringing`, Message alert tone `Standard`, Keypad
 tones `Level 2`, Warning tones `On`, Vibrating alert `On`, Screen saver Timeout `5 seconds`, each
-profile's own values, Own number sending `Set by network`, Set delay `30 seconds`, Phone security
-`Off`, the profile names, Info service topics (`Add topic` only) and languages (`All`); every
-other list keeps its virgin opening. Restore keeps the welcome note, the security code, the
+profile's own values, Own number sending `Set by network`, Set delay `30 seconds`, Games ›
+Settings › Lights `Off`, Phone security `Off`, the profile names, Info service topics (`Add topic`
+only) and languages (`All`); every other list keeps its virgin opening (Games › Settings ›
+Sounds and Shakes stay `On`). Restore keeps the welcome note, the security code, the
 language and the Top scores. Snake II's top score being kept is v5.79 evidence (`1297` before and
 after); Snake II's level returns to virgin, UNVERIFIED (no capture shows it after a Restore).
 Info service topics shrinking to `Add topic` is left to plan 18, which owns the topics.
+
+**Games › Settings after a Restore (2026-10-14 probes, `$REF/captures/scratch-inv/lights/`).** The
+firmware keeps the three game settings in RAM and writes them to the EEPROM as one block. Restore
+stores Lights `Off` (Sounds and Shakes `On`) in that block but leaves the RAM copy alone, so the
+session that restored still shows and plays the old value: plan 15's in-session scroll
+(`plan15/factory/scroll/8-6-2`) and probe `a4` read `On`, and Snake II keeps the LEDs lit (`e`).
+After a power cycle the list opens on `Off` and play holds the LEDs off (`a6`, `e`, plan 25's
+factory image `v639-plan15-restored.fls`, saved straight after the Restore). Any Games › Settings
+choice made before that power cycle writes the whole RAM block back, the old Lights included
+(`f`: Sounds Off after a Restore, then a power cycle, reads Lights `On`); other settings do not
+(`g`: Cell info display). The virgin value persists across power cycles (`b`, `d`). nokia-os
+applies `Off` at once (the factory default); the stale session copy is not reproduced.
 
 **Capture artefacts (plan 15; see also [menu-depth.md](menu-depth.md)):**
 

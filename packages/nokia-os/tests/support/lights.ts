@@ -296,12 +296,10 @@ export function lightsScenario(id: string): void {
   const boot = id.startsWith("lights/boot/");
   const game = /^lights\/(game\/|power-key\/game$)/.test(id);
   const storage = storageFor(boot ? golden.state : "factory");
-  // Games › Settings › Lights as the recordings had it (D7): the On section chose On; the
-  // captures' factory image (v639-plan15-restored.fls) opens it on Off, where plan 15's
-  // in-session Restore scroll (`plan15/factory/scroll/8-6-2`) and nokia-os's factory state show On.
-  if (game) {
-    const lightsOn = id.startsWith("lights/game/on/") ? 1 : 0;
-    createStockSettings(new StockEeprom(storage)).choose(GAMES_LIGHTS_KEY, lightsOn);
+  // Games › Settings › Lights as the recordings had it (D7): factory Off, and the On section
+  // chose On.
+  if (game && id.startsWith("lights/game/on/")) {
+    createStockSettings(new StockEeprom(storage)).choose(GAMES_LIGHTS_KEY, 1);
   }
   const rig = lightsRig({ storage });
   rig.powerOn();
