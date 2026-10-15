@@ -38,9 +38,12 @@ A token joins a line while the line (small-face advances, one space between toke
 83 px wide; tokens never split (`layout/edge-83` fits, `layout/edge-84` wraps). Three lines show;
 the view scrolls as little as the cursor needs. The cursor is a 1 px bar (the line's rows 7-16)
 right after the token before it, on that token's line. Leaving Options (C, Tempo, Save, Play)
-puts the cursor at the end. The blink's phase flag is phone state: shown at power-on, toggled
-every 480 ms while an editor shows (Play included), kept while none does; each time an editor
-appears its 480 ms timer restarts with the flag as it was.
+puts the cursor at the end. The blink runs free while an editor shows (Play included): 478 ms,
+then every 480.1 ms. It starts shown the first time an editor shows after power-on and after
+Save's `Tone saved`, hidden at every other showing (a reopened slot, the return from Options or
+Tempo). Five showings after a Save break this rule (`open/saved-save`, `leave/saved-cleared-reopen`,
+`leave/saved-exit-edited`, `save/keys/prefilled-edit`, `restore/slot-1`): the rule behind them is
+UNVERIFIED (neither a phase kept while covered nor one inverted at each showing fits every still).
 
 ## Options, Tempo, Play
 
@@ -75,9 +78,13 @@ appears its 480 ms timer restarts with the flag as it was.
 
 - Save: `Tone name:` (plan 18's prompt: pen, `Abc`, counter 15, `Back` while empty), prefilled with
   a saved tone's name (typing appends); OK → `Tone saved` → Options on Save; C or Back on the empty
-  prompt → Options; C held on text clears it. Two slots may share a name.
+  prompt → Options; C held on text clears it; C held on the empty prompt goes back to Options at
+  its down and to standby ≈482 ms after it (`save/c-held-empty`). Two slots may share a name. The
+  prompt's cursor starts hidden for one blink step; each character key restarts the blink shown (C,
+  `#` and `*` do not). A name too wide for the large face is drawn in the small face on two lines
+  (`save/keys/fifteen`; nokia-os draws the large face only, plan 18's prompt).
 - Send: the same prompt, then `Phone number:` (counter 30, `Search` → `No phone numbers`); C on the
-  empty number → the editor; OK → `Sending message` (≈3.2 s) → `Message sent` → the editor. The
+  empty number → the editor, its header still showing the prompt's pen (`send/keys/number-c`); OK → `Sending message` (≈3.2 s) → `Message sent` → the editor. The
   transmission is a binary Smart Messaging SMS (UDH port 5505); nokia-os stops at the number (plan
   18c, D11).
 

@@ -3,7 +3,7 @@
 // acts as it goes down; the editor's own keys beep nothing (they silence their beep through the
 // sounder's `silent-key` cue), the lists' keys beep as other lists do.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { ComposerModel } from "../display/widgets";
+import type { ComposerModel, PromptModel } from "../display/widgets";
 import {
   composerHeld,
   composerKeyDown,
@@ -14,13 +14,20 @@ import {
 import { composerLines } from "../composer/layout";
 import { COMPOSER_LIMIT, type ComposerToken } from "../composer/notation";
 import { notePreview, toneMs, toneProgram } from "../composer/program";
-import type { StockComposer } from "../composer/store";
+import { COMPOSER_NAME_LIMIT, type StockComposer } from "../composer/store";
 import type { StockSettings } from "../firmware/settings";
-import { COMPOSER_TEMPI, COMPOSER_TIMINGS, type StockWidgetTimeline } from "../resources";
+import {
+  COMPOSER_TEMPI,
+  COMPOSER_TIMINGS,
+  TEXT_TIMINGS,
+  type StockWidgetTimeline,
+} from "../resources";
 import type { SoundPlay } from "../sound/sequencer";
 import type { StockSounder } from "../sound/sounder";
 import type { Flow, Widget } from "./flow";
 import { note } from "./note";
+import { numberEntry } from "./number-entry";
+import { textInput } from "./text-input";
 import { OptionListWidget } from "./option-list";
 
 /** Options (Task 0 O), in list order. */
@@ -37,6 +44,12 @@ const EXIT = 5;
  * standby (`play/c-held`: 533 ms after the key-down).
  */
 export const PLAY_C_HELD_STANDBY_MS = 533;
+
+/**
+ * C held on an empty `Tone name:`: Options show at its down; still down this long after, the
+ * phone goes to standby (`save/c-held-empty`: Options 66 ms, standby 548 ms into the recording).
+ */
+export const NAME_C_HELD_STANDBY_MS = 482;
 
 /** The editor leaves two levels up, to the Tones page (K2, K7: as plan 14's `EXIT_LEVELS`). */
 const EDITOR_LEVELS = 2;
@@ -83,6 +96,38 @@ export function onKeyDown(widget: Widget): Widget {
   };
 }
 
+/**
+ * A widget pushed by a key-down (Options act as their key goes down): the key's release, and any
+ * other key's that went down before it showed, are not its own.
+ */
+export function ownKeys(widget: Widget): Widget {
+  const down = new Set<PhoneKey>();
+  return {
+    render: (flow) => widget.render(flow),
+    tick: (dtMs, flow) => widget.tick?.(dtMs, flow),
+    close: () => widget.close?.(),
+    onKeyDown(key, flow) {
+      down.add(key);
+      widget.onKeyDown?.(key, flow);
+    },
+    onKey(key, flow) {
+      if (!down.delete(key)) return;
+      widget.onKey?.(key, flow);
+    },
+  };
+}
+
+/** `flow`'s methods, bound (to override one). */
+function flowMethods(flow: Flow): Flow {
+  return {
+    push: (widget) => flow.push(widget),
+    replace: (widget) => flow.replace(widget),
+    back: (levels, options) => flow.back(levels, options),
+    standby: () => flow.standby(),
+    indicator: () => flow.indicator(),
+  };
+}
+
 /** A placeholder inside the Composer's flow: C goes back. */
 function placeholder(label: string): Widget {
   return onKeyDown({
@@ -118,6 +163,10 @@ export class ComposerEditor implements Widget {
   #blinkMs = COMPOSER_TIMINGS.blinkStepMs - COMPOSER_TIMINGS.blinkFirstMs;
   /** Covered by Options or a list: the next tick restarts the blink and puts the cursor at the end. */
   #covered = false;
+  #showsSaved = false;
+  #penLeft = false;
+  /** When C on an empty `Tone name:` went back to Options (its hold goes to standby). */
+  #backOnC: number | undefined;
   readonly #held = new Map<PhoneKey, Held>();
   #play: { readonly sound: SoundPlay; readonly endsAt: number } | undefined;
 
@@ -149,6 +198,7 @@ export class ComposerEditor implements Widget {
         : null,
       counter: String(COMPOSER_LIMIT - this.#state.tokens.length),
       softkey: playing ? "Stop" : this.#state.tokens.length === 0 ? "Back" : "Options",
+      ...(this.#penLeft ? { icon: "prompt/pen" } : {}),
     };
   }
 
@@ -205,7 +255,8 @@ export class ComposerEditor implements Widget {
     this.#now += dtMs;
     if (this.#covered) {
       this.#covered = false;
-      this.#services.blink.shown = false;
+      this.#services.blink.shown = this.#showsSaved;
+      this.#showsSaved = false;
       this.#blinkMs = COMPOSER_TIMINGS.blinkStepMs - COMPOSER_TIMINGS.blinkFirstMs;
       this.#toEnd();
     } else {
@@ -247,8 +298,29 @@ export class ComposerEditor implements Widget {
   }
 
   /** A widget pushed over the editor (Options): the blink restarts, hidden, when it shows again. */
+  /**
+   * Save wrote the tone: the editor shows again with its cursor shown first (Task 0
+   * `save/after-c`, `returns/save`), where every other return starts it hidden.
+   */
+  savedTone(): void {
+    this.#showsSaved = true;
+  }
+
+  /**
+   * C on Send's empty `Phone number:`: the editor shows again with the prompt's pen left in its
+   * header (Task 0 `send/keys/number-c`), until a widget covers it again (not captured further).
+   */
+  backOnC(): void {
+    this.#backOnC = this.#services.now();
+  }
+
+  penLeft(): void {
+    this.#penLeft = true;
+  }
+
   cover(widget: Widget, flow: Flow): void {
     this.#covered = true;
+    this.#penLeft = false;
     flow.push(widget);
   }
 
@@ -371,7 +443,27 @@ export class ComposerEditor implements Widget {
         }
       },
     });
-    this.cover(onKeyDown(list), flow);
+    // C held on an empty `Tone name:` goes to standby from Options (Task 0 `save/c-held-empty`).
+    const options: Widget = {
+      render: (f) => list.render(f),
+      close: () => list.close?.(),
+      tick: (_dtMs, f) => {
+        const at = this.#backOnC;
+        if (at !== undefined && this.#services.now() - at >= NAME_C_HELD_STANDBY_MS) {
+          this.#backOnC = undefined;
+          f.standby();
+        }
+      },
+      onKeyDown: (key, f) => {
+        this.#backOnC = undefined;
+        list.onKeyDown(key);
+        list.onKey(key, f);
+      },
+      onKey: (key) => {
+        if (key === "c") this.#backOnC = undefined;
+      },
+    };
+    this.cover(options, flow);
   }
 
   /** Options › Tempo: 16 tempi, opening on the tone's, no indicator, `Select` (Task 0 O). */
@@ -393,4 +485,98 @@ export class ComposerEditor implements Widget {
 /** Slot `slot`'s editor, the first widget of node 5-4-k's flow. */
 export function composerEditor(services: ComposerServices, slot: number): ComposerEditor {
   return new ComposerEditor(services, slot);
+}
+
+/**
+ * `Tone name:` (plan 18's text input, K11): Abc, the counter, prefilled with a saved tone's name,
+ * soft key `Back` while empty; OK or Back on the empty prompt, and C on it, go back to Options.
+ * Its cursor blinks on its own timer (Task 0): hidden first, restarted shown by each character key.
+ */
+function toneName(
+  editor: ComposerEditor,
+  name: string,
+  done: (name: string, flow: Flow) => void,
+): Widget {
+  const input = textInput({
+    label: ["Tone name:"],
+    limit: COMPOSER_NAME_LIMIT,
+    counter: true,
+    text: name,
+    done: (text, flow) => (text === "" ? flow.back() : done(text, flow)),
+  });
+  // Task 0 (`save/open`, `save/c-typed`): the cursor starts hidden for a blink step, and each
+  // character key restarts the blink shown (C, # and * do not).
+  let blinkMs = TEXT_TIMINGS.blinkMs;
+  return ownKeys({
+    render: (flow) => {
+      const model = input.render(flow) as PromptModel;
+      const empty = model.entry?.kind === "text" && model.entry.text === "";
+      const cursor = Math.floor(blinkMs / TEXT_TIMINGS.blinkMs) % 2 === 0;
+      return { ...model, cursor, ...(empty ? { softkey: "Back" } : {}) };
+    },
+    onKeyDown: (key, flow) => {
+      if (/^[0-9]$/.test(key)) blinkMs = 0;
+      const back: Flow["back"] = (levels, options) => {
+        if (key === "c") editor.backOnC();
+        flow.back(levels, options);
+      };
+      input.onKeyDown?.(key, { ...flowMethods(flow), back });
+    },
+    onKey: (key, flow) => input.onKey?.(key, flow),
+    tick: (dtMs, flow) => {
+      blinkMs += dtMs;
+      input.tick?.(dtMs, flow);
+    },
+    close: () => input.close?.(),
+  });
+}
+
+/** Options › Save (K11): the name, then `Tone saved` and Options on Save; the slot is written. */
+export function composerSave(
+  services: Pick<ComposerServices, "composer" | "timelines">,
+): (editor: ComposerEditor, flow: Flow) => void {
+  return (editor, flow) => {
+    const saved = services.composer.slot(editor.slot)?.name ?? "";
+    flow.push(
+      toneName(editor, saved, (name, inner) => {
+        services.composer.save(editor.slot, { name, tempo: editor.tempo, tokens: editor.tokens });
+        editor.savedTone();
+        inner.replace(note({ lines: ["Tone", "saved"], timeline: services.timelines.saved }));
+      }),
+    );
+  };
+}
+
+/**
+ * Options › Send (K11, D11): the name, then `Phone number:` (C on the empty number back to the
+ * editor); OK on a number opens plan 18c's placeholder (a binary Smart Messaging SMS).
+ */
+export function composerSend(): (editor: ComposerEditor, flow: Flow) => void {
+  return (editor, flow) => {
+    flow.push(
+      toneName(editor, "", (_name, inner) => {
+        const entry = numberEntry({
+          label: ["Phone number:"],
+          done: (_number, last) => last.push(placeholder("Send")),
+        });
+        inner.replace(
+          ownKeys({
+            ...entry,
+            render: (f) => entry.render(f),
+            // C on the empty number goes back past Options to the editor (Task 0 `send/number-c`)
+            onKeyDown: (key, f) =>
+              entry.onKeyDown?.(key, {
+                ...flowMethods(f),
+                back: (levels = 1, o) => {
+                  editor.penLeft();
+                  f.back(levels + 1, o);
+                },
+              }),
+            onKey: (key, f) => entry.onKey?.(key, f),
+            tick: (dtMs, f) => entry.tick?.(dtMs, f),
+          }),
+        );
+      }),
+    );
+  };
 }

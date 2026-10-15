@@ -24,14 +24,20 @@ export interface ComposerModel {
   /** Tokens left (`50` … `0`). */
   readonly counter: string;
   readonly softkey: string;
+  /**
+   * The header icon's sprite; default `composer/icon`. C on Send's empty `Phone number:` leaves
+   * the prompt's `prompt/pen` there (Task 0 `send/keys/number-c`).
+   */
+  readonly icon?: string;
 }
 
 export function paintComposer(fb: Framebuffer, model: ComposerModel): void {
   if (model.lines.length > LINES_SHOWN) {
     throw new Error(`The Composer shows ${LINES_SHOWN} lines, not ${model.lines.length}.`);
   }
-  const icon = WIDGET_SPRITES["composer/icon"];
-  if (icon === undefined) throw new Error('No widget sprite "composer/icon".');
+  const id = model.icon ?? "composer/icon";
+  const icon = WIDGET_SPRITES[id];
+  if (icon === undefined) throw new Error(`No widget sprite "${id}".`);
   fb.blitBitmap(icon.bitmap, icon.x, icon.y);
   const digits = STOCK_FONTS.digits;
   fb.drawText(digits, model.counter, fb.width - textWidth(digits, model.counter), 0);

@@ -2,7 +2,13 @@
 // their saved tones (D13), and the saved tones' EEPROM record (D7). One StockComposer and one
 // cursor blink per phone (per EEPROM).
 import { COMPOSER_RECORD, COMPOSER_SLOTS, StockComposer } from "../../composer/store";
-import { composerEditor, type ComposerBlink, type ComposerServices } from "../../widgets/composer";
+import {
+  composerEditor,
+  composerSave,
+  composerSend,
+  type ComposerBlink,
+  type ComposerServices,
+} from "../../widgets/composer";
 import type { EepromRecord, StockEeprom } from "../eeprom";
 import { timelineByName } from "../timelines";
 import type { ScreenBinding, StockFeature, StockServices } from "./feature";
@@ -30,16 +36,20 @@ function composerServices(services: StockServices): ComposerServices {
     blink = { shown: true, used: false };
     blinks.set(services.eeprom, blink);
   }
+  const composer = composerOf(services);
+  const timelines = {
+    saved: timelineByName("composer-tone-saved"),
+    done: timelineByName("composer-tempo-done"),
+  };
   return {
-    composer: composerOf(services),
+    composer,
     now: () => services.games.now(),
     sounder: services.sounder,
     settings: services.settings,
     blink,
-    timelines: {
-      saved: timelineByName("composer-tone-saved"),
-      done: timelineByName("composer-tempo-done"),
-    },
+    timelines,
+    save: composerSave({ composer, timelines }),
+    send: composerSend(),
   };
 }
 

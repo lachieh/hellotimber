@@ -15,7 +15,7 @@ before Task 2; if it has not, stop and report.
 "Plan 16 supplementary captures") and plans 13-16 and 18 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan27/`. The planning probes in `$REF/captures/scratch-plan27/`
 (`NOTES.md` lists them) are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-8 done).
+**Status:** in progress (Tasks 0-9 done).
 
 ## Goal
 
@@ -917,16 +917,44 @@ with those.
 **Files:** `src/firmware/features/composer.ts`, `src/widgets/composer.ts`,
 `tests/composer-save.test.ts` (new).
 
-- [ ] Save: `textInput` with the measured `Tone name:` layout, limit 15, prefilled with a saved
+- [x] Save: `textInput` with the measured `Tone name:` layout, limit 15, prefilled with a saved
       name; OK → `StockComposer.save` → `Tone saved` → Options on Save; Back and C on the empty
       prompt → Options on Save; C held → standby (K11). The slot list shows the name at once.
-- [ ] Send: the same prompt, then `numberEntry` (`Phone number:`); C on the number → the editor;
+- [x] Send: the same prompt, then `numberEntry` (`Phone number:`); C on the number → the editor;
       OK → a placeholder owned by `18c` (D11).
-- [ ] TDD through keys against `composer/save-*`, `composer/send-{name,number,c}`,
+- [x] TDD through keys against `composer/save-*`, `composer/send-{name,number,c}`,
       `composer/slots-named`, `composer/open-saved`, `composer/persist` (two phones over one
       storage) and `composer/restore` (`restoreFactory()`).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): save Composer tones and the Send prompts`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): save Composer tones and the Send prompts`.
+
+**Task 9 completion.** `src/widgets/composer.ts`: `composerSave` and `composerSend` (wired as the
+editor's `save`/`send` services in `features/composer.ts`) open `Tone name:` (plan 18's
+`textInput`: limit 15, the counter, prefilled with the slot's name, `Back` while empty); OK writes
+the slot (`StockComposer.save`) and shows `Tone saved` (`composer-tone-saved`) back to Options;
+Back, C and C held on the empty prompt as K11. Send's OK opens `numberEntry` (`Phone number:`),
+whose C on the empty number returns to the editor and whose OK opens a `Send` placeholder for 18c.
+`tests/composer-save.test.ts`: 32 Save/Send/named/saved stills, 16 cold-boot stills (two phones
+over one storage) and 4 Restore stills (Menu 6 4 through the phone), plus the slot written at once
+and named, Back/C keeping it empty, C held to standby, a prefilled rename and Send writing nothing.
+Six stills are known gaps (below); Task 12 lists them with their causes.
+
+Deviation (prompts opened on key-down): Options act as their key goes down, so the prompts ignore
+the release of a key that went down before they showed (`ownKeys`); without it Options' OK release
+would answer `Tone name:` at once.
+
+Deviation (blink, Task 0 measured): `Tone name:`'s cursor runs its own blink, hidden for the first
+step and restarted shown by each character key (`save/open`, `save/c-typed`; plan 18's free-running
+text blink does not fit here). The editor's cursor shows first after `Tone saved`
+(`save/after-c`, `returns/save`). Five later showings after a Save do not follow the editor's rule
+(`open/saved-save`, `leave/saved-cleared-reopen`, `leave/saved-exit-edited`,
+`save/keys/prefilled-edit`, `restore/slot-1`): no one rule fitted them, so they stay known gaps.
+
+Deviation (Task 0 facts): C held on the empty prompt goes to standby `NAME_C_HELD_STANDBY_MS`
+(482 ms) after its down, from Options (`save/c-held-empty`); after C on Send's empty number the
+editor's header keeps the prompt's pen (`send/keys/number-c`, a `ComposerModel.icon`). A name wider
+than the large face (`save/keys/fifteen`, `sixteen`) is drawn small on two lines: plan 18's prompt
+draws the large face only, a known gap for that plan's prompt.
 
 ### Task 10 - Saved tones in the Ringing tone lists (TDD against goldens)
 

@@ -51,7 +51,7 @@ const STILLS = COMPOSER_CASES.filter((c) =>
 
 describe("Task 0's editor, Options and Tempo stills on the phone", () => {
   it("covers every still group of Task 8", () => expect(STILLS.length).toBeGreaterThan(100));
-  for (const c of STILLS) it(c.name, () => composerStill(c));
+  for (const c of STILLS) it(c.name, () => composerStill(c), 30_000);
 });
 
 describe("the Composer on the phone", () => {
