@@ -623,20 +623,41 @@ arrows and are corrected with §6; §10's index gains the `stock/phone-book.md` 
 registration), `tests/capture-sets/19-phone-book.test.ts` (new), `tests/acceptance/19-phone-book.test.ts`
 (new: the todo shim only), `goldens/**`.
 
-- [ ] TDD the capture set on synthetic recordings (an injected loader, as plan 18's): ids, kinds,
+- [x] TDD the capture set on synthetic recordings (an injected loader, as plan 18's): ids, kinds,
       cut points, `trigger-frame` on the first changed frame (plan 14 D8), `note:` naming the SIM
       fixture, `pending:22` for call screens, sound goldens under `sound/note/<name>` and
       `sound/phone-book/*`.
-- [ ] `PHONE_BOOK_SIMS`: the fixtures as `StockSimCard` values in a JSON-style block (the REF check
+- [x] `PHONE_BOOK_SIMS`: the fixtures as `StockSimCard` values in a JSON-style block (the REF check
       reads it); a test validates each against the D2 rules.
-- [ ] Integrity: no golden is `pending:19`; every `phone-book/*` golden's note names a fixture that
+- [x] Integrity: no golden is `pending:19`; every `phone-book/*` golden's note names a fixture that
       exists.
-- [ ] Register the set (one line). The acceptance file lists the new asserted goldens without a
+- [x] Register the set (one line). The acceptance file lists the new asserted goldens without a
       scenario as todos (`awaitsPlan19Scenario`; Task 11 deletes it).
-- [ ] Run `import-captures` twice; the second run changes nothing. Record fixture counts, images and
+- [x] Run `import-captures` twice; the second run changes nothing. Record fixture counts, images and
       bytes in a completion note (budget guide: ≤ 2 MB of new text grids).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import phone book goldens (plan 19)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import phone book goldens (plan 19)`.
+
+Deviation: **Task 2 (status, plan 29 pending workflow):** as plan 18's Task 2, every new golden is
+`pending:19` (no `awaitsPlan19Scenario` shim: the harness lists pending goldens as todos and the
+acceptance file has no scenarios yet). Each row names the task that implements it; a task adds its
+number to `DONE_TASKS` when its scenarios pass, which asserts its rows. The integrity check "no
+golden is `pending:19`" moves to Task 11. Call screens, the dialled numbers and held keys are
+`pending:22`.
+
+Deviation: **Task 2 (paths and checks):** the test is `tests/phone-book-capture-set.test.ts` (no
+`tests/capture-sets/` directory exists). `PHONE_BOOK_SIMS` is the JSON block between `// BEGIN` and
+`// END PHONE_BOOK_SIMS` (the REF `check <file>` passes); its glyph check (every name in the
+small and large faces) needs Task 3's harvest, so it is Task 3's (`Å` is not in the fonts yet).
+`PHONE_BOOK_GOLDEN_SIMS` maps each golden to its fixture for the replays. The two warning-tone
+notes are `sound/note/{nothing-to-save,memory-full}`; regenerating adds them to `NOTE_SOUNDS`
+(`src/resources/generated/sounds.ts`, `tests/resources.test.ts`'s expected list).
+
+**Task 2 completion note:** `goldens/index/19.json` holds 229 goldens: 182 timelines, 29 stills
+(878 images) and 18 sound goldens; 223 `pending:19`, 6 `pending:22`. The LCD text grids are
+4.36 MB (`goldens/phone-book/`), the sounds 72 KB: over the 2 MB guide. The table already leaves
+out repeated screens (`PHONE_BOOK_NOT_IMPORTED`); the rest are the flows the replayed scenarios
+compare, each ≈4 KB per image. `import-captures` run twice: no diff.
 
 ### Task 3 - Glyphs, sprites and timelines (TDD)
 

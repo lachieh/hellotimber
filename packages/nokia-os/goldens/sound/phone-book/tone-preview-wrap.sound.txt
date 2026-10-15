@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/phone-book/tone-preview-wrap
+status: pending:19
+source: captures/6.39/plan19/tone/preview-wrap
+source-sha256: ca1a82a89047c501c4ee5655801963db48bdeb266a56dff109fe6c543497939a
+state: factory
+keys: 0:up
+note: Assign tone's list, wrap: the key's beep and the highlighted entry's preview ≈990 ms later (SIM content).
+omitted: none
+
+@events
+# t_ms output   state
+69     tone     900 v=0x9104
+193    tone     off

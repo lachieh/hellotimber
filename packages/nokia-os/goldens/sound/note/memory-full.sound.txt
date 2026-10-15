@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/note/memory-full
+status: pending:19
+source: captures/6.39/plan19/notes/memory-full
+source-sha256: 71ebbbc503afe07d84db49fb761862f9eeb79aa79ea55a1bf9148ecc1a31d7b9
+state: factory
+keys: 0:navi
+note: "Memory full" (Warning tones On) after OK on Add name's Phone number: (SIM full).
+omitted: none
+
+@events
+# t_ms output   state
+28     tone     1750 v=0x9105
+322    tone     off

@@ -1,0 +1,21 @@
+sound-golden 1
+id: sound/phone-book/voice-system-error
+status: pending:19
+source: captures/6.39/plan19/notes/voice-system-error
+source-sha256: 9bdcc0ad7a75fd2b0182c1856820274600184c8db5c711edbd0003624ac991bb
+state: factory
+keys: 0:navi
+note: Start on Press Start: Please speak now, Voice system error with its 675 Hz DSP beeps (SIM content).
+omitted: none
+
+@events
+# t_ms output   state
+33     tone     900 v=0x7008
+47     tone     900 v=0x99B4
+178    tone     off
+2310   tone     675 v=0x99B5
+2455   tone     off
+2494   tone     675 v=0x99B5
+2711   tone     off
+2749   tone     675 v=0x99B5
+2896   tone     off

@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/phone-book/bcard
+status: pending:19
+source: captures/6.39/plan19/notes/business-card-sent
+source-sha256: 8a8ef27f96415a827d5ed0a26934f84230499e57b802c9c6aebf9506e0969607
+state: factory
+keys: 0:navi
+note: Send b'card's OK: Sending b'card and Business card sent: OK's beep only (SIM content).
+omitted: none
+
+@events
+# t_ms output   state
+58     tone     900 v=0x9104
+200    tone     off

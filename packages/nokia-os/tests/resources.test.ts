@@ -752,9 +752,12 @@ describe("sound programs and rules (plan 16 Task 3)", () => {
       "Dividing by zero not allowed",
       "Invalid shortcut",
       "Keypad locked",
+      // Plan 19 (sound/note/memory-full, nothing-to-save).
+      "Memory full",
       "No phone numbers",
       "No voice tags saved",
       "Not allowed",
+      "Nothing to save",
       "Out of range",
       "Screen saver missing",
       "Set PIN code request on",

@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/phone-book/speed-dial-erased
+status: pending:19
+source: captures/6.39/plan19/notes/speed-dial-erased
+source-sha256: 3abb78b10f973ec934945785f20d5c51d23aa1889ef7679fd4be7779d0cea80a
+state: factory
+keys: 0:navi
+note: Speed dial key 3 erased: OK's beep only (SIM content).
+omitted: none
+
+@events
+# t_ms output   state
+85     tone     900 v=0x9104
+225    tone     off
