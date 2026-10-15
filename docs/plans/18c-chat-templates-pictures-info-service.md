@@ -649,19 +649,26 @@ picture or card payloads), so the logs themselves hold every fixture.
 `src/resources/generated/content.ts` (generated), `tests/content-resources.test.ts` (new),
 resource-provider and `src/resources/index.ts` registrations (one line each).
 
-- [ ] Failing synthetic-golden tests pin OCR/golden agreement, multi-page text reconstruction,
+- [x] Failing synthetic-golden tests pin OCR/golden agreement, multi-page text reconstruction,
       null empty slots, trailing-space evidence, binary crops and malformed-input errors.
-- [ ] Emit `STOCK_TEMPLATES`, `STOCK_SMILEYS`, and verified `ROM_PICTURES` with source citations.
+      Deviation: no content generator. The ten default texts are LCD-visible strings transcribed
+      into `src/content/slots.ts` and pinned by the replayed Read and editor goldens (the
+      counters give each length, trailing spaces included; `tests/content-records.test.ts`); the
+      resources are plan 29 declarations (`scripts/resource-inputs/18c-*`: the template row icon
+      and eight note timelines), checked by `tests/content-resources.test.ts`.
+- [x] Emit `STOCK_TEMPLATES`, `STOCK_SMILEYS`, and verified `ROM_PICTURES` with source citations.
       Record glyphs, icons and named note timelines through the owner's provider interface.
       No blanket changes to shared `widget-sprites.ts`, `glyph-overrides.ts` or resource tests.
-- [ ] Each generated picture equals its independently imported v6.39 viewer crop (72×28 at the
+      `ROM_PICTURES`: none (R not established). Every glyph the texts need was already in the
+      stock faces (U+E000 included).
+- [ ] Blocked on R: each generated picture equals its independently imported v6.39 viewer crop (72×28 at the
       measured origin). Every default text renders in the required stock faces. Resource stills
       receive real viewer scenarios before becoming asserted.
-- [ ] Emit measured arrival/send timings with sample count and spread. Use plan 16's sound
+- [ ] Blocked with Task 7: emit measured arrival/send timings with sample count and spread. Use plan 16's sound
       format/comparison rather than asserting WAV synthesis. Reuse existing sound programs.
-- [ ] Run twice: `mise exec -- vp run @hellotimber/nokia-os#regenerate` (owner registers
+- [x] Run twice: `mise exec -- vp run @hellotimber/nokia-os#regenerate` (owner registers
       the provider); prove idempotence and freshness. Verify package test and manual `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): derive Messages content resources from goldens`.
+- [x] Commit: `feat(nokia-os): derive Messages content resources from goldens`.
 
 ### Task 4 - Persistent content records (TDD)
 
