@@ -1455,7 +1455,7 @@
   {
     "id": "tree/05-tones/5-4-1.leaf",
     "file": "tree/05-tones/5-4-1.leaf.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 13,
@@ -1469,7 +1469,7 @@
   {
     "id": "tree/05-tones/5-4-3.leaf",
     "file": "tree/05-tones/5-4-3.leaf.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 13,
@@ -1480,7 +1480,7 @@
   {
     "id": "tree/05-tones/5-4-4.leaf",
     "file": "tree/05-tones/5-4-4.leaf.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 13,
@@ -1491,7 +1491,7 @@
   {
     "id": "tree/05-tones/5-4-5.leaf",
     "file": "tree/05-tones/5-4-5.leaf.lcd.txt",
-    "status": "pending:27",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 13,

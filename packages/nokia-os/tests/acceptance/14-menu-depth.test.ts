@@ -2,6 +2,7 @@
 // 13): the generated tree goldens run the generic tree scenario (tests/support/acceptance.ts);
 // the Task 0 probes (S7) run the hand-written scenarios below.
 import { acceptancePlan, type Scenario } from "../support/acceptance.ts";
+import { composerLeafScenario } from "../support/composer.ts";
 import { expectLcd, PROBE_TOLERANCE_MS } from "../support/golden.ts";
 import { newGameLeafScenario } from "../support/game.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
@@ -33,6 +34,11 @@ const WRAPS: Readonly<Record<string, string>> = {
 };
 
 const SCENARIOS: Record<string, Scenario> = {
+  // Plan 27: the Composer's empty editor; these recordings' blink runs one step 7-11 ms late
+  // (488, 487, 491 ms), so their frames compare within PROBE_TOLERANCE_MS.
+  "tree/05-tones/5-4-3.leaf": composerLeafScenario,
+  "tree/05-tones/5-4-4.leaf": composerLeafScenario,
+  "tree/05-tones/5-4-5.leaf": composerLeafScenario,
   // Snake II's New game: asserted early with plan 23's game comparison (ASSERTED_EARLY).
   "tree/08-games/8-1-1.leaf": newGameLeafScenario,
   "probe/wrap-down": (id) => stills(id, standbyRig(), wrap(`${PHONE_BOOK} down*9`, "down", 4)),

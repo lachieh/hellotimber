@@ -748,8 +748,15 @@ export function extractResources(
   const inputs = composeResourceDeclarations(sets, readGoldenIndex(goldensDir), (id) =>
     loadGolden(goldensDir, id),
   );
-  const loadSound = (id: string) =>
-    parseSoundGolden(readFileSync(join(goldensDir, `${id}.sound.txt`), "utf8"), id);
+  const parsedSounds = new Map<string, ReturnType<typeof parseSoundGolden>>();
+  const loadSound = (id: string) => {
+    let found = parsedSounds.get(id);
+    if (found === undefined) {
+      found = parseSoundGolden(readFileSync(join(goldensDir, `${id}.sound.txt`), "utf8"), id);
+      parsedSounds.set(id, found);
+    }
+    return found;
+  };
   const ids = readGoldenIndex(goldensDir).map((entry) => entry.id);
   const sounds = extractSoundResources(
     loadSound,
@@ -829,7 +836,7 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
     ),
     "composer.ts": module(
       "COMPOSER_DATA",
-      "{ readonly tempi: readonly number[]; readonly unitMs: number; readonly gapUnits: number; readonly periods: Readonly<Record<string, Readonly<Record<string, { readonly plain: number; readonly dotted: number }>>>>; readonly pitches: readonly number[]; readonly timings: { readonly dotMs: number; readonly clearMs: number; readonly repeatFirstMs: number; readonly repeatEveryMs: number }; readonly previewDelayMs: number; readonly volumeListMs: number; readonly levelStepMs: number; readonly unsetVolume: number }",
+      "{ readonly tempi: readonly number[]; readonly unitMs: number; readonly gapUnits: number; readonly periods: Readonly<Record<string, Readonly<Record<string, { readonly plain: number; readonly dotted: number }>>>>; readonly pitches: readonly number[]; readonly timings: { readonly dotMs: number; readonly clearMs: number; readonly repeatFirstMs: number; readonly repeatEveryMs: number; readonly blinkFirstMs: number; readonly blinkStepMs: number }; readonly previewDelayMs: number; readonly volumeListMs: number; readonly levelStepMs: number; readonly unsetVolume: number }",
       resources.composer,
     ),
     "snake.ts": module(

@@ -47,6 +47,9 @@ export interface ComposerData {
     /** ▲/▼ held: the first repeat after the key-down, then every `repeatEveryMs`. */
     readonly repeatFirstMs: number;
     readonly repeatEveryMs: number;
+    /** The cursor's first blink step after the editor shows, then its steps (0.1 ms). */
+    readonly blinkFirstMs: number;
+    readonly blinkStepMs: number;
   };
   /** A saved tone's preview starts this long after ▲/▼ (the middle of the captured spread). */
   readonly previewDelayMs: number;
@@ -161,6 +164,30 @@ export function dotAfterKey(golden: SoundGolden): number {
   return notes[1]!.at - notes[0]!.at;
 }
 
+/**
+ * Select on an empty slot (`composer/open-slot-*`, plan 14's `tree/05-tones/5-4-*.leaf`): the
+ * first blink step after the editor draws (their median), then the mean of their steps within
+ * 4 ms of the median step (the firmware alternates 478-482 ms and now and then runs 7-11 ms late:
+ * those steps are left out).
+ */
+function blinkSteps(goldens: readonly Golden[]): { blinkFirstMs: number; blinkStepMs: number } {
+  const firsts: number[] = [];
+  const steps: number[] = [];
+  for (const golden of goldens) {
+    const rows = golden.timeline!;
+    const t = golden.triggerFrame as number;
+    const toggles = rows.slice(t + 1).map((row) => row.startMs - rows[t]!.startMs);
+    if (toggles.length < 3) throw new ComposerDataError(golden.id, "too few blink steps");
+    firsts.push(toggles[0]!);
+    for (let i = 1; i < toggles.length; i++) steps.push(toggles[i]! - toggles[i - 1]!);
+  }
+  if (steps.length === 0) throw new ComposerDataError("blink", "no editor blink recording");
+  const typical = median(steps);
+  const kept = steps.filter((step) => Math.abs(step - typical) <= 4);
+  const mean = kept.reduce((a, b) => a + b, 0) / kept.length;
+  return { blinkFirstMs: Math.round(median(firsts)), blinkStepMs: Math.round(mean * 10) / 10 };
+}
+
 /** Notation ink in a still (rows 7..37), less the cursor's column: 0 for an empty editor. */
 function notationInk(pixels: Uint8Array): number {
   let ink = 0;
@@ -272,6 +299,11 @@ export function extractComposerData(
       // 778 ms and one every 196 ms (Task 0 outcome; the release's own latency is not modelled).
       repeatFirstMs: 778,
       repeatEveryMs: 196,
+      ...blinkSteps(
+        ids
+          .filter((id) => /^(composer\/open-slot-\d|tree\/05-tones\/5-4-\d\.leaf)$/.test(id))
+          .map(loadLcd),
+      ),
     },
     previewDelayMs: previewDelay(onsets),
     volumeListMs: median(volumeList),

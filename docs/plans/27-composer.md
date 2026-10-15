@@ -15,7 +15,7 @@ before Task 2; if it has not, stop and report.
 "Plan 16 supplementary captures") and plans 13-16 and 18 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan27/`. The planning probes in `$REF/captures/scratch-plan27/`
 (`NOTES.md` lists them) are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-7 done).
+**Status:** in progress (Tasks 0-8 done).
 
 ## Goal
 
@@ -862,23 +862,55 @@ list (one line), `src/sound/sounder.ts` (D10's `cancel` and silenced-held-beeps 
 `tests/composer-flow.test.ts` (new), `tests/sounder.test.ts` (the two hooks),
 `tests/support/composer.ts` (new: open a slot, replay a case).
 
-- [ ] TDD the editor widget in the flow rig: keys on key-down through the engine, holds timed from
+- [x] TDD the editor widget in the flow rig: keys on key-down through the engine, holds timed from
       `COMPOSER_TIMINGS`, the model from `composerLines`, the cursor blink, Back and C on empty →
       `flow.back(2)`, Options pushes the list (C returns), every key silenced (D5).
-- [ ] Options: Play (soft key `Stop`, `toneProgram` through `StockSounder.play`, keys during Play
+- [x] Options: Play (soft key `Stop`, `toneProgram` through `StockSounder.play`, keys during Play
       per Task 0, the editor at the end), Tempo (opening on the tone's tempo, `Done`, Options on
       Tempo; sets the tone's and the new-tone tempo), Clear screen, Exit (`flow.back(2)`,
       unsaved edits lost). Save and Send push placeholders owned by 27 until Task 9 (stop and
       report if a golden needs them earlier).
-- [ ] Entry sounds: each `ComposerEdit.sound` plays `notePreview` and replaces the previous one.
-- [ ] Node 5-4-k opens the feature's application on slot k; the Composer level's `label` reads
+- [x] Entry sounds: each `ComposerEdit.sound` plays `notePreview` and replaces the previous one.
+- [x] Node 5-4-k opens the feature's application on slot k; the Composer level's `label` reads
       `StockComposer.slot(k)?.name ?? "(empty)"`; `stockMenu` keeps no placeholder for 5-4-\*.
-- [ ] Sounder hooks (D10 b, c) with their tests; every plan 16 sound golden still passes.
-- [ ] TDD through keys against the `composer/` goldens `open`, `keys`, `hold-*`, `cursor`,
+- [x] Sounder hooks (D10 b, c) with their tests; every plan 16 sound golden still passes.
+- [x] TDD through keys against the `composer/` goldens `open`, `keys`, `hold-*`, `cursor`,
       `layout`, `delete`, `clear-held`, `limit`, `leave-*`, `options`, `tempo*` and `play*`, and the
       four `tree/05-tones/5-4-*.leaf` goldens.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the stock Composer editor, Play and Tempo`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the stock Composer editor, Play and Tempo`.
+
+**Task 8 completion.** `src/widgets/composer.ts` (the editor over the engine: keys on key-down,
+holds timed by `COMPOSER_TIMINGS`, the blink, Play with `Stop` and its keys per Task 0, entry
+sounds through `notePreview`, Options, the Tempo list and its `Done`, Clear screen, Exit) and
+`src/firmware/features/composer.ts` (5-4-1 … 5-4-7 bound, one `StockComposer` and one blink per
+phone, the Composer level's labels, the record). `5-4-*` left both owner tables; `import-captures`
+re-run: the four `tree/05-tones/5-4-*.leaf` goldens and `sound/note/5-4-1` are asserted (the other
+slots' Select beeps joined plan 16's equal note groups). `tests/composer-flow.test.ts`: 137 Task 0
+stills (entry, returns, leave, Options, Tempo, new-tone tempo) replayed on the phone pixel for
+pixel, and the key-down action, the dot and clear, the silent editor keys against beeping Options
+keys, an entry sound, Back/C on empty, Play and Stop, the slots' names. Sounder (D10): `cancel(play,
+atMs = now)` and a key silenced at its key-down schedules no held beeps, each with a
+`tests/sounder.test.ts` test; every plan 16 sound golden still passes. Full suite: 4762 passed, 20
+expected failures, 586 todos.
+
+Deviation (the blink, Task 0 measured): the cursor blinks 478 ms then 480.1 ms (generated from
+every editor recording: `blinkFirstMs`, `blinkStepMs`); it runs free while an editor shows,
+starting shown the first time an editor shows after power-on and hidden at every later showing (a
+reopened slot, the return from Options) — the replay of every editor still confirms it.
+`tree/05-tones/5-4-{3,4,5}.leaf` run one blink step 7-11 ms late, so plan 14's acceptance gives
+them a hand scenario comparing within `PROBE_TOLERANCE_MS` (three entries, the only edit there).
+
+Deviation (registry): the feature registry gains `levelLabels` (feature.ts, composed as
+`LEVEL_LABELS` in stock.ts, read by `LeafBinder.levelLabel` and one spread in menu.ts's
+`entryOf`), the "level's label" registration this plan names; `ListNumbering` gains `none` (plan
+17 Task 7 had not landed). Options and Tempo act as keys go down (plan 20's precedent: the key that
+opens them must not reach them on its release). `extract-resources.ts` caches parsed sound goldens
+(the composer tables read some twice). Save and Send open placeholders until Task 9.
+
+Deviation (replay timing, test support): a harness tap takes 605-615 ms in the composer (mean 610 ms
+over 50 taps, measured), a `hold` 50 ms more than its hold; `tests/support/composer.ts` replays
+with those.
 
 ### Task 9 - Save and Send (TDD; needs plan 18 Task 7)
 

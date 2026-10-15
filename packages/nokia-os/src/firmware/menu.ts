@@ -118,6 +118,7 @@ function entryOf(
         : spec.opening !== undefined
           ? () => bySlug(spec.opening)
           : undefined;
+  const label = b.leaves.levelLabel(node.number);
   const options: SubmenuOptions = {
     presentation: spec.presentation,
     softkey: spec.softkey,
@@ -133,6 +134,8 @@ function entryOf(
       : { shown: (child: MenuEntry) => child !== leadEntry || b.leaves.leadShown(lead) }),
     ...(spec.intro ? { intro: b.leaves.intro(node, path.map((n) => n.slug).join("/")) } : {}),
     ...(showsEntryIndicator(node.number) ? { entryIndicatorMs: STOCK_SHORTCUT_WINDOW_MS } : {}),
+    // Plan 27: a feature's labels (the Composer's slots show their tones' names, D13).
+    ...(label === undefined ? {} : { label: (child: MenuEntry) => label(child.order.value) }),
   };
   return new SubmenuEntry(slug, order, node.label, new MenuLevel(children), undefined, options);
 }

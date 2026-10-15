@@ -35,6 +35,7 @@ import { PlaceholderApplication } from "./placeholder";
 import {
   EXIT_LEVELS,
   LEVEL_BARS,
+  LEVEL_LABELS,
   modelNumber,
   noteEnd,
   noteMoves,
@@ -178,6 +179,11 @@ export class LeafBinder {
   /** Whether the lead entry is listed now. */
   leadShown(lead: LeadEntry): boolean {
     return lead.shown(this.#services);
+  }
+
+  /** The reader of the level at `number`'s children's labels, if a feature has one (plan 27). */
+  levelLabel(number: string): ((order: number) => string | undefined) | undefined {
+    return LEVEL_LABELS[number]?.(this.#services);
   }
 
   /** A game level's splash intro (D12). */

@@ -257,7 +257,7 @@ describe("sound goldens (plan 16)", () => {
 
   it("leaves no golden pending on plan 16 (the Composer is plan 27's)", () => {
     expect(index.filter((entry) => entry.status === "pending:16").map((e) => e.id)).toEqual([]);
-    expect(PLACEHOLDER_OWNERS["5-4-*"]).toBe("27");
+    expect(PLACEHOLDER_OWNERS["5-4-*"]).toBeUndefined();
   });
 });
 

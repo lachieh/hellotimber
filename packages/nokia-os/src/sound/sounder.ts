@@ -190,10 +190,13 @@ export class StockSounder implements StockCueSink {
     this.#keyLevel = undefined;
     // A note's warning tone opened by this key replaces its beep (D12); a game-over screen
     // silences it.
-    if ((options.beeps ?? true) && this.#silentAtMs !== now) this.#keyBeep(now, level?.option);
+    const silenced = this.#silentAtMs === now;
+    if ((options.beeps ?? true) && !silenced) this.#keyBeep(now, level?.option);
     const repeats = key === "up" || key === "down";
     const first = repeats ? LEVEL_REPEAT.firstMs : key === "c" ? C_HOLD_BEEP_MS : undefined;
-    const next = (options.holdBeeps ?? true) && first !== undefined ? now + first : undefined;
+    // Plan 27 (D10 c): a key silenced at its key-down (the Composer's) has no held beeps either.
+    const holds = (options.holdBeeps ?? true) && !silenced;
+    const next = holds && first !== undefined ? now + first : undefined;
     this.#held.set(key, { next, repeats });
   }
 
@@ -339,6 +342,11 @@ export class StockSounder implements StockCueSink {
   /** Plays `program` now (plan 27's Composer). */
   play(program: SoundProgram): SoundPlay {
     return this.#sequencer.play(program, this.#now());
+  }
+
+  /** Plan 27 (D10 b): ends `play` at `atMs` (default now): the Composer's Stop and C. */
+  cancel(play: SoundPlay, atMs: number = this.#now()): void {
+    this.#sequencer.cancel(play, atMs);
   }
 
   /**

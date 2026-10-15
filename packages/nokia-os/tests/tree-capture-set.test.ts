@@ -233,7 +233,7 @@ describe("placeholder patterns", () => {
     expect(matchesPattern("2-8-4-1", "2-8-4-1-**")).toBe(true);
     expect(matchesPattern("2-8-4-1-3", "2-8-4-1-**")).toBe(true);
     expect(matchesPattern("2-8-4", "2-8-4-1-**")).toBe(false);
-    expect(placeholderOwner("5-4-7")).toBe("27");
+    expect(placeholderOwner("5-4-7")).toBeUndefined();
     expect(placeholderOwner("5-4")).toBeUndefined();
     expect(placeholderOwner("12-6-2-9-4")).toBe("18c");
   });

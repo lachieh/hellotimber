@@ -179,6 +179,14 @@ export interface StockFeature {
   readonly screens?: Readonly<Record<string, ScreenBinding>>;
   /** Entries this feature heads submenu levels with, by the level's node number. */
   readonly leads?: Readonly<Record<string, LeadEntry>>;
+  /**
+   * Plan 27: the text a submenu level's children show (phone-core `SubmenuOptions.label`), by the
+   * level's node number: a reader of each child's order (its node number's last segment) that
+   * returns undefined for the tree's label.
+   */
+  readonly levelLabels?: Readonly<
+    Record<string, (services: StockServices) => (order: number) => string | undefined>
+  >;
   /** Hooks for the option list of setting `key`, if this feature has any. */
   readonly optionLists?: (key: string, services: StockServices) => OptionListHooks | undefined;
   readonly widgets?: StockWidgetTables;

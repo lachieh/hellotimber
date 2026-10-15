@@ -93,9 +93,6 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "6-2-1-3": "26", // Русский: native-language note, then that UI (plan 15 D12)
   "6-2-1-4": "26", // Български
   "6-2-1-5": "26", // Українська
-
-  // Plan 27: Composer.
-  "5-4-*": "27", // Composer slots (plan 16 D14)
 };
 
 /** Leaf screen kinds a stock widget or placeholder handles; anything else is an import error. */

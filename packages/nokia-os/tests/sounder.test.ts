@@ -2,10 +2,14 @@
 // goldens run in tests/acceptance.test.ts through tests/support/sound-scenarios.ts).
 import { describe, expect, it } from "vite-plus/test";
 import type { SoundGolden } from "../scripts/sound-format.ts";
-import { C_HOLD_BEEP_MS } from "../src/sound/sounder";
+import { StockEeprom } from "../src/firmware/eeprom";
+import { createStockSettings } from "../src/firmware/settings";
+import { SoundSequencer } from "../src/sound/sequencer";
+import { C_HOLD_BEEP_MS, StockSounder } from "../src/sound/sounder";
 import { LEVEL_REPEAT } from "../src/widgets/level-bar";
 import type { StockSoundEvent } from "../src/index";
 import { KEYPAD_BEEP } from "../src/resources";
+import { seededStorage } from "./support/rig.ts";
 import { soundRig } from "./support/sound-scenarios.ts";
 import { expectSoundTimeline, type RecordedSound } from "./support/sound.ts";
 
@@ -214,5 +218,54 @@ describe("keypad tones (D8)", () => {
       hz: 900,
       volume: KEYPAD_BEEP.levels.unset,
     });
+  });
+});
+
+describe("plan 27's sounder hooks (D10)", () => {
+  function sounderRig() {
+    const events: StockSoundEvent[] = [];
+    const sequencer = new SoundSequencer((event) => events.push(event));
+    const settings = createStockSettings(new StockEeprom(seededStorage({ factory: true })));
+    let now = 0;
+    const sounder = new StockSounder(sequencer, settings, () => now);
+    const at = (ms: number) => {
+      now = ms;
+      sounder.tick();
+      sequencer.advance(ms);
+    };
+    return { events, sounder, at };
+  }
+
+  it("(c) a key silenced at its key-down beeps nothing, also at its long press", () => {
+    const silenced = sounderRig();
+    silenced.sounder.cue({ kind: "silent-key" }, 0);
+    silenced.sounder.keyDown("c");
+    silenced.at(C_HOLD_BEEP_MS + 100);
+    expect(silenced.events).toEqual([]);
+    // the same key unsilenced beeps at its down and at its long press
+    const plain = sounderRig();
+    plain.sounder.keyDown("c");
+    plain.at(C_HOLD_BEEP_MS + 100);
+    expect(plain.events.filter((e) => e.output === "tone" && e.hz !== null)).toHaveLength(2);
+  });
+
+  it("(b) cancel ends a play at once (now by default), or at a time given", () => {
+    const rig = sounderRig();
+    const program = { id: "t", steps: [{ ms: 500, buzzer: { hz: 523, volume: 11 } }] };
+    const play = rig.sounder.play(program);
+    rig.at(100);
+    rig.sounder.cancel(play);
+    rig.at(600);
+    expect(rig.events).toEqual([
+      { output: "buzzer", atMs: 0, hz: 523, volume: 11 },
+      { output: "buzzer", atMs: 100, hz: null },
+    ]);
+    const later = rig.sounder.play(program);
+    rig.sounder.cancel(later, 700);
+    rig.at(1200);
+    expect(rig.events.slice(2)).toEqual([
+      { output: "buzzer", atMs: 600, hz: 523, volume: 11 },
+      { output: "buzzer", atMs: 700, hz: null },
+    ]);
   });
 });
