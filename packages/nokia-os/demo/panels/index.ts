@@ -5,5 +5,6 @@ export { goldensPanel } from "./goldens";
 export { lightsPanel } from "./lights";
 export { messagesPanel } from "./messages";
 export { phonePanel } from "./phone";
+export { profilesPanel } from "./profiles";
 export { soundPanel } from "./sound";
 export { storagePanel } from "./storage";

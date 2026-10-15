@@ -20,6 +20,7 @@ import { paintMulti, type MultiModel } from "./multi";
 import { paintNote, paintWelcomeNote, type NoteModel, type WelcomeNoteModel } from "./note";
 import { paintOptions, type OptionsModel } from "./options";
 import { paintProgress, type ProgressModel } from "./progress";
+import { paintStandbyFrame, type StandbyFrameModel } from "../profiles";
 import { paintPrompt, type PromptModel } from "./prompt";
 import { paintSnake, type SnakeModel } from "./snake";
 import { paintSplash, type SplashModel } from "./splash";
@@ -92,7 +93,8 @@ export type WidgetModel =
   | KeyguardModel
   | StandbyDrawModel
   | MessageListModel
-  | MessagePageModel;
+  | MessagePageModel
+  | StandbyFrameModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -156,6 +158,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "calculator":
       paintCalculator(fb, model);
+      return;
+    case "standby-frame":
+      paintStandbyFrame(fb, model);
       return;
     case "keyguard":
       paintKeyguard(fb, model, previous);

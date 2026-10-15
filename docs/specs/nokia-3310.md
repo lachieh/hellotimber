@@ -168,11 +168,11 @@ Sources: [helpdoc Games](https://nokia-3310.helpdoc.net/en/12-games-menu-8/) (li
 
 Sources: manual Tones chapter p.65–69, Composer pages ([helpdoc composer](https://nokia-3310.helpdoc.net/en/9-tones-menu-5/composer/creating-a-new-ringing-tone/), verified), [Wikipedia](https://en.wikipedia.org/wiki/Nokia_3310).
 
-- **Key beeps:** `Keypad tones` volume setting (off or levels); short square-wave beep per keypress, muted in Silent profile (profile mutes all tones — verified).
+- **Key beeps:** `Keypad tones` volume setting (off or levels); short square-wave beep per keypress, muted in Silent profile (profile mutes all tones — verified). _History (plan 17): on v6.39 a profile is its settings; Silent is silent because its Keypad, Warning and alert settings are off, and Silent with Keypad tones Level 3 beeps ([stock/profiles.md](stock/profiles.md))._
 - **Ringtones:** ~**35 built-in monophonic ringing tones** plus space for **7 user/downloaded tones** (Wikipedia, verified secondary). Default tone: **Nokia tune** (Francisco Tárrega, _Gran Vals_ excerpt) — **UNVERIFIED as factory default, best guess yes; it is in the tone list**.
 - **Incoming call alert modes (verified):** Ringing / Ascending / Ring once / Beep once / Off. Ringing volume: leveled setting (count UNVERIFIED, best guess 5 levels). Separate `Message alert tone`; `Warning and game tones` toggle; `Vibrating alert` on/off.
 - **Composer (Menu 5-4, verified mechanics):** notes entered with number keys (**1–7 = c, d, e, f, g, a, b**); **8 = shorten duration (−), 9 = lengthen (+)** (default duration 1/4); **0 = insert rest** of same duration as previous note; **`*` = set octave** (octave shown as digit after note, e.g. `e1`); **`#` = sharp** (shown as `#` before note, e.g. `#f`); **press-and-hold a note key = dotted note (+50% length, shown as dot, e.g. `8.a`)**; ▲/▼ move cursor; `C` deletes; Options → `Play`, `Save` (name it; appended to end of ringing-tone list), `Tempo` (bpm), `Clear screen`, `Exit`. _(Exact key-glyph assignments for 8/9/0/\*/# were stripped from the scan; mapping above matches the manual's ordering and the standard Nokia composer — treat 1–7 note mapping as high confidence, 8/9 assignment as minor-UNVERIFIED.)_ Notation format (RTTTL-like, manual example verbatim): `16.a2 16d2 16#f2 16a1 16d2 16#f2 8a2 1- 8-` — i.e. `[duration][.][#][note][octave]`, `-` = rest. Tones can also be received via SMS.
-- **Profiles (VERIFIED list): General (default), Silent, Discreet, Loud, + one replaceable "(empty)" slot** for a received/downloaded profile. Quick access: short-press power button. Each profile personalizes the Tones-menu items (ringing tone, volumes, vibrating alert, screensaver, etc.).
+- **Profiles (VERIFIED list): General (default), Silent, Discreet, Loud, + one replaceable "(empty)" slot** for a received/downloaded profile (v6.39 has two such slots, [stock/profiles.md](stock/profiles.md)). Quick access: short-press power button. Each profile personalizes the Tones-menu items (ringing tone, volumes, vibrating alert, screensaver, etc.).
 - **No startup/shutdown jingle** (see §3, UNVERIFIED).
 
 ---
@@ -210,6 +210,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Security code, boot gates, storage, virgin/factory states  | [stock/storage-and-settings.md](stock/storage-and-settings.md)     | 15   |
 | Tones and sound                                            | [stock/sound.md](stock/sound.md)                                   | 16   |
 | Text entry and SMS                                         | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)         | 18   |
+| Profiles                                                   | [stock/profiles.md](stock/profiles.md)                             | 17   |
 | Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                         | 20   |
 | Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                             | 23   |
 | Keyguard and lights                                        | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |

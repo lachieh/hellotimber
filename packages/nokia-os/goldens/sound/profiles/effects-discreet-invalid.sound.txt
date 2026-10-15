@@ -1,0 +1,16 @@
+sound-golden 1
+id: sound/profiles/effects-discreet-invalid
+status: asserted
+source: captures/6.39/plan17/effects/discreet/invalid
+source-sha256: 7199de34832dafc77a92935e0a83565037b0cf7c1c1743606103c21277211d6c
+state: factory
+keys: 0:navi 300:1 600:9
+note: discreet active: Menu 1 9: Invalid shortcut.
+omitted: none
+
+@events
+# t_ms output   state
+31     tone     900 v=0x9108
+174    tone     off
+320    tone     900 v=0x9108
+460    tone     off

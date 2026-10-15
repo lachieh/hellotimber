@@ -24,6 +24,13 @@ import { createSyntheticNetwork, type StockNetworkPort } from "../messages/netwo
 import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { stockBootGates } from "./boot";
+import {
+  activationBeep,
+  powerList,
+  PowerListState,
+  standbyProfileLine,
+  standbySilent,
+} from "./features/profiles";
 import { createStockSettings } from "./settings";
 import { StockLightRules, StockLights, type StockLightsPort } from "./features/backlight";
 import { KeyguardOverlay } from "./features/keyguard";
@@ -166,14 +173,21 @@ export function createStockPhoneWith(
     config.network ?? createSyntheticNetwork(),
   );
   messaging.connect();
+  const services = stockServices(ports, settings, games, security, sounder, eeprom, messaging);
+  // Plan 17 D7: the power key's list, over the same services as the menu's leaves.
+  const power = new PowerListState();
   const phone = createPhone({
     menu: createStockMenu(ports, settings, games, security, sounder, eeprom, messaging),
     // Plan 18 D11: the envelope while Inbox holds unread messages, blinking while every slot is
-    // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED).
+    // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED). Plan 17 D6: the silent
+    // icon while the active profile's Incoming call alert is Off.
     standbyIndicators: () => {
       const store = messaging.store;
-      if (store.full()) return Math.floor(now / FULL_BLINK_MS) % 2 === 0 ? { message: true } : {};
-      return store.unread() > 0 ? { message: true } : undefined;
+      const message = store.full() ? Math.floor(now / FULL_BLINK_MS) % 2 === 0 : store.unread() > 0;
+      const silent = standbySilent(settings);
+      return message || silent
+        ? { ...(message ? { message: true } : {}), ...(silent ? { silent: true } : {}) }
+        : undefined;
     },
     carrier: config.carrier,
     ...(clock === undefined ? {} : { clock }),
@@ -188,6 +202,9 @@ export function createStockPhoneWith(
     rowsWindow: VISIBLE_ROWS,
     // Stock shortcut digits: menu numbers, delayed opening, Invalid shortcut (plan 14 D14).
     shortcutEntry: { openDelayMs: STOCK_SHORTCUT_OPEN_DELAY_MS, invalid: invalidShortcut(sounder) },
+    // Plan 17: the active profile's line under the operator (D5).
+    standbyLine: standbyProfileLine(settings),
+    standbyPower: powerList(services, power),
   });
   // Plan 25 D4: the keyguard over the kernel, which stays at standby underneath it.
   const keyguard = new KeyguardOverlay(phone, {
@@ -195,16 +212,12 @@ export function createStockPhoneWith(
     noteSound: (lines) => sounder.note(lines),
   });
   // Plan 25 K7, L7: an arrival lights the phone, but not a locked one.
-  const arrivals = stockArrivals(
-    phone,
-    stockServices(ports, settings, games, security, sounder, eeprom, messaging),
-    () => {
-      const engine = keyguard.engine;
-      if ((engine.locked ? engine.arrivedWhileLocked() : { activity: true }).activity) {
-        lights.activity();
-      }
-    },
-  );
+  const arrivals = stockArrivals(phone, services, () => {
+    const engine = keyguard.engine;
+    if ((engine.locked ? engine.arrivedWhileLocked() : { activity: true }).activity) {
+      lights.activity();
+    }
+  });
   // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
   // Plan 25: the light tick runs from the power-on; the boot lights the LEDs at the self-test's
   // first frame and again where the firmware shows its clock prompt (nokia-os: standby).
@@ -275,15 +288,26 @@ export function createStockPhoneWith(
       publish();
       return;
     }
+    // Plan 25: a locked keypad takes every key, the power key included (its hint, not plan 17's
+    // profile list: `hint/pwr`).
     const outcome = keyguard.keyDown(event.key);
     if (outcome.activity) lights.activity();
     if (outcome.consumed) {
       if (!outcome.silent) sounder.keyDown(event.key, { holdBeeps: false });
     } else {
-      const options = keyDownOptions(event.key, phone);
+      const options = keyDownOptions(event.key, phone, power);
+      // Plan 17 D4: a key that activates a profile beeps at that profile's level.
+      const activation = activationBeep(phone, event.key, settings, power);
+      // D7: the power key's list draws the standby it opened over.
+      if (event.key === "power") {
+        const screen = phone.screen;
+        power.standby = screen.kind === "standby" ? screen : undefined;
+      }
       phone.send(event);
-      // The beep follows the key's handling: a widget may set this key's level or replace it.
-      sounder.keyDown(event.key, options);
+      if (activation !== undefined) sounder.keyBeepLevel(activation);
+      // The beep follows the key's handling: a widget may set this key's level or replace it. A
+      // key that switched the phone off has none: the power-off tone plays (Switch off!, P5).
+      if (poweredOn) sounder.keyDown(event.key, options);
     }
     publish();
   };
@@ -334,8 +358,11 @@ export function createStockPhoneWith(
  * (`boot/power-key`; not in the Ringing tone list, `boot/power-off`), and C in the menu
  * carousel leaves the menu at its key-down, so it has no long press to beep at.
  */
-function keyDownOptions(key: PhoneKey, phone: Phone): KeyDownOptions {
-  if (key === "power") return { beeps: phone.screen.kind === "standby", holdBeeps: false };
+function keyDownOptions(key: PhoneKey, phone: Phone, power: PowerListState): KeyDownOptions {
+  // Plan 17: and in the power key's list, where it moves the highlight.
+  const listed = power.selected !== undefined;
+  if (key === "power")
+    return { beeps: phone.screen.kind === "standby" || listed, holdBeeps: false };
   if (key === "c" && phone.screen.kind === "menu-carousel") return { holdBeeps: false };
   return {};
 }
@@ -367,7 +394,8 @@ function stockArrivals(phone: Phone, services: StockServices, arrived: () => voi
       if (atStandby) phone.setNotice({ text: "No space\nfor new\nmessages", softkey: "OK" });
       return;
     }
-    // D15: the profile's message alert (General's, the Tones settings, until plan 17's profiles).
+    // D15: the active profile's message alert (the Tones settings alias the active profile's,
+    // plan 17 D1).
     sounder.messageAlert("tones");
     if (atStandby) received();
     else waiting = true;

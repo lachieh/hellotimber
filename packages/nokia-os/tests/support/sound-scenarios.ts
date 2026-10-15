@@ -214,6 +214,8 @@ export const SOUND_SCENARIOS: Record<string, (id: string) => void> = {
     expectSound(id, soundRig("virgin"), `navi 5 5 ${SETTLE}`, { drift: true }),
   // B: holding the power key stops the preview; power-off plays the power-on tone.
   "sound/boot/power-off": (id) => powerOff(id),
+  // Plan 17: the power key's list opens at standby (its beep), C returns (its beep).
+  "sound/boot/power-key": (id) => expectSound(id, soundRig("factory")),
   // B: the power-on tone 2425 ms into the boot (time 0: the phone turns on), Keypad tones or not.
   "sound/boot/power-on": (id) => powerOnSound(id, {}),
   "sound/boot/power-on-keypad-off": (id) => powerOnSound(id, { [KEYPAD]: 0 }),

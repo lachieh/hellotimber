@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/profiles/power-general-digit-1
+status: asserted
+source: captures/6.39/plan17/power/general/digit-1
+source-sha256: cef853ede9b17102e05c326b078acc8b105299d562202bc8a9e5b04852a21def
+state: factory
+keys: 0:1
+note: General active: 1 in the power list: Switch off! (the phone switches off).
+omitted: none
+
+@events
+# t_ms output   state
+101    tone     900 v=0x9105
+244    tone     off

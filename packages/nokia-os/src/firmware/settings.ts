@@ -6,7 +6,8 @@ import type { StockTreeNode } from "./generated/stock-tree";
 import { setterLevel, settingAlias, STOCK_SETTINGS } from "./stock";
 import { settingKey, slugOf, treePaths } from "./tree";
 
-const { codeSettings, factoryDefaults, hostValues, restoreKeeps, typedTexts } = STOCK_SETTINGS;
+const { codeSettings, factoryDefaults, factoryTexts, hostValues, restoreKeeps, typedTexts } =
+  STOCK_SETTINGS;
 
 export interface StockSettings {
   /** Chosen option index of a single-choice setting; null = never written (virgin EEPROM). */
@@ -43,7 +44,11 @@ export interface StockSettingsSnapshot {
   readonly texts: Readonly<Record<string, string>>;
   /** Numeric values: non-negative integers. */
   readonly numbers: Readonly<Record<string, number>>;
-  /** Keys that read and write another key (D9: Tones are the General profile's). */
+  /**
+   * Keys that read and write another key, by their virgin target (D9: Tones are the General
+   * profile's). A store resolves them again against its stored choices (plan 17 D1: Tones are the
+   * active profile's).
+   */
   readonly aliases: Readonly<Record<string, string>>;
 }
 
@@ -112,7 +117,14 @@ function settingsOver(
   };
   load(stored);
 
-  const resolve = (key: string): string => initial.aliases[key] ?? key;
+  // A stock alias follows the stored choices it reads (plan 17 D1: Tones are the active
+  // profile's); any other alias of the snapshot (a test's) is fixed.
+  const chosen = (key: string): number | null => choices.get(key)?.chosen ?? null;
+  const resolve = (key: string): string => {
+    const target = initial.aliases[key];
+    if (target === undefined) return key;
+    return target === settingAlias(key) ? settingAlias(key, chosen) : target;
+  };
   const single = (key: string): { options: number; chosen: number | null } => {
     const found = choices.get(resolve(key));
     if (!found) throw new Error(`No single-choice setting "${key}".`);
@@ -410,9 +422,10 @@ function factoryTables(): Pick<SettingsOverrides, "choices" | "marks"> {
  * texts and numbers Restore keeps.
  */
 function factorySettings(current: SettingsOverrides): SettingsOverrides {
+  const texts = Object.fromEntries(factoryTexts.map(({ key, text }) => [key, text]));
   return {
     ...factoryTables(),
-    texts: only(current.texts, restoreKeeps),
+    texts: { ...texts, ...only(current.texts, restoreKeeps) },
     numbers: only(current.numbers, restoreKeeps),
   };
 }

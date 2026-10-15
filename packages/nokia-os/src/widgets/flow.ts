@@ -27,6 +27,8 @@ export interface Flow {
   back(levels?: number, options?: { select?: string; row?: "top" | "bottom" }): void;
   /** Leave the menus for standby. */
   standby(): void;
+  /** Switch the phone off (plan 17: the power key's Switch off!); absent outside a phone. */
+  powerOff?(): void;
   /** The menu indicator for the flow's position, as the kernel reports it. */
   indicator(): MenuIndicator;
 }
@@ -179,6 +181,11 @@ class FlowSession implements PhoneApplicationSession, Flow {
     this.#context.exit({ to: "standby" });
     this.#closed = true;
     this.#closeAll();
+  }
+
+  powerOff(): void {
+    if (this.#closed) return;
+    this.#context.powerOff?.();
   }
 
   indicator(): MenuIndicator {

@@ -54,6 +54,8 @@ export interface MenuIndicator {
 export interface StandbyIndicators {
   voicemail?: boolean;
   message?: boolean;
+  /** Plan 17: the host's "silent" icon (stock: drawn top-left while the active profile is silent). */
+  silent?: boolean;
 }
 
 export type ScreenModel =
@@ -67,6 +69,8 @@ export type ScreenModel =
       signal: 0 | 1 | 2 | 3 | 4;
       battery: 0 | 1 | 2 | 3 | 4;
       indicators?: StandbyIndicators;
+      /** Plan 17: the host's second standby line (PhoneConfig.standbyLine); absent when it returns none. */
+      line?: string;
       /** Standby-scoped notice, e.g. "1 message received" + Read. */
       notice?: { text: string; softkey: string };
       /** Present only during PhoneConfig.menuOpenDelayMs, after Menu and before the carousel. */
@@ -172,6 +176,23 @@ export interface PhoneConfig<Metadata = unknown> {
    * change emits one snapshot. Emitted on the standby model only when a field is true. Default: none.
    */
   standbyIndicators?: () => StandbyIndicators | undefined;
+  /**
+   * Plan 17: a second standby line under the operator, re-read on every tick with the time since
+   * standby was last entered (boot end, a return from the menus or an application, a notice
+   * cleared); a change emits one snapshot. Emitted on the standby model (and the standby Menu
+   * leaves for `menuOpenDelayMs`) when it returns a string; an exception omits it. Default: none.
+   */
+  standbyLine?: (shownMs: number) => string | undefined;
+  /**
+   * Plan 17: opened on the power key's key-down at standby as a standby application (empty stack,
+   * path `standby`, `menuIndicator()` without segments, `exit()` returns to standby;
+   * `levels`/`select`/`row` throw). Every later key reaches it, the opening press's release and
+   * the power key's own presses included; the power long press still powers off. It opens over a
+   * standby notice (the notice stays), and when the running application's handling of the power
+   * key's down leaves for standby (a note shown at standby); never in the menus, another
+   * application or the boot, where the short press does nothing.
+   */
+  standbyPower?: PhoneApplication;
 }
 
 /** Plan 15: an application that may hold the boot at an offset into it. */

@@ -181,6 +181,8 @@ export interface MenuIndicator {
 export interface StandbyIndicators {
   voicemail?: boolean;
   message?: boolean;
+  /** Plan 17: the host's "silent" icon (stock: drawn top-left while the active profile is silent). */
+  silent?: boolean;
 }
 
 export type ScreenModel =
@@ -193,6 +195,7 @@ export type ScreenModel =
       signal: 0 | 1 | 2 | 3 | 4;
       battery: 0 | 1 | 2 | 3 | 4;
       indicators?: StandbyIndicators;
+      line?: string; // plan 17: PhoneConfig.standbyLine's text, present only when it returns one
       notice?: { text: string; softkey: string }; // e.g. "1 message received" + Read
       leaving?: true; // only during PhoneConfig.menuOpenDelayMs, between Menu and the carousel
     }
@@ -310,6 +313,13 @@ export interface SubmenuOptions<Metadata = unknown> {
    * by position (1..n) instead of by MenuOrder. Default: every child shown, numbered by order.
    */
   shown?(child: MenuEntry<Metadata>): boolean; // method syntax: keeps SubmenuEntry covariant
+  /**
+   * Plan 17: the text `child` shows in this level's list and as its own level's title; re-read on
+   * every tick (a change emits one snapshot). Undefined (or a non-string) = the child's label;
+   * paths and slugs do not change. `SubmenuEntry.labelOf(child)` throws for a blank label; the
+   * kernel shows the child's own label then, and when the reader throws.
+   */
+  label?(child: MenuEntry<Metadata>): string | undefined; // method syntax: keeps SubmenuEntry covariant
 }
 
 export abstract class MenuEntry<Metadata = unknown> {
@@ -434,6 +444,11 @@ export interface ApplicationContext {
    * indicator. Always provided by the kernel; optional so hosts may wrap contexts.
    */
   menuIndicator?(): MenuIndicator;
+  /**
+   * Plan 17: powers the phone off (deactivation reason `power-off`), as the power long press does.
+   * Always provided by the kernel; optional so hosts may wrap contexts; stale activations no-op.
+   */
+  powerOff?(): void;
 }
 
 export interface PhoneApplicationSession {
@@ -449,6 +464,20 @@ export interface PhoneConfig<Metadata = unknown> {
   clock?: () => string | undefined; // host supplies time; re-read on each tick
   /** Plan 18: re-read per tick; change emits one snapshot; standby includes only true fields. */
   standbyIndicators?: () => StandbyIndicators | undefined;
+  /**
+   * Plan 17: a second standby line under the operator, re-read on every tick with the time since
+   * standby was last entered (boot end, a return from the menus or an application, a notice
+   * cleared); a change emits one snapshot. An exception omits it. Default: none.
+   */
+  standbyLine?: (shownMs: number) => string | undefined;
+  /**
+   * Plan 17: opened on the power key's key-down at standby as a standby application (plan 18's
+   * activation: empty stack, path `standby`, `exit()` returns to standby, `levels`/`select`/`row`
+   * throw), also over a notice and when the running application's handling of that key-down
+   * leaves for standby. The power long press still powers off. Elsewhere the short press does
+   * nothing.
+   */
+  standbyPower?: PhoneApplication;
   bootMs?: number; // 0 skips boot; otherwise defaults to bootTimeline?.durationMs ?? 3000
   /** Finite boot animation; when set, boot length = its durationMs. */
   bootTimeline?: Timeline;
@@ -564,6 +593,17 @@ the kernel defaults are host config with website-preserving defaults: `shortcutW
 the screen is the standby model with `leaving: true`, and the carousel's timeline and the
 shortcut window are timed from the carousel opening and the Menu press respectively; a key
 that moves the carousel opens it at once, C returns to standby).
+
+**Kernel policy (plan 17).** Every plan 17 seam is opt-in and generic; the website
+sets none. _Standby line_: `standbyLine(shownMs)` is re-read per tick; `shownMs` restarts whenever
+standby is entered (a new standby state: boot end, C, C held, an application's exit, a standby
+application's exit, a cleared notice), and the line also rides on Menu's `leaving` model. _Labels_:
+`SubmenuOptions.label` renames a child in its level's list and its own title without touching paths
+or slugs. _Power key_: `standbyPower` opens on the power key's down at standby (the release and later
+keys reach it; the long press still powers off) and `ApplicationContext.powerOff()` switches off
+from any application. nokia-os uses them for profile names under the operator, stored profile
+names in Profiles, and the power key's profile list; its Tones are the active profile's
+Personalise settings (docs/plans/17-profiles.md).
 
 **Kernel policy (plan 18, in progress).** Standby indicators are host readers re-read per tick.
 A notice may open an application at standby with an empty navigation stack. Neither interface
@@ -858,6 +898,13 @@ inconclusive. See [stock text entry and SMS](docs/specs/stock/text-entry-and-sms
 
 Plan 18c's delivery-kind/editor/session registration requirements await owner reconciliation;
 this SMS-only contract does not authorize its proposed picture/card extension.
+
+**Profiles (plan 17).** A profile is its Personalise settings plus a name. The active
+profile is a stored choice in the settings record (General when never written, and after Restore),
+and Tones read and write its Personalise settings, so every audible effect follows it. The public
+API is unchanged; standby shows the active profile's name and the silent icon through phone-core's
+`standbyLine` and `standbyIndicators`, the Profiles level shows stored names through `label`, and the
+power key's list is `standbyPower`. See [stock profiles](docs/specs/stock/profiles.md).
 
 **Storage (plan 15).** The phone's memory is a host `StockStorage`, synchronous and written at
 once on every change, as EEPROM writes are. nokia-os keeps one versioned JSON record per owner

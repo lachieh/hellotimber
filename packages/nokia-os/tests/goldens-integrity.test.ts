@@ -313,3 +313,26 @@ describe("plan 18 goldens", () => {
     }
   });
 });
+
+describe("plan 17 goldens", () => {
+  const own = readPlanIndex(GOLDENS, "17");
+
+  it("lists the thin glyph sheet's pages in its note, one per image", () => {
+    const entry = own.find((e) => e.id === "profiles/glyphs-thin")!;
+    const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+    expect(parseManifestNote(golden.note)).toHaveLength(golden.images.length);
+  });
+
+  it("asserts every plan 17 golden (Task 9: no golden is pending:17)", () => {
+    expect(index.filter((entry) => entry.status === "pending:17").map((e) => e.id)).toEqual([]);
+    expect(own.length).toBeGreaterThan(100);
+  });
+
+  it("leaves no plan 17 golden pending outside its own index", () => {
+    const elsewhere = index.filter(
+      (entry) => entry.status === "pending:17" && !own.some((e) => e.id === entry.id),
+    );
+    expect(Object.values(PLACEHOLDER_OWNERS)).not.toContain("17");
+    expect(elsewhere.map((entry) => entry.id)).toEqual([]);
+  });
+});

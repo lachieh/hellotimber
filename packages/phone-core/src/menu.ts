@@ -147,6 +147,13 @@ export interface SubmenuOptions<Metadata = unknown> {
    * child shown, numbered by order. Method syntax keeps SubmenuEntry covariant in Metadata.
    */
   shown?(child: MenuEntry<Metadata>): boolean;
+  /**
+   * Plan 17: the text `child` shows in this level's list and as its own level's title (a stored
+   * profile name); re-read on every tick (a change emits one snapshot). Undefined or a non-string
+   * = the child's label. Paths and slugs do not change. Method syntax keeps SubmenuEntry
+   * covariant in Metadata.
+   */
+  label?(child: MenuEntry<Metadata>): string | undefined;
 }
 
 export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
@@ -197,6 +204,9 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
     if (options.shown !== undefined && typeof options.shown !== "function") {
       throw new Error("Submenu shown must be a function.");
     }
+    if (options.label !== undefined && typeof options.label !== "function") {
+      throw new Error("Submenu label must be a function.");
+    }
     const entryIndicatorMs = options.entryIndicatorMs ?? 0;
     if (!Number.isInteger(entryIndicatorMs) || entryIndicatorMs < 0) {
       throw new Error(
@@ -216,6 +226,21 @@ export class SubmenuEntry<Metadata = unknown> extends MenuEntry<Metadata> {
   detailOf(child: MenuEntry<Metadata>): string | undefined {
     const value = this.#options.detail?.(child);
     return typeof value === "string" ? value : undefined;
+  }
+
+  /**
+   * The text `child` shows in this level (SubmenuOptions.label, else its own label). Throws when
+   * the reader returns a blank string, as an empty entry label does.
+   */
+  labelOf(child: MenuEntry<Metadata>): string {
+    const value = this.#options.label?.(child);
+    if (typeof value !== "string") return child.label;
+    if (value.trim() === "") {
+      throw new Error(
+        `Submenu "${this.slug.value}" labels "${child.slug.value}" with a blank label.`,
+      );
+    }
+    return value;
   }
 
   /** The child selected on entry: the opening reader's child if shown, else the first shown. */
