@@ -796,7 +796,8 @@ function isStandbyOrigin<Metadata>(
 ): origin is StandbyOrigin<Metadata> {
   return (
     origin.kind === "gate" ||
-    isStandbyOverlay(origin) ||
+    origin.kind === "standby" ||
+    origin.kind === "power" ||
     origin.kind === "interruption" ||
     origin.kind === "wake"
   );

@@ -200,6 +200,20 @@ export interface PhoneConfig<Metadata = unknown> {
    */
   standbyIndicators?: () => StandbyIndicators | undefined;
   /**
+   * Plan 21: polled on every tick while the phone is on and not booting. An application it
+   * returns interrupts whatever is shown: the interrupted mode is held (no keys, no ticks), the
+   * path is unchanged, navigate() is recorded and applied after it. Its exit() restores the held
+   * mode; exit({ to: "standby" }) deactivates the held mode (reason `navigate`) and shows standby;
+   * levels/select/row throw. Default: none.
+   */
+  interruption?: () => PhoneApplication | undefined;
+  /**
+   * Plan 21: polled on every tick while the phone is off. An application it returns powers the
+   * phone on without the boot (empty stack, path `standby`); its exit() powers the phone off
+   * again; exit({ to: "standby" }) runs the normal power-on (boot and gates). Default: none.
+   */
+  wake?: () => PhoneApplication | undefined;
+  /**
    * Plan 17: a second standby line under the operator, re-read on every tick with the time since
    * standby was last entered (boot end, a return from the menus or an application, a notice
    * cleared); a change emits one snapshot. Emitted on the standby model (and the standby Menu
@@ -216,20 +230,6 @@ export interface PhoneConfig<Metadata = unknown> {
    * application or the boot, where the short press does nothing.
    */
   standbyPower?: PhoneApplication;
-  /**
-   * Plan 21: polled on every tick while the phone is on and not booting. An application it
-   * returns interrupts whatever is shown: the interrupted mode is held (no keys, no ticks), the
-   * path is unchanged, navigate() is recorded and applied after it. Its exit() restores the held
-   * mode; exit({ to: "standby" }) deactivates the held mode (reason `navigate`) and shows standby;
-   * levels/select/row throw. Default: none.
-   */
-  interruption?: () => PhoneApplication | undefined;
-  /**
-   * Plan 21: polled on every tick while the phone is off. An application it returns powers the
-   * phone on without the boot (empty stack, path `standby`); its exit() powers the phone off
-   * again; exit({ to: "standby" }) runs the normal power-on (boot and gates). Default: none.
-   */
-  wake?: () => PhoneApplication | undefined;
 }
 
 /** Plan 15: an application that may hold the boot at an offset into it. */

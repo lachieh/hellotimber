@@ -160,8 +160,9 @@ unsubscribe();
   ```
 
 - `standbyIndicators: () => ({ message?, voicemail?, silent?, alarm?, timer?, stopwatch? })`
-  (default none) is re-read on every tick like `clock()`; the standby model carries
-  `indicators` with the fields that are true, and a changed value emits one snapshot.
+  (default none) is re-read on
+  every tick like `clock()`; the standby model carries `indicators` with the fields that are
+  true, and a changed value emits one snapshot.
 - `standbyLine: (shownMs) => string | undefined` (default none) is a second standby line, re-read
   on every tick with the time since standby was last entered (the boot's end, a return from the
   menus or an application, a notice cleared). The standby model (and the standby Menu leaves for
