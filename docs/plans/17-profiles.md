@@ -524,22 +524,33 @@ todo shim, `goldens/**`.
 **Files:** `packages/phone-core/src/{types.ts,machine.ts,menu.ts,application.ts,index.ts}`, README;
 tests `standby-line.test.ts`, `submenu-label.test.ts`, `standby-power.test.ts` (new).
 
-- [ ] TDD `standbyLine`: absent → models unchanged; `shownMs` restarts at boot end, at every return to
+- [x] TDD `standbyLine`: absent → models unchanged; `shownMs` restarts at boot end, at every return to
       standby (C, C held, application `exit({ to: "standby" })`, a standby application's exit); a
       change emits one snapshot; an exception omits the line.
-- [ ] TDD `label`: list items and the child level's title follow the reader; re-read per tick; one
+- [x] TDD `label`: list items and the child level's title follow the reader; re-read per tick; one
       snapshot per change; empty string throws (as labels do); paths and slugs unchanged.
-- [ ] TDD `standbyPower`: opens on the key-down at standby as a standby application (add plan 18
+- [x] TDD `standbyPower`: opens on the key-down at standby as a standby application (add plan 18
       D11's activation if absent: empty stack, path `standby`, `exit()` → standby,
       `levels`/`select`/`row` throw); key events reach it, the power key's too; its long press
       powers off (deactivated once with `power-off`); not opened in nav, app, boot or while a notice
       shows; navigate() deactivates it.
-- [ ] TDD `ApplicationContext.powerOff()`: deactivates with `power-off`, the phone is off; stale
+- [x] TDD `ApplicationContext.powerOff()`: deactivates with `power-off`, the phone is off; stale
       activations are no-ops.
-- [ ] `StandbyIndicators.silent` (and the reader if plan 18 Task 4 has not landed).
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
+- [x] `StandbyIndicators.silent` (and the reader if plan 18 Task 4 has not landed).
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
       `vp check --fix`.
-- [ ] Commit: `feat(phone-core): standby line, submenu labels, power key application and powerOff`.
+- [x] Commit: `feat(phone-core): standby line, submenu labels, power key application and powerOff`.
+
+Deviation: **Task 4 (reuse):** plan 18 Task 4 had already added `PhoneConfig.standbyIndicators`
+and the standby application activation (`setNotice({ open })`); the power key's application is a
+second standby application with the notice's exit rules (`exit()` → standby, `levels`/`select`/
+`row` throw, C on its `App error` reader → standby, `navigate()` leaves it), and
+`StandbyIndicators.silent` extends plan 18's reader. `src/index.ts` needs no change. The standby
+line's `shownMs` restarts with every new standby state (boot end, C, C held, an application's or
+standby application's exit, a cleared notice, `setNotice(null)` included) and rides on Menu's
+`leaving` model. `standbyPower` opens over a notice and after an application leaves for standby
+on the power key's down (Task 0 B6). A blank label from the reader throws from
+`SubmenuEntry.labelOf`; the kernel shows the child's own label then, as when the reader throws.
 
 ### Task 5 - Active profile, aliases and names (TDD)
 

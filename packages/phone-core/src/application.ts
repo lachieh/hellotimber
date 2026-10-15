@@ -29,6 +29,12 @@ export interface ApplicationContext {
    * hosts may wrap contexts.
    */
   menuIndicator?(): MenuIndicator;
+  /**
+   * Plan 17: power the phone off (deactivation reason `power-off`), as the power key's long press
+   * does. Always provided by the kernel (optional so hosts may wrap contexts); a no-op once this
+   * activation has ended.
+   */
+  powerOff?(): void;
 }
 
 export interface PhoneApplicationSession {
