@@ -1,5 +1,8 @@
 // Drive the stock Composer as plan 27's captures did (`gen_v639_plan27.py`).
 import type { PhoneKey } from "@hellotimber/phone-core";
+import type { ComposerModel } from "../../src/display/widgets";
+import { composerLines } from "../../src/composer/layout";
+import { COMPOSER_LIMIT } from "../../src/composer/notation";
 import {
   composerHeld,
   composerKeyDown,
@@ -40,4 +43,34 @@ export function replayComposerKeys(start: ComposerState, keys: string): { state:
     }
   }
   return { state };
+}
+
+/**
+ * The editor's view after each key of `keys` from `start`: the engine's state and the layout's
+ * top, scrolled key by key as the editor does.
+ */
+export function replayComposerView(
+  start: ComposerState,
+  keys: string,
+): { state: ComposerState; top: number } {
+  let state = start;
+  let top = composerLines(state.tokens, state.cursor).top;
+  for (const token of keys.split(/\s+/).filter(Boolean)) {
+    state = replayComposerKeys(state, token).state;
+    top = composerLines(state.tokens, state.cursor, top).top;
+  }
+  return { state, top };
+}
+
+/** The editor's model for `state` with the cursor in its shown phase. */
+export function composerModel(state: ComposerState, top: number): ComposerModel {
+  const layout = composerLines(state.tokens, state.cursor, top);
+  const line = layout.cursorAt.line - layout.top;
+  return {
+    kind: "composer",
+    lines: layout.lines.slice(layout.top, layout.top + 3),
+    cursor: { line, x: layout.cursorAt.x },
+    counter: String(COMPOSER_LIMIT - state.tokens.length),
+    softkey: state.tokens.length === 0 ? "Back" : "Options",
+  };
 }

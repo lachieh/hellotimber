@@ -2,6 +2,7 @@ import type { Framebuffer } from "@hellotimber/phone-screen";
 import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
 import { paintCalculator, type CalculatorModel } from "./calculator";
+import { paintComposer, type ComposerModel } from "./composer";
 import { paintConfirm, type ConfirmModel } from "./confirm";
 import { paintEditor, type EditorModel } from "./editor";
 import { paintGameOver, type GameOverModel } from "./game-over";
@@ -18,6 +19,7 @@ import { paintSplash, type SplashModel } from "./splash";
 import { paintSymbols, type SymbolsModel } from "./symbols";
 import { paintTextPage, type TextPageModel } from "./text-pages";
 
+export type { ComposerModel } from "./composer";
 export type { ConfirmModel } from "./confirm";
 export type { EditorModel } from "./editor";
 export type { GameOverModel } from "./game-over";
@@ -68,7 +70,8 @@ export type WidgetModel =
   | EditorModel
   | SymbolsModel
   | PlaceholderModel
-  | CalculatorModel;
+  | CalculatorModel
+  | ComposerModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -132,6 +135,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "calculator":
       paintCalculator(fb, model);
+      return;
+    case "composer":
+      paintComposer(fb, model);
       return;
   }
 }

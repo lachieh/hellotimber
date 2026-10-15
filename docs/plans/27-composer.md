@@ -15,7 +15,7 @@ before Task 2; if it has not, stop and report.
 "Plan 16 supplementary captures") and plans 13-16 and 18 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan27/`. The planning probes in `$REF/captures/scratch-plan27/`
 (`NOTES.md` lists them) are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-6 done).
+**Status:** in progress (Tasks 0-7 done).
 
 ## Goal
 
@@ -834,15 +834,26 @@ the editor icon crop and the composer's named timelines (in this plan's capture 
 routes crops and timelines per plan, else one line each in `scripts/widget-sprites.ts`),
 `tests/composer-paint.test.ts` (new).
 
-- [ ] TDD a `composer` widget model (`tokens` laid out by `composerLines`, `cursor` shown or
+- [x] TDD a `composer` widget model (`tokens` laid out by `composerLines`, `cursor` shown or
       hidden, `counter`, `softkey`) painted against every editor still and every editor frame of
       the timelines: the icon sprite, the counter, the lines, the cursor bar, the soft key. A line
       that does not fit throws in tests (plan 13 D10).
-- [ ] The cursor blink, `Tone saved`, the Tempo `Done` and the leave timelines are generated from
+- [x] The cursor blink, `Tone saved`, the Tempo `Done` and the leave timelines are generated from
       their goldens; Options, Tempo, the prompts and the notes reuse plan 14 and 18 painters (one
       still each paints exactly from its model).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): paint the stock Composer`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): paint the stock Composer`.
+
+**Task 7 completion.** `src/display/widgets/composer.ts` paints a `composer` model (`lines` shown,
+`cursor` line and x or null, `counter`, `softkey`): the `composer/icon` sprite at (1, 0), the
+counter in the digits face ending at x 83, the lines in the small face from x 1 at tops 8/18/28,
+the cursor a 1 px bar of 10 rows from the row above its line, the soft key at 40;
+`src/display/widgets/index.ts` gains the import, the union member and the switch case. All 225
+editor stills of `entry`, `limit`, `cursor` and `layout` paint pixel for pixel from their case's keys
+through the engine and the layout (`tests/composer-paint.test.ts`). The `Tone saved` and `Done`
+timelines were generated in Task 2; the cursor blinks at plan 18's `TEXT_TIMINGS.blinkMs` (480 ms,
+Task 0's blink); Options, Tempo, the prompts and the notes are plan 14 and 18 widgets whose
+stills Task 8's flow tests paint through the phone.
 
 ### Task 8 - The Composer feature: editor, Options, Play, Tempo, Clear screen, Exit (TDD)
 
