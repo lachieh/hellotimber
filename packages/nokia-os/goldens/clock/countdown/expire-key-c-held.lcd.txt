@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/countdown/expire-key-c-held
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/countdown/expire-key-c-held
 source-sha256: be7ffbc820283f3a32e6ce5dc756a3c4d4de5b1e4d53e77fcec372f8a22823b7
 trigger-frame: 1

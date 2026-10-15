@@ -3,6 +3,7 @@ import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
 import { paintCalculator, type CalculatorModel } from "./calculator";
 import { paintAlert, type AlertModel } from "./alert";
+import { paintStopwatch, type StopwatchModel } from "./stopwatch";
 import { paintConfirm, type ConfirmModel } from "./confirm";
 import { paintEditor, type EditorModel } from "./editor";
 import { paintGameOver, type GameOverModel } from "./game-over";
@@ -36,6 +37,7 @@ export type { SplashModel } from "./splash";
 export type { SymbolsModel } from "./symbols";
 export type { TextPageModel } from "./text-pages";
 export type { AlertModel } from "./alert";
+export type { StopwatchModel } from "./stopwatch";
 
 /** A choice a later plan implements (D13), inside a flow: the placeholder frame of `label`. */
 export interface PlaceholderModel {
@@ -71,7 +73,8 @@ export type WidgetModel =
   | SymbolsModel
   | PlaceholderModel
   | CalculatorModel
-  | AlertModel;
+  | AlertModel
+  | StopwatchModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -138,6 +141,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "alert":
       paintAlert(fb, model);
+      return;
+    case "stopwatch":
+      paintStopwatch(fb, model);
       return;
   }
 }

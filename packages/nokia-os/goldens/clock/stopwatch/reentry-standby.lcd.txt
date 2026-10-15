@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/stopwatch/reentry-standby
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/stopwatch/reentry-standby
 source-sha256: 5120aa436a42934d56c10677ea1d222658616f57bf664ec13a76cb473e1e9967
 trigger-frame: 1

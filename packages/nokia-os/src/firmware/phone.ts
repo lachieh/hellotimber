@@ -11,6 +11,8 @@ import { stockBootGates } from "./boot";
 import { createStockSettings } from "./settings";
 import { autoUpdate } from "./features/clock";
 import { phoneAlarm } from "./features/clock/alarm";
+import { phoneCountdown } from "./features/clock/countdown";
+import { phoneStopwatch } from "./features/clock/stopwatch";
 import { registerClock } from "./features/clock/registry";
 import { StockClock } from "./features/clock/service";
 import type { StockSoundPort } from "../sound/port";
@@ -118,9 +120,12 @@ export function createStockPhoneWith(
     ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
     cues: internals.cues ?? sounder,
   };
-  // Plan 21: the clock's features over this phone's services (the alarm's minute listener).
+  // Plan 21: the clock's features over this phone's services (the alarm's minute listener, the
+  // countdown's expiry).
   const services = stockServices(ports, settings, games, security, sounder, eeprom);
   const alarm = phoneAlarm(services);
+  const countdown = phoneCountdown(services);
+  const stopwatch = phoneStopwatch(services);
   const phone = createPhone({
     menu: createStockMenu(ports, settings, games, security, sounder, eeprom),
     carrier: config.carrier,
@@ -152,6 +157,8 @@ export function createStockPhoneWith(
     if (snapshot.poweredOn === poweredOn) return;
     poweredOn = snapshot.poweredOn;
     alarm.power(poweredOn);
+    countdown.power(poweredOn);
+    stopwatch.power(poweredOn);
     if (poweredOn) {
       sounder.powerOn({ boot: !skip });
       // Plan 21 D13: Auto update of date and time at the end of power-on.

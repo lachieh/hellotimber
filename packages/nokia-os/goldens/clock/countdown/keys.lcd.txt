@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/countdown/keys
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/countdown/keys
 source-sha256: a3227773dfa9ccec266e3e4e4f6565b3829b8ec6197d8ba2d186953020eefe05
 trigger-frame: 1

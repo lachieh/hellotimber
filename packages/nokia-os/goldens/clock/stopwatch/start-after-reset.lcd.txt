@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/stopwatch/start-after-reset
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/stopwatch/start-after-reset
 source-sha256: 95f731d6643c6af2150ad9953e311f120b158af7b97b338f31d4044675df6999
 trigger-frame: 1

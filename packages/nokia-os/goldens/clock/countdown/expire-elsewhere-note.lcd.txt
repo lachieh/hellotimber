@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/countdown/expire-elsewhere-note
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/countdown/expire-elsewhere-note
 source-sha256: 9d96e379764e3c681a5e69d753979da43ea26000e25acd4782154ba589e8ec80
 trigger-frame: 1

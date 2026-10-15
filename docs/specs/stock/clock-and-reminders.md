@@ -102,12 +102,14 @@ still holding `h`/`m`/`d`/`y`, or on an impossible date, shows `Invalid time` / 
   Menu 1 1 1 1 and 1 1 1 2 reach them, not reproduced: 11-1 is an application in nokia-os), On →
   the prompt on the stored time, Off → `Alarm off`.
 - Countdown: `Set timer:` `hh:mm` → Start → `Timer running` (tick) → the page shows the time left
-  rounded up to a minute; `00:00` → `Timer stopped`. While running: `Change time` / `Stop timer`
-  (`11-5-1`, `11-5-2`). The timer icon sits left of the alarm icon. The countdown is RAM.
+  rounded up to a minute; `00:00` → `Timer stopped`. While running: `Change time` (the prompt on
+  the time left) / `Stop timer` (`11-5-1`, `11-5-2`). The timer icon sits left of the alarm icon
+  and stays until the expiry's alert is answered. The countdown is RAM.
 - Stopwatch: `0:00:00.00` `Start` → running `Stop` (redrawn every 100 ms of firmware time, the
   display keeping real time) → stopped `Options`: Start (resume), Reset, Exit (standby, the time
   kept). C and C held while running return to the Stopwatch page; it keeps running; standby
-  blinks its indicator every ≈480 ms. No split or lap timing.
+  blinks its indicator every ≈481 ms. Reopened, the screen shows its last time for ≈85 ms before
+  the first redraw. Navi and C act as they go down. No split or lap timing.
 
 ## Reminders
 

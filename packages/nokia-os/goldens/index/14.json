@@ -2825,7 +2825,7 @@
   {
     "id": "tree/11-clock/11-4.leaf",
     "file": "tree/11-clock/11-4.leaf.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2,

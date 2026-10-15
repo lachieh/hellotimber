@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/no-time/countdown
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/no-time/countdown
 source-sha256: 83513f46506b962f0ed5407ef33303690158c866c9a760dedeb56cd567f5bae8
 trigger-frame: 1

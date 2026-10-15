@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/countdown/change-keys
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/countdown/change-keys
 source-sha256: 592e6c1aefef21f95373703b0e953d4f73567e98f30a1432193b3a166cfb751a
 trigger-frame: before-recording

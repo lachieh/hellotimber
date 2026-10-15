@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/stopwatch/exit
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/stopwatch/exit
 source-sha256: 243fa1ad5c629301fb8641b0cfae9f02b49fd30d3e4af515d053cced804c3f02
 trigger-frame: 1

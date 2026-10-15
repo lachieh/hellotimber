@@ -32,6 +32,14 @@ export const ASSERTED: readonly RegExp[] = [
   /^clock\/alarm\/(prompt|set|on-off-open|on|change|on-c|off|on-off-c|off-prompt|on-off|screens)$/,
   /^clock\/alarm\/shortcut-/,
   /^sound\/clock\/alarm-/,
+  // Task 9: the countdown timer
+  /^clock\/countdown\//,
+  /^clock\/no-time\/countdown$/,
+  /^sound\/clock\/countdown-/,
+  // Task 10: the stopwatch
+  /^clock\/stopwatch\//,
+  /^clock\/no-time\/stopwatch$/,
+  /^clock\/countdown\/expire-elsewhere-stopwatch-standby$/,
   /^clock\/alarm\/ring-(factory|virgin)-(standby|key-.*|snooze-stop|screens)$/,
   /^clock\/alarm\/ring-elsewhere-(menu-page|(menu-page|menu-list|editor|snake)-standby)$/,
   /^clock\/alarm\/ring-(factory|virgin)-(auto-)?resnooze$/,
@@ -356,11 +364,6 @@ export const CLOCK_RECORDINGS: readonly ClockRecording[] = [
     ],
   },
   {
-    id: "clock/countdown/expire-elsewhere-editor",
-    dir: "countdown/expire-elsewhere-editor",
-    keys: [],
-  },
-  {
     id: "clock/countdown/expire-elsewhere-editor-standby",
     dir: "countdown/expire-elsewhere-editor-standby",
     keys: [["c", 0.0, 1500.2]],
@@ -384,11 +387,6 @@ export const CLOCK_RECORDINGS: readonly ClockRecording[] = [
     id: "clock/countdown/expire-elsewhere-note-standby",
     dir: "countdown/expire-elsewhere-note-standby",
     keys: [["c", 0.0, 1500.2]],
-  },
-  {
-    id: "clock/countdown/expire-elsewhere-snake",
-    dir: "countdown/expire-elsewhere-snake",
-    keys: [["menu", 0.0, 60.0]],
   },
   {
     id: "clock/countdown/expire-elsewhere-snake-standby",
@@ -1362,8 +1360,8 @@ export const clockAndReminders: PlanCaptureSet = {
       "boots through the clock wizard (`Time not set`, `Time:`/`Date:`): nokia-os has no clock wizard; the host clock is the RTC (D1)",
     "plan21/alarm/standby-minute, countdown/standby-run, reminders/alert-before, alarm/ring-elsewhere-menu-list, reminders/alert-elsewhere-menu-page, alert-elsewhere-menu-list, alert-elsewhere-option-list, countdown/expire-elsewhere-menu-page, expire-elsewhere-menu-list, reminders/view-1-keys":
       "a single unchanged frame (no trigger): the screen does not change at the event (alerts wait for standby)",
-    "plan21/alarm/ring-elsewhere-editor, ring-elsewhere-snake":
-      "20 s of plan 18's editor and plan 23's Snake II under the alarm's minute: the ring waits for standby (their -standby recordings)",
+    "plan21/alarm/ring-elsewhere-editor, ring-elsewhere-snake, countdown/expire-elsewhere-editor, expire-elsewhere-snake":
+      "20 s of plan 18's editor and plan 23's Snake II under the alarm's minute or the expiry: the alert waits for standby (their -standby recordings)",
     "plan21/persist/boot": "a boot through the clock wizard (no clock wizard in nokia-os, D1)",
     "plan21/countdown/expire-elsewhere-stopwatch":
       "the running stopwatch's digits (D5's tolerance) for 20 s; the countdown waits for standby as on every other screen",

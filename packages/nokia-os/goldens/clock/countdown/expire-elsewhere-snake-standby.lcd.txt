@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/countdown/expire-elsewhere-snake-standby
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/countdown/expire-elsewhere-snake-standby
 source-sha256: 009a0c87b4398c83c13a7aad1e6b088674b0cacb4108815b744a13af8ae84a1d
 trigger-frame: 1

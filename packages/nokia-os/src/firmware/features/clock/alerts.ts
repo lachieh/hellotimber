@@ -4,6 +4,7 @@
 import type { PhoneApplication } from "@hellotimber/phone-core";
 import type { AlertModel } from "../../../display/widgets";
 import { StockFlowApplication, type Flow, type Widget } from "../../../widgets/flow";
+import type { StockClock } from "./service";
 
 /** One alert: what it shows (a flow of widgets; its end returns to standby). */
 export interface ClockAlert {
@@ -27,6 +28,12 @@ export const ALERT_EXIT_MS = 90;
 
 /** What an alert's standby frames show: standby's clock and indicators. */
 export type AlertStandby = () => Pick<AlertModel, "clock" | "indicators">;
+
+/** Standby's clock and indicators, as an alert draws them. */
+export function standbyOf(clock: StockClock): Pick<AlertModel, "clock" | "indicators"> {
+  const shown = clock.standbyClock();
+  return { ...(shown === undefined ? {} : { clock: shown }), indicators: clock.indicators() };
+}
 
 /** Standby without its operator line for `ms`, then `then` (back to standby, or the alert). */
 export class StandbyFrame implements Widget {

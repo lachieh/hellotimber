@@ -170,11 +170,19 @@ export class StockClock {
     this.#listeners.push(listener);
   }
 
+  readonly #tickListeners: (() => void)[] = [];
+
+  /** Called on every kernel tick, before the minute edge (the countdown's expiry, D5). */
+  onTick(listener: () => void): void {
+    this.#tickListeners.push(listener);
+  }
+
   /**
    * Observes the phone time on a kernel tick: one edge when its minute moved forwards since the
    * last tick (however far), none when it moved back or there is no time (D2).
    */
   tick(): void {
+    for (const listener of this.#tickListeners) listener();
     const minute = this.#index();
     const before = this.#minute;
     this.#minute = minute;

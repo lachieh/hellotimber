@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/clock/countdown-factory
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/countdown/expire-standby
 source-sha256: fc08a5d5899900359c8213575e30f5ffff774d561825974696cb1e1ba28e5149
 state: factory

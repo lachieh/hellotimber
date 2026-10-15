@@ -117,7 +117,6 @@ exports[`SETTINGS_RECORD (D3) > pins the keys a record can hold (a renamed slug 
     "call-register/show-call-duration/last-call-duration",
     "call-register/show-call-duration/received-calls-duration",
     "clock/auto-update-of-date-and-time",
-    "clock/countdown-timer",
     "games/pairs-ii/puzzle/score-ids/last-score-id",
     "games/pairs-ii/puzzle/score-ids/top-score-id",
     "games/pairs-ii/puzzle/top-score",

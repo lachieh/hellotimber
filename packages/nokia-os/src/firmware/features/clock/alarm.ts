@@ -8,6 +8,7 @@ import { CLOCK_ALERTS } from "../../../resources";
 import type { SoundPlay } from "../../../sound/sequencer";
 import { confirmQuery } from "../../../widgets/confirm";
 import { StockFlowApplication, type Flow, type Widget } from "../../../widgets/flow";
+import { freshKeys } from "../../../widgets/fresh-keys";
 import { note } from "../../../widgets/note";
 import { timelineByName } from "../../timelines";
 import type { StockServices } from "../feature";
@@ -245,26 +246,6 @@ export function bellsAt(elapsed: number, firstMs: number, secondMs?: number): st
   let step = elapsed < firstMs ? 0 : 1 + Math.floor((elapsed - firstMs) / stepMs);
   if (secondMs !== undefined && step >= 1) step = elapsed < secondMs ? 1 : Math.max(2, step);
   return sprites[step % sprites.length]!;
-}
-
-/**
- * `widget`, given only the keys that went down while it was shown: the ring answers a key as it
- * goes down, so its release must not reach the screen the ring left for.
- */
-function freshKeys(widget: Widget): Widget {
-  const downs = new Set<PhoneKey>();
-  return {
-    render: (flow) => widget.render(flow),
-    onKeyDown(key, flow) {
-      downs.add(key);
-      widget.onKeyDown?.(key, flow);
-    },
-    onKey(key, flow) {
-      if (downs.delete(key)) widget.onKey?.(key, flow);
-    },
-    tick: (dtMs, flow) => widget.tick?.(dtMs, flow),
-    close: () => widget.close?.(),
-  };
 }
 
 /** The ringing alarm: `Alarm!` and the time blinking, the bell row, `Snooze`. */

@@ -386,7 +386,7 @@
   {
     "id": "clock/countdown/0",
     "file": "clock/countdown/0.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 10
@@ -394,7 +394,7 @@
   {
     "id": "clock/countdown/0000",
     "file": "clock/countdown/0000.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 14,
     "frames": 15
@@ -402,7 +402,7 @@
   {
     "id": "clock/countdown/006",
     "file": "clock/countdown/006.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 13
@@ -410,7 +410,7 @@
   {
     "id": "clock/countdown/2359",
     "file": "clock/countdown/2359.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 15,
     "frames": 15
@@ -418,7 +418,7 @@
   {
     "id": "clock/countdown/2400",
     "file": "clock/countdown/2400.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 10,
     "frames": 15
@@ -426,7 +426,7 @@
   {
     "id": "clock/countdown/9959",
     "file": "clock/countdown/9959.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 12
@@ -434,7 +434,7 @@
   {
     "id": "clock/countdown/change",
     "file": "clock/countdown/change.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -442,23 +442,15 @@
   {
     "id": "clock/countdown/change-keys",
     "file": "clock/countdown/change-keys.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 12,
     "frames": 13
   },
   {
-    "id": "clock/countdown/expire-elsewhere-editor",
-    "file": "clock/countdown/expire-elsewhere-editor.lcd.txt",
-    "status": "pending:21",
-    "kind": "timeline",
-    "images": 2,
-    "frames": 42
-  },
-  {
     "id": "clock/countdown/expire-elsewhere-editor-standby",
     "file": "clock/countdown/expire-elsewhere-editor-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 13,
     "frames": 51
@@ -466,7 +458,7 @@
   {
     "id": "clock/countdown/expire-elsewhere-menu-list-standby",
     "file": "clock/countdown/expire-elsewhere-menu-list-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 12,
     "frames": 50
@@ -474,7 +466,7 @@
   {
     "id": "clock/countdown/expire-elsewhere-menu-page-standby",
     "file": "clock/countdown/expire-elsewhere-menu-page-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 12,
     "frames": 50
@@ -482,7 +474,7 @@
   {
     "id": "clock/countdown/expire-elsewhere-note",
     "file": "clock/countdown/expire-elsewhere-note.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -490,23 +482,15 @@
   {
     "id": "clock/countdown/expire-elsewhere-note-standby",
     "file": "clock/countdown/expire-elsewhere-note-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 12,
     "frames": 50
   },
   {
-    "id": "clock/countdown/expire-elsewhere-snake",
-    "file": "clock/countdown/expire-elsewhere-snake.lcd.txt",
-    "status": "pending:21",
-    "kind": "timeline",
-    "images": 5,
-    "frames": 5
-  },
-  {
     "id": "clock/countdown/expire-elsewhere-snake-standby",
     "file": "clock/countdown/expire-elsewhere-snake-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 12,
     "frames": 50
@@ -514,7 +498,7 @@
   {
     "id": "clock/countdown/expire-elsewhere-stopwatch-standby",
     "file": "clock/countdown/expire-elsewhere-stopwatch-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -522,7 +506,7 @@
   {
     "id": "clock/countdown/expire-key-5",
     "file": "clock/countdown/expire-key-5.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -530,7 +514,7 @@
   {
     "id": "clock/countdown/expire-key-c",
     "file": "clock/countdown/expire-key-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -538,7 +522,7 @@
   {
     "id": "clock/countdown/expire-key-c-held",
     "file": "clock/countdown/expire-key-c-held.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -546,7 +530,7 @@
   {
     "id": "clock/countdown/expire-key-ok",
     "file": "clock/countdown/expire-key-ok.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -554,7 +538,7 @@
   {
     "id": "clock/countdown/expire-key-up",
     "file": "clock/countdown/expire-key-up.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -562,7 +546,7 @@
   {
     "id": "clock/countdown/expire-standby",
     "file": "clock/countdown/expire-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 12,
     "frames": 433
@@ -570,7 +554,7 @@
   {
     "id": "clock/countdown/expire-virgin",
     "file": "clock/countdown/expire-virgin.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 12,
     "frames": 176
@@ -578,7 +562,7 @@
   {
     "id": "clock/countdown/keys",
     "file": "clock/countdown/keys.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 15,
     "frames": 15
@@ -586,7 +570,7 @@
   {
     "id": "clock/countdown/list",
     "file": "clock/countdown/list.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -594,7 +578,7 @@
   {
     "id": "clock/countdown/list-c",
     "file": "clock/countdown/list-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -602,7 +586,7 @@
   {
     "id": "clock/countdown/open-running",
     "file": "clock/countdown/open-running.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -610,7 +594,7 @@
   {
     "id": "clock/countdown/prompt",
     "file": "clock/countdown/prompt.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -618,7 +602,7 @@
   {
     "id": "clock/countdown/prompt-c",
     "file": "clock/countdown/prompt-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -626,7 +610,7 @@
   {
     "id": "clock/countdown/screens",
     "file": "clock/countdown/screens.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -634,7 +618,7 @@
   {
     "id": "clock/countdown/stop",
     "file": "clock/countdown/stop.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -770,7 +754,7 @@
   {
     "id": "clock/no-time/countdown",
     "file": "clock/no-time/countdown.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 11
@@ -810,7 +794,7 @@
   {
     "id": "clock/no-time/stopwatch",
     "file": "clock/no-time/stopwatch.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1018,7 +1002,7 @@
   {
     "id": "clock/stopwatch/c-held-again",
     "file": "clock/stopwatch/c-held-again.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 14
@@ -1026,7 +1010,7 @@
   {
     "id": "clock/stopwatch/c-held-running",
     "file": "clock/stopwatch/c-held-running.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1034,7 +1018,7 @@
   {
     "id": "clock/stopwatch/c-running",
     "file": "clock/stopwatch/c-running.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1042,7 +1026,7 @@
   {
     "id": "clock/stopwatch/c-stopped",
     "file": "clock/stopwatch/c-stopped.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1050,7 +1034,7 @@
   {
     "id": "clock/stopwatch/exit",
     "file": "clock/stopwatch/exit.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1058,7 +1042,7 @@
   {
     "id": "clock/stopwatch/open",
     "file": "clock/stopwatch/open.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1066,7 +1050,7 @@
   {
     "id": "clock/stopwatch/options",
     "file": "clock/stopwatch/options.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1074,7 +1058,7 @@
   {
     "id": "clock/stopwatch/options-c",
     "file": "clock/stopwatch/options-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1082,7 +1066,7 @@
   {
     "id": "clock/stopwatch/options-c-c",
     "file": "clock/stopwatch/options-c-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1090,7 +1074,7 @@
   {
     "id": "clock/stopwatch/options-open",
     "file": "clock/stopwatch/options-open.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1106,7 +1090,7 @@
   {
     "id": "clock/stopwatch/reentry",
     "file": "clock/stopwatch/reentry.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 40,
     "frames": 40
@@ -1114,7 +1098,7 @@
   {
     "id": "clock/stopwatch/reentry-after-exit",
     "file": "clock/stopwatch/reentry-after-exit.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1122,7 +1106,7 @@
   {
     "id": "clock/stopwatch/reentry-standby",
     "file": "clock/stopwatch/reentry-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 40,
     "frames": 40
@@ -1130,7 +1114,7 @@
   {
     "id": "clock/stopwatch/reentry-stopped",
     "file": "clock/stopwatch/reentry-stopped.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1138,7 +1122,7 @@
   {
     "id": "clock/stopwatch/reset",
     "file": "clock/stopwatch/reset.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1146,7 +1130,7 @@
   {
     "id": "clock/stopwatch/resume",
     "file": "clock/stopwatch/resume.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 62,
     "frames": 62
@@ -1154,7 +1138,7 @@
   {
     "id": "clock/stopwatch/run",
     "file": "clock/stopwatch/run.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 161,
     "frames": 161
@@ -1162,7 +1146,7 @@
   {
     "id": "clock/stopwatch/standby",
     "file": "clock/stopwatch/standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 61
@@ -1170,7 +1154,7 @@
   {
     "id": "clock/stopwatch/start-after-reset",
     "file": "clock/stopwatch/start-after-reset.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 40,
     "frames": 40
@@ -1178,7 +1162,7 @@
   {
     "id": "clock/stopwatch/stop",
     "file": "clock/stopwatch/stop.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1186,7 +1170,7 @@
   {
     "id": "clock/stopwatch/stop-again",
     "file": "clock/stopwatch/stop-again.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1976,14 +1960,14 @@
   {
     "id": "sound/clock/countdown-factory",
     "file": "sound/clock/countdown-factory.sound.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "sound",
     "events": 278
   },
   {
     "id": "sound/clock/countdown-virgin",
     "file": "sound/clock/countdown-virgin.sound.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "sound",
     "events": 252
   },

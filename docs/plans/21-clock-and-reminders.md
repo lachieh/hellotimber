@@ -1004,13 +1004,25 @@ sequencer's volume changes are whole milliseconds (a fractional change time loop
 **Files:** `src/firmware/features/clock.ts`, `src/firmware/features/clock/countdown.ts` (new),
 `tests/clock-countdown.test.ts` (new).
 
-- [ ] 11-5: `timeEntry` → `Timer running` → the page (counting as Task 0 shows); while running, the
+- [x] 11-5: `timeEntry` → `Timer running` → the page (counting as Task 0 shows); while running, the
       `Change time` / `Stop timer` list (`Timer stopped`); the standby icon.
-- [ ] Expiry at kernel time (D5) → the `Countdown time up` alert (bells loop, `OK`) over whatever is
+- [x] Expiry at kernel time (D5) → the `Countdown time up` alert (bells loop, `OK`) over whatever is
       shown (D3, per Task 0's where-it-returns table); its sound (D11); keys; the automatic stop.
-- [ ] TDD through keys against `clock/countdown/*` (expiry goldens aligned on the expiry) and
+- [x] TDD through keys against `clock/countdown/*` (expiry goldens aligned on the expiry) and
       `sound/clock/countdown-*`.
-- [ ] Commit: `feat(nokia-os): the countdown timer and its alert`.
+- [x] Commit: `feat(nokia-os): the countdown timer and its alert`.
+
+Deviation: Change time's prompt shows the time left (rounded up), not the set time, and its
+cursor (as without a time) first shows a blink step later (plan21 countdown/change, no-time/
+countdown). The timer icon stays until the alert is answered. The alert's bells step first at
+214 ms; a key ends it as it goes down; an expiry that waited for standby shows after the same
+91 ms lead-in as the ring, with its bells. `expire-key-{c,5,up}` are known gaps (standby after the
+alert redrawn in two parts 15 ms apart, `Orange` then `F`; OK and C held draw it whole), as are the
+four `expire-elsewhere-*-standby` (the kernel's C held, as the alarm's; `tests/clock-countdown.
+test.ts` checks the alert from the standby frame). `expire-elsewhere-editor` and `-snake` are not
+imported (plan 18's editor and plan 23's game for 20 s); `expire-elsewhere-stopwatch-standby` is
+Task 10's. The kernel's C held leaves an application for its menu level, so the scenarios' `to
+standby` repeats it until standby (setup only).
 
 ### Task 10 - Stopwatch (TDD against goldens)
 
@@ -1020,16 +1032,29 @@ sequencer's volume changes are whole milliseconds (a fractional change time loop
 `src/widgets/stopwatch.ts` (new), `src/display/widgets/stopwatch.ts` (new; one line in the union),
 `tests/clock-stopwatch.test.ts` (new).
 
-- [ ] The screen (`0:00:00.00`, large, centred), Start/Stop/Options, the Options rows (Start, Reset,
+- [x] The screen (`0:00:00.00`, large, centred), Start/Stop/Options, the Options rows (Start, Reset,
       Exit), C and C held per Task 0, running while the phone is elsewhere, re-entry, the standby
       indicator, power-off.
-- [ ] The display rule and cadence (D5, `STOPWATCH_CADENCE`): redraws at the captured steps,
+- [x] The display rule and cadence (D5, `STOPWATCH_CADENCE`): redraws at the captured steps,
       digits from kernel elapsed time; the 10-hour limit per Task 0 (user guide).
-- [ ] Delete plan 21's `PLACEHOLDER_OWNERS` group; rerun `import-captures` twice;
+- [x] Delete plan 21's `PLACEHOLDER_OWNERS` group; rerun `import-captures` twice;
       `tree/11-clock/11-4.leaf` (plan 14's generic `leaf` scenario) and `sound/note/11-4` (plan 16's
       scenario) pass as asserted.
-- [ ] TDD through keys against `clock/stopwatch/*`.
-- [ ] Commit: `feat(nokia-os): the stopwatch`.
+- [x] TDD through keys against `clock/stopwatch/*`.
+- [x] Commit: `feat(nokia-os): the stopwatch`.
+
+Deviation: Tasks 9 and 10 landed in one commit (`feat(nokia-os): the countdown timer and its
+alert, and the stopwatch`): they share the clock feature, the capture set's ASSERTED list, the
+acceptance file and the re-imported index. The stopwatch redraws every 100 ms of kernel time
+(`STOPWATCH_REDRAW_MS`, no fitted cadence: D5's deviation), floored to the step; Stop shows the
+exact time; a reopened screen shows the time it last showed for 85 ms (`STOPWATCH_STALE_MS`:
+reentry 89, reentry-standby 78, resume 87 ms). Navi and C act as they go down; Options takes only
+keys that went down on it. Exit draws standby without its operator line for 90 ms first. The
+standby indicator blinks every 480.95 ms from the start (as the ring's text). The running
+recordings are compared at each golden frame's middle, the digits within 250 ms
+(`STOPWATCH_TOLERANCE_MS`: v6.39 adds 0.1 s every ≈93 ms and resynchronises); the hours wrap at
+10 (UNVERIFIED). `c-held-again` is a known gap (the kernel's C held). The 10-hour limit is not
+reproduced.
 
 ### Task 11 - Reminders (TDD against goldens; needs plan 18 Task 7)
 

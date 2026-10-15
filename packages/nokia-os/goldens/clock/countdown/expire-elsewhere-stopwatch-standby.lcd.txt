@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/countdown/expire-elsewhere-stopwatch-standby
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/countdown/expire-elsewhere-stopwatch-standby
 source-sha256: 6b3d3e09b0667a3b7db99499a958f982de8e18c0f1b50e94bb5bf5f499027da6
 trigger-frame: 1

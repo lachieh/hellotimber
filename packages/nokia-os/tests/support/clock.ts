@@ -6,7 +6,10 @@ import {
   CLOCK_RECORDINGS,
   type ClockRecording,
 } from "../../scripts/capture-sets/21-clock-and-reminders.ts";
+import { Framebuffer, textWidth } from "@hellotimber/phone-screen";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
+import { STOCK_FONTS } from "../../src/resources";
+import { LCD_HEIGHT, LCD_WIDTH } from "../../scripts/golden-format.ts";
 import {
   expectLcd,
   expectTimeline,
@@ -105,9 +108,15 @@ export function untilShows(rig: Rig, image: GoldenImageRef, maxMs = 10_000): voi
   throw new Error(`${image.id} ${image.image.name} was never shown within ${maxMs} ms.`);
 }
 
-/** Any screen → standby (C held, as the generator's `to_standby`). */
+/**
+ * Any screen → standby (C held, as the generator's `to_standby`; again while the kernel's C held
+ * only left an application for its menu level).
+ */
 export function toStandby(rig: Rig): void {
-  play(rig, "c@1500 +1500");
+  for (let i = 0; i < 3; i++) {
+    play(rig, "c@1500 +1500");
+    if (rig.phone.screen.kind === "standby") return;
+  }
 }
 
 const KEY_NAMES: Readonly<Record<string, PhoneKey>> = { menu: "navi" };
@@ -141,6 +150,11 @@ export function clockScenario(
      * the ring, whose bell and text timers redraw together or 10-20 ms apart by chance.
      */
     readonly sampled?: boolean;
+    /**
+     * Sampled, and a running stopwatch's digits may differ by STOPWATCH_TOLERANCE_MS (D5's
+     * deviation: v6.39 adds 0.1 s every ≈93 ms and resynchronises with its RTC).
+     */
+    readonly stopwatch?: boolean;
     readonly edge?: {
       readonly host: HostClock;
       readonly clock: string;
@@ -162,7 +176,10 @@ export function clockScenario(
   const keyed = !before && options.edge === undefined && keys.length > 0;
   const later = keyed ? keys.slice(1) : keys;
   if (before) alignOnNextChange(rig, rows[0]!.durationMs, goldenImage(id, rows[0]!.image));
-  else expectLcd(rig.paint(), goldenImage(id, rows[0]!.image), `${id}: before the trigger`);
+  else if (options.stopwatch) {
+    const failure = stopwatchMismatch(rig.paint().pixels, goldenImage(id, rows[0]!.image));
+    if (failure !== undefined) throw new Error(`${id}: before the trigger: ${failure}`);
+  } else expectLcd(rig.paint(), goldenImage(id, rows[0]!.image), `${id}: before the trigger`);
   const schedule = later.flatMap(({ key, down, hold }) => {
     const row = rows.find((r) => r.startMs > down && r.startMs <= down + 150);
     const at = Math.max(1, Math.round((row?.startMs ?? down + LATENCY_MS) - origin));
@@ -196,8 +213,8 @@ export function clockScenario(
     ? rig.record(span, undefined, schedule)
     : rig.record(span, trigger, schedule);
   const context = `${id}: ${keys.map((k) => `${k.key}@${k.down}`).join(" ") || "no keys"}`;
-  if (options.sampled) {
-    sampleTimeline(recorded, id, origin, context);
+  if (options.sampled || options.stopwatch) {
+    sampleTimeline(recorded, id, origin, context, options.stopwatch === true);
     return;
   }
   expectTimeline(recorded, golden, context, {
@@ -216,6 +233,7 @@ function sampleTimeline(
   id: string,
   origin: number,
   context: string,
+  stopwatch = false,
 ): void {
   const rows = loadGolden(id).timeline!;
   const failures: string[] = [];
@@ -225,7 +243,9 @@ function sampleTimeline(
     const at = row.startMs + row.durationMs / 2 - origin;
     const shown = frameAt(recorded, recorded.triggerMs + at);
     checked++;
-    const mismatch = lcdMismatch(shown.pixels, goldenImage(id, row.image), `${context} row ${i}`);
+    const mismatch = stopwatch
+      ? stopwatchMismatch(shown.pixels, goldenImage(id, row.image))
+      : lcdMismatch(shown.pixels, goldenImage(id, row.image), `${context} row ${i}`);
     if (mismatch !== undefined) failures.push(`row ${i} (${row.image} at ${at.toFixed(0)} ms)`);
     if (failures.length === 1 && mismatch !== undefined) failures.push(mismatch);
   }
@@ -279,4 +299,70 @@ export function clockSound(
       ...(options.drift ? { drift: true } : {}),
     },
   );
+}
+
+/** How far a running stopwatch's digits may be from the golden's (D5's deviation). */
+export const STOPWATCH_TOLERANCE_MS = 250;
+
+/** The stopwatch's digit row (the large face, top 15). */
+const DIGITS = { y0: 15, y1: 25 } as const;
+
+/** The time a stopwatch screen shows (`h:mm:ss.cc`), read digit by digit; undefined if none. */
+export function readStopwatch(pixels: Uint8Array): number | undefined {
+  const font = STOCK_FONTS.large;
+  const zero = "0:00:00.00";
+  const left = Math.floor((LCD_WIDTH - textWidth(font, zero)) / 2);
+  const digits: number[] = [];
+  for (let p = 0; p < zero.length; p++) {
+    if (zero[p] !== "0") continue;
+    const x0 = left + textWidth(font, zero.slice(0, p));
+    const x1 = left + textWidth(font, zero.slice(0, p + 1));
+    let found: number | undefined;
+    for (let d = 0; d <= 9 && found === undefined; d++) {
+      const fb = new Framebuffer();
+      fb.drawTextCentered(font, zero.slice(0, p) + d + zero.slice(p + 1), DIGITS.y0);
+      let same = true;
+      for (let y = DIGITS.y0; y <= DIGITS.y1 && same; y++) {
+        for (let x = x0; x < x1 && same; x++) {
+          same = fb.pixels[y * LCD_WIDTH + x] === pixels[y * LCD_WIDTH + x];
+        }
+      }
+      if (same) found = d;
+    }
+    if (found === undefined) return undefined;
+    digits.push(found);
+  }
+  const [h, m1, m2, s1, s2, c1, c2] = digits as [
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+    number,
+  ];
+  return ((h * 60 + m1 * 10 + m2) * 60 + s1 * 10 + s2) * 1000 + (c1 * 10 + c2) * 10;
+}
+
+/**
+ * Why `actual` is not `golden` beyond a stopwatch's digits within STOPWATCH_TOLERANCE_MS, or
+ * undefined: every pixel outside the digit row the same, both digit rows readable and close.
+ */
+export function stopwatchMismatch(actual: Uint8Array, golden: GoldenImageRef): string | undefined {
+  const exact = lcdMismatch(actual, golden, golden.id);
+  if (exact === undefined) return undefined;
+  const want = golden.image.pixels;
+  for (let y = 0; y < LCD_HEIGHT; y++) {
+    if (y >= DIGITS.y0 && y <= DIGITS.y1) continue;
+    for (let x = 0; x < LCD_WIDTH; x++) {
+      if (actual[y * LCD_WIDTH + x] !== want[y * LCD_WIDTH + x]) return exact;
+    }
+  }
+  const shown = readStopwatch(actual);
+  const expected = readStopwatch(want);
+  if (shown === undefined || expected === undefined) return exact;
+  const delta = shown - expected;
+  return Math.abs(delta) <= STOPWATCH_TOLERANCE_MS
+    ? undefined
+    : `the stopwatch shows ${shown} ms, the golden ${expected} ms (Δ ${delta})`;
 }

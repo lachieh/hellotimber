@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/clock/countdown-virgin
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/countdown/expire-virgin
 source-sha256: 66d4f7c07c62367e59721ff231f6490789a4edb1be83674d8eb561ca0918f9d2
 state: virgin

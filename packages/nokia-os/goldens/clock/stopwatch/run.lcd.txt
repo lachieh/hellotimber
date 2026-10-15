@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/stopwatch/run
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/stopwatch/run 000-160
 source-sha256: 0a205c99697441799523d0dbacf340438c608bfaf9033e61001bb3dddc2623a2
 trigger-frame: 1

@@ -1,6 +1,6 @@
 // Clock (menu 11; plan 21): phone time over the host clock (D1) on the Clock pages and standby,
 // Clock settings (Hide clock / Show clock, Set the time, Time format), Date setting, and the
-// clock's records. The alarm, the stopwatch and the countdown add their screens in their tasks.
+// clock's records; the alarm clock (11-1), the stopwatch (11-4) and the countdown timer (11-5).
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { PromptLayout } from "../../widgets/prompt";
 import type { Flow, Widget } from "../../widgets/flow";
@@ -17,6 +17,10 @@ import { TIME_FORMAT } from "./clock/service";
 import { formatClock, formatDate, parseHostTime } from "./clock/time";
 import type { ScreenPlace, StockFeature, StockServices } from "./feature";
 import { phoneAlarm } from "./clock/alarm";
+import { countdownOf, phoneCountdown } from "./clock/countdown";
+import { phoneStopwatch } from "./clock/stopwatch";
+import { standbyOf } from "./clock/alerts";
+import { stopwatchWidget } from "../../widgets/stopwatch";
 import { OptionListWidget } from "../../widgets/option-list";
 
 export { TIME_FORMAT };
@@ -203,13 +207,71 @@ function alarmClock(services: StockServices, place: ScreenPlace): () => Widget {
     });
 }
 
+/**
+ * `Set timer:` (`hh:mm`, or the time left when changing it), then `Timer running` (D5). Changing
+ * it, or without a time, the cursor first shows a blink step later (plan21 countdown/change,
+ * no-time/countdown).
+ */
+function timerEntry(services: StockServices, levels: number, initial?: string): Widget {
+  const countdown = phoneCountdown(services);
+  const blink = new Playback(entryBlink("11-5"));
+  if (initial !== undefined || phoneClock(services).now() === undefined) {
+    blink.advance(blink.timeline.timeline.steps[0]?.durationMs ?? 0);
+  }
+  return clockEntry(services, {
+    blink,
+    label: "Set timer:",
+    softkey: "Start",
+    mask: "hh:mm",
+    ...(initial === undefined ? {} : { initial }),
+    node: "11-5",
+    done: (value, flow) => {
+      countdown.start(value);
+      // 00:00 stops it (plan21 countdown/0000).
+      flow.replace(
+        countdown.running()
+          ? clockNote(services, ["Timer", "running"], "timer-running", { levels })
+          : clockNote(services, ["Timer", "stopped"], "timer-stopped", { levels }),
+      );
+    },
+  });
+}
+
+/**
+ * Countdown timer (11-5): the prompt while it is idle; while it runs, `Change time` / `Stop
+ * timer` (`11-5-1`, `11-5-2`; plan21 countdown/open-running, change, stop).
+ */
+function countdownTimer(services: StockServices, place: ScreenPlace): () => Widget {
+  return () => {
+    const countdown = phoneCountdown(services);
+    if (!countdown.running()) return timerEntry(services, 1);
+    return new OptionListWidget({
+      labels: ["Change time", "Stop timer"],
+      opening: 0,
+      softkey: "OK",
+      numbering: place.numbering,
+      choose: (index, flow) => {
+        if (index === 0) {
+          flow.push(timerEntry(services, 2, countdown.remaining()));
+          return;
+        }
+        countdown.stop();
+        flow.replace(clockNote(services, ["Timer", "stopped"], "timer-stopped"));
+      },
+    });
+  };
+}
+
 export const clockFeature: StockFeature = {
   name: "clock",
-  placeholders: {
-    "11-4": "21", // Stopwatch
-  },
   screens: {
     "11-1": (services, place) => alarmClock(services, place),
+    // Stopwatch (plan21 stopwatch/*): the time, Start/Stop/Options.
+    "11-4": (services, place) => () =>
+      stopwatchWidget(phoneStopwatch(services), place.numbering, () =>
+        standbyOf(phoneClock(services)),
+      ),
+    "11-5": (services, place) => countdownTimer(services, place),
     // Hide clock / Show clock (plan21 settings/hide, show): the note, then the Clock settings page.
     "11-2-1": (services) => () => {
       const clock = phoneClock(services);
@@ -278,6 +340,11 @@ export const clockFeature: StockFeature = {
               settings.choice(TIME_FORMAT.key) === TIME_FORMAT.twelveHour,
             )
           : "Off";
+      },
+      // The time left rounded up to a minute, or Off (plan21 countdown/screens page-30s, -70s).
+      "clock/countdown-timer": (_ports, settings) => {
+        const clock = clockOfSettings(settings);
+        return (clock && countdownOf(clock)?.remaining()) ?? "Off";
       },
       "clock/clock-settings": (ports, settings) => {
         const now = parseHostTime(ports.clock?.(), ports.date?.() ?? "01.01.2000");
