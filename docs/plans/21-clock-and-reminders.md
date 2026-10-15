@@ -894,14 +894,23 @@ read. `CLOCK_RECORD.factory` shows the clock again and keeps the alarm and the o
 **Files:** `src/widgets/time-entry.ts` (new), `src/display/widgets/time-entry.ts` (new; one line in
 `src/display/widgets/index.ts`'s union), `tests/widgets-time-entry.test.ts` (new).
 
-- [ ] TDD the painter from literal models against every entry image of `clock/settings/set-time-*`,
+- [x] TDD the painter from literal models against every entry image of `clock/settings/set-time-*`,
       `clock/date/*`, `clock/alarm/*`, `clock/countdown/prompt` and `reminders/add-*` (mask, typed
       digits, cursor position and blink).
-- [ ] TDD the widget in a flow (`tests/support/flow-rig.ts`): digits per Task 0, C, C on empty, OK
+- [x] TDD the widget in a flow (`tests/support/flow-rig.ts`): digits per Task 0, C, C on empty, OK
       with a valid value (`done`) and with each invalid one (its note, then back to the entry as
       captured); the blink timeline (plan 14's cursor timelines) within ±2 ms.
-- [ ] The plan 14 prompt goldens of 11-1, 11-2-2, 11-3 and 11-5 still pass.
-- [ ] Commit: `feat(nokia-os): stock time and date entry`.
+- [x] The plan 14 prompt goldens of 11-1, 11-2-2, 11-3 and 11-5 still pass.
+- [x] Commit: `feat(nokia-os): stock time and date entry`.
+
+Deviation: the entry paints through plan 18's prompt `number` entry (the value right-aligned
+in the large face, the cursor before a character): it matches every entry image, so there is no
+`src/display/widgets/time-entry.ts` and no new union member. The API takes the prompt's icons,
+label and soft key (the caller's layout) and the `Invalid` note's timeline. Evidence the plan did
+not have: after `Invalid time`/`Invalid date` the entry returns with its cursor on the first
+placeholder, else on the first field out of range, and in the blink phase its timer reached under
+the note (the timer runs on; the phase then lasts a whole step). Blink steps vary 477-495 ms
+between recordings, so flows compare within PROBE_TOLERANCE_MS.
 
 ### Task 7 - Clock settings, Date setting, Auto update and the standby clock (TDD against goldens)
 
