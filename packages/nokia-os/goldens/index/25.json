@@ -606,77 +606,77 @@
   {
     "id": "lights/game/off/over",
     "file": "lights/game/off/over.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 8
   },
   {
     "id": "lights/game/off/pause-c",
     "file": "lights/game/off/pause-c.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 12
   },
   {
     "id": "lights/game/off/pause-nav",
     "file": "lights/game/off/pause-nav.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 12
   },
   {
     "id": "lights/game/off/play",
     "file": "lights/game/off/play.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/game/off/top-score",
     "file": "lights/game/off/top-score.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 6
   },
   {
     "id": "lights/game/on/over",
     "file": "lights/game/on/over.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/game/on/pause-c",
     "file": "lights/game/on/pause-c.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 6
   },
   {
     "id": "lights/game/on/pause-nav",
     "file": "lights/game/on/pause-nav.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 6
   },
   {
     "id": "lights/game/on/play",
     "file": "lights/game/on/play.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 2
   },
   {
     "id": "lights/game/on/top-score",
     "file": "lights/game/on/top-score.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/keyguard/emergency",
     "file": "lights/keyguard/emergency.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 2
   },
@@ -690,70 +690,70 @@
   {
     "id": "lights/keyguard/hint",
     "file": "lights/keyguard/hint.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 0
   },
   {
     "id": "lights/keyguard/hint-power",
     "file": "lights/keyguard/hint-power.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 2
   },
   {
     "id": "lights/keyguard/lit/emergency-112",
     "file": "lights/keyguard/lit/emergency-112.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/keyguard/lit/hint-5",
     "file": "lights/keyguard/lit/hint-5.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/keyguard/lit/unlock",
     "file": "lights/keyguard/lit/unlock.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/keyguard/lit/unlock-alone",
     "file": "lights/keyguard/lit/unlock-alone.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/keyguard/lock",
     "file": "lights/keyguard/lock.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/keyguard/power-key-held",
     "file": "lights/keyguard/power-key-held.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 2
   },
   {
     "id": "lights/keyguard/unlock",
     "file": "lights/keyguard/unlock.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/keyguard/unlock-alone",
     "file": "lights/keyguard/unlock-alone.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 0
   },
@@ -949,7 +949,7 @@
   {
     "id": "lights/power-key/game",
     "file": "lights/power-key/game.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
@@ -977,7 +977,7 @@
   {
     "id": "lights/screen-saver",
     "file": "lights/screen-saver.lights.txt",
-    "status": "pending:25",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },

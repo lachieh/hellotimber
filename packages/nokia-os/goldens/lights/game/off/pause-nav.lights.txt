@@ -1,6 +1,6 @@
 lights-golden 1
 id: lights/game/off/pause-nav
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/game/off/pause-nav
 source-sha256: 0c6a4ed5aa2c1be38b045ddc6cfbe8e8acf56db11565d4ac5cc282d80a29ee8a
 state: factory

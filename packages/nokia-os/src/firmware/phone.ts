@@ -15,7 +15,7 @@ import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { stockBootGates } from "./boot";
 import { createStockSettings } from "./settings";
-import { StockLights, type StockLightsPort } from "./features/backlight";
+import { StockLightRules, StockLights, type StockLightsPort } from "./features/backlight";
 import { KeyguardOverlay } from "./features/keyguard";
 import type { StockSoundPort } from "../sound/port";
 import { SoundSequencer } from "../sound/sequencer";
@@ -122,11 +122,23 @@ export function createStockPhoneWith(
     (event) => lightsPort?.change(event),
     () => now,
   );
+  // Plan 25 D7: Games › Settings › Lights during play, timed from the games' own cues; it reads
+  // the suspended game from the holder below.
+  const lightRules = new StockLightRules({
+    lights,
+    settings,
+    games: {
+      get snake() {
+        return games.snake;
+      },
+    },
+    now: () => now,
+  });
   const clockGames = createStockGames(ports, () => now);
   const games = {
     ...clockGames,
     ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
-    cues: internals.cues ?? sounder,
+    cues: lightRules.cues(internals.cues ?? sounder),
   };
   const phone = createPhone({
     menu: createStockMenu(ports, settings, games, security, sounder, eeprom),
@@ -191,6 +203,7 @@ export function createStockPhoneWith(
     deliver(overlay === undefined ? snapshot : { ...snapshot, screen: overlay });
   });
   const publish = (): void => {
+    lightRules.update(phone.path);
     const screen = keyguard.screen;
     if (screen === overlay) return;
     overlay = screen;

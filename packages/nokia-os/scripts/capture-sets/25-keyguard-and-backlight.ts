@@ -7,7 +7,7 @@
 // (`pending:18`, `pending:22`); every other golden is `pending:25` until the plan 25 task that
 // drives it promotes it here (Tasks 4 and 7-9). Task 4 asserts the timeout, key, boot and
 // power-key lights goldens (tests/support/lights.ts `lightsScenario`), Task 7 the keyguard's LCD
-// goldens (tests/support/keyguard.ts `keyguardTimeline`).
+// goldens (tests/support/keyguard.ts `keyguardTimeline`), Task 8 the other lights goldens.
 import type { CaptureSetEntry, PlanCaptureSet } from "../capture-set.ts";
 import type { GoldenStatus } from "../golden-format.ts";
 import type { LightName, LightsCaptureIo, LightsGolden, LightsRow } from "../lights-format.ts";
@@ -130,15 +130,12 @@ export function buildLightsGolden(
   };
 }
 
-/** Task 4 drives these families; the rest wait for Task 8 (or plans 18 and 22). */
-const DRIVEN = /^lights\/(timeout|keys|boot)\/|^lights\/power-key\/(standby|menu|list)$/;
-
 const lights = (
   id: string,
   state: string,
   note: string,
   dir = `${P}/${id}`,
-  status: GoldenStatus = DRIVEN.test(id) ? ASSERTED : OWN,
+  status: GoldenStatus = ASSERTED,
 ): LightsCaptureEntry => ({ id, dir, state, status, note });
 
 const range = (from: number, to: number, step: number): number[] =>

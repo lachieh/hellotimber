@@ -1,6 +1,6 @@
 lights-golden 1
 id: lights/screen-saver
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/screen-saver
 source-sha256: 5ac2872e1cc9342cbfdab3874fcc6732fe357236364e13a7df6deac7c56890ec
 state: factory

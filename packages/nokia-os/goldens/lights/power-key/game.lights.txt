@@ -1,6 +1,6 @@
 lights-golden 1
 id: lights/power-key/game
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/power-key/game
 source-sha256: f1110f6d6fb3b31c5041aace3497bce6f22f3fa576c344323e6f08552ea42c73
 state: factory

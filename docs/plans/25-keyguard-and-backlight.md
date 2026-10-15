@@ -13,7 +13,7 @@ Tasks 12-14 (phone-3d) need only Task 1.
 "Plan 16 supplementary captures") and plans 13-16 and 23 before starting. Task 0 writes this
 plan's captures to `$REF/captures/6.39/plan25/`. The planning probes in
 `$REF/captures/scratch-plan25/` are evidence for this plan only and are never imported.
-**Status:** in progress (Tasks 0-7 and 12-14 done; Tasks 8-11 and 15 not started).
+**Status:** in progress (Tasks 0-8 and 12-14 done; Tasks 9-11 and 15 not started).
 
 ## Goal
 
@@ -873,15 +873,51 @@ book opens when the window ends; plan 14's kernel ends the entry at the `*`).
 outputs, the game rule, the power key), the feature list (one-line registration if separate from
 Task 7's), `tests/lights-rules.test.ts` (new).
 
-- [ ] TDD D3's table against `lights/keyguard/*` and `lights/power-key/*`: keys while locked stay
+- [x] TDD D3's table against `lights/keyguard/*` and `lights/power-key/*`: keys while locked stay
       dark, Unlock then `*` lights, the emergency display per Task 0.
-- [ ] TDD D7 against `lights/game/*`: read the Lights setting and the Snake II session state each
+- [x] TDD D7 against `lights/game/*`: read the Lights setting and the Snake II session state each
       tick (read only; no plan 23 file changes); force off/on during play, release at pause, game
       over and top score per Task 0.
-- [ ] `lights/screen-saver`: Screen saver On changes no light edge (D15).
-- [ ] The `leds` column of every plan 25 LCD golden now matches (D10): delete Task 7's todo.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): light the phone as the stock firmware does`.
+- [x] `lights/screen-saver`: Screen saver On changes no light edge (D15).
+- [x] The `leds` column of every plan 25 LCD golden now matches (D10): delete Task 7's todo.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): light the phone as the stock firmware does`.
+
+**Task 8 completion.** The keyguard's activity was wired in Task 7 (the wrapper lights a key-down
+only when the engine's outcome says so). `StockLightRules` (`src/firmware/features/backlight.ts`)
+adds D7: while the kernel's path is Snake II's New game or Continue, Lights Off forces both LEDs
+off and Lights On forces them on; leaving it (the pause) releases them; the death ends on the
+game-over screen at the crash cue + `SNAKE_DEATH_MS` (2066 ms; a top score's fireworks
+`SNAKE_TOP_SCORE_MS` later), which is activity with the force released, and the fireworks'
+`Game over!` title `FIREWORKS_MS` (2872 ms) later is activity again. It reads the setting, the
+games holder (read only) and the games' cues, which the wrapper passes through it. `StockLights`
+gained an optional `atMs` on `activity` and `force` (an edge stamped at the death's end found
+on a later tick). `src/firmware/phone.ts`: the rules' construction (the holder is read through a
+getter), the games' cue sink wrapped by it, `lightRules.update(path)` in `publish()`. All 23 lights
+goldens Task 4 left are asserted with scenarios (`lightsScenario`: locked dark ones lock first,
+the lit ones lock 4.8 s before time 0 as the capture script did, games open Snake II's menu 8 s
+before New game); 7 rule tests (`tests/lights-rules.test.ts`); every keyguard LCD scenario
+compares its rows' `leds` (D10).
+
+Deviation: the captures' factory image (`v639-plan15-restored.fls`, plans 16, 23 and 25) opens
+Games › Settings › Lights on Off, but plan 15's in-session Restore scroll
+(`plan15/factory/scroll/8-6-2/01.png`) and so nokia-os's factory state show On. The game
+scenarios set Lights as each recording had it; plan 15's factory table is not changed here
+(Lachlan: which image is the factory state?).
+
+Deviation: nokia-os starts New game and Continue at Select's release (plan 23, the tap's 60 ms),
+the firmware 36-38 ms after the key-down, and Snake II's pause lights 36 ms after its key-down
+(the game's key scan): the game scenarios compare an off edge within 100 ms of a key within
+25 ms and allow a 40 ms key latency (`GAME_LIGHTS_TOLERANCE`).
+
+Deviation: known gaps `lights/game/{off,on}/{over,top-score}`: the capture's bot steered live
+from its board (another seed, a game started 22 ms earlier), so its keys do not crash
+nokia-os's snake and the death's end never lights; `tests/lights-rules.test.ts` lights a crash of
+nokia-os's own (Maze 1, into the wall) at exactly the crash cue + 2066 ms. The capture lit 27 ms
+before its game-over redraw (`lights/game/off/over` 7247 ms, LCD 7274 ms): UNVERIFIED which
+nokia-os reproduces (it lights at the game-over screen).
+
+Deviation: the lights rig records the games' cues instead of sounding them (`lightsRig.cues`).
 
 ### Task 9 - Keyguard sounds (TDD against sound goldens)
 

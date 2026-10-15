@@ -10,9 +10,6 @@ import { keyguardTimeline, lockedRig, type KeyguardCase } from "../support/keygu
 import { lightsScenario } from "../support/lights.ts";
 import { standbyRig } from "../support/rig.ts";
 
-/** Task 4: the timeout, key, boot and power-key lights goldens (D2, D3). */
-const LIGHTS = /^lights\/(timeout|keys|boot)\/|^lights\/power-key\/(standby|menu|list)$/;
-
 /**
  * Task 7: the keyguard's LCD goldens, by the keys of their captures (`tests/support/keyguard.ts`):
  * a later key on the golden row its effect starts, or `ms` after the trigger.
@@ -129,7 +126,7 @@ const KEYGUARD: Readonly<Record<string, KeyguardCase>> = {
 const scenarios: Record<string, Scenario> = {
   ...Object.fromEntries(
     readPlanIndex(GOLDENS, "25")
-      .filter((entry) => entry.status === "asserted" && LIGHTS.test(entry.id))
+      .filter((entry) => entry.status === "asserted" && entry.kind === "lights")
       .map((entry) => [entry.id, lightsScenario]),
   ),
   ...Object.fromEntries(
@@ -169,6 +166,16 @@ acceptancePlan({
           "runs 2886 ms (2900: a 23 ms closing partial), so it ends more than " +
           "PROBE_TOLERANCE_MS after the replayed one",
       ]),
+    ),
+    ...Object.fromEntries(
+      ["off", "on"].flatMap((lights) =>
+        ["over", "top-score"].map((end) => [
+          `lights/game/${lights}/${end}`,
+          "the capture's bot steered live from its board (another seed, a game started 22 ms " +
+            "earlier): its keys do not crash nokia-os's snake, so the death's end never lights " +
+            "(tests/lights-rules.test.ts lights a crash of nokia-os's own)",
+        ]),
+      ),
     ),
     "keyguard/lock-cancel/digit":
       "`*` during the carousel's shortcut entry: the firmware ignores it and Phone book opens " +

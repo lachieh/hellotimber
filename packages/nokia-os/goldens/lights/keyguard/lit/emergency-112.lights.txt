@@ -1,6 +1,6 @@
 lights-golden 1
 id: lights/keyguard/lit/emergency-112
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/lit/emergency-112
 source-sha256: b3d2915650f608226bab91ca225d0d976de0274a7444dd4ce693fd42cce3d8c8
 state: virgin

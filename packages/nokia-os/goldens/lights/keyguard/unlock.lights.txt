@@ -1,6 +1,6 @@
 lights-golden 1
 id: lights/keyguard/unlock
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/keyguard/unlock
 source-sha256: 166cd800b016b37e2825a511f82f1c5c70f4880fdddee38531e16a0bdb7bc711
 state: virgin

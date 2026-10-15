@@ -1,6 +1,6 @@
 lights-golden 1
 id: lights/game/on/over
-status: pending:25
+status: asserted
 source: captures/6.39/plan25/lights/game/on/over
 source-sha256: 897f33df1448002b9320d4ee249e546240ed6b1fad000333b1371271f79193d0
 state: factory

@@ -4,7 +4,10 @@ import { join } from "node:path";
 import type { Phone, PhoneKey } from "@hellotimber/phone-core";
 import { readPlanIndex } from "../../scripts/golden-index.ts";
 import { parseLightsGolden, type LightsGolden } from "../../scripts/lights-format.ts";
-import type { StockLightEvent } from "../../src/firmware/features/backlight";
+import type { StockCue } from "../../src/firmware/cues";
+import { GAMES_LIGHTS_KEY, type StockLightEvent } from "../../src/firmware/features/backlight";
+import { StockEeprom } from "../../src/firmware/eeprom";
+import { createStockSettings } from "../../src/firmware/settings";
 import { createStockPhoneWith, type StockPhoneConfig } from "../../src/firmware/phone";
 import type { StockStorage } from "../../src/index";
 import { SEED_1010, seededStorage } from "./rig.ts";
@@ -40,6 +43,8 @@ export interface LightsRig {
   readonly now: number;
   /** Every lights event so far. */
   readonly events: readonly StockLightEvent[];
+  /** Every game cue so far, stamped (the games' sounds are not played: lights only). */
+  readonly cues: readonly { readonly cue: StockCue; readonly atMs: number }[];
   /** When the kernel powered the phone on (the light tick's anchor), once it has. */
   readonly poweredOnAt: number | undefined;
   /** Ticks to `now + ms`, every `stepMs` (1 by default; lights edges are exact at any step). */
@@ -60,6 +65,7 @@ export function storageFor(state: string): StockStorage {
 
 export function lightsRig(config: Partial<StockPhoneConfig> = {}): LightsRig {
   const events: StockLightEvent[] = [];
+  const cues: { cue: StockCue; atMs: number }[] = [];
   const phone = createStockPhoneWith(
     {
       carrier: "Orange F",
@@ -73,7 +79,7 @@ export function lightsRig(config: Partial<StockPhoneConfig> = {}): LightsRig {
         },
       },
     },
-    { seed: SEED_1010 },
+    { seed: SEED_1010, cues: { cue: (cue, atMs) => void cues.push({ cue, atMs }) } },
   );
   let now = 0;
   let poweredOnAt: number | undefined;
@@ -87,6 +93,7 @@ export function lightsRig(config: Partial<StockPhoneConfig> = {}): LightsRig {
       return now;
     },
     events,
+    cues,
     get poweredOnAt() {
       return poweredOnAt;
     },
@@ -153,7 +160,17 @@ export interface LightsTolerance {
   readonly onToleranceMs?: number;
   /** An off edge |Δ| within this (default LIGHT_EDGE_TOLERANCE_MS). */
   readonly offToleranceMs?: number;
+  /** How long after its key-down an on edge may lag (default KEY_LIGHT_LATENCY_MAX_MS). */
+  readonly keyLatencyMaxMs?: number;
+  /**
+   * An off edge within KEY_OFF_WINDOW_MS after a key-down (a game starting under Lights Off):
+   * |Δ| within this (default: `offToleranceMs`).
+   */
+  readonly keyOffToleranceMs?: number;
 }
+
+/** How long after a key-down an off edge counts as that key's (`keyOffToleranceMs`). */
+const KEY_OFF_WINDOW_MS = 100;
 
 /**
  * Compares each light's events with the golden's rows in order. An on edge within
@@ -170,6 +187,8 @@ export function expectLightsTimeline(
 ): void {
   const onTolerance = tolerance.onToleranceMs ?? LIGHT_EDGE_TOLERANCE_MS;
   const offTolerance = tolerance.offToleranceMs ?? LIGHT_EDGE_TOLERANCE_MS;
+  const keyLatency = tolerance.keyLatencyMaxMs ?? KEY_LIGHT_LATENCY_MAX_MS;
+  const keyOffTolerance = tolerance.keyOffToleranceMs ?? offTolerance;
   const keys = golden.keys ?? [];
   const lines = ["  golden  light    state    actual       Δ"];
   let failed = false;
@@ -195,12 +214,15 @@ export function expectLightsTimeline(
       const delta = actual.ms - row.ms;
       const marks: string[] = [];
       if (actual.on !== row.on) marks.push(`✗ state ${actual.on ? "on" : "off"}`);
-      const byKey =
-        row.on && keys.some((k) => k.ms <= row.ms && row.ms - k.ms <= KEY_LIGHT_LATENCY_MAX_MS);
+      const after = (window: number) => keys.some((k) => k.ms <= row.ms && row.ms - k.ms <= window);
+      const byKey = row.on && after(keyLatency);
+      const offByKey = !row.on && after(KEY_OFF_WINDOW_MS);
       if (byKey) {
         if (delta > 0) marks.push("✗ after the golden");
-        else if (delta < -KEY_LIGHT_LATENCY_MAX_MS) marks.push("✗ early");
-      } else if (Math.abs(delta) > (row.on ? onTolerance : offTolerance)) {
+        else if (delta < -keyLatency) marks.push("✗ early");
+      } else if (
+        Math.abs(delta) > (row.on ? onTolerance : offByKey ? keyOffTolerance : offTolerance)
+      ) {
         marks.push(delta < 0 ? "✗ early" : "✗ late");
       }
       if (marks.length > 0) failed = true;
@@ -224,8 +246,40 @@ export function expectLightsTimeline(
 function placeOf(id: string): readonly PhoneKey[] {
   if (/^lights\/(keys\/carousel-|power-key\/menu)/.test(id)) return ["navi"];
   if (/^lights\/(keys\/list-|power-key\/list)/.test(id)) return ["navi", "navi"];
+  // Locked well before the recording, so the lock's light has timed out (Task 8).
+  if (/^lights\/keyguard\/(?!lock$|lit\/|power-key-held$)/.test(id)) return ["navi", "*"];
   return [];
 }
+
+/**
+ * Keys pressed just before a recording (golden time, from its time 0), as the capture script
+ * did: the lit keyguard recordings lock ≈4.8 s before (`key menu`, `key *`, 3.5 s, the shot, the
+ * fork's 100 ms); the games open Snake II's menu (Games, Snake II, its 7 s intro) right before New
+ * game, so the LEDs are lit at New game.
+ */
+function leadOf(id: string): readonly (readonly [ms: number, key: PhoneKey])[] {
+  if (/^lights\/keyguard\/(lit\/|power-key-held$)/.test(id)) {
+    return [
+      [-4784, "navi"],
+      [-4192, "*"],
+    ];
+  }
+  if (/^lights\/(game\/|power-key\/game$)/.test(id)) {
+    const keys: PhoneKey[] = ["navi", ...Array<PhoneKey>(7).fill("down"), "navi", "navi"];
+    return keys.map((key, i) => [-8000 - 600 * (keys.length - 1 - i), key] as const);
+  }
+  return [];
+}
+
+/**
+ * The game recordings' tolerances (D7): Snake II's pause lights 36 ms after its key-down (the
+ * game's key scan), and the force at New game and Continue comes at Select's release in nokia-os
+ * (plan 23: the tap's 60 ms), 36-38 ms after the key-down in the firmware.
+ */
+export const GAME_LIGHTS_TOLERANCE: LightsTolerance = {
+  keyLatencyMaxMs: 40,
+  keyOffToleranceMs: 25,
+};
 
 /** The boot frames' on edge: 268 ms after the power-on in nokia-os, 245-272 ms captured. */
 export const BOOT_LIGHT_TOLERANCE_MS = 25;
@@ -239,7 +293,16 @@ export const BOOT_LIGHT_TOLERANCE_MS = 25;
 export function lightsScenario(id: string): void {
   const golden = loadLightsGolden(id);
   const boot = id.startsWith("lights/boot/");
-  const rig = lightsRig({ storage: storageFor(boot ? golden.state : "factory") });
+  const game = /^lights\/(game\/|power-key\/game$)/.test(id);
+  const storage = storageFor(boot ? golden.state : "factory");
+  // Games › Settings › Lights as the recordings had it (D7): the On section chose On; the
+  // captures' factory image (v639-plan15-restored.fls) opens it on Off, where plan 15's
+  // in-session Restore scroll (`plan15/factory/scroll/8-6-2`) and nokia-os's factory state show On.
+  if (game) {
+    const lightsOn = id.startsWith("lights/game/on/") ? 1 : 0;
+    createStockSettings(new StockEeprom(storage)).choose(GAMES_LIGHTS_KEY, lightsOn);
+  }
+  const rig = lightsRig({ storage });
   rig.powerOn();
   if (!boot) {
     rig.advance(20_000);
@@ -249,12 +312,19 @@ export function lightsScenario(id: string): void {
       rig.release(key);
       rig.advance(1500);
     }
+    const origin = rig.poweredOnAt! + golden.powerOnMs;
+    for (const [ms, key] of leadOf(id)) {
+      rig.advance(origin + ms - rig.now, 20);
+      rig.hold(key);
+      rig.advance(60);
+      rig.release(key);
+    }
   }
-  const recorded = replayLights(rig, golden, { stepMs: boot ? 1 : 20 });
+  const recorded = replayLights(rig, golden, { stepMs: boot ? 1 : game ? 1 : 20 });
   expectLightsTimeline(
     recorded,
     golden,
     id,
-    boot ? { onToleranceMs: BOOT_LIGHT_TOLERANCE_MS } : {},
+    boot ? { onToleranceMs: BOOT_LIGHT_TOLERANCE_MS } : game ? GAME_LIGHTS_TOLERANCE : {},
   );
 }
