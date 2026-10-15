@@ -16,6 +16,7 @@
     "extract-resources": "node scripts/extract-resources.ts",
     "messages-text-runs": "node scripts/messages-text-runs.ts",
     "messages-scripts": "node scripts/messages-scripts.ts",
+    "content-scripts": "node scripts/content-scripts.ts",
     "build-t9-dictionary": "node scripts/build-t9-dictionary.ts"
   },
   "dependencies": {

@@ -1,0 +1,1306 @@
+[
+  {
+    "id": "chat/after-exit-standby",
+    "file": "chat/after-exit-standby.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/arrive-editor",
+    "file": "chat/arrive-editor.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "chat/arrive-options",
+    "file": "chat/arrive-options.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "chat/arrive-options-after",
+    "file": "chat/arrive-options-after.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/arrive-options-c",
+    "file": "chat/arrive-options-c.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/arrive-other",
+    "file": "chat/arrive-other.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 13
+  },
+  {
+    "id": "chat/arrive-other-c",
+    "file": "chat/arrive-other-c.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/chat-history",
+    "file": "chat/chat-history.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "chat/chat-history-ok",
+    "file": "chat/chat-history-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "chat/chat-name",
+    "file": "chat/chat-name.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "chat/chat-name-ok",
+    "file": "chat/chat-name-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "chat/dictionary-off",
+    "file": "chat/dictionary-off.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 10
+  },
+  {
+    "id": "chat/editor",
+    "file": "chat/editor.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/editor-t9",
+    "file": "chat/editor-t9.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/erase",
+    "file": "chat/erase.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "chat/exit",
+    "file": "chat/exit.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 13,
+    "frames": 15
+  },
+  {
+    "id": "chat/factory",
+    "file": "chat/factory.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "chat/factory-options",
+    "file": "chat/factory-options.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "chat/factory-send",
+    "file": "chat/factory-send.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 19,
+    "frames": 20
+  },
+  {
+    "id": "chat/factory-template-open",
+    "file": "chat/factory-template-open.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "chat/history-1",
+    "file": "chat/history-1.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/history-3",
+    "file": "chat/history-3.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/history-4",
+    "file": "chat/history-4.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "chat/history-c",
+    "file": "chat/history-c.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "chat/history-ok",
+    "file": "chat/history-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "chat/inbox-after",
+    "file": "chat/inbox-after.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 7
+  },
+  {
+    "id": "chat/limit",
+    "file": "chat/limit.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "chat/name-c",
+    "file": "chat/name-c.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "chat/name-ok",
+    "file": "chat/name-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 9
+  },
+  {
+    "id": "chat/name-typed",
+    "file": "chat/name-typed.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/no-name-history",
+    "file": "chat/no-name-history.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/number",
+    "file": "chat/number.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "chat/number-ok",
+    "file": "chat/number-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "chat/open",
+    "file": "chat/open.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "chat/options",
+    "file": "chat/options.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "chat/options-held-c",
+    "file": "chat/options-held-c.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "chat/options-history",
+    "file": "chat/options-history.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "chat/options-t9",
+    "file": "chat/options-t9.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 10,
+    "frames": 10
+  },
+  {
+    "id": "chat/other-after-exit",
+    "file": "chat/other-after-exit.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "chat/other-arrival",
+    "file": "chat/other-arrival.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 13
+  },
+  {
+    "id": "chat/own-long",
+    "file": "chat/own-long.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/reentry",
+    "file": "chat/reentry.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "chat/reentry-options",
+    "file": "chat/reentry-options.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "chat/renamed-history",
+    "file": "chat/renamed-history.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/reopen",
+    "file": "chat/reopen.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "chat/reply",
+    "file": "chat/reply.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "chat/search-empty",
+    "file": "chat/search-empty.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 5
+  },
+  {
+    "id": "chat/send",
+    "file": "chat/send.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 19,
+    "frames": 19
+  },
+  {
+    "id": "chat/send-no-name",
+    "file": "chat/send-no-name.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 19,
+    "frames": 19
+  },
+  {
+    "id": "chat/typed",
+    "file": "chat/typed.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "content/editor-smiley-c",
+    "file": "content/editor-smiley-c.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 6
+  },
+  {
+    "id": "content/editor-smiley-list",
+    "file": "content/editor-smiley-list.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "content/editor-smiley-open",
+    "file": "content/editor-smiley-open.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/editor-smiley-placement",
+    "file": "content/editor-smiley-placement.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "content/editor-smiley-select",
+    "file": "content/editor-smiley-select.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "content/editor-smiley-slots",
+    "file": "content/editor-smiley-slots.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "content/editor-template-c",
+    "file": "content/editor-template-c.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 6
+  },
+  {
+    "id": "content/editor-template-list",
+    "file": "content/editor-template-list.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "content/editor-template-open",
+    "file": "content/editor-template-open.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/editor-template-placement",
+    "file": "content/editor-template-placement.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "content/editor-template-select",
+    "file": "content/editor-template-select.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "content/editor-template-slots",
+    "file": "content/editor-template-slots.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "content/restore-edited-after-5",
+    "file": "content/restore-edited-after-5.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "content/restore-edited-after-6",
+    "file": "content/restore-edited-after-6.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "content/restore-edited-before-5",
+    "file": "content/restore-edited-before-5.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "content/restore-edited-before-6",
+    "file": "content/restore-edited-before-6.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "content/restore-smileys",
+    "file": "content/restore-smileys.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "content/restore-templates",
+    "file": "content/restore-templates.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "content/restore-topics",
+    "file": "content/restore-topics.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "content/restore-virgin",
+    "file": "content/restore-virgin.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/smileys-edit",
+    "file": "content/smileys-edit.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "content/smileys-edit-1",
+    "file": "content/smileys-edit-1.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "content/smileys-edit-6",
+    "file": "content/smileys-edit-6.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "content/smileys-edit-exit",
+    "file": "content/smileys-edit-exit.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "content/smileys-edit-options-1",
+    "file": "content/smileys-edit-options-1.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "content/smileys-edit-options-6",
+    "file": "content/smileys-edit-options-6.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "content/smileys-edit-options-empty",
+    "file": "content/smileys-edit-options-empty.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "content/smileys-edited",
+    "file": "content/smileys-edited.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "content/smileys-erase-default",
+    "file": "content/smileys-erase-default.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "content/smileys-erase-default-read",
+    "file": "content/smileys-erase-default-read.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "content/smileys-erase-edited",
+    "file": "content/smileys-erase-edited.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "content/smileys-erase-user",
+    "file": "content/smileys-erase-user.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "content/smileys-fill-save",
+    "file": "content/smileys-fill-save.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 10
+  },
+  {
+    "id": "content/smileys-filled",
+    "file": "content/smileys-filled.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "content/smileys-limit",
+    "file": "content/smileys-limit.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/smileys-list",
+    "file": "content/smileys-list.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "content/smileys-list-c",
+    "file": "content/smileys-list-c.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/smileys-open",
+    "file": "content/smileys-open.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/smileys-options-1",
+    "file": "content/smileys-options-1.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "content/smileys-options-1-list",
+    "file": "content/smileys-options-1-list.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/smileys-options-6",
+    "file": "content/smileys-options-6.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/smileys-options-6-list",
+    "file": "content/smileys-options-6-list.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/smileys-read",
+    "file": "content/smileys-read.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 16,
+    "frames": 16
+  },
+  {
+    "id": "content/smileys-read-1",
+    "file": "content/smileys-read-1.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/smileys-read-c",
+    "file": "content/smileys-read-c.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/smileys-save",
+    "file": "content/smileys-save.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 10
+  },
+  {
+    "id": "content/templates-edit",
+    "file": "content/templates-edit.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "content/templates-edit-1",
+    "file": "content/templates-edit-1.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "content/templates-edit-6",
+    "file": "content/templates-edit-6.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "content/templates-edit-exit",
+    "file": "content/templates-edit-exit.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "content/templates-edit-options-1",
+    "file": "content/templates-edit-options-1.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "content/templates-edit-options-6",
+    "file": "content/templates-edit-options-6.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "content/templates-edit-options-empty",
+    "file": "content/templates-edit-options-empty.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "content/templates-edited",
+    "file": "content/templates-edited.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "content/templates-erase-default",
+    "file": "content/templates-erase-default.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 9,
+    "frames": 12
+  },
+  {
+    "id": "content/templates-erase-default-read",
+    "file": "content/templates-erase-default-read.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "content/templates-erase-edited",
+    "file": "content/templates-erase-edited.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 11
+  },
+  {
+    "id": "content/templates-erase-user",
+    "file": "content/templates-erase-user.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 9,
+    "frames": 12
+  },
+  {
+    "id": "content/templates-fill-save",
+    "file": "content/templates-fill-save.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 10
+  },
+  {
+    "id": "content/templates-filled",
+    "file": "content/templates-filled.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "content/templates-limit",
+    "file": "content/templates-limit.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/templates-list",
+    "file": "content/templates-list.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "content/templates-list-c",
+    "file": "content/templates-list-c.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/templates-open",
+    "file": "content/templates-open.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/templates-options-1",
+    "file": "content/templates-options-1.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/templates-options-1-list",
+    "file": "content/templates-options-1-list.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/templates-options-6",
+    "file": "content/templates-options-6.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/templates-options-6-list",
+    "file": "content/templates-options-6-list.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/templates-read",
+    "file": "content/templates-read.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 16,
+    "frames": 16
+  },
+  {
+    "id": "content/templates-read-1",
+    "file": "content/templates-read-1.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/templates-read-c",
+    "file": "content/templates-read-c.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "content/templates-save",
+    "file": "content/templates-save.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 6,
+    "frames": 10
+  },
+  {
+    "id": "service-command/after",
+    "file": "service-command/after.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "service-command/open",
+    "file": "service-command/open.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "service-command/send",
+    "file": "service-command/send.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 14,
+    "frames": 59
+  },
+  {
+    "id": "service-command/typed",
+    "file": "service-command/typed.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "topics/add-name-ok",
+    "file": "topics/add-name-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "topics/add-number-ok",
+    "file": "topics/add-number-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "topics/add-open",
+    "file": "topics/add-open.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "topics/after-erase",
+    "file": "topics/after-erase.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "topics/edit",
+    "file": "topics/edit.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "topics/edit-after-list",
+    "file": "topics/edit-after-list.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "topics/edit-name-ok",
+    "file": "topics/edit-name-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "topics/edit-number-ok",
+    "file": "topics/edit-number-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 6
+  },
+  {
+    "id": "topics/edit-number-typed-ok",
+    "file": "topics/edit-number-typed-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "topics/edit-open",
+    "file": "topics/edit-open.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "topics/erase-1",
+    "file": "topics/erase-1.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "topics/erase-last",
+    "file": "topics/erase-last.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "topics/factory-add-ok",
+    "file": "topics/factory-add-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "topics/factory-add-open",
+    "file": "topics/factory-add-open.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "topics/factory-adds",
+    "file": "topics/factory-adds.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "topics/factory-edit-full",
+    "file": "topics/factory-edit-full.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "topics/factory-level",
+    "file": "topics/factory-level.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "topics/factory-level-1",
+    "file": "topics/factory-level-1.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "topics/factory-level-full",
+    "file": "topics/factory-level-full.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "topics/factory-level-unnamed",
+    "file": "topics/factory-level-unnamed.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "topics/factory-name-empty-ok",
+    "file": "topics/factory-name-empty-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "topics/factory-number-0-ok",
+    "file": "topics/factory-number-0-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 8
+  },
+  {
+    "id": "topics/factory-number-1000-ok",
+    "file": "topics/factory-number-1000-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 8
+  },
+  {
+    "id": "topics/factory-number-999-ok",
+    "file": "topics/factory-number-999-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 7
+  },
+  {
+    "id": "topics/factory-number-empty-ok",
+    "file": "topics/factory-number-empty-ok.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 6
+  },
+  {
+    "id": "topics/factory-numbers",
+    "file": "topics/factory-numbers.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "topics/factory-select-1",
+    "file": "topics/factory-select-1.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "topics/factory-select-full",
+    "file": "topics/factory-select-full.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 5,
+    "frames": 5
+  },
+  {
+    "id": "topics/level-after-add",
+    "file": "topics/level-after-add.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "topics/level-after-erase",
+    "file": "topics/level-after-erase.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "topics/level-empty",
+    "file": "topics/level-empty.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "topics/select-c",
+    "file": "topics/select-c.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "topics/select-mark",
+    "file": "topics/select-mark.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "topics/select-mark-again",
+    "file": "topics/select-mark-again.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "topics/select-open",
+    "file": "topics/select-open.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "topics/select-reopen",
+    "file": "topics/select-reopen.lcd.txt",
+    "status": "pending:18c",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "topics/select-unmark",
+    "file": "topics/select-unmark.lcd.txt",
+    "status": "pending:18c",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  }
+]

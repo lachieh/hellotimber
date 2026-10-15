@@ -623,19 +623,25 @@ topics-factory, service) wrote 82 recordings and 919 images (333 distinct) under
 `tests/support/18c-fixtures.ts` (new), `tests/acceptance/18c-chat-templates-pictures-info-service.test.ts` (new),
 `scripts/capture-sets/index.ts` (one export), generated `goldens/index/18c.json` and listed grids.
 
-- [ ] Failing synthetic-loader tests pin source paths, state, fixture ID uniqueness, trigger frame,
+- [x] Failing synthetic-loader tests pin source paths, state, fixture ID uniqueness, trigger frame,
       source hash, omitted frames and sound alignment. Import no scratch images or v5.79 flows.
-- [ ] Export a `PlanCaptureSet` with `plan: "18c"`, `lcd`/`sounds` and `notImported`; only verified
+- [x] Export a `PlanCaptureSet` with `plan: "18c"`, `lcd`/`sounds` and `notImported`; only verified
       groups enter the table. Explicit invented fixtures live in `tests/support/18c-fixtures.ts`;
       the REF generator reads the same fixture data supplied as an argument, not repo runtime code.
-- [ ] Initial new fixtures use `pending:18c`. The acceptance file calls
+- [x] Initial new fixtures use `pending:18c`. The acceptance file calls
       `acceptancePlan({ plan: "18c", scenarios, knownGaps, timeoutsMs })` once, no other tests.
       Assert groups as Tasks 5-9 add their independently driven scenarios. No todo/guard shim.
-- [ ] Preserve older indexes/covers. A pending golden remains in its original owner index.
-- [ ] Run twice: `mise exec -- vp run @hellotimber/nokia-os#import-captures /Volumes/SSD/Projects/lachieh/hellotimber/nokia-3310`. Compare byte manifests before/after the
+- [x] Preserve older indexes/covers. A pending golden remains in its original owner index.
+- [x] Run twice: `mise exec -- vp run @hellotimber/nokia-os#import-captures /Volumes/SSD/Projects/lachieh/hellotimber/nokia-3310`. Compare byte manifests before/after the
       second run; scope output changes to this plan plus explicit owner status registrations.
-- [ ] Verify: package test and manual `vp check --fix`. Report fixture/image/byte counts.
-- [ ] Commit: `feat(nokia-os): import Chat and Messages content captures (plan 18c)`.
+- [x] Verify: package test and manual `vp check --fix`. Report fixture/image/byte counts.
+- [x] Commit: `feat(nokia-os): import Chat and Messages content captures (plan 18c)`.
+
+Outcome: 163 goldens (`goldens/index/18c.json`, all `pending:18c` at import; no other index
+changed), `scripts/generated/content-scripts.ts` (13 logs, `content-scripts` package script; run
+it with `--no-cache`: vp caches it on its arguments, not on `$REF`). Deviation: no
+`tests/support/18c-fixtures.ts`: Task 0 typed invented text and delivered plain SMS only (no
+picture or card payloads), so the logs themselves hold every fixture.
 
 ### Task 3 - Capture-derived content resources (TDD)
 

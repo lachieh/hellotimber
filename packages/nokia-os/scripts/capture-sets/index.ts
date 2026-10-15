@@ -7,6 +7,7 @@ export { storageAndSettings } from "./15-storage-and-settings.ts";
 export { profiles } from "./17-profiles.ts";
 export { messagesAndChat } from "./18-messages-and-chat.ts";
 export { t9PredictiveText } from "./18b-t9-predictive-text.ts";
+export { chatAndContent } from "./18c-chat-templates-pictures-info-service.ts";
 export { tonesAndSound } from "./16-tones-and-sound.ts";
 export { calculator } from "./20-calculator.ts";
 export { snakeII } from "./23-snake-ii.ts";
