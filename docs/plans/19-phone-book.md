@@ -770,16 +770,32 @@ shows and sorts by its number, UNVERIFIED where it sorts). `speedDial` falls bac
 widget-model union and the `paintWidget` switch (one line each), `tests/widgets-name-list.test.ts`
 (new).
 
-- [ ] Painters from literal models equal every `phone-book/view-*`, `letters-*` and `service-*`
+- [x] Painters from literal models equal every `phone-book/view-*`, `letters-*` and `service-*`
       image: Large font (icon, the large name with its character break, the small-face fallback),
       Name list (full-width rows, no rail, the ellipsis, the window), Name, number (the small name
       broken at its width, the last digits right-aligned), the Assign tone page, the Service Nos.
       rows and slider.
-- [ ] TDD the widget in a flow (`tests/support/flow-rig.ts`): the opening entry (first, given,
+- [x] TDD the widget in a flow (`tests/support/flow-rig.ts`): the opening entry (first, given,
       found), ▲/▼ wrap, the rows window (plan 14 D3) in Name list view, letter keys with the
       multi-tap cycle and plan 18's commit timeout, inert keys, the soft key handing the entry to
       `choose(entry, flow)`, C → `back`, the view re-read on every open.
-- [ ] Commit: `feat(nokia-os): the stock name list in three views`.
+- [x] Commit: `feat(nokia-os): the stock name list in three views`.
+
+Deviation: **Task 6 (measured layouts):** Large font and Name, number wrap a name at spaces
+(`Lisa Ann` / `Wilson`), breaking a word wider than a line by character (`Abcdefghijklm` / `nop`;
+word wrap in the small face is UNVERIFIED) and keeping a leading space (` Lead`). Name, number and
+the Assign tone page share one layout (`view: "page"`): the name in the small face at tops 7/16,
+the value right-aligned at tops 20/29, a long number showing its last digits on the lines the name
+leaves. A Name list row wider than x 83 is cut where its ink ends by x 72 and the small face's
+`...` follows at x 74 (both captured cuts put the dots at 74/77/80). Service Nos. is plan 14's rows
+painter and rail (`service-list`), so no new sprite is needed for the rail or the ellipsis.
+
+Deviation: **Task 6 (API):** `nameList({ entries, view, value?, softkey, start?, choose, back? })`
+returns the widget and its `NameListControl` (`entry`, `select(location?)`: after an edit the
+highlight keeps its row, `phone-book/erase-list-middle-ok`). Type of view's setting is read by the
+flows when they open a list (`TYPE_OF_VIEW_KEY`, choices `list`/`number`/`large`). A name-less
+entry shows its number as its name (`shownName`). C goes back at its release and, held for the
+kernel's long press, to standby (as plan 18's lists).
 
 ### Task 7 - Standby ▼, Search, Add name, Service Nos. and Options (TDD)
 
