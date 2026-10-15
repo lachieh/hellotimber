@@ -3,5 +3,6 @@
 // Nothing else may be exported here.
 export { goldensPanel } from "./goldens";
 export { phonePanel } from "./phone";
+export { profilesPanel } from "./profiles";
 export { soundPanel } from "./sound";
 export { storagePanel } from "./storage";

@@ -594,7 +594,7 @@ the screen is the standby model with `leaving: true`, and the carousel's timelin
 shortcut window are timed from the carousel opening and the Menu press respectively; a key
 that moves the carousel opens it at once, C returns to standby).
 
-**Kernel policy (plan 17, in progress).** Every plan 17 seam is opt-in and generic; the website
+**Kernel policy (plan 17).** Every plan 17 seam is opt-in and generic; the website
 sets none. _Standby line_: `standbyLine(shownMs)` is re-read per tick; `shownMs` restarts whenever
 standby is entered (a new standby state: boot end, C, C held, an application's exit, a standby
 application's exit, a cleared notice), and the line also rides on Menu's `leaving` model. _Labels_:
@@ -870,7 +870,7 @@ inconclusive. See [stock text entry and SMS](docs/specs/stock/text-entry-and-sms
 Plan 18c's delivery-kind/editor/session registration requirements await owner reconciliation;
 this SMS-only contract does not authorize its proposed picture/card extension.
 
-**Profiles (plan 17, in progress).** A profile is its Personalise settings plus a name. The active
+**Profiles (plan 17).** A profile is its Personalise settings plus a name. The active
 profile is a stored choice in the settings record (General when never written, and after Restore),
 and Tones read and write its Personalise settings, so every audible effect follows it. The public
 API is unchanged; standby shows the active profile's name and the silent icon through phone-core's

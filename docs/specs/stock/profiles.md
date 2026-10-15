@@ -1,12 +1,13 @@
-# Profiles (plan 17, in progress)
+# Profiles (plan 17)
 
 Part of the stock firmware's ground truth ([index](../nokia-3310.md#10-firmware-ground-truth-v639-captures)): the goldens under `packages/nokia-os/goldens/` are authoritative; where this file and a golden disagree, fix this file.
 
 Source: the plan 17 captures (`captures/6.39/plan17/`, the `captures/README.md` section "Plan 17
 supplementary captures"), plan 14's virgin `plan14/open/12-n-1` and `12-n-2-10`, plan 15's
 `accept/c4-*`, plan 16's `notes/12-n-1` and `boot/power-key`. Factory facts come from plan 15's
-restored image. Everything here is "(plan 17, in progress)" until Task 10 verifies it against the
-asserted goldens.
+restored image. Every fact below is verified against plan 17's asserted goldens
+(`goldens/index/17.json`, `tests/acceptance/17-profiles.test.ts`) except the known gaps and the
+UNVERIFIED list at the end.
 
 **Slots.** v6.39 has six profiles: General, Silent, Discreet, Loud, `(empty)` and slot 6, which the
 virgin EEPROM names with two U+E000 boxes and Restore names `(empty)`. There is no Meeting, Outdoor
@@ -75,8 +76,26 @@ resets every name (slot 6: `(empty)`).
 | `Hi` welcome note and the clock wizard at power-on in factory runs                                 | plan 15's restored image                                                                                                                | cut from boot recordings                                 |
 | Key-to-redraw and Switch off! latency                                                              | firmware key scan                                                                                                                       | not reproduced (plan 14 D8)                              |
 
+## Known gaps in nokia-os
+
+Asserted goldens nokia-os does not match yet, each named in the plan 17 acceptance file:
+
+- A key's return to standby first draws the ladders without the operator (84-95 ms); nokia-os
+  draws standby at once (`profiles/standby-carousel-c`).
+- The power key held at standby switches off ≈1033 ms after its down; the kernel's long press is
+  800 ms (`profiles/power-general-held`).
+- In the power list the power key beeps 121-123 ms after its down; nokia-os beeps at the down
+  (`sound/profiles/power-general-power-keys`).
+- Rename's cursor phase after several multi-tap commits (`rename-limit`, `rename-limit-extra`,
+  `rename-limit-ok`, `rename-symbols`) and a stray cursor column in one virgin recording
+  (`rename-open-12-3`).
+
 ## UNVERIFIED
 
 - The name's delay after notes other than Activate, `Date is set` and the power list's choice.
 - Whether the power list's C keeps a standby notice (nokia-os keeps it).
 - The power key during other notes that end at standby (only the Activate note is captured).
+- Which setting silences Switch off!'s power-off tone: Silent has both Warning tones and Keypad
+  tones Off; nokia-os gates it on Warning tones.
+- Notices other than the captured ones over the power list, and the power key in a call or with the
+  keyguard on (plans 22 and 25).

@@ -20,7 +20,7 @@ listed under "Shared-file edits", each named with its reason.
 14, 15, 16 and 18 in full before starting. The planning probes are in
 `$REF/captures/scratch-plan17/` (`NOTES.md`, `probe-{a,b,c,d}.cap`, `out-{a,b,c,d}/`): evidence for
 this plan only, never imported. Task 0 writes the canonical captures to `$REF/captures/6.39/plan17/`.
-**Status:** in progress (Task 0 captured; Task 1 contracts documented).
+**Status:** done. Eight asserted goldens stay known gaps (Task 9 completion note).
 
 ## Goal
 
@@ -770,7 +770,7 @@ captures' navigation, `cutRecordingScenario`, `toleratedTreeScenario`, `ACTIVATE
 
 **Task 9 completion note:** 146 plan 17 goldens (102 LCD, 44 sound) asserted, plus the six
 `tree/12-profiles/12-n-1.leaf`, the four remaining `sound/note/12-n-1` goldens and
-`sound/boot/power-key` of plans 14 and 16. Known gaps (9, each with its reason in the acceptance
+`sound/boot/power-key` of plans 14 and 16. Known gaps (8, each with its reason in the acceptance
 file): `standby-carousel-c` (the key return's operator-less redraw), `power-general-held` (the
 kernel's 800 ms long press), `sound/profiles/power-general-power-keys` (the list's power key beeps
 121-123 ms after its down), `rename-open-12-3` (a stray cursor column), and four Rename blink
@@ -783,17 +783,28 @@ workspace.
 **Files:** `packages/nokia-os/{README.md,demo/main.ts}`, `docs/specs/stock/profiles.md`,
 `docs/plans/README.md`, this plan.
 
-- [ ] Demo: the status line shows the active profile. Verify with
+- [x] Demo: the status line shows the active profile. Verify with
       `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser` (headless, Skip boot,
       through `[role=status]`): Activate Silent (note, standby line), Tones › Keypad tones shows
       Silent's, the power key's list, choose General, Rename Loud, power cycle.
-- [ ] README: profiles as settings plus names, the active profile's alias, what later plans read.
-- [ ] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
+- [x] README: profiles as settings plus names, the active profile's alias, what later plans read.
+- [x] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
       `mise exec -- vp run website#build`; `git diff --stat <commit before Task 1> -- website/` is
       empty.
-- [ ] Spec: replace "(plan 17, in progress)" with verified facts; list what stays UNVERIFIED.
-- [ ] Plans README row 17 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete profiles (plan 17)`.
+- [x] Spec: replace "(plan 17, in progress)" with verified facts; list what stays UNVERIFIED.
+- [x] Plans README row 17 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete profiles (plan 17)`.
+
+**Task 10 completion note:** the demo's status line names the active profile, the standby line
+and the silent icon (`demo/panels/profiles.ts`). The Power button taps while the phone is on and
+holds 1 s while it is off, and `P` holds as long as the key does (Deviation: the demo held every
+power press 1 s, which now switches off from the list). Verified headless with `agent-browser` on
+port 5317 (Factory settings, Skip boot): Activate Silent (note, `Silent` line, icon), Tones ›
+Keypad tones opens on Silent's `Off` (5-6-1; on the virgin EEPROM blank at 5-6-0, as
+`tree/12-profiles/12-2-2-6.open`), the power list, General from it (no line), Rename Loud to
+`Loudh`, `Loudh` from the list by its digit, then Switch off! and power-on still showing `Loudh`.
+Screenshots `/tmp/nokia-os-p17-*.png`. `vp check`, `vp run -r test` and `vp run website#build`
+pass; `git diff --stat f315e64 -- website/` is empty.
 
 ## Follow-up plan adjustments
 

@@ -68,10 +68,12 @@ mise exec -- vp run @hellotimber/nokia-os#demo   # http://localhost:5173
 ```
 
 Arrows ▲/▼, Enter Navi, Backspace or Escape C (hold it to return to standby), digits, `*`,
-`#`, and `P` power (held for 1 s). The buttons do the same. In Snake II the digits steer (2/4/6/8,
+`#`, and `P` power (as long as it is held; the Power button holds 1 s while the phone is off and
+taps while it is on, so at standby it opens the profile list). The buttons do the same. In Snake II the digits steer (2/4/6/8,
 and 1/3/7/9 relative), ▲/▼ and `*`/`#` turn, Enter or Escape suspend the game. The demo validates
 the operator name, can skip the boot, and shows the phone's path, screen kind and application in
-a status line with the EEPROM records stored. The phone's EEPROM is the page's localStorage:
+a status line with the EEPROM records stored and the active profile (its name, the standby line
+and the silent icon when shown). The phone's EEPROM is the page's localStorage:
 settings survive a reload, and **Erase EEPROM** removes every `nokia-os/` record and restarts the
 virgin phone (a malformed record shows its error beside the button). The SIM select restarts the
 phone with `SIM 1` or `SIM 2`: with Phone security On, a SIM the phone has not seen asks for the
@@ -180,9 +182,39 @@ Every power-on that passes records its SIM. A stored welcome note replaces the h
 5 s. `boot: "skip"` still asks for the code, but skips the hands and the note.
 
 **Later plans.** The Welcome note editor (plan 18) writes the note this plan shows at power-on.
-The Russian, Bulgarian and Ukrainian UIs (plan 26), profile switching (17), Clear timers' effect
+The Russian, Bulgarian and Ukrainian UIs (plan 26), Clear timers' effect
 and the call-list erase (22) and Phone book › Erase all (19) are left to later plans. SIM PIN,
 PIN2 and barring passwords keep their first screen.
+
+## Profiles
+
+**A profile is its settings plus a name** (plan 17, `src/firmware/features/profiles.ts`). Each of
+the six slots (`PROFILE_SLUGS`: General, Silent, Discreet, Loud and two `(empty)`) stores its
+Personalise settings under `profiles/<slug>/…` keys and its name under its Rename key, in the
+`settings` record. `ACTIVE_PROFILE_KEY` stores the active slot (General when unset: the virgin
+EEPROM and Restore factory settings).
+
+**The active profile's alias.** Tones (menu 5) are an alias, not settings of their own: every
+`tones/…` key reads and writes `profileAlias(key, activeProfile(settings))`, re-resolved through
+the stored active choice on every read, so Activate switches every Tones value at once and Tones ›
+Keypad tones → Level 3 writes the active profile's. Composer has no Personalise counterpart and
+keeps its own.
+
+**What the phone shows.** Activate (Menu › Profiles › n › Activate, `Menu 1 2 n 1`, or the power
+key's short press at standby, which opens the `Switch off!` / profiles list) stores the choice as
+its note opens and beeps the activating key at the new profile's Keypad tones level. At standby the
+active profile's name (none for General; the text `Silent` for a General with its alert, message,
+keypad and warning tones off) is drawn under the operator `PROFILE_LINE_DELAY_MS` after standby,
+and a small icon shows while its Incoming call alert is Off. Rename edits the name with plan 18's
+text input (10 characters; an empty name restores the factory name). The Profiles level lists the
+names and opens on the active profile.
+
+**What later plans read.** `activeProfile`, `profileName`, `activateProfile` and `renameProfile`
+over `StockSettings`; every tone setting through the `tones/…` keys, which already follow the
+active profile (the message alert (18), the incoming call's ringing (22), reminders and alarms
+(21)). The kernel seams are generic and opt-in: `PhoneConfig.standbyLine`, `standbyPower`,
+`StandbyIndicators.silent`, `SubmenuOptions.label` and `ApplicationContext.powerOff`
+(`packages/phone-core/README.md`).
 
 ## Snake II
 
@@ -275,7 +307,7 @@ requestAnimationFrame(loop);
   settings, or the demo's button) sounds: Ringing tone, Ringing volume and Message alert tone
   previews, warning tones on error notes, Snake II's sounds and shakes.
 - **Later plans.** The incoming call's ringing and DTMF (22), the message alert (18), alarms and
-  reminders (21), profile switching (17), the other games' sounds (24) and the Composer (27) play
+  reminders (21), the other games' sounds (24) and the Composer (27) play
   through the same sequencer.
 
 ## Plan-owned resource evidence
@@ -314,8 +346,7 @@ exemption is needed.
 Leaves that are whole applications open the placeholder, tagged with the plan that owns them:
 Write messages, Service command editor, Picture messages, Templates, Smileys, Topics, Chat and
 Screen saver › Screen saver and the Welcome note editor (18); Composer slots (27); the three
-native languages (26); the other games' New game (24); Calculator (20); Stopwatch (21); Profiles ›
-Activate (17). Prompts and empty-state notes show their first screen until the plans for Messages
+native languages (26); the other games' New game (24); Calculator (20); Stopwatch (21). Prompts and empty-state notes show their first screen until the plans for Messages
 (18), Phone book (19), Clock and Reminders (21) and Call register and Call divert (22) take them
 over.
 
