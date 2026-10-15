@@ -1,6 +1,6 @@
 lcd-golden 1
 id: tree/12-profiles/12-1-1.leaf
-status: pending:17
+status: asserted
 source: captures/6.39/plan14/open/12-1-1
 source-sha256: 1ee592c7ed10c8ebd648aad3f2cf8069cd364cd2fff92bba24c11f883298e087
 trigger-frame: 1

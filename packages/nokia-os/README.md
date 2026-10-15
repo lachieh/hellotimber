@@ -18,8 +18,10 @@ settings and Clear timers, and gates the power-on with Phone security On. Snake 
 sound port (plan 16; see "Sound"); the display and keypad LEDs through a lights port, and the
 keyguard locks the keypad (plan 25; see "Lights and the keyguard"). Multi-tap text entry, the
 Welcome note editor, Write messages, Inbox and Outbox work over a host network port (plan 18; see
-"Text entry and SMS"). The SIM card's phone book (names, Service Nos., speed dials, assigned tones,
-Send b'card) works over the SIM a host inserts (plan 19; see "The phone book"). Leaves that are whole applications open a marked
+"Text entry and SMS"), and Write messages writes in T9 with an English dictionary built from an
+open word list (plan 18b; see "T9 predictive text"). The SIM card's phone book (names, Service
+Nos., speed dials, assigned tones, Send b'card) works over the SIM a host inserts (plan 19; see
+"The phone book"). Leaves that are whole applications open a marked
 placeholder (a dotted border the firmware never draws) naming the plan that owns them; see "Leaf
 ownership".
 
@@ -44,6 +46,8 @@ const phone = createStockPhone({
   storage: window.localStorage, // the EEPROM; default: a fresh in-memory storage per phone
   sim: "sim-1", // the inserted SIM card, an id or a whole StockSimCard (default "sim-1", empty)
   network: createSyntheticNetwork(), // SMS in and out (the default; see "Text entry and SMS")
+  // T9 English (see "T9 predictive text"); without it Write messages is multi-tap.
+  t9: { english: (await import("@hellotimber/nokia-os/t9-english")).englishT9 },
 });
 
 const renderer = createScreenRenderer({ paint: paintStockScreen, scale: 6 });
@@ -74,10 +78,12 @@ mise exec -- vp run @hellotimber/nokia-os#demo   # http://localhost:5173
 ```
 
 Arrows ▲/▼, Enter Navi, Backspace or Escape C (hold it to return to standby), digits, `*`,
-`#`, and `P` power (held for 1 s). The buttons do the same. In Snake II the digits steer (2/4/6/8,
+`#`, and `P` power (as long as it is held; the Power button holds 1 s while the phone is off and
+taps while it is on, so at standby it opens the profile list). The buttons do the same. In Snake II the digits steer (2/4/6/8,
 and 1/3/7/9 relative), ▲/▼ and `*`/`#` turn, Enter or Escape suspend the game. The demo validates
 the operator name, can skip the boot, and shows the phone's path, screen kind and application in
-a status line with the EEPROM records stored. The phone's EEPROM is the page's localStorage:
+a status line with the EEPROM records stored and the active profile (its name, the standby line
+and the silent icon when shown). The phone's EEPROM is the page's localStorage:
 settings survive a reload, and **Erase EEPROM** removes every `nokia-os/` record and restarts the
 virgin phone (a malformed record shows its error beside the button). The SIM select restarts the
 phone with `SIM 1` or `SIM 2`: with Phone security On, a SIM the phone has not seen asks for the
@@ -89,7 +95,10 @@ eight sound events (`atMs output state`) under the status line, so a headless ru
 without hearing it. An `LCD` and a `KEYS` lamp show the lights port (the LCD dims while the display
 LEDs are off) and the last eight lights events are listed too. The phone's network is a synthetic
 one: a **Receive SMS** form (sender and text, time-stamped by the browser's clock) delivers a
-message, and the messages the phone sent are listed beside it. The **SIM phone book** select
+message, and the messages the phone sent are listed beside it. The T9 English dictionary loads as
+a chunk of its own after the page and restarts the phone with it (the status line shows `T9:
+English (30000 words)`); unticking **T9 English dictionary** restarts the phone without one, as a
+host that leaves it out (Write messages is then multi-tap). The **SIM phone book** select
 restarts the phone with an empty SIM (the SIM select's), a sample SIM (a handful of invented names
 and two service numbers) or a full one (50 names); the status line shows the SIM's id and its
 names and free locations, and ▼ at standby opens the list. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
@@ -133,8 +142,10 @@ and the importer indexes them in `goldens/index/<NN>.json`. Tree goldens declare
 the nodes they `covers`; `tests/support/drive.ts` derives their key presses from the generated
 tree. Each plan's `tests/acceptance/<NN>-<slug>.test.ts` drives the phone on a virtual 1 ms clock
 through a scenario for every asserted golden of its index and fails if one has none; timelines
-are compared after aligning on the first changed frame, within ±2 ms (probes that replay another
-recording's timings or press later keys: `PROBE_TOLERANCE_MS`, 25 ms). Its `knownGaps` list the
+are compared after aligning on the first changed frame, by the fidelity standard of `AGENTS.md`
+(settled pixels exact; a change within 34 ms of the golden's, or 10 % of the time since the
+trigger up to 100 ms, plus 2 % drift across a long sequence; partial draws under 34 ms neither
+required nor forbidden). Its `knownGaps` list the
 asserted goldens nokia-os cannot reproduce, each with its reason (they run as expected failures).
 The coverage guard (`tests/acceptance/coverage-guard.test.ts`) collects every plan's file and
 proves that every tree node and option choice is covered by an asserted golden, a golden pending
@@ -192,9 +203,41 @@ Every power-on that passes records its SIM. A stored welcome note replaces the h
 5 s. `boot: "skip"` still asks for the code, but skips the hands and the note.
 
 **Later plans.** The Welcome note editor (plan 18) writes the note this plan shows at power-on.
-The Russian, Bulgarian and Ukrainian UIs (plan 26), profile switching (17), Clear timers' effect
+The Russian, Bulgarian and Ukrainian UIs (plan 26), Clear timers' effect
 and the call-list erase (22) and Phone book › Erase all (19) are left to later plans. SIM PIN,
 PIN2 and barring passwords keep their first screen.
+
+## Profiles
+
+**A profile is its settings plus a name** (plan 17, `src/firmware/features/profiles.ts`). Each of
+the six slots (`PROFILE_SLUGS`: General, Silent, Discreet, Loud and two `(empty)`) stores its
+Personalise settings under `profiles/<slug>/…` keys and its name under its Rename key, in the
+`settings` record. `ACTIVE_PROFILE_KEY` stores the active slot (General when unset: the virgin
+EEPROM and Restore factory settings).
+
+**The active profile's alias.** Tones (menu 5) are an alias, not settings of their own: every
+`tones/…` key reads and writes `profileAlias(key, activeProfile(settings))`, re-resolved through
+the stored active choice on every read, so Activate switches every Tones value at once and Tones ›
+Keypad tones → Level 3 writes the active profile's. Composer has no Personalise counterpart and
+keeps its own.
+
+**What the phone shows.** Activate (Menu › Profiles › n › Activate, `Menu 1 2 n 1`, or the power
+key's short press at standby, which opens the `Switch off!` / profiles list) stores the choice as
+its note opens and beeps the activating key at the new profile's Keypad tones level. At standby the
+active profile's name (none for General; the text `Silent` for a General with its alert, message,
+keypad and warning tones off) is drawn under the operator `PROFILE_LINE_DELAY_MS` after standby,
+and a small icon shows while its Incoming call alert is Off. Rename edits the name with plan 18's
+text input (10 characters; an empty name restores the factory name). The Profiles level lists the
+names and opens on the active profile. A standby notice (plan 18) replaces the name line, and the
+message envelope, drawn where the silent icon is, hides it (UNVERIFIED: no capture shows both). On
+a locked keypad (plan 25) the power key shows the keyguard's hint, not the profile list.
+
+**What later plans read.** `activeProfile`, `profileName`, `activateProfile` and `renameProfile`
+over `StockSettings`; every tone setting through the `tones/…` keys, which already follow the
+active profile (the message alert (18), the incoming call's ringing (22), reminders and alarms
+(21)). The kernel seams are generic and opt-in: `PhoneConfig.standbyLine`, `standbyPower`,
+`StandbyIndicators.silent`, `SubmenuOptions.label` and `ApplicationContext.powerOff`
+(`packages/phone-core/README.md`).
 
 ## Snake II
 
@@ -286,8 +329,9 @@ requestAnimationFrame(loop);
   beep, but ringing previews and warning tones are silent. The factory state (Restore factory
   settings, or the demo's button) sounds: Ringing tone, Ringing volume and Message alert tone
   previews, warning tones on error notes, Snake II's sounds and shakes.
-- **Later plans.** An arriving SMS plays the Message alert tone (plan 18, General's settings until
-  profiles). The incoming call's ringing and DTMF (22), alarms and reminders (21), profile switching (17), the other games' sounds (24) and the Composer (27) play
+- **Later plans.** An arriving SMS plays the active profile's Message alert tone (plan 18; the
+  Tones settings follow the active profile, plan 17). The incoming call's ringing and DTMF (22),
+  alarms and reminders (21), the other games' sounds (24) and the Composer (27) play
   through the same sequencer.
 
 ## Lights and the keyguard
@@ -334,7 +378,7 @@ then *` silently and dark (the power key lights); Unlock then `*` within `Now pr
 Plan 18 adds the firmware's multi-tap text entry and the SMS features built on it, checked against
 196 goldens of emulator captures (`text/*`, `sms/*`, `welcome/*`, `glyphs/*`).
 
-- **Text entry.** Write messages opens the multi-tap editor (Dictionary off: T9 is plan 18b's):
+- **Text entry.** With Dictionary off, Write messages opens the multi-tap editor (T9: plan 18b, below):
   every key's character cycle including the accented letters, the 1452 ms commit, sentence case
   after `. `, `? `, `! ` and the `#` case cycle, `123` on held `#`, held digits, the `*` symbol
   table (31 symbols, ▲/▼ wrap, Use inserts), ▲ right and ▼ left, C delete and held-C clear, the
@@ -409,10 +453,60 @@ function httpNetwork(endpoint: string): StockNetworkPort {
 `sendBusinessCard({ to, card: { name, number } })`; a port without it settles `"sent"` after the
 link time, and `createSyntheticNetwork().cards` lists the cards sent.
 
-**Later plans.** 18b adds T9 (the dictionary, Matches, Insert word, Spell) and makes T9 the virgin
-default again; 18c adds Chat over the same messaging service, Templates, Smileys, Picture messages
-(a binary extension of the port), Info service topics and the Service command editor. Dialling a message's number and the received notice's ▲/▼/digit keys (22) and the
-profiles' message alert (17) are theirs.
+**Later plans.** 18c adds Chat over the same messaging service, Templates, Smileys, Picture messages
+(a binary extension of the port), Info service topics and the Service command editor. Dialling a
+message's number and the received notice's ▲/▼/digit keys (22) are theirs; the message alert plays
+the active profile's tone (plan 17).
+
+## T9 predictive text
+
+Plan 18b adds the firmware's T9 to the SMS editor (Write messages, Reply, Edit, Forward), checked
+against 303 goldens of emulator captures (`t9/*`) and specified in
+[`docs/specs/t9-behaviour.md`](../../docs/specs/t9-behaviour.md). With an English dictionary the
+virgin phone writes in T9, as the firmware does:
+
+```ts
+import { createStockPhone } from "@hellotimber/nokia-os";
+
+// A separate entry point: bundlers emit it as its own chunk (≈246 kB, ≈117 kB gzipped), fetched
+// once, and hosts that never open Write messages can leave it out.
+const { englishT9 } = await import("@hellotimber/nokia-os/t9-english");
+const phone = createStockPhone({ carrier: "Telstra", t9: { english: englishT9 } });
+```
+
+- **Keys.** One press per letter: the composing word (underlined, each letter's case fixed when
+  typed) shows the best candidate; `*` cycles the list, the last candidate with `?` and the soft
+  key Spell; `0` ends the word and adds a space; key 1 gives punctuation alone, a word with each
+  mark after a word, and contractions (`don't`); a key no word follows drops silently after one
+  key and shows `?` after more; `#` toggles `Abc`/`abc` between words and `abc`/`ABC` in one,
+  held `#` is `123`; held digits type the digit; C shortens the word and re-enters the word before
+  a deleted space; ▲/▼ stop at word starts and ends (an end re-enters the word); held `*` opens
+  the symbol table. There is no commit timeout.
+- **Options.** Twelve entries (thirteen with Matches while a word composes): Matches (the other
+  candidates, then the current, Use), Insert word, Insert number, Insert symbol and Dictionary
+  (Dictionary off shows `T9 dictionary deactivated`, English `T9 dictionary activated`;
+  Русский and Български open plan 26's placeholders). Spell and Insert word open the
+  `Insert word:` prompt (multi-tap, the message's counter); OK inserts the word and learns it.
+- **User words.** The `t9-user` EEPROM record (version 1) keeps the learned words oldest first,
+  each with its case, `{"words":["Hovo","intos"]}`: an exact user word comes second in its list,
+  longer ones complete at the end; the store holds words while Σ(length + 1) ≤ 840 and drops the
+  oldest. It is written at once, so learned words survive a power cycle, and Restore factory
+  settings keeps it (as it keeps the Dictionary choice).
+- **Without a dictionary** (no `config.t9.english`) the phone behaves as after plan 18: the
+  virgin Dictionary is off, Write messages is multi-tap and English opens a placeholder owned by
+  `config` (the host). `createT9Dictionary("english", source)` builds a dictionary from the
+  generated format (`#<w>` weight lines, words after them) for hosts and tests.
+- **The dictionary** is built by `scripts/build-t9-dictionary.ts` from the MIT-licensed
+  [IlyaSemenov/wikipedia-word-frequency](https://github.com/IlyaSemenov/wikipedia-word-frequency)
+  English counts (pinned commit and SHA-256): its 30,000 most frequent lower-case words, weighted
+  `floor(4 log2(count))`. Provenance, filter and licence:
+  [`src/text/t9/THIRD_PARTY.md`](src/text/t9/THIRD_PARTY.md). No firmware dictionary content is
+  in the repository.
+- **Not reproduced** (spec 15): which words the firmware knows and their order, its nonsense
+  stems, its single-key letter order where it differs, and its exact compositions after key 1
+  (nokia-os lists the dictionary's contractions, then the word joined by `'`, then by `.`). One
+  golden stays a known gap: after a word and a space a short `*` leaves one pixel lit on the
+  underline row, a rule nothing explains yet.
 
 ## The phone book
 
@@ -489,8 +583,7 @@ exemption is needed.
 Leaves that are whole applications open the placeholder, tagged with the plan that owns them:
 Service command editor, Picture messages, Templates, Smileys, Topics, Chat and Screen saver ›
 Screen saver (18c); Composer slots (27); the three
-native languages (26); the other games' New game (24); Calculator (20); Stopwatch (21); Profiles ›
-Activate (17). Prompts and empty-state notes show their first screen until the plans for Phone book (19), Clock and Reminders (21) and Call register and Call divert (22) take them
+native languages (26); the other games' New game (24); Calculator (20); Stopwatch (21). Prompts and empty-state notes show their first screen until the plans for Phone book (19), Clock and Reminders (21) and Call register and Call divert (22) take them
 over.
 
 ## Capture artefacts

@@ -22,9 +22,10 @@ const sms = (number: string, text: string): StockIncomingSms => ({ number, text,
 const INBOX = "navi wait:300 down navi wait:500 down navi wait:500";
 const OUTBOX = "navi wait:300 down navi wait:500 down*2 navi wait:500";
 
+/** A phone without a T9 dictionary: the captures' editors had Dictionary off (plan 18b D5). */
 function phone(storage: StockStorage = createMemoryStorage()) {
   const network = createSyntheticNetwork();
-  const rig = standbyRig({ storage, network });
+  const rig = standbyRig({ storage, network, t9: {} });
   const arrive = (message: StockIncomingSms) => {
     network.deliver(message);
     rig.advance(RECEIVE_LINK_MS + 10);

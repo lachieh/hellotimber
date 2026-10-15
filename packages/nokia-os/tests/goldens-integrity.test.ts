@@ -25,6 +25,7 @@ import {
   type GoldenIndexEntry,
 } from "../scripts/golden-index.ts";
 import { parseManifestNote } from "../scripts/messages-capture-set.ts";
+import { T9_PROMOTED } from "../scripts/t9-capture-set.ts";
 import { parseLightsGolden } from "../scripts/lights-format.ts";
 import { parseSoundGolden } from "../scripts/sound-format.ts";
 
@@ -270,7 +271,7 @@ describe("sound goldens (plan 16)", () => {
 
   it("leaves no golden pending on plan 16 (the Composer is plan 27's)", () => {
     expect(index.filter((entry) => entry.status === "pending:16").map((e) => e.id)).toEqual([]);
-    expect(PLACEHOLDER_OWNERS["5-4-*"]).toBe("27");
+    expect(PLACEHOLDER_OWNERS["5-4-*"]).toBeUndefined();
   });
 });
 
@@ -284,10 +285,12 @@ describe("plan 18 goldens", () => {
       [],
     );
     expect(Object.values(PLACEHOLDER_OWNERS).filter((plan) => plan === "18")).toEqual([]);
-    // Write messages' T9 first screen waits for plan 18b (D3).
+    // Write messages' T9 first screen: plan 18b asserts it.
     expect(index.find((entry) => entry.id === "tree/02-messages/2-1.leaf")?.status).toBe(
-      "pending:18b",
+      "asserted",
     );
+    // Plan 18b leaves no golden pending on it.
+    expect(index.filter((entry) => entry.status === "pending:18b").map((e) => e.id)).toEqual([]);
   });
 
   it("re-owns Chat, the content leaves and their goldens to plan 18c (D1)", () => {
@@ -311,5 +314,53 @@ describe("plan 18 goldens", () => {
       expect(chars, entry.id).toHaveLength(golden.images.length);
       if (entry.id !== "glyphs/digits") expect(new Set(chars).size, entry.id).toBe(chars!.length);
     }
+  });
+});
+
+describe("plan 18b goldens", () => {
+  const own = readPlanIndex(GOLDENS, "18b");
+
+  it("holds only t9/ goldens, pending on 18b until promoted with their scenario", () => {
+    expect(own.length).toBeGreaterThan(0);
+    for (const entry of own) {
+      expect(entry.id).toMatch(/^t9\/[a-z0-9-]+\/\d\d-[a-z0-9-]+$/);
+      expect(entry.status, entry.id).toBe(T9_PROMOTED.has(entry.id) ? "asserted" : "pending:18b");
+    }
+    const ids = new Set(own.map((entry) => entry.id));
+    expect(index.filter((e) => e.id.startsWith("t9/") && !ids.has(e.id))).toEqual([]);
+  });
+
+  it("reads every golden from captures/plan18b/ only", () => {
+    for (const entry of own) {
+      const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+      for (const part of golden.source.split(" + ")) {
+        expect(part, entry.id).toMatch(
+          /^captures\/plan18b\/[a-z0-9-]+\/\d\d-[A-Za-z0-9-]+(\.png)?$/,
+        );
+      }
+    }
+  });
+});
+
+describe("plan 17 goldens", () => {
+  const own = readPlanIndex(GOLDENS, "17");
+
+  it("lists the thin glyph sheet's pages in its note, one per image", () => {
+    const entry = own.find((e) => e.id === "profiles/glyphs-thin")!;
+    const golden = parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+    expect(parseManifestNote(golden.note)).toHaveLength(golden.images.length);
+  });
+
+  it("asserts every plan 17 golden (Task 9: no golden is pending:17)", () => {
+    expect(index.filter((entry) => entry.status === "pending:17").map((e) => e.id)).toEqual([]);
+    expect(own.length).toBeGreaterThan(100);
+  });
+
+  it("leaves no plan 17 golden pending outside its own index", () => {
+    const elsewhere = index.filter(
+      (entry) => entry.status === "pending:17" && !own.some((e) => e.id === entry.id),
+    );
+    expect(Object.values(PLACEHOLDER_OWNERS)).not.toContain("17");
+    expect(elsewhere.map((entry) => entry.id)).toEqual([]);
   });
 });

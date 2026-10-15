@@ -1,6 +1,6 @@
 lcd-golden 1
 id: tree/05-tones/5-4-5.leaf
-status: pending:27
+status: asserted
 source: captures/6.39/plan14/open/5-4-5
 source-sha256: 21d0b07d4325b45953aedac9ff2e25542f1e79ce887d1507c48ba2b7f04c1471
 trigger-frame: 1

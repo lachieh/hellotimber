@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/profiles/power-general-ok-empty
+status: asserted
+source: captures/6.39/plan17/power/general/ok-empty
+source-sha256: 4b2777c64c6e2b8aa5135ed903805de87158f8bf052cd675749e6437b164a090
+state: factory
+keys: 0:navi
+note: General active: OK on empty in the power list beeps at empty's level.
+omitted: none
+
+@events
+# t_ms output   state
+57     tone     900 v=0x9104
+199    tone     off

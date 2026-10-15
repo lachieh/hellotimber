@@ -20282,7 +20282,9 @@ export const SOUND_DATA: { readonly previewDelayMs: number; readonly messagePrev
       "1760.1": 5,
       "3136.3": 13,
       "3520.2": 18,
-      "2349.1": 9
+      "2349.1": 9,
+      "3729.2": 19,
+      "3951.4": 19
     },
     "2": {
       "440": 4,
@@ -20329,7 +20331,9 @@ export const SOUND_DATA: { readonly previewDelayMs: number; readonly messagePrev
       "1760.1": 8,
       "3136.3": 21,
       "3520.2": 27,
-      "2349.1": 14
+      "2349.1": 14,
+      "3729.2": 30,
+      "3951.4": 29
     },
     "3": {
       "440": 6,
@@ -20376,7 +20380,9 @@ export const SOUND_DATA: { readonly previewDelayMs: number; readonly messagePrev
       "1760.1": 12,
       "3136.3": 30,
       "3520.2": 40,
-      "2349.1": 17
+      "2349.1": 17,
+      "3729.2": 44,
+      "3951.4": 42
     },
     "4": {
       "440": 10,
@@ -20424,7 +20430,9 @@ export const SOUND_DATA: { readonly previewDelayMs: number; readonly messagePrev
       "2216.9": 28,
       "3136.3": 49,
       "3520.2": 58,
-      "1499.9": 25
+      "1499.9": 25,
+      "3729.2": 66,
+      "3951.4": 62
     },
     "5": {
       "440": 15,

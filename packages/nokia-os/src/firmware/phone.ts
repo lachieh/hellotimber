@@ -10,6 +10,7 @@ import { VISIBLE_ROWS } from "../display/list-rows";
 import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
 import type { StockCueSink } from "./cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
+import { composerOf } from "./features/composer";
 import { invalidShortcut } from "./leaves";
 import {
   createStockGames,
@@ -28,10 +29,20 @@ import { normaliseSim, type StockSimCard } from "../phone-book/sim-card";
 import { StockPhoneBook } from "../phone-book/store";
 import { STANDBY_KEY_DELAY_MS } from "../phone-book/timings";
 import { stockBootGates } from "./boot";
+import {
+  activationBeep,
+  powerList,
+  PowerListState,
+  standbyProfileLine,
+  standbySilent,
+} from "./features/profiles";
 import { createStockSettings } from "./settings";
 import { StockLightRules, StockLights, type StockLightsPort } from "./features/backlight";
 import { KeyguardOverlay } from "./features/keyguard";
 import type { StockSoundPort } from "../sound/port";
+import { NO_T9_VIRGIN_CHOICES } from "../messages/bindings";
+import type { T9Dictionary } from "../text/t9/dictionary";
+import { stockT9 } from "../text/t9/service";
 import { SoundSequencer } from "../sound/sequencer";
 import { StockSounder, type KeyDownOptions } from "../sound/sounder";
 
@@ -71,6 +82,11 @@ export interface StockPhoneConfig extends StockPorts {
    * nothing delivered unless the host calls its `deliver`).
    */
   network?: StockNetworkPort;
+  /**
+   * Plan 18b: T9 dictionaries. With `english`, Write messages starts in T9 English as the virgin
+   * firmware does. Without it, T9 English is unavailable (Dictionary off, plan 18 behaviour).
+   */
+  t9?: { readonly english?: T9Dictionary };
 }
 
 /**
@@ -132,14 +148,20 @@ export function createStockPhoneWith(
   const sim = simCard.id;
   const { clock, date } = config;
   const eeprom = new StockEeprom(config.storage ?? createMemoryStorage());
-  const settings = createStockSettings(eeprom);
+  const t9 = stockT9(eeprom, config.t9?.english);
+  // Plan 18b D5: without a T9 dictionary the virgin editor is multi-tap (Dictionary off).
+  const settings = createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES);
   let now = 0;
   const security = new StockSecurity(eeprom, settings, { now: () => now, sim });
   const skip = config.boot === "skip";
   const ports = { clock, date };
   const port = config.sound;
   const sequencer = new SoundSequencer((event) => port?.change(event));
-  const sounder = new StockSounder(sequencer, settings, () => now);
+  // Plan 27 (D8): the Composer's saved tones are Ringing tone options 35-41.
+  const composer = composerOf({ eeprom });
+  const sounder = new StockSounder(sequencer, settings, () => now, {
+    userTones: (index) => composer.userRingingTone(index),
+  });
   const lightsPort = config.lights;
   const lights = new StockLights(
     (event) => lightsPort?.change(event),
@@ -179,16 +201,33 @@ export function createStockPhoneWith(
     sounder,
     eeprom,
     messaging,
+    t9,
     phoneBook,
   );
+  // Plan 17 D7: the power key's list, over the same services as the menu's leaves.
+  const power = new PowerListState();
   const phone = createPhone({
-    menu: createStockMenu(ports, settings, games, security, sounder, eeprom, messaging, phoneBook),
+    menu: createStockMenu(
+      ports,
+      settings,
+      games,
+      security,
+      sounder,
+      eeprom,
+      messaging,
+      t9,
+      phoneBook,
+    ),
     // Plan 18 D11: the envelope while Inbox holds unread messages, blinking while every slot is
-    // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED).
+    // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED). Plan 17 D6: the silent
+    // icon while the active profile's Incoming call alert is Off.
     standbyIndicators: () => {
       const store = messaging.store;
-      if (store.full()) return Math.floor(now / FULL_BLINK_MS) % 2 === 0 ? { message: true } : {};
-      return store.unread() > 0 ? { message: true } : undefined;
+      const message = store.full() ? Math.floor(now / FULL_BLINK_MS) % 2 === 0 : store.unread() > 0;
+      const silent = standbySilent(settings);
+      return message || silent
+        ? { ...(message ? { message: true } : {}), ...(silent ? { silent: true } : {}) }
+        : undefined;
     },
     carrier: config.carrier,
     ...(clock === undefined ? {} : { clock }),
@@ -208,6 +247,9 @@ export function createStockPhoneWith(
     rowsWindow: VISIBLE_ROWS,
     // Stock shortcut digits: menu numbers, delayed opening, Invalid shortcut (plan 14 D14).
     shortcutEntry: { openDelayMs: STOCK_SHORTCUT_OPEN_DELAY_MS, invalid: invalidShortcut(sounder) },
+    // Plan 17: the active profile's line under the operator (D5).
+    standbyLine: standbyProfileLine(settings),
+    standbyPower: powerList(services, power),
   });
   // Plan 25 D4: the keyguard over the kernel, which stays at standby underneath it.
   const keyguard = new KeyguardOverlay(phone, {
@@ -291,15 +333,26 @@ export function createStockPhoneWith(
       publish();
       return;
     }
+    // Plan 25: a locked keypad takes every key, the power key included (its hint, not plan 17's
+    // profile list: `hint/pwr`).
     const outcome = keyguard.keyDown(event.key);
     if (outcome.activity) lights.activity();
     if (outcome.consumed) {
       if (!outcome.silent) sounder.keyDown(event.key, { holdBeeps: false });
     } else {
-      const options = keyDownOptions(event.key, phone);
+      const options = keyDownOptions(event.key, phone, power);
+      // Plan 17 D4: a key that activates a profile beeps at that profile's level.
+      const activation = activationBeep(phone, event.key, settings, power);
+      // D7: the power key's list draws the standby it opened over.
+      if (event.key === "power") {
+        const screen = phone.screen;
+        power.standby = screen.kind === "standby" ? screen : undefined;
+      }
       phone.send(event);
-      // The beep follows the key's handling: a widget may set this key's level or replace it.
-      sounder.keyDown(event.key, options);
+      if (activation !== undefined) sounder.keyBeepLevel(activation);
+      // The beep follows the key's handling: a widget may set this key's level or replace it. A
+      // key that switched the phone off has none: the power-off tone plays (Switch off!, P5).
+      if (poweredOn) sounder.keyDown(event.key, options);
     }
     publish();
   };
@@ -350,8 +403,11 @@ export function createStockPhoneWith(
  * (`boot/power-key`; not in the Ringing tone list, `boot/power-off`), and C in the menu
  * carousel leaves the menu at its key-down, so it has no long press to beep at.
  */
-function keyDownOptions(key: PhoneKey, phone: Phone): KeyDownOptions {
-  if (key === "power") return { beeps: phone.screen.kind === "standby", holdBeeps: false };
+function keyDownOptions(key: PhoneKey, phone: Phone, power: PowerListState): KeyDownOptions {
+  // Plan 17: and in the power key's list, where it moves the highlight.
+  const listed = power.selected !== undefined;
+  if (key === "power")
+    return { beeps: phone.screen.kind === "standby" || listed, holdBeeps: false };
   if (key === "c" && phone.screen.kind === "menu-carousel") return { holdBeeps: false };
   return {};
 }
@@ -383,7 +439,8 @@ function stockArrivals(phone: Phone, services: StockServices, arrived: () => voi
       if (atStandby) phone.setNotice({ text: "No space\nfor new\nmessages", softkey: "OK" });
       return;
     }
-    // D15: the profile's message alert (General's, the Tones settings, until plan 17's profiles).
+    // D15: the active profile's message alert (the Tones settings alias the active profile's,
+    // plan 17 D1).
     sounder.messageAlert("tones");
     if (atStandby) received();
     else waiting = true;

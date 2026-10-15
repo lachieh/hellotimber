@@ -147,6 +147,11 @@ subtrees are written out once and then referred to.
       - `2-1/Options-6` **Insert number** → text-input, "Insert number:", key **OK**
       - `2-1/Options-7` **Insert symbol** → symbol-table, "? + # \* ( / ) \ ' " \_ @ & $ £ % / / < > ¿ § = ¤ €¥", key **Use**
       - `2-1/Options-8` **Dictionary** → submenu (3-row list), opens on English
+        - Order and behaviour (plan 18b, [T9 behaviour](t9-behaviour.md) 10.4): `Dictionary off`,
+          `English`, `Русский`, `Български`; the list opens on the current choice and wraps. The
+          choice is stored and shared by every editor that offers it, and survives a power cycle.
+          `English` shows the `T9 dictionary activated` tick note from Dictionary off too
+          (`t9/dictionary-off-on/19-on`), then the editor in T9.
         - `2-1/Options-8-1` **Dictionary off** → tick-note, "T9 dictionary deactivated" (≈1.39 s); then back to the editor
           - **Options** → returns-immediately, "Send / Send to many / Template", key **OK**
         - `2-1/Options-8-2` **English** → timed-note, "T9 dictionary activated"; then back to the list after ≈4.3 s
@@ -517,7 +522,7 @@ subtrees are written out once and then referred to.
     - entries: On · Confirm first · **Off** ▸
     - each: timed-note "Done", then back
 - `12` **Profiles** → submenu (3-row list, one entry per screen)
-  - `12-1` **General** → submenu (3-row list)
+  - `12-1` **General** → submenu (3-row list); General's Personalise has no Rename (it stops at 9)
     - `12-1-1` **Activate** → timed-note, "Selected / profile: / General"; then standby
     - `12-1-2` **Personalise** → submenu (one entry per screen)
       - `12-1-2-1` **Ringing tone** → option-list, key **Quit**
@@ -647,7 +652,8 @@ subtrees are written out once and then referred to.
           - opens with nothing highlighted (index -0): no current value in the virgin EEPROM
         - `12-5-2-9-4` **Screen saver** → no-response (the screen stays as it was for 3.5 s)
       - `12-5-2-10` **Rename** [(empty)] → text-input, "New name: / (empty)", key **OK**
-  - `12-6` **□□** → submenu (3-row list)
+  - `12-6` **□□** → submenu (3-row list); Restore factory settings and an empty Rename name it
+    `(empty)` (plan 17, [stock profiles](stock/profiles.md))
     - `12-6-1` **Activate** → timed-note, "Selected / profile: / "; then standby
     - `12-6-2` **Personalise** → submenu (one entry per screen)
       - `12-6-2-1` **Ringing tone** → option-list, key **Quit**
@@ -689,7 +695,8 @@ subtrees are written out once and then referred to.
           - each: timed-note "Timeout selected", then back
           - opens with nothing highlighted (index -0): no current value in the virgin EEPROM
         - `12-6-2-9-4` **Screen saver** → no-response (the screen stays as it was for 3.5 s)
-      - `12-6-2-10` **Rename** [] → text-input, "New name: / ", key **OK**
+      - `12-6-2-10` **Rename** [□□] → text-input, "New name: / □□" (the large face's two boxes,
+        counter 8), key **OK**
 
 ## With content
 

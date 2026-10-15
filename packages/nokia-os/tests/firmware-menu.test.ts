@@ -19,7 +19,6 @@ import { stockMenu } from "../src/index";
 import { STOCK_FONTS } from "../src/resources";
 import { StockFlowApplication } from "../src/widgets/flow";
 import { expectFlowTimeline } from "./support/flow-rig.ts";
-import { PROBE_TOLERANCE_MS } from "./support/golden.ts";
 import { loadGolden } from "./support/goldens.ts";
 
 const SLUGS = [
@@ -156,8 +155,8 @@ describe("stockMenu", () => {
       STOCK_TREE,
       stockMenu.entries.map((slot) => slot.entry),
     );
-    // The "Leaf ownership" table: Chat, Composer, New game, Activate, Stopwatch, ...
-    for (const number of ["3", "5-4-3", "8-4-2-1", "11-4", "12-5-1"]) {
+    // The "Leaf ownership" table: Chat, New game, Stopwatch, ... (plan 27: the Composer)
+    for (const number of ["3", "8-4-2-1", "11-4"]) {
       expect(kinds.get(number), number).toBe("placeholder");
     }
     for (const number of [
@@ -166,12 +165,14 @@ describe("stockMenu", () => {
       "1-8-1",
       "2-1",
       "4-5",
+      "5-4-3",
       "6-2-3",
       "8-1-1",
       "8-1-2",
       "8-1-6",
       "9",
       "10-2",
+      "12-5-1",
     ]) {
       expect(kinds.get(number), number).toBe("stock");
     }
@@ -232,7 +233,7 @@ describe("stockMenu", () => {
     });
     // Played from the trigger as `game/snake/after-long-top-score` (Top score after the long
     // game, 105), up to the game menu it returns to. The note plays tree 8-1-4's timeline,
-    // a few ms off other recordings (plan 14 closeout): the probe tolerance.
+    // a few ms off other recordings (plan 14 closeout).
     const frames: { startMs: number; pixels: Uint8Array }[] = [];
     let exitMs: number | undefined;
     for (let t = 0; t < 8000; t++) {
@@ -251,7 +252,6 @@ describe("stockMenu", () => {
     const golden = loadGolden("game/snake/after-long-top-score");
     expectFlowTimeline({ frames, ...(exitMs === undefined ? {} : { exitMs }) }, golden, {
       returns: true,
-      toleranceMs: PROBE_TOLERANCE_MS,
     });
     expect(exits).toEqual([{ select: "new-game" }]);
   });
@@ -322,12 +322,11 @@ describe("PlaceholderApplication", () => {
     expect(owners["menu/calculator"]).toBeUndefined();
     expect(owners["menu/settings/phone-settings/welcome-note"]).toBeUndefined();
     expect(owners["menu/messages/write"]).toBeUndefined();
+    expect(owners["menu/tones/composer/empty-4"]).toBeUndefined();
     expect(owners).toMatchObject({
       "menu/chat": "18c",
-      "menu/tones/composer/empty-4": "27",
       "menu/games/bantumi/new-game": "24",
       "menu/clock/stopwatch": "21",
-      "menu/profiles/loud/activate": "17",
     });
   });
 

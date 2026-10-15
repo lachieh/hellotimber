@@ -18,7 +18,6 @@ import { lcdMismatch } from "./golden.ts";
 import { loadGolden } from "./goldens.ts";
 import { cursorOnly } from "./replay.ts";
 import type { TextMode, TextState } from "../../src/text/multitap";
-import { PROBE_TOLERANCE_MS } from "./golden.ts";
 import { replayScenario, type ReplayContext, type TimelineOptions } from "./replay.ts";
 import { standbyRig, type Rig } from "./rig.ts";
 import {
@@ -199,73 +198,10 @@ export function replayTrace(trace: TextTrace, limit = SMS_LIMIT): TraceShot[] {
  */
 export const SETUP_MS = 8000 + 6 * 592 + 9000 + 5 * 592 + 4000 + 9 * 592 + 20000 + 592 + 2000;
 
-/** A tap as a recording presses it: down, 60 ms, up, then `gap`. */
-const pressed = (key: string, gap: string): string[] => [
-  `press ${key}`,
-  "run 60ms",
-  `release ${key}`,
-  `run ${gap}`,
-];
-
 /**
- * The T9 editor's Options › Dictionary › Dictionary off (Dictionary is Options' eighth entry; its
- * list opens on English, ▲ to Dictionary off), as taps and as a recording's presses
- * (`text/dictionary-off`), and the same done in the multi-tap editor nokia-os opens with (D3):
- * Dictionary is Options' fifth entry and its list opens on Dictionary off.
- */
-const DICTIONARY_OFF_REWRITES: readonly (readonly [readonly string[], readonly string[]])[] = [
-  [
-    [
-      ...Array.from({ length: 7 }, () => "key down"),
-      "key menu",
-      "run 1200ms",
-      "key up",
-      "key menu",
-    ],
-    // Three ▼ and the ▲ become waits as long as their taps (392 ms at the logs' 100 ms key gap),
-    // so everything after keeps the capture's times.
-    [
-      ...Array.from({ length: 4 }, () => "key down"),
-      "run 1176ms",
-      "key menu",
-      "run 1200ms",
-      "run 392ms",
-      "key menu",
-    ],
-  ],
-  [
-    [
-      ...Array.from({ length: 7 }, () => pressed("down", "300ms")).flat(),
-      ...pressed("menu", "1500ms"),
-      ...pressed("up", "600ms"),
-    ],
-    [
-      ...Array.from({ length: 4 }, () => pressed("down", "300ms")).flat(),
-      "run 1080ms",
-      ...pressed("menu", "1500ms"),
-      "run 660ms",
-    ],
-  ],
-];
-
-/**
- * Menu, ▼ to Messages, Select (its first page, Write messages), Select: 2968 ms of taps and
- * waits, then 2858 ms so that the whole takes the log's Menu 2 1 and polls (5826 ms).
- */
-const WRITE_MESSAGES_BY_SELECT: readonly string[] = [
-  "key menu",
-  "run 400ms",
-  "key down",
-  "key menu",
-  "run 1000ms",
-  "key menu",
-  "run 2858ms",
-];
-
-/**
- * A block's commands as a stock phone replays them: each T9 Dictionary off replaced by the
- * multi-tap one, and a reboot's power-on (plan 15's logs record the boot, then type the setup's
- * code, time and date) replaced by the setup.
+ * A block's commands as a stock phone replays them: a reboot's power-on (plan 15's logs record
+ * the boot, then type the setup's code, time and date) replaced by the setup. The logs' T9
+ * Dictionary off runs as captured: the phone writes in T9 (plan 18b).
  */
 export function messagesRewrite(lines: readonly string[]): string[] {
   const out: string[] = [];
@@ -276,28 +212,7 @@ export function messagesRewrite(lines: readonly string[]): string[] {
       while (i < lines.length && !(lines[i] === "run 2s" && lines[i - 1] === "key c")) i++;
       continue;
     }
-    // Menu 2 1, then the log polled the LCD every 250 ms (5 polls) for Write messages. The stock
-    // shortcut opens 2-1 once Messages' `1` can no longer become `10` (plan 14 D14), and its
-    // window stays open over the editor, taking the digits typed into it (phone-core): the replay
-    // opens Write messages with Menu, ▼, Select, Select instead, the next key as late as the log's.
-    if (
-      lines[i] === "key menu" &&
-      lines[i + 1] === "run 400ms" &&
-      lines[i + 2] === "key 2 1" &&
-      lines[i + 3] === "run 3000ms" &&
-      lines.slice(i + 4, i + 9).every((line) => line === "run 250ms")
-    ) {
-      out.push(...WRITE_MESSAGES_BY_SELECT);
-      i += 8;
-      continue;
-    }
-    const rewrite = DICTIONARY_OFF_REWRITES.find(([t9]) =>
-      t9.every((line, k) => lines[i + k] === line),
-    );
-    if (rewrite !== undefined) {
-      out.push(...rewrite[1]);
-      i += rewrite[0].length - 1;
-    } else out.push(lines[i]!);
+    out.push(lines[i]!);
   }
   return out;
 }
@@ -366,9 +281,6 @@ export function messagesScenario(options: TimelineOptions = {}): (id: string) =>
   return (id) => replayScenario(MESSAGES_REPLAY, id, options);
 }
 
-/** A recording of a note whose timeline another recording of the same note gave (D8). */
-const OTHER_RECORDING: TimelineOptions = { toleranceMs: PROBE_TOLERANCE_MS };
-
 /**
  * The synthetic cell's link-time spread around the medians the phone uses (D10): five sends
  * 2574.3-2790.4 ms around 2662.4, five arrivals 2141.3-2464.4 ms around 2324.3.
@@ -376,49 +288,17 @@ const OTHER_RECORDING: TimelineOptions = { toleranceMs: PROBE_TOLERANCE_MS };
 export const SEND_LINK_SPREAD_MS = 130;
 export const RECEIVE_LINK_SPREAD_MS = 185;
 
-/** A send's recording: the bar's steps are 7-6's (PROBE_TOLERANCE_MS), `Message sent` at `row`. */
+/** A send's recording: the bar's steps are 7-6's, `Message sent` at `row`. */
 const sendRecording = (row: number): TimelineOptions => ({
-  toleranceMs: PROBE_TOLERANCE_MS,
   anchors: { [row]: SEND_LINK_SPREAD_MS },
 });
-
-/** A box's recording: `Opening` lasts 35-78 ms between recordings (the SIM read). */
-const OPENING: TimelineOptions = { toleranceMs: 45 };
-
-/**
- * A held key's timer runs from its down in the firmware; the replay puts the down on the key's
- * first redraw (D8), here the `#` that 123 types (`text/hold-hash-back`: 1026 ms vs 1010 + 49).
- */
-const HOLD_FROM_REDRAW: TimelineOptions = { toleranceMs: 35 };
 
 /**
  * The scenario options of plan 18's goldens that are not the default (`messagesScenario()`), by
  * the task that promoted them.
  */
 export const MESSAGES_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
-  // Task 8. Welcome note erased plays welcome/erase-empty's timeline; plan 15's recordings of
-  // the notes play plan 18's; No phone numbers plays text/number-search-empty's.
-  "welcome/save-empty": OTHER_RECORDING,
-  "welcome/plan15-erase": OTHER_RECORDING,
-  "welcome/plan15-save-long": OTHER_RECORDING,
-  "sms/centre-1-ok-empty": OTHER_RECORDING,
   // Task 10.
-  // Rows 0-9 are the virgin T9 editor and its Options (plan 18b, D3): the replay's multi-tap
-  // editor reaches the Dictionary list on Dictionary off directly; compared from there.
-  "text/dictionary-off": { fromRow: 10 },
-  // The commit runs 1449-1452 ms after the letter's redraw between recordings (TEXT_TIMINGS is
-  // text/commit's 1452.2).
-  "text/hold-digit": OTHER_RECORDING,
-  "text/hold-digit-pending": OTHER_RECORDING,
-  "text/hold-one": OTHER_RECORDING,
-  "text/hold-zero": OTHER_RECORDING,
-  "text/hold-hash-back": HOLD_FROM_REDRAW,
-  "text/case-numeric-back": HOLD_FROM_REDRAW,
-  "text/number-hold-2": OTHER_RECORDING,
-  "text/number-hold-hash": OTHER_RECORDING,
-  "sms/save-empty": OTHER_RECORDING,
-  // No phone numbers plays text/number-search-empty's 2914 ms; this recording's runs 2883 ms.
-  "sms/send-to-many": { toleranceMs: 35 },
   "text/input-routing-ok": sendRecording(11),
   "sms/send-by-set-numeric": sendRecording(32),
   "sms/send-by-set-alphanumeric": sendRecording(17),
@@ -428,30 +308,8 @@ export const MESSAGES_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
   ),
   "sms/inbox-option-reply-send": sendRecording(11),
   "sms/elsewhere-sending": sendRecording(11),
-  // Opening lasts 35-78 ms between recordings (2-2's own: 60 ms, 2-3's: 45 ms).
-  "sms/inbox-menu-2-2": OPENING,
-  "sms/notice-read": OPENING,
-  "sms/notice-count-read": OPENING,
-  "sms/notice-inbox-menu": OPENING,
-  "sms/inbox-read": OPENING,
-  "sms/outbox-open": OPENING,
-  "sms/persist-inbox": OPENING,
-  "sms/persist-outbox": OPENING,
-  "sms/restore-inbox": OPENING,
-  "sms/restore-outbox": OPENING,
-  "sms/full-persist-inbox-open": OPENING,
-  "sms/full-persist-outbox-open": OPENING,
-  "sms/sim-second-inbox": OPENING,
-  "sms/sim-second-outbox": OPENING,
-  "sms/sim-same-inbox": OPENING,
-  "sms/sim-same-outbox": OPENING,
-  // Erasing message, Erased and No more messages replay sms/inbox-option-erase's timelines.
-  "sms/outbox-erase": OTHER_RECORDING,
-  "sms/outbox-erase-last": OTHER_RECORDING,
-  "sms/inbox-erase-last": OTHER_RECORDING,
-  // No number found plays No phone numbers' timeline (2914 ms; this recording 2883 ms).
-  "sms/outbox-use-number": { toleranceMs: 35 },
-  // The shortcut window's end (the indicator) varies 2920-2948 ms (plan 14 P5): not timed.
+  // The shortcut window's end (the indicator) varies 2920-2948 ms (plan 14 P5) and the replay
+  // redraws it from the key, not the window: not timed.
   "sms/elsewhere-menu": { untimedRows: new Set([1]) },
   "sms/elsewhere-messages-menu": { untimedRows: new Set([1]) },
   // The game's ticks run from its start, whose key latency the replay approximates: the first
@@ -460,8 +318,6 @@ export const MESSAGES_OPTIONS: Readonly<Record<string, TimelineOptions>> = {
   // A sixteenth arrival on a full SIM is refused 2601 ms after the delivery, past the arrivals'
   // spread (RECEIVE_LINK_MS 2324): its link time is the synthetic cell's (D10), not compared.
   "sms/full-arrival": { anchors: { 6: 300 } },
-  // Settings restored plays plan 15's timeline (probe/accept-c7-restore).
-  "sms/restore-ok": OTHER_RECORDING,
 };
 
 // ---------------------------------------------------------------- glyph sheets

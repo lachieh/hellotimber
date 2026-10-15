@@ -1,6 +1,6 @@
 lcd-golden 1
 id: tree/02-messages/2-1.leaf
-status: pending:18b
+status: asserted
 source: captures/6.39/plan14/open/2-1
 source-sha256: 5666f26b7a0f153db1a2798f5bc5a12c8c4dbf93f581ca75b1f879755a2f7c28
 trigger-frame: 1

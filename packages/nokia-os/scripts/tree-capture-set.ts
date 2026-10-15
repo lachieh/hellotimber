@@ -61,9 +61,6 @@ export const SAME_AS: Readonly<Record<string, string>> = {
  * deletes only its own group; equal to the firmware features' placeholders (coverage guard).
  */
 export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
-  // Plan 17: Profiles.
-  "12-*-1": "17", // Profiles › Activate
-
   // Plan 18c: Chat and content (plan 18 D1).
   "2-4": "18c", // Picture messages: nothing in the virgin EEPROM
   "2-5": "18c", // Templates
@@ -89,9 +86,6 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "6-2-1-3": "26", // Русский: native-language note, then that UI (plan 15 D12)
   "6-2-1-4": "26", // Български
   "6-2-1-5": "26", // Українська
-
-  // Plan 27: Composer.
-  "5-4-*": "27", // Composer slots (plan 16 D14)
 };
 
 /** Leaf screen kinds a stock widget or placeholder handles; anything else is an import error. */
@@ -134,11 +128,10 @@ export const MAX_PENDING_FRAMES = 40;
 export const ASSERTED_EARLY: Readonly<Record<string, string>> = { "8-1-1": "23" };
 
 /**
- * Bound leaves whose recording shows a later plan's screen, by number → that plan: Write
- * messages opens the T9 editor in the virgin EEPROM, which plan 18 replaces with multi-tap
- * (Dictionary off) until plan 18b brings T9 (plan 18 D3).
+ * Bound leaves whose recording shows a later plan's screen, by number → that plan (plan 18 D3
+ * held Write messages' T9 editor here until plan 18b brought T9; none now).
  */
-export const PENDING_LATER: Readonly<Record<string, string>> = { "2-1": "18b" };
+export const PENDING_LATER: Readonly<Record<string, string>> = {};
 
 // ---------------------------------------------------------------- io
 

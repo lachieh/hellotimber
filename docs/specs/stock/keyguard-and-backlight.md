@@ -37,9 +37,10 @@ key-down unless stated.
   key-down); an SMS arriving at a locked phone; a timed screen ending (the lock note, the hint,
   the emergency display); Screen saver On (no screen saver can show: no picture is stored in the
   virgin or factory image).
-- **Games › Settings › Lights** (Off in the captures' factory image `v639-plan15-restored.fls`;
-  plan 15's in-session Restore scroll `plan15/factory/scroll/8-6-2` shows On, and so does
-  nokia-os's factory state). While Snake II is playing, Off holds both LEDs off
+- **Games › Settings › Lights** (factory Off: Restore stores Off, which the captures' factory
+  image `v639-plan15-restored.fls` shows after its power cycle; the session that restored keeps
+  its old value until then, so plan 15's in-session scroll `plan15/factory/scroll/8-6-2` shows
+  On; see [storage-and-settings.md](storage-and-settings.md)). While Snake II is playing, Off holds both LEDs off
   (38 ms after New game; play keys and the power key change nothing) and On holds them on (30 s
   of play, no timeout). The pause (Navi or C) and the death's end release the hold with activity;
   Continue is activity and the hold returns (Off: dark again 20 ms later). Outside play the
@@ -122,21 +123,24 @@ LEDs on; Unlock during the hint (nokia-os: unlocks as at the locked standby); a 
 being forgotten when the locked standby returns; keys other than C, Unlock and digits during the
 emergency display (the hint); Continue on a game whose death had begun (nokia-os: no hold); the
 death's end lighting 27 ms before the game-over redraw in `lights/game/off/over` (nokia-os
-lights at the screen); which image is the factory state for Games › Settings › Lights.
+lights at the screen).
 
 ## What nokia-os reproduces
 
 Every plan 25 golden not pending on plan 22 is asserted (193 of 210): the keyguard's LCD
-timelines and stills pixel for pixel, their `leds` per row, the lights goldens' edges within
-5 ms after power-on alignment, and the keyguard's sounds. The four message arrivals (asserted with
+timelines and stills pixel for pixel, their `leds` per row, the lights goldens' edges after
+power-on alignment and the keyguard's sounds by the fidelity standard of `AGENTS.md` (the light
+model's own tests hold its off edges to 5 ms). The four message arrivals (asserted with
 plan 18's merge) are aligned on the arrival: the captures do not log the delivery and the link
 time spreads 2141-2464 ms, so they pin what an arrival lights and paints, not its latency. Known gaps (expected failures, causes in
-`tests/acceptance/25-keyguard-and-backlight.test.ts`): a restarted hint closing with two partial
-draws (`hint-during`, `emergency/{000,110,113,911,999}`), `Keypad locked` timer spreads of
-15-29 ms (`lock-gap/{2500,2900,2910,2920}`), `*` during the carousel's shortcut entry
-(`lock-cancel/digit`, plan 14's kernel), the light tick's ±3 ms (`timeout/virgin/tap-02`), the
-power key's long press (`boot/power-off`, plan 17) and Snake II deaths the captured bot's keys do
-not reproduce (`game/{off,on}/{over,top-score}`).
+`tests/acceptance/25-keyguard-and-backlight.test.ts`): `*` during the carousel's shortcut entry
+(`lock-cancel/digit`, plan 14's kernel), the light tick's ±3 ms deciding whether the LEDs go dark
+(`timeout/virgin/tap-02`; the contrasting factory captures use a different initial state
+or tick offset, so they do not prove alternatives for the same path), the power key's long press (`boot/power-off`, plan 17) and Snake II
+deaths the captured bot's keys do not reproduce (`game/{off,on}/{over,top-score}`). Within the
+fidelity standard and not gaps: a restarted hint's closing partial draws (17 and 9 ms in
+`hint-during`, `emergency/{000,110,113,911,999}`) and Games › Lights Off darkening the LEDs at
+Select's release, 22 ms after the firmware.
 
 ## The website's backlight
 

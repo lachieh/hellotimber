@@ -1280,7 +1280,8 @@ epoch plus the emulated time and the emulator's 2.2 s start-up), and opens Write
 Menu, ▼, Select, Select where the logs typed Menu 2 1: phone-core's stock shortcut keeps its window
 open over the application it opened and takes the digits typed into it (a kernel finding for the
 shortcut's owner). Blink-free comparison also leaves out the full SIM's blinking envelope; partial
-draws only one side makes are skipped.
+draws only one side makes are skipped. (Resolved 2026-10-14: an application the stock shortcut
+opened now takes the digits typed into it, as the firmware does, and the replay types Menu 2 1.)
 
 ### Task 12 - Acceptance and the coverage guard
 

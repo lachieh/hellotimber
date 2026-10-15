@@ -130,6 +130,41 @@ plan 13) is gitignored and **never committed**; nothing from `$REF/extracted` is
 - Never hand-edit `goldens/**` or `src/resources/generated/**`: change the importer, its
   capture-set table or the extractor inputs and regenerate. Tests never read `$REF`.
 
+## Fidelity standard
+
+"Strict repro" means human-perceivable fidelity, not millisecond-exact timing (Lachlan,
+2026-10-15): "If it doesn't change the game on a human perceivable level, it doesn't matter."
+Every golden comparison applies one rule, implemented in
+`packages/nokia-os/tests/support/golden.ts` (`timingToleranceMs`, `timelineTolerance`,
+`periodToleranceMs`, `withoutPartialDraws`):
+
+- **Pixels:** every settled frame is pixel-exact. No pixel tolerance.
+- **One-off transitions** (a screen change, a note's start, a light switching, a beep after a
+  key): an instant `t` ms after its reference (the trigger; a sound program's onset; the last
+  key-down for lights) matches within two display frames (34 ms), growing as 10 % of `t` to
+  100 ms from 1 s: `clamp(t / 10, 34, 100)` ms.
+- **Long sequences** (tunes, animations): each instant after the sequence's first may also have
+  drifted 2 % of the time since that first instant, on top of the one-off tolerance (160 ms more
+  8 s into a tune).
+- **Partial redraws:** a frame shown for less than 34 ms, in the golden or the recording, is
+  neither required nor forbidden, as long as the frames around it match (a quick two-step redraw
+  reads as one change).
+- **Game rhythm:** a game's tick-to-tick interval (Snake's movement period) matches within
+  `max(17, 20 % of the period)` ms, so a speed or rhythm a player would feel still fails.
+  Gameplay outcomes (whether a grace window saves the snake, scores, positions) are exact.
+- **Sound:** events shorter than 34 ms on either side are optional and merge into neighbours; sustained frequencies and volume registers stay exact, with edge times following the timing rules.
+- **Firmware races:** accept bounded alternatives only when two committed real recordings of the same path demonstrate them; otherwise keep the known gap.
+- **Recordings of one path:** timing that varies between two recordings of the same
+  real-firmware path is imperceptible by definition; the timing rules must cover the variation
+  the golden set shows.
+
+Key-to-redraw, key-to-sound and key-to-light latency stay outside the rule (plan 14 D8, plan 16
+D8, plan 25 D2). A difference the rule counts is a known gap with its reason, never a widened
+per-test tolerance. Plans must not add complexity, known gaps or per-test tolerances to chase
+differences the rule calls imperceptible, nor impose arbitrary API limits for them. This
+supersedes the tolerance text of earlier plans (±2 ms, `PROBE_TOLERANCE_MS`, game tick and sound
+edge tolerances).
+
 ## Parallel plan conventions (nokia-os)
 
 Plans 17+ run in parallel git worktrees. Each plan owns its own files below and touches shared

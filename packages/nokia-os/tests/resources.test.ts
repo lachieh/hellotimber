@@ -37,6 +37,7 @@ import {
   type StockFontName,
 } from "../src/resources";
 import { TEXT_DATA } from "../src/resources/generated/text";
+import { COMPOSER_DATA } from "../src/resources/generated/composer";
 import { BOOT_DATA } from "../src/resources/generated/boot";
 import { STOCK_FONT_DATA } from "../src/resources/generated/fonts";
 import { MENU_ICON_DATA } from "../src/resources/generated/menu-icons";
@@ -166,6 +167,7 @@ describe("generated resources", () => {
         snake: SNAKE_DATA,
         sounds: SOUND_DATA,
         text: TEXT_DATA,
+        composer: COMPOSER_DATA,
       }).toEqual(extractResources());
     },
   );
@@ -415,30 +417,23 @@ describe("widget sprites and timelines", () => {
     });
   }
 
-  it(
-    "crops every listed sprite from its golden: binary art with ink, lit only where the golden is",
-    () => {
-      for (const crop of CROPS) {
-        const sprite = WIDGET_DATA.sprites[crop.id]!;
-        expect([sprite.x, sprite.y], crop.id).toEqual([crop.x0, crop.y0]);
-        expect(sprite.art, crop.id).toHaveLength(crop.y1 - crop.y0 + 1);
-        expect(sprite.art.join(""), crop.id).toMatch(/^[#.]*#[#.]*$/);
-        const { pixels } = loadGolden(crop.golden).images.find(
-          (image) => image.name === crop.image,
-        )!;
-        sprite.art.forEach((row, dy) => {
-          expect(row, crop.id).toHaveLength(crop.x1 - crop.x0 + 1);
-          Array.from(row).forEach((ch, dx) => {
-            expect(ch === "#", `${crop.id} (${dx}, ${dy})`).toBe(
-              pixels[(crop.y0 + dy) * 84 + crop.x0 + dx] === 1,
-            );
-          });
-        });
-        expect(WIDGET_SPRITES[crop.id]!.bitmap.width, crop.id).toBe(crop.x1 - crop.x0 + 1);
-      }
-    },
-    EXTRACTION_TIMEOUT_MS,
-  );
+  it("crops every listed sprite from its golden: binary art with ink, lit only where the golden is", () => {
+    for (const crop of CROPS) {
+      const sprite = WIDGET_DATA.sprites[crop.id]!;
+      expect([sprite.x, sprite.y], crop.id).toEqual([crop.x0, crop.y0]);
+      expect(sprite.art, crop.id).toHaveLength(crop.y1 - crop.y0 + 1);
+      expect(sprite.art.join(""), crop.id).toMatch(/^[#.]*#[#.]*$/);
+      const { pixels } = loadGolden(crop.golden).images.find((image) => image.name === crop.image)!;
+      // One comparison per row (a per-pixel expect outlasts the timeout on a loaded machine).
+      sprite.art.forEach((row, dy) => {
+        const lit = Array.from({ length: crop.x1 - crop.x0 + 1 }, (_, dx) =>
+          pixels[(crop.y0 + dy) * 84 + crop.x0 + dx] === 1 ? "#" : ".",
+        ).join("");
+        expect(row, `${crop.id} row ${dy}`).toBe(lit);
+      });
+      expect(WIDGET_SPRITES[crop.id]!.bitmap.width, crop.id).toBe(crop.x1 - crop.x0 + 1);
+    }
+  });
 
   it("references only known sprites, and loops only progress bars and prompt cursors", () => {
     // Plan 19: Erasing memory's bar steps through once and ends (phone-book/erase-all-erasing).
@@ -899,6 +894,15 @@ describe("text entry and SMS resources (plan 18)", () => {
       "large R",
       "small 1",
       "thin 1",
+      // Plan 17 (the Rename pages): accents that fill their cell, so the next glyph touches them.
+      "thin Ã",
+      "thin Ì",
+      "thin Î",
+      "thin Ï",
+      "thin ì",
+      "thin î",
+      "thin ï",
+      "thin ñ",
     ]);
   });
 

@@ -29,6 +29,22 @@ export interface ApplicationContext {
    * hosts may wrap contexts.
    */
   menuIndicator?(): MenuIndicator;
+  /**
+   * Plan 17: power the phone off (deactivation reason `power-off`), as the power key's long press
+   * does. Always provided by the kernel (optional so hosts may wrap contexts); a no-op once this
+   * activation has ended.
+   */
+  powerOff?(): void;
+}
+
+/**
+ * PhoneConfig.shortcutEntry: an application's options numbered 1..count as a menu level (v6.39:
+ * an option list).
+ */
+export interface ShortcutLevel {
+  readonly count: number;
+  /** The typed number chose option `number` (1-based); the shortcut has closed. */
+  choose(number: number): void;
 }
 
 export interface PhoneApplicationSession {
@@ -36,6 +52,14 @@ export interface PhoneApplicationSession {
   tick(dtMs: number): void;
   render(): ScreenModel;
   onDeactivate?(reason: DeactivationReason): void;
+  /**
+   * PhoneConfig.shortcutEntry: the application's options while it is a menu level to the stock
+   * shortcut (undefined: it is not). Digits typed while the shortcut window is open over it, or
+   * while it is about to open, are then matched as numbers among them, as at a menu level, and
+   * do not reach `onKey`: an option's number chooses it, digits that number none open
+   * `invalid`.
+   */
+  shortcutLevel?(): ShortcutLevel | undefined;
 }
 
 export abstract class PhoneApplication {

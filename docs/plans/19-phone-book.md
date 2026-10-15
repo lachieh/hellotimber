@@ -1,5 +1,7 @@
 # Plan 19 - Phone book
 
+> **Fidelity standard (2026-10-15):** `AGENTS.md` "Fidelity standard" supersedes this plan's tolerance text.
+
 > **For agentic workers:** execute task-by-task; tick checkboxes; commit per task.
 > If this plan contradicts VISION.md, AGENTS.md, the spec or the code, STOP and report.
 

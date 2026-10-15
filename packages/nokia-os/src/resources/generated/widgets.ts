@@ -2935,6 +2935,18 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         "...................................................................................."
       ]
     },
+    "profiles/silent": {
+      "x": 7,
+      "y": 0,
+      "art": [
+        "....#..",
+        ".#..##.",
+        "..#.###",
+        ".####.#",
+        "#####..",
+        ".###.#."
+      ]
+    },
     "editor/mode-upper": {
       "x": 14,
       "y": 0,
@@ -3839,6 +3851,18 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         ".####..####.##.##"
       ]
     },
+    "composer/icon": {
+      "x": 1,
+      "y": 0,
+      "art": [
+        "...#....#....##.",
+        "...#....#....#.#",
+        "...#....#....#..",
+        ".###..###..###..",
+        "#..#.####.####..",
+        ".##...##...##..."
+      ]
+    },
     "capture/tree/02-messages/2-2.leaf/b": {
       "x": 0,
       "y": 0,
@@ -4284,6 +4308,63 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
           "durationMs": 541
         }
       ]
+    },
+    "2-1": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 476
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 492
+        },
+        {
+          "frame": 0,
+          "durationMs": 476
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        }
+      ],
+      "loopFrom": 9
     },
     "2-2": {
       "frames": [
@@ -5037,6 +5118,234 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
           "durationMs": 544
         }
       ]
+    },
+    "5-4-1": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 477
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 478
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
+    },
+    "5-4-3": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 478
+        },
+        {
+          "frame": 1,
+          "durationMs": 488
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
+    },
+    "5-4-4": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 476
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 487
+        },
+        {
+          "frame": 1,
+          "durationMs": 481
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
+    },
+    "5-4-5": {
+      "frames": [
+        {
+          "kind": "cursor"
+        },
+        {
+          "kind": "plain"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 478
+        },
+        {
+          "frame": 1,
+          "durationMs": 479
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 491
+        },
+        {
+          "frame": 1,
+          "durationMs": 476
+        },
+        {
+          "frame": 0,
+          "durationMs": 482
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 480
+        },
+        {
+          "frame": 1,
+          "durationMs": 480
+        },
+        {
+          "frame": 0,
+          "durationMs": 481
+        }
+      ],
+      "loopFrom": 9
     },
     "5-5-2": {
       "frames": [
@@ -7679,6 +7988,45 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
+    "12-1-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 683
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 1981
+        },
+        {
+          "frame": 3,
+          "durationMs": 9
+        }
+      ]
+    },
     "12-1-2-9-1": {
       "frames": [
         {
@@ -7736,6 +8084,45 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 2,
           "durationMs": 1992
+        }
+      ]
+    },
+    "12-2-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 683
+        },
+        {
+          "frame": 1,
+          "durationMs": 233
+        },
+        {
+          "frame": 2,
+          "durationMs": 1982
+        },
+        {
+          "frame": 3,
+          "durationMs": 9
         }
       ]
     },
@@ -7853,6 +8240,162 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 2,
           "durationMs": 2000
+        }
+      ]
+    },
+    "12-3-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 681
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 1982
+        },
+        {
+          "frame": 3,
+          "durationMs": 9
+        }
+      ]
+    },
+    "12-4-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 678
+        },
+        {
+          "frame": 1,
+          "durationMs": 233
+        },
+        {
+          "frame": 2,
+          "durationMs": 1974
+        },
+        {
+          "frame": 3,
+          "durationMs": 8
+        }
+      ]
+    },
+    "12-5-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 691
+        },
+        {
+          "frame": 1,
+          "durationMs": 233
+        },
+        {
+          "frame": 2,
+          "durationMs": 1987
+        },
+        {
+          "frame": 3,
+          "durationMs": 9
+        }
+      ]
+    },
+    "12-6-1": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 78
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 678
+        },
+        {
+          "frame": 1,
+          "durationMs": 240
+        },
+        {
+          "frame": 2,
+          "durationMs": 1971
+        },
+        {
+          "frame": 3,
+          "durationMs": 8
         }
       ]
     },
@@ -8550,6 +9093,67 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         }
       ]
     },
+    "rename-done": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 695
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 534
+        }
+      ]
+    },
+    "power-invalid-shortcut": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/error"
+        },
+        {
+          "kind": "edges",
+          "x0": 5,
+          "x1": 30
+        },
+        {
+          "kind": "cut",
+          "bytes": 31
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 2886
+        },
+        {
+          "frame": 1,
+          "durationMs": 8
+        },
+        {
+          "frame": 2,
+          "durationMs": 15
+        }
+      ]
+    },
     "t9-dictionary-deactivated": {
       "frames": [
         {
@@ -8943,6 +9547,36 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
         {
           "frame": 0,
           "durationMs": 1058
+        }
+      ]
+    },
+    "t9-dictionary-activated": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 656
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 488
         }
       ]
     },
@@ -9828,6 +10462,66 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
           "durationMs": 3879
         }
       ]
+    },
+    "composer-tone-saved": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 686
+        },
+        {
+          "frame": 1,
+          "durationMs": 244
+        },
+        {
+          "frame": 2,
+          "durationMs": 525
+        }
+      ]
+    },
+    "composer-tempo-done": {
+      "frames": [
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-box"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick-half"
+        },
+        {
+          "kind": "sprite",
+          "sprite": "note/tick"
+        }
+      ],
+      "steps": [
+        {
+          "frame": 0,
+          "durationMs": 690
+        },
+        {
+          "frame": 1,
+          "durationMs": 232
+        },
+        {
+          "frame": 2,
+          "durationMs": 556
+        }
+      ]
     }
   },
   "byNode": {
@@ -9843,6 +10537,7 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "1-6": "1-5",
     "1-7": "1-7",
     "1-8-1-1": "1-8-1-1",
+    "2-1": "2-1",
     "2-2": "2-2",
     "2-3": "2-3",
     "2-7-1-1": "2-7-1-1",
@@ -9868,6 +10563,13 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "5-1-1": "5-1-1",
     "5-2-1": "5-2-1",
     "5-3-1": "5-3-1",
+    "5-4-1": "5-4-1",
+    "5-4-2": "5-4-1",
+    "5-4-6": "5-4-1",
+    "5-4-7": "5-4-1",
+    "5-4-3": "5-4-3",
+    "5-4-4": "5-4-4",
+    "5-4-5": "5-4-5",
     "5-5-2": "5-5-2",
     "5-6-1": "5-6-1",
     "5-7-1": "5-7-1",
@@ -9911,11 +10613,17 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "11-3": "11-3",
     "11-5": "11-5",
     "11-6-1": "11-6-1",
+    "12-1-1": "12-1-1",
     "12-1-2-9-1": "12-1-2-9-1",
     "12-1-2-9-2": "12-1-2-9-2",
+    "12-2-1": "12-2-1",
     "12-2-2-10": "12-2-2-10",
     "12-2-2-9-1": "12-2-2-9-1",
     "12-2-2-9-2": "12-2-2-9-2",
+    "12-3-1": "12-3-1",
+    "12-4-1": "12-4-1",
+    "12-5-1": "12-5-1",
+    "12-6-1": "12-6-1",
     "8-1": "8-1",
     "8-2": "8-2",
     "8-3": "8-3",
@@ -9936,6 +10644,8 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "invalid-shortcut": "invalid-shortcut",
     "game-over-note": "game-over-note",
     "game-over-fireworks": "game-over-fireworks",
+    "rename-done": "rename-done",
+    "power-invalid-shortcut": "power-invalid-shortcut",
     "t9-dictionary-deactivated": "t9-dictionary-deactivated",
     "message-saved": "message-saved",
     "centre-number-saved": "centre-number-saved",
@@ -9948,6 +10658,7 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "message-memory-full": "message-memory-full",
     "message-sent": "message-sent",
     "message-erased": "message-erased",
+    "t9-dictionary-activated": "t9-dictionary-activated",
     "saved": "saved",
     "replaced": "replaced",
     "nothing-to-save": "nothing-to-save",
@@ -9971,6 +10682,8 @@ export const WIDGET_DATA: { readonly sprites: Readonly<Record<string, { readonly
     "keyguard-hint-scroll": "keyguard-hint-scroll",
     "keyguard-now-press": "keyguard-now-press",
     "keypad-active": "keypad-active",
-    "keyguard-emergency": "keyguard-emergency"
+    "keyguard-emergency": "keyguard-emergency",
+    "composer-tone-saved": "composer-tone-saved",
+    "composer-tempo-done": "composer-tempo-done"
   }
 };

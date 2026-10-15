@@ -1,4 +1,4 @@
-import type { PhoneKey } from "@hellotimber/phone-core";
+import type { PhoneKey, ShortcutLevel } from "@hellotimber/phone-core";
 import type { OptionsModel } from "../display/widgets";
 import type { StockSettings } from "../firmware/settings";
 import type { Flow, Widget } from "./flow";
@@ -22,6 +22,11 @@ export interface OptionListOptions {
   readonly indicatorPrefix?: readonly number[];
   /** OK on option `index`. */
   choose(index: number, flow: Flow): void;
+  /**
+   * A stock shortcut digit numbered option `index` (Menu 8 6 3, then 1). With it the list is a
+   * menu level to the shortcut while the window is open over it; without it digits are keys.
+   */
+  shortcut?(index: number, flow: Flow): void;
   /**
    * Every key-down, with the option ▲/▼ is about to highlight (other keys: the highlighted one;
    * null while unset). Plan 16: the Keypad tones list beeps ▲/▼ at that option's level.
@@ -94,6 +99,15 @@ export class OptionListWidget implements Widget {
 
   close(): void {
     this.#options.close?.();
+  }
+
+  shortcutLevel(flow: Flow): ShortcutLevel | undefined {
+    const options = this.#options;
+    if (options.shortcut === undefined) return undefined;
+    return {
+      count: options.labels.length,
+      choose: (number) => options.shortcut?.(number - 1, flow),
+    };
   }
 }
 

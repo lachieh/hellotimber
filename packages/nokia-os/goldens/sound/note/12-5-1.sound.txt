@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/note/12-5-1
-status: pending:17
+status: asserted
 source: captures/6.39/plan16/notes/12-5-1
 source-sha256: 947515ac77afa8624c3697a824b4c3f4738b88006823eefa4d045a78e61c8b1c
 state: factory

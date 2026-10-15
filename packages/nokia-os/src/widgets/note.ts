@@ -33,6 +33,11 @@ export interface NoteOptions {
    * when a key goes down on it (in place of the key's beep).
    */
   readonly sound?: NoteSound;
+  /**
+   * Plan 17 (B6): a note shown at standby (Activate's): the power key's down leaves for standby,
+   * where the kernel opens the power key's list.
+   */
+  readonly powerLeaves?: boolean;
 }
 
 /** Plays a note's warning tone by its lines (the phone's sounder decides whether it has one). */
@@ -53,8 +58,9 @@ class NoteWidget implements Widget {
     options.sound?.(options.lines);
   }
 
-  onKeyDown(): void {
+  onKeyDown(key: PhoneKey, flow: Flow): void {
     this.#options.sound?.(this.#options.lines);
+    if (key === "power" && this.#options.powerLeaves) flow.standby();
   }
 
   render(): NoteModel {

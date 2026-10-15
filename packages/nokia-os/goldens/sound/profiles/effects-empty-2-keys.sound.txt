@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/profiles/effects-empty-2-keys
+status: asserted
+source: captures/6.39/plan17/effects/empty-2/keys
+source-sha256: e73728922e5c616566c90d39f6c298a22e7de020945220215e399ba3a1212012
+state: factory
+keys: 0:navi 660:down 1320:down 1980:up 2640:c
+note: empty-2 active: Menu, ▼, ▼, ▲, C in the carousel.
+omitted: none
+
+@events
+# t_ms output   state
+55     tone     900 v=0x9104
+179    tone     off
+684    tone     900 v=0x9104
+829    tone     off
+1341   tone     900 v=0x9104
+1488   tone     off
+1999   tone     900 v=0x9104
+2146   tone     off
+2661   tone     900 v=0x9104
+2804   tone     off

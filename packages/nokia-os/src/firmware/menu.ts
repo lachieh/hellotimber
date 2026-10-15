@@ -26,7 +26,7 @@ import { createMemoryStorage, StockEeprom } from "./eeprom";
 import type { StockPorts } from "./ports";
 import { StockSecurity } from "./security";
 import { createStockSettings, stockPageValue, type StockSettings } from "./settings";
-import { LEADS, setterLevel, showsEntryIndicator, STOCK_SETTINGS } from "./stock";
+import { LEADS, LEVELS, setterLevel, showsEntryIndicator, STOCK_SETTINGS } from "./stock";
 import { settingKey } from "./tree";
 import { SoundSequencer } from "../sound/sequencer";
 import { StockSounder } from "../sound/sounder";
@@ -34,6 +34,8 @@ import { createSyntheticNetwork, type StockNetworkPort } from "../messages/netwo
 import { StockMessaging } from "../messages/service";
 import { StockMessages } from "../messages/store";
 import { SET_1_CENTRE_KEY } from "./features/messages";
+import { NO_T9_VIRGIN_CHOICES } from "../messages/bindings";
+import { stockT9, type StockT9 } from "../text/t9/service";
 
 /** The first-digit dots turn into the menu number 2948 ms after Menu (menu/01-phone-book.anim). */
 export const STOCK_SHORTCUT_WINDOW_MS = 2948;
@@ -41,6 +43,7 @@ export const STOCK_SHORTCUT_WINDOW_MS = 2948;
 interface Builder {
   readonly ports: StockPorts;
   readonly settings: StockSettings;
+  readonly services: StockServices;
   readonly leaves: LeafBinder;
 }
 
@@ -113,23 +116,29 @@ function entryOf(
   const key = settingKey(path);
   const setter = setterLevel(node.number);
   const bySlug = (s: string | undefined) => children.find((child) => child.slug.value === s);
+  // A feature's level options (plan 17: the Profiles level shows the stored names and opens on
+  // the active profile).
+  const level = LEVELS[node.number]?.(b.services);
   const opening =
-    lead !== undefined
-      ? () => (b.leaves.leadShown(lead) ? leadEntry : undefined)
-      : setter !== undefined
-        ? () => {
-            const chosen = b.settings.choice(key);
-            return bySlug(chosen === null ? undefined : setter[chosen]);
-          }
-        : spec.opening !== undefined
-          ? () => bySlug(spec.opening)
-          : undefined;
+    level?.opening !== undefined
+      ? () => bySlug(level.opening!())
+      : lead !== undefined
+        ? () => (b.leaves.leadShown(lead) ? leadEntry : undefined)
+        : setter !== undefined
+          ? () => {
+              const chosen = b.settings.choice(key);
+              return bySlug(chosen === null ? undefined : setter[chosen]);
+            }
+          : spec.opening !== undefined
+            ? () => bySlug(spec.opening)
+            : undefined;
   const options: SubmenuOptions = {
     presentation: spec.presentation,
     softkey: spec.softkey,
     ...(spec.presentation === "pages"
       ? {
           detail: (child: MenuEntry) =>
+            b.leaves.pageValue(`${key}/${child.slug.value}`) ??
             pageDetail(`${key}/${child.slug.value}`, b.ports, b.settings),
         }
       : {}),
@@ -139,6 +148,9 @@ function entryOf(
       : { shown: (child: MenuEntry) => child !== leadEntry || b.leaves.leadShown(lead) }),
     ...(spec.intro ? { intro: b.leaves.intro(node, path.map((n) => n.slug).join("/")) } : {}),
     ...(showsEntryIndicator(node.number) ? { entryIndicatorMs: STOCK_SHORTCUT_WINDOW_MS } : {}),
+    ...(level?.label === undefined
+      ? {}
+      : { label: (child: MenuEntry) => level.label!(child.slug.value, child.order.value) }),
   };
   return new SubmenuEntry(slug, order, node.label, new MenuLevel(children), undefined, options);
 }
@@ -165,7 +177,8 @@ export function createStockGames(ports: StockPorts = {}, now: () => number = () 
  * in-memory EEPROM), previews and note tones going to `sounder` (default: a sounder whose
  * sequencer nothing advances: silent), features' records in `eeprom` (default: an empty
  * in-memory EEPROM, the virgin state) and SMS through `messaging` (default: the security's SIM's
- * messages over `eeprom` and a synthetic network nothing ticks).
+ * messages over `eeprom` and a synthetic network nothing ticks), and T9 from `t9` (default: no
+ * dictionary, the user words over `eeprom`; plan 18b).
  */
 export function createStockMenu(
   ports: StockPorts = {},
@@ -175,6 +188,7 @@ export function createStockMenu(
   sounder?: StockSounder,
   eeprom: StockEeprom = new StockEeprom(createMemoryStorage()),
   messaging?: StockMessaging,
+  t9?: StockT9,
   phoneBook?: StockPhoneBook,
 ): PhoneMenu {
   const services = stockServices(
@@ -185,9 +199,15 @@ export function createStockMenu(
     sounder,
     eeprom,
     messaging,
+    t9,
     phoneBook,
   );
-  const builder: Builder = { ports, settings: services.settings, leaves: new LeafBinder(services) };
+  const builder: Builder = {
+    ports,
+    settings: services.settings,
+    services,
+    leaves: new LeafBinder(services),
+  };
   return new PhoneMenu(
     STOCK_TREE.map(
       (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),
@@ -204,9 +224,10 @@ export function stockServices(
   sounder: StockSounder | undefined,
   eeprom: StockEeprom,
   messaging?: StockMessaging,
+  t9: StockT9 = stockT9(eeprom),
   phoneBook?: StockPhoneBook,
 ): StockServices {
-  const store = settings ?? createStockSettings(eeprom);
+  const store = settings ?? createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES);
   const sound = sounder ?? new StockSounder(new SoundSequencer(() => {}), store, () => games.now());
   const code = security ?? new StockSecurity(new StockEeprom(createMemoryStorage()), store);
   return {
@@ -218,6 +239,7 @@ export function stockServices(
     noteSound: (lines) => sound.note(lines),
     eeprom,
     messaging: messaging ?? stockMessaging(eeprom, store, code.sim, createSyntheticNetwork()),
+    t9,
     phoneBook: phoneBook ?? new StockPhoneBook(eeprom, normaliseSim(code.sim)),
   };
 }

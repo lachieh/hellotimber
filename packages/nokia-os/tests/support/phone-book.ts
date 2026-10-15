@@ -17,7 +17,6 @@ import { createStockSettings } from "../../src/firmware/settings";
 import type { StockSimCard } from "../../src/index";
 import { GOLDENS } from "./acceptance.ts";
 import { loadGolden } from "./goldens.ts";
-import { PROBE_TOLERANCE_MS } from "./golden.ts";
 import { messagesRewrite, SETUP_MS } from "./messages.ts";
 import {
   locate,
@@ -27,13 +26,7 @@ import {
   type TimelineOptions,
 } from "./replay.ts";
 import type { SoundGolden } from "../../scripts/sound-format.ts";
-import {
-  expectSoundTimeline,
-  KEY_LATENCY_MAX_MS,
-  loadSoundGolden,
-  playSound,
-  type SoundTolerance,
-} from "./sound.ts";
+import { expectSoundTimeline, KEY_LATENCY_MAX_MS, loadSoundGolden, playSound } from "./sound.ts";
 import { standbyRig } from "./rig.ts";
 
 /** Plan 19's capture logs on a stock phone with each log's SIM (`standbyRig` stands for the setup). */
@@ -61,137 +54,45 @@ export function phoneBookScenario(
     replayScenario(PHONE_BOOK_REPLAY, id, typeof options === "function" ? options(id) : options);
 }
 
-/** A recording of a note whose timeline another recording of the same note gave (D8). */
-const OTHER_RECORDING: TimelineOptions = { toleranceMs: PROBE_TOLERANCE_MS };
-
 /**
  * ▲/▼ at standby: the key acts on the row of standby's leading frame (22-37 ms; the replay takes
  * a row that short for a partial draw); later keys find their own rows.
  */
-function standbyKey(
-  extra: TimelineOptions = {},
-  laterRows: readonly number[] = [],
-): (id: string) => TimelineOptions {
-  // The leading frame lasts 22-37 ms between presses (STANDBY_KEY_DELAY_MS is the median, 23).
-  return keysOnRows([1, ...laterRows], { toleranceMs: LEAD_SPREAD_MS, ...extra });
+function standbyKey(laterRows: readonly number[] = []): (id: string) => TimelineOptions {
+  return keysOnRows([1, ...laterRows]);
 }
 
-/** The recording's keys act on rows `rows` (one per key, in order), with `extra`'s options. */
-function keysOnRows(
-  rows: readonly number[],
-  extra: TimelineOptions = {},
-): (id: string) => TimelineOptions {
+/** The recording's keys act on rows `rows` (one per key, in order). */
+function keysOnRows(rows: readonly number[]): (id: string) => TimelineOptions {
   return (id) => {
     const timeline = loadGolden(id).timeline!;
     const at = (row: number) => timeline[row]!.startMs - Math.min(timeline[0]!.startMs, 1);
-    return { ...extra, keyAt: Object.fromEntries(rows.map((row, i) => [i, at(row)])) };
+    return { keyAt: Object.fromEntries(rows.map((row, i) => [i, at(row)])) };
   };
 }
 
-/** The leading frame's spread around STANDBY_KEY_DELAY_MS (16 presses: 22-37 ms). */
-const LEAD_SPREAD_MS = 15;
-
-/** C in a standby list draws standby without its operator 80-86 ms (STANDBY_LIST_EXIT_DRAW_MS 85). */
-const LIST_EXIT_SPREAD: TimelineOptions = { toleranceMs: 6 };
-
-/**
- * `No phone numbers` plays one recording's timeline (2914 ms); the note lasts 2850-2938 ms between
- * recordings (standby-down-empty 2901, search-empty-sim 2881, service-empty 2938,
- * speed-empty 2850).
- */
-const NO_PHONE_NUMBERS: TimelineOptions = { toleranceMs: 65 };
-
-/**
- * `Speed dial key n saved` plays speed-assign-2-saved's timeline (1396 ms); it lasts 1380-1427 ms
- * over the nine other saves.
- */
-const SPEED_DIAL_SAVED: TimelineOptions = { toleranceMs: 35 };
-
-/**
- * A warning-tone note in another flow than its recording's: `Nothing to save` lasts 2880 ms after
- * Edit (`edit-empty-both`), 2939 after Add name (its timeline), as `No phone numbers` spreads.
- */
-const WARNING_NOTE = NO_PHONE_NUMBERS;
-
-/** The scenario options of plan 19's goldens that are not the default, by the task that promoted them. */
+/** The scenario options of plan 19's goldens that are not the default. */
 export const PHONE_BOOK_OPTIONS: Readonly<
   Record<string, TimelineOptions | ((id: string) => TimelineOptions)>
 > = {
-  // Task 7. Standby ▲/▼'s leading frame.
-  ...Object.fromEntries(
-    ["standby-down-large", "standby-down-list", "standby-down-number", "standby-delay"].map(
-      (id) => [`phone-book/${id}`, standbyKey()],
-    ),
-  ),
-  // A key in the leading frame acts on the list once it opens (its own row, 3: C's draw, ▼'s anna).
-  "phone-book/standby-lead-c": standbyKey({}, [3]),
-  "phone-book/standby-lead-down": standbyKey({}, [3]),
-  "phone-book/standby-list-c": LIST_EXIT_SPREAD,
-  "phone-book/standby-down-list-c": LIST_EXIT_SPREAD,
-  // No phone numbers plays plan 18's timeline (2914 ms; this recording's 2901).
-  "phone-book/standby-down-empty": standbyKey(NO_PHONE_NUMBERS),
-  "phone-book/search-empty-sim": NO_PHONE_NUMBERS,
-  // The tick notes (Saved, Replaced) and Type of view's Done play one recording's timeline;
-  // their steps spread up to 16 ms between recordings (`saved`: add-saved's 684/235/1927).
+  // Standby ▲/▼'s leading frame.
   ...Object.fromEntries(
     [
-      "add-chars-saved",
-      "add-euro-saved",
-      "add-empty-sim",
-      "add-full-replace",
-      "add-fullrev-replace",
-      "add-limit-saved",
-      "add-no-name",
-      "add-no-number",
-      "add-small-refill",
-      "view-choose-large-font",
-      "view-choose-name-list",
-      "view-choose-name-number",
-      // Task 8. Erased, Saved, Memory full and Done after Erase, Edit and Assign tone.
-      "erase-list-middle-ok",
-      "erase-list-last-ok",
-      "edit-both-replace",
-      "edit-empty-number",
-      "edit-full-add",
-      "edit-full-add-replace",
-      "edit-number-only",
-      "edit-replace",
-      "edit-unchanged",
-    ].map((id) => [`phone-book/${id}`, OTHER_RECORDING]),
+      "standby-down-large",
+      "standby-down-list",
+      "standby-down-number",
+      "standby-delay",
+      "standby-down-empty",
+      "erase-all-after-down",
+    ].map((id) => [`phone-book/${id}`, standbyKey()]),
   ),
-  "phone-book/erase-one-by-one-empty": NO_PHONE_NUMBERS,
-  "phone-book/erase-all-after-down": standbyKey(),
-  "phone-book/edit-empty-both": WARNING_NOTE,
-  // Done's half tick comes 670-672 ms after its box in four recordings, 697 in this one.
-  "phone-book/tone-ok-no-tone": { toleranceMs: 30 },
-  // Task 9.
-  ...Object.fromEntries(
-    [3, 4, 5, 6, 7, 8, 9].map((key) => [`phone-book/speed-assign-${key}-saved`, SPEED_DIAL_SAVED]),
-  ),
-  "phone-book/speed-change-select": SPEED_DIAL_SAVED,
-  "phone-book/speed-empty": NO_PHONE_NUMBERS,
-  // No voice tags saved plays plan 14's recording of its node (1-10-2).
-  "phone-book/voice-erase": OTHER_RECORDING,
-  "phone-book/voice-playback": OTHER_RECORDING,
-  "phone-book/voice-change": OTHER_RECORDING,
-  // Task 10. The sending bar is plan 14's 7-6 recording; Message sent is plan 18's.
-  "phone-book/bcard-ok": OTHER_RECORDING,
-  "phone-book/pick-send-to-many-send": OTHER_RECORDING,
+  // A key in the leading frame acts on the list once it opens (its own row, 3: C's draw, ▼'s anna).
+  "phone-book/standby-lead-c": standbyKey([3]),
+  "phone-book/standby-lead-down": standbyKey([3]),
   // Edit › Add writes a new SIM location: `Saved` comes 361 ms after OK's down, past the
   // replay's latency window (Replace: 285 ms); OK acts on its row.
-  "phone-book/edit-add": keysOnRows([1], OTHER_RECORDING),
+  "phone-book/edit-add": keysOnRows([1]),
 };
-
-/**
- * Sound goldens that are another recording of their program (plan 16's sound tolerance): Assign
- * tone's previews play the tones Tones › Ringing tone's recordings gave.
- */
-const PHONE_BOOK_SOUND_OPTIONS: Readonly<Record<string, SoundTolerance>> = Object.fromEntries(
-  ["down", "down-2", "down-3", "up", "back-to-default", "no-tone", "wrap"].map((move) => [
-    `sound/phone-book/tone-preview-${move}`,
-    { drift: true },
-  ]),
-);
 
 /**
  * Sound goldens whose first key acts at its beep (the screen it opens draws then: Voice tags'
@@ -264,11 +165,7 @@ export function phoneBookSoundScenario(id: string): void {
       : 0;
   const keys = (golden.keys ?? []).map((key, i) => (i === 0 ? { ...key, ms: key.ms + beep } : key));
   const played = playSound(replay.rig, { ...golden, keys });
-  // A late beep is the DSP's awake or woken one (140-145 ms) as the replay's key timing has it.
-  expectSoundTimeline(played, golden, `${id}: ${golden.note ?? ""}`, {
-    ...PHONE_BOOK_SOUND_OPTIONS[id],
-    ...(beep > 0 ? { drift: true } : {}),
-  });
+  expectSoundTimeline(played, golden, `${id}: ${golden.note ?? ""}`);
   replay.end();
 }
 

@@ -1,7 +1,7 @@
 // Plan 13's acceptance (docs/plans/13-nokia-os-foundation.md "Scenario harness and coverage
 // guard"): the boot, standby, the menu carousel and its level lists, driven by key presses on a
-// virtual 1 ms clock, pixel for pixel and every timeline within ±2 ms after aligning on the
-// transition (D9).
+// virtual 1 ms clock, pixel for pixel and every timeline by the fidelity standard after aligning
+// on the transition (D9; tests/support/golden.ts).
 import { MENU_SLUGS } from "../../scripts/capture-set.ts";
 import type { StockPhoneConfig } from "../../src/index";
 import {
@@ -10,7 +10,7 @@ import {
   recordTimeline,
   type Scenario,
 } from "../support/acceptance.ts";
-import { expectLcd, expectTimeline, lcdMismatch, TIMING_TOLERANCE_MS } from "../support/golden.ts";
+import { expectLcd, expectTimeline, lcdMismatch, timingToleranceMs } from "../support/golden.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
 import { frameAt, standbyRig, stockRig, type Rig } from "../support/rig.ts";
 
@@ -60,15 +60,19 @@ function carouselStill(id: string, n: number): void {
   const slug = SLUGS[n - 1]!;
   const { rig, trigger, context } = revealCarouselItem(n);
   const at = STILL_AT_MS[slug];
-  const recording = rig.record(at + TIMING_TOLERANCE_MS + 1, trigger);
+  const toleranceMs = timingToleranceMs(at);
+  const recording = rig.record(at + toleranceMs + 1, trigger);
   const golden = goldenImage(id, slug);
-  // Within ±2 ms of a frame boundary either neighbouring frame may have been on screen.
-  const shown = new Set(
-    [at - TIMING_TOLERANCE_MS, at, at + TIMING_TOLERANCE_MS].map((t) =>
-      frameAt(recording, recording.triggerMs + t),
+  // A frame boundary may move by the fidelity standard's tolerance, so any frame on screen within
+  // it of the shot may be the shot's.
+  const from = recording.triggerMs + at - toleranceMs;
+  const shown = [
+    frameAt(recording, from),
+    ...recording.frames.filter(
+      (frame) => frame.startMs > from && frame.startMs <= from + 2 * toleranceMs,
     ),
-  );
-  if ([...shown].some((frame) => lcdMismatch(frame.pixels, golden, context) === undefined)) return;
+  ];
+  if (shown.some((frame) => lcdMismatch(frame.pixels, golden, context) === undefined)) return;
   expectLcd(frameAt(recording, recording.triggerMs + at), golden, `${context}, ${at} ms later`);
 }
 

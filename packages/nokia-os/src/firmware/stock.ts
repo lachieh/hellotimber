@@ -3,8 +3,11 @@
 // features bind throws here, when the module loads.
 import * as FEATURES from "./features/index";
 import type {
+  AliasTarget,
   FactoryDefault,
+  FactoryText,
   LeadEntry,
+  LevelBinding,
   NoteEndBinding,
   OptionListHooks,
   ScreenBinding,
@@ -82,6 +85,9 @@ export const SCREENS: Readonly<Record<string, ScreenBinding>> = merged("Screen",
 /** Entries heading submenu levels, by the level's node number. */
 export const LEADS: Readonly<Record<string, LeadEntry>> = merged("Lead entry", (f) => f.leads);
 
+/** Labels and openings of submenu levels, by the level's node number (plan 17). */
+export const LEVELS: Readonly<Record<string, LevelBinding>> = merged("Level", (f) => f.levels);
+
 export const PROMPT_LAYOUTS: Readonly<Record<string, PromptLayout>> = widgets(
   "Prompt layout",
   "promptLayouts",
@@ -108,6 +114,7 @@ export const STOCK_SETTINGS = {
   codeSettings: settings("Code setting", "codeSettings"),
   restoreKeeps: joined((f) => f.settings?.restoreKeeps),
   factoryDefaults: joined<FactoryDefault>((f) => f.settings?.factoryDefaults),
+  factoryTexts: joined<FactoryText>((f) => f.settings?.factoryTexts),
 } as const;
 
 /** The features' EEPROM records (plan 15 D2), in feature order. */
@@ -189,14 +196,23 @@ export function numberLine(
 }
 
 /**
- * The key `key` shares by the settings aliases, else itself. The virgin settings alias a key
- * only when that target exists (Composer has no Personalise counterpart).
+ * The key `key` shares by the settings aliases, else itself; a target that follows a stored
+ * choice reads it through `choice` (default: every choice unset, the virgin state: Tones are
+ * General's). The virgin settings alias a key only when that target exists (Composer has no
+ * Personalise counterpart).
  */
-export function settingAlias(key: string): string {
+export function settingAlias(
+  key: string,
+  choice: (key: string) => number | null = () => null,
+): string {
   for (const { prefix, target } of STOCK_SETTINGS.aliases) {
-    if (key.startsWith(prefix)) return target + key.slice(prefix.length);
+    if (key.startsWith(prefix)) return aliasPrefix(target, choice) + key.slice(prefix.length);
   }
   return key;
+}
+
+function aliasPrefix(target: AliasTarget, choice: (key: string) => number | null): string {
+  return typeof target === "string" ? target : target(choice);
 }
 
 /** The features' hooks for the option list of setting `key`; at most one feature has any. */

@@ -236,4 +236,19 @@ export class StockLightRules {
 }
 
 /** The lights' rules are wired by the stock phone wrapper (`src/firmware/phone.ts`). */
-export const backlightFeature: StockFeature = { name: "backlight" };
+export const backlightFeature: StockFeature = {
+  name: "backlight",
+  settings: {
+    // Restore factory settings stores Lights Off: the restored image opens it on Off after a
+    // power cycle and holds the LEDs off in play (`lights/game/off/play`). The session that
+    // restored keeps showing and using its old value until then (not reproduced).
+    factoryDefaults: [
+      {
+        key: GAMES_LIGHTS_KEY,
+        label: "Off",
+        evidence: "v6.39",
+        capture: "plan25/lights/game/off/play.lights.csv",
+      },
+    ],
+  },
+};

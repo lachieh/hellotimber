@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/profiles/effects-discreet-keys
+status: asserted
+source: captures/6.39/plan17/effects/discreet/keys
+source-sha256: ee5776383a274c613db652fc08467e861d572454e962a93835f072c00fda3f61
+state: factory
+keys: 0:navi 660:down 1320:down 1980:up 2640:c
+note: discreet active: Menu, ▼, ▼, ▲, C in the carousel.
+omitted: none
+
+@events
+# t_ms output   state
+52     tone     900 v=0x9108
+176    tone     off
+681    tone     900 v=0x9108
+827    tone     off
+1338   tone     900 v=0x9108
+1485   tone     off
+2004   tone     900 v=0x9108
+2151   tone     off
+2666   tone     900 v=0x9108
+2809   tone     off

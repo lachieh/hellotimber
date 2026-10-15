@@ -3,6 +3,7 @@ import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
 import { paintStandby } from "../standby";
 import { paintCalculator, type CalculatorModel } from "./calculator";
+import { paintComposer, type ComposerModel } from "./composer";
 import { paintConfirm, type ConfirmModel } from "./confirm";
 import { paintEditor, type EditorModel } from "./editor";
 import { paintGameOver, type GameOverModel } from "./game-over";
@@ -30,12 +31,15 @@ import {
 import { paintNote, paintWelcomeNote, type NoteModel, type WelcomeNoteModel } from "./note";
 import { paintOptions, type OptionsModel } from "./options";
 import { paintProgress, type ProgressModel } from "./progress";
+import { paintStandbyFrame, type StandbyFrameModel } from "../profiles";
 import { paintPrompt, type PromptModel } from "./prompt";
+import { paintShortcutChoice, type ShortcutChoiceModel } from "./shortcut-choice";
 import { paintSnake, type SnakeModel } from "./snake";
 import { paintSplash, type SplashModel } from "./splash";
 import { paintSymbols, type SymbolsModel } from "./symbols";
 import { paintTextPage, type TextPageModel } from "./text-pages";
 
+export type { ComposerModel } from "./composer";
 export type { ConfirmModel } from "./confirm";
 export type { EditorModel } from "./editor";
 export type { GameOverModel } from "./game-over";
@@ -56,6 +60,7 @@ export { welcomeNoteLines } from "./note";
 export type { OptionsModel } from "./options";
 export type { ProgressModel } from "./progress";
 export type { PromptEntry, PromptModel } from "./prompt";
+export type { ShortcutChoiceModel } from "./shortcut-choice";
 export type { SnakeModel } from "./snake";
 export type { SplashModel } from "./splash";
 export type { SymbolsModel } from "./symbols";
@@ -105,6 +110,7 @@ export type WidgetModel =
   | SymbolsModel
   | PlaceholderModel
   | CalculatorModel
+  | ComposerModel
   | KeyguardModel
   | StandbyDrawModel
   | MessageListModel
@@ -112,7 +118,9 @@ export type WidgetModel =
   | NameListModel
   | ServiceListModel
   | PhoneBookQueryModel
-  | PhoneBookNumberModel;
+  | PhoneBookNumberModel
+  | StandbyFrameModel
+  | ShortcutChoiceModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -177,6 +185,12 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
     case "calculator":
       paintCalculator(fb, model);
       return;
+    case "composer":
+      paintComposer(fb, model);
+      return;
+    case "standby-frame":
+      paintStandbyFrame(fb, model);
+      return;
     case "keyguard":
       paintKeyguard(fb, model, previous);
       return;
@@ -197,6 +211,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "phone-book-number":
       paintPhoneBookNumber(fb, model);
+      return;
+    case "shortcut-choice":
+      paintShortcutChoice(fb, model, previous);
       return;
     case "standby-draw":
       paintStandby(fb, {

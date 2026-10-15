@@ -15,7 +15,7 @@ before Task 2; if it has not, stop and report.
 "Plan 16 supplementary captures") and plans 13-16 and 18 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan27/`. The planning probes in `$REF/captures/scratch-plan27/`
 (`NOTES.md` lists them) are evidence for this plan only and are never imported.
-**Status:** not started.
+**Status:** done.
 
 ## Goal
 
@@ -122,6 +122,12 @@ facts; its manual example (`16.a2 16d2 16#f2 …`) is the notation K6 draws. Tas
 remaining cases (inheritance after a rest at the start, `#` on a dotted note, the hold threshold
 against the kernel's 800 ms long press, C during the hold) and a Deviation records any change.
 
+Deviation (Task 0): a new note and a rest copy the nearest **note** before the cursor (rests
+skipped; none: 4, octave 1), not the token before (`entry/note-after-rest-shorter`: `4c2 8- 4d2`);
+the hold threshold is the editor's own ≈771 ms (not the kernel's 800 ms long press); `#` sharpens a
+dotted note; C while a note key is held re-enters the held note at C's down and up (key rollover)
+and deletes nothing; ▲/▼ held repeat (≈778 ms, then ≈196 ms).
+
 **D3 - Pitches and durations are tables derived from captured events, never BPM arithmetic or
 equal temperament (plan 16 D3 applied).** `scripts/composer-programs.ts` (pure) derives from the
 composer sound goldens: `PITCHES` (36 frequencies as the buzzer logs them, K10), `TEMPI` (the 16
@@ -132,6 +138,11 @@ program and rendering it reproduces its golden (edges ±2 ms within a recording,
 programs). If a per-tempo rule in timer units fits every recording exactly, the generator may emit
 it instead of the table, with the table kept as its test (plan 16 D10's standard). Nothing from
 `$REF/extracted` or `website/src/phone/composer.ts` is used.
+
+Deviation (Task 0): periods are integer timer units per tempo and value (plain and dotted), a
+note sounds for its period less 2 units; single notes jitter by ±1 unit and a recording can run
+≈1 % long, so the table is the sweep's per-tempo mode and programs are compared with plan 16's
+drift tolerance (25 ms + 1.2 % of the offset, a note's own edges within one unit), not ±2 ms.
 
 **D4 - Volume: the Ringing volume's tables, no gate, no vibrator (new; reuses plan 16 D10).**
 Play and the entry sounds use the stored Ringing volume's `VOLUME_RULE` table (an unset volume:
@@ -144,6 +155,10 @@ the frequencies the ringing tones lack (3729.2 and 3951.4 Hz at least) and every
 it (Play, previews of saved tones, `ring()`) stays exact; a frequency whose register disagrees
 with an existing table entry fails the fit, naming both goldens.
 
+Deviation (Task 0): confirmed for short tones (Level 5 plays Level 4's table, Ascending and unset
+Level 1's); in a long Play, Level 5 jumps and Ascending steps at free-running-timer times (≈3.9 s
+apart); nokia-os uses D9's nearest behaviour for Play too.
+
 **D5 - Keys act on key-down; the editor beeps nothing (plan 23 D7 pattern; plan 16 D8
 exception).** The firmware draws and sounds note keys, C and held C at the key-down (K5, K6), so
 the editor handles keys in `onKeyDown` and times holds itself (the hold threshold and held C's
@@ -152,12 +167,18 @@ clear from Task 0's recordings, generated into `COMPOSER_TIMINGS`). Every key-do
 silenced key no held beeps (a one-line sounder change, D10); the Options and Tempo lists and the
 prompts beep as other stock screens do unless Task 0 shows otherwise. The firmware's key-to-redraw latency is not reproduced (plan 14 D8).
 
+Deviation (Task 0): confirmed; the Options key that opens the list is silent too (it is an editor
+key-down), the keys inside Options and Tempo beep. During Play every key-down is silent.
+
 **D6 - A tone is a value; the program is built from it (new).** `ComposerTone = { name, tempo,
 tokens }`. `toneProgram(tone, level)` builds a `SoundProgram` (buzzer steps from `PITCHES` and
 `DURATIONS`, volumes from `VOLUME_RULE` at `level`), `notePreview(token, tempo, level)` the
 single-note program of K8. The editor plays them through `StockSounder.play` and stops them
 through a new `StockSounder.cancel(play, atMs?)` (D10): C and Stop end Play after the sounding
 note, a note key's sound replaces it, ▲/▼ leave it playing (K9; Task 0 confirms with recordings).
+
+Deviation (Task 0): C and Stop end Play at once (the sounding note is cut), not after it; ▲/▼
+and 0 leave it playing; a note key, 8, 9, `*` and `#` replace it with their note.
 
 **D7 - The Composer record (new; plan 15 D2).** `COMPOSER_RECORD` (`nokia-os/composer`, version
 
@@ -168,6 +189,10 @@ note, a note key's sound replaces it, ▲/▼ leave it playing (K9; Task 0 confi
    factory settings), and the ringing tone reset to `Nokia tune` is plan 15's `FACTORY_DEFAULTS`
    already. Only Save writes; leaving an editor discards unsaved edits (K1, K7, K13). Registered in
    `STOCK_RECORDS`.
+
+Deviation (Task 0): the new tone's tempo is RAM state (the last set or saved since power-on; 112
+after a cold boot; Restore factory settings keeps it), so `COMPOSER_RECORD` holds the slots only and
+`StockComposer` keeps the new-tone tempo for the phone's life.
 
 **D8 - Saved tones are Ringing tone entries 36-42 through one resolver (new; needs one sounder
 hook).** Slot k (1-7) is option index 34 + k of every ringing-tone setting (`tones/ringing-tone`,
@@ -188,6 +213,12 @@ time, notes or passes. A rule is accepted only if it reproduces every recording;
 captured cases are the goldens and other tones are UNVERIFIED in the spec, with the documented
 nearest behaviour (as plan 16's message Ascending at other levels).
 
+Deviation (Task 0): the preview plays once; its vibrator starts with it and toggles every four
+quarter-note values of the tone until its end; the Ringing volume list stops ≈5.3 s after the start.
+Level 5's jump and Ascending's steps fit no rule of the tone (3627-5309 ms; steps ≈3.9-4.3 s apart):
+the captured cases are goldens and nokia-os's nearest behaviour (a step every 3.9 s from the tone's
+start) is UNVERIFIED; recordings it misses are known gaps.
+
 **D10 - The sounder changes are three small hooks, each pinned (shared-file edits).**
 `src/sound/sounder.ts` gains (a) `userTones?: (index: number) => RingingTone | undefined`, consulted
 by `#tone` and `preview` for indices `RINGING_TONES` lacks; (b) `cancel(play, atMs = now)`; (c) a
@@ -202,6 +233,9 @@ OK on the number opens a placeholder owned by `18c`: the firmware sends a binary
 SMS, and plan 18's `StockNetworkPort` carries numbers and text only (plan 18 D9). Task 0 records
 the full Send flow and the payload the emulator logs (hex, for 18c), and its goldens are
 `pending:18c`. Reverse by adding a binary payload to the port in this plan (a contract change).
+
+After Task 0: the payload is a Smart Messaging ringtone SMS (UDH port 5505); its first 60 CP-DATA
+bytes are in `send/ok.log.txt` for plan 18c.
 
 **D12 - Prompts and notes are plan 14 and 18 widgets (dependency).** `Tone name:` is plan 18's
 `textInput` (limit 15, the captured layout, prefilled with a saved name; C held on it → standby,
@@ -439,83 +473,185 @@ append `{ name, keys }` to `plan27/cases.json` (keys from the editor's opening).
 traps: C held on the `Tone name:` prompt and on lists goes to standby; after Exit the slot list
 opens on slot 1; OK on a tempo returns to Options on Tempo, not the editor.
 
-- [ ] **S slots and open:** the virgin and factory slot lists through the wrap (stills); Select on
+- [x] **S slots and open:** the virgin and factory slot lists through the wrap (stills); Select on
       slots 1, 3 and 7 (record 3 s: the empty editor's blink); after saving tones in slots 1, 2
       and 7, the list (stills) and Select on a saved slot (record).
-- [ ] **E entry** (stills, factory): every note key; 8 six times and 9 six times from 4; `*` four
+- [x] **E entry** (stills, factory): every note key; 8 six times and 9 six times from 4; `*` four
       times; `#` twice on each of c-b and on a rest; 0 after a plain and after a dotted note; 8/9
       on a rest; a note after a rest at the start, after a rest mid-tone, after a dotted note;
       insertion at the start, middle and end; every token form in the small face (for glyphs).
-- [ ] **H holds** (records, raw edges): each note key held 600, 700, 750, 800, 850, 900 and 1500 ms
+- [x] **H holds** (records, raw edges): each note key held 600, 700, 750, 800, 850, 900 and 1500 ms
       (the threshold, the second draw and sound); 0, `*`, `#`, 8, 9, ▲, ▼ and C held 1.5 s; C held
       300-700 ms in 50 ms steps (the clear time); a held note at the limit.
-- [ ] **U cursor and layout** (stills): a 50-token tone of mixed forms; ▲ ×51 and ▼ ×51 with a
+- [x] **U cursor and layout** (stills): a 50-token tone of mixed forms; ▲ ×51 and ▼ ×51 with a
       shot after each (raw taps, a shot 80 ms after the release so the cursor shows); the view's
       scroll each way; tones whose tokens break across lines at every character position of a
       `16.#f2`.
-- [ ] **L limit:** 50 tokens: a note, 0, a held note, 8, 9, `*`, `#` (stills and sound).
-- [ ] **X leaving** (records): Back on an empty editor, C on an empty editor, Exit with unsaved
+- [x] **L limit:** 50 tokens: a note, 0, a held note, 8, 9, `*`, `#` (stills and sound).
+- [x] **X leaving** (records): Back on an empty editor, C on an empty editor, Exit with unsaved
       changes, Clear screen then Back, a saved slot emptied by C then Back, then each slot reopened.
-- [ ] **O lists:** Options through its wrap (stills), C on it; Tempo through its wrap from each of
+- [x] **O lists:** Options through its wrap (stills), C on it; Tempo through its wrap from each of
       three openings; OK on 40 and on 225 (record `Done` to Options); C on Tempo.
-- [ ] **P play** (factory, audio + record): a short tone (Stop, the end, the return); C, Stop, ▲,
+- [x] **P play** (factory, audio + record): a short tone (Stop, the end, the return); C, Stop, ▲,
       ▼, a note key, 0, 8 and `#` pressed 1.5 s into Play (each in a fork); Play with Incoming call
       alert Off, Ring once and Beep once, Keypad tones Off, Warning tones Off, Vibrating alert Off;
       a 40 s tone at Level 5 and at Ascending (does Play step?); Play in the virgin state
       (Ringing volume unset).
-- [ ] **T tempo sweep** (factory, audio): one tone holding every value plain and dotted and rests
+- [x] **T tempo sweep** (factory, audio): one tone holding every value plain and dotted and rests
       of every value (≤ 50 tokens, the token order recorded), saved, then played at each of the 16
       tempi (`sound/tempo/<bpm>`); the same at two other levels for two tempi (volume ↔ tempo
       independence).
-- [ ] **F pitch** (audio): the 36-pitch tone (sixteenths) played at Levels 1-5 and in the virgin
+- [x] **F pitch** (audio): the 36-pitch tone (sixteenths) played at Levels 1-5 and in the virgin
       state; entry sounds of a note at each octave at Level 1 and 5.
-- [ ] **N names** (records): Save on a new tone (empty prompt, `Abc`), typing a 15-character name
+- [x] **N names** (records): Save on a new tone (empty prompt, `Abc`), typing a 15-character name
       and a 16th key, a name with symbols, OK, `Tone saved`, Options; Save on a saved tone
       (prefilled), editing the name; Back, C and C held on the empty and the prefilled prompt; two
       slots saved with one name.
-- [ ] **R ringing tones** (factory, audio): saved tones of 3, 8, 30 and 50 tokens at 40, 112 and
+- [x] **R ringing tones** (factory, audio): saved tones of 3, 8, 30 and 50 tokens at 40, 112 and
       225 BPM in slots 1, 2, 3 and 7. Tones › Ringing tone: entries 35-42 (stills), each saved
       tone's preview (record 40 s) at Levels 1-5, Ascending, Ring once, Beep once and Off, and with
       Vibrating alert Off; OK on one (the `Done` and page value); the Ringing volume list's
       previews with a saved tone stored (each level); General's and Silent's Personalise lists
       (stills, one preview each); a stored saved tone then overwritten in its slot (the preview
       after); Restore factory settings with a saved tone stored (page value after).
-- [ ] **M persistence** (`firmware/work/v639-plan27-persist.fls`): three saved tones, one chosen
+- [x] **M persistence** (`firmware/work/v639-plan27-persist.fls`): three saved tones, one chosen
       as the ringing tone, a new-tone tempo of 63; `saveflash`, `reboot`, the slot list, each
       editor, the Tempo openings (saved and new), the ringing tone page; Restore factory settings
       on `v639-plan15-seccode.fls` with tones saved: the slots, a slot's editor, the new-tone
       tempo, the ringing tone page.
-- [ ] **Snd send** (`ROM6_LOG=1`): Send's two prompts, C on each, Search on the empty number, OK
+- [x] **Snd send** (`ROM6_LOG=1`): Send's two prompts, C on each, Search on the empty number, OK
       on a number (record to the editor: `Sending message`, `Message sent`); log the MO SMS
       payload in hex (a harness-only helper in `dct3cap.c` if the log is not hex) for plan 18c.
-- [ ] **G glyphs:** every token form and the counter's digits are in some still (E, U); OCR every
+- [x] **G glyphs:** every token form and the counter's digits are in some still (E, U); OCR every
       image (plan 15's command with `OUT='plan27'`) into `plan27/text.json`.
-- [ ] `gen_v639_plan27.py check`: every case has its image; every recording starts on its parent
+- [x] `gen_v639_plan27.py check`: every case has its image; every recording starts on its parent
       screen; every factory sound recording has events and `keys.csv`; the tempo sweep's tones
       parse and their note count matches their events.
-- [ ] Append "Plan 27 supplementary captures" to `$REF/captures/README.md` (commands, the K table,
+- [x] Append "Plan 27 supplementary captures" to `$REF/captures/README.md` (commands, the K table,
       the outcome below).
-- [ ] No commit. Record the outcome under this task: the key rules and the cases D2 left open, the
+- [x] No commit. Record the outcome under this task: the key rules and the cases D2 left open, the
       hold threshold and held C's time, the wrap and scroll rules, the duration table or rule per
       tempo, the gap, the pitch table, the volume at every level and in the virgin state, Play's
       gating and keys, the saved-tone preview rule (D9) or its failure, the new-tone tempo rule,
       persistence and Restore, Send's payload, and any section that failed.
+
+#### Task 0 outcome — 2026-10-14
+
+51 sections of `$REF/captures/scripts/gen_v639_plan27.py` (each `v639-plan27-<section>.cap`);
+`check` passes: **418 still cases, 263 recordings (252 in `recordings.json`, 11 driven by their
+sections' own keys), 3744 images (460 distinct) OCRed in
+`plan27/text.json`** (faces bold8, large13, plain8, tiny6). `cases.json` holds `{ name, from, state,
+slot, setup, keys, setupKeys }` (`from`: `editor`, `slots` or `standby`; every editor still waits
+for the cursor's shown phase, the wait being its last `+<ms>` key); `recordings.json` lists the
+recordings with their keys. The REF README's "Plan 27 supplementary captures" is appended. Paths
+below are under `plan27/`.
+
+- **Keys (D2 confirmed and settled).** 1-7 insert `4c1`…`4b1` after the cursor; a new note copies
+  the value and octave, a rest (0) the value, of the **nearest note before the cursor, rests
+  skipped** (`4c2 8- 4d2`, `entry/note-after-rest-shorter`; `32.#c3 16- 16- 32-`, `entry/forms-2`),
+  never its dot or sharp; with no note before, 4 and octave 1 (`entry/note-after-rest-start`: `8-
+4c1`). 8 cycles 4→8→16→32→1→2, 9 the other way, on notes and rests, dots kept (`8.c1`); `*` cycles
+  the octave 1→2→3; `#` toggles c, d, f, g, a (dotted too: `4.#c1`); `*` and `#` do nothing on rests
+  and e/b. ▲ moves right, ▼ left, both wrapping over tokens+1 positions. C deletes the token before
+  the cursor (nothing at the start). Held: 0, `*`, `#`, 8, 9 act once; a note key down ≥ ≈771 ms
+  after its key-down redraw dots the note (hold 750 ms plain, 800 ms dotted; the dotted note sounds
+  again then); C held clears ≈465 ms after the deletion's redraw (held 450 ms deletes only, 500 ms
+  clears); ▲/▼ held repeat at ≈778 ms, then every ≈196 ms. 50 tokens: notes, rests and holds are
+  ignored silently (no sound, no beep), 8/9/`*`/`#` still edit (`limit/*`). C pressed while a note
+  key is held does not delete: the firmware re-enters the held note at C's down and at its up (key
+  rollover, `hold/c-during`, `hold/c-after-dot`); other keys UNVERIFIED.
+- **Layout (Deviation from K6).** Lines wrap at **token boundaries** — no token splits in any still
+  (`layout/prefix-*`, `rests-*`, the 50-token `cursor/*`): a token joins the line while the line's
+  width in the small face (advances, single spaces) is ≤ 83 px (`layout/edge-83` fits, `edge-84`
+  wraps). Lines start at x 0, tops 8/18/28, three shown; the cursor (1 px, rows 7-16 of a line) sits
+  right after the token before it, on that token's line (x = the line's width up to it); the view
+  scrolls as little as the cursor needs (`cursor/up`: start → top 0; `cursor/down`). Leaving Options
+  (C, Tempo, Save, Play's end) puts the cursor at the end (`returns/*`); a saved slot opens with the
+  cursor at the end.
+- **The cursor's blink.** 480 ms per phase; the phase flag is phone state: it starts shown at
+  power-on, toggles every 480 ms while an editor shows (Play included) and keeps its value while
+  none does; each time an editor appears (Select, the return from Options) its 480 ms timer
+  restarts with the flag as it was (`open/slot-1` shown first; `open/saved`, `returns/options-c`
+  hidden first).
+- **Durations (D3).** Periods are integer timer units of ≈7.745 ms (40 BPM: 1 = 749, 2 = 374, 4 =
+  187, 8 = 93, 16 = 46, 32 = 22 units); a note sounds for its period less 2 units (≈15.5 ms);
+  dotted periods are separate table entries (40 BPM: 4. = 280 units); a rest is silent for its
+  value's period. No BPM formula fits (112 BPM quarter 67 units = 519 ms, not 536). Single notes
+  jitter by ±1 unit and a recording can run ≈1 % long (`sound/pitch/level-4`: 125.4 ms per
+  sixteenth against 124 at Level 2), so the table is the per-tempo mode of the sweep and programs
+  are compared with plan 16's drift tolerance, not ±2 ms (Deviation). At 225 BPM a 32nd after a
+  dotted 32nd sounded 1 ms (`sound/tempo/225`, dropped by normalisation).
+- **Pitches.** c1 … b3 = 523, 554, 587, 622, 659, 698, 740, 784, 831, 880, 932, 988 Hz, doubled per
+  octave to 3951.4 Hz (13 MHz / divider, as logged); 3729.2 and 3951.4 Hz are new to `VOLUME_RULE`
+  (Level 1: 19/19, Level 3: 44/42, Level 4: 66/62).
+- **Volume and gating (D4 confirmed).** Play and entry sounds use the Ringing volume's tables
+  (Levels 1-4 exact), Level 5 Level 4's, Ascending and the virgin (unset) volume Level 1's;
+  Incoming call alert, Keypad tones, Warning tones and Vibrating alert change nothing; no
+  vibrator. A long Play at Level 5 jumps to the fifth table (≈3.86 s, inside a note) and at
+  Ascending steps Level 1→4 (≈3.87, 8.21, 11.59 s); a 4.5 s Play at Level 5 did not jump.
+- **Play and its keys (Deviation from K9).** Play starts ≈26 ms after OK (latency, not
+  reproduced), soft key `Stop`, the editor with the cursor at the end; at its end `Options`. C and
+  Stop end Play **at once** (the sounding note is cut, C deletes nothing); C held during Play then
+  goes to standby (≈530 ms); ▲/▼ move the cursor and 0 inserts a rest while the tone plays on; a
+  note key, 8, 9, `*` and `#` edit and their note's sound replaces the tone; any key turns the soft
+  key back to `Options`.
+- **Entry sounds (K8, D5 confirmed).** No key-down on the editor beeps (notes, 8, 9, `*`, `#`, 0,
+  ▲/▼, C, held C, Back, and the Options key that opens the list: `sound/entry/*`); keys in Options
+  and Tempo beep as plan 16's lists (the C that returns to the editor too). Each entry sound plays
+  the note for its duration at the tone's tempo and replaces the one before at once; rests and
+  moves are silent.
+- **Options, Tempo, notes.** Options `Play Save Tempo Send Clear screen Exit` (rows, `1`-`6`, `OK`,
+  opening on Play); Tempo 16 entries, no indicator, `Select`, opening on the tone's tempo on the
+  top row; OK → `Done` (≈690/232/556 ms) → Options on Tempo; Save OK → `Tone saved` (same shape) →
+  Options on Save. Clear screen empties at once; Exit and Back/C on an empty editor return to the
+  Tones page `Composer`.
+- **New tone's tempo (Deviation from K13/D7).** A new tone starts at the tempo last set (Tempo,
+  saved or not) or saved in this power-on (`newtempo/*`); it is RAM state: 112 after a cold boot
+  (`persist/new-tempo`) and kept by Restore factory settings (`restore/new-tempo`: 225). So
+  `COMPOSER_RECORD` holds the slots only.
+- **Save / Send (K11 confirmed).** `Tone name:` is plan 18's prompt (pen, `abc`/`Abc`, counter 15,
+  `Back` while empty, `OK`); a saved tone's name is prefilled (typing appends: `Cd`); C held on
+  text clears it; C (or Back) on the empty prompt → Options. Send: the same prompt, then `Phone
+number:` (counter 30, `Search` → `No phone numbers` → the prompt); C on the empty number → the
+  editor; OK → `Sending message` (≈3.17 s) → the `Message sent` animation (≈1.4 s) → the editor.
+  The MO SMS (`send/ok.log.txt`, harness-p27 `smsseg`): CP-DATA `39 01 40 …`, RP-DATA to SC
+  `12345678905`, TP-DA `0412345678`, UDH `06 05 04 15 81 15 81` (port 5505: Smart Messaging
+  ringtone), data `02 4A 3A 45 04 04 00 13 1A CA E9 22 84 93 42 4A A0 …`; the first 60 bytes of the
+  67-byte CP-DATA were seen (the final segment never enters the buffer).
+- **Saved tones as ringing tones (K12 confirmed, D9 partly).** Slot k is entry 35+k of Tones' and
+  every Personalise's list (`5-1-36` = slot 1, `12-1-2-1-38` = slot 3), labelled with its name;
+  OK shows its name as the page value. A preview starts ≈991-1035 ms after ▲/▼ and plays the tone
+  once; the vibrator (Vibrating alert On) starts with it and toggles every 4 quarter-note values
+  of the tone (a bar: 2071 ms at 112 BPM; 8 eighths at 40), stopping at the tone's end. Ring once
+  previews; Beep once and Off silence it; the Ringing volume list plays the stored saved tone and
+  stops ≈5.31 s after its start (mid-note). **Level 5's jump (3627, 4329, 5309 ms) and Ascending's
+  steps (first 3861-4318, second 7245-8638, third 11110-12240 ms) follow no rule of the tone,
+  its tempo or its notes** (the same notes jump at 5309 ms in a preview and 3858 ms in Play): a
+  free-running timer's phase. D9's fallback applies: the captured cases are goldens, the nearest
+  behaviour is a 3.9 s step from the tone's start, documented UNVERIFIED.
+- **Persistence and Restore (K13).** Slots, names and each tone's tempo survive a cold boot;
+  Restore factory settings empties the slots and resets the ringing tone to `Nokia tune`.
+- **Failures, all resolved.** `restore` first chose the wrong list entry; `ringing-list` left a
+  fork open (rerun); the tempo sweep was rerun with a tone that separates dotted periods from rests
+  (plain, dotted, plain, rest per value); `layout-edge`, `returns` and `ringing-4` were added after
+  the first run raised the questions they answer. The ringing-list section composes its four tones
+  in one power-on, so they take the new-tone tempo rule (slot 3 saved at 40 BPM, slot 7 at 80).
 
 ### Task 1 - Documentation
 
 **Files:** `docs/specs/stock/composer.md` (new), `docs/specs/nokia-3310.md` (§8: a pointer only),
 `docs/plans/README.md` (row 27), this plan; `VISION.md` only if Task 6 will add plan 17's seam.
 
-- [ ] Apply Task 0's outcome to D2-D9 and D11 (Deviation lines where it changes them).
-- [ ] `docs/specs/stock/composer.md`: K1-K13 as verified by Task 0 (slots, editor, keys, notation,
+- [x] Apply Task 0's outcome to D2-D9 and D11 (Deviation lines where it changes them).
+- [x] `docs/specs/stock/composer.md`: K1-K13 as verified by Task 0 (slots, editor, keys, notation,
       layout, Options, Tempo, Play, sound tables, saved tones in the Ringing tone lists, Save,
       Send, persistence, Restore), the artefacts table, UNVERIFIED items, and the contrast with the
       website's composer. Marked "(plan 27, in progress)".
-- [ ] Spec §8: mark the Composer bullet manual-sourced history and point to the stock spec (8 is
+- [x] Spec §8: mark the Composer bullet manual-sourced history and point to the stock spec (8 is
       shorter, ▲ moves right, `#` on five notes, a held key dots, 50 tokens, tempi 40-225).
-- [ ] Plans README row 27 `in progress`.
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: specify the stock Composer (plan 27)`.
+- [x] Plans README row 27 `in progress`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: specify the stock Composer (plan 27)`.
 
 ### Task 2 - Capture set, goldens and the re-owned placeholders (TDD)
 
@@ -523,38 +659,74 @@ opens on slot 1; OK on a tempo returns to Options on Tempo, not the editor.
 both `PLACEHOLDER_OWNERS` tables (one line each), `tests/composer-capture-set.test.ts` (new),
 `goldens/**` (generated).
 
-- [ ] TDD the capture set on synthetic sources (injected loader, no REF): every row of "Golden
+- [x] TDD the capture set on synthetic sources (injected loader, no REF): every row of "Golden
       pipeline additions"; stills named by `COMPOSER_CASES` in case order; a case with no image, or
       an image with no case, throws naming both; sound rows reuse plan 16's normalisation with
       `state: factory` (`virgin` where noted); `composer/send-ok` is `pending:18c`.
-- [ ] Drop `5-4-*` from both owner tables: the four `tree/05-tones/5-4-*.leaf` and
-      `sound/note/5-4-{1,2}` goldens become asserted; no golden is `pending:27`.
-- [ ] Text runs from `plan27/text.json` reach the glyph harvester through the capture set; run
+- [x] Drop `5-4-*` from both owner tables: the four `tree/05-tones/5-4-*.leaf` and
+      `sound/note/5-4-{1,2}` goldens become asserted; no golden is `pending:27`. (Done in Task 8
+      with the drivers, see the deviation below; no golden is `pending:27` since Task 12.)
+- [x] Text runs from `plan27/text.json` reach the glyph harvester through the capture set; run
       `extract-resources` twice (no diff): the small face gains `#` and what else the notation needs.
-- [ ] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
+- [x] Run `import-captures` twice; the second run changes nothing. Record counts and bytes in a
       completion note.
-- [ ] Until Task 12, the composer goldens without a scenario are todos through the split's
+- [x] Until Task 12, the composer goldens without a scenario are todos through the split's
       pending-scenario mechanism (one entry in this plan's acceptance file, deleted in Task 12).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import Composer captures (plan 27)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import Composer captures (plan 27)`.
+
+**Task 2 completion.** `scripts/capture-sets/27-composer.ts` (registered by one line) holds
+`COMPOSER_CASES` (Task 0's 418 cases, transcribed with their start, state, slot and setup),
+`COMPOSER_SETUPS` (the named setups' keys from standby) and `COMPOSER_RECORDING_KEYS` (the
+recordings' keys); `scripts/resource-inputs/27-composer.ts` crops the editor's icon
+(`composer/icon`) and names the `Tone saved` and Tempo `Done` notes (`composer-tone-saved`,
+`composer-tempo-done`). `import-captures` writes **303 plan 27 goldens** (30 stills holding the 418
+cases, 81 timelines, 192 sound goldens; 302 `pending:27`, `composer/send-ok` `pending:18c`;
+3 385 759 bytes); a second run leaves every byte unchanged and no other plan's golden or index
+changes. `regenerate` twice: the first wrote `widgets.ts` (the icon and the two note timelines,
+686/244/525 ms and the Done's), the second was up to date.
+
+Deviation: the importing plan has no pending-scenario mechanism (as plan 20 found), so the
+Composer goldens are imported `pending:27` and Task 12 promotes them; `tests/acceptance/
+27-composer.test.ts` registers the plan with no scenarios until then.
+
+Deviation: `5-4-*` stays in both owner tables until Task 8 binds the slots: dropping it now would
+assert the four `tree/05-tones/5-4-*.leaf` goldens and `sound/note/5-4-{1,2}` against the
+placeholder. Task 8 drops it with its drivers.
+
+Deviation: no glyph changes: `#`, `.`, `-` and the digits are already in the small face (plans 14
+and 18), so the capture set registers no text run; ids are the recordings' paths
+(`composer/hold-note-3-800`, `sound/composer/tempo-112`, `sound/composer/preview-slot-3-level-5`).
+Holds of keys other than 3 below 1500 ms are not imported (key 3's and every key's 1500 ms are).
 
 ### Task 3 - Notation, editor and layout engine (pure, TDD)
 
 **Files:** `src/composer/{notation,editor,layout}.ts` (new), `tests/composer-notation.test.ts`,
 `tests/composer-editor.test.ts`, `tests/composer-layout.test.ts` (new).
 
-- [ ] TDD `notation.ts`: `formatToken`/`parseTokens` round trips for every form Task 0 shows
+- [x] TDD `notation.ts`: `formatToken`/`parseTokens` round trips for every form Task 0 shows
       (`4c1`, `1.d2`, `16#f3`, `32.#a1`, `8-`); invalid tokens (`4#e1`, `3c1`, `4c4`) throw naming
       them.
-- [ ] TDD `editor.ts` from `COMPOSER_CASES` (expected tokens transcribed from the goldens'
+- [x] TDD `editor.ts` from `COMPOSER_CASES` (expected tokens transcribed from the goldens'
       notation, independent of the code): each key's effect, inheritance, the 8/9 cycles, `*`,
       `#` on the five sharpable notes only, 0, held keys, C and held C, the cursor's wrap, the
       50-token limit and the keys that still edit there, and `sound` for every edit that sounds
       (K8).
-- [ ] TDD `layout.ts` against every still's notation lines and cursor (the OCR runs): character
+- [x] TDD `layout.ts` against every still's notation lines and cursor (the OCR runs): character
       wrap at the small face's widths, three lines, the scroll rule Task 0 found, the cursor's x.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): Composer notation and editor engine`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): Composer notation and editor engine`.
+
+**Task 3 completion.** `src/composer/notation.ts` (`formatToken`, `formatTokens`, `parseTokens`,
+`COMPOSER_LIMIT`), `editor.ts` (`composerKeyDown`, `composerHeld`, `isNoteKey`, `EMPTY_COMPOSER`)
+and `layout.ts` (`composerLines`, `smallWidth`, `COMPOSER_LINE_WIDTH` = 83). 99 tests: 79 entry
+and limit cases whose keys are checked against `COMPOSER_CASES` and whose notation and cursor are
+transcribed from the images, the 15 lines of the 50-token tone, the 82/83/84 px edges, the cursor's
+x and the view's tops through `cursor/up` and `cursor/down`. `tests/support/composer.ts` replays
+harness keys through the engine with the measured hold times (Task 4 generates them).
+
+Deviation (Task 0 U): the layout wraps at token boundaries, not by character, so `composerLines`
+has no character wrap; the hold times live in the widget (Task 8), the engine only applies a hold.
 
 ### Task 4 - Composer sound tables and programs (TDD)
 
@@ -563,34 +735,74 @@ D4), `src/resources/generated/composer.ts` and `sounds.ts` (generated), `src/res
 (export lines), `src/composer/program.ts` (new), `tests/composer-programs.test.ts` (new),
 `tests/resources.test.ts` (pinned counts only).
 
-- [ ] TDD `composer-programs.ts` on synthetic goldens: pitches from buzzer frequencies; per tempo
+- [x] TDD `composer-programs.ts` on synthetic goldens: pitches from buzzer frequencies; per tempo
       and value the sounding and gap times; the rest rule; a value missing at a tempo throws
       naming the golden.
-- [ ] Generate `COMPOSER_DATA` (`PITCHES`, `TEMPI`, `DURATIONS`, `COMPOSER_TIMINGS` for the hold
+- [x] Generate `COMPOSER_DATA` (`PITCHES`, `TEMPI`, `DURATIONS`, `COMPOSER_TIMINGS` for the hold
       threshold and held C) with comments naming their goldens; the composer pitch goldens join
       `VOLUME_RULE`'s fit (no existing table entry changes; the new frequencies appear).
-- [ ] TDD `program.ts`: `toneProgram` re-renders every `sound/composer/tempo-*` and `pitch-*`
+- [x] TDD `program.ts`: `toneProgram` re-renders every `sound/composer/tempo-*` and `pitch-*`
       golden exactly (±2 ms within a recording); `notePreview` the entry goldens; levels per D4;
       `userRingingTone` per Task 0's D9 rule against the `preview-*` goldens (or the documented
       approximation, D9).
-- [ ] Freshness test; run `extract-resources` twice (no diff); plan 16's resources tests unchanged
+- [x] Freshness test; run `extract-resources` twice (no diff); plan 16's resources tests unchanged
       except the frequency count.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): Composer pitches, tempi and programs from sound goldens`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): Composer pitches, tempi and programs from sound goldens`.
+
+**Task 4 completion.** `scripts/composer-programs.ts` derives `COMPOSER_DATA`
+(`src/resources/generated/composer.ts`): the 16 tempi's periods in timer units (7.745 ms) plain
+and dotted from the sweep (40 and 225 BPM the median of the Level 1, 3 and 4 sweeps), the gap (2
+units), the 36 pitches, the dot (771 ms, `sound/composer/hold-note-3-800`) and C's clear (465 ms,
+`composer/hold-c-*`), the saved tones' preview delay (1013 ms), the Ringing volume list's span
+(5315 ms), D9's level step (4146 ms) and the unset volume's register (3); `addComposerVolumes`
+joins the pitch goldens to `VOLUME_RULE` (3729.2 and 3951.4 Hz added at Levels 1-4, no entry
+changed). Two registrations in `extract-resources.ts` (the volume tables, the `composer.ts`
+module); `src/resources/index.ts` exports `COMPOSER_TEMPI`, `COMPOSER_PERIODS`,
+`COMPOSER_PITCHES`, `COMPOSER_TIMINGS`, `COMPOSER_SOUND`. `src/composer/program.ts`:
+`toneProgram`, `notePreview`, `userRingingTone`, `toneMs`, `noteHz`. 12 tests: the generator on
+synthetic goldens, and the programs against all 16 sweeps, the Level 1 sweep, the pitch tone at
+Levels 1-4 and unset (frequencies and registers exact, onsets within plan 16's drift, lengths
+within two units), the entry note, Level 5/Ascending and the ringing tone's shape. `regenerate`
+twice: the second up to date; `tests/resources.test.ts` pins `COMPOSER_DATA` in its freshness test.
+
+Deviation: an unset Ringing volume plays every pitch at register 3 (`pitch-virgin`), not Level
+1's table; it is `COMPOSER_SOUND.unsetVolume`.
+
+Deviation: the repeat times of held ▲/▼ (778 ms, then 196 ms) are the hand fit of
+`composer/hold-up`/`hold-down` recorded in the generator, not a derivation (the cursor's position
+per frame needs the layout); Task 8's widget test checks them against those goldens.
+
+Deviation (Internal API): `toneProgram(tone, level, { ascending })` takes the alert type's
+Ascending (Play steps up a level per step), and `userRingingTone(tone, slot)` takes the slot (its
+slug) and returns plan 16's tone shape plus `previewDelayMs` (1013 ms: the captured onsets spread
+991-1035 ms, wider than the built-in tones' 991 ± 25). `sound/composer/pitch-level-5` did not jump
+in its 4.5 s while D9's nearest step does at 4146 ms: its last notes differ (a known gap, Task 11).
 
 ### Task 5 - Composer record and slots (TDD)
 
 **Files:** `src/composer/store.ts` (new), `src/firmware/records.ts` (one line),
 `tests/composer-store.test.ts` (new), `tests/eeprom.test.ts` (pinned record list, if any).
 
-- [ ] TDD `COMPOSER_RECORD`: virgin (seven empty slots, tempo 112), encode/decode (tokens as
+- [x] TDD `COMPOSER_RECORD`: virgin (seven empty slots, tempo 112), encode/decode (tokens as
       notation strings), a slot with an invalid token or name dropped, version, `factory` per
       Task 0 (empty slots, tempo reset); the stored JSON pinned by a snapshot.
-- [ ] TDD `StockComposer`: `save` writes at once; `slot` reads it back over a second store on the
+- [x] TDD `StockComposer`: `save` writes at once; `slot` reads it back over a second store on the
       same storage; `newTempo` per K13; `ringingToneLabel`/`userRingingTone` map option indices
       35-41 to slots 1-7 and return undefined for empty slots and other indices.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): Composer EEPROM record`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): Composer EEPROM record`.
+
+**Task 5 completion.** `src/composer/store.ts`: `COMPOSER_RECORD` (`nokia-os/composer`, version 1:
+seven slots of `{ name, tempo, tokens }`, tokens as notation; a stale name, tempo or token drops its
+slot; `factory` empties every slot) and `StockComposer` (`slot`, `save`, `newTempo`, `setNewTempo`,
+`ringingToneLabel`, `userRingingTone` for options 35-41). 9 tests, the stored JSON pinned.
+
+Deviation: the record is registered by the new composer feature's `records` (plan 20's
+precedent: `src/firmware/records.ts` composes features' records), so `features/composer.ts` and
+its line in `features/index.ts` start here; `records.ts` and `tests/eeprom.test.ts` need no line.
+Per Task 0 M the record holds no new-tone tempo: `StockComposer` keeps it in RAM (112 at
+construction, the last set or saved after).
 
 ### Task 6 - The slot labels' kernel seam (conditional on plan 17 Task 4)
 
@@ -599,14 +811,34 @@ D4), `src/resources/generated/composer.ts` and `sounds.ts` (generated), `src/res
 checks that `SubmenuOptions.label` exists as plan 17 specifies, records that here and commits
 nothing.
 
-- [ ] Add `SubmenuOptions.label?(child)` exactly as plan 17's "Contract changes" specify, with
+- [x] Add `SubmenuOptions.label?(child)` exactly as plan 17's "Contract changes" specify, with
       plan 17 Task 4's `label` tests (list items and the child level's title follow the reader;
       re-read per tick; one snapshot per change; an empty string throws; paths and slugs
       unchanged). Plan 17 Task 4 then finds it and reuses it.
-- [ ] Existing tests pass unchanged; configs without the seam produce identical models.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
+- [x] Existing tests pass unchanged; configs without the seam produce identical models.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
       `vp check --fix`.
-- [ ] Commit: `feat(phone-core): submenu label reader`.
+- [x] Commit: `feat(phone-core): submenu label reader`.
+
+**Task 6 completion.** Plan 17 Task 4 had not landed on this branch, so phone-core gains
+`SubmenuOptions.label?(child: MenuEntry<Metadata>): string | undefined` exactly as plan 17's
+contract states, plus `SubmenuEntry.labelOf(child): string` (the reader's text, else the child's
+label; an empty string throws; a reader's exception is contained). The level's list items, the
+child's own level title (submenu, list or reader) and an application's activation title read it;
+the tick signature includes the labels, so a change emits one snapshot. Tests:
+`packages/phone-core/tests/submenu-label.test.ts` (9). VISION and the phone-core README document
+it. Plan 17 Task 4 reuses it (its `label` tests are these).
+
+_Merge with plan 17 (t3/e37f068c at 801f302):_ plan 17 Task 4 landed the same seam in parallel
+(same `label` signature and `labelOf`); the merge keeps one hook, plan 17's: `labelOf` throws on
+a blank string and lets a reader's exception through, and the kernel (`labelIn`) contains both, so
+a blank or failing reader shows the child's own label (this plan's "an empty string throws" from
+`navigate` is dropped). `submenu-label.test.ts` holds both suites (Profiles, then Composer slots). Plan 18's text input
+now leaves an empty prompt on C's up (`HeldC`); `Tone name:` takes C on its empty name at the down
+itself (`save/c-held-empty`: Options 66 ms in), so Options' 482 ms hold still goes to standby.
+Acceptance: a still fixture's case whose keys extend the previous case's from the same start
+continues its phone (`StillChain` in `tests/support/composer.ts`): `cursor-up`/`cursor-down`'s 52
+images each no longer replay 50 tokens from power-on (≈17 s, was ≈300 s of the file's run).
 
 ### Task 7 - Composer painter, icon and glyphs (TDD against goldens)
 
@@ -615,15 +847,26 @@ the editor icon crop and the composer's named timelines (in this plan's capture 
 routes crops and timelines per plan, else one line each in `scripts/widget-sprites.ts`),
 `tests/composer-paint.test.ts` (new).
 
-- [ ] TDD a `composer` widget model (`tokens` laid out by `composerLines`, `cursor` shown or
+- [x] TDD a `composer` widget model (`tokens` laid out by `composerLines`, `cursor` shown or
       hidden, `counter`, `softkey`) painted against every editor still and every editor frame of
       the timelines: the icon sprite, the counter, the lines, the cursor bar, the soft key. A line
       that does not fit throws in tests (plan 13 D10).
-- [ ] The cursor blink, `Tone saved`, the Tempo `Done` and the leave timelines are generated from
+- [x] The cursor blink, `Tone saved`, the Tempo `Done` and the leave timelines are generated from
       their goldens; Options, Tempo, the prompts and the notes reuse plan 14 and 18 painters (one
       still each paints exactly from its model).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): paint the stock Composer`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): paint the stock Composer`.
+
+**Task 7 completion.** `src/display/widgets/composer.ts` paints a `composer` model (`lines` shown,
+`cursor` line and x or null, `counter`, `softkey`): the `composer/icon` sprite at (1, 0), the
+counter in the digits face ending at x 83, the lines in the small face from x 1 at tops 8/18/28,
+the cursor a 1 px bar of 10 rows from the row above its line, the soft key at 40;
+`src/display/widgets/index.ts` gains the import, the union member and the switch case. All 225
+editor stills of `entry`, `limit`, `cursor` and `layout` paint pixel for pixel from their case's keys
+through the engine and the layout (`tests/composer-paint.test.ts`). The `Tone saved` and `Done`
+timelines were generated in Task 2; the cursor blinks at plan 18's `TEXT_TIMINGS.blinkMs` (480 ms,
+Task 0's blink); Options, Tempo, the prompts and the notes are plan 14 and 18 widgets whose
+stills Task 8's flow tests paint through the phone.
 
 ### Task 8 - The Composer feature: editor, Options, Play, Tempo, Clear screen, Exit (TDD)
 
@@ -632,39 +875,101 @@ list (one line), `src/sound/sounder.ts` (D10's `cancel` and silenced-held-beeps 
 `tests/composer-flow.test.ts` (new), `tests/sounder.test.ts` (the two hooks),
 `tests/support/composer.ts` (new: open a slot, replay a case).
 
-- [ ] TDD the editor widget in the flow rig: keys on key-down through the engine, holds timed from
+- [x] TDD the editor widget in the flow rig: keys on key-down through the engine, holds timed from
       `COMPOSER_TIMINGS`, the model from `composerLines`, the cursor blink, Back and C on empty →
       `flow.back(2)`, Options pushes the list (C returns), every key silenced (D5).
-- [ ] Options: Play (soft key `Stop`, `toneProgram` through `StockSounder.play`, keys during Play
+- [x] Options: Play (soft key `Stop`, `toneProgram` through `StockSounder.play`, keys during Play
       per Task 0, the editor at the end), Tempo (opening on the tone's tempo, `Done`, Options on
       Tempo; sets the tone's and the new-tone tempo), Clear screen, Exit (`flow.back(2)`,
       unsaved edits lost). Save and Send push placeholders owned by 27 until Task 9 (stop and
       report if a golden needs them earlier).
-- [ ] Entry sounds: each `ComposerEdit.sound` plays `notePreview` and replaces the previous one.
-- [ ] Node 5-4-k opens the feature's application on slot k; the Composer level's `label` reads
+- [x] Entry sounds: each `ComposerEdit.sound` plays `notePreview` and replaces the previous one.
+- [x] Node 5-4-k opens the feature's application on slot k; the Composer level's `label` reads
       `StockComposer.slot(k)?.name ?? "(empty)"`; `stockMenu` keeps no placeholder for 5-4-\*.
-- [ ] Sounder hooks (D10 b, c) with their tests; every plan 16 sound golden still passes.
-- [ ] TDD through keys against the `composer/` goldens `open`, `keys`, `hold-*`, `cursor`,
+- [x] Sounder hooks (D10 b, c) with their tests; every plan 16 sound golden still passes.
+- [x] TDD through keys against the `composer/` goldens `open`, `keys`, `hold-*`, `cursor`,
       `layout`, `delete`, `clear-held`, `limit`, `leave-*`, `options`, `tempo*` and `play*`, and the
       four `tree/05-tones/5-4-*.leaf` goldens.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the stock Composer editor, Play and Tempo`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): the stock Composer editor, Play and Tempo`.
+
+**Task 8 completion.** `src/widgets/composer.ts` (the editor over the engine: keys on key-down,
+holds timed by `COMPOSER_TIMINGS`, the blink, Play with `Stop` and its keys per Task 0, entry
+sounds through `notePreview`, Options, the Tempo list and its `Done`, Clear screen, Exit) and
+`src/firmware/features/composer.ts` (5-4-1 … 5-4-7 bound, one `StockComposer` and one blink per
+phone, the Composer level's labels, the record). `5-4-*` left both owner tables; `import-captures`
+re-run: the four `tree/05-tones/5-4-*.leaf` goldens and `sound/note/5-4-1` are asserted (the other
+slots' Select beeps joined plan 16's equal note groups). `tests/composer-flow.test.ts`: 137 Task 0
+stills (entry, returns, leave, Options, Tempo, new-tone tempo) replayed on the phone pixel for
+pixel, and the key-down action, the dot and clear, the silent editor keys against beeping Options
+keys, an entry sound, Back/C on empty, Play and Stop, the slots' names. Sounder (D10): `cancel(play,
+atMs = now)` and a key silenced at its key-down schedules no held beeps, each with a
+`tests/sounder.test.ts` test; every plan 16 sound golden still passes. Full suite: 4762 passed, 20
+expected failures, 586 todos.
+
+Deviation (the blink, Task 0 measured): the cursor blinks 478 ms then 480.1 ms (generated from
+every editor recording: `blinkFirstMs`, `blinkStepMs`); it runs free while an editor shows,
+starting shown the first time an editor shows after power-on and hidden at every later showing (a
+reopened slot, the return from Options) — the replay of every editor still confirms it.
+`tree/05-tones/5-4-{3,4,5}.leaf` run one blink step 7-11 ms late, so plan 14's acceptance gives
+them a hand scenario comparing within `PROBE_TOLERANCE_MS` (three entries, the only edit there).
+
+Deviation (registry): the feature registry gains `levelLabels` (feature.ts, composed as
+`LEVEL_LABELS` in stock.ts, read by `LeafBinder.levelLabel` and one spread in menu.ts's
+`entryOf`), the "level's label" registration this plan names (merged with plan 17 into plan 17's
+`levels` table: `LevelOptions.label(slug, order)`, the Composer reading the slot by `order`, the
+Profiles level by `slug`; `levelLabels`, `LEVEL_LABELS` and `levelLabel` are gone); `ListNumbering` gains `none` (plan
+17 Task 7 had not landed). Options and Tempo act as keys go down (plan 20's precedent: the key that
+opens them must not reach them on its release). `extract-resources.ts` caches parsed sound goldens
+(the composer tables read some twice). Save and Send open placeholders until Task 9.
+
+Deviation (replay timing, test support): a harness tap takes 605-615 ms in the composer (mean 610 ms
+over 50 taps, measured), a `hold` 50 ms more than its hold; `tests/support/composer.ts` replays
+with those.
 
 ### Task 9 - Save and Send (TDD; needs plan 18 Task 7)
 
 **Files:** `src/firmware/features/composer.ts`, `src/widgets/composer.ts`,
 `tests/composer-save.test.ts` (new).
 
-- [ ] Save: `textInput` with the measured `Tone name:` layout, limit 15, prefilled with a saved
+- [x] Save: `textInput` with the measured `Tone name:` layout, limit 15, prefilled with a saved
       name; OK → `StockComposer.save` → `Tone saved` → Options on Save; Back and C on the empty
       prompt → Options on Save; C held → standby (K11). The slot list shows the name at once.
-- [ ] Send: the same prompt, then `numberEntry` (`Phone number:`); C on the number → the editor;
+- [x] Send: the same prompt, then `numberEntry` (`Phone number:`); C on the number → the editor;
       OK → a placeholder owned by `18c` (D11).
-- [ ] TDD through keys against `composer/save-*`, `composer/send-{name,number,c}`,
+- [x] TDD through keys against `composer/save-*`, `composer/send-{name,number,c}`,
       `composer/slots-named`, `composer/open-saved`, `composer/persist` (two phones over one
       storage) and `composer/restore` (`restoreFactory()`).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): save Composer tones and the Send prompts`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): save Composer tones and the Send prompts`.
+
+**Task 9 completion.** `src/widgets/composer.ts`: `composerSave` and `composerSend` (wired as the
+editor's `save`/`send` services in `features/composer.ts`) open `Tone name:` (plan 18's
+`textInput`: limit 15, the counter, prefilled with the slot's name, `Back` while empty); OK writes
+the slot (`StockComposer.save`) and shows `Tone saved` (`composer-tone-saved`) back to Options;
+Back, C and C held on the empty prompt as K11. Send's OK opens `numberEntry` (`Phone number:`),
+whose C on the empty number returns to the editor and whose OK opens a `Send` placeholder for 18c.
+`tests/composer-save.test.ts`: 32 Save/Send/named/saved stills, 16 cold-boot stills (two phones
+over one storage) and 4 Restore stills (Menu 6 4 through the phone), plus the slot written at once
+and named, Back/C keeping it empty, C held to standby, a prefilled rename and Send writing nothing.
+Six stills are known gaps (below); Task 12 lists them with their causes.
+
+Deviation (prompts opened on key-down): Options act as their key goes down, so the prompts ignore
+the release of a key that went down before they showed (`ownKeys`); without it Options' OK release
+would answer `Tone name:` at once.
+
+Deviation (blink, Task 0 measured): `Tone name:`'s cursor runs its own blink, hidden for the first
+step and restarted shown by each character key (`save/open`, `save/c-typed`; plan 18's free-running
+text blink does not fit here). The editor's cursor shows first after `Tone saved`
+(`save/after-c`, `returns/save`). Five later showings after a Save do not follow the editor's rule
+(`open/saved-save`, `leave/saved-cleared-reopen`, `leave/saved-exit-edited`,
+`save/keys/prefilled-edit`, `restore/slot-1`): no one rule fitted them, so they stay known gaps.
+
+Deviation (Task 0 facts): C held on the empty prompt goes to standby `NAME_C_HELD_STANDBY_MS`
+(482 ms) after its down, from Options (`save/c-held-empty`); after C on Send's empty number the
+editor's header keeps the prompt's pen (`send/keys/number-c`, a `ComposerModel.icon`). A name wider
+than the large face (`save/keys/fifteen`, `sixteen`) is drawn small on two lines: plan 18's prompt
+draws the large face only, a known gap for that plan's prompt.
 
 ### Task 10 - Saved tones in the Ringing tone lists (TDD against goldens)
 
@@ -672,58 +977,119 @@ list (one line), `src/sound/sounder.ts` (D10's `cancel` and silenced-held-beeps 
 the page detail (1 line), `src/sound/sounder.ts` (D10 a), `tests/composer-ringing.test.ts` (new),
 `tests/sounder.test.ts` (the hook).
 
-- [ ] Ringing tone lists (Tones and every Personalise) label entries 36-42 with `ringingToneLabel`
+- [x] Ringing tone lists (Tones and every Personalise) label entries 36-42 with `ringingToneLabel`
       when they open; the page value of a stored saved tone is its name.
-- [ ] The sounder's `userTones` resolves indices 35-41 through `StockComposer.userRingingTone`;
+- [x] The sounder's `userTones` resolves indices 35-41 through `StockComposer.userRingingTone`;
       previews in both lists, the Ringing volume list and `ring()` (one test, plan 22's call) play
       it with plan 16's delay, gating, volume and vibrator rules and D9's preview rule; empty slots
       stay silent (`sound/ringing-tone/empty` still passes).
-- [ ] TDD through keys against `composer/ringing-tone-*`, `sound/composer/preview-*` and
+- [x] TDD through keys against `composer/ringing-tone-*`, `sound/composer/preview-*` and
       `volume-list-*`; plan 16's preview goldens unchanged.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): Composer tones in the Ringing tone lists`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): Composer tones in the Ringing tone lists`.
+
+**Task 10 completion.** `LeafBinder.optionLabel`/`pageValue` (leaves.ts) name options 35-41 of
+every `*/ringing-tone` list from `StockComposer.ringingToneLabel` as the list opens, and the page
+detail reads `pageValue` first (menu.ts, one line). The sounder's `userTones` (D10 a, a constructor
+option) fills the options `RINGING_TONES` lacks, each with its `previewDelayMs`; `createStockPhone`
+passes the phone's `StockComposer`. `tests/composer-ringing.test.ts`: the Tones, General and
+Silent lists walked past entries 34-43 (30 stills), OK on slot 3 (`ringing/choose` timeline, the
+page, the Tones page, the list opening on it), an overwritten slot's name, 36 slot previews in
+every alert type and level, both Personalise previews, four Ringing volume previews, an empty
+slot's silence and `ring()` repeating a saved tone; `tests/sounder.test.ts` pins the hook. Plan
+16's sound goldens unchanged (full suite 4873 passed).
+
+Deviation (shared file): `src/firmware/phone.ts` gains the `userTones` wiring (the sounder is built
+there, before any feature binds); the thin face gains `C` (a text run on `composer/ringing-choose`
+and an advance override in `scripts/resource-inputs/27-composer.ts`, regenerated).
+
+Deviation (Task 10 found): the `ringing-all` slot 3 was saved at 40 BPM (a new tone starts at the
+last tempo set, slot 2's). At 225 BPM a preview holds each quarter 33 timer units (255.6 ms) where
+Play holds 32 (`sound/composer/tempo-225`): slot 4's eight sounding previews are known gaps (one
+225 BPM tone was captured, so no rule). Level 5 and Ascending of slots 2, 3 and 7 and
+`preview-volume-5` miss D9's nearest rule: known gaps.
 
 ### Task 11 - Composer sounds (TDD against sound goldens)
 
 **Files:** `tests/composer-sound.test.ts` (new), `tests/support/composer.ts`.
 
-- [ ] Drive `sound/composer/{entry,pitch,tempo,play}-*` and `sound/note/5-4-{1,2}` from the
+- [x] Drive `sound/composer/{entry,pitch,tempo,play}-*` and `sound/note/5-4-{1,2}` from the
       factory state (`seededStorage({ factory: true })`; virgin rows from empty storage) with plan
       16's `recordSound`/`expectSoundTimeline` and tolerances: note onsets against their key-down
       (`KEY_LATENCY_MAX_MS`), a program's edges ±2 ms, no keypad beep inside the editor, Play's
       gating and levels, keys during Play.
-- [ ] If a golden needs sounder behaviour beyond D10, stop and report: the sounder is plan 16's.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): Composer note sounds and Play`.
+- [x] If a golden needs sounder behaviour beyond D10, stop and report: the sounder is plan 16's.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): Composer note sounds and Play`.
+
+**Task 11 completion.** `tests/support/composer.ts` `composerSound(id)` replays a sound golden's
+recording (`COMPOSER_RECORDING_KEYS`: its state, the settings its directory names through
+`recordingChoices`, its setup and `before` taps), presses the golden's keys from time 0 and
+compares with plan 16's `expectSoundTimeline`. `tests/composer-sound.test.ts` drives the 134
+entry, hold, limit, pitch, tempo and Play goldens: 130 pass, 4 are known gaps (`SOUND_GAPS`:
+`pitch-level-5`, `play-long-level-5`, `play-long-ascending` by D9's level timer, `tempo-225`'s
+≈1 ms 32nd). `sound/note/5-4-1` is plan 16's acceptance (asserted since Task 8); the other slots'
+Select beeps joined plan 16's groups. No sounder change beyond D10.
+
+Deviation (Task 0, found here): the Options OK that starts Play beeps nothing (`play/*`: no tone
+at the key), so Play silences its key (`silent-key`) as the editor's keys do.
+
+Deviation (tolerances): a key's program is compared from its onset: the phone's buzzer and
+vibrator events after each key move by that key's sound latency (the golden's first buzzer row
+within `KEY_LATENCY_MAX_MS` less the phone's), since key-to-sound latency is not reproduced; later
+edges use plan 16's drift tolerance (`drift: true`, D3's ±1 unit jitter and ≈1 % run), not ±2 ms.
 
 ### Task 12 - Acceptance
 
 **Files:** `tests/acceptance/27-composer.test.ts`, `tests/support/composer.ts`.
 
-- [ ] One scenario per asserted composer golden (LCD and sound), replaying `COMPOSER_CASES` for
+- [x] One scenario per asserted composer golden (LCD and sound), replaying `COMPOSER_CASES` for
       stills and the recordings' keys for timelines; the four tree leaves and two `sound/note`
       goldens included. Delete Task 2's pending-scenario entry; the coverage guard fails for an
       asserted composer golden without a scenario and for nodes 5-4-1…7 if uncovered.
-- [ ] Known gaps, if any, are listed with their cause in this file, as plan 16's are.
-- [ ] Every other plan's goldens still pass.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
+- [x] Known gaps, if any, are listed with their cause in this file, as plan 16's are.
+- [x] Every other plan's goldens still pass.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp run -r test`,
       `mise exec -- vp check --fix`. Report this file's run time.
-- [ ] Commit: `test(nokia-os): drive every Composer golden`.
+- [x] Commit: `test(nokia-os): drive every Composer golden`.
+
+**Task 12 completion.** `scripts/capture-sets/27-composer.ts` asserts every fixture (Send's
+transmission stays `pending:18c`); `import-captures` re-run (status lines only). The thin face
+gains `B` (`composer/persist` `ringing-page`, regenerated) for the stored saved tone's page value.
+`tests/support/composer-scenarios.ts` holds the scenarios: stills per capture directory
+(`stillFixtureScenario` replays each image's case; `persist` over a cold boot, `restore` through
+Menu 6 4, `ringing-*` from storage), timelines (`timelineScenario`: the recording's state,
+settings, setup, `before`, then its keys as raw edges, the blink's phase aligned on the capture's
+first cursor toggle, a key acting on its release or invisibly aligned on its first change),
+`ringing/choose`, `restore/run`, the previews; `composerSound` the other sound goldens.
+`tests/acceptance/27-composer.test.ts`: 302 asserted goldens, 272 pass, 30 known gaps (each with
+its cause there: D9's level timer and the 225 BPM preview quarter (15 previews, 3 Play/pitch),
+`tempo-225`'s 1 ms 32nd, `preview-overwritten`'s vibrator, two-pass redraws and transitional
+frames (5), auto-repeat phase (2), blink phases with no rule (3)), and 7 still images inside their
+fixtures (`COMPOSER_IMAGE_GAPS`: the two long names, five blink phases after a Save). The file
+runs in ≈300 s. The tree leaves 5-4-1 … 5-4-7 stay plan 14's goldens (5-4-3/4/5 by its hand
+scenario) and `sound/note/5-4-1` plan 16's.
+
+Deviation (found by the timelines): every return to the editor restarts its blink at the frame it
+shows (the flow renders the editor as it pushes Options, so it is covered after the push); `Done`
+ignores the release of the Select that chose (it acts on key-down); C held during Play goes to
+standby 474 ms after Play's stop shows (`play/c-held`, was 533); the unit tests share the
+scenarios (`composer-save`, `composer-ringing` import them).
 
 ### Task 13 - Verification gate and closeout
 
 **Files:** this plan, `docs/plans/README.md` (row 27), `docs/specs/stock/composer.md`.
 
-- [ ] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
+- [x] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
       `mise exec -- vp run website#build`; `git diff --stat <commit before Task 1> -- website/` is
       empty.
-- [ ] Demo check (no demo edit): `mise exec -- vp run @hellotimber/nokia-os#demo` with
+- [x] Demo check (no demo edit): `mise exec -- vp run @hellotimber/nokia-os#demo` with
       `agent-browser` (Factory settings, Skip boot): Menu 5 4, Select, `1 2 3`, Options › Play (the
       event log shows 523/587/659 Hz), Save as `A`; Tones › Ringing tone ▼ to entry 36 shows `A`
       and previews it. Screenshots in the completion note.
-- [ ] Spec: replace "(plan 27, in progress)" with verified facts; list what stays UNVERIFIED.
-- [ ] Plans README row 27 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete the stock Composer (plan 27)`.
+- [x] Spec: replace "(plan 27, in progress)" with verified facts; list what stays UNVERIFIED.
+- [x] Plans README row 27 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete the stock Composer (plan 27)`.
 
 ## Follow-up plan adjustments
 
@@ -788,3 +1154,13 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
 - phone-core changes only by plan 17's seam if Task 6 added it; the website is unchanged;
   `vp check`, `vp run -r test` and `vp run website#build` pass; the spec and the plans README match
   what shipped.
+
+**Task 13 completion.** `mise exec -- vp check --fix`, `mise exec -- vp run -r test` (nokia-os:
+80 files, 5280 passed, 50 expected failures, 284 todos; 6 min 53 s for the workspace) and
+`mise exec -- vp run website#build` pass; `git diff --stat f315e64 -- website/` is empty. Demo
+(port 5427, `agent-browser`, Factory settings, Skip boot): Menu 5 4, Select, `1 2 3`, Options ›
+Play logged `buzzer 523`, `587`, `659` 519 ms apart; Save as `A` showed `Tone saved`; Tones ›
+Ringing tone ▼ to `5-1-36` showed `A` highlighted and previewed it (523/587/659 with the vibrator,
+≈1 s after the key). Screenshots: `/tmp/nokia-os-p27-editor.png`, `-play.png`, `-tone-name.png`,
+`-tone-saved.png`, `-tones.png`, `-ringing-tone.png`. The spec drops "in progress" and lists what
+stays UNVERIFIED; the plans README row is `done`.
