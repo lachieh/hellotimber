@@ -2,8 +2,8 @@
 
 Facts recorded by plan 30's Task 0 on the v6.39 emulator with SIM fixtures and a scripted SIM
 Toolkit applet (`$REF/captures/6.39/plan30/`, `$REF/tools/harness-p30/`). Goldens: `sim/*`,
-`sound/stk/*` (`goldens/index/30.json`). Facts not yet asserted by a golden are marked "(plan 30,
-in progress)". Timings are ms after the key-down of the recorded key.
+`sound/stk/*` (`goldens/index/30.json`), all asserted but `*#06#` (plan 22's screen). Timings are ms
+after the key-down of the recorded key.
 
 ## SIM messages (`EF_SMS`)
 
@@ -97,7 +97,18 @@ SIM-borne call data.
 
 The emulator's provisioning writes the 3310 model's IMEI `490154203310018`; `*#06#` then shows
 `Serial No.` over `4901542033` / `10018` (the virgin EEPROM shows `?` glyphs). The goldens
-(`sim/imei-*`) are plan 22's screen (`pending:22`) until its `*#06#` lands (plan 30, in progress).
+(`sim/imei-screen`) is plan 22's screen (`pending:22`) until its `*#06#` lands; nokia-os checks
+the IMEI and gives its two lines (`stockImeiLines`).
+
+## Known gaps
+
+- `Menu 1 3` opens SIM services and `Menu 1 4` is `Invalid shortcut` in nokia-os, the reverse of
+  v6.39: phone-core numbers top-level entries without a gap (SIM services is its 13th slot, drawn
+  as 14).
+- Two phone book entries with the same last 9 digits: v6.39 names some senders by no rule found;
+  nokia-os names the exact match, else the first in SIM order.
+- C held on a SIM screen reaches standby at the kernel's long press (800 ms), the firmware's at
+  ≈530 ms (as plan 19's).
 
 ## Artefacts and UNVERIFIED
 
@@ -105,5 +116,9 @@ The emulator's provisioning writes the 3310 model's IMEI `490154203310018`; `*#0
   emulator's).
 - Network originators lose their `+` in the harness (`sms` takes digits only): the international
   form of a sender is covered by SIM messages only.
-- Composed: SET UP CALL's confirm and what follows it; `Message centre:` of a SIM message without a
+- Composed: SET UP CALL's confirm and what follows it (plan 22's Calling, a placeholder until it
+  lands); Confirm SIM service actions has no effect; `Message centre:` of a SIM message without a
   centre (a blank line).
+- `Opening` and `Opening message` take 270-625 ms on Task 0's swSIM fixture and 35-80 ms on the
+  emulator's own SIM (plan 18): nokia-os keeps plan 18's `Opening` and 270 ms for `Opening message`.
+- The `Wait` durations, the timeouts (≈58.3 s, ≈4.9 s) and the link times are the emulator's.

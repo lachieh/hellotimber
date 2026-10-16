@@ -23,7 +23,7 @@ Shared files change by one-line registrations except the edits listed under "Sha
 and the canonical captures Task 0 writes to `$REF/captures/6.39/plan30/`. The emulator SIM has no
 SIM Toolkit; Task 0 adds one to the harness (D4). Read `$REF/captures/README.md`, plans 18, 19 and
 22 in full, and `tools/nokia-dct3-emulator/third_party/swsim/README.md` before starting.
-**Status:** in progress (Task 0 done; Task 1 applies its outcome).
+**Status:** done (2026-10-15; plan 22's bindings pending: see "Completion notes").
 
 ## Goal
 
@@ -957,19 +957,46 @@ it) covered by passing goldens of its slot, level and every SIM screen kind. Kno
 **Files:** `packages/nokia-os/demo/panels/sim.ts` (new), `demo/panels/index.ts` (one line),
 `packages/nokia-os/README.md`, `docs/specs/stock/sim-services.md`, `docs/plans/README.md`, this plan.
 
-- [ ] Demo: a "Sample SIM" with three SIM messages (one unread), a toolkit (`Info`: a text page;
+- [x] Demo: a "Sample SIM" with three SIM messages (one unread), a toolkit (`Info`: a text page;
       `Places`: a list of two items, one a call step) and the status line from
       `describeStockScreen`; the demo's dial log shows the numbers the toolkit dialled. Verify with
       `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser` (headless, Skip boot,
       the `[role=status]` line): the Inbox, Menu 14, a text page, a list, a call step's confirm and
       dial.
-- [ ] README: "SIM content" (messages, toolkit, the persistence rule, validation), "Host identity
+- [x] README: "SIM content" (messages, toolkit, the persistence rule, validation), "Host identity
       and preload", "Screen text"; the D1 table.
-- [ ] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
+- [x] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
       `git diff --stat <commit before Task 1> -- website/` is empty.
-- [ ] Spec: replace "(plan 30, in progress)" with verified facts; list what stays UNVERIFIED.
-- [ ] Plans README: row 30 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete SIM content and SIM services (plan 30)`.
+- [x] Spec: replace "(plan 30, in progress)" with verified facts; list what stays UNVERIFIED.
+- [x] Plans README: row 30 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete SIM content and SIM services (plan 30)`.
+
+Deviation (Task 11): no browser automation was available to this run (`agent-browser` is not
+installed and the preview browser was not reachable), so the demo's flow was verified headlessly
+on the panel's own config (`SAMPLE_CONFIG`) through the test rig: standby with the envelope, the
+Inbox (`Messages: Ada (1 of 3), unread`), the message and `Sender: Ada 0412000001`, Menu 14 (`Menu
+14: Sample SIM`), its level, a text page, the list, the call confirm (`Question: Call the office?`)
+and plan 22's placeholder after OK. The dial log waits for plan 22 (the toolkit's dial seam is not
+host-facing until plan 22's `StockNetworkPort.dial` exists); the status line shows
+`describeStockScreen`.
+
+### Completion notes (2026-10-15)
+
+Shipped: SIM messages on the SIM (slot-based store, unread-first order, capacity from the SIM,
+`Opening message`, `?` for the extension table, persistence by plan 19's rule), sender names (last
+9 digits), SIM services as Menu 14 (icon, label, level, Wait, text pages, lists, the composed call
+confirm, the session's end), `stockMenuFor`, `imei` / `stockImeiLines`, `preload` (Welcome note
+and plan 21's reminders), `describeStockScreen` on every stock screen, a demo panel, README and
+spec. Goldens: 97 LCD and 10 sound goldens in `goldens/index/30.json`, all asserted except
+`sim/imei-screen` (`pending:22`); 5 known gaps (3 shared-suffix names, `Menu 1 3` / `Menu 1 4`).
+The website is unchanged.
+
+Waiting for plan 22 (one line each when it lands): `toolkitDial` in `features/sim-services.ts` →
+`StockTelephone.dial` (D6's rule is pinned on the seam; plan 22 pins its `Call`); `*#06#` reads
+`StockServices.imei` and shows `stockImeiLines` (flip `sim/imei-screen`). Needs phone-core: a
+top-level entry with its own menu number (Menu 14 without a 13) to close the `Menu 1 3` / `1 4`
+gap. UNVERIFIED: the call confirm, Confirm SIM service actions (no effect), a SIM message without a
+centre, `Opening message`'s 270 ms, the emulator's `Wait` and timeouts.
 
 ## Follow-up plan adjustments
 

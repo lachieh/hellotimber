@@ -106,7 +106,10 @@ English (30000 words)`); unticking **T9 English dictionary** restarts the phone 
 host that leaves it out (Write messages is then multi-tap). The **SIM phone book** select
 restarts the phone with an empty SIM (the SIM select's), a sample SIM (a handful of invented names
 and two service numbers) or a full one (50 names); the status line shows the SIM's id and its
-names and free locations, and ▼ at standby opens the list. In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
+names and free locations, and ▼ at standby opens the list. The **SIM content** select restarts the
+phone with a sample SIM (plan 30: three messages, one unread from a named sender; Menu 14 with a
+text page, and a list whose `Office` asks to call; an IMEI and a preloaded Welcome note); the status
+line then reads each screen as plain text (`text: …`, `describeStockScreen`). In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
 difference; the list groups the goldens by top-level menu (`tree/05-tones`) and kind (`menu`,
 `probe`, `game`).
 
@@ -677,8 +680,119 @@ Erase, Edit, Assign tone (with previews), Send b'card, Options (Type of view, Me
 dials and Voice tags (`Voice system error`: the emulator has no voice DSP) follow the v6.39
 captures; Write messages' number prompts pick a number with `Search`, and Send to many sends to a
 chosen name. **Later plans:** plan 22 adds calls (every `Call` soft key, held 2-9 speed dialling,
-caller names and assigned ringing tones through `StockPhoneBook.speedDial`, `byNumber` and `tone`);
+caller names and assigned ringing tones through `StockPhoneBook.speedDial`, `byNumber` (plan 30:
+the last-9-digits match) and `tone`);
 18c adds receiving business cards (`Business card received`, `Save business card?`).
+
+## SIM content and SIM services
+
+A host supplies its content where a 2000 phone kept it (plan 30), and implements nothing else:
+
+| Content                                  | Where a 3310 keeps it           | nokia-os                                    |
+| ---------------------------------------- | ------------------------------- | ------------------------------------------- |
+| contacts, service numbers                | SIM `EF_ADN`, `EF_SDN`          | `StockSimCard.phoneBook`, `.serviceNumbers` |
+| received SMS                             | SIM `EF_SMS`                    | `StockSimCard.messages`                     |
+| SIM services menu and screens            | the SIM's toolkit applet        | `StockSimCard.toolkit`                      |
+| IMEI                                     | the phone                       | `StockPhoneConfig.imei`                     |
+| Welcome note, Reminders                  | phone memory, typed by the user | `StockPhoneConfig.preload`, applied once    |
+| missed/received calls, durations, alarms | phone memory, made by events    | none: a host plays the events               |
+
+```ts
+import {
+  createStockPhone,
+  describeStockScreen,
+  stockMenuFor,
+  type StockSimCard,
+} from "@hellotimber/nokia-os";
+
+const sim: StockSimCard = {
+  id: "my-sim",
+  phoneBook: { entries: [{ name: "Ada", number: "0412000001" }] },
+  messages: {
+    slots: 15, // the SIM's records: its capacity (default 15)
+    entries: [
+      // by slot (index 0 = slot 1); null = a free slot
+      {
+        number: "0412000001",
+        text: "Hello!",
+        sentAt: { year: 2026, month: 10, day: 13, hour: 9, minute: 30, second: 0 },
+        read: false,
+      },
+    ],
+  },
+  toolkit: {
+    title: "Portfolio", // Menu 14's carousel label
+    items: [
+      { id: "about", label: "About", steps: [{ kind: "text", text: "Content on the SIM card." }] },
+      {
+        id: "places",
+        label: "Places",
+        steps: [
+          {
+            kind: "select",
+            items: [
+              {
+                id: "office",
+                label: "Office",
+                steps: [{ kind: "call", number: "0298765432", confirm: "Call the office?" }],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+const phone = createStockPhone({
+  carrier: "Orange F",
+  storage: window.localStorage,
+  sim,
+  imei: "490154203310018",
+  preload: { welcomeNote: "Hello", reminders: [{ text: "Call Ada" }] },
+});
+stockMenuFor(sim).paths(); // [..., "menu/sim-services", "menu/sim-services/about", "menu/sim-services/places"]
+phone.subscribe(({ screen }) => (mirror.textContent = describeStockScreen(screen)));
+```
+
+- **SMS on the SIM.** The Inbox lists unread messages first, then read ones, each in slot order (the
+  order taken when the Inbox opens); an arrival or a Save takes the first free slot; `No space for
+new messages` when every slot is used. Power-on with unread SIM messages shows the standby
+  envelope only (no notice, no tone). Text is one SMS: GSM 7-bit (the extension table counts two
+  septets; `[ ] { } ~ | ^` draw as `?`), at most 160 septets, drawable in the small face. Read on a
+  message shows `Opening message` first. **Persistence:** the host's messages are the SIM's contents
+  until the phone first writes that SIM's messages (a read, an erase, an arrival, a Save); from then
+  on the `messages` record's copy (plan 19's rule). Restore factory settings keeps them.
+- **Sender names.** A sender in the phone book is listed and read under its name (the list,
+  `Sender:`, Details): two numbers match on their last 9 digits (or all digits of a shorter one),
+  `+` and leading digits ignored; an exact match wins.
+- **SIM services (Menu 14).** A toolkit adds a 13th carousel slot that reads 14, labelled with the
+  toolkit's title (the words that fit), with its own icon; its level lists the items (labels cut with
+  `...` where wide). Choosing an item fetches behind `Wait`, then shows its steps: text pages
+  (`DISPLAY TEXT`, OK on, C back), lists (`SELECT ITEM`, nested) and calls the phone confirms (`SET
+UP CALL`: composed, `confirm` or `Allow SIM card to call?`). The session ends after the item's last
+  step (back on the level). A confirmed call goes through plan 22's dial (a placeholder until plan 22
+  lands), inside the confirming key's `send()` so a browser host keeps the user activation.
+- **Validation.** `createStockPhone` and `stockMenuFor` throw for an invalid SIM, naming the field
+  path (`SIM card "my-sim": toolkit.items[1].steps[0].text has characters the stock small font
+lacks: …`): messages (numbers, GSM text, time stamps, slots), toolkit (kebab-case ids unique per
+  list, 1-255 items, lists at most 4 deep, faces, a text page within one command's 273 septets, a
+  confirm within three lines, call numbers by the SIM's rules).
+- **Not on the SIM:** `EF_LND` (v6.39 never reads it: dialled numbers are phone memory, plan 22).
+
+### Host identity and preload
+
+`imei` (15 digits, Luhn-valid) is what `*#06#` shows (`stockImeiLines(imei)`: `Serial No.` over ten
+digits and five; the screen is plan 22's). `preload` writes the Welcome note while storage has no
+`settings` record and the reminders (in order, as Add would, plan 21) while it has no `reminders`
+record, so a visitor's edits and erasures survive; every string must be typeable, within its
+editor's limit and drawable.
+
+### Screen text
+
+`describeStockScreen(screen)` reads any screen as plain text for an accessibility mirror and
+headless QA: standby (operator, profile line, clock, indicators, a notice), the carousel slot, a
+level's selected row and place, and every stock widget (notes, lists, editors, prompts, pages,
+Snake II's score, placeholders). It is not pixels: no golden asserts it.
 
 ## Plan-owned resource evidence
 
