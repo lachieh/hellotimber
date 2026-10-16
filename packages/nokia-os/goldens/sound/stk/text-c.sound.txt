@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/stk/text-c
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sound/stk/text-c
 source-sha256: 8aeaf598e79f5e9bc1cfc4005084b6073b54a6aa6a37622300a75909293e36c7
 state: factory

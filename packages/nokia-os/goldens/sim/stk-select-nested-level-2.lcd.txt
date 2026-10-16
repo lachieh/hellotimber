@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-select-nested-level-2
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/select/nested/level-2
 source-sha256: d32537276bb415495a01f8c39c840202fafa5232f35678f3324917a86f52a41b
 trigger-frame: 1

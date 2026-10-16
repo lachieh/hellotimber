@@ -855,20 +855,35 @@ Task 7.
 **Files:** `src/firmware/features/sim-services.ts` (new), `src/sim/session.ts` (new), the features
 index (one line), plan 22's telephone only for D6's rule, `tests/sim-services.test.ts` (new).
 
-- [ ] The carousel slot (icon timeline, label, `13`) and the level (presentation, numbers, soft key,
+- [x] The carousel slot (icon timeline, label, `13`) and the level (presentation, numbers, soft key,
       opening selection, rows window) against `sim/stk-carousel-*` and `sim/stk-level-*`.
-- [ ] `ToolkitSession`: text steps as Task 0 K's text page (or plan 14's text pages, composed), OK
+- [x] `ToolkitSession`: text steps as Task 0 K's text page (or plan 14's text pages, composed), OK
       to the next step, C ending the session where Task 0 K returns; select steps as its list (or
       an option list with `Select`, composed); call steps as its confirm (or the confirm query
       `Allow SIM card to call?`, composed) honouring Confirm SIM service actions as Task 0 C shows,
       then plan 22's Calling flow; the session's end.
-- [ ] D6's rule: a test drives `send({ type: "down", key: "navi" })` on the confirm and asserts the
+- [x] D6's rule: a test drives `send({ type: "down", key: "navi" })` on the confirm and asserts the
       port's `dial` was called before `send` returned, here and for plan 22's `Call` from the name
       list; without plan 22, call steps open the `22` placeholder (D15).
-- [ ] TDD through keys against `sim/stk-*` and `sound/stk/*`; composed flows against their stock
+- [x] TDD through keys against `sim/stk-*` and `sound/stk/*`; composed flows against their stock
       widgets' existing goldens.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): SIM services through the SIM toolkit`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): SIM services through the SIM toolkit`.
+
+Deviation (Task 7): plan 22 has not landed, so D6's rule is pinned on the session's dial seam
+(`ToolkitDial`, `tests/sim-services.test.ts`: the number arrives inside the confirming key's
+`send()`), and the phone's seam (`toolkitDial` in `features/sim-services.ts`) opens plan 22's
+`Calling` placeholder until plan 22 binds it to `StockTelephone.dial`; plan 22's own `Call` from
+the name list is its Task 8's to pin. Corrections to Task 0's outcome from the replays: OK on the
+last step of an item chosen from a list ends the session (back on the level, `select-ok`,
+`leaf-ok`), as at the top; only C goes back to the list, which the SIM issues anew (opening on
+its first item). The clear-after-delay and wait-for-user timeouts run from when the text shows:
+4867 ms and 58328 ms (Task 0 read 3581 ms and 54040 ms inside the recordings that followed
+`open`). `Wait` lasts 20 ms + 1.2 ms per character of the fetched command's text. A message page
+(text page) keeps a word on its line while the word's cells fit all 84 columns (`scroll. the
+toolkit`), also for SMS (plan 18's reader). The call confirm is a confirm query of at most three
+lines (`confirm` longer than that is refused at creation). C held is the kernel's long press, as
+plan 19's known gap; its recordings are not imported.
 
 ### Task 8 - IMEI and preload (TDD)
 

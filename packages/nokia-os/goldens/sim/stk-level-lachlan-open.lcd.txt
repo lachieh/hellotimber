@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-level-lachlan-open
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/level/lachlan/open
 source-sha256: 8cebcae6212dffa17c12316d3ba2ad4b0ad9b05ac03b979fb7065f084b52d88b
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-level-main-c
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/select/list/c-2
 source-sha256: 33ac16112fe7915d6131bbe21e9618fe9a970543556d2cc9c0edb566a74f3e61
 trigger-frame: 1

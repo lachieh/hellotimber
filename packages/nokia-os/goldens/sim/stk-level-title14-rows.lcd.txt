@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-level-title14-rows
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/level/title14/rows/01.png + captures/6.39/plan30/stk/level/title14/rows/02.png + captures/6.39/plan30/stk/level/title14/rows/03.png
 source-sha256: 1ad7f1596267e3ca8ef58259040d6a5cc27c0a88b30d84ede32d306611b88afe
 note: SIM stk, toolkit title14: the level, ▼ per image to the wrap (long labels cut with ...).

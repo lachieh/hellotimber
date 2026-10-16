@@ -1,10 +1,10 @@
 lcd-golden 1
 id: sim/stk-select-list-text-c
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/select/list/text-c
 source-sha256: 198de03e12b82578614a048916760007abc42c6cb5883aef1c9a3aa9697630da
 trigger-frame: 1
-note: SIM stk: C on Work page: Wait, the list.
+note: SIM stk: C on Work page: Wait, the list again (issued anew).
 omitted: none
 
 @image a

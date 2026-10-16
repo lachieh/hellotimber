@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-select-list-c
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/select/list/c
 source-sha256: 4dd55818c6615cec7ae0414d94a74d831136959b6f386970f7649a22fd58a4c0
 trigger-frame: 1

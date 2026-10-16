@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-text-auto-wait-60s
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/text/auto/wait-60s
 source-sha256: c781ae3dba8b0c294fe3880459fb7d1249753b3bfd62e45d753bc057eaa5ca27
 trigger-frame: 1

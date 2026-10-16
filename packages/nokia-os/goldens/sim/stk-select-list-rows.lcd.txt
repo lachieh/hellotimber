@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-select-list-rows
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/select/list/rows
 source-sha256: 02accc394485d7aa7cb9377633168e269a80adace3008fae0037b4c2168a8332
 note: SIM stk: ▼ through List's items.

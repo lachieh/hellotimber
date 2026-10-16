@@ -62,23 +62,28 @@ SIM-borne call data.
   wraps to it, ▼ from it wraps to Phone book; there is no 13 (`Menu 1 3`: `Invalid shortcut` at
   430 ms for ≈2.9 s, then standby). `Menu 1 4` opens the level. The label is the SET UP MENU alpha
   identifier in the large face, as many words as fit the line (`Portfolio menu` shows
-  `Portfolio`). Icon: a SIM card and a hand, 11 frames (held 1377 ms, then steps of ≈232-449 ms),
-  settling at 3769 ms; it restarts on every reveal.
+  `Portfolio`). Icon: a SIM card and a hand, 6 pictures played as 11 steps (the hand out and back;
+  held 1377 ms, then steps of ≈232-449 ms), settled 3769 ms after the key; it restarts on every
+  reveal. nokia-os: phone-core numbers top-level entries without a gap, so SIM services is the
+  kernel's 13th slot drawn as 14, and `Menu 1 3` / `Menu 1 4` are swapped (known gaps).
 - **Level:** a three-row rows list with the rail, soft key `OK`, no title and no menu number,
-  opening on item 1 (≈91 ms after Select); ▼ wraps. A label wider than its row is cut to the
-  characters that fit before ` ...` (`Sixteen char ...`, `Twenty-four ...`); 10 characters fit. C
-  returns to the carousel (66 ms, the icon restarting), held C to standby (≈530-615 ms).
+  opening on item 1 (≈91 ms after Select); ▼ wraps. A label wider than its row is cut: `...` sits
+  at a fixed place (x 68-76) and the label keeps the characters that leave a space's width before
+  it (`Sixteen char ...`, `Twenty-four ...`); 10 characters fit. C returns to the carousel (66 ms,
+  the icon restarting), held C to standby (≈530-615 ms).
 - **Every SIM screen** opens with `Wait` on the hatched bar while the phone fetches the command:
   ≈20-45 ms for short commands, 241 ms for a 160-character text, 311 ms for 240 characters
-  (nokia-os: 22 ms + 1.2 ms per character of the command's text).
-- **DISPLAY TEXT:** the small face, four lines a page, soft key `OK`, no rail; ▼ pages (160
-  characters: 3 pages, 240: 4); keys on a one-page text change nothing. OK (result 00) returns to
-  the level at once with the item still selected; C (result 11) shows `Wait` ≈40 ms, then the
-  level; held C goes to standby. A wait-for-user text times out after ≈54 s to the level; a
-  clear-after-delay text clears after ≈3.58 s. Two texts: OK on the first shows the second.
+  (nokia-os: 20 ms + 1.2 ms per character of the command's text).
+- **DISPLAY TEXT:** the small face, four lines a page (a word stays on its line while its cells
+  fit the 84 columns), soft key `OK`, no rail; ▼ pages (160 characters: 3 pages, 240: 4); keys on
+  a one-page text change nothing. OK (result 00) shows the next step at once, or ends the session
+  (the level, the item still selected); C (result 11) shows `Wait` ≈40 ms, then the level; held C
+  goes to standby. A wait-for-user text gives up ≈58.3 s after it shows, a clear-after-delay text
+  clears ≈4.9 s after it shows (both go on as OK).
 - **SELECT ITEM:** the level's rows list with `OK`; the alpha identifier (title) is not drawn;
-  nesting works; OK opens the chosen item's next screen; C returns to the parent list (or the
-  level); held C goes to standby.
+  nesting works; OK opens the chosen item's next screen behind `Wait`; OK on that item's last
+  screen ends the session (the level, at any depth); C returns to the parent list (issued anew,
+  on its first item) or the level; held C goes to standby.
 - **SET UP CALL:** not captured: the phone fetches it, sends one STATUS and freezes on a blank
   screen with `OK`. nokia-os composes the confirm (UNVERIFIED): a confirm query with the step's
   alpha identifier or `Allow SIM card to call?`, OK dials through plan 22 (its placeholder until

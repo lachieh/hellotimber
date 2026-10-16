@@ -394,7 +394,7 @@
   {
     "id": "sim/stk-carousel-lachlan",
     "file": "sim/stk-carousel-lachlan.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -402,7 +402,7 @@
   {
     "id": "sim/stk-carousel-main-down-wrap",
     "file": "sim/stk-carousel-main-down-wrap.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 10
@@ -410,7 +410,7 @@
   {
     "id": "sim/stk-carousel-main-menu-13",
     "file": "sim/stk-carousel-main-menu-13.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -418,7 +418,7 @@
   {
     "id": "sim/stk-carousel-main-menu-14",
     "file": "sim/stk-carousel-main-menu-14.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -426,7 +426,7 @@
   {
     "id": "sim/stk-carousel-main-up",
     "file": "sim/stk-carousel-main-up.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 12
@@ -434,7 +434,7 @@
   {
     "id": "sim/stk-carousel-main-up-again",
     "file": "sim/stk-carousel-main-up-again.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 10
@@ -442,7 +442,7 @@
   {
     "id": "sim/stk-carousel-title14",
     "file": "sim/stk-carousel-title14.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -450,7 +450,7 @@
   {
     "id": "sim/stk-level-lachlan-open",
     "file": "sim/stk-level-lachlan-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -458,7 +458,7 @@
   {
     "id": "sim/stk-level-lachlan-rows",
     "file": "sim/stk-level-lachlan-rows.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -466,7 +466,7 @@
   {
     "id": "sim/stk-level-main-c",
     "file": "sim/stk-level-main-c.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 12
@@ -474,7 +474,7 @@
   {
     "id": "sim/stk-level-main-open",
     "file": "sim/stk-level-main-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -482,7 +482,7 @@
   {
     "id": "sim/stk-level-main-rows",
     "file": "sim/stk-level-main-rows.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 13,
     "frames": 13
@@ -490,7 +490,7 @@
   {
     "id": "sim/stk-level-main-up",
     "file": "sim/stk-level-main-up.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -498,7 +498,7 @@
   {
     "id": "sim/stk-level-title14-open",
     "file": "sim/stk-level-title14-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -506,7 +506,7 @@
   {
     "id": "sim/stk-level-title14-rows",
     "file": "sim/stk-level-title14-rows.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -514,7 +514,7 @@
   {
     "id": "sim/stk-select-list-c",
     "file": "sim/stk-select-list-c.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -522,7 +522,7 @@
   {
     "id": "sim/stk-select-list-open",
     "file": "sim/stk-select-list-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -530,7 +530,7 @@
   {
     "id": "sim/stk-select-list-rows",
     "file": "sim/stk-select-list-rows.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -538,7 +538,7 @@
   {
     "id": "sim/stk-select-list-select",
     "file": "sim/stk-select-list-select.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -546,7 +546,7 @@
   {
     "id": "sim/stk-select-list-select-ok",
     "file": "sim/stk-select-list-select-ok.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -554,7 +554,7 @@
   {
     "id": "sim/stk-select-list-text-c",
     "file": "sim/stk-select-list-text-c.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -562,7 +562,7 @@
   {
     "id": "sim/stk-select-nested-leaf",
     "file": "sim/stk-select-nested-leaf.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -570,7 +570,7 @@
   {
     "id": "sim/stk-select-nested-leaf-ok",
     "file": "sim/stk-select-nested-leaf-ok.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -578,7 +578,7 @@
   {
     "id": "sim/stk-select-nested-level-1-c",
     "file": "sim/stk-select-nested-level-1-c.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -586,7 +586,7 @@
   {
     "id": "sim/stk-select-nested-level-2",
     "file": "sim/stk-select-nested-level-2.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -594,7 +594,7 @@
   {
     "id": "sim/stk-select-nested-level-2-c",
     "file": "sim/stk-select-nested-level-2-c.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -602,7 +602,7 @@
   {
     "id": "sim/stk-select-nested-open",
     "file": "sim/stk-select-nested-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -610,7 +610,7 @@
   {
     "id": "sim/stk-select-no-title-open",
     "file": "sim/stk-select-no-title-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -618,7 +618,7 @@
   {
     "id": "sim/stk-select-no-title-rows",
     "file": "sim/stk-select-no-title-rows.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -626,7 +626,7 @@
   {
     "id": "sim/stk-select-no-title-select",
     "file": "sim/stk-select-no-title-select.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -634,7 +634,7 @@
   {
     "id": "sim/stk-select-no-title-select-ok",
     "file": "sim/stk-select-no-title-select-ok.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -642,7 +642,7 @@
   {
     "id": "sim/stk-text-auto-open",
     "file": "sim/stk-text-auto-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -650,7 +650,7 @@
   {
     "id": "sim/stk-text-auto-wait-60s",
     "file": "sim/stk-text-auto-wait-60s.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -658,7 +658,7 @@
   {
     "id": "sim/stk-text-short-c",
     "file": "sim/stk-text-short-c.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -666,7 +666,7 @@
   {
     "id": "sim/stk-text-short-ok",
     "file": "sim/stk-text-short-ok.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -674,7 +674,7 @@
   {
     "id": "sim/stk-text-short-open",
     "file": "sim/stk-text-short-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -682,7 +682,7 @@
   {
     "id": "sim/stk-text-short-wait-60s",
     "file": "sim/stk-text-short-wait-60s.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -690,7 +690,7 @@
   {
     "id": "sim/stk-text-text-160-c",
     "file": "sim/stk-text-text-160-c.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -698,7 +698,7 @@
   {
     "id": "sim/stk-text-text-160-ok",
     "file": "sim/stk-text-text-160-ok.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -706,7 +706,7 @@
   {
     "id": "sim/stk-text-text-160-open",
     "file": "sim/stk-text-text-160-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -714,7 +714,7 @@
   {
     "id": "sim/stk-text-text-160-pages",
     "file": "sim/stk-text-text-160-pages.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -722,7 +722,7 @@
   {
     "id": "sim/stk-text-text-240-c",
     "file": "sim/stk-text-text-240-c.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -730,7 +730,7 @@
   {
     "id": "sim/stk-text-text-240-ok",
     "file": "sim/stk-text-text-240-ok.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -738,7 +738,7 @@
   {
     "id": "sim/stk-text-text-240-open",
     "file": "sim/stk-text-text-240-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -746,7 +746,7 @@
   {
     "id": "sim/stk-text-text-240-pages",
     "file": "sim/stk-text-text-240-pages.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -754,7 +754,7 @@
   {
     "id": "sim/stk-text-two-c-1",
     "file": "sim/stk-text-two-c-1.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -762,7 +762,7 @@
   {
     "id": "sim/stk-text-two-ok-1",
     "file": "sim/stk-text-two-ok-1.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -770,7 +770,7 @@
   {
     "id": "sim/stk-text-two-ok-2",
     "file": "sim/stk-text-two-ok-2.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -778,7 +778,7 @@
   {
     "id": "sim/stk-text-two-open",
     "file": "sim/stk-text-two-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -786,70 +786,70 @@
   {
     "id": "sound/stk/auto-open",
     "file": "sound/stk/auto-open.sound.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/stk/auto-wait",
     "file": "sound/stk/auto-wait.sound.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/stk/carousel-up",
     "file": "sound/stk/carousel-up.sound.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/stk/level-open",
     "file": "sound/stk/level-open.sound.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/stk/select-c",
     "file": "sound/stk/select-c.sound.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/stk/select-open",
     "file": "sound/stk/select-open.sound.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/stk/select-select",
     "file": "sound/stk/select-select.sound.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/stk/text-c",
     "file": "sound/stk/text-c.sound.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/stk/text-ok",
     "file": "sound/stk/text-ok.sound.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/stk/text-open",
     "file": "sound/stk/text-open.sound.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   }

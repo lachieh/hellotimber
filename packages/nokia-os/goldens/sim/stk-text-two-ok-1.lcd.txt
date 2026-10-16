@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-text-two-ok-1
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/text/two/ok-1
 source-sha256: bd6d460897f7e2397dc6fbf22d72bb8d5304ffabdca7c06874d81111a569c596
 trigger-frame: 1

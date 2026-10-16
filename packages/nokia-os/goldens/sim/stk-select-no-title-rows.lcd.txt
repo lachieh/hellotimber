@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-select-no-title-rows
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/select/no-title/rows
 source-sha256: 1c36c3f3f66223959221e762d94c2323670077e090f9e3211da2a85ac433fb69
 note: SIM stk: ▼ through No title's items.

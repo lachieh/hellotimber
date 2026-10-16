@@ -1,10 +1,10 @@
 lcd-golden 1
 id: sim/stk-select-no-title-select-ok
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/select/no-title/select-ok
 source-sha256: 2e936054319fb224908bee65f6677a3d78180b34d15947b2ebae2e4b82f12077
 trigger-frame: 1
-note: SIM stk: OK on Two's text: the list again.
+note: SIM stk: OK on Two's text: the level (the session ends).
 omitted: none
 
 @image a

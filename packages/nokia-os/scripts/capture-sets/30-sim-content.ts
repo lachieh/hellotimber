@@ -988,7 +988,7 @@ export function simContentCard(
  * The tasks whose goldens are asserted: each row names the task that implements it, and is
  * `pending:30` until that task is listed here (plan 29's pending workflow).
  */
-export const DONE_TASKS: ReadonlySet<number> = new Set<number>([4, 5]);
+export const DONE_TASKS: ReadonlySet<number> = new Set<number>([4, 5, 7]);
 
 /**
  * The plan 30 task that implements a golden: SIM messages (4), sender names (5: every golden
@@ -1389,18 +1389,22 @@ const ROWS: readonly Row[] = [
     [
       ["list", "open", "List: Wait, the list (its title Places not drawn)."],
       ["list", "select", "OK on Work: Wait, Work page."],
-      ["list", "select-ok", "OK on Work page: the list again (the harness re-issues it)."],
+      [
+        "list",
+        "select-ok",
+        "OK on Work page: the level (the session ends after the item's last step).",
+      ],
       ["list", "c", "C on the list: Wait, the level."],
-      ["list", "text-c", "C on Work page: Wait, the list."],
+      ["list", "text-c", "C on Work page: Wait, the list again (issued anew)."],
       ["nested", "open", "Nested: Wait, Level 1's list."],
       ["nested", "level-2", "OK on Deeper: Wait, Level 2's list."],
       ["nested", "leaf", "OK on Leaf: Wait, Leaf text."],
-      ["nested", "leaf-ok", "OK on Leaf text: Level 2's list."],
+      ["nested", "leaf-ok", "OK on Leaf text: the level (the session ends)."],
       ["nested", "level-2-c", "C on Level 2's list: Wait, Level 1's list."],
       ["nested", "level-1-c", "C on Level 1's list: Wait, the level."],
       ["no-title", "open", "No title: Wait, the list."],
       ["no-title", "select", "OK on Two: Wait, Two."],
-      ["no-title", "select-ok", "OK on Two's text: the list again."],
+      ["no-title", "select-ok", "OK on Two's text: the level (the session ends)."],
     ] as const
   ).map(
     ([list, rec, what]): Row => ({

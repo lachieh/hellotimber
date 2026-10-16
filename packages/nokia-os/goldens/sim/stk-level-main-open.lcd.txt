@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-level-main-open
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/level/main/open
 source-sha256: e8b368f95f135dfbe81ebb672436f5efb640f6245b6771cfb3685b4066f91baf
 trigger-frame: 1

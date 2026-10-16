@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/stk/select-c
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sound/stk/select-c
 source-sha256: a9d14492768a6212c4d0fb4299a9f0907c71b3fd6c852b86a96ff41174b2a287
 state: factory

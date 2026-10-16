@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-carousel-lachlan
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/carousel/lachlan/last.png
 source-sha256: 68b43b0c9d524f45eb5b46e627c8e1ef88e941e040e0f769c07c7a33e8a826aa
 note: SIM stk, toolkit lachlan: Menu 14 settled after ▲ from Phone book: the title as the label (LACHLAN).

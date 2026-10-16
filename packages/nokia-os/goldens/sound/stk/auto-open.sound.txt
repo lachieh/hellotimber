@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/stk/auto-open
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sound/stk/auto-open
 source-sha256: dffa2d9d33be14a5b3f15d53ffb0eba5fb0189c81419466bfac8c4489e00f876
 state: factory

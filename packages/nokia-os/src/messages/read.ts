@@ -26,11 +26,12 @@ const BOX_NODES: Readonly<Record<MessageBox, string>> = { inbox: "2-2", outbox: 
 export const ERASING_MS = 261;
 
 /**
- * A message's text lines run x 0..83 (`sms/inbox-view-2`), and a word stays on a line when its
- * cells end one column short of it (`right here with a` ends at x 82, plan 30 `sim/sms-read-1`);
- * `wrapText` keeps the editor's two columns, so pages wrap at 85.
+ * A message's text lines run x 0..83 (`sms/inbox-view-2`), and a word stays on a line while its
+ * cells fit them, its last blank column included (`scroll. the toolkit` takes all 84, plan 30
+ * `sim/stk-text-text-240-pages`; `right here with a` 83, `sim/sms-read-1`); `wrapText` keeps the
+ * editor's two columns free, so pages wrap at 86.
  */
-const PAGE_WIDTH = 85;
+const PAGE_WIDTH = 86;
 
 /** The phone book name of `number`, if it has one (plan 30 D7, Task 0 N). */
 function nameOf(services: StockServices, number: string): { readonly name?: string } {

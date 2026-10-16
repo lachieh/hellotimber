@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-text-auto-open
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/text/auto/open
 source-sha256: f17c7c2613b2a3f176ea33e63d0124e1799b838f23b76b47366f9ffeb055ff47
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-text-short-wait-60s
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/text/short/wait-60s
 source-sha256: fb5ad29005e0f353b1991ed7cc59485f52d0fc026913c966bcbd4e04a5752205
 trigger-frame: 1

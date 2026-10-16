@@ -1,10 +1,10 @@
 lcd-golden 1
 id: sim/stk-select-nested-leaf-ok
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/select/nested/leaf-ok
 source-sha256: d4c9f34f1203e0f5b8849b638b04ab03fa3cca59e519617620501ab31e5adb84
 trigger-frame: 1
-note: SIM stk: OK on Leaf text: Level 2's list.
+note: SIM stk: OK on Leaf text: the level (the session ends).
 omitted: none
 
 @image a

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-carousel-main-up-again
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/carousel/main/up-again
 source-sha256: a888eae291b35708997c8daaaa7bdc0b84eed79b1a59031c48254a8d180d527e
 trigger-frame: 1

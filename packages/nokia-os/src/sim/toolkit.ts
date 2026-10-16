@@ -4,7 +4,7 @@
 import { CAROUSEL_TITLE_WIDTH } from "../display/carousel";
 import { CUT_MARK, cutDotsX, ROW_TEXT_LEFT, ROW_TEXT_WIDTH } from "../display/list-rows";
 import { missingStockGlyphs, type StockFontName } from "../resources";
-import { textWidth } from "../text/layout";
+import { textWidth, wrapText } from "../text/layout";
 import { simNumberProblem } from "../phone-book/sim-card";
 import { gsmSeptets } from "./messages";
 import { SIM_SERVICES_SLUG } from "./slot";
@@ -103,6 +103,22 @@ export function rowLabel(label: string): string {
   return `${chars.slice(0, n).join("").trimEnd()}${CUT_MARK}`;
 }
 
+/** The composed call confirm without an alpha identifier (firmware string 0x3ec, UNVERIFIED). */
+export const ALLOW_CALL = "Allow SIM card to call?";
+
+/** A confirm query's lines wrap to the LCD's 84 columns (the editor's word rule), at most 3. */
+const CONFIRM_WIDTH = 84;
+const CONFIRM_LINES = 3;
+
+/** The lines of a call step's composed confirm (D4, D6): its alpha identifier or ALLOW_CALL. */
+export function callConfirmLines(confirm: string | undefined): readonly string[] {
+  const text = confirm ?? ALLOW_CALL;
+  const chars = Array.from(text);
+  return wrapText(text, "small", CONFIRM_WIDTH).map((line) =>
+    chars.slice(line.start, line.end).join("").trimEnd(),
+  );
+}
+
 function step(value: unknown, path: string, depth: number): StockToolkitStep {
   if (!isObject(value)) fail(path, "must be a step");
   switch (value.kind) {
@@ -141,11 +157,15 @@ function step(value: unknown, path: string, depth: number): StockToolkitStep {
         fail(`${path}.number`, "must be a non-empty string");
       const problem = simNumberProblem(number);
       if (problem !== undefined) fail(path, problem);
-      return {
-        kind: "call",
-        number,
-        ...(confirm === undefined ? {} : { confirm: drawn(confirm, `${path}.confirm`, "small") }),
-      };
+      if (confirm === undefined) return { kind: "call", number };
+      const lines = callConfirmLines(drawn(confirm, `${path}.confirm`, "small")).length;
+      if (lines > CONFIRM_LINES) {
+        fail(
+          `${path}.confirm`,
+          `takes ${lines} lines, more than a confirm query's ${CONFIRM_LINES}`,
+        );
+      }
+      return { kind: "call", number, confirm: confirm as string };
     }
     default:
       return fail(`${path}.kind`, 'must be "text", "select" or "call"');

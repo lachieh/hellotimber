@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-select-no-title-open
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/select/no-title/open
 source-sha256: ff3b3242f11af8ed92b5640d193c9245948c5a8ab7bd2e7767c6ee942e83454b
 trigger-frame: 1

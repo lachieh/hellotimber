@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/stk/level-open
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sound/stk/level-open
 source-sha256: 750112e9b77b2e99a5e098021b288b29f3ef46c2ceded32532fc1a6281b7a723
 state: factory

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/stk-text-text-160-pages
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/stk/text/text-160/page
 source-sha256: 983b228507369d690bad65413205494e3257b00d5b2cbd3a675872f74a9ce7f6
 note: SIM stk: ▼ through text-160's pages, four lines each.

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/stk/carousel-up
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sound/stk/carousel-up
 source-sha256: 3fd995d78573b4592140c21c36af013c3a906453e4e024cff768e31f91da3236
 state: factory
