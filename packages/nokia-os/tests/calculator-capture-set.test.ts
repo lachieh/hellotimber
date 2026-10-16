@@ -127,13 +127,8 @@ describe("calculator capture set", () => {
     );
   });
 
-  it("asserts every fixture but the D9 escapes, which wait on plan 22", () => {
-    for (const [id, entry] of lcd) {
-      const d9 = /keys-options-(\d|star|hash)$|options-dtmf-confirm/.test(id);
-      if (d9) expect(entry.status, id).toBe("pending:22");
-      else expect(entry.status, id).toBe("asserted");
-    }
-    expect(lcd.get("calculator/keys-options-up")!.status).not.toBe("pending:22");
+  it("asserts every fixture, the D9 escapes with plan 22's scenarios", () => {
+    for (const [id, entry] of lcd) expect(entry.status, id).toBe("asserted");
   });
 
   it("aligns key recordings on the key's redraw, or on the key when it changes nothing", () => {
@@ -178,12 +173,11 @@ describe("calculator sound goldens", () => {
     expect(goldens.get("sound/calculator/divide-by-zero-virgin")!.state).toBe("virgin");
   });
 
-  it("keeps both frequencies of a DTMF pair, pending plan 22", () => {
+  it("keeps both frequencies of a DTMF pair (asserted by plan 22)", () => {
     const zero = goldens.get("sound/calculator/keys-options-0")!;
-    expect(zero.status).toBe("pending:22");
+    expect(zero.status).toBe("asserted");
     expect(zero.rows[0]!.state).toEqual({ kind: "sounding", hz: 1336, hz2: 941, volume: 0x9104 });
-    expect(goldens.get("sound/calculator/options-dtmf-confirm-1")!.status).toBe("pending:22");
-    expect(goldens.get("sound/calculator/keys-options-up")!.status).not.toBe("pending:22");
+    expect(goldens.get("sound/calculator/options-dtmf-confirm-1")!.status).toBe("asserted");
   });
 
   it("quotes the warning-tone notes' text, as plan 16's warning-tone extraction reads it", () => {
