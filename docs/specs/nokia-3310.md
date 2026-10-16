@@ -215,7 +215,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Profiles                                                   | [stock/profiles.md](stock/profiles.md)                             | 17   |
 | T9 predictive text                                         | [stock/t9-predictive-text.md](stock/t9-predictive-text.md)         | 18b  |
 | Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                         | 20   |
-| Clock, alarm, timers, Reminders (plan 21, in progress) | [stock/clock-and-reminders.md](stock/clock-and-reminders.md) | 21 |
+| Clock, alarm, timers, Reminders                            | [stock/clock-and-reminders.md](stock/clock-and-reminders.md)       | 21   |
 | Composer                                                   | [stock/composer.md](stock/composer.md)                             | 27   |
 | Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                             | 23   |
 | Keyguard and lights                                        | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |

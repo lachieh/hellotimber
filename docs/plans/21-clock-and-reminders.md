@@ -17,7 +17,7 @@ panel, spec file; one-line registrations in shared files).
 content"). The planning probes in `$REF/captures/scratch-plan21/` (scripts `probe-*.cap`,
 `tools/probe_*.py`, outputs `out/`, logs `*.log`) are evidence for this plan only and are never
 imported. Task 0 writes this plan's captures to `$REF/captures/6.39/plan21/`.
-**Status:** in progress (Task 0 done).
+**Status:** done (2026-10-15).
 
 ## Goal
 
@@ -1067,58 +1067,99 @@ View all, Erase, the alert), `src/firmware/features/clock/service.ts` (reminder 
 `goldens/**` (re-imported),
 `tests/reminders-store.test.ts` (new), `tests/reminders-flows.test.ts` (new).
 
-- [ ] TDD `REMINDERS_RECORD`: the virgin junk entry (D8: dormant, alerted); capacity; order; `due`;
+- [x] TDD `REMINDERS_RECORD`: the virgin junk entry (D8: dormant, alerted); capacity; order; `due`;
       malformed entries dropped; `factory` per Task 0 F; the stored JSON shape pinned by a snapshot.
-- [ ] Add new: `textInput` (35), `Alarm on`/`Alarm off`, `timeEntry` for the date (prefilled with
+- [x] Add new: `textInput` (35), `Alarm on`/`Alarm off`, `timeEntry` for the date (prefilled with
       the phone's date) and the time, the notes and errors, memory full (`Replace old reminder?`).
-- [ ] View all (D9) and its Options (Erase, Edit; Send → placeholder `18c`, D14); Erase › One by
+- [x] View all (D9) and its Options (Erase, Edit; Send → placeholder `18c`, D14); Erase › One by
       one and All; the level's `shown` children (Add new only when empty).
-- [ ] Alerts (D2, D3): due reminders at minute edges, one at a time; Snooze (`Alarm postponed for
+- [x] Alerts (D2, D3): due reminders at minute edges, one at a time; Snooze (`Alarm postponed for
 10 min`, the re-alert minute), the other keys, the automatic end per Task 0; overdue
       reminders at power-on (`1 reminder received` / `%U reminders received` if Task 0 shows them);
       the sound (D11).
-- [ ] TDD through keys against `reminders/*` and `sound/clock/reminder-*`; `probe/confirm-10-3-2-yes`
+- [x] TDD through keys against `reminders/*` and `sound/clock/reminder-*`; `probe/confirm-10-3-2-yes`
       passes.
-- [ ] Commit: `feat(nokia-os): Reminders with alarms, snooze and the reminder memory`.
+- [x] Commit: `feat(nokia-os): Reminders with alarms, snooze and the reminder memory`.
+
+Deviation: Tasks 11 and 12 landed in one commit (`feat(nokia-os): Reminders with alarms, snooze
+and the reminder memory`): they share the acceptance file, the capture set's ASSERTED list and the
+re-imported index. The reminders' alerts live in `reminders/service.ts`, not `clock/service.ts`;
+the store adds and erases by reminder (its `added` stamp), not by index. State-dependent entries
+use plan 17's `levels` table (`LevelOptions.shown`, new, beside `label` and `opening`; the Hide
+clock label moved there from Task 7's `labels` table at the merge with main), and View all with no
+reminder exits at once through a feature table `exitsWhen`. Evidence the plan did not have:
+`Remind about:` restarts its blink on a character key that changes the text and on its return
+from the rows (`TextInputOptions.restartBlinkOnKey`); a text wider than the large face draws in
+small rows (the prompt painter's `text` entry, `reminders/text`); Edit opens on the hidden blink
+step and numbers its rows `2-1`, `2-2`; `Erase? <text>` is one query text broken at spaces;
+`Memory full.` sits at tops 4/13/22 (`ConfirmOptions.tops`); `Reminder time:` returns from
+`Invalid time` to the wrong field's start (`invalidAtField`); a second alert due in the same minute
+shows right after the first (its exit frame, then the alert); Snake II pauses to its menu when an
+alert falls due (`StockGames.events`). Reminder Send goldens are `pending:18c` (D14).
 
 ### Task 12 - Acceptance and the coverage guard
 
 **Files:** `tests/acceptance/21-clock-and-reminders.test.ts`, `tests/support/clock.ts` (new: rig
 helpers for a scripted host clock, `minuteEdge(rig, hhmm)` and the Task 0 section drivers).
 
-- [ ] A scenario for every asserted plan 21 golden; the host clock is scripted to cross the minute
+- [x] A scenario for every asserted plan 21 golden; the host clock is scripted to cross the minute
       the capture's `tominute` crossed, on the tick the golden's trigger needs.
-- [ ] Every asserted golden passes (pixels exact; timelines ±2 ms after alignment; probes and
+- [x] Every asserted golden passes (pixels exact; timelines ±2 ms after alignment; probes and
       alerts that replay another recording's timing within `PROBE_TOLERANCE_MS`; sound within plan
       16's tolerances). New `knownGaps` need a reason. No golden is `pending:21`.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report the
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report the
       suite's run time.
-- [ ] Commit: `test(nokia-os): drive the clock and reminders against their goldens`.
+- [x] Commit: `test(nokia-os): drive the clock and reminders against their goldens`.
+
+Deviation: the merge with main brought the fidelity standard (AGENTS.md), so the scenarios use no
+per-test tolerances (PROBE_TOLERANCE_MS, `toleranceMs`, sound `drift`/`cycleMs` are gone);
+`clockScenario`'s `sampled` comparison stays for the ring and the stopwatch. A prompt recording
+whose blink, not its first key, fixes the timing runs through `blinkScenario`. Three earlier known
+gaps now pass (`countdown/expire-key-{c,5,up}`, `settings/format-choose-12`). Plan 17 landed, so
+`clock/{alarm,stopwatch}/power-off` are this plan's again. Known gaps (each with its reason in the
+acceptance file): the kernel's C held (`reminders/alert-elsewhere-*-standby`, as the alarm's and
+countdown's) and long press (`*/power-off`); `reminders/alert-over-countdown` (a reminder replaces
+the countdown's alert; nokia-os queues it); `alert-elsewhere-snake` (the food: Snake II's seed);
+`view-3-edit`, `-edit-ok` (Edit's opening blink step); `sound/clock/reminder-factory` (the second
+alert's volume rose 395 ms late); `power-on-minute` and `clock/persist/{screens,after-reboot-
+clock-pages}` (emulator clock artefacts); `clock/no-time/reminder` (an unexplained parent);
+`clock/auto-update/boot-on-hour` (a cold boot; the note's place). Suite: `vp run -r test` 8 min 29 s
+(nokia-os 7737 passed, 92 expected fail, 97 todo). The clock reads its record without a copy
+(`StockEeprom.peek`) and memoises phone time: the per-tick cost had made other plans' tests time
+out.
 
 ### Task 13 - Demo and README
 
 **Files:** `packages/nokia-os/demo/panels/clock.ts` (new `DemoPanel`), `demo/panels/index.ts` (one
 line), `packages/nokia-os/README.md`.
 
-- [ ] Demo panel: the host clock follows the browser's local time (as today) plus a "host clock" control
+- [x] Demo panel: the host clock follows the browser's local time (as today) plus a "host clock" control
       (+1 min, +10 min, +1 h, reset) so alarms and reminders can be tried without waiting; an alert
       log in the status line.
-- [ ] Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser` (headless:
+- [x] Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and `agent-browser` (headless:
       drive through the `[role=status]` line, Skip boot): set an alarm a minute ahead, +1 min, the
       alarm screen, Snooze; a reminder; a 1-minute countdown; the stopwatch; Hide clock; 12-hour.
-- [ ] README: the clock contract (D1), alerts and wake (D2-D4), timers (D5), what is composed (D12).
-- [ ] Commit: `feat(nokia-os): clock controls in the demo`.
+- [x] README: the clock contract (D1), alerts and wake (D2-D4), timers (D5), what is composed (D12).
+- [x] Commit: `feat(nokia-os): clock controls in the demo`.
+
+Deviation: no browser automation was available in this environment (agent-browser is not
+installed and the preview browser was unavailable), so the demo was checked by `vp build demo` and
+the dev server serving the panel; the flows the plan lists are each covered by the acceptance
+scenarios. Hosts cannot seed reminders: the record is internal (README).
 
 ### Task 14 - Verification gate and closeout
 
 **Files:** this plan, `docs/plans/README.md`, `docs/specs/stock/clock-and-reminders.md`.
 
-- [ ] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`, `mise exec -- vp run
+- [x] `mise exec -- vp check --fix`, `mise exec -- vp run -r test`, `mise exec -- vp run
 website#build`; `git diff --stat <commit before Task 1> -- website/` is empty.
-- [ ] Spec: replace "(plan 21, in progress)" with verified facts; list what stays UNVERIFIED (the
+- [x] Spec: replace "(plan 21, in progress)" with verified facts; list what stays UNVERIFIED (the
       composed flows, jump rules Task 0 could not settle, the stopwatch beyond what was recorded).
-- [ ] Plans README row 21 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete clock and reminders (plan 21)`.
+- [x] Plans README row 21 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete clock and reminders (plan 21)`.
+
+Completion note: `git diff main -- website/` is empty (the website is unchanged; `vp run
+website#build` passes). Plan 21 asserts 246 goldens (3 `pending:18c`); none names plan 21.
 
 ## Follow-up plan adjustments
 

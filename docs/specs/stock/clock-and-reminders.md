@@ -1,4 +1,4 @@
-# Stock v6.39 clock, alarm, timers and Reminders (plan 21, in progress)
+# Stock v6.39 clock, alarm, timers and Reminders
 
 This reference describes the measured Clock (menu 11) and Reminders (menu 10) behaviour that
 nokia-os implements over the host's real-time clock, and that plan 21's goldens assert. See
@@ -44,7 +44,7 @@ on a menu page, a list, a note, an option list, the editor, Snake II or the runn
 appear when the phone next shows standby (C held: standby without its operator line for ≈91
 ms, then the alert; standby itself is not drawn). A key that ends an alert leaves the same frame
 for ≈90 ms before standby.
-Snake II pauses at the event. Alerts keep the standby layout: ladders, clock and indicators; the
+Snake II pauses to its menu (Continue on top) ≈85 ms after the event. Alerts keep the standby layout: ladders, clock and indicators; the
 operator line is replaced.
 
 - **Reminder** (`reminders/alert-*`): its text where the operator is, the reminder icon at the
@@ -53,7 +53,10 @@ operator line is replaced.
   ladders), standby; it alerts again at its minute + 10. Any other key ends it. Two due in one
   minute: the later-added first. Reminders due while the phone was off alert at the first minute
   edge after power-on. A reminder fires at the first minute edge at or past its time, also after
-  a jump over it; never before.
+  a jump over it; never before. A second alert due in the same minute shows right after the first
+  is answered (its exit frame, ≈67 ms, then the alert). A reminder falling due during the
+  countdown's alert replaces it on screen, and the countdown's alert comes back after the
+  reminder's Snooze (`reminders/alert-over-countdown`; not reproduced: nokia-os queues it).
 - **Countdown** (`countdown/expire-*`): `Countdown` / `time up`, five bell pictures stepping every
   ≈232 ms, `OK`; lights toggling every ≈465 ms; the buzzer's pulses for ≈29 s, louder over time,
   then silence; the screen stays until a key; any key ends it; the page then reads `Off`.
@@ -115,13 +118,34 @@ still holding `h`/`m`/`d`/`y`, or on an impossible date, shows `Invalid time` / 
 
 Add new: `Remind about:` (35 characters) → `Alarm on` / `Alarm off` → (Alarm on) `Reminder date:`
 (today) → `Reminder time:` (`hh:mm`; the cursor's blink carries on) → `Reminder set` → the level;
-C goes back one step. View all: one per screen, `n hh:mm dd.mm` in the digits face, an icon and
-the text, `Options` (`Erase`, `Edit`, `Send` (18c)); listed by alarm time, without alarm last.
-Erase › One by one (`Erase? <text>`, `Reminder erased`, the next) and All (`Are you sure?`,
-`Reminder memory empty`; the level then shows Add new only). Capacity 10: `Memory full. Replace
-old reminder?`. Persistence: reminders, Hide clock and Time format survive a power cycle;
+C goes back one step. `Remind about:` opens on plan 14's blink (shown first, 482 ms); a character
+key that changes the text restarts the blink, shown (C and a key past the limit keep its phase),
+and the prompt's return from the rows restarts it too. A text wider than the large face is drawn in
+small rows of up to 78 px from x 2, the last at top 27 and the ones before 9 rows up; with three
+rows the box rises to top 7 and the label goes (`reminders/text`); the cursor there is 10 rows
+from a row above its row. After `Invalid time`, `Reminder time:` puts its cursor at the start of
+the wrong field (`0h:mm` → the hours; `20:0m` → the minutes), where `Set timer:` puts it on the
+first placeholder. View all: one per screen, `n hh:mm dd.mm` in the digits face, an icon and
+the text, `Options` (`Erase`, `Edit`, `Send` (18c); the indicator shows only the option's
+number); listed by alarm time, without alarm last. Edit opens the text prompt on the text (on the
+hidden blink step in two recordings, the shown one in a third: UNVERIFIED what picks it); its
+`Alarm on` / `Alarm off` rows number `2-1`, `2-2`. Erase › One by one (`Erase? <text>` as one
+query text broken at spaces, `Reminder erased`, the next) and All (`Are you sure?`, `Reminder
+memory empty`; the level then shows Add new only). Capacity 10: Add new then asks `Memory full.` /
+`Replace old` / `reminder?` (tops 4, 13, 22); OK lists the reminders with `Erase`, and the one
+chosen is replaced by the new reminder; C goes back. Persistence: reminders, Hide clock and Time format survive a power cycle;
 Restore factory settings keeps the alarm, the time, the countdown and the reminders and resets
 Time format and Hide clock.
+
+## UNVERIFIED
+
+- Texts of more than one query line in `Erase? <text>` and the alert (no capture shows one).
+- What picks Edit's opening blink step; the jump rules for the alarm (it rings in hardware when
+  its minute arrives, so a jump over it does not ring).
+- Where `Date and time updated` shows: the capture shows it during the boot, after `Code
+accepted`; nokia-os shows it at standby after power-on, and only when clearing the offset
+  changed the time (an unchanged time cannot be captured: the emulator loses it).
+- The stopwatch beyond what was recorded (62 minutes): its hours wrap at 10 in nokia-os.
 
 ## Composed flows (UNVERIFIED)
 
