@@ -95,7 +95,7 @@ export function messagePages(message: Omit<Shown, "slot">): readonly (readonly s
 }
 
 /** `Sender:` and the sender: its name line, then its number (plan 30 D7), or the number alone. */
-function senderLines(message: Omit<Shown, "slot">): readonly string[] {
+function senderLines(message: Omit<Shown, "slot">): string[] {
   const sender = message.sender ?? "";
   return message.name === undefined ? ["Sender:", sender] : ["Sender:", message.name, sender];
 }
