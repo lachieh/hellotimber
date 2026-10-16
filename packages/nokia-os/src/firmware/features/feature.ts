@@ -77,6 +77,11 @@ export interface LevelOptions {
   readonly label?: (slug: string, order: number) => string | undefined;
   /** The slug of the child the level opens on; undefined = the captured opening. */
   readonly opening?: () => string | undefined;
+  /**
+   * Plan 21: whether the child with slug `slug` is listed now (Reminders lists View all and Erase
+   * only while the memory holds a reminder); absent = every child.
+   */
+  readonly shown?: (slug: string) => boolean;
 }
 
 /** A level's options over one phone's services. */
@@ -240,4 +245,9 @@ export interface StockFeature {
   readonly settings?: StockSettingsTables;
   /** EEPROM records this feature owns (plan 15 D2); Restore and erase see them all. */
   readonly records?: readonly EepromRecord<unknown>[];
+  /**
+   * Plan 21: bound leaves that exit at once while `when` holds (by node number), as an
+   * `exitLevels` leaf does: View all with no reminder to show.
+   */
+  readonly exitsWhen?: Readonly<Record<string, (services: StockServices) => boolean>>;
 }

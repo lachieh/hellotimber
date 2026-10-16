@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/view-1-options
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/view-1-options
 source-sha256: 57e96d973dba91b514d00019b564215edc5e11a356b8f7dec7cf5e39f6409708
 trigger-frame: 1

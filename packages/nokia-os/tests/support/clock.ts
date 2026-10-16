@@ -47,6 +47,8 @@ export function clockRig(
     readonly clock?: string | undefined;
     readonly date?: string | undefined;
     readonly storage?: StockStorage;
+    /** No T9 dictionary (`t9: {}`): the editor in multi-tap, as the plan21 captures show it. */
+    readonly multitap?: boolean;
   } = {},
 ): ClockRig {
   const host: HostClock = {
@@ -56,7 +58,12 @@ export function clockRig(
   const storage =
     options.storage ??
     (options.state === "factory" ? seededStorage({ factory: true }) : createMemoryStorage());
-  const rig = standbyRig({ clock: () => host.clock, date: () => host.date, storage });
+  const rig = standbyRig({
+    clock: () => host.clock,
+    date: () => host.date,
+    storage,
+    ...(options.multitap ? { t9: {} } : {}),
+  });
   return { rig, host, storage };
 }
 
@@ -77,6 +84,40 @@ export function toClockSettings(rig: Rig, row = 0): void {
 /** Standby → Reminders on `row`. */
 export function toReminders(rig: Rig, row = 0): void {
   play(rig, `menu +300 up up up +2000 menu +1500 ${"down ".repeat(row)}${SETTLE}`);
+}
+
+/**
+ * Standby → Reminders › Add new → the text (`text`: multi-tap keys 1.6 s apart) → Alarm on
+ * (`date` typed over today's, then `hhmm`) or Alarm off → standby (the generator's
+ * `add_reminder`).
+ */
+export function addReminder(
+  rig: Rig,
+  options: {
+    readonly text?: string;
+    readonly alarm?: boolean;
+    readonly date?: string;
+    readonly hhmm?: string;
+  } = {},
+): void {
+  const { text = "2", alarm = true, date, hhmm = "1011" } = options;
+  toReminders(rig, 0);
+  play(rig, "menu +2500");
+  for (const key of text.split(" ")) play(rig, `${key} +1600`);
+  play(rig, "menu +2000");
+  if (alarm) {
+    play(rig, "menu +2500");
+    if (date !== undefined) play(rig, date.split("").join(" "));
+    play(rig, `menu +2500 ${hhmm.split("").join(" ")} menu +4000`);
+  } else play(rig, "down +1000 menu +4000");
+  toStandby(rig);
+}
+
+/** Standby → Reminders › Erase › All › Yes → standby (the generator's `erase_all`). */
+export function eraseAllReminders(rig: Rig): void {
+  toReminders(rig, 0);
+  play(rig, "down down menu +1500 down +800 menu +1500 menu +5000");
+  toStandby(rig);
 }
 
 /** Standby → the alarm set to `hhmm` (the generator's `set_alarm`) → standby. */
@@ -251,6 +292,47 @@ function sampleTimeline(
       `Sampled timeline mismatch: ${id}: ${failures.length - 1} of ${checked} frames\n${failures.join("\n")}`,
     );
   }
+}
+
+/** A prompt cursor's blink step (≈480 ms in every capture). */
+const BLINK_MS = 480;
+
+/**
+ * A recording whose keys meet a prompt's cursor blink (the blink runs on through the keys, so
+ * the blink, not the first key's redraw, fixes the timing): `rig` is synchronised so that its
+ * next blink edge comes when golden row `edgeRow` starts, and key i goes down on the tick golden
+ * row `keyRows[i]` starts (its redraw: the key-to-redraw latency is not reproduced). Compared
+ * from the first change, as `before-recording` goldens are.
+ */
+export function blinkScenario(
+  id: string,
+  rig: Rig,
+  edgeRow: number,
+  keyRows: readonly number[],
+): void {
+  const golden = loadGolden(id);
+  const rows = golden.timeline!;
+  const recording = recordingOf(id);
+  const start = rows[0]!.startMs - 1;
+  const at = (row: number) => Math.round(rows[row]!.startMs - start);
+  // Wait for a blink edge (any change), then until the next one is `at(edgeRow)` ms away.
+  const from = rig.paint().pixels;
+  for (let i = 0; i < 2 * BLINK_MS && rig.paint().pixels.every((v, j) => v === from[j]); i++) {
+    rig.advance(1);
+  }
+  rig.advance((((BLINK_MS - at(edgeRow)) % BLINK_MS) + BLINK_MS) % BLINK_MS);
+  // The edge must leave the cursor as frame 0 shows it: else wait a step more.
+  if (lcdMismatch(rig.paint().pixels, goldenImage(id, rows[0]!.image), "") !== undefined) {
+    rig.advance(BLINK_MS);
+  }
+  const schedule = recording.keys.map(([key], i) => ({
+    atMs: Math.max(1, at(keyRows[i]!)),
+    run: () => rig.press(phoneKey(key)),
+  }));
+  const last = rows[rows.length - 1]!;
+  const recorded = rig.record(last.startMs + last.durationMs - start + 100, undefined, schedule);
+  const keys = recording.keys.map(([key, down]) => `${key}@${down}`).join(" ");
+  expectTimeline(recorded, { ...golden, triggerFrame: "before-recording" }, `${id}: ${keys}`);
 }
 
 /**

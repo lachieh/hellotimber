@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/add-text-ok
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/add-text-ok
 source-sha256: 7891038e4f8ec8397a7e356f6358e9f6e7c8a97dc5d9885c529b56eae09978b1
 trigger-frame: 1

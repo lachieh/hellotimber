@@ -7,26 +7,35 @@ import { expect } from "vite-plus/test";
 import { CLOCK_STILLS } from "../../scripts/capture-sets/21-clock-and-reminders.ts";
 import { acceptancePlan, type Scenario } from "../support/acceptance.ts";
 import {
+  addReminder,
+  blinkScenario,
+  recordingOf,
   clockRig,
   clockScenario,
+  eraseAllReminders,
   clockSound,
   play,
   setAlarm,
   toClock,
   toClockSettings,
+  toReminders,
   toStandby,
   untilShows,
   type ClockRig,
+  type HostClock,
 } from "../support/clock.ts";
 import { CLOCK_ALERTS } from "../../src/resources";
-import type { SoundProgram } from "../../src/sound/program";
 import { goto } from "../support/drive.ts";
 import { TAP_DOWN_MS } from "../support/calculator.ts";
 import { STOPWATCH_BLINK_MS } from "../../src/firmware/features/clock/stopwatch";
-import { expectLcd, expectTimeline } from "../support/golden.ts";
-import { loadSoundGolden } from "../support/sound.ts";
+import { expectLcd, expectTimeline, lcdMismatch } from "../support/golden.ts";
+import { expectSoundTimeline, loadSoundGolden } from "../support/sound.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
-import type { Rig } from "../support/rig.ts";
+import { seededStorage, stockRig, type Rig } from "../support/rig.ts";
+import type { StockStorage } from "../../src/index";
+import { StockEeprom } from "../../src/firmware/eeprom";
+import { createStockSettings } from "../../src/firmware/settings";
+import { SNAKE_SETTINGS } from "../../src/widgets/snake";
 
 type RigOptions = Parameters<typeof clockRig>[0];
 
@@ -130,10 +139,6 @@ const ringKey =
   };
 
 const RING_STATES = ["factory", "virgin"] as const;
-
-/** An alert program's repeating part, ms. */
-const loopMs = ({ steps, loopFrom = 0 }: SoundProgram): number =>
-  steps.slice(loopFrom).reduce((ms, step) => ms + step.ms, 0);
 
 /**
  * The minutes standby showed in the re-ring recordings, from their first change (the
@@ -324,7 +329,642 @@ const stopwatch =
     clockScenario(id, c.rig, { stopwatch: true });
   };
 
+// R reminders: the generator's `reminders` section (virgin), from its forks' parents.
+
+/**
+ * A recording the generator took before the one a scenario plays (`take`): each key tapped
+ * (60 ms) `gap` ms after the previous, then `tail` ms, so prompts' cursors keep their phase.
+ */
+const took = ({ rig }: ClockRig, keys: string, gap = 600, tail = 3000) => {
+  for (const key of keys.split(" ")) {
+    rig.press(key === "menu" ? "navi" : (key as PhoneKey), 60);
+    rig.advance(gap - 60);
+  }
+  rig.advance(tail);
+};
+
+/** The empty Reminders level (the virgin junk reminder erased: `erase_all`). */
+const emptyReminders = ({ rig }: ClockRig) => {
+  eraseAllReminders(rig);
+  toReminders(rig, 0);
+};
+const addOpen = (c: ClockRig) => {
+  emptyReminders(c);
+  took(c, "menu");
+};
+/** `Remind about:` holding `A`. */
+const textTyped = (c: ClockRig) => {
+  addOpen(c);
+  play(c.rig, "2 +1600");
+};
+const alarmChoice = (c: ClockRig) => {
+  textTyped(c);
+  took(c, "menu", 600, 2500);
+};
+const dateOpen = (c: ClockRig) => {
+  alarmChoice(c);
+  took(c, "menu");
+};
+const timeOpen = (c: ClockRig) => {
+  dateOpen(c);
+  took(c, "menu");
+};
+/** `n` characters typed into `Remind about:` (2 and 3 alternately, 1 s apart). */
+const typeText = ({ rig }: ClockRig, n: number) => {
+  for (let i = 0; i < n; i++) play(rig, `${i % 2 === 0 ? "2" : "3"} +1000`);
+  rig.advance(1000);
+};
+
+/** View all's reminders, added in the generator's order: `A` 10:11, `De` no alarm, `Ggg` 12:00. */
+const VIEW_REMINDERS = [
+  { text: "2", hhmm: "1011" },
+  { text: "3 3", alarm: false },
+  { text: "4 4 4", hhmm: "1200" },
+] as const;
+const withReminders = (n: number) => (c: ClockRig) => {
+  eraseAllReminders(c.rig);
+  for (const reminder of VIEW_REMINDERS.slice(0, n)) addReminder(c.rig, reminder);
+};
+const viewLevel = (n: number) => (c: ClockRig) => {
+  withReminders(n)(c);
+  toReminders(c.rig, 1);
+};
+const viewOpen = (n: number) => (c: ClockRig) => {
+  viewLevel(n)(c);
+  took(c, "menu");
+};
+const viewKeys = (n: number) => (c: ClockRig) => {
+  viewOpen(n)(c);
+  took(c, "down down down up", 1500, 2000);
+};
+const viewOptions = (n: number) => (c: ClockRig) => {
+  viewKeys(n)(c);
+  took(c, "menu", 600, 2500);
+};
+const eraseOpen = (c: ClockRig) => {
+  withReminders(3)(c);
+  toReminders(c.rig, 2);
+  took(c, "menu", 600, 2500);
+};
+/** Ten reminders without an alarm (the generator's `reminders-full`). */
+const fullMemory = ({ rig }: ClockRig) => {
+  eraseAllReminders(rig);
+  for (let n = 0; n < 10; n++) {
+    toReminders(rig, 0);
+    play(rig, `menu +2500 ${2 + (n % 8)} +1600 menu +2000 down +1000 menu +4000`);
+    toStandby(rig);
+  }
+};
+
+/**
+ * Sound golden `id`: the alert from the minute edge (its first event), then its keys (Navi) at
+ * the golden's key times (t 0 = the first key).
+ */
+const reminderSound = (id: string, c: ClockRig) => {
+  const golden = loadSoundGolden(id);
+  const start = c.rig.now;
+  const seen = c.rig.sounds.length;
+  c.host.clock = "10:11";
+  // The edge's tick starts the alert: golden t 0 is that much later.
+  const origin = start - golden.rows[0]!.ms;
+  const keyTimes = (golden.keys ?? []).map((k) => k.ms);
+  for (const at of keyTimes) {
+    c.rig.advance(origin + at - c.rig.now);
+    c.rig.press("navi");
+  }
+  c.rig.advance(origin + golden.rows.at(-1)!.ms + 500 - c.rig.now);
+  expectSoundTimeline(
+    { originMs: origin, endMs: c.rig.now, events: c.rig.sounds.slice(seen) },
+    golden,
+    `${id}: ${golden.note ?? ""}`,
+  );
+};
+
+/** The kernel's long press: the power key turns the phone on this long after it goes down. */
+const POWER_LONG_PRESS_MS = 800;
+
+/** A recording on a blinking prompt (`blinkScenario`): its blink edge row and its keys' rows. */
+const onBlink =
+  (setup: (c: ClockRig) => void, edgeRow: number, keyRows: readonly number[]): Scenario =>
+  (id) => {
+    const c = clockRig();
+    setup(c);
+    blinkScenario(id, c.rig, edgeRow, keyRows);
+  };
+
+/** A timeline from the first moment `setup`'s screen shows the golden's frame 0 (a cursor). */
+const fromFrame0 =
+  (setup: (c: ClockRig) => void): Scenario =>
+  (id) => {
+    const c = clockRig();
+    setup(c);
+    untilShows(c.rig, goldenImage(id, loadGolden(id).timeline![0]!.image), 1000);
+    clockScenario(id, c.rig);
+  };
+
+// R reminder alerts: the generator's `reminder-alerts` sections (factory unless said), the
+// reminder `A` at 10:11 (`add_reminder`), the host clock moved as `settime` moved the phone's.
+
+/** A phone holding the reminder `A` at 10:11 (and `more`), at standby at 10:10. */
+const withAlert = (
+  state: "factory" | "virgin" = "factory",
+  more: string[] = [],
+  storage?: StockStorage,
+): ClockRig => {
+  const c = clockRig({
+    ...(state === "factory" ? { state } : {}),
+    ...(storage === undefined ? {} : { storage }),
+    multitap: true,
+  });
+  addReminder(c.rig);
+  for (const text of more) addReminder(c.rig, { text });
+  return c;
+};
+
+/** The alert 3 s in (`alert_now`, then 3 s), from the moment it shows golden `id`'s frame 0. */
+const alertShown = (id: string): ClockRig => {
+  const c = withAlert();
+  c.host.clock = "10:11";
+  c.rig.advance(3000);
+  untilShows(c.rig, goldenImage(id, loadGolden(id).timeline![0]!.image), 1000);
+  return c;
+};
+
+/** Snoozed at 10:11 (the alert-key-snooze recording, then 6 s). */
+const snoozed = (): ClockRig => {
+  const c = withAlert();
+  c.host.clock = "10:11";
+  c.rig.advance(3000);
+  play(c.rig, "menu +6000");
+  return c;
+};
+
+/**
+ * Where the reminder's minute finds the phone (the generator's `reminder-alerts` elsewhere): the
+ * screen, then the recording's trigger, `edgeMs` before the minute edge.
+ */
+const ALERT_ELSEWHERE: Readonly<Record<string, { setup: (c: ClockRig) => void; edgeMs: number }>> =
+  {
+    "menu-page": { setup: ({ rig }) => toClock(rig, 0), edgeMs: 3000 },
+    "menu-list": { setup: ({ rig }) => toClockSettings(rig, 0), edgeMs: 3000 },
+    note: { setup: ({ rig }) => toClockSettings(rig, 0), edgeMs: 600 },
+    "option-list": {
+      setup: ({ rig }) => {
+        toClockSettings(rig, 2);
+        play(rig, "menu +1500");
+      },
+      edgeMs: 3000,
+    },
+    editor: {
+      setup: ({ rig }) => play(rig, "menu +300 down +2000 menu +1500 menu +2000"),
+      edgeMs: 3000,
+    },
+    snake: {
+      setup: ({ rig }) => {
+        goto(rig, "8-1-1");
+        rig.advance(1000);
+      },
+      edgeMs: 3000,
+    },
+  };
+
+/** The recording elsewhere: its keys from the trigger, the minute `edgeMs` after it. */
+/** The factory state with Snake II at level 1, as the plan21 factory image had it. */
+const factoryLevel1 = (): StockStorage => {
+  const storage = seededStorage({ factory: true });
+  createStockSettings(new StockEeprom(storage)).setNumber(SNAKE_SETTINGS.level, 1);
+  return storage;
+};
+
+const alertElsewhere =
+  (where: string): Scenario =>
+  (id) => {
+    const c = withAlert("factory", [], where === "snake" ? factoryLevel1() : undefined);
+    const { setup, edgeMs } = ALERT_ELSEWHERE[where]!;
+    setup(c);
+    const rows = loadGolden(id).timeline!;
+    const keyed = recordingOf(id).keys.length > 0;
+    if (!keyed) {
+      // The first change is the screen's own (the editor's cursor blink): start 1 ms before one.
+      const next = goldenImage(id, rows[1]!.image);
+      while (lcdMismatch(c.rig.paint().pixels, next, "") === undefined) c.rig.advance(1);
+      untilShows(c.rig, next, 2000);
+      c.rig.advance(959);
+    }
+    clockScenario(id, c.rig, {
+      edge: {
+        host: c.host,
+        clock: "10:10",
+        later: [{ atMs: Math.round(edgeMs - rows[1]!.startMs), clock: "10:11" }],
+      },
+    });
+  };
+
+/** C held 15 s after the reminder's minute found the phone elsewhere. */
+const alertElsewhereStandby =
+  (where: string): Scenario =>
+  (id) => {
+    const c = withAlert("factory", [], where === "snake" ? factoryLevel1() : undefined);
+    const { setup, edgeMs } = ALERT_ELSEWHERE[where]!;
+    setup(c);
+    if (where === "note") play(c.rig, "menu");
+    c.rig.advance(edgeMs);
+    c.host.clock = "10:11";
+    c.rig.advance(15_000);
+    clockScenario(id, c.rig);
+  };
+
+// F persistence and Restore: the generator's `persist_state`, then a power cycle or Restore.
+
+/** Alarm 10:11, two reminders at 12:00 (today, tomorrow), time 11:00, countdown 00:05, 12-hour. */
+const persistState12h = ({ rig }: ClockRig) => {
+  setAlarm(rig, "1011");
+  addReminder(rig, { hhmm: "1200" });
+  addReminder(rig, { text: "3", hhmm: "1200", date: "14102026" });
+  toClockSettings(rig, 1);
+  play(rig, "menu +2500 1 1 0 0 menu +4000");
+  toStandby(rig);
+  toClock(rig, 4);
+  play(rig, "menu +2500 0 0 0 5 menu +4000");
+  toStandby(rig);
+  toClockSettings(rig, 2);
+  play(rig, "menu +1500 down +800 menu +4000");
+  toStandby(rig);
+};
+/** …and Hide clock. */
+const persistState = (c: ClockRig) => {
+  persistState12h(c);
+  toClockSettings(c.rig, 0);
+  play(c.rig, "menu +4000");
+  toStandby(c.rig);
+};
+/** The power key held until the phone is off, then pressed until it is on (`saveflash`, `reboot`). */
+const powerCycle = ({ rig }: ClockRig) => {
+  rig.press("power", 2500);
+  rig.advance(3000);
+  rig.press("power", 1000);
+  rig.advance(3000);
+};
+const rebooted = (c: ClockRig) => {
+  persistState(c);
+  powerCycle(c);
+};
+/** Settings › Restore factory settings (Menu 6 4), its code typed. */
+const restorePrompt = (c: ClockRig) => {
+  persistState(c);
+  play(c.rig, "menu 6 4 +1500 1 2 3 4 5");
+};
+const restored = (c: ClockRig) => {
+  restorePrompt(c);
+  play(c.rig, "menu +8000");
+  toStandby(c.rig);
+};
+/** View all after `setup` (the generator's `persist_after` view shot). */
+const viewAfter = (setup: (c: ClockRig) => void) => (c: ClockRig) => {
+  setup(c);
+  toReminders(c.rig, 1);
+  play(c.rig, "menu +2500");
+};
+
+const PERSIST_SCENARIOS: Record<string, Scenario> = {
+  "clock/persist/screens": stills({
+    "before-standby-12h": persistState12h,
+    "before-standby": persistState,
+    "after-reboot-standby": rebooted,
+    "after-reboot-view": viewAfter(rebooted),
+  }),
+  "clock/persist/before-clock-pages": scroll((c) => {
+    persistState(c);
+    toClock(c.rig, 0);
+  }),
+  "clock/persist/after-reboot-clock-pages": scroll((c) => {
+    rebooted(c);
+    toClock(c.rig, 0);
+  }),
+  "clock/persist/after-reboot-reminders": scroll((c) => {
+    rebooted(c);
+    toReminders(c.rig, 0);
+  }),
+  "clock/restore/screens": stills({
+    "before-standby-12h": persistState12h,
+    "before-standby": persistState,
+    "after-standby": restored,
+    "after-view": viewAfter(restored),
+  }),
+  "clock/restore/run": timeline(restorePrompt),
+  "clock/restore/before-clock-pages": scroll((c) => {
+    persistState(c);
+    toClock(c.rig, 0);
+  }),
+  "clock/restore/after-clock-pages": scroll((c) => {
+    restored(c);
+    toClock(c.rig, 0);
+  }),
+  "clock/restore/after-reminders": scroll((c) => {
+    restored(c);
+    toReminders(c.rig, 0);
+  }),
+  // Reminders due while the phone was off (`reminders-power-on`, factory): 10:11 and 10:12,
+  // powered off, on again at 10:15; they alert at the first minute edge after power-on.
+  "reminders/power-on-screens": stills(
+    {
+      "power-on-standby": (c) => {
+        addReminder(c.rig);
+        addReminder(c.rig, { text: "3", hhmm: "1012" });
+        c.rig.press("power", 2500);
+        c.rig.advance(3000);
+        c.host.clock = "10:15";
+        c.rig.press("power", 1000);
+        c.rig.advance(30_000);
+      },
+    },
+    { state: "factory" },
+  ),
+  "reminders/power-on-minute": (id) => {
+    const c = clockRig({ state: "factory" });
+    addReminder(c.rig);
+    addReminder(c.rig, { text: "3", hhmm: "1012" });
+    c.rig.press("power", 2500);
+    c.rig.advance(3000);
+    c.host.clock = "10:15";
+    c.rig.press("power", 1000);
+    c.rig.advance(30_000);
+    clockScenario(id, c.rig, { edge: { host: c.host, clock: "10:16" } });
+  },
+  // The power key's profile list (plan 17), then its long press switches the phone off.
+  "clock/alarm/power-off": timeline(({ rig }) => setAlarm(rig, "1011")),
+  // Opened and left with C held: the Stopwatch page.
+  "clock/stopwatch/power-off": timeline(({ rig }) => {
+    toClock(rig, 3);
+    play(rig, "menu +3000 c@1500 +1500");
+  }),
+  // Auto update On and a boot whose network time is an hour from the phone's
+  // (`auto-update/boot-on-hour`, Phone security On): here the phone's time is set an hour behind
+  // the host's (its offset), and the power-on clears it.
+  "clock/auto-update/boot-on-hour": (id) => {
+    const host: HostClock = { clock: "10:10", date: "13.10.2026" };
+    const rig = stockRig({
+      clock: () => host.clock,
+      date: () => host.date,
+      storage: seededStorage(),
+      t9: {},
+    });
+    const powerOn = () => play(rig, "power@1000 +9000 1 2 3 4 5 menu +9000");
+    powerOn();
+    toClock(rig, 5);
+    play(rig, "menu +1500 up up menu +4000");
+    toClockSettings(rig, 1);
+    play(rig, "menu +2500 0 9 1 0 menu +4000");
+    toStandby(rig);
+    rig.press("power", 2500);
+    rig.advance(3000);
+    const golden = loadGolden(id);
+    const rows = golden.timeline!;
+    const origin = rows[1]!.startMs;
+    rig.hold("power");
+    rig.advance(POWER_LONG_PRESS_MS - 2);
+    const schedule = recordingOf(id).keys.map(([key, down]) => ({
+      atMs: Math.round((rows.find((r) => r.startMs > down)?.startMs ?? down) - origin),
+      run: () => rig.press(key === "menu" ? "navi" : (key as PhoneKey)),
+    }));
+    const last = rows[rows.length - 1]!;
+    const recorded = rig.record(
+      last.startMs + last.durationMs - origin + 100,
+      () => {
+        rig.advance(1);
+        rig.release("power");
+      },
+      schedule,
+    );
+    expectTimeline(recorded, golden, `${id}: power on, the code`);
+  },
+};
+
+const REMINDER_SCENARIOS: Record<string, Scenario> = {
+  ...PERSIST_SCENARIOS,
+  "reminders/alert-standby": (id) => {
+    const c = withAlert();
+    clockScenario(id, c.rig, { edge: { host: c.host, clock: "10:11" } });
+  },
+  "reminders/alert-virgin": (id) => {
+    const c = withAlert("virgin");
+    clockScenario(id, c.rig, { edge: { host: c.host, clock: "10:11" } });
+  },
+  "reminders/alert-two": (id) => {
+    const c = withAlert("factory", ["3"]);
+    clockScenario(id, c.rig, { edge: { host: c.host, clock: "10:11" } });
+  },
+  "reminders/alert-jump-over": (id) => {
+    const c = withAlert();
+    clockScenario(id, c.rig, { edge: { host: c.host, clock: "10:25" } });
+  },
+  ...Object.fromEntries(
+    ["snooze", "c", "up", "5", "c-held", "power"].map((key) => [
+      `reminders/alert-key-${key}`,
+      (id: string) => clockScenario(id, alertShown(id).rig),
+    ]),
+  ),
+  ...Object.fromEntries(
+    ["1020", "1021", "1022"].map((hhmm) => [
+      `reminders/alert-resnooze-${hhmm}`,
+      (id: string) => {
+        const c = snoozed();
+        clockScenario(id, c.rig, {
+          edge: { host: c.host, clock: `${hhmm.slice(0, 2)}:${hhmm.slice(2)}` },
+        });
+      },
+    ]),
+  ),
+  ...Object.fromEntries(
+    ["note", "editor", "snake"].map((where) => [
+      `reminders/alert-elsewhere-${where}`,
+      alertElsewhere(where),
+    ]),
+  ),
+  ...Object.fromEntries(
+    Object.keys(ALERT_ELSEWHERE).map((where) => [
+      `reminders/alert-elsewhere-${where}-standby`,
+      alertElsewhereStandby(where),
+    ]),
+  ),
+  "reminders/alert-over-countdown": (id) => {
+    const c = withAlert();
+    const endsAt = startCountdown(c, "0001");
+    toStandby(c.rig);
+    c.rig.advance(endsAt + 100 - c.rig.now);
+    const rows = loadGolden(id).timeline!;
+    untilShows(c.rig, goldenImage(id, rows[0]!.image), 3000);
+    // The record's trigger is 1 ms in: the bell step falls on it.
+    c.rig.advance(Math.round(CLOCK_ALERTS.bells.stepMs) - 2);
+    const keyDown = recordingOf(id).keys[0]![1];
+    clockScenario(id, c.rig, {
+      edge: {
+        host: c.host,
+        clock: "10:10",
+        // tominute(15000) ran 15 s past the edge before the key.
+        later: [{ atMs: Math.round(keyDown - 15_000 - rows[1]!.startMs), clock: "10:11" }],
+      },
+    });
+  },
+  "sound/clock/reminder-factory": (id) => {
+    const c = withAlert("factory", ["3"]);
+    reminderSound(id, c);
+  },
+  "sound/clock/reminder-virgin": (id) => {
+    const c = withAlert("virgin");
+    reminderSound(id, c);
+  },
+
+  "reminders/level-virgin": scroll(({ rig }) => toReminders(rig, 0)),
+  "reminders/virgin-view": timeline(({ rig }) => toReminders(rig, 0)),
+  "reminders/virgin-erase-open": timeline(({ rig }) => toReminders(rig, 0)),
+  "reminders/virgin-erase-one": timeline((c) => {
+    toReminders(c.rig, 0);
+    took(c, "down down menu", 1500, 2500);
+  }),
+  "reminders/virgin-erase-all": timeline(({ rig }) => {
+    toReminders(rig, 0);
+    play(rig, "down down menu +2000");
+  }),
+  "reminders/virgin-erase-all-yes": timeline((c) => {
+    toReminders(c.rig, 0);
+    play(c.rig, "down down menu +2000");
+    took(c, "down menu", 1500, 2500);
+  }),
+  "reminders/level-empty": scroll((c) => {
+    toReminders(c.rig, 0);
+    play(c.rig, "down down menu +2000");
+    took(c, "down menu", 1500, 2500);
+    took(c, "menu", 600, 5000);
+  }),
+  "reminders/add-open": timeline(emptyReminders),
+  "reminders/text": stills(
+    Object.fromEntries(
+      [1, 20, 35, 36].map((n) => [
+        `text-${n}`,
+        (c: ClockRig) => {
+          addOpen(c);
+          typeText(c, n);
+        },
+      ]),
+    ),
+  ),
+  "reminders/add-c-empty": timeline(addOpen),
+  "reminders/add-c-text": onBlink(textTyped, 2, [1, 5]),
+  "reminders/add-text-ok": fromFrame0(textTyped),
+  "reminders/alarm-choice": scroll(alarmChoice),
+  "reminders/add-alarm-off": timeline(alarmChoice),
+  "reminders/add-choice-c": timeline(alarmChoice),
+  "reminders/add-date-open": timeline(alarmChoice),
+  "reminders/add-date-c": timeline(dateOpen),
+  ...Object.fromEntries(
+    ["31022026", "12102026", "01012027", "29022028"].map((v) => [
+      `reminders/add-date-${v}`,
+      timeline(dateOpen),
+    ]),
+  ),
+  "reminders/add-time-open": onBlink(dateOpen, 2, [1]),
+  "reminders/add-time-c": onBlink(timeOpen, 1, [2]),
+  ...Object.fromEntries(
+    ["0900", "1010", "2500", "0"].map((v) => [`reminders/add-time-${v}`, timeline(timeOpen)]),
+  ),
+  "reminders/add-save": timeline(timeOpen),
+  ...Object.fromEntries(
+    [1, 2, 3].flatMap((n) => [
+      [`reminders/view-${n}`, timeline(viewLevel(n))],
+      // View all with one reminder: ▲/▼ change nothing (`view-1-keys` is not imported).
+      ...(n === 1 ? [] : [[`reminders/view-${n}-keys`, timeline(viewOpen(n))]]),
+      [`reminders/view-${n}-options`, timeline(viewKeys(n))],
+      [`reminders/view-${n}-options-list`, scroll(viewOptions(n))],
+      [`reminders/view-${n}-erase`, timeline(viewOptions(n))],
+      [`reminders/view-${n}-edit`, timeline(viewOptions(n))],
+      [
+        `reminders/view-${n}-edit-ok`,
+        timeline((c) => {
+          viewOptions(n)(c);
+          took(c, "down menu", 1200, 4000);
+        }),
+      ],
+      [`reminders/view-${n}-options-c`, timeline(viewOptions(n))],
+      [
+        `reminders/view-${n}-c`,
+        timeline((c) => {
+          viewOptions(n)(c);
+          took(c, "c", 600, 2500);
+        }),
+      ],
+    ]),
+  ),
+  "reminders/erase-open": timeline((c) => {
+    withReminders(3)(c);
+    toReminders(c.rig, 2);
+  }),
+  "reminders/erase-one": timeline(eraseOpen),
+  "reminders/erase-one-down": timeline((c) => {
+    eraseOpen(c);
+    took(c, "menu");
+  }),
+  "reminders/erase-one-ok": timeline((c) => {
+    eraseOpen(c);
+    took(c, "menu");
+    took(c, "down", 600, 2000);
+  }),
+  "reminders/erase-one-yes": timeline((c) => {
+    eraseOpen(c);
+    took(c, "menu");
+    took(c, "down", 600, 2000);
+    took(c, "menu");
+  }),
+  "reminders/erase-one-next": timeline((c) => {
+    eraseOpen(c);
+    took(c, "menu");
+    took(c, "down", 600, 2000);
+    took(c, "menu");
+    took(c, "menu", 600, 4000);
+  }),
+  "reminders/erase-all": timeline(eraseOpen),
+  "reminders/erase-all-c": timeline((c) => {
+    eraseOpen(c);
+    took(c, "down menu", 1200, 2500);
+  }),
+  "reminders/erase-all-yes": timeline((c) => {
+    eraseOpen(c);
+    took(c, "down menu", 1200, 2500);
+  }),
+  "reminders/full-screens": stills(
+    Object.fromEntries(
+      ["full-after-adds", "full-at-add"].map((name) => [
+        name,
+        (c: ClockRig) => {
+          fullMemory(c);
+          toReminders(c.rig, 0);
+          play(c.rig, "menu +2500");
+        },
+      ]),
+    ),
+  ),
+  "reminders/full-add": timeline((c) => {
+    fullMemory(c);
+    toReminders(c.rig, 0);
+  }),
+  "reminders/full-yes": timeline((c) => {
+    fullMemory(c);
+    toReminders(c.rig, 0);
+    took(c, "menu", 600, 4000);
+  }),
+  "reminders/full-no": timeline((c) => {
+    fullMemory(c);
+    toReminders(c.rig, 0);
+    took(c, "menu", 600, 4000);
+  }),
+  "reminders/full-view": timeline((c) => {
+    fullMemory(c);
+    toReminders(c.rig, 1);
+  }),
+};
+
 const SCENARIOS: Record<string, Scenario> = {
+  ...REMINDER_SCENARIOS,
   // W stopwatch
   "clock/stopwatch/open": timeline(({ rig }) => toClock(rig, 3)),
   "clock/no-time/stopwatch": timeline(({ rig }) => toClock(rig, 3), noTime),
@@ -724,6 +1364,8 @@ const SCENARIOS: Record<string, Scenario> = {
     ]),
   ),
   "clock/no-time/clock-settings": timeline(({ rig }) => toClock(rig, 1), noTime),
+  "clock/no-time/alarm": timeline(({ rig }) => toClock(rig, 0), noTime),
+  "clock/no-time/reminder": timeline(({ rig }) => toReminders(rig, 0), noTime),
   "clock/no-time/set-time": timeline(({ rig }) => toClockSettings(rig, 1), noTime),
   // U auto update
   "clock/auto-update/open": timeline(({ rig }) => toClock(rig, 5)),
@@ -750,6 +1392,56 @@ acceptancePlan({
   plan: "21",
   scenarios: SCENARIOS,
   knownGaps: {
+    "sound/clock/reminder-factory":
+      "the second alert's volume rose a note (≈395 ms) later than the first alert's in the same " +
+      "recording (UNVERIFIED why); nokia-os raises both on CLOCK_ALERTS.ascend's timer",
+    "reminders/alert-over-countdown":
+      "a reminder falling due during the countdown's alert replaces it, and the countdown's " +
+      "alert comes back after the reminder's Snooze; nokia-os shows one alert at a time and " +
+      "queues the reminder after the countdown's",
+    "reminders/alert-elsewhere-snake":
+      "the food lies elsewhere: the game's seed (plan 23's, recovered for its own captures) is " +
+      "not this capture's; the game pausing to its menu at the minute matches",
+    ...Object.fromEntries(
+      ["menu-page", "menu-list", "note", "option-list", "editor", "snake"].map((where) => [
+        `reminders/alert-elsewhere-${where}-standby`,
+        "C held: v6.39 goes back a level as C goes down and reaches standby ≈475 ms later; " +
+          "the kernel's long press (phone-core LONG_PRESS_MS, plan 14) reaches standby at 800 ms",
+      ]),
+    ),
+    "clock/no-time/reminder":
+      "its parent is the Time: prompt holding `2h:mm`, a digit none of the generator's keys " +
+      "typed (UNVERIFIED how); its Invalid time is clock/settings/set-time-*'s",
+    "clock/auto-update/boot-on-hour":
+      "a cold boot of a saved image (the emulator's `reboot`: the LCD black first) where " +
+      "nokia-os boots from the power key; and `Date and time updated` comes during the boot " +
+      "after Code accepted, where nokia-os shows it at standby (D13, UNVERIFIED place)",
+    ...Object.fromEntries(
+      ["alarm", "stopwatch"].map((area) => [
+        `clock/${area}/power-off`,
+        "the kernel switches off at its 800 ms long press (phone-core LONG_PRESS_MS); v6.39 " +
+          "≈960-990 ms after the power key went down",
+      ]),
+    ),
+    "reminders/power-on-minute":
+      "the emulator's clock stood at 10:15 through the minute edge (its software clock never " +
+      "advances, P1); nokia-os alerts when the host's minute changes, so its standby shows 10:16",
+    ...Object.fromEntries(
+      ["screens", "after-reboot-clock-pages"].map((name) => [
+        `clock/persist/${name}`,
+        "the emulator loses the alarm and the time at a power cycle (its RTC stops, an artefact); " +
+          "nokia-os keeps the alarm and the offset (D7), so standby keeps the alarm icon and " +
+          "the Alarm clock page its time",
+      ]),
+    ),
+    ...Object.fromEntries(
+      ["edit", "edit-ok"].map((name) => [
+        `reminders/view-3-${name}`,
+        "Options › Edit opened its prompt on the shown blink step here and on the hidden one in " +
+          "view-1-edit and view-2-edit (each a whole 480 ms step); what picks the step is " +
+          "UNVERIFIED, and nokia-os opens on the hidden one",
+      ]),
+    ),
     "clock/stopwatch/c-held-again":
       "C held on the Stopwatch page: v6.39 goes back a level as C goes down and reaches standby " +
       "≈475 ms later; the kernel's long press (phone-core LONG_PRESS_MS, plan 14) at 800 ms",
@@ -787,8 +1479,14 @@ acceptancePlan({
       ]),
     ),
   },
-  // Each image builds a phone and navigates to it (20 images); the rings run 135 s each.
+  // Each image builds a phone and navigates to it (20 images); the rings run 135 s each; the
+  // reminder scenarios add up to ten reminders and a power cycle first.
   timeoutsMs: {
+    ...Object.fromEntries(
+      Object.keys(SCENARIOS)
+        .filter((id) => /^(reminders\/|sound\/clock\/reminder|clock\/(persist|restore)\/)/.test(id))
+        .map((id) => [id, 120_000]),
+    ),
     "clock/settings/format": 20_000,
     ...Object.fromEntries(
       RING_STATES.flatMap((state) => [

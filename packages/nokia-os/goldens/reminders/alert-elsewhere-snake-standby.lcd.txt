@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/alert-elsewhere-snake-standby
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/alert-elsewhere-snake-standby
 source-sha256: 51ceef5fbf937b92783f8d2d6b2e5bec5097b7c0215c97181ea26265f03ddc4e
 trigger-frame: 1

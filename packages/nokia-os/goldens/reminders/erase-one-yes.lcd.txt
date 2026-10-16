@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/erase-one-yes
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/erase-one-yes
 source-sha256: 8a2f27342245f8fbc6ede1c9deb4a8177a77f27b02661eb8dfb1656e2726f6b9
 trigger-frame: 1

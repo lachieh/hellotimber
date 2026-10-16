@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/erase-open
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/erase-open
 source-sha256: 239c4c39ef1a936cb72b8e595914c0f3355f0d01ee84f11067d6e8e3f6033434
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/alert-resnooze-1021
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/alert-resnooze-1021
 source-sha256: 38a635fd3aa500bac490ad327e399d8ee1d704071aee745352d05c39b9a8e3bd
 trigger-frame: 1

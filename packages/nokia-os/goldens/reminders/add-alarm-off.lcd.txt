@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/add-alarm-off
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/add-alarm-off
 source-sha256: 30e9690cce453f259a8859acec0da2e94d3779fd7efef59a8d601cc4b6b1b2d5
 trigger-frame: 1

@@ -141,9 +141,13 @@ function entryOf(
         }
       : {}),
     ...(opening === undefined ? {} : { opening }),
-    ...(lead === undefined
+    ...(lead === undefined && level?.shown === undefined
       ? {}
-      : { shown: (child: MenuEntry) => child !== leadEntry || b.leaves.leadShown(lead) }),
+      : {
+          shown: (child: MenuEntry) =>
+            (lead === undefined || child !== leadEntry || b.leaves.leadShown(lead)) &&
+            (level?.shown?.(child.slug.value) ?? true),
+        }),
     ...(spec.intro ? { intro: b.leaves.intro(node, path.map((n) => n.slug).join("/")) } : {}),
     ...(showsEntryIndicator(node.number) ? { entryIndicatorMs: STOCK_SHORTCUT_WINDOW_MS } : {}),
     ...(level?.label === undefined

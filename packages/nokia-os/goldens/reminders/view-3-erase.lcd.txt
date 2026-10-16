@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/view-3-erase
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/view-3-erase
 source-sha256: 197245342df1ae279f9a95ebfe86ab608618cdb151e383b29c138c525e48f52b
 trigger-frame: 1

@@ -132,11 +132,9 @@ function expectEntryFlow(id: string, root: () => ReturnType<typeof timeEntry>, r
     sample();
   }
   const exit = rig.exits[0];
-  expectFlowTimeline(
-    { frames, ...(exit === undefined ? {} : { exitMs: exit.atMs }) },
-    golden,
-    { returns },
-  );
+  expectFlowTimeline({ frames, ...(exit === undefined ? {} : { exitMs: exit.atMs }) }, golden, {
+    returns,
+  });
 }
 
 const time =

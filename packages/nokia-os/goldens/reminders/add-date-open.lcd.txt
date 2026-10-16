@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/add-date-open
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/add-date-open
 source-sha256: 4a65255a4f0c159f2b037cf807453fae133d388e4dedd4f505484771da6d9e66
 trigger-frame: 1

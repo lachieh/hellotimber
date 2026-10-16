@@ -70,6 +70,11 @@ export class StockAlerts {
   readonly #now: () => number;
   readonly #pending: { readonly alert: ClockAlert; readonly atMs: number }[] = [];
   #active: ClockAlert | undefined;
+  /** When the alert on screen showed. */
+  #activeFrom = 0;
+  /** The last alert's span: one that fell due during it follows it at once (alert-two). */
+  #last: { readonly from: number; readonly to: number } | undefined;
+  #queued = 0;
 
   /** `now`: the kernel time. */
   constructor(now: () => number) {
@@ -78,6 +83,7 @@ export class StockAlerts {
 
   /** Queues `alert` (`first`: ahead of the others). */
   queue(alert: ClockAlert, options: { readonly first?: boolean } = {}): void {
+    this.#queued++;
     const entry = { alert, atMs: this.#now() };
     if (options.first) this.#pending.unshift(entry);
     else this.#pending.push(entry);
@@ -90,6 +96,11 @@ export class StockAlerts {
     }
   }
 
+  /** How many alerts have fallen due (Snake II pauses at each, `StockGames.events`). */
+  get queued(): number {
+    return this.#queued;
+  }
+
   get pending(): readonly ClockAlert[] {
     return this.#pending.map((entry) => entry.alert);
   }
@@ -100,19 +111,26 @@ export class StockAlerts {
   }
 
   /**
-   * The next alert while the phone shows standby (since `standbySince`, kernel time; undefined
-   * while it is elsewhere), at once: `deferred` when it fell due before standby was reached. An
+   * The next alert while the phone shows standby (since `since()`, kernel time; undefined while
+   * it is elsewhere; asked only while an alert waits), at once: `deferred` when it fell due before standby was reached,
+   * unless it fell due while the alert before it showed (it then follows that one at once). An
    * application whose exit returns to standby. phone-core polls this only while no interruption
    * runs, so a poll also ends the alert shown before.
    */
-  interruption(standbySince: number | undefined): PhoneApplication | undefined {
+  interruption(since: () => number | undefined): PhoneApplication | undefined {
+    if (this.#active !== undefined) this.#last = { from: this.#activeFrom, to: this.#now() };
     this.#active = undefined;
     const next = this.#pending[0];
-    if (standbySince === undefined || next === undefined) return undefined;
+    if (next === undefined) return undefined;
+    const standbySince = since();
+    if (standbySince === undefined) return undefined;
     this.#pending.shift();
     const alert = next.alert;
-    const deferred = next.atMs < standbySince;
+    const last = this.#last;
+    const followsLast = last !== undefined && next.atMs >= last.from && next.atMs <= last.to;
+    const deferred = !followsLast && next.atMs < standbySince;
     this.#active = alert;
+    this.#activeFrom = this.#now();
     return new StockFlowApplication(`stock:alert:${alert.id}`, () => alert.root(deferred));
   }
 }

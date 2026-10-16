@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/alert-elsewhere-editor-standby
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/alert-elsewhere-editor-standby
 source-sha256: defca8c16fbcabe98c5b4a9f46614e53500027141f04d5d2808d7a469eb4694e
 trigger-frame: 1

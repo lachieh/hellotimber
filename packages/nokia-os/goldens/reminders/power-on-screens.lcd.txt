@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/power-on-screens
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/power-on-standby.png
 source-sha256: 78005446fbf98beafef19bd4f9f9b99a4581f3cc0736165c15eae3d8bb1af3f4
 note: After the boot: standby.

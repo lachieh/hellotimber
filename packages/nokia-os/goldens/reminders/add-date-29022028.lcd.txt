@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/add-date-29022028
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/add-date-29022028
 source-sha256: a34ef7ff4b9c009440759718c7d249ddf2a538eed5c5a29e46424c8180c1f058
 trigger-frame: before-recording

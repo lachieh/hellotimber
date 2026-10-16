@@ -95,7 +95,12 @@ export class StockClock {
     const date = this.#host.date?.();
     const offset = this.state().offsetMinutes;
     const memo = this.#memo;
-    if (memo !== undefined && memo.clock === clock && memo.date === date && memo.offset === offset) {
+    if (
+      memo !== undefined &&
+      memo.clock === clock &&
+      memo.date === date &&
+      memo.offset === offset
+    ) {
       return memo.time;
     }
     const host = parseHostTime(clock, date);

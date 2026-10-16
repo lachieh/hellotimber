@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/alert-key-snooze
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/alert-key-snooze
 source-sha256: f3b7f9e1ad357488862782c8620f8cf2a04ace5678ffea17529734e761618174
 trigger-frame: 1

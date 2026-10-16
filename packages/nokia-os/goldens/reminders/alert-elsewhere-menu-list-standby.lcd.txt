@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/alert-elsewhere-menu-list-standby
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/alert-elsewhere-menu-list-standby
 source-sha256: 38123ed5197a97b46d85ed4a13ccfcada2c442cc53c99fd1393cfc070e0a9420
 trigger-frame: 1

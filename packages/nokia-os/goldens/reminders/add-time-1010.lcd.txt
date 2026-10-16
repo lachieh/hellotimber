@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/add-time-1010
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/add-time-1010
 source-sha256: 4111fe72a1c254e6fe3b507b3ff5e28641387c186678683170560004229184fc
 trigger-frame: before-recording

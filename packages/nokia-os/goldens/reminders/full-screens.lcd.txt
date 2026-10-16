@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/full-screens
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/full-after-adds.png + captures/6.39/plan21/reminders/full-at-add.png
 source-sha256: 5aa9aacb949e03dd6e3ecbde444696acf7f6e0fbf4ebf0046342da49aa41e89c
 note: Ten reminders: Add new asks Memory full.

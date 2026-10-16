@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/virgin-erase-one
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/virgin-erase-one
 source-sha256: 682cdbef763c873344a0684446c7ea429247b1840db78bd6faccb91f5ee10996
 trigger-frame: 1

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/clock/reminder-factory
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/alert-two
 source-sha256: 1ff41812b951f86de0c4600a026bc059d573d0c2deb669e098e477220c0f4aaa
 state: factory

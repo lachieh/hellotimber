@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/alert-jump-over
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/alert-jump-over
 source-sha256: 27d138b15ae7ee3a0b8fc7a02d42dd24a2708fb43006f1d79032315828d9c6ca
 trigger-frame: 1

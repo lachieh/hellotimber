@@ -85,6 +85,13 @@ export function invalidAt(mask: EntryMask, value: string): number | undefined {
   return isDate(d!, mo!, y!) ? undefined : 0;
 }
 
+/** The start of the field holding position `at` (`hh`, `mm`; `dd`, `mm`, `yyyy`). */
+function fieldStart(mask: EntryMask, at: number): number {
+  let start = at;
+  while (start > 0 && /[a-z]/.test(mask[start - 1]!)) start--;
+  return start;
+}
+
 /** Whether a complete value is a real time (`hh:mm`) or date (`dd.mm.yyyy`). */
 export function validValue(mask: EntryMask, value: string): boolean {
   return invalidAt(mask, value) === undefined;
@@ -104,6 +111,11 @@ export interface TimeEntryOptions {
   readonly invalid: StockWidgetTimeline;
   /** A complete, real value the caller still refuses: the note's lines (shown like Invalid). */
   readonly validate?: (value: string) => readonly string[] | undefined;
+  /**
+   * Plan 21: after `Invalid` the cursor goes to the start of the field holding the first
+   * placeholder, not to the placeholder (Reminder time: plan21 reminders/add-time-0, -2500).
+   */
+  readonly invalidAtField?: boolean;
   readonly sound?: NoteSound;
   /** OK on a valid value. */
   readonly done: (value: string, flow: Flow) => void;
@@ -193,7 +205,13 @@ class TimeEntryWidget implements Widget {
       return;
     }
     // The entry comes back with its cursor where the value is wrong (`invalidAt`).
-    this.#cursor = invalidAt(mask, value) ?? this.#positions[0]!;
+    const at = invalidAt(mask, value);
+    this.#cursor =
+      at === undefined
+        ? this.#positions[0]!
+        : this.#options.invalidAtField
+          ? fieldStart(mask, at)
+          : at;
     const inner = note({ lines, timeline: invalid, ...(sound === undefined ? {} : { sound }) });
     flow.push({
       render: (f) => inner.render(f),

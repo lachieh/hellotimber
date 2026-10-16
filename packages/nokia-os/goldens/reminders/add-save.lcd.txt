@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/add-save
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/add-save
 source-sha256: 03c5e9f6fa55b0becc0ce326b099e9db3cc7184f4ecb4b4cc39578c3dc77a1f6
 trigger-frame: before-recording

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/virgin-erase-all-yes
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/virgin-erase-all-yes
 source-sha256: 669e4902ab25c5a8451831cfb5bd2df41e2853be98ce8788e27e29e32d6aa7a0
 trigger-frame: 1

@@ -6,6 +6,8 @@ export interface ConfirmOptions {
   readonly lines: readonly string[];
   /** `OK`, `Yes`. */
   readonly softkey: string;
+  /** Plan 21: the lines' tops where the query is not laid out as its line count says. */
+  readonly tops?: readonly number[];
   /** The soft key: run the query's result (P8). */
   readonly confirm: (flow: Flow) => void;
   /** C. Default: back to the screen below, unchanged (P8). */
@@ -21,7 +23,8 @@ class ConfirmWidget implements Widget {
   }
 
   render(): ConfirmModel {
-    return { kind: "confirm", lines: this.#options.lines, softkey: this.#options.softkey };
+    const { lines, softkey, tops } = this.#options;
+    return { kind: "confirm", lines, softkey, ...(tops === undefined ? {} : { tops }) };
   }
 
   onKey(key: PhoneKey, flow: Flow): void {

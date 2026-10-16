@@ -68,6 +68,11 @@ const NUMBER_ROW_WIDTH = 78;
 /** Long numbers' rows: the last one at top 28, the ones before it 9 rows up. */
 const NUMBER_LAST_ROW_TOP = 28;
 const NUMBER_ROW_PITCH = 9;
+/** Plan 21: a long text's rows start here and end with one at this top (`reminders/text`). */
+const TEXT_ROW_LEFT = 2;
+const TEXT_LAST_ROW_TOP = 27;
+/** The cursor in a long text: from a row above its row, 10 rows (to the box's bottom). */
+const TEXT_ROW_CURSOR_ROWS = 10;
 /** With three rows the box rises to here and the label is not drawn (`text/number` len-27). */
 const NUMBER_TALL_BOX_TOP = 7;
 
@@ -92,6 +97,33 @@ function numberRows(text: string): { start: number; end: number }[] {
   return rows.length === 0 ? [{ start: 0, end: 0 }] : rows;
 }
 
+/**
+ * Plan 21: a long text's rows in the small face, filled from its start (`reminders/text`: 14
+ * characters a row, the last row at the box's bottom).
+ */
+function textRows(text: string): { start: number; end: number }[] {
+  const chars = Array.from(text);
+  const font = STOCK_FONTS.small;
+  const rows: { start: number; end: number }[] = [];
+  let start = 0;
+  while (start < chars.length) {
+    let end = start;
+    let width = 0;
+    while (end < chars.length) {
+      const advance = font.glyphs.get(chars[end]!)?.width ?? 0;
+      if (width + advance > NUMBER_ROW_WIDTH) break;
+      width += advance;
+      end++;
+    }
+    rows.push({ start, end });
+    start = end;
+  }
+  return rows;
+}
+
+/** A text too wide for the large face (plan 21: `reminders/text` 20 and 35 characters). */
+const longText = (text: string): boolean => textWidth(STOCK_FONTS.large, text) > NUMBER_LARGE_WIDTH;
+
 export function paintPrompt(fb: Framebuffer, model: PromptModel): void {
   for (const id of model.icons) {
     const icon = WIDGET_SPRITES[id];
@@ -104,9 +136,10 @@ export function paintPrompt(fb: Framebuffer, model: PromptModel): void {
   }
   const { entry } = model;
   const tall =
-    entry?.kind === "number" &&
-    textWidth(STOCK_FONTS.large, entry.text) > NUMBER_LARGE_WIDTH &&
-    numberRows(entry.text).length >= 3;
+    (entry?.kind === "number" &&
+      textWidth(STOCK_FONTS.large, entry.text) > NUMBER_LARGE_WIDTH &&
+      numberRows(entry.text).length >= 3) ||
+    (entry?.kind === "text" && longText(entry.text) && textRows(entry.text).length >= 3);
   if (!tall) {
     model.label.forEach((line, i) =>
       fb.drawText(STOCK_FONTS.small, line, 0, LABEL_TOP + i * LINE_PITCH),
@@ -162,11 +195,36 @@ function paintTextEntry(
   cursorShown: boolean,
 ): void {
   paintFrame(fb, top);
+  if (longText(entry.text)) {
+    paintTextRows(fb, entry, cursorShown);
+    return;
+  }
   const font = STOCK_FONTS.large;
   fb.drawText(font, entry.text, TEXT_INSET, top + TEXT_INSET);
   if (!cursorShown || entry.cursor === undefined) return;
   const before = Array.from(entry.text).slice(0, entry.cursor).join("");
   fb.fillRect(TEXT_INSET + textWidth(font, before) - 1, top + 1, 1, TEXT_CURSOR_ROWS, 1);
+}
+
+/** Plan 21: a long text in small rows from x 1, the last on the box's bottom row. */
+function paintTextRows(
+  fb: Framebuffer,
+  entry: Extract<PromptEntry, { kind: "text" }>,
+  cursorShown: boolean,
+): void {
+  const small = STOCK_FONTS.small;
+  const chars = Array.from(entry.text);
+  const rows = textRows(entry.text);
+  rows.forEach((row, i) => {
+    const rowTop = TEXT_LAST_ROW_TOP - (rows.length - 1 - i) * NUMBER_ROW_PITCH;
+    fb.drawText(small, chars.slice(row.start, row.end).join(""), TEXT_ROW_LEFT, rowTop);
+    const cursor = entry.cursor;
+    if (!cursorShown || cursor === undefined) return;
+    const last = i === rows.length - 1;
+    if (cursor < row.start || cursor > row.end || (cursor === row.end && !last)) return;
+    const x = TEXT_ROW_LEFT + textWidth(small, chars.slice(row.start, cursor).join("")) - 1;
+    fb.fillRect(x, rowTop - 1, 1, TEXT_ROW_CURSOR_ROWS, 1);
+  });
 }
 
 /**

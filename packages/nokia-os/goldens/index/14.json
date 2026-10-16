@@ -2,7 +2,7 @@
   {
     "id": "probe/confirm-10-3-2-yes",
     "file": "probe/confirm-10-3-2-yes.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4

@@ -26,7 +26,7 @@ export interface ClockRecording {
 export const ASSERTED: readonly RegExp[] = [
   // Task 7: Clock settings, Date setting, no time, Auto update's list
   /^clock\/(settings|date)\//,
-  /^clock\/no-time\/(screens|clock-pages|date|auto-update|clock-settings|set-time)$/,
+  /^clock\/no-time\/(screens|clock-pages|date|auto-update|clock-settings|set-time|alarm|reminder)$/,
   /^clock\/auto-update\/(open|list|choose-.*)$/,
   // Task 8: the alarm clock
   /^clock\/alarm\/(prompt|set|on-off-open|on|change|on-c|off|on-off-c|off-prompt|on-off|screens)$/,
@@ -43,16 +43,21 @@ export const ASSERTED: readonly RegExp[] = [
   /^clock\/alarm\/ring-(factory|virgin)-(standby|key-.*|snooze-stop|screens)$/,
   /^clock\/alarm\/ring-elsewhere-(menu-page|(menu-page|menu-list|editor|snake)-standby)$/,
   /^clock\/alarm\/ring-(factory|virgin)-(auto-)?resnooze$/,
+  // Task 11: Reminders
+  /^reminders\/(level|virgin|add|text|alarm-choice|view|erase|full|alert)/,
+  /^sound\/clock\/reminder-/,
+  /^reminders\/power-on-/,
+  /^clock\/(persist|restore)\//,
+  /^clock\/auto-update\/boot-on-hour$/,
+  /^clock\/(alarm|stopwatch)\/power-off$/,
 ];
 
 /**
- * Goldens another plan's behaviour decides: the power key's profile list (plan 17) shows before
- * the long press switches the phone off.
+ * Goldens another plan's behaviour decides: reminder Send is Smart Messaging's (plan 18c, D14).
  */
-export const PENDING_ELSEWHERE: Readonly<Record<string, GoldenStatus>> = {
-  "clock/alarm/power-off": "pending:17",
-  "clock/stopwatch/power-off": "pending:17",
-};
+export const PENDING_ELSEWHERE: Readonly<Record<string, GoldenStatus>> = Object.fromEntries(
+  [1, 2, 3].map((n) => [`reminders/view-${n}-send`, "pending:18c" as const]),
+);
 
 export function statusOf(id: string): GoldenStatus {
   const elsewhere = PENDING_ELSEWHERE[id];

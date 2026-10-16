@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/add-time-open
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/add-time-open
 source-sha256: 51533038e6b3f287874fe27d37b9f4697ced5f058d7a68f28145710ad4adb402
 trigger-frame: 1

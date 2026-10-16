@@ -66,7 +66,7 @@
   {
     "id": "clock/alarm/power-off",
     "file": "clock/alarm/power-off.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -338,7 +338,7 @@
   {
     "id": "clock/auto-update/boot-on-hour",
     "file": "clock/auto-update/boot-on-hour.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 24,
     "frames": 26
@@ -722,7 +722,7 @@
   {
     "id": "clock/no-time/alarm",
     "file": "clock/no-time/alarm.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -770,7 +770,7 @@
   {
     "id": "clock/no-time/reminder",
     "file": "clock/no-time/reminder.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 16
@@ -802,7 +802,7 @@
   {
     "id": "clock/persist/after-reboot-clock-pages",
     "file": "clock/persist/after-reboot-clock-pages.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -810,7 +810,7 @@
   {
     "id": "clock/persist/after-reboot-reminders",
     "file": "clock/persist/after-reboot-reminders.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -818,7 +818,7 @@
   {
     "id": "clock/persist/before-clock-pages",
     "file": "clock/persist/before-clock-pages.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -826,7 +826,7 @@
   {
     "id": "clock/persist/screens",
     "file": "clock/persist/screens.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -834,7 +834,7 @@
   {
     "id": "clock/restore/after-clock-pages",
     "file": "clock/restore/after-clock-pages.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -842,7 +842,7 @@
   {
     "id": "clock/restore/after-reminders",
     "file": "clock/restore/after-reminders.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -850,7 +850,7 @@
   {
     "id": "clock/restore/before-clock-pages",
     "file": "clock/restore/before-clock-pages.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -858,7 +858,7 @@
   {
     "id": "clock/restore/run",
     "file": "clock/restore/run.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -866,7 +866,7 @@
   {
     "id": "clock/restore/screens",
     "file": "clock/restore/screens.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -1082,7 +1082,7 @@
   {
     "id": "clock/stopwatch/power-off",
     "file": "clock/stopwatch/power-off.lcd.txt",
-    "status": "pending:17",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1178,7 +1178,7 @@
   {
     "id": "reminders/add-alarm-off",
     "file": "reminders/add-alarm-off.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -1186,7 +1186,7 @@
   {
     "id": "reminders/add-c-empty",
     "file": "reminders/add-c-empty.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1194,7 +1194,7 @@
   {
     "id": "reminders/add-c-text",
     "file": "reminders/add-c-text.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -1202,7 +1202,7 @@
   {
     "id": "reminders/add-choice-c",
     "file": "reminders/add-choice-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -1210,7 +1210,7 @@
   {
     "id": "reminders/add-date-01012027",
     "file": "reminders/add-date-01012027.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 17,
     "frames": 26
@@ -1218,7 +1218,7 @@
   {
     "id": "reminders/add-date-12102026",
     "file": "reminders/add-date-12102026.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 13,
     "frames": 24
@@ -1226,7 +1226,7 @@
   {
     "id": "reminders/add-date-29022028",
     "file": "reminders/add-date-29022028.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 17,
     "frames": 26
@@ -1234,7 +1234,7 @@
   {
     "id": "reminders/add-date-31022026",
     "file": "reminders/add-date-31022026.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 15,
     "frames": 20
@@ -1242,7 +1242,7 @@
   {
     "id": "reminders/add-date-c",
     "file": "reminders/add-date-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1250,7 +1250,7 @@
   {
     "id": "reminders/add-date-open",
     "file": "reminders/add-date-open.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -1258,7 +1258,7 @@
   {
     "id": "reminders/add-open",
     "file": "reminders/add-open.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -1266,7 +1266,7 @@
   {
     "id": "reminders/add-save",
     "file": "reminders/add-save.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 14,
     "frames": 14
@@ -1274,7 +1274,7 @@
   {
     "id": "reminders/add-text-ok",
     "file": "reminders/add-text-ok.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1282,7 +1282,7 @@
   {
     "id": "reminders/add-time-0",
     "file": "reminders/add-time-0.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 8
@@ -1290,7 +1290,7 @@
   {
     "id": "reminders/add-time-0900",
     "file": "reminders/add-time-0900.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 14,
     "frames": 14
@@ -1298,7 +1298,7 @@
   {
     "id": "reminders/add-time-1010",
     "file": "reminders/add-time-1010.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 14,
     "frames": 14
@@ -1306,7 +1306,7 @@
   {
     "id": "reminders/add-time-2500",
     "file": "reminders/add-time-2500.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 10,
     "frames": 13
@@ -1314,7 +1314,7 @@
   {
     "id": "reminders/add-time-c",
     "file": "reminders/add-time-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 9
@@ -1322,7 +1322,7 @@
   {
     "id": "reminders/add-time-open",
     "file": "reminders/add-time-open.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 9
@@ -1330,7 +1330,7 @@
   {
     "id": "reminders/alarm-choice",
     "file": "reminders/alarm-choice.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1338,7 +1338,7 @@
   {
     "id": "reminders/alert-elsewhere-editor",
     "file": "reminders/alert-elsewhere-editor.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 32
@@ -1346,7 +1346,7 @@
   {
     "id": "reminders/alert-elsewhere-editor-standby",
     "file": "reminders/alert-elsewhere-editor-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1354,7 +1354,7 @@
   {
     "id": "reminders/alert-elsewhere-menu-list-standby",
     "file": "reminders/alert-elsewhere-menu-list-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1362,7 +1362,7 @@
   {
     "id": "reminders/alert-elsewhere-menu-page-standby",
     "file": "reminders/alert-elsewhere-menu-page-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1370,7 +1370,7 @@
   {
     "id": "reminders/alert-elsewhere-note",
     "file": "reminders/alert-elsewhere-note.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1378,7 +1378,7 @@
   {
     "id": "reminders/alert-elsewhere-note-standby",
     "file": "reminders/alert-elsewhere-note-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1386,7 +1386,7 @@
   {
     "id": "reminders/alert-elsewhere-option-list-standby",
     "file": "reminders/alert-elsewhere-option-list-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1394,7 +1394,7 @@
   {
     "id": "reminders/alert-elsewhere-snake",
     "file": "reminders/alert-elsewhere-snake.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -1402,7 +1402,7 @@
   {
     "id": "reminders/alert-elsewhere-snake-standby",
     "file": "reminders/alert-elsewhere-snake-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1410,7 +1410,7 @@
   {
     "id": "reminders/alert-jump-over",
     "file": "reminders/alert-jump-over.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1418,7 +1418,7 @@
   {
     "id": "reminders/alert-key-5",
     "file": "reminders/alert-key-5.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1426,7 +1426,7 @@
   {
     "id": "reminders/alert-key-c",
     "file": "reminders/alert-key-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1434,7 +1434,7 @@
   {
     "id": "reminders/alert-key-c-held",
     "file": "reminders/alert-key-c-held.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1442,7 +1442,7 @@
   {
     "id": "reminders/alert-key-power",
     "file": "reminders/alert-key-power.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1450,7 +1450,7 @@
   {
     "id": "reminders/alert-key-snooze",
     "file": "reminders/alert-key-snooze.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1458,7 +1458,7 @@
   {
     "id": "reminders/alert-key-up",
     "file": "reminders/alert-key-up.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1466,7 +1466,7 @@
   {
     "id": "reminders/alert-over-countdown",
     "file": "reminders/alert-over-countdown.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 23,
     "frames": 139
@@ -1474,7 +1474,7 @@
   {
     "id": "reminders/alert-resnooze-1020",
     "file": "reminders/alert-resnooze-1020.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1482,7 +1482,7 @@
   {
     "id": "reminders/alert-resnooze-1021",
     "file": "reminders/alert-resnooze-1021.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1490,7 +1490,7 @@
   {
     "id": "reminders/alert-resnooze-1022",
     "file": "reminders/alert-resnooze-1022.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1498,7 +1498,7 @@
   {
     "id": "reminders/alert-standby",
     "file": "reminders/alert-standby.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1506,7 +1506,7 @@
   {
     "id": "reminders/alert-two",
     "file": "reminders/alert-two.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 10
@@ -1514,7 +1514,7 @@
   {
     "id": "reminders/alert-virgin",
     "file": "reminders/alert-virgin.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -1522,7 +1522,7 @@
   {
     "id": "reminders/erase-all",
     "file": "reminders/erase-all.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1530,7 +1530,7 @@
   {
     "id": "reminders/erase-all-c",
     "file": "reminders/erase-all-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1538,7 +1538,7 @@
   {
     "id": "reminders/erase-all-yes",
     "file": "reminders/erase-all-yes.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1546,7 +1546,7 @@
   {
     "id": "reminders/erase-one",
     "file": "reminders/erase-one.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1554,7 +1554,7 @@
   {
     "id": "reminders/erase-one-down",
     "file": "reminders/erase-one-down.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1562,7 +1562,7 @@
   {
     "id": "reminders/erase-one-next",
     "file": "reminders/erase-one-next.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1570,7 +1570,7 @@
   {
     "id": "reminders/erase-one-ok",
     "file": "reminders/erase-one-ok.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1578,7 +1578,7 @@
   {
     "id": "reminders/erase-one-yes",
     "file": "reminders/erase-one-yes.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 11
@@ -1586,7 +1586,7 @@
   {
     "id": "reminders/erase-open",
     "file": "reminders/erase-open.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1594,7 +1594,7 @@
   {
     "id": "reminders/full-add",
     "file": "reminders/full-add.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1602,7 +1602,7 @@
   {
     "id": "reminders/full-no",
     "file": "reminders/full-no.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1610,7 +1610,7 @@
   {
     "id": "reminders/full-screens",
     "file": "reminders/full-screens.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1618,7 +1618,7 @@
   {
     "id": "reminders/full-view",
     "file": "reminders/full-view.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1626,7 +1626,7 @@
   {
     "id": "reminders/full-yes",
     "file": "reminders/full-yes.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1634,7 +1634,7 @@
   {
     "id": "reminders/level-empty",
     "file": "reminders/level-empty.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -1642,7 +1642,7 @@
   {
     "id": "reminders/level-virgin",
     "file": "reminders/level-virgin.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1650,7 +1650,7 @@
   {
     "id": "reminders/power-on-minute",
     "file": "reminders/power-on-minute.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1658,7 +1658,7 @@
   {
     "id": "reminders/power-on-screens",
     "file": "reminders/power-on-screens.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -1666,7 +1666,7 @@
   {
     "id": "reminders/text",
     "file": "reminders/text.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -1674,7 +1674,7 @@
   {
     "id": "reminders/view-1",
     "file": "reminders/view-1.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1682,7 +1682,7 @@
   {
     "id": "reminders/view-1-c",
     "file": "reminders/view-1-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1690,7 +1690,7 @@
   {
     "id": "reminders/view-1-edit",
     "file": "reminders/view-1-edit.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 13
@@ -1698,7 +1698,7 @@
   {
     "id": "reminders/view-1-edit-ok",
     "file": "reminders/view-1-edit-ok.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1706,7 +1706,7 @@
   {
     "id": "reminders/view-1-erase",
     "file": "reminders/view-1-erase.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1714,7 +1714,7 @@
   {
     "id": "reminders/view-1-options",
     "file": "reminders/view-1-options.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1722,7 +1722,7 @@
   {
     "id": "reminders/view-1-options-c",
     "file": "reminders/view-1-options-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1730,7 +1730,7 @@
   {
     "id": "reminders/view-1-options-list",
     "file": "reminders/view-1-options-list.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1738,7 +1738,7 @@
   {
     "id": "reminders/view-1-send",
     "file": "reminders/view-1-send.lcd.txt",
-    "status": "pending:21",
+    "status": "pending:18c",
     "kind": "timeline",
     "images": 6,
     "frames": 15
@@ -1746,7 +1746,7 @@
   {
     "id": "reminders/view-2",
     "file": "reminders/view-2.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1754,7 +1754,7 @@
   {
     "id": "reminders/view-2-c",
     "file": "reminders/view-2-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1762,7 +1762,7 @@
   {
     "id": "reminders/view-2-edit",
     "file": "reminders/view-2-edit.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 13
@@ -1770,7 +1770,7 @@
   {
     "id": "reminders/view-2-edit-ok",
     "file": "reminders/view-2-edit-ok.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1778,7 +1778,7 @@
   {
     "id": "reminders/view-2-erase",
     "file": "reminders/view-2-erase.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1786,7 +1786,7 @@
   {
     "id": "reminders/view-2-keys",
     "file": "reminders/view-2-keys.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 5
@@ -1794,7 +1794,7 @@
   {
     "id": "reminders/view-2-options",
     "file": "reminders/view-2-options.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1802,7 +1802,7 @@
   {
     "id": "reminders/view-2-options-c",
     "file": "reminders/view-2-options-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1810,7 +1810,7 @@
   {
     "id": "reminders/view-2-options-list",
     "file": "reminders/view-2-options-list.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1818,7 +1818,7 @@
   {
     "id": "reminders/view-2-send",
     "file": "reminders/view-2-send.lcd.txt",
-    "status": "pending:21",
+    "status": "pending:18c",
     "kind": "timeline",
     "images": 6,
     "frames": 15
@@ -1826,7 +1826,7 @@
   {
     "id": "reminders/view-3",
     "file": "reminders/view-3.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1834,7 +1834,7 @@
   {
     "id": "reminders/view-3-c",
     "file": "reminders/view-3-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1842,7 +1842,7 @@
   {
     "id": "reminders/view-3-edit",
     "file": "reminders/view-3-edit.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 13
@@ -1850,7 +1850,7 @@
   {
     "id": "reminders/view-3-edit-ok",
     "file": "reminders/view-3-edit-ok.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1858,7 +1858,7 @@
   {
     "id": "reminders/view-3-erase",
     "file": "reminders/view-3-erase.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1866,7 +1866,7 @@
   {
     "id": "reminders/view-3-keys",
     "file": "reminders/view-3-keys.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -1874,7 +1874,7 @@
   {
     "id": "reminders/view-3-options",
     "file": "reminders/view-3-options.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1882,7 +1882,7 @@
   {
     "id": "reminders/view-3-options-c",
     "file": "reminders/view-3-options-c.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1890,7 +1890,7 @@
   {
     "id": "reminders/view-3-options-list",
     "file": "reminders/view-3-options-list.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1898,7 +1898,7 @@
   {
     "id": "reminders/view-3-send",
     "file": "reminders/view-3-send.lcd.txt",
-    "status": "pending:21",
+    "status": "pending:18c",
     "kind": "timeline",
     "images": 6,
     "frames": 15
@@ -1906,7 +1906,7 @@
   {
     "id": "reminders/virgin-erase-all",
     "file": "reminders/virgin-erase-all.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1914,7 +1914,7 @@
   {
     "id": "reminders/virgin-erase-all-yes",
     "file": "reminders/virgin-erase-all-yes.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1922,7 +1922,7 @@
   {
     "id": "reminders/virgin-erase-one",
     "file": "reminders/virgin-erase-one.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1930,7 +1930,7 @@
   {
     "id": "reminders/virgin-erase-open",
     "file": "reminders/virgin-erase-open.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1938,7 +1938,7 @@
   {
     "id": "reminders/virgin-view",
     "file": "reminders/virgin-view.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 16,
     "frames": 17
@@ -1974,14 +1974,14 @@
   {
     "id": "sound/clock/reminder-factory",
     "file": "sound/clock/reminder-factory.sound.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "sound",
     "events": 82
   },
   {
     "id": "sound/clock/reminder-virgin",
     "file": "sound/clock/reminder-virgin.sound.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "sound",
     "events": 146
   }

@@ -36,6 +36,7 @@ import type {
 import { PlaceholderApplication } from "./placeholder";
 import {
   EXIT_LEVELS,
+  EXITS_WHEN,
   LEVEL_BARS,
   modelNumber,
   noteEnd,
@@ -135,7 +136,13 @@ export class LeafBinder {
     const node = place.path[place.path.length - 1]!;
     const id = idOf(place.path);
     const bound = this.#bound(node.number, node.opens, settingKey(place.path));
-    if (bound !== undefined) return new StockFlowApplication(id, bound);
+    if (bound !== undefined) {
+      const flow = new StockFlowApplication(id, bound);
+      const exits = EXITS_WHEN[node.number];
+      if (exits === undefined) return flow;
+      const services = this.#services;
+      return new GatedApplication(id, flow, () => exits(services), EXIT_LEVELS[node.number] ?? 1);
+    }
     const owner = placeholderOwner(node.number);
     if (owner !== undefined) {
       const path = place.path.map((n) => n.slug).join("/");
@@ -499,6 +506,26 @@ export class LeafBinder {
  * A leaf with nothing to show (View all): it leaves inside `createSession`, closing `levels`
  * levels, so the kernel never renders it (Task 5).
  */
+/** Plan 21: a bound leaf that exits at once while `exits` holds (View all with no reminder). */
+class GatedApplication extends PhoneApplication {
+  readonly #inner: PhoneApplication;
+  readonly #exits: () => boolean;
+  readonly #levels: number;
+
+  constructor(id: string, inner: PhoneApplication, exits: () => boolean, levels: number) {
+    super(id);
+    this.#inner = inner;
+    this.#exits = exits;
+    this.#levels = levels;
+    Object.freeze(this);
+  }
+
+  createSession(context: ApplicationContext): PhoneApplicationSession {
+    if (!this.#exits()) return this.#inner.createSession(context);
+    return new ExitApplication(this.id, this.#levels).createSession(context);
+  }
+}
+
 class ExitApplication extends PhoneApplication {
   readonly #levels: number;
 

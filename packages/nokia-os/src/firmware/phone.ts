@@ -2,8 +2,10 @@ import {
   createPhone,
   type KeyEvent,
   type Phone,
+  type PhoneApplication,
   type PhoneKey,
   type PhoneSnapshot,
+  type ScreenModel,
 } from "@hellotimber/phone-core";
 import type { StockServices } from "./features/feature";
 import { VISIBLE_ROWS } from "../display/list-rows";
@@ -37,6 +39,7 @@ import { autoUpdate } from "./features/clock";
 import { phoneAlarm } from "./features/clock/alarm";
 import { phoneCountdown } from "./features/clock/countdown";
 import { phoneStopwatch } from "./features/clock/stopwatch";
+import { phoneReminders } from "./features/reminders/service";
 import { registerClock } from "./features/clock/registry";
 import { StockClock } from "./features/clock/service";
 import { StockLightRules, StockLights, type StockLightsPort } from "./features/backlight";
@@ -191,6 +194,8 @@ export function createStockPhoneWith(
     ...clockGames,
     ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
     cues: lightRules.cues(internals.cues ?? sounder),
+    // Plan 21: an alert falling due pauses Snake II (it shows at standby, D3).
+    events: () => phoneTime.alerts.queued,
   };
   const messaging = stockMessaging(
     eeprom,
@@ -207,6 +212,7 @@ export function createStockPhoneWith(
   const stopwatch = phoneStopwatch(services);
   // Plan 17 D7: the power key's list, over the same services as the menu's leaves.
   const power = new PowerListState();
+  const reminders = phoneReminders(services);
   const phone = createPhone({
     menu: createStockMenu(ports, settings, games, security, sounder, eeprom, messaging, t9),
     // Plan 18 D11: the envelope while Inbox holds unread messages, blinking while every slot is
@@ -224,7 +230,13 @@ export function createStockPhoneWith(
     // Plan 21 D10: standby shows the phone's time, hidden or 12-hour as Clock settings say.
     clock: () => phoneTime.standbyClock(),
     // Plan 21 D3: the clock's alerts, when the phone shows standby.
-    interruption: () => phoneTime.alerts.interruption(standbySince),
+    interruption: (): PhoneApplication | undefined =>
+      phoneTime.alerts.interruption(() => {
+        if (standbySince !== undefined) return standbySince;
+        // Standby reached within this tick (an alert's exit) counts from now.
+        const screen: ScreenModel = phone.screen;
+        return screen.kind === "standby" && !screen.leaving ? now : undefined;
+      }),
     // Plan 21 D4: the alarm switches a powered-off phone on.
     wake: () => alarm.wake(),
     bootTimeline: BOOT_TIMELINE,
@@ -274,6 +286,7 @@ export function createStockPhoneWith(
       alarm.power(poweredOn);
       countdown.power(poweredOn);
       stopwatch.power(poweredOn);
+      reminders.power(poweredOn);
       if (poweredOn) {
         sounder.powerOn({ boot: !skip });
         lights.powerOn(now);

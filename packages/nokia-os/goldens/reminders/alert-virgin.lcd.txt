@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/alert-virgin
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/alert-virgin
 source-sha256: 47287b2cfec5b8dcb61d3439563857264a62352664d209b0dac233a49f37adc8
 trigger-frame: 1

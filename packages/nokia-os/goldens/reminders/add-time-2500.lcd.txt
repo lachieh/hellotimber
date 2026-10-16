@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/add-time-2500
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/add-time-2500
 source-sha256: 41b1e1368d7ac5585f83dc245c40b91d4d84f9e1d0bf12d1b16f53b1b5fc0f77
 trigger-frame: before-recording

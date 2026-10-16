@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/restore/after-clock-pages
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/restore/after-clock-pages
 source-sha256: f4c21535fe3f1161e521353cd4cd3e08e6fffe52b8e24974651a9b8532fc5166
 note: After Restore.

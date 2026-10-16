@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/text
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/text-1.png + captures/6.39/plan21/reminders/text-20.png + captures/6.39/plan21/reminders/text-35.png + captures/6.39/plan21/reminders/text-36.png
 source-sha256: cb97956ec23a54f699ecac56aa8e8641b61bfa12f8dd1a06e53e5a7a2a76dd19
 note: Remind about: 1, 20, 35 and 36 characters typed (2 and 3 alternately, 1 s apart).

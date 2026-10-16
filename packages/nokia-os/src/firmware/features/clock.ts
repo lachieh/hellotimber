@@ -79,6 +79,8 @@ export function clockEntry(
     readonly validate?: (value: string) => readonly string[] | undefined;
     /** The cursor's blink, when it is not the node's own from its start. */
     readonly blink?: Playback;
+    /** After `Invalid`, the cursor at the wrong field's start (Reminder time). */
+    readonly invalidAtField?: boolean;
   },
 ): Widget & ReturnType<typeof timeEntry> {
   return timeEntry({
@@ -92,6 +94,7 @@ export function clockEntry(
     sound: services.noteSound,
     done: options.done,
     ...(options.validate === undefined ? {} : { validate: options.validate }),
+    ...(options.invalidAtField ? { invalidAtField: true } : {}),
   });
 }
 

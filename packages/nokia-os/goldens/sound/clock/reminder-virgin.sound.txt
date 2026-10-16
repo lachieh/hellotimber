@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/clock/reminder-virgin
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/alert-virgin
 source-sha256: 799b7b5e78bda879ca6e76ea507a4c61f324cc8f832703332a12d36ec1d67338
 state: virgin

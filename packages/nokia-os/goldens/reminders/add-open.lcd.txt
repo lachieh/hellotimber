@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/add-open
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/add-open
 source-sha256: 7e1e0ab774e0b7b8aa4921b141ae59b443db86105934d8bd48c1162893eaef5d
 trigger-frame: 1

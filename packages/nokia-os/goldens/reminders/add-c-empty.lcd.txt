@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/add-c-empty
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/add-c-empty
 source-sha256: 1ae5b63781c10b1dfdac4451eeaebd53ed91f4388a9d2a9eb5e50f62fb3c203f
 trigger-frame: 1

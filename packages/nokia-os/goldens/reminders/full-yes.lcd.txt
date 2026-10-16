@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/full-yes
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/full-yes
 source-sha256: ad434a128fdbd475f5e1fd38912228f462015d75ee0a057bce25caabc6f8265d
 trigger-frame: 1

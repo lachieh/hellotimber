@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/alert-over-countdown
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/alert-over-countdown
 source-sha256: f1dedfccba724c1d4eb958d93422448a43c8601df7f0fec0507f1dd8c64ab012
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/alert-key-c
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/alert-key-c
 source-sha256: d005f4c132c3c3390568c9175c6789716795c916db68999ee49ec80cbfc136c0
 trigger-frame: 1

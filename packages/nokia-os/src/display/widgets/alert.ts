@@ -16,9 +16,10 @@ export interface AlertModel {
   readonly lines: readonly string[];
   /**
    * `block`: every line from the x that centres the widest (Countdown / time up); `centre`:
-   * each line centred (Alarm! / 10:11); `left`: from x 6 (a reminder's text).
+   * each line centred (Alarm! / 10:11); `left`: from x 6 (a reminder's text); `edge`: from x 0
+   * (Alarm postponed for 10 min).
    */
-  readonly align: "block" | "centre" | "left";
+  readonly align: "block" | "centre" | "left" | "edge";
   /** Sprite ids drawn at their captured place: the reminder's icon, the bell row. */
   readonly sprites?: readonly string[];
   readonly softkey: string;
@@ -55,11 +56,13 @@ export function paintAlert(fb: Framebuffer, model: AlertModel): void {
   model.lines.forEach((line, i) => {
     const top = LINES_TOP + i * LINE_PITCH;
     const x =
-      model.align === "left"
-        ? LEFT_X
-        : model.align === "block"
-          ? Math.floor((fb.width - widest) / 2)
-          : Math.floor((fb.width - textWidth(font, line)) / 2);
+      model.align === "edge"
+        ? 0
+        : model.align === "left"
+          ? LEFT_X
+          : model.align === "block"
+            ? Math.floor((fb.width - widest) / 2)
+            : Math.floor((fb.width - textWidth(font, line)) / 2);
     fb.drawText(font, line, x, top);
   });
   for (const id of model.sprites ?? []) {

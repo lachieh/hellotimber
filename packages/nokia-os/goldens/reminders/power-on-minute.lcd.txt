@@ -1,6 +1,6 @@
 lcd-golden 1
 id: reminders/power-on-minute
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/reminders/power-on-minute
 source-sha256: 036dfa57566953a6169f7b5f013c100fb15412152ac572af2c83e4e455da388b
 trigger-frame: 1

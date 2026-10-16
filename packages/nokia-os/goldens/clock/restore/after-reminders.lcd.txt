@@ -1,6 +1,6 @@
 lcd-golden 1
 id: clock/restore/after-reminders
-status: pending:21
+status: asserted
 source: captures/6.39/plan21/restore/after-reminders
 source-sha256: 31bab2df7aa005c4fb90d7bf46c7db92c2db155e42cbaa0a6d009575b1d47b35
 note: After Restore.
