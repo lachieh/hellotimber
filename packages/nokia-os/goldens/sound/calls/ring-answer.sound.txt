@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/ring-answer
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/ring/answer
 source-sha256: 6b2921edc4e5f92fd0f26d6b200e2628420ba8b8534f01def183f87ea328379e
 state: factory

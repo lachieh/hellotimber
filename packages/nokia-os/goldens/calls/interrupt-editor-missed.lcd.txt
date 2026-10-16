@@ -1,9 +1,9 @@
 lcd-golden 1
 id: calls/interrupt-editor-missed
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/interrupt/editor-missed
 source-sha256: 00d3b97a8eb0922475ec302984fe9a8671b3428167897699a07611c6aafe7e0b
-trigger-frame: 1
+trigger-frame: 3
 note: A ring over editor, the caller hangs up.
 omitted: none
 

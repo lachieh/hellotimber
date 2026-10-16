@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/net-end
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/call/net-end
 source-sha256: 0638c7a804aaffc156e7735ff87bdc0d6f60041ba8cb78fe726276892d3af5fc
 state: factory

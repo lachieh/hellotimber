@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/dial-number-pause
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/dial/number-pause 000-002
 source-sha256: 08f0b9994172d160814c295e080174012abc224eca351ae67c3815a8f9b86836
 trigger-frame: 1

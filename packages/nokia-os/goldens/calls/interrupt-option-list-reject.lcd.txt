@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/interrupt-option-list-reject
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/interrupt/option-list-reject
 source-sha256: a3723197235cd9c9bf3a397edea8ecc58c55835ac2d2cb62d0adae56b59e75fc
 trigger-frame: 1

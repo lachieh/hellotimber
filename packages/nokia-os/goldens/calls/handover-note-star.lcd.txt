@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/handover-note-star
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/handover/note-star
 source-sha256: f33f3cf96cbacfb5b9cc45d160787efabea87fbefd9829775fbe5afc40060bef
 trigger-frame: 1

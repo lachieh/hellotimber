@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/entry-up-held
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/entry/up-held
 source-sha256: f942eb7e1695209e35d57b751482b5ecdb01b25b8286817a7df8271b9f98b80a
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/entry-second-digit
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/entry/second-digit
 source-sha256: 70b455ee1c33bce66417e8bf715ff87e32afa5a405ff86485f96ca7287c30232
 trigger-frame: 1

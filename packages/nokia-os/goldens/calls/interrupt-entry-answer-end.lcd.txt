@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/interrupt-entry-answer-end
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/interrupt/entry-answer-end
 source-sha256: fd6432cb5047e651f6da88d5156cc76e5f317204a29e9fcb77b500db3b69a881
 trigger-frame: 1

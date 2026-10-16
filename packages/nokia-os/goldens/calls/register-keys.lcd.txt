@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-keys
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/time-of-call-back.png + captures/6.39/plan22/register/time-of-call-12h.png
 source-sha256: 48bdcf132f7a6a33ebcf957093e143d566cffa944e056c87e950125bf46ec3c1
 note: Time of call's Back, and Time of call in the 12-hour Time format. Each image's keys from a settled standby are its CALL_CASES entry.

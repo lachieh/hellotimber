@@ -1,6 +1,6 @@
 lcd-golden 1
 id: probe/shortcut-m8-6-3-late-1
-status: pending:22
+status: asserted
 source: captures/scratch-inv/shortcut/out/t5-863-1-late-in-window
 source-sha256: 57d4a1ba52600beab20289db2a0fb07dfa25880350c9c94559372f0007a6b494
 trigger-frame: 1

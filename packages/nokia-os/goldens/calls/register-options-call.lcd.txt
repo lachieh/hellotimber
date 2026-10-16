@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-options-call
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/options-call
 source-sha256: ac2df2994c85f60d64dbc5d62bb104799aa51a55e25d51cbd14cf5baeb8d2382
 trigger-frame: 1

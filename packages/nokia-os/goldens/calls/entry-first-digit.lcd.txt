@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/entry-first-digit
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/entry/first-digit
 source-sha256: 7a4cc628676c993df31e64368ef9a88f4f1f87d215f69d371a78fe02307bfbce
 trigger-frame: 1

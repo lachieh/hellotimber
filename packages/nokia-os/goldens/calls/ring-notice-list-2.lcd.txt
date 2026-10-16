@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/ring-notice-list-2
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/ring/notice-list-2
 source-sha256: d14be6f6caca6ba2f7f6640badb98a7752095c4fd0a5f94ce7c3a55d13d86020
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/recall-1-hash
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/recall/1-hash
 source-sha256: 8b0312bae0a5a2f0436cd54042577b9eef35290400411561597ca8809b0f6b03
 trigger-frame: 1

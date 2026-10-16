@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/ring-missed
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/ring/missed
 source-sha256: e73b9061f6ddbea33e402cab6b51e2936c3306723fbe1b68229f4c4f11b9fae3
 state: factory

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-standby-up-c-held
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/standby-up-c-held
 source-sha256: cb0711b9b4154b811e6b1c4e06f297d392b12cbf3f7aa7269ae18758637f527e
 trigger-frame: 1

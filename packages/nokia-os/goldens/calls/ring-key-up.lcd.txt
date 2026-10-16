@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/ring-key-up
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/ring/key-up
 source-sha256: cf46bd63deebdc8a20e98920f15d15e788efe9d7f755f378305d495ec35fded9
 trigger-frame: 1

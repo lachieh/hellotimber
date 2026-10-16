@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/entry-c
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/entry/c/01.png + captures/6.39/plan22/entry/c/02.png + captures/6.39/plan22/entry/c/03.png + captures/6.39/plan22/entry/c/04.png
 source-sha256: ab42d416c45d60351c61c710b8f97779bb2c1aa1f281ddc44b5d187ef998dcbc
 note: 12345, then C ×1…4. Each image's keys from a settled standby are its CALL_CASES entry.

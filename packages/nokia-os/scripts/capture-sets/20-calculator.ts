@@ -720,8 +720,11 @@ export const CALCULATOR_CASES: readonly CalculatorCase[] = [
   },
 ];
 
-/** D9 (plan 22): Options' digits, `*` and `#` leave for standby number entry with DTMF pairs. */
-const STANDBY_ENTRY = "pending:22" as const satisfies GoldenStatus;
+/**
+ * D9 (plan 22): Options' digits, `*` and `#` leave for standby number entry with DTMF pairs;
+ * plan 22's acceptance scenarios drive them (tests/support/calls-handover.ts).
+ */
+const STANDBY_ENTRY = "asserted" as const satisfies GoldenStatus;
 
 /**
  * Every other fixture is asserted: its scenario passes (Task 8), or fails as a known gap with

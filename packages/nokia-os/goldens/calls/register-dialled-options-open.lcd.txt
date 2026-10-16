@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-dialled-options-open
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/dialled-options-open
 source-sha256: b709dc3928a783d395497dc42e9ac809317596359baa8a2e73fc9248e85ba52c
 trigger-frame: 1

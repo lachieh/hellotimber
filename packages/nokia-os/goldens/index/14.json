@@ -378,7 +378,7 @@
   {
     "id": "probe/shortcut-m1-8-1",
     "file": "probe/shortcut-m1-8-1.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 7
@@ -386,7 +386,7 @@
   {
     "id": "probe/shortcut-m1-8-1-2",
     "file": "probe/shortcut-m1-8-1-2.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 8
@@ -394,7 +394,7 @@
   {
     "id": "probe/shortcut-m1-9-c",
     "file": "probe/shortcut-m1-9-c.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 10
@@ -450,7 +450,7 @@
   {
     "id": "probe/shortcut-m8-6-3-late-1",
     "file": "probe/shortcut-m8-6-3-late-1.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 10,
     "frames": 10

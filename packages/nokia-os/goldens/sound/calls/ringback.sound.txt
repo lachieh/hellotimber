@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/ringback
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/call/ringback
 source-sha256: 467459bd2f741ea35e05e87acd2c1290642a819ced4b8e00cabd8285b8d8a693
 state: factory

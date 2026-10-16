@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/no-last-dialled
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/notes/no-last-dialled
 source-sha256: 6743f1936e63e29b600a7b56d151f28eb446aebc95da0d9933e641a999bc7004
 state: factory

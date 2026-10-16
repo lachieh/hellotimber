@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/entry-c-one
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/entry/c-one
 source-sha256: 8598307b9d48278a32f2f0233e4ded54226f06ddf8193bdd11aba3ba3ff61ed1
 trigger-frame: 1

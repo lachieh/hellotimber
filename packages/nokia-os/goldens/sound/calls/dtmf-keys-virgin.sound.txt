@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/dtmf-keys-virgin
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/dtmf/keys-virgin
 source-sha256: bd1df9dc13a160796f35b5aa6fe45985bc55d1ce9fed51b7d748039412c9fbf3
 state: virgin

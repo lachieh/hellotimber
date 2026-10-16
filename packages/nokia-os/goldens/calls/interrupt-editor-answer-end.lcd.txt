@@ -1,9 +1,9 @@
 lcd-golden 1
 id: calls/interrupt-editor-answer-end
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/interrupt/editor-answer-end
 source-sha256: 2bcf8988e674534a84306046339fddbe42c990f3defe6e9bbfbaa1edee3b7a5c
-trigger-frame: 1
+trigger-frame: 3
 note: A ring over editor, Answer, End 4.8 s later.
 omitted: none
 

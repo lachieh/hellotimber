@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/ring-reject-held
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/ring/reject-held
 source-sha256: d0505fa40c72c5312d1805427c9e4983c838bc0c4873e279e9645905040d0d44
 trigger-frame: 1

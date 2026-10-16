@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/entry-star-commit
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/entry/star-commit
 source-sha256: bc5a46c560e3f5da0841e08a42798e38cb854ae93aff73315139148e95bdf737
 trigger-frame: 1

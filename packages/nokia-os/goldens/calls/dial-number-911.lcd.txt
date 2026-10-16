@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/dial-number-911
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/dial/number-911 000-002
 source-sha256: aa5212236d5a82763321169533da8a620071215575c20b272a9220608a29d23a
 trigger-frame: 1

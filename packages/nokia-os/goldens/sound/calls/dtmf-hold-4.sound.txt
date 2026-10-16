@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/dtmf-hold-4
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/dtmf/hold-4
 source-sha256: 4445bb01305d52f6d993086e8116df2b2503c4bc57cfa49ec5ae6fa160728716
 state: factory

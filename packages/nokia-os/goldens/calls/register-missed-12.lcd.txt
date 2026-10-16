@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-missed-12
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/missed-12/01.png + captures/6.39/plan22/register/missed-12/02.png
 source-sha256: 6d1769cdd1f033d3cdce59358c783396860156e7f5ee23eb0c9317c9040c7c9a
 note: 12 missed calls: Missed holds 10 (▲ ▲ after the note). Each image's keys from a settled standby are its CALL_CASES entry.

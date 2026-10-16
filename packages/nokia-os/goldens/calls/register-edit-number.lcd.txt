@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-edit-number
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/edit-number
 source-sha256: 17e95971cee47c160a7f3718a6d46b14a538159ef084da8aae91b8e83715170d
 trigger-frame: 1

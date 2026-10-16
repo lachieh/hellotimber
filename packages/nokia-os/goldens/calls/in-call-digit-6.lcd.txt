@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/in-call-digit-6
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/in-call/digit-6
 source-sha256: e13e4fbb229c40000dc9b07bea33786998eb075a175951fcb82852a5c5722cb6
 trigger-frame: 1

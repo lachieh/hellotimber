@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-erase-c
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/erase-c
 source-sha256: 6995e702fd660bbc1619d526cdc8e3c11f38534934be761d5edbf55b8b87237b
 trigger-frame: 1

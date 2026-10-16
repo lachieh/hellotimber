@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/interrupt-calculator-missed
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/interrupt/calculator-missed
 source-sha256: d33fb715bfd42a5faf5908b1e60559b377a630f71aa81b4154e8fc3f9d393264
 trigger-frame: 1

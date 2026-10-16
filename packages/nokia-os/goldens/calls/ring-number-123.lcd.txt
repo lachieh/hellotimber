@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/ring-number-123
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/ring/number-123
 source-sha256: 1dfc82a1d26c54ec34a6bcfeafd9be65048ee3c57f8fb0fc619c87a5148e3b0d
 trigger-frame: 1

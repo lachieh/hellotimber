@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/dial-number-plus
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/dial/number-plus 000-002
 source-sha256: 6034890424723dc584bf045e43b3824228278e778e2f3158a367a8317dc159f4
 trigger-frame: 1

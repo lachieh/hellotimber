@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/ring-key-pwr
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/ring/key-pwr
 source-sha256: 9c52dc73926ac98f58d439d4041adef05aa00df282704919a83c7518d8298b54
 trigger-frame: 0

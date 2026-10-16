@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/note/calls-speed-dial-not-saved
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/notes/speed-dial-not-saved
 source-sha256: 4b2d93b59c50ea4f2ab05085351dc925b5d5c690a8910c669cdec273660909e8
 state: factory

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/durations-clear-timers
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/durations/clear-timers
 source-sha256: 788088f8457297aa51abacd400d076321315246bdafad506a3bc81c43c0c36ab
 trigger-frame: 1

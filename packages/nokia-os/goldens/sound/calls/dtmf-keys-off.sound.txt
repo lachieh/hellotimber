@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/dtmf-keys-off
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/dtmf/keys-off
 source-sha256: 5b822ae0bf04cd66354400908fa90384cc53c1f61f9fda5bd259b22d80f7837a
 state: factory

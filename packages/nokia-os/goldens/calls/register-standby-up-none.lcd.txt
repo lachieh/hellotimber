@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-standby-up-none
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/standby-up-none
 source-sha256: 043cb4cfa3c6da46d2351a14139dca477d829df5ebde18554bff59cce971c1e4
 trigger-frame: 1

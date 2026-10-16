@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/ring-beep-once-vibrator-off
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/ring/beep-once-vibrator-off
 source-sha256: 5fa995d90d1e0c74b61dbe6c41b1cea8f2156fac3e0ac78ca5978c0d5e907475
 state: factory

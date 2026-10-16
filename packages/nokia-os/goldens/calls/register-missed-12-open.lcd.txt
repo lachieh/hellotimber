@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-missed-12-open
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/missed-12-open
 source-sha256: 9b3bf8d3a4004bde38c9d4b2e26f6244254eef7e9e50493ba8f4bec88fa431cf
 trigger-frame: 1

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/volume-top
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/call/volume-top
 source-sha256: ab7e039580f66b194f63bd816fc7bb0cf5e9b0d02da78061ca37c6f4594f38cc
 state: factory

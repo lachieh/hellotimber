@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/ring-end-by-caller
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/ring/end-by-caller
 source-sha256: ff9aaac1c53c30a458089e5806279c92ff02066904348e94c043966f352d95a9
 trigger-frame: 1

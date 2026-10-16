@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/erased
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/notes/erased
 source-sha256: 530141dd034e3dfe01fdd6b6e61b5ab82b7df26ae9c1fcd071e6ed6d7b677ed5
 state: factory

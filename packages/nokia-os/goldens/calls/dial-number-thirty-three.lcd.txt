@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/dial-number-thirty-three
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/dial/number-thirty-three
 source-sha256: 37d49784f1b8f1e30dfef6dfc353dde18a6a925c14f1872bc5c6e5be32e1fc7f
 trigger-frame: 1

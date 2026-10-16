@@ -1,9 +1,9 @@
 lcd-golden 1
 id: calls/dial-number-hash-ended
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/dial/number-hash-ended
 source-sha256: 41025f3834309e78e5c5a2b7d9a500d6e56a6c8aca50e4802541fac2f39fa30c
-trigger-frame: 0
+trigger-frame: 1
 note: 123#: the # looked up location 123 (Invalid location) before Call.
 omitted: none
 

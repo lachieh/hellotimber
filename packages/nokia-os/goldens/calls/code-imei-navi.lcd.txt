@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/code-imei-navi
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/code/imei-navi
 source-sha256: 69b8c66f03cb6379a73a48e05345d6d0f8eddb49364b5f0ee157ee5f430e8921
 trigger-frame: 1

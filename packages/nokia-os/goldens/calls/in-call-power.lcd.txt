@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/in-call-power
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/in-call/power
 source-sha256: 401f646788ff8414ca85e850b07550e020879fa62e66643ddde4eba5a4651523
 trigger-frame: 1

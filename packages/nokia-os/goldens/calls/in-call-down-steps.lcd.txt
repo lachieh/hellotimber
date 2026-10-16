@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/in-call-down-steps
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/in-call/down-steps
 source-sha256: 3e903920ff5a2e18667b10103d9554f67a7a3b20f3ff36037d937daa59e9cb3a
 trigger-frame: 1

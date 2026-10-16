@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/dial-c-calling
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/dial/c-calling
 source-sha256: 6a7c661aa828186cb03a004b97b5aa0624c4a2f78ffbdb20509a215877c02000
 trigger-frame: 1

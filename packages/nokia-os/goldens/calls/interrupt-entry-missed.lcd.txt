@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/interrupt-entry-missed
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/interrupt/entry-missed
 source-sha256: 67193fbbcde4d2e5f8be53c006fcb1a5f84c7ade4bd43ffd1909a16afa1559c7
 trigger-frame: 1

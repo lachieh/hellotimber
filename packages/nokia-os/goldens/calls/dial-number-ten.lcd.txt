@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/dial-number-ten
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/dial/number-ten 000-002
 source-sha256: 9fd341ad97ee1c3c7df296d7d7d2e368bf680cccb24d43d010ea7e9a61e7833e
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/interrupt-entry-reject
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/interrupt/entry-reject
 source-sha256: abe235fa58b68cc1db71213e61d0b4e659b33dc9352750ea4ea3ba3294c23354
 trigger-frame: 1

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/emergency
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/notes/emergency
 source-sha256: 3b9082072a0dfa3f2d5ef88301d6a9f82c7215e8aa7572f793fa78a765c17ea2
 state: factory

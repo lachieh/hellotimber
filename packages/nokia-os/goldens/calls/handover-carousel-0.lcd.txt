@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/handover-carousel-0
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/handover/carousel-0
 source-sha256: b8ea599239caa6bd1bc93b0be86382bbecba88dbe69f0728ae7688a2bf209bc9
 trigger-frame: 1

@@ -2,7 +2,7 @@
   {
     "id": "calls/code",
     "file": "calls/code.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -18,7 +18,7 @@
   {
     "id": "calls/code-imei",
     "file": "calls/code-imei.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -26,7 +26,7 @@
   {
     "id": "calls/code-imei-navi",
     "file": "calls/code-imei-navi.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -34,7 +34,7 @@
   {
     "id": "calls/code-version",
     "file": "calls/code-version.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -42,7 +42,7 @@
   {
     "id": "calls/code-version-navi",
     "file": "calls/code-version-navi.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -50,7 +50,7 @@
   {
     "id": "calls/dial-alerting",
     "file": "calls/dial-alerting.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 11
@@ -58,7 +58,7 @@
   {
     "id": "calls/dial-c-alerting",
     "file": "calls/dial-c-alerting.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 10,
     "frames": 11
@@ -66,7 +66,7 @@
   {
     "id": "calls/dial-c-calling",
     "file": "calls/dial-c-calling.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 11
@@ -74,7 +74,7 @@
   {
     "id": "calls/dial-c-connected",
     "file": "calls/dial-c-connected.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 12,
     "frames": 18
@@ -82,7 +82,7 @@
   {
     "id": "calls/dial-c-held-connected",
     "file": "calls/dial-c-held-connected.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 10,
     "frames": 13
@@ -90,7 +90,7 @@
   {
     "id": "calls/dial-call",
     "file": "calls/dial-call.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 11
@@ -98,23 +98,23 @@
   {
     "id": "calls/dial-end-alerting",
     "file": "calls/dial-end-alerting.lcd.txt",
-    "status": "pending:22",
-    "kind": "timeline",
-    "images": 11,
-    "frames": 13
-  },
-  {
-    "id": "calls/dial-end-calling",
-    "file": "calls/dial-end-calling.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 11
   },
   {
+    "id": "calls/dial-end-calling",
+    "file": "calls/dial-end-calling.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 8,
+    "frames": 10
+  },
+  {
     "id": "calls/dial-end-connected",
     "file": "calls/dial-end-connected.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 10,
     "frames": 14
@@ -122,15 +122,15 @@
   {
     "id": "calls/dial-net-end-alerting",
     "file": "calls/dial-net-end-alerting.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
-    "images": 12,
-    "frames": 14
+    "images": 9,
+    "frames": 11
   },
   {
     "id": "calls/dial-net-end-connected",
     "file": "calls/dial-net-end-connected.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 11,
     "frames": 15
@@ -138,7 +138,7 @@
   {
     "id": "calls/dial-number-112",
     "file": "calls/dial-number-112.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -146,7 +146,7 @@
   {
     "id": "calls/dial-number-12",
     "file": "calls/dial-number-12.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -154,7 +154,7 @@
   {
     "id": "calls/dial-number-911",
     "file": "calls/dial-number-911.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -162,7 +162,7 @@
   {
     "id": "calls/dial-number-hash-ended",
     "file": "calls/dial-number-hash-ended.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -170,7 +170,7 @@
   {
     "id": "calls/dial-number-one-1",
     "file": "calls/dial-number-one-1.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 11
@@ -178,7 +178,7 @@
   {
     "id": "calls/dial-number-one-digit",
     "file": "calls/dial-number-one-digit.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -186,7 +186,7 @@
   {
     "id": "calls/dial-number-pause",
     "file": "calls/dial-number-pause.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -194,7 +194,7 @@
   {
     "id": "calls/dial-number-plus",
     "file": "calls/dial-number-plus.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -202,7 +202,7 @@
   {
     "id": "calls/dial-number-plus-later",
     "file": "calls/dial-number-plus-later.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -210,7 +210,7 @@
   {
     "id": "calls/dial-number-ten",
     "file": "calls/dial-number-ten.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -218,7 +218,7 @@
   {
     "id": "calls/dial-number-thirty-three",
     "file": "calls/dial-number-thirty-three.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -226,7 +226,7 @@
   {
     "id": "calls/dial-number-thirty-two",
     "file": "calls/dial-number-thirty-two.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -234,7 +234,7 @@
   {
     "id": "calls/dial-number-twenty",
     "file": "calls/dial-number-twenty.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -242,7 +242,7 @@
   {
     "id": "calls/dial-number-twenty-eight",
     "file": "calls/dial-number-twenty-eight.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -250,7 +250,7 @@
   {
     "id": "calls/durations",
     "file": "calls/durations.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 21,
     "frames": 21
@@ -258,7 +258,7 @@
   {
     "id": "calls/durations-clear-timers",
     "file": "calls/durations-clear-timers.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -266,7 +266,7 @@
   {
     "id": "calls/entry-c",
     "file": "calls/entry-c.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -274,7 +274,7 @@
   {
     "id": "calls/entry-c-held-475",
     "file": "calls/entry-c-held-475.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -282,7 +282,7 @@
   {
     "id": "calls/entry-c-held-500",
     "file": "calls/entry-c-held-500.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -290,7 +290,7 @@
   {
     "id": "calls/entry-c-held-long",
     "file": "calls/entry-c-held-long.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -298,7 +298,7 @@
   {
     "id": "calls/entry-c-last",
     "file": "calls/entry-c-last.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -306,7 +306,7 @@
   {
     "id": "calls/entry-c-last-star",
     "file": "calls/entry-c-last-star.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -314,7 +314,7 @@
   {
     "id": "calls/entry-c-one",
     "file": "calls/entry-c-one.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -322,7 +322,7 @@
   {
     "id": "calls/entry-down-held",
     "file": "calls/entry-down-held.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -330,7 +330,7 @@
   {
     "id": "calls/entry-first-digit",
     "file": "calls/entry-first-digit.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -338,7 +338,7 @@
   {
     "id": "calls/entry-hash",
     "file": "calls/entry-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -346,7 +346,7 @@
   {
     "id": "calls/entry-idle",
     "file": "calls/entry-idle.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 1,
     "frames": 1
@@ -354,7 +354,7 @@
   {
     "id": "calls/entry-keys",
     "file": "calls/entry-keys.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 11,
     "frames": 11
@@ -362,7 +362,7 @@
   {
     "id": "calls/entry-large-to-small",
     "file": "calls/entry-large-to-small.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -370,7 +370,7 @@
   {
     "id": "calls/entry-length",
     "file": "calls/entry-length.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 47,
     "frames": 47
@@ -378,7 +378,7 @@
   {
     "id": "calls/entry-limit",
     "file": "calls/entry-limit.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -394,7 +394,7 @@
   {
     "id": "calls/entry-second-digit",
     "file": "calls/entry-second-digit.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -402,7 +402,7 @@
   {
     "id": "calls/entry-softkey-down",
     "file": "calls/entry-softkey-down.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -410,7 +410,7 @@
   {
     "id": "calls/entry-softkey-up",
     "file": "calls/entry-softkey-up.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -418,7 +418,7 @@
   {
     "id": "calls/entry-star",
     "file": "calls/entry-star.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -426,7 +426,7 @@
   {
     "id": "calls/entry-star-after-digit",
     "file": "calls/entry-star-after-digit.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 5,
     "frames": 5
@@ -434,7 +434,7 @@
   {
     "id": "calls/entry-star-commit",
     "file": "calls/entry-star-commit.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -442,7 +442,7 @@
   {
     "id": "calls/entry-star-cycle-commit",
     "file": "calls/entry-star-cycle-commit.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 8
@@ -450,7 +450,7 @@
   {
     "id": "calls/entry-star-digit",
     "file": "calls/entry-star-digit.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -458,7 +458,7 @@
   {
     "id": "calls/entry-up-held",
     "file": "calls/entry-up-held.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -466,7 +466,7 @@
   {
     "id": "calls/handover-carousel-0",
     "file": "calls/handover-carousel-0.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -474,7 +474,7 @@
   {
     "id": "calls/handover-carousel-hash",
     "file": "calls/handover-carousel-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -482,7 +482,7 @@
   {
     "id": "calls/handover-carousel-star",
     "file": "calls/handover-carousel-star.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -490,7 +490,7 @@
   {
     "id": "calls/handover-list-5",
     "file": "calls/handover-list-5.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -498,7 +498,7 @@
   {
     "id": "calls/handover-list-hash",
     "file": "calls/handover-list-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -506,7 +506,7 @@
   {
     "id": "calls/handover-list-star",
     "file": "calls/handover-list-star.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -514,7 +514,7 @@
   {
     "id": "calls/handover-note-5",
     "file": "calls/handover-note-5.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -522,7 +522,7 @@
   {
     "id": "calls/handover-note-hash",
     "file": "calls/handover-note-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -530,7 +530,7 @@
   {
     "id": "calls/handover-note-star",
     "file": "calls/handover-note-star.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -538,7 +538,7 @@
   {
     "id": "calls/handover-notice-digit",
     "file": "calls/handover-notice-digit.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -554,7 +554,7 @@
   {
     "id": "calls/handover-notice-up",
     "file": "calls/handover-notice-up.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 5
@@ -562,7 +562,7 @@
   {
     "id": "calls/handover-option-list-5",
     "file": "calls/handover-option-list-5.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -570,7 +570,7 @@
   {
     "id": "calls/handover-shortcut-list-late",
     "file": "calls/handover-shortcut-list-late.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -578,7 +578,7 @@
   {
     "id": "calls/hold-empty-0",
     "file": "calls/hold-empty-0.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -586,7 +586,7 @@
   {
     "id": "calls/hold-empty-1",
     "file": "calls/hold-empty-1.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 12
@@ -594,7 +594,7 @@
   {
     "id": "calls/hold-empty-2",
     "file": "calls/hold-empty-2.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -602,7 +602,7 @@
   {
     "id": "calls/hold-empty-3",
     "file": "calls/hold-empty-3.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -610,7 +610,7 @@
   {
     "id": "calls/hold-empty-4",
     "file": "calls/hold-empty-4.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -618,7 +618,7 @@
   {
     "id": "calls/hold-empty-5",
     "file": "calls/hold-empty-5.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -626,7 +626,7 @@
   {
     "id": "calls/hold-empty-6",
     "file": "calls/hold-empty-6.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -634,7 +634,7 @@
   {
     "id": "calls/hold-empty-7",
     "file": "calls/hold-empty-7.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -642,7 +642,7 @@
   {
     "id": "calls/hold-empty-8",
     "file": "calls/hold-empty-8.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -650,7 +650,7 @@
   {
     "id": "calls/hold-empty-9",
     "file": "calls/hold-empty-9.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -658,7 +658,7 @@
   {
     "id": "calls/hold-empty-hash",
     "file": "calls/hold-empty-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -666,7 +666,7 @@
   {
     "id": "calls/hold-empty-star",
     "file": "calls/hold-empty-star.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -674,7 +674,7 @@
   {
     "id": "calls/hold-inside-0",
     "file": "calls/hold-inside-0.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -682,7 +682,7 @@
   {
     "id": "calls/hold-inside-1",
     "file": "calls/hold-inside-1.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -690,7 +690,7 @@
   {
     "id": "calls/hold-inside-2",
     "file": "calls/hold-inside-2.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -698,7 +698,7 @@
   {
     "id": "calls/hold-inside-3",
     "file": "calls/hold-inside-3.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -706,7 +706,7 @@
   {
     "id": "calls/hold-inside-4",
     "file": "calls/hold-inside-4.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -714,7 +714,7 @@
   {
     "id": "calls/hold-inside-5",
     "file": "calls/hold-inside-5.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -722,7 +722,7 @@
   {
     "id": "calls/hold-inside-6",
     "file": "calls/hold-inside-6.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -730,7 +730,7 @@
   {
     "id": "calls/hold-inside-7",
     "file": "calls/hold-inside-7.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -738,7 +738,7 @@
   {
     "id": "calls/hold-inside-8",
     "file": "calls/hold-inside-8.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -746,7 +746,7 @@
   {
     "id": "calls/hold-inside-9",
     "file": "calls/hold-inside-9.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -754,7 +754,7 @@
   {
     "id": "calls/hold-inside-hash",
     "file": "calls/hold-inside-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -762,7 +762,7 @@
   {
     "id": "calls/hold-inside-star",
     "file": "calls/hold-inside-star.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -770,7 +770,7 @@
   {
     "id": "calls/hold-one-475",
     "file": "calls/hold-one-475.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -778,7 +778,7 @@
   {
     "id": "calls/hold-one-500",
     "file": "calls/hold-one-500.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 12
@@ -786,7 +786,7 @@
   {
     "id": "calls/in-call-c",
     "file": "calls/in-call-c.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 5
@@ -794,7 +794,7 @@
   {
     "id": "calls/in-call-digit-0",
     "file": "calls/in-call-digit-0.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -802,7 +802,7 @@
   {
     "id": "calls/in-call-digit-1",
     "file": "calls/in-call-digit-1.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -810,7 +810,7 @@
   {
     "id": "calls/in-call-digit-2",
     "file": "calls/in-call-digit-2.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -818,7 +818,7 @@
   {
     "id": "calls/in-call-digit-3",
     "file": "calls/in-call-digit-3.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -826,7 +826,7 @@
   {
     "id": "calls/in-call-digit-4",
     "file": "calls/in-call-digit-4.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -834,7 +834,7 @@
   {
     "id": "calls/in-call-digit-5",
     "file": "calls/in-call-digit-5.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -842,7 +842,7 @@
   {
     "id": "calls/in-call-digit-6",
     "file": "calls/in-call-digit-6.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -850,7 +850,7 @@
   {
     "id": "calls/in-call-digit-7",
     "file": "calls/in-call-digit-7.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -858,7 +858,7 @@
   {
     "id": "calls/in-call-digit-8",
     "file": "calls/in-call-digit-8.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -866,7 +866,7 @@
   {
     "id": "calls/in-call-digit-9",
     "file": "calls/in-call-digit-9.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -874,7 +874,7 @@
   {
     "id": "calls/in-call-digit-hash",
     "file": "calls/in-call-digit-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -882,7 +882,7 @@
   {
     "id": "calls/in-call-digit-held",
     "file": "calls/in-call-digit-held.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -890,7 +890,7 @@
   {
     "id": "calls/in-call-digit-star",
     "file": "calls/in-call-digit-star.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 5
@@ -898,7 +898,7 @@
   {
     "id": "calls/in-call-digits",
     "file": "calls/in-call-digits.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 20,
     "frames": 20
@@ -906,7 +906,7 @@
   {
     "id": "calls/in-call-digits-options",
     "file": "calls/in-call-digits-options.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -914,7 +914,7 @@
   {
     "id": "calls/in-call-down",
     "file": "calls/in-call-down.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -922,7 +922,7 @@
   {
     "id": "calls/in-call-down-held",
     "file": "calls/in-call-down-held.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 9
@@ -930,7 +930,7 @@
   {
     "id": "calls/in-call-down-steps",
     "file": "calls/in-call-down-steps.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 11,
     "frames": 12
@@ -938,7 +938,7 @@
   {
     "id": "calls/in-call-long",
     "file": "calls/in-call-long.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 1,
     "frames": 1
@@ -946,7 +946,7 @@
   {
     "id": "calls/in-call-options",
     "file": "calls/in-call-options.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -954,7 +954,7 @@
   {
     "id": "calls/in-call-options-all",
     "file": "calls/in-call-options-all.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 10,
     "frames": 10
@@ -962,7 +962,7 @@
   {
     "id": "calls/in-call-options-c",
     "file": "calls/in-call-options-c.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -970,7 +970,7 @@
   {
     "id": "calls/in-call-options-select-0",
     "file": "calls/in-call-options-select-0.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1010,7 +1010,7 @@
   {
     "id": "calls/in-call-options-select-5",
     "file": "calls/in-call-options-select-5.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1018,7 +1018,7 @@
   {
     "id": "calls/in-call-power",
     "file": "calls/in-call-power.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 5
@@ -1026,7 +1026,7 @@
   {
     "id": "calls/in-call-up",
     "file": "calls/in-call-up.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -1034,7 +1034,7 @@
   {
     "id": "calls/in-call-up-steps",
     "file": "calls/in-call-up-steps.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 6
@@ -1042,7 +1042,7 @@
   {
     "id": "calls/interrupt-calculator-answer-end",
     "file": "calls/interrupt-calculator-answer-end.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 10
@@ -1050,7 +1050,7 @@
   {
     "id": "calls/interrupt-calculator-missed",
     "file": "calls/interrupt-calculator-missed.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 7
@@ -1058,7 +1058,7 @@
   {
     "id": "calls/interrupt-calculator-reject",
     "file": "calls/interrupt-calculator-reject.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 6
@@ -1066,7 +1066,7 @@
   {
     "id": "calls/interrupt-editor-answer-end",
     "file": "calls/interrupt-editor-answer-end.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 11,
     "frames": 15
@@ -1074,7 +1074,7 @@
   {
     "id": "calls/interrupt-editor-missed",
     "file": "calls/interrupt-editor-missed.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 17
@@ -1082,7 +1082,7 @@
   {
     "id": "calls/interrupt-editor-reject",
     "file": "calls/interrupt-editor-reject.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 7,
     "frames": 16
@@ -1090,7 +1090,7 @@
   {
     "id": "calls/interrupt-entry-answer-end",
     "file": "calls/interrupt-entry-answer-end.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 5
@@ -1098,7 +1098,7 @@
   {
     "id": "calls/interrupt-entry-missed",
     "file": "calls/interrupt-entry-missed.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -1106,7 +1106,7 @@
   {
     "id": "calls/interrupt-entry-reject",
     "file": "calls/interrupt-entry-reject.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 5
@@ -1114,7 +1114,7 @@
   {
     "id": "calls/interrupt-menu-answer-end",
     "file": "calls/interrupt-menu-answer-end.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 10
@@ -1122,7 +1122,7 @@
   {
     "id": "calls/interrupt-menu-missed",
     "file": "calls/interrupt-menu-missed.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 7
@@ -1130,7 +1130,7 @@
   {
     "id": "calls/interrupt-menu-reject",
     "file": "calls/interrupt-menu-reject.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 6
@@ -1138,7 +1138,7 @@
   {
     "id": "calls/interrupt-note-reject",
     "file": "calls/interrupt-note-reject.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 7
@@ -1146,7 +1146,7 @@
   {
     "id": "calls/interrupt-note-short",
     "file": "calls/interrupt-note-short.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 8
@@ -1154,7 +1154,7 @@
   {
     "id": "calls/interrupt-option-list-answer-end",
     "file": "calls/interrupt-option-list-answer-end.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 11
@@ -1162,7 +1162,7 @@
   {
     "id": "calls/interrupt-option-list-missed",
     "file": "calls/interrupt-option-list-missed.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 7
@@ -1170,7 +1170,7 @@
   {
     "id": "calls/interrupt-option-list-reject",
     "file": "calls/interrupt-option-list-reject.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 7
@@ -1178,7 +1178,7 @@
   {
     "id": "calls/interrupt-ring-during-call",
     "file": "calls/interrupt-ring-during-call.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 20
@@ -1186,7 +1186,7 @@
   {
     "id": "calls/interrupt-snake-answer-end",
     "file": "calls/interrupt-snake-answer-end.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 9
@@ -1194,7 +1194,7 @@
   {
     "id": "calls/interrupt-snake-reject",
     "file": "calls/interrupt-snake-reject.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1202,7 +1202,7 @@
   {
     "id": "calls/recall-0-hash",
     "file": "calls/recall-0-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1210,7 +1210,7 @@
   {
     "id": "calls/recall-1-hash",
     "file": "calls/recall-1-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1218,7 +1218,7 @@
   {
     "id": "calls/recall-12-hash",
     "file": "calls/recall-12-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1226,7 +1226,7 @@
   {
     "id": "calls/recall-250-hash",
     "file": "calls/recall-250-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1234,7 +1234,7 @@
   {
     "id": "calls/recall-50-hash",
     "file": "calls/recall-50-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1242,7 +1242,7 @@
   {
     "id": "calls/recall-51-hash",
     "file": "calls/recall-51-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 6
@@ -1250,7 +1250,7 @@
   {
     "id": "calls/recall-note-c",
     "file": "calls/recall-note-c.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1258,7 +1258,7 @@
   {
     "id": "calls/recall-note-call",
     "file": "calls/recall-note-call.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1266,7 +1266,7 @@
   {
     "id": "calls/recall-note-digit",
     "file": "calls/recall-note-digit.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1274,7 +1274,7 @@
   {
     "id": "calls/register-dialled",
     "file": "calls/register-dialled.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1282,7 +1282,7 @@
   {
     "id": "calls/register-dialled-21",
     "file": "calls/register-dialled-21.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1290,7 +1290,7 @@
   {
     "id": "calls/register-dialled-open",
     "file": "calls/register-dialled-open.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1298,7 +1298,7 @@
   {
     "id": "calls/register-dialled-options",
     "file": "calls/register-dialled-options.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -1306,7 +1306,7 @@
   {
     "id": "calls/register-dialled-options-open",
     "file": "calls/register-dialled-options-open.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1314,7 +1314,7 @@
   {
     "id": "calls/register-edit-number",
     "file": "calls/register-edit-number.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7
@@ -1322,7 +1322,7 @@
   {
     "id": "calls/register-edit-number-c",
     "file": "calls/register-edit-number-c.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 9
@@ -1330,7 +1330,7 @@
   {
     "id": "calls/register-edit-number-ok",
     "file": "calls/register-edit-number-ok.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1338,7 +1338,7 @@
   {
     "id": "calls/register-erase",
     "file": "calls/register-erase.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1346,7 +1346,7 @@
   {
     "id": "calls/register-erase-c",
     "file": "calls/register-erase-c.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1354,7 +1354,7 @@
   {
     "id": "calls/register-erase-lists",
     "file": "calls/register-erase-lists.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -1362,7 +1362,7 @@
   {
     "id": "calls/register-erase-lists-all",
     "file": "calls/register-erase-lists-all.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1370,7 +1370,7 @@
   {
     "id": "calls/register-erase-lists-dialled",
     "file": "calls/register-erase-lists-dialled.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1378,7 +1378,7 @@
   {
     "id": "calls/register-erase-lists-missed",
     "file": "calls/register-erase-lists-missed.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1386,7 +1386,7 @@
   {
     "id": "calls/register-erase-lists-received",
     "file": "calls/register-erase-lists-received.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1394,7 +1394,7 @@
   {
     "id": "calls/register-erase-ok",
     "file": "calls/register-erase-ok.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 11
@@ -1402,7 +1402,7 @@
   {
     "id": "calls/register-keys",
     "file": "calls/register-keys.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1410,7 +1410,7 @@
   {
     "id": "calls/register-list-c",
     "file": "calls/register-list-c.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1418,7 +1418,7 @@
   {
     "id": "calls/register-missed",
     "file": "calls/register-missed.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1426,7 +1426,7 @@
   {
     "id": "calls/register-missed-12",
     "file": "calls/register-missed-12.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1434,7 +1434,7 @@
   {
     "id": "calls/register-missed-12-open",
     "file": "calls/register-missed-12-open.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1442,7 +1442,7 @@
   {
     "id": "calls/register-missed-empty",
     "file": "calls/register-missed-empty.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 3
@@ -1450,7 +1450,7 @@
   {
     "id": "calls/register-missed-open",
     "file": "calls/register-missed-open.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1458,7 +1458,7 @@
   {
     "id": "calls/register-missed-open-read",
     "file": "calls/register-missed-open-read.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1466,7 +1466,7 @@
   {
     "id": "calls/register-missed-options",
     "file": "calls/register-missed-options.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1474,7 +1474,7 @@
   {
     "id": "calls/register-options-c",
     "file": "calls/register-options-c.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1482,7 +1482,7 @@
   {
     "id": "calls/register-options-call",
     "file": "calls/register-options-call.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 11
@@ -1490,7 +1490,7 @@
   {
     "id": "calls/register-options-call-end",
     "file": "calls/register-options-call-end.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1498,7 +1498,7 @@
   {
     "id": "calls/register-received",
     "file": "calls/register-received.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1506,7 +1506,7 @@
   {
     "id": "calls/register-received-open",
     "file": "calls/register-received-open.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1514,7 +1514,7 @@
   {
     "id": "calls/register-redialled",
     "file": "calls/register-redialled.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -1530,7 +1530,7 @@
   {
     "id": "calls/register-send-sms",
     "file": "calls/register-send-sms.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 8
@@ -1538,7 +1538,7 @@
   {
     "id": "calls/register-standby-up",
     "file": "calls/register-standby-up.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1546,7 +1546,7 @@
   {
     "id": "calls/register-standby-up-c",
     "file": "calls/register-standby-up-c.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1554,7 +1554,7 @@
   {
     "id": "calls/register-standby-up-c-held",
     "file": "calls/register-standby-up-c-held.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -1562,7 +1562,7 @@
   {
     "id": "calls/register-standby-up-call",
     "file": "calls/register-standby-up-call.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 10
@@ -1570,7 +1570,7 @@
   {
     "id": "calls/register-standby-up-list",
     "file": "calls/register-standby-up-list.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -1578,7 +1578,7 @@
   {
     "id": "calls/register-standby-up-none",
     "file": "calls/register-standby-up-none.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 5
@@ -1586,7 +1586,7 @@
   {
     "id": "calls/register-time-of-call",
     "file": "calls/register-time-of-call.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1594,7 +1594,7 @@
   {
     "id": "calls/ring-answer",
     "file": "calls/ring-answer.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -1602,7 +1602,7 @@
   {
     "id": "calls/ring-answer-end",
     "file": "calls/ring-answer-end.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1610,7 +1610,7 @@
   {
     "id": "calls/ring-end-by-caller",
     "file": "calls/ring-end-by-caller.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1618,7 +1618,7 @@
   {
     "id": "calls/ring-key-5",
     "file": "calls/ring-key-5.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 8
@@ -1626,7 +1626,7 @@
   {
     "id": "calls/ring-key-down",
     "file": "calls/ring-key-down.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -1634,7 +1634,7 @@
   {
     "id": "calls/ring-key-hash",
     "file": "calls/ring-key-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 8
@@ -1642,7 +1642,7 @@
   {
     "id": "calls/ring-key-pwr",
     "file": "calls/ring-key-pwr.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 8
@@ -1650,7 +1650,7 @@
   {
     "id": "calls/ring-key-star",
     "file": "calls/ring-key-star.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 8
@@ -1658,7 +1658,7 @@
   {
     "id": "calls/ring-key-up",
     "file": "calls/ring-key-up.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -1666,7 +1666,7 @@
   {
     "id": "calls/ring-missed",
     "file": "calls/ring-missed.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1674,7 +1674,7 @@
   {
     "id": "calls/ring-navi-held",
     "file": "calls/ring-navi-held.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -1682,7 +1682,7 @@
   {
     "id": "calls/ring-notice",
     "file": "calls/ring-notice.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4
@@ -1690,7 +1690,7 @@
   {
     "id": "calls/ring-notice-c",
     "file": "calls/ring-notice-c.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -1698,7 +1698,7 @@
   {
     "id": "calls/ring-notice-list",
     "file": "calls/ring-notice-list.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1706,7 +1706,7 @@
   {
     "id": "calls/ring-notice-list-11",
     "file": "calls/ring-notice-list-11.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1714,7 +1714,7 @@
   {
     "id": "calls/ring-notice-list-2",
     "file": "calls/ring-notice-list-2.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1722,7 +1722,7 @@
   {
     "id": "calls/ring-notice-navi-held",
     "file": "calls/ring-notice-navi-held.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -1730,7 +1730,7 @@
   {
     "id": "calls/ring-notice-wait",
     "file": "calls/ring-notice-wait.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 1,
     "frames": 1
@@ -1738,7 +1738,7 @@
   {
     "id": "calls/ring-number-123",
     "file": "calls/ring-number-123.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -1746,7 +1746,7 @@
   {
     "id": "calls/ring-number-1234567890",
     "file": "calls/ring-number-1234567890.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -1754,7 +1754,7 @@
   {
     "id": "calls/ring-number-12345678901234",
     "file": "calls/ring-number-12345678901234.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -1762,7 +1762,7 @@
   {
     "id": "calls/ring-number-123456789012345",
     "file": "calls/ring-number-123456789012345.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -1770,7 +1770,7 @@
   {
     "id": "calls/ring-number-12345678901234567890",
     "file": "calls/ring-number-12345678901234567890.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 5
@@ -1778,7 +1778,7 @@
   {
     "id": "calls/ring-number-plus61412345678",
     "file": "calls/ring-number-plus61412345678.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 6
@@ -1786,7 +1786,7 @@
   {
     "id": "calls/ring-reject",
     "file": "calls/ring-reject.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1794,7 +1794,7 @@
   {
     "id": "calls/ring-reject-held",
     "file": "calls/ring-reject-held.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -1802,7 +1802,7 @@
   {
     "id": "calls/ring-screen",
     "file": "calls/ring-screen.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 10
@@ -1810,350 +1810,350 @@
   {
     "id": "sound/calls/connected",
     "file": "sound/calls/connected.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/calls/dtmf-entry-keys",
     "file": "sound/calls/dtmf-entry-keys.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/calls/dtmf-hold-0",
     "file": "sound/calls/dtmf-hold-0.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/dtmf-hold-1",
     "file": "sound/calls/dtmf-hold-1.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/calls/dtmf-hold-2",
     "file": "sound/calls/dtmf-hold-2.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/dtmf-hold-3",
     "file": "sound/calls/dtmf-hold-3.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/dtmf-hold-4",
     "file": "sound/calls/dtmf-hold-4.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/dtmf-hold-5",
     "file": "sound/calls/dtmf-hold-5.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/dtmf-hold-6",
     "file": "sound/calls/dtmf-hold-6.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/dtmf-hold-7",
     "file": "sound/calls/dtmf-hold-7.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/dtmf-hold-8",
     "file": "sound/calls/dtmf-hold-8.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/dtmf-hold-9",
     "file": "sound/calls/dtmf-hold-9.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/dtmf-hold-hash",
     "file": "sound/calls/dtmf-hold-hash.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/dtmf-hold-star",
     "file": "sound/calls/dtmf-hold-star.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/dtmf-keys",
     "file": "sound/calls/dtmf-keys.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 30
   },
   {
     "id": "sound/calls/dtmf-keys-level-1",
     "file": "sound/calls/dtmf-keys-level-1.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 12
   },
   {
     "id": "sound/calls/dtmf-keys-level-3",
     "file": "sound/calls/dtmf-keys-level-3.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 12
   },
   {
     "id": "sound/calls/dtmf-keys-off",
     "file": "sound/calls/dtmf-keys-off.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/calls/dtmf-keys-virgin",
     "file": "sound/calls/dtmf-keys-virgin.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 12
   },
   {
     "id": "sound/calls/dtmf-taps-fast",
     "file": "sound/calls/dtmf-taps-fast.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/calls/emergency",
     "file": "sound/calls/emergency.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/calls/end",
     "file": "sound/calls/end.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 4
   },
   {
     "id": "sound/calls/erased",
     "file": "sound/calls/erased.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/in-call-keys",
     "file": "sound/calls/in-call-keys.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 21
   },
   {
     "id": "sound/calls/net-end",
     "file": "sound/calls/net-end.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/calls/no-last-dialled",
     "file": "sound/calls/no-last-dialled.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/ring-answer",
     "file": "sound/calls/ring-answer.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 19
   },
   {
     "id": "sound/calls/ring-ascending-vibrator-off",
     "file": "sound/calls/ring-ascending-vibrator-off.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 40
   },
   {
     "id": "sound/calls/ring-ascending-vibrator-on",
     "file": "sound/calls/ring-ascending-vibrator-on.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 55
   },
   {
     "id": "sound/calls/ring-beep-once-vibrator-off",
     "file": "sound/calls/ring-beep-once-vibrator-off.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calls/ring-beep-once-vibrator-on",
     "file": "sound/calls/ring-beep-once-vibrator-on.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 14
   },
   {
     "id": "sound/calls/ring-keys",
     "file": "sound/calls/ring-keys.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 28
   },
   {
     "id": "sound/calls/ring-missed",
     "file": "sound/calls/ring-missed.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 17
   },
   {
     "id": "sound/calls/ring-off-vibrator-off",
     "file": "sound/calls/ring-off-vibrator-off.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/calls/ring-off-vibrator-on",
     "file": "sound/calls/ring-off-vibrator-on.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 9
   },
   {
     "id": "sound/calls/ring-reject",
     "file": "sound/calls/ring-reject.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 19
   },
   {
     "id": "sound/calls/ring-ring-once-vibrator-off",
     "file": "sound/calls/ring-ring-once-vibrator-off.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 14
   },
   {
     "id": "sound/calls/ring-ring-once-vibrator-on",
     "file": "sound/calls/ring-ring-once-vibrator-on.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 24
   },
   {
     "id": "sound/calls/ring-ringing-vibrator-off",
     "file": "sound/calls/ring-ringing-vibrator-off.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 41
   },
   {
     "id": "sound/calls/ring-ringing-vibrator-on",
     "file": "sound/calls/ring-ringing-vibrator-on.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 57
   },
   {
     "id": "sound/calls/ring-virgin",
     "file": "sound/calls/ring-virgin.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 0
   },
   {
     "id": "sound/calls/ringback",
     "file": "sound/calls/ringback.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 10
   },
   {
     "id": "sound/calls/ringback-answer",
     "file": "sound/calls/ringback-answer.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 6
   },
   {
     "id": "sound/calls/volume-top",
     "file": "sound/calls/volume-top.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 5
   },
   {
     "id": "sound/note/calls-invalid-location",
     "file": "sound/note/calls-invalid-location.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/note/calls-invalid-phone-number",
     "file": "sound/note/calls-invalid-phone-number.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/note/calls-new-numbers",
     "file": "sound/note/calls-new-numbers.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/note/calls-no-new-numbers",
     "file": "sound/note/calls-no-new-numbers.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/note/calls-no-phone-numbers",
     "file": "sound/note/calls-no-phone-numbers.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/note/calls-speed-dial-not-saved",
     "file": "sound/note/calls-speed-dial-not-saved.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   }

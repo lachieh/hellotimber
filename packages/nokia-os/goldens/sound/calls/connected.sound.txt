@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/connected
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/call/connected
 source-sha256: 7f44e092949b831b935b56e9693508982068a1cd5133542eab6dc75209a459ba
 state: factory

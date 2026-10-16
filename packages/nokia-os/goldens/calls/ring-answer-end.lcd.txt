@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/ring-answer-end
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/ring/answer-end 000-003
 source-sha256: f60a8466861c317e1414eb0bff58879bcd39814a4a3f913e5e7443230f87a583
 trigger-frame: 1

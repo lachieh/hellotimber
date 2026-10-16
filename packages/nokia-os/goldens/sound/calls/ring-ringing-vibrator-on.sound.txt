@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/ring-ringing-vibrator-on
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/ring/ringing-vibrator-on
 source-sha256: e4e15bc06df08d91164ee63ab54a6d1e18209e6bb0da621e2afd6081ab4367ac
 state: factory

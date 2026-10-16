@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/code-version-navi
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/code/version-navi
 source-sha256: 6afaf4511d58edad59d15973e3134387cd399164347578491bcad123f03b6812
 trigger-frame: 1

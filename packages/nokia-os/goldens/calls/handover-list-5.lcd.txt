@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/handover-list-5
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/handover/list-5
 source-sha256: f22d4444cc57f908a0a45d0760e21836ae6ae7f92372429d288c491072a5b86c
 trigger-frame: 1

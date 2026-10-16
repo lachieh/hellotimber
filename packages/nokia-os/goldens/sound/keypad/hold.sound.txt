@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/keypad/hold
-status: pending:22
+status: asserted
 source: captures/6.39/plan16/keypad/hold
 source-sha256: 716aa9f6befa063c0f8bcc8d90cd8979575eecbca2dbcd2424b056b496adc143
 state: factory

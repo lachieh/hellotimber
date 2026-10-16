@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/ring-ring-once-vibrator-off
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/ring/ring-once-vibrator-off
 source-sha256: 5b37baf5016b789fb8dcd6843bfc7f48271b1e663a112a97e427f65263ba089b
 state: factory

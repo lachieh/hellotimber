@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/interrupt-menu-reject
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/interrupt/menu-reject
 source-sha256: 080979330ba069d251a89aeac966201084101a7f3c8c01301018bd545490858a
 trigger-frame: 1

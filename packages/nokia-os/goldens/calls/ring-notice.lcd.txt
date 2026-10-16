@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/ring-notice
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/ring/notice-1.png + captures/6.39/plan22/ring/notice-2.png + captures/6.39/plan22/ring/notice-11.png + captures/6.39/plan22/ring/missed-list-11.png
 source-sha256: ab5fb0565ad1eb8cb93d4194166d4a62190a071f52212f8ce8f6579996bfb91c
 note: The missed-call notice after 1, 2 (one number) and 11 calls, and Missed 1: after 11. Each image's keys from a settled standby are its CALL_CASES entry.

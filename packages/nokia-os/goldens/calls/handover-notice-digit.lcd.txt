@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/handover-notice-digit
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/handover/notice-digit
 source-sha256: 9c946a105ca872e5d8e5657a794f09751423546ebc569647581a4c2a39712efa
 trigger-frame: 1

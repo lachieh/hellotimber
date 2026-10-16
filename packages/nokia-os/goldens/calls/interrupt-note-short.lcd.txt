@@ -1,9 +1,9 @@
 lcd-golden 1
 id: calls/interrupt-note-short
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/interrupt/note-short
 source-sha256: 99a4c6a472610c19780327408c5868d6d24e8c87d5ce32af227ca12e6239e9e2
-trigger-frame: 1
+trigger-frame: 2
 note: Missed calls' No numbers, a ring 600 ms later.
 omitted: none
 

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/dial-number-one-1
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/dial/number-one-1
 source-sha256: a2bfd6ddb408ebadf493feb93ab2ee8c0101bfb6cf6b3de43bb73a393b0e5d8a
 trigger-frame: 1

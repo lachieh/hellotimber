@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calculator/keys-options-8
-status: pending:22
+status: asserted
 source: captures/6.39/plan20/sound/keys-options-8
 source-sha256: 2e50cebceaf4dcb5896349d7a2c2e66eb0a25c98a526ef30fa568c6f51ce675d
 trigger-frame: 1

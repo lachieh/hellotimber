@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/interrupt-snake-answer-end
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/interrupt/snake-answer-end 265-273
 source-sha256: 1adb191998294450dfa65ac7ad307b2314d1a28d6673d187a69e607f53127ef2
 trigger-frame: 0

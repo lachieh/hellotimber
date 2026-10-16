@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/note/calls-no-new-numbers
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/notes/no-new-numbers
 source-sha256: 7351a4b287e2eb24f23188d2ae9703fdf432d883d9865d381ccfc4ab288f8e4c
 state: factory

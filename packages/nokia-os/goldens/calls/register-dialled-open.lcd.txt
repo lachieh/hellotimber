@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-dialled-open
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/dialled-open
 source-sha256: f5d2998bd24fbd04a2acd0e5f6d06222bfcd24adf44116fd081cb798a00610dc
 trigger-frame: 1

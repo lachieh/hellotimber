@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/dtmf-keys-level-1
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/dtmf/keys-level-1
 source-sha256: 765833c28892a00d9bc0a7d7541a7e93dfa01697428c9e4cabeadb3711e02f64
 state: factory

@@ -626,7 +626,7 @@
   {
     "id": "game/snake/level-keys-digit-1",
     "file": "game/snake/level-keys-digit-1.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2

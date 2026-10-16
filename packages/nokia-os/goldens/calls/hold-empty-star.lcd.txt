@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/hold-empty-star
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/hold/empty-star
 source-sha256: 6f63dd2248a66564e27635320500882e2ac9e22cfcf5c8d119ff5c85d41ff5a0
 trigger-frame: 1

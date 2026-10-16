@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/ring-ascending-vibrator-on
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/ring/ascending-vibrator-on
 source-sha256: 2fa71134b03fa855ff03866de05936b391000dc251feda60f382318e4d16c571
 state: factory

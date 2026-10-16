@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/recall-note-digit
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/recall/note-digit
 source-sha256: 2eb135eb430c81a6d7aa63457ab08c599d4b2413be1930a0443bb5b8088f3261
 trigger-frame: 1

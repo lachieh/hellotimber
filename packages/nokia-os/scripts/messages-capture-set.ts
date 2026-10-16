@@ -54,13 +54,7 @@ export class MessagesCaptureError extends Error {
  */
 export const MESSAGES_LATER: Readonly<Record<string, string>> = {
   "sms/inbox-option-chat": "18c",
-  "sms/inbox-option-use-number": "22",
-  "sms/inbox-option-use-number-odd": "22",
-  "sms/outbox-use-number-found": "22",
-  "sms/notice-up": "22",
-  "sms/notice-down": "22",
-  "sms/notice-digit": "22",
-  "sms/notice-hash": "22",
+  "sms/notice-down": "19",
 };
 
 /** Asserted (plan 18 Task 12: each has its scenario), unless a later plan implements it. */

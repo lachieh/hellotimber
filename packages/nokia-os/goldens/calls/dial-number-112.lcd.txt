@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/dial-number-112
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/dial/number-112
 source-sha256: 993eaa014ffd9e085667aab38d8b8c1cc5530e979b59a2a55c184afe0f71ab07
 trigger-frame: 1

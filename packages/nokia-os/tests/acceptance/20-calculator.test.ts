@@ -19,6 +19,7 @@ import {
   stillScenario,
 } from "../support/calculator.ts";
 import { standbyRig, type Rig } from "../support/rig.ts";
+import { CALLS_PLAN20_SCENARIOS } from "../support/calls-handover.ts";
 
 /** The calculator's first screen on a virgin phone, then `keys`. */
 function calculatorAt(keys = ""): Rig {
@@ -181,6 +182,7 @@ const SCENARIOS: Record<string, Scenario> = {
     ]),
   ),
   ...CALCULATOR_SOUND_SCENARIOS,
+  ...CALLS_PLAN20_SCENARIOS,
 };
 
 /** C held on `0` exits to the carousel at its down; the firmware goes on to standby. */

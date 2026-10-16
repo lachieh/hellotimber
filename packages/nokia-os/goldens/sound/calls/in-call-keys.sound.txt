@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/in-call-keys
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/call/in-call-keys
 source-sha256: c4bcae75378769ba4f1fb0e1ebb5974d3cb19d5d6f9798e64732528d52730495
 state: factory

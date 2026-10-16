@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/hold-empty-hash
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/hold/empty-hash
 source-sha256: f483e76f3eb73f84001c9a1e3e01e792a083174e150b526e4593233419e589c1
 trigger-frame: 1

@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/keypad/keys
-status: pending:22
+status: pending:19
 source: captures/6.39/plan16/keypad/keys
 source-sha256: ecc4d29f74d74dcd9a9396593322430d2ba9a3cfa6a2220826f680914b8d9616
 state: factory

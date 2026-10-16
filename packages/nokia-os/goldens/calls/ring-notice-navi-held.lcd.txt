@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/ring-notice-navi-held
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/ring/notice-navi-held
 source-sha256: 85118ce5913d0939f6510deb86810aca306749e887921cfb491a0874f292659c
 trigger-frame: 1

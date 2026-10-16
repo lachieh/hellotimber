@@ -2,10 +2,11 @@
 // events, from the scenarios of tests/support/sound-scenarios.ts.
 import { acceptancePlan } from "../support/acceptance.ts";
 import { SOUND_SCENARIOS } from "../support/sound-scenarios.ts";
+import { CALLS_PLAN16_SCENARIOS } from "../support/calls-handover.ts";
 
 acceptancePlan({
   plan: "16",
-  scenarios: SOUND_SCENARIOS,
+  scenarios: { ...SOUND_SCENARIOS, ...CALLS_PLAN16_SCENARIOS },
   knownGaps: {
     "sound/keypad/pair":
       "the ▲ pressed 70 ms before the DSP powers down beeps for 77 ms in the capture (one " +

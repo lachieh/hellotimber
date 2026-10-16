@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/entry-c-held-500
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/entry/c-held-500
 source-sha256: 8c5ad6e7d413eae0695c30ae2f2bab298927e12e8dac0fd99ee90bd3f89f2437
 trigger-frame: 1

@@ -66,7 +66,7 @@
   {
     "id": "calculator/keys-options-0",
     "file": "calculator/keys-options-0.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -74,7 +74,7 @@
   {
     "id": "calculator/keys-options-1",
     "file": "calculator/keys-options-1.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -82,7 +82,7 @@
   {
     "id": "calculator/keys-options-2",
     "file": "calculator/keys-options-2.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -90,7 +90,7 @@
   {
     "id": "calculator/keys-options-3",
     "file": "calculator/keys-options-3.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -98,7 +98,7 @@
   {
     "id": "calculator/keys-options-4",
     "file": "calculator/keys-options-4.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -106,7 +106,7 @@
   {
     "id": "calculator/keys-options-5",
     "file": "calculator/keys-options-5.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -114,7 +114,7 @@
   {
     "id": "calculator/keys-options-6",
     "file": "calculator/keys-options-6.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -122,7 +122,7 @@
   {
     "id": "calculator/keys-options-7",
     "file": "calculator/keys-options-7.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -130,7 +130,7 @@
   {
     "id": "calculator/keys-options-8",
     "file": "calculator/keys-options-8.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -138,7 +138,7 @@
   {
     "id": "calculator/keys-options-9",
     "file": "calculator/keys-options-9.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -162,7 +162,7 @@
   {
     "id": "calculator/keys-options-hash",
     "file": "calculator/keys-options-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -178,7 +178,7 @@
   {
     "id": "calculator/keys-options-star",
     "file": "calculator/keys-options-star.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -442,7 +442,7 @@
   {
     "id": "calculator/options-dtmf-confirm-0",
     "file": "calculator/options-dtmf-confirm-0.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -450,7 +450,7 @@
   {
     "id": "calculator/options-dtmf-confirm-1",
     "file": "calculator/options-dtmf-confirm-1.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -632,70 +632,70 @@
   {
     "id": "sound/calculator/keys-options-0",
     "file": "sound/calculator/keys-options-0.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-options-1",
     "file": "sound/calculator/keys-options-1.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-options-2",
     "file": "sound/calculator/keys-options-2.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-options-3",
     "file": "sound/calculator/keys-options-3.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-options-4",
     "file": "sound/calculator/keys-options-4.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-options-5",
     "file": "sound/calculator/keys-options-5.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-options-6",
     "file": "sound/calculator/keys-options-6.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-options-7",
     "file": "sound/calculator/keys-options-7.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-options-8",
     "file": "sound/calculator/keys-options-8.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/keys-options-9",
     "file": "sound/calculator/keys-options-9.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
@@ -716,7 +716,7 @@
   {
     "id": "sound/calculator/keys-options-hash",
     "file": "sound/calculator/keys-options-hash.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
@@ -730,7 +730,7 @@
   {
     "id": "sound/calculator/keys-options-star",
     "file": "sound/calculator/keys-options-star.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
@@ -863,14 +863,14 @@
   {
     "id": "sound/calculator/options-dtmf-confirm-0",
     "file": "sound/calculator/options-dtmf-confirm-0.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },
   {
     "id": "sound/calculator/options-dtmf-confirm-1",
     "file": "sound/calculator/options-dtmf-confirm-1.sound.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "sound",
     "events": 2
   },

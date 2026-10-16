@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/dial-net-end-connected
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/dial/net-end-connected
 source-sha256: 87072d90eb420551674aa0d1d7f8f84ad7052c3c55326cc561f0d12a97e01e78
 trigger-frame: 1

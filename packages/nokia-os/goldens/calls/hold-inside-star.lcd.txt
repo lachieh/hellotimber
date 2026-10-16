@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/hold-inside-star
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/hold/inside-star
 source-sha256: 44cab77b5f5c293a0dd90772bfd906a03a8cc0aca010edc58bc34b628be9b775
 trigger-frame: 1

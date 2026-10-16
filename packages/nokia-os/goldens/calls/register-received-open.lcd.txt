@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-received-open
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/received-open
 source-sha256: ec7b8f98d8e7e10c8c8b46d7406d293c392be306844576ffe0ee105e3af3bbd7
 trigger-frame: 1

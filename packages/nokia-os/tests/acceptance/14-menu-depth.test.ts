@@ -5,6 +5,7 @@ import type { PhoneKey } from "@hellotimber/phone-core";
 import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockSettings } from "../../src/firmware/settings";
 import { acceptancePlan, type Scenario } from "../support/acceptance.ts";
+import { CALLS_PLAN14_KNOWN_GAPS, CALLS_PLAN14_SCENARIOS } from "../support/calls-handover.ts";
 import { expectLcd } from "../support/golden.ts";
 import { newGameLeafScenario } from "../support/game.ts";
 import { goldenImage, loadGolden } from "../support/goldens.ts";
@@ -296,6 +297,7 @@ const SCENARIOS: Record<string, Scenario> = {
     stills(id, after("navi down*3 navi down*7 navi"), ["", "navi", ...Array(6).fill("down")]),
   "probe/prepaid-recharge-status": (id) =>
     stills(id, after("navi down*3 navi down*7 navi"), ["down*3", "navi", ...Array(6).fill("down")]),
+  ...CALLS_PLAN14_SCENARIOS,
 };
 
 const ON_OVER_GAMES =
@@ -308,5 +310,6 @@ acceptancePlan({
   knownGaps: {
     "probe/shortcut-m8-6": ON_OVER_GAMES,
     "probe/shortcut-m8-6-3": ON_OVER_GAMES,
+    ...CALLS_PLAN14_KNOWN_GAPS,
   },
 });

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/entry-c-last-star
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/entry/c-last-star
 source-sha256: d022609f1f7fcc9ef74472145fc8f727865392aaebbbce94759a659f60eea176
 trigger-frame: 1

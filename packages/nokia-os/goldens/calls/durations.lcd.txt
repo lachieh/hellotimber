@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/durations
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/durations/empty/1.png + captures/6.39/plan22/durations/empty/2.png + captures/6.39/plan22/durations/empty/3.png + captures/6.39/plan22/durations/empty/4.png + captures/6.39/plan22/durations/fit/after-3400/1.png + captures/6.39/plan22/durations/fit/after-3900/1.png + captures/6.39/plan22/durations/fit/after-4400/1.png + captures/6.39/plan22/durations/fit/after-4900/1.png + captures/6.39/plan22/durations/fit/after-5400/1.png + captures/6.39/plan22/durations/fit/after-5900/1.png + captures/6.39/plan22/durations/fit/after-6400/1.png + captures/6.39/plan22/durations/fit/after-63400/1.png + captures/6.39/plan22/durations/fit/after-64400/1.png + captures/6.39/plan22/durations/after-received/1.png + captures/6.39/plan22/durations/after-received/2.png + captures/6.39/plan22/durations/after-received/3.png + captures/6.39/plan22/durations/after-received/4.png + captures/6.39/plan22/durations/after-clear/1.png + captures/6.39/plan22/durations/after-clear/2.png + captures/6.39/plan22/durations/after-clear/3.png + captures/6.39/plan22/durations/after-clear/4.png
 source-sha256: a13c7123b0afd910092c48cdacf465bb328cbcdc905393683fe6f7413b1a5bfc
 note: Show call duration's four pages: empty, after calls of measured lengths, after a received call, after Clear timers (factory). Each image's keys from a settled standby are its CALL_CASES entry.

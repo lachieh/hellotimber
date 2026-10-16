@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/ring-key-down
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/ring/key-down
 source-sha256: 61f67346384edf94369b84b44e480bb563e7be8d9384762218644a021630126e
 trigger-frame: 1

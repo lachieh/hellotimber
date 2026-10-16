@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-send-sms
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/send-sms
 source-sha256: 2f6d11930a0e31d1866d8d48d5c0d45f8c4d38906e180cf5d05669095715eb2f
 trigger-frame: 1

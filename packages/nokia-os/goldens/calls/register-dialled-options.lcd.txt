@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-dialled-options
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/dialled-options/01.png + captures/6.39/plan22/register/dialled-options/02.png + captures/6.39/plan22/register/dialled-options/03.png + captures/6.39/plan22/register/dialled-options/04.png + captures/6.39/plan22/register/dialled-options/05.png + captures/6.39/plan22/register/dialled-options/06.png
 source-sha256: 70b7f584a7ea365e20d2314cfb67b41a663ffcc0e77bdf400ccfe48d9e6736f4
 note: Dialled 1:'s Options: ▼ ×1…6 through the wrap. Each image's keys from a settled standby are its CALL_CASES entry.

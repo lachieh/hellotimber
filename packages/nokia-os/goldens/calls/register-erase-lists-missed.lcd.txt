@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-erase-lists-missed
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/erase-lists-missed
 source-sha256: fba89e3994a61d44c9200bc53f55ba3dd7e9f3a5f1c02e278f63b2b0eecb670d
 trigger-frame: 1

@@ -399,7 +399,6 @@ const SCREENS: readonly ScreenSpec[] = [
     name: "level-keys-digit-1",
     dir: "levels/key-1",
     note: "C1: 1 on the Level page leaves for standby number entry.",
-    status: "pending:22",
   },
   {
     name: "pause-c",

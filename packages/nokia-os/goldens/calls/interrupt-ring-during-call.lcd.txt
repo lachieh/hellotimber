@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/interrupt-ring-during-call
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/interrupt/ring-during-call
 source-sha256: 699c4509c7db538b66b97c34e1184f9f9f95e873907d80bbe75e5c5ee0260ba9
 trigger-frame: 0

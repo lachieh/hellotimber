@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/entry-large-to-small
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/entry/large-to-small
 source-sha256: 7b121545b7a62a33e7dfd57811cd2050ba8b36303c149cebd73cb99e686cd13a
 trigger-frame: 1

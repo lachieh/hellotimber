@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/hold-one-500
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/hold/one-500
 source-sha256: 6518f8f3ea3d8a5669bfde8fec181c37bc4f89b87d124e3487110e24b8764c66
 trigger-frame: 1

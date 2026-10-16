@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/dial-c-held-connected
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/dial/c-held-connected
 source-sha256: 60b039923de13dacdce08b403fc5c8719335d4835dd3002a94952e525cfb9dcd
 trigger-frame: 1

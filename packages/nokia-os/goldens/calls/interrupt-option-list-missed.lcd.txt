@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/interrupt-option-list-missed
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/interrupt/option-list-missed
 source-sha256: 6ae117537193a63d093c45c9b883a28af1627ed960c83737df5c6762467d6638
 trigger-frame: 1

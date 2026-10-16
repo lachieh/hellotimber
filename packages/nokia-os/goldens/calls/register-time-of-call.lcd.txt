@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-time-of-call
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/register/time-of-call
 source-sha256: 01e235b46a1cbd2ddb210fa6c3899eb6087687f9fd1d85797ed80ab7adc72ab7
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: game/snake/level-keys-digit-1
-status: pending:22
+status: asserted
 source: captures/6.39/plan23/levels/key-1
 source-sha256: 29ebaa1ad971422299209e936db662021f6bff981c866697b29f41b60d23bf83
 trigger-frame: 1

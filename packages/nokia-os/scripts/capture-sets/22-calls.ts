@@ -24,14 +24,11 @@ const SERVICES: GoldenStatus = "pending:22b";
 const PHONE_BOOK: GoldenStatus = "pending:19";
 
 /**
- * Goldens whose scenario passes (plan 29's pending workflow): every other plan 22 golden stays
- * `pending:22` until tests/acceptance/22-call-register-divert-and-dialling.test.ts drives it.
+ * A golden's status: its own (22b's, 19's), else asserted: every plan 22 golden is driven by
+ * tests/acceptance/22-call-register-divert-and-dialling.test.ts (Task 10).
  */
-export const PROMOTED: ReadonlySet<string> = new Set<string>([]);
-
-/** A golden's status: its own (22b's, 19's), asserted once promoted, else pending on plan 22. */
-function statusOf(id: string, own?: GoldenStatus): GoldenStatus {
-  return own ?? (PROMOTED.has(id) ? ASSERTED : "pending:22");
+function statusOf(own?: GoldenStatus): GoldenStatus {
+  return own ?? ASSERTED;
 }
 
 /**
@@ -560,7 +557,9 @@ export const DURATION_CASES: readonly CallCase[] = [
     (total): CallCase => ({
       name: `durations/fit/after-${total}/1`,
       keys: DURATIONS,
-      setup: `${NUMBER_KEYS} menu +${total} menu +3030`,
+      // The fit calls were recorded (`rec_keys`: a tap is 300 ms, not play's 592 ms): Call, then
+      // End `total` ms after the tap's 300 ms.
+      setup: `${NUMBER_KEYS} menu +${total - (592 - 300)} menu +3030`,
       state: "factory",
       image: `fit-${total}`,
     }),
@@ -689,7 +688,7 @@ export function callStills(cases: readonly CallCase[] = ALL_CALL_CASES): Capture
     return {
       id,
       kind: "still",
-      status: statusOf(id, status),
+      status: statusOf(status),
       prefer: {
         source: { kind: "shots", files: shots },
         note: `${note} Each image's keys from a settled standby are its CALL_CASES entry.`,
@@ -808,18 +807,25 @@ export const CALL_RECORDINGS: readonly CallRecording[] = [
   }),
   // dialling
   rec("dial/call", 1, "0412345678, Call: Calling, alerting, connected."),
-  rec("dial/end-calling", 1, "Call, End 1.3 s later (taken at the alerting)."),
+  // The standby after a call without a traffic channel loses its signal ladder (the patched
+  // network's first measurement, an artefact): those recordings end at standby's first frame.
+  rec("dial/end-calling", 1, "Call, End 1.3 s later (taken at the alerting).", {
+    frames: { from: 0, to: 9 },
+  }),
   rec("dial/end-connected", 1, "Call, End 7.3 s later: standby."),
   rec("dial/c-calling", 1, "Call, C 1.3 s later: nothing changes."),
   rec("dial/c-connected", 1, "Call, connected: C, C, End."),
   rec("dial/c-held-connected", 1, "Call, connected: C held 1.5 s."),
   rec("dial/alerting", 1, "Call held alerting (CAP_MO_HOLD), the far end answers at 6.3 s."),
-  rec("dial/end-alerting", 1, "Call held alerting, End at 4.3 s."),
+  rec("dial/end-alerting", 1, "Call held alerting, End at 4.3 s.", { frames: { from: 0, to: 10 } }),
   rec("dial/c-alerting", 1, "Call held alerting, C at 4.3 s: Options."),
   rec(
     "dial/net-end-alerting",
     1,
     "Call held alerting, the network's DISCONNECT (cause 16) at 4.3 s.",
+    {
+      frames: { from: 0, to: 10 },
+    },
   ),
   rec("dial/net-end-connected", 1, "Call, connected, the network's DISCONNECT at 7.3 s."),
   rec("dial/number-one-digit", 1, "5, Call: Speed dial number not saved."),
@@ -840,7 +846,7 @@ export const CALL_RECORDINGS: readonly CallRecording[] = [
   rec("dial/number-plus-later", 1, "0412+345, Call: 0412 dialled.", { frames: { from: 0, to: 2 } }),
   rec(
     "dial/number-hash-ended",
-    0,
+    1,
     "123#: the # looked up location 123 (Invalid location) before Call.",
   ),
   rec(
@@ -914,13 +920,17 @@ export const CALL_RECORDINGS: readonly CallRecording[] = [
   rec("ring/notice-navi-held", 1, "The notice, Navi held: List."),
   rec("ring/notice-wait", 0, "The notice left 62 s."),
   // interruptions
-  ...(["menu", "option-list", "entry", "editor", "calculator"] as const).flatMap((below) => [
-    rec(`interrupt/${below}-reject`, "ring", `A ring over ${below}, C 3 s later.`),
-    rec(`interrupt/${below}-answer-end`, "ring", `A ring over ${below}, Answer, End 4.8 s later.`),
-    rec(`interrupt/${below}-missed`, "ring", `A ring over ${below}, the caller hangs up.`),
-  ]),
-  rec("interrupt/note-reject", 1, "Missed calls' No numbers, a ring 600 ms later, C."),
-  rec("interrupt/note-short", 1, "Missed calls' No numbers, a ring 600 ms later."),
+  ...(["menu", "option-list", "entry", "editor", "calculator"] as const).flatMap((below) => {
+    // Over the editor the cursor's blink comes first: the ringing screen is frame 3.
+    const ring = below === "editor" ? 3 : "ring";
+    return [
+      rec(`interrupt/${below}-reject`, ring, `A ring over ${below}, C 3 s later.`),
+      rec(`interrupt/${below}-answer-end`, ring, `A ring over ${below}, Answer, End 4.8 s later.`),
+      rec(`interrupt/${below}-missed`, ring, `A ring over ${below}, the caller hangs up.`),
+    ];
+  }),
+  rec("interrupt/note-reject", "ring", "Missed calls' No numbers, a ring 600 ms later, C."),
+  rec("interrupt/note-short", "ring", "Missed calls' No numbers, a ring 600 ms later."),
   rec("interrupt/ring-during-call", 0, "In a call, a ring: paged after End."),
   rec(
     "interrupt/snake-reject",
@@ -982,7 +992,7 @@ function recordingEntries(io: CaptureIo | undefined): CaptureSetEntry[] {
     return {
       id: recordingId(r.dir),
       kind: "timeline",
-      status: statusOf(recordingId(r.dir), r.status),
+      status: statusOf(r.status),
       prefer: { source, triggerFrame, note: r.note },
     };
   });
@@ -1147,7 +1157,7 @@ export const CALL_SOUNDS: readonly SoundCaptureEntry[] = (
   (entry: SoundRow): SoundCaptureEntry => ({
     ...entry,
     state: entry.state ?? "factory",
-    status: statusOf(entry.id, entry.status),
+    status: statusOf(entry.status),
   }),
 );
 

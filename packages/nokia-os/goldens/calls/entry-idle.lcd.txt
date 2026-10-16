@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/entry-idle
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/entry/idle
 source-sha256: ba4115d84302dedfe2be6ac9329ff35cc36e3364037a8c8fa6ddbcb926deaa73
 trigger-frame: 0

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/in-call-options-all
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/in-call/options-all/01.png + captures/6.39/plan22/in-call/options-all/02.png + captures/6.39/plan22/in-call/options-all/03.png + captures/6.39/plan22/in-call/options-all/04.png + captures/6.39/plan22/in-call/options-all/05.png + captures/6.39/plan22/in-call/options-all/06.png + captures/6.39/plan22/in-call/options-all/07.png + captures/6.39/plan22/in-call/options-all/08.png + captures/6.39/plan22/in-call/options-all/09.png + captures/6.39/plan22/in-call/options-all/10.png
 source-sha256: b9cb822b7df327ee511d4dcc249aa2621e0f18a3bac26ca4bccbd3bc12132bc4
 note: In a call, C, Options: ▼ ×1…10 through the six rows' wrap. Each image's keys from a settled standby are its CALL_CASES entry.

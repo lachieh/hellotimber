@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/entry-star-digit
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/entry/star-digit
 source-sha256: 3a29dfb10e37ef4e68dcb6b18cfb7608cf95c1b8a51d3a80290823b1e22c09c9
 trigger-frame: 1

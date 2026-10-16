@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/calls/dtmf-taps-fast
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/sound/dtmf/taps-fast
 source-sha256: b3ad75a3a1f62720b0b023ad43357202cee552b3302a3f84e7e68daa294f2c11
 state: factory
