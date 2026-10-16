@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/stk/auto-open
+status: pending:30
+source: captures/6.39/plan30/sound/stk/auto-open
+source-sha256: dffa2d9d33be14a5b3f15d53ffb0eba5fb0189c81419466bfac8c4489e00f876
+state: factory
+keys: 0:navi
+note: SIM stk, toolkit main (factory image): OK on Auto clear: Wait, the text: OK's beep only.
+omitted: none
+
+@events
+# t_ms output   state
+23     tone     900 v=0x9104
+177    tone     off

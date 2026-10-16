@@ -19,6 +19,7 @@
     "phone-book-text-runs": "node scripts/phone-book-text-runs.ts",
     "phone-book-scripts": "node scripts/phone-book-scripts.ts",
     "content-scripts": "node scripts/content-scripts.ts",
+    "sim-content-scripts": "node scripts/sim-content-scripts.ts",
     "build-t9-dictionary": "node scripts/build-t9-dictionary.ts"
   },
   "dependencies": {

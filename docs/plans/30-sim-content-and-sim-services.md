@@ -710,16 +710,31 @@ toolkit SIM), `docs/plans/README.md` (row 30), this plan.
 `tests/capture-sets/30-sim-content.test.ts` (new), `tests/acceptance/30-sim-content.test.ts` (new:
 the todo shim only), `goldens/**`, `goldens/index/30.json` (generated).
 
-- [ ] TDD the capture set on synthetic recordings (an injected loader, as plan 19's): ids, kinds,
+- [x] TDD the capture set on synthetic recordings (an injected loader, as plan 19's): ids, kinds,
       cut points, `trigger-frame`, `note:` naming the SIM fixture, sound rows in plan 16's format.
-- [ ] `SIM_CONTENT_SIMS` in a JSON-style block; a test validates each against D2/D12's rules.
-- [ ] If Task 0 K failed: no `sim/stk-*` golden exists; the set lists the composed flows instead
+- [x] `SIM_CONTENT_SIMS` in a JSON-style block; a test validates each against D2/D12's rules.
+- [x] If Task 0 K failed: no `sim/stk-*` golden exists; the set lists the composed flows instead
       (`COMPOSED_FLOWS` rows with their reason), and `sim/stk-*` coverage is the acceptance file's
       known gap (D4).
-- [ ] Register the set (one line). Run `import-captures` twice; no diff the second time. Record
+- [x] Register the set (one line). Run `import-captures` twice; no diff the second time. Record
       fixture counts and bytes (budget guide: ≤ 1.5 MB of new text grids).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import SIM content and SIM services goldens (plan 30)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import SIM content and SIM services goldens (plan 30)`.
+
+Deviation (Task 2): Task 0 K succeeded, so there are `sim/stk-*` goldens and no `COMPOSED_FLOWS`
+rows; the composed call confirm (no capture) is pinned by unit tests (Task 7). `SIM_CONTENT_SIMS`'s
+block is in the shape `gen_v639_plan30.py check` reads (time stamps as `DD.MM.YYYY HH:MM:SS`,
+`slot`, the applet's `qualifier`); the module turns it into `StockSimCard` values (messages by
+slot, `clear: "delay"`); `check` reports 0 problems. Not imported (reasons in
+`SIM_CONTENT_NOT_IMPORTED`): `lnd/*` (D8: plan 22's empty screens), `stk/call/*` (never completes),
+`stk/in-call/*` (plan 22's), every held-C recording (the kernel's 800 ms long press against the
+firmware's ≈530 ms, plan 19's known gap), the power-on recordings (the virgin image's date prompt;
+their standby and Inbox stills are imported, replayed by hand). `*#06#` is plan 22's screen:
+`sim/imei-screen` is `pending:22`. Capture logs are transcribed for the replays by
+`scripts/sim-content-scripts.ts` (`vp run @hellotimber/nokia-os#sim-content-scripts <REF>`).
+Imported: 97 LCD goldens and 10 sound goldens, 1.53 MB of text grids (images past a list's wrap,
+the same icon animation again and the names' text and time pages trimmed to stay near the 1.5 MB
+guide); a second import changes nothing.
 
 ### Task 3 - Glyphs, sprites and timelines (TDD)
 
