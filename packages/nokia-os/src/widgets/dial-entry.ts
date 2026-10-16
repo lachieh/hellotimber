@@ -110,7 +110,7 @@ export class DialEntryWidget implements Widget {
     if (this.#leaving !== undefined) return;
     if (DIAL_KEYS.test(key)) {
       this.#o.sounder.keyDtmf();
-      this.#dialKey(key, flow);
+      this.#dialKey(key);
       return;
     }
     if (key === "c") {
@@ -143,7 +143,7 @@ export class DialEntryWidget implements Widget {
     if (key === this.#repeat?.key) this.#repeat = undefined;
   }
 
-  #dialKey(key: PhoneKey, flow: Flow): void {
+  #dialKey(key: PhoneKey): void {
     const now = this.#now;
     if (key === "*") {
       const pending = this.#pending;

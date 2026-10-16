@@ -25,7 +25,7 @@ plan 14 goldens already committed for Call register, the crawl's
 `$REF/captures/scratch-plan22/` (evidence only, never imported; `NOTES.md` there lists them and the
 scratch harness), and the canonical captures Task 0 writes to `$REF/captures/6.39/plan22/`. Read
 `$REF/captures/README.md` and plans 13, 14, 15, 16, 18, 19 and 23 in full before starting.
-**Status:** in progress.
+**Status:** done (plan 25's call goldens open, see Completion notes).
 
 ## Goal
 
@@ -842,21 +842,21 @@ timings are constants beside their widgets, each citing its golden.
 applications and plan 21's `interruption` are reused if they have landed, else added here exactly
 as those plans specify (D14), each with that plan's tests.
 
-- [ ] TDD `standbyEntry`: a listed key-down at standby opens `open(key)` as a standby application
+- [x] TDD `standbyEntry`: a listed key-down at standby opens `open(key)` as a standby application
       that receives that key-down and its up; unlisted keys behave as today; `navi`/`c`/`power` in
       `keys` throw; a notice takes keys first (Task 0 S); in `nav` mode a listed key with no open
       window leaves the menus (deactivating an application below as held C does) and opens the
       entry; a key a window takes stays a shortcut; at the carousel the window's first key that
       begins no number (per the level's numbers) opens the entry; not consulted during boot, a
       gate or an interruption.
-- [ ] TDD `exit({ to: "standby", key })`: from an application and an intro; from a gate it throws;
+- [x] TDD `exit({ to: "standby", key })`: from an application and an intro; from a gate it throws;
       the key is still down and its up reaches the entry; `key` without `to` throws.
-- [ ] If Task 0 I shows Snake II suspended by a call: the optional `onInterrupted?()` hook on plan
+- [x] If Task 0 I shows Snake II suspended by a call: the optional `onInterrupted?()` hook on plan
       21's interruption (called once on the held session when an interruption starts), with tests.
-- [ ] Existing tests pass unchanged; configs without the seams produce identical models.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
+- [x] Existing tests pass unchanged; configs without the seams produce identical models.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
       `vp check --fix`.
-- [ ] Commit: `feat(phone-core): standby entry and key hand-over`.
+- [x] Commit: `feat(phone-core): standby entry and key hand-over`.
 
 ### Task 5 - DTMF, ringing and call sounds (TDD against sound goldens)
 
@@ -864,18 +864,18 @@ as those plans specify (D14), each with that plan's tests.
 `src/index.ts` (the event type is re-exported unchanged), `tests/sound-calls.test.ts` (new),
 `tests/sequencer.test.ts` (new cases only).
 
-- [ ] TDD `hz2`: the sequencer emits it on tone events only; two states differing only in `hz2`
+- [x] TDD `hz2`: the sequencer emits it on tone events only; two states differing only in `hz2`
       differ; every plan 16 sound golden still passes byte for byte.
-- [ ] TDD the DTMF mode: `keyDtmf()` before a key-down makes that key sound its pair at the Keypad
+- [x] TDD the DTMF mode: `keyDtmf()` before a key-down makes that key sound its pair at the Keypad
       tones word (Off: silent; unset: 0x9100), at least the tap length, until the tail after its
       up; a held key; fast taps (S6); against `sound/keypad/keys`, `keypad/hold`,
       `sound/calls/dtmf-*`.
-- [ ] TDD `ring(prefix)` per alert type and Vibrating alert against `sound/calls/ring-*` (D9);
+- [x] TDD `ring(prefix)` per alert type and Vibrating alert against `sound/calls/ring-*` (D9);
       `stopRing()`; the ringback, the network-end beeps and the Volume beep as `callSound(name)`.
-- [ ] `sound/keypad/keys` and `sound/keypad/hold` need the entry to set the DTMF mode at standby, so
+- [x] `sound/keypad/keys` and `sound/keypad/hold` need the entry to set the DTMF mode at standby, so
       they are flipped in Task 7; here the DTMF mode is tested directly on the sounder.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): DTMF, ringing alert types and call sounds`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): DTMF, ringing alert types and call sounds`.
 
 ### Task 6 - Dial strings, the call log and the network's call half (pure, TDD)
 
@@ -884,21 +884,21 @@ as those plans specify (D14), each with that plan's tests.
 (one line), `tests/dial-string.test.ts`, `tests/call-log.test.ts`, `tests/call-network.test.ts`
 (new).
 
-- [ ] TDD `dial-string.ts` from Task 0's tables: the `*` cycle, 60 FIFO, the layout breaks, every
+- [x] TDD `dial-string.ts` from Task 0's tables: the `*` cycle, 60 FIFO, the layout breaks, every
       S9 outcome (one digit, `1x`, other two-digit strings, `#`-ended strings, `112`, too long, `+`,
       `p`, `w`), the immediate codes and `N#` (S8).
-- [ ] TDD `CALLS_RECORD` and `StockCallLog` (D13): capacities, newest first, a repeated number moved
+- [x] TDD `CALLS_RECORD` and `StockCallLog` (D13): capacities, newest first, a repeated number moved
       up, rejected → received, unread missed, durations and their rounding (D12), Erase recent call
       lists, Clear timers; decode drops malformed entries; no `factory`; the stored JSON pinned by a
       snapshot; persistence per Task 0 F.
-- [ ] TDD the network's call half: `createSyntheticNetwork().dial` alerts and connects;
+- [x] TDD the network's call half: `createSyntheticNetwork().dial` alerts and connects;
       `ring(number)` and its `hangUp`; `dialled`; host events applied at the next tick, after the
       link times (D10); events after the end ignored; power-off hangs up; a `ring` while off,
       booting or in a call (D5 rules).
-- [ ] `timestamp.ts`: the call stamp (plan 21's phone time plus the counted seconds, or the parsed
+- [x] `timestamp.ts`: the call stamp (plan 21's phone time plus the counted seconds, or the parsed
       host strings, D11) and Time of call's format (both Time formats per Task 0 R).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): dial strings, the call log record and the network's calls`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): dial strings, the call log record and the network's calls`.
 
 ### Task 7 - Standby number entry and the key hand-over (TDD against goldens)
 
@@ -908,26 +908,26 @@ features index and widget-model union (one line each), `src/firmware/phone.ts`,
 `src/firmware/leaves.ts`, `src/widgets/{note,option-list,level-bar}.ts` ("Shared-file edits"),
 `tests/dialling.test.ts` (new).
 
-- [ ] The entry widget: S1 layouts from literal models against `calls/entry-length-*`; keys through
+- [x] The entry widget: S1 layouts from literal models against `calls/entry-length-*`; keys through
       `dial-string.ts`; the `*` commit and held C timed by the widget (plan 18 D5's pattern); C on
       the last character exits (the operator's late redraw as captured); ▲/▼ soft keys; Save
       (plan 19's add flow, D14), Convert (plan 20, D14); DTMF through `keyDtmf` (Task 5).
-- [ ] Holds: `1` (voice mailbox from `messages/voice-mailbox-number`), 2-9 (Speed dialling and plan
+- [x] Holds: `1` (voice mailbox from `messages/voice-mailbox-number`), 2-9 (Speed dialling and plan
       19's `speedDial`), the rest as taps; `N#` (plan 19's location lookup, or `No phone numbers`),
       `*#06#`, `*#0000#`.
-- [ ] Call: `dialOutcome` → the Calling flow (Task 8), `Speed dial number not saved`, `Invalid
+- [x] Call: `dialOutcome` → the Calling flow (Task 8), `Speed dial number not saved`, `Invalid
 phone number`, emergency, a service string → a placeholder owned by `22b`.
-- [ ] `createStockPhone`: `standbyEntry` with the dial keys; the hand-over (S10) in `invalidShortcut`,
+- [x] `createStockPhone`: `standbyEntry` with the dial keys; the hand-over (S10) in `invalidShortcut`,
       notes, option lists and the Level page (D2).
-- [ ] TDD through keys against `calls/entry-*`, `calls/handover-*`, plan 14's `shortcut-m1-8-1`,
+- [x] TDD through keys against `calls/entry-*`, `calls/handover-*`, plan 14's `shortcut-m1-8-1`,
       `-m1-8-1-2`, `-m1-9-c` and plan 23's `level-keys-digit-1` (pixels exact; timelines ±2 ms, or
       plan 14 closeout decision 2's stated tolerance where a scenario replays another recording).
-- [ ] Flip those four goldens and plan 16's two keypad goldens (Task 5) to `asserted` (one status
+- [x] Flip those four goldens and plan 16's two keypad goldens (Task 5) to `asserted` (one status
       line each in `tree-capture-set.ts`, `game-capture-set.ts`, `sound-capture-set.ts`), add their
       scenarios to plans 14, 16 and 23's acceptance files by one spread line each, rerun
       `import-captures` (only their index statuses change).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): standby number entry and DTMF`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): standby number entry and DTMF`.
 
 ### Task 8 - Calls: dialling, ringing and the in-call screens (TDD against goldens)
 
@@ -936,14 +936,14 @@ phone number`, emergency, a service string → a placeholder owned by `22b`.
 `src/display/standby.ts` (one call), `src/widgets/snake.ts` (if Task 0 I), plan 19's `Call`
 placeholders (`features/phone-book.ts`, D14), `tests/calls.test.ts` (new).
 
-- [ ] `StockTelephone` per phone: dials through the port, applies its events and link times, keeps
+- [x] `StockTelephone` per phone: dials through the port, applies its events and link times, keeps
       the call's state, writes the log (dialled at Call, received at Answer or reject, missed at a
       release before Answer) and the duration (D12).
-- [ ] Outgoing flow: Calling → alerting (`Call 1` or the name from plan 19's `byNumber`) with the
+- [x] Outgoing flow: Calling → alerting (`Call 1` or the name from plan 19's `byNumber`) with the
       ringback → connected → End/C/Options/the network's end, as S11-S15; `112`.
-- [ ] In-call keys: Volume (an earpiece level kept for the session, or stored per Task 0 M), DTMF
+- [x] In-call keys: Volume (an earpiece level kept for the session, or stored per Task 0 M), DTMF
       digits and their display, `Options` and its three entries, power (plan 17's list, D14).
-- [ ] Incoming: `subscribeCalls` → the telephone offers the ringing flow to the `interruption` poll
+- [x] Incoming: `subscribeCalls` → the telephone offers the ringing flow to the `interruption` poll
       after `RING_LINK_MS` (D4); the screen,
       `ring(prefix)` (D9), Answer, C, keys while ringing (S20); missed → the notice through
       `setNotice({ text, softkey: "List", open })` (plan 18) and its icon; `List` → `<n> new
@@ -951,10 +951,10 @@ numbers` → Missed calls.
 - [ ] Bind plan 19's `Call` placeholders and held 2-9/1 to `dial` (if plan 19 has landed); flip its
       `pending:22` call and hold goldens (status lines in `19-phone-book.ts`, one spread line in
       plan 19's acceptance file).
-- [ ] TDD through keys and the synthetic network against `calls/dial-*`, `net-end-*`, `in-call-*`,
+- [x] TDD through keys and the synthetic network against `calls/dial-*`, `net-end-*`, `in-call-*`,
       `ring-*`, `missed-*`, `interrupt-*` and the sound goldens.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): dialling, incoming calls and the in-call screens`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): dialling, incoming calls and the in-call screens`.
 
 ### Task 9 - The call register (TDD against goldens)
 
@@ -963,18 +963,18 @@ numbers` → Missed calls.
 painter (new), `src/firmware/phone.ts` (▲: `STOCK_STANDBY_KEYS.up`), `tests/call-register.test.ts`
 (new).
 
-- [ ] 4-1…4-3: opening notes (`<n> new numbers`, `No new numbers`, `No numbers`), the entry view,
+- [x] 4-1…4-3: opening notes (`<n> new numbers`, `No new numbers`, `No numbers`), the entry view,
       ▲/▼ wrapping, Options (opens on Call; Time of call, Edit number → plan 18's `numberEntry` →
       the standby entry with the number, Save → plan 19, Erase → `Erase?` → `Erased`, Call, Send
       SMS → plan 18's editor; placeholders per D14).
-- [ ] Standby ▲: the dialled list as plan 19's standby-key application with `Call`, or `No last
+- [x] Standby ▲: the dialled list as plan 19's standby-key application with `Call`, or `No last
 dialled numbers` (D3); flip plan 19's `phone-book/standby-up` (as Task 8's flips).
-- [ ] 4-4 erases the chosen lists (plan 14's notes keep their goldens); 4-5's pages read the log;
+- [x] 4-4 erases the chosen lists (plan 14's notes keep their goldens); 4-5's pages read the log;
       4-5-5's accepted flow (plan 15) also zeroes the durations.
-- [ ] TDD through keys against `calls/list-*`, `options-*`, `erase-*`, `duration-*`, `persist-*` and
+- [x] TDD through keys against `calls/list-*`, `options-*`, `erase-*`, `duration-*`, `persist-*` and
       plan 19's `standby-up`; plan 14's empty-register goldens still pass.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): the call register and standby ▲`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): the call register and standby ▲`.
 
 ### Task 10 - Acceptance and the coverage guard
 
@@ -982,18 +982,18 @@ dialled numbers` (D3); flip plan 19's `phone-book/standby-up` (as Task 8's flips
 `tests/support/calls.ts` (new: the scenarios, a `ring(number, atMs)` rig helper over the synthetic
 network), `tests/support/rig.ts` (a `network` option, if plans 18/19 did not add it).
 
-- [ ] `acceptancePlan({ plan: "22", scenarios, knownGaps, timeoutsMs })`: a hand-written scenario for
+- [x] `acceptancePlan({ plan: "22", scenarios, knownGaps, timeoutsMs })`: a hand-written scenario for
       every golden in `goldens/index/22.json` (navigate as the capture did; keys on the ticks their
       redraws start; network events at the capture's command times); delete `awaitsPlan22Scenario`.
       The flipped goldens of plans 14, 16, 19 and 23 run in their own plan files (Tasks 5, 7-9).
 - [ ] Coverage guard: no golden or placeholder names `22`; nodes 4-1…4-5 are covered by asserted
       goldens with content and without.
-- [ ] Every asserted golden passes (pixels exact; timelines ±2 ms after alignment, or the stated
+- [x] Every asserted golden passes (pixels exact; timelines ±2 ms after alignment, or the stated
       tolerance where a scenario replays another recording's timing). New `KNOWN_GAPS` need a
       reason.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report the
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report the
       suite's run time.
-- [ ] Commit: `test(nokia-os): drive number entry, calls and the register against their goldens`.
+- [x] Commit: `test(nokia-os): drive number entry, calls and the register against their goldens`.
 
 ### Task 11 - Demo, README, verification gate and closeout
 
@@ -1006,14 +1006,53 @@ network), `tests/support/rig.ts` (a `network` option, if plans 18/19 did not add
       the `[role=status]` line, Skip boot): type a number, ▲/▼ soft keys, Call, End; an incoming call
       over a menu, Answer, End, back to the menu; a missed call, `List`; Call register lists and Time
       of call; standby ▲; DTMF in the event log.
-- [ ] README: number entry, the call port (a host sketch with no telephony code), the `calls`
+- [x] README: number entry, the call port (a host sketch with no telephony code), the `calls`
       record, what 22b adds.
-- [ ] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
+- [x] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
       `git diff --stat <commit before Task 1> -- website/` is empty.
-- [ ] `docs/specs/stock/calls.md`: replace "(plan 22, in progress)" with verified facts; list what
+- [x] `docs/specs/stock/calls.md`: replace "(plan 22, in progress)" with verified facts; list what
       stays UNVERIFIED.
-- [ ] Plans README: row 22 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete number entry, calls and the call register (plan 22)`.
+- [x] Plans README: row 22 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete number entry, calls and the call register (plan 22)`.
+
+### Completion notes — 2026-10-15
+
+- **Commits** (branch `t3/p22-calls`): phone-core's seams (plans 19 and 21 merged in, then
+  `standbyEntry`, `exit({ to: "standby", key })`, `onInterrupted`), docs, goldens, resources,
+  sounds (Task 5), the pure modules (Task 6), the firmware (Tasks 7-9 in one commit: the entry,
+  the telephone and the register share `phone.ts` and the dialling feature), acceptance (Task 10),
+  demo and docs (Task 11).
+- **Acceptance.** All 268 plan 22 goldens are asserted (8 stay `pending:19`/`pending:22b`), each
+  replaying its capture's transcribed script (`tests/support/call-scripts.ts`, generated once
+  from `gen_v639_plan22.py`) over the synthetic cell; 251 pass and 17 are known gaps with their
+  causes (`CALLS_KNOWN_GAPS`): the cell's timing in four interruption and dial recordings, the T9
+  dictionary's word in the three editor interruptions, phone-core's notice and held-C handling
+  (three), Snake II's 35 ms erase (two), the number prompt's blink phase, and five sound details
+  (Ascending's ramp ×2, keys while ringing, End's extra tones, held `1`'s 1750 Hz tone).
+- **Scenario conventions (Deviation).** A ring is aligned on its ringing screen and the recording's
+  later events keep their time from the golden's ringing screen (the cell's paging delay varies
+  1662-2116 ms); a later key goes down on the golden row its effect starts (within 120 ms, 30 ms
+  ahead of it); a setup tap's redraw follows it by 60 ms (timers it starts, a prompt's blink, run
+  that much later); held C in a setup is held again until standby (phone-core swallows a key held
+  across an exit, as plan 20's `caseRig`). Recordings ending in the patched network's missing
+  signal ladder are cut before it (`frames`, three dial recordings).
+- **Other plans' goldens.** Plan 14's four shortcut probes (two known gaps), plan 16's
+  `keypad/hold`, plan 18's six (Use number opens the standby entry with the number; the notice's
+  ▲, digit and `#`), plan 20's 28 Options escapes and plan 23's Level digit are asserted in their
+  plans' files by one spread line each. `sound/keypad/keys` and `sms/notice-down` are plan 19's
+  (▼ at standby is the phone book): `pending:19`. **Open:** plan 25's 17 call goldens
+  (`keyguard/call*`, `keyguard/emergency-call`, `lights/arrival/call*`, `lights/keyguard/emergency-call`,
+  the `*` after the lock window) stay `pending:22`: they need the keyguard to pass a call's keys,
+  `KeyguardCalls.dial` wired to the telephone and the lights held during a call — a follow-up.
+- **Shared-file edits beyond the plan's list.** `standbyKeyDelayMs: 23` in `phone.ts` (plan 19's
+  value; `handover/notice-up`), `NoteOptions.next`/`endOnDown` and unpaired-release handling in
+  `note.ts`, `ConfirmOptions.tops`, `InfoScreenOptions.large`, `Widget.interrupted` in `flow.ts`,
+  `KeyDownOptions`-free `keyBeepWord`/`keySilent` on the sounder, `powerListWidget` in
+  `profiles.ts`, an `accept` hook on the security code's note flow, `levelPage` exported from
+  `tests/support/game.ts`, and `network` exported from the demo's messages panel.
+- **Not done.** The demo was not driven in a browser (no headless browser in this session; the
+  panel builds and the dev server serves it). Plan 19's `Call` placeholders are not bound (plan 19
+  is not on main); `TelephoneDeps.nameOf` is the seam for its names.
 
 ## Plan 22b (written when scheduled): Calls II, network services and costs
 
