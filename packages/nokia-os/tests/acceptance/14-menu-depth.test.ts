@@ -192,6 +192,9 @@ const SCENARIOS: Record<string, Scenario> = {
     timeline(id, after("navi down*7 navi down*4 navi down*3"), "navi", [[2, "c"]]),
   "probe/confirm-8-6-4-ok": (id) =>
     timeline(id, after("navi down*7 navi down*4 navi down*3"), "navi", [[2, "navi"]]),
+  // Plan 21: Erase › All empties the reminder memory; the level then lists Add new only.
+  "probe/confirm-10-3-2-yes": (id) =>
+    timeline(id, after("navi down*9 navi down*2 navi down"), "navi", [[2, "navi"]]),
   "probe/prompts-1-1": (id) => timeline(id, after(PHONE_BOOK), "navi", [[2, "c"]]),
   "probe/prompts-1-9": (id) => timeline(id, after(`${PHONE_BOOK} down*8`), "navi", [[2, "c"]]),
   "probe/prompts-6-4": (id) => timeline(id, after("navi down*5 navi down*3"), "navi", [[2, "c"]]),

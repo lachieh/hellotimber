@@ -13,6 +13,13 @@ import { Framebuffer } from "@hellotimber/phone-screen";
 import { paintWidget, type WidgetModel } from "../display/widgets";
 
 /** What a widget may do to the flow that hosts it. */
+/** How Flow.back leaves the menus when it exits the flow. */
+export interface BackOptions {
+  readonly select?: string;
+  readonly row?: "top" | "bottom";
+  readonly endHolds?: boolean;
+}
+
 export interface Flow {
   /** Show `widget` above the current one; its `back()` returns here. */
   push(widget: Widget): void;
@@ -22,10 +29,10 @@ export interface Flow {
    * Close `levels` widgets (default 1). Past the last one the flow exits to the menu, closing
    * the remaining levels there too (`back(2)` from a list opened by a submenu: two levels up),
    * and selecting the child `select` (a slug) in the level it returns to, placed on the window's
-   * bottom row or, with `row: "top"`, its top row. `select` is ignored when the flow does not
-   * exit.
+   * bottom row or, with `row: "top"`, its top row; `endHolds`: keys held now lose their long
+   * press too (phone-core ExitOptions). Both are ignored when the flow does not exit.
    */
-  back(levels?: number, options?: { select?: string; row?: "top" | "bottom" }): void;
+  back(levels?: number, options?: BackOptions): void;
   /** Leave the menus for standby. */
   standby(): void;
   /** Switch the phone off (plan 17: the power key's Switch off!); absent outside a phone. */
@@ -178,7 +185,7 @@ class FlowSession implements PhoneApplicationSession, Flow {
     this.#stack.push(widget);
   }
 
-  back(levels = 1, options: { select?: string; row?: "top" | "bottom" } = {}): void {
+  back(levels = 1, options: BackOptions = {}): void {
     if (this.#closed) return;
     if (!Number.isInteger(levels) || levels < 1) {
       throw new Error(`back levels must be a positive integer (received ${levels}).`);
@@ -197,6 +204,7 @@ class FlowSession implements PhoneApplicationSession, Flow {
       ...(beyond === 0 ? {} : { levels: beyond + 1 }),
       ...(options.select === undefined ? {} : { select: options.select }),
       ...(options.row === undefined ? {} : { row: options.row }),
+      ...(options.endHolds === true ? { endHolds: true } : {}),
     };
     this.#context.exit(Object.keys(exit).length === 0 ? undefined : exit);
     this.#closed = true;

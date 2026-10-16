@@ -6,12 +6,21 @@ import { PhoneApplication } from "../src/index";
 import type { ApplicationContext, PhoneApplicationSession } from "../src/index";
 import { bootedPhone, testMenu } from "./fixtures";
 
-/** An application that exits at C's down. */
+/** An application that exits at C's down (`endHolds`: ending the hold too). */
 class LeavesAtDown extends PhoneApplication {
+  constructor(
+    id: string,
+    readonly endHolds = false,
+  ) {
+    super(id);
+  }
+
   createSession(context: ApplicationContext): PhoneApplicationSession {
     return {
       onKey: (event) => {
-        if (event.type === "down" && event.key === "c") context.exit();
+        if (event.type === "down" && event.key === "c") {
+          context.exit(this.endHolds ? { endHolds: true } : undefined);
+        }
       },
       tick: () => {},
       render: () => ({ kind: "confirm", text: "Names", softkey: "OK" }),
@@ -19,8 +28,8 @@ class LeavesAtDown extends PhoneApplication {
   }
 }
 
-function inApplication() {
-  const phone = bootedPhone({ menu: testMenu(new LeavesAtDown("write-message")) });
+function inApplication(endHolds = false) {
+  const phone = bootedPhone({ menu: testMenu(new LeavesAtDown("write-message", endHolds)) });
   // bootedPhone powered on with a 1000 ms press: the phone's clock is there.
   let now = 1000;
   phone.navigate("menu/messages/write");
@@ -45,5 +54,14 @@ describe("a key held across an application's exit", () => {
     expect(phone.path).toBe("standby");
     phone.send({ type: "up", key: "c" });
     expect(phone.path).toBe("standby");
+  });
+
+  it("with endHolds loses the long press too: C held stays on the level (plan 21)", () => {
+    const { phone, advance } = inApplication(true);
+    phone.send({ type: "down", key: "c" });
+    advance(900);
+    expect(phone.path).toBe("menu/messages");
+    phone.send({ type: "up", key: "c" });
+    expect(phone.path).toBe("menu/messages");
   });
 });

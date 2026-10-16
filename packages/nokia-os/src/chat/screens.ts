@@ -22,7 +22,7 @@ import {
   t9Context,
 } from "../messages/write";
 import { editor, type EditorControl } from "../widgets/editor";
-import type { Flow, Widget } from "../widgets/flow";
+import type { BackOptions, Flow, Widget } from "../widgets/flow";
 import { HeldC } from "../widgets/held-c";
 import { pickNumber } from "../phone-book/flows";
 import { numberEntry } from "../widgets/number-entry";
@@ -271,7 +271,7 @@ class ChatWidget implements Widget, Flow {
     this.#stack.push(widget);
   }
 
-  back(levels = 1, options: { select?: string; row?: "top" | "bottom" } = {}): void {
+  back(levels = 1, options: BackOptions = {}): void {
     const popped = Math.min(levels, this.#stack.length);
     for (const widget of this.#stack.splice(this.#stack.length - popped).reverse()) {
       widget.close?.();

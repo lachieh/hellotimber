@@ -21,7 +21,10 @@ Welcome note editor, Write messages, Inbox and Outbox work over a host network p
 "Text entry and SMS"), and Write messages writes in T9 with an English dictionary built from an
 open word list (plan 18b; see "T9 predictive text"). The SIM card's phone book (names, Service
 Nos., speed dials, assigned tones, Send b'card) works over the SIM a host inserts (plan 19; see
-"The phone book"). Leaves that are whole applications open a marked
+"The phone book"). The Clock and Reminders run on the host's clock: Clock settings, Date setting,
+Auto update, the alarm, the countdown timer, the stopwatch and the reminder memory, with their
+alerts at standby (plan 21; see "Clock, alarm, timers and Reminders"). Leaves that are whole
+applications open a marked
 placeholder (a dotted border the firmware never draws) naming the plan that owns them; see "Leaf
 ownership".
 
@@ -81,7 +84,8 @@ Arrows ▲/▼, Enter Navi, Backspace or Escape C (hold it to return to standby)
 `#`, and `P` power (as long as it is held; the Power button holds 1 s while the phone is off and
 taps while it is on, so at standby it opens the profile list). The buttons do the same. In Snake II the digits steer (2/4/6/8,
 and 1/3/7/9 relative), ▲/▼ and `*`/`#` turn, Enter or Escape suspend the game. The demo validates
-the operator name, can skip the boot, and shows the phone's path, screen kind and application in
+the operator name, can skip the boot, moves the host clock on (**Host clock**: +1 min, +10 min,
++1 h, Reset; the status line shows it and the times of the last alerts), and shows the phone's path, screen kind and application in
 a status line with the EEPROM records stored and the active profile (its name, the standby line
 and the silent icon when shown). The phone's EEPROM is the page's localStorage:
 settings survive a reload, and **Erase EEPROM** removes every `nokia-os/` record and restarts the
@@ -160,6 +164,74 @@ node, the leaves it leaves to a later plan's placeholder, the generic widgets' t
 layouts, note styles and ends, query results, setter levels), its settings (virgin and factory
 values, aliases) and its EEPROM records. The demo's controls are panels the same way
 (`demo/panels/`).
+
+## Clock, alarm, timers and Reminders
+
+**The clock contract (D1).** The host's `clock` (`HH:MM`, 24-hour) and `date` (`DD.MM.YYYY`) are
+the phone's real-time clock. nokia-os reads them on every tick and never reads a wall clock of its
+own. A value that does not parse (`24:00`, `9:5`, `31.02.2026`, `undefined`) counts as no time:
+standby shows no clock, the Clock pages show `--:--` and `--.--.----`, Alarm clock, Date setting
+and Reminders › Add new say `Clock needs to be set first`, and alarms and reminders stay dormant.
+Nothing throws. The phone's time is the host's plus a signed minute offset kept in the EEPROM
+(the internal `clock` record): Set the time and Date setting move the offset, never the host, and
+Auto update `On` clears it at power-on (`Date and time updated` when that changed the time;
+`Confirm first` asks `Update date and time of the phone?` at standby). With no offset the phone
+shows the host's strings exactly. A host that wants a fixed zone formats its strings in that zone:
+
+```ts
+const brisbane = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Australia/Brisbane",
+  hour: "2-digit",
+  minute: "2-digit",
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  hourCycle: "h23",
+});
+const part = (type: string) =>
+  brisbane.formatToParts(new Date()).find((p) => p.type === type)!.value;
+createStockPhone({
+  clock: () => `${part("hour")}:${part("minute")}`, // "07:59"
+  date: () => `${part("day")}.${part("month")}.${part("year")}`, // "13.10.2026"
+});
+```
+
+Clock settings › Hide clock (the entry then reads `Show clock`) and Time format (12-hour: `hh:mm`
+and an am/pm mark on standby, `10:10 am` on the page) are kept in the EEPROM; Restore factory
+settings shows the clock and sets 24-hour, and keeps the alarm, the offset and the reminders.
+
+**Minute edges and alerts (D2, D3).** On the first tick whose phone time is a new minute, the
+alarm rings if the minute is its time (or its snooze's), and every reminder whose date and time
+have come (a jump over its minute included) alerts, the later-added first. Setting the time, the
+date or the alarm fires nothing by itself; a backwards jump re-fires nothing. v6.39 shows no
+alert over anything: an alert that falls due away from standby waits until the phone next shows
+standby (Snake II pauses to its menu), and alerts show one at a time, through phone-core's opt-in
+`PhoneConfig.interruption`. The alarm rings with `Alarm!` and its time blinking (Snooze: `Snooze
+active`, it rings again 5 minutes later rounded up to a minute; untouched for a minute it snoozes
+itself; any other key stops it, and it is a one-shot). A reminder shows its text with `Snooze`
+(`Alarm postponed for 10 min`, then it alerts again 10 minutes later; any other key ends it).
+The countdown's `Countdown time up` steps its bells until a key. Each alert plays its captured
+program on the sound port (its volume climbing as Ringing volume Ascending does).
+
+**Wake (D4).** While the phone is off, the alarm's minute switches it on without the boot
+(phone-core's opt-in `PhoneConfig.wake`): the ringing alarm, then `Activate phone for calls?`
+(Yes: the normal power-on; No: off again). The emulator cannot run while off, so this flow is
+composed from captured screens and the firmware's strings and is UNVERIFIED (D12).
+
+**Timers (D5).** The countdown and the stopwatch run on kernel time with nominal durations (the
+emulator's timer unit runs ≈2.9 % fast, an artefact). The countdown shows the time left rounded
+up to a minute and its standby icon; the stopwatch (Start, Stop, Options › Start, Reset, Exit)
+keeps running while the phone is elsewhere, redraws every 100 ms and blinks its standby
+indicator. Both are RAM: a power-off loses them. Standby's `StandbyIndicators` gain `alarm`,
+`timer` and `stopwatch`.
+
+**Reminders.** Up to 10 reminders (35 characters, with or without an alarm date and time) live in
+the EEPROM's internal `reminders` record; Restore keeps them. The virgin EEPROM holds the
+firmware's junk reminder, dormant (D8): it keeps View all and Erase listed until Erase › All.
+There is no host API to add reminders: a host's only route would be writing that internal record
+into the storage before the phone starts, which is not a supported contract. Reminder Send asks
+for the `Phone number:` (Search: the phone book's names); the Smart Messaging transmission after it
+is a placeholder.
 
 ## Storage, settings and the security code
 
@@ -332,8 +404,8 @@ requestAnimationFrame(loop);
   previews, warning tones on error notes, Snake II's sounds and shakes.
 - **Later plans.** An arriving SMS plays the active profile's Message alert tone (plan 18; the
   Tones settings follow the active profile, plan 17). The incoming call's ringing and DTMF (22),
-  alarms and reminders (21), the other games' sounds (24) and the Composer (27) play
-  through the same sequencer.
+  the other games' sounds (24) and the Composer (27) play through the same sequencer, as the
+  alarm's, the countdown's and the reminders' alerts do (21).
 
 ## Lights and the keyguard
 
@@ -643,8 +715,9 @@ exemption is needed.
 
 Leaves that are whole applications open the placeholder, tagged with the plan that owns them:
 Picture messages and Screen saver › Screen saver (18c); the three
-native languages (26); the other games' New game (24); Calculator (20); Stopwatch (21). Prompts and empty-state notes show their first screen until the plans for Phone book (19), Clock and Reminders (21) and Call register and Call divert (22) take them
-over.
+native languages (26); the other games' New game (24); Calculator (20). Prompts and empty-state
+notes show their first screen until the plans for Phone book (19) and Call register and Call
+divert (22) take them over.
 
 ## Capture artefacts
 
@@ -656,7 +729,8 @@ The emulator's virgin EEPROM and synthetic network leave marks that the OS does 
 | Security-code prompt at every virgin power-on  | reproduced as the Phone security gate (new SIM)    |
 | In-menu `Code error` for `12345`               | never recorded; wrong-code goldens use `00000`     |
 | Clock wizard after the boot                    | not imported; the boot ends at standby             |
-| First standby `Snooze` prompt                  | not imported                                       |
+| First standby `Snooze` prompt                  | the junk reminder's alert; the entry kept dormant  |
+| The time of day never advances; dormant alarm  | the host clock is the RTC; captures use `settime`  |
 | Profiles slot 6 name                           | two U+E000 boxes, as captured                      |
 | Page values (`Level 1`, `Off`, …)              | the virgin EEPROM (empty storage)                  |
 | Unset tone lists, `Top score: 45`, score IDs   | the virgin EEPROM (empty storage)                  |

@@ -2,8 +2,10 @@ import {
   createPhone,
   type KeyEvent,
   type Phone,
+  type PhoneApplication,
   type PhoneKey,
   type PhoneSnapshot,
+  type ScreenModel,
 } from "@hellotimber/phone-core";
 import type { StockServices } from "./features/feature";
 import { VISIBLE_ROWS } from "../display/list-rows";
@@ -37,9 +39,17 @@ import {
   standbySilent,
 } from "./features/profiles";
 import { createStockSettings } from "./settings";
+import { autoUpdate } from "./features/clock";
+import { phoneAlarm } from "./features/clock/alarm";
+import { phoneCountdown } from "./features/clock/countdown";
+import { phoneStopwatch } from "./features/clock/stopwatch";
+import { phoneReminders } from "./features/reminders/service";
+import { registerClock } from "./features/clock/registry";
+import { StockClock } from "./features/clock/service";
 import { StockLightRules, StockLights, type StockLightsPort } from "./features/backlight";
 import { KeyguardOverlay } from "./features/keyguard";
 import type { StockSoundPort } from "../sound/port";
+import type { StockGames } from "../widgets/snake";
 import { NO_T9_VIRGIN_CHOICES } from "../messages/bindings";
 import type { T9Dictionary } from "../text/t9/dictionary";
 import { stockT9 } from "../text/t9/service";
@@ -154,7 +164,11 @@ export function createStockPhoneWith(
   let now = 0;
   const security = new StockSecurity(eeprom, settings, { now: () => now, sim });
   const skip = config.boot === "skip";
-  const ports = { clock, date };
+  // Plan 21 D1: the phone's time is the host's clock plus its own offset; the menu, its pages
+  // and the games read the phone's time.
+  const phoneTime = new StockClock({ host: { clock, date }, settings, eeprom, now: () => now });
+  registerClock(eeprom, settings, phoneTime);
+  const ports = phoneTime.ports;
   const port = config.sound;
   const sequencer = new SoundSequencer((event) => port?.change(event));
   // Plan 27 (D8): the Composer's saved tones are Ringing tone options 35-41.
@@ -180,10 +194,12 @@ export function createStockPhoneWith(
     now: () => now,
   });
   const clockGames = createStockGames(ports, () => now);
-  const games = {
+  const games: StockGames = {
     ...clockGames,
     ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
     cues: lightRules.cues(internals.cues ?? sounder),
+    // Plan 21: an alert falling due pauses Snake II (it shows at standby, D3).
+    events: () => phoneTime.alerts.queued,
   };
   const messaging = stockMessaging(
     eeprom,
@@ -204,8 +220,14 @@ export function createStockPhoneWith(
     t9,
     phoneBook,
   );
+  // Plan 21: the clock's features over this phone's services (the alarm's minute listener, the
+  // countdown's expiry).
+  const alarm = phoneAlarm(services);
+  const countdown = phoneCountdown(services);
+  const stopwatch = phoneStopwatch(services);
   // Plan 17 D7: the power key's list, over the same services as the menu's leaves.
   const power = new PowerListState();
+  const reminders = phoneReminders(services);
   const phone = createPhone({
     menu: createStockMenu(
       ports,
@@ -220,17 +242,28 @@ export function createStockPhoneWith(
     ),
     // Plan 18 D11: the envelope while Inbox holds unread messages, blinking while every slot is
     // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED). Plan 17 D6: the silent
-    // icon while the active profile's Incoming call alert is Off.
+    // icon while the active profile's Incoming call alert is Off. Plan 21 D10: the alarm, timer
+    // and stopwatch indicators.
     standbyIndicators: () => {
       const store = messaging.store;
       const message = store.full() ? Math.floor(now / FULL_BLINK_MS) % 2 === 0 : store.unread() > 0;
       const silent = standbySilent(settings);
-      return message || silent
-        ? { ...(message ? { message: true } : {}), ...(silent ? { silent: true } : {}) }
-        : undefined;
+      // The kernel keeps only the flags that are true.
+      return { message, silent, ...phoneTime.indicators() };
     },
     carrier: config.carrier,
-    ...(clock === undefined ? {} : { clock }),
+    // Plan 21 D10: standby shows the phone's time, hidden or 12-hour as Clock settings say.
+    clock: () => phoneTime.standbyClock(),
+    // Plan 21 D3: the clock's alerts, when the phone shows standby.
+    interruption: (): PhoneApplication | undefined =>
+      phoneTime.alerts.interruption(() => {
+        if (standbySince !== undefined) return standbySince;
+        // Standby reached within this tick (an alert's exit) counts from now.
+        const screen: ScreenModel = phone.screen;
+        return screen.kind === "standby" && !screen.leaving ? now : undefined;
+      }),
+    // Plan 21 D4: the alarm switches a powered-off phone on.
+    wake: () => alarm.wake(),
     bootTimeline: BOOT_TIMELINE,
     ...(skip ? { bootMs: 0 } : {}),
     // Plan 15 D9: the security code and the welcome note hold the boot after the self-test.
@@ -263,6 +296,8 @@ export function createStockPhoneWith(
       lights.activity();
     }
   });
+  // When standby was last drawn (kernel time), while it is on screen (plan 21 D3).
+  let standbySince: number | undefined;
   // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
   // Plan 25: the light tick runs from the power-on; the boot lights the LEDs at the self-test's
   // first frame and again where the firmware shows its clock prompt (nokia-os: standby).
@@ -278,9 +313,15 @@ export function createStockPhoneWith(
     if (snapshot.poweredOn !== poweredOn) {
       poweredOn = snapshot.poweredOn;
       booting = poweredOn;
+      alarm.power(poweredOn);
+      countdown.power(poweredOn);
+      stopwatch.power(poweredOn);
+      reminders.power(poweredOn);
       if (poweredOn) {
         sounder.powerOn({ boot: !skip });
         lights.powerOn(now);
+        // Plan 21 D13: Auto update of date and time at the end of power-on.
+        autoUpdate(services);
       } else {
         sounder.powerOff();
         lights.powerOff();
@@ -377,6 +418,10 @@ export function createStockPhoneWith(
     tick(nowMs) {
       // The kernel time the games stamp their cues and the sounder its sounds with.
       now = Math.max(now, nowMs);
+      phoneTime.tick();
+      const screen = phone.screen;
+      if (screen.kind !== "standby" || screen.leaving) standbySince = undefined;
+      else standbySince ??= now;
       messaging.tick(now);
       phone.tick(nowMs);
       sounder.tick();
