@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/sms-inbox-open
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sms/inbox/open
 source-sha256: abb6ab1f45adf5b4eb3e02eb8c8e51302b8bcbbaa5337699ac24f0a61e06c573
 trigger-frame: 1

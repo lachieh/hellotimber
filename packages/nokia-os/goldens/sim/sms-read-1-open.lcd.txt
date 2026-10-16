@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/sms-read-1-open
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sms/read/1/open
 source-sha256: ef38619c594af7d0c20834e796055d12d938ed8dd148d00799a88e405253c00a
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/names-digits
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/names/digits/0061412345678.png + captures/6.39/plan30/names/digits/0123456.png + captures/6.39/plan30/names/digits/0312345678.png + captures/6.39/plan30/names/digits/0402345678.png + captures/6.39/plan30/names/digits/0412345678.png + captures/6.39/plan30/names/digits/0412345679.png + captures/6.39/plan30/names/digits/0412945678.png + captures/6.39/plan30/names/digits/0413345678.png + captures/6.39/plan30/names/digits/0498765432.png + captures/6.39/plan30/names/digits/123456.png + captures/6.39/plan30/names/digits/12345678.png + captures/6.39/plan30/names/digits/23456.png + captures/6.39/plan30/names/digits/2345678.png + captures/6.39/plan30/names/digits/412345678.png + captures/6.39/plan30/names/digits/44412345678.png + captures/6.39/plan30/names/digits/4498765432.png + captures/6.39/plan30/names/digits/498765432.png + captures/6.39/plan30/names/digits/5412345678.png + captures/6.39/plan30/names/digits/61412345678.png + captures/6.39/plan30/names/digits/61498765432.png + captures/6.39/plan30/names/digits/9123456.png + captures/6.39/plan30/names/digits/98765432.png
 source-sha256: c82c75f453bc45f6c31e0cdd7a943f574a00e383926e32985ebdf9156a9fe42c
 note: SIM names2 (Ann 0412345678, Zed +61498765432, Sam 123456): one arrival per image (its number), the Inbox list: the last-9-digits rule.

@@ -806,12 +806,22 @@ arrivals at 10/15/30 slots.
 **Files:** `src/messages/read.ts` ("Shared-file edits"), plan 18c's chat screens (one call, if
 landed), `tests/sim-names.test.ts` (new).
 
-- [ ] If Task 0 N found no names: record the finding in the spec, delete this task's rows from the
+- [x] If Task 0 N found no names (it found them: not applicable): record the finding in the spec, delete this task's rows from the
       capture set (none were imported), skip to the commit with docs only.
-- [ ] Otherwise TDD the list, `Sender:`, Details, the notice and Chat's `>` lines through
+- [x] Otherwise TDD the list, `Sender:`, Details, the notice and Chat's `>` lines through
       `StockPhoneBook.byNumber` with Task 0 N's number comparison, against `sim/names-*`; plan 18's
       goldens (numbers not in the phone book) still pass.
-- [ ] Commit: `feat(nokia-os): name SMS senders from the phone book`.
+- [x] Commit: `feat(nokia-os): name SMS senders from the phone book`.
+
+Deviation (Task 5): Chat's `>` lines were not captured (Task 0 N: Chat opens `Chat name:` empty)
+and the arrival notice names nobody, so neither changes; the list, `Sender:` (name line, number
+line) and Details are named. The rule is `sameSubscriber` (`src/phone-book/numbers.ts`), used by
+`StockPhoneBook.byNumber` (exact match first, then the first entry in SIM order that is the same
+subscriber; an entry without a name names nobody), so plan 22's caller names follow it too.
+`names/digits` (22 numbers against Ann, Zed and Sam) is asserted; the shared 9-digit suffix cases
+`sim/names-bob-9digits`, `-bob-k10` and `-bob-plus` are known gaps (v6.39 names nobody there, by no
+rule Task 0 found). Details' `Message centre:` of a network arrival is not imported (plan 18's
+model shows Set 1's centre; the emulator network writes `+1234567890`).
 
 ### Task 6 - The toolkit model and `stockMenuFor` (pure, TDD)
 

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/names-plus-exact
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/names/plus-exact/list.png + captures/6.39/plan30/names/plus-exact/page/02.png + captures/6.39/plan30/names/plus-exact/details/01.png
 source-sha256: 0ee6c26993963737b9fadf0cdbce534d8a42770bfa3b8573076837f9a425fda1
 note: SIM sms, an arrival from +61400000004 (arrives 61400000004): Dave: the Inbox list, Sender: and Details' Sender:.

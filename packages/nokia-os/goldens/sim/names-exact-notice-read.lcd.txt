@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/names-exact-notice-read
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/names/exact/notice-read
 source-sha256: 7b6305ad01f91c120f87c9e9fc1fdeb4bfacb17559bdc0163df44bf78c5929d2
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/sms-read-1
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sms/read/1/page/01.png + captures/6.39/plan30/sms/read/1/page/02.png + captures/6.39/plan30/sms/read/1/page/03.png + captures/6.39/plan30/sms/read/1/page/04.png + captures/6.39/plan30/sms/read/1/page/05.png + captures/6.39/plan30/sms/read/1/details/01.png + captures/6.39/plan30/sms/read/1/details/02.png + captures/6.39/plan30/sms/read/1/details/03.png
 source-sha256: 89c17730e1cdcf437345866fd48119c27f81d737811b28948c75bc3e52315165
 note: SIM sms: Inbox message 1: its pages (text, Sender:, Sent:), then Details (Sender:, Message centre:, Time:).

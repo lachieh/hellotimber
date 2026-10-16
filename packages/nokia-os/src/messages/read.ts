@@ -32,13 +32,20 @@ export const ERASING_MS = 261;
  */
 const PAGE_WIDTH = 85;
 
+/** The phone book name of `number`, if it has one (plan 30 D7, Task 0 N). */
+function nameOf(services: StockServices, number: string): { readonly name?: string } {
+  const name = services.phoneBook.byNumber(number)?.name;
+  return name === undefined ? {} : { name };
+}
+
 /** A message of either box as the screens show it. */
 interface Shown {
   /** Its SIM slot (plan 30): the screens name a message by it. */
   readonly slot: number;
   readonly text: string;
-  /** Inbox only: the sender and the service centre's time stamp. */
+  /** Inbox only: the sender (and its phone book name) and the service centre's time stamp. */
   readonly sender?: string;
+  readonly name?: string;
   readonly sent?: readonly string[];
   readonly centre?: string;
   /** A saved message's number (Reply or Forward), Send's prompt starts with it. */
@@ -60,6 +67,8 @@ function messagesOf(services: StockServices, box: MessageBox): readonly Shown[] 
     slot: m.slot,
     text: m.text,
     sender: m.number,
+    // Plan 30 D7: a sender in the phone book is listed and read under its name.
+    ...nameOf(services, m.number),
     sent: [messageDate(m.sentAt), messageTime(m.sentAt)],
     centre: m.centre,
     read: m.read,
@@ -80,9 +89,15 @@ export function messagePages(message: Omit<Shown, "slot">): readonly (readonly s
   for (let i = 0; i < Math.max(lines.length, 1); i += MESSAGE_PAGE_LINES) {
     pages.push(lines.slice(i, i + MESSAGE_PAGE_LINES));
   }
-  if (message.sender !== undefined) pages.push(["Sender:", message.sender]);
+  if (message.sender !== undefined) pages.push(senderLines(message));
   if (message.sent !== undefined) pages.push(["Sent:", ...message.sent]);
   return pages;
+}
+
+/** `Sender:` and the sender: its name line, then its number (plan 30 D7), or the number alone. */
+function senderLines(message: Omit<Shown, "slot">): readonly string[] {
+  const sender = message.sender ?? "";
+  return message.name === undefined ? ["Sender:", sender] : ["Sender:", message.name, sender];
 }
 
 /** Pages turned by ▲/▼ (wrapping) with a soft key: a message, or its Details. */
@@ -202,7 +217,7 @@ function messageOptions(owner: Box, message: Shown): Widget {
       flow.replace(
         pager(
           [
-            ["Sender:", message.sender ?? ""],
+            senderLines(message),
             ["Message centre:", message.centre ?? ""],
             ["Time:", ...(message.sent ?? [])],
           ],
@@ -290,7 +305,7 @@ class MessageListWidget implements Widget {
     return {
       kind: "message-list",
       rows: messages.map((m) => ({
-        label: this.#owner.box === "inbox" ? (m.sender ?? "") : "Message",
+        label: this.#owner.box === "inbox" ? (m.name ?? m.sender ?? "") : "Message",
         icon: m.read ? "message/read" : "message/unread",
       })),
       selected,

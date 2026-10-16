@@ -10,7 +10,7 @@
   {
     "id": "sim/names-bob-9digits",
     "file": "sim/names-bob-9digits.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -18,7 +18,7 @@
   {
     "id": "sim/names-bob-k10",
     "file": "sim/names-bob-k10.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -26,7 +26,7 @@
   {
     "id": "sim/names-bob-k6",
     "file": "sim/names-bob-k6.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -34,7 +34,7 @@
   {
     "id": "sim/names-bob-k7",
     "file": "sim/names-bob-k7.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -42,7 +42,7 @@
   {
     "id": "sim/names-bob-k8",
     "file": "sim/names-bob-k8.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -50,7 +50,7 @@
   {
     "id": "sim/names-bob-k9",
     "file": "sim/names-bob-k9.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -58,7 +58,7 @@
   {
     "id": "sim/names-bob-plus",
     "file": "sim/names-bob-plus.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -66,7 +66,7 @@
   {
     "id": "sim/names-bob-plus44",
     "file": "sim/names-bob-plus44.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -74,7 +74,7 @@
   {
     "id": "sim/names-digits",
     "file": "sim/names-digits.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 22,
     "frames": 22
@@ -82,7 +82,7 @@
   {
     "id": "sim/names-exact",
     "file": "sim/names-exact.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -90,7 +90,7 @@
   {
     "id": "sim/names-exact-arrive",
     "file": "sim/names-exact-arrive.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -98,7 +98,7 @@
   {
     "id": "sim/names-exact-notice-read",
     "file": "sim/names-exact-notice-read.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -106,7 +106,7 @@
   {
     "id": "sim/names-last-digit",
     "file": "sim/names-last-digit.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -114,7 +114,7 @@
   {
     "id": "sim/names-national-of-plus",
     "file": "sim/names-national-of-plus.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -122,7 +122,7 @@
   {
     "id": "sim/names-plus-exact",
     "file": "sim/names-plus-exact.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -130,7 +130,7 @@
   {
     "id": "sim/names-plus61",
     "file": "sim/names-plus61.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -138,7 +138,7 @@
   {
     "id": "sim/names-unknown",
     "file": "sim/names-unknown.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -162,7 +162,7 @@
   {
     "id": "sim/sms-boot-read",
     "file": "sim/sms-boot-read.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -170,7 +170,7 @@
   {
     "id": "sim/sms-boot-unread",
     "file": "sim/sms-boot-unread.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -178,7 +178,7 @@
   {
     "id": "sim/sms-erase",
     "file": "sim/sms-erase.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 12
@@ -186,7 +186,7 @@
   {
     "id": "sim/sms-erase-after",
     "file": "sim/sms-erase-after.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -194,7 +194,7 @@
   {
     "id": "sim/sms-inbox-list",
     "file": "sim/sms-inbox-list.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -202,7 +202,7 @@
   {
     "id": "sim/sms-inbox-open",
     "file": "sim/sms-inbox-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -226,7 +226,7 @@
   {
     "id": "sim/sms-read-1",
     "file": "sim/sms-read-1.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
@@ -234,7 +234,7 @@
   {
     "id": "sim/sms-read-1-open",
     "file": "sim/sms-read-1-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -250,7 +250,7 @@
   {
     "id": "sim/sms-read-2-open",
     "file": "sim/sms-read-2-open.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3
@@ -266,7 +266,7 @@
   {
     "id": "sim/sms-read-4",
     "file": "sim/sms-read-4.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -274,7 +274,7 @@
   {
     "id": "sim/sms-read-5",
     "file": "sim/sms-read-5.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -282,7 +282,7 @@
   {
     "id": "sim/sms-read-6",
     "file": "sim/sms-read-6.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -290,7 +290,7 @@
   {
     "id": "sim/sms-restore-list",
     "file": "sim/sms-restore-list.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 4,
     "frames": 4

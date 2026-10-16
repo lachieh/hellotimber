@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/sms-restore-list
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sms/restore/list-after/01.png + captures/6.39/plan30/sms/restore/list-after/02.png + captures/6.39/plan30/sms/restore/list-after/03.png + captures/6.39/plan30/sms/restore/list-after/04.png
 source-sha256: 5a91944b0e94689019a0d70c9c76baca95a74690bf20d903c41867ce92c4aca6
 note: SIM sms on the factory image: the Inbox after Restore factory settings keeps every SIM message.

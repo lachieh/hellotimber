@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/sms-boot-unread
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sms/boot/unread-after-c.png + captures/6.39/plan30/sms/boot/unread-inbox.png
 source-sha256: f048e4cabf3a81768d33428bbab5f4b05eff001e850910d956d8b0b868143b23
 note: SIM sms (three unread): standby after power-on shows only the envelope; the Inbox lists the unread first.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/sms-inbox-list
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sms/inbox/list
 source-sha256: d86d0d2f9da56ae483ac25f6cb221f030608a2df9c33a52c058b77e2cbae6404
 note: SIM sms: the Inbox list, ▼ per image: unread (slots 2, 3, 7), then read (slots 1, 5, 9), past the wrap.

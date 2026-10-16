@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/names-last-digit
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/names/last-digit/list.png + captures/6.39/plan30/names/last-digit/page/02.png + captures/6.39/plan30/names/last-digit/details/01.png
 source-sha256: 57e865ba50dda10111cd30fa5172bcb400033bc2a66f12a385c1f7d2ffefa8f8
 note: SIM sms, an arrival from 0400000001: nobody (Ben's number but the last digit): the Inbox list, Sender: and Details' Sender:.

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/names-bob-k7
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/names/bob-k7/list.png + captures/6.39/plan30/names/bob-k7/page/02.png + captures/6.39/plan30/names/bob-k7/details/01.png
 source-sha256: ef58533d533ac3fe5de0391a4a26c2e537cb8b84526705273809379296af3ce4
 note: SIM sms, an arrival from 0419345678: nobody (digit 7): the Inbox list, Sender: and Details' Sender:.
