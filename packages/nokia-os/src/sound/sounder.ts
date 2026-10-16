@@ -61,6 +61,8 @@ const ALERT = { ringing: 0, ascending: 1, ringOnce: 2, beepOnce: 3, off: 4 } as 
 const MESSAGE_TONE_SLUGS = [undefined, "standard", "special", "beep-once", "ascending"] as const;
 /** Vibrating alert's options: On, Off. */
 const VIBRATING_ON = 0;
+/** Plan 22: Ring once's pass is this much shorter than the tone's ringing cycle. */
+const RING_ONCE_SHORTER_MS = 287;
 
 type RingingTone = (typeof RINGING_TONES)[number];
 
@@ -185,6 +187,8 @@ export class StockSounder implements StockCueSink {
    * going down then makes no beep.
    */
   #silentAtMs: number | undefined;
+  /** Plan 22: the next key's beep word (`keyBeepWord`). */
+  #keyWord: number | undefined;
   /** The last key's beep and when it started. */
   #beep: { readonly play: SoundPlay; readonly atMs: number } | undefined;
   /** The Keypad tones option the next key-down beeps at, instead of the stored one. */
@@ -216,6 +220,8 @@ export class StockSounder implements StockCueSink {
     this.#lastKeyMs = now;
     const level = this.#keyLevel;
     this.#keyLevel = undefined;
+    const word = this.#keyWord;
+    this.#keyWord = undefined;
     const dtmf = this.#dtmf;
     this.#dtmf = undefined;
     // A note's warning tone opened by this key replaces its beep (D12); a game-over screen
@@ -231,7 +237,10 @@ export class StockSounder implements StockCueSink {
       });
       return;
     }
-    if ((options.beeps ?? true) && !silenced) this.#keyBeep(now, level?.option);
+    if ((options.beeps ?? true) && !silenced) {
+      if (word !== undefined) this.#keyBeepWord(now, word);
+      else this.#keyBeep(now, level?.option);
+    }
     const repeats = key === "up" || key === "down";
     const first = repeats ? LEVEL_REPEAT.firstMs : key === "c" ? C_HOLD_BEEP_MS : undefined;
     // Plan 27 (D10 c): a key silenced at its key-down (the Composer's) has no held beeps either.
@@ -246,6 +255,16 @@ export class StockSounder implements StockCueSink {
    */
   keyBeepLevel(option: number | null): void {
     this.#keyLevel = { option };
+  }
+
+  /** Plan 22: the key going down beeps at tone word `word` (in a call: the earpiece's). */
+  keyBeepWord(word: number): void {
+    this.#keyWord = word;
+  }
+
+  /** Plan 22: the key going down makes no beep (a call's ▲/▼ sound their Volume tone). */
+  keySilent(): void {
+    this.#silentAtMs = this.#now();
   }
 
   /**
@@ -372,9 +391,9 @@ export class StockSounder implements StockCueSink {
   }
 
   /** Plan 22: the ringing (or a call sound) stops now: every output it holds goes quiet. */
-  stopRing(play: SoundPlay | undefined): void {
-    if (play !== undefined) this.#sequencer.cancel(play, this.#now());
-    this.#sequencer.stop(["vibrator"], this.#now());
+  stopRing(play: SoundPlay | undefined, atMs: number = this.#now()): void {
+    if (play !== undefined) this.#sequencer.cancel(play, atMs);
+    this.#sequencer.stop(["vibrator"], atMs);
   }
 
   /** Stops the preview (C, OK, leaving the list, another ▲/▼). */
@@ -406,17 +425,30 @@ export class StockSounder implements StockCueSink {
     }
     const tone = this.#tone(prefix);
     if (tone === undefined) return undefined;
+    const cycle = tone.program.steps.slice(0, cycleSteps(tone));
+    // Ring once's vibrator pulses follow its pass RING_ONCE_SHORTER_MS sooner than Ringing's
+    // second cycle (`sound/calls/ring-ring-once-vibrator-on`: 5728 ms, Ringing's 6015 ms).
+    const last = cycle[cycle.length - 1];
+    const steps =
+      alert === ALERT.ringOnce && last !== undefined && last.ms > RING_ONCE_SHORTER_MS
+        ? [...cycle.slice(0, -1), { ...last, ms: last.ms - RING_ONCE_SHORTER_MS }]
+        : cycle;
+    // Ring once: one pass of the tone; with the vibrator on, Off's vibrator pulses follow it
+    // (`sound/calls/ring-ring-once-vibrator-on`: from the second cycle).
+    const once = alert === ALERT.ringOnce;
     const pass: SoundProgram = {
       id: `ring/${tone.slug}`,
-      steps: tone.program.steps.slice(0, cycleSteps(tone)),
-      ...(alert === ALERT.ringOnce ? {} : { loopFrom: 0 }),
+      steps: once && vibrating ? [...steps, ...OFF_VIBRATOR.steps] : steps,
+      ...(once ? (vibrating ? { loopFrom: steps.length } : {}) : { loopFrom: 0 }),
     };
     return this.#ringing(
-      { ...tone, program: pass },
+      tone,
       prefix,
       this.#level(prefix),
       this.#now(),
       vibrating,
+      undefined,
+      pass,
     );
   }
 
@@ -516,11 +548,13 @@ export class StockSounder implements StockCueSink {
     atMs: number,
     vibrates: boolean,
     endStep?: number,
+    played: SoundProgram = tone.program,
   ): SoundPlay | undefined {
     const alert = this.#settings.choice(`${prefix}/incoming-call-alert`);
     if (alert === null || alert === ALERT.beepOnce || alert === ALERT.off) return undefined;
     const stored = level ?? 1;
-    const program = vibrates ? tone.program : withoutVibrator(tone.program);
+    // Plan 22: a ring plays its loop (`played`); the ramp's positions are the tone's own.
+    const program = vibrates ? played : withoutVibrator(played);
     const at = (position: { readonly note: number; readonly offsetMs: number }): number =>
       positionMs(tone.program, position);
     const levels: LevelStep[] =
@@ -583,6 +617,11 @@ export class StockSounder implements StockCueSink {
     if (last === undefined) return false;
     if (last.output === "tone" && last.hz !== null) return true;
     return atMs - last.atMs < KEYPAD_BEEP.sleepAfterMs;
+  }
+
+  #keyBeepWord(atMs: number, word: number): void {
+    const ms = this.#dspAwake(atMs) ? KEYPAD_BEEP.awakeMs : KEYPAD_BEEP.wokenMs;
+    this.#beep = { play: this.#sequencer.play(beepProgram(word, ms), atMs), atMs };
   }
 
   #keyBeep(atMs: number, level?: number | null): void {

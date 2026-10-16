@@ -65,9 +65,25 @@ export function netEndProgram(word: number): SoundProgram {
 
 export const NET_END_BEEPS_AFTER_MS = 104;
 
-/** ▲ at the top Volume (`sound/calls/volume-top`): 1125 Hz for ≈322 ms at the earpiece word. */
-export function volumeTopProgram(word: number): SoundProgram {
-  return { id: "calls/volume-top", steps: [{ ms: 322, tone: { hz: 1125, volume: word } }] };
+/**
+ * An emergency call's beep in the earpiece (`sound/calls/emergency`): 900 Hz for 54 ms, 88 ms
+ * after Call.
+ */
+export function emergencyProgram(word: number): SoundProgram {
+  return { id: "calls/emergency", steps: [{ ms: 54, tone: { hz: 900, volume: word } }] };
+}
+
+export const EMERGENCY_BEEP_AFTER_MS = 88;
+
+/** Volume's tone: 1125 Hz for ≈322 ms at the earpiece word (`sound/calls/volume-top`). */
+export const VOLUME_TONE_MS = 322;
+
+/**
+ * Volume's tone (`sound/calls/volume-top`, `in-call-keys`): ▲ at the top and every ▼ sound 1125 Hz
+ * at the new level's word, `ms` long (a tone still sounding ends the new one with it).
+ */
+export function volumeTopProgram(word: number, ms: number = VOLUME_TONE_MS): SoundProgram {
+  return { id: "calls/volume-top", steps: [{ ms, tone: { hz: 1125, volume: word } }] };
 }
 
 /**

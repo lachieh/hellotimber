@@ -6,6 +6,8 @@ export interface InfoScreenOptions {
   /** Read on every render (Memory status: `SIM card:`, `50 free`, `0 in use`). */
   readonly lines: () => readonly string[];
   readonly softkey: string;
+  /** Plan 22: the large face (Time of call). */
+  readonly large?: true;
 }
 
 /** An info screen: its lines and `Back`; the soft key and C go back. */
@@ -15,6 +17,7 @@ export function infoScreen(options: InfoScreenOptions): Widget {
       kind: "info-screen",
       lines: options.lines(),
       softkey: options.softkey,
+      ...(options.large ? { large: true as const } : {}),
     }),
     onKey(key: PhoneKey, flow: Flow) {
       if (key === "navi" || key === "c") flow.back();

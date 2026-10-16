@@ -3,6 +3,18 @@ import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
 import { paintStandby } from "../standby";
 import { paintCalculator, type CalculatorModel } from "./calculator";
+import {
+  paintCall,
+  paintCallEntry,
+  paintDialEntry,
+  paintRinging,
+  paintVolume,
+  type CallEntryModel,
+  type CallModel,
+  type DialEntryModel,
+  type RingingModel,
+  type VolumeModel,
+} from "./call";
 import { paintComposer, type ComposerModel } from "./composer";
 import { paintConfirm, type ConfirmModel } from "./confirm";
 import { paintEditor, type EditorModel } from "./editor";
@@ -29,6 +41,14 @@ import { paintSplash, type SplashModel } from "./splash";
 import { paintSymbols, type SymbolsModel } from "./symbols";
 import { paintTextPage, type TextPageModel } from "./text-pages";
 
+export type {
+  CallBody,
+  CallEntryModel,
+  CallModel,
+  DialEntryModel,
+  RingingModel,
+  VolumeModel,
+} from "./call";
 export type { ComposerModel } from "./composer";
 export type { ConfirmModel } from "./confirm";
 export type { EditorModel } from "./editor";
@@ -100,7 +120,12 @@ export type WidgetModel =
   | MessageListModel
   | MessagePageModel
   | StandbyFrameModel
-  | ShortcutChoiceModel;
+  | ShortcutChoiceModel
+  | DialEntryModel
+  | CallModel
+  | CallEntryModel
+  | RingingModel
+  | VolumeModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -182,6 +207,21 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "shortcut-choice":
       paintShortcutChoice(fb, model, previous);
+      return;
+    case "dial-entry":
+      paintDialEntry(fb, model);
+      return;
+    case "call":
+      paintCall(fb, model);
+      return;
+    case "call-entry":
+      paintCallEntry(fb, model);
+      return;
+    case "ringing":
+      paintRinging(fb, model);
+      return;
+    case "volume":
+      paintVolume(fb, model);
       return;
     case "standby-draw":
       paintStandby(fb, {

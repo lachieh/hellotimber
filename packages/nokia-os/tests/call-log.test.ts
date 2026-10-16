@@ -55,8 +55,8 @@ describe("the lists (D13)", () => {
 });
 
 describe("the durations (D12)", () => {
-  it("counts a second at ≈820 ms connected, then one every ≈980 ms", () => {
-    expect([810, 1310, 1810, 60_810].map(callSeconds)).toEqual([0, 1, 2, 62]);
+  it("counts a second at ≈865 ms connected, then one every ≈980 ms", () => {
+    expect([855, 1355, 1855, 60_855].map(callSeconds)).toEqual([0, 1, 2, 62]);
     expect(durationText(3725)).toBe("01:02:05");
   });
 

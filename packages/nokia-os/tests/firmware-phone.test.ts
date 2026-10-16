@@ -79,13 +79,17 @@ describe("createStockPhone", () => {
     expect(phone.screen).toMatchObject({ kind: "list", selected: 9, windowTop: 9 });
   });
 
-  it("opens the stock standby ▲/▼ targets: the Search prompt and the Dialled numbers note", () => {
-    const up = poweredOn();
-    up.pressKey("up");
-    expect(up.path).toBe("menu/phone-book/search");
-    expect(up.screen).toMatchObject({ kind: "custom", appId: "stock:phone-book/search" });
-    const down = poweredOn();
-    down.pressKey("down");
+  it("opens the stock standby ▲/▼ targets: the dialled numbers and the Dialled numbers note", () => {
+    // Plan 22 (D3): ▲ opens the dialled list (`No last dialled numbers` while it is empty).
+    // Standby shows with its ladders erased 23 ms first (plan 19's standby key delay).
+    const up = clocked();
+    up.press("up");
+    up.advance(100);
+    expect(up.phone.screen).toMatchObject({ kind: "custom", appId: "stock:dialled-numbers" });
+    const clock = clocked();
+    clock.press("down");
+    clock.advance(100);
+    const down = clock.phone;
     expect(down.path).toBe("menu/call-register/dialled-numbers");
     expect(down.screen).toMatchObject({
       kind: "custom",

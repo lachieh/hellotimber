@@ -26,8 +26,11 @@ export interface Flow {
    * exit.
    */
   back(levels?: number, options?: { select?: string; row?: "top" | "bottom" }): void;
-  /** Leave the menus for standby. */
-  standby(): void;
+  /**
+   * Leave the menus for standby. Plan 22: with `key` (down now), standby's number entry then
+   * starts with it (phone-core's `exit({ to: "standby", key })`).
+   */
+  standby(key?: PhoneKey): void;
   /** Switch the phone off (plan 17: the power key's Switch off!); absent outside a phone. */
   powerOff?(): void;
   /** The menu indicator for the flow's position, as the kernel reports it. */
@@ -58,6 +61,8 @@ export interface Widget {
    * `PhoneApplicationSession.shortcutLevel`). Asked of the top widget.
    */
   shortcutLevel?(flow: Flow): ShortcutLevel | undefined;
+  /** Plan 22: a ring interrupted the flow (Snake II suspends its game to the game menu). */
+  interrupted?(flow: Flow): void;
 }
 
 const NO_INDICATOR: MenuIndicator = { segments: [], awaitingNext: false };
@@ -112,6 +117,10 @@ class FlowSession implements PhoneApplicationSession, Flow {
 
   tick(dtMs: number): void {
     this.#top?.tick?.(dtMs, this);
+  }
+
+  onInterrupted(): void {
+    this.#top?.interrupted?.(this);
   }
 
   shortcutLevel(): ShortcutLevel | undefined {
@@ -192,9 +201,9 @@ class FlowSession implements PhoneApplicationSession, Flow {
     this.#closed = true;
   }
 
-  standby(): void {
+  standby(key?: PhoneKey): void {
     if (this.#closed) return;
-    this.#context.exit({ to: "standby" });
+    this.#context.exit(key === undefined ? { to: "standby" } : { to: "standby", key });
     this.#closed = true;
     this.#closeAll();
   }

@@ -10,6 +10,8 @@ export interface ConfirmOptions {
   readonly confirm: (flow: Flow) => void;
   /** C. Default: back to the screen below, unchanged (P8). */
   readonly cancel?: (flow: Flow) => void;
+  /** Plan 22: the lines' tops where they are not the query's measured layout. */
+  readonly tops?: readonly number[];
 }
 
 /** A confirm query: the soft key runs its result, C goes back unchanged (P8). */
@@ -21,7 +23,8 @@ class ConfirmWidget implements Widget {
   }
 
   render(): ConfirmModel {
-    return { kind: "confirm", lines: this.#options.lines, softkey: this.#options.softkey };
+    const { lines, softkey, tops } = this.#options;
+    return { kind: "confirm", lines, softkey, ...(tops === undefined ? {} : { tops }) };
   }
 
   onKey(key: PhoneKey, flow: Flow): void {

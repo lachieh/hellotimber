@@ -256,9 +256,9 @@ class OptionsWidget implements Widget {
     if (moved !== undefined) this.#cursor = moved;
     else if (key === "navi") this.#choose(this.#selected, flow);
     else if (key === "c") flow.back();
-    // D9: digits, `*` and `#` leave for standby number entry with their DTMF pairs. That
-    // handoff is plan 22's (`calculator/keys-options-*`, `options-dtmf-confirm-*`,
-    // pending:22); until it lands Options does not act on them.
+    // D9 (plan 22): digits, `*` and `#` leave for standby number entry with their DTMF pairs
+    // (`calculator/keys-options-*`, `options-dtmf-confirm-*`).
+    else if (/^[0-9*#]$/.test(key)) flow.standby(key);
   }
 }
 

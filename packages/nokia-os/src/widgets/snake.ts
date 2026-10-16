@@ -63,6 +63,8 @@ class SnakeGameWidget implements Widget {
   readonly #settings: StockSettings;
   #state: SnakeState;
   #phase: Phase;
+  /** A ring interrupted the game: it suspends when the flow resumes. */
+  #suspended = false;
   /** The last model and the state it shows. */
   #model: { readonly state: SnakeState; readonly model: SnakeModel } | undefined;
   /** The game ended with a new top score (written when the death steps end). */
@@ -119,6 +121,10 @@ class SnakeGameWidget implements Widget {
   }
 
   tick(dtMs: number, flow: Flow): void {
+    if (this.#suspended) {
+      this.#suspend(flow);
+      return;
+    }
     let left = dtMs;
     // Until the time left falls inside the current phase (a phase ending exactly now ends now).
     for (;;) {
@@ -210,6 +216,14 @@ class SnakeGameWidget implements Widget {
   }
 
   /** Navi or C: the game menu opens on Continue, on the top row (H15, D10). */
+  /**
+   * Plan 22 (Task 0 I): a ring suspends the game, as Navi or C does; the game menu shows once the
+   * call leaves the screen (the flow resumes then).
+   */
+  interrupted(): void {
+    this.#suspended = true;
+  }
+
   #suspend(flow: Flow): void {
     const phase = this.#phase;
     const death =

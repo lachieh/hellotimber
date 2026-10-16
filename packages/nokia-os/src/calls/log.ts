@@ -32,10 +32,12 @@ export interface CallDurations {
 const ZERO: CallDurations = { last: 0, all: 0, received: 0, dialled: 0 };
 
 /**
- * The seconds a connected call adds (Task 0 X, `durations/fit`): none until ≈820 ms, then one
- * more every ≈980 ms of emulated time (0.81 s → 0, 1.31 → 1, 1.81 → 2, 60.81 → 62).
+ * The seconds a connected call adds (Task 0 X, `durations/fit`), counted from the connect's
+ * redraw (CALL_TIMINGS.connectMs after Calling) to End: none until ≈865 ms, then one more every
+ * ≈980 ms of emulated time (End 3.4 s after Call → 0.855 s connected → 0; 3.9 → 1; 4.4 → 2;
+ * 63.4 → 62).
  */
-export const DURATION_FIRST_MS = 820;
+export const DURATION_FIRST_MS = 865;
 export const DURATION_TICK_MS = 980;
 
 export function callSeconds(connectedMs: number): number {

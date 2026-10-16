@@ -59,7 +59,12 @@ class SnakeLevelWidget implements Widget {
     return { kind: "level-bar", bars: `level/snake-${bars}`, softkey: this.#options.softkey };
   }
 
-  onKeyDown(key: PhoneKey): void {
+  onKeyDown(key: PhoneKey, flow: Flow): void {
+    // Plan 22 (S10): a dial key leaves for standby's number entry (`game/snake/level-keys-digit-1`).
+    if (/^[0-9*#]$/.test(key)) {
+      flow.standby(key);
+      return;
+    }
     if (key !== "up" && key !== "down") return;
     this.#step(key);
     this.#held = { key, elapsedMs: 0, nextMs: LEVEL_REPEAT.firstMs };

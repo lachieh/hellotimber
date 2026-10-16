@@ -32,8 +32,12 @@ export type AcceptFlow =
     }
   /** Restore factory settings (D5), `note`, then the page. */
   | { readonly kind: "restore"; readonly note: NamedNote }
-  /** `note`, then the page. */
-  | { readonly kind: "note"; readonly note: NamedNote };
+  /** `note`, then the page; `accept` runs first (plan 22: Clear timers zeroes the durations). */
+  | {
+      readonly kind: "note";
+      readonly note: NamedNote;
+      readonly accept?: (services: StockServices) => void;
+    };
 
 /**
  * A security-code leaf (D7): the stock code entry over the tree screen's label and soft key; an
@@ -122,8 +126,13 @@ function acceptFlow(
         settings.restoreFactory();
         f.replace(done());
       };
-    case "note":
-      return (f) => f.replace(done());
+    case "note": {
+      const { accept } = flow;
+      return (f) => {
+        accept?.(services);
+        f.replace(done());
+      };
+    }
   }
 }
 

@@ -2,6 +2,7 @@ import {
   createPhone,
   type KeyEvent,
   type Phone,
+  type PhoneApplication,
   type PhoneKey,
   type PhoneSnapshot,
 } from "@hellotimber/phone-core";
@@ -41,6 +42,19 @@ import type { T9Dictionary } from "../text/t9/dictionary";
 import { stockT9 } from "../text/t9/service";
 import { SoundSequencer } from "../sound/sequencer";
 import { StockSounder, type KeyDownOptions } from "../sound/sounder";
+import { Framebuffer } from "@hellotimber/phone-screen";
+import { paintStockScreen } from "../display/paint";
+import { StockCallLog } from "../calls/log";
+import { StockTelephone } from "../calls/telephone";
+import { CallClock } from "../calls/timestamp";
+import { WIDGET_SPRITES } from "../resources";
+import { dialledStandbyList, missedCallsList } from "./features/call-register";
+import {
+  incomingCallApplication,
+  registerTelephone,
+  shownEntry,
+  stockStandbyEntry,
+} from "./features/dialling";
 
 export interface StockPhoneConfig extends StockPorts {
   /** Operator line. Every glyph must exist in the stock small font (validated; throws). */
@@ -94,6 +108,9 @@ export const STOCK_STANDBY_KEYS = {
 
 /** The envelope's blink while the SIM's message slots are full (`sms/full-arrival`: 478-482 ms). */
 export const FULL_BLINK_MS = 480;
+
+/** Plan 22: the handset over a screen below or above a call starts at x 1 (`in-call/options` e). */
+const HANDSET_OVER_X = 1;
 
 /** Standby stays on screen (ladders erased) for 39 ms after Menu (menu/01-phone-book.anim b). */
 export const STOCK_MENU_OPEN_DELAY_MS = 39;
@@ -181,17 +198,30 @@ export function createStockPhoneWith(
     ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
     cues: lightRules.cues(internals.cues ?? sounder),
   };
-  const messaging = stockMessaging(
-    eeprom,
-    settings,
-    sim,
-    config.network ?? createSyntheticNetwork(),
-  );
+  const network = config.network ?? createSyntheticNetwork();
+  const messaging = stockMessaging(eeprom, settings, sim, network);
   messaging.connect();
   const services = stockServices(ports, settings, games, security, sounder, eeprom, messaging, t9);
+  // Plan 22: the telephone, its register and its clock; calls ring through the network port.
+  const callLog = new StockCallLog(eeprom);
+  const callClock = new CallClock(
+    () => clock?.(),
+    () => config.date?.(),
+    () => now,
+  );
+  const telephone = new StockTelephone({
+    network,
+    sounder,
+    settings,
+    log: callLog,
+    clock: callClock,
+    now: () => now,
+  });
+  network.subscribeCalls?.((call, link) => telephone.ring(call, link));
   // Plan 17 D7: the power key's list, over the same services as the menu's leaves.
   const power = new PowerListState();
-  const phone = createPhone({
+  registerTelephone(eeprom, telephone, power);
+  const phone: Phone = createPhone({
     menu: createStockMenu(ports, settings, games, security, sounder, eeprom, messaging, t9),
     // Plan 18 D11: the envelope while Inbox holds unread messages, blinking while every slot is
     // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED). Plan 17 D6: the silent
@@ -210,7 +240,9 @@ export function createStockPhoneWith(
     ...(skip ? { bootMs: 0 } : {}),
     // Plan 15 D9: the security code and the welcome note hold the boot after the self-test.
     bootGates: stockBootGates({ security, settings, skip, sound: (lines) => sounder.note(lines) }),
-    standbyKeys: STOCK_STANDBY_KEYS,
+    standbyKeys: { ...STOCK_STANDBY_KEYS, up: dialledStandbyList(services) },
+    // Standby with the ladders erased before ▲'s list (plan 19's 23 ms; `handover/notice-up`).
+    standbyKeyDelayMs: 23,
     menuOpenDelayMs: STOCK_MENU_OPEN_DELAY_MS,
     shortcutWindowMs: STOCK_SHORTCUT_WINDOW_MS,
     // Rows levels keep the stateful circular window of the stock painter (plan 14 D3).
@@ -220,6 +252,24 @@ export function createStockPhoneWith(
     // Plan 17: the active profile's line under the operator (D5).
     standbyLine: standbyProfileLine(settings),
     standbyPower: powerList(services, power),
+    // Plan 22 (D2): digits, `*` and `#` start standby's number entry.
+    standbyEntry: stockStandbyEntry(services),
+    // Plan 22 (D4): a ring interrupts whatever shows; an answered call over another screen comes
+    // back once connected.
+    interruption: (): PhoneApplication | undefined => {
+      const resumed = telephone.callToShow();
+      if (resumed !== undefined) {
+        return incomingCallApplication(services, telephone, resumed, { kind: "other" });
+      }
+      const ringing = telephone.takeRing();
+      if (ringing === undefined) return undefined;
+      const entry = shownEntry(telephone);
+      const below =
+        entry !== undefined
+          ? { kind: "entry" as const, text: entry.text }
+          : { kind: phone.screen.kind === "standby" ? ("standby" as const) : ("other" as const) };
+      return incomingCallApplication(services, telephone, ringing, below);
+    },
   });
   // Plan 25 D4: the keyguard over the kernel, which stays at standby underneath it.
   const keyguard = new KeyguardOverlay(phone, {
@@ -233,6 +283,23 @@ export function createStockPhoneWith(
       lights.activity();
     }
   });
+  // Plan 22 (S21): missed calls show their notice at standby (List opens Missed calls).
+  let noticed = 0;
+  const missedNotice = (): void => {
+    const missed = callLog.missedCalls();
+    if (missed === noticed) return;
+    if (missed === 0) {
+      noticed = 0;
+      return;
+    }
+    if (phone.screen.kind !== "standby" || telephone.active) return;
+    noticed = missed;
+    phone.setNotice({
+      text: `${missed}\nmissed\ncall${missed === 1 ? "" : "s"}`,
+      softkey: "List",
+      open: missedCallsList(services),
+    });
+  };
   // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
   // Plan 25: the light tick runs from the power-on; the boot lights the LEDs at the self-test's
   // first frame and again where the firmware shows its clock prompt (nokia-os: standby).
@@ -251,7 +318,9 @@ export function createStockPhoneWith(
       if (poweredOn) {
         sounder.powerOn({ boot: !skip });
         lights.powerOn(now);
+        telephone.powerOn();
       } else {
+        telephone.powerOff();
         sounder.powerOff();
         lights.powerOff();
         keyguard.reset();
@@ -279,16 +348,41 @@ export function createStockPhoneWith(
       }
     }
   };
+  // Plan 22: the handset drawn over the screen below a call (a ring rejected over a menu, an
+  // answered call before it connects).
+  let handset:
+    | { readonly under: PhoneSnapshot["screen"]; readonly screen: PhoneSnapshot["screen"] }
+    | undefined;
+  const withHandset = (screen: PhoneSnapshot["screen"]): PhoneSnapshot["screen"] => {
+    if (!poweredOn || !telephone.handsetOverlay()) {
+      handset = undefined;
+      return screen;
+    }
+    if (handset?.under === screen) return handset.screen;
+    const fb = new Framebuffer();
+    paintStockScreen(fb, screen);
+    const sprite = WIDGET_SPRITES["call/handset"]!;
+    // Over another screen the handset sits at the top left (`interrupt/menu-reject` e).
+    fb.blitBitmap(sprite.bitmap, HANDSET_OVER_X, sprite.y);
+    const painted: PhoneSnapshot["screen"] = {
+      kind: "custom",
+      appId: "stock:handset",
+      frame: { width: fb.width, height: fb.height, pixels: fb.pixels },
+    };
+    handset = { under: screen, screen: painted };
+    return painted;
+  };
+  const shownScreen = (): PhoneSnapshot["screen"] => keyguard.screen ?? withHandset(phone.screen);
   phone.subscribe((snapshot) => {
-    overlay = keyguard.screen;
-    deliver(overlay === undefined ? snapshot : { ...snapshot, screen: overlay });
+    overlay = keyguard.screen ?? withHandset(snapshot.screen);
+    deliver(overlay === snapshot.screen ? snapshot : { ...snapshot, screen: overlay });
   });
   const publish = (): void => {
     lightRules.update(phone.path);
-    const screen = keyguard.screen;
+    const screen = shownScreen();
     if (screen === overlay) return;
     overlay = screen;
-    deliver({ path: phone.path, screen: screen ?? phone.screen, poweredOn });
+    deliver({ path: phone.path, screen, poweredOn });
   };
   const send = (event: KeyEvent): void => {
     if (event.type === "up") {
@@ -337,7 +431,10 @@ export function createStockPhoneWith(
       // The kernel time the games stamp their cues and the sounder its sounds with.
       now = Math.max(now, nowMs);
       messaging.tick(now);
+      callClock.tick();
       phone.tick(nowMs);
+      telephone.tick();
+      missedNotice();
       sounder.tick();
       sequencer.advance(now);
       lights.tick();
@@ -355,7 +452,7 @@ export function createStockPhoneWith(
       return phone.path;
     },
     get screen() {
-      return keyguard.screen ?? phone.screen;
+      return shownScreen();
     },
     subscribe(callback) {
       subscribers.add(callback);

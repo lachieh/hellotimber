@@ -15,6 +15,7 @@ import { OptionListWidget } from "../widgets/option-list";
 import { moveRows, rowsIndicator, type RowsCursor } from "../widgets/rows";
 import { messageDate, messageTime } from "./timestamp";
 import { smsEditor } from "./write";
+import { numberEntry } from "../firmware/features/dialling";
 
 export type MessageBox = "inbox" | "outbox";
 
@@ -181,11 +182,11 @@ function messageOptions(owner: Box, index: number, message: Shown): Widget {
           ...(message.number === undefined ? {} : { number: message.number }),
         }),
       ),
-    // Dialling a number is plan 22's (`sms/inbox-option-use-number`: the call screen).
+    // Plan 22: the number in standby's number entry (`sms/inbox-option-use-number`).
     "Use number": (flow) => {
       const number = box === "inbox" ? message.sender : numberIn(message.text);
       if (number === undefined) numberNote(flow);
-      else flow.replace(placeholder("Use number"));
+      else flow.replace(numberEntry(services, number));
     },
     Forward: (flow) => flow.replace(smsEditor(services, { text: message.text })),
     // Details (`sms/inbox-details`): Sender, Message centre, Time; Back.
