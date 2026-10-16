@@ -106,7 +106,7 @@ Source: "List of menu functions", manual p.41–43 ([p.41](https://www.manualsli
 10. **Reminders (Menu 10)** — `Add new` (write note text → `Alarm on` (date+time) / `Alarm off`) · `View all` (scroll; Options incl. erase). Phone alarms when date/time reached. (p.85, verified.)
 11. **Clock (Menu 11)** — 11-1 `Alarm clock` (with snooze) · 11-2 `Clock settings` (time display on/off in standby, set time, 12/24 h format) · 11-3 `Date setting` · 11-4 `Stopwatch` · 11-5 `Countdown timer` · 11-6 `Auto update of date and time`. (p.43 + p.87 + helpdoc, verified.)
 12. **Profiles (Menu 12)** — profile list (verified, p.91): `General` ("the default setting") · `Silent` (mutes all tones) · `Discreet` (quiet tones) · `Loud` · a fifth **`(empty)`/replaceable slot** that "you can replace with a profile that you have received" (Club Nokia downloadable). Per-profile: `Activate`, `Personalise` (ringing tone, ringing volume, and the other Tones-menu items incl. screensaver), `Rename` for custom (UNVERIFIED rename scope).
-13. **SIM services (Menu 13)** — operator/SIM-dependent; appears only if SIM supports it.
+13. **SIM services (Menu 13)** — operator/SIM-dependent; appears only if SIM supports it. v6.39 numbers it **14** and labels it with the SIM's toolkit title: see [stock/sim-services.md](stock/sim-services.md).
 
 ---
 
@@ -220,6 +220,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Composer                                                   | [stock/composer.md](stock/composer.md)                             | 27   |
 | Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                             | 23   |
 | Keyguard and lights                                        | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |
+| SIM messages, sender names, SIM services, IMEI             | [stock/sim-services.md](stock/sim-services.md)                     | 30   |
 
 ---
 
