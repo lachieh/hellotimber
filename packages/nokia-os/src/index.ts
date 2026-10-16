@@ -27,4 +27,5 @@ export type { T9Dictionary } from "./text/t9/dictionary";
 export type { StockSimMessage } from "./sim/messages";
 export type { StockSimToolkit, StockToolkitItem, StockToolkitStep } from "./sim/toolkit";
 export { stockImeiLines } from "./firmware/preload";
+export { describeStockScreen } from "./display/describe";
 export type { StockPreload, StockReminderPreload } from "./firmware/preload";

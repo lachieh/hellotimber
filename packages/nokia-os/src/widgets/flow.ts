@@ -11,6 +11,7 @@ import type {
 } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { paintWidget, type WidgetModel } from "../display/widgets";
+import { attachDescription, describeWidget } from "../display/describe";
 
 /** What a widget may do to the flow that hosts it. */
 /** How Flow.back leaves the menus when it exits the flow. */
@@ -152,6 +153,8 @@ class FlowSession implements PhoneApplicationSession, Flow {
     const fb = new Framebuffer();
     paintWidget(fb, model, shown?.screen.frame.pixels);
     const frame = { width: fb.width, height: fb.height, pixels: fb.pixels };
+    // Plan 30 D11: the frame's plain text, for hosts (describeStockScreen).
+    attachDescription(frame, describeWidget(model));
     this.#shown = { model, json, screen: { kind: "custom", appId: this.#appId, frame } };
     return this.#shown.screen;
   }

@@ -912,15 +912,25 @@ Welcome note's record is the `settings` record, so a preload never returns after
 **Files:** `src/display/describe.ts` (new), `src/widgets/flow.ts` (one call), each widget model
 module (a `describe` beside its model), `src/index.ts` (one line), `tests/describe.test.ts` (new).
 
-- [ ] TDD `describeStockScreen` for off, boot, standby (operator, clock, profile line, notice,
+- [x] TDD `describeStockScreen` for off, boot, standby (operator, clock, profile line, notice,
       indicators), the carousel and both level presentations.
-- [ ] A describer per widget model kind (exhaustive switch; the test enumerates the widget-model
+- [x] A describer per widget model kind (exhaustive switch; the test enumerates the widget-model
       union): notes, queries, prompts and entries (label, text, counter), option lists, the editor,
       the symbol table, the name list, call screens, Snake II (`Snake II, score 12`), placeholders
       (`<label> (not implemented)`), toolkit screens.
-- [ ] A property test: driving every asserted golden's scenario of plans 14, 18 and 19, every
+- [x] A property test: driving every asserted golden's scenario of plans 14, 18 and 19, every
       emitted screen has a non-empty description.
-- [ ] Commit: `feat(nokia-os): describe stock screens for hosts`.
+- [x] Commit: `feat(nokia-os): describe stock screens for hosts`.
+
+Deviation (Task 9): the describers live in one module (`src/display/describe.ts`), one exhaustive
+`switch` over `WidgetModel` beside `paintWidget`'s, rather than one per widget module: a new kind
+without a describer is a type error there, and the test's `SAMPLES` table (one model per kind) is
+a type error too. Three places attach text to the frames they paint: the stock flow, the keyguard
+overlay and plan 14's placeholder application; a custom frame without text reads `Screen of
+<appId>` (no stock screen does: the property test fails on it). The property test drives every
+plan 30 scenario and every 10th asserted golden of plans 14, 18 and 19 (each replays from
+power-on; all of them would double the suite) through a screen watcher in the test rig
+(`watchScreens`). SIM services' level reads without a menu number, its carousel slot as Menu 14.
 
 ### Task 10 - Acceptance and the coverage guard
 

@@ -1,6 +1,7 @@
 import { PhoneApplication } from "@hellotimber/phone-core";
 import type { ApplicationContext, PhoneApplicationSession } from "@hellotimber/phone-core";
 import { placeholderFrame } from "../display/placeholder";
+import { attachDescription, describeWidget } from "../display/describe";
 
 /**
  * A stock leaf that later plans implement (D13). It shows a marked placeholder frame; C exits to
@@ -19,7 +20,9 @@ export class PlaceholderApplication extends PhoneApplication {
   }
 
   createSession(context: ApplicationContext): PhoneApplicationSession {
-    const screen = { kind: "custom" as const, appId: this.id, frame: placeholderFrame(this.label) };
+    const frame = placeholderFrame(this.label);
+    attachDescription(frame, describeWidget({ kind: "placeholder", label: this.label }));
+    const screen = { kind: "custom" as const, appId: this.id, frame };
     return {
       onKey(event) {
         if (event.type === "up" && event.key === "c") context.exit();
