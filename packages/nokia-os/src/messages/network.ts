@@ -3,7 +3,16 @@
 // stamp, and nothing of the radio protocol (no SMSC, no PDU). Times are the phone's: the port has
 // no clock. A host backs it with whatever it likes (a test network, the website's contacts); the
 // default, `createSyntheticNetwork`, behaves as the v6.39 emulator's network does (Task 0 S10,
-// S11): it accepts every SMS and never loops one back.
+// S11): it accepts every SMS and never loops one back. Plan 22 adds the call half
+// (`src/calls/network.ts`): `dial` and `subscribeCalls`.
+import {
+  syntheticCalls,
+  type StockCallControl,
+  type StockCallLink,
+  type StockOutgoingCall,
+  type StockRing,
+  type SyntheticCalls,
+} from "../calls/network";
 
 /** One SMS as the phone sees it: a typed recipient number (or routing address) and its text. */
 export interface StockSms {
@@ -37,10 +46,22 @@ export interface StockNetworkPort {
   send(sms: StockSms): StockSendOutcome | Promise<StockSendOutcome>;
   /** Called once by `createStockPhone`; the host calls `deliver` for each incoming SMS. */
   subscribe(deliver: (sms: StockIncomingSms) => void): () => void;
+  /**
+   * Plan 22: the phone places a call (Calling is on screen; `call` carries the number dialled and
+   * the phone book name, D5). The host reports its progress on `phone` and hears the user on the
+   * returned link. Absent: the synthetic network's behaviour (every call alerts and connects).
+   */
+  dial?(call: StockOutgoingCall, phone: StockCallControl): StockCallLink;
+  /** Plan 22: called once by `createStockPhone`; the host calls `ring` for each incoming call. */
+  subscribeCalls?(ring: StockRing): () => void;
 }
 
-/** The synthetic network: the port, `deliver` to inject an SMS, and what phones sent. */
-export interface SyntheticNetwork extends StockNetworkPort {
+/**
+ * The synthetic network: the port, `deliver` to inject an SMS and what phones sent; plan 22:
+ * `ring` to ring the phones and what they `dialled`.
+ */
+export interface SyntheticNetwork
+  extends Omit<StockNetworkPort, "dial" | "subscribeCalls">, SyntheticCalls {
   /** Injects an incoming SMS into every subscribed phone (validated: throws naming a field). */
   deliver(sms: StockIncomingSms): void;
   /** Every SMS phones sent through this network, in order. */
@@ -104,6 +125,7 @@ export function checkIncomingSms(sms: StockIncomingSms): StockIncomingSms {
 export function createSyntheticNetwork(): SyntheticNetwork {
   const subscribers = new Set<(sms: StockIncomingSms) => void>();
   const sent: StockSms[] = [];
+  const calls = syntheticCalls();
   return {
     send(sms) {
       sent.push({ number: sms.number, text: sms.text });
@@ -120,5 +142,11 @@ export function createSyntheticNetwork(): SyntheticNetwork {
       for (const deliver of Array.from(subscribers)) deliver(checked);
     },
     sent,
+    dial: (call, phone) => calls.dial(call, phone),
+    subscribeCalls: (ring) => calls.subscribeCalls(ring),
+    ring: (number) => calls.ring(number),
+    get dialled() {
+      return calls.dialled;
+    },
   };
 }

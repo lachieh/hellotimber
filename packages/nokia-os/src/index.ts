@@ -18,6 +18,15 @@ export type {
   StockTimestamp,
   SyntheticNetwork,
 } from "./messages/network";
+// Plan 22: the network port's call half (dial, subscribeCalls) and the synthetic cell's rings.
+export type {
+  StockCallControl,
+  StockCallLink,
+  StockIncomingCall,
+  StockOutgoingCall,
+  StockRing,
+  SyntheticRing,
+} from "./calls/network";
 // Plan 18b: T9 dictionaries (the English one is the `@hellotimber/nokia-os/t9-english` entry).
 export { createT9Dictionary } from "./text/t9/dictionary";
 export type { T9Dictionary } from "./text/t9/dictionary";
