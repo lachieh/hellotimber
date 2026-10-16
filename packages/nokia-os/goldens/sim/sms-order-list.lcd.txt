@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/sms-order-list
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sms/order/list
 source-sha256: c12daf26c38c4b39e8fbe58f5672718f7c1cbd83f66d9f992a35cce51bbaec2f
 note: SIM order: unread first, then read, each in slot order whatever their time stamps; ▼ per image.

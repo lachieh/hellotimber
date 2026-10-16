@@ -1,6 +1,6 @@
 lcd-golden 1
 id: sim/sms-slots-15-arrive-2
-status: pending:30
+status: asserted
 source: captures/6.39/plan30/sms/slots/15/arrive-2
 source-sha256: 0da552f307636342903b2fe2c13084028510c4e45726dfb5569af87b5159a942
 trigger-frame: 1

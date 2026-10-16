@@ -146,7 +146,7 @@
   {
     "id": "sim/sms-boot-empty",
     "file": "sim/sms-boot-empty.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -154,7 +154,7 @@
   {
     "id": "sim/sms-boot-factory",
     "file": "sim/sms-boot-factory.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1
@@ -210,10 +210,18 @@
   {
     "id": "sim/sms-order-list",
     "file": "sim/sms-order-list.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 8,
     "frames": 8
+  },
+  {
+    "id": "sim/sms-order-read",
+    "file": "sim/sms-order-read.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
   },
   {
     "id": "sim/sms-read-1",
@@ -234,7 +242,7 @@
   {
     "id": "sim/sms-read-2",
     "file": "sim/sms-read-2.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -250,7 +258,7 @@
   {
     "id": "sim/sms-read-3",
     "file": "sim/sms-read-3.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6
@@ -290,7 +298,7 @@
   {
     "id": "sim/sms-slots-10-arrive-1",
     "file": "sim/sms-slots-10-arrive-1.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 15
@@ -298,7 +306,7 @@
   {
     "id": "sim/sms-slots-10-arrive-2",
     "file": "sim/sms-slots-10-arrive-2.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 21
@@ -306,7 +314,7 @@
   {
     "id": "sim/sms-slots-10-arrive-3",
     "file": "sim/sms-slots-10-arrive-3.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 20
@@ -314,7 +322,7 @@
   {
     "id": "sim/sms-slots-10-list",
     "file": "sim/sms-slots-10-list.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -322,7 +330,7 @@
   {
     "id": "sim/sms-slots-15-arrive-1",
     "file": "sim/sms-slots-15-arrive-1.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 15
@@ -330,7 +338,7 @@
   {
     "id": "sim/sms-slots-15-arrive-2",
     "file": "sim/sms-slots-15-arrive-2.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 21
@@ -338,7 +346,7 @@
   {
     "id": "sim/sms-slots-15-arrive-3",
     "file": "sim/sms-slots-15-arrive-3.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 21
@@ -346,7 +354,7 @@
   {
     "id": "sim/sms-slots-15-list",
     "file": "sim/sms-slots-15-list.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3
@@ -354,7 +362,7 @@
   {
     "id": "sim/sms-slots-30-arrive-1",
     "file": "sim/sms-slots-30-arrive-1.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 16
@@ -362,7 +370,7 @@
   {
     "id": "sim/sms-slots-30-arrive-2",
     "file": "sim/sms-slots-30-arrive-2.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 21
@@ -370,7 +378,7 @@
   {
     "id": "sim/sms-slots-30-arrive-3",
     "file": "sim/sms-slots-30-arrive-3.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 21
@@ -378,7 +386,7 @@
   {
     "id": "sim/sms-slots-30-list",
     "file": "sim/sms-slots-30-list.lcd.txt",
-    "status": "pending:30",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3

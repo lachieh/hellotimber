@@ -188,7 +188,7 @@ export function createStockPhoneWith(
   const messaging = stockMessaging(
     eeprom,
     settings,
-    sim,
+    simCard,
     config.network ?? createSyntheticNetwork(),
   );
   messaging.connect();
@@ -322,7 +322,13 @@ export function createStockPhoneWith(
   };
   const send = (event: KeyEvent): void => {
     if (event.type === "up") {
+      const notice = noticeShown();
       if (!(poweredOn && keyguard.keyUp(event.key))) phone.send(event);
+      // Plan 30 Task 0 M (`sms/slots/*`): C held on a notice clears it too, at its release (the
+      // kernel's long press at standby does nothing).
+      if (event.key === "c" && notice !== undefined && noticeShown() === notice) {
+        phone.setNotice(null);
+      }
       sounder.keyUp(event.key);
       publish();
       return;
@@ -356,6 +362,11 @@ export function createStockPhoneWith(
     }
     publish();
   };
+  /** The text of the notice standby shows, if any. */
+  function noticeShown(): string | undefined {
+    const screen = phone.screen;
+    return screen.kind === "standby" ? screen.notice?.text : undefined;
+  }
   const wrapper: Phone = {
     send,
     pressKey(key, holdMs = 0) {

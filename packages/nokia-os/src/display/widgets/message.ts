@@ -2,15 +2,18 @@
 import type { MenuIndicator } from "@hellotimber/phone-core";
 import type { Framebuffer } from "@hellotimber/phone-screen";
 import { missingStockGlyphs, STOCK_FONTS, WIDGET_SPRITES } from "../../resources";
+import { smsDrawn } from "../../sim/messages";
 import { paintIndicator } from "../indicator";
 import { VISIBLE_ROWS } from "../list-rows";
 import { SOFTKEY_TOP } from "../standby";
 
 /**
- * Text from the network as the small face can draw it: characters it lacks are left out (D6:
- * network text may hold any character; `missingStockGlyphs` reports them).
+ * Text from the network as the small face can draw it: the GSM extension characters v6.39 draws
+ * as `?` become `?` (plan 30 Task 0 M), other characters it lacks are left out (D6: network text
+ * may hold any character; `missingStockGlyphs` reports them).
  */
 export function drawable(text: string): string {
+  text = smsDrawn(text);
   const missing = new Set(missingStockGlyphs(text, "small"));
   return missing.size === 0 ? text : Array.from(text, (ch) => (missing.has(ch) ? "" : ch)).join("");
 }

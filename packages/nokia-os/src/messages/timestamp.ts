@@ -8,11 +8,11 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 const two = (n: number): string => String(n).padStart(2, "0");
 
 /**
- * `13-Oct-2026` (`sms/inbox-view-1` down-02). A one-digit day is padded like the time's fields
- * (UNVERIFIED: every captured day is 13).
+ * `13-Oct-2026` (`sms/inbox-view-1` down-02); a one-digit day is not padded (`1-Jan-2026`, plan 30
+ * `sim/sms-order-read`).
  */
 export function messageDate(stamp: StockTimestamp): string {
-  return `${two(stamp.day)}-${MONTHS[stamp.month - 1]}-${stamp.year}`;
+  return `${stamp.day}-${MONTHS[stamp.month - 1]}-${stamp.year}`;
 }
 
 /** `10:11:20`: hours, minutes and seconds, 24-hour. */

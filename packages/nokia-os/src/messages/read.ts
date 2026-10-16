@@ -25,11 +25,17 @@ const BOX_NODES: Readonly<Record<MessageBox, string>> = { inbox: "2-2", outbox: 
 /** `Erasing message` shows the bar's first frame this long (`sms/inbox-option-erase` frame 2). */
 export const ERASING_MS = 261;
 
-/** A message's text lines run x 0..83 (`sms/inbox-view-2`). */
-const PAGE_WIDTH = 84;
+/**
+ * A message's text lines run x 0..83 (`sms/inbox-view-2`), and a word stays on a line when its
+ * cells end one column short of it (`right here with a` ends at x 82, plan 30 `sim/sms-read-1`);
+ * `wrapText` keeps the editor's two columns, so pages wrap at 85.
+ */
+const PAGE_WIDTH = 85;
 
 /** A message of either box as the screens show it. */
 interface Shown {
+  /** Its SIM slot (plan 30): the screens name a message by it. */
+  readonly slot: number;
   readonly text: string;
   /** Inbox only: the sender and the service centre's time stamp. */
   readonly sender?: string;
@@ -44,12 +50,14 @@ function messagesOf(services: StockServices, box: MessageBox): readonly Shown[] 
   const store = services.messaging.store;
   if (box === "outbox") {
     return store.outbox().map((m) => ({
+      slot: m.slot,
       text: m.text,
       read: true,
       ...(m.number === undefined ? {} : { number: m.number }),
     }));
   }
   return store.inbox().map((m) => ({
+    slot: m.slot,
     text: m.text,
     sender: m.number,
     sent: [messageDate(m.sentAt), messageTime(m.sentAt)],
@@ -62,7 +70,7 @@ function messagesOf(services: StockServices, box: MessageBox): readonly Shown[] 
  * A message's pages (D13): its text, up to four lines a page, then (Inbox) `Sender:` and `Sent:`
  * (`sms/inbox-view-1`, `-2`). ▲/▼ turn them and wrap.
  */
-export function messagePages(message: Shown): readonly (readonly string[])[] {
+export function messagePages(message: Omit<Shown, "slot">): readonly (readonly string[])[] {
   const text = drawable(message.text);
   const chars = Array.from(text);
   const lines = wrapText(text, "small", PAGE_WIDTH).map((line) =>
@@ -126,13 +134,13 @@ interface Box {
  * Options › Erase (`sms/inbox-option-erase`, `-erase-last`): `Erase message?`; OK erases,
  * `Erasing message`, then `Erased` and the list, or `No more messages in …` and the page.
  */
-function erase({ services, box }: Box, index: number): Widget {
+function erase({ services, box }: Box, slot: number): Widget {
   const { messaging, noteSound } = services;
   return confirmQuery({
     lines: ["Erase", "message?"],
     softkey: "OK",
     confirm(flow) {
-      messaging.store.erase(box, index);
+      messaging.store.erase(box, slot);
       const empty = messagesOf(services, box).length === 0;
       const after = empty
         ? note({
@@ -157,7 +165,7 @@ function erase({ services, box }: Box, index: number): Widget {
 }
 
 /** A message's Options (`sms/inbox-options`: seven; `sms/outbox-options`: four). */
-function messageOptions(owner: Box, index: number, message: Shown): Widget {
+function messageOptions(owner: Box, message: Shown): Widget {
   const { services, box } = owner;
   const numberNote = (flow: Flow) =>
     flow.replace(
@@ -170,7 +178,7 @@ function messageOptions(owner: Box, index: number, message: Shown): Widget {
       }),
     );
   const actions: Readonly<Record<string, (flow: Flow) => void>> = {
-    Erase: (flow) => flow.push(erase(owner, index)),
+    Erase: (flow) => flow.push(erase(owner, message.slot)),
     // Reply starts empty; Send's prompt starts with the sender (D8, `sms/inbox-option-typed`).
     Reply: (flow) => flow.replace(smsEditor(services, { number: message.sender ?? "" })),
     // Plan 18c: a chat with the sender (`sms/inbox-option-chat`: Chat name:).
@@ -216,23 +224,40 @@ function messageOptions(owner: Box, index: number, message: Shown): Widget {
   });
 }
 
+/**
+ * Read on an Inbox message shows `Opening message` on plan 14's hatched bar first, while the phone
+ * reads its SIM record: 270-625 ms in plan 30's recordings (`sim/sms-read-*-open`, longer with a
+ * phone book match or a long text; the screen after it is compared within that spread), here
+ * the shortest.
+ */
+export const OPENING_MESSAGE_MS = 270;
+
 /** A message read (D13): its pages, Options; reading an Inbox message marks it read. */
-function messageView(owner: Box, index: number): Widget {
+function messageView(owner: Box, message: Shown): Widget {
   const { services, box } = owner;
-  if (box === "inbox") services.messaging.store.markRead(index);
-  const message = messagesOf(services, box)[index]!;
-  return pager(messagePages(message), "Options", (flow) =>
-    flow.push(messageOptions(owner, index, message)),
+  const view = pager(messagePages(message), "Options", (flow) =>
+    flow.push(messageOptions(owner, message)),
+  );
+  if (box === "outbox") return view;
+  services.messaging.store.markRead(message.slot);
+  return interlude(
+    { kind: "progress", text: ["Opening", "message"], bar: "progress-1", softkey: "" },
+    OPENING_MESSAGE_MS,
+    (flow) => flow.replace(view),
   );
 }
 
 /**
  * The list (`sms/inbox-list`, `sms/outbox-list`): the sender (Inbox) or `Message` (Outbox) after
- * an envelope, closed while unread; the circular rows window; Read opens the message. It reads
- * the box afresh on every screen, so an erased message leaves it at once.
+ * an envelope, closed while unread; the circular rows window; Read opens the message. Its order is
+ * the box's when the list opened (plan 30 Task 0 M: a message read stays where it was until the
+ * Inbox opens again, `sms/inbox/list-one-read`); it reads the box afresh on every screen, so an
+ * erased message leaves it at once and an arrival joins at the end.
  */
 class MessageListWidget implements Widget {
   readonly #owner: Box;
+  /** The slots in the order the list opened with. */
+  readonly #order: readonly number[];
   #cursor: RowsCursor = { selected: 0, windowTop: 0 };
   /** How many messages the list showed last: an erase puts the next one on top. */
   #count: number | undefined;
@@ -240,10 +265,16 @@ class MessageListWidget implements Widget {
 
   constructor(owner: Box) {
     this.#owner = owner;
+    this.#order = messagesOf(owner.services, owner.box).map((m) => m.slot);
   }
 
   #messages(): readonly Shown[] {
-    return messagesOf(this.#owner.services, this.#owner.box);
+    const now = messagesOf(this.#owner.services, this.#owner.box);
+    const rank = (m: Shown) => {
+      const at = this.#order.indexOf(m.slot);
+      return at < 0 ? this.#order.length : at;
+    };
+    return [...now].sort((a, b) => rank(a) - rank(b));
   }
 
   render(flow: Flow): MessageListModel {
@@ -281,7 +312,7 @@ class MessageListWidget implements Widget {
     const count = this.#messages().length;
     if (key === "c") this.#c.up(flow);
     else if (key === "navi" && count > 0) {
-      flow.push(messageView(this.#owner, this.#cursor.selected ?? 0));
+      flow.push(messageView(this.#owner, this.#messages()[this.#cursor.selected ?? 0]!));
     } else this.#cursor = moveRows(this.#cursor, key, count) ?? this.#cursor;
   }
 }

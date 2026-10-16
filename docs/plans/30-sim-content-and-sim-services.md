@@ -768,18 +768,38 @@ reveal timeline of its own; every reveal plays the ▲ timeline.
 **Files:** `src/sim/messages.ts` (new), `src/phone-book/sim-card.ts` and `src/messages/store.ts`
 ("Shared-file edits"), `tests/sim-messages.test.ts` (new).
 
-- [ ] TDD `gsmSeptets`: the default alphabet (1), the extension table (2), anything else
+- [x] TDD `gsmSeptets`: the default alphabet (1), the extension table (2), anything else
       `undefined`; 160 septets accepted, 161 refused.
-- [ ] TDD `simMessagesProblem` and `normaliseSim`'s messages: `slots` positive and at most Task 0
+- [x] TDD `simMessagesProblem` and `normaliseSim`'s messages: `slots` positive and at most Task 0
       M's cap; entries at most `slots`; each number, text, time stamp (plan 18's ranges) and `read`;
       errors naming `messages.entries[i].<field>`.
-- [ ] TDD the store: with no stored copy of this SIM, `inbox()` is the SIM's messages in Task 0 M's
+- [x] TDD the store: with no stored copy of this SIM, `inbox()` is the SIM's messages in Task 0 M's
       order with their read flags; `unread()` counts them; the first `markRead`, `erase` or
       `receive` writes the whole inbox under the SIM id; another SIM id sees its own; capacity is
       `slots` (`receive` returns `"full"` past it); Restore keeps them (plan 18 D7).
-- [ ] Power-on with unread SIM messages does what Task 0 M recorded (envelope, notice).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): SMS stored on the SIM card`.
+- [x] Power-on with unread SIM messages does what Task 0 M recorded (envelope, notice).
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): SMS stored on the SIM card`.
+
+Deviation (Task 4): the store is slot-based (Task 0 M: order and arrivals follow the SIM's
+records): every stored message carries its `slot` (plan 18's records without one get the first
+free slots when read, so no record version change), `receive` and `save` take the first free slot
+of the SIM's `slots`, `markRead` and `erase` name a slot, and `inbox()` lists unread then read,
+each by slot. The Inbox list keeps the order it opened with (a message read stays in place until
+the Inbox opens again, as plan 18's `sms/inbox/list-one-read` and plan 30's `sms/erase` show).
+`stockMessaging` takes the normalised SIM card. Found on the way and fixed with their goldens:
+Read on an Inbox message shows `Opening message` on the hatched bar first (270-625 ms in plan 30's
+recordings; nokia-os 270 ms; plan 18 captured no message opening); C held on a notice clears it at
+its release (`sms/slots/*`; the kernel's long press at standby did nothing); a word stays on a
+message page's line when its cells end one column short of the LCD (`right here with a`); the
+`Sent:` day is not padded (`1-Jan-2026`, new golden `sim/sms-order-read`); the extension table's
+`[ ] { } ~ | ^` draw as `?` (`drawable`). The acceptance compares the screen after `Opening` and
+`Opening message` within 600 ms, and an arrival's notice within 475 ms: plan 18's and plan 30's
+recordings of the same paths differ by that much (the emulator's SIM against Task 0's swSIM
+fixture; the synthetic cell's link time), which the fidelity standard counts as imperceptible.
+Every golden that shows a sender from the phone book is Task 5's (names), so Task 4 asserts the
+SIM messages without names: power-on (empty, factory), messages 2 and 3, the order, capacity and
+arrivals at 10/15/30 slots.
 
 ### Task 5 - Sender names (TDD against goldens)
 

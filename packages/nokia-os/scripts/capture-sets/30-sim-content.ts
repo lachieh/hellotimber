@@ -988,9 +988,12 @@ export function simContentCard(
  * The tasks whose goldens are asserted: each row names the task that implements it, and is
  * `pending:30` until that task is listed here (plan 29's pending workflow).
  */
-export const DONE_TASKS: ReadonlySet<number> = new Set<number>([]);
+export const DONE_TASKS: ReadonlySet<number> = new Set<number>([4]);
 
-/** The plan 30 task that implements a golden. */
+/**
+ * The plan 30 task that implements a golden: SIM messages (4), sender names (5: every golden
+ * that shows a sender from the phone book), SIM services (7), IMEI (8).
+ */
 export type SimContentTask = 4 | 5 | 7 | 8;
 
 /** Goldens another plan's screen shows: `*#06#` (plan 22). */
@@ -1089,7 +1092,7 @@ const ROWS: readonly Row[] = [
     dir: "sms/boot",
     shots: ["unread-after-c", "unread-inbox"],
     sim: "sms",
-    task: 4,
+    task: 5,
     note: "SIM sms (three unread): standby after power-on shows only the envelope; the Inbox lists the unread first.",
   },
   {
@@ -1097,7 +1100,7 @@ const ROWS: readonly Row[] = [
     dir: "sms/boot",
     shots: ["read-after-c", "read-inbox"],
     sim: "smsread",
-    task: 4,
+    task: 5,
     note: "SIM smsread (all read): standby after power-on without the envelope; the Inbox in slot order.",
   },
   {
@@ -1121,7 +1124,7 @@ const ROWS: readonly Row[] = [
     id: "sim/sms-inbox-open",
     dir: "sms/inbox/open",
     sim: "sms",
-    task: 4,
+    task: 5,
     note: "SIM sms: Inbox's Select: Opening, then the list on the first unread message (named senders).",
   },
   {
@@ -1129,7 +1132,7 @@ const ROWS: readonly Row[] = [
     dir: "sms/inbox/list",
     scroll: true,
     sim: "sms",
-    task: 4,
+    task: 5,
     note: "SIM sms: the Inbox list, ▼ per image: unread (slots 2, 3, 7), then read (slots 1, 5, 9), past the wrap.",
   },
   ...[1, 2, 3, 4, 5, 6].map(
@@ -1138,7 +1141,8 @@ const ROWS: readonly Row[] = [
       dir: `sms/read/${n}`,
       shots: readShots(n === 1 ? 5 : 3),
       sim: "sms",
-      task: 4,
+      // Messages 1, 4, 5 and 6 are from senders in the phone book (Intl, Ben, Carl, Dave).
+      task: n === 2 || n === 3 ? 4 : 5,
       note: `SIM sms: Inbox message ${n}: its pages (text, Sender:, Sent:), then Details (Sender:, Message centre:, Time:).`,
     }),
   ),
@@ -1146,14 +1150,14 @@ const ROWS: readonly Row[] = [
     id: "sim/sms-read-1-open",
     dir: "sms/read/1/open",
     sim: "sms",
-    task: 4,
+    task: 5,
     note: "SIM sms: Read on message 1 (Intl's 160 septets): Opening message, its first page.",
   },
   {
     id: "sim/sms-read-2-open",
     dir: "sms/read/2/open",
     sim: "sms",
-    task: 4,
+    task: 5,
     note: "SIM sms: Read on message 2: the extension-table characters [ ] { } ~ | ^ drawn as ?.",
   },
   {
@@ -1165,10 +1169,18 @@ const ROWS: readonly Row[] = [
     note: "SIM order: unread first, then read, each in slot order whatever their time stamps; ▼ per image.",
   },
   {
+    id: "sim/sms-order-read",
+    dir: "sms/order/read-3",
+    shots: ["page/01", "page/02", "page/03"],
+    sim: "order",
+    task: 4,
+    note: "SIM order: Oldest unread's pages: its Sent: date 1-Jan-2026 (the day unpadded).",
+  },
+  {
     id: "sim/sms-erase",
     dir: "sms/erase/erase",
     sim: "sms",
-    task: 4,
+    task: 5,
     note: "SIM sms, 0499000001 read before: Erase message?'s OK on Intl: Erasing message, Erased, the list re-sorted.",
   },
   {
@@ -1176,7 +1188,7 @@ const ROWS: readonly Row[] = [
     dir: "sms/erase",
     shots: [...range("list-after/", 1, 4), ...range("reboot-list/", 1, 4)],
     sim: "sms",
-    task: 4,
+    task: 5,
     note: "SIM sms: the list after the erase, ▼ per image, then the same after a cold power-on with the written SIM.",
   },
   ...(["10", "15", "30"] as const).flatMap((slots): Row[] => [
@@ -1206,7 +1218,7 @@ const ROWS: readonly Row[] = [
     dir: "sms/restore",
     shots: range("list-after/", 1, 4),
     sim: "sms",
-    task: 4,
+    task: 5,
     note: "SIM sms on the factory image: the Inbox after Restore factory settings keeps every SIM message.",
   },
   // ------------------------------------------------ sender names (N)
@@ -1553,7 +1565,8 @@ export const SIM_CONTENT_NOT_IMPORTED: Readonly<Record<string, string>> = {
     "the power-on recordings type the virgin image's date prompt and dismiss its first standby prompt (setup artefacts nokia-os's skip boot does not show); their standby and Inbox stills are imported",
   "plan30/sms/inbox/list-up.png, standby.png, sms/read/*/list.png, open/ but 1 and 2, options/":
     "the same screens as the imported lists, plan 18's Options list",
-  "plan30/sms/order/read-*": "each message's pages: plan 18's layout, imported for sms/read",
+  "plan30/sms/order/read-* but read-3/page":
+    "each message's pages: plan 18's layout, imported for sms/read",
   "plan30/sms/erase/{list-before,confirm,after,reboot-standby}.png":
     "the screens around the imported erase recording and lists",
   "plan30/sms/slots/*/{arrive-*-end,standby}.png, messages-menu/":

@@ -2,7 +2,7 @@
 // entries. Submenus keep their presentation, soft key, opening selection, page values and game
 // splash; leaves open stock widget flows, a feature's screens or the placeholder of the plan that
 // owns them (`leaves.ts`, `stock.ts`, `features/`).
-import { normaliseSim } from "../phone-book/sim-card";
+import { normaliseSim, type NormalisedSimCard } from "../phone-book/sim-card";
 import { StockPhoneBook } from "../phone-book/store";
 import {
   ApplicationEntry,
@@ -254,11 +254,14 @@ export function stockServices(
   };
 }
 
-/** A phone's messaging: `sim`'s messages over `eeprom`, Set 1's centre from `settings`. */
+/**
+ * A phone's messaging: `sim`'s messages over `eeprom` (plan 30: the SIM's own until the phone
+ * first writes them), Set 1's centre from `settings`.
+ */
 export function stockMessaging(
   eeprom: StockEeprom,
   settings: StockSettings,
-  sim: string,
+  sim: string | NormalisedSimCard,
   network: StockNetworkPort,
 ): StockMessaging {
   const centre = () => settings.text(SET_1_CENTRE_KEY) ?? "";
