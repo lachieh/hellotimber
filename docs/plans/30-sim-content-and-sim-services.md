@@ -828,14 +828,27 @@ model shows Set 1's centre; the emulator network writes `+1234567890`).
 **Files:** `src/sim/toolkit.ts` (new), `src/phone-book/sim-card.ts`, `src/firmware/menu.ts`,
 `src/index.ts` (one line), `tests/sim-toolkit.test.ts` (new).
 
-- [ ] TDD `normaliseToolkit` (D12): title and labels in their faces and limits; ids kebab-case and
+- [x] TDD `normaliseToolkit` (D12): title and labels in their faces and limits; ids kebab-case and
       unique per list; steps non-empty; a `select` with 1-255 items; depth ≤ 4; call numbers per
       plan 19; `confirm` in its face; field-path errors.
-- [ ] TDD `stockMenuFor`: `"sim-1"` and a SIM without a toolkit equal `stockMenu` (paths, labels,
+- [x] TDD `stockMenuFor`: `"sim-1"` and a SIM without a toolkit equal `stockMenu` (paths, labels,
       numbers); a toolkit SIM adds `menu/sim-services` and one path per top-level item, in order;
       the carousel label per D5; an invalid SIM throws as `createStockPhone` does.
-- [ ] `createStockPhone` builds its menu with `stockMenuFor(config.sim)`; every existing test passes.
-- [ ] Commit: `feat(nokia-os): the SIM toolkit model and stockMenuFor`.
+- [x] `createStockPhone` builds its menu with `stockMenuFor(config.sim)`; every existing test passes.
+- [x] Commit: `feat(nokia-os): the SIM toolkit model and stockMenuFor`.
+
+Deviation (Task 6): phone-core numbers top-level entries 1..n and refuses a gap ("Sibling menu
+orders must be contiguous from 1"), and indexes the carousel by order, so SIM services is the
+kernel's 13th slot (`src/sim/slot.ts`: `SIM_SERVICES_ORDER` 13) and the stock painter draws its
+counter as 14 (`SIM_SERVICES_NUMBER`) and its level without a menu number. What phone-core decides
+by number stays 13: `Menu 1 3` opens SIM services and `Menu 1 4` is `Invalid shortcut`, the reverse
+of v6.39 (`sim/stk-carousel-main-menu-13`, `-menu-14`: known gaps until phone-core lets a top-level
+entry carry its own menu number; phone-core does not change in this plan). `createStockPhone` and
+`stockMenuFor` both build the menu through `createStockMenu(…, sim)` with the normalised card (the
+SIM's toolkit, messages and phone book). A cut label (Task 0 K) ends in `CUT_MARK` (`…`): the rows
+painter draws its text, then `...` at a fixed column (x 68-76) wherever the text stops, and the
+text keeps a space's width before it (`Sixteen char`, `Twenty-four`). Items open a placeholder until
+Task 7.
 
 ### Task 7 - SIM services screens (TDD against goldens, or composed)
 

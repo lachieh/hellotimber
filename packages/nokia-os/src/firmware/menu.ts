@@ -2,7 +2,8 @@
 // entries. Submenus keep their presentation, soft key, opening selection, page values and game
 // splash; leaves open stock widget flows, a feature's screens or the placeholder of the plan that
 // owns them (`leaves.ts`, `stock.ts`, `features/`).
-import { normaliseSim, type NormalisedSimCard } from "../phone-book/sim-card";
+import { normaliseSim, type NormalisedSimCard, type StockSimCard } from "../phone-book/sim-card";
+import { simServicesEntry } from "./features/sim-services";
 import { StockPhoneBook } from "../phone-book/store";
 import {
   ApplicationEntry,
@@ -200,6 +201,7 @@ export function createStockMenu(
   messaging?: StockMessaging,
   t9?: StockT9,
   phoneBook?: StockPhoneBook,
+  sim?: NormalisedSimCard,
 ): PhoneMenu {
   const services = stockServices(
     ports,
@@ -211,6 +213,7 @@ export function createStockMenu(
     messaging,
     t9,
     phoneBook,
+    sim,
   );
   const builder: Builder = {
     ports,
@@ -218,10 +221,34 @@ export function createStockMenu(
     services,
     leaves: new LeafBinder(services),
   };
+  const entries = STOCK_TREE.map(
+    (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),
+  );
+  // Plan 30 D5: a SIM with a toolkit adds SIM services (Menu 14) after Profiles.
+  const toolkit = sim?.toolkit;
   return new PhoneMenu(
-    STOCK_TREE.map(
-      (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),
-    ),
+    toolkit === undefined ? entries : [...entries, simServicesEntry(toolkit, services)],
+  );
+}
+
+/**
+ * Plan 30 D5: the stock menu for the inserted SIM: `stockMenu`, and SIM services (Menu 14) when
+ * the SIM has a toolkit. Validates the SIM as `createStockPhone` does (throws naming the field).
+ */
+export function stockMenuFor(sim: string | StockSimCard): PhoneMenu {
+  const card = normaliseSim(sim);
+  const eeprom = new StockEeprom(createMemoryStorage());
+  return createStockMenu(
+    {},
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    eeprom,
+    undefined,
+    undefined,
+    undefined,
+    card,
   );
 }
 
@@ -236,6 +263,7 @@ export function stockServices(
   messaging?: StockMessaging,
   t9: StockT9 = stockT9(eeprom),
   phoneBook?: StockPhoneBook,
+  sim?: NormalisedSimCard,
 ): StockServices {
   const store = settings ?? createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES);
   const sound = sounder ?? new StockSounder(new SoundSequencer(() => {}), store, () => games.now());
@@ -248,9 +276,10 @@ export function stockServices(
     sounder: sound,
     noteSound: (lines) => sound.note(lines),
     eeprom,
-    messaging: messaging ?? stockMessaging(eeprom, store, code.sim, createSyntheticNetwork()),
+    messaging:
+      messaging ?? stockMessaging(eeprom, store, sim ?? code.sim, createSyntheticNetwork()),
     t9,
-    phoneBook: phoneBook ?? new StockPhoneBook(eeprom, normaliseSim(code.sim)),
+    phoneBook: phoneBook ?? new StockPhoneBook(eeprom, sim ?? normaliseSim(code.sim)),
   };
 }
 

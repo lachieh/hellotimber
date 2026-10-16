@@ -1,8 +1,9 @@
 // The inserted SIM card (plan 19 D2): host config, and the contacts seam. A string is the emulator
 // SIM under that identity; a `StockSimCard` adds its phone book and service numbers. Validated
-// once, when the phone is created. Plan 30 adds the SIM's messages (`EF_SMS`).
+// once, when the phone is created. Plan 30 adds the SIM's messages (`EF_SMS`) and toolkit menu.
 import { missingStockGlyphs } from "../resources";
 import { normaliseSimMessages, type SimMessages, type StockSimMessage } from "../sim/messages";
+import { normaliseToolkit, type StockSimToolkit } from "../sim/toolkit";
 
 /** Plan 19: one SIM phone book entry or service number. */
 export interface StockContact {
@@ -34,6 +35,8 @@ export interface StockSimCard {
     readonly slots?: number;
     readonly entries?: readonly (StockSimMessage | null)[];
   };
+  /** Plan 30: the SIM applet's menu (SIM services, Menu 14). Default: none. */
+  readonly toolkit?: StockSimToolkit;
 }
 
 /** A validated SIM card with its defaults filled in. */
@@ -46,6 +49,8 @@ export interface NormalisedSimCard {
   readonly serviceNumbers: readonly StockContact[];
   /** Plan 30: its message slots and the received messages in them. */
   readonly messages: SimMessages;
+  /** Plan 30: its toolkit menu, if it has one. */
+  readonly toolkit?: StockSimToolkit;
 }
 
 /** The emulator SIM's `EF_ADN`: 50 records of 30 bytes, 16-character names (Task 0). */
@@ -140,5 +145,14 @@ export function normaliseSim(sim: string | StockSimCard): NormalisedSimCard {
     return { name: contact.name, number: contact.number };
   });
   const messages = normaliseSimMessages(card.messages, where);
-  return { id: card.id, locations, nameLength, entries, serviceNumbers, messages };
+  const toolkit = normaliseToolkit(card.toolkit, where);
+  return {
+    id: card.id,
+    locations,
+    nameLength,
+    entries,
+    serviceNumbers,
+    messages,
+    ...(toolkit === undefined ? {} : { toolkit }),
+  };
 }

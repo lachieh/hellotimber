@@ -1328,11 +1328,12 @@ const ROWS: readonly Row[] = [
   ]),
   {
     id: `sim/stk-level-main-c`,
-    dir: `stk/level/main/c`,
+    // C after List's session (stk/level/main/c is cut off at 3.4 s, before the icon settles).
+    dir: `stk/select/list/c-2`,
     sim: "stk",
     toolkit: "main",
     task: 7,
-    note: `SIM stk, toolkit main: C in the level: the carousel on Menu 14, its icon restarting.`,
+    note: `SIM stk, toolkit main: C in the level (after List): the carousel on Menu 14, its icon restarting.`,
   },
   {
     id: `sim/stk-level-main-up`,
@@ -1583,8 +1584,9 @@ export const SIM_CONTENT_NOT_IMPORTED: Readonly<Record<string, string>> = {
     "the same screens and icon animation as the imported recordings (lachlan and title14 keep their settled label)",
   "plan30/stk/level/*/held-c, stk/text/*/held-c, stk/select/*/*held*":
     "held C: the firmware's long press reaches standby ≈530 ms after the down, the kernel's at 800 ms (plan 19's known gap); C's screens are imported",
-  "plan30/stk/level/*/carousel.png": "the carousel stills (the recordings' first frames)",
-  "plan30/stk/text/short/{open-*,after-ok*,keys,page}, text-160/open-*, text-240/open-*, two/open-c, stk/select/*/open-*, list/c-2":
+  "plan30/stk/level/*/carousel.png, stk/level/*/c":
+    "the carousel stills (the recordings' first frames); C's recordings are cut off before the icon settles (sim/stk-level-main-c is stk/select/list/c-2)",
+  "plan30/stk/text/short/{open-*,after-ok*,keys,page}, text-160/open-*, text-240/open-*, two/open-c, stk/select/*/open-*":
     "the opening recordings again before another key; a one-frame keys recording",
   "plan30/stk/call/":
     "SET UP CALL never completes in the emulator (a blank OK screen): the call confirm is composed (D4, D6)",

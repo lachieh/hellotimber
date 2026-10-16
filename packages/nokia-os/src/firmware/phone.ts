@@ -239,6 +239,7 @@ export function createStockPhoneWith(
       messaging,
       t9,
       phoneBook,
+      simCard,
     ),
     // Plan 18 D11: the envelope while Inbox holds unread messages, blinking while every slot is
     // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED). Plan 17 D6: the silent
