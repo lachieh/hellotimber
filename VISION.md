@@ -824,7 +824,7 @@ export interface StockPhoneConfig {
   /** Plan 30: phone-memory content written once, only where its record does not exist. */
   preload?: {
     readonly welcomeNote?: string;
-    readonly reminders?: readonly StockReminderPreload[]; // needs plan 21 (throws until then)
+    readonly reminders?: readonly StockReminderPreload[]; // plan 21's reminders, added in order
   };
 }
 
@@ -1107,7 +1107,8 @@ label is the toolkit's title; its items run text pages, lists and calls the phon
 confirmed call goes through plan 22's dial (a placeholder until plan 22 lands), inside the
 confirming key's `send()` so a browser host keeps the user activation. Every host string is
 validated when the phone (or `stockMenuFor`) is created, naming the field path. `preload` writes
-the Welcome note only while storage has no settings record. `describeStockScreen` reads every
+the Welcome note only while storage has no settings record, and the reminders only while it has
+no reminders record. `describeStockScreen` reads every
 screen as plain text (stock widgets attach their text to their frames). See
 [stock SIM services](docs/specs/stock/sim-services.md).
 

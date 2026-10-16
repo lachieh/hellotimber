@@ -26,3 +26,5 @@ export type { T9Dictionary } from "./text/t9/dictionary";
 // Plan 30: SIM content (SMS on the SIM) and SIM services (the SIM toolkit's Menu 14).
 export type { StockSimMessage } from "./sim/messages";
 export type { StockSimToolkit, StockToolkitItem, StockToolkitStep } from "./sim/toolkit";
+export { stockImeiLines } from "./firmware/preload";
+export type { StockPreload, StockReminderPreload } from "./firmware/preload";

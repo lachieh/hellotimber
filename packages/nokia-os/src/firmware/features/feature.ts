@@ -41,6 +41,8 @@ export interface StockServices {
   readonly phoneBook: StockPhoneBook;
   /** Plan 18b: the host's T9 dictionaries and the user words. */
   readonly t9: StockT9;
+  /** Plan 30 D9: the phone's IMEI (`StockPhoneConfig.imei`, checked), for `*#06#`; none: virgin. */
+  readonly imei?: string;
 }
 
 /** The tree node a bound screen opens for. */

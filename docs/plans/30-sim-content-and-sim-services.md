@@ -890,12 +890,22 @@ plan 19's known gap; its recordings are not imported.
 **Files:** `src/firmware/phone.ts`, plan 22's `*#06#` code (≈5 lines), `src/firmware/preload.ts`
 (new), `tests/preload.test.ts` (new), `tests/imei.test.ts` (new).
 
-- [ ] TDD `imei`: 15 digits, Luhn; `*#06#` against `sim/imei-*` (or composed per D9).
-- [ ] TDD `preload`: the Welcome note written when the settings record lacks its key (then shown at
+- [x] TDD `imei`: 15 digits, Luhn; `*#06#` against `sim/imei-*` (or composed per D9).
+- [x] TDD `preload`: the Welcome note written when the settings record lacks its key (then shown at
       power-on as plan 15 does), never over a stored note, not after Erase; reminders added in order
       when no `reminders` record exists, never otherwise; limits and typeable characters (D10);
       without plan 21, `preload.reminders` throws naming it.
-- [ ] Commit: `feat(nokia-os): host IMEI and phone-memory preload`.
+- [x] Commit: `feat(nokia-os): host IMEI and phone-memory preload`.
+
+Deviation (Task 8): plan 21 merged during this plan (t3/integration a624df4), so
+`preload.reminders` binds to its `StockReminders.add` (text and an optional alarm, in order,
+while storage has no `reminders` record; plan 21's 10 reminders of 35 characters) instead of
+throwing. Plan 22's `*#06#` has not landed: `imei` is checked when the phone is created, kept as
+`StockServices.imei` for plan 22's screen, and `stockImeiLines` gives its two lines
+(`sim/imei-screen` stays `pending:22`). Every preloaded string must be typeable (plan 18's
+`TYPEABLE`), within its editor's limit and drawn by the faces that show it (the Welcome note: large
+and small; a reminder: small and large); the preload is checked before anything is written. The
+Welcome note's record is the `settings` record, so a preload never returns after Erase.
 
 ### Task 9 - Screen text (TDD)
 
