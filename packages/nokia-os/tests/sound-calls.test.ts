@@ -30,7 +30,11 @@ function sounderAt(choices: SettingChoices = {}) {
   return { events, sequencer, sounder, advance };
 }
 
-const tones = (events: readonly StockSoundEvent[]) => events.filter((e) => e.output === "tone");
+type Sounding = Extract<StockSoundEvent, { output: "tone" | "buzzer" }>;
+const tones = (events: readonly StockSoundEvent[]) =>
+  events.filter((e): e is Sounding => e.output === "tone");
+const buzzer = (events: readonly StockSoundEvent[]) =>
+  events.filter((e): e is Sounding => e.output === "buzzer");
 
 describe("DTMF (S6)", () => {
   it("sounds a dial key's pair with keyDtmf, both oscillators, until the tail after its up", () => {
@@ -64,7 +68,7 @@ describe("DTMF (S6)", () => {
     advance(200);
     sounder.keyUp("5");
     advance(200);
-    expect(events.some((e) => e.output === "tone" && e.hz2 !== undefined)).toBe(false);
+    expect(tones(events).some((e) => "hz2" in e)).toBe(false);
   });
 });
 
@@ -95,10 +99,10 @@ describe("the call sounds (D7-D9)", () => {
     const beep = sounderAt({ "tones/incoming-call-alert": 3 });
     beep.sounder.ring("tones");
     beep.advance(10_000);
-    expect(beep.events.filter((e) => e.output === "buzzer" && e.hz !== null)).toHaveLength(1);
+    expect(buzzer(beep.events).filter((e) => e.hz !== null)).toHaveLength(1);
     const off = sounderAt({ "tones/incoming-call-alert": 4 });
     off.sounder.ring("tones");
     off.advance(10_000);
-    expect(off.events.filter((e) => e.output === "buzzer")).toEqual([]);
+    expect(buzzer(off.events)).toEqual([]);
   });
 });
