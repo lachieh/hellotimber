@@ -99,6 +99,14 @@ export class StockEeprom {
     return structuredClone(this.held(record) as T);
   }
 
+  /**
+   * The record's value without the copy `read` makes, for readers polled on every tick (plan 21's
+   * clock). The caller must not mutate it.
+   */
+  peek<T>(record: EepromRecord<T>): Readonly<T> {
+    return this.held(record) as T;
+  }
+
   /** Stores `value` at once. A storage failure is contained: the value stays in memory. */
   write<T>(record: EepromRecord<T>, value: T): void {
     this.held(record);

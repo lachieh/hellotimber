@@ -158,8 +158,9 @@ describe("stockMenu", () => {
       STOCK_TREE,
       stockMenu.entries.map((slot) => slot.entry),
     );
-    // The "Leaf ownership" table: Picture messages, New game, Stopwatch, ... (plan 27: the Composer)
-    for (const number of ["2-4", "8-4-2-1", "11-4"]) {
+    // The "Leaf ownership" table: Picture messages, New game, ... (plan 27: the Composer; plan 21:
+    // Stopwatch)
+    for (const number of ["2-4", "8-4-2-1"]) {
       expect(kinds.get(number), number).toBe("placeholder");
     }
     for (const number of [
@@ -175,6 +176,7 @@ describe("stockMenu", () => {
       "8-1-6",
       "9",
       "10-2",
+      "11-4",
       "12-5-1",
     ]) {
       expect(kinds.get(number), number).toBe("stock");
@@ -259,12 +261,12 @@ describe("stockMenu", () => {
     expect(exits).toEqual([{ select: "new-game" }]);
   });
 
-  it("returns no page value without host ports for the Clock and Date pages", () => {
+  it("shows no time on the Clock and Date pages without host ports (plan 21 no-time)", () => {
     const clock = submenu(stockMenu.entries[10]!.entry);
     expect(clock.children.entries.map((child) => clock.detailOf(child))).toEqual([
       "Off",
-      undefined,
-      undefined,
+      "--:--",
+      "--.--.----",
       undefined,
       "Off",
       "Off",
@@ -330,7 +332,6 @@ describe("PlaceholderApplication", () => {
     expect(owners).toMatchObject({
       "menu/messages/picture-messages": "18c",
       "menu/games/bantumi/new-game": "24",
-      "menu/clock/stopwatch": "21",
     });
   });
 

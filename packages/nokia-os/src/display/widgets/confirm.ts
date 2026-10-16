@@ -17,11 +17,13 @@ export interface ConfirmModel {
   readonly kind: "confirm";
   readonly lines: readonly string[];
   readonly softkey: string;
+  /** Plan 21: the lines' tops, else LINE_TOPS by their count (`Memory full.` 4/13/22). */
+  readonly tops?: readonly number[];
 }
 
 /** A confirm query: small-face lines from x 0 and its soft key (`OK`, `Yes`). */
 export function paintConfirm(fb: Framebuffer, model: ConfirmModel): void {
-  const tops = LINE_TOPS[model.lines.length];
+  const tops = model.tops ?? LINE_TOPS[model.lines.length];
   if (tops === undefined) {
     throw new Error(`Confirm query ${JSON.stringify(model.lines)}: no layout for its line count.`);
   }

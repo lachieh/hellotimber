@@ -37,6 +37,7 @@ import {
   type StockFontName,
 } from "../src/resources";
 import { TEXT_DATA } from "../src/resources/generated/text";
+import { CLOCK_DATA } from "../src/resources/generated/clock";
 import { COMPOSER_DATA } from "../src/resources/generated/composer";
 import { BOOT_DATA } from "../src/resources/generated/boot";
 import { STOCK_FONT_DATA } from "../src/resources/generated/fonts";
@@ -167,6 +168,7 @@ describe("generated resources", () => {
         snake: SNAKE_DATA,
         sounds: SOUND_DATA,
         text: TEXT_DATA,
+        clock: CLOCK_DATA,
         composer: COMPOSER_DATA,
       }).toEqual(extractResources());
     },

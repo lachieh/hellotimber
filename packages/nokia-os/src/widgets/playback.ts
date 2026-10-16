@@ -9,6 +9,11 @@ export class Playback {
     this.#timeline = timeline;
   }
 
+  /** The timeline played. */
+  get timeline(): StockWidgetTimeline {
+    return this.#timeline;
+  }
+
   advance(dtMs: number): void {
     this.#elapsed += dtMs;
   }

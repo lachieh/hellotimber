@@ -3,7 +3,10 @@ import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
 import { paintStandby } from "../standby";
 import { paintCalculator, type CalculatorModel } from "./calculator";
+import { paintAlert, type AlertModel } from "./alert";
+import { paintStopwatch, type StopwatchModel } from "./stopwatch";
 import { paintComposer, type ComposerModel } from "./composer";
+import { paintReminderView, type ReminderViewModel } from "./reminder-view";
 import { paintConfirm, type ConfirmModel } from "./confirm";
 import { paintContentList, type ContentListModel } from "./content-list";
 import { paintEditor, type EditorModel } from "./editor";
@@ -69,6 +72,9 @@ export type { SnakeModel } from "./snake";
 export type { SplashModel } from "./splash";
 export type { SymbolsModel } from "./symbols";
 export type { TextPageModel } from "./text-pages";
+export type { AlertModel } from "./alert";
+export type { StopwatchModel } from "./stopwatch";
+export type { ReminderViewModel } from "./reminder-view";
 
 /** A choice a later plan implements (D13), inside a flow: the placeholder frame of `label`. */
 export interface PlaceholderModel {
@@ -114,6 +120,8 @@ export type WidgetModel =
   | SymbolsModel
   | PlaceholderModel
   | CalculatorModel
+  | AlertModel
+  | StopwatchModel
   | ComposerModel
   | KeyguardModel
   | StandbyDrawModel
@@ -126,7 +134,8 @@ export type WidgetModel =
   | StandbyFrameModel
   | ShortcutChoiceModel
   | ContentListModel
-  | ServiceRequestModel;
+  | ServiceRequestModel
+  | ReminderViewModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -191,6 +200,12 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
     case "calculator":
       paintCalculator(fb, model);
       return;
+    case "alert":
+      paintAlert(fb, model);
+      return;
+    case "stopwatch":
+      paintStopwatch(fb, model);
+      return;
     case "composer":
       paintComposer(fb, model);
       return;
@@ -235,6 +250,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
         battery: 4,
         ...(model.clock === undefined ? {} : { clock: model.clock }),
       });
+      return;
+    case "reminder-view":
+      paintReminderView(fb, model);
       return;
   }
 }

@@ -2,7 +2,7 @@
   {
     "id": "probe/confirm-10-3-2-yes",
     "file": "probe/confirm-10-3-2-yes.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 4
@@ -2867,7 +2867,7 @@
   {
     "id": "tree/11-clock/11-4.leaf",
     "file": "tree/11-clock/11-4.leaf.lcd.txt",
-    "status": "pending:21",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2,

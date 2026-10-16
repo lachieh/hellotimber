@@ -8,6 +8,7 @@ import type { StockWidgetTimeline } from "../resources";
 import { shownMode, type TextMode, type TextState } from "../text/multitap";
 import { MODE_SPRITES, openSymbols } from "./editor";
 import type { Flow, Widget } from "./flow";
+import { isTextKey } from "../text/keys";
 import { HeldC } from "./held-c";
 import { TextEntry } from "./text-entry";
 
@@ -53,6 +54,12 @@ export interface TextInputOptions {
   readonly done: (text: string, flow: Flow) => void;
   /** Plan 17: a commit restarts the cursor's blink (Rename's prompt). */
   readonly restartBlinkOnCommit?: boolean;
+  /**
+   * Plan 21: a character key that changes the text, and the prompt's return to the top, restart
+   * the cursor's blink, shown (Remind about: `reminders/text`, `add-choice-c`; C and a key past
+   * the limit keep its phase, `add-c-text`, text-36).
+   */
+  readonly restartBlinkOnKey?: boolean;
 }
 
 function counterOf(
@@ -123,7 +130,11 @@ class TextInputWidget implements Widget {
   }
 
   onKeyDown(key: PhoneKey, flow: Flow): void {
+    const before = this.#entry.state;
     const request = this.#entry.keyDown(key);
+    if (this.#options.restartBlinkOnKey && isTextKey(key) && this.#entry.state !== before) {
+      this.#entry.restartBlink();
+    }
     if (request === "empty-c" && this.#options.leaveAtDown) flow.back();
     else if (request === "empty-c") this.#emptyC.down();
     if (request === "symbols") openSymbols(flow, this.#entry.control());
@@ -133,6 +144,10 @@ class TextInputWidget implements Widget {
     this.#entry.keyUp(key);
     if (key === "navi") this.#options.done(this.#entry.text, flow);
     if (key === "c") this.#emptyC.up(flow);
+  }
+
+  reveal(): void {
+    if (this.#options.restartBlinkOnKey) this.#entry.restartBlink();
   }
 
   tick(dtMs: number, flow: Flow): void {

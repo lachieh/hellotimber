@@ -107,6 +107,27 @@ function levelVolume(levels: readonly LevelStep[]): SoundVolume {
   };
 }
 
+/** The start of `program`'s first note at or after `ms` (looping from `loopFrom`). */
+function noteAtOrAfter(program: SoundProgram, ms: number): number {
+  const starts = noteStarts(program);
+  const length = program.steps.reduce((sum, step) => sum + step.ms, 0);
+  const loopStart = program.steps
+    .slice(0, program.loopFrom ?? 0)
+    .reduce((sum, step) => sum + step.ms, 0);
+  const looped = starts.filter((t) => t >= loopStart);
+  if (looped.length === 0 || program.loopFrom === undefined) {
+    return starts.find((t) => t >= ms) ?? ms;
+  }
+  const first = starts.find((t) => t >= ms);
+  if (first !== undefined) return first;
+  const period = length - loopStart;
+  const passes = Math.floor((ms - length) / period);
+  for (let pass = Math.max(0, passes); ; pass++) {
+    const found = looped.map((t) => length + pass * period + (t - loopStart)).find((t) => t >= ms);
+    if (found !== undefined) return found;
+  }
+}
+
 /** A tone's note position (`level5At`, `ascendingAt`) as a time into `program`. */
 function positionMs(
   program: SoundProgram,
@@ -390,6 +411,36 @@ export class StockSounder implements StockCueSink {
     if (this.#settings.choice(WARNING_TONES_KEY) === WARNING_TONES_ON) {
       this.#sequencer.play(program, now);
     }
+  }
+
+  /**
+   * Plan 21: a clock alert's sound (the alarm, the countdown, a reminder): `program` (Level 1
+   * registers, looped) from Level 1, one Ringing volume level louder on the first note starting
+   * at or after `ascend.firstMs + k × ascend.stepMs`, up to the active profile's (Level 1 while
+   * unset: the virgin captures stay at v=6); the vibrator only with Vibrating alert On. Cancel
+   * the play to stop it.
+   */
+  alert(
+    program: SoundProgram,
+    ascend: { readonly firstMs: number; readonly stepMs: number },
+  ): SoundPlay {
+    const top = this.#level("tones") ?? 1;
+    const vibrates = this.#vibrates();
+    const steps = vibrates
+      ? program.steps
+      : program.steps.map(({ vibrator: _vibrator, ...step }) => step);
+    const levels: LevelStep[] = [{ atMs: 0, level: 1 }];
+    for (let level = 2; level <= top; level++) {
+      const due = ascend.firstMs + (level - 2) * ascend.stepMs;
+      levels.push({ atMs: noteAtOrAfter(program, due), level });
+    }
+    const volume = levelVolume(levels);
+    return this.#sequencer.play({ ...program, steps }, this.#now(), { volume });
+  }
+
+  /** Stops `play` now (an alert answered). */
+  stop(play: SoundPlay): void {
+    this.#sequencer.cancel(play, this.#now());
   }
 
   /** Plays `program` now (plan 27's Composer). */

@@ -8,6 +8,7 @@ import {
   type PixelFont,
 } from "@hellotimber/phone-screen";
 import { BOOT_DATA } from "./generated/boot";
+import { CLOCK_DATA } from "./generated/clock";
 import { COMPOSER_DATA } from "./generated/composer";
 import { STOCK_FONT_DATA } from "./generated/fonts";
 import { MENU_ICON_DATA } from "./generated/menu-icons";
@@ -269,6 +270,12 @@ export const RECEIVE_LINK_MS: number = TEXT_DATA.messages.receiveLinkMs;
 /** `Saving message` shows its first bar frame this long before `Message saved`. */
 export const SAVING_MS: number = TEXT_DATA.messages.savingMs;
 
+/**
+ * Plan 21: the alerts' bell row (the `clock/bells-<n>` sprites) and its step, the ringing alarm's
+ * blink, the alerts' sound programs (one Level 1 cycle each, looped), how fast their volume climbs
+ * and their limits, measured on the clock's goldens (scripts/clock-resources.ts).
+ */
+export const CLOCK_ALERTS = CLOCK_DATA;
 // ---------------------------------------------------------------- Composer (plan 27)
 
 /** The Tempo list's BPM labels, in list order. */

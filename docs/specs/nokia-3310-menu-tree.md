@@ -501,7 +501,8 @@ subtrees are written out once and then referred to.
       - Domestic unit expressed in foreign units: text-input "Exchange rate:" [OK]
 - `10` **Reminders** → submenu (3-row list)
   - `10-1` **Add new** → text-input, "Remind about:", key **OK**
-  - `10-2` **View all** → returns-immediately, "Reminders", key **Select**
+  - `10-2` **View all** → returns-immediately, "Reminders", key **Select** (the virgin EEPROM's
+    junk reminder, `0000000000`, is not listed; its alert is the virgin first standby prompt: plan 21)
   - `10-3` **Erase** → option-list, key **OK**
     - entries: **One by one** ▸ · All
     - One by one: returns immediately
@@ -510,13 +511,15 @@ subtrees are written out once and then referred to.
   - `11-1` **Alarm clock** [Off] → text-input, "Set alarm time: / 00:00", key **OK**
   - `11-2` **Clock settings** [10:10] → submenu (3-row list)
     - `11-2-1` **Hide clock** → timed-note, "Clock hidden"; then back to the list after ≈1.4 s
+      (the entry then reads **Show clock**: "Clock displayed"; plan 21)
     - `11-2-2` **Set the time** → text-input, "Time: / 10:10", key **OK**
     - `11-2-3` **Time format** → option-list, key **OK**
       - entries: **24-hour** ▸ · 12-hour
       - 24-hour: timed-note "24-hour clock selected", then back
       - 12-hour: timed-note "12-hour clock selected", then back
   - `11-3` **Date setting** [13.10.2026] → text-input, "Date: / 13.10.2026", key **OK**
-  - `11-4` **Stopwatch** → application, "0:00:00.00", key **Start**
+  - `11-4` **Stopwatch** → application, "0:00:00.00", key **Start** (stopped: **Options** →
+    Start · Reset · Exit, `11-4-1`; plan 21)
   - `11-5` **Countdown timer** [Off] → number-input, "Set timer: / hh:mm", key **Start**
   - `11-6` **Auto update of date and time** [Off] → option-list, key **OK**
     - entries: On · Confirm first · **Off** ▸
