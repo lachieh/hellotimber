@@ -936,12 +936,21 @@ power-on; all of them would double the suite) through a screen watcher in the te
 
 **Files:** `tests/acceptance/30-sim-content.test.ts`, `tests/support/sim-content.ts` (new).
 
-- [ ] `acceptancePlan({ plan: "30", scenarios, knownGaps, timeoutsMs })`: a hand-written scenario for
+- [x] `acceptancePlan({ plan: "30", scenarios, knownGaps, timeoutsMs })`: a hand-written scenario for
       every golden in `goldens/index/30.json`; delete the todo shim. Known gaps only with a reason
       (D4's composed icon, if any).
-- [ ] Coverage guard: no golden or placeholder names `30`; Menu 14 (when present) is covered.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
-- [ ] Commit: `test(nokia-os): drive SIM content and SIM services against their goldens`.
+- [x] Coverage guard: no golden or placeholder names `30`; Menu 14 (when present) is covered.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
+- [x] Commit: `test(nokia-os): drive SIM content and SIM services against their goldens`.
+
+Deviation (Task 10): the acceptance file was written with Task 4 (plan 29's pending workflow
+flips each task's goldens with their scenarios), so this task adds the coverage checks. The shared
+coverage guard stays as it is (adding a plan is adding its acceptance file); plan 30's own checks
+are `tests/sim-coverage.test.ts`: nothing `pending:30`, only `sim/imei-screen` `pending:22`, no
+placeholder owned by 30, and Menu 14 (not in the stock tree, so the guard's tree walk cannot see
+it) covered by passing goldens of its slot, level and every SIM screen kind. Known gaps: the shared
+9-digit suffix (`sim/names-bob-9digits`, `-bob-k10`, `-bob-plus`) and `Menu 1 3` / `Menu 1 4`
+(`sim/stk-carousel-main-menu-13`, `-menu-14`: phone-core's gapless top-level numbers).
 
 ### Task 11 - Demo, README, verification gate and closeout
 

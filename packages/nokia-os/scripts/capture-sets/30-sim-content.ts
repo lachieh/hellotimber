@@ -988,7 +988,7 @@ export function simContentCard(
  * The tasks whose goldens are asserted: each row names the task that implements it, and is
  * `pending:30` until that task is listed here (plan 29's pending workflow).
  */
-export const DONE_TASKS: ReadonlySet<number> = new Set<number>([4, 5, 7]);
+export const DONE_TASKS: ReadonlySet<number> = new Set<number>([4, 5, 7, 8]);
 
 /**
  * The plan 30 task that implements a golden: SIM messages (4), sender names (5: every golden
