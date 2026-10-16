@@ -91,13 +91,13 @@ are independent and reusable; **only `website/` composes them**.
                    └───────────────────┘
 ```
 
-| Package                     | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Dependencies                                                       |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                                                                                                                                                                                                                                                                                       | none                                                               |
-| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                                                                                                                                                                                                                                  | `phone-core` (type-only)                                           |
-| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                                                                                                                                                                                                                                    | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
-| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                                                                                                                                                                                                                      | none                                                               |
-| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18, in progress), T9 English (open dictionary, plan 18b), the SIM card port with its phone book (plan 19), clock and alerts (plan 21), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, keyguard and display/keypad LED events on the light tick (plan 25, in progress), standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
+| Package                     | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Dependencies                                                       |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | none                                                               |
+| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | `phone-core` (type-only)                                           |
+| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
+| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | none                                                               |
+| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18, in progress), T9 English (open dictionary, plan 18b), the SIM card port with its phone book (plan 19), clock and alerts (plan 21), SIM content and SIM services (SIM-stored SMS, sender names, the SIM Toolkit's Menu 14, IMEI, preload, screen text; plan 30), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, keyguard and display/keypad LED events on the light tick (plan 25, in progress), standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
 
 The website does **not** consume `@hellotimber/nokia-os` yet (plan 13). How portfolio content
 integrates with the stock OS is decided later. Until then the website keeps phone-screen's own
@@ -784,7 +784,7 @@ ignored by the legacy painter.
 ### `@hellotimber/nokia-os`
 
 ```ts
-import type { Phone, PhoneMenu } from "@hellotimber/phone-core";
+import type { Phone, PhoneMenu, ScreenModel } from "@hellotimber/phone-core";
 import type { ScreenPainter } from "@hellotimber/phone-screen";
 
 export interface StockPhoneConfig {
@@ -819,6 +819,19 @@ export interface StockPhoneConfig {
    * firmware does. Without it, T9 English is unavailable (Dictionary off, plan 18 behaviour).
    */
   t9?: { readonly english?: T9Dictionary };
+  /** Plan 30: 15 digits, Luhn-valid (throws otherwise). `*#06#` shows it. Default: none. */
+  imei?: string;
+  /** Plan 30: phone-memory content written once, only where its record does not exist. */
+  preload?: {
+    readonly welcomeNote?: string;
+    readonly reminders?: readonly StockReminderPreload[]; // plan 21's reminders, added in order
+  };
+}
+
+/** Plan 30: a reminder as the user could have typed it. */
+export interface StockReminderPreload {
+  readonly text: string;
+  readonly alarm?: { readonly date: string; readonly time: string }; // "DD.MM.YYYY", "HH:MM"
 }
 
 /** Plan 19: one SIM phone book entry or service number. */
@@ -841,6 +854,45 @@ export interface StockSimCard {
   };
   /** The SIM's service numbers (Service Nos.), in SIM order. Default none. */
   readonly serviceNumbers?: readonly StockContact[];
+  /** Plan 30: `EF_SMS`: 15 slots by default; entries by slot (index 0 = slot 1), null = free. */
+  readonly messages?: {
+    readonly slots?: number;
+    readonly entries?: readonly (StockSimMessage | null)[];
+  };
+  /** Plan 30: the SIM Toolkit menu (`SET UP MENU`). Default none: no Menu 14. */
+  readonly toolkit?: StockSimToolkit;
+}
+
+/** Plan 30: one received SMS stored on the SIM. */
+export interface StockSimMessage {
+  readonly number: string; // `+` and 1-20 digits
+  /** GSM 7-bit (extension table counts two), ≤ 160 septets, drawable; `[ ] { } ~ | ^` show `?`. */
+  readonly text: string;
+  readonly sentAt: StockTimestamp;
+  readonly read?: boolean; // default true
+  readonly centre?: string; // Details' Message centre; default ""
+}
+
+/** Plan 30: what the SIM applet does when an item is chosen. */
+export type StockToolkitStep =
+  | { readonly kind: "text"; readonly text: string; readonly clear?: "user" | "delay" }
+  | {
+      readonly kind: "select";
+      readonly title?: string;
+      readonly items: readonly StockToolkitItem[];
+    }
+  | { readonly kind: "call"; readonly number: string; readonly confirm?: string };
+
+export interface StockToolkitItem {
+  readonly id: string; // kebab-case, unique among siblings; top level: `menu/sim-services/<id>`
+  readonly label: string;
+  readonly steps: readonly StockToolkitStep[];
+}
+
+/** Plan 30: the SIM's toolkit menu; `title` is Menu 14's carousel label. */
+export interface StockSimToolkit {
+  readonly title: string;
+  readonly items: readonly StockToolkitItem[];
 }
 
 /** Plan 19: a business card as Send b'card sends it. */
@@ -957,6 +1009,12 @@ export function createMemoryStorage(): StockStorage;
 export function createStockPhone(config: StockPhoneConfig): Phone;
 export const paintStockScreen: ScreenPainter;
 export const stockMenu: PhoneMenu; // the whole v6.39 tree (plan 14); application leaves without behaviour open placeholders
+/** Plan 30: the stock menu for a SIM: `stockMenu`, plus Menu 14 when it has a toolkit. Validates. */
+export function stockMenuFor(sim: string | StockSimCard): PhoneMenu;
+/** Plan 30: plain-text description of any screen a stock phone emits (accessibility, QA). */
+export function describeStockScreen(screen: ScreenModel): string;
+/** Plan 30: `*#06#`'s two digit lines for a valid IMEI. */
+export function stockImeiLines(imei: string): readonly [string, string];
 /** Characters of `text` missing from a stock font; [] when renderable. */
 export function missingStockGlyphs(
   text: string,
@@ -1028,6 +1086,31 @@ identity once it first writes them; until then the host's entries are the SIM's 
 dials and assigned ringing tones are phone memory kept per SIM identity; Restore factory settings
 keeps all of it. Send b'card goes through the network port's optional `sendBusinessCard`, with
 plan 18's send rules (link time 3240 ms). See [stock phone book](docs/specs/stock/phone-book.md).
+
+**SIM content and SIM services (plan 30).** A host supplies content where a 2000
+phone kept it, and nowhere else:
+
+| Content                                  | Where a 3310 keeps it           | nokia-os                                    |
+| ---------------------------------------- | ------------------------------- | ------------------------------------------- |
+| contacts, service numbers                | SIM `EF_ADN`, `EF_SDN`          | `StockSimCard.phoneBook`, `.serviceNumbers` |
+| received SMS                             | SIM `EF_SMS`                    | `StockSimCard.messages`                     |
+| SIM services menu and screens            | the SIM's toolkit applet        | `StockSimCard.toolkit`                      |
+| IMEI                                     | the phone                       | `StockPhoneConfig.imei`                     |
+| Welcome note, Reminders                  | phone memory, typed by the user | `StockPhoneConfig.preload`, applied once    |
+| missed/received calls, durations, alarms | phone memory, made by events    | none: a host plays the events               |
+
+SIM messages are the Inbox (unread first, then read, each in slot order) until the phone first
+writes that SIM's messages (a read, an erase, an arrival), then the `messages` record's copy, as
+plan 19's phone book; capacity is the SIM's `slots`. Senders in the phone book are named (last 9
+digits match). A toolkit adds Menu 14 (`menu/sim-services`, one path per top-level item) whose
+label is the toolkit's title; its items run text pages, lists and calls the phone confirms; a
+confirmed call goes through plan 22's dial (a placeholder until plan 22 lands), inside the
+confirming key's `send()` so a browser host keeps the user activation. Every host string is
+validated when the phone (or `stockMenuFor`) is created, naming the field path. `preload` writes
+the Welcome note only while storage has no settings record, and the reminders only while it has
+no reminders record. `describeStockScreen` reads every
+screen as plain text (stock widgets attach their text to their frames). See
+[stock SIM services](docs/specs/stock/sim-services.md).
 
 Plan 18c's delivery-kind/editor/session registration requirements await owner reconciliation;
 this SMS-only contract does not authorize its proposed picture/card extension.

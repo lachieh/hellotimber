@@ -21,9 +21,16 @@ describe("MESSAGES_RECORD", () => {
     expect(two.inbox()).toEqual([]);
     expect(two.outbox()).toEqual([]);
     expect(one.inbox()).toEqual([
-      { number: "0400000001", text: "Hello", sentAt: STAMP, centre: "+1234567890", read: false },
+      {
+        slot: 1,
+        number: "0400000001",
+        text: "Hello",
+        sentAt: STAMP,
+        centre: "+1234567890",
+        read: false,
+      },
     ]);
-    expect(one.outbox()).toEqual([{ text: "Kept", number: "0412345678" }]);
+    expect(one.outbox()).toEqual([{ slot: 2, text: "Kept", number: "0412345678" }]);
   });
 
   it("stores the shape pinned here", () => {
@@ -34,8 +41,10 @@ describe("MESSAGES_RECORD", () => {
     expect(JSON.parse(storage.getItem(`${STOCK_STORAGE_PREFIX}messages`)!)).toEqual({
       sims: {
         "sim-1": {
-          inbox: [{ centre: "", number: "0400000001", read: false, sentAt: STAMP, text: "Hi" }],
-          outbox: [{ text: "Draft" }],
+          inbox: [
+            { centre: "", number: "0400000001", read: false, sentAt: STAMP, slot: 1, text: "Hi" },
+          ],
+          outbox: [{ slot: 2, text: "Draft" }],
         },
       },
       version: 1,
@@ -49,19 +58,21 @@ describe("MESSAGES_RECORD", () => {
     for (let i = 0; i < 5; i++) expect(messages.save(`saved ${i}`)).toBe("saved");
     expect(messages.receive(sms("0400000099", "one more"))).toBe("full");
     expect(messages.save("one more")).toBe("full");
-    messages.erase("inbox", 0);
+    messages.erase("inbox", 1);
     expect(messages.save("now it fits")).toBe("saved");
+    // Plan 30: the freed slot (1) takes it.
+    expect(messages.outbox().map((m) => m.slot)).toEqual([1, 11, 12, 13, 14, 15]);
   });
 
-  it("marks messages read and counts the unread; erases by list and index", () => {
+  it("marks messages read and counts the unread; erases by list and slot", () => {
     const messages = new StockMessages(new StockEeprom(createMemoryStorage()), "sim-1");
     messages.receive(sms("1", "a"));
     messages.receive(sms("2", "b"));
     expect(messages.unread()).toBe(2);
-    messages.markRead(1);
+    messages.markRead(2);
     expect(messages.unread()).toBe(1);
     expect(messages.inbox().map((m) => m.read)).toEqual([false, true]);
-    messages.erase("inbox", 0);
+    messages.erase("inbox", 1);
     expect(messages.inbox().map((m) => m.text)).toEqual(["b"]);
   });
 
@@ -85,7 +96,9 @@ describe("MESSAGES_RECORD", () => {
     );
     const messages = new StockMessages(new StockEeprom(storage), "sim-1");
     expect(messages.inbox().map((m) => m.text)).toEqual(["ok"]);
-    expect(messages.outbox()).toEqual([{ text: "kept" }]);
+    // Plan 18's records have no slots: each message takes the first free one, Inbox first.
+    expect(messages.inbox().map((m) => m.slot)).toEqual([1]);
+    expect(messages.outbox()).toEqual([{ slot: 2, text: "kept" }]);
     storage.setItem(`${STOCK_STORAGE_PREFIX}messages`, JSON.stringify({ version: 1, sims: [] }));
     expect(() => new StockEeprom(storage)).toThrow(/nokia-os\/messages: sims must be an object/);
   });
@@ -98,16 +111,16 @@ describe("MESSAGES_RECORD", () => {
     messages.save("saved too");
     createStockSettings(eeprom).restoreFactory();
     expect(messages.inbox().map((m) => m.text)).toEqual(["kept over restore"]);
-    expect(messages.outbox()).toEqual([{ text: "saved too" }]);
+    expect(messages.outbox()).toEqual([{ slot: 2, text: "saved too" }]);
   });
 });
 
 describe("the Sent: time stamp", () => {
-  it("reads 13-Oct-2026 and 10:11:20, 24-hour (sms/inbox-view-1, sms/time-format)", () => {
+  it("reads 13-Oct-2026 and 10:11:20, 24-hour, the day unpadded (sms/inbox-view-1, sim/sms-order-read)", () => {
     expect(messageDate(STAMP)).toBe("13-Oct-2026");
     expect(messageTime(STAMP)).toBe("10:11:20");
     const afternoon = { year: 2026, month: 1, day: 3, hour: 14, minute: 1, second: 7 };
-    expect(messageDate(afternoon)).toBe("03-Jan-2026");
+    expect(messageDate(afternoon)).toBe("3-Jan-2026");
     expect(messageTime(afternoon)).toBe("14:01:07");
   });
 });

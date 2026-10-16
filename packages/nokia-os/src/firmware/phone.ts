@@ -23,6 +23,7 @@ import {
 } from "./menu";
 import { openBox } from "../messages/read";
 import { StockFlowApplication } from "../widgets/flow";
+import { applyPreload, checkImei, checkPreload, type StockPreload } from "./preload";
 import { createSyntheticNetwork, type StockNetworkPort } from "../messages/network";
 import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
@@ -93,6 +94,18 @@ export interface StockPhoneConfig extends StockPorts {
    */
   network?: StockNetworkPort;
   /**
+   * Plan 30 D9: the phone's IMEI, 15 digits with a valid Luhn check digit (throws otherwise).
+   * `*#06#` shows it (plan 22's screen). Default: none (the virgin `?` glyphs).
+   */
+  imei?: string;
+  /**
+   * Plan 30 D10: phone memory a user could have typed, written once where its record does not
+   * exist in storage: the Welcome note (no settings record) and Reminders (no reminders record,
+   * added in order). Every string must be typeable, within its editor's limit and drawable;
+   * anything else throws, naming the field.
+   */
+  preload?: StockPreload;
+  /**
    * Plan 18b: T9 dictionaries. With `english`, Write messages starts in T9 English as the virgin
    * firmware does. Without it, T9 English is unavailable (Dictionary off, plan 18 behaviour).
    */
@@ -156,11 +169,16 @@ export function createStockPhoneWith(
   }
   const simCard = normaliseSim(config.sim ?? STOCK_DEFAULT_SIM);
   const sim = simCard.id;
+  // Plan 30 D9, D10: the host's IMEI and preload, checked before anything is written.
+  const imei = config.imei === undefined ? undefined : checkImei(config.imei);
+  const preload = checkPreload(config.preload);
   const { clock, date } = config;
-  const eeprom = new StockEeprom(config.storage ?? createMemoryStorage());
+  const storage = config.storage ?? createMemoryStorage();
+  const eeprom = new StockEeprom(storage);
   const t9 = stockT9(eeprom, config.t9?.english);
   // Plan 18b D5: without a T9 dictionary the virgin editor is multi-tap (Dictionary off).
   const settings = createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES);
+  applyPreload(preload, storage, eeprom, settings);
   let now = 0;
   const security = new StockSecurity(eeprom, settings, { now: () => now, sim });
   const skip = config.boot === "skip";
@@ -204,22 +222,15 @@ export function createStockPhoneWith(
   const messaging = stockMessaging(
     eeprom,
     settings,
-    sim,
+    simCard,
     config.network ?? createSyntheticNetwork(),
   );
   messaging.connect();
   const phoneBook = new StockPhoneBook(eeprom, simCard);
-  const services = stockServices(
-    ports,
-    settings,
-    games,
-    security,
-    sounder,
-    eeprom,
-    messaging,
-    t9,
-    phoneBook,
-  );
+  const services: StockServices = {
+    ...stockServices(ports, settings, games, security, sounder, eeprom, messaging, t9, phoneBook),
+    ...(imei === undefined ? {} : { imei }),
+  };
   // Plan 21: the clock's features over this phone's services (the alarm's minute listener, the
   // countdown's expiry).
   const alarm = phoneAlarm(services);
@@ -239,6 +250,7 @@ export function createStockPhoneWith(
       messaging,
       t9,
       phoneBook,
+      simCard,
     ),
     // Plan 18 D11: the envelope while Inbox holds unread messages, blinking while every slot is
     // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED). Plan 17 D6: the silent
@@ -363,7 +375,13 @@ export function createStockPhoneWith(
   };
   const send = (event: KeyEvent): void => {
     if (event.type === "up") {
+      const notice = noticeShown();
       if (!(poweredOn && keyguard.keyUp(event.key))) phone.send(event);
+      // Plan 30 Task 0 M (`sms/slots/*`): C held on a notice clears it too, at its release (the
+      // kernel's long press at standby does nothing).
+      if (event.key === "c" && notice !== undefined && noticeShown() === notice) {
+        phone.setNotice(null);
+      }
       sounder.keyUp(event.key);
       publish();
       return;
@@ -397,6 +415,11 @@ export function createStockPhoneWith(
     }
     publish();
   };
+  /** The text of the notice standby shows, if any. */
+  function noticeShown(): string | undefined {
+    const screen = phone.screen;
+    return screen.kind === "standby" ? screen.notice?.text : undefined;
+  }
   const wrapper: Phone = {
     send,
     pressKey(key, holdMs = 0) {

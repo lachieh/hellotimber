@@ -320,12 +320,19 @@ function itemRows(
   return rows;
 }
 
-function extractMenuIcons(goldensDir: string): Record<string, MenuIconData> {
+function extractMenuIcons(
+  goldensDir: string,
+  declared: ResourceInputs["menuIcons"],
+): Record<string, MenuIconData> {
   const icons: Record<string, MenuIconData> = {};
-  for (const slug of MENU_SLUGS) {
+  // Plan 13's twelve, then the icons plans declare (plan 30: SIM services), by slug.
+  const icon = (slug: string): { golden: string; reveals?: Readonly<Record<string, string>> } =>
+    declared[slug] ?? { golden: `menu/${slug}.anim`, reveals: REVEAL_GOLDENS[slug] };
+  for (const slug of [...MENU_SLUGS, ...Object.keys(declared)]) {
+    const { golden: reveal0, reveals: revealIds } = icon(slug);
     const sources: [string | undefined, Golden][] = [
-      [undefined, loadGolden(goldensDir, `menu/${slug}.anim`)],
-      ...Object.entries(REVEAL_GOLDENS[slug] ?? {}).map(([reveal, id]): [string, Golden] => [
+      [undefined, loadGolden(goldensDir, reveal0)],
+      ...Object.entries(revealIds ?? {}).map(([reveal, id]): [string, Golden] => [
         reveal,
         loadGolden(goldensDir, id),
       ]),
@@ -336,7 +343,7 @@ function extractMenuIcons(goldensDir: string): Record<string, MenuIconData> {
     for (const { rows } of perSource) {
       for (const row of rows) box = union(box, inkBox(row.pixels, ICON_REGION));
     }
-    if (!box) throw new Error(`menu/${slug}.anim: no icon ink in x 0..79, y 20..39`);
+    if (!box) throw new Error(`${reveal0}: no icon ink in x 0..79, y 20..39`);
 
     const frames: string[][] = [];
     const frameIndex = (pixels: Uint8Array): number => {
@@ -770,7 +777,7 @@ export function extractResources(
   const volumeTables = addComposerVolumes(sounds.volumeTables, loadSound);
   return {
     fonts: harvestFonts(goldensDir, inputs),
-    menuIcons: extractMenuIcons(goldensDir),
+    menuIcons: extractMenuIcons(goldensDir, inputs.menuIcons),
     boot: extractBoot(goldensDir),
     status: extractStatus(goldensDir),
     widgets: extractWidgets(goldensDir, inputs),

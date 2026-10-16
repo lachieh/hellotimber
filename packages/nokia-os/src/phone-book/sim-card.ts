@@ -1,7 +1,9 @@
 // The inserted SIM card (plan 19 D2): host config, and the contacts seam. A string is the emulator
 // SIM under that identity; a `StockSimCard` adds its phone book and service numbers. Validated
-// once, when the phone is created.
+// once, when the phone is created. Plan 30 adds the SIM's messages (`EF_SMS`) and toolkit menu.
 import { missingStockGlyphs } from "../resources";
+import { normaliseSimMessages, type SimMessages, type StockSimMessage } from "../sim/messages";
+import { normaliseToolkit, type StockSimToolkit } from "../sim/toolkit";
 
 /** Plan 19: one SIM phone book entry or service number. */
 export interface StockContact {
@@ -25,6 +27,16 @@ export interface StockSimCard {
   };
   /** The SIM's service numbers (Service Nos.), in SIM order. Default none. */
   readonly serviceNumbers?: readonly StockContact[];
+  /**
+   * Plan 30: `EF_SMS`. Default: 15 slots, none used. `entries` by slot (index 0 = slot 1); null =
+   * a free slot.
+   */
+  readonly messages?: {
+    readonly slots?: number;
+    readonly entries?: readonly (StockSimMessage | null)[];
+  };
+  /** Plan 30: the SIM applet's menu (SIM services, Menu 14). Default: none. */
+  readonly toolkit?: StockSimToolkit;
 }
 
 /** A validated SIM card with its defaults filled in. */
@@ -35,6 +47,10 @@ export interface NormalisedSimCard {
   /** One per location (index 0 = location 1); null = free. */
   readonly entries: readonly (StockContact | null)[];
   readonly serviceNumbers: readonly StockContact[];
+  /** Plan 30: its message slots and the received messages in them. */
+  readonly messages: SimMessages;
+  /** Plan 30: its toolkit menu, if it has one. */
+  readonly toolkit?: StockSimToolkit;
 }
 
 /** The emulator SIM's `EF_ADN`: 50 records of 30 bytes, 16-character names (Task 0). */
@@ -128,5 +144,15 @@ export function normaliseSim(sim: string | StockSimCard): NormalisedSimCard {
     if (problem !== undefined) throw new Error(`${where}: serviceNumbers[${i}] ${problem}.`);
     return { name: contact.name, number: contact.number };
   });
-  return { id: card.id, locations, nameLength, entries, serviceNumbers };
+  const messages = normaliseSimMessages(card.messages, where);
+  const toolkit = normaliseToolkit(card.toolkit, where);
+  return {
+    id: card.id,
+    locations,
+    nameLength,
+    entries,
+    serviceNumbers,
+    messages,
+    ...(toolkit === undefined ? {} : { toolkit }),
+  };
 }

@@ -1,0 +1,11 @@
+sound-golden 1
+id: sound/stk/auto-wait
+status: asserted
+source: captures/6.39/plan30/sound/stk/auto-wait
+source-sha256: 0ad33852f39329e356738b956aa2519e196d1b6972594a0770b40772e955cdef
+state: factory
+note: SIM stk, toolkit main (factory image): The clear-after-delay text clears itself: silent.
+omitted: none
+
+@events
+# t_ms output   state

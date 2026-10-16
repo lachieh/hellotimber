@@ -20,5 +20,6 @@ export { profilesFeature } from "./profiles";
 export { remindersFeature } from "./reminders";
 export { securityFeature } from "./security";
 export { settingsFeature } from "./settings";
+export { simServicesFeature } from "./sim-services";
 export { templatesFeature } from "./templates";
 export { tonesFeature } from "./tones";

@@ -263,7 +263,8 @@ describe("generated resources", () => {
 });
 
 describe("menu icons", () => {
-  // Distinct frames per icon, as recorded by plan 13 Task 0 (menu-anim-long).
+  // Distinct frames per icon, as recorded by plan 13 Task 0 (menu-anim-long), and SIM services'
+  // (plan 30 Task 0: `sim/stk-carousel-main-up`).
   const FRAME_COUNTS: Record<string, number> = {
     "phone-book": 4,
     messages: 14,
@@ -277,9 +278,10 @@ describe("menu icons", () => {
     reminders: 14,
     clock: 8,
     profiles: 4,
+    "sim-services": 6,
   };
 
-  it("has the captured frame count for each of the 12 carousel icons", () => {
+  it("has the captured frame count for each carousel icon (12 stock, SIM services)", () => {
     expect(
       Object.fromEntries(Object.entries(STOCK_MENU_ICONS).map(([id, i]) => [id, i.frames.length])),
     ).toEqual(FRAME_COUNTS);
@@ -300,6 +302,14 @@ describe("menu icons", () => {
         }
       }
     }
+  });
+
+  // Settled 3769 ms after ▲'s key-down, 60 ms of it the key's latency before the reveal.
+  it("plays SIM services' 11 steps once (the hand out and back), settling at 3709 ms (plan 30 K)", () => {
+    const steps = MENU_ICON_DATA["sim-services"]!.timeline.steps;
+    expect(steps.map((step) => step.frame)).toEqual([0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0]);
+    const settle = steps.slice(0, -1).reduce((ms, step) => ms + step.durationMs, 0);
+    expect(Math.abs(settle - 3709)).toBeLessThanOrEqual(2);
   });
 
   it("settles every icon on a held frame (no loop) and starts on frame 0", () => {

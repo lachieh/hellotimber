@@ -9,6 +9,7 @@ export { messagesPanel } from "./messages";
 export { phoneBookPanel } from "./phone-book";
 export { phonePanel } from "./phone";
 export { profilesPanel } from "./profiles";
+export { simPanel } from "./sim";
 export { soundPanel } from "./sound";
 export { storagePanel } from "./storage";
 export { t9Panel } from "./t9";

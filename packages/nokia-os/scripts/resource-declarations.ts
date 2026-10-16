@@ -26,8 +26,17 @@ export interface OrderedBatch<T> {
   readonly order: number;
   readonly entries: readonly T[];
 }
+/**
+ * A carousel icon outside plan 13's twelve (`menu/<slug>.anim`): its reveal recording, and the
+ * recordings of reveals whose timing differs (plan 30: SIM services, by its slug).
+ */
+export interface MenuIconDeclaration {
+  readonly golden: string;
+  readonly reveals?: Readonly<Record<string, string>>;
+}
 export interface ResourceDeclarations {
   readonly textRuns?: TextRuns;
+  readonly menuIcons?: Readonly<Record<string, MenuIconDeclaration>>;
   readonly glyphOverrides?: readonly GlyphOverride[];
   readonly spriteBatches?: readonly OrderedBatch<SpriteCrop>[];
   readonly timelineBatches?: readonly OrderedBatch<ProbeTimeline>[];
@@ -35,6 +44,7 @@ export interface ResourceDeclarations {
 }
 export interface ResourceInputs {
   readonly textRuns: TextRuns;
+  readonly menuIcons: Readonly<Record<string, MenuIconDeclaration>>;
   readonly glyphOverrides: readonly GlyphOverride[];
   readonly sprites: readonly SpriteCrop[];
   readonly probes: readonly ProbeTimeline[];
@@ -81,6 +91,7 @@ export function composeResourceDeclarations(
     }
   };
   const textRuns: Record<string, Record<string, TextRun[]>> = {};
+  const menuIcons: Record<string, MenuIconDeclaration> = {};
   const glyphOverrides: GlyphOverride[] = [];
   const spriteBatches: OrderedBatch<SpriteCrop>[] = [];
   const timelineBatches: OrderedBatch<ProbeTimeline>[] = [];
@@ -110,6 +121,15 @@ export function composeResourceDeclarations(
           textRuns[id]![image]!.push(run);
         }
       }
+    }
+    for (const [slug, icon] of Object.entries(resources.menuIcons ?? {})) {
+      claim("menu icon", slug, set.plan);
+      for (const id of [icon.golden, ...Object.values(icon.reveals ?? {})]) {
+        if (golden(id, set.plan).timeline === undefined) {
+          throw new Error(`plan ${set.plan}: menu icon ${slug}: ${id} is not a timeline`);
+        }
+      }
+      menuIcons[slug] = icon;
     }
     for (const override of resources.glyphOverrides ?? []) {
       const char = override.kind === "touch" ? override.pair : override.char;
@@ -175,5 +195,5 @@ export function composeResourceDeclarations(
   for (const probe of probes)
     if (!Object.hasOwn(timelineGroups, probe.kind))
       throw new Error(`plan ${probeOwners.get(probe)}: unknown timeline kind ${probe.kind}`);
-  return { textRuns, glyphOverrides, sprites, probes, timelineGroups };
+  return { textRuns, menuIcons, glyphOverrides, sprites, probes, timelineGroups };
 }

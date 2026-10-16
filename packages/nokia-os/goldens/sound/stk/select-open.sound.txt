@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/stk/select-open
+status: asserted
+source: captures/6.39/plan30/sound/stk/select-open
+source-sha256: 73f40e1079c513cdee39b8c6e47bade049ffcb32e7b9ad77a71468e326aa9bcf
+state: factory
+keys: 0:navi
+note: SIM stk, toolkit main (factory image): OK on List: Wait, the list: OK's beep only.
+omitted: none
+
+@events
+# t_ms output   state
+36     tone     900 v=0x9104
+182    tone     off

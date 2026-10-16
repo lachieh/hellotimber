@@ -3,6 +3,7 @@
 // SIM's contents), and the phone memory kept per SIM identity: speed dials (key → location) and
 // the tones assigned to locations. Restore factory settings keeps all of it (`speed/restore-*`),
 // so the record has no `factory`.
+import { sameSubscriber } from "./numbers";
 import type { EepromRecord, StockEeprom } from "../firmware/eeprom";
 import { sortEntries, type PhoneBookEntry } from "./entries";
 import type { NormalisedSimCard, StockContact } from "./sim-card";
@@ -229,9 +230,17 @@ export class StockPhoneBook {
     this.#write({ tones: tone === null ? tones : { ...tones, [String(location)]: tone } });
   }
 
-  /** The first entry (in SIM order) whose number is `number` (plan 22: caller names). */
+  /**
+   * The entry named for `number` (plan 22: caller names; plan 30 D7: SMS senders): the first in SIM
+   * order whose number is `number`, else the first that is the same subscriber by v6.39's rule
+   * (`sameSubscriber`: the last 9 digits). Unnamed entries name nobody.
+   */
   byNumber(number: string): PhoneBookEntry | undefined {
-    const index = this.#locations().findIndex((contact) => contact?.number === number);
+    const locations = this.#locations();
+    const named = (match: (entry: string) => boolean) =>
+      locations.findIndex((c) => c !== null && c.name !== "" && match(c.number));
+    let index = named((entry) => entry === number);
+    if (index < 0) index = named((entry) => sameSubscriber(entry, number));
     return index < 0 ? undefined : this.at(index + 1);
   }
 }

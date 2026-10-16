@@ -63,7 +63,8 @@ export interface SyntheticNetwork extends StockNetworkPort {
   readonly cards: readonly StockBusinessCard[];
 }
 
-const TIMESTAMP_RANGES: Readonly<Record<keyof StockTimestamp, readonly [number, number]>> = {
+/** The ranges of a time stamp's fields (plan 30: SIM messages are checked with them too). */
+export const TIMESTAMP_RANGES: Readonly<Record<keyof StockTimestamp, readonly [number, number]>> = {
   year: [1900, 9999],
   month: [1, 12],
   day: [1, 31],
