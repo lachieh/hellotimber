@@ -741,16 +741,27 @@ guide); a second import changes nothing.
 **Files:** `scripts/resource-inputs/30-sim-content.ts` (new; plan 29's registrations),
 `src/resources/generated/**` (regenerated), `tests/resources.test.ts` (new cases only).
 
-- [ ] Text runs for the new images; overrides naming their golden. Every fixture string renders in
+- [x] Text runs for the new images; overrides naming their golden. Every fixture string renders in
       the face its screen uses.
-- [ ] Sprites: the Menu 14 icon frames (from `sim/stk-carousel-*`; or, on D4's composed branch, the
+- [x] Sprites: the Menu 14 icon frames (from `sim/stk-carousel-*`; or, on D4's composed branch, the
       clean-room icon in a separate, labelled source file whose header names it non-stock), any new
       note icon, the toolkit level's marks.
-- [ ] Timelines (`WIDGET_TIMELINE_BY_NAME`): the carousel slot's animation, the level's opening, the
+- [x] Timelines (`WIDGET_TIMELINE_BY_NAME`): the carousel slot's animation, the level's opening, the
       text page and list openings, the call confirm, each new note.
-- [ ] TDD freshness; every sprite binary and inside its golden's ink; every timeline finite.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#regenerate` twice; no diff.
-- [ ] Commit: `feat(nokia-os): SIM services glyphs, icon and timelines`.
+- [x] TDD freshness; every sprite binary and inside its golden's ink; every timeline finite.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#regenerate` twice; no diff.
+- [x] Commit: `feat(nokia-os): SIM services glyphs, icon and timelines`.
+
+Deviation (Task 3): nothing new to harvest but the icon. Every fixture string renders with the
+existing fonts (`missingStockGlyphs` finds only the extension table's `[ ] { } ~ | ^`, which the
+firmware draws as `?`), `Wait` is plan 14's hatched bar (`progress-*`), the level and lists are the
+rows layout and rail, and no toolkit screen plays a tone; so no text runs, sprites or note
+timelines are added (the acceptance replays compare every pixel). SIM services' icon is a carousel
+icon (`STOCK_MENU_ICONS["sim-services"]`: 6 distinct frames played as 11 steps, the hand out and
+back, settled 3709 ms after the reveal), extracted like plan 13's twelve: `ResourceDeclarations`
+gains `menuIcons` (slug → reveal golden), which `extract-resources` adds to plan 13's twelve. C's
+return from the level (`sim/stk-level-main-c`) is cut off before the icon settles, so it gives no
+reveal timeline of its own; every reveal plays the ▲ timeline.
 
 ### Task 4 - SIM messages (pure and store, TDD)
 

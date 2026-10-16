@@ -53,6 +53,21 @@ describe("plan resource registrations", () => {
     const timeline = result.widgets.timelines[result.widgets.byName["consumer-confirmation"]!];
     expect(timeline?.frames).toContainEqual({ kind: "sprite", sprite: "consumer/tick" });
   });
+  it("accepts a plan's carousel icon once, from a timeline golden (plan 30)", () => {
+    const icon = (plan: string, golden: string): PlanCaptureSet => ({
+      plan,
+      resources: { menuIcons: { "sim-services": { golden } } },
+    });
+    const own = captureSets().filter((set) => set.resources?.menuIcons === undefined);
+    expect(compose([...own, icon("30", "sim/stk-carousel-main-up")]).menuIcons).toEqual({
+      "sim-services": { golden: "sim/stk-carousel-main-up" },
+    });
+    expect(() =>
+      compose([icon("30", "sim/stk-carousel-main-up"), icon("31", "sim/stk-carousel-main-up")]),
+    ).toThrow(/menu icon "sim-services" owned by plans 30 and 31/);
+    expect(() => compose([icon("30", "sim/stk-level-main-rows")])).toThrow(/is not a timeline/);
+  });
+
   it("rejects competing sprite ownership even when recipes are identical", () => {
     expect(() =>
       compose([
@@ -291,6 +306,7 @@ it("does not execute capture callbacks when composing registered evidence", () =
   const sets = captureSets([{ plan: "18c", lcd: callback, ticks: callback, sounds: callback }]);
   expect(compose(sets)).toEqual({
     textRuns: {},
+    menuIcons: {},
     glyphOverrides: [],
     sprites: [],
     probes: [],
