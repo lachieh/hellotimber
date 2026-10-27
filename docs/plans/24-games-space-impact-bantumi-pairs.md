@@ -876,6 +876,142 @@ An earlier run whose child PATH selected system Node was stopped and is not the 
 result. The installed Vite+ has no `env doctor` subcommand; the attempted diagnostic exited 2.
 No runtime adaptation, dependency change, import or generated-file edit was needed.
 
+### Task 0 LCD/audio review after the second rebase (2026-10-27)
+
+Evidence paths below are relative to `$REF/captures/6.39/plan24/`.
+
+**S6 bonus outcomes: passed from reused LCD/audio.**
+`analysis/review_hud.py` finds exact, persistent HUD transitions for review;
+`analysis/review_bonus.py` checks the selected native recordings against their stored LCD
+histories and audio events. `analysis/s6-reviewed-bonus.json` records the pixel hashes,
+before/contact/after frames, keys, WAVs and sound-event windows for all four outcomes:
+
+| Outcome    | Canonical contact frame                             | Observed HUD change   |
+| ---------- | --------------------------------------------------- | --------------------- |
+| Wall       | `bot/full/level-2/274.png`, 19,691.2 ms             | missiles 06 → wall 03 |
+| Missiles   | `bot/full/level-1/153.png`, 11,551.3 ms             | missiles 03 → 06      |
+| Extra life | `bot/cap/level-1/150.png`, 11,622.3 ms              | three hearts → four   |
+| Beam       | `bot/deaths-0/level-0.restart/880.png`, 65,134.0 ms | missiles 03 → beam 01 |
+
+Each reviewed sequence shows the dotted pickup contacting the ship and disappearing, with
+13 exact successive HUD observations (1,120.1–1,176.1 ms), no death/restart or intervening
+phase change, and a 2636.9 Hz pickup cue at volume register 6. The cue lasts 4 ms in these
+recordings; the shared fidelity rule makes such short events optional, without changing the
+coverage evidence. These observations establish the four outcomes, not H9's RNG draw mapping,
+five-life reroll, weapon damage or complete sound programs. The previous audit is preserved
+in `archive/20261027b-before-coverage-review/`; `coverage.py` includes the reviewed evidence
+file when accepting `S6-bonus-four-kinds`.
+
+**S7 splash ambiguity: resolved; gameplay remains open.**
+`analysis/seed_stars_background.py` exhaustively searches all 65,521 effective seeds, adding
+negative evidence from the independently reviewed clear background band at rows 45–47.
+That band is identical across all nine title frames. The old two-candidate 07:59 result
+included 60943, which predicts a star at `(37,46)`; the actual pixel is blank in every frame.
+`analysis/seed-stars-background-verified.json` therefore identifies one splash candidate per
+clock: 07:59 36670; 10:10 44530; 19:48 13689; 23:59 38909; 00:00 8013; 10:10 on 14.10.2026 10048. The original positive-pixel-only result is retained. No blank title/ship pixel is used
+as negative evidence. This closes the splash ambiguity only. Gameplay traces still need an
+independent, informative uniqueness proof. The midnight splash seed is not a New-game seed:
+the existing exact route's later diagnostic u32 gives effective candidate 8017. The different
+capture histories remain resolved as documented above; no clock/date-only function is accepted,
+and Snake II's permitted fallback remains unchanged.
+
+**S8 spawn-row reproduction: partial, from reused LCD/audio.**
+`analysis/verify_ansi_rows.py` tracks the level-1 sprite from the actual LCD, including clipped
+entries, and checks all twelve row coordinates in the original two S8 games.
+`analysis/ansi-spawn-rows-verified.json` records native frame hashes, neighbouring frames,
+keys and audio. The fitted hypothesis uses `state = state * 1103515245 + 12345 mod 2^32`,
+`rand15 = (state >> 16) & 32767`, and observed level-1 row
+`min(27, 6 + (rand15 & 31))`. The six rows are 27,27,12,27,15,8 at chain positions 1–6 and
+27,6,27,19,27,27 at positions 8–13. The fifth first-game sprite is destroyed while clipped
+to four columns; its row is unambiguous. This is a fit for this wave's bounds, not other levels.
+The independent continuous ending controls explain the intervening top-score draw.
+The full criterion stays open: the original later Pairs II and Bantumi screenshots show
+Continue (suspension), not demonstrated endings, and no subsequent LCD wave establishes the
+chain position after those visits. The original S8 ending tails are unrecorded; the continuous
+refresh controls do not reproduce its second wave. RAM peeks are still diagnostic hypotheses.
+
+**Special effects: partial, from new paired unmodified captures.**
+`analysis/capture_specials.py` and `analysis/capture_wall_enemy.py` replay the existing
+hash-checked streams to LCD anchors, then fork identical states for fixed controls with and
+without special-key taps. `special-evidence-20261027b/result.json` reports 64,532 checked
+LCD reads and 175.00 s wall time; `special-enemy-targeted-20261027b/result.json` reports
+34,732 reads and 85.75 s. There is no bot search, RAM read, poke or firmware call in these
+successful probes (`analysis/special-capture-command-audit.json`). Ten recordings retain
+365 native frames, exact raw key edges, WAVs and sound events. `analysis/special-keys-reticked.json`
+uses the existing reticker to derive tick labels without changing millisecond edges.
+
+The initial two attempts stopped before recording: the stored tick timestamp marks the
+first changed LCD write, while its saved picture is the later settled frame. The successful
+procedure checks the saved frame itself, observed 2–4 ms later, before forking. The failed
+attempts remain in `archive/20261027b-special-anchor-before-wait/` and
+`archive/20261027b-special-anchor-before-settle/`. This is capture-boundary handling, with no
+firmware change or new fidelity tolerance.
+
+`analysis/s6-special-effects-reviewed-partial.json` and
+`analysis/special-observations-20261027b.json` preserve the reviewed sequences and controls:
+
+| Probe               | Initial score | Control final | Special final | Outcome                                                          |
+| ------------------- | ------------- | ------------- | ------------- | ---------------------------------------------------------------- |
+| Beam / enemies      | 410           | 410           | 460           | sweep contacts and kills enemies                                 |
+| Beam / boss         | 485           | 515           | 555           | sweep contacts and damages boss                                  |
+| Wall / boss         | 1885          | 1900          | 2040          | wall contacts and destroys boss                                  |
+| Wall / early pickup | 1455          | 1455          | 1455          | no target hit; retained unsuccessful probe                       |
+| Wall / enemy wave   | 1465          | 1515          | 1515          | prior bullets account for the same hits; no isolated wall effect |
+
+The wall/beam criterion remains open for an ordinary-enemy wall hit isolated from pre-existing
+player bullets. A consumed counter or an overlapping line is not accepted as damage proof.
+The HUD-only review intentionally does not call the ship classifier: one later terrain frame
+matches two ship shapes, which is irrelevant to the exact HUD observations and fixed controls.
+
+**S9 sounds and vibration: passed.** `analysis/review_sounds.py` writes
+`analysis/s9-reviewed-specials-sound.json`: the exact frequency, volume-register and edge
+sequences for shot, death, missile, wall, beam and all four bonus outcomes, linked to LCD
+frames and raw audio. The new wall and beam programs are isolated by the paired controls;
+existing validated recordings supply the other cues. All three recorded no-key deaths vibrate
+with Warning tones On; Sounds Off removes the buzzer while retaining vibration; Shakes Off
+removes vibration while retaining the death program. The validated boss exit supplies boss
+vibration across adjacent cuts, and the ending supplies the fireworks tune. This completes
+recording coverage; runtime sound programs remain Task 12. Short events continue to follow the
+shared 34 ms rule, with no per-test tolerance or new known gap.
+
+**OCR: extended and checked.** `analysis/ocr-extension-20261027b.json` verifies exact native
+image inventory: 54,761 images, including all 365 new probe frames, and 23,853 distinct pixel
+states. All 54,396 prior OCR entries are unchanged. The existing memoized recognizer's 17
+original/cached equivalence checks pass; recognizing the additional states takes 68.80 s.
+The prior text and OCR reports are preserved in `archive/20261027b-before-ocr-extension/`.
+
+**Gate and scope.** `analysis/check-20261027b-final.log` reports 13 accepted criteria and
+12 open, with no stale control proof, missing recording, key file or OCR failure. Of the
+original 14 open criteria, bonus outcomes and sound/vibration now pass. The remaining outcomes
+are explicit; no criterion has been dropped, relabelled as unobtainable or proposed for removal:
+
+| Original criterion              | Outcome and evidence                                                                                                                                  |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bonus four kinds                | passed: `analysis/s6-reviewed-bonus.json`                                                                                                             |
+| Five-life reroll / reachability | open: `analysis/s6-reroll.json` reaches four, which proves neither reroll nor unreachability                                                          |
+| Wall/beam on enemies and boss   | partial: `analysis/s6-special-effects-reviewed-partial.json`; isolated wall/ordinary-enemy hit remains                                                |
+| Gameplay seed identifiability   | open: `analysis/seed-stars-background-verified.json` completes all splash seeds only; `analysis/midnight-resolution.json` rejects clock/date-only fit |
+| ANSI rows and advancers         | partial: `analysis/ansi-spawn-rows-verified.json`; all twelve rows fit, other-game history proof remains                                              |
+| Special/bonus sounds            | passed: `analysis/s9-reviewed-specials-sound.json`                                                                                                    |
+| Level 0 object kills/fire       | open: `analysis/census-level-0.json`; 12 component shapes, 12 possible kills, no complete semantic fire inventory                                     |
+| Level 1 object kills/fire       | open: `analysis/census-level-1.json`; 27 shapes, 20 possible kills                                                                                    |
+| Level 2 object kills/fire       | open: `analysis/census-level-2.json`; 21 shapes, 18 possible kills                                                                                    |
+| Level 3 object kills/fire       | open: `analysis/census-level-3.json`; 12 shapes, 7 possible kills                                                                                     |
+| Level 4 object kills/fire       | open: `analysis/census-level-4.json`; 25 shapes, 19 possible kills                                                                                    |
+| Level 5 object kills/fire       | open: `analysis/census-level-5.json`; 26 shapes, 21 possible kills                                                                                    |
+| Level 6 object kills/fire       | open: `analysis/census-level-6.json`; 12 shapes, 10 possible kills                                                                                    |
+| Level 7 object kills/fire       | open: `analysis/census-level-7.json`; 40 shapes, 12 possible kills                                                                                    |
+
+Component counts are exploratory; animation fragments, terrain and HUD overdraw are not
+semantic object types, and score-associated disappearance is not a complete kill/fire proof.
+No per-level criterion is accepted from those counts. The prior midnight-history resolution
+stands; a gameplay seed/clock fit remains unaccepted and the existing Snake fallback stays.
+No criterion change is proposed. Tasks 1+ have not advanced. No plan 24 golden has been imported
+or asserted, no resources regenerated and no known gaps or tolerances changed. The existing
+Space impact leaf and sound-note goldens stay `pending:24`; no `goldens/index/24.json` exists.
+Only this report changes in the repository; the scripts, recordings and evidence remain in REF.
+The rebase verification above applies to the unchanged runtime tree. Final `vp check` passes.
+
 ### Task 1 - Contracts and documentation
 
 **Files:** `docs/specs/stock/space-impact.md` (new), `docs/specs/stock/snake.md` (the seed and
