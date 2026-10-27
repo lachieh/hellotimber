@@ -38,3 +38,9 @@ sticky note's red "now:" line follows the phone's state.
 
 RISK: props crowd mid widths; handwriting must stay legible (contrast, size) and every prop
 that carries information must remain a real control or text, not a picture.
+
+## Decisions
+
+- 2026-10-27: Lachlan accepted the authored SVG Walkman and pencil case (brushed-metal and nylon
+  imitations) in place of raster plates.
+- Known follow-up: `.phone-skeleton` still fills from the legacy template's `--surface`.
