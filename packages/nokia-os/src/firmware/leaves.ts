@@ -272,6 +272,8 @@ export class LeafBinder {
             end: endNow(),
             ...(keys === undefined ? {} : { moves: keys }),
             sound,
+            // Plan 22 (S10): a dial key on a note leaves for standby's number entry.
+            handover: true,
           });
       }
       case "progress-note": {
@@ -563,6 +565,12 @@ class ExitApplication extends PhoneApplication {
 export function invalidShortcut(sounder: StockSounder): PhoneApplication {
   const timeline = timelineByName(INVALID_SHORTCUT.timeline);
   return new StockFlowApplication("stock:invalid-shortcut", () =>
-    note({ lines: INVALID_SHORTCUT.lines, timeline, sound: (lines) => sounder.note(lines) }),
+    note({
+      lines: INVALID_SHORTCUT.lines,
+      timeline,
+      sound: (lines) => sounder.note(lines),
+      // Plan 22 (S10): a dial key on the note starts standby's number entry (`shortcut-m1-8-1`).
+      handover: true,
+    }),
   );
 }

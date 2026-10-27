@@ -1,0 +1,20 @@
+sound-golden 1
+id: sound/calls/ring-off-vibrator-on
+status: asserted
+source: captures/6.39/plan22/sound/ring/off-vibrator-on
+source-sha256: e200683abec54bbdcd567cb8640987f5bc1bafaccc990e8d12a61cb32a84275f
+state: factory
+note: A ring, Incoming call alert off, Vibrating alert on (Nokia tune, Level 4).
+omitted: none
+
+@events
+# t_ms output   state
+2080   vibrator on
+2792   vibrator off
+3506   vibrator on
+4218   vibrator off
+4946   vibrator on
+5674   vibrator off
+8098   vibrator on
+8810   vibrator off
+9523   vibrator on

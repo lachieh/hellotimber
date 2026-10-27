@@ -16,6 +16,7 @@ import { moveRows, rowsIndicator, type RowsCursor } from "../widgets/rows";
 import { chatWith } from "../chat/screens";
 import { messageDate, messageTime } from "./timestamp";
 import { smsEditor } from "./write";
+import { numberEntry } from "../firmware/features/dialling";
 
 export type MessageBox = "inbox" | "outbox";
 
@@ -126,16 +127,6 @@ function pager(
   };
 }
 
-/** A choice another plan implements (C goes back). */
-function placeholder(label: string): Widget {
-  return {
-    render: () => ({ kind: "placeholder", label }),
-    onKey(key, flow) {
-      if (key === "c") flow.back();
-    },
-  };
-}
-
 /** The first run of digits in `text` long enough to dial (UNVERIFIED rule: three or more). */
 function numberIn(text: string): string | undefined {
   return /\+?\d{3,}/.exec(text)?.[0];
@@ -206,11 +197,11 @@ function messageOptions(owner: Box, message: Shown): Widget {
           ...(message.number === undefined ? {} : { number: message.number }),
         }),
       ),
-    // Dialling a number is plan 22's (`sms/inbox-option-use-number`: the call screen).
+    // Plan 22: the number in standby's number entry (`sms/inbox-option-use-number`).
     "Use number": (flow) => {
       const number = box === "inbox" ? message.sender : numberIn(message.text);
       if (number === undefined) numberNote(flow);
-      else flow.replace(placeholder("Use number"));
+      else flow.replace(numberEntry(services, number));
     },
     Forward: (flow) => flow.replace(smsEditor(services, { text: message.text })),
     // Details (`sms/inbox-details`): Sender, Message centre, Time; Back.

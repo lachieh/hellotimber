@@ -1,0 +1,24 @@
+sound-golden 1
+id: sound/calls/dtmf-keys-virgin
+status: asserted
+source: captures/6.39/plan22/sound/dtmf/keys-virgin
+source-sha256: bd1df9dc13a160796f35b5aa6fe45985bc55d1ce9fed51b7d748039412c9fbf3
+state: virgin
+keys: 0:1 300:5 600:9 900:* 1200:# 1500:0+1000
+note: Virgin (Keypad tones unset): 1 5 9 * # and 0 held.
+omitted: none
+
+@events
+# t_ms output   state
+38     tone     1209+697 v=0x9100
+162    tone     off
+315    tone     1336+770 v=0x9100
+456    tone     off
+617    tone     1477+852 v=0x9100
+758    tone     off
+920    tone     1209+941 v=0x9100
+1060   tone     off
+1224   tone     1477+941 v=0x9100
+1370   tone     off
+1515   tone     1336+941 v=0x9100
+2601   tone     off

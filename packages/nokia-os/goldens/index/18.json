@@ -370,7 +370,7 @@
   {
     "id": "sms/inbox-option-use-number",
     "file": "sms/inbox-option-use-number.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -378,7 +378,7 @@
   {
     "id": "sms/inbox-option-use-number-odd",
     "file": "sms/inbox-option-use-number-odd.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -458,7 +458,7 @@
   {
     "id": "sms/notice-digit",
     "file": "sms/notice-digit.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -466,7 +466,7 @@
   {
     "id": "sms/notice-down",
     "file": "sms/notice-down.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -474,7 +474,7 @@
   {
     "id": "sms/notice-hash",
     "file": "sms/notice-hash.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -498,7 +498,7 @@
   {
     "id": "sms/notice-up",
     "file": "sms/notice-up.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4
@@ -586,7 +586,7 @@
   {
     "id": "sms/outbox-use-number-found",
     "file": "sms/outbox-use-number-found.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2

@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/calls/connected
+status: asserted
+source: captures/6.39/plan22/sound/call/connected
+source-sha256: 7f44e092949b831b935b56e9693508982068a1cd5133542eab6dc75209a459ba
+state: factory
+keys: 0:navi
+note: Call: the ringback until the connect.
+omitted: none
+
+@events
+# t_ms output   state
+32     tone     900 v=0x9104
+134    tone     900 v=0x7008
+152    tone     900 v=0x99B5
+176    tone     off
+2218   tone     425 v=0x99B5
+2886   tone     off

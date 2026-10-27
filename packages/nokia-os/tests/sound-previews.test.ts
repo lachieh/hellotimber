@@ -51,18 +51,21 @@ describe("ring (plan 22's incoming call, D11)", () => {
     expect(events).toContainEqual({ output: "buzzer", atMs: 0, hz: 1319, volume: 16 });
   });
 
-  it("plays one pass with Ring once, nothing with Beep once or Off, no vibrator when it is Off", () => {
+  it("plays one pass with Ring once, one beep with Beep once, nothing with Off, no vibrator when it is Off", () => {
     const once = factorySounder({ "tones/incoming-call-alert": 2 });
     once.sounder.ring("tones");
     once.sequencer.advance(60_000);
     expect(buzzerOnsets(once.events).at(-1)![0]).toBeLessThan(NOKIA_TUNE.cycleMs!);
     expect(buzzerOnsets(once.events).length).toBeGreaterThan(5);
-    for (const alert of [3, 4]) {
-      const quiet = factorySounder({ "tones/incoming-call-alert": alert });
-      expect(quiet.sounder.ring("tones")).toBeUndefined();
-      quiet.sequencer.advance(10_000);
-      expect(quiet.events).toEqual([]);
-    }
+    // Plan 22 (D9, `sound/calls/ring-beep-once`): Beep once is one 3000 Hz beep.
+    const beep = factorySounder({ "tones/incoming-call-alert": 3 });
+    beep.sounder.ring("tones");
+    beep.sequencer.advance(10_000);
+    expect(buzzerOnsets(beep.events)).toHaveLength(1);
+    const quiet = factorySounder({ "tones/incoming-call-alert": 4 });
+    quiet.sounder.ring("tones");
+    quiet.sequencer.advance(10_000);
+    expect(quiet.events.filter((e) => e.output === "buzzer")).toEqual([]);
     const still = factorySounder({ "tones/vibrating-alert": 1 });
     still.sounder.ring("tones");
     still.sequencer.advance(10_000);

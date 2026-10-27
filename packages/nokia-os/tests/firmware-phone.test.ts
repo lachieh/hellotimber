@@ -79,17 +79,14 @@ describe("createStockPhone", () => {
     expect(phone.screen).toMatchObject({ kind: "list", selected: 9, windowTop: 9 });
   });
 
-  it("opens the stock standby ▲/▼ targets after 23 ms: Dialled numbers, the name list (plan 19 D5)", () => {
+  it("opens the stock standby ▲/▼ targets after 23 ms: the dialled numbers, the name list", () => {
+    // Plan 22 (D3): ▲ opens the dialled list (`No last dialled numbers` while it is empty).
     const up = clocked();
     up.press("up");
     expect(up.phone.screen).toMatchObject({ kind: "standby", leaving: true });
-    up.advance(30);
-    expect(up.phone.path).toBe("menu/call-register/dialled-numbers");
-    expect(up.phone.screen).toMatchObject({
-      kind: "custom",
-      appId: "stock:call-register/dialled-numbers",
-    });
-    // An empty SIM: No phone numbers, at standby.
+    up.advance(100);
+    expect(up.phone.screen).toMatchObject({ kind: "custom", appId: "stock:dialled-numbers" });
+    // Plan 19 D5: ▼ opens the name list. An empty SIM: No phone numbers, at standby.
     const empty = clocked();
     empty.press("down");
     empty.advance(30);

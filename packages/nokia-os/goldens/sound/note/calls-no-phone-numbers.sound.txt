@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/note/calls-no-phone-numbers
+status: asserted
+source: captures/6.39/plan22/sound/notes/no-phone-numbers
+source-sha256: f4057ca3934dce230843addbb55cba17b2073942d84c8204dcc3f18171bf3ba0
+state: factory
+keys: 0:#
+note: "No phone numbers" after 1#.
+omitted: none
+
+@events
+# t_ms output   state
+73     tone     1750 v=0x9105
+364    tone     off

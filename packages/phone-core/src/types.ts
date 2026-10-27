@@ -235,6 +235,18 @@ export interface PhoneConfig<Metadata = unknown> {
    * application or the boot, where the short press does nothing.
    */
   standbyPower?: PhoneApplication;
+  /**
+   * Plan 22: keys that start a standby application with themselves (stock number entry). At
+   * standby the key-down of a listed key runs `open(key)` as a standby application (empty stack,
+   * path `standby`, `menuIndicator()` without segments, `exit()` returns to standby; a notice
+   * shown is cleared) and forwards that key-down, and later its release, to it. In menu levels a
+   * listed key that no open shortcut window takes leaves the menus (as C held does) and does the
+   * same; at the menu carousel so does a shortcut window's first key that begins no menu number.
+   * Not consulted during the boot, a boot gate, an application (which hands keys over with
+   * `exit({ to: "standby", key })`) or an interruption. `keys` must not hold `navi`, `c` or
+   * `power` (throws). Default: none.
+   */
+  standbyEntry?: { readonly keys: readonly PhoneKey[]; open(key: PhoneKey): PhoneApplication };
 }
 
 /** Plan 15: an application that may hold the boot at an offset into it. */

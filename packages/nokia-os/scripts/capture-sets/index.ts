@@ -11,6 +11,7 @@ export { t9PredictiveText } from "./18b-t9-predictive-text.ts";
 export { chatAndContent } from "./18c-chat-templates-pictures-info-service.ts";
 export { tonesAndSound } from "./16-tones-and-sound.ts";
 export { calculator } from "./20-calculator.ts";
+export { calls } from "./22-calls.ts";
 export { clockAndReminders } from "./21-clock-and-reminders.ts";
 export { composer } from "./27-composer.ts";
 export { snakeII } from "./23-snake-ii.ts";

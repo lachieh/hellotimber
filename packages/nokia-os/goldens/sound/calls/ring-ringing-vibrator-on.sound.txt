@@ -1,0 +1,68 @@
+sound-golden 1
+id: sound/calls/ring-ringing-vibrator-on
+status: asserted
+source: captures/6.39/plan22/sound/ring/ringing-vibrator-on
+source-sha256: e4e15bc06df08d91164ee63ab54a6d1e18209e6bb0da621e2afd6081ab4367ac
+state: factory
+note: A ring, Incoming call alert ringing, Vibrating alert on (Nokia tune, Level 4).
+omitted: 2 (stale frequency)
+
+@events
+# t_ms output   state
+1691   buzzer   1319 v=16
+1691   vibrator on
+1805   buzzer   1175 v=16
+1921   buzzer   740 v=12
+2161   buzzer   831 v=12
+2401   buzzer   1109 v=17
+2401   vibrator off
+2517   buzzer   988 v=16
+2633   buzzer   587 v=11
+2873   buzzer   659 v=12
+3114   vibrator on
+3115   buzzer   988 v=16
+3231   buzzer   880 v=14
+3347   buzzer   554 v=11
+3587   buzzer   659 v=12
+3827   buzzer   880 v=14
+3827   vibrator off
+4555   buzzer   off
+4555   vibrator on
+5283   vibrator off
+7706   vibrator on
+7707   buzzer   1319 v=16
+7822   buzzer   1175 v=16
+7939   buzzer   740 v=12
+8179   buzzer   831 v=12
+8419   buzzer   1109 v=17
+8419   vibrator off
+8535   buzzer   988 v=16
+8651   buzzer   587 v=11
+8891   buzzer   659 v=12
+9131   buzzer   988 v=16
+9131   vibrator on
+9247   buzzer   880 v=14
+9363   buzzer   554 v=11
+9604   buzzer   659 v=12
+9843   vibrator off
+9844   buzzer   880 v=14
+10572  vibrator on
+10573  buzzer   off
+11300  vibrator off
+13724  buzzer   1319 v=16
+13724  vibrator on
+13840  buzzer   1175 v=16
+13956  buzzer   740 v=12
+14196  buzzer   831 v=12
+14436  vibrator off
+14437  buzzer   1109 v=17
+14553  buzzer   988 v=16
+14669  buzzer   587 v=11
+14909  buzzer   659 v=12
+15149  buzzer   988 v=16
+15149  vibrator on
+15265  buzzer   880 v=14
+15381  buzzer   554 v=11
+15621  buzzer   659 v=12
+15861  buzzer   880 v=14
+15861  vibrator off

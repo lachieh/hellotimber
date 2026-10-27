@@ -972,10 +972,16 @@ function startApplication<Metadata>(
   m.dirty = true;
   const context: ApplicationContext = {
     exit(options?: ExitOptions): void {
+      const handOver = exitKey(origin, options);
       if (isStandbyOrigin(origin)) {
-        const toStandby = gateExitsToStandby(options, STANDBY_APPLICATION_NAMES[origin.kind]);
+        const toStandby = gateExitsToStandby(
+          handOver === undefined ? options : { ...options, key: undefined },
+          STANDBY_APPLICATION_NAMES[origin.kind],
+        );
         run(m, () => {
-          if (isActive(m, activation, token)) leaveStandbyApplication(m, activation, toStandby);
+          if (!isActive(m, activation, token)) return;
+          leaveStandbyApplication(m, activation, toStandby);
+          if (handOver !== undefined) handKeyToEntry(m, handOver);
         });
         return;
       }
@@ -988,6 +994,7 @@ function startApplication<Metadata>(
           m.mode = { kind: "standby" };
           m.shortcut = null;
           m.dirty = true;
+          if (handOver !== undefined) handKeyToEntry(m, handOver);
           return;
         }
         if (plan.plain && origin.kind === "intro" && origin.viaShortcut) {
@@ -1296,6 +1303,11 @@ function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
     m.held.set(event.key, { downAt: m.now, longFired: false, shortcutCaptured });
     if (m.mode.kind !== "off") emit(m, "sound", { kind: "key", id: "beep" });
     if (shortcutCaptured) return;
+    if (opensStandbyEntry(m, event.key)) {
+      if (m.mode.kind === "nav") goStandby(m);
+      startStandbyEntry(m, event.key);
+      return;
+    }
     if (event.key === "power" && opensStandbyPower(m)) {
       startApplication(m, { kind: "power" }, m.config.standbyPower!, []);
       return;
@@ -1334,6 +1346,97 @@ function handleKeyEvent<Metadata>(m: Machine<Metadata>, event: KeyEvent): void {
   }
   if (held === undefined || held.longFired || held.swallowed) return;
   onShortPress(m, event.key);
+}
+
+/** Plan 22: PhoneConfig.standbyEntry's keys hold none of navi, C and the power key. */
+function validateStandbyEntry(entry: PhoneConfig["standbyEntry"]): void {
+  if (entry === undefined) return;
+  if (!Array.isArray(entry.keys) || typeof entry.open !== "function") {
+    throw new Error("standbyEntry needs keys and open(key).");
+  }
+  for (const key of entry.keys) {
+    if (key === "navi" || key === "c" || key === "power") {
+      throw new Error(`standbyEntry keys must not hold "${key}".`);
+    }
+  }
+}
+
+function isStandbyEntryKey<Metadata>(m: Machine<Metadata>, key: PhoneKey): boolean {
+  return m.config.standbyEntry?.keys.includes(key) ?? false;
+}
+
+/**
+ * Plan 22: a listed key's down opens the entry at standby, and in the menus when no shortcut
+ * window took it (capturedDigit ran first).
+ */
+function opensStandbyEntry<Metadata>(m: Machine<Metadata>, key: PhoneKey): boolean {
+  if (!isStandbyEntryKey(m, key)) return false;
+  if (m.mode.kind === "standby") return m.mode.leaving === undefined;
+  if (m.mode.kind !== "nav") return false;
+  if (m.shortcut === null) return true;
+  // A stock window's first key at the carousel that begins no menu number (0, *, #).
+  return carouselEntryKey(m, key) || !/^[0-9]$/.test(key);
+}
+
+/** At the carousel with a stock window open and no digit typed: a key beginning no number. */
+function carouselEntryKey<Metadata>(m: Machine<Metadata>, key: PhoneKey): boolean {
+  const s = m.shortcut;
+  if (s?.kind !== "stock" || s.digits !== "" || s.pending !== null) return false;
+  if (!isStandbyEntryKey(m, key) || m.mode.kind !== "nav") return false;
+  if (m.mode.stack[m.mode.stack.length - 1]?.kind !== "carousel") return false;
+  return !numberedTopLevel(m).some(({ number }) => String(number).startsWith(key));
+}
+
+/** An application standbyEntry's open() could not build: it shows App error. */
+class FailedEntry extends PhoneApplication {
+  createSession(): never {
+    throw new Error("standbyEntry.open() failed.");
+  }
+}
+
+/**
+ * Opens PhoneConfig.standbyEntry for `key` (down now) as a standby application at standby,
+ * clearing a notice, and forwards the key-down to it.
+ */
+function startStandbyEntry<Metadata>(m: Machine<Metadata>, key: PhoneKey): void {
+  let application: PhoneApplication;
+  try {
+    const opened = m.config.standbyEntry!.open(key);
+    application = opened instanceof PhoneApplication ? opened : new FailedEntry("standby-entry");
+  } catch {
+    application = new FailedEntry("standby-entry");
+  }
+  m.notice = null;
+  startApplication(m, { kind: "standby" }, application, []);
+  forwardToApp(m, { type: "down", key });
+}
+
+/**
+ * The key an exit hands over to standbyEntry (plan 22): it needs `to: "standby"` and is refused
+ * by boot gates, interruptions and wake applications; an unlisted key hands nothing over.
+ */
+function exitKey<Metadata>(
+  origin: ActivationOrigin<Metadata>,
+  options: ExitOptions | undefined,
+): PhoneKey | undefined {
+  const key = options?.key;
+  if (key === undefined) return undefined;
+  if (options?.to !== "standby") throw new Error('exit key needs to: "standby".');
+  if (origin.kind === "gate" || origin.kind === "interruption" || origin.kind === "wake") {
+    throw new Error(`exit key is not available to ${STANDBY_APPLICATION_NAMES[origin.kind]}.`);
+  }
+  return key;
+}
+
+/** After an exit to standby: `key`, still down, starts the entry and keeps its release. */
+function handKeyToEntry<Metadata>(m: Machine<Metadata>, key: PhoneKey): void {
+  if (m.mode.kind !== "standby" || !isStandbyEntryKey(m, key)) return;
+  const held = m.held.get(key);
+  if (held !== undefined) {
+    delete held.swallowed;
+    delete held.detached;
+  }
+  startStandbyEntry(m, key);
 }
 
 /** The power key's key-down opens PhoneConfig.standbyPower at standby (a notice stays). */
@@ -1419,7 +1522,17 @@ function pollInterruption<Metadata>(m: Machine<Metadata>): void {
   const wasDirty = m.dirty;
   m.shortcut = null;
   const origin: ActivationOrigin<Metadata> = { kind: "interruption", held };
-  if (startPolled(m, origin, application)) return;
+  if (startPolled(m, origin, application)) {
+    // Plan 22: the held application learns it is interrupted (Snake II suspends its game).
+    if (mode.kind === "app") {
+      try {
+        mode.activation.session?.onInterrupted?.();
+      } catch {
+        // Application failures are isolated from firmware navigation.
+      }
+    }
+    return;
+  }
   m.mode = mode;
   m.shortcut = held.shortcut;
   m.dirty = wasDirty;
@@ -1704,6 +1817,7 @@ function enterMenu<Metadata>(m: Machine<Metadata>): void {
  */
 function capturedDigit<Metadata>(m: Machine<Metadata>, key: PhoneKey): number | null {
   if (m.shortcut === null || !/^[0-9]$/.test(key)) return null;
+  if (carouselEntryKey(m, key)) return null;
   if (m.shortcut.kind === "digits") return key === "0" ? null : Number(key);
   return m.mode.kind === "app" && appShortcutLevel(m) === undefined ? null : Number(key);
 }
@@ -2195,6 +2309,7 @@ export function createPhone<Metadata = unknown>(config: PhoneConfig<Metadata>): 
     SHORTCUT_WINDOW_MS,
   );
   if (shortcutWindowMs === 0) throw new Error("shortcutWindowMs must be a positive integer.");
+  validateStandbyEntry(config.standbyEntry);
   if (config.standbyPower !== undefined && !(config.standbyPower instanceof PhoneApplication)) {
     throw new Error("standbyPower must be an application definition.");
   }

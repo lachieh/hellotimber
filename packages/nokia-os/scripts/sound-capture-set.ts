@@ -471,14 +471,12 @@ function titled(profile: string): string {
 
 const LISTED: readonly SoundCaptureEntry[] = [
   // K keypad
-  entry("keypad/keys", "keypad/keys", "Every key at standby, C held after each (DTMF digits).", {
-    status: "pending:22",
-  }),
+  // ▼ at standby is plan 19's phone book (its note's 1750 Hz tone at 46966 ms).
+  entry("keypad/keys", "keypad/keys", "Every key at standby, C held after each (DTMF digits)."),
   entry(
     "keypad/hold",
     "keypad/hold",
     "5 held at standby (DTMF), C held, ▼ held in the menu (repeats), ▲ held, C held.",
-    { status: "pending:22" },
   ),
   entry(
     "keypad/pair",

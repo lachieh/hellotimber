@@ -1,0 +1,31 @@
+sound-golden 1
+id: sound/calls/ring-reject
+status: asserted
+source: captures/6.39/plan22/sound/ring/reject
+source-sha256: 842b72729fadbdca55cc9ec7c6a3ab3c0dc7fd2ac43802ee8d3927d44fdaa02b
+state: factory
+keys: 0:c
+note: Ringing, C at 4 s.
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+-1939  buzzer   1319 v=16
+-1939  vibrator on
+-1829  buzzer   1175 v=16
+-1712  buzzer   740 v=12
+-1472  buzzer   831 v=12
+-1233  vibrator off
+-1232  buzzer   1109 v=17
+-1116  buzzer   988 v=16
+-1000  buzzer   587 v=11
+-760   buzzer   659 v=12
+-520   buzzer   988 v=16
+-520   vibrator on
+-404   buzzer   880 v=14
+-288   buzzer   554 v=11
+-48    buzzer   659 v=12
+27     buzzer   off
+28     vibrator off
+61     tone     900 v=0x9104
+185    tone     off

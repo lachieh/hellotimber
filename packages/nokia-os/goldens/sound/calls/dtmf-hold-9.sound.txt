@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/calls/dtmf-hold-9
+status: asserted
+source: captures/6.39/plan22/sound/dtmf/hold-9
+source-sha256: e7ee9d1f9a832eb8462607aad19daae392be84b5aa9754e17dd79a4850e9f701
+state: factory
+keys: 0:9+1000
+note: 9 held 1 s at standby: its pair until the release.
+omitted: none
+
+@events
+# t_ms output   state
+29     tone     1477+852 v=0x9104
+1056   tone     off

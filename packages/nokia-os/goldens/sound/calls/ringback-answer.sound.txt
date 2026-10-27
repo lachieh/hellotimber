@@ -1,0 +1,18 @@
+sound-golden 1
+id: sound/calls/ringback-answer
+status: asserted
+source: captures/6.39/plan22/sound/call/ringback-answer
+source-sha256: 1fa3de4437aa13beb6ec3837049090c9840cab38de591fb1c273b798f2eeabd8
+state: factory
+keys: 0:navi
+note: Call held alerting, answered at 6.3 s.
+omitted: none
+
+@events
+# t_ms output   state
+32     tone     900 v=0x9104
+134    tone     900 v=0x7008
+152    tone     900 v=0x99B5
+176    tone     off
+2218   tone     425 v=0x99B5
+3234   tone     off

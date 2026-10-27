@@ -4,6 +4,8 @@
 /** An output's sounding state: a frequency at the firmware's level register. */
 export interface SoundNote {
   readonly hz: number;
+  /** Plan 22: the tone generator's second oscillator (a DTMF pair); tone steps only. */
+  readonly hz2?: number;
   readonly volume: number;
 }
 

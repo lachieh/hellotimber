@@ -635,7 +635,7 @@ function periodsScenario(): void {
 const LEVEL_PAGE = "down navi";
 
 /** The Snake II Level page at `level` (▼ from the virgin 175). */
-function levelPage(level: number): Rig {
+export function levelPage(level: number): Rig {
   const rig = standbyRig();
   keys(rig, `${SNAKE} ${LEVEL_PAGE}`);
   lowerLevel(rig, level);

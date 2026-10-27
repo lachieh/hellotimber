@@ -47,20 +47,11 @@ export class MessagesCaptureError extends Error {
 }
 
 /**
- * Fixtures whose screens a later plan implements, by that plan (plan 18 Task 11): Inbox's Chat
- * (`Chat name:`, plan 18c); Use number's call screen and the received notice's ▲, ▼, digit and #
- * (the call register, the phone book and standby number entry: plan 22, which also needs the
- * kernel to route a notice's keys, D12).
+ * Fixtures whose screens a later plan implements, by that plan (plan 18 Task 11). None is left:
+ * Inbox's Chat was plan 18c's; Use number's call screen and the received notice's ▲, ▼, digit and
+ * # were plans 22 and 19's.
  */
-export const MESSAGES_LATER: Readonly<Record<string, string>> = {
-  "sms/inbox-option-use-number": "22",
-  "sms/inbox-option-use-number-odd": "22",
-  "sms/outbox-use-number-found": "22",
-  "sms/notice-up": "22",
-  "sms/notice-down": "22",
-  "sms/notice-digit": "22",
-  "sms/notice-hash": "22",
-};
+export const MESSAGES_LATER: Readonly<Record<string, string>> = {};
 
 /** Asserted (plan 18 Task 12: each has its scenario), unless a later plan implements it. */
 function statusOf(id: string): GoldenStatus {

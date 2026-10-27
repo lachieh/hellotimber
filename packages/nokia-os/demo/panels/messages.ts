@@ -6,7 +6,8 @@ import { byId, html, type DemoPanel } from "../panel";
 
 /**
  * One network for the page: it outlives restarts, so sent messages stay listed. Plan 18c's Chat
- * partner (`chat-and-content.ts`) answers through it.
+ * partner (`chat-and-content.ts`) answers through it; plan 22's calls panel rings and lists calls
+ * through it.
  */
 export const network = createSyntheticNetwork();
 

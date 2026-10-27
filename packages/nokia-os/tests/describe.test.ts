@@ -198,6 +198,16 @@ const SAMPLES: { readonly [K in WidgetModel["kind"]]: Extract<WidgetModel, { kin
     softkey: "Quit",
   },
   "reminder-view": { kind: "reminder-view", number: 1, text: "Call Ann", softkey: "Options" },
+  "dial-entry": { kind: "dial-entry", text: "0412", softkey: "Call" },
+  call: {
+    kind: "call",
+    body: { kind: "call", label: "Call 1" },
+    softkey: "Options",
+    handset: true,
+  },
+  "call-entry": { kind: "call-entry", label: "Dialled 1:", number: "0412", softkey: "Options" },
+  ringing: { kind: "ringing", number: "0412", calling: true },
+  volume: { kind: "volume", level: 5 },
 };
 
 describe("describeWidget: every stock widget kind", () => {

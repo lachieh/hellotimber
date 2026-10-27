@@ -279,8 +279,8 @@ Every power-on that passes records its SIM. A stored welcome note replaces the h
 5 s. `boot: "skip"` still asks for the code, but skips the hands and the note.
 
 **Later plans.** The Welcome note editor (plan 18) writes the note this plan shows at power-on.
-The Russian, Bulgarian and Ukrainian UIs (plan 26), Clear timers' effect
-and the call-list erase (22) and Phone book › Erase all (19) are left to later plans. SIM PIN,
+The Russian, Bulgarian and Ukrainian UIs (plan 26) and Phone book › Erase all (19) are left to
+later plans; Clear timers' effect and the call-list erase are plan 22's (Calls). SIM PIN,
 PIN2 and barring passwords keep their first screen.
 
 ## Profiles
@@ -406,7 +406,7 @@ requestAnimationFrame(loop);
   settings, or the demo's button) sounds: Ringing tone, Ringing volume and Message alert tone
   previews, warning tones on error notes, Snake II's sounds and shakes.
 - **Later plans.** An arriving SMS plays the active profile's Message alert tone (plan 18; the
-  Tones settings follow the active profile, plan 17). The incoming call's ringing and DTMF (22),
+  Tones settings follow the active profile, plan 17). The incoming call's ringing and DTMF (22, Calls),
   the other games' sounds (24) and the Composer (27) play through the same sequencer, as the
   alarm's, the countdown's and the reminders' alerts do (21).
 
@@ -466,8 +466,8 @@ Plan 18 adds the firmware's multi-tap text entry and the SMS features built on i
   Erase, Exit, Dictionary, Send by set with Numeric/Alphanumeric and Set 2's centre prompt;
   Send to many, Template and Insert smiley show what the firmware shows without a phone book or
   content). Inbox and Outbox list, read (four lines a page, then `Sender:` and `Sent:`), and offer
-  the stock Options (Erase, Reply, Edit, Forward, Details; Chat and Use number's dialling are
-  later plans'). Arrivals show `1 message received` (Read) and the envelope at standby, wait for
+  the stock Options (Erase, Reply, Edit, Use number: the number in standby's number entry, plan
+  22; Forward, Details; Chat is plan 18c's). Arrivals show `1 message received` (Read) and the envelope at standby, wait for
   standby elsewhere, and are refused with `No space for new messages` when the SIM's 15 slots are
   used (the envelope blinks). Message centre numbers and the voice mailbox number are editable.
 - **Records.** The `messages` EEPROM record (version 1) holds each SIM's Inbox and Outbox:
@@ -530,8 +530,8 @@ function httpNetwork(endpoint: string): StockNetworkPort {
 link time, and `createSyntheticNetwork().cards` lists the cards sent.
 
 **Later plans.** Chat, Templates, Smileys, Info service topics and the Service command editor are
-plan 18c's (below). Dialling a message's number and the received notice's ▲/▼/digit keys are plan
-22's; the message alert plays the active profile's tone (plan 17).
+plan 18c's (below). Use number and the received notice's ▲/digit keys are plan
+22's (Calls); the message alert plays the active profile's tone (plan 17).
 
 ## Chat and Messages content
 
@@ -593,6 +593,89 @@ above the sent line. Nothing of a chat is stored but the name, which the next ch
 Screen saver, receiving business cards and sending a Composer tone stay placeholders of plan 18c:
 the v6.39 emulator opens no picture folder and stalls on saving a picture, and the network port's
 binary (picture, card, ringtone) extension is not part of the contract.
+
+## Calls
+
+Plan 22 adds standby number entry, calls in and out and the call register, checked against 268
+goldens of emulator captures (`calls/*`, `sound/calls/*`, `sound/note/calls-*`) over a patched
+emulator network that really connects calls.
+
+- **Number entry.** A digit, `*` or `#` at standby (or on a note, an option list, the Level page,
+  the calculator's Options) starts the entry with that key: the large face up to 16 characters,
+  the small face to 33, the newest 60 kept; `*` cycles `* + p w` and commits after 1.44 s; C,
+  held C, ▲/▼ cycle the soft key (Call, Save, Convert); held `1` calls the voice mailbox; `#`
+  answers `*#06#`, `*#0000#` and SIM locations (`12#`) at once. Every dial key sounds its DTMF
+  pair (`StockSoundEvent.hz2`) for as long as it is held.
+- **Calls.** Call shows Calling, the network's alerting (`Call 1`, the 425 Hz ringback),
+  connected, and End, C (End/Options), the in-call Options (End active call, Mute; Hold, New
+  call and Send DTMF are plan 22b's), Volume on ▲/▼ and DTMF digits. A ring shows over any
+  screen ≈1.9 s after the network's ring with the profile's ringing tone and alert type; Answer,
+  C (reject), a missed call's `1 missed call` notice (List) and the handset over the screen
+  below follow the captures. `112` is an emergency call.
+- **Call register.** Missed (10), Received (10) and Dialled (20) are RAM lists (power-off empties
+  them), each entry with Options (Call, Send SMS, Time of call, Edit number, Save, Erase); standby
+  ▲ opens the dialled numbers with Call. The `calls` EEPROM record (version 1,
+  `{"durations":{"last","all","received","dialled"}}` in seconds) keeps Show call duration's
+  totals; Clear timers and Restore factory settings zero it.
+
+**The call port.** `StockNetworkPort` (the SMS port above) has an optional call half. The phone
+calls `dial(call, phone)` the moment Calling shows (the Call key's redraw), with the number it
+dials and, when the phone book knows it, the name it shows:
+
+```ts
+interface StockOutgoingCall {
+  readonly number: string; // the entry, cut at a later `+` or at its first `p`/`w`
+  readonly name?: string; // the phone book's name for the number (plan 19), if any
+  readonly emergency: boolean; // `112`
+}
+```
+
+`dial` returns the host's `StockCallLink` (`hangUp()` is called once when the user ends the
+call or the phone switches off) and receives the phone's `StockCallControl`: `alerting()` (the
+far end rings: `Call 1`, the ringback), `connected()` (the call counts its duration) and
+`released()` (the far end or the network ended the call; called before `alerting`, it refuses
+the call: the network's end, the checkered `Call 1` with three beeps, then standby). Events
+apply at the phone's next tick, no sooner than its own link times (≈2.2 s to alerting, ≈2.85 s to
+connected). A port without `dial` behaves as the synthetic network: every call alerts and
+connects at once. Rings come in through `subscribeCalls(ring)`: `ring({ number }, link)` shows a
+call and returns the phone's control, whose `released()` ends it (before Answer: a missed call);
+`link.answer()` and `link.hangUp()` report the user's Answer and End/reject.
+
+A website can turn numbers into links: open a URL when its number is dialled and end the call
+with the stock network's end (no telephony involved):
+
+```ts
+import {
+  createStockPhone,
+  createSyntheticNetwork,
+  type StockNetworkPort,
+} from "@hellotimber/nokia-os";
+
+const LINKS: Record<string, string> = { "448482": "https://github.com/lachieh" }; // "GITHUB"
+const sms = createSyntheticNetwork();
+const network: StockNetworkPort = {
+  ...sms,
+  dial(call, phone) {
+    const url = LINKS[call.number];
+    if (url !== undefined) {
+      window.open(url, "_blank", "noopener");
+      phone.released(); // refused: the network's end, then standby
+    } else {
+      phone.alerting(); // or ring for a while, then connect or release
+      phone.connected();
+    }
+    return { answer() {}, hangUp() {} };
+  },
+};
+const phone = createStockPhone({ carrier: "Telstra", network });
+```
+
+`createSyntheticNetwork()` implements both halves: `ring(number)` rings every subscribed phone
+and returns a handle (`hangUp()`, `state`), and `dialled` lists the calls phones placed.
+
+**Plan 22b** adds the network services behind the same port: supplementary service and USSD
+strings (`*#21#`, `Requesting`), Hold, New call and Send DTMF in a call, the DTMF a number sends
+after `p`/`w`, call costs and Call divert.
 
 ## T9 predictive text
 

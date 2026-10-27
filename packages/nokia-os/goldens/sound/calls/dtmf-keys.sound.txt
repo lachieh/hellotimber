@@ -1,0 +1,42 @@
+sound-golden 1
+id: sound/calls/dtmf-keys
+status: asserted
+source: captures/6.39/plan22/sound/dtmf/keys
+source-sha256: 55fd5ce422f0fe53bc9e9b14dd11a014df1eaf85b0ff8232fc26bb643dd617b2
+state: factory
+keys: 0:1 300:2 600:3 900:4 1200:5 1500:6 1800:7 2100:8 2400:9 2700:0 3000:* 3301:# 3601:c 3901:c+1500
+note: Every digit, `*`, `#` at standby (DTMF pairs), C, C held.
+omitted: none
+
+@events
+# t_ms output   state
+29     tone     1209+697 v=0x9104
+173    tone     off
+319    tone     1336+697 v=0x9104
+460    tone     off
+621    tone     1477+697 v=0x9104
+763    tone     off
+915    tone     1209+770 v=0x9104
+1056   tone     off
+1217   tone     1336+770 v=0x9104
+1358   tone     off
+1531   tone     1477+770 v=0x9104
+1676   tone     off
+1821   tone     1209+852 v=0x9104
+1962   tone     off
+2115   tone     1336+852 v=0x9104
+2256   tone     off
+2419   tone     1477+852 v=0x9104
+2574   tone     off
+2719   tone     1336+941 v=0x9104
+2860   tone     off
+3033   tone     1209+941 v=0x9104
+3178   tone     off
+3320   tone     1477+941 v=0x9104
+3465   tone     off
+3622   tone     900 v=0x9104
+3768   tone     off
+3924   tone     900 v=0x9104
+4077   tone     off
+4407   tone     900 v=0x9104
+4550   tone     off

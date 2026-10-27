@@ -116,7 +116,7 @@ Sources: manual p.19 keys, p.28, p.34–38, p.32 ([scroll keys verbatim](https:/
 
 - **NaviKey:** context softkey = select/confirm/primary action. Standby: `Menu`. Number typed: `Call`. Incoming call: `Answer`. In lists: `Select`/`OK`/`View`. In editors: `Options`. Also `Send`, `Use`, `Unlock`, `Read` etc. There are no Send/End hardware keys — calls are placed with NaviKey (`Call`) and ended with it (`End`).
 - **C key (verified, p.19):** deletes character to the left when entering text; **press-and-hold deletes all characters**; steps back to the previous menu level; **rejects an incoming call**; (with `Options`) used for clearing. Back out of menus level-by-level with C; hold to return to standby.
-- **Scroll keys in standby (corrected by the v6.39 captures):** **▼ opens the Phone book name list; ▲ opens the list of last dialled numbers** (`No last dialled numbers` when empty; redial list, last 20 numbers; scroll then press `Call`). The helpdoc's "Scroll keys" page names both actions verbatim, but its arrow glyphs are stripped images, so this spec first read them as ▲ = phone book and ▼ = dialled numbers. See [stock/phone-book.md](stock/phone-book.md).
+- **Scroll keys in standby (corrected by the v6.39 captures):** **▼ opens the Phone book name list; ▲ opens the list of last dialled numbers** (`No last dialled numbers` when empty; redial list, last 20 numbers; scroll then press `Call`). The helpdoc's "Scroll keys" page names both actions verbatim, but its arrow glyphs are stripped images, so this spec first read them as ▲ = phone book and ▼ = dialled numbers. See [stock/phone-book.md](stock/phone-book.md) and [stock/calls.md](stock/calls.md).
 - **Scroll keys elsewhere (verified):** browse menus/settings; **the manual describes cursor left (▲) and right (▼); v6.39 captures show the reverse (see §10)**; during a call they adjust earpiece volume.
 - **Power key short-press in standby = profile switcher** (verified). **Long-press `#`: no documented function on the 3310** (silent-profile toggle via # arrived on later models) — UNVERIFIED/absent, recommend no-op.
 - **Long-press `1` in standby = dial voice mailbox** (verified, speed-dial section). Long-press `2`–`9` = speed dial if enabled (verified).
@@ -129,7 +129,7 @@ Sources: manual p.19 keys, p.28, p.34–38, p.32 ([scroll keys verbatim](https:/
   - In predictive mode, accept word with `0` (space). For the measured v6.39 predictive text (T9:
     candidate lists, `*`, `?`/Spell, key 1, case, word stops, Matches, Insert word, user words) see
     [T9 behaviour](t9-behaviour.md) and [stock T9](stock/t9-predictive-text.md).
-  - Dialing screen: `*` pressed repeatedly cycles `*`/`+`/`p`/`w` for international prefix and dialing pauses — UNVERIFIED exact cycle, standard Nokia behavior.
+  - Dialing screen: `*` pressed repeatedly cycles `*`/`+`/`p`/`w` for international prefix and dialing pauses (history: confirmed for v6.39 with its commit and the 60-character entry in [stock/calls.md](stock/calls.md)).
 
 ---
 
@@ -189,7 +189,7 @@ Sources as cited inline.
 - **Signal/battery as side-mounted four-bar stacks** (verified concept; four-bar count and exact tapered pixels reconstructed from the home-screen photograph). On charge, battery bars scroll/animate (standard Nokia behavior, UNVERIFIED).
 - **Menu shortcut numbers** with the 3-second entry window and top-right shortcut display (verified). Immediate per-level navigation and the visible bullet/cursor treatment are project interpretations of the supplied photograph.
 - **One-softkey UI**: every screen has exactly one bottom-center label; "back" is always the C key. This asymmetry is core to the 3310 feel.
-- **Down=phone book / Up=dialled numbers** standby shortcuts on v6.39 (captured; the helpdoc's stripped arrow glyphs first read as the reverse, §6, [stock/phone-book.md](stock/phone-book.md)).
+- **Down=phone book / Up=dialled numbers** standby shortcuts on v6.39 (captured; the helpdoc's stripped arrow glyphs first read as the reverse, §6, [stock/phone-book.md](stock/phone-book.md), [stock/calls.md](stock/calls.md)).
 - **Screensaver lives in the Tones menu** (verified) and uses picture-message graphics.
 - **Welcome note** text on boot (verified), **Chat** as a headline feature (verified), **160-char SMS with countdown counter**, long-SMS chaining up to 459 chars (3 × 153) — Wikipedia, secondary-verified.
 - Battery: BMC-3 NiMH 900 mAh, talk 2.5–4.5 h, standby up to ~260 h (mobile-review/Wikipedia) — useful for replica battery-drain pacing.
@@ -221,6 +221,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Composer                                                   | [stock/composer.md](stock/composer.md)                             | 27   |
 | Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                             | 23   |
 | Keyguard and lights                                        | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |
+| Number entry, calls and the call register (plan 22)        | [stock/calls.md](stock/calls.md)                                   | 22   |
 | SIM messages, sender names, SIM services, IMEI             | [stock/sim-services.md](stock/sim-services.md)                     | 30   |
 
 ---

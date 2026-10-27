@@ -1,0 +1,24 @@
+sound-golden 1
+id: sound/calls/dtmf-keys-level-3
+status: asserted
+source: captures/6.39/plan22/sound/dtmf/keys-level-3
+source-sha256: 755c5d4ab5a921be6b2f8ad739d2f6276025b809c63280120d61ee79bfa0463c
+state: factory
+keys: 0:1 300:5 600:9 900:* 1200:# 1500:0+1000
+note: Keypad tones level-3: 1 5 9 * # and 0 held.
+omitted: none
+
+@events
+# t_ms output   state
+20     tone     1209+697 v=0x9100
+160    tone     off
+320    tone     1336+770 v=0x9100
+470    tone     off
+615    tone     1477+852 v=0x9100
+756    tone     off
+925    tone     1209+941 v=0x9100
+1066   tone     off
+1222   tone     1477+941 v=0x9100
+1368   tone     off
+1521   tone     1336+941 v=0x9100
+2591   tone     off

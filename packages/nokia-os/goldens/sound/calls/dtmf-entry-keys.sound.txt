@@ -1,0 +1,22 @@
+sound-golden 1
+id: sound/calls/dtmf-entry-keys
+status: asserted
+source: captures/6.39/plan22/sound/dtmf/entry-keys
+source-sha256: d0c9e3fd4ea8a81dfad3c310a4b869712d022139f4043aaca10150ba73e200ae
+state: factory
+keys: 0:up 300:down 600:c 900:c+1500
+note: In the entry: ▲, ▼, C, C held (900 Hz beeps).
+omitted: none
+
+@events
+# t_ms output   state
+22     tone     900 v=0x9104
+162    tone     off
+316    tone     900 v=0x9104
+456    tone     off
+621    tone     900 v=0x9104
+766    tone     off
+925    tone     900 v=0x9104
+1068   tone     off
+1405   tone     900 v=0x9104
+1548   tone     off

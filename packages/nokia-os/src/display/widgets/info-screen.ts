@@ -10,9 +10,18 @@ export interface InfoScreenModel {
   readonly kind: "info-screen";
   readonly lines: readonly string[];
   readonly softkey: string;
+  /** Plan 22: the large face at tops 7/21 (Time of call, `register/time-of-call` b). */
+  readonly large?: true;
 }
 
+const LARGE_TOPS = [7, 21] as const;
+
 export function paintInfoScreen(fb: Framebuffer, model: InfoScreenModel): void {
+  if (model.large) {
+    model.lines.forEach((line, i) => fb.drawText(STOCK_FONTS.large, line, 0, LARGE_TOPS[i]!));
+    fb.drawTextCentered(STOCK_FONTS.small, model.softkey, SOFTKEY_TOP);
+    return;
+  }
   if (model.lines.length > SCREEN_TOPS.length) {
     throw new Error(`Info screen ${JSON.stringify(model.lines)} has more than 3 lines.`);
   }

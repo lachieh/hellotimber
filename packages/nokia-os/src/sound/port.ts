@@ -13,6 +13,8 @@ export type StockSoundEvent =
       readonly atMs: number;
       /** > 0: sounding at this frequency (buzzer: 13 MHz / divider). */
       readonly hz: number;
+      /** Plan 22: the tone generator's second oscillator (DTMF); absent for single tones. */
+      readonly hz2?: number;
       readonly volume: number;
     }
   | { readonly output: "buzzer" | "tone"; readonly atMs: number; readonly hz: null }

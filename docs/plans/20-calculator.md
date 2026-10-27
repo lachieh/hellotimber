@@ -17,7 +17,7 @@ API or filename is assumed here. The per-plan file split (feature modules, per-p
 "Plan 16 supplementary captures") and plans 13-16 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan20/`. The planning probes in `$REF/captures/scratch-plan20/`
 are evidence for this plan only and are never imported.
-**Status:** implemented except D9. Tasks 2-8 done on plan 29's registration; node 9 is the stock calculator. Options' numeric/star/hash escape (D9) waits on plan 22 and the dual-frequency sound contract (28 fixtures `pending:22`). Task 0 R stays unticked for the parent's review of the corrected criterion.
+**Status:** implemented (D9 since plan 22). Tasks 2-8 done on plan 29's registration; node 9 is the stock calculator. Options' numeric/star/hash escape (D9) is asserted by plan 22 (its 28 fixtures, `StockSoundEvent.hz2`; merged 2026-10-27). Task 0 R stays unticked for the parent's review of the corrected criterion.
 
 ## Goal
 

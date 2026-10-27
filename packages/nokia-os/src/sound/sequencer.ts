@@ -142,7 +142,7 @@ function sameEvent(a: StockSoundEvent | undefined, b: StockSoundEvent): boolean 
     return a.output === "vibrator" && b.output === "vibrator" && a.on === b.on;
   }
   if (a.hz === null || b.hz === null) return a.hz === b.hz;
-  return a.hz === b.hz && a.volume === b.volume;
+  return a.hz === b.hz && a.hz2 === b.hz2 && a.volume === b.volume;
 }
 
 export class SoundSequencer {
@@ -270,6 +270,10 @@ export class SoundSequencer {
     if (output === "vibrator") return { output, atMs: t, on: held === true };
     if (held === null || typeof held === "boolean") return silent;
     const volume = play.volume?.of(output, held.hz, held.volume, offset) ?? held.volume;
+    // Plan 22: a second oscillator only on the tone generator (DTMF).
+    if (output === "tone" && held.hz2 !== undefined) {
+      return { output, atMs: t, hz: held.hz, hz2: held.hz2, volume };
+    }
     return { output, atMs: t, hz: held.hz, volume };
   }
 

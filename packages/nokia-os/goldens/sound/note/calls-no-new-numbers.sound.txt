@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/note/calls-no-new-numbers
+status: asserted
+source: captures/6.39/plan22/sound/notes/no-new-numbers
+source-sha256: 7351a4b287e2eb24f23188d2ae9703fdf432d883d9865d381ccfc4ab288f8e4c
+state: factory
+keys: 0:navi
+note: "No new numbers" on Missed calls read.
+omitted: none
+
+@events
+# t_ms output   state
+30     tone     1750 v=0x9105
+323    tone     off

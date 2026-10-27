@@ -586,7 +586,7 @@
   {
     "id": "phone-book/hold-off-2",
     "file": "phone-book/hold-off-2.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1410,7 +1410,7 @@
   {
     "id": "phone-book/standby-up",
     "file": "phone-book/standby-up.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 5
@@ -1418,7 +1418,7 @@
   {
     "id": "phone-book/standby-up-dialled",
     "file": "phone-book/standby-up-dialled.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 3

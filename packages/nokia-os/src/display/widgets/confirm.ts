@@ -17,7 +17,8 @@ export interface ConfirmModel {
   readonly kind: "confirm";
   readonly lines: readonly string[];
   readonly softkey: string;
-  /** Plan 21: the lines' tops, else LINE_TOPS by their count (`Memory full.` 4/13/22). */
+  /** The lines' tops, else LINE_TOPS by their count (plan 21: `Memory full.` 4/13/22; plan 22:
+   * `Erase?` and the number at 4/15). */
   readonly tops?: readonly number[];
 }
 

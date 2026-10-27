@@ -1,0 +1,33 @@
+sound-golden 1
+id: sound/calls/in-call-keys
+status: asserted
+source: captures/6.39/plan22/sound/call/in-call-keys
+source-sha256: c4bcae75378769ba4f1fb0e1ebb5974d3cb19d5d6f9798e64732528d52730495
+state: factory
+keys: 0:1 300:5 600:9 900:0 1200:* 1500:# 1800:5+1000 3050:up 3350:down 3650:c 3951:c
+note: In a call: DTMF digits, 5 held, ▲, ▼, C, C.
+omitted: none
+
+@events
+# t_ms output   state
+26     tone     1209+697 v=0x99B5
+169    tone     off
+322    tone     1336+770 v=0x99B5
+463    tone     off
+617    tone     1477+852 v=0x99B5
+758    tone     off
+919    tone     1336+941 v=0x99B5
+1060   tone     off
+1221   tone     1209+941 v=0x99B5
+1362   tone     off
+1525   tone     1477+941 v=0x99B5
+1671   tone     off
+1816   tone     1336+770 v=0x99B5
+2887   tone     off
+3075   tone     1125 v=0x99B5
+3365   tone     1125 v=0x99B6
+3398   tone     off
+3669   tone     900 v=0x99B6
+3810   tone     off
+3975   tone     900 v=0x99B6
+4119   tone     off

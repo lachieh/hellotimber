@@ -395,6 +395,11 @@ function powerInvalidTimeline(): StockWidgetTimeline {
   };
 }
 
+/** Plan 22: the power key's list over the number entry or a call (C returns to it). */
+export function powerListWidget(services: StockServices, state: PowerListState): Widget {
+  return new PowerListWidget(services, state, powerInvalidTimeline());
+}
+
 /**
  * phone-core's `standbyPower` (D7): the power key's list as a standby application. It opens on
  * the key-down with standby's ladders erased for POWER_LIST_LEAD_MS (`state.standby`, the model

@@ -21799,6 +21799,66 @@ export const SOUND_DATA: { readonly previewDelayMs: number; readonly messagePrev
         }
       ]
     },
+    "Invalid location": {
+      "id": "sound/note/calls-invalid-location",
+      "steps": [
+        {
+          "ms": 290,
+          "tone": {
+            "hz": 1750,
+            "volume": 37125
+          }
+        }
+      ]
+    },
+    "Invalid phone number": {
+      "id": "sound/note/calls-invalid-phone-number",
+      "steps": [
+        {
+          "ms": 280,
+          "buzzer": {
+            "hz": 1000,
+            "volume": 22
+          }
+        }
+      ]
+    },
+    "1 new number": {
+      "id": "sound/note/calls-new-numbers",
+      "steps": [
+        {
+          "ms": 291,
+          "tone": {
+            "hz": 1750,
+            "volume": 37125
+          }
+        }
+      ]
+    },
+    "No new numbers": {
+      "id": "sound/note/calls-no-new-numbers",
+      "steps": [
+        {
+          "ms": 293,
+          "tone": {
+            "hz": 1750,
+            "volume": 37125
+          }
+        }
+      ]
+    },
+    "Speed dial number not saved": {
+      "id": "sound/note/calls-speed-dial-not-saved",
+      "steps": [
+        {
+          "ms": 282,
+          "buzzer": {
+            "hz": 1000,
+            "volume": 22
+          }
+        }
+      ]
+    },
     "Code error": {
       "id": "sound/note/code-error",
       "steps": [

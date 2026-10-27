@@ -71,9 +71,11 @@ export function playSound(rig: Rig, golden: SoundGolden, options: PlayOptions = 
 
 function stateOf(event: StockSoundEvent): SoundState {
   if (event.output === "vibrator") return { kind: event.on ? "on" : "off" };
-  return event.hz === null
-    ? { kind: "off" }
-    : { kind: "sounding", hz: event.hz, volume: event.volume };
+  if (event.hz === null) return { kind: "off" };
+  // Plan 22: DTMF pairs carry the second oscillator.
+  return event.hz2 === undefined
+    ? { kind: "sounding", hz: event.hz, volume: event.volume }
+    : { kind: "sounding", hz: event.hz, hz2: event.hz2, volume: event.volume };
 }
 
 const isOn = (state: SoundState): boolean => state.kind !== "off";

@@ -117,12 +117,8 @@ const PROBE_TIMELINES: readonly ProbeSpec[] = [
     [
       ["m1", "Menu 1: waits for a second digit, then opens Phone book."],
       ["m1-8", "Menu 1 8: Invalid shortcut, then standby."],
-      [
-        "m1-8-1",
-        "Menu 1 8 1: Invalid shortcut, then the digit starts a number at standby.",
-        "pending:22",
-      ],
-      ["m1-8-1-2", "Menu 1 8 1 2: Invalid shortcut, then the number 12.", "pending:22"],
+      ["m1-8-1", "Menu 1 8 1: Invalid shortcut, then the digit starts a number at standby."],
+      ["m1-8-1-2", "Menu 1 8 1 2: Invalid shortcut, then the number 12."],
       ["m1-1-0", "Menu 1 1 0: Clock (11), then 11-0 and Invalid shortcut when the window ends."],
       ["m1-2", "Menu 1 2: Profiles (12) opens after the delay, then 12- and dots."],
       ["m8-1", "Menu 8 1: the Snake II splash, the Games list at 8-1, then the game menu."],
@@ -133,7 +129,7 @@ const PROBE_TIMELINES: readonly ProbeSpec[] = [
         "m1-wait-9",
         "Menu 1, wait (Phone book opens), 9: Speed dials on the top row, then its prompt.",
       ],
-      ["m1-9-c/rec", "Menu 1 9: Invalid shortcut, then C at standby.", "pending:22"],
+      ["m1-9-c/rec", "Menu 1 9: Invalid shortcut, then C at standby."],
     ] as readonly (readonly [string, string, GoldenStatus?])[]
   ).map(([dir, note, status]) => ({
     name: `shortcut-${dir.replace("/rec", "")}`,
@@ -262,7 +258,6 @@ const SHORTCUT_LIST_TIMELINES: readonly ProbeSpec[] = [
     name: "shortcut-m8-6-3-late-1",
     dir: "t5-863-1-late-in-window",
     note: "Menu 8 6 3, 1 just after the list's window ends: the digit starts a number at standby.",
-    status: "pending:22",
   },
 ];
 

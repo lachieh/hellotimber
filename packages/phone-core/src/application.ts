@@ -1,4 +1,4 @@
-import type { KeyEvent, MenuIndicator, ScreenModel } from "./types";
+import type { KeyEvent, MenuIndicator, PhoneKey, ScreenModel } from "./types";
 
 export type DeactivationReason = "exit" | "replace" | "navigate" | "power-off";
 
@@ -8,6 +8,13 @@ export interface ExitOptions {
   levels?: number;
   select?: string;
   row?: "top" | "bottom";
+  /**
+   * Plan 22: with `to: "standby"`, the key `key` (down now) then starts PhoneConfig.standbyEntry
+   * as if it had gone down at standby; its release reaches the entry. Throws without
+   * `to: "standby"` and from a boot gate, an interruption or a wake application; ignored when
+   * `key` is not one of `standbyEntry.keys`.
+   */
+  key?: PhoneKey;
   /**
    * Keys held across the exit lose their long press as well as their release (plan 21: C held on
    * the running stopwatch stays on the Stopwatch page). By default only the release is swallowed,
@@ -58,6 +65,11 @@ export interface PhoneApplicationSession {
   tick(dtMs: number): void;
   render(): ScreenModel;
   onDeactivate?(reason: DeactivationReason): void;
+  /**
+   * Plan 22: PhoneConfig.interruption began holding this session (it gets no keys or ticks until
+   * the interruption ends). Called once per interruption; an exception is ignored.
+   */
+  onInterrupted?(): void;
   /**
    * PhoneConfig.shortcutEntry: the application's options while it is a menu level to the stock
    * shortcut (undefined: it is not). Digits typed while the shortcut window is open over it, or

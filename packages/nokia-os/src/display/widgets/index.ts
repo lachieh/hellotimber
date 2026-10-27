@@ -3,6 +3,18 @@ import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
 import { paintStandby } from "../standby";
 import { paintCalculator, type CalculatorModel } from "./calculator";
+import {
+  paintCall,
+  paintCallEntry,
+  paintDialEntry,
+  paintRinging,
+  paintVolume,
+  type CallEntryModel,
+  type CallModel,
+  type DialEntryModel,
+  type RingingModel,
+  type VolumeModel,
+} from "./call";
 import { paintAlert, type AlertModel } from "./alert";
 import { paintStopwatch, type StopwatchModel } from "./stopwatch";
 import { paintComposer, type ComposerModel } from "./composer";
@@ -44,6 +56,14 @@ import { paintSplash, type SplashModel } from "./splash";
 import { paintSymbols, type SymbolsModel } from "./symbols";
 import { paintTextPage, type TextPageModel } from "./text-pages";
 
+export type {
+  CallBody,
+  CallEntryModel,
+  CallModel,
+  DialEntryModel,
+  RingingModel,
+  VolumeModel,
+} from "./call";
 export type { ComposerModel } from "./composer";
 export type { ConfirmModel } from "./confirm";
 export type { ContentListModel } from "./content-list";
@@ -133,6 +153,11 @@ export type WidgetModel =
   | PhoneBookNumberModel
   | StandbyFrameModel
   | ShortcutChoiceModel
+  | DialEntryModel
+  | CallModel
+  | CallEntryModel
+  | RingingModel
+  | VolumeModel
   | ContentListModel
   | ServiceRequestModel
   | ReminderViewModel;
@@ -235,6 +260,21 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "shortcut-choice":
       paintShortcutChoice(fb, model, previous);
+      return;
+    case "dial-entry":
+      paintDialEntry(fb, model);
+      return;
+    case "call":
+      paintCall(fb, model);
+      return;
+    case "call-entry":
+      paintCallEntry(fb, model);
+      return;
+    case "ringing":
+      paintRinging(fb, model);
+      return;
+    case "volume":
+      paintVolume(fb, model);
       return;
     case "content-list":
       paintContentList(fb, model);

@@ -98,8 +98,8 @@ describe("notes and progress notes against every asserted .leaf golden that open
   });
 
   it("covers the information, error, tick, long, Top score and progress notes", () => {
-    // Plans that take a leaf over (18c, 19, 21) leave the generic note set; 29 after plan 21.
-    expect(cases.length).toBeGreaterThanOrEqual(29);
+    // Plans that take a leaf over (18c, 19, 21, 22) leave the generic note set; 27 after plan 22.
+    expect(cases.length).toBeGreaterThanOrEqual(27);
   });
 
   for (const { id, number, screen } of cases) {
@@ -128,8 +128,8 @@ describe("option choices against every asserted .choose golden whose result is a
   });
 
   it("covers the Done, erased, selected, progress and confirm results", () => {
-    // Plans that take a leaf over (18c, 19, 21) leave the generic note set; 29 after plan 21.
-    expect(cases.length).toBeGreaterThanOrEqual(29);
+    // Plans that take a leaf over (18c, 19, 21, 22) leave the generic note set; 27 after plan 22.
+    expect(cases.length).toBeGreaterThanOrEqual(27);
   });
 
   for (const { id, number, list, index, result } of cases) {

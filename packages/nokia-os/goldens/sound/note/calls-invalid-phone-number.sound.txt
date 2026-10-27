@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/note/calls-invalid-phone-number
+status: asserted
+source: captures/6.39/plan22/sound/notes/invalid-phone-number
+source-sha256: 5cc21ba409f0bd43dce477f21ac965bd969ab2f3989014a8d8d7bf5a537376a0
+state: factory
+keys: 0:navi
+note: "Invalid phone number" after Call on 33 digits.
+omitted: none
+
+@events
+# t_ms output   state
+31     buzzer   1000 v=22
+311    buzzer   off

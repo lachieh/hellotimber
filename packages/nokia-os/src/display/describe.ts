@@ -6,7 +6,7 @@
 import type { MenuIndicator, ScreenModel } from "@hellotimber/phone-core";
 import { SIM_SERVICES_NUMBER } from "../sim/slot";
 import { CUT_MARK } from "./list-rows";
-import type { WidgetModel } from "./widgets";
+import type { CallBody, WidgetModel } from "./widgets";
 
 /** The text attached to each frame object a stock flow painted. */
 const DESCRIPTIONS = new WeakMap<object, string>();
@@ -165,11 +165,37 @@ export function describeWidget(model: WidgetModel): string {
       return withSoftkey(`List: ${selection(model.rows, model.selected)}`, model.softkey);
     case "service-request":
       return withSoftkey(`${model.text} (in progress)`, model.softkey);
+    case "dial-entry":
+      return withSoftkey(`Number: ${model.text}`, model.softkey);
+    case "call":
+      return withSoftkey(`Call: ${describeCallBody(model.body)}`, model.softkey);
+    case "call-entry":
+      return withSoftkey(`${model.label} ${model.number}`, model.softkey);
+    case "ringing":
+      return withSoftkey(`Incoming call: ${model.name ?? model.number}`, "Answer");
+    case "volume":
+      return `Volume ${model.level}`;
     case "reminder-view":
       return withSoftkey(
         `Reminder ${model.number}${model.when === undefined ? "" : `, ${model.when}`}: ${model.text}`,
         model.softkey,
       );
+  }
+}
+
+/** Plan 22: what a call screen shows (`Calling 0412345678`, `Call 1, muted`). */
+function describeCallBody(body: CallBody): string {
+  switch (body.kind) {
+    case "calling":
+      return `Calling${body.number === undefined ? "" : ` ${body.number}`}`;
+    case "emergency":
+      return "Attempting emergency call";
+    case "call":
+      return `${body.label}${body.ended === true ? ", ended" : ""}${body.muted === true ? ", muted" : ""}`;
+    case "digits":
+      return body.text;
+    case "blank":
+      return "connecting";
   }
 }
 
