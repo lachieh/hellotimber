@@ -1,9 +1,12 @@
 # Space impact (plan 24, in progress)
 
-**Draft retained from the pre-rebase WIP (2026-10-27).** No plan 24 goldens are imported or
-asserted. Every gameplay statement below remains an observation pending the Task 0 audit and
-acceptance replay. The refresh audit in plan 24 records the stale driver proof and missing
-coverage/OCR that gate implementation.
+**Capture gate closed (Lachlan, 2026-10-27).** Task 0's accepted scope is the eight validated
+full-level recordings, their exits and ending, plus the reviewed key, pause, bonus, special,
+seed, ANSI and sound evidence. No plan 24 gameplay golden has yet passed an implementation
+replay. Gameplay observations below remain **(plan 24, in progress)** until that replay passes.
+The four accepted defaults are labelled `UNVERIFIED` beside the affected behavior; acceptance
+of them does not establish fidelity for branches the recordings never exercise. The exploratory
+census is not a coverage gate.
 
 Part of the stock firmware's ground truth ([index](../nokia-3310.md#10-firmware-ground-truth-v639-captures)): the goldens under `packages/nokia-os/goldens/` are authoritative; where this file and a golden disagree, fix this file.
 
@@ -61,15 +64,75 @@ Bantumi, Pairs II's mode list or standby). Whether Pairs II's two modes share on
 **Random numbers (plan 24, in progress).** New game writes a u32 game seed from the clock (peek
 `0x10da5c`); the game draws from `seed = (seed × 0x625f + 0x3623) mod 0xfff1`, the first step in
 32-bit wrapping arithmetic, one chain per game (no reseed between levels or at Continue). The
-splash takes its 60 draws from the same u32. A provisional fit uses
-`0xd452fe80 + seconds of the day + 86400 × days since 13.10.2026`,
-but the hour-0 evidence is unresolved. The inherited Snake II comparison table uses
-`0xd452fec1` for both 00:00 and 00:01; the current `seed/0000` peek in `seeds.json` is
-`0xd452fed7` and does not match the recovered 00:00 LCD seed's first draw. The comparison table
-therefore verifies candidate u32s against Snake II placements, not every actual captured seed.
-The shared `gameSeed` keeps the minutes-of-the-day fallback (UNVERIFIED).
+splash takes 60 draws from its own clock seed. Exhaustive LCD star searches identify effective
+splash seeds 36670 (07:59), 44530 (10:10), 13689 (19:48), 38909 (23:59), 8013 (00:00) and
+10048 (10:10 on 14.10.2026). They do not establish a later New-game seed: at midnight, different
+menu histories change it while the displayed minute stays the same.
 
-**Levels, enemies, bonuses, specials, bosses, scoring and sounds.** (plan 24, in progress)
+**UNVERIFIED accepted seed default:** `gameSeed` retains the existing minutes-of-the-day
+fallback (0 without a clock). The clock/date-only fit is rejected. Tests may inject a gameplay
+seed only when an informative LCD trace uniquely recovers it. No-draw or ambiguous traces are
+noninformative; splash or RAM seeds cannot be presented as recovered gameplay seeds. Candidate
+u32s reproducing all nine Snake II seed sequences prove generator equivalence, not the clock
+function. Evidence: `analysis/seed-stars-background-verified.json`,
+`analysis/midnight-resolution.json`, `analysis/snake-seed-lcd-verification.json` under plan24.
+
+**Phone-wide ANSI chain (plan 24, in progress).** The fitted generator starts at `0x7fffffff`,
+steps `state = (state × 1103515245 + 12345) mod 2^32`, and returns `(state >>> 16) & 32767`.
+All twelve captured level-1 random rows fit `min(27, 6 + (rand15 & 31))`: 27,27,12,27,15,8 at
+positions 1–6, then 27,6,27,19,27,27 at positions 8–13. Bounds for other waves remain
+UNVERIFIED until fitted. Space impact's new-top-score ending consumes one draw; ordinary and
+tied-score endings consume none. The chain survives New game and resets at power-on.
+**UNVERIFIED accepted ANSI default:** other games and Games Settings leave this chain unchanged;
+24b/24c must revisit their consumers. The original S8 ending tails were not recorded; the
+independent continuous ending controls do not fill those tails. Evidence:
+`analysis/ansi-spawn-rows-verified.json`, `analysis/ansi-game-over-resolution.json`.
+
+**Levels and enemies (plan 24, in progress).** The unmodified full game covers levels 0–7,
+each level's exit, a final-level restart after Continue, and the ending. The HUD moves below
+ceiling terrain in levels 4 and 5. The scroll pauses at a boss; a kill lines up the ship and
+flies it off before the next level. The canonical stream took 10,282 ticks and 962 s of emulated
+time (including the final boss and restart), with 11,777 look-ahead evaluations. Its 18 cuts
+replayed identically at native pixels, key edges, timing and audio. These are capture integrity
+facts, not proof that the implementation replays them. Tasks 4–10 fit sprites, terrain,
+spawn/movement/fire rules, collision, scoring and bosses from those goldens.
+
+Each full-level golden's pixel-exact replay under the shared fidelity standard will verify
+every spawn, kill and shot it contains. **UNVERIFIED:** any spawn, kill, shot, firing rate,
+collision or RNG-consumption branch never exercised by those recordings; the recordings do not
+prove that an unseen event is impossible. Exhaustive per-type kill/fire coverage is not a gate.
+The partial census remains an exploratory aid for reconstruction.
+
+**Bonuses and specials (plan 24, in progress).** Reviewed LCD/audio pickups establish all four
+outcomes: missiles 03 → 06 (level 1), missiles 06 → wall 03 (level 2), three hearts → four
+(cap run), and missiles 03 → beam 01 (level-0 restart). Their contact/disappearance, persistent
+HUD changes and pickup cues are recorded in `analysis/s6-reviewed-bonus.json`.
+**UNVERIFIED accepted life default:** cap lives at five; if a life is selected at the cap,
+reroll from the same game RNG until a non-life bonus is selected. Five-life reachability and
+this branch's RNG consumption have not been established by the LCD.
+
+Paired unmodified controls establish beam/enemy kills, beam/boss damage and a wall/boss kill.
+The wall/enemy probe has the same bullet hits and score with and without the wall.
+**UNVERIFIED accepted wall default:** ordinary enemies take H10's four HP per registered wall
+hit through the enemy damage path. No repeated-hit cadence or universal instant kill is
+inferred. Exact weapon damage, hit registration, bonus draw mapping and unexercised stacking
+branches still require reconstruction; evidence is
+`analysis/s6-special-effects-reviewed-partial.json`.
+
+**Sounds and vibration (plan 24, in progress).** Reviewed recordings isolate shot, death,
+missile, wall, beam and all four bonus cues. A pickup sounds ≈2637 Hz; a shot ascends through
+440/466/494/523 Hz; the death alternates short low tones and ≈4186 Hz. Exact frequencies,
+volume registers and programs come from `analysis/s9-reviewed-specials-sound.json` and the
+sound goldens, not these rounded descriptions. Deaths and boss kills vibrate ≈480 ms. Warning
+tones and Games Sounds gate the buzzer; Sounds Off keeps vibration, Shakes Off keeps sound;
+Vibrating alert also gates vibration. The new-top-score ending uses the fireworks tune. Events
+shorter than 34 ms follow the shared fidelity standard; no per-test sound tolerance applies.
+
+**Remaining hypotheses (UNVERIFIED until golden replay or further evidence).** Exact collision
+geometry, score ceiling and per-hit awards, all boss phases and projectiles, the pending-sound
+return code and lost-event behavior, held-fire cap, shield durations and exact continue/exit
+steps remain H1–H22 hypotheses where not demonstrated by an informative recording. A recorded
+outcome must match exactly; unexercised branches stay labelled rather than asserted.
 
 **Capture artefacts.**
 

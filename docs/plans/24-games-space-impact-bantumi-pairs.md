@@ -170,13 +170,16 @@ without growing Space-impact-shaped options.
 **D3 - The captures are ground truth; the RE notes are hypotheses; level data is reconstructed
 from goldens (extends plan 23 D3).** `$REF/tools/lukesau-nokia-dct3-re/docs/
 games_applications_3310.md` describes the game from a decompile. This plan states its rules as
-hypotheses (H1-H22). A rule enters the engine only with a test that checks it against goldens. All
+hypotheses (H1-H22). A rule enters the engine with a test against goldens, or as an explicitly accepted UNVERIFIED
+default. All
 data is derived from goldens by committed generators: sprites, HUD glyphs, terrain tiles and
 tilemaps, the per-level spawn scripts, movement paths, object templates (hit points, shots, fire
 chance) and boss behaviour. The reconstruction (Task 5) tracks every object through the level
 goldens and fits the RE notes' structures (spawn entry, pattern, template) to what it sees. A
-value no golden shows is not guessed: it is reported, and Task 0 recaptures until every object
-the game can spawn has been seen. Nothing from `$REF/extracted`, the flash image or the RE notes'
+value no golden shows stays UNVERIFIED in the spec; no exhaustive per-type census gates the
+validated full-level recordings. The four defaults accepted on 2026-10-27 retain that label
+beside code and spec behavior. Other missing implementation decisions are reported rather than
+guessed. Nothing from `$REF/extracted`, the flash image or the RE notes'
 tables is committed.
 
 **D4 - Every level is captured from unmodified play by a look-ahead bot (new).** Pokes break the
@@ -187,25 +190,22 @@ continue/stop decisions and recording boundaries come from LCD observations and 
 RAM reads cross-check those observations only (Task 0 capture-driver proof). The recorded run
 is a real game with real keys (`keys.csv` by tick) and its frames are pixel-faithful. One full run
 plays levels 0-7 to the end of the game; variety
-runs cover what one run misses (every bonus kind, the wall and the beam, a death and a continue in
-each level, the repeat-fire cap).
+runs supply the reviewed bonus, special, death/Continue and held-fire evidence. The accepted
+2026-10-27 scope verifies the spawns, kills and shots contained in the eight full-level goldens;
+behavior never exercised by them stays UNVERIFIED and does not gate Task 0.
 
-**D5 - One game generator for every game, seeded at New game from the clock; Snake II's seed
-fallback is replaced if Task 0's fit holds (new; revises plan 23 D4).** `game_rand16`
-(`seed = (seed × 0x625f + 0x3623) mod 0xfff1`) moves from `src/games/snake/rng.ts` to
-`src/games/random.ts` (Snake II keeps its placement helpers and imports the generator). The seed
-state is the u32 the firmware writes at New game: its first step runs in 32-bit wrapping
-arithmetic, later steps stay below 0xfff1. Task 0 S7 reads the u32 (peek) at New game for the
-plan 23 C9 clocks and dates and fits `u32 = f(date, time)`. If one function reproduces the
-complete LCD random-event sequences of every Snake II seed golden (including all C9 clocks/dates
-and overflow cases) and this plan's informative S7 datasets,
-`src/games/seed.ts` replaces plan 23's minutes-of-the-day fallback for all games. Otherwise the
-fallback stays, as UNVERIFIED, and tests inject recovered seeds where identifiable. RAM peeks
-are cross-checks, never the sole proof of the fit. Noninformative traces use a clock seed proved
-independently by informative LCD datasets; they do not claim seed recovery (Task 6). Space impact
-draws for enemy fire, bonus kinds and explosion frames from one chain per game (no reseed between
-levels or on Continue; investigation item 5). The splash draws its 30 stars from the same clock
-seed (H18).
+**D5 - One shared game generator; retain the minutes-of-the-day fallback (accepted 2026-10-27).**
+`game_rand16` (`seed = (seed × 0x625f + 0x3623) mod 0xfff1`) moves from
+`src/games/snake/rng.ts` to `src/games/random.ts`. A u32 seed's first step wraps at 32 bits;
+later states stay below 0xfff1. Candidate u32s reproduce the nine Snake II seed goldens' LCD
+placement sequences, including overflow, but do not establish the actual clock function.
+**UNVERIFIED accepted default:** `src/games/seed.ts` keeps the existing minutes-of-the-day
+fallback (0 without a clock). Midnight route controls reject the clock/date-only fit. Do not
+add an hour-zero formula from RAM. A gameplay replay may inject a seed only when an informative
+LCD trace uniquely recovers it. No-draw and ambiguous gameplay traces remain noninformative;
+they cannot borrow a splash or peek seed as gameplay proof. The six splash seeds are uniquely
+recovered from LCD stars separately. Space impact uses one game RNG chain across levels and
+Continue; exact consumer ordering remains to be checked by full-level replay (H14).
 
 **D6 - The ANSI `rand` is a phone-wide generator (new).** Random spawn rows (`y = 0x3f`) draw from
 a second generator whose state survives games and is set only at power-on (investigation item 6).
@@ -219,15 +219,20 @@ and their rigs replay that history.
 **Task 0 correction (2026-10-27):** captured Space impact new-top-score endings consume one
 ANSI draw. Ordinary and tied-score endings consume none, including the first game after reboot
 with its earned top score retained. See `analysis/ansi-game-over-resolution.json` and the
-continuous LCD/audio recordings below. Random-row coordinate reproduction and other games'
-advancers remain unverified; do not implement an unconditional game-over advance.
+continuous LCD/audio recordings below. All twelve original level-1 LCD random rows now fit the ANSI LCG from `0x7fffffff`:
+`state = state * 1103515245 + 12345 mod 2^32`, `rand15 = (state >>> 16) & 32767`,
+`y = min(27, 6 + (rand15 & 31))` for that wave. Other wave bounds remain UNVERIFIED.
+**UNVERIFIED accepted default:** other games and Games Settings leave ANSI unchanged;
+24b/24c revisit their consumers. Preserve the chain across games and reset only at power-on;
+do not implement an unconditional game-over advance.
 
 **D7 - Timing: periods from goldens, per-interval tolerance, no latency model (plan 23 D6).** The
 session ticks the engine at `SPACE_IMPACT_TICK_MS` (Task 0: ≈93 ms), the first tick
 `SPACE_IMPACT_FIRST_TICK_MS` after the New game frame, the one-shot (shield) after
 `SPACE_IMPACT_SHIELD_MS` (≈1500 ms after a resume, H1), the continue screen's steps at the
-captured `05` hold and step period, and the level exit's steps as captured. Tick intervals are
-compared within `GAME_TICK_TOLERANCE_MS` (16 ms), never cumulatively. Key-to-game latency is not
+captured `05` hold and step period, and the level exit's steps as captured. Tick intervals follow AGENTS.md's shared game-rhythm rule (`periodToleranceMs`), never a
+per-test tolerance. One-off and sequence edges use the shared timing helpers, and redraws
+shorter than 34 ms follow its partial-redraw rule. Key-to-game latency is not
 reproduced; `input:` places keys by tick (plan 23 D6).
 
 **D8 - The pending return code is reproduced (new; H16).** When a tick leaves a sound pending
@@ -385,7 +390,7 @@ export type StockGameId =
 export interface StockGames {
   suspended: Partial<Record<StockGameId, unknown>>; // D10; Pairs II mode scope unresolved
   seed(): number; // the u32 for New game
-  readonly ansi: AnsiRandom; // phone-wide (D6)
+  ansi: AnsiRandom; // phone-wide (D6); holder replaces it only at power-on
   readonly cues: StockCueSink;
   now(): number;
 }
@@ -1261,14 +1266,41 @@ this capture gate. Verification: `mise exec -- vp check --fix` passes.
 Continue corrections, if the refactor created it; else the Snake II section of
 `docs/specs/nokia-3310.md`), `docs/plans/README.md`, this plan.
 
-- [ ] Apply Task 0's outcome to D4-D13 and H1-H22 (`Deviation:` lines where it changes them).
-- [ ] `docs/specs/stock/space-impact.md`: entry, keys, the rules as verified, levels, pause and
+- [x] Apply Task 0's outcome to D4-D13 and H1-H22 (`Deviation:` lines where it changes them).
+- [x] `docs/specs/stock/space-impact.md`: entry, keys, the rules as verified, levels, pause and
       Continue, scoring, game over, sound, artefacts; everything not yet asserted marked
       "(plan 24, in progress)". Correct spec §7's "Space Impact: `2`/`8` move up/down, `5` fires".
-- [ ] The shared facts: the seed (D5), the suspend slot (D10), Continue's key, the timer-unit rule.
-- [ ] Plans README: row 24 `in progress`.
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define Space impact gameplay and the shared game facts (plan 24)`.
+- [x] The shared facts: the seed (D5), the suspend slot (D10), Continue's key, the timer-unit rule.
+- [x] Plans README: row 24 `in progress`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define Space impact gameplay and the shared game facts (plan 24)`.
+
+**Completion (2026-10-27).** Updated the stock Space impact spec and §7/index, corrected the
+shared Snake II seed and independent Continue facts, and retained row 24 as `in progress`.
+No runtime code changed. The observed control/key/timing facts and all four accepted defaults
+are separated from unasserted implementation claims. `vp check --fix` and the nokia-os suite
+pass (the suite's current expected failures and TODOs are retained).
+
+**Deviation (D3-D13, H1-H22).** The accepted Task 0 decision supersedes exhaustive capture and
+clock-fit requirements. The status of the hypotheses is:
+
+| Hypotheses | Task 0 outcome; implementation replay remains pending                                                                                                                                  |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| H1         | 12-unit tick and captured interval/transition evidence; exact shield/repeat/continue timings are derived in Task 4. Shared fidelity helpers supersede fixed tolerances.                |
+| H2, H3     | Canonical key matrix and LCD ship observations exist; global clamps, held-fire cap and collision limits still need replay/fitting.                                                     |
+| H4-H8      | Full levels, terrain, enemies, collisions and score changes are captured. Exact tables and rules are reconstructed and checked in Tasks 4-10; unexercised branches stay UNVERIFIED.    |
+| H9         | All four bonus outcomes reviewed. Five-life cap and same-game-RNG life reroll are the accepted UNVERIFIED default; draw mapping/stacking still need replay.                            |
+| H10        | Beam/enemy and beam/boss effects plus wall/boss kill reviewed with controls. Ordinary-enemy wall damage is the accepted UNVERIFIED four HP per registered hit; no cadence is inferred. |
+| H11, H12   | Death, Continue/restart/refusal, all level exits and ending recorded; exact step behavior awaits replay.                                                                               |
+| H13        | Final level and restart are validated LCD recordings; multipart boss rules remain reconstruction work.                                                                                 |
+| H14        | Shared u32 generator supported by Snake LCD sequences; retained minutes seed is UNVERIFIED. Gameplay seed recovery/consumer ordering remains Task 6.                                   |
+| H15        | Twelve level-1 random-row coordinates fit ANSI. Other games/Settings zero advance is UNVERIFIED; top-score-only Space impact ending advance replaces unconditional game-over advance.  |
+| H16        | Pending-return/lost-event mechanism remains UNVERIFIED until a trace test demonstrates it. No gap/tolerance may conceal a wrong step count.                                            |
+| H17        | Captured polarities and bottom HUD in levels 4/5; exact pixels remain replay work.                                                                                                     |
+| H18        | Six unique LCD splash seeds and key-to-menu captures; New-game seed is separate at midnight.                                                                                           |
+| H19, H20   | Sound/vibration coverage reviewed, including special controls and gating; programs and runtime comparison remain Task 12.                                                              |
+| H21        | Per-game Snake II/Space impact suspension in both orders confirmed. Pairs II cross-mode scope stays UNVERIFIED for 24c.                                                                |
+| H22        | Ordinary, tied and top-score endings reviewed; only Space impact's new-top-score ending advances ANSI. Runtime endings remain Task 11.                                                 |
 
 ### Task 2 - Games II seams, with Snake II migrated (TDD)
 

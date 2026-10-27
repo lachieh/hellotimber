@@ -153,7 +153,7 @@ Sources: [helpdoc Games](https://nokia-3310.helpdoc.net/en/12-games-menu-8/) (li
 
 ### Others (brief)
 
-- **Space Impact:** side-scrolling shoot-'em-up; `2`/`8` move up/down, `5` fires (UNVERIFIED keys); levels with boss fights; lives counter.
+- **Space Impact:** side-scrolling shoot-'em-up; `8`/`0` move up/down, `*`/`#` back/forward, `1`/`3` fire and `4`/`6` use a special. Navi or C suspends. These v6.39 capture observations supersede the earlier key guess; see [stock/space-impact.md](stock/space-impact.md) for replay status and UNVERIFIED behavior.
 - **Bantumi:** mancala variant vs. phone AI or pass-and-play; difficulty via Level option.
 - **Pairs II:** memory/matching game flipping tiles on a grid; themed picture sets.
   (Mechanical details for these three are **UNVERIFIED** — manual only documents the common option menu.)
@@ -220,6 +220,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Clock, alarm, timers, Reminders                            | [stock/clock-and-reminders.md](stock/clock-and-reminders.md)       | 21   |
 | Composer                                                   | [stock/composer.md](stock/composer.md)                             | 27   |
 | Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                             | 23   |
+| Space impact (plan 24, in progress)                        | [stock/space-impact.md](stock/space-impact.md)                     | 24   |
 | Keyguard and lights                                        | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |
 | Number entry, calls and the call register (plan 22)        | [stock/calls.md](stock/calls.md)                                   | 22   |
 | SIM messages, sender names, SIM services, IMEI             | [stock/sim-services.md](stock/sim-services.md)                     | 30   |

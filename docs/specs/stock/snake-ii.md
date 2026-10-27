@@ -4,7 +4,7 @@ Part of the stock firmware's ground truth ([index](../nokia-3310.md#10-firmware-
 
 Source: the plan 23 recaptures (`captures/6.39/plan23/`, generator
 `captures/scripts/gen_v639_plan23.py`), asserted by nokia-os's `game/snake/*` goldens (pixels
-exact; tick intervals within 16 ms). The RE notes (`games_snake2_3310.md`) are cross-checks only.
+exact; timing follows AGENTS.md's fidelity standard). The RE notes (`games_snake2_3310.md`) are cross-checks only.
 
 **Board.** 20x9 cells; cell (x, y) at pixel (2 + 4x, 10 + 4y). A frame runs at x 0 and 83 from
 y 8 to 47, with rules at y 6 and y 8. The score is four HUD digits at x 0/4/8/12 with leading
@@ -42,6 +42,10 @@ grow the snake. Food and creatures never share a row or column. Placements come 
 from the clock and date at New game, not at Continue: one seed reproduces every placement of a
 recorded game. Most captured clocks fit `(seconds of the day + 7930) mod 65521`, but no function
 of the clock and date fits them all; nokia-os seeds from the minutes of the day (UNVERIFIED).
+Plan 24's accepted decision retains that fallback: midnight route controls reject the proposed
+clock/date-only fit. The shared generator's first step uses 32-bit wrapping arithmetic for a
+u32 seed; candidate u32s reproduce every existing Snake II seed placement, without proving a
+clock function. Continue does not reseed.
 
 **Death and game over.** After the crash the snake blinks every ≈240 ms (nine frames) for ≈2.07
 s, unless its ring index has wrapped (after ≈290 moves), in which case it does not blink. A new
@@ -58,7 +62,13 @@ game `8-1-2` … Instructions `8-1-7`). C goes to the Games list. Entering Snake
 splash and opens on Continue; the suspended game survives standby. Continue redraws the board,
 which stands until a key; ticks restart one period after that key. New game while suspended
 starts a new game. Top score while suspended returns with Continue on the bottom row. OK on the
-Level page while suspended removes Continue.
+Level page while suspended removes Continue. Canonical plan 24 S2 recordings establish
+independent Snake II and Space impact suspension in both orderings: visiting or suspending the
+other game, Bantumi's menu, Pairs II's mode list or standby preserves each game's Continue and
+board. New game clears only its own entry; power-off clears all entries. Pairs II cross-mode
+scope is UNVERIFIED pending plan 24c. **UNVERIFIED accepted ANSI default:** Snake II, other games
+and Games Settings leave the phone-wide ANSI chain unchanged; plans 24b/24c revisit it. The
+captured Space impact top-score advance is not applied to Snake II.
 
 **Sound.** Game sounds need Tones › Warning tones On (unset in the virgin EEPROM, so captured
 games are silent apart from the 900 Hz keypad beeps): a meal sounds 2637 Hz for one or two timer
