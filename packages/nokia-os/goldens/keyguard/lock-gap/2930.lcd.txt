@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/lock-gap/2930
-status: pending:22
+status: asserted
 source: captures/6.39/plan25/keyguard/lock-gap/2930
 source-sha256: 6becea44ed7296106ef107a4ae688554dfc278d5befd888a59a11c83d609334c
 trigger-frame: 1

@@ -260,6 +260,7 @@ export function createStockPhoneWith(
   const power = new PowerListState();
   const reminders = phoneReminders(services);
   registerTelephone(eeprom, telephone, power);
+  let keyguardCall: PhoneApplication | undefined;
   const phone: Phone = createPhone({
     menu: createStockMenu(
       ports,
@@ -315,6 +316,11 @@ export function createStockPhoneWith(
     // Plan 22 (D4): a ring interrupts whatever shows; an answered call over another screen comes
     // back once connected. The telephone goes first, then plan 21 D3's clock alerts (at standby).
     interruption: (): PhoneApplication | undefined => {
+      if (keyguardCall !== undefined) {
+        const application = keyguardCall;
+        keyguardCall = undefined;
+        return application;
+      }
       const resumed = telephone.callToShow();
       if (resumed !== undefined) {
         return incomingCallApplication(services, telephone, resumed, { kind: "other" });
@@ -328,9 +334,11 @@ export function createStockPhoneWith(
           return screen.kind === "standby" && !screen.leaving ? now : undefined;
         });
       }
+      if (keyguard.engine.pass().activity) lights.activity();
       const entry = shownEntry(telephone);
-      const below =
-        entry !== undefined
+      const below = keyguard.engine.locked
+        ? { kind: "keyguard" as const }
+        : entry !== undefined
           ? { kind: "entry" as const, text: entry.text }
           : { kind: phone.screen.kind === "standby" ? ("standby" as const) : ("other" as const) };
       return incomingCallApplication(services, telephone, ringing, below);
@@ -340,6 +348,13 @@ export function createStockPhoneWith(
   const keyguard = new KeyguardOverlay(phone, {
     now: () => now,
     noteSound: (lines) => sounder.note(lines),
+    calls: {
+      dial(number) {
+        const call = telephone.dial(number, true);
+        keyguard.engine.pass();
+        keyguardCall = incomingCallApplication(services, telephone, call, { kind: "standby" });
+      },
+    },
   });
   // Plan 25 K7, L7: an arrival lights the phone, but not a locked one.
   const arrivals = stockArrivals(phone, services, () => {
@@ -452,8 +467,15 @@ export function createStockPhoneWith(
     overlay = keyguard.screen ?? withHandset(snapshot.screen);
     deliver(overlay === snapshot.screen ? snapshot : { ...snapshot, screen: overlay });
   });
+  let callLights = false;
   const publish = (): void => {
-    lightRules.update(phone.path);
+    const call = telephone.call;
+    const holdsLights =
+      call !== undefined && !call.done && (call.emergency || telephone.phase(call) === "ringing");
+    if (holdsLights !== callLights) lights.force(holdsLights ? "on" : null);
+    callLights = holdsLights;
+    if (!holdsLights) lightRules.update(phone.path);
+    if (!telephone.active) keyguard.engine.resume();
     const screen = shownScreen();
     if (screen === overlay) return;
     overlay = screen;

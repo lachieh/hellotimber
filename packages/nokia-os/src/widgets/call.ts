@@ -28,6 +28,8 @@ export const CALLING = {
 } as const;
 /** The ringing screen's `calling` blinks 480/480 ms, shown first (`ring/screen`). */
 const RING_BLINK_MS = 480;
+/** Call 1 after End's blank on a locked phone (plan25/keyguard/call, frame 14). */
+const KEYGUARD_END_CALL_MS = 512;
 /**
  * A screen over the call (Options, the power key's list): the ladders erased first (34 ms,
  * `in-call/power`; 36 ms, `in-call/options`), then the screen, with the handset at the top left;
@@ -94,10 +96,10 @@ export interface CallWidgetOptions {
   /**
    * An incoming call: what the ring interrupted. `standby` shows the call screen at Answer,
    * `entry` (with its characters) keeps them on the call screen, `other` keeps the screen below
-   * (with the handset) until the call connects.
+   * (with the handset) until the call connects. `keyguard` returns through the lock note (K8).
    */
   readonly below?:
-    | { readonly kind: "standby" | "other" }
+    | { readonly kind: "standby" | "other" | "keyguard" }
     | { readonly kind: "entry"; readonly text: string };
   /** The call is over: leave for standby or the screen below. */
   readonly done: (exit: CallExit, flow: Flow) => void;
@@ -490,6 +492,10 @@ export class CallWidget implements Widget {
       return { leave: "below" };
     }
     if (now < ended + t.endBlankMs) return { model: this.#model({ kind: "blank" }, "End") };
+    if (this.#o.below?.kind === "keyguard") {
+      if (now < ended + t.endBlankMs + KEYGUARD_END_CALL_MS) return { model: this.#inCall(now) };
+      return { leave: "standby" };
+    }
     const exit = this.#afterCall();
     if (exit === "below") return { leave: "below" };
     if (now < ended + t.endBlankMs + t.standbyDrawMs) return { model: this.#standbyDraw() };
@@ -517,7 +523,10 @@ export class CallWidget implements Widget {
       if (now < r + t.rejectBlankMs + t.rejectCallMs) {
         return { model: this.#model(this.#callBody(), "End") };
       }
-      if (now < r + t.rejectBlankMs + t.rejectCallMs + t.standbyDrawMs) {
+      if (
+        this.#o.below?.kind !== "keyguard" &&
+        now < r + t.rejectBlankMs + t.rejectCallMs + t.standbyDrawMs
+      ) {
         return { model: this.#standbyDraw() };
       }
       return { leave: "below" };
@@ -545,7 +554,7 @@ export class CallWidget implements Widget {
     }
     // Answered over the number entry: its characters with End for the whole call.
     if (below === "entry") return { model: this.#inCall(now) };
-    const connected = answered + t.answerConnectMs;
+    const connected = telephone.connectedAt(call);
     if (below === "other" && !this.#resumed) {
       // Over another screen it stays (with the handset) until the call connects, then the call
       // screen comes back through the telephone's interruption.
@@ -555,7 +564,7 @@ export class CallWidget implements Widget {
     if (!this.#resumed && now < answered + t.answerBlankMs) {
       return { model: this.#model({ kind: "blank" }, "End") };
     }
-    if (now >= connected && now < connected + t.connectBlankMs) {
+    if (connected !== undefined && now >= connected && now < connected + t.connectBlankMs) {
       return { model: this.#model({ kind: "blank" }, this.#softkey(now)) };
     }
     return { model: this.#inCall(now) };

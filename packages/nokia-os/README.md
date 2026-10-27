@@ -639,7 +639,10 @@ apply at the phone's next tick, no sooner than its own link times (≈2.2 s to a
 connected). A port without `dial` behaves as the synthetic network: every call alerts and
 connects at once. Rings come in through `subscribeCalls(ring)`: `ring({ number }, link)` shows a
 call and returns the phone's control, whose `released()` ends it (before Answer: a missed call);
-`link.answer()` and `link.hangUp()` report the user's Answer and End/reject.
+`link.answer()` and `link.hangUp()` report the user's Answer and End/reject. After Answer, the
+host calls `connected()` when the incoming speech channel is ready; the synthetic network does
+this at Answer. Without that event the answered call stays up without a connection redraw or
+connected duration (the original plan 25 emulator cell).
 
 A website can turn numbers into links: open a URL when its number is dialled and end the call
 with the stock network's end (no telephony involved):

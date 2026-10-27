@@ -280,7 +280,12 @@ export class StockTelephone {
     }
     return {
       alerting: () => {},
-      connected: () => {},
+      connected: () => {
+        const answered = this.#call;
+        if (answered?.direction === "in" && answered.link === link && !answered.done) {
+          answered.hostConnected ??= this.#deps.now();
+        }
+      },
       released: () => {
         if (ring.released) return;
         ring.released = true;
@@ -347,9 +352,9 @@ export class StockTelephone {
   /** When the call connects: out, the connect's redraw; in, the traffic channel after Answer. */
   connectedAt(call: StockCall): number | undefined {
     if (call.direction === "in") {
-      return call.answeredAt === undefined
+      return call.answeredAt === undefined || call.hostConnected === undefined
         ? undefined
-        : call.answeredAt + CALL_TIMINGS.answerConnectMs;
+        : Math.max(call.answeredAt + CALL_TIMINGS.answerConnectMs, call.hostConnected);
     }
     if (call.hostConnected === undefined) return undefined;
     const alerting = this.alertingAt(call) ?? call.startedAt + CALL_TIMINGS.alertingMs;

@@ -13,7 +13,4 @@ acceptancePlan({
       "keys held when an application exits, so the held C's long press never fires (phone-core; " +
       "the game suspends on C's key-down, as the capture shows the menu while C is held)",
   },
-  // `game/snake/periods` plays New game at all 166 captured levels on one phone (≈1.6 s alone,
-  // the longest scenario, ≈5× any other).
-  timeoutsMs: { "game/snake/periods": 20_000 },
 });

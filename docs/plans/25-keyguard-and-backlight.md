@@ -1095,6 +1095,46 @@ of plans 18 and the rows-window fix (`614ee1d`); no plan 25 commit touches it. T
 discrepancy, the Task 5/7/8 UNVERIFIED rules and what nokia-os reproduces (189 of 210 goldens
 asserted, 17 known gaps).
 
+### Call integration follow-up — 2026-10-27
+
+- [x] Assert all 17 `pending:22` goldens by changing the capture set and rerunning
+      `import-captures` against REF. All 210 plan 25 goldens now have asserted status and scenarios.
+- [x] Wire incoming calls through `KeyguardEngine.pass()`, emergency Call through the telephone
+      and interruption seam, and `resume()` after the call finishes. Ringing and emergency calls
+      hold both lights on; Answer/reject/End return the light timeout to its captured key activity.
+- [x] Replay the six call light arrivals, two locked-call LCD timelines, emergency Call (LCD and
+      lights), carousel `*`, two lock cancellations and four expired lock windows.
+- [x] Keep incoming speech-channel connection on the network control. Plan 25's original cell
+      never assigns it; the plan 22 synthetic cell connects when Answer is pressed. The locked
+      call's End draws Call 1 for 512 ms before the lock note; reject goes straight to that note
+      after its call frame, without the ordinary standby redraw.
+- [x] Test emergency End, re-lock and subsequent unlock, and incoming Answer with a delayed
+      network connection. The synthetic cell reports connection once.
+- [x] Verify `vp check`, `vp run -r --no-cache test`, and `vp run website#build`; commit the result.
+
+**Verification:** the uncached workspace run passes all 252 test files: 10,636 passed,
+122 expected failures and 33 todos (10,791 cases). nokia-os contributes 160 files, 9,794 passed,
+122 expected failures and 33 todos; its run took 1142.18 s under concurrent worktree load. Plan 25
+has 202 passing scenarios and eight expected failures, with no pending goldens. `vp check` has
+no formatting, lint or type errors, and the website production build passes.
+
+**Known gap:** `keyguard/lock-cancel/c` is asserted with an expected failure. The firmware
+shows standby without its operator for 83 ms after C; phone-core returns directly to the full
+standby, as in the existing `calls/missed-c` gap. The following `*` number entry matches. This
+follow-up leaves phone-core unchanged and uses no per-test tolerance. The other 16 newly
+asserted scenarios pass, including both locked-call timelines. Plan 25 retains its seven older
+acceptance gaps, for eight total.
+
+**Shared calls edits:** `src/calls/network.ts` reports the incoming speech connection from the
+synthetic cell at Answer; `src/calls/telephone.ts` records that host event and uses it for the
+connection time; `src/widgets/call.ts` reads that time and adds a `keyguard` return context.
+`src/firmware/features/dialling.ts` is unchanged. No phone-book, IMEI or sound-gap work is included.
+
+**Verification adjustment:** plan 23's `game/snake/periods` exceeded its old 20 s wall-clock
+override under concurrent worktree load (22.1 s in the full run, 21.4 s alone alongside that run).
+It now inherits nokia-os's existing 60 s test timeout. Its simulated game periods, pixel checks
+and fidelity tolerances are unchanged.
+
 ## Follow-up plan adjustments
 
 - **17 - Profiles:** the power key's profile list opens on the short press at standby; plan 25
@@ -1109,6 +1149,7 @@ asserted, 17 known gaps).
 - **22 - Calls:** an incoming call calls `KeyguardEngine.pass()` and `StockLights.activity()`, its
   end `resume()` (K8); Call on an emergency number arrives through `KeyguardCalls.dial` (D6);
   `keyguard/call`, `keyguard/carousel-star` and `keyguard/emergency-call` become asserted.
+  Completed by the call integration follow-up above.
 - **24 - Games II:** their play state feeds D7's rule as Snake II's does.
 - **Portfolio integration (not sequenced):** the website drives phone-3d's `backlightOn` and
   `keypadLightOn` from the lights port, which retires `settings.backlight` and its own screen

@@ -1,6 +1,6 @@
 lights-golden 1
 id: lights/keyguard/emergency-call
-status: pending:22
+status: asserted
 source: captures/6.39/plan25/keyguard/emergency-call
 source-sha256: 1a68059336980af0198263b8e5a8ecbcc597da2d64d8c1223579b4e0592c7ccc
 state: virgin

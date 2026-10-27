@@ -22,7 +22,6 @@ import type { TreeCaptureIo } from "../tree-capture-set.ts";
 
 const P = "plan25";
 const ASSERTED: GoldenStatus = "asserted";
-const CALLS: GoldenStatus = "pending:22";
 /** Recordings this close (same images, every frame start within it) share one golden. */
 const SHARE_TOLERANCE_MS = 2;
 
@@ -250,7 +249,7 @@ export const LIGHTS_ENTRIES: readonly LightsCaptureEntry[] = [
     "virgin",
     "1 1 2, then Call (Navi) 1 s into the display.",
     `${P}/keyguard/emergency-call`,
-    CALLS,
+    ASSERTED,
   ),
   ...["hint-5", "unlock-alone", "unlock", "emergency-112"].map((name) =>
     lights(
@@ -297,7 +296,7 @@ export const LIGHTS_ENTRIES: readonly LightsCaptureEntry[] = [
         "virgin",
         `An incoming call at a dark${suffix ? " locked" : ""} standby, ${what}.`,
         `${P}/lights/arrival/call${suffix}${end}`,
-        CALLS,
+        ASSERTED,
       ),
     ),
   ]),
@@ -402,7 +401,7 @@ export function keyguardLcdSet(frames: TreeCaptureIo): CaptureSetEntry[] {
         `keyguard/lock-gap/${ms}`,
         `keyguard/lock-gap/${ms}`,
         `Menu, then * ${ms} ms later: ${ms <= 2920 ? "locks" : "standby number entry (plan 22)"}.`,
-        ms <= 2920 ? ASSERTED : CALLS,
+        ASSERTED,
       ),
     ),
     timeline(
@@ -414,19 +413,19 @@ export function keyguardLcdSet(frames: TreeCaptureIo): CaptureSetEntry[] {
       "keyguard/lock-cancel/down",
       "keyguard/lock-cancel/down",
       "Menu, ▼ at 300 ms, * 300 ms later: standby number entry (plan 22).",
-      CALLS,
+      ASSERTED,
     ),
     timeline(
       "keyguard/lock-cancel/c",
       "keyguard/lock-cancel/c",
       "Menu, C at 300 ms, * 300 ms later: standby number entry (plan 22).",
-      CALLS,
+      ASSERTED,
     ),
     timeline(
       "keyguard/carousel-star",
       "keyguard/carousel-star",
       "Menu, then * 4000 ms later: standby number entry (plan 22).",
-      CALLS,
+      ASSERTED,
     ),
     timeline("keyguard/lock-star-held", "keyguard/lock-star-held", "Menu, then * held 600 ms."),
     still("keyguard/standby", "keyguard/standby.png", "The locked standby (K2)."),
@@ -485,7 +484,7 @@ export function keyguardLcdSet(frames: TreeCaptureIo): CaptureSetEntry[] {
       "keyguard/emergency-call",
       "keyguard/emergency-call",
       "1 1 2, then Call (Navi) 1 s later: Attempting emergency call (plan 22).",
-      CALLS,
+      ASSERTED,
     ),
     ...["hint-5", "unlock-alone", "unlock", "emergency-112"].map((name) =>
       timeline(
@@ -508,13 +507,13 @@ export function keyguardLcdSet(frames: TreeCaptureIo): CaptureSetEntry[] {
       "keyguard/call",
       "lights/arrival/call-locked",
       "An incoming call on a locked phone, answered and ended with Navi: Keypad locked again.",
-      CALLS,
+      ASSERTED,
     ),
     timeline(
       "keyguard/call-reject",
       "lights/arrival/call-locked-reject",
       "An incoming call on a locked phone, rejected with C: Keypad locked again.",
-      CALLS,
+      ASSERTED,
     ),
     timeline(
       "keyguard/sms",

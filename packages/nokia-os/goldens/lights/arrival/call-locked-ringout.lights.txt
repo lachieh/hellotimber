@@ -1,6 +1,6 @@
 lights-golden 1
 id: lights/arrival/call-locked-ringout
-status: pending:22
+status: asserted
 source: captures/6.39/plan25/lights/arrival/call-locked-ringout
 source-sha256: 426a0f0337f6cca9b1f385fcc6595fcc88038a577c7709afa5c25dc4ce7a39d9
 state: virgin
