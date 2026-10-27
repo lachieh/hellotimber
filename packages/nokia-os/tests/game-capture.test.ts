@@ -16,7 +16,7 @@ import {
   spaceImpactTicks,
   SPACE_IMPACT_FIRST_TICK_MS,
   SPACE_IMPACT_PERIOD_MS,
-} from "../scripts/capture-sets/24-space-impact.ts";
+} from "../scripts/space-impact-capture-set.ts";
 import { LCD_HEIGHT, LCD_WIDTH } from "../scripts/golden-format.ts";
 
 const P = SPACE_IMPACT_PERIOD_MS;

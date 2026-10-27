@@ -3,7 +3,8 @@
 import { describe, expect, it } from "vite-plus/test";
 import { CALCULATOR_RECORD } from "../src/calculator/rate";
 import { createMemoryStorage, StockEeprom } from "../src/firmware/eeprom";
-import { createStockGames, stockServices } from "../src/firmware/menu";
+import { stockServices } from "../src/firmware/menu";
+import { createStockGames } from "../src/firmware/features/games";
 import { createStockSettings } from "../src/firmware/settings";
 
 describe("StockServices.eeprom", () => {

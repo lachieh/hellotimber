@@ -2,7 +2,7 @@
 // impact's game goldens from the plan 24 Task 0 captures (`captures/6.39/plan24/`), through the
 // shared game machinery (`../game-capture.ts`) with Space impact's frame predicate, tick rule
 // and still selection.
-import type { CaptureSetEntry, PlanCaptureSet } from "../capture-set.ts";
+import type { CaptureSetEntry, PlanCaptureSet } from "./capture-set.ts";
 import {
   gameGolden,
   lit,
@@ -15,10 +15,10 @@ import {
   type StillRule,
   type Tick,
   type TickRule,
-} from "../game-capture.ts";
-import { LCD_HEIGHT, LCD_WIDTH, type GoldenStatus } from "../golden-format.ts";
-import { buildSoundGolden, KEYS_HEADER, type SoundCaptureIo } from "../sound-capture-set.ts";
-import type { SoundGolden } from "../sound-format.ts";
+} from "./game-capture.ts";
+import { LCD_HEIGHT, LCD_WIDTH, type GoldenStatus } from "./golden-format.ts";
+import { buildSoundGolden, KEYS_HEADER, type SoundCaptureIo } from "./sound-capture-set.ts";
+import type { SoundGolden } from "./sound-format.ts";
 
 // ---------------------------------------------------------------- pixel features
 

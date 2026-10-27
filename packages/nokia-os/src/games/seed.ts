@@ -1,13 +1,8 @@
-// The seed New game takes from the clock (plan 24 D5; plan 23 D4): the provisional fallback.
-//
-// Evidence (plan 24 Task 0 S7, plan 23 Task 5): New game writes a u32 whose first draw, in
-// 32-bit arithmetic (`random.ts`), is the first draw of every seed plan 23 recovered from the
-// LCD, the 23:59 and 14.10.2026 overflows and the seed 00:00 and 00:01 share included. That u32
-// is 0xd452fe80 + the seconds of the day + 86400 × the days since 13.10.2026 at every captured
-// clock except hour 0, where 00:00 and 00:01 write the same value, 65 s and 5 s above it.
-// So no function of the shown clock and date reproduces every Snake II seed golden, and the
-// u32 counts seconds the clock port does not give. Every game seeds from the minutes of the day,
-// UNVERIFIED; tests inject the recovered seeds.
+// The shared New-game seed (plan 24 D5): retain plan 23's minutes-of-the-day fallback.
+// A clock/date fit still needs informative LCD evidence, including hour 0 and overflow cases.
+// The inherited u32 comparison table contains candidates equivalent to Snake II's recovered
+// placements; it does not establish the u32 actually written at every capture clock.
+// Tests inject recovered seeds while the clock rule remains UNVERIFIED.
 
 /** The seed New game writes, from the clock ("HH:MM") and date; undefined without a clock. */
 export function gameSeed(clock: string | undefined, _date: string | undefined): number | undefined {

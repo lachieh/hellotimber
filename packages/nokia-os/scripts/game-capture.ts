@@ -2,7 +2,7 @@
 // Task 3): recordings played back to back, engine ticks numbered from the frames a game draws,
 // `keys.csv` turned into `input`, tick stills selected and the period fixture's rows. Each game
 // supplies its frame predicate, period, silent-tick rule and still selection
-// (`game-capture-set.ts` for Snake II, `capture-sets/24-space-impact.ts` for Space impact).
+// (`game-capture-set.ts` for Snake II, `space-impact-capture-set.ts` for Space impact).
 //
 // Reads captures only through the injected `GameCaptureIo`, so tests run it on synthetic
 // recordings. Paths are relative to `$REF/captures/6.39`. Pure: imports only sibling scripts.

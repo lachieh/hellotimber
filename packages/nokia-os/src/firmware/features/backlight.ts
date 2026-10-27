@@ -7,7 +7,8 @@
 // injected, and every edge is emitted stamped with the time it happens at, so the events are the
 // same at any tick rate. What counts as activity is the wiring's (D3); this is the timer.
 import { SNAKE_DEATH_STEPS, SNAKE_TOP_SCORE_MS } from "../../resources";
-import type { StockGames } from "../../widgets/snake";
+import type { StockGames } from "./games";
+import type { SuspendedSnake } from "../../widgets/snake";
 import type { StockCue, StockCueSink } from "../cues";
 import type { StockSettings } from "../settings";
 import { timelineByName } from "../timelines";
@@ -149,7 +150,7 @@ export interface StockLightRulesOptions {
   readonly lights: StockLights;
   readonly settings: StockSettings;
   /** Snake II's holder, read only: the game Continue resumes. */
-  readonly games: Pick<StockGames, "snake">;
+  readonly games: Pick<StockGames, "suspended">;
   readonly now: () => number;
 }
 
@@ -166,7 +167,7 @@ export interface StockLightRulesOptions {
 export class StockLightRules {
   readonly #lights: StockLights;
   readonly #settings: StockSettings;
-  readonly #games: Pick<StockGames, "snake">;
+  readonly #games: Pick<StockGames, "suspended">;
   readonly #now: () => number;
   #playing = false;
   /** The playing game's crash (its cue), once it has crashed. */
@@ -175,7 +176,7 @@ export class StockLightRules {
   /** Activity still due: the fireworks' `Game over!` title. */
   #due: number | undefined;
   /** The suspended game when last seen out of play (a session clears it as it starts). */
-  #suspended: StockGames["snake"];
+  #suspended: SuspendedSnake | undefined;
 
   constructor({ lights, settings, games, now }: StockLightRulesOptions) {
     this.#lights = lights;
@@ -204,7 +205,7 @@ export class StockLightRules {
     }
     const atPlay = SNAKE_PLAY.test(path);
     if (!atPlay) {
-      this.#suspended = this.#games.snake;
+      this.#suspended = this.#games.suspended.snake as SuspendedSnake | undefined;
       this.#crash = undefined;
       if (this.#playing) {
         this.#playing = false;

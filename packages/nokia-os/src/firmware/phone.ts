@@ -14,12 +14,7 @@ import type { StockCueSink } from "./cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { composerOf } from "./features/composer";
 import { invalidShortcut } from "./leaves";
-import {
-  createStockMenu,
-  STOCK_SHORTCUT_WINDOW_MS,
-  stockMessaging,
-  stockServices,
-} from "./menu";
+import { createStockMenu, STOCK_SHORTCUT_WINDOW_MS, stockMessaging, stockServices } from "./menu";
 import { openBox } from "../messages/read";
 import { StockFlowApplication } from "../widgets/flow";
 import { applyPreload, checkImei, checkPreload, type StockPreload } from "./preload";
@@ -50,7 +45,7 @@ import { StockClock } from "./features/clock/service";
 import { StockLightRules, StockLights, type StockLightsPort } from "./features/backlight";
 import { KeyguardOverlay } from "./features/keyguard";
 import type { StockSoundPort } from "../sound/port";
-import type { StockGames } from "../widgets/snake";
+import type { StockGames } from "./features/games";
 import { NO_T9_VIRGIN_CHOICES } from "../messages/bindings";
 import type { T9Dictionary } from "../text/t9/dictionary";
 import { stockT9 } from "../text/t9/service";
@@ -213,8 +208,8 @@ export function createStockPhoneWith(
     lights,
     settings,
     games: {
-      get snake() {
-        return games.snake;
+      get suspended() {
+        return games.suspended;
       },
     },
     now: () => now,

@@ -9,10 +9,11 @@ import { goldenPlacements } from "./support/snake-decode";
 const step = (seed: number) => (seed * 0x625f + 0x3623) % GAME_RANDOM_MODULUS;
 
 /**
- * The u32 New game writes at 0x10da5c (plan 24 Task 0 S7, RAM peeks: a cross-check, never the
- * proof) for the clocks of Snake II's seed goldens (plan 23 C9), all on 13.10.2026 unless named.
+ * Candidate u32s whose first draws match Snake II's recovered LCD placements. These do not
+ * prove the clock/date seed function: the raw seed/0000 peek differs from this candidate
+ * (0xd452fed7 rather than 0xd452fec1), and hour-0 capture provenance still needs Task 0.
  */
-const NEW_GAME_U32: readonly { golden: string; clock: string; u32: number }[] = [
+const LCD_EQUIVALENT_U32: readonly { golden: string; clock: string; u32: number }[] = [
   { golden: "seed-0759", clock: "07:59", u32: 0xd4536ec4 },
   { golden: "seed-1010", clock: "10:10", u32: 0xd4538d78 },
   { golden: "seed-1011", clock: "10:11", u32: 0xd4538db4 },
@@ -55,8 +56,8 @@ describe("createGameRandom (D5)", () => {
     expect(() => createGameRandom(1.5)).toThrow();
   });
 
-  for (const { golden, clock, u32 } of NEW_GAME_U32) {
-    it(`New game's u32 at ${clock} draws the first placement draw of game/snake/${golden}`, () => {
+  for (const { golden, clock, u32 } of LCD_EQUIVALENT_U32) {
+    it(`the candidate u32 for ${clock} draws the first placement draw of game/snake/${golden}`, () => {
       // The u32 explains every seed plan 23 recovered from the LCD, the 32-bit overflow of
       // 23:59 and 14.10.2026 and the shared seed of 00:00 and 00:01 included.
       const recovered = searchSeeds(goldenPlacements(`game/snake/${golden}`));
@@ -66,15 +67,16 @@ describe("createGameRandom (D5)", () => {
 });
 
 describe("gameSeed (D5: the minutes-of-the-day fallback stays, UNVERIFIED)", () => {
-  it("records why no clock function replaces it: 00:00 and 00:01 write the same u32", () => {
+  it("the provisional clock fit misses the hour-0 LCD-equivalent candidates", () => {
     // u32 = 0xd452fe80 + seconds of the day + 86400 × days since 13.10.2026 fits every other
     // clock (the constant holds the seconds the capture spends between setting the clock and
-    // New game), but 00:00 and 00:01 both write 0xd452fec1: 65 s and 5 s above it.
+    // New game), but the hour-0 candidates both use 0xd452fec1: 65 s and 5 s above it.
+    // This rejects the provisional fit, not every possible clock/date function.
     const fit = (clock: string, days = 0) => {
       const [h, m] = clock.split(":").map(Number);
       return 0xd452fe80 + h! * 3600 + m! * 60 + 86400 * days;
     };
-    for (const { clock, u32 } of NEW_GAME_U32) {
+    for (const { clock, u32 } of LCD_EQUIVALENT_U32) {
       const [time, date] = clock.split(" ");
       const fits = fit(time!, date === undefined ? 0 : 1) === u32;
       expect(fits, clock).toBe(!time!.startsWith("00:"));
@@ -82,7 +84,7 @@ describe("gameSeed (D5: the minutes-of-the-day fallback stays, UNVERIFIED)", () 
   });
 
   it("plan 23's evidence: (seconds + 7930) mod 65521 fits only the 07:59-19:48 clocks of 13.10.2026", () => {
-    for (const { golden, clock } of NEW_GAME_U32) {
+    for (const { golden, clock } of LCD_EQUIVALENT_U32) {
       const [h, m] = clock.split(/[: ]/).map(Number);
       const candidate = (h! * 3600 + m! * 60 + 7930) % GAME_RANDOM_MODULUS;
       const fits = !clock.includes(" ") && h! >= 7 && h! <= 19;

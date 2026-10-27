@@ -8,7 +8,7 @@ import {
   type TickRule,
 } from "../scripts/game-capture.ts";
 import { isBoardFrame, PERIOD_LEVELS, snakeTickRule } from "../scripts/game-capture-set.ts";
-import { spaceImpactTicks } from "../scripts/capture-sets/24-space-impact.ts";
+import { spaceImpactTicks } from "../scripts/space-impact-capture-set.ts";
 import { PLACEHOLDER_OWNERS as IMPORTER_PLACEHOLDER_OWNERS } from "../scripts/tree-capture-set.ts";
 import { PLACEHOLDER_OWNERS } from "../src/firmware/stock";
 import {
