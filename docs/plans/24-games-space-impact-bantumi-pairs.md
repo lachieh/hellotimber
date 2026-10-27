@@ -18,8 +18,10 @@ lands second rebases onto the other and keeps both plans' tests green.
 supplementary captures") and plans 13, 14, 16, 23 and 28 in full before starting. The planning
 probes in `$REF/captures/scratch-plan24/{space-impact,bantumi,pairs2}/` are evidence for this plan
 only and are never imported. Task 0 writes this plan's captures to `$REF/captures/6.39/plan24/`.
-**Status:** Task 0 partially attempted; incomplete. Documentation reconciled on 2026-10-14;
-Tasks 1-6 remain unstarted. See the Task 0 evidence and outcome below.
+**Status (2026-10-27):** rebased onto main `72cb29e`; inherited Games II groundwork
+is preserved and verified against the current suite. Task 0 remains incomplete after a read-only corpus audit;
+Tasks 1-3 have partial inherited WIP, not completed tasks. Tasks 4-14 remain unstarted.
+No plan 24 goldens have been imported or asserted. See the refresh audit below.
 
 ## Goal
 
@@ -612,6 +614,104 @@ The former Task 6 uniqueness requirement is reconciled, not satisfied: informati
 still require uniqueness; noninformative replay requires independent clock-seed proof. Resume
 Task 0 at the LCD capture-driver repair and RAM-independence checks, then finish canonical
 captures and report the remaining gates. All Task 0 checkboxes remain unchecked.
+
+### Refresh audit (2026-10-27)
+
+The assignment for this refresh makes `$REF` read-only. Preserve the existing captures and
+scripts; completing or resealing Task 0 requires a later assignment that can write there.
+The 2026-10-14 handoff above is historical, not the current corpus inventory.
+
+**Branch preservation and rebase.** Created `t3/p24-space-impact-backup-2026-10-27` at
+`66efe97`, then committed all 38 WIP files as `3f5e839` before rebasing onto main `72cb29e`.
+The rebase dropped `4c031b2` because its patch was already upstream. The plan-29 / `t3/e37f068c`
+merge content is already in main; no merge-only replay was needed. The preserved WIP replayed
+as `1b4177d`. No golden or generated-resource conflicts occurred.
+
+**Adaptations to main.** Keep main's phone lifecycle, alarm/call interruption, keyguard, lights,
+SIM and Composer paths. Move the game-event callback with `StockGames` to the shared holder;
+power-off clears every suspended game. The lights bridge reads `suspended.snake` from that
+holder, retaining plan 25's existing Snake rules. The sounder accepts game programs alongside
+its existing `userTones` option, preserving the current sound contract. Settings tests retain
+Dictionary restore and dynamic phone-book memory facts.
+
+**Deviation (Task 3 registration).** Main's plan-29 guard requires every file in
+`scripts/capture-sets/` to be registered, and each registered plan needs an index and acceptance
+slice. The inherited unregistered `24-space-impact.ts` cannot enter that live registry before
+the canonical-level gate. Preserve it as `scripts/space-impact-capture-set.ts`, with its
+synthetic tests, until Task 3 moves it back and adds the one-line registration. No registry
+exception, empty index or premature import is introduced. Generic capture/release support
+remains usable by Snake II. Plan 29's actual resource contract is `PlanCaptureSet.resources`;
+Tasks 4-5 must use it when their gates pass.
+
+**Task 0 audit.** Ran the existing `gen_v639_plan24.py check` with Python bytecode writes
+disabled. It exits 1 and reports:
+
+- an empty archived recording at
+  `driver-proof/attempt5-partial/after/fireworks-key-c-1500`;
+- a stale or failed LCD control proof;
+- absent `task0-coverage.json`, including variety, seed identifiability and ANSI coverage.
+
+All eight `bot/full/level-<n>` recordings and their exits now have `timings.csv`, `keys.csv`,
+audio and sound-event files. The checker reports 1,024 / 684 / 1,001 / 1,314 / 1,368 / 1,184 /
+898 / 1,735 frames for levels 0-7. File presence does not validate their complete chained
+provenance. `bot/full/bot.json` reports 10,282 ticks, 11,777 evaluations, 1,864 searches,
+2,083.1 s for its latest segment and 16,799.9 s total wall time across seven resumes. Its
+original split list labels the final section as level 6; `boundaries.json` supplies corrected
+LCD-derived level-6/7 boundaries. These corrections still need the complete S5/S6 audit.
+
+`driver-proof/complete.json` is sealed for generator SHA-256
+`dbf911f60e82749e57055f2d1ac23991631e75703a4f3f43745ff7f6b1ca01a7`, whereas the current
+generator is `cca9ffd8025c0494b890ef2b306dca7352c284ed204f3e245859ceb14daaa5b8`.
+The proof's reported pass therefore does not satisfy the current-generator gate. The top-level
+`plan24/text.json` OCR file is absent. `seeds.json` rejects its clock/date fit, and its 00:00
+peek (`0xd452fed7`) differs from the inherited test table's LCD-equivalent candidate
+(`0xd452fec1`). The test now names these as candidates, not verified New-game seed observations.
+The migrated `gameSeed` retains plan 23's minutes-of-the-day fallback (UNVERIFIED). Do not infer
+a fitted ANSI generator or complete variety/sound coverage from the directory names.
+
+`analysis/ansi-fit.json` supplies only RAM hypotheses: six random-row steps in each of two
+level-1 runs, one extra step after the first game's ending and none after the second. D6's
+unconditional game-over advance is therefore not established; reproduce LCD spawn rows and
+resolve those different ending histories before implementing the ANSI holder.
+
+**Inherited implementation status.** Task 1 has a draft spec only. Task 2 has the shared u32
+random generator, unchanged seed fallback, per-game suspension, Snake migration, generalized
+score endings and Level pages, numeric top scores, and injectable game-sound programs with
+unit coverage. Its ANSI holder/generator and capture-dependent conclusions remain absent.
+Task 3 has releases, generic game capture and a tested draft Space impact table, but no imports,
+registration, index or acceptance slice. Tasks 1-3 remain incomplete; 24b/24c are not unblocked.
+No engine, level reconstruction, sprites or Space impact session is implemented.
+
+**Deviation (fidelity).** Main's current AGENTS.md fidelity standard supersedes D7's fixed
+16 ms game tolerance and Task 12's ±2 ms sound-edge text. Use shared `periodToleranceMs`,
+`timingToleranceMs`, `timelineTolerance` and partial-redraw rules for all future replays.
+Do not introduce per-test tolerances to preserve the older wording.
+
+**Verification environment.** `vp install` succeeds. A host PATH hook puts Homebrew Node
+26.12.0 ahead of mise's Node 22 for child processes, causing 22 unrelated website tests to fail
+because `localStorage` is unavailable. Prepending the directory of mise's
+`process.execPath` to the child PATH restores Node 22.22.3; all 180 website tests and the
+production build pass without website changes. This installed CLI reports `Command 'env' not
+found` for the instructed `vp env doctor`; `vp --version` reports 0.1.24.
+
+**Refresh verification.** `vp check --fix` and `vp check` pass. The complete
+`vp run -r --no-cache test` passes with mise Node 22, `VITEST_MAX_WORKERS=2` and
+`VP_RUN_CONCURRENCY_LIMIT=1`: 255 test files, 10,663 passed, 121 expected failures and 50 TODOs.
+The nokia-os portion is 163 files, 9,821 passed, 121 expected failures and 50 TODOs (2,406.73 s).
+The other packages contribute phone-core 450, snake 62, phone-3d 49, phone-screen 101 and
+website 180 passing tests. The production `website#build` passes. A prior overlapping run
+hit the resource extraction test's existing 30 s timeout; the final single run passes without
+changing test cases or timeout budgets. No files changed in website, phone-core, phone-screen,
+packages/snake, committed goldens or generated resources.
+
+**Golden status.** No fixture, golden index or generated resource changed during the refresh.
+Space impact's `tree/08-games/8-2-1.leaf` and `sound/note/8-2-1` remain `pending:24`, as do the
+three Bantumi/Pairs II leaf and sound-note pairs owned by the later Games plans. There is no
+`goldens/index/24.json`. No known-gap table or timing tolerance was widened.
+
+**Next gate.** Repair/revalidate the current LCD control proof, audit corrected S5 boundaries
+and all S6 observations, complete S7-S10/OCR, and make the canonical checker pass before Task 1
+completion or any Task 3 import. This refresh does not waive that gate.
 
 ### Task 1 - Contracts and documentation
 

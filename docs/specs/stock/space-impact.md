@@ -1,10 +1,15 @@
-# Space impact (plan 24)
+# Space impact (plan 24, in progress)
+
+**Draft retained from the pre-rebase WIP (2026-10-27).** No plan 24 goldens are imported or
+asserted. Every gameplay statement below remains an observation pending the Task 0 audit and
+acceptance replay. The refresh audit in plan 24 records the stale driver proof and missing
+coverage/OCR that gate implementation.
 
 Part of the stock firmware's ground truth ([index](../nokia-3310.md#10-firmware-ground-truth-v639-captures)): the goldens under `packages/nokia-os/goldens/` are authoritative; where this file and a golden disagree, fix this file.
 
 Source: the plan 24 Task 0 captures (`captures/6.39/plan24/`, generator
-`captures/scripts/gen_v639_plan24.py`). Facts below are measured on the LCD (frame times within
-1 ms) or the audio and vibrator events; RAM reads only cross-check them and are marked (peek).
+`captures/scripts/gen_v639_plan24.py`). The draft records LCD, audio and vibrator observations;
+timing comparisons follow AGENTS.md's fidelity standard. RAM observations are marked (peek) and do not replace LCD replay proof.
 Statements marked "(plan 24, in progress)" are not yet asserted by a golden and its replay. The
 RE notes (`games_applications_3310.md`) are cross-checks only.
 
@@ -56,11 +61,13 @@ Bantumi, Pairs II's mode list or standby). Whether Pairs II's two modes share on
 **Random numbers (plan 24, in progress).** New game writes a u32 game seed from the clock (peek
 `0x10da5c`); the game draws from `seed = (seed × 0x625f + 0x3623) mod 0xfff1`, the first step in
 32-bit wrapping arithmetic, one chain per game (no reseed between levels or at Continue). The
-splash takes its 60 draws from the same u32. The u32 is `0xd452fe80 + seconds of the day + 86400 ×
-days since 13.10.2026` at every captured clock except hour 0 (00:00 and 00:01 write the same u32),
-so nokia-os seeds every game from the minutes of the day (UNVERIFIED). Its first draw is the first
-draw after every Snake II seed plan 23 recovered from the LCD, the 23:59 and 14.10.2026 overflows
-included.
+splash takes its 60 draws from the same u32. A provisional fit uses
+`0xd452fe80 + seconds of the day + 86400 × days since 13.10.2026`,
+but the hour-0 evidence is unresolved. The inherited Snake II comparison table uses
+`0xd452fec1` for both 00:00 and 00:01; the current `seed/0000` peek in `seeds.json` is
+`0xd452fed7` and does not match the recovered 00:00 LCD seed's first draw. The comparison table
+therefore verifies candidate u32s against Snake II placements, not every actual captured seed.
+The shared `gameSeed` keeps the minutes-of-the-day fallback (UNVERIFIED).
 
 **Levels, enemies, bonuses, specials, bosses, scoring and sounds.** (plan 24, in progress)
 
