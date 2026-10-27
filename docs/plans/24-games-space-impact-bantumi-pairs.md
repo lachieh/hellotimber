@@ -1012,6 +1012,212 @@ Space impact leaf and sound-note goldens stay `pending:24`; no `goldens/index/24
 Only this report changes in the repository; the scripts, recordings and evidence remain in REF.
 The rebase verification above applies to the unchanged runtime tree. Final `vp check` passes.
 
+### Task 0 deterministic census (partial delivery, 2026-10-27)
+
+This follow-up starts at `a13a4e9` in `t3/p24-space-impact`. All paths below are relative
+to `$REF/captures/6.39/plan24/`, unless they start with `captures/scripts/`.
+The preceding report remains historical. None of the twelve open criteria is accepted by
+this delivery. Tasks 1+ remain gated. No runtime code, goldens or generated resources change.
+
+**Tool and evidence.** `captures/scripts/census_v639_plan24.py` reads every native PNG in
+the eight validated `bot/full/level-<n>` recordings and their `.exit` cuts. A continuous
+ledger index crosses each cut while `recording` and `capture_frame` preserve native PNG
+identity. Track time uses the recorded cut durations and frame timestamps. It reads no RAM,
+extracted assets or RE object tables. Its sprite references cite LCD frame rectangles and image hashes. Rectangular
+matching retains disconnected sprite pixels and checks blank pixels. Reviewed animation
+variants share a visual family. The tracker records frame/time/position histories, clipped
+entry candidates, edge-exit candidates, explosion/score kill candidates and projectile
+origin/trail candidates. Equal-cost assignments and identity loss after overlaps remain
+unresolved. A track birth is not automatically a spawn.
+
+Each level has `analysis/census-level-<n>.json`, `.frames.jsonl`, `.tracks.json` and
+`.sources.json`. The summary includes per-family track counts, entry candidates, reviewed kill
+and fire frames, candidate events, and flags for missing reviewed kills and fire. `spawn_count`
+is deliberately null while overlaps prevent a complete count. The frame ledger retains all
+unclassified foreground, including boundary-connected ink that could contain enemies or boss
+parts. It examines short partial redraws too; it adds no fidelity tolerance. The source manifest
+hashes every native PNG, timings, keys, audio, sound events, command stream, boundaries, full-run
+validation and local review input. Superseded outputs are archived by content hash.
+
+**Hand validation.** `analysis/census-hand-review.json` records three local checks against
+native level-0 LCD sequences:
+
+- Frames 55-63: the first `round-wide-left` enemy is hit, the HUD rises from 0 to 10 in frame
+  58, and the explosion appears at frame 59. The following two enemies remain. The HUD's partial
+  redraw precedes the explosion; requiring the score to rise after the last sprite frame misses
+  this kill. The surrounding settled pictures establish the event.
+- Frames 583-591: a 2x1 shot appears left of `round-small-left` at `(67,29)` in frame 586,
+  then moves through x 64, 61, 58 and 55 while its source moves left by 1 px per tick. Player
+  shots in the same sequence move right. The tracker attributes this shot to one source.
+- Frames 254-262: a `round-wide-left` track moves through x 8, 6, 4, 2 and 0, then disappears
+  at frame 261 without an explosion or score change (100 throughout). Its identity before an
+  earlier overlap is still unresolved. This is a reviewed local exit, not a proved full spawn.
+
+The enlarged inspection sheets are `analysis/census-hand-{kill,fire,exit}-20261027c.png`.
+`captures/scripts/test_census_v639_plan24.py` checks exact sprite backgrounds, disconnected
+pixels, clipping, separate simultaneous objects, ambiguous identity, occlusions, player versus
+enemy shots, multiple possible firing sources, partial score redraws, stale/ambiguous review
+inputs and output archival. These checks validate the tool's local behavior; they do not certify
+the eight levels' inventories.
+
+**Per-level result.** All eight remain **incomplete**. These counts describe tracked visual
+families and fragments, not firmware object types or proved spawn totals. The boss contributes
+at most one visual family when its reference matches; level 7's multipart boss remains in the
+unclassified foreground and is absent from the family count.
+
+| Level | Native frames (gameplay + exit) | Object/boss visual families | Object tracks | Kill candidates | Fire candidates | Census evidence                |
+| ----- | ------------------------------- | --------------------------- | ------------- | --------------- | --------------- | ------------------------------ |
+| 0     | 1,060 (1,024 + 36)              | 5                           | 49            | 36              | 3               | `analysis/census-level-0.json` |
+| 1     | 721 (684 + 37)                  | 5                           | 54            | 46              | 9               | `analysis/census-level-1.json` |
+| 2     | 1,034 (1,001 + 33)              | 8                           | 49            | 31              | 11              | `analysis/census-level-2.json` |
+| 3     | 1,353 (1,314 + 39)              | 5                           | 47            | 72              | 1               | `analysis/census-level-3.json` |
+| 4     | 1,395 (1,368 + 27)              | 7                           | 128           | 24              | 23              | `analysis/census-level-4.json` |
+| 5     | 1,204 (1,184 + 20)              | 7                           | 129           | 40              | 7               | `analysis/census-level-5.json` |
+| 6     | 935 (898 + 37)                  | 5                           | 122           | 78              | 3               | `analysis/census-level-6.json` |
+| 7     | 1,769 (1,735 + 34)              | 3                           | 67            | 90              | 3               | `analysis/census-level-7.json` |
+
+There is one reviewed kill, one reviewed shot and one reviewed exit, all in level 0. The other
+entries remain candidates. No type is declared incapable of firing. More templates and identity
+work are needed, especially where sprites touch terrain, bullets or one another, and for the
+final boss. Consequently this tool does **not** yet fulfill the requested exhaustive semantic
+spawn/kill/fire census. It replaces the old shape summary with a rerunnable, inspectable partial
+tracker and makes its remaining work explicit.
+
+**Checker.** `analysis/coverage.py --check` verifies the census source/artifact hashes, updates
+`task0-coverage.json` and runs the existing canonical checker. Artifact integrity and criterion
+coverage are separate outcomes. A stale census, unexplained foreground, unreviewed event or a
+sample-only review cannot pass a per-level criterion. The capture generator and its LCD driver
+seal are unchanged; no new capture control proof is needed for this offline tool. Existing
+recordings and the old census/checker are preserved under
+`archive/20261027c-before-tracked-census/`.
+
+**Offline verification:** 16 focused checks pass. Two complete scans of all 9,471 gameplay
+and exit frames produce 33 byte-identical artifacts. All eight provenance checks pass.
+`analysis/census-final-validation-20261027c.json` records the final tool hash, test count and
+per-level results; `analysis/census-determinism-20261027c.json` lists the artifact hashes.
+The canonical checker exits 1 as required, with 13 accepted criteria and 12 open. Its final
+log is `analysis/check-final-20261027c.log`. No open criterion is suppressed by a proposal.
+
+**Recapture decision.** No recapture is made. The current failures are incomplete tracking and
+attribution in already validated recordings. They do not establish a genuinely missing type.
+A targeted capture cannot be specified reliably until the existing LCD inventory is resolved.
+The next worker should extend the sprite families and multipart boss tracker, review the
+remaining candidate events, then name a missing type and LCD anchor before spending emulator
+replay time. No hypothesis is turned into an unreachable-type assertion.
+
+**Repository verification:** `vp check --fix` and `vp check` pass. The uncached workspace
+suite passes: 255 files, 10,693 passed tests, 120 expected failures and 25 todos. The website
+production build passes. Tests and build use mise's Node 22.22.3 first on child PATH. The first
+Python-launched attempt selected global Node 26 and failed website `localStorage` checks; its
+log is retained, and the complete Node 22 rerun passes without source changes.
+`analysis/quality-20261027c.json` links the successful suite and build logs. No plan 24 golden
+is imported or asserted; the existing leaf and sound-note fixtures remain `pending:24`.
+
+### Proposed Task 0 criterion changes (for parent review)
+
+These are **proposals only**, not accepted changes or satisfied criteria. They do not modify
+D4-D13, H1-H22, the canonical gate, runtime behavior or golden status. If the parent accepts a
+proposal, its implementation and spec must carry the literal `UNVERIFIED` label next to the
+chosen behavior. The fidelity risks below concern visible outcomes; none is a reason to widen
+pixel, rhythm, sound or timing tolerances.
+
+**S6-life-reroll-or-unreachable.**
+
+- **Original:** observe the extra-life reroll at five lives, or establish from the LCD that
+  five lives cannot be reached.
+- **Established:** all four bonus outcomes are reviewed (`analysis/s6-reviewed-bonus.json`).
+  `analysis/s6-reroll.json` reaches four hearts. Neither proves five-life reachability,
+  unreachability or which RNG draws the reroll consumes.
+- **Proposed replacement/default:** record the five-life branch as **UNVERIFIED**. Keep H9's
+  provisional five-life cap and redraw a life result from the same game RNG until a non-life
+  bonus is selected. Do not award a sixth life or substitute a fixed weapon. This preserves the
+  existing, partially corroborated bonus model and its stated reroll hypothesis while making the
+  unsupported branch visible. It is not a demonstrated LCD rule.
+- **Fidelity risk:** an incorrect cap or reroll changes survival, the awarded weapon and every
+  later RNG-dependent event. Those outcomes are human-perceivable and require recapture before
+  this branch can be called faithful.
+
+**S6-wall-beam-enemies-boss: isolated wall damage to an ordinary enemy.**
+
+- **Original:** observe wall and beam effects against ordinary enemies and a boss. For wall
+  damage, separate its effect from pre-existing player bullets.
+- **Established:** paired controls show beam/enemy kills, beam/boss damage and a wall/boss kill
+  (`analysis/s6-special-effects-reviewed-partial.json`). The ordinary-enemy wall probe reaches
+  the same score with and without the wall, so it establishes no isolated damage.
+- **Proposed replacement/default:** retain the reviewed effects and record ordinary-enemy wall
+  damage as **UNVERIFIED**. Use H10's provisional four hit points per registered wall hit,
+  through the same enemy collision/damage path. Do not infer a tick-by-tick damage cadence or
+  instant universal kill from the boss result. H10 is the existing specific hypothesis, and a
+  damaging wall is consistent with the observed boss control; its ordinary-enemy damage is
+  still a default, not a fitted number.
+- **Fidelity risk:** wrong damage or repeated-hit handling changes kills, scores and the value
+  of a limited weapon. These are visible gameplay differences. No acceptance claim follows
+  from consuming the HUD counter or drawing an overlapping wall.
+
+**S7-identifiability: gameplay seed and midnight clock/date fit.**
+
+- **Original:** each designated informative gameplay trace uniquely identifies its effective
+  seed; accept a clock/date seed function only if it reproduces every relevant Snake II and
+  Space impact LCD sequence. Separate noninformative traces with independent clock proof.
+- **Established:** the six splash seeds are unique
+  (`analysis/seed-stars-background-verified.json`), and candidate u32s reproduce the nine Snake
+  C9 LCD sequences (`analysis/snake-seed-lcd-verification.json`). Gameplay uniqueness is
+  incomplete. `analysis/midnight-resolution.json` reproduces both midnight histories and shows
+  a six-second route delay changing the midnight diagnostic seed while the LCD still says
+  `00:00`. The splash seed is not the later New-game seed at midnight. These observations
+  reject the proposed clock/date-only fit.
+- **Proposed replacement/default:** retain the existing minutes-of-the-day seed fallback as
+  **UNVERIFIED**, as D5 already permits. Keep the proved generator and splash observations
+  separate from the unproved clock function. A replay may inject a seed only where an
+  informative LCD trace recovers it uniquely; no-draw or ambiguous gameplay traces remain
+  labelled noninformative and cannot borrow a splash or peek seed as gameplay proof. Do not add
+  an hour-zero formula from RAM readings. Retaining the existing fallback avoids replacing it
+  with a function the controls have disproved.
+- **Fidelity risk:** random fire, bonuses and subsequent RNG consumers can differ, especially
+  around midnight or after different menu histories. Correct generator arithmetic does not
+  prove correct gameplay outcomes from a clock setting.
+
+**S8-ansi-formula-advancers: other games' advancers.**
+
+- **Original:** fit the ANSI chain and boot value, reproduce random-row spawns on the LCD, then
+  establish chain advances after completed Snake II, Pairs II and Bantumi games and Games
+  Settings visits with a subsequent verifying LCD wave.
+- **Established:** all twelve original level-1 spawn rows fit the proposed LCG and bounds
+  (`analysis/ansi-spawn-rows-verified.json`). Continuous ending controls separate Space impact's
+  one-draw new-top-score endings from ordinary/tied endings with no draw
+  (`analysis/ansi-game-over-resolution.json`). Other-game peeks remain hypotheses; the Pairs II
+  and Bantumi screenshots show suspension, and no subsequent wave proves their chain position.
+- **Proposed replacement/default:** record other games' ANSI consumers as **UNVERIFIED**. Advance
+  the shared chain only for proved Space impact random-row spawns and its new-top-score ending;
+  provisionally leave it unchanged for the unproved other-game histories and Settings visits.
+  Preserve the state across games and reset only at power-on. This follows the existing
+  zero-advance diagnostic hypothesis without inventing consumers or generalizing the Space
+  impact ending rule to unrelated games. Plans 24b/24c must revisit it.
+- **Fidelity risk:** an omitted advance changes the next random-row wave after another game is
+  played. Positions, collisions and survival can change, even if each game's first run matches.
+  The original unrecorded ending tails remain a provenance limit; independent controls do not
+  become a recording of those tails.
+
+**S6-level-0 through S6-level-7: remaining census work.**
+
+- **Original (each level):** every spawned object type is observed killed and, where it fires,
+  firing; a non-firing exception needs LCD evidence that firing is impossible.
+- **Established:** all 9,471 native gameplay and exit frames are inventoried by the partial
+  tracker. The per-level table and hash-sealed ledgers identify visual families, tracks, candidate events
+  and unresolved foreground. Only the three local level-0 events above are reviewed. No
+  complete spawn count, full type inventory or firing-impossibility exception is established.
+- **Proposed disposition/default:** keep **all eight criteria open**. If the parent explicitly
+  chooses to defer exhaustive coverage, record the omitted per-type behavior as **UNVERIFIED**
+  and implement only LCD-backed spawn, motion, damage and fire observations. For any otherwise
+  unsupported fire event, the provisional default is no extra shot and no speculative RNG
+  advance. This introduces fewer invented visible events than guessing firing rates. It is
+  unsuitable as evidence that a type cannot fire, and does not authorize starting Task 1 here.
+  The preferred next action is to finish tracking existing recordings before changing a
+  criterion or requesting a recapture.
+- **Fidelity risk:** missed types or shots change whole waves, score, difficulty, RNG history
+  and boss outcomes. This is a material fidelity gap across all eight levels. It cannot be
+  excused by the shared timing rule or by a percentage-of-types threshold.
+
 ### Task 1 - Contracts and documentation
 
 **Files:** `docs/specs/stock/space-impact.md` (new), `docs/specs/stock/snake.md` (the seed and
