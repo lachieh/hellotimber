@@ -49,7 +49,7 @@ export const IN_CALL_OPTIONS = [
 ] as const;
 
 /** `widget` opened while `key` is down: that key's release is not a key on it. */
-function afterDown(key: PhoneKey, widget: Widget): Widget {
+export function afterDown(key: PhoneKey, widget: Widget): Widget {
   let released = false;
   return {
     render: (flow) => widget.render(flow),
@@ -336,7 +336,7 @@ export class CallWidget implements Widget {
           return;
         }
         if (label === "Phone book" && this.#o.phoneBook !== undefined) {
-          flow.replace(this.#o.phoneBook());
+          flow.replace(afterDown("navi", this.#o.phoneBook()));
           return;
         }
         // Hold, New call and Send DTMF are plan 22b's; Phone book plan 19's.
@@ -457,7 +457,15 @@ export class CallWidget implements Widget {
         ? 0
         : 1 + Math.floor((t - numberMs - CALLING.firstDotsMs) / CALLING.dotsEveryMs);
     const dots = [1, 2, 3, 0][steps % 4]!;
-    return this.#model({ kind: "calling", dots, number: call.number }, "End");
+    // The SIM lookup replaces the number while Calling still animates (plan 19's
+    // hold/on-2: 1003 ms; standby/list-call's two-line number: 1772 ms).
+    const nameMs = call.number.length > 14 ? 1770 : 1000;
+    return this.#model(
+      call.name !== undefined && t >= nameMs
+        ? { kind: "calling", dots, name: call.name }
+        : { kind: "calling", dots, number: call.number },
+      "End",
+    );
   }
 
   /** The connected (or alerting) call: Volume over it, C's blank, or the call's screen. */

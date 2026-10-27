@@ -22,13 +22,12 @@ const ASSERTED: GoldenStatus = "asserted";
 const SERVICES: GoldenStatus = "pending:22b";
 /**
  * The phone book's screens from number entry and calls (Save's `Name:`, ▼ on the code pages,
- * Phone book in a call): plan 19 landed after plan 22, and wiring its flows into these screens is
- * this plan's follow-up (as plan 19's `Call` from a name is `pending:22`).
+ * Phone book in a call), connected to plan 19's flows by the calls/phone-book follow-up.
  */
-const PHONE_BOOK: GoldenStatus = "pending:22";
+const PHONE_BOOK: GoldenStatus = "asserted";
 
 /**
- * A golden's status: its own (22b's, this plan's follow-up), else asserted: every plan 22 golden is driven by
+ * A golden's status: its own (22b's), else asserted: every plan 22 golden is driven by
  * tests/acceptance/22-call-register-divert-and-dialling.test.ts (Task 10).
  */
 function statusOf(own?: GoldenStatus): GoldenStatus {

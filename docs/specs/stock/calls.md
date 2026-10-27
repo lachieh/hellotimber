@@ -18,7 +18,7 @@ waiting, supplementary services and costs are plan 22b's.
   88 ms after the rest). Held C deletes at its down and clears at ≥ 500 ms held. No timeout.
 - ▲/▼ cycle the soft key `Call` → `Save` → `Convert` (held: again at ≈787 ms, then every
   ≈480 ms); a digit or C edits the number and keeps the soft key. `Save` opens the phone book's
-  `Name:` (plan 19); `Convert` converts with the Calculator's rate (plan 20: the virgin rate gives
+  `Name:` (plan 19), retaining the number and saving after OK; `Convert` converts with the Calculator's rate (plan 20: the virgin rate gives
   `Dividing by zero not allowed`); the power key opens the profile list (plan 17), C back.
 - Held `1` on an empty entry (≥ 500 ms) calls the voice mailbox; other held keys are taps while
   Speed dialling is off.
@@ -26,16 +26,20 @@ waiting, supplementary services and costs are plan 22b's.
   empty location (1-50 on the emulator SIM), `Invalid location` for 0 or past the SIM, ≈2.9 s, then
   standby; a digit on the note starts a new entry.
 - `*#06#` shows `Serial No.` and the IMEI (`?` glyphs on the virgin EEPROM); `*#0000#` shows
-  `V 06.39` / `23-12-04` / `NHM-5`; C or Navi leaves for standby.
+  `V 06.39` / `23-12-04` / `NHM-5`; C or Navi leaves for standby; ▼ opens the phone book.
 - **Hand-over:** a digit, `*` or `#` on a timed note (`Invalid shortcut` included), a list entered
   with Navi or after its shortcut window, an option list, the Level page, the calculator's Options,
   the carousel after its window and the missed-call notice start the entry with that key. A `#`
   code's note or page draws 16-36 ms after the entry's redraw; the code pages end on a key's down.
 - The vanishing `*` leaves a space's width (3 px) at the end of the line (`hold/inside-star` c).
 
+With Speed dialling On, held 2–9 shows the location's full number with End after about 0.5 s;
+Calling starts on release (`phone-book/hold-on-2`). Off leaves the typed digit; held 1 calls the
+voice mailbox independently.
+
 ## Calls
 
-- **Call:** one digit → `Speed dial number not saved`; 33 or more digits → `Invalid phone
+- **Call:** a digit 2–9 dials its assigned or fallback SIM location, else `Speed dial number not saved`; 33 or more digits → `Invalid phone
 number` (then the entry); `112` → `Attempting emergency call`; a string ending in `#` after a
   non-digit or starting with a service prefix (`04`) → `Requesting` (22b). Otherwise the number is
   dialled, cut at a later `+` or the first `p`/`w`.
@@ -44,6 +48,11 @@ number` (then the entry); `112` → `Attempting emergency call`; a string ending
   476 ms later and then every ≈503 ms, `End`. Alerting: a 76 ms blank at
   2253 ms, then a 7×7 call icon at (6, 8) and `Call 1` thin at (17, 8). The connect redraws the
   same screen after a 73 ms blank. No call timer is ever drawn.
+- **Saved names:** `phone-book/hold-on-2` replaces the number with `anna` at (6, 16)
+  about 1 s after Calling; the 20-digit number in `standby-list-call` resolves after about 1.77 s.
+  Calling's dots continue. The alerting screen shows the name at (17, 8), clipping its text before
+  the three dots at x 72 when it is too wide. The short named call alerts about 2.1 s after
+  Calling; the long SETUP reaches the stock cell later (2.873 s in this recording).
 - **End:** a blank `End` frame ≈80 ms, `Menu` without the operator ≈85 ms, standby. C while
   calling does nothing; C in a call toggles the soft key `End`/`Options`.
 - **The network ends the call:** a blank `End` 87 ms, the checkered `Call 1` 1471 ms, then
@@ -101,7 +110,6 @@ number` (then the entry); `112` → `Attempting emergency call`; a string ending
 - Whether a rejected call is listed in Missed calls (not listed); a name in the entry view (the
   phone book's, plan 19); numbers longer than 10 digits in the entry view (lines of 10).
 - Time of call's seconds (the emulator's RTC is frozen: `10:10:00`).
-- Held 2-9 with Speed dialling on, and the phone book's lookups (plan 19).
 
 ## Artefacts (not reproduced)
 

@@ -76,8 +76,8 @@ describe("the Phone book's coverage (plan 19 Task 11)", () => {
     expect(EDITOR_OPTIONS.filter((option) => option.owner === "19")).toEqual([]);
   });
 
-  it("hands calls on to plan 22 (D11)", () => {
+  it("asserts every phone-book golden, including the integrated calls (D11)", () => {
     const pending = INDEX.filter((e) => e.id.startsWith("phone-book/") && e.status !== "asserted");
-    expect(new Set(pending.map((e) => e.status))).toEqual(new Set(["pending:22"]));
+    expect(pending.map((e) => e.id)).toEqual([]);
   });
 });

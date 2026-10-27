@@ -594,7 +594,7 @@
   {
     "id": "phone-book/hold-on-2",
     "file": "phone-book/hold-on-2.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 12,
     "frames": 12
@@ -1010,7 +1010,7 @@
   {
     "id": "phone-book/service-call",
     "file": "phone-book/service-call.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 8,
     "frames": 9
@@ -1394,7 +1394,7 @@
   {
     "id": "phone-book/standby-list-call",
     "file": "phone-book/standby-list-call.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 11,
     "frames": 11

@@ -35,6 +35,8 @@ export interface DialEntryOptions {
   readonly act: (softkey: EntrySoftkey, text: string, flow: Flow) => void;
   /** Held `1` on an empty entry: the voice mailbox. */
   readonly voiceMailbox: (flow: Flow) => void;
+  /** Held 2-9 on an empty entry: dial when Speed dialling is On. */
+  readonly speedDial?: (key: string, flow: Flow) => void;
   /** `#` completed a code or location number: what it shows (undefined: nothing). */
   readonly code: (text: string, flow: Flow) => void;
   /** Starts with these characters (Edit number), the soft key Call. */
@@ -58,8 +60,8 @@ export class DialEntryWidget implements Widget {
   #blinkUntil: number | undefined;
   /** Held C: when it went down (the clear is due `heldMs` later). */
   #heldC: number | undefined;
-  /** Held `1` on an empty entry. */
-  #heldOne: number | undefined;
+  /** A digit held on an empty entry. */
+  #heldDigit: { key: string; at: number } | undefined;
   /** ▲/▼ held: the key and when it next repeats. */
   #repeat: { key: "up" | "down"; at: number } | undefined;
   /** A code `#` completed: what it shows, due then. */
@@ -139,7 +141,7 @@ export class DialEntryWidget implements Widget {
 
   onKey(key: PhoneKey): void {
     if (key === "c") this.#heldC = undefined;
-    if (key === "1") this.#heldOne = undefined;
+    if (key === this.#heldDigit?.key) this.#heldDigit = undefined;
     if (key === this.#repeat?.key) this.#repeat = undefined;
   }
 
@@ -161,7 +163,7 @@ export class DialEntryWidget implements Widget {
     }
     this.#commit();
     this.#blinkUntil = undefined;
-    if (key === "1" && this.#text === "") this.#heldOne = now;
+    if (/^[1-9]$/.test(key) && this.#text === "") this.#heldDigit = { key, at: now };
     this.#text = appendDial(this.#text, key);
     if (key === "#" && immediateCode(this.#text) !== undefined) {
       this.#code = { at: now + DIAL_TIMINGS.codeDrawMs, text: this.#text };
@@ -208,9 +210,13 @@ export class DialEntryWidget implements Widget {
       this.#leave();
       return;
     }
-    if (this.#heldOne !== undefined && now >= this.#heldOne + DIAL_TIMINGS.heldMs) {
-      this.#heldOne = undefined;
-      if (this.#text === "1") this.#o.voiceMailbox(flow);
+    const held = this.#heldDigit;
+    if (held !== undefined && now >= held.at + DIAL_TIMINGS.heldMs) {
+      this.#heldDigit = undefined;
+      if (this.#text === held.key) {
+        if (held.key === "1") this.#o.voiceMailbox(flow);
+        else this.#o.speedDial?.(held.key, flow);
+      }
       return;
     }
     const repeat = this.#repeat;

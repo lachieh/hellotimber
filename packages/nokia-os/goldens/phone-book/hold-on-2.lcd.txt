@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/hold-on-2
-status: pending:22
+status: asserted
 source: captures/6.39/plan19/hold/on-2
 source-sha256: 141ab9bd6e1e56491c3e8c54205aa27e100473d091d4119d28573c423e8dd9fe
 trigger-frame: 1

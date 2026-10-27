@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/standby-list-call
-status: pending:22
+status: asserted
 source: captures/6.39/plan19/standby/list-call
 source-sha256: 02a8ec818507836bebe6f3fe53e85ac6b529e13cdc618613f5e84c5bf4bb21e2
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/entry-save
-status: pending:22
+status: asserted
 source: captures/6.39/plan22/entry/save.png + captures/6.39/plan22/entry/save-typed.png
 source-sha256: 58d428b3eb98a70d22fae2e9356636a72f6d05be7e4148a939d2ef0fc7e8432f
 note: Save: plan 19's `Name:` prompt. Each image's keys from a settled standby are its CALL_CASES entry.

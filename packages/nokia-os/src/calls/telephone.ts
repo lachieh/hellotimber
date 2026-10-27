@@ -35,6 +35,8 @@ import type { CallClock } from "./timestamp";
  */
 export const CALL_TIMINGS = {
   alertingMs: 2200,
+  /** A resolved SIM name: ≈2065 ms from Calling (plan 19 hold/on-2). */
+  namedAlertingMs: 2100,
   connectMs: 2845,
   /** A host's `connected` shows ≈94 ms later (`dial/alerting`: `answer` at 6301, the blank at 6395). */
   hostConnectMs: 94,
@@ -341,7 +343,8 @@ export class StockTelephone {
   /** When an outgoing call's alerting redraw comes (max of the link time and the host's event). */
   alertingAt(call: StockCall): number | undefined {
     if (call.hostAlerting === undefined) return undefined;
-    return Math.max(call.startedAt + CALL_TIMINGS.alertingMs, call.hostAlerting);
+    const delay = call.name === undefined ? CALL_TIMINGS.alertingMs : CALL_TIMINGS.namedAlertingMs;
+    return Math.max(call.startedAt + delay, call.hostAlerting);
   }
 
   /** When the call connects: out, the connect's redraw; in, the traffic channel after Answer. */

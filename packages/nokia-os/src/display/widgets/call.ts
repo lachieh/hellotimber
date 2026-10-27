@@ -100,7 +100,12 @@ export function paintDialEntry(fb: Framebuffer, model: DialEntryModel): void {
 /** What a call screen shows between standby's frame and the soft key. */
 export type CallBody =
   /** Calling (`dial/call` b-f): `Calling` and its dots, the number once it shows. */
-  | { readonly kind: "calling"; readonly dots: number; readonly number?: string }
+  | {
+      readonly kind: "calling";
+      readonly dots: number;
+      readonly number?: string;
+      readonly name?: string;
+    }
   /** `Attempting` / `emergency` / `call` (`dial/number-112`). */
   | { readonly kind: "emergency" }
   /** The call icon (solid, or checkered once ended) and `Call 1` or the caller's name. */
@@ -134,6 +139,19 @@ const EMERGENCY_TOPS = [7, 16, 25] as const;
 const MUTED_LEFT = 6;
 const MUTED_TOP = 21;
 
+function paintCallLabel(fb: Framebuffer, text: string): void {
+  const font = STOCK_FONTS.thin;
+  let label = text;
+  const cut = CALL_LABEL_LEFT + textWidth(font, text) > 80;
+  if (cut) {
+    while (label.length > 0 && CALL_LABEL_LEFT + textWidth(font, label) > 72) {
+      label = label.slice(0, -1);
+    }
+  }
+  fb.drawText(font, label, CALL_LABEL_LEFT, CALL_LABEL_TOP);
+  if (cut) fb.drawText(font, "...", 72, CALL_LABEL_TOP);
+}
+
 export function paintCall(fb: Framebuffer, model: CallModel): void {
   paintStatusFrame(fb, {
     ...(model.clock === undefined ? {} : { clock: model.clock }),
@@ -144,7 +162,9 @@ export function paintCall(fb: Framebuffer, model: CallModel): void {
   switch (body.kind) {
     case "calling": {
       fb.drawText(STOCK_FONTS.small, `Calling${".".repeat(body.dots)}`, CALLING_LEFT, CALLING_TOP);
-      if (body.number !== undefined) {
+      if (body.name !== undefined) {
+        fb.drawText(STOCK_FONTS.thin, body.name, 6, 16);
+      } else if (body.number !== undefined) {
         const number = body.number.slice(-THIN_PER_LINE * CALLING_TOPS.length);
         linesFromEnd(number, THIN_PER_LINE).forEach((line, i) =>
           fb.drawText(
@@ -164,7 +184,7 @@ export function paintCall(fb: Framebuffer, model: CallModel): void {
       break;
     case "call":
       widgetSprite(fb, body.ended ? "call/icon-ended" : "call/icon");
-      fb.drawText(STOCK_FONTS.thin, body.label, CALL_LABEL_LEFT, CALL_LABEL_TOP);
+      paintCallLabel(fb, body.label);
       if (body.muted) fb.drawText(STOCK_FONTS.thin, "Muted", MUTED_LEFT, MUTED_TOP);
       break;
     case "digits":

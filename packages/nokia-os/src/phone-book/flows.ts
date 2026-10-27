@@ -1,8 +1,8 @@
 // The phone book's flows (plan 19 Tasks 7-10) over the inserted SIM's `StockPhoneBook`: the
 // standby name list, Search, Service Nos., Add name and Memory status (Task 7). Every screen and
 // timing is a Task 0 capture's; the goldens are cited per flow.
-import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockServices } from "../firmware/features/feature";
+import { placeCall } from "../firmware/features/dialling";
 import { nodeTimeline, timelineByName } from "../firmware/timelines";
 import { nameQuery, type PhoneBookQueryModel } from "../display/widgets/name-list";
 import type { WidgetModel } from "../display/widgets";
@@ -46,21 +46,6 @@ function listView(view: NameListView): NameListOptions["view"] {
   return view === "number" ? "page" : view;
 }
 
-/** A choice another plan implements, inside a flow (C goes back): `Call` is plan 22's. */
-export function placeholder(label: string): Widget {
-  return {
-    render: () => ({ kind: "placeholder", label }),
-    onKey(key: PhoneKey, flow: Flow) {
-      if (key === "c") flow.back();
-    },
-  };
-}
-
-/** `Call` on an entry: plan 22's call screens (D11). */
-export function call(_entry: PhoneBookEntry, flow: Flow): void {
-  flow.push(placeholder("Call"));
-}
-
 /** The SIM's names in the view Type of view selects, on `start`, with the flow's soft key. */
 export function names(
   services: StockServices,
@@ -98,7 +83,7 @@ export function standbyList(services: StockServices): Widget {
   if (services.phoneBook.entries().length === 0) return emptyNote(services);
   return names(services, {
     softkey: "Call",
-    choose: call,
+    choose: (entry, flow) => placeCall(services, flow, entry.number),
     back: (flow) =>
       flow.replace(
         interlude(standbyDraw(services), STANDBY_LIST_EXIT_DRAW_MS, (inner) => inner.back()),
@@ -143,7 +128,11 @@ export function search(services: StockServices): Widget {
         return;
       }
       flow.replace(
-        names(services, { softkey: "Call", start: searchIndex(entries, text), choose: call }),
+        names(services, {
+          softkey: "Call",
+          start: searchIndex(entries, text),
+          choose: (entry, flow) => placeCall(services, flow, entry.number),
+        }),
       );
     },
   });
@@ -154,7 +143,8 @@ export function search(services: StockServices): Widget {
  * a blank LCD and the first row alone (`phone-book/service-open`); none: plan 14's note.
  */
 export function serviceNumbers(services: StockServices): Widget {
-  const items = services.phoneBook.serviceNumbers().map((contact) => contact.name);
+  const contacts = services.phoneBook.serviceNumbers();
+  const items = contacts.map((contact) => contact.name);
   if (items.length === 0) return emptyNote(services, "1-2");
   let selected = 0;
   const model = (): WidgetModel => ({
@@ -169,7 +159,7 @@ export function serviceNumbers(services: StockServices): Widget {
     onKey(key, flow) {
       if (key === "down") selected = (selected + 1) % items.length;
       else if (key === "up") selected = (selected + items.length - 1) % items.length;
-      else if (key === "navi") flow.push(placeholder("Call"));
+      else if (key === "navi") placeCall(services, flow, contacts[selected]!.number, false, "list");
       else if (key === "c") flow.back();
     },
   };
@@ -256,7 +246,13 @@ export function savedThenList(
   softkey: string,
   timeline: "saved" | "replaced",
 ): void {
-  flow.replace(names(services, { softkey, start: indexOf(services, location), choose: call }));
+  flow.replace(
+    names(services, {
+      softkey,
+      start: indexOf(services, location),
+      choose: (entry, flow) => placeCall(services, flow, entry.number),
+    }),
+  );
   flow.push(phoneBookNote(services, [timeline === "saved" ? "Saved" : "Replaced"], timeline));
 }
 
@@ -289,6 +285,7 @@ export function namePrompt(
   services: StockServices,
   text: string,
   done: (name: string, flow: Flow) => void,
+  typedCase = true,
 ): Widget {
   // The cursor blinks as Add name's own recording shows it (`tree/01-phone-book/1-3.leaf`).
   const blink = nodeTimeline("1-3");
@@ -298,7 +295,7 @@ export function namePrompt(
     counter: true,
     counted: simNameLength,
     smallWhenWide: true,
-    typedCase: true,
+    typedCase,
     leaveAtDown: true,
     text,
     ...(blink === undefined ? {} : { blink }),

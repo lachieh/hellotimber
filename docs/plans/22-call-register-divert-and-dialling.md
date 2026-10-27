@@ -948,7 +948,7 @@ placeholders (`features/phone-book.ts`, D14), `tests/calls.test.ts` (new).
       `ring(prefix)` (D9), Answer, C, keys while ringing (S20); missed → the notice through
       `setNotice({ text, softkey: "List", open })` (plan 18) and its icon; `List` → `<n> new
 numbers` → Missed calls.
-- [ ] Bind plan 19's `Call` placeholders and held 2-9/1 to `dial` (if plan 19 has landed); flip its
+- [x] Bind plan 19's `Call` placeholders and held 2-9/1 to `dial` (if plan 19 has landed); flip its
       `pending:22` call and hold goldens (status lines in `19-phone-book.ts`, one spread line in
       plan 19's acceptance file).
 - [x] TDD through keys and the synthetic network against `calls/dial-*`, `net-end-*`, `in-call-*`,
@@ -1043,10 +1043,9 @@ network), `tests/support/rig.ts` (a `network` option, if plans 18/19 did not add
   (▼ at standby is the phone book); after the merge with plan 19 both are asserted
   (`sound/keypad/keys` with a known gap: C on the standby `No phone numbers` note), as are
   `calls/handover-notice-down` and plan 19's `phone-book/standby-up`, `standby-up-dialled` and
-  `hold-off-2`. **Open (plan 19 integration):** `calls/entry-save`, `calls/register-save` (Save's
-  `Name:`), `calls/code-down` (▼ on the code pages), `calls/in-call-options-select-4` (Phone book
-  in a call) and plan 19's `phone-book/standby-list-call`, `service-call` and `hold-on-2` (Call from
-  a name or service number, a held speed dial) are `pending:22`. `*#06#` shows `StockPhoneConfig.imei`
+  `hold-off-2`. **Completed (2026-10-27, plan 19 integration):** `calls/entry-save`, `calls/register-save`,
+  `calls/code-down`, `calls/in-call-options-select-4` and plan 19's `phone-book/standby-list-call`,
+  `service-call` and `hold-on-2` are asserted and pass. `*#06#` shows `StockPhoneConfig.imei`
   (plan 30 D9); plan 30's `sim/imei-screen` stays `pending:22` until its replay can provision the
   emulator's IMEI. **Open:** plan 25's 17 call goldens
   (`keyguard/call*`, `keyguard/emergency-call`, `lights/arrival/call*`, `lights/keyguard/emergency-call`,
@@ -1059,8 +1058,35 @@ network), `tests/support/rig.ts` (a `network` option, if plans 18/19 did not add
   `profiles.ts`, an `accept` hook on the security code's note flow, `levelPage` exported from
   `tests/support/game.ts`, and `network` exported from the demo's messages panel.
 - **Not done.** The demo was not driven in a browser (no headless browser in this session; the
-  panel builds and the dev server serves it). Plan 19's `Call` placeholders are not bound (plan 19
-  is not on main); `TelephoneDeps.nameOf` is the seam for its names.
+  panel builds and the dev server serves it). Plan 19's Call and name seams were connected in
+  the 2026-10-27 follow-up below.
+
+## Phone-book integration follow-up — 2026-10-27
+
+- Number-entry Save and register Save now open the shared Name prompt with the selected number
+  retained. Their acceptance scenarios also save a name and verify the subsequent host call's
+  number and name. Number-entry Save consumes the opening Navi release; Save's case indicator follows
+  its cursor, as `entry/save-typed` records, while Add name keeps plan 19's typed-case behavior.
+- ▼ on either code page opens the phone book. In-call Options › Phone book opens its real menu,
+  reusing the generated tree and the phone-book feature's screens, and consumes the opening
+  Navi release instead of immediately selecting Search.
+- Call from names and service numbers reaches the telephone; speed dials use the SIM's assigned
+  or fallback location. `TelephoneDeps.nameOf` is connected in `firmware/phone.ts` (one
+  registration line), so calls, host dial requests and register entries retain the resolved name.
+- Supporting call widgets and their painter implement the captured held-number preview, named
+  Calling frames and fixed-position ellipsis. Plan 19's named short call reaches alerting about
+  2.1 s after Calling; the stock-cell replay supplies its long-number SETUP's later event.
+- The owning capture sets promote exactly four plan 22 and three plan 19 goldens. The importer
+  changes only their statuses and owning indexes. All seven pass; no known gaps were added and
+  `calls/in-call-options-select-1` through `-3` remain `pending:22b`.
+- The phone-book capture-set and coverage guards now require the integrated calls to be asserted.
+  Validation uses `VITEST_MAX_WORKERS=4` for the uncached workspace run: the unrestricted run hit
+  Snake II's existing 20 s wall-clock timeout under parallel-worktree load; its isolated scenario
+  passed. No timeout or fidelity tolerance changed.
+- Final verification: `vp check` and `vp run website#build` pass. The uncached recursive tests
+  pass across 252 files: 10,625 passed, 121 expected failures and 43 todos. Nokia-os contributes
+  9,783 passed, 121 expected failures and 43 todos across 160 files. The focused seven-golden
+  run passes; extended Save and in-call journeys plus status guards pass (18 focused checks).
 
 ## Plan 22b (written when scheduled): Calls II, network services and costs
 
