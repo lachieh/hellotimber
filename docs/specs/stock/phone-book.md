@@ -31,6 +31,14 @@ it opens. With an empty SIM ▼ shows `No phone numbers` (≈2.90 s), then stand
 returns to standby through an 85 ms frame of standby without its operator line; C held shows
 that frame twice (at the press and ≈530 ms later).
 
+The empty-SIM note's timeout is not shortened for C. In `phone-book/standby-down-empty` it
+stays for 2901 ms without another key (plan 19 `standby/down-empty`, frame 2). In plan 16's
+`keypad/keys`, ▼ goes down at 46937 ms, the note shows at 47004.7 ms and stays until
+48042.9 ms, about 46 ms after C's down at 47997 ms. C cancels the note on its down rather
+than waiting for its release: its 900 Hz keypad beep starts at 48019 ms and its held beep
+at 48498 ms (`sound/keypad/keys`), with no second 1750 Hz warning. The intervening 8 ms
+partial redraw is optional under the fidelity standard. The normal timeout remains ≈2.90 s.
+
 ## Sort order
 
 1. Leading spaces are skipped.
@@ -179,14 +187,14 @@ editor.
 
 ## Known gaps
 
-Three asserted goldens differ in ways the fidelity standard counts:
+Two asserted goldens differ in ways the fidelity standard counts:
 
 - `phone-book/standby-list-hold-c`, `phone-book/search-prompt-hold-c`: C held. The firmware's own
   long press redraws standby (its operator-less frame) ≈530-545 ms after the down; phone-core's
   long press comes at 800 ms and draws standby at once.
-- `phone-book/speed-restore`: its log opens Call register › Missed calls and holds C there; plan
-  22's placeholder does not leave for standby on a held C, so the replay's later keys land in Call
-  register (Restore keeping speed dials and tones is covered by `tests/phone-book-store.test.ts`).
+
+`phone-book/speed-restore` now passes: plan 22 supplies the Missed calls note, and C cancels
+it on key-down, allowing the replay to reach Restore and verify that speed dials and tones remain.
 
 The calls follow-up asserts every plan 19 call golden: Call from names or Service Nos.,
 held speed dial 2 with Speed dialling On, standby ▲ and its dialled-list call, and held 2 with

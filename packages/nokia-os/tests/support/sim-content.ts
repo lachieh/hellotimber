@@ -183,8 +183,20 @@ export function simContentSoundScenario(id: string): void {
   replay.end();
 }
 
+/** The provisioned phone's *#06# page (plan 30 I); the host supplies the captured identity. */
+export function simImeiScenario(id: string): void {
+  const rig = standbyRig({ sim: simContentCard("empty", undefined), imei: "490154203310018" });
+  for (const key of ["*", "#", "0", "6", "#"] as const) {
+    rig.press(key, 60);
+    rig.advance(300);
+  }
+  rig.advance(3000);
+  expectLcdAnyBlink(rig.paint(), goldenImage(id, "screen"), id);
+}
+
 /** The scenario of a plan 30 golden: a power-on still by hand, a sound, or its capture replayed. */
 export function simContentScenarioOf(id: string): (id: string) => void {
+  if (id === "sim/imei-screen") return simImeiScenario;
   if (id.startsWith("sound/")) return simContentSoundScenario;
   return id.startsWith("sim/sms-boot-") ? simBootScenario : simContentScenario(optionsOf(id));
 }

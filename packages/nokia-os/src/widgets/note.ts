@@ -30,7 +30,7 @@ export interface NoteOptions {
   readonly moves?: { readonly up?: string; readonly down?: string };
   /**
    * Plan 16 (D12): the note's warning tone, by its lines, played when the note opens and again
-   * when a key goes down on it (in place of the key's beep).
+   * when a key other than C goes down on it (in place of the key's beep). C cancels the note.
    */
   readonly sound?: NoteSound;
   /**
@@ -73,6 +73,10 @@ class NoteWidget implements Widget {
   }
 
   onKeyDown(key: PhoneKey, flow: Flow): void {
+    if (key === "c") {
+      this.#end(flow);
+      return;
+    }
     this.#down.add(key);
     if (this.#options.handover && /^[0-9*#]$/.test(key)) {
       flow.standby(key);

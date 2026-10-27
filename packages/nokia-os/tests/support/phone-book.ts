@@ -188,11 +188,6 @@ export const PHONE_BOOK_SCENARIOS: Readonly<Record<string, (id: string) => void>
 
 /** Asserted plan 19 goldens whose scenario cannot pass, with the reason. */
 export const PHONE_BOOK_KNOWN_GAPS: Readonly<Record<string, string>> = {
-  "phone-book/speed-restore":
-    "its log opens Call register › Missed calls (Menu 4 1) before the shots and holds C there: " +
-    "plan 22's placeholder does not leave for standby on a held C as the firmware's note does, " +
-    "so the replay's later keys land in Call register (Restore keeping speed dials and tones is " +
-    "tests/phone-book-store.test.ts's)",
   "phone-book/standby-list-hold-c":
     "C held: the list closes at C's down as captured; the firmware then redraws standby (its " +
     "operator-less frame) ≈530 ms after the down, its own long press; the kernel's long press " +

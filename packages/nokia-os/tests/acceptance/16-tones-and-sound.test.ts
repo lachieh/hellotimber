@@ -16,10 +16,6 @@ acceptancePlan({
       "Phone book › Search shows `No phone numbers` ≈150 ms after OK in the capture, so OK's " +
       "beep sounds before the note's tone replaces it; nokia-os opens the note at the key " +
       "(plan 14 D8), so its tone replaces the beep at once",
-    "sound/keypad/keys":
-      "C 1060 ms after ▼ on the empty SIM's `No phone numbers` (plan 19's standby note): the " +
-      "firmware has left the note by C's down (C beeps 900 Hz and its held beep follows); " +
-      "nokia-os's note plays its 1750 Hz tone again at the key and ends at the release",
     "sound/alert/ascending-l5":
       "Ascending at Level 5: the Level 2 → 3 step and Nokia tune's last note race in this " +
       "recording (that note stays at Level 2; in the Level 4 recordings it steps, `ascendingAt`)",

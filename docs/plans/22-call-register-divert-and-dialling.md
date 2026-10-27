@@ -1041,16 +1041,15 @@ network), `tests/support/rig.ts` (a `network` option, if plans 18/19 did not add
   ▲, digit and `#`), plan 20's 28 Options escapes and plan 23's Level digit are asserted in their
   plans' files by one spread line each. `sound/keypad/keys` and `sms/notice-down` waited on plan 19
   (▼ at standby is the phone book); after the merge with plan 19 both are asserted
-  (`sound/keypad/keys` with a known gap: C on the standby `No phone numbers` note), as are
+  (`sound/keypad/keys`'s known gap, C on the standby `No phone numbers` note, closed 2026-10-27: C dismisses the note at its down), as are
   `calls/handover-notice-down` and plan 19's `phone-book/standby-up`, `standby-up-dialled` and
   `hold-off-2`. **Completed (2026-10-27, plan 19 integration):** `calls/entry-save`, `calls/register-save`,
   `calls/code-down`, `calls/in-call-options-select-4` and plan 19's `phone-book/standby-list-call`,
   `service-call` and `hold-on-2` are asserted and pass. `*#06#` shows `StockPhoneConfig.imei`
-  (plan 30 D9); plan 30's `sim/imei-screen` stays `pending:22` until its replay can provision the
-  emulator's IMEI. **Open:** plan 25's 17 call goldens
+  (plan 30 D9); plan 30's `sim/imei-screen` is asserted (2026-10-27) by typing the code on a
+  phone configured with the captured IMEI `490154203310018`. Plan 25's 17 call goldens
   (`keyguard/call*`, `keyguard/emergency-call`, `lights/arrival/call*`, `lights/keyguard/emergency-call`,
-  the `*` after the lock window) stay `pending:22`: they need the keyguard to pass a call's keys,
-  `KeyguardCalls.dial` wired to the telephone and the lights held during a call — a follow-up.
+  the `*` after the lock window) are asserted (2026-10-27, plan 25's follow-up; see its plan).
 - **Shared-file edits beyond the plan's list.** `standbyKeyDelayMs: 23` in `phone.ts` (plan 19's
   value; `handover/notice-up`), `NoteOptions.next`/`endOnDown` and unpaired-release handling in
   `note.ts`, `ConfirmOptions.tops`, `InfoScreenOptions.large`, `Widget.interrupted` in `flow.ts`,

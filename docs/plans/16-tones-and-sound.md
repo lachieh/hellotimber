@@ -264,6 +264,16 @@ _After Task 0 (Deviation D12):_ with Warning tones On, `Invalid shortcut`, `No p
 ≈285 ms); every other note is silent. The tone replaces the triggering key's beep, a key pressed on
 the note sounds it again, and with Warning tones Off the triggering key is silent.
 
+Follow-up (2026-10-27): C is cancellation on key-down, before the note's warning is replayed.
+Plan 16's `keypad/keys` LCD frames 68-70 show `No phone numbers` until 48042.9 ms (C down
+47997 ms), then standby after an 8 ms partial redraw. Its sound golden has C's 900 Hz beep at
+48019 ms and its held beep at 48498 ms. Plan 19's uninterrupted `standby/down-empty` holds the
+same note for 2901 ms: the timeout is correct. The shared note widget now cancels on C down;
+other keys keep their warning behavior. The `sound/keypad/keys` known gap is removed after its
+scenario passes, with no tolerance changes or firmware-race alternatives. The same change closes
+`phone-book/speed-restore`: C held on plan 22's Missed calls note now leaves it before the
+replay's Restore keys, and its complete golden scenario passes (the stale known gap is removed).
+
 **D13 - Game cues become sounds (completes plan 23 D8).** `StockCue`s from the Snake II session
 go to the phone's sounder instead of `NO_CUES`: `eat` and `crash` play their captured programs
 when Warning tones is On and Games › Settings › Sounds allows it, `vibrate` runs the vibrator for

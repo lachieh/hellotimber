@@ -5,13 +5,20 @@
 // Goldens are pending until the task that implements them is done (plan 29 "Pending workflow").
 import { readPlanIndex } from "../../scripts/golden-index.ts";
 import { acceptancePlan, GOLDENS } from "../support/acceptance.ts";
-import { SIM_CONTENT_KNOWN_GAPS, simContentScenarioOf } from "../support/sim-content.ts";
+import {
+  SIM_CONTENT_KNOWN_GAPS,
+  simContentScenarioOf,
+  simImeiScenario,
+} from "../support/sim-content.ts";
 
 const ASSERTED = readPlanIndex(GOLDENS, "30").filter((entry) => entry.status === "asserted");
 
 acceptancePlan({
   plan: "30",
-  scenarios: Object.fromEntries(ASSERTED.map(({ id }) => [id, simContentScenarioOf(id)])),
+  scenarios: {
+    ...Object.fromEntries(ASSERTED.map(({ id }) => [id, simContentScenarioOf(id)])),
+    "sim/imei-screen": simImeiScenario,
+  },
   knownGaps: Object.fromEntries(
     Object.entries(SIM_CONTENT_KNOWN_GAPS).filter(([id]) => ASSERTED.some((e) => e.id === id)),
   ),

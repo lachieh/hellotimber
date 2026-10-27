@@ -2,7 +2,7 @@
   {
     "id": "sim/imei-screen",
     "file": "sim/imei-screen.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 1,
     "frames": 1

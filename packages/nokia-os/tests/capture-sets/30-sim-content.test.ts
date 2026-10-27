@@ -70,11 +70,10 @@ describe("SIM content capture set", () => {
     expect(ids.some((id) => id.startsWith("sim/lnd"))).toBe(false);
   });
 
-  it("is pending:30 until its task is done, and pending:22 for *#06#", () => {
+  it("asserts each completed task, including plan 22's *#06#", () => {
     for (const entry of lcd) {
       const task = SIM_CONTENT_TASKS[entry.id]!;
-      if (entry.id.startsWith("sim/imei-")) expect(entry.status, entry.id).toBe("pending:22");
-      else expect(entry.status, entry.id).toBe(DONE_TASKS.has(task) ? "asserted" : "pending:30");
+      expect(entry.status, entry.id).toBe(DONE_TASKS.has(task) ? "asserted" : "pending:30");
     }
   });
 
