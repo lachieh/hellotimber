@@ -635,6 +635,10 @@
   .d01-walkman {
     width: min(300px, 31vw);
   }
+  /* The struck-through hint makes the note tall enough to cover the strip. */
+  .d01-sticky__hint-old {
+    display: none;
+  }
 }
 
 /* ── mobile: phone first, the desk's things scattered down a column ───── */
