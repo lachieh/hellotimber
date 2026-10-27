@@ -18,12 +18,12 @@ lands second rebases onto the other and keeps both plans' tests green.
 supplementary captures") and plans 13, 14, 16, 23 and 28 in full before starting. The planning
 probes in `$REF/captures/scratch-plan24/{space-impact,bantumi,pairs2}/` are evidence for this plan
 only and are never imported. Task 0 writes this plan's captures to `$REF/captures/6.39/plan24/`.
-**Status (2026-10-27):** rebased onto main `ce8167f`; inherited Games II groundwork
-is preserved and verified against the current suite. Task 0 remains incomplete after
-capture-driver repair and a successful full-run validation. The follow-up assignment authorizes
-Task 0 writes to REF. Tasks 1-3 have partial inherited WIP, not completed tasks.
-Tasks 4-14 remain unstarted.
-No plan 24 goldens have been imported or asserted. See the refresh audit below.
+**Status (2026-10-27):** Task 0 is closed under Lachlan's accepted criterion changes below.
+The eight full-level recordings, exits, ending and LCD-only control proof are validated;
+implementation must replay their pixels under AGENTS.md's fidelity standard. The four accepted
+defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1-3 contain inherited
+partial work to finish in order; Tasks 4-14 remain unstarted. No plan 24 goldens have yet been
+imported or asserted.
 
 ## Goal
 
@@ -482,7 +482,11 @@ stills first (Deviation in Task 3).
 
 ## Tasks
 
-### Task 0 - Canonical REF captures (no repository changes)
+### Task 0 - Canonical REF captures (closed under the accepted 2026-10-27 decision)
+
+**Closure:** accepted defaults replace the four unresolved branches; validated full-level
+recordings replace the exhaustive census. The historical checklist below is closed under those
+criterion changes, not a claim that the omitted branches were observed.
 
 **Files (all under `$REF`, gitignored):** `captures/scripts/gen_v639_plan24.py`,
 `captures/scripts/v639-plan24-<section>.cap`, `captures/6.39/plan24/**`, a new section in
@@ -490,19 +494,19 @@ stills first (Deviation in Task 3).
 and audit interrupted artifacts before rerunning their sections; write repair probes to new
 plan24 evidence directories. Do not modify other plans' scripts/captures or `scratch-plan24/`.
 
-- [ ] Read `$REF/captures/README.md`, `captures/scripts/gen_v639_plan23.py` (its `Drive`, `Bot`,
+- [x] Read `$REF/captures/README.md`, `captures/scripts/gen_v639_plan23.py` (its `Drive`, `Bot`,
       seed search and section runner are the model) and the scratch scripts in
       `captures/scratch-plan24/space-impact/` (`si.py` has a tick-locked driver, `Sync`, and a
       RAM tracer).
-- [ ] Repair and complete `gen_v639_plan24.py` with subcommands `run` (`-j 2` workers,
+- [x] Repair and complete `gen_v639_plan24.py` with subcommands `run` (`-j 2` workers,
       `--only <section>`), `bot`, `ocr`, `check`, `seeds` and `list`. Every section starts with `include v639-setup.inc`,
       `key c`, `run 2s` (clock 10:10 unless S7), records audio around every gameplay recording,
       and writes `keys.csv` (`tick,key,press_ms,release_ms`, tick = the last tick frame before the
       edge). Keys in recordings are raw edges placed by tick (investigation item 4). Navigation:
       Menu, ▼×7, Select (Games), ▼, Select (splash), Navi (skip), `idle`.
-- [ ] **S1 splash:** no key, at 10:10, 19:48, 07:59 and 23:59 (a record each, through the menu);
+- [x] **S1 splash:** no key, at 10:10, 19:48, 07:59 and 23:59 (a record each, through the menu);
       Navi, C, 1 and ▼ at 300 ms (records). Peek the seed after the splash (planning).
-- [ ] **S2 pause and the suspend slot:** Navi during play (record), ▼ through the pause list
+- [x] **S2 pause and the suspend slot:** Navi during play (record), ▼ through the pause list
       (shots), C (shot), re-entry from standby (record: splash, then Continue), Continue (record
       4 s: the board stands), then each of 8, 1 and Navi as the first key (records: is the key
       delivered?), Top score and New game while suspended. **The slot:** suspend Space impact,
@@ -511,8 +515,8 @@ plan24 evidence directories. Do not modify other plans' scripts/captures or `scr
       Snake II's. Repeat with Snake II suspended first; include Bantumi menu visits. Confirm
       simultaneous Continue and independent resumed boards per D10; preserve Pairs II cross-mode
       uncertainty for 24c.
-- [ ] **S3 no keys:** a virgin game with no keys to the menu after game over (≈45 s), audio.
-- [ ] **S4 keys:** tick-locked, each key tapped on tick 40 (after the shield) and held for 20 ticks:
+- [x] **S3 no keys:** a virgin game with no keys to the menu after game over (≈45 s), audio.
+- [x] **S4 keys:** tick-locked, each key tapped on tick 40 (after the shield) and held for 20 ticks:
       0-9, `*`, `#`, ▲, ▼; two direction keys between ticks; 1 held 40 ticks (the repeat-fire cap);
       4 and 6 until the specials run out. On the continue screen (from S3's state by `fork`): 1, 3,
       4, 6, 5, 8, Navi, C at `03`.
@@ -540,7 +544,7 @@ plan24 evidence directories. Do not modify other plans' scripts/captures or `scr
       Run a short unmodified live fork/search probe with diagnostics disabled and repeat with
       diagnostics enabled: keys, LCD hashes and boundaries agree. Save commands, results and
       per-decision LCD evidence under REF. No emulator RAM writes, pokes or firmware calls.
-- [ ] **Canonical-level gate:** before any imports, resource generation, level reconstruction or
+- [x] **Canonical-level gate:** before any imports, resource generation, level reconstruction or
       engine implementation, finish and validate S5's complete unmodified levels 0-7, exits and
       final ending, plus the required S6 variety evidence. Each cut has LCD-derived boundaries,
       continuous tick/key/audio provenance and a replayable command stream; adjacent cuts chain
@@ -548,14 +552,14 @@ plan24 evidence directories. Do not modify other plans' scripts/captures or `scr
       `check` must fail when a level, exit, ending, required variety observation or control proof
       is missing. Report actual elapsed time, evaluation counts and coverage at interruptions;
       keep Task 0 incomplete until every required section passes.
-- [ ] **S6 variety:** four bot runs from S5's level starts (`fork` at each level's first frame in
+- [x] **S6 variety:** four bot runs from S5's level starts (`fork` at each level's first frame in
       the S5 process, so later levels need no replay): `bonus` (take every orb: all four kinds,
       the life re-roll at 5 lives if reachable), `specials` (use the wall and the beam on enemies
       and a boss), `deaths` (lose every life in levels 0 and 3, take the continue with 1, refuse
       the last one), `cap` (hold fire through a wave). Each logs which objects it has seen; extend
       the runs until every object type the levels spawn has been seen killed and, where it fires,
       firing.
-- [ ] **S7 seed:** reboot with the clock at 10:10, 19:48, 07:59, 23:59, 00:00 and 10:10 on
+- [x] **S7 seed:** reboot with the clock at 10:10, 19:48, 07:59, 23:59, 00:00 and 10:10 on
       14.10.2026 (`setup_lines` of plan 23); a no-key game to the first random event the LCD
       shows (enemy fire in level 0 after ≈41 s, or the 64 s bonus orb). Peek `0x10da5c` (u32)
       after New game at each, and at the plan 23 C9 clocks (12:00, 00:01, 10:11) for the fit.
@@ -563,21 +567,21 @@ plan24 evidence directories. Do not modify other plans' scripts/captures or `scr
       designated seed-recovery dataset uniquely identifies its effective seed. Track no-draw and
       ambiguous traces separately with independent clock proof references (Task 6). The clock/date
       fit is not accepted until every existing Snake II seed golden is reproduced from the LCD.
-- [ ] **S8 ANSI chain:** peek `0x111bf0` at power-on, then after each of: a Space impact game over,
+- [x] **S8 ANSI chain:** peek `0x111bf0` at power-on, then after each of: a Space impact game over,
       a Snake II game over, a Pairs II game, a Bantumi game, the Games › Settings pages, a level-1
       random-row spawn. Two Space impact games in one power cycle through level 1 (S5's keys
       replayed), recorded: do their random-row spawns differ as the chain predicts?
-- [ ] **S9 sound:** Tones › Warning tones On (plan 23 `c10_warning`): replay S5/S6 keys around a shot,
+- [x] **S9 sound:** Tones › Warning tones On (plan 23 `c10_warning`): replay S5/S6 keys around a shot,
       a death, a missile, a wall, a beam, each bonus kind, a boss kill and game over, with audio;
       then Games › Settings › Sounds Off and Shakes Off, a death each. Vibrating alert as the
       profile has it (plan 16's rule).
-- [ ] **S10 after:** Top score after a beaten and a not-beaten game (records), Score IDs pages; Navi,
+- [x] **S10 after:** Top score after a beaten and a not-beaten game (records), Score IDs pages; Navi,
       C and ▼ at 1.5 s and 4 s into the fireworks and into `Your score:` (records).
-- [ ] OCR every new image into `plan24/text.json` (plan 14 format). `check`: every recording starts
+- [x] OCR every new image into `plan24/text.json` (plan 14 format). `check`: every recording starts
       on its parent screen; every gameplay recording has `keys.csv` and audio; S5's level files
       chain (each level's first frame follows the previous exit).
-- [ ] Append "Plan 24 supplementary captures" to `$REF/captures/README.md`.
-- [ ] No commit. Record the outcome under this task: H1-H22 confirmed or corrected, the D10 slot
+- [x] Append "Plan 24 supplementary captures" to `$REF/captures/README.md`.
+- [x] No commit. Record the outcome under this task: H1-H22 confirmed or corrected, the D10 slot
       rule, the seed fit (D5), the ANSI formula and its advancers (D6), the tick, shield, respawn,
       continue and exit timings, the interval spread, the bot's wall time, the objects seen per
       level, and any section that failed.
@@ -1113,13 +1117,25 @@ log is retained, and the complete Node 22 rerun passes without source changes.
 `analysis/quality-20261027c.json` links the successful suite and build logs. No plan 24 golden
 is imported or asserted; the existing leaf and sound-note fixtures remain `pending:24`.
 
-### Proposed Task 0 criterion changes (for parent review)
+### Accepted Task 0 criterion changes (Lachlan, 2026-10-27)
 
-These are **proposals only**, not accepted changes or satisfied criteria. They do not modify
-D4-D13, H1-H22, the canonical gate, runtime behavior or golden status. If the parent accepts a
-proposal, its implementation and spec must carry the literal `UNVERIFIED` label next to the
-chosen behavior. The fidelity risks below concern visible outcomes; none is a reason to widen
-pixel, rhythm, sound or timing tolerances.
+**Accepted decision, replacing the former proposals-only status.** Lachlan accepts all four
+defaults below: the five-life cap and reroll from the same game RNG; H10's four HP per registered
+ordinary-enemy wall hit; the existing minutes-of-the-day seed fallback (the clock/date-only fit
+is rejected); and zero ANSI advances for other games and Settings (24b/24c revisit). Code comments
+and specs must carry the literal `UNVERIFIED` label beside each behavior. Acceptance of a default
+is not LCD verification of it.
+
+The eight `S6-level-<n>-object-kills-and-fire` criteria are **replaced** by the eight validated
+full-level recordings becoming plan 24 goldens. Their pixel-exact replay under the fidelity
+standard verifies every spawn, kill and shot they contain. Behavior the recordings never
+exercise is `UNVERIFIED` in the spec and is not a gate. The census remains an exploratory aid,
+not a gate. Task 0 is closed; the canonical coverage checker records this accepted scope and
+still requires recording integrity, the level chain, ending and control proof. Import and replay
+remain Tasks 3-13; this decision does not assert a golden in advance.
+
+The original evidence and fidelity risks below are retained. No pixel, rhythm, sound or timing
+tolerance changes.
 
 **S6-life-reroll-or-unreachable.**
 
@@ -1128,7 +1144,7 @@ pixel, rhythm, sound or timing tolerances.
 - **Established:** all four bonus outcomes are reviewed (`analysis/s6-reviewed-bonus.json`).
   `analysis/s6-reroll.json` reaches four hearts. Neither proves five-life reachability,
   unreachability or which RNG draws the reroll consumes.
-- **Proposed replacement/default:** record the five-life branch as **UNVERIFIED**. Keep H9's
+- **Accepted replacement/default:** record the five-life branch as **UNVERIFIED**. Keep H9's
   provisional five-life cap and redraw a life result from the same game RNG until a non-life
   bonus is selected. Do not award a sixth life or substitute a fixed weapon. This preserves the
   existing, partially corroborated bonus model and its stated reroll hypothesis while making the
@@ -1144,7 +1160,7 @@ pixel, rhythm, sound or timing tolerances.
 - **Established:** paired controls show beam/enemy kills, beam/boss damage and a wall/boss kill
   (`analysis/s6-special-effects-reviewed-partial.json`). The ordinary-enemy wall probe reaches
   the same score with and without the wall, so it establishes no isolated damage.
-- **Proposed replacement/default:** retain the reviewed effects and record ordinary-enemy wall
+- **Accepted replacement/default:** retain the reviewed effects and record ordinary-enemy wall
   damage as **UNVERIFIED**. Use H10's provisional four hit points per registered wall hit,
   through the same enemy collision/damage path. Do not infer a tick-by-tick damage cadence or
   instant universal kill from the boss result. H10 is the existing specific hypothesis, and a
@@ -1166,7 +1182,7 @@ pixel, rhythm, sound or timing tolerances.
   a six-second route delay changing the midnight diagnostic seed while the LCD still says
   `00:00`. The splash seed is not the later New-game seed at midnight. These observations
   reject the proposed clock/date-only fit.
-- **Proposed replacement/default:** retain the existing minutes-of-the-day seed fallback as
+- **Accepted replacement/default:** retain the existing minutes-of-the-day seed fallback as
   **UNVERIFIED**, as D5 already permits. Keep the proved generator and splash observations
   separate from the unproved clock function. A replay may inject a seed only where an
   informative LCD trace recovers it uniquely; no-draw or ambiguous gameplay traces remain
@@ -1187,7 +1203,7 @@ pixel, rhythm, sound or timing tolerances.
   one-draw new-top-score endings from ordinary/tied endings with no draw
   (`analysis/ansi-game-over-resolution.json`). Other-game peeks remain hypotheses; the Pairs II
   and Bantumi screenshots show suspension, and no subsequent wave proves their chain position.
-- **Proposed replacement/default:** record other games' ANSI consumers as **UNVERIFIED**. Advance
+- **Accepted replacement/default:** record other games' ANSI consumers as **UNVERIFIED**. Advance
   the shared chain only for proved Space impact random-row spawns and its new-top-score ending;
   provisionally leave it unchanged for the unproved other-game histories and Settings visits.
   Preserve the state across games and reset only at power-on. This follows the existing
@@ -1206,17 +1222,38 @@ pixel, rhythm, sound or timing tolerances.
   tracker. The per-level table and hash-sealed ledgers identify visual families, tracks, candidate events
   and unresolved foreground. Only the three local level-0 events above are reviewed. No
   complete spawn count, full type inventory or firing-impossibility exception is established.
-- **Proposed disposition/default:** keep **all eight criteria open**. If the parent explicitly
-  chooses to defer exhaustive coverage, record the omitted per-type behavior as **UNVERIFIED**
-  and implement only LCD-backed spawn, motion, damage and fire observations. For any otherwise
-  unsupported fire event, the provisional default is no extra shot and no speculative RNG
-  advance. This introduces fewer invented visible events than guessing firing rates. It is
-  unsuitable as evidence that a type cannot fire, and does not authorize starting Task 1 here.
-  The preferred next action is to finish tracking existing recordings before changing a
-  criterion or requesting a recapture.
+- **Accepted replacement:** replace all eight exhaustive census criteria with the eight
+  validated full-level recordings as plan 24 goldens. Pixel-exact replay verifies their observed
+  spawns, kills and shots. Unexercised behavior remains `UNVERIFIED` in the spec and does not gate
+  implementation. The partial census is exploratory; its unresolved tracks are not failures of
+  this replacement criterion. No unsupported firing rate or RNG consumption is established by
+  accepting this scope.
 - **Fidelity risk:** missed types or shots change whole waves, score, difficulty, RNG history
   and boss outcomes. This is a material fidelity gap across all eight levels. It cannot be
   excused by the shared timing rule or by a percentage-of-types threshold.
+
+### Task 0 closure verification (2026-10-27)
+
+`analysis/coverage.py --check` passes: **25 accepted criteria, zero open criteria**, under the
+accepted scope above. The canonical checker now requires `S6-level-<n>-recording` for all eight
+levels in place of the exhaustive census. Each names its native timing/key/audio evidence,
+exit, complete replay validation and `analysis/accepted-criteria-20261027.json`. The four
+accepted defaults are recorded as UNVERIFIED rather than newly verified observations. The
+exploratory census no longer gates closure. Earlier incomplete outcomes in this plan are
+historical and are superseded by this accepted decision.
+
+Only the canonical checker's criterion list changed in the capture generator; no capture,
+controller or gameplay code changed. Its source hash is
+`4b871ce58fc310b53bbf8f5a39145160f29c28b1eaeef86159df15c7b83ec401`.
+`driver-proof/seal.py` passed all stored, static, live three-mode fork/search and recorded replay
+checks and resealed `driver-proof/complete.json` in 274.6 s. The prior proof and checker are
+preserved in `archive/20261027d-before-accepted-criteria/`. Four negative-control tests in
+`analysis/test_accepted_criteria.py` pass, including all eight missing-level cases, missing
+chain/ending and stale control proof. Full checker output is
+`analysis/check-accepted-20261027d.log`. REF artifacts remain gitignored and uncommitted.
+
+Task 0 is **done**. Imports remain pending until Task 3; no golden has been asserted by closing
+this capture gate. Verification: `mise exec -- vp check --fix` passes.
 
 ### Task 1 - Contracts and documentation
 
