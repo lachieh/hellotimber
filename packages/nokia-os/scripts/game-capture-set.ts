@@ -1,59 +1,32 @@
 // Snake II gameplay goldens (plan 23 "Capture set"): an explicit table over the plan 23 Task 0
-// recaptures (`captures/6.39/plan23/`), plus the rules that number engine ticks from frames,
-// turn `keys.csv` into `input`, pick tick stills and build the period fixture.
+// recaptures (`captures/6.39/plan23/`), Snake II's board predicate, grace and still selection
+// for the shared machinery (`game-capture.ts`), and the period fixture.
 //
 // Reads captures only through the injected `GameCaptureIo`, so tests run it on synthetic
 // recordings. Paths are relative to `$REF/captures/6.39`. Pure: imports only sibling scripts.
-import type { CaptureSetEntry, CaptureSource, FrameRange } from "./capture-set.ts";
+import type { CaptureSetEntry } from "./capture-set.ts";
 import {
-  INPUT_KEYS,
-  LCD_HEIGHT,
-  LCD_WIDTH,
-  type GoldenKeyPress,
-  type GoldenStatus,
-  type TickRow,
-} from "./golden-format.ts";
-
-// ---------------------------------------------------------------- io
-
-/** One distinct LCD state of a `record` directory. */
-export interface GameRecordingFrame {
-  /** LCD_WIDTH × LCD_HEIGHT, row-major, 1 = lit. */
-  readonly pixels: Uint8Array;
-  readonly startMs: number;
-  readonly durationMs: number;
-}
-
-/** One row of a recording's `keys.csv` (Task 0): `tick` as the capture script labelled it. */
-export interface GameKeyRow {
-  readonly tick: number;
-  readonly key: string;
-  readonly pressMs: number;
-}
-
-export interface GameCaptureIo {
-  /** The frames of `<dir>/timings.csv`, or undefined when the recording is missing. */
-  recording(dir: string): readonly GameRecordingFrame[] | undefined;
-  /** The rows of `<dir>/keys.csv`, or undefined when there is none. */
-  keys(dir: string): readonly GameKeyRow[] | undefined;
-}
-
-export class GameCaptureError extends Error {
-  constructor(where: string, message: string) {
-    super(`${where}: ${message}`);
-    this.name = "GameCaptureError";
-  }
-}
+  framePeriod,
+  GameCaptureError,
+  gameGolden,
+  lit,
+  numberTicks,
+  playBackToBack,
+  region,
+  screenGolden,
+  selectTickStills,
+  shotsGolden,
+  tickRow,
+  type GameCaptureIo,
+  type StillRule,
+  type Tick,
+  type TickFixtureSpec,
+  type TickRule,
+} from "./game-capture.ts";
+import { LCD_HEIGHT, LCD_WIDTH, type GoldenKeyPress, type GoldenStatus } from "./golden-format.ts";
 
 // ---------------------------------------------------------------- measured constants
 
-/** Key-to-game latency window (Task 0: 30-45 ms; plan 23 D6). */
-export const KEY_LATENCY_MS = { min: 30, max: 45 } as const;
-/**
- * A tick frame drawn within this long after the latency window may still precede the key's
- * processing (the tick event comes a few ms before its redraw ends).
- */
-export const DRAW_SLACK_MS = 5;
 /** The grace tick after a blocked tick (Task 0: ≈93 ms, 12 timer units; H6). */
 export const GRACE_MS = 93;
 /** How far an interval may stray from `period + GRACE_MS` and still mark a grace. */
@@ -68,10 +41,6 @@ export const PERIOD_BY_LEVEL: Readonly<Record<number, number>> = {
 
 // ---------------------------------------------------------------- pixel features
 
-function lit(pixels: Uint8Array, x: number, y: number): boolean {
-  return pixels[y * LCD_WIDTH + x] === 1;
-}
-
 /** The Snake II board: rules at y 6 and y 8 (y 7 clear), bottom row y 47, sides x 0 and 83. */
 export function isBoardFrame(pixels: Uint8Array): boolean {
   for (let x = 0; x < LCD_WIDTH; x++) {
@@ -85,12 +54,6 @@ export function isBoardFrame(pixels: Uint8Array): boolean {
   return true;
 }
 
-function region(pixels: Uint8Array, x0: number, x1: number, y0: number, y1: number): string {
-  let out = "";
-  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) out += lit(pixels, x, y) ? 1 : 0;
-  return out;
-}
-
 /** The four score digits (x 0..15, y 0..4). */
 export function scoreKey(pixels: Uint8Array): string {
   return region(pixels, 0, 15, 0, 4);
@@ -101,129 +64,19 @@ export function creatureShown(pixels: Uint8Array): boolean {
   return region(pixels, 64, 83, 0, 5).includes("1");
 }
 
-function same(a: Uint8Array, b: Uint8Array): boolean {
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
-  return true;
-}
-
 // ---------------------------------------------------------------- ticks
 
-/** A frame of one or more recordings played back to back, on one clock. */
-export interface PlayedFrame extends GameRecordingFrame {
-  /** Recording directory and frame index within it. */
-  readonly dir: string;
-  readonly frame: number;
-}
-
 /**
- * One engine tick: its first frame (when the redraw started) and its last frame (the finished
- * board, before the next tick). A blocked tick shows nothing (H6): `virtual`, inferred from a
- * grace-length interval, with no frames.
+ * Snake II's ticks: board frames at the level's period; a gap of `period + GRACE_MS` (±
+ * tolerance) holds a blocked tick, which draws nothing (H6).
  */
-export interface Tick {
-  readonly tick: number;
-  readonly startMs: number;
-  readonly first?: PlayedFrame;
-  readonly last?: PlayedFrame;
-  readonly virtual: boolean;
-}
-
-/**
- * Concatenates recordings that were made back to back (the next `record` starts when the
- * previous one stops): each one's clock starts where the previous one's last frame ended.
- */
-export function playBackToBack(
-  parts: readonly { dir: string; frames: readonly GameRecordingFrame[] }[],
-): { frames: PlayedFrame[]; offsets: Map<string, number> } {
-  const frames: PlayedFrame[] = [];
-  const offsets = new Map<string, number>();
-  let offset = 0;
-  for (const part of parts) {
-    offsets.set(part.dir, offset);
-    part.frames.forEach((frame, i) => {
-      frames.push({ ...frame, startMs: frame.startMs + offset, dir: part.dir, frame: i });
-    });
-    const last = part.frames.at(-1);
-    if (last) offset += last.startMs + last.durationMs;
-  }
-  return { frames, offsets };
-}
-
-/**
- * Numbers engine ticks from frames: tick 0 is the first board frame. A later board frame whose
- * pixels differ from the current tick's last frame starts a new tick when it comes at least
- * half a period after that tick's first frame; closer, it finishes the same tick (a redraw in
- * two bursts). A gap of `period + GRACE_MS` (± tolerance) holds a blocked tick (no frame).
- * Frames that are not the board (menus, notes) end nothing and are not numbered.
- */
-export function numberTicks(frames: readonly PlayedFrame[], periodMs: number): Tick[] {
-  const ticks: Tick[] = [];
-  let current: { tick: number; startMs: number; first: PlayedFrame; last: PlayedFrame } | undefined;
-  const close = (): void => {
-    if (current) ticks.push({ ...current, virtual: false });
+export function snakeTickRule(periodMs: number): TickRule {
+  return {
+    isGameFrame: isBoardFrame,
+    periodMs,
+    silentTicks: (gap) => (Math.abs(gap - (periodMs + GRACE_MS)) <= GRACE_TOLERANCE_MS ? 1 : 0),
   };
-  for (const frame of frames) {
-    if (!isBoardFrame(frame.pixels)) continue;
-    if (current === undefined) {
-      current = { tick: 0, startMs: frame.startMs, first: frame, last: frame };
-      continue;
-    }
-    if (same(frame.pixels, current.last.pixels)) continue;
-    const gap = frame.startMs - current.startMs;
-    if (gap < periodMs / 2) {
-      current.last = frame;
-      continue;
-    }
-    close();
-    let tick = current.tick + 1;
-    if (Math.abs(gap - (periodMs + GRACE_MS)) <= GRACE_TOLERANCE_MS) {
-      ticks.push({ tick, startMs: current.startMs + periodMs, virtual: true });
-      tick += 1;
-    }
-    current = { tick, startMs: frame.startMs, first: frame, last: frame };
-  }
-  close();
-  return ticks;
 }
-
-/**
- * The engine tick each key belongs to (`input`): the last tick that started before the key was
- * processed (press + KEY_LATENCY_MS.min). A tick starting while the key may still be in flight
- * (up to KEY_LATENCY_MS.max + DRAW_SLACK_MS after the press) makes the key ambiguous, which
- * throws, naming the recording. Keys before tick 0 (the Select that starts the game) and
- * `skip`ped keys are not input.
- */
-export function inputFromKeys(
-  ticks: readonly Tick[],
-  keys: readonly { key: string; pressMs: number }[],
-  where: string,
-): GoldenKeyPress[] {
-  const out: GoldenKeyPress[] = [];
-  for (const press of keys) {
-    const key = PHONE_KEY[press.key] ?? press.key;
-    if (!INPUT_KEYS.includes(key)) throw new GameCaptureError(where, `unknown key "${press.key}"`);
-    const processed = press.pressMs + KEY_LATENCY_MS.min;
-    const before = ticks.filter((tick) => tick.startMs <= processed);
-    if (before.length === 0) continue; // the Select that starts the game
-    const late = ticks.find(
-      (tick) =>
-        tick.startMs > processed &&
-        tick.startMs <= press.pressMs + KEY_LATENCY_MS.max + DRAW_SLACK_MS,
-    );
-    if (late !== undefined) {
-      throw new GameCaptureError(
-        where,
-        `key ${press.key} at ${press.pressMs} ms is ambiguous: tick ${late.tick} starts at ${late.startMs} ms, within its latency window`,
-      );
-    }
-    out.push({ tick: before.at(-1)!.tick, key });
-  }
-  return out;
-}
-
-/** Harness key names (`tools/harness`) → phone keys. */
-const PHONE_KEY: Readonly<Record<string, string>> = { menu: "navi" };
 
 /**
  * Which ticks become tick stills (plan 23 D5): `game` (bot games) keeps tick 0, every tick
@@ -233,70 +86,26 @@ const PHONE_KEY: Readonly<Record<string, string>> = { menu: "navi" };
  */
 export type StillSelection = "game" | "meals" | "input";
 
+const meal = (a: Uint8Array, b: Uint8Array) => scoreKey(a) !== scoreKey(b);
+
+const STILL_RULES: Readonly<Record<StillSelection, StillRule>> = {
+  game: {
+    first: true,
+    event: (a, b) => meal(a, b) || creatureShown(a) !== creatureShown(b),
+    around: 1,
+    every: 25,
+    last: 12,
+  },
+  meals: { first: true, event: meal, last: 1 },
+  input: { afterInput: 2 },
+};
+
 export function tickStillSelection(
   ticks: readonly Tick[],
   selection: StillSelection = "game",
   input: readonly GoldenKeyPress[] = [],
 ): number[] {
-  const real = ticks.filter((tick) => !tick.virtual);
-  const last = real.at(-1)?.tick ?? 0;
-  const wanted = new Set<number>(selection === "input" ? [] : [0]);
-  for (let i = 1; i < real.length && selection !== "input"; i++) {
-    const a = real[i - 1]!.last!.pixels;
-    const b = real[i]!.last!.pixels;
-    const meal = scoreKey(a) !== scoreKey(b);
-    if (selection === "meals") {
-      if (meal) wanted.add(real[i]!.tick);
-    } else if (meal || creatureShown(a) !== creatureShown(b)) {
-      for (const t of [real[i]!.tick - 1, real[i]!.tick, real[i]!.tick + 1]) wanted.add(t);
-    }
-  }
-  if (selection === "meals") wanted.add(last);
-  if (selection === "game") {
-    for (let t = 25; t <= last; t += 25) wanted.add(t);
-    for (let t = Math.max(0, last - 11); t <= last; t++) wanted.add(t);
-  }
-  if (selection === "input") {
-    for (const press of input)
-      for (const t of [press.tick, press.tick + 1, press.tick + 2]) wanted.add(t);
-  }
-  const numbered = new Set(real.map((tick) => tick.tick));
-  return [...wanted].filter((t) => numbered.has(t)).sort((x, y) => x - y);
-}
-
-export function tickName(tick: number): string {
-  return `t${String(tick).padStart(4, "0")}`;
-}
-
-/** First tick and every interval of one level's recording (the period fixture). */
-export function tickRow(level: number, ticks: readonly Tick[], where: string): TickRow {
-  const real = ticks.filter((tick) => !tick.virtual);
-  if (real.length < 4) {
-    throw new GameCaptureError(where, `${real.length} tick frames, need the start and 3 ticks`);
-  }
-  const starts = real.map((tick) => Math.round(tick.startMs));
-  return {
-    level,
-    firstMs: starts[1]! - starts[0]!,
-    intervalsMs: starts.slice(2).map((start, i) => start - starts[i + 1]!),
-  };
-}
-
-/**
- * The median interval between distinct board frames: the period the half-period rule uses
- * when the level is not known in advance (C3).
- */
-export function framePeriod(frames: readonly PlayedFrame[]): number {
-  const board = frames.filter((frame) => isBoardFrame(frame.pixels));
-  const gaps: number[] = [];
-  for (let i = 1; i < board.length; i++) {
-    if (!same(board[i]!.pixels, board[i - 1]!.pixels)) {
-      gaps.push(board[i]!.startMs - board[i - 1]!.startMs);
-    }
-  }
-  if (gaps.length === 0) return Infinity;
-  gaps.sort((a, b) => a - b);
-  return gaps[Math.floor(gaps.length / 2)]!;
+  return selectTickStills(ticks, STILL_RULES[selection], input);
 }
 
 // ---------------------------------------------------------------- the table
@@ -691,131 +500,54 @@ const STILL_NOTES: Readonly<Record<StillSelection, string>> = {
 
 // ---------------------------------------------------------------- building entries
 
-function source(dirs: readonly string[], cut?: { dir: string; frame: number }): CaptureSource {
-  if (cut === undefined && dirs.length === 1)
-    return { kind: "recording", dir: `${ROOT}/${dirs[0]}` };
-  const parts: FrameRange[] = [];
-  for (const dir of dirs) {
-    if (cut !== undefined && dir === cut.dir) {
-      parts.push({ dir: `${ROOT}/${dir}`, from: 0, to: cut.frame });
-      break;
-    }
-    parts.push({ dir: `${ROOT}/${dir}`, from: 0, to: Infinity });
-  }
-  return { kind: "composite", parts };
-}
-
-function load(io: GameCaptureIo, dir: string): readonly GameRecordingFrame[] {
-  const frames = io.recording(`${ROOT}/${dir}`);
-  if (frames === undefined || frames.length === 0) {
-    throw new GameCaptureError(`${ROOT}/${dir}`, "missing capture");
-  }
-  return frames;
-}
-
 function gameEntry(spec: GameSpec, io: GameCaptureIo): CaptureSetEntry {
-  const dirs = spec.dirs;
-  const id = `game/snake/${spec.name}`;
-  const { frames, offsets } = playBackToBack(dirs.map((dir) => ({ dir, frames: load(io, dir) })));
-  const period = PERIOD_BY_LEVEL[spec.level] ?? framePeriod(frames);
-  const ticks = numberTicks(frames, period);
-  if (ticks.length === 0) throw new GameCaptureError(id, "no board frame");
-  const keys = [
-    ...dirs.flatMap((dir) =>
-      (io.keys(`${ROOT}/${dir}`) ?? []).map((row) => ({
-        key: row.key,
-        pressMs: row.pressMs + offsets.get(dir)!,
-      })),
-    ),
-    ...(spec.extraKeys ?? []).map((row) => ({
-      key: row.key,
-      pressMs: row.pressMs + offsets.get(row.dir)!,
-    })),
-  ].sort((a, b) => a.pressMs - b.pressMs);
-  const input = spec.input ?? inputFromKeys(ticks, keys, id);
-  const status = spec.status ?? "asserted";
-  const trigger = frames.indexOf(ticks[0]!.first!);
-  if (spec.kind === "stills") {
-    const selection = spec.selection ?? "game";
-    const wanted = tickStillSelection(ticks, selection, input);
-    const byTick = new Map(ticks.map((tick) => [tick.tick, tick]));
-    return {
-      id,
-      kind: "still",
-      status,
-      ...(input.length > 0 ? { input } : {}),
-      prefer: {
-        source: {
-          kind: "frames",
-          frames: wanted.map((t) => {
-            const last = byTick.get(t)!.last!;
-            return { name: tickName(t), dir: `${ROOT}/${last.dir}`, frame: last.frame };
-          }),
-        },
-        note: `${spec.note} Tick stills: ${STILL_NOTES[selection]}.`,
-      },
-    };
-  }
-  let cut: { dir: string; frame: number } | undefined;
-  if (spec.toTick !== undefined) {
-    const tick = ticks.find((t) => t.tick === spec.toTick && !t.virtual);
-    if (tick === undefined) throw new GameCaptureError(id, `no tick ${spec.toTick}`);
-    cut = { dir: tick.last!.dir, frame: tick.last!.frame };
-  }
-  const lastTick = spec.toTick ?? ticks.at(-1)!.tick;
-  const late = input.find((press) => press.tick > lastTick);
-  if (late !== undefined) {
-    throw new GameCaptureError(id, `input tick ${late.tick} is after the timeline's last tick`);
-  }
-  return {
-    id,
-    kind: "timeline",
-    status,
-    ...(input.length > 0 ? { input } : {}),
-    prefer: {
-      source: source(dirs, cut),
-      triggerFrame: trigger,
-      note: `${spec.note} Frame ${trigger} is the New game frame (tick 0).`,
+  const selection = spec.selection ?? "game";
+  return gameGolden(
+    {
+      id: `game/snake/${spec.name}`,
+      root: ROOT,
+      dirs: spec.dirs,
+      ticks: (frames) =>
+        snakeTickRule(PERIOD_BY_LEVEL[spec.level] ?? framePeriod(frames, isBoardFrame)),
+      note: spec.note,
+      status: spec.status ?? "asserted",
+      ...(spec.kind === "stills"
+        ? { stills: { rule: STILL_RULES[selection], note: STILL_NOTES[selection] } }
+        : {}),
+      ...(spec.toTick === undefined ? {} : { toTick: spec.toTick }),
+      ...(spec.input === undefined ? {} : { input: spec.input }),
+      ...(spec.extraKeys === undefined ? {} : { extraKeys: spec.extraKeys }),
     },
-  };
-}
-
-function screenEntry(spec: ScreenSpec, io: GameCaptureIo): CaptureSetEntry {
-  const all = load(io, spec.dir);
-  const from = spec.from ?? 0;
-  const frames = all.slice(from);
-  const changed = frames.findIndex((frame) => !same(frame.pixels, frames[0]!.pixels));
-  const trigger = spec.triggerFrame ?? (changed < 0 ? 0 : changed);
-  return {
-    id: `game/snake/${spec.name}`,
-    kind: "timeline",
-    status: spec.status ?? "asserted",
-    prefer: {
-      source:
-        from === 0
-          ? { kind: "recording", dir: `${ROOT}/${spec.dir}` }
-          : { kind: "composite", parts: [{ dir: `${ROOT}/${spec.dir}`, from, to: Infinity }] },
-      triggerFrame: trigger,
-      note: `${spec.note}${from > 0 ? ` From frame ${from} of the recording.` : ""} Trigger: frame ${trigger}, the first change.`,
-    },
-  };
+    io,
+  );
 }
 
 /** The game goldens, in table order. */
 export function gameCaptureSet(io: GameCaptureIo): CaptureSetEntry[] {
   return [
-    ...STILLS.map(
-      (spec): CaptureSetEntry => ({
+    ...STILLS.map((spec) =>
+      shotsGolden({
         id: `game/snake/${spec.name}`,
-        kind: "still",
+        root: ROOT,
+        files: spec.files,
+        note: spec.note,
         status: "asserted",
-        prefer: {
-          source: { kind: "shots", files: spec.files.map((file) => `${ROOT}/${file}`) },
-          note: spec.note,
-        },
       }),
     ),
-    ...SCREENS.map((spec) => screenEntry(spec, io)),
+    ...SCREENS.map((spec) =>
+      screenGolden(
+        {
+          id: `game/snake/${spec.name}`,
+          root: ROOT,
+          dir: spec.dir,
+          note: spec.note,
+          status: spec.status ?? "asserted",
+          ...(spec.triggerFrame === undefined ? {} : { triggerFrame: spec.triggerFrame }),
+          ...(spec.from === undefined ? {} : { from: spec.from }),
+        },
+        io,
+      ),
+    ),
     ...GAMES.map((spec) => gameEntry(spec, io)),
   ];
 }
@@ -823,22 +555,17 @@ export function gameCaptureSet(io: GameCaptureIo): CaptureSetEntry[] {
 /** Levels of the period fixture (C3); levels 1-9 come from `ticks-l<L>`. */
 export const PERIOD_LEVELS: readonly number[] = Array.from({ length: 166 }, (_, i) => i + 10);
 
-export interface TickFixtureSpec {
-  readonly id: string;
-  readonly status: GoldenStatus;
-  readonly source: string;
-  /** The `timings.csv` files hashed for `source-sha256`, in level order. */
-  readonly timings: readonly string[];
-  readonly note: string;
-  readonly rows: readonly TickRow[];
-}
-
 /** The period fixture: the first tick and every interval at each level 10..175. */
 export function periodFixture(io: GameCaptureIo): TickFixtureSpec {
   const rows = PERIOD_LEVELS.map((level) => {
     const dir = `periods/${level}`;
-    const { frames } = playBackToBack([{ dir, frames: load(io, dir) }]);
-    return tickRow(level, numberTicks(frames, framePeriod(frames)), `${ROOT}/${dir}`);
+    const frames = io.recording(`${ROOT}/${dir}`);
+    if (frames === undefined || frames.length === 0) {
+      throw new GameCaptureError(`${ROOT}/${dir}`, "missing capture");
+    }
+    const played = playBackToBack([{ dir, frames }]).frames;
+    const ticks = numberTicks(played, snakeTickRule(framePeriod(played, isBoardFrame)));
+    return tickRow(level, ticks, `${ROOT}/${dir}`);
   });
   return {
     id: "game/snake/periods",

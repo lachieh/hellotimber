@@ -12,13 +12,8 @@ import {
   type Golden,
   type TickGolden,
 } from "./golden-format.ts";
-import {
-  framePeriod,
-  isBoardFrame,
-  numberTicks,
-  PERIOD_BY_LEVEL,
-  type PlayedFrame,
-} from "./game-capture-set.ts";
+import { framePeriod, numberTicks, type PlayedFrame } from "./game-capture.ts";
+import { isBoardFrame, PERIOD_BY_LEVEL, snakeTickRule } from "./game-capture-set.ts";
 
 export const BOARD_WIDTH = 20;
 export const BOARD_HEIGHT = 9;
@@ -295,7 +290,10 @@ function playedFrames(golden: Golden): PlayedFrame[] {
 
 function ticksOf(golden: Golden, level: number) {
   const frames = playedFrames(golden);
-  return numberTicks(frames, PERIOD_BY_LEVEL[level] ?? framePeriod(frames));
+  return numberTicks(
+    frames,
+    snakeTickRule(PERIOD_BY_LEVEL[level] ?? framePeriod(frames, isBoardFrame)),
+  );
 }
 
 /** A timeline's first tick (after tick 0, the New game frame) and its median interval. */

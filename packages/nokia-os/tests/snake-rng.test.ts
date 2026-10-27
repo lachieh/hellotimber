@@ -1,15 +1,10 @@
-// Snake II random numbers (plan 23 Task 5, D4, H8, H9, H12): the generator, food and creature
-// placement on synthetic boards, and the seed of every gameplay golden.
+// Snake II random numbers (plan 23 Task 5, D4, H8, H9): food and creature placement on synthetic
+// boards, and the seed of every gameplay golden. The generator and the clock seed are the games'
+// (tests/game-random.test.ts).
 import { describe, expect, it } from "vite-plus/test";
 import { replaySeed, searchSeeds } from "../scripts/snake-seeds.ts";
-import {
-  createSnakeRandom,
-  placeCreature,
-  placeFood,
-  type Cell,
-  type RandomSource,
-} from "../src/games/snake/rng";
-import { seedFromClock } from "../src/games/snake/seed";
+import { createGameRandom, type RandomSource } from "../src/games/random";
+import { placeCreature, placeFood, type Cell } from "../src/games/snake/rng";
 import { goldenPlacements } from "./support/snake-decode";
 
 /** Draws the given values in order, then fails. */
@@ -29,22 +24,10 @@ const free = (taken: readonly Cell[] = []) => {
   return (x: number, y: number) => !set.has(`${x},${y}`);
 };
 
-describe("the generator (H12)", () => {
-  it("steps seed = (seed × 0x625f + 0x3623) mod 0xfff1", () => {
-    const rng = createSnakeRandom(1);
-    expect([rng.next(), rng.next()]).toEqual([39042, (39042 * 0x625f + 0x3623) % 0xfff1]);
-    expect(rng.seed).toBe((39042 * 0x625f + 0x3623) % 0xfff1);
-  });
-
-  it("puts the 10:10 game's first food at (14, 8): x from the first draw, y from the second", () => {
-    const rng = createSnakeRandom(44530);
+describe("the 10:10 game's first food (H8, H12)", () => {
+  it("is at (14, 8): x from the first draw, y from the second", () => {
+    const rng = createGameRandom(44530);
     expect(placeFood(rng, free(), [])).toEqual({ x: 14, y: 8 });
-  });
-
-  it("rejects seeds outside 0..65520", () => {
-    expect(() => createSnakeRandom(65521)).toThrow();
-    expect(() => createSnakeRandom(-1)).toThrow();
-    expect(() => createSnakeRandom(1.5)).toThrow();
   });
 });
 
@@ -214,45 +197,5 @@ describe("the seed of every gameplay golden (D4)", () => {
     const placements = goldenPlacements("game/snake/pause-bot");
     expect(placements.length).toBeGreaterThanOrEqual(4);
     expect(searchSeeds(placements)).toContain(44530);
-  });
-});
-
-describe("seedFromClock (D4 fallback)", () => {
-  // No function of the clock and date fits every C9 seed (see the Task 5 deviation in plan 23):
-  // (seconds of the day + 7930) mod 65521 fits the clocks from 07:59 to 19:48 on 13.10.2026,
-  // 23:59 and 14.10.2026 fit it only with a 32-bit overflow term whose epoch the data leave
-  // open, and 00:00 and 00:01 draw the same seed. The stock phone therefore seeds from the
-  // minutes of the day (UNVERIFIED) and tests inject the recovered seeds.
-  it("uses the minutes of the day (UNVERIFIED fallback; no clock function fits every C9 seed)", () => {
-    expect(seedFromClock("10:10")).toBe(610);
-    expect(seedFromClock("00:00")).toBe(0);
-    expect(seedFromClock("23:59")).toBe(1439);
-    expect(seedFromClock("7:05")).toBe(425);
-  });
-
-  it("leaves the seed alone when the clock is not set", () => {
-    expect(seedFromClock(undefined)).toBeUndefined();
-    expect(seedFromClock("")).toBeUndefined();
-    expect(seedFromClock("25:00")).toBeUndefined();
-  });
-
-  it("records the evidence: (seconds + 7930) mod 65521 fits only the 07:59-19:48 clocks of 13.10.2026", () => {
-    const clocks: readonly [string, string, boolean][] = [
-      ["seed-0759", "07:59", true],
-      ["seed-1010", "10:10", true],
-      ["seed-1011", "10:11", true],
-      ["seed-1200", "12:00", true],
-      ["seed-1948", "19:48", true],
-      ["seed-0000", "00:00", false],
-      ["seed-0001", "00:01", false],
-      ["seed-2359", "23:59", false],
-      ["seed-1010-14102026", "10:10", false],
-    ];
-    for (const [id, clock, fits] of clocks) {
-      const [h, m] = clock.split(":").map(Number);
-      const candidate = (h! * 3600 + m! * 60 + 7930) % 65521;
-      const found = searchSeeds(goldenPlacements(`game/snake/${id}`));
-      expect(found.includes(candidate), `${id} (${clock})`).toBe(fits);
-    }
   });
 });

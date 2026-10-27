@@ -16,18 +16,18 @@ import type { Widget } from "../../widgets/flow";
 import type { ListNumbering } from "../../widgets/rows";
 import type { NoteSound } from "../../widgets/note";
 import type { PromptLayout } from "../../widgets/prompt";
-import type { StockGames } from "../../widgets/snake";
 import type { EepromRecord, StockEeprom } from "../eeprom";
 import type { StockResult, StockScreenSpec } from "../generated/stock-tree";
 import type { StockPorts } from "../ports";
 import type { StockSecurity } from "../security";
 import type { StockSettings } from "../settings";
+import type { StockGames } from "./games";
 
 /** One phone's state and outputs, as feature bindings see them. */
 export interface StockServices {
   readonly ports: StockPorts;
   readonly settings: StockSettings;
-  /** The suspended game, the seed and the cue sink (plan 23). */
+  /** The suspended games, the seed and the cue sink (plans 23, 24). */
   readonly games: StockGames;
   readonly security: StockSecurity;
   readonly sounder: StockSounder;

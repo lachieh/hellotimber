@@ -9,6 +9,7 @@ import {
   BEEP_ONCE_LEVELS,
   BOOT_TONE,
   GAME_CUES,
+  GAME_SOUNDS,
   KEYPAD_BEEP,
   MESSAGE_PREVIEW_DELAY_MS,
   MESSAGE_TONES,
@@ -218,6 +219,9 @@ export class StockSounder implements StockCueSink {
   #dtmf: { readonly word?: number } | undefined;
   /** Plan 19: what the next key-down plays in place of its beep. */
   #keyProgram: SoundProgram | undefined;
+  readonly #gameSounds: Readonly<Record<string, SoundProgram>>;
+  /** The game sound playing: the next one cuts it off (plan 24 H19). */
+  #gameSound: SoundPlay | undefined;
 
   readonly #userTones: UserRingingTones | undefined;
 
@@ -225,12 +229,16 @@ export class StockSounder implements StockCueSink {
     sequencer: SoundSequencer,
     settings: StockSettings,
     now: () => number,
-    options: { readonly userTones?: UserRingingTones } = {},
+    options: {
+      readonly userTones?: UserRingingTones;
+      readonly gameSounds?: Readonly<Record<string, SoundProgram>>;
+    } = {},
   ) {
     this.#sequencer = sequencer;
     this.#settings = settings;
     this.#now = now;
     this.#userTones = options.userTones;
+    this.#gameSounds = options.gameSounds ?? GAME_SOUNDS;
   }
 
   /**
@@ -561,12 +569,15 @@ export class StockSounder implements StockCueSink {
   }
 
   /**
-   * A game cue at kernel time `atMs` (D13, Task 0 G): the meal, the crash and the top score play
-   * their captured programs with Warning tones On and Games › Settings › Sounds On; a shake runs
+   * A game cue at kernel time `atMs` (D13, Task 0 G): the meal, the crash, the top score and the
+   * games' sounds (`GAME_SOUNDS`, plan 24 D13) play their captured programs with Warning tones On
+   * and Games › Settings › Sounds On, a game sound cutting off the one before it; a shake runs
    * the vibrator for its `ms` with Shakes On and the active profile's Vibrating alert On; a
    * silent key makes the key going down then beep nothing.
    */
   cue(cue: StockCue, atMs: number): void {
+    // An unknown sound is a bug whatever the settings.
+    if (cue.kind === "game-sound") this.#gameProgram(cue.id);
     if (cue.kind === "silent-key") {
       this.#silenceKey(atMs);
       return;
@@ -578,8 +589,19 @@ export class StockSounder implements StockCueSink {
     }
     if (this.#settings.choice(WARNING_TONES_KEY) !== WARNING_TONES_ON) return;
     if (this.#settings.choice(SOUNDS_KEY) !== GAMES_ON) return;
+    if (cue.kind === "game-sound") {
+      if (this.#gameSound !== undefined) this.#sequencer.cancel(this.#gameSound, atMs);
+      this.#gameSound = this.#sequencer.play(this.#gameProgram(cue.id), atMs);
+      return;
+    }
     const program = { eat: GAME_CUES.eat, crash: GAME_CUES.crash, "top-score": GAME_CUES.topScore };
     this.#sequencer.play(program[cue.kind], atMs);
+  }
+
+  #gameProgram(id: string): SoundProgram {
+    const program = this.#gameSounds[id];
+    if (program === undefined) throw new Error(`No game sound "${id}".`);
+    return program;
   }
 
   /** The key going down at `atMs` makes no beep (its beep, if it has started, stops). */

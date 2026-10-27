@@ -487,6 +487,49 @@ describe("input header key (plan 23)", () => {
   });
 });
 
+describe("input releases (plan 24: `<tick>:<key>^`, a held key going up)", () => {
+  const held: Golden = {
+    ...timelineGolden,
+    id: "game/space-impact/keys-hold-1",
+    input: [
+      { tick: 40, key: "1" },
+      { tick: 40, key: "8" },
+      { tick: 41, key: "8", release: true },
+      { tick: 60, key: "1", release: true },
+      { tick: 60, key: "1" },
+    ],
+  };
+
+  it("round-trips releases in order with the presses", () => {
+    const text = serializeGolden(held);
+    expect(text.split("\n")).toContain("input: 40:1 40:8 41:8^ 60:1^ 60:1");
+    expect(parseGolden(text, "x")).toEqual(held);
+    expect(serializeGolden(parseGolden(text, "x"))).toBe(text);
+  });
+
+  it("leaves plan 23's taps as they were (no release field)", () => {
+    const taps: Golden = { ...timelineGolden, input: [{ tick: 3, key: "2" }] };
+    const parsed = parseGolden(serializeGolden(taps), "x");
+    expect(parsed.input).toEqual([{ tick: 3, key: "2" }]);
+    expect(parsed.input![0]).not.toHaveProperty("release");
+  });
+
+  it("rejects a release without a press of its key down, and descending releases", () => {
+    const all = serializeGolden(held).split("\n");
+    const input = lineIndex(all, (l) => l.startsWith("input: "));
+    for (const [value, message] of [
+      ["3:1^", "input release 3:1^ follows no press of 1"],
+      ["3:1 4:8^", "input release 4:8^ follows no press of 8"],
+      ["3:1 4:1^ 5:1^", "input release 5:1^ follows no press of 1"],
+      ["3:1 4:1^ 2:8", "input ticks must ascend: 2 after 4"],
+      ["3:1^^", 'input must be space-separated <tick>:<key> pairs, got "3:1^^"'],
+    ] as const) {
+      all[input] = `input: ${value}`;
+      expect(parseError(all.join("\n"))).toBe(`bad.lcd.txt:${input + 1}: ${message}`);
+    }
+  });
+});
+
 describe("tick fixture format (plan 23)", () => {
   const fixture: TickGolden = {
     id: "game/snake/periods",

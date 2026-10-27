@@ -17,12 +17,10 @@ import {
   type SubmenuOptions,
 } from "@hellotimber/phone-core";
 import { stockMenuGraphic } from "../resources";
-import type { StockGames } from "../widgets/snake";
-import { NO_CUES } from "./cues";
 import type { StockServices } from "./features/feature";
+import { createStockGames, type StockGames } from "./features/games";
 import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
 import { LeafBinder, type LeafPlace } from "./leaves";
-import { seedFromClock } from "../games/snake/seed";
 import { createMemoryStorage, StockEeprom } from "./eeprom";
 import type { StockPorts } from "./ports";
 import { StockSecurity } from "./security";
@@ -164,20 +162,6 @@ function entryOf(
       : { label: (child: MenuEntry) => level.label!(child.slug.value, child.order.value) }),
   };
   return new SubmenuEntry(slug, order, node.label, new MenuLevel(children), undefined, options);
-}
-
-/**
- * A phone's games holder: no suspended game, New game seeded from the clock port's minutes of
- * the day (D4 fallback, UNVERIFIED; 0 without a clock), no cue sink, and a clock that reads 0
- * unless the phone supplies the kernel time.
- */
-export function createStockGames(ports: StockPorts = {}, now: () => number = () => 0): StockGames {
-  return {
-    snake: undefined,
-    seed: () => seedFromClock(ports.clock?.()) ?? 0,
-    cues: NO_CUES,
-    now,
-  };
 }
 
 /**

@@ -4,9 +4,11 @@ import { describe, expect, it } from "vite-plus/test";
 import {
   framePeriod,
   numberTicks,
-  PERIOD_LEVELS,
   type PlayedFrame,
-} from "../scripts/game-capture-set.ts";
+  type TickRule,
+} from "../scripts/game-capture.ts";
+import { isBoardFrame, PERIOD_LEVELS, snakeTickRule } from "../scripts/game-capture-set.ts";
+import { spaceImpactTicks } from "../scripts/capture-sets/24-space-impact.ts";
 import { PLACEHOLDER_OWNERS as IMPORTER_PLACEHOLDER_OWNERS } from "../scripts/tree-capture-set.ts";
 import { PLACEHOLDER_OWNERS } from "../src/firmware/stock";
 import {
@@ -190,7 +192,7 @@ describe("plan 15 goldens", () => {
   });
 });
 
-describe("game goldens (plan 23)", () => {
+describe("game goldens (plans 23, 24)", () => {
   const games = index.filter((entry) => entry.id.startsWith("game/"));
   const load = (entry: IndexEntry): Golden =>
     parseGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
@@ -205,7 +207,13 @@ describe("game goldens (plan 23)", () => {
       dir: golden.id,
       frame,
     }));
-    return numberTicks(frames, framePeriod(frames)).at(-1)?.tick ?? -1;
+    return numberTicks(frames, tickRule(golden.id, frames)).at(-1)?.tick ?? -1;
+  }
+
+  /** How the importer numbers the ticks of a game's golden. */
+  function tickRule(id: string, frames: readonly PlayedFrame[]): TickRule {
+    if (id.startsWith("game/space-impact/")) return spaceImpactTicks("new-game");
+    return snakeTickRule(framePeriod(frames, isBoardFrame));
   }
 
   for (const entry of games.filter((e) => e.kind !== "ticks")) {

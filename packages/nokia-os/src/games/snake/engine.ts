@@ -7,7 +7,8 @@ import type { StockCue } from "../../firmware/cues";
 import { SNAKE_DATA } from "../../resources/generated/snake";
 import { headingFor, opposite } from "./keys";
 import type { Cell, Heading, Segment, SegmentPicture, SnakeRenderModel, SnakeState } from "./model";
-import { BOARD_HEIGHT, BOARD_WIDTH, createSnakeRandom, placeCreature, placeFood } from "./rng";
+import { createGameRandom } from "../random";
+import { BOARD_HEIGHT, BOARD_WIDTH, placeCreature, placeFood } from "./rng";
 
 /** Ring slots (the firmware's segment ring, modulus 299). */
 const RING = 299;
@@ -88,12 +89,12 @@ export function newSnakeGame(options: SnakeOptions): SnakeState {
     picture: i === 0 ? "tail/right" : i === 6 ? "head/right" : "body/right",
   }));
   const taken = new Set([...wallCells(options.maze), ...segments].map(key));
-  const rng = createSnakeRandom(options.seed);
+  const rng = createGameRandom(options.seed);
   const food = placeFood(rng, (x, y) => !taken.has(`${x},${y}`), []);
   return {
     level: options.level,
     maze: options.maze,
-    seed: rng.seed,
+    seed: rng.state,
     segments,
     ring: { head: start.x + 7, tail: start.x + 1 },
     heading: "right",
@@ -189,7 +190,7 @@ export function stepSnake(state: SnakeState): SnakeStep {
   };
   const cues: StockCue[] = [];
   const events: SnakeEvent[] = [];
-  const rng = createSnakeRandom(state.seed);
+  const rng = createGameRandom(state.seed);
   const occupied = new Set([...wallCells(state.maze), ...segments].map(key));
   const free = (x: number, y: number) => !occupied.has(`${x},${y}`);
 
@@ -240,7 +241,7 @@ export function stepSnake(state: SnakeState): SnakeStep {
     cues.push({ kind: "eat" }, { kind: "vibrate", ms: SNAKE_VIBRATE_MS });
     events.push({ kind: "ate", what: "food", points: state.level });
   }
-  return { state: { ...after, seed: rng.seed }, cues, events };
+  return { state: { ...after, seed: rng.state }, cues, events };
 }
 
 /**

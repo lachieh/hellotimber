@@ -12,7 +12,8 @@ import { Framebuffer } from "@hellotimber/phone-screen";
 import { paintWidget } from "../src/display/widgets";
 import { GAME_CUES, SNAKE_PERIODS } from "../src/resources";
 import { gameOver } from "../src/widgets/game-over";
-import { snakeGame, SNAKE_SETTINGS, type StockGames } from "../src/widgets/snake";
+import type { StockGames } from "../src/firmware/features/games";
+import { snakeGame, SNAKE_SETTINGS, type SuspendedSnake } from "../src/widgets/snake";
 import { flowRig, type FlowRecording, type FlowRig } from "./support/flow-rig.ts";
 import {
   expectGameTimeline,
@@ -51,7 +52,7 @@ function gameRig(
   let seeds = 0;
   let rig: FlowRig | undefined;
   const games: StockGames = options.games ?? {
-    snake: undefined,
+    suspended: {},
     seed: () => {
       seeds++;
       return options.seed ?? 44530;
@@ -64,6 +65,8 @@ function gameRig(
 }
 
 const press = (rig: FlowRig, key: PhoneKey) => rig.press(key);
+
+const suspendedSnake = (games: StockGames) => games.suspended.snake as SuspendedSnake | undefined;
 
 /**
  * Records the screen from now (the New game frame) for `durationMs`, pressing the trace's
@@ -194,7 +197,7 @@ describe("the crash, the death blink and game over (H6, H11, H14)", () => {
       const first = gameRig({ level: 1 });
       play(first.rig, t, crash + suspendAt);
       first.rig.press("navi");
-      expect(first.games.snake?.death, `${suspendAt}`).toBeDefined();
+      expect(suspendedSnake(first.games)?.death, `${suspendAt}`).toBeDefined();
       const cues: StampedCue[] = [];
       let resumed: FlowRig | undefined;
       const games: StockGames = {
@@ -221,7 +224,12 @@ describe("the crash, the death blink and game over (H6, H11, H14)", () => {
 
 describe("game-over keys (C12)", () => {
   const over = (topScore: boolean) =>
-    flowRig(() => gameOver({ topScore, score: "4", select: "new-game" }));
+    flowRig(() =>
+      gameOver({
+        ending: { kind: topScore ? "top-score" : "score", score: "4" },
+        select: "new-game",
+      }),
+    );
 
   it("ignores ▼ and other keys; the screen ends by itself", () => {
     const rig = over(false);
@@ -237,8 +245,7 @@ describe("game-over keys (C12)", () => {
     let now = 0;
     const rig = flowRig(() =>
       gameOver({
-        topScore: false,
-        score: "0",
+        ending: { kind: "score", score: "0" },
         select: "new-game",
         games: { ...games, now: () => now },
       }),
@@ -269,7 +276,7 @@ describe("suspend and Continue (H15, D10, Task 0 C8)", () => {
       expect(rig.exits.map((e) => e.options)).toEqual([{ select: "continue", row: "top" }]);
       const replay = snakeReplay(trace("ticks-l1"));
       replay.stepTo(2);
-      expect(games.snake).toEqual({ state: replay.state });
+      expect(games.suspended.snake).toEqual({ state: replay.state });
     }
   });
 
@@ -277,8 +284,8 @@ describe("suspend and Continue (H15, D10, Task 0 C8)", () => {
     const { rig, games } = gameRig({ level: 1, maze: 1 });
     play(rig, trace("maze-1"), 5600);
     rig.session.onKey({ type: "down", key: "navi" });
-    expect(games.snake?.state.crash).toBe("dead");
-    expect(games.snake?.death).toMatchObject({ step: 1 });
+    expect(suspendedSnake(games)?.state.crash).toBe("dead");
+    expect(suspendedSnake(games)?.death).toMatchObject({ step: 1 });
   });
 
   it("Continue redraws the board, stands until a key, and steps one period after it", () => {
@@ -286,11 +293,11 @@ describe("suspend and Continue (H15, D10, Task 0 C8)", () => {
     first.rig.advance(1300);
     const board = first.rig.frame();
     first.rig.press("navi");
-    const suspended = first.games.snake!;
+    const suspended = suspendedSnake(first.games)!;
 
     const { rig, games, seeds } = gameRig({ level: 1, start: "continue", games: first.games });
     expect(seeds()).toBe(0);
-    expect(games.snake).toBeUndefined();
+    expect(games.suspended.snake).toBeUndefined();
     expect(rig.frame()).toEqual(board);
     rig.advance(5000);
     expect(rig.frame()).toEqual(board);
@@ -308,7 +315,7 @@ describe("suspend and Continue (H15, D10, Task 0 C8)", () => {
     first.rig.advance(1300);
     first.rig.press("navi");
     const { games } = gameRig({ level: 1, games: first.games });
-    expect(games.snake).toBeUndefined();
+    expect(games.suspended.snake).toBeUndefined();
   });
 });
 

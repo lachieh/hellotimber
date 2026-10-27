@@ -1,6 +1,7 @@
-// Snake II's random numbers (plan 23 D4, H8, H9, H12). The generator and the placement rules
-// are the RE notes' hypotheses, kept because one seed per recorded game reproduces every food
-// and creature placement (tests/snake-rng.test.ts). Pure: no time, no I/O.
+// Snake II's placements (plan 23 D4, H8, H9): the RE notes' rules, kept because one seed per
+// recorded game reproduces every food and creature placement (tests/snake-rng.test.ts). They
+// draw from the games' shared generator (`../random.ts`, plan 24 D5). Pure: no time, no I/O.
+import type { RandomSource } from "../random";
 
 /** A board cell: x 0..19, y 0..8. */
 export interface Cell {
@@ -10,37 +11,6 @@ export interface Cell {
 
 export const BOARD_WIDTH = 20;
 export const BOARD_HEIGHT = 9;
-
-/** seed = (seed × 0x625f + 0x3623) mod 0xfff1 (H12). */
-export const RNG_MODULUS = 0xfff1;
-const MULTIPLIER = 0x625f;
-const INCREMENT = 0x3623;
-
-export interface RandomSource {
-  /** The next 16-bit draw (the new seed). */
-  next(): number;
-}
-
-export interface SnakeRandom extends RandomSource {
-  /** The generator's state: the last draw, or the seed before the first. */
-  readonly seed: number;
-}
-
-export function createSnakeRandom(seed: number): SnakeRandom {
-  if (!Number.isInteger(seed) || seed < 0 || seed >= RNG_MODULUS) {
-    throw new Error(`Snake II seed ${seed} is not an integer in 0..${RNG_MODULUS - 1}.`);
-  }
-  let state = seed;
-  return {
-    get seed() {
-      return state;
-    },
-    next() {
-      state = (state * MULTIPLIER + INCREMENT) % RNG_MODULUS;
-      return state;
-    },
-  };
-}
 
 /** Whether a cell is free of walls and snake (food and creatures do not occupy cells). */
 export type CellFree = (x: number, y: number) => boolean;

@@ -17,6 +17,7 @@ import { STATUS_DATA } from "./generated/status";
 import { TEXT_DATA } from "./generated/text";
 import { SOUND_DATA } from "./generated/sounds";
 import { WIDGET_DATA } from "./generated/widgets";
+import type { SoundProgram } from "../sound/program";
 
 export type StockFontName = "small" | "large" | "digits" | "thin";
 
@@ -249,6 +250,11 @@ export const KEYPAD_BEEP = SOUND_DATA.keypad;
 export const NOTE_SOUNDS = SOUND_DATA.noteSounds;
 /** Snake II: the meal, the crash and the top score; the vibrator's run per shake (D13). */
 export const GAME_CUES = SOUND_DATA.gameCues;
+/**
+ * The games' sounds by `<game>/<sound>` (plan 24 D13), extracted from their sound goldens by the
+ * program extractor; Space impact's arrive with its S9 goldens (plan 24 Task 12).
+ */
+export const GAME_SOUNDS: Readonly<Record<string, SoundProgram>> = {};
 /** The power-on tone (and the power key's long press): its time into the power-on. */
 export const BOOT_TONE = SOUND_DATA.bootTone;
 

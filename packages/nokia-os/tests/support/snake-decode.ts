@@ -3,7 +3,8 @@
 // Anything it cannot match throws, naming the cell. Also turns a gameplay golden into the
 // placement sequence the seed search replays (Task 5).
 import { findGoldenImage, LCD_WIDTH, type Golden } from "../../scripts/golden-format.ts";
-import { framePeriod, isBoardFrame, numberTicks } from "../../scripts/game-capture-set.ts";
+import { framePeriod, numberTicks } from "../../scripts/game-capture.ts";
+import { isBoardFrame, snakeTickRule } from "../../scripts/game-capture-set.ts";
 import type { SeedPlacement } from "../../scripts/snake-seeds.ts";
 import type { Cell, CreatureKind } from "../../src/games/snake/rng";
 import {
@@ -225,7 +226,7 @@ export function goldenBoards(id: string, maze?: SnakeMaze): TickBoard[] {
     frame: i,
   }));
   const boards: TickBoard[] = [];
-  for (const tick of numberTicks(frames, framePeriod(frames))) {
+  for (const tick of numberTicks(frames, snakeTickRule(framePeriod(frames, isBoardFrame)))) {
     if (tick.virtual) continue;
     const where = `${id} frame ${tick.last!.frame}`;
     const board = decodeBoard(tick.last!.pixels, maze, where);

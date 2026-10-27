@@ -11,6 +11,11 @@ export type StockCue =
    * death steps end (plan 16 Task 0: `sound/game/snake-top-score`).
    */
   | { readonly kind: "top-score" }
+  /**
+   * A game's sound as data (plan 24 D13): `GAME_SOUNDS[id]`, keyed `<game>/<sound>`; a new one
+   * cuts off the one playing (H19).
+   */
+  | { readonly kind: "game-sound"; readonly id: string }
   /** The vibrator: ≈480 ms per meal and at the crash (with Shakes On). */
   | { readonly kind: "vibrate"; readonly ms: number }
   /**

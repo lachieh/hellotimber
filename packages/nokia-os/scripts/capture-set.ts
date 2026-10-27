@@ -4,7 +4,7 @@
 // imported. Paths are relative to `$REF/captures/6.39`.
 // See docs/plans/13-nokia-os-foundation.md "Capture set" and "Ground truth and artefacts".
 import type { ResourceDeclarations } from "./resource-declarations.ts";
-import type { GameCaptureIo, TickFixtureSpec } from "./game-capture-set.ts";
+import type { GameCaptureIo, TickFixtureSpec } from "./game-capture.ts";
 import type { LightsCaptureIo, LightsGolden } from "./lights-format.ts";
 import {
   IMAGE_NAME,

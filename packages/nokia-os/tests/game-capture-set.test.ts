@@ -1,23 +1,26 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
-  creatureShown,
   framePeriod,
   GameCaptureError,
-  gameCaptureSet,
-  GRACE_MS,
   inputFromKeys,
-  isBoardFrame,
   numberTicks,
-  periodFixture,
-  PERIOD_LEVELS,
   playBackToBack,
-  scoreKey,
   tickName,
   tickRow,
-  tickStillSelection,
   type GameCaptureIo,
   type GameRecordingFrame,
   type PlayedFrame,
+} from "../scripts/game-capture.ts";
+import {
+  creatureShown,
+  gameCaptureSet,
+  GRACE_MS,
+  isBoardFrame,
+  periodFixture,
+  PERIOD_LEVELS,
+  scoreKey,
+  snakeTickRule,
+  tickStillSelection,
 } from "../scripts/game-capture-set.ts";
 import { LCD_HEIGHT, LCD_WIDTH } from "../scripts/golden-format.ts";
 
@@ -50,6 +53,10 @@ function recording(rows: readonly [number, Uint8Array][], endMs?: number): GameR
   }));
 }
 
+/** Snake II's ticks at `periodMs` (its grace rule included). */
+const snakeTicks = (frames: readonly PlayedFrame[], periodMs: number) =>
+  numberTicks(frames, snakeTickRule(periodMs));
+
 function played(rows: readonly [number, Uint8Array][]): PlayedFrame[] {
   return playBackToBack([{ dir: "rec", frames: recording(rows) }]).frames;
 }
@@ -69,7 +76,7 @@ describe("pixel features", () => {
 
 describe("numberTicks", () => {
   it("numbers board frames at least half a period apart, from the first board frame", () => {
-    const ticks = numberTicks(
+    const ticks = snakeTicks(
       played([
         [0, menu()],
         [56, board(0)],
@@ -87,7 +94,7 @@ describe("numberTicks", () => {
 
   it("keeps a redraw in two bursts as one tick: first frame for the time, last for the still", () => {
     const partial = board(2);
-    const ticks = numberTicks(
+    const ticks = snakeTicks(
       played([
         [0, board(0)],
         [635, board(1)],
@@ -103,7 +110,7 @@ describe("numberTicks", () => {
   });
 
   it("skips non-board frames and repeated pixels", () => {
-    const ticks = numberTicks(
+    const ticks = snakeTicks(
       played([
         [0, board(0)],
         [300, menu()],
@@ -119,7 +126,7 @@ describe("numberTicks", () => {
   });
 
   it("infers a blocked tick (no frame) from a grace-length gap", () => {
-    const ticks = numberTicks(
+    const ticks = snakeTicks(
       played([
         [0, board(0)],
         [635, board(1)],
@@ -158,7 +165,7 @@ describe("numberTicks", () => {
 });
 
 describe("inputFromKeys", () => {
-  const ticks = numberTicks(
+  const ticks = snakeTicks(
     played([
       [0, menu()],
       [56, board(0)],
@@ -199,7 +206,7 @@ describe("inputFromKeys", () => {
   });
 
   it("puts a key pressed during the grace on the blocked tick", () => {
-    const grace = numberTicks(
+    const grace = snakeTicks(
       played([
         [0, board(0)],
         [635, board(1)],
@@ -214,7 +221,7 @@ describe("inputFromKeys", () => {
 });
 
 describe("tick stills and the period fixture", () => {
-  const long = numberTicks(
+  const long = snakeTicks(
     played(
       Array.from({ length: 60 }, (_, i): [number, Uint8Array] => [
         i * 635,
@@ -238,7 +245,7 @@ describe("tick stills and the period fixture", () => {
   });
 
   it("measures the first tick and every interval of a level", () => {
-    const ticks = numberTicks(
+    const ticks = snakeTicks(
       played([
         [0, menu()],
         [56, board(0)],
@@ -261,6 +268,7 @@ describe("tick stills and the period fixture", () => {
           [16, board(2)],
           [38, board(3)],
         ]),
+        isBoardFrame,
       ),
     ).toBe(8);
   });

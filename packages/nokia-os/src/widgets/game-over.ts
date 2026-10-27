@@ -1,17 +1,25 @@
-// The games' game-over screens (plan 23 D13): the plain note, or a new top score's fireworks
-// followed by the note, as one timeline each. Shared with Space impact, Pairs II and Bantumi
-// (plan 24): parameterised by the label, the score text and where the menu returns.
+// The games' game-over screens (plan 23 D13, plan 24 D11): an ending each, as one timeline: the
+// plain score note, or a new top score's fireworks followed by the note; Bantumi's won, draw and
+// lost endings come with plan 24b's resources. Parameterised by the ending and where the menu
+// returns.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { GameOverModel } from "../display/widgets";
 import { WIDGET_TIMELINE_BY_NAME, WIDGET_TIMELINES, type StockWidgetTimeline } from "../resources";
 import type { Flow, Widget } from "./flow";
 import { Playback } from "./playback";
-import type { StockGames } from "./snake";
+import type { StockGames } from "../firmware/features/games";
+
+/**
+ * How a game ends (D11): `score` (`Game over!` / `Your score:` / the score), `top-score` (the
+ * fireworks, then `TOP SCORE:` / the score), and Bantumi's `won` (fireworks, `YOU WON!`), `draw`
+ * (`Game over!`) and `lost` (`You lost, sorry!`).
+ */
+export type GameEnding =
+  | { readonly kind: "score" | "top-score"; readonly score: string }
+  | { readonly kind: "won" | "draw" | "lost" };
 
 export interface GameOverOptions {
-  /** A new top score: the fireworks and `TOP SCORE:`; else `Your score:`. */
-  readonly topScore: boolean;
-  readonly score: string;
+  readonly ending: GameEnding;
   /** Where the game menu returns: the child selected, on the window's top row (Task 0 H14). */
   readonly select: string;
   /**
@@ -34,21 +42,26 @@ function named(name: string): StockWidgetTimeline {
  */
 class GameOverWidget implements Widget {
   readonly #options: GameOverOptions;
+  readonly #ending: Extract<GameEnding, { score: string }>;
   readonly #playback: Playback;
 
   constructor(options: GameOverOptions) {
+    const ending = options.ending;
+    if (!("score" in ending)) {
+      throw new Error(`Game ending "${ending.kind}": resource missing (plan 24b).`);
+    }
     this.#options = options;
-    this.#playback = new Playback(
-      named(options.topScore ? "game-over-fireworks" : "game-over-note"),
-    );
+    this.#ending = ending;
+    const topScore = ending.kind === "top-score";
+    this.#playback = new Playback(named(topScore ? "game-over-fireworks" : "game-over-note"));
   }
 
   render(): GameOverModel {
     return {
       kind: "game-over",
       frame: this.#playback.frame,
-      label: this.#options.topScore ? "TOP SCORE:" : "Your score:",
-      score: this.#options.score,
+      label: this.#ending.kind === "top-score" ? "TOP SCORE:" : "Your score:",
+      score: this.#ending.score,
     };
   }
 

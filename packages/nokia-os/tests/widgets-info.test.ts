@@ -9,7 +9,7 @@ import { WIDGET_TIMELINE_BY_NODE, WIDGET_TIMELINES } from "../src/resources";
 import type { Widget } from "../src/widgets/flow";
 import { infoPages, type InfoPage } from "../src/widgets/info-pages";
 import { infoScreen } from "../src/widgets/info-screen";
-import { levelBar, snakeLevel } from "../src/widgets/level-bar";
+import { levelBar, levelPage } from "../src/widgets/level-bar";
 import { note } from "../src/widgets/note";
 import { OptionListWidget } from "../src/widgets/option-list";
 import { promptFromLayout, splitPromptLines } from "../src/widgets/prompt";
@@ -290,7 +290,9 @@ describe("Snake II's Level page (plan 23 D11, C1)", () => {
   const KEY = "games/snake/level";
   /** The page over `settings` (virgin: 175), after `downs` ▼ presses. */
   function page(settings: StockSettings = virgin(), downs = 0) {
-    const rig = flowRig(() => snakeLevel({ settings, key: KEY, softkey: "OK" }));
+    const rig = flowRig(() =>
+      levelPage({ settings, key: KEY, max: 9, bars: "level/snake", softkey: "OK" }),
+    );
     for (let i = 0; i < downs; i++) rig.press("down");
     return { rig, settings };
   }

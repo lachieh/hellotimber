@@ -4,13 +4,14 @@ import { describe, expect, it } from "vite-plus/test";
 import type { SoundGolden } from "../scripts/sound-format.ts";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
+import type { SoundProgram } from "../src/sound/program";
 import { SoundSequencer } from "../src/sound/sequencer";
 import { C_HOLD_BEEP_MS, StockSounder, type UserRingingTones } from "../src/sound/sounder";
 import { LEVEL_REPEAT } from "../src/widgets/level-bar";
 import type { StockSoundEvent } from "../src/index";
 import { KEYPAD_BEEP, RINGING_TONES } from "../src/resources";
 import { seededStorage } from "./support/rig.ts";
-import { soundRig } from "./support/sound-scenarios.ts";
+import { soundRig, soundStorage, type SettingChoices } from "./support/sound-scenarios.ts";
 import { expectSoundTimeline, type RecordedSound } from "./support/sound.ts";
 
 const BEEP = { kind: "sounding", hz: 900, volume: 0x9104 } as const;
@@ -306,3 +307,66 @@ describe("plan 27's sounder hooks (D10)", () => {
     ]);
   });
 });
+
+describe("game-sound cues (plan 24 D13: sounds as data, gated like Snake II's)", () => {
+  const SHOT: SoundProgram = {
+    id: "test/shot",
+    steps: [
+      { ms: 39, buzzer: { hz: 440, volume: 6 } },
+      { ms: 39, buzzer: { hz: 466, volume: 6 } },
+    ],
+  };
+  const BONUS: SoundProgram = {
+    id: "test/bonus",
+    steps: [{ ms: 50, buzzer: { hz: 2637, volume: 6 } }],
+  };
+
+  function sounderAt(state: "virgin" | "factory", choices: SettingChoices = {}) {
+    const events: StockSoundEvent[] = [];
+    const sequencer = new SoundSequencer((event) => events.push(event));
+    const settings = createStockSettings(new StockEeprom(soundStorage(state, choices)));
+    const sounder = new StockSounder(sequencer, settings, () => 0, {
+      gameSounds: { "test/shot": SHOT, "test/bonus": BONUS },
+    });
+    const cue = (id: string, atMs: number) => sounder.cue({ kind: "game-sound", id }, atMs);
+    return { events, cue, finish: () => sequencer.advance(10_000) };
+  }
+
+  it("plays the program of its id at the cue's time", () => {
+    const { events, cue, finish } = sounderAt("factory");
+    cue("test/shot", 1000);
+    finish();
+    expect(events).toEqual([buzz(1000, 440), buzz(1039, 466), buzz(1078, null)].map(at6));
+  });
+
+  it("a second game sound cuts the first off", () => {
+    const { events, cue, finish } = sounderAt("factory");
+    cue("test/shot", 1000);
+    cue("test/bonus", 1020);
+    finish();
+    expect(events).toEqual([buzz(1000, 440), buzz(1020, 2637), buzz(1070, null)].map(at6));
+  });
+
+  it("is silent with Warning tones Off or unset, or with Games › Settings › Sounds Off", () => {
+    for (const [state, choices] of [
+      ["factory", { "tones/warning-tones": 1 }],
+      ["factory", { "games/settings/sounds": 0 }],
+      ["virgin", {}],
+    ] as const) {
+      const { events, cue, finish } = sounderAt(state, choices);
+      cue("test/shot", 1000);
+      finish();
+      expect(events, JSON.stringify(choices)).toEqual([]);
+    }
+  });
+
+  it("throws on an id with no program, whatever the settings", () => {
+    expect(() => sounderAt("factory").cue("test/nope", 0)).toThrow('No game sound "test/nope"');
+    expect(() => sounderAt("virgin").cue("test/nope", 0)).toThrow('No game sound "test/nope"');
+  });
+});
+
+/** A buzzer event at volume 6 (the game programs' level). */
+function at6(event: StockSoundEvent): StockSoundEvent {
+  return event.output === "buzzer" && event.hz !== null ? { ...event, volume: 6 } : event;
+}

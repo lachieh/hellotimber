@@ -47,10 +47,14 @@ export const INPUT_KEYS: readonly string[] = [
 /**
  * One key of a game golden's `input` (plan 23): pressed after the frame of engine tick `tick`
  * (0 = the New game frame) and before tick `tick + 1`. Keys on one tick are pressed in order.
+ * A press is a tap (released before the next tick) unless a `release` of its key follows
+ * (plan 24, `<tick>:<key>^`): then the key is held until after the frame of that tick.
  */
 export interface GoldenKeyPress {
   readonly tick: number;
   readonly key: string;
+  /** The key goes up instead (plan 24); it follows a press of the same key. */
+  readonly release?: true;
 }
 
 export interface GoldenImage {
@@ -157,7 +161,8 @@ export function serializeGolden(golden: Golden): string {
     out.push(`scenario: ${golden.scenario ?? ""}`, `covers: ${(golden.covers ?? []).join(" ")}`);
   }
   if (golden.input !== undefined) {
-    out.push(`input: ${golden.input.map((press) => `${press.tick}:${press.key}`).join(" ")}`);
+    const pair = (press: GoldenKeyPress) => `${press.tick}:${press.key}${press.release ? "^" : ""}`;
+    out.push(`input: ${golden.input.map(pair).join(" ")}`);
   }
   out.push("");
   for (const image of golden.images) {
@@ -362,7 +367,7 @@ export function parseGolden(text: string, file: string): Golden {
   };
 }
 
-const INPUT_PAIR = /^(0|[1-9][0-9]*):(\S+)$/;
+const INPUT_PAIR = /^(0|[1-9][0-9]*):([^\s^]+)(\^?)$/;
 
 function parseInput(value: string, fail: (message: string) => never): GoldenKeyPress[] {
   const out: GoldenKeyPress[] = [];
@@ -371,6 +376,7 @@ function parseInput(value: string, fail: (message: string) => never): GoldenKeyP
     if (!match) fail(`input must be space-separated <tick>:<key> pairs, got "${value}"`);
     const tick = Number(match![1]);
     const key = match![2]!;
+    const release = match![3] === "^";
     if (!INPUT_KEYS.includes(key)) {
       fail(`input key must be a phone key (0-9, *, #, up, down, navi, c, power), got "${key}"`);
     }
@@ -378,7 +384,12 @@ function parseInput(value: string, fail: (message: string) => never): GoldenKeyP
     if (previous !== undefined && tick < previous.tick) {
       fail(`input ticks must ascend: ${tick} after ${previous.tick}`);
     }
-    out.push({ tick, key });
+    if (release) {
+      const last = out.filter((press) => press.key === key).at(-1);
+      if (last === undefined || last.release)
+        fail(`input release ${pair} follows no press of ${key}`);
+    }
+    out.push(release ? { tick, key, release } : { tick, key });
   }
   return out;
 }

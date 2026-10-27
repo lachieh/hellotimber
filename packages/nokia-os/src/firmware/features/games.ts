@@ -1,6 +1,147 @@
-// Games (menu 8) other than Snake II (plan 24 implements Space impact, Bantumi and Pairs II):
-// their fixed Level bars, virgin top scores, Top score's return, and Club Nokia's ID query.
-import type { StockFeature } from "./feature";
+// Games (menu 8; plans 23 and 24): the games holder every game shares (one suspended state per
+// game, the New-game seed, cues and the kernel clock), the table of game levels that lists each
+// level's Continue and routes its Top score and Level returns (plan 24 D10), and the games that
+// are not built yet: their fixed Level bars, virgin top scores, and Club Nokia's ID query.
+import { gameSeed } from "../../games/seed";
+import type { Widget } from "../../widgets/flow";
+import { snakeGame } from "../../widgets/snake";
+import { NO_CUES, type StockCueSink } from "../cues";
+import type { StockPorts } from "../ports";
+import { nextSibling } from "../tree";
+import type { LeadEntry, NoteEndBinding, StockFeature, StockServices } from "./feature";
+
+/**
+ * The games that suspend (D10). Pairs II's two modes are provisional: whether they share one
+ * state is plan 24c's question (`pairs2/out-e6`).
+ */
+export type StockGameId =
+  | "snake"
+  | "space-impact"
+  | "bantumi"
+  | "pairs-time-trial"
+  | "pairs-puzzle";
+
+/**
+ * What the games share per phone (like the settings store): each game's suspended state, the
+ * seed New game takes, the cue sink and the kernel clock that stamps cues.
+ */
+export interface StockGames {
+  /**
+   * A state per suspended game (D10: Snake II and Space impact keep Continue together, in both
+   * orders, plan 24 Task 0 S2). Each game reads and writes only its own entry.
+   */
+  suspended: Partial<Record<StockGameId, unknown>>;
+  /** The seed New game writes (D5). */
+  seed(): number;
+  readonly cues: StockCueSink;
+  now(): number;
+  /** Phone events that suspend an active game (plan 21). */
+  events?(): number;
+}
+
+/**
+ * A phone's games holder: no suspended game, New game seeded from the clock port's minutes of
+ * the day (D5 fallback, UNVERIFIED; 0 without a clock), no cue sink, and a clock that reads 0
+ * unless the phone supplies the kernel time.
+ */
+export function createStockGames(ports: StockPorts = {}, now: () => number = () => 0): StockGames {
+  return {
+    suspended: {},
+    seed: () => gameSeed(ports.clock?.(), ports.date?.()) ?? 0,
+    cues: NO_CUES,
+    now,
+  };
+}
+
+/** Power-off loses every suspended game; standby keeps them (plan 23 Task 0 C8). */
+export function powerOffGames(games: StockGames): void {
+  games.suspended = {};
+}
+
+/** A game's level in the Games menu. */
+export interface GameLevel {
+  /** The level's node (`8-1`). */
+  readonly number: string;
+  /** Its New game (`8-1-1`), which discards the suspended game. */
+  readonly newGame: string;
+  readonly game: StockGameId;
+  /** The flow Continue opens: the board stands until a key, which then reaches the game. */
+  readonly continue: (services: StockServices) => () => Widget;
+  /**
+   * Its Top score note, which returns to Continue while the game is suspended and to New game
+   * otherwise, on the bottom row unless `row` is "top".
+   */
+  readonly topScore?: { readonly number: string; readonly row?: "top" };
+  /**
+   * Its Level page: OK while the game is suspended discards the game, and the selection moves
+   * to the entry after Level (plan 23 Task 0 C8).
+   */
+  readonly level?: string;
+}
+
+const CONTINUE = { slug: "continue", label: "Continue" } as const;
+
+/** The levels whose games suspend; a plan adds its game with one line. */
+export const GAME_LEVELS: readonly GameLevel[] = [
+  {
+    number: "8-1",
+    newGame: "8-1-1",
+    game: "snake",
+    continue:
+      ({ games, settings }) =>
+      () =>
+        snakeGame({ games, settings, start: "continue" }),
+    topScore: { number: "8-1-4" },
+    level: "8-1-2",
+  },
+];
+
+export interface GameLevelTables {
+  /** Continue heading each level while its game is suspended (positional numbers follow). */
+  readonly leads: Readonly<Record<string, LeadEntry>>;
+  readonly noteEnds: Readonly<Record<string, (services: StockServices) => NoteEndBinding>>;
+  /** What OK on each Level page does: the slug it selects, if any. */
+  readonly levelStores: Readonly<Record<string, (services: StockServices) => string | undefined>>;
+}
+
+/** The tables `levels` contribute; a game or node listed twice throws. */
+export function gameLevelTables(levels: readonly GameLevel[]): GameLevelTables {
+  const games = new Set<StockGameId>();
+  const leads: Record<string, LeadEntry> = {};
+  const noteEnds: Record<string, (services: StockServices) => NoteEndBinding> = {};
+  const levelStores: Record<string, (services: StockServices) => string | undefined> = {};
+  for (const level of levels) {
+    const { game } = level;
+    if (games.has(game) || level.number in leads) {
+      throw new Error(`Game level ${level.number} (${game}) is listed twice.`);
+    }
+    games.add(game);
+    leads[level.number] = {
+      ...CONTINUE,
+      shown: ({ games }) => games.suspended[game] !== undefined,
+      open: level.continue,
+    };
+    const topScore = level.topScore;
+    if (topScore !== undefined) {
+      noteEnds[topScore.number] = ({ games }) => ({
+        select: games.suspended[game] === undefined ? "new-game" : CONTINUE.slug,
+        ...(topScore.row === undefined ? {} : { row: topScore.row }),
+      });
+    }
+    const page = level.level;
+    if (page !== undefined) {
+      const after = nextSibling(page);
+      levelStores[page] = ({ games }) => {
+        if (games.suspended[game] === undefined) return undefined;
+        delete games.suspended[game];
+        return after;
+      };
+    }
+  }
+  return { leads, noteEnds, levelStores };
+}
+
+export const GAME_LEVEL_TABLES: GameLevelTables = gameLevelTables(GAME_LEVELS);
 
 export const gamesFeature: StockFeature = {
   name: "games",
@@ -10,13 +151,15 @@ export const gamesFeature: StockFeature = {
     "8-4-1-1": "24", // Pairs II › Time trial › New game
     "8-4-2-1": "24", // Pairs II › Puzzle › New game
   },
+  leads: GAME_LEVEL_TABLES.leads,
   widgets: {
     // The fixed level bar each game's Level shows (virgin EEPROM; Pairs II's two modes share
     // one) until plan 24 measures them.
     levelBars: { "8-3-2": "level/8-3", "8-4-1-2": "level/8-4", "8-4-2-2": "level/8-4" },
-    // Top score returns to New game on the top row, the window rebuilt at it (`New game / Top
-    // score / Score IDs`, `tree/08-games/8-2-2.leaf`, `8-4-1-3.leaf`, `8-4-2-3.leaf` image m).
     noteEnds: {
+      ...GAME_LEVEL_TABLES.noteEnds,
+      // Top score returns to New game on the top row, the window rebuilt at it (`New game / Top
+      // score / Score IDs`, `tree/08-games/8-2-2.leaf`, `8-4-1-3.leaf`, `8-4-2-3.leaf` image m).
       "8-2-2": { select: "new-game", row: "top" },
       "8-4-*-3": { select: "new-game", row: "top" },
     },
@@ -35,11 +178,17 @@ export const gamesFeature: StockFeature = {
     },
   },
   settings: {
-    // `Top score:` / the score: uninitialised game EEPROM (Space impact) and zero (Pairs II).
-    virginTexts: [
+    // `Top score:` / the score (D12): uninitialised game EEPROM (Space impact: 45) and zero
+    // (Pairs II). The games write them; Restore keeps them, as Snake II's (v5.79 kept them).
+    virginNumbers: [
       { key: "games/space-impact/top-score", number: "8-2-2", line: 1 },
       { key: "games/pairs-ii/time-trial/top-score", number: "8-4-1-3", line: 1 },
       { key: "games/pairs-ii/puzzle/top-score", number: "8-4-2-3", line: 1 },
+    ],
+    restoreKeeps: [
+      "games/space-impact/top-score",
+      "games/pairs-ii/time-trial/top-score",
+      "games/pairs-ii/puzzle/top-score",
     ],
   },
 };

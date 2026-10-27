@@ -137,7 +137,6 @@ describe("virgin-EEPROM settings (D10)", () => {
     expect(virgin.texts).toMatchObject({
       "messages/message-settings/set-1/message-centre-number": "+1234567890",
       "messages/voice-mailbox-number": "793000333",
-      "games/pairs-ii/puzzle/top-score": "0",
       "games/snake/score-ids/last-score-id": "ç",
       "games/snake/score-ids/top-score-id": "ÆG",
       "games/settings/club-nokia-id": "T",
@@ -145,9 +144,15 @@ describe("virgin-EEPROM settings (D10)", () => {
     });
   });
 
-  it("stores Snake II's level and top score as numbers: 175 and 45 (plan 23 D2, D9)", () => {
-    expect(virgin.numbers).toEqual({ "games/snake/level": 175, "games/snake/top-score": 45 });
-    expect(virgin.texts["games/snake/top-score"]).toBeUndefined();
+  it("stores the games' levels and top scores as numbers (plan 23 D2, D9; plan 24 D12)", () => {
+    expect(virgin.numbers).toEqual({
+      "games/snake/level": 175,
+      "games/snake/top-score": 45,
+      "games/space-impact/top-score": 45,
+      "games/pairs-ii/time-trial/top-score": 0,
+      "games/pairs-ii/puzzle/top-score": 0,
+    });
+    for (const key of Object.keys(virgin.numbers)) expect(virgin.texts[key]).toBeUndefined();
   });
 
   it("leaves the Clock pages to the host ports", () => {
@@ -447,7 +452,7 @@ describe("factory state (D5)", () => {
     ).toEqual(["games/settings/lights"]);
   });
 
-  it("keeps RESTORE_KEEPS (the welcome note, the top score, the Dictionary) and resets the rest", () => {
+  it("keeps RESTORE_KEEPS (the welcome note, the top scores, the Dictionary) and resets the rest", () => {
     const { storage, settings } = persistent();
     settings.choose(DICTIONARY_KEY, 0);
     settings.choose("tones/keypad-tones", 0);
@@ -462,7 +467,10 @@ describe("factory state (D5)", () => {
     });
     expect(factory.numbers).toEqual({ "games/snake/top-score": 105 });
     expect([...RESTORE_KEEPS].sort()).toEqual([
+      "games/pairs-ii/puzzle/top-score",
+      "games/pairs-ii/time-trial/top-score",
       "games/snake/top-score",
+      "games/space-impact/top-score",
       DICTIONARY_KEY,
       WELCOME_NOTE_KEY,
     ]);

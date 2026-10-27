@@ -4,7 +4,7 @@
 // ends in the game-over screen (D13), writing a new top score (D9).
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { SnakeModel } from "../display/widgets";
-import type { StockCueSink } from "../firmware/cues";
+import type { StockGames } from "../firmware/features/games";
 import type { StockSettings } from "../firmware/settings";
 import { blinkSnake, newSnakeGame, snakeKey, snakeRender, stepSnake } from "../games/snake/engine";
 import type { SnakeState } from "../games/snake/model";
@@ -30,22 +30,6 @@ export const SNAKE_SETTINGS = {
 export interface SuspendedSnake {
   readonly state: SnakeState;
   readonly death?: { readonly step: number; readonly leftMs: number };
-}
-
-/**
- * What the games share per phone (like the settings store): the suspended game, the seed New
- * game takes, the cue sink and the kernel clock that stamps cues.
- */
-export interface StockGames {
-  snake: SuspendedSnake | undefined;
-  seed(): number;
-  readonly cues: StockCueSink;
-  now(): number;
-  /**
-   * Plan 21: how many of the phone's events (an alert falling due) have happened; a game in play
-   * suspends to its menu when it grows (plan21 reminders/alert-elsewhere-snake). Default none.
-   */
-  events?(): number;
 }
 
 export interface SnakeGameOptions {
@@ -82,7 +66,7 @@ class SnakeGameWidget implements Widget {
     this.#settings = settings;
     this.#events = games.events?.() ?? 0;
     if (start === "continue") {
-      const suspended = games.snake;
+      const suspended = games.suspended.snake as SuspendedSnake | undefined;
       if (suspended === undefined) throw new Error("Continue without a suspended Snake II game.");
       this.#state = suspended.state;
       this.#phase = {
@@ -98,7 +82,7 @@ class SnakeGameWidget implements Widget {
       });
       this.#phase = { kind: "playing", leftMs: tickTable(SNAKE_FIRST_TICK, level) };
     }
-    games.snake = undefined;
+    delete games.suspended.snake;
   }
 
   render(): SnakeModel {
@@ -215,8 +199,7 @@ class SnakeGameWidget implements Widget {
     }
     flow.replace(
       gameOver({
-        topScore: this.#topScore,
-        score: String(score),
+        ending: { kind: this.#topScore ? "top-score" : "score", score: String(score) },
         select: "new-game",
         games: this.#games,
       }),
@@ -241,7 +224,11 @@ class SnakeGameWidget implements Widget {
         : phase.kind === "waiting"
           ? phase.death
           : undefined;
-    this.#games.snake = { state: this.#state, ...(death === undefined ? {} : { death }) };
+    const suspended: SuspendedSnake = {
+      state: this.#state,
+      ...(death === undefined ? {} : { death }),
+    };
+    this.#games.suspended.snake = suspended;
     flow.back(1, { select: "continue", row: "top" });
   }
 }

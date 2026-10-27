@@ -15,7 +15,6 @@ import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { composerOf } from "./features/composer";
 import { invalidShortcut } from "./leaves";
 import {
-  createStockGames,
   createStockMenu,
   STOCK_SHORTCUT_WINDOW_MS,
   stockMessaging,
@@ -25,6 +24,7 @@ import { openBox } from "../messages/read";
 import { StockFlowApplication } from "../widgets/flow";
 import { applyPreload, checkImei, checkPreload, type StockPreload } from "./preload";
 import { createSyntheticNetwork, type StockNetworkPort } from "../messages/network";
+import { createStockGames, powerOffGames } from "./features/games";
 import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { standbyList } from "../phone-book/flows";
@@ -161,7 +161,7 @@ export function createStockPhone(config: StockPhoneConfig): Phone {
  * `createStockPhone` with internal options. The phone owns its EEPROM over `config.storage`
  * (read once here, so a malformed record throws now), its settings store and security code over
  * it (the lockout timed by the kernel clock, the SIM from `config.sim`), its boot gates, and its
- * games holder (the suspended game), which power-off clears.
+ * games holder (the suspended games), which power-off clears.
  */
 export function createStockPhoneWith(
   config: StockPhoneConfig,
@@ -389,7 +389,7 @@ export function createStockPhoneWith(
   let poweredOn = false;
   let booting = false;
   phone.subscribe((snapshot) => {
-    if (!snapshot.poweredOn) games.snake = undefined;
+    if (!snapshot.poweredOn) powerOffGames(games);
     // Plan 18 D9: messages delivered while off land once power-on reaches standby.
     if (snapshot.poweredOn && snapshot.screen.kind === "standby") {
       messaging.atStandby();

@@ -22,7 +22,7 @@ import {
   type SourceChoice,
 } from "./capture-set.ts";
 import { captureSets } from "./capture-registry.ts";
-import type { GameCaptureIo, GameKeyRow } from "./game-capture-set.ts";
+import type { GameCaptureIo, GameKeyRow } from "./game-capture.ts";
 import {
   GOLDEN_INDEX_DIR,
   indexedPlans,
@@ -421,7 +421,7 @@ function captureIo(root: string): TreeCaptureIo {
   };
 }
 
-/** Reads plan 23 recordings (pixels) and their keys.csv for the game set. */
+/** Reads game recordings (pixels) and their keys.csv for the game sets (plans 23, 24). */
 function gameIo(root: string): GameCaptureIo {
   return {
     recording(dir: string) {
@@ -440,13 +440,20 @@ function gameIo(root: string): GameCaptureIo {
       const path = join(root, dir, "keys.csv");
       if (!existsSync(path)) return undefined;
       const lines = readFileSync(path, "utf8").trim().split("\n");
-      if (lines[0] !== "tick,key,press_ms") fail(`${path}: unexpected header "${lines[0]}"`);
+      // Plan 23 logs presses; plan 24 also logs each release.
+      const releases = lines[0] === "tick,key,press_ms,release_ms";
+      if (lines[0] !== "tick,key,press_ms" && !releases) {
+        fail(`${path}: unexpected header "${lines[0]}"`);
+      }
       return lines.slice(1).map((line, i) => {
-        const [tick, key, pressMs] = line.split(",");
-        if (key === undefined || pressMs === undefined || !Number.isFinite(Number(pressMs))) {
+        const [tick, key, pressMs, releaseMs] = line.split(",");
+        const number = (value: string | undefined) =>
+          value !== undefined && Number.isFinite(Number(value));
+        if (key === undefined || !number(pressMs) || (releases && !number(releaseMs))) {
           fail(`${path}:${i + 2}: bad row "${line}"`);
         }
-        return { tick: Number(tick), key: key!, pressMs: Number(pressMs) };
+        const row = { tick: Number(tick), key: key!, pressMs: Number(pressMs) };
+        return releases ? { ...row, releaseMs: Number(releaseMs) } : row;
       });
     },
   };
