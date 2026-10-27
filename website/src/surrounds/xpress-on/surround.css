@@ -1,0 +1,823 @@
+@font-face {
+  font-family: "XP Archivo";
+  src: url("/surrounds/xpress-on/fonts/archivo-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "XP Archivo";
+  src: url("/surrounds/xpress-on/fonts/archivo-italic-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "XP VT323";
+  src: url("/surrounds/xpress-on/fonts/vt323-latin.woff2") format("woff2");
+  font-display: swap;
+}
+
+@property --wash {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #efe7d2;
+}
+
+.sr-xpress-on {
+  --ink: #1b1d22;
+  --ink-soft: #4a4c52;
+  --stock: #fbf9f3;
+  --stock-edge: #ddd6c6;
+  --rubber: #2a2e35;
+  --sticker: #ffd21f;
+  --focus: #0f2f86;
+  --board: color-mix(in oklab, #e8e4d9 78%, var(--wash));
+  --board-hole: color-mix(in oklab, #5d574c 80%, var(--wash));
+  --phone-h: clamp(440px, calc(100dvh - 196px), 900px);
+  --phone-w: calc(var(--phone-h) * 0.47);
+
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  color: var(--ink);
+  font-family: "XP Archivo", system-ui, sans-serif;
+  font-stretch: 100%;
+  font-size: 15px;
+  line-height: 1.4;
+  background-color: var(--board);
+  transition: --wash 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  scrollbar-color: color-mix(in oklab, var(--board-hole) 70%, transparent) transparent;
+}
+
+.sr-xpress-on ::selection {
+  background: var(--sticker);
+  color: var(--ink);
+}
+
+.sr-xpress-on h2,
+.sr-xpress-on p,
+.sr-xpress-on ul,
+.sr-xpress-on dl,
+.sr-xpress-on dd {
+  margin: 0;
+}
+
+.sr-xpress-on ul {
+  padding: 0;
+  list-style: none;
+}
+
+.sr-xpress-on button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.sr-xpress-on :is(button, a):focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* ── the wall ─────────────────────────────────────────────────────────── */
+
+.sr-xpress-on .xp-wall {
+  position: relative;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    "covers hero keys"
+    "badge  hero settings"
+    "shelf  shelf shelf";
+  column-gap: clamp(20px, 3vw, 56px);
+  row-gap: 20px;
+  padding: 18px clamp(20px, 3vw, 48px) 0;
+  /* pegboard: a hole, its lit lower lip, and a spotlight on the hanging phone */
+  background:
+    radial-gradient(
+      ellipse 46% 62% at 50% 44%,
+      color-mix(in oklab, var(--wash) 58%, transparent),
+      transparent 72%
+    ),
+    radial-gradient(circle at 50% 50%, var(--board-hole) 0 2.6px, transparent 3.2px) 0 0 / 26px 26px,
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7) 0 2.6px, transparent 3.2px) 0 1px /
+      26px 26px;
+}
+
+/* ── the hanging phone ────────────────────────────────────────────────── */
+
+.sr-xpress-on .xp-hero {
+  grid-area: hero;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 26px;
+}
+
+.sr-xpress-on .xp-hook {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 40px;
+  height: 48px;
+  transform: translateX(-50%);
+  z-index: 2;
+  filter: drop-shadow(0 3px 3px rgba(30, 26, 20, 0.35));
+}
+
+.sr-xpress-on .xp-display {
+  position: relative;
+  width: calc(var(--phone-w) + 40px);
+  border-radius: 10px 10px 18px 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 30%),
+    color-mix(in oklab, var(--stock) 90%, var(--wash));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 18px 40px -18px rgba(40, 32, 20, 0.5),
+    0 3px 8px rgba(40, 32, 20, 0.18);
+}
+
+.sr-xpress-on .xp-display-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 12px;
+}
+
+.sr-xpress-on .xp-wordmark {
+  font-weight: 850;
+  font-style: italic;
+  font-stretch: 118%;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.sr-xpress-on .xp-phone {
+  height: var(--phone-h);
+  width: var(--phone-w);
+  margin: 0 auto;
+  padding-bottom: 8px;
+}
+
+.sr-xpress-on .xp-tryme {
+  position: absolute;
+  top: 46px;
+  right: -46px;
+  display: grid;
+  place-content: center;
+  width: 92px;
+  aspect-ratio: 1;
+  background: var(--sticker);
+  clip-path: polygon(
+    50% 0%,
+    58.9% 11%,
+    71.7% 5%,
+    74.9% 18.7%,
+    89.1% 18.8%,
+    86% 32.6%,
+    98.7% 38.9%,
+    90% 50%,
+    98.7% 61.1%,
+    86% 67.4%,
+    89.1% 81.2%,
+    74.9% 81.3%,
+    71.7% 95%,
+    58.9% 89%,
+    50% 100%,
+    41.1% 89%,
+    28.3% 95%,
+    25.1% 81.3%,
+    10.9% 81.2%,
+    14% 67.4%,
+    1.3% 61.1%,
+    10% 50%,
+    1.3% 38.9%,
+    14% 32.6%,
+    10.9% 18.8%,
+    25.1% 18.7%,
+    28.3% 5%,
+    41.1% 11%
+  );
+  transform: rotate(12deg);
+  text-align: center;
+  font-weight: 900;
+  font-style: italic;
+  font-stretch: 110%;
+  font-size: 20px;
+  line-height: 0.88;
+  text-transform: uppercase;
+  color: #b3120c;
+  pointer-events: none;
+}
+
+.sr-xpress-on .xp-tryme span {
+  display: block;
+}
+
+/* the die-cut euro slot every hanging card carries */
+.sr-xpress-on .xp-slot,
+.sr-xpress-on .xp-hang {
+  display: block;
+  width: 34px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--board-hole);
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.45),
+    0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+/* ── shelf edge with the LCD price label ─────────────────────────────── */
+
+.sr-xpress-on .xp-shelf {
+  grid-area: shelf;
+  margin: 0 calc(-1 * clamp(20px, 3vw, 48px));
+  padding: 12px clamp(20px, 3vw, 48px) 14px;
+  background: linear-gradient(180deg, #f6f5f1 0, #dcdad3 100%);
+  border-top: 1px solid #fff;
+  box-shadow: 0 -10px 22px -12px rgba(30, 26, 20, 0.45);
+}
+
+.sr-xpress-on .xp-label {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 6px;
+  border-radius: 4px;
+  /* the clear ticket channel the label slides into */
+  background: linear-gradient(180deg, #a8adb1, #cfd3d6 40%, #9aa0a5);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.sr-xpress-on .xp-lcd {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr) minmax(0, 1.2fr);
+  gap: 18px;
+  padding: 8px 16px;
+  border-radius: 2px;
+  background: #a9bf8c;
+  box-shadow:
+    inset 0 0 0 1px rgba(30, 42, 20, 0.4),
+    inset 0 6px 12px rgba(30, 42, 20, 0.18);
+  color: #17210f;
+  font-family: "XP VT323", ui-monospace, monospace;
+}
+
+.sr-xpress-on .xp-lcd-field {
+  min-width: 0;
+}
+
+.sr-xpress-on .xp-lcd dt {
+  font-size: 15px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #2f4021;
+}
+
+.sr-xpress-on .xp-lcd dd {
+  font-size: 24px;
+  line-height: 1.05;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sr-xpress-on .xp-lcd-screen dd {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* ── cover packs ──────────────────────────────────────────────────────── */
+
+.sr-xpress-on .xp-covers {
+  grid-area: covers;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.sr-xpress-on .xp-rail-title {
+  align-self: stretch;
+  text-align: center;
+  font-weight: 850;
+  font-style: italic;
+  font-stretch: 116%;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  padding: 8px 14px 9px;
+  background: #c8160f;
+  color: #fff;
+  border-radius: 3px;
+  box-shadow: 0 6px 14px -8px rgba(60, 10, 0, 0.6);
+}
+
+.sr-xpress-on .xp-cover-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px 16px;
+}
+
+.sr-xpress-on .xp-pack {
+  --pack-w: clamp(98px, 9vw, 136px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--pack-w);
+  padding: 7px 0 0;
+  border: 0;
+  border-radius: 6px;
+  background: var(--stock);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 10px 18px -10px rgba(40, 32, 20, 0.55),
+    0 2px 4px rgba(40, 32, 20, 0.16);
+  transform-origin: 50% 12px;
+  transition:
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sr-xpress-on .xp-pack:hover,
+.sr-xpress-on .xp-pack:focus-visible {
+  transform: rotate(-3deg);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 16px 22px -10px rgba(40, 32, 20, 0.55),
+    0 2px 4px rgba(40, 32, 20, 0.16);
+}
+
+.sr-xpress-on .xp-pack[aria-pressed="true"] {
+  box-shadow:
+    0 0 0 3px var(--band),
+    0 12px 20px -10px rgba(40, 32, 20, 0.55);
+}
+
+.sr-xpress-on .xp-blister {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: calc(100% - 18px);
+  aspect-ratio: 0.72;
+  margin-top: 6px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--band) 14%, #eef0f0);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+    inset 0 -8px 12px rgba(0, 0, 0, 0.08),
+    0 2px 3px rgba(0, 0, 0, 0.14);
+}
+
+/* the blister's moulded highlight: a hard specular stripe that slides as the pack swings */
+.sr-xpress-on .xp-blister::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+      112deg,
+      transparent 32%,
+      rgba(255, 255, 255, 0.8) 38%,
+      rgba(255, 255, 255, 0.15) 44%,
+      transparent 50%
+    )
+    0 0 / 220% 100% no-repeat;
+  background-position: 70% 0;
+  transition: background-position 620ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sr-xpress-on .xp-pack:is(:hover, :focus-visible) .xp-blister::after {
+  background-position: 20% 0;
+}
+
+.sr-xpress-on .xp-cover-art {
+  width: 62%;
+  height: auto;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.22));
+}
+
+.sr-xpress-on .xp-pack-band {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  padding: 6px 8px 7px;
+  border-radius: 0 0 6px 6px;
+  background: var(--band);
+  color: var(--band-ink);
+  text-align: left;
+}
+
+.sr-xpress-on .xp-pack-name {
+  font-weight: 850;
+  font-style: italic;
+  font-stretch: 112%;
+  font-size: 15px;
+  line-height: 1.05;
+}
+
+.sr-xpress-on .xp-pack-sub {
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+/* ── printed pack-card backs (keys, sound/lights) ─────────────────────── */
+
+.sr-xpress-on .xp-card {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 20px 18px;
+  border-radius: 8px;
+  background: var(--stock);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 14px 26px -14px rgba(40, 32, 20, 0.55),
+    0 2px 5px rgba(40, 32, 20, 0.16);
+}
+
+.sr-xpress-on .xp-card .xp-hang {
+  margin: 0 auto 12px;
+}
+
+.sr-xpress-on .xp-card-title {
+  font-weight: 850;
+  font-style: italic;
+  font-stretch: 116%;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.sr-xpress-on .xp-card-note {
+  margin-top: 4px;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+}
+
+.sr-xpress-on .xp-keys {
+  grid-area: keys;
+  align-self: start;
+  justify-self: start;
+}
+
+.sr-xpress-on .xp-keylist {
+  display: grid;
+  gap: 4px;
+  margin-top: 12px;
+}
+
+.sr-xpress-on .xp-key {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 4px 6px 4px 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+}
+
+.sr-xpress-on .xp-key:hover {
+  background: color-mix(in oklab, var(--stock-edge) 55%, transparent);
+}
+
+.sr-xpress-on .xp-cap,
+.sr-xpress-on .xp-padkey {
+  display: grid;
+  place-items: center;
+  flex: none;
+  min-width: 58px;
+  height: 32px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #3c424b, var(--rubber));
+  color: #f4f4f2;
+  font-weight: 750;
+  font-size: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 2px 2px rgba(0, 0, 0, 0.3);
+  transition: transform 120ms ease-out;
+}
+
+.sr-xpress-on .xp-key:active .xp-cap,
+.sr-xpress-on .xp-padkey:active {
+  transform: translateY(1px);
+}
+
+.sr-xpress-on [data-next] .xp-cap,
+.sr-xpress-on .xp-padkey[data-next] {
+  background: var(--sticker);
+  color: var(--ink);
+  box-shadow:
+    inset 0 -2px 0 rgba(0, 0, 0, 0.18),
+    0 2px 2px rgba(0, 0, 0, 0.25);
+}
+
+.sr-xpress-on .xp-key-text {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.sr-xpress-on .xp-key-does {
+  font-weight: 600;
+}
+
+.sr-xpress-on kbd {
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  padding: 1px 6px;
+  border: 1px solid var(--stock-edge);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: #fff;
+  white-space: nowrap;
+}
+
+.sr-xpress-on .xp-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--stock-edge);
+}
+
+.sr-xpress-on .xp-padkey {
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  border: 0;
+  font-size: 16px;
+}
+
+.sr-xpress-on .xp-padkey:focus-visible {
+  outline-offset: 2px;
+}
+
+/* ── sound / lights ───────────────────────────────────────────────────── */
+
+.sr-xpress-on .xp-settings {
+  grid-area: settings;
+  align-self: end;
+  justify-self: start;
+  margin-bottom: 4px;
+}
+
+.sr-xpress-on .xp-settings .xp-card-title {
+  margin-bottom: 8px;
+}
+
+.sr-xpress-on .xp-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 4px;
+  border: 0;
+  border-top: 1px solid var(--stock-edge);
+  background: transparent;
+  text-align: left;
+}
+
+.sr-xpress-on .xp-toggle-label {
+  flex: 1;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.sr-xpress-on .xp-toggle-state {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.sr-xpress-on .xp-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: #b9b4a8;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
+  transition: background-color 200ms ease-out;
+}
+
+.sr-xpress-on .xp-switch-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sr-xpress-on .xp-toggle[aria-checked="true"] .xp-switch {
+  background: #1f8a3a;
+}
+
+.sr-xpress-on .xp-toggle[aria-checked="true"] .xp-switch-knob {
+  transform: translateX(20px);
+}
+
+/* ── staff name badge ─────────────────────────────────────────────────── */
+
+.sr-xpress-on .xp-badge {
+  grid-area: badge;
+  align-self: end;
+  justify-self: end;
+  position: relative;
+  width: min(100%, 300px);
+  margin: 0 0 4px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.08),
+    0 14px 26px -14px rgba(40, 32, 20, 0.6),
+    0 2px 5px rgba(40, 32, 20, 0.16);
+  transform: rotate(-1.5deg);
+}
+
+.sr-xpress-on .xp-clip {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 46px;
+  height: 20px;
+  transform: translateX(-50%);
+  border-radius: 4px 4px 2px 2px;
+  background: linear-gradient(90deg, #858d95, #eef1f3 45%, #6c747c);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.sr-xpress-on .xp-badge-band {
+  padding: 14px 18px 8px;
+  border-radius: 10px 10px 0 0;
+  background: #13306f;
+  color: #fff;
+  font-weight: 850;
+  font-style: italic;
+  font-stretch: 118%;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.sr-xpress-on .xp-badge-body {
+  padding: 12px 18px 16px;
+}
+
+.sr-xpress-on .xp-badge-name {
+  font-weight: 800;
+  font-stretch: 104%;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.sr-xpress-on .xp-badge-role {
+  margin-top: 2px;
+  font-weight: 600;
+  color: #13306f;
+}
+
+.sr-xpress-on .xp-badge-tagline {
+  margin-top: 8px;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.sr-xpress-on .xp-badge-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 10px;
+}
+
+.sr-xpress-on .xp-badge-links a {
+  color: #13306f;
+  font-weight: 700;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in oklab, #13306f 40%, transparent);
+}
+
+.sr-xpress-on .xp-badge-links a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* ── narrow: phone first, packs on a rail, then the info cards ───────── */
+
+@media (max-width: 1080px) {
+  .sr-xpress-on {
+    --phone-h: min(72svh, 660px);
+    --phone-w: min(calc(var(--phone-h) * 0.54), calc(100vw - 72px));
+  }
+
+  .sr-xpress-on .xp-wall {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    padding: 14px 0 32px;
+  }
+
+  .sr-xpress-on .xp-tryme {
+    right: -10px;
+    width: 76px;
+    font-size: 16px;
+  }
+
+  .sr-xpress-on .xp-shelf {
+    align-self: stretch;
+    margin: 0;
+    padding: 10px 14px 12px;
+  }
+
+  .sr-xpress-on .xp-lcd {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .sr-xpress-on .xp-lcd dd {
+    white-space: normal;
+  }
+
+  .sr-xpress-on .xp-covers {
+    align-self: stretch;
+    padding: 0 16px;
+  }
+
+  .sr-xpress-on .xp-cover-list {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-self: stretch;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16px;
+    padding: 6px 4px 16px;
+    margin: 0 -16px;
+    padding-inline: 16px;
+  }
+
+  .sr-xpress-on .xp-cover-list li {
+    scroll-snap-align: start;
+  }
+
+  .sr-xpress-on .xp-pack {
+    --pack-w: 118px;
+  }
+
+  .sr-xpress-on .xp-card,
+  .sr-xpress-on .xp-badge {
+    width: calc(100% - 32px);
+    max-width: 440px;
+    justify-self: auto;
+    align-self: center;
+  }
+
+  .sr-xpress-on .xp-badge {
+    margin-top: 10px;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sr-xpress-on,
+  .sr-xpress-on *,
+  .sr-xpress-on *::after {
+    transition-duration: 0ms !important;
+  }
+
+  .sr-xpress-on .xp-pack:hover,
+  .sr-xpress-on .xp-pack:focus-visible {
+    transform: none;
+  }
+}

@@ -1,0 +1,783 @@
+/* "Phone connected": a 2000-era desktop with the phone cabled to its PC software.
+   Palette: Windows 2000 system colours (3D face, highlight/shadow pairs, active caption). */
+
+.sr-pc-suite {
+  --face: #d4d0c8;
+  --hilite: #ffffff;
+  --shadow: #808080;
+  --dark: #404040;
+  --ink: #000000;
+  --caption: #0a246a;
+  --caption-end: #a6caf0;
+  --caption-off: #6e6e6e;
+  --caption-off-end: #b8b8b8;
+  --desktop: #3a6ea5;
+  --tip: #ffffe1;
+  --link: #0033cc;
+
+  --raised:
+    inset -1px -1px var(--dark), inset 1px 1px var(--face), inset -2px -2px var(--shadow),
+    inset 2px 2px var(--hilite);
+  --btn-raised:
+    inset -1px -1px var(--dark), inset 1px 1px var(--hilite), inset -2px -2px var(--shadow),
+    inset 2px 2px var(--face);
+  --pressed:
+    inset 1px 1px var(--dark), inset -1px -1px var(--hilite), inset 2px 2px var(--shadow),
+    inset -2px -2px var(--face);
+  --sunken:
+    inset 1px 1px var(--shadow), inset -1px -1px var(--hilite), inset 2px 2px var(--dark),
+    inset -2px -2px var(--face);
+  --thin-sunken: inset 1px 1px var(--shadow), inset -1px -1px var(--hilite);
+
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 30px;
+  background: var(--desktop);
+  color: var(--ink);
+  font-family: Tahoma, Verdana, "DejaVu Sans", sans-serif;
+  font-size: 12px;
+  line-height: 1.35;
+  -webkit-font-smoothing: none;
+  scrollbar-color: #b9b5ad var(--face);
+}
+
+.sr-pc-suite ::selection {
+  background: var(--caption);
+  color: var(--hilite);
+}
+
+.sr-pc-suite .sr-pc-suite__icon {
+  flex: none;
+  display: block;
+}
+
+.sr-pc-suite .phone-skeleton {
+  background: transparent;
+}
+
+.sr-pc-suite p,
+.sr-pc-suite h2,
+.sr-pc-suite ul,
+.sr-pc-suite ol,
+.sr-pc-suite dl,
+.sr-pc-suite dd {
+  margin: 0;
+}
+
+/* ── desktop layout ─────────────────────────────────────────────────── */
+
+.sr-pc-suite__desk {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 36vw) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "monitor stage settings"
+    "keypad stage owner";
+  column-gap: 20px;
+  row-gap: 20px;
+  padding: 20px 24px;
+}
+
+.sr-pc-suite__stage {
+  grid-area: stage;
+  grid-row: 1 / -1;
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+}
+
+.sr-pc-suite__cable {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sr-pc-suite__cord-shadow {
+  fill: none;
+  stroke: rgb(10 30 60 / 0.35);
+  stroke-width: 9;
+  stroke-linecap: round;
+  transform: translate(2px, 4px);
+}
+
+.sr-pc-suite__cord {
+  fill: none;
+  stroke: #26282b;
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.sr-pc-suite__cord-shine {
+  fill: none;
+  stroke: #5a5f66;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  transform: translate(-1px, -1px);
+}
+
+.sr-pc-suite__plug {
+  fill: #3a3d42;
+  stroke: #1b1c1e;
+  stroke-width: 1;
+}
+
+/* ── windows ────────────────────────────────────────────────────────── */
+
+.sr-pc-suite__win {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 470px;
+  min-height: 0;
+  align-self: start;
+  padding: 3px;
+  background: var(--face);
+  box-shadow: var(--raised);
+}
+
+.sr-pc-suite__win[hidden] {
+  display: none;
+}
+
+.sr-pc-suite__win--monitor {
+  grid-area: monitor;
+  justify-self: end;
+}
+.sr-pc-suite__win--keypad {
+  grid-area: keypad;
+  justify-self: end;
+  align-self: start;
+  max-width: 430px;
+}
+.sr-pc-suite__win--settings {
+  grid-area: settings;
+  justify-self: start;
+  max-width: 400px;
+}
+.sr-pc-suite__win--owner {
+  grid-area: owner;
+  justify-self: start;
+  align-self: start;
+  max-width: 400px;
+}
+
+.sr-pc-suite__titlebar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 2px 0 3px;
+  background: linear-gradient(90deg, var(--caption-off), var(--caption-off-end));
+  color: var(--hilite);
+}
+
+.sr-pc-suite__win.is-active .sr-pc-suite__titlebar {
+  background: linear-gradient(90deg, var(--caption), var(--caption-end));
+}
+
+.sr-pc-suite__titlebar h2 {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sr-pc-suite__winbody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 6px 4px;
+  min-height: 0;
+}
+
+/* ── controls ───────────────────────────────────────────────────────── */
+
+.sr-pc-suite__btn {
+  appearance: none;
+  border: 0;
+  border-radius: 0;
+  margin: 0;
+  background: var(--face);
+  color: var(--ink);
+  font: inherit;
+  box-shadow: var(--btn-raised);
+  cursor: default;
+}
+
+.sr-pc-suite__btn:active,
+.sr-pc-suite__btn.is-down {
+  box-shadow: var(--pressed);
+}
+
+.sr-pc-suite__btn:active > *,
+.sr-pc-suite__btn.is-down > * {
+  transform: translate(1px, 1px);
+}
+
+.sr-pc-suite.sr-pc-suite button:focus-visible,
+.sr-pc-suite.sr-pc-suite a:focus-visible,
+.sr-pc-suite.sr-pc-suite input:focus-visible + span {
+  outline: 1px dotted var(--ink);
+  outline-offset: -4px;
+}
+
+.sr-pc-suite.sr-pc-suite a:focus-visible,
+.sr-pc-suite.sr-pc-suite input:focus-visible + span {
+  outline-offset: 1px;
+}
+
+.sr-pc-suite__winctl {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 14px;
+  padding: 0 0 1px;
+}
+
+.sr-pc-suite.sr-pc-suite .sr-pc-suite__winctl:focus-visible {
+  outline-offset: -3px;
+}
+
+.sr-pc-suite__field {
+  background: var(--hilite);
+  box-shadow: var(--sunken);
+  padding: 3px;
+}
+
+.sr-pc-suite__label {
+  white-space: nowrap;
+}
+
+.sr-pc-suite__mono {
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* ── Phone monitor ──────────────────────────────────────────────────── */
+
+.sr-pc-suite__address {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sr-pc-suite__path {
+  flex: 1;
+  min-width: 0;
+  padding: 3px 5px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sr-pc-suite__split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 4px;
+  height: 160px;
+}
+
+.sr-pc-suite__tree {
+  padding: 5px 4px;
+  overflow: auto;
+}
+
+.sr-pc-suite__tree ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sr-pc-suite__tree ul ul {
+  margin-left: 7px;
+  padding-left: 9px;
+  border-left: 1px dotted var(--shadow);
+}
+
+.sr-pc-suite__node {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 3px 1px 2px;
+  white-space: nowrap;
+}
+
+.sr-pc-suite__node.is-selected {
+  background: var(--caption);
+  color: var(--hilite);
+}
+
+.sr-pc-suite__lcd {
+  display: flex;
+  flex-direction: column;
+  padding: 2px;
+  background: #c3d9a0;
+  overflow: auto;
+}
+
+.sr-pc-suite__lcdhead {
+  padding: 1px 5px;
+  background: var(--face);
+  box-shadow: var(--btn-raised);
+}
+
+.sr-pc-suite__lcd ol {
+  list-style: none;
+  padding: 4px 6px;
+  color: #1c2810;
+  font-size: 13px;
+}
+
+.sr-pc-suite__lcd li + li {
+  margin-top: 2px;
+}
+
+.sr-pc-suite__hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 5px 7px;
+  background: var(--tip);
+  border: 1px solid var(--ink);
+}
+
+.sr-pc-suite__hint .sr-pc-suite__icon {
+  margin-top: 1px;
+}
+
+.sr-pc-suite__statusbar {
+  display: flex;
+  gap: 2px;
+  margin: 0 -3px -1px;
+}
+
+.sr-pc-suite__pane {
+  padding: 2px 6px;
+  box-shadow: var(--thin-sunken);
+  white-space: nowrap;
+}
+
+.sr-pc-suite__pane--grow {
+  flex: 1;
+}
+
+/* ── Keypad ─────────────────────────────────────────────────────────── */
+
+.sr-pc-suite__keys {
+  display: grid;
+  gap: 4px;
+}
+
+.sr-pc-suite__keyrow {
+  display: grid;
+  grid-template-columns: 1fr 2fr 0.7fr 0.7fr 0.7fr;
+  gap: 4px;
+}
+
+.sr-pc-suite__digits {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.sr-pc-suite__digits > span {
+  display: contents;
+}
+
+.sr-pc-suite__key {
+  display: grid;
+  place-items: center;
+  min-height: 25px;
+  padding: 2px 6px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.sr-pc-suite__key--navi {
+  font-weight: 700;
+}
+
+.sr-pc-suite__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  caption-side: top;
+}
+
+.sr-pc-suite__table caption {
+  text-align: left;
+  padding-bottom: 3px;
+  background: var(--face);
+}
+
+.sr-pc-suite__table th {
+  padding: 2px 6px;
+  background: var(--face);
+  box-shadow: var(--btn-raised);
+  font-weight: 400;
+  text-align: left;
+}
+
+.sr-pc-suite__table td {
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+
+.sr-pc-suite__table kbd {
+  font: inherit;
+  font-weight: 700;
+}
+
+/* ── Settings property sheet ────────────────────────────────────────── */
+
+.sr-pc-suite__tabs {
+  display: flex;
+  align-items: flex-end;
+  padding-left: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+.sr-pc-suite__tab {
+  appearance: none;
+  border: 0;
+  margin: 0 -1px 0 0;
+  padding: 3px 9px 2px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--face);
+  border-radius: 3px 3px 0 0;
+  box-shadow:
+    inset 1px 1px var(--hilite),
+    inset -1px 0 var(--dark),
+    inset -2px 0 var(--shadow);
+  cursor: default;
+}
+
+.sr-pc-suite__tab[aria-selected="true"] {
+  margin: 0 -1px -1px -2px;
+  padding: 4px 11px 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.sr-pc-suite__tabpanel {
+  display: grid;
+  gap: 8px;
+  padding: 10px 10px 12px;
+  box-shadow:
+    inset 1px 1px var(--hilite),
+    inset -1px -1px var(--dark),
+    inset -2px -2px var(--shadow);
+  min-height: 150px;
+  align-content: start;
+}
+
+.sr-pc-suite__group {
+  margin: 0;
+  padding: 4px 10px 8px;
+  border: 0;
+  box-shadow:
+    inset 1px 1px var(--shadow),
+    inset -1px -1px var(--hilite),
+    inset 2px 2px var(--hilite),
+    inset -2px -2px var(--shadow);
+  display: grid;
+  gap: 4px;
+}
+
+.sr-pc-suite__group legend {
+  padding: 0 3px;
+}
+
+.sr-pc-suite__check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: max-content;
+  padding: 1px 0;
+}
+
+.sr-pc-suite__check input {
+  appearance: none;
+  flex: none;
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  background: var(--hilite) center / 9px 9px no-repeat;
+  box-shadow: var(--sunken);
+}
+
+.sr-pc-suite__check input:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 7' shape-rendering='crispEdges'%3E%3Cpath d='M0 2h1v1h1v1h1V3h1V2h1V1h1V0h1v3H6v1H5v1H4v1H3v1H2V6H1V5H0z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+.sr-pc-suite__check.is-disabled {
+  color: var(--shadow);
+  text-shadow: 1px 1px var(--hilite);
+}
+
+.sr-pc-suite__check.is-disabled input {
+  background-color: var(--face);
+}
+
+.sr-pc-suite__props {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 5px 14px;
+}
+
+.sr-pc-suite__props dd {
+  overflow-wrap: anywhere;
+}
+
+/* ── Owner properties ───────────────────────────────────────────────── */
+
+.sr-pc-suite__owner {
+  display: grid;
+  gap: 8px;
+  padding: 2px 4px 6px;
+}
+
+.sr-pc-suite__ownerhead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sr-pc-suite__name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.sr-pc-suite__owner hr {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  height: 2px;
+  box-shadow:
+    inset 0 1px var(--shadow),
+    inset 0 -1px var(--hilite);
+}
+
+.sr-pc-suite__tagline {
+  max-width: 44ch;
+}
+
+.sr-pc-suite__links {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.sr-pc-suite__links li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sr-pc-suite__links a {
+  color: var(--link);
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+
+.sr-pc-suite__links a:visited {
+  color: #6b1a8a;
+}
+
+/* ── taskbar ────────────────────────────────────────────────────────── */
+
+.sr-pc-suite__taskbar {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 2px 2px;
+  background: var(--face);
+  box-shadow:
+    inset 0 1px var(--face),
+    inset 0 2px var(--hilite);
+  min-width: 0;
+}
+
+.sr-pc-suite__start,
+.sr-pc-suite__task {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 23px;
+  padding: 0 7px 0 5px;
+  white-space: nowrap;
+}
+
+.sr-pc-suite__start {
+  font-weight: 700;
+}
+
+.sr-pc-suite__sep {
+  align-self: stretch;
+  width: 2px;
+  margin: 1px 1px;
+  box-shadow:
+    inset 1px 0 var(--shadow),
+    inset -1px 0 var(--hilite);
+}
+
+.sr-pc-suite__tasks {
+  flex: 1;
+  display: flex;
+  gap: 3px;
+  min-width: 0;
+}
+
+.sr-pc-suite__task {
+  flex: 0 1 160px;
+  min-width: 0;
+}
+
+.sr-pc-suite__task span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sr-pc-suite__task.is-down {
+  background-color: #e6e3de;
+  font-weight: 700;
+}
+
+.sr-pc-suite__tray {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 23px;
+  padding: 0 8px 0 6px;
+  box-shadow: var(--thin-sunken);
+}
+
+.sr-pc-suite__trayitem {
+  display: grid;
+  place-items: center;
+}
+
+.sr-pc-suite__traybtn {
+  appearance: none;
+  border: 0;
+  padding: 1px;
+  background: transparent;
+  color: inherit;
+  cursor: default;
+}
+
+.sr-pc-suite__clock {
+  padding-left: 4px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── narrower desktops: windows in one column beside the phone ─────── */
+
+@media (max-width: 1180px) and (min-width: 821px) {
+  .sr-pc-suite__desk {
+    overflow-y: auto;
+    grid-template-columns: minmax(340px, 44vw) minmax(0, 1fr);
+    grid-template-rows: repeat(4, max-content);
+    grid-template-areas:
+      "stage monitor"
+      "stage keypad"
+      "stage settings"
+      "stage owner";
+  }
+  .sr-pc-suite__stage {
+    grid-row: 1 / span 4;
+    position: sticky;
+    top: 0;
+    height: calc(100svh - 30px - 40px);
+  }
+  .sr-pc-suite__win--monitor,
+  .sr-pc-suite__win--keypad,
+  .sr-pc-suite__win--settings,
+  .sr-pc-suite__win--owner {
+    justify-self: start;
+  }
+}
+
+/* ── mobile: phone first, windows stacked below ─────────────────────── */
+
+@media (max-width: 820px) {
+  .sr-pc-suite__desk {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-auto-rows: max-content;
+    grid-template-areas:
+      "stage"
+      "monitor"
+      "keypad"
+      "settings"
+      "owner";
+    row-gap: 14px;
+    padding: 8px 10px 20px;
+  }
+  .sr-pc-suite__stage {
+    grid-row: auto;
+    height: min(72svh, 640px);
+  }
+  .sr-pc-suite__win {
+    max-width: none;
+    justify-self: stretch;
+  }
+  .sr-pc-suite__win--keypad,
+  .sr-pc-suite__win--settings,
+  .sr-pc-suite__win--owner {
+    max-width: none;
+  }
+  .sr-pc-suite__key {
+    min-height: 36px;
+  }
+  .sr-pc-suite__task span,
+  .sr-pc-suite__start span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .sr-pc-suite__task {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 400px) {
+  .sr-pc-suite__split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sr-pc-suite__table td:last-child,
+  .sr-pc-suite__table th:last-child {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sr-pc-suite *,
+  .sr-pc-suite *::before,
+  .sr-pc-suite *::after {
+    transition: none;
+    animation: none;
+  }
+}
