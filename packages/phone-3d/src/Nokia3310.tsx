@@ -22,8 +22,11 @@ import {
   SCREEN_LIT_PIXEL_TINT,
 } from "./materials";
 import type { MaterialSpec } from "./materials";
+import { startPress } from "./press";
 import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL, DEFAULT_SCREEN_BG, resolveLights } from "./types";
 import type { Nokia3310Key, Nokia3310Props } from "./types";
+
+const POINTER_EVENTS = ["pointermove", "pointerup", "pointercancel"] as const;
 
 /** World height the stage is framed against (plan 03 convention). */
 const STAGE_HEIGHT = 10;
@@ -363,21 +366,24 @@ export function Nokia3310({
           object={model}
           onPointerDown={(e: import("@react-three/fiber").ThreeEvent<PointerEvent>) => {
             const mesh = keyFromEvent(e.object);
-            if (mesh === null) return;
-            e.stopPropagation();
-            (e.nativeEvent.target as Element | null)?.setPointerCapture(e.nativeEvent.pointerId);
-            emit(mesh, "down");
-          }}
-          onPointerUp={(e: import("@react-three/fiber").ThreeEvent<PointerEvent>) => {
-            // release EVERY held key — capture means we may not re-hit the mesh
-            for (const mesh of nodes.keys.values()) emit(mesh, "up");
             const el = e.nativeEvent.target as Element | null;
-            if (el?.hasPointerCapture(e.nativeEvent.pointerId)) {
-              el.releasePointerCapture(e.nativeEvent.pointerId);
-            }
-          }}
-          onPointerCancel={() => {
-            for (const mesh of nodes.keys.values()) emit(mesh, "up");
+            if (mesh === null || el === null) return;
+            e.stopPropagation();
+            const { pointerId, pointerType, clientX, clientY } = e.nativeEvent;
+            const press = startPress(pointerType, clientX, clientY, (action) => emit(mesh, action));
+            // Follow this pointer on the canvas itself: it may leave the key
+            // mesh (or the phone) before it lifts.
+            const onEvent = (ev: Event) => {
+              const pe = ev as PointerEvent;
+              if (pe.pointerId !== pointerId) return;
+              if (pe.type === "pointermove") return press.move(pe.clientX, pe.clientY);
+              if (pe.type === "pointerup") press.up();
+              else press.cancel();
+              for (const type of POINTER_EVENTS) el.removeEventListener(type, onEvent);
+              if (el.hasPointerCapture(pointerId)) el.releasePointerCapture(pointerId);
+            };
+            for (const type of POINTER_EVENTS) el.addEventListener(type, onEvent);
+            el.setPointerCapture(pointerId);
           }}
           onPointerOver={(e: import("@react-three/fiber").ThreeEvent<PointerEvent>) => {
             if (keyFromEvent(e.object) !== null) {
