@@ -188,7 +188,10 @@ Three asserted goldens differ in ways the fidelity standard counts:
   22's placeholder does not leave for standby on a held C, so the replay's later keys land in Call
   register (Restore keeping speed dials and tones is covered by `tests/phone-book-store.test.ts`).
 
-Six call goldens (`Call` from a list, held 2-9 and 1, standby ▲) stay `pending:22`.
+The calls follow-up asserts every plan 19 call golden: Call from names or Service Nos.,
+held speed dial 2 with Speed dialling On, standby ▲ and its dialled-list call, and held 2 with
+Speed dialling Off. The stock-cell call recordings alert without a traffic channel; their
+ringback does not imply a connected call.
 
 ## UNVERIFIED
 
@@ -199,4 +202,4 @@ Six call goldens (`Call` from a list, held 2-9 and 1, standby ▲) stay `pending
 - `Sending b'card`'s link time on a live network (the synthetic cell's 3240 ms).
 - SIM writes surviving a real power cycle with the same card (the harness never writes the
   fixture back; nokia-os keeps the SIM in the EEPROM under its identity).
-- Receiving a business card (plan 18c) and every call (plan 22).
+- Receiving a business card (plan 18c).

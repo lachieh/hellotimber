@@ -1041,6 +1041,25 @@ section and the specs are done. Plan 19 asserts all 224 of its goldens (206 LCD,
 three known gaps (`standby-list-hold-c`, `search-prompt-hold-c`, `speed-restore`); 6 call goldens
 stay `pending:22`. `git diff main -- website/` is empty.
 
+## Calls integration follow-up — 2026-10-27
+
+Plan 22 now connects Call from the standby/search/saved-name lists, Call from Service Nos.,
+and held speed dials 2–9 when Speed dialling is On. The held key first shows the selected
+number with End, then starts Calling on release. The telephone resolves SIM names through
+`StockPhoneBook.byNumber`; Calling replaces its number with the name after the captured lookup,
+and the call screen truncates long names with the stock three-dot ellipsis.
+
+`phone-book/standby-list-call`, `phone-book/service-call` and `phone-book/hold-on-2` are now
+asserted by this plan's acceptance file. Its replay uses the captured stock cell without a traffic
+channel and supplies the long-number SETUP's later alerting event. All seven calls/phone-book
+follow-up goldens pass with exact pixels and the common fidelity tolerances; no new known gaps.
+The three existing plan 19 known gaps remain. Capture statuses changed in this plan's capture
+set; `import-captures` regenerated the fixtures and index without changing their pixels.
+
+Verification: all 230 plan 19 goldens are asserted. The uncached workspace run passes with
+`VITEST_MAX_WORKERS=4` (10,625 passed, 121 expected failures, 43 todos in 252 files); `vp check`
+and the website production build pass. Plan 22's follow-up records the worker-limit reason.
+
 ## Follow-up plan adjustments
 
 - **18 - Messages I:** its `numberEntry` `Search` and Write messages › Send to many take plan 19's

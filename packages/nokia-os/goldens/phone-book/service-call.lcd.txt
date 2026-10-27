@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/service-call
-status: pending:22
+status: asserted
 source: captures/6.39/plan19/service/call
 source-sha256: e5c5080743477af44f39b3fad42a73dc47720b3675de49a8a404ef9448dde824
 trigger-frame: 1

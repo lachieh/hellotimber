@@ -10,7 +10,7 @@
   {
     "id": "calls/code-down",
     "file": "calls/code-down.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -386,7 +386,7 @@
   {
     "id": "calls/entry-save",
     "file": "calls/entry-save.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "still",
     "images": 2,
     "frames": 2
@@ -1002,7 +1002,7 @@
   {
     "id": "calls/in-call-options-select-4",
     "file": "calls/in-call-options-select-4.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -1522,7 +1522,7 @@
   {
     "id": "calls/register-save",
     "file": "calls/register-save.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 7

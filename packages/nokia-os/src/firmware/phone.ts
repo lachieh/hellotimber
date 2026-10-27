@@ -253,6 +253,7 @@ export function createStockPhoneWith(
     settings,
     log: callLog,
     clock: callClock,
+    nameOf: (number) => phoneBook.byNumber(number)?.name,
     now: () => now,
   });
   network.subscribeCalls?.((call, link) => telephone.ring(call, link));

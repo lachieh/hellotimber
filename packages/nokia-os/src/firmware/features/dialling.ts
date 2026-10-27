@@ -6,7 +6,13 @@ import { CalculatorRate } from "../../calculator/rate";
 import { dialOutcome, immediateCode } from "../../calls/dial-string";
 import { CALLS_RECORD } from "../../calls/log";
 import type { StockCall, StockTelephone } from "../../calls/telephone";
-import { CALLING, CallWidget, type CallExit, type CallWidgetOptions } from "../../widgets/call";
+import {
+  afterDown,
+  CALLING,
+  CallWidget,
+  type CallExit,
+  type CallWidgetOptions,
+} from "../../widgets/call";
 import { dialEntry, type DialEntryWidget, type EntrySoftkey } from "../../widgets/dial-entry";
 import { StockFlowApplication, type Flow, type Widget } from "../../widgets/flow";
 import { note } from "../../widgets/note";
@@ -14,6 +20,8 @@ import { placeholderWidget } from "../../widgets/placeholder";
 import type { EepromRecord, StockEeprom } from "../eeprom";
 import { timelineByName } from "../timelines";
 import type { StockFeature, StockServices } from "./feature";
+import { standbyList } from "../../phone-book/flows";
+import { inCallPhoneBook, savePhoneNumber } from "./phone-book";
 import { powerListWidget, type PowerListState } from "./profiles";
 
 /** The keys that start standby's number entry (D2: digits, `*`, `#`). */
@@ -88,6 +96,7 @@ export function callScreen(
     ...(powerList === undefined ? {} : { powerList }),
     telephone,
     call,
+    phoneBook: () => inCallPhoneBook(services),
     sounder: services.sounder,
     now: () => services.games.now(),
     clock: () => services.ports.clock?.(),
@@ -161,7 +170,11 @@ function call(services: StockServices, text: string, flow: Flow): void {
       );
       return;
     case "speed-dial":
-      // Plan 19's speed dials; none is saved (D14).
+      const entry = services.phoneBook.speedDial(outcome.key);
+      if (entry !== undefined) {
+        placeCall(services, flow, entry.number);
+        return;
+      }
       flow.push(noteOf(["Speed dial", "number", "not saved"], "speed-dial-not-saved", services));
       return;
     case "voice-mailbox":
@@ -206,7 +219,15 @@ function code(services: StockServices, text: string, flow: Flow): void {
     const imeiLines =
       imei === undefined ? IMEI_LINES : ["Serial No.", imei.slice(0, 10), imei.slice(10)];
     const lines = found.kind === "imei" ? imeiLines : VERSION_LINES;
-    flow.push(note({ lines, end: "standby", handover: true, endOnDown: true }));
+    const page = note({ lines, end: "standby", handover: true, endOnDown: true });
+    flow.push({
+      render: (inner) => page.render(inner),
+      onKeyDown(key, inner) {
+        if (key === "down") inner.replace(standbyList(services));
+        else page.onKeyDown?.(key, inner);
+      },
+      onKey: (key, inner) => page.onKey?.(key, inner),
+    });
     return;
   }
   const valid = found.location >= 1 && found.location <= SIM_LOCATIONS;
@@ -233,8 +254,26 @@ export function numberEntry(services: StockServices, text?: string): Widget {
     },
     act: (softkey: EntrySoftkey, typed: string, flow: Flow) => {
       if (softkey === "Call") call(services, typed, flow);
-      else if (softkey === "Save") flow.push(placeholderWidget("Save", "19"));
+      else if (softkey === "Save") flow.push(afterDown("navi", savePhoneNumber(services, typed)));
       else convert(services, typed, flow);
+    },
+    speedDial: (key, flow) => {
+      if (services.settings.choice("settings/call-settings/speed-dialling") !== 0) return;
+      const entry = services.phoneBook.speedDial(Number(key));
+      if (entry === undefined) return;
+      flow.replace({
+        render: () => ({
+          kind: "call",
+          body: { kind: "digits", text: entry.number },
+          softkey: "End",
+          handset: false,
+          ladders: false,
+          ...(services.ports.clock === undefined ? {} : { clock: services.ports.clock() }),
+        }),
+        onKey(released, inner) {
+          if (released === key) placeCall(services, inner, entry.number);
+        },
+      });
     },
     voiceMailbox: (flow) =>
       placeCall(services, flow, services.settings.text(VOICE_MAILBOX_KEY) ?? ""),

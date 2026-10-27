@@ -1,13 +1,94 @@
 // Phone book (menu 1; plan 19): the SIM's names behind standby ▼ and the Phone book's leaves,
 // over the inserted SIM's `StockPhoneBook` (`services.phoneBook`). With an empty SIM the leaves
 // keep plan 14's notes and first screens (D13).
+import type { PhoneKey } from "@hellotimber/phone-core";
 import { sendBusinessCard } from "../../phone-book/bcard";
-import { addName, memoryStatus, search, serviceNumbers } from "../../phone-book/flows";
+import {
+  addName,
+  memoryStatus,
+  namePrompt,
+  saveNew,
+  search,
+  serviceNumbers,
+} from "../../phone-book/flows";
 import { assignTone, edit, eraseAll, eraseOneByOne } from "../../phone-book/manage";
 import { addVoiceTag, speedDials } from "../../phone-book/speed";
 import { PHONE_BOOK_RECORD } from "../../phone-book/store";
 import type { EepromRecord } from "../eeprom";
-import type { StockFeature } from "./feature";
+import type { StockFeature, StockServices } from "./feature";
+import type { Flow, Widget } from "../../widgets/flow";
+import { OptionListWidget, settingOptionList } from "../../widgets/option-list";
+import { settingKey, treePath } from "../tree";
+import { nodeTimeline } from "../timelines";
+import { note } from "../../widgets/note";
+
+/** Save a number already entered or selected in the call register: ask only for its name. */
+export function savePhoneNumber(services: StockServices, number: string, text = ""): Widget {
+  return namePrompt(
+    services,
+    text,
+    (name, flow) => {
+      const retry = (inner: Flow) => inner.replace(savePhoneNumber(services, number, name));
+      saveNew(services, flow, { name, number }, "Call", retry);
+    },
+    false,
+  );
+}
+
+/** The Phone book level opened over a call, sharing the menu's tree and feature screens. */
+export function inCallPhoneBook(services: StockServices, number = "1"): Widget {
+  const path = treePath(number);
+  const node = path[path.length - 1]!;
+  const screen = node.opens;
+  const key = settingKey(path);
+  const bound = phoneBookFeature.screens?.[number]?.(services, {
+    number,
+    screen,
+    key,
+    numbering: "option",
+  });
+  const widget = bound?.();
+  if (widget !== undefined) return widget;
+  if (screen.kind === "submenu") {
+    const children = node.children ?? [];
+    const pressed = new Set<PhoneKey>();
+    const list = new OptionListWidget({
+      labels: children.map((child) => child.label.replace(/\n/g, " ")),
+      opening: 0,
+      softkey: screen.softkey,
+      numbering: "option",
+      choose: (index, flow) => flow.push(inCallPhoneBook(services, children[index]!.number)),
+    });
+    return {
+      render: (flow) => list.render(flow),
+      onKeyDown(key) {
+        pressed.add(key);
+        list.onKeyDown(key);
+      },
+      onKey(key, flow) {
+        if (pressed.delete(key)) list.onKey(key, flow);
+      },
+    };
+  }
+  if (screen.kind === "option-list") {
+    return settingOptionList({
+      key,
+      labels: screen.options.map((option) => option.label),
+      softkey: screen.softkey,
+      settings: services.settings,
+      numbering: "option",
+    });
+  }
+  if (screen.kind === "timed-note" || screen.kind === "static-note") {
+    const timeline = nodeTimeline(number);
+    return note({
+      lines: screen.lines,
+      ...(timeline === undefined ? {} : { timeline }),
+      sound: services.noteSound,
+    });
+  }
+  throw new Error(`No phone-book screen for ${number}.`);
+}
 
 export const phoneBookFeature: StockFeature = {
   name: "phone-book",

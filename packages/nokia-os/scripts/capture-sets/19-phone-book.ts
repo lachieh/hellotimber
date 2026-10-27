@@ -292,11 +292,7 @@ export const DONE_TASKS: ReadonlySet<number> = new Set<number>([7, 8, 9, 10, 11]
 /** The plan 19 task that implements a golden. */
 type Task = 7 | 8 | 9 | 10 | 11;
 
-/** Goldens another plan implements, by plan: calls and the dialled numbers (plan 22). */
-type Owner = "22";
-
-function statusOf(task: Task, owner: Owner | undefined): GoldenStatus {
-  if (owner !== undefined) return `pending:${owner}`;
+function statusOf(task: Task): GoldenStatus {
   return DONE_TASKS.has(task) ? "asserted" : "pending:19";
 }
 
@@ -310,7 +306,6 @@ interface Row {
   readonly shots?: readonly string[];
   readonly sim: PhoneBookSimName;
   readonly task: Task;
-  readonly owner?: Owner;
   readonly note: string;
 }
 
@@ -436,7 +431,6 @@ const ROWS: readonly Row[] = [
     dir: "standby/list-call",
     sim: "content",
     task: 7,
-    owner: "22",
     note: "SIM content: Call in the standby list: Calling (plan 22).",
   },
   {
@@ -625,7 +619,6 @@ const ROWS: readonly Row[] = [
     dir: "service/call",
     sim: "content",
     task: 7,
-    owner: "22",
     note: "SIM content: Call on Help: Calling (plan 22).",
   },
   // ------------------------------------------------ add name (A)
@@ -1411,8 +1404,6 @@ const ROWS: readonly Row[] = [
       dir: `hold/${slug}`,
       sim: "content",
       task: 9,
-      // Held 2 with Speed dialling On calls the speed dial: plan 22's follow-up.
-      ...(slug === "on-2" ? { owner: "22" as const } : {}),
       note: `SIM content: ${slug.slice(-1)} held at standby with Speed dialling ${slug.startsWith("on") ? "On" : "Off"} (plan 22).`,
     }),
   ),
@@ -1560,7 +1551,7 @@ export const PHONE_BOOK_GOLDEN_SIMS: Readonly<Record<string, PhoneBookSimName>> 
 
 function lcdEntries(io: CaptureIo | undefined): CaptureSetEntry[] {
   return ROWS.map((row): CaptureSetEntry => {
-    const status = statusOf(row.task, row.owner);
+    const status = statusOf(row.task);
     const note = row.note;
     if (row.shots !== undefined) {
       return {
@@ -1684,7 +1675,7 @@ export const PHONE_BOOK_SOUNDS: readonly SoundCaptureEntry[] = SOUND_ROWS.map((r
   id: row.id,
   dir: `plan19/${row.dir}`,
   state: "factory",
-  status: statusOf(row.task, undefined),
+  status: statusOf(row.task),
   note: row.note,
 }));
 

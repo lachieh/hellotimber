@@ -14,7 +14,7 @@ import { infoScreen } from "../../widgets/info-screen";
 import { note } from "../../widgets/note";
 import { numberEntry as phoneNumberEntry } from "../../widgets/number-entry";
 import { OptionListWidget } from "../../widgets/option-list";
-import { placeholderWidget } from "../../widgets/placeholder";
+import { savePhoneNumber } from "./phone-book";
 import { smsEditor } from "../../messages/write";
 import { nodeTimeline, timelineByName } from "../timelines";
 import { numberEntry, placeCall, telephoneOf } from "./dialling";
@@ -120,8 +120,8 @@ function entryOptions(
           done: (typed, inner) => inner.replace(numberEntry(services, typed)),
         }),
       ),
-    // Save is plan 19's phone book (`register/save`: Name:).
-    Save: (flow) => flow.replace(placeholderWidget("Save", "19")),
+    // Save asks for a name for this number (`register/save`: Name:).
+    Save: (flow) => flow.replace(savePhoneNumber(services, entry.number)),
     Erase: (flow) => flow.replace(eraseQuery(services, list, index, entry)),
   };
   return new OptionListWidget({

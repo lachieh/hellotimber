@@ -187,7 +187,7 @@ export function describeWidget(model: WidgetModel): string {
 function describeCallBody(body: CallBody): string {
   switch (body.kind) {
     case "calling":
-      return `Calling${body.number === undefined ? "" : ` ${body.number}`}`;
+      return `Calling${body.name !== undefined ? ` ${body.name}` : body.number === undefined ? "" : ` ${body.number}`}`;
     case "emergency":
       return "Attempting emergency call";
     case "call":

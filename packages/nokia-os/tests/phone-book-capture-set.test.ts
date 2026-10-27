@@ -51,8 +51,7 @@ const PIPELINE = [
   "phone-book/pick-",
 ];
 
-/** Call screens, the dialled numbers and held keys at standby: plan 22's (D11). */
-/** Plan 22's follow-up: Call from a name or a service number, a held speed dial. */
+/** Call from names or Service Nos. and a held speed dial, connected by plan 22's follow-up. */
 const CALLS = ["phone-book/standby-list-call", "phone-book/service-call", "phone-book/hold-on-2"];
 
 describe("phone book capture set", () => {
@@ -97,8 +96,8 @@ describe("phone book capture set", () => {
     }
   });
 
-  it("leaves calls to plan 22 and every other golden to its plan 19 task", () => {
-    for (const id of CALLS) expect(byId.get(id)?.status, id).toBe("pending:22");
+  it("asserts the integrated calls and leaves every other golden to its plan 19 task", () => {
+    for (const id of CALLS) expect(byId.get(id)?.status, id).toBe("asserted");
     for (const entry of lcd) {
       if (CALLS.includes(entry.id)) continue;
       expect(["asserted", "pending:19"], entry.id).toContain(entry.status);
