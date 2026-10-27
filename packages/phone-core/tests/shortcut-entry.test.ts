@@ -98,6 +98,7 @@ interface Rig {
 function stockShapedMenu(
   rig: Omit<Rig, "phone" | "at" | "splash">,
   splash: PhoneApplication,
+  extra: readonly MenuEntry[] = [],
 ): PhoneMenu {
   const phoneBook = new SubmenuEntry(
     slug("phone-book"),
@@ -183,7 +184,7 @@ function stockShapedMenu(
       readers(["General", "Silent", "Discreet", "Loud", "My style", "(empty)"], "profile"),
     ),
   );
-  const tops: MenuEntry[] = [phoneBook, games, clock, profiles];
+  const tops: MenuEntry[] = [phoneBook, games, clock, profiles, ...extra];
   for (const number of [2, 3, 4, 5, 6, 7, 9, 10]) {
     tops.push(new ReaderEntry(slug(`top-${number}`), order(number), `Top ${number}`, "Body"));
   }
@@ -197,6 +198,7 @@ function stockRig(
   overrides: Partial<PhoneConfig> = {},
   intro?: PhoneApplication,
   shakesOptions?: number,
+  extra: readonly MenuEntry[] = [],
 ): Rig {
   const apps = {
     invalid: new RecordingApplication("invalid-shortcut", 2900),
@@ -205,7 +207,7 @@ function stockRig(
     shakes: new RecordingApplication("shakes", Infinity, shakesOptions),
   };
   const phone = bootedPhone({
-    menu: stockShapedMenu(apps, intro ?? apps.splash),
+    menu: stockShapedMenu(apps, intro ?? apps.splash, extra),
     rowsWindow: 3,
     shortcutWindowMs: WINDOW_MS,
     shortcutEntry: { openDelayMs: OPEN_DELAY_MS, invalid: apps.invalid },
@@ -308,6 +310,58 @@ describe("stock shortcut entry (PhoneConfig.shortcutEntry, plan 14 D14)", () => 
       expect(phone.path).toBe("standby");
     },
   );
+
+  describe("a 13th slot numbered 14 (v6.39's SIM services: no Menu 13)", () => {
+    const simRig = (): Rig =>
+      stockRig({}, undefined, undefined, [
+        new SubmenuEntry(
+          slug("sim"),
+          order(14),
+          "SIM",
+          new MenuLevel(readers(["One", "Two"], "sim")),
+        ),
+      ]);
+
+    it("Menu 1 3 matches no number: Invalid shortcut at once (sim/stk-carousel-main-menu-13)", () => {
+      const { phone, invalid, at } = simRig();
+      at(600);
+      phone.pressKey("1");
+      expect(indicator(phone)).toEqual({ segments: [], awaitingNext: true, typed: "1" });
+      at(1200);
+      phone.pressKey("3");
+      expect(invalid.starts).toBe(1);
+      expect(phone.screen).toEqual({ kind: "confirm", text: "invalid-shortcut", softkey: "" });
+    });
+
+    it("Menu 1 4 selects the slot at once and opens it after the delay (-menu-14)", () => {
+      const { phone, invalid, at } = simRig();
+      at(600);
+      phone.pressKey("1");
+      at(1200);
+      phone.pressKey("4");
+      expect(menuScreen(phone)).toMatchObject({
+        kind: "menu-carousel",
+        label: "SIM",
+        menuNumber: 14,
+        position: 13,
+        total: 13,
+        opening: true,
+      });
+      expect(indicator(phone)).toEqual({ segments: [14], awaitingNext: false });
+      at(1200 + OPEN_DELAY_MS);
+      expect(phone.path).toBe("menu/sim");
+      expect(indicator(phone)).toEqual({ segments: [14], awaitingNext: true, typed: "" });
+      expect(invalid.starts).toBe(0);
+    });
+
+    it("Menu 1 still resolves to 1 at the window end", () => {
+      const { phone, at } = simRig();
+      at(600);
+      phone.pressKey("1");
+      at(600 + WINDOW_MS + OPEN_DELAY_MS);
+      expect(phone.path).toBe("menu/phone-book");
+    });
+  });
 
   it("Menu 1 1 0: Clock opens on time, `11-0` waits, and the window end is Invalid (P5 m1-1-0)", () => {
     const { phone, invalid, at } = stockRig();

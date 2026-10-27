@@ -441,6 +441,11 @@ function numberedTopLevel<Metadata>(m: Machine<Metadata>): Numbered<Metadata> {
   }));
 }
 
+/** The carousel slot of a top-level entry: its position, not its menu number. */
+function carouselIndex<Metadata>(m: Machine<Metadata>, entry: MenuEntry<Metadata>): number {
+  return m.config.menu.entries.findIndex((slot) => slot.entry === entry);
+}
+
 function carouselIconFrame<Metadata>(
   m: Machine<Metadata>,
   frame: CarouselFrame,
@@ -847,6 +852,7 @@ function renderFrame<Metadata>(
         kind: "menu-carousel",
         label: slot.entry.label,
         menuNumber: slot.entry.order.value,
+        ...(slot.entry.order.value === frame.index + 1 ? {} : { position: frame.index + 1 }),
         total: m.config.menu.entries.length,
         iconId: slot.graphic.id,
         ...(iconFrame === undefined ? {} : { iconFrame }),
@@ -1870,7 +1876,7 @@ function selectTyped<Metadata>(
   } else {
     const top = stack[stack.length - 1]!;
     if (top.kind === "carousel") {
-      top.index = entry.order.value - 1;
+      top.index = carouselIndex(m, entry);
       revealCarousel(m, top, "enter");
     } else if (top.kind === "submenu") {
       top.selected = top.entry.children.entries.indexOf(entry);
@@ -1969,8 +1975,8 @@ function buildNavStack<Metadata>(
   for (const [position, entry] of entries.entries()) {
     const last = position === entries.length - 1;
     const parent = stack[stack.length - 1]!;
-    // Position within the parent level: a submenu level may skip a hidden entry's number.
-    if (parent.kind === "carousel") parent.index = entry.order.value - 1;
+    // Position within the parent level: a level may skip a number (a hidden entry's, Menu 14's).
+    if (parent.kind === "carousel") parent.index = carouselIndex(m, entry);
     else if (parent.kind === "submenu") {
       if (!parent.entry.shownChildren().includes(entry)) {
         // A path through a hidden child (SubmenuOptions.shown) lands on its level.

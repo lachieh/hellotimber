@@ -367,13 +367,12 @@ export class ApplicationEntry<Metadata = unknown> extends MenuEntry<Metadata> {
 }
 
 /**
- * Sorts siblings by order and rejects duplicates. A submenu level may skip a number: the
- * firmware keeps a hidden entry's menu number (Call divert shows 1-4 then 6). Top-level orders
- * stay contiguous because the carousel's position is its menu number.
+ * Sorts siblings by order and rejects duplicates. An order is the entry's menu number, and a level
+ * may skip one: the firmware keeps a hidden entry's number (Call divert shows 1-4 then 6; v6.39's
+ * SIM services is Menu 14 with no 13).
  */
 function canonicalEntries<Metadata>(
   entries: readonly MenuEntry<Metadata>[],
-  { contiguous }: { contiguous: boolean },
 ): readonly MenuEntry<Metadata>[] {
   for (const entry of entries) {
     const concrete =
@@ -399,15 +398,6 @@ function canonicalEntries<Metadata>(
     orders.add(entry.order.value);
   }
 
-  for (const [index, entry] of sorted.entries()) {
-    if (!contiguous) break;
-    const expected = index + 1;
-    if (entry.order.value !== expected) {
-      throw new Error(
-        `Sibling menu orders must be contiguous from 1; expected ${expected}, received ${entry.order.value}.`,
-      );
-    }
-  }
   return Object.freeze(sorted);
 }
 
@@ -415,7 +405,7 @@ export class MenuLevel<Metadata = unknown> implements Iterable<MenuEntry<Metadat
   readonly entries: readonly MenuEntry<Metadata>[];
 
   constructor(entries: readonly MenuEntry<Metadata>[]) {
-    this.entries = canonicalEntries(entries, { contiguous: false });
+    this.entries = canonicalEntries(entries);
     Object.freeze(this);
   }
 
@@ -488,10 +478,7 @@ export class PhoneMenu<Metadata = unknown> {
       throw new Error("Phone menu requires top-level entry slots with graphics.");
     }
     const byEntry = new Map(entries.map((slot) => [slot.entry, slot]));
-    const canonical = canonicalEntries(
-      entries.map((slot) => slot.entry),
-      { contiguous: true },
-    );
+    const canonical = canonicalEntries(entries.map((slot) => slot.entry));
     this.entries = Object.freeze(canonical.map((entry) => byEntry.get(entry)!));
     validateTopology(canonical);
 

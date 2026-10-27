@@ -236,18 +236,20 @@ describe("PhoneMenu", () => {
     expect(menu.walk(visitor)).toEqual(["reader:about", "submenu:work", "reader:project"]);
   });
 
-  it("rejects missing top-level graphics and invalid top-level sibling order", () => {
+  it("rejects missing top-level graphics", () => {
     const first = reader("first", 1);
     expect(() => new TopLevelEntry(first, undefined as unknown as MenuGraphic)).toThrow(
       /top-level.*graphic/i,
     );
+  });
+
+  it("lets a top-level order skip a number and still rejects a repeated one", () => {
+    const third = new TopLevelEntry(reader("third", 3), new MenuGraphic("third"));
+    const first = new TopLevelEntry(reader("first", 1), new MenuGraphic("first"));
+    expect(new PhoneMenu([third, first]).entries).toEqual([first, third]);
     expect(
-      () =>
-        new PhoneMenu([
-          new TopLevelEntry(reader("first", 1), new MenuGraphic("first")),
-          new TopLevelEntry(reader("third", 3), new MenuGraphic("third")),
-        ]),
-    ).toThrow(/contiguous.*expected 2/i);
+      () => new PhoneMenu([first, new TopLevelEntry(reader("again", 1), new MenuGraphic("again"))]),
+    ).toThrow(/duplicate.*order.*1/i);
   });
 
   it("rejects an entry object reused in separate branches", () => {

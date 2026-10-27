@@ -89,6 +89,11 @@ export type ScreenModel =
       kind: "menu-carousel";
       label: string;
       menuNumber: number;
+      /**
+       * The slot's 1-based place among `total`; present only when it differs from `menuNumber`
+       * (an earlier menu number is skipped, as v6.39's SIM services is Menu 14 in slot 13).
+       */
+      position?: number;
       total: number;
       iconId: string;
       /** Visible frame of the slot graphic's timeline; present iff the graphic has a timeline. */

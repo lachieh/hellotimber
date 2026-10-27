@@ -94,3 +94,48 @@ describe("sibling order gaps (hidden entries keep their numbers)", () => {
     expect(phone.path).toBe("menu/divert/cancel");
   });
 });
+
+/** Two slots numbered 1 and 14 (v6.39's SIM services: Menu 14 without a 13). */
+function topGapPhone(): Phone {
+  const menu = new PhoneMenu([
+    new TopLevelEntry(
+      new SubmenuEntry(slug("sim"), order(14), "SIM", new MenuLevel([reader("one", 1)])),
+      new MenuGraphic("sim"),
+    ),
+    new TopLevelEntry(reader("book", 1), new MenuGraphic("book")),
+  ]);
+  return bootedPhone({ menu });
+}
+
+describe("top-level order gaps (an entry carries its own menu number)", () => {
+  it("keeps the slots in order and numbers each by its order", () => {
+    const phone = topGapPhone();
+    phone.navigate("menu");
+    expect(phone.screen).toMatchObject({ kind: "menu-carousel", label: "book", menuNumber: 1 });
+    expect(phone.screen).not.toHaveProperty("position");
+    phone.pressKey("down");
+    expect(phone.screen).toMatchObject({
+      kind: "menu-carousel",
+      label: "SIM",
+      menuNumber: 14,
+      position: 2,
+      total: 2,
+      menuIndicator: { segments: [14], awaitingNext: false },
+    });
+    phone.pressKey("down");
+    expect(phone.screen).toMatchObject({ label: "book", menuNumber: 1 });
+    phone.pressKey("up");
+    expect(phone.screen).toMatchObject({ label: "SIM", menuNumber: 14 });
+  });
+
+  it("lands a path on the slot's position and numbers its children under its number", () => {
+    const phone = topGapPhone();
+    phone.navigate("menu/sim/one");
+    expect(phone.screen).toMatchObject({ kind: "reader", menuIndicator: { segments: [14, 1] } });
+    phone.pressKey("c");
+    expect(phone.screen).toMatchObject({ kind: "list", title: "SIM", selected: 0 });
+    phone.pressKey("c");
+    expect(phone.path).toBe("menu");
+    expect(phone.screen).toMatchObject({ kind: "menu-carousel", menuNumber: 14, position: 2 });
+  });
+});
