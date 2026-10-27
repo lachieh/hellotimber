@@ -1,25 +1,25 @@
 @font-face {
   font-family: "D01 Kalam";
-  src: url("/surrounds/desk-2001/fonts/kalam-400.woff2") format("woff2");
+  src: url("/desk/fonts/kalam-400.woff2") format("woff2");
   font-weight: 400;
   font-display: swap;
 }
 
 @font-face {
   font-family: "D01 Kalam";
-  src: url("/surrounds/desk-2001/fonts/kalam-700.woff2") format("woff2");
+  src: url("/desk/fonts/kalam-700.woff2") format("woff2");
   font-weight: 700;
   font-display: swap;
 }
 
 @font-face {
   font-family: "D01 Reenie";
-  src: url("/surrounds/desk-2001/fonts/reenie-beanie.woff2") format("woff2");
+  src: url("/desk/fonts/reenie-beanie.woff2") format("woff2");
   font-display: swap;
 }
 
 /* Light comes from a window at the top left: every shadow falls down and to the right. */
-.sr-desk-2001 {
+.desk {
   --d01-wood: #84522c;
   --d01-wood-deep: #5e3519;
   --d01-biro: #1f2c86;
@@ -41,31 +41,31 @@
   background: var(--d01-wood);
 }
 
-.sr-desk-2001 ::selection {
+.desk ::selection {
   background: rgb(255 236 64 / 0.85);
   color: #1b1b1b;
 }
 
-.sr-desk-2001 h2,
-.sr-desk-2001 p,
-.sr-desk-2001 ul,
-.sr-desk-2001 dl,
-.sr-desk-2001 dd {
+.desk h2,
+.desk p,
+.desk ul,
+.desk dl,
+.desk dd {
   margin: 0;
   padding: 0;
 }
 
-.sr-desk-2001 ul {
+.desk ul {
   list-style: none;
 }
 
-.sr-desk-2001 button {
+.desk button {
   font: inherit;
   color: inherit;
   cursor: pointer;
 }
 
-.sr-desk-2001 :is(button, a):focus-visible {
+.desk :is(button, a):focus-visible {
   outline: 2.5px dashed var(--d01-biro);
   outline-offset: 3px;
 }
@@ -753,7 +753,7 @@
 /* ── mobile: phone first, the desk's things scattered down a column ───── */
 
 @media (max-width: 899px) {
-  .sr-desk-2001 {
+  .desk {
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -849,9 +849,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sr-desk-2001 *,
-  .sr-desk-2001 *::before,
-  .sr-desk-2001 *::after {
+  .desk *,
+  .desk *::before,
+  .desk *::after {
     animation: none !important;
     transition: none !important;
   }

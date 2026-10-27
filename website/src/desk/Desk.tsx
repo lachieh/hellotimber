@@ -1,15 +1,15 @@
 import { LONG_PRESS_MS } from "@hellotimber/phone-core";
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { ReactNode } from "react";
-import { site } from "../../content/site";
-import { holdPhoneKey, tapPhoneKey, updateSettings, usePhoneLive, useSettings } from "../live";
-import "./surround.css";
+import { site } from "../content/site";
+import { holdPhoneKey, tapPhoneKey, updateSettings, usePhoneLive, useSettings } from "./live";
+import "./desk.css";
 
 /** "Left on the desk, 2001": the phone put down among a teenager's things, which carry the info. */
-export default function Surround({ phone }: { phone: ReactNode }) {
+export default function Desk({ phone }: { phone: ReactNode }) {
   const live = usePhoneLive();
   return (
-    <div className="sr-desk-2001">
+    <div className="desk">
       <div className="d01-desk">
         <DeskGrain />
         <div className="d01-window-light" aria-hidden="true" />
