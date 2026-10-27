@@ -21,9 +21,8 @@ only and are never imported. Task 0 writes this plan's captures to `$REF/capture
 **Status (2026-10-27):** Task 0 is closed under Lachlan's accepted criterion changes below.
 The eight full-level recordings, exits, ending and LCD-only control proof are validated;
 implementation must replay their pixels under AGENTS.md's fidelity standard. The four accepted
-defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1-3 contain inherited
-partial work to finish in order; Tasks 4-14 remain unstarted. No plan 24 goldens have yet been
-imported or asserted.
+defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete, including the inherited Games II seams. Task 3 is next;
+Tasks 4-14 remain unstarted. No plan 24 goldens have yet been imported or asserted.
 
 ## Goal
 
@@ -1313,30 +1312,53 @@ module, `src/widgets/game-over.ts`, `src/widgets/level-bar.ts`, `src/firmware/cu
 `tests/game-random.test.ts` (new), `tests/game-seams.test.ts` (new), `tests/snake-rng.test.ts`,
 `tests/settings.test.ts`, `tests/sounder.test.ts`.
 
-- [ ] TDD `random.ts`: Snake II's generator unchanged for seeds below 0xfff1; a u32 seed's first
+- [x] TDD `random.ts`: Snake II's generator unchanged for seeds below 0xfff1; a u32 seed's first
       step in 32-bit arithmetic (the investigation's two u32s give 44530's and 13689's first
       draws); `snake-rng.test.ts`'s recovered seeds still reproduce every placement.
-- [ ] TDD `seed.ts`: the Task 0 fit (D5) against every informative S7 dataset and every Snake II
+- [x] TDD `seed.ts`: the Task 0 fit (D5) against every informative S7 dataset and every Snake II
       seed golden (all placements and C9 clocks/dates, including overflow), or the fallback with
       the evidence in the test names. Snake II's New game uses it.
-- [ ] TDD the holder (D10, the rule Task 0 S2 chose): suspend and Continue for a fake game id; per-game
+- [x] TDD the holder (D10, the rule Task 0 S2 chose): suspend and Continue for a fake game id; per-game
       isolation in both Snake II/Space impact suspend orderings; captured clearing rules; power-off
       clears all suspended states; `GAME_LEVELS` gives each listed level its Continue
       entry (`shown`, `opening()`, positional numbers), Top score and Level returns. Snake II's
       goldens and `snake-game.test.ts` pass unchanged; add scenarios for independent suspension.
-- [ ] TDD `gameOver(ending)` (D11): `score` and `top-score` reproduce Snake II's game-over goldens;
+- [x] TDD `gameOver(ending)` (D11): `score` and `top-score` reproduce Snake II's game-over goldens;
       `won`/`draw`/`lost` throw "resource missing (plan 24b)" until 24b adds them.
-- [ ] TDD `levelPage` (D14): Snake II's Level goldens pass with `max: 9`; a `max: 5` page clamps at
+- [x] TDD `levelPage` (D14): Snake II's Level goldens pass with `max: 9`; a `max: 5` page clamps at
       1 and 5 (synthetic bars).
-- [ ] TDD the `game-sound` cue (D13): gated like `eat`; a second sound cancels the first; an
+- [x] TDD the `game-sound` cue (D13): gated like `eat`; a second sound cancels the first; an
       unknown id throws.
-- [ ] `VIRGIN_NUMBERS`: Space impact's and Pairs II's top scores (45, 0, 0) from their notes;
+- [x] `VIRGIN_NUMBERS`: Space impact's and Pairs II's top scores (45, 0, 0) from their notes;
       `RESTORE_KEEPS` adds them.
-- [ ] Remove `src/games/snake/seed.ts` and the generator from `rng.ts` (no re-exports; plan 23's
+- [x] Remove `src/games/snake/seed.ts` and the generator from `rng.ts` (no re-exports; plan 23's
       callers import the new modules).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp run website#build`,
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp run website#build`,
       `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): shared game random, suspend slot, endings and level pages`.
+- [x] Commit: `feat(nokia-os): shared game random, suspend slot, endings and level pages`.
+
+**Completion (2026-10-27).** Finished the inherited generator/seed, per-game suspension,
+Snake II migration, ending, Level-page, numeric-score and data-driven sound seams. Added the
+missing ANSI generator and phone-owned power-on reset: its arithmetic reproduces all twelve
+LCD spawn rows, preserves its state across games and suspension, and resets only at power-on.
+The accepted zero-advance default for other games/Settings and minutes-of-the-day seed remain
+UNVERIFIED beside the code. No Space impact session or speculative consumer was added.
+
+TDD: the new ANSI/lifetime checks failed before implementation (six failures including existing
+Snake suspension assertions), then all 166 focused random/seam/Snake/settings/sounder checks
+passed. Candidate u32 checks now replay every decoded Snake seed placement, not just the first
+draw. Test services use the real service constructor instead of a partial type cast.
+`vp check --fix` passes. The uncached workspace suite passes: **255 files, 10,696 passed,
+120 expected failures, 25 TODOs** (nokia-os: 163 files, 9,854 passed). `website#build` passes.
+Logs: `/private/tmp/plan24-task2-{tests,build}.log`. Mise's Node 22.22.3 directory is prepended
+to child PATH through a temporary launcher, avoiding the documented host Node 26 hook.
+
+**Deviation:** the refactored settings/score tables already live in `features/games.ts` and
+`features/snake.ts`; they are retained there rather than duplicated in `bindings.ts`.
+`GAME_LEVELS` registers each game when its feature exists (Space impact: Task 11); fake-game
+seam tests cover independent entries now. The holder's `ansi` reference is internally mutable
+so its owner can replace it at power-on; callers consume its read-only state. Task 6 still
+verifies the Space impact consumers against decoded goldens.
 
 ### Task 3 - Golden pipeline: releases, generic game capture and the capture set (TDD)
 

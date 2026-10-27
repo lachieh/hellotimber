@@ -1,17 +1,17 @@
 // The games' shared random numbers (plan 24 D5): the generator every game draws from, its u32
 // seed state, and the seed New game takes from the clock.
 import { describe, expect, it } from "vite-plus/test";
-import { searchSeeds } from "../scripts/snake-seeds.ts";
-import { createGameRandom, GAME_RANDOM_MODULUS } from "../src/games/random";
+import { replaySeed, searchSeeds } from "../scripts/snake-seeds.ts";
+import { createAnsiRandom, createGameRandom, GAME_RANDOM_MODULUS } from "../src/games/random";
 import { gameSeed } from "../src/games/seed";
 import { goldenPlacements } from "./support/snake-decode";
 
 const step = (seed: number) => (seed * 0x625f + 0x3623) % GAME_RANDOM_MODULUS;
 
 /**
- * Candidate u32s whose first draws match Snake II's recovered LCD placements. These do not
+ * Candidate u32s that reproduce every recovered Snake II LCD placement. These do not
  * prove the clock/date seed function: the raw seed/0000 peek differs from this candidate
- * (0xd452fed7 rather than 0xd452fec1), and hour-0 capture provenance still needs Task 0.
+ * (0xd452fed7 rather than 0xd452fec1). Task 0's midnight route controls reject that fit.
  */
 const LCD_EQUIVALENT_U32: readonly { golden: string; clock: string; u32: number }[] = [
   { golden: "seed-0759", clock: "07:59", u32: 0xd4536ec4 },
@@ -57,10 +57,12 @@ describe("createGameRandom (D5)", () => {
   });
 
   for (const { golden, clock, u32 } of LCD_EQUIVALENT_U32) {
-    it(`the candidate u32 for ${clock} draws the first placement draw of game/snake/${golden}`, () => {
+    it(`the candidate u32 for ${clock} reproduces every LCD placement of game/snake/${golden}`, () => {
       // The u32 explains every seed plan 23 recovered from the LCD, the 32-bit overflow of
       // 23:59 and 14.10.2026 and the shared seed of 00:00 and 00:01 included.
-      const recovered = searchSeeds(goldenPlacements(`game/snake/${golden}`));
+      const placements = goldenPlacements(`game/snake/${golden}`);
+      const recovered = searchSeeds(placements);
+      expect(replaySeed(u32, placements), "every LCD placement").toBeDefined();
       expect(recovered.map(step)).toContain(createGameRandom(u32).next());
     });
   }
@@ -105,5 +107,28 @@ describe("gameSeed (D5: the minutes-of-the-day fallback stays, UNVERIFIED)", () 
     expect(gameSeed(undefined, "13.10.2026")).toBeUndefined();
     expect(gameSeed("", undefined)).toBeUndefined();
     expect(gameSeed("25:00", undefined)).toBeUndefined();
+  });
+});
+
+describe("the phone-wide ANSI generator (D6, LCD level-1 wave)", () => {
+  it("draws the captured first wave, then the top-score draw and the next wave", () => {
+    const random = createAnsiRandom();
+    expect(random.state).toBe(0x7fffffff);
+    const first = Array.from({ length: 6 }, () => random.next());
+    expect(first).toEqual([15929, 4409, 9862, 26718, 8713, 28226]);
+    expect(first.map((draw) => Math.min(27, 6 + (draw & 31)))).toEqual([27, 27, 12, 27, 15, 8]);
+    expect(random.state).toBe(0x6e42c491);
+    expect(random.next()).toBe(9080); // Space impact's new-top-score ending, not every game over.
+    const second = Array.from({ length: 6 }, () => random.next());
+    expect(second.map((draw) => Math.min(27, 6 + (draw & 31)))).toEqual([27, 6, 27, 19, 27, 27]);
+  });
+
+  it("continues an existing u32 state without losing low bits to floating-point multiplication", () => {
+    const random = createAnsiRandom(0x6e42c491);
+    expect(random.next()).toBe(9080);
+    expect(random.state).toBe(0x23780ff6);
+    expect(() => createAnsiRandom(-1)).toThrow();
+    expect(() => createAnsiRandom(2 ** 32)).toThrow();
+    expect(() => createAnsiRandom(1.5)).toThrow();
   });
 });

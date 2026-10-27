@@ -12,7 +12,7 @@ import { Framebuffer } from "@hellotimber/phone-screen";
 import { paintWidget } from "../src/display/widgets";
 import { GAME_CUES, SNAKE_PERIODS } from "../src/resources";
 import { gameOver } from "../src/widgets/game-over";
-import type { StockGames } from "../src/firmware/features/games";
+import { createStockGames, type StockGames } from "../src/firmware/features/games";
 import { snakeGame, SNAKE_SETTINGS, type SuspendedSnake } from "../src/widgets/snake";
 import { flowRig, type FlowRecording, type FlowRig } from "./support/flow-rig.ts";
 import {
@@ -52,7 +52,7 @@ function gameRig(
   let seeds = 0;
   let rig: FlowRig | undefined;
   const games: StockGames = options.games ?? {
-    suspended: {},
+    ...createStockGames(),
     seed: () => {
       seeds++;
       return options.seed ?? 44530;

@@ -7,10 +7,12 @@ import {
   GAME_LEVELS,
   gameLevelTables,
   powerOffGames,
+  powerOnGames,
   type GameLevel,
   type StockGames,
 } from "../src/firmware/features/games";
-import type { StockServices } from "../src/firmware/features/feature";
+import { stockServices } from "../src/firmware/menu";
+import { createMemoryStorage, StockEeprom } from "../src/firmware/eeprom";
 import { createMemorySettings, virginSettings, type StockSettings } from "../src/firmware/settings";
 import { gameOver } from "../src/widgets/game-over";
 import { levelPage } from "../src/widgets/level-bar";
@@ -22,7 +24,7 @@ const holder = (seed = 44530): StockGames => ({ ...createStockGames(), seed: () 
 
 /** The services a feature binding sees, over `games` and virgin settings. */
 const services = (games: StockGames, settings = createMemorySettings(virginSettings())) =>
-  ({ games, settings }) as unknown as StockServices;
+  stockServices({}, settings, games, undefined, undefined, new StockEeprom(createMemoryStorage()));
 
 /** Widgets render without a flow here (models only). */
 const NO_FLOW = {} as Flow;
@@ -54,6 +56,23 @@ describe("the games holder (D10)", () => {
     games.suspended["space-impact"] = { any: 2 };
     powerOffGames(games);
     expect(games.suspended).toEqual({});
+  });
+});
+
+describe("the phone-wide ANSI lifetime (D6)", () => {
+  it("keeps the chain across suspension and power-off, resets it only at power-on", () => {
+    const games = holder();
+    games.ansi.next();
+    games.suspended.snake = { board: "snake" };
+    games.suspended["space-impact"] = { board: "space" };
+    expect(games.ansi.state).toBe(0x3e39e1cc);
+    powerOffGames(games);
+    expect(games.suspended).toEqual({});
+    expect(games.ansi.state).toBe(0x3e39e1cc);
+    powerOnGames(games);
+    expect(games.ansi.state).toBe(0x7fffffff);
+    expect(games.ansi.next()).toBe(15929);
+    expect(holder().ansi.state).toBe(0x7fffffff);
   });
 });
 
@@ -124,6 +143,7 @@ describe("Snake II on the per-game holder (D10)", () => {
     const board = rig.frame();
     rig.press("navi");
     expect(rig.exits.map((e) => e.options)).toEqual([{ select: "continue", row: "top" }]);
+    expect(games.ansi.state).toBe(0x7fffffff);
     return board;
   }
 

@@ -1,8 +1,7 @@
 // The shared New-game seed (plan 24 D5): retain plan 23's minutes-of-the-day fallback.
-// A clock/date fit still needs informative LCD evidence, including hour 0 and overflow cases.
-// The inherited u32 comparison table contains candidates equivalent to Snake II's recovered
-// placements; it does not establish the u32 actually written at every capture clock.
-// Tests inject recovered seeds while the clock rule remains UNVERIFIED.
+// UNVERIFIED accepted default (Lachlan, 2026-10-27): the minutes-of-the-day fallback stays.
+// Midnight route controls reject the clock/date-only fit; candidate u32s reproducing Snake II
+// placements do not establish a New-game clock function. Tests inject recovered gameplay seeds.
 
 /** The seed New game writes, from the clock ("HH:MM") and date; undefined without a clock. */
 export function gameSeed(clock: string | undefined, _date: string | undefined): number | undefined {

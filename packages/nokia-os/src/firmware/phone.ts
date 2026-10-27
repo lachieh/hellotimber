@@ -19,7 +19,7 @@ import { openBox } from "../messages/read";
 import { StockFlowApplication } from "../widgets/flow";
 import { applyPreload, checkImei, checkPreload, type StockPreload } from "./preload";
 import { createSyntheticNetwork, type StockNetworkPort } from "../messages/network";
-import { createStockGames, powerOffGames } from "./features/games";
+import { createStockGames, powerOffGames, powerOnGames } from "./features/games";
 import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { standbyList } from "../phone-book/flows";
@@ -398,6 +398,7 @@ export function createStockPhoneWith(
       stopwatch.power(poweredOn);
       reminders.power(poweredOn);
       if (poweredOn) {
+        powerOnGames(games);
         sounder.powerOn({ boot: !skip });
         lights.powerOn(now);
         telephone.powerOn();

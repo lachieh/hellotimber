@@ -2,6 +2,7 @@
 // game, the New-game seed, cues and the kernel clock), the table of game levels that lists each
 // level's Continue and routes its Top score and Level returns (plan 24 D10), and the games that
 // are not built yet: their fixed Level bars, virgin top scores, and Club Nokia's ID query.
+import { createAnsiRandom, type AnsiRandom } from "../../games/random";
 import { gameSeed } from "../../games/seed";
 import type { Widget } from "../../widgets/flow";
 import { snakeGame } from "../../widgets/snake";
@@ -33,6 +34,11 @@ export interface StockGames {
   suspended: Partial<Record<StockGameId, unknown>>;
   /** The seed New game writes (D5). */
   seed(): number;
+  /**
+   * Phone-wide random-row chain; replaced only at power-on. UNVERIFIED accepted default:
+   * other games and Settings leave it unchanged; plans 24b/24c revisit their consumers.
+   */
+  ansi: AnsiRandom;
   readonly cues: StockCueSink;
   now(): number;
   /** Phone events that suspend an active game (plan 21). */
@@ -47,10 +53,16 @@ export interface StockGames {
 export function createStockGames(ports: StockPorts = {}, now: () => number = () => 0): StockGames {
   return {
     suspended: {},
+    ansi: createAnsiRandom(),
     seed: () => gameSeed(ports.clock?.(), ports.date?.()) ?? 0,
     cues: NO_CUES,
     now,
   };
+}
+
+/** Reset the phone-wide random chain at power-on; New game and Continue keep it. */
+export function powerOnGames(games: StockGames): void {
+  games.ansi = createAnsiRandom();
 }
 
 /** Power-off loses every suspended game; standby keeps them (plan 23 Task 0 C8). */

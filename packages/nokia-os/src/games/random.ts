@@ -40,3 +40,25 @@ export function createGameRandom(seedU32: number): GameRandom {
     },
   };
 }
+
+export interface AnsiRandom {
+  next(): number;
+  readonly state: number;
+}
+
+/** Phone-wide ANSI rand, fitted to plan 24 S8's twelve LCD spawn rows. */
+export function createAnsiRandom(seedU32 = 0x7fffffff): AnsiRandom {
+  if (!Number.isInteger(seedU32) || seedU32 < 0 || seedU32 >= U32) {
+    throw new Error(`ANSI seed ${seedU32} is not a u32 integer.`);
+  }
+  let state = seedU32;
+  return {
+    get state() {
+      return state;
+    },
+    next() {
+      state = (Math.imul(state, 1103515245) + 12345) >>> 0;
+      return (state >>> 16) & 0x7fff;
+    },
+  };
+}
