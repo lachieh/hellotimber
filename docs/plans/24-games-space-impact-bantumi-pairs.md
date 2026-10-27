@@ -18,7 +18,7 @@ lands second rebases onto the other and keeps both plans' tests green.
 supplementary captures") and plans 13, 14, 16, 23 and 28 in full before starting. The planning
 probes in `$REF/captures/scratch-plan24/{space-impact,bantumi,pairs2}/` are evidence for this plan
 only and are never imported. Task 0 writes this plan's captures to `$REF/captures/6.39/plan24/`.
-**Status (2026-10-27):** rebased onto main `72cb29e`; inherited Games II groundwork
+**Status (2026-10-27):** rebased onto main `ce8167f`; inherited Games II groundwork
 is preserved and verified against the current suite. Task 0 remains incomplete after
 capture-driver repair and a successful full-run validation. The follow-up assignment authorizes
 Task 0 writes to REF. Tasks 1-3 have partial inherited WIP, not completed tasks.
@@ -856,6 +856,25 @@ goldens remain `pending:24`; there is no `goldens/index/24.json`. Tasks 1-3 rema
 and Tasks 4-14 have not started. Next: finish S6's required variety and object coverage,
 reconcile S7's informative and ambiguous datasets and D5 fallback, reproduce S8's LCD spawn
 rows, finish special/bonus sound coverage and pass the canonical checker before Task 1.
+
+### Second main refresh and Task 0 evidence review (2026-10-27)
+
+**Rebase.** Created `t3/p24-space-impact-backup-2026-10-27b` at `5ae31b2`, then
+rebased the four branch commits onto main `ce8167f` without conflicts. The replayed head
+before this report is `4c5cb00`. No golden index or generated resource conflicted, so neither
+an import nor regeneration was needed. Main's calls/phone-book integration, plan 25 call
+captures, IMEI path and note-dismissal changes remain intact. Every command ran from the
+assigned `p24-space-impact` worktree through mise. No other checkout was edited.
+
+**Verification after rebase:** `vp install`, `vp check --fix`, the uncached workspace
+suite and `vp run website#build` pass. Node 22.22.3 was explicitly first on the child PATH,
+with `VITEST_MAX_WORKERS=2` and `VP_RUN_CONCURRENCY_LIMIT=1`. All 255 files pass:
+10,693 passed tests, 120 expected failures and 25 TODOs. nokia-os contributes 163 files,
+9,851 passed tests, 120 expected failures and 25 TODOs (1,006.04 s); the other packages
+contribute phone-core 450, snake 62, phone-3d 49, phone-screen 101 and website 180.
+An earlier run whose child PATH selected system Node was stopped and is not the verification
+result. The installed Vite+ has no `env doctor` subcommand; the attempted diagnostic exited 2.
+No runtime adaptation, dependency change, import or generated-file edit was needed.
 
 ### Task 1 - Contracts and documentation
 
