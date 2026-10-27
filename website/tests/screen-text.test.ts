@@ -41,6 +41,19 @@ describe("screenToText", () => {
       }),
     ).toBe("Menu 8. Games, 8 of 13.");
   });
+  it("reads a carousel slot's place when its number skips one", () => {
+    expect(
+      screenToText({
+        kind: "menu-carousel",
+        label: "SIM services",
+        menuNumber: 14,
+        position: 13,
+        total: 13,
+        iconId: "sim-services",
+        menuIndicator: { segments: [14], awaitingNext: false },
+      }),
+    ).toBe("Menu 14. SIM services, 13 of 13.");
+  });
   it("announces active and resolved menu hierarchies without visual punctuation", () => {
     const active = screenToText({
       kind: "list",

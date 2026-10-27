@@ -15,6 +15,6 @@ export function renderCarousel(fb: Framebuffer, screen: CarouselScreen): void {
   drawMenuIndicator(fb, screen.menuIndicator);
   fb.drawTextCentered(FONT, truncateToWidth(FONT, screen.label, 80), LABEL_Y);
   fb.blitBitmap(menuIcon(screen.iconId), ICON_X, ICON_Y);
-  drawPositionRail(fb, screen.menuNumber - 1, screen.total);
+  drawPositionRail(fb, (screen.position ?? screen.menuNumber) - 1, screen.total);
   drawSoftkey(fb, "Select");
 }

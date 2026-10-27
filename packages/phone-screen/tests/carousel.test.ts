@@ -50,6 +50,14 @@ describe("renderCarousel", () => {
     expect(first.getPixel(81, 20)).toBe(1);
   });
 
+  it("places the rail by position when the slot's number skips one (Menu 14 in slot 13)", () => {
+    const fb = new Framebuffer();
+    const last = new Framebuffer();
+    renderCarousel(fb, carousel({ menuNumber: 14, position: 13 }));
+    renderCarousel(last, carousel({ menuNumber: 13 }));
+    expect(regionToArt(fb, 81, 8, 3, 30)).toBe(regionToArt(last, 81, 8, 3, 30));
+  });
+
   it("shows the Select softkey", () => {
     const fb = new Framebuffer();
     renderCarousel(fb, carousel());

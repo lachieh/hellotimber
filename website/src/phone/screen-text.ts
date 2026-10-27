@@ -18,7 +18,7 @@ export function screenToText(s: ScreenModel): string {
       }
       return `Standby. ${s.carrier}.${s.clock ? ` ${s.clock}.` : ""} Press Menu.`;
     case "menu-carousel":
-      return `${describeMenu(s.menuIndicator)} ${s.label}, ${s.menuNumber} of ${s.total}.`;
+      return `${describeMenu(s.menuIndicator)} ${s.label}, ${s.position ?? s.menuNumber} of ${s.total}.`;
     case "list":
       return `${s.menuIndicator === undefined ? "" : `${describeMenu(s.menuIndicator)} `}${s.title}. ${s.items[s.selected] ?? ""}, ${s.selected + 1} of ${s.items.length}. ${s.softkey}.`;
     case "reader":
