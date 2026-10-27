@@ -11,7 +11,7 @@ import { StockPhoneBook } from "../src/phone-book/store";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";
 import { lockedRig } from "./support/keyguard.ts";
-import { standbyRig, type Rig } from "./support/rig.ts";
+import { seededStorage, standbyRig, type Rig } from "./support/rig.ts";
 
 const CONTENT = PHONE_BOOK_SIMS.content as StockSimCard;
 
@@ -41,6 +41,28 @@ function type(rig: Rig, keys: string): void {
 }
 
 describe("standby ▼ (D5)", () => {
+  it("C cancels the empty SIM note on key-down and keeps its keypad and held beeps", () => {
+    const rig = standbyRig({ storage: seededStorage({ factory: true }) });
+    rig.press("down");
+    rig.advance(1060);
+    expectLcd(
+      rig.paint(),
+      goldenImage("phone-book/standby-down-empty", "c"),
+      "No phone numbers is still shown before C",
+    );
+    const seen = rig.sounds.length;
+    rig.hold("c");
+    expect(rig.phone.screen.kind).toBe("standby");
+    rig.advance(650);
+    expect(
+      rig.sounds.slice(seen).filter((event) => event.output === "tone" && event.hz !== null),
+    ).toMatchObject([
+      { hz: 900, volume: 0x9104 },
+      { hz: 900, volume: 0x9104 },
+    ]);
+    rig.release("c");
+  });
+
   it("shows the keyguard hint at a locked standby, not the name list", () => {
     const rig = lockedRig("dark", { sim: CONTENT });
     rig.press("down");

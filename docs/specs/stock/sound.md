@@ -36,7 +36,10 @@ unset, which silences ringing previews and warning tones; the factory state (pla
 - **Warning tones** (On): `Invalid shortcut`, `No phone numbers`, `No voice tags saved`, `Screen
 saver missing` play 1750 Hz on the tone generator (≈290 ms); `Code error`, `Not allowed`, `Set PIN
 code request on` the buzzer at 1000 Hz (≈285 ms). Other notes are silent. The tone replaces the
-  key's beep; Off silences that key.
+  key's beep; Off silences that key. C cancels a note on key-down without replaying its warning,
+  so C and its held action keep their 900 Hz keypad beeps (`sound/keypad/keys`; see
+  [phone-book note timing](phone-book.md#standby-keys)). Other dismissal keys retain the note's
+  warning (`sound/note/invalid-shortcut-key`: ▼ replays 1750 Hz).
 - **Snake II:** meal 2636.9 Hz for one timer unit, crash three 15 ms 440 Hz pulses, a top score
   the fireworks tune (587/880 Hz, twice) 2045 ms after the crash, 21 ms before the death steps
   end; sound needs Warning tones and Sounds On, the ≈480 ms vibrator Shakes and Vibrating alert
@@ -72,6 +75,5 @@ a second recording of the same path). Events shorter than 34 ms on either side a
 including Badinerie's 8 ms rest and Mangrove's 7 ms chirp; sustained pitches and volume registers
 remain exact. Within the fidelity standard and not gaps: Beep once's beep 23 ms
 after the vibrator with Keypad tones Off (1 ms in the other recordings) and one Level 5 recording
-of Get cool running ≈0.7 % slow (57 ms behind by 8 s). DTMF at standby (`sound/keypad/keys`, `hold`) is plan 22's: digits
-there beep 900 Hz until number entry exists, and the dialling tones need the event's second
-oscillator (a contract extension then).
+of Get cool running ≈0.7 % slow (57 ms behind by 8 s). DTMF at standby (`sound/keypad/keys`, `hold`) is asserted through plan 22's number entry;
+the sound events carry both oscillators of each pair.
