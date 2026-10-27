@@ -2,6 +2,9 @@
 // entries. Submenus keep their presentation, soft key, opening selection, page values and game
 // splash; leaves open stock widget flows, a feature's screens or the placeholder of the plan that
 // owns them (`leaves.ts`, `stock.ts`, `features/`).
+import { normaliseSim, type NormalisedSimCard, type StockSimCard } from "../phone-book/sim-card";
+import { simServicesEntry } from "./features/sim-services";
+import { StockPhoneBook } from "../phone-book/store";
 import {
   ApplicationEntry,
   MenuLevel,
@@ -94,23 +97,28 @@ function entryOf(
 
   // A feature's lead entry heads the level while it is shown, and the level opens on it then
   // (Snake II's Continue, plan 23 D10); the tree's children follow it (orders 2.., slugs
-  // unchanged), numbered by position.
+  // unchanged), numbered by position. A lead `after` a child follows that child instead (plan
+  // 18c: Topics' Add topic after Select).
   const lead = LEADS[node.number];
+  const treeChildren = node.children ?? [];
+  const leadAt =
+    lead?.after === undefined ? 0 : treeChildren.findIndex((c) => c.slug === lead.after) + 1;
+  if (lead?.after !== undefined && leadAt === 0) {
+    throw new Error(`${node.number}: no child "${lead.after}" for its lead to follow.`);
+  }
   const leadEntry =
     lead === undefined
       ? undefined
       : new ApplicationEntry(
           new MenuSlug(lead.slug),
-          new MenuOrder(1),
+          new MenuOrder(leadAt + 1),
           lead.label,
           b.leaves.lead(path, lead),
         );
-  const children = [
-    ...(leadEntry === undefined ? [] : [leadEntry]),
-    ...(node.children ?? []).map((child, i) =>
-      entryOf([...path, child], i, b, leadEntry === undefined ? 0 : 1),
-    ),
-  ];
+  const children = treeChildren.map((child, i) =>
+    entryOf([...path, child], i, b, leadEntry !== undefined && i >= leadAt ? 1 : 0),
+  );
+  if (leadEntry !== undefined) children.splice(leadAt, 0, leadEntry);
   const key = settingKey(path);
   const setter = setterLevel(node.number);
   const bySlug = (s: string | undefined) => children.find((child) => child.slug.value === s);
@@ -141,9 +149,14 @@ function entryOf(
         }
       : {}),
     ...(opening === undefined ? {} : { opening }),
-    ...(lead === undefined
+    ...(lead === undefined && level?.shown === undefined
       ? {}
-      : { shown: (child: MenuEntry) => child !== leadEntry || b.leaves.leadShown(lead) }),
+      : {
+          shown: (child: MenuEntry) =>
+            child === leadEntry
+              ? b.leaves.leadShown(lead!)
+              : (level?.shown?.(child.slug.value) ?? true),
+        }),
     ...(spec.intro ? { intro: b.leaves.intro(node, path.map((n) => n.slug).join("/")) } : {}),
     ...(showsEntryIndicator(node.number) ? { entryIndicatorMs: STOCK_SHORTCUT_WINDOW_MS } : {}),
     ...(level?.label === undefined
@@ -187,18 +200,55 @@ export function createStockMenu(
   eeprom: StockEeprom = new StockEeprom(createMemoryStorage()),
   messaging?: StockMessaging,
   t9?: StockT9,
+  phoneBook?: StockPhoneBook,
+  sim?: NormalisedSimCard,
 ): PhoneMenu {
-  const services = stockServices(ports, settings, games, security, sounder, eeprom, messaging, t9);
+  const services = stockServices(
+    ports,
+    settings,
+    games,
+    security,
+    sounder,
+    eeprom,
+    messaging,
+    t9,
+    phoneBook,
+    sim,
+  );
   const builder: Builder = {
     ports,
     settings: services.settings,
     services,
     leaves: new LeafBinder(services),
   };
+  const entries = STOCK_TREE.map(
+    (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),
+  );
+  // Plan 30 D5: a SIM with a toolkit adds SIM services (Menu 14) after Profiles.
+  const toolkit = sim?.toolkit;
   return new PhoneMenu(
-    STOCK_TREE.map(
-      (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),
-    ),
+    toolkit === undefined ? entries : [...entries, simServicesEntry(toolkit, services)],
+  );
+}
+
+/**
+ * Plan 30 D5: the stock menu for the inserted SIM: `stockMenu`, and SIM services (Menu 14) when
+ * the SIM has a toolkit. Validates the SIM as `createStockPhone` does (throws naming the field).
+ */
+export function stockMenuFor(sim: string | StockSimCard): PhoneMenu {
+  const card = normaliseSim(sim);
+  const eeprom = new StockEeprom(createMemoryStorage());
+  return createStockMenu(
+    {},
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    eeprom,
+    undefined,
+    undefined,
+    undefined,
+    card,
   );
 }
 
@@ -212,6 +262,8 @@ export function stockServices(
   eeprom: StockEeprom,
   messaging?: StockMessaging,
   t9: StockT9 = stockT9(eeprom),
+  phoneBook?: StockPhoneBook,
+  sim?: NormalisedSimCard,
 ): StockServices {
   const store = settings ?? createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES);
   const sound = sounder ?? new StockSounder(new SoundSequencer(() => {}), store, () => games.now());
@@ -224,16 +276,21 @@ export function stockServices(
     sounder: sound,
     noteSound: (lines) => sound.note(lines),
     eeprom,
-    messaging: messaging ?? stockMessaging(eeprom, store, code.sim, createSyntheticNetwork()),
+    messaging:
+      messaging ?? stockMessaging(eeprom, store, sim ?? code.sim, createSyntheticNetwork()),
     t9,
+    phoneBook: phoneBook ?? new StockPhoneBook(eeprom, sim ?? normaliseSim(code.sim)),
   };
 }
 
-/** A phone's messaging: `sim`'s messages over `eeprom`, Set 1's centre from `settings`. */
+/**
+ * A phone's messaging: `sim`'s messages over `eeprom` (plan 30: the SIM's own until the phone
+ * first writes them), Set 1's centre from `settings`.
+ */
 export function stockMessaging(
   eeprom: StockEeprom,
   settings: StockSettings,
-  sim: string,
+  sim: string | NormalisedSimCard,
   network: StockNetworkPort,
 ): StockMessaging {
   const centre = () => settings.text(SET_1_CENTRE_KEY) ?? "";

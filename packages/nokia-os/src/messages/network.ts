@@ -14,6 +14,8 @@ import {
   type SyntheticCalls,
 } from "../calls/network";
 
+import type { StockContact } from "../phone-book/sim-card";
+
 /** One SMS as the phone sees it: a typed recipient number (or routing address) and its text. */
 export interface StockSms {
   readonly number: string;
@@ -37,6 +39,13 @@ export interface StockIncomingSms extends StockSms {
 
 export type StockSendOutcome = "sent" | "failed";
 
+/** Plan 19: a business card as Send b'card sends it. */
+export interface StockBusinessCard {
+  /** The number typed at `Phone number:`. */
+  readonly to: string;
+  readonly card: StockContact;
+}
+
 /** The phone's network for SMS. The host owns delivery and outcomes; times are the phone's. */
 export interface StockNetworkPort {
   /**
@@ -44,6 +53,11 @@ export interface StockNetworkPort {
    * passed; a promise that rejects counts as `"failed"`.
    */
   send(sms: StockSms): StockSendOutcome | Promise<StockSendOutcome>;
+  /**
+   * Plan 19: Send b'card. The phone shows `Sending b'card` until this settles and its link time
+   * has passed; absent, a card settles `"sent"` after the link time (the emulator's network).
+   */
+  sendBusinessCard?(card: StockBusinessCard): StockSendOutcome | Promise<StockSendOutcome>;
   /** Called once by `createStockPhone`; the host calls `deliver` for each incoming SMS. */
   subscribe(deliver: (sms: StockIncomingSms) => void): () => void;
   /**
@@ -66,9 +80,12 @@ export interface SyntheticNetwork
   deliver(sms: StockIncomingSms): void;
   /** Every SMS phones sent through this network, in order. */
   readonly sent: readonly StockSms[];
+  /** Plan 19: every business card phones sent through this network, in order. */
+  readonly cards: readonly StockBusinessCard[];
 }
 
-const TIMESTAMP_RANGES: Readonly<Record<keyof StockTimestamp, readonly [number, number]>> = {
+/** The ranges of a time stamp's fields (plan 30: SIM messages are checked with them too). */
+export const TIMESTAMP_RANGES: Readonly<Record<keyof StockTimestamp, readonly [number, number]>> = {
   year: [1900, 9999],
   month: [1, 12],
   day: [1, 31],
@@ -126,9 +143,14 @@ export function createSyntheticNetwork(): SyntheticNetwork {
   const subscribers = new Set<(sms: StockIncomingSms) => void>();
   const sent: StockSms[] = [];
   const calls = syntheticCalls();
+  const cards: StockBusinessCard[] = [];
   return {
     send(sms) {
       sent.push({ number: sms.number, text: sms.text });
+      return "sent";
+    },
+    sendBusinessCard(card) {
+      cards.push({ to: card.to, card: { name: card.card.name, number: card.card.number } });
       return "sent";
     },
     subscribe(deliver) {
@@ -148,5 +170,6 @@ export function createSyntheticNetwork(): SyntheticNetwork {
     get dialled() {
       return calls.dialled;
     },
+    cards,
   };
 }

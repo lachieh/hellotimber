@@ -9,6 +9,7 @@
 // table must not overlap (tests/features.test.ts).
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockMessaging } from "../../messages/service";
+import type { StockPhoneBook } from "../../phone-book/store";
 import type { StockSounder } from "../../sound/sounder";
 import type { StockT9 } from "../../text/t9/service";
 import type { Widget } from "../../widgets/flow";
@@ -36,8 +37,12 @@ export interface StockServices {
   readonly eeprom: StockEeprom;
   /** Plan 18: the phone's SMS (its `messages` record over `eeprom`, the network port). */
   readonly messaging: StockMessaging;
+  /** Plan 19: the inserted SIM's phone book (its `phone-book` record over `eeprom`). */
+  readonly phoneBook: StockPhoneBook;
   /** Plan 18b: the host's T9 dictionaries and the user words. */
   readonly t9: StockT9;
+  /** Plan 30 D9: the phone's IMEI (`StockPhoneConfig.imei`, checked), for `*#06#`; none: virgin. */
+  readonly imei?: string;
 }
 
 /** The tree node a bound screen opens for. */
@@ -52,13 +57,21 @@ export interface ScreenPlace {
   readonly numbering: ListNumbering;
 }
 
-/** A screen a feature implements: the first widget of the flow the node opens. */
-export type ScreenBinding = (services: StockServices, place: ScreenPlace) => () => Widget;
+/**
+ * A screen a feature implements: the first widget of the flow the node opens; undefined = no
+ * response (a leaf only: the menu stays as it was, plan 18c's virgin Templates).
+ */
+export type ScreenBinding = (
+  services: StockServices,
+  place: ScreenPlace,
+) => () => Widget | undefined;
 
 /** An entry a feature puts at the head of a submenu level (Snake II's Continue, plan 23 D10). */
 export interface LeadEntry {
   readonly slug: string;
   readonly label: string;
+  /** The tree child it follows instead of heading the level (plan 18c: Topics' Add topic). */
+  readonly after?: string;
   /** Whether the entry is listed now; the level opens on it while it is. */
   readonly shown: (services: StockServices) => boolean;
   /** The flow it opens. */
@@ -77,6 +90,11 @@ export interface LevelOptions {
   readonly label?: (slug: string, order: number) => string | undefined;
   /** The slug of the child the level opens on; undefined = the captured opening. */
   readonly opening?: () => string | undefined;
+  /**
+   * Whether the tree child `slug` is listed now (plan 18c: Topics with no topic; plan 21:
+   * Reminders lists View all and Erase only while the memory holds a reminder); default all.
+   */
+  readonly shown?: (slug: string) => boolean;
 }
 
 /** A level's options over one phone's services. */
@@ -240,4 +258,9 @@ export interface StockFeature {
   readonly settings?: StockSettingsTables;
   /** EEPROM records this feature owns (plan 15 D2); Restore and erase see them all. */
   readonly records?: readonly EepromRecord<unknown>[];
+  /**
+   * Plan 21: bound leaves that exit at once while `when` holds (by node number), as an
+   * `exitLevels` leaf does: View all with no reminder to show.
+   */
+  readonly exitsWhen?: Readonly<Record<string, (services: StockServices) => boolean>>;
 }

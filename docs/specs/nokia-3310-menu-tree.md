@@ -501,7 +501,8 @@ subtrees are written out once and then referred to.
       - Domestic unit expressed in foreign units: text-input "Exchange rate:" [OK]
 - `10` **Reminders** → submenu (3-row list)
   - `10-1` **Add new** → text-input, "Remind about:", key **OK**
-  - `10-2` **View all** → returns-immediately, "Reminders", key **Select**
+  - `10-2` **View all** → returns-immediately, "Reminders", key **Select** (the virgin EEPROM's
+    junk reminder, `0000000000`, is not listed; its alert is the virgin first standby prompt: plan 21)
   - `10-3` **Erase** → option-list, key **OK**
     - entries: **One by one** ▸ · All
     - One by one: returns immediately
@@ -510,13 +511,15 @@ subtrees are written out once and then referred to.
   - `11-1` **Alarm clock** [Off] → text-input, "Set alarm time: / 00:00", key **OK**
   - `11-2` **Clock settings** [10:10] → submenu (3-row list)
     - `11-2-1` **Hide clock** → timed-note, "Clock hidden"; then back to the list after ≈1.4 s
+      (the entry then reads **Show clock**: "Clock displayed"; plan 21)
     - `11-2-2` **Set the time** → text-input, "Time: / 10:10", key **OK**
     - `11-2-3` **Time format** → option-list, key **OK**
       - entries: **24-hour** ▸ · 12-hour
       - 24-hour: timed-note "24-hour clock selected", then back
       - 12-hour: timed-note "12-hour clock selected", then back
   - `11-3` **Date setting** [13.10.2026] → text-input, "Date: / 13.10.2026", key **OK**
-  - `11-4` **Stopwatch** → application, "0:00:00.00", key **Start**
+  - `11-4` **Stopwatch** → application, "0:00:00.00", key **Start** (stopped: **Options** →
+    Start · Reset · Exit, `11-4-1`; plan 21)
   - `11-5` **Countdown timer** [Off] → number-input, "Set timer: / hh:mm", key **Start**
   - `11-6` **Auto update of date and time** [Off] → option-list, key **OK**
     - entries: On · Confirm first · **Off** ▸
@@ -705,6 +708,10 @@ screens behind prompts and one-entry views (the content crawl pressed the soft k
 well). Seed data: contacts **A** and **B**, dialled call 0400000001, saved message "High", one
 reminder "Hi", alarm 07:00, composed tone "A". The Phone book view setting is the default
 **Large font**, so names show one per screen with the action as the key.
+
+The Phone book's behaviour with names (views, sorting, every flow and its timings) is in
+[stock/phone-book.md](stock/phone-book.md) (plan 19); the two-contact crawl below is its first
+reference.
 
 ### Phone book › Search
 
@@ -1146,15 +1153,15 @@ reminder "Hi", alarm 07:00, composed tone "A". The Phone book view setting is th
 accessory set. The user guide's list of menu functions names most of them, and their strings
 exist in the firmware text table:
 
-| number       | entry                                                                          | why it is hidden here                                                                                                                                   |
-| ------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 6-1-5, 6-1-6 | Line selection, Automatic answer ("Automatic answer" 0x0fc, "Line 1"/"Line 2") | Line selection needs a two-line (ALS) SIM. Automatic answer needs a headset or car kit. Both would come after 6-1-4, so no gap shows                    |
-| 6-2-5        | Lights (0x260 / 0x2b4)                                                         | only with the PPH-1 car kit                                                                                                                             |
-| 6-3-3        | Fixed dialling (0x2d2)                                                         | needs a SIM with fixed dialling (FDN)                                                                                                                   |
-| 7-5          | not identified                                                                 | a network- or SIM-dependent divert. The firmware has "Divert when off, no answer, or no coverage" (0x215), which is a candidate, but this is unverified |
-| 8-5          | not identified                                                                 | hidden Games entry                                                                                                                                      |
-| 12-n-2-4     | (none)                                                                         | Personalise reuses the Tones numbers, and 5-4 Composer has no per-profile equivalent                                                                    |
-| 13           | SIM services (0x3f2)                                                           | only with a SIM Toolkit SIM. The emulator SIM has none                                                                                                  |
+| number       | entry                                                                          | why it is hidden here                                                                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 6-1-5, 6-1-6 | Line selection, Automatic answer ("Automatic answer" 0x0fc, "Line 1"/"Line 2") | Line selection needs a two-line (ALS) SIM. Automatic answer needs a headset or car kit. Both would come after 6-1-4, so no gap shows                                              |
+| 6-2-5        | Lights (0x260 / 0x2b4)                                                         | only with the PPH-1 car kit                                                                                                                                                       |
+| 6-3-3        | Fixed dialling (0x2d2)                                                         | needs a SIM with fixed dialling (FDN)                                                                                                                                             |
+| 7-5          | not identified                                                                 | a network- or SIM-dependent divert. The firmware has "Divert when off, no answer, or no coverage" (0x215), which is a candidate, but this is unverified                           |
+| 8-5          | not identified                                                                 | hidden Games entry                                                                                                                                                                |
+| 12-n-2-4     | (none)                                                                         | Personalise reuses the Tones numbers, and 5-4 Composer has no per-profile equivalent                                                                                              |
+| 13           | SIM services (0x3f2)                                                           | only with a SIM Toolkit SIM (phase 2+). The emulator SIM has none. Plan 30: it is **Menu 14**, labelled with the toolkit's title ([stock/sim-services.md](stock/sim-services.md)) |
 
 The main-menu table (`extracted/6.39/menu/main_menu.json`) also has hidden entries for SIM
 services (dynamic text), "Net monitor" (0x00a, service-enabled) and "Picture" (0x047). None of

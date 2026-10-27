@@ -74,7 +74,7 @@ Exactly four elements (manual, verbatim list):
 
 - **Clock:** if _Clock settings → time display on_, the time is shown in standby (12/24 h selectable) (helpdoc Clock settings, verified). Position: below/beside operator name — **UNVERIFIED exact pixel position, best guess upper-right under the battery bars** (per period photos).
 - **Screensaver:** after a user-set **timeout**, the selected **picture** (chosen from the picture-message graphics set) replaces the standby display; configured at **Tones → Screen saver (Menu 5-9)** with `On / Off / Timeout`-style options (manual p.69 + helpdoc, verified). Wikipedia adds screensavers could come from received picture messages. Any keypress dismisses it (UNVERIFIED, best guess). Per-profile screensaver setting is referenced in Profiles (manual p.90, verified).
-- Typing a digit in standby replaces the label with **`Call`** options flow; up arrow opens **phone book name list**, down arrow opens **last dialled numbers** (see §6).
+- Typing a digit in standby replaces the label with **`Call`** options flow; the scroll keys open the **phone book name list** and the **last dialled numbers** (v6.39: ▼ names, ▲ dialled numbers; see §6).
 
 ---
 
@@ -106,7 +106,7 @@ Source: "List of menu functions", manual p.41–43 ([p.41](https://www.manualsli
 10. **Reminders (Menu 10)** — `Add new` (write note text → `Alarm on` (date+time) / `Alarm off`) · `View all` (scroll; Options incl. erase). Phone alarms when date/time reached. (p.85, verified.)
 11. **Clock (Menu 11)** — 11-1 `Alarm clock` (with snooze) · 11-2 `Clock settings` (time display on/off in standby, set time, 12/24 h format) · 11-3 `Date setting` · 11-4 `Stopwatch` · 11-5 `Countdown timer` · 11-6 `Auto update of date and time`. (p.43 + p.87 + helpdoc, verified.)
 12. **Profiles (Menu 12)** — profile list (verified, p.91): `General` ("the default setting") · `Silent` (mutes all tones) · `Discreet` (quiet tones) · `Loud` · a fifth **`(empty)`/replaceable slot** that "you can replace with a profile that you have received" (Club Nokia downloadable). Per-profile: `Activate`, `Personalise` (ringing tone, ringing volume, and the other Tones-menu items incl. screensaver), `Rename` for custom (UNVERIFIED rename scope).
-13. **SIM services (Menu 13)** — operator/SIM-dependent; appears only if SIM supports it.
+13. **SIM services (Menu 13)** — operator/SIM-dependent; appears only if SIM supports it. v6.39 numbers it **14** and labels it with the SIM's toolkit title: see [stock/sim-services.md](stock/sim-services.md).
 
 ---
 
@@ -116,7 +116,7 @@ Sources: manual p.19 keys, p.28, p.34–38, p.32 ([scroll keys verbatim](https:/
 
 - **NaviKey:** context softkey = select/confirm/primary action. Standby: `Menu`. Number typed: `Call`. Incoming call: `Answer`. In lists: `Select`/`OK`/`View`. In editors: `Options`. Also `Send`, `Use`, `Unlock`, `Read` etc. There are no Send/End hardware keys — calls are placed with NaviKey (`Call`) and ended with it (`End`).
 - **C key (verified, p.19):** deletes character to the left when entering text; **press-and-hold deletes all characters**; steps back to the previous menu level; **rejects an incoming call**; (with `Options`) used for clearing. Back out of menus level-by-level with C; hold to return to standby.
-- **Scroll keys in standby (VERIFIED, helpdoc verbatim; history: v6.39's ▲ opens the dialled list and ▼ the phone book, see [stock/calls.md](stock/calls.md)):** **▲ up = opens the Phone book name/number list; ▼ down = opens the list of last dialled numbers** (redial list, last 20 numbers; scroll then press `Call`).
+- **Scroll keys in standby (corrected by the v6.39 captures):** **▼ opens the Phone book name list; ▲ opens the list of last dialled numbers** (`No last dialled numbers` when empty; redial list, last 20 numbers; scroll then press `Call`). The helpdoc's "Scroll keys" page names both actions verbatim, but its arrow glyphs are stripped images, so this spec first read them as ▲ = phone book and ▼ = dialled numbers. See [stock/phone-book.md](stock/phone-book.md) and [stock/calls.md](stock/calls.md).
 - **Scroll keys elsewhere (verified):** browse menus/settings; **the manual describes cursor left (▲) and right (▼); v6.39 captures show the reverse (see §10)**; during a call they adjust earpiece volume.
 - **Power key short-press in standby = profile switcher** (verified). **Long-press `#`: no documented function on the 3310** (silent-profile toggle via # arrived on later models) — UNVERIFIED/absent, recommend no-op.
 - **Long-press `1` in standby = dial voice mailbox** (verified, speed-dial section). Long-press `2`–`9` = speed dial if enabled (verified).
@@ -189,7 +189,7 @@ Sources as cited inline.
 - **Signal/battery as side-mounted four-bar stacks** (verified concept; four-bar count and exact tapered pixels reconstructed from the home-screen photograph). On charge, battery bars scroll/animate (standard Nokia behavior, UNVERIFIED).
 - **Menu shortcut numbers** with the 3-second entry window and top-right shortcut display (verified). Immediate per-level navigation and the visible bullet/cursor treatment are project interpretations of the supplied photograph.
 - **One-softkey UI**: every screen has exactly one bottom-center label; "back" is always the C key. This asymmetry is core to the 3310 feel.
-- **Up=phonebook / Down=redial-list** standby shortcuts (verified) — opposite of what many remember. (History: v6.39 does the reverse, ▲ the dialled list, ▼ the names; see [stock/calls.md](stock/calls.md).)
+- **Down=phone book / Up=dialled numbers** standby shortcuts on v6.39 (captured; the helpdoc's stripped arrow glyphs first read as the reverse, §6, [stock/phone-book.md](stock/phone-book.md), [stock/calls.md](stock/calls.md)).
 - **Screensaver lives in the Tones menu** (verified) and uses picture-message graphics.
 - **Welcome note** text on boot (verified), **Chat** as a headline feature (verified), **160-char SMS with countdown counter**, long-SMS chaining up to 459 chars (3 × 153) — Wikipedia, secondary-verified.
 - Battery: BMC-3 NiMH 900 mAh, talk 2.5–4.5 h, standby up to ~260 h (mobile-review/Wikipedia) — useful for replica battery-drain pacing.
@@ -212,13 +212,17 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Security code, boot gates, storage, virgin/factory states  | [stock/storage-and-settings.md](stock/storage-and-settings.md)     | 15   |
 | Tones and sound                                            | [stock/sound.md](stock/sound.md)                                   | 16   |
 | Text entry and SMS                                         | [stock/text-entry-and-sms.md](stock/text-entry-and-sms.md)         | 18   |
+| Phone book                                                 | [stock/phone-book.md](stock/phone-book.md)                         | 19   |
 | Profiles                                                   | [stock/profiles.md](stock/profiles.md)                             | 17   |
+| Chat, Templates, Smileys, Info topics, service commands    | [stock/chat-and-content.md](stock/chat-and-content.md)             | 18c  |
 | T9 predictive text                                         | [stock/t9-predictive-text.md](stock/t9-predictive-text.md)         | 18b  |
 | Calculator (plan 20, in progress)                          | [stock/calculator.md](stock/calculator.md)                         | 20   |
+| Clock, alarm, timers, Reminders                            | [stock/clock-and-reminders.md](stock/clock-and-reminders.md)       | 21   |
 | Composer                                                   | [stock/composer.md](stock/composer.md)                             | 27   |
 | Snake II                                                   | [stock/snake-ii.md](stock/snake-ii.md)                             | 23   |
 | Keyguard and lights                                        | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |
 | Number entry, calls and the call register (plan 22)        | [stock/calls.md](stock/calls.md)                                   | 22   |
+| SIM messages, sender names, SIM services, IMEI             | [stock/sim-services.md](stock/sim-services.md)                     | 30   |
 
 ---
 

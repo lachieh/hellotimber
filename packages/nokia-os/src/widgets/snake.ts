@@ -41,6 +41,11 @@ export interface StockGames {
   seed(): number;
   readonly cues: StockCueSink;
   now(): number;
+  /**
+   * Plan 21: how many of the phone's events (an alert falling due) have happened; a game in play
+   * suspends to its menu when it grows (plan21 reminders/alert-elsewhere-snake). Default none.
+   */
+  events?(): number;
 }
 
 export interface SnakeGameOptions {
@@ -69,10 +74,13 @@ class SnakeGameWidget implements Widget {
   #model: { readonly state: SnakeState; readonly model: SnakeModel } | undefined;
   /** The game ended with a new top score (written when the death steps end). */
   #topScore = false;
+  /** The phone's events when the game opened (plan 21: a new one suspends it). */
+  readonly #events: number;
 
   constructor({ games, settings, start }: SnakeGameOptions) {
     this.#games = games;
     this.#settings = settings;
+    this.#events = games.events?.() ?? 0;
     if (start === "continue") {
       const suspended = games.snake;
       if (suspended === undefined) throw new Error("Continue without a suspended Snake II game.");
@@ -121,7 +129,8 @@ class SnakeGameWidget implements Widget {
   }
 
   tick(dtMs: number, flow: Flow): void {
-    if (this.#suspended) {
+    // Plan 22: a call interrupted the game (onInterrupted); plan 21: an alert fell due.
+    if (this.#suspended || (this.#games.events?.() ?? 0) !== this.#events) {
       this.#suspend(flow);
       return;
     }

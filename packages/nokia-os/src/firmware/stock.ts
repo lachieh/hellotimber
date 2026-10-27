@@ -82,6 +82,12 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = merged(
 /** Screens implemented by a feature, by node number. */
 export const SCREENS: Readonly<Record<string, ScreenBinding>> = merged("Screen", (f) => f.screens);
 
+/** Plan 21: bound leaves that exit at once while their condition holds, by node number. */
+export const EXITS_WHEN: Readonly<Record<string, (services: StockServices) => boolean>> = merged(
+  "Exits when",
+  (f) => f.exitsWhen,
+);
+
 /** Entries heading submenu levels, by the level's node number. */
 export const LEADS: Readonly<Record<string, LeadEntry>> = merged("Lead entry", (f) => f.leads);
 

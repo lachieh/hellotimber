@@ -19,7 +19,12 @@ sound port (plan 16; see "Sound"); the display and keypad LEDs through a lights 
 keyguard locks the keypad (plan 25; see "Lights and the keyguard"). Multi-tap text entry, the
 Welcome note editor, Write messages, Inbox and Outbox work over a host network port (plan 18; see
 "Text entry and SMS"), and Write messages writes in T9 with an English dictionary built from an
-open word list (plan 18b; see "T9 predictive text"). Leaves that are whole applications open a marked
+open word list (plan 18b; see "T9 predictive text"). The SIM card's phone book (names, Service
+Nos., speed dials, assigned tones, Send b'card) works over the SIM a host inserts (plan 19; see
+"The phone book"). The Clock and Reminders run on the host's clock: Clock settings, Date setting,
+Auto update, the alarm, the countdown timer, the stopwatch and the reminder memory, with their
+alerts at standby (plan 21; see "Clock, alarm, timers and Reminders"). Leaves that are whole
+applications open a marked
 placeholder (a dotted border the firmware never draws) naming the plan that owns them; see "Leaf
 ownership".
 
@@ -42,7 +47,7 @@ const phone = createStockPhone({
   },
   boot: "animated", // or "skip" (tests, reduced motion; the security code is still asked for)
   storage: window.localStorage, // the EEPROM; default: a fresh in-memory storage per phone
-  sim: "sim-1", // the inserted SIM card (default "sim-1")
+  sim: "sim-1", // the inserted SIM card, an id or a whole StockSimCard (default "sim-1", empty)
   network: createSyntheticNetwork(), // SMS in and out (the default; see "Text entry and SMS")
   // T9 English (see "T9 predictive text"); without it Write messages is multi-tap.
   t9: { english: (await import("@hellotimber/nokia-os/t9-english")).englishT9 },
@@ -79,7 +84,8 @@ Arrows ▲/▼, Enter Navi, Backspace or Escape C (hold it to return to standby)
 `#`, and `P` power (as long as it is held; the Power button holds 1 s while the phone is off and
 taps while it is on, so at standby it opens the profile list). The buttons do the same. In Snake II the digits steer (2/4/6/8,
 and 1/3/7/9 relative), ▲/▼ and `*`/`#` turn, Enter or Escape suspend the game. The demo validates
-the operator name, can skip the boot, and shows the phone's path, screen kind and application in
+the operator name, can skip the boot, moves the host clock on (**Host clock**: +1 min, +10 min,
++1 h, Reset; the status line shows it and the times of the last alerts), and shows the phone's path, screen kind and application in
 a status line with the EEPROM records stored and the active profile (its name, the standby line
 and the silent icon when shown). The phone's EEPROM is the page's localStorage:
 settings survive a reload, and **Erase EEPROM** removes every `nokia-os/` record and restarts the
@@ -93,10 +99,17 @@ eight sound events (`atMs output state`) under the status line, so a headless ru
 without hearing it. An `LCD` and a `KEYS` lamp show the lights port (the LCD dims while the display
 LEDs are off) and the last eight lights events are listed too. The phone's network is a synthetic
 one: a **Receive SMS** form (sender and text, time-stamped by the browser's clock) delivers a
-message, and the messages the phone sent are listed beside it. The T9 English dictionary loads as
+message, and the messages the phone sent are listed beside it. A **Chat partner** answers every
+Chat line sent to its number (`Hi <name>, you said "<line>"`), as a host's chat contact would. The T9 English dictionary loads as
 a chunk of its own after the page and restarts the phone with it (the status line shows `T9:
 English (30000 words)`); unticking **T9 English dictionary** restarts the phone without one, as a
-host that leaves it out (Write messages is then multi-tap). In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
+host that leaves it out (Write messages is then multi-tap). The **SIM phone book** select
+restarts the phone with an empty SIM (the SIM select's), a sample SIM (a handful of invented names
+and two service numbers) or a full one (50 names); the status line shows the SIM's id and its
+names and free locations, and ▼ at standby opens the list. The **SIM content** select restarts the
+phone with a sample SIM (plan 30: three messages, one unread from a named sender; Menu 14 with a
+text page, and a list whose `Office` asks to call; an IMEI and a preloaded Welcome note); the status
+line then reads each screen as plain text (`text: …`, `describeStockScreen`). In dev it also lays any committed golden over the LCD, as an overlay or as a pixel
 difference; the list groups the goldens by top-level menu (`tree/05-tones`) and kind (`menu`,
 `probe`, `game`).
 
@@ -154,6 +167,74 @@ node, the leaves it leaves to a later plan's placeholder, the generic widgets' t
 layouts, note styles and ends, query results, setter levels), its settings (virgin and factory
 values, aliases) and its EEPROM records. The demo's controls are panels the same way
 (`demo/panels/`).
+
+## Clock, alarm, timers and Reminders
+
+**The clock contract (D1).** The host's `clock` (`HH:MM`, 24-hour) and `date` (`DD.MM.YYYY`) are
+the phone's real-time clock. nokia-os reads them on every tick and never reads a wall clock of its
+own. A value that does not parse (`24:00`, `9:5`, `31.02.2026`, `undefined`) counts as no time:
+standby shows no clock, the Clock pages show `--:--` and `--.--.----`, Alarm clock, Date setting
+and Reminders › Add new say `Clock needs to be set first`, and alarms and reminders stay dormant.
+Nothing throws. The phone's time is the host's plus a signed minute offset kept in the EEPROM
+(the internal `clock` record): Set the time and Date setting move the offset, never the host, and
+Auto update `On` clears it at power-on (`Date and time updated` when that changed the time;
+`Confirm first` asks `Update date and time of the phone?` at standby). With no offset the phone
+shows the host's strings exactly. A host that wants a fixed zone formats its strings in that zone:
+
+```ts
+const brisbane = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Australia/Brisbane",
+  hour: "2-digit",
+  minute: "2-digit",
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  hourCycle: "h23",
+});
+const part = (type: string) =>
+  brisbane.formatToParts(new Date()).find((p) => p.type === type)!.value;
+createStockPhone({
+  clock: () => `${part("hour")}:${part("minute")}`, // "07:59"
+  date: () => `${part("day")}.${part("month")}.${part("year")}`, // "13.10.2026"
+});
+```
+
+Clock settings › Hide clock (the entry then reads `Show clock`) and Time format (12-hour: `hh:mm`
+and an am/pm mark on standby, `10:10 am` on the page) are kept in the EEPROM; Restore factory
+settings shows the clock and sets 24-hour, and keeps the alarm, the offset and the reminders.
+
+**Minute edges and alerts (D2, D3).** On the first tick whose phone time is a new minute, the
+alarm rings if the minute is its time (or its snooze's), and every reminder whose date and time
+have come (a jump over its minute included) alerts, the later-added first. Setting the time, the
+date or the alarm fires nothing by itself; a backwards jump re-fires nothing. v6.39 shows no
+alert over anything: an alert that falls due away from standby waits until the phone next shows
+standby (Snake II pauses to its menu), and alerts show one at a time, through phone-core's opt-in
+`PhoneConfig.interruption`. The alarm rings with `Alarm!` and its time blinking (Snooze: `Snooze
+active`, it rings again 5 minutes later rounded up to a minute; untouched for a minute it snoozes
+itself; any other key stops it, and it is a one-shot). A reminder shows its text with `Snooze`
+(`Alarm postponed for 10 min`, then it alerts again 10 minutes later; any other key ends it).
+The countdown's `Countdown time up` steps its bells until a key. Each alert plays its captured
+program on the sound port (its volume climbing as Ringing volume Ascending does).
+
+**Wake (D4).** While the phone is off, the alarm's minute switches it on without the boot
+(phone-core's opt-in `PhoneConfig.wake`): the ringing alarm, then `Activate phone for calls?`
+(Yes: the normal power-on; No: off again). The emulator cannot run while off, so this flow is
+composed from captured screens and the firmware's strings and is UNVERIFIED (D12).
+
+**Timers (D5).** The countdown and the stopwatch run on kernel time with nominal durations (the
+emulator's timer unit runs ≈2.9 % fast, an artefact). The countdown shows the time left rounded
+up to a minute and its standby icon; the stopwatch (Start, Stop, Options › Start, Reset, Exit)
+keeps running while the phone is elsewhere, redraws every 100 ms and blinks its standby
+indicator. Both are RAM: a power-off loses them. Standby's `StandbyIndicators` gain `alarm`,
+`timer` and `stopwatch`.
+
+**Reminders.** Up to 10 reminders (35 characters, with or without an alarm date and time) live in
+the EEPROM's internal `reminders` record; Restore keeps them. The virgin EEPROM holds the
+firmware's junk reminder, dormant (D8): it keeps View all and Erase listed until Erase › All.
+There is no host API to add reminders: a host's only route would be writing that internal record
+into the storage before the phone starts, which is not a supported contract. Reminder Send asks
+for the `Phone number:` (Search: the phone book's names); the Smart Messaging transmission after it
+is a placeholder.
 
 ## Storage, settings and the security code
 
@@ -326,8 +407,8 @@ requestAnimationFrame(loop);
   previews, warning tones on error notes, Snake II's sounds and shakes.
 - **Later plans.** An arriving SMS plays the active profile's Message alert tone (plan 18; the
   Tones settings follow the active profile, plan 17). The incoming call's ringing and DTMF (22, Calls),
-  alarms and reminders (21), the other games' sounds (24) and the Composer (27) play
-  through the same sequencer.
+  the other games' sounds (24) and the Composer (27) play through the same sequencer, as the
+  alarm's, the countdown's and the reminders' alerts do (21).
 
 ## Lights and the keyguard
 
@@ -444,9 +525,74 @@ function httpNetwork(endpoint: string): StockNetworkPort {
 }
 ```
 
-**Later plans.** 18c adds Chat over the same messaging service, Templates, Smileys, Picture messages
-(a binary extension of the port), Info service topics and the Service command editor. Phone book
-names (19) are theirs; Use number and the received notice's ▲/digit keys are plan 22's (Calls); the message alert plays the active profile's tone (plan 17).
+**Business cards.** Send b'card (plan 19) goes through the same port's optional
+`sendBusinessCard({ to, card: { name, number } })`; a port without it settles `"sent"` after the
+link time, and `createSyntheticNetwork().cards` lists the cards sent.
+
+**Later plans.** Chat, Templates, Smileys, Info service topics and the Service command editor are
+plan 18c's (below). Use number and the received notice's ▲/digit keys are plan
+22's (Calls); the message alert plays the active profile's tone (plan 17).
+
+## Chat and Messages content
+
+Plan 18c adds Chat, Templates, Smileys, Info service › Topics and the Service command editor,
+checked against 163 goldens of emulator captures (`content/*`, `chat/*`, `topics/*`,
+`service-command/*`) and specified in
+[`docs/specs/stock/chat-and-content.md`](../../docs/specs/stock/chat-and-content.md). The public
+API does not change.
+
+- **Templates and Smileys** (Messages 5 and 6) are the `templates` and `smileys` EEPROM records:
+  eight slots each, a slot holding the user's text or nothing. The virgin EEPROM has neither list
+  (the menu entries do nothing, as on the captured phone); Restore factory settings provisions
+  them, and an empty slot shows the firmware's default (five templates, five smileys) or
+  `(empty)`. Read, Edit (70 characters, 7 for a smiley) and Erase work as captured, and every
+  editor's Options › Template and Insert smiley insert a slot's text at the cursor.
+- **Info service › Topics** is the `info-topics` record: the virgin EEPROM's five junk topics
+  (box-glyph names), an empty list after Restore; Select, Add topic (at most five), Edit and Erase.
+- **The Service command editor** sends nothing anywhere: `Requesting` for ≈14.9 s, then `Not done`,
+  as the emulator, which answers no USSD.
+
+**Chat over the network port.** Chat (menu 3, and Inbox › Options › Chat) needs no API of its
+own. Each line goes out through `StockNetworkPort.send` as an SMS to the chat's number whose
+text is `<chat name>: <line>` (`: <line>` with no name). While a chat runs, an SMS that the host
+delivers from exactly that number is the partner's line: it shows on the chat's history at once
+and is not stored in Inbox. An SMS from any other number lands in Inbox as usual. So a host that
+gives the phone someone to chat with only answers SMS, for example:
+
+```ts
+import { createStockPhone, createSyntheticNetwork } from "@hellotimber/nokia-os";
+
+const network = createSyntheticNetwork();
+const phone = createStockPhone({ network });
+const PARTNER = "0412345678"; // the number the user types at Chat's `Phone number:`
+
+let answered = 0;
+function answerChats(): void {
+  for (const sms of network.sent.slice(answered)) {
+    const line = /^([^:]*): ([\s\S]*)$/.exec(sms.text);
+    if (sms.number === PARTNER && line !== null) {
+      const text = `Hi ${line[1]}, you said "${line[2]}"`; // an LLM's reply, say
+      network.deliver({
+        number: PARTNER,
+        text,
+        sentAt: { year: 2026, month: 10, day: 15, hour: 9, minute: 0, second: 0 },
+      });
+    }
+  }
+  answered = network.sent.length;
+}
+// Call answerChats() after each phone.tick(), or answer from your own StockNetworkPort's send.
+```
+
+The partner's SMS lands the usual receive link time (≈2.32 s) after `deliver`; an answer that
+lands before the phone shows `Message sent` waits for it, and the history then lists the answer
+above the sent line. Nothing of a chat is stored but the name, which the next chat offers
+(kept in memory: its persistence over a power cycle is UNVERIFIED).
+
+**Not implemented (no verified v6.39 captures).** Picture messages (Messages 4), Screen saver ›
+Screen saver, receiving business cards and sending a Composer tone stay placeholders of plan 18c:
+the v6.39 emulator opens no picture folder and stalls on saving a picture, and the network port's
+binary (picture, card, ringtone) extension is not part of the contract.
 
 ## Calls
 
@@ -581,6 +727,156 @@ const phone = createStockPhone({ carrier: "Telstra", t9: { english: englishT9 } 
   golden stays a known gap: after a word and a space a short `*` leaves one pixel lit on the
   underline row, a rule nothing explains yet.
 
+## The phone book
+
+The names live on the SIM card a host inserts (`StockPhoneConfig.sim`), as on the real phone (no
+phone memory): its id, its locations (default 50, the emulator SIM's), its name length (default 16)
+and its initial entries, plus its service numbers. A host passes its own contacts:
+
+```ts
+import { createStockPhone, type StockSimCard } from "@hellotimber/nokia-os";
+
+const sim: StockSimCard = {
+  id: "my-sim",
+  phoneBook: {
+    entries: [
+      { name: "Ada", number: "0412000001" },
+      null, // a free location
+      { name: "Grace Hopper", number: "+61412000002" },
+    ],
+  },
+  serviceNumbers: [{ name: "Voice mail", number: "101" }],
+};
+const phone = createStockPhone({ storage: window.localStorage, sim });
+```
+
+`createStockPhone` throws for an invalid SIM (an empty id, fewer than one location or name
+character, more entries than locations, a name too long for the SIM or a number it cannot hold),
+naming the field and the location. **Persistence (D3):** the phone keeps each SIM's names, speed
+dials and assigned tones in its EEPROM (the `phone-book` record) by SIM id. The host's entries are
+read only until the phone first changes that SIM's names; from then on the EEPROM's copy is the
+SIM's (so the same id with other entries shows the phone's edits), and another SIM id has its own
+phone book. Erasing the EEPROM returns to the host's entries.
+
+Standby ▼ opens the list (▲ opens the dialled numbers, plan 22's); Search, Service Nos., Add name,
+Erase, Edit, Assign tone (with previews), Send b'card, Options (Type of view, Memory status), Speed
+dials and Voice tags (`Voice system error`: the emulator has no voice DSP) follow the v6.39
+captures; Write messages' number prompts pick a number with `Search`, and Send to many sends to a
+chosen name. **Later plans:** plan 22 adds calls (every `Call` soft key, held 2-9 speed dialling,
+caller names and assigned ringing tones through `StockPhoneBook.speedDial`, `byNumber` (plan 30:
+the last-9-digits match) and `tone`);
+18c adds receiving business cards (`Business card received`, `Save business card?`).
+
+## SIM content and SIM services
+
+A host supplies its content where a 2000 phone kept it (plan 30), and implements nothing else:
+
+| Content                                  | Where a 3310 keeps it           | nokia-os                                    |
+| ---------------------------------------- | ------------------------------- | ------------------------------------------- |
+| contacts, service numbers                | SIM `EF_ADN`, `EF_SDN`          | `StockSimCard.phoneBook`, `.serviceNumbers` |
+| received SMS                             | SIM `EF_SMS`                    | `StockSimCard.messages`                     |
+| SIM services menu and screens            | the SIM's toolkit applet        | `StockSimCard.toolkit`                      |
+| IMEI                                     | the phone                       | `StockPhoneConfig.imei`                     |
+| Welcome note, Reminders                  | phone memory, typed by the user | `StockPhoneConfig.preload`, applied once    |
+| missed/received calls, durations, alarms | phone memory, made by events    | none: a host plays the events               |
+
+```ts
+import {
+  createStockPhone,
+  describeStockScreen,
+  stockMenuFor,
+  type StockSimCard,
+} from "@hellotimber/nokia-os";
+
+const sim: StockSimCard = {
+  id: "my-sim",
+  phoneBook: { entries: [{ name: "Ada", number: "0412000001" }] },
+  messages: {
+    slots: 15, // the SIM's records: its capacity (default 15)
+    entries: [
+      // by slot (index 0 = slot 1); null = a free slot
+      {
+        number: "0412000001",
+        text: "Hello!",
+        sentAt: { year: 2026, month: 10, day: 13, hour: 9, minute: 30, second: 0 },
+        read: false,
+      },
+    ],
+  },
+  toolkit: {
+    title: "Portfolio", // Menu 14's carousel label
+    items: [
+      { id: "about", label: "About", steps: [{ kind: "text", text: "Content on the SIM card." }] },
+      {
+        id: "places",
+        label: "Places",
+        steps: [
+          {
+            kind: "select",
+            items: [
+              {
+                id: "office",
+                label: "Office",
+                steps: [{ kind: "call", number: "0298765432", confirm: "Call the office?" }],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+const phone = createStockPhone({
+  carrier: "Orange F",
+  storage: window.localStorage,
+  sim,
+  imei: "490154203310018",
+  preload: { welcomeNote: "Hello", reminders: [{ text: "Call Ada" }] },
+});
+stockMenuFor(sim).paths(); // [..., "menu/sim-services", "menu/sim-services/about", "menu/sim-services/places"]
+phone.subscribe(({ screen }) => (mirror.textContent = describeStockScreen(screen)));
+```
+
+- **SMS on the SIM.** The Inbox lists unread messages first, then read ones, each in slot order (the
+  order taken when the Inbox opens); an arrival or a Save takes the first free slot; `No space for
+new messages` when every slot is used. Power-on with unread SIM messages shows the standby
+  envelope only (no notice, no tone). Text is one SMS: GSM 7-bit (the extension table counts two
+  septets; `[ ] { } ~ | ^` draw as `?`), at most 160 septets, drawable in the small face. Read on a
+  message shows `Opening message` first. **Persistence:** the host's messages are the SIM's contents
+  until the phone first writes that SIM's messages (a read, an erase, an arrival, a Save); from then
+  on the `messages` record's copy (plan 19's rule). Restore factory settings keeps them.
+- **Sender names.** A sender in the phone book is listed and read under its name (the list,
+  `Sender:`, Details): two numbers match on their last 9 digits (or all digits of a shorter one),
+  `+` and leading digits ignored; an exact match wins.
+- **SIM services (Menu 14).** A toolkit adds a 13th carousel slot that reads 14, labelled with the
+  toolkit's title (the words that fit), with its own icon; its level lists the items (labels cut with
+  `...` where wide). Choosing an item fetches behind `Wait`, then shows its steps: text pages
+  (`DISPLAY TEXT`, OK on, C back), lists (`SELECT ITEM`, nested) and calls the phone confirms (`SET
+UP CALL`: composed, `confirm` or `Allow SIM card to call?`). The session ends after the item's last
+  step (back on the level). A confirmed call goes through plan 22's dial (a placeholder until plan 22
+  lands), inside the confirming key's `send()` so a browser host keeps the user activation.
+- **Validation.** `createStockPhone` and `stockMenuFor` throw for an invalid SIM, naming the field
+  path (`SIM card "my-sim": toolkit.items[1].steps[0].text has characters the stock small font
+lacks: …`): messages (numbers, GSM text, time stamps, slots), toolkit (kebab-case ids unique per
+  list, 1-255 items, lists at most 4 deep, faces, a text page within one command's 273 septets, a
+  confirm within three lines, call numbers by the SIM's rules).
+- **Not on the SIM:** `EF_LND` (v6.39 never reads it: dialled numbers are phone memory, plan 22).
+
+### Host identity and preload
+
+`imei` (15 digits, Luhn-valid) is what `*#06#` shows (`stockImeiLines(imei)`: `Serial No.` over ten
+digits and five; the screen is plan 22's). `preload` writes the Welcome note while storage has no
+`settings` record and the reminders (in order, as Add would, plan 21) while it has no `reminders`
+record, so a visitor's edits and erasures survive; every string must be typeable, within its
+editor's limit and drawable.
+
+### Screen text
+
+`describeStockScreen(screen)` reads any screen as plain text for an accessibility mirror and
+headless QA: standby (operator, profile line, clock, indicators, a notice), the carousel slot, a
+level's selected row and place, and every stock widget (notes, lists, editors, prompts, pages,
+Snake II's score, placeholders). It is not pixels: no golden asserts it.
+
 ## Plan-owned resource evidence
 
 Each `PlanCaptureSet` can declare `resources`, normally imported from its own
@@ -615,10 +911,10 @@ exemption is needed.
 ## Leaf ownership
 
 Leaves that are whole applications open the placeholder, tagged with the plan that owns them:
-Service command editor, Picture messages, Templates, Smileys, Topics, Chat and Screen saver ›
-Screen saver (18c); Composer slots (27); the three
-native languages (26); the other games' New game (24); Calculator (20); Stopwatch (21). Prompts and empty-state notes show their first screen until the plans for Phone book (19), Clock and Reminders (21) and Call register and Call divert (22) take them
-over.
+Picture messages and Screen saver › Screen saver (18c); the three
+native languages (26); the other games' New game (24); Calculator (20). Prompts and empty-state
+notes show their first screen until the plans for Phone book (19) and Call register and Call
+divert (22) take them over.
 
 ## Capture artefacts
 
@@ -630,7 +926,8 @@ The emulator's virgin EEPROM and synthetic network leave marks that the OS does 
 | Security-code prompt at every virgin power-on  | reproduced as the Phone security gate (new SIM)    |
 | In-menu `Code error` for `12345`               | never recorded; wrong-code goldens use `00000`     |
 | Clock wizard after the boot                    | not imported; the boot ends at standby             |
-| First standby `Snooze` prompt                  | not imported                                       |
+| First standby `Snooze` prompt                  | the junk reminder's alert; the entry kept dormant  |
+| The time of day never advances; dormant alarm  | the host clock is the RTC; captures use `settime`  |
 | Profiles slot 6 name                           | two U+E000 boxes, as captured                      |
 | Page values (`Level 1`, `Off`, …)              | the virgin EEPROM (empty storage)                  |
 | Unset tone lists, `Top score: 45`, score IDs   | the virgin EEPROM (empty storage)                  |

@@ -4,6 +4,9 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["tests/**/*.test.ts"],
+    // Replays that take 1-3 s alone pass vitest's 5 s default when every workspace suite (and
+    // other worktrees') share the machine; a hung test still fails, a minute later.
+    testTimeout: 60_000,
   },
   run: {
     tasks: {

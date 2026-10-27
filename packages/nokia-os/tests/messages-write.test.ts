@@ -92,7 +92,7 @@ describe("Write messages (2-1)", () => {
     const storage = createMemoryStorage();
     const rig = standbyRig({ ...MULTITAP, storage });
     keys(rig, `${WRITE} ${HI} ${option("Save")} wait:2500`);
-    expect(outbox(storage)).toEqual([{ text: "Hi" }]);
+    expect(outbox(storage)).toEqual([{ slot: 1, text: "Hi" }]);
     const store = new StockMessages(new StockEeprom(storage), "sim-1");
     for (let i = 1; i < MESSAGE_SLOTS; i++) store.save(`saved ${i}`);
     const full = standbyRig({ ...MULTITAP, storage });

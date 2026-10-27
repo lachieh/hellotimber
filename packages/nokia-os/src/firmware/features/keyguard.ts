@@ -7,6 +7,7 @@
 // window and the leads before the hint and `Keypad active` are the goldens' (tests check them).
 import type { Phone, PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
+import { attachDescription, describeWidget } from "../../display/describe";
 import { paintWidget, type KeyguardModel } from "../../display/widgets";
 import { KEYPAD_LOCKED_LINES } from "../../display/widgets/keyguard";
 import type { StockWidgetTimeline } from "../../resources";
@@ -463,6 +464,7 @@ export class KeyguardOverlay {
     const fb = new Framebuffer();
     paintWidget(fb, model, shown?.screen.frame.pixels);
     const frame = { width: fb.width, height: fb.height, pixels: fb.pixels };
+    attachDescription(frame, describeWidget(model));
     this.#shown = { json, screen: { kind: "custom", appId: "keyguard", frame } };
     return this.#shown.screen;
   }

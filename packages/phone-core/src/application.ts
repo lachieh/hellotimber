@@ -15,6 +15,12 @@ export interface ExitOptions {
    * `key` is not one of `standbyEntry.keys`.
    */
   key?: PhoneKey;
+  /**
+   * Keys held across the exit lose their long press as well as their release (plan 21: C held on
+   * the running stopwatch stays on the Stopwatch page). By default only the release is swallowed,
+   * so C held from a screen that leaves at C's down still goes on to standby (plan 19).
+   */
+  endHolds?: boolean;
 }
 
 export interface ApplicationContext {

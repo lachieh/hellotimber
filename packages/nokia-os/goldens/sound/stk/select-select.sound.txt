@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/stk/select-select
+status: asserted
+source: captures/6.39/plan30/sound/stk/select-select
+source-sha256: 62c027be43213b555d52b975bfd5079b3c36ee9b60df1831f682ce65d9383467
+state: factory
+keys: 0:navi
+note: SIM stk, toolkit main (factory image): OK on Home: Wait, its text: OK's beep only.
+omitted: none
+
+@events
+# t_ms output   state
+51     tone     900 v=0x9104
+182    tone     off

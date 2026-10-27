@@ -18,8 +18,8 @@ export interface EditorOption {
  */
 export const EDITOR_OPTIONS: readonly EditorOption[] = [
   { label: "Send", golden: "sms/send" },
-  // The virgin phone book's note; with names, plan 19's list (Send to many with names).
-  { label: "Send to many", golden: "sms/send-to-many", owner: "19" },
+  // The empty SIM's note; with names, the phone book's list (plan 19).
+  { label: "Send to many", golden: "sms/send-to-many" },
   // No response in the captured state; templates are plan 18c's.
   { label: "Template", golden: "sms/template", owner: "18c" },
   { label: "Insert smiley", golden: "sms/insert-smiley", owner: "18c" },
@@ -48,7 +48,7 @@ export interface T9EditorOption {
  */
 export const T9_EDITOR_OPTIONS: readonly T9EditorOption[] = [
   { label: "Send", golden: "sms/send" },
-  { label: "Send to many", golden: "sms/send-to-many", owner: "19" },
+  { label: "Send to many", golden: "sms/send-to-many" },
   { label: "Template", golden: "sms/template", owner: "18c" },
   { label: "Insert smiley", golden: "sms/insert-smiley", owner: "18c" },
   { label: "Matches", golden: "t9/g-matches/10-used", composing: true },

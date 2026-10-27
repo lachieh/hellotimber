@@ -1,13 +1,12 @@
 import type { ScreenModel } from "@hellotimber/phone-core";
-import { textWidth, type Framebuffer } from "@hellotimber/phone-screen";
+import type { Framebuffer } from "@hellotimber/phone-screen";
 import { STATUS_SPRITES, STOCK_FONTS, WIDGET_SPRITES, type StockSprite } from "../resources";
+import { paintClock, paintClockIndicators } from "./clock-indicators";
 import { paintProfileStandby } from "./profiles";
 
 /** Softkey labels are centred: x = floor((84 - advance width) / 2), top y 40. */
 export const SOFTKEY_TOP = 40;
 const CARRIER_TOP = 8;
-/** The clock's last digit cell ends here, left of the battery ladder (its ink ends at x 76). */
-const CLOCK_END = 78;
 /** Plan 18: a notice's lines, small from x 6 at tops 7/16/25 (`sms/notice` count-1). */
 const NOTICE_LEFT = 6;
 const NOTICE_TOPS = [7, 16, 25] as const;
@@ -48,9 +47,7 @@ export function paintStandby(
     lines.forEach((line, i) => fb.drawText(STOCK_FONTS.small, line, NOTICE_LEFT, NOTICE_TOPS[i]!));
   }
   paintProfileStandby(fb, screen);
-  if (screen.clock !== undefined) {
-    const x = CLOCK_END - textWidth(STOCK_FONTS.digits, screen.clock);
-    fb.drawText(STOCK_FONTS.digits, screen.clock, x, 0);
-  }
+  if (screen.clock !== undefined) paintClock(fb, screen.clock);
+  paintClockIndicators(fb, screen);
   fb.drawTextCentered(STOCK_FONTS.small, notice?.softkey ?? "Menu", SOFTKEY_TOP);
 }

@@ -16,7 +16,7 @@ plan 14 goldens already committed for Phone book (virgin EEPROM, empty SIM), the
 `$REF/captures/scratch-plan19/` (evidence only, never imported; `NOTES.md` lists them), and the
 canonical recaptures Task 0 writes to `$REF/captures/6.39/plan19/`. Read `$REF/captures/README.md`
 and plans 13, 14, 15, 16 and 18 in full before starting.
-**Status:** not started.
+**Status:** done.
 
 ## Goal
 
@@ -242,7 +242,8 @@ export interface PhoneConfig<Metadata = unknown> {
   standbyKeys?: { up?: string | PhoneApplication; down?: string | PhoneApplication };
   /**
    * Plan 19: after a standby key, standby stays on screen with `leaving: true` this long before
-   * its target opens (as `menuOpenDelayMs` for Menu). Default 0; non-negative integer.
+   * its target opens (as `menuOpenDelayMs` for Menu); a key meanwhile opens the target at once
+   * and goes to it (Task 0 S). Default 0; non-negative integer.
    */
   standbyKeyDelayMs?: number;
 }
@@ -253,8 +254,8 @@ export interface PhoneConfig<Metadata = unknown> {
 ```ts
 /** Plan 19: one SIM phone book entry or service number. */
 export interface StockContact {
-  readonly name: string; // within the SIM's name length; every glyph in the small and large faces
-  readonly number: string; // 1-20 of 0-9 * # p w, after an optional leading `+`
+  readonly name: string; // within the SIM's name length; every glyph in the small and large faces; "" = none
+  readonly number: string; // 0-20 of 0-9 * # p (no `w`, Task 0), after an optional `+`; "" = none (not both)
 }
 
 /** Plan 19: the inserted SIM card. Plan 15's string `sim` is `{ id }` with these defaults. */
@@ -410,10 +411,10 @@ scenario is hand-written in the acceptance file:
 fixtures in `plan19/sims/`), a "Plan 19 supplementary captures" section in `captures/README.md`,
 `firmware/work/v639-plan19-*.fls`.
 
-- [ ] Read `$REF/captures/README.md`, `captures/scratch-plan19/NOTES.md` and its `tools/*.py`
+- [x] Read `$REF/captures/README.md`, `captures/scratch-plan19/NOTES.md` and its `tools/*.py`
       (`sim.py` writes SIM fixtures; `drv.py` passes `SWSIM_FS`). Do not modify existing captures
       or scripts. Each SIM needs its own emulator process (the harness reads it once).
-- [ ] Write `gen_v639_plan19.py` (`sims`, `run -j 3`, `--only`, `ocr`, `check`), driving
+- [x] Write `gen_v639_plan19.py` (`sims`, `run -j 3`, `--only`, `ocr`, `check`), driving
       `tools/menutree/emu.py` like plans 16 and 23. Fixtures (invented names, restated in the repo's
       capture set): `content` (the scratch names plus `Ånna`, `1st`, `zed`, `Zed`, a 15- and a
       16-character name, numbers of 10, 14, 15, 19 and 20 digits, `+`, `*`, `#`, `p`, `w`; two
@@ -421,69 +422,174 @@ fixtures in `plan19/sims/`), a "Plan 19 supplementary captures" section in `capt
       (the emulator SIM), `second` (another identity, three names). Virgin sections start from
       `v639-setup.inc`; sections with the security code or sound from `v639-factory-setup.inc`.
       Every recording is `record` + `audio` of the same name with `keys.csv` (plan 16's format).
-- [ ] **S standby:** ▼ in each view (Large font, Name list, Name, number) and with `empty`; ▲ with
+- [x] **S standby:** ▼ in each view (Large font, Name list, Name, number) and with `empty`; ▲ with
       and without dialled numbers; ▲/▼ through the list past both ends; C; C held; Navi (`Call`,
       record 3 s, then End); a key during the leading frame. Measure `standbyKeyDelayMs` (the
       ladders-erased frame) over ten presses.
-- [ ] **V views and L letters:** every `content` name in each view (shots), with the window in Name
+- [x] **V views and L letters:** every `content` name in each view (shots), with the window in Name
       list view after each ▼ and ▲; every digit key in the list, pressed 1-5 times quickly and with
       the commit gap (the multi-tap letter cycle and the jump), `0`, `1`, `*`, `#`.
-- [ ] **Q search:** `Name:` with every query in the fixture's interesting set (each first letter,
+- [x] **Q search:** `Name:` with every query in the fixture's interesting set (each first letter,
       two-letter prefixes inside and between names, a prefix past the last name, upper and lower
       case, `Å`, a digit, a space), empty OK, C on the prompt, C held, and the prompt's other keys
       (`#`, held `#`, `*`). Record where C returns from the list.
-- [ ] **N service numbers:** `content` (list, ▲/▼, Navi `Call` 3 s then End, C) and `empty`.
-- [ ] **A add name:** names typed with every character class (letters, accents, digits, punctuation
+- [x] **N service numbers:** `content` (list, ▲/▼, Navi `Call` 3 s then End, C) and `empty`.
+- [x] **A add name:** names typed with every character class (letters, accents, digits, punctuation
       from key 1, a symbol-table character the SIM alphabet lacks, e.g. `€`: record what OK does),
       16 characters and a 17th, the small-face drop, `Phone number:` with 20 digits and a 21st,
       `*`/`#`/`p`/`w`/`+` entry, OK and C at each step (where C returns), C held; `Saved` (record to
       the settled list; C and Navi there), `Nothing to save`, an empty name with a number, a name
       with no number; `full`: `Memory full`, `Replace?` OK and C; a name equal to an existing one;
       which free location an Add fills (with `small` after an Erase).
-- [ ] **E erase:** One by one in each view (first, middle, last name; C on `Erase?`; the last
+- [x] **E erase:** One by one in each view (first, middle, last name; C on `Erase?`; the last
       remaining name, then the empty SIM); Erase all: `Are you sure?` C and OK, a wrong code
       (`00000`), `12345` (record through `Memory erased` and the level), Erase all on `empty`.
-- [ ] **D edit:** per S10: name only, number only, both, neither, empty name, empty number, Replace,
+- [x] **D edit:** per S10: name only, number only, both, neither, empty name, empty number, Replace,
       Add, Add with `full`, C on `Replace`/`Add`; the list position afterwards; an assigned tone and a
       speed dial on the edited entry afterwards (do they follow it?).
-- [ ] **T assign tone:** the pages per view and for a long name, the list (indicators of the first
+- [x] **T assign tone:** the pages per view and for a long name, the list (indicators of the first
       and last entries), ▲/▼ with audio over ≥ 3 tones (factory), `Default` highlighted after a move
       (does it preview?), whether the first ▼ previews (plan 16 S9), OK on a tone and on
       `Default`, C during a preview, the page after; the tone after Edit Replace and after Erase.
-- [ ] **B send b'card:** the leading frame, `Phone number:` (`Search` while empty: the name list
+- [x] **B send b'card:** the leading frame, `Phone number:` (`Search` while empty: the name list
       with `Select`, then the number filled), OK with audio through the list, C at each step, three
       more sends for the link-time median (`BCARD_LINK_MS`).
-- [ ] **O options:** each Type of view choice (`Done`, the page value), Memory status on `content`,
+- [x] **O options:** each Type of view choice (`Done`, the page value), Memory status on `content`,
       `full`, `small`, `empty` and after an Add and an Erase.
-- [ ] **K speed dials:** keys 2-9 (▼ and ▲ wrap) on `content`, `two`, `small` (keys past the SIM's
+- [x] **K speed dials:** keys 2-9 (▼ and ▲ wrap) on `content`, `two`, `small` (keys past the SIM's
       locations: what shows?) and `empty`; Assign on each of keys 2-9 once (every `Speed dial key n
 saved`); Options › View number (long and `+` numbers), Change, Erase (C on `Erase?`); Assign
       with no names; a key assigned to a location that is then erased (what shows?); Restore factory
       settings (factory image), then the keys (D3).
-- [ ] **H hold:** held 2, 5, 9 and 1 at standby with Speed dialling Off and On, assigned and
+- [x] **H hold:** held 2, 5, 9 and 1 at standby with Speed dialling Off and On, assigned and
       unassigned keys, and a key whose location is empty (record 6 s each, then End or C). Evidence
       for plan 22 (`pending:22`).
-- [ ] **G voice tags:** Add voice tag per view, Start (through `Voice system error`), Quit during
+- [x] **G voice tags:** Add voice tag per view, Start (through `Voice system error`), Quit during
       `Please speak now`, C on `Press Start`; Playback, Change, Erase with names.
-- [ ] **P persistence and SIM:** `saveflash` + `reboot` after an Add, an Edit, an Erase, a speed-dial
+- [x] **P persistence and SIM:** `saveflash` + `reboot` after an Add, an Edit, an Erase, a speed-dial
       Assign and a tone; a run with `second` from the saved image (that SIM's names; the speed dials
       and tones made on `content`, D4).
-- [ ] **W warning tones (factory):** audio of every new note (`Saved`, `Erased`, `Memory erased`,
+- [x] **W warning tones (factory):** audio of every new note (`Saved`, `Erased`, `Memory erased`,
       `Speed dial key n saved`/`erased`, `Done`, `Nothing to save`, `Memory full`, `Voice system
 error`, `Business card sent`) with Warning tones On, and the error notes with it Off.
-- [ ] **X pickers:** Write messages › Options › Send › `Search` (plan 18's prompt) with names (the
+- [x] **X pickers:** Write messages › Options › Send › `Search` (plan 18's prompt) with names (the
       list, `Select`, the number filled); Send to many with names (the list with `Send`, each send);
       Chat's `Phone number:` Search (18c evidence).
-- [ ] OCR every new image into `plan19/text.json` (plan 14's format and command).
-- [ ] `check`: every recording starts on its parent; the fixtures in `plan19/sims/` equal the capture
+- [x] OCR every new image into `plan19/text.json` (plan 14's format and command).
+- [x] `check`: every recording starts on its parent; the fixtures in `plan19/sims/` equal the capture
       set's `PHONE_BOOK_SIMS` (the repo file given as an argument); every audio recording has
       `keys.csv`.
-- [ ] Append "Plan 19 supplementary captures" to `$REF/captures/README.md`.
-- [ ] No commit. Record the outcome under this task: the standby delay, the sort order (accents,
+- [x] Append "Plan 19 supplementary captures" to `$REF/captures/README.md`.
+- [x] No commit. Record the outcome under this task: the standby delay, the sort order (accents,
       digits, case ties, duplicates), the search and letter rules, every layout per view (wrap
       points, truncation, the ellipsis), Add/Edit/Erase flows with every return target, unsupported
       SIM characters, speed-dial fallbacks and their persistence across SIMs and Restore, the tone
       list's numbering and previews, the link-time median and spread, the new notes' sounds.
+
+**Task 0 outcome (2026-10-14).** `gen_v639_plan19.py` has 43 sections over eight SIM fixtures
+(`content`, `two`, `full`, `fullrev`, `small`, `empty`, `second`, `sort`); `plan19/` holds 1,812
+base images and 273 recordings, each with audio and `keys.csv`; `check` reports no problem (two
+single-frame notes: the hung `speed/small-past-last*`). `$REF/captures/README.md` has the section.
+
+- **Standby (S).** ▼ shows standby with the ladders erased for 22-37 ms (16 presses, median
+  **23 ms**: `STANDBY_KEY_DELAY_MS`), then the name list on its first name with `Call` in every
+  view; with an empty SIM `No phone numbers` (≈2.90 s), then standby. ▲ shows `No last dialled
+numbers` (≈2.89 s), or `Dialled 1:` with a dialled number (plan 22). A key in the leading frame
+  acts on the list once it opens (`lead-c`: C closes it; `lead-down`: ▼ moves to the next name).
+  C in the list returns to standby through an 85 ms frame of standby without its operator; C held
+  shows that twice (at the press and ≈530 ms later). Call opens plan 22's `Calling` screens.
+- **Sort order.** Leading spaces are skipped; then character by character: space lowest, letters
+  case-insensitively with accents folded to their letter (`Ä Å à` → a, `É` → e, `Ñ` → n,
+  `Ö Ø` → o, `ü` → u), then digits, then other characters by code (`- . _`); a name that is a
+  prefix of another comes first; equal keys keep SIM order (`Zed`, `zed`; `Ånna`, `Anna`, `anna`;
+  `Ben`, `ben`, `Ben`). A name starting with GSM `@` (byte 0x00) breaks the order (an artefact of
+  the firmware's C strings; nokia-os sorts `@` by its code).
+- **Search and letters.** Search and a letter key land on the first name whose key is at or after
+  the query, else on the first name (`Bz` → Carl, `M` → Pause, `zz` → 1st, `9` → the first). Case
+  and accents fold as in sorting (`AN`, `aN`, `Ä`). An empty or space query lands on the first
+  name. With an empty SIM Search shows `No phone numbers` (≈2.88 s), then the Phone book level.
+  A letter key's query is one letter: the key's upper-case multi-tap cycle (`J K L 5 £`) with plan
+  18's commit timeout; a new key or a press after the commit starts a new one-letter query; `0`,
+  `1`, `*`, `#` do nothing. The jump redraws ≈190 ms after the key (the firmware's search). In
+  Name list view a target inside the window keeps the window; otherwise the highlight keeps its
+  row. Search opens the list fresh (the found name on the top row).
+- **Views (S3).** As planned; Name, number: the name in small from x 0, wrapped after 15
+  characters, then the number right-aligned in small on the lines left of the three, showing
+  its last digits (14 per line; a 19-digit number takes two lines, `12345` / `67890123456789`).
+  A name-less entry shows its number in place of the name.
+- **Add name.** Counter 16 → 0, the 17th key ignored; names wider than the large-face box drop to
+  two lines; `Phone number:` counts 20 → 0 with `OK` even when empty. `Saved` (tick: 0, ≈684,
+  ≈919 ms) for ≈2.85 s, then the list on the new name with `Call` (C: the level). An empty name
+  with a number, or a name without a number, is saved; both empty: `Nothing to save` (≈2.92 s, the
+  1750 Hz warning tone), then the level. C on the empty `Name:` or on the empty `Phone number:`
+  returns to the level. Add fills the first free location (`small`). `w` is refused when saving:
+  `Invalid char. for SIM card` (≈2.9 s), then the number prompt with the text kept; `+ p * #` and
+  `€` are stored. A name equal to an existing one asks `Replace?` / that name (▲/▼ inert): OK shows
+  `Replaced` (as `Saved`), C returns to `Name:` with the text. A full SIM shows `Memory full`
+  (≈2.83 s, warning tone), then `Replace?` browsing the names sorted (▲ wraps to the last); OK
+  replaces the shown one (`Saved`), C returns to `Name:` with the text.
+- **Erase.** One by one: `Erase?` / the name (≈50 ms after the key), OK: `Erased` (the bin, nine
+  frames ≈232 ms apart, ≈2.91 s), then the list on the next name (the first after the last); C on
+  `Erase?` returns to the list, C in the list to the level. Erasing the last name shows `Memory
+erased` with the same bin timing, then the level. Erase all: `Are you sure?`, the security code
+  (factory image: `Erasing memory`, the bar at 0, 360, 748, 1131, 1554, 1906, 2251 ms, then
+  `Memory erased` (tick) ≈2.92 s, then the Erase level); wrong code: `Code error`, the prompt.
+- **Edit.** `Name:` with the name (counter 16 − length), `Phone number:` with the number. A changed
+  name (including an emptied one) asks `Replace` / `Add` (rows, `Select`; C: `Name:` with the
+  text); Replace and Add show `Saved`; Add on a full SIM shows `Memory full` → `Replace?`. An
+  unchanged name saves at once. Both emptied: `Nothing to save`, then `Name:` with the old name.
+  The list afterwards is on the edited (or added) name with `Edit`.
+- **Assign tone (T).** One page per name (as planned); the list is `No tone` (1-6-1), `Default`
+  (1-6-2), then the ringing tone list (1-6-3 … 1-6-44, its last entries the composer's `(empty)`
+  slots), opening on the name's tone. ▲/▼ preview the highlighted entry ≈990 ms later (the first
+  move too): a tone plays as Tones › Ringing tone previews it, `Default` plays the profile's
+  ringing tone, `No tone` a 1750 Hz beep (≈340 ms), an `(empty)` slot nothing (`tone/preview-*`).
+  OK shows `Done` (tick: 0, ≈670, ≈902 ms)
+  for ≈1.40 s, then the page with the tone. Tones belong to the SIM location: Edit › Replace keeps
+  it, Erase keeps it on the location (a new name there inherits it).
+- **Send b'card (B).** A 33 ms frame with only `OK`, then `Phone number:` (counter 30, `Search`:
+  the name list with `OK`, then the number filled). OK: `Sending b'card` (plan 18's bar), link
+  **3240 ms** (`BCARD_LINK_MS`; six sends 3237-3359), then `Business card sent` (six frames,
+  ≈1.37 s), then the list on the name with `Send`.
+- **Options (O).** Type of view as planned (`Done` ≈1.47 s, then the page with the value). Memory
+  status: `SIM card:` / `<n> free` / `<n> in use` for every fixture (`0 free` / `50 in use`,
+  `50 free` / `0 in use`, `0 free` / `3 in use`).
+- **Speed dials (K).** Keys 2-9, ▲/▼ wrapping; an unassigned key shows SIM location n or
+  `(empty)`, with `Assign`; keys stop at the SIM's last location (`small`: 2-3; ▼ there hangs the
+  emulator's page, an artefact). Assign: the list with `Select` → `Speed dial key n saved` (tick,
+  ≈1.40 s) → the key with `Options` (View number: the number in large, `Back`; Change: the list;
+  Erase: `Erase?` → `Speed dial key n erased`, the bin ≈2.84 s → the fallback with `Assign`).
+  Assign with no names: `No phone numbers`. Erasing an assigned name drops its speed dial.
+- **Persistence (P, K).** The SIM keeps its names; speed dials and tones are phone memory: they
+  survive a cold boot of the saved image and Restore factory settings (`speed/restore-*`), but do
+  not show with another SIM (`sim/second-*`: its own locations, `Default`). Whether the phone
+  forgets them on the change is UNVERIFIED: nokia-os keeps them per SIM identity.
+- **Hold (H, plan 22).** Speed dialling Off: held 2-9 opens number entry; On: the key's entry is
+  called (`anna` for key 2's fallback). Held 1 dials the voice mailbox either way.
+- **Voice tags (G).** As planned; `Please speak now` animates in seven frames ≈190 ms apart;
+  `Voice system error` comes ≈2.27 s after and stays ≈2.84 s (with 675 Hz DSP beeps), then the
+  list. Quit and C return to the list.
+- **Warning tones (W).** `Saved`, `Replaced`, `Erased`, `Memory erased`, `Speed dial key n
+saved`/`erased`, `Done` and `Business card sent` only beep the key; `Nothing to save` and
+  `Memory full` play the 1750 Hz warning tone (silent with Warning tones Off).
+- **Pickers (X).** Write messages › Send › `Search` opens the name list with `OK`; choosing fills
+  the number. Send to many opens the list with `Send` after a ≈45 ms frame with only `OK`; each
+  send returns to the list; C returns to the editor.
+
+Deviation: **Task 0 / D2:** a SIM number cannot hold `w` (`Invalid char. for SIM card`); numbers
+are `0-9 * # p` after an optional `+`, and the `content` fixture's `w` entry became `Hash`
+(`0400#123`). An entry may lack its name or its number (not both).
+
+Deviation: **Task 0 / D4:** speed dials and tones are kept per SIM identity (the record's
+`speedDials` is keyed by SIM like `tones`); erasing a name drops its speed dial but not its
+location's tone.
+
+Deviation: **Task 0 / D5:** a key during the standby key's delay opens the target at once and goes
+to it (Task 0 S), not "C returns, others ignored".
+
+Deviation: **Task 0 (paths):** `Å` has no multi-tap key, so the queries use `Ä`; the virgin image
+rejects `12345` in menus (plan 15), so Erase all's success and Restore are factory sections;
+`reboot` without a file reloads the original image, so persistence reboots the saved image.
 
 ### Task 1 - Contracts and documentation
 
@@ -491,19 +597,27 @@ error`, `Business card sent`) with Warning tones On, and the error notes with it
 corrected bullet pointing to the new file), `docs/specs/nokia-3310-menu-tree.md` ("With content ›
 Phone book": a pointer), `docs/plans/README.md` (row 19), this plan.
 
-- [ ] Apply Task 0's outcome to D2-D12 and the contracts (Deviation lines where it changes them).
-- [ ] VISION: the phone-core seam and the nokia-os contracts exactly as in "Contract changes"; a
+- [x] Apply Task 0's outcome to D2-D12 and the contracts (Deviation lines where it changes them).
+- [x] VISION: the phone-core seam and the nokia-os contracts exactly as in "Contract changes"; a
       kernel-policy sentence for plan 19 (a standby key may open a standby application, after an
       optional leaving delay); the nokia-os row mentions the SIM card port. In the website's menu
       table, replace "just like the real phone" in the standby row with a note that v6.39 does the
       opposite (▼ names, ▲ dialled numbers; spec) and that the website keeps its mapping (D15).
-- [ ] `docs/specs/stock/phone-book.md`: the S-findings as Task 0 verified them, the layouts, the
+- [x] `docs/specs/stock/phone-book.md`: the S-findings as Task 0 verified them, the layouts, the
       flows with their timings, the artefacts above, and everything not yet asserted marked "(plan
       19, in progress)". Spec §6: the standby-arrow bullet corrected (manual-sourced history kept,
       the stripped-glyph explanation, a link to the new file).
-- [ ] Plans README: row 19 `in progress`.
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define the SIM phone book and standby list contracts (plan 19)`.
+- [x] Plans README: row 19 `in progress`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define the SIM phone book and standby list contracts (plan 19)`.
+
+Deviation: **Task 1 (contracts, Task 0):** `StockContact` numbers are `0-9 * # p` after an optional
+`+` (no `w`), and either field may be empty (not both); `standbyKeyDelayMs` hands a key in the
+delay to the target at once; speed dials are kept per SIM identity (D4). VISION, the plan's
+contract block and the spec state these.
+
+Deviation: **Task 1 (files):** spec §4's standby line and §9's quirk line repeated the reversed
+arrows and are corrected with §6; §10's index gains the `stock/phone-book.md` row.
 
 ### Task 2 - Goldens and the capture set (TDD)
 
@@ -511,20 +625,41 @@ Phone book": a pointer), `docs/plans/README.md` (row 19), this plan.
 registration), `tests/capture-sets/19-phone-book.test.ts` (new), `tests/acceptance/19-phone-book.test.ts`
 (new: the todo shim only), `goldens/**`.
 
-- [ ] TDD the capture set on synthetic recordings (an injected loader, as plan 18's): ids, kinds,
+- [x] TDD the capture set on synthetic recordings (an injected loader, as plan 18's): ids, kinds,
       cut points, `trigger-frame` on the first changed frame (plan 14 D8), `note:` naming the SIM
       fixture, `pending:22` for call screens, sound goldens under `sound/note/<name>` and
       `sound/phone-book/*`.
-- [ ] `PHONE_BOOK_SIMS`: the fixtures as `StockSimCard` values in a JSON-style block (the REF check
+- [x] `PHONE_BOOK_SIMS`: the fixtures as `StockSimCard` values in a JSON-style block (the REF check
       reads it); a test validates each against the D2 rules.
-- [ ] Integrity: no golden is `pending:19`; every `phone-book/*` golden's note names a fixture that
+- [x] Integrity: no golden is `pending:19`; every `phone-book/*` golden's note names a fixture that
       exists.
-- [ ] Register the set (one line). The acceptance file lists the new asserted goldens without a
+- [x] Register the set (one line). The acceptance file lists the new asserted goldens without a
       scenario as todos (`awaitsPlan19Scenario`; Task 11 deletes it).
-- [ ] Run `import-captures` twice; the second run changes nothing. Record fixture counts, images and
+- [x] Run `import-captures` twice; the second run changes nothing. Record fixture counts, images and
       bytes in a completion note (budget guide: ≤ 2 MB of new text grids).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
-- [ ] Commit: `feat(nokia-os): import phone book goldens (plan 19)`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `mise exec -- vp check --fix`.
+- [x] Commit: `feat(nokia-os): import phone book goldens (plan 19)`.
+
+Deviation: **Task 2 (status, plan 29 pending workflow):** as plan 18's Task 2, every new golden is
+`pending:19` (no `awaitsPlan19Scenario` shim: the harness lists pending goldens as todos and the
+acceptance file has no scenarios yet). Each row names the task that implements it; a task adds its
+number to `DONE_TASKS` when its scenarios pass, which asserts its rows. The integrity check "no
+golden is `pending:19`" moves to Task 11. Call screens, the dialled numbers and held keys are
+`pending:22`.
+
+Deviation: **Task 2 (paths and checks):** the test is `tests/phone-book-capture-set.test.ts` (no
+`tests/capture-sets/` directory exists). `PHONE_BOOK_SIMS` is the JSON block between `// BEGIN` and
+`// END PHONE_BOOK_SIMS` (the REF `check <file>` passes); its glyph check (every name in the
+small and large faces) needs Task 3's harvest, so it is Task 3's (`Å` is not in the fonts yet).
+`PHONE_BOOK_GOLDEN_SIMS` maps each golden to its fixture for the replays. The two warning-tone
+notes are `sound/note/{nothing-to-save,memory-full}`; regenerating adds them to `NOTE_SOUNDS`
+(`src/resources/generated/sounds.ts`, `tests/resources.test.ts`'s expected list).
+
+**Task 2 completion note:** `goldens/index/19.json` holds 229 goldens: 182 timelines, 29 stills
+(878 images) and 18 sound goldens; 223 `pending:19`, 6 `pending:22`. The LCD text grids are
+4.36 MB (`goldens/phone-book/`), the sounds 72 KB: over the 2 MB guide. The table already leaves
+out repeated screens (`PHONE_BOOK_NOT_IMPORTED`); the rest are the flows the replayed scenarios
+compare, each ≈4 KB per image. `import-captures` run twice: no diff.
 
 ### Task 3 - Glyphs, sprites and timelines (TDD)
 
@@ -532,21 +667,44 @@ registration), `tests/capture-sets/19-phone-book.test.ts` (new), `tests/acceptan
 `scripts/glyph-overrides.ts`, `src/resources/generated/**` (generated), `tests/resources.test.ts`
 (new cases only).
 
-- [ ] Text runs for the new images from `plan19/text.json`; resolve harvester reports with overrides
+- [x] Text runs for the new images from `plan19/text.json`; resolve harvester reports with overrides
       naming their golden. Every fixture name renders in `small` and `large`, every number in `small`
       and `large` (D2's validation relies on it).
-- [ ] Crops: the name-list icon (assert equal to `prompt/phone-book`, else a new sprite), the
+- [x] Crops: the name-list icon (assert equal to `prompt/phone-book`, else a new sprite), the
       ellipsis, the Service Nos. slider rail, the bin animation, the `Please speak now` icon frames,
       the `Business card sent` frames (compared with plan 18's `Message sent` frames; shared if
       equal), any new note icon.
-- [ ] Named timelines (`WIDGET_TIMELINE_BY_NAME`): `saved`, `erased`, `memory-erased` (with `Erasing
+- [x] Named timelines (`WIDGET_TIMELINE_BY_NAME`): `saved`, `erased`, `memory-erased` (with `Erasing
 memory`'s bar), `speed-dial-saved`, `speed-dial-erased`, `tone-done`, `nothing-to-save`,
       `memory-full`, `sending-bcard`, `bcard-sent`, `please-speak`, `voice-system-error`; the
       standby leaving frame (`STANDBY_KEY_DELAY_MS`) and `BCARD_LINK_MS` (medians, the spread in a
       comment).
-- [ ] TDD freshness; every sprite binary and inside its golden's ink; every timeline finite.
-- [ ] Run `extract-resources` twice; no diff.
-- [ ] Commit: `feat(nokia-os): phone book glyphs, sprites and timelines`.
+- [x] TDD freshness; every sprite binary and inside its golden's ink; every timeline finite.
+- [x] Run `extract-resources` twice; no diff.
+- [x] Commit: `feat(nokia-os): phone book glyphs, sprites and timelines`.
+
+Deviation: **Task 3 (paths, plan 29):** the evidence is `PlanCaptureSet.resources` in
+`scripts/resource-inputs/19-phone-book.ts` (`scripts/widget-sprites.ts` and
+`scripts/glyph-overrides.ts` no longer exist). The text runs of every plan 19 golden image but
+plan 22's call screens are generated from `plan19/text.json` by `scripts/phone-book-text-runs.ts`
+(`vp run @hellotimber/nokia-os#phone-book-text-runs <REF>`, a package script) into
+`scripts/generated/phone-book-text-runs.ts`, as plan 18's. The glyph harvest adds `Å` (small and
+large) and needs one override (large `Ki` touch, as `Ke`).
+
+Deviation: **Task 3 (sprites and timelines):** the name list's icon is `prompt/phone-book`; the
+notes reuse plan 14's tick, `!` and octagon, plan 18's bin (`erased-*`) and envelope
+(`message-sent-*`, for `Business card sent`), and plan 14's hatched bar (`Sending b'card` loops
+the Requesting bar as plan 18's `Sending message` does). The only new sprites are
+`please-speak-1..2`. The ellipsis and Service Nos.' rail are Task 6's (its painters show whether
+they are glyphs or plan 14's rail). Named timelines: `saved`, `replaced`, `nothing-to-save`,
+`memory-full`, `invalid-sim-char`, `speed-dial-saved`, `tone-done`, `memory-erased`,
+`erasing-memory` (a single pass of the bar: the loop rule test allows it), `erased`,
+`last-name-erased`, `speed-dial-erased`, `bcard-sent`, `please-speak`, `voice-system-error`.
+`STANDBY_KEY_DELAY_MS` (23) and `BCARD_LINK_MS` (3240) are Task 0's medians over captures the
+goldens hold one of each, so they are constants in `src/phone-book/timings.ts`. The tone page
+draws the tone in the small face (no thin glyph); `phone-book/tone-ok-third` (Mosquito) is
+imported for it. The sprite-crop test takes `EXTRACTION_TIMEOUT_MS`, as plan 18's extraction
+tests do.
 
 ### Task 4 - phone-core: standby keys that open applications (TDD)
 
@@ -554,17 +712,22 @@ memory`'s bar), `speed-dial-saved`, `speed-dial-erased`, `tone-done`, `nothing-t
 `standby-keys.test.ts` (new). Shared: phone-core; plan 18 Task 4's standby-application activation is
 reused, not duplicated.
 
-- [ ] TDD `standbyKeys` with an application: ▼ runs it as a standby application (path `standby`,
+- [x] TDD `standbyKeys` with an application: ▼ runs it as a standby application (path `standby`,
       empty stack, `menuIndicator()` without segments, `exit()` to standby, `levels`/`select`/`row`
       throw); a path still navigates as before; power-off deactivates it once; `navigate()` while it
       runs deactivates it (`navigate`); an exception in `createSession` shows `App error`.
-- [ ] TDD `standbyKeyDelayMs`: standby with `leaving: true` for that long, then the target; keys
+- [x] TDD `standbyKeyDelayMs`: standby with `leaving: true` for that long, then the target; keys
       during the delay per Task 0 S (kernel default: C returns to standby, other keys are ignored);
       invalid values throw.
-- [ ] Existing tests pass unchanged; configs without the seams produce identical models.
-- [ ] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
+- [x] Existing tests pass unchanged; configs without the seams produce identical models.
+- [x] `mise exec -- vp run @hellotimber/phone-core#test`, `vp run -r test`, `vp run website#build`,
       `vp check --fix`.
-- [ ] Commit: `feat(phone-core): standby keys that open applications`.
+- [x] Commit: `feat(phone-core): standby keys that open applications`.
+
+Deviation: **Task 4:** a key during the delay opens the target at once and goes to it (Task 0 S:
+`standby/lead-c`, `lead-down`), so the power key's long press in the delay powers off what it
+opened. The notice's activation origin is renamed `standby` (notice and standby key applications
+share it); `src/index.ts` needs no change (no new export).
 
 ### Task 5 - SIM card, entries and the phone book record (pure, TDD)
 
@@ -572,21 +735,36 @@ reused, not duplicated.
 line: `PHONE_BOOK_RECORD`), `tests/phone-book-store.test.ts` (new), `tests/phone-book-entries.test.ts`
 (new).
 
-- [ ] TDD `normaliseSim(sim)`: a string is `{ id }` with the defaults; validation per D2 with
+- [x] TDD `normaliseSim(sim)`: a string is `{ id }` with the defaults; validation per D2 with
       messages naming the field and the location.
-- [ ] TDD `entries.ts`: `compareNames` per Task 0's order (case-insensitive; accents, digits, spaces
+- [x] TDD `entries.ts`: `compareNames` per Task 0's order (case-insensitive; accents, digits, spaces
       and equal names as recorded); `searchIndex` per D6 (every Task 0 Q and L case as a row).
-- [ ] TDD `PHONE_BOOK_RECORD` (plan 15 D2): `{ sims: { [id]: { locations: (Contact | null)[] } },
+- [x] TDD `PHONE_BOOK_RECORD` (plan 15 D2): `{ sims: { [id]: { locations: (Contact | null)[] } },
 speedDials: { [key]: location }, tones: { [id]: { [location]: tone } } }` with sorted keys;
       decode drops malformed parts; no `factory` (a test runs `restoreFactory()`, unless Task 0 K
       said otherwise); the stored JSON shape pinned by a snapshot.
-- [ ] TDD `StockPhoneBook`: the host's entries until the first write, then the record; `add` fills
+- [x] TDD `StockPhoneBook`: the host's entries until the first write, then the record; `add` fills
       the location Task 0 A shows and returns `"full"` at capacity; `replace`, `erase`, `eraseAll`;
       `free`/`used`; `speedDial` with the location fallback (S13) and Task 0 K's rule for empty or
       erased locations; tones following Replace and dropped by Erase (Task 0 D, T); `byNumber`; two
       phones over one storage see the same SIM; another SIM id sees its own.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): SIM card port and phone book record`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): SIM card port and phone book record`.
+
+Deviation: **Task 5 (paths and wiring):** as plan 18's messages record, `PHONE_BOOK_RECORD` is the
+phone book feature's (`features/phone-book.ts` `records`), not a line in `src/firmware/records.ts`
+(which composes the features' records). `normaliseSim`, `simContactProblem` and
+`simNumberProblem` live in `src/phone-book/sim-card.ts` with the `StockContact`/`StockSimCard`
+types.
+
+Deviation: **Task 5 (record and API, Task 0):** the record is `{ sims: { [id]: { locations } },
+speedDials: { [id]: { [key]: location } }, tones: { [id]: { [location]: tone } } }`: speed dials
+are per SIM (D4's deviation). A tone is 0 for No tone or k for Tones › Ringing tone's entry k;
+`tone()` is null for Default. `erase` drops the speed dials assigned to the location and keeps
+its tone; `eraseAll` drops every speed dial (the tones staying is UNVERIFIED). `StockPhoneBook`
+adds `at(location)`, `simId` and `nameLength`; `entries.ts` adds `shownName` (a name-less entry
+shows and sorts by its number, UNVERIFIED where it sorts). `speedDial` falls back to location n
+(an assignment whose location is empty cannot exist: Erase drops it).
 
 ### Task 6 - The name list widget and painters (TDD against goldens)
 
@@ -594,16 +772,32 @@ speedDials: { [key]: location }, tones: { [id]: { [location]: tone } } }` with s
 widget-model union and the `paintWidget` switch (one line each), `tests/widgets-name-list.test.ts`
 (new).
 
-- [ ] Painters from literal models equal every `phone-book/view-*`, `letters-*` and `service-*`
+- [x] Painters from literal models equal every `phone-book/view-*`, `letters-*` and `service-*`
       image: Large font (icon, the large name with its character break, the small-face fallback),
       Name list (full-width rows, no rail, the ellipsis, the window), Name, number (the small name
       broken at its width, the last digits right-aligned), the Assign tone page, the Service Nos.
       rows and slider.
-- [ ] TDD the widget in a flow (`tests/support/flow-rig.ts`): the opening entry (first, given,
+- [x] TDD the widget in a flow (`tests/support/flow-rig.ts`): the opening entry (first, given,
       found), ▲/▼ wrap, the rows window (plan 14 D3) in Name list view, letter keys with the
       multi-tap cycle and plan 18's commit timeout, inert keys, the soft key handing the entry to
       `choose(entry, flow)`, C → `back`, the view re-read on every open.
-- [ ] Commit: `feat(nokia-os): the stock name list in three views`.
+- [x] Commit: `feat(nokia-os): the stock name list in three views`.
+
+Deviation: **Task 6 (measured layouts):** Large font and Name, number wrap a name at spaces
+(`Lisa Ann` / `Wilson`), breaking a word wider than a line by character (`Abcdefghijklm` / `nop`;
+word wrap in the small face is UNVERIFIED) and keeping a leading space (` Lead`). Name, number and
+the Assign tone page share one layout (`view: "page"`): the name in the small face at tops 7/16,
+the value right-aligned at tops 20/29, a long number showing its last digits on the lines the name
+leaves. A Name list row wider than x 83 is cut where its ink ends by x 72 and the small face's
+`...` follows at x 74 (both captured cuts put the dots at 74/77/80). Service Nos. is plan 14's rows
+painter and rail (`service-list`), so no new sprite is needed for the rail or the ellipsis.
+
+Deviation: **Task 6 (API):** `nameList({ entries, view, value?, softkey, start?, choose, back? })`
+returns the widget and its `NameListControl` (`entry`, `select(location?)`: after an edit the
+highlight keeps its row, `phone-book/erase-list-middle-ok`). Type of view's setting is read by the
+flows when they open a list (`TYPE_OF_VIEW_KEY`, choices `list`/`number`/`large`). A name-less
+entry shows its number as its name (`shownName`). C goes back at its release and, held for the
+kernel's long press, to standby (as plan 18's lists).
 
 ### Task 7 - Standby ▼, Search, Add name, Service Nos. and Options (TDD)
 
@@ -617,53 +811,133 @@ line: the `StockSimCard` and `StockContact` types). Shared, beyond one line:
 `tests/firmware-phone.test.ts` (the standby-key test: ▼ the list, ▲ Dialled numbers). New:
 `tests/phone-book-flows.test.ts`.
 
-- [ ] Standby ▼: the name list with `Call` (Call → plan 22's placeholder widget); C and C held per
+- [x] Standby ▼: the name list with `Call` (Call → plan 22's placeholder widget); C and C held per
       Task 0 S; an empty SIM's `No phone numbers`, then standby.
-- [ ] 1-1 Search: plan 18's `textInput` on the existing prompt layout; OK → the list at
+- [x] 1-1 Search: plan 18's `textInput` on the existing prompt layout; OK → the list at
       `searchIndex`; an empty SIM → `No phone numbers` → the level (plan 14's golden still passes).
-- [ ] 1-2 Service Nos.: the SIM's numbers, else the existing note.
-- [ ] 1-3 Add name: `textInput` (the SIM's limit and counter) → `numberEntry` (limit 20, `OK`) →
+- [x] 1-2 Service Nos.: the SIM's numbers, else the existing note.
+- [x] 1-3 Add name: `textInput` (the SIM's limit and counter) → `numberEntry` (limit 20, `OK`) →
       `Saved` → the list on the new entry with `Call`; `Nothing to save`; `Memory full` → `Replace?`
       (OK replaces location 1, or what Task 0 A shows; C → `Name:` with the text kept).
-- [ ] 1-8-2 Memory status computed (D14); 1-8-1 Type of view unchanged, now read by the list.
-- [ ] TDD through keys against `phone-book/standby-*`, `search-*`, `service-*`, `add-*`, `memory-*`,
+- [x] 1-8-2 Memory status computed (D14); 1-8-1 Type of view unchanged, now read by the list.
+- [x] TDD through keys against `phone-book/standby-*`, `search-*`, `service-*`, `add-*`, `memory-*`,
       `view-choose-*` (pixels exact; timelines ±2 ms; recording spreads per plan 14 closeout
       decision 2).
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): standby name list, Search, Add name and Memory status`.
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-os): standby name list, Search, Add name and Memory status`.
+
+Deviation: **Task 7 (paths and wiring):** the flows are `src/phone-book/flows.ts` (the feature binds
+1-1, 1-2, 1-3 and 1-8-2 to them); the standby list is `StockFlowApplication("stock:phone-book")`
+on `standbyKeys.down`; `STOCK_STANDBY_KEYS` keeps only ▲. `StockServices` gains `phoneBook`
+(`feature.ts`, `menu.ts`'s `stockServices`/`createStockMenu`). The Memory status virgin texts
+were the phone book feature's `settings.virginTexts` (plan 29), now deleted; 1-8-2 is bound.
+
+Deviation: **Task 7 (acceptance lever, built here):** as plan 18's Task 8, the scenarios replay Task
+0's own command logs: `scripts/phone-book-scripts.ts` (`vp run @hellotimber/nokia-os#phone-book-scripts
+<REF>`) transcribes them with each log's SIM and setup into `scripts/generated/phone-book-scripts.ts`;
+`tests/support/phone-book.ts` replays them (factory logs seed the factory state) and drives the
+sound goldens from each recording's start. A task's goldens are asserted by adding it to the
+capture set's `DONE_TASKS` (now `{7}`); `memory-small`'s log passes through Speed dials, so it is
+Task 9's.
+
+Deviation: **Task 7 (measured behaviour):** the name prompts (`Name:` of Search, Add name, Edit)
+change the header's mode when the next character is typed, not at a commit (one letter keeps
+`Abc`; empty: `Abc`) and leave at C's down; a SIM name's `€` counts two (GSM extension);
+Add name's `Name:` drops to small-face lines of 81 columns once the text is wider than 72 (large
+holds `Adgjmptwad`, 71; not `Adgjmptwadg`, 78), the cursor 10 rows high in the blank column after
+the character before it; the name list leaves at C's down; a name-less entry shows its number
+large and right-aligned at top 24 (as View number); Service Nos. opens through a blank LCD (69 ms)
+and its first row alone (34 ms). Plan 18's widgets gain additive options for these
+(`numberEntry` `emptyOk`; `textInput` `smallWhenWide`, `noCursor`, `blink`, `typedCase`,
+`counted`, `leaveAtDown`; the prompt's text entry `smallWhenWide`).
+
+Deviation: **Task 7 (phone-core, generic):** a key held when an application exits keeps its long
+press and only its release is swallowed (it used to lose both), so C held from a screen that leaves
+at C's down reaches standby as the firmware's menus do (`packages/phone-core/tests/held-across-exit.test.ts`).
+This fixes plan 18's flagged gap: `sms/elsewhere` leaves its known gaps, and so does `sms/notice`
+(▼ at standby now opens the phone book, as captured).
+
+**Task 7 completion note:** 91 plan 19 goldens are asserted (Task 7's), two of them known gaps
+(`standby-list-hold-c`, `search-prompt-hold-c`: the firmware's own long press redraws standby
+≈530 ms after C's down; the kernel's comes at 800 ms). Scenario tolerances: the leading frame's
+spread (±15 ms), standby's operator-less draw (±6), the tick notes' and `Done`'s spread between
+recordings (±25, `PROBE_TOLERANCE_MS`), `No phone numbers` (±60: 2850-2938 ms between recordings).
 
 ### Task 8 - Erase, Edit and Assign tone (TDD)
 
 **Files:** `src/firmware/features/phone-book.ts` (its Erase, Edit and Assign tone section),
 `tests/phone-book-flows.test.ts`.
 
-- [ ] 1-4-1 One by one: the list with `Erase` → `Erase?` (a confirm query; C back) → `Erased` → the
+- [x] 1-4-1 One by one: the list with `Erase` → `Erase?` (a confirm query; C back) → `Erased` → the
       list on the next entry, or what Task 0 E shows after the last one.
-- [ ] 1-4-2 Erase all: `Are you sure?` → plan 15's `codeEntry` (wrong code and lockout shared) →
+- [x] 1-4-2 Erase all: `Are you sure?` → plan 15's `codeEntry` (wrong code and lockout shared) →
       `Erasing memory` → `Memory erased` → the level; the empty SIM's note as captured.
-- [ ] 1-5 Edit: the list with `Edit` → `Name:` (prefilled, counter) → `Phone number:` (prefilled) →
+- [x] 1-5 Edit: the list with `Edit` → `Name:` (prefilled, counter) → `Phone number:` (prefilled) →
       `Replace`/`Add` (a list with no stored value) when the name changed → `Saved` (or `Memory
 full` → `Replace?` for Add); the list position afterwards.
-- [ ] 1-6 Assign tone: the name pages with `Assign` → the ringing tone list with `Default` first and
+- [x] 1-6 Assign tone: the name pages with `Assign` → the ringing tone list with `Default` first and
       the captured numbering → previews (D12) → OK stores and shows `Done` → the page.
-- [ ] TDD through keys against `phone-book/erase-*`, `edit-*`, `tone-*` and `sound/phone-book/tone-*`.
-- [ ] Commit: `feat(nokia-os): Erase, Edit and Assign tone`.
+- [x] TDD through keys against `phone-book/erase-*`, `edit-*`, `tone-*` and `sound/phone-book/tone-*`.
+- [x] Commit: `feat(nokia-os): Erase, Edit and Assign tone`.
+
+Deviation: **Task 8 (files):** the flows live in `src/phone-book/manage.ts` (Task 7's
+`flows.ts` holds the shared screens); `features/phone-book.ts` binds `1-4-1`, `1-4-2`, `1-5`, `1-6`.
+Plan 16's sounder gains one additive method, `previewProgram` (Assign tone's `No tone` preview:
+1750 Hz for 339 ms on word 0x9104 at the list's preview delay, `NO_TONE_PREVIEW`).
+
+Deviation: **Task 8 (measured behaviour):** a name that is a prefix of another sorts _equal_ to it
+and SIM order decides (`phone-book/edit-after`: after Edit › Replace `annab` at `anna`'s location 2
+comes before `Ånna` at 14; added at location 24, after it). Task 0's "a prefix comes first" had no
+capture that told the two apart; `compareNames` and the spec follow the capture. Erase all's `Are
+you sure?` sits at tops 2/12 (plan 14's confirm query: 4/13), drawn as a phone book query; Edit's
+`Replace` / `Add` are plan 14's rows and rail with no indicator (the Service Nos. model). The tone
+list is `No tone`, `Default`, then Tones › Ringing tone's 42 entries as the tree lists them (5-1).
+
+Deviation: **Task 8 (scenario tolerances):** Edit › Add writes a new SIM location: `Saved` comes
+361 ms after OK's down, past the replay's 300-ms latency window, so OK acts on its row
+(`keysOnRows`). `Erased`, `Saved`, `Memory full` and `Done` play one recording's timeline (±25;
+`tone-ok-no-tone`'s half tick 697 ms after the box, 670-672 elsewhere: ±30), `Nothing to save`
+after Edit and `No phone numbers` of One by one ±60. Assign tone's previews are other recordings of
+plan 16's programs (`drift`); two start while the previous preview sounds, whose start-state rows
+are not edges (the key's stop is compared).
+
+**Task 8 completion note:** 63 more plan 19 goldens are asserted (53 LCD, 10 sound: `erased`,
+`memory-erased`, `done` and the seven previews), no new known gaps.
 
 ### Task 9 - Speed dials and Voice tags (TDD)
 
 **Files:** `src/firmware/features/phone-book.ts` (its Speed dials and Voice tags section),
 `tests/phone-book-flows.test.ts`.
 
-- [ ] 1-9: the key page (`Key n:` and the entry's name, large or the small fallback, or `(empty)`)
+- [x] 1-9: the key page (`Key n:` and the entry's name, large or the small fallback, or `(empty)`)
       for keys 2-9 with ▲/▼ wrap; `Assign` (unassigned) → the list with `Select` → `Speed dial key n
 saved` → `Options`; `Options` (assigned) → View number (`Back`), Change (the list again), Erase
       (`Erase?` → `Speed dial key n erased`); no names → `No phone numbers`.
-- [ ] 1-10-1 Add voice tag: the list with `Add voice tag` → `Press Start, then` / `speak after tone`
+- [x] 1-10-1 Add voice tag: the list with `Add voice tag` → `Press Start, then` / `speak after tone`
       (`Start`) → `Please speak now` (`Quit`) → `Voice system error` → the list (D9); 1-10-2…4 keep
       their notes.
-- [ ] `StockPhoneBook.speedDial` for plan 22 (D11); a test pins the fallback.
-- [ ] TDD through keys against `phone-book/speed-*` and `voice-*`.
-- [ ] Commit: `feat(nokia-os): Speed dials and Voice tags`.
+- [x] `StockPhoneBook.speedDial` for plan 22 (D11); a test pins the fallback.
+- [x] TDD through keys against `phone-book/speed-*` and `voice-*`.
+- [x] Commit: `feat(nokia-os): Speed dials and Voice tags`.
+
+Deviation: **Task 9 (files):** the flows live in `src/phone-book/speed.ts`; `features/phone-book.ts`
+binds `1-9` and `1-10-1` (its `1-9` prompt layout goes: the screen is bound; plan 14's prompt
+coverage test counts 12 unbound prompts). Additive shared changes: plan 14's prompt `value` entry
+takes `font: "small"` (a key's wide name, UNVERIFIED), a `phone-book-number` model draws View
+number (digits to x 82, one column right of the name list's), and plan 16's sounder gains
+`keyBeepProgram` (Start's beep on the voice DSP's words; `VOICE_START_BEEP`, `VOICE_ERROR_BEEPS`).
+
+Deviation: **Task 9 (measured behaviour):** C held on a key page, its Options or View number goes
+to standby (plan 18's `HeldC`; the captures' `hold c` from those screens reach standby).
+
+Deviation: **Task 9 (scenarios):** `Speed dial key n saved` plays one recording's timeline (1396
+ms; 1380-1427 over the other nine saves: ±35), `No phone numbers` ±65 (2850-2938 ms against 2914),
+`No voice tags saved` ±25. `voice-system-error`'s Start acts at its beep (the screen draws then).
+New known gap: `speed-restore` (its log opens Call register › Missed calls, plan 22's placeholder,
+and holds C there; the placeholder does not leave for standby, so the later keys land in Call
+register; Restore keeping speed dials and tones is pinned by `tests/phone-book-store.test.ts`).
+
+**Task 9 completion note:** 51 more plan 19 goldens are asserted (48 LCD, 3 sound), one known gap.
 
 ### Task 10 - Send b'card and the pickers other plans use (TDD)
 
@@ -672,51 +946,100 @@ saved` → `Options`; `Options` (assigned) → View number (`Back`), Change (the
 network), `src/index.ts` (one line: `StockBusinessCard`), plan 18's `EDITOR_OPTIONS` and its
 `numberEntry` Search hook (one line each: the picker), `tests/phone-book-bcard.test.ts` (new).
 
-- [ ] 1-7: the list with `Send` → the leading frame → `numberEntry` (`Search` → the list with
+- [x] 1-7: the list with `Send` → the leading frame → `numberEntry` (`Search` → the list with
       `Select` → the number filled) → `Sending b'card` for `max(BCARD_LINK_MS, settle)` → `Business
 card sent` → the list; `"failed"` → plan 18's failure note.
-- [ ] `createSyntheticNetwork().cards`; a port without `sendBusinessCard` settles `"sent"` (D10).
-- [ ] `pickNumber(flow, done)`: the name list with `Select` for plan 18's number prompts' `Search`;
+- [x] `createSyntheticNetwork().cards`; a port without `sendBusinessCard` settles `"sent"` (D10).
+- [x] `pickNumber(flow, done)`: the name list with `Select` for plan 18's number prompts' `Search`;
       Send to many with names (the list with `Send`) replacing plan 18's owner-19 placeholder.
-- [ ] TDD through keys against `phone-book/bcard-*`, `sound/phone-book/bcard`, `phone-book/pick-*`.
-- [ ] Commit: `feat(nokia-os): Send b'card and phone book pickers`.
+- [x] TDD through keys against `phone-book/bcard-*`, `sound/phone-book/bcard`, `phone-book/pick-*`.
+- [x] Commit: `feat(nokia-os): Send b'card and phone book pickers`.
+
+Deviation: **Task 10 (files):** Send b'card lives in `src/phone-book/bcard.ts`, `pickNumber` in
+`src/phone-book/flows.ts`; plan 18's messaging service gains `sendBusinessCard(card, linkMs,
+settled)` beside `send` (one shared `#start`). Plan 18's Send to many moves into a `sendToMany`
+function of `write.ts` (the empty SIM's note unchanged); `EDITOR_OPTIONS` drops its `owner: "19"`
+and plan 18's coverage test its `"19"`.
+
+Deviation: **Task 10 (measured behaviour):** Send's leading frame keeps the list's icon with `OK`
+alone for 114 ms (S12's 33 ms is the list's frame before it, `phone-book/bcard-send`); Send to many
+with names draws `OK` alone for 146 ms (plan 18's 168 is the empty SIM's). Search on an empty SIM
+keeps plan 18's `No phone numbers`.
+
+Deviation: **Task 10 (scenarios):** `bcard-ok` and `pick-send-to-many-send` play plan 14's bar
+and plan 18's `Message sent` from other recordings (±25).
+
+**Task 10 completion note:** 11 more plan 19 goldens are asserted (10 LCD, 1 sound), no known gaps.
 
 ### Task 11 - Acceptance and the coverage guard
 
 **Files:** `tests/acceptance/19-phone-book.test.ts`, `tests/support/rig.ts` (shared: a `sim`
 pass-through only if the rig does not already forward the whole `StockPhoneConfig`).
 
-- [ ] A hand-written scenario for every asserted `phone-book/*` golden and every new sound golden
+- [x] A hand-written scenario for every asserted `phone-book/*` golden and every new sound golden
       (navigate as the capture did, the fixture's SIM as a `StockSimCard`, keys on the ticks their
       redraws start); delete `awaitsPlan19Scenario`.
-- [ ] Coverage guard: every Phone book tree node (1-1 … 1-10-4 and the 1-8-1 choices) is covered by
+- [x] Coverage guard: every Phone book tree node (1-1 … 1-10-4 and the 1-8-1 choices) is covered by
       an asserted golden in both states it has (empty SIM: plan 14's; with names: this plan's), or
       by a `pending:22` golden for a call; no golden or placeholder names plan 19.
-- [ ] Every asserted golden passes (pixels exact; timelines ±2 ms, or the stated tolerance where a
+- [x] Every asserted golden passes (pixels exact; timelines ±2 ms, or the stated tolerance where a
       scenario replays another recording's timing). New `KNOWN_GAPS` need a reason.
-- [ ] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report
+- [x] `mise exec -- vp run @hellotimber/nokia-os#test`, `vp run -r test`, `vp check --fix`. Report
       the suite's run time.
-- [ ] Commit: `test(nokia-os): drive the phone book against its goldens`.
+- [x] Commit: `test(nokia-os): drive the phone book against its goldens`.
+
+Deviation: **Task 11 (scenarios):** as Task 7 records, every scenario replays its capture's own
+command log (`tests/support/phone-book.ts`) rather than a hand-written key script; there was no
+`awaitsPlan19Scenario` to delete (plan 29's pending workflow kept the goldens `pending:19`), and
+`tests/support/rig.ts` already forwards the whole `StockPhoneConfig`. The coverage guard is the
+shared `coverage-guard.test.ts` with `PHONE_BOOK_COVERS` (the nodes plan 19's goldens show with
+names) plus `tests/phone-book-coverage.test.ts` (both states of every menu 1 node; nothing
+`pending:19` in goldens, placeholders or `EDITOR_OPTIONS`; only calls left `pending:22`).
+
+**Task 11 completion note:** all 224 plan 19 goldens are asserted (206 LCD, 18 sound; 6 call
+goldens stay `pending:22`), three known gaps (`standby-list-hold-c`, `search-prompt-hold-c`,
+`speed-restore`). Run time: plan 19's acceptance file 97 s alone; `vp run @hellotimber/nokia-os#test`
+2 min 13 s wall. Under a heavily loaded machine plan 18's
+longest replays can pass vitest's 5 s default (`sms/full-arrival`: 5.5 s once at load 21); they
+pass at normal load.
 
 ### Task 12 - Demo, README, verification gate and closeout
 
 **Files:** `packages/nokia-os/{README.md,demo/{index.html,main.ts,style.css}}`,
 `docs/specs/stock/phone-book.md`, `docs/plans/README.md`, this plan.
 
-- [ ] Demo: a SIM select (`Empty SIM`, `Sample SIM` with a handful of invented names and two service
+- [x] Demo: a SIM select (`Empty SIM`, `Sample SIM` with a handful of invented names and two service
       numbers, `Full SIM`) restarting the phone with that `StockSimCard`; the status line shows the
       SIM id and its used/free count. Verify with `mise exec -- vp run @hellotimber/nokia-os#demo` and
       `agent-browser` (headless, Skip boot, the `[role=status]` line): ▼ at standby (the list),
       Search `C`, Add name `Zoe` and `Saved`, Type of view › Name list, Erase one by one, Speed dials
       Assign.
-- [ ] README: the SIM card port (a host passing its own contacts; the persistence rule, D3), what
+- [x] README: the SIM card port (a host passing its own contacts; the persistence rule, D3), what
       plan 22 adds (calls), what 18c adds (receiving cards).
-- [ ] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
+- [x] `mise exec -- vp check --fix`, `vp run -r test`, `vp run website#build`;
       `git diff --stat <commit before Task 1> -- website/` is empty.
-- [ ] `docs/specs/stock/phone-book.md`: replace "(plan 19, in progress)" with verified facts; list
+- [x] `docs/specs/stock/phone-book.md`: replace "(plan 19, in progress)" with verified facts; list
       what stays UNVERIFIED.
-- [ ] Plans README: row 19 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete the phone book (plan 19)`.
+- [x] Plans README: row 19 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete the phone book (plan 19)`.
+
+Deviation: **Task 12 (verification):** `agent-browser` is not installed in this environment; the
+demo was driven headless through Chrome's DevTools protocol instead (Skip boot, the Sample SIM,
+the `[role=status]` line and LCD screenshots): ▼ at standby (the list with `Call`), Search `C`
+(`Cy`), Add name `Zoe` (`Saved`, the status line 9 names / 41 free), Type of view › Name list (▼
+then shows three rows), Erase one by one (`Erase?`, back to 8 names) and Speed dials › Assign
+(`Speed dial key 2 saved`, `Key 2:` / `Alan`).
+
+Deviation: **Task 12 (fidelity standard):** merging `main` brought AGENTS.md's fidelity standard,
+which removes per-test tolerances. Plan 19's scenario options lost every `toleranceMs` and sound
+`drift` (other recordings' notes, `No phone numbers`, Speed dial saves, the list exit and the
+standby lead's spread, Assign tone's previews); only key placement (`keyAt`) remains. Every plan 19
+golden passes under the standard; the known gaps are unchanged.
+
+**Task 12 completion note:** the demo's SIM phone book panel, the README's "The phone book"
+section and the specs are done. Plan 19 asserts all 224 of its goldens (206 LCD, 18 sound) with
+three known gaps (`standby-list-hold-c`, `search-prompt-hold-c`, `speed-restore`); 6 call goldens
+stay `pending:22`. `git diff main -- website/` is empty.
 
 ## Follow-up plan adjustments
 

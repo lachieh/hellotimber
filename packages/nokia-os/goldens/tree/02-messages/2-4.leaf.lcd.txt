@@ -4,10 +4,10 @@ status: pending:18c
 source: captures/6.39/plan14/open/2-4
 source-sha256: 9c8e2149683f771815c2b5cd321695597185eb72d121649312014de276fbd92f
 trigger-frame: 0
-note: Picture messages (2-4) highlighted at frame 0; Select changes nothing. Shared by 2-4, 2-5, 2-6, 5-9-4, 12-1-2-9-4, 12-2-2-9-4: their recordings match after the trigger (±2 ms); image a is each one's own starting screen.
+note: Picture messages (2-4) highlighted at frame 0; Select changes nothing. Shared by 2-4, 5-9-4, 12-1-2-9-4, 12-2-2-9-4: their recordings match after the trigger (±2 ms); image a is each one's own starting screen.
 omitted: none
 scenario: leaf
-covers: 2-4 2-5 2-6 5-9-4 12-1-2-9-4 12-2-2-9-4
+covers: 2-4 5-9-4 12-1-2-9-4 12-2-2-9-4
 
 @image a
 .....................................................................####........##.

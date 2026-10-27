@@ -14,6 +14,8 @@ import { composeResourceDeclarations } from "../scripts/resource-declarations.ts
 import { readGoldenIndex } from "../scripts/golden-index.ts";
 
 import { placeholderOwner } from "../scripts/tree-capture-set.ts";
+import { PHONE_BOOK_SIMS } from "../scripts/capture-sets/19-phone-book.ts";
+import { BCARD_LINK_MS, STANDBY_KEY_DELAY_MS } from "../src/phone-book/timings";
 
 import { loadGolden } from "./support/goldens";
 import { missingStockGlyphs, stockMenu } from "../src/index";
@@ -35,6 +37,7 @@ import {
   type StockFontName,
 } from "../src/resources";
 import { TEXT_DATA } from "../src/resources/generated/text";
+import { CLOCK_DATA } from "../src/resources/generated/clock";
 import { COMPOSER_DATA } from "../src/resources/generated/composer";
 import { BOOT_DATA } from "../src/resources/generated/boot";
 import { STOCK_FONT_DATA } from "../src/resources/generated/fonts";
@@ -165,6 +168,7 @@ describe("generated resources", () => {
         snake: SNAKE_DATA,
         sounds: SOUND_DATA,
         text: TEXT_DATA,
+        clock: CLOCK_DATA,
         composer: COMPOSER_DATA,
       }).toEqual(extractResources());
     },
@@ -259,7 +263,8 @@ describe("generated resources", () => {
 });
 
 describe("menu icons", () => {
-  // Distinct frames per icon, as recorded by plan 13 Task 0 (menu-anim-long).
+  // Distinct frames per icon, as recorded by plan 13 Task 0 (menu-anim-long), and SIM services'
+  // (plan 30 Task 0: `sim/stk-carousel-main-up`).
   const FRAME_COUNTS: Record<string, number> = {
     "phone-book": 4,
     messages: 14,
@@ -273,9 +278,10 @@ describe("menu icons", () => {
     reminders: 14,
     clock: 8,
     profiles: 4,
+    "sim-services": 6,
   };
 
-  it("has the captured frame count for each of the 12 carousel icons", () => {
+  it("has the captured frame count for each carousel icon (12 stock, SIM services)", () => {
     expect(
       Object.fromEntries(Object.entries(STOCK_MENU_ICONS).map(([id, i]) => [id, i.frames.length])),
     ).toEqual(FRAME_COUNTS);
@@ -296,6 +302,14 @@ describe("menu icons", () => {
         }
       }
     }
+  });
+
+  // Settled 3769 ms after ▲'s key-down, 60 ms of it the key's latency before the reveal.
+  it("plays SIM services' 11 steps once (the hand out and back), settling at 3709 ms (plan 30 K)", () => {
+    const steps = MENU_ICON_DATA["sim-services"]!.timeline.steps;
+    expect(steps.map((step) => step.frame)).toEqual([0, 1, 2, 3, 4, 5, 4, 3, 2, 1, 0]);
+    const settle = steps.slice(0, -1).reduce((ms, step) => ms + step.durationMs, 0);
+    expect(Math.abs(settle - 3709)).toBeLessThanOrEqual(2);
   });
 
   it("settles every icon on a held frame (no loop) and starts on frame 0", () => {
@@ -434,6 +448,8 @@ describe("widget sprites and timelines", () => {
   });
 
   it("references only known sprites, and loops only progress bars and prompt cursors", () => {
+    // Plan 19: Erasing memory's bar steps through once and ends (phone-book/erase-all-erasing).
+    const singlePass = new Set([WIDGET_TIMELINE_BY_NAME["erasing-memory"]]);
     for (const [id, data] of Object.entries(WIDGET_DATA.timelines)) {
       for (const frame of data.frames) {
         if (frame.kind === "sprite" || frame.kind === "image")
@@ -444,7 +460,7 @@ describe("widget sprites and timelines", () => {
           frame.kind === "sprite" ? frame.sprite.split("-")[0] : frame.kind,
         ),
       );
-      const loops = kinds.has("progress") || kinds.has("cursor");
+      const loops = (kinds.has("progress") && !singlePass.has(id)) || kinds.has("cursor");
       expect(data.loopFrom !== undefined, id).toBe(loops);
       expect(Number.isFinite(WIDGET_TIMELINES[id]!.timeline.durationMs), id).toBe(!loops);
     }
@@ -756,10 +772,13 @@ describe("sound programs and rules (plan 16 Task 3)", () => {
       "Invalid phone number",
       "Invalid shortcut",
       "Keypad locked",
+      // Plan 19 (sound/note/memory-full, nothing-to-save).
+      "Memory full",
       "No new numbers",
       "No phone numbers",
       "No voice tags saved",
       "Not allowed",
+      "Nothing to save",
       "Out of range",
       "Screen saver missing",
       "Set PIN code request on",
@@ -990,5 +1009,86 @@ describe("text entry and SMS resources (plan 18)", () => {
     const sent = WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NAME["message-sent"]!]!;
     expect(sent.timeline.durationMs).toBe(1403);
     expect(sent.frames).toHaveLength(7);
+  });
+});
+
+describe("phone book resources (plan 19)", () => {
+  /** The pixels of `image` of golden `id` in a sprite's box. */
+  const cropOf = (id: string, image: string, sprite: string): string[] => {
+    const { x, y, art } = WIDGET_DATA.sprites[sprite]!;
+    const golden = loadGolden(id);
+    const pixels = golden.images.find((i) => i.name === image)!.pixels;
+    return art.map((row, r) =>
+      Array.from(row, (_, c) => (pixels[(y + r) * 84 + x + c] === 1 ? "#" : ".")).join(""),
+    );
+  };
+
+  it("draws every SIM fixture's names and numbers in the small and large faces (D2)", () => {
+    for (const [name, sim] of Object.entries(PHONE_BOOK_SIMS)) {
+      const contacts = [...(sim.phoneBook?.entries ?? []), ...(sim.serviceNumbers ?? [])];
+      for (const contact of contacts) {
+        if (contact === null) continue;
+        for (const face of ["small", "large"] as const) {
+          for (const text of [contact.name, contact.number]) {
+            expect(missingStockGlyphs(text, face), `${name}: ${text} (${face})`).toEqual([]);
+          }
+        }
+      }
+    }
+  });
+
+  it("shows the phone book icon of the prompts at the top left of the name list", () => {
+    for (const image of ["down-00", "down-02"]) {
+      expect(cropOf("phone-book/view-large", image, "prompt/phone-book"), image).toEqual(
+        WIDGET_DATA.sprites["prompt/phone-book"]!.art,
+      );
+    }
+  });
+
+  it("crops Please speak now's two faces", () => {
+    expect(cropOf("phone-book/voice-start", "b", "please-speak-1")).not.toEqual(
+      cropOf("phone-book/voice-start", "c", "please-speak-1"),
+    );
+    expect(WIDGET_DATA.sprites["please-speak-2"]!.art.join("")).toContain("#");
+  });
+
+  it("names the phone book's notes, each a finite timeline", () => {
+    for (const name of [
+      "saved",
+      "replaced",
+      "nothing-to-save",
+      "memory-full",
+      "invalid-sim-char",
+      "speed-dial-saved",
+      "tone-done",
+      "memory-erased",
+      "erasing-memory",
+      "voice-system-error",
+      "erased",
+      "last-name-erased",
+      "speed-dial-erased",
+      "bcard-sent",
+      "please-speak",
+    ]) {
+      const id = WIDGET_TIMELINE_BY_NAME[name];
+      expect(id, name).toBeDefined();
+      expect(Number.isFinite(WIDGET_TIMELINES[id!]!.timeline.durationMs), name).toBe(true);
+    }
+    // Saved: the tick's three steps for ≈2.85 s (phone-book/add-saved: 684, 235, 1927 ms).
+    const saved = WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NAME.saved!]!;
+    expect(saved.frames.map((f) => (f.kind === "sprite" ? f.sprite : f.kind))).toEqual([
+      "note/tick-box",
+      "note/tick-half",
+      "note/tick",
+    ]);
+    // Erasing memory's bar steps once through (seven steps, 2468 ms) and ends.
+    const erasing = WIDGET_TIMELINES[WIDGET_TIMELINE_BY_NAME["erasing-memory"]!]!;
+    expect(erasing.frames).toHaveLength(7);
+    expect(erasing.timeline.durationMs).toBe(2468);
+  });
+
+  it("keeps Task 0's medians: the standby keys' delay and Send b'card's link time", () => {
+    expect(STANDBY_KEY_DELAY_MS).toBe(23);
+    expect(BCARD_LINK_MS).toBe(3240);
   });
 });

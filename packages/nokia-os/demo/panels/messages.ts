@@ -5,13 +5,14 @@ import { createSyntheticNetwork, type StockTimestamp } from "../../src/index";
 import { byId, html, type DemoPanel } from "../panel";
 
 /**
- * One network for the page: it outlives restarts, so sent messages stay listed. Plan 22's calls
- * panel rings and lists calls through it.
+ * One network for the page: it outlives restarts, so sent messages stay listed. Plan 18c's Chat
+ * partner (`chat-and-content.ts`) answers through it; plan 22's calls panel rings and lists calls
+ * through it.
  */
 export const network = createSyntheticNetwork();
 
 /** The browser's local time as an SMS service-centre time stamp. */
-function now(): StockTimestamp {
+export function now(): StockTimestamp {
   const d = new Date();
   return {
     year: d.getFullYear(),

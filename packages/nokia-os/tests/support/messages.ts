@@ -439,11 +439,6 @@ export const MESSAGES_COVERS: Readonly<Record<string, readonly string[]>> = {
 
 /** Asserted plan 18 goldens whose scenario cannot pass, with the reason. */
 export const MESSAGES_KNOWN_GAPS: Readonly<Record<string, string>> = {
-  "sms/notice":
-    "image standby-down-after-c: ▼ at standby opens the Phone book (No phone numbers) in the " +
-    "capture, while nokia-os's standby keys (plan 14's STOCK_STANDBY_KEYS, after the spec's " +
-    "help text) put the dialled numbers on ▼; D12 keeps that configuration; the other six " +
-    "images match",
   "sms/notice-c":
     "C on the received notice: the firmware draws standby without its operator for 88 ms first " +
     "(as Exit's 83 ms); the kernel clears a notice to the whole standby at once (phone-core)",

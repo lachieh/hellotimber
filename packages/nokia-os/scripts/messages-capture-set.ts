@@ -53,7 +53,6 @@ export class MessagesCaptureError extends Error {
  * kernel to route a notice's keys, D12).
  */
 export const MESSAGES_LATER: Readonly<Record<string, string>> = {
-  "sms/inbox-option-chat": "18c",
   "sms/notice-down": "19",
 };
 

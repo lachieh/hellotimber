@@ -53,6 +53,21 @@ describe("plan resource registrations", () => {
     const timeline = result.widgets.timelines[result.widgets.byName["consumer-confirmation"]!];
     expect(timeline?.frames).toContainEqual({ kind: "sprite", sprite: "consumer/tick" });
   });
+  it("accepts a plan's carousel icon once, from a timeline golden (plan 30)", () => {
+    const icon = (plan: string, golden: string): PlanCaptureSet => ({
+      plan,
+      resources: { menuIcons: { "sim-services": { golden } } },
+    });
+    const own = captureSets().filter((set) => set.resources?.menuIcons === undefined);
+    expect(compose([...own, icon("30", "sim/stk-carousel-main-up")]).menuIcons).toEqual({
+      "sim-services": { golden: "sim/stk-carousel-main-up" },
+    });
+    expect(() =>
+      compose([icon("30", "sim/stk-carousel-main-up"), icon("31", "sim/stk-carousel-main-up")]),
+    ).toThrow(/menu icon "sim-services" owned by plans 30 and 31/);
+    expect(() => compose([icon("30", "sim/stk-level-main-rows")])).toThrow(/is not a timeline/);
+  });
+
   it("rejects competing sprite ownership even when recipes are identical", () => {
     expect(() =>
       compose([
@@ -128,21 +143,21 @@ it(
 );
 
 it("allows resource evidence from an honestly pending LCD golden", () => {
-  const pending = index.find((entry) => entry.id === "menu/03-chat.sub")!;
+  const pending = index.find((entry) => entry.id === "tree/02-messages/2-4.leaf")!;
   expect(pending.status).toBe("pending:18c");
   const inputs = compose([
     {
       plan: "18c",
       resources: {
         textRuns: {
-          "menu/03-chat.sub": {
-            "01": [{ font: "small", text: "Phone number:", top: 7, right: 79 }],
+          "tree/02-messages/2-4.leaf": {
+            a: [{ font: "small", text: "Picture", top: 18 }],
           },
         },
       },
     },
   ]);
-  expect(inputs.textRuns["menu/03-chat.sub"]!["01"]![0]!.text).toBe("Phone number:");
+  expect(inputs.textRuns["tree/02-messages/2-4.leaf"]!["a"]![0]!.text).toBe("Picture");
   expect(pending.status).toBe("pending:18c");
 });
 
@@ -291,6 +306,7 @@ it("does not execute capture callbacks when composing registered evidence", () =
   const sets = captureSets([{ plan: "18c", lcd: callback, ticks: callback, sounds: callback }]);
   expect(compose(sets)).toEqual({
     textRuns: {},
+    menuIcons: {},
     glyphOverrides: [],
     sprites: [],
     probes: [],

@@ -786,7 +786,7 @@ function standbySignature<Metadata>(m: Machine<Metadata>): string {
 }
 
 /**
- * Applications with an empty stack: plan 15's boot gates, plan 18's notice applications, plan
+ * Applications with an empty stack: plan 15's boot gates, plan 18's notice applications and plan
  * 19's standby key applications, plan 17's power key application and plan 21's interruptions and
  * wake applications. All but an interruption (which shows the path of the mode it holds) have the
  * path `standby`.
@@ -905,8 +905,11 @@ function renderFrame<Metadata>(
   }
 }
 
-function swallowHeldReleases<Metadata>(m: Machine<Metadata>): void {
-  for (const held of m.held.values()) held.swallowed = true;
+function swallowHeldReleases<Metadata>(m: Machine<Metadata>, endHolds = false): void {
+  for (const held of m.held.values()) {
+    held.swallowed = true;
+    if (endHolds) held.longFired = true;
+  }
 }
 
 function deactivate<Metadata>(
@@ -979,7 +982,7 @@ function startApplication<Metadata>(
       const plan = exitPlan(m, activation, options);
       run(m, () => {
         if (!isActive(m, activation, token)) return;
-        swallowHeldReleases(m);
+        swallowHeldReleases(m, options?.endHolds === true);
         deactivate(activation, "exit");
         if (plan === "standby") {
           m.mode = { kind: "standby" };
@@ -1605,6 +1608,7 @@ function endInterruption<Metadata>(
 /** Moves the held mode's deadlines and timeline starts on by `heldMs`, as if no time had passed. */
 function shiftHeldTimers<Metadata>(held: HeldMode<Metadata>, heldMs: number): void {
   const { mode, shortcut, since } = held;
+  if (mode.kind === "standby" && mode.leaving !== undefined) mode.leaving.at += heldMs;
   const stack = mode.kind === "nav" ? mode.stack : mode.kind === "app" ? mode.activation.stack : [];
   for (const frame of stack) {
     if (frame.kind === "carousel") frame.revealedAt += heldMs;

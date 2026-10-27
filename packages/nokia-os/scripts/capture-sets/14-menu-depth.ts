@@ -181,7 +181,6 @@ const PROBE_TIMELINES: readonly ProbeSpec[] = [
     name: "confirm-10-3-2-yes",
     dir: "confirm/10-3-2-yes",
     note: "P8: Reminders › Erase › All OK, then Yes.",
-    status: "pending:21",
   },
   ...(["1-1", "1-9", "6-4", "11-5"] as const).map((number) => ({
     name: `prompts-${number}`,

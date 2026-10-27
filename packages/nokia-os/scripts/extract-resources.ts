@@ -16,6 +16,7 @@
 // - sounds (plan 16): the tone programs and volume rules of scripts/sound-programs.ts, from the
 //   sound goldens;
 // - text (plan 18): the multi-tap and SMS timings of scripts/messages-resources.ts;
+// - clock (plan 21): the alerts' bells, blink, sounds and limits of scripts/clock-resources.ts;
 // - composer (plan 27): the Composer's periods, pitches and timings of scripts/composer-programs.ts,
 //   whose pitch goldens also join the sounds' volume tables (D4).
 //
@@ -45,6 +46,7 @@ import {
   type HarvestedFont,
   type RunSample,
 } from "./harvest-glyphs.ts";
+import { extractClockResources, type ClockResourceData } from "./clock-resources.ts";
 import { addComposerVolumes, extractComposerData, type ComposerData } from "./composer-programs.ts";
 import { extractMessagesResources, type MessagesResourceData } from "./messages-resources.ts";
 import { extractSnakeResources, type SnakeResourceData } from "./snake-resources.ts";
@@ -165,6 +167,7 @@ export interface ExtractedResources {
   readonly snake: SnakeResourceData;
   readonly sounds: SoundResourceData;
   readonly text: MessagesResourceData;
+  readonly clock: ClockResourceData;
   readonly composer: ComposerData;
 }
 
@@ -317,12 +320,19 @@ function itemRows(
   return rows;
 }
 
-function extractMenuIcons(goldensDir: string): Record<string, MenuIconData> {
+function extractMenuIcons(
+  goldensDir: string,
+  declared: ResourceInputs["menuIcons"],
+): Record<string, MenuIconData> {
   const icons: Record<string, MenuIconData> = {};
-  for (const slug of MENU_SLUGS) {
+  // Plan 13's twelve, then the icons plans declare (plan 30: SIM services), by slug.
+  const icon = (slug: string): { golden: string; reveals?: Readonly<Record<string, string>> } =>
+    declared[slug] ?? { golden: `menu/${slug}.anim`, reveals: REVEAL_GOLDENS[slug] };
+  for (const slug of [...MENU_SLUGS, ...Object.keys(declared)]) {
+    const { golden: reveal0, reveals: revealIds } = icon(slug);
     const sources: [string | undefined, Golden][] = [
-      [undefined, loadGolden(goldensDir, `menu/${slug}.anim`)],
-      ...Object.entries(REVEAL_GOLDENS[slug] ?? {}).map(([reveal, id]): [string, Golden] => [
+      [undefined, loadGolden(goldensDir, reveal0)],
+      ...Object.entries(revealIds ?? {}).map(([reveal, id]): [string, Golden] => [
         reveal,
         loadGolden(goldensDir, id),
       ]),
@@ -333,7 +343,7 @@ function extractMenuIcons(goldensDir: string): Record<string, MenuIconData> {
     for (const { rows } of perSource) {
       for (const row of rows) box = union(box, inkBox(row.pixels, ICON_REGION));
     }
-    if (!box) throw new Error(`menu/${slug}.anim: no icon ink in x 0..79, y 20..39`);
+    if (!box) throw new Error(`${reveal0}: no icon ink in x 0..79, y 20..39`);
 
     const frames: string[][] = [];
     const frameIndex = (pixels: Uint8Array): number => {
@@ -767,7 +777,7 @@ export function extractResources(
   const volumeTables = addComposerVolumes(sounds.volumeTables, loadSound);
   return {
     fonts: harvestFonts(goldensDir, inputs),
-    menuIcons: extractMenuIcons(goldensDir),
+    menuIcons: extractMenuIcons(goldensDir, inputs.menuIcons),
     boot: extractBoot(goldensDir),
     status: extractStatus(goldensDir),
     widgets: extractWidgets(goldensDir, inputs),
@@ -777,6 +787,10 @@ export function extractResources(
     ),
     sounds: { ...sounds, volumeTables },
     text: extractMessagesResources((id) => loadGolden(goldensDir, id)),
+    clock: extractClockResources(
+      (id) => loadGolden(goldensDir, id),
+      (id) => parseSoundGolden(readFileSync(join(goldensDir, `${id}.sound.txt`), "utf8"), id),
+    ),
     composer: extractComposerData(loadSound, (id) => loadGolden(goldensDir, id), ids, volumeTables),
   };
 }
@@ -835,6 +849,11 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
       "TEXT_DATA",
       "{ readonly text: { readonly commitMs: number; readonly blinkMs: number; readonly clearAfterDeleteMs: number; readonly numberModeHoldMs: number; readonly digitHoldMs: number }; readonly messages: { readonly sendLinkMs: number; readonly receiveLinkMs: number; readonly savingMs: number } }",
       resources.text,
+    ),
+    "clock.ts": module(
+      "CLOCK_DATA",
+      `{ readonly bells: { readonly sprites: readonly string[]; readonly stepMs: number }; readonly ring: { readonly bellsFirstMs: number; readonly textFirstMs: number; readonly textMs: number }; readonly programs: Readonly<Record<"countdown" | "reminder" | "alarm", ${TYPES.program}>>; readonly ascend: { readonly stepMs: number; readonly firstMs: Readonly<Record<"countdown" | "reminder" | "alarm", number>> }; readonly countdownSoundMs: number; readonly alarmRingMs: number }`,
+      resources.clock,
     ),
     "composer.ts": module(
       "COMPOSER_DATA",

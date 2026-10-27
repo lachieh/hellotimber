@@ -79,22 +79,42 @@ describe("createStockPhone", () => {
     expect(phone.screen).toMatchObject({ kind: "list", selected: 9, windowTop: 9 });
   });
 
-  it("opens the stock standby ▲/▼ targets: the dialled numbers and the Dialled numbers note", () => {
+  it("opens the stock standby ▲/▼ targets after 23 ms: the dialled numbers, the name list", () => {
     // Plan 22 (D3): ▲ opens the dialled list (`No last dialled numbers` while it is empty).
-    // Standby shows with its ladders erased 23 ms first (plan 19's standby key delay).
     const up = clocked();
     up.press("up");
+    expect(up.phone.screen).toMatchObject({ kind: "standby", leaving: true });
     up.advance(100);
     expect(up.phone.screen).toMatchObject({ kind: "custom", appId: "stock:dialled-numbers" });
-    const clock = clocked();
-    clock.press("down");
-    clock.advance(100);
-    const down = clock.phone;
-    expect(down.path).toBe("menu/call-register/dialled-numbers");
-    expect(down.screen).toMatchObject({
-      kind: "custom",
-      appId: "stock:call-register/dialled-numbers",
+    // Plan 19 D5: ▼ opens the name list. An empty SIM: No phone numbers, at standby.
+    const empty = clocked();
+    empty.press("down");
+    empty.advance(30);
+    expect(empty.phone.path).toBe("standby");
+    expect(empty.phone.screen).toMatchObject({ kind: "custom", appId: "stock:phone-book" });
+    empty.advance(3000);
+    expect(empty.phone.screen).toMatchObject({ kind: "standby" });
+    // Names: the list, a standby application (C returns to standby).
+    const names = clocked({
+      sim: { id: "s", phoneBook: { entries: [{ name: "Zoe", number: "1" }] } },
     });
+    names.press("down");
+    names.advance(30);
+    expect(names.phone.path).toBe("standby");
+    expect(names.phone.screen).toMatchObject({ kind: "custom", appId: "stock:phone-book" });
+    names.press("c");
+    names.advance(200);
+    expect(names.phone.screen).toMatchObject({ kind: "standby" });
+  });
+
+  it("rejects an invalid SIM card, naming the field and the location (plan 19 D2)", () => {
+    expect(() =>
+      createStockPhone({
+        carrier: "Orange F",
+        sim: { id: "s", phoneBook: { entries: [null, { name: "W", number: "04w" }] } },
+      }),
+    ).toThrow(/phoneBook\.entries\[1\] \(location 2\)/);
+    expect(() => createStockPhone({ carrier: "Orange F", sim: "" })).toThrow(/non-empty/);
   });
 
   it("drives standby and the Clock pages from the clock and date ports", () => {

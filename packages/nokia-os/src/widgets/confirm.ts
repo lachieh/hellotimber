@@ -6,12 +6,15 @@ export interface ConfirmOptions {
   readonly lines: readonly string[];
   /** `OK`, `Yes`. */
   readonly softkey: string;
+  /**
+   * The lines' tops where the query is not laid out as its line count says (plan 21; plan 22:
+   * where they are not the query's measured layout).
+   */
+  readonly tops?: readonly number[];
   /** The soft key: run the query's result (P8). */
   readonly confirm: (flow: Flow) => void;
   /** C. Default: back to the screen below, unchanged (P8). */
   readonly cancel?: (flow: Flow) => void;
-  /** Plan 22: the lines' tops where they are not the query's measured layout. */
-  readonly tops?: readonly number[];
 }
 
 /** A confirm query: the soft key runs its result, C goes back unchanged (P8). */

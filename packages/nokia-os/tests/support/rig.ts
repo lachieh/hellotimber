@@ -49,6 +49,14 @@ export interface Rig {
   ): RecordedTimeline;
 }
 
+/** Plan 30 D11: sees every screen every rig's phone emits (tests/describe.test.ts), if set. */
+let screenWatcher: ((screen: ScreenModel) => void) | undefined;
+
+/** Watches every screen of the rigs created from now on; undefined stops. */
+export function watchScreens(watcher: ((screen: ScreenModel) => void) | undefined): void {
+  screenWatcher = watcher;
+}
+
 export function createRig(config: StockPhoneConfig, internals: StockPhoneInternals = {}): Rig {
   const sounds: StockSoundEvent[] = [];
   const sound = {
@@ -58,6 +66,8 @@ export function createRig(config: StockPhoneConfig, internals: StockPhoneInterna
     },
   };
   const phone = createStockPhoneWith({ ...config, sound }, internals);
+  const watcher = screenWatcher;
+  if (watcher !== undefined) phone.subscribe((snapshot) => watcher(snapshot.screen));
   let now = 0;
   phone.tick(now);
 

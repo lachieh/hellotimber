@@ -15,8 +15,12 @@ import {
   type RingingModel,
   type VolumeModel,
 } from "./call";
+import { paintAlert, type AlertModel } from "./alert";
+import { paintStopwatch, type StopwatchModel } from "./stopwatch";
 import { paintComposer, type ComposerModel } from "./composer";
+import { paintReminderView, type ReminderViewModel } from "./reminder-view";
 import { paintConfirm, type ConfirmModel } from "./confirm";
+import { paintContentList, type ContentListModel } from "./content-list";
 import { paintEditor, type EditorModel } from "./editor";
 import { paintGameOver, type GameOverModel } from "./game-over";
 import { paintInfoPage, type InfoPageModel } from "./info-pages";
@@ -30,11 +34,22 @@ import {
   type MessagePageModel,
 } from "./message";
 import { paintMulti, type MultiModel } from "./multi";
+import {
+  paintNameList,
+  paintPhoneBookNumber,
+  paintPhoneBookQuery,
+  paintServiceList,
+  type NameListModel,
+  type PhoneBookNumberModel,
+  type PhoneBookQueryModel,
+  type ServiceListModel,
+} from "./name-list";
 import { paintNote, paintWelcomeNote, type NoteModel, type WelcomeNoteModel } from "./note";
 import { paintOptions, type OptionsModel } from "./options";
 import { paintProgress, type ProgressModel } from "./progress";
 import { paintStandbyFrame, type StandbyFrameModel } from "../profiles";
 import { paintPrompt, type PromptModel } from "./prompt";
+import { paintServiceRequest, type ServiceRequestModel } from "./service-request";
 import { paintShortcutChoice, type ShortcutChoiceModel } from "./shortcut-choice";
 import { paintSnake, type SnakeModel } from "./snake";
 import { paintSplash, type SplashModel } from "./splash";
@@ -51,6 +66,7 @@ export type {
 } from "./call";
 export type { ComposerModel } from "./composer";
 export type { ConfirmModel } from "./confirm";
+export type { ContentListModel } from "./content-list";
 export type { EditorModel } from "./editor";
 export type { GameOverModel } from "./game-over";
 export type { InfoPageModel } from "./info-pages";
@@ -59,16 +75,26 @@ export type { KeyguardModel } from "./keyguard";
 export type { LevelBarModel } from "./level-bar";
 export type { MessageListModel, MessagePageModel } from "./message";
 export type { MultiModel } from "./multi";
+export type {
+  NameListModel,
+  PhoneBookNumberModel,
+  PhoneBookQueryModel,
+  ServiceListModel,
+} from "./name-list";
 export type { NoteModel, WelcomeNoteModel } from "./note";
 export { welcomeNoteLines } from "./note";
 export type { OptionsModel } from "./options";
 export type { ProgressModel } from "./progress";
 export type { PromptEntry, PromptModel } from "./prompt";
+export type { ServiceRequestModel } from "./service-request";
 export type { ShortcutChoiceModel } from "./shortcut-choice";
 export type { SnakeModel } from "./snake";
 export type { SplashModel } from "./splash";
 export type { SymbolsModel } from "./symbols";
 export type { TextPageModel } from "./text-pages";
+export type { AlertModel } from "./alert";
+export type { StopwatchModel } from "./stopwatch";
+export type { ReminderViewModel } from "./reminder-view";
 
 /** A choice a later plan implements (D13), inside a flow: the placeholder frame of `label`. */
 export interface PlaceholderModel {
@@ -114,18 +140,27 @@ export type WidgetModel =
   | SymbolsModel
   | PlaceholderModel
   | CalculatorModel
+  | AlertModel
+  | StopwatchModel
   | ComposerModel
   | KeyguardModel
   | StandbyDrawModel
   | MessageListModel
   | MessagePageModel
+  | NameListModel
+  | ServiceListModel
+  | PhoneBookQueryModel
+  | PhoneBookNumberModel
   | StandbyFrameModel
   | ShortcutChoiceModel
   | DialEntryModel
   | CallModel
   | CallEntryModel
   | RingingModel
-  | VolumeModel;
+  | VolumeModel
+  | ContentListModel
+  | ServiceRequestModel
+  | ReminderViewModel;
 
 /**
  * Paints a stock widget's screen onto a cleared framebuffer. `previous` is the screen shown
@@ -190,6 +225,12 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
     case "calculator":
       paintCalculator(fb, model);
       return;
+    case "alert":
+      paintAlert(fb, model);
+      return;
+    case "stopwatch":
+      paintStopwatch(fb, model);
+      return;
     case "composer":
       paintComposer(fb, model);
       return;
@@ -204,6 +245,18 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "message-page":
       paintMessagePage(fb, model);
+      return;
+    case "name-list":
+      paintNameList(fb, model);
+      return;
+    case "service-list":
+      paintServiceList(fb, model);
+      return;
+    case "phone-book-query":
+      paintPhoneBookQuery(fb, model);
+      return;
+    case "phone-book-number":
+      paintPhoneBookNumber(fb, model);
       return;
     case "shortcut-choice":
       paintShortcutChoice(fb, model, previous);
@@ -223,6 +276,12 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
     case "volume":
       paintVolume(fb, model);
       return;
+    case "content-list":
+      paintContentList(fb, model);
+      return;
+    case "service-request":
+      paintServiceRequest(fb, model);
+      return;
     case "standby-draw":
       paintStandby(fb, {
         kind: "standby",
@@ -231,6 +290,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
         battery: 4,
         ...(model.clock === undefined ? {} : { clock: model.clock }),
       });
+      return;
+    case "reminder-view":
+      paintReminderView(fb, model);
       return;
   }
 }

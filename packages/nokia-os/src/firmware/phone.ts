@@ -5,6 +5,7 @@ import {
   type PhoneApplication,
   type PhoneKey,
   type PhoneSnapshot,
+  type ScreenModel,
 } from "@hellotimber/phone-core";
 import type { StockServices } from "./features/feature";
 import { VISIBLE_ROWS } from "../display/list-rows";
@@ -22,9 +23,14 @@ import {
 } from "./menu";
 import { openBox } from "../messages/read";
 import { StockFlowApplication } from "../widgets/flow";
+import { applyPreload, checkImei, checkPreload, type StockPreload } from "./preload";
 import { createSyntheticNetwork, type StockNetworkPort } from "../messages/network";
 import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
+import { standbyList } from "../phone-book/flows";
+import { normaliseSim, type StockSimCard } from "../phone-book/sim-card";
+import { StockPhoneBook } from "../phone-book/store";
+import { STANDBY_KEY_DELAY_MS } from "../phone-book/timings";
 import { stockBootGates } from "./boot";
 import {
   activationBeep,
@@ -34,9 +40,17 @@ import {
   standbySilent,
 } from "./features/profiles";
 import { createStockSettings } from "./settings";
+import { autoUpdate } from "./features/clock";
+import { phoneAlarm } from "./features/clock/alarm";
+import { phoneCountdown } from "./features/clock/countdown";
+import { phoneStopwatch } from "./features/clock/stopwatch";
+import { phoneReminders } from "./features/reminders/service";
+import { registerClock } from "./features/clock/registry";
+import { StockClock } from "./features/clock/service";
 import { StockLightRules, StockLights, type StockLightsPort } from "./features/backlight";
 import { KeyguardOverlay } from "./features/keyguard";
 import type { StockSoundPort } from "../sound/port";
+import type { StockGames } from "../widgets/snake";
 import { NO_T9_VIRGIN_CHOICES } from "../messages/bindings";
 import type { T9Dictionary } from "../text/t9/dictionary";
 import { stockT9 } from "../text/t9/service";
@@ -44,6 +58,7 @@ import { SoundSequencer } from "../sound/sequencer";
 import { StockSounder, type KeyDownOptions } from "../sound/sounder";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { paintStockScreen } from "../display/paint";
+import { attachDescription, describeStockScreen } from "../display/describe";
 import { StockCallLog } from "../calls/log";
 import { StockTelephone } from "../calls/telephone";
 import { CallClock } from "../calls/timestamp";
@@ -70,10 +85,12 @@ export interface StockPhoneConfig extends StockPorts {
    */
   storage?: StockStorage;
   /**
-   * Plan 15: the inserted SIM card's identity. With Phone security On, power-on asks for the
-   * security code when this SIM is not among the last five used. Default "sim-1"; non-empty.
+   * Plan 15: the inserted SIM card's identity (with Phone security On, power-on asks for the
+   * security code when this SIM is not among the last five used), or (plan 19 D2) the whole SIM
+   * card: its phone book and service numbers. Default "sim-1": the emulator SIM (50 locations,
+   * 16-character names, empty). An invalid card throws, naming the field and the location.
    */
-  sim?: string;
+  sim?: string | StockSimCard;
   /**
    * Plan 16: the phone's buzzer, tone generator and vibrator. Every change arrives from `tick()`
    * stamped with the kernel time it happens at. Default: nowhere.
@@ -91,20 +108,23 @@ export interface StockPhoneConfig extends StockPorts {
    */
   network?: StockNetworkPort;
   /**
+   * Plan 30 D9: the phone's IMEI, 15 digits with a valid Luhn check digit (throws otherwise).
+   * `*#06#` shows it (plan 22's screen). Default: none (the virgin `?` glyphs).
+   */
+  imei?: string;
+  /**
+   * Plan 30 D10: phone memory a user could have typed, written once where its record does not
+   * exist in storage: the Welcome note (no settings record) and Reminders (no reminders record,
+   * added in order). Every string must be typeable, within its editor's limit and drawable;
+   * anything else throws, naming the field.
+   */
+  preload?: StockPreload;
+  /**
    * Plan 18b: T9 dictionaries. With `english`, Write messages starts in T9 English as the virgin
    * firmware does. Without it, T9 English is unavailable (Dictionary off, plan 18 behaviour).
    */
   t9?: { readonly english?: T9Dictionary };
 }
-
-/**
- * Stock standby ▲/▼: the phone book name search and the dialled-numbers list (placeholders until
- * the Phone book and Call register plans).
- */
-export const STOCK_STANDBY_KEYS = {
-  up: "menu/phone-book/search",
-  down: "menu/call-register/dialled-numbers",
-} as const;
 
 /** The envelope's blink while the SIM's message slots are full (`sms/full-arrival`: 478-482 ms). */
 export const FULL_BLINK_MS = 480;
@@ -155,19 +175,26 @@ export function createStockPhoneWith(
         .join(", ")}.`,
     );
   }
-  const sim = config.sim ?? STOCK_DEFAULT_SIM;
-  if (typeof sim !== "string" || sim === "") {
-    throw new Error(`The SIM must be a non-empty string (received ${JSON.stringify(sim)}).`);
-  }
+  const simCard = normaliseSim(config.sim ?? STOCK_DEFAULT_SIM);
+  const sim = simCard.id;
+  // Plan 30 D9, D10: the host's IMEI and preload, checked before anything is written.
+  const imei = config.imei === undefined ? undefined : checkImei(config.imei);
+  const preload = checkPreload(config.preload);
   const { clock, date } = config;
-  const eeprom = new StockEeprom(config.storage ?? createMemoryStorage());
+  const storage = config.storage ?? createMemoryStorage();
+  const eeprom = new StockEeprom(storage);
   const t9 = stockT9(eeprom, config.t9?.english);
   // Plan 18b D5: without a T9 dictionary the virgin editor is multi-tap (Dictionary off).
   const settings = createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES);
+  applyPreload(preload, storage, eeprom, settings);
   let now = 0;
   const security = new StockSecurity(eeprom, settings, { now: () => now, sim });
   const skip = config.boot === "skip";
-  const ports = { clock, date };
+  // Plan 21 D1: the phone's time is the host's clock plus its own offset; the menu, its pages
+  // and the games read the phone's time.
+  const phoneTime = new StockClock({ host: { clock, date }, settings, eeprom, now: () => now });
+  registerClock(eeprom, settings, phoneTime);
+  const ports = phoneTime.ports;
   const port = config.sound;
   const sequencer = new SoundSequencer((event) => port?.change(event));
   // Plan 27 (D8): the Composer's saved tones are Ringing tone options 35-41.
@@ -193,20 +220,31 @@ export function createStockPhoneWith(
     now: () => now,
   });
   const clockGames = createStockGames(ports, () => now);
-  const games = {
+  const games: StockGames = {
     ...clockGames,
     ...(internals.seed === undefined ? {} : { seed: () => internals.seed! }),
     cues: lightRules.cues(internals.cues ?? sounder),
+    // Plan 21: an alert falling due pauses Snake II (it shows at standby, D3).
+    events: () => phoneTime.alerts.queued,
   };
   const network = config.network ?? createSyntheticNetwork();
-  const messaging = stockMessaging(eeprom, settings, sim, network);
+  const messaging = stockMessaging(eeprom, settings, simCard, network);
   messaging.connect();
-  const services = stockServices(ports, settings, games, security, sounder, eeprom, messaging, t9);
-  // Plan 22: the telephone, its register and its clock; calls ring through the network port.
+  const phoneBook = new StockPhoneBook(eeprom, simCard);
+  const services: StockServices = {
+    ...stockServices(ports, settings, games, security, sounder, eeprom, messaging, t9, phoneBook),
+    ...(imei === undefined ? {} : { imei }),
+  };
+  // Plan 21: the clock's features over this phone's services (the alarm's minute listener, the
+  // countdown's expiry).
+  const alarm = phoneAlarm(services);
+  const countdown = phoneCountdown(services);
+  const stopwatch = phoneStopwatch(services);
+  // Plan 22: the telephone, its register and its clock (plan 21's phone time, D11); calls ring through the network port.
   const callLog = new StockCallLog(eeprom);
   const callClock = new CallClock(
-    () => clock?.(),
-    () => config.date?.(),
+    () => ports.clock?.(),
+    () => ports.date?.(),
     () => now,
   );
   const telephone = new StockTelephone({
@@ -220,29 +258,49 @@ export function createStockPhoneWith(
   network.subscribeCalls?.((call, link) => telephone.ring(call, link));
   // Plan 17 D7: the power key's list, over the same services as the menu's leaves.
   const power = new PowerListState();
+  const reminders = phoneReminders(services);
   registerTelephone(eeprom, telephone, power);
   const phone: Phone = createPhone({
-    menu: createStockMenu(ports, settings, games, security, sounder, eeprom, messaging, t9),
+    menu: createStockMenu(
+      ports,
+      settings,
+      games,
+      security,
+      sounder,
+      eeprom,
+      messaging,
+      t9,
+      phoneBook,
+      simCard,
+    ),
     // Plan 18 D11: the envelope while Inbox holds unread messages, blinking while every slot is
     // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED). Plan 17 D6: the silent
-    // icon while the active profile's Incoming call alert is Off.
+    // icon while the active profile's Incoming call alert is Off. Plan 21 D10: the alarm, timer
+    // and stopwatch indicators.
     standbyIndicators: () => {
       const store = messaging.store;
       const message = store.full() ? Math.floor(now / FULL_BLINK_MS) % 2 === 0 : store.unread() > 0;
       const silent = standbySilent(settings);
-      return message || silent
-        ? { ...(message ? { message: true } : {}), ...(silent ? { silent: true } : {}) }
-        : undefined;
+      // The kernel keeps only the flags that are true.
+      return { message, silent, ...phoneTime.indicators() };
     },
     carrier: config.carrier,
-    ...(clock === undefined ? {} : { clock }),
+    // Plan 21 D10: standby shows the phone's time, hidden or 12-hour as Clock settings say.
+    clock: () => phoneTime.standbyClock(),
+    // Plan 21 D4: the alarm switches a powered-off phone on.
+    wake: () => alarm.wake(),
     bootTimeline: BOOT_TIMELINE,
     ...(skip ? { bootMs: 0 } : {}),
     // Plan 15 D9: the security code and the welcome note hold the boot after the self-test.
     bootGates: stockBootGates({ security, settings, skip, sound: (lines) => sounder.note(lines) }),
-    standbyKeys: { ...STOCK_STANDBY_KEYS, up: dialledStandbyList(services) },
-    // Standby with the ladders erased before ▲'s list (plan 19's 23 ms; `handover/notice-up`).
-    standbyKeyDelayMs: 23,
+    // Plan 22 (D3): ▲ opens the dialled numbers; plan 19 D5: ▼ opens the phone book's name list
+    // (S1: the captures correct the spec's arrows, which plan 14 copied). Both are standby
+    // applications after standby's 23 ms leaving frame (`handover/notice-up`).
+    standbyKeys: {
+      up: dialledStandbyList(services),
+      down: new StockFlowApplication("stock:phone-book", () => standbyList(services)),
+    },
+    standbyKeyDelayMs: STANDBY_KEY_DELAY_MS,
     menuOpenDelayMs: STOCK_MENU_OPEN_DELAY_MS,
     shortcutWindowMs: STOCK_SHORTCUT_WINDOW_MS,
     // Rows levels keep the stateful circular window of the stock painter (plan 14 D3).
@@ -255,14 +313,21 @@ export function createStockPhoneWith(
     // Plan 22 (D2): digits, `*` and `#` start standby's number entry.
     standbyEntry: stockStandbyEntry(services),
     // Plan 22 (D4): a ring interrupts whatever shows; an answered call over another screen comes
-    // back once connected.
+    // back once connected. The telephone goes first, then plan 21 D3's clock alerts (at standby).
     interruption: (): PhoneApplication | undefined => {
       const resumed = telephone.callToShow();
       if (resumed !== undefined) {
         return incomingCallApplication(services, telephone, resumed, { kind: "other" });
       }
       const ringing = telephone.takeRing();
-      if (ringing === undefined) return undefined;
+      if (ringing === undefined) {
+        return phoneTime.alerts.interruption(() => {
+          if (standbySince !== undefined) return standbySince;
+          // Standby reached within this tick (an alert's exit) counts from now.
+          const screen: ScreenModel = phone.screen;
+          return screen.kind === "standby" && !screen.leaving ? now : undefined;
+        });
+      }
       const entry = shownEntry(telephone);
       const below =
         entry !== undefined
@@ -300,6 +365,8 @@ export function createStockPhoneWith(
       open: missedCallsList(services),
     });
   };
+  // When standby was last drawn (kernel time), while it is on screen (plan 21 D3).
+  let standbySince: number | undefined;
   // Power-off loses the suspended game (it survives standby, Task 0 C8) and silences the phone.
   // Plan 25: the light tick runs from the power-on; the boot lights the LEDs at the self-test's
   // first frame and again where the firmware shows its clock prompt (nokia-os: standby).
@@ -315,10 +382,16 @@ export function createStockPhoneWith(
     if (snapshot.poweredOn !== poweredOn) {
       poweredOn = snapshot.poweredOn;
       booting = poweredOn;
+      alarm.power(poweredOn);
+      countdown.power(poweredOn);
+      stopwatch.power(poweredOn);
+      reminders.power(poweredOn);
       if (poweredOn) {
         sounder.powerOn({ boot: !skip });
         lights.powerOn(now);
         telephone.powerOn();
+        // Plan 21 D13: Auto update of date and time at the end of power-on.
+        autoUpdate(services);
       } else {
         telephone.powerOff();
         sounder.powerOff();
@@ -369,6 +442,8 @@ export function createStockPhoneWith(
       appId: "stock:handset",
       frame: { width: fb.width, height: fb.height, pixels: fb.pixels },
     };
+    // Plan 30 D11: the screen text is the screen's below.
+    attachDescription(painted.frame, describeStockScreen(screen));
     handset = { under: screen, screen: painted };
     return painted;
   };
@@ -386,7 +461,13 @@ export function createStockPhoneWith(
   };
   const send = (event: KeyEvent): void => {
     if (event.type === "up") {
+      const notice = noticeShown();
       if (!(poweredOn && keyguard.keyUp(event.key))) phone.send(event);
+      // Plan 30 Task 0 M (`sms/slots/*`): C held on a notice clears it too, at its release (the
+      // kernel's long press at standby does nothing).
+      if (event.key === "c" && notice !== undefined && noticeShown() === notice) {
+        phone.setNotice(null);
+      }
       sounder.keyUp(event.key);
       publish();
       return;
@@ -420,6 +501,11 @@ export function createStockPhoneWith(
     }
     publish();
   };
+  /** The text of the notice standby shows, if any. */
+  function noticeShown(): string | undefined {
+    const screen = phone.screen;
+    return screen.kind === "standby" ? screen.notice?.text : undefined;
+  }
   const wrapper: Phone = {
     send,
     pressKey(key, holdMs = 0) {
@@ -430,6 +516,10 @@ export function createStockPhoneWith(
     tick(nowMs) {
       // The kernel time the games stamp their cues and the sounder its sounds with.
       now = Math.max(now, nowMs);
+      phoneTime.tick();
+      const screen = phone.screen;
+      if (screen.kind !== "standby" || screen.leaving) standbySince = undefined;
+      else standbySince ??= now;
       messaging.tick(now);
       callClock.tick();
       phone.tick(nowMs);

@@ -84,7 +84,7 @@ describe("stock carousel", () => {
   });
 
   it("rejects an unknown icon or frame", () => {
-    expect(() => paint({ ...carousel(0, 0), iconId: "sim-services" })).toThrow(/sim-services/);
+    expect(() => paint({ ...carousel(0, 0), iconId: "space-impact" })).toThrow(/space-impact/);
     expect(() => paint(carousel(0, 99))).toThrow(/frame 99/);
   });
 });

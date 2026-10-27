@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/phone-book/erased
+status: asserted
+source: captures/6.39/plan19/notes/erased
+source-sha256: 94c65df4fec42f12470d007e3ba38b3ca47530900e20870de52ac776944b91f5
+state: factory
+keys: 0:navi
+note: Erased after One by one: OK's beep only (SIM content).
+omitted: none
+
+@events
+# t_ms output   state
+117    tone     900 v=0x9104
+261    tone     off

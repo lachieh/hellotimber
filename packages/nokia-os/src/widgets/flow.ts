@@ -11,8 +11,16 @@ import type {
 } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { paintWidget, type WidgetModel } from "../display/widgets";
+import { attachDescription, describeWidget } from "../display/describe";
 
 /** What a widget may do to the flow that hosts it. */
+/** How Flow.back leaves the menus when it exits the flow. */
+export interface BackOptions {
+  readonly select?: string;
+  readonly row?: "top" | "bottom";
+  readonly endHolds?: boolean;
+}
+
 export interface Flow {
   /** Show `widget` above the current one; its `back()` returns here. */
   push(widget: Widget): void;
@@ -22,10 +30,10 @@ export interface Flow {
    * Close `levels` widgets (default 1). Past the last one the flow exits to the menu, closing
    * the remaining levels there too (`back(2)` from a list opened by a submenu: two levels up),
    * and selecting the child `select` (a slug) in the level it returns to, placed on the window's
-   * bottom row or, with `row: "top"`, its top row. `select` is ignored when the flow does not
-   * exit.
+   * bottom row or, with `row: "top"`, its top row; `endHolds`: keys held now lose their long
+   * press too (phone-core ExitOptions). Both are ignored when the flow does not exit.
    */
-  back(levels?: number, options?: { select?: string; row?: "top" | "bottom" }): void;
+  back(levels?: number, options?: BackOptions): void;
   /**
    * Leave the menus for standby. Plan 22: with `key` (down now), standby's number entry then
    * starts with it (phone-core's `exit({ to: "standby", key })`).
@@ -70,19 +78,29 @@ const NO_INDICATOR: MenuIndicator = { segments: [], awaitingNext: false };
 /**
  * A stock leaf: a flow of widgets starting with `root()`, built afresh for every session. It
  * renders `custom` frames, repainted only when the top widget's model changes; the painter sees
- * the frame shown before (a widget's partial draws start from it, D8).
+ * the frame shown before (a widget's partial draws start from it, D8). A root of `undefined` is
+ * no response (plan 18c: the virgin Templates): the session exits at once, nothing drawn.
  */
 export class StockFlowApplication extends PhoneApplication {
-  readonly #root: () => Widget;
+  readonly #root: () => Widget | undefined;
 
-  constructor(id: string, root: () => Widget) {
+  constructor(id: string, root: () => Widget | undefined) {
     super(id);
     this.#root = root;
     Object.freeze(this);
   }
 
   createSession(context: ApplicationContext): PhoneApplicationSession {
-    return new FlowSession(this.id, context, this.#root());
+    const root = this.#root();
+    if (root !== undefined) return new FlowSession(this.id, context, root);
+    context.exit();
+    return {
+      onKey() {},
+      tick() {},
+      render() {
+        throw new Error("A leaf with no response has nothing to show.");
+      },
+    };
   }
 }
 
@@ -144,6 +162,8 @@ class FlowSession implements PhoneApplicationSession, Flow {
     const fb = new Framebuffer();
     paintWidget(fb, model, shown?.screen.frame.pixels);
     const frame = { width: fb.width, height: fb.height, pixels: fb.pixels };
+    // Plan 30 D11: the frame's plain text, for hosts (describeStockScreen).
+    attachDescription(frame, describeWidget(model));
     this.#shown = { model, json, screen: { kind: "custom", appId: this.#appId, frame } };
     return this.#shown.screen;
   }
@@ -177,7 +197,7 @@ class FlowSession implements PhoneApplicationSession, Flow {
     this.#stack.push(widget);
   }
 
-  back(levels = 1, options: { select?: string; row?: "top" | "bottom" } = {}): void {
+  back(levels = 1, options: BackOptions = {}): void {
     if (this.#closed) return;
     if (!Number.isInteger(levels) || levels < 1) {
       throw new Error(`back levels must be a positive integer (received ${levels}).`);
@@ -196,6 +216,7 @@ class FlowSession implements PhoneApplicationSession, Flow {
       ...(beyond === 0 ? {} : { levels: beyond + 1 }),
       ...(options.select === undefined ? {} : { select: options.select }),
       ...(options.row === undefined ? {} : { row: options.row }),
+      ...(options.endHolds === true ? { endHolds: true } : {}),
     };
     this.#context.exit(Object.keys(exit).length === 0 ? undefined : exit);
     this.#closed = true;

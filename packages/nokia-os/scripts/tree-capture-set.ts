@@ -63,18 +63,8 @@ export const SAME_AS: Readonly<Record<string, string>> = {
 export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   // Plan 18c: Chat and content (plan 18 D1).
   "2-4": "18c", // Picture messages: nothing in the virgin EEPROM
-  "2-5": "18c", // Templates
-  "2-6": "18c", // Smileys
-  "2-8-4-1-**": "18c", // Topics: lists of box-glyph names (virgin EEPROM)
-  "2-8-4-2-**": "18c",
-  "2-8-4-3-**": "18c",
-  "2-10": "18c", // Service command editor
-  "3": "18c", // Chat
   "5-9-4": "18c", // Screen saver › Screen saver: nothing in the virgin EEPROM
   "12-*-2-9-4": "18c",
-
-  // Plan 21: Clock and Reminders.
-  "11-4": "21", // Stopwatch
 
   // Plan 24: Games II.
   "8-2-1": "24", // Space impact › New game

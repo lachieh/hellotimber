@@ -29,10 +29,10 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 17  | [Profiles](./17-profiles.md)                                                    | Activate, active profile behind Tones, standby name and icon, power-key list, Rename                  | 15, 16 (18 for Rename)                    | done        |
 | 18  | [Messages I: text entry and SMS](./18-messages-and-chat.md)                     | multi-tap entry, editor/prompts, Welcome note, Write/Send/Save, Inbox/Outbox, network port            | 14, 15                                    | done        |
 | 18b | [Messages II: T9](./18b-t9-predictive-text.md)                                  | T9 predictive text, open-list English dictionary, Matches, Insert word, user words                    | 18                                        | done        |
-| 18c | [Messages III: Chat and content](./18c-chat-templates-pictures-info-service.md) | stock T9 Chat, Templates/Smileys, pictures/gallery, Info topics, Service command editor, card receipt | 18, 18b (19 for Search/cards; 17 gallery) | not started |
-| 19  | [Phone book](./19-phone-book.md)                                                | SIM card port, standby ▼ name list, Search, Add/Edit/Erase, tones, b'card, Speed dials                | 14, 15, 16, 18                            | not started |
+| 18c | [Messages III: Chat and content](./18c-chat-templates-pictures-info-service.md) | stock T9 Chat, Templates/Smileys, pictures/gallery, Info topics, Service command editor, card receipt | 18, 18b (19 for Search/cards; 17 gallery) | in progress |
+| 19  | [Phone book](./19-phone-book.md)                                                | SIM card port, standby ▼ name list, Search, Add/Edit/Erase, tones, b'card, Speed dials                | 14, 15, 16, 18                            | done        |
 | 20  | [Calculator](./20-calculator.md)                                                | stock calculator: entry, `*` operators, Options, 9-character arithmetic, exchange rate                | 14, 15, 16                                | in progress |
-| 21  | [Clock and Reminders](./21-clock-and-reminders.md)                              | clock and date settings, alarm and wake, stopwatch, countdown, reminders; alert seams                 | 14, 15, 16, 18 (17 seams)                 | not started |
+| 21  | [Clock and Reminders](./21-clock-and-reminders.md)                              | clock and date settings, alarm and wake, stopwatch, countdown, reminders; alert seams                 | 14, 15, 16, 18 (17 seams)                 | done        |
 | 22  | [Calls I](./22-call-register-divert-and-dialling.md)                            | standby number entry, DTMF, calls in and out, call lists, durations, network call port                | 14, 15, 16, 23 (17-21 seams)              | done        |
 | 22b | Calls II: services and costs                                                    | Call divert, Call waiting, SS/USSD at standby, redial, own number, call costs                         | 22                                        | not started |
 | 23  | [Games I: Snake II](./23-games-snake-ii.md)                                     | Snake II gameplay and the scores it writes (menu, widgets: 14)                                        | 14 (15 for persistence)                   | done        |
@@ -44,13 +44,17 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 26b | T9 languages (outlined in plan 26)                                              | Russian and Bulgarian T9 dictionaries, clean-room per 18b; Bulgarian word list unresolved             | 18b, 26                                   | not started |
 | 27  | [Composer](./27-composer.md)                                                    | Tones › Composer: note editor, Play, Tempo, Save; saved tones as Ringing tones 36-42                  | 16, 18 (17 label seam)                    | done        |
 | 28  | [Game SDK and user games](./28-game-sdk-and-user-games.md)                      | wake-based game SDK, shell services, 2048, sandboxed user JS/Wasm games, extra games in Games         | 13, 14, 15, 16, 23                        | not started |
+| 30  | [SIM content and SIM services](./30-sim-content-and-sim-services.md)            | SIM-stored SMS, sender names, SIM services (STK text, lists, calls), IMEI, preload, screen text       | 19, 22 (18c, 21 seams)                    | done        |
+| 31  | [Portfolio on the stock firmware](./31-portfolio-on-stock-firmware.md)          | the website runs `createStockPhone`: content on the SIM, LLM network port, link calls, stock routes   | 30, 19, 22, 25 (18c, 21 seams)            | not started |
 
 Plans 01–04 are parallel-safe: no shared files, no cross-package imports at runtime
 (02 imports types from 01, which exist from 01's first task). Plan 09 is parallel-safe
 with 07/08 except its final website task; 08 strictly follows 07.
 
 Plans 14-25 are the follow-ups listed in plan 13 ("Follow-up plans"); their files are written
-when they are scheduled. Portfolio integration of `@hellotimber/nokia-os` is not sequenced.
+when they are scheduled. Portfolio integration of `@hellotimber/nokia-os` is plans 30 (what the
+firmware needs so a host supplies content on the SIM) and 31 (the website runs the stock firmware),
+in that order.
 
 **Update the Status column** (not started → in progress → done) as part of finishing
 a task batch.

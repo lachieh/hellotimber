@@ -21894,6 +21894,30 @@ export const SOUND_DATA: { readonly previewDelayMs: number; readonly messagePrev
           }
         }
       ]
+    },
+    "Memory full": {
+      "id": "sound/note/memory-full",
+      "steps": [
+        {
+          "ms": 294,
+          "tone": {
+            "hz": 1750,
+            "volume": 37125
+          }
+        }
+      ]
+    },
+    "Nothing to save": {
+      "id": "sound/note/nothing-to-save",
+      "steps": [
+        {
+          "ms": 292,
+          "tone": {
+            "hz": 1750,
+            "volume": 37125
+          }
+        }
+      ]
     }
   },
   "gameCues": {

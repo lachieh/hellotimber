@@ -1,0 +1,856 @@
+[
+  {
+    "id": "sim/imei-screen",
+    "file": "sim/imei-screen.lcd.txt",
+    "status": "pending:22",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "sim/names-bob-9digits",
+    "file": "sim/names-bob-9digits.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-bob-k10",
+    "file": "sim/names-bob-k10.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-bob-k6",
+    "file": "sim/names-bob-k6.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-bob-k7",
+    "file": "sim/names-bob-k7.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-bob-k8",
+    "file": "sim/names-bob-k8.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-bob-k9",
+    "file": "sim/names-bob-k9.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-bob-plus",
+    "file": "sim/names-bob-plus.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-bob-plus44",
+    "file": "sim/names-bob-plus44.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-digits",
+    "file": "sim/names-digits.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 22,
+    "frames": 22
+  },
+  {
+    "id": "sim/names-exact",
+    "file": "sim/names-exact.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-exact-arrive",
+    "file": "sim/names-exact-arrive.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/names-exact-notice-read",
+    "file": "sim/names-exact-notice-read.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "sim/names-last-digit",
+    "file": "sim/names-last-digit.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-national-of-plus",
+    "file": "sim/names-national-of-plus.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-plus-exact",
+    "file": "sim/names-plus-exact.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-plus61",
+    "file": "sim/names-plus61.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/names-unknown",
+    "file": "sim/names-unknown.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/sms-boot-empty",
+    "file": "sim/sms-boot-empty.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "sim/sms-boot-factory",
+    "file": "sim/sms-boot-factory.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "sim/sms-boot-read",
+    "file": "sim/sms-boot-read.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/sms-boot-unread",
+    "file": "sim/sms-boot-unread.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/sms-erase",
+    "file": "sim/sms-erase.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 9,
+    "frames": 12
+  },
+  {
+    "id": "sim/sms-erase-after",
+    "file": "sim/sms-erase-after.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "sim/sms-inbox-list",
+    "file": "sim/sms-inbox-list.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "sim/sms-inbox-open",
+    "file": "sim/sms-inbox-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/sms-order-list",
+    "file": "sim/sms-order-list.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "sim/sms-order-read",
+    "file": "sim/sms-order-read.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/sms-read-1",
+    "file": "sim/sms-read-1.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 8,
+    "frames": 8
+  },
+  {
+    "id": "sim/sms-read-1-open",
+    "file": "sim/sms-read-1-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/sms-read-2",
+    "file": "sim/sms-read-2.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "sim/sms-read-2-open",
+    "file": "sim/sms-read-2-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/sms-read-3",
+    "file": "sim/sms-read-3.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "sim/sms-read-4",
+    "file": "sim/sms-read-4.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "sim/sms-read-5",
+    "file": "sim/sms-read-5.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "sim/sms-read-6",
+    "file": "sim/sms-read-6.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 6,
+    "frames": 6
+  },
+  {
+    "id": "sim/sms-restore-list",
+    "file": "sim/sms-restore-list.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "sim/sms-slots-10-arrive-1",
+    "file": "sim/sms-slots-10-arrive-1.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 15
+  },
+  {
+    "id": "sim/sms-slots-10-arrive-2",
+    "file": "sim/sms-slots-10-arrive-2.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 21
+  },
+  {
+    "id": "sim/sms-slots-10-arrive-3",
+    "file": "sim/sms-slots-10-arrive-3.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 20
+  },
+  {
+    "id": "sim/sms-slots-10-list",
+    "file": "sim/sms-slots-10-list.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/sms-slots-15-arrive-1",
+    "file": "sim/sms-slots-15-arrive-1.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 15
+  },
+  {
+    "id": "sim/sms-slots-15-arrive-2",
+    "file": "sim/sms-slots-15-arrive-2.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 21
+  },
+  {
+    "id": "sim/sms-slots-15-arrive-3",
+    "file": "sim/sms-slots-15-arrive-3.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 21
+  },
+  {
+    "id": "sim/sms-slots-15-list",
+    "file": "sim/sms-slots-15-list.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/sms-slots-30-arrive-1",
+    "file": "sim/sms-slots-30-arrive-1.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 16
+  },
+  {
+    "id": "sim/sms-slots-30-arrive-2",
+    "file": "sim/sms-slots-30-arrive-2.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 21
+  },
+  {
+    "id": "sim/sms-slots-30-arrive-3",
+    "file": "sim/sms-slots-30-arrive-3.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 4,
+    "frames": 21
+  },
+  {
+    "id": "sim/sms-slots-30-list",
+    "file": "sim/sms-slots-30-list.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-carousel-lachlan",
+    "file": "sim/stk-carousel-lachlan.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "sim/stk-carousel-main-down-wrap",
+    "file": "sim/stk-carousel-main-down-wrap.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 10
+  },
+  {
+    "id": "sim/stk-carousel-main-menu-13",
+    "file": "sim/stk-carousel-main-menu-13.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "sim/stk-carousel-main-menu-14",
+    "file": "sim/stk-carousel-main-menu-14.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 7
+  },
+  {
+    "id": "sim/stk-carousel-main-up",
+    "file": "sim/stk-carousel-main-up.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 12
+  },
+  {
+    "id": "sim/stk-carousel-main-up-again",
+    "file": "sim/stk-carousel-main-up-again.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 5,
+    "frames": 10
+  },
+  {
+    "id": "sim/stk-carousel-title14",
+    "file": "sim/stk-carousel-title14.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "sim/stk-level-lachlan-open",
+    "file": "sim/stk-level-lachlan-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-level-lachlan-rows",
+    "file": "sim/stk-level-lachlan-rows.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 1,
+    "frames": 1
+  },
+  {
+    "id": "sim/stk-level-main-c",
+    "file": "sim/stk-level-main-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 7,
+    "frames": 12
+  },
+  {
+    "id": "sim/stk-level-main-open",
+    "file": "sim/stk-level-main-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-level-main-rows",
+    "file": "sim/stk-level-main-rows.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 13,
+    "frames": 13
+  },
+  {
+    "id": "sim/stk-level-main-up",
+    "file": "sim/stk-level-main-up.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-level-title14-open",
+    "file": "sim/stk-level-title14-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-level-title14-rows",
+    "file": "sim/stk-level-title14-rows.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-select-list-c",
+    "file": "sim/stk-select-list-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-select-list-open",
+    "file": "sim/stk-select-list-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-select-list-rows",
+    "file": "sim/stk-select-list-rows.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-select-list-select",
+    "file": "sim/stk-select-list-select.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-select-list-select-ok",
+    "file": "sim/stk-select-list-select-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-select-list-text-c",
+    "file": "sim/stk-select-list-text-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-select-nested-leaf",
+    "file": "sim/stk-select-nested-leaf.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-select-nested-leaf-ok",
+    "file": "sim/stk-select-nested-leaf-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-select-nested-level-1-c",
+    "file": "sim/stk-select-nested-level-1-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-select-nested-level-2",
+    "file": "sim/stk-select-nested-level-2.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-select-nested-level-2-c",
+    "file": "sim/stk-select-nested-level-2-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-select-nested-open",
+    "file": "sim/stk-select-nested-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-select-no-title-open",
+    "file": "sim/stk-select-no-title-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-select-no-title-rows",
+    "file": "sim/stk-select-no-title-rows.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-select-no-title-select",
+    "file": "sim/stk-select-no-title-select.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-select-no-title-select-ok",
+    "file": "sim/stk-select-no-title-select-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-text-auto-open",
+    "file": "sim/stk-text-auto-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-text-auto-wait-60s",
+    "file": "sim/stk-text-auto-wait-60s.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-text-short-c",
+    "file": "sim/stk-text-short-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-text-short-ok",
+    "file": "sim/stk-text-short-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-text-short-open",
+    "file": "sim/stk-text-short-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-text-short-wait-60s",
+    "file": "sim/stk-text-short-wait-60s.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-text-text-160-c",
+    "file": "sim/stk-text-text-160-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-text-text-160-ok",
+    "file": "sim/stk-text-text-160-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-text-text-160-open",
+    "file": "sim/stk-text-text-160-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-text-text-160-pages",
+    "file": "sim/stk-text-text-160-pages.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-text-text-240-c",
+    "file": "sim/stk-text-text-240-c.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-text-text-240-ok",
+    "file": "sim/stk-text-text-240-ok.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-text-text-240-open",
+    "file": "sim/stk-text-text-240-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-text-text-240-pages",
+    "file": "sim/stk-text-text-240-pages.lcd.txt",
+    "status": "asserted",
+    "kind": "still",
+    "images": 4,
+    "frames": 4
+  },
+  {
+    "id": "sim/stk-text-two-c-1",
+    "file": "sim/stk-text-two-c-1.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-text-two-ok-1",
+    "file": "sim/stk-text-two-ok-1.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sim/stk-text-two-ok-2",
+    "file": "sim/stk-text-two-ok-2.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 2,
+    "frames": 2
+  },
+  {
+    "id": "sim/stk-text-two-open",
+    "file": "sim/stk-text-two-open.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 3,
+    "frames": 3
+  },
+  {
+    "id": "sound/stk/auto-open",
+    "file": "sound/stk/auto-open.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/stk/auto-wait",
+    "file": "sound/stk/auto-wait.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 0
+  },
+  {
+    "id": "sound/stk/carousel-up",
+    "file": "sound/stk/carousel-up.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/stk/level-open",
+    "file": "sound/stk/level-open.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/stk/select-c",
+    "file": "sound/stk/select-c.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/stk/select-open",
+    "file": "sound/stk/select-open.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/stk/select-select",
+    "file": "sound/stk/select-select.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/stk/text-c",
+    "file": "sound/stk/text-c.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/stk/text-ok",
+    "file": "sound/stk/text-ok.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  },
+  {
+    "id": "sound/stk/text-open",
+    "file": "sound/stk/text-open.sound.txt",
+    "status": "asserted",
+    "kind": "sound",
+    "events": 2
+  }
+]

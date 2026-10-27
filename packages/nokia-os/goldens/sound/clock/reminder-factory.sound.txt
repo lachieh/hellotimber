@@ -1,0 +1,94 @@
+sound-golden 1
+id: sound/clock/reminder-factory
+status: asserted
+source: captures/6.39/plan21/reminders/alert-two
+source-sha256: 1ff41812b951f86de0c4600a026bc059d573d0c2deb669e098e477220c0f4aaa
+state: factory
+keys: 0:navi 6061:navi
+note: Two reminders due at 10:11: the first alert, Snooze, the second, Snooze.
+omitted: none
+
+@events
+# t_ms output   state
+-4038  buzzer   2683.7 v=6
+-4038  vibrator on
+-3946  buzzer   off
+-3853  buzzer   2683.7 v=6
+-3760  buzzer   off
+-3667  buzzer   2683.7 v=6
+-3574  buzzer   off
+-3481  buzzer   2683.7 v=6
+-3481  vibrator off
+-3389  buzzer   off
+-3296  buzzer   2683.7 v=6
+-3203  buzzer   off
+-2629  vibrator on
+-2628  buzzer   2683.7 v=6
+-2536  buzzer   off
+-2443  buzzer   2683.7 v=6
+-2350  buzzer   off
+-2257  buzzer   2683.7 v=6
+-2164  buzzer   off
+-2071  buzzer   2683.7 v=6
+-2071  vibrator off
+-1978  buzzer   off
+-1885  buzzer   2683.7 v=6
+-1792  buzzer   off
+-1219  buzzer   2683.7 v=6
+-1219  vibrator on
+-1126  buzzer   off
+-1033  buzzer   2683.7 v=10
+-941   buzzer   off
+-848   buzzer   2683.7 v=10
+-755   buzzer   off
+-662   buzzer   2683.7 v=10
+-662   vibrator off
+-569   buzzer   off
+-476   buzzer   2683.7 v=10
+-383   buzzer   off
+43     tone     900 v=0x9104
+167    tone     off
+1507   buzzer   2683.7 v=6
+1507   vibrator on
+1615   buzzer   off
+1708   buzzer   2683.7 v=6
+1801   buzzer   off
+1894   buzzer   2683.7 v=6
+1998   buzzer   off
+2087   buzzer   2683.7 v=6
+2087   vibrator off
+2180   buzzer   off
+2273   buzzer   2683.7 v=6
+2366   buzzer   off
+2939   buzzer   2683.7 v=6
+2939   vibrator on
+3032   buzzer   off
+3125   buzzer   2683.7 v=6
+3218   buzzer   off
+3311   buzzer   2683.7 v=6
+3403   buzzer   off
+3500   buzzer   2683.7 v=6
+3500   vibrator off
+3590   buzzer   off
+3683   buzzer   2683.7 v=6
+3776   buzzer   off
+4349   vibrator on
+4350   buzzer   2683.7 v=6
+4442   buzzer   off
+4535   buzzer   2683.7 v=6
+4628   buzzer   off
+4721   buzzer   2683.7 v=6
+4814   buzzer   off
+4907   buzzer   2683.7 v=10
+4907   vibrator off
+5003   buzzer   off
+5093   buzzer   2683.7 v=10
+5185   buzzer   off
+5759   buzzer   2683.7 v=10
+5759   vibrator on
+5851   buzzer   off
+5944   buzzer   2683.7 v=10
+6037   buzzer   off
+6079   vibrator off
+6107   tone     900 v=0x9104
+6231   tone     off
