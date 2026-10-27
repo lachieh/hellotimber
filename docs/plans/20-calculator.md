@@ -17,7 +17,7 @@ API or filename is assumed here. The per-plan file split (feature modules, per-p
 "Plan 16 supplementary captures") and plans 13-16 before starting. Task 0 writes this plan's
 captures to `$REF/captures/6.39/plan20/`. The planning probes in `$REF/captures/scratch-plan20/`
 are evidence for this plan only and are never imported.
-**Status:** implemented (D9 since plan 22). Tasks 2-8 done on plan 29's registration; node 9 is the stock calculator. Options' numeric/star/hash escape (D9) is asserted by plan 22 (its 28 fixtures, `StockSoundEvent.hz2`; merged 2026-10-27). Task 0 R stays unticked for the parent's review of the corrected criterion.
+**Status:** done (2026-10-27). Tasks 2-8 done on plan 29's registration; node 9 is the stock calculator. Options' numeric/star/hash escape (D9) is asserted by plan 22 (its 28 fixtures, `StockSoundEvent.hz2`; merged 2026-10-27). Task 0 R is closed under its corrected criterion (parent review, 2026-10-27).
 
 ## Goal
 
@@ -301,7 +301,7 @@ C held on a list goes to standby.
       state; `operator-slow` (`*` three times 3 s apart).
 - [x] **M Options:** scroll every state's list through its wrap (number, operator, operand); ▲
       from the first entry; C from the list; every entry chosen in every state where it exists.
-- [ ] **R results** (stills, one case each): every C5 case; the half cases `24691357/2` and
+- [x] **R results** (stills, one case each): every C5 case; the half cases `24691357/2` and
       `-24691357/2` (via `0 - 24691357` then `/ 2`); `-1/3`, `-2/3`, `-12345678 × 1`, `-123456789`
       (`0 - 123456789`), `-99999999.5`, `999999999 + 1`, `0.00000005 × 1`, `-0.00000005 × 1`,
       `0.5 + 0.5`, `9.9999999 + 0.00000001`; results used as operands (`(2/3) × 3`, `(1/3) + (1/3)`);
@@ -727,7 +727,7 @@ Domestic 2 the prompt opens with the cursor hidden; UNVERIFIED cause).
       `agent-browser`: Menu 9, `1 2 * 3`, Options › Equals shows `15`; Exchange rate › Foreign
       `1.5`, `Rate saved`; `10` In domestic shows `15`. Screenshots in the completion note.
 - [x] Spec: replace "(plan 20, in progress)" with verified facts; list what stays UNVERIFIED.
-- [ ] Plans README row 20 `done`. Completion notes; status `done`. (Parent-owned; blocked on D9.)
+- [x] Plans README row 20 `done`. Completion notes; status `done`.
 - [x] Commit: `docs: complete the stock calculator (plan 20)`.
 
 **Task 9 completion.** `vp check` passes (423 files); `vp run -r test` passes in all six
@@ -754,10 +754,10 @@ UNVERIFIED. The plan is not `done`: D9 remains.
 
 ## Remaining gates
 
-1. Parent: the plans README row 20 stays `in progress` until D9 lands.
-2. Task 0 R remains unticked pending full checklist review under the corrected criterion.
+1. Done: D9 landed with plan 22 (merged 2026-10-27); the plans README row 20 is `done`.
+2. Done: the parent reviewed Task 0 R against the full original C5/R checklist on 2026-10-27 and accepted the corrected criterion. Every other R case and both In domestic conversions are asserted goldens (`calculator/results`, `calculator/convert`); the three unenterable cases are replaced by the literal truncation captures and the representable half-rounding and carry cases above.
 3. Done: plan 29's registration carries the calculator's text, note timelines and warning tones (Task 2).
-4. Plan 22 standby entry and parent/shared sound-contract reconciliation gate Options numeric/star/hash acceptance and final completion. Required proof is the captured `Call` LCD plus both simultaneous DTMF frequencies, using real behavioral drivers.
+4. Done: plan 22 standby entry and parent/shared sound-contract reconciliation gate Options numeric/star/hash acceptance and final completion. Required proof is the captured `Call` LCD plus both simultaneous DTMF frequencies, using real behavioral drivers.
 5. Physical EEPROM encoding and the exact internal C-hold timer remain UNVERIFIED. Preserve observable behavior without claiming those internals.
 
 ## Conflicts found while planning
