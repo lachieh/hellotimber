@@ -996,11 +996,7 @@ export const DONE_TASKS: ReadonlySet<number> = new Set<number>([4, 5, 7, 8]);
  */
 export type SimContentTask = 4 | 5 | 7 | 8;
 
-/** Goldens another plan's screen shows: `*#06#` (plan 22). */
-type Owner = "22";
-
-function statusOf(task: SimContentTask, owner: Owner | undefined): GoldenStatus {
-  if (owner !== undefined) return `pending:${owner}`;
+function statusOf(task: SimContentTask): GoldenStatus {
   return DONE_TASKS.has(task) ? "asserted" : "pending:30";
 }
 
@@ -1020,7 +1016,6 @@ interface Row {
   readonly sim: SimContentSimName;
   readonly toolkit?: SimContentToolkitName;
   readonly task: SimContentTask;
-  readonly owner?: Owner;
   readonly note: string;
 }
 
@@ -1434,7 +1429,6 @@ const ROWS: readonly Row[] = [
     shots: ["screen"],
     sim: "empty",
     task: 8,
-    owner: "22",
     note: "IMEI 490154203310018 written by the emulator's provisioning: *#06#: Serial No., 4901542033 / 10018.",
   },
 ];
@@ -1454,7 +1448,7 @@ const shotName = (file: string): string => file.replace(/\//g, "-");
 
 function lcdEntries(io: CaptureIo | undefined): CaptureSetEntry[] {
   return ROWS.map((row): CaptureSetEntry => {
-    const status = statusOf(row.task, row.owner);
+    const status = statusOf(row.task);
     const note = row.note;
     const dir = `plan30/${row.dir}`;
     if (row.shots !== undefined) {
@@ -1545,7 +1539,7 @@ export const SIM_CONTENT_SOUNDS: readonly SoundCaptureEntry[] = SOUND_ROWS.map((
   id: row.id,
   dir: `plan30/sound/stk/${row.dir}`,
   state: "factory",
-  status: statusOf(7, undefined),
+  status: statusOf(7),
   note: `SIM stk, toolkit main (factory image): ${row.note}`,
 }));
 

@@ -1047,8 +1047,8 @@ network), `tests/support/rig.ts` (a `network` option, if plans 18/19 did not add
   `Name:`), `calls/code-down` (▼ on the code pages), `calls/in-call-options-select-4` (Phone book
   in a call) and plan 19's `phone-book/standby-list-call`, `service-call` and `hold-on-2` (Call from
   a name or service number, a held speed dial) are `pending:22`. `*#06#` shows `StockPhoneConfig.imei`
-  (plan 30 D9); plan 30's `sim/imei-screen` stays `pending:22` until its replay can provision the
-  emulator's IMEI. **Open:** plan 25's 17 call goldens
+  (plan 30 D9); plan 30's `sim/imei-screen` is asserted (2026-10-27) by typing the code on a
+  phone configured with the captured IMEI `490154203310018`. **Open:** plan 25's 17 call goldens
   (`keyguard/call*`, `keyguard/emergency-call`, `lights/arrival/call*`, `lights/keyguard/emergency-call`,
   the `*` after the lock window) stay `pending:22`: they need the keyguard to pass a call's keys,
   `KeyguardCalls.dial` wired to the telephone and the lights held during a call — a follow-up.

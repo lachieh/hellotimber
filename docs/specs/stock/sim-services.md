@@ -2,7 +2,7 @@
 
 Facts recorded by plan 30's Task 0 on the v6.39 emulator with SIM fixtures and a scripted SIM
 Toolkit applet (`$REF/captures/6.39/plan30/`, `$REF/tools/harness-p30/`). Goldens: `sim/*`,
-`sound/stk/*` (`goldens/index/30.json`), all asserted but `*#06#` (plan 22's screen). Timings are ms
+`sound/stk/*` (`goldens/index/30.json`), all asserted. Timings are ms
 after the key-down of the recorded key.
 
 ## SIM messages (`EF_SMS`)
@@ -96,9 +96,10 @@ SIM-borne call data.
 ## IMEI
 
 The emulator's provisioning writes the 3310 model's IMEI `490154203310018`; `*#06#` then shows
-`Serial No.` over `4901542033` / `10018` (the virgin EEPROM shows `?` glyphs). The goldens
-(`sim/imei-screen`) is plan 22's screen (`pending:22`) until its `*#06#` lands; nokia-os checks
-the IMEI and gives its two lines (`stockImeiLines`).
+`Serial No.` over `4901542033` / `10018` (the virgin EEPROM shows `?` glyphs). The golden
+(`sim/imei-screen`) asserts plan 22's screen on a phone configured with that host IMEI. nokia-os
+validates the IMEI and displays its first ten digits and last five (`stockImeiLines`); without a
+host IMEI it keeps the virgin EEPROM's `?` glyphs. C or Navi dismisses the page to standby.
 
 ## Known gaps
 

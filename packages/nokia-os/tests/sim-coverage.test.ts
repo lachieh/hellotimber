@@ -1,5 +1,5 @@
-// Plan 30 Task 10: SIM content and SIM services' coverage. Nothing waits for plan 30 (only plan
-// 22's `*#06#`), no placeholder names it, and Menu 14 (SIM services, added by a toolkit SIM, not
+// Plan 30 Task 10: SIM content and SIM services' coverage. Every golden is asserted, no
+// placeholder names plan 30, and Menu 14 (SIM services, added by a toolkit SIM, not
 // in the stock tree) is covered by asserted goldens that pass: its carousel slot, its level and
 // each kind of SIM screen; the SIM messages by theirs.
 import { describe, expect, it } from "vite-plus/test";
@@ -16,11 +16,10 @@ const PASSING = new Set(
 );
 
 describe("SIM content and SIM services' coverage (plan 30 Task 10)", () => {
-  it("leaves nothing pending for plan 30, and only *#06# for plan 22", () => {
+  it("leaves no SIM content golden pending, including *#06#", () => {
     expect(INDEX.filter((e) => e.status === "pending:30").map((e) => e.id)).toEqual([]);
-    expect(OWN.filter((e) => e.status !== "asserted").map((e) => [e.id, e.status])).toEqual([
-      ["sim/imei-screen", "pending:22"],
-    ]);
+    expect(OWN.filter((e) => e.status !== "asserted").map((e) => e.id)).toEqual([]);
+    expect(PASSING.has("sim/imei-screen")).toBe(true);
     expect(Object.values(PLACEHOLDER_OWNERS)).not.toContain("30");
   });
 

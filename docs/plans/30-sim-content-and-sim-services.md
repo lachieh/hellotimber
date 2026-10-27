@@ -23,7 +23,7 @@ Shared files change by one-line registrations except the edits listed under "Sha
 and the canonical captures Task 0 writes to `$REF/captures/6.39/plan30/`. The emulator SIM has no
 SIM Toolkit; Task 0 adds one to the harness (D4). Read `$REF/captures/README.md`, plans 18, 19 and
 22 in full, and `tools/nokia-dct3-emulator/third_party/swsim/README.md` before starting.
-**Status:** done (2026-10-15; plan 22's bindings pending: see "Completion notes"; since the merge with plan 22, `*#06#` shows the host's IMEI, while `sim/imei-screen` stays `pending:22`).
+**Status:** done (2026-10-15; IMEI acceptance completed 2026-10-27: `sim/imei-screen` is asserted on plan 22's number entry with the captured host IMEI).
 
 ## Goal
 
@@ -1002,6 +1002,11 @@ spec. Goldens: 97 LCD and 10 sound goldens in `goldens/index/30.json`, all asser
 `sim/imei-screen` (`pending:22`); 3 known gaps (shared-suffix names; `Menu 1 3` / `Menu 1 4` closed
 later by phone-core's top-level menu numbers, Task 6's last deviation).
 The website is unchanged.
+
+Follow-up (2026-10-27): plan 22 already renders the host IMEI. `sim/imei-screen` is now
+asserted against `Serial No.` / `4901542033` / `10018`, reached by typing `*#06#` on a phone
+configured with the captured IMEI. The capture status was regenerated through `import-captures`;
+all 108 plan 30 goldens are asserted. The original pending notes below record the initial delivery.
 
 Waiting for plan 22 (one line each when it lands): `toolkitDial` in `features/sim-services.ts` →
 `StockTelephone.dial` (D6's rule is pinned on the seam; plan 22 pins its `Call`); `*#06#` reads
