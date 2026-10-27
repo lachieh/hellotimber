@@ -19,8 +19,10 @@ supplementary captures") and plans 13, 14, 16, 23 and 28 in full before starting
 probes in `$REF/captures/scratch-plan24/{space-impact,bantumi,pairs2}/` are evidence for this plan
 only and are never imported. Task 0 writes this plan's captures to `$REF/captures/6.39/plan24/`.
 **Status (2026-10-27):** rebased onto main `72cb29e`; inherited Games II groundwork
-is preserved and verified against the current suite. Task 0 remains incomplete after a read-only corpus audit;
-Tasks 1-3 have partial inherited WIP, not completed tasks. Tasks 4-14 remain unstarted.
+is preserved and verified against the current suite. Task 0 remains incomplete after
+capture-driver repair and a successful full-run validation. The follow-up assignment authorizes
+Task 0 writes to REF. Tasks 1-3 have partial inherited WIP, not completed tasks.
+Tasks 4-14 remain unstarted.
 No plan 24 goldens have been imported or asserted. See the refresh audit below.
 
 ## Goal
@@ -210,8 +212,15 @@ a second generator whose state survives games and is set only at power-on (inves
 Its formula and boot value are fitted in Task 0 S8 (peek series) and accepted only if they
 reproduce every random-row spawn in the goldens. It lives in the shared games holder (D10), is
 reset at power-on and advanced by Space impact's random rows and by whatever else S8 shows
-(Space impact's game over steps it once). Goldens that depend on it record the chain's position
-in their note (the games played since power-on), and their rigs replay that history.
+(the Task 0 ending controls below correct the unconditional game-over hypothesis). Goldens
+that depend on it record the chain's position in their note (the games played since power-on),
+and their rigs replay that history.
+
+**Task 0 correction (2026-10-27):** captured Space impact new-top-score endings consume one
+ANSI draw. Ordinary and tied-score endings consume none, including the first game after reboot
+with its earned top score retained. See `analysis/ansi-game-over-resolution.json` and the
+continuous LCD/audio recordings below. Random-row coordinate reproduction and other games'
+advancers remain unverified; do not implement an unconditional game-over advance.
 
 **D7 - Timing: periods from goldens, per-interval tolerance, no latency model (plan 23 D6).** The
 session ticks the engine at `SPACE_IMPACT_TICK_MS` (Task 0: ≈93 ms), the first tick
@@ -507,7 +516,7 @@ plan24 evidence directories. Do not modify other plans' scripts/captures or `scr
       0-9, `*`, `#`, ▲, ▼; two direction keys between ticks; 1 held 40 ticks (the repeat-fire cap);
       4 and 6 until the specials run out. On the continue screen (from S3's state by `fork`): 1, 3,
       4, 6, 5, 8, Navi, C at `03`.
-- [ ] **S5 the full run:** the look-ahead bot of D4 (`bot`): fork per tick, candidate inputs
+- [x] **S5 the full run:** the look-ahead bot of D4 (`bot`): fork per tick, candidate inputs
       (stay, up, down, back, forward, fire, special) over a horizon of 8-16 ticks, scored by lives
       lost then by score; `exit` back and play the best. It reads lives, score and phase from the
       LCD (HUD digits and icons learned from canonical S3). Derive phase, level transitions,
@@ -520,7 +529,7 @@ plan24 evidence directories. Do not modify other plans' scripts/captures or `scr
       Play levels 0-7 to the end of the game, then the game-over screens and the menu.
       Record the whole run (one recording per level, split at the level-exit frame, plus `end`).
       Budget ≈8-9 min emulated for the game; the search may take hours of wall time (one worker).
-- [ ] **Capture-driver proof before S5:** replay stored LCD sequences for play, death, continue,
+- [x] **Capture-driver proof before S5:** replay stored LCD sequences for play, death, continue,
       exit, next-level entry and ending through the controller with RAM diagnostics disabled,
       truthful and deliberately conflicting. All produce identical key edges, candidate choices,
       phase/level decisions, stop reasons and recording boundaries. Collect the controller decisions
@@ -617,8 +626,8 @@ captures and report the remaining gates. All Task 0 checkboxes remain unchecked.
 
 ### Refresh audit (2026-10-27)
 
-The assignment for this refresh makes `$REF` read-only. Preserve the existing captures and
-scripts; completing or resealing Task 0 requires a later assignment that can write there.
+The assignment for that refresh made `$REF` read-only. The follow-up assignment below
+authorizes Task 0 writes there and supersedes that restriction.
 The 2026-10-14 handoff above is historical, not the current corpus inventory.
 
 **Branch preservation and rebase.** Created `t3/p24-space-impact-backup-2026-10-27` at
@@ -712,6 +721,141 @@ three Bantumi/Pairs II leaf and sound-note pairs owned by the later Games plans.
 **Next gate.** Repair/revalidate the current LCD control proof, audit corrected S5 boundaries
 and all S6 observations, complete S7-S10/OCR, and make the canonical checker pass before Task 1
 completion or any Task 3 import. This refresh does not waive that gate.
+
+### Task 0 capture repair (2026-10-27, follow-up)
+
+The follow-up assignment permits writes to Task 0's REF paths. Work stays on
+`t3/p24-space-impact`, starting at `639bb87`. Task 0 is still incomplete. Tasks 1+ have not
+advanced. No goldens were imported and no resources were generated.
+Evidence paths below are relative to `$REF/captures/6.39/plan24/`.
+
+**Driver proof: passed.** `driver-proof/complete.json` now seals generator SHA-256
+`3b557dd135811130fcda48e3d7a6610aab1a6fde28812dd169492e741f06517e`.
+`seal.py` ran the stored controller and actual Bot tests, ambiguity negatives, source audit,
+three live diagnostic modes and a hash-checked recording replay. Each live mode ran 25 ticks
+and 41 candidate evaluations. Controls, choices, LCD hashes, phases, boundaries and streams
+were identical with diagnostics disabled, truthful and conflicting. Proof wall time was 479.6 s.
+The previous proof and generator are preserved in `archive/20261027-before-refresh/`.
+
+**S5: existing recordings validated and reused.** `analysis/validate_full.py` observes the
+stored LCD history with the current controller, checks the corrected boundaries and replays
+the unmodified command stream once. `validation-20261027/result.json` reports 210,434 checked
+LCD reads and 18 byte-identical cuts (levels 0-7, eight exits, the level-7 restart and the ending).
+All 13,215 compared native PNG, timing, key and audio files match the preserved recordings.
+There are no gaps or replay mismatches. Validation took 1,057.9 s wall time and performed no
+new bot search. The original game retains its measured 10,282 ticks, 11,777 evaluations,
+1,864 searches and 16,799.9 s total bot wall time. `bot/full/boundaries.json` remains the
+corrected split source. The S5/S6 canonical-level gate stays closed until S6 passes.
+
+**Empty archived fireworks recording: resolved.** The empty
+`driver-proof/attempt5-partial/after/fireworks-key-c-1500` belongs to an interrupted attempt.
+The canonical `after/fireworks-key-c-1500` has nine frames and the C edge at
+2,100.3-2,140.3 ms. The interrupted directory stays intact, with an archive manifest pointing
+to its replacement. `analysis/archive-inventory-result.json` verifies that canonical
+inventory includes the replacement and excludes `archive/` and historical `driver-proof/attempt*`.
+`record_run` now archives superseded recordings instead of deleting them.
+
+**Midnight conflict: resolved as different capture histories.**
+`analysis/midnight-resolution.json`, `midnight-20261027/result.json` and
+`midnight-20261027/exact/result.json` retain the commands, LCD captures, audio and diagnostic
+cross-checks. The short route reproduces `0xd452fec1`. A 6 s delay gives `0xd452fec7` while
+standby still shows `00:00`. The exact S7 route reproduces `0xd452fed7` and all 11 original
+splash PNGs byte for byte. At 10:10 the same added delay leaves `0xd4538d78` unchanged.
+A 00:01 short-route control also gives `0xd452fec1`. Neither original observation is replaced.
+These observations reject a clock/date-only fit. The minutes-of-the-day fallback stays
+UNVERIFIED as D5 permits. No clock seed function is accepted from RAM peeks.
+
+**Seed identifiability: incomplete.** `analysis/seed_stars.py` exhaustively checks 65,521
+effective seeds against star pixels exposed across all nine canonical title frames.
+`analysis/seed-stars.json` identifies single candidates at 10:10 (44530), 19:48 (13689),
+23:59 (38909), 00:00 (8013 for the splash) and 10:10 on 14.10.2026 (10048).
+07:59 retains two candidates, 36670 and 60943. The observed star pixels do not distinguish
+them. The midnight splash and New game also occur at different times:
+the splash's recovered draw does not match the later New-game u32's first draw.
+The existing tick-52 no-draw trace remains noninformative. Gameplay random events and
+independent clock proof still need reconciliation before S7 can pass.
+`analysis/snake-seed-lcd-verification.json` completes the comparison against all nine existing
+Snake C9 LCD seed goldens. The captured candidate u32s produce matching first draws and hence
+the same later chains. The focused `game-random.test.ts` run records 17 passed tests in
+`analysis/snake-lcd-tests.json`. This verifies the existing placement sequences and records
+D5's retained fallback. It does not accept a clock/date seed function or complete Space impact
+identifiability.
+
+**Coverage audit: incomplete.** `analysis/coverage.py` now writes `task0-coverage.json`
+without accepting a rejected seed fit, RAM-only ANSI evidence, HUD occlusions or a 50-percent
+object-kill threshold as proof. `analysis/coverage-audit.json` lists the remaining observations.
+The inherited `bonus` run was interrupted and no completed `specials` bot document exists.
+The census is exploratory: component disappearance on a score increase does not prove every
+spawn type was killed or, where applicable, fired. Five lives or an evidence-backed
+unreachability argument is still required for the life reroll. Wall and beam use against both
+enemies and a boss, and special/bonus sound coverage remain open.
+
+**S6 death/Continue subcriterion: passed.** The inherited level-0 run already takes Continue
+with 1 and reaches level 1. `analysis/deaths_key1.py` adds `bot/deaths-3-key1/` from S5's
+LCD-derived level-3 anchor: three countdowns, two Continues with 1, then final refusal and the
+ending/menu. It uses the sealed LCD controller, makes no search decisions and reads RAM only
+through the existing diagnostic sink after observations. The run has 1,319 ticks, zero
+look-ahead evaluations and four hash-checked recording cuts with keys and audio.
+`analysis/deaths-key1-result.json` records 353.9 s total wall time, including the initial
+S5 replay and recording replay. `analysis/s6-reviewed-deaths.json` checks both levels' actual
+LCD countdown entries, Continue key events, recordings and final states. The original
+level-3 recording with keys 3 and 4 stays intact.
+
+**D6 ending advance: corrected from continuous LCD/audio captures.**
+`analysis/ansi-game-over-resolution.json` and `analysis/ansi-notes-reviewed.json` cover:
+
+- `ansi-nokeys-20261027/game1`: `TOP SCORE: 70`, one ANSI step.
+- `ansi-nokeys-20261027/game2`: `Your score: 70`, no ANSI step.
+- `ansi-top-score-20261027/first-after-reboot`: `Your score: 70`, no ANSI step,
+  with the earned top score preserved and ANSI back at `0x7fffffff` on cold boot.
+- `ansi-20261027/game1`: six gameplay steps, then one ending step, `TOP SCORE: 1335`.
+- `ansi-20261027/game2`: no observed ANSI step, `Your score: 930`. This retry did not
+  reproduce the original S8 second game's six-step random-row wave; retain both histories.
+
+The records include every LCD frame, key edges, WAV audio and sound events through the menu.
+The ending step occurs at the end of the continue countdown, before the top-score sequence.
+The reboot control separates first-game history from the top-score condition. D6's unconditional
+advance is rejected. The complete ANSI gate remains open: the LCG hypotheses and all random-row
+coordinates must still be reproduced from LCD observations before an ANSI holder is implemented.
+An earlier probe rejected ambiguous ship matches and is preserved under
+`archive/20261027-ansi-ambiguous/`; the successful retry uses a fixed 60 s tail with no
+classifier-dependent gameplay or stopping decisions.
+
+**OCR: passed.** Top-level `text.json` now covers the exact inventory of 54,396 native
+images (23,524 distinct pixel states), including the new death/Continue capture.
+`analysis/ocr-result.json` records the inventory check and text SHA-256.
+`analysis/ocr_cached.py` reuses the existing matcher by exact LCD band, saves recognized pixel
+states atomically and versions the recognizer inputs. Baseline imports require both unchanged
+recognizer inputs and a PNG unchanged since the original run started. The original recognizer
+completed 32,487 images (21,339 distinct states); reconciliation compared 32,452 unchanged
+entries and reused the remaining exact-pixel cache. `analysis/ocr-cache-proof.json` verifies
+17 representative original/cached outputs and isolation from caller mutation. The initial
+snapshot is preserved in `archive/20261027-ocr-initial/`. No font data or extracted content
+is copied into the repository.
+
+**Canonical checker: incomplete.** `analysis/task0-refresh-result.json` and
+`analysis/check-20261027.log` record 11 accepted coverage criteria and 14 open criteria.
+The remaining failures are bonus kinds, life reroll or reachability, wall/beam effects,
+all eight levels' complete object kill/fire coverage, Space impact seed identifiability,
+ANSI spawn-row reproduction and special/bonus sound coverage. The checker reports no empty
+canonical recording, stale proof, missing key file or OCR failure. These are capture and
+verification gaps, not new acceptance known-gap entries or relaxed fidelity tolerances.
+
+**Repository verification:** `vp install`, `vp check --fix`, `vp check`, the complete
+`vp run -r --no-cache test` and `vp run website#build` pass. Commands ran from the assigned
+worktree through mise, with Node 22.22.3 first on the child PATH, `VITEST_MAX_WORKERS=2` and
+`VP_RUN_CONCURRENCY_LIMIT=1`. The suite has 255 passing files, 10,663 passed tests,
+121 expected failures and 50 TODOs. nokia-os contributes 163 files, 9,821 passed tests,
+121 expected failures and 50 TODOs (1,713.50 s). The other packages contribute phone-core 450,
+snake 62, phone-3d 49, phone-screen 101 and website 180 passing tests.
+
+**Delivery scope:** only this plan report changes in the repository. REF repairs and new
+captures remain gitignored. No fixture, golden index, generated resource, acceptance scenario,
+runtime file, dependency or other plan changes. Space impact's existing leaf and sound-note
+goldens remain `pending:24`; there is no `goldens/index/24.json`. Tasks 1-3 remain incomplete,
+and Tasks 4-14 have not started. Next: finish S6's required variety and object coverage,
+reconcile S7's informative and ambiguous datasets and D5 fallback, reproduce S8's LCD spawn
+rows, finish special/bonus sound coverage and pass the canonical checker before Task 1.
 
 ### Task 1 - Contracts and documentation
 
