@@ -64,8 +64,8 @@ SIM-borne call data.
   identifier in the large face, as many words as fit the line (`Portfolio menu` shows
   `Portfolio`). Icon: a SIM card and a hand, 6 pictures played as 11 steps (the hand out and back;
   held 1377 ms, then steps of ≈232-449 ms), settled 3769 ms after the key; it restarts on every
-  reveal. nokia-os: phone-core numbers top-level entries without a gap, so SIM services is the
-  kernel's 13th slot drawn as 14, and `Menu 1 3` / `Menu 1 4` are swapped (known gaps).
+  reveal. nokia-os: SIM services' menu order is 14 in the kernel's 13th slot (phone-core lets a
+  top-level order skip a number), so `Menu 1 3` and `Menu 1 4` match v6.39.
 - **Level:** a three-row rows list with the rail, soft key `OK`, no title and no menu number,
   opening on item 1 (≈91 ms after Select); ▼ wraps. A label wider than its row is cut: `...` sits
   at a fixed place (x 68-76) and the label keeps the characters that leave a space's width before
@@ -102,9 +102,6 @@ the IMEI and gives its two lines (`stockImeiLines`).
 
 ## Known gaps
 
-- `Menu 1 3` opens SIM services and `Menu 1 4` is `Invalid shortcut` in nokia-os, the reverse of
-  v6.39: phone-core numbers top-level entries without a gap (SIM services is its 13th slot, drawn
-  as 14).
 - Two phone book entries with the same last 9 digits: v6.39 names some senders by no rule found;
   nokia-os names the exact match, else the first in SIM order.
 - C held on a SIM screen reaches standby at the kernel's long press (800 ms), the firmware's at

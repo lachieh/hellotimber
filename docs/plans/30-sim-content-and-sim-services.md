@@ -843,7 +843,17 @@ kernel's 13th slot (`src/sim/slot.ts`: `SIM_SERVICES_ORDER` 13) and the stock pa
 counter as 14 (`SIM_SERVICES_NUMBER`) and its level without a menu number. What phone-core decides
 by number stays 13: `Menu 1 3` opens SIM services and `Menu 1 4` is `Invalid shortcut`, the reverse
 of v6.39 (`sim/stk-carousel-main-menu-13`, `-menu-14`: known gaps until phone-core lets a top-level
-entry carry its own menu number; phone-core does not change in this plan). `createStockPhone` and
+entry carry its own menu number; phone-core does not change in this plan).
+
+Deviation (after Task 11, orchestrator-authorised phone-core change): phone-core now lets a
+top-level order skip a number (as a submenu level's could): an order is the menu number for
+shortcuts, the carousel counter and the indicator, the slot's place in the carousel is its
+position, and the `menu-carousel` model carries `position` when the two differ (the rail uses it).
+SIM services' order is `SIM_SERVICES_NUMBER` (14) in the 13th slot; `SIM_SERVICES_ORDER` and the
+painter's 13-to-14 rewrite are gone. `Menu 1 3` is `Invalid shortcut` at once and `Menu 1 4`
+selects the slot and opens the level after the delay, as v6.39 does; both goldens are asserted
+(Phone book's icon frames before the digits are compared by pixels only: their reference, the
+reveal, precedes the recording). `createStockPhone` and
 `stockMenuFor` both build the menu through `createStockMenu(…, sim)` with the normalised card (the
 SIM's toolkit, messages and phone book). A cut label (Task 0 K) ends in `CUT_MARK` (`…`): the rows
 painter draws its text, then `...` at a fixed column (x 68-76) wherever the text stops, and the
@@ -949,8 +959,9 @@ coverage guard stays as it is (adding a plan is adding its acceptance file); pla
 are `tests/sim-coverage.test.ts`: nothing `pending:30`, only `sim/imei-screen` `pending:22`, no
 placeholder owned by 30, and Menu 14 (not in the stock tree, so the guard's tree walk cannot see
 it) covered by passing goldens of its slot, level and every SIM screen kind. Known gaps: the shared
-9-digit suffix (`sim/names-bob-9digits`, `-bob-k10`, `-bob-plus`) and `Menu 1 3` / `Menu 1 4`
-(`sim/stk-carousel-main-menu-13`, `-menu-14`: phone-core's gapless top-level numbers).
+9-digit suffix (`sim/names-bob-9digits`, `-bob-k10`, `-bob-plus`); `Menu 1 3` / `Menu 1 4`
+(`sim/stk-carousel-main-menu-13`, `-menu-14`) were known gaps until the phone-core change noted
+under Task 6.
 
 ### Task 11 - Demo, README, verification gate and closeout
 
@@ -988,14 +999,13 @@ Shipped: SIM messages on the SIM (slot-based store, unread-first order, capacity
 confirm, the session's end), `stockMenuFor`, `imei` / `stockImeiLines`, `preload` (Welcome note
 and plan 21's reminders), `describeStockScreen` on every stock screen, a demo panel, README and
 spec. Goldens: 97 LCD and 10 sound goldens in `goldens/index/30.json`, all asserted except
-`sim/imei-screen` (`pending:22`); 5 known gaps (3 shared-suffix names, `Menu 1 3` / `Menu 1 4`).
+`sim/imei-screen` (`pending:22`); 3 known gaps (shared-suffix names; `Menu 1 3` / `Menu 1 4` closed
+later by phone-core's top-level menu numbers, Task 6's last deviation).
 The website is unchanged.
 
 Waiting for plan 22 (one line each when it lands): `toolkitDial` in `features/sim-services.ts` →
 `StockTelephone.dial` (D6's rule is pinned on the seam; plan 22 pins its `Call`); `*#06#` reads
-`StockServices.imei` and shows `stockImeiLines` (flip `sim/imei-screen`). Needs phone-core: a
-top-level entry with its own menu number (Menu 14 without a 13) to close the `Menu 1 3` / `1 4`
-gap. UNVERIFIED: the call confirm, Confirm SIM service actions (no effect), a SIM message without a
+`StockServices.imei` and shows `stockImeiLines` (flip `sim/imei-screen`). UNVERIFIED: the call confirm, Confirm SIM service actions (no effect), a SIM message without a
 centre, `Opening message`'s 270 ms, the emulator's `Wait` and timeouts.
 
 ## Follow-up plan adjustments

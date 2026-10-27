@@ -1,6 +1,6 @@
 // SIM services (plan 30 D3, D5; Task 0 K): the SIM toolkit's Menu 14. A SIM with a toolkit adds a
-// 13th carousel slot that reads 14 (`sim/slot.ts`: there is no 13), labelled with the toolkit's title and drawn with
-// its own icon; its level lists the `SET UP MENU` items (a rows list with `OK`, no title and no
+// 13th carousel slot numbered 14 (`sim/slot.ts`: there is no 13), labelled with the toolkit's title
+// and drawn with its own icon; its level lists the `SET UP MENU` items (a rows list with `OK`, no title and no
 // menu number: `display/paint.ts`), each a route `menu/sim-services/<id>` whose session plays the
 // applet's steps (`sim/session.ts`). No tree node is involved, so the feature binds no node tables.
 import {
@@ -12,7 +12,7 @@ import {
   TopLevelEntry,
 } from "@hellotimber/phone-core";
 import { stockMenuGraphic } from "../../resources";
-import { SIM_SERVICES_ORDER, SIM_SERVICES_SLUG } from "../../sim/slot";
+import { SIM_SERVICES_NUMBER, SIM_SERVICES_SLUG } from "../../sim/slot";
 import { carouselLabel, rowLabel, type StockSimToolkit } from "../../sim/toolkit";
 import { toolkitSession, type ToolkitDial } from "../../sim/session";
 import type { Widget } from "../../widgets/flow";
@@ -55,7 +55,7 @@ export function simServicesEntry(toolkit: StockSimToolkit, services: StockServic
   );
   const level = new SubmenuEntry(
     new MenuSlug(SIM_SERVICES_SLUG),
-    new MenuOrder(SIM_SERVICES_ORDER),
+    new MenuOrder(SIM_SERVICES_NUMBER),
     carouselLabel(toolkit.title)!,
     new MenuLevel(items),
     undefined,

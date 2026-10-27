@@ -9,7 +9,7 @@ import { paintRows, VISIBLE_ROWS } from "./list-rows";
 import { paintRail } from "./rail";
 import { paintStandby, SOFTKEY_TOP } from "./standby";
 import { paintUnsupported } from "./unsupported";
-import { SIM_SERVICES_ORDER } from "../sim/slot";
+import { SIM_SERVICES_NUMBER } from "../sim/slot";
 
 /**
  * Paints a ScreenModel the way the stock v6.39 firmware draws it. Use it as phone-screen's
@@ -65,7 +65,7 @@ function paintList(fb: Framebuffer, screen: Extract<ScreenModel, { kind: "list" 
   paintRail(fb, screen.selected, screen.items.length);
   const indicator = screen.menuIndicator;
   // Plan 30 Task 0 K: the SIM services level (Menu 14) draws no menu number.
-  if (indicator !== undefined && indicator.segments[0] !== SIM_SERVICES_ORDER) {
+  if (indicator !== undefined && indicator.segments[0] !== SIM_SERVICES_NUMBER) {
     const number = screen.itemOrders?.[screen.selected] ?? screen.selected + 1;
     paintIndicator(
       fb,

@@ -4,7 +4,7 @@
 // painted the frame (`attachDescription`), so snapshots and their equality do not change and
 // phone-core does not change. Accessibility and QA text, not pixels: no golden asserts it.
 import type { MenuIndicator, ScreenModel } from "@hellotimber/phone-core";
-import { SIM_SERVICES_NUMBER, SIM_SERVICES_ORDER, SIM_SERVICES_SLUG } from "../sim/slot";
+import { SIM_SERVICES_NUMBER } from "../sim/slot";
 import { CUT_MARK } from "./list-rows";
 import type { WidgetModel } from "./widgets";
 
@@ -35,7 +35,7 @@ const rowText = (label: string): string =>
 /** `Menu 2-2`: the menu number at the top right, when the screen draws one (SIM services' none). */
 function menuNumber(indicator: MenuIndicator | undefined): string | undefined {
   if (indicator === undefined || indicator.segments.length === 0) return undefined;
-  if (indicator.segments[0] === SIM_SERVICES_ORDER) return undefined;
+  if (indicator.segments[0] === SIM_SERVICES_NUMBER) return undefined;
   return indicator.segments.join("-");
 }
 
@@ -203,14 +203,11 @@ export function describeStockScreen(screen: ScreenModel): string {
       return screen.phase === "welcome" ? "Switching on: welcome" : "Switching on";
     case "standby":
       return standby(screen);
-    case "menu-carousel": {
-      // SIM services (plan 30) is the kernel's 13th slot and reads 14 (src/sim/slot.ts).
-      const number =
-        screen.iconId === SIM_SERVICES_SLUG && screen.menuNumber === SIM_SERVICES_ORDER
-          ? SIM_SERVICES_NUMBER
-          : screen.menuNumber;
-      return withSoftkey(`Menu ${number}: ${screen.label}`, screen.opening ? undefined : "Select");
-    }
+    case "menu-carousel":
+      return withSoftkey(
+        `Menu ${screen.menuNumber}: ${screen.label}`,
+        screen.opening ? undefined : "Select",
+      );
     case "list": {
       const shown = rowText(screen.items[screen.selected] ?? "");
       const where = menuNumber(screen.menuIndicator);

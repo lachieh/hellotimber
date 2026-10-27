@@ -158,6 +158,11 @@ function optionsOf(id: string): TimelineOptions {
   if (id === "sim/names-exact-notice-read") return afterOpening(3);
   // Read on a message: its first page after `Opening message`.
   if (/^sim\/sms-read-\d-open$/.test(id)) return afterOpening(2);
+  // `Menu 1 3` / `1 4` 1.5 s into the carousel: rows 2-3 are Phone book's icon frames, whose
+  // reference is the slot's reveal ≈1.6 s before the recording (after `key menu`, whose latency the
+  // replay approximates). From there the long-sequence rule allows 133 ms; the replay's frames are
+  // 58 ms later from the recording's start, so they are compared by pixels only.
+  if (/^sim\/stk-carousel-main-menu-1[34]$/.test(id)) return { untimedRows: new Set([2, 3]) };
   return {};
 }
 
@@ -185,37 +190,20 @@ export function simContentScenarioOf(id: string): (id: string) => void {
 }
 
 /**
- * `Menu 1 3` and `Menu 1 4`: phone-core numbers top-level entries 1..n without a gap, so SIM
- * services is the kernel's 13th slot (its counter drawn as 14, src/sim/slot.ts): `Menu 1 3` opens
- * it where v6.39 answers `Invalid shortcut`, and `Menu 1 4` is invalid where v6.39 opens it.
- */
-const SHORTCUT_GAPS: Readonly<Record<string, string>> = {
-  "sim/stk-carousel-main-menu-13":
-    "Menu 1 3: v6.39 has no Menu 13 (Invalid shortcut); nokia-os's SIM services is phone-core's " +
-    "13th top-level entry (phone-core numbers entries without gaps), so 1 3 opens it",
-  "sim/stk-carousel-main-menu-14":
-    "Menu 1 4: v6.39 opens SIM services (Menu 14); in nokia-os it is phone-core's 13th entry, so " +
-    "1 4 is an invalid shortcut",
-};
-
-/**
  * Asserted plan 30 goldens whose scenario cannot pass, with the reason (Task 0 N's shared 9-digit
  * suffix: Bob 0412345678 and Intl +61412345678 in one phone book).
  */
-export const SIM_CONTENT_KNOWN_GAPS: Readonly<Record<string, string>> = {
-  ...SHORTCUT_GAPS,
-  ...Object.fromEntries(
-    (
-      [
-        ["bob-9digits", "412345678"],
-        ["bob-k10", "5412345678"],
-        ["bob-plus", "61412345678"],
-      ] as const
-    ).map(([slug, number]) => [
-      `sim/names-${slug}`,
-      `the arrival from ${number} matches both Bob 0412345678 and Intl +61412345678 on their last 9 ` +
-        "digits; v6.39 then names nobody (while 44412345678 names Bob and a SIM message from " +
-        "+61412345678 names Intl: Task 0 N found no rule), nokia-os names the first match, Bob",
-    ]),
-  ),
-};
+export const SIM_CONTENT_KNOWN_GAPS: Readonly<Record<string, string>> = Object.fromEntries(
+  (
+    [
+      ["bob-9digits", "412345678"],
+      ["bob-k10", "5412345678"],
+      ["bob-plus", "61412345678"],
+    ] as const
+  ).map(([slug, number]) => [
+    `sim/names-${slug}`,
+    `the arrival from ${number} matches both Bob 0412345678 and Intl +61412345678 on their last 9 ` +
+      "digits; v6.39 then names nobody (while 44412345678 names Bob and a SIM message from " +
+      "+61412345678 names Intl: Task 0 N found no rule), nokia-os names the first match, Bob",
+  ]),
+);

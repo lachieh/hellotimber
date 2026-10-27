@@ -765,7 +765,7 @@ new messages` when every slot is used. Power-on with unread SIM messages shows t
 - **Sender names.** A sender in the phone book is listed and read under its name (the list,
   `Sender:`, Details): two numbers match on their last 9 digits (or all digits of a shorter one),
   `+` and leading digits ignored; an exact match wins.
-- **SIM services (Menu 14).** A toolkit adds a 13th carousel slot that reads 14, labelled with the
+- **SIM services (Menu 14).** A toolkit adds a 13th carousel slot numbered 14 (no 13: `Menu 1 4` opens it), labelled with the
   toolkit's title (the words that fit), with its own icon; its level lists the items (labels cut with
   `...` where wide). Choosing an item fetches behind `Wait`, then shows its steps: text pages
   (`DISPLAY TEXT`, OK on, C back), lists (`SELECT ITEM`, nested) and calls the phone confirms (`SET

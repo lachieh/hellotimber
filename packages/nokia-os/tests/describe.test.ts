@@ -50,9 +50,11 @@ describe("describeStockScreen: kernel screens", () => {
       describeStockScreen({
         ...slot,
         label: "SIM services",
-        menuNumber: 13,
+        menuNumber: 14,
+        position: 13,
         total: 13,
         iconId: "sim-services",
+        menuIndicator: { segments: [14], awaitingNext: false },
       }),
     ).toBe("Menu 14: SIM services [Select]");
   });

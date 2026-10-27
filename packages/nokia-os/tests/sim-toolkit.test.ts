@@ -160,7 +160,7 @@ describe("stockMenuFor (D5)", () => {
     );
   });
 
-  // The kernel's 13th slot (phone-core numbers slots without gaps); the stock painter shows 14.
+  // The carousel's 13th slot, numbered 14: there is no Menu 13.
   it("adds SIM services as Menu 14, its items in SIM order, labelled by the toolkit's title", () => {
     const menu = stockMenuFor(card(MAIN));
     const paths = menu.paths();
@@ -170,7 +170,7 @@ describe("stockMenuFor (D5)", () => {
     const slot = menu.entries[12]!.entry;
     expect([slot.slug.value, slot.order.value, slot.label]).toEqual([
       "sim-services",
-      13,
+      14,
       "SIM services",
     ]);
     expect(menu.resolve("menu/sim-services/text-160")?.at(-1)?.label).toBe("Sixteen chars ok");
