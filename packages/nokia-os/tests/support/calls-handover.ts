@@ -47,6 +47,8 @@ export const CALLS_PLAN14_KNOWN_GAPS: Readonly<Record<string, string>> = {
 /** Plan 16's keypad goldens: the dial keys' DTMF pairs at standby (Task 5). */
 export const CALLS_PLAN16_SCENARIOS: Readonly<Record<string, Scenario>> = {
   "sound/keypad/hold": (id) => expectSound(id, soundRig("factory")),
+  // Every key at standby with its DTMF pair; ▼ opens plan 19's name list (`No phone numbers`).
+  "sound/keypad/keys": (id) => expectSound(id, soundRig("factory")),
 };
 
 /** Plan 23's Level page: a digit leaves for standby number entry. */

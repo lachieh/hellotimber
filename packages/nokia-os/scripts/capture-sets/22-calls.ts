@@ -20,11 +20,15 @@ const P = "plan22";
 const ASSERTED: GoldenStatus = "asserted";
 /** Plan 22b: services, held calls and the DTMF a call sends after `p`/`w`. */
 const SERVICES: GoldenStatus = "pending:22b";
-/** Plan 19: the phone book's screens (Save, ▼ at standby, Phone book in a call). */
-const PHONE_BOOK: GoldenStatus = "pending:19";
+/**
+ * The phone book's screens from number entry and calls (Save's `Name:`, ▼ on the code pages,
+ * Phone book in a call): plan 19 landed after plan 22, and wiring its flows into these screens is
+ * this plan's follow-up (as plan 19's `Call` from a name is `pending:22`).
+ */
+const PHONE_BOOK: GoldenStatus = "pending:22";
 
 /**
- * A golden's status: its own (22b's, 19's), else asserted: every plan 22 golden is driven by
+ * A golden's status: its own (22b's, this plan's follow-up), else asserted: every plan 22 golden is driven by
  * tests/acceptance/22-call-register-divert-and-dialling.test.ts (Task 10).
  */
 function statusOf(own?: GoldenStatus): GoldenStatus {
@@ -802,9 +806,7 @@ export const CALL_RECORDINGS: readonly CallRecording[] = [
     1,
     "The missed-call notice, then ▲: No last dialled numbers, the notice.",
   ),
-  rec("handover/notice-down", 1, "The missed-call notice, then ▼: the phone book.", {
-    status: PHONE_BOOK,
-  }),
+  rec("handover/notice-down", 1, "The missed-call notice, then ▼: the phone book."),
   // dialling
   rec("dial/call", 1, "0412345678, Call: Calling, alerting, connected."),
   // The standby after a call without a traffic channel loses its signal ladder (the patched

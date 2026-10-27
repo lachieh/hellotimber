@@ -466,7 +466,7 @@
   {
     "id": "sms/notice-down",
     "file": "sms/notice-down.lcd.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "timeline",
     "images": 3,
     "frames": 4

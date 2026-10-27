@@ -52,14 +52,8 @@ const PIPELINE = [
 ];
 
 /** Call screens, the dialled numbers and held keys at standby: plan 22's (D11). */
-const CALLS = [
-  "phone-book/standby-list-call",
-  "phone-book/standby-up",
-  "phone-book/standby-up-dialled",
-  "phone-book/service-call",
-  "phone-book/hold-off-2",
-  "phone-book/hold-on-2",
-];
+/** Plan 22's follow-up: Call from a name or a service number, a held speed dial. */
+const CALLS = ["phone-book/standby-list-call", "phone-book/service-call", "phone-book/hold-on-2"];
 
 describe("phone book capture set", () => {
   it("is plan 19's, with LCD and sound goldens", () => {

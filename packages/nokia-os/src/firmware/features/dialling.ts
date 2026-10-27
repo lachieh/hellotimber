@@ -201,7 +201,11 @@ function code(services: StockServices, text: string, flow: Flow): void {
   const found = immediateCode(text);
   if (found === undefined) return;
   if (found.kind === "imei" || found.kind === "version") {
-    const lines = found.kind === "imei" ? IMEI_LINES : VERSION_LINES;
+    // Plan 30 D9: the host's IMEI (checked) as `stockImeiLines` splits it, else the virgin `?`s.
+    const { imei } = services;
+    const imeiLines =
+      imei === undefined ? IMEI_LINES : ["Serial No.", imei.slice(0, 10), imei.slice(10)];
+    const lines = found.kind === "imei" ? imeiLines : VERSION_LINES;
     flow.push(note({ lines, end: "standby", handover: true, endOnDown: true }));
     return;
   }

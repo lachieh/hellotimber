@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/standby-up
-status: pending:22
+status: asserted
 source: captures/6.39/plan19/standby/up
 source-sha256: 4fc0c83e20dec5a479ce2a81b4ccd3b7018a1ab2ba5a47a1ae0c834c8bb0bfce
 trigger-frame: 1

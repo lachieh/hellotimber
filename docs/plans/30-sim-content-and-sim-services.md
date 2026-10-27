@@ -23,7 +23,7 @@ Shared files change by one-line registrations except the edits listed under "Sha
 and the canonical captures Task 0 writes to `$REF/captures/6.39/plan30/`. The emulator SIM has no
 SIM Toolkit; Task 0 adds one to the harness (D4). Read `$REF/captures/README.md`, plans 18, 19 and
 22 in full, and `tools/nokia-dct3-emulator/third_party/swsim/README.md` before starting.
-**Status:** done (2026-10-15; plan 22's bindings pending: see "Completion notes").
+**Status:** done (2026-10-15; plan 22's bindings pending: see "Completion notes"; since the merge with plan 22, `*#06#` shows the host's IMEI, while `sim/imei-screen` stays `pending:22`).
 
 ## Goal
 

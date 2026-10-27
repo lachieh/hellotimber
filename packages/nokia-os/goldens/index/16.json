@@ -401,7 +401,7 @@
   {
     "id": "sound/keypad/keys",
     "file": "sound/keypad/keys.sound.txt",
-    "status": "pending:19",
+    "status": "asserted",
     "kind": "sound",
     "events": 98
   },

@@ -3,7 +3,8 @@
 // table over Task 0's recaptures. Every golden names its SIM fixture (`PHONE_BOOK_SIMS`, the same
 // invented contacts Task 0's generator wrote into `plan19/sims/`). Each row is imported
 // `pending:19` until the task that implements it is done (`DONE_TASKS`, plan 29's pending
-// workflow); call screens, the dialled numbers and held keys at standby are `pending:22`.
+// workflow); Call from a name or a service number and a held speed dial are `pending:22` (the
+// dialled numbers and a held key without Speed dialling are plan 22's, asserted here).
 //
 // Pure: imports only sibling scripts, reads captures through the injected io.
 import type { CaptureIo, CaptureSetEntry, PlanCaptureSet } from "../capture-set.ts";
@@ -443,7 +444,6 @@ const ROWS: readonly Row[] = [
     dir: "standby/up",
     sim: "content",
     task: 7,
-    owner: "22",
     note: "SIM content: ▲ at standby: No last dialled numbers, then standby (plan 22).",
   },
   {
@@ -451,7 +451,6 @@ const ROWS: readonly Row[] = [
     dir: "standby/up-dialled",
     sim: "content",
     task: 7,
-    owner: "22",
     note: "SIM content, 123 dialled: ▲ at standby: Dialled 1: 123 (plan 22).",
   },
   // ------------------------------------------------ views (V) and sorting
@@ -1412,7 +1411,8 @@ const ROWS: readonly Row[] = [
       dir: `hold/${slug}`,
       sim: "content",
       task: 9,
-      owner: "22",
+      // Held 2 with Speed dialling On calls the speed dial: plan 22's follow-up.
+      ...(slug === "on-2" ? { owner: "22" as const } : {}),
       note: `SIM content: ${slug.slice(-1)} held at standby with Speed dialling ${slug.startsWith("on") ? "On" : "Off"} (plan 22).`,
     }),
   ),

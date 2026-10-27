@@ -1,6 +1,6 @@
 lcd-golden 1
 id: phone-book/hold-off-2
-status: pending:22
+status: asserted
 source: captures/6.39/plan19/hold/off-2
 source-sha256: 9b6bb720ff0bd84620c4ae2e700e31b1dd5988432717f855264b2bfcf7513e20
 trigger-frame: 1

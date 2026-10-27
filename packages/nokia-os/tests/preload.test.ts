@@ -8,6 +8,7 @@ import { createStockSettings } from "../src/firmware/settings";
 import {
   createMemoryStorage,
   createStockPhone,
+  describeStockScreen,
   stockImeiLines,
   type StockPhoneConfig,
   type StockStorage,
@@ -33,6 +34,22 @@ describe("imei (D9)", () => {
   it("splits as *#06# shows it: Serial No. over ten digits, then five (Task 0 I)", () => {
     expect(stockImeiLines("490154203310018")).toEqual(["4901542033", "10018"]);
     expect(() => stockImeiLines("123")).toThrow(/imei must be 15 digits/);
+  });
+
+  it("is what *#06# shows (plan 22's page), the virgin `?` glyphs without one", () => {
+    const shown = (imei?: string) => {
+      const p = phone(imei === undefined ? {} : { imei });
+      p.pressKey("power", 1000);
+      for (let t = 1000; t <= 3000; t += 10) p.tick(t);
+      let t = 3000;
+      for (const key of ["*", "#", "0", "6", "#"] as const) {
+        p.pressKey(key);
+        for (const end = t + 400; t < end; t += 10) p.tick(t);
+      }
+      return describeStockScreen(p.screen);
+    };
+    expect(shown("490154203310018")).toBe("Note: Serial No. 4901542033 10018");
+    expect(shown()).toBe("Note: Serial No. ???????????? ??4");
   });
 });
 

@@ -1039,8 +1039,16 @@ network), `tests/support/rig.ts` (a `network` option, if plans 18/19 did not add
 - **Other plans' goldens.** Plan 14's four shortcut probes (two known gaps), plan 16's
   `keypad/hold`, plan 18's six (Use number opens the standby entry with the number; the notice's
   ▲, digit and `#`), plan 20's 28 Options escapes and plan 23's Level digit are asserted in their
-  plans' files by one spread line each. `sound/keypad/keys` and `sms/notice-down` are plan 19's
-  (▼ at standby is the phone book): `pending:19`. **Open:** plan 25's 17 call goldens
+  plans' files by one spread line each. `sound/keypad/keys` and `sms/notice-down` waited on plan 19
+  (▼ at standby is the phone book); after the merge with plan 19 both are asserted
+  (`sound/keypad/keys` with a known gap: C on the standby `No phone numbers` note), as are
+  `calls/handover-notice-down` and plan 19's `phone-book/standby-up`, `standby-up-dialled` and
+  `hold-off-2`. **Open (plan 19 integration):** `calls/entry-save`, `calls/register-save` (Save's
+  `Name:`), `calls/code-down` (▼ on the code pages), `calls/in-call-options-select-4` (Phone book
+  in a call) and plan 19's `phone-book/standby-list-call`, `service-call` and `hold-on-2` (Call from
+  a name or service number, a held speed dial) are `pending:22`. `*#06#` shows `StockPhoneConfig.imei`
+  (plan 30 D9); plan 30's `sim/imei-screen` stays `pending:22` until its replay can provision the
+  emulator's IMEI. **Open:** plan 25's 17 call goldens
   (`keyguard/call*`, `keyguard/emergency-call`, `lights/arrival/call*`, `lights/keyguard/emergency-call`,
   the `*` after the lock window) stay `pending:22`: they need the keyguard to pass a call's keys,
   `KeyguardCalls.dial` wired to the telephone and the lights held during a call — a follow-up.

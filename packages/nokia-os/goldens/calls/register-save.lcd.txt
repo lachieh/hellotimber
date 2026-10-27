@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/register-save
-status: pending:19
+status: pending:22
 source: captures/6.39/plan22/register/save
 source-sha256: 4221c264aee221f3d2d3a8298b097f35abb667fa615eda9c8423126f93b02173
 trigger-frame: 1
