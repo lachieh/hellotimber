@@ -1,5 +1,7 @@
 // The keyguard over the kernel (plan 25 D4, Task 7): the stock phone routes a locked phone's keys
 // to the keyguard and shows its screens, while the kernel stays at standby underneath.
+import type { StockCallControl } from "../src/calls/network";
+import { CALL_TIMINGS } from "../src/calls/telephone";
 import type { PhoneSnapshot } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
@@ -9,7 +11,7 @@ import {
   KEYGUARD_TIMES,
   KEYGUARD_UNLOCK_LEAD_MS,
 } from "../src/firmware/features/keyguard";
-import { createMemoryStorage } from "../src/index";
+import { createMemoryStorage, createSyntheticNetwork } from "../src/index";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";
 import { lockedRig } from "./support/keyguard.ts";
@@ -136,5 +138,56 @@ describe("unlocking", () => {
     locked.advance(KEYGUARD_TIMES.lockNoteMs);
     const cold = standbyRig({ storage });
     expectLcd(cold.paint(), goldenImage("keyguard/power-cycle", "standby"), "cold power-on");
+  });
+});
+
+describe("calls through the keyguard", () => {
+  it("waits for the network's speech channel before redrawing a connected call", () => {
+    let control: StockCallControl | undefined;
+    const base = createSyntheticNetwork();
+    const network = {
+      ...base,
+      subscribeCalls: (ring: Parameters<typeof base.subscribeCalls>[0]) =>
+        base.subscribeCalls((call, link) => {
+          control = ring(call, link);
+          return { ...control, connected() {} };
+        }),
+    };
+    const rig = lockedRig("dark", { network });
+    network.ring("0412345678");
+    rig.advance(CALL_TIMINGS.ringMs);
+    rig.press("navi");
+    rig.advance(CALL_TIMINGS.answerConnectMs);
+    expectLcd(
+      rig.paint(),
+      goldenImage("calls/ring-answer", "c"),
+      "answered without a speech channel",
+    );
+    control!.connected();
+    rig.advance(1);
+    expectLcd(rig.paint(), goldenImage("calls/ring-answer", "b"), "speech channel redraw");
+    rig.advance(CALL_TIMINGS.connectBlankMs);
+    expectLcd(rig.paint(), goldenImage("calls/ring-answer", "c"), "connected call");
+  });
+
+  it("dials 112 as an emergency call, passes End, then locks again and can unlock", () => {
+    const network = createSyntheticNetwork();
+    const rig = lockedRig("dark", { network });
+    for (const key of ["1", "1", "2"] as const) {
+      rig.press(key);
+      rig.advance(500);
+    }
+    rig.press("navi");
+    rig.advance(4000);
+    expect(network.dialled).toEqual([{ number: "112", emergency: true }]);
+    expectLcd(rig.paint(), goldenImage("keyguard/emergency-call", "e"), "the emergency call");
+    rig.press("navi");
+    rig.advance(KEYGUARD_TIMES.lockNoteMs + 1000);
+    expectLcd(rig.paint(), LOCKED_STANDBY, "locked again after End");
+    rig.press("navi");
+    rig.advance(300);
+    rig.press("*");
+    rig.advance(KEYGUARD_UNLOCK_LEAD_MS + KEYGUARD_TIMES.activeNoteMs);
+    expect(rig.phone.screen.kind).toBe("standby");
   });
 });

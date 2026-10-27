@@ -6,6 +6,7 @@
 // in the golden (a golden row), or `ms` after the trigger when its effect is no new frame (a hint
 // restarted on its own first step, a second Unlock) or when the window it falls in is what the
 // golden pins (`lock-gap/2920`).
+import { CALL_TIMINGS } from "../../src/calls/telephone";
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { expect } from "vite-plus/test";
 import type { StockLightEvent } from "../../src/firmware/features/backlight";
@@ -176,4 +177,41 @@ export function lockedWithMessage(id: string): void {
     goldenImage(id, "standby-message"),
     "the locked standby, a message waiting",
   );
+}
+
+/** Calls arrive at the ringing redraw; later keys follow their captured redraw rows. */
+export function keyguardCall(id: string): void {
+  const golden = loadGolden(id);
+  const rows = golden.timeline!;
+  const origin = rows[golden.triggerFrame as number]!.startMs;
+  const last = rows.at(-1)!;
+  const base = createSyntheticNetwork();
+  // This capture predates the cell's speech-channel patch (plan 22 D15).
+  const network = {
+    ...base,
+    subscribeCalls: (ring: Parameters<typeof base.subscribeCalls>[0]) =>
+      base.subscribeCalls((call, link) => ({
+        ...ring(call, link),
+        connected() {},
+      })),
+  };
+  const rig = lockedRig("dark", { network });
+  const keys: readonly (readonly [number, PhoneKey])[] = id.endsWith("-reject")
+    ? [[4, "c"]]
+    : [
+        [11, "navi"],
+        [13, "navi"],
+      ];
+  const recording = rig.record(
+    last.startMs + last.durationMs - origin + 100,
+    () => {
+      network.ring("0412345678");
+      rig.advance(CALL_TIMINGS.ringMs);
+    },
+    keys.map(([row, key]) => ({
+      atMs: rows[row]!.startMs - origin,
+      run: () => rig.press(key),
+    })),
+  );
+  expectTimeline(recording, golden, id);
 }

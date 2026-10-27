@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/lock-cancel/c
-status: pending:22
+status: asserted
 source: captures/6.39/plan25/keyguard/lock-cancel/c
 source-sha256: 6a090df077e46a802603878fff4bd67437949e0105b0544322f1a11ef0305342
 trigger-frame: 1

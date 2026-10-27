@@ -1,13 +1,13 @@
 // Plan 25's acceptance (docs/plans/25-keyguard-and-backlight.md Task 10): one scenario per
 // asserted golden: the keyguard's LCD goldens (their `leds` too, D10), the lights goldens and the
-// keyguard's sound goldens. The goldens pending on plan 22 (call screens) are todos; known gaps
-// name their cause.
+// keyguard's sound goldens, including calls through the network port; known gaps name their cause.
 import { readPlanIndex } from "../../scripts/golden-index.ts";
 import { acceptancePlan, GOLDENS, type Scenario } from "../support/acceptance.ts";
 import { expectLcd } from "../support/golden.ts";
 import { goldenImage } from "../support/goldens.ts";
 import {
   keyguardArrival,
+  keyguardCall,
   keyguardSound,
   keyguardTimeline,
   lockedRig,
@@ -41,6 +41,34 @@ const KEYGUARD: Readonly<Record<string, KeyguardCase>> = {
       [3, "1"],
       [{ ms: 577 }, "*"],
     ],
+  },
+  ...Object.fromEntries(
+    [2930, 2940, 2960, 3000].map((ms) => [
+      `keyguard/lock-gap/${ms}`,
+      { from: "standby", trigger: ["navi"], later: [[12, "*"]] },
+    ]),
+  ),
+  "keyguard/carousel-star": { from: "standby", trigger: ["navi"], later: [[12, "*"]] },
+  "keyguard/lock-cancel/c": {
+    from: "standby",
+    trigger: ["navi"],
+    later: [
+      [3, "c"],
+      [5, "*"],
+    ],
+  },
+  "keyguard/lock-cancel/down": {
+    from: "standby",
+    trigger: ["navi"],
+    later: [
+      [3, "down"],
+      [4, "*"],
+    ],
+  },
+  "keyguard/emergency-call": {
+    from: "dark",
+    trigger: ["1"],
+    later: [...DIGITS_112, [4, "navi"]],
   },
   "keyguard/hint": { from: "dark", trigger: ["5"] },
   "keyguard/hint/up": { from: "dark", trigger: ["up"] },
@@ -145,6 +173,26 @@ const scenarios: Record<string, Scenario> = {
   // the locked one's notice, `keyguard/sms` frame 1).
   "lights/arrival/sms": (id) => arrivalLights(id, 2729),
   "lights/arrival/sms-locked": (id) => arrivalLights(id, 2477),
+  ...Object.fromEntries(
+    [
+      "call",
+      "call-locked",
+      "call-reject",
+      "call-locked-reject",
+      "call-ringout",
+      "call-locked-ringout",
+    ].map((name) => [
+      `lights/arrival/${name}`,
+      (id: string) => {
+        const locked = name.includes("-locked");
+        const start = locked ? 1731 : 2000;
+        const key = name.endsWith("-reject") ? 3100 : name.endsWith("-ringout") ? 0 : 6101;
+        arrivalLights(id, start - key);
+      },
+    ]),
+  ),
+  "keyguard/call": keyguardCall,
+  "keyguard/call-reject": keyguardCall,
   "keyguard/sms": keyguardArrival,
   "keyguard/standby-message": lockedWithMessage,
   ...Object.fromEntries(
@@ -184,6 +232,10 @@ acceptancePlan({
         ]),
       ),
     ),
+    "keyguard/lock-cancel/c":
+      "C leaving the carousel draws standby without its operator for 83 ms before the full " +
+      "standby; phone-core returns directly to the full standby (the same erase missing on " +
+      "calls/missed-c). Number entry after the following * matches.",
     "keyguard/lock-cancel/digit":
       "`*` during the carousel's shortcut entry: the firmware ignores it and Phone book opens " +
       "when the entry's window ends; the kernel's shortcut entry (plan 14) ends at the `*`",

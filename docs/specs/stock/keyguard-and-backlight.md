@@ -80,13 +80,18 @@ key-down unless stated.
   buffer ends in `112` (`112`, `2112`, `0112`; not `911`, `999`, `000`, `08`, `110`, `113`, `1122`)
   the phone shows `112` in the large digits, right-aligned, with `Call`, the key icon, ladders and
   clock, for 3878.6 ms, and lights the LEDs. C ends it at once; another digit shows the hint;
-  Call (Navi) shows `Attempting emergency call` / `End` (plan 22).
+  Call (Navi) dials 112 through the network port and shows `Attempting emergency call` / `End`;
+  both LEDs stay on until End, then the phone locks again.
 - **Arrivals.** An SMS lights an unlocked phone at its arrival (`lights/arrival/sms`). On a locked
   phone it shows its notice with the key icon and `Unlock` and stays dark; a waiting message's
   envelope sits right of the key icon, from x 23 (x 7 unlocked). An
   incoming call on a locked phone rings as on an unlocked one (`0412345678`, `calling` blinking
   every ≈480 ms, `Answer`); Navi answers, Navi (`End`) or C ends it; then `Keypad locked` again
-  (446/232/232/1979 ms) and the locked standby.
+  (446/232/232/1979 ms) and the locked standby. Ringing holds both LEDs on (including 75 s
+  without an answer); Answer/reject releases that hold into the ordinary light timeout. The
+  original plan 25 cell never assigns a speech channel after Answer; a host connection triggers
+  plan 22's additional blank redraw. End shows Call 1 for 512 ms after its blank, then the lock
+  note; reject goes from its Call 1 frame to the lock note.
 - **Key-down.** The lock note, the hint, `Now press *` and the emergency display all draw while
   their key is still held.
 - **Power cycle.** A cold power-on (the emulator's battery pull) comes up unlocked.
@@ -127,14 +132,15 @@ lights at the screen).
 
 ## What nokia-os reproduces
 
-Every plan 25 golden not pending on plan 22 is asserted (193 of 210): the keyguard's LCD
+Every plan 25 golden is asserted (210 of 210): the keyguard's LCD
 timelines and stills pixel for pixel, their `leds` per row, the lights goldens' edges after
 power-on alignment and the keyguard's sounds by the fidelity standard of `AGENTS.md` (the light
 model's own tests hold its off edges to 5 ms). The four message arrivals (asserted with
 plan 18's merge) are aligned on the arrival: the captures do not log the delivery and the link
 time spreads 2141-2464 ms, so they pin what an arrival lights and paints, not its latency. Known gaps (expected failures, causes in
 `tests/acceptance/25-keyguard-and-backlight.test.ts`): `*` during the carousel's shortcut entry
-(`lock-cancel/digit`, plan 14's kernel), the light tick's ±3 ms deciding whether the LEDs go dark
+(`lock-cancel/digit`, plan 14's kernel), C leaving the carousel skipping the 83 ms
+operator-erasure frame (`lock-cancel/c`, also missing in `calls/missed-c`), the light tick's ±3 ms deciding whether the LEDs go dark
 (`timeout/virgin/tap-02`; the contrasting factory captures use a different initial state
 or tick offset, so they do not prove alternatives for the same path), the power key's long press (`boot/power-off`, plan 17) and Snake II
 deaths the captured bot's keys do not reproduce (`game/{off,on}/{over,top-score}`). Within the

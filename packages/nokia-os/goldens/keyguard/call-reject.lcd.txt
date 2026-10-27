@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/call-reject
-status: pending:22
+status: asserted
 source: captures/6.39/plan25/lights/arrival/call-locked-reject
 source-sha256: 7d95dc425a156a1d3af85523199ae979635142cc638135647b2cb0634caa19bb
 trigger-frame: 1

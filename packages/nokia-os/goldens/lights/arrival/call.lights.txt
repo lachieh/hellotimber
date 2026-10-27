@@ -1,6 +1,6 @@
 lights-golden 1
 id: lights/arrival/call
-status: pending:22
+status: asserted
 source: captures/6.39/plan25/lights/arrival/call
 source-sha256: 6383963e68a40cd33ee23bc874d204da5a533a904758f056606b5daf5bb0e19a
 state: virgin

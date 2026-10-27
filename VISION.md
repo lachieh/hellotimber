@@ -1010,7 +1010,7 @@ export interface StockCallLink {
 export interface StockCallControl {
   /** Outgoing: the far end is ringing (`Call 1`, the ringback). */
   alerting(): void;
-  /** Outgoing: the far end answered (the ringback stops, the duration starts). */
+  /** The speech channel connected (the ringback stops, the duration starts). */
   connected(): void;
   /**
    * The far end or the network ended the call, or refused it before it alerted: the phone shows

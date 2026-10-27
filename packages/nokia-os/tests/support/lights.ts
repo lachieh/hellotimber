@@ -1,4 +1,5 @@
 // Plan 25's lights goldens in tests: loading them by id and the comparison tolerances (Task 0).
+import { CALL_TIMINGS } from "../../src/calls/telephone";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Phone, PhoneKey } from "@hellotimber/phone-core";
@@ -304,7 +305,7 @@ export function lightsScenario(id: string): void {
   expectLightsTimeline(recorded, golden, id, game ? GAME_LIGHTS_TOLERANCE : {});
 }
 
-// ---------------------------------------------------------------- message arrivals (L7, K7)
+// ---------------------------------------------------------------- arrivals (L7, K7, K8)
 
 /** The SMS the plan 25 arrival captures received (its text and sender are not on screen). */
 export const ARRIVING_SMS = {
@@ -328,11 +329,10 @@ export function deliverAndLand(
 }
 
 /**
- * `lights/arrival/sms` and `-locked` (L7, K7): an SMS lands at golden time `landsAtMs` on a dark
- * standby, locked well before for `-locked`. The captures do not log the delivery, so it is
- * placed for the arrival to land where the recording's first change is (the unlocked one's LED
- * edge, the locked one's notice in `keyguard/sms`); the goldens pin what the arrival lights and
- * that its timeout runs from the arrival on the power-on's light tick.
+ * A call or SMS arrives at golden time `landsAtMs` on a dark standby, locked first for
+ * `-locked`. Align the arrival on its LED edge (the dark SMS on keyguard/sms's notice), then
+ * replay the keys from the golden. The host's paging delay varies between captures; the LED
+ * hold and timeout still follow the captured keys and power-on light tick.
  */
 export function arrivalLights(id: string, landsAtMs: number): void {
   const golden = loadLightsGolden(id);
@@ -340,7 +340,7 @@ export function arrivalLights(id: string, landsAtMs: number): void {
   const rig = lightsRig({ storage: storageFor("factory"), network });
   rig.powerOn();
   rig.advance(20_000);
-  if (id.endsWith("-locked")) {
+  if (id.includes("-locked")) {
     for (const key of ["navi", "*"] as const) {
       rig.hold(key);
       rig.advance(60);
@@ -350,8 +350,20 @@ export function arrivalLights(id: string, landsAtMs: number): void {
   }
   const powered = rig.poweredOnAt!;
   const origin = powered + golden.powerOnMs;
-  rig.advance(origin + landsAtMs - Math.ceil(RECEIVE_LINK_MS) - rig.now, 20);
-  deliverAndLand((ms) => rig.advance(ms), network);
+  const call = id.startsWith("lights/arrival/call");
+  const linkMs = call ? CALL_TIMINGS.ringMs : Math.ceil(RECEIVE_LINK_MS);
+  rig.advance(origin + landsAtMs - linkMs - rig.now, 20);
+  if (call) network.ring("0412345678");
+  else network.deliver(ARRIVING_SMS);
+  rig.advance(linkMs);
+  if (call) {
+    for (const key of golden.keys ?? []) {
+      rig.advance(origin + key.ms - rig.now);
+      rig.hold(key.key as PhoneKey);
+      rig.advance(key.holdMs ?? 60);
+      rig.release(key.key as PhoneKey);
+    }
+  }
   rig.advance(origin + golden.endMs - rig.now, 20);
   const events = rig.events.filter((e) => e.atMs >= powered);
   expectLightsTimeline({ originMs: origin, endMs: rig.now, events }, golden, id);

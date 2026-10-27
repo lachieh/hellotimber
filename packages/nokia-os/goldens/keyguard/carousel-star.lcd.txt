@@ -1,6 +1,6 @@
 lcd-golden 1
 id: keyguard/carousel-star
-status: pending:22
+status: asserted
 source: captures/6.39/plan25/keyguard/carousel-star
 source-sha256: e9be8c32a4da95373d1f6bdf192e196c3d30348ced924ed8cdc03a0f8c79339f
 trigger-frame: 1

@@ -42,9 +42,11 @@ describe("createSyntheticNetwork's calls", () => {
     expect(ring.state).toBe("ringing");
     links[0]!.answer();
     expect(ring.state).toBe("connected");
+    links[0]!.answer();
+    expect(seen).toEqual(["connected"]);
     ring.hangUp();
     ring.hangUp();
-    expect(seen).toEqual(["released"]);
+    expect(seen).toEqual(["connected", "released"]);
     expect(ring.state).toBe("ended");
     unsubscribe();
     net.ring("1");

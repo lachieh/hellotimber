@@ -2,7 +2,7 @@
   {
     "id": "keyguard/call",
     "file": "keyguard/call.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 11,
     "frames": 22
@@ -10,7 +10,7 @@
   {
     "id": "keyguard/call-reject",
     "file": "keyguard/call-reject.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 11,
     "frames": 13
@@ -18,7 +18,7 @@
   {
     "id": "keyguard/carousel-star",
     "file": "keyguard/carousel-star.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 15
@@ -26,7 +26,7 @@
   {
     "id": "keyguard/emergency-call",
     "file": "keyguard/emergency-call.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -226,7 +226,7 @@
   {
     "id": "keyguard/lock-cancel/c",
     "file": "keyguard/lock-cancel/c.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 8
@@ -242,7 +242,7 @@
   {
     "id": "keyguard/lock-cancel/down",
     "file": "keyguard/lock-cancel/down.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 6,
     "frames": 7
@@ -298,7 +298,7 @@
   {
     "id": "keyguard/lock-gap/2930",
     "file": "keyguard/lock-gap/2930.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 15
@@ -306,7 +306,7 @@
   {
     "id": "keyguard/lock-gap/2940",
     "file": "keyguard/lock-gap/2940.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 15
@@ -314,7 +314,7 @@
   {
     "id": "keyguard/lock-gap/2960",
     "file": "keyguard/lock-gap/2960.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 15
@@ -322,7 +322,7 @@
   {
     "id": "keyguard/lock-gap/3000",
     "file": "keyguard/lock-gap/3000.lcd.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 15
@@ -522,42 +522,42 @@
   {
     "id": "lights/arrival/call",
     "file": "lights/arrival/call.lights.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/arrival/call-locked",
     "file": "lights/arrival/call-locked.lights.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/arrival/call-locked-reject",
     "file": "lights/arrival/call-locked-reject.lights.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/arrival/call-locked-ringout",
     "file": "lights/arrival/call-locked-ringout.lights.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "lights",
     "events": 2
   },
   {
     "id": "lights/arrival/call-reject",
     "file": "lights/arrival/call-reject.lights.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "lights",
     "events": 4
   },
   {
     "id": "lights/arrival/call-ringout",
     "file": "lights/arrival/call-ringout.lights.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "lights",
     "events": 2
   },
@@ -683,7 +683,7 @@
   {
     "id": "lights/keyguard/emergency-call",
     "file": "lights/keyguard/emergency-call.lights.txt",
-    "status": "pending:22",
+    "status": "asserted",
     "kind": "lights",
     "events": 2
   },

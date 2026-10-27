@@ -253,7 +253,7 @@ describe("plan 25's capture set", () => {
     expect(LIGHTS_ENTRIES.length).toBe(lights.size);
   });
 
-  it("leaves plan 22's screens pending on it and asserts the rest", () => {
+  it("asserts the call integration and every other plan 25 capture", () => {
     for (const id of [
       "keyguard/carousel-star",
       "keyguard/lock-gap/2930",
@@ -262,7 +262,7 @@ describe("plan 25's capture set", () => {
       "lights/arrival/call-locked",
       "lights/keyguard/emergency-call",
     ]) {
-      expect(status(id), id).toBe("pending:22");
+      expect(status(id), id).toBe("asserted");
     }
     // Task 4 drives the timeout, key, boot and power-key lights goldens, Task 7 the keyguard's LCD
     // goldens, Task 8 the other lights goldens; the message arrivals since plan 18's merge.
@@ -287,7 +287,7 @@ describe("plan 25's capture set", () => {
     expect(status("lights/power-key/game")).toBe("asserted");
     // Task 10: every golden of plan 25's own is driven.
     const statuses = [...lcd.values(), ...lights.values()].map((g) => g.status);
-    expect(statuses.filter((s) => s === "pending:25")).toEqual([]);
+    expect(new Set(statuses)).toEqual(new Set(["asserted"]));
   });
 
   it("imports the keyguard sound recordings", () => {
