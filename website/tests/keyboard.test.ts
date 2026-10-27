@@ -92,6 +92,24 @@ describe("attachKeyboard", () => {
     detach();
   });
 
+  it("leaves Enter on a focused link or button to the page, but still sends other keys", () => {
+    const { sent, input } = recordingPhone();
+    const detach = attachKeyboard(input);
+    const link = document.createElement("a");
+    link.href = "https://example.com";
+    const button = document.createElement("button");
+    document.body.append(link, button);
+    const enterOnLink = press(link, "keydown", "Enter");
+    const enterOnButton = press(button, "keydown", "Enter");
+    press(button, "keydown", "ArrowDown");
+    expect(enterOnLink.defaultPrevented).toBe(false);
+    expect(enterOnButton.defaultPrevented).toBe(false);
+    expect(sent).toEqual([{ key: "down", type: "down" }]);
+    link.remove();
+    button.remove();
+    detach();
+  });
+
   it("stops sending after detach", () => {
     const { sent, input } = recordingPhone();
     const detach = attachKeyboard(input);
