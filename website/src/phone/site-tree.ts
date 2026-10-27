@@ -51,6 +51,19 @@ export function projectSiteRoute(path: string): SiteRouteProjection | null {
   };
 }
 
+/**
+ * The phone's own titles from "Menu" to the deepest menu entry on `path` (an application's own
+ * deeper path keeps its entry's titles). Standby and unknown paths have none.
+ */
+export function siteBreadcrumb(path: string): string[] {
+  const segments = path.split("/");
+  for (let length = segments.length; length >= 1; length--) {
+    const chain = siteMenu.resolve(segments.slice(0, length).join("/"));
+    if (chain !== null) return ["Menu", ...chain.map((entry) => entry.label)];
+  }
+  return [];
+}
+
 /** Every valid menu URL in the aggregate's canonical order. */
 export function allSitePaths(): string[] {
   return siteMenu.paths().map((path) => `/${path}`);

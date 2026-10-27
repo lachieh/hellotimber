@@ -61,11 +61,16 @@ inside your own `<Canvas>` instead.
 | --------------- | ----------------------------------------------------- | -------- | ------------------------------------------------------------------- |
 | `screenCanvas`  | `HTMLCanvasElement`                                   | yes      | Texture source; native 84×48 recommended (NearestFilter upscales)   |
 | `screenVersion` | `number`                                              | yes      | Bump after drawing — triggers a texture re-upload on the next frame |
-| `onKey`         | `(key: Nokia3310Key, action: "down" \| "up") => void` | no       | Fired by pointer interaction with the key meshes                    |
+| `onKey`         | `(key: Nokia3310Key, action: "down" \| "up") => void` | no       | Fired by pointer interaction with the key meshes (see below)        |
 | `backlightOn`   | `boolean`                                             | no       | The display LEDs. Default `true`; off = dim LCD, no green glow      |
 | `keypadLightOn` | `boolean`                                             | no       | The keypad LEDs (legend + NaviKey glow). Default: `backlightOn`     |
 | `pressedKeys`   | `ReadonlySet<Nokia3310Key>`                           | no       | Visually depress keys from outside (e.g. keyboard input)            |
 | `screenBgColor` | `string`                                              | no       | The LCD's background; pass your screen renderer's background color  |
+
+Mouse and pen presses fire `"down"` at once. A touch may be the start of a page scroll
+(hosts can set `touch-action: pan-y` on the canvas), so its `"down"` waits until the
+finger has rested about 110 ms within 10 px, or lifts; a touch that moves further or is
+cancelled by the browser first fires nothing. Every `"down"` is followed by one `"up"`.
 
 The LCD is drawn the way an early backlit monochrome panel looks: the
 background is `screenBgColor` lit from three LEDs along the top edge (a
@@ -103,5 +108,5 @@ vp run @hellotimber/phone-3d#test
 ```
 
 Pure logic only (layout geometry invariants, legend atlas, key union, materials,
-the backlight lightmap, the ink and shadow masks)
+the backlight lightmap, the ink and shadow masks, the pointer press gesture)
 — 3D rendering is verified through the demo, since jsdom has no WebGL.

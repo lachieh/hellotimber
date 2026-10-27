@@ -14,7 +14,7 @@ export interface SnakeTopScoreStore {
   write(score: number): void;
 }
 
-function localStorageTopScore(key = SNAKE_TOPSCORE_KEY): SnakeTopScoreStore {
+export function localStorageTopScore(key = SNAKE_TOPSCORE_KEY): SnakeTopScoreStore {
   return {
     read() {
       if (typeof localStorage === "undefined") return 0;

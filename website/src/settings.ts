@@ -8,7 +8,7 @@ export interface SiteSettings {
   backlight: boolean;
   /** Settings → Phone settings → Welcome note — shown at boot (next load). */
   welcomeNote: string;
-  /** Global mute — overrides everything (the SoundToggle button). */
+  /** Global mute — overrides everything (the desk Walkman's Sound switch). */
   muted: boolean;
   /** Tones 5-1 — selected ringtone id (see src/phone/tones.ts). */
   ringtone: string;

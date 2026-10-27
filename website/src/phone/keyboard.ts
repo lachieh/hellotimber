@@ -33,9 +33,15 @@ function isTextEntryTarget(target: EventTarget | null): boolean {
   return target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
 }
 
+/** Enter on a focused link or button activates it; the page keeps that key. */
+function isActivatedByEnter(target: EventTarget | null): boolean {
+  return target instanceof HTMLElement && (target.tagName === "A" || target.tagName === "BUTTON");
+}
+
 /**
  * Attach document-level key handling. preventDefault ONLY for handled keys;
- * text inputs and modifier chords pass through untouched. Returns a detach
+ * text inputs, Enter on a focused link or button, and modifier chords pass
+ * through untouched. Returns a detach
  * function. The param is the runtime input funnel (deviation 10) — keys flow
  * through `input(key, action)` so the runtime can watch the stream (*#06#,
  * screensaver idle). Tests can pass a stub.
@@ -46,6 +52,7 @@ export function attachKeyboard(
 ): () => void {
   const handle = (type: KeyEvent["type"]) => (e: KeyboardEvent) => {
     if (isTextEntryTarget(e.target)) return;
+    if (e.key === "Enter" && isActivatedByEnter(e.target)) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     const key = phoneKeyForKeyboardKey(e.key);
     if (key === null) return;
