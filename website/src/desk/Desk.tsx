@@ -1,8 +1,13 @@
 import { LONG_PRESS_MS } from "@hellotimber/phone-core";
 import type { PhoneKey } from "@hellotimber/phone-core";
+import type { ScreenModel } from "@hellotimber/phone-core";
+import { useState } from "react";
 import type { ReactNode } from "react";
-import { site } from "../content/site";
-import { holdPhoneKey, tapPhoneKey, updateSettings, usePhoneLive, useSettings } from "./live";
+import { localStorageTopScore } from "../phone/applications/snake";
+import { deskHint, lcdCopy } from "./lcd-copy";
+import { holdPhoneKey, tapPhoneKey, usePhoneLive } from "./live";
+import PencilCase from "./PencilCase";
+import Walkman from "./Walkman";
 import "./desk.css";
 
 /** "Left on the desk, 2001": the phone put down among a teenager's things, which carry the info. */
@@ -24,8 +29,8 @@ export default function Desk({ phone }: { phone: ReactNode }) {
           <ScribbleArrow />
         </p>
 
-        <StickyNote path={live.path} screenText={live.screenText} />
-        <NotebookStrip path={live.path} screenText={live.screenText} />
+        <StickyNote hint={deskHint(live.path, live.screen)} />
+        <NotebookStrip screen={live.screen} trail={live.trail} />
         <Walkman />
         <PencilCase />
         <TextSpeakCard />
@@ -38,18 +43,24 @@ export default function Desk({ phone }: { phone: ReactNode }) {
 
 /* ── contextual hint ─────────────────────────────────────────────────────── */
 
-function hintFor(path: string, screenText: string): string {
-  if (screenText.startsWith("Phone off")) return "it's off. Hold P to switch it on";
-  if (screenText.startsWith("Starting up")) return "it's starting up, give it a sec";
-  if (path === "standby") return "press Menu (Enter)";
-  if (path === "menu") return "up/down to flick through, Enter to open one";
-  if (path.startsWith("menu/games/snake")) return "Enter to play, steer with 2 4 6 8";
-  return "Enter to pick, Esc to go back";
+/** The hint on screen and the one it replaced (struck through until the next change). */
+function useHintChange(hint: string): { hint: string; previous: string | null } {
+  const [state, setState] = useState<{ hint: string; previous: string | null }>({
+    hint,
+    previous: null,
+  });
+  if (state.hint !== hint) {
+    const next = { hint, previous: state.hint };
+    setState(next);
+    return next;
+  }
+  return state;
 }
 
 /* ── sticky note: the key legend ─────────────────────────────────────────── */
 
-function StickyNote({ path, screenText }: { path: string; screenText: string }) {
+function StickyNote({ hint }: { hint: string }) {
+  const change = useHintChange(hint);
   return (
     <section className="d01-obj d01-sticky" aria-labelledby="d01-sticky-title">
       <h2 id="d01-sticky-title" className="d01-sticky__title">
@@ -102,9 +113,18 @@ function StickyNote({ path, screenText }: { path: string; screenText: string }) 
         </li>
       </ul>
       <p className="d01-sticky__tap">or just tap the phone&rsquo;s own keys</p>
-      <p className="d01-sticky__hint" aria-live="polite">
+      <p className="d01-sticky__hint">
         <ScribbleArrow className="d01-sticky__hint-arrow" />
-        <span>now: {hintFor(path, screenText)}</span>
+        <span className="d01-sticky__hint-text">
+          {change.previous !== null && (
+            <s className="d01-sticky__hint-old" key={`old:${change.previous}`} aria-hidden="true">
+              {change.previous}
+            </s>
+          )}
+          <span className="d01-sticky__hint-new" key={change.hint}>
+            now: {change.hint}
+          </span>
+        </span>
       </p>
     </section>
   );
@@ -158,21 +178,42 @@ function PowerKey() {
 
 /* ── torn notebook strip: the live screen, copied out by hand ────────────── */
 
-function NotebookStrip({ path, screenText }: { path: string; screenText: string }) {
+function NotebookStrip({ screen, trail }: { screen: ScreenModel; trail: string[] }) {
+  const copy = lcdCopy(screen);
+  // Read on every phone snapshot, so a new top score shows as soon as Snake saves it.
+  const topScore = localStorageTopScore().read();
+  const blank = copy.head === undefined && copy.rows.length === 0 && copy.pixels === undefined;
   return (
     <section className="d01-obj d01-strip" aria-labelledby="d01-strip-title">
       <div className="d01-strip__paper" style={{ clipPath: TORN_EDGE }}>
         <h2 id="d01-strip-title" className="d01-strip__title">
           on the screen
         </h2>
-        <p className="d01-strip__lcd" key={screenText}>
-          &ldquo;{screenText}&rdquo;
-        </p>
+        <div className="d01-strip__lcd" key={JSON.stringify(copy)}>
+          {copy.head !== undefined && <p className="d01-strip__head">{copy.head}</p>}
+          {copy.rows.map((row, index) => (
+            <p key={index} className="d01-strip__row">
+              {row.selected === true ? (
+                <mark className="d01-strip__picked">{row.text}</mark>
+              ) : (
+                row.text
+              )}
+            </p>
+          ))}
+          {copy.pixels !== undefined && (
+            <p className="d01-strip__row">(no words, just {copy.pixels} pixels)</p>
+          )}
+          {blank && <p className="d01-strip__row">(blank)</p>}
+          {copy.softkey !== undefined && <p className="d01-strip__softkey">{copy.softkey}</p>}
+        </div>
         <p className="d01-strip__path">
-          at <code key={path}>{path}</code>
+          at{" "}
+          <span className="d01-strip__trail" key={trail.join("/")}>
+            {trail.length === 0 ? "standby" : trail.join(" › ")}
+          </span>
         </p>
         <p className="d01-strip__score" aria-hidden="true">
-          snake hi 1452!!
+          {topScore > 0 ? `snake hi ${topScore}!!` : "play snake!!"}
         </p>
       </div>
     </section>
@@ -192,94 +233,6 @@ const TORN_EDGE = (() => {
   }
   return `polygon(${points.join(", ")})`;
 })();
-
-/* ── Walkman: Sound and Lights slide switches ────────────────────────────── */
-
-function Walkman() {
-  const settings = useSettings();
-  return (
-    <section className="d01-obj d01-walkman" aria-labelledby="d01-walkman-title">
-      <h2 id="d01-walkman-title" className="d01-sr">
-        Phone sound and lights
-      </h2>
-      <WalkmanCord />
-      <div className="d01-walkman__body">
-        <div className="d01-walkman__window" aria-hidden="true">
-          <Reel />
-          <span className="d01-walkman__tape" />
-          <Reel />
-        </div>
-        <p className="d01-walkman__brand" aria-hidden="true">
-          stereo cassette player
-        </p>
-        <div className="d01-walkman__switches">
-          <Slide
-            label="Sound"
-            on={!settings.muted}
-            onToggle={() => {
-              updateSettings({ muted: !settings.muted });
-            }}
-          />
-          <Slide
-            label="Lights"
-            on={settings.backlight}
-            onToggle={() => {
-              updateSettings({ backlight: !settings.backlight });
-            }}
-          />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Slide({ label, on, onToggle }: { label: string; on: boolean; onToggle: () => void }) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={on}
-      className="d01-slide"
-      data-on={on}
-      onClick={onToggle}
-    >
-      <span className="d01-slide__label">{label}</span>
-      <span className="d01-slide__track" aria-hidden="true">
-        <span className="d01-slide__knob" />
-      </span>
-      <span className="d01-slide__state" aria-hidden="true">
-        <span>off</span>
-        <span>on</span>
-      </span>
-    </button>
-  );
-}
-
-/* ── pencil case: whose phone it is ──────────────────────────────────────── */
-
-function PencilCase() {
-  return (
-    <section className="d01-obj d01-case" aria-labelledby="d01-case-name">
-      <div className="d01-case__zip" aria-hidden="true">
-        <span className="d01-case__pull" />
-      </div>
-      <h2 id="d01-case-name" className="d01-case__tape">
-        {site.name}
-      </h2>
-      <p className="d01-case__job">{site.jobTitle}</p>
-      <p className="d01-case__tagline">{site.tagline}</p>
-      <ul className="d01-case__links">
-        {site.sameAs.map((href) => (
-          <li key={href}>
-            <a href={href} rel="me noreferrer" target="_blank">
-              {href.replace(/^https?:\/\/(www\.)?/, "")}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
 
 /* ── decorative period objects ───────────────────────────────────────────── */
 
@@ -416,42 +369,6 @@ function ScribbleArrow({ className = "d01-arrow" }: { className?: string }) {
         strokeWidth="2.6"
         strokeLinecap="round"
         strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function Reel() {
-  return (
-    <svg className="d01-reel" viewBox="0 0 40 40" aria-hidden="true">
-      <circle cx="20" cy="20" r="18" fill="#3a2a22" />
-      <circle cx="20" cy="20" r="9" fill="#efe9dc" />
-      {[0, 60, 120, 180, 240, 300].map((deg) => (
-        <rect
-          key={deg}
-          x="18.6"
-          y="11"
-          width="2.8"
-          height="4.5"
-          fill="#3a2a22"
-          transform={`rotate(${deg} 20 20)`}
-        />
-      ))}
-    </svg>
-  );
-}
-
-function WalkmanCord() {
-  return (
-    <svg className="d01-walkman__cord" viewBox="0 0 160 260" aria-hidden="true">
-      <rect x="113" y="236" width="14" height="24" rx="3" fill="#2a2725" />
-      <rect x="117" y="228" width="6" height="10" fill="#b9b4a8" />
-      <path
-        d="M120 228 C 120 170, 30 180, 50 110 S 150 40, 96 -20"
-        fill="none"
-        stroke="#1d1b1a"
-        strokeWidth="3"
-        strokeLinecap="round"
       />
     </svg>
   );

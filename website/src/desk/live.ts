@@ -1,25 +1,31 @@
-import type { PhoneKey } from "@hellotimber/phone-core";
+import type { PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { useEffect, useState } from "react";
 import { getPhoneRuntime } from "../phone/phone";
-import { screenToText } from "../phone/screen-text";
+import { siteBreadcrumb } from "../phone/site-tree";
 
 /** Live phone state for the surrounds. Client-only: surrounds render under <ClientOnly>. */
 export interface PhoneLive {
   /** phone-core path, e.g. `standby`, `menu/games/snake`. */
   path: string;
-  /** The LCD as plain text (the same text the sr-only status mirror announces). */
-  screenText: string;
+  /** What the LCD is drawing. */
+  screen: ScreenModel;
+  /** The phone's own titles down to `path`, e.g. ["Menu", "Phone book", "Search"]; [] at standby. */
+  trail: string[];
+}
+
+function liveFrom(path: string, screen: ScreenModel): PhoneLive {
+  return { path, screen, trail: siteBreadcrumb(path) };
 }
 
 export function usePhoneLive(): PhoneLive {
   const [live, setLive] = useState<PhoneLive>(() => {
     const { phone } = getPhoneRuntime();
-    return { path: phone.path, screenText: screenToText(phone.screen) };
+    return liveFrom(phone.path, phone.screen);
   });
   useEffect(() => {
     const { phone } = getPhoneRuntime();
     return phone.subscribe((snap) => {
-      setLive({ path: snap.path, screenText: screenToText(snap.screen) });
+      setLive(liveFrom(snap.path, snap.screen));
     });
   }, []);
   return live;

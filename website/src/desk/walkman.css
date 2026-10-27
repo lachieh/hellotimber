@@ -1,0 +1,165 @@
+/* ── Walkman: a 2001 brushed-aluminium cassette player ───────────────── */
+
+.d01-walkman {
+  --d01-silk: "D01 Michroma", "Eurostile", sans-serif;
+}
+
+/* The plug sits in the jack drawn at x 222 of the 300-wide casing. */
+.d01-walkman__cord {
+  position: absolute;
+  z-index: 1;
+  left: calc(74% - 120px);
+  bottom: calc(100% - 15px);
+  width: 160px;
+  height: 260px;
+  filter: drop-shadow(3px 5px 3px rgb(30 12 2 / 0.4));
+  pointer-events: none;
+}
+
+.d01-wm {
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 300 / 224;
+}
+
+.d01-wm__body {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(1px 2px 1.5px rgb(45 20 4 / 0.4))
+    drop-shadow(9px 15px 14px rgb(45 20 4 / 0.38));
+}
+
+.d01-wm__silk {
+  font-family: var(--d01-silk);
+  letter-spacing: 0.08em;
+  fill: #262d33;
+}
+
+.d01-wm__label {
+  font-family: var(--d01-scrawl);
+  fill: var(--d01-biro);
+}
+
+/* Equal tape speed: the near-empty take-up hub turns faster than the full one. */
+.d01-wm__hub {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.d01-walkman[data-playing="true"] .d01-wm__hub--full {
+  animation: d01-wm-spin 4.2s linear infinite;
+}
+
+.d01-walkman[data-playing="true"] .d01-wm__hub--empty {
+  animation: d01-wm-spin 2.6s linear infinite;
+}
+
+@keyframes d01-wm-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .d01-walkman .d01-wm__hub {
+    animation: none !important;
+  }
+}
+
+/* ── slide switches, printed straight onto the casing ─────────────────── */
+
+.d01-wm__switches {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: 68.5%;
+  bottom: 5%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4cqw;
+}
+
+.d01-walkman .d01-slide {
+  display: grid;
+  align-content: center;
+  gap: 1.6cqw;
+  padding: 0 1cqw;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  color: #20272d;
+  text-align: left;
+}
+
+.d01-slide:hover .d01-slide__knob {
+  filter: brightness(1.08);
+}
+
+.d01-slide__label {
+  font-family: var(--d01-silk);
+  font-size: max(11px, 3.6cqw);
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.d01-slide__row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.8cqw;
+}
+
+.d01-slide__mark {
+  font-family: var(--d01-silk);
+  font-size: max(9px, 3cqw);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: #4d555d;
+}
+
+.d01-slide[data-on="false"] .d01-slide__mark:first-child,
+.d01-slide[data-on="true"] .d01-slide__mark:last-child {
+  color: #111619;
+  text-decoration: underline 1.5px;
+  text-underline-offset: 2px;
+}
+
+/* A slot cut into the metal, with the orange ribbed slider riding in it. */
+.d01-slide__track {
+  position: relative;
+  height: max(8px, 3cqw);
+  border-radius: 2px;
+  background: #15191d;
+  box-shadow:
+    inset 1px 2px 2px rgb(0 0 0 / 0.8),
+    0 1px 0 rgb(255 255 255 / 0.8);
+}
+
+.d01-slide__knob {
+  position: absolute;
+  top: -40%;
+  left: 0;
+  width: 52%;
+  height: 180%;
+  border-radius: 2px;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.35), rgb(255 255 255 / 0) 45%, rgb(0 0 0 / 0.18)),
+    repeating-linear-gradient(90deg, #f37c22 0 2px, #c95708 2px 3.5px);
+  box-shadow:
+    1px 2px 2px rgb(0 0 0 / 0.5),
+    inset 0 0 0 0.5px rgb(120 40 0 / 0.6);
+  transition: left 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.d01-slide[data-on="true"] .d01-slide__knob {
+  left: 48%;
+}
+
+.d01-walkman .d01-slide:focus-visible {
+  outline-offset: 2px;
+}
