@@ -5,6 +5,7 @@
 //
 // Geometry (H1): cell (x, y) of the 20x9 board has its top-left pixel at (2 + 4x, 10 + 4y); the
 // snake, the food and the walls draw inside their cells. Imports only sibling scripts.
+import { resourceModule, type GeneratedResourceModule } from "./resource-declarations.ts";
 import {
   findGoldenImage,
   LCD_HEIGHT,
@@ -451,3 +452,13 @@ export function extractSnakeResources(
 
   return { sprites, mazes, periods, firstTick, graceMs, death, topScoreMs };
 }
+
+export const snakeResourceModule: GeneratedResourceModule = {
+  file: "snake.ts",
+  extract: ({ golden, ticks }) =>
+    resourceModule(
+      "SNAKE_DATA",
+      "{ readonly sprites: Readonly<Record<string, readonly string[]>>; readonly mazes: readonly { readonly start: { readonly x: number; readonly y: number }; readonly walls: readonly { readonly x1: number; readonly y1: number; readonly x2: number; readonly y2: number }[] }[]; readonly periods: Readonly<Record<number, number>>; readonly firstTick: Readonly<Record<number, number>>; readonly graceMs: number; readonly death: readonly { readonly visible: boolean; readonly durationMs: number }[]; readonly topScoreMs: number }",
+      extractSnakeResources(golden, ticks),
+    ),
+};

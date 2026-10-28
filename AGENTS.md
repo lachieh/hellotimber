@@ -126,7 +126,11 @@ plan 13) is gitignored and **never committed**; nothing from `$REF/extracted` is
 - `vp run @hellotimber/nokia-os#import-captures <REF>` turns captures into committed text-grid
   fixtures under `packages/nokia-os/goldens/` plus one index per plan, `goldens/index/<NN>.json`.
 - `vp run @hellotimber/nokia-os#regenerate` regenerates `src/resources/generated/` (fonts, icons,
-  boot frames, status art, widgets, Snake II, sounds) from those goldens.
+  boot frames, status art, widgets, game modules, sounds) from those goldens.
+- Plans register dedicated modules through `PlanCaptureSet.resources.generatedModules`: each
+  `{ file, extract }` owns a TypeScript path relative to `src/resources/generated/` and a
+  deterministic extractor using indexed committed LCD/tick/sound readers. Never add per-plan
+  output cases to `extract-resources.ts`; add one export block per module in `src/resources/index.ts`.
 - Never hand-edit `goldens/**` or `src/resources/generated/**`: change the importer, its
   capture-set table or the extractor inputs and regenerate. Tests never read `$REF`.
 
@@ -190,8 +194,13 @@ knownGaps, timeoutsMs })` once and registers no other tests; it runs the goldens
    is a new file plus one `export { … } from` line in `features/index.ts`. `src/firmware/stock.ts`
    composes them and throws on a node bound twice. Keep `src/firmware/generated/stock-tree.ts` as
    generated.
-4. **Generated resources** (`src/resources/generated/**`) are shared outputs of every plan's
-   goldens. On a merge conflict there, take either side, merge the inputs, then run
+4. **Generated resources:** a plan registers its `resources.generatedModules` in its capture
+   set (the existing one-line capture-index export discovers it). Each `{ file, extract }` owns
+   a unique path under `src/resources/generated/`; the extractor receives `golden`, `ticks` and
+   `sound` readers of indexed committed fixtures, including pending resource evidence. Multiple
+   outputs use multiple declarations. Keep one export block per module in `src/resources/index.ts`.
+   Never hand-edit generated files or add plan-specific output cases to shared extraction.
+   Shared generated resources remain outputs of every contributing plan's goldens. On a merge conflict there, take either side, merge the inputs, then run
    `mise exec -- vp run @hellotimber/nokia-os#regenerate` (deterministic; the resources test fails
    while a file differs from what it writes). Conflicts in `goldens/index/<NN>.json` only arise
    within one plan: rerun `import-captures`.

@@ -23,8 +23,8 @@ The eight full-level recordings, exits, ending and LCD-only control proof are va
 implementation must replay their pixels under AGENTS.md's fidelity standard. The four accepted
 defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete,
 including the inherited Games II seams. Task 3 is complete: 166 fixtures are imported and
-remain pending gameplay replay. Task 4 is stopped at the resource registration discrepancy
-recorded below; Tasks 4-14 remain unstarted.
+remain pending gameplay replay. Task 4 resumes after the parent-approved resource registration extension recorded below;
+Tasks 4-14 remain unstarted.
 
 ## Goal
 
@@ -1416,6 +1416,10 @@ acceptance slice contains 166 TODOs, no scenarios and no known gaps. Assertion w
 ordered gameplay, painter, session and sound tasks. The six Bantumi/Pairs II fixtures owned by
 later Games plans also remain pending, unchanged.
 
+**Parent decision (Lachlan, 2026-10-28): size accepted.** Keep the roughly 87 MiB
+(91,463,703 bytes) of lossless recordings as imported; they compress approximately 15× in git.
+The parent accepts this size. Do not thin the recordings or change their format.
+
 **Deviation (size and selection).** Full-level lossless timelines replace the earlier proposed
 sparse object-event selection. The accepted recording scope verifies every captured spawn,
 kill and shot, while the exploratory census cannot yet identify every event to thin safely.
@@ -1452,9 +1456,28 @@ would only enter shared `widgets.ts`, not Task 4's required `space-impact.ts` (o
 pipeline and explicitly forbids redesigning it here. AGENTS.md requires stopping on plan/API
 drift. No Task 4 file, resource, dependency or speculative workaround is added.
 
-**Decision needed:** provide the shared extension that registers plan-owned generated outputs,
-or approve a revised Task 4/5 integration contract. This is an implementation-plan decision;
-no new gameplay/product default is needed at Task 3. Keep the four accepted defaults UNVERIFIED.
+**Parent decision (Lachlan, 2026-10-28): shared extension approved.** Extend
+`PlanCaptureSet.resources` / `ResourceDeclarations` so a plan declares an extractor and its
+generated module paths under `src/resources/generated/`. The shared extractor iterates those
+declarations; migrate Snake II's hard-coded output to the same contract. Keep one export block
+per module in `src/resources/index.ts`. Update AGENTS.md and plan 29's contract. This is an
+authorized exception to Task 4's earlier prohibition on shared pipeline edits, committed as
+its own verified unit: `feat(nokia-os): plans register their own generated resource modules`.
+All existing generated modules must remain byte-identical, including Snake II; regenerate
+twice with no diff. Task 4 then uses one owned registration line. No new gameplay/product
+default is authorized; the four accepted defaults remain labelled UNVERIFIED.
+
+**Shared pipeline delivery (2026-10-28).** `generatedModules: [{ file, extract }]` now
+registers a deterministic module extractor through the existing capture registry. Readers accept
+indexed committed LCD, tick and sound fixtures, including pending evidence; the shared writer
+rejects duplicate/escaping output paths and conflicts with shared modules before writing.
+Snake II registers `snakeResourceModule` through plan 23's existing resource input; no Snake
+output/data case remains in shared extraction. The shared serializers iterate descriptors.
+Eight new regressions failed before implementation; the completed focused gate passes
+**5 files, 175 tests**, including four additional reader/migration checks. Both regenerate
+runs report `extract-resources: up to date`; **all ten existing generated files remain
+byte-identical**. Snake SHA-256: `9c7f946de4c616d5ef360169e19e96e6c77773e7be92e3516c73ebb11ced5572`.
+`vp check --fix` passes. No generated file or golden changes.
 
 ### Task 4 - Space impact resources from goldens (TDD)
 

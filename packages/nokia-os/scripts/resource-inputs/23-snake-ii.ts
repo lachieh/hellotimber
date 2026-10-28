@@ -1,3 +1,4 @@
+import { snakeResourceModule } from "../snake-resources.ts";
 import type { ResourceDeclarations, SpriteCrop } from "../resource-declarations.ts";
 import type { TextRun } from "../harvest-glyphs.ts";
 /** A game-over note (plan 23 D13): large lines from x 0 at tops 3, 18 and 33. */
@@ -25,6 +26,7 @@ function frames(
 }
 
 export const resources: ResourceDeclarations = {
+  generatedModules: [snakeResourceModule],
   textRuns: {
     // Snake II's game-over notes (plan 23): Your score: 4 and 8, TOP SCORE: 105.
     "game/snake/bot-short.death": { c: gameOver("Your score:", "4") },

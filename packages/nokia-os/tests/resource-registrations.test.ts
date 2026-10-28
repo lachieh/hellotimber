@@ -2,9 +2,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vite-plus/test";
 import { captureSets } from "../scripts/capture-registry.ts";
-import { composeResourceDeclarations } from "../scripts/resource-declarations.ts";
+import { composeResourceDeclarations, resourceModule } from "../scripts/resource-declarations.ts";
 import type { PlanCaptureSet } from "../scripts/capture-set.ts";
-import { extractResources, GOLDENS_DIR } from "../scripts/extract-resources.ts";
+import { extractResources, generatedFiles, GOLDENS_DIR } from "../scripts/extract-resources.ts";
 import { readGoldenIndex } from "../scripts/golden-index.ts";
 import { loadGolden } from "./support/goldens.ts";
 
@@ -305,6 +305,7 @@ it("does not execute capture callbacks when composing registered evidence", () =
   };
   const sets = captureSets([{ plan: "18c", lcd: callback, ticks: callback, sounds: callback }]);
   expect(compose(sets)).toEqual({
+    generatedModules: [],
     textRuns: {},
     menuIcons: {},
     glyphOverrides: [],
@@ -338,4 +339,119 @@ it("rejects a missing fixture file without modifying generated output", () => {
     ]),
   ).toThrow(/not an indexed LCD/);
   expect(bytes()).toEqual(before);
+});
+
+describe("plan-owned generated modules", () => {
+  const module = {
+    file: "consumer.ts",
+    extract: ({
+      golden,
+      ticks,
+      sound,
+    }: import("../scripts/resource-declarations.ts").ResourceExtractionIo) => {
+      const frame = golden("tree/02-messages/2-4.leaf");
+      const period = ticks("game/snake/periods");
+      const cue = sound("sound/game/snake-meal");
+      return resourceModule("CONSUMER_DATA", "readonly number[]", [
+        frame.images.length,
+        period.rows.length,
+        cue.rows.length,
+      ]);
+    },
+  };
+  it("extracts a registered module from indexed pending LCD, ticks and sound without importing captures", () => {
+    const expected = resourceModule("CONSUMER_DATA", "readonly number[]", [
+      loadGolden("tree/02-messages/2-4.leaf").images.length,
+      166,
+      18,
+    ]);
+    const result = generatedFiles(
+      extractResources(GOLDENS_DIR, [
+        ...captureSets(),
+        {
+          plan: "29",
+          resources: { generatedModules: [module] },
+          lcd: () => {
+            throw new Error("must not import REF");
+          },
+        },
+      ]),
+    );
+    expect(result["consumer.ts"]).toBe(expected);
+    expect(index.find((entry) => entry.id === "tree/02-messages/2-4.leaf")?.status).toBe(
+      "pending:18c",
+    );
+  });
+  it("rejects two plans writing the same output", () => {
+    expect(() =>
+      compose([
+        { plan: "29", resources: { generatedModules: [module] } },
+        { plan: "30", resources: { generatedModules: [module] } },
+      ]),
+    ).toThrow(/generated module.*consumer.ts.*29.*30/);
+  });
+  it.each([
+    "../escape.ts",
+    "/absolute.ts",
+    "nested/../../escape.ts",
+    "wrong.txt",
+    "nested\\escape.ts",
+  ])("rejects an output outside generated TypeScript modules: %s", (file) => {
+    expect(() =>
+      compose([{ plan: "29", resources: { generatedModules: [{ ...module, file }] } }]),
+    ).toThrow(/invalid generated module path/);
+  });
+  it("rejects replacement of a shared output before files are written", () => {
+    expect(() =>
+      generatedFiles(
+        extractResources(GOLDENS_DIR, [
+          ...captureSets(),
+          {
+            plan: "29",
+            resources: { generatedModules: [{ file: "fonts.ts", extract: () => "replacement" }] },
+          },
+        ]),
+      ),
+    ).toThrow(/generated module.*fonts.ts.*shared/);
+  });
+});
+
+it(
+  "generates Snake II only through its plan declaration",
+  () => {
+    const sets = captureSets().map((set) =>
+      set.plan === "23" ? { ...set, resources: { ...set.resources, generatedModules: [] } } : set,
+    );
+    expect(generatedFiles(extractResources(GOLDENS_DIR, sets))).not.toHaveProperty("snake.ts");
+    expect(generatedFiles(extractResources())["snake.ts"]).toBe(
+      readFileSync(join(import.meta.dirname, "../src/resources/generated/snake.ts"), "utf8"),
+    );
+  },
+  EXTRACTION_TIMEOUT_MS,
+);
+
+it.each([
+  ["golden", "sound/game/snake-meal"],
+  ["ticks", "tree/02-messages/2-4.leaf"],
+  ["sound", "missing/sound"],
+] as const)("rejects unindexed or wrong-kind %s evidence: %s", (reader, id) => {
+  expect(() =>
+    extractResources(GOLDENS_DIR, [
+      ...captureSets(),
+      {
+        plan: "29",
+        resources: {
+          generatedModules: [
+            {
+              file: "consumer.ts",
+              extract: (io) => {
+                io[reader](id);
+                return "";
+              },
+            },
+          ],
+        },
+      },
+    ]),
+  ).toThrow(/not an indexed .* fixture/);
 });

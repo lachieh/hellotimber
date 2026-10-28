@@ -42,7 +42,6 @@ import { COMPOSER_DATA } from "../src/resources/generated/composer";
 import { BOOT_DATA } from "../src/resources/generated/boot";
 import { STOCK_FONT_DATA } from "../src/resources/generated/fonts";
 import { MENU_ICON_DATA } from "../src/resources/generated/menu-icons";
-import { SNAKE_DATA } from "../src/resources/generated/snake";
 import { STATUS_DATA } from "../src/resources/generated/status";
 import { WIDGET_DATA } from "../src/resources/generated/widgets";
 import { SOUND_DATA } from "../src/resources/generated/sounds";
@@ -159,18 +158,18 @@ describe("generated resources", () => {
     "equal a fresh extraction from the committed goldens",
     { timeout: EXTRACTION_TIMEOUT_MS },
     () => {
+      const { modules: _modules, ...fresh } = extractResources();
       expect({
         fonts: STOCK_FONT_DATA,
         menuIcons: MENU_ICON_DATA,
         boot: BOOT_DATA,
         status: STATUS_DATA,
         widgets: WIDGET_DATA,
-        snake: SNAKE_DATA,
         sounds: SOUND_DATA,
         text: TEXT_DATA,
         clock: CLOCK_DATA,
         composer: COMPOSER_DATA,
-      }).toEqual(extractResources());
+      }).toEqual(fresh);
     },
   );
 
