@@ -12,6 +12,7 @@ import { CLOCK_DATA } from "./generated/clock";
 import { COMPOSER_DATA } from "./generated/composer";
 import { STOCK_FONT_DATA } from "./generated/fonts";
 import { MENU_ICON_DATA } from "./generated/menu-icons";
+import { SPACE_IMPACT_DATA } from "./generated/space-impact";
 import { SNAKE_DATA } from "./generated/snake";
 import { STATUS_DATA } from "./generated/status";
 import { TEXT_DATA } from "./generated/text";
@@ -309,4 +310,17 @@ export const COMPOSER_SOUND = {
   volumeListMs: COMPOSER_DATA.volumeListMs,
   levelStepMs: COMPOSER_DATA.levelStepMs,
   unsetVolume: COMPOSER_DATA.unsetVolume,
+} as const;
+
+// ---------------------------------------------------------------- Space impact (plan 24)
+
+export const SPACE_IMPACT_SPRITES: Readonly<Record<string, Bitmap>> = Object.fromEntries(
+  Object.entries(SPACE_IMPACT_DATA.sprites).map(([id, art]) => [id, bitmapFromArt(art)]),
+);
+export const SPACE_IMPACT_TICK_MS: number = SPACE_IMPACT_DATA.timings.tickMs;
+export const SPACE_IMPACT_FIRST_TICK_MS: number = SPACE_IMPACT_DATA.timings.firstTickMs;
+export const SPACE_IMPACT_CONTINUE_TIMINGS = {
+  holdMs: SPACE_IMPACT_DATA.timings.continueHoldMs,
+  stepMs: SPACE_IMPACT_DATA.timings.continueStepMs,
+  zeroMs: SPACE_IMPACT_DATA.timings.continueZeroMs,
 } as const;

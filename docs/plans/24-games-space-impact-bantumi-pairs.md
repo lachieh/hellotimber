@@ -24,7 +24,7 @@ implementation must replay their pixels under AGENTS.md's fidelity standard. The
 defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete,
 including the inherited Games II seams. Task 3 is complete: 166 fixtures are imported and
 remain pending gameplay replay. Task 4 resumes after the parent-approved resource registration extension recorded below;
-Tasks 4-14 remain unstarted.
+Task 4 has a verified HUD/ship/timing checkpoint; Tasks 5-14 remain unstarted.
 
 ## Goal
 
@@ -1486,7 +1486,7 @@ through the pipeline delivered by plan 29),
 `src/resources/generated/space-impact.ts` (generated), `src/resources/index.ts` (one export
 block), `tests/space-impact-resources.test.ts` (new).
 
-- [ ] Confirm Task 0's canonical-level gate and plan 29's verified registration repair before
+- [x] Confirm Task 0's canonical-level gate and plan 29's verified registration repair before
       generating resources. Inspect the landed registration contract; use one owned registration
       line without redesigning shared extraction here.
 - [ ] Crop table (golden, image, rectangle, sprite id) for the ship, shield, shot, missile, wall
@@ -1505,6 +1505,38 @@ block), `tests/space-impact-resources.test.ts` (new).
       every period as a cross-check.
 - [ ] Run `extract-resources` twice; no diff.
 - [ ] Commit: `feat(nokia-os): derive Space impact sprites, terrain and timings from goldens`.
+
+**Task 4 checkpoint (2026-10-28; incomplete).** The parent permits partial progress with
+every commit green. This checkpoint keeps Task 4 open and does not begin Task 5.
+`analysis/coverage.py --check` passes all 25 accepted criteria immediately before extraction.
+The shared registration repair above is verified. The one owned `resources` registration in
+plan 24's capture set declares `space-impact.ts`; `src/resources/index.ts` adds one export block.
+
+`space-impact-resources.ts` derives **14 sprites from 27 explicit golden/image/rectangle
+specimens**: the ship, HUD heart, missile icon, ten digits and continue icon. Thirteen sprites
+have independent normal/inverted specimens; conflicting specimens, absent images, invalid
+rectangles and ink-free crops fail. Nothing is copied from extracted firmware or the exploratory
+census. The crop geometry and expected art are read from committed LCD frames.
+
+Three independent complete no-key recordings (`nokeys`, `ansi-nokeys-game1`,
+`ansi-nokeys-game2`) yield median timings: tick **93 ms**, first tick **173 ms**, initial
+continue hold **1548 ms**, countdown step **775 ms**, final zero **856 ms**. These are empirical
+medians, not exact per-recording edge requirements. The 12-unit tick and 100-unit countdown
+independently cross-check; no tolerance changes. An incomplete countdown fails extraction.
+
+TDD first failed because the resource module was absent, then because its generated output
+was absent. The focused checkpoint gate passes **3 files, 88 tests**. The generated output
+comes only from `regenerate`; existing ten generated modules retain their baseline bytes.
+
+**Still required for Task 4:** the shield, player shot/missile/wall/beam/explosions, complete
+enemy and boss animation/projectile inventory (including the multipart final boss), pickup
+sprites, wall/beam HUD icons, splash pictures, terrain tiles/maps and full terrain re-render
+proof, new-game/respawn/resume shield, repeat, respawn and level-exit timing. The current
+module is an incomplete resource checkpoint, not a complete sprite inventory or gameplay
+implementation. All Task 4 completion boxes above remain open except its entry gate; the
+planned full-resource commit still waits for those proofs. No fixture is asserted, no known
+gap is added, and the four accepted defaults remain UNVERIFIED. No product decision is needed
+for this checkpoint.
 
 ### Task 5 - Level reconstruction (TDD)
 
