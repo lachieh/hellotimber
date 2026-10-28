@@ -388,6 +388,14 @@
     "input": true
   },
   {
+    "id": "game/space-impact/keys-hold-0.timeline",
+    "file": "game/space-impact/keys-hold-0.timeline.lcd.txt",
+    "status": "pending:24",
+    "kind": "timeline",
+    "images": 56,
+    "frames": 74
+  },
+  {
     "id": "game/space-impact/keys-hold-1",
     "file": "game/space-impact/keys-hold-1.lcd.txt",
     "status": "pending:24",
@@ -476,6 +484,14 @@
     "images": 6,
     "frames": 6,
     "input": true
+  },
+  {
+    "id": "game/space-impact/keys-hold-8.timeline",
+    "file": "game/space-impact/keys-hold-8.timeline.lcd.txt",
+    "status": "pending:24",
+    "kind": "timeline",
+    "images": 56,
+    "frames": 74
   },
   {
     "id": "game/space-impact/keys-hold-9",

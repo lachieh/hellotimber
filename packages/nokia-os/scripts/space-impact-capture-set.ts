@@ -376,6 +376,15 @@ const SPECS: readonly Spec[] = [
     dir: "nokeys/top-score",
     note: "S3: Top score after the no-key game: 70.",
   },
+  // S4 keys: keep two lossless timelines for measured held-repeat edges (Task 4).
+  ...["0", "8"].map(
+    (key): Spec => ({
+      kind: "screen",
+      name: `keys-hold-${key}.timeline`,
+      dir: `keys/hold-${key}`,
+      note: `S4 resource evidence: complete held-${key} timeline; the matching tick-still fixture owns the input.`,
+    }),
+  ),
   // S4 keys
   ...KEY_PROBES.flatMap((key): Spec[] => [
     {

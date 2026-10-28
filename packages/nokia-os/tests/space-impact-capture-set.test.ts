@@ -75,6 +75,15 @@ it("keeps each full level as a lossless recording for every captured spawn, kill
         : recording,
     keys: () => [],
   });
+  for (const key of ["0", "8"]) {
+    expect(
+      entries.find((entry) => entry.id === `game/space-impact/keys-hold-${key}.timeline`),
+    ).toMatchObject({
+      kind: "timeline",
+      status: "pending:24",
+      prefer: { source: { kind: "recording", dir: `plan24/keys/hold-${key}` } },
+    });
+  }
   for (let level = 0; level < 8; level++) {
     const entry = entries.find((entry) => entry.id === `game/space-impact/level-${level}`);
     expect(entry).toMatchObject({

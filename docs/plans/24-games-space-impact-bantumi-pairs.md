@@ -1497,7 +1497,7 @@ block), `tests/space-impact-resources.test.ts` (new).
       targeted S6 run, Deviation).
 - [ ] Terrain: from each level's tick stills, the 32x8 tiles and the 2x16 tilemap (ground or
       ceiling), checked by re-rendering every terrain row of every still at its scroll position.
-- [ ] Timing: `SPACE_IMPACT_TICK_MS`, `…_FIRST_TICK_MS`, `…_SHIELD_MS` (new game, respawn,
+- [x] Timing: `SPACE_IMPACT_TICK_MS`, `…_FIRST_TICK_MS`, `…_SHIELD_MS` (new game, respawn,
       resume), `…_REPEAT_MS`, the continue screen's hold and step, the respawn delay, the level
       exit's step times, from the timelines (medians).
 - [ ] TDD: freshness (in-process extraction equals the committed file); every sprite inside its
@@ -1638,6 +1638,84 @@ the six inherited later-games fixtures are unchanged. The generated Space impact
 14,005 bytes. Website, phone-core, phone-screen, phone-3d and packages/snake have no diff from
 `7026975`. No fixture or index changes. Resume at Task 4's remaining proofs above, then
 continue Tasks 5-14 in order.
+
+### Task 4 terrain/timing checkpoint (2026-10-28; incomplete)
+
+Continued from `edacd86` in `t3/p24-space-impact`. Task 4 remains open; Tasks 5-14 have
+not begun. The canonical `analysis/coverage.py --check` passes all 25 accepted criteria.
+No new accepted default or product decision.
+
+Terrain was investigated first. The previous adjacent-frame fit was rerun with short redraws
+excluded, exact known-sprite rectangles masked, and time-constrained scroll candidates. Raw
+and terrain-subtracted sprite matches, including clipped edges, still leave conflicting
+terrain pixels: bosses and shots overlap the band, and the inventory does not yet identify
+all of them. Identifying a boss by its clean rows outside the terrain band reduces conflicts
+but does not remove them. **No fitted map, majority-voted pixel, relaxed comparison or full
+terrain proof is accepted by this checkpoint.** Scroll alignment and complete 2x16 maps remain
+unproved; the apparent unobserved columns in levels 1 and 7 are an investigative result,
+not a claim that a tile choice is established or impossible to observe. The failed probes,
+results, tile inspection sheet and their limitations are retained in
+`$REF/captures/6.39/plan24/analysis/task4-terrain-20261028/` (see its README and manifest).
+
+The crop table adds **27 nonempty 32x8 terrain pictures**, each checked against two clean,
+independent LCD images at different screen x positions. The pictures cover the outline hills,
+mountains, buildings, ceiling patterns and the last two levels' ground. Numeric ids are crop
+identities, not recovered firmware tile numbers or a complete inventory. Their inspected
+expected rows live in the resource test. Extraction reads only those committed LCD crops;
+exploratory fitted pixels never enter generated output. Terrain tile extraction is useful
+input to reconstruction, not a substitute for re-rendering every remaining terrain pixel.
+
+A third shielded-ship picture is proved by the two independent resume recordings and a
+normal-polarity level-1 specimen. The module now holds **58 sprite pictures plus 27 terrain
+pictures (85 entries)**. The shield landmark classifier accepts the ship's ink under its
+shield, verifies the shield perimeter, and excludes the gun row redrawn by shots. A bare
+ship still requires its clear pixels. It supports the one-row move of the resume-8 case.
+
+Remaining timing measurements now include `resumeShieldMs: 1512` (visible edges 1512 and
+1481 ms after the wake-key redraw), `repeatMs: 94` (the two-pixel moves under held 0 and 8),
+and `levelExitStepMs: 92` (ship movement across all eight exits). These are LCD medians;
+the timer-unit cross-checks use the shared fidelity rule. Level 5 starts on its exit row
+already and contributes fly-off steps without inventing an alignment phase. Missing resume
+edges, missing repeats or an exit without its fly-off fail extraction.
+
+**Deviation:** the original held-key fixtures retained selected tick stills and therefore
+could not measure repeat intervals. Two additional resource timelines,
+`keys-hold-{0,8}.timeline`, retain the existing canonical recordings losslessly. The importer
+creates them and their two plan-24 index entries; the original key fixtures remain intact.
+No recapture, fixture hand edit, status promotion or tolerance change. Plan 24 now has
+**0 asserted, 168 pending fixtures, 0 known gaps**; the inherited Space impact leaf and sound
+note stay pending in their original indices. The six later-games fixtures are unchanged.
+
+**Still required:** the complete animation/projectile/bonus/explosion inventory (including
+level-6 and multipart final bosses, seven wall frames and splash pictures), terrain scroll
+alignment and complete maps, and the exact re-render proof across all settled level stills.
+Task 4's timing box is complete; its inventory, terrain, combined verification and commit
+boxes remain open. The four accepted defaults retain their UNVERIFIED
+labels. Do not start Task 5 from this checkpoint.
+
+**Checkpoint closeout verification.** The focused resource, capture-set and registration
+suite passes **3 files, 128 tests**. The new resource/timing checks fail before their
+implementation, then pass after extraction and regeneration. All 27 terrain pictures have
+two exact specimens; the new shield picture has three specimens including both polarities.
+The crop table has **170 explicit specimens** including the mapped digits. Freshness compares
+the complete in-process module byte for byte with the generated file.
+
+The uncached `vp run -r --no-cache test` passes all six packages: **257 passing files,
+one pending-only slice, 11,126 passed tests, 120 expected failures, 193 TODOs**, zero cache
+hits. Nokia-os: 165 passing files, one pending-only slice, 10,284 passed tests
+(959.59 s). Other package totals: phone-core 450, snake 62, phone-3d 49,
+phone-screen 101, website 180. `vp check --fix`, stable formatting, final `vp check` and
+`website#build` pass. All gates use mise's absolute Node **22.22.3** executable and the
+child-PATH guard `/private/tmp/plan24-run-node22.cjs`; the workspace run uses
+`VITEST_MAX_WORKERS=2` and `VP_RUN_CONCURRENCY_LIMIT=1`. Logs:
+`/private/tmp/plan24-terrain-{focused-final,workspace-tests,check,build}.log`.
+
+Two subsequent resource regenerations report `up to date`; a second import changes nothing.
+All ten other generated modules and every existing golden retain their baseline bytes.
+All 166 pre-existing plan-24 index entries are unchanged; only the two pending timing
+entries are added. The generated Space impact module is 24,233 bytes. Website, phone-core,
+phone-screen, phone-3d and packages/snake have no diff from `edacd86`. Task 4 remains open;
+no gameplay replay or full terrain proof is claimed, and Tasks 5-14 remain unstarted.
 
 ### Task 5 - Level reconstruction (TDD)
 
