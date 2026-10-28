@@ -1,5 +1,5 @@
 // Plan 24 Task 4: committed LCD specimens and measured no-key timing.
-// The remaining sprite families, terrain and shield/exit timings are not reconstructed yet.
+// Further animation pictures, terrain and resume/repeat/exit timings remain incomplete.
 import { findGoldenImage, LCD_WIDTH, LCD_HEIGHT, type Golden } from "./golden-format.ts";
 import { framePeriod } from "./game-capture.ts";
 import { isSpaceImpactFrame, normalized } from "./space-impact-capture-set.ts";
@@ -42,6 +42,92 @@ export const SPACE_IMPACT_CROPS: readonly SpaceImpactCrop[] = [
   crop("heart", "level-1", "b", 0, 0, 5, 4, false),
   crop("special/missile", "keys-tap-5", "t0040", 36, 0, 5, 4, true),
   crop("special/missile", "level-1", "b", 36, 0, 5, 4, false),
+  crop("boss/0/0", "level-0", "aht", 62, 12, 20, 23, true),
+  crop("boss/0/0", "level-0", "ahu", 61, 12, 20, 23, true),
+  crop("boss/0/1", "level-0", "ahs", 63, 12, 20, 23, true),
+  crop("boss/0/1", "level-0", "ahw", 60, 12, 20, 23, true),
+  crop("boss/1/0", "level-1", "ub", 59, 12, 22, 21, false),
+  crop("boss/1/0", "level-1", "uc", 58, 12, 22, 21, false),
+  crop("boss/1/1", "level-1", "ty", 60, 12, 23, 20, false),
+  crop("boss/1/1", "level-1", "ua", 59, 12, 23, 20, false),
+  crop("boss/2/0", "level-2", "aay", 62, 12, 21, 20, false),
+  crop("boss/2/0", "level-2", "abc", 59, 12, 21, 20, false),
+  crop("boss/2/1", "level-2", "aaz", 60, 12, 22, 20, false),
+  crop("boss/2/1", "level-2", "aba", 59, 12, 22, 20, false),
+  crop("boss/3/0", "level-3", "ajv", 56, 14, 15, 21, false),
+  crop("boss/3/0", "level-3", "ajw", 56, 15, 15, 21, false),
+  crop("boss/3/1", "level-3", "ajz", 56, 17, 15, 21, false),
+  crop("boss/3/1", "level-3", "akd", 56, 16, 15, 21, false),
+  crop("boss/4/0", "level-4", "anf", 56, 17, 19, 21, true),
+  crop("boss/4/0", "level-4", "ano", 56, 18, 19, 21, true),
+  crop("boss/4/1", "level-4", "ang", 56, 18, 19, 21, true),
+  crop("boss/4/1", "level-4", "anm", 56, 19, 19, 21, true),
+  crop("boss/5/0", "level-5", "aec", 65, 9, 18, 18, true),
+  crop("boss/5/0", "level-5", "aef", 62, 9, 18, 18, true),
+  crop("boss/5/1", "level-5", "aer", 56, 10, 18, 19, true),
+  crop("boss/5/1", "level-5", "aes", 56, 11, 18, 19, true),
+  crop("ship/shielded/0", "nokeys", "b", 3, 18, 14, 11, true),
+  crop("ship/shielded/0", "keys-continue-6", "b", 3, 18, 14, 11, true),
+  crop("ship/shielded/1", "nokeys", "c", 3, 18, 14, 11, true),
+  crop("ship/shielded/1", "deaths-3-key1-level-3", "t0000", 3, 18, 14, 11, false),
+  crop("missile", "keys-special-4", "t0076", 35, 20, 5, 3, true),
+  crop("missile", "level-7.restart", "jj", 33, 24, 5, 3, false),
+  crop("beam", "variety-level-0.beam-enemy-special", "f", 15, 6, 1, 42, true),
+  crop("beam", "variety-level-0.beam-enemy-special", "g", 17, 6, 1, 42, true),
+  crop("wall/diamond", "variety-level-2.wall-enemy-special", "h", 26, 28, 5, 5, false),
+  crop("wall/diamond", "variety-level-2.wall-boss-special", "k", 30, 22, 5, 5, false),
+  crop("enemy/round-wide/0", "level-0", "ah", 72, 8, 11, 5, true),
+  crop("enemy/round-wide/0", "keys-continue-6", "i", 72, 8, 11, 5, true),
+  crop("enemy/round-wide/1", "level-0", "aj", 70, 8, 11, 5, true),
+  crop("enemy/round-wide/1", "keys-continue-6", "j", 70, 8, 11, 5, true),
+  crop("enemy/round-small/0", "level-0", "ru", 74, 12, 9, 5, true),
+  crop("enemy/round-small/0", "level-1", "gj", 73, 9, 9, 5, false),
+  crop("enemy/round-small/1", "level-4", "mf", 72, 24, 9, 5, true),
+  crop("enemy/round-small/1", "level-1", "gi", 74, 9, 9, 5, false),
+  crop("enemy/triangle/0", "level-0", "lg", 56, 7, 6, 7, true),
+  crop("enemy/triangle/0", "level-1", "ac", 76, 8, 6, 7, false),
+  crop("enemy/triangle/1", "level-0", "lh", 55, 8, 6, 7, true),
+  crop("enemy/triangle/1", "level-1", "ab", 77, 8, 6, 7, false),
+  crop("enemy/long-left/0", "level-0", "afo", 74, 14, 9, 5, true),
+  crop("enemy/long-left/0", "level-1", "nt", 72, 24, 9, 5, false),
+  crop("enemy/round-tail/0", "level-5", "gu", 69, 32, 9, 5, true),
+  crop("enemy/round-tail/0", "level-1", "dg", 73, 7, 9, 5, false),
+  crop("enemy/round-tail/1", "level-5", "gw", 66, 33, 9, 5, true),
+  crop("enemy/round-tail/1", "level-1", "df", 74, 7, 9, 5, false),
+  crop("enemy/zigzag/0", "level-4", "in", 68, 34, 9, 5, true),
+  crop("enemy/zigzag/0", "level-2", "am", 74, 9, 9, 5, false),
+  crop("enemy/zigzag/1", "level-4", "ik", 74, 36, 9, 5, true),
+  crop("enemy/zigzag/1", "level-2", "an", 73, 9, 9, 5, false),
+  crop("enemy/lander/0", "level-4", "dr", 76, 17, 7, 7, true),
+  crop("enemy/lander/0", "level-2", "pz", 76, 12, 7, 7, false),
+  crop("enemy/jet/0", "level-4", "anw", 45, 30, 9, 5, true),
+  crop("enemy/jet/0", "level-3", "ag", 74, 10, 9, 5, false),
+  crop("enemy/jet/1", "level-4", "anx", 43, 30, 9, 5, true),
+  crop("enemy/jet/1", "level-3", "ai", 72, 10, 9, 5, false),
+  crop("enemy/diamond/0", "level-3", "si", 76, 12, 7, 7, false),
+  crop("enemy/diamond/0", "level-3", "sk", 75, 12, 7, 7, false),
+  crop("enemy/long-right/0", "level-5", "ph", 70, 16, 10, 5, true),
+  crop("enemy/long-right/0", "level-7", "ca", 73, 27, 10, 5, false),
+  crop("enemy/long-right/1", "level-5", "pg", 72, 16, 10, 5, true),
+  crop("enemy/long-right/1", "level-7", "cc", 72, 27, 10, 5, false),
+  crop("projectile/pellet/0", "level-0", "gs", 76, 11, 4, 3, true),
+  crop("projectile/pellet/0", "level-1", "dv", 77, 26, 4, 3, false),
+  crop("projectile/cross/0", "level-3", "akk", 55, 18, 5, 3, false),
+  crop("projectile/cross/0", "level-3", "akl", 52, 19, 5, 3, false),
+  crop("explosion/checker/0", "level-0", "dx", 78, 18, 5, 5, true),
+  crop("explosion/checker/0", "level-1", "bg", 56, 16, 5, 5, false),
+  crop("explosion/split/0", "level-0", "bh", 32, 8, 7, 7, true),
+  crop("explosion/split/0", "level-1", "bf", 55, 15, 7, 7, false),
+  crop("shot", "keys-tap-1", "t0042", 15, 23, 2, 1, true),
+  crop("shot", "level-2", "aam", 25, 27, 2, 1, false),
+  crop("special/wall", "variety-level-2.wall-enemy-special", "a", 36, 0, 5, 4, false),
+  crop("special/wall", "level-5.exit", "a", 36, 43, 5, 4, true),
+  crop("special/beam", "variety-level-0.beam-enemy-special", "a", 36, 0, 5, 4, true),
+  crop("special/beam", "variety-level-0.beam-boss-special", "a", 36, 0, 5, 4, true),
+  crop("bonus/orb/0", "level-2", "jl", 18, 27, 8, 7, false),
+  crop("bonus/orb/0", "seed-0000", "t0625", 70, 24, 8, 7, true),
+  crop("bonus/orb/1", "level-0", "aes", 31, 24, 8, 7, true),
+  crop("bonus/orb/1", "deaths-3-key1-level-3.restart-2", "t0336", 61, 16, 8, 7, false),
   crop("continue/icon", "keys-continue-5", "a", 0, 0, 5, 4, true),
   ...(
     [
@@ -135,6 +221,40 @@ function countdown(
   return undefined;
 }
 
+type ShipPhase = "shielded" | "bare" | "absent";
+
+function shipPhase(
+  pixels: Uint8Array,
+  sprites: Readonly<Record<string, readonly string[]>>,
+): ShipPhase {
+  pixels = normalized(pixels);
+  const matches = (art: readonly string[], outer: boolean): boolean =>
+    art.every((row, dy) =>
+      Array.from(row).every((pixel, dx) => {
+        if (outer && dx >= 2 && dx < 12 && dy >= 2 && dy < 9) return true;
+        if (!outer && dy === 3) return true;
+        const x = (outer ? 3 : 5) + dx;
+        const y = (outer ? 18 : 20) + dy;
+        return (pixels[y * LCD_WIDTH + x] === 1) === (pixel === "#");
+      }),
+    );
+  if (!matches(sprites.ship!, false)) return "absent";
+  if ([0, 1].some((n) => matches(sprites[`ship/shielded/${n}`]!, true))) return "shielded";
+  return matches(
+    Array.from({ length: 11 }, () => ".".repeat(14)),
+    true,
+  )
+    ? "bare"
+    : "absent";
+}
+
+// S3/S8: visible shield edges and both respawns in each complete no-key recording.
+const SHIELD_TIMING_SPECIMENS = {
+  nokeys: { newGameBare: "o", firstRespawnBare: "df" },
+  "ansi-nokeys-game1": { newGameBare: "o", firstRespawnBare: "df" },
+  "ansi-nokeys-game2": { newGameBare: "p", firstRespawnBare: "dg" },
+};
+
 export function extractSpaceImpactResources(read: (id: string) => Golden) {
   const cache = new Map<string, Golden>();
   const load = (id: string) => {
@@ -150,8 +270,11 @@ export function extractSpaceImpactResources(read: (id: string) => Golden) {
     first: number[] = [],
     holds: number[] = [],
     steps: number[] = [],
-    zeros: number[] = [];
-  for (const name of ["nokeys", "ansi-nokeys-game1", "ansi-nokeys-game2"]) {
+    zeros: number[] = [],
+    newGameShields: number[] = [],
+    respawnShields: number[] = [],
+    respawns: number[] = [];
+  for (const [name, edges] of Object.entries(SHIELD_TIMING_SPECIMENS)) {
     const golden = load(ROOT + name);
     const played = frames(golden);
     const game = played.filter((frame) => isSpaceImpactFrame(frame.pixels));
@@ -160,6 +283,25 @@ export function extractSpaceImpactResources(read: (id: string) => Golden) {
       throw new Error(`${golden.id}: missing New game timing`);
     periods.push(framePeriod(played, isSpaceImpactFrame));
     first.push(game[1].startMs - trigger.startMs);
+    const edge = (image: string, phase: ShipPhase) => {
+      const row = played.find((row) => row.image === image);
+      if (!row || shipPhase(row.pixels, sprites) !== phase)
+        throw new Error(`${golden.id}: ${image} is not the ${phase} shield/respawn edge`);
+      return row.startMs;
+    };
+    const elapsed = (from: number, to: number) => {
+      if (to <= from) throw new Error(`${golden.id}: invalid shield/respawn timing`);
+      return to - from;
+    };
+    newGameShields.push(elapsed(edge("b", "shielded"), edge(edges.newGameBare, "bare")));
+    for (const [death, ship, bare] of [
+      ["bw", "ca", edges.firstRespawnBare],
+      ["ep", "et", "fy"],
+    ] as const) {
+      const spawnedAt = edge(ship, "shielded");
+      respawns.push(elapsed(edge(death, "absent"), spawnedAt));
+      respawnShields.push(elapsed(spawnedAt, edge(bare, "bare")));
+    }
     const counts = played.map((frame) => ({ frame, count: countdown(frame.pixels, sprites) }));
     const start = counts.findIndex((entry) => entry.count === 5);
     let cursor = start;
@@ -191,6 +333,9 @@ export function extractSpaceImpactResources(read: (id: string) => Golden) {
       continueHoldMs: median(holds, "continue hold"),
       continueStepMs: median(steps, "continue step"),
       continueZeroMs: median(zeros, "continue zero"),
+      newGameShieldMs: median(newGameShields, "new game shield"),
+      respawnShieldMs: median(respawnShields, "respawn shield"),
+      respawnMs: median(respawns, "respawn"),
     },
   };
 }
@@ -200,7 +345,7 @@ export const spaceImpactResourceModule: GeneratedResourceModule = {
   extract: ({ golden }) =>
     resourceModule(
       "SPACE_IMPACT_DATA",
-      "{ readonly sprites: Readonly<Record<string, readonly string[]>>; readonly timings: { readonly tickMs: number; readonly firstTickMs: number; readonly continueHoldMs: number; readonly continueStepMs: number; readonly continueZeroMs: number } }",
+      "{ readonly sprites: Readonly<Record<string, readonly string[]>>; readonly timings: { readonly tickMs: number; readonly firstTickMs: number; readonly continueHoldMs: number; readonly continueStepMs: number; readonly continueZeroMs: number; readonly newGameShieldMs: number; readonly respawnShieldMs: number; readonly respawnMs: number } }",
       extractSpaceImpactResources(golden),
     ),
 };

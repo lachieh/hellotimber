@@ -24,7 +24,7 @@ implementation must replay their pixels under AGENTS.md's fidelity standard. The
 defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete,
 including the inherited Games II seams. Task 3 is complete: 166 fixtures are imported and
 remain pending gameplay replay. Task 4 resumes after the parent-approved resource registration extension recorded below;
-Task 4 has a verified HUD/ship/timing checkpoint; Tasks 5-14 remain unstarted.
+Task 4 has verified partial sprite/timing checkpoints (57 sprites, eight timings); Tasks 5-14 remain unstarted.
 
 ## Goal
 
@@ -1560,6 +1560,84 @@ Website, phone-core, phone-screen, phone-3d and packages/snake have no diff from
 starting head. Both parent decisions are recorded above; the full recordings are retained.
 No new product decision is needed. Resume at the remaining Task 4 inventory/terrain/timing
 proofs, then continue Tasks 5-14 in order.
+
+### Task 4 continuation checkpoint (2026-10-28; incomplete)
+
+Resumed at `7026975` in `t3/p24-space-impact`. This is further Task 4 resource work;
+Task 4 remains open and Tasks 5-14 have not begun. The accepted Task 0 checker
+`analysis/coverage.py --check` passes again. No new product decision or accepted default.
+
+The owned crop table now contains **57 sprites from 113 explicit specimens** (the earlier
+checkpoint had 14 from 27). The additional 43 pictures are:
+
+- 12 boss pictures: two for each of levels 0-5, with the same complete rectangle matched at
+  two different positions. These are observed pictures, not a claim that every boss phase,
+  hit picture or animation variant is complete.
+- Two shielded-ship pictures (14x11, including the ship), a missile (5x3), the beam's play-field
+  column (1x42), and one wall burst picture. The beam specimens deliberately avoid XOR holes
+  from overlapping shots or enemies.
+- 17 enemy pictures in ten visual families: round-wide, round-small, triangle, long-left,
+  round-tail, zigzag, lander, jet, diamond and long-right. The names are visual labels, not
+  recovered firmware type numbers.
+- The player shot, wall/beam HUD icons, two dotted-orb pickup pictures, two projectile pictures
+  and two explosion pictures.
+
+Every additional picture has at least two golden/image specimens, including opposite LCD
+polarities for the 23 new pictures for which clean shared specimens have been selected.
+Tests hold independently inspected expected pixels and compare all declared specimens exactly.
+The exploratory census was used only to locate candidate LCD frames: its eye/orb/pellet
+candidates included adjacent boss ink or incomplete rectangles. They were not copied into
+resources. The real dotted pickup is independently located in the reviewed level-2 approach
+(`jl`) and the normal/inverted specimens in the crop table. Resource extraction reads only
+indexed committed goldens, never REF or exploratory census outputs.
+
+Three more visible timing medians come from the three complete no-key timelines:
+`newGameShieldMs: 2992`, `respawnShieldMs: 3002`, `respawnMs: 471`. The six respawns supply
+both the death-to-ship delay and shield durations. Explicit image landmarks validate the ship
+and its surrounding shield/clear pixels, ignoring the gun row and the shield's central ship
+rectangle where shots redraw. Missing landmarks, wrong ship phases and reversed event times
+fail extraction. The shared timing tolerance cross-checks the observed 376/62-unit intervals;
+no fidelity tolerance changes. These are visible LCD-edge medians, not proof of a
+millisecond-exact underlying timer or game-engine behavior.
+
+TDD: the first added sprite batch failed for its missing pictures; the boss and shield/weapon
+batches each failed before their crops were added; the timing expectation failed before its
+extractor was added. The focused gate passes **3 files, 109 tests** (56 in the Space impact
+resource file). Freshness compares in-process extraction byte-for-byte with the generated
+module. Two subsequent regenerations report `up to date`; the ten other generated modules
+retain their baseline bytes. Formatting is stable; `vp check --fix` passes.
+
+**Remaining Task 4 work:** complete the sprite/animation/projectile inventory, including the
+level-6 and multipart final boss, further enemy/bonus/explosion pictures, the seven wall frames,
+and splash pictures; reconstruct the terrain tiles/tilemaps and prove every still's terrain;
+measure resume shield, held repeat and level-exit steps. An exploratory terrain-alignment
+probe did not reproduce every terrain row because of partial redraws, sprite overlap and
+unresolved scroll alignment; no terrain data or permissive comparison was committed. The
+remaining crop list and all Task 4 completion boxes stay open. Task 5 still depends on this.
+
+No gameplay golden is promoted by resource extraction. Plan 24 remains **0 asserted,
+166 pending fixtures, 0 known gaps**; inherited pending Space impact fixtures remain in their
+original indices. No runtime game implementation, capture fixture, tolerance or other package
+changes in this checkpoint. The four previously accepted defaults remain UNVERIFIED.
+
+**Continuation closeout verification.** `vp check --fix`, stable formatting and final
+`vp check` pass. The uncached `vp run -r --no-cache test` passes all six packages:
+**257 passing files, one pending-only slice, 11,086 passed tests, 120 expected failures,
+191 TODOs**, zero cache hits. Nokia-os: 165 passing files, one pending-only slice,
+10,244 passed tests (937.90 s). Other package totals remain phone-core 450, snake 62,
+phone-3d 49, phone-screen 101 and website 180. `website#build` passes. All successful gates
+run through mise's absolute Node **22.22.3** executable with its directory pinned for children
+by `/private/tmp/plan24-run-node22.cjs`; the workspace run sets `VITEST_MAX_WORKERS=2` and
+`VP_RUN_CONCURRENCY_LIMIT=1`. An initial `env ... node` launch selected host Node 26 and was
+rejected by that guard before tests; it is not counted as verification. Logs:
+`/private/tmp/plan24-resource-{workspace-tests,check,build,focused}.log` and
+`/private/tmp/plan24-resource-canonical-coverage.log`.
+
+Plan 24's 166 fixtures plus the two inherited Space impact leaf/sound fixtures remain pending;
+the six inherited later-games fixtures are unchanged. The generated Space impact module is
+14,005 bytes. Website, phone-core, phone-screen, phone-3d and packages/snake have no diff from
+`7026975`. No fixture or index changes. Resume at Task 4's remaining proofs above, then
+continue Tasks 5-14 in order.
 
 ### Task 5 - Level reconstruction (TDD)
 
