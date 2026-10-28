@@ -18,7 +18,7 @@ lands second rebases onto the other and keeps both plans' tests green.
 supplementary captures") and plans 13, 14, 16, 23 and 28 in full before starting. The planning
 probes in `$REF/captures/scratch-plan24/{space-impact,bantumi,pairs2}/` are evidence for this plan
 only and are never imported. Task 0 writes this plan's captures to `$REF/captures/6.39/plan24/`.
-**Status (2026-10-27):** Task 0 is closed under Lachlan's accepted criterion changes below.
+**Status (2026-10-28):** Task 0 is closed under Lachlan's accepted criterion changes below.
 The eight full-level recordings, exits, ending and LCD-only control proof are validated;
 implementation must replay their pixels under AGENTS.md's fidelity standard. The four accepted
 defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete,
@@ -1537,6 +1537,29 @@ implementation. All Task 4 completion boxes above remain open except its entry g
 planned full-resource commit still waits for those proofs. No fixture is asserted, no known
 gap is added, and the four accepted defaults remain UNVERIFIED. No product decision is needed
 for this checkpoint.
+
+**Checkpoint closeout verification (2026-10-28).** Commits: `e1ccbb7` (shared pipeline)
+and `9b682aa` (Task 4 HUD/ship/timing checkpoint). The final uncached
+`mise exec -- vp run -r --no-cache test` passes all six packages with **257 passing files,
+one pending-only slice, 11,037 passed tests, 120 expected failures and 191 TODOs**. Nokia-os:
+165 passing files, one pending-only slice, 10,195 passed tests, 120 expected failures and
+191 TODOs (931.63 s). Other packages: phone-core 450, snake 62, phone-3d 49, phone-screen 101,
+website 180 passed tests. Zero cache hits. Final `vp check` and `website#build` pass.
+Every gate used mise's Node **22.22.3** by absolute executable, with its directory prepended
+for children via `/private/tmp/plan24-run-node22.cjs`; the workspace suite used
+`VITEST_MAX_WORKERS=2` and `VP_RUN_CONCURRENCY_LIMIT=1`. Logs:
+`/private/tmp/plan24-final-{workspace-tests,check,build}.log`.
+
+The first two pipeline regenerations report up to date and match the baseline SHA-256 for
+all ten existing files. The Task 4 checkpoint adds only the 1,817-byte `space-impact.ts`;
+two subsequent regenerations report up to date, and all ten existing files still match.
+No tracked golden or index changes. Plan 24 has **zero asserted, 166 pending fixtures and
+zero known gaps**. Its inherited Space impact leaf and sound note remain pending in their
+original indices; the six later-games fixtures remain unchanged. No tolerance changes.
+Website, phone-core, phone-screen, phone-3d and packages/snake have no diff from the assigned
+starting head. Both parent decisions are recorded above; the full recordings are retained.
+No new product decision is needed. Resume at the remaining Task 4 inventory/terrain/timing
+proofs, then continue Tasks 5-14 in order.
 
 ### Task 5 - Level reconstruction (TDD)
 
