@@ -1,0 +1,37 @@
+sound-golden 1
+id: sound/game/space-impact/variety-level-0.beam-boss-special
+status: pending:24
+source: captures/6.39/plan24/special-evidence-20261027b/level-0.beam-boss-special
+source-sha256: 2ea6b998aff6aff982f02eb704ba5fbf4e1fafc63c104a9c4e243a6ac4df311f
+state: virgin
+keys: 0:4 300:4 600:4
+note: S9: isolated level-0.beam-boss special arm with its exact keys, paired LCD and audio.
+omitted: 2 (stale frequency)
+
+@events
+# t_ms output   state
+-59    buzzer   466 v=3
+-27    buzzer   494 v=3
+12     buzzer   523 v=3
+50     buzzer   off
+364    buzzer   1396.9 v=5
+376    buzzer   988 v=4
+391    buzzer   1396.9 v=5
+407    buzzer   932 v=4
+422    buzzer   1396.9 v=5
+437    buzzer   880 v=3
+453    buzzer   1568 v=7
+468    buzzer   831 v=4
+484    buzzer   1396.9 v=5
+499    buzzer   784 v=4
+515    buzzer   1396.9 v=5
+537    buzzer   740 v=3
+546    buzzer   1396.9 v=5
+561    buzzer   698 v=3
+577    buzzer   1396.9 v=5
+592    buzzer   659 v=3
+608    buzzer   1396.9 v=5
+623    buzzer   622 v=3
+639    buzzer   1396.9 v=5
+654    buzzer   587 v=3
+670    buzzer   off

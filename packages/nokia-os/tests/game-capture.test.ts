@@ -2,6 +2,7 @@
 // frame predicate, tick rule and still selection, on synthetic recordings.
 import { describe, expect, it } from "vite-plus/test";
 import {
+  gameGolden,
   inputFromKeys,
   numberTicks,
   playBackToBack,
@@ -188,6 +189,17 @@ describe("input with releases (D9)", () => {
     ]);
   });
 
+  it("keeps a zero-duration shot tap when its redraw resolves the press to the next tick", () => {
+    expect(
+      inputFromKeys(
+        ticks,
+        [{ key: "1", pressMs: 4 * P - 40, releaseMs: 4 * P - 40 }],
+        "shot at tick boundary",
+        (edge, before, late) => (edge.release ? before.tick : late.tick),
+      ),
+    ).toEqual([{ tick: 4, key: "1" }]);
+  });
+
   it("orders a release among the presses of its tick", () => {
     expect(
       inputFromKeys(
@@ -227,5 +239,62 @@ describe("selectTickStills", () => {
 
   it("keeps each input tick and the ticks after it", () => {
     expect(selectTickStills(ticks, { afterInput: 2 }, [{ tick: 5, key: "1" }])).toEqual([5, 6, 7]);
+  });
+});
+
+it("cuts a level timeline after its last play tick, before the exit recording", () => {
+  const frames = played([
+    [0, blank()],
+    [66, frame(0)],
+    [239, frame(1)],
+    [332, frame(2, { score: 100 })],
+  ]);
+  const entry = gameGolden(
+    {
+      id: "game/space-impact/level-cut",
+      root: "plan24",
+      dirs: ["level"],
+      ticks: spaceImpactTicks("new-game"),
+      status: "pending:24",
+      note: "synthetic level boundary",
+      toTick: 1,
+    },
+    { recording: () => frames, keys: () => [] },
+  );
+  expect(entry.prefer).toMatchObject({
+    triggerFrame: 1,
+    source: { kind: "composite", parts: [{ dir: "plan24/level", from: 0, to: 2 }] },
+  });
+});
+
+it("keeps the recorded LCD at an input tick that drew no gameplay frame", () => {
+  const frames = played([
+    [0, frame(0)],
+    [P, frame(1)],
+    [2 * P, blank()],
+    [4 * P, frame(2)],
+  ]);
+  const entry = gameGolden(
+    {
+      id: "game/space-impact/silent-input",
+      root: "plan24",
+      dirs: ["silent"],
+      ticks: spaceImpactTicks("running"),
+      status: "pending:24",
+      note: "recorded input during a gap in gameplay redraws",
+      stills: { rule: { afterInput: 0 }, note: "each input tick" },
+    },
+    {
+      recording: () => frames,
+      keys: () => [{ tick: 2, key: "8", pressMs: 2 * P + 2, releaseMs: 2 * P + 20 }],
+    },
+  );
+  expect(
+    selectTickStills(numberTicks(frames, spaceImpactTicks("running")), { every: 2 }, entry.input),
+  ).toEqual([4]);
+  expect(entry.input).toEqual([{ tick: 2, key: "8" }]);
+  expect(entry.prefer.source).toEqual({
+    kind: "frames",
+    frames: [{ name: "t0002", dir: "plan24/silent", frame: 2 }],
   });
 });

@@ -1,0 +1,20 @@
+sound-golden 1
+id: sound/game/space-impact/nokeys-sounds-off
+status: pending:24
+source: captures/6.39/plan24/sound/sounds-off/game
+source-sha256: ef679ff22667d672cd46557dffc550d358bb2937e128635bee9ed7d219448803
+state: virgin
+keys: 0:navi
+note: S9: Warning tones On, Games › Settings › Sounds Off, the no-key game: the vibrator only.
+omitted: none
+
+@events
+# t_ms output   state
+32     tone     900 v=0x9100
+176    tone     off
+8658   vibrator on
+9158   vibrator off
+15512  vibrator on
+16025  vibrator off
+27717  vibrator on
+28196  vibrator off

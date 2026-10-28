@@ -1,0 +1,44 @@
+sound-golden 1
+id: sound/game/space-impact/variety-level-2.wall-boss-special
+status: pending:24
+source: captures/6.39/plan24/special-evidence-20261027b/level-2.wall-boss-special
+source-sha256: 430270a3f7cf4e4e0a39677cf81b3436d11d38e3058f794e35f133ec73326f4f
+state: virgin
+keys: 0:#+600 660:4 960:4 1260:4
+note: S9: isolated level-2.wall-boss special arm with its exact keys, paired LCD and audio.
+omitted: none
+
+@events
+# t_ms output   state
+695    buzzer   4185.4 v=19
+756    buzzer   3951.4 v=19
+772    buzzer   3729.2 v=19
+787    buzzer   3520.2 v=18
+803    buzzer   3322.3 v=17
+818    buzzer   3136.3 v=13
+834    buzzer   2959.9 v=9
+854    buzzer   2793.9 v=7
+865    buzzer   2636.9 v=6
+880    buzzer   off
+997    buzzer   4185.4 v=19
+1058   buzzer   3951.4 v=19
+1074   buzzer   3729.2 v=19
+1089   buzzer   3520.2 v=18
+1105   buzzer   3322.3 v=17
+1120   buzzer   3136.3 v=13
+1136   buzzer   2959.9 v=9
+1151   buzzer   2793.9 v=7
+1167   buzzer   2636.9 v=6
+1182   buzzer   off
+1279   buzzer   4185.4 v=19
+1337   buzzer   3951.4 v=19
+1355   buzzer   3729.2 v=19
+1368   buzzer   3520.2 v=18
+1383   buzzer   3322.3 v=17
+1399   buzzer   3136.3 v=13
+1414   buzzer   2959.9 v=9
+1430   buzzer   2793.9 v=7
+1445   buzzer   2636.9 v=6
+1461   buzzer   off
+1609   vibrator on
+2118   vibrator off

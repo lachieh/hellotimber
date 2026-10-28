@@ -1,0 +1,35 @@
+sound-golden 1
+id: sound/game/space-impact/end
+status: pending:24
+source: captures/6.39/plan24/bot/full/end
+source-sha256: 1037eb9d29b3cad8cbf529b47b1fba3a0c6304164bb0db172b6630282e580e1d
+state: virgin
+note: S5/S9: full game's ending and fireworks tune.
+omitted: 2 (divider rewrite)
+
+@events
+# t_ms output   state
+1      buzzer   587 v=3
+80     buzzer   off
+218    buzzer   587 v=3
+334    buzzer   off
+357    buzzer   587 v=3
+473    buzzer   off
+497    buzzer   880 v=3
+899    buzzer   off
+923    buzzer   587 v=3
+1039   buzzer   off
+1062   buzzer   880 v=3
+1495   buzzer   off
+2856   buzzer   587 v=3
+2990   buzzer   off
+3129   buzzer   587 v=3
+3245   buzzer   off
+3269   buzzer   587 v=3
+3385   buzzer   off
+3408   buzzer   880 v=3
+3812   buzzer   off
+3836   buzzer   587 v=3
+3951   buzzer   off
+3974   buzzer   880 v=3
+4408   buzzer   off

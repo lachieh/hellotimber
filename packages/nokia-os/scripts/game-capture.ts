@@ -260,9 +260,11 @@ export function inputFromKeys(
     // A release in the press's own tick, however late, is a tap: the game sees the key go up
     // long before it would repeat. Only a held key's release is placed (and must be clear).
     const processed = row.releaseMs + KEY_LATENCY_MS.min;
-    if (ticks.filter((t) => t.startMs <= processed).at(-1)!.tick === tick) continue;
+    if (ticks.filter((t) => t.startMs <= processed).at(-1)!.tick <= tick) continue;
     const up = tickOf(ticks, { key, ms: row.releaseMs, release: true }, where, resolve)!;
-    events.push({ tick: up, ms: row.releaseMs, press: { tick: up, key, release: true } });
+    if (up > tick) {
+      events.push({ tick: up, ms: row.releaseMs, press: { tick: up, key, release: true } });
+    }
   }
   return events.sort((a, b) => a.tick - b.tick || a.ms - b.ms).map((e) => e.press);
 }
@@ -308,7 +310,10 @@ export function selectTickStills(
       for (let t = press.tick; t <= press.tick + rule.afterInput; t++) wanted.add(t);
     }
   }
-  const numbered = new Set(real.map((tick) => tick.tick));
+  const inputTicks = new Set(rule.afterInput === undefined ? [] : input.map((press) => press.tick));
+  const numbered = new Set(
+    ticks.filter((tick) => !tick.virtual || inputTicks.has(tick.tick)).map((tick) => tick.tick),
+  );
   return [...wanted].filter((t) => numbered.has(t)).sort((x, y) => x - y);
 }
 
@@ -471,7 +476,9 @@ export function gameGolden(spec: GameGoldenSpec, io: GameCaptureIo): CaptureSetE
         source: {
           kind: "frames",
           frames: wanted.map((t) => {
-            const last = byTick.get(t)!.last!;
+            const tick = byTick.get(t)!;
+            const last =
+              tick.last ?? frames.filter((frame) => frame.startMs <= tick.startMs).at(-1)!;
             return { name: tickName(t), dir: `${root}/${last.dir}`, frame: last.frame };
           }),
         },

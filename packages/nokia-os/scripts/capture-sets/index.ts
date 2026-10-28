@@ -17,3 +17,4 @@ export { composer } from "./27-composer.ts";
 export { snakeII } from "./23-snake-ii.ts";
 export { keyguardAndBacklight } from "./25-keyguard-and-backlight.ts";
 export { simContent } from "./30-sim-content.ts";
+export { spaceImpact } from "./24-space-impact.ts";

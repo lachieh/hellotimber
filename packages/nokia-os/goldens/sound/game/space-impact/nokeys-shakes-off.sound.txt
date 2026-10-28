@@ -1,0 +1,57 @@
+sound-golden 1
+id: sound/game/space-impact/nokeys-shakes-off
+status: pending:24
+source: captures/6.39/plan24/sound/shakes-off/game
+source-sha256: 0365402356e533d9965ce630940653a61e42585a20f0d3500d184edab7cdb98f
+state: virgin
+keys: 0:navi
+note: S9: Warning tones On, Games › Settings › Shakes Off, the no-key game: sounds without the vibrator.
+omitted: none
+
+@events
+# t_ms output   state
+8741   buzzer   880 v=3
+8756   buzzer   4185.4 v=19
+8802   buzzer   932 v=4
+8818   buzzer   4185.4 v=19
+8864   buzzer   988 v=4
+8880   buzzer   4185.4 v=19
+8940   buzzer   off
+15595  buzzer   880 v=3
+15610  buzzer   4185.4 v=19
+15656  buzzer   932 v=4
+15672  buzzer   4185.4 v=19
+15726  buzzer   988 v=4
+15741  buzzer   4185.4 v=19
+15788  buzzer   off
+27759  buzzer   880 v=3
+27768  buzzer   4185.4 v=19
+27815  buzzer   932 v=4
+27830  buzzer   4185.4 v=19
+27877  buzzer   988 v=4
+27892  buzzer   4185.4 v=19
+27939  buzzer   off
+33526  buzzer   587 v=3
+33662  buzzer   off
+33802  buzzer   587 v=3
+33918  buzzer   off
+33941  buzzer   587 v=3
+34057  buzzer   off
+34080  buzzer   880 v=3
+34483  buzzer   off
+34506  buzzer   587 v=3
+34622  buzzer   off
+34646  buzzer   880 v=3
+35079  buzzer   off
+36439  buzzer   587 v=3
+36574  buzzer   off
+36713  buzzer   587 v=3
+36829  buzzer   off
+36854  buzzer   587 v=3
+36984  buzzer   off
+37001  buzzer   880 v=3
+37403  buzzer   off
+37427  buzzer   587 v=3
+37543  buzzer   off
+37566  buzzer   880 v=3
+38000  buzzer   off

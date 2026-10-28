@@ -8,7 +8,7 @@ import {
   type TickRule,
 } from "../scripts/game-capture.ts";
 import { isBoardFrame, PERIOD_LEVELS, snakeTickRule } from "../scripts/game-capture-set.ts";
-import { spaceImpactTicks } from "../scripts/space-impact-capture-set.ts";
+import { spaceImpactStart, spaceImpactTicks } from "../scripts/space-impact-capture-set.ts";
 import { PLACEHOLDER_OWNERS as IMPORTER_PLACEHOLDER_OWNERS } from "../scripts/tree-capture-set.ts";
 import { PLACEHOLDER_OWNERS } from "../src/firmware/stock";
 import {
@@ -212,7 +212,7 @@ describe("game goldens (plans 23, 24)", () => {
 
   /** How the importer numbers the ticks of a game's golden. */
   function tickRule(id: string, frames: readonly PlayedFrame[]): TickRule {
-    if (id.startsWith("game/space-impact/")) return spaceImpactTicks("new-game");
+    if (id.startsWith("game/space-impact/")) return spaceImpactTicks(spaceImpactStart(id));
     return snakeTickRule(framePeriod(frames, isBoardFrame));
   }
 
@@ -233,8 +233,15 @@ describe("game goldens (plans 23, 24)", () => {
       const last = golden.timeline
         ? timelineTicks(golden)
         : Number(golden.images.at(-1)!.name.slice(1));
-      for (const press of golden.input)
+      for (const press of golden.input) {
         expect(press.tick, `${press.tick}:${press.key}`).toBeLessThanOrEqual(last);
+        if (entry.id.startsWith("game/space-impact/") && golden.timeline === undefined) {
+          expect(
+            golden.images.some((image) => Number(image.name.slice(1)) === press.tick),
+            `${entry.id}: input ${press.tick}:${press.key} has no tick still`,
+          ).toBe(true);
+        }
+      }
     });
   }
 
@@ -380,4 +387,28 @@ describe("plan 17 goldens", () => {
     expect(Object.values(PLACEHOLDER_OWNERS)).not.toContain("17");
     expect(elsewhere.map((entry) => entry.id)).toEqual([]);
   });
+});
+
+describe("plan 24 imported evidence", () => {
+  const own = readPlanIndex(GOLDENS, "24");
+  it("retains the eight complete levels, exits, restart and ending pending gameplay replay", () => {
+    for (const name of [
+      ...Array.from({ length: 8 }, (_, n) => [`level-${n}`, `level-${n}.exit`]).flat(),
+      "level-7.restart",
+      "end",
+    ]) {
+      expect(own.find((entry) => entry.id === `game/space-impact/${name}`)).toMatchObject({
+        kind: "timeline",
+        status: "pending:24",
+      });
+    }
+  });
+  for (const entry of own.filter((entry) => entry.kind === "sound")) {
+    it(`${entry.id}: sound evidence parses and matches its index`, () => {
+      const golden = parseSoundGolden(readFileSync(join(GOLDENS, entry.file), "utf8"), entry.file);
+      expect(golden.id).toBe(entry.id);
+      expect(golden.status).toBe(entry.status);
+      expect(golden.rows).toHaveLength(entry.events!);
+    });
+  }
 });

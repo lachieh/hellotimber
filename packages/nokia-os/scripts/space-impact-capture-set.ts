@@ -227,7 +227,7 @@ export const INPUT_STILLS = {
 
 /** Games without keys: tick 0, HUD changes ±1, every 16th tick and the last 12. */
 export const GAME_STILLS: { rule: StillRule; note: string } = {
-  rule: { first: true, event: hudChanged, around: 1, every: 16, last: 12 },
+  rule: { first: true, event: hudChanged, around: 1, every: 16, last: 12, afterInput: 0 },
   note: "tick 0, HUD changes (lives, special, score) ±1, every 16th tick, the last 12",
 };
 
@@ -368,7 +368,6 @@ const SPECS: readonly Spec[] = [
     name: "nokeys",
     dirs: ["nokeys/game"],
     start: "new-game",
-    stills: GAME_STILLS,
     note: "S3: the virgin game with no keys: three deaths, the continue screen, the fireworks (70 beats the virgin 45), TOP SCORE:, the game menu.",
   },
   {
@@ -438,41 +437,115 @@ const SPECS: readonly Spec[] = [
       note: `S4: the no-key game's continue screen at 03 (frame 0), then ${what}.`,
     }),
   ),
+  ...["0759", "1010", "1948", "2359", "0000", "1010-14102026"].flatMap((tag): Spec[] => [
+    {
+      kind: "screen",
+      name: `seed-${tag}.splash`,
+      dir: `seed/${tag}/splash`,
+      note: `S7: ${tag}, the independently reviewed splash; its seed is not gameplay seed proof.`,
+    },
+    {
+      kind: "game",
+      name: `seed-${tag}`,
+      dirs: [`seed/${tag}/game`],
+      start: "new-game",
+      stills: GAME_STILLS,
+      note: `S7: ${tag}, recorded gameplay. Gameplay seed recovery is UNVERIFIED; no splash or RAM seed is injected as proof.`,
+    },
+  ]),
+  ...[1, 2].map(
+    (game): Spec => ({
+      kind: "game",
+      name: `ansi-game${game}`,
+      dirs: [`ansi/game${game}`],
+      start: "new-game",
+      stills: GAME_STILLS,
+      note: `S8: game ${game} in one power cycle, level-1 random rows at ANSI positions ${game === 1 ? "1-6" : "8-13"}. Original ending tails are unrecorded; independent ending controls establish the top-score draw, not those missing tails.`,
+    }),
+  ),
+  ...[1, 2, 3].flatMap((game): Spec[] => [
+    {
+      kind: "game",
+      name: `after-game${game}`,
+      dirs: [`after/game${game}`],
+      start: "new-game",
+      note: `S10: game ${game}, the complete recorded no-key game and ending before its Top score check.`,
+    },
+    {
+      kind: "screen",
+      name: `after-top-score-${game}`,
+      dir: `after/top-score-${game}`,
+      note: `S10: Top score after game ${game}.`,
+    },
+  ]),
+  ...["fireworks", "your-score"].flatMap((phase) =>
+    ["navi", "c", "down"].flatMap((key) =>
+      [1500, 4000].map(
+        (ms): Spec => ({
+          kind: "screen",
+          name: `gameover-${phase}-${key}-${ms}`,
+          dir: `after/${phase}-key-${key}-${ms}`,
+          note: `S10: ${key} ${ms} ms into the ${phase} ending; preserve every recorded transition.`,
+        }),
+      ),
+    ),
+  ),
+  ...[
+    "level-0.beam-enemy",
+    "level-0.beam-boss",
+    "level-2.wall-boss",
+    "level-2.wall-enemy",
+    "level-2.wall-enemy-targeted",
+  ].flatMap((probe) =>
+    ["control", "special"].map(
+      (arm): Spec => ({
+        kind: "game",
+        name: `variety-${probe}-${arm}`,
+        dirs: [`special-evidence-20261027b/${probe}-${arm}`],
+        start: "running",
+        note: `S6 paired unmodified probe ${probe}, ${arm} arm. Same validated stream to the observed LCD anchor, then fixed key edges. Ordinary-enemy wall damage remains the accepted UNVERIFIED four-HP default; these controls do not establish it.`,
+      }),
+    ),
+  ),
+  ...["game1", "game2"].map(
+    (game): Spec => ({
+      kind: "game",
+      name: `ansi-nokeys-${game}`,
+      dirs: [`ansi-nokeys-20261027/${game}`],
+      start: "new-game",
+      note: `S8 continuous ending control ${game}: first game beats 45 with 70 (one ANSI draw); second ties 70 (no ending draw).`,
+    }),
+  ),
+  {
+    kind: "game",
+    name: "ansi-first-after-reboot",
+    dirs: ["ansi-top-score-20261027/first-after-reboot"],
+    start: "new-game",
+    note: "S8: first game after reboot, earned top score 70 retained; tied-score ending consumes no ANSI draw.",
+  },
 ];
 
 /**
  * Level recordings of the look-ahead bot (S5 `full`, S6 varieties): each level from its first
  * frame (level 0 from Select), its restarts after a continue, its exit (from the boss kill's
- * +100), and the end. S5 keeps every second tick and the HUD events (the level reconstruction
- * tracks every object at most 2 px between stills); varieties keep the HUD events.
+ * +100), and the end. The accepted 2026-10-27 scope keeps every full-level frame; varieties
+ * keep the HUD events and input ticks. No unreviewed census can thin the full-level evidence.
  */
-const LEVEL_STILLS: { rule: StillRule; note: string } = {
-  rule: { first: true, event: hudChanged, every: 2, last: 12 },
-  note: "every second tick, HUD changes (kills, pickups, specials, lives), the last 12",
-};
-
 const VARIETY_STILLS: { rule: StillRule; note: string } = {
-  rule: { first: true, event: hudChanged, around: 2, every: 16, last: 12 },
+  rule: { first: true, event: hudChanged, around: 2, every: 16, last: 12, afterInput: 0 },
   note: "tick 0, HUD changes (kills, pickups, specials, lives) ±2, every 16th tick, the last 12",
 };
 
 const BOT_RUNS: readonly {
   readonly run: string;
   readonly levels: readonly number[];
-  readonly stills: { rule: StillRule; note: string };
+  readonly stills?: { rule: StillRule; note: string };
   readonly what: string;
 }[] = [
   {
     run: "full",
     levels: [0, 1, 2, 3, 4, 5, 6, 7],
-    stills: LEVEL_STILLS,
     what: "S5: the look-ahead bot from New game to the end of the game (Warning tones On)",
-  },
-  {
-    run: "specials",
-    levels: [2, 3],
-    stills: VARIETY_STILLS,
-    what: "S6 specials: the bot from S5's level 2 tick where the wall is picked up, using the wall (and the beam, if an orb gives it) on enemies and the bosses",
   },
   {
     run: "deaths-0",
@@ -485,6 +558,12 @@ const BOT_RUNS: readonly {
     levels: [3],
     stills: VARIETY_STILLS,
     what: "S6 deaths: from S5's level 3, no keys through three continue screens (3, 4, then none)",
+  },
+  {
+    run: "deaths-3-key1",
+    levels: [3],
+    stills: VARIETY_STILLS,
+    what: "S6 deaths: level 3's reviewed two key-1 Continues, final refusal and ending",
   },
   {
     run: "cap",
@@ -510,7 +589,7 @@ function botSpecs(io: GameCaptureIo): Spec[] {
           level === 0 && (run === "full" || run === "bonus" || run === "deaths-0")
             ? "new-game"
             : "running",
-        stills,
+        ...(stills === undefined ? {} : { stills }),
         note: `${what}: level ${level} from its first frame${level === 0 ? " (frame 0: the menu, Select)" : ""}.`,
       });
       for (const k of [1, 2, 3]) {
@@ -521,7 +600,7 @@ function botSpecs(io: GameCaptureIo): Spec[] {
           name: `${prefix}-${level}.${tag}`,
           dirs: [`${dir}.${tag}`],
           start: "running",
-          stills,
+          ...(stills === undefined ? {} : { stills }),
           note: `${what}: level ${level} restarted after continue ${k}.`,
         });
       }
@@ -636,6 +715,20 @@ const SOUNDS: readonly { readonly name: string; readonly dir: string; readonly n
     dir: `bot/full/level-${level}`,
     note: `S5 (Warning tones On): level ${level} of the bot's game: shots, kills, deaths, bonuses and the boss.`,
   })),
+  ...[
+    "level-0.beam-enemy",
+    "level-0.beam-boss",
+    "level-2.wall-boss",
+    "level-2.wall-enemy",
+    "level-2.wall-enemy-targeted",
+  ].flatMap((probe) =>
+    ["control", "special"].map((arm) => ({
+      name: `variety-${probe}-${arm}`,
+      dir: `special-evidence-20261027b/${probe}-${arm}`,
+      note: `S9: isolated ${probe} ${arm} arm with its exact keys, paired LCD and audio.`,
+    })),
+  ),
+  { name: "end", dir: "bot/full/end", note: "S5/S9: full game's ending and fireworks tune." },
 ];
 
 /** Space impact's sound goldens (plan 16 format), from recordings with their keys. */

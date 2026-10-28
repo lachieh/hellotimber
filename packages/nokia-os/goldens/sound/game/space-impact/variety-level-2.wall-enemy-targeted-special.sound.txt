@@ -1,0 +1,46 @@
+sound-golden 1
+id: sound/game/space-impact/variety-level-2.wall-enemy-targeted-special
+status: pending:24
+source: captures/6.39/plan24/special-evidence-20261027b/level-2.wall-enemy-targeted-special
+source-sha256: 719d159a024c1e52f66cb58b29b946fe545adf84c421808be90f710733dfa0a9
+state: virgin
+keys: 0:4 300:4 600:4
+note: S9: isolated level-2.wall-enemy-targeted special arm with its exact keys, paired LCD and audio.
+omitted: none
+
+@events
+# t_ms output   state
+-59    buzzer   466 v=3
+-41    buzzer   494 v=3
+-2     buzzer   523 v=3
+37     buzzer   off
+53     buzzer   4185.4 v=19
+114    buzzer   3951.4 v=19
+130    buzzer   3729.2 v=19
+145    buzzer   3520.2 v=18
+161    buzzer   3322.3 v=17
+176    buzzer   3136.3 v=13
+192    buzzer   2959.9 v=9
+207    buzzer   2793.9 v=7
+223    buzzer   2636.9 v=6
+238    buzzer   off
+326    buzzer   4185.4 v=19
+385    buzzer   3951.4 v=19
+401    buzzer   3729.2 v=19
+416    buzzer   3520.2 v=18
+432    buzzer   3322.3 v=17
+447    buzzer   3136.3 v=13
+463    buzzer   2959.9 v=9
+478    buzzer   2793.9 v=7
+494    buzzer   2636.9 v=6
+509    buzzer   off
+614    buzzer   4185.4 v=19
+672    buzzer   3951.4 v=19
+688    buzzer   3729.2 v=19
+703    buzzer   3520.2 v=18
+718    buzzer   3322.3 v=17
+734    buzzer   3136.3 v=13
+749    buzzer   2959.9 v=9
+765    buzzer   2793.9 v=7
+784    buzzer   2636.9 v=6
+796    buzzer   off

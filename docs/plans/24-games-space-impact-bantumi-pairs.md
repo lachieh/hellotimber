@@ -21,8 +21,10 @@ only and are never imported. Task 0 writes this plan's captures to `$REF/capture
 **Status (2026-10-27):** Task 0 is closed under Lachlan's accepted criterion changes below.
 The eight full-level recordings, exits, ending and LCD-only control proof are validated;
 implementation must replay their pixels under AGENTS.md's fidelity standard. The four accepted
-defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete, including the inherited Games II seams. Task 3 is next;
-Tasks 4-14 remain unstarted. No plan 24 goldens have yet been imported or asserted.
+defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete,
+including the inherited Games II seams. Task 3 is complete: 166 fixtures are imported and
+remain pending gameplay replay. Task 4 is stopped at the resource registration discrepancy
+recorded below; Tasks 4-14 remain unstarted.
 
 ## Goal
 
@@ -1364,28 +1366,95 @@ verifies the Space impact consumers against decoded goldens.
 
 **Files:** `scripts/golden-format.ts`, `scripts/game-capture.ts` (new),
 `scripts/game-capture-set.ts`, `scripts/capture-sets/24-space-impact.ts` (new),
-`scripts/capture-sets/index.ts` (one line), `scripts/tree-capture-set.ts` (one `ASSERTED_EARLY`
-entry), `tests/golden-format.test.ts`,
+`scripts/capture-sets/index.ts` (one line), `tests/golden-format.test.ts`,
 `tests/game-capture.test.ts` (new), `tests/goldens-integrity.test.ts`, `goldens/game/space-impact/**`,
 `goldens/sound/game/space-impact/**`, `goldens/index/24.json`.
 
-- [ ] TDD `input` releases (order, a release only after its press, round trip); existing goldens
+- [x] TDD `input` releases (order, a release only after its press, round trip); existing goldens
       parse unchanged.
-- [ ] Split the generic machinery into `game-capture.ts` (frame predicate, period, selection rule);
+- [x] Split the generic machinery into `game-capture.ts` (frame predicate, period, selection rule);
       Snake II's goldens re-import byte-identical.
-- [ ] TDD Space impact's frame predicate (HUD rows and the play field), tick numbering at the
-      12-unit period, the level cut at the exit frame, and the level-still selection (spawn,
-      death, fire, picture change, every 16th, last 12) on synthetic recordings.
-- [ ] The capture set (table above), its `notImported` reasons (S2's slot probes after Task 2
+- [x] TDD Space impact's frame predicate (HUD rows and the play field), tick numbering at the
+      12-unit period, the level cut at the exit frame, and probe still selection (HUD changes,
+      input, every 16th, last 12) on synthetic recordings. Full levels retain every native frame
+      rather than depending on the incomplete object census for event selection.
+- [x] The capture set (table above), its `notImported` reasons (S2's slot probes after Task 2
       encodes them, `scratch-plan24/`, peek logs), and the sound goldens through plan 16's
-      sound capture machinery. `tree/08-games/8-2-1.leaf` becomes asserted through plan 23's
-      `ASSERTED_EARLY` table (`scripts/tree-capture-set.ts`, one entry; its index entry stays in
-      `goldens/index/14.json`), and the acceptance slice lists it as a todo until Task 13.
-- [ ] Integrity: `game/space-impact/*` timelines have a numeric `trigger-frame`; tick stills are
+      sound capture machinery. Per the 2026-10-27 assignment, all imports and the existing
+      `tree/08-games/8-2-1.leaf` stay pending until their scenarios pass (Deviation below).
+      Add the plan-24 acceptance slice now; its pending fixtures are TODOs.
+- [x] Integrity: `game/space-impact/*` timelines have a numeric `trigger-frame`; tick stills are
       ascending `t<tick>`; every `input` tick exists in its golden.
-- [ ] Before importing anything, require Task 0's canonical-level gate and control proof to pass.
+- [x] Before importing anything, require Task 0's canonical-level gate and control proof to pass.
       Run the importer twice; no diff. Record counts and bytes (D3 budget guide).
-- [ ] Commit: `feat(nokia-os): import Space impact gameplay captures as goldens`.
+- [x] Commit: `feat(nokia-os): import Space impact gameplay captures as goldens`.
+
+**Implementation and import (2026-10-27).** Preserved and finished the inherited Task 3 work.
+The release format and generic capture split already existed in the branch; focused tests cover
+round trips, releases, Space impact's HUD/polarities, tick numbering, selection and level cuts.
+Two additional regressions failed before their fixes: a zero-duration shot at a tick boundary
+could emit its release before its resolved press, and input on a silent tick had no still.
+Such a tap now has no held release; an explicitly selected silent input tick uses the actual
+recorded LCD displayed at that time. Snake II's existing selection policy is preserved.
+
+`analysis/coverage.py --check` passes all 25 accepted criteria before the final import.
+The registered capture set rejects absent, failed or stale proof/audit evidence, missing level
+criteria and unaccepted scope changes. It imports **166 fixtures: 88 timelines, 56 tick-still
+sets and 22 sounds**, with **22,065 images, 23,064 LCD rows/stills and 11,197 sound events**.
+Fixture bytes total **91,463,703**; `goldens/index/24.json` adds **34,807** bytes.
+The eight full levels, eight exits, level-7 restart and final ending retain their native frames.
+The final repeat import changes no SHA-256 among all 3,319 fixture/index files. All 3,152
+pre-existing fixture/index files, including every Snake II golden, remain byte-identical.
+No REF file or generated resource is committed.
+
+**Deviation (pending assertions).** The 2026-10-27 implementation assignment requires every
+fixture to stay `pending:24` until its scenario passes. This supersedes Task 3's older
+`ASSERTED_EARLY` instruction and the capture table's default asserted status. The existing
+`tree/08-games/8-2-1.leaf` and `sound/note/8-2-1` stay pending in their original indices;
+no `ASSERTED_EARLY` registration or acceptance gap disguises the missing session. The plan-24
+acceptance slice contains 166 TODOs, no scenarios and no known gaps. Assertion waits for the
+ordered gameplay, painter, session and sound tasks. The six Bantumi/Pairs II fixtures owned by
+later Games plans also remain pending, unchanged.
+
+**Deviation (size and selection).** Full-level lossless timelines replace the earlier proposed
+sparse object-event selection. The accepted recording scope verifies every captured spawn,
+kill and shot, while the exploratory census cannot yet identify every event to thin safely.
+The 6 MB figure is a budget guide, not a fidelity allowance. Periodic thinning of the remaining
+stills cannot bring the complete recordings under it. The actual 91.5 MB is recorded here;
+no native full-level evidence is removed to meet the guide. Other probes keep HUD/input stills
+or their full transition recordings. No fidelity tolerance or known-gap table changes.
+
+**Focused verification:** 8 passing files, 3,391 passed tests, plus the plan-24 slice's
+166 expected TODOs. Includes the capture/resource registry and acceptance-contract guards.
+`vp check --fix`, final `vp check` and `website#build` pass. The complete uncached workspace
+suite passes: **256 passing files, one pending-only slice, 11,018 passed tests,
+120 expected failures and 191 TODOs** (25 existing, 166 plan 24). Nokia-os contributes
+164 passing files, one pending-only slice, 10,176 passed tests, 120 expected failures and
+191 TODOs, in 931.78 s. The other packages contribute phone-core 450, snake 62, phone-3d 49,
+phone-screen 101 and website 180 passing tests. Logs: `/private/tmp/plan24-task3-{validation,check-fix,build}.log` and
+`/private/tmp/plan24-task3-tests-node22.log`.
+
+**Verification environment correction.** An initial workspace run used Homebrew Node 26:
+the host PATH hook overrode the `node` resolved through `mise exec -- env ...`. That run was
+stopped and is not accepted verification. The replacement invokes mise's installed Node 22
+by absolute path, then prepends its directory for child processes in the temporary launcher.
+The uncached website tests pass (24 files, 180 tests) with this correction; no website file or
+host toolchain configuration changes.
+
+**Task 4 discrepancy — stop before implementation (2026-10-27).** The landed plan-29
+`PlanCaptureSet.resources` contract (`scripts/resource-declarations.ts`, `ResourceDeclarations`)
+registers text, crops, menu icons and widget timelines. It has no extractor/output registration
+for a dedicated generated module or structured terrain/timing data. `ExtractedResources`,
+`extractResources` and `generatedFiles` in `scripts/extract-resources.ts` explicitly enumerate
+all outputs; Snake II's `snake.ts` is hard-coded there. A plan-owned crop/timeline declaration
+would only enter shared `widgets.ts`, not Task 4's required `space-impact.ts` (or Task 5's
+`space-impact-levels.ts`). Task 4 requires an owned one-line registration through the shared
+pipeline and explicitly forbids redesigning it here. AGENTS.md requires stopping on plan/API
+drift. No Task 4 file, resource, dependency or speculative workaround is added.
+
+**Decision needed:** provide the shared extension that registers plan-owned generated outputs,
+or approve a revised Task 4/5 integration contract. This is an implementation-plan decision;
+no new gameplay/product default is needed at Task 3. Keep the four accepted defaults UNVERIFIED.
 
 ### Task 4 - Space impact resources from goldens (TDD)
 

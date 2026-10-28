@@ -1,0 +1,15 @@
+sound-golden 1
+id: sound/game/space-impact/variety-level-0.beam-enemy-control
+status: pending:24
+source: captures/6.39/plan24/special-evidence-20261027b/level-0.beam-enemy-control
+source-sha256: f15e3a35def35abab777f8b09f89e7256ecf1ed63db4a85d2cb82af427488a6a
+state: virgin
+note: S9: isolated level-0.beam-enemy control arm with its exact keys, paired LCD and audio.
+omitted: none
+
+@events
+# t_ms output   state
+1      buzzer   494 v=3
+36     buzzer   523 v=3
+60     buzzer   2636.9 v=6
+67     buzzer   off

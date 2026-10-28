@@ -1,0 +1,1573 @@
+sound-golden 1
+id: sound/game/space-impact/level-4
+status: pending:24
+source: captures/6.39/plan24/bot/full/level-4
+source-sha256: bcc36c01d8267d1d289a906aaf4f25e50849011c560a8a3ab46a193869124b9e
+state: virgin
+keys: 0:8 21:1 62:8 144:8 236:8 259:1 310:8 444:8 531:8 554:1 603:8 733:8 825:8 848:1 899:8 1027:8 1121:8 1142:1 1207:8 1337:8 1445:8 1466:1 1519:0 1647:8 1741:8 1762:1 1813:8 1947:8 2038:8 2061:1 2118:8 2252:8 2349:8 2370:1 2443:8 2577:8 2670:8 2670:1 2763:8 2856:8 2949:1 3040:8 3138:8 3230:1 3324:8 3418:8 3510:8 3531:1 3588:8 3726:8 3820:8 3841:1 3898:8 4125:1 4404:1 4684:1 4883:1 5171:1 5463:1 5543:8 5631:8 5737:8 5758:1 5813:8 5947:8 6040:8 6040:1 6133:8 6226:8 6319:8 6319:1 6598:1 6792:1 7078:1 7362:1 7466:0 7548:0 7640:1 7926:1 8220:1 8490:1 8766:1 9050:1 9332:1 9614:1 9888:1 10178:1 10268:* 10362:* 10466:* 10489:1 10540:8 10693:8 11243:8 11264:1 11669:8 11690:1 11761:8 11857:8 11961:8 11984:1 12037:8 12167:8 12259:8 12280:1 12331:8 12465:8 12552:8 12573:1 12624:8 12754:8 12848:8 12869:1 12928:8 13056:8 13148:8 13171:1 13244:8 13334:8 13426:8 13447:1 13743:1 13831:0 13925:0 14015:0 14036:1 14089:0 14223:8 14308:8 14329:1 14380:8 14510:8 14602:8 14623:1 14676:8 14804:8 14898:8 14921:1 14986:8 15116:8 15222:1 15494:1 15588:8 15682:8 15774:1 16052:1 16340:1 16618:1 16728:0 16806:0 16898:0 16919:1 16986:0 17222:8 17243:1 17426:8 17518:1 17798:1 17892:8 18000:8 18092:8 18115:1 18172:8 18304:8 18397:8 18397:1 18490:8 18583:8 18676:1 18955:1 19150:1 19440:1 19732:1 20004:1 20284:1 20566:1 20854:0 20875:1 20930:0 21066:0 21158:0 21179:1 21254:0 21390:0 21498:8 21519:1 21784:8 21807:1 21866:8 22000:8 22097:8 22118:1 22175:8 22309:0 22402:0 22402:1 22495:0 22588:0 22681:0 22681:1 22774:0 22867:0 22961:0 22961:1 22990:0 23068:0 23160:8 23181:1 23254:8+318 23859:0 23880:1 24107:8 24128:1 24319:8 24411:8 24432:1 24507:8 24641:8 24734:8 24734:1 24831:0 24925:8 25017:8 25040:1 25097:8 25231:8 25324:8 25345:1 25398:8 25528:8 25622:0 25643:1 25702:0 25834:0 25931:8 25952:1 26027:8 26209:8 26230:1 26301:8 26391:8 26501:8 26522:1 26575:8 26705:8 26795:8 26816:1 26863:8 26997:8 27090:8 27090:1 27183:8 27276:8 27369:0 27369:1 27462:0 27491:0 27571:0 27592:1 27651:0 27777:0 27873:0 27894:1 27953:0 28081:8 28175:8 28196:1 28267:8 28359:8 28453:8 28474:1 28547:8 28637:8 28743:0 28764:1 28817:0 28949:0 29041:0 29064:1 29121:0 29255:8 29348:1 29534:0 29627:1 29829:1 30105:1 30387:1 30663:1 30959:1 31255:1 31521:1 31805:1 32083:1 32368:1 32650:1 32924:1 33214:1 33508:1 33780:1 34060:1 34334:1 34620:1 34900:1 35006:0 35088:0 35178:1 35466:1 35756:1 36028:8 36049:1 36110:8 36244:8 36339:8 36362:1 36419:8 36553:0 36646:0 36646:1 36739:0 36834:0 36926:0 36947:1 37266:1 37532:1 37812:1 38008:0 38090:0 38111:1 38170:0 38400:1 38676:1 38784:8 38878:8 38972:8 38993:1 39064:8 39158:8 39264:8 39285:1 39338:8 39468:8 39560:0 39583:1 39640:0 39774:0 39867:0 39867:1 39960:0 40053:0 40146:0 40146:1 40239:0 40262:0 40338:1 40626:1 40904:1 41182:1 41290:0 41382:0 41477:1 41659:8 41771:8 41792:1 41843:0 41939:0 42039:1 42315:1 42595:1 42883:1 43067:8 43161:8 43182:1 43383:8 43479:1 43777:8 43798:1 44041:1 44131:8 44223:8 44317:8 44338:1 44393:8 44527:8 44620:8 44620:1 44713:8 44806:8 44899:1 45097:1 45385:1 45663:1 45773:8 45943:1 46227:1 46519:1 46795:1 47073:1 47351:1 47545:0 47633:0 47656:1 47707:0 47835:0 47931:0 47952:1 48023:0 48155:0 48261:1 48341:0 48541:1 48805:1 49085:1 49365:1 49643:1 49735:0 49923:1 50205:1 50492:1 50786:1 50866:0 50960:0 51052:0 51075:1 51136:0 51270:0 51291:1 51369:8 51457:8 51557:8 51578:1 51639:8 51773:8 51794:0 51817:1 51868:0 52054:1 52152:0 52238:0 52330:0 52351:1 52414:0 52548:0 52641:0 52641:1 52734:0 52827:0 52920:0 52920:1 53013:0 53106:8 53203:0 53224:1 53291:0 53419:0 53527:1 53623:8 53709:8 53803:8 53824:1 53879:8 54013:8 54102:8 54123:1 54174:8 54304:8 54394:8 54415:1 54468:8 54598:8 54690:1 54970:1 55246:8 55267:1 55342:8 55538:8 55559:1 55614:8 55742:8 55836:1 56114:1 56402:1 56496:8 56584:8 56680:8 56701:1 56750:8 56977:1 57256:1 57455:1 57737:1 58033:1 58307:1 58583:1 58859:1 59147:1 59425:1 59705:0 59728:1 59791:0 59922:0 60028:1 60116:0 60310:1 60588:0 60611:1 60881:1 61165:1 61441:1 61721:1 62001:1 62293:1 62565:1 62845:1 63123:1 63411:1 63689:1 63967:8 63988:1 64185:8 64291:8 64314:1 64365:8 64587:1 64865:1 65161:1 65255:0 65349:8 65441:8 65464:1 65539:8 65765:1 66057:1 66323:1 66601:1 66881:1 67167:1 67447:1 67725:1 68007:1 68303:1 68571:1 68854:1 69130:1 69420:1 69696:1 69976:1 70262:1 70558:1 70826:1 71108:1 71384:1 71672:1 71858:0 71950:0 71971:1 72022:0 72150:0 72246:0 72267:1 72522:1 72710:8 72814:1 73088:1 73276:8 73368:1 73648:1 73924:* 73945:1 73998:* 74130:4 74226:1 74330:8 74404:8 74500:1 74780:1 74966:0 75070:0 75091:1 75144:0 75368:1 75646:1 75926:1 76210:1 76480:1 76774:1 77066:1 77238:8 77340:8 77363:1 77422:8 77649:1 77936:1 78032:8 78216:1 78486:1 78780:0 78801:1 78874:0 78966:0 79074:0 79095:1 79246:0 79346:0 79369:1 79560:0 79655:8 79678:1 79871:8 79963:8 79986:1 80059:8 80281:0 80304:1 80375:0 80469:0 80577:0 80598:1 80749:8 80851:8 80872:1 81063:8 81158:8 81181:1 81238:8 81372:8 81465:8 81465:1 81655:0 81745:0 81766:1 81843:0 82087:8 82110:1 82165:8 82351:8 82374:1 82431:8 82565:8 82660:0 82683:1 82878:0 82972:0 82993:1 83066:0 83198:8 83289:8 83310:1 83391:8 83481:8 83589:8 83612:1 83759:0 83855:0 83878:1 84067:0 84160:1 84448:1 84726:8 84749:1 85068:0 85091:1 85352:1 85612:0 85633:1 85692:0 85921:8 85944:1 86001:8 86231:1 86339:0 86417:0 86511:0 86532:1 86741:8 86851:1 87135:8 87158:1 87352:8 87449:1 87551:0 87737:1 87919:0 88015:0 88038:1 88105:8 88297:8 88320:1 88611:0 88634:1 88823:0 88920:0 88941:1 88998:0 89132:0 89225:0 89225:1 89506:8 89527:1 89602:8 89844:1 89926:0 90020:0 90114:1 90296:0 90390:8 90413:1 90701:1 90803:8 90893:8 90985:0 91006:1 91215:0 91308:0 91308:1 91491:1 91685:0 91777:1 91873:8 91965:8 92047:8 92070:1 92129:8 92261:0 92354:0 92354:1 92447:0 92540:0 92633:0 92633:1 92726:0 92819:0 92912:1 93005:0 93098:0 93119:0 93142:1 93432:0 93455:1 93512:0 93646:0 93739:0 93739:1 93832:0 93927:0 94013:1 94117:0 94205:0 94297:1 94591:1 94867:1 94957:8 95051:8 95135:8 95158:1 95207:8 95341:8 95430:8 95451:1 95502:8 95722:1 96465:1 96746:0 96769:1 96840:0 96972:0 97056:1 97156:0 97254:0 97358:1 97622:1 97900:1 98174:1 98466:1 98744:1 99024:1 99304:1 99604:1 99876:1 100154:1 100426:1 100720:1 100814:8 100906:8 101000:8 101021:1 101094:8 101325:8 101346:1 101511:0 101619:0 101640:1 101689:8 101791:0 101883:8 101904:1 102188:1 102469:1 102749:1 102927:8 103027:8 103048:1 103121:0 103251:4 103365:0 103388:1 103523:8 103631:0 103652:1 103845:8 103940:8 103963:1 104020:8
+note: S5 (Warning tones On): level 4 of the bot's game: shots, kills, deaths, bonuses and the boss.
+omitted: 19 (divider rewrite), 1 (stale frequency)
+
+@events
+# t_ms output   state
+58     buzzer   440 v=3
+92     buzzer   466 v=3
+130    buzzer   494 v=3
+183    buzzer   523 v=3
+215    buzzer   off
+274    buzzer   440 v=3
+308    buzzer   466 v=3
+347    buzzer   494 v=3
+386    buzzer   523 v=3
+433    buzzer   off
+568    buzzer   440 v=3
+603    buzzer   466 v=3
+641    buzzer   494 v=3
+684    buzzer   523 v=3
+719    buzzer   off
+862    buzzer   440 v=3
+897    buzzer   466 v=3
+936    buzzer   494 v=3
+974    buzzer   523 v=3
+1013   buzzer   off
+1157   buzzer   440 v=3
+1191   buzzer   466 v=3
+1230   buzzer   494 v=3
+1269   buzzer   523 v=3
+1307   buzzer   off
+1482   buzzer   440 v=3
+1516   buzzer   466 v=3
+1555   buzzer   494 v=3
+1594   buzzer   523 v=3
+1633   buzzer   off
+1776   buzzer   440 v=3
+1811   buzzer   466 v=3
+1849   buzzer   494 v=3
+1888   buzzer   523 v=3
+1936   buzzer   off
+2078   buzzer   440 v=3
+2113   buzzer   466 v=3
+2151   buzzer   494 v=3
+2190   buzzer   523 v=3
+2229   buzzer   off
+2388   buzzer   440 v=3
+2436   buzzer   466 v=3
+2469   buzzer   494 v=3
+2508   buzzer   523 v=3
+2546   buzzer   off
+3247   buzzer   440 v=3
+3282   buzzer   466 v=3
+3321   buzzer   494 v=3
+3359   buzzer   523 v=3
+3398   buzzer   off
+3549   buzzer   440 v=3
+3584   buzzer   466 v=3
+3623   buzzer   494 v=3
+3661   buzzer   523 v=3
+3700   buzzer   off
+3859   buzzer   440 v=3
+3894   buzzer   466 v=3
+3938   buzzer   494 v=3
+3971   buzzer   523 v=3
+4010   buzzer   off
+4898   buzzer   440 v=3
+4941   buzzer   466 v=3
+4979   buzzer   494 v=3
+5018   buzzer   523 v=3
+5056   buzzer   off
+5479   buzzer   440 v=3
+5513   buzzer   466 v=3
+5552   buzzer   494 v=3
+5591   buzzer   523 v=3
+5629   buzzer   off
+5773   buzzer   440 v=3
+5807   buzzer   466 v=3
+5846   buzzer   494 v=3
+5885   buzzer   523 v=3
+5924   buzzer   off
+6810   buzzer   440 v=3
+6845   buzzer   466 v=3
+6884   buzzer   494 v=3
+6923   buzzer   523 v=3
+6961   buzzer   off
+7097   buzzer   440 v=3
+7132   buzzer   466 v=3
+7170   buzzer   494 v=3
+7209   buzzer   523 v=3
+7248   buzzer   off
+7376   buzzer   440 v=3
+7410   buzzer   466 v=3
+7449   buzzer   494 v=3
+7488   buzzer   523 v=3
+7526   buzzer   off
+7655   buzzer   440 v=3
+7695   buzzer   466 v=3
+7728   buzzer   494 v=3
+7767   buzzer   523 v=3
+7805   buzzer   off
+7949   buzzer   440 v=3
+7983   buzzer   466 v=3
+8022   buzzer   494 v=3
+8061   buzzer   523 v=3
+8100   buzzer   off
+8235   buzzer   440 v=3
+8270   buzzer   466 v=3
+8309   buzzer   494 v=3
+8347   buzzer   523 v=3
+8386   buzzer   off
+8506   buzzer   440 v=3
+8541   buzzer   466 v=3
+8580   buzzer   494 v=3
+8618   buzzer   523 v=3
+8657   buzzer   off
+8785   buzzer   440 v=3
+8820   buzzer   466 v=3
+8858   buzzer   494 v=3
+8897   buzzer   523 v=3
+8946   buzzer   off
+9064   buzzer   440 v=3
+9099   buzzer   466 v=3
+9137   buzzer   494 v=3
+9176   buzzer   523 v=3
+9215   buzzer   off
+9350   buzzer   440 v=3
+9385   buzzer   466 v=3
+9424   buzzer   494 v=3
+9462   buzzer   523 v=3
+9501   buzzer   off
+9629   buzzer   440 v=3
+9664   buzzer   466 v=3
+9703   buzzer   494 v=3
+9741   buzzer   523 v=3
+9780   buzzer   off
+9908   buzzer   440 v=3
+9948   buzzer   466 v=3
+9981   buzzer   494 v=3
+10020  buzzer   523 v=3
+10059  buzzer   off
+10504  buzzer   440 v=3
+10539  buzzer   466 v=3
+10578  buzzer   494 v=3
+10616  buzzer   523 v=3
+10655  buzzer   off
+10726  vibrator on
+10818  buzzer   880 v=3
+10833  buzzer   4185.4 v=19
+10880  buzzer   932 v=4
+10895  buzzer   4185.4 v=19
+10949  buzzer   988 v=4
+10965  buzzer   4185.4 v=19
+11011  buzzer   off
+11241  vibrator off
+11306  buzzer   440 v=3
+11344  buzzer   466 v=3
+11383  buzzer   494 v=3
+11422  buzzer   523 v=3
+11460  buzzer   off
+11999  buzzer   440 v=3
+12033  buzzer   466 v=3
+12072  buzzer   494 v=3
+12111  buzzer   523 v=3
+12149  buzzer   off
+12293  buzzer   440 v=3
+12328  buzzer   466 v=3
+12366  buzzer   494 v=3
+12405  buzzer   523 v=3
+12451  buzzer   off
+12587  buzzer   440 v=3
+12622  buzzer   466 v=3
+12661  buzzer   494 v=3
+12702  buzzer   523 v=3
+12738  buzzer   off
+12889  buzzer   440 v=3
+12924  buzzer   466 v=3
+12963  buzzer   494 v=3
+13001  buzzer   523 v=3
+13040  buzzer   off
+13471  buzzer   440 v=3
+13506  buzzer   466 v=3
+13544  buzzer   494 v=3
+13583  buzzer   523 v=3
+13622  buzzer   off
+13758  buzzer   440 v=3
+13792  buzzer   466 v=3
+13831  buzzer   494 v=3
+13870  buzzer   523 v=3
+13908  buzzer   off
+14052  buzzer   440 v=3
+14086  buzzer   466 v=3
+14125  buzzer   494 v=3
+14164  buzzer   523 v=3
+14205  buzzer   off
+14346  buzzer   440 v=3
+14381  buzzer   466 v=3
+14419  buzzer   494 v=3
+14458  buzzer   523 v=3
+14497  buzzer   off
+14640  buzzer   440 v=3
+14675  buzzer   466 v=3
+14714  buzzer   494 v=3
+14752  buzzer   523 v=3
+14791  buzzer   off
+14935  buzzer   440 v=3
+14969  buzzer   466 v=3
+15008  buzzer   494 v=3
+15047  buzzer   523 v=3
+15085  buzzer   off
+15237  buzzer   440 v=3
+15271  buzzer   466 v=3
+15310  buzzer   494 v=3
+15349  buzzer   523 v=3
+15387  buzzer   off
+15508  buzzer   440 v=3
+15542  buzzer   466 v=3
+15581  buzzer   494 v=3
+15620  buzzer   523 v=3
+15658  buzzer   off
+15794  buzzer   440 v=3
+15829  buzzer   466 v=3
+15868  buzzer   494 v=3
+15906  buzzer   523 v=3
+15957  buzzer   off
+16065  buzzer   440 v=3
+16100  buzzer   466 v=3
+16139  buzzer   494 v=3
+16177  buzzer   523 v=3
+16216  buzzer   off
+16360  buzzer   440 v=3
+16394  buzzer   466 v=3
+16433  buzzer   494 v=3
+16472  buzzer   523 v=3
+16510  buzzer   off
+16638  buzzer   440 v=3
+16673  buzzer   466 v=3
+16712  buzzer   494 v=3
+16750  buzzer   523 v=3
+16789  buzzer   off
+16932  buzzer   440 v=3
+16967  buzzer   466 v=3
+17006  buzzer   494 v=3
+17045  buzzer   523 v=3
+17083  buzzer   off
+17258  buzzer   440 v=3
+17292  buzzer   466 v=3
+17331  buzzer   494 v=3
+17370  buzzer   523 v=3
+17408  buzzer   off
+17536  buzzer   440 v=3
+17571  buzzer   466 v=3
+17610  buzzer   494 v=3
+17649  buzzer   523 v=3
+17687  buzzer   off
+17815  buzzer   440 v=3
+17850  buzzer   466 v=3
+17889  buzzer   494 v=3
+17927  buzzer   523 v=3
+17966  buzzer   off
+18133  buzzer   440 v=3
+18167  buzzer   466 v=3
+18210  buzzer   494 v=3
+18245  buzzer   523 v=3
+18283  buzzer   off
+19171  buzzer   440 v=3
+19212  buzzer   466 v=3
+19244  buzzer   494 v=3
+19282  buzzer   523 v=3
+19321  buzzer   off
+19751  buzzer   440 v=3
+19786  buzzer   466 v=3
+19825  buzzer   494 v=3
+19863  buzzer   523 v=3
+19902  buzzer   off
+20023  buzzer   440 v=3
+20057  buzzer   466 v=3
+20096  buzzer   494 v=3
+20134  buzzer   523 v=3
+20173  buzzer   off
+20301  buzzer   440 v=3
+20336  buzzer   466 v=3
+20374  buzzer   494 v=3
+20413  buzzer   523 v=3
+20464  buzzer   off
+20580  buzzer   440 v=3
+20614  buzzer   466 v=3
+20653  buzzer   494 v=3
+20692  buzzer   523 v=3
+20730  buzzer   off
+20889  buzzer   440 v=3
+20924  buzzer   466 v=3
+20964  buzzer   494 v=3
+21002  buzzer   523 v=3
+21040  buzzer   off
+21199  buzzer   440 v=3
+21234  buzzer   466 v=3
+21273  buzzer   494 v=3
+21311  buzzer   523 v=3
+21350  buzzer   off
+21517  buzzer   2636.9 v=6
+21520  buzzer   off
+21599  buzzer   440 v=3
+21637  buzzer   466 v=3
+21675  buzzer   494 v=3
+21716  buzzer   523 v=3
+21753  buzzer   off
+21826  buzzer   440 v=3
+21861  buzzer   466 v=3
+21900  buzzer   494 v=3
+21939  buzzer   523 v=3
+21977  buzzer   off
+22136  buzzer   440 v=3
+22171  buzzer   466 v=3
+22216  buzzer   494 v=3
+22248  buzzer   523 v=3
+22287  buzzer   off
+23198  buzzer   440 v=3
+23233  buzzer   466 v=3
+23271  buzzer   494 v=3
+23310  buzzer   523 v=3
+23349  buzzer   off
+23444  vibrator on
+23496  buzzer   880 v=3
+23512  buzzer   4185.4 v=19
+23558  buzzer   932 v=4
+23573  buzzer   4185.4 v=19
+23620  buzzer   988 v=4
+23635  buzzer   4185.4 v=19
+23682  buzzer   off
+23925  buzzer   440 v=3
+23929  vibrator off
+23970  buzzer   466 v=3
+24007  buzzer   494 v=3
+24046  buzzer   523 v=3
+24084  buzzer   off
+24143  buzzer   440 v=3
+24178  buzzer   466 v=3
+24220  buzzer   494 v=3
+24255  buzzer   523 v=3
+24294  buzzer   off
+24453  buzzer   440 v=3
+24487  buzzer   466 v=3
+24526  buzzer   494 v=3
+24565  buzzer   523 v=3
+24603  buzzer   off
+25057  buzzer   440 v=3
+25091  buzzer   466 v=3
+25130  buzzer   494 v=3
+25169  buzzer   523 v=3
+25221  buzzer   off
+25359  buzzer   440 v=3
+25393  buzzer   466 v=3
+25432  buzzer   494 v=3
+25472  buzzer   523 v=3
+25509  buzzer   off
+25661  buzzer   440 v=3
+25695  buzzer   466 v=3
+25734  buzzer   494 v=3
+25773  buzzer   523 v=3
+25811  buzzer   off
+26249  buzzer   440 v=3
+26284  buzzer   466 v=3
+26322  buzzer   494 v=3
+26361  buzzer   523 v=3
+26400  buzzer   off
+26536  buzzer   440 v=3
+26570  buzzer   466 v=3
+26609  buzzer   494 v=3
+26648  buzzer   523 v=3
+26686  buzzer   off
+26830  buzzer   440 v=3
+26865  buzzer   466 v=3
+26903  buzzer   494 v=3
+26942  buzzer   523 v=3
+26981  buzzer   off
+27612  buzzer   440 v=3
+27647  buzzer   466 v=3
+27685  buzzer   494 v=3
+27725  buzzer   523 v=3
+27763  buzzer   off
+27914  buzzer   440 v=3
+27949  buzzer   466 v=3
+27987  buzzer   494 v=3
+28026  buzzer   523 v=3
+28065  buzzer   off
+28495  buzzer   440 v=3
+28529  buzzer   466 v=3
+28568  buzzer   494 v=3
+28607  buzzer   523 v=3
+28645  buzzer   off
+28781  buzzer   440 v=3
+28816  buzzer   466 v=3
+28855  buzzer   494 v=3
+28893  buzzer   523 v=3
+28932  buzzer   off
+29083  buzzer   440 v=3
+29118  buzzer   466 v=3
+29157  buzzer   494 v=3
+29195  buzzer   523 v=3
+29234  buzzer   off
+29842  buzzer   440 v=3
+29877  buzzer   466 v=3
+29916  buzzer   494 v=3
+29954  buzzer   523 v=3
+29993  buzzer   off
+30121  buzzer   440 v=3
+30156  buzzer   466 v=3
+30194  buzzer   494 v=3
+30233  buzzer   523 v=3
+30272  buzzer   off
+30408  buzzer   440 v=3
+30442  buzzer   466 v=3
+30481  buzzer   494 v=3
+30520  buzzer   523 v=3
+30558  buzzer   off
+30678  buzzer   440 v=3
+30713  buzzer   466 v=3
+30752  buzzer   494 v=3
+30791  buzzer   523 v=3
+30829  buzzer   off
+30984  buzzer   440 v=3
+31015  buzzer   466 v=3
+31054  buzzer   494 v=3
+31093  buzzer   523 v=3
+31131  buzzer   off
+31275  buzzer   440 v=3
+31309  buzzer   466 v=3
+31348  buzzer   494 v=3
+31387  buzzer   523 v=3
+31425  buzzer   off
+31538  buzzer   440 v=3
+31573  buzzer   466 v=3
+31611  buzzer   494 v=3
+31650  buzzer   523 v=3
+31689  buzzer   off
+31825  buzzer   440 v=3
+31859  buzzer   466 v=3
+31898  buzzer   494 v=3
+31937  buzzer   523 v=3
+31982  buzzer   off
+32105  buzzer   440 v=3
+32139  buzzer   466 v=3
+32178  buzzer   494 v=3
+32216  buzzer   523 v=3
+32255  buzzer   off
+32383  buzzer   440 v=3
+32418  buzzer   466 v=3
+32456  buzzer   494 v=3
+32495  buzzer   523 v=3
+32534  buzzer   off
+32670  buzzer   440 v=3
+32704  buzzer   466 v=3
+32743  buzzer   494 v=3
+32782  buzzer   523 v=3
+32820  buzzer   off
+32941  buzzer   440 v=3
+32984  buzzer   466 v=3
+33022  buzzer   494 v=3
+33060  buzzer   523 v=3
+33099  buzzer   off
+33238  buzzer   440 v=3
+33277  buzzer   466 v=3
+33316  buzzer   494 v=3
+33355  buzzer   523 v=3
+33393  buzzer   off
+33521  buzzer   440 v=3
+33556  buzzer   466 v=3
+33595  buzzer   494 v=3
+33634  buzzer   523 v=3
+33672  buzzer   off
+33800  buzzer   440 v=3
+33835  buzzer   466 v=3
+33874  buzzer   494 v=3
+33912  buzzer   523 v=3
+33951  buzzer   off
+34079  buzzer   440 v=3
+34114  buzzer   466 v=3
+34152  buzzer   494 v=3
+34191  buzzer   523 v=3
+34235  buzzer   off
+34350  buzzer   440 v=3
+34385  buzzer   466 v=3
+34423  buzzer   494 v=3
+34462  buzzer   523 v=3
+34501  buzzer   off
+34637  buzzer   440 v=3
+34671  buzzer   466 v=3
+34710  buzzer   494 v=3
+34749  buzzer   523 v=3
+34787  buzzer   off
+34915  buzzer   440 v=3
+34950  buzzer   466 v=3
+34989  buzzer   494 v=3
+35027  buzzer   523 v=3
+35066  buzzer   off
+35194  buzzer   440 v=3
+35237  buzzer   466 v=3
+35275  buzzer   494 v=3
+35314  buzzer   523 v=3
+35353  buzzer   off
+35775  buzzer   440 v=3
+35810  buzzer   466 v=3
+35848  buzzer   494 v=3
+35887  buzzer   523 v=3
+35926  buzzer   off
+36069  buzzer   440 v=3
+36104  buzzer   466 v=3
+36142  buzzer   494 v=3
+36181  buzzer   523 v=3
+36220  buzzer   off
+36379  buzzer   440 v=3
+36414  buzzer   466 v=3
+36452  buzzer   494 v=3
+36491  buzzer   523 v=3
+36530  buzzer   off
+36967  buzzer   440 v=3
+37002  buzzer   466 v=3
+37041  buzzer   494 v=3
+37079  buzzer   523 v=3
+37118  buzzer   off
+37285  buzzer   440 v=3
+37320  buzzer   466 v=3
+37358  buzzer   494 v=3
+37397  buzzer   523 v=3
+37436  buzzer   off
+37548  buzzer   440 v=3
+37583  buzzer   466 v=3
+37622  buzzer   494 v=3
+37660  buzzer   523 v=3
+37699  buzzer   off
+37827  buzzer   440 v=3
+37862  buzzer   466 v=3
+37900  buzzer   494 v=3
+37939  buzzer   523 v=3
+37990  buzzer   off
+38129  buzzer   440 v=3
+38164  buzzer   466 v=3
+38202  buzzer   494 v=3
+38241  buzzer   523 v=3
+38280  buzzer   off
+38415  buzzer   440 v=3
+38450  buzzer   466 v=3
+38491  buzzer   494 v=3
+38528  buzzer   523 v=3
+38566  buzzer   off
+38694  buzzer   440 v=3
+38742  buzzer   466 v=3
+38775  buzzer   494 v=3
+38814  buzzer   523 v=3
+38853  buzzer   off
+39012  buzzer   440 v=3
+39046  buzzer   466 v=3
+39085  buzzer   494 v=3
+39124  buzzer   523 v=3
+39162  buzzer   off
+39298  buzzer   440 v=3
+39333  buzzer   466 v=3
+39372  buzzer   494 v=3
+39410  buzzer   523 v=3
+39449  buzzer   off
+39600  buzzer   440 v=3
+39635  buzzer   466 v=3
+39674  buzzer   494 v=3
+39712  buzzer   523 v=3
+39751  buzzer   off
+40351  buzzer   440 v=3
+40386  buzzer   466 v=3
+40425  buzzer   494 v=3
+40463  buzzer   523 v=3
+40502  buzzer   off
+40646  buzzer   440 v=3
+40680  buzzer   466 v=3
+40719  buzzer   494 v=3
+40758  buzzer   523 v=3
+40796  buzzer   off
+40924  buzzer   440 v=3
+40959  buzzer   466 v=3
+40998  buzzer   494 v=3
+41037  buzzer   523 v=3
+41075  buzzer   off
+41196  buzzer   440 v=3
+41231  buzzer   466 v=3
+41270  buzzer   494 v=3
+41309  buzzer   523 v=3
+41347  buzzer   off
+41847  buzzer   440 v=3
+41882  buzzer   466 v=3
+41920  buzzer   494 v=3
+41959  buzzer   523 v=3
+41998  buzzer   off
+42056  buzzer   440 v=3
+42091  buzzer   466 v=3
+42129  buzzer   494 v=3
+42168  buzzer   523 v=3
+42207  buzzer   off
+42335  buzzer   440 v=3
+42369  buzzer   466 v=3
+42408  buzzer   494 v=3
+42447  buzzer   523 v=3
+42498  buzzer   off
+42614  buzzer   440 v=3
+42648  buzzer   466 v=3
+42687  buzzer   494 v=3
+42726  buzzer   523 v=3
+42764  buzzer   off
+42900  buzzer   440 v=3
+42935  buzzer   466 v=3
+42973  buzzer   494 v=3
+43012  buzzer   523 v=3
+43051  buzzer   off
+43202  buzzer   440 v=3
+43249  buzzer   466 v=3
+43283  buzzer   494 v=3
+43322  buzzer   523 v=3
+43361  buzzer   off
+43853  buzzer   440 v=3
+43887  buzzer   466 v=3
+43926  buzzer   494 v=3
+43965  buzzer   523 v=3
+44003  buzzer   off
+44062  buzzer   440 v=3
+44096  buzzer   466 v=3
+44135  buzzer   494 v=3
+44174  buzzer   523 v=3
+44212  buzzer   off
+44356  buzzer   440 v=3
+44391  buzzer   466 v=3
+44429  buzzer   494 v=3
+44468  buzzer   523 v=3
+44507  buzzer   off
+45115  buzzer   440 v=3
+45149  buzzer   466 v=3
+45188  buzzer   494 v=3
+45227  buzzer   523 v=3
+45265  buzzer   off
+45401  buzzer   440 v=3
+45436  buzzer   466 v=3
+45475  buzzer   494 v=3
+45513  buzzer   523 v=3
+45552  buzzer   off
+45684  buzzer   440 v=3
+45722  buzzer   466 v=3
+45761  buzzer   494 v=3
+45800  buzzer   523 v=3
+45838  buzzer   off
+45959  buzzer   440 v=3
+46003  buzzer   466 v=3
+46040  buzzer   494 v=3
+46079  buzzer   523 v=3
+46117  buzzer   off
+46540  buzzer   440 v=3
+46574  buzzer   466 v=3
+46613  buzzer   494 v=3
+46652  buzzer   523 v=3
+46690  buzzer   off
+46811  buzzer   440 v=3
+46845  buzzer   466 v=3
+46884  buzzer   494 v=3
+46923  buzzer   523 v=3
+46961  buzzer   off
+47089  buzzer   440 v=3
+47124  buzzer   466 v=3
+47163  buzzer   494 v=3
+47201  buzzer   523 v=3
+47254  buzzer   off
+47368  buzzer   440 v=3
+47403  buzzer   466 v=3
+47442  buzzer   494 v=3
+47480  buzzer   523 v=3
+47519  buzzer   off
+47670  buzzer   440 v=3
+47705  buzzer   466 v=3
+47755  buzzer   494 v=3
+47790  buzzer   523 v=3
+47829  buzzer   off
+47972  buzzer   440 v=3
+48007  buzzer   466 v=3
+48046  buzzer   494 v=3
+48084  buzzer   523 v=3
+48123  buzzer   off
+48274  buzzer   440 v=3
+48309  buzzer   466 v=3
+48348  buzzer   494 v=3
+48386  buzzer   523 v=3
+48425  buzzer   off
+48561  buzzer   440 v=3
+48595  buzzer   466 v=3
+48634  buzzer   494 v=3
+48673  buzzer   523 v=3
+48711  buzzer   off
+48824  buzzer   440 v=3
+48859  buzzer   466 v=3
+48897  buzzer   494 v=3
+48936  buzzer   523 v=3
+48975  buzzer   off
+49103  buzzer   440 v=3
+49137  buzzer   466 v=3
+49176  buzzer   494 v=3
+49215  buzzer   523 v=3
+49257  buzzer   off
+49381  buzzer   440 v=3
+49416  buzzer   466 v=3
+49455  buzzer   494 v=3
+49508  buzzer   523 v=3
+49540  buzzer   off
+49660  buzzer   440 v=3
+49695  buzzer   466 v=3
+49734  buzzer   494 v=3
+49772  buzzer   523 v=3
+49811  buzzer   off
+49939  buzzer   440 v=3
+49974  buzzer   466 v=3
+50012  buzzer   494 v=3
+50051  buzzer   523 v=3
+50090  buzzer   off
+50226  buzzer   440 v=3
+50261  buzzer   466 v=3
+50300  buzzer   494 v=3
+50339  buzzer   523 v=3
+50377  buzzer   off
+50514  buzzer   440 v=3
+50548  buzzer   466 v=3
+50586  buzzer   494 v=3
+50625  buzzer   523 v=3
+50664  buzzer   off
+50800  buzzer   440 v=3
+50834  buzzer   466 v=3
+50873  buzzer   494 v=3
+50912  buzzer   523 v=3
+50950  buzzer   off
+51094  buzzer   440 v=3
+51129  buzzer   466 v=3
+51167  buzzer   494 v=3
+51206  buzzer   523 v=3
+51245  buzzer   off
+51311  buzzer   440 v=3
+51345  buzzer   466 v=3
+51384  buzzer   494 v=3
+51423  buzzer   523 v=3
+51461  buzzer   off
+51597  buzzer   440 v=3
+51632  buzzer   466 v=3
+51671  buzzer   494 v=3
+51709  buzzer   523 v=3
+51762  buzzer   off
+51871  buzzer   440 v=3
+51903  buzzer   466 v=3
+51942  buzzer   494 v=3
+51980  buzzer   523 v=3
+52019  buzzer   off
+52070  buzzer   440 v=3
+52104  buzzer   466 v=3
+52143  buzzer   494 v=3
+52182  buzzer   523 v=3
+52220  buzzer   off
+52372  buzzer   440 v=3
+52406  buzzer   466 v=3
+52445  buzzer   494 v=3
+52484  buzzer   523 v=3
+52522  buzzer   off
+53239  buzzer   440 v=3
+53274  buzzer   466 v=3
+53312  buzzer   494 v=3
+53351  buzzer   523 v=3
+53390  buzzer   off
+53541  buzzer   440 v=3
+53576  buzzer   466 v=3
+53614  buzzer   494 v=3
+53653  buzzer   523 v=3
+53692  buzzer   off
+53843  buzzer   440 v=3
+53878  buzzer   466 v=3
+53916  buzzer   494 v=3
+53955  buzzer   523 v=3
+53994  buzzer   off
+54137  buzzer   440 v=3
+54172  buzzer   466 v=3
+54211  buzzer   494 v=3
+54249  buzzer   523 v=3
+54288  buzzer   off
+54431  buzzer   440 v=3
+54466  buzzer   466 v=3
+54516  buzzer   494 v=3
+54551  buzzer   523 v=3
+54590  buzzer   off
+54710  buzzer   440 v=3
+54745  buzzer   466 v=3
+54784  buzzer   494 v=3
+54822  buzzer   523 v=3
+54861  buzzer   off
+54989  buzzer   440 v=3
+55024  buzzer   466 v=3
+55062  buzzer   494 v=3
+55101  buzzer   523 v=3
+55140  buzzer   off
+55283  buzzer   440 v=3
+55318  buzzer   466 v=3
+55357  buzzer   494 v=3
+55395  buzzer   523 v=3
+55434  buzzer   off
+55577  buzzer   440 v=3
+55612  buzzer   466 v=3
+55651  buzzer   494 v=3
+55690  buzzer   523 v=3
+55728  buzzer   off
+55856  buzzer   440 v=3
+55891  buzzer   466 v=3
+55930  buzzer   494 v=3
+55968  buzzer   523 v=3
+56018  buzzer   off
+56127  buzzer   440 v=3
+56162  buzzer   466 v=3
+56201  buzzer   494 v=3
+56239  buzzer   523 v=3
+56278  buzzer   off
+56422  buzzer   440 v=3
+56456  buzzer   466 v=3
+56495  buzzer   494 v=3
+56534  buzzer   523 v=3
+56572  buzzer   off
+56716  buzzer   440 v=3
+56750  buzzer   466 v=3
+56789  buzzer   494 v=3
+56828  buzzer   523 v=3
+56867  buzzer   off
+57475  buzzer   440 v=3
+57520  buzzer   466 v=3
+57556  buzzer   494 v=3
+57595  buzzer   523 v=3
+57633  buzzer   off
+57753  buzzer   440 v=3
+57788  buzzer   466 v=3
+57827  buzzer   494 v=3
+57866  buzzer   523 v=3
+57904  buzzer   off
+58048  buzzer   440 v=3
+58082  buzzer   466 v=3
+58121  buzzer   494 v=3
+58160  buzzer   523 v=3
+58198  buzzer   off
+58327  buzzer   440 v=3
+58361  buzzer   466 v=3
+58400  buzzer   494 v=3
+58439  buzzer   523 v=3
+58477  buzzer   off
+58597  buzzer   440 v=3
+58632  buzzer   466 v=3
+58671  buzzer   494 v=3
+58710  buzzer   523 v=3
+58748  buzzer   off
+58876  buzzer   440 v=3
+58911  buzzer   466 v=3
+58950  buzzer   494 v=3
+58988  buzzer   523 v=3
+59027  buzzer   off
+59163  buzzer   440 v=3
+59197  buzzer   466 v=3
+59236  buzzer   494 v=3
+59275  buzzer   523 v=3
+59314  buzzer   off
+59442  buzzer   440 v=3
+59476  buzzer   466 v=3
+59523  buzzer   494 v=3
+59561  buzzer   523 v=3
+59601  buzzer   off
+59745  buzzer   440 v=3
+59779  buzzer   466 v=3
+59818  buzzer   494 v=3
+59857  buzzer   523 v=3
+59895  buzzer   off
+60047  buzzer   440 v=3
+60081  buzzer   466 v=3
+60120  buzzer   494 v=3
+60159  buzzer   523 v=3
+60197  buzzer   off
+60325  buzzer   440 v=3
+60360  buzzer   466 v=3
+60399  buzzer   494 v=3
+60437  buzzer   523 v=3
+60476  buzzer   off
+60627  buzzer   440 v=3
+60662  buzzer   466 v=3
+60701  buzzer   494 v=3
+60739  buzzer   523 v=3
+60778  buzzer   off
+60898  buzzer   440 v=3
+60933  buzzer   466 v=3
+60972  buzzer   494 v=3
+61010  buzzer   523 v=3
+61049  buzzer   off
+61185  buzzer   440 v=3
+61220  buzzer   466 v=3
+61258  buzzer   494 v=3
+61297  buzzer   523 v=3
+61336  buzzer   off
+61456  buzzer   440 v=3
+61491  buzzer   466 v=3
+61529  buzzer   494 v=3
+61568  buzzer   523 v=3
+61607  buzzer   off
+61735  buzzer   440 v=3
+61777  buzzer   466 v=3
+61816  buzzer   494 v=3
+61855  buzzer   523 v=3
+61893  buzzer   off
+62308  buzzer   440 v=3
+62342  buzzer   466 v=3
+62381  buzzer   494 v=3
+62420  buzzer   523 v=3
+62458  buzzer   off
+62579  buzzer   440 v=3
+62613  buzzer   466 v=3
+62652  buzzer   494 v=3
+62691  buzzer   523 v=3
+62729  buzzer   off
+62865  buzzer   440 v=3
+62900  buzzer   466 v=3
+62939  buzzer   494 v=3
+62977  buzzer   523 v=3
+63029  buzzer   off
+63136  buzzer   440 v=3
+63171  buzzer   466 v=3
+63210  buzzer   494 v=3
+63248  buzzer   523 v=3
+63287  buzzer   off
+63431  buzzer   440 v=3
+63465  buzzer   466 v=3
+63504  buzzer   494 v=3
+63543  buzzer   523 v=3
+63581  buzzer   off
+63710  buzzer   440 v=3
+63744  buzzer   466 v=3
+63783  buzzer   494 v=3
+63821  buzzer   523 v=3
+63860  buzzer   off
+64004  buzzer   440 v=3
+64038  buzzer   466 v=3
+64077  buzzer   494 v=3
+64116  buzzer   523 v=3
+64154  buzzer   off
+64329  buzzer   440 v=3
+64363  buzzer   466 v=3
+64402  buzzer   494 v=3
+64441  buzzer   523 v=3
+64480  buzzer   off
+64608  buzzer   440 v=3
+64642  buzzer   466 v=3
+64681  buzzer   494 v=3
+64720  buzzer   523 v=3
+64758  buzzer   off
+64879  buzzer   440 v=3
+64913  buzzer   466 v=3
+64952  buzzer   494 v=3
+64991  buzzer   523 v=3
+65031  buzzer   off
+65181  buzzer   440 v=3
+65215  buzzer   466 v=3
+65254  buzzer   494 v=3
+65293  buzzer   523 v=3
+65331  buzzer   off
+65483  buzzer   440 v=3
+65517  buzzer   466 v=3
+65556  buzzer   494 v=3
+65595  buzzer   523 v=3
+65633  buzzer   off
+65787  buzzer   440 v=3
+65819  buzzer   466 v=3
+65858  buzzer   494 v=3
+65897  buzzer   523 v=3
+65935  buzzer   off
+66071  buzzer   440 v=3
+66106  buzzer   466 v=3
+66145  buzzer   494 v=3
+66183  buzzer   523 v=3
+66222  buzzer   off
+66342  buzzer   440 v=3
+66377  buzzer   466 v=3
+66416  buzzer   494 v=3
+66454  buzzer   523 v=3
+66493  buzzer   off
+66621  buzzer   440 v=3
+66656  buzzer   466 v=3
+66694  buzzer   494 v=3
+66733  buzzer   523 v=3
+66784  buzzer   off
+66900  buzzer   440 v=3
+66934  buzzer   466 v=3
+66973  buzzer   494 v=3
+67012  buzzer   523 v=3
+67050  buzzer   off
+67186  buzzer   440 v=3
+67221  buzzer   466 v=3
+67260  buzzer   494 v=3
+67298  buzzer   523 v=3
+67337  buzzer   off
+67465  buzzer   440 v=3
+67500  buzzer   466 v=3
+67538  buzzer   494 v=3
+67577  buzzer   523 v=3
+67616  buzzer   off
+67744  buzzer   440 v=3
+67785  buzzer   466 v=3
+67817  buzzer   494 v=3
+67856  buzzer   523 v=3
+67894  buzzer   off
+68037  buzzer   440 v=3
+68073  buzzer   466 v=3
+68111  buzzer   494 v=3
+68150  buzzer   523 v=3
+68189  buzzer   off
+68317  buzzer   440 v=3
+68351  buzzer   466 v=3
+68390  buzzer   494 v=3
+68429  buzzer   523 v=3
+68468  buzzer   off
+68589  buzzer   440 v=3
+68623  buzzer   466 v=3
+68662  buzzer   494 v=3
+68701  buzzer   523 v=3
+68740  buzzer   off
+68868  buzzer   440 v=3
+68902  buzzer   466 v=3
+68941  buzzer   494 v=3
+68980  buzzer   523 v=3
+69018  buzzer   off
+69146  buzzer   440 v=3
+69181  buzzer   466 v=3
+69220  buzzer   494 v=3
+69258  buzzer   523 v=3
+69297  buzzer   off
+69433  buzzer   440 v=3
+69468  buzzer   466 v=3
+69506  buzzer   494 v=3
+69545  buzzer   523 v=3
+69584  buzzer   off
+69712  buzzer   440 v=3
+69746  buzzer   466 v=3
+69789  buzzer   494 v=3
+69824  buzzer   523 v=3
+69862  buzzer   off
+69990  buzzer   440 v=3
+70040  buzzer   466 v=3
+70072  buzzer   494 v=3
+70110  buzzer   523 v=3
+70149  buzzer   off
+70292  buzzer   440 v=3
+70327  buzzer   466 v=3
+70366  buzzer   494 v=3
+70405  buzzer   523 v=3
+70443  buzzer   off
+70571  buzzer   440 v=3
+70606  buzzer   466 v=3
+70645  buzzer   494 v=3
+70683  buzzer   523 v=3
+70722  buzzer   off
+70842  buzzer   440 v=3
+70877  buzzer   466 v=3
+70916  buzzer   494 v=3
+70954  buzzer   523 v=3
+70993  buzzer   off
+71121  buzzer   440 v=3
+71156  buzzer   466 v=3
+71194  buzzer   494 v=3
+71233  buzzer   523 v=3
+71272  buzzer   off
+71400  buzzer   440 v=3
+71434  buzzer   466 v=3
+71473  buzzer   494 v=3
+71512  buzzer   523 v=3
+71551  buzzer   off
+71686  buzzer   440 v=3
+71721  buzzer   466 v=3
+71760  buzzer   494 v=3
+71798  buzzer   523 v=3
+71837  buzzer   off
+71988  buzzer   440 v=3
+72023  buzzer   466 v=3
+72062  buzzer   494 v=3
+72100  buzzer   523 v=3
+72139  buzzer   off
+72832  buzzer   440 v=3
+72867  buzzer   466 v=3
+72906  buzzer   494 v=3
+72944  buzzer   523 v=3
+72983  buzzer   off
+73103  buzzer   440 v=3
+73138  buzzer   466 v=3
+73177  buzzer   494 v=3
+73215  buzzer   523 v=3
+73254  buzzer   off
+73382  buzzer   440 v=3
+73417  buzzer   466 v=3
+73456  buzzer   494 v=3
+73494  buzzer   523 v=3
+73544  buzzer   off
+73661  buzzer   440 v=3
+73696  buzzer   466 v=3
+73734  buzzer   494 v=3
+73773  buzzer   523 v=3
+73812  buzzer   off
+73963  buzzer   440 v=3
+73998  buzzer   466 v=3
+74045  buzzer   494 v=3
+74083  buzzer   523 v=3
+74121  buzzer   off
+74149  buzzer   4185.4 v=19
+74207  buzzer   3951.4 v=19
+74222  buzzer   3729.2 v=19
+74238  buzzer   3520.2 v=18
+74253  buzzer   3322.3 v=17
+74269  buzzer   3136.3 v=13
+74296  buzzer   2959.9 v=9
+74307  buzzer   2793.9 v=7
+74323  buzzer   2636.9 v=6
+74338  buzzer   off
+74521  buzzer   440 v=3
+74555  buzzer   466 v=3
+74594  buzzer   494 v=3
+74633  buzzer   523 v=3
+74671  buzzer   off
+74800  buzzer   440 v=3
+74834  buzzer   466 v=3
+74873  buzzer   494 v=3
+74911  buzzer   523 v=3
+74950  buzzer   off
+75109  buzzer   440 v=3
+75144  buzzer   466 v=3
+75182  buzzer   494 v=3
+75221  buzzer   523 v=3
+75260  buzzer   off
+75388  buzzer   440 v=3
+75422  buzzer   466 v=3
+75461  buzzer   494 v=3
+75500  buzzer   523 v=3
+75547  buzzer   off
+75667  buzzer   440 v=3
+75701  buzzer   466 v=3
+75740  buzzer   494 v=3
+75779  buzzer   523 v=3
+75817  buzzer   off
+75945  buzzer   440 v=3
+75980  buzzer   466 v=3
+76019  buzzer   494 v=3
+76057  buzzer   523 v=3
+76096  buzzer   off
+76224  buzzer   440 v=3
+76259  buzzer   466 v=3
+76298  buzzer   494 v=3
+76336  buzzer   523 v=3
+76375  buzzer   off
+76495  buzzer   440 v=3
+76530  buzzer   466 v=3
+76569  buzzer   494 v=3
+76607  buzzer   523 v=3
+76646  buzzer   off
+77084  buzzer   440 v=3
+77118  buzzer   466 v=3
+77157  buzzer   494 v=3
+77196  buzzer   523 v=3
+77234  buzzer   off
+77378  buzzer   440 v=3
+77413  buzzer   466 v=3
+77451  buzzer   494 v=3
+77490  buzzer   523 v=3
+77530  buzzer   off
+77665  buzzer   440 v=3
+77700  buzzer   466 v=3
+77739  buzzer   494 v=3
+77778  buzzer   523 v=3
+77816  buzzer   off
+77952  buzzer   440 v=3
+77987  buzzer   466 v=3
+78025  buzzer   494 v=3
+78064  buzzer   523 v=3
+78103  buzzer   off
+78231  buzzer   440 v=3
+78265  buzzer   466 v=3
+78304  buzzer   494 v=3
+78343  buzzer   523 v=3
+78381  buzzer   off
+78502  buzzer   440 v=3
+78536  buzzer   466 v=3
+78575  buzzer   494 v=3
+78614  buzzer   523 v=3
+78652  buzzer   off
+78819  buzzer   440 v=3
+78854  buzzer   466 v=3
+78893  buzzer   494 v=3
+78931  buzzer   523 v=3
+78970  buzzer   off
+79154  buzzer   440 v=3
+79187  buzzer   466 v=3
+79226  buzzer   494 v=3
+79264  buzzer   523 v=3
+79303  buzzer   off
+79385  buzzer   440 v=3
+79419  buzzer   466 v=3
+79458  buzzer   494 v=3
+79497  buzzer   523 v=3
+79535  buzzer   off
+79694  buzzer   440 v=3
+79729  buzzer   466 v=3
+79768  buzzer   494 v=3
+79806  buzzer   523 v=3
+79845  buzzer   off
+80004  buzzer   440 v=3
+80039  buzzer   466 v=3
+80077  buzzer   494 v=3
+80116  buzzer   523 v=3
+80155  buzzer   off
+80321  buzzer   440 v=3
+80356  buzzer   466 v=3
+80395  buzzer   494 v=3
+80434  buzzer   523 v=3
+80472  buzzer   off
+80658  buzzer   440 v=3
+80697  buzzer   466 v=3
+80736  buzzer   494 v=3
+80774  buzzer   523 v=3
+80813  buzzer   off
+80887  buzzer   440 v=3
+80921  buzzer   466 v=3
+80960  buzzer   494 v=3
+80999  buzzer   523 v=3
+81038  buzzer   off
+81197  buzzer   440 v=3
+81231  buzzer   466 v=3
+81270  buzzer   494 v=3
+81309  buzzer   523 v=3
+81347  buzzer   off
+81785  buzzer   440 v=3
+81820  buzzer   466 v=3
+81858  buzzer   494 v=3
+81897  buzzer   523 v=3
+81936  buzzer   off
+82169  buzzer   440 v=3
+82207  buzzer   466 v=3
+82246  buzzer   494 v=3
+82284  buzzer   523 v=3
+82323  buzzer   off
+82389  buzzer   440 v=3
+82424  buzzer   466 v=3
+82462  buzzer   494 v=3
+82501  buzzer   523 v=3
+82540  buzzer   off
+82699  buzzer   440 v=3
+82733  buzzer   466 v=3
+82772  buzzer   494 v=3
+82811  buzzer   523 v=3
+82850  buzzer   off
+83009  buzzer   440 v=3
+83043  buzzer   466 v=3
+83082  buzzer   494 v=3
+83121  buzzer   523 v=3
+83159  buzzer   off
+83326  buzzer   440 v=3
+83361  buzzer   466 v=3
+83399  buzzer   494 v=3
+83438  buzzer   523 v=3
+83477  buzzer   off
+83671  buzzer   440 v=3
+83709  buzzer   466 v=3
+83748  buzzer   494 v=3
+83787  buzzer   523 v=3
+83825  buzzer   off
+83891  buzzer   440 v=3
+83926  buzzer   466 v=3
+83965  buzzer   494 v=3
+84003  buzzer   523 v=3
+84042  buzzer   off
+84178  buzzer   440 v=3
+84213  buzzer   466 v=3
+84251  buzzer   494 v=3
+84290  buzzer   523 v=3
+84329  buzzer   off
+84464  buzzer   440 v=3
+84499  buzzer   466 v=3
+84538  buzzer   494 v=3
+84576  buzzer   523 v=3
+84615  buzzer   off
+84766  buzzer   440 v=3
+84811  buzzer   466 v=3
+84848  buzzer   494 v=3
+84886  buzzer   523 v=3
+84925  buzzer   off
+85150  buzzer   440 v=3
+85188  buzzer   466 v=3
+85227  buzzer   494 v=3
+85266  buzzer   523 v=3
+85312  buzzer   off
+85370  buzzer   440 v=3
+85405  buzzer   466 v=3
+85444  buzzer   494 v=3
+85482  buzzer   523 v=3
+85521  buzzer   off
+85649  buzzer   440 v=3
+85684  buzzer   466 v=3
+85723  buzzer   494 v=3
+85761  buzzer   523 v=3
+85812  buzzer   off
+85959  buzzer   440 v=3
+85994  buzzer   466 v=3
+86032  buzzer   494 v=3
+86071  buzzer   523 v=3
+86110  buzzer   off
+86245  buzzer   440 v=3
+86280  buzzer   466 v=3
+86319  buzzer   494 v=3
+86358  buzzer   523 v=3
+86396  buzzer   off
+86547  buzzer   440 v=3
+86582  buzzer   466 v=3
+86621  buzzer   494 v=3
+86660  buzzer   523 v=3
+86698  buzzer   off
+86865  buzzer   440 v=3
+86900  buzzer   466 v=3
+86938  buzzer   494 v=3
+86977  buzzer   523 v=3
+87017  buzzer   off
+87176  buzzer   440 v=3
+87210  buzzer   466 v=3
+87249  buzzer   494 v=3
+87288  buzzer   523 v=3
+87326  buzzer   off
+87462  buzzer   440 v=3
+87497  buzzer   466 v=3
+87536  buzzer   494 v=3
+87574  buzzer   523 v=3
+87613  buzzer   off
+87757  buzzer   440 v=3
+87791  buzzer   466 v=3
+87830  buzzer   494 v=3
+87869  buzzer   523 v=3
+87907  buzzer   off
+88337  buzzer   440 v=3
+88372  buzzer   466 v=3
+88411  buzzer   494 v=3
+88449  buzzer   523 v=3
+88488  buzzer   off
+88647  buzzer   440 v=3
+88682  buzzer   466 v=3
+88720  buzzer   494 v=3
+88759  buzzer   523 v=3
+88798  buzzer   off
+88957  buzzer   440 v=3
+88991  buzzer   466 v=3
+89030  buzzer   494 v=3
+89069  buzzer   523 v=3
+89107  buzzer   off
+89545  buzzer   440 v=3
+89580  buzzer   466 v=3
+89619  buzzer   494 v=3
+89657  buzzer   523 v=3
+89696  buzzer   off
+89863  buzzer   440 v=3
+89897  buzzer   466 v=3
+89936  buzzer   494 v=3
+89975  buzzer   523 v=3
+90013  buzzer   off
+90134  buzzer   440 v=3
+90168  buzzer   466 v=3
+90207  buzzer   494 v=3
+90246  buzzer   523 v=3
+90285  buzzer   off
+90428  buzzer   440 v=3
+90463  buzzer   466 v=3
+90501  buzzer   494 v=3
+90540  buzzer   523 v=3
+90579  buzzer   off
+90715  buzzer   440 v=3
+90749  buzzer   466 v=3
+90788  buzzer   494 v=3
+90827  buzzer   523 v=3
+90865  buzzer   off
+91024  buzzer   440 v=3
+91071  buzzer   466 v=3
+91105  buzzer   494 v=3
+91144  buzzer   523 v=3
+91183  buzzer   off
+91504  buzzer   440 v=3
+91539  buzzer   466 v=3
+91578  buzzer   494 v=3
+91617  buzzer   523 v=3
+91655  buzzer   off
+91791  buzzer   440 v=3
+91826  buzzer   466 v=3
+91864  buzzer   494 v=3
+91903  buzzer   523 v=3
+91942  buzzer   off
+92093  buzzer   440 v=3
+92128  buzzer   466 v=3
+92166  buzzer   494 v=3
+92205  buzzer   523 v=3
+92244  buzzer   off
+93162  buzzer   440 v=3
+93196  buzzer   466 v=3
+93235  buzzer   494 v=3
+93274  buzzer   523 v=3
+93324  buzzer   off
+93471  buzzer   440 v=3
+93506  buzzer   466 v=3
+93545  buzzer   494 v=3
+93583  buzzer   523 v=3
+93622  buzzer   off
+94029  buzzer   440 v=3
+94076  buzzer   466 v=3
+94110  buzzer   494 v=3
+94149  buzzer   523 v=3
+94187  buzzer   off
+94610  buzzer   440 v=3
+94644  buzzer   466 v=3
+94683  buzzer   494 v=3
+94722  buzzer   523 v=3
+94760  buzzer   off
+94881  buzzer   440 v=3
+94915  buzzer   466 v=3
+94954  buzzer   494 v=3
+94993  buzzer   523 v=3
+95031  buzzer   off
+95175  buzzer   440 v=3
+95210  buzzer   466 v=3
+95248  buzzer   494 v=3
+95287  buzzer   523 v=3
+95327  buzzer   off
+95469  buzzer   440 v=3
+95504  buzzer   466 v=3
+95543  buzzer   494 v=3
+95581  buzzer   523 v=3
+95620  buzzer   off
+95740  buzzer   440 v=3
+95775  buzzer   466 v=3
+95828  buzzer   494 v=3
+95860  buzzer   523 v=3
+95899  buzzer   off
+96485  buzzer   440 v=3
+96519  buzzer   466 v=3
+96558  buzzer   494 v=3
+96597  buzzer   523 v=3
+96635  buzzer   off
+96787  buzzer   440 v=3
+96831  buzzer   466 v=3
+96868  buzzer   494 v=3
+96906  buzzer   523 v=3
+96945  buzzer   off
+97375  buzzer   440 v=3
+97410  buzzer   466 v=3
+97449  buzzer   494 v=3
+97487  buzzer   523 v=3
+97526  buzzer   off
+97638  buzzer   440 v=3
+97673  buzzer   466 v=3
+97712  buzzer   494 v=3
+97751  buzzer   523 v=3
+97789  buzzer   off
+97917  buzzer   440 v=3
+97952  buzzer   466 v=3
+97991  buzzer   494 v=3
+98029  buzzer   523 v=3
+98082  buzzer   off
+98188  buzzer   440 v=3
+98223  buzzer   466 v=3
+98262  buzzer   494 v=3
+98300  buzzer   523 v=3
+98339  buzzer   off
+98482  buzzer   440 v=3
+98517  buzzer   466 v=3
+98556  buzzer   494 v=3
+98595  buzzer   523 v=3
+98633  buzzer   off
+98761  buzzer   440 v=3
+98796  buzzer   466 v=3
+98835  buzzer   494 v=3
+98873  buzzer   523 v=3
+98912  buzzer   off
+99040  buzzer   440 v=3
+99084  buzzer   466 v=3
+99121  buzzer   494 v=3
+99160  buzzer   523 v=3
+99198  buzzer   off
+99319  buzzer   440 v=3
+99353  buzzer   466 v=3
+99392  buzzer   494 v=3
+99431  buzzer   523 v=3
+99470  buzzer   off
+99621  buzzer   440 v=3
+99655  buzzer   466 v=3
+99694  buzzer   494 v=3
+99733  buzzer   523 v=3
+99772  buzzer   off
+99892  buzzer   440 v=3
+99927  buzzer   466 v=3
+99965  buzzer   494 v=3
+100004 buzzer   523 v=3
+100043 buzzer   off
+100171 buzzer   440 v=3
+100205 buzzer   466 v=3
+100244 buzzer   494 v=3
+100283 buzzer   523 v=3
+100335 buzzer   off
+100442 buzzer   440 v=3
+100476 buzzer   466 v=3
+100515 buzzer   494 v=3
+100554 buzzer   523 v=3
+100592 buzzer   off
+100736 buzzer   440 v=3
+100771 buzzer   466 v=3
+100809 buzzer   494 v=3
+100848 buzzer   523 v=3
+100887 buzzer   off
+101038 buzzer   440 v=3
+101086 buzzer   466 v=3
+101119 buzzer   494 v=3
+101158 buzzer   523 v=3
+101196 buzzer   off
+101363 buzzer   440 v=3
+101398 buzzer   466 v=3
+101437 buzzer   494 v=3
+101475 buzzer   523 v=3
+101514 buzzer   off
+101692 buzzer   440 v=3
+101731 buzzer   466 v=3
+101770 buzzer   494 v=3
+101808 buzzer   523 v=3
+101847 buzzer   off
+101921 buzzer   440 v=3
+101955 buzzer   466 v=3
+101994 buzzer   494 v=3
+102033 buzzer   523 v=3
+102071 buzzer   off
+102486 buzzer   440 v=3
+102521 buzzer   466 v=3
+102559 buzzer   494 v=3
+102598 buzzer   523 v=3
+102637 buzzer   off
+102765 buzzer   440 v=3
+102799 buzzer   466 v=3
+102839 buzzer   494 v=3
+102877 buzzer   523 v=3
+102915 buzzer   off
+103067 buzzer   440 v=3
+103101 buzzer   466 v=3
+103140 buzzer   494 v=3
+103179 buzzer   523 v=3
+103217 buzzer   off
+103268 buzzer   4185.4 v=19
+103339 buzzer   3951.4 v=19
+103349 buzzer   3729.2 v=19
+103365 buzzer   3520.2 v=18
+103380 buzzer   3322.3 v=17
+103396 buzzer   3136.3 v=13
+103411 buzzer   2959.9 v=9
+103427 buzzer   2793.9 v=7
+103442 buzzer   440 v=3
+103481 buzzer   466 v=3
+103520 buzzer   494 v=3
+103558 buzzer   523 v=3
+103597 buzzer   off
+103671 buzzer   440 v=3
+103705 buzzer   466 v=3
+103744 buzzer   494 v=3
+103783 buzzer   523 v=3
+103821 buzzer   off
+103980 buzzer   440 v=3
+104015 buzzer   466 v=3
+104024 vibrator on

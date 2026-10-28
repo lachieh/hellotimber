@@ -1,0 +1,15 @@
+sound-golden 1
+id: sound/game/space-impact/variety-level-2.wall-enemy-targeted-control
+status: pending:24
+source: captures/6.39/plan24/special-evidence-20261027b/level-2.wall-enemy-targeted-control
+source-sha256: b91cf0e7ab9f43f772b4931e93e7c36c67c8b13a8618deb604ddf0f88edef59b
+state: virgin
+note: S9: isolated level-2.wall-enemy-targeted control arm with its exact keys, paired LCD and audio.
+omitted: none
+
+@events
+# t_ms output   state
+1      buzzer   466 v=3
+19     buzzer   494 v=3
+58     buzzer   523 v=3
+97     buzzer   off

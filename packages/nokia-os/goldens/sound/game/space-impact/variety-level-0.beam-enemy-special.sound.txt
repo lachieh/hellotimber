@@ -1,0 +1,37 @@
+sound-golden 1
+id: sound/game/space-impact/variety-level-0.beam-enemy-special
+status: pending:24
+source: captures/6.39/plan24/special-evidence-20261027b/level-0.beam-enemy-special
+source-sha256: 5c95e155d0ac3e3319665fb176b9c3bbe1844b575acc4ac363fad032648a879f
+state: virgin
+keys: 0:4 300:4 600:4
+note: S9: isolated level-0.beam-enemy special arm with its exact keys, paired LCD and audio.
+omitted: none
+
+@events
+# t_ms output   state
+-59    buzzer   494 v=3
+-24    buzzer   523 v=3
+0      buzzer   2636.9 v=6
+7      buzzer   off
+319    buzzer   1396.9 v=5
+332    buzzer   988 v=4
+348    buzzer   1396.9 v=5
+363    buzzer   932 v=4
+379    buzzer   1396.9 v=5
+394    buzzer   880 v=3
+410    buzzer   1568 v=7
+425    buzzer   831 v=4
+441    buzzer   1396.9 v=5
+456    buzzer   784 v=4
+472    buzzer   1396.9 v=5
+487    buzzer   740 v=3
+503    buzzer   1396.9 v=5
+518    buzzer   698 v=3
+534    buzzer   1396.9 v=5
+549    buzzer   659 v=3
+565    buzzer   1396.9 v=5
+580    buzzer   622 v=3
+596    buzzer   1396.9 v=5
+611    buzzer   587 v=3
+627    buzzer   off

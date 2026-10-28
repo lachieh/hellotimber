@@ -1,0 +1,15 @@
+sound-golden 1
+id: sound/game/space-impact/variety-level-0.beam-boss-control
+status: pending:24
+source: captures/6.39/plan24/special-evidence-20261027b/level-0.beam-boss-control
+source-sha256: 6d3886c3bddb3ab48fa7e2deb96145fbcde7f86bee59a3621fdfd155227bbeea
+state: virgin
+note: S9: isolated level-0.beam-boss control arm with its exact keys, paired LCD and audio.
+omitted: none
+
+@events
+# t_ms output   state
+1      buzzer   466 v=3
+33     buzzer   494 v=3
+72     buzzer   523 v=3
+110    buzzer   off

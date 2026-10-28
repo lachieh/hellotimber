@@ -1,0 +1,63 @@
+sound-golden 1
+id: sound/game/space-impact/nokeys-warning-on
+status: pending:24
+source: captures/6.39/plan24/sound/warning-on/game
+source-sha256: 28da50864269f14aed92081d8b0fe13d3f418c1d4e0c4538479bfde8742064ae
+state: virgin
+keys: 0:navi
+note: S9: Tones › Warning tones On, the no-key game: three deaths (sound and the vibrator), the continue screen, the fireworks tune.
+omitted: 1 (stale frequency)
+
+@events
+# t_ms output   state
+8658   vibrator on
+8750   buzzer   880 v=3
+8765   buzzer   4185.4 v=19
+8811   buzzer   932 v=4
+8827   buzzer   4185.4 v=19
+8873   buzzer   988 v=4
+8889   buzzer   4185.4 v=19
+8944   buzzer   off
+9168   vibrator off
+15512  vibrator on
+15604  buzzer   880 v=3
+15619  buzzer   4185.4 v=19
+15665  buzzer   932 v=4
+15681  buzzer   4185.4 v=19
+15735  buzzer   988 v=4
+15751  buzzer   4185.4 v=19
+15797  buzzer   off
+16024  vibrator off
+27724  vibrator on
+27763  buzzer   880 v=3
+27778  buzzer   4185.4 v=19
+27824  buzzer   932 v=4
+27840  buzzer   4185.4 v=19
+27886  buzzer   988 v=4
+27902  buzzer   4185.4 v=19
+27948  buzzer   off
+28203  vibrator off
+33542  buzzer   587 v=3
+33679  buzzer   off
+33819  buzzer   587 v=3
+33935  buzzer   off
+33958  buzzer   587 v=3
+34074  buzzer   off
+34097  buzzer   880 v=3
+34500  buzzer   off
+34523  buzzer   587 v=3
+34639  buzzer   off
+34663  buzzer   880 v=3
+35096  buzzer   off
+36456  buzzer   587 v=3
+36591  buzzer   off
+36736  buzzer   587 v=3
+36846  buzzer   off
+36870  buzzer   587 v=3
+36986  buzzer   off
+37009  buzzer   880 v=3
+37412  buzzer   off
+37436  buzzer   587 v=3
+37552  buzzer   off
+37575  buzzer   880 v=3
+38009  buzzer   off

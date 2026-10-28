@@ -1,0 +1,14 @@
+sound-golden 1
+id: sound/game/space-impact/variety-level-2.wall-enemy-control
+status: pending:24
+source: captures/6.39/plan24/special-evidence-20261027b/level-2.wall-enemy-control
+source-sha256: 5a1019b780837f54a3636e2953a7843e138918b945f349eeff7b67ec243d9f62
+state: virgin
+keys: 0:#+450
+note: S9: isolated level-2.wall-enemy control arm with its exact keys, paired LCD and audio.
+omitted: none
+
+@events
+# t_ms output   state
+2      buzzer   2636.9 v=6
+9      buzzer   off
