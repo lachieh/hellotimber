@@ -1,11 +1,9 @@
-import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
-import { useEffect } from "react";
-import ContentPanel from "../../components/ContentPanel";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { portfolioMenu, redirectFor } from "../../phone/stock-routes";
 import { site } from "../../content/site";
 import { PANELS } from "../../panels/registry";
 import GenericPanel from "../../panels/GenericPanel";
-import { getPhoneRuntime } from "../../phone/stock-phone";
+import NotFoundPanel from "../../panels/NotFoundPanel";
 import { projectStockRoute } from "../../phone/stock-routes";
 import { pageHead } from "../../seo";
 
@@ -51,23 +49,4 @@ function ResolvedPanel() {
   if (chain === null) return null;
   const Panel = PANELS[panel] ?? GenericPanel;
   return <Panel chain={chain} />;
-}
-
-function NotFoundPanel() {
-  // Unknown URL → steer the handset to SIM services (VISION 404). This can
-  // only mount for tree-invalid URLs now — never for valid phone screens.
-  // Client-only: getPhoneRuntime() throws under SSR, so guard with typeof window.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    getPhoneRuntime().phone.navigate("menu/sim-services");
-  }, []);
-  return (
-    <ContentPanel title="SIM services">
-      <p>Page not found. This phone accepts no SIM cards from strangers.</p>
-      <p>
-        If the phone screen shows something here, it is a phone-only screen with no page of its own
-        — keep browsing on the handset, or go back <Link to="/">to standby</Link>.
-      </p>
-    </ContentPanel>
-  );
 }
