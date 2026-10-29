@@ -88,6 +88,15 @@ describe("describeStockScreen: kernel screens", () => {
  * a type error.
  */
 const SAMPLES: { readonly [K in WidgetModel["kind"]]: Extract<WidgetModel, { kind: K }> } = {
+  "space-impact": {
+    kind: "space-impact",
+    board: {
+      level: 0,
+      scroll: 0,
+      hud: { lives: 3, weapon: "missile", count: 3, score: 0 },
+      sprites: [],
+    },
+  },
   options: {
     kind: "options",
     items: ["Off", "On"],

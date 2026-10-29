@@ -20,13 +20,14 @@ export type SpaceImpactControl = "8" | "0" | "*" | "#" | "1" | "3";
 
 export interface SpaceImpactState {
   readonly tick: number;
+  readonly randomState: number;
   readonly level: number;
   readonly scroll: number;
   readonly ship: SpaceImpactPoint;
   readonly shield: boolean;
   readonly hud: SpaceImpactHud;
   readonly shots: readonly SpaceImpactPoint[];
-  readonly enemies: readonly SpaceImpactPoint[];
+  readonly enemies: readonly (SpaceImpactPoint & { readonly animationOffset: number })[];
   readonly moves: readonly SpaceImpactPoint[];
   readonly fireCooldown: number;
   readonly held: Readonly<Partial<Record<SpaceImpactControl, number>>>;

@@ -195,6 +195,17 @@ describe("coverage guard (plan 14 D7)", () => {
     expect(placeholderOwner("8-1-1")).toBeUndefined();
   });
 
+  it("covers Space impact's New game and Continue through asserted real menu scenarios", () => {
+    expect(stockMenu.paths()).toContain("menu/games/space-impact/continue");
+    expect(placeholderOwner("8-2-1")).toBeUndefined();
+    expect(asserted.some((e) => e.id === "tree/08-games/8-2-1.leaf")).toBe(true);
+    for (const id of ["pause-nav", "pause-continue", "pause-continue-navi", "pause-list"]) {
+      const entry = asserted.find((e) => e.id === `game/space-impact/${id}`);
+      expect(entry, id).toBeDefined();
+      expect(scenarioFor(entry!), id).toBeDefined();
+    }
+  });
+
   it("proves every same-as subtree equal to its model (labels aside from profile names)", () => {
     for (const [copy, model] of Object.entries(SAME_AS)) {
       const a = treeNode(copy)!;

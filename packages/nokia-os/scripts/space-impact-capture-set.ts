@@ -642,9 +642,23 @@ export function spaceImpactStart(id: string): TickStart {
   return /^(level|bonus-level|deaths-0-level)-0$/.test(name) ? "new-game" : "running";
 }
 
+const ASSERTED = new Set([
+  ...["8", "0", "star", "hash", "2", "5", "7", "9", "up", "down", "1", "3"].map(
+    (key) => `keys-tap-${key}`,
+  ),
+  "pause-nav",
+  "pause-list",
+  "pause-c",
+  "pause-reenter",
+  "pause-from-standby",
+  "pause-continue",
+  "pause-continue-navi",
+  "pause-top-score",
+]);
+
 function entry(spec: Spec, io: GameCaptureIo): CaptureSetEntry {
   const id = `game/space-impact/${spec.name}`;
-  const status: GoldenStatus = "pending:24";
+  const status: GoldenStatus = ASSERTED.has(spec.name) ? "asserted" : "pending:24";
   if (spec.kind === "shots")
     return shotsGolden({ id, root: ROOT, files: spec.files, note: spec.note, status });
   if (spec.kind === "screen") {

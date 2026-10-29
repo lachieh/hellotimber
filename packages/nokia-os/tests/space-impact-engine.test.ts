@@ -78,6 +78,16 @@ describe("Space impact ship and player shots", () => {
     },
   );
 
+  it("applies ordered queued moves before a shot redraw and clears them for the next tick", () => {
+    let state = newSpaceImpactGame();
+    for (const key of ["8", "8", "#"] as const) state = spaceImpactKey(state, key).state;
+    const fired = spaceImpactKey(state, "1");
+    expect(fired.state.ship).toEqual({ x: 6, y: 18 });
+    expect(fired.state.shots).toEqual([{ x: 12, y: 21 }]);
+    expect(stepSpaceImpact(fired.state).state.ship).toEqual({ x: 6, y: 18 });
+    expect(state.ship).toEqual({ x: 5, y: 20 });
+  });
+
   it("rejects a shot during the two-tick cooldown", () => {
     let state = spaceImpactKey(newSpaceImpactGame(), "1").state;
     state = spaceImpactKey(steps(1, state), "3").state;

@@ -1,4 +1,4 @@
 import { acceptancePlan } from "../support/acceptance.ts";
+import { spaceImpactScenarios } from "../support/game.ts";
 
-// Every imported capture remains pending until its gameplay/session replay passes.
-acceptancePlan({ plan: "24", scenarios: {} });
+acceptancePlan({ plan: "24", scenarios: spaceImpactScenarios });

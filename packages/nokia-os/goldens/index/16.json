@@ -980,13 +980,6 @@
     "events": 2
   },
   {
-    "id": "sound/note/8-2-1",
-    "file": "sound/note/8-2-1.sound.txt",
-    "status": "pending:24",
-    "kind": "sound",
-    "events": 0
-  },
-  {
     "id": "sound/note/8-3-1",
     "file": "sound/note/8-3-1.sound.txt",
     "status": "pending:24",

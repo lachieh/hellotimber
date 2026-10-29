@@ -24,3 +24,4 @@ export { settingsFeature } from "./settings";
 export { simServicesFeature } from "./sim-services";
 export { templatesFeature } from "./templates";
 export { tonesFeature } from "./tones";
+export { spaceImpactFeature } from "./space-impact";

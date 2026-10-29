@@ -1,6 +1,6 @@
 lcd-golden 1
 id: game/space-impact/pause-c
-status: pending:24
+status: asserted
 source: captures/6.39/plan24/pause/c
 source-sha256: 59e7c69f235008197701737a47e611a8ababed353d298af2b6b58d1677b5be3d
 trigger-frame: 1

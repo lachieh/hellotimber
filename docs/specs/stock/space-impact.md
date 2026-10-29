@@ -52,8 +52,10 @@ the score for ≈2.94 s; else `Game over!` / `Your score:` / the score for ≈2.
 `00`). The game menu follows with New game on the top row. The Top score page then shows the new
 score (70 after the no-key game, beating the virgin 45).
 
-**Suspend and Continue.** Navi or C during play opens `Continue / New game / Top score / Score
-IDs / Instructions` (`8-2-1`..`8-2-5`) ≈70 ms after the key, Continue on the top row. C there goes
+**Suspend and Continue.** Navi during play opens `Continue / New game / Top score / Score
+IDs / Instructions` (`8-2-1`..`8-2-5`) ≈70 ms after the key, Continue on the top row.
+C also suspends; its `pause-c-during-play` recording returns with New game selected in the
+middle row (the current implementation's window placement remains pending; checkpoint below). C there goes
 to the Games list; Space impact then plays its splash and opens on Continue. Continue redraws the
 board ≈80 ms after Select; it stands until a key, which reaches the game (1 fires at once), and
 the ticks restart ≈140 ms after that key. Snake II and Space impact keep their suspended games
@@ -163,6 +165,33 @@ this is resource/painter proof, not full gameplay acceptance. No plan-24 fixture
 **UNVERIFIED implementation hypotheses:** held fire makes five attempts including its initial
 press; a pending sound consumes the next engine event. Their synthetic tests check the chosen
 contract, not a complete firmware replay. The four accepted defaults retain their labels above.
+
+**Session checkpoint (2026-10-29; incomplete).** Games › Space impact › New game now opens
+the initial pure engine through the stock feature/session, and its per-game Continue survives
+standby and Top score. Twenty plan-24 fixtures are asserted through real menu navigation: the
+12 tap-key still sets and eight pause/menu fixtures (Navi, list, C from the menu, re-entry,
+standby, the waiting Continue board, Navi from Continue and Top score). The inherited New game
+tree fixture is asserted over all 60 original frames. This does not establish a complete game.
+The first movement/shot redraw `af` now includes the preceding move and uses its new gun row;
+`ag` verifies it is not applied twice. Shield expiry changes pixels only on a subsequent redraw.
+The next observed enemy enters at tick 55, (82,17), with the opposite animation phase from the
+opening group, fitted from independent frames `ao`/`ap` of the tree capture.
+
+Continue's waiting board uses `ship/shielded/2`, distinct from the two moving shield frames.
+**UNVERIFIED session defaults:** simultaneous deadlines run shield, tick, then repeats; an alert
+or call suspends to Continue as Snake does. C during play selects New game; its captured middle-row
+placement remains pending, with the current implementation using the existing top-row return.
+`pause-c-during-play`'s final frame equals `pause-list/02`, so the earlier "like Navi" note does
+not establish identical return selection/window placement. No comparison is relaxed for it.
+
+A diagnostic ran all 631 level-0 input taps through 831 engine steps. Only the initial 25 of
+879 settled timeline rows currently match in sequence; `ah` (2534 ms) is the next mismatch.
+The source contains zero-duration movement pulses and a 4 ms fire pulse, but no duration filter
+or latency model is accepted. The shot program is generated from the first level-0 sound sequence and reaches the real sounder:
+440/466/494/523 Hz at volume 3, with edges 0/34/73/112/150 ms. Warning tones Off and Games Sounds
+Off silence it. Full-level acceptance, collision/bonus/RNG consumption, the boss, endings and
+complete sound replays remain pending. The seed is stored once per game, without claiming seed
+recovery or random-event replay; the four accepted UNVERIFIED defaults above remain unchanged.
 
 **Remaining hypotheses (UNVERIFIED until golden replay or further evidence).** Exact collision
 geometry, score ceiling and per-hit awards, all boss phases and projectiles, the pending-sound

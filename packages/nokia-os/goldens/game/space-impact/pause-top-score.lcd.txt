@@ -1,6 +1,6 @@
 lcd-golden 1
 id: game/space-impact/pause-top-score
-status: pending:24
+status: asserted
 source: captures/6.39/plan24/pause/top-score
 source-sha256: 834d9a5ea192b1b53b916b0b05ec5ebe5e0bb6bb2d56cec0cf98ef62512b82c2
 trigger-frame: 1

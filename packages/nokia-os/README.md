@@ -315,6 +315,21 @@ active profile (the message alert (18), the incoming call's ringing (22), remind
 `StandbyIndicators.silent`, `SubmenuOptions.label` and `ApplicationContext.powerOff`
 (`packages/phone-core/README.md`).
 
+## Space impact (plan 24, incomplete)
+
+Games › Space impact › New game opens the initial engine and LCD painter. Navi suspends to
+Continue; Continue waits for a key, which reaches the game. The stock menu, waiting board,
+re-entry from standby, Top score return and twelve tap-key fixtures have exact acceptance
+coverage. The full 60-frame New game tree capture also passes. Each game's suspended state
+is independent; New game seeds once and replaces only its own state.
+
+`src/games/space-impact/` owns pure state and steps; `src/firmware/features/space-impact.ts`
+owns timers, key repeats and suspension. Games wiring stays in `features/games.ts`. Generated
+opening-wave declarations come from committed LCD evidence. Full level-0 replay still fails
+at image `ah`; collisions, later waves, RNG consumption, bonuses, bosses, game over, seeded
+splash and the remaining sound programs are unfinished; the ordinary shot program is generated. The retained clock-seed fallback and other accepted
+defaults remain UNVERIFIED. See `docs/specs/stock/space-impact.md` and plan 24 for the checkpoint.
+
 ## Snake II
 
 `Games › Snake II › New game` plays the firmware's game (plan 23), checked against gameplay

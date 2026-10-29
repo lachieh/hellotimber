@@ -2,6 +2,7 @@
 // game, the New-game seed, cues and the kernel clock), the table of game levels that lists each
 // level's Continue and routes its Top score and Level returns (plan 24 D10), and the games that
 // are not built yet: their fixed Level bars, virgin top scores, and Club Nokia's ID query.
+import { spaceImpactGame } from "./space-impact";
 import { createAnsiRandom, type AnsiRandom } from "../../games/random";
 import { gameSeed } from "../../games/seed";
 import type { Widget } from "../../widgets/flow";
@@ -106,6 +107,16 @@ export const GAME_LEVELS: readonly GameLevel[] = [
     topScore: { number: "8-1-4" },
     level: "8-1-2",
   },
+  {
+    number: "8-2",
+    newGame: "8-2-1",
+    game: "space-impact",
+    continue:
+      ({ games }) =>
+      () =>
+        spaceImpactGame({ games, start: "continue" }),
+    topScore: { number: "8-2-2", row: "top" },
+  },
 ];
 
 export interface GameLevelTables {
@@ -158,10 +169,15 @@ export const GAME_LEVEL_TABLES: GameLevelTables = gameLevelTables(GAME_LEVELS);
 export const gamesFeature: StockFeature = {
   name: "games",
   placeholders: {
-    "8-2-1": "24", // Space impact › New game
     "8-3-1": "24", // Bantumi › New game
     "8-4-1-1": "24", // Pairs II › Time trial › New game
     "8-4-2-1": "24", // Pairs II › Puzzle › New game
+  },
+  screens: {
+    "8-2-1":
+      ({ games }) =>
+      () =>
+        spaceImpactGame({ games, start: "new" }),
   },
   leads: GAME_LEVEL_TABLES.leads,
   widgets: {
@@ -172,7 +188,6 @@ export const gamesFeature: StockFeature = {
       ...GAME_LEVEL_TABLES.noteEnds,
       // Top score returns to New game on the top row, the window rebuilt at it (`New game / Top
       // score / Score IDs`, `tree/08-games/8-2-2.leaf`, `8-4-1-3.leaf`, `8-4-2-3.leaf` image m).
-      "8-2-2": { select: "new-game", row: "top" },
       "8-4-*-3": { select: "new-game", row: "top" },
     },
     // Club Nokia › Club Nokia ID asks for the ID (probe/confirm-8-6-4-ok image c: no value). It
@@ -190,17 +205,11 @@ export const gamesFeature: StockFeature = {
     },
   },
   settings: {
-    // `Top score:` / the score (D12): uninitialised game EEPROM (Space impact: 45) and zero
-    // (Pairs II). The games write them; Restore keeps them, as Snake II's (v5.79 kept them).
+    // Pairs II's top scores start at zero; each game writes them and Restore keeps them.
     virginNumbers: [
-      { key: "games/space-impact/top-score", number: "8-2-2", line: 1 },
       { key: "games/pairs-ii/time-trial/top-score", number: "8-4-1-3", line: 1 },
       { key: "games/pairs-ii/puzzle/top-score", number: "8-4-2-3", line: 1 },
     ],
-    restoreKeeps: [
-      "games/space-impact/top-score",
-      "games/pairs-ii/time-trial/top-score",
-      "games/pairs-ii/puzzle/top-score",
-    ],
+    restoreKeeps: ["games/pairs-ii/time-trial/top-score", "games/pairs-ii/puzzle/top-score"],
   },
 };

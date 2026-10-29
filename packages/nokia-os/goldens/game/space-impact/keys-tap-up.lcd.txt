@@ -1,6 +1,6 @@
 lcd-golden 1
 id: game/space-impact/keys-tap-up
-status: pending:24
+status: asserted
 source: captures/6.39/plan24/keys/tap-up
 source-sha256: ec7c09b3c08a15ca037e608d282d6e3bef1d458df1237052fe197d667d859b47
 note: S4: New game, ▲ tapped after tick 40 (the shield gone). Tick stills: each key's tick and the two after it.

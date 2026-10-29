@@ -188,3 +188,25 @@ describe("cue comparison (tests/support/sound.ts, `cues`)", () => {
     expect(check(meals(8287, 6 + TWO_FRAMES_MS + 1))).toThrow(/\+8287 ±34 \(\+35\) {2}✗ timing/);
   });
 });
+
+describe("Space impact shot sound", () => {
+  it("plays the captured four ascending tones when the game fires", () => {
+    const events = sounderAt("factory").cue({ kind: "game-sound", id: "space-impact/shot" });
+    expect(events).toEqual([
+      { output: "buzzer", atMs: 1000, hz: 440, volume: 3 },
+      { output: "buzzer", atMs: 1034, hz: 466, volume: 3 },
+      { output: "buzzer", atMs: 1073, hz: 494, volume: 3 },
+      { output: "buzzer", atMs: 1112, hz: 523, volume: 3 },
+      { output: "buzzer", atMs: 1150, hz: null },
+    ]);
+  });
+
+  it.each<SettingChoices>([{ [WARNING_TONES]: TONES_OFF }, { [SOUNDS]: GAMES_OFF }])(
+    "silences shots under captured game sound gating %j",
+    (choices) => {
+      expect(
+        sounderAt("factory", choices).cue({ kind: "game-sound", id: "space-impact/shot" }),
+      ).toEqual([]);
+    },
+  );
+});

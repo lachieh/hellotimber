@@ -332,15 +332,34 @@ export const spaceImpactOpeningWaveModule: GeneratedResourceModule = {
       const entryX = 82;
       const tick = first.tick - (entryX - object.x) / 2;
       if (!Number.isSafeInteger(tick)) throw new Error("opening wave: nonintegral entry");
-      return { tick, x: entryX, y: object.y };
+      return { tick, x: entryX, y: object.y, animationOffset: 0 };
     });
     for (const snapshot of snapshots)
       for (const object of snapshot.objects)
         if (object.picture !== `enemy/round-wide/${snapshot.tick % 2 === 0 ? 1 : 0}`)
           throw new Error("opening wave: changed animation phase");
+    const tree = golden("tree/08-games/8-2-1.leaf");
+    const following = [
+      { tick: 57, image: "ao" },
+      { tick: 58, image: "ap" },
+    ].map(({ tick, image }) => {
+      const objects = decodeSpaceImpact(findGoldenImage(tree, image).pixels, { level: 0 }).objects;
+      const object = objects.find((object) => object.y === 17);
+      if (!object) throw new Error("following wave: missing observed enemy");
+      if (object.picture !== `enemy/round-wide/${tick % 2}`)
+        throw new Error("following wave: changed animation phase");
+      return { tick, object };
+    });
+    const motion = fitSpaceImpactLinearPath(following);
+    if (motion.family !== "enemy/round-wide" || motion.dx !== -2 || motion.dy !== 0)
+      throw new Error("following wave: changed observed motion");
+    const firstFollowing = following[0]!;
+    const followingTick = firstFollowing.tick - (82 - firstFollowing.object.x) / 2;
+    if (!Number.isSafeInteger(followingTick)) throw new Error("following wave: nonintegral entry");
+    entries.push({ tick: followingTick, x: 82, y: firstFollowing.object.y, animationOffset: 1 });
     return resourceModule(
       "SPACE_IMPACT_OPENING_WAVE",
-      "{ readonly family: string; readonly dx: number; readonly dy: number; readonly entries: readonly { readonly tick: number; readonly x: number; readonly y: number }[] }",
+      "{ readonly family: string; readonly dx: number; readonly dy: number; readonly entries: readonly { readonly tick: number; readonly x: number; readonly y: number; readonly animationOffset: number }[] }",
       { family: "enemy/round-wide", dx: -2, dy: 0, entries },
     );
   },

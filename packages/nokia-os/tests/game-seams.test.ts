@@ -77,13 +77,16 @@ describe("the phone-wide ANSI lifetime (D6)", () => {
 });
 
 describe("GAME_LEVELS and their tables (D10)", () => {
-  it("lists Snake II's level, its New game, Top score and Level", () => {
+  it("lists Snake II and Space impact, with each game's score and Level pages", () => {
     expect(GAME_LEVELS.map(({ number, newGame, game }) => ({ number, newGame, game }))).toEqual([
       { number: "8-1", newGame: "8-1-1", game: "snake" },
+      { number: "8-2", newGame: "8-2-1", game: "space-impact" },
     ]);
     const snake = GAME_LEVELS[0]!;
     expect(snake.topScore).toEqual({ number: "8-1-4" });
     expect(snake.level).toBe("8-1-2");
+    expect(GAME_LEVELS[1]!.topScore).toEqual({ number: "8-2-2", row: "top" });
+    expect(GAME_LEVELS[1]!.level).toBeUndefined();
   });
 
   it("lists each level's Continue only while its own game is suspended", () => {

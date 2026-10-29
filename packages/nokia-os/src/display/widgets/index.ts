@@ -1,3 +1,4 @@
+import { paintSpaceImpact, type SpaceImpactModel } from "./space-impact";
 import type { Framebuffer } from "@hellotimber/phone-screen";
 import { paintBootFrame } from "../boot";
 import { placeholderFrame } from "../placeholder";
@@ -121,6 +122,7 @@ export interface BootFrameModel {
 
 /** What a stock widget shows: plain data, compared by value to decide whether to repaint. */
 export type WidgetModel =
+  | SpaceImpactModel
   | OptionsModel
   | MultiModel
   | NoteModel
@@ -200,6 +202,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "splash":
       paintSplash(fb, model, previous);
+      return;
+    case "space-impact":
+      paintSpaceImpact(fb, model);
       return;
     case "snake":
       paintSnake(fb, model);

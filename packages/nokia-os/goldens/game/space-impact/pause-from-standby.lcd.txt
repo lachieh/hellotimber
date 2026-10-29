@@ -1,6 +1,6 @@
 lcd-golden 1
 id: game/space-impact/pause-from-standby
-status: pending:24
+status: asserted
 source: captures/6.39/plan24/pause/from-standby
 source-sha256: 0a57faa128df5525cba13b5210efc3d28375e530cbf4f5f361566641bd7e1798
 trigger-frame: 1

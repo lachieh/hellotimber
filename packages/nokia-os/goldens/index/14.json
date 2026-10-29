@@ -2415,10 +2415,10 @@
   {
     "id": "tree/08-games/8-2-1.leaf",
     "file": "tree/08-games/8-2-1.leaf.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "timeline",
-    "images": 22,
-    "frames": 40,
+    "images": 42,
+    "frames": 60,
     "covers": [
       "8-2-1"
     ]

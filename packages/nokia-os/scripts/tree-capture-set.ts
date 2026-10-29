@@ -67,7 +67,6 @@ export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
   "12-*-2-9-4": "18c",
 
   // Plan 24: Games II.
-  "8-2-1": "24", // Space impact › New game
   "8-3-1": "24", // Bantumi › New game
   "8-4-1-1": "24", // Pairs II › Time trial › New game
   "8-4-2-1": "24", // Pairs II › Puzzle › New game

@@ -1,3 +1,4 @@
+import { SPACE_IMPACT_DATA } from "../../src/resources/generated/space-impact";
 // Snake II gameplay goldens replayed through the engine (plan 23 Tasks 7-8): each recorded
 // game's level, maze and recovered seed (Task 5), and the engine state at every board the golden
 // shows, driven by the golden's `input`.
@@ -811,4 +812,91 @@ export const SNAKE_SCENARIOS: Record<string, (id: string) => void> = {
   "game/snake/after-virgin": (id) => afterGame(id, "virgin-game"),
   "game/snake/after-long-top-score": (id) => afterTopScore(id, "bot-long"),
   "game/snake/after-virgin-top-score": (id) => afterTopScore(id, "virgin-game"),
+};
+
+/** Space impact's real Games binding, at New game after its title. */
+function spaceImpactMenu(): Rig {
+  const rig = standbyRig({}, {});
+  goto(rig, "8-2-1");
+  rig.advance(TAP_MS);
+  return rig;
+}
+
+function spaceImpactTap(id: string): void {
+  const rig = spaceImpactMenu();
+  const golden = loadGolden(id);
+  const input = inputByTick(id);
+  rig.press("navi");
+  let tick = 0;
+  for (const image of golden.images) {
+    const target = Number(image.name.slice(1));
+    while (tick < target) {
+      rig.advance(
+        tick === 0 ? SPACE_IMPACT_DATA.timings.firstTickMs : SPACE_IMPACT_DATA.timings.tickMs,
+      );
+      tick++;
+    }
+    for (const key of input.get(tick) ?? []) rig.press(key);
+    expectLcd(rig.paint(), { id, image }, `${id} tick ${tick}`);
+  }
+}
+
+function spaceImpactPause(id: string): void {
+  const rig = spaceImpactMenu();
+  const golden = loadGolden(id);
+  const finalRow = golden.timeline!.at(-1)!;
+  const input = golden.input!;
+  if (input.length !== 1 || (input[0]!.key !== "navi" && input[0]!.key !== "c"))
+    throw new Error(`${id}: expected one suspend key`);
+  const tick = input[0]!.tick;
+  const key = input[0]!.key;
+  if (key !== "navi" && key !== "c") throw new Error(`${id}: invalid suspend key`);
+  const pauseAt =
+    SPACE_IMPACT_DATA.timings.firstTickMs + (tick - 1) * SPACE_IMPACT_DATA.timings.tickMs + 20;
+  const recording = rig.record(
+    finalRow.startMs + finalRow.durationMs + 100,
+    () => rig.press("navi"),
+    [{ atMs: pauseAt, run: () => rig.press(key) }],
+  );
+  expectTimeline(recording, golden, id, { untimedRows: new Set([finalRow.frame]) });
+}
+
+function suspendedSpaceImpact(): Rig {
+  const rig = spaceImpactMenu();
+  rig.press("navi");
+  rig.advance(SPACE_IMPACT_DATA.timings.firstTickMs + 9 * SPACE_IMPACT_DATA.timings.tickMs);
+  rig.press("navi");
+  rig.advance(TAP_MS);
+  return rig;
+}
+
+export const spaceImpactScenarios: Readonly<Record<string, (id: string) => void>> = {
+  ...Object.fromEntries(
+    ["8", "0", "star", "hash", "2", "5", "7", "9", "up", "down", "1", "3"].map((key) => [
+      `game/space-impact/keys-tap-${key}`,
+      spaceImpactTap,
+    ]),
+  ),
+  "game/space-impact/pause-nav": spaceImpactPause,
+  "game/space-impact/pause-list": (id) =>
+    stills(id, suspendedSpaceImpact(), ["", ...Array(6).fill("down")]),
+  "game/space-impact/pause-c": (id) => timeline(id, suspendedSpaceImpact(), "c", []),
+  "game/space-impact/pause-reenter": (id) => {
+    const rig = suspendedSpaceImpact();
+    keys(rig, "c");
+    timeline(id, rig, "navi", []);
+  },
+  "game/space-impact/pause-from-standby": (id) => {
+    const rig = suspendedSpaceImpact();
+    keys(rig, "c*3 wait:2000 navi down*7 navi down");
+    timeline(id, rig, "navi", []);
+  },
+  "game/space-impact/pause-continue": (id) => timeline(id, suspendedSpaceImpact(), "navi", []),
+  "game/space-impact/pause-continue-navi": (id) =>
+    timeline(id, suspendedSpaceImpact(), "navi", [[2, "navi"]]),
+  "game/space-impact/pause-top-score": (id) => {
+    const rig = suspendedSpaceImpact();
+    keys(rig, "down*2");
+    timeline(id, rig, "navi", []);
+  },
 };

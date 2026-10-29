@@ -1,3 +1,4 @@
+import { SPACE_IMPACT_SOUNDS } from "./generated/space-impact-sounds";
 // Stock resources, built from the data that scripts/extract-resources.ts derives from the
 // committed goldens (D8). Nothing here is drawn by hand.
 import { MenuGraphic, Timeline, type CarouselReveal } from "@hellotimber/phone-core";
@@ -255,7 +256,7 @@ export const GAME_CUES = SOUND_DATA.gameCues;
  * The games' sounds by `<game>/<sound>` (plan 24 D13), extracted from their sound goldens by the
  * program extractor; Space impact's arrive with its S9 goldens (plan 24 Task 12).
  */
-export const GAME_SOUNDS: Readonly<Record<string, SoundProgram>> = {};
+export const GAME_SOUNDS: Readonly<Record<string, SoundProgram>> = SPACE_IMPACT_SOUNDS;
 /** The power-on tone (and the power key's long press): its time into the power-on. */
 export const BOOT_TONE = SOUND_DATA.bootTone;
 

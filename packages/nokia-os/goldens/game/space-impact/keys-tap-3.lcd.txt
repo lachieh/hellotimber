@@ -1,6 +1,6 @@
 lcd-golden 1
 id: game/space-impact/keys-tap-3
-status: pending:24
+status: asserted
 source: captures/6.39/plan24/keys/tap-3
 source-sha256: 0c441c201a03735b231616419245f5e3895dc3015be438845512c9c678ed1fab
 note: S4: New game, 3 tapped after tick 40 (the shield gone). Tick stills: each key's tick and the two after it.

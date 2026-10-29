@@ -47,6 +47,34 @@ describe("Space impact engine pixels before the first wave", () => {
   });
 });
 
+describe("Space impact movement before a shot redraw", () => {
+  it("replays the first move/fire redraw and the following tick from the full level-0 input", () => {
+    const golden = loadGolden("game/space-impact/level-0");
+    let state = newSpaceImpactGame();
+    for (let tick = 0; tick <= 22; tick++) {
+      if (tick > 0) state = stepSpaceImpact(state).state;
+      for (const input of golden.input ?? []) {
+        if (input.tick !== tick) continue;
+        if (input.key !== "8" && input.key !== "1") throw new Error("Changed opening input");
+        state = spaceImpactKey(state, input.key).state;
+        state = spaceImpactKey(state, input.key, "up").state;
+      }
+    }
+    const paint = () => {
+      const fb = new Framebuffer();
+      paintSpaceImpact(fb, { kind: "space-impact", board: spaceImpactRender(state) });
+      return fb.pixels;
+    };
+    expect(paint(), "level-0 af: the shot redraw includes the preceding move").toEqual(
+      goldenImage(golden.id, "af").image.pixels,
+    );
+    state = stepSpaceImpact(state).state;
+    expect(paint(), "level-0 ag: the move is not applied again on the next tick").toEqual(
+      goldenImage(golden.id, "ag").image.pixels,
+    );
+  });
+});
+
 describe("Space impact observed level-0 data pixels", () => {
   it("paints every retained alternative exactly and keeps the unresolved boss redraw explicit", () => {
     const data = SPACE_IMPACT_LEVEL_OBSERVATIONS;

@@ -18,16 +18,17 @@ lands second rebases onto the other and keeps both plans' tests green.
 supplementary captures") and plans 13, 14, 16, 23 and 28 in full before starting. The planning
 probes in `$REF/captures/scratch-plan24/{space-impact,bantumi,pairs2}/` are evidence for this plan
 only and are never imported. Task 0 writes this plan's captures to `$REF/captures/6.39/plan24/`.
-**Status (2026-10-28):** Task 0 is closed under Lachlan's accepted criterion changes below.
+**Status (2026-10-29):** Task 0 is closed under Lachlan's accepted criterion changes below.
 The eight full-level recordings, exits, ending and LCD-only control proof are validated;
 implementation must replay their pixels under AGENTS.md's fidelity standard. The four accepted
 defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete,
-including the inherited Games II seams. Task 3 is complete: 168 fixtures are imported and
-remain pending gameplay replay. Task 4 is complete under the accepted revised criterion below.
+including the inherited Games II seams. Task 3 is complete: 168 fixtures are imported; 20 are asserted and 148 remain pending
+gameplay/session replay. Task 4 is complete under the accepted revised criterion below.
 Task 5 is split into level 0 (5a) and levels 1–7 (5b) under the accepted sequencing change
 below. The level-0 decoder checkpoint reads 855 of 856 settled images exactly; full level-0
-reconstruction remains open. Tasks 7/8/10 have an initial engine/painter slice; Tasks 6 and
-9/11–14 remain open. The 2026-10-29 checkpoint below records its exact proof and limits.
+reconstruction remains open. Tasks 7/8/10 have an initial engine/painter slice, and Tasks 11/13 now have the
+Games binding, initial session and 20 passing acceptance scenarios. Tasks 6 and 9/12/14 remain
+open; none of those partial slices completes its task. The 2026-10-29 checkpoint below records its exact proof and limits.
 
 ## Goal
 
@@ -2198,6 +2199,114 @@ are not accepted verification. The final source includes test-first Navi/C key-d
 suspend handling. Generated outputs are up to date; excluded packages and the lockfile are
 unchanged. This is one coherent partial engine/data/painter unit, not Task 5a or plan completion.
 
+### Session and first replay mismatch checkpoint (2026-10-29; incomplete)
+
+The parent Task 11 wiring decision is recorded below and implemented in `features/games.ts`:
+`8-2-1` is a screen, its `GAME_LEVELS` entry adds Continue and routes Top score returns, and
+`scripts/tree-capture-set.ts` no longer owns its placeholder. `features/space-impact.ts` owns
+the session and its score settings; the single feature-index export satisfies the repository's
+one-feature-per-file guard. No missing `bindings.ts` workaround or phone-core change was made.
+
+**Full recording attempt.** A diagnostic drove all **631** committed level-0 input taps and
+**831** engine steps through the recording's end. Before the fix, its first unmatched settled
+image was `af` (frame 31, 2305 ms): a movement preceding a shot was absent from that shot's
+redraw, and the shot originated on the old gun row. The engine now flushes ordered queued moves
+before firing and clears them so the next tick does not move twice. Two regression tests fail
+against the supplied engine and pass with the change; the painter compares `af` and the next
+settled image `ag` pixel-exact against their committed frames.
+
+The complete-recording diagnostic now matches its first **25 of 879 settled timeline rows**;
+the next unmatched image is **`ah` (frame 33, 2534 ms, held 82 ms)**. The engine then puts the
+ship one pixel above its capture. The source `keys.csv` includes zero-duration movement taps
+(e.g. 2438.2 ms) and a 4 ms fire pulse (2840.3–2844.3 ms), all currently represented as ordinary
+taps by `input:`. An exploratory duration filter moved the failure later but did not resolve
+it; that filter was rejected and no input, capture, comparator or tolerance was changed. Do
+not treat the source pulse durations as an established causal model or add an arbitrary tap
+threshold. The diagnostic ran the entire input through the engine despite this first mismatch;
+its final score remains 0 because collisions and scoring are still absent. This is neither
+full-level acceptance nor seed recovery. Diagnostic source and output are retained locally as
+`/private/tmp/p24-full-level-diagnostic.test.ts` and `/private/tmp/p24-full-level-diagnostic.log`.
+
+**Session and exact passing slice.** The session takes `games.seed()` once into the game's
+`randomState` (no random consumer is claimed), ticks at the generated first offset and period,
+runs the shield one-shot and repeat timers, forwards key down/up and cues, suspends per game,
+and keeps Continue's board still until a key. New game clears only Space impact's slot. The
+painter is registered in the stock widget union; the accessibility description and its exhaustive
+sample are updated. The session tests verify the board, timer start, release stopping repeats,
+seed preservation, independent Snake state, New game and first-key delivery after Continue.
+
+The tree acceptance replay first failed on an extra redraw when the shield expired. The timer
+now changes the internal shield without drawing; the next tick or shot redraw reveals it. After
+placeholder removal the importer exposes all **60** original tree frames instead of the former
+40-frame placeholder cut. The later frames required one additional observed enemy entry:
+`(tick 55, x 82, y 17)`, with its animation opposite the first group. Its generated declaration
+is fitted from tree images `ao` and `ap` (ticks 57/58); no later group member is invented.
+Continue's waiting board uses the separately captured `ship/shielded/2` picture. No general
+decoder change was made.
+
+The following **20 plan-24 fixtures** replay through the real phone's Games menu and are asserted:
+the twelve `keys-tap-{8,0,star,hash,2,5,7,9,up,down,1,3}` still sets, plus `pause-nav`,
+`pause-list`, `pause-c`, `pause-reenter`, `pause-from-standby`, `pause-continue`,
+`pause-continue-navi` and `pause-top-score`. `tree/08-games/8-2-1.leaf` is asserted in index 14;
+its 60 frames pass without a special comparator. The old inherited pending sound note for
+`8-2-1` joins the existing equal silent `sound/note/5-6-1` group when the placeholder owner is
+removed; the importer makes that shared generated change. No gameplay sound fixture is asserted. The required first shot program is now generated through
+plan 24's resource extension from the first five buzzer edges in `sound/game/space-impact/level-0`:
+440/466/494/523 Hz at volume 3, with captured edge times 0/34/73/112/150 ms. The initial real
+Games binding exposed the absent program; a focused sounder regression fails with "No game sound"
+before generation and passes afterward, including Warning tones Off and Games Sounds Off gating.
+No death/special/bonus program, sound replay or timing exception is claimed. Task 12's partial
+program extraction lives in the new plan-owned `scripts/space-impact-sounds.ts`, reusing
+`sound-programs.ts`'s `programFromRows`, and registers `space-impact-sounds.ts` through
+`resources.generatedModules`. This follows AGENTS.md's shared-output convention without adding
+a Space-impact-specific case to the shared generator. Pixel scenarios use the normal clock seed
+fallback; none injects Snake's recovered seed into a noninformative Space impact opening.
+Plan 24 is **20 asserted, 148 pending, 0 registered known gaps**. The coverage guard requires
+asserted New game and Continue scenarios. No `ala` gap has been registered.
+
+**Calls and remaining limits.** The four accepted defaults remain explicitly UNVERIFIED.
+Further provisional calls for this partial session are:
+
+- **UNVERIFIED:** simultaneous session deadlines run shield, then game tick, then held-key
+  repeats in insertion order. No recorded simultaneous edge establishes a different priority.
+- **UNVERIFIED:** alerts and calls suspend to Continue like Navi, following the existing Snake
+  convention; Space impact's interrupted-state ordering is not independently replayed here.
+- **UNVERIFIED:** C suspends with New game selected using the existing top-row return. The
+  `pause-c-during-play` capture's final image equals `pause-list/02` (New game on the middle row),
+  contradicting its provisional note "like Navi" and Task 11's blanket `select: "continue"`.
+  Navi's top-row Continue and C's New-game selection are observed; C's window placement remains
+  pending. The current Flow/kernel return contract offers top/bottom, so no shared API or custom
+  menu implementation was added just to manufacture its middle-row layout.
+
+The full level-0 golden, moving/firing Continue traces, held-key/special traces, splash seed
+variants, collision/bonus/RNG ordering, bosses, death/restart/game-over and sounds remain pending.
+The fixed existing splash still plays; seeded splash generation is not implemented. Tasks 5a,
+6–14 remain incomplete outside the slice above. Continue work at `ah`, preserving every raw key
+and settled frame; do not claim this checkpoint completes level 0 or the game.
+
+**Verification:** the focused pre-closeout run passes 8 files, **704 tests**, 4 expected failures
+and 155 TODOs. This includes the actual plan-24 acceptance scenarios and complete tree/menu
+slice, the engine/painter tests, the coverage guard, feature composition and accessibility.
+The final focused wiring/sound check passes 4 files / 85 tests; the resource/engine/session/
+acceptance check passes 8 files / 256 tests and 148 expected TODOs. An initial uncached run
+found the old one-Continue path count; the next found the Games seam's one-game table and
+positional assumption. Both runs were stopped, and their workers were cleaned up. The table
+now keeps Snake first, then Space impact, with explicit tests for both entries and the added
+Continue path. The broader non-acceptance-only attempt was superseded by the required final
+uncached workspace run; only a fully completed final run counts. Final totals, check and build
+are recorded at closeout below when complete.
+
+**Checkpoint closeout verification.** The completed final `vp run -r --no-cache test` passes
+all six packages with **262 passing files, 11,817 passed tests, 120 expected failures and
+171 TODOs**, and **0/6 cache hits**. Nokia-os contributes **170 files / 10,975 passed tests**
+in **973.22 s**; phone-core 450, snake 62, phone-3d 49, phone-screen 101 and website 180.
+The final source uses mise's guarded Node 22 with `VITEST_MAX_WORKERS=2` and
+`VP_RUN_CONCURRENCY_LIMIT=1`. `vp check --fix`, final `vp check` and `website#build` pass.
+Logs: `/private/tmp/p24-full-suite-final.log`, `/private/tmp/p24-final-check.log`,
+`/private/tmp/p24-build-final.log`. Earlier stopped runs are not accepted verification.
+No excluded package, website file or lockfile changed. This is one coherent partial session,
+Games wiring, shot and acceptance unit; the full level-0 golden remains pending at `ah`.
+
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 
 **Files:** `scripts/space-impact-seeds.ts` (new), `src/games/space-impact/random.ts` (new: which
@@ -2273,10 +2382,19 @@ line), `tests/paint-space-impact.test.ts` (new).
       both polarities; the HUD at every value the goldens show.
 - [ ] Commit: `feat(nokia-os): paint Space impact from the stock sprites`.
 
+### Parent decision (2026-10-29): Task 11 wiring
+
+`src/firmware/bindings.ts` does not exist. Extend `src/firmware/features/games.ts`, which
+owns Games placeholders, replacing Space impact's placeholder with its `screens` binding.
+This follows AGENTS.md's Firmware convention. The capture-side ownership line lives in
+`scripts/tree-capture-set.ts` and is removed when its real tree scenario passes. This
+supersedes the earlier checkpoint's stop on the missing bindings file.
+
 ### Task 11 - The Space impact feature: session, splash, suspend and game over (TDD)
 
 **Files:** `src/firmware/features/space-impact.ts` (new), the features index and `GAME_LEVELS`
-(one line each), `src/firmware/bindings.ts` (`PLACEHOLDER_OWNERS`: one line removed), `src/widgets/splash.ts` (a generated-frame splash), `tests/space-impact-game.test.ts`
+(one line each), `src/firmware/features/games.ts` (replace `8-2-1` in `placeholders` with `screens`),
+`scripts/tree-capture-set.ts` (`PLACEHOLDER_OWNERS`: one line removed), `src/widgets/splash.ts` (a generated-frame splash), `tests/space-impact-game.test.ts`
 (new).
 
 - [ ] TDD the session: New game seeds from `games.seed()` (D5); ticks at the captured period after

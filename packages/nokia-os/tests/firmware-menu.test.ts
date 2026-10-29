@@ -194,9 +194,10 @@ describe("stockMenu", () => {
         count(node.children ?? []);
       });
     count(STOCK_TREE);
-    // The menu itself, every node, Snake II's Continue (plan 23 D10) and Add topic (plan 18c).
-    expect(paths.length).toBe(1 + nodes + 2);
+    // The menu, every tree node, Snake II and Space impact Continue, and Add topic.
+    expect(paths.length).toBe(1 + nodes + 3);
     expect(paths).toContain("menu/games/snake/continue");
+    expect(paths).toContain("menu/games/space-impact/continue");
     for (const path of [
       "menu/phone-book/search",
       "menu/phone-book/send-bcard",

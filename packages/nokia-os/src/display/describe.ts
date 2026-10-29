@@ -87,6 +87,8 @@ export function describeWidget(model: WidgetModel): string {
       return withSoftkey(join(model.lines) || "Blank page", model.softkey);
     case "splash":
       return "Game title";
+    case "space-impact":
+      return `Space impact, score ${model.board.hud.score}`;
     case "snake":
       return `Snake II, score ${model.board.score}`;
     case "game-over":

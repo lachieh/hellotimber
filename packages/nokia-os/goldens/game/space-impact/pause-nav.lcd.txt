@@ -1,6 +1,6 @@
 lcd-golden 1
 id: game/space-impact/pause-nav
-status: pending:24
+status: asserted
 source: captures/6.39/plan24/pause/nav
 source-sha256: 18fae2ab9c83255affd8e6c39f8e8bce62744ed8f1389cc25822b2cad9329826
 trigger-frame: 1

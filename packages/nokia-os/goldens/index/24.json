@@ -604,7 +604,7 @@
   {
     "id": "game/space-impact/keys-tap-0",
     "file": "game/space-impact/keys-tap-0.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3,
@@ -613,7 +613,7 @@
   {
     "id": "game/space-impact/keys-tap-1",
     "file": "game/space-impact/keys-tap-1.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3,
@@ -622,7 +622,7 @@
   {
     "id": "game/space-impact/keys-tap-2",
     "file": "game/space-impact/keys-tap-2.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3,
@@ -631,7 +631,7 @@
   {
     "id": "game/space-impact/keys-tap-3",
     "file": "game/space-impact/keys-tap-3.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3,
@@ -649,7 +649,7 @@
   {
     "id": "game/space-impact/keys-tap-5",
     "file": "game/space-impact/keys-tap-5.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3,
@@ -667,7 +667,7 @@
   {
     "id": "game/space-impact/keys-tap-7",
     "file": "game/space-impact/keys-tap-7.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3,
@@ -676,7 +676,7 @@
   {
     "id": "game/space-impact/keys-tap-8",
     "file": "game/space-impact/keys-tap-8.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3,
@@ -685,7 +685,7 @@
   {
     "id": "game/space-impact/keys-tap-9",
     "file": "game/space-impact/keys-tap-9.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3,
@@ -694,7 +694,7 @@
   {
     "id": "game/space-impact/keys-tap-down",
     "file": "game/space-impact/keys-tap-down.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3,
@@ -703,7 +703,7 @@
   {
     "id": "game/space-impact/keys-tap-hash",
     "file": "game/space-impact/keys-tap-hash.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3,
@@ -712,7 +712,7 @@
   {
     "id": "game/space-impact/keys-tap-star",
     "file": "game/space-impact/keys-tap-star.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3,
@@ -721,7 +721,7 @@
   {
     "id": "game/space-impact/keys-tap-up",
     "file": "game/space-impact/keys-tap-up.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 3,
     "frames": 3,
@@ -891,7 +891,7 @@
   {
     "id": "game/space-impact/pause-c",
     "file": "game/space-impact/pause-c.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -908,7 +908,7 @@
   {
     "id": "game/space-impact/pause-continue",
     "file": "game/space-impact/pause-continue.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 2
@@ -934,7 +934,7 @@
   {
     "id": "game/space-impact/pause-continue-navi",
     "file": "game/space-impact/pause-continue-navi.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "timeline",
     "images": 2,
     "frames": 3,
@@ -943,7 +943,7 @@
   {
     "id": "game/space-impact/pause-from-standby",
     "file": "game/space-impact/pause-from-standby.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "timeline",
     "images": 11,
     "frames": 11
@@ -951,7 +951,7 @@
   {
     "id": "game/space-impact/pause-list",
     "file": "game/space-impact/pause-list.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 7,
     "frames": 7
@@ -959,7 +959,7 @@
   {
     "id": "game/space-impact/pause-nav",
     "file": "game/space-impact/pause-nav.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 13,
@@ -976,7 +976,7 @@
   {
     "id": "game/space-impact/pause-reenter",
     "file": "game/space-impact/pause-reenter.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "timeline",
     "images": 11,
     "frames": 11
@@ -984,7 +984,7 @@
   {
     "id": "game/space-impact/pause-top-score",
     "file": "game/space-impact/pause-top-score.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "timeline",
     "images": 13,
     "frames": 17
