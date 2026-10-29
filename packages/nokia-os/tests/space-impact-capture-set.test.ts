@@ -93,3 +93,48 @@ it("keeps each full level as a lossless recording for every captured spawn, kill
     });
   }
 });
+
+it("does not turn zero-execution matrix pairs into input or impose a minimum pulse duration", () => {
+  const recording = [0, 173, 266, 359, 452].map((startMs, index) => ({
+    startMs,
+    durationMs: 93,
+    pixels: frame(index),
+  }));
+  const entries = spaceImpactCaptureSet({
+    recording: () => recording,
+    keys: (dir) =>
+      dir === "plan24/bot/full/level-0"
+        ? [
+            { tick: 1, key: "8", pressMs: 200, releaseMs: 200 },
+            { tick: 1, key: "8", pressMs: 201, releaseMs: 202 },
+            { tick: 2, key: "1", pressMs: 294, releaseMs: 298 },
+          ]
+        : [],
+  });
+  expect(entries.find((entry) => entry.id === "game/space-impact/level-0")?.input).toEqual([
+    { tick: 1, key: "8" },
+    { tick: 2, key: "1" },
+  ]);
+});
+
+it("omits only the independently controlled short shot, without inferring a pulse cutoff", () => {
+  const recording = Array.from({ length: 34 }, (_, index) => ({
+    startMs: index === 0 ? 0 : 173 + (index - 1) * 93,
+    durationMs: 93,
+    pixels: frame(index),
+  }));
+  const entries = spaceImpactCaptureSet({
+    recording: () => recording,
+    keys: (dir) =>
+      dir === "plan24/bot/full/level-0"
+        ? [
+            { tick: 29, key: "1", pressMs: 2840.3, releaseMs: 2844.3 },
+            { tick: 29, key: "3", pressMs: 2840.3, releaseMs: 2844.3 },
+            { tick: 30, key: "1", pressMs: 2933.3, releaseMs: 2937.3 },
+          ]
+        : [],
+  });
+  const golden = entries.find((entry) => entry.id === "game/space-impact/level-0");
+  expect(golden?.input?.map((input) => input.key)).toEqual(["3", "1"]);
+  expect(golden?.prefer.note).toContain("independently controlled undelivered 1 pulse");
+});

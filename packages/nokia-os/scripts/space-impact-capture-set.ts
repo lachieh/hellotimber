@@ -10,6 +10,7 @@ import {
   screenGolden,
   shotsGolden,
   type GameCaptureIo,
+  type GameKeyRow,
   type KeyEdge,
   type PlayedFrame,
   type StillRule,
@@ -656,6 +657,15 @@ const ASSERTED = new Set([
   "pause-top-score",
 ]);
 
+function undeliveredPulse(dir: string, row: GameKeyRow): boolean {
+  if (dir !== "plan24/bot/full/level-0") return false;
+  // Raw matrix edges with no emulated execution between them cannot be scanned.
+  if (row.releaseMs === row.pressMs) return true;
+  // Removing this isolated pulse preserves all 66 native frames and PCM samples of the
+  // independent plan24/input-controls-20261029 control. No duration cutoff is inferred.
+  return row.key === "1" && row.pressMs === 2840.3 && row.releaseMs === 2844.3;
+}
+
 function entry(spec: Spec, io: GameCaptureIo): CaptureSetEntry {
   const id = `game/space-impact/${spec.name}`;
   const status: GoldenStatus = ASSERTED.has(spec.name) ? "asserted" : "pending:24";
@@ -674,13 +684,25 @@ function entry(spec: Spec, io: GameCaptureIo): CaptureSetEntry {
       io,
     );
   }
+  const ignored = spec.dirs.flatMap((dir) => {
+    const path = `${ROOT}/${dir}`;
+    return (io.keys(path) ?? []).filter((row) => undeliveredPulse(path, row));
+  });
+  const inputNote =
+    ignored.length === 0
+      ? ""
+      : ` Input excludes ${ignored.filter((row) => row.pressMs === row.releaseMs).length} zero-emulated-time raw matrix pulses` +
+        (ignored.some((row) => row.pressMs !== row.releaseMs)
+          ? " and the independently controlled undelivered 1 pulse at 2840.3–2844.3 ms"
+          : "") +
+        "; raw keys.csv and every recorded frame are retained.";
   return gameGolden(
     {
       id,
       root: ROOT,
       dirs: spec.dirs,
       ticks: spaceImpactTicks(spec.start),
-      note: spec.note,
+      note: spec.note + inputNote,
       status,
       ...(spec.stills === undefined ? {} : { stills: spec.stills }),
       resolve: resolveEdge,
@@ -689,7 +711,7 @@ function entry(spec: Spec, io: GameCaptureIo): CaptureSetEntry {
           ? `Frame ${frame} is the New game frame (tick 0).`
           : `Frame ${frame} is tick 0.`,
     },
-    io,
+    { ...io, keys: (dir) => io.keys(dir)?.filter((row) => !undeliveredPulse(dir, row)) },
   );
 }
 

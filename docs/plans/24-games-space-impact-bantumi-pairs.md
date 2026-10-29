@@ -2307,6 +2307,88 @@ Logs: `/private/tmp/p24-full-suite-final.log`, `/private/tmp/p24-final-check.log
 No excluded package, website file or lockfile changed. This is one coherent partial session,
 Games wiring, shot and acceptance unit; the full level-0 golden remains pending at `ah`.
 
+### Level-0 input delivery checkpoint (2026-10-29; incomplete)
+
+Started at `043286b` on `t3/p24-space-impact`. The original full diagnostic reproduced
+**631 taps / 831 steps**, first failing at `ah` (frame 33, 2534 ms). No engine, general
+decoder, comparator, tolerance, RNG or runtime seed behavior changes in this unit.
+
+**Raw pulses versus firmware input.** The raw harness writes a key's matrix bit on `press`
+and clears it on `release`; neither command executes firmware instructions. Fifty-three
+level-0 pairs have no emulated execution between those edges. Treating each as a delivered
+game key created movement absent from `ah`. An independent control replays the original first
+five seconds, then removes just those zero-execution pairs, preserving every `run` command.
+All **66 native PNG frames** and the **PCM WAV** remain byte-identical. Removing the isolated
+`1` pulse at **2840.3–2844.3 ms** as a separate control also preserves all 66 PNGs and PCM;
+this pulse produced neither the shot nor its sound. Same-onset controls extending its hold
+to 8 ms still produce neither, while 20/40 ms holds produce the shot's exact four-tone program
+and two additional shot pixels at 3050/3120 ms (`short-fire-result.json`). This distinguishes
+the isolated scan loss from a shot-capacity or cooldown rejection; it does not establish a
+universal minimum duration. LCD edge differences reach 1 ms; sound
+edge differences reach 0.1 ms. No timing or pixel comparator is modified.
+
+The plan-owned importer excludes these non-delivered pulses from **this full level-0 timeline
+only**, with their count and the isolated exception recorded in its note. It does not introduce
+a positive-duration cutoff: regressions retain one-millisecond pulses, other four-millisecond
+pulses, and other keys at the isolated pulse's exact time. The untouched source `keys.csv`
+retains every raw edge. Importer regeneration changes only `note` and `input` in
+`game/space-impact/level-0`: **631 raw pairs → 577 input entries**. All **993 images**, every
+pixel, all **1,024 timeline rows**, the source hash and every other fixture remain identical.
+Import was run twice; resource regeneration reports up to date.
+
+**Evidence limits.** Controls live below
+`$REF/captures/6.39/plan24/input-controls-20261029/`, never in git. The complete
+`full-exact-input-control` removes exactly the 53 zero-time pairs and the isolated first shot,
+retaining all later positive-duration pulses. Its first differing native image is frame 143
+(10,713.1 ms in the canonical run). Raw matrix edges can still affect interrupt/scan timing;
+this control is **not** a full-level replay proof and does not establish a universal debounce
+rule. The earlier exploratory `full-without-undelivered` also removed later four-millisecond
+shots and is superseded by the precise control. No later short pulse is filtered on that basis.
+
+**Exact implementation progress.** A committed regression drives the imported input and
+compares every settled opening image through `am` (frame 38, 3029 ms): **31 images**, all
+4,032 pixels each. It fails with the original input and passes with the corrected import.
+The complete local diagnostic still runs all **577 entries / 831 steps** and now matches
+**36 of 879 settled timeline rows**, through `ar`. Its shield deadline is corrected to expire
+before step 31, matching the session's existing wall-clock one-shot; no runtime timer changed.
+The next mismatch is **`at`, frame 45, 3532 ms, held 86 ms**: the engine's ship is at y=10
+and its new shot at y=13, while the LCD shows y=8 and a shot at y=11.
+Diagnostic source/log: `/private/tmp/p24-input-full-level-diagnostic.test.ts` and
+`/private/tmp/p24-input-diagnostic.log`. The failing complete diagnostic stays outside the
+passing suite; the full-level golden remains pending.
+
+Independent forked LCD controls narrow the remaining input/repeat question. At the same redraw,
+removing the 3445-ms `8` pulse changes y=8 to y=9; removing the 3525-ms `8` pulse leaves y=8;
+removing the shot leaves y=8 too. Thus moving the later pulse before the shot, or changing only
+shot redraw behavior, does not explain the extra two-pixel movement. The framework's delivered
+repeat ordering remains unresolved. Do not manufacture extra taps, infer a pulse threshold,
+or use the decoder's selected ship positions as runtime state. Further controls establish
+that removing the earlier **3339-ms** pulse removes both its one-pixel move at 3446 ms and
+the extra two-pixel move at 3526 ms; removing 3339 and 3445 ms leaves the ship at y=12 there.
+With 3445 and 3525 ms removed, the 3339-ms pulse alone still reaches y=9 (one pixel, then two),
+despite its raw release at 3357 ms. The control result is `repeat-result.json` beside its
+recordings. This identifies the earlier pulse's repeat as the next delivery-model question;
+it does not establish a universal grace period or justify delaying all releases.
+Resume with this mismatch,
+then later waves, collisions, bonuses/RNG, the boss and ending/sound replay in failure order.
+
+**Calls.** This is a capture-input correction with explicit evidence limits, not a new product
+default. The four accepted UNVERIFIED defaults and previous session UNVERIFIED calls remain
+labelled and unchanged. No known gap is registered and no pending fixture is promoted:
+plan 24 remains **20 asserted, 148 pending, 0 registered known gaps**. Level 0 end-to-end,
+Tasks 5a/6–14 and levels 1–7 remain incomplete. Focused verification passes **7 files /
+714 tests**, with 148 expected TODOs.
+
+**Closeout verification.** The final `vp run -r --no-cache test` passes all six packages:
+**262 files, 11,820 passed tests, 120 expected failures, 171 TODOs**, with **0/6 cache hits**.
+Nokia-os contributes **170 files / 10,978 passed tests** in **986.63 s**; phone-core 450,
+snake 62, phone-3d 49, phone-screen 101 and website 180. `vp check --fix`, final `vp check`,
+`git diff --check` and `website#build` pass under mise's guarded Node 22 with
+`VITEST_MAX_WORKERS=2` and `VP_RUN_CONCURRENCY_LIMIT=1`. Import ran twice, and both resource
+regeneration runs report up to date. Logs: `/private/tmp/p24-input-{workspace-tests,focused,build,final-check,check-fix-closeout}.log`.
+Only six plan-24 files change; excluded packages, website and lockfile remain unchanged.
+This is a partial input-delivery/opening-replay unit; **level 0 end-to-end is not complete**.
+
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 
 **Files:** `scripts/space-impact-seeds.ts` (new), `src/games/space-impact/random.ts` (new: which

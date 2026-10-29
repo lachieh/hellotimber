@@ -2,8 +2,9 @@
 
 **Capture gate closed (Lachlan, 2026-10-27).** Task 0's accepted scope is the eight validated
 full-level recordings, their exits and ending, plus the reviewed key, pause, bonus, special,
-seed, ANSI and sound evidence. No plan 24 gameplay golden has yet passed an implementation
-replay. Gameplay observations below remain **(plan 24, in progress)** until that replay passes.
+seed, ANSI and sound evidence. Twenty plan-24 fixtures and the inherited New game tree fixture pass partial implementation
+replays. The full-level recordings remain pending. Other gameplay observations below remain
+**(plan 24, in progress)** until their replays pass.
 The four accepted defaults are labelled `UNVERIFIED` beside the affected behavior; acceptance
 of them does not establish fidelity for branches the recordings never exercise. The exploratory
 census is not a coverage gate.
@@ -161,7 +162,8 @@ fixtures (movement, ignored keys and ordinary fire). The opening wave's three li
 are generated from independent tick stills; they are not a complete level script. The generated
 level-0 observation table preserves every alternative for 855 decoded settled images and the
 unresolved `ala` redraw. Painting each of its 8,055 alternatives reproduces the original pixels;
-this is resource/painter proof, not full gameplay acceptance. No plan-24 fixture is asserted yet.
+this is resource/painter proof, not full gameplay acceptance. No plan-24 fixture was asserted
+at this initial engine checkpoint.
 **UNVERIFIED implementation hypotheses:** held fire makes five attempts including its initial
 press; a pending sound consumes the next engine event. Their synthetic tests check the chosen
 contract, not a complete firmware replay. The four accepted defaults retain their labels above.
@@ -192,6 +194,23 @@ or latency model is accepted. The shot program is generated from the first level
 Off silence it. Full-level acceptance, collision/bonus/RNG consumption, the boss, endings and
 complete sound replays remain pending. The seed is stored once per game, without claiming seed
 recovery or random-event replay; the four accepted UNVERIFIED defaults above remain unchanged.
+
+**Input-delivery checkpoint (2026-10-29; incomplete).** The full level-0 timeline's input
+now distinguishes raw matrix pulses from delivered game keys. Fifty-three zero-execution
+press/release pairs and the independently controlled `1` pulse at 2840.3–2844.3 ms are absent
+from game input; their raw source log remains intact. First-five-second firmware controls
+preserve all 66 native frames and byte-identical PCM audio. This introduces no minimum pulse
+duration: all other positive-duration pulses remain represented. The complete control diverges
+later at frame 143, so it does not establish an identical full run or a general scan rule.
+Every original golden pixel and timeline row is retained.
+
+The imported input has 577 entries. An engine/painter regression matches all 31 settled frames
+through `am` (3029 ms); the complete diagnostic matches 36 of 879 rows, next failing at `at`
+(frame 45, 3532 ms): recorded ship y=8 versus engine y=10. Removing the 3445-ms movement pulse
+changes the recorded ship by one pixel; removing the 3525-ms pulse or the shot does not remove
+the extra two-pixel displacement. Delivered key-repeat ordering is still unresolved. No new
+runtime rule, seed claim, accepted UNVERIFIED default, tolerance or known gap follows from
+these controls. Plan 24 remains 20 asserted and 148 pending; full-level replay is incomplete.
 
 **Remaining hypotheses (UNVERIFIED until golden replay or further evidence).** Exact collision
 geometry, score ceiling and per-hit awards, all boss phases and projectiles, the pending-sound
