@@ -17,7 +17,7 @@ they exist; each use is conditional and names its fallback (D17).
 `siteMenu`) with website applications and phone-screen's own painter. A painter-only swap to
 nokia-os broke the site and was reverted (`b446466`): `paintStockScreen` draws only the stock
 firmware's screens. The fix is to run the stock firmware itself.
-**Status:** in progress (Tasks 0-1 complete; runtime cutover pending).
+**Status:** in progress (Tasks 0-2 complete; runtime cutover pending).
 
 ## Goal
 
@@ -374,16 +374,16 @@ New: `network.test.ts`, `threads.test.ts`, `stock-sound.test.ts`, `host-clock.te
 `website/tests/{sim-content,people}.test.ts` (new). The old modules and their tests stay until
 Task 6 (they still feed `siteMenu`).
 
-- [ ] Re-check ACMA's list (D6); write the numbers.
-- [ ] TDD D4's rules first (`sim-content.test.ts` with an intentionally bad fixture for each rule), then
+- [x] Re-check ACMA's list (D6); write the numbers.
+- [x] TDD D4's rules first (`sim-content.test.ts` with an intentionally bad fixture for each rule), then
       the modules: `PEOPLE` (persona prompts and canned replies from `contacts.ts`, plus numbers),
       `LINKS` (name, number, href, label, `rel`, `download`), `SIM_MESSAGES` (D2's intros, roles,
       testimonials as `StockSimMessage`s from Lachlan's number, `sentAt` in September 2000),
       `TOOLKIT` (title `LACHLAN`; `projects` and `about`), `NOW` (reminder preloads), `PORTFOLIO_SIM`
       and its hashed id (D3), `PRELOAD`.
-- [ ] Rewrite the sample copy under D5; keep `SAMPLE DATA` markers.
-- [ ] `mise exec -- vp install`, `vp run website#test`, `vp check --fix`.
-- [ ] Commit: `feat(website): portfolio content as a SIM card`.
+- [x] Rewrite the sample copy under D5; keep `SAMPLE DATA` markers.
+- [x] `mise exec -- vp install`, `vp run website#test`, `vp check --fix`.
+- [x] Commit: `feat(website): portfolio content as a SIM card`.
 
 ### Task 3 - The network port and the SMS API (TDD)
 
@@ -584,3 +584,48 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
   Use that implementation through the network port; do not classify Chat as a placeholder
   solely because the broader plan is in progress. Verify actual Chat integration in Tasks
   3 and 9. No change to Games is part of this batch.
+
+### Task 2 delivery (2026-10-29)
+
+- Added the stock-shaped content without wiring it into the website runtime. The desk,
+  its controls, and the single phone mount remain on the working legacy runtime until Task 6.
+- Re-checked ACMA's creative-works list:
+  https://www.acma.gov.au/phone-numbers-use-tv-shows-films-and-creative-works.
+  Personas use 0491 570 006 / 156 / 157; links use 07 5550 xxxx.
+- Preserved existing sample projects, employers and quotes. The phone bio, roles and quotes
+  explicitly say SAMPLE; the sample testimonial replies share one additional SMS. Ten seeded
+  messages leave exactly five slots for replies. The fictional bio fits in one SMS.
+- Projects with URLs use toolkit calls; Source code uses the existing sample repository URL
+  through Service Nos. and About. No real repository URL or CV asset was invented. The two
+  placeholder project URLs share their corresponding link numbers.
+- Shortened the three existing now notes to the stock 35-character limit and preloaded them
+  without alarms. No Welcome note replaces the boot animation. Reminders preload is landed,
+  so D17's fallback SMS is unnecessary.
+- Used FNV-1a over UTF-8 JSON for the SIM identity, with an independent `{}` test vector.
+  Route metadata is reserved in routes.ts for Task 5; legacy content stays until Task 6.
+- TDD: the new suites failed before their modules existed, then passed after implementation.
+  Fourteen deliberately bad fixtures cover stock validation and portfolio constraints.
+- Runtime tooling: direct `mise exec -- node -v` reports 22.22.3, but Vite+ task subprocesses
+  inherited host Node 26. Run the workspace-local Vite+ entry with the absolute mise Node 22
+  executable and `SHELL=/bin/sh`, with PATH limited to that Node directory, /usr/bin and /bin.
+  This also avoids the host's global tool wrapper and its missing-jsdom virtual store.
+- `vp install` regenerated the lockfile and refreshed existing `latest` catalog resolutions;
+  the only added dependency is the authorized nokia-os workspace package.
+- Chat: no new 18c dependency in Task 2. Tasks 3 and 9 must still verify the landed Chat
+  implementation through the new network port; Task 6 must migrate desk/live.ts and document
+  the new runtime in website/DESIGN.md and PRODUCT.md. Games remains outside this batch.
+- QA: this worktree's dev server uses port 3001 (3000 is occupied). All 66 captured legacy
+  URLs returned HTTP 200; report: /tmp/plan31-task2-legacy-urls.json. Headless agent-browser
+  read the status mirror: `Standby. LACHLAN. 16:28. Press Menu.` Screenshot:
+  /tmp/plan31-task2-desk.png. Waking the legacy screensaver then pressing the desk NaviKey
+  produced `Menu 1. Phone book, 1 of 13.` (/tmp/plan31-task2-menu.png). This is legacy-runtime
+  regression evidence, not stock cutover QA.
+- Website validation: 27 test files, 198 tests passed; production build passed. Tasks 3-9
+  remain outstanding; this delivery completes Task 2 only.
+
+- Final Task 2 gate: `vp check` passed; `vp run -r --no-cache test` exited 0 with
+  276 test files, 11,941 passed tests, 120 expected failures and 161 TODOs. Stock firmware
+  accounted for 11,081 passed, 120 expected failures and 161 TODOs (798 seconds);
+  website accounted for 198 passed. No firmware or Games files were modified.
+- The settled phone-book deep link mirror reads `Menu 1 then 1. Search. Email, 1 of 7. Select.`;
+  screenshot: /tmp/plan31-task2-phonebook.png. The agent-browser QA session was closed.
