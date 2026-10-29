@@ -357,6 +357,33 @@ export const spaceImpactOpeningWaveModule: GeneratedResourceModule = {
     const followingTick = firstFollowing.tick - (82 - firstFollowing.object.x) / 2;
     if (!Number.isSafeInteger(followingTick)) throw new Error("following wave: nonintegral entry");
     entries.push({ tick: followingTick, x: 82, y: firstFollowing.object.y, animationOffset: 1 });
+    const held = golden("game/space-impact/keys-hold-0.timeline");
+    const followingSecond = [
+      { image: "ba", tick: 69, x: 72, picture: "enemy/round-wide/1" },
+      { image: "bb", tick: 70, x: 70, picture: "enemy/round-wide/0" },
+    ].map(({ image, tick, x, picture }) => {
+      const pixels = findGoldenImage(held, image).pixels;
+      const art = SPACE_IMPACT_DATA.sprites[picture]!;
+      if (
+        !art.every((line, y) =>
+          line
+            .split("")
+            .every((pixel, dx) => pixels[(17 + y) * 84 + x + dx] === (pixel === "#" ? 0 : 1)),
+        )
+      )
+        throw new Error(`following wave: changed exact second-entry specimen ${image}`);
+      return { tick, object: { picture, x, y: 17, width: 11, height: 5 } };
+    });
+    const secondMotion = fitSpaceImpactLinearPath(followingSecond);
+    if (secondMotion.dx !== -2 || secondMotion.dy !== 0)
+      throw new Error("following wave: changed second entry motion");
+    const secondFirst = followingSecond[0]!;
+    entries.push({
+      tick: secondFirst.tick - (82 - secondFirst.object.x) / 2,
+      x: 82,
+      y: secondFirst.object.y,
+      animationOffset: 1,
+    });
     return resourceModule(
       "SPACE_IMPACT_OPENING_WAVE",
       "{ readonly family: string; readonly dx: number; readonly dy: number; readonly entries: readonly { readonly tick: number; readonly x: number; readonly y: number; readonly animationOffset: number }[] }",

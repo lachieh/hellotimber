@@ -22,7 +22,7 @@ only and are never imported. Task 0 writes this plan's captures to `$REF/capture
 The eight full-level recordings, exits, ending and LCD-only control proof are validated;
 implementation must replay their pixels under AGENTS.md's fidelity standard. The four accepted
 defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete,
-including the inherited Games II seams. Task 3 is complete: 168 fixtures are imported; 20 are asserted and 148 remain pending
+including the inherited Games II seams. Task 3 is complete: 168 fixtures are imported; 21 are asserted and 147 remain pending
 gameplay/session replay. Task 4 is complete under the accepted revised criterion below.
 Task 5 is split into level 0 (5a) and levels 1–7 (5b) under the accepted sequencing change
 below. The level-0 decoder checkpoint reads 855 of 856 settled images exactly; full level-0
@@ -2509,6 +2509,97 @@ delivered input reaches 46/879. Their intentionally incomplete full-level checks
 the green suite. Only the nine owned Games/code/test/documentation paths change; excluded
 packages, website, lockfile, goldens and generated resources remain unchanged. This is a
 coherent partial delivered-input unit, not completion of the general raw-input model or plan 24.
+
+### Accepted parent decision (2026-10-29): full-level delivered input
+
+Full-level replays use the observed delivered events that the existing diagnostic derives:
+the keys the game received, rather than the harness's raw matrix scan pulses. Their goldens
+prove gameplay (spawns, kills, scores, bosses and endings). Scanner capture timing is a
+capture artifact; AGENTS.md keeps key latency outside the fidelity rule. This supersedes
+the previous checkpoint's normalization prerequisite. Raw-pulse normalization is an optional
+capture-side follow-up and no longer blocks gameplay. The importer generates the delivered
+stream into the committed golden; tests derive replay input deterministically from that
+fixture, without REF access or hand-edited event tables. The existing delivered-input model
+from `6009783` and the exact short tap/hold fixture checks remain unchanged.
+
+### Opening kills and following-wave checkpoint (2026-10-29; partial)
+
+Continued from `6009783` only in `t3/p24-space-impact`, under the accepted full-level
+input decision above. The importer now validates and stores all **1,812 observed delivered
+events** (537 downs, 71 repeats, 382 releases, 796 steps and 26 one-shot callbacks) in the
+level-0 golden's note. Replay support parses this committed evidence deterministically;
+tests never read REF. The first New-game timer callback is already excluded by the existing
+observer's normalization. The legacy `input:` remains available for raw-pulse diagnostics
+and is explicitly distinguished in the note; no scanner normalization gates gameplay.
+The short tap/hold input records and the `6009783` delivered-key contract stay intact.
+
+**TDD and gameplay.** The committed-input regression first fails at `bg`, score 0 instead
+of 10. The engine now consumes a colliding shot, awards ten points once, preserves the hit
+enemy for that redraw, then shows split/checker/spark explosion pictures on the next three
+ticks without moving the explosion. The upper-edge hit in `ch` needs the shot's lower edge
+to meet the enemy's top edge; this is checked by both the recorded pixels and a focused
+boundary regression. The tick-64 second enemy of the following wave is fitted from two
+independent, complete 11×5 specimens (`keys-hold-0.timeline` images `ba`/`bb`, ticks 69/70),
+with its motion and alternating pictures checked before generating the opening-wave module.
+No generated file is hand-edited.
+
+The complete diagnostic now consumes the entire committed stream and matches **96 of 879
+settled timeline rows**, through **`dm`, frame 116, 8630 ms**. The first remaining mismatch
+is **`dn`, frame 117, 8736 ms, held 92 ms**, at the following right-edge enemy entry. This
+is ordered pixel-exact prefix accounting, not a passing full-level acceptance scenario;
+complete output/timing acceptance remains required before asserting `level-0`. The opening
+five kills, score 50 and their explosion pictures now match. A separate replay regression
+checks every settled image through the following-wave kill and its explosion.
+
+**Asserted fixture.** The real menu/session scenario now replays all six tick stills and
+both input edges of **`keys-hold-0`**. Its initially failing `t0062` establishes that an enemy
+retires when its left edge becomes negative, rather than drawing its remaining right edge;
+the focused regression checks this. That fixture alone is promoted. Plan 24 now has
+**21 asserted, 147 pending, 0 registered known gaps**. The inherited New-game tree golden
+remains asserted in its original index. The complete held timelines and held-8 fixture
+remain pending; a passing short fixture does not assert their longer recordings.
+
+**Calls and limits.** No new product default is needed for these five captured round-wide
+enemy kills. **UNVERIFIED:** applying the current collision-box boundary and three-picture
+explosion sequence to unseen arrangements; other enemy HP/score rules, multi-hit behavior,
+score ceiling, and unexercised collision branches still need replay. All four accepted
+UNVERIFIED defaults, held-fire/pending-return hypotheses and prior session choices remain.
+No seed is injected or claimed recovered. No comparison or timing tolerance changes, and
+no genuine unresolvable difference has been established as a known gap. The old Task 11
+bindings discrepancy stays resolved through `features/games.ts`; no unrelated file changes.
+
+**Evidence preservation.** Re-importing only changes level-0's note, held-0's status and
+its plan-24 index entry. Every image, every native timeline row, source hash and existing
+`input:` remains byte-identical. Only `space-impact-opening-wave.ts` changes among generated
+modules. Regeneration is deterministic and reads committed goldens. Red/green evidence:
+`/private/tmp/p24-kills-{red-after-import,engine-red,hold-red,hold-green}.log`.
+
+**Focused verification.** Eight files pass **665 tests**, with 147 expected TODOs. The
+final `vp check` and `vp check --fix` pass without warnings, and `website#build` passes,
+under mise's guarded Node 22. Final full uncached workspace results follow below. Logs:
+`/private/tmp/p24-kills-{focused-final,check-fix-closeout,final-check,build}.log`.
+
+**Remaining work.** Resume at `dn`: derive the next entry and movement from committed LCD
+specimens, then continue later waves, RNG ordering, collisions, bonuses, boss, endings,
+seeded splash and sound in failure order. Tasks 5a/6–14, level 0 end-to-end and levels 1–7
+remain incomplete. Raw matrix normalization is optional capture-side follow-up.
+
+**Closeout verification.** The complete uncached `vp run -r --no-cache test` passes all six
+packages: **264 files, 11,847 passed tests, 120 expected failures and 170 TODOs**, with
+**0/6 cache hits**. Nokia-os contributes **172 files / 11,005 passed tests** in **988.37 s**;
+phone-core 450, snake 62, phone-3d 49, phone-screen 101 and website 180. Final focused
+verification passes 8 files / 665 tests, with 147 expected plan-24 TODOs. `website#build`,
+`vp check --fix`, `vp check` and `git diff --check` pass. All commands use mise's Node 22
+and `/private/tmp/plan24-run-node22.cjs`; the uncached run uses `VITEST_MAX_WORKERS=2` and
+`VP_RUN_CONCURRENCY_LIMIT=1`. Logs:
+`/private/tmp/p24-kills-{workspace-tests,focused-final,build,final-check,check-fix-closeout}.log`.
+A fresh separate complete-stream diagnostic confirms 96/879 through `dm`, next `dn` at
+8736 ms; its evidence is `/private/tmp/p24-kills-complete-diagnostic{.log,-result.json}`.
+Repeated imports execute deterministically and regeneration reports up to date. Every golden
+pixel/timeline/input and every generated module other than the opening-wave module retains
+its previous bytes. Website, phone-core, phone-screen, phone-3d, packages/snake and the
+lockfile have no diff. This is a coherent partial opening-kills unit; level 0 end-to-end
+remains incomplete.
 
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 

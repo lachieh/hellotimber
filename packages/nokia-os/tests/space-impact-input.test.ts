@@ -12,7 +12,9 @@ import {
 import { paintSpaceImpact } from "../src/display/widgets/space-impact";
 import { normalized, shipAt } from "../scripts/space-impact-capture-set";
 import { goldenImage, loadGolden } from "./support/goldens";
+import { replaySpaceImpactLevel } from "./support/space-impact-replay";
 import evidence from "./fixtures/space-impact-input.json";
+import { observedSpaceImpactInput } from "../scripts/space-impact-delivery";
 
 function recordedKey(key: string | undefined): PhoneKey {
   switch (key) {
@@ -58,10 +60,20 @@ describe("Space impact recorded input order", () => {
     },
   );
 
-  it("replays all 46 settled level-0 opening rows before the first captured kill", () => {
-    const id = "game/space-impact/level-0";
-    const golden = loadGolden(id);
-    const expected = golden.timeline!.slice(1).filter((row) => row.durationMs >= 34);
+  it("runs the complete imported delivered stream and matches the 96 settled rows through dm", () => {
+    const replay = replaySpaceImpactLevel(loadGolden("game/space-impact/level-0"));
+    expect(replay.events).toBe(1812);
+    expect(replay.matched).toBeGreaterThanOrEqual(96);
+    expect(replay.total).toBe(879);
+  });
+});
+
+describe("Space impact first captured kill", () => {
+  it("replays every settled level-0 row through the opening kills and the following wave", () => {
+    const golden = loadGolden("game/space-impact/level-0");
+    const expected = golden
+      .timeline!.slice(1)
+      .filter((row) => row.durationMs >= 34 && row.startMs < 6900);
     const images = new Map(golden.images.map((image) => [image.name, image.pixels]));
     let state = newSpaceImpactGame();
     let matched = 0;
@@ -73,12 +85,14 @@ describe("Space impact recorded input order", () => {
         matched++;
     };
     compare();
-    for (const event of evidence.opening) {
+    for (const event of observedSpaceImpactInput(golden.note).filter(
+      (event) => event.atMs < 7000,
+    )) {
       state = deliver(state, event);
       compare();
+      if (matched === expected.length) break;
     }
-    expect(matched).toBe(46);
-    expect(expected[matched - 1]?.image).toBe("bf");
-    expect(state.ship).toEqual({ x: 5, y: 7 });
+    expect(expected[matched]?.image, `matched ${matched}/${expected.length} rows`).toBeUndefined();
+    expect(state.hud.score).toBe(50);
   });
 });

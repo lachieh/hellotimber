@@ -841,6 +841,29 @@ function spaceImpactTap(id: string): void {
   }
 }
 
+function spaceImpactHoldDown(id: string): void {
+  const rig = spaceImpactMenu();
+  const golden = loadGolden(id);
+  rig.press("navi");
+  let tick = 0;
+  for (const image of golden.images) {
+    const target = Number(image.name.slice(1));
+    while (tick < target) {
+      rig.advance(
+        tick === 0 ? SPACE_IMPACT_DATA.timings.firstTickMs : SPACE_IMPACT_DATA.timings.tickMs,
+      );
+      tick++;
+    }
+    for (const input of golden.input ?? []) {
+      if (input.tick !== tick) continue;
+      if (input.key !== "0") throw new Error(`${id}: unexpected held-direction key`);
+      if (input.release) rig.release(input.key);
+      else rig.hold(input.key);
+    }
+    expectLcd(rig.paint(), { id, image }, `${id} tick ${tick}`);
+  }
+}
+
 function spaceImpactPause(id: string): void {
   const rig = spaceImpactMenu();
   const golden = loadGolden(id);
@@ -871,6 +894,7 @@ function suspendedSpaceImpact(): Rig {
 }
 
 export const spaceImpactScenarios: Readonly<Record<string, (id: string) => void>> = {
+  "game/space-impact/keys-hold-0": spaceImpactHoldDown,
   ...Object.fromEntries(
     ["8", "0", "star", "hash", "2", "5", "7", "9", "up", "down", "1", "3"].map((key) => [
       `game/space-impact/keys-tap-${key}`,

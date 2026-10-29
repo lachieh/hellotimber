@@ -381,7 +381,7 @@
   {
     "id": "game/space-impact/keys-hold-0",
     "file": "game/space-impact/keys-hold-0.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6,

@@ -161,3 +161,58 @@ describe("Space impact ship and player shots", () => {
     expect(state.ship).toEqual({ x: 5, y: 20 });
   });
 });
+
+describe("Space impact shot collisions", () => {
+  it("consumes the first colliding shot and awards a kill once", () => {
+    const original = {
+      ...newSpaceImpactGame(),
+      enemies: [{ x: 34, y: 8, animationOffset: 0, deathFrame: null }],
+      shots: [
+        { x: 29, y: 11 },
+        { x: 23, y: 10 },
+      ],
+    };
+    const killed = stepSpaceImpact(original).state;
+    expect(killed.hud.score).toBe(10);
+    expect(killed.shots).toEqual([{ x: 25, y: 10 }]);
+    expect(spaceImpactRender(killed).sprites).toContainEqual({
+      picture: "enemy/round-wide/0",
+      x: 32,
+      y: 8,
+    });
+    const explosion = stepSpaceImpact(killed).state;
+    expect(spaceImpactRender(explosion).sprites).toContainEqual({
+      picture: "explosion/split/0",
+      x: 32,
+      y: 8,
+    });
+    expect(explosion.hud.score).toBe(10);
+    expect(original.hud.score).toBe(0);
+  });
+
+  it("does not hit outside the enemy box", () => {
+    const original = {
+      ...newSpaceImpactGame(),
+      enemies: [{ x: 34, y: 8, animationOffset: 0, deathFrame: null }],
+      shots: [{ x: 29, y: 13 }],
+    };
+    expect(stepSpaceImpact(original).state.hud.score).toBe(0);
+  });
+});
+
+it("registers the captured shot at the upper edge of a following-wave enemy", () => {
+  const state = {
+    ...newSpaceImpactGame(),
+    enemies: [{ x: 82, y: 17, animationOffset: 1, deathFrame: null }],
+    shots: [{ x: 77, y: 16 }],
+  };
+  expect(stepSpaceImpact(state).state.hud.score).toBe(10);
+});
+
+it("retires an enemy when its left edge leaves the display, as the held-0 fixture records", () => {
+  const state = {
+    ...newSpaceImpactGame(),
+    enemies: [{ x: 0, y: 8, animationOffset: 0, deathFrame: null }],
+  };
+  expect(stepSpaceImpact(state).state.enemies).toEqual([]);
+});

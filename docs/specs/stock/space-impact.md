@@ -236,6 +236,26 @@ These are distinct diagnostic results. No additional golden is asserted; plan 24
 20 asserted and 148 pending. No raw scan delay, seed, tolerance or runtime captured-state
 substitution is introduced.
 
+**Opening kills checkpoint (2026-10-29; partial).** Accepted full-level replay input is the
+observed delivered stream, deterministically imported into the committed golden's note.
+Raw harness scanner timing is capture-side follow-up and does not gate gameplay; short tap
+and held-key fixtures retain their exact input checks. The complete level-0 diagnostic now
+matches 96/879 settled rows through `dm` (8630 ms), first failing at `dn` (8736 ms), the next
+right-edge enemy entry. This is a pixel-exact prefix, not full-level acceptance.
+
+The opening five round-wide enemy kills award 10 points each and consume their colliding
+shots. Their hit redraw retains the enemy; the next three ticks show split, checker and
+spark explosions, fixed at the hit position with shrinking-picture offsets. The next
+wave's second entry (tick 64, y=17) is generated from two complete held-0 LCD specimens.
+The exact held-0 tick fixture passes through real Games navigation and establishes that
+an enemy retires when its left edge becomes negative. It is now asserted: plan 24 has
+21 asserted, 147 pending and no registered known gaps. Every original pixel, timeline row
+and short fixture's input is unchanged.
+**UNVERIFIED:** collision geometry and explosion behavior outside the captured arrangements,
+other enemy HP/score rules, multi-hit behavior and score ceiling. The four accepted defaults
+and previous labelled hypotheses remain unchanged. No gameplay seed recovery, later-wave
+rule, bonus, boss, ending or complete sound replay is established by this checkpoint.
+
 **Remaining hypotheses (UNVERIFIED until golden replay or further evidence).** Exact collision
 geometry, score ceiling and per-hit awards, all boss phases and projectiles, the pending-sound
 return code and lost-event behavior, held-fire cap, shield durations and exact continue/exit

@@ -1,3 +1,4 @@
+import { withObservedSpaceImpactInput } from "../space-impact-delivery.ts";
 import { spaceImpactSoundModule } from "../space-impact-sounds.ts";
 import { spaceImpactLevelModule, spaceImpactOpeningWaveModule } from "../space-impact-levels.ts";
 import { spaceImpactResources } from "../space-impact-resources.ts";
@@ -61,7 +62,23 @@ export const spaceImpact: PlanCaptureSet = {
   },
   lcd(io) {
     assertSpaceImpactCaptureGate(io.json);
-    return spaceImpactCaptureSet(io.game);
+    const levels = io.json("plan24/input-model-20261029/delivered-levels.json");
+    if (!isRecord(levels)) throw new Error("Space impact: missing delivered-level evidence");
+    return spaceImpactCaptureSet(io.game).map((entry) =>
+      entry.id === "game/space-impact/level-0"
+        ? {
+            ...entry,
+            prefer: {
+              ...entry.prefer,
+              note: withObservedSpaceImpactInput(
+                (entry.prefer.note ?? "") +
+                  " Full-level replay uses the observed delivered stream below; input retains the legacy raw-pulse diagnostic.",
+                levels["0"],
+              ),
+            },
+          }
+        : entry,
+    );
   },
   sounds(io) {
     assertSpaceImpactCaptureGate(io.json);

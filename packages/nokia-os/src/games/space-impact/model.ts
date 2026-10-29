@@ -28,7 +28,10 @@ export interface SpaceImpactState {
   readonly shield: boolean;
   readonly hud: SpaceImpactHud;
   readonly shots: readonly SpaceImpactPoint[];
-  readonly enemies: readonly (SpaceImpactPoint & { readonly animationOffset: number })[];
+  readonly enemies: readonly (SpaceImpactPoint & {
+    readonly animationOffset: number;
+    readonly deathFrame: number | null;
+  })[];
   readonly moves: readonly SpaceImpactPoint[];
   readonly fireCooldown: number;
   readonly held: { readonly key: PhoneKey; readonly attempts: number } | null;

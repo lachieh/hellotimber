@@ -28,6 +28,12 @@ export const SPACE_IMPACT_OPENING_WAVE: { readonly family: string; readonly dx: 
       "x": 82,
       "y": 17,
       "animationOffset": 1
+    },
+    {
+      "tick": 64,
+      "x": 82,
+      "y": 17,
+      "animationOffset": 1
     }
   ]
 };
