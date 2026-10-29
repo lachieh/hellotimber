@@ -87,12 +87,9 @@ const terrainViews = new Map<
   }
 >();
 
-function readTerrain(
-  pixels: Uint8Array,
-  level: number,
-  scroll?: number,
-): DecodedSpaceImpact["terrain"] {
-  if (level === 0) return { kind: "none" };
+function readTerrain(level: number, scroll?: number) {
+  if (level === 0)
+    return [{ terrain: { kind: "none" } as const, background: new Uint8Array(WIDTH * HEIGHT) }];
   const map = SPACE_IMPACT_DATA.terrain[level]!;
   let views = terrainViews.get(level);
   if (!views) {
@@ -116,100 +113,45 @@ function readTerrain(
   }
   if (scroll !== undefined && views.unverified.includes(scroll % 512))
     throw new Error(`decoder: UNVERIFIED terrain at level ${level}, scroll ${scroll}`);
-  const candidates = views.known.filter(
-    (view) =>
-      (scroll === undefined || view.scroll === scroll % 512) &&
-      matches(pixels, view.art, 0, map.top),
-  );
-  if (candidates.length === 0)
-    throw new Error(`decoder: unread terrain at level ${level}; requires a complete clean band`);
-  erase(pixels, WIDTH, 16, 0, map.top);
-  return {
-    kind: "terrain",
-    scrolls: candidates.map((view) => view.scroll),
-    unverifiedScrolls: scroll === undefined ? views.unverified : [],
-  };
-}
-
-function objectPictures(inverted: boolean) {
-  return Object.entries(sprites)
-    .filter(
-      ([id]) =>
-        id === "ship" ||
-        id.startsWith("ship/") ||
-        id === "shot" ||
-        id === "missile" ||
-        id === "beam" ||
-        /^(enemy|boss|bonus|projectile|explosion|wall)\//.test(id),
-    )
-    .flatMap(([id, art]) => {
-      const width = art[0]!.length,
-        height = art.length;
-      const object = { picture: id, x: 0, y: 0, width, height };
-      const patterns = [{ art, objects: [object] }];
-      // LCD specimens: XOR on black (level-0 d/h), ink union on white (level-1 c, level-2 e).
-      if (id === "ship" || id.startsWith("ship/")) {
-        for (let shotY = 0; shotY < height; shotY++) {
-          for (let shotX = 0; shotX < width; shotX++) {
-            const combined = art.map((row, y) =>
-              row
-                .padEnd(Math.max(width, shotX + 2), ".")
-                .split("")
-                .map((char, x) =>
-                  y === shotY && (x === shotX || x === shotX + 1)
-                    ? inverted && char === "#"
-                      ? "."
-                      : "#"
-                    : char,
-                )
-                .join(""),
-            );
-            if (combined.join("/") === art.join("/")) continue;
-            patterns.push({
-              art: combined,
-              objects: [object, { picture: "shot", x: shotX, y: shotY, width: 2, height: 1 }],
-            });
-          }
-        }
-      }
-      return patterns.flatMap((pattern) => {
-        const patternWidth = pattern.art[0]!.length;
-        return Array.from({ length: WIDTH + patternWidth - 1 }, (_, index) => {
-          const x = index - patternWidth + 1;
-          const left = Math.max(0, x),
-            right = Math.min(WIDTH, x + patternWidth);
-          const visible = pattern.art.map((row) => row.slice(left - x, right - x));
-          const firstY = visible.findIndex((row) => row.includes("#"));
-          if (firstY === -1) return [];
-          if (pattern.objects.some((part) => part.x + x >= WIDTH || part.x + x + part.width <= 0))
-            return [];
-          return [
-            {
-              visible,
-              x,
-              left,
-              right,
-              firstY,
-              firstX: left + visible[firstY]!.indexOf("#"),
-              height,
-              objects: pattern.objects,
-            },
-          ];
-        }).flat();
-      });
+  return views.known
+    .filter((view) => scroll === undefined || view.scroll === scroll % 512)
+    .map((view) => {
+      const background = new Uint8Array(WIDTH * HEIGHT);
+      for (const [dy, row] of view.art.entries())
+        for (const [x, char] of row.split("").entries())
+          background[(map.top + dy) * WIDTH + x] = Number(char === "#");
+      return {
+        terrain: {
+          kind: "terrain",
+          scrolls: [view.scroll],
+          unverifiedScrolls: scroll === undefined ? views.unverified : [],
+        } as const,
+        background,
+      };
     });
 }
 
-const blackPictures = objectPictures(true);
-const whitePictures = objectPictures(false);
+const objectPictures = Object.entries(sprites)
+  .filter(
+    ([id]) =>
+      id === "ship" ||
+      id.startsWith("ship/") ||
+      id === "shot" ||
+      id === "missile" ||
+      id === "beam" ||
+      /^(enemy|boss|bonus|projectile|explosion|wall)\//.test(id),
+  )
+  .map(([id, art]) => ({ id, art, width: art[0]!.length, height: art.length }));
 
 function readObjects(
   pixels: Uint8Array,
   top: number,
   bottom: number,
   inverted: boolean,
+  background = new Uint8Array(WIDTH * HEIGHT),
 ): readonly (readonly SpaceImpactObservation[])[] {
   const solutions: SpaceImpactObservation[][] = [];
+  const signatures = new Set<string>();
   const search = (
     remaining: Uint8Array,
     occupied: Uint8Array,
@@ -220,40 +162,140 @@ function readObjects(
       const ordered = [...found].sort(
         (a, b) => a.y - b.y || a.x - b.x || a.picture.localeCompare(b.picture),
       );
-      if (!solutions.some((solution) => JSON.stringify(solution) === JSON.stringify(ordered)))
+      const signature = JSON.stringify(ordered);
+      if (!signatures.has(signature)) {
+        signatures.add(signature);
         solutions.push(ordered);
+      }
       return;
     }
-    for (const sprite of inverted ? blackPictures : whitePictures) {
-      if (first % WIDTH !== sprite.firstX) continue;
-      const x = sprite.x;
-      const y = Math.floor(first / WIDTH) - sprite.firstY;
-      if (
-        y < top ||
-        y + sprite.height > bottom ||
-        !matches(remaining, sprite.visible, sprite.left, y) ||
-        sprite.visible.some((row, dy) =>
-          occupied
-            .slice((y + dy) * WIDTH + sprite.left, (y + dy) * WIDTH + sprite.right)
-            .some(Boolean),
-        )
-      )
-        continue;
-      const next = remaining.slice();
-      erase(next, sprite.right - sprite.left, sprite.height, sprite.left, y);
-      const used = occupied.slice();
-      for (let dy = 0; dy < sprite.height; dy++)
-        used.fill(1, (y + dy) * WIDTH + sprite.left, (y + dy) * WIDTH + sprite.right);
-      search(next, used, [
-        ...found,
-        ...sprite.objects.map((object) => ({ ...object, x: x + object.x, y: y + object.y })),
-      ]);
+    const firstX = first % WIDTH,
+      firstY = Math.floor(first / WIDTH);
+    for (const sprite of objectPictures) {
+      const compound =
+        sprite.id === "ship" || sprite.id.startsWith("ship/") || sprite.id.startsWith("explosion/");
+      // The sprite or one of its crossing shots must cover the first unexplained pixel.
+      for (
+        let y = Math.max(top, firstY - sprite.height + 1);
+        y <= Math.min(firstY, bottom - sprite.height);
+        y++
+      ) {
+        for (
+          let x = Math.max(1 - sprite.width, firstX - sprite.width + (compound ? 0 : 1));
+          x <= Math.min(WIDTH - 1, firstX + (compound ? 1 : 0));
+          x++
+        ) {
+          const left = Math.max(0, x),
+            right = Math.min(WIDTH, x + sprite.width);
+          const rows: { x: number; y: number }[][][] = [];
+          let valid = true;
+          for (let dy = 0; dy < sprite.height && valid; dy++) {
+            const row = sprite.art[dy]!;
+            const base = (dx: number) =>
+              Number(row[dx] === "#") & (inverted ? 1 : background[(y + dy) * WIDTH + x + dx]! ^ 1);
+            const observed = (dx: number) => remaining[(y + dy) * WIDTH + x + dx]!;
+            const differences: number[] = [];
+            for (let dx = left - x; dx < right - x; dx++) {
+              if (base(dx) !== observed(dx)) {
+                if (!compound || (!inverted && base(dx) === 1)) {
+                  valid = false;
+                  break;
+                }
+                differences.push(dx);
+              }
+            }
+            if (!valid) break;
+            if (firstY === y + dy && (firstX === x - 1 || firstX === x + sprite.width))
+              differences.push(firstX - x);
+            differences.sort((a, b) => a - b);
+            if (differences.length === 0) {
+              rows.push([[]]);
+              continue;
+            }
+            const alternatives: { x: number; y: number }[][] = [];
+            const cover = (
+              pending: readonly number[],
+              shots: readonly { x: number; y: number }[],
+            ) => {
+              const next = pending[0];
+              if (next === undefined) {
+                alternatives.push([...shots]);
+                return;
+              }
+              for (const start of [next - 1, next]) {
+                if (
+                  start < -1 ||
+                  start >= sprite.width ||
+                  shots.some((shot) => Math.abs(shot.x - (x + start)) < 2)
+                )
+                  continue;
+                let works = true;
+                for (const dx of [start, start + 1]) {
+                  if (x + dx < 0 || x + dx >= WIDTH) {
+                    works = false;
+                    break;
+                  }
+                  if (occupied[(y + dy) * WIDTH + x + dx]) {
+                    works = false;
+                    break;
+                  }
+                  const before = dx >= 0 && dx < sprite.width ? base(dx) : 0;
+                  const after = inverted
+                    ? before ^ 1
+                    : background[(y + dy) * WIDTH + x + dx]
+                      ? 0
+                      : 1;
+                  if (after !== observed(dx)) {
+                    works = false;
+                    break;
+                  }
+                }
+                if (works)
+                  cover(
+                    pending.filter((dx) => dx !== start && dx !== start + 1),
+                    [...shots, { x: x + start, y: y + dy }],
+                  );
+              }
+            };
+            cover(differences, []);
+            if (!alternatives.length) valid = false;
+            rows.push(alternatives);
+          }
+          if (!valid) continue;
+          for (let dy = 0; dy < sprite.height && valid; dy++)
+            for (let dx = left; dx < right; dx++)
+              if (occupied[(y + dy) * WIDTH + dx]) {
+                valid = false;
+                break;
+              }
+          if (!valid) continue;
+          const combinations = (dy: number, shots: readonly { x: number; y: number }[]) => {
+            if (dy < rows.length) {
+              for (const row of rows[dy]!) combinations(dy + 1, [...shots, ...row]);
+              return;
+            }
+            const next = remaining.slice(),
+              used = occupied.slice();
+            for (let dy = 0; dy < sprite.height; dy++) {
+              erase(next, right - left, 1, left, y + dy);
+              used.fill(1, (y + dy) * WIDTH + left, (y + dy) * WIDTH + right);
+            }
+            for (const shot of shots) {
+              erase(next, 2, 1, shot.x, shot.y);
+              used.fill(1, shot.y * WIDTH + shot.x, shot.y * WIDTH + shot.x + 2);
+            }
+            search(next, used, [
+              ...found,
+              { picture: sprite.id, x, y, width: sprite.width, height: sprite.height },
+              ...shots.map((shot) => ({ picture: "shot", ...shot, width: 2, height: 1 })),
+            ]);
+          };
+          combinations(0, []);
+        }
+      }
     }
   };
   search(pixels, new Uint8Array(WIDTH * HEIGHT), []);
-  const result = solutions[0];
-  if (!result)
-    throw new Error("decoder: unread object pixels (unknown, overlapping or damaged picture)");
   return solutions;
 }
 
@@ -271,28 +313,49 @@ export function decodeSpaceImpactCandidates(
   const ceiling = level === 4 || level === 5;
   const normal = pixels.map((value) => (level === 0 || ceiling ? value ^ 1 : value));
   const hud = readHud(normal, ceiling ? 43 : 0);
-  const terrain = readTerrain(normal, level, scroll);
-  const solutions = readObjects(
-    normal,
-    ceiling ? 0 : 6,
-    ceiling ? 42 : HEIGHT,
-    level === 0 || ceiling,
-  );
-  const decoded = solutions.flatMap((observations) => {
-    const ships = observations.filter(
-      (object) => object.picture === "ship" || object.picture.startsWith("ship/"),
+  const decoded: DecodedSpaceImpact[] = [];
+  for (const { terrain, background } of readTerrain(level, scroll)) {
+    if (!(level === 0 || ceiling) && background.some((value, index) => value > normal[index]!))
+      continue;
+    const residual = normal.map((value, index) => value ^ background[index]!);
+    const solutions = readObjects(
+      residual,
+      ceiling ? 0 : 6,
+      ceiling ? 42 : HEIGHT,
+      level === 0 || ceiling,
+      background,
     );
-    if (ships.length > 1) return [];
-    return [
-      {
+    for (const observations of solutions) {
+      const ships = observations.filter(
+        (object) => object.picture === "ship" || object.picture.startsWith("ship/"),
+      );
+      if (ships.length > 1) continue;
+      const result = {
         hud,
         terrain,
         ship: ships[0] ?? null,
         objects: observations.filter((object) => object !== ships[0]),
-      },
-    ];
-  });
-  if (decoded.length === 0) throw new Error("decoder: multiple ship pictures");
+      };
+      const existing = decoded.find(
+        (candidate) =>
+          JSON.stringify(candidate.ship) === JSON.stringify(result.ship) &&
+          JSON.stringify(candidate.objects) === JSON.stringify(result.objects),
+      );
+      if (existing?.terrain.kind === "terrain" && terrain.kind === "terrain") {
+        decoded[decoded.indexOf(existing)] = {
+          ...existing,
+          terrain: {
+            ...existing.terrain,
+            scrolls: [...existing.terrain.scrolls, ...terrain.scrolls],
+          },
+        };
+      } else decoded.push(result);
+    }
+  }
+  if (decoded.length === 0)
+    throw new Error(
+      "decoder: unread object pixels or terrain (unknown, overlapping, damaged or multiple ship pictures)",
+    );
   return decoded;
 }
 

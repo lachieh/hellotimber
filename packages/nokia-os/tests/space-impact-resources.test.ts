@@ -86,6 +86,7 @@ const OBJECT_SPRITES = {
   "projectile/pellet/0": ".##./##.#/.##.",
   "projectile/cross/0": ".##.#/#####/.##.#",
   "explosion/checker/0": ".#.#./#.#.#/.#.#./#.#.#/##.##",
+  "explosion/spark/0": "#.#/.#./#.#",
   "explosion/split/0": ".##.##./#.....#/#.#.#.#/.#...#./#.#.#.#/##...##/.##.##.",
 };
 
@@ -193,7 +194,7 @@ describe("Space impact HUD and ship resources", () => {
         new Set(SPACE_IMPACT_CROPS.filter((crop) => crop.id === id).map((crop) => crop.inverted)),
       ).toEqual(new Set([true, false]));
     }
-    expect(Object.keys(resources.sprites)).toHaveLength(85);
+    expect(Object.keys(resources.sprites)).toHaveLength(86);
   });
   it("requires independent specimens for every new picture and both polarities for shared pictures", () => {
     for (const id of Object.keys(OBJECT_SPRITES)) {

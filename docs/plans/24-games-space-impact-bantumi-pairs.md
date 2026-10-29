@@ -1808,6 +1808,13 @@ block), `tests/support/space-impact-decode.ts` (new), `tests/space-impact-levels
       and place; every y-path reproduces its tracks.
 - [ ] Commit: `feat(nokia-os): reconstruct Space impact levels from goldens`.
 
+**Parent execution guidance (Lachlan, 2026-10-28).** Where exhaustive rule fitting is slow,
+Task 5 may retain the per-level data observed by the tracker (spawn times, positions, paths,
+and HP from kills) before deriving a general rule. Get level 0 through the engine and replay
+early, then extend the remaining levels. The full-level pixel-exact replay remains the proof;
+this permits neither guessed data nor a relaxed comparison. Fire/RNG rule fitting still needs
+Task 6's informative LCD evidence.
+
 **Task 5 decoder checkpoint (2026-10-28; incomplete).** Continued from `e1dbdd7`, only
 in `t3/p24-space-impact`. The canonical `analysis/coverage.py --check` again passes all
 25 criteria. The landed `resources.generatedModules` contract is confirmed; no shared
@@ -1937,6 +1944,86 @@ linear tracker/fitter. No fixture, generated resource, excluded package, toleran
 UNVERIFIED default changes. Plan 24 remains **0 asserted, 168 pending, 0 known gaps**;
 the inherited Space impact fixtures remain pending in their original indices. Task 5 remains
 incomplete; Tasks 6–14 are unstarted.
+
+### Task 5 multiple-shot and terrain-layer checkpoint (2026-10-28; incomplete)
+
+Continued from `bd293ec` in the existing `t3/p24-space-impact` worktree. The canonical
+`analysis/coverage.py --check` passes all 25 accepted criteria. Task 5 remains incomplete;
+Tasks 6–14 remain unstarted. No new product decision or accepted UNVERIFIED default.
+
+**Exact layers.** The decoder now solves crossing shots by row instead of pre-enumerating
+single-shot ship pictures. Multiple nonoverlapping shots may cross one ship rectangle, on
+the same or different rows. LCD specimens `level-3 f` and `level-4 g` establish the two cases;
+`level-5 f` establishes the shield crossing the ceiling terrain. The reserved rectangles still
+prevent another decomposition from restoring already consumed pixels with duplicate shots.
+Every supported white-background shot alternative remains explicit, including the identical
+one-shot and two-adjacent-shot interpretations hidden by the shield. The strict entry point
+refuses ambiguous decompositions; it never chooses the smaller shot count as a gameplay fact.
+
+Terrain is composed with foreground objects instead of requiring a clean 16-row band. Known
+scroll candidates are tested against the complete frame: XOR on inverted levels, ink union on
+white levels. Unknown terrain cells are still UNVERIFIED and an explicitly requested unknown
+scroll still fails. Independent regressions repaint every returned candidate pixel-for-pixel
+for `level-0 bk`, `level-1 t/bh`, `level-2 bn`, `level-3 f`, `level-4 g`, `level-5 f`,
+`level-6 ab` and `level-7 aa`. No damaged pixel, partial-draw rule or timing comparison is
+ignored to make these decompositions pass.
+
+The missing `explosion/spark/0` picture (`#.# / .#. / #.#`) comes from independent clean
+3×3 LCD specimens in `level-0 dz` and `level-1 bh`. It is registered in the existing resource
+extractor and regenerated through `generatedModules`, bringing the inventory to **86 pictures**.
+`level-0 bk` proves a shot crossing this explosion's edge. Tiny standalone pictures can also
+have exact explosion/shot decompositions: the synthetic picture tests now require the original
+picture to be present among candidates, independently repaint **every** candidate exactly,
+and require the strict decoder to reject an unresolved choice. This strengthens the pixel
+proof without pretending that a single image establishes invisible object identity.
+
+**Remaining reconstruction.** The native-image probe (including transients, no pixel tolerance)
+now reaches these first unread images. Counts exclude the initial menu and count distinct
+images, not engine ticks or accepted gameplay frames:
+
+| Level | Readable images | Ambiguous images | First unread image |
+| ----- | --------------: | ---------------: | ------------------ |
+| 0     |             195 |               86 | `go`               |
+| 1     |             134 |               57 | `ef`               |
+| 2     |             123 |               69 | `du`               |
+| 3     |             142 |               59 | `en`               |
+| 4     |              32 |                5 | `ah`               |
+| 5     |              68 |               14 | `br`               |
+| 6     |              83 |               32 | `cg`               |
+| 7     |              69 |               27 | `bs`               |
+
+Level 0 `go` has an orb crossing the rightmost enemy's bounding rectangle; its separated ink
+is identifiable in the adjacent `gr` frame. The current solver reserves whole object
+rectangles, so inter-object layers other than crossing shots remain unfinished. Level 4 `ah`
+contains an unknown clipped foreground picture; later probes require additional object and
+layer evidence too. These stops are investigative findings, not newly registered known gaps.
+No complete level tracker, lifecycle/kill attribution, spawn script, path/boss/HP/fire fitting,
+seed recovery or runtime level module is claimed. Continue with the remaining exact layers,
+then complete level-0 tracking and fit observed per-level data under the parent guidance.
+Do not emit guessed or partial runtime tables to close Task 5.
+
+**Verification.** Focused checks pass **3 files, 704 tests**, including **130 decoder/tracker
+tests**. Red-before evidence is in `/private/tmp/plan24-{multi,spark,explosion}-red.log`.
+The generator alone writes `src/resources/generated/space-impact.ts`; no golden, status,
+comparison tolerance or excluded package is edited.
+
+**Closeout.** The complete uncached workspace suite passes all six packages: **258 passing
+files, one pending-only slice, 11,706 passed tests, 120 expected failures and 193 TODOs**,
+zero cache hits. Nokia-os contributes 166 passing files, one pending-only slice and
+10,864 passing tests in 991.65 s; the other totals are phone-core 450, snake 62, phone-3d 49,
+phone-screen 101 and website 180. `vp check --fix`, final `vp check` and `website#build`
+pass. The full suite uses mise's absolute Node 22.22.3 with
+`/private/tmp/plan24-run-node22.cjs`, `VITEST_MAX_WORKERS=2` and
+`VP_RUN_CONCURRENCY_LIMIT=1`. An initial `mise exec -- env ... node` invocation was rejected
+by that guard before executing any tests because the host hook resolved Node 26; its
+replacement above is the accepted verification.
+
+Logs: `/private/tmp/plan24-multilayer-{focused,registrations,workspace-tests,check-fix,check,build}.log`.
+The independent native-image probes are `/private/tmp/plan24-probe-{fast,other}.log`.
+Website, phone-core, phone-screen and packages/snake have no diff from `e1dbdd7`. The six
+changed paths are this plan, the decoder, its tests, the sprite extractor, its tests and its
+generated output. Plan 24's index remains **0 asserted, 168 pending, 0 known gaps**; the two
+inherited Space impact fixtures remain pending in indices 14 and 16. Tasks 5–14 remain open.
 
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 

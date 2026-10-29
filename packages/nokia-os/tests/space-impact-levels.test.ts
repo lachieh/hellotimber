@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vite-plus/test";
 import { SPACE_IMPACT_DATA } from "../src/resources/generated/space-impact.ts";
-import { decodeSpaceImpact, decodeSpaceImpactCandidates } from "./support/space-impact-decode.ts";
+import {
+  decodeSpaceImpact,
+  decodeSpaceImpactCandidates,
+  type DecodedSpaceImpact,
+} from "./support/space-impact-decode.ts";
 import { goldenImage } from "./support/goldens.ts";
 import {
   fitSpaceImpactLinearPath,
@@ -64,6 +68,22 @@ function frame({
   return level === 0 || ceiling ? pixels.map((value) => value ^ 1) : pixels;
 }
 
+function repaint(candidate: DecodedSpaceImpact, level: number, scroll = 0) {
+  const pixels = frame({ level, ...candidate.hud, scroll, objects: [] });
+  for (const object of [...(candidate.ship ? [candidate.ship] : []), ...candidate.objects]) {
+    const art = sprites[object.picture]!;
+    for (const [dy, row] of art.entries())
+      for (const [dx, char] of row.split("").entries()) {
+        const x = object.x + dx,
+          y = object.y + dy;
+        if (char !== "#" || x < 0 || x >= 84 || y < 0 || y >= 48) continue;
+        if ([0, 4, 5].includes(level)) pixels[y * 84 + x] ^= 1;
+        else pixels[y * 84 + x] = 1;
+      }
+  }
+  return pixels;
+}
+
 const pictures = Object.keys(sprites).filter(
   (id) =>
     id === "ship" ||
@@ -77,15 +97,21 @@ const pictures = Object.keys(sprites).filter(
 describe("strict Space impact LCD decoder", () => {
   it.each(pictures)("reads the complete %s picture and its box", (picture) => {
     const art = sprites[picture]!;
-    const decoded = decodeSpaceImpact(frame({ objects: [{ picture, x: 20, y: 6 }] }), { level: 0 });
+    const pixels = frame({ objects: [{ picture, x: 20, y: 6 }] });
+    const candidates = decodeSpaceImpactCandidates(pixels, { level: 0 });
     const object = { picture, x: 20, y: 6, width: art[0]!.length, height: art.length };
-    if (picture === "ship" || picture.startsWith("ship/")) {
-      expect(decoded.ship).toEqual(object);
-      expect(decoded.objects).toEqual([]);
-    } else {
-      expect(decoded.ship).toBeNull();
-      expect(decoded.objects).toEqual([object]);
-    }
+    expect(
+      candidates.some((candidate) =>
+        picture === "ship" || picture.startsWith("ship/")
+          ? JSON.stringify(candidate.ship) === JSON.stringify(object) &&
+            candidate.objects.length === 0
+          : candidate.ship === null &&
+            JSON.stringify(candidate.objects) === JSON.stringify([object]),
+      ),
+    ).toBe(true);
+    for (const candidate of candidates) expect(repaint(candidate, 0)).toEqual(pixels);
+    if (candidates.length > 1)
+      expect(() => decodeSpaceImpact(pixels, { level: 0 })).toThrow(/ambiguous/);
   });
 
   it.each([0, 1, 2, 3, 4, 5])("reads %i hearts without inferring a hidden life", (lives) => {
@@ -284,11 +310,112 @@ describe("strict Space impact LCD decoder", () => {
       const pixels = frame({ level, objects: [objects[0]!] });
       const inverted = [0, 4, 5].includes(level);
       for (const x of [13, 14]) pixels[22 * 84 + x] = inverted ? pixels[22 * 84 + x]! ^ 1 : 1;
-      const decoded = decodeSpaceImpact(pixels, { level, scroll: 0 });
-      expect(decoded.ship).toMatchObject(objects[0]!);
-      expect(decoded.objects).toEqual([{ ...objects[1], width: 2, height: 1 }]);
+      const candidates = decodeSpaceImpactCandidates(pixels, { level, scroll: 0 });
+      expect(
+        candidates.every(
+          (candidate) =>
+            candidate.ship?.picture === objects[0]!.picture &&
+            candidate.ship.x === 3 &&
+            candidate.ship.y === 16,
+        ),
+      ).toBe(true);
+      const expected = inverted
+        ? [[{ picture: "shot", x: 13, y: 22, width: 2, height: 1 }]]
+        : [
+            [
+              { picture: "shot", x: 12, y: 22, width: 2, height: 1 },
+              { picture: "shot", x: 14, y: 22, width: 2, height: 1 },
+            ],
+            [{ picture: "shot", x: 13, y: 22, width: 2, height: 1 }],
+          ];
+      expect(candidates.map((candidate) => candidate.objects)).toEqual(expected);
+      if (!inverted)
+        expect(() => decodeSpaceImpact(pixels, { level, scroll: 0 })).toThrow(/ambiguous/);
     },
   );
+
+  it.each([
+    [
+      3,
+      "f",
+      2,
+      "ship/shielded/1",
+      3,
+      18,
+      [
+        [11, 23],
+        [15, 23],
+      ],
+    ],
+    [
+      4,
+      "g",
+      2,
+      "ship/shielded/1",
+      3,
+      16,
+      [
+        [11, 21],
+        [15, 22],
+      ],
+    ],
+    [5, "f", 2, "ship/shielded/1", 3, 15, [[15, 22]]],
+  ] as const)(
+    "decodes multiple captured shots over the ship in level %i %s",
+    (level, name, scroll, picture, x, y, shots) => {
+      const pixels = goldenImage(`game/space-impact/level-${level}`, name).image.pixels;
+      const candidates = decodeSpaceImpactCandidates(pixels, { level, scroll });
+      expect(
+        candidates.some(
+          (candidate) =>
+            candidate.ship?.picture === picture &&
+            candidate.ship.x === x &&
+            candidate.ship.y === y &&
+            shots.every(([sx, sy]) =>
+              candidate.objects.some(
+                (object) => object.picture === "shot" && object.x === sx && object.y === sy,
+              ),
+            ),
+        ),
+      ).toBe(true);
+    },
+  );
+
+  it("decodes the captured shot crossing the final explosion picture", () => {
+    const candidates = decodeSpaceImpactCandidates(
+      goldenImage("game/space-impact/level-0", "bk").image.pixels,
+      { level: 0 },
+    );
+    expect(
+      candidates.some(
+        (candidate) =>
+          candidate.objects.some(
+            (object) =>
+              object.picture === "explosion/spark/0" && object.x === 34 && object.y === 10,
+          ) &&
+          candidate.objects.some(
+            (object) => object.picture === "shot" && object.x === 33 && object.y === 10,
+          ),
+      ),
+    ).toBe(true);
+  });
+
+  it.each([
+    [0, "bk", 0],
+    [1, "t", 19],
+    [1, "bh", 50],
+    [2, "bn", 49],
+    [3, "f", 2],
+    [4, "g", 2],
+    [5, "f", 2],
+    [6, "ab", 19],
+    [7, "aa", 20],
+  ] as const)("repaints every layer candidate exactly in level %i %s", (level, name, scroll) => {
+    const pixels = goldenImage(`game/space-impact/level-${level}`, name).image.pixels;
+    const candidates = decodeSpaceImpactCandidates(pixels, { level, scroll });
+    expect(candidates.length).toBeGreaterThan(0);
+    for (const candidate of candidates) expect(repaint(candidate, level, scroll)).toEqual(pixels);
+  });
 
   it("preserves its source pixels on success and failure", () => {
     const pixels = frame({ level: 2 });

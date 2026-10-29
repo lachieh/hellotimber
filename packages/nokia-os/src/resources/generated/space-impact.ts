@@ -514,6 +514,11 @@ export const SPACE_IMPACT_DATA: { readonly sprites: Readonly<Record<string, read
       "#####",
       ".##.#"
     ],
+    "explosion/spark/0": [
+      "#.#",
+      ".#.",
+      "#.#"
+    ],
     "explosion/checker/0": [
       ".#.#.",
       "#.#.#",

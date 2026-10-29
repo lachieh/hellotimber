@@ -114,6 +114,8 @@ export const SPACE_IMPACT_CROPS: readonly SpaceImpactCrop[] = [
   crop("projectile/pellet/0", "level-1", "dv", 77, 26, 4, 3, false),
   crop("projectile/cross/0", "level-3", "akk", 55, 18, 5, 3, false),
   crop("projectile/cross/0", "level-3", "akl", 52, 19, 5, 3, false),
+  crop("explosion/spark/0", "level-0", "dz", 79, 19, 3, 3, true),
+  crop("explosion/spark/0", "level-1", "bh", 57, 17, 3, 3, false),
   crop("explosion/checker/0", "level-0", "dx", 78, 18, 5, 5, true),
   crop("explosion/checker/0", "level-1", "bg", 56, 16, 5, 5, false),
   crop("explosion/split/0", "level-0", "bh", 32, 8, 7, 7, true),
