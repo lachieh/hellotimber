@@ -111,3 +111,13 @@ it("keeps vibration on until an off event", () => {
   vi.advanceTimersByTime(1000);
   expect(vibrate).not.toHaveBeenCalled();
 });
+
+it("schedules overdue firmware edges at audio now after a delayed animation frame", () => {
+  const { ctx, gains } = audio();
+  ctx.currentTime = 0;
+  const sound = new WebAudioSound();
+  sound.start();
+  sound.phoneNow = 2000;
+  sound.change({ output: "buzzer", atMs: 1000, hz: null });
+  expect(gains[1]?.gain.setValueAtTime).toHaveBeenLastCalledWith(0, 0);
+});

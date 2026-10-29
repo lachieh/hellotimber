@@ -38,8 +38,10 @@ describe("settings store", () => {
 
   it("corrupt stored JSON falls back to defaults", () => {
     window.localStorage.setItem("hellotimber.settings", "{not json");
+    window.localStorage.setItem("hellotimber.messages", "legacy");
     resetSettingsForTests();
     expect(getSettings()).toEqual(DEFAULT_SETTINGS);
+    expect(window.localStorage.getItem("hellotimber.messages")).toBeNull();
   });
 
   it("notifies subscribers once per update and supports unsubscribe", () => {

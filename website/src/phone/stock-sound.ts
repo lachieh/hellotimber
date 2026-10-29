@@ -81,7 +81,7 @@ export class WebAudioSound implements StockSoundPort {
     }
     const audio = this.#audio;
     if (!audio) return;
-    const at = audio.ctx.currentTime + delay;
+    const at = Math.max(audio.ctx.currentTime, audio.ctx.currentTime + delay);
     const voice = audio[event.output];
     if (event.hz === null) {
       voice.gain.gain.setValueAtTime(0, at);

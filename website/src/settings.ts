@@ -12,11 +12,16 @@ let cached: SiteSettings | null = null;
 function load(): SiteSettings {
   if (typeof window === "undefined") return DEFAULT_SETTINGS;
   try {
-    const raw: unknown = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null");
+    window.localStorage.removeItem("hellotimber.messages");
+    let raw: unknown;
+    try {
+      raw = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null");
+    } catch {
+      raw = null;
+    }
     const settings = {
       muted: typeof raw === "object" && raw !== null && "muted" in raw && raw.muted === true,
     };
-    window.localStorage.removeItem("hellotimber.messages");
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
     return settings;
   } catch {
