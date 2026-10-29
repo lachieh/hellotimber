@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vite-plus/test";
 import { createGameRandom, GAME_RANDOM_MODULUS } from "../src/games/random";
 import { spaceImpactBonus } from "../src/games/space-impact/random";
-import { searchSpaceImpactSeeds } from "../scripts/space-impact-seeds";
+import {
+  filterSpaceImpactSeedEvents,
+  spaceImpactU32SeedAliases,
+  searchSpaceImpactSeeds,
+} from "../scripts/space-impact-seeds";
 import { SPACE_IMPACT_LEVEL_OBSERVATIONS } from "../src/resources/generated/space-impact-levels";
 
 const hud = { lives: 3, weapon: "missile", count: 3, score: 100 } as const;
@@ -102,5 +106,91 @@ describe("Space impact LCD seed identifiability", () => {
     expect(() => searchSpaceImpactSeeds([observation])).toThrow(
       /Invalid Space impact random observation/,
     );
+  });
+});
+
+describe("Space impact joint event filtering", () => {
+  it("keeps both level-0 pickup outcomes in one chain, with a checkpoint per event", () => {
+    for (const [image, weapon] of [
+      ["ik", "wall"],
+      ["afp", "missile"],
+    ] as const) {
+      const frame = SPACE_IMPACT_LEVEL_OBSERVATIONS.frames.find((frame) => frame.image === image);
+      expect(frame).toMatchObject({ kind: "decoded", hud: { weapon, count: 3 } });
+    }
+    const result = filterSpaceImpactSeedEvents([
+      { draw: 1, kind: "mask", mask: 3, value: 2, source: "game/space-impact/level-0/ik" },
+      { draw: 20, kind: "mask", mask: 3, value: 1, source: "game/space-impact/level-0/afp" },
+    ]);
+    expect(result.kind).toBe("ambiguous");
+    expect(result.checkpoints.map((event) => event.remaining)).toEqual([16380, 4093]);
+    expect(result.candidates).toHaveLength(4093);
+  });
+
+  it("rejects a conflicting order at the responsible event and preserves its checkpoints", () => {
+    const result = filterSpaceImpactSeedEvents([
+      { draw: 1, kind: "mask", mask: 3, value: 2, source: "pickup/wall" },
+      { draw: 1, kind: "mask", mask: 3, value: 1, source: "pickup/missile-at-same-draw" },
+    ]);
+    expect(result.kind).toBe("rejected");
+    expect(result.candidates).toEqual([]);
+    expect(result.checkpoints.map((event) => [event.source, event.remaining])).toEqual([
+      ["pickup/wall", 16380],
+      ["pickup/missile-at-same-draw", 0],
+    ]);
+  });
+
+  it("filters shot and non-shot opportunities at their positions in the same chain", () => {
+    const result = filterSpaceImpactSeedEvents([
+      {
+        draw: 1,
+        kind: "remainder",
+        modulus: 65521,
+        value: 32727,
+        equal: true,
+        source: "synthetic/first-draw",
+      },
+      {
+        draw: 2,
+        kind: "remainder",
+        modulus: 5,
+        value: 0,
+        equal: false,
+        source: "synthetic/no-shot",
+      },
+      { draw: 3, kind: "remainder", modulus: 3, value: 0, equal: true, source: "synthetic/shot" },
+    ]);
+    expect(result.kind).toBe("unique");
+    expect(result.checkpoints.map((event) => event.remaining)).toEqual([1, 1, 1]);
+    expect(result.candidates).toEqual([1234]);
+  });
+
+  it("does not mistake a unique effective chain for the original u32 seed", () => {
+    const aliases = spaceImpactU32SeedAliases(1234);
+    expect(aliases).toHaveLength(65551);
+    expect(aliases).toContain(1234);
+    expect(aliases.some((seed) => seed > 0xffff0000)).toBe(true);
+    expect(new Set(aliases).size).toBe(aliases.length);
+    const expected = createGameRandom(1234);
+    const first = expected.next(),
+      second = expected.next();
+    for (const seed of aliases) {
+      const random = createGameRandom(seed);
+      expect([random.next(), random.next()]).toEqual([first, second]);
+    }
+  });
+
+  it("requires an ordered, valid consumer hypothesis", () => {
+    expect(() =>
+      filterSpaceImpactSeedEvents([
+        { draw: 2, kind: "mask", mask: 3, value: 2, source: "later" },
+        { draw: 1, kind: "mask", mask: 3, value: 1, source: "earlier" },
+      ]),
+    ).toThrow(/order/);
+    expect(() =>
+      filterSpaceImpactSeedEvents([
+        { draw: 1, kind: "remainder", modulus: 0, value: 0, equal: true, source: "invalid" },
+      ]),
+    ).toThrow(/Invalid/);
   });
 });

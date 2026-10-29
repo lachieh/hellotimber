@@ -2754,6 +2754,136 @@ Remaining work starts with first-pickup contact/consumer order and informative g
 recovery, then nonlinear waves, HP/fire, bosses, exits/endings, seeded splash and complete
 sound/acceptance replays. Task 6 remains open.
 
+### Accepted parent decision (2026-10-29): joint level-0 RNG recovery
+
+Recover level 0's New-game chain from **all** RNG-observable LCD outcomes jointly:
+every pickup, every random-row spawn (on the separate phone-wide ANSI chain), every
+random enemy shot/timing/choice and every other demonstrated `game_rand16` consumer.
+Filter event by event and report the remaining set after each event. Consumer order is
+a hypothesis tested by that filter: an empty set rejects the order/model. Precompute
+transitions and, if needed, use a deterministic dedicated exhaustive u32 sweep.
+
+A uniquely surviving gameplay chain is informative LCD recovery under accepted S7;
+commit its derivation generated from committed goldens. Keep an effective chain state
+separate from the original u32 clock seed, whose wrapping first step can alias. Never
+borrow a splash/RAM seed, select an arbitrary survivor or inject an unsupported seed.
+If several candidates survive the complete level, retain the set and register a known
+gap for outcomes on which they disagree, with that reason. Partial consumer coverage
+is unfinished recovery, not proof of whole-level ambiguity. Wire H9's bonus policy and
+the recovered consumer order, then continue level 0 in failure order through spawns,
+HP/fire, boss, endings, seeded splash and sound. Promote only complete passing fixtures;
+keep pixels exact and all existing tolerances. Product calls stay **UNVERIFIED**.
+
+### Joint RNG recovery checkpoint (2026-10-29; conditional, partial)
+
+Continued from `e98d4dd`, only in `t3/p24-space-impact`. The parent joint-recovery
+decision above is recorded and implemented as a deterministic LCD derivation. This unit
+does not wire collection or advance the full-level replay: **205/879 settled rows** still
+match, through `ij` (18075 ms); **`ik` (18149 ms)** is still first. Plan 24 remains
+**28 asserted, 140 pending, 0 registered known gaps**. No runtime seed, golden, resource,
+comparison or tolerance is changed. The bonus policy remains unwired.
+
+**Reproduction.** From this worktree, under guarded mise Node 22:
+`node packages/nokia-os/scripts/space-impact-seed-recovery.ts --write` regenerates
+`tests/fixtures/space-impact-seed-recovery.json` (paths under `packages/nokia-os/`).
+Without `--write` it prints the same JSON. The script reads committed level-0 and exit
+goldens; the existing exact observation validator checks the level pixels. No test or
+committed script reads REF. A dedicated script and generated derivation fixture are the
+additional Task 6 owned files needed to make the result rerunnable and reviewable.
+
+**All observable RNG outcomes jointly.** Both pickups (`ik`: wall, `afp`: missiles) feed
+H9's labelled provisional mapping. The two boss bullets are identified by consecutive LCD
+samples moving left **3 px per delivered step**, born at steps **746/y29** and **788/y33**;
+regular player shots move right. The first boss at x=56 and the committed delivered events
+establish **69** boss opportunities, steps **728–796**. All shot and non-shot opportunities
+filter the same chain. The firing denominator is searched over the full byte domain
+1–255 except the documented 127 no-fire sentinel (0 cannot produce the observed shots).
+The five initial boss-destruction LCD windows then test the complete 16-draw effect
+initializer, including random offsets and animation phases, with **every pixel exact**
+in the unobscured 21×23 rectangle (60,24). These windows are derivation evidence, not a
+passing full-level replay. There is no random-row/ANSI consumer in the level-0 hypothesis;
+ANSI stays a separate chain and its later-level verification remains pending.
+
+**Observed-order hypothesis and checkpoints.** The counted order is: pickup draw **1**;
+**18** ordinary fire rolls at draws **2–19** whose return outcomes do not establish visible
+shots; second pickup draw **20**; boss rolls **21–89**; boss effects **90–105** (central
+phase, then five offset/positive-phase/negative-phase triplets). Ordinary explosions do
+not add draws in this observed order. The derivation retains all **94** checkpoints:
+
+| Evidence                         | Effective seeds |           Seed/denominator models |
+| -------------------------------- | --------------: | --------------------------------: |
+| First wall pickup                |          16,380 |        denominator not introduced |
+| Each of 18 hidden ordinary rolls |          16,380 |    no observable result to filter |
+| Second missile pickup            |           4,093 |        denominator not introduced |
+| All 69 boss opportunities        |              38 |                                50 |
+| First destruction window `a`     |               3 |                                 5 |
+| Second window `b`                |    **1: 44530** | **1: seed 44530, denominator 40** |
+| Windows `c`, `d`, `e`, each      |               1 |                                 1 |
+
+The JSON contains the candidate counts after **each** boss event, not just this summary.
+With denominator fixed at 40, the pickup/boss evidence leaves 7791 and 44530; destruction
+rejects 7791. The full search does not borrow 40 from native state. It independently fits
+40 after the effect pixels remove the other rates. Precomputed generator transitions and
+105-draw chains avoid repeated u32 sweeps. Each unique effective seed still has **65,551**
+original u32 aliases: invert the wrapping multiplier for each word congruent to its first
+draw modulo 65521. Tests check every alias against the real shared generator. Later draws
+cannot identify which original u32 was written; no clock function follows from this result.
+
+**Order discrepancy and conservative resolution.** Omitting all hidden rolls, using 17,
+putting the second pickup before them, or moving the first boss roll by ±1 yields an empty
+set. However **19** hidden rolls yields **59408**, also with denominator 40 and the same
+later LCD outcomes. The fixture preserves that counterexample and its full checkpoints. Both chains are at
+state **59365** immediately after the second pickup; every later draw is identical. Thus the parent's proposed empty-set order test rejects many wrong orders but is not a
+uniqueness theorem for unobservable consumers. Under AGENTS.md, retain the conditional
+results and the observed call-count cross-check; do not select between unsupported models
+or inject a seed merely because one hypothesis gives a unique result. **UNVERIFIED:**
+hidden consumer attribution until the spawn/fire engine executes that order. The tested
+histories agree on the recorded pickup/fire/destruction outcomes, so there is no differing
+recorded outcome to register as a known gap. Full-level replay remains unfinished, not
+asserted or disguised as a seed gap.
+
+**Independent order cross-check.** Read-only native observers under
+`$REF/captures/6.39/plan24/joint-rng-20261029/` count exactly the 18 ordinary calls, 69 boss
+calls, two pickup calls and 16 destruction calls above, with zero ANSI calls. They never
+read/print the RNG seed or random return values, nor modify emulated state or timing.
+Both controls compare all **2,048** original PNG/PCM files byte-identically. The second
+observer cross-checks ordinary denominator 2 and boss denominator 40, but those values are
+not committed seed constraints: an ordinary successful roll can return without a visible
+shot. The executable, native source, logs and control JSON remain in REF. Algorithm
+instructions are a hypothesis cross-check only; no flash tables or extracted assets enter
+the repository. The apparent pellet matches near the first pickup follow the orb itself;
+they are not treated as independent firing evidence.
+
+**TDD and calls.** The new joint-filter and LCD-recovery tests fail before implementation.
+The filter retains event checkpoints, tests modulo shots/non-shots and rejects inconsistent
+orders without discarding the rejecting event. Recovery searches every effective seed and
+rate, rejects a changed destruction pixel, verifies the generated derivation and preserves
+the 19-roll counterexample. **UNVERIFIED product choices:** use the byte denominator domain
+and the observed level-0 explosion initializer outside the captured arrangements only as
+hypotheses; keep the four accepted defaults unchanged. No new dependency or public API.
+
+**Remaining work.** Wire H9 collection/contact and pending return behavior, then implement
+the generated later waves/HP/fire so their real consumer count establishes the replay's
+seed input. Continue through the boss, exit/endings, seeded splash and complete sound.
+No fixture can be promoted on these cropped derivation checks alone. Task 6 remains open
+outside this conditional level-0 result; Tasks 7–14 are unchanged partial work.
+
+**Verification.** Final focused, full uncached, formatting/typechecking and build results
+are recorded below at closeout. An early workspace run was cancelled to expand the firing
+rate search from 1–126 to its full byte domain; it is not accepted verification.
+
+**Closeout verification.** The final uncached `vp run -r --no-cache test` passes all six
+packages: **267 files, 11,896 passing tests, 120 expected failures, 163 TODOs**, with
+**0/6 cache hits**. Nokia-os: **175 files / 11,054 passed** in **989.95 s**; phone-core 450,
+snake 62, phone-3d 49, phone-screen 101 and website 180. The focused eight-file gate passes
+**350 tests** with 140 plan-24 TODOs; the final full-byte-domain recovery/filter rerun passes
+**2 files / 30 tests**. `website#build` passes. `vp check --fix`, final `vp check` and
+`git diff --check` pass. All Node commands use mise's guarded Node 22; the full run uses
+`VITEST_MAX_WORKERS=2` and `VP_RUN_CONCURRENCY_LIMIT=1`. Logs:
+`/private/tmp/p24-joint-{workspace-tests,focused,focused-recovery-final,check-fix-final,
+final-check,build}.log`. No excluded package, website source, lockfile, golden or generated
+resource changes. This is a green conditional-recovery unit, not completed level-0 gameplay.
+
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 
 **Files:** `scripts/space-impact-seeds.ts` (new), `src/games/space-impact/random.ts` (new: which

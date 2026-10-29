@@ -305,6 +305,31 @@ pixel-intersection test establishes collection. The replay remains 205/879 settl
 28 asserted fixtures, 140 pending and no registered known gaps. Every original pixel and
 tolerance remains unchanged; no splash/RAM seed supplies gameplay proof.
 
+**Joint RNG recovery checkpoint (2026-10-29; conditional).** The dedicated
+`scripts/space-impact-seed-recovery.ts` derives both pickups, two boss bullet tracks,
+69 boss firing/non-firing opportunities and the first five destruction windows from
+committed level-0/exit goldens. It searches all effective seeds and the full byte firing
+denominator domain (excluding no-fire sentinels). Under the independently counted order
+(draw 1 pickup; 2–19 ordinary rolls; 20 pickup; 21–89 boss rolls; 90–105 destruction),
+remaining effective seeds are 16,380 after the first pickup, 4,093 after the second,
+38 after boss opportunities, 3 after the first destruction window, and **44530 alone**
+after the second. The sole rate is **40**. Every destruction pixel in the unobscured
+21×23 window matches, and the next three windows also match. This is conditional RNG
+derivation, not full-level acceptance. The generated JSON fixture records every event.
+
+**UNVERIFIED consumer attribution:** adding a nineteenth hidden ordinary roll instead
+leaves seed **59408** and the same later recorded outcomes. That counterexample is
+retained. Both histories reach state **59365** immediately after the second pickup, so
+every later draw is identical. The byte-identical read-only native control counts 18, but the engine has yet
+to execute the full spawn/fire program and prove its count. Do not inject an arbitrary
+survivor or treat the conditional result as a clock rule. Either effective seed has
+65,551 original u32 aliases with the same wrapping first draw; future gameplay cannot
+distinguish those aliases. No ANSI draw occurs in the level-0 order hypothesis; later
+random-row replay remains pending. No registered known gap follows from histories
+that agree on every recorded outcome. The runtime is unchanged: **205/879** settled
+rows, first mismatch **`ik` at 18149 ms**, **28 asserted / 140 pending** plan-24 fixtures,
+zero registered known gaps, and the bonus policy remains unwired.
+
 **Remaining hypotheses (UNVERIFIED until golden replay or further evidence).** Exact collision
 geometry, score ceiling and per-hit awards, all boss phases and projectiles, the pending-sound
 return code and lost-event behavior, held-fire cap, shield durations and exact continue/exit

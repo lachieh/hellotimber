@@ -1,0 +1,1384 @@
+{
+  "countedOrder": {
+    "hypothesis": {
+      "silentFireRolls": 18,
+      "pickupBeforeSilentRolls": false,
+      "bossStartOffset": 0
+    },
+    "pickups": [
+      {
+        "image": "ik",
+        "atMs": 18149,
+        "value": 2
+      },
+      {
+        "image": "afp",
+        "atMs": 65592,
+        "value": 1
+      }
+    ],
+    "boss": {
+      "firstRollStep": 728,
+      "rolls": 69,
+      "shots": [
+        {
+          "step": 746,
+          "y": 29,
+          "images": [
+            "aiy",
+            "aiz",
+            "ajb",
+            "ajc",
+            "ajd",
+            "aje",
+            "ajg",
+            "ajh",
+            "aji",
+            "ajj",
+            "ajl",
+            "ajn",
+            "ajo",
+            "ajp",
+            "ajq",
+            "ajs"
+          ]
+        },
+        {
+          "step": 788,
+          "y": 33,
+          "images": ["akw", "akx", "aky", "akz", "alb", "alc", "ale"]
+        }
+      ]
+    },
+    "ansi": {
+      "draws": 0,
+      "interpretation": "Separate chain; no random-row consumer in the level-0 hypothesis. Later-level LCD verification remains pending."
+    },
+    "checkpoints": [
+      {
+        "source": "game/space-impact/level-0/ik",
+        "draw": 1,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 2,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 3,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 4,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 5,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 6,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 7,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 8,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 9,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 10,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 11,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 12,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 13,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 14,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 15,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 16,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 17,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 18,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 19,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "game/space-impact/level-0/afp",
+        "draw": 20,
+        "seeds": 4093,
+        "models": 0
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 728 (no shot)",
+        "draw": 21,
+        "seeds": 4093,
+        "models": 1014676
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 729 (no shot)",
+        "draw": 22,
+        "seeds": 4093,
+        "models": 996421
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 730 (no shot)",
+        "draw": 23,
+        "seeds": 4093,
+        "models": 979746
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 731 (no shot)",
+        "draw": 24,
+        "seeds": 4093,
+        "models": 964532
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 732 (no shot)",
+        "draw": 25,
+        "seeds": 4093,
+        "models": 950487
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 733 (no shot)",
+        "draw": 26,
+        "seeds": 4093,
+        "models": 937026
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 734 (no shot)",
+        "draw": 27,
+        "seeds": 4093,
+        "models": 924665
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 735 (no shot)",
+        "draw": 28,
+        "seeds": 4093,
+        "models": 912721
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 736 (no shot)",
+        "draw": 29,
+        "seeds": 4093,
+        "models": 900950
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 737 (no shot)",
+        "draw": 30,
+        "seeds": 4093,
+        "models": 889643
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 738 (no shot)",
+        "draw": 31,
+        "seeds": 4093,
+        "models": 878554
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 739 (no shot)",
+        "draw": 32,
+        "seeds": 4093,
+        "models": 867972
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 740 (no shot)",
+        "draw": 33,
+        "seeds": 4093,
+        "models": 857847
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 741 (no shot)",
+        "draw": 34,
+        "seeds": 4093,
+        "models": 848192
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 742 (no shot)",
+        "draw": 35,
+        "seeds": 4093,
+        "models": 838405
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 743 (no shot)",
+        "draw": 36,
+        "seeds": 4093,
+        "models": 828892
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 744 (no shot)",
+        "draw": 37,
+        "seeds": 4093,
+        "models": 819929
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 745 (no shot)",
+        "draw": 38,
+        "seeds": 4093,
+        "models": 811306
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 746 (shot)",
+        "draw": 39,
+        "seeds": 2300,
+        "models": 8913
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 747 (no shot)",
+        "draw": 40,
+        "seeds": 2270,
+        "models": 8698
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 748 (no shot)",
+        "draw": 41,
+        "seeds": 2246,
+        "models": 8504
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 749 (no shot)",
+        "draw": 42,
+        "seeds": 2222,
+        "models": 8286
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 750 (no shot)",
+        "draw": 43,
+        "seeds": 2198,
+        "models": 8076
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 751 (no shot)",
+        "draw": 44,
+        "seeds": 2176,
+        "models": 7942
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 752 (no shot)",
+        "draw": 45,
+        "seeds": 2161,
+        "models": 7804
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 753 (no shot)",
+        "draw": 46,
+        "seeds": 2134,
+        "models": 7652
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 754 (no shot)",
+        "draw": 47,
+        "seeds": 2113,
+        "models": 7517
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 755 (no shot)",
+        "draw": 48,
+        "seeds": 2098,
+        "models": 7366
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 756 (no shot)",
+        "draw": 49,
+        "seeds": 2075,
+        "models": 7195
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 757 (no shot)",
+        "draw": 50,
+        "seeds": 2058,
+        "models": 7046
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 758 (no shot)",
+        "draw": 51,
+        "seeds": 2040,
+        "models": 6953
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 759 (no shot)",
+        "draw": 52,
+        "seeds": 2022,
+        "models": 6808
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 760 (no shot)",
+        "draw": 53,
+        "seeds": 2007,
+        "models": 6692
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 761 (no shot)",
+        "draw": 54,
+        "seeds": 2000,
+        "models": 6570
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 762 (no shot)",
+        "draw": 55,
+        "seeds": 1985,
+        "models": 6465
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 763 (no shot)",
+        "draw": 56,
+        "seeds": 1973,
+        "models": 6368
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 764 (no shot)",
+        "draw": 57,
+        "seeds": 1955,
+        "models": 6250
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 765 (no shot)",
+        "draw": 58,
+        "seeds": 1943,
+        "models": 6162
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 766 (no shot)",
+        "draw": 59,
+        "seeds": 1934,
+        "models": 6082
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 767 (no shot)",
+        "draw": 60,
+        "seeds": 1922,
+        "models": 6005
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 768 (no shot)",
+        "draw": 61,
+        "seeds": 1911,
+        "models": 5897
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 769 (no shot)",
+        "draw": 62,
+        "seeds": 1896,
+        "models": 5809
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 770 (no shot)",
+        "draw": 63,
+        "seeds": 1881,
+        "models": 5723
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 771 (no shot)",
+        "draw": 64,
+        "seeds": 1867,
+        "models": 5620
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 772 (no shot)",
+        "draw": 65,
+        "seeds": 1851,
+        "models": 5544
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 773 (no shot)",
+        "draw": 66,
+        "seeds": 1837,
+        "models": 5442
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 774 (no shot)",
+        "draw": 67,
+        "seeds": 1826,
+        "models": 5381
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 775 (no shot)",
+        "draw": 68,
+        "seeds": 1813,
+        "models": 5307
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 776 (no shot)",
+        "draw": 69,
+        "seeds": 1808,
+        "models": 5236
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 777 (no shot)",
+        "draw": 70,
+        "seeds": 1796,
+        "models": 5183
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 778 (no shot)",
+        "draw": 71,
+        "seeds": 1787,
+        "models": 5114
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 779 (no shot)",
+        "draw": 72,
+        "seeds": 1776,
+        "models": 5035
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 780 (no shot)",
+        "draw": 73,
+        "seeds": 1758,
+        "models": 4964
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 781 (no shot)",
+        "draw": 74,
+        "seeds": 1750,
+        "models": 4910
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 782 (no shot)",
+        "draw": 75,
+        "seeds": 1735,
+        "models": 4836
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 783 (no shot)",
+        "draw": 76,
+        "seeds": 1727,
+        "models": 4796
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 784 (no shot)",
+        "draw": 77,
+        "seeds": 1718,
+        "models": 4739
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 785 (no shot)",
+        "draw": 78,
+        "seeds": 1706,
+        "models": 4689
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 786 (no shot)",
+        "draw": 79,
+        "seeds": 1697,
+        "models": 4646
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 787 (no shot)",
+        "draw": 80,
+        "seeds": 1690,
+        "models": 4599
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 788 (shot)",
+        "draw": 81,
+        "seeds": 45,
+        "models": 63
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 789 (no shot)",
+        "draw": 82,
+        "seeds": 45,
+        "models": 63
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 790 (no shot)",
+        "draw": 83,
+        "seeds": 45,
+        "models": 63
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 791 (no shot)",
+        "draw": 84,
+        "seeds": 43,
+        "models": 59
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 792 (no shot)",
+        "draw": 85,
+        "seeds": 42,
+        "models": 58
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 793 (no shot)",
+        "draw": 86,
+        "seeds": 42,
+        "models": 58
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 794 (no shot)",
+        "draw": 87,
+        "seeds": 42,
+        "models": 58
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 795 (no shot)",
+        "draw": 88,
+        "seeds": 42,
+        "models": 57
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 796 (no shot)",
+        "draw": 89,
+        "seeds": 38,
+        "models": 50
+      },
+      {
+        "source": "game/space-impact/level-0.exit/a",
+        "draw": 105,
+        "seeds": 3,
+        "models": 5
+      },
+      {
+        "source": "game/space-impact/level-0.exit/b",
+        "draw": 105,
+        "seeds": 1,
+        "models": 1
+      },
+      {
+        "source": "game/space-impact/level-0.exit/c",
+        "draw": 105,
+        "seeds": 1,
+        "models": 1
+      },
+      {
+        "source": "game/space-impact/level-0.exit/d",
+        "draw": 105,
+        "seeds": 1,
+        "models": 1
+      },
+      {
+        "source": "game/space-impact/level-0.exit/e",
+        "draw": 105,
+        "seeds": 1,
+        "models": 1
+      }
+    ],
+    "burst": [
+      {
+        "image": "a",
+        "rectangle": {
+          "x": 60,
+          "y": 24,
+          "width": 21,
+          "height": 23
+        },
+        "seeds": 3,
+        "models": 5
+      },
+      {
+        "image": "b",
+        "rectangle": {
+          "x": 60,
+          "y": 24,
+          "width": 21,
+          "height": 23
+        },
+        "seeds": 1,
+        "models": 1
+      },
+      {
+        "image": "c",
+        "rectangle": {
+          "x": 60,
+          "y": 24,
+          "width": 21,
+          "height": 23
+        },
+        "seeds": 1,
+        "models": 1
+      },
+      {
+        "image": "d",
+        "rectangle": {
+          "x": 60,
+          "y": 24,
+          "width": 21,
+          "height": 23
+        },
+        "seeds": 1,
+        "models": 1
+      },
+      {
+        "image": "e",
+        "rectangle": {
+          "x": 60,
+          "y": 24,
+          "width": 21,
+          "height": 23
+        },
+        "seeds": 1,
+        "models": 1
+      }
+    ],
+    "models": [
+      {
+        "seed": 44530,
+        "fireDenominator": 40
+      }
+    ],
+    "effectiveSeeds": [44530],
+    "u32Aliases": 65551,
+    "interpretation": "Conditional effective gameplay chain recovery, not the original u32 clock seed, unique consumer order or full-level engine acceptance. The 19-hidden-roll counterexample has a different pre-draw seed and the same later LCD outcomes. Hidden consumer attribution remains UNVERIFIED until spawn/fire engine replay."
+  },
+  "extraSilentRoll": {
+    "hypothesis": {
+      "silentFireRolls": 19,
+      "pickupBeforeSilentRolls": false,
+      "bossStartOffset": 0
+    },
+    "pickups": [
+      {
+        "image": "ik",
+        "atMs": 18149,
+        "value": 2
+      },
+      {
+        "image": "afp",
+        "atMs": 65592,
+        "value": 1
+      }
+    ],
+    "boss": {
+      "firstRollStep": 728,
+      "rolls": 69,
+      "shots": [
+        {
+          "step": 746,
+          "y": 29,
+          "images": [
+            "aiy",
+            "aiz",
+            "ajb",
+            "ajc",
+            "ajd",
+            "aje",
+            "ajg",
+            "ajh",
+            "aji",
+            "ajj",
+            "ajl",
+            "ajn",
+            "ajo",
+            "ajp",
+            "ajq",
+            "ajs"
+          ]
+        },
+        {
+          "step": 788,
+          "y": 33,
+          "images": ["akw", "akx", "aky", "akz", "alb", "alc", "ale"]
+        }
+      ]
+    },
+    "ansi": {
+      "draws": 0,
+      "interpretation": "Separate chain; no random-row consumer in the level-0 hypothesis. Later-level LCD verification remains pending."
+    },
+    "checkpoints": [
+      {
+        "source": "game/space-impact/level-0/ik",
+        "draw": 1,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 2,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 3,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 4,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 5,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 6,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 7,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 8,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 9,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 10,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 11,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 12,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 13,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 14,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 15,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 16,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 17,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 18,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 19,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "UNVERIFIED consumer attribution: off-screen/zero-shot fire roll",
+        "draw": 20,
+        "seeds": 16380,
+        "models": 0
+      },
+      {
+        "source": "game/space-impact/level-0/afp",
+        "draw": 21,
+        "seeds": 4095,
+        "models": 0
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 728 (no shot)",
+        "draw": 22,
+        "seeds": 4095,
+        "models": 1015107
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 729 (no shot)",
+        "draw": 23,
+        "seeds": 4095,
+        "models": 996229
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 730 (no shot)",
+        "draw": 24,
+        "seeds": 4095,
+        "models": 979761
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 731 (no shot)",
+        "draw": 25,
+        "seeds": 4095,
+        "models": 964952
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 732 (no shot)",
+        "draw": 26,
+        "seeds": 4095,
+        "models": 950785
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 733 (no shot)",
+        "draw": 27,
+        "seeds": 4095,
+        "models": 937343
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 734 (no shot)",
+        "draw": 28,
+        "seeds": 4095,
+        "models": 924675
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 735 (no shot)",
+        "draw": 29,
+        "seeds": 4095,
+        "models": 912638
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 736 (no shot)",
+        "draw": 30,
+        "seeds": 4095,
+        "models": 900769
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 737 (no shot)",
+        "draw": 31,
+        "seeds": 4095,
+        "models": 889527
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 738 (no shot)",
+        "draw": 32,
+        "seeds": 4095,
+        "models": 878803
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 739 (no shot)",
+        "draw": 33,
+        "seeds": 4095,
+        "models": 868185
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 740 (no shot)",
+        "draw": 34,
+        "seeds": 4095,
+        "models": 858116
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 741 (no shot)",
+        "draw": 35,
+        "seeds": 4095,
+        "models": 848062
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 742 (no shot)",
+        "draw": 36,
+        "seeds": 4095,
+        "models": 838363
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 743 (no shot)",
+        "draw": 37,
+        "seeds": 4095,
+        "models": 829045
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 744 (no shot)",
+        "draw": 38,
+        "seeds": 4095,
+        "models": 819954
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 745 (no shot)",
+        "draw": 39,
+        "seeds": 4095,
+        "models": 811219
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 746 (shot)",
+        "draw": 40,
+        "seeds": 2247,
+        "models": 8822
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 747 (no shot)",
+        "draw": 41,
+        "seeds": 2231,
+        "models": 8634
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 748 (no shot)",
+        "draw": 42,
+        "seeds": 2197,
+        "models": 8419
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 749 (no shot)",
+        "draw": 43,
+        "seeds": 2173,
+        "models": 8228
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 750 (no shot)",
+        "draw": 44,
+        "seeds": 2150,
+        "models": 8065
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 751 (no shot)",
+        "draw": 45,
+        "seeds": 2137,
+        "models": 7944
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 752 (no shot)",
+        "draw": 46,
+        "seeds": 2113,
+        "models": 7783
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 753 (no shot)",
+        "draw": 47,
+        "seeds": 2095,
+        "models": 7634
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 754 (no shot)",
+        "draw": 48,
+        "seeds": 2073,
+        "models": 7501
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 755 (no shot)",
+        "draw": 49,
+        "seeds": 2057,
+        "models": 7353
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 756 (no shot)",
+        "draw": 50,
+        "seeds": 2028,
+        "models": 7185
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 757 (no shot)",
+        "draw": 51,
+        "seeds": 2006,
+        "models": 7023
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 758 (no shot)",
+        "draw": 52,
+        "seeds": 1992,
+        "models": 6912
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 759 (no shot)",
+        "draw": 53,
+        "seeds": 1964,
+        "models": 6784
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 760 (no shot)",
+        "draw": 54,
+        "seeds": 1943,
+        "models": 6653
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 761 (no shot)",
+        "draw": 55,
+        "seeds": 1928,
+        "models": 6531
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 762 (no shot)",
+        "draw": 56,
+        "seeds": 1916,
+        "models": 6421
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 763 (no shot)",
+        "draw": 57,
+        "seeds": 1901,
+        "models": 6323
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 764 (no shot)",
+        "draw": 58,
+        "seeds": 1881,
+        "models": 6221
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 765 (no shot)",
+        "draw": 59,
+        "seeds": 1869,
+        "models": 6127
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 766 (no shot)",
+        "draw": 60,
+        "seeds": 1854,
+        "models": 6030
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 767 (no shot)",
+        "draw": 61,
+        "seeds": 1841,
+        "models": 5937
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 768 (no shot)",
+        "draw": 62,
+        "seeds": 1832,
+        "models": 5842
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 769 (no shot)",
+        "draw": 63,
+        "seeds": 1816,
+        "models": 5740
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 770 (no shot)",
+        "draw": 64,
+        "seeds": 1803,
+        "models": 5653
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 771 (no shot)",
+        "draw": 65,
+        "seeds": 1791,
+        "models": 5589
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 772 (no shot)",
+        "draw": 66,
+        "seeds": 1776,
+        "models": 5491
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 773 (no shot)",
+        "draw": 67,
+        "seeds": 1770,
+        "models": 5430
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 774 (no shot)",
+        "draw": 68,
+        "seeds": 1761,
+        "models": 5371
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 775 (no shot)",
+        "draw": 69,
+        "seeds": 1747,
+        "models": 5309
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 776 (no shot)",
+        "draw": 70,
+        "seeds": 1739,
+        "models": 5230
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 777 (no shot)",
+        "draw": 71,
+        "seeds": 1720,
+        "models": 5154
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 778 (no shot)",
+        "draw": 72,
+        "seeds": 1706,
+        "models": 5072
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 779 (no shot)",
+        "draw": 73,
+        "seeds": 1699,
+        "models": 5010
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 780 (no shot)",
+        "draw": 74,
+        "seeds": 1688,
+        "models": 4962
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 781 (no shot)",
+        "draw": 75,
+        "seeds": 1676,
+        "models": 4917
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 782 (no shot)",
+        "draw": 76,
+        "seeds": 1670,
+        "models": 4848
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 783 (no shot)",
+        "draw": 77,
+        "seeds": 1659,
+        "models": 4793
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 784 (no shot)",
+        "draw": 78,
+        "seeds": 1651,
+        "models": 4729
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 785 (no shot)",
+        "draw": 79,
+        "seeds": 1643,
+        "models": 4678
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 786 (no shot)",
+        "draw": 80,
+        "seeds": 1635,
+        "models": 4627
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 787 (no shot)",
+        "draw": 81,
+        "seeds": 1625,
+        "models": 4542
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 788 (shot)",
+        "draw": 82,
+        "seeds": 35,
+        "models": 56
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 789 (no shot)",
+        "draw": 83,
+        "seeds": 34,
+        "models": 54
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 790 (no shot)",
+        "draw": 84,
+        "seeds": 34,
+        "models": 54
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 791 (no shot)",
+        "draw": 85,
+        "seeds": 33,
+        "models": 51
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 792 (no shot)",
+        "draw": 86,
+        "seeds": 33,
+        "models": 51
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 793 (no shot)",
+        "draw": 87,
+        "seeds": 33,
+        "models": 50
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 794 (no shot)",
+        "draw": 88,
+        "seeds": 33,
+        "models": 50
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 795 (no shot)",
+        "draw": 89,
+        "seeds": 33,
+        "models": 50
+      },
+      {
+        "source": "game/space-impact/level-0: boss roll at delivered step 796 (no shot)",
+        "draw": 90,
+        "seeds": 29,
+        "models": 41
+      },
+      {
+        "source": "game/space-impact/level-0.exit/a",
+        "draw": 106,
+        "seeds": 2,
+        "models": 2
+      },
+      {
+        "source": "game/space-impact/level-0.exit/b",
+        "draw": 106,
+        "seeds": 1,
+        "models": 1
+      },
+      {
+        "source": "game/space-impact/level-0.exit/c",
+        "draw": 106,
+        "seeds": 1,
+        "models": 1
+      },
+      {
+        "source": "game/space-impact/level-0.exit/d",
+        "draw": 106,
+        "seeds": 1,
+        "models": 1
+      },
+      {
+        "source": "game/space-impact/level-0.exit/e",
+        "draw": 106,
+        "seeds": 1,
+        "models": 1
+      }
+    ],
+    "burst": [
+      {
+        "image": "a",
+        "rectangle": {
+          "x": 60,
+          "y": 24,
+          "width": 21,
+          "height": 23
+        },
+        "seeds": 2,
+        "models": 2
+      },
+      {
+        "image": "b",
+        "rectangle": {
+          "x": 60,
+          "y": 24,
+          "width": 21,
+          "height": 23
+        },
+        "seeds": 1,
+        "models": 1
+      },
+      {
+        "image": "c",
+        "rectangle": {
+          "x": 60,
+          "y": 24,
+          "width": 21,
+          "height": 23
+        },
+        "seeds": 1,
+        "models": 1
+      },
+      {
+        "image": "d",
+        "rectangle": {
+          "x": 60,
+          "y": 24,
+          "width": 21,
+          "height": 23
+        },
+        "seeds": 1,
+        "models": 1
+      },
+      {
+        "image": "e",
+        "rectangle": {
+          "x": 60,
+          "y": 24,
+          "width": 21,
+          "height": 23
+        },
+        "seeds": 1,
+        "models": 1
+      }
+    ],
+    "models": [
+      {
+        "seed": 59408,
+        "fireDenominator": 40
+      }
+    ],
+    "effectiveSeeds": [59408],
+    "u32Aliases": 65551,
+    "interpretation": "Conditional effective gameplay chain recovery, not the original u32 clock seed, unique consumer order or full-level engine acceptance. The 19-hidden-roll counterexample has a different pre-draw seed and the same later LCD outcomes. Hidden consumer attribution remains UNVERIFIED until spawn/fire engine replay."
+  }
+}
