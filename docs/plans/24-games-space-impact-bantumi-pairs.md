@@ -22,9 +22,10 @@ only and are never imported. Task 0 writes this plan's captures to `$REF/capture
 The eight full-level recordings, exits, ending and LCD-only control proof are validated;
 implementation must replay their pixels under AGENTS.md's fidelity standard. The four accepted
 defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete,
-including the inherited Games II seams. Task 3 is complete: 166 fixtures are imported and
-remain pending gameplay replay. Task 4 resumes after the parent-approved resource registration extension recorded below;
-Task 4 has verified partial sprite/timing checkpoints (57 sprites, eight timings); Tasks 5-14 remain unstarted.
+including the inherited Games II seams. Task 3 is complete: 168 fixtures are imported and
+remain pending gameplay replay. Task 4 is complete under the accepted revised criterion below.
+Task 5 has a verified partial strict-decoder checkpoint; reconstruction remains open and
+Tasks 6–14 are unstarted.
 
 ## Goal
 
@@ -1791,7 +1792,7 @@ terrain edge not observed cleanly, or spawn/firing rule is asserted by this reso
 `src/resources/generated/space-impact-levels.ts` (generated), `src/resources/index.ts` (one export
 block), `tests/support/space-impact-decode.ts` (new), `tests/space-impact-levels.test.ts` (new).
 
-- [ ] Confirm the canonical-level gate and the verified plan 29 pipeline before reconstruction.
+- [x] Confirm the canonical-level gate and the verified plan 29 pipeline before reconstruction.
 - [ ] TDD the decoder on synthetic frames painted from Task 4's sprites: HUD values, the ship,
       every object (type by picture, frame, box), terrain scroll; it rejects frames it cannot read.
 - [ ] The tracker follows each object across a level golden's stills (positions per tick by
@@ -1806,6 +1807,54 @@ block), `tests/support/space-impact-decode.ts` (new), `tests/space-impact-levels
 - [ ] TDD: freshness; every level's script re-spawns every tracked object at its captured tick
       and place; every y-path reproduces its tracks.
 - [ ] Commit: `feat(nokia-os): reconstruct Space impact levels from goldens`.
+
+**Task 5 decoder checkpoint (2026-10-28; incomplete).** Continued from `e1dbdd7`, only
+in `t3/p24-space-impact`. The canonical `analysis/coverage.py --check` again passes all
+25 criteria. The landed `resources.generatedModules` contract is confirmed; no shared
+pipeline or generated output changes in this checkpoint.
+
+The test-first decoder reads literal HUD values, the ship and shield pictures, known enemy,
+boss, bonus, projectile, explosion and special pictures, including identifiable horizontal
+clipping. Picture ids retain their captured animation-frame identity and the observations
+include full bounding boxes. It requires an exact decomposition of the remaining LCD ink,
+rejects competing decompositions and unread pixels, and never mutates its source. It reads
+complete clean terrain bands against Task 4's maps, preserves matching scroll candidates and
+UNVERIFIED-map candidates separately, refuses a supplied scroll through unknown cells, and
+reports level 0's scroll as unobservable. This does not impose a gameplay life cap or seed.
+
+Synthetic regressions cover every existing object picture, HUD digits and weapon icons, both
+polarities and HUD placements, terrain wrapping, repeated enemies, clipped boxes, ambiguous
+pictures, corrupt pixels and invalid inputs. Independent committed LCD checks cover startup
+ships and three enemies (including the clipped rightmost enemy) in `keys-tap-5 t0040`.
+Two exact LCD specimens (`level-0 d/h`) establish a shot XOR across the ship's gun row; the
+decoder composes the existing ship/shot pictures for that case rather than ignoring gun pixels
+or cropping an overlapping shot into a new ship sprite. No new sprite or crop is required
+by the implemented cases. All **87 decoder tests** pass; the focused resource/registry gate
+passes **3 files, 660 tests**.
+
+**Remaining decoder work.** It presently requires clean terrain bands and known pictures.
+The strict full-level probe first stops at `level-0 ac` (ambiguous decomposition after 27
+readable images), `level-1 c`, `level-2 e`, `level-3 c`, `level-4 e`, `level-5 e`, `level-6 c`
+and `level-7 c` (unread object pixels). The white-background gun-row composite is not proved
+by the level-0 XOR specimens. Extend the observed layering/pictures with exact evidence;
+keep ambiguity explicit for the temporal tracker. Add any needed new sprite with two exact
+LCD specimens. These are unfinished reconstruction cases, not asserted acceptance or newly
+registered known gaps. No complete level replay, tracker, spawn script, y-path, hit-point,
+shot/fire fit or boss reconstruction is claimed. The decoder completion box stays open;
+Tasks 6–14 have not begun. No product decision is needed for this checkpoint and the four
+accepted UNVERIFIED defaults are unchanged.
+
+**Checkpoint verification.** The complete uncached `vp run -r --no-cache test` passes all
+six packages with **258 passing files, one pending-only slice, 11,662 passed tests,
+120 expected failures and 193 TODOs**, zero cache hits. Nokia-os contributes 166 passing
+files, one pending-only slice and 10,820 passed tests (961.53 s); other package totals are
+phone-core 450, snake 62, phone-3d 49, phone-screen 101 and website 180. `vp check --fix`,
+final `vp check` and `website#build` pass, using mise Node 22.22.3 and
+`/private/tmp/plan24-run-node22.cjs` (workspace: `VITEST_MAX_WORKERS=2`,
+`VP_RUN_CONCURRENCY_LIMIT=1`). Logs: `/private/tmp/plan24-levels-{focused-final,workspace-tests,check-fix,check,build}.log`.
+No golden or generated file changes: **0 asserted, 168 pending, 0 known gaps** in plan 24.
+The inherited Space impact fixtures remain pending in their original indices. Website,
+phone-core, phone-screen and packages/snake are unchanged from `e1dbdd7`.
 
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 
