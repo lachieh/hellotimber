@@ -53,7 +53,7 @@ describe("Space impact ship and player shots", () => {
   });
 
   it.each([
-    ["8", 5, 7],
+    ["8", 5, 6],
     ["0", 5, 41],
     ["*", 2, 20],
     ["#", 46, 20],
@@ -71,10 +71,10 @@ describe("Space impact ship and player shots", () => {
     (key) => {
       const original = newSpaceImpactGame();
       const fired = spaceImpactKey(original, key);
-      expect(fired.state.shots).toEqual([{ x: 11, y: 23 }]);
+      expect(fired.state.shots.map(({ x, y }) => ({ x, y }))).toEqual([{ x: 11, y: 23 }]);
       expect(fired.cues).toEqual([{ kind: "game-sound", id: "space-impact/shot" }]);
-      expect(steps(2, fired.state).shots).toEqual([{ x: 15, y: 23 }]);
-      expect(original.shots).toEqual([]);
+      expect(steps(2, fired.state).shots.map(({ x, y }) => ({ x, y }))).toEqual([{ x: 15, y: 23 }]);
+      expect(original.shots.map(({ x, y }) => ({ x, y }))).toEqual([]);
     },
   );
 
@@ -83,7 +83,7 @@ describe("Space impact ship and player shots", () => {
     for (const key of ["8", "8", "#"] as const) state = spaceImpactKey(state, key).state;
     const fired = spaceImpactKey(state, "1");
     expect(fired.state.ship).toEqual({ x: 6, y: 18 });
-    expect(fired.state.shots).toEqual([{ x: 12, y: 21 }]);
+    expect(fired.state.shots.map(({ x, y }) => ({ x, y }))).toEqual([{ x: 12, y: 21 }]);
     expect(stepSpaceImpact(fired.state).state.ship).toEqual({ x: 6, y: 18 });
     expect(state.ship).toEqual({ x: 5, y: 20 });
   });
@@ -93,7 +93,7 @@ describe("Space impact ship and player shots", () => {
     state = spaceImpactKey(steps(1, state), "3").state;
     expect(state.shots).toHaveLength(1);
     state = spaceImpactKey(steps(1, state), "3").state;
-    expect(state.shots).toEqual([
+    expect(state.shots.map(({ x, y }) => ({ x, y }))).toEqual([
       { x: 15, y: 23 },
       { x: 11, y: 23 },
     ]);
@@ -101,8 +101,8 @@ describe("Space impact ship and player shots", () => {
 
   it("retires shots only after their ink leaves the viewport", () => {
     const state = spaceImpactKey(newSpaceImpactGame(), "1").state;
-    expect(steps(36, state).shots).toEqual([{ x: 83, y: 23 }]);
-    expect(steps(37, state).shots).toEqual([]);
+    expect(steps(36, state).shots.map(({ x, y }) => ({ x, y }))).toEqual([{ x: 83, y: 23 }]);
+    expect(steps(37, state).shots.map(({ x, y }) => ({ x, y }))).toEqual([]);
   });
 
   it("a held fire key makes five attempts including its first press", () => {
@@ -111,7 +111,7 @@ describe("Space impact ship and player shots", () => {
       state = stepSpaceImpact(state).state;
       state = spaceImpactKey(state, "1", "repeat").state;
     }
-    expect(state.shots).toEqual([
+    expect(state.shots.map(({ x, y }) => ({ x, y }))).toEqual([
       { x: 51, y: 23 },
       { x: 47, y: 23 },
       { x: 43, y: 23 },
@@ -145,7 +145,7 @@ describe("Space impact ship and player shots", () => {
     expect(result.state.pendingCue).toBeNull();
     expect(result.cues).toEqual([{ kind: "game-sound", id: "space-impact/bonus" }]);
     const key = spaceImpactKey(state, "1");
-    expect(key.state.shots).toEqual([]);
+    expect(key.state.shots.map(({ x, y }) => ({ x, y }))).toEqual([]);
     expect(key.cues).toEqual(result.cues);
   });
 
@@ -166,15 +166,31 @@ describe("Space impact shot collisions", () => {
   it("consumes the first colliding shot and awards a kill once", () => {
     const original = {
       ...newSpaceImpactGame(),
-      enemies: [{ x: 34, y: 8, animationOffset: 0, dx: -2, deathFrame: null }],
+      enemies: [
+        {
+          x: 34,
+          y: 8,
+          family: "enemy/round-wide",
+          motion: "straight" as const,
+          flash: false,
+          flashToggle: false,
+          age: 0,
+          hp: 1,
+          shotsLeft: 0,
+          fireDenominator: 0,
+          animationOffset: 0,
+          dx: -2,
+          deathFrame: null,
+        },
+      ],
       shots: [
-        { x: 29, y: 11 },
-        { x: 23, y: 10 },
+        { x: 29, y: 11, bornTick: 0 },
+        { x: 23, y: 10, bornTick: 0 },
       ],
     };
     const killed = stepSpaceImpact(original).state;
     expect(killed.hud.score).toBe(10);
-    expect(killed.shots).toEqual([{ x: 25, y: 10 }]);
+    expect(killed.shots.map(({ x, y }) => ({ x, y }))).toEqual([{ x: 25, y: 10 }]);
     expect(spaceImpactRender(killed).sprites).toContainEqual({
       picture: "enemy/round-wide/0",
       x: 32,
@@ -193,8 +209,24 @@ describe("Space impact shot collisions", () => {
   it("does not hit outside the enemy box", () => {
     const original = {
       ...newSpaceImpactGame(),
-      enemies: [{ x: 34, y: 8, animationOffset: 0, dx: -2, deathFrame: null }],
-      shots: [{ x: 29, y: 14 }],
+      enemies: [
+        {
+          x: 34,
+          y: 8,
+          family: "enemy/round-wide",
+          motion: "straight" as const,
+          flash: false,
+          flashToggle: false,
+          age: 0,
+          hp: 1,
+          shotsLeft: 0,
+          fireDenominator: 0,
+          animationOffset: 0,
+          dx: -2,
+          deathFrame: null,
+        },
+      ],
+      shots: [{ x: 29, y: 14, bornTick: 0 }],
     };
     expect(stepSpaceImpact(original).state.hud.score).toBe(0);
   });
@@ -203,8 +235,24 @@ describe("Space impact shot collisions", () => {
 it("registers the captured shot at the upper edge of a following-wave enemy", () => {
   const state = {
     ...newSpaceImpactGame(),
-    enemies: [{ x: 82, y: 17, animationOffset: 1, dx: -2, deathFrame: null }],
-    shots: [{ x: 77, y: 16 }],
+    enemies: [
+      {
+        x: 82,
+        y: 17,
+        family: "enemy/round-wide",
+        motion: "straight" as const,
+        flash: false,
+        flashToggle: false,
+        age: 0,
+        hp: 1,
+        shotsLeft: 0,
+        fireDenominator: 0,
+        animationOffset: 1,
+        dx: -2,
+        deathFrame: null,
+      },
+    ],
+    shots: [{ x: 77, y: 16, bornTick: 0 }],
   };
   expect(stepSpaceImpact(state).state.hud.score).toBe(10);
 });
@@ -212,7 +260,23 @@ it("registers the captured shot at the upper edge of a following-wave enemy", ()
 it("retires an enemy when its left edge leaves the display, as the held-0 fixture records", () => {
   const state = {
     ...newSpaceImpactGame(),
-    enemies: [{ x: 0, y: 8, animationOffset: 0, dx: -2, deathFrame: null }],
+    enemies: [
+      {
+        x: 0,
+        y: 8,
+        family: "enemy/round-wide",
+        motion: "straight" as const,
+        flash: false,
+        flashToggle: false,
+        age: 0,
+        hp: 1,
+        shotsLeft: 0,
+        fireDenominator: 0,
+        animationOffset: 0,
+        dx: -2,
+        deathFrame: null,
+      },
+    ],
   };
   expect(stepSpaceImpact(state).state.enemies).toEqual([]);
 });
@@ -220,8 +284,24 @@ it("retires an enemy when its left edge leaves the display, as the held-0 fixtur
 it("registers the captured right-edge contact against a slow round enemy", () => {
   const state = {
     ...newSpaceImpactGame(),
-    enemies: [{ x: 78, y: 17, dx: -1, animationOffset: 0, deathFrame: null }],
-    shots: [{ x: 73, y: 18 }],
+    enemies: [
+      {
+        x: 78,
+        y: 17,
+        family: "enemy/round-wide",
+        motion: "straight" as const,
+        flash: false,
+        flashToggle: false,
+        age: 0,
+        hp: 1,
+        shotsLeft: 0,
+        fireDenominator: 0,
+        dx: -1,
+        animationOffset: 0,
+        deathFrame: null,
+      },
+    ],
+    shots: [{ x: 73, y: 18, bornTick: 0 }],
   };
   expect(stepSpaceImpact(state).state.hud.score).toBe(10);
 });
@@ -229,8 +309,24 @@ it("registers the captured right-edge contact against a slow round enemy", () =>
 it("registers the captured lower-edge contact against the second slow enemy", () => {
   const state = {
     ...newSpaceImpactGame(),
-    enemies: [{ x: 72, y: 17, dx: -1, animationOffset: 0, deathFrame: null }],
-    shots: [{ x: 67, y: 22 }],
+    enemies: [
+      {
+        x: 72,
+        y: 17,
+        family: "enemy/round-wide",
+        motion: "straight" as const,
+        flash: false,
+        flashToggle: false,
+        age: 0,
+        hp: 1,
+        shotsLeft: 0,
+        fireDenominator: 0,
+        dx: -1,
+        animationOffset: 0,
+        deathFrame: null,
+      },
+    ],
+    shots: [{ x: 67, y: 22, bornTick: 0 }],
   };
   expect(stepSpaceImpact(state).state.hud.score).toBe(10);
 });

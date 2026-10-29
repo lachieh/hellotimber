@@ -47,7 +47,7 @@ describe("Space impact seeded pickup contact", () => {
       tick,
       shield: false,
       ship: { x: 5, y: 15 },
-      bonuses: [{ x, y: 9, dx: -2 }],
+      bonuses: [{ x, y: 9, dx: -2, animationOffset: 0 }],
     };
     const after = stepSpaceImpact(original).state;
     expect(after.bonuses).toHaveLength(collected ? 0 : 1);
@@ -56,7 +56,10 @@ describe("Space impact seeded pickup contact", () => {
   });
 
   it("keeps a shielded overlapping orb without drawing a bonus", () => {
-    const original = { ...newSpaceImpactGame({ seed }), bonuses: [{ x: 8, y: 20, dx: -2 }] };
+    const original = {
+      ...newSpaceImpactGame({ seed }),
+      bonuses: [{ x: 8, y: 20, dx: -2, animationOffset: 0 }],
+    };
     const after = stepSpaceImpact(original).state;
     expect(after.bonuses).toHaveLength(1);
     expect(after.randomState).toBe(seed);
@@ -76,7 +79,7 @@ describe("Space impact seeded pickup contact", () => {
       ship: { x: 5, y: 20 },
       shield: false,
       hud: { lives: 5, weapon: "missile" as const, count: 3, score: 100 },
-      bonuses: [{ x: 8, y: 20, dx: -2 }],
+      bonuses: [{ x: 8, y: 20, dx: -2, animationOffset: 0 }],
     };
     const picked = stepSpaceImpact(state).state;
     expect(picked.bonuses).toEqual([]);

@@ -360,6 +360,39 @@ boss rolls or destruction draws; their accepted order remains the next replay ob
 Plan 24 stays **28 asserted / 140 pending / 0 registered known gaps**. Full level 0 remains
 pending; no comparator, timing tolerance, golden pixel or input changes.
 
+**Complete level-0 consumer/boss checkpoint (2026-10-29; partial).** The runtime now
+executes the counted 105-draw order: pickup; eighteen ordinary fire rolls; pickup;
+69 boss rolls at denominator 40; sixteen destruction draws. Both recorded pickups,
+ordinary bullets and their zero-score explosions, multi-hit triangles and the boss
+run from the static generated wave program. The second pickup yields missiles ×3;
+the boss fits 25 HP and awards +100 to score 585. Its first five destruction windows
+match every pixel of the independently checked 21×23 region. This is not full exit
+or sound acceptance.
+
+The boss approaches x56, bounces between y6 and y25, alternates pictures every two
+ticks and alternates its persistent flash latch on damaging hits. Pixel damage uses
+absolute row/column offsets, including the shot's right edge; the zero-row result
+is a non-hit. Its opaque picture covers older shots while later shots draw above it.
+The second orb enters at engine update 608 with an independent animation phase.
+A touching shot is consumed without damaging the orb. The key returning its pending
+cue retains its queued movement, contradicting the provisional blanket lost-key rule.
+**UNVERIFIED:** applying this pending-key ordering outside the recorded arrangement.
+
+**UNVERIFIED program choices:** clipped `qy` selects the round-small alternative
+among its retained identities; unhit enemies use one HP; shot capacities, hidden
+spatial firing extrema and continuation beyond observed wave columns are provisional.
+The latter holds the previous row. The program keeps those labels beside its data;
+no seed skips, stored runtime frames, extracted assets or relaxed comparisons are used.
+The four previously accepted defaults remain unchanged.
+
+The complete delivered stream matches **874/879 settled rows in order**, first
+remaining **`ala`, frame 1019, 76,783 ms** (the mixed upper/lower boss redraw).
+This remains pending rather than a registered known gap. A strict full-output timing
+experiment also exposes earlier extra/intermediate redraws at `ah` (frame 33), which
+the prefix diagnostic does not detect. Full-level acceptance therefore remains pending:
+**28 asserted / 140 pending / 0 registered known gaps**. Exit alignment/fly-off,
+endings, seeded splash and complete sound remain unfinished.
+
 **Remaining hypotheses (UNVERIFIED until golden replay or further evidence).** Exact collision
 geometry, score ceiling and per-hit awards, all boss phases and projectiles, the pending-sound
 return code and lost-event behavior, held-fire cap, shield durations and exact continue/exit

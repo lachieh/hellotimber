@@ -4392,6 +4392,145 @@ export const SPACE_IMPACT_WAVE_INVENTORY: { readonly source: string; readonly in
     },
     {
       "family": "enemy/triangle",
+      "entryStep": 229,
+      "x": 83,
+      "y": null,
+      "dx": -1,
+      "motion": "observed",
+      "path": [
+        {
+          "x": 83,
+          "ys": [
+            15,
+            19
+          ]
+        },
+        {
+          "x": 82,
+          "ys": [
+            19
+          ]
+        },
+        {
+          "x": 81,
+          "ys": [
+            20
+          ]
+        },
+        {
+          "x": 80,
+          "ys": [
+            22
+          ]
+        }
+      ],
+      "hp": {
+        "kind": "unverified"
+      },
+      "specimens": [
+        {
+          "image": "kk",
+          "x": 83,
+          "y": 15,
+          "picture": "enemy/triangle/0"
+        },
+        {
+          "image": "kk",
+          "x": 83,
+          "y": 15,
+          "picture": "enemy/triangle/1"
+        },
+        {
+          "image": "kl",
+          "x": 83,
+          "y": 19,
+          "picture": "enemy/triangle/0"
+        },
+        {
+          "image": "kl",
+          "x": 83,
+          "y": 19,
+          "picture": "enemy/triangle/1"
+        },
+        {
+          "image": "km",
+          "x": 82,
+          "y": 19,
+          "picture": "enemy/triangle/0"
+        },
+        {
+          "image": "kn",
+          "x": 81,
+          "y": 20,
+          "picture": "enemy/triangle/1"
+        },
+        {
+          "image": "ko",
+          "x": 81,
+          "y": 20,
+          "picture": "enemy/triangle/1"
+        },
+        {
+          "image": "kp",
+          "x": 80,
+          "y": 22,
+          "picture": "enemy/triangle/0"
+        }
+      ]
+    },
+    {
+      "family": "enemy/triangle",
+      "entryStep": 247,
+      "x": 83,
+      "y": null,
+      "dx": -1,
+      "motion": "observed",
+      "path": [
+        {
+          "x": 83,
+          "ys": [
+            19
+          ]
+        },
+        {
+          "x": 82,
+          "ys": [
+            19
+          ]
+        }
+      ],
+      "hp": {
+        "kind": "unverified"
+      },
+      "specimens": [
+        {
+          "image": "lh",
+          "x": 83,
+          "y": 19,
+          "picture": "enemy/triangle/0"
+        },
+        {
+          "image": "lh",
+          "x": 83,
+          "y": 19,
+          "picture": "enemy/triangle/1"
+        },
+        {
+          "image": "li",
+          "x": 82,
+          "y": 19,
+          "picture": "enemy/triangle/0"
+        },
+        {
+          "image": "lj",
+          "x": 82,
+          "y": 19,
+          "picture": "enemy/triangle/0"
+        }
+      ]
+    },
+    {
+      "family": "enemy/triangle",
       "entryStep": 265,
       "x": 83,
       "y": null,

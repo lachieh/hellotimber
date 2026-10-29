@@ -22,7 +22,9 @@ const WAVES: readonly WaveDefinition[] = [
   ...[219, 237, 255, 273].map(
     (step): WaveDefinition => ["enemy/triangle", step, 83, 6, -1, "observed"],
   ),
-  ...[265, 283].map((step): WaveDefinition => ["enemy/triangle", step, 83, null, -1, "observed"]),
+  ...[229, 247, 265, 283].map(
+    (step): WaveDefinition => ["enemy/triangle", step, 83, null, -1, "observed"],
+  ),
   ["enemy/round-small", 399, 82, 12, -2, "flat"],
   ["enemy/round-small", 406, 83, 12, -2, "flat"],
   ...[444, 459, 489].map(

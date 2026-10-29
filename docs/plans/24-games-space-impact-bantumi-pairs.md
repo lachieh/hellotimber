@@ -2966,6 +2966,126 @@ events consumed. Every golden, excluded package, website source and lockfile is 
 Only the generated Space impact sounds module changes among generated resources. This is
 a green partial first-pickup unit, not full level-0 acceptance or the complete RNG program.
 
+### Ordinary waves, complete level-0 RNG and boss checkpoint (2026-10-29; partial)
+
+Continued from `98c5feb`, only in the assigned `t3/p24-space-impact` worktree. The
+accepted seed 44530 decision and all four accepted UNVERIFIED defaults are unchanged.
+This unit implements the remaining ordinary waves, both pickups, boss approach/bounce,
+HP/fire and the complete counted RNG order in one program. It does **not** complete
+full-level acceptance, exit/endings, seeded splash or sound replay.
+
+**Exact replay.** The complete 1,812-event delivered stream now matches **874/879**
+settled rows in order, through `akz` (76,692 ms). The first remaining mismatch is
+**`ala`, frame 1019, 76,783 ms, held 93 ms**: the previously documented mixed boss
+redraw. Its upper rows move while its lower rows retain the old LCD contents. No pixel,
+row, input, comparison or tolerance is changed. This remains a reconstruction failure
+in a pending fixture, not a registered acceptance known gap.
+
+**Complete consumer program.** The engine now executes pickup draw 1, all eighteen
+ordinary fire rolls 2–19, pickup 20, all 69 boss rolls 21–89 and the sixteen destruction
+draws 90–105. A regression checks every ordinary chain advance against the shared RNG;
+another checks the final 105-draw state, the boss kill's **585** score, and every pixel
+in all five initial 21×23 destruction windows. No RNG skips or stored runtime frames.
+ANSI has no level-0 consumer. Pickup two awards missiles ×3 from the actual chain.
+
+**Wave reconstruction.** `scripts/space-impact-wave-program.ts` registers the compact
+runtime program through the existing owned resource extension. The engine consumes
+its static groups and spatial path, not the observation table's captured states.
+Two four-member triangle groups, the two-member fast round group, the five-member wave,
+the four descending round enemies, four long enemies and the boss run alongside the
+existing twelve opening enemies and two orbs. Three short-lived edge contacts (`qy`,
+`td`, `vi`) fit the retained LCD alternatives; their pixels and following explosions
+replay. The observation inventory now retains the first two short-lived sine triangles
+as well as its previous tracks. Group members move while offscreen, allowing incoming
+shots to hit before their first visible entry.
+
+The absolute wave's two visible peak columns, with the counted spatial-extrema
+hypothesis, produce eighteen ordinary rolls as the offscreen and onscreen members
+cross the four extrema. Successful rolls outside the viewport do not create bullets.
+Two visible bullets move left three pixels per step; player shots destroy them with
+no score, followed by the ordinary three-picture explosion. The native observer's
+existing byte-preserving log cross-checks the eighteen callback positions, without
+reading seeds or returns. Algorithm-only read-only disassembly cross-checks path fire,
+boss contacts and the flash latch; no flash tables, assets or extracted files enter
+this repository. Tests and generation read only committed fixtures.
+
+**Boss and painter.** The approach stops at x56, bounces between y6 and y25, and changes
+picture every two ticks. Recorded hits establish the absolute row/column bitmap lookup,
+the inclusive right collision edge, and the zero-row non-hit. Successive damaging hits
+alternate its persistent flash latch. The opaque boss covers shots created before it;
+shots created later draw over it. The recorded kill fits **25 HP**. The destruction
+initializer uses the same chain, then advances and removes its independently phased
+pictures. Ship alignment, fly-off, next-level loading and the complete exit timeline
+remain unfinished.
+
+**Second pickup and deferred movement discrepancy.** The second orb enters at engine
+update 608, one less than its delivered callback ordinal, and has its own animation
+phase. Its box consumes touching player bullets without awarding score. At pickup two,
+8 is the event that returns the pending cue, and its movement is visible at the next
+shot redraw (`afr`). This contradicts H16's blanket lost-key hypothesis. Following
+AGENTS.md, retain that queued movement while returning the cue. The original first
+pickup still loses its next callback's world step and every earlier pixel remains exact.
+UNVERIFIED: this movement-before-return ordering outside the captured arrangement.
+
+**Product calls, explicitly UNVERIFIED.** `qy`'s clipped art does not identify its family
+uniquely; the runtime selects its retained round-small alternative. Unhit ordinary
+enemies use the minimum one HP; their actual HP is not established. One-shot capacities,
+hidden spatial fire extrema and unseen wave continuation remain provisional; outside
+the observed wave columns, the current motion holds the previous row. These choices
+are labelled in the generated program and this spec; the complete observed RNG chain
+and pixels are the evidence, not proof of unseen branches. All four previously accepted
+defaults keep their literal UNVERIFIED labels.
+
+**Full timeline limit.** A separate strict complete-output timing attempt is preserved
+at `/private/tmp/p24-level-timing-red.log`. Its first discrepancy is already `ah`
+(frame 33): extra/intermediate model redraws shift the sequence compared with the
+native LCD writes. A read-only exact-image audit locates the first unmatched model
+outputs at delivered steps 24 (2398.1079 ms) and 29 (2893.7568 ms): neither complete
+image exists anywhere in the native golden. The ordered 874-row diagnostic does not
+detect those extra outputs. Their event-to-display/coalescing mechanism needs evidence;
+no per-recording output suppression is installed. The audit is preserved in
+`/private/tmp/p24-complete-waves-output-sequence.json`.
+The attempted timing helper was not retained or registered. Do not promote `level-0`
+on prefix accounting or the cropped destruction proof. Resolve complete redraw/output
+sequencing as well as `ala` before claiming full acceptance. Plan 24 remains
+**28 asserted / 140 pending / 0 registered known gaps**; no new complete fixture has
+passed acceptance, so no golden is promoted or hand-edited.
+
+**Capture audit distinction.** The sealed `analysis/coverage-audit.json` still reports
+`status: pass`, **25 accepted criteria / zero pending**, with the unchanged generator
+hash. The broader `analysis/coverage.py --check` exits 1 because earlier contact/input/
+joint-RNG diagnostic recording directories lack `keys.csv`; its scan includes these
+supplementary directories as gameplay. No canonical capture or accepted criterion fails,
+and no capture, key log, checker rule or accepted scope is changed to suppress those
+existing provenance complaints. Log: `/private/tmp/p24-complete-waves-canonical-coverage.log`.
+
+**TDD and verification.** The new replay and eighteen-consumer tests fail before their
+implementations. The passing focused gameplay/acceptance gate has **9 files / 284 tests**
+and 140 expected TODOs; resource/freshness/capture checks add **3 files / 597 tests**.
+The complete workspace suite, final checks and production build are recorded below
+when finished. Logs: `/private/tmp/p24-complete-waves-{focused,resources,check-fix,
+workspace-tests,build}.log`. The temporary pixel diagnostic stays outside the repository.
+
+**Closeout verification.** The complete uncached `vp run -r --no-cache test` passes
+all six packages: **269 files / 11,908 passed tests**, **120 expected failures** and
+**163 TODOs**, with **0/6 cache hits**. Nokia-os: **177 files / 11,066 passed tests**,
+991.47 s; phone-core 450, snake 62, phone-3d 49, phone-screen 101 and website 180.
+The production `website#build` passes. `vp check --fix`, stable repeated `vp fmt`,
+final `vp check` and `git diff --check` pass. Commands use mise's explicit Node 22
+through `/private/tmp/plan24-run-node22.cjs`; the full run uses
+`VITEST_MAX_WORKERS=2` and `VP_RUN_CONCURRENCY_LIMIT=1`.
+
+Both final resource regenerations report `up to date`. Only the opening-wave,
+wave-inventory and new compact wave-program generated modules change. All golden
+files, the seed derivation, excluded packages, website source, lockfile and TODOS.md
+remain unchanged. The final independently executed helper reports **874/879**, first
+**`ala` at 76783 ms**, all **1,812 events**, destruction score **585** and RNG state
+**18052** after all 105 draws. Its report is
+`/private/tmp/p24-complete-waves-final-diagnostic.json`. Full-level promotion still
+requires real output/timing replay, including the early extra model outputs and the
+mixed boss redraw. Exit/endings, seeded splash and complete sound replay remain open.
+This is a coherent partial waves/RNG/boss unit, not full level-0 acceptance.
+
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 
 **Files:** `scripts/space-impact-seeds.ts` (new), `src/games/space-impact/random.ts` (new: which

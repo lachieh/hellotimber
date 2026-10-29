@@ -484,6 +484,7 @@ export const spaceImpactOpeningWaveModule: GeneratedResourceModule = {
     const bonuses = [
       {
         tick: 149,
+        animationOffset: 0,
         x: 82,
         y: 9,
         dx: -2,
@@ -493,14 +494,15 @@ export const spaceImpactOpeningWaveModule: GeneratedResourceModule = {
         ],
       },
       {
-        // UNVERIFIED runtime phase: delivered callback ordinal until pickup/pending replay.
-        tick: 609,
+        // The first pickup consumes one callback without advancing the world.
+        tick: 608,
+        animationOffset: 1,
         x: 83,
         y: 24,
         dx: -1,
         specimens: [
-          ["acl", 616, 76],
-          ["acn", 617, 75],
+          ["acl", 615, 76],
+          ["acn", 616, 75],
         ],
       },
     ] as const;
@@ -514,7 +516,9 @@ export const spaceImpactOpeningWaveModule: GeneratedResourceModule = {
             candidate.objects.some((index) => {
               const object = complete.objects[index]!;
               return (
-                object.picture === `bonus/orb/${tick % 2}` && object.x === x && object.y === entry.y
+                object.picture === `bonus/orb/${(tick + entry.animationOffset) % 2}` &&
+                object.x === x &&
+                object.y === entry.y
               );
             }),
           )
@@ -524,7 +528,7 @@ export const spaceImpactOpeningWaveModule: GeneratedResourceModule = {
     }
     return resourceModule(
       "SPACE_IMPACT_OPENING_WAVE",
-      "{ readonly family: string; readonly bonuses: readonly { readonly tick: number; readonly x: number; readonly y: number; readonly dx: number }[]; readonly entries: readonly { readonly tick: number; readonly x: number; readonly y: number; readonly animationOffset: number; readonly dx: number }[] }",
+      "{ readonly family: string; readonly bonuses: readonly { readonly animationOffset: number; readonly tick: number; readonly x: number; readonly y: number; readonly dx: number }[]; readonly entries: readonly { readonly tick: number; readonly x: number; readonly y: number; readonly animationOffset: number; readonly dx: number }[] }",
       {
         family: "enemy/round-wide",
         bonuses: bonuses.map(({ specimens: _specimens, ...entry }) => entry),

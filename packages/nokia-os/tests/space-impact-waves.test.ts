@@ -6,7 +6,7 @@ import { loadGolden } from "./support/goldens";
 describe("Space impact complete level-0 wave evidence", () => {
   it("accounts for the later movement families and preserves unresolved HP and edge identities", () => {
     const waves = extractSpaceImpactWaveInventory(loadGolden("game/space-impact/level-0"));
-    expect(waves.tracks).toHaveLength(34);
+    expect(waves.tracks).toHaveLength(36);
     expect(new Set(waves.tracks.map((track) => track.family))).toEqual(
       new Set([
         "enemy/round-wide",

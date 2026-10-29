@@ -49,5 +49,13 @@ export function paintSpaceImpact(fb: Framebuffer, { board }: SpaceImpactModel): 
   };
   digits(hud.count, 43, 2);
   digits(hud.score, 57, 5);
-  for (const sprite of board.sprites) draw(sprite.picture, sprite.x, sprite.y);
+  for (const sprite of board.sprites) {
+    if (sprite.opaque) {
+      const art = SPACE_IMPACT_DATA.sprites[sprite.picture]!;
+      for (let y = 0; y < art.length; y++)
+        for (let x = 0; x < art[0]!.length; x++)
+          fb.setPixel(sprite.x + x, sprite.y + y, inverted ? 1 : 0);
+    }
+    draw(sprite.picture, sprite.x, sprite.y);
+  }
 }
