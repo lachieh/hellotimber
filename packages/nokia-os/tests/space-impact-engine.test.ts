@@ -120,7 +120,10 @@ describe("Space impact ship and player shots", () => {
 
   it.each(["2", "5", "7", "9", "up", "down"] as const)("ignores %s", (key) => {
     const state = newSpaceImpactGame();
-    expect(spaceImpactKey(state, key)).toEqual({ state, cues: [], events: [] });
+    const ignored = spaceImpactKey(state, key);
+    expect(spaceImpactRender(ignored.state)).toEqual(spaceImpactRender(state));
+    expect(ignored.cues).toEqual([]);
+    expect(ignored.events).toEqual([]);
   });
 
   it("alternates the shield and expires it only on its one-shot event", () => {

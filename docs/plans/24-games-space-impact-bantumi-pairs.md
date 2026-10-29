@@ -2389,6 +2389,127 @@ regeneration runs report up to date. Logs: `/private/tmp/p24-input-{workspace-te
 Only six plan-24 files change; excluded packages, website and lockfile remain unchanged.
 This is a partial input-delivery/opening-replay unit; **level 0 end-to-end is not complete**.
 
+### Parent direction (2026-10-29): general input model
+
+Stop fixing input one frame at a time. Derive one model of key-down registration relative
+to ticks, held-repeat delay and period (Task 4: 94 ms), short-tap repeats, release cancellation
+and lost raw pulses. Fit it against all tap-key stills, both held-direction timelines, all
+631 level-0 raw taps and the other levels' key logs together. Commit recorded-sequence ship
+position regressions test-first before resuming the complete level-0 diagnostic. Then continue
+in failure order: later waves, RNG ordering, collisions, bonuses, boss, endings, seeded splash
+and sound; promote a golden only when its pixel-exact replay passes. AGENTS.md's fidelity
+standard and plan 14 D8 exclude key latency itself; delivery, repeat counts and gameplay
+outcomes remain exact. No widened comparison or tolerance. Product calls may proceed as
+UNVERIFIED with their evidence and limits recorded here; genuinely unresolvable mismatches
+need a reasoned known gap. Partial units are allowed, with green commits and a full uncached
+suite once per finished unit.
+
+### Delivered-input model checkpoint (2026-10-29; partial)
+
+Started at `ff5b1da` on `t3/p24-space-impact`. The general-input parent direction above
+supersedes the previous instruction to fix `at` in isolation. This unit fixes the delivered
+framework key contract. **Raw matrix-to-delivered-event normalization remains unresolved;
+the parent direction's complete input-model task is not finished.** No later wave, RNG,
+collision, bonus, boss, ending, splash or sound behavior is added.
+
+**Model and boundary.** Host `KeyEvent`s are delivered framework events, not raw emulator
+matrix bits (plan 14 D8 and AGENTS.md exclude key latency). A delivered down replaces the
+single repeat key, including an otherwise ignored key; the first repeat is scheduled after
+the generated `repeatMs` (94 ms), then at that period. A movement down contributes one pixel,
+a repeat two; ordered movement is consumed by the next tick or an intervening shot redraw.
+A delivered release cancels the sole repeat, regardless of the host key label; it does not
+undo movement already queued. A raw release cannot retroactively cancel a repeat dispatched
+before the firmware delivers that release. There is no per-key timer map, pulse-duration
+cutoff or grace period. Raw pulses with no intervening scan are not delivered game events;
+the exact scan schedule is not implemented. The existing UNVERIFIED pending-sound event-loss
+hypothesis and held-fire cap are unchanged.
+
+**Independent whole-corpus control.** A private native harness copy adds only an observation
+of the existing game/framework handler arguments; it changes no emulated register, firmware
+instruction, matrix edge or source capture. The whole canonical full-game stream and all 46
+S4 key recordings run through it. All **64 recordings / 15,899 native PNGs and every paired
+PCM WAV** remain byte-identical to their independent canonical recordings. Handler inspection
+is diagnostic corroboration, not replacement pixel proof. The complete key evidence has no
+repeat whose key differs from the last delivered down before its release: **833 full-stream
+repeats**, including the restart/exit recordings, agree with one active framework key. Both
+held-direction traces and all tap, paired-key and held-fire probes were inspected together.
+
+| Canonical level | Raw pairs | Zero-execution pairs | Delivered downs | Delivered repeats |
+| --------------- | --------: | -------------------: | --------------: | ----------------: |
+| 0               |       631 |                   53 |             537 |                71 |
+| 1               |       508 |                    7 |             467 |                33 |
+| 2               |       780 |                    2 |             743 |                33 |
+| 3               |       919 |                    0 |             877 |                48 |
+| 4               |       812 |                  104 |             645 |                79 |
+| 5               |       603 |                   75 |             469 |                64 |
+| 6               |       603 |                    0 |             572 |                38 |
+| 7               |      1155 |                    8 |            1086 |               163 |
+
+This rejects the idea that removing zero-execution pairs plus one isolated shot completely
+normalizes level 0: its importer currently has 577 entries, while the firmware receives 537
+downs plus 71 repeats. It also rejects fitting a universal positive-duration cutoff. The
+3339.3–3357.3 ms raw tap delivers down at 3354.214 ms, repeat at 3444.713 ms and release at
+3445.787 ms. The repeat is already dispatched when the release arrives. The raw/delivered
+ordering also explains the prior 8/1/8 burst: a new down replaces the old repeat key without
+waiting for that old key's physical up. First-repeat phase and handler latency vary against
+raw edges; no millisecond-exact scanner or arbitrary release delay follows from these facts.
+
+**TDD and recorded outcomes.** The session regression reproduces the delivered 8/1/8 burst;
+it fails before the change with ship y=14 instead of y=16, then passes. Two more session tests
+read six consecutive pre-bound positions directly from `keys-hold-{0,8}.timeline` and verify
+release stops further movement. `space-impact-input.test.ts` replays short recorded sequences
+from **all eight levels**, with starting and expected ship positions independently read from
+the named committed LCD images. These are input-window tests; initializing an engine from an
+observed ship position does not constitute a full-level replay. The bounded 11.8 KiB fixture
+contains delivered event order/time and source hashes, never runtime ship positions. Runtime
+code never reads it. The existing twelve tap golden scenarios remain passing.
+
+A separate regression checks the **46 settled opening rows** through `bf` pixel-exact using
+the recorded delivered events. The complete local observed-event diagnostic reaches the
+same **46 of 879 rows**; the next mismatch is **`bg`, frame 58, 4467 ms, held 80 ms**. That
+frame records the first kill and score **00010**; the current engine has no collision/scoring
+implementation and remains at zero. This result is conditional on independently observed
+input delivery. **The unchanged imported-input diagnostic still matches 36/879 and fails at
+`at` (3532 ms)**, because the importer has not yet encoded that tap's delivered repeat. Do not
+report 46/879 as a passing replay of the golden's current `input:` or advance to collision
+implementation before finishing the general normalization model.
+
+**Calls and limits.** UNVERIFIED boundary choice: deliver host downs/releases immediately,
+with repeat timing from the existing captured resource; keep raw matrix scanning in capture
+normalization rather than imposing firmware scan latency on the host API. This follows D8's
+latency exclusion, but is not a claim that raw pulse conversion is solved. Simultaneous
+shield/tick/repeat deadline priority remains the previous UNVERIFIED choice. No golden,
+generated resource, comparator, tolerance or seed behavior changes; no fixture is promoted.
+Plan 24 remains **20 asserted, 148 pending, 0 registered known gaps**. The raw scanner has
+not been proved unresolvable, so it is unfinished work, not a new known gap.
+
+**Reproduction material.** All new controls and native tracer source/binary/logs are below
+`$REF/captures/6.39/plan24/input-model-20261029/`: `trace-control.json` verifies the 64 byte
+comparisons; `input-audit.json` records the table; `delivered-levels.json` keeps every level's
+observed events; `full.{log,trace}` and `keys-stdin.{log,trace}` retain their input/order evidence.
+The tracer's first standalone five-second control also preserves all 66 PNGs and PCM. The
+46-row local diagnostic source/result are `/private/tmp/p24-model-full-level-diagnostic.test.ts`
+and `/private/tmp/p24-model-diagnostic-result.json`; its event input is
+`/private/tmp/p24-delivered-level0.json`. No `$REF` file is committed or read by tests.
+
+**Verification.** The focused gate passes **6 files / 108 tests**, plus 148 expected TODOs.
+The red evidence is `/private/tmp/p24-model-red.log`; focused passing evidence is
+`/private/tmp/p24-model-focused-final.log`. `vp check --fix` passes. Final full uncached suite,
+check and build results follow at closeout.
+
+**Closeout verification.** The completed `vp run -r --no-cache test` passes all six packages:
+**263 files, 11,832 passed tests, 120 expected failures and 171 TODOs**, with **0/6 cache hits**.
+Nokia-os contributes **171 files / 10,990 passed tests** in **970.39 s**; phone-core 450,
+snake 62, phone-3d 49, phone-screen 101 and website 180. `vp check --fix`, final `vp check`,
+`git diff --check` and `website#build` pass under mise's guarded Node 22 with
+`VITEST_MAX_WORKERS=2` and `VP_RUN_CONCURRENCY_LIMIT=1`. Logs:
+`/private/tmp/p24-model-{workspace-tests,focused-final,check-fix-closeout,final-check,build}.log`.
+Both complete diagnostics were rerun separately: imported input remains 36/879; observed
+delivered input reaches 46/879. Their intentionally incomplete full-level checks stay outside
+the green suite. Only the nine owned Games/code/test/documentation paths change; excluded
+packages, website, lockfile, goldens and generated resources remain unchanged. This is a
+coherent partial delivered-input unit, not completion of the general raw-input model or plan 24.
+
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 
 **Files:** `scripts/space-impact-seeds.ts` (new), `src/games/space-impact/random.ts` (new: which

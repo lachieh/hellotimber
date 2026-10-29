@@ -29,7 +29,7 @@ export function newSpaceImpactGame({ seed = 0 }: { seed?: number } = {}): SpaceI
     shots: [],
     enemies: [],
     moves: [],
-    held: {},
+    held: null,
     fireCooldown: 0,
     pendingCue: null,
   };
@@ -54,15 +54,11 @@ export function spaceImpactKey(
   if (deferred) return deferred;
   if (key === "navi" || key === "c")
     return action === "down" ? { ...result(state), events: [{ kind: "suspend" }] } : result(state);
-  if (!isSpaceImpactControl(key)) return result(state);
-  const held = { ...state.held };
-  if (action === "up") {
-    delete held[key];
-    return result({ ...state, held });
-  }
-  if (action === "repeat" && held[key] === undefined) return result(state);
-  const attempts = action === "down" ? 1 : (held[key] ?? 0) + 1;
-  held[key] = attempts;
+  if (action === "up") return result({ ...state, held: null });
+  if (action === "repeat" && state.held?.key !== key) return result(state);
+  const attempts = action === "down" ? 1 : (state.held?.attempts ?? 0) + 1;
+  const held = { key, attempts };
+  if (!isSpaceImpactControl(key)) return result({ ...state, held });
   const move = spaceImpactMove(key, action === "repeat" ? 2 : 1);
   if (move) return result({ ...state, held, moves: [...state.moves, move] });
   // H2, UNVERIFIED: five held-fire attempts including the initial press.

@@ -1,3 +1,4 @@
+import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockCue } from "../../firmware/cues";
 
 export interface SpaceImpactPoint {
@@ -30,7 +31,7 @@ export interface SpaceImpactState {
   readonly enemies: readonly (SpaceImpactPoint & { readonly animationOffset: number })[];
   readonly moves: readonly SpaceImpactPoint[];
   readonly fireCooldown: number;
-  readonly held: Readonly<Partial<Record<SpaceImpactControl, number>>>;
+  readonly held: { readonly key: PhoneKey; readonly attempts: number } | null;
   /** H16, UNVERIFIED: a pending return consumes the next event without advancing the game. */
   readonly pendingCue: string | null;
 }

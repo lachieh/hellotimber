@@ -212,6 +212,30 @@ the extra two-pixel displacement. Delivered key-repeat ordering is still unresol
 runtime rule, seed claim, accepted UNVERIFIED default, tolerance or known gap follows from
 these controls. Plan 24 remains 20 asserted and 148 pending; full-level replay is incomplete.
 
+**Delivered-input checkpoint (2026-10-29; partial).** The framework has one repeat key.
+A delivered down replaces it, including a key ignored by gameplay; a delivered release stops
+that sole repeat. Movement contributes one pixel on down and two on repeat, applied at the
+next tick or a shot redraw. The session uses the captured 94 ms repeat period. Recorded 8/1/8
+ordering, both held-direction movement prefixes and short input windows from all eight levels
+have ship-position regressions. A byte-preserving trace control covers all 64 canonical full-
+game/key recordings (15,899 PNGs and all paired PCM WAVs); inspection of delivered handler
+arguments corroborates the input ordering but does not replace gameplay pixel proof.
+
+A short raw pulse can repeat: the 3339.3–3357.3 ms tap's delivered down precedes its repeat,
+which precedes its delivered release. Raw matrix release time is not game-release time. No
+universal pulse cutoff or release grace is established. Across all 631 raw level-0 taps the
+firmware receives 537 downs plus 71 repeats; the current importer still has 577 entries and
+has not normalized the full delivered stream. UNVERIFIED boundary choice: host KeyEvents
+represent delivered events; raw matrix scanning remains capture-side work, consistent with
+D8's exclusion of key latency. The complete general input model remains unfinished.
+
+Using independently observed delivered events, the engine/painter checks 46/879 settled
+level-0 rows through `bf`, next failing at `bg` (4467 ms), the first captured kill/score 10.
+Using the unchanged imported input, it still checks 36/879 and fails at `at` (3532 ms).
+These are distinct diagnostic results. No additional golden is asserted; plan 24 remains
+20 asserted and 148 pending. No raw scan delay, seed, tolerance or runtime captured-state
+substitution is introduced.
+
 **Remaining hypotheses (UNVERIFIED until golden replay or further evidence).** Exact collision
 geometry, score ceiling and per-hit awards, all boss phases and projectiles, the pending-sound
 return code and lost-event behavior, held-fire cap, shield durations and exact continue/exit

@@ -32,7 +32,7 @@ class SpaceImpactGame implements Widget {
   #interrupted = false;
   #tickMs: number = timings.firstTickMs;
   #shieldMs: number | null = timings.newGameShieldMs;
-  #repeats = new Map<PhoneKey, number>();
+  #repeat: { key: PhoneKey; ms: number } | null = null;
   #model: SpaceImpactModel;
 
   constructor({ games, start }: SpaceImpactGameOptions) {
@@ -69,11 +69,11 @@ class SpaceImpactGame implements Widget {
     this.#accept(spaceImpactKey(this.#state, key), flow, this.#games.now(), {
       suspendSelect: key === "c" ? "new-game" : "continue",
     });
-    if (["8", "0", "*", "#", "1", "3"].includes(key)) this.#repeats.set(key, timings.repeatMs);
+    this.#repeat = { key, ms: timings.repeatMs };
   }
 
   onKey(key: PhoneKey, flow: Flow): void {
-    this.#repeats.delete(key);
+    this.#repeat = null;
     this.#accept(spaceImpactKey(this.#state, key, "up"), flow, this.#games.now(), { draw: false });
   }
 
@@ -85,11 +85,11 @@ class SpaceImpactGame implements Widget {
     if (this.#waiting) return;
     let left = dtMs;
     while (left > 0) {
-      const next = Math.min(this.#tickMs, this.#shieldMs ?? Infinity, ...this.#repeats.values());
+      const next = Math.min(this.#tickMs, this.#shieldMs ?? Infinity, this.#repeat?.ms ?? Infinity);
       const advance = Math.min(left, next);
       this.#tickMs -= advance;
       if (this.#shieldMs !== null) this.#shieldMs -= advance;
-      for (const [key, ms] of this.#repeats) this.#repeats.set(key, ms - advance);
+      if (this.#repeat !== null) this.#repeat.ms -= advance;
       left -= advance;
       const atMs = this.#games.now() - left;
       if (this.#shieldMs === 0) {
@@ -100,9 +100,9 @@ class SpaceImpactGame implements Widget {
         this.#tickMs = timings.tickMs;
         this.#accept(stepSpaceImpact(this.#state), flow, atMs);
       }
-      for (const [key, ms] of this.#repeats) {
-        if (ms !== 0) continue;
-        this.#repeats.set(key, timings.repeatMs);
+      if (this.#repeat?.ms === 0) {
+        const { key } = this.#repeat;
+        this.#repeat.ms = timings.repeatMs;
         this.#accept(spaceImpactKey(this.#state, key, "repeat"), flow, atMs);
       }
     }
@@ -129,7 +129,7 @@ class SpaceImpactGame implements Widget {
 
   #suspend(flow: Flow, select: "continue" | "new-game" = "continue"): void {
     this.#games.suspended["space-impact"] = {
-      state: { ...this.#state, held: {} },
+      state: { ...this.#state, held: null },
     } satisfies SuspendedSpaceImpact;
     flow.back(1, {
       select,

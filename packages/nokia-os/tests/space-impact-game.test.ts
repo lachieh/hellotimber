@@ -5,7 +5,8 @@ import { createStockGames } from "../src/firmware/features/games";
 import { spaceImpactGame } from "../src/firmware/features/space-impact";
 import { SPACE_IMPACT_DATA } from "../src/resources/generated/space-impact";
 import { flowRig, type FlowRig } from "./support/flow-rig";
-import { goldenImage } from "./support/goldens";
+import { goldenImage, loadGolden } from "./support/goldens";
+import { normalized, shipAt } from "../scripts/space-impact-capture-set";
 
 function game() {
   let rig: FlowRig;
@@ -76,6 +77,50 @@ describe("Space impact session", () => {
     expect(games.suspended["space-impact"]).toBeUndefined();
     expect(fresh.frame()).toEqual(goldenImage("game/space-impact/level-0", "b").image.pixels);
   });
+
+  it("replaces the repeat key in the recorded 8/1/8 burst instead of retaining older holds", () => {
+    const { rig } = game();
+    for (let n = 0; n < 2; n++) {
+      rig.press("8");
+      rig.advance(n === 0 ? 173 : 93);
+    }
+    expect(shipAt(normalized(rig.frame()))).toEqual({ x: 5, y: 18 });
+    // Level 0: delivered 8 at 2238.971, 1 at 2262.168, 8 at 2349.446,
+    // release at 2359.884. D8 preserves their order around the two game ticks.
+    rig.advance(29);
+    rig.session.onKey({ type: "down", key: "8" });
+    rig.advance(23.197);
+    rig.session.onKey({ type: "down", key: "1" });
+    expect(shipAt(normalized(rig.frame()))).toEqual({ x: 5, y: 17 });
+    rig.advance(87.278);
+    rig.session.onKey({ type: "down", key: "8" });
+    rig.advance(10.438);
+    rig.session.onKey({ type: "up", key: "8" });
+    rig.advance(37);
+    expect(shipAt(normalized(rig.frame()))).toEqual({ x: 5, y: 16 });
+    rig.advance(186);
+    expect(shipAt(normalized(rig.frame()))).toEqual({ x: 5, y: 16 });
+  });
+
+  it.each(["0", "8"] as const)(
+    "held %s follows the six recorded pre-bound movement positions and stops on release",
+    (key) => {
+      const { rig } = game();
+      const golden = loadGolden(`game/space-impact/keys-hold-${key}.timeline`);
+      const rows = golden.timeline!.filter((row) => row.startMs >= 3998).slice(0, 6);
+      rig.advance(SPACE_IMPACT_DATA.timings.firstTickMs + 39 * SPACE_IMPACT_DATA.timings.tickMs);
+      rig.session.onKey({ type: "down", key });
+      for (const row of rows) {
+        rig.advance(SPACE_IMPACT_DATA.timings.tickMs);
+        const expected = shipAt(normalized(goldenImage(golden.id, row.image).image.pixels));
+        expect(shipAt(normalized(rig.frame())), `${golden.id}/${row.image}`).toEqual(expected);
+      }
+      const stopped = shipAt(normalized(rig.frame()));
+      rig.session.onKey({ type: "up", key });
+      rig.advance(3 * SPACE_IMPACT_DATA.timings.tickMs);
+      expect(shipAt(normalized(rig.frame()))).toEqual(stopped);
+    },
+  );
 
   it("key release stops movement repeats", () => {
     const { rig } = game();
