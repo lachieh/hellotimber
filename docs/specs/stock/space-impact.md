@@ -103,6 +103,31 @@ collision or RNG-consumption branch never exercised by those recordings; the rec
 prove that an unseen event is impossible. Exhaustive per-type kill/fire coverage is not a gate.
 The partial census remains an exploratory aid for reconstruction.
 
+**Terrain resources (Task 4, 2026-10-28).** Eight 2×16 maps use the exact 32×8 LCD
+pictures in the resource crop table; level 0 has no terrain. Ground starts at row 32,
+ceiling at row 0 in levels 4/5. A map's scroll selects world column `(scroll + x) % 512`.
+Explicit clean rectangles, including disjoint fragments when objects obscure a complete tile,
+establish each observed tile; every pixel of each accepted clean frame is checked exactly.
+The resource extractor never votes on pixels. Resource extraction does not assert gameplay.
+Every settled frame of the full-level acceptance replays will prove terrain and sprites together.
+
+Level 6 has four observed leading-tile variants (columns 0, 4, 9, 12, numbered from zero):
+when a tile reaches screen x=0, its first column at LCD rows 43/44 differs from the interior
+specimen. Both are retained exactly in `leadingTiles`. The mechanism behind these boundary
+draws remains **UNVERIFIED**; the resources record LCD observations, not an inferred firmware
+blitter. Clean frames prove both variants and wrapping without relaxing pixel comparisons.
+
+**UNVERIFIED terrain columns:** level 1 column 15, and level 7 columns 7–15. These do not
+have complete clean pixel coverage in the recordings: level 1 reaches only the start of
+column 15, while both final-level recordings expose only part of column 7 before the terrain
+stops scrolling. Maps contain `null` for those cells, and the reference renderer refuses to
+invent their pixels. Level 1's upper column 5 and level 7's column 6 are established by two
+independent specimens of each disjoint fragment. Full-level replay remains the next check on
+all scroll placements and pictures. **UNVERIFIED sprites:** any sprite or animation picture
+absent from the committed crop table, including unobserved pictures; later replay adds needed
+pictures using two exact LCD specimens. The four accepted gameplay defaults above/below remain
+UNVERIFIED and unchanged.
+
 **Bonuses and specials (plan 24, in progress).** Reviewed LCD/audio pickups establish all four
 outcomes: missiles 03 → 06 (level 1), missiles 06 → wall 03 (level 2), three hearts → four
 (cap run), and missiles 03 → beam 01 (level-0 restart). Their contact/disappearance, persistent

@@ -7,6 +7,9 @@ import {
   extractSpaceImpactSprites,
   spaceImpactResourceModule,
   SPACE_IMPACT_CROPS,
+  SPACE_IMPACT_TERRAIN_SPECIMENS,
+  SPACE_IMPACT_TERRAIN_FRAMES,
+  renderSpaceImpactTerrain,
 } from "../scripts/space-impact-resources.ts";
 import { timingToleranceMs } from "./support/golden.ts";
 import { loadGolden } from "./support/goldens.ts";
@@ -377,4 +380,116 @@ it("extracts exact crop pixels in either polarity and rejects conflicting specim
   expect(() => extractSpaceImpactSprites(load, [{ ...crop, x: 83 }])).toThrow(/sample.*rectangle/);
   expect(() => extractSpaceImpactSprites(load, [{ ...crop, image: "missing" }])).toThrow(/missing/);
   expect(() => extractSpaceImpactSprites(load, [{ ...crop, y: 4 }])).toThrow(/sample.*no ink/);
+});
+
+const terrainGoldens = new Map<string, Golden>();
+function terrainGolden(level: number, restart = false): Golden {
+  const id = `game/space-impact/level-${level}${restart ? ".restart" : ""}`;
+  let golden = terrainGoldens.get(id);
+  if (!golden) {
+    golden = loadGolden(id);
+    terrainGoldens.set(id, golden);
+  }
+  return golden;
+}
+
+describe("Space impact terrain maps from clean LCD specimens", () => {
+  it("derives eight 2×16 maps and records unsupported cells without inventing pixels", () => {
+    expect(resources.terrain).toHaveLength(8);
+    expect(resources.terrain.map((level) => level.top)).toEqual([32, 32, 32, 32, 0, 0, 32, 32]);
+    for (const level of resources.terrain) {
+      expect(level.rows).toHaveLength(2);
+      expect(level.rows.every((row) => row.length === 16)).toBe(true);
+      expect(level.unverifiedColumns).toEqual(
+        Array.from({ length: 16 }, (_, column) => column).filter((column) =>
+          level.rows.some((row) => row[column] === null),
+        ),
+      );
+    }
+    expect(resources.terrain[2]!.rows[1]).toEqual(
+      [5, 6, 7, 7, 6, 5, 7, 5, 6, 7, 6, 5, 7, 5, 7, 6].map((id) => `terrain/${id}`),
+    );
+    expect(resources.terrain[1]!.unverifiedColumns).toEqual([15]);
+    expect(resources.terrain[7]!.unverifiedColumns).toEqual([7, 8, 9, 10, 11, 12, 13, 14, 15]);
+  });
+
+  it.each(SPACE_IMPACT_TERRAIN_SPECIMENS)(
+    "re-renders the exact map specimen $level:$image at scroll $scroll, x $x, row $row",
+    ({ level, image, scroll, x, row, width = 32, restart }) => {
+      const terrain = resources.terrain[level]!;
+      const source = loadGolden(
+        `game/space-impact/level-${level}${restart ? ".restart" : ""}`,
+      ).images.find((entry) => entry.name === image)!;
+      const actual = renderSpaceImpactTerrain(resources, level, scroll, x, row * 8, width, 8);
+      const expected = Array.from({ length: 8 }, (_, dy) =>
+        Array.from({ length: width }, (_, dx) =>
+          (source.pixels[(terrain.top + row * 8 + dy) * 84 + x + dx] === 1) !== terrain.inverted
+            ? "#"
+            : ".",
+        ).join(""),
+      );
+      expect(actual).toEqual(expected);
+    },
+  );
+
+  it.each(SPACE_IMPACT_TERRAIN_FRAMES)(
+    "re-renders every pixel of clean band $level:$image at scroll $scroll",
+    ({ level, image, scroll }) => {
+      const terrain = resources.terrain[level]!;
+      const source = terrainGolden(level).images.find((entry) => entry.name === image)!;
+      expect(renderSpaceImpactTerrain(resources, level, scroll)).toEqual(
+        Array.from({ length: 16 }, (_, dy) =>
+          Array.from({ length: 84 }, (_, x) =>
+            (source.pixels[(terrain.top + dy) * 84 + x] === 1) !== terrain.inverted ? "#" : ".",
+          ).join(""),
+        ),
+      );
+    },
+  );
+
+  it("preserves the observed viewport-edge variants rather than changing tile pixels", () => {
+    expect(resources.terrain[6]!.leadingTiles).toEqual({
+      0: "terrain/18",
+      4: "terrain/21",
+      9: "terrain/19",
+      12: "terrain/21",
+    });
+    expect(resources.terrain[6]!.rows[1]![4]).toBe("terrain/20");
+    expect(renderSpaceImpactTerrain(resources, 6, 128, 0, 11, 1, 2)).toEqual(["#", "#"]);
+    expect(renderSpaceImpactTerrain(resources, 6, 96, 32, 11, 1, 2)).toEqual([".", "."]);
+  });
+
+  it("moves one terrain pixel per scroll step and wraps after 512 pixels", () => {
+    const first = renderSpaceImpactTerrain(resources, 2, 0);
+    const next = renderSpaceImpactTerrain(resources, 2, 1);
+    expect(next.map((row) => row.slice(0, 83))).toEqual(first.map((row) => row.slice(1)));
+    expect(renderSpaceImpactTerrain(resources, 2, 512)).toEqual(first);
+    const source = terrainGolden(2).images.find((image) => image.name === "b")!;
+    const observed = Array.from({ length: 16 }, (_, dy) =>
+      Array.from({ length: 84 }, (_, x) => (source.pixels[(32 + dy) * 84 + x] ? "#" : ".")).join(
+        "",
+      ),
+    );
+    expect(first).toEqual(observed);
+    expect(next).not.toEqual(observed);
+  });
+
+  it("fails when rendering needs an unverified map column", () => {
+    expect(() => renderSpaceImpactTerrain(resources, 1, 480)).toThrow(/UNVERIFIED.*15/);
+  });
+
+  it("rejects a changed clean specimen instead of voting away its mismatch", () => {
+    const specimen = SPACE_IMPACT_TERRAIN_SPECIMENS.find((entry) => entry.level === 2)!;
+    const id = `game/space-impact/level-${specimen.level}`;
+    const golden = loadGolden(id);
+    const images = golden.images.map((image) => {
+      if (image.name !== specimen.image) return image;
+      const pixels = image.pixels.slice();
+      pixels[(32 + specimen.row * 8) * 84 + specimen.x] ^= 1;
+      return { ...image, pixels };
+    });
+    expect(() =>
+      extractSpaceImpactResources((key) => (key === id ? { ...golden, images } : loadGolden(key))),
+    ).toThrow(/terrain.*specimen/);
+  });
 });

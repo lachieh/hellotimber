@@ -1481,6 +1481,19 @@ byte-identical**. Snake SHA-256: `9c7f946de4c616d5ef360169e19e96e6c77773e7be92e3
 
 ### Task 4 - Space impact resources from goldens (TDD)
 
+**Accepted criterion change (Lachlan, 2026-10-28).** Task 4's every-still terrain
+re-render proof and complete-sprite-inventory prerequisite for Task 5 are replaced by the
+acceptance tests. Task 4 derives terrain tiles and per-level tilemaps, including scroll
+alignment, from clean frames and verifies those frames exactly. It commits the sprite table
+available now; later tasks add pictures when a level replay needs them, with two exact LCD
+specimens per added picture. Every settled frame of every full-level golden is then proven
+pixel-exactly by acceptance replay, including terrain and sprites, following the accepted
+level-coverage decision. A wrong tile or sprite fails at the frame containing it: fix the
+mismatch there or record a known gap with its reason. Terrain columns and sprites absent
+from the recordings remain labelled `UNVERIFIED` in the spec. No relaxed or majority-vote
+comparison is permitted. This supersedes the earlier Task 4 checkpoint's inventory and
+every-still blockers; the timing and freshness/TDD requirements remain.
+
 **Files:** `scripts/space-impact-resources.ts` (new), shared resource registration (one line
 through the pipeline delivered by plan 29),
 `src/resources/generated/space-impact.ts` (generated), `src/resources/index.ts` (one export
@@ -1489,22 +1502,20 @@ block), `tests/space-impact-resources.test.ts` (new).
 - [x] Confirm Task 0's canonical-level gate and plan 29's verified registration repair before
       generating resources. Inspect the landed registration contract; use one owned registration
       line without redesigning shared extraction here.
-- [ ] Crop table (golden, image, rectangle, sprite id) for the ship, shield, shot, missile, wall
-      frames, beam, explosion frames, every enemy and boss frame, bonus orbs, enemy bullets and boss
-      projectiles, the HUD heart, special icons (missile, wall, beam), HUD digits, continue-screen
-      icons and digits, and the splash's pictures (logo halves, ship pictures, the fill). Each in
-      both polarities where the levels show both. Missing pictures fail the task (recapture with a
-      targeted S6 run, Deviation).
-- [ ] Terrain: from each level's tick stills, the 32x8 tiles and the 2x16 tilemap (ground or
-      ceiling), checked by re-rendering every terrain row of every still at its scroll position.
+- [x] Commit the current crop table (golden, image, rectangle, sprite id); add further pictures
+      during later level replay with two exact LCD specimens, including both polarities where
+      clean specimens show both. Complete inventory is proved by acceptance replay.
+- [x] Terrain: derive 32x8 tiles and each level's 2x16 tilemap (ground or ceiling), including
+      scroll alignment, from clean frames; re-render those clean frames exactly. Label unseen
+      columns `UNVERIFIED` in the spec. Full-level acceptance replay proves every settled frame.
 - [x] Timing: `SPACE_IMPACT_TICK_MS`, `…_FIRST_TICK_MS`, `…_SHIELD_MS` (new game, respawn,
       resume), `…_REPEAT_MS`, the continue screen's hold and step, the respawn delay, the level
       exit's step times, from the timelines (medians).
-- [ ] TDD: freshness (in-process extraction equals the committed file); every sprite inside its
-      golden's ink; tilemaps reproduce every still's terrain; the timer-unit rule (H1) holds for
-      every period as a cross-check.
-- [ ] Run `extract-resources` twice; no diff.
-- [ ] Commit: `feat(nokia-os): derive Space impact sprites, terrain and timings from goldens`.
+- [x] TDD: freshness (in-process extraction equals the committed file); every sprite inside its
+      golden's ink; tilemaps reproduce their clean reference frames exactly; the timer-unit rule
+      (H1) holds for every period as a cross-check.
+- [x] Run `extract-resources` twice; no diff.
+- [x] Commit: `feat(nokia-os): derive Space impact sprites, terrain and timings from goldens`.
 
 **Task 4 checkpoint (2026-10-28; incomplete).** The parent permits partial progress with
 every commit green. This checkpoint keeps Task 4 open and does not begin Task 5.
@@ -1716,6 +1727,63 @@ All 166 pre-existing plan-24 index entries are unchanged; only the two pending t
 entries are added. The generated Space impact module is 24,233 bytes. Website, phone-core,
 phone-screen, phone-3d and packages/snake have no diff from `edacd86`. Task 4 remains open;
 no gameplay replay or full terrain proof is claimed, and Tasks 5-14 remain unstarted.
+
+### Task 4 revised-criterion delivery (2026-10-28)
+
+Continued from `09e6be9`, only in `t3/p24-space-impact`. The accepted criterion change
+under Task 4 supersedes the historical checkpoints' complete-inventory/every-still blockers.
+The canonical `analysis/coverage.py --check` passes all 25 criteria again. Plan 29's existing
+owned module registration remains unchanged.
+
+The resource extractor now derives eight 2×16 terrain maps from **229 explicit clean LCD
+specimens**, including four level-6 leading-tile variants and two independent specimens of
+each fragment where objects obscure a complete tile. It verifies **215 complete clean terrain
+bands**, every pixel exactly at its declared scroll alignment. The maps contain **236 observed
+or terrain-free cells**; level 0 has no terrain. The current **58 sprite pictures plus 27
+terrain pictures** are retained unchanged. No missing sprite inventory is claimed complete:
+Tasks 5–13 add needed pictures with two exact specimens and prove full settled frames in replay.
+
+Level 1's upper column 5 is established by two clean 16-column views per half. Level 7's
+column 6 is established by two clean eight-column views per fragment in the separate committed
+restart recording. Exact adjacent lower-terrain strips identify the restart's scroll stopping
+at 166; no majority vote or tolerated pixel is used. The exploratory first-recording offsets
+are used only to locate references; committed extraction reads and validates committed LCD
+rectangles and full clean bands, never exploratory fitted pixels or REF.
+
+**UNVERIFIED:** level 1 column 15 and level 7 columns 7–15 lack complete clean coverage.
+Their map cells remain `null`, the spec names them, and the reference renderer fails explicitly
+if a requested rectangle needs them. Partial right-edge observations do not prove hidden
+pixels. Every observed placement, including those edges, remains an obligation of full-level
+acceptance replay. Level 6's leading variants preserve the two-pixel difference at screen x=0
+in columns 0/4/9/12; the underlying blitter mechanism remains UNVERIFIED. An exact probe matches
+all 432 clean level-6 bands; the committed proof set retains boundary, intermediate and wrap
+landmarks. No tile is altered to hide the difference.
+
+TDD first fails for the absent terrain exports, then for unsupported map cells, then for
+stale generated bytes; the completed focused gate passes **3 files, 577 tests**. Independent
+checks cover the level-2 tile order, a one-pixel scroll, 512-pixel wrapping, exact source
+rectangles and complete clean frames, viewport-leading variants, refusal of unknown cells,
+and deliberate one-pixel source corruption. Existing timing/H1 cross-checks remain green.
+The generated module comes only from `regenerate`; two consecutive subsequent runs report
+`up to date`. The other ten generated modules retain their bytes from `09e6be9`.
+
+**Closeout verification.** The complete uncached `vp run -r --no-cache test` passes all six
+packages: **257 passing files, one pending-only slice, 11,575 passed tests, 120 expected
+failures and 193 TODOs**, zero cache hits. Nokia-os: 165 passing files, one pending-only
+slice, 10,733 passed tests (944.32 s). Other package totals remain phone-core 450, snake 62,
+phone-3d 49, phone-screen 101 and website 180. `vp check --fix`, final `vp check` and
+`website#build` pass. Gates use mise's absolute Node **22.22.3** with the child-PATH guard
+`/private/tmp/plan24-run-node22.cjs`; the workspace run uses `VITEST_MAX_WORKERS=2` and
+`VP_RUN_CONCURRENCY_LIMIT=1`. Logs:
+`/private/tmp/plan24-map-{focused-final,workspace-tests,check-fix,check,build}.log`.
+No golden is promoted by resource extraction: **0 asserted, 168 pending, 0 known gaps** in
+plan 24; the two inherited Space impact fixtures remain pending in their original indices.
+No tolerance or four accepted UNVERIFIED gameplay default changes. No new product decision.
+Task 4 is complete under the revised criterion. This delivery stops at its green commit;
+Tasks 5–14 remain unimplemented. Resume with Task 5's strict decoder, then object tracking,
+spawn/y-path/boss fitting and seed/fire-event reconstruction. Missing pictures are added as
+replays need them, not used to reopen the superseded inventory gate. No complete gameplay,
+terrain edge not observed cleanly, or spawn/firing rule is asserted by this resource delivery.
 
 ### Task 5 - Level reconstruction (TDD)
 
