@@ -121,6 +121,7 @@ class SpaceImpactGame implements Widget {
       suspendSelect = "continue",
     }: { draw?: boolean; suspendSelect?: "continue" | "new-game" } = {},
   ): void {
+    if (result.state.level !== this.#state.level) this.#shieldMs = timings.newGameShieldMs;
     this.#state = result.state;
     if (draw) this.#model = { kind: "space-impact", board: spaceImpactRender(this.#state) };
     for (const cue of result.cues) this.#games.cues.cue(cue, atMs);

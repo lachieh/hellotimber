@@ -644,6 +644,7 @@ export function spaceImpactStart(id: string): TickStart {
 }
 
 const ASSERTED = new Set([
+  "level-0.exit",
   ...["0", "2", "5", "7", "9", "up", "down", "star"].map((key) => `keys-hold-${key}`),
   ...["8", "0", "star", "hash", "2", "5", "7", "9", "up", "down", "1", "3"].map(
     (key) => `keys-tap-${key}`,
@@ -786,7 +787,7 @@ export function spaceImpactSounds(io: SoundCaptureIo): SoundGolden[] {
         id: `sound/game/space-impact/${s.name}`,
         dir: `${ROOT}/${s.dir}`,
         state: "virgin",
-        status: "pending:24",
+        status: s.name === "level-0" ? "asserted" : "pending:24",
         note: s.note,
       },
       converted,

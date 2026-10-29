@@ -1,3 +1,5 @@
+import { expectSpaceImpactSound } from "./space-impact-sound";
+import { expectSpaceImpactExit, expectSpaceImpactLevel } from "./space-impact-replay";
 import { SPACE_IMPACT_DATA } from "../../src/resources/generated/space-impact";
 // Snake II gameplay goldens replayed through the engine (plan 23 Tasks 7-8): each recorded
 // game's level, maze and recovered seed (Task 5), and the engine state at every board the golden
@@ -897,6 +899,9 @@ function suspendedSpaceImpact(): Rig {
 }
 
 export const spaceImpactScenarios: Readonly<Record<string, (id: string) => void>> = {
+  "sound/game/space-impact/level-0": expectSpaceImpactSound,
+  "game/space-impact/level-0.exit": (id) => expectSpaceImpactExit(loadGolden(id)),
+  "game/space-impact/level-0.replay": (id) => expectSpaceImpactLevel(loadGolden(id)),
   ...Object.fromEntries(
     ["0", "2", "5", "7", "9", "up", "down", "star"].map((key) => [
       `game/space-impact/keys-hold-${key}`,

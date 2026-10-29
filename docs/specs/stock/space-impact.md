@@ -408,3 +408,25 @@ outcome must match exactly; unexercised branches stay labelled rather than asser
 | ANSI generator at its boot value in every capture's first game | each section starts from power-on                         | reproduced: a phone's first game after power-on starts there         |
 | Tick-phase jitter of ±15 ms against Select                     | the timer's phase at the key                              | not reproduced; inputs by tick                                       |
 | Timer unit ≈7.745 ms                                           | emulator timebase (plan 23)                               | reproduced as captured; UNVERIFIED against hardware                  |
+
+**Complete level-0 output/exit/sound checkpoint (2026-10-29; partial).** The independent
+`game/space-impact/level-0.replay` recording passes every settled pixel and the shared timing
+comparison. The original recorder resets its three-millisecond quiet counter at each bot
+command; two-millisecond runs can therefore miss complete LCD frames and overstate partial
+frame durations. An identical-input run with the existing `quiet 1` setting captures 1,040
+frames, retains every original image and has identical PCM. In it the mixed boss `ala` lasts
+15 ms, rather than the original recorder's apparent 93 ms. The existing partial-redraw rule
+applies, with no known gap or tolerance change. The original sparse `level-0` fixture remains
+pending resource evidence; its images and rows are preserved.
+
+The original level-0 exit and full sound window are asserted. Exit alignment steps toward y6,
+waits one step and accelerates right, increasing speed whenever the new x is divisible by
+three. Surviving shots continue during destruction. Boss death emits vibration using the
+510 ms median of three committed no-key intervals. The full level-0 sound window ends while
+vibration is on; it does not establish that later edge.
+
+Fly-off loads level 1 preserving the HUD and shared game RNG. Its first settled board `c`
+(after its first fire key) matches exactly. **UNVERIFIED beyond this transition:** x104 load
+cutoff, the initial animation update and y6 alignment. Level 1's next failure is `d` at
+197 ms: two missing shield-edge pixels at (14,20) and (14,26). Level 1 remains pending.
+Seeded splash, game-over endings and remaining control replays are still incomplete.

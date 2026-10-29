@@ -22,7 +22,7 @@ only and are never imported. Task 0 writes this plan's captures to `$REF/capture
 The eight full-level recordings, exits, ending and LCD-only control proof are validated;
 implementation must replay their pixels under AGENTS.md's fidelity standard. The four accepted
 defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete,
-including the inherited Games II seams. Task 3 is complete: 168 fixtures are imported; 28 are asserted and 140 remain pending
+including the inherited Games II seams. Task 3 is complete: 169 fixtures are imported; 31 are asserted and 138 remain pending
 gameplay/session replay. Task 4 is complete under the accepted revised criterion below.
 Task 5 is split into level 0 (5a) and levels 1–7 (5b) under the accepted sequencing change
 below. The level-0 decoder checkpoint reads 855 of 856 settled images exactly; full level-0
@@ -3085,6 +3085,95 @@ remain unchanged. The final independently executed helper reports **874/879**, f
 requires real output/timing replay, including the early extra model outputs and the
 mixed boss redraw. Exit/endings, seeded splash and complete sound replay remain open.
 This is a coherent partial waves/RNG/boss unit, not full level-0 acceptance.
+
+### Complete level-0 output, exit and sound checkpoint (2026-10-29; partial)
+
+Continued from `b201801`, only in the assigned `t3/p24-space-impact` worktree.
+**Accepted parent resolution path (2026-10-29):** check early redraws against the shared
+partial-draw rule; make a bounded evidence-based attempt at `ala`; fix a reproducible
+mechanism or register a precise known gap if genuinely unresolved. Do not widen tolerances.
+The investigation below resolves both through a demonstrated recorder defect, so no
+known gap is appropriate. Splash and game-over endings remain unfinished; this is not
+completion of the entire level-0 vertical slice or plans 5–14.
+
+**Recorder cause and controlled evidence.** The reference harness's `advance()` keeps its
+three-grain quiet counter locally, resetting it on every command. The bot frequently issues
+`run 2ms`; these calls cannot reach three quiet grains. Consequently the recorder omits
+complete frames and falsely extends an intermediate frame until a later sampled picture.
+A private read-only observer confirms renderer calls at the early missing tick and preserves
+all **2,048 original PNG bytes (1,024 frames plus previews)** and the original PCM exactly.
+No firmware, memory, registers, clock or key stream was changed. All private tooling and
+controls stay in `$REF/captures/6.39/plan24/redraw-20261029/`.
+
+An independent run prepends the harness's existing `quiet 1` setting to the identical
+canonical level-0 input. It captures **1,040 frames**, retains **every original image**,
+and has byte-identical PCM. `dense-control.json` records that proof; `README.md` documents
+reproduction. `ala` occurs at **76,783.2 ms for 15 ms**, followed by the complete boss at
+76,798.2 ms. The old recorder falsely held it for 93 ms. This is a bounded reproduction
+of the mixed boss layering and its real duration: the existing `<34 ms` rule applies.
+Neither an engine redraw suppression table nor a known gap is added.
+
+**Complete acceptance.** `game/space-impact/level-0.replay` imports the independent dense
+recording through the capture set and passes `expectTimeline` over the complete engine
+output. Every settled image is pixel-exact, including both pickups, ordinary and boss
+projectiles, the 105-draw chain and destruction start. The replay derives its initial
+clock from the first delivered step and the generated session first-tick offset; it uses
+the shared comparator unchanged. It does not align individual frames or suppress extra
+outputs. A regression requires every original image to remain in the new fixture, checks
+`ala`'s 15 ms duration, and confirms that the original censored timeline still fails.
+
+**UNVERIFIED product choice:** preserve `level-0` as the original pending resource-evidence
+fixture, with its established image names and all original rows, and assert the independent
+`level-0.replay` instead. The source record's false durations cannot truthfully pass complete
+output acceptance. No original golden pixel or timeline row is changed; no unnecessary
+resource-reference migration is introduced. This choice does not assert the old recording.
+
+**Exit and sound.** The original `level-0.exit` now passes every settled frame and timing
+through the shared comparator. The ship moves one pixel toward y6, holds one step, then
+flies right: speed starts at one and increases whenever its new x is divisible by three.
+Player shots, the surviving boss projectile and destruction pictures keep moving. The
+original `sound/game/space-impact/level-0` passes its entire captured window through the real
+sounder/sequencer, including replacement cues and boss-kill vibration. Its duration resource
+is generated from the median of the three committed no-key vibration intervals (510 ms).
+Sound callback timestamps use the importer's millisecond rounding, without new tolerances.
+The level-0 sound window ends during boss vibration; later silence is not claimed by it.
+
+**Task 5b started, in failure order.** Fly-off loads level 1 after crossing x104, preserving
+score **585**, lives/weapon/count and RNG state **18052**. The session rearms the new shield.
+The initial object update supplies animation tick 1; with the recorded first fire key,
+level 1's first settled board `c` is pixel-exact. Its delivered input is now imported into
+its note through the existing seam. **UNVERIFIED:** generalizing the load cutoff, initial
+animation update and y6 alignment beyond the observed level-0→1 transition.
+
+The next exact failure is **level 1 `d`, frame 3, 197 ms**, after `c` at 82 ms: model pixels
+`(14,20)` and `(14,26)` are clear while the native shield edge is set. No broader level-1
+replay is claimed or asserted. A later unrestricted diagnostic also reaches the already
+UNVERIFIED terrain column 15; that is not the first failure and must not displace the shield
+edge in failure order. Temporary diagnostics remain outside committed tests.
+
+**Census and remaining scope.** **31 asserted / 138 pending / 0 known gaps**, across 169
+fixtures. Newly asserted: dense full-level output, the original exit, and full level-0 sound.
+Seeded splash, death/continue and game-over endings, remaining related control fixtures,
+complete level-1 reconstruction and levels 2–7 remain open. Existing accepted seed/default
+choices retain their UNVERIFIED labels. No comparison helper, per-test tolerance, website
+source, phone-core, snake package, lockfile or TODOS.md changes.
+
+**Verification.** Test-first failures precede the exit, vibration and next-level fixes.
+The focused gate passes **20 files / 975 tests**, with 138 expected TODOs. `vp check --fix`
+passes; the production website build passes. Full uncached workspace and final check results
+are recorded at closeout. Logs: `/private/tmp/p24-output-{focused,check-fix,workspace-tests,
+build}.log`; next failure: `/private/tmp/p24-level-one-next.json`.
+
+**Closeout verification.** The complete `vp run -r --no-cache test` passes all six
+packages: **273 files / 11,923 passed tests**, with **0/6 cache hits**. Detailed
+expected-failure/TODO counts and package timings are in `/private/tmp/p24-output-workspace-tests.log`.
+The stale plan-24 integrity expectation that all exits remain pending was updated to name only
+proven asserted fixtures; its focused regression passes all 3,221 tests. Production
+`website#build`, `vp check --fix`, two stable formatting passes and `git diff --check` pass.
+Final regeneration reports `up to date`. Only the owned sound resource changes; the original
+level-0 pixel/timeline data, excluded packages, lockfile and TODOS.md remain unchanged.
+All test processes use mise Node 22; the guard rejects host Node 26 before tests can run.
+The successful uncached suite uses `VITEST_MAX_WORKERS=2` and `VP_RUN_CONCURRENCY_LIMIT=1`.
 
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 

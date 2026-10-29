@@ -1,6 +1,6 @@
 sound-golden 1
 id: sound/game/space-impact/level-0
-status: pending:24
+status: asserted
 source: captures/6.39/plan24/bot/full/level-0
 source-sha256: 504d351987cad199c2aa4776bc1b6a8e754eb6dff4448fbda4772cd23c303420
 state: virgin

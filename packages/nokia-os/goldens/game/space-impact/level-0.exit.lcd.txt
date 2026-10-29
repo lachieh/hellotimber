@@ -1,6 +1,6 @@
 lcd-golden 1
 id: game/space-impact/level-0.exit
-status: pending:24
+status: asserted
 source: captures/6.39/plan24/bot/full/level-0.exit
 source-sha256: 692a8697cfdf38a803b545e364d88522e0cccdb351a301d6d735048f732d572b
 trigger-frame: 1

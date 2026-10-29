@@ -32,19 +32,33 @@ export const spaceImpactSoundModule: GeneratedResourceModule = {
     )
       throw new Error("Space impact: changed captured pickup program");
     const first = rows[0]!.ms;
-    return resourceModule(
-      "SPACE_IMPACT_SOUNDS",
-      "Readonly<Record<string, { readonly id: string; readonly steps: readonly { readonly ms: number; readonly buzzer?: { readonly hz: number; readonly volume: number } | null }[] }>>",
-      {
-        "space-impact/bonus": programFromRows(
-          "space-impact/bonus",
-          bonus.map((row) => ({ ...row, ms: row.ms - bonus[0]!.ms })),
-        ),
-        "space-impact/shot": programFromRows(
-          "space-impact/shot",
-          rows.map((row) => ({ ...row, ms: row.ms - first })),
-        ),
-      },
+    const vibration = sound("sound/game/space-impact/nokeys-warning-on").rows.filter(
+      (row) => row.output === "vibrator",
+    );
+    const durations = vibration
+      .flatMap((row, i) => {
+        const next = vibration[i + 1];
+        return row.state.kind === "on" && next?.state.kind === "off" ? [next.ms - row.ms] : [];
+      })
+      .sort((a, b) => a - b);
+    if (durations.length !== 3)
+      throw new Error("Space impact: missing captured vibration intervals");
+    return (
+      resourceModule("SPACE_IMPACT_VIBRATE_MS", "number", durations[1]) +
+      resourceModule(
+        "SPACE_IMPACT_SOUNDS",
+        "Readonly<Record<string, { readonly id: string; readonly steps: readonly { readonly ms: number; readonly buzzer?: { readonly hz: number; readonly volume: number } | null }[] }>>",
+        {
+          "space-impact/bonus": programFromRows(
+            "space-impact/bonus",
+            bonus.map((row) => ({ ...row, ms: row.ms - bonus[0]!.ms })),
+          ),
+          "space-impact/shot": programFromRows(
+            "space-impact/shot",
+            rows.map((row) => ({ ...row, ms: row.ms - first })),
+          ),
+        },
+      )
     );
   },
 };

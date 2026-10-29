@@ -68,8 +68,8 @@ export const spaceImpact: PlanCaptureSet = {
     assertSpaceImpactCaptureGate(io.json);
     const levels = io.json("plan24/input-model-20261029/delivered-levels.json");
     if (!isRecord(levels)) throw new Error("Space impact: missing delivered-level evidence");
-    return spaceImpactCaptureSet(io.game).map((entry) =>
-      entry.id === "game/space-impact/level-0"
+    const entries = spaceImpactCaptureSet(io.game).map((entry) =>
+      /^game\/space-impact\/level-[01]$/.test(entry.id)
         ? {
             ...entry,
             prefer: {
@@ -77,12 +77,33 @@ export const spaceImpact: PlanCaptureSet = {
               note: withObservedSpaceImpactInput(
                 (entry.prefer.note ?? "") +
                   " Full-level replay uses the observed delivered stream below; input retains the legacy raw-pulse diagnostic.",
-                levels["0"],
+                levels[entry.id.slice(-1)],
               ),
             },
           }
         : entry,
     );
+    const source = entries.find((entry) => entry.id === "game/space-impact/level-0");
+    if (source === undefined) throw new Error("Space impact: missing level-0 source");
+    return [
+      ...entries,
+      {
+        ...source,
+        id: "game/space-impact/level-0.replay",
+        status: "asserted",
+        prefer: {
+          ...source.prefer,
+          source: {
+            kind: "recording",
+            dir: "plan24/redraw-20261029/dense-recording/plan24/validation-20261027/full/level-0",
+          },
+          note: withObservedSpaceImpactInput(
+            "Independent replay with quiet 1: the original recorder reset its three-millisecond quiet counter at each two-millisecond bot run, missing complete frames and overstating partial redraw durations. Every original image and identical PCM are retained in the source control; this recording measures the complete LCD output.",
+            levels["0"],
+          ),
+        },
+      },
+    ];
   },
   sounds(io) {
     assertSpaceImpactCaptureGate(io.json);

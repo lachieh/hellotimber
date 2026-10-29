@@ -391,15 +391,16 @@ describe("plan 17 goldens", () => {
 
 describe("plan 24 imported evidence", () => {
   const own = readPlanIndex(GOLDENS, "24");
-  it("retains the eight complete levels, exits, restart and ending pending gameplay replay", () => {
+  it("retains every level, exit, restart and ending with only proven replays asserted", () => {
     for (const name of [
       ...Array.from({ length: 8 }, (_, n) => [`level-${n}`, `level-${n}.exit`]).flat(),
       "level-7.restart",
+      "level-0.replay",
       "end",
     ]) {
       expect(own.find((entry) => entry.id === `game/space-impact/${name}`)).toMatchObject({
         kind: "timeline",
-        status: "pending:24",
+        status: name === "level-0.exit" || name === "level-0.replay" ? "asserted" : "pending:24",
       });
     }
   });

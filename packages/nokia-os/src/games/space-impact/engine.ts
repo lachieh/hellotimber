@@ -1,3 +1,4 @@
+import { SPACE_IMPACT_VIBRATE_MS } from "../../resources/generated/space-impact-sounds";
 import { SPACE_IMPACT_WAVE_PROGRAM } from "../../resources/generated/space-impact-wave-program";
 import { createGameRandom } from "../random";
 import { spaceImpactEnemyEntries, spaceImpactEnemyY } from "./objects";
@@ -123,12 +124,35 @@ export function stepSpaceImpact(state: SpaceImpactState): SpaceImpactResult {
   const deferred = pending(state);
   if (deferred) return deferred;
   if (state.phase.kind === "boss-destruction") {
+    const targetY = 6;
+    const ship =
+      state.phase.flightSpeed === 0
+        ? { ...state.ship, y: state.ship.y + Math.sign(targetY - state.ship.y) }
+        : { ...state.ship, x: state.ship.x + state.phase.flightSpeed };
+    if (ship.x > 104 && state.level < 7)
+      return result({
+        ...newSpaceImpactGame({ seed: state.randomState }),
+        level: state.level + 1,
+        tick: 1,
+        hud: state.hud,
+      });
+    const flightSpeed =
+      state.phase.flightSpeed === 0
+        ? state.ship.y === targetY
+          ? 1
+          : 0
+        : state.phase.flightSpeed + (ship.x % 3 === 0 ? 1 : 0);
     return result({
       ...state,
       tick: state.tick + 1,
+      ship,
+      enemyShots: state.enemyShots.flatMap((shot) =>
+        shot.x < 3 ? [] : [{ ...shot, x: shot.x - 3 }],
+      ),
       phase: {
         ...state.phase,
         frame: state.phase.frame + 1,
+        flightSpeed,
         effects: state.phase.effects.flatMap((effect) =>
           (effect.phase + 1) % 5 === 4 ? [] : [{ ...effect, phase: (effect.phase + 1) % 5 }],
         ),
@@ -175,6 +199,7 @@ export function stepSpaceImpact(state: SpaceImpactState): SpaceImpactResult {
     enemies[index] = { ...enemy, shotsLeft: enemy.shotsLeft - 1 };
     enemyShots.push({ x: enemy.x - 5, y: enemy.y + 2, deathFrame: null });
   }
+  const cues: SpaceImpactResult["cues"][number][] = [];
   let score = state.hud.score;
   const movedBonuses = [
     // UNVERIFIED: level 0 collects both orbs before their left-edge retirement.
@@ -250,8 +275,9 @@ export function stepSpaceImpact(state: SpaceImpactState): SpaceImpactResult {
           { x: center.x - dx, y: center.y - 6, phase: random.next() % 5 },
         );
       }
-      phase = { kind: "boss-destruction", frame: 0, effects };
+      phase = { kind: "boss-destruction", frame: 0, flightSpeed: 0, effects };
       score += 100;
+      cues.push({ kind: "vibrate", ms: SPACE_IMPACT_VIBRATE_MS });
     } else score += hp === 0 ? 10 : 5;
     return [];
   });
@@ -263,22 +289,25 @@ export function stepSpaceImpact(state: SpaceImpactState): SpaceImpactResult {
     pendingCue = "space-impact/bonus";
     return false;
   });
-  return result({
-    ...state,
-    phase,
-    enemies,
-    enemyShots,
-    bonuses,
-    hud,
-    randomState: random.state,
-    pendingCue,
-    ship,
-    moves: [],
-    tick: state.tick + 1,
-    scroll: state.scroll + 1,
-    fireCooldown: Math.max(0, state.fireCooldown - 1),
-    shots,
-  });
+  return {
+    ...result({
+      ...state,
+      phase,
+      enemies,
+      enemyShots,
+      bonuses,
+      hud,
+      randomState: random.state,
+      pendingCue,
+      ship,
+      moves: [],
+      tick: state.tick + 1,
+      scroll: state.scroll + 1,
+      fireCooldown: Math.max(0, state.fireCooldown - 1),
+      shots,
+    }),
+    cues,
+  };
 }
 
 export function expireSpaceImpactShield(state: SpaceImpactState): SpaceImpactResult {

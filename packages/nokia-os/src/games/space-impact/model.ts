@@ -40,6 +40,7 @@ export interface SpaceImpactState {
     | {
         readonly kind: "boss-destruction";
         readonly frame: number;
+        readonly flightSpeed: number;
         readonly effects: readonly (SpaceImpactPoint & { readonly phase: number })[];
       };
   readonly tick: number;

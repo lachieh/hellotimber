@@ -739,10 +739,19 @@
   {
     "id": "game/space-impact/level-0.exit",
     "file": "game/space-impact/level-0.exit.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "timeline",
     "images": 36,
     "frames": 36
+  },
+  {
+    "id": "game/space-impact/level-0.replay",
+    "file": "game/space-impact/level-0.replay.lcd.txt",
+    "status": "asserted",
+    "kind": "timeline",
+    "images": 1009,
+    "frames": 1040,
+    "input": true
   },
   {
     "id": "game/space-impact/level-1",
@@ -1251,7 +1260,7 @@
   {
     "id": "sound/game/space-impact/level-0",
     "file": "sound/game/space-impact/level-0.sound.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "sound",
     "events": 1209
   },
