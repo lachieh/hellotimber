@@ -24,7 +24,8 @@ implementation must replay their pixels under AGENTS.md's fidelity standard. The
 defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete,
 including the inherited Games II seams. Task 3 is complete: 168 fixtures are imported and
 remain pending gameplay replay. Task 4 is complete under the accepted revised criterion below.
-Task 5 has a verified partial layered-decoder and linear-tracker checkpoint; complete level
+Task 5 is split into level 0 (5a) and levels 1–7 (5b) under the accepted sequencing change
+below. The level-0 decoder checkpoint reads 855 of 856 settled images exactly; full level-0
 reconstruction remains open and Tasks 6–14 are unstarted.
 
 ## Goal
@@ -1786,6 +1787,26 @@ spawn/y-path/boss fitting and seed/fire-event reconstruction. Missing pictures a
 replays need them, not used to reopen the superseded inventory gate. No complete gameplay,
 terrain edge not observed cleanly, or spawn/firing rule is asserted by this resource delivery.
 
+### Accepted sequencing change (Lachlan, 2026-10-28): level 0 vertical slice first
+
+Task 5 is split into **5a (level 0)** and **5b (levels 1–7)**. Task 5a commits
+level 0's observed spawn script, paths, boss, HP and fire data through the existing
+`resources.generatedModules` extension. The existing decoder/tracker's observed per-level
+data is acceptable; a general fitted rule is not a prerequisite. This supersedes the
+historical checkpoints' requirement to finish every level before emitting runtime data.
+
+After 5a, execute Tasks 6 onwards against level 0 until its complete full-level golden
+and related fixtures replay pixel-exact in `tests/acceptance/24-space-impact.test.ts`
+and become asserted. Drive splash, menu, HUD, continue and game-over fixtures as soon as
+supported. Then execute 5b and extend levels 1–7 one at a time, using replay failures to
+identify missing data or engine behavior. Tasks remain incomplete outside their proven
+slice; this is an accepted sequencing change, not a reduction of the final plan scope.
+
+Pixel-exact replay remains the proof. Keep the shared fidelity rules, record real
+mismatches with reasons, preserve the four accepted UNVERIFIED defaults, use TDD and
+commit coherent green units. Run focused tests during development and the full uncached
+workspace suite for each finished unit. The target of this round is level 0 end-to-end.
+
 ### Task 5 - Level reconstruction (TDD)
 
 **Files:** `scripts/space-impact-levels.ts` (new: the object tracker and the fitter),
@@ -2024,6 +2045,75 @@ Website, phone-core, phone-screen and packages/snake have no diff from `e1dbdd7`
 changed paths are this plan, the decoder, its tests, the sprite extractor, its tests and its
 generated output. Plan 24's index remains **0 asserted, 168 pending, 0 known gaps**; the two
 inherited Space impact fixtures remain pending in indices 14 and 16. Tasks 5–14 remain open.
+
+### Task 5a level-0 overlap checkpoint (2026-10-29; incomplete)
+
+Continued from `258bd86` in the existing `t3/p24-space-impact` worktree. The accepted
+2026-10-28 sequencing change above is recorded before code changes. Task 5a remains open;
+no generated level module, complete spawn/HP/fire table, runtime engine or acceptance replay
+is claimed. Task 5b waits until level 0 replays end-to-end. The canonical capture check again
+passes all 25 accepted criteria.
+
+**Exact observations.** Level-0 `go/gp/gq/gr` establish a bonus orb following a round-wide
+enemy at the same row, with intersecting bounding rectangles. The decoder composes their
+existing original pictures, retains both object identities, and requires visible ink from
+both parts; it never infers an invisible orb beyond the viewport. The composite's coverage
+is the union of its original rectangles, not a larger filled bounding box. `ih/ii/ij`
+establish the orb crossing blank cells of the ship's rectangle. Only that supported blank
+intersection is admitted; other consumed rectangles remain reserved so cancelling shots
+cannot manufacture a second decomposition. All previous tests, including strict clipped
+enemy identification and the duplicate-shot regression, retain their assertions.
+
+`aet/aeu/aev` prove an enemy at y=5, crossing the one-row gap below the HUD. Row 5 is now
+read by the object solver rather than rejected as HUD corruption; an isolated corrupt gap
+pixel still fails. `ahx/ahy` independently prove a player shot at (61,16) crossing the boss
+at (58,12). The existing exact shot compositor now supports this level-0 boss case. No new
+sprite, crop, generated resource, golden, tolerance or UNVERIFIED default is introduced.
+
+`afo` proves the ship and orb's actual ink crossing just before pickup; the composed
+ship/orb retains a separate ship observation and orb observation. Every returned candidate
+repaints the complete frame exactly.
+
+A local, consecutive-frame tracker regression (`gn` through `gr`) follows the enemy and orb
+as separate objects at dx=-2, dy=0, recognizes the orb's clipped viewport entry, and fits its
+observed path. It does not claim a complete level track or global spawn/RNG ordering.
+The additional cases were test-first (`/private/tmp/plan24-slice-{overlap,gap,boss,pickup}-red.log`).
+The final focused gate passes **3 files, 718 tests**, including **144 decoder/tracker tests**.
+
+**Complete settled-image audit.** An independent temporary audit reads all level-0 images
+shown for at least 34 ms (and the endpoints), using the shared fidelity standard without
+altering any comparison helper. Of **856 settled gameplay images**, **855** have supported
+exact decompositions, **398** remain ambiguous, and every one of **8,055** returned candidates
+repaints all 4,032 pixels exactly. This is decoder evidence, not gameplay acceptance. Native image `rw` still needs a partial-draw decomposition, but
+lasts 15 ms and is optional under the existing fidelity rule. The remaining settled failure
+is not eligible for a 34-ms exception:
+
+- `ala` (frame 1019, 76,783 ms, held 93 ms): in the boss region x=56..75, rows 23..31 are
+  pixel-identical to the preceding `akz` image shifted up one row, while rows 32..46 remain
+  pixel-identical to `akz` at their old coordinates. The next `alb` image redraws the complete
+  boss. This mixed redraw lasts longer than 34 ms and cannot be dropped or disguised as a
+  normal boss picture. Its redraw mechanism remains unimplemented.
+
+This is a documented reconstruction failure, not an asserted known-gap scenario: the whole
+fixture is still pending and the coverage guard requires known gaps to have an asserted
+scenario. Finish this case and temporal/lifecycle reconstruction, emit observed level-0
+data through `resources.generatedModules`, then proceed with the engine/painter/session and
+pixel-exact acceptance. No product decision is requested; no missing gameplay default is
+invented. All four accepted UNVERIFIED defaults remain labelled and unchanged.
+
+**Closeout verification.** The full uncached workspace suite passes all six packages:
+**258 passing files, one pending-only slice, 11,720 passed tests, 120 expected failures
+and 193 TODOs**, zero cache hits. Nokia-os contributes 166 passing files, one pending-only
+slice and 10,878 passing tests in 960.64 s; the other totals are phone-core 450, snake 62,
+phone-3d 49, phone-screen 101 and website 180. `vp check --fix`, final `vp check` and
+`website#build` pass. Formatting is stable after two `vp fmt` runs. Verification uses mise's
+absolute Node 22 and `/private/tmp/plan24-run-node22.cjs`, `VITEST_MAX_WORKERS=2`,
+`VP_RUN_CONCURRENCY_LIMIT=1`. An earlier full-suite attempt was stopped before completion
+when the final pickup regression was added; only this final uncached run is accepted.
+Logs: `/private/tmp/plan24-slice-{focused-final,workspace-tests,check-fix,check,build,audit-final,redraw,coverage}.log`.
+Plan 24 remains **0 asserted, 168 pending, 0 registered known gaps**; the two inherited
+Space impact fixtures remain pending in indices 14 and 16. Only this plan and the two
+plan-24 decoder/test files change. No excluded package changes.
 
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 

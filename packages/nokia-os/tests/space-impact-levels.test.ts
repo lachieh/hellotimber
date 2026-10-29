@@ -417,6 +417,88 @@ describe("strict Space impact LCD decoder", () => {
     for (const candidate of candidates) expect(repaint(candidate, level, scroll)).toEqual(pixels);
   });
 
+  it.each([
+    ["go", 72, 82, "enemy/round-wide/0", "bonus/orb/1"],
+    ["gp", 70, 80, "enemy/round-wide/1", "bonus/orb/0"],
+    ["gq", 68, 78, "enemy/round-wide/0", "bonus/orb/1"],
+    ["gr", 66, 76, "enemy/round-wide/1", "bonus/orb/0"],
+  ] as const)("reads the captured enemy/orb overlap in level-0 %s", (name, ex, bx, enemy, orb) => {
+    const pixels = goldenImage("game/space-impact/level-0", name).image.pixels;
+    const candidates = decodeSpaceImpactCandidates(pixels, { level: 0 });
+    expect(
+      candidates.some(
+        (candidate) =>
+          candidate.objects.some(
+            (object) => object.picture === enemy && object.x === ex && object.y === 9,
+          ) &&
+          candidate.objects.some(
+            (object) => object.picture === orb && object.x === bx && object.y === 9,
+          ),
+      ),
+    ).toBe(true);
+    for (const candidate of candidates) expect(repaint(candidate, 0)).toEqual(pixels);
+  });
+
+  it.each(["ih", "ii", "ij"])("reads the orb crossing the ship rectangle in level-0 %s", (name) => {
+    const pixels = goldenImage("game/space-impact/level-0", name).image.pixels;
+    const candidates = decodeSpaceImpactCandidates(pixels, { level: 0 });
+    expect(
+      candidates.some(
+        (candidate) =>
+          candidate.ship?.picture === "ship" &&
+          candidate.objects.some((object) => object.picture.startsWith("bonus/orb/")),
+      ),
+    ).toBe(true);
+    for (const candidate of candidates) expect(repaint(candidate, 0)).toEqual(pixels);
+  });
+
+  it.each(["aet", "aeu", "aev"])("reads the enemy crossing the HUD gap in level-0 %s", (name) => {
+    const pixels = goldenImage("game/space-impact/level-0", name).image.pixels;
+    const candidates = decodeSpaceImpactCandidates(pixels, { level: 0 });
+    expect(
+      candidates.some((candidate) =>
+        candidate.objects.some(
+          (object) => object.picture === "enemy/long-left/0" && object.y === 5,
+        ),
+      ),
+    ).toBe(true);
+    for (const candidate of candidates) expect(repaint(candidate, 0)).toEqual(pixels);
+  });
+
+  it.each(["ahx", "ahy"])("reads a captured shot crossing the level-0 boss in %s", (name) => {
+    const pixels = goldenImage("game/space-impact/level-0", name).image.pixels;
+    const candidates = decodeSpaceImpactCandidates(pixels, { level: 0 });
+    expect(
+      candidates.some(
+        (candidate) =>
+          candidate.objects.some(
+            (object) => object.picture === "boss/0/0" && object.x === 58 && object.y === 12,
+          ) &&
+          candidate.objects.some(
+            (object) => object.picture === "shot" && object.x === 61 && object.y === 16,
+          ),
+      ),
+    ).toBe(true);
+    for (const candidate of candidates) expect(repaint(candidate, 0)).toEqual(pixels);
+  });
+
+  it("reads the captured ship/orb ink crossing immediately before pickup", () => {
+    const pixels = goldenImage("game/space-impact/level-0", "afo").image.pixels;
+    const candidates = decodeSpaceImpactCandidates(pixels, { level: 0 });
+    expect(
+      candidates.some(
+        (candidate) =>
+          candidate.ship?.picture === "ship" &&
+          candidate.ship.x === 5 &&
+          candidate.ship.y === 24 &&
+          candidate.objects.some(
+            (object) => object.picture === "bonus/orb/0" && object.x === 14 && object.y === 24,
+          ),
+      ),
+    ).toBe(true);
+    for (const candidate of candidates) expect(repaint(candidate, 0)).toEqual(pixels);
+  });
+
   it("preserves its source pixels on success and failure", () => {
     const pixels = frame({ level: 2 });
     const original = pixels.slice();
@@ -503,6 +585,55 @@ describe("Space impact linear segment reconstruction", () => {
         exits: [],
       },
     ]);
+  });
+
+  it("tracks the captured enemy/orb pair through its clipped entry without merging their identities", () => {
+    const frames = ["gn", "go", "gp", "gq", "gr"].map((name, tick) => {
+      const candidates = decodeSpaceImpactCandidates(
+        goldenImage("game/space-impact/level-0", name).image.pixels,
+        { level: 0 },
+      ).map((candidate) =>
+        candidate.objects.filter(
+          (object) =>
+            object.picture.startsWith("bonus/orb/") ||
+            (object.picture.startsWith("enemy/round-wide/") && object.y === 9),
+        ),
+      );
+      return {
+        tick,
+        candidates: [
+          ...new Map(candidates.map((objects) => [JSON.stringify(objects), objects])).values(),
+        ],
+      };
+    });
+    const graph = trackSpaceImpactLinearSegment(frames, [
+      { family: "enemy/round-wide", dx: -2, dy: 0 },
+      { family: "bonus/orb", dx: -2, dy: 0 },
+    ]);
+    expect(graph.map((nodes) => nodes.length)).toEqual([1, 1, 1, 1, 1]);
+    expect(graph[1]![0]!.predecessors).toEqual([
+      { candidate: 0, links: [{ from: 0, to: 0 }], entries: [1], exits: [] },
+    ]);
+    for (const nodes of graph.slice(2))
+      expect(nodes[0]!.predecessors).toEqual([
+        {
+          candidate: 0,
+          links: [
+            { from: 0, to: 0 },
+            { from: 1, to: 1 },
+          ],
+          entries: [],
+          exits: [],
+        },
+      ]);
+    expect(
+      fitSpaceImpactLinearPath(
+        graph.slice(1).map(([node]) => ({
+          tick: node!.tick,
+          object: node!.objects[1]!,
+        })),
+      ),
+    ).toEqual({ family: "bonus/orb", startTick: 1, endTick: 4, x: 82, y: 9, dx: -2, dy: 0 });
   });
 
   it("uses later motion to eliminate an ambiguous white-background shot position", () => {

@@ -73,7 +73,7 @@ function readHud(pixels: Uint8Array, y: number): DecodedSpaceImpact["hud"] {
   const count = digits(43, 2),
     score = digits(57, 5);
   const start = y === 0 ? 0 : y - 1;
-  const end = y === 0 ? 6 : HEIGHT;
+  const end = y === 0 ? 5 : HEIGHT;
   if (pixels.slice(start * WIDTH, end * WIDTH).some((value) => value !== 0))
     throw new Error("decoder: unread HUD pixels or gap");
   return { lives, weapon, count, score };
@@ -143,6 +143,47 @@ const objectPictures = Object.entries(sprites)
   )
   .map(([id, art]) => ({ id, art, width: art[0]!.length, height: art.length }));
 
+// Level-0 go–gr and afo establish these pairs using their original pictures.
+function layeredPictures(inverted: boolean) {
+  const singles = objectPictures.map((sprite) => ({
+    ...sprite,
+    parts: [{ picture: sprite.id, x: 0, y: 0, width: sprite.width, height: sprite.height }],
+  }));
+  const pairs = ["enemy/round-wide/0", "enemy/round-wide/1", "ship"].flatMap((id) =>
+    [0, 1].map((orbFrame) => {
+      const primary = objectPictures.find((sprite) => sprite.id === id)!;
+      const orb = objectPictures.find((sprite) => sprite.id === `bonus/orb/${orbFrame}`)!;
+      const offset = primary.width - 1;
+      const width = offset + orb.width,
+        height = Math.max(primary.height, orb.height);
+      const art = Array.from({ length: height }, (_, y) =>
+        Array.from({ length: width }, (_, x) => {
+          const a = Number(primary.art[y]?.[x] === "#"),
+            b = Number(orb.art[y]?.[x - offset] === "#");
+          return (inverted ? a ^ b : a | b) ? "#" : ".";
+        }).join(""),
+      );
+      return {
+        id: `${primary.id}+${orb.id}`,
+        art,
+        width,
+        height,
+        parts: [
+          { picture: primary.id, x: 0, y: 0, width: primary.width, height: primary.height },
+          { picture: orb.id, x: offset, y: 0, width: orb.width, height: orb.height },
+        ],
+      };
+    }),
+  );
+  return [...singles, ...pairs];
+}
+
+const RESERVED_OBJECT = 1,
+  RESERVED_BONUS = 2;
+
+const invertedPictures = layeredPictures(true);
+const normalPictures = layeredPictures(false);
+
 function readObjects(
   pixels: Uint8Array,
   top: number,
@@ -171,20 +212,52 @@ function readObjects(
     }
     const firstX = first % WIDTH,
       firstY = Math.floor(first / WIDTH);
-    for (const sprite of objectPictures) {
-      const compound =
-        sprite.id === "ship" || sprite.id.startsWith("ship/") || sprite.id.startsWith("explosion/");
+    for (const sprite of inverted ? invertedPictures : normalPictures) {
+      const compound = sprite.parts.some(
+        (part) =>
+          part.picture === "ship" ||
+          part.picture.startsWith("ship/") ||
+          part.picture.startsWith("explosion/") ||
+          part.picture.startsWith("boss/0/"),
+      );
       // The sprite or one of its crossing shots must cover the first unexplained pixel.
       for (
         let y = Math.max(top, firstY - sprite.height + 1);
         y <= Math.min(firstY, bottom - sprite.height);
         y++
       ) {
+        if (top === 5 && y === 5 && !sprite.id.startsWith("enemy/")) continue;
         for (
           let x = Math.max(1 - sprite.width, firstX - sprite.width + (compound ? 0 : 1));
           x <= Math.min(WIDTH - 1, firstX + (compound ? 1 : 0));
           x++
         ) {
+          if (
+            sprite.parts.length > 1 &&
+            sprite.parts.some(
+              (part) =>
+                !picture(part.picture).some((row, dy) =>
+                  row
+                    .split("")
+                    .some(
+                      (char, dx) =>
+                        char === "#" &&
+                        x + part.x + dx >= 0 &&
+                        x + part.x + dx < WIDTH &&
+                        remaining[(y + part.y + dy) * WIDTH + x + part.x + dx] === 1,
+                    ),
+                ),
+            )
+          )
+            continue;
+          const covered = (dx: number, dy: number) =>
+            sprite.parts.some(
+              (part) =>
+                dx >= part.x &&
+                dx < part.x + part.width &&
+                dy >= part.y &&
+                dy < part.y + part.height,
+            );
           const left = Math.max(0, x),
             right = Math.min(WIDTH, x + sprite.width);
           const rows: { x: number; y: number }[][][] = [];
@@ -196,6 +269,7 @@ function readObjects(
             const observed = (dx: number) => remaining[(y + dy) * WIDTH + x + dx]!;
             const differences: number[] = [];
             for (let dx = left - x; dx < right - x; dx++) {
+              if (!covered(dx, dy)) continue;
               if (base(dx) !== observed(dx)) {
                 if (!compound || (!inverted && base(dx) === 1)) {
                   valid = false;
@@ -264,7 +338,14 @@ function readObjects(
           if (!valid) continue;
           for (let dy = 0; dy < sprite.height && valid; dy++)
             for (let dx = left; dx < right; dx++)
-              if (occupied[(y + dy) * WIDTH + dx]) {
+              if (
+                occupied[(y + dy) * WIDTH + dx] &&
+                !(
+                  (sprite.id === "ship" || sprite.id.startsWith("ship/")) &&
+                  occupied[(y + dy) * WIDTH + dx] === RESERVED_BONUS &&
+                  sprite.art[dy]![dx - x] === "."
+                )
+              ) {
                 valid = false;
                 break;
               }
@@ -277,16 +358,30 @@ function readObjects(
             const next = remaining.slice(),
               used = occupied.slice();
             for (let dy = 0; dy < sprite.height; dy++) {
-              erase(next, right - left, 1, left, y + dy);
-              used.fill(1, (y + dy) * WIDTH + left, (y + dy) * WIDTH + right);
+              for (let dx = left; dx < right; dx++) {
+                if (!covered(dx - x, dy)) continue;
+                next[(y + dy) * WIDTH + dx] = 0;
+                const parts = sprite.parts.filter(
+                  (part) =>
+                    dx - x >= part.x &&
+                    dx - x < part.x + part.width &&
+                    dy >= part.y &&
+                    dy < part.y + part.height,
+                );
+                used[(y + dy) * WIDTH + dx] = parts.every((part) =>
+                  part.picture.startsWith("bonus/"),
+                )
+                  ? RESERVED_BONUS
+                  : RESERVED_OBJECT;
+              }
             }
             for (const shot of shots) {
               erase(next, 2, 1, shot.x, shot.y);
-              used.fill(1, shot.y * WIDTH + shot.x, shot.y * WIDTH + shot.x + 2);
+              used.fill(RESERVED_OBJECT, shot.y * WIDTH + shot.x, shot.y * WIDTH + shot.x + 2);
             }
             search(next, used, [
               ...found,
-              { picture: sprite.id, x, y, width: sprite.width, height: sprite.height },
+              ...sprite.parts.map((part) => ({ ...part, x: x + part.x, y: y + part.y })),
               ...shots.map((shot) => ({ picture: "shot", ...shot, width: 2, height: 1 })),
             ]);
           };
@@ -320,7 +415,7 @@ export function decodeSpaceImpactCandidates(
     const residual = normal.map((value, index) => value ^ background[index]!);
     const solutions = readObjects(
       residual,
-      ceiling ? 0 : 6,
+      ceiling ? 0 : 5,
       ceiling ? 42 : HEIGHT,
       level === 0 || ceiling,
       background,
@@ -354,7 +449,7 @@ export function decodeSpaceImpactCandidates(
   }
   if (decoded.length === 0)
     throw new Error(
-      "decoder: unread object pixels or terrain (unknown, overlapping, damaged or multiple ship pictures)",
+      "decoder: unread object pixels, HUD gap or terrain (unknown, overlapping, damaged or multiple ship pictures)",
     );
   return decoded;
 }
