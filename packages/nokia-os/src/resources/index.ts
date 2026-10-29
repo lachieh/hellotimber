@@ -329,3 +329,5 @@ export const SPACE_IMPACT_CONTINUE_TIMINGS = {
 export { SPACE_IMPACT_LEVEL_OBSERVATIONS } from "./generated/space-impact-levels";
 
 export { SPACE_IMPACT_OPENING_WAVE } from "./generated/space-impact-opening-wave";
+
+export { SPACE_IMPACT_WAVE_INVENTORY } from "./generated/space-impact-waves";

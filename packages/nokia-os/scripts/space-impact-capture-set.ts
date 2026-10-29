@@ -644,7 +644,7 @@ export function spaceImpactStart(id: string): TickStart {
 }
 
 const ASSERTED = new Set([
-  "keys-hold-0",
+  ...["0", "2", "5", "7", "9", "up", "down", "star"].map((key) => `keys-hold-${key}`),
   ...["8", "0", "star", "hash", "2", "5", "7", "9", "up", "down", "1", "3"].map(
     (key) => `keys-tap-${key}`,
   ),

@@ -841,7 +841,7 @@ function spaceImpactTap(id: string): void {
   }
 }
 
-function spaceImpactHoldDown(id: string): void {
+function spaceImpactHold(id: string): void {
   const rig = spaceImpactMenu();
   const golden = loadGolden(id);
   rig.press("navi");
@@ -856,9 +856,12 @@ function spaceImpactHoldDown(id: string): void {
     }
     for (const input of golden.input ?? []) {
       if (input.tick !== tick) continue;
-      if (input.key !== "0") throw new Error(`${id}: unexpected held-direction key`);
-      if (input.release) rig.release(input.key);
-      else rig.hold(input.key);
+      const key = (["0", "2", "5", "7", "9", "up", "down", "*"] as const).find(
+        (key) => key === input.key,
+      );
+      if (key === undefined) throw new Error(`${id}: unexpected held key ${input.key}`);
+      if (input.release) rig.release(key);
+      else rig.hold(key);
     }
     expectLcd(rig.paint(), { id, image }, `${id} tick ${tick}`);
   }
@@ -894,7 +897,12 @@ function suspendedSpaceImpact(): Rig {
 }
 
 export const spaceImpactScenarios: Readonly<Record<string, (id: string) => void>> = {
-  "game/space-impact/keys-hold-0": spaceImpactHoldDown,
+  ...Object.fromEntries(
+    ["0", "2", "5", "7", "9", "up", "down", "star"].map((key) => [
+      `game/space-impact/keys-hold-${key}`,
+      spaceImpactHold,
+    ]),
+  ),
   ...Object.fromEntries(
     ["8", "0", "star", "hash", "2", "5", "7", "9", "up", "down", "1", "3"].map((key) => [
       `game/space-impact/keys-tap-${key}`,

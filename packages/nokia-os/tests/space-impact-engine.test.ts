@@ -166,7 +166,7 @@ describe("Space impact shot collisions", () => {
   it("consumes the first colliding shot and awards a kill once", () => {
     const original = {
       ...newSpaceImpactGame(),
-      enemies: [{ x: 34, y: 8, animationOffset: 0, deathFrame: null }],
+      enemies: [{ x: 34, y: 8, animationOffset: 0, dx: -2, deathFrame: null }],
       shots: [
         { x: 29, y: 11 },
         { x: 23, y: 10 },
@@ -193,8 +193,8 @@ describe("Space impact shot collisions", () => {
   it("does not hit outside the enemy box", () => {
     const original = {
       ...newSpaceImpactGame(),
-      enemies: [{ x: 34, y: 8, animationOffset: 0, deathFrame: null }],
-      shots: [{ x: 29, y: 13 }],
+      enemies: [{ x: 34, y: 8, animationOffset: 0, dx: -2, deathFrame: null }],
+      shots: [{ x: 29, y: 14 }],
     };
     expect(stepSpaceImpact(original).state.hud.score).toBe(0);
   });
@@ -203,7 +203,7 @@ describe("Space impact shot collisions", () => {
 it("registers the captured shot at the upper edge of a following-wave enemy", () => {
   const state = {
     ...newSpaceImpactGame(),
-    enemies: [{ x: 82, y: 17, animationOffset: 1, deathFrame: null }],
+    enemies: [{ x: 82, y: 17, animationOffset: 1, dx: -2, deathFrame: null }],
     shots: [{ x: 77, y: 16 }],
   };
   expect(stepSpaceImpact(state).state.hud.score).toBe(10);
@@ -212,7 +212,25 @@ it("registers the captured shot at the upper edge of a following-wave enemy", ()
 it("retires an enemy when its left edge leaves the display, as the held-0 fixture records", () => {
   const state = {
     ...newSpaceImpactGame(),
-    enemies: [{ x: 0, y: 8, animationOffset: 0, deathFrame: null }],
+    enemies: [{ x: 0, y: 8, animationOffset: 0, dx: -2, deathFrame: null }],
   };
   expect(stepSpaceImpact(state).state.enemies).toEqual([]);
+});
+
+it("registers the captured right-edge contact against a slow round enemy", () => {
+  const state = {
+    ...newSpaceImpactGame(),
+    enemies: [{ x: 78, y: 17, dx: -1, animationOffset: 0, deathFrame: null }],
+    shots: [{ x: 73, y: 18 }],
+  };
+  expect(stepSpaceImpact(state).state.hud.score).toBe(10);
+});
+
+it("registers the captured lower-edge contact against the second slow enemy", () => {
+  const state = {
+    ...newSpaceImpactGame(),
+    enemies: [{ x: 72, y: 17, dx: -1, animationOffset: 0, deathFrame: null }],
+    shots: [{ x: 67, y: 22 }],
+  };
+  expect(stepSpaceImpact(state).state.hud.score).toBe(10);
 });

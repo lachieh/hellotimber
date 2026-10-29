@@ -1,3 +1,4 @@
+import { spaceImpactWaveInventoryModule } from "../space-impact-waves.ts";
 import { withObservedSpaceImpactInput } from "../space-impact-delivery.ts";
 import { spaceImpactSoundModule } from "../space-impact-sounds.ts";
 import { spaceImpactLevelModule, spaceImpactOpeningWaveModule } from "../space-impact-levels.ts";
@@ -57,6 +58,7 @@ export const spaceImpact: PlanCaptureSet = {
       ...(spaceImpactResources.generatedModules ?? []),
       spaceImpactLevelModule,
       spaceImpactOpeningWaveModule,
+      spaceImpactWaveInventoryModule,
       spaceImpactSoundModule,
     ],
   },

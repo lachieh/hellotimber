@@ -1,6 +1,6 @@
 lcd-golden 1
 id: game/space-impact/keys-hold-up
-status: pending:24
+status: asserted
 source: captures/6.39/plan24/keys/hold-up
 source-sha256: 6174bf2e03f1d9efd26d0ac7a12e05c37de1e2c431ab1761686c4d79fc4986aa
 note: S4: New game, ▲ held from tick 40 to tick 60. Tick stills: each key's tick and the two after it.

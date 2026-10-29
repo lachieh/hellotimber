@@ -1,6 +1,6 @@
 lcd-golden 1
 id: game/space-impact/keys-hold-star
-status: pending:24
+status: asserted
 source: captures/6.39/plan24/keys/hold-star
 source-sha256: 7dfad3f4a2d8cfd49ba41316d2eb11cb983d82df20079006a7f98bb76378f3c3
 note: S4: New game, * held from tick 40 to tick 60. Tick stills: each key's tick and the two after it.

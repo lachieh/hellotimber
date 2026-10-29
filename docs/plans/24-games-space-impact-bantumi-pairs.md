@@ -22,12 +22,12 @@ only and are never imported. Task 0 writes this plan's captures to `$REF/capture
 The eight full-level recordings, exits, ending and LCD-only control proof are validated;
 implementation must replay their pixels under AGENTS.md's fidelity standard. The four accepted
 defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete,
-including the inherited Games II seams. Task 3 is complete: 168 fixtures are imported; 21 are asserted and 147 remain pending
+including the inherited Games II seams. Task 3 is complete: 168 fixtures are imported; 28 are asserted and 140 remain pending
 gameplay/session replay. Task 4 is complete under the accepted revised criterion below.
 Task 5 is split into level 0 (5a) and levels 1–7 (5b) under the accepted sequencing change
 below. The level-0 decoder checkpoint reads 855 of 856 settled images exactly; full level-0
 reconstruction remains open. Tasks 7/8/10 have an initial engine/painter slice, and Tasks 11/13 now have the
-Games binding, initial session and 20 passing acceptance scenarios. Tasks 6 and 9/12/14 remain
+Games binding, initial session and 28 passing acceptance scenarios. Tasks 6 and 9/12/14 remain
 open; none of those partial slices completes its task. The 2026-10-29 checkpoint below records its exact proof and limits.
 
 ## Goal
@@ -2600,6 +2600,92 @@ pixel/timeline/input and every generated module other than the opening-wave modu
 its previous bytes. Website, phone-core, phone-screen, phone-3d, packages/snake and the
 lockfile have no diff. This is a coherent partial opening-kills unit; level 0 end-to-end
 remains incomplete.
+
+### Later linear waves and first bonus approach checkpoint (2026-10-29; partial)
+
+Continued from `040b58d`, only in `t3/p24-space-impact`. The complete observed delivered
+stream now matches **205 of 879 settled rows**, through **`ij`, frame 243, 18075 ms**.
+The first remaining mismatch is **`ik`, frame 244, 18149 ms, held 189 ms**: the real pickup
+removes the orb and changes missiles to wall ×3. The engine has not selected a bonus result
+or injected a gameplay seed. `level-0` remains pending; this is ordered pixel-exact prefix
+accounting, not complete output/timing acceptance.
+
+**One-pass wave inventory.** `scripts/space-impact-waves.ts` registers an owned generated
+module through the existing capture set. It preserves **34 observed tracks** across the
+whole level: 12 round-wide, six triangle, nine round-small, four long-left, two bonus orbs
+and the boss. Each has a candidate delivered entry-step ordinal, horizontal motion,
+spatial path alternatives and exact LCD specimen references. The inventory accounts for
+**every unambiguous complete ordinary-enemy observation** in Task 5a's table. `qy`, `td`
+and `vi` retain explicitly unresolved clipped-entry/kill attribution. This is a full-level
+inventory of the retained observations, **not a complete fitted spawn/HP/fire script**.
+The generated module labels later entry-step attribution, nonlinear path associations and
+unfitted HP **UNVERIFIED**. It is not consumed as captured runtime state. Further decoder
+work is not required by this unit.
+
+The callback ordinal is distinct from engine updates and scroll. LCD writes can retain
+the previous update while the next callback has begun; an identical stationary picture
+links through its preceding observed frame. These are observation associations, not a
+new latency model, firmware race allowance or widened timing tolerance. Later replay must
+resolve their alternatives. The boss's observed horizontal approach clamps at x=56; its
+later y alternatives and specimen references are retained, not a fitted boss phase program.
+
+**Runtime and TDD.** Static generated entries now include all twelve observed linear
+round-wide entries and both bonus-orb entries. Each enemy carries its own horizontal speed;
+the slow entries at delivered steps 90 and 108 move one pixel per update. Exact source
+specimens validate positions, motion and alternating pictures before generation. Runtime
+replay checks the first orb's entry, two-picture animation and approach alongside the ship,
+shots, enemies, explosions and HUD. Ten kills and score 100 match.
+
+The new complete-stream regression first failed at 96/879. `dv` then demonstrated right-edge
+shot contact and `fb` lower-edge contact, each with a focused failing-before regression.
+The collision box now includes those exact contacts. The old synthetic exterior test moved
+one pixel below the newly established lower boundary; an exterior non-hit is still checked.
+The earlier prefix stays exact. A bonus-rendering regression failed at 163/879 and now
+checks the entire 205-row prefix. Inventory tests cover every unambiguous complete enemy,
+retain unknown HP/edge attribution, and reject a deliberately changed LCD pixel.
+
+**Asserted fixtures.** Seven complete held-key tick-still fixtures pass through real
+Games navigation, preserving their down and release events: `2`, `5`, `7`, `9`, ▲, ▼ and
+`*`. The importer alone promotes them. Plan 24 is now **28 asserted, 140 pending,
+0 registered known gaps**. The inherited New-game tree golden remains asserted in its
+original index. Longer held timelines, the held-8 fixture and full level 0 remain pending.
+The importer has no per-plan CLI filter; the standard full import changed only these seven
+status lines and `goldens/index/24.json`. Every pixel, timeline, input and source hash stays
+byte-identical. Only the opening-wave module and new wave-inventory module change among
+generated resources; all resources are generator outputs.
+
+**Calls and limits.** No new RNG seed, pickup mapping or accepted game default is invented.
+The existing four accepted UNVERIFIED defaults are unchanged. **UNVERIFIED:** retiring an
+uncollected orb when its left edge becomes negative; both level-0 orbs are collected before
+that boundary. Applying the captured collision boundaries to unseen arrangements remains
+UNVERIFIED. Later nonlinear motion, all unresolved HP/fire data, RNG consumer ordering,
+bonus activation, boss behavior, endings, seeded splash and sound remain unfinished.
+No comparator or tolerance changes, and no genuinely unresolvable mismatch is established.
+
+**Focused verification.** `vp check --fix` passes without warnings. Ten focused files pass
+**760 tests**, with **140 expected TODOs**. Red/green evidence and the complete-stream
+diagnostic are `/private/tmp/p24-waves-{red-focused,edge-red,bottom-red,bonus-red,held-red,
+held-green,focused-final}.log` and `/private/tmp/p24-waves-diagnostic{.test.ts,.json}`.
+The diagnostic consumes all 1,812 committed events; no test reads REF. Full uncached suite,
+production build and final check results follow at closeout below.
+
+**Closeout verification.** The complete uncached `vp run -r --no-cache test` passes all six
+packages: **265 files, 11,866 passed tests, 120 expected failures and 163 TODOs**, with
+**0/6 cache hits**. Nokia-os contributes **173 files / 11,024 passed tests** in **988.95 s**;
+phone-core 450, snake 62, phone-3d 49, phone-screen 101 and website 180. `website#build`,
+`vp check --fix`, final `vp check` and `git diff --check` pass. All Node commands use mise's
+Node 22 and `/private/tmp/plan24-run-node22.cjs`; the workspace run uses
+`VITEST_MAX_WORKERS=2` and `VP_RUN_CONCURRENCY_LIMIT=1`. Focused invocation from the worktree
+is `vp test run --root packages/nokia-os tests/<file>.test.ts`, through that same guard.
+Logs: `/private/tmp/p24-waves-{workspace-tests,focused-final,build,final-check,
+check-fix-closeout}.log`. Regeneration reports up to date; the repeated import preserves
+all original pixels, timelines, source hashes and inputs. Only the seven intended status
+lines and plan-24 index change among goldens. Website, sibling packages and lockfile have
+no diff. This is a coherent partial wave/bonus-approach unit; level 0 remains pending at `ik`.
+
+The second orb's runtime phase remains **UNVERIFIED** until earlier pickup/pending-return
+behavior is replayed: its generated entry currently records the observed delivered callback
+ordinal. Later engine-update phases must not silently be equated with callback ordinals.
 
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 

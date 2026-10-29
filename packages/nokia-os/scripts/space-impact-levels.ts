@@ -384,10 +384,155 @@ export const spaceImpactOpeningWaveModule: GeneratedResourceModule = {
       y: secondFirst.object.y,
       animationOffset: 1,
     });
+    const complete = extractSpaceImpactLevelObservations(golden("game/space-impact/level-0"));
+    const later = [
+      {
+        tick: 90,
+        x: 83,
+        y: 17,
+        dx: -1,
+        animationOffset: 0,
+        specimens: [
+          ["du", 95, 78],
+          ["dv", 96, 77],
+        ],
+      },
+      {
+        tick: 108,
+        x: 83,
+        y: 17,
+        dx: -1,
+        animationOffset: 0,
+        specimens: [
+          ["es", 113, 78],
+          ["et", 114, 77],
+        ],
+      },
+      {
+        tick: 125,
+        x: 82,
+        y: 29,
+        dx: -2,
+        animationOffset: 1,
+        specimens: [
+          ["fk", 127, 78],
+          ["fm", 128, 76],
+        ],
+      },
+      {
+        tick: 134,
+        x: 82,
+        y: 29,
+        dx: -2,
+        animationOffset: 1,
+        specimens: [
+          ["fx", 136, 78],
+          ["fz", 138, 74],
+        ],
+      },
+      {
+        tick: 143,
+        x: 82,
+        y: 29,
+        dx: -2,
+        animationOffset: 1,
+        specimens: [
+          ["gj", 145, 78],
+          ["gl", 147, 74],
+        ],
+      },
+      {
+        tick: 144,
+        x: 82,
+        y: 9,
+        dx: -2,
+        animationOffset: 0,
+        specimens: [
+          ["gk", 146, 78],
+          ["gl", 147, 76],
+        ],
+      },
+      {
+        tick: 158,
+        x: 82,
+        y: 9,
+        dx: -2,
+        animationOffset: 0,
+        specimens: [
+          ["hb", 160, 78],
+          ["hd", 161, 76],
+        ],
+      },
+    ] as const;
+    for (const entry of later) {
+      for (const [image, tick, x] of entry.specimens) {
+        const frame = complete.frames.find((frame) => frame.image === image);
+        const picture = `enemy/round-wide/${(tick + entry.animationOffset) % 2 === 0 ? 1 : 0}`;
+        if (
+          x !== entry.x + entry.dx * (tick - entry.tick) ||
+          frame?.kind !== "decoded" ||
+          !frame.candidates.every((candidate) =>
+            candidate.objects.some((index) => {
+              const object = complete.objects[index]!;
+              return object.picture === picture && object.x === x && object.y === entry.y;
+            }),
+          )
+        )
+          throw new Error(`level-0 wave: changed specimen ${image}`);
+      }
+    }
+    const bonuses = [
+      {
+        tick: 149,
+        x: 82,
+        y: 9,
+        dx: -2,
+        specimens: [
+          ["gp", 150, 80],
+          ["gr", 152, 76],
+        ],
+      },
+      {
+        // UNVERIFIED runtime phase: delivered callback ordinal until pickup/pending replay.
+        tick: 609,
+        x: 83,
+        y: 24,
+        dx: -1,
+        specimens: [
+          ["acl", 616, 76],
+          ["acn", 617, 75],
+        ],
+      },
+    ] as const;
+    for (const entry of bonuses) {
+      for (const [image, tick, x] of entry.specimens) {
+        const frame = complete.frames.find((frame) => frame.image === image);
+        if (
+          x !== entry.x + entry.dx * (tick - entry.tick) ||
+          frame?.kind !== "decoded" ||
+          !frame.candidates.every((candidate) =>
+            candidate.objects.some((index) => {
+              const object = complete.objects[index]!;
+              return (
+                object.picture === `bonus/orb/${tick % 2}` && object.x === x && object.y === entry.y
+              );
+            }),
+          )
+        )
+          throw new Error(`level-0 bonus: changed specimen ${image}`);
+      }
+    }
     return resourceModule(
       "SPACE_IMPACT_OPENING_WAVE",
-      "{ readonly family: string; readonly dx: number; readonly dy: number; readonly entries: readonly { readonly tick: number; readonly x: number; readonly y: number; readonly animationOffset: number }[] }",
-      { family: "enemy/round-wide", dx: -2, dy: 0, entries },
+      "{ readonly family: string; readonly bonuses: readonly { readonly tick: number; readonly x: number; readonly y: number; readonly dx: number }[]; readonly entries: readonly { readonly tick: number; readonly x: number; readonly y: number; readonly animationOffset: number; readonly dx: number }[] }",
+      {
+        family: "enemy/round-wide",
+        bonuses: bonuses.map(({ specimens: _specimens, ...entry }) => entry),
+        entries: [
+          ...entries.map((entry) => ({ ...entry, dx: -2 })),
+          ...later.map(({ specimens: _specimens, ...entry }) => entry),
+        ],
+      },
     );
   },
 };

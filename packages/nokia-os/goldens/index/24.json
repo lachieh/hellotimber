@@ -416,7 +416,7 @@
   {
     "id": "game/space-impact/keys-hold-2",
     "file": "game/space-impact/keys-hold-2.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6,
@@ -452,7 +452,7 @@
   {
     "id": "game/space-impact/keys-hold-5",
     "file": "game/space-impact/keys-hold-5.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6,
@@ -470,7 +470,7 @@
   {
     "id": "game/space-impact/keys-hold-7",
     "file": "game/space-impact/keys-hold-7.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6,
@@ -496,7 +496,7 @@
   {
     "id": "game/space-impact/keys-hold-9",
     "file": "game/space-impact/keys-hold-9.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6,
@@ -505,7 +505,7 @@
   {
     "id": "game/space-impact/keys-hold-down",
     "file": "game/space-impact/keys-hold-down.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6,
@@ -523,7 +523,7 @@
   {
     "id": "game/space-impact/keys-hold-star",
     "file": "game/space-impact/keys-hold-star.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6,
@@ -532,7 +532,7 @@
   {
     "id": "game/space-impact/keys-hold-up",
     "file": "game/space-impact/keys-hold-up.lcd.txt",
-    "status": "pending:24",
+    "status": "asserted",
     "kind": "still",
     "images": 6,
     "frames": 6,

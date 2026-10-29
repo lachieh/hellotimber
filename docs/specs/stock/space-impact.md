@@ -256,6 +256,36 @@ other enemy HP/score rules, multi-hit behavior and score ceiling. The four accep
 and previous labelled hypotheses remain unchanged. No gameplay seed recovery, later-wave
 rule, bonus, boss, ending or complete sound replay is established by this checkpoint.
 
+**Later-wave checkpoint (2026-10-29; partial).** The complete delivered-input diagnostic
+matches 205/879 settled rows through `ij` (18075 ms), with ten kills and score 100. `ik`
+(18149 ms) is the first remaining mismatch: the real pickup changes missiles to wall ×3.
+No gameplay seed or bonus result is injected. The full level-0 golden remains pending.
+The second orb's runtime entry phase is UNVERIFIED until earlier pickup/pending-return
+behavior is replayed; its current generated entry uses the delivered callback ordinal.
+
+Generated static data now includes twelve linear round-wide entries, each with its own
+horizontal speed, and both bonus-orb entries. The entries at updates 90 and 108 move one
+pixel per update. `dv` and `fb` establish inclusive right-edge and lower-edge shot contacts
+against these slow enemies; earlier settled pixels remain exact. The first orb's captured
+entry, animation and approach replay alongside the ship, shots, enemies, explosions and HUD.
+**UNVERIFIED:** these collision boundaries outside the recorded arrangements, and retiring
+an uncollected orb at negative x (both recorded level-0 orbs are collected earlier).
+
+The generated full-level observation inventory retains 34 tracks: twelve round-wide,
+six triangle, nine round-small, four long-left, two orbs and the boss. Every unambiguous
+complete ordinary-enemy observation is accounted for. Candidate delivered entry ordinals,
+spatial path alternatives and LCD specimen references are retained; they do not constitute
+a fitted complete spawn/HP/fire program. **UNVERIFIED:** later entry attribution, nonlinear
+path association and HP not established by runtime replay. Clipped entry/kill attribution
+at `qy`, `td` and `vi` stays unresolved. The boss approaches x=56; its observed later y
+alternatives are not a fitted phase model. The runtime does not substitute these observed
+frames for game state. Remaining reconstruction and RNG ordering continue from the pickup.
+
+Seven further held-key tick fixtures (`2`, `5`, `7`, `9`, ▲, ▼ and `*`) pass every still and
+both input edges through real Games navigation. Plan 24 now has 28 asserted, 140 pending
+and no registered known gaps. The full held timelines, held-8 and level-0 acceptance remain
+pending; no comparison or timing tolerance changes.
+
 **Remaining hypotheses (UNVERIFIED until golden replay or further evidence).** Exact collision
 geometry, score ceiling and per-hit awards, all boss phases and projectiles, the pending-sound
 return code and lost-event behavior, held-fire cap, shield durations and exact continue/exit

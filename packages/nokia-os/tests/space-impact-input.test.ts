@@ -60,10 +60,10 @@ describe("Space impact recorded input order", () => {
     },
   );
 
-  it("runs the complete imported delivered stream and matches the 96 settled rows through dm", () => {
+  it("runs the complete imported delivered stream and matches all 205 settled rows through the first bonus approach", () => {
     const replay = replaySpaceImpactLevel(loadGolden("game/space-impact/level-0"));
     expect(replay.events).toBe(1812);
-    expect(replay.matched).toBeGreaterThanOrEqual(96);
+    expect(replay.matched).toBeGreaterThanOrEqual(205);
     expect(replay.total).toBe(879);
   });
 });

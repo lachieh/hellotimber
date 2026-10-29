@@ -28,6 +28,7 @@ export function newSpaceImpactGame({ seed = 0 }: { seed?: number } = {}): SpaceI
     hud: { lives: 3, weapon: "missile", count: 3, score: 0 },
     shots: [],
     enemies: [],
+    bonuses: [],
     moves: [],
     held: null,
     fireCooldown: 0,
@@ -87,12 +88,12 @@ export function stepSpaceImpact(state: SpaceImpactState): SpaceImpactResult {
     ...state.enemies.flatMap((enemy) => {
       if (enemy.deathFrame !== null)
         return enemy.deathFrame >= 3 ? [] : [{ ...enemy, deathFrame: enemy.deathFrame + 1 }];
-      const x = enemy.x + SPACE_IMPACT_OPENING_WAVE.dx;
-      return x < 0 ? [] : [{ ...enemy, x, y: enemy.y + SPACE_IMPACT_OPENING_WAVE.dy }];
+      const x = enemy.x + enemy.dx;
+      return x < 0 ? [] : [{ ...enemy, x }];
     }),
     ...SPACE_IMPACT_OPENING_WAVE.entries
       .filter((entry) => entry.tick === state.tick + 1)
-      .map(({ x, y, animationOffset }) => ({ x, y, animationOffset, deathFrame: null })),
+      .map(({ x, y, dx, animationOffset }) => ({ x, y, dx, animationOffset, deathFrame: null })),
   ];
   let score = state.hud.score;
   const shots = state.shots.flatMap((shot) => {
@@ -101,10 +102,10 @@ export function stepSpaceImpact(state: SpaceImpactState): SpaceImpactResult {
     const hit = enemies.findIndex(
       (enemy) =>
         enemy.deathFrame === null &&
-        moved.x + 2 > enemy.x &&
+        moved.x + 2 >= enemy.x &&
         moved.x < enemy.x + 11 &&
         moved.y + 1 >= enemy.y &&
-        moved.y < enemy.y + 5,
+        moved.y <= enemy.y + 5,
     );
     if (hit === -1) return [moved];
     enemies[hit] = { ...enemies[hit]!, deathFrame: 0 };
@@ -114,6 +115,16 @@ export function stepSpaceImpact(state: SpaceImpactState): SpaceImpactResult {
   return result({
     ...state,
     enemies,
+    bonuses: [
+      // UNVERIFIED: level 0 collects both orbs before their left-edge retirement.
+      ...state.bonuses.flatMap((bonus) => {
+        const x = bonus.x + bonus.dx;
+        return x < 0 ? [] : [{ ...bonus, x }];
+      }),
+      ...SPACE_IMPACT_OPENING_WAVE.bonuses
+        .filter((entry) => entry.tick === state.tick + 1)
+        .map(({ x, y, dx }) => ({ x, y, dx })),
+    ],
     hud: { ...state.hud, score },
     ship,
     moves: [],
@@ -157,6 +168,7 @@ export function spaceImpactRender(
         ]!;
         return { picture, x: x + deathFrame - 1, y: y + deathFrame - 1 };
       }),
+      ...state.bonuses.map(({ x, y }) => ({ picture: `bonus/orb/${state.tick % 2}`, x, y })),
       ...state.shots.map((shot) => ({ picture: "shot", ...shot })),
     ],
   };
