@@ -17,7 +17,7 @@ they exist; each use is conditional and names its fallback (D17).
 `siteMenu`) with website applications and phone-screen's own painter. A painter-only swap to
 nokia-os broke the site and was reverted (`b446466`): `paintStockScreen` draws only the stock
 firmware's screens. The fix is to run the stock firmware itself.
-**Status:** in progress (Tasks 0-2 complete; runtime cutover pending).
+**Status:** in progress (Tasks 0-5 complete; runtime cutover pending).
 
 ## Goal
 
@@ -678,3 +678,34 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
 - Tasks 3-5 are delivered as independent commits. Tasks 6-9 remain unchecked: the
   2001 desk, single mounted phone stage and browser routes still use the legacy runtime.
   Do not treat these adapter commits as the cutover, desk migration or plan completion.
+
+### Tasks 3-5 headless regression evidence (2026-10-29)
+
+- Ran this worktree's dev server on port 3002 (3000 and 3001 were occupied), using
+  Node 22.22.3, SHELL=/bin/sh and the absolute mise Node executable for Vite+.
+- agent-browser 0.34.0 headless: hydrated standby mirror read `Standby. LACHLAN. 16:52.
+Press Menu.`; notebook strip showed the same clock and carrier; hint said press Menu.
+  Pressing the desk Navi control changed the mirror to `Menu 1. Phone book, 1 of 13.`,
+  strip to Phone book / Select, and hint to up/down and Enter.
+- Phone-book deep link settled to `Menu 1 then 1. Search. Email, 1 of 7. Select.`;
+  strip showed Email / GitHub / LinkedIn, trail Menu > Phone book > Search, and the
+  sticky hint switched to list controls. Inbox deep link showed its legacy four SMS.
+- All 66 legacy URLs returned HTTP 200. Report: /tmp/plan31-batch35-legacy-urls.json.
+  These are pre-cutover results, not proof of the pending stock HTTP redirects.
+- Real POST /api/sms accepted a 459-character request and returned HTTP 200 with the
+  existing Lachlan canned reply. No real persona copy or claims were invented.
+- Screenshots: /tmp/plan31-batch35-standby.png, /tmp/plan31-batch35-menu.png,
+  /tmp/plan31-batch35-phonebook.png, /tmp/plan31-batch35-inbox.png,
+  /tmp/plan31-batch35-snake.png. Browser session closed after QA.
+- No work in this batch waits on 18c; the public stock-phone Chat test exercises its
+  landed implementation. Task 6 must migrate desk/live.ts and screen-copy consumers,
+  sound/lights controls, DESIGN.md and PRODUCT.md while keeping the stage mounted once.
+- Tasks 6-9 remain: runtime cutover and deletion of legacy adapters, content panels,
+  package subtraction after proving consumers, complete stock browser QA, bundle-size
+  comparison and deployment notes. Plan remains in progress; nothing was deployed.
+
+- Final gates for this partial batch: vp check passed; vp run -r --no-cache test exited 0:
+  282 test files, 11,961 passed, 120 expected failures and 161 TODOs. nokia-os: 181 files,
+  11,081 passed / 120 expected failures / 161 TODOs (1124 seconds); website: 33 files,
+  218 passed. vp run website#build passed. Logs: /tmp/plan31-final-tests.log,
+  /tmp/plan31-final-check.log and /tmp/plan31-task5-build.log.
