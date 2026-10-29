@@ -352,10 +352,10 @@ New: `network.test.ts`, `threads.test.ts`, `stock-sound.test.ts`, `host-clock.te
 **Files:** `website/tests/fixtures/legacy-paths.ts` (new), `website/tests/legacy-paths.test.ts`
 (new, temporary: Task 6 replaces it).
 
-- [ ] Write `LEGACY_PATHS`: `siteMenu.paths()` plus `/`, as literal strings (generated once by a test
+- [x] Write `LEGACY_PATHS`: `siteMenu.paths()` plus `/`, as literal strings (generated once by a test
       that prints them; commit the literal list, not the generator).
-- [ ] A test asserts the literal list equals `siteMenu.paths()` today (so the snapshot is exact).
-- [ ] Commit: `test(website): snapshot the legacy menu URLs`.
+- [x] A test asserts the literal list equals `siteMenu.paths()` today (so the snapshot is exact).
+- [x] Commit: `test(website): snapshot the legacy menu URLs`.
 
 ### Task 1 - Contracts and documentation
 
