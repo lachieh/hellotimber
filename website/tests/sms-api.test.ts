@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { contactById, contacts } from "../src/content/contacts";
+import { personById as contactById, PEOPLE as contacts } from "../src/content/people";
 import {
   cannedReply,
   generateReply,
@@ -53,8 +53,9 @@ describe("validateSmsRequest", () => {
     expect(validateSmsRequest({ contactId: "nobody", text: "hi", history: [] }).ok).toBe(false);
   });
 
-  it("rejects text over 160 chars and empty text", () => {
-    expect(validateSmsRequest({ contactId: "lachlan", text: "x".repeat(161) }).ok).toBe(false);
+  it("accepts three-part messages and rejects longer or empty text", () => {
+    expect(validateSmsRequest({ contactId: "lachlan", text: "x".repeat(459) }).ok).toBe(true);
+    expect(validateSmsRequest({ contactId: "lachlan", text: "x".repeat(460) }).ok).toBe(false);
     expect(validateSmsRequest({ contactId: "lachlan", text: "   " }).ok).toBe(false);
   });
 
@@ -151,4 +152,12 @@ describe("contacts sanity for the API", () => {
   it("every contact has canned replies for fallback mode", () => {
     for (const c of contacts) expect(c.canned.length, c.id).toBeGreaterThan(0);
   });
+});
+
+it("sanitises model punctuation and unsupported glyphs before truncating", async () => {
+  const { client, calls } = fakeClient("‘Hi’ — … × 😀漢");
+  expect(await generateReply({ createClient: () => client }, lachlan, [], "hi")).toBe(
+    "'Hi' - ... x ",
+  );
+  expect(calls[0]?.system).toContain("plain ASCII");
 });

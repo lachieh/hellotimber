@@ -1,5 +1,6 @@
-import { contactById } from "../content/contacts";
-import type { Contact } from "../content/contacts";
+import { personById as contactById } from "../content/people";
+import { missingStockGlyphs } from "@hellotimber/nokia-os";
+import type { Person as Contact } from "../content/people";
 
 /**
  * Pure logic behind POST /api/sms (plan 08). Kept out of the route file so
@@ -11,6 +12,7 @@ import type { Contact } from "../content/contacts";
 
 export const SMS_MODEL = "claude-haiku-4-5";
 export const MAX_SMS_CHARS = 160;
+export const MAX_INPUT_CHARS = 459;
 export const MAX_HISTORY = 12;
 
 export interface SmsTurn {
@@ -61,8 +63,8 @@ export function validateSmsRequest(body: unknown): ValidationResult {
   if (typeof text !== "string" || text.trim() === "") {
     return { ok: false, error: "text required" };
   }
-  if (text.length > MAX_SMS_CHARS) {
-    return { ok: false, error: `text must be <= ${MAX_SMS_CHARS} chars` };
+  if (text.length > MAX_INPUT_CHARS) {
+    return { ok: false, error: `text must be <= ${MAX_INPUT_CHARS} chars` };
   }
   if (!Array.isArray(history) || history.length > MAX_HISTORY || !history.every(isSmsTurn)) {
     return { ok: false, error: `history must be <= ${MAX_HISTORY} valid entries` };
@@ -71,7 +73,7 @@ export function validateSmsRequest(body: unknown): ValidationResult {
 }
 
 /** Next canned reply for this thread — cycles on how many replies it has. */
-export function cannedReply(contact: Contact, history: SmsTurn[]): string {
+export function cannedReply(contact: Pick<Contact, "canned">, history: SmsTurn[]): string {
   const replies = history.filter((turn) => turn.who === "them").length;
   return contact.canned[replies % contact.canned.length] ?? "OK.";
 }
@@ -102,7 +104,7 @@ export async function generateReply(
     const res = await client.messages.create({
       model: SMS_MODEL,
       max_tokens: 120,
-      system: `${contact.system}\nReply as one SMS: plain text, max 160 characters.`,
+      system: `${contact.system}\nReply as one SMS: plain ASCII, no emoji, max 160 characters.`,
       messages: [
         ...usable.map(
           (turn) =>
@@ -112,9 +114,23 @@ export async function generateReply(
       ],
     });
     const block = res.content.find((b) => b.type === "text");
-    const reply = (block?.text ?? "").slice(0, MAX_SMS_CHARS);
+    const reply = sanitiseReply(block?.text ?? "");
     return reply === "" ? fallback : reply;
   } catch {
     return fallback;
   }
+}
+
+export function sanitiseReply(text: string): string {
+  const mapped = text
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/[–—]/g, "-")
+    .replace(/…/g, "...")
+    .replace(/×/g, "x");
+  const missing = new Set(missingStockGlyphs(mapped, "small"));
+  return Array.from(mapped)
+    .filter((char) => !missing.has(char))
+    .join("")
+    .slice(0, MAX_SMS_CHARS);
 }

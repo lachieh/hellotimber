@@ -391,18 +391,18 @@ Task 6 (they still feed `siteMenu`).
 `website/src/messages/generate-reply.ts`, `website/src/routes/api/sms.ts`,
 `website/tests/{network,threads,sms-api}.test.ts`.
 
-- [ ] TDD `send` with a stubbed `fetch`: persona number → POST body (contactId, text, the last 12
+- [x] TDD `send` with a stubbed `fetch`: persona number → POST body (contactId, text, the last 12
       turns) → `deliver` called with the reply, the number and a Brisbane `sentAt`; thread updated
       both ways; other numbers → `"sent"`, no POST; a rejected fetch → `"failed"`.
-- [ ] TDD `dial` with stubbed `window.open`/`location.assign` and fake timers: a link opens before
+- [x] TDD `dial` with stubbed `window.open`/`location.assign` and fake timers: a link opens before
       `dial` returns (synchronously), then `alerting`, `connected`, `released` after `LINK_CALL_MS`;
       `hangUp` cancels the release; persona numbers alert and release after `NO_ANSWER_MS`; others
       alert and connect.
-- [ ] Drive it through a real stock phone (`createStockPhone`, `boot: "skip"`, memory storage): ▼,
+- [x] Drive it through a real stock phone (`createStockPhone`, `boot: "skip"`, memory storage): ▼,
       GitHub, Navi → `window.open` called during that `send()`; Write messages to Lachlan → a reply in
       the Inbox (canned client).
-- [ ] TDD the API: 459 characters in, replies ≤160 and sanitised (D9), personas told "plain ASCII".
-- [ ] Commit: `feat(website): a network port for SMS personas and link calls`.
+- [x] TDD the API: 459 characters in, replies ≤160 and sanitised (D9), personas told "plain ASCII".
+- [x] Commit: `feat(website): a network port for SMS personas and link calls`.
 
 ### Task 4 - Host adapters: sound, clock and IMEI (TDD)
 
@@ -629,3 +629,23 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
   website accounted for 198 passed. No firmware or Games files were modified.
 - The settled phone-book deep link mirror reads `Menu 1 then 1. Search. Email, 1 of 7. Select.`;
   screenshot: /tmp/plan31-task2-phonebook.png. The agent-browser QA session was closed.
+
+### Task 3 delivery (2026-10-29)
+
+- Added the network port without changing the mounted legacy runtime. Link calls open
+  synchronously; HTTPS uses noopener/noreferrer, mail uses location.assign, downloads use
+  a temporary anchor. Link calls connect for 1500 ms; persona calls release unanswered
+  after 30 seconds; emergency calls retain the synthetic network's no-connect behavior.
+- SMS settles sent on successful HTTP headers; JSON reply delivery is asynchronous.
+  A failed POST is failed; a body that fails after acceptance cannot retract a sent SMS
+  and produces no incoming reply. Threads keep twelve turns per SIM and number, tolerate
+  blocked/corrupt storage, and live under hellotimber.threads.
+- API uses PEOPLE, accepts 459 characters, requests ASCII and sanitises punctuation and
+  unsupported small-face glyphs before the 160-character reply limit. No real copy added.
+- Preserved cannedReply's narrow canned-data contract while legacy menu.ts still uses it;
+  requiring a stock persona number there would break the pre-cutover runtime.
+- TDD: missing network/thread modules, the former input limit and Unicode replies failed
+  first. Website: 29 files / 209 tests pass; vp check --fix and production build pass.
+- Public createStockPhone key tests prove GitHub opens inside send(), Write messages
+  delivers a canned reply into Inbox, and landed Chat sends A: Hi and renders the reply.
+  No Task 3 work waits on 18c. Full browser cutover QA remains for Tasks 6 and 9.
