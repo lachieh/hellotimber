@@ -2,7 +2,7 @@
 
 **Capture gate closed (Lachlan, 2026-10-27).** Task 0's accepted scope is the eight validated
 full-level recordings, their exits and ending, plus the reviewed key, pause, bonus, special,
-seed, ANSI and sound evidence. Twenty plan-24 fixtures and the inherited New game tree fixture pass partial implementation
+seed, ANSI and sound evidence. Twenty-eight plan-24 fixtures and the inherited New game tree fixture pass partial implementation
 replays. The full-level recordings remain pending. Other gameplay observations below remain
 **(plan 24, in progress)** until their replays pass.
 The four accepted defaults are labelled `UNVERIFIED` beside the affected behavior; acceptance
@@ -285,6 +285,25 @@ Seven further held-key tick fixtures (`2`, `5`, `7`, `9`, ▲, ▼ and `*`) pass
 both input edges through real Games navigation. Plan 24 now has 28 asserted, 140 pending
 and no registered known gaps. The full held timelines, held-8 and level-0 acceptance remain
 pending; no comparison or timing tolerance changes.
+
+**Bonus RNG checkpoint (2026-10-29; partial).** A pure, currently unwired helper centralizes
+H9's **UNVERIFIED** draw mapping (low two bits: life, missiles, wall, beam) and stacking
+(three matching missiles/walls or one beam; another weapon replaces the count). It uses the
+same game RNG for the accepted **UNVERIFIED** five-life cap/reroll. The four reviewed pickup
+outcomes do not establish their numeric random mapping, draw positions or unseen stacking.
+The engine still does not collect an orb; no pickup result or extra RNG draw is injected.
+
+The seed search enumerates all 65,521 effective pre-draw states for provenance-labelled
+observations at explicit draw indices, and refuses contradictory evidence. Its result is
+conditional on those indices; a unique effective state would not identify the original u32
+clock seed. With H9 and a first-draw assumption, level 0's first wall HUD (`ik`) leaves
+16,380 candidates, excluding both accepted fallback inputs 0 and 610. Later random outcomes
+and consumer ordering are not yet fitted, so this is not a complete level-0 seed search.
+The first-pickup contact/order also remains unresolved: `ih` and `ij` retain the orb while
+the ship is at (5,15), before `ik` removes it. Neither a simple full box test nor the tried
+pixel-intersection test establishes collection. The replay remains 205/879 settled rows,
+28 asserted fixtures, 140 pending and no registered known gaps. Every original pixel and
+tolerance remains unchanged; no splash/RAM seed supplies gameplay proof.
 
 **Remaining hypotheses (UNVERIFIED until golden replay or further evidence).** Exact collision
 geometry, score ceiling and per-hit awards, all boss phases and projectiles, the pending-sound

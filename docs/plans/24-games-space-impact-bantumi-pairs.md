@@ -2687,6 +2687,73 @@ The second orb's runtime phase remains **UNVERIFIED** until earlier pickup/pendi
 behavior is replayed: its generated entry currently records the observed delivered callback
 ordinal. Later engine-update phases must not silently be equated with callback ordinals.
 
+### Bonus RNG and identifiability checkpoint (2026-10-29; partial)
+
+Continued from `21e3833`, only in `t3/p24-space-impact`. This is a bounded Task 6 unit,
+not completed pickup or level-0 acceptance. The complete delivered-input replay remains
+**205/879 settled rows**, through `ij` (18075 ms), first mismatch `ik` (18149 ms):
+missiles become wall ×3. Ten kills and score 100 remain exact. Plan 24 remains
+**28 asserted, 140 pending, zero registered known gaps**. No seed is injected, no golden
+is promoted, and every comparator, timeline, input and tolerance is unchanged.
+
+**Seed evidence.** `scripts/space-impact-seeds.ts` exhaustively enumerates the 65,521
+effective pre-draw states against supplied, provenance-labelled masked observations at
+explicit one-based draw positions. It distinguishes no-draw/ambiguous datasets from a
+unique effective candidate; zero candidates throw a draw-order/model mismatch. It never
+selects the first of several candidates or identifies an original u32 clock seed. Its
+result is conditional on the supplied consumer positions, not proof of those positions.
+The caller must account for every earlier consumer before using a uniquely recovered state.
+
+Under **UNVERIFIED H9 and the first-draw hypothesis**, `ik`'s wall result constrains the
+first draw's low two bits to 2. Exactly **16,380** effective seeds satisfy this single
+observation. Neither 0 (no-clock fallback) nor 610 (10:10 fallback) is in that set: both
+produce a first low-two-bit result of 3, H9's beam. This does not prove that the entire
+level-0 trace is noninformative: later random fire and pickups must still constrain the
+chain after their consumers/order are reconstructed. No splash or RAM seed enters the
+search or replay. No new clock formula or seed default is accepted.
+
+**Bonus policy and calls.** `src/games/space-impact/random.ts` implements one provisional
+H9 policy over the shared RNG source: 0 life, 1 missiles, 2 wall, 3 beam; matching weapons
+stack by 3 (beam by 1), other weapons replace the count. The four reviewed LCD outcomes
+remain the observable evidence (`analysis/s6-reviewed-bonus.json`); they do not establish
+the numeric draw mapping, positions in the chain or unseen stacking. The code carries
+**UNVERIFIED** beside this policy. The accepted **UNVERIFIED** five-life default rerolls
+life results from the same source until a non-life result, with no artificial retry cap.
+The helper is **not yet wired into the engine**. All other accepted defaults are unchanged.
+
+The first pickup's retained LCD observations show the ship at (5,15), an orb at (10,9)
+in `ih` and (8,9) in `ij`, followed by its disappearance in `ik`. Simple full bounding-box
+collection contradicts that approach; a pixel-intersection trial also fails to establish
+the contact. Neither trial remains in runtime code. Collection geometry and its ordering
+relative to movement/redraws still require reconstruction across the bonus evidence.
+No pickup-specific geometry, captured outcome, alternate seed or RNG skip is introduced
+to pass this frame. The full-level inventory's later entry ordinals remain UNVERIFIED;
+no fire/explosion consumer ordering is claimed by this bonus-only unit.
+
+**TDD.** The new suite first failed on the absent RNG modules. It tests the four provisional
+outcomes, stacking, accepted life rerolls consuming one shared chain, the actual `ik` HUD
+observation's ambiguity, no-draw ambiguity, synthetic unique recovery, a deliberately
+inconsistent dataset and invalid recovery evidence. Synthetic seeds and scripted draws
+exercise the helper contract only; they are not gameplay replay seeds. Existing Snake II
+seed regressions and the unchanged 205-row pixel regression remain required.
+
+**Verification.** The focused gate passes **7 files / 200 tests**, with 140 expected TODOs.
+The complete uncached `vp run -r --no-cache test` passes **266 files / 11,883 tests**,
+120 expected failures and 163 TODOs, with **0/6 cache hits**. Nokia-os contributes
+174 files / 11,041 passed tests in 965.78 s; phone-core 450, snake 62, phone-3d 49,
+phone-screen 101 and website 180. `website#build`, `vp check --fix` and final `vp check`
+pass. The full run uses mise's explicit Node 22.22.3 executable through the guard,
+`VITEST_MAX_WORKERS=2` and `VP_RUN_CONCURRENCY_LIMIT=1`; an `env` invocation that selected
+host Node 26 was rejected by the guard before tests ran and is not verification.
+Logs: `/private/tmp/p24-rng-workspace-tests.log`; the final exact complete-stream diagnostic
+is `/private/tmp/p24-rng-final-diagnostic.json`. All 1,812 events were consumed, retaining
+205/879 rows and `ik` as the first mismatch. No golden, generated resource, excluded package,
+website source or lockfile changes.
+
+Remaining work starts with first-pickup contact/consumer order and informative gameplay seed
+recovery, then nonlinear waves, HP/fire, bosses, exits/endings, seeded splash and complete
+sound/acceptance replays. Task 6 remains open.
+
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 
 **Files:** `scripts/space-impact-seeds.ts` (new), `src/games/space-impact/random.ts` (new: which
