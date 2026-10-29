@@ -45,7 +45,7 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 27  | [Composer](./27-composer.md)                                                    | Tones › Composer: note editor, Play, Tempo, Save; saved tones as Ringing tones 36-42                  | 16, 18 (17 label seam)                    | done        |
 | 28  | [Game SDK and user games](./28-game-sdk-and-user-games.md)                      | wake-based game SDK, shell services, 2048, sandboxed user JS/Wasm games, extra games in Games         | 13, 14, 15, 16, 23                        | not started |
 | 30  | [SIM content and SIM services](./30-sim-content-and-sim-services.md)            | SIM-stored SMS, sender names, SIM services (STK text, lists, calls), IMEI, preload, screen text       | 19, 22 (18c, 21 seams)                    | done        |
-| 31  | [Portfolio on the stock firmware](./31-portfolio-on-stock-firmware.md)          | the website runs `createStockPhone`: content on the SIM, LLM network port, link calls, stock routes   | 30, 19, 22, 25 (18c, 21 seams)            | not started |
+| 31  | [Portfolio on the stock firmware](./31-portfolio-on-stock-firmware.md)          | the website runs `createStockPhone`: content on the SIM, LLM network port, link calls, stock routes   | 30, 19, 22, 25 (18c, 21 seams)            | in progress |
 
 Plans 01–04 are parallel-safe: no shared files, no cross-package imports at runtime
 (02 imports types from 01, which exist from 01's first task). Plan 09 is parallel-safe

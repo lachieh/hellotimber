@@ -70,11 +70,14 @@ use `"catalog:"` specifiers where a catalog entry exists.
 2. **Allowed internal dependency direction** (type-level or runtime):
 
    ```
-   website ──▶ phone-core, phone-screen, phone-3d, snake   (not nokia-os yet)
+   website ──▶ nokia-os, phone-core (types/router bridge), phone-screen (renderer), phone-3d
    nokia-os ──▶ phone-core, phone-screen   (runtime: kernel/menu model/Timeline; LCD toolkit)
    phone-screen ──▶ phone-core (type-only imports of ScreenModel — no runtime dep)
    snake, phone-3d ──▶ (no internal deps)
    ```
+
+   Plan 31 establishes this website target. Until its Task 6 cutover, the legacy website
+   still consumes `snake`; Task 6 removes that dependency.
 
    Anything else is a boundary violation. `phone-3d` receives a ready-made
    `HTMLCanvasElement` for the screen texture and reports key presses via callback —

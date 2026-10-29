@@ -6,7 +6,7 @@ A portfolio website that _is_ a working Nokia 3310. The visitor lands on a 3D re
 the phone (three.js / react-three-fiber). It boots like the real thing — Nokia logo,
 connecting-hands animation — and drops to the standby screen. Every button works.
 Navigating the phone's menus with the NaviKey, C key, and scroll keys behaves exactly
-like the year-2000 firmware, except the menus contain Lachlan Heywood's portfolio:
+like the year-2000 firmware. Lachlan Heywood's SIM card carries the portfolio:
 contacts, work history, projects, an about page — and a fully playable Snake II.
 
 The phone and the browser URL are two views of one state: scrolling into
@@ -29,11 +29,10 @@ order, key semantics, timings, sounds — is a hard requirement, specified in
 
 ## Non-goals
 
-- The portfolio website simulating telephony (calls/SMS over a network) or SIM features.
-  nokia-os accepts SMS and calls through a host network port (plans 18, 22); the host owns the network.
-- T9 dictionaries beyond what the UI bit needs, on the website. nokia-os ships one English T9
-  dictionary built from an openly licensed word-frequency list (plan 18b); the website adopts it
-  only when it adopts nokia-os.
+- The website owns no telephony. nokia-os's network ports carry SMS and calls to website
+  adapters for LLM personas and links. The firmware owns the phone and SIM behaviour.
+- Maintaining a website T9 dictionary. The website loads nokia-os's English dictionary,
+  built from an openly licensed word-frequency list (plan 18b).
 - Mobile-first 3D performance heroics. It should run fine on a laptop; on small
   screens the HTML panels carry the content.
 - Pixel-perfect photogrammetry of the shell. Convincing > exact; the screen behavior
@@ -41,31 +40,64 @@ order, key semantics, timings, sounds — is a hard requirement, specified in
 
 ## The menu is the sitemap
 
-Original 3310 menu structure, repurposed. URL = `/` + phone path. (Exact original menu
-names/order are governed by `docs/specs/nokia-3310.md`; this table holds the mapping.)
+The stock v6.39 menu defines the routes: URL = `/` + phone path. The visitor holds a
+phone with Lachlan's SIM. Its operator line reads `LACHLAN`; standby ▼ opens names and
+▲ opens dialled numbers. Menu numbers follow the firmware, including SIM services as
+Menu 14 in the thirteenth visible slot. See [stock phone book](docs/specs/stock/phone-book.md)
+and [SIM services](docs/specs/stock/sim-services.md).
 
-All 13 original menus, in the verified order (Menu 1–13):
+Plan 31 defines this website contract. Tasks 0-1 establish the migration fixture and
+contracts; Task 6 replaces the current `siteMenu` runtime. Until that cutover, the website
+still uses the legacy menu and standby shortcuts.
 
-| #   | Phone menu    | Portfolio content                                                                                                                                                                                                        | Route                                                            |
-| --- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
-| —   | _(standby)_   | Landing. Operator line reads `LACHLAN`. Up = phone book, down = redial list (v6.39 does the opposite: ▼ names, ▲ dialled numbers, see [stock phone book](docs/specs/stock/phone-book.md); the website keeps its mapping) | `/`                                                              |
-| —   | Menu          | One-item-at-a-time menu carousel with animated icons and `Menu`+digit shortcuts                                                                                                                                          | `/menu`                                                          |
-| 1   | Phone book    | Contact: email, GitHub, LinkedIn, CV. "Search" finds entries; entries open like contact cards                                                                                                                            | `/menu/phone-book`                                               |
-| 2   | Messages      | About me. Inbox = short "SMS" intros; Write message = real contact form with multi-tap text entry                                                                                                                        | `/menu/messages`, `/menu/messages/inbox`, `/menu/messages/write` |
-| 3   | Chat          | Testimonials/recommendations rendered as a 3310 chat session (`>` them, `<` Lachlan)                                                                                                                                     | `/menu/chat`                                                     |
-| 4   | Call register | Work history. Received calls = roles held; Dialled numbers = projects shipped; Missed calls = fun "ones that got away"                                                                                                   | `/menu/call-register/…`                                          |
-| 5   | Tones         | Sound settings + ringtone picker (plays through WebAudio). Composer is a **stretch** easter egg                                                                                                                          | `/menu/tones`                                                    |
-| 6   | Settings      | Site settings dressed as phone settings: keypad tones, backlight, welcome note                                                                                                                                           | `/menu/settings`                                                 |
-| 7   | Call divert   | "Divert" visitors to external profiles: GitHub, LinkedIn, X, etc. (literal redirects)                                                                                                                                    | `/menu/call-divert`                                              |
-| 8   | Games         | Snake II, playable, with persistent top score (localStorage). Space Impact/Bantumi/Pairs II listed, **stretch**                                                                                                          | `/menu/games`, `/menu/games/snake`                               |
-| 9   | Calculator    | Working 3310 calculator (`*` cycles + − × ÷, `#` decimal point)                                                                                                                                                          | `/menu/calculator`                                               |
-| 10  | Reminders     | "Now" page — what Lachlan is currently doing/learning                                                                                                                                                                    | `/menu/reminders`                                                |
-| 11  | Clock         | Lachlan's local time + availability; alarm/stopwatch as easter eggs                                                                                                                                                      | `/menu/clock`                                                    |
-| 12  | Profiles      | Visitor modes (General / Recruiter / Engineer…) that re-weight content — **stretch**                                                                                                                                     | `/menu/profiles`                                                 |
-| 13  | SIM services  | Easter egg; also serves as the 404 experience                                                                                                                                                                            | `/menu/sim-services`                                             |
+| Menu    | Stock feature                | Portfolio content and route                                                                                                                                        |
+| ------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Standby | Operator and clock           | Landing bio at `/`; Brisbane time                                                                                                                                  |
+| Menu    | Stock carousel and shortcuts | `/menu`                                                                                                                                                            |
+| 1       | Phone book                   | Personas and link contacts; Call opens a link. `/menu/phone-book`, `/menu/phone-book/search`, `/menu/phone-book/service-nos`                                       |
+| 2       | Messages                     | Intros, bio, availability, work history and testimonials in Inbox; Write messages texts personas. `/menu/messages`, `/menu/messages/inbox`, `/menu/messages/write` |
+| 3       | Chat                         | Live persona conversation through the SMS network port. `/menu/chat`                                                                                               |
+| 4       | Call register                | Actual call events, without seeded work history. `/menu/call-register`                                                                                             |
+| 5       | Tones                        | Stock tones and Composer. `/menu/tones`                                                                                                                            |
+| 6       | Settings                     | Stock EEPROM settings. `/menu/settings`                                                                                                                            |
+| 7       | Call divert                  | Stock network services. External profiles move to Phone book. `/menu/call-divert`                                                                                  |
+| 8       | Games                        | Stock games, including Snake II. `/menu/games`, `/menu/games/snake`                                                                                                |
+| 9       | Calculator                   | Stock calculator. `/menu/calculator`                                                                                                                               |
+| 10      | Reminders                    | Preloaded "now" notes, without alarms. `/menu/reminders`, `/menu/reminders/view-all`                                                                               |
+| 11      | Clock                        | Stock clock and alerts; Brisbane time and availability in HTML. `/menu/clock`                                                                                      |
+| 12      | Profiles                     | Stock profiles. `/menu/profiles`                                                                                                                                   |
+| 14      | SIM services                 | Projects, colophon and the handset's 404 destination. `/menu/sim-services`, `/menu/sim-services/projects`, `/menu/sim-services/about`                              |
 
-Deep submenu state that has no content value (e.g. cursor position inside the
-calculator) stays phone-internal and is not reflected in the URL.
+Content allocation follows [plan 31 D2](docs/plans/31-portfolio-on-stock-firmware.md#decisions).
+Decision and open-question numbers in this table refer to that plan:
+
+| Content                                                   | Stock home                                          | Form                                                                                                 | Why                                                                                                     |
+| --------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Personas (Lachlan, Recruiter Rachel, Y2K Support)         | Phone book (SIM `EF_ADN`)                           | name + a fiction-range mobile number (D6)                                                            | people are contacts; texting them reaches the LLM (D9)                                                  |
+| Email, GitHub, LinkedIn, X, CV                            | Phone book (SIM `EF_ADN`)                           | name + a fiction-range number; **Call opens the URL in a new tab** (D10)                             | Lachlan's decision; Call divert's three links move here                                                 |
+| Source code (this repo)                                   | Service Nos. (SIM `EF_SDN`)                         | `Source code` + number; Call opens the repo                                                          | an operator's own service number; the operator is `LACHLAN`, the site                                   |
+| Intros (hello, stack, say-hi), bio                        | Inbox (SIM `EF_SMS`), from Lachlan's number         | one SMS each, ≤160 GSM septets; the bio split into at most two SMS                                   | "About me, in SMS form" was already the Inbox's job                                                     |
+| Availability                                              | the say-hi SMS                                      | one sentence in it                                                                                   | fits an SMS; the Clock shows the time itself (D13)                                                      |
+| Work history (roles)                                      | Inbox, from Lachlan's number                        | one SMS per role: period, title, organisation, one line                                              | a received-calls list holds numbers, not roles; an SMS holds 160 characters                             |
+| Testimonials                                              | Inbox, from Lachlan's number                        | one SMS each, quoting the giver: `CTO@Acme: Lachlan shipped the impossible. Twice.`                  | stock Chat keeps no history to seed; a forwarded quote is how 2000 phones carried one (Open question 4) |
+| Projects (name, blurb, year, URL)                         | **SIM services › Projects**                         | `SELECT ITEM` of projects → a text page (blurb, year) → a call step `Open <name>?` when it has a URL | breaks down: a contact holds no text and an SMS holds no link (D16)                                     |
+| Colophon (how the site is built)                          | **SIM services › About this site**                  | a text page → a call step to Source code                                                             | longer than an SMS and about the SIM itself (D16)                                                       |
+| "Now" items                                               | Reminders (phone memory)                            | plan 30's `preload.reminders`, no alarm, within plan 21's text limit                                 | Reminders are notes to self; a used phone has them (D7)                                                 |
+| Tagline                                                   | none on the phone; SEO only                         | `site.tagline`                                                                                       | a Welcome note would replace the boot hands animation (Open question 6)                                 |
+| Missed calls ("ones that got away")                       | dropped                                             | —                                                                                                    | call lists record events (plan 30 D8); the joke has no stock home (Open question 5)                     |
+| Profile modes (stretch copy)                              | dropped; Profiles stay stock                        | —                                                                                                    | the stock Profiles are the feature                                                                      |
+| Write's destination email                                 | the Email contact; the Write panel's `mailto:`      | —                                                                                                    | unchanged in HTML                                                                                       |
+| Clock, Call divert, Tones, Settings, Snake II, Calculator | stock                                               | —                                                                                                    | the firmware is the content                                                                             |
+| IMEI easter egg                                           | stock `*#06#` with `imei` from the build hash (D12) | 15 digits, Luhn                                                                                      | `*#06#` is stock (plan 22 S8); the IMEI is the phone's                                                  |
+
+All portfolio copy remains SAMPLE DATA until Lachlan supplies it. The SIM id changes with
+its content, so returning visitors see new content while their edits remain with the old SIM.
+Phone-memory reminders preload once. Chat uses the landed plan 18c implementation; if it is
+unavailable, its page is noindex and points to Write messages (plan 31 D17).
+
+The indexable pages are the routes above for standby, Menu, Phone book, Messages, Chat,
+Reminders, Clock, Games, Snake II, Calculator and SIM services. Other stock routes use a
+noindex generic panel. Text-entry cursors and other application state stay inside the phone.
 
 ## Architecture
 
@@ -73,42 +105,41 @@ A Vite+ (`vp`) pnpm monorepo. Workspaces: `website`, `packages/*`. Hard rule: pa
 are independent and reusable; **only `website/` composes them**.
 
 ```
-                       ┌──────────────────────────────────────────┐
-                       │ website/  (TanStack Start)               │
-                       │  routes ⇄ PhoneBridge ⇄ adapters         │
-                       │  HTML content panels · WebAudio · SEO    │
-                       └──┬───────────┬───────────┬───────────┬───┘
-                          ▼           ▼           ▼           ▼
-                   phone-core   phone-screen   phone-3d     snake
-                   (firmware)   (rasterizer)   (R3F model)  (game logic)
-                      ▲  ▲          ▲
-                      │  └──────────┤ (type-only)
-                      │             │
-                   ┌──┴─────────────┴──┐
-                   │ nokia-os          │  stock v6.39 firmware + its pixels
-                   │ (not consumed by  │  (menu, placeholders, painter, goldens,
-                   │  the website yet) │   standalone demo)
-                   └───────────────────┘
+website (TanStack Start, router bridge, content, host adapters)
+  ├── nokia-os (stock firmware and painter)
+  │     ├── phone-core (kernel and menu model)
+  │     └── phone-screen (LCD toolkit)
+  ├── phone-core (types and router bridge)
+  ├── phone-screen (canvas renderer)
+  └── phone-3d (R3F model)
+
+phone-screen ──▶ phone-core (type-only)
+snake (standalone package; unused by the website after cutover)
 ```
 
-| Package                     | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Dependencies                                                       |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | none                                                               |
-| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | `phone-core` (type-only)                                           |
-| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
-| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | none                                                               |
-| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18, in progress), T9 English (open dictionary, plan 18b), number entry, calls and the call register over the same port (plan 22), the SIM card port with its phone book (plan 19), clock and alerts (plan 21), SIM content and SIM services (SIM-stored SMS, sender names, the SIM Toolkit's Menu 14, IMEI, preload, screen text; plan 30), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, keyguard and display/keypad LED events on the light tick (plan 25, in progress), standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
+| Package                     | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Dependencies                                                       |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | none                                                               |
+| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | `phone-core` (type-only)                                           |
+| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
+| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | none                                                               |
+| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18), T9 English (open dictionary, plan 18b), number entry, calls and the call register over the same port (plan 22), the SIM card port with its phone book (plan 19), clock and alerts (plan 21), SIM content and SIM services (SIM-stored SMS, sender names, the SIM Toolkit's Menu 14, IMEI, preload, screen text; plan 30), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, keyguard and display/keypad LED events on the light tick (plan 25), standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
 
-The website does **not** consume `@hellotimber/nokia-os` yet (plan 13). How portfolio content
-integrates with the stock OS is decided later. Until then the website keeps phone-screen's own
-layout; phone-screen's painter seam lets a host swap in `paintStockScreen`.
+The website creates one `createStockPhone` runtime per session with a portfolio `StockSimCard`,
+preload, localStorage EEPROM, network, sound, lights, Brisbane clock and build-derived IMEI.
+`createScreenRenderer({ paint: paintStockScreen })` draws its screens. The website's mute
+control sets the sound adapter's master gain. Stock settings and the light port own the handset's
+sound choices and LED state.
 
-The Nokia content graph is website-owned (`website/src/content/menu.ts`) and is composed as
-one `PhoneMenu<WebMetadata>` object graph. `phone-core` owns only the generic immutable menu
-model, traversal, and firmware behavior. Website metadata crosses that boundary as opaque
-generic data: phone-core stores and returns it but never interprets, mutates, or recursively
-freezes it. The website projects the same graph into routes, sitemap entries, SEO metadata,
-and HTML panels; router loaders return plain serializable projections, never class instances.
+The website supplies content through `website/src/content/sim.ts`. `stockMenuFor(PORTFOLIO_SIM)`
+defines the route tree. A website-owned `ROUTE_CONTENT` table supplies descriptions, indexing
+and HTML panel ids without changing firmware behaviour. Router loaders return plain serializable
+projections, never menu class instances. The stock menu and website panels use the same SIM data.
+
+The 2001 desk stays around the phone (`website/src/desk/`, `website/DESIGN.md`). Its live adapter
+reads the stock runtime's path, screen text and settings. The notebook, key controls and live
+hints must keep following the handset. Stock light events replace the old backlight preference;
+the desk must display the resulting state without inventing firmware settings.
 
 **Control inversion (the key design decision):** the phone packages never import the
 router. `phone-core` exposes `navigate(path)` and emits `pathchange` events;
@@ -1275,9 +1306,9 @@ export function Nokia3310(props: Nokia3310Props): React.JSX.Element;
 export function PhoneStage(props: Nokia3310Props & { className?: string }): React.JSX.Element;
 ```
 
-phone-3d does not know nokia-os: a host maps nokia-os's `StockLightEvent`s to `backlightOn`
-(display) and `keypadLightOn` (keypad). The website passes only `backlightOn`, so its keypad
-follows it (plan 25 D13).
+phone-3d does not know nokia-os: the website maps nokia-os's `StockLightEvent`s to `backlightOn`
+(display) and `keypadLightOn` (keypad). The website passes both light states after plan 31 Task 6. Before that
+cutover it passes only `backlightOn`, so the keypad follows it (plan 25 D13).
 
 ### `@hellotimber/snake`
 
@@ -1307,29 +1338,32 @@ export function tickIntervalMs(speed: number): number;
 export const MAZE_NAMES: readonly string[]; // ['No maze','Box','Tunnel','Mill','Rails','Apartment']
 ```
 
-`website/src/phone/` hosts the concrete Snake `PhoneApplication`, renderer→3D props, and
-the router bridge. Adapters are the only place two packages meet.
-
-`@hellotimber/snake` is the website's game only. The stock OS (`@hellotimber/nokia-os`) has its
-own Snake II engine reproduced from the v6.39 captures (plan 23 D1).
+`website/src/phone/` hosts the runtime adapters and router bridge. The stock OS has its own
+Snake II engine reproduced from v6.39 captures (plan 23 D1). Plan 31 removes the website's
+dependency on `@hellotimber/snake`; the standalone package remains available.
 
 ## Router integration design (website)
 
 - The 3D scene mounts once in a pathless layout route (`routes/_phone.tsx`),
   client-only via the router's `<ClientOnly>` + `lazy()` (SSR renders the HTML panels;
   the canvas hydrates in). Route changes must never remount the canvas.
-- **URL → phone:** on route change, `phone.navigate(pathFromUrl(pathname))`.
+- **URL → phone:** resolve the URL against `stockMenuFor(PORTFOLIO_SIM)`, then
+  `phone.navigate(pathFromUrl(pathname))`. Standby applications keep the URL `/`.
 - **Phone → URL:** on `pathchange`, `router.navigate({ to: urlFromPhonePath(path) })`.
 - **Echo suppression:** the bridge keeps the last path it applied in each direction and
   ignores the reflected event, so the loop terminates.
 - A catch-all route under the phone layout (`routes/_phone/$.tsx`) absorbs phone-pushed
   URLs that have no dedicated route file (deep submenus like `menu/phone-book/search`),
-  so navigation never 404s out of the layout and unmounts the canvas. It doubles as the
-  SIM-services/404 experience.
+  so stock navigation stays inside the layout. Legacy paths that left the tree return 301
+  redirects to their new homes, using the Task 0 URL fixture to prove coverage. Unknown URLs
+  return 404 with noindex and a "No service" panel; the handset opens SIM services.
 - Keyboard input (arrows/enter/backspace/digits) maps to phone keys for desktop users;
   on-screen keys are pointer targets in 3D.
-- Each route also renders its content as plain HTML in a side panel — same data source
-  as the phone menu (single content module), so phone and page can never drift apart.
+- Each route renders server-side HTML from the same content as the SIM. The panels are
+  visually hidden on the desk; the desk's notebook mirrors `describeStockScreen` for sighted
+  visitors, and the `[role=status]` mirror exposes the same text.
+- The sitemap is `/` plus indexable stock paths in stock order (plan 31 D14). Generic stock
+  pages remain reachable with noindex. Redirects run before unknown-path handling.
 
 ## Milestones
 
@@ -1355,8 +1389,8 @@ Decisions made without blocking on input — flag if any is wrong:
 - **Portfolio copy** (bio, roles, project list) isn't known yet; plans build the
   content _structure_ in `website/src/content/` with clearly-marked sample data for
   Lachlan to replace. Structure is real; words are placeholders.
-- **Stretch items** (Profiles modes, ringtone composer, Space Impact/Bantumi/Pairs II)
-  are designed-around but not planned in detail. Chat ships as read-only testimonials.
+- **Stock features** keep their firmware behaviour. Testimonials move to Inbox SMS; Chat
+  uses the network port. Missed-call jokes and visitor profile modes are dropped (plan 31 D2).
 - **Deployment target** not chosen (old 2017 `deploy.sh` was removed with the legacy
   site); milestone 6 leaves a placeholder task.
 - The menu list/order above is verified against the original user manual (doc 9357246)

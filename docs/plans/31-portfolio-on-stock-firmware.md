@@ -17,7 +17,7 @@ they exist; each use is conditional and names its fallback (D17).
 `siteMenu`) with website applications and phone-screen's own painter. A painter-only swap to
 nokia-os broke the site and was reverted (`b446466`): `paintStockScreen` draws only the stock
 firmware's screens. The fix is to run the stock firmware itself.
-**Status:** not started.
+**Status:** in progress (Tasks 0-1 complete; runtime cutover pending).
 
 ## Goal
 
@@ -361,10 +361,10 @@ New: `network.test.ts`, `threads.test.ts`, `stock-sound.test.ts`, `host-clock.te
 
 **Files:** `VISION.md`, `AGENTS.md`, `docs/plans/README.md` (row 31), this plan.
 
-- [ ] VISION and AGENTS.md as "Website contract changes"; record D2's table in VISION's sitemap
+- [x] VISION and AGENTS.md as "Website contract changes"; record D2's table in VISION's sitemap
       section.
-- [ ] Plans README: row 31 `in progress`. No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define the portfolio on the stock firmware (plan 31)`.
+- [x] Plans README: row 31 `in progress`. No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define the portfolio on the stock firmware (plan 31)`.
 
 ### Task 2 - Portfolio content in stock shape (TDD)
 
@@ -569,3 +569,18 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
   legacy URLs redirect or still resolve; unknown URLs 404 to SIM services.
 - `vp check`, `vp run -r test` and `vp run website#build` pass; the headless QA list passes; VISION,
   AGENTS.md and the plans README match what shipped; a deploy waits for Lachlan's OK.
+
+## Implementation notes (2026-10-29)
+
+- Tasks 0-1: captured all 66 legacy URLs as literals, including `/`; the equality test
+  failed with an incomplete fixture before passing with the captured list. Runtime unchanged.
+- The website contract now permits nokia-os. The existing snake dependency remains until
+  Task 6, as the ordered plan requires. VISION distinguishes the target from the runtime
+  still running before that cutover.
+- Preserve the 2001 desk through the cutover. Task 6 must also migrate `desk/live.ts`
+  (runtime and breadcrumbs), its screen-text consumers and the Lights control to stock
+  state; leaving the desk on deleted adapters would break the build and live controls.
+- Plan 18c remains in progress, but `features/chat.ts` already binds node 3 to `chatScreen`.
+  Use that implementation through the network port; do not classify Chat as a placeholder
+  solely because the broader plan is in progress. Verify actual Chat integration in Tasks
+  3 and 9. No change to Games is part of this batch.
