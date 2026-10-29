@@ -410,13 +410,13 @@ Task 6 (they still feed `siteMenu`).
 `website/tests/{stock-sound,host-clock,imei}.test.ts` (new). Lights and mute are wired in Task 6
 (they replace settings the old menu still reads).
 
-- [ ] Port the demo's `WebAudioSound` (D12): a fake `AudioContext` records scheduled values; buzzer
+- [x] Port the demo's `WebAudioSound` (D12): a fake `AudioContext` records scheduled values; buzzer
       and tone gains per register, `hz2` on a second oscillator, `hz: null` silences, scheduling
       offset, mute → master gain 0, the vibrator → `navigator.vibrate` (none when muted).
-- [ ] `host-clock.ts` with a fixed `Date`: `"HH:MM"`/`"DD.MM.YYYY"` in Brisbane across a UTC date
+- [x] `host-clock.ts` with a fixed `Date`: `"HH:MM"`/`"DD.MM.YYYY"` in Brisbane across a UTC date
       change; the `sentAt` stamp.
-- [ ] `imei.ts`: 15 digits, Luhn-valid, stable per hash.
-- [ ] Commit: `feat(website): stock sound, clock and IMEI adapters`.
+- [x] `imei.ts`: 15 digits, Luhn-valid, stable per hash.
+- [x] Commit: `feat(website): stock sound, clock and IMEI adapters`.
 
 ### Task 5 - Stock routes, redirects and the sitemap (pure, TDD; not wired)
 
@@ -649,3 +649,17 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
 - Public createStockPhone key tests prove GitHub opens inside send(), Write messages
   delivers a canned reply into Inbox, and landed Chat sends A: Hi and renders the reply.
   No Task 3 work waits on 18c. Full browser cutover QA remains for Tasks 6 and 9.
+
+### Task 4 delivery (2026-10-29)
+
+- Added a gesture-started WebAudio adapter with the demo's register-to-gain mapping,
+  30 ms scheduling headroom, square buzzer and two sine voices for DTMF. A single tone
+  and tone-off silence the second voice. Mute changes master gain, stops vibration,
+  and prevents queued on events from restarting vibration while muted. Browser vibration
+  is renewed until the firmware turns it off; no browser vibration support is required.
+- Unified SMS timestamps and the future phone clock on one Brisbane formatter. UTC
+  date-boundary and midnight cases are pinned. IMEI uses 35 + a twelve-digit padded
+  FNV-1a hash + a Luhn check digit, deterministic for a build hash.
+- These adapters are not mounted until Task 6. No desk controls or Games code changed.
+- TDD: all three new adapter suites failed for absent modules before implementation;
+  website suite, production build and vp check --fix pass (final totals below).

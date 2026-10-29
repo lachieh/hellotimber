@@ -1,6 +1,7 @@
 import type { StockIncomingSms, StockNetworkPort, StockStorage } from "@hellotimber/nokia-os";
 import { LINKS, type PortfolioLink } from "../content/links";
 import { personByNumber } from "../content/people";
+import { hostTimestamp } from "./host-clock";
 import { createThreads } from "./threads";
 
 export const LINK_CALL_MS = 1500;
@@ -13,28 +14,6 @@ interface NetworkOptions {
   open?: (href: string, target: string, features: string) => unknown;
   assign?: (href: string) => void;
   download?: (href: string) => void;
-}
-function timestamp(date: Date) {
-  const parts = new Intl.DateTimeFormat("en-AU", {
-    timeZone: "Australia/Brisbane",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(date);
-  const get = (name: Intl.DateTimeFormatPartTypes) =>
-    Number(parts.find((part) => part.type === name)?.value);
-  return {
-    year: get("year"),
-    month: get("month"),
-    day: get("day"),
-    hour: get("hour"),
-    minute: get("minute"),
-    second: get("second"),
-  };
 }
 export function createPortfolioNetwork(options: NetworkOptions): StockNetworkPort {
   const threads = createThreads(options.storage, options.simId);
@@ -86,7 +65,7 @@ export function createPortfolioNetwork(options: NetworkOptions): StockNetworkPor
             const sms = {
               number,
               text: body.reply,
-              sentAt: timestamp((options.now ?? (() => new Date()))()),
+              sentAt: hostTimestamp((options.now ?? (() => new Date()))()),
             };
             for (const deliver of subscribers) deliver(sms);
           })
