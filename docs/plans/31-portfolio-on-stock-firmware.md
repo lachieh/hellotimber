@@ -17,7 +17,7 @@ they exist; each use is conditional and names its fallback (D17).
 `siteMenu`) with website applications and phone-screen's own painter. A painter-only swap to
 nokia-os broke the site and was reverted (`b446466`): `paintStockScreen` draws only the stock
 firmware's screens. The fix is to run the stock firmware itself.
-**Status:** in progress (Tasks 0-5 complete; runtime cutover pending).
+**Status:** in progress (Tasks 0-8 delivered; Task 9 blocked on the stock toolkit-call seam).
 
 ## Goal
 
@@ -485,20 +485,20 @@ panel ids), `website/tests/{panels,panel-registry}.test.tsx` (new or rewritten),
 their tests and READMEs, `VISION.md` (their contract sections), `pnpm-workspace.yaml` only if Open
 question 11 says to delete the snake package.
 
-- [ ] For each candidate, prove no consumer remains (`grep -rn` over `packages/` and `website/`):
+- [x] For each candidate, prove no consumer remains (`grep -rn` over `packages/` and `website/`):
       phone-core's `multitap.ts` and `EditorApplication` (plan 18 D2 kept them for the website);
       phone-screen's own screen layouts and `welcomeText` (plan 13: phone-screen becomes an LCD
       toolkit once the website paints with nokia-os). Delete what has none; record what still has a
       consumer and why.
-- [ ] `mise exec -- vp run -r test`, `vp run website#build`, `vp check --fix`.
-- [ ] Commit: `refactor: delete phone-core and phone-screen code only the old website used`.
+- [x] `mise exec -- vp run -r test`, `vp run website#build`, `vp check --fix`.
+- [x] Commit: `refactor: delete phone-core and phone-screen code only the old website used`.
 
 ### Task 9 - Headless QA, verification gate and closeout
 
 **Files:** `docs/plans/README.md`, this plan (completion notes), `website/README.md` if it exists
 (deploy notes).
 
-- [ ] `mise exec -- vp check`, `vp run -r test`, `vp run website#build`; report the client bundle's
+- [x] `mise exec -- vp check`, `vp run -r test`, `vp run website#build`; report the client bundle's
       gzip size against `main` (no gate; record it).
 - [ ] Headless QA with `agent-browser` against `mise exec -- vp run website#dev`, reading the
       `[role=status]` mirror (boot ≈5 s; Enter, arrows, Escape, digits). Record each result: 1. `/` boots to standby (`LACHLAN`, the Brisbane time); reduced motion skips the boot. 2. ▼ opens the name list; ▼ to GitHub; Enter (`Call`) opens a new tab on GitHub; the mirror
@@ -744,3 +744,149 @@ Press Menu.`; notebook strip showed the same clock and carrier; hint said press 
   17 files / 90 tests, with two workers to avoid shared-machine CPU contention. Production
   build and vp check --fix pass. Generic panels link stock children; stock metadata selects
   the bespoke panels. HTML remains SSR, sr-only and screen-reader reachable.
+
+### Task 8 subtraction audit (2026-10-29)
+
+- Audits saved in /tmp/plan31-editor-consumers.txt and /tmp/plan31-layout-consumers.txt.
+  EditorApplication and core multitap had only their own tests and exports remaining;
+  deleted both and preserved the generic application lifecycle test with an inert target.
+- Deleted all website LCD layouts, their icons, boot frames, clock font, reference fixtures,
+  layout tests and the obsolete layout-comparison demo (including its package script).
+  The canvas requires paint; welcomeText and its tests/docs are gone.
+- The final audit removed FONT/GLYPHS too: only their own tests consumed them; stock firmware
+  supplies its own generated glyphs. Toolkit text tests now use a tiny synthetic font and
+  independent literal pixel expectations. nokia-os still consumes Framebuffer, bitmapFromArt,
+  createPixelFont, PixelFont and textWidth; these primitives remain.
+- No whole package is superseded: phone-core is the stock kernel, phone-screen its LCD
+  toolkit. The standalone snake package stays per resolved Open question 11; website no
+  longer depends on it. AGENTS.md now reflects these roles and the actual dependency graph.
+
+### Stock browser audio regression (2026-10-29)
+
+- Browser QA found an overdue tone-off edge scheduled at negative AudioContext time. The
+  browser threw RangeError and stopped rAF, preventing SMS arrival processing. A focused
+  regression failed with -0.97 instead of 0 before the fix. The adapter now schedules overdue
+  edges at audio now; future edges retain their recorded offset and 30 ms headroom.
+- No ANTHROPIC_API_KEY is available locally. Live LLM QA therefore uses the network port's
+  canned fallback; a real model reply remains a deployment-environment check.
+
+- Corrupt legacy settings initially bypassed message cleanup. The focused settings test
+  failed with the legacy value still present before fixing load order and JSON recovery.
+- Stock browser Chat passed through the real network port: nickname, editor, Send and a
+  canned reply (`Good timing - I was just polishing 4032 pixels...`). No Task 6-8 work waits
+  on 18c. Firmware screen saver/gallery remains 18c work and is not faked by the surrounds.
+- Deep-link integration limit observed: an SMS delivered before the phone first visits
+  standby is queued by StockMessaging.atStandby. After returning to standby it arrived,
+  and the Inbox showed 11 messages and the canned reply. This needs a stock/host deep-boot
+  readiness follow-up; the normal root-boot SMS and Chat paths work.
+
+### Resume audit and QA (2026-10-29)
+
+- Confirmed Task 6 in `6bc4295`: stock singleton, painter, router, network/sound/light adapters,
+  legacy website deletion, and the desk migration all shipped together. `_phone.tsx` owns the
+  unkeyed stage once; live.ts uses stock snapshots; lcd-copy.ts uses describeStockScreen;
+  Walkman gates stock sound and both light channels. DESIGN.md and PRODUCT.md already describe
+  this visible migration. Task 7 in `974491a` supplies all fourteen content panel ids and the
+  content-only tests. Their checked boxes are supported by those commits.
+- Preserved all unfinished subtraction and both inherited browser fixes. Committed audio/settings
+  recovery separately (`bd76770`). Updated phone-core README and the VISION ownership table to
+  remove stale text-entry/layout claims. No Games or nokia-os source/generated/golden file changed.
+- Retained ScreenModel's generic editor variant: nokia-os's painter fallback and tests still
+  consume it. Retained the independently usable bitmap/font primitives. The standalone Snake
+  package remains explicitly required by resolved Open question 11; it has its own public API,
+  README and passing tests, and is not a dead website dependency.
+- Tooling: mise Node 22.22.3, explicit Node path and SHELL=/bin/sh. Stopped the cut-off agent's
+  duplicate uncached run. The first new default-worker run exceeded unchanged 30-second resource
+  extraction limits; repeated the entire uncached command with VITEST_MAX_WORKERS=2, the supported
+  runner setting. No test timeout or firmware tolerance was widened.
+
+Headless agent-browser 0.34.0, own session `plan31-resume`, existing worktree dev server on 3003:
+
+| Check                | Result and evidence                                                                                                                                                                                                                                                                                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Root boot            | `Standby: LACHLAN, 08:00 [Menu]`; `/tmp/plan31-resume-standby.png`                                                                                                                                                                                                                                                                                                  |
+| Every top-level menu | Phone book, Messages, Chat, Call register, Tones, Settings, Call divert, Games, Calculator, Reminders, Clock, Profiles, Menu 14 LACHLAN; `/tmp/plan31-resume-menu.png`                                                                                                                                                                                              |
+| Phone book/link call | Standby down opens names; GitHub [Call] opens `https://github.com/example-handle` in tab t2 and returns to standby; `/tmp/plan31-resume-after-call.png`. Existing short-call screenshot `/tmp/plan31-stock-link-call.png` captures the connected phase. Placeholder destination remains sample data.                                                                |
+| SMS network          | Wrote `Ii`, Options > Send, number 0491570006; `Sending message`, persisted outgoing/incoming thread; returning to standby shows unread messages. `/tmp/plan31-resume-message-sent.png`, `/tmp/plan31-resume-sms-arrival.png`; original Inbox reply `/tmp/plan31-stock-sms-reply.png`. No local API key: canned response tested, live LLM still a deployment check. |
+| Chat network         | Number, nickname A, stock editor, Options > Send; `>Typing this with multi-tap, so keeping it short: thanks for the [OK]`; `/tmp/plan31-resume-chat.png`                                                                                                                                                                                                            |
+| Notebook and hint    | On Chat, notebook equals the status description with the separate OK softkey; sticky says `Enter = OK, up/down to scroll, Esc to go back`. Also observed standby/Menu and editor changes.                                                                                                                                                                           |
+| Snake                | Deep link selects New game; Enter starts `Snake II, score 0`; steering works; `/tmp/plan31-resume-snake.png`. No Games changes.                                                                                                                                                                                                                                     |
+| Walkman              | Sound and Lights toggle checked true/false and restore; `/tmp/plan31-resume-switches-off.png`. Audio mute/late-edge behavior covered by adapter tests; lights gates verified in stage source.                                                                                                                                                                       |
+| Legacy URLs          | All 66 resolve HTTP 200 after redirects; `/tmp/plan31-resume-legacy-urls.json`. Unknown URL returns 404; Search response contains contact hrefs before hydration.                                                                                                                                                                                                   |
+| Persistence          | Added Zoe through real multi-tap and stock number form, reloaded, Search lists Zoe; `/tmp/plan31-resume-persistence.png`. Only firmware, threads and mute keys plus the dev-only `tanstack_devtools_state` were present. The plan's storage whitelist excludes that development tooling key in production.                                                          |
+| Mobile               | 390x844 renders handset and playable Snake, desk continues below; `/tmp/plan31-resume-mobile.png`; browser errors empty.                                                                                                                                                                                                                                            |
+
+- Full browser commands and text evidence: `/tmp/plan31-resume-browser.jsonl`. Earlier detailed
+  traces remain `/tmp/plan31-stock-top-menus.json`, `/tmp/plan31-stock-sms-qa.json`,
+  `/tmp/plan31-stock-chat-qa.json`, `/tmp/plan31-stock-imei-projects-qa.json`.
+- Bundle: built base-main source `238952d` from a temporary git archive using the same installed
+  dependencies and Node 22, without switching/editing any branch or creating a git worktree.
+  Both builds passed. Sum of individually gzip-9-compressed client JS assets (including lazy
+  chunks; excluding CSS, model and wasm): main 395,718 bytes; stock 655,630 bytes; +259,912.
+  Stock includes English T9 (116,851 bytes gzip) and the stock firmware/resources. This is an
+  aggregate download inventory, not the root route's initial transfer or a timing benchmark.
+  `/tmp/plan31-bundle-comparison.json`, `/tmp/plan31-main-build.log`,
+  `/tmp/plan31-resume-build.log`. Temporary baseline used current dependency resolutions to
+  isolate source changes; it is not a reproduction of main's historical lockfile environment.
+- Deployment steps are in website/README.md. Vercel project secrets/settings were not inspected
+  or changed. Set ANTHROPIC_API_KEY and BUILD_HASH, review sample data, then smoke-test after an
+  approved merge/deploy. Nothing was pushed, merged or deployed.
+- 18c: no portfolio blocker. Landed Chat works through this port. Firmware screen saver/gallery
+  remains owned by 18c. The separately observed deep-boot SMS readiness limit remains a stock/host
+  follow-up: replies received before the first standby queue until standby is visited. Root-boot
+  SMS and Chat passed; this plan does not alter firmware delivery policy.
+
+- Final QA found and fixed a direct-404 initialization failure: NotFoundPanel called the
+  suspending synchronous runtime getter in an effect. It now awaits loadPhoneRuntime and
+  cancels navigation if unmounted. Extracted the panel to test its real behavior independently
+  of TanStack's lazy route transformation. Regression fails with the old getter (`Unknown
+Error: Promise`) and passes with the fix; `/tmp/plan31-404-red.log` and
+  `/tmp/plan31-404-green.log`. Committed as `1f00cd6`.
+- Rechecked 404: HTTP remains 404 and the mounted handset settles to `LACHLAN: Projects
+(1 of 2) [OK]`, client URL `/menu/sim-services`; `/tmp/plan31-resume-404.png`.
+  Confirmed reduced-motion standby and `*#06#` serial number (`/tmp/plan31-resume-imei.png`).
+  Projects deep link renders hellotimber's text then `Question: Open hellotimber? [OK]`;
+  `/tmp/plan31-resume-project.png`.
+- Browser route ownership proof: captured the canvas element, followed the real Messages
+  link, went Back and Forward; the same canvas object remained throughout, and the mirror
+  aligned to Menu 1 and Messages respectively. No stage remount introduced.
+
+### Task 9 discrepancy: toolkit calls still a firmware placeholder
+
+Settled browser QA (not an optimistic immediate tab check) found that confirming
+`Open hellotimber?` shows `Calling (not implemented)` and opens no tab. The network adapter
+cannot receive this call: `packages/nokia-os/src/firmware/features/sim-services.ts`'s
+`toolkitDial` still discards services and replaces the flow with `callPlaceholder`.
+This is the deferred plan 30 D6/plan 22 integration seam, despite the prerequisite's
+calls API now existing. Phone-book calls do reach the port; toolkit calls do not.
+
+AGENTS.md's Working agreement says to stop and report a plan/code discrepancy rather than
+improvise a workaround. Plan 31 excludes nokia-os behavior changes and permits only package
+subtraction outside the website. Therefore no website interception or firmware patch was
+added. Task 9's project-call acceptance and the plan closeout remain open pending the
+firmware owner wiring toolkitDial to the calling flow and proving it through the public
+phone API. This is separate from plan 18c. Do not mark this plan done merely because the
+remaining website/package gates pass. Screenshots and earlier text-page/confirmation checks
+prove navigation only, not a working toolkit link call.
+
+### Final verified delivery
+
+- Task 8 committed as `c4e2326`: 44 files, 112 insertions / 3,536 deletions. No whole
+  package removed; retained packages each own a standalone public contract. Deleted editor,
+  multitap, legacy layouts/icons/boot/clock/default font, their exports, obsolete demo/script,
+  golden fixtures/tests and orphaned helper. Synthetic font tests preserve toolkit behavior.
+- Exact `vp check` passed after stabilizing formatting (`/tmp/plan31-resume-check-gate.log`).
+  Production build passed (`/tmp/plan31-resume-build-final.log`).
+- `VITEST_MAX_WORKERS=2 vp run -r --no-cache test` exited 0: 257 files, 11,736 passed tests,
+  120 expected failures, 161 TODOs; firmware alone 181 files / 11,081 passed (2,032 seconds).
+  `/tmp/plan31-resume-tests-two-workers.log`. The full run began before the final dead-font
+  deletion; its phone-screen stage ran 31 tests. Reran the affected final phone-screen suite:
+  4 files / 24 passed (`/tmp/plan31-final-screen-tests.log`); website 18 files / 92 passed
+  (`/tmp/plan31-resume-website-tests.log`). The final tree therefore contains 11,729 passing
+  tests, plus the same expected failures and TODOs. No firmware behavior or test changed.
+- Final QA blocker screenshot: `/tmp/plan31-resume-toolkit-blocker.png`. The settled toolkit
+  call does not reach the network port. Task 9's QA and closeout boxes deliberately stay open;
+  plan index row 31 says in progress with the toolkit-call seam. Do not deploy this as complete.
+- 18c remains a firmware follow-up, not the cause of this blocker. Local LLM QA used canned
+  replies; live API credentials, real portfolio copy/URLs, merge and deployment remain external
+  release actions. No secrets, Games, generated assets, main or other branches were changed.

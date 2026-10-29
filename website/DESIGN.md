@@ -311,3 +311,7 @@ it no longer reads the removed website game's score store.
 Sound gates the stock audio adapter's master gain. Lights is a session-only gate on the
 stock display and keypad LED outputs: Off suppresses both; On follows the firmware's
 automatic timeout. Neither switch rewrites firmware settings or invents phone behaviour.
+
+A direct unknown URL keeps the handset and desk available while the runtime loads, then
+opens stock SIM services. The server response remains a 404; client navigation follows the
+phone to SIM services. Route changes and browser Back/Forward keep the same stage canvas.
