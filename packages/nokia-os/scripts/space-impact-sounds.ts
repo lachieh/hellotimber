@@ -16,11 +16,30 @@ export const spaceImpactSoundModule: GeneratedResourceModule = {
       )
     )
       throw new Error("Space impact: changed captured shot program");
+    const bonusIndex = source.rows.findIndex(
+      (row) =>
+        row.output === "buzzer" &&
+        row.state.kind === "sounding" &&
+        row.state.hz === 2636.9 &&
+        row.state.volume === 6,
+    );
+    const bonus = source.rows.slice(bonusIndex, bonusIndex + 2);
+    if (
+      bonusIndex < 0 ||
+      bonus.length !== 2 ||
+      bonus[1]!.output !== "buzzer" ||
+      bonus[1]!.state.kind !== "off"
+    )
+      throw new Error("Space impact: changed captured pickup program");
     const first = rows[0]!.ms;
     return resourceModule(
       "SPACE_IMPACT_SOUNDS",
       "Readonly<Record<string, { readonly id: string; readonly steps: readonly { readonly ms: number; readonly buzzer?: { readonly hz: number; readonly volume: number } | null }[] }>>",
       {
+        "space-impact/bonus": programFromRows(
+          "space-impact/bonus",
+          bonus.map((row) => ({ ...row, ms: row.ms - bonus[0]!.ms })),
+        ),
         "space-impact/shot": programFromRows(
           "space-impact/shot",
           rows.map((row) => ({ ...row, ms: row.ms - first })),

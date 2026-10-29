@@ -1,3 +1,6 @@
+import { createGameRandom } from "../random";
+import { spaceImpactBonus } from "./random";
+import { SPACE_IMPACT_DATA } from "../../resources/generated/space-impact";
 import { SPACE_IMPACT_OPENING_WAVE } from "../../resources/generated/space-impact-opening-wave";
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { isSpaceImpactControl, spaceImpactMove } from "./keys";
@@ -51,11 +54,11 @@ export function spaceImpactKey(
   key: PhoneKey,
   action: "down" | "up" | "repeat" = "down",
 ): SpaceImpactResult {
+  if (action === "up") return result({ ...state, held: null });
   const deferred = pending(state);
   if (deferred) return deferred;
   if (key === "navi" || key === "c")
     return action === "down" ? { ...result(state), events: [{ kind: "suspend" }] } : result(state);
-  if (action === "up") return result({ ...state, held: null });
   if (action === "repeat" && state.held?.key !== key) return result(state);
   const attempts = action === "down" ? 1 : (state.held?.attempts ?? 0) + 1;
   const held = { key, attempts };
@@ -78,6 +81,27 @@ export function spaceImpactKey(
     cues: [{ kind: "game-sound", id: "space-impact/shot" }],
     events: [],
   };
+}
+
+function touchesBonus(
+  state: SpaceImpactState,
+  ship: SpaceImpactState["ship"],
+  bonus: SpaceImpactState["bonuses"][number],
+  tick: number,
+): boolean {
+  if (state.shield) return false;
+  const inverted = state.level === 0 || state.level === 4 || state.level === 5;
+  const orb = SPACE_IMPACT_DATA.sprites[`bonus/orb/${tick % 2}`]!;
+  // The opaque ship meets clear XOR-orb bits on inverted levels. UNVERIFIED outside level 0.
+  return SPACE_IMPACT_DATA.sprites.ship!.some((row, y) =>
+    row
+      .split("")
+      .some(
+        (pixel, x) =>
+          pixel === "#" &&
+          orb[ship.y + y - bonus.y]?.[ship.x + x - bonus.x] === (inverted ? "." : "#"),
+      ),
+  );
 }
 
 export function stepSpaceImpact(state: SpaceImpactState): SpaceImpactResult {
@@ -112,20 +136,31 @@ export function stepSpaceImpact(state: SpaceImpactState): SpaceImpactResult {
     score += 10;
     return [];
   });
+  const random = createGameRandom(state.randomState);
+  let hud = { ...state.hud, score };
+  let pendingCue = state.pendingCue;
+  const bonuses = [
+    // UNVERIFIED: level 0 collects both orbs before their left-edge retirement.
+    ...state.bonuses.flatMap((bonus) => {
+      const x = bonus.x + bonus.dx;
+      return x < 0 ? [] : [{ ...bonus, x }];
+    }),
+    ...SPACE_IMPACT_OPENING_WAVE.bonuses
+      .filter((entry) => entry.tick === state.tick + 1)
+      .map(({ x, y, dx }) => ({ x, y, dx })),
+  ].filter((bonus) => {
+    if (!touchesBonus(state, ship, bonus, state.tick + 1)) return true;
+    hud = spaceImpactBonus(random, hud);
+    pendingCue = "space-impact/bonus";
+    return false;
+  });
   return result({
     ...state,
     enemies,
-    bonuses: [
-      // UNVERIFIED: level 0 collects both orbs before their left-edge retirement.
-      ...state.bonuses.flatMap((bonus) => {
-        const x = bonus.x + bonus.dx;
-        return x < 0 ? [] : [{ ...bonus, x }];
-      }),
-      ...SPACE_IMPACT_OPENING_WAVE.bonuses
-        .filter((entry) => entry.tick === state.tick + 1)
-        .map(({ x, y, dx }) => ({ x, y, dx })),
-    ],
-    hud: { ...state.hud, score },
+    bonuses,
+    hud,
+    randomState: random.state,
+    pendingCue,
     ship,
     moves: [],
     tick: state.tick + 1,

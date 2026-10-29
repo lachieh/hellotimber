@@ -210,3 +210,31 @@ describe("Space impact shot sound", () => {
     },
   );
 });
+
+describe("Space impact pickup sound", () => {
+  it("plays the captured bonus cue and replaces a shot", () => {
+    const events: StockSoundEvent[] = [];
+    const sequencer = new SoundSequencer((event) => events.push(event));
+    const settings = createStockSettings(new StockEeprom(soundStorage("factory")));
+    const sounder = new StockSounder(sequencer, settings, () => 1000);
+    sounder.cue({ kind: "game-sound", id: "space-impact/shot" }, 1000);
+    sequencer.advance(1050);
+    sounder.cue({ kind: "game-sound", id: "space-impact/bonus" }, 1050);
+    sequencer.advance(1200);
+    expect(events).toEqual([
+      { output: "buzzer", atMs: 1000, hz: 440, volume: 3 },
+      { output: "buzzer", atMs: 1034, hz: 466, volume: 3 },
+      { output: "buzzer", atMs: 1050, hz: 2636.9, volume: 6 },
+      { output: "buzzer", atMs: 1054, hz: null },
+    ]);
+  });
+
+  it.each<SettingChoices>([{ [WARNING_TONES]: TONES_OFF }, { [SOUNDS]: GAMES_OFF }])(
+    "silences pickups under captured game sound gating %j",
+    (choices) => {
+      expect(
+        sounderAt("factory", choices).cue({ kind: "game-sound", id: "space-impact/bonus" }),
+      ).toEqual([]);
+    },
+  );
+});

@@ -2884,6 +2884,88 @@ snake 62, phone-3d 49, phone-screen 101 and website 180. The focused eight-file 
 final-check,build}.log`. No excluded package, website source, lockfile, golden or generated
 resource changes. This is a green conditional-recovery unit, not completed level-0 gameplay.
 
+### Accepted parent decision (2026-10-29): counted level-0 effective seed
+
+Use the counted **18-roll hypothesis**, effective seed **44530**, as level 0's
+recovered gameplay seed, labelled **UNVERIFIED**. The committed recovery script derives
+this value from the informative LCD trace; it satisfies accepted S7. The replay may
+supply it through the recovered-seed seam, without changing the clock fallback.
+The nineteen-roll alternative (59408) reaches the identical state 59365 after pickup
+two, and nothing visible distinguishes the histories before that. Under AGENTS.md's
+fidelity standard, choosing the counted history is imperceptible. This supersedes the
+previous checkpoint's prohibition on selecting between these two hypotheses.
+
+The consumer order is pickup draw 1; eighteen ordinary fire rolls 2–19; pickup 20;
+boss rolls 21–89 (denominator 40); destruction draws 90–105. Zero ANSI draws.
+Hidden-consumer attribution remains **UNVERIFIED** until engine replay establishes it.
+
+### Seeded first-pickup checkpoint (2026-10-29; partial)
+
+Continued from `1cafdc5`, only in `t3/p24-space-impact`. The accepted counted-seed parent
+decision is recorded above. Replay reads effective seed 44530 from the committed generated
+joint-recovery derivation, rather than duplicating a numeric seed in runtime code. The clock
+fallback is unchanged. This is a first-pickup unit; the complete eighteen-roll ordinary-fire
+program, second pickup, boss and destruction consumers are **not yet executed by the engine**.
+Their accepted order remains UNVERIFIED pending those gameplay implementations.
+
+**TDD and exact proof.** The new pickup and capped-life regressions fail before collection
+is wired; the complete-stream test fails at 205 rows. The first orb now consumes draw one,
+changes missiles to wall ×3, and disappears at `ik`. Its sound return remains pending.
+A second failing regression establishes that a framework release stops repeating without
+consuming the pending game return. The next game callback returns the cue without a step.
+Together these changes match **237 of 879 settled rows**, through **`jy`, frame 284,
+21090 ms**. First remaining mismatch is **`jz`, frame 285, 21192 ms, held 92 ms**, the
+first triangle entry. Every original settled pixel and input event remains unchanged.
+The diagnostic still consumes all **1,812** committed delivered events. This prefix is not
+complete output/timing acceptance; no golden can be promoted from it.
+
+**Contact mechanism.** The ship's opaque bitmap and the orb's XOR bitmap use different
+collision senses on inverted level 0: the ship's ink meets the orb's clear pixels. Exact
+LCD specimens establish misses at x10 and x8, then collection at x6 with ship (5,15).
+The native read-only observer under `$REF/captures/6.39/plan24/contact-20261029/` corroborates
+these coordinates, senses and test results without changing registers, RAM, keys or timing.
+`control.json` compares all **2,049** original PNG/PCM files byte-identically. Early observer
+attempts used incorrect firmware/SIM setups and are discarded; only `exact-recording`
+uses canonical PPM E virgin EEPROM and the documented absolute SWSIM_FS. No seed or random
+return value is read. No flash asset/table or extracted file enters the repository.
+
+**Sound.** The registered generator derives the 2636.9 Hz, volume-6, 4 ms bonus cue from the
+committed level-0 sound golden. Only the generated Space impact sound module changes.
+Failing-before sounder tests now exercise actual replacement of an ongoing shot and both
+Warning tones/Games Sounds gates. Complete sound timeline replay is still pending.
+
+**Calls and limits.** UNVERIFIED: applying the captured contact mechanism outside these
+level-0 arrangements; suppressing ship collection while shielded. The existing accepted
+five-life same-chain reroll now runs on collection and has a synthetic engine regression;
+five-life reachability is not claimed. All other accepted defaults retain their labels.
+No RNG skips, scripted pickup award, saved runtime frames, changed comparison or widened
+tolerance. The later generated spawn ordinals still need conversion after the lost callback.
+No genuinely unresolved mismatch is established as a known gap. Plan 24 remains
+**28 asserted, 140 pending, 0 registered known gaps**. Tasks 5a/6–14 remain partial.
+
+**Remaining work.** Continue at `jz`: triangle paths, remaining waves, HP and fire; execute
+and verify the eighteen ordinary consumers before the second pickup, all 69 boss rolls and
+16 destruction draws against the derivation. Then boss/exit/endings, seeded splash, complete
+sound and acceptance, promoting only complete passing fixtures. Level 0's full golden is
+still pending; levels 1–7 and optional raw scanner normalization are unchanged.
+
+**Verification.** Red logs: `/private/tmp/p24-pickup-{red,release-red,sound-red}.log`.
+Final focused, full uncached, build and check results are appended at closeout.
+
+**Closeout verification.** The final uncached `vp run -r --no-cache test` passes all six
+packages: **268 files / 11,905 passed tests**, **120 expected failures**, **163 TODOs**,
+with **0/6 cache hits**. Nokia-os: **176 files / 11,063 passed**, 986.62 s; phone-core 450,
+snake 62, phone-3d 49, phone-screen 101 and website 180. The focused gate passes **8 files /
+161 tests**, with 140 plan-24 TODOs. `website#build`, `vp check --fix`, final `vp check` and
+`git diff --check` pass without warnings. Regeneration reports `up to date` on repetition.
+All commands use mise's guarded Node 22; the full run uses `VITEST_MAX_WORKERS=2` and
+`VP_RUN_CONCURRENCY_LIMIT=1`. Logs: `/private/tmp/p24-pickup-{workspace-tests,focused-final,
+check-fix-final,final-check,build,regenerate-repeat}.log`. The complete-stream diagnostic is
+`/private/tmp/p24-pickup-diagnostic.json`: **237/879**, next **jz at 21192 ms**, all 1,812
+events consumed. Every golden, excluded package, website source and lockfile is unchanged.
+Only the generated Space impact sounds module changes among generated resources. This is
+a green partial first-pickup unit, not full level-0 acceptance or the complete RNG program.
+
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 
 **Files:** `scripts/space-impact-seeds.ts` (new), `src/games/space-impact/random.ts` (new: which

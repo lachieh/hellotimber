@@ -1,4 +1,5 @@
 import { Framebuffer } from "@hellotimber/phone-screen";
+import recovery from "../fixtures/space-impact-seed-recovery.json";
 import type { Golden } from "../../scripts/golden-format";
 import {
   observedSpaceImpactInput,
@@ -37,7 +38,8 @@ export function replaySpaceImpactLevel(golden: Golden) {
     (row) => row.frame >= Number(golden.triggerFrame) && row.durationMs >= 34,
   );
   const images = new Map(golden.images.map((image) => [image.name, image.pixels]));
-  let state = newSpaceImpactGame();
+  // Accepted UNVERIFIED counted-order seed, derived from this informative LCD trace.
+  let state = newSpaceImpactGame({ seed: recovery.countedOrder.effectiveSeeds[0] });
   let matched = 0;
   const compare = () => {
     const fb = new Framebuffer();

@@ -330,6 +330,36 @@ that agree on every recorded outcome. The runtime is unchanged: **205/879** sett
 rows, first mismatch **`ik` at 18149 ms**, **28 asserted / 140 pending** plan-24 fixtures,
 zero registered known gaps, and the bonus policy remains unwired.
 
+**Accepted seed and first-pickup replay (2026-10-29; partial).** The parent accepts the
+counted eighteen-roll hypothesis, effective seed **44530**, as level 0's recovered seed,
+labelled **UNVERIFIED**. It is derived by the committed LCD recovery script and supplied
+from its generated derivation to the replay, satisfying accepted S7. The nineteen-roll
+alternative (59408) is observationally equivalent: both reach 59365 after pickup two,
+and nothing visible distinguishes the histories beforehand. The choice is imperceptible
+under AGENTS.md; it establishes no clock formula or original u32 seed.
+
+The engine now collects the first orb and consumes the first shared RNG draw, awarding
+wall ×3. The ship uses an opaque bitmap; on inverted level 0 the collision test meets
+clear pixels of the XOR orb. The exact skimming approach misses at orb x10/x8, then
+collects at x6 with ship (5,15). A read-only observer corroborates this mechanism and
+preserves all 2,049 original PNG/PCM files byte-for-byte. The LCD pixels remain the proof.
+**UNVERIFIED:** generalizing this contact to other arrangements and levels, and suppressing
+ship collection while shielded. The accepted same-chain five-life reroll is now wired into
+contact and covered synthetically; its reachability remains UNVERIFIED.
+
+Pickup leaves a pending sound return. Framework key release ends the repeat but does not
+consume that game return; the next game event returns the cue without advancing the engine.
+The bonus sound is generated from the committed 2636.9 Hz, volume-6 cue (4 ms), and replaces
+an ongoing shot through the real sounder. Warning tones and Games Sounds still gate it.
+This is cue proof, not complete sound-timeline acceptance.
+
+The complete delivered stream now matches **237/879** settled rows through **`jy` at
+21090 ms**. First remaining mismatch is **`jz`, frame 285, 21192 ms**, the next triangle
+enemy entry. The runtime does not yet execute the eighteen ordinary rolls, second pickup,
+boss rolls or destruction draws; their accepted order remains the next replay obligation.
+Plan 24 stays **28 asserted / 140 pending / 0 registered known gaps**. Full level 0 remains
+pending; no comparator, timing tolerance, golden pixel or input changes.
+
 **Remaining hypotheses (UNVERIFIED until golden replay or further evidence).** Exact collision
 geometry, score ceiling and per-hit awards, all boss phases and projectiles, the pending-sound
 return code and lost-event behavior, held-fire cap, shield durations and exact continue/exit
