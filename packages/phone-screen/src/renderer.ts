@@ -1,6 +1,5 @@
 import type { ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "./framebuffer";
-import { renderScreen } from "./render";
 
 export interface ScreenRenderer {
   readonly canvas: HTMLCanvasElement; // 84×48 logical px, scaled by opts.scale
@@ -19,15 +18,8 @@ export type ScreenRendererOptions = {
   // image-rendering:pixelated handle upscaling crisply
   fg?: string;
   bg?: string; // default classic green LCD palette
-} & (
-  | {
-      /** Default: the legacy (website) layout, `renderScreen`. */
-      paint?: undefined;
-      /** Boot 'welcome' phase text (the boot ScreenModel carries none). Default "Welcome!". */
-      welcomeText?: string;
-    }
-  | { paint: ScreenPainter; welcomeText?: never }
-);
+  paint: ScreenPainter;
+};
 
 const LCD_FG = "#43523d";
 const LCD_BG = "#c7f0d8";
@@ -44,13 +36,11 @@ function parseHexColor(hex: string): [number, number, number] {
  * this package, and only inside this function — module import stays
  * node-safe for tests and SSR.
  */
-export function createScreenRenderer(opts: ScreenRendererOptions = {}): ScreenRenderer {
+export function createScreenRenderer(opts: ScreenRendererOptions): ScreenRenderer {
   const scale = Math.max(1, Math.floor(opts.scale ?? 1));
   const fg = parseHexColor(opts.fg ?? LCD_FG);
   const bg = parseHexColor(opts.bg ?? LCD_BG);
-  const welcomeText = opts.welcomeText ?? "Welcome!";
-  const paintScreen: ScreenPainter =
-    opts.paint ?? ((target, screen) => renderScreen(target, screen, { welcomeText }));
+  const paintScreen = opts.paint;
 
   const fb = new Framebuffer();
   const canvas = document.createElement("canvas");

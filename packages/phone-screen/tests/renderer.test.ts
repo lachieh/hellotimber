@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 import type { ScreenModel } from "@hellotimber/phone-core";
-import { Framebuffer, renderScreen } from "../src/index";
+import { Framebuffer } from "../src/index";
 import type { ScreenPainter } from "../src/index";
 import { createScreenRenderer } from "../src/renderer";
 
@@ -43,19 +43,25 @@ function customFrame(...setPixels: [number, number][]): ScreenModel {
   return { kind: "custom", appId: "test", frame: { width: 84, height: 48, pixels } };
 }
 
+const paint: ScreenPainter = (fb, screen) => {
+  fb.clear();
+  if (screen.kind === "custom") fb.blitBitmap(screen.frame, 0, 0);
+  else if (screen.kind !== "off") fb.setPixel(0, 0, 1);
+};
+
 describe("createScreenRenderer", () => {
   it("owns an 84×48 canvas, scaled by opts.scale", () => {
     stubCanvas2d();
-    expect(createScreenRenderer().canvas.width).toBe(84);
-    expect(createScreenRenderer().canvas.height).toBe(48);
-    const scaled = createScreenRenderer({ scale: 3 });
+    expect(createScreenRenderer({ paint }).canvas.width).toBe(84);
+    expect(createScreenRenderer({ paint }).canvas.height).toBe(48);
+    const scaled = createScreenRenderer({ paint, scale: 3 });
     expect(scaled.canvas.width).toBe(252);
     expect(scaled.canvas.height).toBe(144);
   });
 
   it("bumps version and repaints only on visible change", () => {
     const { paints } = stubCanvas2d();
-    const r = createScreenRenderer();
+    const r = createScreenRenderer({ paint });
     expect(r.version).toBe(0);
     r.render(OFF); // first frame always paints
     expect(r.version).toBe(1);
@@ -72,7 +78,7 @@ describe("createScreenRenderer", () => {
 
   it("paints the default green LCD palette", () => {
     const { paints } = stubCanvas2d();
-    const r = createScreenRenderer();
+    const r = createScreenRenderer({ paint });
     r.render(customFrame([0, 0]));
     const data = paints[0]!.data;
     // pixel (0,0) is set → fg #43523d
@@ -83,7 +89,7 @@ describe("createScreenRenderer", () => {
 
   it("honors custom fg/bg colors", () => {
     const { paints } = stubCanvas2d();
-    const r = createScreenRenderer({ fg: "#000000", bg: "#ffffff" });
+    const r = createScreenRenderer({ paint, fg: "#000000", bg: "#ffffff" });
     r.render(customFrame([0, 0]));
     const data = paints[0]!.data;
     expect([data[0], data[1], data[2]]).toEqual([0, 0, 0]);
@@ -92,7 +98,7 @@ describe("createScreenRenderer", () => {
 
   it("expands each framebuffer pixel into a scale×scale block", () => {
     const { paints } = stubCanvas2d();
-    const r = createScreenRenderer({ scale: 2 });
+    const r = createScreenRenderer({ paint, scale: 2 });
     r.render(customFrame([0, 0]));
     const { width, data } = paints[0]!;
     expect(width).toBe(168);
@@ -110,25 +116,10 @@ describe("createScreenRenderer", () => {
     expect(at(0, 2)).toEqual(BG);
   });
 
-  it("renders the boot welcome phase with the configured welcomeText", () => {
-    const { paints } = stubCanvas2d();
-    const a = createScreenRenderer({ welcomeText: "Hello!" });
-    const b = createScreenRenderer({ welcomeText: "Other text" });
-    const welcome: ScreenModel = { kind: "boot", phase: "welcome", frame: 0 };
-    a.render(welcome);
-    b.render(welcome);
-    expect(paints[0]!.data).not.toEqual(paints[1]!.data);
-  });
-});
-
-describe("createScreenRenderer with an injected painter", () => {
   const FG = [0x43, 0x52, 0x3d];
   const BG = [0xc7, 0xf0, 0xd8];
-  const canvasPixel = (data: Uint8ClampedArray, i: number): number[] => [
-    data[i * 4]!,
-    data[i * 4 + 1]!,
-    data[i * 4 + 2]!,
-  ];
+  const canvasPixel = (data: Uint8ClampedArray, i: number) =>
+    Array.from(data.slice(i * 4, i * 4 + 3));
 
   it("lets the painter control every pixel", () => {
     const { paints } = stubCanvas2d();
@@ -163,26 +154,5 @@ describe("createScreenRenderer with an injected painter", () => {
     r.render(STANDBY); // different model, identical output
     expect(r.version).toBe(1);
     expect(paints).toHaveLength(1);
-  });
-
-  it("defaults to the existing renderer", () => {
-    const { paints } = stubCanvas2d();
-    const legacy: ScreenPainter = (fb, screen) =>
-      renderScreen(fb, screen, { welcomeText: "Welcome!" });
-    for (const screen of [STANDBY, { kind: "boot", phase: "welcome", frame: 0 } as const]) {
-      createScreenRenderer().render(screen);
-      createScreenRenderer({ paint: legacy }).render(screen);
-    }
-    expect(paints).toHaveLength(4);
-    expect(paints[0]!.data).toEqual(paints[1]!.data);
-    expect(paints[2]!.data).toEqual(paints[3]!.data);
-  });
-
-  it("rejects paint together with welcomeText at the type level", () => {
-    stubCanvas2d();
-    const paint: ScreenPainter = (fb) => fb.clear(0);
-    // @ts-expect-error welcomeText belongs to the legacy painter only
-    createScreenRenderer({ paint, welcomeText: "Hello!" });
-    expect(createScreenRenderer({ paint, scale: 2 }).canvas.width).toBe(168);
   });
 });

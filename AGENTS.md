@@ -49,10 +49,10 @@ exists for future npm publishing only; do not add `build` scripts to packages.
 ```
 website/            TanStack Start app — the ONLY place everything is wired together
 packages/
-  phone-core/       @hellotimber/phone-core   — pure-TS Nokia 3310 state machine ("firmware")
-  phone-screen/     @hellotimber/phone-screen — ScreenModel → 84×48 pixels on a 2D canvas
+  phone-core/       @hellotimber/phone-core   — pure-TS phone kernel, menu model and Timeline
+  phone-screen/     @hellotimber/phone-screen — LCD framebuffer, bitmap/font toolkit and canvas renderer
   phone-3d/         @hellotimber/phone-3d     — R3F <Nokia3310/> 3D model (body, keys, screen mesh)
-  snake/            @hellotimber/snake        — Snake II game logic (pure TS)
+  snake/            @hellotimber/snake        — standalone legacy Snake logic (not used by the website)
   nokia-os/         @hellotimber/nokia-os     — stock v6.39 firmware + its pixels (menu, painter, goldens, demo)
 docs/plans/         numbered implementation plans (the source of truth for tasks)
 ```
@@ -75,9 +75,6 @@ use `"catalog:"` specifiers where a catalog entry exists.
    phone-screen ──▶ phone-core (type-only imports of ScreenModel — no runtime dep)
    snake, phone-3d ──▶ (no internal deps)
    ```
-
-   Plan 31 establishes this website target. Until its Task 6 cutover, the legacy website
-   still consumes `snake`; Task 6 removes that dependency.
 
    Anything else is a boundary violation. `phone-3d` receives a ready-made
    `HTMLCanvasElement` for the screen texture and reports key presses via callback —

@@ -2,11 +2,11 @@
 
 The Nokia 3310 "firmware" as a pure TypeScript state machine. **Zero runtime
 dependencies, no DOM, no timers** — time is injected through `tick(nowMs)`, which
-makes every behavior (boot animation, long presses, multi-tap timeouts, the 3-second
+makes every behavior (boot animation, long presses, the 3-second
 menu-shortcut window) deterministic and unit-testable.
 
 It models: the boot/power sequence, the one-softkey menu system (carousel → lists →
-readers), `Menu`+digit shortcuts, multi-tap text entry, app hosting (games draw raw
+readers), `Menu`+digit shortcuts, app hosting (games draw raw
 pixels), key sounds as events, and external `navigate(path)` control for URL sync.
 
 ## Usage

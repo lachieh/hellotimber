@@ -1,14 +1,13 @@
 import { bitmapFromArt } from "../bitmap";
 import type { Bitmap } from "../bitmap";
-import { GLYPHS } from "./glyphs";
 
 /**
- * Variable-width pixel font (the authentic 3310 UI font — see glyphs.ts).
+ * Variable-width pixel font supplied by a consumer.
  * Each glyph's bitmap width IS its advance (right-side bearing baked in),
  * so rendering is simply: blit, move right by width, repeat.
  */
 export interface PixelFont {
-  /** Cell height in rows (baseline at row 7; rows 8–9 hold descenders). */
+  /** Cell height in rows. */
   readonly glyphHeight: number;
   /** Advance used for characters missing from the map. */
   readonly nominalAdvance: number;
@@ -36,9 +35,6 @@ export function createPixelFont(
   }
   return { glyphHeight, nominalAdvance, fallbackGlyph, glyphs };
 }
-
-/** The 3310 body font: 9-row cells, ~6px average advance, 14 chars/line. */
-export const FONT: PixelFont = createPixelFont(GLYPHS, 9, 6, "?");
 
 /** Advance of a single character (nominal for unmapped characters). */
 export function charAdvance(font: PixelFont, ch: string): number {

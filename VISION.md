@@ -47,8 +47,7 @@ Menu 14 in the thirteenth visible slot. See [stock phone book](docs/specs/stock/
 and [SIM services](docs/specs/stock/sim-services.md).
 
 Plan 31 defines this website contract. Tasks 0-1 establish the migration fixture and
-contracts; Task 6 replaces the current `siteMenu` runtime. Until that cutover, the website
-still uses the legacy menu and standby shortcuts.
+contracts. The mounted website runs the stock firmware with Lachlan's SIM content.
 
 | Menu    | Stock feature                | Portfolio content and route                                                                                                                                        |
 | ------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -119,8 +118,8 @@ snake (standalone package; unused by the website after cutover)
 
 | Package                     | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Dependencies                                                       |
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), text entry, app hosting, path serialization, sound _events_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | none                                                               |
-| `@hellotimber/phone-screen` | Rasterizes a `ScreenModel` to an 84×48 monochrome framebuffer on a 2D canvas: pixel font, icons, status bars, boot animation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | `phone-core` (type-only)                                           |
+| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), app hosting, path serialization, sound _events_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | none                                                               |
+| `@hellotimber/phone-screen` | LCD framebuffer, bitmap/font primitives and canvas renderer; the host supplies the painter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | `phone-core` (type-only)                                           |
 | `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
 | `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | none                                                               |
 | `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18), T9 English (open dictionary, plan 18b), number entry, calls and the call register over the same port (plan 22), the SIM card port with its phone book (plan 19), clock and alerts (plan 21), SIM content and SIM services (SIM-stored SMS, sender names, the SIM Toolkit's Menu 14, IMEI, preload, screen text; plan 30), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, keyguard and display/keypad LED events on the light tick (plan 25), standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
@@ -802,8 +801,7 @@ making callbacks from stale asynchronous activations permanent no-ops. A success
 created session is deactivated at most once with `exit`, `replace`, `navigate`, or
 `power-off`. Application exceptions are contained: failed creation renders the existing
 `App error` reader, while key, tick, render, and deactivation failures cannot break power or
-navigation. `EditorApplication` is the reusable core multi-tap application definition and
-follows the same session lifecycle.
+navigation. Stock text entry belongs to nokia-os.
 
 **Path scheme:** `standby` | `menu` | `menu/<slug>/<slug>/…` — explicit entry slugs are
 kebab-case and joined by `/`. Application IDs, graphics, labels, order, and metadata never
@@ -819,7 +817,7 @@ export interface ScreenRenderer {
   render(screen: ScreenModel): void; // draw + bump version when output changes
   readonly version: number; // increments on visible change
 }
-/** Paints one ScreenModel into the 84×48 framebuffer. The default is the legacy renderScreen. */
+/** Paints one ScreenModel into the 84×48 framebuffer. The host supplies the painter. */
 export type ScreenPainter = (fb: Framebuffer, screen: ScreenModel) => void;
 
 export type ScreenRendererOptions = {
@@ -827,17 +825,13 @@ export type ScreenRendererOptions = {
   // image-rendering:pixelated handle upscaling crisply
   fg?: string;
   bg?: string; // default classic green LCD palette
-} & (
-  | { paint?: undefined; welcomeText?: string } // legacy painter (default, unchanged);
-  // welcomeText is shown during the boot "welcome" phase (the ScreenModel carries no text)
-  | { paint: ScreenPainter; welcomeText?: never }
-);
-export function createScreenRenderer(opts?: ScreenRendererOptions): ScreenRenderer;
+  paint: ScreenPainter;
+};
+export function createScreenRenderer(opts: ScreenRendererOptions): ScreenRenderer;
 ```
 
-The painter seam is additive: without `paint`, output is byte-identical to the legacy renderer.
-New optional ScreenModel fields (`iconFrame`, `presentation`, `detail`, `awaitingFirst`) are
-ignored by the legacy painter.
+The toolkit has no built-in screen layouts. nokia-os supplies stock pixels; the website
+passes its painter to the canvas renderer.
 
 ### `@hellotimber/nokia-os`
 
@@ -1139,7 +1133,7 @@ derives from emulator captures of the real v6.39 firmware. Nothing from the capt
 committed except those golden text grids. See `docs/plans/13-nokia-os-foundation.md`.
 
 **Sound (plan 16).** nokia-os's sound goes through `StockPhoneConfig.sound`, not phone-core's
-id-only `sound` event (that stays the website's contract). The phone emits every buzzer, tone
+id-only `sound` event. The website mounts the stock sound port. The phone emits every buzzer, tone
 generator and vibrator change from `tick()` once kernel time reaches it, stamped with its own
 `atMs`, so the output is the same at any tick rate and a host schedules each event at
 `audioNow + (atMs - phoneNow) + latency`. Rules: `atMs` never exceeds the emitting tick's kernel
@@ -1307,8 +1301,7 @@ export function PhoneStage(props: Nokia3310Props & { className?: string }): Reac
 ```
 
 phone-3d does not know nokia-os: the website maps nokia-os's `StockLightEvent`s to `backlightOn`
-(display) and `keypadLightOn` (keypad). The website passes both light states after plan 31 Task 6. Before that
-cutover it passes only `backlightOn`, so the keypad follows it (plan 25 D13).
+(display) and `keypadLightOn` (keypad). The website passes both LED states through the Walkman's session-only output gate.
 
 ### `@hellotimber/snake`
 
@@ -1339,7 +1332,7 @@ export const MAZE_NAMES: readonly string[]; // ['No maze','Box','Tunnel','Mill',
 ```
 
 `website/src/phone/` hosts the runtime adapters and router bridge. The stock OS has its own
-Snake II engine reproduced from v6.39 captures (plan 23 D1). Plan 31 removes the website's
+Snake II engine reproduced from v6.39 captures (plan 23 D1). The website has no
 dependency on `@hellotimber/snake`; the standalone package remains available.
 
 ## Router integration design (website)
@@ -1371,7 +1364,7 @@ Implementation is sliced into independently shippable plans under `docs/plans/`
 (see `docs/plans/README.md` for status):
 
 1. **phone-core** — firmware state machine, fully unit-tested, no DOM.
-2. **phone-screen** — rasterizer + pixel font + boot animation; visual harness page.
+2. **phone-screen** — framebuffer, bitmap/font toolkit and canvas renderer.
 3. **phone-3d** — the 3D phone with a test-pattern canvas; standalone demo.
 4. **snake** — Snake II engine + bitmap renderer, unit-tested.
 5. **website shell** — routes, router⇄phone bridge, client-only stage, keyboard input.
