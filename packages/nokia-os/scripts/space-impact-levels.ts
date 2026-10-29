@@ -1,4 +1,11 @@
-import type { SpaceImpactObservation } from "../tests/support/space-impact-decode.ts";
+import { SPACE_IMPACT_DATA } from "../src/resources/generated/space-impact.ts";
+import { LEVEL_ZERO_OBJECTS, LEVEL_ZERO_READINGS } from "./space-impact-level-zero.ts";
+import {
+  decodeSpaceImpact,
+  type SpaceImpactObservation,
+} from "../tests/support/space-impact-decode.ts";
+import { findGoldenImage, type Golden } from "./golden-format.ts";
+import { resourceModule, type GeneratedResourceModule } from "./resource-declarations.ts";
 
 export interface SpaceImpactLinearMotion {
   readonly family: string;
@@ -200,3 +207,141 @@ export function fitSpaceImpactLinearPath(
     dy,
   };
 }
+
+export type SpaceImpactObservedFrame = {
+  readonly image: string;
+  readonly frame: number;
+  readonly startMs: number;
+  readonly durationMs: number;
+} & (
+  | {
+      readonly kind: "decoded";
+      readonly hud: {
+        readonly lives: number;
+        readonly weapon: "missile" | "wall" | "beam";
+        readonly count: number;
+        readonly score: number;
+      };
+      readonly candidates: readonly {
+        readonly ship: number | null;
+        readonly objects: readonly number[];
+      }[];
+    }
+  | { readonly kind: "unresolved"; readonly reason: string }
+);
+
+export function extractSpaceImpactLevelObservations(golden: Golden) {
+  if (golden.id !== "game/space-impact/level-0" || !golden.timeline)
+    throw new Error("level observations: expected the level-0 timeline");
+  const frames: SpaceImpactObservedFrame[] = [];
+  const objects: SpaceImpactObservation[] = LEVEL_ZERO_OBJECTS.map(
+    ([picture, x, y, width, height]) => ({ picture, x, y, width, height }),
+  );
+  const readings = new Map(LEVEL_ZERO_READINGS.map((reading) => [reading[0], reading]));
+  for (const [index, row] of golden.timeline.entries()) {
+    if (row.frame < Number(golden.triggerFrame)) continue;
+    if (row.durationMs < 34 && index !== golden.timeline.length - 1) continue;
+    const { image, frame, startMs, durationMs } = row;
+    const source = { image, frame, startMs, durationMs };
+    const pixels = findGoldenImage(golden, image).pixels;
+    if (image === "ala") {
+      const previous = findGoldenImage(golden, "akz").pixels;
+      for (let y = 23; y <= 46; y++)
+        for (let x = 56; x <= 75; x++)
+          if (pixels[y * 84 + x] !== previous[(y < 32 ? y + 1 : y) * 84 + x])
+            throw new Error("level-0 ala: no longer the established mixed boss redraw");
+      frames.push({
+        ...source,
+        kind: "unresolved",
+        reason:
+          "Boss mixed redraw: upper rows shifted by one, lower rows retained; requires engine replay.",
+      });
+      continue;
+    }
+    const reading = readings.get(image);
+    if (!reading) throw new Error(`level-0 ${image}: missing retained observations`);
+    const [, lives, weapon, count, score, alternatives] = reading;
+    const hud = { lives, weapon, count, score };
+    const candidates = alternatives.map(([ship, ...observed]) => ({
+      ship: ship === -1 ? null : ship,
+      objects: observed,
+    }));
+    for (const candidate of candidates) {
+      const actual = new Uint8Array(84 * 48).fill(1);
+      const draw = (picture: string, x: number, y: number) => {
+        const art = SPACE_IMPACT_DATA.sprites[picture];
+        if (!art) throw new Error(`level-0: missing observed sprite ${picture}`);
+        for (const [dy, row] of art.entries())
+          for (let dx = 0; dx < row.length; dx++)
+            if (row[dx] === "#" && x + dx >= 0 && x + dx < 84 && y + dy >= 0 && y + dy < 48)
+              actual[(y + dy) * 84 + x + dx] ^= 1;
+      };
+      for (let life = 0; life < lives; life++) draw("heart", life * 6, 0);
+      draw(`special/${weapon}`, 36, 0);
+      for (const [value, x, length] of [
+        [count, 43, 2],
+        [score, 57, 5],
+      ] as const)
+        for (const [offset, digit] of String(value).padStart(length, "0").split("").entries())
+          draw(`digit/${digit}`, x + offset * 4, 0);
+      const sprites = [
+        ...(candidate.ship === null ? [] : [objects[candidate.ship]!]),
+        ...candidate.objects.map((index) => objects[index]!),
+      ];
+      for (const sprite of sprites) draw(sprite.picture, sprite.x, sprite.y);
+      if (!actual.every((pixel, index) => pixel === pixels[index]))
+        throw new Error(
+          `level-0 ${image}: unread settled observation (retained alternative no longer paints exactly)`,
+        );
+    }
+    frames.push({ ...source, kind: "decoded", hud, candidates });
+  }
+  return { level: 0, source: golden.id, sourceSha256: golden.sourceSha256, objects, frames };
+}
+
+export const spaceImpactLevelModule: GeneratedResourceModule = {
+  file: "space-impact-levels.ts",
+  extract: ({ golden }) =>
+    resourceModule(
+      "SPACE_IMPACT_LEVEL_OBSERVATIONS",
+      "{ readonly level: number; readonly source: string; readonly sourceSha256: string; readonly objects: readonly { readonly picture: string; readonly x: number; readonly y: number; readonly width: number; readonly height: number }[]; readonly frames: readonly ({ readonly image: string; readonly frame: number; readonly startMs: number; readonly durationMs: number } & ({ readonly kind: 'decoded'; readonly hud: { readonly lives: number; readonly weapon: 'missile' | 'wall' | 'beam'; readonly count: number; readonly score: number }; readonly candidates: readonly { readonly ship: number | null; readonly objects: readonly number[] }[] } | { readonly kind: 'unresolved'; readonly reason: string }))[] }",
+      extractSpaceImpactLevelObservations(golden("game/space-impact/level-0")),
+    ),
+};
+
+export const spaceImpactOpeningWaveModule: GeneratedResourceModule = {
+  file: "space-impact-opening-wave.ts",
+  extract: ({ golden }) => {
+    const capture = golden("game/space-impact/keys-tap-5");
+    const snapshots = [40, 41, 42].map((tick) => ({
+      tick,
+      objects: decodeSpaceImpact(findGoldenImage(capture, `t00${tick}`).pixels, { level: 0 })
+        .objects,
+    }));
+    const first = snapshots[0]!;
+    if (first.objects.length !== 3)
+      throw new Error("opening wave: expected three observed enemies");
+    const entries = first.objects.map((object, index) => {
+      const samples = snapshots.map((snapshot) => ({
+        tick: snapshot.tick,
+        object: snapshot.objects[index]!,
+      }));
+      const motion = fitSpaceImpactLinearPath(samples);
+      if (motion.family !== "enemy/round-wide" || motion.dx !== -2 || motion.dy !== 0)
+        throw new Error("opening wave: changed observed motion");
+      const entryX = 82;
+      const tick = first.tick - (entryX - object.x) / 2;
+      if (!Number.isSafeInteger(tick)) throw new Error("opening wave: nonintegral entry");
+      return { tick, x: entryX, y: object.y };
+    });
+    for (const snapshot of snapshots)
+      for (const object of snapshot.objects)
+        if (object.picture !== `enemy/round-wide/${snapshot.tick % 2 === 0 ? 1 : 0}`)
+          throw new Error("opening wave: changed animation phase");
+    return resourceModule(
+      "SPACE_IMPACT_OPENING_WAVE",
+      "{ readonly family: string; readonly dx: number; readonly dy: number; readonly entries: readonly { readonly tick: number; readonly x: number; readonly y: number }[] }",
+      { family: "enemy/round-wide", dx: -2, dy: 0, entries },
+    );
+  },
+};

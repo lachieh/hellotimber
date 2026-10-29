@@ -1,3 +1,4 @@
+import { spaceImpactLevelModule, spaceImpactOpeningWaveModule } from "../space-impact-levels.ts";
 import { spaceImpactResources } from "../space-impact-resources.ts";
 import type { CaptureIo, PlanCaptureSet } from "../capture-set.ts";
 import {
@@ -48,7 +49,14 @@ export function assertSpaceImpactCaptureGate(read: CaptureIo["json"]): void {
 
 export const spaceImpact: PlanCaptureSet = {
   ...captures,
-  resources: spaceImpactResources,
+  resources: {
+    ...spaceImpactResources,
+    generatedModules: [
+      ...(spaceImpactResources.generatedModules ?? []),
+      spaceImpactLevelModule,
+      spaceImpactOpeningWaveModule,
+    ],
+  },
   lcd(io) {
     assertSpaceImpactCaptureGate(io.json);
     return spaceImpactCaptureSet(io.game);

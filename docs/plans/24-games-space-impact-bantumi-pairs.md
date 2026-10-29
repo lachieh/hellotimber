@@ -26,7 +26,8 @@ including the inherited Games II seams. Task 3 is complete: 168 fixtures are imp
 remain pending gameplay replay. Task 4 is complete under the accepted revised criterion below.
 Task 5 is split into level 0 (5a) and levels 1–7 (5b) under the accepted sequencing change
 below. The level-0 decoder checkpoint reads 855 of 856 settled images exactly; full level-0
-reconstruction remains open and Tasks 6–14 are unstarted.
+reconstruction remains open. Tasks 7/8/10 have an initial engine/painter slice; Tasks 6 and
+9/11–14 remain open. The 2026-10-29 checkpoint below records its exact proof and limits.
 
 ## Goal
 
@@ -1807,6 +1808,24 @@ mismatches with reasons, preserve the four accepted UNVERIFIED defaults, use TDD
 commit coherent green units. Run focused tests during development and the full uncached
 workspace suite for each finished unit. The target of this round is level 0 end-to-end.
 
+### Accepted level-0-first refinement (Lachlan, 2026-10-29)
+
+The decoder is sufficient to leave the critical path: it exactly reads 855 of 856 settled
+level-0 images, retaining ambiguity in 398. Do no further general decoder work this round;
+only an engine replay that specifically demands a decoder correction justifies one.
+
+Commit Task 5a's observed level-0 data through `resources.generatedModules`, keeping explicit
+alternatives where the LCD is ambiguous. Proceed immediately with Tasks 6 onwards: engine,
+painter, session, flow, sounds and Games integration, then level-0 acceptance scenarios. The
+engine's rendered frames choose between observed alternatives. Each settled frame must match
+its golden pixel-exact; fix engine/data mismatches, or record a genuinely unresolved difference
+as a reasoned known gap. The mixed boss redraw `ala` is a candidate gap only after replay
+confirms it. Assert the full level-0 recording and related splash, menu, HUD, Continue and
+game-over fixtures as their real scenarios pass. The four accepted defaults retain their
+literal UNVERIFIED labels. TDD, coherent green commits, focused development checks, and one
+full uncached workspace suite per finished unit remain required. This refines the accepted
+2026-10-28 sequencing change without reducing the final scope.
+
 ### Task 5 - Level reconstruction (TDD)
 
 **Files:** `scripts/space-impact-levels.ts` (new: the object tracker and the fitter),
@@ -2114,6 +2133,70 @@ Logs: `/private/tmp/plan24-slice-{focused-final,workspace-tests,check-fix,check,
 Plan 24 remains **0 asserted, 168 pending, 0 registered known gaps**; the two inherited
 Space impact fixtures remain pending in indices 14 and 16. Only this plan and the two
 plan-24 decoder/test files change. No excluded package changes.
+
+### Task 5a / engine foundation checkpoint (2026-10-29; incomplete)
+
+The accepted 2026-10-29 refinement above is recorded. No general decoder work was done.
+`space-impact-levels.ts` now registers two deterministic generated modules through the plan's
+existing capture-set extension: the complete settled level-0 observation table and the opening
+wave. The table retains 879 timeline rows / 856 unique settled images, with 855 decoded images,
+398 ambiguous images and all 8,055 exact alternatives. Repeated object placements are interned
+without dropping alternatives. `ala` remains an explicit unresolved observation, accepted only
+when its boss rows still have the established mixed-redraw relationship to `akz`; corrupted
+`ala` evidence fails. It is not yet a registered acceptance known gap. Task 5a remains incomplete
+for the later spawn/HP/fire/boss reconstruction; Task 5b remains deferred.
+
+The first pure runtime slice (`src/games/space-impact/{model,keys,engine}.ts`) implements queued
+one-pixel moves, two-pixel repeats, observed level-0 bounds, gun-position shots, two-pixel shot
+motion, two-tick cooldown, viewport retirement, shield expiry and alternation, pending-return
+handling, scroll and the generated opening enemy wave. The painter handles the stock HUD,
+sprite compositing, clipping, polarity and terrain resources, refusing unobserved terrain.
+It remains unregistered until the gameplay/session slice is complete.
+
+TDD first failed on the missing observation function, then missing engine/painter modules,
+then opening-wave pixels. The focused gate passes **3 files, 188 tests**: 14 settled opening
+frames and all 36 tick stills in 12 independent tap-key fixtures match engine pixels exactly;
+the painter separately reproduces all 8,055 retained observation alternatives. This last check
+does not drive the engine and is not acceptance. No seed is injected or recovered; no full-level
+replay, collision, score, random fire, bonus, boss, death, Continue, sound or Games integration
+is claimed. Tasks 6–14 keep their original completion boxes open.
+
+**UNVERIFIED calls:** retain H2's five held-fire attempts including the initial press, and H16's
+pending return consuming the next event. Synthetic tests establish these implementation
+contracts only. The four previously accepted UNVERIFIED defaults remain labelled and unchanged.
+No comparator or tolerance changes. The observation table does not choose a candidate for the
+engine or use pixels as runtime game state.
+
+**Regeneration cost correction.** Re-solving every image during extraction made the first full
+suite fail the existing 30-second resource freshness timeout (about 180 seconds per extraction).
+That failed run was stopped. `scripts/space-impact-level-zero.ts` now holds the decoder's exact
+alternatives as compact, typed capture declarations, emitted from the checked observation table.
+This is the one additional plan-owned data input file needed by Task 5a. Regeneration validates
+every retained alternative against every source pixel, using the stock sprites; it no longer
+reruns a combinatorial solver. The original decoder stays unchanged. Source hash and freshness
+checks, unread/corrupted image rejection, and the independent production-painter checks stay in
+place. No resource test timeout, golden comparator or fidelity rule was changed.
+
+**Task 11 plan/file discrepancy:** the task requires removing `8-2-1` from
+`src/firmware/bindings.ts`'s `PLACEHOLDER_OWNERS`, but that file is absent at the supplied head.
+The actual firmware placeholder is `features/games.ts`; the capture owner is
+`scripts/tree-capture-set.ts`. Per AGENTS.md's stop-and-report rule, this checkpoint leaves
+Games wiring and ownership unchanged rather than improvising the missing-file step. It also
+leaves acceptance statuses untouched: **0 asserted, 168 pending, 0 registered known gaps**,
+plus the two inherited pending Space impact fixtures in indices 14 and 16.
+
+**Checkpoint closeout verification.** The final full uncached workspace run passes all six
+packages with **260 passing files, one pending-only slice, 11,764 passed tests, 120 expected
+failures and 193 TODOs**, zero cache hits. Nokia-os contributes 168 passing files, one
+pending-only slice and 10,922 passed tests in 1006.13 seconds; the other totals are phone-core
+450, snake 62, phone-3d 49, phone-screen 101 and website 180. The focused resource/engine/painter
+check passes 4 files / 237 tests. `vp check --fix`, final `vp check`, and `website#build` pass
+under mise Node 22 with the guard. The guard rejected a host-Node-26 attempt before tests ran;
+the accepted full run uses mise's absolute Node 22, `VITEST_MAX_WORKERS=2` and
+`VP_RUN_CONCURRENCY_LIMIT=1`. An earlier timeout failure and superseded pre-final-fix runs
+are not accepted verification. The final source includes test-first Navi/C key-down-only
+suspend handling. Generated outputs are up to date; excluded packages and the lockfile are
+unchanged. This is one coherent partial engine/data/painter unit, not Task 5a or plan completion.
 
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 

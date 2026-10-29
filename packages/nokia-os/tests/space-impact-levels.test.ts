@@ -5,8 +5,9 @@ import {
   decodeSpaceImpactCandidates,
   type DecodedSpaceImpact,
 } from "./support/space-impact-decode.ts";
-import { goldenImage } from "./support/goldens.ts";
+import { goldenImage, loadGolden } from "./support/goldens.ts";
 import {
+  extractSpaceImpactLevelObservations,
   fitSpaceImpactLinearPath,
   trackSpaceImpactLinearSegment,
 } from "../scripts/space-impact-levels.ts";
@@ -826,5 +827,58 @@ describe("Space impact linear segment reconstruction", () => {
       ],
     ])
       expect(() => fitSpaceImpactLinearPath(samples)).toThrow(/linear|family/);
+  });
+});
+
+describe("observed level-0 resource", () => {
+  it("retains the independent LCD alternatives instead of selecting the first reading", () => {
+    const golden = loadGolden("game/space-impact/level-0");
+    const image = golden.images.find((image) => image.name === "ac")!;
+    const row = golden.timeline!.find((row) => row.image === "ac")!;
+    const observed = extractSpaceImpactLevelObservations({
+      ...golden,
+      images: [image],
+      timeline: [{ ...row, durationMs: 93 }],
+    });
+    expect(observed.frames).toHaveLength(1);
+    expect(observed.frames[0]).toMatchObject({ kind: "decoded", image: "ac" });
+    const frame = observed.frames[0]!;
+    if (frame.kind !== "decoded") throw new Error("expected decoded LCD evidence");
+    const candidates = decodeSpaceImpactCandidates(image.pixels, { level: 0 });
+    const unpacked = frame.candidates.map((candidate) => ({
+      hud: frame.hud,
+      terrain: { kind: "none" as const },
+      ship: candidate.ship === null ? null : observed.objects[candidate.ship]!,
+      objects: candidate.objects.map((index) => observed.objects[index]!),
+    }));
+    expect(unpacked).toEqual(candidates);
+    expect(candidates.length).toBeGreaterThan(1);
+    for (const candidate of unpacked) expect(repaint(candidate, 0)).toEqual(image.pixels);
+  });
+
+  it("rejects an unread settled image instead of inventing a runtime object", () => {
+    const golden = loadGolden("game/space-impact/level-0");
+    const row = golden.timeline!.find((row) => row.image === "b")!;
+    expect(() =>
+      extractSpaceImpactLevelObservations({
+        ...golden,
+        images: [{ name: "b", pixels: new Uint8Array(4032) }],
+        timeline: [{ ...row, durationMs: 93 }],
+      }),
+    ).toThrow(/level-0 b: unread settled observation/);
+  });
+  it("does not relabel a corrupted ala image as the observed mixed redraw", () => {
+    const golden = loadGolden("game/space-impact/level-0");
+    const row = golden.timeline!.find((row) => row.image === "ala")!;
+    expect(() =>
+      extractSpaceImpactLevelObservations({
+        ...golden,
+        images: [
+          ...golden.images.filter((image) => image.name !== "ala"),
+          { name: "ala", pixels: new Uint8Array(4032) },
+        ],
+        timeline: [row],
+      }),
+    ).toThrow(/no longer the established mixed boss redraw/);
   });
 });

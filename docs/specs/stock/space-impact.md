@@ -153,6 +153,17 @@ tones and Games Sounds gate the buzzer; Sounds Off keeps vibration, Shakes Off k
 Vibrating alert also gates vibration. The new-top-score ending uses the fireworks tune. Events
 shorter than 34 ms follow the shared fidelity standard; no per-test sound tolerance applies.
 
+**Runtime checkpoint (2026-10-29; incomplete).** The pure engine/painter reproduce 14 settled
+opening frames from the canonical level-0 recording and all 36 tick stills of the 12 tap-key
+fixtures (movement, ignored keys and ordinary fire). The opening wave's three linear entries
+are generated from independent tick stills; they are not a complete level script. The generated
+level-0 observation table preserves every alternative for 855 decoded settled images and the
+unresolved `ala` redraw. Painting each of its 8,055 alternatives reproduces the original pixels;
+this is resource/painter proof, not full gameplay acceptance. No plan-24 fixture is asserted yet.
+**UNVERIFIED implementation hypotheses:** held fire makes five attempts including its initial
+press; a pending sound consumes the next engine event. Their synthetic tests check the chosen
+contract, not a complete firmware replay. The four accepted defaults retain their labels above.
+
 **Remaining hypotheses (UNVERIFIED until golden replay or further evidence).** Exact collision
 geometry, score ceiling and per-hit awards, all boss phases and projectiles, the pending-sound
 return code and lost-event behavior, held-fire cap, shield durations and exact continue/exit
