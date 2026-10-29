@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vite-plus/test";
 import { SPACE_IMPACT_DATA } from "../src/resources/generated/space-impact.ts";
-import { decodeSpaceImpact } from "./support/space-impact-decode.ts";
+import { decodeSpaceImpact, decodeSpaceImpactCandidates } from "./support/space-impact-decode.ts";
 import { goldenImage } from "./support/goldens.ts";
+import {
+  fitSpaceImpactLinearPath,
+  trackSpaceImpactLinearSegment,
+} from "../scripts/space-impact-levels.ts";
 
 const { sprites, terrain } = SPACE_IMPACT_DATA;
 
@@ -217,6 +221,75 @@ describe("strict Space impact LCD decoder", () => {
     );
   });
 
+  it("preserves both exact white-background shot positions for temporal resolution", () => {
+    const pixels = goldenImage("game/space-impact/level-1", "c").image.pixels;
+    const candidates = decodeSpaceImpactCandidates(pixels, { level: 1, scroll: 0 });
+    expect(candidates).toHaveLength(2);
+    expect(candidates.map((candidate) => candidate.objects)).toEqual([
+      [{ picture: "shot", x: 11, y: 23, width: 2, height: 1 }],
+      [{ picture: "shot", x: 12, y: 23, width: 2, height: 1 }],
+    ]);
+    expect(() => decodeSpaceImpact(pixels, { level: 1, scroll: 0 })).toThrow(/ambiguous/);
+  });
+
+  it.each([4, 5])("reads the captured off-gun-row shot in level %i e", (level) => {
+    const pixels = goldenImage(`game/space-impact/level-${level}`, "e").image.pixels;
+    const decoded = decodeSpaceImpact(pixels, { level, scroll: 1 });
+    expect(decoded.ship).toMatchObject({ picture: "ship/shielded/2", x: 3, y: 16 });
+    expect(decoded.objects).toEqual([{ picture: "shot", x: 13, y: 22, width: 2, height: 1 }]);
+  });
+
+  it("retains every exact interpretation of the level-0 ac frame", () => {
+    const pixels = goldenImage("game/space-impact/level-0", "ac").image.pixels;
+    const candidates = decodeSpaceImpactCandidates(pixels, { level: 0 });
+    expect(candidates.length).toBeGreaterThan(1);
+    expect(candidates.every((candidate) => candidate.ship?.picture === "ship/shielded/0")).toBe(
+      true,
+    );
+    expect(() => decodeSpaceImpact(pixels, { level: 0 })).toThrow(/ambiguous/);
+  });
+
+  it("does not manufacture duplicate cancelling shots across a consumed ship rectangle", () => {
+    const pixels = goldenImage("game/space-impact/keys-tap-5", "t0040").image.pixels;
+    const candidates = decodeSpaceImpactCandidates(pixels, { level: 0 });
+    expect(candidates).toHaveLength(1);
+    expect(candidates[0]!.objects.every((object) => object.picture !== "shot")).toBe(true);
+  });
+
+  it.each([1, 2, 3, 6, 7])(
+    "proves white-background shot union from independent level %i LCDs",
+    (level) => {
+      const image = level === 2 ? "e" : "c";
+      const pixels = goldenImage(`game/space-impact/level-${level}`, image).image.pixels;
+      const candidates = decodeSpaceImpactCandidates(pixels, { level });
+      expect(candidates).toHaveLength(2);
+      expect(candidates.map((candidate) => candidate.ship?.picture)).toEqual([
+        "ship/shielded/1",
+        "ship/shielded/1",
+      ]);
+      expect(candidates.map((candidate) => candidate.objects)).toEqual([
+        [{ picture: "shot", x: 11, y: 23, width: 2, height: 1 }],
+        [{ picture: "shot", x: 12, y: 23, width: 2, height: 1 }],
+      ]);
+    },
+  );
+
+  it.each([0, 1, 2, 4, 5, 6, 7])(
+    "reconstructs a synthetic shot away from level %i's moving gun row",
+    (level) => {
+      const objects = [
+        { picture: "ship/shielded/2", x: 3, y: 16 },
+        { picture: "shot", x: 13, y: 22 },
+      ];
+      const pixels = frame({ level, objects: [objects[0]!] });
+      const inverted = [0, 4, 5].includes(level);
+      for (const x of [13, 14]) pixels[22 * 84 + x] = inverted ? pixels[22 * 84 + x]! ^ 1 : 1;
+      const decoded = decodeSpaceImpact(pixels, { level, scroll: 0 });
+      expect(decoded.ship).toMatchObject(objects[0]!);
+      expect(decoded.objects).toEqual([{ ...objects[1], width: 2, height: 1 }]);
+    },
+  );
+
   it("preserves its source pixels on success and failure", () => {
     const pixels = frame({ level: 2 });
     const original = pixels.slice();
@@ -273,5 +346,227 @@ describe("strict Space impact LCD decoder", () => {
       expect(() => decodeSpaceImpact(frame(), { level })).toThrow(/level/);
     for (const scroll of [-1, 1.5, NaN])
       expect(() => decodeSpaceImpact(frame(), { level: 0, scroll })).toThrow(/scroll/);
+  });
+});
+
+describe("Space impact linear segment reconstruction", () => {
+  const enemy = (x: number, picture = "enemy/round-wide/0", y = 8) => ({
+    picture,
+    x,
+    y,
+    width: 11,
+    height: 5,
+  });
+  const motions = [{ family: "enemy/round-wide", dx: -2, dy: 0 }];
+
+  it("links repeated enemies across animation changes and reordered observations", () => {
+    const frames = [
+      { tick: 0, candidates: [[enemy(42), enemy(60)]] },
+      { tick: 1, candidates: [[enemy(58, "enemy/round-wide/1"), enemy(40, "enemy/round-wide/1")]] },
+    ];
+    const graph = trackSpaceImpactLinearSegment(frames, motions);
+    expect(graph[1]![0]!.predecessors).toEqual([
+      {
+        candidate: 0,
+        links: [
+          { from: 0, to: 1 },
+          { from: 1, to: 0 },
+        ],
+        entries: [],
+        exits: [],
+      },
+    ]);
+  });
+
+  it("uses later motion to eliminate an ambiguous white-background shot position", () => {
+    const pixels = goldenImage("game/space-impact/level-1", "c").image.pixels;
+    const objects = decodeSpaceImpactCandidates(pixels, { level: 1, scroll: 0 }).map(
+      (c) => c.objects,
+    );
+    const graph = trackSpaceImpactLinearSegment(
+      [
+        { tick: 0, candidates: objects },
+        { tick: 2, candidates: [[{ picture: "shot", x: 15, y: 23, width: 2, height: 1 }]] },
+      ],
+      [{ family: "shot", dx: 2, dy: 0 }],
+    );
+    expect(graph[0]).toHaveLength(1);
+    expect(graph[0]![0]!.objects[0]!.x).toBe(11);
+  });
+
+  it("keeps unresolved entry pictures explicit while linking their object", () => {
+    const graph = trackSpaceImpactLinearSegment(
+      [
+        { tick: 0, candidates: [[]] },
+        { tick: 1, candidates: [[enemy(82)], [enemy(82, "enemy/round-wide/1")]] },
+        { tick: 2, candidates: [[enemy(80)]] },
+      ],
+      motions,
+    );
+    expect(graph[1]).toHaveLength(2);
+    expect(graph[1]!.map((node) => node.predecessors[0]!.entries)).toEqual([[0], [0]]);
+    expect(graph[2]![0]!.predecessors.map((edge) => edge.candidate)).toEqual([0, 1]);
+  });
+
+  it("recognizes a fully clipped exit and does not label it a kill", () => {
+    const graph = trackSpaceImpactLinearSegment(
+      [
+        { tick: 0, candidates: [[enemy(-9)]] },
+        { tick: 1, candidates: [[]] },
+      ],
+      motions,
+    );
+    expect(graph[1]![0]!.predecessors[0]!.exits).toEqual([0]);
+  });
+
+  it("refuses interior births and disappearances without collision evidence", () => {
+    for (const candidates of [
+      [[], [enemy(40)]],
+      [[enemy(40)], []],
+    ]) {
+      expect(() =>
+        trackSpaceImpactLinearSegment(
+          candidates.map((objects, tick) => ({ tick, candidates: [objects] })),
+          motions,
+        ),
+      ).toThrow(/no consistent.*tick 1/);
+    }
+  });
+
+  it("refuses uncovered motion families and invalid tick order", () => {
+    expect(() =>
+      trackSpaceImpactLinearSegment([{ tick: 0, candidates: [[enemy(40)]] }], []),
+    ).toThrow(/motion.*enemy\/round-wide/);
+    expect(() =>
+      trackSpaceImpactLinearSegment(
+        [
+          { tick: 1, candidates: [[enemy(40)]] },
+          { tick: 1, candidates: [[enemy(38)]] },
+        ],
+        motions,
+      ),
+    ).toThrow(/increasing/);
+  });
+
+  it("rejects a one-pixel motion mismatch instead of selecting the nearest object", () => {
+    expect(() =>
+      trackSpaceImpactLinearSegment(
+        [
+          { tick: 0, candidates: [[enemy(40)]] },
+          { tick: 1, candidates: [[enemy(39)]] },
+        ],
+        motions,
+      ),
+    ).toThrow(/no consistent/);
+  });
+
+  it("tracks three captured enemies tick by tick and fits their independent LCD positions", () => {
+    const frames = [40, 41, 42].map((tick) => ({
+      tick,
+      candidates: decodeSpaceImpactCandidates(
+        goldenImage("game/space-impact/keys-tap-5", `t00${tick}`).image.pixels,
+        { level: 0 },
+      ).map((candidate) => candidate.objects),
+    }));
+    const graph = trackSpaceImpactLinearSegment(frames, motions);
+    expect(graph.map((nodes) => nodes.length)).toEqual([1, 1, 1]);
+    for (const nodes of graph.slice(1))
+      expect(nodes[0]!.predecessors).toEqual([
+        {
+          candidate: 0,
+          links: [
+            { from: 0, to: 0 },
+            { from: 1, to: 1 },
+            { from: 2, to: 2 },
+          ],
+          entries: [],
+          exits: [],
+        },
+      ]);
+    expect(
+      [0, 1, 2].map((index) =>
+        fitSpaceImpactLinearPath(
+          graph.map((nodes) => ({ tick: nodes[0]!.tick, object: nodes[0]!.objects[index]! })),
+        ),
+      ),
+    ).toEqual(
+      [42, 60, 78].map((x) => ({
+        family: "enemy/round-wide",
+        startTick: 40,
+        endTick: 42,
+        x,
+        y: 8,
+        dx: -2,
+        dy: 0,
+      })),
+    );
+  });
+
+  it("remaps predecessor indices after backwards candidate pruning", () => {
+    const graph = trackSpaceImpactLinearSegment(
+      [
+        { tick: 0, candidates: [[enemy(61)], [enemy(60)]] },
+        { tick: 1, candidates: [[enemy(59)], [enemy(58)]] },
+        { tick: 2, candidates: [[enemy(56)]] },
+      ],
+      motions,
+    );
+    expect(graph.map((nodes) => nodes.map((node) => node.sourceCandidate))).toEqual([
+      [1],
+      [1],
+      [0],
+    ]);
+    for (const nodes of graph.slice(1)) expect(nodes[0]!.predecessors[0]!.candidate).toBe(0);
+  });
+
+  it("validates motion evidence and input observations", () => {
+    expect(() => trackSpaceImpactLinearSegment([], motions)).toThrow(/empty/);
+    expect(() => trackSpaceImpactLinearSegment([{ tick: 0, candidates: [] }], motions)).toThrow(
+      /candidates/,
+    );
+    expect(() => trackSpaceImpactLinearSegment([{ tick: -1, candidates: [[]] }], motions)).toThrow(
+      /ticks/,
+    );
+    for (const invalid of [
+      [...motions, ...motions],
+      [{ family: "enemy/round-wide", dx: 0.5, dy: 0 }],
+    ])
+      expect(() => trackSpaceImpactLinearSegment([{ tick: 0, candidates: [[]] }], invalid)).toThrow(
+        /motion/,
+      );
+    for (const objects of [[{ ...enemy(40), width: 0 }], [enemy(40), enemy(40)], [enemy(84)]])
+      expect(() =>
+        trackSpaceImpactLinearSegment([{ tick: 0, candidates: [objects] }], motions),
+      ).toThrow(/object/);
+  });
+
+  it("fits a linear track with exact positions, including missing linear ticks", () => {
+    expect(
+      fitSpaceImpactLinearPath([
+        { tick: 4, object: enemy(72) },
+        { tick: 6, object: enemy(68) },
+        { tick: 9, object: enemy(62) },
+      ]),
+    ).toEqual({ family: "enemy/round-wide", startTick: 4, endTick: 9, x: 72, y: 8, dx: -2, dy: 0 });
+  });
+
+  it("refuses curved, fractional, mixed-type and underdetermined linear fits", () => {
+    for (const samples of [
+      [{ tick: 0, object: enemy(72) }],
+      [
+        { tick: 0, object: enemy(72) },
+        { tick: 2, object: enemy(71) },
+      ],
+      [
+        { tick: 0, object: enemy(72) },
+        { tick: 1, object: enemy(70) },
+        { tick: 2, object: enemy(69) },
+      ],
+      [
+        { tick: 0, object: enemy(72) },
+        { tick: 1, object: enemy(70, "enemy/triangle/0") },
+      ],
+    ])
+      expect(() => fitSpaceImpactLinearPath(samples)).toThrow(/linear|family/);
   });
 });

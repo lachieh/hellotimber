@@ -24,8 +24,8 @@ implementation must replay their pixels under AGENTS.md's fidelity standard. The
 defaults and behavior absent from the recordings remain UNVERIFIED. Tasks 1 and 2 are complete,
 including the inherited Games II seams. Task 3 is complete: 168 fixtures are imported and
 remain pending gameplay replay. Task 4 is complete under the accepted revised criterion below.
-Task 5 has a verified partial strict-decoder checkpoint; reconstruction remains open and
-Tasks 6–14 are unstarted.
+Task 5 has a verified partial layered-decoder and linear-tracker checkpoint; complete level
+reconstruction remains open and Tasks 6–14 are unstarted.
 
 ## Goal
 
@@ -1855,6 +1855,88 @@ final `vp check` and `website#build` pass, using mise Node 22.22.3 and
 No golden or generated file changes: **0 asserted, 168 pending, 0 known gaps** in plan 24.
 The inherited Space impact fixtures remain pending in their original indices. Website,
 phone-core, phone-screen and packages/snake are unchanged from `e1dbdd7`.
+
+### Task 5 layered-decoder and linear-tracker checkpoint (2026-10-28; incomplete)
+
+Continued from `12d5c08`, only in `t3/p24-space-impact`. The canonical
+`analysis/coverage.py --check` passes all 25 accepted criteria. Task 5 stays open;
+Tasks 6–14 have not begun. No product decision, golden promotion or generated level data
+is claimed by this checkpoint.
+
+**Exact layering and ambiguity.** `decodeSpaceImpactCandidates` returns every supported
+visible decomposition instead of stopping after two solutions; `decodeSpaceImpact` still
+refuses an unresolved choice. Independent LCD specimens establish shot XOR on black
+(`level-0 d/h`) and ink union on white (`level-1 c`, `level-2 e`, `level-3 c`,
+`level-6 c`, `level-7 c`). In the white specimens, a shot at x=11 or x=12 gives the same
+pixels across the shield's gun row. Both remain candidates. No invisible shot is inferred.
+`level-4 e` and `level-5 e` independently establish a shot at (13,22) while the shielded
+ship has moved to (3,16); shot overlaps are no longer limited to its current gun row.
+Existing resource pictures suffice; no crop or sprite is added.
+
+Each consumed picture rectangle is reserved during decomposition. Otherwise a shot
+could cancel the ship's top-row ink, then a duplicate shot could "restore" it in the
+already consumed blank rectangle: an invalid decomposition introduced by unrestricted
+layer enumeration. The independent `keys-tap-5 t0040` regression forbids that artifact.
+Only the explicitly composed ship/shot layer may overlap here; other overlaps remain
+unread rather than silently discarding pixels. All 87 previous decoder tests remain
+unchanged in their assertions and pass.
+
+**Tracker and fitting.** `scripts/space-impact-levels.ts` now associates exact positions
+across animation-picture changes, keeping a graph of alternative observations and links.
+Later observations prune candidates backwards, including predecessor-index remapping.
+The first supported segment type requires an independently established integral constant
+motion per picture family and permits horizontal viewport entries/exits. Unknown motion,
+interior births/disappearances, corrupt observations and one-pixel motion mismatches fail
+explicitly; no nearest-neighbour choice, kill or HP inference is made. It preserves unresolved
+animation pictures at entry. A linear fitter checks every supplied position and rejects
+curvature, mixed families, nonintegral motion and underdetermined fits. A line through sparse
+samples alone is not proof of the missing ticks; those require independent motion evidence.
+
+The independent `keys-tap-5` LCD sequence at ticks 40,41,42 tracks all three enemies through
+both animation frames, including the initially clipped enemy. Their fitted starts are
+x=42,60,78, y=8, with dx=-2, dy=0. A separate test uses the real ambiguous white LCD frame
+and a later established shot position to show temporal pruning to x=11; it is a synthetic
+motion constraint, not a claim of full captured shot replay. TDD fails first on the absent
+candidate API/off-gun-row overlap, then on the absent tracker module. The focused gate passes
+**3 files, 689 tests**, including **116 decoder/tracker tests** (29 additional).
+
+**Continuation points.** The exact candidate probe (all native images after the initial
+menu, no timing or pixel tolerance) now first stops at:
+
+| Level | Readable images | Ambiguous images | First unread image | Unfinished case                                           |
+| ----- | --------------: | ---------------: | ------------------ | --------------------------------------------------------- |
+| 0     |              61 |               13 | `bk`               | object/layer decomposition                                |
+| 1     |              18 |                1 | `t`                | object over terrain; at scroll 19, residual pixel (83,36) |
+| 2     |              64 |               31 | `bn`               | object/layer decomposition                                |
+| 3     |               4 |                1 | `f`                | more than one shot crosses the ship rectangle             |
+| 4     |               5 |                0 | `g`                | more than one shot crosses the ship rectangle             |
+| 5     |               4 |                0 | `f`                | ship/shot intersects ceiling terrain                      |
+| 6     |              26 |                7 | `ab`               | object over terrain                                       |
+| 7     |              25 |                6 | `aa`               | object over terrain                                       |
+
+These are investigative stops, not registered known gaps. Extend exact supported layering
+and add needed sprites with two LCD specimens, then track complete levels (including
+nonlinear paths and collision/score evidence). Full spawn/group/spacing/y-path/boss/HP/fire
+fitting and seed recovery remain unimplemented. Register `space-impact-levels.ts` output
+through the existing `resources.generatedModules` contract only when those fitted data have
+committed evidence and freshness tests; do not emit guessed or partial runtime level tables.
+Keep the accepted full-level pixel-exact replay gate and all four UNVERIFIED defaults.
+
+**Checkpoint closeout verification.** The complete uncached `vp run -r --no-cache test`
+passes all six packages: **258 passing files, one pending-only slice, 11,691 passed tests,
+120 expected failures and 193 TODOs**, zero cache hits. Nokia-os contributes 166 passing
+files, one pending-only slice and 10,849 passed tests (1003.86 s); the other totals remain
+phone-core 450, snake 62, phone-3d 49, phone-screen 101 and website 180. `vp check --fix`,
+final `vp check` and `website#build` pass, using mise's absolute Node 22 and
+`/private/tmp/plan24-run-node22.cjs` (workspace: `VITEST_MAX_WORKERS=2`,
+`VP_RUN_CONCURRENCY_LIMIT=1`). Logs:
+`/private/tmp/plan24-layer-{focused,workspace-tests,check-fix,check,build}.log`;
+failing-before evidence: `/private/tmp/plan24-{layer,tracker}-red.log`.
+The four-file checkpoint changes only the assigned plan, the decoder, its tests and the new
+linear tracker/fitter. No fixture, generated resource, excluded package, tolerance or accepted
+UNVERIFIED default changes. Plan 24 remains **0 asserted, 168 pending, 0 known gaps**;
+the inherited Space impact fixtures remain pending in their original indices. Task 5 remains
+incomplete; Tasks 6–14 are unstarted.
 
 ### Task 6 - Random numbers: seeds and the ANSI chain (TDD)
 

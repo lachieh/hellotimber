@@ -131,75 +131,90 @@ function readTerrain(
   };
 }
 
-const objectPictures = Object.entries(sprites)
-  .filter(
-    ([id]) =>
-      id === "ship" ||
-      id.startsWith("ship/") ||
-      id === "shot" ||
-      id === "missile" ||
-      id === "beam" ||
-      /^(enemy|boss|bonus|projectile|explosion|wall)\//.test(id),
-  )
-  .flatMap(([id, art]) => {
-    const width = art[0]!.length,
-      height = art.length;
-    const object = { picture: id, x: 0, y: 0, width, height };
-    const patterns = [{ art, objects: [object] }];
-    // The shot flips two gun-row pixels, including while it still crosses the ship (level-0 d/h).
-    if (id === "ship" || id.startsWith("ship/")) {
-      const gunRow = id === "ship" ? 3 : 5;
-      for (let shotX = 0; shotX < width; shotX++) {
-        const combined = art.map((row, y) =>
-          row
-            .padEnd(Math.max(width, shotX + 2), ".")
-            .split("")
-            .map((char, x) =>
-              y === gunRow && (x === shotX || x === shotX + 1) ? (char === "#" ? "." : "#") : char,
-            )
-            .join(""),
-        );
-        patterns.push({
-          art: combined,
-          objects: [object, { picture: "shot", x: shotX, y: gunRow, width: 2, height: 1 }],
-        });
+function objectPictures(inverted: boolean) {
+  return Object.entries(sprites)
+    .filter(
+      ([id]) =>
+        id === "ship" ||
+        id.startsWith("ship/") ||
+        id === "shot" ||
+        id === "missile" ||
+        id === "beam" ||
+        /^(enemy|boss|bonus|projectile|explosion|wall)\//.test(id),
+    )
+    .flatMap(([id, art]) => {
+      const width = art[0]!.length,
+        height = art.length;
+      const object = { picture: id, x: 0, y: 0, width, height };
+      const patterns = [{ art, objects: [object] }];
+      // LCD specimens: XOR on black (level-0 d/h), ink union on white (level-1 c, level-2 e).
+      if (id === "ship" || id.startsWith("ship/")) {
+        for (let shotY = 0; shotY < height; shotY++) {
+          for (let shotX = 0; shotX < width; shotX++) {
+            const combined = art.map((row, y) =>
+              row
+                .padEnd(Math.max(width, shotX + 2), ".")
+                .split("")
+                .map((char, x) =>
+                  y === shotY && (x === shotX || x === shotX + 1)
+                    ? inverted && char === "#"
+                      ? "."
+                      : "#"
+                    : char,
+                )
+                .join(""),
+            );
+            if (combined.join("/") === art.join("/")) continue;
+            patterns.push({
+              art: combined,
+              objects: [object, { picture: "shot", x: shotX, y: shotY, width: 2, height: 1 }],
+            });
+          }
+        }
       }
-    }
-    return patterns.flatMap((pattern) => {
-      const patternWidth = pattern.art[0]!.length;
-      return Array.from({ length: WIDTH + patternWidth - 1 }, (_, index) => {
-        const x = index - patternWidth + 1;
-        const left = Math.max(0, x),
-          right = Math.min(WIDTH, x + patternWidth);
-        const visible = pattern.art.map((row) => row.slice(left - x, right - x));
-        const firstY = visible.findIndex((row) => row.includes("#"));
-        if (firstY === -1) return [];
-        if (pattern.objects.some((part) => part.x + x >= WIDTH || part.x + x + part.width <= 0))
-          return [];
-        return [
-          {
-            visible,
-            x,
-            left,
-            right,
-            firstY,
-            firstX: left + visible[firstY]!.indexOf("#"),
-            height,
-            objects: pattern.objects,
-          },
-        ];
-      }).flat();
+      return patterns.flatMap((pattern) => {
+        const patternWidth = pattern.art[0]!.length;
+        return Array.from({ length: WIDTH + patternWidth - 1 }, (_, index) => {
+          const x = index - patternWidth + 1;
+          const left = Math.max(0, x),
+            right = Math.min(WIDTH, x + patternWidth);
+          const visible = pattern.art.map((row) => row.slice(left - x, right - x));
+          const firstY = visible.findIndex((row) => row.includes("#"));
+          if (firstY === -1) return [];
+          if (pattern.objects.some((part) => part.x + x >= WIDTH || part.x + x + part.width <= 0))
+            return [];
+          return [
+            {
+              visible,
+              x,
+              left,
+              right,
+              firstY,
+              firstX: left + visible[firstY]!.indexOf("#"),
+              height,
+              objects: pattern.objects,
+            },
+          ];
+        }).flat();
+      });
     });
-  });
+}
+
+const blackPictures = objectPictures(true);
+const whitePictures = objectPictures(false);
 
 function readObjects(
   pixels: Uint8Array,
   top: number,
   bottom: number,
-): readonly SpaceImpactObservation[] {
+  inverted: boolean,
+): readonly (readonly SpaceImpactObservation[])[] {
   const solutions: SpaceImpactObservation[][] = [];
-  const search = (remaining: Uint8Array, found: readonly SpaceImpactObservation[]) => {
-    if (solutions.length >= 2) return;
+  const search = (
+    remaining: Uint8Array,
+    occupied: Uint8Array,
+    found: readonly SpaceImpactObservation[],
+  ) => {
     const first = remaining.indexOf(1);
     if (first === -1) {
       const ordered = [...found].sort(
@@ -209,38 +224,44 @@ function readObjects(
         solutions.push(ordered);
       return;
     }
-    for (const sprite of objectPictures) {
+    for (const sprite of inverted ? blackPictures : whitePictures) {
       if (first % WIDTH !== sprite.firstX) continue;
       const x = sprite.x;
       const y = Math.floor(first / WIDTH) - sprite.firstY;
       if (
         y < top ||
         y + sprite.height > bottom ||
-        !matches(remaining, sprite.visible, sprite.left, y)
+        !matches(remaining, sprite.visible, sprite.left, y) ||
+        sprite.visible.some((row, dy) =>
+          occupied
+            .slice((y + dy) * WIDTH + sprite.left, (y + dy) * WIDTH + sprite.right)
+            .some(Boolean),
+        )
       )
         continue;
       const next = remaining.slice();
       erase(next, sprite.right - sprite.left, sprite.height, sprite.left, y);
-      search(next, [
+      const used = occupied.slice();
+      for (let dy = 0; dy < sprite.height; dy++)
+        used.fill(1, (y + dy) * WIDTH + sprite.left, (y + dy) * WIDTH + sprite.right);
+      search(next, used, [
         ...found,
         ...sprite.objects.map((object) => ({ ...object, x: x + object.x, y: y + object.y })),
       ]);
-      if (solutions.length >= 2) return;
     }
   };
-  search(pixels, []);
+  search(pixels, new Uint8Array(WIDTH * HEIGHT), []);
   const result = solutions[0];
   if (!result)
     throw new Error("decoder: unread object pixels (unknown, overlapping or damaged picture)");
-  if (solutions.length > 1) throw new Error("decoder: ambiguous object pictures");
-  return result;
+  return solutions;
 }
 
-/** Exact identifiable pictures and clean terrain bands only; unresolved pixels fail closed. */
-export function decodeSpaceImpact(
+/** Exact visible decompositions; invisible objects cannot be inferred from one LCD frame. */
+export function decodeSpaceImpactCandidates(
   pixels: Uint8Array,
   { level, scroll }: { readonly level: number; readonly scroll?: number },
-): DecodedSpaceImpact {
+): readonly DecodedSpaceImpact[] {
   if (pixels.length !== WIDTH * HEIGHT) throw new Error("decoder: expected 84 x 48 pixels");
   if (pixels.some((value) => value !== 0 && value !== 1))
     throw new Error("decoder: expected monochrome pixels");
@@ -251,15 +272,36 @@ export function decodeSpaceImpact(
   const normal = pixels.map((value) => (level === 0 || ceiling ? value ^ 1 : value));
   const hud = readHud(normal, ceiling ? 43 : 0);
   const terrain = readTerrain(normal, level, scroll);
-  const observations = readObjects(normal, ceiling ? 0 : 6, ceiling ? 42 : HEIGHT);
-  const ships = observations.filter(
-    (object) => object.picture === "ship" || object.picture.startsWith("ship/"),
+  const solutions = readObjects(
+    normal,
+    ceiling ? 0 : 6,
+    ceiling ? 42 : HEIGHT,
+    level === 0 || ceiling,
   );
-  if (ships.length > 1) throw new Error("decoder: multiple ship pictures");
-  return {
-    hud,
-    terrain,
-    ship: ships[0] ?? null,
-    objects: observations.filter((object) => object !== ships[0]),
-  };
+  const decoded = solutions.flatMap((observations) => {
+    const ships = observations.filter(
+      (object) => object.picture === "ship" || object.picture.startsWith("ship/"),
+    );
+    if (ships.length > 1) return [];
+    return [
+      {
+        hud,
+        terrain,
+        ship: ships[0] ?? null,
+        objects: observations.filter((object) => object !== ships[0]),
+      },
+    ];
+  });
+  if (decoded.length === 0) throw new Error("decoder: multiple ship pictures");
+  return decoded;
+}
+
+/** Refuse to choose an interpretation without temporal evidence. */
+export function decodeSpaceImpact(
+  pixels: Uint8Array,
+  options: { readonly level: number; readonly scroll?: number },
+): DecodedSpaceImpact {
+  const candidates = decodeSpaceImpactCandidates(pixels, options);
+  if (candidates.length > 1) throw new Error("decoder: ambiguous object pictures");
+  return candidates[0]!;
 }
