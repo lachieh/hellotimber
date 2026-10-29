@@ -9,7 +9,8 @@ import { ALLOW_CALL, callConfirmLines, type StockSimToolkit } from "../src/sim/t
 import { fetchMs, toolkitSession, type ToolkitDial } from "../src/sim/session";
 import { StockFlowApplication } from "../src/widgets/flow";
 import { flowRig } from "./support/flow-rig.ts";
-import { simContentRig } from "./support/sim-content.ts";
+import { standbyRig } from "./support/rig.ts";
+import { createSyntheticNetwork, describeStockScreen, type StockOutgoingCall } from "../src/index";
 
 const MAIN = SIM_CONTENT_TOOLKITS.main as StockSimToolkit;
 const item = (id: string) => MAIN.items.find((i) => i.id === id)!;
@@ -66,16 +67,35 @@ describe("the composed call confirm (D4, D6: SET UP CALL never completes in the 
     expect(dialled).toEqual(["0298765432"]);
   });
 
-  it("opens plan 22's placeholder on a phone until plan 22 lands (D15), C back to the level", () => {
-    const rig = simContentRig("stk", "main");
+  it("hands a confirmed toolkit link to the network inside send(), then uses the call flow", () => {
+    const dialled: { call: StockOutgoingCall; duringSend: boolean }[] = [];
+    let duringSend = false;
+    const rig = standbyRig({
+      sim: { id: "toolkit-call", toolkit: MAIN },
+      network: {
+        ...createSyntheticNetwork(),
+        dial(call, control) {
+          dialled.push({ call, duringSend });
+          control.released();
+          return { answer() {}, hangUp() {} };
+        },
+      },
+    });
     rig.phone.navigate("menu/sim-services/call-alpha");
     rig.advance(200);
-    rig.press("navi");
-    rig.advance(50);
-    expect(rig.phone.path).toBe("menu/sim-services/call-alpha");
-    rig.press("c");
-    rig.advance(50);
-    expect(rig.phone.path).toBe("menu/sim-services");
+    expect(describeStockScreen(rig.phone.screen)).toContain("Call Lachlan?");
+    expect(dialled).toEqual([]);
+    duringSend = true;
+    rig.phone.send({ type: "down", key: "navi" });
+    rig.phone.send({ type: "up", key: "navi" });
+    duringSend = false;
+    expect(dialled).toEqual([
+      { call: { number: "0412345678", emergency: false }, duringSend: true },
+    ]);
+    expect(describeStockScreen(rig.phone.screen)).toContain("Calling");
+    expect(describeStockScreen(rig.phone.screen)).not.toContain("not implemented");
+    rig.advance(5000);
+    expect(rig.phone.screen.kind).toBe("standby");
   });
 });
 

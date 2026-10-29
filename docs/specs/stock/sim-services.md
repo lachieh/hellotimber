@@ -86,8 +86,9 @@ SIM-borne call data.
   on its first item) or the level; held C goes to standby.
 - **SET UP CALL:** not captured: the phone fetches it, sends one STATUS and freezes on a blank
   screen with `OK`. nokia-os composes the confirm (UNVERIFIED): a confirm query with the step's
-  alpha identifier or `Allow SIM card to call?`, OK dials through plan 22 (its placeholder until
-  plan 22 lands), C ends the session.
+  alpha identifier or `Allow SIM card to call?`, OK synchronously dials through the same
+  `placeCall` telephone/network path as phone-book calls, C ends the session. The handoff
+  reuses phone-book Calling/connected/end screens (UNVERIFIED as a toolkit composition).
 - Confirm SIM service actions (6-2-6) opens on `Not asked` in the virgin image; `Asked` shows
   `Done`. It changed nothing Task 0 could see.
 - During a call the in-call Options have no Menu entry: SIM services cannot be reached in a call.
@@ -114,8 +115,7 @@ host IMEI it keeps the virgin EEPROM's `?` glyphs. C or Navi dismisses the page 
   emulator's).
 - Network originators lose their `+` in the harness (`sms` takes digits only): the international
   form of a sender is covered by SIM messages only.
-- Composed: SET UP CALL's confirm and what follows it (plan 22's Calling, a placeholder until it
-  lands); Confirm SIM service actions has no effect; `Message centre:` of a SIM message without a
+- Composed: SET UP CALL's confirm and what follows it (plan 22's phone-book call flow); Confirm SIM service actions has no effect; `Message centre:` of a SIM message without a
   centre (a blank line).
 - `Opening` and `Opening message` take 270-625 ms on Task 0's swSIM fixture and 35-80 ms on the
   emulator's own SIM (plan 18): nokia-os keeps plan 18's `Opening` and 270 ms for `Opening message`.

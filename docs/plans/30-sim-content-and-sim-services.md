@@ -1066,3 +1066,22 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
 - The default SIM reproduces every plan 13-22 golden; no golden or placeholder names plan 30.
 - The website is unchanged; `vp check`, `vp run -r test` and `vp run website#build` pass; VISION,
   the specs and the plans README match what shipped.
+
+## Parent decision and call handoff follow-up — 2026-10-29
+
+Plan 31 Task 9 exposed the deferred `toolkitDial` placeholder after plan 22 landed.
+Parent decision: make the minimal firmware change in plan 30's SIM services feature;
+confirmed SET UP CALL hands off to the same telephone/network-port path as phone-book
+link calls. `toolkitDial` now delegates to `placeCall` with the phone-book list screen
+options. No calls-code seam or website interception is needed. Dial runs synchronously
+inside the confirming key's `send()`, preserving browser user activation.
+
+Task 0 K could not capture SET UP CALL: the emulator freezes after fetching it. The
+confirmation and following phone-book Calling/connected/end flow therefore remain an
+UNVERIFIED composition, using plan 22/19's existing screens without inventing any.
+This supersedes the historical placeholder/waiting-for-plan-22 notes above.
+
+TDD: the public firmware regression in `tests/sim-services.test.ts` failed with no
+network call, then passed after wiring the seam. It checks the number during `send()`,
+a real Calling screen without the placeholder, and return to standby on release.
+Logs: `/tmp/plan31-toolkit-red.log`, `/tmp/plan31-toolkit-green.log`.

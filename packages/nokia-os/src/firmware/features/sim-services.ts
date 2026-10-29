@@ -15,28 +15,13 @@ import { stockMenuGraphic } from "../../resources";
 import { SIM_SERVICES_NUMBER, SIM_SERVICES_SLUG } from "../../sim/slot";
 import { carouselLabel, rowLabel, type StockSimToolkit } from "../../sim/toolkit";
 import { toolkitSession, type ToolkitDial } from "../../sim/session";
-import type { Widget } from "../../widgets/flow";
 import { StockFlowApplication } from "../../widgets/flow";
 import type { StockFeature, StockServices } from "./feature";
+import { placeCall } from "./dialling";
 
-/**
- * Where a confirmed toolkit call goes (D6): plan 22's Calling flow once it lands (one line here:
- * `services.telephone.dial(number, flow)`, which reaches `StockNetworkPort.dial`); until then
- * plan 22's placeholder, C back to the toolkit's level.
- */
+/** SET UP CALL reuses the phone-book call flow (UNVERIFIED composition: plan 30 D6). */
 export function toolkitDial(services: StockServices): ToolkitDial {
-  void services;
-  return (_number, flow) => flow.replace(callPlaceholder());
-}
-
-/** Plan 22's Calling screen, not implemented yet (D15). */
-function callPlaceholder(): Widget {
-  return {
-    render: () => ({ kind: "placeholder", label: "Calling" }),
-    onKey(key, flow) {
-      if (key === "c") flow.back();
-    },
-  };
+  return (number, flow) => placeCall(services, flow, number, false, "list");
 }
 
 /** Menu 14 for `toolkit`: its carousel slot and level over one phone's `services`. */
