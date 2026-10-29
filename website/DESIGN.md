@@ -315,3 +315,8 @@ automatic timeout. Neither switch rewrites firmware settings or invents phone be
 A direct unknown URL keeps the handset and desk available while the runtime loads, then
 opens stock SIM services. The server response remains a 404; client navigation follows the
 phone to SIM services. Route changes and browser Back/Forward keep the same stage canvas.
+
+Confirming a project's Open question in SIM services now opens its link through the same
+call flow as a phone-book contact. The handset and notebook show the existing Calling,
+connected and call-end screens, then standby. The toolkit composition is UNVERIFIED
+against real SET UP CALL firmware; plan 30 records the missing capture.

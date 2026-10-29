@@ -22,8 +22,8 @@ On a busy shared machine, `VITEST_MAX_WORKERS=2` limits test contention without 
 
 No deployment is performed by plan 31. After approval to merge and deploy:
 
-1. Complete the firmware toolkit-call seam recorded in plan 31; project-call QA currently
-   reaches the stock Calling placeholder.
+1. Confirm the deployed build includes plan 31's toolkit-call handoff; project links now
+   use the same telephone/network port as phone-book links.
 2. Review the sample content and placeholder contact/project URLs before presenting them as real.
 3. Set `ANTHROPIC_API_KEY` in the Vercel project for live persona replies. Without it, SMS and
    Chat use the recorded canned responses. A live-model reply still needs an environment check.

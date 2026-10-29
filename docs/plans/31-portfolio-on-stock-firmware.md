@@ -17,7 +17,7 @@ they exist; each use is conditional and names its fallback (D17).
 `siteMenu`) with website applications and phone-screen's own painter. A painter-only swap to
 nokia-os broke the site and was reverted (`b446466`): `paintStockScreen` draws only the stock
 firmware's screens. The fix is to run the stock firmware itself.
-**Status:** in progress (Tasks 0-8 delivered; Task 9 blocked on the stock toolkit-call seam).
+**Status:** done (Tasks 0-9 delivered; launch actions remain in the handoff).
 
 ## Goal
 
@@ -500,7 +500,7 @@ question 11 says to delete the snake package.
 
 - [x] `mise exec -- vp check`, `vp run -r test`, `vp run website#build`; report the client bundle's
       gzip size against `main` (no gate; record it).
-- [ ] Headless QA with `agent-browser` against `mise exec -- vp run website#dev`, reading the
+- [x] Headless QA with `agent-browser` against `mise exec -- vp run website#dev`, reading the
       `[role=status]` mirror (boot ≈5 s; Enter, arrows, Escape, digits). Record each result: 1. `/` boots to standby (`LACHLAN`, the Brisbane time); reduced motion skips the boot. 2. ▼ opens the name list; ▼ to GitHub; Enter (`Call`) opens a new tab on GitHub; the mirror
       shows `Calling`, the connected screen, the end, the list. 3. Menu 2 2: the Inbox lists the SIM messages; reading one shows its text and `Sender:`
       (Lachlan, or the number per D17). 4. Write messages to Lachlan (via Options › Send › Search): `Message sent`, then a reply in
@@ -508,11 +508,11 @@ question 11 says to delete the snake package.
       Back/Forward keep phone and URL aligned. 8. `/menu/call-divert/github` answers 301 to `/menu/phone-book/search`; `/nope` answers 404
       and the handset shows SIM services. 9. Persistence: Add name `Zoe`, reload, the name is there; `localStorage` holds only
       `nokia-os/…`, `hellotimber.threads`, `hellotimber.settings` (`muted`) and `theme`. 10. View source of `/menu/phone-book/search`: the contacts' links are in the HTML.
-- [ ] Deploy readiness (no deploy): Vercel builds from `main` through Nitro (no `vercel.json`);
-      `ANTHROPIC_API_KEY` set in the project; `BUILD_HASH` set for the IMEI. Write the steps and ask
-      Lachlan for approval to merge and deploy.
-- [ ] Plans README: row 31 `done`. Completion notes; status `done`.
-- [ ] Commit: `docs: complete the portfolio on the stock firmware (plan 31)`.
+- [x] Deploy readiness (no deploy): document Nitro/Vercel settings, live `ANTHROPIC_API_KEY`,
+      `BUILD_HASH` and post-deploy verification in the launch handoff. External settings and
+      merge/deploy approval remain release actions, per the parent closeout instruction.
+- [x] Plans README: row 31 `done`. Completion notes; status `done`.
+- [x] Commit: `docs: complete the portfolio on the stock firmware (plan 31)`.
 
 ## Open questions for Lachlan
 
@@ -890,3 +890,76 @@ prove navigation only, not a working toolkit link call.
 - 18c remains a firmware follow-up, not the cause of this blocker. Local LLM QA used canned
   replies; live API credentials, real portfolio copy/URLs, merge and deployment remain external
   release actions. No secrets, Games, generated assets, main or other branches were changed.
+
+## Parent decision — 2026-10-29: resolve Task 9's toolkit-call blocker
+
+The parent authorizes the minimal firmware fix owned by plan 30: SIM services must
+hand confirmed SET UP CALL to the same telephone/network port as phone-book links.
+This is the explicit exception to this plan's website-only scope. `toolkitDial` now
+uses `placeCall` with the phone-book list options; no calls-code changes are needed.
+Plan 30 Task 0 K never captured SET UP CALL, so its confirm and the reused phone-book
+Calling/connected/end screens remain UNVERIFIED as a toolkit composition. No new
+screen, golden, tolerance, dependency or Games change is introduced.
+
+The firmware regression failed first because the port received nothing, then passed:
+the confirming key calls the port synchronously with the exact number, shows Calling
+without `not implemented`, and returns to standby after release. This supersedes the
+historical Task 9 discrepancy and its instruction to await the firmware owner.
+
+### Launch handoff (prepared; no deployment performed)
+
+- Set a live `ANTHROPIC_API_KEY` in the deployment project and smoke-test a real SMS/Chat
+  model response. Local browser QA uses the existing canned fallback.
+- Verify Vercel's main branch, workspace/build/output settings against the existing
+  Nitro integration; set `BUILD_HASH` to the release revision. No new `vercel.json`.
+- Replace/review all sample portfolio copy, project/contact URLs and the CV asset before
+  public launch. The sample GitHub project URL currently returns GitHub's 404 as expected.
+- Obtain Lachlan's merge/deploy approval, then smoke-test the deployed handset, toolkit
+  and phone-book links, SMS/Chat, mobile, redirects and SSR content.
+- Retain the documented deep-boot SMS policy follow-up (incoming messages queue until
+  first standby), and plan 18c's separate firmware work. Neither blocks the root-boot
+  portfolio flow. No Games change belongs to this delivery.
+
+This handoff supersedes Task 9's original requirement to set external deployment secrets
+and ask for release approval during implementation: the parent requested implementation
+closeout with these remaining deploy-time items explicitly handed back.
+
+### Task 9 closeout QA — 2026-10-29
+
+Headless agent-browser 0.34.0, session `plan31-closeout`, this worktree's dev server on
+port 3003. The earlier server stopped during QA; restarted the same worktree's server
+and continued. All handset assertions use `[role=status]`, with real keyboard/forms.
+
+| Check                              | Result / evidence                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Toolkit project link               | Projects → hellotimber text → `Question: Open hellotimber? [OK]` → actual `Call: Calling 0755507687 [End]`; a new tab opens `https://github.com/example-handle/hellotimber`, then handset returns to standby. Sample destination returns GitHub 404. `/tmp/plan31-closeout-project.png`, `/tmp/plan31-closeout-confirm.png`, `/tmp/plan31-closeout-toolkit-calling.png`, `/tmp/plan31-closeout-toolkit-return.png`. |
+| Root/menu                          | Standby with LACHLAN and Brisbane clock; all 13 carousel slots, including Menu 14 LACHLAN. `/tmp/plan31-closeout-standby.png`, `/tmp/plan31-closeout-menu.png`.                                                                                                                                                                                                                                                     |
+| Phone-book link                    | Standby ▼, scroll to GitHub, Call opens `https://github.com/example-handle`; actual Calling then standby. `/tmp/plan31-closeout-github-call.png`.                                                                                                                                                                                                                                                                   |
+| SMS                                | Root-boot Write → Options/Send/Search → Lachlan; canned reply persisted in `hellotimber.threads`. `/tmp/plan31-closeout-sms-sent.png`.                                                                                                                                                                                                                                                                              |
+| Chat                               | Root boot → Menu 3, number/nickname/editor/Send → `>Good timing - I was just polishing 4032 pixels. What [OK]`. `/tmp/plan31-closeout-chat-root.png`. Deep-link Chat retains the documented first-standby queue policy; it is separate from this fix.                                                                                                                                                               |
+| Reduced motion / controls / mobile | Reduced motion settles to standby; Sound and Lights toggle off and back on; 390x844 Snake starts and accepts steering, with no browser errors. `/tmp/plan31-closeout-reduced-motion.png`, `/tmp/plan31-closeout-switches-off.png`, `/tmp/plan31-closeout-mobile-snake.png`.                                                                                                                                         |
+| IMEI                               | `*#06#` shows Serial No. and the build-derived digits. `/tmp/plan31-closeout-imei.png`.                                                                                                                                                                                                                                                                                                                             |
+| Routes/stage                       | Projects and Search deep links settle to their stock screens. Back/Forward keeps mirror/URL aligned; the same canvas object survives both. Direct `/nope` returns HTTP 404 and handset opens `LACHLAN: Projects (1 of 2) [OK]`. `/tmp/plan31-closeout-404.png`.                                                                                                                                                     |
+| Persistence                        | Added Zoe via stock multi-tap and number forms, reloaded, Search finds `Zoe [Call]`. `/tmp/plan31-closeout-persistence.png`. Storage contains firmware, mute and threads, plus development-only `tanstack_devtools_state`.                                                                                                                                                                                          |
+| HTTP/SSR                           | All 66 legacy URLs resolve HTTP 200 after redirects; old Call divert GitHub returns 301 to Search. Server Search HTML includes contact hrefs before hydration. `/tmp/plan31-closeout-legacy-urls.json`.                                                                                                                                                                                                             |
+
+Full command/status/tab evidence: `/tmp/plan31-closeout-browser.jsonl`. The Inbox reply reader shows `G'day! Lachlan here...`, pages through its text, then
+`Sender: Lachlan 0491570006 [Options]`: `/tmp/plan31-closeout-inbox-reader.png`,
+`/tmp/plan31-closeout-sender.png`. Earlier SMS arrival evidence remains in the resume table. No live
+LLM key was introduced and no real portfolio URL or copy was invented.
+
+### Final closeout verification — 2026-10-29
+
+- Firmware handoff committed in `5e25d9d`; regression first failed at the empty network
+  call list, then passed. Final focused firmware suites: 2 files / 15 passed.
+- `VITEST_MAX_WORKERS=2 vp run -r --no-cache test` exited 0: **257 files, 11,729 passed,
+  120 expected failures, 161 TODOs**. Nokia OS: 181 files / 11,081 passed, the same
+  120 expected failures and 161 TODOs, 1870.85 seconds. Website: 18 files / 92 passed.
+  Every existing golden remains accounted for without fixture or tolerance changes.
+  `/tmp/plan31-closeout-tests.log`.
+- `vp check --fix` passed; production build passed. Logs:
+  `/tmp/plan31-closeout-check-fix.log`, `/tmp/plan31-closeout-build.log`.
+- Task 9 QA and plan 31 are complete. DESIGN.md describes the visible call handoff;
+  website/README.md no longer instructs release owners to repair the resolved seam.
+  The deploy-time handoff above remains explicit. No Games code, generated files,
+  golden fixtures, TODOS.md, main or another branch changed. Nothing was deployed.
