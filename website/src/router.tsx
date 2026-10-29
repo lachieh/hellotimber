@@ -1,5 +1,5 @@
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
-import { getPhoneRuntime } from "./phone/phone";
+import { loadPhoneRuntime } from "./phone/stock-phone";
 import { connectPhoneToRouter } from "./phone/router-sync";
 import { routeTree } from "./routeTree.gen";
 
@@ -14,9 +14,10 @@ export function getRouter() {
   });
 
   if (typeof window !== "undefined") {
-    const { phone } = getPhoneRuntime();
-    disconnect?.();
-    disconnect = connectPhoneToRouter(router, phone);
+    void loadPhoneRuntime().then(({ phone }) => {
+      disconnect?.();
+      disconnect = connectPhoneToRouter(router, phone);
+    });
   }
 
   return router;

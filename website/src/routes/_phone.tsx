@@ -14,15 +14,17 @@ function PhoneLayout() {
           The stage persists across /, /menu, … — never remounts. Do NOT key this
           by pathname and never move the stage into a leaf route. */}
       <ClientOnly fallback={<div className="phone-skeleton" aria-hidden="true" />}>
-        <Desk
-          phone={
-            <div className="phone-fill">
-              <Suspense fallback={<div className="phone-skeleton" aria-hidden="true" />}>
-                <PhoneStageHost />
-              </Suspense>
-            </div>
-          }
-        />
+        <Suspense fallback={<div className="phone-skeleton" aria-hidden="true" />}>
+          <Desk
+            phone={
+              <div className="phone-fill">
+                <Suspense fallback={<div className="phone-skeleton" aria-hidden="true" />}>
+                  <PhoneStageHost />
+                </Suspense>
+              </div>
+            }
+          />
+        </Suspense>
       </ClientOnly>
 
       {/* Everything below is in the DOM (server-rendered, crawlable, screen-reader
@@ -31,7 +33,9 @@ function PhoneLayout() {
       <div className="sr-only">
         <ClientOnly>
           {/* aria-live mirror of the LCD; client-only (constructs the runtime). */}
-          <ScreenMirror />
+          <Suspense>
+            <ScreenMirror />
+          </Suspense>
         </ClientOnly>
         <Outlet /> {/* the per-route content panel — hidden, but present for SEO/AT */}
       </div>

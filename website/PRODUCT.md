@@ -34,7 +34,7 @@ against emulator captures of the real firmware.
 - Touch: tap the 3D keys.
 - The phone boots (~5 s) before standby; the LCD is 84×48 monochrome.
 - Live phone state is available to the page: the current route/menu path, a text rendering of
-  the LCD (`screenToText`, today an sr-only `role=status` mirror), sound and backlight settings.
+  the LCD (`describeStockScreen`, today an sr-only `role=status` mirror), sound and backlight settings.
 
 ## Capabilities and Constraints
 
@@ -42,7 +42,7 @@ against emulator captures of the real firmware.
   remount across routes.
 - Per-route portfolio content is server-rendered and crawlable; today it is visually hidden.
 - The phone packages must not know about the router; the website owns all bridging.
-- Today the page shows only the phone and nothing around it.
+- The 2001 desk carries real key controls, a live LCD transcription, Sound/Lights switches and contact links.
 
 ## Brand Commitments
 
@@ -63,3 +63,14 @@ against emulator captures of the real firmware.
 3. Teach the device in its own terms (keys, menus, the LCD), not in web-UI idioms.
 4. Who and how-to-reach must be findable without driving the phone.
 5. Fidelity is the craft: never fake phone behaviour in the surrounds.
+
+## Stock runtime desk (plan 31)
+
+The notebook transcribes the firmware's accessible screen description, including stock
+widgets, messages, calls and game scores. It does not reconstruct the old website LCD
+layout. The sticky note reads the same stock softkey. The Snake scrawl says "play snake!!";
+it no longer reads the removed website game's score store.
+
+Sound gates the stock audio adapter's master gain. Lights is a session-only gate on the
+stock display and keypad LED outputs: Off suppresses both; On follows the firmware's
+automatic timeout. Neither switch rewrites firmware settings or invents phone behaviour.

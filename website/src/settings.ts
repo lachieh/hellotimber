@@ -1,29 +1,9 @@
 import { useSyncExternalStore } from "react";
 
-/** Site settings, dressed as phone settings (VISION Menu 5/6). */
 export interface SiteSettings {
-  /** Tones 5-6 — key beeps on/off (deviation 11: On/Off, not levels). */
-  keypadTones: boolean;
-  /** Settings → Phone settings → Lights — drives phone-3d backlightOn. */
-  backlight: boolean;
-  /** Settings → Phone settings → Welcome note — shown at boot (next load). */
-  welcomeNote: string;
-  /** Global mute — overrides everything (the desk Walkman's Sound switch). */
   muted: boolean;
-  /** Tones 5-1 — selected ringtone id (see src/phone/tones.ts). */
-  ringtone: string;
-  /** Tones 5-9 — idle screensaver on/off. */
-  screenSaver: boolean;
 }
-
-export const DEFAULT_SETTINGS: SiteSettings = {
-  keypadTones: true,
-  backlight: true,
-  welcomeNote: "Welcome!",
-  muted: false,
-  ringtone: "nokia-tune",
-  screenSaver: true,
-};
+export const DEFAULT_SETTINGS: SiteSettings = { muted: false };
 
 const STORAGE_KEY = "hellotimber.settings";
 const listeners = new Set<() => void>();
@@ -32,9 +12,13 @@ let cached: SiteSettings | null = null;
 function load(): SiteSettings {
   if (typeof window === "undefined") return DEFAULT_SETTINGS;
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw === null) return { ...DEFAULT_SETTINGS };
-    return { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as Partial<SiteSettings>) };
+    const raw: unknown = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null");
+    const settings = {
+      muted: typeof raw === "object" && raw !== null && "muted" in raw && raw.muted === true,
+    };
+    window.localStorage.removeItem("hellotimber.messages");
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    return settings;
   } catch {
     return { ...DEFAULT_SETTINGS };
   }

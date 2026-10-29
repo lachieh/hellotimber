@@ -19,16 +19,21 @@ describe("settings store", () => {
   });
 
   it("updates persist to localStorage under hellotimber.settings", () => {
-    updateSettings({ keypadTones: false, welcomeNote: "G'day" });
+    updateSettings({ muted: true });
     const raw = window.localStorage.getItem("hellotimber.settings");
     expect(raw).not.toBeNull();
-    expect(JSON.parse(raw!)).toMatchObject({ keypadTones: false, welcomeNote: "G'day" });
+    expect(JSON.parse(raw!)).toMatchObject({ muted: true });
   });
 
-  it("stored partial JSON merges over defaults", () => {
+  it("removes superseded settings and legacy messages", () => {
     window.localStorage.setItem("hellotimber.settings", JSON.stringify({ backlight: false }));
     resetSettingsForTests();
-    expect(getSettings()).toEqual({ ...DEFAULT_SETTINGS, backlight: false });
+    window.localStorage.setItem("hellotimber.messages", "legacy");
+    expect(getSettings()).toEqual({ muted: false });
+    expect(window.localStorage.getItem("hellotimber.messages")).toBeNull();
+    expect(JSON.parse(window.localStorage.getItem("hellotimber.settings")!)).toEqual({
+      muted: false,
+    });
   });
 
   it("corrupt stored JSON falls back to defaults", () => {

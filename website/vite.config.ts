@@ -21,7 +21,7 @@ const config = defineConfig({
       "@hellotimber/phone-core",
       "@hellotimber/phone-screen",
       "@hellotimber/phone-3d",
-      "@hellotimber/snake",
+      "@hellotimber/nokia-os",
     ],
   },
   // Nitro builds the server output and auto-detects the host (Vercel sets VERCEL

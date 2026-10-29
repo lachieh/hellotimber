@@ -1,7 +1,7 @@
 import type { PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { useEffect, useState } from "react";
-import { getPhoneRuntime } from "../phone/phone";
-import { siteBreadcrumb } from "../phone/site-tree";
+import { getPhoneRuntime } from "../phone/stock-phone";
+import { portfolioMenu } from "../phone/stock-routes";
 
 /** Live phone state for the surrounds. Client-only: surrounds render under <ClientOnly>. */
 export interface PhoneLive {
@@ -14,7 +14,17 @@ export interface PhoneLive {
 }
 
 function liveFrom(path: string, screen: ScreenModel): PhoneLive {
-  return { path, screen, trail: siteBreadcrumb(path) };
+  return {
+    path,
+    screen,
+    trail:
+      path === "standby"
+        ? []
+        : [
+            "Menu",
+            ...(portfolioMenu.resolve(path) ?? []).map((entry) => entry.label.replace(/\s+/g, " ")),
+          ],
+  };
 }
 
 export function usePhoneLive(): PhoneLive {

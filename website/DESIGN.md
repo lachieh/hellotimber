@@ -300,3 +300,14 @@ There is none outside the phone. The phone's menus are the navigation; the noteb
 - **Don't** light anything from a second direction or add hover lift, glows or floating shadows.
 - **Don't** draw a picture of a control where a working control belongs.
 - **Don't** reuse the legacy sea/lagoon tokens in `src/styles.css` (`--surface`, `--line`, …); they belong to the original site template, not this world.
+
+## Stock runtime desk (plan 31)
+
+The notebook transcribes the firmware's accessible screen description, including stock
+widgets, messages, calls and game scores. It does not reconstruct the old website LCD
+layout. The sticky note reads the same stock softkey. The Snake scrawl says "play snake!!";
+it no longer reads the removed website game's score store.
+
+Sound gates the stock audio adapter's master gain. Lights is a session-only gate on the
+stock display and keypad LED outputs: Off suppresses both; On follows the firmware's
+automatic timeout. Neither switch rewrites firmware settings or invents phone behaviour.

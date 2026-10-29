@@ -1,9 +1,8 @@
 import { PhoneStage } from "@hellotimber/phone-3d";
 import type { Nokia3310Key } from "@hellotimber/phone-3d";
 import { useEffect, useState } from "react";
-import { useSettings } from "../settings";
 import { attachKeyboard } from "./keyboard";
-import { getPhoneRuntime } from "./phone";
+import { getPhoneRuntime } from "./stock-phone";
 
 /**
  * Bridges the phone runtime to the 3D stage. Client-only (lives under
@@ -13,7 +12,8 @@ export default function PhoneStageHost() {
   // `input` is a closure on the runtime object, not a class method — no `this`.
   // oxlint-disable-next-line unbound-method
   const { renderer, input } = getPhoneRuntime();
-  const settings = useSettings();
+  const { lights } = getPhoneRuntime();
+  const [leds, setLeds] = useState({ display: false, keypad: false });
   const [version, setVersion] = useState(renderer.version);
 
   // rAF-driven version observation: re-render only when the LCD actually
@@ -21,12 +21,17 @@ export default function PhoneStageHost() {
   useEffect(() => {
     let raf = requestAnimationFrame(function loop() {
       setVersion(renderer.version);
+      setLeds((prev) => {
+        const display = lights.display && lights.enabled;
+        const keypad = lights.keypad && lights.enabled;
+        return prev.display === display && prev.keypad === keypad ? prev : { display, keypad };
+      });
       raf = requestAnimationFrame(loop);
     });
     return () => {
       cancelAnimationFrame(raf);
     };
-  }, [renderer]);
+  }, [renderer, lights]);
 
   // Desktop keyboard → runtime input funnel, alive exactly as long as the
   // stage. Keyboard-held keys also depress the 3D keypad (pressedKeys);
@@ -51,7 +56,8 @@ export default function PhoneStageHost() {
       className="phone-stage"
       screenCanvas={renderer.canvas}
       screenVersion={version}
-      backlightOn={settings.backlight}
+      backlightOn={leds.display}
+      keypadLightOn={leds.keypad}
       pressedKeys={pressedKeys}
       onKey={(key, action) => {
         input(key, action);

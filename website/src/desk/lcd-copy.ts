@@ -1,5 +1,5 @@
 import type { ScreenModel } from "@hellotimber/phone-core";
-import { formatMenuIndicator, LINE_CHARS, truncate, wrapText } from "@hellotimber/phone-screen";
+import { describeStockScreen } from "@hellotimber/nokia-os";
 
 /** One text row the LCD draws; `selected` is the inverted (highlighted) row. */
 export interface LcdRow {
@@ -18,84 +18,12 @@ export interface LcdCopy {
   pixels?: string;
 }
 
-/** phone-screen's list/reader body: three rows under the title. */
-const VISIBLE_ROWS = 3;
-/** phone-screen's editor body: four rows of hard-wrapped text. */
-const EDITOR_ROWS = 4;
-
-const rows = (lines: readonly string[]): LcdRow[] => lines.map((text) => ({ text }));
-
-/** Same window as phone-screen's renderList: keep the selection on the middle row when it can. */
-function listWindowTop(selected: number, count: number): number {
-  return Math.min(Math.max(0, selected - 1), Math.max(0, count - VISIBLE_ROWS));
-}
-
-export function lcdCopy(screen: ScreenModel, welcomeText = "Welcome!"): LcdCopy {
-  switch (screen.kind) {
-    case "off":
-      return { rows: [] };
-    case "boot":
-      return { rows: rows([screen.phase === "welcome" ? welcomeText : "NOKIA"]) };
-    case "standby":
-      if (screen.notice !== undefined) {
-        return {
-          rows: rows(wrapText(screen.notice.text, 11).slice(0, 3)),
-          softkey: screen.notice.softkey,
-        };
-      }
-      return {
-        ...(screen.clock === undefined ? {} : { head: screen.clock }),
-        rows: rows([screen.carrier]),
-        softkey: "Menu",
-      };
-    case "menu-carousel":
-      return {
-        head: formatMenuIndicator(screen.menuIndicator),
-        rows: rows([screen.label]),
-        softkey: "Select",
-      };
-    case "list": {
-      const top = listWindowTop(screen.selected, screen.items.length);
-      return {
-        head:
-          screen.menuIndicator === undefined
-            ? screen.title
-            : formatMenuIndicator(screen.menuIndicator),
-        rows: screen.items
-          .slice(top, top + VISIBLE_ROWS)
-          .map((text, offset) =>
-            top + offset === screen.selected ? { text, selected: true } : { text },
-          ),
-        softkey: screen.softkey,
-      };
-    }
-    case "reader":
-      return {
-        head: screen.title,
-        rows: rows(screen.lines.slice(screen.scrollTop, screen.scrollTop + VISIBLE_ROWS)),
-        softkey: "Back",
-      };
-    case "editor": {
-      const chars = Array.from(screen.text);
-      const lines: string[] = [];
-      for (let i = 0; i < chars.length; i += LINE_CHARS) {
-        lines.push(chars.slice(i, i + LINE_CHARS).join(""));
-      }
-      const cursorRow = Math.floor(screen.cursor / LINE_CHARS);
-      const top = Math.max(0, cursorRow - (EDITOR_ROWS - 1));
-      const remaining =
-        screen.limit === undefined ? "" : ` ${Math.max(0, screen.limit - screen.text.length)}`;
-      return {
-        head: `${truncate(screen.title, 9)}${remaining} ${screen.mode}`,
-        rows: rows(lines.slice(top, top + EDITOR_ROWS)),
-        softkey: "Options",
-      };
-    }
-    case "confirm":
-      return { rows: rows(wrapText(screen.text).slice(0, 3)), softkey: screen.softkey };
-    case "custom":
-      return { rows: [], pixels: screen.appId };
-  }
+export function lcdCopy(screen: ScreenModel): LcdCopy {
+  if (screen.kind === "off") return { rows: [] };
+  const description = describeStockScreen(screen);
+  const softkey = description.match(/\[([^\]]+)\]$/)?.[1];
+  const text = softkey ? description.slice(0, description.lastIndexOf(" [")) : description;
+  return { rows: [{ text }], ...(softkey ? { softkey } : {}) };
 }
 
 /** What to press next, in the voice of the sticky note. */
@@ -120,7 +48,12 @@ export function deskHint(path: string, screen: ScreenModel): string {
       return "type on 0-9, # for case, Enter for Options";
     case "confirm":
       return `Enter = ${screen.softkey}, Esc to back out`;
-    case "custom":
-      return "Esc to go back";
+    case "custom": {
+      const text = describeStockScreen(screen);
+      const softkey = text.match(/\[([^\]]+)\]$/)?.[1];
+      if (text.startsWith("Editor:")) return "type on 0-9, # for case, Enter for Options";
+      if (softkey) return `Enter = ${softkey}, up/down to scroll, Esc to go back`;
+      return text.startsWith("Switching on") ? "it's starting up, give it a sec" : "Esc to go back";
+    }
   }
 }

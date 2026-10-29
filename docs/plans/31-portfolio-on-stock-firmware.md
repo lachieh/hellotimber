@@ -444,26 +444,26 @@ filled here), `website/tests/stock-routes.test.ts` (new).
 the table marks delete or rewrite (`panels.test.tsx` and `panel-registry.test.ts` wait for Task 7);
 `website/tests/legacy-paths.test.ts` (folded into `stock-routes.test.ts`).
 
-- [ ] `stock-phone.ts` (D12): the runtime, power-on, reduced motion, T9, the adapters; one instance
+- [x] `stock-phone.ts` (D12): the runtime, power-on, reduced motion, T9, the adapters; one instance
       per session; `stock-phone.test.ts` creates it under jsdom with a stub `AudioContext` and checks
       the config passed (storage, sim, preload, imei, boot).
-- [ ] `PhoneStageHost`: `paintStockScreen` renderer, lights → `backlightOn`/`keypadLightOn`,
+- [x] `PhoneStageHost`: `paintStockScreen` renderer, lights → `backlightOn`/`keypadLightOn`,
       keyboard and 3D keys to `phone.send`, the first gesture starts audio.
-- [ ] `settings.ts`: `muted` only (SoundToggle → the sound port's master gain); start-up removes the
+- [x] `settings.ts`: `muted` only (SoundToggle → the sound port's master gain); start-up removes the
       other `hellotimber.settings` fields and `hellotimber.messages`; `settings.test.ts` rewritten.
-- [ ] `router-sync.ts` unchanged in design; `router-sync.test.ts` rewritten against a stock phone
+- [x] `router-sync.ts` unchanged in design; `router-sync.test.ts` rewritten against a stock phone
       (URL → phone, phone → URL, echo suppression, `/menu/sim-services/projects`, standby
       applications keep `/`).
-- [ ] `$.tsx`: projection from `stock-routes.ts`, `REDIRECTS` (301), the 404 (D15); every path
+- [x] `$.tsx`: projection from `stock-routes.ts`, `REDIRECTS` (301), the 404 (D15); every path
       renders `GenericPanel` over the stock entry (the standby route keeps its bio panel) until
       Task 7; `seo.ts`'s `SITEMAP_PATHS` = `stockSitemapPaths()`; `ScreenMirror` uses
       `describeStockScreen`.
-- [ ] Delete the superseded files; `grep -rn "siteMenu\|phone/applications\|createPhone(" website/src`
+- [x] Delete the superseded files; `grep -rn "siteMenu\|phone/applications\|createPhone(" website/src`
       is empty.
-- [ ] `mise exec -- vp run website#test`, `vp run website#build`, `vp check --fix`; run
+- [x] `mise exec -- vp run website#test`, `vp run website#build`, `vp check --fix`; run
       `mise exec -- vp run website#dev` and load `/`, `/menu/phone-book/search`, `/menu/sim-services/projects`,
       `/menu/call-divert/github` (301), `/nope` (404).
-- [ ] Commit: `feat(website): run the portfolio on the stock firmware`.
+- [x] Commit: `feat(website): run the portfolio on the stock firmware`.
 
 ### Task 7 - Content panels for the indexable paths (TDD)
 
@@ -709,3 +709,28 @@ Press Menu.`; notebook strip showed the same clock and carrier; hint said press 
   11,081 passed / 120 expected failures / 161 TODOs (1124 seconds); website: 33 files,
   218 passed. vp run website#build passed. Logs: /tmp/plan31-final-tests.log,
   /tmp/plan31-final-check.log and /tmp/plan31-task5-build.log.
+
+### Task 6 implementation decisions (2026-10-29)
+
+- The stage remains in `_phone.tsx`, with Suspense around the client desk while T9 loads.
+  The singleton is constructed after the dictionary resolves; import failure falls back to
+  stock multi-tap. Router alignment waits for that same singleton.
+- The Walkman's Sound is the master mute. Lights is a session-only output gate over both
+  firmware LED channels: enabled follows stock timeouts, disabled suppresses them. It does
+  not add a fake Lights setting to the stock phone. Only muted persists as a site setting.
+- The notebook uses describeStockScreen for every widget instead of the obsolete website
+  layout. This preserves stock SMS/Chat/call text and scores without labelling them pixels.
+  The old independent Snake high-score scrawl becomes "play snake!!". No Games code touched.
+- SoundToggle.tsx named in the plan does not exist: the desk Walkman owns that control.
+  content/index.ts also exported deleted legacy modules; migrated its exports with them.
+- Settings regression failed before migration, then passed. 18c: no new dependency; landed
+  Chat remains covered by the existing public-key network integration test.
+
+- Task 6 gates: vp check --fix, website tests (16 files / 86 tests) and production build
+  pass. Deep-link browser QA exposed a power-hold race: the singleton now becomes available
+  only after the initial one-second power hold is released, before router alignment.
+  Browser standby reads `Standby: LACHLAN`; Search settles to `Name: [OK]`, the stock query.
+  HTTP legacy GitHub returns 301 to Search; /nope returns 404. Screenshots:
+  /tmp/plan31-stock-standby.png, /tmp/plan31-stock-phonebook.png.
+- The first uncached workspace run hit resource-registration test timeouts under concurrent
+  machine load (including plan 24). Retrying with two workers; firmware tests unchanged.

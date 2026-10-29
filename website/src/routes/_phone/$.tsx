@@ -1,13 +1,11 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { useEffect } from "react";
 import ContentPanel from "../../components/ContentPanel";
-import { siteMenu } from "../../content/menu";
+import { portfolioMenu, redirectFor } from "../../phone/stock-routes";
 import { site } from "../../content/site";
 import GenericPanel from "../../panels/GenericPanel";
-import MenuPanel from "../../panels/menu";
-import { PANELS } from "../../panels/registry";
-import { getPhoneRuntime } from "../../phone/phone";
-import { projectSiteRoute } from "../../phone/site-tree";
+import { getPhoneRuntime } from "../../phone/stock-phone";
+import { projectStockRoute } from "../../phone/stock-routes";
 import { pageHead } from "../../seo";
 
 /**
@@ -17,7 +15,9 @@ import { pageHead } from "../../seo";
  */
 export const Route = createFileRoute("/_phone/$")({
   loader: ({ params }) => {
-    const projection = projectSiteRoute(params._splat ?? "");
+    const target = redirectFor(`/${params._splat ?? ""}`);
+    if (target) throw redirect({ to: target, statusCode: 301 });
+    const projection = projectStockRoute(params._splat ?? "");
     if (projection === null) throw notFound();
     return projection;
   },
@@ -45,13 +45,9 @@ export const Route = createFileRoute("/_phone/$")({
 
 function ResolvedPanel() {
   const params = Route.useParams();
-  const { panel } = Route.useLoaderData();
-  const chain = siteMenu.resolve(params._splat ?? "");
+  const chain = portfolioMenu.resolve(params._splat ?? "");
   if (chain === null) return null;
-  const node = chain.at(-1);
-  if (node === undefined) return <MenuPanel />; // "/menu"
-  const Panel = panel === null ? GenericPanel : PANELS[panel];
-  return <Panel chain={chain} />;
+  return <GenericPanel chain={chain} />;
 }
 
 function NotFoundPanel() {

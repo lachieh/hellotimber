@@ -3,7 +3,6 @@ import type { PhoneKey } from "@hellotimber/phone-core";
 import type { ScreenModel } from "@hellotimber/phone-core";
 import { useState } from "react";
 import type { ReactNode } from "react";
-import { localStorageTopScore } from "../phone/applications/snake";
 import { deskHint, lcdCopy } from "./lcd-copy";
 import { holdPhoneKey, tapPhoneKey, usePhoneLive } from "./live";
 import PencilCase from "./PencilCase";
@@ -181,7 +180,6 @@ function PowerKey() {
 function NotebookStrip({ screen, trail }: { screen: ScreenModel; trail: string[] }) {
   const copy = lcdCopy(screen);
   // Read on every phone snapshot, so a new top score shows as soon as Snake saves it.
-  const topScore = localStorageTopScore().read();
   const blank = copy.head === undefined && copy.rows.length === 0 && copy.pixels === undefined;
   return (
     <section className="d01-obj d01-strip" aria-labelledby="d01-strip-title">
@@ -213,7 +211,7 @@ function NotebookStrip({ screen, trail }: { screen: ScreenModel; trail: string[]
           </span>
         </p>
         <p className="d01-strip__score" aria-hidden="true">
-          {topScore > 0 ? `snake hi ${topScore}!!` : "play snake!!"}
+          play snake!!
         </p>
       </div>
     </section>

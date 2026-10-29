@@ -1,9 +1,12 @@
+import { useState } from "react";
+import { getPhoneRuntime } from "../phone/stock-phone";
 import { updateSettings, useSettings } from "./live";
 import "./walkman.css";
 
 /** A brushed-aluminium cassette player whose orange slide switches are the phone's Sound and Lights. */
 export default function Walkman() {
   const settings = useSettings();
+  const [lightsOn, setLightsOn] = useState(getPhoneRuntime().lights.enabled);
   return (
     <section
       className="d01-obj d01-walkman"
@@ -26,9 +29,10 @@ export default function Walkman() {
           />
           <Slide
             label="Lights"
-            on={settings.backlight}
+            on={lightsOn}
             onToggle={() => {
-              updateSettings({ backlight: !settings.backlight });
+              getPhoneRuntime().lights.enabled = !lightsOn;
+              setLightsOn(!lightsOn);
             }}
           />
         </div>

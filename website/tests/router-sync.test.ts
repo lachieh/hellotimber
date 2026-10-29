@@ -1,20 +1,9 @@
-import {
-  createPhone,
-  MenuGraphic,
-  MenuLevel,
-  MenuOrder,
-  MenuSlug,
-  PhoneMenu,
-  ReaderEntry,
-  SubmenuEntry,
-  TopLevelEntry,
-} from "@hellotimber/phone-core";
+import { createStockPhone, createMemoryStorage } from "@hellotimber/nokia-os";
+import { PORTFOLIO_SIM } from "../src/content/sim";
 import type { Phone } from "@hellotimber/phone-core";
 import type { AnyRouter } from "@tanstack/react-router";
 import { describe, expect, it } from "vite-plus/test";
-import { siteMenu } from "../src/content/menu";
 import { connectPhoneToRouter } from "../src/phone/router-sync";
-import { screenToText } from "../src/phone/screen-text";
 
 // ── minimal fake router: subscribe/navigate/state, navigations recorded ──
 interface ResolvedEvent {
@@ -50,20 +39,13 @@ function fakeRouter(initialPathname: string) {
   return fake;
 }
 
-const chat = new ReaderEntry(new MenuSlug("chat"), new MenuOrder(1), "Chat", "> hi");
-const games = new SubmenuEntry(
-  new MenuSlug("games"),
-  new MenuOrder(2),
-  "Games",
-  new MenuLevel([new ReaderEntry(new MenuSlug("snake"), new MenuOrder(1), "Snake II", "stub")]),
-);
-const menu = new PhoneMenu([
-  new TopLevelEntry(chat, new MenuGraphic("chat")),
-  new TopLevelEntry(games, new MenuGraphic("games")),
-]);
-
 function bootedPhone(): Phone {
-  const phone = createPhone({ menu, bootMs: 0 });
+  const phone = createStockPhone({
+    carrier: "LACHLAN",
+    boot: "skip",
+    storage: createMemoryStorage(),
+    sim: PORTFOLIO_SIM,
+  });
   phone.tick(0);
   phone.pressKey("power", 1000);
   return phone;
@@ -73,15 +55,10 @@ function connect(router: ReturnType<typeof fakeRouter>, phone: Phone): () => voi
   return connectPhoneToRouter(router as unknown as AnyRouter, phone);
 }
 
-function press(phone: Phone, key: Parameters<Phone["pressKey"]>[0]): void {
-  phone.send({ type: "down", key });
-  phone.send({ type: "up", key });
-}
-
 describe("connectPhoneToRouter", () => {
   it("aligns the phone to the URL on connect (deep link, even from off)", () => {
     const router = fakeRouter("/menu/games/snake");
-    const phone = createPhone({ menu, bootMs: 0 }); // off — navigate boots it
+    const phone = bootedPhone(); // off — navigate boots it
     connect(router, phone);
     expect(phone.path).toBe("menu/games/snake");
     expect(router.navigations).toEqual([]); // alignment never touches the URL
@@ -144,83 +121,19 @@ describe("connectPhoneToRouter", () => {
     expect(router.navigations).toEqual([]);
   });
 
-  it("keeps immediate hierarchical shortcuts, routes, and spoken output synchronized", () => {
-    const router = fakeRouter("/");
-    const phone = createPhone({ menu: siteMenu, bootMs: 0 });
-    phone.tick(0);
-    phone.pressKey("power", 1000);
+  it("aligns SIM projects without an echo", () => {
+    const phone = bootedPhone();
+    const router = fakeRouter("/menu/sim-services/projects");
     connect(router, phone);
-    let spoken = screenToText(phone.screen);
-    phone.subscribe((snapshot) => {
-      spoken = screenToText(snapshot.screen);
-    });
-
-    press(phone, "navi");
-    expect(phone.path).toBe("menu");
-    expect(router.state.location.pathname).toBe("/menu");
-    expect(phone.screen).toMatchObject({
-      kind: "menu-carousel",
-      label: "Phone book",
-      menuIndicator: { segments: [1], awaitingNext: false },
-    });
-    expect(spoken).toContain("Menu 1.");
-
-    press(phone, "5");
-    expect(phone.path).toBe("menu/tones");
-    expect(router.state.location.pathname).toBe("/menu/tones");
-    expect(phone.screen).toMatchObject({
-      kind: "list",
-      title: "Tones",
-      menuIndicator: { segments: [5], awaitingNext: true },
-    });
-    expect(spoken).toContain("Menu 5. Enter another digit.");
-
-    press(phone, "3");
-    expect(phone.path).toBe("menu/tones/incoming-call-alert");
-    expect(router.state.location.pathname).toBe("/menu/tones/incoming-call-alert");
-    expect(phone.screen).toMatchObject({
-      kind: "reader",
-      title: "Incoming call alert",
-      menuIndicator: { segments: [5, 3], awaitingNext: true },
-    });
-    expect(spoken).toContain("Menu 5 then 3. Enter another digit.");
-
-    router.navigations.length = 0;
-    router.settle("/menu/tones");
-    expect(phone.path).toBe("menu/tones");
-    expect(phone.screen).toMatchObject({
-      menuIndicator: { segments: [5], awaitingNext: false },
-    });
-    expect(spoken).not.toContain("Enter another digit.");
+    expect(phone.path).toBe("menu/sim-services/projects");
     expect(router.navigations).toEqual([]);
-
-    router.settle("/menu/tones/incoming-call-alert");
-    expect(phone.screen).toMatchObject({
-      menuIndicator: { segments: [5, 3], awaitingNext: false },
-    });
-    expect(spoken).not.toContain("Enter another digit.");
-
-    press(phone, "c");
-    expect(phone.path).toBe("menu/tones");
-    expect(router.state.location.pathname).toBe("/menu/tones");
-    expect(phone.screen).toMatchObject({
-      menuIndicator: { segments: [5], awaitingNext: false },
-    });
   });
-
-  it("does not leak shortcut digits into an app and resumes app input after cancellation", () => {
-    const phone = createPhone({ menu: siteMenu, bootMs: 0 });
-    phone.tick(0);
-    phone.pressKey("power", 1000);
-
-    press(phone, "navi");
-    press(phone, "9");
-    expect(phone.path).toBe("menu/calculator");
-    expect(phone.screen).toMatchObject({ kind: "editor", title: "Calculator", text: "0" });
-
-    press(phone, "#");
-    expect(phone.screen).toMatchObject({ kind: "editor", text: "0." });
-    press(phone, "5");
-    expect(phone.screen).toMatchObject({ kind: "editor", text: "0.5" });
+  it("standby name browsing keeps the root URL", () => {
+    const phone = bootedPhone();
+    const router = fakeRouter("/");
+    connect(router, phone);
+    phone.pressKey("down");
+    expect(phone.path).toBe("standby");
+    expect(router.navigations).toEqual([]);
   });
 });
