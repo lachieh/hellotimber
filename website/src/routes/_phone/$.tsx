@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import ContentPanel from "../../components/ContentPanel";
 import { portfolioMenu, redirectFor } from "../../phone/stock-routes";
 import { site } from "../../content/site";
+import { PANELS } from "../../panels/registry";
 import GenericPanel from "../../panels/GenericPanel";
 import { getPhoneRuntime } from "../../phone/stock-phone";
 import { projectStockRoute } from "../../phone/stock-routes";
@@ -45,9 +46,11 @@ export const Route = createFileRoute("/_phone/$")({
 
 function ResolvedPanel() {
   const params = Route.useParams();
+  const { panel } = Route.useLoaderData();
   const chain = portfolioMenu.resolve(params._splat ?? "");
   if (chain === null) return null;
-  return <GenericPanel chain={chain} />;
+  const Panel = PANELS[panel] ?? GenericPanel;
+  return <Panel chain={chain} />;
 }
 
 function NotFoundPanel() {

@@ -470,14 +470,14 @@ the table marks delete or rewrite (`panels.test.tsx` and `panel-registry.test.ts
 **Files:** `website/src/panels/**` (new bespoke panels, the registry keyed by `ROUTE_CONTENT`'s
 panel ids), `website/tests/{panels,panel-registry}.test.tsx` (new or rewritten), `website/tests/seo.test.ts`.
 
-- [ ] TDD in jsdom, from content alone (no phone): each D14 panel renders its content (the contacts
+- [x] TDD in jsdom, from content alone (no phone): each D14 panel renders its content (the contacts
       with their `href`, `rel="me"` and `download`; the SIM messages with `<time>` and sender names;
       the projects with blurbs, years and links; the "now" items; the colophon); `GenericPanel` lists
       a stock level's children as links.
-- [ ] Every `ROUTE_CONTENT` panel id has a panel; every panel id is used.
-- [ ] `seo.test.ts`: the sitemap lists D14's paths in stock order; noindex pages carry `robots`.
-- [ ] `mise exec -- vp run website#test`, `vp run website#build`, `vp check --fix`.
-- [ ] Commit: `feat(website): content panels for the stock routes`.
+- [x] Every `ROUTE_CONTENT` panel id has a panel; every panel id is used.
+- [x] `seo.test.ts`: the sitemap lists D14's paths in stock order; noindex pages carry `robots`.
+- [x] `mise exec -- vp run website#test`, `vp run website#build`, `vp check --fix`.
+- [x] Commit: `feat(website): content panels for the stock routes`.
 
 ### Task 8 - Subtract package code only the website used
 
@@ -734,3 +734,13 @@ Press Menu.`; notebook strip showed the same clock and carrier; hint said press 
   /tmp/plan31-stock-standby.png, /tmp/plan31-stock-phonebook.png.
 - The first uncached workspace run hit resource-registration test timeouts under concurrent
   machine load (including plan 24). Retrying with two workers; firmware tests unchanged.
+
+### Task 7 delivery (2026-10-29)
+
+- All fourteen ROUTE_CONTENT panel ids render existing content without a phone. Sample
+  employers, roles, testimonials, links and availability remain explicitly sample data.
+  Standby's sample bio now comes from the same seeded SMS as the handset.
+- Content-only jsdom rendering tests failed before implementation. Website tests pass:
+  17 files / 90 tests, with two workers to avoid shared-machine CPU contention. Production
+  build and vp check --fix pass. Generic panels link stock children; stock metadata selects
+  the bespoke panels. HTML remains SSR, sr-only and screen-reader reachable.
