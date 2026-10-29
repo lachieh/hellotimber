@@ -423,13 +423,13 @@ Task 6 (they still feed `siteMenu`).
 **Files:** `website/src/phone/stock-routes.ts` (new), `website/src/content/routes.ts` (Task 2's,
 filled here), `website/tests/stock-routes.test.ts` (new).
 
-- [ ] TDD `projectStockRoute(path)`: titles from stock labels (lines joined by a space),
+- [x] TDD `projectStockRoute(path)`: titles from stock labels (lines joined by a space),
       descriptions and indexing from `ROUTE_CONTENT`, `null` for unknown paths; `indexablePaths()`
       in stock order; `redirectFor(path)`; `stockSitemapPaths()` = `/` + `indexablePaths()`.
-- [ ] Every `ROUTE_CONTENT` key is in `stockMenuFor(PORTFOLIO_SIM).paths()`; every `LEGACY_PATHS`
+- [x] Every `ROUTE_CONTENT` key is in `stockMenuFor(PORTFOLIO_SIM).paths()`; every `LEGACY_PATHS`
       entry is a stock path or a `REDIRECTS` key; every redirect target is a stock path; D14's
       indexable set exactly.
-- [ ] Commit: `feat(website): stock routes, redirects and sitemap paths`.
+- [x] Commit: `feat(website): stock routes, redirects and sitemap paths`.
 
 ### Task 6 - Cutover to the stock firmware
 
@@ -663,3 +663,18 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
 - These adapters are not mounted until Task 6. No desk controls or Games code changed.
 - TDD: all three new adapter suites failed for absent modules before implementation;
   website suite, production build and vp check --fix pass (final totals below).
+
+### Task 5 delivery (2026-10-29)
+
+- Added the pure stock route projection, all D14 metadata and D15 redirects, with
+  no runtime wiring. Indexable sitemap paths follow stock order, not content-table order.
+  Unknown stock paths return null; real stock routes without content use a generic
+  noindex panel. Firmware title line breaks collapse to spaces.
+- Tests prove all 66 legacy URLs are root, stock paths or explicit redirects, all
+  redirect targets exist and the indexable set is exactly D14. Task 6 still must
+  verify actual HTTP redirects and responses after wiring the stock runtime.
+- TDD failed for the missing projection before implementation. Website: 33 files,
+  218 passing tests; production build and vp check --fix pass (final gates below).
+- Tasks 3-5 are delivered as independent commits. Tasks 6-9 remain unchecked: the
+  2001 desk, single mounted phone stage and browser routes still use the legacy runtime.
+  Do not treat these adapter commits as the cutover, desk migration or plan completion.
