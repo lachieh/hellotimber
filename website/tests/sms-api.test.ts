@@ -16,6 +16,7 @@ function fakeClient(reply: string | Error) {
   const calls: {
     model: string;
     max_tokens: number;
+    thinking: { type: "disabled" };
     system: string;
     messages: { role: "user" | "assistant"; content: string }[];
   }[] = [];
@@ -128,6 +129,9 @@ describe("generateReply", () => {
     expect(calls).toHaveLength(1);
     const call = calls[0]!;
     expect(call.model).toBe(SMS_MODEL);
+    expect(SMS_MODEL).toBe("claude-haiku-5-5");
+    // Haiku 5.5 thinks by default; thinking tokens would eat the 120-token reply budget.
+    expect(call.thinking).toEqual({ type: "disabled" });
     expect(call.system).toContain(lachlan.system);
     expect(call.messages).toEqual([
       { role: "user", content: "first" },

@@ -7,7 +7,7 @@ import { generateReply, validateSmsRequest } from "../../messages/generate-reply
 
 /**
  * POST /api/sms (plan 08): { contactId, text, history } → { reply }.
- * claude-haiku-4-5 answers in persona when ANTHROPIC_API_KEY is set; canned
+ * claude-haiku-5-5 answers in persona when ANTHROPIC_API_KEY is set; canned
  * replies otherwise. Handled failures never 5xx — the handset always gets an
  * answer (generateReply falls back internally on any API error).
  */

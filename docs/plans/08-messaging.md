@@ -16,7 +16,8 @@ countdown top-right; NaviKey opens an **Options** list (`Send`, `Clear text`, `E
 lands in **Outbox** (2-3 — the 3310 says Outbox, never "Sent items"). **Function**: the
 message goes to a "contact" persona answered by a cheap LLM
 (**`claude-haiku-4-5`** — $1/$5 per MTok; a full exchange costs well under a tenth of a
-cent). The reply arrives seconds later exactly like a real SMS: standby shows the envelope
+cent; since 2026-10-29 **`claude-haiku-5-5`** at $0.10/$0.50 per MTok with thinking disabled, so
+thinking can't use the 120-token reply budget). The reply arrives seconds later exactly like a real SMS: standby shows the envelope
 icon + **"1 message received"** with softkey `Read`; the message is in **Inbox** (2-2).
 **Chat (Menu 3)** becomes what it really was on the 3310 — a live conversation view with
 `>` their lines and `<` yours — backed by the "Lachlan" persona.

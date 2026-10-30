@@ -10,7 +10,7 @@ import type { Person as Contact } from "../content/people";
  * the route never 5xxs for handled failures.
  */
 
-export const SMS_MODEL = "claude-haiku-4-5";
+export const SMS_MODEL = "claude-haiku-5-5";
 export const MAX_SMS_CHARS = 160;
 export const MAX_INPUT_CHARS = 459;
 export const MAX_HISTORY = 12;
@@ -32,6 +32,7 @@ export interface MessagesClient {
     create(req: {
       model: string;
       max_tokens: number;
+      thinking: { type: "disabled" };
       system: string;
       messages: { role: "user" | "assistant"; content: string }[];
     }): Promise<{ content: { type: string; text?: string }[] }>;
@@ -104,6 +105,8 @@ export async function generateReply(
     const res = await client.messages.create({
       model: SMS_MODEL,
       max_tokens: 120,
+      // Haiku 5.5 thinks by default, and thinking tokens count toward max_tokens.
+      thinking: { type: "disabled" },
       system: `${contact.system}\nReply as one SMS: plain ASCII, no emoji, max 160 characters.`,
       messages: [
         ...usable.map(
