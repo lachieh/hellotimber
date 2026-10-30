@@ -95,7 +95,7 @@ it("opens links synchronously, reports call progress and cancels release on hang
   network.dial!({ number: cv.number, emergency: false }, control);
   expect(download).toHaveBeenCalledWith(cv.href);
 });
-it("leaves personas unanswered and connects unknown numbers until End", () => {
+it("leaves personas unanswered and rejects unknown numbers", () => {
   vi.useFakeTimers();
   const { network } = setup();
   const control = { alerting: vi.fn(), connected: vi.fn(), released: vi.fn() };
@@ -104,9 +104,10 @@ it("leaves personas unanswered and connects unknown numbers until End", () => {
   vi.advanceTimersByTime(NO_ANSWER_MS);
   expect(control.released).toHaveBeenCalledOnce();
   network.dial!({ number: "12345", emergency: false }, control);
-  expect(control.connected).toHaveBeenCalledOnce();
+  expect(control.connected).not.toHaveBeenCalled();
+  expect(control.released).toHaveBeenLastCalledWith(1);
   vi.advanceTimersByTime(NO_ANSWER_MS);
-  expect(control.released).toHaveBeenCalledOnce();
+  expect(control.released).toHaveBeenCalledTimes(2);
 });
 
 function requestBody(fetcher: ReturnType<typeof setup>["fetcher"], index: number) {
@@ -225,4 +226,24 @@ it("uses the landed Chat implementation to send to a persona and show its reply"
   wait(10000);
   expect(requestBody(fetcher, 0).text).toBe("A: Hi");
   expect(describeStockScreen(phone.screen)).toContain("G'day!");
+});
+
+it("rejects unknown dialled numbers with unallocated-number release", () => {
+  const { network, open } = setup();
+  const control = { alerting: vi.fn(), connected: vi.fn(), released: vi.fn() };
+  network.dial!({ number: "0299999837", emergency: false }, control);
+  expect(control.released).toHaveBeenCalledWith(1);
+  expect(control.alerting).not.toHaveBeenCalled();
+  expect(control.connected).not.toHaveBeenCalled();
+  expect(open).not.toHaveBeenCalled();
+});
+it("shows the stock network-failure screen for an unknown number, then standby", () => {
+  const { phone, press, wait, open } = stock();
+  for (const digit of "0299999837") press(digit as PhoneKey);
+  press("navi");
+  wait(400);
+  expect(describeStockScreen(phone.screen)).toContain("Call 1, ended");
+  expect(open).not.toHaveBeenCalled();
+  wait(3000);
+  expect(phone.screen.kind).toBe("standby");
 });

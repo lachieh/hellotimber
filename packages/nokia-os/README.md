@@ -642,6 +642,7 @@ interface StockOutgoingCall {
   readonly number: string; // the entry, cut at a later `+` or at its first `p`/`w`
   readonly name?: string; // the phone book's name for the number (plan 19), if any
   readonly emergency: boolean; // `112`
+  readonly ownNumberSending?: "network" | "show" | "hide";
 }
 ```
 
@@ -651,8 +652,8 @@ far end rings: `Call 1`, the ringback), `connected()` (the call counts its durat
 `released()` (the far end or the network ended the call; called before `alerting`, it refuses
 the call: the network's end, the checkered `Call 1` with three beeps, then standby). Events
 apply at the phone's next tick, no sooner than its own link times (≈2.2 s to alerting, ≈2.85 s to
-connected). A port without `dial` behaves as the synthetic network: every call alerts and
-connects at once. Rings come in through `subscribeCalls(ring)`: `ring({ number }, link)` shows a
+connected). A supplied port without `dial` reports no outgoing progress. The explicit
+default synthetic network alerts and connects non-emergency calls. Rings come in through `subscribeCalls(ring)`: `ring({ number }, link)` shows a
 call and returns the phone's control, whose `released()` ends it (before Answer: a missed call);
 `link.answer()` and `link.hangUp()` report the user's Answer and End/reject. After Answer, the
 host calls `connected()` when the incoming speech channel is ready; the synthetic network does
@@ -986,3 +987,6 @@ Outgoing calls include the stock `ownNumberSending` policy for non-emergency
 calls. `control.released(cause?)` may name the GSM release cause; the captured
 phone renders all causes alike. Charging stays zero without network advice;
 nonzero charging and broader automatic-redial policy are not implemented.
+
+A supplied host that omits `dial` reports no call progress. Only the explicit
+default synthetic network synthesizes its documented emulator call outcomes.

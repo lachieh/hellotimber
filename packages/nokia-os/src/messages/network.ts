@@ -72,7 +72,8 @@ export interface StockNetworkPort {
   /**
    * Plan 22: the phone places a call (Calling is on screen; `call` carries the number dialled and
    * the phone book name, D5). The host reports its progress on `phone` and hears the user on the
-   * returned link. Absent: the synthetic network's behaviour (every call alerts and connects).
+   * returned link. Absent: no outgoing progress is reported. The default synthetic network
+   * explicitly supplies dial and its deterministic progress.
    */
   dial?(call: StockOutgoingCall, phone: StockCallControl): StockCallLink;
   /** Plan 22: called once by `createStockPhone`; the host calls `ring` for each incoming call. */

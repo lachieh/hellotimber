@@ -340,11 +340,6 @@ export class StockTelephone {
     } catch {
       call.link = undefined;
     }
-    if (network?.dial === undefined && !emergency) {
-      // A port without `dial` behaves as the synthetic network: alerting and connected at once.
-      control.alerting();
-      control.connected();
-    }
     return call;
   }
 

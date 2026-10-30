@@ -101,7 +101,8 @@ export function callScreen(
     pickNumber: (flow, done) => pickNumber(services, flow, done),
     newCall: (number, flow) => {
       telephone.hold(call);
-      placeCall(services, flow, number);
+      const next = telephone.dial(number);
+      flow.replace(callScreen(services, telephone, next, { callingSoftkey: "End call" }));
     },
     sounder: services.sounder,
     now: () => services.games.now(),

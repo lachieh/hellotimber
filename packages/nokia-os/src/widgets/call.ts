@@ -111,6 +111,7 @@ export interface CallWidgetOptions {
   readonly phoneBook?: () => Widget;
   /** Calling's number shows this long after Calling (default CALLING.numberMs). */
   readonly numberMs?: number;
+  readonly callingSoftkey?: string;
   readonly newCall?: (number: string, flow: Flow) => void;
   readonly pickNumber?: (flow: Flow, done: (number: string, flow: Flow) => void) => void;
 }
@@ -591,7 +592,8 @@ export class CallWidget implements Widget {
     const t = now - call.startedAt;
     if (call.emergency) return this.#model({ kind: "emergency" }, "End");
     const numberMs = this.#o.numberMs ?? CALLING.numberMs;
-    if (t < numberMs) return this.#model({ kind: "calling", dots: 1 }, "End", false);
+    if (t < numberMs)
+      return this.#model({ kind: "calling", dots: 1 }, this.#o.callingSoftkey ?? "End", false);
     const steps =
       t < numberMs + CALLING.firstDotsMs
         ? 0
@@ -604,7 +606,7 @@ export class CallWidget implements Widget {
       call.name !== undefined && t >= nameMs
         ? { kind: "calling", dots, name: call.name }
         : { kind: "calling", dots, number: call.number },
-      "End",
+      this.#o.callingSoftkey ?? "End",
     );
   }
 

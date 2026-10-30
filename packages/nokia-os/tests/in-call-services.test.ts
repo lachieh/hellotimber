@@ -26,6 +26,9 @@ it("opens a new-call number entry without inventing network progress", () => {
   play(rig, "0 4 1 2 3 4 5 6 7 8 menu +5000 c +1000 menu +1500 down down menu +500");
   expect(describeStockScreen(rig.phone.screen)).toContain("Phone number:");
   expect(rig.net.dialled).toHaveLength(1);
+  play(rig, "1 2 3 menu +500");
+  expect(rig.net.dialled).toHaveLength(2);
+  expect(describeStockScreen(rig.phone.screen)).toContain("[End call]");
 });
 it("sends the entered DTMF string through the host link", () => {
   const sent: string[] = [];

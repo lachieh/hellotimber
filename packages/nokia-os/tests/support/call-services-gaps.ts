@@ -6,9 +6,9 @@ export const CALL_SERVICE_KNOWN_GAPS: Readonly<Record<string, string>> = {
   "calls-services/in-call-ack-hold":
     "The explicit test host acknowledges Hold synchronously; the captured cell updates the held icon 1497 ms after Select. The subsequent 123 digits/Options redraw and retained held icon differ; no local network acknowledgment delay is invented.",
   "calls-services/in-call-ack-new-call":
-    "New call opens the pixel-exact inherited prompt and dials through the host, but the later typed-number cursor phase differs near 5284 ms and Calling uses End rather than the captured End call while the first call is held. Independent two-call lifecycle remains capture-blocked in 22c.",
+    "New call opens the pixel-exact inherited prompt and dials through the host, but the later typed-number cursor phase differs near 5284 ms and later Calling/connection redraws still differ while the first call is held. Independent two-call lifecycle remains capture-blocked in 22c.",
   "calls-services/in-call-ack-send-dtmf":
-    "The inherited DTMF opening is pixel-exact and the host receives 123, but later number-entry cursor/key redraws differ after 4081 ms. Sending completion uses a common 1000 ms redraw; the capture's three-digit transmission ends near 6980 ms after Select, with intermediate firmware progress frames not yet reproduced.",
+    "The inherited DTMF opening is pixel-exact and the host receives 123, but later number-entry cursor/key redraws differ after 4081 ms. Sending completion follows the transmitted-tone program; the capture's three-digit transmission ends near 6980 ms after Select, with intermediate firmware progress frames not yet reproduced.",
   "calls-services/in-call-ack-pause":
     "The host receives post-connect 123 after the captured 2500 ms pause, but the Calling and connection redraws differ (first at 2077 ms), and the Sending/bar return timeline is not yet pixel-exact. No host transmission success is inferred when its operation is absent or pending.",
   "calls-services/in-call-ack-wait":

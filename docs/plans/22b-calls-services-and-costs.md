@@ -1,6 +1,6 @@
 # Plan 22b — Calls II: services and costs
 
-**Status:** in progress — bounded Task 0 done; Task 1 scenarios complete; Task 2 implemented with eleven fidelity gaps; Task 3 implemented with five presentation gaps; Task 4 proven identity/redial/zero-cost scope implemented; Task 5 rejection tests and website QA pass, final gates remain.
+**Status:** done — Tasks 0–5 complete within the bounded evidence scope; 18 precise fidelity gaps remain executable; capture-blocked behavior belongs to 22c.
 **Prerequisites:** plans 22, 25, 30 and 31 done.
 **Ground truth:** `docs/specs/stock/calls.md`, plan 22's S9, S15, S22 and S27,
 `$REF/captures/scratch-plan22/` and `$REF/captures/6.39/plan22/`, where
@@ -156,7 +156,8 @@ and the full uncached suite before commit (pending cases stay accounted for by t
 **Files:** `src/calls/{network,telephone,dial-string}.ts`, `src/widgets/call.ts`, call features,
 focused tests and plan 22's capture set/scenarios.
 
-- [x] Test Hold/retrieve, New call, waiting-call transitions and End active/all with real ports.
+- [x] Test supported Hold/retrieve and New call with real ports; waiting-call transitions and
+      independent End active/all moved to 22c under the bounded capture decision.
 - [x] Implement captured call-waiting options and in-call actions with host-owned outcomes.
 - [x] Test and implement Send DTMF and post-connect `p`/`w`, including cancellation/release.
 - [x] Flip all three inherited plan 22 selections to asserted through the importer.
@@ -167,8 +168,9 @@ focused tests and plan 22's capture set/scenarios.
 
 **Files:** call models, network port, call-register/settings feature owners and focused tests.
 
-- [x] Test then implement automatic redial eligibility, timer, attempt limit and cancellation
-      from captures; never synthesize successful remote call progress.
+- [x] Test captured cause-17 redial On/Off: no retry over 90 seconds. Eligibility,
+      intervals and attempt limits beyond this evidence are explicitly owned by 22c;
+      never synthesize successful remote call progress.
 - [x] Pass Own number sending policy to the host and retain stock setting behavior.
 - [x] Implement charging records/views/settings/prepaid to the extent proven by captures;
       preserve zero values without network advice and make unsupported charging explicit.
@@ -185,16 +187,16 @@ focused tests and plan 22's capture set/scenarios.
       network progress. Drive the actual website headlessly using
       `mise exec npm:agent-browser@0.34.0 -- agent-browser` and inspect `[role=status]`.
 - [x] All scoped goldens asserted, with any evidence-blocked split explicitly re-owned.
-- [ ] Update the firmware spec index, task checkboxes, status and plans README row.
+- [x] Update the firmware spec index, task checkboxes, status and plans README row.
 
 ## Remaining gates
 
-- [ ] `mise exec -- vp check`.
-- [ ] `mise exec -- vp run -r --no-cache test` (record totals).
-- [ ] `mise exec -- vp run website#build`.
-- [ ] Website status-mirror evidence recorded.
-- [ ] Per-task commits contain only owned paths; never stage TODOS.md.
-- [ ] Final report: branch, SHA, tasks, goldens, known gaps, decisions, QA, totals, status.
+- [x] `mise exec -- vp check`.
+- [x] `mise exec -- vp run -r --no-cache test` (record totals).
+- [x] `mise exec -- vp run website#build`.
+- [x] Website status-mirror evidence recorded.
+- [x] Per-task commits contain only owned paths; never stage TODOS.md.
+- [x] Final report: branch, SHA, tasks, goldens, known gaps, decisions, QA, totals, status.
 
 ### Task 0 bounded continuation (2026-10-29)
 
@@ -378,3 +380,25 @@ Task 4 gates: full uncached suite green (11,852 passed, 138 expected failures,
 158 todos; 262 files). Focused identity/call contracts: 19 passed. Full 22b
 acceptance plus coverage/identity: 120 passed, 18 expected failures, one pending
 22c todo. `vp check --fix` and website production build pass.
+
+### Task 5 integration (2026-10-30)
+
+Unknown numbers now receive host release cause 1, using the captured network end
+path. This decision is recorded in both 22b and 31. A final host-boundary regression
+proved that a supplied network with no `dial` method must not inherit synthetic
+alert/connect events; removing that fallback leaves outcomes with the host. The
+explicit synthetic default retains its documented behavior.
+
+Focused final tests: 25 passed across website network, telephone and in-call
+contracts. The missing-dial regression and the second-call End call softkey
+regression failed before their fixes. Headless random-number, contact-link and
+toolkit-link evidence is recorded above. Final production build and check --fix
+pass. Final uncached workspace suite: 11,853 passed, 138 expected failures,
+158 todos across 262 files; all six package tasks ran without cache. The 22b
+subset retains its 18 documented expected failures and one pending 22c fixture.
+
+Closure: spec index and plans README updated; every scoped checkbox is complete.
+Task commits: `29a7149` acceptance, `bc96e8f` supplementary services,
+`8c2bded` in-call services, `1663017` identity/proven policies; the final website
+integration and closure form Task 5's commit. No tolerance was widened. No
+TODOS.md, raw reference corpus or forbidden generated file was hand-edited.

@@ -973,3 +973,11 @@ events. Use cause 1 (unallocated number) and that captured checkered Call 1,
 three-beep and standby path. Configured link contacts and toolkit links continue
 opening their URLs through the telephone. The host owns the release cause; no
 additional cause-specific failure screen is established.
+
+Unknown-number policy implemented by plan 22b: the website calls
+`control.released(1)` for unknown non-emergency numbers, without `alerting()` or
+`connected()`. Cause 1's stock release path is captured by plan 22 S14. Headless
+QA at localhost:3004 shows random `0299999837` reaching the checkered Call 1/End
+failure and standby. Phone-book GitHub and toolkit hellotimber still open their
+configured URLs through the telephone. Evidence: `/private/tmp/22b-unknown-number-failure.png`,
+`/private/tmp/22b-github-calling.png`, `/private/tmp/22b-toolkit-calling.png`.

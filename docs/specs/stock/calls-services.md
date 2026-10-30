@@ -1,7 +1,9 @@
 # Calls II: supplementary services and in-call actions (plan 22b)
 
-Task 0 investigation, 2026-10-29. This is evidence in progress, not an implementation
-completion claim. Firmware: v6.39 PPM E virgin EEPROM. Corpus root:
+Calls II implementation completed 2026-10-30 within the evidence-bounded 22b scope.
+The dated investigation below records its evidence history; the implementation
+and explicit known-gap sections at the end define current behavior.
+Firmware: v6.39 PPM E virgin EEPROM. Corpus root:
 `$REF/captures/6.39/plan22b/`; no firmware or extracted resources are copied into this repo.
 
 ## Reproduction
@@ -150,8 +152,8 @@ differences, not local successful network outcomes. All links remain owned for
 power-off cleanup. True two-call end/swap/waiting lifecycle is still plan 22c.
 
 UNVERIFIED product choices: Sending remains visible through the local DTMF program after
-host acceptance (1000 ms for three digits); the explicit synthetic network
-acknowledges hold/retrieve and DTMF deterministically. A missing host method never
+host acceptance (264 ms lead + 295 ms between starts + 146 ms final pair);
+the explicit synthetic network acknowledges hold/retrieve and DTMF deterministically. A missing host method never
 acknowledges. Factory DTMF events establish 146 ms pairs roughly 295 ms apart at word 0x99B5.
 The three factory recordings lack keys.csv, so complete sound-golden alignment is
 blocked and moves to 22c. Transmission plays these relative intervals after host
@@ -172,3 +174,12 @@ responses remain blocked on network evidence in 22c. The three identity captures
 match their pixels; the Set by network case retains the test-cell connection
 redraw gap. Cold reset retains the shared power-key boot-timeline gap; it is not
 evidence of persisted forwarding state.
+
+## Website host policy (2026-10-30)
+
+Unknown non-emergency numbers receive host release cause 1 (unallocated number),
+using plan 22 S14's captured checkered Call 1, three-beep and standby path. The
+website reports no alerting or connection for these numbers. Configured contact
+and toolkit URLs retain their existing telephone path. A supplied network port
+without `dial` also reports no progress; only the explicit default synthetic
+network supplies its documented emulator progress.
