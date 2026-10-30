@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/in-call-ack-wait
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/in-call-ack/wait
 source-sha256: 82b35aa89c5ca2787cde88d9f42b1b5d667306acffc34ccf24aa4988a8af18b6
 trigger-frame: 1

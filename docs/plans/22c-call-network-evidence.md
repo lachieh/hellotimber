@@ -34,3 +34,16 @@ by 22b; opening their single-call actions does not require this split.
 - [ ] Run check, full uncached tests, website build and status-mirror QA.
 
 No guessed network outcome or per-test tolerance is authorized.
+
+## Additional evidence blockers confirmed during 22b implementation
+
+- Factory sound: `plan22b/factory-sound/{divert-status,waiting-status,dtmf}.events.csv`
+  and WAVs exist, but none of the three recording directories contains `keys.csv`.
+  `buildSoundGolden` requires those edges and rejects a missing file. Obtain actual
+  key-edge recordings; do not synthesize them from expected output timing. Relative
+  DTMF pair durations/cadence are measurable, but key-to-sound alignment is not.
+- Divert persistence: `persist/reboot` ends at a security gate; the bounded
+  `persist-unlock/reboot-after-code` reaches Time. Neither reaches settled standby
+  after registration, so retaining/resetting the divert indicator across a true
+  cold boot and Restore is not established. The existing reboot LCD fixture stays
+  22b's boot-path comparison; no new golden is re-owned for these absent captures.

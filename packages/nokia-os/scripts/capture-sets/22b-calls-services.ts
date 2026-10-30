@@ -65,6 +65,26 @@ export const callsServices: PlanCaptureSet = {
         order: 221,
         entries: [
           {
+            id: "calls-services/in-call-pen",
+            group: "calls-services",
+            golden: "calls-services/in-call-ack-new-call",
+            image: "b",
+            x0: 20,
+            x1: 28,
+            y0: 0,
+            y1: 5,
+          },
+          {
+            id: "call/icon-held",
+            group: "call",
+            golden: "calls-services/in-call-ack-hold",
+            image: "d",
+            x0: 6,
+            x1: 12,
+            y0: 8,
+            y1: 14,
+          },
+          {
             id: "calls-services/divert",
             group: "calls-services",
             golden: "calls-services/divert-indicator",
@@ -85,7 +105,7 @@ export const callsServices: PlanCaptureSet = {
       status:
         dir === "in-call-ack/second-call"
           ? "pending:22c"
-          : /^(verified|none)\//.test(dir)
+          : /^(verified|none|in-call-ack)\//.test(dir)
             ? "asserted"
             : "pending:22b",
       prefer: {

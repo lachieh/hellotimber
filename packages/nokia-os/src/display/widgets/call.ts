@@ -114,10 +114,12 @@ export type CallBody =
       readonly label: string;
       readonly ended?: boolean;
       readonly muted?: boolean;
+      readonly held?: boolean;
     }
   /** Digits typed in the call, laid out as the number entry. */
   | { readonly kind: "digits"; readonly text: string }
   /** Nothing but the frame (the blank redraws between call screens). */
+  | { readonly kind: "sending"; readonly text: string; readonly bar: string }
   | { readonly kind: "blank" };
 
 export interface CallModel {
@@ -183,12 +185,17 @@ export function paintCall(fb: Framebuffer, model: CallModel): void {
       );
       break;
     case "call":
-      widgetSprite(fb, body.ended ? "call/icon-ended" : "call/icon");
+      widgetSprite(fb, body.held ? "call/icon-held" : body.ended ? "call/icon-ended" : "call/icon");
       paintCallLabel(fb, body.label);
       if (body.muted) fb.drawText(STOCK_FONTS.thin, "Muted", MUTED_LEFT, MUTED_TOP);
       break;
     case "digits":
       paintDialled(fb, body.text);
+      break;
+    case "sending":
+      widgetSprite(fb, body.bar);
+      fb.drawText(STOCK_FONTS.small, "Sending", 0, 18);
+      fb.drawText(STOCK_FONTS.thin, body.text, 83 - textWidth(STOCK_FONTS.thin, body.text), 29);
       break;
     case "blank":
       break;

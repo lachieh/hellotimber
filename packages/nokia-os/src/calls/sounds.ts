@@ -123,3 +123,17 @@ export const OFF_VIBRATOR: SoundProgram = {
   ],
   loopFrom: 0,
 };
+
+/** Factory plan22b/factory-sound/dtmf: 146 ms pairs, approximately 295 ms apart. */
+export function transmittedDtmfProgram(text: string, volume: number): SoundProgram {
+  const pairs = Array.from(text).flatMap((key) => {
+    const pair = DTMF_PAIRS[key as PhoneKey];
+    return pair === undefined
+      ? []
+      : [
+          { ms: 146, tone: { hz: pair[0], hz2: pair[1], volume } },
+          { ms: 149, tone: null },
+        ];
+  });
+  return { id: "calls/transmitted-dtmf", steps: [{ ms: 264 }, ...pairs] };
+}

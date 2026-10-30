@@ -21,6 +21,9 @@ export interface StockIncomingCall {
 /** The host's side of one call; the phone calls each at most once. */
 export interface StockCallLink {
   /** Incoming calls only: the user answered. */
+  hold?(): boolean | Promise<boolean>;
+  retrieve?(): boolean | Promise<boolean>;
+  sendDtmf?(text: string, signal: AbortSignal): boolean | Promise<boolean>;
   answer(): void;
   /** The user ended the call, or rejected it while it rang (End, C, power-off). */
   hangUp(): void;
@@ -73,7 +76,13 @@ export function syntheticCalls(): SyntheticCalls {
         phone.alerting();
         phone.connected();
       }
-      return { answer() {}, hangUp() {} };
+      return {
+        answer() {},
+        hangUp() {},
+        hold: () => true,
+        retrieve: () => true,
+        sendDtmf: () => true,
+      };
     },
     subscribeCalls(ring) {
       rings.add(ring);

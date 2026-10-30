@@ -976,3 +976,8 @@ and reaches the captured Not done timeout. It never succeeds locally.
 Unconditional forwarding's indicator follows confirmed network outcomes in RAM.
 Persistence across power cycles remains UNVERIFIED: the canonical reboot reaches
 a security gate, not settled standby. The host remains the service authority.
+
+The optional call-link methods `hold()`, `retrieve()` and `sendDtmf(text, signal)`
+return boolean outcomes or promises. Their absence does not imply success. The
+explicit synthetic network acknowledges these operations. A host can abort DTMF
+work when its signal aborts; late success cannot revive a released call.

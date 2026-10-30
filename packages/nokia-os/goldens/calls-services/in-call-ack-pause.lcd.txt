@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/in-call-ack-pause
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/in-call-ack/pause
 source-sha256: 2ebc87ae4c0105ebb404f4a5e16e67fbee9ee1a135eb974fa87a659bdb745a9b
 trigger-frame: 1

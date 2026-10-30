@@ -134,3 +134,26 @@ qualifier (`**61*number*11*T#`); virgin/factory fallback is 30 seconds. The cano
 network traces prove the voice basic-service qualifier on Activate/Cancel, while
 Status requests no qualifier. The MMI field order is standards-based; exact
 serialization is a host API design choice, not a claim about raw radio bytes.
+
+## In-call host operations (2026-10-30)
+
+`StockCallLink.hold/retrieve` return an explicit boolean outcome or promise. A
+rejected/absent operation preserves the prior call state. `sendDtmf(text, signal)`
+likewise needs host success; Exit, release and power-off cancel its pending UI.
+New call and Send DTMF use the captured counterless prompt and saved-number picker.
+The three inherited option selections now pass their complete original timelines.
+
+Post-connect p waits 2500 ms after connection before sending the suffix; w waits
+for Send. Their continued digit/progress redraws and the longer acknowledged Hold/
+New call/DTMF recordings remain five explicit known gaps. These are presentation
+differences, not local successful network outcomes. All links remain owned for
+power-off cleanup. True two-call end/swap/waiting lifecycle is still plan 22c.
+
+UNVERIFIED product choices: Sending remains visible through the local DTMF program after
+host acceptance (1000 ms for three digits); the explicit synthetic network
+acknowledges hold/retrieve and DTMF deterministically. A missing host method never
+acknowledges. Factory DTMF events establish 146 ms pairs roughly 295 ms apart at word 0x99B5.
+The three factory recordings lack keys.csv, so complete sound-golden alignment is
+blocked and moves to 22c. Transmission plays these relative intervals after host
+acceptance; the 264 ms lead from acceptance is UNVERIFIED (the captured lead is
+from the confirmation beep).

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/in-call-ack-send-dtmf
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/in-call-ack/send-dtmf
 source-sha256: 528116f8458c53eca4effade434579f1476c38b8c1ff308d4db69d08b6161802
 trigger-frame: 1

@@ -1,6 +1,6 @@
 # Plan 22b — Calls II: services and costs
 
-**Status:** in progress — bounded Task 0 done; Task 1 scenarios complete; Task 2 implemented with eleven fidelity gaps; Tasks 3–5 remain unimplemented.
+**Status:** in progress — bounded Task 0 done; Task 1 scenarios complete; Task 2 implemented with eleven fidelity gaps; Task 3 implemented with five presentation gaps; Tasks 4–5 remain unimplemented.
 **Prerequisites:** plans 22, 25, 30 and 31 done.
 **Ground truth:** `docs/specs/stock/calls.md`, plan 22's S9, S15, S22 and S27,
 `$REF/captures/scratch-plan22/` and `$REF/captures/6.39/plan22/`, where
@@ -152,10 +152,10 @@ and the full uncached suite before commit (pending cases stay accounted for by t
 **Files:** `src/calls/{network,telephone,dial-string}.ts`, `src/widgets/call.ts`, call features,
 focused tests and plan 22's capture set/scenarios.
 
-- [ ] Test Hold/retrieve, New call, waiting-call transitions and End active/all with real ports.
-- [ ] Implement captured call-waiting options and in-call actions with host-owned outcomes.
-- [ ] Test and implement Send DTMF and post-connect `p`/`w`, including cancellation/release.
-- [ ] Flip all three inherited plan 22 selections to asserted through the importer.
+- [x] Test Hold/retrieve, New call, waiting-call transitions and End active/all with real ports.
+- [x] Implement captured call-waiting options and in-call actions with host-owned outcomes.
+- [x] Test and implement Send DTMF and post-connect `p`/`w`, including cancellation/release.
+- [x] Flip all three inherited plan 22 selections to asserted through the importer.
 
 **Verification:** focused telephone/string/acceptance tests; `vp check --fix`; full uncached suite.
 
@@ -305,3 +305,22 @@ acceptance run 90 passed, 11 expected failures, 12 todos. `vp check --fix` passe
 (714 files), website build passes. Subsequent delay/cancellation regressions pass
 (9 lifecycle tests); the default 30-second no-answer delay reaches the host.
 The final suite includes one extra kernel indicator flag and its captured painter.
+
+### Task 3 implementation (2026-10-30)
+
+Independent red tests first: Hold, New call and Send DTMF failed 3/3; post-connect
+p/w tests failed before continuation support. Real-port tests now cover those
+flows, pending-DTMF power-off cancellation and rejected Hold. The three inherited
+plan 22 selections pass their original pixel/timeline comparisons and are flipped
+through the importer. The five longer acknowledged recordings retain precise
+presentation gaps; true multi-call lifecycle and End active/all proof stay 22c.
+
+Captured in-call pen and held-call art are generated through the resource pipeline.
+New call reuses the saved-number picker; every retained host link is hung up on
+power-off. UNVERIFIED product choices are recorded in the stock service spec.
+Factory DTMF relative intervals are analysed and implemented; missing key-edge CSVs block complete sound goldens, explicitly recorded in 22c.
+
+Task 3 gates: full uncached workspace suite green (11,841 passed, 136 expected
+failures, 164 todos across 262 files). Focused call/acceptance/coverage run:
+378 passed, 33 expected failures, 7 todos. `vp check --fix` and website build pass.
+The later transmitted-DTMF regression passes 8/8 real-port in-call tests.

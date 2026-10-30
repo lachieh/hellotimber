@@ -37,6 +37,7 @@ const DIGITS = "0123456789";
 export interface NumberEntryOptions {
   /** The label lines (`Phone number:`). */
   readonly label: readonly string[];
+  readonly icons?: readonly string[];
   /** Default NUMBER_LIMIT. */
   readonly limit?: number;
   /** Draw the digits left, top right (default); the voice mailbox prompt has none (`sms/voice-mailbox`). */
@@ -57,6 +58,7 @@ export interface NumberEntryOptions {
    * which does nothing there (`topics/edit-number-ok`).
    */
   readonly emptySoftkey?: string;
+  readonly filledSoftkey?: string;
   /**
    * ▼ on the empty entry is Search too (Chat's `Phone number:`, `menu/03-chat.sub` image 02: the
    * virgin book's `No phone numbers`); default ▼ only moves the cursor.
@@ -107,7 +109,7 @@ class NumberEntryWidget implements Widget {
     const empty = state.text === "";
     return {
       kind: "prompt",
-      icons: ["prompt/pen"],
+      icons: this.#options.icons ?? ["prompt/pen"],
       ...(this.#options.counter === false
         ? {}
         : { counter: String(this.#limit - counted(state.text)) }),
@@ -119,7 +121,9 @@ class NumberEntryWidget implements Widget {
       },
       cursor: blinkShown(this.#blink, this.#now),
       softkey:
-        empty && this.#options.emptyOk !== true ? (this.#options.emptySoftkey ?? "Search") : "OK",
+        empty && this.#options.emptyOk !== true
+          ? (this.#options.emptySoftkey ?? "Search")
+          : (this.#options.filledSoftkey ?? "OK"),
     };
   }
 

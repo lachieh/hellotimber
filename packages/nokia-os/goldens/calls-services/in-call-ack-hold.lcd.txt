@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/in-call-ack-hold
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/in-call-ack/hold
 source-sha256: e4349051f8d36548c0878e3ac323dbcb0246258fcb612e6e95d7072c124b90cd
 trigger-frame: 1

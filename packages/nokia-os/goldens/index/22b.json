@@ -34,7 +34,7 @@
   {
     "id": "calls-services/in-call-ack-hold",
     "file": "calls-services/in-call-ack-hold.lcd.txt",
-    "status": "pending:22b",
+    "status": "asserted",
     "kind": "timeline",
     "images": 9,
     "frames": 9
@@ -42,7 +42,7 @@
   {
     "id": "calls-services/in-call-ack-new-call",
     "file": "calls-services/in-call-ack-new-call.lcd.txt",
-    "status": "pending:22b",
+    "status": "asserted",
     "kind": "timeline",
     "images": 15,
     "frames": 29
@@ -50,7 +50,7 @@
   {
     "id": "calls-services/in-call-ack-pause",
     "file": "calls-services/in-call-ack-pause.lcd.txt",
-    "status": "pending:22b",
+    "status": "asserted",
     "kind": "timeline",
     "images": 17,
     "frames": 20
@@ -66,7 +66,7 @@
   {
     "id": "calls-services/in-call-ack-send-dtmf",
     "file": "calls-services/in-call-ack-send-dtmf.lcd.txt",
-    "status": "pending:22b",
+    "status": "asserted",
     "kind": "timeline",
     "images": 19,
     "frames": 25
@@ -74,7 +74,7 @@
   {
     "id": "calls-services/in-call-ack-wait",
     "file": "calls-services/in-call-ack-wait.lcd.txt",
-    "status": "pending:22b",
+    "status": "asserted",
     "kind": "timeline",
     "images": 17,
     "frames": 20

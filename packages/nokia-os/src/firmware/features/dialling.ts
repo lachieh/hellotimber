@@ -21,7 +21,7 @@ import { placeholderWidget } from "../../widgets/placeholder";
 import type { EepromRecord, StockEeprom } from "../eeprom";
 import { timelineByName } from "../timelines";
 import type { StockFeature, StockServices } from "./feature";
-import { standbyList } from "../../phone-book/flows";
+import { pickNumber, standbyList } from "../../phone-book/flows";
 import { inCallPhoneBook, savePhoneNumber } from "./phone-book";
 import { powerListWidget, type PowerListState } from "./profiles";
 
@@ -98,6 +98,11 @@ export function callScreen(
     telephone,
     call,
     phoneBook: () => inCallPhoneBook(services),
+    pickNumber: (flow, done) => pickNumber(services, flow, done),
+    newCall: (number, flow) => {
+      telephone.hold(call);
+      placeCall(services, flow, number);
+    },
     sounder: services.sounder,
     now: () => services.games.now(),
     clock: () => services.ports.clock?.(),
@@ -188,7 +193,7 @@ function call(services: StockServices, text: string, flow: Flow): void {
       placeCall(services, flow, outcome.number, true);
       return;
     case "call":
-      placeCall(services, flow, outcome.number);
+      placeCall(services, flow, text);
   }
 }
 
