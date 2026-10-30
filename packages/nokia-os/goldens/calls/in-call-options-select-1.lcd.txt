@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls/in-call-options-select-1
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22/in-call/options-select-1
 source-sha256: fb4c9004c407ee56bdf8551baa905dd85aa52c0ea26581154e9cf3eb85d4ed2b
 trigger-frame: 1

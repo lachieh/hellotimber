@@ -19,7 +19,7 @@ import { resources } from "../resource-inputs/22-calls.ts";
 const P = "plan22";
 const ASSERTED: GoldenStatus = "asserted";
 /** Plan 22b: services, held calls and the DTMF a call sends after `p`/`w`. */
-const SERVICES: GoldenStatus = "pending:22b";
+const SERVICES: GoldenStatus = "asserted";
 /**
  * The phone book's screens from number entry and calls (Save's `Name:`, ▼ on the code pages,
  * Phone book in a call), connected to plan 19's flows by the calls/phone-book follow-up.

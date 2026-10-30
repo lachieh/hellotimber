@@ -52,6 +52,7 @@ export interface MenuIndicator {
 }
 
 export interface StandbyIndicators {
+  divert?: boolean;
   voicemail?: boolean;
   message?: boolean;
   /** Plan 17: the host's "silent" icon (stock: drawn top-left while the active profile is silent). */

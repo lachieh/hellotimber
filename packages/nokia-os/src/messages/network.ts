@@ -14,6 +14,7 @@ import {
   type SyntheticCalls,
 } from "../calls/network";
 
+import type { StockServiceHost } from "../calls/services";
 import type { ComposerTone } from "../composer/program";
 import type { StockContact } from "../phone-book/sim-card";
 
@@ -54,6 +55,7 @@ export interface StockRingtone {
 
 /** The phone's network for SMS. The host owns delivery and outcomes; times are the phone's. */
 export interface StockNetworkPort {
+  requestService?: StockServiceHost;
   /**
    * An outgoing SMS. The phone shows `Sending message` until this settles and its link time has
    * passed; a promise that rejects counts as `"failed"`.
@@ -70,7 +72,8 @@ export interface StockNetworkPort {
   /**
    * Plan 22: the phone places a call (Calling is on screen; `call` carries the number dialled and
    * the phone book name, D5). The host reports its progress on `phone` and hears the user on the
-   * returned link. Absent: the synthetic network's behaviour (every call alerts and connects).
+   * returned link. Absent: no outgoing progress is reported. The default synthetic network
+   * explicitly supplies dial and its deterministic progress.
    */
   dial?(call: StockOutgoingCall, phone: StockCallControl): StockCallLink;
   /** Plan 22: called once by `createStockPhone`; the host calls `ring` for each incoming call. */

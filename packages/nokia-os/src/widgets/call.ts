@@ -4,13 +4,15 @@
 // widget follows one call of the phone's telephone; its frames come from the call's times.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { CallBody, CallModel, StandbyDrawModel, WidgetModel } from "../display/widgets";
-import { timelineByName } from "../firmware/timelines";
+import { Playback } from "./playback";
+import { timelineById, timelineByName } from "../firmware/timelines";
 import { CALL_TIMINGS, type StockCall, type StockTelephone } from "../calls/telephone";
 import { appendDial, starCycle } from "../calls/dial-string";
-import { VOLUME_TONE_MS, volumeTopProgram } from "../calls/sounds";
+import { transmittedDtmfProgram, VOLUME_TONE_MS, volumeTopProgram } from "../calls/sounds";
 import { DIAL_TIMINGS } from "./dial-entry";
 import type { StockSounder } from "../sound/sounder";
 import type { Flow, Widget } from "./flow";
+import { numberEntry } from "./number-entry";
 import { note } from "./note";
 import { OptionListWidget } from "./option-list";
 import { placeholderWidget } from "./placeholder";
@@ -109,6 +111,9 @@ export interface CallWidgetOptions {
   readonly phoneBook?: () => Widget;
   /** Calling's number shows this long after Calling (default CALLING.numberMs). */
   readonly numberMs?: number;
+  readonly callingSoftkey?: string;
+  readonly newCall?: (number: string, flow: Flow) => void;
+  readonly pickNumber?: (flow: Flow, done: (number: string, flow: Flow) => void) => void;
 }
 
 /** A time span's start and the frames it shows, in order. */
@@ -137,6 +142,7 @@ export class CallWidget implements Widget {
   /** A held ▲/▼ repeats (`in-call/down-held`: 812 ms, then every ≈478 ms). */
   #volumeRepeat: { readonly key: "up" | "down"; at: number } | undefined;
   #left = false;
+  #postShown = false;
   /** A screen opens over the call (its lead: the ladders erased). */
   #cover:
     | { readonly at: number; readonly key: PhoneKey; readonly open: () => Widget; shown: boolean }
@@ -182,6 +188,38 @@ export class CallWidget implements Widget {
   tick(_dtMs: number, flow: Flow): void {
     if (this.#left) return;
     const now = this.#o.now();
+    const post = this.#call.postDial;
+    const connected = this.#o.telephone.connectedAt(this.#call);
+    if (
+      !this.#postShown &&
+      post !== undefined &&
+      connected !== undefined &&
+      now >= connected + (post.mode === "p" ? 2500 : 175)
+    ) {
+      this.#postShown = true;
+      this.#call.covered = true;
+      if (post.mode === "p") {
+        post.sent = true;
+        flow.push(this.#sending(post.text));
+      } else
+        flow.push({
+          render: () => ({
+            kind: "call",
+            body: { kind: "digits", text: post.text },
+            softkey: "Send",
+            handset: true,
+            ladders: false,
+            ...(this.#o.clock() === undefined ? {} : { clock: this.#o.clock() }),
+          }),
+          onKey: (key, inner) => {
+            if (key === "navi") {
+              post.sent = true;
+              inner.replace(this.#sending(post.text));
+            } else if (key === "c") inner.back();
+          },
+        });
+      return;
+    }
     const repeat = this.#volumeRepeat;
     if (repeat !== undefined && now >= repeat.at) {
       repeat.at += VOLUME_REPEAT.everyMs;
@@ -317,7 +355,7 @@ export class CallWidget implements Widget {
     const { telephone } = this.#o;
     const call = this.#call;
     return new OptionListWidget({
-      labels: IN_CALL_OPTIONS,
+      labels: IN_CALL_OPTIONS.map((label) => (label === "Hold" && call.held ? "Retrieve" : label)),
       opening: 0,
       softkey: "Select",
       numbering: "none",
@@ -341,13 +379,113 @@ export class CallWidget implements Widget {
           flow.replace(afterDown("navi", this.#o.phoneBook()));
           return;
         }
-        // Hold, New call and Send DTMF are plan 22b's; Phone book plan 19's.
+        if (label === "Hold") {
+          telephone.hold(call);
+          flow.back();
+          return;
+        }
+        if (label === "New call" || label === "Send DTMF") {
+          const prompt = (text = ""): Widget =>
+            this.#duringCall(
+              numberEntry({
+                label: ["Phone number:"],
+                icons: ["calls-services/in-call-pen"],
+                counter: false,
+                number: text,
+                filledSoftkey: label === "New call" ? "Call" : "Send",
+                search: (inner) =>
+                  this.#o.pickNumber?.(inner, (number, next) => next.replace(prompt(number))),
+                done: (number, inner) => {
+                  if (label === "New call") this.#o.newCall?.(number, inner);
+                  else inner.replace(this.#sending(number));
+                },
+              }),
+            );
+          if (label === "New call") flow.replace(afterDown("navi", prompt()));
+          else {
+            let elapsed = 0;
+            call.covered = false;
+            const entry = prompt();
+            flow.replace({
+              render: (inner) => {
+                if (elapsed < 215)
+                  return {
+                    ...this.#model({ kind: "blank" }, ""),
+                    ...(elapsed >= 176 ? { ladders: false as const } : {}),
+                  };
+                return entry.render(inner);
+              },
+              tick: (dtMs, inner) => {
+                elapsed += dtMs;
+                if (elapsed >= 215) {
+                  call.covered = true;
+                  inner.replace(entry);
+                }
+              },
+            });
+          }
+          return;
+        }
+        // Phone book is supplied by the phone-book feature.
         flow.replace(placeholderWidget(label, label === "Phone book" ? "19" : "22b"));
       },
       close: () => {
         this.#options = false;
       },
     });
+  }
+
+  #duringCall(widget: Widget): Widget {
+    return {
+      render: (flow) => widget.render(flow),
+      onKey: (key, flow) => widget.onKey?.(key, flow),
+      onKeyDown: (key, flow) => widget.onKeyDown?.(key, flow),
+      tick: (dtMs, flow) => {
+        if (this.#call.done || this.#call.hostReleased !== undefined) flow.back();
+        else widget.tick?.(dtMs, flow);
+      },
+      close: () => widget.close?.(),
+    };
+  }
+
+  #sending(text: string): Widget {
+    const abort = new AbortController();
+    this.#call.covered = false;
+    const bar = new Playback(timelineById("7-6", "DTMF progress"));
+    let tone: ReturnType<StockSounder["callSound"]> | undefined;
+    let completed = false;
+    let elapsed = 0;
+    this.#o.telephone.sendDtmf(this.#call, text, abort.signal, () => {
+      completed = true;
+      elapsed = 0;
+      tone = this.#o.sounder.callSound(
+        transmittedDtmfProgram(text, this.#o.telephone.earpieceWord),
+      );
+    });
+    return {
+      render: () => {
+        const frame = bar.frame;
+        if (frame.kind !== "sprite") throw Error("DTMF needs a progress sprite");
+        return this.#model({ kind: "sending", text, bar: frame.sprite }, "Exit");
+      },
+      tick: (dtMs, flow) => {
+        elapsed += dtMs;
+        bar.advance(dtMs);
+        if (
+          this.#call.hostReleased !== undefined ||
+          this.#call.done ||
+          (completed && elapsed >= 264 + Math.max(0, text.length - 1) * 295 + 146)
+        )
+          flow.back();
+      },
+      onKey: (key, flow) => {
+        if (key === "navi" || key === "c") flow.back();
+      },
+      close: () => {
+        abort.abort();
+        if (tone !== undefined) this.#o.sounder.stopRing(tone);
+      },
+    };
   }
 
   // ---------------------------------------------------------------- frames
@@ -381,6 +519,7 @@ export class CallWidget implements Widget {
       kind: "call",
       label: call.name ?? "Call 1",
       ...(ended ? { ended: true } : {}),
+      ...(call.held ? { held: true } : {}),
       ...(call.muted ? { muted: true } : {}),
     };
   }
@@ -453,7 +592,8 @@ export class CallWidget implements Widget {
     const t = now - call.startedAt;
     if (call.emergency) return this.#model({ kind: "emergency" }, "End");
     const numberMs = this.#o.numberMs ?? CALLING.numberMs;
-    if (t < numberMs) return this.#model({ kind: "calling", dots: 1 }, "End", false);
+    if (t < numberMs)
+      return this.#model({ kind: "calling", dots: 1 }, this.#o.callingSoftkey ?? "End", false);
     const steps =
       t < numberMs + CALLING.firstDotsMs
         ? 0
@@ -466,7 +606,7 @@ export class CallWidget implements Widget {
       call.name !== undefined && t >= nameMs
         ? { kind: "calling", dots, name: call.name }
         : { kind: "calling", dots, number: call.number },
-      "End",
+      this.#o.callingSoftkey ?? "End",
     );
   }
 

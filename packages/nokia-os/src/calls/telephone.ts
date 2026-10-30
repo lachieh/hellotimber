@@ -2,6 +2,8 @@
 // host's network port, with the phone's own link times. It keeps each call's state and times for
 // the call screens (widgets/call.ts), sounds the ringback, the ringing and the network's end,
 // writes the call register and the durations, and queues a ring that comes during a call.
+import { dialledNumber } from "./dial-string";
+import { ServiceRequest } from "./services";
 import type { StockNetworkPort } from "../messages/network";
 import type { StockSettings } from "../firmware/settings";
 import type { SoundPlay } from "../sound/sequencer";
@@ -108,6 +110,7 @@ export interface StockCall {
   hostAlerting?: number;
   hostConnected?: number;
   hostReleased?: number;
+  releaseCause?: number;
   answeredAt?: number;
   rejectedAt?: number;
   /** The user ended it (End, End active call). */
@@ -115,6 +118,8 @@ export interface StockCall {
   /** Digits typed in the call (or, answered over the number entry, its characters). */
   digits: string;
   muted: boolean;
+  held?: boolean;
+  postDial?: { readonly mode: "p" | "w"; readonly text: string; sent: boolean };
   /** Sounds playing for this call. */
   ringing?: SoundPlay;
   ringback?: SoundPlay;
@@ -162,6 +167,7 @@ interface Ring {
 export class StockTelephone {
   readonly #deps: TelephoneDeps;
   #call: StockCall | undefined;
+  readonly #calls = new Set<StockCall>();
   #rings: Ring[] = [];
   /** When the last call left the screen (a queued ring waits for it). */
   #lastFinish = -Infinity;
@@ -171,6 +177,59 @@ export class StockTelephone {
 
   constructor(deps: TelephoneDeps) {
     this.#deps = deps;
+  }
+
+  #divert = false;
+
+  get divert(): boolean {
+    return this.#divert;
+  }
+
+  service(text: string): ServiceRequest {
+    const network = this.#deps.network;
+    return new ServiceRequest(text, network?.requestService?.bind(network), (result) => {
+      if (result.kind !== "active" && result.kind !== "inactive") return;
+      if (/^(?:\*\*?21\*|\*#21(?:#|\*)|#21(?:#|\*)|##002#)/.test(text))
+        this.#divert = result.kind === "active";
+    });
+  }
+
+  hold(call: StockCall): void {
+    if (call.done || call.hostReleased !== undefined) return;
+    const held = !call.held;
+    try {
+      const result = call.held ? call.link?.retrieve?.() : call.link?.hold?.();
+      if (result === undefined) return;
+      const accept = (ok: boolean) => {
+        if (ok && !call.done && call.endedAt === undefined && call.hostReleased === undefined)
+          call.held = held;
+      };
+      if (result instanceof Promise) void result.then(accept, () => {});
+      else accept(result);
+    } catch {
+      /* A host rejection keeps the previous call state. */
+    }
+  }
+
+  sendDtmf(call: StockCall, text: string, signal: AbortSignal, done: () => void): void {
+    if (call.done || call.hostReleased !== undefined || signal.aborted) return;
+    try {
+      const result = call.link?.sendDtmf?.(text, signal);
+      const accept = (ok: boolean) => {
+        if (
+          ok &&
+          !signal.aborted &&
+          !call.done &&
+          call.endedAt === undefined &&
+          call.hostReleased === undefined
+        )
+          done();
+      };
+      if (result instanceof Promise) void result.then(accept, () => {});
+      else if (result !== undefined) accept(result);
+    } catch {
+      /* An unsupported or rejected operation stays pending until Exit. */
+    }
   }
 
   get call(): StockCall | undefined {
@@ -207,12 +266,15 @@ export class StockTelephone {
   /** Power-off hangs every call up (D5 rules); the lists are RAM (Task 0 F). */
   powerOff(): void {
     this.#on = false;
-    const call = this.#call;
-    if (call !== undefined && !call.done) {
-      call.link?.hangUp();
-      this.#stopSounds(call);
-      call.done = true;
+    this.#divert = false;
+    for (const call of this.#calls) {
+      if (!call.done) {
+        call.link?.hangUp();
+        this.#stopSounds(call);
+        call.done = true;
+      }
     }
+    this.#calls.clear();
     this.#call = undefined;
     for (const ring of this.#rings) ring.link.hangUp();
     this.#rings = [];
@@ -221,10 +283,22 @@ export class StockTelephone {
 
   /** Places an outgoing call now: Calling shows; the host hears of it at once. */
   dial(number: string, emergency = false): StockCall {
+    const entry = number;
+    number = dialledNumber(number);
+    const post = /([pw])(.*)$/.exec(entry);
     const now = this.#deps.now();
     const name = emergency ? undefined : this.#deps.nameOf?.(number);
     const call: StockCall = {
       direction: "out",
+      ...(post === null
+        ? {}
+        : {
+            postDial: {
+              mode: post[1] === "p" ? ("p" as const) : ("w" as const),
+              text: post[2]!,
+              sent: false,
+            },
+          }),
       number,
       ...(name === undefined ? {} : { name }),
       emergency,
@@ -236,6 +310,7 @@ export class StockTelephone {
       onScreen: true,
     };
     this.#call = call;
+    this.#calls.add(call);
     const stamp = this.#deps.clock.stamp();
     if (!emergency) {
       this.#deps.log.add("dialled", {
@@ -250,7 +325,10 @@ export class StockTelephone {
         now + EMERGENCY_BEEP_AFTER_MS,
       );
     }
+    const identity = this.#deps.settings.choice("settings/call-settings/own-number-sending");
+    const policy = identity === 0 ? "network" : identity === 1 ? "show" : "hide";
     const outgoing: StockOutgoingCall = {
+      ...(emergency ? {} : { ownNumberSending: identity === null ? "network" : policy }),
       number,
       ...(name === undefined ? {} : { name }),
       emergency,
@@ -261,11 +339,6 @@ export class StockTelephone {
       call.link = network?.dial?.(outgoing, control);
     } catch {
       call.link = undefined;
-    }
-    if (network?.dial === undefined && !emergency) {
-      // A port without `dial` behaves as the synthetic network: alerting and connected at once.
-      control.alerting();
-      control.connected();
     }
     return call;
   }
@@ -329,6 +402,7 @@ export class StockTelephone {
       onScreen: true,
     };
     this.#call = call;
+    this.#calls.add(call);
     call.ringing = this.#deps.sounder.ring("tones");
     return call;
   }
@@ -413,6 +487,7 @@ export class StockTelephone {
   finish(call: StockCall): void {
     if (call.done) return;
     call.done = true;
+    this.#calls.delete(call);
     this.#lastFinish = this.#deps.now();
     this.#stopSounds(call);
     if (call.direction === "in" && call.answeredAt === undefined && call.rejectedAt === undefined) {
@@ -492,7 +567,8 @@ export class StockTelephone {
         call.hostAlerting ??= this.#deps.now();
         call.hostConnected = this.#deps.now();
       },
-      released: () => {
+      released: (cause) => {
+        call.releaseCause = cause;
         if (call.done || call.endedAt !== undefined) return;
         if (call.hostAlerting === undefined) call.hostAlerting = this.#deps.now();
         this.#release(call);

@@ -968,3 +968,21 @@ D12 uses Atlanta's US Eastern time via `clock.timeZone = "America/New_York"`, in
 EST/EDT daylight saving transitions. Host clock, date and incoming SMS timestamps share
 that setting. Fictional link numbers remain in the reserved `075550xxxx` range.
 Historical QA logs above retain the content and time zone they actually verified.
+
+### Parent decision — unknown-number network release (2026-10-30)
+
+The website must reject unknown dialled numbers with an unassigned/unallocated-number
+network release. It must not invent alerting or connection progress. Plan 22 S14
+explicitly captures cause 1 alongside 16/17/18/19/34 with identical frames and
+events. Use cause 1 (unallocated number) and that captured checkered Call 1,
+three-beep and standby path. Configured link contacts and toolkit links continue
+opening their URLs through the telephone. The host owns the release cause; no
+additional cause-specific failure screen is established.
+
+Unknown-number policy implemented by plan 22b: the website calls
+`control.released(1)` for unknown non-emergency numbers, without `alerting()` or
+`connected()`. Cause 1's stock release path is captured by plan 22 S14. Headless
+QA at localhost:3004 shows random `0299999837` reaching the checkered Call 1/End
+failure and standby. Phone-book GitHub and toolkit hellotimber still open their
+configured URLs through the telephone. Evidence: `/private/tmp/22b-unknown-number-failure.png`,
+`/private/tmp/22b-github-calling.png`, `/private/tmp/22b-toolkit-calling.png`.

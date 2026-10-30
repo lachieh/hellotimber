@@ -1,6 +1,6 @@
 // The call half of the host network port (plan 22 D5): the objects a call is made of. The host
 // owns what a call does; the phone shows it and keeps its own link times (D10). Every network
-// cause looks alike on the 3310 (S14), so a release carries none.
+// cause looks alike on the 3310 (S14); optional release metadata does not change its screen.
 
 /** An outgoing call as the phone places it, when Calling appears. */
 export interface StockOutgoingCall {
@@ -10,6 +10,7 @@ export interface StockOutgoingCall {
   readonly name?: string;
   /** An emergency call (`112`): `Attempting emergency call`. */
   readonly emergency: boolean;
+  readonly ownNumberSending?: "network" | "show" | "hide";
 }
 
 /** An incoming call as the network presents it. */
@@ -21,6 +22,9 @@ export interface StockIncomingCall {
 /** The host's side of one call; the phone calls each at most once. */
 export interface StockCallLink {
   /** Incoming calls only: the user answered. */
+  hold?(): boolean | Promise<boolean>;
+  retrieve?(): boolean | Promise<boolean>;
+  sendDtmf?(text: string, signal: AbortSignal): boolean | Promise<boolean>;
   answer(): void;
   /** The user ended the call, or rejected it while it rang (End, C, power-off). */
   hangUp(): void;
@@ -37,7 +41,7 @@ export interface StockCallControl {
    * (the checkered `Call 1`, three beeps), then standby; an incoming call released before Answer
    * is a missed call.
    */
-  released(): void;
+  released(cause?: number): void;
 }
 
 /** How the host rings the phone: `ring(call, link)` returns the phone's control of the call. */
@@ -73,7 +77,13 @@ export function syntheticCalls(): SyntheticCalls {
         phone.alerting();
         phone.connected();
       }
-      return { answer() {}, hangUp() {} };
+      return {
+        answer() {},
+        hangUp() {},
+        hold: () => true,
+        retrieve: () => true,
+        sendDtmf: () => true,
+      };
     },
     subscribeCalls(ring) {
       rings.add(ring);

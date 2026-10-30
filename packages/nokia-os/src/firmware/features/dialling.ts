@@ -16,11 +16,12 @@ import {
 import { dialEntry, type DialEntryWidget, type EntrySoftkey } from "../../widgets/dial-entry";
 import { StockFlowApplication, type Flow, type Widget } from "../../widgets/flow";
 import { note } from "../../widgets/note";
+import { serviceRequest } from "../../widgets/service-request";
 import { placeholderWidget } from "../../widgets/placeholder";
 import type { EepromRecord, StockEeprom } from "../eeprom";
 import { timelineByName } from "../timelines";
 import type { StockFeature, StockServices } from "./feature";
-import { standbyList } from "../../phone-book/flows";
+import { pickNumber, standbyList } from "../../phone-book/flows";
 import { inCallPhoneBook, savePhoneNumber } from "./phone-book";
 import { powerListWidget, type PowerListState } from "./profiles";
 
@@ -97,6 +98,12 @@ export function callScreen(
     telephone,
     call,
     phoneBook: () => inCallPhoneBook(services),
+    pickNumber: (flow, done) => pickNumber(services, flow, done),
+    newCall: (number, flow) => {
+      telephone.hold(call);
+      const next = telephone.dial(number);
+      flow.replace(callScreen(services, telephone, next, { callingSoftkey: "End call" }));
+    },
     sounder: services.sounder,
     now: () => services.games.now(),
     clock: () => services.ports.clock?.(),
@@ -181,14 +188,13 @@ function call(services: StockServices, text: string, flow: Flow): void {
       placeCall(services, flow, services.settings.text(VOICE_MAILBOX_KEY) ?? "");
       return;
     case "service":
-      // Supplementary services and USSD (S9) are plan 22b's.
-      flow.push(placeholderWidget("Requesting", "22b"));
+      flow.push(afterDown("navi", serviceRequest(services, text, true)));
       return;
     case "emergency":
       placeCall(services, flow, outcome.number, true);
       return;
     case "call":
-      placeCall(services, flow, outcome.number);
+      placeCall(services, flow, text);
   }
 }
 

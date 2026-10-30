@@ -194,6 +194,8 @@ function describeCallBody(body: CallBody): string {
       return "Attempting emergency call";
     case "call":
       return `${body.label}${body.ended === true ? ", ended" : ""}${body.muted === true ? ", muted" : ""}`;
+    case "sending":
+      return `Sending ${body.text}`;
     case "digits":
       return body.text;
     case "blank":

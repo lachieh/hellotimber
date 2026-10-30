@@ -90,7 +90,10 @@ describe("the composed call confirm (D4, D6: SET UP CALL never completes in the 
     rig.phone.send({ type: "up", key: "navi" });
     duringSend = false;
     expect(dialled).toEqual([
-      { call: { number: "0412345678", emergency: false }, duringSend: true },
+      {
+        call: { number: "0412345678", emergency: false, ownNumberSending: "show" },
+        duringSend: true,
+      },
     ]);
     expect(describeStockScreen(rig.phone.screen)).toContain("Calling");
     expect(describeStockScreen(rig.phone.screen)).not.toContain("not implemented");

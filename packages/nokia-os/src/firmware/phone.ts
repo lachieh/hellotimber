@@ -279,7 +279,7 @@ export function createStockPhoneWith(
       const message = store.full() ? Math.floor(now / FULL_BLINK_MS) % 2 === 0 : store.unread() > 0;
       const silent = standbySilent(settings);
       // The kernel keeps only the flags that are true.
-      return { message, silent, ...phoneTime.indicators() };
+      return { message, silent, divert: telephone.divert, ...phoneTime.indicators() };
     },
     carrier: config.carrier,
     // Plan 21 D10: standby shows the phone's time, hidden or 12-hour as Clock settings say.

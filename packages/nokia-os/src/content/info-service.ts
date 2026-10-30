@@ -1,9 +1,9 @@
 // Info service › Topics (2-8-4) and the Service command editor (2-10), plan 18c Task 9 as Task 0
 // I and X captured them (`topics/*`, `service-command/*`, plan 14's `tree/02-messages/2-8-4-*`).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { EditorModel, ServiceRequestModel } from "../display/widgets";
+import type { EditorModel } from "../display/widgets";
 import type { StockServices } from "../firmware/features/feature";
-import { nodeTimeline, timelineById, timelineByName } from "../firmware/timelines";
+import { nodeTimeline, timelineByName } from "../firmware/timelines";
 import { TEXT_TIMINGS } from "../resources";
 import {
   textClear,
@@ -21,6 +21,7 @@ import { multiSelect } from "../widgets/multi-select";
 import { note, type NoteEnd } from "../widgets/note";
 import { DIAL_CYCLE, numberEntry } from "../widgets/number-entry";
 import { OptionListWidget } from "../widgets/option-list";
+import { serviceRequest } from "../widgets/service-request";
 import { Playback } from "../widgets/playback";
 import { blinkShown } from "../widgets/text-entry";
 import { textInput } from "../widgets/text-input";
@@ -193,49 +194,6 @@ export const SERVICE_REQUEST_MS = 14867;
  * `Requesting` (7-6's bar, Quit) with standby's clock, then `Not done` and standby
  * (`service-command/send`).
  */
-function requesting(services: StockServices): Widget {
-  const bar = new Playback(timelineById("7-6", "Requesting's bar"));
-  let left = SERVICE_REQUEST_MS;
-  return {
-    render(): ServiceRequestModel {
-      const frame = bar.frame;
-      if (frame.kind !== "sprite") throw new Error(`Requesting's bar cannot show "${frame.kind}".`);
-      const clock = services.ports.clock?.();
-      return {
-        kind: "service-request",
-        text: "Requesting",
-        bar: frame.sprite,
-        softkey: "Quit",
-        ...(clock === undefined ? {} : { clock }),
-      };
-    },
-    tick(dtMs, flow) {
-      bar.advance(dtMs);
-      left -= dtMs;
-      if (left > 0) return;
-      flow.replace(
-        note({
-          lines: ["Not", "done"],
-          timeline: timelineByName("service-not-done"),
-          end: "standby",
-          sound: services.noteSound,
-        }),
-      );
-    },
-    // Quit (UNVERIFIED: not captured): Call divert's Requesting answer, then standby.
-    onKey(key, flow) {
-      if (key !== "navi" && key !== "c") return;
-      flow.replace(
-        note({
-          lines: ["Request", "not", "confirmed"],
-          timeline: timelineByName("request-not-confirmed"),
-          end: "standby",
-          sound: services.noteSound,
-        }),
-      );
-    },
-  };
-}
 
 /**
  * The Service command editor (2-10, `service-command/*`): the editor's layout with the pen, `123`
@@ -332,7 +290,7 @@ class ServiceCommandEditor implements Widget {
     }
     if (key !== "navi") return;
     if (this.#state.text === "") flow.back();
-    else flow.replace(requesting(this.#services));
+    else flow.replace(serviceRequest(this.#services, this.#state.text, true, false));
   }
 
   tick(dtMs: number, flow: Flow): void {

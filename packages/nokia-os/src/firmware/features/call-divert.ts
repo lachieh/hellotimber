@@ -1,12 +1,61 @@
 // Call divert (menu 7; plan 22 implements the divert flows): the copied subtrees, the number
 // prompts, the lists' numbering, Set delay's return and Requesting's Quit.
+import { serviceRequest } from "../../widgets/service-request";
+import { numberEntry } from "../../widgets/number-entry";
+import type { ScreenBinding } from "./feature";
 import type { PromptLayout } from "../../widgets/prompt";
+import type { StockServices } from "./feature";
 import type { StockFeature } from "./feature";
 
 const PEN_BOX_END: PromptLayout = { icons: ["pen"], entry: "end" };
 
+function activation(services: StockServices, code: string, number: string): string {
+  const delay =
+    code === "61"
+      ? (services.settings.choice("call-divert/divert-if-not-answered/set-delay") ?? 5) * 5 + 5
+      : undefined;
+  return `**${code}*${number}*11${delay === undefined ? "" : `*${delay}`}#`;
+}
+
+const request =
+  (text: string, levels = 2): ScreenBinding =>
+  (services) =>
+  () =>
+    serviceRequest(services, text, false, false, levels);
+const screens: Record<string, ScreenBinding> = {
+  "7-6": request("##002#", 1),
+  "6-1-3-1": request("*43#", 1),
+  "6-1-3-2": request("#43#", 1),
+  "6-1-3-3": request("*#43#", 1),
+};
+for (const [node, code] of [
+  ["7-1", "21"],
+  ["7-2", "67"],
+  ["7-3", "61"],
+  ["7-4", "62"],
+] as const) {
+  screens[`${node}-2`] = request(`#${code}**11#`);
+  screens[`${node}-3`] = request(`*#${code}#`);
+  screens[`${node}-1-1`] = (services) => () =>
+    serviceRequest(
+      services,
+      activation(services, code, services.settings.text("messages/voice-mailbox-number") ?? ""),
+      false,
+      false,
+      2,
+    );
+  screens[`${node}-1-2`] = (services) => () =>
+    numberEntry({
+      label: ["Phone number:"],
+      counter: false,
+      done: (number, flow) =>
+        flow.replace(serviceRequest(services, activation(services, code, number), false, false, 2)),
+    });
+}
+
 export const callDivertFeature: StockFeature = {
   name: "call-divert",
+  screens,
   // Divert when busy and Divert when phone off or no coverage are Divert all voice calls'
   // subtree (plan 14 S6).
   sameAs: { "7-2": "7-1", "7-4": "7-1" },

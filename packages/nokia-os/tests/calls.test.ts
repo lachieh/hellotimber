@@ -3,6 +3,7 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
 import type { StockCallControl, StockCallLink, StockOutgoingCall } from "../src/calls/network";
+import { describeStockScreen } from "../src/index";
 import { CALL_TIMINGS } from "../src/calls/telephone";
 import { createSyntheticNetwork } from "../src/messages/network";
 import { standbyRig, type Rig } from "./support/rig.ts";
@@ -46,7 +47,9 @@ describe("dialling through the host (D5)", () => {
     host.attach(rig);
     typeNumber(rig, "0412345678");
     rig.press("navi");
-    expect(host.dialled.map((d) => d.call)).toEqual([{ number: "0412345678", emergency: false }]);
+    expect(host.dialled.map((d) => d.call)).toEqual([
+      { number: "0412345678", emergency: false, ownNumberSending: "show" },
+    ]);
     expect(host.dialled[0]!.at).toBe(rig.now);
   });
 
@@ -62,7 +65,7 @@ describe("dialling through the host (D5)", () => {
   });
 
   it("ends a call the host refuses before it alerts with the network's end, then standby", () => {
-    const host = hostNetwork((_call, phone) => phone.released());
+    const host = hostNetwork((_call, phone) => phone.released(1));
     const rig = standbyRig({ network: host.network });
     typeNumber(rig, "0412345678");
     rig.press("navi");
@@ -110,4 +113,13 @@ describe("rings (D4)", () => {
     rig.press("navi");
     expect(ring.state).toBe("connected");
   });
+});
+
+it("does not invent outgoing progress when a supplied host has no dial operation", () => {
+  const rig = standbyRig({ network: { send: () => "sent", subscribe: () => () => {} } });
+  typeNumber(rig, "0299999837");
+  rig.press("navi");
+  rig.advance(10000);
+  expect(rig.phone.screen.kind).toBe("custom");
+  expect(describeStockScreen(rig.phone.screen)).toContain("Calling");
 });

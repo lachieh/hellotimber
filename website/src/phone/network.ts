@@ -89,8 +89,7 @@ export function createPortfolioNetwork(options: NetworkOptions): StockNetworkPor
         control.alerting();
         timer = setTimeout(() => control.released(), NO_ANSWER_MS);
       } else if (!call.emergency) {
-        control.alerting();
-        control.connected();
+        control.released(1);
       }
       return {
         answer() {},
