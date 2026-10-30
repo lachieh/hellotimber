@@ -1,6 +1,6 @@
 # Plan 22b — Calls II: services and costs
 
-**Status:** in progress — plan authored; Task 0 not started.
+**Status:** in progress — Task 0 capture investigation; implementation not started.
 **Prerequisites:** plans 22, 25, 30 and 31 done.
 **Ground truth:** `docs/specs/stock/calls.md`, plan 22's S9, S15, S22 and S27,
 `$REF/captures/scratch-plan22/` and `$REF/captures/6.39/plan22/`, where
@@ -92,6 +92,35 @@ this plan's outcome and `docs/specs/stock/calls-services.md`.
 **Verification:** rerun capture scripts, compare repeated settled frames, validate all files
 and baseline hashes. Record unsupported network/harness paths as UNVERIFIED with precise causes.
 Commit only the specification and plan evidence, never the external corpus.
+
+### Task 0 progress (2026-10-29)
+
+Plan commit: `a67ac40`. Dependencies installed with mise Node v22.22.3.
+The separate build-copy harness `tools/harness-p22b` now has an opt-in `CAP_SS` responder.
+Its corrected build reproduces all 44 PNG hashes from plan 13's clock baseline with the
+extension disabled. A first build omitted the service-8 hook: discard its `ok/` and `error/`
+results; the valid SS results are `verified/ok/` and `verified/error/`. Unanswered `none/`
+remains valid. This exclusion is recorded in the stock specification.
+
+Canonical probes now cover divert success/error/no answer; standby service strings;
+Call waiting options; Quit/C; Number → To number; delay selection; in-call Hold, New call,
+Send DTMF, `p`/`w`; second incoming calls; zero-cost/settings views; and redial On/Off with
+cause 17. Exact scripts and network logs live beside the corpus. Settled-frame OCR and
+SHA-256 input manifests are recorded there; no corpus files are committed.
+
+The original harness does not acknowledge Hold or DTMF. A second opt-in `CAP_CC` build-copy
+patch sends HOLD/RETRIEVE and START/STOP DTMF acknowledgements, using the message constants
+from [libosmocore's protocol header](https://downloads.osmocom.org/api/latest/libosmocore/gsm/html/gsm__04__08_8h.html).
+Its disabled-extension baseline also matches all 44 clock PNGs. Its acknowledged captures
+are separate (`in-call-ack/`): DTMF completes and New call reaches
+`Calling…` with `End call`. This is explicit network input, not local invented progress.
+Further multi-call lifecycle, persistence and factory-image sound evidence remain required.
+No blocker split is justified yet; these requirements remain owned by 22b.
+
+Baseline verification: `vp check --fix` and `vp check` pass; full uncached workspace tests
+pass (258 files; 11,736 passed, 120 expected failures, 160 todos); website production build
+passes. These verify the unchanged runtime baseline, not completion of Calls II. No golden
+has been flipped and no implementation task has been completed.
 
 ## Task 1 — Import evidence and build acceptance scenarios
 
