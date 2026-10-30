@@ -2,7 +2,8 @@
 
 > **Fidelity standard:** follow `AGENTS.md`; settled pixels are exact and shared timing rules apply.
 
-**Status:** blocked (needs repaired-state captures).
+**Status:** closed as known gaps (Lachlan, 2026-10-30). The emulator cannot produce the
+evidence below; reopen only with new captures. Pending goldens keep their `pending:` owner.
 **Depends on:** [plan 18c](18c-chat-templates-pictures-info-service.md), done; plans 18/18b,
 19 (phone book store/picker) and 17 (profile aliases) are landed prerequisites.
 **Parent decision (Lachlan's delegate, 2026-10-29):** split all remaining picture messages

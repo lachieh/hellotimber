@@ -1,6 +1,7 @@
 # Plan 22c — Call network evidence
 
-**Status:** blocked on captures.
+**Status:** closed as known gaps (Lachlan, 2026-10-30). The emulator cannot produce the
+evidence below; reopen only with new captures. Pending goldens keep their `pending:` owner.
 **Prerequisite:** plan 22b supported single-call services.
 
 ## Scope and blocker (2026-10-29)
