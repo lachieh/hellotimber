@@ -10,7 +10,7 @@
   {
     "id": "calls-services/identity-persist-identity-0",
     "file": "calls-services/identity-persist-identity-0.lcd.txt",
-    "status": "pending:22b",
+    "status": "asserted",
     "kind": "timeline",
     "images": 18,
     "frames": 21
@@ -18,7 +18,7 @@
   {
     "id": "calls-services/identity-persist-identity-1",
     "file": "calls-services/identity-persist-identity-1.lcd.txt",
-    "status": "pending:22b",
+    "status": "asserted",
     "kind": "timeline",
     "images": 18,
     "frames": 21
@@ -26,7 +26,7 @@
   {
     "id": "calls-services/identity-persist-identity-2",
     "file": "calls-services/identity-persist-identity-2.lcd.txt",
-    "status": "pending:22b",
+    "status": "asserted",
     "kind": "timeline",
     "images": 18,
     "frames": 20
@@ -194,7 +194,7 @@
   {
     "id": "calls-services/persist-reboot",
     "file": "calls-services/persist-reboot.lcd.txt",
-    "status": "pending:22b",
+    "status": "asserted",
     "kind": "timeline",
     "images": 4,
     "frames": 6
@@ -202,7 +202,7 @@
   {
     "id": "calls-services/redial-off",
     "file": "calls-services/redial-off.lcd.txt",
-    "status": "pending:22b",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5
@@ -210,7 +210,7 @@
   {
     "id": "calls-services/redial-on",
     "file": "calls-services/redial-on.lcd.txt",
-    "status": "pending:22b",
+    "status": "asserted",
     "kind": "timeline",
     "images": 5,
     "frames": 5

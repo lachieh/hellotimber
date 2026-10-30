@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/redial-on
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/redial/on
 source-sha256: abb14f5f6bdfea8c257a93e2ca06983d5869743e64bafbb6eb2804ec8d2c672b
 trigger-frame: 1

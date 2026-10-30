@@ -107,7 +107,7 @@ export const callsServices: PlanCaptureSet = {
           ? "pending:22c"
           : /^(verified|none|in-call-ack)\//.test(dir)
             ? "asserted"
-            : "pending:22b",
+            : "asserted",
       prefer: {
         source: { kind: "recording", dir: `plan22b/${dir}` },
         triggerFrame: (io.frames.recording(`plan22b/${dir}`)?.length ?? 0) > 1 ? 1 : 0,

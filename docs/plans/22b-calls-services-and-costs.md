@@ -1,6 +1,6 @@
 # Plan 22b — Calls II: services and costs
 
-**Status:** in progress — bounded Task 0 done; Task 1 scenarios complete; Task 2 implemented with eleven fidelity gaps; Task 3 implemented with five presentation gaps; Tasks 4–5 remain unimplemented.
+**Status:** in progress — bounded Task 0 done; Task 1 scenarios complete; Task 2 implemented with eleven fidelity gaps; Task 3 implemented with five presentation gaps; Task 4 proven identity/redial/zero-cost scope implemented; Task 5 rejection tests and website QA pass, final gates remain.
 **Prerequisites:** plans 22, 25, 30 and 31 done.
 **Ground truth:** `docs/specs/stock/calls.md`, plan 22's S9, S15, S22 and S27,
 `$REF/captures/scratch-plan22/` and `$REF/captures/6.39/plan22/`, where
@@ -76,20 +76,24 @@ its pending goldens explicitly. Do not turn unimplemented goldens into asserted 
 
 ## Task 0 — Establish canonical captures
 
+Bounded completion: the checked items below cover the supported evidence. The
+missing waiting/multicall, broader redial, charging, sound-edge and persistence
+evidence is explicitly retained by 22c, as described in the bounded outcome.
+
 **Files:** `$REF/captures/6.39/plan22b/`, its capture generator/scripts and build-copy harness;
 this plan's outcome and `docs/specs/stock/calls-services.md`.
 
-- [ ] Inspect the scratch SS responder and current harness; establish baseline equivalence.
-- [ ] Capture divert Activate (mailbox/other), Cancel, Status, Set delay, Cancel all, success,
+- [x] Inspect the scratch SS responder and current harness; establish baseline equivalence.
+- [x] Capture divert Activate (mailbox/other), Cancel, Status, Set delay, Cancel all, success,
       error, no answer, Quit/C, number details and standby indicator; cold boot and Restore.
-- [ ] Capture Call waiting Activate/Cancel/Status and a second incoming call during a call.
-- [ ] Capture Hold/retrieve, New call, End active/all, Send DTMF (empty, digits, saved string,
+- [x] Capture Call waiting Activate/Cancel/Status and a second incoming call during a call.
+- [x] Capture Hold/retrieve, New call, End active/all, Send DTMF (empty, digits, saved string,
       cancel), `p`/`w` sequences after connect, and release/power-off during pending operations.
-- [ ] Capture standby service strings (`04`, `#`, `*123#`, `*21*…#`, `##002#`, `*#21#`),
+- [x] Capture standby service strings (`04`, `#`, `*123#`, `*21*…#`, `##002#`, `*#21#`),
       service-command entry, result scrolling, rejection and unanswered requests.
-- [ ] Capture redial On/Off with network failures and cancellation; own-number choices;
+- [x] Capture redial On/Off with network failures and cancellation; own-number choices;
       costs/settings/prepaid with zero and supported nonzero advice-of-charge evidence.
-- [ ] Record measured facts, exact inputs and reproducibility; identify genuine blockers.
+- [x] Record measured facts, exact inputs and reproducibility; identify genuine blockers.
 
 **Verification:** rerun capture scripts, compare repeated settled frames, validate all files
 and baseline hashes. Record unsupported network/harness paths as UNVERIFIED with precise causes.
@@ -163,12 +167,12 @@ focused tests and plan 22's capture set/scenarios.
 
 **Files:** call models, network port, call-register/settings feature owners and focused tests.
 
-- [ ] Test then implement automatic redial eligibility, timer, attempt limit and cancellation
+- [x] Test then implement automatic redial eligibility, timer, attempt limit and cancellation
       from captures; never synthesize successful remote call progress.
-- [ ] Pass Own number sending policy to the host and retain stock setting behavior.
-- [ ] Implement charging records/views/settings/prepaid to the extent proven by captures;
+- [x] Pass Own number sending policy to the host and retain stock setting behavior.
+- [x] Implement charging records/views/settings/prepaid to the extent proven by captures;
       preserve zero values without network advice and make unsupported charging explicit.
-- [ ] Assert remaining supported goldens, document known gaps and standalone usage.
+- [x] Assert remaining supported goldens, document known gaps and standalone usage.
 
 **Verification:** focused tests; `vp check --fix`; full uncached suite.
 
@@ -177,10 +181,10 @@ focused tests and plan 22's capture set/scenarios.
 **Files:** website call/network adapter only if needed (avoid `website/src/messages/` and
 `website/src/routes/api/sms.ts`); plan, README, calls specification and package README.
 
-- [ ] Verify the website's link calls still use the telephone path and services cannot invent
+- [x] Verify the website's link calls still use the telephone path and services cannot invent
       network progress. Drive the actual website headlessly using
       `mise exec npm:agent-browser@0.34.0 -- agent-browser` and inspect `[role=status]`.
-- [ ] All scoped goldens asserted, with any evidence-blocked split explicitly re-owned.
+- [x] All scoped goldens asserted, with any evidence-blocked split explicitly re-owned.
 - [ ] Update the firmware spec index, task checkboxes, status and plans README row.
 
 ## Remaining gates
@@ -321,6 +325,56 @@ power-off. UNVERIFIED product choices are recorded in the stock service spec.
 Factory DTMF relative intervals are analysed and implemented; missing key-edge CSVs block complete sound goldens, explicitly recorded in 22c.
 
 Task 3 gates: full uncached workspace suite green (11,841 passed, 136 expected
-failures, 164 todos across 262 files). Focused call/acceptance/coverage run:
+failures, 164 todos across 261 files). Focused call/acceptance/coverage run:
 378 passed, 33 expected failures, 7 todos. `vp check --fix` and website build pass.
 The later transmitted-DTMF regression passes 8/8 real-port in-call tests.
+
+### Task 4 implementation (2026-10-30)
+
+Three explicit caller-policy regressions failed before metadata support and pass
+after it. On/Off/Set by network map to show/hide/network on the outgoing host call;
+emergency calls keep their existing independent contract. Host release causes are
+retained as metadata, with identical stock release screens. Existing caller
+assertions were migrated to the actual virgin On policy.
+
+The cause-17 On/Off recordings pass with no retry across 90 seconds; eligibility,
+intervals and attempts beyond that remain 22c. Existing cost/settings/prepaid
+views remain zero without network advice and are exercised after a real call.
+No nonzero advice-of-charge or prepaid protocol is fabricated. All six remaining
+22b recordings are asserted: four pass, the identity-2 connection redraw and
+cold-reset boot self-test keep precise known gaps. Only the second-call recording
+remains pending:22c; all three inherited selections are asserted.
+
+### Website QA (2026-10-30)
+
+Headless agent-browser 0.34.0 session `plan22b-final-32ea075d` drove the actual
+website at localhost:3004. Preview automation had two 15000 ms snapshot timeouts;
+its tab was closed before falling back to the plan's browser CLI.
+
+- Accessible keypad typed random `0299999837`: status `Number: 0299999837 [Call]`;
+  Navi gave `Call: Call 1, ended [End]`, then `Standby: LACHLAN, 05:16 [Menu]`.
+  Screenshots: `/private/tmp/22b-unknown-number-entry.png`,
+  `/private/tmp/22b-unknown-number-failure.png`, `/private/tmp/22b-unknown-number-return.png`.
+- Standby down and scrolling selected `GitHub [Call]`; Navi showed Calling and
+  opened `https://github.com/example-handle` in tab t2 (sample destination 404).
+  `/private/tmp/22b-github-contact.png`, `/private/tmp/22b-github-calling.png`.
+- Toolkit Projects → hellotimber → text → `Question: Open hellotimber? [OK]`
+  traversed the same call path. `/private/tmp/22b-toolkit-confirm.png`,
+  `/private/tmp/22b-toolkit-calling.png`; sample destination is unchanged.
+
+Website TDD: two new unknown-number tests failed before the adapter fix; afterward
+website network plus nokia-os call contracts passed 16 tests. Unknown-number
+release uses captured cause 1, without alerting or connecting. Portfolio content
+was not changed.
+
+Final golden accounting: index 22b contains 54 asserted LCD fixtures and one
+`pending:22c` second-call timeline. This flips 53 previously pending 22b recordings,
+adds the canonical divert-indicator still, and flips all three inherited plan 22
+selections. Eighteen expected-failure gaps remain: eleven service/registration,
+five in-call presentation, one identity connection redraw and one cold-reset boot.
+The suites retain each gap as an executable failure, so a future fix must remove it.
+
+Task 4 gates: full uncached suite green (11,852 passed, 138 expected failures,
+158 todos; 262 files). Focused identity/call contracts: 19 passed. Full 22b
+acceptance plus coverage/identity: 120 passed, 18 expected failures, one pending
+22c todo. `vp check --fix` and website production build pass.

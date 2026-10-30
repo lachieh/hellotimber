@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/persist-reboot
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/persist/reboot
 source-sha256: 9730ca05fd7f8e489e91ca5e647949e0f424338e808e1cae7b5293b02404281e
 trigger-frame: 1

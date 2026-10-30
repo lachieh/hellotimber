@@ -46,7 +46,9 @@ describe("dialling through the host (D5)", () => {
     host.attach(rig);
     typeNumber(rig, "0412345678");
     rig.press("navi");
-    expect(host.dialled.map((d) => d.call)).toEqual([{ number: "0412345678", emergency: false }]);
+    expect(host.dialled.map((d) => d.call)).toEqual([
+      { number: "0412345678", emergency: false, ownNumberSending: "show" },
+    ]);
     expect(host.dialled[0]!.at).toBe(rig.now);
   });
 
@@ -62,7 +64,7 @@ describe("dialling through the host (D5)", () => {
   });
 
   it("ends a call the host refuses before it alerts with the network's end, then standby", () => {
-    const host = hostNetwork((_call, phone) => phone.released());
+    const host = hostNetwork((_call, phone) => phone.released(1));
     const rig = standbyRig({ network: host.network });
     typeNumber(rig, "0412345678");
     rig.press("navi");

@@ -22,7 +22,12 @@ import { CALL_SCRIPTS } from "../support/call-scripts.ts";
 
 function saveAndCall(rig: CallRig, number: string): void {
   play(rig, "2 +1500 menu +4000 menu +3000");
-  expect(rig.net.dialled.at(-1)).toEqual({ number, name: "A", emergency: false });
+  expect(rig.net.dialled.at(-1)).toEqual({
+    number,
+    name: "A",
+    emergency: false,
+    ownNumberSending: "show",
+  });
 }
 
 acceptancePlan({

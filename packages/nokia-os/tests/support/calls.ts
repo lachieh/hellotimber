@@ -71,7 +71,7 @@ export function callNetwork(moHold = false): CallNetwork {
       const ring = rings.find((r) => r.state !== "ended");
       if (ring !== undefined) ring.hangUp();
       else {
-        outgoing?.released();
+        outgoing?.released(arg === undefined ? undefined : Number(arg));
         outgoing = undefined;
       }
     },

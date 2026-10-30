@@ -157,3 +157,18 @@ The three factory recordings lack keys.csv, so complete sound-golden alignment i
 blocked and moves to 22c. Transmission plays these relative intervals after host
 acceptance; the 264 ms lead from acceptance is UNVERIFIED (the captured lead is
 from the confirmation beep).
+
+## Identity, redial and zero charging (2026-10-30)
+
+Outgoing calls carry `ownNumberSending: network | show | hide` from the actual
+stock setting, except emergency calls. A host release may carry a numeric GSM
+cause; all causes retain the same captured release UI. Automatic redial On and
+Off both make no further attempt on captured cause 17 for 90 seconds. Broader
+eligibility/interval/attempt policy remains 22c.
+
+Without advice of charge, existing stock cost and prepaid views remain zero.
+No amount is inferred from duration. Nonzero charging, limits and prepaid
+responses remain blocked on network evidence in 22c. The three identity captures
+match their pixels; the Set by network case retains the test-cell connection
+redraw gap. Cold reset retains the shared power-key boot-timeline gap; it is not
+evidence of persisted forwarding state.

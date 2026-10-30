@@ -981,3 +981,8 @@ The optional call-link methods `hold()`, `retrieve()` and `sendDtmf(text, signal
 return boolean outcomes or promises. Their absence does not imply success. The
 explicit synthetic network acknowledges these operations. A host can abort DTMF
 work when its signal aborts; late success cannot revive a released call.
+
+Outgoing calls include the stock `ownNumberSending` policy for non-emergency
+calls. `control.released(cause?)` may name the GSM release cause; the captured
+phone renders all causes alike. Charging stays zero without network advice;
+nonzero charging and broader automatic-redial policy are not implemented.

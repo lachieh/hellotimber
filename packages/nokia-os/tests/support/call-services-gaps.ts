@@ -1,4 +1,8 @@
 export const CALL_SERVICE_KNOWN_GAPS: Readonly<Record<string, string>> = {
+  "calls-services/identity-persist-identity-2":
+    "Dialled digits and Calling pixels match; the test cell's common connection times differ after 8303 ms. The recording erases Calling before its alert/connect transition and connects later; caller-identity metadata itself is passed to the host without inventing new remote progress.",
+  "calls-services/persist-reboot":
+    "This cold reboot records a 974 ms fully-set LCD self-test, followed by a 1191 ms blank and Nokia frame. The shared boot timeline uses the foundation power-key self-test/blank timing instead; pixels and offsets differ before the final security gate. The recording never reaches standby and does not prove divert persistence.",
   "calls-services/in-call-ack-hold":
     "The explicit test host acknowledges Hold synchronously; the captured cell updates the held icon 1497 ms after Select. The subsequent 123 digits/Options redraw and retained held icon differ; no local network acknowledgment delay is invented.",
   "calls-services/in-call-ack-new-call":

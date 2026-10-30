@@ -129,7 +129,7 @@ const scripts: Readonly<Record<string, CallScript>> = {
       `identity-persist-identity-${i}`,
       {
         setup: `menu 6 1 4 +1200 ${"down ".repeat(i)}menu +3500 c@1500 +1000`,
-        keys: "0 +292 4 +292 1 +292 2 +292 3 +292 4 +292 5 +292 6 +292 7 +292 8 +292 menu +5000",
+        keys: "0 +320 4 +320 1 +320 2 +320 3 +320 4 +320 5 +320 6 +320 7 +320 8 +340 menu +5000",
       },
     ]),
   ),

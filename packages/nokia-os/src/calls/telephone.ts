@@ -110,6 +110,7 @@ export interface StockCall {
   hostAlerting?: number;
   hostConnected?: number;
   hostReleased?: number;
+  releaseCause?: number;
   answeredAt?: number;
   rejectedAt?: number;
   /** The user ended it (End, End active call). */
@@ -324,7 +325,10 @@ export class StockTelephone {
         now + EMERGENCY_BEEP_AFTER_MS,
       );
     }
+    const identity = this.#deps.settings.choice("settings/call-settings/own-number-sending");
+    const policy = identity === 0 ? "network" : identity === 1 ? "show" : "hide";
     const outgoing: StockOutgoingCall = {
+      ...(emergency ? {} : { ownNumberSending: identity === null ? "network" : policy }),
       number,
       ...(name === undefined ? {} : { name }),
       emergency,
@@ -568,7 +572,8 @@ export class StockTelephone {
         call.hostAlerting ??= this.#deps.now();
         call.hostConnected = this.#deps.now();
       },
-      released: () => {
+      released: (cause) => {
+        call.releaseCause = cause;
         if (call.done || call.endedAt !== undefined) return;
         if (call.hostAlerting === undefined) call.hostAlerting = this.#deps.now();
         this.#release(call);

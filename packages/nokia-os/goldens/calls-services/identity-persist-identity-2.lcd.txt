@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/identity-persist-identity-2
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/identity-persist/identity-2
 source-sha256: 2741d8393c22715ff3c92be26f0248e07c449d709bd71fae31c63f3a500cecab
 trigger-frame: 1
