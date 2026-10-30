@@ -59,6 +59,8 @@ If an essential result cannot be produced by the real firmware with the harness,
 exact failure and evidence, split only that behavior into a named follow-up plan, and transfer
 its pending goldens explicitly. Do not turn unimplemented goldens into asserted coverage.
 
+**D7 — Parent direction (2026-10-29).** Time-box the remainder of Task 0 to the first portion of this round. Attempt multi-call lifecycle, persistence and factory-image sound with CAP_SS/CAP_CC. Move only evidence-blocked behavior to plan 22c, blocked on captures, re-own its pending goldens through the importer, then continue Tasks 1–5. Task 0 must not consume the round.
+
 ## Golden pipeline additions
 
 - Add `scripts/capture-sets/22b-calls-services.ts`, exported once from the capture-set index;
@@ -189,3 +191,16 @@ focused tests and plan 22's capture set/scenarios.
 - [ ] Website status-mirror evidence recorded.
 - [ ] Per-task commits contain only owned paths; never stage TODOS.md.
 - [ ] Final report: branch, SHA, tasks, goldens, known gaps, decisions, QA, totals, status.
+
+### Task 0 bounded continuation (2026-10-29)
+
+Parent D7 applied: final `closure.py` and `closure-final.py` probes completed.
+Factory-image SS and DTMF sound captured under `factory-sound/`. HOLD and RETRIEVE
+are acknowledged; second SETUP on TI 0x13 is logged. The network stores only one
+transaction and cannot independently release both calls. True waiting/multi-call
+lifecycle, unproven redial policy and nonzero charging move to plan 22c, blocked
+on captures; the second-call golden is re-owned as `pending:22c` by the importer.
+The inherited three single-call option selections remain 22b. Cold boot is
+continued in `persist-unlock/`; persistence interpretation remains UNVERIFIED.
+54 canonical LCD recordings are registered, pending implementation and scenarios.
+No runtime completion or asserted fidelity is claimed by this import.

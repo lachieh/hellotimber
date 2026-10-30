@@ -90,3 +90,19 @@ The first identity/persistence attempt used an invalid `power` token and was sto
 the identity-policy cases were rerun with `pwr`. Do not use raw `press pwr` as proof of
 power-off: the canonical harness has a separate power API. The explicit `persist/` probe
 is the authoritative power-off input. Persistence interpretation remains pending.
+
+## Bounded Task 0 continuation (2026-10-29)
+
+`closure.py` records HOLD then RETRIEVE acknowledgements and factory-image sound
+probes under `factory-sound/` using `v639-plan15-restored.fls`. Its initial second-call
+sequence selected the wrong menu row; `closure-final.py` corrects the input and writes
+`closure-multicall/`. That network log contains the second SETUP to 0298765432
+on TI 0x13, but the network retains only one transaction's call state. Independent
+release, waiting SETUP, swap and End all remain UNVERIFIED and move to plan 22c.
+`persist-unlock/` continues the saved cold boot with security code 12345. Its result
+still requires pixel analysis; no persistence policy is inferred from the login prompt.
+
+Redial beyond the measured no-retry cause-17 path, advice of charge and prepaid
+protocols move to 22c, blocked on captures. The existing network has no charging
+input. The three plan 22 option selections remain owned by 22b. Factory sound was
+captured successfully and stays owned by 22b pending event analysis.
