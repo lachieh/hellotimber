@@ -16,7 +16,7 @@ plan 18. Every other task needs only 13-16 and 29.
 `$REF/captures/scratch-plan26/` (`gen.py`, `run.sh`, `sweep.sh`, `out-*`). They are evidence for
 this plan only and are never imported. Task 0 writes this plan's captures to
 `$REF/captures/6.39/plan26/`.
-**Status:** not started (planning probes done 2026-10-14).
+**Status:** dropped (2026-10-29). Lachlan: English only; neither this plan nor 26b will be built. The planning probes (2026-10-14) stay as historical evidence.
 
 ## Goal
 

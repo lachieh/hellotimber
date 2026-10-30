@@ -40,8 +40,8 @@ Each plan is self-contained: an agent assigned a task needs only `AGENTS.md`,
 | 24b | Games III: Bantumi                                                              | Bantumi against the phone (deterministic search), 5-bar Level page, endings                           | 24 (Tasks 1-3)                            | not started |
 | 24c | Games IV: Pairs II                                                              | Time trial and Puzzle: seeded boards, 7-bar Level pages, two top scores                               | 24 (Tasks 1-3)                            | not started |
 | 25  | [Keyguard and backlight](./25-keyguard-and-backlight.md)                        | keyguard, LEDs on the light tick, host lights port, phone-3d keypad light and LCD look                | 13, 14, 15, 16, 23                        | done        |
-| 26  | [Languages](./26-languages.md)                                                  | Русский, Български, Українська UI: replayed per-language text, Cyrillic glyphs, multi-tap (T9: 26b)   | 14, 15, 16, 18, 29                        | not started |
-| 26b | T9 languages (outlined in plan 26)                                              | Russian and Bulgarian T9 dictionaries, clean-room per 18b; Bulgarian word list unresolved             | 18b, 26                                   | not started |
+| 26  | [Languages](./26-languages.md)                                                  | Русский, Български, Українська UI: replayed per-language text, Cyrillic glyphs, multi-tap (T9: 26b)   | 14, 15, 16, 18, 29                        | dropped     |
+| 26b | T9 languages (outlined in plan 26)                                              | Russian and Bulgarian T9 dictionaries, clean-room per 18b; Bulgarian word list unresolved             | 18b, 26                                   | dropped     |
 | 27  | [Composer](./27-composer.md)                                                    | Tones › Composer: note editor, Play, Tempo, Save; saved tones as Ringing tones 36-42                  | 16, 18 (17 label seam)                    | done        |
 | 28  | [Game SDK and user games](./28-game-sdk-and-user-games.md)                      | wake-based game SDK, shell services, 2048, sandboxed user JS/Wasm games, extra games in Games         | 13, 14, 15, 16, 23                        | not started |
 | 30  | [SIM content and SIM services](./30-sim-content-and-sim-services.md)            | SIM-stored SMS, sender names, SIM services (STK text, lists, calls), IMEI, preload, screen text       | 19, 22 (18c, 21 seams)                    | done        |
@@ -63,3 +63,9 @@ a task batch.
 (Lachlan, 2026-10-29: too slow for its value). Level 0 is asserted on `main`; the rest is on branch
 `t3/p24-space-impact` with resume notes in the plan's "Paused (2026-10-29)" section. Plans 24b and
 24c only need plan 24's finished Tasks 1-3, so they can proceed without it.
+
+**Dropped:** plans 26 and 26b (other UI languages and their T9) will not be built; the site is
+English only (Lachlan, 2026-10-29). Six goldens stay `pending:26` on purpose: choosing Русский,
+Български or Українська in Settings › Language (`tree/06-settings/6-2-1-{3,4,5}.choose` in index 14,
+`sound/note/6-2-1-{3,4,5}` in index 16). The menu still lists the stock languages; selecting one is
+out of scope.
