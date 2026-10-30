@@ -1,6 +1,6 @@
 # Plan 22b — Calls II: services and costs
 
-**Status:** in progress — Task 0 capture investigation; implementation not started.
+**Status:** in progress — bounded Task 0 continuation recorded; Task 1 evidence imported, acceptance incomplete; runtime implementation not started.
 **Prerequisites:** plans 22, 25, 30 and 31 done.
 **Ground truth:** `docs/specs/stock/calls.md`, plan 22's S9, S15, S22 and S27,
 `$REF/captures/scratch-plan22/` and `$REF/captures/6.39/plan22/`, where
@@ -204,3 +204,42 @@ The inherited three single-call option selections remain 22b. Cold boot is
 continued in `persist-unlock/`; persistence interpretation remains UNVERIFIED.
 54 canonical LCD recordings are registered, pending implementation and scenarios.
 No runtime completion or asserted fidelity is claimed by this import.
+
+### Task 1 progress (2026-10-30)
+
+Importer registered 54 canonical LCD timelines: 53 `pending:22b`, one
+`pending:22c` (`calls-services/in-call-ack-second-call`). `regenerate` is up to
+date. Four temporary red probes exercised the preserved scenario helpers:
+Hold, New call, Send DTMF and unanswered `04` all failed (4/4), with current
+placeholders/missing timeout behavior. The probe file was removed; inherited
+selections remain pending and are not counted as asserted or known gaps.
+Acceptance helpers cover the three inherited selections and 14 unanswered
+service paths. Successful/error host-response scenarios, sound analysis and
+implementation Tasks 2–5 remain unfinished. This is not plan completion.
+
+The bounded follow-up probes have 245 SHA-256 entries in external
+`plan22b/closure-sha256.json`. `persist-unlock/reboot-after-code` reaches the
+Time prompt after entering the security code; it does not yet prove divert
+persistence at settled standby.
+
+Verification of this evidence checkpoint: Node v22.22.3 (explicit mise Node bin
+first on PATH), `vp check --fix` passes (710 files), resource regeneration is
+unchanged, website build passes. Coverage guard plus 22b acceptance: 80 passed,
+54 todos. Temporary red probe: 4 failed as expected (three inherited actions and
+unanswered 04); these are not added to known gaps.
+
+Headless QA used agent-browser 0.34.0 session `plan22b` against this worktree's
+server at localhost:3003 (3000–3002 already occupied). `[role=status]` read
+`Standby: LACHLAN, 14:07 [Menu]`, then `Number: 0755504484 [Call]`; Call showed
+`Call: Calling [End]` and opened the configured sample GitHub URL in a new tab.
+The sample URL returns 404; no portfolio content was changed. This confirms
+that link entry still traverses the telephone, not the unfinished service flows.
+Code inspection also finds that the existing website adapter connects unknown
+non-emergency numbers locally; this conflicts with the requested host-owned
+progress policy and remains to be resolved in Task 5. No new progress policy
+is introduced at this evidence checkpoint.
+
+Full uncached workspace suite at this checkpoint: 11,794 passed, 120 expected
+failures, 214 todos (259 files including one todo-only acceptance file).
+The website production build and final `vp check` pass. Plan remains in progress;
+Tasks 1–5 are not marked complete. No inherited golden is flipped.
