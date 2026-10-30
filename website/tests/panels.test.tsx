@@ -24,9 +24,9 @@ it("accounts for every content panel without unused registrations", () => {
   );
   for (const id of Object.keys(PANELS)) expect(panel(id).textContent?.length).toBeGreaterThan(0);
 });
-it("renders contacts as actual links including rel=me and downloads", () => {
+it("renders contacts as actual links including rel=me", () => {
   const root = panel("contacts");
-  for (const link of LINKS.filter((link) => !["source", "project-x"].includes(link.id))) {
+  for (const link of LINKS.filter((link) => link.kind === "social")) {
     const anchor = root.querySelector(`a[href="${link.href}"]`);
     expect(anchor).not.toBeNull();
     if ("rel" in link) expect(anchor?.getAttribute("rel")).toBe(link.rel);

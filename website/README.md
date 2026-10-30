@@ -24,7 +24,7 @@ No deployment is performed by plan 31. After approval to merge and deploy:
 
 1. Confirm the deployed build includes plan 31's toolkit-call handoff; project links now
    use the same telephone/network port as phone-book links.
-2. Review the sample content and placeholder contact/project URLs before presenting them as real.
+2. Content and profile/project URLs are sourced from Lachlan's public GitHub profile and history or supplied directly by him. There is no public email or CV yet.
 3. Set `ANTHROPIC_API_KEY` in the Vercel project for live persona replies. Without it, SMS and
    Chat use the recorded canned responses. A live-model reply still needs an environment check.
 4. Set `BUILD_HASH` to the deployed revision when building, for a stable per-build IMEI.

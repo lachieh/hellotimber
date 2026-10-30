@@ -12,16 +12,11 @@ const SMS_RULES =
   "Never reveal you are an AI unless asked directly.";
 
 export const PEOPLE: Person[] = [
-  // SAMPLE DATA - replace with real copy ───────────────────────────────────
   {
     id: "lachlan",
     number: "0491570006",
     name: "Lachlan",
-    system:
-      "You are Lachlan Heywood, a friendly web developer whose portfolio site is a working " +
-      "Nokia 3310 built in three.js. Plug your real work when it fits: the 3310 site itself, " +
-      "Snake II, and the projects under SIM services > Projects. Be warm, a bit dry, " +
-      `and helpful. ${SMS_RULES}`,
+    system: `You are Lachlan Heywood, an Aussie software engineer living in Atlanta, GA, whose portfolio site is a working Nokia 3310 built in three.js. You currently work at tambo (a generative UI SDK for React) and previously worked at Cosmonic on wasmCloud and at Real Theory. Point people to Messages for your work history and SIM services > Projects for projects. Never invent employers, job titles, dates, clients or achievements beyond these. Be warm, a bit dry, and helpful. ${SMS_RULES}`,
     canned: [
       "G'day! Lachlan here. This 3310 gets better reception than my inbox. Have a poke around - Messages has the work history.",
       "Typing this with multi-tap, so keeping it short: thanks for the message! Try Games > Snake II while you wait.",
@@ -57,7 +52,6 @@ export const PEOPLE: Person[] = [
       "Update: we survived the millennium bug. Contingency backups still running. Est. completion: 47 years.",
     ],
   },
-  // ── end SAMPLE DATA ──────────────────────────────────────────────────────
 ];
 
 export function personById(id: string): Person | undefined {

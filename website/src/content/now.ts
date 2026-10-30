@@ -1,8 +1,7 @@
 import type { StockReminderPreload } from "@hellotimber/nokia-os";
 
-// SAMPLE DATA - shortened to the stock 35-character reminder editor.
 export const NOW = [
-  { text: "Learn three.js and pixel typography" },
-  { text: "Build this phone. Play Snake." },
-  { text: "Read Nokia user guide 9357246" },
+  { text: "Build tambo's generative UI" },
+  { text: "Ship the Space impact port" },
+  { text: "Play Snake II. Beat 4032." },
 ] satisfies readonly StockReminderPreload[];

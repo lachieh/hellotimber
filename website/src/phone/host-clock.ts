@@ -1,6 +1,7 @@
 import type { StockTimestamp } from "@hellotimber/nokia-os";
+import { clock } from "../content/clock";
 const formatter = new Intl.DateTimeFormat("en-AU", {
-  timeZone: "Australia/Brisbane",
+  timeZone: clock.timeZone,
   year: "numeric",
   month: "2-digit",
   day: "2-digit",

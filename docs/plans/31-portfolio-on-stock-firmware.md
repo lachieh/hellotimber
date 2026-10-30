@@ -31,11 +31,11 @@ the stock v6.39 features, as Lachlan decided (2026-10-15):
 > be contacts that 'making a call' to will open in a new tab)."
 
 - **Content** on a portfolio SIM card: people and links in the phone book, intros, work history and
-  testimonials as SMS in the Inbox, projects and the colophon in SIM services, "now" items as
+  open-source contributions as SMS in the Inbox, projects and the colophon in SIM services, "now" items as
   Reminders; calling a link contact opens its URL in a new tab;
 - **messaging**: Write messages and Chat reach the LLM personas through a website
   `StockNetworkPort` backed by `/api/sms`;
-- **runtime**: localStorage EEPROM, WebAudio sound, phone-3d lights, Brisbane clock, keys, tick
+- **runtime**: localStorage EEPROM, WebAudio sound, phone-3d lights, Eastern clock, keys, tick
   loop, power-on, reduced motion, mute;
 - **routes**: URLs mirror the stock menu paths; server-rendered panels, sitemap and redirects
   derived from stock paths and content; the 404;
@@ -56,24 +56,22 @@ the stock v6.39 features, as Lachlan decided (2026-10-15):
 | Settings         | `hellotimber.settings` (keypad tones, backlight, welcome note, ringtone, screensaver, mute)                   | the EEPROM (`nokia-os/…` keys); the website keeps mute only                       |
 | Routes           | `siteMenu.paths()` + website metadata                                                                         | `stockMenuFor(PORTFOLIO_SIM).paths()` + a website route-content table             |
 
-## Content inventory (2026-10-15)
+## Content inventory (updated 2026-10-30)
 
-Every item in `website/src/content/**` (all marked SAMPLE DATA except structure):
+Real copy supplied by Lachlan from his public GitHub profile/history or directly:
 
-| Module             | Items                                                                                   | Shape today                                   |
-| ------------------ | --------------------------------------------------------------------------------------- | --------------------------------------------- |
-| `site.ts`          | name, job title, description, tagline, `sameAs`, origin                                 | SEO and JSON-LD                               |
-| `phonebook.ts`     | Email, GitHub, LinkedIn, CV (`href`, `rel`, `download`)                                 | Phone book › Search list                      |
-| `contacts.ts`      | personas Lachlan, Recruiter Rachel, Y2K Support (system prompts, canned replies)        | Write messages recipients, Chat partner       |
-| `messages.ts`      | four intros (hello, stack, work, say-hi), Write's destination email                     | Inbox list                                    |
-| `chat.ts`          | five testimonial lines (`>` them, `<` Lachlan)                                          | Chat's opening history                        |
-| `call-register.ts` | roles (2), projects (3, two with URLs), missed calls (2)                                | Received calls, Dialled numbers, Missed calls |
-| `reminders.ts`     | three "now" items                                                                       | Reminders list                                |
-| `clock.ts`         | time zone `Australia/Brisbane`, availability line                                       | Clock reader                                  |
-| `divert.ts`        | GitHub, LinkedIn, X                                                                     | Call divert `ActionEntry` redirects           |
-| `profiles.ts`      | visitor-mode copy (stretch, unused)                                                     | Profiles list                                 |
-| `menu.ts`          | `siteMenu`, `SITE_STANDBY_KEYS`, website applications, SIM services 404 reader          | the whole phone                               |
-| (panels)           | standby bio paragraph (`routes/_phone/index.tsx`), SIM services IMEI (`__BUILD_HASH__`) | HTML only                                     |
+| Module            | Items                                                                                     | Stock home                              |
+| ----------------- | ----------------------------------------------------------------------------------------- | --------------------------------------- |
+| `site.ts`         | hellotimber.com, Software Engineer, tagline, four social profiles                         | SEO and JSON-LD                         |
+| `links.ts`        | GitHub, LinkedIn, X, Bluesky; Source code; three project links                            | Phone book, Service Nos., toolkit calls |
+| `people.ts`       | Lachlan's real bio; Recruiter Rachel and Y2K Support unchanged                            | SMS/Chat personas                       |
+| `sim-messages.ts` | seven SMS: hello, stack, contact, bio, tambo, Cosmonic, open source                       | Inbox                                   |
+| `toolkit.ts`      | hellotimber (2026), tambo (2025), wasmCloud TS (2024), herdr-plugin-cmux (2026), colophon | SIM services                            |
+| `now.ts`          | three current notes, at most 35 characters each                                           | Reminders                               |
+| `clock.ts`        | America/New_York, ET availability                                                         | Clock and SMS timestamps                |
+
+No public email or CV yet. Project links are marked by kind and excluded from the phone book.
+Source code remains in Service Nos.; social links are in the phone book.
 
 ## Scope and non-goals
 
@@ -82,8 +80,7 @@ deleting package code whose only consumer was the website (Task 8).
 
 Out of scope: any nokia-os behaviour (plan 30 and the feature plans own it); the phone-3d model;
 incoming calls to the visitor (D11); a letter keyboard for SMS (Open question 13); deploying
-(Lachlan approves it, Task 9); real copy (Lachlan supplies it; the structure and the sample data
-follow the constraints, D8).
+(Lachlan approves it, Task 9); new claims beyond the copy supplied by Lachlan.
 
 ## Decisions
 
@@ -95,24 +92,22 @@ goes where Lachlan's SIM (or a phone he handed over) would carry it.
 
 **D2 - Content mapping (the starting point, adjusted).**
 
-| Content                                                   | Stock home                                          | Form                                                                                                 | Why                                                                                                     |
-| --------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Personas (Lachlan, Recruiter Rachel, Y2K Support)         | Phone book (SIM `EF_ADN`)                           | name + a fiction-range mobile number (D6)                                                            | people are contacts; texting them reaches the LLM (D9)                                                  |
-| Email, GitHub, LinkedIn, X, CV                            | Phone book (SIM `EF_ADN`)                           | name + a fiction-range number; **Call opens the URL in a new tab** (D10)                             | Lachlan's decision; Call divert's three links move here                                                 |
-| Source code (this repo)                                   | Service Nos. (SIM `EF_SDN`)                         | `Source code` + number; Call opens the repo                                                          | an operator's own service number; the operator is `LACHLAN`, the site                                   |
-| Intros (hello, stack, say-hi), bio                        | Inbox (SIM `EF_SMS`), from Lachlan's number         | one SMS each, ≤160 GSM septets; the bio split into at most two SMS                                   | "About me, in SMS form" was already the Inbox's job                                                     |
-| Availability                                              | the say-hi SMS                                      | one sentence in it                                                                                   | fits an SMS; the Clock shows the time itself (D13)                                                      |
-| Work history (roles)                                      | Inbox, from Lachlan's number                        | one SMS per role: period, title, organisation, one line                                              | a received-calls list holds numbers, not roles; an SMS holds 160 characters                             |
-| Testimonials                                              | Inbox, from Lachlan's number                        | one SMS each, quoting the giver: `CTO@Acme: Lachlan shipped the impossible. Twice.`                  | stock Chat keeps no history to seed; a forwarded quote is how 2000 phones carried one (Open question 4) |
-| Projects (name, blurb, year, URL)                         | **SIM services › Projects**                         | `SELECT ITEM` of projects → a text page (blurb, year) → a call step `Open <name>?` when it has a URL | breaks down: a contact holds no text and an SMS holds no link (D16)                                     |
-| Colophon (how the site is built)                          | **SIM services › About this site**                  | a text page → a call step to Source code                                                             | longer than an SMS and about the SIM itself (D16)                                                       |
-| "Now" items                                               | Reminders (phone memory)                            | plan 30's `preload.reminders`, no alarm, within plan 21's text limit                                 | Reminders are notes to self; a used phone has them (D7)                                                 |
-| Tagline                                                   | none on the phone; SEO only                         | `site.tagline`                                                                                       | a Welcome note would replace the boot hands animation (Open question 6)                                 |
-| Missed calls ("ones that got away")                       | dropped                                             | —                                                                                                    | call lists record events (plan 30 D8); the joke has no stock home (Open question 5)                     |
-| Profile modes (stretch copy)                              | dropped; Profiles stay stock                        | —                                                                                                    | the stock Profiles are the feature                                                                      |
-| Write's destination email                                 | the Email contact; the Write panel's `mailto:`      | —                                                                                                    | unchanged in HTML                                                                                       |
-| Clock, Call divert, Tones, Settings, Snake II, Calculator | stock                                               | —                                                                                                    | the firmware is the content                                                                             |
-| IMEI easter egg                                           | stock `*#06#` with `imei` from the build hash (D12) | 15 digits, Luhn                                                                                      | `*#06#` is stock (plan 22 S8); the IMEI is the phone's                                                  |
+| Content                                                   | Stock home                                          | Form                                                                                                 | Why                                                                                 |
+| --------------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Personas (Lachlan, Recruiter Rachel, Y2K Support)         | Phone book (SIM `EF_ADN`)                           | name + a fiction-range mobile number (D6)                                                            | people are contacts; texting them reaches the LLM (D9)                              |
+| GitHub, LinkedIn, X, Bluesky                              | Phone book (SIM `EF_ADN`)                           | name + a fiction-range number; **Call opens the URL in a new tab** (D10)                             | Lachlan's decision; Call divert's three links move here                             |
+| Source code (this repo)                                   | Service Nos. (SIM `EF_SDN`)                         | `Source code` + number; Call opens the repo                                                          | an operator's own service number; the operator is `LACHLAN`, the site               |
+| Intros (hello, stack, say-hi), bio                        | Inbox (SIM `EF_SMS`), from Lachlan's number         | one SMS each, ≤160 GSM septets; the bio split into at most two SMS                                   | "About me, in SMS form" was already the Inbox's job                                 |
+| Availability                                              | the say-hi SMS                                      | one sentence in it                                                                                   | fits an SMS; the Clock shows the time itself (D13)                                  |
+| Work history (roles)                                      | Inbox, from Lachlan's number                        | one SMS per role: period, title, organisation, one line                                              | a received-calls list holds numbers, not roles; an SMS holds 160 characters         |
+| Projects (name, blurb, year, URL)                         | **SIM services › Projects**                         | `SELECT ITEM` of projects → a text page (blurb, year) → a call step `Open <name>?` when it has a URL | breaks down: a contact holds no text and an SMS holds no link (D16)                 |
+| Colophon (how the site is built)                          | **SIM services › About this site**                  | a text page → a call step to Source code                                                             | longer than an SMS and about the SIM itself (D16)                                   |
+| "Now" items                                               | Reminders (phone memory)                            | plan 30's `preload.reminders`, no alarm, within plan 21's text limit                                 | Reminders are notes to self; a used phone has them (D7)                             |
+| Tagline                                                   | none on the phone; SEO only                         | `site.tagline`                                                                                       | a Welcome note would replace the boot hands animation (Open question 6)             |
+| Missed calls ("ones that got away")                       | dropped                                             | —                                                                                                    | call lists record events (plan 30 D8); the joke has no stock home (Open question 5) |
+| Profile modes (stretch copy)                              | dropped; Profiles stay stock                        | —                                                                                                    | the stock Profiles are the feature                                                  |
+| Clock, Call divert, Tones, Settings, Snake II, Calculator | stock                                               | —                                                                                                    | the firmware is the content                                                         |
+| IMEI easter egg                                           | stock `*#06#` with `imei` from the build hash (D12) | 15 digits, Luhn                                                                                      | `*#06#` is stock (plan 22 S8); the IMEI is the phone's                              |
 
 **D3 - The portfolio SIM card is generated from content and named by its hash (decision).**
 `website/src/content/sim.ts` builds `PORTFOLIO_SIM: StockSimCard` from the content modules: id
@@ -136,7 +131,7 @@ and every such number is in `LINKS` or `PEOPLE`.
 **D5 - Content style for the stock glyphs (rewrite rule).** Plain ASCII punctuation: `'` and `"`
 (no curly quotes), `-` (no en or em dash), `...` (no ellipsis character), `x` (no `×`), no emoji,
 no non-GSM characters in SMS. Task 2 rewrites the sample data accordingly (`—` in the hello intro,
-`→` in persona prompts' plugs are the known cases) and keeps every `SAMPLE DATA` marker.
+`→` in persona prompts' plugs are the known cases) with real copy supplied on 2026-10-30.
 
 **D6 - Numbers come from Australia's fiction ranges (decision).** Personas use ACMA's mobile numbers
 reserved for creative works (`0491 570 006`, `0491 570 156`, … ;
@@ -151,8 +146,7 @@ a returning visitor keeps their reminders and Lachlan's later edits reach new vi
 question 7). Without plan 21 Task 11 the "now" items become one more SIM SMS (`Now: …`) and
 `PRELOAD` is empty (D17).
 
-**D8 - Sample data stays sample.** Lachlan supplies real copy later (VISION assumption); this plan
-moves the sample data into the new shape under the D4/D5 rules and keeps the `SAMPLE DATA` markers.
+**D8 - Real sourced content (updated 2026-10-30).** Use Lachlan's supplied copy verbatim, under the D4/D5 limits. No invented claims, public email or CV.
 
 **D9 - The website network port backs SMS and Chat with the personas (replaces
 `website/src/phone/applications/{sms,chat}.ts`).** `createPortfolioNetwork()` implements
@@ -160,7 +154,7 @@ moves the sample data into the new shape under the D4/D5 rules and keeps the `SA
 
 - `send({ number, text })`: a persona number → POST `/api/sms` `{ contactId, text, history }` with
   the last 12 turns of that number's thread → `deliver({ number, text: reply, sentAt: now })`
-  (Brisbane time); resolves `"sent"` as soon as the POST is accepted (the reply arrives after it, as
+  (US Eastern time); resolves `"sent"` as soon as the POST is accepted (the reply arrives after it, as
   an SMS does). Offline or a network error → `"failed"` (plan 18's failure note). Any other number
   → `"sent"` and no reply (the synthetic network's behaviour);
 - thread history in `hellotimber.threads` (localStorage, keyed by SIM id and number, last 12 turns),
@@ -177,7 +171,7 @@ moves the sample data into the new shape under the D4/D5 rules and keeps the `SA
 
 - a link number → open the URL **synchronously** (plan 30 D6 guarantees `dial` runs inside the
   key event, so the browser keeps the user activation): `window.open(href, "_blank",
-"noopener,noreferrer")` for `https:`, `location.assign` for `mailto:`, a download link for the CV;
+"noopener,noreferrer")` for `https:`, legacy `mailto:`/download support remains in the adapter; no email or CV content is seeded;
   then `control.alerting()`, `control.connected()` and, after `LINK_CALL_MS` (1500 ms),
   `control.released()`. The phone shows `Calling` with the name, the connected `GitHub` screen, the
   network's end (the checkered icon, three beeps) and returns; Dialled numbers lists `GitHub`;
@@ -199,7 +193,7 @@ moves the sample data into the new shape under the D4/D5 rules and keeps the `SA
 | Painter        | `createScreenRenderer({ paint: paintStockScreen })` at 84×48; phone-3d upscales                                                                                                                                                                                                                                                                                                                                                                       |
 | Sound          | `stock-sound.ts`: the nokia-os demo's `WebAudioSound` (`demo/panels/sound.ts`) without its DOM: buzzer square, tone sine plus a second sine for plan 22's `hz2` (DTMF), its gain tables, scheduling at `ctx.currentTime + (atMs - phoneNow)/1000 + 0.03`, the context created on the first key or pointer gesture; mute (the site's SoundToggle) sets the master gain to 0; the vibrator calls `navigator.vibrate` where it exists, never while muted |
 | Lights         | `StockLightsPort` events → React state → `<PhoneStage backlightOn keypadLightOn>` (plan 25's README sketch); the `backlight` setting is deleted                                                                                                                                                                                                                                                                                                       |
-| Clock and date | `host-clock.ts`: `Intl.DateTimeFormat("en-AU", { timeZone: "Australia/Brisbane" })` → `"HH:MM"` and `"DD.MM.YYYY"` (plan 21 D1's validated formats); SMS replies' `sentAt` from the same clock                                                                                                                                                                                                                                                        |
+| Clock and date | `host-clock.ts`: `Intl.DateTimeFormat("en-AU", { timeZone: "America/New_York" })` → `"HH:MM"` and `"DD.MM.YYYY"` (plan 21 D1's validated formats); SMS replies' `sentAt` from the same clock                                                                                                                                                                                                                                                          |
 | Keys           | `keyboard.ts` unchanged: arrows ▲/▼, Enter Navi, Backspace/Escape C, digits, `*`, `#`, `P` power; 3D key taps as today. The 3310 has no green/red keys: Navi is `Call`/`Answer`/`End` by its soft key, C rejects or goes back, held C returns to standby                                                                                                                                                                                              |
 | Tick loop      | `requestAnimationFrame` → `phone.tick(Math.floor(performance.now()))`, the sound port's `phoneNow` set first; a hidden tab catches up on its next frame                                                                                                                                                                                                                                                                                               |
 | Power-on       | at first construction: power down, up 1000 ms later (the nokia-os README's sequence); deep links retarget the boot as today                                                                                                                                                                                                                                                                                                                           |
@@ -222,18 +216,18 @@ a notice, dialling) keep the path `standby` and the URL `/`.
 **D14 - Indexable paths and panels (SEO).** `ROUTE_CONTENT` marks these `index` with a description
 and a panel; everything else is `noindex`:
 
-| Path                                                                            | Panel (server-rendered, `sr-only`)                                                |
-| ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `/`                                                                             | standby: name, job title, the bio (the intro SMS texts), how to drive the phone   |
-| `/menu`                                                                         | the 12/13 top-level entries as links                                              |
-| `/menu/phone-book`, `/menu/phone-book/search`                                   | `<address>`: people and links with real `<a>` (`rel="me"`, `download` for the CV) |
-| `/menu/phone-book/service-nos`                                                  | Source code                                                                       |
-| `/menu/messages`, `/menu/messages/inbox`                                        | the SIM messages as articles with `<time>` and sender names                       |
-| `/menu/messages/write`, `/menu/chat`                                            | how to text the personas; the `mailto:` fallback                                  |
-| `/menu/reminders`, `/menu/reminders/view-all`                                   | the "now" items                                                                   |
-| `/menu/clock`                                                                   | Brisbane time zone and availability                                               |
-| `/menu/games`, `/menu/games/snake`, `/menu/calculator`                          | what the stock game and calculator do                                             |
-| `/menu/sim-services`, `/menu/sim-services/projects`, `/menu/sim-services/about` | the toolkit's items; projects with blurbs, years and links; the colophon          |
+| Path                                                                            | Panel (server-rendered, `sr-only`)                                              |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `/`                                                                             | standby: name, job title, the bio (the intro SMS texts), how to drive the phone |
+| `/menu`                                                                         | the 12/13 top-level entries as links                                            |
+| `/menu/phone-book`, `/menu/phone-book/search`                                   | `<address>`: people and links with real `<a>` (`rel="me"` for social profiles)  |
+| `/menu/phone-book/service-nos`                                                  | Source code                                                                     |
+| `/menu/messages`, `/menu/messages/inbox`                                        | the SIM messages as articles with `<time>` and sender names                     |
+| `/menu/messages/write`, `/menu/chat`                                            | how to text the personas; the `mailto:` fallback                                |
+| `/menu/reminders`, `/menu/reminders/view-all`                                   | the "now" items                                                                 |
+| `/menu/clock`                                                                   | US Eastern time zone and availability                                           |
+| `/menu/games`, `/menu/games/snake`, `/menu/calculator`                          | what the stock game and calculator do                                           |
+| `/menu/sim-services`, `/menu/sim-services/projects`, `/menu/sim-services/about` | the toolkit's items; projects with blurbs, years and links; the colophon        |
 
 The sitemap is `/` plus these paths in stock order (only those `stockMenuFor` lists). The JSON-LD
 Person and `pageHead` are unchanged. A test proves every `ROUTE_CONTENT` key is a stock path and
@@ -258,15 +252,15 @@ says "No service" with links, and steers the handset to `menu/sim-services` as V
 
 **D16 - Where the model breaks down (explicit list).**
 
-| Content                              | Why no standard feature fits                                              | Fallback                                                             |
-| ------------------------------------ | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Project with a blurb and a link      | a contact holds a name and number; an SMS holds text but no callable link | SIM services › Projects: list → text page → `Open <name>?` call step |
-| Colophon, longer than 160 characters | one SMS; concatenated SIM SMS are not supported (plan 30 D2)              | SIM services › About this site (a text page) → Source code call step |
-| A link without a person (repo, CV)   | fits as a contact or service number whose call opens it                   | none needed (D10)                                                    |
-| `mailto:` and downloads              | fit the same way                                                          | none needed                                                          |
-| Lost URLs                            | a phone has no 404                                                        | SIM services (D15)                                                   |
-| `rel="me"`, rich text, images        | an 84×48 phone shows none                                                 | the HTML panels only                                                 |
-| Profile modes, missed-call jokes     | no stock feature holds them                                               | dropped (Open question 5)                                            |
+| Content                                 | Why no standard feature fits                                              | Fallback                                                             |
+| --------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Project with a blurb and a link         | a contact holds a name and number; an SMS holds text but no callable link | SIM services › Projects: list → text page → `Open <name>?` call step |
+| Colophon, longer than 160 characters    | one SMS; concatenated SIM SMS are not supported (plan 30 D2)              | SIM services › About this site (a text page) → Source code call step |
+| A link without a person (repo, project) | fits as a contact or service number whose call opens it                   | none needed (D10)                                                    |
+| `mailto:` and downloads                 | fit the same way                                                          | none needed                                                          |
+| Lost URLs                               | a phone has no 404                                                        | SIM services (D15)                                                   |
+| `rel="me"`, rich text, images           | an 84×48 phone shows none                                                 | the HTML panels only                                                 |
+| Profile modes, missed-call jokes        | no stock feature holds them                                               | dropped (Open question 5)                                            |
 
 **D17 - Dependencies are conditional, each with its fallback.**
 
@@ -378,10 +372,10 @@ Task 6 (they still feed `siteMenu`).
 - [x] TDD D4's rules first (`sim-content.test.ts` with an intentionally bad fixture for each rule), then
       the modules: `PEOPLE` (persona prompts and canned replies from `contacts.ts`, plus numbers),
       `LINKS` (name, number, href, label, `rel`, `download`), `SIM_MESSAGES` (D2's intros, roles,
-      testimonials as `StockSimMessage`s from Lachlan's number, `sentAt` in September 2000),
+      open source as `StockSimMessage`s from Lachlan's number, `sentAt` in September 2000),
       `TOOLKIT` (title `LACHLAN`; `projects` and `about`), `NOW` (reminder preloads), `PORTFOLIO_SIM`
       and its hashed id (D3), `PRELOAD`.
-- [x] Rewrite the sample copy under D5; keep `SAMPLE DATA` markers.
+- [x] Use the supplied real copy under D5 (updated 2026-10-30).
 - [x] `mise exec -- vp install`, `vp run website#test`, `vp check --fix`.
 - [x] Commit: `feat(website): portfolio content as a SIM card`.
 
@@ -392,7 +386,7 @@ Task 6 (they still feed `siteMenu`).
 `website/tests/{network,threads,sms-api}.test.ts`.
 
 - [x] TDD `send` with a stubbed `fetch`: persona number → POST body (contactId, text, the last 12
-      turns) → `deliver` called with the reply, the number and a Brisbane `sentAt`; thread updated
+      turns) → `deliver` called with the reply, the number and an Eastern `sentAt`; thread updated
       both ways; other numbers → `"sent"`, no POST; a rejected fetch → `"failed"`.
 - [x] TDD `dial` with stubbed `window.open`/`location.assign` and fake timers: a link opens before
       `dial` returns (synchronously), then `alerting`, `connected`, `released` after `LINK_CALL_MS`;
@@ -413,7 +407,7 @@ Task 6 (they still feed `siteMenu`).
 - [x] Port the demo's `WebAudioSound` (D12): a fake `AudioContext` records scheduled values; buzzer
       and tone gains per register, `hz2` on a second oscillator, `hz: null` silences, scheduling
       offset, mute → master gain 0, the vibrator → `navigator.vibrate` (none when muted).
-- [x] `host-clock.ts` with a fixed `Date`: `"HH:MM"`/`"DD.MM.YYYY"` in Brisbane across a UTC date
+- [x] `host-clock.ts` with a fixed `Date`: `"HH:MM"`/`"DD.MM.YYYY"` in New York across a UTC date
       change; the `sentAt` stamp.
 - [x] `imei.ts`: 15 digits, Luhn-valid, stable per hash.
 - [x] Commit: `feat(website): stock sound, clock and IMEI adapters`.
@@ -501,7 +495,7 @@ question 11 says to delete the snake package.
 - [x] `mise exec -- vp check`, `vp run -r test`, `vp run website#build`; report the client bundle's
       gzip size against `main` (no gate; record it).
 - [x] Headless QA with `agent-browser` against `mise exec -- vp run website#dev`, reading the
-      `[role=status]` mirror (boot ≈5 s; Enter, arrows, Escape, digits). Record each result: 1. `/` boots to standby (`LACHLAN`, the Brisbane time); reduced motion skips the boot. 2. ▼ opens the name list; ▼ to GitHub; Enter (`Call`) opens a new tab on GitHub; the mirror
+      `[role=status]` mirror (boot ≈5 s; Enter, arrows, Escape, digits). Record each result: 1. `/` boots to standby (`LACHLAN`, the US Eastern time); reduced motion skips the boot. 2. ▼ opens the name list; ▼ to GitHub; Enter (`Call`) opens a new tab on GitHub; the mirror
       shows `Calling`, the connected screen, the end, the list. 3. Menu 2 2: the Inbox lists the SIM messages; reading one shows its text and `Sender:`
       (Lachlan, or the number per D17). 4. Write messages to Lachlan (via Options › Send › Search): `Message sent`, then a reply in
       the Inbox (canned without `ANTHROPIC_API_KEY`). 5. Menu 13: Projects › a project › its text page › OK › `Open <name>?` › OK opens the project. 6. `*#06#` shows the IMEI. 7. Deep links: `/menu/phone-book/search` and `/menu/sim-services/projects` load on that screen;
@@ -523,8 +517,7 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
 2. **Projects in SIM services (D2, D16):** a list with blurbs and an `Open` call. Reverse: projects
    as phone book contacts (call opens them) with blurbs as SMS.
 3. **Work history as SMS (D2):** one SMS per role from Lachlan. Reverse: SIM services › Work history.
-4. **Testimonials as quoted SMS from Lachlan (D2):** `CTO@Acme: …`. Reverse: SMS from the givers'
-   own (fiction) numbers, in the phone book or not.
+4. **Testimonials omitted (updated 2026-10-30):** no sourced quotes supplied.
 5. **Missed-call jokes and profile modes dropped (D2).** Reverse: one SMS each.
 6. **No Welcome note (D2):** the boot shows the hands. Reverse: the tagline (≤36 characters) as a
    preloaded Welcome note, shown for ≈5 s instead of the hands.
@@ -541,7 +534,7 @@ Resolved provisionally so execution is not blocked; each is cheap to reverse.
     the 3D model. Reverse: start without T9 (multi-tap) and never switch.
 13. **No letter keyboard:** desktop letters do not type multi-tap. Reverse: map letters to their
     multi-tap key sequences (a convenience a real phone does not have).
-14. **Phone time is Brisbane's (D12):** the visitor sees Lachlan's time. Reverse: the visitor's own.
+14. **Phone time is Atlanta/Eastern (D12, updated 2026-10-30):** the visitor sees Lachlan's time. Reverse: the visitor's own.
 15. **Service Nos. holds Source code (D2).** Reverse: an empty Service Nos. (the stock note).
 
 ## Conflicts found while planning
@@ -963,3 +956,15 @@ LLM key was introduced and no real portfolio URL or copy was invented.
   website/README.md no longer instructs release owners to repair the resolved seam.
   The deploy-time handoff above remains explicit. No Games code, generated files,
   golden fixtures, TODOS.md, main or another branch changed. Nothing was deployed.
+
+## Content decision — 2026-10-30
+
+D8 now uses Lachlan's real supplied portfolio copy and public profile/project URLs.
+The Inbox now has seven seeded SMS, replacing the original ten. No public email, CV,
+fictional employers or testimonials are included. The first two intros, canned replies,
+Recruiter Rachel, Y2K Support and SMS_RULES remain unchanged.
+
+D12 uses Atlanta's US Eastern time via `clock.timeZone = "America/New_York"`, including
+EST/EDT daylight saving transitions. Host clock, date and incoming SMS timestamps share
+that setting. Fictional link numbers remain in the reserved `075550xxxx` range.
+Historical QA logs above retain the content and time zone they actually verified.

@@ -15,7 +15,7 @@ export const ROUTE_CONTENT: Readonly<Record<string, RouteContent>> = {
     panel: "service-numbers",
   },
   "/menu/messages": {
-    description: "About Lachlan, work history and sample testimonials as SMS.",
+    description: "About Lachlan, work history and open source as SMS.",
     panel: "messages",
   },
   "/menu/messages/inbox": { description: "Read the messages on Lachlan's SIM.", panel: "messages" },
@@ -26,7 +26,7 @@ export const ROUTE_CONTENT: Readonly<Record<string, RouteContent>> = {
   "/menu/chat": { description: "Chat with a portfolio persona over SMS.", panel: "messaging" },
   "/menu/reminders": { description: "What Lachlan is doing now.", panel: "now" },
   "/menu/reminders/view-all": { description: "Notes preloaded on this phone.", panel: "now" },
-  "/menu/clock": { description: "Brisbane time and availability.", panel: "clock" },
+  "/menu/clock": { description: "US Eastern time and availability.", panel: "clock" },
   "/menu/games": { description: "Play the Nokia 3310 games.", panel: "games" },
   "/menu/games/snake": { description: "Play stock Snake II.", panel: "snake" },
   "/menu/calculator": { description: "Use the Nokia 3310 calculator.", panel: "calculator" },
@@ -35,7 +35,7 @@ export const ROUTE_CONTENT: Readonly<Record<string, RouteContent>> = {
     panel: "toolkit",
   },
   "/menu/sim-services/projects": {
-    description: "Sample projects, years and links.",
+    description: "Projects, years and links.",
     panel: "projects",
   },
   "/menu/sim-services/about": {

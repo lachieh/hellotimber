@@ -17,7 +17,7 @@ const content = {
   phoneBook: {
     locations: 50,
     nameLength: 16,
-    entries: [...PEOPLE, ...LINKS.filter((link) => !["source", "project-x"].includes(link.id))].map(
+    entries: [...PEOPLE, ...LINKS.filter((link) => link.kind === "social")].map(
       ({ name, number }) => ({ name, number }),
     ),
   },

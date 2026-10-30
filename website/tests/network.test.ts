@@ -27,7 +27,7 @@ function setup(fetcher = vi.fn<typeof fetch>(async () => Response.json({ reply: 
   return { network, fetcher, storage, open, assign, download };
 }
 afterEach(() => vi.useRealTimers());
-it("posts a persona's history and delivers its reply with Brisbane time", async () => {
+it("posts a persona's history and delivers its reply with New York time", async () => {
   const { network, fetcher, storage } = setup();
   const deliver = vi.fn();
   network.subscribe(deliver);
@@ -41,7 +41,7 @@ it("posts a persona's history and delivers its reply with Brisbane time", async 
   expect(deliver).toHaveBeenCalledWith({
     number,
     text: "Hello!",
-    sentAt: { year: 2026, month: 10, day: 30, hour: 6, minute: 30, second: 40 },
+    sentAt: { year: 2026, month: 10, day: 29, hour: 16, minute: 30, second: 40 },
   });
   expect(createThreads(storage, "test").read(number)).toEqual([
     { who: "me", text: "Hi" },
@@ -89,11 +89,11 @@ it("opens links synchronously, reports call progress and cancels release on hang
   link.hangUp();
   vi.advanceTimersByTime(LINK_CALL_MS);
   expect(control.released).toHaveBeenCalledOnce();
-  network.dial!({ number: LINKS[0]!.number, emergency: false }, control);
-  expect(assign).toHaveBeenCalledWith(LINKS[0]!.href);
-  const cv = LINKS.find((link) => link.id === "cv")!;
-  network.dial!({ number: cv.number, emergency: false }, control);
-  expect(download).toHaveBeenCalledWith(cv.href);
+  const linkedin = LINKS.find((link) => link.id === "linkedin")!;
+  network.dial!({ number: linkedin.number, emergency: false }, control);
+  expect(open).toHaveBeenCalledWith(linkedin.href, "_blank", "noopener,noreferrer");
+  expect(assign).not.toHaveBeenCalled();
+  expect(download).not.toHaveBeenCalled();
 });
 it("leaves personas unanswered and connects unknown numbers until End", () => {
   vi.useFakeTimers();

@@ -59,6 +59,22 @@ function check(sim: StockSimCard, preload: StockPreload = PRELOAD) {
 
 describe("portfolio SIM content", () => {
   it("boots real stock firmware with room for five replies", () => check(PORTFOLIO_SIM));
+  it("seeds seven messages and keeps project links out of the phone book", () => {
+    expect(PORTFOLIO_SIM.messages.entries).toHaveLength(7);
+    const names = PORTFOLIO_SIM.phoneBook.entries.map((entry) => entry?.name);
+    expect(names).toEqual([
+      "Lachlan",
+      "Recruiter Rachel",
+      "Y2K Support",
+      "GitHub",
+      "LinkedIn",
+      "X",
+      "Bluesky",
+    ]);
+    expect(PORTFOLIO_SIM.serviceNumbers.map((entry) => entry?.name)).toEqual(["Source code"]);
+    for (const link of LINKS.filter((link) => link.kind === "project"))
+      expect(names).not.toContain(link.name);
+  });
   it("names the SIM by all its content, deterministically", () => {
     expect(PORTFOLIO_SIM.id).toMatch(/^hellotimber-[0-9a-f]{8}$/);
     const { id, ...content } = PORTFOLIO_SIM;

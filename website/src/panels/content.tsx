@@ -1,7 +1,7 @@
 import ContentPanel from "../components/ContentPanel";
 import { LINKS, SOURCE_LINK, type PortfolioLink } from "../content/links";
 import { PEOPLE, personByNumber } from "../content/people";
-import { SIM_MESSAGES } from "../content/sim-messages";
+import { SIM_MESSAGES, INTRO_MESSAGE, STACK_MESSAGE, BIO_MESSAGE } from "../content/sim-messages";
 import { PROJECTS, COLOPHON, TOOLKIT } from "../content/toolkit";
 import { NOW } from "../content/now";
 import { clock } from "../content/clock";
@@ -16,14 +16,14 @@ function LinkContact({ link }: { link: PortfolioLink }) {
 export function ContactsPanel() {
   return (
     <ContentPanel title="Phone book">
-      <p>Sample contacts and links. Call a link on the phone to open it.</p>
+      <p>Contacts and links. Call a link on the phone to open it.</p>
       <address>
         {PEOPLE.map((person) => (
           <p key={person.id}>
             {person.name}: {person.number}
           </p>
         ))}
-        {LINKS.filter((link) => !["source", "project-x"].includes(link.id)).map((link) => (
+        {LINKS.filter((link) => link.kind === "social").map((link) => (
           <p key={link.id}>
             <LinkContact link={link} />
           </p>
@@ -42,7 +42,7 @@ export function ServiceNumbersPanel() {
 export function MessagesPanel() {
   return (
     <ContentPanel title="Messages">
-      <p>Sample messages on Lachlan's SIM, including fictional roles and testimonials.</p>
+      <p>Messages on Lachlan's SIM: introductions, work history and open source.</p>
       {SIM_MESSAGES.map((message, index) => {
         const t = message.sentAt;
         const pad = (value: number) => String(value).padStart(2, "0");
@@ -59,7 +59,6 @@ export function MessagesPanel() {
   );
 }
 export function MessagingPanel() {
-  const email = LINKS.find((link) => link.id === "email")!;
   return (
     <ContentPanel title="Text a persona">
       <p>
@@ -73,16 +72,20 @@ export function MessagingPanel() {
           </li>
         ))}
       </ul>
-      <p>
-        Or <a href={email.href}>send an email</a>.
-      </p>
+      <ul>
+        {LINKS.filter((link) => link.kind === "social").map((link) => (
+          <li key={link.id}>
+            <LinkContact link={link} />
+          </li>
+        ))}
+      </ul>
     </ContentPanel>
   );
 }
 export function NowPanel() {
   return (
     <ContentPanel title="Now">
-      <p>Sample notes preloaded in Reminders.</p>
+      <p>Notes preloaded in Reminders.</p>
       <ul>
         {NOW.map((item) => (
           <li key={item.text}>{item.text}</li>
@@ -94,15 +97,14 @@ export function NowPanel() {
 export function ClockPanel() {
   return (
     <ContentPanel title="Clock">
-      <p>The phone shows Australia/Brisbane time (AEST, UTC+10).</p>
-      <p>Sample availability: {clock.availability}</p>
+      <p>The phone shows US Eastern time (ET), with daylight saving time.</p>
+      <p>Availability: {clock.availability}</p>
     </ContentPanel>
   );
 }
 export function ProjectsPanel() {
   return (
     <ContentPanel title="Projects">
-      <p>Sample projects; links are placeholders.</p>
       {PROJECTS.map((project) => {
         const link = LINKS.find((link) => link.id === project.linkId);
         return (
@@ -165,9 +167,9 @@ export function CalculatorPanel() {
 export function StandbyPanel() {
   return (
     <ContentPanel title="Lachlan Heywood">
-      <p>{SIM_MESSAGES[0]?.text}</p>
-      <p>{SIM_MESSAGES[1]?.text}</p>
-      <p>{SIM_MESSAGES[3]?.text}</p>
+      <p>{INTRO_MESSAGE}</p>
+      <p>{STACK_MESSAGE}</p>
+      <p>{BIO_MESSAGE}</p>
       <p>
         Use arrows to scroll, Enter for the NaviKey, Escape or Backspace for C. Digits, * and # are
         the phone keypad; hold P for power.

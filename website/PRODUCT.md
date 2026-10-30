@@ -52,9 +52,10 @@ against emulator captures of the real firmware.
 
 ## Evidence on Hand
 
-- Content in `website/src/content/` (phone book, messages, chat, profiles, …) is largely
-  SAMPLE DATA pending real copy; do not invent claims, roles, employers or testimonials.
-- No real CV, origin URL or social handles yet (`site.ts` holds placeholders).
+- Portfolio content is real and sourced from Lachlan's public GitHub profile and history or
+  supplied directly by him. The site uses hellotimber.com and his real social handles.
+- There is no public email or CV yet. Contact links lead to GitHub, LinkedIn, Bluesky and X.
+- Recruiter Rachel and Y2K Support remain fictional personas.
 
 ## Product Principles
 

@@ -1,7 +1,6 @@
 import type { StockSimToolkit, StockToolkitStep } from "@hellotimber/nokia-os";
 import { LINKS, SOURCE_LINK } from "./links";
 
-// SAMPLE DATA - existing projects; the URLs remain placeholders.
 export const PROJECTS = [
   {
     id: "this-site",
@@ -11,18 +10,25 @@ export const PROJECTS = [
     linkId: "source",
   },
   {
-    id: "project-x",
-    name: "Project X",
-    blurb: "A made-up data pipeline that processed made-up terabytes.",
-    year: "2024",
-    linkId: "project-x",
+    id: "tambo",
+    name: "tambo",
+    blurb: "Generative UI SDK for React. Contributor: SDK, web app, monorepo and security.",
+    year: "2025",
+    linkId: "tambo",
   },
   {
-    id: "tool-y",
-    name: "tool-y",
-    blurb: "A fictional CLI with 12 imaginary GitHub stars.",
-    year: "2023",
-    linkId: undefined,
+    id: "wasmcloud-ts",
+    name: "wasmCloud TS",
+    blurb: "Libraries, tooling and the washboard UI for wasmCloud.",
+    year: "2024",
+    linkId: "wasmcloud-ts",
+  },
+  {
+    id: "herdr-cmux",
+    name: "herdr-plugin-cmux",
+    blurb: "A cmux plugin for herdr.",
+    year: "2026",
+    linkId: "herdr-cmux",
   },
 ];
 export const COLOPHON =
