@@ -1,4 +1,4 @@
-# Plan 18c - Messages III: Chat, Templates, Smileys, Picture messages and Info service
+# Plan 18c - Messages III: Chat, Templates, Smileys and Info service
 
 > **Fidelity standard (2026-10-15):** `AGENTS.md` "Fidelity standard" supersedes this plan's tolerance text.
 
@@ -21,13 +21,20 @@ probes and recaptures, the planning probes in `$REF/captures/scratch-plan18c/` (
 never imported; `NOTES.md` lists them), and the canonical recaptures Task 0 writes to
 `$REF/captures/6.39/plan18c/`. Read `$REF/captures/README.md`
 and plans 13-16, 18, 18b and 19 in full before starting.
-**Status:** in progress. Done and asserted: Templates, Smileys and insertion, Chat, Topics and
-the Service command editor (all 163 goldens of `goldens/index/18c.json`). Blocked: the picture
-folder, the saver gallery, picture and business-card arrivals and picture sends. Composer Send
-is now implemented and asserted (2026-10-29 resume below). Picture-directory research and
-canonical picture/card receipt captures remain incomplete. See Tasks 6, 7, 10 and 11.
+**Status:** done (pictures, screen saver and card receipt split to
+[plan 18d](18d-pictures-screen-saver-card-receipt.md)). Delivered: Templates, Smileys and
+insertion, Chat, Topics, Service command editor (163 asserted goldens in index 18c), and
+Composer Send (`composer/send-ok`, asserted in index 27).
 
-## Goal
+**Parent decision (Lachlan's delegate, 2026-10-29):** all remaining Picture messages
+(Messages 2-4), Screen saver picture (5-9-4 and `12-*-2-9-4`), picture/gallery and
+business-card receipt work is blocked on captures that do not exist: no verified repaired
+v6.39 picture directory, and picture Save freezes. Move this work to plan 18d, status
+**blocked (needs repaired-state captures)**, and close 18c with everything else it delivered.
+This decision supersedes the original whole-scope completion gates below. Historical research
+and proposed contracts remain as context; 18d owns their unfinished picture/card portions.
+
+## Original scope (picture work now in 18d)
 
 Give `@hellotimber/nokia-os` the remaining stock v6.39 Messages content and Chat, pixel- and
 timing-faithful to the captures:
@@ -504,7 +511,11 @@ Independent verified groups can finish while a capture or owner dependency is un
 
 ## Tasks
 
-### Task 0 - Complete research and capture the v6.39 flows (REF only)
+### Task 0 - Research and captured v6.39 flows (REF only)
+
+Closeout: R/P/A/S/B and picture N/G are transferred to 18d. Partial non-picture probes
+below describe the limits of the delivered captured scope; they do not claim uncaptured
+research exists. The parent decision above closes this plan on that basis.
 
 **Files:** explorations only under `$REF/captures/scratch-plan18c/` (tools, image copies, logs,
 notes). After verification, canonical generator `$REF/captures/scripts/gen_v639_plan18c.py`,
@@ -518,22 +529,22 @@ append to `$REF/captures/README.md`. v5.79 outputs remain comparative scratch ev
       worker may update the common harness. Keep all experimental image mutations in scratch.
       Deviation: the isolated copy is `tools/harness-p18c` (tools/harness plus the scratch
       `smsbin`), as the coordinator asked; `tools/harness` is unchanged.
-- [ ] **R picture directory (bounded research, maximum 3 hours):** not attempted beyond the
-      planning probes (virgin, factory, PPM B, v5.79). No repaired image exists, so the picture
-      folder, Save, the gallery and every picture flow stay blocked (D4).
-- [ ] **F defaults** (partial): virgin lists (no response), a fresh Restore on plan 15's code image
-      (lists provisioned, Topics emptied), factory lists, Read of every entry, Edit/Erase of a
-      default, a filled empty slot, Restore over edits (defaults back). Not done: saveflash/reboot,
-      first boot versus reset, the PPM language comparison.
+- Transferred to 18d: **R picture directory (bounded research, maximum 3 hours):** not attempted beyond the
+  planning probes (virgin, factory, PPM B, v5.79). No repaired image exists, so the picture
+  folder, Save, the gallery and every picture flow stay blocked (D4).
+- Research limitation: **F defaults** (partial): virgin lists (no response), a fresh Restore on plan 15's code image
+  (lists provisioned, Topics emptied), factory lists, Read of every entry, Edit/Erase of a
+  default, a filled empty slot, Restore over edits (defaults back). Not done: saveflash/reboot,
+  first boot versus reset, the PPM language comparison.
 - [x] **T lists/editing:** eight slots and wrap both directions, row icon/text origin, truncation,
       Read, Options, Edit keys/counter/limit, empty Save, Erase confirmation/cancel and notes.
       Establish actual capacity rather than assuming a ninth slot can be added.
-- [ ] **E insertion** (partial): Template and Insert smiley in Write messages (every slot, after
-      text, mid-text, a pending character) and Chat. Not done: Reply/Edit/Forward, T9 composing,
-      the limit.
-- [ ] **P pictures, after R:** blocked on R.
-- [ ] **A arrivals:** not captured (Task 7 is blocked on the port extension, VISION).
-- [ ] **S send/gallery, after R:** blocked on R.
+- Research limitation: **E insertion** (partial): Template and Insert smiley in Write messages (every slot, after
+  text, mid-text, a pending character) and Chat. Not done: Reply/Edit/Forward, T9 composing,
+  the limit.
+- Transferred to 18d: **P pictures, after R:** blocked on R.
+- Transferred to 18d: **A arrivals:** not captured (Task 7 is blocked on the port extension, VISION).
+- Transferred to 18d: **S send/gallery, after R:** blocked on R.
 - [x] **C Chat:** Menu 3 and Inbox Chat; number/Search/name, name prefill/empty/cancel, T9 header
       and `140/1` boundaries, Options with and without composed word. Send and exact on-air text,
       successful/failed send, wrapped multi-line history, scroll, OK/C/held C/Exit. Partner and
@@ -548,9 +559,9 @@ append to `$REF/captures/README.md`. v5.79 outputs remain comparative scratch ev
 - [x] **X Service command editor:** empty header/counter `182`/Back, digits/letters/`*`/`#`, limit,
       Options/Send, `*100#` for 20 seconds, Quit/C and result. No USSD reply invention. Not done:
       the limit, Quit.
-- [ ] **B cards:** blocked on plan 19 (not in this checkout).
-- [ ] **N/G** (partial): note timelines and glyphs come from the imported goldens; no audio
-      recordings were taken (the new notes' warning tones stay UNVERIFIED).
+- Transferred to 18d: **B cards:** blocked on plan 19 (not in this checkout).
+- Research limitation: **N/G** (partial): note timelines and glyphs come from the imported goldens; no audio
+  recordings were taken (the new notes' warning tones stay UNVERIFIED).
 - [x] Promote only successful scripts into canonical sections; implement `--only`, `ocr`, `check`
       and bounded runs. Each section restarts a documented image/setup state. Use `record` before
       trigger, same-name audio and key logs; OCR to `text.json` (plan 14 format). `check` verifies
@@ -666,11 +677,11 @@ resource-provider and `src/resources/index.ts` registrations (one line each).
       No blanket changes to shared `widget-sprites.ts`, `glyph-overrides.ts` or resource tests.
       `ROM_PICTURES`: none (R not established). Every glyph the texts need was already in the
       stock faces (U+E000 included).
-- [ ] Blocked on R: each generated picture equals its independently imported v6.39 viewer crop (72×28 at the
-      measured origin). Every default text renders in the required stock faces. Resource stills
-      receive real viewer scenarios before becoming asserted.
-- [ ] Blocked with Task 7: emit measured arrival/send timings with sample count and spread. Use plan 16's sound
-      format/comparison rather than asserting WAV synthesis. Reuse existing sound programs.
+- Transferred to plan 18d (blocked on R): each generated picture equals its independently imported v6.39 viewer crop (72×28 at the
+  measured origin). Every default text renders in the required stock faces. Resource stills
+  receive real viewer scenarios before becoming asserted.
+- Transferred to plan 18d (blocked with Task 7): emit measured arrival/send timings with sample count and spread. Use plan 16's sound
+  format/comparison rather than asserting WAV synthesis. Reuse existing sound programs.
 - [x] Run twice: `mise exec -- vp run @hellotimber/nokia-os#regenerate` (owner registers
       the provider); prove idempotence and freshness. Verify package test and manual `vp check --fix`.
 - [x] Commit: `feat(nokia-os): derive Messages content resources from goldens`.
@@ -687,9 +698,9 @@ resource-provider and `src/resources/index.ts` registrations (one line each).
       add/edit/erase bounds, duplicate/full behaviour and factory-empty state follow I captures.
       Deviation: a topic keeps its number as the prompt's text (the junk `p9` included); the
       prompt itself bounds new numbers to three digits (I), so no separate ID field is needed.
-- [ ] Blocked on P/R: pictures encode slots and any built-in text overlays/copies only after P verifies them.
-      Test capacity/order/name/retention, Save/replace/full and erased selection using independent
-      expected states. Preserve virgin no-response; repair-state data is an explicit test seed.
+- Transferred to plan 18d (blocked on P/R): pictures encode slots and any built-in text overlays/copies only after P verifies them.
+  Test capacity/order/name/retention, Save/replace/full and erased selection using independent
+  expected states. Preserve virgin no-response; repair-state data is an explicit test seed.
 - [x] Register each record through its feature's `records`; no `records.ts` rewrite. Chat name
       gets a record only if cold reboot proves persistence; history retention follows C.
       (`templates`, `smileys`: Task 5's feature; `info-topics`: Task 9's; no `chat` record, D9.)
@@ -724,54 +735,11 @@ registration lines; delete only these nodes' owned placeholder lines.
 - [x] Verify package test and manual `vp check --fix`.
 - [x] Commit: `feat(nokia-os): implement Templates, Smileys and editor insertion`.
 
-### Task 6 - Picture folder and screen-saver gallery (TDD, R gate)
+### Tasks 6 and 7 - Transferred to plan 18d
 
-**Files:** `src/firmware/features/picture-messages.ts` (new),
-`src/widgets/{picture-view,gallery}.ts`, `src/display/widgets/{picture,gallery}.ts` (new),
-`tests/widgets-picture.test.ts`, `tests/picture-flows.test.ts` (new), plan acceptance/support;
-one-line feature/widget/painter registrations and owned placeholder removals.
-
-- [ ] Gate on R's verified v6.39 image. If missing, retain placeholders/pending covers and report
-      the dependency; continue verified incoming view work in Task 7. No composed folder fallback.
-      Outcome (2026-10-15): blocked. R was not attempted beyond the planning probes: the Save
-      stall leaves no emulator fault in the log (`p4-factory.err`), so telling a directory fault
-      from an emulator fault needs firmware tracing, a research task of its own. 2-4, 5-9-4 and
-      12-n-2-9-4 keep their `18c` placeholders; `tree/02-messages/2-4.leaf` and the six
-      `sound/note/{2-4,5-9-4,12-n-2-9-4}` goldens stay `pending:18c` in plans 14 and 16.
-- [ ] Failing pixel tests use literal models and independent goldens for image origin, text
-      wrapping/scroll, icon rows, counter and gallery. Key tests cover folder order/wrap, stored
-      versus built-in Options, Edit text, Erase/cancel/full, Use number and Details/Exit.
-- [ ] Gallery binds 5-9-4 and profile copies, shares alias policy with 17, saves choice and follows
-      captured missing/selected notes. Virgin remains no-response. Standby saver is follow-up.
-- [ ] Add `pictures/folder-*`, `view-*`, `rom-*`, `screen-saver/*` scenarios for captured state;
-      one state must not satisfy another state's golden by changing its input behind the test.
-- [ ] Verify package test and manual `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): implement the captured picture folder and saver gallery`.
-
-### Task 7 - Picture and business-card network flows (TDD)
-
-**Files:** `src/content/network.ts` (new), `src/firmware/features/picture-messages.ts`,
-`tests/picture-network.test.ts`, `tests/picture-arrivals.test.ts` (new),
-`tests/support/18c-fixtures.ts`, plan acceptance/support; one-line network/public-type registrations.
-
-- [ ] Gate on plan 18's registered delivery/dispatch interface. Keep D6 payload types here;
-      reuse plan 18 validation for number/timestamp and plan 19 validation for contacts.
-      Outcome (2026-10-15): blocked. VISION keeps the port SMS-only and states that it does not
-      authorize D6's picture/card extension, so `StockIncoming`, `sendPicture` and the binary
-      kinds wait for an owner decision; no A or B captures exist; card Save needs plan 19 Task 5
-      (unmerged, `t3/p19-phone-book`). Plan 27's `composer/send-ok` (a ringtone SMS) is pending
-      on the same extension.
-- [ ] Failing tests: unchanged text SMS, invalid art/timestamp/text, one send, missing optional
-      sender, rejected Promise, late result after power-off, off-phone queue, two arrivals,
-      cleanup and phone isolation. Tick sizes 1/16/1000 ms produce identical due event times.
-- [ ] Notice/View/C at standby and interruptions elsewhere use captured A/B policy. Picture
-      Save/Forward/full notes require P/S captures; do not implement or assert the captured stall
-      as a successful Save. Reuse plan 16 message alert and plan 18 `setNotice({ open })`.
-- [ ] Business-card View/Save/full/cancel requires B and plan 19 Task 5. If unavailable, keep
-      that subtask pending and report it; do not fake a phone book. Add every verified arrival,
-      save/send and sound scenario to the plan file.
-- [ ] Verify package test and manual `vp check --fix`.
-- [ ] Commit: `feat(nokia-os): deliver pictures and business cards through the network port`.
+Picture folder/gallery and picture/card network flows, their repair research, proposed
+D4-D7 contracts and blockers now live in [plan 18d](18d-pictures-screen-saver-card-receipt.md).
+Composer Send is complete here; its historical port blocker is resolved for outgoing tones.
 
 ### Task 8 - Stock Chat with T9 (TDD)
 
@@ -888,9 +856,8 @@ if not already present and owned topic/service-command placeholder removals.
 - [x] Run `mise exec -- vp check --fix`, `mise exec -- vp run -r test`,
       `mise exec -- vp run website#build`; verify `git diff <implementation-base> -- website/`
       and phone-core are empty. Run generators and scoped formatter twice to stability.
-- [ ] Mark row 18c and this plan `done` only after all scope/dependency gates pass; otherwise
-      report verified groups and exact remaining gates. Never stage `TODOS.md`.
-      Not done: Tasks 6 and 7 are blocked (above), so row 18c stays `in progress`.
+- [x] Close row 18c and this plan as done under the parent decision above; remaining
+      picture demo/QA and Task 10 ownership closeout move to 18d. Never stage `TODOS.md`.
 - [x] Commit: `docs: document stock Chat and Messages content (plan 18c)` (not "complete").
 
 ## Open questions resolved provisionally
@@ -907,7 +874,7 @@ if not already present and owned topic/service-command placeholder removals.
 4. **Phone book dependency:** Search and received-card Save are scoped to 19's existing APIs;
    completion waits for its Tasks 5/10. Other content and Chat editor/history work can proceed.
 5. **Service commands and info reception:** reproduce observed unanswered service-command UI.
-   No cell-broadcast receipt without a capture source. Standby saver is follow-up, gallery is 18c.
+   No cell-broadcast receipt without a capture source. Standby saver is follow-up, gallery is now 18d.
 6. **Shared registrations:** new delivery/editor/resource hooks are owner prerequisites. Report
    API drift before implementation; do not improvise edits to shared dispatchers.
 
@@ -926,7 +893,7 @@ if not already present and owned topic/service-command placeholder removals.
   preserve all raw virgin covers while testing factory/repaired states separately.
 - `regenerate` is defined in `vite.config.ts`, rather than the package scripts.
 
-## Done means
+## Original completion criteria (superseded by closure decision)
 
 - All scoped flows are implemented and match independently imported v6.39 pixels/timings;
   provenance and virgin/factory/repaired states are explicit. Uncaptured required flows remain
@@ -988,3 +955,19 @@ Logs: `/tmp/18c-final-tests.log`, `/tmp/18c-final-check.log`, `/tmp/18c-final-bu
 Composer transmission and its one owner golden are complete; Tasks 6/7 as a whole and
 plan 18c are not complete. The seven picture/gallery fixtures remain pending. No new known
 gap, pixel change, timing-tolerance change, dependency or Games change was introduced.
+
+## Closure (2026-10-29)
+
+18c is **done** under the parent scope decision. All remaining picture resources/storage,
+repair/capture tasks, Tasks 6/7 and picture/card portions of Tasks 10/11 are tracked in
+[18d](18d-pictures-screen-saver-card-receipt.md). The seven pending goldens are re-owned to
+`pending:18d` in their original indexes (14/16); index 18c remains 163 asserted fixtures.
+Earlier in-progress statements above record historical checkpoints, not current status.
+
+Closure verification (Node 22.22.3): `vp check --fix`, `vp check`, uncached
+`VITEST_MAX_WORKERS=6 vp run -r --no-cache test`, and `vp run website#build` pass.
+Workspace totals: 258 files, 11,736 passed, 120 expected failures and 160 TODOs (0/6 cache
+hits). Nokia OS: 182 files, 11,088 passed, 599.05 s. Golden totals: 3,304 fixtures,
+3,144 asserted and 160 pending (18d: 7, 24: 144, 26: 6, 22b: 3). No `pending:18c`
+fixtures remain. Repeat import leaves all 3,321 golden/index files byte-identical. Coverage
+accepts 18d as a pending owner without an index or acceptance file; no guard change is needed.

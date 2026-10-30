@@ -144,7 +144,7 @@ it(
 
 it("allows resource evidence from an honestly pending LCD golden", () => {
   const pending = index.find((entry) => entry.id === "tree/02-messages/2-4.leaf")!;
-  expect(pending.status).toBe("pending:18c");
+  expect(pending.status).toBe("pending:18d");
   const inputs = compose([
     {
       plan: "18c",
@@ -158,7 +158,7 @@ it("allows resource evidence from an honestly pending LCD golden", () => {
     },
   ]);
   expect(inputs.textRuns["tree/02-messages/2-4.leaf"]!["a"]![0]!.text).toBe("Picture");
-  expect(pending.status).toBe("pending:18c");
+  expect(pending.status).toBe("pending:18d");
 });
 
 it.each([
@@ -379,7 +379,7 @@ describe("plan-owned generated modules", () => {
     );
     expect(result["consumer.ts"]).toBe(expected);
     expect(index.find((entry) => entry.id === "tree/02-messages/2-4.leaf")?.status).toBe(
-      "pending:18c",
+      "pending:18d",
     );
   });
   it("rejects two plans writing the same output", () => {

@@ -17,7 +17,7 @@ export function profileSetting(key: string): { prefix: string; setting: string }
 export const tonesFeature: StockFeature = {
   name: "tones",
   placeholders: {
-    "5-9-4": "18c", // Screen saver › Screen saver: nothing in the virgin EEPROM
+    "5-9-4": "18d", // Screen saver › Screen saver: nothing in the virgin EEPROM
   },
   // Plan 16 (Tones and every Personalise): the Keypad tones list's keys beep at the option
   // highlighted (▲/▼ at the one they move to), C at the stored one (Task 0); the preview lists

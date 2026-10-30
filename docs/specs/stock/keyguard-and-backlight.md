@@ -121,7 +121,7 @@ Every position below paints its golden pixel for pixel (`tests/keyguard-paint.te
 | Operator `Orange F`, caller `0412345678`, clock 10:10                  | test inputs                                            |
 
 UNVERIFIED: the LED rise and fall times (the captures are binary); charging (no charger model);
-the car kit's `Lights` (no PPH-1); the screen saver with a picture (plan 18c); the alarm's LED
+the car kit's `Lights` (no PPH-1); the screen saver with a picture (plan 18d); the alarm's LED
 blink (plan 21); emergency numbers other than those tried; whether a call in progress holds the
 LEDs on; Unlock during the hint (nokia-os: unlocks as at the locked standby); a key during
 `Keypad active` (ends it) or `Keypad locked` (the hint, no lead); the digits typed while locked

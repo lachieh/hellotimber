@@ -308,12 +308,12 @@ describe("plan 18 goldens", () => {
     expect(index.filter((entry) => entry.status === "pending:18b").map((e) => e.id)).toEqual([]);
   });
 
-  it("re-owns Chat, the content leaves and their goldens to plan 18c (D1)", () => {
-    // Picture messages and the screen saver gallery: no verified v6.39 capture (plan 18c D4).
+  it("keeps delivered content asserted and transfers blocked pictures to plan 18d", () => {
+    // Picture messages and the screen saver gallery: no verified v6.39 capture (plan 18d D4).
     for (const number of ["2-4", "5-9-4", "12-*-2-9-4"])
-      expect(PLACEHOLDER_OWNERS[number], number).toBe("18c");
+      expect(PLACEHOLDER_OWNERS[number], number).toBe("18d");
     const status = new Map(index.map((entry) => [entry.id, entry.status]));
-    expect(status.get("tree/02-messages/2-4.leaf")).toBe("pending:18c");
+    expect(status.get("tree/02-messages/2-4.leaf")).toBe("pending:18d");
     // Plan 18c Tasks 5, 8 and 9: Templates, Smileys (their virgin no response), Chat, Topics
     // and the Service command editor.
     for (const number of ["2-5", "2-6", "3", "2-8-4-1-**", "2-8-4-2-**", "2-8-4-3-**", "2-10"]) {

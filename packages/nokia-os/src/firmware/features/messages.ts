@@ -1,6 +1,6 @@
 // Messages (menu 2; plan 18): Write messages, the message centre and voice mailbox numbers,
 // Message settings' virgin values, Info service's setter level and topics, and the leaves plan
-// 18c owns (placeholders until then).
+// 18d owns (placeholders until then).
 import { DICTIONARY_KEY, DICTIONARY_LABELS, VIRGIN_DICTIONARY } from "../../messages/bindings";
 import { MESSAGES_RECORD } from "../../messages/store";
 import { openBox } from "../../messages/read";
@@ -76,7 +76,7 @@ const voiceMailbox: ScreenBinding = ({ settings, noteSound }, { key, number }) =
 export const messagesFeature: StockFeature = {
   name: "messages",
   placeholders: {
-    "2-4": "18c", // Picture messages: nothing in the virgin EEPROM
+    "2-4": "18d", // Picture messages: nothing in the virgin EEPROM
   },
   screens: {
     // Write messages: the editor, in T9 while Dictionary is English (plan 18b).

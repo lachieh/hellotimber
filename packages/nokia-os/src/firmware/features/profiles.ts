@@ -487,7 +487,7 @@ export const profilesFeature: StockFeature = {
   // Every profile's Personalise is General's (plan 14 S6).
   sameAs: { "12-3-2": "12-2-2", "12-4-2": "12-2-2", "12-5-2": "12-2-2", "12-6-2": "12-2-2" },
   placeholders: {
-    "12-*-2-9-4": "18c", // Personalise › Screen saver › Screen saver: nothing in the virgin EEPROM
+    "12-*-2-9-4": "18d", // Personalise › Screen saver › Screen saver: nothing in the virgin EEPROM
   },
   // Activate (D3) and Rename (D9; General has none).
   screens: Object.fromEntries([

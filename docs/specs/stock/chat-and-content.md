@@ -115,16 +115,20 @@ The editor with the pen and the counter `182`, soft key `Back` while empty, `Sen
 Send shows `Requesting` with `Quit` for ≈14.9 s, then `Not done` (≈2.9 s), then standby: the
 emulator answers no USSD (Task 0 X).
 
-## Unresolved (blocked)
+## Unresolved (blocked, owned by plan 18d)
+
+[Plan 18d](../../plans/18d-pictures-screen-saver-card-receipt.md) owns the remaining
+picture/gallery and card receipt work split from completed plan 18c on 2026-10-29.
 
 - **Picture messages (2-4), Screen saver › Screen saver (5-9-4, 12-n-2-9-4):** v6.39 opens no
   picture folder (virgin or factory) and stalls on Save; Task 0 R (a repaired picture directory)
   was not established, so the folder, the gallery and the stored and built-in pictures stay
-  plan 18c placeholders (D4). v5.79's folder is comparative evidence only.
+  plan 18d placeholders (D4). v5.79's folder is comparative evidence only.
 - **Incoming and outgoing picture messages, business cards:** the network port's picture and
-  card kinds (D6) await the owner's contract reconciliation (VISION); card Save needs plan 19.
-- **Sending a Composer tone** (plan 27's `composer/send-ok`, `pending:18c`): a binary Smart
-  Messaging SMS, the same unauthorized port extension.
+  card kinds (D6) await the owner's contract reconciliation (VISION). Plan 19's store
+  is now present; repaired-state and complete card receipt captures are still missing.
+- **Composer Send is complete:** plan 27's `composer/send-ok` is asserted through
+  `StockNetworkPort.sendRingtone` (plan 18c); it is independent of the picture/card gate.
 - **Card Save:** needs the card kind above.
 
 ## Resume research, 2026-10-29

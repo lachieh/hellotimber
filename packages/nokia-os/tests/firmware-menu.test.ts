@@ -331,7 +331,7 @@ describe("PlaceholderApplication", () => {
     expect(owners["menu/chat"]).toBeUndefined();
     expect(owners["menu/tones/composer/empty-4"]).toBeUndefined();
     expect(owners).toMatchObject({
-      "menu/messages/picture-messages": "18c",
+      "menu/messages/picture-messages": "18d",
       "menu/games/bantumi/new-game": "24",
     });
   });

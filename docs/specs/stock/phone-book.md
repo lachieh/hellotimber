@@ -210,4 +210,4 @@ ringback does not imply a connected call.
 - `Sending b'card`'s link time on a live network (the synthetic cell's 3240 ms).
 - SIM writes surviving a real power cycle with the same card (the harness never writes the
   fixture back; nokia-os keeps the SIM in the EEPROM under its identity).
-- Receiving a business card (plan 18c).
+- Receiving a business card (plan 18d).

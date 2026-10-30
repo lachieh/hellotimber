@@ -61,10 +61,10 @@ export const SAME_AS: Readonly<Record<string, string>> = {
  * deletes only its own group; equal to the firmware features' placeholders (coverage guard).
  */
 export const PLACEHOLDER_OWNERS: Readonly<Record<string, string>> = {
-  // Plan 18c: Chat and content (plan 18 D1).
-  "2-4": "18c", // Picture messages: nothing in the virgin EEPROM
-  "5-9-4": "18c", // Screen saver › Screen saver: nothing in the virgin EEPROM
-  "12-*-2-9-4": "18c",
+  // Plan 18d: Pictures and screen-saver gallery (split from plan 18c).
+  "2-4": "18d", // Picture messages: nothing in the virgin EEPROM
+  "5-9-4": "18d", // Screen saver › Screen saver: nothing in the virgin EEPROM
+  "12-*-2-9-4": "18d",
 
   // Plan 24: Games II.
   "8-3-1": "24", // Bantumi › New game
