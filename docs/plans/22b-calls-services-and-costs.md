@@ -1,6 +1,6 @@
 # Plan 22b — Calls II: services and costs
 
-**Status:** in progress — bounded Task 0 continuation recorded; Task 1 evidence imported, acceptance incomplete; runtime implementation not started.
+**Status:** in progress — bounded Task 0 done; Task 1 scenarios complete; Tasks 2–5 remain unimplemented.
 **Prerequisites:** plans 22, 25, 30 and 31 done.
 **Ground truth:** `docs/specs/stock/calls.md`, plan 22's S9, S15, S22 and S27,
 `$REF/captures/scratch-plan22/` and `$REF/captures/6.39/plan22/`, where
@@ -128,9 +128,9 @@ has been flipped and no implementation task has been completed.
 
 **Files:** capture set, resource inputs/modules, acceptance file and scenario support above.
 
-- [ ] Register and import Task 0 captures; regenerate resources deterministically.
-- [ ] Write failing acceptance scenarios for all supported flows and each inherited selection.
-- [ ] Prove failures identify missing behavior; keep pending ownership explicit until fixed.
+- [x] Register and import Task 0 captures; regenerate resources deterministically.
+- [x] Write failing acceptance scenarios for all supported flows and each inherited selection.
+- [x] Prove failures identify missing behavior; keep pending ownership explicit until fixed.
 
 **TDD/verification:** focused acceptance and resource tests, coverage guard; `vp check --fix`
 and the full uncached suite before commit (pending cases stay accounted for by the guard).
@@ -243,3 +243,43 @@ Full uncached workspace suite at this checkpoint: 11,794 passed, 120 expected
 failures, 214 todos (259 files including one todo-only acceptance file).
 The website production build and final `vp check` pass. Plan remains in progress;
 Tasks 1–5 are not marked complete. No inherited golden is flipped.
+
+### Parent decision — unknown-number network release (2026-10-30)
+
+The website must reject unknown dialled numbers with an unassigned/unallocated-number
+network release. It must not invent alerting or connection progress. Plan 22 S14
+explicitly captures cause 1 alongside 16/17/18/19/34 with identical frames and
+events. Use cause 1 (unallocated number) and that captured checkered Call 1,
+three-beep and standby path. Configured link contacts and toolkit links continue
+opening their URLs through the telephone. The host owns the release cause; no
+additional cause-specific failure screen is established.
+
+### Task 1 acceptance completion (2026-10-30)
+
+Preserved independent command replays for all 53 supported 22b recordings and the
+three inherited selections. The response scenarios supply explicit host replies;
+the `none` mode supplies a never-settling request. The reboot replay exercises the security
+gate without inferring divert persistence. Temporary direct red run: 54 failed,
+2 passed (56 scenarios); failures expose absent service requests, in-call actions
+and replay differences. The temporary test is removed; pending goldens retain
+their ownership and are not claimed as asserted coverage.
+
+Task 1 replay correction: the new capture harness uses 592 ms taps inside its
+recordings. Explicit waits preserve those intervals in the older 300 ms replay
+helper; acknowledged single-call recordings receive explicit test-host methods.
+The corrected direct red run remains 54 failed / 2 passed (56 scenarios).
+The success responder's unsupported USSD cases supply failure, as its network log
+records operation 59 returning error 0x12. Its unqualified divert strings use All
+services, matching the absence of a voice basic-service qualifier.
+
+The Task 2 prototype was removed from the worktree after its 42-case replay
+showed only 12 passes. No fidelity claims or status flips were made. Automatic
+approval review rejected bulk classification of the remaining 30 failures as
+asserted known gaps; all affected goldens remain pending.
+
+Task 1 verification: `vp check --fix` and `vp check` pass (710 files).
+Resource regeneration checks, acceptance and coverage guard: 129 passed, 54 todos.
+Full uncached workspace suite: 11,794 passed, 120 expected failures, 214 todos
+(259 files). Website production build passes. All test workers used mise Node
+v22.22.3 with its bin and this worktree's `node_modules/.bin` explicitly first
+on PATH; `VITEST_MAX_WORKERS=4` bounded worker contention.

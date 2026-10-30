@@ -963,3 +963,13 @@ LLM key was introduced and no real portfolio URL or copy was invented.
   website/README.md no longer instructs release owners to repair the resolved seam.
   The deploy-time handoff above remains explicit. No Games code, generated files,
   golden fixtures, TODOS.md, main or another branch changed. Nothing was deployed.
+
+### Parent decision — unknown-number network release (2026-10-30)
+
+The website must reject unknown dialled numbers with an unassigned/unallocated-number
+network release. It must not invent alerting or connection progress. Plan 22 S14
+explicitly captures cause 1 alongside 16/17/18/19/34 with identical frames and
+events. Use cause 1 (unallocated number) and that captured checkered Call 1,
+three-beep and standby path. Configured link contacts and toolkit links continue
+opening their URLs through the telephone. The host owns the release cause; no
+additional cause-specific failure screen is established.

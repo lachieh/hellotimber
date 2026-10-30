@@ -10,6 +10,7 @@ import {
   type CallCase,
 } from "../../scripts/capture-sets/22-calls.ts";
 import type { StockCallControl, StockOutgoingCall, SyntheticRing } from "../../src/calls/network";
+import type { StockNetworkPort } from "../../src/messages/network";
 import { createSyntheticNetwork } from "../../src/messages/network";
 import { CALL_TIMINGS } from "../../src/calls/telephone";
 import { englishT9 } from "../../src/text/t9/english";
@@ -86,13 +87,18 @@ export function callRig(
   state: "virgin" | "factory" = "virgin",
   moHold = false,
   english = false,
+  configure: (network: StockNetworkPort) => StockNetworkPort = (network) => network,
 ): CallRig {
   const net = callNetwork(moHold);
   // The editor's words are the real English dictionary's (`22` is `Cc`, not the fixture's).
   const t9 = english ? { t9: { english: englishT9 } } : {};
   if (state === "virgin")
-    return Object.assign(standbyRig({ network: net.network, ...t9 }), { net });
-  const rig = standbyRig({ network: net.network, storage: soundStorage("factory"), ...t9 });
+    return Object.assign(standbyRig({ network: configure(net.network), ...t9 }), { net });
+  const rig = standbyRig({
+    network: configure(net.network),
+    storage: soundStorage("factory"),
+    ...t9,
+  });
   rig.press("c", 1500);
   rig.advance(1000);
   return Object.assign(rig, { net });
@@ -211,11 +217,11 @@ function ringDelayMs(number: string): number {
  * golden aligned on the trigger's first redraw (a key's at the key: its latency is not
  * reproduced; an interruption's on the ringing screen).
  */
-export function callRecording(id: string, script: CallScript): void {
+export function callRecording(id: string, script: CallScript, suppliedRig?: CallRig): void {
   const golden = loadGolden(id);
   const rows = golden.timeline!;
   const t = golden.triggerFrame as number;
-  const rig = scriptRig(script, id.includes("-editor-"));
+  const rig = suppliedRig ?? scriptRig(script, id.includes("-editor-"));
   const recorded = CALL_RECORDINGS.find((r) => `calls/${r.dir.replace(/\//g, "-")}` === id);
   // A golden cut from the middle of its recording (Snake II's game) starts at the ringing screen.
   const cut = (recorded?.frames?.from ?? 0) > 0;
