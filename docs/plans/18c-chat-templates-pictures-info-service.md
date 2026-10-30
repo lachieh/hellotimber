@@ -23,9 +23,9 @@ never imported; `NOTES.md` lists them), and the canonical recaptures Task 0 writ
 and plans 13-16, 18, 18b and 19 in full before starting.
 **Status:** in progress. Done and asserted: Templates, Smileys and insertion, Chat, Topics and
 the Service command editor (all 163 goldens of `goldens/index/18c.json`). Blocked: the picture
-folder, the saver gallery, picture and business-card arrivals, picture and Composer-tone sends
-(Task 0 R not established; the port's binary extension unauthorized in VISION; card Save and
-Chat Search on plan 19). See the Task 6, 7, 10 and 11 outcomes.
+folder, the saver gallery, picture and business-card arrivals and picture sends. Composer Send
+is now implemented and asserted (2026-10-29 resume below). Picture-directory research and
+canonical picture/card receipt captures remain incomplete. See Tasks 6, 7, 10 and 11.
 
 ## Goal
 
@@ -940,3 +940,51 @@ if not already present and owned topic/service-command placeholder removals.
   placeholder or pending dependency is hidden. Scope status matches the evidence.
 - Manual `vp check --fix`, workspace tests and website build pass; generation/formatting are stable;
   specs, README and plan status describe the delivered behaviour.
+
+## Resume implementation — 2026-10-29
+
+The assignment authorizes finishing 18c against plan 31's stock-firmware website. Plan 19's
+store and picker are now present; the historical missing-phone-book prerequisite is stale.
+Its presence does not supply picture-directory evidence. English only; Games untouched.
+
+Completed independent transmission slice of Task 7: Composer Send now transmits the named
+tone through optional `StockNetworkPort.sendRingtone`, using the existing messaging service's
+outcome queue and Sending/Message sent widgets. Default acceptance, thrown/rejected failures,
+late outcomes after power-off and immutable snapshots are tested. The key-driven regression
+failed on the placeholder first. The real `composer/send-ok` timeline passes pixel-exactly;
+its owner plan 27 registers the driver and the importer changes its status to asserted.
+The port receives semantic Composer notation; the host owns wire encoding (UNVERIFIED:
+interoperability with a physical handset). This additive callback is the authorized resolution
+of the historical binary-port gate for outgoing Composer tones only. Existing SMS hosts work
+without it; picture/card delivery is still absent.
+
+Task 0 diagnostics are retained under `$REF/captures/6.39/plan18c/research-resume/`, with exact
+command scripts and logs. Picture-first and text-first payloads both stall on Save for 30 s;
+held C cannot exit. A v6.39 image with a donor v5.79 PMM still does not open the picture folder.
+This is negative research evidence, not a repaired image, and is not imported. Card receipt
+now has preliminary evidence: Options → Show / Save / Discard; Save opens Name. Completion,
+capacity and persistence remain uncaptured. See the spec's resume research for exact inputs.
+
+Remaining required work: repaired-state research and Tasks 0 P/S, canonical picture/card
+arrivals, Tasks 3/4 picture resources/storage, Tasks 6/7 picture/card implementations and
+Task 11 picture demo/QA. Seven `pending:18c` fixtures remain (one plan 14 tree, six plan 16
+sound notes). No new known gap or widened tolerance. The plan remains **in progress**;
+unproven behavior and an unimplemented required flow cannot be ticked done.
+
+Resume QA: agent-browser 0.34.0 session `plan18c`, worktree server port 3018. Standby reads
+`LACHLAN`; `/menu/tones/composer` opens slot 1. Real Enter/digit/arrow keys enter c/d/e,
+Options → Send → name A → number 1. `[role=status]` reads `Sending message (in progress)`
+then `Composer: 4c1 4d1 4e1 (47) [Options]`. No browser errors. Evidence:
+`/tmp/18c-qa-sending.txt`, `/tmp/18c-qa-return.txt`, `/tmp/18c-composer-return.png`.
+Website and phone-core diffs are empty. Production build and `vp check` pass. Focused
+network/capture-set/coverage verification: 4 files, 98 passed; the owner acceptance run
+for `composer/send-ok`: 1 passed. The importer was run twice; only that fixture's two
+status lines change. Resource generation was run twice and reports up to date.
+
+Resume final verification: `VITEST_MAX_WORKERS=6 vp run -r --no-cache test` exited 0,
+258 files / **11,736 passed**, 120 expected failures, 160 TODOs (0/6 cache hits).
+Nokia OS: 182 files / 11,088 passed, 623.84 seconds. Website: 18 files / 92 passed.
+Logs: `/tmp/18c-final-tests.log`, `/tmp/18c-final-check.log`, `/tmp/18c-final-build.log`.
+Composer transmission and its one owner golden are complete; Tasks 6/7 as a whole and
+plan 18c are not complete. The seven picture/gallery fixtures remain pending. No new known
+gap, pixel change, timing-tolerance change, dependency or Games change was introduced.

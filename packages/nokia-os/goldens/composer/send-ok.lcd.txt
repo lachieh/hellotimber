@@ -1,6 +1,6 @@
 lcd-golden 1
 id: composer/send-ok
-status: pending:18c
+status: asserted
 source: captures/6.39/plan27/send/ok
 source-sha256: 8cb1c062185996b48d137fe5ffdf9f9cb4b988b1dfae4511bae71c14b4ba132f
 trigger-frame: 1

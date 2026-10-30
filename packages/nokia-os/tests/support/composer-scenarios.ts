@@ -497,3 +497,10 @@ export const PREVIEW_GAPS: Readonly<Record<string, string>> = {
     "with a two-note tone the Ringing volume list's vibrator stays on 1.9 s past the tone's end " +
     "in the capture; D9's vibrator track ends with the tone",
 };
+
+export function sendToneScenario(id: string): void {
+  const rig = composerRig("factory");
+  playComposer(rig, setupKeys({ from: "editor", slot: 1 }));
+  playComposer(rig, "1 2 3 menu down down down menu +600 2 +1600 menu +1000 0 4 1 2 3 4 5 6 7 8");
+  expectRecording(id, rig, "menu", "factory Composer: send A to 0412345678");
+}

@@ -12,6 +12,7 @@ export type { StockFontName } from "./resources";
 export { createSyntheticNetwork } from "./messages/network";
 export type {
   StockBusinessCard,
+  StockRingtone,
   StockIncomingSms,
   StockNetworkPort,
   StockSendOutcome,

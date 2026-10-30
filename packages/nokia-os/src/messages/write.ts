@@ -75,9 +75,17 @@ export function sending(
   sms: StockSms,
   sent?: (flow: Flow, note: Widget) => void,
 ): Widget {
+  return sendingResult(services, (settled) => services.messaging.send(sms, settled), sent);
+}
+
+export function sendingResult(
+  services: Pick<StockServices, "noteSound">,
+  transmit: (settled: (outcome: "sent" | "failed") => void) => void,
+  sent?: (flow: Flow, note: Widget) => void,
+): Widget {
   const bar = new Playback(timelineById(SENDING_BAR, "Sending message's bar"));
   let outcome: "sent" | "failed" | undefined;
-  services.messaging.send(sms, (settled) => {
+  transmit((settled) => {
     outcome = settled;
   });
   return {

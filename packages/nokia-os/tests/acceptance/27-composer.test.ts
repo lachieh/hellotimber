@@ -22,6 +22,7 @@ import {
   ringingChooseScenario,
   stillFixtureScenario,
   timelineScenario,
+  sendToneScenario,
 } from "../support/composer-scenarios.ts";
 
 const STILL_IDS = [...new Set(COMPOSER_CASES.map((c) => stillFixtureOf(c.name).id))];
@@ -36,8 +37,10 @@ const SCENARIOS: Record<string, Scenario> = {
     COMPOSER_RECORDING_KEYS.filter((r) => lcdRecording(r.dir)).map((r) => [
       composerTimelineId(r.dir),
       timelineScenario,
+      sendToneScenario,
     ]),
   ),
+  "composer/send-ok": sendToneScenario,
   "composer/ringing-choose": ringingChooseScenario,
   "composer/restore-run": restoreRunScenario,
   ...Object.fromEntries(

@@ -65,9 +65,7 @@ describe("composer capture set", () => {
   it("lists every LCD row of the golden pipeline table, asserted (Task 12)", () => {
     for (const id of PIPELINE_LCD) expect(lcd.has(id), id).toBe(true);
     for (const entry of lcd.values()) {
-      expect(entry.status, entry.id).toBe(
-        entry.id === "composer/send-ok" ? "pending:18c" : "asserted",
-      );
+      expect(entry.status, entry.id).toBe("asserted");
     }
     expect(composer.plan).toBe("27");
   });

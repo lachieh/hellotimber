@@ -126,3 +126,33 @@ emulator answers no USSD (Task 0 X).
 - **Sending a Composer tone** (plan 27's `composer/send-ok`, `pending:18c`): a binary Smart
   Messaging SMS, the same unauthorized port extension.
 - **Card Save:** needs the card kind above.
+
+## Resume research, 2026-10-29
+
+`captures/6.39/plan18c/research-resume/` contains diagnostic captures, not canonical
+acceptance inputs. The private `tools/harness-p18c/build/dct3cap` ran the factory image with
+`CAP_EPOCH=1791886200`. The invented frame/diagonal/square picture from the retained `pic.py`
+was delivered to port 5514. Both picture-first and text-first item orders display the incoming
+viewer and stall after Save for 30 emulated seconds; held C does not recover it. No repaired
+picture directory was established. A diagnostic v6.39 image with only the native v5.79 PMM
+partition grafted in still leaves Picture messages at its menu page; its garbled operator line
+makes it unsuitable as a canonical state. No donor art or firmware bytes enter the repository.
+
+An invented vCard 2.1 (Test Person, 0400000002), port 9204, reaches `Business card received`
+with **Options**, followed by Show / Save / Discard. Show displays name and number; Save opens
+an editable `Name:` prompt. The probe does not yet establish confirmation, capacity, persistence
+or cancellation, and does not assert a successful Save. These findings supersede the proposed
+notice/View/Save hypothesis; card receipt remains unimplemented.
+
+Composer transmission is independent of the picture-memory gate. `composer/send-ok` supplies
+its Sending message / Message sent / editor frames. Its captured send interval is 3174 ms;
+the existing progress bar and message-sent note match within the shared timing rule. The editor
+retains the number prompt's pen icon on return. `StockNetworkPort.sendRingtone` carries a named
+ComposerTone; host encoding is outside the firmware. Its optional default follows Send b'card:
+the synthetic cell accepts it. No arrival API, picture storage or tolerance is changed.
+
+The comparative `native579.cap` probe uses the native v5.79 image and the same invented
+picture-first payload. Save enters a picture replacement picker (`Inlocuit`) and held C
+returns to the received-picture notice; it does not freeze like v6.39. This narrows the
+failure to the v6.39 path/state rather than proving a fault in all binary Save handling.
+No replacement was confirmed; no v5.79 frames are accepted as v6.39 goldens.

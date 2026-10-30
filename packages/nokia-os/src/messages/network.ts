@@ -14,6 +14,7 @@ import {
   type SyntheticCalls,
 } from "../calls/network";
 
+import type { ComposerTone } from "../composer/program";
 import type { StockContact } from "../phone-book/sim-card";
 
 /** One SMS as the phone sees it: a typed recipient number (or routing address) and its text. */
@@ -46,12 +47,18 @@ export interface StockBusinessCard {
   readonly card: StockContact;
 }
 
+export interface StockRingtone {
+  readonly to: string;
+  readonly tone: ComposerTone;
+}
+
 /** The phone's network for SMS. The host owns delivery and outcomes; times are the phone's. */
 export interface StockNetworkPort {
   /**
    * An outgoing SMS. The phone shows `Sending message` until this settles and its link time has
    * passed; a promise that rejects counts as `"failed"`.
    */
+  sendRingtone?(message: StockRingtone): StockSendOutcome | Promise<StockSendOutcome>;
   send(sms: StockSms): StockSendOutcome | Promise<StockSendOutcome>;
   /**
    * Plan 19: Send b'card. The phone shows `Sending b'card` until this settles and its link time
@@ -82,6 +89,7 @@ export interface SyntheticNetwork
   readonly sent: readonly StockSms[];
   /** Plan 19: every business card phones sent through this network, in order. */
   readonly cards: readonly StockBusinessCard[];
+  readonly tones: readonly StockRingtone[];
 }
 
 /** The ranges of a time stamp's fields (plan 30: SIM messages are checked with them too). */
@@ -144,9 +152,18 @@ export function createSyntheticNetwork(): SyntheticNetwork {
   const sent: StockSms[] = [];
   const calls = syntheticCalls();
   const cards: StockBusinessCard[] = [];
+  const tones: StockRingtone[] = [];
   return {
     send(sms) {
       sent.push({ number: sms.number, text: sms.text });
+      return "sent";
+    },
+    tones,
+    sendRingtone(message) {
+      tones.push({
+        to: message.to,
+        tone: { ...message.tone, tokens: message.tone.tokens.map((token) => ({ ...token })) },
+      });
       return "sent";
     },
     sendBusinessCard(card) {

@@ -49,7 +49,7 @@ function composerServices(services: StockServices): ComposerServices {
     blink,
     timelines,
     save: composerSave({ composer, timelines }),
-    send: composerSend(),
+    send: composerSend(services),
   };
 }
 

@@ -2,6 +2,8 @@
 // Options (Play, Save, Tempo, Send, Clear screen, Exit), the Tempo list and its notes. Every key
 // acts as it goes down; the editor's own keys beep nothing (they silence their beep through the
 // sounder's `silent-key` cue), the lists' keys beep as other lists do.
+import type { StockServices } from "../firmware/features/feature";
+import { sendingResult } from "../messages/write";
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { ComposerModel, PromptModel } from "../display/widgets";
 import {
@@ -572,15 +574,31 @@ export function composerSave(
 
 /**
  * Options › Send (K11, D11): the name, then `Phone number:` (C on the empty number back to the
- * editor); OK on a number opens plan 18c's placeholder (a binary Smart Messaging SMS).
+ * editor); OK sends the named tone through the host network port.
  */
-export function composerSend(): (editor: ComposerEditor, flow: Flow) => void {
+export function composerSend(
+  services: Pick<StockServices, "messaging" | "noteSound">,
+): (editor: ComposerEditor, flow: Flow) => void {
   return (editor, flow) => {
     flow.push(
-      toneName(editor, "", (_name, inner) => {
+      toneName(editor, "", (name, inner) => {
         const entry = numberEntry({
           label: ["Phone number:"],
-          done: (_number, last) => last.push(placeholder("Send")),
+          done: (number, last) => {
+            editor.penLeft();
+            last.back(2);
+            last.push(
+              sendingResult(services, (settled) =>
+                services.messaging.sendRingtone(
+                  {
+                    to: number,
+                    tone: { name, tempo: editor.tempo, tokens: editor.tokens },
+                  },
+                  settled,
+                ),
+              ),
+            );
+          },
         });
         inner.replace(
           ownKeys({

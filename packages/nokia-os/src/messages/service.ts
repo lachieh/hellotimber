@@ -9,6 +9,7 @@ import {
   type StockNetworkPort,
   type StockSendOutcome,
   type StockSms,
+  type StockRingtone,
 } from "./network";
 import type { StockMessages } from "./store";
 
@@ -24,6 +25,9 @@ export interface ArrivalListener {
  * lines show in the chat and are not stored, `chat/inbox-after`).
  */
 export type ArrivalClaim = (sms: StockIncomingSms) => boolean;
+
+/** composer/send-ok: Message sent begins 3174 ms after Sending message. */
+const RINGTONE_SEND_LINK_MS = 3174;
 
 interface Sending {
   readonly dueAt: number;
@@ -111,6 +115,14 @@ export class StockMessaging {
       () => (port.sendBusinessCard === undefined ? "sent" : port.sendBusinessCard(copy)),
       settled,
     );
+  }
+
+  sendRingtone(message: StockRingtone, settled: (outcome: StockSendOutcome) => void): void {
+    const copy: StockRingtone = {
+      to: message.to,
+      tone: { ...message.tone, tokens: message.tone.tokens.map((token) => ({ ...token })) },
+    };
+    this.#start(RINGTONE_SEND_LINK_MS, () => this.#network.sendRingtone?.(copy) ?? "sent", settled);
   }
 
   /** A send that settles once `call`'s outcome is in and `linkMs` has passed, at a `tick`. */

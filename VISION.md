@@ -1216,10 +1216,15 @@ no reminders record. `describeStockScreen` reads every
 screen as plain text (stock widgets attach their text to their frames). See
 [stock SIM services](docs/specs/stock/sim-services.md).
 
-Plan 18c's delivery-kind/editor/session registration requirements await owner reconciliation;
-this SMS-only contract does not authorize its proposed picture/card extension.
+Incoming delivery remains text SMS only; picture/card delivery is still unimplemented.
 
-**Chat and Messages content (plan 18c, in progress; no public API change).** Templates, Smileys
+**Composer transmission (plan 18c).** The optional `StockNetworkPort.sendRingtone({ to, tone })`
+transmits a named `ComposerTone` (name, tempo and notation tokens). The host owns encoding and
+transport. An absent callback settles as sent, matching the synthetic cell; rejection settles
+as failed and power-off drops the pending result. `createSyntheticNetwork().tones` records
+snapshots of outgoing tones. This additive callback preserves existing text-SMS hosts.
+
+**Chat and Messages content (plan 18c, in progress).** Templates, Smileys
 and Info service topics are EEPROM records (`templates`, `smileys`, `info-topics`): the virgin
 EEPROM has no Templates or Smileys list and five junk topics; Restore factory settings provisions
 the lists (eight slots, the firmware's five defaults each) and empties the topics. Chat sends each

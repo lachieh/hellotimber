@@ -802,7 +802,7 @@
   {
     "id": "composer/send-ok",
     "file": "composer/send-ok.lcd.txt",
-    "status": "pending:18c",
+    "status": "asserted",
     "kind": "timeline",
     "images": 20,
     "frames": 36

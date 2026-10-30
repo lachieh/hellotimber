@@ -954,3 +954,11 @@ The emulator's virgin EEPROM and synthetic network leave marks that the OS does 
 | Network: every send succeeds, no loopback      | `createSyntheticNetwork`; hosts decide outcomes    |
 | SMS sender `12345` for `Nokia`, 120 septets    | replays map the helper's encoding; not reproduced  |
 | Messages lost in a new emulator process        | the `messages` record persists them (D7 policy)    |
+
+Composer Send uses the optional `StockNetworkPort.sendRingtone({ to, tone })` callback.
+`tone` contains the typed name, tempo and Composer notation tokens; the host encodes the
+wire payload. It returns `"sent"`, `"failed"`, or a Promise of either. Rejection means failed;
+power-off ignores pending results. Without the callback the synthetic cell accepts the tone.
+`createSyntheticNetwork().tones` lists snapshots of transmitted tones. Send does not save the
+Composer slot. Its Sending message / Message sent / editor flow is asserted by
+`composer/send-ok` (plan 27's fixture, implemented by plan 18c).
