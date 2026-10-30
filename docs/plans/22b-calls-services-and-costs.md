@@ -1,6 +1,6 @@
 # Plan 22b — Calls II: services and costs
 
-**Status:** in progress — bounded Task 0 done; Task 1 scenarios complete; Tasks 2–5 remain unimplemented.
+**Status:** in progress — bounded Task 0 done; Task 1 scenarios complete; Task 2 implemented with eleven fidelity gaps; Tasks 3–5 remain unimplemented.
 **Prerequisites:** plans 22, 25, 30 and 31 done.
 **Ground truth:** `docs/specs/stock/calls.md`, plan 22's S9, S15, S22 and S27,
 `$REF/captures/scratch-plan22/` and `$REF/captures/6.39/plan22/`, where
@@ -140,10 +140,10 @@ and the full uncached suite before commit (pending cases stay accounted for by t
 **Files:** `src/calls/services.ts`, `src/messages/network.ts`, public exports,
 `src/firmware/features/{call-divert,dialling}.ts`, request/result widgets, unit tests.
 
-- [ ] Test host request/outcome, cancellation, late completion and power-off first.
-- [ ] Implement standby SS/USSD and service-command requests through the shared network port.
-- [ ] Implement divert inputs, results, timeout, Quit and indicator/persistence per captures.
-- [ ] Assert corresponding goldens and document the public contract and synthetic behavior.
+- [x] Test host request/outcome, cancellation, late completion and power-off first.
+- [x] Implement standby SS/USSD and service-command requests through the shared network port.
+- [x] Implement divert inputs, results, timeout, Quit and indicator/persistence per captures.
+- [x] Assert corresponding goldens and document the public contract and synthetic behavior.
 
 **Verification:** focused request/unit/acceptance tests; `vp check --fix`; full uncached suite.
 
@@ -283,3 +283,25 @@ Full uncached workspace suite: 11,794 passed, 120 expected failures, 214 todos
 (259 files). Website production build passes. All test workers used mise Node
 v22.22.3 with its bin and this worktree's `node_modules/.bin` explicitly first
 on PATH; `VITEST_MAX_WORKERS=4` bounded worker contention.
+
+### Task 2 implementation (2026-10-30)
+
+Shared service control uses explicit host completion events at the next tick;
+request cancellation aborts and invalidates late/duplicate completions. Standby
+strings, Service command, forwarding and Call waiting use that port. Divert result
+Number details, failure return levels and Quit follow captured paths. The arrow
+is imported from canonical active standby and its full-frame golden passes.
+UNVERIFIED product decision: keep confirmed unconditional-forwarding indication
+in RAM and clear on power-off until cold-boot persistence evidence is established.
+
+43 new asserted LCD fixtures (42 service timelines plus the indicator); eleven
+precise known gaps cover final timeout-bar frames and later radio-registration
+loss only. No arbitrary success timer or per-test tolerance exists. Host test-cell
+delays are fixed independently of golden timestamps. The five inherited generic
+divert leaves pass their original plan 14 goldens after taking feature ownership.
+
+Task 2 gates: full uncached workspace suite green; final focused resource/lifecycle/
+acceptance run 90 passed, 11 expected failures, 12 todos. `vp check --fix` passes
+(714 files), website build passes. Subsequent delay/cancellation regressions pass
+(9 lifecycle tests); the default 30-second no-answer delay reaches the host.
+The final suite includes one extra kernel indicator flag and its captured painter.

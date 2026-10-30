@@ -106,3 +106,31 @@ Redial beyond the measured no-retry cause-17 path, advice of charge and prepaid
 protocols move to 22c, blocked on captures. The existing network has no charging
 input. The three plan 22 option selections remain owned by 22b. Factory sound was
 captured successfully and stays owned by 22b pending event analysis.
+
+## Implemented supplementary requests (2026-10-30)
+
+The shared host port now owns service completion. Standby strings, Service command,
+forwarding Activate/Cancel/Status/Cancel all and Call waiting all reach
+`requestService(text, control, signal)`. Menu Activate/Cancel retain voice basic
+service 0x10 through MMI code 11; typed strings retain their own qualifier.
+MMI serialization follows [ETSI TS 122 030 §6.5.2 and Annex C](https://www.etsi.org/deliver/etsi_ts/122000_122099/122030/16.00.00_60/ts_122030v160000p.pdf).
+No successful response is inferred from a timer. Unanswered requests use the
+existing 14867 ms service timeout; Quit/C cancels and shows Request not confirmed.
+Closing a flow aborts it and invalidates late host events.
+
+Confirmed unconditional forwarding sets the arrow at x7..18, y0..5, extracted
+from canonical `persist/active-standby.png`; its full standby golden matches.
+The indicator is RAM-only pending the unproven persistence interpretation.
+UNVERIFIED product choice: power cycles clear it until a new host confirmation.
+
+The 42 service timelines are asserted: 31 pass directly and eleven retain exact
+known-gap reasons in `tests/support/call-services-gaps.ts`. Eight miss a final
+35–107 ms progress-bar frame before Not done; three later lose network registration
+in the emulator, a state the host port does not yet supply. Shared tolerances are
+unchanged. Existing five Call divert tree leaves still pass their original goldens.
+
+Menu no-answer activation serializes the selected delay after the voice service
+qualifier (`**61*number*11*T#`); virgin/factory fallback is 30 seconds. The canonical
+network traces prove the voice basic-service qualifier on Activate/Cancel, while
+Status requests no qualifier. The MMI field order is standards-based; exact
+serialization is a host API design choice, not a claim about raw radio bytes.

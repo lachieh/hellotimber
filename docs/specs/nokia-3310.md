@@ -223,6 +223,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Space impact (plan 24, in progress)                        | [stock/space-impact.md](stock/space-impact.md)                     | 24   |
 | Keyguard and lights                                        | [stock/keyguard-and-backlight.md](stock/keyguard-and-backlight.md) | 25   |
 | Number entry, calls and the call register (plan 22)        | [stock/calls.md](stock/calls.md)                                   | 22   |
+| Supplementary requests and divert (plan 22b)               | [stock/calls-services.md](stock/calls-services.md)                 | 22b  |
 | SIM messages, sender names, SIM services, IMEI             | [stock/sim-services.md](stock/sim-services.md)                     | 30   |
 
 ---

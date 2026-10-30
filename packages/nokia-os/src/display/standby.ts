@@ -37,6 +37,10 @@ export function paintStandby(
     const { bitmap, x, y } = WIDGET_SPRITES["message/envelope"]!;
     fb.blitBitmap(bitmap, x, y);
   }
+  if (screen.indicators?.divert === true) {
+    const { bitmap, x, y } = WIDGET_SPRITES["calls-services/divert"]!;
+    fb.blitBitmap(bitmap, x, y);
+  }
   const notice = screen.notice;
   if (notice === undefined) fb.drawTextCentered(STOCK_FONTS.small, screen.carrier, CARRIER_TOP);
   else {

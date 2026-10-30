@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/verified-error-waiting-activate
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/verified/error/waiting-activate
 source-sha256: e94134c7a9bc5ca83de532087e228bf547acd55837bb78a068b24a382702c67b
 trigger-frame: 1

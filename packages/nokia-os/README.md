@@ -962,3 +962,17 @@ power-off ignores pending results. Without the callback the synthetic cell accep
 `createSyntheticNetwork().tones` lists snapshots of transmitted tones. Send does not save the
 Composer slot. Its Sending message / Message sent / editor flow is asserted by
 `composer/send-ok` (plan 27's fixture, implemented by plan 18c).
+
+### Supplementary service host (plan 22b)
+
+`StockNetworkPort.requestService(text, control, signal)` receives standby service
+strings and menu-generated forwarding/waiting requests. Call
+`control.completed(result)` with an active/inactive forwarding result, a waiting
+result, or failure. The phone applies that outcome at its next tick. Abort ends
+the operation on Quit, C, navigation or power-off; later completions are ignored.
+An absent responder, including the default synthetic network, stays unanswered
+and reaches the captured Not done timeout. It never succeeds locally.
+
+Unconditional forwarding's indicator follows confirmed network outcomes in RAM.
+Persistence across power cycles remains UNVERIFIED: the canonical reboot reaches
+a security gate, not settled standby. The host remains the service authority.

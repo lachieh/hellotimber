@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/none-divert-status
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/none/divert-status
 source-sha256: c56b14963c761c99cfca5da5fe14840b7900f8d6c66e4e4b76ebd38fd70d056d
 trigger-frame: 1

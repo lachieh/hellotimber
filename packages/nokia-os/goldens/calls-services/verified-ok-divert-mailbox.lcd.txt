@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/verified-ok-divert-mailbox
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/verified/ok/divert-mailbox
 source-sha256: e386357a83420189b16006fbd02da5a985a1298accaf14bd99fd2c11750f4a29
 trigger-frame: 1

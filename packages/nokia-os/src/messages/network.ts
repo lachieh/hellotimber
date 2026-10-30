@@ -14,6 +14,7 @@ import {
   type SyntheticCalls,
 } from "../calls/network";
 
+import type { StockServiceHost } from "../calls/services";
 import type { ComposerTone } from "../composer/program";
 import type { StockContact } from "../phone-book/sim-card";
 
@@ -54,6 +55,7 @@ export interface StockRingtone {
 
 /** The phone's network for SMS. The host owns delivery and outcomes; times are the phone's. */
 export interface StockNetworkPort {
+  requestService?: StockServiceHost;
   /**
    * An outgoing SMS. The phone shows `Sending message` until this settles and its link time has
    * passed; a promise that rejects counts as `"failed"`.

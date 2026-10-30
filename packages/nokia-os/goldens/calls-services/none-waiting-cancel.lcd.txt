@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/none-waiting-cancel
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/none/waiting-cancel
 source-sha256: ca555b047cbf520ba3e6bf236386325219289041d4693c8ea189084c67a5efd3
 trigger-frame: 1

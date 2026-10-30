@@ -16,6 +16,7 @@ import {
 import { dialEntry, type DialEntryWidget, type EntrySoftkey } from "../../widgets/dial-entry";
 import { StockFlowApplication, type Flow, type Widget } from "../../widgets/flow";
 import { note } from "../../widgets/note";
+import { serviceRequest } from "../../widgets/service-request";
 import { placeholderWidget } from "../../widgets/placeholder";
 import type { EepromRecord, StockEeprom } from "../eeprom";
 import { timelineByName } from "../timelines";
@@ -181,8 +182,7 @@ function call(services: StockServices, text: string, flow: Flow): void {
       placeCall(services, flow, services.settings.text(VOICE_MAILBOX_KEY) ?? "");
       return;
     case "service":
-      // Supplementary services and USSD (S9) are plan 22b's.
-      flow.push(placeholderWidget("Requesting", "22b"));
+      flow.push(afterDown("navi", serviceRequest(services, text, true)));
       return;
     case "emergency":
       placeCall(services, flow, outcome.number, true);

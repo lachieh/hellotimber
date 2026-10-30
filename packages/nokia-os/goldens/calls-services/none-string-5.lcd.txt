@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/none-string-5
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/none/string-5
 source-sha256: 68b111a9ab80da0ae2027230d18e0c53ecdb6b0baa90a6aa88eca6c885a0f518
 trigger-frame: 1

@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/verified-error-waiting-cancel
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/verified/error/waiting-cancel
 source-sha256: 7213e8709f9dba5503404e5bbd01eab7ab59ef67df531ddb2950014a36f2acb1
 trigger-frame: 1

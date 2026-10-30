@@ -98,8 +98,8 @@ describe("notes and progress notes against every asserted .leaf golden that open
   });
 
   it("covers the information, error, tick, long, Top score and progress notes", () => {
-    // Plans that take a leaf over (18c, 19, 21, 22) leave the generic note set; 27 after plan 22.
-    expect(cases.length).toBeGreaterThanOrEqual(27);
+    // Five Call divert leaf goldens now exercise the feature through plan 14 acceptance.
+    expect(cases.length).toBeGreaterThanOrEqual(22);
   });
 
   for (const { id, number, screen } of cases) {

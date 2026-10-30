@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/verified-ok-string-5
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/verified/ok/string-5
 source-sha256: e18abfbaebf3db25840f7c30955796279ed7f79df9ffe9019e50185c548b2c38
 trigger-frame: 1

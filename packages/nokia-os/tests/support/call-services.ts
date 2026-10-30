@@ -1,5 +1,6 @@
-import { expectTimeline } from "./golden.ts";
-import { loadGolden } from "./goldens.ts";
+import type { StockServiceControl, StockServiceResult } from "../../src/calls/services";
+import { expectLcd, expectTimeline } from "./golden.ts";
+import { goldenImage, loadGolden } from "./goldens.ts";
 import { recordTimeline, type Scenario } from "./acceptance.ts";
 import { callRig, callRecording, play, type CallScript } from "./calls.ts";
 import { createRig, seededStorage } from "./rig.ts";
@@ -31,35 +32,65 @@ export const SERVICE_SETUPS = {
   "string-5": "* # 2 1 #",
 };
 
-export type ServiceReply =
-  | { readonly kind: "active"; readonly scope: "voice" | "all"; readonly number: string }
-  | { readonly kind: "inactive"; readonly scope: "voice" | "all" }
-  | { readonly kind: "waiting"; readonly active: boolean }
-  | { readonly kind: "failed" };
+type ServiceReply = StockServiceResult;
+
+function cellReplyMs(name: string, mode: "ok" | "error"): number {
+  if (/^string-[012]$/.test(name)) return 2630;
+  if (mode === "error") {
+    if (name === "divert-all-cancel" || name === "string-4" || name === "waiting-status")
+      return 2000;
+    if (name === "waiting-activate" || name === "string-3") return 2775;
+    return name.endsWith("status") || name === "string-5" ? 1800 : 2630;
+  }
+  if (name === "divert-all-cancel" || name === "string-4") return 2250;
+  if (name.endsWith("status") || name === "string-5") return 2050;
+  return 2900;
+}
 
 function serviceScenario(name: string, setup: string, mode: "none" | "ok" | "error"): Scenario {
   const id = `calls-services/${mode === "none" ? "none" : `verified-${mode}`}-${name}`;
   return () => {
+    let host: StockServiceControl | undefined;
+    let reply: ServiceReply | undefined;
     const rig = callRig("virgin", false, false, (network) => ({
       ...network,
-      requestService() {
-        if (mode === "none") return new Promise<ServiceReply>(() => {});
-        if (mode === "error" || ["string-0", "string-1", "string-2"].includes(name))
-          return { kind: "failed" } satisfies ServiceReply;
-        if (name.startsWith("waiting"))
-          return { kind: "waiting", active: name !== "waiting-cancel" } satisfies ServiceReply;
-        const scope =
-          name.endsWith("status") || name === "divert-all-cancel" || /^string-[345]$/.test(name)
-            ? "all"
-            : "voice";
-        return name.includes("cancel") || name === "string-4"
-          ? ({ kind: "inactive", scope } satisfies ServiceReply)
-          : ({ kind: "active", scope, number: "+0412345678" } satisfies ServiceReply);
+      requestService(_text, control) {
+        host = control;
+        if (mode === "none") return;
+        if (mode === "error" || /^string-[012]$/.test(name)) reply = { kind: "failed" };
+        else if (name.startsWith("waiting"))
+          reply = { kind: "waiting", active: name !== "waiting-cancel" };
+        else {
+          const scope =
+            name.endsWith("status") || name === "divert-all-cancel" || /^string-[345]$/.test(name)
+              ? "all"
+              : "voice";
+          reply =
+            name.includes("cancel") || name === "string-4"
+              ? { kind: "inactive", scope }
+              : { kind: "active", scope, number: "+0412345678" };
+        }
       },
     }));
     play(rig, setup);
     const golden = loadGolden(id);
-    const recording = recordTimeline(rig, golden, () => rig.press("navi"));
+    const rows = golden.timeline!;
+    const trigger = rows[golden.triggerFrame as number]!;
+    const last = rows.at(-1)!;
+    const recording = rig.record(
+      last.startMs + last.durationMs - trigger.startMs + 100,
+      () => rig.press("navi"),
+      mode === "none"
+        ? []
+        : [
+            {
+              atMs: cellReplyMs(name, mode),
+              run: () => {
+                if (reply !== undefined) host?.completed(reply);
+              },
+            },
+          ],
+    );
     expectTimeline(recording, golden, `${name}: ${mode} host request`);
   };
 }
@@ -105,6 +136,22 @@ const scripts: Readonly<Record<string, CallScript>> = {
 };
 
 export const CALL_SERVICE_SCENARIOS: Readonly<Record<string, Scenario>> = {
+  "calls-services/divert-indicator": () => {
+    const rig = callRig("virgin", false, false, (network) => ({
+      ...network,
+      requestService(_text, host) {
+        host.completed({ kind: "active", scope: "voice", number: "0412345678" });
+      },
+    }));
+    play(rig, "* 2 1 * 0 4 1 2 3 4 5 6 7 8 # menu +100");
+    rig.press("c");
+    rig.advance(100);
+    expectLcd(
+      rig.paint(),
+      goldenImage("calls-services/divert-indicator", "active-standby"),
+      "host-confirmed divert standby",
+    );
+  },
   "calls-services/persist-reboot": () => {
     const rig = createRig({ carrier: "Orange F", clock: () => "10:10", storage: seededStorage() });
     const golden = loadGolden("calls-services/persist-reboot");

@@ -2,6 +2,7 @@
 // host's network port, with the phone's own link times. It keeps each call's state and times for
 // the call screens (widgets/call.ts), sounds the ringback, the ringing and the network's end,
 // writes the call register and the durations, and queues a ring that comes during a call.
+import { ServiceRequest } from "./services";
 import type { StockNetworkPort } from "../messages/network";
 import type { StockSettings } from "../firmware/settings";
 import type { SoundPlay } from "../sound/sequencer";
@@ -173,6 +174,21 @@ export class StockTelephone {
     this.#deps = deps;
   }
 
+  #divert = false;
+
+  get divert(): boolean {
+    return this.#divert;
+  }
+
+  service(text: string): ServiceRequest {
+    const network = this.#deps.network;
+    return new ServiceRequest(text, network?.requestService?.bind(network), (result) => {
+      if (result.kind !== "active" && result.kind !== "inactive") return;
+      if (/^(?:\*\*?21\*|\*#21(?:#|\*)|#21(?:#|\*)|##002#)/.test(text))
+        this.#divert = result.kind === "active";
+    });
+  }
+
   get call(): StockCall | undefined {
     return this.#call;
   }
@@ -207,6 +223,7 @@ export class StockTelephone {
   /** Power-off hangs every call up (D5 rules); the lists are RAM (Task 0 F). */
   powerOff(): void {
     this.#on = false;
+    this.#divert = false;
     const call = this.#call;
     if (call !== undefined && !call.done) {
       call.link?.hangUp();

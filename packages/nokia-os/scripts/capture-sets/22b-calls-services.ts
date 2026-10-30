@@ -1,4 +1,4 @@
-import type { PlanCaptureSet } from "../capture-set.ts";
+import type { CaptureSetEntry, PlanCaptureSet } from "../capture-set.ts";
 
 export const SERVICE_RECORDINGS = [
   ["verified/ok/divert-all-cancel", "calls-services/verified-ok-divert-all-cancel"],
@@ -59,16 +59,47 @@ export const SERVICE_RECORDINGS = [
 
 export const callsServices: PlanCaptureSet = {
   plan: "22b",
-  lcd: (io) =>
-    SERVICE_RECORDINGS.map(([dir, id]) => ({
+  resources: {
+    spriteBatches: [
+      {
+        order: 221,
+        entries: [
+          {
+            id: "calls-services/divert",
+            group: "calls-services",
+            golden: "calls-services/divert-indicator",
+            image: "active-standby",
+            x0: 7,
+            x1: 18,
+            y0: 0,
+            y1: 5,
+          },
+        ],
+      },
+    ],
+  },
+  lcd: (io) => [
+    ...SERVICE_RECORDINGS.map<CaptureSetEntry>(([dir, id]) => ({
       id,
       kind: "timeline",
-      status: dir === "in-call-ack/second-call" ? "pending:22c" : "pending:22b",
+      status:
+        dir === "in-call-ack/second-call"
+          ? "pending:22c"
+          : /^(verified|none)\//.test(dir)
+            ? "asserted"
+            : "pending:22b",
       prefer: {
         source: { kind: "recording", dir: `plan22b/${dir}` },
         triggerFrame: (io.frames.recording(`plan22b/${dir}`)?.length ?? 0) > 1 ? 1 : 0,
       },
     })),
+    {
+      id: "calls-services/divert-indicator",
+      kind: "still",
+      status: "asserted",
+      prefer: { source: { kind: "shot", file: "plan22b/persist/active-standby.png" } },
+    },
+  ],
   notImported: {
     "plan22b/ok/**, plan22b/error/**":
       "Invalid initial SS build omitted service-8 hook; verified/ replaces these recordings",

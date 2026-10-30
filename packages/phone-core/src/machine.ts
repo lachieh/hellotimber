@@ -766,7 +766,15 @@ function standbyIndicators<Metadata>(m: Machine<Metadata>): StandbyIndicators | 
   const read = m.config.standbyIndicators?.();
   if (read === undefined) return undefined;
   const shown: StandbyIndicators = {};
-  for (const flag of ["voicemail", "message", "silent", "alarm", "timer", "stopwatch"] as const) {
+  for (const flag of [
+    "voicemail",
+    "message",
+    "silent",
+    "alarm",
+    "timer",
+    "stopwatch",
+    "divert",
+  ] as const) {
     if (read[flag] === true) shown[flag] = true;
   }
   return Object.keys(shown).length === 0 ? undefined : shown;

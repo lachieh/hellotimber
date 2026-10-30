@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/verified-ok-waiting-activate
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/verified/ok/waiting-activate
 source-sha256: d9dba45c578b15feea5a2219d5ba6dfb8bd04542cb7b570370320d56c2301ee5
 trigger-frame: 1

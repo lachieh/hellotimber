@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/verified-ok-divert-all-cancel
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/verified/ok/divert-all-cancel
 source-sha256: 004c852c7f69fbaab92d9fb69a140b15fa1fd19ce4132ab437c07faa9f5546ac
 trigger-frame: 1

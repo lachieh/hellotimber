@@ -1,6 +1,6 @@
 lcd-golden 1
 id: calls-services/verified-error-divert-other
-status: pending:22b
+status: asserted
 source: captures/6.39/plan22b/verified/error/divert-other
 source-sha256: c4d791ef6e798d2e700462e0dcf5db046289fe19d86340e8d9aee29166b9af42
 trigger-frame: 1

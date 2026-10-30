@@ -39,3 +39,5 @@ export type { StockSimToolkit, StockToolkitItem, StockToolkitStep } from "./sim/
 export { stockImeiLines } from "./firmware/preload";
 export { describeStockScreen } from "./display/describe";
 export type { StockPreload, StockReminderPreload } from "./firmware/preload";
+
+export type { StockServiceHost, StockServiceResult, StockServiceControl } from "./calls/services";
