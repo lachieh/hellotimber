@@ -10,7 +10,7 @@ export const site: SiteMeta = {
   sameAs: [
     "https://github.com/lachieh",
     "https://www.linkedin.com/in/lachlanh/",
-    "https://bsky.app/profile/lachieh.bsky.social",
+    "https://bsky.app/profile/heywood.dev",
     "https://x.com/lachie_h",
   ],
 };

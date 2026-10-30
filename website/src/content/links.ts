@@ -51,9 +51,9 @@ export const LINKS = [
     kind: "social",
     id: "bluesky",
     name: "Bluesky",
-    label: "lachieh.bsky.social",
+    label: "heywood.dev",
     number: "0755502583",
-    href: "https://bsky.app/profile/lachieh.bsky.social",
+    href: "https://bsky.app/profile/heywood.dev",
     rel: "me",
   },
   {

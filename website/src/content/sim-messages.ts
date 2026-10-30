@@ -6,7 +6,7 @@ export const INTRO_MESSAGE =
 export const STACK_MESSAGE =
   "Daily drivers: TypeScript, React, three.js, and an 84x48 pixel grid. I like hard boundaries and small packages.";
 export const CONTACT_MESSAGE =
-  "Want to talk? Text Lachlan here, or find him on LinkedIn (lachlanh), GitHub (lachieh), Bluesky or X (lachie_h). Based in Atlanta, GA; replies in ET hours.";
+  "Want to talk? Text Lachlan, or find him on LinkedIn (lachlanh), GitHub (lachieh), Bluesky (heywood.dev) or X (lachie_h). Atlanta, GA; replies in ET hours.";
 export const BIO_MESSAGE =
   "Aussie software engineer in Atlanta, GA. Builds web tooling, SDKs and developer experience. Currently at tambo; before that Cosmonic and Real Theory.";
 export const TAMBO_MESSAGE =
