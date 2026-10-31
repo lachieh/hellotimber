@@ -30,4 +30,5 @@ const content = {
 } satisfies Omit<StockSimCard, "id">;
 
 export const PORTFOLIO_SIM = { id: simId(content), ...content } satisfies StockSimCard;
-export const PRELOAD = { reminders: NOW } satisfies StockPreload;
+// Snake II at level 5 (217 ms a step): the virgin EEPROM's level 175 steps every ≈7.7 ms.
+export const PRELOAD = { reminders: NOW, snakeLevel: 5 } satisfies StockPreload;

@@ -5,6 +5,7 @@ import { WELCOME_NOTE_KEY } from "../src/firmware/features/settings";
 import { StockReminders } from "../src/firmware/features/reminders/store";
 import { checkImei } from "../src/firmware/preload";
 import { createStockSettings } from "../src/firmware/settings";
+import { SNAKE_SETTINGS } from "../src/widgets/snake";
 import {
   createMemoryStorage,
   createStockPhone,
@@ -106,6 +107,39 @@ describe("preload (D10)", () => {
     store.erase(store.list()[0]!);
     phone({ storage: emptied, preload: { reminders: [{ text: "Host" }] } });
     expect(reminders(emptied)).toEqual([]);
+  });
+
+  it("stores Snake II's level while the level was never written, as the Level page would", () => {
+    const level = (storage: StockStorage) =>
+      createStockSettings(new StockEeprom(storage)).number(SNAKE_SETTINGS.level);
+    const storage = createMemoryStorage();
+    phone({ storage, preload: { snakeLevel: 5 } });
+    expect(level(storage)).toBe(5);
+    // Without it, the virgin EEPROM's 175 (snake-ii.md: the snake moves every timer unit).
+    expect(level(createMemoryStorage())).toBe(175);
+    // A level the visitor stored stays, even 175's neighbour ▼ reaches.
+    const stored = createMemoryStorage();
+    createStockSettings(new StockEeprom(stored)).setNumber(SNAKE_SETTINGS.level, 174);
+    phone({ storage: stored, preload: { snakeLevel: 5 } });
+    expect(level(stored)).toBe(174);
+    // Other settings written first do not stop it.
+    const other = createMemoryStorage();
+    createStockSettings(new StockEeprom(other)).setText(WELCOME_NOTE_KEY, "Mine");
+    phone({ storage: other, preload: { snakeLevel: 3 } });
+    expect(level(other)).toBe(3);
+    // Nor does it stop the Welcome note, which needs no settings record.
+    const both = createMemoryStorage();
+    phone({ storage: both, preload: { welcomeNote: "Hi", snakeLevel: 5 } });
+    expect([note(both), level(both)]).toEqual(["Hi", 5]);
+  });
+
+  it("refuses a Snake II level the Level page cannot store (1 to 9)", () => {
+    expect(() => phone({ preload: { snakeLevel: 0 } })).toThrow(
+      "preload.snakeLevel must be a whole number from 1 to 9 (received 0).",
+    );
+    expect(() => phone({ preload: { snakeLevel: 10 } })).toThrow(/preload\.snakeLevel/);
+    expect(() => phone({ preload: { snakeLevel: 2.5 } })).toThrow(/preload\.snakeLevel/);
+    expect(() => phone({ preload: { snakeLevel: 9 } })).not.toThrow();
   });
 
   it("refuses what no editor could have typed, naming the field", () => {

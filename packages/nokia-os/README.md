@@ -796,7 +796,7 @@ A host supplies its content where a 2000 phone kept it (plan 30), and implements
 | received SMS                             | SIM `EF_SMS`                    | `StockSimCard.messages`                     |
 | SIM services menu and screens            | the SIM's toolkit applet        | `StockSimCard.toolkit`                      |
 | IMEI                                     | the phone                       | `StockPhoneConfig.imei`                     |
-| Welcome note, Reminders                  | phone memory, typed by the user | `StockPhoneConfig.preload`, applied once    |
+| Welcome note, Reminders, Snake II level  | phone memory, typed by the user | `StockPhoneConfig.preload`, applied once    |
 | missed/received calls, durations, alarms | phone memory, made by events    | none: a host plays the events               |
 
 ```ts
@@ -887,7 +887,8 @@ lacks: …`): messages (numbers, GSM text, time stamps, slots), toolkit (kebab-c
 digits and five; the screen is plan 22's). `preload` writes the Welcome note while storage has no
 `settings` record and the reminders (in order, as Add would, plan 21) while it has no `reminders`
 record, so a visitor's edits and erasures survive; every string must be typeable, within its
-editor's limit and drawable.
+editor's limit and drawable. `snakeLevel` (1-9, as the Level page stores it) is written while the
+level was never stored: the virgin EEPROM's 175 moves the snake every ≈7.7 ms.
 
 ### Screen text
 

@@ -1,6 +1,6 @@
 // The host's identity and preload (plan 30 D9, D10): the phone's IMEI for `*#06#`, and phone
-// memory a user could have typed (the Welcome note, Reminders), written once where its record
-// does not exist in storage, so a visitor's own edits and erasures survive. Validated when the
+// memory a user could have typed (the Welcome note, Reminders, Snake II's level), written once
+// where it was never written in storage, so a visitor's own edits and erasures survive. Validated when the
 // phone is created: an invalid value throws, naming the field.
 import { missingStockGlyphs, type StockFontName } from "../resources";
 import { TYPEABLE } from "../text/keys";
@@ -12,6 +12,7 @@ import {
   StockReminders,
 } from "./features/reminders/store";
 import { WELCOME_NOTE_KEY, WELCOME_NOTE_LIMIT } from "./features/settings";
+import { SNAKE_SETTINGS } from "../widgets/snake";
 import { STOCK_STORAGE_PREFIX, type StockEeprom, type StockStorage } from "./eeprom";
 import { SETTINGS_RECORD, type StockSettings } from "./settings";
 
@@ -26,6 +27,11 @@ export interface StockReminderPreload {
 export interface StockPreload {
   readonly welcomeNote?: string;
   readonly reminders?: readonly StockReminderPreload[];
+  /**
+   * Snake II's level as the Level page stores it (1-9), written while the level was never
+   * written. The virgin EEPROM's 175 moves the snake every timer unit (≈7.7 ms, snake-ii.md).
+   */
+  readonly snakeLevel?: number;
 }
 
 /** An IMEI's digits (GSM 03.03: TAC, serial number and the Luhn check digit). */
@@ -89,7 +95,15 @@ export function checkPreload(preload: unknown): StockPreload {
   if (preload === undefined) return {};
   if (typeof preload !== "object" || preload === null)
     throw new Error("preload must be an object.");
-  const { welcomeNote, reminders } = preload as Record<string, unknown>;
+  const { welcomeNote, reminders, snakeLevel } = preload as Record<string, unknown>;
+  if (
+    snakeLevel !== undefined &&
+    !(Number.isInteger(snakeLevel) && (snakeLevel as number) >= 1 && (snakeLevel as number) <= 9)
+  ) {
+    throw new Error(
+      `preload.snakeLevel must be a whole number from 1 to 9 (received ${JSON.stringify(snakeLevel)}).`,
+    );
+  }
   if (welcomeNote !== undefined) {
     const problem = typedProblem(welcomeNote, WELCOME_NOTE_LIMIT, ["large", "small"]);
     if (problem !== undefined) throw new Error(`preload.welcomeNote ${problem}.`);
@@ -130,7 +144,8 @@ function stored(storage: StockStorage, record: { readonly name: string }): boole
 /**
  * Writes `preload` where its record does not exist in `storage` (D10): the Welcome note while
  * there is no settings record, the reminders (in order, as `Add` would) while there is no
- * reminders record. Call before the phone writes anything.
+ * reminders record, Snake II's level while the settings record holds none. Call before the phone
+ * writes anything.
  */
 export function applyPreload(
   preload: StockPreload,
@@ -138,9 +153,12 @@ export function applyPreload(
   eeprom: StockEeprom,
   settings: StockSettings,
 ): void {
-  const { welcomeNote, reminders } = preload;
+  const { welcomeNote, reminders, snakeLevel } = preload;
   if (welcomeNote !== undefined && !stored(storage, SETTINGS_RECORD)) {
     settings.setText(WELCOME_NOTE_KEY, welcomeNote);
+  }
+  if (snakeLevel !== undefined && !(SNAKE_SETTINGS.level in eeprom.peek(SETTINGS_RECORD).numbers)) {
+    settings.setNumber(SNAKE_SETTINGS.level, snakeLevel);
   }
   if (reminders !== undefined && reminders.length > 0 && !stored(storage, REMINDERS_RECORD)) {
     const store = new StockReminders(eeprom);
