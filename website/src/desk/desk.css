@@ -665,13 +665,15 @@
     height: auto;
   }
 
+  /* The stage fills the screen and frames the phone to 95% of its limiting side
+     (PhoneStageHost's fit). */
   .d01-phone__stage {
-    height: min(80svh, 720px);
+    height: 100svh;
   }
 
   .d01-phone__shadow {
-    width: calc(min(80svh, 720px) * 0.36);
-    height: calc(min(80svh, 720px) * 0.8);
+    width: calc(min(95svh, 95vw / 0.43) * 0.41);
+    height: calc(min(95svh, 95vw / 0.43) * 0.92);
   }
 
   .d01-more {

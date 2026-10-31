@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { attachKeyboard } from "./keyboard";
 import { getPhoneRuntime } from "./stock-phone";
 
+const MOBILE = "(max-width: 899px)";
+
 /**
  * Bridges the phone runtime to the 3D stage. Client-only (lives under
  * <ClientOnly> in routes/_phone.tsx) and mounted ONCE for the whole session.
@@ -33,6 +35,15 @@ export default function PhoneStageHost() {
     };
   }, [renderer, lights]);
 
+  // Mobile: the phone spans 95% of the screen's limiting side (desk.css's mobile breakpoint).
+  const [mobile, setMobile] = useState(() => window.matchMedia(MOBILE).matches);
+  useEffect(() => {
+    const media = window.matchMedia(MOBILE);
+    const change = () => setMobile(media.matches);
+    media.addEventListener("change", change);
+    return () => media.removeEventListener("change", change);
+  }, []);
+
   // Desktop keyboard → runtime input funnel, alive exactly as long as the
   // stage. Keyboard-held keys also depress the 3D keypad (pressedKeys);
   // pointer presses don't feed the set — the key mesh already animates itself.
@@ -54,6 +65,7 @@ export default function PhoneStageHost() {
   return (
     <PhoneStage
       className="phone-stage"
+      fit={mobile ? 0.95 : undefined}
       screenCanvas={renderer.canvas}
       screenVersion={version}
       backlightOn={leds.display}

@@ -85,7 +85,9 @@ keyguard while the display lights). A host maps its light events to the two
 props; a host that passes only `backlightOn` gets a keypad that follows it.
 
 `PhoneStage` additionally accepts `className` (applied to the canvas wrapper div —
-size it with CSS; the canvas tracks its container).
+size it with CSS; the canvas tracks its container). With `fit` (0–1), the camera moves so the phone, centred,
+at rest spans that fraction of the canvas's limiting side (width on a portrait screen); without it
+the camera keeps its fixed distance.
 
 `Nokia3310Key` is `"power" | "navi" | "c" | "up" | "down" | "0"–"9" | "*" | "#"`.
 The power target doubles as the earpiece grille on the front face (the real
