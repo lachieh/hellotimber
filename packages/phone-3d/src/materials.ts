@@ -11,6 +11,8 @@ export const MATERIALS = {
   // Colors are authored darker than the reference reads on screen — the
   // stage's lights + environment are additive (~1.7× on camera-facing faces).
   body: { color: "#4d566f", roughness: 0.55, metalness: 0.05 },
+  /** The inside of the shell, through its openings: unlit, near black. */
+  interior: { color: "#0b0c10", roughness: 1, metalness: 0 },
   face: { color: "#49526b", roughness: 0.6, metalness: 0.05 },
   island: { color: "#c3c7d1", roughness: 0.3, metalness: 0.75 },
   key: { color: "#c9cdd6", roughness: 0.28, metalness: 0.7 },

@@ -14,7 +14,7 @@ const CLIPS = Object.keys(REVEAL) as RevealClip[];
  */
 function RevealTuner() {
   const timeline = useDialTimeline("Phone reveal", REVEAL, {
-    id: "phone-reveal",
+    id: "phone-reveal-v2",
     persist: true,
     autoplay: false,
   });

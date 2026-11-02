@@ -167,6 +167,20 @@ export function Nokia3310({
       const o = model.getObjectByName(name);
       if (o instanceof THREE.Mesh && dress[name]) o.material = standard(dress[name]);
     }
+    // The shell's inside, seen through its openings (the earpiece slots, the key wells): the
+    // one-sided body would show straight through to whatever is behind the phone, so its
+    // inward faces are drawn dark and unlit.
+    for (const name of ["body", "side_cap"]) {
+      const o = model.getObjectByName(name);
+      if (!(o instanceof THREE.Mesh) || o.getObjectByName(`${name}_interior`)) continue;
+      const interior = new THREE.Mesh(
+        o.geometry,
+        new THREE.MeshBasicMaterial({ color: MATERIALS.interior.color, side: THREE.BackSide }),
+      );
+      interior.name = `${name}_interior`;
+      interior.raycast = () => {};
+      o.add(interior);
+    }
     // badge logo prints light
     const logo = model.getObjectByName("badge_logo");
     if (logo instanceof THREE.Mesh) {
