@@ -55,6 +55,16 @@ function MyPhone() {
 pointer tilt). To compose into an existing scene, render `<Nokia3310 {...props}/>`
 inside your own `<Canvas>` instead.
 
+## Server-rendered sketch and the form entrance
+
+`@hellotimber/phone-3d/sketch` exports `<Nokia3310Sketch fit? screenBgColor?/>`: the phone
+drawn flat in comic ink, as pure SVG with no three.js import, so it renders on the server. It is
+traced from the model's front view (`vp run @hellotimber/phone-3d#sketch-outline` regenerates
+`src/sketch/outline.generated.ts` after a model change) and framed exactly like the stage's flat
+phone. Place it absolutely over `<PhoneStage form onFormStart={…}>` (same `fit`) and fade it out
+on `onFormStart`: the 3D phone starts flat at the sketch's outline and rises out of it over
+`FORM_MS`, keys last.
+
 ## Props (`Nokia3310Props`)
 
 | Prop            | Type                                                  | Required | Notes                                                               |

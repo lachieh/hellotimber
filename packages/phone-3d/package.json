@@ -5,10 +5,12 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./sketch": "./src/sketch/index.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
     "dev": "vp dev",
+    "sketch-outline": "node scripts/sketch-outline.ts",
     "test": "vp test run"
   },
   "devDependencies": {

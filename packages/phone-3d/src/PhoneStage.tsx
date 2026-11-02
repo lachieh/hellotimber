@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 import * as THREE from "three";
 import type { Group } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { CAMERA_FOV, CAMERA_Z, FORM_MS, formDepth } from "./frame";
+import { KEY_NODES } from "./layout";
 import { Nokia3310 } from "./Nokia3310";
 import type { Nokia3310Props } from "./types";
 
@@ -33,9 +35,6 @@ const prefersReducedMotion =
   typeof window !== "undefined" &&
   typeof window.matchMedia === "function" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-const CAMERA_Z = 15;
-const CAMERA_FOV = 42;
 
 /** Points `(offset along an axis, z)` of the phone at rest: the convex hull of its vertices'. */
 type Profile = readonly (readonly [number, number])[];
@@ -91,11 +90,18 @@ function convexHull(points: [number, number][]): Profile {
  * `|e - c| <= t (d - z)`. Some `c` satisfies every point when `d` is at least
  * `max(z / 2 + e / 2t) + max(z / 2 - e / 2t)`; `c` is then the middle of the range left.
  */
-function fitCamera(silhouette: Silhouette, aspect: number, fit: number): THREE.Vector3Tuple {
+function fitCamera(
+  silhouette: Silhouette,
+  aspect: number,
+  fit: number,
+  depth: number,
+): THREE.Vector3Tuple {
   const t = fit * Math.tan(THREE.MathUtils.degToRad(CAMERA_FOV / 2));
+  // Squashing the phone's depth about z = 0 squashes its profiles' z the same way.
+  const squash = (profile: Profile) => profile.map(([e, z]) => [e, z * depth] as const);
   const axes = [
-    { profile: silhouette.x, t: t * aspect },
-    { profile: silhouette.y, t },
+    { profile: squash(silhouette.x), t: t * aspect },
+    { profile: squash(silhouette.y), t },
   ];
   let d = 0;
   for (const { profile, t } of axes) {
@@ -119,41 +125,130 @@ function fitCamera(silhouette: Silhouette, aspect: number, fit: number): THREE.V
   return [x!, y!, d];
 }
 
-function SwayRig({ children, fit }: { children: ReactNode; fit: number | undefined }) {
+/** Lowest depth scale while forming: a zero scale has no inverse for the normals. */
+const FLAT = 0.002;
+
+/** How long the keys trail the body, from the top key to the bottom one. */
+const KEY_DELAY_MS = { first: 260, last: 520 } as const;
+
+const KEY_NODE_NAMES = new Set<string>(Object.values(KEY_NODES));
+
+/** The phone's key meshes and when each starts forming (a wave down the keypad). */
+function keyWave(g: Group): { mesh: THREE.Mesh; delayMs: number }[] {
+  const keys: { mesh: THREE.Mesh; y: number }[] = [];
+  g.traverse((object) => {
+    if (!(object instanceof THREE.Mesh) || !KEY_NODE_NAMES.has(object.name)) return;
+    object.geometry.computeBoundingBox();
+    const box = object.geometry.boundingBox;
+    if (box !== null) keys.push({ mesh: object, y: (box.min.y + box.max.y) / 2 });
+  });
+  const top = Math.max(...keys.map((k) => k.y));
+  const bottom = Math.min(...keys.map((k) => k.y));
+  return keys.map(({ mesh, y }) => ({
+    mesh,
+    delayMs:
+      KEY_DELAY_MS.first +
+      ((top - y) / (top - bottom || 1)) * (KEY_DELAY_MS.last - KEY_DELAY_MS.first),
+  }));
+}
+
+/** Where forming has got to, once the model is there. */
+interface Forming {
+  startedAt: number;
+  keys: { mesh: THREE.Mesh; delayMs: number }[];
+  done: boolean;
+}
+
+function SwayRig({
+  children,
+  fit,
+  form,
+  onFormStart,
+}: {
+  children: ReactNode;
+  fit: number | undefined;
+  form: boolean;
+  onFormStart: (() => void) | undefined;
+}) {
   const group = useRef<Group>(null);
   const silhouette = useRef<Silhouette>(undefined);
+  const forming = useRef<Forming>(undefined);
   useFrame((state) => {
     const g = group.current;
     if (!g) return;
     // The model loads (suspends) after the rig mounts: measure once it is there.
-    if (fit !== undefined) silhouette.current ??= restSilhouette(g);
+    silhouette.current ??= restSilhouette(g);
+    if (silhouette.current === undefined) return;
+
+    // The first frame with the model: the phone starts flat, as its outline, and rises.
+    if (forming.current === undefined) {
+      forming.current = {
+        startedAt: performance.now(),
+        keys: form && !prefersReducedMotion ? keyWave(g) : [],
+        done: !form || prefersReducedMotion,
+      };
+      onFormStart?.();
+    }
+    const f = forming.current;
+    let depth = 1;
+    if (!f.done) {
+      const ms = performance.now() - f.startedAt;
+      depth = Math.max(FLAT, formDepth(ms));
+      for (const key of f.keys)
+        key.mesh.scale.z =
+          Math.max(FLAT, formDepth(ms - key.delayMs, FORM_MS - KEY_DELAY_MS.first)) / depth;
+      if (ms >= FORM_MS + KEY_DELAY_MS.last) {
+        f.done = true;
+        for (const key of f.keys) key.mesh.scale.z = 1;
+        depth = 1;
+      }
+    }
+    g.scale.z = depth;
+
     const [x, y, z] =
-      fit === undefined || silhouette.current === undefined
+      fit === undefined
         ? [0, 0, CAMERA_Z]
-        : fitCamera(silhouette.current, state.size.width / state.size.height, fit);
+        : fitCamera(silhouette.current, state.size.width / state.size.height, fit, depth);
     state.camera.position.set(x, y, z);
     if (prefersReducedMotion) {
       g.rotation.y += (0 - g.rotation.y) * 0.1;
       g.rotation.x += (0 - g.rotation.x) * 0.1;
       return;
     }
+    // Sway grows in with the depth: a flat phone lies still.
+    const sway = Math.min(1, depth);
     const t = state.clock.elapsedTime;
-    const targetY = Math.sin(t * 0.5) * 0.06 + state.pointer.x * 0.18;
-    const targetX = Math.sin(t * 0.7) * 0.02 - state.pointer.y * 0.12;
+    const targetY = (Math.sin(t * 0.5) * 0.06 + state.pointer.x * 0.18) * sway;
+    const targetX = (Math.sin(t * 0.7) * 0.02 - state.pointer.y * 0.12) * sway;
     g.rotation.y += (targetY - g.rotation.y) * 0.05;
     g.rotation.x += (targetX - g.rotation.x) * 0.05;
   });
   return <group ref={group}>{children}</group>;
 }
 
+export interface PhoneStageProps extends Nokia3310Props {
+  className?: string;
+  /** Frame the phone at rest to this fraction of the canvas's limiting side. */
+  fit?: number;
+  /**
+   * Form the phone out of its flat front outline once the model has loaded: it rises out of the
+   * surface over FORM_MS, keys last. `<Nokia3310Sketch>` with the same `fit` draws that outline,
+   * so a host can show the sketch until `onFormStart` and let the phone grow out of it.
+   */
+  form?: boolean;
+  /** The first frame the model is drawn (flat, when forming). */
+  onFormStart?: () => void;
+}
+
 /** Convenience scene: Canvas + lighting + resize + subtle idle motion (VISION contract).
- *  R3F's Canvas tracks its container size, so resize works out of the box. With `fit`, the
- *  camera frames the phone at rest to that fraction of the canvas's limiting side. */
+ *  R3F's Canvas tracks its container size, so resize works out of the box. */
 export function PhoneStage({
   className,
   fit,
+  form = false,
+  onFormStart,
   ...props
-}: Nokia3310Props & { className?: string; fit?: number }) {
+}: PhoneStageProps) {
   return (
     <Canvas
       className={className}
@@ -164,7 +259,7 @@ export function PhoneStage({
       <ambientLight intensity={0.3} />
       <directionalLight position={[4, 6, 8]} intensity={1.0} />
       <directionalLight position={[-5, -2, 4]} intensity={0.3} />
-      <SwayRig fit={fit}>
+      <SwayRig fit={fit} form={form} onFormStart={onFormStart}>
         <Nokia3310 {...props} />
       </SwayRig>
     </Canvas>

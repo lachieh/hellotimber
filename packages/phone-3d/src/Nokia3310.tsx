@@ -3,6 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { LED_X, backlightLightmap, unlitLightmap } from "./backlight";
+import { STAGE_HEIGHT } from "./frame";
 import Key from "./Key";
 import {
   INK_SHADOW_BLUR,
@@ -27,9 +28,6 @@ import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL, DEFAULT_SCREEN_BG, resolveLights
 import type { Nokia3310Key, Nokia3310Props } from "./types";
 
 const POINTER_EVENTS = ["pointermove", "pointerup", "pointercancel"] as const;
-
-/** World height the stage is framed against (plan 03 convention). */
-const STAGE_HEIGHT = 10;
 
 function standard(spec: MaterialSpec): THREE.MeshStandardMaterial {
   return new THREE.MeshStandardMaterial({

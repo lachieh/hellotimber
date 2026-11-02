@@ -2,15 +2,14 @@ import { PhoneStage } from "@hellotimber/phone-3d";
 import type { Nokia3310Key } from "@hellotimber/phone-3d";
 import { useEffect, useState } from "react";
 import { attachKeyboard } from "./keyboard";
+import { MOBILE, MOBILE_FIT } from "./stage-frame";
 import { getPhoneRuntime } from "./stock-phone";
-
-const MOBILE = "(max-width: 899px)";
 
 /**
  * Bridges the phone runtime to the 3D stage. Client-only (lives under
- * <ClientOnly> in routes/_phone.tsx) and mounted ONCE for the whole session.
+ * <ClientOnly> in PhoneSlot) and mounted ONCE for the whole session.
  */
-export default function PhoneStageHost() {
+export default function PhoneStageHost({ onFormStart }: { onFormStart: () => void }) {
   // `input` is a closure on the runtime object, not a class method — no `this`.
   // oxlint-disable-next-line unbound-method
   const { renderer, input } = getPhoneRuntime();
@@ -65,7 +64,9 @@ export default function PhoneStageHost() {
   return (
     <PhoneStage
       className="phone-stage"
-      fit={mobile ? 0.95 : undefined}
+      fit={mobile ? MOBILE_FIT : undefined}
+      form
+      onFormStart={onFormStart}
       screenCanvas={renderer.canvas}
       screenVersion={version}
       backlightOn={leds.display}

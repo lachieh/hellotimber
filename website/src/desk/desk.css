@@ -170,6 +170,17 @@
   background: rgb(24 8 0 / 0.78);
   filter: blur(12px);
   pointer-events: none;
+  transition:
+    translate 900ms cubic-bezier(0.2, 0.9, 0.3, 1.2),
+    filter 900ms ease-out,
+    opacity 900ms ease-out;
+}
+
+/* Drawn flat, the phone lies in the desk: a tight contact shadow until it rises (PhoneSlot). */
+.d01-phone:has([data-phone="sketch"]) .d01-phone__shadow {
+  translate: calc(-50% + 6px) calc(-50% + 8px);
+  filter: blur(3px);
+  opacity: 0.6;
 }
 
 .d01-more {
