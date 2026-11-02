@@ -4,7 +4,25 @@ import ScreenMirror from "../components/ScreenMirror";
 import Desk from "../desk/Desk";
 import PhoneSlot from "../phone/PhoneSlot";
 
-export const Route = createFileRoute("/_phone")({ component: PhoneLayout });
+/** What the 3D phone fetches once its code runs (phone-3d's defaults), started with the page so
+ *  they download alongside that code. as="fetch" + crossOrigin matches three's FileLoader. */
+const PHONE_ASSETS = [
+  "/models/nokia3310-v3.glb",
+  "/draco/draco_wasm_wrapper.js",
+  "/draco/draco_decoder.wasm",
+];
+
+export const Route = createFileRoute("/_phone")({
+  head: () => ({
+    links: PHONE_ASSETS.map((href) => ({
+      rel: "preload",
+      href,
+      as: "fetch",
+      crossOrigin: "anonymous",
+    })),
+  }),
+  component: PhoneLayout,
+});
 
 function PhoneLayout() {
   return (

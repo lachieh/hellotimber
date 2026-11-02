@@ -11,6 +11,8 @@ export interface Nokia3310SketchProps {
   fit?: number;
   /** The LCD's background; pass the `screenBgColor` you give the stage. */
   screenBgColor?: string;
+  /** Show "Loading" on the LCD with a bar this full (0–1); a blank LCD when unset. */
+  progress?: number;
 }
 
 const INK = "#16130f";
@@ -59,6 +61,7 @@ export function Nokia3310Sketch({
   className,
   fit,
   screenBgColor = DEFAULT_SCREEN_BG,
+  progress,
 }: Nokia3310SketchProps) {
   const wrapper: CSSProperties = {
     position: "absolute",
@@ -128,6 +131,10 @@ export function Nokia3310Sketch({
           ))}
         </g>
 
+        {screen && progress !== undefined && (
+          <LcdLoading center={screen.center} progress={progress} />
+        )}
+
         {/* Gloss on the LCD: two hard white streaks. */}
         {screen && (
           <g clipPath={url("screen")} stroke={PAPER_HIGHLIGHT} strokeLinecap="round">
@@ -177,6 +184,77 @@ export function Nokia3310Sketch({
         <path d={SILHOUETTE} fill="none" stroke={INK} strokeWidth="0.11" strokeLinejoin="round" />
       </svg>
     </div>
+  );
+}
+
+/** LCD ink: the dark pixels of the green screen. */
+const LCD_INK = "#1f2d22";
+/** Segments in the loading bar, like the 3310's own signal and battery bars. */
+const SEGMENTS = 10;
+
+/**
+ * "Loading" on the LCD over a segmented bar, the way the phone draws its own progress. The dots
+ * blink by SMIL, so the drawing is alive before any script runs.
+ */
+function LcdLoading({
+  center: [cx, cy],
+  progress,
+}: {
+  center: readonly [number, number];
+  progress: number;
+}) {
+  const lit = Math.round(Math.min(1, Math.max(0, progress)) * SEGMENTS);
+  const width = 2.1;
+  const height = 0.34;
+  const gap = 0.05;
+  const inner = (width - 2 * gap - (SEGMENTS - 1) * gap) / SEGMENTS;
+  const left = cx - width / 2;
+  const top = cy + 0.12;
+  return (
+    <g role="progressbar" aria-valuenow={Math.round(progress * 100)}>
+      <text
+        x={left}
+        y={cy - 0.32}
+        fill={LCD_INK}
+        fontFamily='"Courier New", ui-monospace, monospace'
+        fontWeight="700"
+        fontSize="0.38"
+      >
+        Loading
+        {[0, 1, 2].map((i) => (
+          <tspan key={i}>
+            .
+            <animate
+              attributeName="opacity"
+              values="0;0;1;1"
+              keyTimes={`0;${(i + 1) / 4};${(i + 1) / 4};1`}
+              dur="1.2s"
+              repeatCount="indefinite"
+            />
+          </tspan>
+        ))}
+      </text>
+      <rect
+        x={left}
+        y={top}
+        width={width}
+        height={height}
+        rx="0.04"
+        fill="none"
+        stroke={LCD_INK}
+        strokeWidth="0.04"
+      />
+      {Array.from({ length: lit }, (_, i) => (
+        <rect
+          key={i}
+          x={left + gap + i * (inner + gap)}
+          y={top + gap}
+          width={inner}
+          height={height - 2 * gap}
+          fill={LCD_INK}
+        />
+      ))}
+    </g>
   );
 }
 

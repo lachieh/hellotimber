@@ -40,3 +40,20 @@ describe("Nokia3310Sketch", () => {
     expect(render({ screenBgColor: "#abcdef" })).toContain('fill="#abcdef"');
   });
 });
+
+describe("Nokia3310Sketch loading", () => {
+  const segments = (html: string) => (html.match(/fill="#1f2d22"/g) ?? []).length;
+
+  it("leaves the LCD blank without progress", () => {
+    expect(render()).not.toContain("Loading");
+  });
+
+  it("fills the bar with the progress", () => {
+    const empty = render({ progress: 0 });
+    expect(empty).toContain("Loading");
+    // Text fill alone at 0; then one segment per tenth.
+    expect(segments(render({ progress: 0.5 })) - segments(empty)).toBe(5);
+    expect(segments(render({ progress: 1 })) - segments(empty)).toBe(10);
+    expect(segments(render({ progress: 3 })) - segments(empty)).toBe(10);
+  });
+});

@@ -6,6 +6,8 @@ import type { Group } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { CAMERA_FOV, CAMERA_Z, FORM_MS, formDepth } from "./frame";
 import { KEY_NODES } from "./layout";
+import { settleRest, tiltRotation, watchTilt } from "./tilt";
+import type { ScreenTilt } from "./tilt";
 import { Nokia3310 } from "./Nokia3310";
 import type { Nokia3310Props } from "./types";
 
@@ -28,7 +30,7 @@ function StudioEnvironment() {
   return null;
 }
 
-/** Gentle idle sway (sine) + pointer-follow tilt, eased toward the target.
+/** Gentle idle sway (sine) + device tilt (tilt.ts; none without a sensor), eased toward the target.
  *  Honors prefers-reduced-motion: the rig holds still for those users
  *  (plan 06 deviation 6 — the single sanctioned phone-3d edit). */
 const prefersReducedMotion =
@@ -173,7 +175,16 @@ function SwayRig({
   const group = useRef<Group>(null);
   const silhouette = useRef<Silhouette>(undefined);
   const forming = useRef<Forming>(undefined);
-  useFrame((state) => {
+  // The latest sensor reading and the rest pose it is measured from; unset without a sensor.
+  const tilt = useRef<{ now: ScreenTilt; rest: ScreenTilt }>(undefined);
+  useEffect(
+    () =>
+      watchTilt((now) => {
+        tilt.current = { now, rest: tilt.current?.rest ?? now };
+      }),
+    [],
+  );
+  useFrame((state, dt) => {
     const g = group.current;
     if (!g) return;
     // The model loads (suspends) after the rig mounts: measure once it is there.
@@ -218,8 +229,13 @@ function SwayRig({
     // Sway grows in with the depth: a flat phone lies still.
     const sway = Math.min(1, depth);
     const t = state.clock.elapsedTime;
-    const targetY = (Math.sin(t * 0.5) * 0.06 + state.pointer.x * 0.18) * sway;
-    const targetX = (Math.sin(t * 0.7) * 0.02 - state.pointer.y * 0.12) * sway;
+    let turn = { x: 0, y: 0 };
+    if (tilt.current !== undefined) {
+      tilt.current.rest = settleRest(tilt.current.rest, tilt.current.now, dt);
+      turn = tiltRotation(tilt.current.rest, tilt.current.now);
+    }
+    const targetY = (Math.sin(t * 0.5) * 0.06 + turn.y) * sway;
+    const targetX = (Math.sin(t * 0.7) * 0.02 + turn.x) * sway;
     g.rotation.y += (targetY - g.rotation.y) * 0.05;
     g.rotation.x += (targetX - g.rotation.x) * 0.05;
   });
