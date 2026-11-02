@@ -1,31 +1,6 @@
 import type { ScreenModel } from "@hellotimber/phone-core";
 import { describeStockScreen } from "@hellotimber/nokia-os";
 
-/** One text row the LCD draws; `selected` is the inverted (highlighted) row. */
-export interface LcdRow {
-  text: string;
-  selected?: true;
-}
-
-/**
- * The words the LCD is showing, laid out as phone-screen draws them: the top line, the body rows
- * actually on screen, and the soft key. Pixels-only screens (Snake) carry `pixels` instead of rows.
- */
-export interface LcdCopy {
-  head?: string;
-  rows: LcdRow[];
-  softkey?: string;
-  pixels?: string;
-}
-
-export function lcdCopy(screen: ScreenModel): LcdCopy {
-  if (screen.kind === "off") return { rows: [] };
-  const description = describeStockScreen(screen);
-  const softkey = description.match(/\[([^\]]+)\]$/)?.[1];
-  const text = softkey ? description.slice(0, description.lastIndexOf(" [")) : description;
-  return { rows: [{ text }], ...(softkey ? { softkey } : {}) };
-}
-
 /** What to press next, in the voice of the sticky note. */
 export function deskHint(path: string, screen: ScreenModel): string {
   if (path.startsWith("menu/games/snake")) return "Enter to play, steer with 2 4 6 8";

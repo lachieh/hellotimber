@@ -30,7 +30,7 @@ function StudioEnvironment() {
   return null;
 }
 
-/** Gentle idle sway (sine) + device tilt (tilt.ts; none without a sensor), eased toward the target.
+/** Device tilt (tilt.ts; none without a sensor), eased toward the target.
  *  Honors prefers-reduced-motion: the rig holds still for those users
  *  (plan 06 deviation 6 — the single sanctioned phone-3d edit). */
 const prefersReducedMotion =
@@ -41,7 +41,7 @@ const prefersReducedMotion =
 /** Points `(offset along an axis, z)` of the phone at rest: the convex hull of its vertices'. */
 type Profile = readonly (readonly [number, number])[];
 
-/** The phone's profiles at rest (no sway) along the camera's x and y axes, in world units. */
+/** The phone's profiles at rest (untilted) along the camera's x and y axes, in world units. */
 interface Silhouette {
   readonly x: Profile;
   readonly y: Profile;
@@ -199,16 +199,16 @@ function SwayRig({
       g.rotation.x += (0 - g.rotation.x) * 0.1;
       return;
     }
-    // Idle motion grows in as the phone settles; until then the forming wobble drives it.
+    // Device tilt grows in as the phone settles; until then the forming wobble drives it. Without
+    // a tilt sensor the phone holds still.
     const sway = pose.settled;
-    const t = state.clock.elapsedTime;
     let turn = { x: 0, y: 0 };
     if (tilt.current !== undefined) {
       tilt.current.rest = settleRest(tilt.current.rest, tilt.current.now, dt);
       turn = tiltRotation(tilt.current.rest, tilt.current.now);
     }
-    const targetY = (Math.sin(t * 0.5) * 0.06 + turn.y) * sway;
-    const targetX = (Math.sin(t * 0.7) * 0.02 + turn.x) * sway;
+    const targetY = turn.y * sway;
+    const targetX = turn.x * sway;
     if (sway < 1) {
       g.rotation.set(pose.tiltX + targetX, pose.tiltY + targetY, 0);
       return;
@@ -239,7 +239,7 @@ export interface PhoneStageProps extends Nokia3310Props {
   pose?: () => FormPose;
 }
 
-/** Convenience scene: Canvas + lighting + resize + subtle idle motion (VISION contract).
+/** Convenience scene: Canvas + lighting + resize + device-tilt motion (VISION contract).
  *  R3F's Canvas tracks its container size, so resize works out of the box. */
 export function PhoneStage({
   className,

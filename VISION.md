@@ -1299,7 +1299,7 @@ export interface Nokia3310Props {
 }
 /** The phone model; must be rendered inside an R3F <Canvas>. */
 export function Nokia3310(props: Nokia3310Props): React.JSX.Element;
-/** Convenience scene: Canvas + lighting + resize + subtle idle motion. */
+/** Convenience scene: Canvas + lighting + resize + device-tilt motion. */
 export function PhoneStage(props: Nokia3310Props & { className?: string }): React.JSX.Element;
 ```
 
