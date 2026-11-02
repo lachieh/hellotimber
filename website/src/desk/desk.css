@@ -32,6 +32,14 @@
 
 /* Light comes from a window at the top left: every shadow falls down and to the right. */
 .desk {
+  /* The phone at most its real size, 113 mm (4.45 in) tall. Browsers don't report a screen's
+     physical size, so this goes by the CSS pixels in a real inch on each kind of screen: desktop
+     and laptop displays ≈ 96–127 (110 at 1×, 120 on high-density ones), tablets ≈ 132, phones
+     ≈ 160 (Android's dp, iPhones' points). */
+  --d01-ppi: 110;
+  --d01-real-phone: calc(var(--d01-ppi) * 4.45px);
+  /* The stage, which the handset spans 0.87 of down (PhoneStage without fit). */
+  --d01-stage: min(88vh, calc(var(--d01-real-phone) / 0.87));
   --d01-wood: #84522c;
   --d01-wood-deep: #5e3519;
   --d01-biro: #1f2c86;
@@ -89,6 +97,24 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+@media (pointer: fine) and (min-resolution: 2dppx) {
+  .desk {
+    --d01-ppi: 120;
+  }
+}
+
+@media (pointer: coarse) {
+  .desk {
+    --d01-ppi: 160;
+  }
+}
+
+@media (pointer: coarse) and (min-width: 600px) and (min-height: 600px) {
+  .desk {
+    --d01-ppi: 132;
+  }
 }
 
 /* ── the desk ─────────────────────────────────────────────────────────── */
@@ -150,7 +176,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  height: min(88vh, 860px);
+  height: var(--d01-stage);
 }
 
 /* A vertical swipe that starts on the phone scrolls the desk; taps still reach the keys. */
@@ -170,8 +196,8 @@
   z-index: 0;
   left: 50%;
   top: 50%;
-  width: calc(min(88vh, 860px) * 0.38);
-  height: calc(min(88vh, 860px) * 0.8);
+  width: calc(var(--d01-stage) * 0.38);
+  height: calc(var(--d01-stage) * 0.8);
   translate: calc(-50% + 6px + var(--rest) * 36px + var(--leap) * 42px)
     calc(-50% + 8px + var(--rest) * 42px + var(--leap) * 50px);
   scale: calc(0.96 + var(--rest) * 0.04 + var(--leap) * 0.1);
@@ -193,33 +219,48 @@
   box-shadow: var(--d01-shadow);
 }
 
-/* Beside the phone: the pencil case at its bottom left, the sticky note pad tucked under its
-   bottom right. */
+/* Beside the phone, low on the desk: the pencil case at its left, the sticky note pad at its
+   right. Each sits `--gap` clear of the handset when the screen has room for it; with less room
+   it slides in, its outer edge kept `--edge` inside the screen, and sinks out of the phone's way,
+   at the least the top of it peeking up just above the phone's bottom edge. The phone's stage is
+   `--stage` tall and the handset spans about 0.354 × that across and 0.87 × it down. */
+.d01-desk > .d01-case,
+.d01-desk > .d01-sticky {
+  --stage: var(--d01-stage);
+  --phone-half: calc(var(--stage) * 0.177);
+  --phone-bottom: calc(var(--stage) * 0.435);
+  --gap: 32px;
+  --edge: 24px;
+  /* How much wider than the room beside the phone the object is (0 when it fits). */
+  --over: max(0px, calc(var(--w) - (50vw - var(--phone-half) - var(--gap) - var(--edge))));
+  --beside: calc(var(--phone-half) + var(--gap) - var(--over) + 50%);
+  grid-area: phone;
+  align-self: center;
+  justify-self: center;
+  width: var(--w);
+  translate: var(--x)
+    min(
+      calc(50vh - 50% - 28px + var(--over) * 1.5),
+      max(calc(50vh - 50% - 28px), calc(var(--phone-bottom) - 40px + 50%))
+    );
+}
+
 .d01-desk > .d01-case {
-  grid-area: left;
+  --x: calc(-1 * var(--beside));
 }
 
 .d01-desk > .d01-sticky {
-  grid-area: phone;
+  --x: var(--beside);
 }
 
 /* ── sticky note pad ──────────────────────────────────────────────────── */
 
-/* A full pad, square like the real thing, its sheets' edges stacked down and to the right. It
-   sits in the phone's column, offset from the handset's centre by its half size (≈ 0.177 × the
-   stage height across, 0.435 down): its left edge tucks `--tuck` under the phone's right, its top
-   just above the phone's bottom, lifted to stay whole on screen. */
+/* A full pad, square like the real thing, its sheets' edges stacked down and to the right; under
+   the phone where the two meet. */
 .d01-sticky {
-  --stage: min(88vh, 860px);
-  --pad: 280px;
-  --tuck: 40px;
-  align-self: center;
-  justify-self: center;
+  --w: 280px;
   z-index: 0;
-  width: var(--pad);
   aspect-ratio: 1;
-  translate: calc(var(--stage) * 0.177 - var(--tuck) + var(--pad) / 2)
-    min(calc(var(--stage) * 0.435 - 90px + var(--pad) / 2), calc(50vh - var(--pad) / 2 - 28px));
   rotate: 4deg;
   border-radius: 2px;
   background: #e8d45a;
@@ -240,8 +281,7 @@
 .d01-sticky__sheet {
   position: absolute;
   inset: 0;
-  /* Clear of the phone over its left edge. */
-  padding: 34px 22px 22px calc(var(--tuck) + 20px);
+  padding: 34px 22px 22px;
   border-radius: 1px 1px 2px 14px / 1px 1px 2px 6px;
   background:
     linear-gradient(0deg, rgb(255 252 220 / 0.5) 0, rgb(120 96 10 / 0.1) 5px, rgb(0 0 0 / 0) 30px),
@@ -306,12 +346,10 @@
 
 /* ── pencil case: placement (its look is in pencil-case.css) ─────────── */
 
+/* Over the phone where the two meet: its links stay clickable. */
 .d01-case {
-  align-self: end;
-  justify-self: end;
+  --w: 320px;
   z-index: 3;
-  width: 320px;
-  margin: 0 -10px 9vh 0;
   rotate: -5deg;
 }
 
@@ -322,7 +360,8 @@
   grid-area: left;
   align-self: end;
   justify-self: end;
-  z-index: 4;
+  /* Under the pencil case, poking out of it. */
+  z-index: 2;
   width: min(280px, 72%);
   height: auto;
   margin: 0 5% calc(2vh + 26px) 0;
@@ -345,11 +384,11 @@
     grid-template-columns: minmax(0, 1fr) minmax(320px, 34vw) minmax(0, 1fr);
   }
   .d01-case {
-    width: min(300px, 31vw);
+    --w: 290px;
   }
 
   .d01-sticky {
-    --pad: 240px;
+    --w: 240px;
   }
 }
 
@@ -378,14 +417,21 @@
   }
 
   /* The stage fills the screen and frames the phone to 95% of its limiting side
-     (PhoneStageHost's fit). */
+     (PhoneStageHost's fit), but no more than the real phone: the handset is ≈ 0.43 as wide as
+     it is tall. */
   .d01-phone__stage {
-    height: 100svh;
+    width: min(100%, calc(var(--d01-real-phone) * 0.43 / 0.95));
+    height: min(100svh, calc(var(--d01-real-phone) / 0.95));
+    margin-inline: auto;
+  }
+
+  .d01-phone {
+    min-height: 100svh;
   }
 
   .d01-phone__shadow {
-    width: calc(min(95svh, 95vw / 0.43) * 0.41);
-    height: calc(min(95svh, 95vw / 0.43) * 0.92);
+    width: calc(min(95svh, 95vw / 0.43, var(--d01-real-phone)) * 0.41);
+    height: calc(min(95svh, 95vw / 0.43, var(--d01-real-phone)) * 0.92);
   }
 
   .d01-more {
@@ -410,13 +456,12 @@
     width: min(330px, calc(100vw - 48px));
   }
 
-  .d01-sticky {
-    --tuck: 0px;
+  .d01-desk > .d01-sticky {
     rotate: -2deg;
     translate: -6px 0;
   }
 
-  .d01-case {
+  .d01-desk > .d01-case {
     rotate: 2deg;
     translate: -4px 0;
   }
