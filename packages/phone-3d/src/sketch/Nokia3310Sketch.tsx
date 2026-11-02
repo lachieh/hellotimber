@@ -1,5 +1,5 @@
 import { useId } from "react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { VIEW_HEIGHT_AT_ORIGIN } from "../frame";
 import { MATERIALS, PRINT_DARK } from "../materials";
 import { DEFAULT_SCREEN_BG } from "../types";
@@ -13,6 +13,13 @@ export interface Nokia3310SketchProps {
   screenBgColor?: string;
   /** Show "Loading" on the LCD with a bar this full (0–1); a blank LCD when unset. */
   progress?: number;
+  /**
+   * Line boil, 0–1: the ink wobbles like a hand-drawn cartoon redrawn every other frame, as if
+   * the drawing were coming to life. Off (crisp) at 0.
+   */
+  boil?: number;
+  /** How much of the printed dot shading shows, 0–1 (default 1). */
+  halftone?: number;
 }
 
 const INK = "#16130f";
@@ -52,17 +59,21 @@ function sketchHeight(fit: number | undefined): string {
   return `min(${fit * 100}cqh, ${((fit * HALF_H) / HALF_W) * 100}cqw)`;
 }
 
-/**
- * The 3310 drawn flat in comic ink, traced from the 3D model's front view. Pure SVG: it renders
- * on the server, before three.js and the model have loaded, exactly where `<PhoneStage>` with
- * the same `fit` and `form` draws the phone flat before it rises.
- */
-export function Nokia3310Sketch({
+/** How far the boil displaces the ink at full strength, in model units (the phone is 10 tall). */
+const BOIL_SCALE = 0.1;
+/** Drawings a second while boiling: animation "on twos". */
+const BOIL_FPS = 12;
+
+/** The wrapper and SVG every sketch layer shares, so they all line up with the stage. */
+function SketchFrame({
   className,
   fit,
-  screenBgColor = DEFAULT_SCREEN_BG,
-  progress,
-}: Nokia3310SketchProps) {
+  children,
+}: {
+  className: string | undefined;
+  fit: number | undefined;
+  children: ReactNode;
+}) {
   const wrapper: CSSProperties = {
     position: "absolute",
     inset: 0,
@@ -78,36 +89,77 @@ export function Nokia3310Sketch({
     translate: "-50% -50%",
     overflow: "visible",
   };
+  return (
+    <div className={className} style={wrapper} aria-hidden="true">
+      <svg viewBox={VIEW_BOX} style={svg} role="presentation">
+        {children}
+      </svg>
+    </div>
+  );
+}
+
+/**
+ * The 3310 drawn flat in comic ink, traced from the 3D model's front view. Pure SVG: it renders
+ * on the server, before three.js and the model have loaded, exactly where `<PhoneStage>` with
+ * the same `fit` and `form` draws the phone flat before it rises.
+ */
+export function Nokia3310Sketch({
+  className,
+  fit,
+  screenBgColor = DEFAULT_SCREEN_BG,
+  progress,
+  boil = 0,
+  halftone = 1,
+}: Nokia3310SketchProps) {
   const screen = REGIONS.screen;
   // Ids unique per sketch: a page may hold several (one per breakpoint, say).
   const id = useId();
   const ref = (name: string) => `${id}${name}`;
   const url = (name: string) => `url(#${ref(name)})`;
   return (
-    <div className={className} style={wrapper} aria-hidden="true">
-      <svg viewBox={VIEW_BOX} style={svg} role="presentation">
-        <defs>
-          {/* Ben-Day dots for the shading, densest away from the light (top left). */}
-          <pattern id={ref("dots")} width="0.13" height="0.13" patternUnits="userSpaceOnUse">
-            <circle cx="0.065" cy="0.065" r="0.034" fill={INK} />
-          </pattern>
-          <linearGradient id={ref("shade")} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0.35" stopColor="#fff" stopOpacity="0" />
-            <stop offset="1" stopColor="#fff" stopOpacity="0.55" />
-          </linearGradient>
-          <mask id={ref("shade-mask")} maskContentUnits="objectBoundingBox">
-            <rect width="1" height="1" fill={url("shade")} />
-          </mask>
-          <clipPath id={ref("body")}>
-            <path d={SILHOUETTE} />
+    <SketchFrame className={className} fit={fit}>
+      <defs>
+        {/* Ben-Day dots for the shading, densest away from the light (top left). */}
+        <pattern id={ref("dots")} width="0.13" height="0.13" patternUnits="userSpaceOnUse">
+          <circle cx="0.065" cy="0.065" r="0.034" fill={INK} />
+        </pattern>
+        <linearGradient id={ref("shade")} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0.35" stopColor="#fff" stopOpacity="0" />
+          <stop offset="1" stopColor="#fff" stopOpacity="0.55" />
+        </linearGradient>
+        <mask id={ref("shade-mask")} maskContentUnits="objectBoundingBox">
+          <rect width="1" height="1" fill={url("shade")} />
+        </mask>
+        <clipPath id={ref("body")}>
+          <path d={SILHOUETTE} />
+        </clipPath>
+        {screen && (
+          <clipPath id={ref("screen")}>
+            <path d={screen.d} />
           </clipPath>
-          {screen && (
-            <clipPath id={ref("screen")}>
-              <path d={screen.d} />
-            </clipPath>
-          )}
-        </defs>
+        )}
+        {boil > 0 && (
+          <filter id={ref("boil")} x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence type="turbulence" baseFrequency="2.4" numOctaves="2" seed="1">
+              <animate
+                attributeName="seed"
+                values="1;2;3;4"
+                calcMode="discrete"
+                dur={`${4 / BOIL_FPS}s`}
+                repeatCount="indefinite"
+              />
+            </feTurbulence>
+            <feDisplacementMap
+              in="SourceGraphic"
+              scale={boil * BOIL_SCALE}
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
+        )}
+      </defs>
 
+      <g filter={boil > 0 ? url("boil") : undefined}>
         <path d={SILHOUETTE} fill={BODY_FILL} />
         <g clipPath={url("body")}>
           <rect
@@ -117,6 +169,7 @@ export function Nokia3310Sketch({
             height={2 * HALF_H}
             fill={url("dots")}
             mask={url("shade-mask")}
+            opacity={halftone}
           />
         </g>
 
@@ -182,8 +235,65 @@ export function Nokia3310Sketch({
 
         {/* The bold outer contour last, so it sits over every inner line. */}
         <path d={SILHOUETTE} fill="none" stroke={INK} strokeWidth="0.11" strokeLinejoin="round" />
-      </svg>
-    </div>
+      </g>
+    </SketchFrame>
+  );
+}
+
+export interface Nokia3310BurstProps {
+  className?: string;
+  /** Same as the sketch's `fit`. */
+  fit?: number;
+  /** How far out the lines have shot, as a scale of their resting ring (1 = just clear of the phone). */
+  spread?: number;
+  /** The lines' opacity, 0–1. */
+  opacity?: number;
+}
+
+/** Action lines: ink wedges around the phone, uneven like a hand-drawn "pop". */
+const BURST_LINES = (() => {
+  let seed = 3310;
+  const rand = () => {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  };
+  const count = 26;
+  return Array.from({ length: count }, (_, i) => {
+    const angle = ((i + rand() * 0.6 - 0.3) / count) * 2 * Math.PI;
+    return { angle, length: 0.9 + rand() * 1.6, width: 0.1 + rand() * 0.22, gap: rand() * 0.5 };
+  });
+})();
+
+/**
+ * Comic action lines bursting out around the phone, framed like `<Nokia3310Sketch>` with the same
+ * `fit`. Pure SVG; draws nothing at zero opacity.
+ */
+export function Nokia3310Burst({ className, fit, spread = 1, opacity = 1 }: Nokia3310BurstProps) {
+  if (opacity <= 0) return null;
+  // Lines start on an ellipse just clear of the phone and point outwards.
+  const rx = HALF_W * 1.12;
+  const ry = HALF_H * 0.98;
+  return (
+    <SketchFrame className={className} fit={fit}>
+      <g fill={INK} opacity={opacity}>
+        {BURST_LINES.map(({ angle, length, width, gap }, i) => {
+          const dx = Math.cos(angle);
+          const dy = Math.sin(angle);
+          // The ellipse's radius along this direction, pushed out by `spread`.
+          const r = (spread * (rx * ry)) / Math.hypot(ry * dx, rx * dy) + gap;
+          const [x0, y0] = [dx * r, dy * r];
+          const [x1, y1] = [dx * (r + length * spread), dy * (r + length * spread)];
+          const [nx, ny] = [-dy * width, dx * width];
+          return (
+            <path
+              key={i}
+              d={`M${x0 + nx} ${y0 + ny}L${x1} ${y1}L${x0 - nx} ${y0 - ny}Z`}
+              strokeLinejoin="round"
+            />
+          );
+        })}
+      </g>
+    </SketchFrame>
   );
 }
 

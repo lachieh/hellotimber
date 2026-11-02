@@ -157,60 +157,27 @@
   touch-action: pan-y;
 }
 
-/* A soft contact shadow the size of the handset (≈ 0.43 × its height), cast down-right. */
+/* A soft shadow the size of the handset (≈ 0.43 × its height), cast down-right. It follows the
+   phone (PhoneSlot sets the variables): `--phone-rest` 0 is the phone drawn flat in the desk (a
+   tight contact shadow), 1 the phone hovering at rest; `--phone-leap` 1 is the phone at the top
+   of its leap off the desk. */
 .d01-phone__shadow {
+  --rest: var(--phone-rest, 0);
+  --leap: var(--phone-leap, 0);
   position: absolute;
   z-index: 0;
   left: 50%;
   top: 50%;
   width: calc(min(88vh, 860px) * 0.38);
   height: calc(min(88vh, 860px) * 0.8);
-  translate: calc(-50% + 42px) calc(-50% + 50px);
+  translate: calc(-50% + 6px + var(--rest) * 36px + var(--leap) * 42px)
+    calc(-50% + 8px + var(--rest) * 42px + var(--leap) * 50px);
+  scale: calc(0.96 + var(--rest) * 0.04 + var(--leap) * 0.1);
   border-radius: 46% 46% 40% 40% / 22% 22% 18% 18%;
   background: rgb(24 8 0 / 0.78);
-  filter: blur(16px);
-  opacity: 0.85;
+  filter: blur(calc(3px + var(--rest) * 13px + var(--leap) * 14px));
+  opacity: calc(0.6 + var(--rest) * 0.25 - var(--leap) * 0.45);
   pointer-events: none;
-}
-
-/* Drawn flat, the phone lies in the desk: a tight contact shadow (PhoneSlot). */
-.d01-phone:has([data-phone="sketch"]) .d01-phone__shadow {
-  translate: calc(-50% + 6px) calc(-50% + 8px);
-  filter: blur(3px);
-  opacity: 0.6;
-}
-
-/* Forming, it leaps off the desk and drops back to hover above it: the shadow follows
-   (PhoneStage FORM_MS, peak about a third of the way). */
-.d01-phone:has([data-phone="3d"]) .d01-phone__shadow {
-  animation: d01-phone-leap 1600ms cubic-bezier(0.3, 0.7, 0.4, 1) both;
-}
-
-@keyframes d01-phone-leap {
-  0% {
-    translate: calc(-50% + 6px) calc(-50% + 8px);
-    scale: 0.96;
-    filter: blur(3px);
-    opacity: 0.6;
-  }
-  32% {
-    translate: calc(-50% + 84px) calc(-50% + 100px);
-    scale: 1.1;
-    filter: blur(30px);
-    opacity: 0.4;
-  }
-  100% {
-    translate: calc(-50% + 42px) calc(-50% + 50px);
-    scale: 1;
-    filter: blur(16px);
-    opacity: 0.85;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .d01-phone:has([data-phone="3d"]) .d01-phone__shadow {
-    animation: none;
-  }
 }
 
 .d01-more {

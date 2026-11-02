@@ -38,6 +38,8 @@ catalog:
   "@tanstack/router-plugin": latest
   nitro: 3.0.260610-beta
   "@anthropic-ai/sdk": ^0.109.1
+  dialkit: ^2.1.0
+  motion: ^14.9.0
 overrides:
   vite: "catalog:"
   vitest: "catalog:"

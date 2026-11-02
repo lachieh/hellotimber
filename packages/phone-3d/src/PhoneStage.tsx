@@ -5,6 +5,7 @@ import * as THREE from "three";
 import type { Group } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { CAMERA_FOV, CAMERA_Z, FORM_MS, formPose } from "./frame";
+import type { FormPose } from "./frame";
 import { settleRest, tiltRotation, watchTilt } from "./tilt";
 import type { ScreenTilt } from "./tilt";
 import { Nokia3310 } from "./Nokia3310";
@@ -140,11 +141,13 @@ function SwayRig({
   fit,
   form,
   onFormStart,
+  pose: posed,
 }: {
   children: ReactNode;
   fit: number | undefined;
   form: boolean;
   onFormStart: (() => void) | undefined;
+  pose: (() => FormPose) | undefined;
 }) {
   const group = useRef<Group>(null);
   const silhouette = useRef<Silhouette>(undefined);
@@ -174,10 +177,14 @@ function SwayRig({
       onFormStart?.();
     }
     const f = forming.current;
-    const ms = f.done ? FORM_MS : performance.now() - f.startedAt;
-    const pose = formPose(ms);
+    let pose: FormPose;
+    if (posed !== undefined && !f.done) pose = posed();
+    else {
+      const ms = f.done ? FORM_MS : performance.now() - f.startedAt;
+      pose = formPose(ms);
+      if (ms >= FORM_MS) f.done = true;
+    }
     const depth = Math.max(FLAT, pose.depth);
-    if (ms >= FORM_MS) f.done = true;
     g.scale.set(pose.spread, pose.spread, depth);
 
     const [x, y, z] =
@@ -224,6 +231,12 @@ export interface PhoneStageProps extends Nokia3310Props {
   form?: boolean;
   /** The first frame the model is drawn (flat, when forming). */
   onFormStart?: () => void;
+  /**
+   * Drive the entrance yourself: read every frame instead of `formPose` over FORM_MS from the
+   * first frame (`form` still decides whether there is an entrance at all). Return the rest pose
+   * (`depth` 1, `settled` 1, the rest neutral) once it is over.
+   */
+  pose?: () => FormPose;
 }
 
 /** Convenience scene: Canvas + lighting + resize + subtle idle motion (VISION contract).
@@ -233,6 +246,7 @@ export function PhoneStage({
   fit,
   form = false,
   onFormStart,
+  pose,
   ...props
 }: PhoneStageProps) {
   return (
@@ -245,7 +259,7 @@ export function PhoneStage({
       <ambientLight intensity={0.3} />
       <directionalLight position={[4, 6, 8]} intensity={1.0} />
       <directionalLight position={[-5, -2, 4]} intensity={0.3} />
-      <SwayRig fit={fit} form={form} onFormStart={onFormStart}>
+      <SwayRig fit={fit} form={form} onFormStart={onFormStart} pose={pose}>
         <Nokia3310 {...props} />
       </SwayRig>
     </Canvas>
