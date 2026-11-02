@@ -1,5 +1,5 @@
 import { useId } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties } from "react";
 import { VIEW_HEIGHT_AT_ORIGIN } from "../frame";
 import { MATERIALS, PRINT_DARK } from "../materials";
 import { DEFAULT_SCREEN_BG } from "../types";
@@ -14,15 +14,17 @@ export interface Nokia3310SketchProps {
   /** Show "Loading" on the LCD with a bar this full (0–1); a blank LCD when unset. */
   progress?: number;
   /**
-   * Line boil, 0–1: the ink wobbles like a hand-drawn cartoon redrawn every other frame, as if
-   * the drawing were coming to life. Off (crisp) at 0.
+   * How far the drawing has turned into the phone beneath it, 0–1: a bright edge sweeps down
+   * from the top, the ink gone above it, print dots dissolving in its wake. Gone at 1.
    */
-  boil?: number;
-  /** How much of the printed dot shading shows, 0–1 (default 1). */
-  halftone?: number;
+  wipe?: number;
 }
 
 const INK = "#16130f";
+/** The wipe's edge: the softness of the ink's cut-off below it, and the dissolving dots above. */
+const WIPE_SOFT = 0.12;
+const WIPE_TRAIL = 0.9;
+const WIPE_GLOW = "#e9fbff";
 const PAPER_HIGHLIGHT = "#fffdf6";
 
 /** Flat comic colours for each model node: the 3D materials as they read lit on screen. */
@@ -59,21 +61,18 @@ function sketchHeight(fit: number | undefined): string {
   return `min(${fit * 100}cqh, ${((fit * HALF_H) / HALF_W) * 100}cqw)`;
 }
 
-/** How far the boil displaces the ink at full strength, in model units (the phone is 10 tall). */
-const BOIL_SCALE = 0.1;
-/** Drawings a second while boiling: animation "on twos". */
-const BOIL_FPS = 12;
-
-/** The wrapper and SVG every sketch layer shares, so they all line up with the stage. */
-function SketchFrame({
+/**
+ * The 3310 drawn flat in comic ink, traced from the 3D model's front view. Pure SVG: it renders
+ * on the server, before three.js and the model have loaded, exactly where `<PhoneStage>` with
+ * the same `fit` and `form` draws the phone flat before it rises.
+ */
+export function Nokia3310Sketch({
   className,
   fit,
-  children,
-}: {
-  className: string | undefined;
-  fit: number | undefined;
-  children: ReactNode;
-}) {
+  screenBgColor = DEFAULT_SCREEN_BG,
+  progress,
+  wipe = 0,
+}: Nokia3310SketchProps) {
   const wrapper: CSSProperties = {
     position: "absolute",
     inset: 0,
@@ -89,211 +88,200 @@ function SketchFrame({
     translate: "-50% -50%",
     overflow: "visible",
   };
-  return (
-    <div className={className} style={wrapper} aria-hidden="true">
-      <svg viewBox={VIEW_BOX} style={svg} role="presentation">
-        {children}
-      </svg>
-    </div>
-  );
-}
-
-/**
- * The 3310 drawn flat in comic ink, traced from the 3D model's front view. Pure SVG: it renders
- * on the server, before three.js and the model have loaded, exactly where `<PhoneStage>` with
- * the same `fit` and `form` draws the phone flat before it rises.
- */
-export function Nokia3310Sketch({
-  className,
-  fit,
-  screenBgColor = DEFAULT_SCREEN_BG,
-  progress,
-  boil = 0,
-  halftone = 1,
-}: Nokia3310SketchProps) {
   const screen = REGIONS.screen;
   // Ids unique per sketch: a page may hold several (one per breakpoint, say).
   const id = useId();
   const ref = (name: string) => `${id}${name}`;
   const url = (name: string) => `url(#${ref(name)})`;
+  if (wipe >= 1) return null;
+  // The edge sweeps from the phone's top until its trail has left the bottom.
+  const edge = BOUNDS.y + wipe * (BOUNDS.height + WIPE_TRAIL);
+  const wiping = wipe > 0;
   return (
-    <SketchFrame className={className} fit={fit}>
-      <defs>
-        {/* Ben-Day dots for the shading, densest away from the light (top left). */}
-        <pattern id={ref("dots")} width="0.13" height="0.13" patternUnits="userSpaceOnUse">
-          <circle cx="0.065" cy="0.065" r="0.034" fill={INK} />
-        </pattern>
-        <linearGradient id={ref("shade")} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0.35" stopColor="#fff" stopOpacity="0" />
-          <stop offset="1" stopColor="#fff" stopOpacity="0.55" />
-        </linearGradient>
-        <mask id={ref("shade-mask")} maskContentUnits="objectBoundingBox">
-          <rect width="1" height="1" fill={url("shade")} />
-        </mask>
-        <clipPath id={ref("body")}>
-          <path d={SILHOUETTE} />
-        </clipPath>
-        {screen && (
-          <clipPath id={ref("screen")}>
-            <path d={screen.d} />
+    <div className={className} style={wrapper} aria-hidden="true">
+      <svg viewBox={VIEW_BOX} style={svg} role="presentation">
+        <defs>
+          {/* Ben-Day dots for the shading, densest away from the light (top left). */}
+          <pattern id={ref("dots")} width="0.13" height="0.13" patternUnits="userSpaceOnUse">
+            <circle cx="0.065" cy="0.065" r="0.034" fill={INK} />
+          </pattern>
+          <linearGradient id={ref("shade")} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0.35" stopColor="#fff" stopOpacity="0" />
+            <stop offset="1" stopColor="#fff" stopOpacity="0.55" />
+          </linearGradient>
+          <mask id={ref("shade-mask")} maskContentUnits="objectBoundingBox">
+            <rect width="1" height="1" fill={url("shade")} />
+          </mask>
+          <clipPath id={ref("body")}>
+            <path d={SILHOUETTE} />
           </clipPath>
-        )}
-        {boil > 0 && (
-          <filter id={ref("boil")} x="-5%" y="-5%" width="110%" height="110%">
-            <feTurbulence type="turbulence" baseFrequency="2.4" numOctaves="2" seed="1">
-              <animate
-                attributeName="seed"
-                values="1;2;3;4"
-                calcMode="discrete"
-                dur={`${4 / BOIL_FPS}s`}
-                repeatCount="indefinite"
-              />
-            </feTurbulence>
-            <feDisplacementMap
-              in="SourceGraphic"
-              scale={boil * BOIL_SCALE}
-              xChannelSelector="R"
-              yChannelSelector="G"
-            />
-          </filter>
-        )}
-      </defs>
+          {screen && (
+            <clipPath id={ref("screen")}>
+              <path d={screen.d} />
+            </clipPath>
+          )}
+          {wiping && (
+            <>
+              <linearGradient
+                id={ref("wipe-fade")}
+                gradientUnits="userSpaceOnUse"
+                x1="0"
+                y1={edge}
+                x2="0"
+                y2={edge + WIPE_SOFT}
+              >
+                <stop offset="0" stopColor="#000" />
+                <stop offset="1" stopColor="#fff" />
+              </linearGradient>
+              <mask
+                id={ref("wipe")}
+                maskUnits="userSpaceOnUse"
+                x={-HALF_W}
+                y={-HALF_H}
+                width={2 * HALF_W}
+                height={2 * HALF_H}
+              >
+                <rect
+                  x={-HALF_W}
+                  y={-HALF_H}
+                  width={2 * HALF_W}
+                  height={2 * HALF_H}
+                  fill={url("wipe-fade")}
+                />
+              </mask>
+              <linearGradient
+                id={ref("wipe-trail")}
+                gradientUnits="userSpaceOnUse"
+                x1="0"
+                y1={edge - WIPE_TRAIL}
+                x2="0"
+                y2={edge}
+              >
+                <stop offset="0" stopColor="#fff" stopOpacity="0" />
+                <stop offset="1" stopColor="#fff" stopOpacity="0.9" />
+              </linearGradient>
+              <mask
+                id={ref("trail-mask")}
+                maskUnits="userSpaceOnUse"
+                x={-HALF_W}
+                y={edge - WIPE_TRAIL}
+                width={2 * HALF_W}
+                height={WIPE_TRAIL}
+              >
+                <rect
+                  x={-HALF_W}
+                  y={edge - WIPE_TRAIL}
+                  width={2 * HALF_W}
+                  height={WIPE_TRAIL}
+                  fill={url("wipe-trail")}
+                />
+              </mask>
+            </>
+          )}
+        </defs>
 
-      <g filter={boil > 0 ? url("boil") : undefined}>
-        <path d={SILHOUETTE} fill={BODY_FILL} />
-        <g clipPath={url("body")}>
-          <rect
-            x={-HALF_W}
-            y={-HALF_H}
-            width={2 * HALF_W}
-            height={2 * HALF_H}
-            fill={url("dots")}
-            mask={url("shade-mask")}
-            opacity={halftone}
-          />
-        </g>
-
-        <g stroke={INK} strokeWidth="0.045" strokeLinejoin="round">
-          {Object.entries(REGIONS).map(([name, region]) => (
-            <path
-              key={name}
-              d={region.d}
-              fillRule="evenodd"
-              fill={name === "screen" ? screenBgColor : (FILL[name] ?? KEY_FILL)}
-            />
-          ))}
-        </g>
-
-        {screen && progress !== undefined && (
-          <LcdLoading center={screen.center} progress={progress} />
-        )}
-
-        {/* Gloss on the LCD: two hard white streaks. */}
-        {screen && (
-          <g clipPath={url("screen")} stroke={PAPER_HIGHLIGHT} strokeLinecap="round">
-            <path
-              d={`M${screen.center[0] - 1.6} ${screen.center[1] + 0.2}L${screen.center[0] - 0.4} ${screen.center[1] - 1.3}`}
-              strokeWidth="0.16"
-              opacity="0.75"
-            />
-            <path
-              d={`M${screen.center[0] - 1.0} ${screen.center[1] + 0.5}L${screen.center[0] + 0.1} ${screen.center[1] - 0.9}`}
-              strokeWidth="0.07"
-              opacity="0.75"
+        <g mask={wiping ? url("wipe") : undefined}>
+          <path d={SILHOUETTE} fill={BODY_FILL} />
+          <g clipPath={url("body")}>
+            <rect
+              x={-HALF_W}
+              y={-HALF_H}
+              width={2 * HALF_W}
+              height={2 * HALF_H}
+              fill={url("dots")}
+              mask={url("shade-mask")}
             />
           </g>
-        )}
 
-        {/* Key legends, hand-lettered at each key's centre. */}
-        <g
-          fill={PRINT_DARK}
-          fontFamily='"Arial Black", "Helvetica Neue", system-ui, sans-serif'
-          fontWeight="900"
-          fontSize="0.34"
-          textAnchor="middle"
-          dominantBaseline="central"
-        >
-          {Object.entries(LEGENDS).map(([name, legend]) => {
-            const region = REGIONS[name];
-            if (!region) return null;
-            return (
-              <text key={name} x={region.center[0]} y={region.center[1]}>
-                {legend}
-              </text>
-            );
-          })}
-        </g>
-        <ScrollArrows />
-        {REGIONS.key_navi && (
-          <path
-            d={`M${REGIONS.key_navi.center[0] - 0.42} ${REGIONS.key_navi.center[1]}h0.84`}
-            stroke={MATERIALS.naviBar.color}
-            strokeWidth="0.1"
-            strokeLinecap="round"
-          />
-        )}
+          <g stroke={INK} strokeWidth="0.045" strokeLinejoin="round">
+            {Object.entries(REGIONS).map(([name, region]) => (
+              <path
+                key={name}
+                d={region.d}
+                fillRule="evenodd"
+                fill={name === "screen" ? screenBgColor : (FILL[name] ?? KEY_FILL)}
+              />
+            ))}
+          </g>
 
-        {/* The bold outer contour last, so it sits over every inner line. */}
-        <path d={SILHOUETTE} fill="none" stroke={INK} strokeWidth="0.11" strokeLinejoin="round" />
-      </g>
-    </SketchFrame>
-  );
-}
+          {screen && progress !== undefined && (
+            <LcdLoading center={screen.center} progress={progress} />
+          )}
 
-export interface Nokia3310BurstProps {
-  className?: string;
-  /** Same as the sketch's `fit`. */
-  fit?: number;
-  /** How far out the lines have shot, as a scale of their resting ring (1 = just clear of the phone). */
-  spread?: number;
-  /** The lines' opacity, 0–1. */
-  opacity?: number;
-}
+          {/* Gloss on the LCD: two hard white streaks. */}
+          {screen && (
+            <g clipPath={url("screen")} stroke={PAPER_HIGHLIGHT} strokeLinecap="round">
+              <path
+                d={`M${screen.center[0] - 1.6} ${screen.center[1] + 0.2}L${screen.center[0] - 0.4} ${screen.center[1] - 1.3}`}
+                strokeWidth="0.16"
+                opacity="0.75"
+              />
+              <path
+                d={`M${screen.center[0] - 1.0} ${screen.center[1] + 0.5}L${screen.center[0] + 0.1} ${screen.center[1] - 0.9}`}
+                strokeWidth="0.07"
+                opacity="0.75"
+              />
+            </g>
+          )}
 
-/** Action lines: ink wedges around the phone, uneven like a hand-drawn "pop". */
-const BURST_LINES = (() => {
-  let seed = 3310;
-  const rand = () => {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / 233280;
-  };
-  const count = 26;
-  return Array.from({ length: count }, (_, i) => {
-    const angle = ((i + rand() * 0.6 - 0.3) / count) * 2 * Math.PI;
-    return { angle, length: 0.9 + rand() * 1.6, width: 0.1 + rand() * 0.22, gap: rand() * 0.5 };
-  });
-})();
-
-/**
- * Comic action lines bursting out around the phone, framed like `<Nokia3310Sketch>` with the same
- * `fit`. Pure SVG; draws nothing at zero opacity.
- */
-export function Nokia3310Burst({ className, fit, spread = 1, opacity = 1 }: Nokia3310BurstProps) {
-  if (opacity <= 0) return null;
-  // Lines start on an ellipse just clear of the phone and point outwards.
-  const rx = HALF_W * 1.12;
-  const ry = HALF_H * 0.98;
-  return (
-    <SketchFrame className={className} fit={fit}>
-      <g fill={INK} opacity={opacity}>
-        {BURST_LINES.map(({ angle, length, width, gap }, i) => {
-          const dx = Math.cos(angle);
-          const dy = Math.sin(angle);
-          // The ellipse's radius along this direction, pushed out by `spread`.
-          const r = (spread * (rx * ry)) / Math.hypot(ry * dx, rx * dy) + gap;
-          const [x0, y0] = [dx * r, dy * r];
-          const [x1, y1] = [dx * (r + length * spread), dy * (r + length * spread)];
-          const [nx, ny] = [-dy * width, dx * width];
-          return (
+          {/* Key legends, hand-lettered at each key's centre. */}
+          <g
+            fill={PRINT_DARK}
+            fontFamily='"Arial Black", "Helvetica Neue", system-ui, sans-serif'
+            fontWeight="900"
+            fontSize="0.34"
+            textAnchor="middle"
+            dominantBaseline="central"
+          >
+            {Object.entries(LEGENDS).map(([name, legend]) => {
+              const region = REGIONS[name];
+              if (!region) return null;
+              return (
+                <text key={name} x={region.center[0]} y={region.center[1]}>
+                  {legend}
+                </text>
+              );
+            })}
+          </g>
+          <ScrollArrows />
+          {REGIONS.key_navi && (
             <path
-              key={i}
-              d={`M${x0 + nx} ${y0 + ny}L${x1} ${y1}L${x0 - nx} ${y0 - ny}Z`}
-              strokeLinejoin="round"
+              d={`M${REGIONS.key_navi.center[0] - 0.42} ${REGIONS.key_navi.center[1]}h0.84`}
+              stroke={MATERIALS.naviBar.color}
+              strokeWidth="0.1"
+              strokeLinecap="round"
             />
-          );
-        })}
-      </g>
-    </SketchFrame>
+          )}
+
+          {/* The bold outer contour last, so it sits over every inner line. */}
+          <path d={SILHOUETTE} fill="none" stroke={INK} strokeWidth="0.11" strokeLinejoin="round" />
+        </g>
+
+        {/* The transforming edge, on the phone only: print dots dissolving into the real thing
+            above it, and a bright line where ink turns to plastic. */}
+        {wiping && (
+          <g clipPath={url("body")}>
+            <rect
+              x={-HALF_W}
+              y={edge - WIPE_TRAIL}
+              width={2 * HALF_W}
+              height={WIPE_TRAIL}
+              fill={url("dots")}
+              mask={url("trail-mask")}
+            />
+            <rect
+              x={-HALF_W}
+              y={edge - 0.16}
+              width={2 * HALF_W}
+              height={0.32}
+              fill={WIPE_GLOW}
+              opacity="0.35"
+            />
+            <rect x={-HALF_W} y={edge - 0.04} width={2 * HALF_W} height={0.08} fill={WIPE_GLOW} />
+          </g>
+        )}
+      </svg>
+    </div>
   );
 }
 

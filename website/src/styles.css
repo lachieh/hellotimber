@@ -493,36 +493,20 @@ a {
 }
 
 /* The phone drawn flat (server-rendered) lies over the 3D stage until the model has loaded; then
-   the drawing comes to life and the phone leaps out of it (PhoneSlot, reveal.ts). Action lines
-   burst out behind the phone; the body (stage and ink) squashes as one. */
-.phone-burst {
-  z-index: 0;
-}
-
-.phone-body {
-  position: absolute;
+   it turns into the phone top to bottom (PhoneSlot, reveal.ts). */
+.phone-sketch {
   z-index: 1;
-  inset: 0;
-}
-
-.phone-ink {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  pointer-events: none;
 }
 
 /* PhoneStageHost frames the phone differently per breakpoint (stage-frame.ts MOBILE). */
 @media (max-width: 899px) {
-  .phone-sketch--wide,
-  .phone-burst--wide {
+  .phone-sketch--wide {
     display: none;
   }
 }
 
 @media (min-width: 900px) {
-  .phone-sketch--narrow,
-  .phone-burst--narrow {
+  .phone-sketch--narrow {
     display: none;
   }
 }

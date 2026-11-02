@@ -66,10 +66,9 @@ on `onFormStart`: the 3D phone starts flat at the sketch's outline and leaps out
 `FORM_MS`.
 
 To stage the entrance yourself, pass `<PhoneStage pose={() => …}>`: it reads a `FormPose`
-(`depth`, `lift`, `spread`, `tiltX`, `tiltY`, `settled`) every frame instead of `formPose`. The
-sketch can come to life before it goes: `boil` (0–1) wobbles its ink like hand-drawn animation
-and `halftone` (0–1) fades its printed dots. `<Nokia3310Burst fit? spread? opacity?/>` draws comic
-action lines around the phone, framed the same way.
+(`depth`, `lift`, `spread`, `tiltX`, `tiltY`, `settled`) every frame instead of `formPose`
+(exported, so a host can delay or re-time it). The sketch's `wipe` (0–1) turns it into the phone
+beneath, top to bottom: a bright edge sweeps down, the ink gone above it.
 
 ## Props (`Nokia3310Props`)
 

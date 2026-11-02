@@ -1,4 +1,4 @@
-import { Nokia3310Burst, Nokia3310Sketch } from "@hellotimber/phone-3d/sketch";
+import { Nokia3310Sketch } from "@hellotimber/phone-3d/sketch";
 import { ClientOnly } from "@tanstack/react-router";
 import {
   lazy,
@@ -11,7 +11,6 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import type { ComponentType } from "react";
 import { DRAWN } from "./reveal";
 import { getRevealFrame, playReveal, subscribeReveal } from "./reveal-player";
 import { MOBILE_FIT } from "./stage-frame";
@@ -31,8 +30,8 @@ const LIFT_FOR_FULL_SHADOW = 0.16;
 
 /**
  * The phone on the desk. The server sends it drawn flat in comic ink, its LCD loading; once
- * three.js, the model and the firmware are in, the drawing comes to life (reveal.ts) and the 3D
- * phone leaps out of it. Mounted once per session, like the stage inside it.
+ * three.js, the model and the firmware are in, the drawing turns into the 3D phone top to
+ * bottom and the phone leaps out of the desk (reveal.ts). Mounted once per session, like the stage inside it.
  */
 export default function PhoneSlot() {
   const [formed, setFormed] = useState(false);
@@ -61,13 +60,6 @@ export default function PhoneSlot() {
     playReveal();
   }, []);
 
-  // Dev only: DialKit's timeline dock drives the reveal (RevealTuner).
-  const [Tuner, setTuner] = useState<ComponentType>();
-  useEffect(() => {
-    if (!import.meta.env.DEV) return;
-    void import("./RevealTuner").then((module) => setTuner(() => module.default));
-  }, []);
-
   const frame = useSyncExternalStore(subscribeReveal, getRevealFrame, () => DRAWN);
 
   // The desk's shadow (desk.css) follows the phone off the desk and back.
@@ -82,48 +74,25 @@ export default function PhoneSlot() {
     );
   }, [frame]);
 
-  const squash =
-    frame.squashX === 1 && frame.squashY === 1
-      ? undefined
-      : `scale(${frame.squashX}, ${frame.squashY})`;
-
   return (
     <div ref={fill} className="phone-fill" data-phone={formed ? "3d" : "sketch"}>
-      <Nokia3310Burst
-        className="phone-burst phone-burst--wide"
-        spread={frame.burstSpread}
-        opacity={frame.burstOpacity}
+      <ClientOnly>
+        <Suspense fallback={null}>
+          <PhoneStageHost onFormStart={startReveal} pose={getPose} />
+        </Suspense>
+      </ClientOnly>
+      {/* One sketch per breakpoint, each framed like the stage there (PhoneStageHost's fit). */}
+      <Nokia3310Sketch
+        className="phone-sketch phone-sketch--wide"
+        progress={progress}
+        wipe={frame.wipe}
       />
-      <Nokia3310Burst
-        className="phone-burst phone-burst--narrow"
+      <Nokia3310Sketch
+        className="phone-sketch phone-sketch--narrow"
         fit={MOBILE_FIT}
-        spread={frame.burstSpread}
-        opacity={frame.burstOpacity}
+        progress={progress}
+        wipe={frame.wipe}
       />
-      <div className="phone-body" style={{ transform: squash }}>
-        <ClientOnly>
-          <Suspense fallback={null}>
-            <PhoneStageHost onFormStart={startReveal} pose={getPose} />
-          </Suspense>
-          {Tuner && <Tuner />}
-        </ClientOnly>
-        {/* One sketch per breakpoint, each framed like the stage there (PhoneStageHost's fit). */}
-        <div className="phone-ink" style={{ opacity: frame.ink }}>
-          <Nokia3310Sketch
-            className="phone-sketch phone-sketch--wide"
-            progress={progress}
-            boil={frame.boil}
-            halftone={frame.halftone}
-          />
-          <Nokia3310Sketch
-            className="phone-sketch phone-sketch--narrow"
-            fit={MOBILE_FIT}
-            progress={progress}
-            boil={frame.boil}
-            halftone={frame.halftone}
-          />
-        </div>
-      </div>
     </div>
   );
 }
