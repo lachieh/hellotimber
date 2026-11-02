@@ -5,7 +5,6 @@ import * as THREE from "three";
 import type { Group } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { CAMERA_FOV, CAMERA_Z, FORM_MS, formPose } from "./frame";
-import { KEY_NODES } from "./layout";
 import { settleRest, tiltRotation, watchTilt } from "./tilt";
 import type { ScreenTilt } from "./tilt";
 import { Nokia3310 } from "./Nokia3310";
@@ -130,43 +129,9 @@ function fitCamera(
 /** Lowest depth scale while forming: a zero scale has no inverse for the normals. */
 const FLAT = 0.002;
 
-/** When the keys pop, from the top key to the bottom one, once the body has its depth. */
-const KEY_DELAY_MS = { first: 380, last: 760 } as const;
-
-/** How far past its rest a key pops (as depth scale), and for how long. A key never sinks below
- *  rest: the body's key wells are open, and the desk would show through them. */
-const KEY_POP = 0.45;
-const KEY_POP_MS = 320;
-
-function keyPop(ms: number): number {
-  return ms <= 0 || ms >= KEY_POP_MS ? 0 : Math.sin((Math.PI * ms) / KEY_POP_MS);
-}
-
-const KEY_NODE_NAMES = new Set<string>(Object.values(KEY_NODES));
-
-/** The phone's key meshes and when each starts forming (a wave down the keypad). */
-function keyWave(g: Group): { mesh: THREE.Mesh; delayMs: number }[] {
-  const keys: { mesh: THREE.Mesh; y: number }[] = [];
-  g.traverse((object) => {
-    if (!(object instanceof THREE.Mesh) || !KEY_NODE_NAMES.has(object.name)) return;
-    object.geometry.computeBoundingBox();
-    const box = object.geometry.boundingBox;
-    if (box !== null) keys.push({ mesh: object, y: (box.min.y + box.max.y) / 2 });
-  });
-  const top = Math.max(...keys.map((k) => k.y));
-  const bottom = Math.min(...keys.map((k) => k.y));
-  return keys.map(({ mesh, y }) => ({
-    mesh,
-    delayMs:
-      KEY_DELAY_MS.first +
-      ((top - y) / (top - bottom || 1)) * (KEY_DELAY_MS.last - KEY_DELAY_MS.first),
-  }));
-}
-
 /** Where forming has got to, once the model is there. */
 interface Forming {
   startedAt: number;
-  keys: { mesh: THREE.Mesh; delayMs: number }[];
   done: boolean;
 }
 
@@ -204,7 +169,6 @@ function SwayRig({
     if (forming.current === undefined) {
       forming.current = {
         startedAt: performance.now(),
-        keys: form && !prefersReducedMotion ? keyWave(g) : [],
         done: !form || prefersReducedMotion,
       };
       onFormStart?.();
@@ -213,13 +177,7 @@ function SwayRig({
     const ms = f.done ? FORM_MS : performance.now() - f.startedAt;
     const pose = formPose(ms);
     const depth = Math.max(FLAT, pose.depth);
-    if (!f.done) {
-      for (const key of f.keys) key.mesh.scale.z = 1 + KEY_POP * keyPop(ms - key.delayMs);
-      if (ms >= Math.max(FORM_MS, KEY_DELAY_MS.last + KEY_POP_MS)) {
-        f.done = true;
-        for (const key of f.keys) key.mesh.scale.z = 1;
-      }
-    }
+    if (ms >= FORM_MS) f.done = true;
     g.scale.set(pose.spread, pose.spread, depth);
 
     const [x, y, z] =
@@ -260,7 +218,7 @@ export interface PhoneStageProps extends Nokia3310Props {
   fit?: number;
   /**
    * Form the phone out of its flat front outline once the model has loaded: it rises out of the
-   * surface over FORM_MS, keys last. `<Nokia3310Sketch>` with the same `fit` draws that outline,
+   * surface over FORM_MS. `<Nokia3310Sketch>` with the same `fit` draws that outline,
    * so a host can show the sketch until `onFormStart` and let the phone grow out of it.
    */
   form?: boolean;
