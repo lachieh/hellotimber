@@ -62,8 +62,8 @@ drawn flat in comic ink, as pure SVG with no three.js import, so it renders on t
 traced from the model's front view (`vp run @hellotimber/phone-3d#sketch-outline` regenerates
 `src/sketch/outline.generated.ts` after a model change) and framed exactly like the stage's flat
 phone. Place it absolutely over `<PhoneStage form onFormStart={…}>` (same `fit`) and fade it out
-on `onFormStart`: the 3D phone starts flat at the sketch's outline and rises out of it over
-`FORM_MS`, keys last.
+on `onFormStart`: the 3D phone starts flat at the sketch's outline and leaps out of it over
+`FORM_MS`, its keys popping last.
 
 ## Props (`Nokia3310Props`)
 

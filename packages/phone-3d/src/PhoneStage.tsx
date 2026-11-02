@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import * as THREE from "three";
 import type { Group } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { CAMERA_FOV, CAMERA_Z, FORM_MS, formDepth } from "./frame";
+import { CAMERA_FOV, CAMERA_Z, FORM_MS, formPose } from "./frame";
 import { KEY_NODES } from "./layout";
 import { settleRest, tiltRotation, watchTilt } from "./tilt";
 import type { ScreenTilt } from "./tilt";
@@ -130,8 +130,17 @@ function fitCamera(
 /** Lowest depth scale while forming: a zero scale has no inverse for the normals. */
 const FLAT = 0.002;
 
-/** How long the keys trail the body, from the top key to the bottom one. */
-const KEY_DELAY_MS = { first: 260, last: 520 } as const;
+/** When the keys pop, from the top key to the bottom one, once the body has its depth. */
+const KEY_DELAY_MS = { first: 380, last: 760 } as const;
+
+/** How far past its rest a key pops (as depth scale), and for how long. A key never sinks below
+ *  rest: the body's key wells are open, and the desk would show through them. */
+const KEY_POP = 0.45;
+const KEY_POP_MS = 320;
+
+function keyPop(ms: number): number {
+  return ms <= 0 || ms >= KEY_POP_MS ? 0 : Math.sin((Math.PI * ms) / KEY_POP_MS);
+}
 
 const KEY_NODE_NAMES = new Set<string>(Object.values(KEY_NODES));
 
@@ -201,33 +210,32 @@ function SwayRig({
       onFormStart?.();
     }
     const f = forming.current;
-    let depth = 1;
+    const ms = f.done ? FORM_MS : performance.now() - f.startedAt;
+    const pose = formPose(ms);
+    const depth = Math.max(FLAT, pose.depth);
     if (!f.done) {
-      const ms = performance.now() - f.startedAt;
-      depth = Math.max(FLAT, formDepth(ms));
-      for (const key of f.keys)
-        key.mesh.scale.z =
-          Math.max(FLAT, formDepth(ms - key.delayMs, FORM_MS - KEY_DELAY_MS.first)) / depth;
-      if (ms >= FORM_MS + KEY_DELAY_MS.last) {
+      for (const key of f.keys) key.mesh.scale.z = 1 + KEY_POP * keyPop(ms - key.delayMs);
+      if (ms >= Math.max(FORM_MS, KEY_DELAY_MS.last + KEY_POP_MS)) {
         f.done = true;
         for (const key of f.keys) key.mesh.scale.z = 1;
-        depth = 1;
       }
     }
-    g.scale.z = depth;
+    g.scale.set(pose.spread, pose.spread, depth);
 
     const [x, y, z] =
       fit === undefined
         ? [0, 0, CAMERA_Z]
         : fitCamera(silhouette.current, state.size.width / state.size.height, fit, depth);
     state.camera.position.set(x, y, z);
+    // The leap: nearer the camera by a share of its distance.
+    g.position.z = pose.lift * z;
     if (prefersReducedMotion) {
       g.rotation.y += (0 - g.rotation.y) * 0.1;
       g.rotation.x += (0 - g.rotation.x) * 0.1;
       return;
     }
-    // Sway grows in with the depth: a flat phone lies still.
-    const sway = Math.min(1, depth);
+    // Idle motion grows in as the phone settles; until then the forming wobble drives it.
+    const sway = pose.settled;
     const t = state.clock.elapsedTime;
     let turn = { x: 0, y: 0 };
     if (tilt.current !== undefined) {
@@ -236,6 +244,10 @@ function SwayRig({
     }
     const targetY = (Math.sin(t * 0.5) * 0.06 + turn.y) * sway;
     const targetX = (Math.sin(t * 0.7) * 0.02 + turn.x) * sway;
+    if (sway < 1) {
+      g.rotation.set(pose.tiltX + targetX, pose.tiltY + targetY, 0);
+      return;
+    }
     g.rotation.y += (targetY - g.rotation.y) * 0.05;
     g.rotation.x += (targetX - g.rotation.x) * 0.05;
   });

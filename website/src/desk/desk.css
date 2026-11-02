@@ -165,22 +165,52 @@
   top: 50%;
   width: calc(min(88vh, 860px) * 0.38);
   height: calc(min(88vh, 860px) * 0.8);
-  translate: calc(-50% + 30px) calc(-50% + 34px);
+  translate: calc(-50% + 42px) calc(-50% + 50px);
   border-radius: 46% 46% 40% 40% / 22% 22% 18% 18%;
   background: rgb(24 8 0 / 0.78);
-  filter: blur(12px);
+  filter: blur(16px);
+  opacity: 0.85;
   pointer-events: none;
-  transition:
-    translate 900ms cubic-bezier(0.2, 0.9, 0.3, 1.2),
-    filter 900ms ease-out,
-    opacity 900ms ease-out;
 }
 
-/* Drawn flat, the phone lies in the desk: a tight contact shadow until it rises (PhoneSlot). */
+/* Drawn flat, the phone lies in the desk: a tight contact shadow (PhoneSlot). */
 .d01-phone:has([data-phone="sketch"]) .d01-phone__shadow {
   translate: calc(-50% + 6px) calc(-50% + 8px);
   filter: blur(3px);
   opacity: 0.6;
+}
+
+/* Forming, it leaps off the desk and drops back to hover above it: the shadow follows
+   (PhoneStage FORM_MS, peak about a third of the way). */
+.d01-phone:has([data-phone="3d"]) .d01-phone__shadow {
+  animation: d01-phone-leap 1600ms cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+
+@keyframes d01-phone-leap {
+  0% {
+    translate: calc(-50% + 6px) calc(-50% + 8px);
+    scale: 0.96;
+    filter: blur(3px);
+    opacity: 0.6;
+  }
+  32% {
+    translate: calc(-50% + 84px) calc(-50% + 100px);
+    scale: 1.1;
+    filter: blur(30px);
+    opacity: 0.4;
+  }
+  100% {
+    translate: calc(-50% + 42px) calc(-50% + 50px);
+    scale: 1;
+    filter: blur(16px);
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .d01-phone:has([data-phone="3d"]) .d01-phone__shadow {
+    animation: none;
+  }
 }
 
 .d01-more {

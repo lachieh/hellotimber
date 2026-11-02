@@ -493,10 +493,10 @@ a {
 }
 
 /* The phone drawn flat (server-rendered) lies over the 3D stage until the model has loaded; then
-   the phone forms out of it (PhoneStage form, ~1.1 s) while the ink lifts off. */
+   the phone forms out of it (PhoneStage form, ~1.6 s) while the ink lifts off. */
 .phone-sketch {
   z-index: 1;
-  transition: opacity 650ms cubic-bezier(0.4, 0, 0.7, 0.2) 80ms;
+  transition: opacity 350ms ease-in;
 }
 
 .phone-fill[data-phone="3d"] .phone-sketch {
