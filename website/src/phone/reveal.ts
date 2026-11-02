@@ -2,10 +2,14 @@ import { FORM_MS, formPose } from "@hellotimber/phone-3d";
 import type { FormPose } from "@hellotimber/phone-3d";
 
 /** How long the drawing takes to turn into the phone, top to bottom. */
-export const WIPE_MS = 700;
+export const WIPE_MS = 650;
 
-/** How long the whole reveal runs: the wipe, then the phone leaping out of the desk. */
-export const REVEAL_MS = WIPE_MS + FORM_MS;
+/** When the phone starts leaping out of the desk: just after the edge sets off, so it pitches up
+ *  and rises out of the drawing while the edge sweeps over it. */
+export const LEAP_MS = 100;
+
+/** How long the whole reveal runs, until the phone has settled. */
+export const REVEAL_MS = LEAP_MS + FORM_MS;
 
 /** Everything the reveal moves, at one instant. */
 export interface RevealFrame {
@@ -16,8 +20,8 @@ export interface RevealFrame {
 }
 
 /**
- * The phone's depth while the drawing turns into it: thin enough to line up with the drawing,
- * thick enough that its layers (keys, island, LCD) don't fight over the same depth.
+ * The phone's least depth: thin enough to line up with the drawing before it moves, thick enough
+ * that its layers (keys, island, LCD) don't fight over the same depth.
  */
 const WIPE_DEPTH = 0.06;
 
@@ -25,12 +29,12 @@ const easeInOut = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 /
 
 /**
  * The reveal `ms` after the 3D model is ready under the drawing. A bright edge sweeps down the
- * drawing and leaves the real phone behind it, still flat, so the two line up exactly; then the
- * phone pitches up and leaps out of the desk (phone-3d's `formPose`) and settles.
+ * drawing, turning it into the real phone, and as it goes the phone pops out of the page: it
+ * pitches up and leaps off the desk (phone-3d's `formPose`), then settles.
  */
 export function revealAt(ms: number): RevealFrame {
   const wipe = easeInOut(Math.min(1, Math.max(0, ms / WIPE_MS)));
-  const pose = formPose(Math.max(0, ms - WIPE_MS));
+  const pose = formPose(Math.max(0, ms - LEAP_MS));
   return { wipe, pose: { ...pose, depth: Math.max(WIPE_DEPTH, pose.depth) } };
 }
 
