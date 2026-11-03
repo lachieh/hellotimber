@@ -42,7 +42,12 @@ against emulator captures of the real firmware.
   remount across routes.
 - Per-route portfolio content is server-rendered and crawlable; today it is visually hidden.
 - The phone packages must not know about the router; the website owns all bridging.
-- The 2001 desk carries real key controls, a live LCD transcription, Sound/Lights switches and contact links.
+- The 2001 school desk carries a sticky pad with the live "what to press next" hint (worded for
+  keyboard or touch) and a Sound off tick-box, and a pencil case with the name and contact
+  links. There is no key legend and no LCD transcription on the desk: the phone teaches itself,
+  one step at a time. The phone's number for Lachlan (0491 570 006) is written on the desk.
+- The phone renders at most its real physical size; the server sends a comic-ink drawing of it
+  that turns into the 3D phone once it has loaded, or says it can't switch on if it can't.
 
 ## Brand Commitments
 
@@ -67,11 +72,15 @@ against emulator captures of the real firmware.
 
 ## Stock runtime desk (plan 31)
 
-The notebook transcribes the firmware's accessible screen description, including stock
-widgets, messages, calls and game scores. It does not reconstruct the old website LCD
-layout. The sticky note reads the same stock softkey. The Snake scrawl says "play snake!!";
-it no longer reads the removed website game's score store.
+The sticky pad's hint reads the stock screen (its kind, softkey and accessible description);
+it never reconstructs the LCD. The Sound off tick-box gates the stock audio adapter's master
+gain and never rewrites firmware settings. Lights follow the firmware's own automatic timeout.
 
-Sound gates the stock audio adapter's master gain. Lights is a session-only gate on the
-stock display and keypad LED outputs: Off suppresses both; On follows the firmware's
-automatic timeout. Neither switch rewrites firmware settings or invents phone behaviour.
+A direct unknown URL keeps the handset and desk available while the runtime loads, then
+opens stock SIM services. The server response remains a 404; client navigation follows the
+phone to SIM services. Route changes and browser Back/Forward keep the same stage canvas.
+
+Confirming a project's Open question in SIM services opens its link through the same call
+flow as a phone-book contact: the handset shows the existing Calling, connected and call-end
+screens, then standby. The toolkit composition is UNVERIFIED against real SET UP CALL
+firmware; plan 30 records the missing capture.

@@ -1,427 +1,404 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-27T15:23:12.746Z",
+  "generatedAt": "2026-11-03T06:12:41.389043+00:00",
   "title": "Design System: hellotimber",
   "extensions": {
     "colorMeta": {
       "biro-blue": {
         "role": "primary",
         "displayName": "Biro Blue",
-        "canonical": "oklch(34.8% 0.150 270)",
+        "canonical": "#1f2c86",
         "tonalRamp": [
-          "#03042c",
-          "#111861",
-          "#263590",
-          "#4158b5",
-          "#607adb",
-          "#85a0f7",
-          "#b3c7ff",
-          "#e4eeff"
+          "#0e143e",
+          "#19246d",
+          "#24339d",
+          "#2f43cc",
+          "#5c6cd9",
+          "#8c97e4",
+          "#bbc2ef",
+          "#eaecfa"
         ]
       },
       "red-pen": {
         "role": "secondary",
         "displayName": "Red Pen",
-        "canonical": "oklch(48.5% 0.185 26)",
+        "canonical": "#b0171b",
         "tonalRamp": [
-          "#240000",
-          "#520000",
-          "#860000",
-          "#b31b1e",
-          "#d84c44",
-          "#ec8278",
-          "#fcb4ab",
-          "#ffe5e0"
+          "#44090a",
+          "#771012",
+          "#ab161a",
+          "#de1d22",
+          "#e84e52",
+          "#ef8184",
+          "#f5b5b7",
+          "#fce8e9"
         ]
       },
-      "score-red": {
-        "role": "secondary",
-        "displayName": "Score Red",
-        "canonical": "oklch(41.7% 0.156 26)",
-        "tonalRamp": [
-          "#240000",
-          "#520000",
-          "#81000b",
-          "#a8312e",
-          "#cf564e",
-          "#ec8279",
-          "#fcb4ac",
-          "#ffe5e1"
-        ]
-      },
-      "highlighter-green": {
-        "role": "tertiary",
-        "displayName": "Highlighter Green",
-        "canonical": "oklch(46.6% 0.111 153)",
-        "tonalRamp": [
-          "#001300",
-          "#003305",
-          "#005224",
-          "#1f7342",
-          "#469563",
-          "#6ab984",
-          "#9edaaf",
-          "#dbf7e2"
-        ]
-      },
-      "desk-wood": {
+      "desk-laminate": {
         "role": "neutral",
-        "displayName": "Desk Wood",
-        "canonical": "oklch(48.7% 0.085 56)",
+        "displayName": "Desk Laminate",
+        "canonical": "#cb9f63",
         "tonalRamp": [
-          "#210000",
-          "#421600",
-          "#63340a",
-          "#86542e",
-          "#aa754e",
-          "#cf9770",
-          "#f5bb93",
-          "#ffe8d5"
+          "#392913",
+          "#654922",
+          "#916830",
+          "#bd873f",
+          "#cda369",
+          "#dbbd94",
+          "#ead8c0",
+          "#f9f3ec"
+        ]
+      },
+      "laminate-light": {
+        "role": "neutral",
+        "displayName": "Laminate Light",
+        "canonical": "#d4a96b",
+        "tonalRamp": [
+          "#3b2a11",
+          "#684a1e",
+          "#966a2b",
+          "#c38a39",
+          "#d2a564",
+          "#dfbf91",
+          "#ecd9be",
+          "#f9f4eb"
+        ]
+      },
+      "laminate-deep": {
+        "role": "neutral",
+        "displayName": "Laminate Deep",
+        "canonical": "#c0915a",
+        "tonalRamp": [
+          "#372815",
+          "#624625",
+          "#8c6435",
+          "#b68245",
+          "#c89e6e",
+          "#d8ba98",
+          "#e8d7c2",
+          "#f8f3ed"
         ]
       },
       "sticky-yellow": {
         "role": "neutral",
         "displayName": "Sticky Yellow",
-        "canonical": "oklch(90.8% 0.141 100)",
+        "canonical": "#f6e36c",
         "tonalRamp": [
-          "#130900",
-          "#342200",
-          "#544000",
-          "#746100",
-          "#968300",
-          "#b8a634",
-          "#d5cb89",
-          "#f4f0d1"
+          "#483f04",
+          "#7f6f08",
+          "#b69e0b",
+          "#edce0f",
+          "#f3db42",
+          "#f7e679",
+          "#faf0b0",
+          "#fefae7"
         ]
       },
-      "notebook-paper": {
+      "sticky-light": {
         "role": "neutral",
-        "displayName": "Notebook Paper",
-        "canonical": "oklch(98.1% 0.011 95)",
+        "displayName": "Sticky Light",
+        "canonical": "#f9e978",
         "tonalRamp": [
-          "#0c0b06",
-          "#27251f",
-          "#44423c",
-          "#63615a",
-          "#84827b",
-          "#a7a59e",
-          "#cbc9c1",
-          "#f0efe7"
+          "#494103",
+          "#817206",
+          "#b9a308",
+          "#f1d40b",
+          "#f6e03f",
+          "#f9e977",
+          "#fbf2af",
+          "#fefbe7"
         ]
       },
-      "feint-rule": {
+      "pad-edge": {
         "role": "neutral",
-        "displayName": "Feint Rule",
-        "canonical": "oklch(80.7% 0.050 251)",
+        "displayName": "Pad Edge",
+        "canonical": "#e8d45a",
         "tonalRamp": [
-          "#000b1f",
-          "#11263c",
-          "#2e445c",
-          "#4c637d",
-          "#6c85a0",
-          "#8ea8c4",
-          "#b2cce9",
-          "#dcf1ff"
-        ]
-      },
-      "margin-red": {
-        "role": "neutral",
-        "displayName": "Margin Red",
-        "canonical": "oklch(73.5% 0.114 20)",
-        "tonalRamp": [
-          "#240001",
-          "#4f000b",
-          "#722127",
-          "#974345",
-          "#bd6465",
-          "#e38787",
-          "#fcb3b2",
-          "#ffe5e3"
+          "#433b09",
+          "#766810",
+          "#a99518",
+          "#ddc21f",
+          "#e6d14f",
+          "#eedf82",
+          "#f5ecb5",
+          "#fcf9e9"
         ]
       },
       "pencil-graphite": {
         "role": "neutral",
         "displayName": "Pencil Graphite",
-        "canonical": "oklch(33.5% 0.010 73)",
+        "canonical": "#3a3631",
         "tonalRamp": [
-          "#0e0b07",
-          "#282420",
-          "#45413c",
-          "#65605b",
-          "#86817c",
-          "#a9a49e",
-          "#cdc8c2",
-          "#f3eee7"
+          "#292723",
+          "#49443e",
+          "#696158",
+          "#887f73",
+          "#a39c92",
+          "#beb9b2",
+          "#d9d5d2",
+          "#f3f2f1"
+        ]
+      },
+      "graffiti-graphite": {
+        "role": "neutral",
+        "displayName": "Graffiti Graphite",
+        "canonical": "#4b4640",
+        "tonalRamp": [
+          "#292723",
+          "#49443e",
+          "#686159",
+          "#887f74",
+          "#a39c93",
+          "#beb8b2",
+          "#d8d5d2",
+          "#f3f2f1"
+        ]
+      },
+      "graffiti-biro": {
+        "role": "neutral",
+        "displayName": "Graffiti Biro",
+        "canonical": "#22308c",
+        "tonalRamp": [
+          "#0f153e",
+          "#1a256c",
+          "#26359b",
+          "#3145ca",
+          "#5e6ed8",
+          "#8d98e3",
+          "#bcc2ef",
+          "#eaedfa"
+        ]
+      },
+      "graffiti-red": {
+        "role": "neutral",
+        "displayName": "Graffiti Red",
+        "canonical": "#a51e1c",
+        "tonalRamp": [
+          "#410c0b",
+          "#731514",
+          "#a51e1c",
+          "#d72724",
+          "#e25654",
+          "#ea8786",
+          "#f3b8b7",
+          "#fbe9e9"
+        ]
+      },
+      "graffiti-marker": {
+        "role": "neutral",
+        "displayName": "Graffiti Marker",
+        "canonical": "#1c1a17",
+        "tonalRamp": [
+          "#2a2722",
+          "#4a453d",
+          "#6a6257",
+          "#8a8071",
+          "#a59d91",
+          "#bfb9b1",
+          "#d9d6d1",
+          "#f4f3f1"
+        ]
+      },
+      "carved-cream": {
+        "role": "neutral",
+        "displayName": "Carved Cream",
+        "canonical": "#fff4de",
+        "tonalRamp": [
+          "#4c3300",
+          "#875a00",
+          "#c18100",
+          "#fba800",
+          "#ffbc37",
+          "#ffd071",
+          "#ffe3ab",
+          "#fff7e6"
         ]
       },
       "nylon-navy": {
         "role": "neutral",
         "displayName": "Nylon Navy",
-        "canonical": "oklch(36.5% 0.095 268)",
+        "canonical": "#2a3a70",
         "tonalRamp": [
-          "#03042c",
-          "#131f52",
-          "#2d3e74",
-          "#4b5e97",
-          "#6b80bc",
-          "#8ca3e1",
-          "#b2c7ff",
-          "#e3eeff"
+          "#151d38",
+          "#253362",
+          "#35498c",
+          "#455fb7",
+          "#6d82c8",
+          "#98a6d8",
+          "#c2cbe8",
+          "#eceff8"
         ]
       },
       "correction-fluid": {
         "role": "neutral",
         "displayName": "Correction Fluid",
-        "canonical": "oklch(95.7% 0.015 94)",
+        "canonical": "#f4f1e6",
         "tonalRamp": [
-          "#0d0b05",
-          "#27251d",
-          "#444239",
-          "#646158",
-          "#858278",
-          "#a8a59b",
-          "#ccc9bf",
-          "#f2efe4"
+          "#352f17",
+          "#5e5229",
+          "#86763b",
+          "#af9a4d",
+          "#c2b174",
+          "#d4c89c",
+          "#e5dec5",
+          "#f7f5ed"
         ]
       },
       "marker-yellow": {
-        "role": "tertiary",
+        "role": "neutral",
         "displayName": "Marker Yellow",
-        "canonical": "oklch(92.3% 0.159 99)",
+        "canonical": "#ffe75a",
         "tonalRamp": [
-          "#140900",
-          "#352200",
-          "#583f00",
-          "#786000",
-          "#9a8200",
-          "#b9a634",
-          "#d6cb89",
-          "#f5f0d1"
+          "#4c4100",
+          "#877300",
+          "#c1a500",
+          "#fbd700",
+          "#ffe237",
+          "#ffea71",
+          "#fff3ab",
+          "#fffbe6"
         ]
       },
-      "brushed-aluminium": {
+      "masking-tape": {
         "role": "neutral",
-        "displayName": "Brushed Aluminium",
-        "canonical": "oklch(86.2% 0.010 252)",
+        "displayName": "Masking Tape",
+        "canonical": "#f0e5c2",
         "tonalRamp": [
-          "#080b0f",
-          "#22252a",
-          "#3e4247",
-          "#5d6267",
-          "#7e8388",
-          "#a1a5ab",
-          "#c5cad0",
-          "#eaeff5"
+          "#3d320f",
+          "#6c591b",
+          "#9b7f26",
+          "#caa532",
+          "#d7ba5e",
+          "#e3ce8d",
+          "#eee2bc",
+          "#faf6eb"
         ]
       },
-      "silk-ink": {
+      "comic-ink": {
         "role": "neutral",
-        "displayName": "Silk Ink",
-        "canonical": "oklch(29.3% 0.015 244)",
+        "displayName": "Comic Ink",
+        "canonical": "#16130f",
         "tonalRamp": [
-          "#060c11",
-          "#1f262c",
-          "#3c4349",
-          "#5a6269",
-          "#7b848b",
-          "#9ea6ae",
-          "#c1cad2",
-          "#e7f0f8"
+          "#2d271f",
+          "#504537",
+          "#73634e",
+          "#958166",
+          "#ae9e88",
+          "#c5baab",
+          "#ddd6cd",
+          "#f5f3f0"
         ]
       },
-      "switch-orange": {
-        "role": "tertiary",
-        "displayName": "Switch Orange",
-        "canonical": "oklch(71.0% 0.173 51)",
-        "tonalRamp": [
-          "#220000",
-          "#4f0000",
-          "#810800",
-          "#a83600",
-          "#cf5b00",
-          "#e58b53",
-          "#f7ba96",
-          "#ffe8d7"
-        ]
-      },
-      "switch-slot": {
+      "lcd-ink": {
         "role": "neutral",
-        "displayName": "Switch Slot",
-        "canonical": "oklch(21.1% 0.010 248)",
+        "displayName": "Lcd Ink",
+        "canonical": "#1f2d22",
         "tonalRamp": [
-          "#080c0f",
-          "#21262a",
-          "#3e4347",
-          "#5d6267",
-          "#7e8388",
-          "#a0a6ab",
-          "#c4cacf",
-          "#e9eff5"
-        ]
-      },
-      "voucher-blue": {
-        "role": "neutral",
-        "displayName": "Voucher Blue",
-        "canonical": "oklch(46.9% 0.143 253)",
-        "tonalRamp": [
-          "#00082b",
-          "#00205f",
-          "#003f8b",
-          "#1661b0",
-          "#3d84d5",
-          "#68a8f5",
-          "#a3cdff",
-          "#ddf1ff"
-        ]
-      },
-      "voucher-cyan": {
-        "role": "neutral",
-        "displayName": "Voucher Cyan",
-        "canonical": "oklch(74.3% 0.126 227)",
-        "tonalRamp": [
-          "#000e24",
-          "#002b53",
-          "#004c75",
-          "#006d98",
-          "#0090bc",
-          "#33b4e2",
-          "#8bd5f5",
-          "#d4f5ff"
+          "#1f2d22",
+          "#37503c",
+          "#4f7256",
+          "#679570",
+          "#88ad90",
+          "#abc5b0",
+          "#cdddd1",
+          "#f0f5f1"
         ]
       },
       "window-cream": {
         "role": "neutral",
         "displayName": "Window Cream",
-        "canonical": "oklch(96.8% 0.033 83)",
+        "canonical": "#ffecc8",
         "tonalRamp": [
-          "#120a00",
-          "#2d2412",
-          "#4a412e",
-          "#6a604c",
-          "#8c816c",
-          "#afa48e",
-          "#d3c8b2",
-          "#f9edd6"
+          "#4c3200",
+          "#875800",
+          "#c17e00",
+          "#fba500",
+          "#ffba37",
+          "#ffce71",
+          "#ffe2ab",
+          "#fff6e6"
         ]
       },
       "shadow-umber": {
         "role": "neutral",
         "displayName": "Shadow Umber",
-        "canonical": "oklch(22.4% 0.049 52)",
+        "canonical": "#2d1404",
         "tonalRamp": [
-          "#1a0400",
-          "#381e0d",
-          "#573b29",
-          "#785a47",
-          "#9b7b67",
-          "#bf9d89",
-          "#e4c1ac",
-          "#ffe8d7"
+          "#461f06",
+          "#7c370b",
+          "#b14f10",
+          "#e76715",
+          "#ef8847",
+          "#f3ab7d",
+          "#f8cdb2",
+          "#fdf0e8"
         ]
       }
     },
     "typographyMeta": {
-      "display": {
-        "displayName": "Display",
-        "purpose": "An object's handwritten heading, underlined with a drawn squiggle."
-      },
       "headline": {
         "displayName": "Headline",
-        "purpose": "The name in black marker on masking tape."
+        "purpose": "The name in marker on the pencil case's masking tape."
+      },
+      "hint": {
+        "displayName": "Hint",
+        "purpose": "The sticky pad's live 'now: …' in red pen."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Notebook heading, pencil-case job line."
+        "purpose": "The pencil case's job line."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Legends, copied LCD rows, taglines, links; sits on the paper's rules."
+        "purpose": "Pencil case tagline and links, the mute label."
       },
       "scrawl": {
         "displayName": "Scrawl",
-        "purpose": "Quick asides (play snake!!, txt spk, more on the desk)."
-      },
-      "label": {
-        "displayName": "Silk-screen Label",
-        "purpose": "Printed legends on the Walkman; container-unit sized."
-      },
-      "brand-word": {
-        "displayName": "Brand Word",
-        "purpose": "The top-up voucher's printed word only."
+        "purpose": "Quick asides and graffiti."
       }
     },
     "shadows": [
       {
         "name": "desk-contact",
         "value": "1px 2px 2px rgb(45 20 4 / 0.32), 8px 14px 22px rgb(45 20 4 / 0.38)",
-        "purpose": "Default shadow for any rectangular object on the desk (--d01-shadow)."
+        "purpose": "Any object on the desk."
       },
       {
-        "name": "torn-paper",
-        "value": "drop-shadow(1px 2px 1.5px rgb(45 20 4 / 0.3)) drop-shadow(7px 12px 14px rgb(45 20 4 / 0.32))",
-        "purpose": "filter: for torn, cut or irregular outlines."
-      },
-      {
-        "name": "sticky-curl",
-        "value": "4px 20px 14px -10px rgb(45 20 4 / 0.5), 14px 22px 18px -14px rgb(45 20 4 / 0.4)",
-        "purpose": "Added to desk-contact where a paper edge lifts."
+        "name": "pad-stack",
+        "value": "1px 1px 0 #f4e277, 2px 2px 0 #e2ce55, 3px 3px 0 #f2e073, 4px 4px 0 #dfcb52, 5px 5px 0 #f0de71, 6px 6px 0 #dbc74e, 7px 7px 0 #eedc6e, 8px 8px 0 #d3bf48",
+        "purpose": "The full pad's stacked sheet edges."
       },
       {
         "name": "case-bulk",
-        "value": "inset 0 3px 3px rgb(255 255 255 / 0.12), inset 6px 0 12px rgb(255 255 255 / 0.05), inset -10px -16px 22px rgb(4 8 26 / 0.55), 1px 2px 2px rgb(45 20 4 / 0.32), 10px 18px 26px rgb(45 20 4 / 0.42)",
-        "purpose": "A soft, stuffed object (pencil case)."
-      },
-      {
-        "name": "phone-contact",
-        "value": "blur(12px) pill, rgb(24 8 0 / 0.78), translate(30px, 34px)",
-        "purpose": "The handset's contact shadow, sized from the stage height."
-      },
-      {
-        "name": "cut-slot",
-        "value": "inset 1px 2px 2px rgb(0 0 0 / 0.8), 0 1px 0 rgb(255 255 255 / 0.8)",
-        "purpose": "A groove cut into metal (Walkman switch slot)."
+        "value": "10px 18px 26px rgb(45 20 4 / 0.42)",
+        "purpose": "The pencil case's soft bulk, with desk contact."
       }
     ],
     "motion": [
       {
-        "name": "ease-ink",
+        "name": "ease-write",
         "value": "cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "The one easing for every desk transition."
+        "purpose": "Ink wipes and small state changes."
       },
       {
-        "name": "ink-wipe",
-        "value": "700ms clip-path inset(0 100% 0 0) to inset(0)",
-        "purpose": "Notebook re-copies the LCD on each screen change."
+        "name": "peel",
+        "value": "720ms cubic-bezier(0.45, 0, 0.7, 0.35)",
+        "purpose": "A sheet peeling off the pad."
       },
       {
-        "name": "hint-write",
-        "value": "620ms, 220ms delay",
-        "purpose": "New red-pen hint written in after the strike."
+        "name": "write-hint",
+        "value": "760ms after 380ms",
+        "purpose": "The new hint written on the blank sheet."
       },
       {
-        "name": "hint-strike",
-        "value": "260ms scaleX 0 to 1",
-        "purpose": "Old hint crossed out."
+        "name": "reveal-wipe",
+        "value": "650ms",
+        "purpose": "The drawing turning into the phone, top to bottom."
       },
       {
-        "name": "key-press",
-        "value": "background 160ms, translate 120ms",
-        "purpose": "Drawn key hover and press."
-      },
-      {
-        "name": "switch-slide",
-        "value": "left 220ms",
-        "purpose": "Walkman knob."
-      },
-      {
-        "name": "hub-spin",
-        "value": "4.2s full / 2.6s empty, linear infinite",
-        "purpose": "Cassette hubs while Sound is on."
-      },
-      {
-        "name": "reduced-motion",
-        "value": "animation: none; transition: none",
-        "purpose": "All desk motion removed under prefers-reduced-motion."
+        "name": "form-leap",
+        "value": "1600ms",
+        "purpose": "The phone pitching up and leaping out of the desk."
       }
     ],
     "breakpoints": [
@@ -430,129 +407,113 @@
         "value": "max-width: 899px"
       },
       {
-        "name": "mid",
+        "name": "narrow-desk",
         "value": "900px to 1180px"
       },
       {
-        "name": "short-desktop",
-        "value": "min-width: 900px and max-height: 760px"
+        "name": "short-desk",
+        "value": "min-width 900px and max-height 760px"
       }
     ]
   },
   "components": [
     {
-      "name": "Drawn Key",
-      "kind": "button",
-      "refersTo": "drawn-key",
-      "description": "A biro-drawn key on the sticky note that presses the phone's real key.",
-      "html": "<div class=\"ds-paper\"><button class=\"ds-key\" type=\"button\" aria-label=\"Press scroll up\"><svg viewBox=\"0 0 20 20\" width=\"1em\" height=\"1em\" aria-hidden=\"true\"><path d=\"M4 13.5 L10 6.5 L16 13.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></button> <button class=\"ds-key\" type=\"button\">C</button></div>",
-      "css": ".ds-paper{display:flex;gap:6px;padding:16px;background:#f6e36c}.ds-key{display:inline-grid;place-items:center;min-width:38px;height:32px;padding:0 7px;border:2px solid #1f2c86;border-radius:14px 11px 13px 10px / 11px 14px 10px 13px;background:rgb(255 255 255 / 0.18);color:#1f2c86;font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;font-size:1.05rem;font-weight:700;line-height:1;cursor:pointer;transition:background-color 160ms cubic-bezier(0.16, 1, 0.3, 1),translate 120ms cubic-bezier(0.16, 1, 0.3, 1)}.ds-key svg{width:1.1rem;height:1.1rem}.ds-key:hover{background:rgb(255 255 255 / 0.55)}.ds-key:active{translate:0 1px;background:rgb(31 44 134 / 0.16)}.ds-key:focus-visible{outline:2.5px dashed #1f2c86;outline-offset:3px}"
-    },
-    {
-      "name": "NaviKey Pill",
-      "kind": "button",
-      "refersTo": "drawn-key",
-      "description": "The wider drawn pill for the Menu/NaviKey.",
-      "html": "<div class=\"ds-paper\"><button class=\"ds-key ds-key-navi\" type=\"button\">Menu</button></div>",
-      "css": ".ds-paper{padding:16px;background:#f6e36c}.ds-key{display:inline-grid;place-items:center;min-width:64px;height:32px;padding:0 7px;border:2px solid #1f2c86;background:rgb(255 255 255 / 0.18);color:#1f2c86;font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;font-size:1.05rem;font-weight:700;line-height:1;cursor:pointer;transition:background-color 160ms cubic-bezier(0.16, 1, 0.3, 1)}.ds-key-navi{border-radius:40% 40% 50% 50% / 60% 60% 40% 40%}.ds-key:hover{background:rgb(255 255 255 / 0.55)}.ds-key:focus-visible{outline:2.5px dashed #1f2c86;outline-offset:3px}"
-    },
-    {
-      "name": "Sticky Note",
-      "kind": "card",
-      "refersTo": "sticky-note",
-      "description": "The key legend with the live red-pen hint.",
-      "html": "<section class=\"ds-sticky\"><h2 class=\"ds-sticky-title\">how to work it</h2><p class=\"ds-sticky-body\">arrow keys scroll</p><p class=\"ds-sticky-hint\"><s class=\"ds-old\">it's starting up</s><span>now: press Menu (Enter)</span></p></section>",
-      "css": ".ds-sticky{width:300px;padding:22px 22px 18px;rotate:-3deg;color:#1f2c86;font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;border-radius:1px 1px 2px 18px / 1px 1px 2px 8px;background:linear-gradient(180deg,rgb(0 0 0 / 0.05),rgb(0 0 0 / 0) 26px),linear-gradient(170deg,#f9e978,#f6e36c 70%,#ecd75c);box-shadow:1px 2px 2px rgb(45 20 4 / 0.32), 8px 14px 22px rgb(45 20 4 / 0.38),4px 20px 14px -10px rgb(45 20 4 / 0.5)}.ds-sticky-title{margin:0 0 14px;font-size:1.55rem;font-weight:700;line-height:1.1}.ds-sticky-body{margin:0;font-size:1.02rem}.ds-sticky-hint{display:grid;gap:2px;margin:10px 0 0;padding-top:10px;border-top:1.5px dashed rgb(31 44 134 / 0.45);color:#b0171b;font-size:1.1rem;font-weight:700;line-height:1.2}.ds-old{font-weight:400;font-size:0.92rem;opacity:0.62}"
-    },
-    {
-      "name": "Notebook Strip",
+      "name": "Sticky Pad",
       "kind": "custom",
-      "refersTo": "notebook-strip",
-      "description": "The LCD copied out by hand on torn lined paper; re-written with an ink wipe on every screen change.",
-      "html": "<section class=\"ds-strip\"><h2 class=\"ds-strip-title\">on the screen</h2><div class=\"ds-strip-lcd\"><p>Messages</p><p><mark class=\"ds-picked\">Phone book</mark></p><p class=\"ds-softkey\">Select</p></div><p>at <b class=\"ds-trail\">Menu</b></p></section>",
-      "css": ".ds-strip{width:330px;padding:14px 20px 26px 46px;rotate:2.5deg;font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;font-size:1.04rem;line-height:28px;color:#3a3631;background:linear-gradient(90deg,rgb(0 0 0 / 0) 34px,#e88b8b 34px 35.5px,rgb(0 0 0 / 0) 35.5px),repeating-linear-gradient(180deg,rgb(0 0 0 / 0) 0 27px,#a9c3e0 27px 28px) 0 9px,#fbf9f1;filter:drop-shadow(1px 2px 1.5px rgb(45 20 4 / 0.3)) drop-shadow(7px 12px 14px rgb(45 20 4 / 0.32))}.ds-strip p,.ds-strip h2{margin:0}.ds-strip-title{font-size:1.15rem;font-weight:700;color:#1f2c86}.ds-strip-lcd{color:#1f2c86;animation:ds-write 700ms cubic-bezier(0.16, 1, 0.3, 1)}.ds-picked{padding:0 6px;margin:0 -6px;border:2px solid #1f2c86;border-radius:48% 52% 44% 56% / 60% 46% 54% 40%;background:none;color:inherit}.ds-softkey{text-align:center;font-weight:700;text-decoration:underline 1.5px;text-underline-offset:4px}.ds-trail{color:#1f2c86}@keyframes ds-write{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}@media (prefers-reduced-motion:reduce){.ds-strip-lcd{animation:none}}"
+      "refersTo": "sticky-pad",
+      "description": "The full pad with the live hint in red pen on its top sheet.",
+      "html": "<div class=\"ds-pad\"><div class=\"ds-pad-sheet\"><p class=\"ds-pad-hint\"><span class=\"ds-pad-arrow\">&rarr;</span> now: press Menu (Enter)</p></div></div>",
+      "css": ".ds-pad{position:relative;width:240px;aspect-ratio:1;rotate:4deg;border-radius:2px;background:#e8d45a;box-shadow:1px 1px 0 #f4e277,2px 2px 0 #e2ce55,3px 3px 0 #f2e073,4px 4px 0 #dfcb52,5px 5px 0 #f0de71,6px 6px 0 #dbc74e,7px 7px 0 #eedc6e,8px 8px 0 #d3bf48,1px 2px 2px rgb(45 20 4 / .32),8px 14px 22px rgb(45 20 4 / .38)} .ds-pad-sheet{position:absolute;inset:0;padding:34px 22px 22px;border-radius:1px 1px 2px 14px / 1px 1px 2px 6px;background:linear-gradient(180deg,rgb(120 96 10 / .1) 0 24px,transparent 24px),linear-gradient(170deg,#f9e978,#f6e36c 70%,#ecd75c)} .ds-pad-hint{margin:0;font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;font-weight:700;font-size:1.3rem;line-height:1.2;color:#b0171b} .ds-pad-arrow{display:inline-block;rotate:-10deg}"
     },
     {
-      "name": "Walkman Slide Switch",
+      "name": "Mute Tick-box",
+      "kind": "input",
+      "refersTo": "mute-tick",
+      "description": "A biro tick-box switch for Sound off, ticked in red pen.",
+      "html": "<button class=\"ds-mute\" role=\"switch\" aria-checked=\"true\" aria-label=\"Sound off\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 5.2c5.4-1 10.8-1.2 16-.4.9 5 1 10.2.2 15.2-5.2.9-10.6.9-16 .2-.9-5-1-10 0-15z\"/><path class=\"ds-mute-tick\" d=\"M6.5 12.5l4 4.5 9-13\"/></svg><span>shh, no sound</span></button>",
+      "css": ".ds-mute{display:inline-flex;align-items:center;gap:6px;padding:4px 6px;border:0;border-radius:6px;background:#f6e36c;color:#1f2c86;font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;font-size:1.05rem;cursor:pointer} .ds-mute svg{width:24px;height:24px;overflow:visible;fill:rgb(255 255 255 / .18);stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:fill 160ms cubic-bezier(.16,1,.3,1)} .ds-mute:hover svg{fill:rgb(255 255 255 / .55)} .ds-mute:focus-visible{outline:2.5px dashed #1f2c86;outline-offset:3px} .ds-mute .ds-mute-tick{fill:none;stroke:#b0171b;stroke-width:2.6}"
+    },
+    {
+      "name": "Pencil Case Link",
+      "kind": "nav",
+      "refersTo": "pencil-case-link-hover",
+      "description": "A contact link in correction fluid on navy nylon; marker yellow on hover and focus.",
+      "html": "<div class=\"ds-case\"><a class=\"ds-case-link\" href=\"#\">github.com/lachieh</a></div>",
+      "css": ".ds-case{padding:24px;border-radius:30px 34px 28px 32px / 30px 28px 34px 30px;background:radial-gradient(130% 120% at 0 0,#3e5290,#1b2550 60%,#141c40)} .ds-case-link{font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;font-size:1.04rem;color:#f4f1e6;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px} .ds-case-link:hover{color:#ffe75a} .ds-case-link:focus-visible{color:#ffe75a;outline:2.5px dashed #ffe75a;outline-offset:3px}"
+    },
+    {
+      "name": "Masking Tape Name",
       "kind": "custom",
-      "refersTo": "slide-switch",
-      "description": "A silk-screened off/on slide switch on brushed aluminium; Sound and Lights.",
-      "html": "<div class=\"ds-alu\"><button class=\"ds-slide\" type=\"button\" role=\"switch\" aria-checked=\"true\" data-on=\"true\"><span class=\"ds-slide-label\">Sound</span><span class=\"ds-slide-row\" aria-hidden=\"true\"><span class=\"ds-mark\">off</span><span class=\"ds-track\"><span class=\"ds-knob\"></span></span><span class=\"ds-mark ds-mark-on\">on</span></span></button></div>",
-      "css": ".ds-alu{width:160px;padding:14px;border-radius:8px;background:linear-gradient(180deg,#e4e8ec,#cdd2d8 42%,#bcc2c9 50%,#c9ced4)}.ds-slide{display:grid;gap:6px;width:100%;padding:0 3px;border:0;border-radius:3px;background:none;color:#20272d;text-align:left;cursor:pointer}.ds-slide-label{font-family:\"D01 Michroma\", \"Eurostile\", sans-serif;font-size:11px;letter-spacing:0.1em;line-height:1;text-transform:uppercase}.ds-slide-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px}.ds-mark{font-family:\"D01 Michroma\", \"Eurostile\", sans-serif;font-size:9px;letter-spacing:0.06em;line-height:1;text-transform:uppercase;color:#4d555d}.ds-mark-on{color:#111619;text-decoration:underline 1.5px;text-underline-offset:2px}.ds-track{position:relative;height:9px;border-radius:2px;background:#15191d;box-shadow:inset 1px 2px 2px rgb(0 0 0 / 0.8),0 1px 0 rgb(255 255 255 / 0.8)}.ds-knob{position:absolute;top:-40%;left:48%;width:52%;height:180%;border-radius:2px;background:linear-gradient(180deg,rgb(255 255 255 / 0.35),rgb(255 255 255 / 0) 45%,rgb(0 0 0 / 0.18)),repeating-linear-gradient(90deg,#f37c22 0 2px,#c95708 2px 3.5px);box-shadow:1px 2px 2px rgb(0 0 0 / 0.5);transition:left 220ms cubic-bezier(0.16, 1, 0.3, 1)}.ds-slide:hover .ds-knob{filter:brightness(1.08)}.ds-slide:focus-visible{outline:2.5px dashed #1f2c86;outline-offset:2px}"
-    },
-    {
-      "name": "Pencil Case Contact",
-      "kind": "card",
       "refersTo": "pencil-case",
-      "description": "Whose desk: name on masking tape, the rest in correction pen on navy nylon.",
-      "html": "<section class=\"ds-case\"><h2 class=\"ds-tape\">Lachlan Heywood</h2><p class=\"ds-ink ds-job\">Software Engineer</p><a class=\"ds-ink ds-link\" href=\"#\">github.com/example-handle</a></section>",
-      "css": ".ds-case{position:relative;width:320px;padding:40px 24px 24px;rotate:-5deg;font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;color:#f4f1e6;border-radius:30px 34px 28px 32px / 30px 28px 34px 30px;background:radial-gradient(130% 100% at 24% 10%,#3e5290 0,#2a3a70 38%,#1b2550 78%,#141c40 100%);box-shadow:inset 0 3px 3px rgb(255 255 255 / 0.12),inset -10px -16px 22px rgb(4 8 26 / 0.55),1px 2px 2px rgb(45 20 4 / 0.32),10px 18px 26px rgb(45 20 4 / 0.42)}.ds-case::before{content:\"\";position:absolute;inset:7px;border:1.5px dashed rgb(160 178 230 / 0.32);border-radius:inherit;pointer-events:none}.ds-tape{display:inline-block;margin:2px 0 12px -10px;padding:3px 18px 1px;rotate:1.5deg;background:linear-gradient(178deg,rgb(240 229 194 / 0.88),rgb(226 212 172 / 0.84));font-size:1.75rem;font-weight:700;line-height:1.25;color:#151515}.ds-ink{display:block;margin:0;text-shadow:-0.5px -0.5px 0 rgb(255 255 255 / 0.55),1px 1.5px 0 rgb(8 12 34 / 0.65)}.ds-job{font-size:1.2rem;font-weight:700}.ds-link{margin-top:12px;font-size:1.04rem;font-weight:700;color:#f4f1e6;text-decoration:underline 2px;text-underline-offset:4px;transition:color 160ms cubic-bezier(0.16, 1, 0.3, 1)}.ds-link:hover{color:#ffe75a}.ds-link:focus-visible{outline:2.5px dashed #ffe75a;outline-offset:3px}"
+      "description": "The name in black marker on a torn strip of masking tape.",
+      "html": "<span class=\"ds-tape\">Lachlan Heywood</span>",
+      "css": ".ds-tape{display:inline-block;padding:3px 18px 1px;rotate:1.5deg;white-space:nowrap;background:linear-gradient(178deg,rgb(240 229 194 / .9),rgb(226 212 172 / .86));clip-path:polygon(5px 0,calc(100% - 7px) 2px,100% 21%,calc(100% - 5px) 50%,100% 80%,calc(100% - 4px) 100%,6px calc(100% - 2px),0 70%,4px 40%,0 12%);font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;font-size:1.75rem;font-weight:700;line-height:1.25;color:#151515;filter:drop-shadow(1px 2px 1.5px rgb(0 0 0 / .35))}"
     },
     {
-      "name": "Scrawl Aside",
+      "name": "Graffiti Marks",
       "kind": "custom",
-      "refersTo": "",
-      "description": "A quick Reenie Beanie aside written onto paper or the desk.",
-      "html": "<div class=\"ds-wood\"><p class=\"ds-scrawl\">more on the desk</p></div>",
-      "css": ".ds-wood{padding:16px;background:linear-gradient(180deg,#8e5a31,#84522c 55%,#7a4826)}.ds-scrawl{margin:0;font-family:\"D01 Reenie\", \"D01 Kalam\", cursive;font-size:1.6rem;line-height:1;color:#fff3dc}"
+      "refersTo": "desk-laminate",
+      "description": "Graffiti on the laminate in each ink: faded pencil, biro, red pen, marker, carving, and the fresh way-in line.",
+      "html": "<div class=\"ds-desk\"><span class=\"ds-g ds-g-ghost\">steph &amp; bec</span><span class=\"ds-g ds-g-pencil\">maths sux</span><span class=\"ds-g ds-g-red\">kate wuz ere</span><span class=\"ds-g ds-g-marker\">SK8 OR DIE</span><span class=\"ds-g ds-g-carved\">L.H. '01</span><span class=\"ds-g ds-g-fresh\">txt Lachlan 0491 570 006</span></div>",
+      "css": ".ds-desk{display:flex;flex-wrap:wrap;gap:14px 22px;padding:22px;background:linear-gradient(180deg,#d4a96b,#cb9f63 55%,#c0915a)} .ds-g{font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;mix-blend-mode:multiply} .ds-g-ghost{color:#4b4640;opacity:.2;font-size:1.6rem} .ds-g-pencil{color:#4b4640;opacity:.5} .ds-g-red{color:#a51e1c;opacity:.6} .ds-g-marker{color:#1c1a17;opacity:.5;font-weight:700;letter-spacing:.04em;font-size:1.5rem;filter:blur(.3px)} .ds-g-carved{color:rgb(255 244 222 / .75);font-weight:700;letter-spacing:.08em;mix-blend-mode:normal;text-shadow:-1px -1px 0 rgb(70 38 12 / .55),1px 1px 0 rgb(255 248 230 / .35)} .ds-g-fresh{color:#1f2c86;opacity:.9;font-weight:700;font-size:1.2rem}"
     }
   ],
   "narrative": {
     "northStar": "Left on the desk, 2001",
-    "overview": "The page is not a page. It is a warm wooden desk top lit by one window at the top left, and the 3D Nokia 3310 has just been put down in the middle of it. Everything a visitor needs to use the phone is an object lying around it: a yellow sticky note with the controls, a torn notebook strip that copies the LCD out by hand, a brushed-aluminium Walkman whose orange slide switches are the phone's Sound and Lights, and a navy nylon pencil case that says whose desk this is. Period clutter (a txt spk cheat sheet, a prepaid top-up card, a biro) fills the edges without carrying anything essential.\n\nEvery object is a real material with a real light source. Paper has rules, margins, punched holes and torn edges; the sticky note curls off the desk; nylon has a weave and a stitched seam; the Walkman has a slot cut into its metal. Writing is done with the tool that object would have been written on with: biro on the sticky note and notebook, red pen for corrections and the live hint, black marker on masking tape, correction pen on the pencil case, Reenie Beanie scrawl for the asides. No web chrome, no header, no footer, no cards-on-a-grid.\n\nThe phone is the biggest thing on the desk and stays dead centre. The objects are information that happens to look like stuff, and every one that carries information is a real control or real text, never a picture of one.",
+    "overview": "The page is not a page. It is a school desk: one sheet of pale, honey-coloured laminate, worn paler where arms rest along its front, scratched and written over by years of kids, lit by one window at the top left. A working Nokia 3310 has just been put down in the middle of it, at the size of the real handset. Only two things lie beside it: a full pad of sticky notes at its bottom right that says what to press next, and a navy nylon pencil case at its bottom left that says whose desk this is. A biro pokes out from under the case.\n\nThe graffiti is the desk's history, not information: faded older names and dates under newer pencil, biro, red pen, permanent marker and compass-point carvings, hearts, tallies and scribbled-out patches. It stays texture, always quieter than the objects on top of it, with one exception: the freshest biro on the desk, pressed hard, gives the phone's own number for Lachlan.\n\nThe phone arrives as a comic drawing. The server renders the handset in flat comic ink with \"Loading…\" and a segmented bar on its LCD; when three.js and the model are ready, a bright edge sweeps down the drawing, turning it into the real phone, which pitches up and leaps out of the desk as the edge passes, then drops back to hover. On a device with a tilt sensor, tilting it moves the window's light across the phone; the phone itself stays put.",
     "keyCharacteristics": [
       "One light source: a window at the top left; every shadow falls down and to the right.",
-      "Handwriting is the UI type; printed type appears only where a 2001 object would carry print (Walkman silk-screen, top-up voucher).",
-      "Objects sit at small rotations (between -13deg and 11deg), never square to the viewport.",
-      "Information objects are live: the notebook re-copies the LCD and the sticky note's \"now:\" line follows the phone.",
-      "The phone is never covered, never framed, never competed with."
+      "Handwriting is the UI type. Nothing is set in a neutral web sans.",
+      "Objects sit a few degrees off square, never aligned to the viewport.",
+      "The phone is dead centre, at most its real 113 mm, and nothing covers it.",
+      "Every object that carries information is a real control or real text; decoration is `aria-hidden`."
     ],
     "rules": [
       {
         "name": "The Right Pen Rule",
-        "body": "Ink colour follows the object and the act: biro writes, red pen corrects or points at the live state, green belongs to the txt card, correction fluid belongs to the pencil case. A new note picks its pen from what a teenager would have used, not from a role table.",
+        "body": "Ink follows the object and the act: biro writes, red pen points at the live state, correction fluid belongs to the pencil case, marker is for names on tape. A new mark picks its pen from what a kid would have used.",
+        "section": "colors"
+      },
+      {
+        "name": "The Quiet History Rule",
+        "body": "Graffiti never outweighs the desk's objects. Its heaviest marks (marker) stay at or below 0.5 opacity and under 2rem; only the way-in line is written fresh, at 0.9.",
         "section": "colors"
       },
       {
         "name": "The Window Rule",
-        "body": "There is exactly one light: warm cream from the top left (`rgb(255 236 200 / 0.38)`), umber dark toward the bottom right, plus the soft shadow of the window frame across the desk. Nothing is lit from anywhere else.",
+        "body": "There is exactly one light, from the top left. Device tilt moves that light across the phone; nothing is lit from anywhere else.",
         "section": "colors"
       },
       {
         "name": "The Who Wrote It Rule",
-        "body": "Every line of text was either written by hand (Kalam or Reenie) or printed by a manufacturer (Michroma or Lilita). Nothing is set in a neutral web sans.",
-        "section": "typography"
-      },
-      {
-        "name": "The Ruled Line Rule",
-        "body": "Writing on lined paper sits on its lines: line height equals the rule pitch (28px on the notebook, 24px on the txt card).",
+        "body": "Every line of visible text was written by hand, in Kalam or Reenie, or shown on the phone's own LCD.",
         "section": "typography"
       },
       {
         "name": "The Down-Right Rule",
-        "body": "Every shadow offset is positive on both axes. A shadow that falls up or left breaks the window.",
+        "body": "Every shadow offset is positive on both axes.",
         "section": "elevation"
       },
       {
         "name": "The Lying Flat Rule",
-        "body": "Shadows stay soft and close: nothing floats more than a few millimetres off the desk. No hover lift, no glow.",
+        "body": "Nothing floats except the phone in its entrance. No hover lift, no glow.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "Do put every new piece of information on a plausible 2001 desk object, in the pen that object would be written with.",
-      "Do cast every shadow down and to the right in shadow umber, using desk contact for rectangles and the torn-paper drop-shadow for irregular shapes.",
-      "Do rotate objects a few degrees off square and keep the phone dead centre and uncovered.",
-      "Do make every object that carries information a real control or real text (buttons, switches, links, headings), and mark purely decorative objects `aria-hidden`.",
-      "Do animate writing as writing: a left-to-right ink wipe on `cubic-bezier(0.16, 1, 0.3, 1)`, removed entirely under `prefers-reduced-motion`.",
-      "Do keep handwritten body text at 0.92rem or larger and in biro, graphite or red pen on light paper."
+      "**Do** put new information on a plausible 2001 desk object, in the pen that object would be written with.",
+      "**Do** keep the phone dead centre, at most its real size, uncovered, with the pad and case clear of it when there is room.",
+      "**Do** cast every shadow down and to the right in shadow umber.",
+      "**Do** make every object that carries information a real control or real text, and mark decoration `aria-hidden`.",
+      "**Do** name the visitor's own keys: keyboard keys for keyboards, the phone's keys for touch.",
+      "**Do** animate writing as writing: a left-to-right ink wipe on `cubic-bezier(0.16, 1, 0.3, 1)`, removed under `prefers-reduced-motion`."
     ],
     "donts": [
-      "Don't add a header, footer, nav bar or any web chrome around the phone.",
-      "Don't set text in a neutral web sans or system font; it was either written or printed.",
-      "Don't light anything from a second direction or add hover lift, glows or floating shadows.",
-      "Don't draw a picture of a control where a working control belongs.",
-      "Don't reuse the legacy sea/lagoon tokens in `src/styles.css` (`--surface`, `--line`, …); they belong to the original site template, not this world."
+      "**Don't** add a header, footer, nav bar or any web chrome around the phone.",
+      "**Don't** put a key legend or instructions on the desk; the pad shows only what to press next.",
+      "**Don't** let graffiti outweigh the desk's objects (The Quiet History Rule).",
+      "**Don't** light anything from a second direction, or add hover lift, glows or floating shadows.",
+      "**Don't** reuse the legacy sea/lagoon tokens in `src/styles.css` (`--surface`, `--line`, …); they belong to the original site template."
     ]
   }
 }
