@@ -2,16 +2,19 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import { deskHint } from "./lcd-copy";
 import { usePhoneLive } from "./live";
+import Graffiti from "./Graffiti";
 import PencilCase from "./PencilCase";
 import "./desk.css";
 
-/** "Left on the desk, 2001": the phone put down among a teenager's things, which carry the info. */
+/** "Left on the desk, 2001": the phone put down on a graffitied school desk among a teenager's
+ *  things, which carry the info. */
 export default function Desk({ phone }: { phone: ReactNode }) {
   const live = usePhoneLive();
   return (
     <div className="desk">
       <div className="d01-desk">
         <DeskGrain />
+        <Graffiti />
         <div className="d01-window-light" aria-hidden="true" />
 
         <section className="d01-phone" aria-label="The phone">
@@ -109,7 +112,7 @@ function DeskGrain() {
         <feTurbulence type="fractalNoise" baseFrequency="0.0028 0.11" numOctaves="4" seed="7" />
         <feColorMatrix
           type="matrix"
-          values="0 0 0 0 0.34  0 0 0 0 0.18  0 0 0 0 0.06  1.9 0 0 0 -0.78"
+          values="0 0 0 0 0.5  0 0 0 0 0.3  0 0 0 0 0.1  1.6 0 0 0 -0.7"
         />
       </filter>
       <rect width="100%" height="100%" filter="url(#d01-grain)" />
