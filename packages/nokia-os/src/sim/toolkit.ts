@@ -1,10 +1,10 @@
 // The SIM's toolkit menu as data (plan 30 D3, D5, D12; Task 0 K): what the applet's SET UP MENU
 // lists and what each item does, validated by the faces that draw it, and how the 3310 shows its
 // title and labels. Pure.
-import { CAROUSEL_TITLE_WIDTH } from "../display/carousel";
-import { CUT_MARK, cutDotsX, ROW_TEXT_LEFT, ROW_TEXT_WIDTH } from "../display/list-rows";
-import { missingStockGlyphs, type StockFontName } from "../resources";
-import { textWidth, wrapText } from "../text/layout";
+import { CAROUSEL_TITLE_WIDTH } from "../kit/ui/display/carousel";
+import { CUT_MARK, cutDotsX, ROW_TEXT_LEFT, ROW_TEXT_WIDTH } from "../kit/ui/display/list-rows";
+import { missingStockGlyphs, type StockFontName } from "../kit/ui/resources";
+import { textWidth, wrapText } from "../kit/ui/text/layout";
 import { simNumberProblem } from "../phone-book/sim-card";
 import { gsmSeptets } from "./messages";
 import { SIM_SERVICES_SLUG } from "./slot";

@@ -1,9 +1,9 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { MultiModel } from "../display/widgets";
+import type { MultiModel } from "../kit/ui/display/widgets";
 import type { StockSettings } from "../firmware/settings";
-import { confirmQuery } from "./confirm";
-import type { Flow, Widget } from "./flow";
-import { moveRows, openRows, rowsIndicator, type RowsCursor } from "./rows";
+import { confirmQuery } from "../kit/ui/widgets/confirm";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { moveRows, openRows, rowsIndicator, type RowsCursor } from "../kit/ui/widgets/rows";
 
 export interface MultiSelectOptions {
   /** The setting's key in `settings` (its tree slug path). */

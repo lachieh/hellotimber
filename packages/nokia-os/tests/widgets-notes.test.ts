@@ -1,6 +1,6 @@
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { paintWidget } from "../src/display/widgets";
+import { paintWidget } from "../src/kit/ui/display/widgets";
 import { noteTimelineId, NOTE_STYLES, optionListNumbering, SCREENS } from "../src/firmware/stock";
 import type {
   StockLeafScreen,
@@ -13,12 +13,12 @@ import {
   WIDGET_TIMELINE_BY_NODE,
   WIDGET_TIMELINES,
   type StockWidgetTimeline,
-} from "../src/resources";
-import { confirmQuery } from "../src/widgets/confirm";
-import type { Flow, Widget } from "../src/widgets/flow";
-import { note, type NoteEnd } from "../src/widgets/note";
+} from "../src/kit/ui/resources";
+import { confirmQuery } from "../src/kit/ui/widgets/confirm";
+import type { Flow, Widget } from "../src/kit/ui/widgets/flow";
+import { note, type NoteEnd } from "../src/kit/ui/widgets/note";
 import { settingOptionList } from "../src/widgets/option-list";
-import { progress } from "../src/widgets/progress";
+import { progress } from "../src/kit/ui/widgets/progress";
 import { expectLcd } from "./support/golden.ts";
 import { expectFlowTimeline, flowRig, recordFlow } from "./support/flow-rig.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";

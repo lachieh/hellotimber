@@ -1,4 +1,4 @@
-import { SPACE_IMPACT_DATA } from "../src/resources/generated/space-impact.ts";
+import { SPACE_IMPACT_DATA } from "../src/kit/ui/resources/generated/space-impact.ts";
 import { LEVEL_ZERO_OBJECTS, LEVEL_ZERO_READINGS } from "./space-impact-level-zero.ts";
 import {
   decodeSpaceImpact,

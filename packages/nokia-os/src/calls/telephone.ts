@@ -6,7 +6,7 @@ import { dialledNumber } from "./dial-string";
 import { ServiceRequest } from "./services";
 import type { StockNetworkPort } from "../messages/network";
 import type { StockSettings } from "../firmware/settings";
-import type { SoundPlay } from "../sound/sequencer";
+import type { SoundPlay } from "../kit/ui/sound/sequencer";
 import type { StockSounder } from "../sound/sounder";
 import type { StockCallLog } from "./log";
 import type {

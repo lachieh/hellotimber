@@ -1,7 +1,7 @@
 import { loadGolden } from "./goldens";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { expectTimeline, samePixels, type RecordedFrame } from "./golden";
-import { SPACE_IMPACT_DATA } from "../../src/resources/generated/space-impact";
+import { SPACE_IMPACT_DATA } from "../../src/kit/ui/resources/generated/space-impact";
 import recovery from "../fixtures/space-impact-seed-recovery.json";
 import type { Golden } from "../../scripts/golden-format";
 import {
@@ -16,7 +16,7 @@ import {
   stepSpaceImpact,
 } from "../../src/games/space-impact/engine";
 import type { SpaceImpactResult, SpaceImpactState } from "../../src/games/space-impact/model";
-import { paintSpaceImpact } from "../../src/display/widgets/space-impact";
+import { paintSpaceImpact } from "../../src/kit/apps/games/display-space-impact";
 
 export function deliverSpaceImpactResult(
   state: SpaceImpactState,

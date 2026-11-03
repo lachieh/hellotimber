@@ -2,7 +2,7 @@
 // checked on synthetic frames painted from known cells with the Task 4 sprites.
 import type { Bitmap } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { SNAKE_MAZES, SNAKE_SPRITES, type SnakeSpriteId } from "../src/resources";
+import { SNAKE_MAZES, SNAKE_SPRITES, type SnakeSpriteId } from "../src/kit/ui/resources";
 import { decodeBoard } from "./support/snake-decode";
 import { loadGolden } from "./support/goldens";
 

@@ -24,7 +24,7 @@ import {
   type ClockRig,
   type HostClock,
 } from "../support/clock.ts";
-import { CLOCK_ALERTS } from "../../src/resources";
+import { CLOCK_ALERTS } from "../../src/kit/ui/resources";
 import { goto } from "../support/drive.ts";
 import { TAP_DOWN_MS } from "../support/calculator.ts";
 import { STOPWATCH_BLINK_MS } from "../../src/firmware/features/clock/stopwatch";

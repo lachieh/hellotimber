@@ -1,7 +1,7 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { LevelBarModel } from "../display/widgets";
+import type { LevelBarModel } from "../kit/ui/display/widgets";
 import type { StockSettings } from "../firmware/settings";
-import type { Flow, Widget } from "./flow";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
 
 /**
  * A held ▲/▼ on Snake II's Level page (plan 23 Task 0 C1, `game/snake/level-keys-hold-up`): one

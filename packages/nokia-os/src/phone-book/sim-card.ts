@@ -1,7 +1,7 @@
 // The inserted SIM card (plan 19 D2): host config, and the contacts seam. A string is the emulator
 // SIM under that identity; a `StockSimCard` adds its phone book and service numbers. Validated
 // once, when the phone is created. Plan 30 adds the SIM's messages (`EF_SMS`) and toolkit menu.
-import { missingStockGlyphs } from "../resources";
+import { missingStockGlyphs } from "../kit/ui/resources";
 import { normaliseSimMessages, type SimMessages, type StockSimMessage } from "../sim/messages";
 import { normaliseToolkit, type StockSimToolkit } from "../sim/toolkit";
 

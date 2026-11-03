@@ -3,14 +3,14 @@
 // a new ring 5 minutes later rounded up to a whole minute), the automatic snooze after the
 // ring's minute, Stop, and the ring that switches a powered-off phone on (D4, composed).
 import type { PhoneApplication, PhoneKey } from "@hellotimber/phone-core";
-import type { AlertModel } from "../../../display/widgets";
-import { CLOCK_ALERTS } from "../../../resources";
-import type { SoundPlay } from "../../../sound/sequencer";
-import { confirmQuery } from "../../../widgets/confirm";
-import { StockFlowApplication, type Flow, type Widget } from "../../../widgets/flow";
-import { freshKeys } from "../../../widgets/fresh-keys";
-import { note } from "../../../widgets/note";
-import { timelineByName } from "../../timelines";
+import type { AlertModel } from "../../../kit/ui/display/widgets";
+import { CLOCK_ALERTS } from "../../../kit/ui/resources";
+import type { SoundPlay } from "../../../kit/ui/sound/sequencer";
+import { confirmQuery } from "../../../kit/ui/widgets/confirm";
+import { StockFlowApplication, type Flow, type Widget } from "../../../kit/ui/widgets/flow";
+import { freshKeys } from "../../../kit/ui/widgets/fresh-keys";
+import { note } from "../../../kit/ui/widgets/note";
+import { timelineByName } from "../../../kit/ui/timelines";
 import type { StockServices } from "../feature";
 import type { AlarmTime } from "./record";
 import { alertExit, alertLeadIn } from "./alerts";

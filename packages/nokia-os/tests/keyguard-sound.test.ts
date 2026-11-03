@@ -4,7 +4,7 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
 import { KEYGUARD_TIMES } from "../src/firmware/features/keyguard";
-import { NOTE_SOUNDS } from "../src/resources";
+import { NOTE_SOUNDS } from "../src/kit/ui/resources";
 import { darkStandbyRig, lockedRig } from "./support/keyguard.ts";
 import { seededStorage } from "./support/rig.ts";
 import { soundStorage } from "./support/sound-scenarios.ts";

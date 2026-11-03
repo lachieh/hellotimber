@@ -4,19 +4,24 @@
 // Dictionary is English (and the host gave a T9 dictionary) the editor writes in T9, with the T9
 // Options (Matches, Insert word, Insert number, Insert symbol) and the Spell prompt.
 import type { StockServices } from "../firmware/features/feature";
-import { timelineById, timelineByName } from "../firmware/timelines";
-import type { WidgetModel } from "../display/widgets";
-import { SAVING_MS } from "../resources";
-import type { T9Context } from "../text/t9/editing";
-import { editor, smsCounter, type EditorControl, type T9EditorControl } from "../widgets/editor";
-import { symbolTable } from "../widgets/symbol-table";
-import type { Flow, Widget } from "../widgets/flow";
-import { BLANK, interlude, softkeyAlone } from "../widgets/interlude";
-import { note } from "../widgets/note";
-import { numberEntry } from "../widgets/number-entry";
+import { timelineById, timelineByName } from "../kit/ui/timelines";
+import type { WidgetModel } from "../kit/ui/display/widgets";
+import { SAVING_MS } from "../kit/ui/resources";
+import type { T9Context } from "../kit/ui/text/t9/editing";
+import {
+  editor,
+  smsCounter,
+  type EditorControl,
+  type T9EditorControl,
+} from "../kit/ui/widgets/editor";
+import { symbolTable } from "../kit/ui/widgets/symbol-table";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { BLANK, interlude, softkeyAlone } from "../kit/ui/widgets/interlude";
+import { note } from "../kit/ui/widgets/note";
+import { numberEntry } from "../kit/ui/widgets/number-entry";
 import { OptionListWidget } from "../widgets/option-list";
-import { Playback } from "../widgets/playback";
-import { textInput } from "../widgets/text-input";
+import { Playback } from "../kit/ui/widgets/playback";
+import { textInput } from "../kit/ui/widgets/text-input";
 import { names, pickNumber } from "../phone-book/flows";
 import { SEND_TO_MANY_LIST_OK_MS } from "../phone-book/timings";
 import {

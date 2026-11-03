@@ -8,15 +8,15 @@ import {
   type ScreenModel,
 } from "@hellotimber/phone-core";
 import type { StockServices } from "./features/feature";
-import { VISIBLE_ROWS } from "../display/list-rows";
-import { BOOT_TIMELINE, missingStockGlyphs } from "../resources";
+import { VISIBLE_ROWS } from "../kit/ui/display/list-rows";
+import { BOOT_TIMELINE, missingStockGlyphs } from "../kit/ui/resources";
 import type { StockCueSink } from "./cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { composerOf } from "./features/composer";
 import { invalidShortcut } from "./leaves";
 import { createStockMenu, STOCK_SHORTCUT_WINDOW_MS, stockMessaging, stockServices } from "./menu";
 import { openBox } from "../messages/read";
-import { StockFlowApplication } from "../widgets/flow";
+import { StockFlowApplication } from "../kit/ui/widgets/flow";
 import { applyPreload, checkImei, checkPreload, type StockPreload } from "./preload";
 import { createSyntheticNetwork, type StockNetworkPort } from "../messages/network";
 import { createStockGames, powerOffGames, powerOnGames } from "./features/games";
@@ -44,20 +44,20 @@ import { registerClock } from "./features/clock/registry";
 import { StockClock } from "./features/clock/service";
 import { StockLightRules, StockLights, type StockLightsPort } from "./features/backlight";
 import { KeyguardOverlay } from "./features/keyguard";
-import type { StockSoundPort } from "../sound/port";
+import type { StockSoundPort } from "../kit/ui/sound/port";
 import type { StockGames } from "./features/games";
 import { NO_T9_VIRGIN_CHOICES } from "../messages/bindings";
-import type { T9Dictionary } from "../text/t9/dictionary";
-import { stockT9 } from "../text/t9/service";
-import { SoundSequencer } from "../sound/sequencer";
+import type { T9Dictionary } from "../kit/ui/text/t9/dictionary";
+import { stockT9 } from "../kit/system/t9/service";
+import { SoundSequencer } from "../kit/ui/sound/sequencer";
 import { StockSounder, type KeyDownOptions } from "../sound/sounder";
 import { Framebuffer } from "@hellotimber/phone-screen";
-import { paintStockScreen } from "../display/paint";
-import { attachDescription, describeStockScreen } from "../display/describe";
+import { paintStockScreen } from "../kit/ui/display/paint";
+import { attachDescription, describeStockScreen } from "../kit/ui/display/describe";
 import { StockCallLog } from "../calls/log";
 import { StockTelephone } from "../calls/telephone";
 import { CallClock } from "../calls/timestamp";
-import { WIDGET_SPRITES } from "../resources";
+import { WIDGET_SPRITES } from "../kit/ui/resources";
 import { dialledStandbyList, missedCallsList } from "./features/call-register";
 import {
   incomingCallApplication,

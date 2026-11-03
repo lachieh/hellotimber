@@ -1,7 +1,7 @@
 // Plan 22: the telephone's painters against their goldens' images (literal models).
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, it } from "vite-plus/test";
-import { paintWidget, type WidgetModel } from "../src/display/widgets";
+import { paintWidget, type WidgetModel } from "../src/kit/ui/display/widgets";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";
 

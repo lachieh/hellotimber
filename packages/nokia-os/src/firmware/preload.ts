@@ -2,8 +2,8 @@
 // memory a user could have typed (the Welcome note, Reminders, Snake II's level), written once
 // where it was never written in storage, so a visitor's own edits and erasures survive. Validated when the
 // phone is created: an invalid value throws, naming the field.
-import { missingStockGlyphs, type StockFontName } from "../resources";
-import { TYPEABLE } from "../text/keys";
+import { missingStockGlyphs, type StockFontName } from "../kit/ui/resources";
+import { TYPEABLE } from "../kit/ui/text/keys";
 import { parseHostTime } from "./features/clock/time";
 import {
   REMINDER_TEXT_LIMIT,

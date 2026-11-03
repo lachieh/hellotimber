@@ -5,7 +5,7 @@
 import type { StockServices } from "../firmware/features/feature";
 import { sendingResult } from "../messages/write";
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { ComposerModel, PromptModel } from "../display/widgets";
+import type { ComposerModel, PromptModel } from "../kit/ui/display/widgets";
 import {
   composerHeld,
   composerKeyDown,
@@ -23,13 +23,13 @@ import {
   COMPOSER_TIMINGS,
   TEXT_TIMINGS,
   type StockWidgetTimeline,
-} from "../resources";
-import type { SoundPlay } from "../sound/sequencer";
+} from "../kit/ui/resources";
+import type { SoundPlay } from "../kit/ui/sound/sequencer";
 import type { StockSounder } from "../sound/sounder";
-import type { Flow, Widget } from "./flow";
-import { note } from "./note";
-import { numberEntry } from "./number-entry";
-import { textInput } from "./text-input";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { note } from "../kit/ui/widgets/note";
+import { numberEntry } from "../kit/ui/widgets/number-entry";
+import { textInput } from "../kit/ui/widgets/text-input";
 import { OptionListWidget } from "./option-list";
 
 /** Options (Task 0 O), in list order. */

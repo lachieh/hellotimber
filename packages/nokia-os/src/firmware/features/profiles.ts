@@ -10,19 +10,19 @@ import {
   type PhoneKey,
   type ScreenModel,
 } from "@hellotimber/phone-core";
-import type { WidgetModel } from "../../display/widgets";
-import type { StandbyFrameModel } from "../../display/profiles";
+import type { WidgetModel } from "../../kit/ui/display/widgets";
+import type { StandbyFrameModel } from "../../kit/ui/display/profiles";
 import {
   WIDGET_TIMELINE_BY_NODE,
   type StockWidgetTimeline,
   type WidgetFrame,
-} from "../../resources";
-import { StockFlowApplication, type Flow, type Widget } from "../../widgets/flow";
-import { note } from "../../widgets/note";
+} from "../../kit/ui/resources";
+import { StockFlowApplication, type Flow, type Widget } from "../../kit/ui/widgets/flow";
+import { note } from "../../kit/ui/widgets/note";
 import { OptionListWidget } from "../../widgets/option-list";
-import { textInput } from "../../widgets/text-input";
+import { textInput } from "../../kit/ui/widgets/text-input";
 import type { StockSettings } from "../settings";
-import { timelineById, timelineByName } from "../timelines";
+import { timelineById, timelineByName } from "../../kit/ui/timelines";
 import type { FactoryDefault, StockFeature, StockServices } from "./feature";
 
 /** The six v6.39 slots in order (P11: no Meeting, Outdoor or Pager profile). */

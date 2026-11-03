@@ -3,10 +3,14 @@
 // lost endings come with plan 24b's resources. Parameterised by the ending and where the menu
 // returns.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { GameOverModel } from "../display/widgets";
-import { WIDGET_TIMELINE_BY_NAME, WIDGET_TIMELINES, type StockWidgetTimeline } from "../resources";
-import type { Flow, Widget } from "./flow";
-import { Playback } from "./playback";
+import type { GameOverModel } from "../kit/ui/display/widgets";
+import {
+  WIDGET_TIMELINE_BY_NAME,
+  WIDGET_TIMELINES,
+  type StockWidgetTimeline,
+} from "../kit/ui/resources";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { Playback } from "../kit/ui/widgets/playback";
 import type { StockGames } from "../firmware/features/games";
 
 /**

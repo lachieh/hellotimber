@@ -1,15 +1,15 @@
 // The phone book's Send b'card (plan 19 Task 10, D10): a name's card to a typed number through
 // the network port (`phone-book/bcard-*`).
 import type { StockServices } from "../firmware/features/feature";
-import { timelineById, timelineByName } from "../firmware/timelines";
-import type { WidgetModel } from "../display/widgets";
+import { timelineById, timelineByName } from "../kit/ui/timelines";
+import type { WidgetModel } from "../kit/ui/display/widgets";
 import { COMPOSED_FLOWS } from "../messages/bindings";
 import type { StockSendOutcome } from "../messages/network";
-import type { Flow, Widget } from "../widgets/flow";
-import { interlude } from "../widgets/interlude";
-import { note } from "../widgets/note";
-import { numberEntry } from "../widgets/number-entry";
-import { Playback } from "../widgets/playback";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { interlude } from "../kit/ui/widgets/interlude";
+import { note } from "../kit/ui/widgets/note";
+import { numberEntry } from "../kit/ui/widgets/number-entry";
+import { Playback } from "../kit/ui/widgets/playback";
 import type { PhoneBookEntry } from "./entries";
 import { emptyNote, names, pickNumber } from "./flows";
 import { BCARD_LINK_MS, BCARD_OK_MS } from "./timings";

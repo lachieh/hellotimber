@@ -21,8 +21,8 @@ import type {
 } from "./features/feature";
 import type { EepromRecord } from "./eeprom";
 import { byPattern, matchesPattern } from "./tree";
-import type { PromptLayout } from "../widgets/prompt";
-import type { ListNumbering } from "../widgets/rows";
+import type { PromptLayout } from "../kit/ui/widgets/prompt";
+import type { ListNumbering } from "../kit/ui/widgets/rows";
 
 /**
  * Every registered feature, by name: module namespaces list their exports in a different order

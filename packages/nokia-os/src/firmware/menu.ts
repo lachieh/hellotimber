@@ -16,7 +16,7 @@ import {
   type MenuEntry,
   type SubmenuOptions,
 } from "@hellotimber/phone-core";
-import { stockMenuGraphic } from "../resources";
+import { stockMenuGraphic } from "../kit/ui/resources";
 import type { StockServices } from "./features/feature";
 import { createStockGames, type StockGames } from "./features/games";
 import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
@@ -27,14 +27,14 @@ import { StockSecurity } from "./security";
 import { createStockSettings, stockPageValue, type StockSettings } from "./settings";
 import { LEADS, LEVELS, setterLevel, showsEntryIndicator, STOCK_SETTINGS } from "./stock";
 import { settingKey } from "./tree";
-import { SoundSequencer } from "../sound/sequencer";
+import { SoundSequencer } from "../kit/ui/sound/sequencer";
 import { StockSounder } from "../sound/sounder";
 import { createSyntheticNetwork, type StockNetworkPort } from "../messages/network";
 import { StockMessaging } from "../messages/service";
 import { StockMessages } from "../messages/store";
 import { SET_1_CENTRE_KEY } from "./features/messages";
 import { NO_T9_VIRGIN_CHOICES } from "../messages/bindings";
-import { stockT9, type StockT9 } from "../text/t9/service";
+import { stockT9, type StockT9 } from "../kit/system/t9/service";
 
 /** The first-digit dots turn into the menu number 2948 ms after Menu (menu/01-phone-book.anim). */
 export const STOCK_SHORTCUT_WINDOW_MS = 2948;

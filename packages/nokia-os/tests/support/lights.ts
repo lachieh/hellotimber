@@ -11,7 +11,7 @@ import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockSettings } from "../../src/firmware/settings";
 import { createStockPhoneWith, type StockPhoneConfig } from "../../src/firmware/phone";
 import { createSyntheticNetwork, type StockStorage } from "../../src/index";
-import { RECEIVE_LINK_MS } from "../../src/resources";
+import { RECEIVE_LINK_MS } from "../../src/kit/ui/resources";
 import { timingToleranceMs } from "./golden.ts";
 import { SEED_1010, seededStorage } from "./rig.ts";
 

@@ -5,7 +5,7 @@
 import { spaceImpactGame } from "./space-impact";
 import { createAnsiRandom, type AnsiRandom } from "../../games/random";
 import { gameSeed } from "../../games/seed";
-import type { Widget } from "../../widgets/flow";
+import type { Widget } from "../../kit/ui/widgets/flow";
 import { snakeGame } from "../../widgets/snake";
 import { NO_CUES, type StockCueSink } from "../cues";
 import type { StockPorts } from "../ports";

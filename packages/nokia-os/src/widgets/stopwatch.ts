@@ -3,13 +3,13 @@
 // while running the time is redrawn every STOPWATCH_REDRAW_MS of kernel time (D5's deviation:
 // v6.39 adds 0.1 s every ≈93 ms and resynchronises), the stopped time exactly.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { StopwatchModel } from "../display/widgets/stopwatch";
+import type { StopwatchModel } from "../kit/ui/display/widgets/stopwatch";
 import { formatStopwatch, type StockStopwatch } from "../firmware/features/clock/stopwatch";
 import { ALERT_EXIT_MS, StandbyFrame, type AlertStandby } from "../firmware/features/clock/alerts";
-import type { Flow, Widget } from "./flow";
-import { freshKeys } from "./fresh-keys";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { freshKeys } from "../kit/ui/widgets/fresh-keys";
 import { OptionListWidget } from "./option-list";
-import type { ListNumbering } from "./rows";
+import type { ListNumbering } from "../kit/ui/widgets/rows";
 
 /** The running stopwatch's redraw step, kernel time. */
 export const STOPWATCH_REDRAW_MS = 100;

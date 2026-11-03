@@ -2,7 +2,7 @@ import type { ScreenModel } from "@hellotimber/phone-core";
 import { bitmapFromArt, Framebuffer, textWidth } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { paintStockScreen } from "../src/index";
-import { STOCK_FONTS } from "../src/resources";
+import { STOCK_FONTS } from "../src/kit/ui/resources";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";
 

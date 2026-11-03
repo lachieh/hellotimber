@@ -1,8 +1,8 @@
 // Plan 18b Task 4: the T9 engine against docs/specs/t9-behaviour.md, on the hand-made fixture
 // dictionary (tests/support/t9-fixture.ts) and a few inline ones. Section numbers are the spec's.
 import { describe, expect, it } from "vite-plus/test";
-import { englishT9 } from "../src/text/t9/english";
-import { ENGLISH_T9_WORDS } from "../src/text/t9/generated/english";
+import { englishT9 } from "../src/kit/ui/text/t9/english";
+import { ENGLISH_T9_WORDS } from "../src/kit/ui/text/t9/generated/english";
 import {
   createT9Dictionary,
   keysOf,
@@ -18,7 +18,7 @@ import {
   type T9Composing,
   type T9Dictionary,
   type T9Key,
-} from "../src/text/t9";
+} from "../src/kit/ui/text/t9";
 import { T9_FIXTURE as DICT, T9_FIXTURE_WORDS } from "./support/t9-fixture.ts";
 
 const NONE: readonly string[] = [];

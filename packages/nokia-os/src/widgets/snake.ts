@@ -3,7 +3,7 @@
 // engine's cues with the kernel time (D8), suspends to the game menu on Navi or C (H15, D10) and
 // ends in the game-over screen (D13), writing a new top score (D9).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { SnakeModel } from "../display/widgets";
+import type { SnakeModel } from "../kit/ui/display/widgets";
 import type { StockGames } from "../firmware/features/games";
 import type { StockSettings } from "../firmware/settings";
 import { blinkSnake, newSnakeGame, snakeKey, snakeRender, stepSnake } from "../games/snake/engine";
@@ -15,8 +15,8 @@ import {
   SNAKE_GRACE_MS,
   SNAKE_PERIODS,
   SNAKE_TOP_SCORE_MS,
-} from "../resources";
-import type { Flow, Widget } from "./flow";
+} from "../kit/ui/resources";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
 import { gameOver } from "./game-over";
 
 /** The settings Snake II reads and writes. */

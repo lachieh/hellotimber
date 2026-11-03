@@ -6,7 +6,7 @@ import {
   spaceImpactU32SeedAliases,
   searchSpaceImpactSeeds,
 } from "../scripts/space-impact-seeds";
-import { SPACE_IMPACT_LEVEL_OBSERVATIONS } from "../src/resources/generated/space-impact-levels";
+import { SPACE_IMPACT_LEVEL_OBSERVATIONS } from "../src/kit/ui/resources/generated/space-impact-levels";
 
 const hud = { lives: 3, weapon: "missile", count: 3, score: 100 } as const;
 

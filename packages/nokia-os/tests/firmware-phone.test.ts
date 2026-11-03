@@ -3,7 +3,7 @@ import { describe, expect, it } from "vite-plus/test";
 import type { StockCue } from "../src/firmware/cues";
 import { createStockPhoneWith } from "../src/firmware/phone";
 import { createStockPhone, type StockPhoneConfig, type StockSoundEvent } from "../src/index";
-import { BOOT_TIMELINE, BOOT_TONE, KEYPAD_BEEP } from "../src/resources";
+import { BOOT_TIMELINE, BOOT_TONE, KEYPAD_BEEP } from "../src/kit/ui/resources";
 import { LEVEL_REPEAT } from "../src/widgets/level-bar";
 import { soundStorage } from "./support/sound-scenarios.ts";
 

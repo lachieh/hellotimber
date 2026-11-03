@@ -3,7 +3,7 @@ import { scenarioOf } from "./support/acceptance";
 import { describe, expect, it } from "vite-plus/test";
 import { createStockGames } from "../src/firmware/features/games";
 import { spaceImpactGame } from "../src/firmware/features/space-impact";
-import { SPACE_IMPACT_DATA } from "../src/resources/generated/space-impact";
+import { SPACE_IMPACT_DATA } from "../src/kit/ui/resources/generated/space-impact";
 import { flowRig, type FlowRig } from "./support/flow-rig";
 import { goldenImage, loadGolden } from "./support/goldens";
 import { normalized, shipAt } from "../scripts/space-impact-capture-set";

@@ -17,7 +17,7 @@ import {
   CALLS_TIMEOUTS_MS,
 } from "../support/calls.ts";
 
-import { describeStockScreen } from "../../src/display/describe";
+import { describeStockScreen } from "../../src/kit/ui/display/describe";
 import { CALL_SCRIPTS } from "../support/call-scripts.ts";
 
 function saveAndCall(rig: CallRig, number: string): void {

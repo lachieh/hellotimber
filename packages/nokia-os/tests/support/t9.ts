@@ -11,8 +11,8 @@
 // phase, so stills compare against either blink phase.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockPhoneConfig, StockStorage } from "../../src/index";
-import { TEXT_TIMINGS } from "../../src/resources";
-import { englishT9 } from "../../src/text/t9/english";
+import { TEXT_TIMINGS } from "../../src/kit/ui/resources";
+import { englishT9 } from "../../src/kit/ui/text/t9/english";
 import { readPlanIndex } from "../../scripts/golden-index.ts";
 import { GOLDENS } from "./acceptance.ts";
 import { goto } from "./drive.ts";

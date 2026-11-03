@@ -5,7 +5,7 @@ import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { isBoardFrame } from "../scripts/game-capture-set.ts";
 import { findGoldenImage } from "../scripts/golden-format.ts";
-import { paintWidget } from "../src/display/widgets";
+import { paintWidget } from "../src/kit/ui/display/widgets";
 import { blinkSnake, newSnakeGame, snakeRender, stepSnake } from "../src/games/snake/engine";
 import type { SnakeState } from "../src/games/snake/model";
 import { lcdMismatch } from "./support/golden.ts";

@@ -9,15 +9,15 @@ import {
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { LEVEL1 } from "../scripts/resource-inputs/13-foundation.ts";
-import { paintDottedBorder } from "../src/display/unsupported";
+import { paintDottedBorder } from "../src/kit/ui/display/unsupported";
 import { placeholderOwner } from "../src/firmware/stock";
 import { STOCK_TREE, type StockTreeNode } from "../src/firmware/generated/stock-tree";
 import { createStockMenu } from "../src/firmware/menu";
 import { PlaceholderApplication } from "../src/firmware/placeholder";
 import { createMemorySettings, virginSettings } from "../src/firmware/settings";
 import { stockMenu } from "../src/index";
-import { STOCK_FONTS } from "../src/resources";
-import { StockFlowApplication } from "../src/widgets/flow";
+import { STOCK_FONTS } from "../src/kit/ui/resources";
+import { StockFlowApplication } from "../src/kit/ui/widgets/flow";
 import { expectFlowTimeline } from "./support/flow-rig.ts";
 import { loadGolden } from "./support/goldens.ts";
 

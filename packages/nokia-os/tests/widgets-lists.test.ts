@@ -7,10 +7,10 @@ import type {
 } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { paintWidget, type WidgetModel } from "../src/display/widgets";
+import { paintWidget, type WidgetModel } from "../src/kit/ui/display/widgets";
 import { optionListNumbering } from "../src/firmware/stock";
 import { createMemorySettings, virginSettings, type StockSettings } from "../src/firmware/settings";
-import { StockFlowApplication, type Flow, type Widget } from "../src/widgets/flow";
+import { StockFlowApplication, type Flow, type Widget } from "../src/kit/ui/widgets/flow";
 import { multiSelect } from "../src/widgets/multi-select";
 import { OptionListWidget, settingOptionList } from "../src/widgets/option-list";
 import { expectLcd } from "./support/golden.ts";

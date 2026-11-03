@@ -16,11 +16,11 @@ import { addVoiceTag, speedDials } from "../../phone-book/speed";
 import { PHONE_BOOK_RECORD } from "../../phone-book/store";
 import type { EepromRecord } from "../eeprom";
 import type { StockFeature, StockServices } from "./feature";
-import type { Flow, Widget } from "../../widgets/flow";
+import type { Flow, Widget } from "../../kit/ui/widgets/flow";
 import { OptionListWidget, settingOptionList } from "../../widgets/option-list";
 import { settingKey, treePath } from "../tree";
-import { nodeTimeline } from "../timelines";
-import { note } from "../../widgets/note";
+import { nodeTimeline } from "../../kit/ui/timelines";
+import { note } from "../../kit/ui/widgets/note";
 
 /** Save a number already entered or selected in the call register: ask only for its name. */
 export function savePhoneNumber(services: StockServices, number: string, text = ""): Widget {

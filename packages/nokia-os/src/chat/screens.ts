@@ -9,8 +9,8 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { MenuIndicator } from "@hellotimber/phone-core";
 import { insertionList } from "../content/insertion";
-import type { MessagePageModel, WidgetModel } from "../display/widgets";
-import { MESSAGE_PAGE_LINES } from "../display/widgets/message";
+import type { MessagePageModel, WidgetModel } from "../kit/ui/display/widgets";
+import { MESSAGE_PAGE_LINES } from "../kit/ui/display/widgets/message";
 import type { StockServices } from "../firmware/features/feature";
 import { messagePages } from "../messages/read";
 import {
@@ -21,14 +21,14 @@ import {
   sending,
   t9Context,
 } from "../messages/write";
-import { editor, type EditorControl } from "../widgets/editor";
-import type { BackOptions, Flow, Widget } from "../widgets/flow";
-import { HeldC } from "../widgets/held-c";
+import { editor, type EditorControl } from "../kit/ui/widgets/editor";
+import type { BackOptions, Flow, Widget } from "../kit/ui/widgets/flow";
+import { HeldC } from "../kit/ui/widgets/held-c";
 import { pickNumber } from "../phone-book/flows";
-import { numberEntry } from "../widgets/number-entry";
+import { numberEntry } from "../kit/ui/widgets/number-entry";
 import { OptionListWidget } from "../widgets/option-list";
-import { symbolTable } from "../widgets/symbol-table";
-import { textInput } from "../widgets/text-input";
+import { symbolTable } from "../kit/ui/widgets/symbol-table";
+import { textInput } from "../kit/ui/widgets/text-input";
 import { ChatSession, lastChatName } from "./session";
 
 /** A chat line holds 140 characters (`chat/name-ok`: `140/1`; `chat/limit`: `0/1`). */

@@ -5,12 +5,12 @@ import { DICTIONARY_KEY, DICTIONARY_LABELS, VIRGIN_DICTIONARY } from "../../mess
 import { MESSAGES_RECORD } from "../../messages/store";
 import { openBox } from "../../messages/read";
 import { smsEditor } from "../../messages/write";
-import { T9_USER_RECORD } from "../../text/t9/user";
-import { interlude, softkeyAlone } from "../../widgets/interlude";
+import { T9_USER_RECORD } from "../../kit/system/t9/user";
+import { interlude, softkeyAlone } from "../../kit/ui/widgets/interlude";
 import type { EepromRecord } from "../eeprom";
-import { note } from "../../widgets/note";
-import { numberEntry } from "../../widgets/number-entry";
-import { nodeTimeline, timelineByName } from "../timelines";
+import { note } from "../../kit/ui/widgets/note";
+import { numberEntry } from "../../kit/ui/widgets/number-entry";
+import { nodeTimeline, timelineByName } from "../../kit/ui/timelines";
 import type { ScreenBinding, StockFeature } from "./feature";
 
 /** The SIM's message centre of Set 1 (an emulator artefact, `sms/centre-1` 00). */

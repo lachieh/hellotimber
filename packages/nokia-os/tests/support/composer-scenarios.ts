@@ -15,7 +15,7 @@ import {
 import { findGoldenImage, LCD_WIDTH, type Golden } from "../../scripts/golden-format.ts";
 import { EMPTY_COMPOSER } from "../../src/composer/editor";
 import { COMPOSER_RINGING_INDEX, StockComposer } from "../../src/composer/store";
-import { COMPOSER_TIMINGS } from "../../src/resources";
+import { COMPOSER_TIMINGS } from "../../src/kit/ui/resources";
 import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockSettings } from "../../src/firmware/settings";
 import { createMemoryStorage, type StockStorage } from "../../src/index";

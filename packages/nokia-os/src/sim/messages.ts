@@ -1,6 +1,6 @@
 // SMS stored on the SIM card (plan 30 D2, Task 0 M): the GSM 7-bit alphabet a SIM message is
 // written in, how the 3310 draws it, and the validation of `StockSimCard.messages`. Pure.
-import { missingStockGlyphs } from "../resources";
+import { missingStockGlyphs } from "../kit/ui/resources";
 import { TIMESTAMP_RANGES, type StockTimestamp } from "../messages/network";
 
 /** Plan 30: one received SMS stored on the SIM (`EF_SMS`). */

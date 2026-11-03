@@ -1,10 +1,10 @@
 // Info service › Topics (2-8-4) and the Service command editor (2-10), plan 18c Task 9 as Task 0
 // I and X captured them (`topics/*`, `service-command/*`, plan 14's `tree/02-messages/2-8-4-*`).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { EditorModel } from "../display/widgets";
+import type { EditorModel } from "../kit/ui/display/widgets";
 import type { StockServices } from "../firmware/features/feature";
-import { nodeTimeline, timelineByName } from "../firmware/timelines";
-import { TEXT_TIMINGS } from "../resources";
+import { nodeTimeline, timelineByName } from "../kit/ui/timelines";
+import { TEXT_TIMINGS } from "../kit/ui/resources";
 import {
   textClear,
   textDelete,
@@ -12,19 +12,19 @@ import {
   textMove,
   textTick,
   type TextState,
-} from "../text/multitap";
-import { editorModel, MODE_SPRITES, T9_MODE_X } from "../widgets/editor";
+} from "../kit/ui/text/multitap";
+import { editorModel, MODE_SPRITES, T9_MODE_X } from "../kit/ui/widgets/editor";
 import { t9Context } from "../messages/write";
-import type { Flow, Widget } from "../widgets/flow";
-import { HeldC } from "../widgets/held-c";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { HeldC } from "../kit/ui/widgets/held-c";
 import { multiSelect } from "../widgets/multi-select";
-import { note, type NoteEnd } from "../widgets/note";
-import { DIAL_CYCLE, numberEntry } from "../widgets/number-entry";
+import { note, type NoteEnd } from "../kit/ui/widgets/note";
+import { DIAL_CYCLE, numberEntry } from "../kit/ui/widgets/number-entry";
 import { OptionListWidget } from "../widgets/option-list";
 import { serviceRequest } from "../widgets/service-request";
-import { Playback } from "../widgets/playback";
-import { blinkShown } from "../widgets/text-entry";
-import { textInput } from "../widgets/text-input";
+import { Playback } from "../kit/ui/widgets/playback";
+import { blinkShown } from "../kit/ui/widgets/text-entry";
+import { textInput } from "../kit/ui/widgets/text-input";
 import { StockTopics } from "./topics";
 
 /** `Topic number:` types three digits (`topics/factory-numbers` 1000). */

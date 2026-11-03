@@ -7,8 +7,8 @@ import type {
 } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { paintWidget, type WidgetModel } from "../src/display/widgets";
-import { StockFlowApplication, type Flow, type Widget } from "../src/widgets/flow";
+import { paintWidget, type WidgetModel } from "../src/kit/ui/display/widgets";
+import { StockFlowApplication, type Flow, type Widget } from "../src/kit/ui/widgets/flow";
 
 type ExitOptions = Parameters<ApplicationContext["exit"]>[0];
 

@@ -3,7 +3,7 @@
 import { CALCULATOR_RECORD, CalculatorRate } from "../../kit/apps/calculator/rate";
 import { calculator } from "../../kit/apps/calculator/widget";
 import type { EepromRecord } from "../eeprom";
-import { timelineById, timelineByName } from "../timelines";
+import { timelineById, timelineByName } from "../../kit/ui/timelines";
 import type { StockFeature } from "./feature";
 
 /**

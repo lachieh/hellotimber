@@ -9,11 +9,11 @@
 // the window, else the highlight keeps its row (`phone-book/letters-list`). 0, 1, * and # do
 // nothing.
 import { rowsWindowTop, type PhoneKey } from "@hellotimber/phone-core";
-import type { NameListModel } from "../display/widgets";
+import type { NameListModel } from "../kit/ui/display/widgets";
 import { searchIndex, shownName, type PhoneBookEntry } from "../phone-book/entries";
-import { TEXT_TIMINGS } from "../resources";
-import { MULTITAP_KEYS, type TextKey } from "../text/keys";
-import type { Flow, Widget } from "./flow";
+import { TEXT_TIMINGS } from "../kit/ui/resources";
+import { MULTITAP_KEYS, type TextKey } from "../kit/ui/text/keys";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
 
 /** Options › Type of view's setting and its choices, in list order (`1-8-1`). */
 export const TYPE_OF_VIEW_KEY = "phone-book/options/type-of-view";

@@ -1,7 +1,7 @@
 // The phone book's timings that no single golden fixes (plan 19 Task 0's medians over several
 // captures; one of each is imported). The notes' timelines are generated
 // (`WIDGET_TIMELINE_BY_NAME`, scripts/resource-inputs/19-phone-book.ts).
-import type { SoundProgram } from "../sound/program";
+import type { SoundProgram } from "../kit/ui/sound/program";
 
 /**
  * Standby ▲/▼ show standby with the ladders erased this long before their target (16 presses

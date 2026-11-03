@@ -7,8 +7,8 @@ import {
   COMPOSER_SOUND,
   RINGING_TONES,
   VOLUME_RULE,
-} from "../resources";
-import type { SoundProgram, SoundStep } from "../sound/program";
+} from "../kit/ui/resources";
+import type { SoundProgram, SoundStep } from "../kit/ui/sound/program";
 import { NOTE_PITCHES, type ComposerToken } from "./notation";
 
 /** A saved tone (plan 27 Internal API; stored by `store.ts`). */

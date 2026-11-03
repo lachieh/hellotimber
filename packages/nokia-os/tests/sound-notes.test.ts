@@ -4,11 +4,11 @@ import { describe, expect, it } from "vite-plus/test";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import type { StockSoundEvent } from "../src/index";
-import { NOTE_SOUNDS } from "../src/resources";
-import { SoundSequencer } from "../src/sound/sequencer";
+import { NOTE_SOUNDS } from "../src/kit/ui/resources";
+import { SoundSequencer } from "../src/kit/ui/sound/sequencer";
 import { StockSounder } from "../src/sound/sounder";
-import type { Flow } from "../src/widgets/flow";
-import { note } from "../src/widgets/note";
+import type { Flow } from "../src/kit/ui/widgets/flow";
+import { note } from "../src/kit/ui/widgets/note";
 import { soundStorage, type SettingChoices } from "./support/sound-scenarios.ts";
 
 function sounderAt(choices: SettingChoices = {}) {

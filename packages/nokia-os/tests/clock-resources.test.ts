@@ -6,7 +6,7 @@ import {
   missingStockGlyphs,
   WIDGET_SPRITES,
   WIDGET_TIMELINE_BY_NAME,
-} from "../src/resources";
+} from "../src/kit/ui/resources";
 
 describe("clock resources", () => {
   it("has the standby indicators, the 12-hour marks and the reminder icons", () => {

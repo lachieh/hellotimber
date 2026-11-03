@@ -2,8 +2,8 @@
 // Auto update's notes wait in a queue and show one at a time when the phone is at standby (v6.39
 // shows none over a menu, a note, an editor or a game), through phone-core's `interruption`.
 import type { PhoneApplication } from "@hellotimber/phone-core";
-import type { AlertModel } from "../../../display/widgets";
-import { StockFlowApplication, type Flow, type Widget } from "../../../widgets/flow";
+import type { AlertModel } from "../../../kit/ui/display/widgets";
+import { StockFlowApplication, type Flow, type Widget } from "../../../kit/ui/widgets/flow";
 import type { StockClock } from "./service";
 
 /** One alert: what it shows (a flow of widgets; its end returns to standby). */

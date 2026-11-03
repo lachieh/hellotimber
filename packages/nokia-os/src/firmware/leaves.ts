@@ -8,21 +8,21 @@ import type {
   PhoneApplicationSession,
   PhoneKey,
 } from "@hellotimber/phone-core";
-import { WIDGET_TIMELINE_BY_NODE } from "../resources";
-import type { StockWidgetTimeline } from "../resources";
-import { confirmQuery } from "../widgets/confirm";
-import { StockFlowApplication, type Flow, type Widget } from "../widgets/flow";
-import { infoPages, type InfoPage } from "../widgets/info-pages";
-import { infoScreen } from "../widgets/info-screen";
+import { WIDGET_TIMELINE_BY_NODE } from "../kit/ui/resources";
+import type { StockWidgetTimeline } from "../kit/ui/resources";
+import { confirmQuery } from "../kit/ui/widgets/confirm";
+import { StockFlowApplication, type Flow, type Widget } from "../kit/ui/widgets/flow";
+import { infoPages, type InfoPage } from "../kit/ui/widgets/info-pages";
+import { infoScreen } from "../kit/ui/widgets/info-screen";
 import { levelBar } from "../widgets/level-bar";
 import { multiSelect } from "../widgets/multi-select";
-import { note, type NoteEnd, type NoteOptions } from "../widgets/note";
+import { note, type NoteEnd, type NoteOptions } from "../kit/ui/widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
-import { progress } from "../widgets/progress";
-import { shortcutChoice } from "../widgets/shortcut-choice";
-import { promptFromLayout, type PromptLayout } from "../widgets/prompt";
-import { splashIntro } from "../widgets/splash";
-import { textPages } from "../widgets/text-pages";
+import { progress } from "../kit/ui/widgets/progress";
+import { shortcutChoice } from "../kit/ui/widgets/shortcut-choice";
+import { promptFromLayout, type PromptLayout } from "../kit/ui/widgets/prompt";
+import { splashIntro } from "../kit/ui/widgets/splash";
+import { textPages } from "../kit/ui/widgets/text-pages";
 import { composerOf } from "./features/composer";
 import type { LeadEntry, ScreenPlace, StockServices } from "./features/feature";
 import type {
@@ -52,7 +52,7 @@ import {
   QUERY_RESULTS,
   SCREENS,
 } from "./stock";
-import { timelineById, timelineByName } from "./timelines";
+import { timelineById, timelineByName } from "../kit/ui/timelines";
 import { settingKey, slugOf } from "./tree";
 import type { StockSounder } from "../sound/sounder";
 

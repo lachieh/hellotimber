@@ -4,8 +4,8 @@
 // and ignores the release of a key it did not see go down, so a key that changes the screen
 // never acts again on the screen it opened.
 import type { MenuIndicator, PhoneKey } from "@hellotimber/phone-core";
-import type { OptionsModel } from "../../../display/widgets";
-import type { CalculatorModel } from "../../../display/widgets/calculator";
+import type { OptionsModel } from "../../ui/display/widgets";
+import type { CalculatorModel } from "../../ui/display/widgets/calculator";
 import {
   CALCULATOR_START,
   chooseOption,
@@ -27,12 +27,12 @@ import {
   type RateEntry,
   type RateKey,
 } from "./rate-entry";
-import type { StockWidgetTimeline } from "../../../resources";
-import type { Flow, Widget } from "../../../widgets/flow";
-import { infoPages } from "../../../widgets/info-pages";
-import { note, type NoteSound } from "../../../widgets/note";
-import { Playback } from "../../../widgets/playback";
-import { moveRows, openRows, rowsIndicator, type RowsCursor } from "../../../widgets/rows";
+import type { StockWidgetTimeline } from "../../ui/resources";
+import type { Flow, Widget } from "../../ui/widgets/flow";
+import { infoPages } from "../../ui/widgets/info-pages";
+import { note, type NoteSound } from "../../ui/widgets/note";
+import { Playback } from "../../ui/widgets/playback";
+import { moveRows, openRows, rowsIndicator, type RowsCursor } from "../../ui/widgets/rows";
 
 /**
  * How long C is held before it clears (D8): the captured clears redraw 532.1 and 544.0 ms after

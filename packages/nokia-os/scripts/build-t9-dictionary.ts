@@ -5,7 +5,7 @@
 // The input is IlyaSemenov/wikipedia-word-frequency's `results/enwiki-2023-04-13.txt` at the
 // pinned commit (word, space, count per line, descending count; MIT). The script checks its
 // SHA-256, keeps the first ENGLISH_SOURCE.limit words that pass `keepWord`, and writes
-// `src/text/t9/generated/english.ts`: a provenance header and one exported string, the words in
+// `src/kit/ui/text/t9/generated/english.ts`: a provenance header and one exported string, the words in
 // descending count, one per line, with a `#<w>` line wherever the weight w = floor(4 * log2(count))
 // changes. Deterministic: running it twice gives no diff. No firmware data is read or written.
 // Runs under Node's type stripping: imports only node:*.
@@ -117,7 +117,7 @@ export function writeDictionaryModule(bytes: Uint8Array, source: DictionarySourc
 
 const OUTPUT = resolve(
   dirname(fileURLToPath(import.meta.url)),
-  "../src/text/t9/generated/english.ts",
+  "../src/kit/ui/text/t9/generated/english.ts",
 );
 
 async function readSource(from: string): Promise<Uint8Array> {

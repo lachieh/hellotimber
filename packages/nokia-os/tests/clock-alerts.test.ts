@@ -1,7 +1,7 @@
 // Plan 21: the alerts' painter against the plan21 alert frames (standby layout, D3's family).
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, it } from "vite-plus/test";
-import { paintWidget, type AlertModel } from "../src/display/widgets";
+import { paintWidget, type AlertModel } from "../src/kit/ui/display/widgets";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";
 

@@ -4,9 +4,9 @@ import type { PhoneKey } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { CalculatorRate } from "../src/kit/apps/calculator/rate";
-import { paintWidget, type WidgetModel } from "../src/display/widgets";
+import { paintWidget, type WidgetModel } from "../src/kit/ui/display/widgets";
 import { createMemoryStorage, StockEeprom } from "../src/firmware/eeprom";
-import { timelineById, timelineByName } from "../src/firmware/timelines";
+import { timelineById, timelineByName } from "../src/kit/ui/timelines";
 import {
   CALCULATOR_HOLD_MS,
   calculator,

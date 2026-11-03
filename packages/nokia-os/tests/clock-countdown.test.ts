@@ -4,7 +4,7 @@
 // frame: the path there is the kernel's C held).
 import { describe, expect, it } from "vite-plus/test";
 import { formatMinutes } from "../src/firmware/features/clock/countdown";
-import { CLOCK_ALERTS } from "../src/resources";
+import { CLOCK_ALERTS } from "../src/kit/ui/resources";
 import { TAP_DOWN_MS } from "./support/calculator.ts";
 import { clockRig, play, toClock, toStandby, untilShows } from "./support/clock.ts";
 import { lcdMismatch } from "./support/golden.ts";

@@ -2,15 +2,15 @@
 // Clock settings (Hide clock / Show clock, Set the time, Time format), Date setting, and the
 // clock's records; the alarm clock (11-1), the stopwatch (11-4) and the countdown timer (11-5).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { PromptLayout } from "../../widgets/prompt";
-import type { Flow, Widget } from "../../widgets/flow";
-import { confirmQuery } from "../../widgets/confirm";
-import { note, type NoteOptions } from "../../widgets/note";
-import { Playback } from "../../widgets/playback";
+import type { PromptLayout } from "../../kit/ui/widgets/prompt";
+import type { Flow, Widget } from "../../kit/ui/widgets/flow";
+import { confirmQuery } from "../../kit/ui/widgets/confirm";
+import { note, type NoteOptions } from "../../kit/ui/widgets/note";
+import { Playback } from "../../kit/ui/widgets/playback";
 import { timeEntry, type EntryMask } from "../../widgets/time-entry";
 import type { EepromRecord } from "../eeprom";
-import { timelineById, timelineByName } from "../timelines";
-import { WIDGET_TIMELINE_BY_NODE } from "../../resources";
+import { timelineById, timelineByName } from "../../kit/ui/timelines";
+import { WIDGET_TIMELINE_BY_NODE } from "../../kit/ui/resources";
 import { CLOCK_RECORD } from "./clock/record";
 import { clockOfSettings, phoneClock } from "./clock/registry";
 import { TIME_FORMAT } from "./clock/service";

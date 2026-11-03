@@ -8,8 +8,8 @@ import {
   WIDGET_TIMELINE_BY_NAME,
   WIDGET_TIMELINE_BY_NODE,
   WIDGET_TIMELINES,
-} from "../src/resources";
-import { TYPEABLE } from "../src/text/keys";
+} from "../src/kit/ui/resources";
+import { TYPEABLE } from "../src/kit/ui/text/keys";
 import { loadGolden } from "./support/goldens.ts";
 
 /** Every name a profile has before a rename: virgin (slot 6's boxes) and factory. */

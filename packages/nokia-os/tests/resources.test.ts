@@ -35,16 +35,16 @@ import {
   WIDGET_TIMELINES,
   TEXT_TIMINGS,
   type StockFontName,
-} from "../src/resources";
-import { TEXT_DATA } from "../src/resources/generated/text";
-import { CLOCK_DATA } from "../src/resources/generated/clock";
-import { COMPOSER_DATA } from "../src/resources/generated/composer";
-import { BOOT_DATA } from "../src/resources/generated/boot";
-import { STOCK_FONT_DATA } from "../src/resources/generated/fonts";
-import { MENU_ICON_DATA } from "../src/resources/generated/menu-icons";
-import { STATUS_DATA } from "../src/resources/generated/status";
-import { WIDGET_DATA } from "../src/resources/generated/widgets";
-import { SOUND_DATA } from "../src/resources/generated/sounds";
+} from "../src/kit/ui/resources";
+import { TEXT_DATA } from "../src/kit/ui/resources/generated/text";
+import { CLOCK_DATA } from "../src/kit/ui/resources/generated/clock";
+import { COMPOSER_DATA } from "../src/kit/ui/resources/generated/composer";
+import { BOOT_DATA } from "../src/kit/ui/resources/generated/boot";
+import { STOCK_FONT_DATA } from "../src/kit/ui/resources/generated/fonts";
+import { MENU_ICON_DATA } from "../src/kit/ui/resources/generated/menu-icons";
+import { STATUS_DATA } from "../src/kit/ui/resources/generated/status";
+import { WIDGET_DATA } from "../src/kit/ui/resources/generated/widgets";
+import { SOUND_DATA } from "../src/kit/ui/resources/generated/sounds";
 import { parseSoundGolden, type SoundGolden, type SoundRow } from "../scripts/sound-format.ts";
 import { LEVEL_COVER_TONES, RINGING_TONE_NAMES, toneSlug } from "../scripts/sound-capture-set.ts";
 import { previewRows, renderProgram, type SoundProgramData } from "../scripts/sound-programs.ts";
@@ -177,7 +177,7 @@ describe("generated resources", () => {
     "are byte for byte what `regenerate` writes (resolve a conflict by regenerating)",
     { timeout: EXTRACTION_TIMEOUT_MS },
     () => {
-      const dir = join(import.meta.dirname, "../src/resources/generated");
+      const dir = join(import.meta.dirname, "../src/kit/ui/resources/generated");
       const files = generatedFiles(extractResources());
       expect(readdirSync(dir).sort()).toEqual(Object.keys(files).sort());
       for (const [file, text] of Object.entries(files)) {

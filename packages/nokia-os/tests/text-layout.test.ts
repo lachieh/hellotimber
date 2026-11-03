@@ -1,7 +1,7 @@
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { STOCK_FONTS } from "../src/resources";
-import { WIDGET_DATA } from "../src/resources/generated/widgets";
+import { STOCK_FONTS } from "../src/kit/ui/resources";
+import { WIDGET_DATA } from "../src/kit/ui/resources/generated/widgets";
 import {
   cursorLine,
   EDITOR_LINE_WIDTH,
@@ -10,8 +10,8 @@ import {
   viewTop,
   wrapText,
   type TextLine,
-} from "../src/text/layout";
-import { emptyText, shownMode, textKey, type TextState } from "../src/text/multitap";
+} from "../src/kit/ui/text/layout";
+import { emptyText, shownMode, textKey, type TextState } from "../src/kit/ui/text/multitap";
 import { loadGolden } from "./support/goldens";
 import { replayTrace, TEXT_TRACES, type TextTrace } from "./support/messages";
 

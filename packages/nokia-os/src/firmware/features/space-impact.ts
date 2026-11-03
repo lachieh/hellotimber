@@ -1,8 +1,8 @@
 import type { StockFeature } from "./feature";
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockGames } from "./games";
-import type { Flow, Widget } from "../../widgets/flow";
-import type { SpaceImpactModel } from "../../display/widgets/space-impact";
+import type { Flow, Widget } from "../../kit/ui/widgets/flow";
+import type { SpaceImpactModel } from "../../kit/apps/games/display-space-impact";
 import {
   newSpaceImpactGame,
   spaceImpactKey,
@@ -11,7 +11,7 @@ import {
   expireSpaceImpactShield,
 } from "../../games/space-impact/engine";
 import type { SpaceImpactResult, SpaceImpactState } from "../../games/space-impact/model";
-import { SPACE_IMPACT_DATA } from "../../resources/generated/space-impact";
+import { SPACE_IMPACT_DATA } from "../../kit/ui/resources/generated/space-impact";
 
 const timings = SPACE_IMPACT_DATA.timings;
 

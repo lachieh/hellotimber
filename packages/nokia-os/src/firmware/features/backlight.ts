@@ -6,12 +6,12 @@
 // (Games › Settings › Lights, D7); releasing it returns to the timeout. Pure: the clock is
 // injected, and every edge is emitted stamped with the time it happens at, so the events are the
 // same at any tick rate. What counts as activity is the wiring's (D3); this is the timer.
-import { SNAKE_DEATH_STEPS, SNAKE_TOP_SCORE_MS } from "../../resources";
+import { SNAKE_DEATH_STEPS, SNAKE_TOP_SCORE_MS } from "../../kit/ui/resources";
 import type { StockGames } from "./games";
 import type { SuspendedSnake } from "../../widgets/snake";
 import type { StockCue, StockCueSink } from "../cues";
 import type { StockSettings } from "../settings";
-import { timelineByName } from "../timelines";
+import { timelineByName } from "../../kit/ui/timelines";
 import type { StockFeature } from "./feature";
 
 /** Plan 25: one change of the phone's lights at kernel time `atMs`. */

@@ -3,19 +3,19 @@
 // (Volume, DTMF digits, C's `End`/`Options`, Options), and how a call leaves the screen. One
 // widget follows one call of the phone's telephone; its frames come from the call's times.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { CallBody, CallModel, StandbyDrawModel, WidgetModel } from "../display/widgets";
-import { Playback } from "./playback";
-import { timelineById, timelineByName } from "../firmware/timelines";
+import type { CallBody, CallModel, StandbyDrawModel, WidgetModel } from "../kit/ui/display/widgets";
+import { Playback } from "../kit/ui/widgets/playback";
+import { timelineById, timelineByName } from "../kit/ui/timelines";
 import { CALL_TIMINGS, type StockCall, type StockTelephone } from "../calls/telephone";
 import { appendDial, starCycle } from "../calls/dial-string";
 import { transmittedDtmfProgram, VOLUME_TONE_MS, volumeTopProgram } from "../calls/sounds";
 import { DIAL_TIMINGS } from "./dial-entry";
 import type { StockSounder } from "../sound/sounder";
-import type { Flow, Widget } from "./flow";
-import { numberEntry } from "./number-entry";
-import { note } from "./note";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { numberEntry } from "../kit/ui/widgets/number-entry";
+import { note } from "../kit/ui/widgets/note";
 import { OptionListWidget } from "./option-list";
-import { placeholderWidget } from "./placeholder";
+import { placeholderWidget } from "../kit/ui/widgets/placeholder";
 
 /**
  * Calling's dots: one, the number ≈100 ms later from the number entry (`dial/number-12` 81,

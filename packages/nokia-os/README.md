@@ -135,7 +135,7 @@ mise exec -- vp run @hellotimber/nokia-os#import-captures $REF
 #    corpus OCR, plus the harvester's text runs (scripts/generated/tree-text-runs.ts).
 mise exec -- vp run @hellotimber/nokia-os#import-tree $REF
 # 3. Derive fonts, icons, boot frames, status art, widget sprites and widget timelines, and
-#    Snake II's pictures, mazes and timings, into src/resources/generated/ (`regenerate` runs
+#    Snake II's pictures, mazes and timings, into src/kit/ui/resources/generated/ (`regenerate` runs
 #    every generator that needs no $REF; resolve a conflict in generated files with it).
 mise exec -- vp run @hellotimber/nokia-os#regenerate
 # 4. Test: pixel and timing acceptance against every asserted golden, the tree coverage guard,
@@ -413,7 +413,7 @@ requestAnimationFrame(loop);
   aligned on the recording's first key. The captures' WAV files are the emulator's own synthesis
   (it ignores both volume registers) and are never imported or asserted.
 - **Asset policy.** `import-captures` turns the capture corpus's sound recordings into the sound
-  goldens; `extract-resources` derives every program from them (`src/resources/generated/sounds.ts`:
+  goldens; `extract-resources` derives every program from them (`src/kit/ui/resources/generated/sounds.ts`:
   the 35 ringing tones, the message tones, the keypad beep, note tones, Snake II's cues, the
   per-level volume tables). The extracted firmware tone tables are only a cross-check.
 - **Virgin vs factory.** Empty storage is the virgin EEPROM, whose tone settings are unset: keys
@@ -738,7 +738,7 @@ const phone = createStockPhone({ carrier: "Telstra", t9: { english: englishT9 } 
   [IlyaSemenov/wikipedia-word-frequency](https://github.com/IlyaSemenov/wikipedia-word-frequency)
   English counts (pinned commit and SHA-256): its 30,000 most frequent lower-case words, weighted
   `floor(4 log2(count))`. Provenance, filter and licence:
-  [`src/text/t9/THIRD_PARTY.md`](src/text/t9/THIRD_PARTY.md). No firmware dictionary content is
+  [`src/kit/ui/text/t9/THIRD_PARTY.md`](src/kit/ui/text/t9/THIRD_PARTY.md). No firmware dictionary content is
   in the repository.
 - **Not reproduced** (spec 15): which words the firmware knows and their order, its nonsense
   stems, its single-key letter order where it differs, and its exact compositions after key 1

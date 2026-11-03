@@ -1,9 +1,9 @@
 // Call divert (menu 7; plan 22 implements the divert flows): the copied subtrees, the number
 // prompts, the lists' numbering, Set delay's return and Requesting's Quit.
 import { serviceRequest } from "../../widgets/service-request";
-import { numberEntry } from "../../widgets/number-entry";
+import { numberEntry } from "../../kit/ui/widgets/number-entry";
 import type { ScreenBinding } from "./feature";
-import type { PromptLayout } from "../../widgets/prompt";
+import type { PromptLayout } from "../../kit/ui/widgets/prompt";
 import type { StockServices } from "./feature";
 import type { StockFeature } from "./feature";
 

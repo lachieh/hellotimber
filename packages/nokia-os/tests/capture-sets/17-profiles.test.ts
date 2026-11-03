@@ -20,7 +20,7 @@ import {
   type SoundCaptureIo,
 } from "../../scripts/sound-capture-set.ts";
 import type { RecordingFrame, TreeCaptureIo } from "../../scripts/tree-capture-set.ts";
-import { TYPEABLE } from "../../src/text/keys";
+import { TYPEABLE } from "../../src/kit/ui/text/keys";
 
 /** A recording of `images` (one frame each, 100 ms apart). */
 const recording = (...images: string[]): RecordingFrame[] =>

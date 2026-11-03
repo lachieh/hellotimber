@@ -10,7 +10,7 @@ import { StockComposer } from "../src/composer/store";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import type { StockSoundEvent } from "../src/index";
-import { SoundSequencer } from "../src/sound/sequencer";
+import { SoundSequencer } from "../src/kit/ui/sound/sequencer";
 import { StockSounder } from "../src/sound/sounder";
 import { recordTimeline } from "./support/acceptance.ts";
 import { replayComposerKeys } from "./support/composer";

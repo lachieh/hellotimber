@@ -17,7 +17,7 @@ import { createMemorySettings, virginSettings, type StockSettings } from "../src
 import { gameOver } from "../src/widgets/game-over";
 import { levelPage } from "../src/widgets/level-bar";
 import { snakeGame } from "../src/widgets/snake";
-import type { Flow, Widget } from "../src/widgets/flow";
+import type { Flow, Widget } from "../src/kit/ui/widgets/flow";
 import { flowRig } from "./support/flow-rig.ts";
 
 const holder = (seed = 44530): StockGames => ({ ...createStockGames(), seed: () => seed });

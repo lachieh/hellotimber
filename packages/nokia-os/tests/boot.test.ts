@@ -1,7 +1,7 @@
 // Plan 15 Task 8: the security-code and welcome-note boot gates of the stock phone (D9, D10).
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { paintWidget, welcomeNoteLines } from "../src/display/widgets";
+import { paintWidget, welcomeNoteLines } from "../src/kit/ui/display/widgets";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { SECURITY_RECORD } from "../src/firmware/security";
 import {
@@ -12,7 +12,7 @@ import {
   WELCOME_NOTE_MS,
 } from "../src/firmware/boot";
 import { createMemoryStorage, createStockPhone, missingStockGlyphs } from "../src/index";
-import { GATE_HANDS_TIMELINE } from "../src/resources";
+import { GATE_HANDS_TIMELINE } from "../src/kit/ui/resources";
 import type { StockStorage } from "../src/index";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";

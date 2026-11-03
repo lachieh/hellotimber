@@ -1,8 +1,14 @@
 import type { PhoneKey, ShortcutLevel } from "@hellotimber/phone-core";
-import type { OptionsModel } from "../display/widgets";
+import type { OptionsModel } from "../kit/ui/display/widgets";
 import type { StockSettings } from "../firmware/settings";
-import type { Flow, Widget } from "./flow";
-import { moveRows, openRows, rowsIndicator, type ListNumbering, type RowsCursor } from "./rows";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import {
+  moveRows,
+  openRows,
+  rowsIndicator,
+  type ListNumbering,
+  type RowsCursor,
+} from "../kit/ui/widgets/rows";
 
 /** Shown instead of the soft key while nothing is selected (P10). */
 const UNSET_SOFTKEY = "Quit";

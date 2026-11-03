@@ -14,12 +14,12 @@ import {
   type CallWidgetOptions,
 } from "../../widgets/call";
 import { dialEntry, type DialEntryWidget, type EntrySoftkey } from "../../widgets/dial-entry";
-import { StockFlowApplication, type Flow, type Widget } from "../../widgets/flow";
-import { note } from "../../widgets/note";
+import { StockFlowApplication, type Flow, type Widget } from "../../kit/ui/widgets/flow";
+import { note } from "../../kit/ui/widgets/note";
 import { serviceRequest } from "../../widgets/service-request";
-import { placeholderWidget } from "../../widgets/placeholder";
+import { placeholderWidget } from "../../kit/ui/widgets/placeholder";
 import type { EepromRecord, StockEeprom } from "../eeprom";
-import { timelineByName } from "../timelines";
+import { timelineByName } from "../../kit/ui/timelines";
 import type { StockFeature, StockServices } from "./feature";
 import { pickNumber, standbyList } from "../../phone-book/flows";
 import { inCallPhoneBook, savePhoneNumber } from "./phone-book";

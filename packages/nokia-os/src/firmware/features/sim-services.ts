@@ -11,11 +11,11 @@ import {
   SubmenuEntry,
   TopLevelEntry,
 } from "@hellotimber/phone-core";
-import { stockMenuGraphic } from "../../resources";
+import { stockMenuGraphic } from "../../kit/ui/resources";
 import { SIM_SERVICES_NUMBER, SIM_SERVICES_SLUG } from "../../sim/slot";
 import { carouselLabel, rowLabel, type StockSimToolkit } from "../../sim/toolkit";
 import { toolkitSession, type ToolkitDial } from "../../sim/session";
-import { StockFlowApplication } from "../../widgets/flow";
+import { StockFlowApplication } from "../../kit/ui/widgets/flow";
 import type { StockFeature, StockServices } from "./feature";
 import { placeCall } from "./dialling";
 

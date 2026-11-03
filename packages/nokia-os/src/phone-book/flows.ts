@@ -3,12 +3,12 @@
 // timing is a Task 0 capture's; the goldens are cited per flow.
 import type { StockServices } from "../firmware/features/feature";
 import { placeCall } from "../firmware/features/dialling";
-import { nodeTimeline, timelineByName } from "../firmware/timelines";
-import { nameQuery, type PhoneBookQueryModel } from "../display/widgets/name-list";
-import type { WidgetModel } from "../display/widgets";
-import type { Flow, Widget } from "../widgets/flow";
-import { BLANK, interlude } from "../widgets/interlude";
-import { infoScreen } from "../widgets/info-screen";
+import { nodeTimeline, timelineByName } from "../kit/ui/timelines";
+import { nameQuery, type PhoneBookQueryModel } from "../kit/ui/display/widgets/name-list";
+import type { WidgetModel } from "../kit/ui/display/widgets";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { BLANK, interlude } from "../kit/ui/widgets/interlude";
+import { infoScreen } from "../kit/ui/widgets/info-screen";
 import {
   nameList,
   TYPE_OF_VIEW,
@@ -17,9 +17,9 @@ import {
   type NameListOptions,
   type NameListView,
 } from "../widgets/name-list";
-import { note } from "../widgets/note";
-import { noPhoneNumbers, numberEntry } from "../widgets/number-entry";
-import { textInput } from "../widgets/text-input";
+import { note } from "../kit/ui/widgets/note";
+import { noPhoneNumbers, numberEntry } from "../kit/ui/widgets/number-entry";
+import { textInput } from "../kit/ui/widgets/text-input";
 import { searchIndex, type PhoneBookEntry } from "./entries";
 import { SIM_NUMBER_DIGITS, simNameLength, simNumberProblem, type StockContact } from "./sim-card";
 

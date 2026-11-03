@@ -1,7 +1,7 @@
 // The telephone's sounds (plan 22 D7-D9), measured on the factory sound goldens
 // (`goldens/sound/calls/*`; tests/sound-calls.test.ts plays each program against its golden).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { SoundProgram } from "../sound/program";
+import type { SoundProgram } from "../kit/ui/sound/program";
 
 /** The DTMF pair of each dial key: the high and the low group (Hz), as the tone generator plays. */
 export const DTMF_PAIRS: Readonly<Partial<Record<PhoneKey, readonly [number, number]>>> = {

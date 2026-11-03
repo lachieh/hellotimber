@@ -5,12 +5,12 @@
 // pages (DISPLAY TEXT), lists (SELECT ITEM); composed (UNVERIFIED, D4): the call confirm (SET UP
 // CALL never completes in the emulator), whose OK hands the number to `ToolkitDial`.
 import { LONG_PRESS_MS, type PhoneKey } from "@hellotimber/phone-core";
-import type { MessagePageModel, OptionsModel } from "../display/widgets";
+import type { MessagePageModel, OptionsModel } from "../kit/ui/display/widgets";
 import { messagePages } from "../messages/read";
-import { confirmQuery } from "../widgets/confirm";
-import type { Flow, Widget } from "../widgets/flow";
-import { interlude } from "../widgets/interlude";
-import { moveRows, openRows, type RowsCursor } from "../widgets/rows";
+import { confirmQuery } from "../kit/ui/widgets/confirm";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { interlude } from "../kit/ui/widgets/interlude";
+import { moveRows, openRows, type RowsCursor } from "../kit/ui/widgets/rows";
 import {
   callConfirmLines,
   rowLabel,

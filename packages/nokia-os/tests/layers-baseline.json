@@ -1,11 +1,9 @@
 [
-  "kit/apps/calculator/rate.ts -> firmware/eeprom.ts",
-  "kit/apps/calculator/widget.ts -> display/widgets/calculator.ts",
-  "kit/apps/calculator/widget.ts -> display/widgets/index.ts",
-  "kit/apps/calculator/widget.ts -> resources/index.ts",
-  "kit/apps/calculator/widget.ts -> widgets/flow.ts",
-  "kit/apps/calculator/widget.ts -> widgets/info-pages.ts",
-  "kit/apps/calculator/widget.ts -> widgets/note.ts",
-  "kit/apps/calculator/widget.ts -> widgets/playback.ts",
-  "kit/apps/calculator/widget.ts -> widgets/rows.ts"
+  "kit/apps/games/display-snake.ts -> games/snake/model.ts",
+  "kit/apps/games/display-space-impact.ts -> games/space-impact/model.ts",
+  "kit/ui/display/describe.ts -> sim/slot.ts",
+  "kit/ui/display/paint.ts -> sim/slot.ts",
+  "kit/ui/display/widgets/index.ts -> kit/apps/games/display-snake.ts",
+  "kit/ui/display/widgets/index.ts -> kit/apps/games/display-space-impact.ts",
+  "kit/ui/display/widgets/message.ts -> sim/messages.ts"
 ]

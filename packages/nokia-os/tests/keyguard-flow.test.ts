@@ -5,7 +5,7 @@ import { CALL_TIMINGS } from "../src/calls/telephone";
 import type { PhoneSnapshot } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { paintWidget } from "../src/display/widgets";
+import { paintWidget } from "../src/kit/ui/display/widgets";
 import {
   KEYGUARD_HINT_LEAD_MS,
   KEYGUARD_TIMES,

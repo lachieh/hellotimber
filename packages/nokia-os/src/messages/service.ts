@@ -1,7 +1,7 @@
 // One phone's SMS traffic over its host network port (plan 18 D9, D10): sends that settle no
 // sooner than the synthetic cell's median link time, and arrivals that land RECEIVE_LINK_MS after
 // the host delivers them. Times are the kernel's (`tick`); the port has no clock.
-import { RECEIVE_LINK_MS, SEND_LINK_MS } from "../resources";
+import { RECEIVE_LINK_MS, SEND_LINK_MS } from "../kit/ui/resources";
 import {
   checkIncomingSms,
   type StockBusinessCard,

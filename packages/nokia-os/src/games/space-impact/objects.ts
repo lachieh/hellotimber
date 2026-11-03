@@ -1,5 +1,5 @@
-import { SPACE_IMPACT_WAVE_PROGRAM } from "../../resources/generated/space-impact-wave-program";
-import { SPACE_IMPACT_OPENING_WAVE } from "../../resources/generated/space-impact-opening-wave";
+import { SPACE_IMPACT_WAVE_PROGRAM } from "../../kit/ui/resources/generated/space-impact-wave-program";
+import { SPACE_IMPACT_OPENING_WAVE } from "../../kit/ui/resources/generated/space-impact-opening-wave";
 import type { SpaceImpactEnemy } from "./model";
 
 export function spaceImpactEnemyY(enemy: SpaceImpactEnemy, x: number): number {

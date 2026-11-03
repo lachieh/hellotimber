@@ -14,7 +14,7 @@ import {
   type SnakeHeading,
   type SnakeMaze,
   type SnakeSpriteId,
-} from "../../src/resources";
+} from "../../src/kit/ui/resources";
 import { loadGolden } from "./goldens";
 
 export interface DecodedSegment extends Cell {

@@ -1,7 +1,7 @@
 // Plan 18c Task 3: the resources its goldens declare (scripts/resource-inputs/18c-*), regenerated
-// into src/resources/generated/widgets.ts (tests/resources.test.ts checks their freshness).
+// into src/kit/ui/resources/generated/widgets.ts (tests/resources.test.ts checks their freshness).
 import { describe, expect, it } from "vite-plus/test";
-import { WIDGET_SPRITES, WIDGET_TIMELINE_BY_NAME } from "../src/resources";
+import { WIDGET_SPRITES, WIDGET_TIMELINE_BY_NAME } from "../src/kit/ui/resources";
 
 describe("plan 18c resources", () => {
   it("name a timeline for each note its screens show", () => {

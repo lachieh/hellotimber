@@ -2,7 +2,7 @@ import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { captureSets } from "../scripts/capture-registry.ts";
 const TEXT_RUNS = captureSets().find((set) => set.plan === "13")!.resources!.textRuns!;
-import { paintIndicator } from "../src/display/indicator";
+import { paintIndicator } from "../src/kit/ui/display/indicator";
 import { goldenImage } from "./support/goldens.ts";
 
 /** The indicator band: rows 0..5 right of x 40 (nothing else is drawn there on menu screens). */

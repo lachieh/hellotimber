@@ -157,7 +157,7 @@ describe("writeDictionaryModule", () => {
 
 describe("the committed dictionary", () => {
   const generated = readFileSync(
-    join(import.meta.dirname, "../src/text/t9/generated/english.ts"),
+    join(import.meta.dirname, "../src/kit/ui/text/t9/generated/english.ts"),
     "utf8",
   );
 

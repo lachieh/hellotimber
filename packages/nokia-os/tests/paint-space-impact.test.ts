@@ -7,8 +7,8 @@ import {
   spaceImpactRender,
   stepSpaceImpact,
 } from "../src/games/space-impact/engine";
-import { paintSpaceImpact } from "../src/display/widgets/space-impact";
-import { SPACE_IMPACT_LEVEL_OBSERVATIONS } from "../src/resources/generated/space-impact-levels";
+import { paintSpaceImpact } from "../src/kit/apps/games/display-space-impact";
+import { SPACE_IMPACT_LEVEL_OBSERVATIONS } from "../src/kit/ui/resources/generated/space-impact-levels";
 import { goldenImage, loadGolden } from "./support/goldens";
 
 describe("Space impact engine pixels before the first wave", () => {

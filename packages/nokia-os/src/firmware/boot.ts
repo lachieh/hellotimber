@@ -2,17 +2,17 @@
 // Phone security asks for it, and the welcome note, which the firmware shows instead of the
 // hands. Both hold phone-core's boot at the end of the self-test.
 import type { BootGate } from "@hellotimber/phone-core";
-import type { WidgetModel } from "../display/widgets";
+import type { WidgetModel } from "../kit/ui/display/widgets";
 import {
   BOOT_TIMELINE,
   GATE_HANDS_TIMELINE,
   WIDGET_TIMELINE_BY_NAME,
   WIDGET_TIMELINES,
   type StockWidgetTimeline,
-} from "../resources";
+} from "../kit/ui/resources";
 import { codeEntry } from "../widgets/code-entry";
-import { StockFlowApplication, type Flow, type Widget } from "../widgets/flow";
-import type { NoteSound } from "../widgets/note";
+import { StockFlowApplication, type Flow, type Widget } from "../kit/ui/widgets/flow";
+import type { NoteSound } from "../kit/ui/widgets/note";
 import { WELCOME_NOTE_KEY } from "./features/settings";
 import type { StockSecurity } from "./security";
 import type { StockSettings } from "./settings";

@@ -1,4 +1,4 @@
-import { SoundSequencer } from "../../src/sound/sequencer";
+import { SoundSequencer } from "../../src/kit/ui/sound/sequencer";
 import { StockSounder } from "../../src/sound/sounder";
 import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockSettings } from "../../src/firmware/settings";

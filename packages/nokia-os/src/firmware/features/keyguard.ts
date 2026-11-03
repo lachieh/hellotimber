@@ -7,11 +7,11 @@
 // window and the leads before the hint and `Keypad active` are the goldens' (tests check them).
 import type { Phone, PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
-import { attachDescription, describeWidget } from "../../display/describe";
-import { paintWidget, type KeyguardModel } from "../../display/widgets";
-import { KEYPAD_LOCKED_LINES } from "../../display/widgets/keyguard";
-import type { StockWidgetTimeline } from "../../resources";
-import { timelineByName } from "../timelines";
+import { attachDescription, describeWidget } from "../../kit/ui/display/describe";
+import { paintWidget, type KeyguardModel } from "../../kit/ui/display/widgets";
+import { KEYPAD_LOCKED_LINES } from "../../kit/ui/display/widgets/keyguard";
+import type { StockWidgetTimeline } from "../../kit/ui/resources";
+import { timelineByName } from "../../kit/ui/timelines";
 import type { StockFeature } from "./feature";
 
 /** The keyguard's generated widget timelines (plan 25's resource registration). */

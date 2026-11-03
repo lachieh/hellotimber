@@ -10,7 +10,7 @@ import {
   type ComposerServices,
 } from "../../widgets/composer";
 import type { EepromRecord, StockEeprom } from "../eeprom";
-import { timelineByName } from "../timelines";
+import { timelineByName } from "../../kit/ui/timelines";
 import type { ScreenBinding, StockFeature, StockServices } from "./feature";
 
 /** The Composer level (Tones › Composer) and its slots. */

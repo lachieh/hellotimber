@@ -1,5 +1,5 @@
 import { Framebuffer } from "@hellotimber/phone-screen";
-import { paintSpaceImpact } from "../src/display/widgets/space-impact";
+import { paintSpaceImpact } from "../src/kit/apps/games/display-space-impact";
 import { spaceImpactRender, stepSpaceImpact } from "../src/games/space-impact/engine";
 import { createGameRandom } from "../src/games/random";
 import { newSpaceImpactGame } from "../src/games/space-impact/engine";

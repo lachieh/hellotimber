@@ -3,14 +3,14 @@
 // `voice-*`).
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockServices } from "../firmware/features/feature";
-import { timelineByName } from "../firmware/timelines";
-import type { WidgetModel } from "../display/widgets";
-import { STOCK_FONTS } from "../resources";
+import { timelineByName } from "../kit/ui/timelines";
+import type { WidgetModel } from "../kit/ui/display/widgets";
+import { STOCK_FONTS } from "../kit/ui/resources";
 import { textWidth } from "@hellotimber/phone-screen";
-import type { Flow, Widget } from "../widgets/flow";
-import { note } from "../widgets/note";
-import { HeldC } from "../widgets/held-c";
-import { Playback } from "../widgets/playback";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { note } from "../kit/ui/widgets/note";
+import { HeldC } from "../kit/ui/widgets/held-c";
+import { Playback } from "../kit/ui/widgets/playback";
 import { shownName } from "./entries";
 import { emptyNote, nameQueryWidget, names, phoneBookNote } from "./flows";
 import { VOICE_ERROR_BEEPS, VOICE_START_BEEP } from "./timings";

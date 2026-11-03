@@ -1,13 +1,13 @@
 import { Timeline } from "@hellotimber/phone-core";
 import type { StockServices } from "../firmware/features/feature";
 import { telephoneOf } from "../firmware/features/dialling";
-import { timelineById, timelineByName } from "../firmware/timelines";
+import { timelineById, timelineByName } from "../kit/ui/timelines";
 import { ServiceRequest, type StockServiceResult } from "../calls/services";
-import type { Widget } from "./flow";
+import type { Widget } from "../kit/ui/widgets/flow";
 import { afterDown } from "./call";
-import { infoScreen } from "./info-screen";
-import { note } from "./note";
-import { Playback } from "./playback";
+import { infoScreen } from "../kit/ui/widgets/info-screen";
+import { note } from "../kit/ui/widgets/note";
+import { Playback } from "../kit/ui/widgets/playback";
 
 function resultWidget(
   result: Exclude<StockServiceResult, { kind: "failed" | "waiting" }>,

@@ -7,9 +7,9 @@ import { COMPOSER_CASES } from "../scripts/capture-sets/27-composer.ts";
 import { EMPTY_COMPOSER } from "../src/composer/editor";
 import { parseTokens } from "../src/composer/notation";
 import { StockComposer } from "../src/composer/store";
-import { paintWidget } from "../src/display/widgets";
+import { paintWidget } from "../src/kit/ui/display/widgets";
 import { StockEeprom } from "../src/firmware/eeprom";
-import { COMPOSER_TIMINGS } from "../src/resources";
+import { COMPOSER_TIMINGS } from "../src/kit/ui/resources";
 import {
   composerModel,
   composerRig,

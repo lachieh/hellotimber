@@ -4,10 +4,10 @@
 // reminder icon, `Snooze`, the buzzer until a key. Snooze: `Alarm postponed for 10 min`, then
 // it alerts again 10 minutes later; any other key ends it.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { AlertModel } from "../../../display/widgets";
-import { CLOCK_ALERTS } from "../../../resources";
-import type { SoundPlay } from "../../../sound/sequencer";
-import type { Flow, Widget } from "../../../widgets/flow";
+import type { AlertModel } from "../../../kit/ui/display/widgets";
+import { CLOCK_ALERTS } from "../../../kit/ui/resources";
+import type { SoundPlay } from "../../../kit/ui/sound/sequencer";
+import type { Flow, Widget } from "../../../kit/ui/widgets/flow";
 import type { StockServices } from "../feature";
 import {
   alertExit,

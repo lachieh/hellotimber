@@ -14,7 +14,7 @@ import {
   type KeyguardCalls,
   type KeyguardOutcome,
 } from "../src/firmware/features/keyguard";
-import { timelineByName } from "../src/firmware/timelines";
+import { timelineByName } from "../src/kit/ui/timelines";
 import { findGoldenImage } from "../scripts/golden-format.ts";
 import { loadGolden } from "./support/goldens.ts";
 

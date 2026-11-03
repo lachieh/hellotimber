@@ -8,7 +8,7 @@ import {
 } from "../../scripts/capture-sets/21-clock-and-reminders.ts";
 import { Framebuffer, textWidth } from "@hellotimber/phone-screen";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
-import { STOCK_FONTS } from "../../src/resources";
+import { STOCK_FONTS } from "../../src/kit/ui/resources";
 import { LCD_HEIGHT, LCD_WIDTH } from "../../scripts/golden-format.ts";
 import {
   expectLcd,

@@ -18,8 +18,8 @@ import {
   RINGING_TONES,
   UNSET_MESSAGE_VOLUMES,
   VOLUME_RULE,
-} from "../resources";
-import { noteStarts, type SoundProgram } from "./program";
+} from "../kit/ui/resources";
+import { noteStarts, type SoundProgram } from "../kit/ui/sound/program";
 import {
   BEEP_ONCE_RING,
   BEEP_ONCE_VIBRATOR,
@@ -27,7 +27,7 @@ import {
   DTMF_TAIL_MS,
   OFF_VIBRATOR,
 } from "../calls/sounds";
-import type { SoundPlay, SoundSequencer, SoundVolume } from "./sequencer";
+import type { SoundPlay, SoundSequencer, SoundVolume } from "../kit/ui/sound/sequencer";
 
 /**
  * The option lists that preview what they highlight (plan 16 D9), by setting slug, in Tones and

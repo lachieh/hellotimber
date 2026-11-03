@@ -3,7 +3,7 @@
 // the virgin-EEPROM state.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { STOCK_TREE, type StockTreeNode } from "../../src/firmware/generated/stock-tree";
-import { WIDGET_TIMELINE_BY_NODE, WIDGET_TIMELINES } from "../../src/resources";
+import { WIDGET_TIMELINE_BY_NODE, WIDGET_TIMELINES } from "../../src/kit/ui/resources";
 import type { Rig } from "./rig.ts";
 
 export type DriveStep = { readonly key: PhoneKey } | { readonly waitMs: number };

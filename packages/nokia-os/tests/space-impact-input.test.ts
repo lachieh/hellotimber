@@ -9,7 +9,7 @@ import {
   spaceImpactRender,
   stepSpaceImpact,
 } from "../src/games/space-impact/engine";
-import { paintSpaceImpact } from "../src/display/widgets/space-impact";
+import { paintSpaceImpact } from "../src/kit/apps/games/display-space-impact";
 import { normalized, shipAt } from "../scripts/space-impact-capture-set";
 import { goldenImage, loadGolden } from "./support/goldens";
 import { replaySpaceImpactLevel } from "./support/space-impact-replay";

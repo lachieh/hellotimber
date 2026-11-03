@@ -14,7 +14,7 @@ import {
 import { KEYGUARD_TIMES } from "../src/firmware/features/keyguard";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
-import { SNAKE_TOP_SCORE_MS } from "../src/resources";
+import { SNAKE_TOP_SCORE_MS } from "../src/kit/ui/resources";
 import { SNAKE_SETTINGS } from "../src/widgets/snake";
 import { lightsRig, storageFor, type LightsRig } from "./support/lights.ts";
 

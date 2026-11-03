@@ -2,7 +2,7 @@
 // invented weights, in the generated format (`#<w>` weight lines, words after them). Each rule of
 // docs/specs/t9-behaviour.md has a key sequence here that shows it; the comments name them. Not
 // derived from any golden or firmware.
-import { createT9Dictionary, type T9Dictionary } from "../../src/text/t9";
+import { createT9Dictionary, type T9Dictionary } from "../../src/kit/ui/text/t9";
 
 export const T9_FIXTURE_SOURCE = [
   "#60",

@@ -1,11 +1,11 @@
 // Settings (menu 6; plans 15 and 18): the welcome note's stored text and its editor, and Own
 // number sending's factory value. Security settings and Restore factory settings are the
 // security feature's.
-import { editor } from "../../widgets/editor";
-import type { Flow, Widget } from "../../widgets/flow";
-import { note } from "../../widgets/note";
+import { editor } from "../../kit/ui/widgets/editor";
+import type { Flow, Widget } from "../../kit/ui/widgets/flow";
+import { note } from "../../kit/ui/widgets/note";
 import { OptionListWidget } from "../../widgets/option-list";
-import { nodeTimeline, timelineByName } from "../timelines";
+import { nodeTimeline, timelineByName } from "../../kit/ui/timelines";
 import type { StockFeature, StockServices } from "./feature";
 
 /** The stored welcome note (a typed text; absent = no note). Plan 18's editor writes it. */

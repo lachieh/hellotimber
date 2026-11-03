@@ -1,18 +1,18 @@
 // Inbox (2-2) and Outbox (2-3), plan 18 Task 11: `Opening`, then the list of messages (the
 // empty boxes keep plan 14's note), a message's pages and its Options (D8, D13; Task 0 I, O).
-import { MESSAGE_PAGE_LINES, drawable } from "../display/widgets/message";
-import type { MessageListModel, MessagePageModel } from "../display/widgets";
+import { MESSAGE_PAGE_LINES, drawable } from "../kit/ui/display/widgets/message";
+import type { MessageListModel, MessagePageModel } from "../kit/ui/display/widgets";
 import type { StockServices } from "../firmware/features/feature";
-import { nodeTimeline, timelineByName } from "../firmware/timelines";
-import { wrapText } from "../text/layout";
+import { nodeTimeline, timelineByName } from "../kit/ui/timelines";
+import { wrapText } from "../kit/ui/text/layout";
 import type { PhoneKey } from "@hellotimber/phone-core";
-import { confirmQuery } from "../widgets/confirm";
-import { HeldC } from "../widgets/held-c";
-import type { Flow, Widget } from "../widgets/flow";
-import { interlude } from "../widgets/interlude";
-import { note } from "../widgets/note";
+import { confirmQuery } from "../kit/ui/widgets/confirm";
+import { HeldC } from "../kit/ui/widgets/held-c";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { interlude } from "../kit/ui/widgets/interlude";
+import { note } from "../kit/ui/widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
-import { moveRows, rowsIndicator, type RowsCursor } from "../widgets/rows";
+import { moveRows, rowsIndicator, type RowsCursor } from "../kit/ui/widgets/rows";
 import { chatWith } from "../chat/screens";
 import { messageDate, messageTime } from "./timestamp";
 import { smsEditor } from "./write";

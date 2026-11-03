@@ -3,10 +3,10 @@
 // to a minute, the standby timer icon, and the `Countdown` / `time up` alert with its bells and its
 // sound (≈29 s, ascending), which stays until a key.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { AlertModel } from "../../../display/widgets";
-import { CLOCK_ALERTS } from "../../../resources";
-import type { SoundPlay } from "../../../sound/sequencer";
-import type { Flow, Widget } from "../../../widgets/flow";
+import type { AlertModel } from "../../../kit/ui/display/widgets";
+import { CLOCK_ALERTS } from "../../../kit/ui/resources";
+import type { SoundPlay } from "../../../kit/ui/sound/sequencer";
+import type { Flow, Widget } from "../../../kit/ui/widgets/flow";
 import type { StockServices } from "../feature";
 import { bellsAt } from "./alarm";
 import { alertExit, alertLeadIn, standbyOf, type AlertStandby } from "./alerts";

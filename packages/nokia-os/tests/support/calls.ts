@@ -13,7 +13,7 @@ import type { StockCallControl, StockOutgoingCall, SyntheticRing } from "../../s
 import type { StockNetworkPort } from "../../src/messages/network";
 import { createSyntheticNetwork } from "../../src/messages/network";
 import { CALL_TIMINGS } from "../../src/calls/telephone";
-import { englishT9 } from "../../src/text/t9/english";
+import { englishT9 } from "../../src/kit/ui/text/t9/english";
 import { expectLcd, expectTimeline, type RecordedTimeline } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { standbyRig, type Rig } from "./rig.ts";

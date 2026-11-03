@@ -18,8 +18,13 @@ import {
   userRingingTone,
   type ComposerTone,
 } from "../src/composer/program";
-import { COMPOSER_SOUND, COMPOSER_TEMPI, COMPOSER_TIMINGS, VOLUME_RULE } from "../src/resources";
-import type { SoundProgram } from "../src/sound/program";
+import {
+  COMPOSER_SOUND,
+  COMPOSER_TEMPI,
+  COMPOSER_TIMINGS,
+  VOLUME_RULE,
+} from "../src/kit/ui/resources";
+import type { SoundProgram } from "../src/kit/ui/sound/program";
 import { loadSoundGolden } from "./support/sound.ts";
 
 const U = 7.745;

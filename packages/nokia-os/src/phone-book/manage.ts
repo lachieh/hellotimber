@@ -2,16 +2,16 @@
 // Assign tone, over the inserted SIM's `StockPhoneBook`. Every screen and timing is a Task 0
 // capture's (`phone-book/erase-*`, `edit-*`, `tone-*`).
 import type { StockServices } from "../firmware/features/feature";
-import { timelineByName } from "../firmware/timelines";
+import { timelineByName } from "../kit/ui/timelines";
 import { treePath } from "../firmware/tree";
-import type { WidgetModel } from "../display/widgets";
+import type { WidgetModel } from "../kit/ui/display/widgets";
 import { codeEntry } from "../widgets/code-entry";
-import type { Flow, Widget } from "../widgets/flow";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
 import type { NameListControl } from "../widgets/name-list";
 import { nameList } from "../widgets/name-list";
-import { note } from "../widgets/note";
+import { note } from "../kit/ui/widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
-import { Playback } from "../widgets/playback";
+import { Playback } from "../kit/ui/widgets/playback";
 import type { PhoneBookEntry } from "./entries";
 import {
   emptyNote,

@@ -3,7 +3,7 @@
 // replays' (tests/acceptance/18c-*); these pin the stored state each flow leaves.
 import { describe, expect, it } from "vite-plus/test";
 import { StockTextSlots, STOCK_SMILEYS, STOCK_TEMPLATES } from "../src/content/slots";
-import { rowText } from "../src/display/widgets/content-list";
+import { rowText } from "../src/kit/ui/display/widgets/content-list";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createMemoryStorage, createSyntheticNetwork, type StockStorage } from "../src/index";
 import { keys } from "./support/probes.ts";

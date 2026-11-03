@@ -247,7 +247,10 @@ describe("Space impact HUD and ship resources", () => {
       },
     };
     expect(spaceImpactResourceModule.extract(io)).toBe(
-      readFileSync(join(import.meta.dirname, "../src/resources/generated/space-impact.ts"), "utf8"),
+      readFileSync(
+        join(import.meta.dirname, "../src/kit/ui/resources/generated/space-impact.ts"),
+        "utf8",
+      ),
     );
   });
 });

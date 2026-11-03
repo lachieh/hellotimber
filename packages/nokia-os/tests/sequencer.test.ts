@@ -1,9 +1,9 @@
 // Plan 16 Task 4: the sound sequencer plays programs on the buzzer, the tone generator and the
 // vibrator, emitting each output change stamped with the kernel time it happens at.
 import { describe, expect, it } from "vite-plus/test";
-import type { SoundProgram } from "../src/sound/program";
-import type { StockSoundEvent } from "../src/sound/port";
-import { SoundSequencer, type SoundVolume } from "../src/sound/sequencer";
+import type { SoundProgram } from "../src/kit/ui/sound/program";
+import type { StockSoundEvent } from "../src/kit/ui/sound/port";
+import { SoundSequencer, type SoundVolume } from "../src/kit/ui/sound/sequencer";
 
 function recorder(): { events: StockSoundEvent[]; sequencer: SoundSequencer } {
   const events: StockSoundEvent[] = [];

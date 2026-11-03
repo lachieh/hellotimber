@@ -2,13 +2,13 @@
 // the stock code entry, and an accepted code opens the leaf's flow; Phone security stores a
 // single choice behind the code. The security code itself is `../security.ts`.
 import { codeEntry, codeError, maskedEntry } from "../../widgets/code-entry";
-import type { Flow, Widget } from "../../widgets/flow";
-import { note } from "../../widgets/note";
+import type { Flow, Widget } from "../../kit/ui/widgets/flow";
+import { note } from "../../kit/ui/widgets/note";
 import { OptionListWidget } from "../../widgets/option-list";
-import { splitPromptLines } from "../../widgets/prompt";
+import { splitPromptLines } from "../../kit/ui/widgets/prompt";
 import type { EepromRecord } from "../eeprom";
 import { SECURITY_CODE_DIGITS, SECURITY_RECORD } from "../security";
-import { timelineByName } from "../timelines";
+import { timelineByName } from "../../kit/ui/timelines";
 import type { NamedNote, ScreenBinding, ScreenPlace, StockFeature, StockServices } from "./feature";
 
 /** What an accepted security code opens (D8, Task 0c: `probe/accept-*`, all v6.39 captures). */

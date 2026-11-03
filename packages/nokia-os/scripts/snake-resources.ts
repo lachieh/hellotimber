@@ -1,7 +1,7 @@
 // Snake II resources derived from the committed goldens (plan 23 Task 4, D3): the crop table of
 // the board, HUD and creature pictures, the maze walls and start cells, and the tick, grace and
 // death timing. `extract-resources.ts` runs `extractSnakeResources` and writes
-// src/resources/generated/snake.ts. Nothing here comes from the firmware image.
+// src/kit/ui/resources/generated/snake.ts. Nothing here comes from the firmware image.
 //
 // Geometry (H1): cell (x, y) of the 20x9 board has its top-left pixel at (2 + 4x, 10 + 4y); the
 // snake, the food and the walls draw inside their cells. Imports only sibling scripts.

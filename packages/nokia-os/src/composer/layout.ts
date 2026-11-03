@@ -2,7 +2,7 @@
 // separated by one space, wrapped at token boundaries (a token never splits: Task 0's layout
 // stills) when a line would pass 83 px; three lines shown, the view scrolled as little as the
 // cursor needs. The cursor sits right after the token before it, on that token's line.
-import { STOCK_FONTS } from "../resources";
+import { STOCK_FONTS } from "../kit/ui/resources";
 import { formatToken, type ComposerToken } from "./notation";
 
 /** The widest line: 83 px fits, 84 wraps (`layout/edge-83`, `layout/edge-84`). */

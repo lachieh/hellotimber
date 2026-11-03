@@ -318,7 +318,7 @@ it("does not execute capture callbacks when composing registered evidence", () =
 });
 
 it("rejects a missing fixture file without modifying generated output", () => {
-  const generated = join(import.meta.dirname, "../src/resources/generated");
+  const generated = join(import.meta.dirname, "../src/kit/ui/resources/generated");
   const bytes = () =>
     readdirSync(generated).map((file) => readFileSync(join(generated, file), "utf8"));
   const before = bytes();
@@ -424,7 +424,7 @@ it(
     );
     expect(generatedFiles(extractResources(GOLDENS_DIR, sets))).not.toHaveProperty("snake.ts");
     expect(generatedFiles(extractResources())["snake.ts"]).toBe(
-      readFileSync(join(import.meta.dirname, "../src/resources/generated/snake.ts"), "utf8"),
+      readFileSync(join(import.meta.dirname, "../src/kit/ui/resources/generated/snake.ts"), "utf8"),
     );
   },
   EXTRACTION_TIMEOUT_MS,

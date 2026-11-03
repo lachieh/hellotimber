@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
-import { TEXT_TIMINGS } from "../src/resources";
-import { MULTITAP_KEYS, SYMBOLS, TYPEABLE } from "../src/text/keys";
+import { TEXT_TIMINGS } from "../src/kit/ui/resources";
+import { MULTITAP_KEYS, SYMBOLS, TYPEABLE } from "../src/kit/ui/text/keys";
 import {
   emptyText,
   shownMode,
@@ -13,7 +13,7 @@ import {
   textTick,
   type TextInputKey,
   type TextState,
-} from "../src/text/multitap";
+} from "../src/kit/ui/text/multitap";
 
 const LIMIT = 459;
 const COMMIT = TEXT_TIMINGS.commitMs;

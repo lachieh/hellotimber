@@ -3,7 +3,7 @@
 // (K13). The tempo a new tone starts at is RAM state (Task 0: the last set or saved since
 // power-on, 112 after a cold boot), kept by this object for the phone's life.
 import type { EepromRecord, StockEeprom } from "../firmware/eeprom";
-import { COMPOSER_TEMPI } from "../resources";
+import { COMPOSER_TEMPI } from "../kit/ui/resources";
 import { COMPOSER_LIMIT, formatTokens, parseTokens } from "./notation";
 import { userRingingTone, type ComposerTone, type UserRingingTone } from "./program";
 

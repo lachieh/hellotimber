@@ -2,7 +2,7 @@
 import type { ScreenModel, StandbyIndicators } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, it } from "vite-plus/test";
-import { paintStandby } from "../src/display/standby";
+import { paintStandby } from "../src/kit/ui/display/standby";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";
 

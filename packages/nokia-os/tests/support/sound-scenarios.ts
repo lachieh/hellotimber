@@ -6,7 +6,7 @@ import { StockEeprom } from "../../src/firmware/eeprom";
 import { GATE_BLANK_MS, SELF_TEST_MS } from "../../src/firmware/boot";
 import { createStockSettings, type StockSettings } from "../../src/firmware/settings";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
-import { RINGING_TONES } from "../../src/resources";
+import { RINGING_TONES } from "../../src/kit/ui/resources";
 import { settingKey } from "../../src/firmware/tree";
 import { goto, open } from "./drive.ts";
 import { INDEX, treePath } from "./tree.ts";

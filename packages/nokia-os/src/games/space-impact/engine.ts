@@ -1,10 +1,10 @@
-import { SPACE_IMPACT_VIBRATE_MS } from "../../resources/generated/space-impact-sounds";
-import { SPACE_IMPACT_WAVE_PROGRAM } from "../../resources/generated/space-impact-wave-program";
+import { SPACE_IMPACT_VIBRATE_MS } from "../../kit/ui/resources/generated/space-impact-sounds";
+import { SPACE_IMPACT_WAVE_PROGRAM } from "../../kit/ui/resources/generated/space-impact-wave-program";
 import { createGameRandom } from "../random";
 import { spaceImpactEnemyEntries, spaceImpactEnemyY } from "./objects";
 import { spaceImpactBonus } from "./random";
-import { SPACE_IMPACT_DATA } from "../../resources/generated/space-impact";
-import { SPACE_IMPACT_OPENING_WAVE } from "../../resources/generated/space-impact-opening-wave";
+import { SPACE_IMPACT_DATA } from "../../kit/ui/resources/generated/space-impact";
+import { SPACE_IMPACT_OPENING_WAVE } from "../../kit/ui/resources/generated/space-impact-opening-wave";
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { isSpaceImpactControl, spaceImpactMove } from "./keys";
 import type { SpaceImpactState, SpaceImpactResult, SpaceImpactRenderModel } from "./model";

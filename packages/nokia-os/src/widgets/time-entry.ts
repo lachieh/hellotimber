@@ -7,12 +7,12 @@
 // returns to the entry as it was. The cursor blinks on its own timer (≈480 ms), which keys do
 // not restart (plan21 settings/set-time-keys).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { PromptModel } from "../display/widgets";
+import type { PromptModel } from "../kit/ui/display/widgets";
 import { isDate } from "../firmware/features/clock/time";
-import type { StockWidgetTimeline } from "../resources";
-import type { Flow, Widget } from "./flow";
-import { note, type NoteSound } from "./note";
-import { Playback } from "./playback";
+import type { StockWidgetTimeline } from "../kit/ui/resources";
+import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { note, type NoteSound } from "../kit/ui/widgets/note";
+import { Playback } from "../kit/ui/widgets/playback";
 
 export type EntryMask = "hh:mm" | "dd.mm.yyyy";
 

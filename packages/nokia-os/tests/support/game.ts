@@ -1,6 +1,6 @@
 import { expectSpaceImpactSound } from "./space-impact-sound";
 import { expectSpaceImpactExit, expectSpaceImpactLevel } from "./space-impact-replay";
-import { SPACE_IMPACT_DATA } from "../../src/resources/generated/space-impact";
+import { SPACE_IMPACT_DATA } from "../../src/kit/ui/resources/generated/space-impact";
 // Snake II gameplay goldens replayed through the engine (plan 23 Tasks 7-8): each recorded
 // game's level, maze and recovered seed (Task 5), and the engine state at every board the golden
 // shows, driven by the golden's `input`.
@@ -18,7 +18,7 @@ import {
   SNAKE_MAZES,
   SNAKE_PERIODS,
   WIDGET_SPRITES,
-} from "../../src/resources";
+} from "../../src/kit/ui/resources";
 import { goto } from "./drive";
 import {
   expectLcd,
