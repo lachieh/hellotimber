@@ -17,6 +17,7 @@ import { REVEAL_MS } from "../../phone/reveal";
 import type { PhoneRuntime } from "../../phone/stock-phone";
 import { Icon } from "./controls";
 import { Emulator } from "./emulator";
+import { Inspector } from "./Inspector";
 import {
   INITIAL_PANEL,
   PANEL_TABS,
@@ -154,7 +155,7 @@ export default function NokiaEmulator() {
         onTab={(tab) => dispatch({ type: "tab", tab })}
         onStep={(by) => dispatch({ type: "step", by })}
       >
-        {null}
+        {panel.tab === "inspector" && <Inspector emulator={emulator} state={state} />}
       </Panel>
     </div>
   );
