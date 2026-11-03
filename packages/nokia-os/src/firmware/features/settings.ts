@@ -66,9 +66,6 @@ export const settingsFeature: StockFeature = {
     "6-2-3": (services, { number }) => welcomeNoteEditor(services, number),
   },
   settings: {
-    typedTexts: [WELCOME_NOTE_KEY],
-    // Restore keeps the welcome note (v6.39 `plan15/accept/c4-*` then `factory/boot` shows `Hi`).
-    restoreKeeps: [WELCOME_NOTE_KEY],
     factoryDefaults: [
       {
         key: "settings/call-settings/own-number-sending",

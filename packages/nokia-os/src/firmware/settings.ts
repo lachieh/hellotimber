@@ -1,8 +1,8 @@
 // The stock settings store (plan 14 D9, plan 15 D3): the captured virgin EEPROM (plan 14 D10)
 // with the phone's writes on top, persisted as one EEPROM record (`SETTINGS_RECORD`), and the
 // factory state Restore factory settings writes (plan 15 D5). Each composed firmware has its own
-// schema: the virgin state of its tree and features, and its record. The
-// stock-bound exports below are STOCK_FIRMWARE's.
+// schema: the virgin state of its handset, tree and features, and its record. The stock-bound
+// exports below are STOCK_FIRMWARE's.
 import type { EepromRecord, StockEeprom } from "./eeprom";
 import type { Firmware } from "./firmware";
 import type { StockTreeNode } from "./generated/stock-tree";
@@ -304,8 +304,11 @@ function valuePages(firmware: Firmware): ReadonlyMap<string, readonly string[]> 
  * generated tree): option lists open on their
  * captured value (null when unset), setter levels on their page value (Info service `Off`),
  * multi-select marks, page values as display text (the Clock
- * pages are the host's), info page values, and the features' virgin texts and numbers. Keys that
- * alias another (Tones → General) are stored once, under their target.
+ * pages are the host's), info page values, and the features' virgin texts and numbers. The
+ * handset's and features' single choices (`settings.choices`) join them: one the tree lists too
+ * binds to the tree's (same options, same virgin choice; throws otherwise). Keys that alias
+ * another (Tones → General) are stored once, under their target; an alias prefix covers every key
+ * under its virgin target, listed under the prefix in the tree or not.
  */
 export function virginSettings(firmware: Firmware = STOCK_FIRMWARE): StockSettingsSnapshot {
   const { codeSettings, hostValues } = firmware.settings;
@@ -313,6 +316,8 @@ export function virginSettings(firmware: Firmware = STOCK_FIRMWARE): StockSettin
   const choices: Record<string, { options: number; chosen: number | null }> = {};
   const marks: Record<string, boolean[]> = {};
   const texts: Record<string, string> = {};
+  /** The tree's single choices' option labels, by key. */
+  const treeLabels = new Map<string, readonly string[]>();
   const byNumber = new Map<string, StockTreeNode>();
   for (const path of firmware.treePaths()) {
     const node = path[path.length - 1]!;
@@ -327,9 +332,16 @@ export function virginSettings(firmware: Firmware = STOCK_FIRMWARE): StockSettin
       const chosen = setter.indexOf(node.valueHint ?? "");
       if (chosen < 0) throw new Error(`Setting ${node.number} shows no option as its value.`);
       choices[key] = { options: setter.length, chosen };
+      treeLabels.set(key, setter);
     } else if (spec.kind === "option-list") {
       if (spec.multi) marks[key] = spec.options.map((option) => option.marked === true);
-      else choices[key] = { options: spec.options.length, chosen: spec.opening };
+      else {
+        choices[key] = { options: spec.options.length, chosen: spec.opening };
+        treeLabels.set(
+          key,
+          spec.options.map((option) => option.label),
+        );
+      }
     } else if (spec.kind === "info-pages") {
       for (const page of spec.pages) {
         if (page.value !== undefined) texts[`${key}/${slugOf(page.label)}`] = page.value;
@@ -337,7 +349,14 @@ export function virginSettings(firmware: Firmware = STOCK_FIRMWARE): StockSettin
     }
   }
   for (const { key, labels, chosen } of tables.choices) {
-    if (key in choices) throw new Error(`Setting "${key}" is a tree setting too.`);
+    const listed = treeLabels.get(key);
+    if (listed !== undefined) {
+      if (JSON.stringify(listed) !== JSON.stringify(labels) || choices[key]!.chosen !== chosen) {
+        throw new Error(`Tree setting "${key}" differs from its registered choice.`);
+      }
+      continue;
+    }
+    if (key in choices || key in marks) throw new Error(`Setting "${key}" is registered twice.`);
     choices[key] = { options: labels.length, chosen };
   }
   for (const entry of tables.virginTexts) {
@@ -375,6 +394,16 @@ export function virginSettings(firmware: Firmware = STOCK_FIRMWARE): StockSettin
       }
       aliases[key] = target;
       delete table[key];
+    }
+  }
+  for (const { prefix, target } of tables.aliases) {
+    const base = typeof target === "string" ? target : target(() => null);
+    for (const table of [choices, marks, texts] as Record<string, unknown>[]) {
+      for (const key of Object.keys(table)) {
+        const alias = prefix + key.slice(base.length);
+        if (!key.startsWith(base) || alias in aliases) continue;
+        if (firmware.settingAlias(alias) === key) aliases[alias] = key;
+      }
     }
   }
   return { choices, marks, texts, numbers, aliases };

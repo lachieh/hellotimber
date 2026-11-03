@@ -17,7 +17,6 @@ import { invalidShortcut } from "./leaves";
 import { firmwareMenu, STOCK_SHORTCUT_WINDOW_MS, stockMessaging, stockServices } from "./menu";
 import type { Firmware } from "./firmware";
 import { firmwareRecords } from "./records";
-import { settingsRecordOf } from "./settings";
 import { STOCK_FIRMWARE } from "./stock";
 import { openBox } from "../messages/read";
 import { StockFlowApplication } from "../kit/ui/widgets/flow";
@@ -198,7 +197,7 @@ export function createStockPhoneWith(
   const t9 = stockT9(eeprom, config.t9?.english);
   // Plan 18b D5: without a T9 dictionary the virgin editor is multi-tap (Dictionary off).
   const settings = createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES, firmware);
-  applyPreload(preload, storage, eeprom, settings, settingsRecordOf(firmware));
+  applyPreload(preload, storage, eeprom, settings, firmware);
   let now = 0;
   const security = new StockSecurity(eeprom, settings, { now: () => now, sim });
   const skip = config.boot === "skip";

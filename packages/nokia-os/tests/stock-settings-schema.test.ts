@@ -1,8 +1,9 @@
 // Plan 32 Phase 0: the handset registers the settings and records it needs itself, and a tree's
 // option lists bind to them. The stock firmware must compose to exactly the schema it had before
 // that split: the same virgin settings (keys, option counts, chosen values, texts, numbers,
-// aliases), the same option labels, the same record keys, the same EEPROM records (by name: their order only orders independent writes) and the same
-// factory state. The file snapshot was written before the registry existed.
+// aliases), the same option labels, the same record keys, the same EEPROM records (by name: their
+// order only orders independent writes) and the same factory state. The file snapshot (plain
+// text, so the formatter leaves it as written) was written before the registry existed.
 import { describe, expect, it } from "vite-plus/test";
 import { firmwareRecords } from "../src/firmware/records";
 import { createMemorySettings, settingsRecordKeys, virginSettings } from "../src/firmware/settings";
@@ -40,7 +41,7 @@ describe("the stock settings schema", () => {
         }),
     };
     await expect(`${JSON.stringify(schema, null, 2)}\n`).toMatchFileSnapshot(
-      "__snapshots__/stock-settings-schema.json",
+      "__snapshots__/stock-settings-schema.txt",
     );
   });
 });

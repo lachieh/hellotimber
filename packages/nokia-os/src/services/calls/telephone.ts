@@ -24,6 +24,12 @@ import type { CallClock } from "./timestamp";
  * 1866-1873 ms at standby; the paging occasion varies it, 1958-2115 ms over other screens), 240 ms
  * more for a number of 15 digits or more (`ring/number-123456789012345`: two SETUP blocks).
  */
+/**
+ * Settings › Call settings › Own number sending (6-1-4): Set by network, On, Off; outgoing calls
+ * send the caller identity it says.
+ */
+export const OWN_NUMBER_SENDING_KEY = "settings/call-settings/own-number-sending";
+
 export const CALL_TIMINGS = {
   alertingMs: 2200,
   /** A resolved SIM name: ≈2065 ms from Calling (plan 19 hold/on-2). */
@@ -340,7 +346,7 @@ export class StockTelephone {
       const tone = this.#deps.tones.emergency;
       this.#deps.sounder.callSound(tone.program(this.#volume), now + tone.afterMs);
     }
-    const identity = this.#deps.settings.choice("settings/call-settings/own-number-sending");
+    const identity = this.#deps.settings.choice(OWN_NUMBER_SENDING_KEY);
     const policy = identity === 0 ? "network" : identity === 1 ? "show" : "hide";
     const outgoing: StockOutgoingCall = {
       ...(emergency ? {} : { ownNumberSending: identity === null ? "network" : policy }),

@@ -13,8 +13,6 @@ import {
 } from "../../phone-book/flows";
 import { assignTone, edit, eraseAll, eraseOneByOne } from "../../phone-book/manage";
 import { addVoiceTag, speedDials } from "../../phone-book/speed";
-import { PHONE_BOOK_RECORD } from "../../services/phone-book/store";
-import type { EepromRecord } from "../eeprom";
 import type { StockFeature, StockServices } from "./feature";
 import type { Flow, Widget } from "../../kit/ui/widgets/flow";
 import { OptionListWidget, settingOptionList } from "../../widgets/option-list";
@@ -106,8 +104,6 @@ export const phoneBookFeature: StockFeature = {
     "1-9": (services) => () => speedDials(services),
     "1-10-1": (services) => () => addVoiceTag(services),
   },
-  // Plan 19 D3: the SIM's locations by SIM identity, speed dials and assigned tones.
-  records: [PHONE_BOOK_RECORD as EepromRecord<unknown>],
   widgets: {
     promptLayouts: {
       "1-1": { icons: ["pen", "abc"], entry: "box" },

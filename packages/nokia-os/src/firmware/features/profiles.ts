@@ -515,16 +515,6 @@ export const profilesFeature: StockFeature = {
     noteEnds: { "12-*-2-9-1": { levels: 2 }, "12-*-2-9-2": { levels: 2 } },
   },
   settings: {
-    // Settings one menu shares with another (plan 14 D9, P11): Tones are the active profile's
-    // Personalise settings (D1); the virgin EEPROM's active profile is General. Composer has no
-    // Personalise counterpart, so it keeps its own.
-    aliases: [
-      {
-        prefix: TONES,
-        target: (choice) => profileAlias(TONES, PROFILE_SLUGS[choice(ACTIVE_PROFILE_KEY) ?? 0]!),
-      },
-    ],
-    choices: [{ key: ACTIVE_PROFILE_KEY, labels: PROFILE_SLUGS, chosen: null }],
     // Restore gives slot 6 the name (empty), not the virgin boxes (plan 15 Task 0c).
     factoryTexts: [
       {

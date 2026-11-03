@@ -1,17 +1,19 @@
-// The stock v6.39 firmware: the generated tree with every feature of features/index.ts composed
-// over it (`firmware.ts`). A node, key or text two features bind throws here, when the module
+// The stock v6.39 firmware: the stock handset and the generated tree with every feature of
+// features/index.ts composed over it (`firmware.ts`). A node, key or text two features bind throws here, when the module
 // loads. The other exports are STOCK_FIRMWARE's tables and lookups under their pre-composition
 // names, for tests and tools that read the stock firmware.
 import * as FEATURES from "./features/index";
 import type { StockFeature } from "./features/feature";
 import { byName, composeFirmware, type Firmware } from "./firmware";
 import { STOCK_TREE } from "./generated/stock-tree";
+import { STOCK_HANDSET } from "./handset";
 
 /** Every registered feature, sorted by name (list tables concatenate in this order). */
 export const STOCK_FEATURES: readonly StockFeature[] = byName(Object.values(FEATURES));
 
 /** The stock v6.39 firmware. */
 export const STOCK_FIRMWARE: Firmware = composeFirmware({
+  handset: STOCK_HANDSET,
   tree: STOCK_TREE,
   features: STOCK_FEATURES,
 });

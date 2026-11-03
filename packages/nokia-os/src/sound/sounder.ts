@@ -52,8 +52,8 @@ const WARNING_TONES_ON = 0;
 const WARNING_TONES_OFF = 1;
 
 /** Games › Settings › Sounds and Shakes (shared by the games): Off, On. */
-const SOUNDS_KEY = "games/settings/sounds";
-const SHAKES_KEY = "games/settings/shakes";
+export const GAMES_SOUNDS_KEY = "games/settings/sounds";
+export const GAMES_SHAKES_KEY = "games/settings/shakes";
 const GAMES_ON = 1;
 
 /** Incoming call alert's options (5-3, 12-n-2-3). */
@@ -583,12 +583,12 @@ export class StockSounder implements StockCueSink {
       return;
     }
     if (cue.kind === "vibrate") {
-      if (this.#settings.choice(SHAKES_KEY) !== GAMES_ON || !this.#vibrates()) return;
+      if (this.#settings.choice(GAMES_SHAKES_KEY) !== GAMES_ON || !this.#vibrates()) return;
       this.#sequencer.play({ id: "game/vibrate", steps: [{ ms: cue.ms, vibrator: true }] }, atMs);
       return;
     }
     if (this.#settings.choice(WARNING_TONES_KEY) !== WARNING_TONES_ON) return;
-    if (this.#settings.choice(SOUNDS_KEY) !== GAMES_ON) return;
+    if (this.#settings.choice(GAMES_SOUNDS_KEY) !== GAMES_ON) return;
     if (cue.kind === "game-sound") {
       if (this.#gameSound !== undefined) this.#sequencer.cancel(this.#gameSound, atMs);
       this.#gameSound = this.#sequencer.play(this.#gameProgram(cue.id), atMs);

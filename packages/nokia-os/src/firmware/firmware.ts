@@ -1,6 +1,6 @@
-// A firmware as a value (plan 32 Phase 0): a menu tree and the features bound to its nodes,
-// composed into one table per kind of binding and the lookups the menu, the leaves, the settings
-// store and the records list read. A node, key or text two features bind throws when the
+// A firmware as a value (plan 32 Phase 0): the handset's own settings and records, a menu tree
+// and the features bound to its nodes, composed into one table per kind of binding and the
+// lookups the menu, the leaves, the settings store and the records list read. A node, key or text two features bind throws when the
 // firmware is composed. `stock.ts` composes the v6.39 firmware; any other tree in the same node
 // format composes the same way.
 import type {
@@ -30,13 +30,30 @@ import type { ListNumbering } from "../kit/ui/widgets/rows";
 import type { StockPorts } from "./ports";
 import type { StockSettings } from "./settings";
 
-/** What a firmware is composed of: its menu tree and the features bound to its node numbers. */
+/**
+ * What the phone around the menu needs whatever tree it runs (`handset.ts` `STOCK_HANDSET`): the
+ * settings it reads, which a tree's option lists bind to by key (same options, same virgin
+ * choice), and its EEPROM records.
+ */
+export interface Handset {
+  readonly settings: Pick<
+    StockSettingsTables,
+    "choices" | "aliases" | "typedTexts" | "restoreKeeps"
+  >;
+  readonly records: readonly EepromRecord<unknown>[];
+}
+
+/** What a firmware is composed of: its handset, its menu tree and the features bound to it. */
 export interface FirmwareSpec {
+  readonly handset: Handset;
   readonly tree: readonly StockTreeNode[];
   readonly features: readonly StockFeature[];
 }
 
-/** The settings store's tables (plan 14 D9, plan 15), merged across a firmware's features. */
+/**
+ * The settings store's tables (plan 14 D9, plan 15), merged across a firmware's handset (first)
+ * and features.
+ */
 export interface FirmwareSettingsTables {
   readonly choices: readonly VirginChoice[];
   readonly aliases: readonly { readonly prefix: string; readonly target: AliasTarget }[];
@@ -75,10 +92,13 @@ export interface Firmware {
   readonly progressQuits: Readonly<Record<string, NamedNote>>;
   readonly exitLevels: Readonly<Record<string, number>>;
   readonly levelBars: Readonly<Record<string, string>>;
-  /** The settings store's tables (plan 14 D9, plan 15). */
+  /** The settings store's tables (plan 14 D9, plan 15), the handset's included. */
   readonly settings: FirmwareSettingsTables;
-  /** The features' EEPROM records (plan 15 D2), in feature order. */
-  readonly featureRecords: readonly EepromRecord<unknown>[];
+  /**
+   * The EEPROM records (plan 15 D2) besides the settings store's: the handset's, then the
+   * features' in feature order.
+   */
+  readonly records: readonly EepromRecord<unknown>[];
 
   /** The path from the top level to tree node `number`; throws when there is none. */
   readonly treePath: (number: string) => StockTreeNode[];
@@ -139,9 +159,12 @@ export function byName(features: readonly StockFeature[]): readonly StockFeature
   return [...features].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 }
 
-/** Composes `spec.features` over `spec.tree`; a node, key or text two features bind throws. */
+/**
+ * Composes `spec.features` over `spec.tree` with `spec.handset`; a node, key or text two features
+ * bind throws.
+ */
 export function composeFirmware(spec: FirmwareSpec): Firmware {
-  const { tree } = spec;
+  const { tree, handset } = spec;
   const features = byName(spec.features);
 
   /** The union of one table from every feature; a key two features define throws. */
@@ -200,15 +223,16 @@ export function composeFirmware(spec: FirmwareSpec): Firmware {
   const levelBars = widgets("Level bars", "levelBars");
   const entryIndicatorLevels = joined((f) => f.widgets?.entryIndicatorLevels);
 
+  const own = handset.settings;
   const settings: FirmwareSettingsTables = {
-    choices: joined((f) => f.settings?.choices),
-    aliases: joined((f) => f.settings?.aliases),
+    choices: [...(own.choices ?? []), ...joined((f) => f.settings?.choices)],
+    aliases: [...(own.aliases ?? []), ...joined((f) => f.settings?.aliases)],
     hostValues: settingsTable("Host value", "hostValues"),
     virginTexts: joined((f) => f.settings?.virginTexts),
     virginNumbers: joined((f) => f.settings?.virginNumbers),
-    typedTexts: joined((f) => f.settings?.typedTexts),
+    typedTexts: [...(own.typedTexts ?? []), ...joined((f) => f.settings?.typedTexts)],
     codeSettings: settingsTable("Code setting", "codeSettings"),
-    restoreKeeps: joined((f) => f.settings?.restoreKeeps),
+    restoreKeeps: [...(own.restoreKeeps ?? []), ...joined((f) => f.settings?.restoreKeeps)],
     factoryDefaults: joined((f) => f.settings?.factoryDefaults),
     factoryTexts: joined((f) => f.settings?.factoryTexts),
   };
@@ -232,7 +256,7 @@ export function composeFirmware(spec: FirmwareSpec): Firmware {
     exitLevels,
     levelBars,
     settings,
-    featureRecords: joined((f) => f.records),
+    records: [...handset.records, ...joined((f) => f.records)],
 
     treePath: (number) => treePath(tree, number),
     nextSibling: (number) => nextSibling(tree, number),

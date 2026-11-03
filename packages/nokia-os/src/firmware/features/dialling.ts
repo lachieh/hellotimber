@@ -4,7 +4,6 @@
 import { PhoneApplication, type PhoneKey } from "@hellotimber/phone-core";
 import { CalculatorRate } from "../../kit/apps/calculator/rate";
 import { dialOutcome, immediateCode } from "../../services/calls/dial-string";
-import { CALLS_RECORD } from "../../services/calls/log";
 import type { StockCall, StockTelephone } from "../../services/calls/telephone";
 import {
   afterDown,
@@ -18,7 +17,7 @@ import { StockFlowApplication, type Flow, type Widget } from "../../kit/ui/widge
 import { note } from "../../kit/ui/widgets/note";
 import { serviceRequest } from "../../widgets/service-request";
 import { placeholderWidget } from "../../kit/ui/widgets/placeholder";
-import type { EepromRecord, StockEeprom } from "../eeprom";
+import type { StockEeprom } from "../eeprom";
 import { timelineByName } from "../../kit/ui/timelines";
 import type { StockFeature, StockServices } from "./feature";
 import { pickNumber, standbyList } from "../../phone-book/flows";
@@ -43,6 +42,9 @@ export const DIAL_KEYS: readonly PhoneKey[] = [
 
 /** Messages › Voice mailbox number (plan 18's setting; virgin: the SIM's `793000333`). */
 const VOICE_MAILBOX_KEY = "messages/voice-mailbox-number";
+
+/** Settings › Call settings › Speed dialling (6-1-2): On, Off; a held digit dials while On. */
+export const SPEED_DIALLING_KEY = "settings/call-settings/speed-dialling";
 
 /** The SIM's phone book locations (the emulator SIM: 50; plan 19's SIM port replaces this). */
 const SIM_LOCATIONS = 50;
@@ -264,7 +266,7 @@ export function numberEntry(services: StockServices, text?: string): Widget {
       else convert(services, typed, flow);
     },
     speedDial: (key, flow) => {
-      if (services.settings.choice("settings/call-settings/speed-dialling") !== 0) return;
+      if (services.settings.choice(SPEED_DIALLING_KEY) !== 0) return;
       const entry = services.phoneBook.speedDial(Number(key));
       if (entry === undefined) return;
       flow.replace({
@@ -298,7 +300,8 @@ export function stockStandbyEntry(services: StockServices): {
   };
 }
 
-export const diallingFeature: StockFeature = {
-  name: "dialling",
-  records: [CALLS_RECORD as EepromRecord<unknown>],
-};
+/**
+ * Standby's number entry and the calls are wired by the handset (`phone.ts`), whose records hold
+ * the call register (`handset.ts`).
+ */
+export const diallingFeature: StockFeature = { name: "dialling" };

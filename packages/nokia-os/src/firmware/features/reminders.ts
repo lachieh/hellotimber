@@ -1,11 +1,9 @@
 // Reminders (menu 10; plan 21): Add new, View all and Erase over the reminder memory
 // (`reminders/store.ts`), its alerts (`reminders/service.ts`), and the level's children listed
 // while the memory holds a reminder (D8, D9).
-import type { EepromRecord } from "../eeprom";
 import type { StockFeature } from "./feature";
 import { addNew, erase, viewAll } from "./reminders/flows";
 import { phoneReminders } from "./reminders/service";
-import { REMINDERS_RECORD } from "./reminders/store";
 
 export const remindersFeature: StockFeature = {
   name: "reminders",
@@ -37,5 +35,4 @@ export const remindersFeature: StockFeature = {
     },
     exitLevels: { "10-2": 2 },
   },
-  records: [REMINDERS_RECORD as EepromRecord<unknown>],
 };

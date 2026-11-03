@@ -6,8 +6,7 @@ import type { Flow, Widget } from "../../kit/ui/widgets/flow";
 import { note } from "../../kit/ui/widgets/note";
 import { OptionListWidget } from "../../widgets/option-list";
 import { splitPromptLines } from "../../kit/ui/widgets/prompt";
-import type { EepromRecord } from "../eeprom";
-import { SECURITY_CODE_DIGITS, SECURITY_RECORD } from "../security";
+import { SECURITY_CODE_DIGITS } from "../security";
 import { timelineByName } from "../../kit/ui/timelines";
 import type { NamedNote, ScreenBinding, ScreenPlace, StockFeature, StockServices } from "./feature";
 
@@ -171,5 +170,4 @@ export const securityFeature: StockFeature = {
     // Phone security is a single choice behind the code (virgin `Off`, `tree/06-settings/6-3.sub`).
     codeSettings: { "6-3-5": PHONE_SECURITY_LABELS },
   },
-  records: [SECURITY_RECORD as EepromRecord<unknown>],
 };

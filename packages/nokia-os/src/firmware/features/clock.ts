@@ -8,10 +8,8 @@ import { confirmQuery } from "../../kit/ui/widgets/confirm";
 import { note, type NoteOptions } from "../../kit/ui/widgets/note";
 import { Playback } from "../../kit/ui/widgets/playback";
 import { timeEntry, type EntryMask } from "../../widgets/time-entry";
-import type { EepromRecord } from "../eeprom";
 import { timelineById, timelineByName } from "../../kit/ui/timelines";
 import { WIDGET_TIMELINE_BY_NODE } from "../../kit/ui/resources";
-import { CLOCK_RECORD } from "./clock/record";
 import { clockOfSettings, phoneClock } from "./clock/registry";
 import { TIME_FORMAT } from "./clock/service";
 import { formatClock, formatDate, parseHostTime } from "./clock/time";
@@ -362,6 +360,4 @@ export const clockFeature: StockFeature = {
       },
     },
   },
-  // Plan 21 D7: the alarm, its snooze, the time offset and Hide clock.
-  records: [CLOCK_RECORD as EepromRecord<unknown>],
 };

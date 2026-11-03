@@ -1,7 +1,7 @@
 // Composer (Tones › Composer, 5-4-1 … 5-4-7; plan 27): each slot's editor (D1), the slots named by
 // their saved tones (D13), and the saved tones' EEPROM record (D7). One StockComposer and one
 // cursor blink per phone (per EEPROM).
-import { COMPOSER_RECORD, COMPOSER_SLOTS, StockComposer } from "../../composer/store";
+import { COMPOSER_SLOTS, StockComposer } from "../../composer/store";
 import {
   composerEditor,
   composerSave,
@@ -9,7 +9,7 @@ import {
   type ComposerBlink,
   type ComposerServices,
 } from "../../widgets/composer";
-import type { EepromRecord, StockEeprom } from "../eeprom";
+import type { StockEeprom } from "../eeprom";
 import { timelineByName } from "../../kit/ui/timelines";
 import type { ScreenBinding, StockFeature, StockServices } from "./feature";
 
@@ -75,6 +75,4 @@ export const composerFeature: StockFeature = {
       return { label: (_slug, order) => composer.slot(order)?.name };
     },
   },
-  // Restore factory settings empties every slot (K13).
-  records: [COMPOSER_RECORD as EepromRecord<unknown>],
 };
