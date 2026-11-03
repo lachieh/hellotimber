@@ -55,8 +55,8 @@ import { stockT9 } from "../kit/system/t9/service";
 import { SoundSequencer } from "../kit/ui/sound/sequencer";
 import { StockSounder, type KeyDownOptions } from "../sound/sounder";
 import { Framebuffer } from "@hellotimber/phone-screen";
-import { paintStockScreen } from "../kit/ui/display/paint";
-import { attachDescription, describeStockScreen } from "../kit/ui/display/describe";
+import { attachDescription } from "../kit/ui/display/describe";
+import { describeFirmwareScreen, firmwarePainter } from "./display";
 import { StockCallLog } from "../services/calls/log";
 import { StockTelephone } from "../services/calls/telephone";
 import { STOCK_CALL_TONES } from "../calls/sounds";
@@ -458,6 +458,7 @@ export function createStockPhoneWith(
   let handset:
     | { readonly under: PhoneSnapshot["screen"]; readonly screen: PhoneSnapshot["screen"] }
     | undefined;
+  const paint = firmwarePainter(firmware);
   const withHandset = (screen: PhoneSnapshot["screen"]): PhoneSnapshot["screen"] => {
     if (!poweredOn || !telephone.handsetOverlay()) {
       handset = undefined;
@@ -465,7 +466,7 @@ export function createStockPhoneWith(
     }
     if (handset?.under === screen) return handset.screen;
     const fb = new Framebuffer();
-    paintStockScreen(fb, screen);
+    paint(fb, screen);
     const sprite = WIDGET_SPRITES["call/handset"]!;
     // Over another screen the handset sits at the top left (`interrupt/menu-reject` e).
     fb.blitBitmap(sprite.bitmap, HANDSET_OVER_X, sprite.y);
@@ -475,7 +476,7 @@ export function createStockPhoneWith(
       frame: { width: fb.width, height: fb.height, pixels: fb.pixels },
     };
     // Plan 30 D11: the screen text is the screen's below.
-    attachDescription(painted.frame, describeStockScreen(screen));
+    attachDescription(painted.frame, describeFirmwareScreen(firmware, screen));
     handset = { under: screen, screen: painted };
     return painted;
   };

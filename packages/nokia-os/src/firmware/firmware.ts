@@ -1,8 +1,8 @@
 // A firmware as a value (plan 32 Phase 0): the handset's own settings and records, a menu tree
 // and the features bound to its nodes, composed into one table per kind of binding and the
-// lookups the menu, the leaves, the settings store and the records list read. A node, key or text two features bind throws when the
-// firmware is composed. `stock.ts` composes the v6.39 firmware; any other tree in the same node
-// format composes the same way.
+// lookups the menu, the leaves, the painter, the settings store and the records list read. A
+// node, key or text two features bind throws when the firmware is composed. `stock.ts` composes
+// the v6.39 firmware; any other tree in the same node format composes the same way.
 import type {
   AliasTarget,
   FactoryDefault,
@@ -25,6 +25,13 @@ import type {
 import type { EepromRecord } from "../services/storage";
 import type { StockTreeNode } from "./generated/stock-tree";
 import { byPattern, matchesPattern, nextSibling, treePath, treePaths } from "./tree";
+import type { ScreenDisplay } from "../kit/ui/display/screen-display";
+import {
+  WIDGET_TIMELINE_BY_NODE,
+  type CarouselGraphic,
+  type StockWidgetTimeline,
+} from "../kit/ui/resources";
+import { timelineById } from "../kit/ui/timelines";
 import type { PromptLayout } from "../kit/ui/widgets/prompt";
 import type { ListNumbering } from "../kit/ui/widgets/rows";
 import type { StockPorts } from "./ports";
@@ -43,11 +50,32 @@ export interface Handset {
   readonly records: readonly EepromRecord<unknown>[];
 }
 
+/**
+ * A top-level node of a firmware's tree: a tree node that may draw its own carousel graphic
+ * (otherwise the stock icon of its slug; its slug still keys its settings).
+ */
+export type FirmwareNode = StockTreeNode & { readonly graphic?: CarouselGraphic };
+
+/** SIM services' carousel slot (plan 30 D5): after the tree's items, numbered `number`. */
+export interface SimServicesSlot {
+  /** Its menu number (v6.39: 14 in the 13th slot, Task 0 K); its level draws no menu number. */
+  readonly number: number;
+}
+
 /** What a firmware is composed of: its handset, its menu tree and the features bound to it. */
 export interface FirmwareSpec {
   readonly handset: Handset;
-  readonly tree: readonly StockTreeNode[];
+  readonly tree: readonly FirmwareNode[];
   readonly features: readonly StockFeature[];
+  /**
+   * Subtrees whose nodes play the stock v6.39 recordings (their widget timelines) of a stock
+   * subtree, by this tree's number prefix → the stock number prefix (`"3": "8"`: 3-1-1 plays
+   * 8-1-1's). The stock firmware maps every top-level node to itself; remounted features add
+   * theirs (`StockFeature.models`). A node under none has no node timeline, only text styles.
+   */
+  readonly models?: Readonly<Record<string, string>>;
+  /** SIM services' slot, shown while the SIM has a toolkit; absent: the firmware has none. */
+  readonly simServices?: SimServicesSlot;
 }
 
 /**
@@ -71,11 +99,17 @@ export interface FirmwareSettingsTables {
 
 /** One composed firmware: its tree, its features' merged tables and the lookups over them. */
 export interface Firmware {
-  readonly tree: readonly StockTreeNode[];
+  readonly tree: readonly FirmwareNode[];
   /** The features, sorted by name: list tables (aliases, defaults, records) join in this order. */
   readonly features: readonly StockFeature[];
   /** Same-as subtrees (plan 14 S6). */
   readonly sameAs: Readonly<Record<string, string>>;
+  /** The stock subtrees whose recordings this tree's subtrees play (`FirmwareSpec.models`). */
+  readonly models: Readonly<Record<string, string>>;
+  /** SIM services' slot, if the firmware has one. */
+  readonly simServices: SimServicesSlot | undefined;
+  /** What the painter and the describer draw beyond the screen model (`firmwareDisplay`). */
+  readonly display: ScreenDisplay;
   /** Leaves that open a later plan's placeholder, by node pattern → owner plan. */
   readonly placeholders: Readonly<Record<string, string>>;
   /** Screens implemented by a feature, by node number. */
@@ -110,10 +144,18 @@ export interface Firmware {
   /** The plan that owns the placeholder at node `number`, if it is one. */
   readonly placeholderOwner: (number: string) => string | undefined;
   /**
-   * The node whose goldens and timelines stand for `number`: below a same-as root, the model's
-   * node (`12-3-2-9-1` → `12-2-2-9-1`: a long Screen saver `Done`, not the short style).
+   * The tree node whose bindings stand for `number`: below a same-as root, the model's node, to
+   * the end of a chain (`12-3-2-9-1` → `12-2-2-9-1`).
    */
-  readonly modelNumber: (number: string) => string;
+  readonly sameAsNumber: (number: string) => string;
+  /**
+   * The stock node whose recordings `number` plays: its same-as node under `models`
+   * (`12-3-2-9-1` → `12-2-2-9-1`: a long Screen saver `Done`, not the short style); undefined
+   * under no model.
+   */
+  readonly recordingNumber: (number: string) => string | undefined;
+  /** The widget timeline of node `number`'s own recording (`recordingNumber`), if any. */
+  readonly nodeTimeline: (number: string) => StockWidgetTimeline | undefined;
   /** The setter children (slugs) of the level at `number`, if it is a setter level. */
   readonly setterLevel: (number: string) => readonly string[] | undefined;
   /** Whether the level at `number` shows the entry indicator. */
@@ -130,12 +172,11 @@ export interface Firmware {
   readonly optionListNumbering: (number: string) => ListNumbering;
   /** The prompt layout of node `number`; code prompts share one. */
   readonly promptLayout: (number: string, kind: string) => PromptLayout | undefined;
-  /** The widget timeline id of the note at tree node `number` with text `lines`, if any. */
-  readonly noteTimelineId: (
-    byNode: Readonly<Record<string, string>>,
-    number: string,
-    lines: readonly string[],
-  ) => string | undefined;
+  /**
+   * The widget timeline id of the note at tree node `number` with text `lines`, if any: its own
+   * recording's (`recordingNumber`), else its text's style (`noteStyles`).
+   */
+  readonly noteTimelineId: (number: string, lines: readonly string[]) => string | undefined;
   /** The note lines a numeric setting shows, by node number: line `line` is its value. */
   readonly numberLine: (
     number: string,
@@ -159,13 +200,48 @@ export function byName(features: readonly StockFeature[]): readonly StockFeature
   return [...features].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 }
 
+/** Whether `number` is `prefix` or below it, by whole segments. */
+const under = (number: string, prefix: string): boolean =>
+  number === prefix || number.startsWith(`${prefix}-`);
+
+/** Throws unless every top-level node's own carousel graphic can be painted. */
+function checkGraphics(tree: readonly FirmwareNode[]): void {
+  for (const { number, graphic } of tree) {
+    if (graphic === undefined) continue;
+    if (graphic.frames.length === 0) throw new Error(`Node ${number}'s graphic has no frames.`);
+    const step = graphic.timeline?.steps.find((s) => s.frame >= graphic.frames.length);
+    if (step !== undefined) {
+      throw new Error(
+        `Node ${number}'s graphic timeline shows frame ${step.frame}, which it lacks.`,
+      );
+    }
+  }
+}
+
+/**
+ * What a firmware's screens draw beyond their models: its nodes' own carousel graphics by graphic
+ * id (the node's slug, `firmwareMenu`), and SIM services' level, which draws no menu number.
+ */
+function firmwareDisplay(
+  tree: readonly FirmwareNode[],
+  simServices: SimServicesSlot | undefined,
+): ScreenDisplay {
+  return {
+    menuIcons: Object.fromEntries(
+      tree.flatMap((node) => (node.graphic === undefined ? [] : [[node.slug, node.graphic]])),
+    ),
+    unnumberedMenus: simServices === undefined ? [] : [simServices.number],
+  };
+}
+
 /**
  * Composes `spec.features` over `spec.tree` with `spec.handset`; a node, key or text two features
- * bind throws.
+ * bind throws, as does a model prefix two features map to different stock subtrees.
  */
 export function composeFirmware(spec: FirmwareSpec): Firmware {
-  const { tree, handset } = spec;
+  const { tree, handset, simServices } = spec;
   const features = byName(spec.features);
+  checkGraphics(tree);
 
   /** The union of one table from every feature; a key two features define throws. */
   function merged<T>(
@@ -206,6 +282,33 @@ export function composeFirmware(spec: FirmwareSpec): Firmware {
     ) as never;
 
   const sameAs = merged("Same-as subtree", (f) => f.sameAs);
+  const models: Record<string, string> = { ...spec.models };
+  for (const feature of features) {
+    for (const [prefix, model] of Object.entries(feature.models ?? {})) {
+      if (models[prefix] !== undefined && models[prefix] !== model) {
+        throw new Error(
+          `${feature.name} maps ${prefix} to stock ${model}, not ${models[prefix]} as composed.`,
+        );
+      }
+      models[prefix] = model;
+    }
+  }
+  /** Longest prefix first, so a deeper mapping wins. */
+  const modelPrefixes = Object.keys(models).sort((a, b) => b.length - a.length);
+  const sameAsNumber = (number: string): string => {
+    let at = number;
+    for (let hops = 0; hops <= Object.keys(sameAs).length; hops++) {
+      const copy = Object.keys(sameAs).find((root) => at.startsWith(`${root}-`));
+      if (copy === undefined) return at;
+      at = sameAs[copy]! + at.slice(copy.length);
+    }
+    throw new Error(`Same-as subtrees loop at ${number}.`);
+  };
+  const recordingNumber = (number: string): string | undefined => {
+    const at = sameAsNumber(number);
+    const prefix = modelPrefixes.find((p) => under(at, p));
+    return prefix === undefined ? undefined : models[prefix] + at.slice(prefix.length);
+  };
   const placeholders = merged("Placeholder", (f) => f.placeholders);
   const screens = merged("Screen", (f) => f.screens);
   const exitsWhen = merged("Exits when", (f) => f.exitsWhen);
@@ -244,6 +347,9 @@ export function composeFirmware(spec: FirmwareSpec): Firmware {
     tree,
     features,
     sameAs,
+    models,
+    simServices,
+    display: firmwareDisplay(tree, simServices),
     placeholders,
     screens,
     exitsWhen,
@@ -263,11 +369,12 @@ export function composeFirmware(spec: FirmwareSpec): Firmware {
     treePaths: () => treePaths(tree),
 
     placeholderOwner: (number) => byPattern(placeholders, number),
-    modelNumber(number) {
-      for (const [copy, model] of Object.entries(sameAs)) {
-        if (number.startsWith(`${copy}-`)) return model + number.slice(copy.length);
-      }
-      return number;
+    sameAsNumber,
+    recordingNumber,
+    nodeTimeline(number) {
+      const recording = recordingNumber(number);
+      const id = recording === undefined ? undefined : WIDGET_TIMELINE_BY_NODE[recording];
+      return id === undefined ? undefined : timelineById(id, `node ${number}`);
     },
     setterLevel: (number) => byPattern(setterLevels, number),
     showsEntryIndicator: (number) =>
@@ -279,7 +386,11 @@ export function composeFirmware(spec: FirmwareSpec): Firmware {
       "path",
     promptLayout: (number, kind) =>
       promptLayouts[number] ?? (kind === "code-prompt" ? CODE_PROMPT : undefined),
-    noteTimelineId: (byNode, number, lines) => byNode[number] ?? noteStyles[lines.join(" ")],
+    noteTimelineId(number, lines) {
+      const recording = recordingNumber(number);
+      const own = recording === undefined ? undefined : WIDGET_TIMELINE_BY_NODE[recording];
+      return own ?? noteStyles[lines.join(" ")];
+    },
     numberLine(number) {
       for (const entry of settings.virginNumbers) {
         if ("number" in entry && entry.number === number) {

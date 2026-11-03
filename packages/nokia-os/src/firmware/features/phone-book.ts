@@ -17,7 +17,6 @@ import type { StockFeature, StockServices } from "./feature";
 import type { Flow, Widget } from "../../kit/ui/widgets/flow";
 import { OptionListWidget, settingOptionList } from "../../widgets/option-list";
 import { settingKey } from "../tree";
-import { nodeTimeline } from "../../kit/ui/timelines";
 import { note } from "../../kit/ui/widgets/note";
 
 /** Save a number already entered or selected in the call register: ask only for its name. */
@@ -78,7 +77,7 @@ export function inCallPhoneBook(services: StockServices, number = "1"): Widget {
     });
   }
   if (screen.kind === "timed-note" || screen.kind === "static-note") {
-    const timeline = nodeTimeline(number);
+    const timeline = services.firmware.nodeTimeline(number);
     return note({
       lines: screen.lines,
       ...(timeline === undefined ? {} : { timeline }),

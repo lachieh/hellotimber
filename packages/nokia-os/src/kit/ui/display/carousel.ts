@@ -1,6 +1,7 @@
 import type { ScreenModel } from "@hellotimber/phone-core";
 import { textWidth, type Framebuffer } from "@hellotimber/phone-screen";
 import { STOCK_FONTS, STOCK_MENU_ICONS } from "../resources";
+import type { ScreenDisplay } from "./screen-display";
 import { paintIndicator } from "./indicator";
 import { paintRail } from "./rail";
 import { SOFTKEY_TOP } from "./standby";
@@ -12,20 +13,21 @@ const TITLE_WIDTH = CAROUSEL_TITLE_WIDTH;
 
 /**
  * The main-menu carousel: the large title, the animated icon (frame `iconFrame`, else its
- * first frame), the rail placing the slot among `total`, the indicator and the softkey (hidden
- * while a typed entry is opening).
+ * first frame; the firmware's own graphic of that id, else the stock icon), the rail placing the
+ * slot among `total`, the indicator and the softkey (hidden while a typed entry is opening).
  */
 export function paintCarousel(
   fb: Framebuffer,
   screen: Extract<ScreenModel, { kind: "menu-carousel" }>,
+  display: ScreenDisplay = {},
 ): void {
   const title = textWidth(STOCK_FONTS.large, screen.label);
   fb.drawText(STOCK_FONTS.large, screen.label, Math.floor((TITLE_WIDTH - title) / 2), TITLE_TOP);
-  const icon = STOCK_MENU_ICONS[screen.iconId];
-  if (icon === undefined) throw new Error(`No stock menu icon "${screen.iconId}".`);
+  const icon = display.menuIcons?.[screen.iconId] ?? STOCK_MENU_ICONS[screen.iconId];
+  if (icon === undefined) throw new Error(`No menu icon "${screen.iconId}".`);
   const frame = icon.frames[screen.iconFrame ?? 0];
   if (frame === undefined) {
-    throw new Error(`No frame ${screen.iconFrame} for stock menu icon "${screen.iconId}".`);
+    throw new Error(`No frame ${screen.iconFrame} for menu icon "${screen.iconId}".`);
   }
   fb.blitBitmap(frame, icon.x, icon.y);
   paintRail(fb, (screen.position ?? screen.menuNumber) - 1, screen.total);

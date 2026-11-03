@@ -248,6 +248,12 @@ export interface StockFeature {
   readonly name: string;
   /** Same-as subtrees (plan 14 S6): everything strictly below each key is its value's subtree. */
   readonly sameAs?: Readonly<Record<string, string>>;
+  /**
+   * The stock subtrees whose recordings this feature's subtrees play, by this tree's number
+   * prefix → the stock prefix (`FirmwareSpec.models`); `remountFeature` writes them. A stock
+   * feature has none: the stock firmware maps its whole tree to itself.
+   */
+  readonly models?: Readonly<Record<string, string>>;
   /** Leaves that open a later plan's placeholder, by node pattern → owner plan (D13). */
   readonly placeholders?: Readonly<Record<string, string>>;
   /** Screens this feature implements, by node number (a leaf, an option, a page). */

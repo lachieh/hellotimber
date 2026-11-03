@@ -5,7 +5,7 @@ import { editor } from "../../kit/ui/widgets/editor";
 import type { Flow, Widget } from "../../kit/ui/widgets/flow";
 import { note } from "../../kit/ui/widgets/note";
 import { OptionListWidget } from "../../widgets/option-list";
-import { nodeTimeline, timelineByName } from "../../kit/ui/timelines";
+import { timelineByName } from "../../kit/ui/timelines";
 import type { StockFeature, StockServices } from "./feature";
 
 /** The stored welcome note (a typed text; absent = no note). Plan 18's editor writes it. */
@@ -21,9 +21,12 @@ export const WELCOME_NOTE_LIMIT = 36;
  * the note (`Welcome note erased`, `welcome/save-empty`, `welcome/erase-empty`). Either note
  * returns to the page (`welcome/save-hi`).
  */
-function welcomeNoteEditor({ settings, noteSound }: StockServices, number: string): () => Widget {
+function welcomeNoteEditor(
+  { settings, noteSound, firmware }: StockServices,
+  number: string,
+): () => Widget {
   // The cursor blinks as the node's own recording (`tree/06-settings/6-2-3.leaf`).
-  const blink = nodeTimeline(number);
+  const blink = firmware.nodeTimeline(number);
   const saved = timelineByName("welcome-note-saved");
   const erased = timelineByName("welcome-note-erased");
   const store = (flow: Flow, text: string): void => {

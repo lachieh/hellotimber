@@ -9,6 +9,7 @@ import { createStockPhoneWith, type StockPhoneInternals } from "../../src/firmwa
 import { createStockSettings } from "../../src/firmware/settings";
 import {
   createMemoryStorage,
+  firmwarePainter,
   paintStockScreen,
   type StockPhoneConfig,
   type StockSoundEvent,
@@ -70,6 +71,9 @@ export function createRig(config: StockPhoneConfig, internals: StockPhoneInterna
   if (watcher !== undefined) phone.subscribe((snapshot) => watcher(snapshot.screen));
   let now = 0;
   phone.tick(now);
+  // A custom firmware's screens are painted with its own display (its carousel graphics).
+  const paintStock =
+    internals.firmware === undefined ? paintStockScreen : firmwarePainter(internals.firmware);
 
   // A stock flow returns the same `custom` frame object until its widget changes, so a frame
   // already painted is reused (performance only: the pixels are the frame's).
@@ -77,7 +81,7 @@ export function createRig(config: StockPhoneConfig, internals: StockPhoneInterna
   const paintScreen = (screen: ScreenModel): Framebuffer => {
     if (screen.kind === "custom" && painted?.frame === screen.frame) return painted.fb;
     const fb = new Framebuffer();
-    paintStockScreen(fb, screen);
+    paintStock(fb, screen);
     if (screen.kind === "custom") painted = { frame: screen.frame, fb };
     return fb;
   };

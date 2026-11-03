@@ -68,6 +68,15 @@ export interface StockMenuIcon {
   readonly frames: readonly Bitmap[];
 }
 
+/**
+ * A carousel graphic a firmware draws itself (plan 32 Phase 0), as the stock icons are drawn:
+ * frames at (x, y), and the timeline whose frames index them; none: a static graphic, its first
+ * frame.
+ */
+export interface CarouselGraphic extends StockMenuIcon {
+  readonly timeline?: Timeline;
+}
+
 /** Carousel icons by graphic id (the menu slug, e.g. `phone-book`). */
 export const STOCK_MENU_ICONS: Readonly<Record<string, StockMenuIcon>> = Object.fromEntries(
   Object.entries(MENU_ICON_DATA).map(([id, icon]) => [

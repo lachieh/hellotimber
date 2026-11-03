@@ -8,7 +8,6 @@ import type {
   PhoneApplicationSession,
   PhoneKey,
 } from "@hellotimber/phone-core";
-import { WIDGET_TIMELINE_BY_NODE } from "../kit/ui/resources";
 import type { StockWidgetTimeline } from "../kit/ui/resources";
 import { confirmQuery } from "../kit/ui/widgets/confirm";
 import { StockFlowApplication, type Flow, type Widget } from "../kit/ui/widgets/flow";
@@ -53,18 +52,12 @@ export interface LeafPlace {
   readonly moves?: NoteOptions["moves"];
 }
 
-/** The node's own recording's timeline (or its same-as model's), if any. */
-function ownTimeline(firmware: Firmware, number: string): StockWidgetTimeline | undefined {
-  const id = WIDGET_TIMELINE_BY_NODE[firmware.modelNumber(number)];
-  return id === undefined ? undefined : timelineById(id, `node ${number}`);
-}
-
 function noteTimeline(
   firmware: Firmware,
   number: string,
   lines: readonly string[],
 ): StockWidgetTimeline | undefined {
-  const id = firmware.noteTimelineId(WIDGET_TIMELINE_BY_NODE, firmware.modelNumber(number), lines);
+  const id = firmware.noteTimelineId(number, lines);
   return id === undefined ? undefined : timelineById(id, `the note at ${number}`);
 }
 
@@ -91,7 +84,7 @@ function placeholderWidget(label: string): Widget {
 function layoutOf(firmware: Firmware, number: string, screen: StockLeafScreen): PromptLayout {
   const layout =
     firmware.promptLayouts[number] ??
-    firmware.promptLayout(firmware.modelNumber(number), screen.kind);
+    firmware.promptLayout(firmware.sameAsNumber(number), screen.kind);
   if (layout === undefined) throw new Error(`No prompt layout for ${number} (${screen.kind}).`);
   return layout;
 }
@@ -105,7 +98,7 @@ function blinkOf(
   if (layout.entry !== "end" && layout.entry !== "start" && layout.entry !== "text") {
     return undefined;
   }
-  return ownTimeline(firmware, number) ?? timelineById(CURSOR_STYLE, `the cursor at ${number}`);
+  return firmware.nodeTimeline(number) ?? timelineById(CURSOR_STYLE, `the cursor at ${number}`);
 }
 
 /** The application id of the node at `path`. */
@@ -194,7 +187,7 @@ export class LeafBinder {
 
   /** A game level's splash intro (D12). */
   intro(node: StockTreeNode, path: string): PhoneApplication {
-    const timeline = ownTimeline(this.#firmware, node.number);
+    const timeline = this.#firmware.nodeTimeline(node.number);
     if (timeline === undefined) throw new Error(`No splash timeline for ${node.number}.`);
     return splashIntro(`stock:intro:${path}`, timeline);
   }
@@ -317,7 +310,8 @@ export class LeafBinder {
       }
       case "level-bar": {
         const sk = need("a level bar");
-        const bars = firmware.levelBars[number] ?? firmware.levelBars[firmware.modelNumber(number)];
+        const bars =
+          firmware.levelBars[number] ?? firmware.levelBars[firmware.sameAsNumber(number)];
         if (bars === undefined) throw new Error(`No level bars for ${number}.`);
         return () => levelBar({ bars, softkey: sk });
       }

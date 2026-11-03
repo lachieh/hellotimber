@@ -1,8 +1,6 @@
 [
   "kit/apps/games/display-snake.ts -> games/snake/model.ts",
   "kit/apps/games/display-space-impact.ts -> games/space-impact/model.ts",
-  "kit/ui/display/describe.ts -> sim/slot.ts",
-  "kit/ui/display/paint.ts -> sim/slot.ts",
   "kit/ui/display/widgets/index.ts -> kit/apps/games/display-snake.ts",
   "kit/ui/display/widgets/index.ts -> kit/apps/games/display-space-impact.ts",
   "kit/ui/display/widgets/message.ts -> sim/messages.ts"

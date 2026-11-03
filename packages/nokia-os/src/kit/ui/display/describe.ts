@@ -4,14 +4,14 @@
 // painted the frame (`attachDescription`), so snapshots and their equality do not change and
 // phone-core does not change. Accessibility and QA text, not pixels: no golden asserts it.
 import type { MenuIndicator, ScreenModel } from "@hellotimber/phone-core";
-import { SIM_SERVICES_NUMBER } from "../../../sim/slot";
+import type { ScreenDisplay } from "./screen-display";
 import { CUT_MARK } from "./list-rows";
 import type { CallBody, WidgetModel } from "./widgets";
 
 /** The text attached to each frame object a stock flow painted. */
 const DESCRIPTIONS = new WeakMap<object, string>();
 
-/** Attaches `text` to `frame` (a stock widget's painted frame): `describeStockScreen` reads it. */
+/** Attaches `text` to `frame` (a stock widget's painted frame): `describeScreen` reads it. */
 export function attachDescription(frame: object, text: string): void {
   DESCRIPTIONS.set(frame, text);
 }
@@ -32,10 +32,16 @@ function withSoftkey(text: string, softkey: string | undefined): string {
 const rowText = (label: string): string =>
   label.endsWith(CUT_MARK) ? `${label.slice(0, -CUT_MARK.length)}...` : label;
 
-/** `Menu 2-2`: the menu number at the top right, when the screen draws one (SIM services' none). */
-function menuNumber(indicator: MenuIndicator | undefined): string | undefined {
+/**
+ * `Menu 2-2`: the menu number at the top right, when the screen draws one (an unnumbered menu's,
+ * v6.39's SIM services, none).
+ */
+function menuNumber(
+  indicator: MenuIndicator | undefined,
+  display: ScreenDisplay,
+): string | undefined {
   if (indicator === undefined || indicator.segments.length === 0) return undefined;
-  if (indicator.segments[0] === SIM_SERVICES_NUMBER) return undefined;
+  if (display.unnumberedMenus?.includes(indicator.segments[0]!)) return undefined;
   return indicator.segments.join("-");
 }
 
@@ -160,7 +166,7 @@ export function describeWidget(model: WidgetModel): string {
     case "phone-book-number":
       return withSoftkey(`Number ${model.number}`, model.softkey);
     case "standby-frame":
-      return describeStockScreen(model.screen);
+      return describeScreen(model.screen);
     case "shortcut-choice":
       return model.label;
     case "content-list":
@@ -222,10 +228,11 @@ function standby(screen: Extract<ScreenModel, { kind: "standby" }>): string {
 }
 
 /**
- * Plan 30 D11: a plain-text description of `screen` (any snapshot's screen of a stock phone), for
- * accessibility mirrors and headless QA. Never empty.
+ * Plan 30 D11: a plain-text description of `screen` (any snapshot's screen of a phone running a
+ * firmware with `display`), for accessibility mirrors and headless QA. Never empty. The stock
+ * firmware's is `describeStockScreen` (src/firmware/display.ts).
  */
-export function describeStockScreen(screen: ScreenModel): string {
+export function describeScreen(screen: ScreenModel, display: ScreenDisplay = {}): string {
   switch (screen.kind) {
     case "off":
       return "Off";
@@ -240,7 +247,7 @@ export function describeStockScreen(screen: ScreenModel): string {
       );
     case "list": {
       const shown = rowText(screen.items[screen.selected] ?? "");
-      const where = menuNumber(screen.menuIndicator);
+      const where = menuNumber(screen.menuIndicator, display);
       const position =
         screen.presentation === "pages"
           ? `${shown}${screen.detail === undefined ? "" : `: ${screen.detail}`}`

@@ -12,7 +12,8 @@ import {
   TopLevelEntry,
 } from "@hellotimber/phone-core";
 import { stockMenuGraphic } from "../../kit/ui/resources";
-import { SIM_SERVICES_NUMBER, SIM_SERVICES_SLUG } from "../../sim/slot";
+import { SIM_SERVICES_SLUG } from "../../sim/slot";
+import type { SimServicesSlot } from "../firmware";
 import { carouselLabel, rowLabel, type StockSimToolkit } from "../../sim/toolkit";
 import { toolkitSession, type ToolkitDial } from "../../sim/session";
 import { StockFlowApplication } from "../../kit/ui/widgets/flow";
@@ -25,7 +26,11 @@ export function toolkitDial(services: StockServices): ToolkitDial {
 }
 
 /** Menu 14 for `toolkit`: its carousel slot and level over one phone's `services`. */
-export function simServicesEntry(toolkit: StockSimToolkit, services: StockServices): TopLevelEntry {
+export function simServicesEntry(
+  toolkit: StockSimToolkit,
+  services: StockServices,
+  slot: SimServicesSlot,
+): TopLevelEntry {
   const deps = { dial: toolkitDial(services) };
   const items = toolkit.items.map(
     (item, i) =>
@@ -40,7 +45,7 @@ export function simServicesEntry(toolkit: StockSimToolkit, services: StockServic
   );
   const level = new SubmenuEntry(
     new MenuSlug(SIM_SERVICES_SLUG),
-    new MenuOrder(SIM_SERVICES_NUMBER),
+    new MenuOrder(slot.number),
     carouselLabel(toolkit.title)!,
     new MenuLevel(items),
     undefined,

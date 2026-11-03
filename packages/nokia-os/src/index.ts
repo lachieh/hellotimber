@@ -1,9 +1,23 @@
 // @hellotimber/nokia-os — the stock Nokia 3310 v6.39 firmware on the phone-core kernel.
-export { paintStockScreen } from "./kit/ui/display/paint";
+export {
+  describeFirmwareScreen,
+  describeStockScreen,
+  firmwarePainter,
+  paintStockScreen,
+} from "./firmware/display";
 export { createFirmwarePhone, createStockPhone } from "./firmware/phone";
-// Plan 32: a firmware is a value: a tree and the features bound to it (`createFirmwarePhone`).
+// Plan 32: a firmware is a value: a handset, a tree and the features bound to it
+// (`createFirmwarePhone`).
 export { composeFirmware } from "./firmware/firmware";
-export type { Firmware, FirmwareSpec } from "./firmware/firmware";
+export type {
+  Firmware,
+  FirmwareNode,
+  FirmwareSpec,
+  Handset,
+  SimServicesSlot,
+} from "./firmware/firmware";
+export { STOCK_HANDSET } from "./firmware/handset";
+export type { CarouselGraphic } from "./kit/ui/resources";
 export { remountFeature } from "./firmware/remount";
 export { STOCK_FEATURES, STOCK_FIRMWARE } from "./firmware/stock";
 export type { StockFeature } from "./firmware/features/feature";
@@ -44,7 +58,6 @@ export type { T9Dictionary } from "./kit/ui/text/t9/dictionary";
 export type { StockSimMessage } from "./sim/messages";
 export type { StockSimToolkit, StockToolkitItem, StockToolkitStep } from "./sim/toolkit";
 export { stockImeiLines } from "./firmware/preload";
-export { describeStockScreen } from "./kit/ui/display/describe";
 export type { StockPreload, StockReminderPreload } from "./firmware/preload";
 
 export type {

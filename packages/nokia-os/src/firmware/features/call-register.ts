@@ -214,7 +214,7 @@ function eraseLists(list: CallList | "all", index: number): ScreenBinding {
   return (services, { number, screen, key }) => {
     if (!("lines" in screen)) throw new Error(`${number}: Erase recent call lists without a note.`);
     const lines = screen.lines;
-    const timeline = nodeTimeline(number);
+    const timeline = services.firmware.nodeTimeline(number);
     return () => {
       services.settings.choose(key, index);
       logOf(services)?.erase(list);

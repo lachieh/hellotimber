@@ -1,7 +1,9 @@
 // Plan 32 Phase 0: the engine runs a second firmware. A hand-written three-item tree (About,
-// Chat, Games) composed with stock features remounted to its numbers boots, shows its carousel
-// and opens the stock Chat and Snake II flows from their new places.
-import type { ScreenModel } from "@hellotimber/phone-core";
+// Chat, Games) composed with the stock handset and stock features remounted to its numbers boots,
+// shows its carousel (About with its own graphic) and opens the stock Chat and Snake II flows from
+// their new places, pixel for pixel as the stock phone draws them.
+import { Timeline, type ScreenModel } from "@hellotimber/phone-core";
+import { bitmapFromArt } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { chatFeature } from "../src/firmware/features/chat";
 import type { StockFeature } from "../src/firmware/features/feature";
@@ -13,14 +15,19 @@ import { STOCK_TREE, type StockTreeNode } from "../src/firmware/generated/stock-
 import { STOCK_HANDSET } from "../src/firmware/handset";
 import { firmwareRecords } from "../src/firmware/records";
 import { settingsRecordKeys, virginSettings } from "../src/firmware/settings";
+import { STOCK_FIRMWARE } from "../src/firmware/stock";
+import { STOCK_MENU_ICONS, WIDGET_TIMELINE_BY_NODE } from "../src/kit/ui/resources";
 import {
   composeFirmware,
   createFirmwarePhone,
   createSyntheticNetwork,
-  describeStockScreen,
+  describeFirmwareScreen,
   remountFeature,
   type Firmware,
+  type FirmwareNode,
+  type StockSimToolkit,
 } from "../src/index";
+import { SIM_CONTENT_TOOLKITS } from "../scripts/capture-sets/30-sim-content.ts";
 import { keys } from "./support/probes.ts";
 import type { Rig } from "./support/rig.ts";
 import { createRig, standbyRig } from "./support/rig.ts";
@@ -38,21 +45,36 @@ function renumber(node: StockTreeNode, from: string, to: string): StockTreeNode 
 
 const STOCK_GAMES = STOCK_TREE.find((node) => node.number === "8")!;
 
-/** Three carousel items: a reader, the stock Chat leaf at 2, the stock Games subtree at 3. */
-const TREE: readonly StockTreeNode[] = [
+/** About's carousel graphic: a 3×3 box, then its centre filled, 300 ms each, looping. */
+const ABOUT_FRAMES = [
+  ["###", "#.#", "###"],
+  ["###", "###", "###"],
+].map((art) => bitmapFromArt(art));
+const ABOUT_GRAPHIC = {
+  x: 40,
+  y: 26,
+  frames: ABOUT_FRAMES,
+  timeline: new Timeline(
+    [
+      { frame: 0, durationMs: 300 },
+      { frame: 1, durationMs: 300 },
+    ],
+    { loopFrom: 0 },
+  ),
+};
+
+/** Three carousel items: a reader with its own graphic, stock Chat at 2, stock Games at 3. */
+const TREE: readonly FirmwareNode[] = [
   {
     number: "1",
-    // The carousel icon is looked up by slug (`stockMenuGraphic`): a stock icon's.
-    slug: "clock",
+    slug: "about",
     label: "About",
+    graphic: ABOUT_GRAPHIC,
     opens: { kind: "text-pages", pages: [["Lachlan", "builds", "phones."]] },
   },
   renumber(STOCK_TREE.find((node) => node.number === "3")!, "3", "2"),
   renumber(STOCK_GAMES, "8", "3"),
 ];
-
-/** The widget timelines are the stock recordings', by stock node: Games' are under 8. */
-const GAMES_RECORDINGS: StockFeature = { name: "games-recordings", sameAs: { "3": "8" } };
 
 const FIRMWARE: Firmware = composeFirmware({
   handset: STOCK_HANDSET,
@@ -62,16 +84,23 @@ const FIRMWARE: Firmware = composeFirmware({
     remountFeature(gamesFeature, "8", "3"),
     remountFeature(snakeFeature, "8", "3"),
     remountFeature(spaceImpactFeature, "8", "3"),
-    GAMES_RECORDINGS,
     // The stock notes' timelines by text (`Done`, `Activated`): no node numbers to move.
     noteStylesFeature,
   ],
 });
 
+const describeScreen = (screen: ScreenModel) => describeFirmwareScreen(FIRMWARE, screen);
+
 /** A rig at standby; New game takes `seed`. */
-function rig(seed?: number): Rig {
+function rig(seed?: number, sim?: { id: string; toolkit: StockSimToolkit }): Rig {
   const internals = { firmware: FIRMWARE, ...(seed === undefined ? {} : { seed }) };
-  const r = createRig({ carrier: "hellotimber", boot: "skip", t9: {} }, internals);
+  const config = {
+    carrier: "hellotimber",
+    boot: "skip",
+    t9: {},
+    ...(sim === undefined ? {} : { sim }),
+  } as const;
+  const r = createRig(config, internals);
   r.press("power", 1000);
   r.advance(1000);
   return r;
@@ -123,12 +152,56 @@ describe("a custom firmware", () => {
     ]);
   });
 
+  it("draws About's own carousel graphic, frame by frame, and Chat's stock icon", () => {
+    const r = rig();
+    keys(r, "navi wait:1000");
+    /** The 3×3 cells at About's graphic. */
+    const cell = () => {
+      const { pixels } = r.paint();
+      return [0, 1, 2].map((dy) =>
+        [0, 1, 2].map((dx) => (pixels[(26 + dy) * 84 + 40 + dx] ? "#" : ".")).join(""),
+      );
+    };
+    const screen = r.phone.screen;
+    expect(screen.kind === "menu-carousel" && screen.iconId).toBe("about");
+    const seen = new Set<string>();
+    for (let t = 0; t < 600; t += 50) {
+      seen.add(cell().join("/"));
+      r.advance(50);
+    }
+    expect([...seen].sort()).toEqual(["###/###/###", "###/#.#/###"]);
+    // Chat keeps its slug's stock icon: the stock phone's at Chat, pixel for pixel (the rail and
+    // the menu number differ: 2 of 3, not 3 of 12).
+    const stock = standbyRig({ t9: {} });
+    keys(r, "down wait:1000");
+    keys(stock, "navi wait:1000 down*2 wait:1000");
+    const icon = STOCK_MENU_ICONS.chat!;
+    const { width, height } = icon.frames[0]!;
+    const region = (rig: Rig) =>
+      art(rig)
+        .split("\n")
+        .slice(icon.y, icon.y + height)
+        .map((row) => row.slice(icon.x, icon.x + width));
+    expect(region(r)).toEqual(region(stock));
+    expect(region(r).join("")).toContain("#");
+  });
+
+  it("has no SIM services slot, even with a toolkit SIM", () => {
+    expect(FIRMWARE.simServices).toBeUndefined();
+    const r = rig(undefined, {
+      id: "sim-1",
+      toolkit: SIM_CONTENT_TOOLKITS.main as StockSimToolkit,
+    });
+    keys(r, "navi wait:1000 up wait:1000");
+    expect(carousel(r.phone.screen)).toEqual({ label: "Games", number: 3 });
+    expect(STOCK_FIRMWARE.simServices).toEqual({ number: 14 });
+    expect(STOCK_FIRMWARE.display.unnumberedMenus).toEqual([14]);
+  });
+
   it("opens its own reader screen", () => {
     const r = rig();
     keys(r, "navi wait:1000 navi wait:1000");
-    expect(describeStockScreen(r.phone.screen)).toMatchInlineSnapshot(
-      `"Lachlan builds phones. [More]"`,
-    );
+    expect(describeScreen(r.phone.screen)).toMatchInlineSnapshot(`"Lachlan builds phones. [More]"`);
   });
 
   it("opens Chat from its new place as the stock phone does from 3, and C returns", () => {
@@ -136,7 +209,7 @@ describe("a custom firmware", () => {
     const stock = standbyRig({ t9: {} });
     keys(custom, "navi wait:300 down wait:1000 navi wait:500");
     keys(stock, "navi wait:300 down*2 wait:1000 navi wait:500");
-    expect(describeStockScreen(custom.phone.screen)).toBe("Phone number: [Search]");
+    expect(describeScreen(custom.phone.screen)).toBe("Phone number: [Search]");
     expect(art(custom)).toEqual(art(stock));
     keys(custom, "c wait:1000");
     expect(carousel(custom.phone.screen)).toEqual({ label: "Chat", number: 2 });
@@ -148,7 +221,7 @@ describe("a custom firmware", () => {
     const path = "wait:1000 navi wait:3000 navi wait:3000 navi wait:2000";
     keys(custom, `navi wait:300 down*2 ${path}`);
     keys(stock, `navi wait:300 down*7 ${path}`);
-    expect(describeStockScreen(custom.phone.screen)).toBe("Snake II, score 0");
+    expect(describeScreen(custom.phone.screen)).toBe("Snake II, score 0");
     expect(art(custom)).toEqual(art(stock));
   });
 
@@ -174,6 +247,68 @@ describe("a custom firmware", () => {
   });
 });
 
+describe("a firmware's recordings", () => {
+  it("are the stock nodes its remounted features were", () => {
+    expect(FIRMWARE.models).toEqual({ "2": "3", "3": "8" });
+    expect(FIRMWARE.recordingNumber("3-1-2")).toBe("8-1-2");
+    expect(FIRMWARE.recordingNumber("2")).toBe("3");
+    expect(FIRMWARE.nodeTimeline("3-1-2")).toBe(STOCK_FIRMWARE.nodeTimeline("8-1-2"));
+  });
+
+  it("are none for a node no model covers, whatever stock number it has", () => {
+    // 2-9 is the stock Voice mailbox number, with its own recording.
+    expect(WIDGET_TIMELINE_BY_NODE["2-9"]).toBeDefined();
+    const tree: FirmwareNode[] = [
+      {
+        number: "2",
+        slug: "notes",
+        label: "Notes",
+        opens: { kind: "submenu", presentation: "rows", softkey: "Select" },
+        children: Array.from({ length: 9 }, (_, i) => ({
+          number: `2-${i + 1}`,
+          slug: `note-${i + 1}`,
+          label: `Note ${i + 1}`,
+          opens: { kind: "timed-note", lines: ["Done"], after: "back" },
+        })),
+      },
+    ];
+    const firmware = composeFirmware({
+      handset: STOCK_HANDSET,
+      tree,
+      features: [noteStylesFeature],
+    });
+    expect(firmware.recordingNumber("2-9")).toBeUndefined();
+    expect(firmware.nodeTimeline("2-9")).toBeUndefined();
+    // Its note still plays the text's style.
+    expect(firmware.noteTimelineId("2-9", ["Done"])).toBe(
+      noteStylesFeature.widgets!.noteStyles!.Done,
+    );
+  });
+
+  it("follow a chain of remounts to the stock subtree", () => {
+    const twice = remountFeature(remountFeature(snakeFeature, "8", "3"), "3", "5-2");
+    expect(twice.models).toEqual({ "5-2": "8" });
+    const part = remountFeature(remountFeature(snakeFeature, "8", "3"), "3-1", "4");
+    expect(part.models).toEqual({ "3": "8", "4": "8-1" });
+  });
+
+  it("are the stock firmware's own, through its same-as subtrees", () => {
+    expect(STOCK_FIRMWARE.recordingNumber("12-3-2-9-1")).toBe("12-2-2-9-1");
+    expect(STOCK_FIRMWARE.recordingNumber("2-9")).toBe("2-9");
+    expect(STOCK_FIRMWARE.sameAsNumber("7-2-1")).toBe("7-1-1");
+  });
+
+  it("throws on two features that map one subtree to different stock subtrees", () => {
+    expect(() =>
+      composeFirmware({
+        handset: STOCK_HANDSET,
+        tree: TREE,
+        features: [remountFeature(chatFeature, "3", "2"), remountFeature(snakeFeature, "8", "2")],
+      }),
+    ).toThrow("maps 2 to stock");
+  });
+});
+
 describe("a firmware whose tree lists none of the handset's settings", () => {
   const about = TREE[0]!;
   const bare = composeFirmware({ handset: STOCK_HANDSET, tree: [about], features: [] });
@@ -191,7 +326,7 @@ describe("a firmware whose tree lists none of the handset's settings", () => {
     } as const;
     const r = createRig(config, firmware === undefined ? {} : { firmware });
     const seen: string[] = [];
-    const look = (step: string) => seen.push(`${step}: ${describeStockScreen(r.phone.screen)}`);
+    const look = (step: string) => seen.push(`${step}: ${describeScreen(r.phone.screen)}`);
     r.press("power", 1000);
     r.advance(1000);
     look("standby");

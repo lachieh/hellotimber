@@ -1,15 +1,19 @@
 // Moving a feature to another place in a menu tree (plan 32 Phase 0): a stock feature binds
 // absolute v6.39 node numbers ("3" Chat, "8-1-1" Snake II's New game); another firmware's tree
 // may put the same area elsewhere. `remountFeature` rewrites every node-number key, pattern and
-// value of a feature from one subtree to another. Setting keys (slug paths), note texts and
-// widget timeline ids (which name the stock recordings) stay as they are.
+// value of a feature from one subtree to another, and records the move (`models`), so the moved
+// nodes play the stock recordings of the nodes they were. Setting keys (slug paths), note texts
+// and widget timeline ids (which name the stock recordings) stay as they are.
 import type { StockFeature, StockSettingsTables, StockWidgetTables } from "./features/feature";
 
 /**
  * A copy of `feature` whose node numbers and patterns at or below `fromPrefix` sit at or below
  * `toPrefix` instead ("8" → "3": `8-1-1` → `3-1-1`, `8-*` → `3-*`, `8` → `3`; `18-1` stays).
  * A match is by whole segments. Others stay as they are. A pattern that could match the prefix
- * only through a `*` in its leading segments throws: it cannot be moved exactly.
+ * only through a `*` in its leading segments throws: it cannot be moved exactly. The copy's
+ * `models` map `toPrefix` to the stock subtree `fromPrefix` stands for (itself for a stock
+ * feature; through the feature's own `models` for a feature remounted before, so a chain of
+ * remounts still names the stock recordings).
  */
 export function remountFeature(
   feature: StockFeature,
@@ -45,7 +49,8 @@ export function remountFeature(
       ? undefined
       : Object.fromEntries(Object.entries(table).map(([key, value]) => [move(key), value]));
 
-  const { sameAs, placeholders, screens, leads, levels, exitsWhen, widgets, settings } = feature;
+  const { sameAs, models, placeholders, screens, leads, levels, exitsWhen, widgets, settings } =
+    feature;
   const out: Record<string, unknown> = { ...feature };
   const set = (name: keyof StockFeature, value: unknown): void => {
     if (value !== undefined) out[name] = value;
@@ -58,6 +63,7 @@ export function remountFeature(
           Object.entries(sameAs).map(([copy, model]) => [move(copy), move(model)]),
         ),
   );
+  set("models", { ...keys(models), [toPrefix]: stockModel(models ?? {}, fromPrefix) });
   set("placeholders", keys(placeholders));
   set("screens", keys(screens));
   set("leads", keys(leads));
@@ -66,6 +72,14 @@ export function remountFeature(
   set("widgets", widgets === undefined ? undefined : remountWidgets(widgets, move, keys));
   set("settings", settings === undefined ? undefined : remountSettings(settings, move, keys));
   return out as unknown as StockFeature;
+}
+
+/** The stock node `number` stands for under `models` (the longest prefix that covers it). */
+function stockModel(models: Readonly<Record<string, string>>, number: string): string {
+  const prefix = Object.keys(models)
+    .filter((p) => number === p || number.startsWith(`${p}-`))
+    .sort((a, b) => b.length - a.length)[0];
+  return prefix === undefined ? number : models[prefix] + number.slice(prefix.length);
 }
 
 type Keys = <T>(

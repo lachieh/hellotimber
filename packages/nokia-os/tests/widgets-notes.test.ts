@@ -10,7 +10,6 @@ import type {
 import { createMemorySettings, virginSettings } from "../src/firmware/settings";
 import {
   WIDGET_TIMELINE_BY_NAME,
-  WIDGET_TIMELINE_BY_NODE,
   WIDGET_TIMELINES,
   type StockWidgetTimeline,
 } from "../src/kit/ui/resources";
@@ -25,7 +24,7 @@ import { goldenImage, loadGolden } from "./support/goldens.ts";
 import { indicatorOf, INDEX, optionNode, treePath } from "./support/tree.ts";
 
 function timelineOf(number: string, lines: readonly string[]): StockWidgetTimeline {
-  const id = noteTimelineId(WIDGET_TIMELINE_BY_NODE, number, lines);
+  const id = noteTimelineId(number, lines);
   const found = id === undefined ? undefined : WIDGET_TIMELINES[id];
   if (found === undefined) throw new Error(`No widget timeline for ${number}.`);
   return found;
@@ -301,12 +300,12 @@ describe("note behaviour", () => {
   });
 
   it("looks up a node's own timeline before its note style", () => {
-    expect(noteTimelineId(WIDGET_TIMELINE_BY_NODE, "1-8-1-1", ["Done"])).toBe("1-8-1-1");
-    expect(noteTimelineId(WIDGET_TIMELINE_BY_NODE, "1-8-1-2", ["Done"])).toBe(NOTE_STYLES.Done);
-    expect(noteTimelineId(WIDGET_TIMELINE_BY_NODE, "5-9-3-4", ["Timeout", "selected"])).toBe(
+    expect(noteTimelineId("1-8-1-1", ["Done"])).toBe("1-8-1-1");
+    expect(noteTimelineId("1-8-1-2", ["Done"])).toBe(NOTE_STYLES.Done);
+    expect(noteTimelineId("5-9-3-4", ["Timeout", "selected"])).toBe(
       NOTE_STYLES["Timeout selected"],
     );
-    expect(noteTimelineId(WIDGET_TIMELINE_BY_NODE, "6-2-1-3", ["Есть!"])).toBeUndefined();
+    expect(noteTimelineId("6-2-1-3", ["Есть!"])).toBeUndefined();
   });
 
   it("every note style names a generated timeline", () => {

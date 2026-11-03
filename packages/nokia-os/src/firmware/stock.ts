@@ -7,6 +7,7 @@ import type { StockFeature } from "./features/feature";
 import { byName, composeFirmware, type Firmware } from "./firmware";
 import { STOCK_TREE } from "./generated/stock-tree";
 import { STOCK_HANDSET } from "./handset";
+import { SIM_SERVICES_NUMBER } from "../sim/slot";
 
 /** Every registered feature, sorted by name (list tables concatenate in this order). */
 export const STOCK_FEATURES: readonly StockFeature[] = byName(Object.values(FEATURES));
@@ -16,6 +17,10 @@ export const STOCK_FIRMWARE: Firmware = composeFirmware({
   handset: STOCK_HANDSET,
   tree: STOCK_TREE,
   features: STOCK_FEATURES,
+  // Every node plays its own v6.39 recordings.
+  models: Object.fromEntries(STOCK_TREE.map(({ number }) => [number, number])),
+  // Plan 30 D5: SIM services is Menu 14 in the 13th slot (there is no 13, Task 0 K).
+  simServices: { number: SIM_SERVICES_NUMBER },
 });
 
 /** Same-as subtrees (plan 14 S6). Equal to the importer's table (coverage guard). */

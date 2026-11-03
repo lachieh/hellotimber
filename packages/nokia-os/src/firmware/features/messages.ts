@@ -6,7 +6,7 @@ import { smsEditor } from "../../messages/write";
 import { interlude, softkeyAlone } from "../../kit/ui/widgets/interlude";
 import { note } from "../../kit/ui/widgets/note";
 import { numberEntry } from "../../kit/ui/widgets/number-entry";
-import { nodeTimeline, timelineByName } from "../../kit/ui/timelines";
+import { timelineByName } from "../../kit/ui/timelines";
 import type { ScreenBinding, StockFeature } from "./feature";
 
 /** The SIM's message centre of Set 1 (an emulator artefact, `sms/centre-1` 00). */
@@ -27,9 +27,9 @@ export const CENTRE_SAVE_SOFTKEY_MS = 128;
  * saved`, then the page (`sms/centre-1-ok`); Search on the empty entry is the phone book's
  * (`sms/centre-1-ok-empty`: `No phone numbers`, then the prompt).
  */
-const centreNumber: ScreenBinding = ({ settings, noteSound }, { key, number }) => {
+const centreNumber: ScreenBinding = ({ settings, noteSound, firmware }, { key, number }) => {
   const saved = timelineByName("centre-number-saved");
-  const blink = nodeTimeline(number);
+  const blink = firmware.nodeTimeline(number);
   return () =>
     numberEntry({
       label: ["Centre number:"],
@@ -53,9 +53,9 @@ const centreNumber: ScreenBinding = ({ settings, noteSound }, { key, number }) =
  * (`sms/voice-mailbox-ok`). Its limit is the Send prompt's 30 digits (UNVERIFIED: the capture
  * types 19).
  */
-const voiceMailbox: ScreenBinding = ({ settings, noteSound }, { key, number }) => {
+const voiceMailbox: ScreenBinding = ({ settings, noteSound, firmware }, { key, number }) => {
   const saved = timelineByName("voice-mailbox-saved");
-  const blink = nodeTimeline(number);
+  const blink = firmware.nodeTimeline(number);
   return () =>
     numberEntry({
       label: ["Phone number:"],

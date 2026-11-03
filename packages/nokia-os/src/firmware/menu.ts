@@ -7,6 +7,7 @@ import { simServicesEntry } from "./features/sim-services";
 import { StockPhoneBook } from "../services/phone-book/store";
 import {
   ApplicationEntry,
+  MenuGraphic,
   MenuLevel,
   MenuOrder,
   MenuSlug,
@@ -211,7 +212,8 @@ export function createStockMenu(
 
 /**
  * The menu of `services.firmware` over one phone's services: its tree's top level as the
- * carousel, and (plan 30 D5) SIM services after it when `sim` has a toolkit.
+ * carousel, each node with its own graphic or its slug's stock icon, and (plan 30 D5) SIM
+ * services after it when the firmware has the slot and `sim` has a toolkit.
  */
 export function firmwareMenu(services: StockServices, sim?: NormalisedSimCard): PhoneMenu {
   const builder: Builder = {
@@ -221,13 +223,22 @@ export function firmwareMenu(services: StockServices, sim?: NormalisedSimCard): 
     services,
     leaves: new LeafBinder(services),
   };
-  const entries = services.firmware.tree.map(
-    (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),
+  const { tree, simServices } = services.firmware;
+  const entries = tree.map(
+    (node, i) =>
+      new TopLevelEntry(
+        entryOf([node], i, builder),
+        node.graphic === undefined
+          ? stockMenuGraphic(node.slug)
+          : new MenuGraphic(node.slug, node.graphic.timeline),
+      ),
   );
-  // Plan 30 D5: a SIM with a toolkit adds SIM services (Menu 14) after Profiles.
+  // Plan 30 D5: a SIM with a toolkit adds SIM services (stock: Menu 14) after the last item.
   const toolkit = sim?.toolkit;
   return new PhoneMenu(
-    toolkit === undefined ? entries : [...entries, simServicesEntry(toolkit, services)],
+    toolkit === undefined || simServices === undefined
+      ? entries
+      : [...entries, simServicesEntry(toolkit, services, simServices)],
   );
 }
 
