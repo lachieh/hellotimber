@@ -8,20 +8,24 @@ import type {
   PhoneApplicationSession,
   PhoneKey,
 } from "@hellotimber/phone-core";
-import type { StockWidgetTimeline } from "../kit/ui/resources";
-import { confirmQuery } from "../kit/ui/widgets/confirm";
-import { StockFlowApplication, type Flow, type Widget } from "../kit/ui/widgets/flow";
-import { infoPages, type InfoPage } from "../kit/ui/widgets/info-pages";
-import { infoScreen } from "../kit/ui/widgets/info-screen";
+import type { StockWidgetTimeline } from "@hellotimber/nokia-kit/ui/resources";
+import { confirmQuery } from "@hellotimber/nokia-kit/ui/widgets/confirm";
+import {
+  StockFlowApplication,
+  type Flow,
+  type Widget,
+} from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { infoPages, type InfoPage } from "@hellotimber/nokia-kit/ui/widgets/info-pages";
+import { infoScreen } from "@hellotimber/nokia-kit/ui/widgets/info-screen";
 import { levelBar } from "../widgets/level-bar";
 import { multiSelect } from "../widgets/multi-select";
-import { note, type NoteEnd, type NoteOptions } from "../kit/ui/widgets/note";
+import { note, type NoteEnd, type NoteOptions } from "@hellotimber/nokia-kit/ui/widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
-import { progress } from "../kit/ui/widgets/progress";
-import { shortcutChoice } from "../kit/ui/widgets/shortcut-choice";
-import { promptFromLayout, type PromptLayout } from "../kit/ui/widgets/prompt";
-import { splashIntro } from "../kit/ui/widgets/splash";
-import { textPages } from "../kit/ui/widgets/text-pages";
+import { progress } from "@hellotimber/nokia-kit/ui/widgets/progress";
+import { shortcutChoice } from "@hellotimber/nokia-kit/ui/widgets/shortcut-choice";
+import { promptFromLayout, type PromptLayout } from "@hellotimber/nokia-kit/ui/widgets/prompt";
+import { splashIntro } from "@hellotimber/nokia-kit/ui/widgets/splash";
+import { textPages } from "@hellotimber/nokia-kit/ui/widgets/text-pages";
 import { composerOf } from "./features/composer";
 import type { LeadEntry, ScreenPlace, StockServices } from "./features/feature";
 import type {
@@ -34,9 +38,9 @@ import type {
 } from "./generated/stock-tree";
 import type { Firmware } from "./firmware";
 import { PlaceholderApplication } from "./placeholder";
-import { timelineById, timelineByName } from "../kit/ui/timelines";
+import { timelineById, timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import { settingKey, slugOf } from "./tree";
-import type { StockSounder } from "../kit/system/sounder";
+import type { StockSounder } from "@hellotimber/nokia-kit/system/sounder";
 
 /** The soft key of Instructions pages (P12; the tree records only their text). */
 const TEXT_PAGES_SOFTKEY = "More";

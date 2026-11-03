@@ -1,13 +1,13 @@
 // The stock lights' rules (plan 25 D3, D7): Games › Settings › Lights during play, over the
-// handset's lights (`src/kit/system/lights.ts`).
-import { SNAKE_DEATH_STEPS, SNAKE_TOP_SCORE_MS } from "../../kit/ui/resources";
+// handset's lights (`nokia-kit/src/system/lights.ts`).
+import { SNAKE_DEATH_STEPS, SNAKE_TOP_SCORE_MS } from "@hellotimber/nokia-kit/ui/resources";
 import type { StockGames } from "./games";
 import type { SuspendedSnake } from "../../widgets/snake";
-import type { StockCue, StockCueSink } from "../../kit/system/cues";
+import type { StockCue, StockCueSink } from "@hellotimber/nokia-kit/system/cues";
 import type { StockSettings } from "../settings";
-import { timelineByName } from "../../kit/ui/timelines";
+import { timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import type { StockFeature } from "./feature";
-import type { StockLights } from "../../kit/system/lights";
+import type { StockLights } from "@hellotimber/nokia-kit/system/lights";
 
 // ---------------------------------------------------------------- the rules (Task 8, D3, D7)
 

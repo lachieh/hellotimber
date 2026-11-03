@@ -1156,7 +1156,7 @@ keyguard (Menu then `*`) is nokia-os's own standby mode; phone-core does not cha
 [stock keyguard and lights](docs/specs/stock/keyguard-and-backlight.md).
 
 **T9 (plan 18b).** The English T9 dictionary is a separate entry point,
-`@hellotimber/nokia-os/t9-english` (`export const englishT9: T9Dictionary`, indexed on first
+`@hellotimber/nokia-kit/t9-english` (`export const englishT9: T9Dictionary`, indexed on first
 lookup), generated from the MIT-licensed IlyaSemenov/wikipedia-word-frequency list by a committed
 build script (provenance and licence in `packages/nokia-os/src/text/t9/THIRD_PARTY.md`). Hosts
 pass it as `StockPhoneConfig.t9.english`, typically after `await import(...)` so bundlers emit it

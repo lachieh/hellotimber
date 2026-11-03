@@ -1,10 +1,14 @@
 // The inserted SIM card (plan 19 D2): its limits and its validation against the stock faces, once,
-// when the phone is created. The card's types are src/services/sim/card.ts. Plan 30 adds the SIM's
+// when the phone is created. The card's types are phone-services/src/sim/card.ts. Plan 30 adds the SIM's
 // messages (`EF_SMS`) and toolkit menu.
-import { missingStockGlyphs } from "../kit/ui/resources";
+import { missingStockGlyphs } from "@hellotimber/nokia-kit/ui/resources";
 import { normaliseSimMessages } from "../sim/messages";
 import { normaliseToolkit } from "../sim/toolkit";
-import type { NormalisedSimCard, StockContact, StockSimCard } from "../services/sim/card";
+import type {
+  NormalisedSimCard,
+  StockContact,
+  StockSimCard,
+} from "@hellotimber/phone-services/sim/card";
 
 export type { NormalisedSimCard, StockContact, StockSimCard };
 

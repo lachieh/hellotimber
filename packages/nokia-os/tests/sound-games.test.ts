@@ -1,14 +1,14 @@
 // Plan 16 Task 8: Snake II's cues as sound and vibration (D13). Every `sound/game/*` golden runs
 // in tests/acceptance.test.ts (tests/support/sound-scenarios.ts).
 import { describe, expect, it } from "vite-plus/test";
-import type { StockCue } from "../src/kit/system/cues";
+import type { StockCue } from "@hellotimber/nokia-kit/system/cues";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
-import { SNAKE_VIBRATE_MS } from "../src/kit/apps/games/snake/engine";
+import { SNAKE_VIBRATE_MS } from "@hellotimber/nokia-kit/apps/games/snake/engine";
 import type { StockSoundEvent } from "../src/index";
-import { GAME_CUES, KEYPAD_BEEP } from "../src/kit/ui/resources";
-import { SoundSequencer } from "../src/kit/ui/sound/sequencer";
-import { StockSounder } from "../src/kit/system/sounder";
+import { GAME_CUES, KEYPAD_BEEP } from "@hellotimber/nokia-kit/ui/resources";
+import { SoundSequencer } from "@hellotimber/nokia-kit/ui/sound/sequencer";
+import { StockSounder } from "@hellotimber/nokia-kit/system/sounder";
 import type { SoundGolden } from "../scripts/sound-format.ts";
 import { LONG_TOLERANCE_MS, TWO_FRAMES_MS } from "./support/golden.ts";
 import { soundStorage, type SettingChoices } from "./support/sound-scenarios.ts";

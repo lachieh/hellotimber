@@ -6,9 +6,9 @@ import {
   spaceImpactKey,
   spaceImpactRender,
   stepSpaceImpact,
-} from "../src/kit/apps/games/space-impact/engine";
-import { paintSpaceImpact } from "../src/kit/ui/display/widgets/space-impact";
-import { SPACE_IMPACT_LEVEL_OBSERVATIONS } from "../src/kit/ui/resources/generated/space-impact-levels";
+} from "@hellotimber/nokia-kit/apps/games/space-impact/engine";
+import { paintSpaceImpact } from "@hellotimber/nokia-kit/ui/display/widgets/space-impact";
+import { SPACE_IMPACT_LEVEL_OBSERVATIONS } from "@hellotimber/nokia-kit/ui/resources/generated/space-impact-levels";
 import { goldenImage, loadGolden } from "./support/goldens";
 
 describe("Space impact engine pixels before the first wave", () => {

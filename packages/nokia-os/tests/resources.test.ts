@@ -12,6 +12,7 @@ import {
 import { captureSets } from "../scripts/capture-registry.ts";
 import { composeResourceDeclarations } from "../scripts/resource-declarations.ts";
 import { readGoldenIndex } from "../scripts/golden-index.ts";
+import { KIT_RESOURCES_GENERATED } from "../scripts/kit-paths.ts";
 
 import { placeholderOwner } from "../scripts/tree-capture-set.ts";
 import { PHONE_BOOK_SIMS } from "../scripts/capture-sets/19-phone-book.ts";
@@ -35,16 +36,16 @@ import {
   WIDGET_TIMELINES,
   TEXT_TIMINGS,
   type StockFontName,
-} from "../src/kit/ui/resources";
-import { TEXT_DATA } from "../src/kit/ui/resources/generated/text";
-import { CLOCK_DATA } from "../src/kit/ui/resources/generated/clock";
-import { COMPOSER_DATA } from "../src/kit/ui/resources/generated/composer";
-import { BOOT_DATA } from "../src/kit/ui/resources/generated/boot";
-import { STOCK_FONT_DATA } from "../src/kit/ui/resources/generated/fonts";
-import { MENU_ICON_DATA } from "../src/kit/ui/resources/generated/menu-icons";
-import { STATUS_DATA } from "../src/kit/ui/resources/generated/status";
-import { WIDGET_DATA } from "../src/kit/ui/resources/generated/widgets";
-import { SOUND_DATA } from "../src/kit/ui/resources/generated/sounds";
+} from "@hellotimber/nokia-kit/ui/resources";
+import { TEXT_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/text";
+import { CLOCK_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/clock";
+import { COMPOSER_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/composer";
+import { BOOT_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/boot";
+import { STOCK_FONT_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/fonts";
+import { MENU_ICON_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/menu-icons";
+import { STATUS_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/status";
+import { WIDGET_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/widgets";
+import { SOUND_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/sounds";
 import { parseSoundGolden, type SoundGolden, type SoundRow } from "../scripts/sound-format.ts";
 import { LEVEL_COVER_TONES, RINGING_TONE_NAMES, toneSlug } from "../scripts/sound-capture-set.ts";
 import { previewRows, renderProgram, type SoundProgramData } from "../scripts/sound-programs.ts";
@@ -177,7 +178,7 @@ describe("generated resources", () => {
     "are byte for byte what `regenerate` writes (resolve a conflict by regenerating)",
     { timeout: EXTRACTION_TIMEOUT_MS },
     () => {
-      const dir = join(import.meta.dirname, "../src/kit/ui/resources/generated");
+      const dir = KIT_RESOURCES_GENERATED;
       const files = generatedFiles(extractResources());
       expect(readdirSync(dir).sort()).toEqual(Object.keys(files).sort());
       for (const [file, text] of Object.entries(files)) {

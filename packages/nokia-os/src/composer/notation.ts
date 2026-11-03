@@ -1,7 +1,11 @@
 // The Composer's notation (plan 27 K6, D2): a tone is a list of tokens, each a note
 // (`[duration][.][#]<note><octave>`, `16.#f2`) or a rest (`[duration]-`, `8-`). Pure.
 
-import type { ComposerToken, NotePitch, NoteValue } from "../services/messaging/ringtone";
+import type {
+  ComposerToken,
+  NotePitch,
+  NoteValue,
+} from "@hellotimber/phone-services/messaging/ringtone";
 
 export type { ComposerToken, NotePitch, NoteValue };
 

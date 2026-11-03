@@ -79,7 +79,7 @@ let runtime: PhoneRuntime | undefined;
 let loading: Promise<PhoneRuntime> | undefined;
 export function loadPhoneRuntime(): Promise<PhoneRuntime> {
   if (typeof window === "undefined") throw new Error("Phone runtime is client-only");
-  return (loading ??= import("@hellotimber/nokia-os/t9-english")
+  return (loading ??= import("@hellotimber/nokia-kit/t9-english")
     .then(
       ({ englishT9 }) => englishT9,
       () => undefined,

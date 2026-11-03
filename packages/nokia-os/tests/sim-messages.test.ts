@@ -5,10 +5,10 @@ import { describe, expect, it } from "vite-plus/test";
 import { SIM_CONTENT_SIMS } from "../scripts/capture-sets/30-sim-content.ts";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
-import { MESSAGES_RECORD, StockMessages } from "../src/services/messaging/store";
+import { MESSAGES_RECORD, StockMessages } from "@hellotimber/phone-services/messaging/store";
 import { normaliseSim } from "../src/phone-book/sim-card";
 import { gsmSeptets, simMessagesProblem } from "../src/sim/messages";
-import { smsDrawn } from "../src/kit/ui/text/sms";
+import { smsDrawn } from "@hellotimber/nokia-kit/ui/text/sms";
 import {
   createMemoryStorage,
   createStockPhone,

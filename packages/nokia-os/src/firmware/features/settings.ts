@@ -1,13 +1,13 @@
 // Settings (menu 6; plans 15 and 18): the welcome note's stored text and its editor, and Own
 // number sending's factory value. Security settings and Restore factory settings are the
 // security feature's.
-import { editor } from "../../kit/ui/widgets/editor";
-import type { Flow, Widget } from "../../kit/ui/widgets/flow";
-import { note } from "../../kit/ui/widgets/note";
+import { editor } from "@hellotimber/nokia-kit/ui/widgets/editor";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
 import { OptionListWidget } from "../../widgets/option-list";
-import { timelineByName } from "../../kit/ui/timelines";
+import { timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import type { StockFeature, StockServices } from "./feature";
-import { WELCOME_NOTE_KEY } from "../../kit/system/boot";
+import { WELCOME_NOTE_KEY } from "@hellotimber/nokia-kit/system/boot";
 
 /** The welcome note holds 36 characters (`welcome/editor` 36: the counter at 0, a 37th ignored). */
 export const WELCOME_NOTE_LIMIT = 36;

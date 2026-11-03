@@ -1,7 +1,7 @@
 // Plan 20 Task 4: the exchange-rate record (D6) and the rate entry (D7). Expected values are the
 // `calculator/rate-*`, `calculator/convert` and `calculator/persist` stills' text.
 import { describe, expect, it } from "vite-plus/test";
-import { CalculatorRate, CALCULATOR_RECORD } from "../src/kit/apps/calculator/rate";
+import { CalculatorRate, CALCULATOR_RECORD } from "@hellotimber/nokia-kit/apps/calculator/rate";
 import {
   openRateEntry,
   pressRateKey,
@@ -9,7 +9,7 @@ import {
   rateToSave,
   type RateEntry,
   type RateKey,
-} from "../src/kit/apps/calculator/rate-entry";
+} from "@hellotimber/nokia-kit/apps/calculator/rate-entry";
 import { StockEeprom, createMemoryStorage, type StockStorage } from "../src/firmware/eeprom";
 import { STOCK_RECORDS } from "../src/firmware/records";
 

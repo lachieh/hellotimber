@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vite-plus/test";
-import { createGameRandom, GAME_RANDOM_MODULUS } from "../src/kit/apps/games/random";
-import { spaceImpactBonus } from "../src/kit/apps/games/space-impact/random";
+import { createGameRandom, GAME_RANDOM_MODULUS } from "@hellotimber/nokia-kit/apps/games/random";
+import { spaceImpactBonus } from "@hellotimber/nokia-kit/apps/games/space-impact/random";
 import {
   filterSpaceImpactSeedEvents,
   spaceImpactU32SeedAliases,
   searchSpaceImpactSeeds,
 } from "../scripts/space-impact-seeds";
-import { SPACE_IMPACT_LEVEL_OBSERVATIONS } from "../src/kit/ui/resources/generated/space-impact-levels";
+import { SPACE_IMPACT_LEVEL_OBSERVATIONS } from "@hellotimber/nokia-kit/ui/resources/generated/space-impact-levels";
 
 const hud = { lives: 3, weapon: "missile", count: 3, score: 100 } as const;
 

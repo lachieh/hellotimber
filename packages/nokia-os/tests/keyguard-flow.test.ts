@@ -1,16 +1,16 @@
 // The keyguard over the kernel (plan 25 D4, Task 7): the stock phone routes a locked phone's keys
 // to the keyguard and shows its screens, while the kernel stays at standby underneath.
-import type { StockCallControl } from "../src/services/calls/network";
-import { CALL_TIMINGS } from "../src/services/calls/telephone";
+import type { StockCallControl } from "@hellotimber/phone-services/calls/network";
+import { CALL_TIMINGS } from "@hellotimber/phone-services/calls/telephone";
 import type { PhoneSnapshot } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { paintWidget } from "../src/kit/ui/display/widgets";
+import { paintWidget } from "@hellotimber/nokia-kit/ui/display/widgets";
 import {
   KEYGUARD_HINT_LEAD_MS,
   KEYGUARD_TIMES,
   KEYGUARD_UNLOCK_LEAD_MS,
-} from "../src/kit/system/keyguard";
+} from "@hellotimber/nokia-kit/system/keyguard";
 import { createMemoryStorage, createSyntheticNetwork } from "../src/index";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";

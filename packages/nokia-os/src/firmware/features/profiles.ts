@@ -10,19 +10,23 @@ import {
   type PhoneKey,
   type ScreenModel,
 } from "@hellotimber/phone-core";
-import type { WidgetModel } from "../../kit/ui/display/widgets";
-import type { StandbyFrameModel } from "../../kit/ui/display/profiles";
+import type { WidgetModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import type { StandbyFrameModel } from "@hellotimber/nokia-kit/ui/display/profiles";
 import {
   WIDGET_TIMELINE_BY_NODE,
   type StockWidgetTimeline,
   type WidgetFrame,
-} from "../../kit/ui/resources";
-import { StockFlowApplication, type Flow, type Widget } from "../../kit/ui/widgets/flow";
-import { note } from "../../kit/ui/widgets/note";
+} from "@hellotimber/nokia-kit/ui/resources";
+import {
+  StockFlowApplication,
+  type Flow,
+  type Widget,
+} from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
 import { OptionListWidget } from "../../widgets/option-list";
-import { textInput } from "../../kit/ui/widgets/text-input";
+import { textInput } from "@hellotimber/nokia-kit/ui/widgets/text-input";
 import type { StockSettings } from "../settings";
-import { timelineById, timelineByName } from "../../kit/ui/timelines";
+import { timelineById, timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import type { FactoryDefault, StockFeature, StockServices } from "./feature";
 
 /** The six v6.39 slots in order (P11: no Meeting, Outdoor or Pager profile). */

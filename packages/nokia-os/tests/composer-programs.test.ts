@@ -23,8 +23,8 @@ import {
   COMPOSER_TEMPI,
   COMPOSER_TIMINGS,
   VOLUME_RULE,
-} from "../src/kit/ui/resources";
-import type { SoundProgram } from "../src/kit/ui/sound/program";
+} from "@hellotimber/nokia-kit/ui/resources";
+import type { SoundProgram } from "@hellotimber/nokia-kit/ui/sound/program";
 import { loadSoundGolden } from "./support/sound.ts";
 
 const U = 7.745;

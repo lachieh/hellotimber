@@ -9,11 +9,15 @@
 // the window, else the highlight keeps its row (`phone-book/letters-list`). 0, 1, * and # do
 // nothing.
 import { rowsWindowTop, type PhoneKey } from "@hellotimber/phone-core";
-import type { NameListModel } from "../kit/ui/display/widgets";
-import { searchIndex, shownName, type PhoneBookEntry } from "../services/phone-book/entries";
-import { TEXT_TIMINGS } from "../kit/ui/resources";
-import { MULTITAP_KEYS, type TextKey } from "../kit/ui/text/keys";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import type { NameListModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import {
+  searchIndex,
+  shownName,
+  type PhoneBookEntry,
+} from "@hellotimber/phone-services/phone-book/entries";
+import { TEXT_TIMINGS } from "@hellotimber/nokia-kit/ui/resources";
+import { MULTITAP_KEYS, type TextKey } from "@hellotimber/nokia-kit/ui/text/keys";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
 
 /** Options › Type of view's setting and its choices, in list order (`1-8-1`). */
 export const TYPE_OF_VIEW_KEY = "phone-book/options/type-of-view";

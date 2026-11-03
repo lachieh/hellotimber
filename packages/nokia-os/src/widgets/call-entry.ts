@@ -2,9 +2,9 @@
 // `Missed 1:` and the number, ▲/▼ through the list (wrapping), the soft key (`Options` from the
 // menu, `Call` from standby ▲), C back. The list is read on every render, so an erase shows at once.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { CallEntry, CallList } from "../services/calls/log";
-import type { CallEntryModel, StandbyDrawModel } from "../kit/ui/display/widgets";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import type { CallEntry, CallList } from "@hellotimber/phone-services/calls/log";
+import type { CallEntryModel, StandbyDrawModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
 
 /** The label before an entry's position (`Missed 1:`, `Received 1:`, `Dialled 1:`). */
 export const CALL_LIST_LABELS: Readonly<Record<CallList, string>> = {

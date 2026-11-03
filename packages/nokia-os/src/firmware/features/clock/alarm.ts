@@ -3,20 +3,24 @@
 // a new ring 5 minutes later rounded up to a whole minute), the automatic snooze after the
 // ring's minute, Stop, and the ring that switches a powered-off phone on (D4, composed).
 import type { PhoneApplication, PhoneKey } from "@hellotimber/phone-core";
-import type { AlertModel } from "../../../kit/ui/display/widgets";
-import { CLOCK_ALERTS } from "../../../kit/ui/resources";
-import type { SoundPlay } from "../../../kit/ui/sound/sequencer";
-import { confirmQuery } from "../../../kit/ui/widgets/confirm";
-import { StockFlowApplication, type Flow, type Widget } from "../../../kit/ui/widgets/flow";
-import { freshKeys } from "../../../kit/ui/widgets/fresh-keys";
-import { note } from "../../../kit/ui/widgets/note";
-import { timelineByName } from "../../../kit/ui/timelines";
+import type { AlertModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import { CLOCK_ALERTS } from "@hellotimber/nokia-kit/ui/resources";
+import type { SoundPlay } from "@hellotimber/nokia-kit/ui/sound/sequencer";
+import { confirmQuery } from "@hellotimber/nokia-kit/ui/widgets/confirm";
+import {
+  StockFlowApplication,
+  type Flow,
+  type Widget,
+} from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { freshKeys } from "@hellotimber/nokia-kit/ui/widgets/fresh-keys";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
+import { timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import type { StockServices } from "../feature";
-import type { AlarmTime } from "../../../kit/system/clock/record";
-import { alertExit, alertLeadIn } from "../../../kit/system/clock/alerts";
-import { phoneClock } from "../../../kit/system/clock/registry";
-import type { StockClock } from "../../../kit/system/clock/service";
-import { formatClock, minuteIndex, type PhoneTime } from "../../../kit/system/clock/time";
+import type { AlarmTime } from "@hellotimber/nokia-kit/system/clock/record";
+import { alertExit, alertLeadIn } from "@hellotimber/nokia-kit/system/clock/alerts";
+import { phoneClock } from "@hellotimber/nokia-kit/system/clock/registry";
+import type { StockClock } from "@hellotimber/nokia-kit/system/clock/service";
+import { formatClock, minuteIndex, type PhoneTime } from "@hellotimber/nokia-kit/system/clock/time";
 
 /**
  * Screens no capture shows, composed from captured widgets with v6.39's own strings (plan 21 D12,

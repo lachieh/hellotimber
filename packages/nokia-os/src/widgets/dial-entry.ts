@@ -3,11 +3,20 @@
 // key (`Call`, `Save`, `Convert`), held `1` (the voice mailbox), `#` answering location numbers
 // and codes at once, DTMF while a key is held, and Call.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import { appendDial, DIAL_CYCLE, immediateCode, starCycle } from "../services/calls/dial-string";
-import type { DialEntryModel, StandbyDrawModel, WidgetModel } from "../kit/ui/display/widgets";
-import type { StockSounder } from "../kit/system/sounder";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { LEVEL_REPEAT } from "../kit/ui/widgets/key-repeat";
+import {
+  appendDial,
+  DIAL_CYCLE,
+  immediateCode,
+  starCycle,
+} from "@hellotimber/phone-services/calls/dial-string";
+import type {
+  DialEntryModel,
+  StandbyDrawModel,
+  WidgetModel,
+} from "@hellotimber/nokia-kit/ui/display/widgets";
+import type { StockSounder } from "@hellotimber/nokia-kit/system/sounder";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { LEVEL_REPEAT } from "@hellotimber/nokia-kit/ui/widgets/key-repeat";
 
 /**
  * The entry's timings, from its first redraw (the key's latency is not reproduced): the `*`

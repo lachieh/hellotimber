@@ -1,14 +1,14 @@
 // Security settings and Restore factory settings (plan 15 D7, D8): the security-code leaves use
 // the stock code entry, and an accepted code opens the leaf's flow; Phone security stores a
 // single choice behind the code. The security code itself is the handset's
-// (`src/kit/system/security.ts`).
-import { codeEntry, codeError, maskedEntry } from "../../kit/system/code-entry";
-import type { Flow, Widget } from "../../kit/ui/widgets/flow";
-import { note } from "../../kit/ui/widgets/note";
+// (`nokia-kit/src/system/security.ts`).
+import { codeEntry, codeError, maskedEntry } from "@hellotimber/nokia-kit/system/code-entry";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
 import { OptionListWidget } from "../../widgets/option-list";
-import { splitPromptLines } from "../../kit/ui/widgets/prompt";
-import { SECURITY_CODE_DIGITS } from "../../kit/system/security";
-import { timelineByName } from "../../kit/ui/timelines";
+import { splitPromptLines } from "@hellotimber/nokia-kit/ui/widgets/prompt";
+import { SECURITY_CODE_DIGITS } from "@hellotimber/nokia-kit/system/security";
+import { timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import type { NamedNote, ScreenBinding, ScreenPlace, StockFeature, StockServices } from "./feature";
 
 /** What an accepted security code opens (D8, Task 0c: `probe/accept-*`, all v6.39 captures). */

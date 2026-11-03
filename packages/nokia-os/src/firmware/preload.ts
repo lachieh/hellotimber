@@ -2,16 +2,16 @@
 // memory a user could have typed (the Welcome note, Reminders, Snake II's level), written once
 // where it was never written in storage, so a visitor's own edits and erasures survive. Validated when the
 // phone is created: an invalid value throws, naming the field.
-import { missingStockGlyphs, type StockFontName } from "../kit/ui/resources";
-import { TYPEABLE } from "../kit/ui/text/keys";
-import { parseHostTime } from "../kit/system/clock/time";
+import { missingStockGlyphs, type StockFontName } from "@hellotimber/nokia-kit/ui/resources";
+import { TYPEABLE } from "@hellotimber/nokia-kit/ui/text/keys";
+import { parseHostTime } from "@hellotimber/nokia-kit/system/clock/time";
 import {
   REMINDER_TEXT_LIMIT,
   REMINDERS_CAPACITY,
   REMINDERS_RECORD,
   StockReminders,
 } from "./features/reminders/store";
-import { WELCOME_NOTE_KEY } from "../kit/system/boot";
+import { WELCOME_NOTE_KEY } from "@hellotimber/nokia-kit/system/boot";
 import { WELCOME_NOTE_LIMIT } from "./features/settings";
 import { SNAKE_SETTINGS } from "../widgets/snake";
 import { STOCK_STORAGE_PREFIX, type StockEeprom, type StockStorage } from "./eeprom";

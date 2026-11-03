@@ -1,7 +1,7 @@
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { paintStockScreen } from "../src/index";
-import { BOOT_TIMELINE } from "../src/kit/ui/resources";
+import { BOOT_TIMELINE } from "@hellotimber/nokia-kit/ui/resources";
 import { expectLcd } from "./support/golden.ts";
 import { loadGolden } from "./support/goldens.ts";
 

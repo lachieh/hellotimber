@@ -1,7 +1,7 @@
 // Tones (menu 5; plan 16) and the same settings in every profile's Personalise: the option lists
 // that beep or preview what they highlight, Ringing volume's Level 5 query, and Screen saver's
-// setter level. The sound itself is the sounder's (src/kit/system/sounder.ts).
-import { PREVIEW_LISTS } from "../../kit/system/sounder";
+// setter level. The sound itself is the sounder's (nokia-kit/src/system/sounder.ts).
+import { PREVIEW_LISTS } from "@hellotimber/nokia-kit/system/sounder";
 import type { StockFeature } from "./feature";
 
 /**

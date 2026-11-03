@@ -2,16 +2,16 @@
 // Assign tone, over the inserted SIM's `StockPhoneBook`. Every screen and timing is a Task 0
 // capture's (`phone-book/erase-*`, `edit-*`, `tone-*`).
 import type { StockServices } from "../firmware/features/feature";
-import { timelineByName } from "../kit/ui/timelines";
-import type { WidgetModel } from "../kit/ui/display/widgets";
-import { codeEntry } from "../kit/system/code-entry";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
+import { timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
+import type { WidgetModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import { codeEntry } from "@hellotimber/nokia-kit/system/code-entry";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
 import type { NameListControl } from "../widgets/name-list";
 import { nameList } from "../widgets/name-list";
-import { note } from "../kit/ui/widgets/note";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
-import { Playback } from "../kit/ui/widgets/playback";
-import type { PhoneBookEntry } from "../services/phone-book/entries";
+import { Playback } from "@hellotimber/nokia-kit/ui/widgets/playback";
+import type { PhoneBookEntry } from "@hellotimber/phone-services/phone-book/entries";
 import {
   emptyNote,
   nameQueryWidget,

@@ -1,7 +1,7 @@
-// Plan 18b Task 6: the editor's text in T9 mode (src/kit/ui/text/t9/editing.ts) on the fixture
+// Plan 18b Task 6: the editor's text in T9 mode (nokia-kit/src/ui/text/t9/editing.ts) on the fixture
 // dictionary: `0`, `#`, holds, C across words, word stops, insertions (spec 5, 8, 9, 10.3).
 import { describe, expect, it } from "vite-plus/test";
-import { emptyText, type TextState } from "../src/kit/ui/text/multitap";
+import { emptyText, type TextState } from "@hellotimber/nokia-kit/ui/text/multitap";
 import {
   composingWord,
   t9ClearText,
@@ -18,8 +18,8 @@ import {
   t9TypeKey,
   wordAroundCursor,
   type T9Context,
-} from "../src/kit/ui/text/t9/editing";
-import type { T9Key } from "../src/kit/ui/text/t9";
+} from "@hellotimber/nokia-kit/ui/text/t9/editing";
+import type { T9Key } from "@hellotimber/nokia-kit/ui/text/t9";
 import { T9_FIXTURE } from "./support/t9-fixture.ts";
 
 const CTX: T9Context = { dictionary: T9_FIXTURE, user: [] };

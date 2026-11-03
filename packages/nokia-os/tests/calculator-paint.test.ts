@@ -3,7 +3,7 @@
 // prompt's value, cursor position and blink phase are the case's keys (plan20/cases.json).
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { paintWidget } from "../src/kit/ui/display/widgets";
+import { paintWidget } from "@hellotimber/nokia-kit/ui/display/widgets";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";
 

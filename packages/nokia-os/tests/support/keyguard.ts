@@ -6,11 +6,11 @@
 // in the golden (a golden row), or `ms` after the trigger when its effect is no new frame (a hint
 // restarted on its own first step, a second Unlock) or when the window it falls in is what the
 // golden pins (`lock-gap/2920`).
-import { CALL_TIMINGS } from "../../src/services/calls/telephone";
+import { CALL_TIMINGS } from "@hellotimber/phone-services/calls/telephone";
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { expect } from "vite-plus/test";
-import type { StockLightEvent } from "../../src/kit/system/lights";
-import { KEYGUARD_TIMES } from "../../src/kit/system/keyguard";
+import type { StockLightEvent } from "@hellotimber/nokia-kit/system/lights";
+import { KEYGUARD_TIMES } from "@hellotimber/nokia-kit/system/keyguard";
 import { createSyntheticNetwork, type StockPhoneConfig } from "../../src/index";
 import { expectLcd, expectTimeline, withoutPartialDraws } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";

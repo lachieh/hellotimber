@@ -1,10 +1,10 @@
 import type { KeyEvent, Phone, PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
-import type { StockCue } from "../src/kit/system/cues";
+import type { StockCue } from "@hellotimber/nokia-kit/system/cues";
 import { createStockPhoneWith } from "../src/firmware/phone";
 import { createStockPhone, type StockPhoneConfig, type StockSoundEvent } from "../src/index";
-import { BOOT_TIMELINE, BOOT_TONE, KEYPAD_BEEP } from "../src/kit/ui/resources";
-import { LEVEL_REPEAT } from "../src/kit/ui/widgets/key-repeat";
+import { BOOT_TIMELINE, BOOT_TONE, KEYPAD_BEEP } from "@hellotimber/nokia-kit/ui/resources";
+import { LEVEL_REPEAT } from "@hellotimber/nokia-kit/ui/widgets/key-repeat";
 import { soundStorage } from "./support/sound-scenarios.ts";
 
 function poweredOn(config: Partial<StockPhoneConfig> = {}): Phone {

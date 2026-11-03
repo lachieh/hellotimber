@@ -1,17 +1,20 @@
 import type { StockFeature } from "./feature";
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockGames } from "./games";
-import type { Flow, Widget } from "../../kit/ui/widgets/flow";
-import type { SpaceImpactModel } from "../../kit/ui/display/widgets/space-impact";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import type { SpaceImpactModel } from "@hellotimber/nokia-kit/ui/display/widgets/space-impact";
 import {
   newSpaceImpactGame,
   spaceImpactKey,
   stepSpaceImpact,
   spaceImpactRender,
   expireSpaceImpactShield,
-} from "../../kit/apps/games/space-impact/engine";
-import type { SpaceImpactResult, SpaceImpactState } from "../../kit/apps/games/space-impact/model";
-import { SPACE_IMPACT_DATA } from "../../kit/ui/resources/generated/space-impact";
+} from "@hellotimber/nokia-kit/apps/games/space-impact/engine";
+import type {
+  SpaceImpactResult,
+  SpaceImpactState,
+} from "@hellotimber/nokia-kit/apps/games/space-impact/model";
+import { SPACE_IMPACT_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/space-impact";
 
 const timings = SPACE_IMPACT_DATA.timings;
 

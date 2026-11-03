@@ -7,9 +7,9 @@ import {
   COMPOSER_SOUND,
   RINGING_TONES,
   VOLUME_RULE,
-} from "../kit/ui/resources";
-import type { SoundProgram, SoundStep } from "../kit/ui/sound/program";
-import type { ComposerTone } from "../services/messaging/ringtone";
+} from "@hellotimber/nokia-kit/ui/resources";
+import type { SoundProgram, SoundStep } from "@hellotimber/nokia-kit/ui/sound/program";
+import type { ComposerTone } from "@hellotimber/phone-services/messaging/ringtone";
 import { NOTE_PITCHES, type ComposerToken } from "./notation";
 
 export type { ComposerTone };

@@ -1,8 +1,8 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { LevelBarModel } from "../kit/ui/display/widgets";
+import type { LevelBarModel } from "@hellotimber/nokia-kit/ui/display/widgets";
 import type { StockSettings } from "../firmware/settings";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { LEVEL_REPEAT } from "../kit/ui/widgets/key-repeat";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { LEVEL_REPEAT } from "@hellotimber/nokia-kit/ui/widgets/key-repeat";
 
 /**
  * A Level page with fixed bars, as the virgin EEPROM shows them; OK and C go back (P12). Bantumi

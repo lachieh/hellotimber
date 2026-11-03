@@ -4,7 +4,7 @@ import { PHONE_BOOK_SIMS } from "../scripts/capture-sets/19-phone-book.ts";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "../src/firmware/eeprom";
 import { STOCK_RECORDS } from "../src/firmware/records";
 import { normaliseSim, type StockSimCard } from "../src/phone-book/sim-card";
-import { PHONE_BOOK_RECORD, StockPhoneBook } from "../src/services/phone-book/store";
+import { PHONE_BOOK_RECORD, StockPhoneBook } from "@hellotimber/phone-services/phone-book/store";
 
 const CONTENT = PHONE_BOOK_SIMS.content as StockSimCard;
 

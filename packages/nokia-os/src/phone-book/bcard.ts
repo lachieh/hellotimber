@@ -1,16 +1,16 @@
 // The phone book's Send b'card (plan 19 Task 10, D10): a name's card to a typed number through
 // the network port (`phone-book/bcard-*`).
 import type { StockServices } from "../firmware/features/feature";
-import { timelineById, timelineByName } from "../kit/ui/timelines";
-import type { WidgetModel } from "../kit/ui/display/widgets";
+import { timelineById, timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
+import type { WidgetModel } from "@hellotimber/nokia-kit/ui/display/widgets";
 import { COMPOSED_FLOWS } from "../messages/bindings";
-import type { StockSendOutcome } from "../services/messaging/network";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { interlude } from "../kit/ui/widgets/interlude";
-import { note } from "../kit/ui/widgets/note";
-import { numberEntry } from "../kit/ui/widgets/number-entry";
-import { Playback } from "../kit/ui/widgets/playback";
-import type { PhoneBookEntry } from "../services/phone-book/entries";
+import type { StockSendOutcome } from "@hellotimber/phone-services/messaging/network";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { interlude } from "@hellotimber/nokia-kit/ui/widgets/interlude";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
+import { numberEntry } from "@hellotimber/nokia-kit/ui/widgets/number-entry";
+import { Playback } from "@hellotimber/nokia-kit/ui/widgets/playback";
+import type { PhoneBookEntry } from "@hellotimber/phone-services/phone-book/entries";
 import { emptyNote, names, pickNumber } from "./flows";
 import { BCARD_LINK_MS, BCARD_OK_MS } from "./timings";
 

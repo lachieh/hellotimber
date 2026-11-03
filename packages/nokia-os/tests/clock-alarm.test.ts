@@ -4,7 +4,7 @@
 // (D4: no capture can advance a powered-off emulator).
 import { describe, expect, it } from "vite-plus/test";
 import { ALARM_SNOOZE_MINUTES, bellsAt, ringTextShown } from "../src/firmware/features/clock/alarm";
-import { CLOCK_ALERTS } from "../src/kit/ui/resources";
+import { CLOCK_ALERTS } from "@hellotimber/nokia-kit/ui/resources";
 import { clockRig, play, setAlarm, toClock, toClockSettings, untilShows } from "./support/clock.ts";
 import { lcdMismatch } from "./support/golden.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";

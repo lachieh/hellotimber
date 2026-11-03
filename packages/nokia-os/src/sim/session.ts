@@ -5,12 +5,12 @@
 // pages (DISPLAY TEXT), lists (SELECT ITEM); composed (UNVERIFIED, D4): the call confirm (SET UP
 // CALL never completes in the emulator), whose OK hands the number to `ToolkitDial`.
 import { LONG_PRESS_MS, type PhoneKey } from "@hellotimber/phone-core";
-import type { MessagePageModel, OptionsModel } from "../kit/ui/display/widgets";
+import type { MessagePageModel, OptionsModel } from "@hellotimber/nokia-kit/ui/display/widgets";
 import { messagePages } from "../messages/read";
-import { confirmQuery } from "../kit/ui/widgets/confirm";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { interlude } from "../kit/ui/widgets/interlude";
-import { moveRows, openRows, type RowsCursor } from "../kit/ui/widgets/rows";
+import { confirmQuery } from "@hellotimber/nokia-kit/ui/widgets/confirm";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { interlude } from "@hellotimber/nokia-kit/ui/widgets/interlude";
+import { moveRows, openRows, type RowsCursor } from "@hellotimber/nokia-kit/ui/widgets/rows";
 import {
   callConfirmLines,
   rowLabel,

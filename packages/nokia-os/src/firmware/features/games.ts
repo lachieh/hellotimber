@@ -3,12 +3,12 @@
 // level's Continue and routes its Top score and Level returns (plan 24 D10), and the games that
 // are not built yet: their fixed Level bars, virgin top scores, and Club Nokia's ID query.
 import { spaceImpactGame } from "./space-impact";
-import { createAnsiRandom, type AnsiRandom } from "../../kit/apps/games/random";
-import { gameSeed } from "../../kit/apps/games/seed";
-import type { Widget } from "../../kit/ui/widgets/flow";
+import { createAnsiRandom, type AnsiRandom } from "@hellotimber/nokia-kit/apps/games/random";
+import { gameSeed } from "@hellotimber/nokia-kit/apps/games/seed";
+import type { Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
 import { snakeGame } from "../../widgets/snake";
-import { NO_CUES, type StockCueSink } from "../../kit/system/cues";
-import type { StockPorts } from "../../kit/system/ports";
+import { NO_CUES, type StockCueSink } from "@hellotimber/nokia-kit/system/cues";
+import type { StockPorts } from "@hellotimber/nokia-kit/system/ports";
 import { nextSibling } from "../tree";
 import { STOCK_TREE } from "../generated/stock-tree";
 import type { LeadEntry, NoteEndBinding, StockFeature, StockServices } from "./feature";

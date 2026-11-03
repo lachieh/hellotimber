@@ -12,7 +12,7 @@ import {
   type ComposerRecordingKeys,
 } from "../../scripts/capture-sets/27-composer.ts";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
-import type { ComposerModel } from "../../src/kit/ui/display/widgets";
+import type { ComposerModel } from "@hellotimber/nokia-kit/ui/display/widgets";
 import { expectLcd } from "./golden.ts";
 import { goldenImage } from "./goldens.ts";
 import { seededStorage, standbyRig, type Rig } from "./rig.ts";

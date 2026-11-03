@@ -3,8 +3,8 @@
 // level). `paintStockScreen` and `describeStockScreen` are the stock v6.39 firmware's.
 import type { ScreenModel } from "@hellotimber/phone-core";
 import type { ScreenPainter } from "@hellotimber/phone-screen";
-import { describeScreen } from "../kit/ui/display/describe";
-import { screenPainter } from "../kit/ui/display/paint";
+import { describeScreen } from "@hellotimber/nokia-kit/ui/display/describe";
+import { screenPainter } from "@hellotimber/nokia-kit/ui/display/paint";
 import type { Firmware } from "./firmware";
 import { STOCK_FIRMWARE } from "./stock";
 

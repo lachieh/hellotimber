@@ -1,13 +1,17 @@
 import { Framebuffer } from "@hellotimber/phone-screen";
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
-import { paintWidget, type PromptModel, type WidgetModel } from "../src/kit/ui/display/widgets";
-import { TEXT_TIMINGS } from "../src/kit/ui/resources";
-import { SYMBOLS } from "../src/kit/ui/text/keys";
-import { editor } from "../src/kit/ui/widgets/editor";
-import { numberEntry, DIAL_CYCLE } from "../src/kit/ui/widgets/number-entry";
-import { symbolTable } from "../src/kit/ui/widgets/symbol-table";
-import { textInput } from "../src/kit/ui/widgets/text-input";
+import {
+  paintWidget,
+  type PromptModel,
+  type WidgetModel,
+} from "@hellotimber/nokia-kit/ui/display/widgets";
+import { TEXT_TIMINGS } from "@hellotimber/nokia-kit/ui/resources";
+import { SYMBOLS } from "@hellotimber/nokia-kit/ui/text/keys";
+import { editor } from "@hellotimber/nokia-kit/ui/widgets/editor";
+import { numberEntry, DIAL_CYCLE } from "@hellotimber/nokia-kit/ui/widgets/number-entry";
+import { symbolTable } from "@hellotimber/nokia-kit/ui/widgets/symbol-table";
+import { textInput } from "@hellotimber/nokia-kit/ui/widgets/text-input";
 import { flowRig, type FlowRig } from "./support/flow-rig";
 import { lcdMismatch } from "./support/golden";
 import { loadGolden } from "./support/goldens";

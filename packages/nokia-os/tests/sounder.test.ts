@@ -4,12 +4,16 @@ import { describe, expect, it } from "vite-plus/test";
 import type { SoundGolden } from "../scripts/sound-format.ts";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
-import type { SoundProgram } from "../src/kit/ui/sound/program";
-import { SoundSequencer } from "../src/kit/ui/sound/sequencer";
-import { C_HOLD_BEEP_MS, StockSounder, type UserRingingTones } from "../src/kit/system/sounder";
-import { LEVEL_REPEAT } from "../src/kit/ui/widgets/key-repeat";
+import type { SoundProgram } from "@hellotimber/nokia-kit/ui/sound/program";
+import { SoundSequencer } from "@hellotimber/nokia-kit/ui/sound/sequencer";
+import {
+  C_HOLD_BEEP_MS,
+  StockSounder,
+  type UserRingingTones,
+} from "@hellotimber/nokia-kit/system/sounder";
+import { LEVEL_REPEAT } from "@hellotimber/nokia-kit/ui/widgets/key-repeat";
 import type { StockSoundEvent } from "../src/index";
-import { KEYPAD_BEEP, RINGING_TONES } from "../src/kit/ui/resources";
+import { KEYPAD_BEEP, RINGING_TONES } from "@hellotimber/nokia-kit/ui/resources";
 import { seededStorage } from "./support/rig.ts";
 import { soundRig, soundStorage, type SettingChoices } from "./support/sound-scenarios.ts";
 import { expectSoundTimeline, type RecordedSound } from "./support/sound.ts";

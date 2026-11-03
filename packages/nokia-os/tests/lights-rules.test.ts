@@ -4,11 +4,15 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
 import { FIREWORKS_MS, GAMES_LIGHTS_KEY, SNAKE_DEATH_MS } from "../src/firmware/features/backlight";
-import { LIGHT_TICK_MS, LIGHT_TICK_PHASE_MS, LIGHT_TIMEOUT_MS } from "../src/kit/system/lights";
-import { KEYGUARD_TIMES } from "../src/kit/system/keyguard";
+import {
+  LIGHT_TICK_MS,
+  LIGHT_TICK_PHASE_MS,
+  LIGHT_TIMEOUT_MS,
+} from "@hellotimber/nokia-kit/system/lights";
+import { KEYGUARD_TIMES } from "@hellotimber/nokia-kit/system/keyguard";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
-import { SNAKE_TOP_SCORE_MS } from "../src/kit/ui/resources";
+import { SNAKE_TOP_SCORE_MS } from "@hellotimber/nokia-kit/ui/resources";
 import { SNAKE_SETTINGS } from "../src/widgets/snake";
 import { lightsRig, storageFor, type LightsRig } from "./support/lights.ts";
 

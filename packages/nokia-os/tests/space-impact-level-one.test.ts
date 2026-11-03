@@ -5,8 +5,8 @@ import {
   spaceImpactKey,
   spaceImpactRender,
   stepSpaceImpact,
-} from "../src/kit/apps/games/space-impact/engine";
-import { paintSpaceImpact } from "../src/kit/ui/display/widgets/space-impact";
+} from "@hellotimber/nokia-kit/apps/games/space-impact/engine";
+import { paintSpaceImpact } from "@hellotimber/nokia-kit/ui/display/widgets/space-impact";
 import { observedSpaceImpactInput } from "../scripts/space-impact-delivery";
 import { deliverSpaceImpactEvent } from "./support/space-impact-replay";
 import { goldenImage, loadGolden } from "./support/goldens";

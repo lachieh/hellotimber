@@ -6,8 +6,13 @@ import {
   callSeconds,
   durationText,
   StockCallLog,
-} from "../src/services/calls/log";
-import { CallClock, callDate, callTime, parseHostTime } from "../src/services/calls/timestamp";
+} from "@hellotimber/phone-services/calls/log";
+import {
+  CallClock,
+  callDate,
+  callTime,
+  parseHostTime,
+} from "@hellotimber/phone-services/calls/timestamp";
 import { createMemoryStorage, StockEeprom } from "../src/firmware/eeprom";
 
 const log = () => new StockCallLog(new StockEeprom(createMemoryStorage()));

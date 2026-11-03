@@ -2,7 +2,7 @@ import type { ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { paintStockScreen, stockMenu } from "../src/index";
-import { STOCK_MENU_ICONS } from "../src/kit/ui/resources";
+import { STOCK_MENU_ICONS } from "@hellotimber/nokia-kit/ui/resources";
 import { expectLcd, lcdMismatch, type GoldenImageRef } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";
 

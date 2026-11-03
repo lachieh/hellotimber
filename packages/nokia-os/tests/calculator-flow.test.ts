@@ -3,15 +3,15 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { CalculatorRate } from "../src/kit/apps/calculator/rate";
-import { paintWidget, type WidgetModel } from "../src/kit/ui/display/widgets";
+import { CalculatorRate } from "@hellotimber/nokia-kit/apps/calculator/rate";
+import { paintWidget, type WidgetModel } from "@hellotimber/nokia-kit/ui/display/widgets";
 import { createMemoryStorage, StockEeprom } from "../src/firmware/eeprom";
-import { timelineById, timelineByName } from "../src/kit/ui/timelines";
+import { timelineById, timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import {
   CALCULATOR_HOLD_MS,
   calculator,
   type CalculatorServices,
-} from "../src/kit/apps/calculator/widget";
+} from "@hellotimber/nokia-kit/apps/calculator/widget";
 import { flowRig, type FlowRig } from "./support/flow-rig.ts";
 import { FRAME_MS } from "./support/golden.ts";
 import { play } from "./support/calculator.ts";

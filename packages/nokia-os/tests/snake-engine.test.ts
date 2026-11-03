@@ -9,8 +9,8 @@ import {
   snakeRender,
   stepSnake,
   type SnakeStep,
-} from "../src/kit/apps/games/snake/engine";
-import type { Heading, Segment, SnakeState } from "../src/kit/apps/games/snake/model";
+} from "@hellotimber/nokia-kit/apps/games/snake/engine";
+import type { Heading, Segment, SnakeState } from "@hellotimber/nokia-kit/apps/games/snake/model";
 import { replayBoards, SNAKE_TRACES } from "./support/game";
 
 /** A game at 10:10's seed (first food (14, 8)) with the given overrides. */

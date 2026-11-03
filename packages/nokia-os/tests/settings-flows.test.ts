@@ -1,10 +1,10 @@
 // Plan 15 Task 7: what an accepted security code opens (D8, Task 0c `probe/accept-*`), through
 // the stock phone's keys, with the EEPROM read back from its storage.
 import { describe, expect, it } from "vite-plus/test";
-import { WELCOME_NOTE_KEY } from "../src/kit/system/boot";
-import { PHONE_SECURITY_KEY } from "../src/kit/system/security";
+import { WELCOME_NOTE_KEY } from "@hellotimber/nokia-kit/system/boot";
+import { PHONE_SECURITY_KEY } from "@hellotimber/nokia-kit/system/security";
 import { StockEeprom } from "../src/firmware/eeprom";
-import { SECURITY_RECORD } from "../src/kit/system/security";
+import { SECURITY_RECORD } from "@hellotimber/nokia-kit/system/security";
 import { SETTINGS_RECORD, createStockSettings } from "../src/firmware/settings";
 import { createMemoryStorage, type StockStorage } from "../src/index";
 import { expectLcd } from "./support/golden.ts";

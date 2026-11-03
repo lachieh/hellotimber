@@ -41,7 +41,7 @@ export interface ResourceExtractionIo {
   readonly sound: (id: string) => SoundGolden;
 }
 export interface GeneratedResourceModule {
-  /** Relative to src/kit/ui/resources/generated/. */
+  /** Relative to nokia-kit's src/ui/resources/generated/. */
   readonly file: string;
   readonly extract: (io: ResourceExtractionIo) => string;
 }

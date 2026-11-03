@@ -6,7 +6,7 @@ import {
   searchIndex,
   sortEntries,
   type PhoneBookEntry,
-} from "../src/services/phone-book/entries";
+} from "@hellotimber/phone-services/phone-book/entries";
 
 /** A fixture's entries by location, as the SIM holds them. */
 function entriesOf(sim: keyof typeof PHONE_BOOK_SIMS): PhoneBookEntry[] {

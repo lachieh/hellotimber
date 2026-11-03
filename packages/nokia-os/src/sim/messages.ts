@@ -1,14 +1,14 @@
 // SMS stored on the SIM card (plan 30 D2, Task 0 M): the GSM 7-bit alphabet a SIM message is
 // written in, how the 3310 draws it, and the validation of `StockSimCard.messages`. Pure.
-import { missingStockGlyphs } from "../kit/ui/resources";
-import { smsDrawn } from "../kit/ui/text/sms";
-import { TIMESTAMP_RANGES } from "../services/messaging/network";
+import { missingStockGlyphs } from "@hellotimber/nokia-kit/ui/resources";
+import { smsDrawn } from "@hellotimber/nokia-kit/ui/text/sms";
+import { TIMESTAMP_RANGES } from "@hellotimber/phone-services/messaging/network";
 import {
   SIM_MESSAGE_SLOTS,
   type SimMessage,
   type SimMessages,
   type StockSimMessage,
-} from "../services/sim/messages";
+} from "@hellotimber/phone-services/sim/messages";
 
 export { SIM_MESSAGE_SLOTS, type SimMessage, type SimMessages, type StockSimMessage };
 

@@ -13,7 +13,7 @@ import { writeResources } from "./extract-resources.ts";
 /** The generators, in dependency order: each returns the files it changed. */
 export const GENERATORS: readonly { readonly name: string; readonly run: () => string[] }[] = [
   // Fonts, menu icons, boot, status, widget sprites and timelines, Snake II and sounds, from
-  // goldens/ (src/kit/ui/resources/generated/).
+  // goldens/ (nokia-kit's src/ui/resources/generated/).
   { name: "extract-resources", run: writeResources },
 ];
 

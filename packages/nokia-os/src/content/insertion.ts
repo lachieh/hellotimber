@@ -3,9 +3,9 @@
 // Select inserts the slot's text at the cursor exactly (an `(empty)` slot nothing), C returns to
 // the editor. Write messages, Reply, Edit, Forward and Chat open it.
 import type { StockServices } from "../firmware/features/feature";
-import { contentList } from "../kit/ui/widgets/content-list";
-import type { EditorControl } from "../kit/ui/widgets/text-entry";
-import type { Widget } from "../kit/ui/widgets/flow";
+import { contentList } from "@hellotimber/nokia-kit/ui/widgets/content-list";
+import type { EditorControl } from "@hellotimber/nokia-kit/ui/widgets/text-entry";
+import type { Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
 import { StockTextSlots, type TextSlotsKind } from "./slots";
 
 /** A slot's row and Read text: its text, or `(empty)`. */

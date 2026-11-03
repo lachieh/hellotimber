@@ -4,7 +4,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { PHONE_BOOK_SIMS } from "../scripts/capture-sets/19-phone-book.ts";
 import { StockEeprom } from "../src/firmware/eeprom";
-import { StockMessages } from "../src/services/messaging/store";
+import { StockMessages } from "@hellotimber/phone-services/messaging/store";
 import {
   createMemoryStorage,
   createSyntheticNetwork,

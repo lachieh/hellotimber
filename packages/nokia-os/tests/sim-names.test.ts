@@ -3,9 +3,9 @@
 import { describe, expect, it } from "vite-plus/test";
 import { SIM_CONTENT_SIMS } from "../scripts/capture-sets/30-sim-content.ts";
 import { StockEeprom } from "../src/firmware/eeprom";
-import { sameSubscriber } from "../src/services/phone-book/numbers";
+import { sameSubscriber } from "@hellotimber/phone-services/phone-book/numbers";
 import { normaliseSim } from "../src/phone-book/sim-card";
-import { StockPhoneBook } from "../src/services/phone-book/store";
+import { StockPhoneBook } from "@hellotimber/phone-services/phone-book/store";
 import { createMemoryStorage, type StockSimCard } from "../src/index";
 import { messagePages } from "../src/messages/read";
 

@@ -11,7 +11,7 @@ import {
   type StockSettings,
   type StockSettingsSnapshot,
   type StoreSchema,
-} from "../kit/system/settings";
+} from "@hellotimber/nokia-kit/system/settings";
 
 export type { SettingsOverrides, StockSettings, StockSettingsSnapshot };
 import type { Firmware } from "./firmware";

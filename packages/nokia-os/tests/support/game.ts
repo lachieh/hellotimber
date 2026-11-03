@@ -1,6 +1,6 @@
 import { expectSpaceImpactSound } from "./space-impact-sound";
 import { expectSpaceImpactExit, expectSpaceImpactLevel } from "./space-impact-replay";
-import { SPACE_IMPACT_DATA } from "../../src/kit/ui/resources/generated/space-impact";
+import { SPACE_IMPACT_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/space-impact";
 // Snake II gameplay goldens replayed through the engine (plan 23 Tasks 7-8): each recorded
 // game's level, maze and recovered seed (Task 5), and the engine state at every board the golden
 // shows, driven by the golden's `input`.
@@ -15,15 +15,15 @@ import {
   snakeKey,
   snakeRender,
   stepSnake,
-} from "../../src/kit/apps/games/snake/engine";
-import type { SnakeState } from "../../src/kit/apps/games/snake/model";
+} from "@hellotimber/nokia-kit/apps/games/snake/engine";
+import type { SnakeState } from "@hellotimber/nokia-kit/apps/games/snake/model";
 import {
   SNAKE_FIRST_TICK,
   SNAKE_GRACE_MS,
   SNAKE_MAZES,
   SNAKE_PERIODS,
   WIDGET_SPRITES,
-} from "../../src/kit/ui/resources";
+} from "@hellotimber/nokia-kit/ui/resources";
 import { goto } from "./drive";
 import {
   expectLcd,

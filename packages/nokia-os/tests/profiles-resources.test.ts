@@ -8,8 +8,8 @@ import {
   WIDGET_TIMELINE_BY_NAME,
   WIDGET_TIMELINE_BY_NODE,
   WIDGET_TIMELINES,
-} from "../src/kit/ui/resources";
-import { TYPEABLE } from "../src/kit/ui/text/keys";
+} from "@hellotimber/nokia-kit/ui/resources";
+import { TYPEABLE } from "@hellotimber/nokia-kit/ui/text/keys";
 import { loadGolden } from "./support/goldens.ts";
 
 /** Every name a profile has before a rename: virgin (slot 6's boxes) and factory. */

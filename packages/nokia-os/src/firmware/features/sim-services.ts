@@ -11,12 +11,12 @@ import {
   SubmenuEntry,
   TopLevelEntry,
 } from "@hellotimber/phone-core";
-import { stockMenuGraphic } from "../../kit/ui/resources";
+import { stockMenuGraphic } from "@hellotimber/nokia-kit/ui/resources";
 import { SIM_SERVICES_SLUG } from "../../sim/slot";
 import type { SimServicesSlot } from "../firmware";
 import { carouselLabel, rowLabel, type StockSimToolkit } from "../../sim/toolkit";
 import { toolkitSession, type ToolkitDial } from "../../sim/session";
-import { StockFlowApplication } from "../../kit/ui/widgets/flow";
+import { StockFlowApplication } from "@hellotimber/nokia-kit/ui/widgets/flow";
 import type { StockFeature, StockServices } from "./feature";
 import { placeCall } from "./dialling";
 

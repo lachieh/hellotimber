@@ -3,24 +3,33 @@
 // (Volume, DTMF digits, C's `End`/`Options`, Options), and how a call leaves the screen. One
 // widget follows one call of the phone's telephone; its frames come from the call's times.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { CallBody, CallModel, StandbyDrawModel, WidgetModel } from "../kit/ui/display/widgets";
-import { Playback } from "../kit/ui/widgets/playback";
-import { timelineById, timelineByName } from "../kit/ui/timelines";
-import { CALL_TIMINGS, type StockCall, type StockTelephone } from "../services/calls/telephone";
-import { appendDial, starCycle } from "../services/calls/dial-string";
+import type {
+  CallBody,
+  CallModel,
+  StandbyDrawModel,
+  WidgetModel,
+} from "@hellotimber/nokia-kit/ui/display/widgets";
+import { Playback } from "@hellotimber/nokia-kit/ui/widgets/playback";
+import { timelineById, timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
+import {
+  CALL_TIMINGS,
+  type StockCall,
+  type StockTelephone,
+} from "@hellotimber/phone-services/calls/telephone";
+import { appendDial, starCycle } from "@hellotimber/phone-services/calls/dial-string";
 import {
   earpieceWord,
   transmittedDtmfProgram,
   VOLUME_TONE_MS,
   volumeTopProgram,
-} from "../kit/system/call-sounds";
+} from "@hellotimber/nokia-kit/system/call-sounds";
 import { DIAL_TIMINGS } from "./dial-entry";
-import type { StockSounder } from "../kit/system/sounder";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { numberEntry } from "../kit/ui/widgets/number-entry";
-import { note } from "../kit/ui/widgets/note";
+import type { StockSounder } from "@hellotimber/nokia-kit/system/sounder";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { numberEntry } from "@hellotimber/nokia-kit/ui/widgets/number-entry";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
 import { OptionListWidget } from "./option-list";
-import { placeholderWidget } from "../kit/ui/widgets/placeholder";
+import { placeholderWidget } from "@hellotimber/nokia-kit/ui/widgets/placeholder";
 
 /**
  * Calling's dots: one, the number ≈100 ms later from the number entry (`dial/number-12` 81,

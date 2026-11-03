@@ -3,10 +3,10 @@
 // to a minute, the standby timer icon, and the `Countdown` / `time up` alert with its bells and its
 // sound (≈29 s, ascending), which stays until a key.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { AlertModel } from "../../../kit/ui/display/widgets";
-import { CLOCK_ALERTS } from "../../../kit/ui/resources";
-import type { SoundPlay } from "../../../kit/ui/sound/sequencer";
-import type { Flow, Widget } from "../../../kit/ui/widgets/flow";
+import type { AlertModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import { CLOCK_ALERTS } from "@hellotimber/nokia-kit/ui/resources";
+import type { SoundPlay } from "@hellotimber/nokia-kit/ui/sound/sequencer";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
 import type { StockServices } from "../feature";
 import { bellsAt } from "./alarm";
 import {
@@ -14,9 +14,9 @@ import {
   alertLeadIn,
   standbyOf,
   type AlertStandby,
-} from "../../../kit/system/clock/alerts";
-import { phoneClock } from "../../../kit/system/clock/registry";
-import type { StockClock } from "../../../kit/system/clock/service";
+} from "@hellotimber/nokia-kit/system/clock/alerts";
+import { phoneClock } from "@hellotimber/nokia-kit/system/clock/registry";
+import type { StockClock } from "@hellotimber/nokia-kit/system/clock/service";
 
 /**
  * The countdown alert's bells step first this long after it is drawn (plan21 countdown/

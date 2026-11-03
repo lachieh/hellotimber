@@ -6,8 +6,8 @@ import {
   createAnsiRandom,
   createGameRandom,
   GAME_RANDOM_MODULUS,
-} from "../src/kit/apps/games/random";
-import { gameSeed } from "../src/kit/apps/games/seed";
+} from "@hellotimber/nokia-kit/apps/games/random";
+import { gameSeed } from "@hellotimber/nokia-kit/apps/games/seed";
 import { goldenPlacements } from "./support/snake-decode";
 
 const step = (seed: number) => (seed * 0x625f + 0x3623) % GAME_RANDOM_MODULUS;

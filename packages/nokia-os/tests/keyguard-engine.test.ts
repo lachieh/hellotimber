@@ -13,8 +13,8 @@ import {
   KeyguardEngine,
   type KeyguardCalls,
   type KeyguardOutcome,
-} from "../src/kit/system/keyguard";
-import { timelineByName } from "../src/kit/ui/timelines";
+} from "@hellotimber/nokia-kit/system/keyguard";
+import { timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import { findGoldenImage } from "../scripts/golden-format.ts";
 import { loadGolden } from "./support/goldens.ts";
 

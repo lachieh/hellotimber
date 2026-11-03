@@ -2,22 +2,22 @@
 // Clock settings (Hide clock / Show clock, Set the time, Time format), Date setting, and the
 // clock's records; the alarm clock (11-1), the stopwatch (11-4) and the countdown timer (11-5).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { PromptLayout } from "../../kit/ui/widgets/prompt";
-import type { Flow, Widget } from "../../kit/ui/widgets/flow";
-import { confirmQuery } from "../../kit/ui/widgets/confirm";
-import { note, type NoteOptions } from "../../kit/ui/widgets/note";
-import { Playback } from "../../kit/ui/widgets/playback";
+import type { PromptLayout } from "@hellotimber/nokia-kit/ui/widgets/prompt";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { confirmQuery } from "@hellotimber/nokia-kit/ui/widgets/confirm";
+import { note, type NoteOptions } from "@hellotimber/nokia-kit/ui/widgets/note";
+import { Playback } from "@hellotimber/nokia-kit/ui/widgets/playback";
 import { timeEntry, type EntryMask } from "../../widgets/time-entry";
-import { timelineById, timelineByName } from "../../kit/ui/timelines";
-import { WIDGET_TIMELINE_BY_NODE } from "../../kit/ui/resources";
-import { clockOfSettings, phoneClock } from "../../kit/system/clock/registry";
-import { TIME_FORMAT } from "../../kit/system/clock/service";
-import { formatClock, formatDate, parseHostTime } from "../../kit/system/clock/time";
+import { timelineById, timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
+import { WIDGET_TIMELINE_BY_NODE } from "@hellotimber/nokia-kit/ui/resources";
+import { clockOfSettings, phoneClock } from "@hellotimber/nokia-kit/system/clock/registry";
+import { TIME_FORMAT } from "@hellotimber/nokia-kit/system/clock/service";
+import { formatClock, formatDate, parseHostTime } from "@hellotimber/nokia-kit/system/clock/time";
 import type { ScreenPlace, StockFeature, StockServices } from "./feature";
 import { phoneAlarm } from "./clock/alarm";
 import { countdownOf, phoneCountdown } from "./clock/countdown";
 import { phoneStopwatch } from "./clock/stopwatch";
-import { standbyOf } from "../../kit/system/clock/alerts";
+import { standbyOf } from "@hellotimber/nokia-kit/system/clock/alerts";
 import { stopwatchWidget } from "../../widgets/stopwatch";
 import { OptionListWidget } from "../../widgets/option-list";
 

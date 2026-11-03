@@ -5,7 +5,7 @@
 import type { StockServices } from "../firmware/features/feature";
 import { sendingResult } from "../messages/write";
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { ComposerModel, PromptModel } from "../kit/ui/display/widgets";
+import type { ComposerModel, PromptModel } from "@hellotimber/nokia-kit/ui/display/widgets";
 import {
   composerHeld,
   composerKeyDown,
@@ -23,13 +23,13 @@ import {
   COMPOSER_TIMINGS,
   TEXT_TIMINGS,
   type StockWidgetTimeline,
-} from "../kit/ui/resources";
-import type { SoundPlay } from "../kit/ui/sound/sequencer";
-import type { StockSounder } from "../kit/system/sounder";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { note } from "../kit/ui/widgets/note";
-import { numberEntry } from "../kit/ui/widgets/number-entry";
-import { textInput } from "../kit/ui/widgets/text-input";
+} from "@hellotimber/nokia-kit/ui/resources";
+import type { SoundPlay } from "@hellotimber/nokia-kit/ui/sound/sequencer";
+import type { StockSounder } from "@hellotimber/nokia-kit/system/sounder";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
+import { numberEntry } from "@hellotimber/nokia-kit/ui/widgets/number-entry";
+import { textInput } from "@hellotimber/nokia-kit/ui/widgets/text-input";
 import { OptionListWidget } from "./option-list";
 
 /** Options (Task 0 O), in list order. */

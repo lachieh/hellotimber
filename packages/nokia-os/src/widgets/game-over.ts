@@ -3,14 +3,14 @@
 // lost endings come with plan 24b's resources. Parameterised by the ending and where the menu
 // returns.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { GameOverModel } from "../kit/ui/display/widgets";
+import type { GameOverModel } from "@hellotimber/nokia-kit/ui/display/widgets";
 import {
   WIDGET_TIMELINE_BY_NAME,
   WIDGET_TIMELINES,
   type StockWidgetTimeline,
-} from "../kit/ui/resources";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { Playback } from "../kit/ui/widgets/playback";
+} from "@hellotimber/nokia-kit/ui/resources";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { Playback } from "@hellotimber/nokia-kit/ui/widgets/playback";
 import type { StockGames } from "../firmware/features/games";
 
 /**

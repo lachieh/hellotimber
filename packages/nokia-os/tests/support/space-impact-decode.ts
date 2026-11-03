@@ -1,4 +1,4 @@
-import { SPACE_IMPACT_DATA } from "../../src/kit/ui/resources/generated/space-impact.ts";
+import { SPACE_IMPACT_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/space-impact";
 import { renderSpaceImpactTerrain } from "../../scripts/space-impact-resources.ts";
 
 export interface SpaceImpactObservation {

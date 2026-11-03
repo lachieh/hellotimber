@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { SPACE_IMPACT_DATA } from "../src/kit/ui/resources/generated/space-impact.ts";
+import { SPACE_IMPACT_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/space-impact";
 import {
   decodeSpaceImpact,
   decodeSpaceImpactCandidates,

@@ -10,8 +10,8 @@ import { StockComposer } from "../src/composer/store";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import type { StockSoundEvent } from "../src/index";
-import { SoundSequencer } from "../src/kit/ui/sound/sequencer";
-import { StockSounder } from "../src/kit/system/sounder";
+import { SoundSequencer } from "@hellotimber/nokia-kit/ui/sound/sequencer";
+import { StockSounder } from "@hellotimber/nokia-kit/system/sounder";
 import { recordTimeline } from "./support/acceptance.ts";
 import { replayComposerKeys } from "./support/composer";
 import {

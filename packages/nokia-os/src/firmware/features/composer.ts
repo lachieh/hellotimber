@@ -10,7 +10,7 @@ import {
   type ComposerServices,
 } from "../../widgets/composer";
 import type { StockEeprom } from "../eeprom";
-import { timelineByName } from "../../kit/ui/timelines";
+import { timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import type { ScreenBinding, StockFeature, StockServices } from "./feature";
 
 /** The Composer level (Tones › Composer) and its slots. */

@@ -8,9 +8,9 @@ import {
   type ScreenModel,
 } from "@hellotimber/phone-core";
 import type { StockServices } from "./features/feature";
-import { VISIBLE_ROWS } from "../kit/ui/display/list-rows";
-import { BOOT_TIMELINE, missingStockGlyphs } from "../kit/ui/resources";
-import type { StockCueSink } from "../kit/system/cues";
+import { VISIBLE_ROWS } from "@hellotimber/nokia-kit/ui/display/list-rows";
+import { BOOT_TIMELINE, missingStockGlyphs } from "@hellotimber/nokia-kit/ui/resources";
+import type { StockCueSink } from "@hellotimber/nokia-kit/system/cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { composerOf } from "./features/composer";
 import { invalidShortcut } from "./leaves";
@@ -19,17 +19,20 @@ import type { Firmware } from "./firmware";
 import { firmwareRecords } from "./records";
 import { STOCK_FIRMWARE } from "./stock";
 import { openBox } from "../messages/read";
-import { StockFlowApplication } from "../kit/ui/widgets/flow";
+import { StockFlowApplication } from "@hellotimber/nokia-kit/ui/widgets/flow";
 import { applyPreload, checkImei, checkPreload, type StockPreload } from "./preload";
-import { createSyntheticNetwork, type StockNetworkPort } from "../services/messaging/network";
+import {
+  createSyntheticNetwork,
+  type StockNetworkPort,
+} from "@hellotimber/phone-services/messaging/network";
 import { createStockGames, powerOffGames, powerOnGames } from "./features/games";
-import type { StockPorts } from "../kit/system/ports";
-import { STOCK_DEFAULT_SIM, StockSecurity } from "../kit/system/security";
+import type { StockPorts } from "@hellotimber/nokia-kit/system/ports";
+import { STOCK_DEFAULT_SIM, StockSecurity } from "@hellotimber/nokia-kit/system/security";
 import { standbyList } from "../phone-book/flows";
 import { normaliseSim, type StockSimCard } from "../phone-book/sim-card";
-import { StockPhoneBook } from "../services/phone-book/store";
+import { StockPhoneBook } from "@hellotimber/phone-services/phone-book/store";
 import { STANDBY_KEY_DELAY_MS } from "../phone-book/timings";
-import { stockBootGates } from "../kit/system/boot";
+import { stockBootGates } from "@hellotimber/nokia-kit/system/boot";
 import {
   activationBeep,
   powerList,
@@ -43,26 +46,26 @@ import { phoneAlarm } from "./features/clock/alarm";
 import { phoneCountdown } from "./features/clock/countdown";
 import { phoneStopwatch } from "./features/clock/stopwatch";
 import { phoneReminders } from "./features/reminders/service";
-import { registerClock } from "../kit/system/clock/registry";
-import { StockClock } from "../kit/system/clock/service";
+import { registerClock } from "@hellotimber/nokia-kit/system/clock/registry";
+import { StockClock } from "@hellotimber/nokia-kit/system/clock/service";
 import { StockLightRules } from "./features/backlight";
-import { StockLights, type StockLightsPort } from "../kit/system/lights";
-import { KeyguardOverlay } from "../kit/system/keyguard";
-import type { StockSoundPort } from "../kit/ui/sound/port";
+import { StockLights, type StockLightsPort } from "@hellotimber/nokia-kit/system/lights";
+import { KeyguardOverlay } from "@hellotimber/nokia-kit/system/keyguard";
+import type { StockSoundPort } from "@hellotimber/nokia-kit/ui/sound/port";
 import type { StockGames } from "./features/games";
 import { NO_T9_VIRGIN_CHOICES } from "../messages/bindings";
-import type { T9Dictionary } from "../kit/ui/text/t9/dictionary";
-import { stockT9 } from "../kit/system/t9/service";
-import { SoundSequencer } from "../kit/ui/sound/sequencer";
-import { StockSounder, type KeyDownOptions } from "../kit/system/sounder";
+import type { T9Dictionary } from "@hellotimber/nokia-kit/ui/text/t9/dictionary";
+import { stockT9 } from "@hellotimber/nokia-kit/system/t9/service";
+import { SoundSequencer } from "@hellotimber/nokia-kit/ui/sound/sequencer";
+import { StockSounder, type KeyDownOptions } from "@hellotimber/nokia-kit/system/sounder";
 import { Framebuffer } from "@hellotimber/phone-screen";
-import { attachDescription } from "../kit/ui/display/describe";
+import { attachDescription } from "@hellotimber/nokia-kit/ui/display/describe";
 import { describeFirmwareScreen, firmwarePainter } from "./display";
-import { StockCallLog } from "../services/calls/log";
-import { StockTelephone } from "../services/calls/telephone";
-import { STOCK_CALL_TONES } from "../kit/system/call-sounds";
-import { CallClock } from "../services/calls/timestamp";
-import { WIDGET_SPRITES } from "../kit/ui/resources";
+import { StockCallLog } from "@hellotimber/phone-services/calls/log";
+import { StockTelephone } from "@hellotimber/phone-services/calls/telephone";
+import { STOCK_CALL_TONES } from "@hellotimber/nokia-kit/system/call-sounds";
+import { CallClock } from "@hellotimber/phone-services/calls/timestamp";
+import { WIDGET_SPRITES } from "@hellotimber/nokia-kit/ui/resources";
 import { dialledStandbyList, missedCallsList } from "./features/call-register";
 import {
   incomingCallApplication,

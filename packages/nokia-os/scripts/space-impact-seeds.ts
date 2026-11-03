@@ -1,4 +1,4 @@
-import { createGameRandom, GAME_RANDOM_MODULUS } from "../src/kit/apps/games/random.ts";
+import { createGameRandom, GAME_RANDOM_MODULUS } from "@hellotimber/nokia-kit/apps/games/random";
 
 export interface SpaceImpactRandomObservation {
   /** One-based position in the game chain, including all earlier consumers. */

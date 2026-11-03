@@ -11,13 +11,13 @@ import { MESSAGES_CAPTURE_SCRIPTS } from "../../scripts/generated/messages-scrip
 import { parseManifestNote } from "../../scripts/messages-capture-set.ts";
 import { readPlanIndex } from "../../scripts/golden-index.ts";
 import { Framebuffer } from "@hellotimber/phone-screen";
-import { paintWidget, type WidgetModel } from "../../src/kit/ui/display/widgets";
-import { editorModel } from "../../src/kit/ui/widgets/editor";
+import { paintWidget, type WidgetModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import { editorModel } from "@hellotimber/nokia-kit/ui/widgets/editor";
 import { GOLDENS } from "./acceptance.ts";
 import { lcdMismatch } from "./golden.ts";
 import { loadGolden } from "./goldens.ts";
 import { cursorOnly } from "./replay.ts";
-import type { TextMode, TextState } from "../../src/kit/ui/text/multitap";
+import type { TextMode, TextState } from "@hellotimber/nokia-kit/ui/text/multitap";
 import { replayScenario, type ReplayContext, type TimelineOptions } from "./replay.ts";
 import { standbyRig, type Rig } from "./rig.ts";
 import {
@@ -32,7 +32,7 @@ import {
   textMove,
   textTick,
   type TextInputKey,
-} from "../../src/kit/ui/text/multitap";
+} from "@hellotimber/nokia-kit/ui/text/multitap";
 
 export const TAP_MS = 392;
 export const SMS_LIMIT = 459;

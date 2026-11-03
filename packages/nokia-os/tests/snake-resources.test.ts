@@ -16,8 +16,8 @@ import {
   SNAKE_SPRITE_IDS,
   SNAKE_SPRITES,
   WIDGET_SPRITES,
-} from "../src/kit/ui/resources";
-import { SNAKE_DATA } from "../src/kit/ui/resources/generated/snake";
+} from "@hellotimber/nokia-kit/ui/resources";
+import { SNAKE_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/snake";
 import { loadGolden } from "./support/goldens";
 
 const cellLeft = (x: number) => 2 + 4 * x;

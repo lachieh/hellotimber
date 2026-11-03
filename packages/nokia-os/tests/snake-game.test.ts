@@ -5,12 +5,12 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
 import { isBoardFrame } from "../scripts/game-capture-set.ts";
-import type { StockCue } from "../src/kit/system/cues";
+import type { StockCue } from "@hellotimber/nokia-kit/system/cues";
 import { createMemorySettings, virginSettings } from "../src/firmware/settings";
-import { snakeRender, stepSnake } from "../src/kit/apps/games/snake/engine";
+import { snakeRender, stepSnake } from "@hellotimber/nokia-kit/apps/games/snake/engine";
 import { Framebuffer } from "@hellotimber/phone-screen";
-import { paintWidget } from "../src/kit/ui/display/widgets";
-import { GAME_CUES, SNAKE_PERIODS } from "../src/kit/ui/resources";
+import { paintWidget } from "@hellotimber/nokia-kit/ui/display/widgets";
+import { GAME_CUES, SNAKE_PERIODS } from "@hellotimber/nokia-kit/ui/resources";
 import { gameOver } from "../src/widgets/game-over";
 import { createStockGames, type StockGames } from "../src/firmware/features/games";
 import { snakeGame, SNAKE_SETTINGS, type SuspendedSnake } from "../src/widgets/snake";

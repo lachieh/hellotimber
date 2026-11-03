@@ -9,7 +9,7 @@ import {
   stillFixtureOf,
 } from "../scripts/capture-sets/27-composer.ts";
 import { EMPTY_COMPOSER } from "../src/composer/editor";
-import { paintWidget } from "../src/kit/ui/display/widgets";
+import { paintWidget } from "@hellotimber/nokia-kit/ui/display/widgets";
 import { composerModel, replayComposerView } from "./support/composer";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";

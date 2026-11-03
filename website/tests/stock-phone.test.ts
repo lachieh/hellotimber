@@ -16,7 +16,7 @@ vi.mock("@hellotimber/nokia-os", async (original) => {
     },
   };
 });
-vi.mock("@hellotimber/nokia-os/t9-english", async () => {
+vi.mock("@hellotimber/nokia-kit/t9-english", async () => {
   const { createT9Dictionary } = await import("@hellotimber/nokia-os");
   return { englishT9: createT9Dictionary("english", "#0\nhello\nworld") };
 });

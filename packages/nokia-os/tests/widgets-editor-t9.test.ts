@@ -5,9 +5,9 @@
 // standard).
 import { describe, expect, it } from "vite-plus/test";
 import { readPlanIndex } from "../scripts/golden-index.ts";
-import { englishT9 } from "../src/kit/ui/text/t9/english";
-import type { T9Context } from "../src/kit/ui/text/t9/editing";
-import { editor } from "../src/kit/ui/widgets/editor";
+import { englishT9 } from "@hellotimber/nokia-kit/ui/text/t9/english";
+import type { T9Context } from "@hellotimber/nokia-kit/ui/text/t9/editing";
+import { editor } from "@hellotimber/nokia-kit/ui/widgets/editor";
 import { GOLDENS } from "./support/acceptance.ts";
 import { flowRig } from "./support/flow-rig.ts";
 import { loadGolden } from "./support/goldens.ts";

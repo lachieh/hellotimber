@@ -22,19 +22,19 @@ import type {
   VirginNumber,
   VirginText,
 } from "./features/feature";
-import type { EepromRecord } from "../services/storage";
+import type { EepromRecord } from "@hellotimber/phone-services/storage";
 import type { StockTreeNode } from "./generated/stock-tree";
 import { byPattern, matchesPattern, nextSibling, treePath, treePaths } from "./tree";
-import type { ScreenDisplay } from "../kit/ui/display/screen-display";
+import type { ScreenDisplay } from "@hellotimber/nokia-kit/ui/display/screen-display";
 import {
   WIDGET_TIMELINE_BY_NODE,
   type CarouselGraphic,
   type StockWidgetTimeline,
-} from "../kit/ui/resources";
-import { timelineById } from "../kit/ui/timelines";
-import type { PromptLayout } from "../kit/ui/widgets/prompt";
-import type { ListNumbering } from "../kit/ui/widgets/rows";
-import type { StockPorts } from "../kit/system/ports";
+} from "@hellotimber/nokia-kit/ui/resources";
+import { timelineById } from "@hellotimber/nokia-kit/ui/timelines";
+import type { PromptLayout } from "@hellotimber/nokia-kit/ui/widgets/prompt";
+import type { ListNumbering } from "@hellotimber/nokia-kit/ui/widgets/rows";
+import type { StockPorts } from "@hellotimber/nokia-kit/system/ports";
 import type { StockSettings } from "./settings";
 
 /**

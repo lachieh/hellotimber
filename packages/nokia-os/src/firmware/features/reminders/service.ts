@@ -4,10 +4,10 @@
 // reminder icon, `Snooze`, the buzzer until a key. Snooze: `Alarm postponed for 10 min`, then
 // it alerts again 10 minutes later; any other key ends it.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { AlertModel } from "../../../kit/ui/display/widgets";
-import { CLOCK_ALERTS } from "../../../kit/ui/resources";
-import type { SoundPlay } from "../../../kit/ui/sound/sequencer";
-import type { Flow, Widget } from "../../../kit/ui/widgets/flow";
+import type { AlertModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import { CLOCK_ALERTS } from "@hellotimber/nokia-kit/ui/resources";
+import type { SoundPlay } from "@hellotimber/nokia-kit/ui/sound/sequencer";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
 import type { StockServices } from "../feature";
 import {
   alertExit,
@@ -16,10 +16,10 @@ import {
   ALERT_EXIT_MS,
   standbyOf,
   type AlertStandby,
-} from "../../../kit/system/clock/alerts";
-import { phoneClock } from "../../../kit/system/clock/registry";
-import type { StockClock } from "../../../kit/system/clock/service";
-import { minuteIndex } from "../../../kit/system/clock/time";
+} from "@hellotimber/nokia-kit/system/clock/alerts";
+import { phoneClock } from "@hellotimber/nokia-kit/system/clock/registry";
+import type { StockClock } from "@hellotimber/nokia-kit/system/clock/service";
+import { minuteIndex } from "@hellotimber/nokia-kit/system/clock/time";
 import { REMINDER_SNOOZE_MINUTES, StockReminders, type Reminder } from "./store";
 
 /** Snooze clears the ladders this long before `Alarm postponed` (plan21 alert-key-snooze 17 ms). */

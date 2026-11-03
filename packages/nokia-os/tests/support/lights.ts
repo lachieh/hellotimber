@@ -1,18 +1,18 @@
 // Plan 25's lights goldens in tests: loading them by id and the comparison tolerances (Task 0).
-import { CALL_TIMINGS } from "../../src/services/calls/telephone";
+import { CALL_TIMINGS } from "@hellotimber/phone-services/calls/telephone";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Phone, PhoneKey } from "@hellotimber/phone-core";
 import { readPlanIndex } from "../../scripts/golden-index.ts";
 import { parseLightsGolden, type LightsGolden } from "../../scripts/lights-format.ts";
-import type { StockCue } from "../../src/kit/system/cues";
+import type { StockCue } from "@hellotimber/nokia-kit/system/cues";
 import { GAMES_LIGHTS_KEY } from "../../src/firmware/features/backlight";
-import type { StockLightEvent } from "../../src/kit/system/lights";
+import type { StockLightEvent } from "@hellotimber/nokia-kit/system/lights";
 import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockSettings } from "../../src/firmware/settings";
 import { createStockPhoneWith, type StockPhoneConfig } from "../../src/firmware/phone";
 import { createSyntheticNetwork, type StockStorage } from "../../src/index";
-import { RECEIVE_LINK_MS } from "../../src/kit/ui/resources";
+import { RECEIVE_LINK_MS } from "@hellotimber/nokia-kit/ui/resources";
 import { timingToleranceMs } from "./golden.ts";
 import { SEED_1010, seededStorage } from "./rig.ts";
 

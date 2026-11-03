@@ -6,10 +6,10 @@ import type {
   StockCallControl,
   StockCallLink,
   StockOutgoingCall,
-} from "../src/services/calls/network";
+} from "@hellotimber/phone-services/calls/network";
 import { describeStockScreen } from "../src/index";
-import { CALL_TIMINGS } from "../src/services/calls/telephone";
-import { createSyntheticNetwork } from "../src/services/messaging/network";
+import { CALL_TIMINGS } from "@hellotimber/phone-services/calls/telephone";
+import { createSyntheticNetwork } from "@hellotimber/phone-services/messaging/network";
 import { standbyRig, type Rig } from "./support/rig.ts";
 
 function typeNumber(rig: Rig, keys: string): void {

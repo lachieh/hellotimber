@@ -5,14 +5,15 @@
 // The input is IlyaSemenov/wikipedia-word-frequency's `results/enwiki-2023-04-13.txt` at the
 // pinned commit (word, space, count per line, descending count; MIT). The script checks its
 // SHA-256, keeps the first ENGLISH_SOURCE.limit words that pass `keepWord`, and writes
-// `src/kit/ui/text/t9/generated/english.ts`: a provenance header and one exported string, the words in
+// nokia-kit's `src/ui/text/t9/generated/english.ts`: a provenance header and one exported string, the words in
 // descending count, one per line, with a `#<w>` line wherever the weight w = floor(4 * log2(count))
 // changes. Deterministic: running it twice gives no diff. No firmware data is read or written.
 // Runs under Node's type stripping: imports only node:*.
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { KIT_T9_ENGLISH_GENERATED } from "./kit-paths.ts";
 
 /** The pinned open list (plan 18b D2) and how many words the build keeps (D3). */
 export interface DictionarySource {
@@ -115,10 +116,7 @@ export function writeDictionaryModule(bytes: Uint8Array, source: DictionarySourc
   ].join("\n");
 }
 
-const OUTPUT = resolve(
-  dirname(fileURLToPath(import.meta.url)),
-  "../src/kit/ui/text/t9/generated/english.ts",
-);
+const OUTPUT = KIT_T9_ENGLISH_GENERATED;
 
 async function readSource(from: string): Promise<Uint8Array> {
   if (!/^https?:\/\//.test(from)) return readFileSync(from);

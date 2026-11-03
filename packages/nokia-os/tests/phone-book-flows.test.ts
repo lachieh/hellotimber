@@ -2,12 +2,12 @@
 // tests/acceptance/19-phone-book.test.ts; these pin the rules between the captures).
 import { describe, expect, it } from "vite-plus/test";
 import { PHONE_BOOK_SIMS } from "../scripts/capture-sets/19-phone-book.ts";
-import { KEYGUARD_HINT_LEAD_MS, KEYGUARD_TIMES } from "../src/kit/system/keyguard";
+import { KEYGUARD_HINT_LEAD_MS, KEYGUARD_TIMES } from "@hellotimber/nokia-kit/system/keyguard";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import { createMemoryStorage, type StockSimCard, type StockStorage } from "../src/index";
 import { normaliseSim } from "../src/phone-book/sim-card";
-import { StockPhoneBook } from "../src/services/phone-book/store";
+import { StockPhoneBook } from "@hellotimber/phone-services/phone-book/store";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";
 import { lockedRig } from "./support/keyguard.ts";

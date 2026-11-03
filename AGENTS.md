@@ -53,7 +53,9 @@ packages/
   phone-screen/     @hellotimber/phone-screen — LCD framebuffer, bitmap/font toolkit and canvas renderer
   phone-3d/         @hellotimber/phone-3d     — R3F <Nokia3310/> 3D model (body, keys, screen mesh)
   snake/            @hellotimber/snake        — standalone legacy Snake logic (not used by the website)
-  nokia-os/         @hellotimber/nokia-os     — stock v6.39 firmware + its pixels (menu, painter, goldens, demo)
+  phone-services/   @hellotimber/phone-services — shared phone state: SMS, chat, phone book, SIM, telephone, call log, network port
+  nokia-kit/        @hellotimber/nokia-kit    — the modular Nokia OS: ui (widgets, painter, resources, text, sound), system, apps
+  nokia-os/         @hellotimber/nokia-os     — stock v6.39 firmware engine and snapshot (menu, features, tree, goldens, demo)
 docs/plans/         numbered implementation plans (the source of truth for tasks)
 ```
 
@@ -70,13 +72,19 @@ use `"catalog:"` specifiers where a catalog entry exists.
 2. **Allowed internal dependency direction** (type-level or runtime):
 
    ```
-   website ──▶ nokia-os, phone-core (types/router bridge), phone-screen (renderer), phone-3d
-   nokia-os ──▶ phone-core, phone-screen   (runtime: kernel/menu model/Timeline; LCD toolkit)
+   website ──▶ nokia-os, nokia-kit, phone-services, phone-core (types/router bridge), phone-screen (renderer), phone-3d
+   nokia-os ──▶ nokia-kit, phone-services, phone-core, phone-screen
+   nokia-kit ──▶ phone-services, phone-core, phone-screen   (runtime: kernel/menu model/Timeline; LCD toolkit)
+   phone-services ──▶ (no internal deps)
    phone-screen ──▶ phone-core (type-only imports of ScreenModel — no runtime dep)
    snake, phone-3d ──▶ (no internal deps)
    ```
 
-   Anything else is a boundary violation. `phone-3d` receives a ready-made
+   Anything else is a boundary violation. Packages import each other only by package
+   specifier (`@hellotimber/nokia-kit/ui/resources`), never by a relative path into a sibling
+   (`packages/nokia-os/tests/package-boundaries.test.ts`). Inside nokia-kit, `apps/<app>` may
+   import its own app, `system` and `ui`; `system` imports `ui`; `ui` imports only `ui`, phone-core
+   and phone-screen (`packages/nokia-kit/tests/layers.test.ts`). `phone-3d` receives a ready-made
    `HTMLCanvasElement` for the screen texture and reports key presses via callback —
    it never imports phone-core.
 
@@ -110,6 +118,8 @@ use `"catalog:"` specifiers where a catalog entry exists.
    ```
 
    No `build` script, no `main`/`types`, no `files`/`publishConfig`/`author` boilerplate.
+   A package read module by module (nokia-kit, phone-services) exports `"./*": "./src/*.ts"`
+   instead of `"."`, plus an explicit entry for each directory index it exposes.
 
 4. Give the package its own `tsconfig.json` (the root one has no JSX/DOM libs) — copy
    the template from `docs/specs/integration-notes.md` §1.
@@ -125,13 +135,14 @@ plan 13) is gitignored and **never committed**; nothing from `$REF/extracted` is
 
 - `vp run @hellotimber/nokia-os#import-captures <REF>` turns captures into committed text-grid
   fixtures under `packages/nokia-os/goldens/` plus one index per plan, `goldens/index/<NN>.json`.
-- `vp run @hellotimber/nokia-os#regenerate` regenerates `src/resources/generated/` (fonts, icons,
-  boot frames, status art, widgets, game modules, sounds) from those goldens.
+- `vp run @hellotimber/nokia-os#regenerate` regenerates nokia-kit's `src/ui/resources/generated/` (fonts, icons,
+  boot frames, status art, widgets, game modules, sounds) from those goldens; the generators
+  find nokia-kit through its workspace link (`scripts/kit-paths.ts`).
 - Plans register dedicated modules through `PlanCaptureSet.resources.generatedModules`: each
-  `{ file, extract }` owns a TypeScript path relative to `src/resources/generated/` and a
+  `{ file, extract }` owns a TypeScript path relative to nokia-kit's `src/ui/resources/generated/` and a
   deterministic extractor using indexed committed LCD/tick/sound readers. Never add per-plan
-  output cases to `extract-resources.ts`; add one export block per module in `src/resources/index.ts`.
-- Never hand-edit `goldens/**` or `src/resources/generated/**`: change the importer, its
+  output cases to `extract-resources.ts`; add one export block per module in nokia-kit's `src/ui/resources/index.ts`.
+- Never hand-edit `goldens/**` or `packages/nokia-kit/src/**/generated/**`: change the importer, its
   capture-set table or the extractor inputs and regenerate. Tests never read `$REF`.
 
 ## Fidelity standard
@@ -196,9 +207,9 @@ knownGaps, timeoutsMs })` once and registers no other tests; it runs the goldens
    generated.
 4. **Generated resources:** a plan registers its `resources.generatedModules` in its capture
    set (the existing one-line capture-index export discovers it). Each `{ file, extract }` owns
-   a unique path under `src/resources/generated/`; the extractor receives `golden`, `ticks` and
+   a unique path under nokia-kit's `src/ui/resources/generated/`; the extractor receives `golden`, `ticks` and
    `sound` readers of indexed committed fixtures, including pending resource evidence. Multiple
-   outputs use multiple declarations. Keep one export block per module in `src/resources/index.ts`.
+   outputs use multiple declarations. Keep one export block per module in nokia-kit's `src/ui/resources/index.ts`.
    Never hand-edit generated files or add plan-specific output cases to shared extraction.
    Shared generated resources remain outputs of every contributing plan's goldens. On a merge conflict there, take either side, merge the inputs, then run
    `mise exec -- vp run @hellotimber/nokia-os#regenerate` (deterministic; the resources test fails

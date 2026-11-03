@@ -20,7 +20,7 @@ import type { PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { findGoldenImage, type Golden } from "../../scripts/golden-format.ts";
 import { paintStockScreen, type StockStorage } from "../../src/index";
-import { WIDGET_SPRITES } from "../../src/kit/ui/resources";
+import { WIDGET_SPRITES } from "@hellotimber/nokia-kit/ui/resources";
 import {
   lcdMismatch,
   samePixels,

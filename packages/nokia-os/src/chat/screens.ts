@@ -9,8 +9,8 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { MenuIndicator } from "@hellotimber/phone-core";
 import { insertionList } from "../content/insertion";
-import type { MessagePageModel, WidgetModel } from "../kit/ui/display/widgets";
-import { MESSAGE_PAGE_LINES } from "../kit/ui/display/widgets/message";
+import type { MessagePageModel, WidgetModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import { MESSAGE_PAGE_LINES } from "@hellotimber/nokia-kit/ui/display/widgets/message";
 import type { StockServices } from "../firmware/features/feature";
 import { messagePages } from "../messages/read";
 import {
@@ -21,15 +21,15 @@ import {
   sending,
   t9Context,
 } from "../messages/write";
-import { editor, type EditorControl } from "../kit/ui/widgets/editor";
-import type { BackOptions, Flow, Widget } from "../kit/ui/widgets/flow";
-import { HeldC } from "../kit/ui/widgets/held-c";
+import { editor, type EditorControl } from "@hellotimber/nokia-kit/ui/widgets/editor";
+import type { BackOptions, Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { HeldC } from "@hellotimber/nokia-kit/ui/widgets/held-c";
 import { pickNumber } from "../phone-book/flows";
-import { numberEntry } from "../kit/ui/widgets/number-entry";
+import { numberEntry } from "@hellotimber/nokia-kit/ui/widgets/number-entry";
 import { OptionListWidget } from "../widgets/option-list";
-import { symbolTable } from "../kit/ui/widgets/symbol-table";
-import { textInput } from "../kit/ui/widgets/text-input";
-import { ChatSession, lastChatName } from "../services/chat/session";
+import { symbolTable } from "@hellotimber/nokia-kit/ui/widgets/symbol-table";
+import { textInput } from "@hellotimber/nokia-kit/ui/widgets/text-input";
+import { ChatSession, lastChatName } from "@hellotimber/phone-services/chat/session";
 
 /** A chat line holds 140 characters (`chat/name-ok`: `140/1`; `chat/limit`: `0/1`). */
 export const CHAT_LIMIT = 140;

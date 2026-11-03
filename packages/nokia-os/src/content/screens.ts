@@ -1,8 +1,8 @@
 // Templates (2-5) and Smileys (2-6), plan 18c Task 5, as the factory image shows them
 // (`content/*`): the list, Read, Options (Edit, Erase), the slot's editor and its Options.
-import type { MessagePageModel } from "../kit/ui/display/widgets";
+import type { MessagePageModel } from "@hellotimber/nokia-kit/ui/display/widgets";
 import type { StockServices } from "../firmware/features/feature";
-import { timelineByName } from "../kit/ui/timelines";
+import { timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import { messagePages } from "../messages/read";
 import {
   dictionary,
@@ -11,12 +11,12 @@ import {
   standbyDraw,
   t9Context,
 } from "../messages/write";
-import { contentList } from "../kit/ui/widgets/content-list";
-import { editor, type EditorControl } from "../kit/ui/widgets/editor";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { HeldC } from "../kit/ui/widgets/held-c";
-import { interlude } from "../kit/ui/widgets/interlude";
-import { note } from "../kit/ui/widgets/note";
+import { contentList } from "@hellotimber/nokia-kit/ui/widgets/content-list";
+import { editor, type EditorControl } from "@hellotimber/nokia-kit/ui/widgets/editor";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { HeldC } from "@hellotimber/nokia-kit/ui/widgets/held-c";
+import { interlude } from "@hellotimber/nokia-kit/ui/widgets/interlude";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
 import { EMPTY_SLOT, ROW_ICONS, slotRows } from "./insertion";
 import { StockTextSlots, type TextSlotsKind } from "./slots";

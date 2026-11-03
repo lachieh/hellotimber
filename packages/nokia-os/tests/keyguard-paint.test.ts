@@ -3,8 +3,12 @@
 import type { ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { paintWidget, type KeyguardModel } from "../src/kit/ui/display/widgets";
-import { WIDGET_SPRITES, WIDGET_TIMELINE_BY_NAME, WIDGET_TIMELINES } from "../src/kit/ui/resources";
+import { paintWidget, type KeyguardModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import {
+  WIDGET_SPRITES,
+  WIDGET_TIMELINE_BY_NAME,
+  WIDGET_TIMELINES,
+} from "@hellotimber/nokia-kit/ui/resources";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";
 

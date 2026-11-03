@@ -2,7 +2,7 @@
 // its handset's (the security code's, the clock's, ...) and every feature's
 // (`StockFeature.records`), each with its own version.
 // Restore factory settings and a host's "erase" see every record listed here.
-import type { EepromRecord } from "../services/storage";
+import type { EepromRecord } from "@hellotimber/phone-services/storage";
 import type { Firmware } from "./firmware";
 import { settingsRecordOf } from "./settings";
 import { STOCK_FIRMWARE } from "./stock";

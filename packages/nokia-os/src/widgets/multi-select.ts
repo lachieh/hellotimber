@@ -1,9 +1,14 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { MultiModel } from "../kit/ui/display/widgets";
+import type { MultiModel } from "@hellotimber/nokia-kit/ui/display/widgets";
 import type { StockSettings } from "../firmware/settings";
-import { confirmQuery } from "../kit/ui/widgets/confirm";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { moveRows, openRows, rowsIndicator, type RowsCursor } from "../kit/ui/widgets/rows";
+import { confirmQuery } from "@hellotimber/nokia-kit/ui/widgets/confirm";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import {
+  moveRows,
+  openRows,
+  rowsIndicator,
+  type RowsCursor,
+} from "@hellotimber/nokia-kit/ui/widgets/rows";
 
 export interface MultiSelectOptions {
   /** The setting's key in `settings` (its tree slug path). */

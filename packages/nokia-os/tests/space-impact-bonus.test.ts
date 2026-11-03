@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vite-plus/test";
-import { createGameRandom } from "../src/kit/apps/games/random";
+import { createGameRandom } from "@hellotimber/nokia-kit/apps/games/random";
 import {
   newSpaceImpactGame,
   stepSpaceImpact,
   spaceImpactKey,
-} from "../src/kit/apps/games/space-impact/engine";
+} from "@hellotimber/nokia-kit/apps/games/space-impact/engine";
 import { loadGolden } from "./support/goldens";
 import { observedSpaceImpactInput } from "../scripts/space-impact-delivery";
 import { deliverSpaceImpactEvent } from "./support/space-impact-replay";

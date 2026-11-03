@@ -1,5 +1,5 @@
 // T9 predictive text (plan 18b D5): the English dictionary is a separate entry point,
-// `@hellotimber/nokia-os/t9-english`, imported lazily so Vite emits it as its own chunk; the phone
+// `@hellotimber/nokia-kit/t9-english`, imported lazily so Vite emits it as its own chunk; the phone
 // is restarted with it once it arrives (until then, and with the box unticked, the phone has no
 // dictionary and Write messages is multi-tap, as for a host that leaves it out).
 import type { T9Dictionary } from "../../src/index";
@@ -21,7 +21,7 @@ export const t9Panel: DemoPanel = {
     enabled = byId<HTMLInputElement>(label, "t9-english");
     enabled.addEventListener("change", () => host.restart());
     slots.control(label);
-    import("@hellotimber/nokia-os/t9-english").then(
+    import("@hellotimber/nokia-kit/t9-english").then(
       ({ englishT9 }) => {
         english = englishT9;
         loading = "";

@@ -1,0 +1,28 @@
+{
+  "name": "@hellotimber/nokia-kit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./ui/display/widgets": "./src/ui/display/widgets/index.ts",
+    "./ui/resources": "./src/ui/resources/index.ts",
+    "./ui/text": "./src/ui/text/index.ts",
+    "./ui/text/t9": "./src/ui/text/t9/index.ts",
+    "./t9-english": "./src/ui/text/t9/english.ts",
+    "./*": "./src/*.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "vp test run"
+  },
+  "dependencies": {
+    "@hellotimber/phone-core": "workspace:*",
+    "@hellotimber/phone-screen": "workspace:*",
+    "@hellotimber/phone-services": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

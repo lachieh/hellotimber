@@ -8,12 +8,12 @@ import {
   earpieceWord,
   netEndProgram,
   ringbackProgram,
-} from "../src/kit/system/call-sounds";
+} from "@hellotimber/nokia-kit/system/call-sounds";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import type { StockSoundEvent } from "../src/index";
-import { SoundSequencer } from "../src/kit/ui/sound/sequencer";
-import { StockSounder } from "../src/kit/system/sounder";
+import { SoundSequencer } from "@hellotimber/nokia-kit/ui/sound/sequencer";
+import { StockSounder } from "@hellotimber/nokia-kit/system/sounder";
 import { soundStorage, type SettingChoices } from "./support/sound-scenarios.ts";
 
 function sounderAt(choices: SettingChoices = {}) {

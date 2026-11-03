@@ -2,9 +2,14 @@ import { Framebuffer } from "@hellotimber/phone-screen";
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { LONG_PRESS_MS } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
-import { paintWidget } from "../src/kit/ui/display/widgets";
-import { TEXT_TIMINGS } from "../src/kit/ui/resources";
-import { editor, editorModel, smsCounter, type EditorControl } from "../src/kit/ui/widgets/editor";
+import { paintWidget } from "@hellotimber/nokia-kit/ui/display/widgets";
+import { TEXT_TIMINGS } from "@hellotimber/nokia-kit/ui/resources";
+import {
+  editor,
+  editorModel,
+  smsCounter,
+  type EditorControl,
+} from "@hellotimber/nokia-kit/ui/widgets/editor";
 import { expectLcd } from "./support/golden";
 import { flowRig, recordFlow, expectFlowTimeline, type FlowRig } from "./support/flow-rig";
 import { loadGolden } from "./support/goldens";

@@ -6,7 +6,7 @@ import { findGoldenImage, LCD_WIDTH, type Golden } from "../../scripts/golden-fo
 import { framePeriod, numberTicks } from "../../scripts/game-capture.ts";
 import { isBoardFrame, snakeTickRule } from "../../scripts/game-capture-set.ts";
 import type { SeedPlacement } from "../../scripts/snake-seeds.ts";
-import type { Cell, CreatureKind } from "../../src/kit/apps/games/snake/rng";
+import type { Cell, CreatureKind } from "@hellotimber/nokia-kit/apps/games/snake/rng";
 import {
   SNAKE_MAZES,
   SNAKE_SPRITE_IDS,
@@ -14,7 +14,7 @@ import {
   type SnakeHeading,
   type SnakeMaze,
   type SnakeSpriteId,
-} from "../../src/kit/ui/resources";
+} from "@hellotimber/nokia-kit/ui/resources";
 import { loadGolden } from "./goldens";
 
 export interface DecodedSegment extends Cell {

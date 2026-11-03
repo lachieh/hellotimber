@@ -4,6 +4,13 @@ A strict reproduction of the stock Nokia 3310 firmware (v6.39, PPM E, English) o
 `@hellotimber/phone-core` kernel, painted with `@hellotimber/phone-screen`'s LCD toolkit. Every
 pixel and timing step is checked against emulator captures of the real firmware.
 
+It is the firmware engine and the v6.39 snapshot (`src/firmware/**`: `composeFirmware`,
+`createFirmwarePhone`, the menu, features, handset and settings schema; the generated stock tree;
+goldens, generators, demo and tests). The widgets, painter, generated resources, text entry,
+system services and apps it composes live in `@hellotimber/nokia-kit`; the shared phone state
+(SMS, chat, phone book, SIM, telephone, call log, network port) lives in
+`@hellotimber/phone-services`. The generators here write nokia-kit's generated modules.
+
 What it covers today (plans 13 and 14): the boot sequence, standby, the 12-entry main-menu
 carousel with its animated icons, and the whole v6.39 menu tree (279 nodes, depth 6) in order,
 with hidden menu numbers, both presentations (row lists with the stateful circular window, and
@@ -50,7 +57,7 @@ const phone = createStockPhone({
   sim: "sim-1", // the inserted SIM card, an id or a whole StockSimCard (default "sim-1", empty)
   network: createSyntheticNetwork(), // SMS in and out (the default; see "Text entry and SMS")
   // T9 English (see "T9 predictive text"); without it Write messages is multi-tap.
-  t9: { english: (await import("@hellotimber/nokia-os/t9-english")).englishT9 },
+  t9: { english: (await import("@hellotimber/nokia-kit/t9-english")).englishT9 },
 });
 
 const renderer = createScreenRenderer({ paint: paintStockScreen, scale: 6 });
@@ -135,7 +142,7 @@ mise exec -- vp run @hellotimber/nokia-os#import-captures $REF
 #    corpus OCR, plus the harvester's text runs (scripts/generated/tree-text-runs.ts).
 mise exec -- vp run @hellotimber/nokia-os#import-tree $REF
 # 3. Derive fonts, icons, boot frames, status art, widget sprites and widget timelines, and
-#    Snake II's pictures, mazes and timings, into src/kit/ui/resources/generated/ (`regenerate` runs
+#    Snake II's pictures, mazes and timings, into nokia-kit/src/ui/resources/generated/ (`regenerate` runs
 #    every generator that needs no $REF; resolve a conflict in generated files with it).
 mise exec -- vp run @hellotimber/nokia-os#regenerate
 # 4. Test: pixel and timing acceptance against every asserted golden, the tree coverage guard,
@@ -323,7 +330,7 @@ re-entry from standby, Top score return and twelve tap-key fixtures have exact a
 coverage. The full 60-frame New game tree capture also passes. Each game's suspended state
 is independent; New game seeds once and replaces only its own state.
 
-`src/kit/apps/games/space-impact/` owns pure state and steps; `src/firmware/features/space-impact.ts`
+`nokia-kit/src/apps/games/space-impact/` owns pure state and steps; `src/firmware/features/space-impact.ts`
 owns timers, key repeats and suspension. Games wiring stays in `features/games.ts`. Generated
 opening-wave declarations come from committed LCD evidence. Full level-0 replay still fails
 at image `ah`; collisions, later waves, RNG consumption, bonuses, bosses, game over, seeded
@@ -335,7 +342,7 @@ defaults remain UNVERIFIED. See `docs/specs/stock/space-impact.md` and plan 24 f
 `Games › Snake II › New game` plays the firmware's game (plan 23), checked against gameplay
 captures pixel for pixel and tick by tick.
 
-- **Engine.** `src/kit/apps/games/snake/` is a pure engine (`newSnakeGame`, `snakeKey`, `stepSnake`,
+- **Engine.** `nokia-kit/src/apps/games/snake/` is a pure engine (`newSnakeGame`, `snakeKey`, `stepSnake`,
   `blinkSnake`, `snakeRender`) with the firmware's rules: the 20x9 board and its wrap, the five
   mazes, every game key, food and growth, the bonus creatures and their countdown, the grace
   tick before a crash, the death blink and the ring quirk. It is separate from
@@ -413,7 +420,7 @@ requestAnimationFrame(loop);
   aligned on the recording's first key. The captures' WAV files are the emulator's own synthesis
   (it ignores both volume registers) and are never imported or asserted.
 - **Asset policy.** `import-captures` turns the capture corpus's sound recordings into the sound
-  goldens; `extract-resources` derives every program from them (`src/kit/ui/resources/generated/sounds.ts`:
+  goldens; `extract-resources` derives every program from them (`nokia-kit/src/ui/resources/generated/sounds.ts`:
   the 35 ringing tones, the message tones, the keypad beep, note tones, Snake II's cues, the
   per-level volume tables). The extracted firmware tone tables are only a cross-check.
 - **Virgin vs factory.** Empty storage is the virgin EEPROM, whose tone settings are unset: keys
@@ -708,7 +715,7 @@ import { createStockPhone } from "@hellotimber/nokia-os";
 
 // A separate entry point: bundlers emit it as its own chunk (≈246 kB, ≈117 kB gzipped), fetched
 // once, and hosts that never open Write messages can leave it out.
-const { englishT9 } = await import("@hellotimber/nokia-os/t9-english");
+const { englishT9 } = await import("@hellotimber/nokia-kit/t9-english");
 const phone = createStockPhone({ carrier: "Telstra", t9: { english: englishT9 } });
 ```
 
@@ -738,7 +745,7 @@ const phone = createStockPhone({ carrier: "Telstra", t9: { english: englishT9 } 
   [IlyaSemenov/wikipedia-word-frequency](https://github.com/IlyaSemenov/wikipedia-word-frequency)
   English counts (pinned commit and SHA-256): its 30,000 most frequent lower-case words, weighted
   `floor(4 log2(count))`. Provenance, filter and licence:
-  [`src/kit/ui/text/t9/THIRD_PARTY.md`](src/kit/ui/text/t9/THIRD_PARTY.md). No firmware dictionary content is
+  [`nokia-kit/src/ui/text/t9/THIRD_PARTY.md`](../nokia-kit/src/ui/text/t9/THIRD_PARTY.md). No firmware dictionary content is
   in the repository.
 - **Not reproduced** (spec 15): which words the firmware knows and their order, its nonsense
   stems, its single-key letter order where it differs, and its exact compositions after key 1

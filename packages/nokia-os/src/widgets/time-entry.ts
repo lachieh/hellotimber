@@ -7,12 +7,12 @@
 // returns to the entry as it was. The cursor blinks on its own timer (≈480 ms), which keys do
 // not restart (plan21 settings/set-time-keys).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { PromptModel } from "../kit/ui/display/widgets";
-import { isDate } from "../kit/system/clock/time";
-import type { StockWidgetTimeline } from "../kit/ui/resources";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { note, type NoteSound } from "../kit/ui/widgets/note";
-import { Playback } from "../kit/ui/widgets/playback";
+import type { PromptModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import { isDate } from "@hellotimber/nokia-kit/system/clock/time";
+import type { StockWidgetTimeline } from "@hellotimber/nokia-kit/ui/resources";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { note, type NoteSound } from "@hellotimber/nokia-kit/ui/widgets/note";
+import { Playback } from "@hellotimber/nokia-kit/ui/widgets/playback";
 
 export type EntryMask = "hh:mm" | "dd.mm.yyyy";
 

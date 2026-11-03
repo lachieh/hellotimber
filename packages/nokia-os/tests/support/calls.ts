@@ -13,11 +13,11 @@ import type {
   StockCallControl,
   StockOutgoingCall,
   SyntheticRing,
-} from "../../src/services/calls/network";
-import type { StockNetworkPort } from "../../src/services/messaging/network";
-import { createSyntheticNetwork } from "../../src/services/messaging/network";
-import { CALL_TIMINGS } from "../../src/services/calls/telephone";
-import { englishT9 } from "../../src/kit/ui/text/t9/english";
+} from "@hellotimber/phone-services/calls/network";
+import type { StockNetworkPort } from "@hellotimber/phone-services/messaging/network";
+import { createSyntheticNetwork } from "@hellotimber/phone-services/messaging/network";
+import { CALL_TIMINGS } from "@hellotimber/phone-services/calls/telephone";
+import { englishT9 } from "@hellotimber/nokia-kit/ui/text/t9/english";
 import { expectLcd, expectTimeline, type RecordedTimeline } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { standbyRig, type Rig } from "./rig.ts";

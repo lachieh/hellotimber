@@ -4,24 +4,24 @@
 // Dictionary is English (and the host gave a T9 dictionary) the editor writes in T9, with the T9
 // Options (Matches, Insert word, Insert number, Insert symbol) and the Spell prompt.
 import type { StockServices } from "../firmware/features/feature";
-import { timelineById, timelineByName } from "../kit/ui/timelines";
-import type { WidgetModel } from "../kit/ui/display/widgets";
-import { SAVING_MS } from "../kit/ui/resources";
-import type { T9Context } from "../kit/ui/text/t9/editing";
+import { timelineById, timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
+import type { WidgetModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import { SAVING_MS } from "@hellotimber/nokia-kit/ui/resources";
+import type { T9Context } from "@hellotimber/nokia-kit/ui/text/t9/editing";
 import {
   editor,
   smsCounter,
   type EditorControl,
   type T9EditorControl,
-} from "../kit/ui/widgets/editor";
-import { symbolTable } from "../kit/ui/widgets/symbol-table";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { BLANK, interlude, softkeyAlone } from "../kit/ui/widgets/interlude";
-import { note } from "../kit/ui/widgets/note";
-import { numberEntry } from "../kit/ui/widgets/number-entry";
+} from "@hellotimber/nokia-kit/ui/widgets/editor";
+import { symbolTable } from "@hellotimber/nokia-kit/ui/widgets/symbol-table";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { BLANK, interlude, softkeyAlone } from "@hellotimber/nokia-kit/ui/widgets/interlude";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
+import { numberEntry } from "@hellotimber/nokia-kit/ui/widgets/number-entry";
 import { OptionListWidget } from "../widgets/option-list";
-import { Playback } from "../kit/ui/widgets/playback";
-import { textInput } from "../kit/ui/widgets/text-input";
+import { Playback } from "@hellotimber/nokia-kit/ui/widgets/playback";
+import { textInput } from "@hellotimber/nokia-kit/ui/widgets/text-input";
 import { names, pickNumber } from "../phone-book/flows";
 import { SEND_TO_MANY_LIST_OK_MS } from "../phone-book/timings";
 import {
@@ -33,7 +33,7 @@ import {
   T9_EDITOR_OPTIONS,
 } from "./bindings";
 import { insertionList } from "../content/insertion";
-import type { StockSms } from "../services/messaging/network";
+import type { StockSms } from "@hellotimber/phone-services/messaging/network";
 
 /** An SMS holds 459 characters in three parts (`text/counter` 459: `0/3`). */
 export const SMS_LIMIT = 459;

@@ -10,7 +10,7 @@ import type {
 import { expect } from "vite-plus/test";
 import type { Golden } from "../../scripts/golden-format.ts";
 import { findGoldenImage } from "../../scripts/golden-format.ts";
-import { StockFlowApplication, type Widget } from "../../src/kit/ui/widgets/flow";
+import { StockFlowApplication, type Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
 import { lcdMismatch, sameTime, timelineTolerance } from "./golden.ts";
 
 export type ExitOptions = Parameters<ApplicationContext["exit"]>[0];

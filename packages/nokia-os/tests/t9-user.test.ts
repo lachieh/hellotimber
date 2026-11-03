@@ -2,13 +2,13 @@
 import { describe, expect, it } from "vite-plus/test";
 import { createMemoryStorage, StockEeprom } from "../src/firmware/eeprom";
 import { STOCK_RECORDS } from "../src/firmware/records";
-import { t9Candidates } from "../src/kit/ui/text/t9";
+import { t9Candidates } from "@hellotimber/nokia-kit/ui/text/t9";
 import {
   addUserWord,
   T9_USER_BUDGET,
   T9_USER_RECORD,
   type T9UserState,
-} from "../src/kit/system/t9/user";
+} from "@hellotimber/nokia-kit/system/t9/user";
 import { T9_FIXTURE as DICT } from "./support/t9-fixture.ts";
 
 const EMPTY: T9UserState = { words: [] };

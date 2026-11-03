@@ -1,13 +1,13 @@
 // Plan 15 Task 6: the masked code entry (D7, Task 0 A2/A5) and the stock code-entry widget.
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { paintWidget, type PromptModel } from "../src/kit/ui/display/widgets";
+import { paintWidget, type PromptModel } from "@hellotimber/nokia-kit/ui/display/widgets";
 import { StockEeprom } from "../src/firmware/eeprom";
-import { StockSecurity } from "../src/kit/system/security";
+import { StockSecurity } from "@hellotimber/nokia-kit/system/security";
 import { createStockSettings } from "../src/firmware/settings";
 import { createMemoryStorage } from "../src/index";
-import type { Flow } from "../src/kit/ui/widgets/flow";
-import { codeEntry } from "../src/kit/system/code-entry";
+import type { Flow } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { codeEntry } from "@hellotimber/nokia-kit/system/code-entry";
 import { expectLcd } from "./support/golden.ts";
 import { expectFlowTimeline, flowRig, recordFlow, type FlowRig } from "./support/flow-rig.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";

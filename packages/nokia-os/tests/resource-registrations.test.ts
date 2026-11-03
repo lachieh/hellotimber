@@ -6,6 +6,7 @@ import { composeResourceDeclarations, resourceModule } from "../scripts/resource
 import type { PlanCaptureSet } from "../scripts/capture-set.ts";
 import { extractResources, generatedFiles, GOLDENS_DIR } from "../scripts/extract-resources.ts";
 import { readGoldenIndex } from "../scripts/golden-index.ts";
+import { KIT_RESOURCES_GENERATED } from "../scripts/kit-paths.ts";
 import { loadGolden } from "./support/goldens.ts";
 
 /** Two full extractions per test: seconds alone, longer beside the other packages' tests. */
@@ -318,7 +319,7 @@ it("does not execute capture callbacks when composing registered evidence", () =
 });
 
 it("rejects a missing fixture file without modifying generated output", () => {
-  const generated = join(import.meta.dirname, "../src/kit/ui/resources/generated");
+  const generated = KIT_RESOURCES_GENERATED;
   const bytes = () =>
     readdirSync(generated).map((file) => readFileSync(join(generated, file), "utf8"));
   const before = bytes();
@@ -424,7 +425,7 @@ it(
     );
     expect(generatedFiles(extractResources(GOLDENS_DIR, sets))).not.toHaveProperty("snake.ts");
     expect(generatedFiles(extractResources())["snake.ts"]).toBe(
-      readFileSync(join(import.meta.dirname, "../src/kit/ui/resources/generated/snake.ts"), "utf8"),
+      readFileSync(join(KIT_RESOURCES_GENERATED, "snake.ts"), "utf8"),
     );
   },
   EXTRACTION_TIMEOUT_MS,

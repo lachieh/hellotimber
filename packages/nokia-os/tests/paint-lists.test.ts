@@ -3,8 +3,8 @@ import { rowsWindowTop, SubmenuEntry, type ScreenModel } from "@hellotimber/phon
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { readGoldenIndex } from "../scripts/golden-index.ts";
-import { paintIndicator } from "../src/kit/ui/display/indicator";
-import { paintRail, railBumpTop } from "../src/kit/ui/display/rail";
+import { paintIndicator } from "@hellotimber/nokia-kit/ui/display/indicator";
+import { paintRail, railBumpTop } from "@hellotimber/nokia-kit/ui/display/rail";
 import { createStockMenu } from "../src/firmware/menu";
 import { paintStockScreen } from "../src/index";
 import { expectLcd, lcdMismatch } from "./support/golden.ts";

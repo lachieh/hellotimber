@@ -21,12 +21,12 @@
 // - composer (plan 27): the Composer's periods, pitches and timings of scripts/composer-programs.ts,
 //   whose pitch goldens also join the sounds' volume tables (D4).
 //
-// Writes src/kit/ui/resources/generated/*.ts. Idempotent. `extractResources` is also run in-process by
+// Writes @hellotimber/nokia-kit's src/ui/resources/generated/*.ts. Idempotent. `extractResources` is also run in-process by
 // tests/resources.test.ts to prove the committed files are fresh. Runs under Node's type
 // stripping: imports only node:*, sibling scripts and import-free generated data, with .ts
 // extensions.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { captureSets } from "./capture-registry.ts";
 import { MENU_SLUGS, type PlanCaptureSet } from "./capture-set.ts";
@@ -54,6 +54,7 @@ import {
 import { extractClockResources, type ClockResourceData } from "./clock-resources.ts";
 import { addComposerVolumes, extractComposerData, type ComposerData } from "./composer-programs.ts";
 import { extractMessagesResources, type MessagesResourceData } from "./messages-resources.ts";
+import { KIT_RESOURCES_GENERATED } from "./kit-paths.ts";
 import { parseSoundGolden } from "./sound-format.ts";
 import { extractSoundResources, type SoundResourceData } from "./sound-programs.ts";
 import {
@@ -65,7 +66,7 @@ import {
 
 const PACKAGE = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 export const GOLDENS_DIR = join(PACKAGE, "goldens");
-const GENERATED_DIR = join(PACKAGE, "src/kit/ui/resources/generated");
+const GENERATED_DIR = KIT_RESOURCES_GENERATED;
 
 /** Carousel icon art lives here; the title (and its descenders) sits above y 20. */
 const ICON_REGION = { x0: 0, x1: 79, y0: 20, y1: 39 } as const;
@@ -898,7 +899,7 @@ export function generatedFiles(resources: ExtractedResources): Record<string, st
   return files;
 }
 
-/** Writes src/kit/ui/resources/generated/*.ts from the committed goldens; returns the files changed. */
+/** Writes nokia-kit's src/ui/resources/generated/*.ts from the committed goldens; returns the files changed. */
 export function writeResources(): string[] {
   if (!existsSync(GOLDENS_DIR)) throw new Error(`missing ${GOLDENS_DIR}`);
   mkdirSync(GENERATED_DIR, { recursive: true });
@@ -908,7 +909,7 @@ export function writeResources(): string[] {
     mkdirSync(dirname(path), { recursive: true });
     if (existsSync(path) && readFileSync(path, "utf8") === text) continue;
     writeFileSync(path, text);
-    written.push(`src/kit/ui/resources/generated/${file}`);
+    written.push(relative(PACKAGE, path));
   }
   return written;
 }

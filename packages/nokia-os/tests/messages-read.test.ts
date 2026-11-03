@@ -3,8 +3,8 @@
 import { describe, expect, it } from "vite-plus/test";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { messagePages } from "../src/messages/read";
-import { MESSAGE_SLOTS, StockMessages } from "../src/services/messaging/store";
-import { RECEIVE_LINK_MS } from "../src/kit/ui/resources";
+import { MESSAGE_SLOTS, StockMessages } from "@hellotimber/phone-services/messaging/store";
+import { RECEIVE_LINK_MS } from "@hellotimber/nokia-kit/ui/resources";
 import {
   createMemoryStorage,
   createSyntheticNetwork,

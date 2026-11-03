@@ -4,7 +4,7 @@
 // plan that owns them (`leaves.ts`, `firmware.ts`, `features/`).
 import { normaliseSim, type NormalisedSimCard, type StockSimCard } from "../phone-book/sim-card";
 import { simServicesEntry } from "./features/sim-services";
-import { StockPhoneBook } from "../services/phone-book/store";
+import { StockPhoneBook } from "@hellotimber/phone-services/phone-book/store";
 import {
   ApplicationEntry,
   MenuGraphic,
@@ -17,27 +17,34 @@ import {
   type MenuEntry,
   type SubmenuOptions,
 } from "@hellotimber/phone-core";
-import { RECEIVE_LINK_MS, SEND_LINK_MS, stockMenuGraphic } from "../kit/ui/resources";
+import {
+  RECEIVE_LINK_MS,
+  SEND_LINK_MS,
+  stockMenuGraphic,
+} from "@hellotimber/nokia-kit/ui/resources";
 import type { StockServices } from "./features/feature";
 import { createStockGames, type StockGames } from "./features/games";
 import type { StockTreeNode } from "./generated/stock-tree";
 import type { Firmware } from "./firmware";
 import { LeafBinder, type LeafPlace } from "./leaves";
 import { createMemoryStorage, StockEeprom } from "./eeprom";
-import type { StockPorts } from "../kit/system/ports";
-import { StockSecurity } from "../kit/system/security";
+import type { StockPorts } from "@hellotimber/nokia-kit/system/ports";
+import { StockSecurity } from "@hellotimber/nokia-kit/system/security";
 import { createStockSettings, stockPageValue, type StockSettings } from "./settings";
 import { firmwareRecords } from "./records";
 import { STOCK_FIRMWARE } from "./stock";
 import { settingKey } from "./tree";
-import { SoundSequencer } from "../kit/ui/sound/sequencer";
-import { StockSounder } from "../kit/system/sounder";
-import { createSyntheticNetwork, type StockNetworkPort } from "../services/messaging/network";
-import { StockMessaging, type MessagingLinks } from "../services/messaging/service";
-import { StockMessages } from "../services/messaging/store";
+import { SoundSequencer } from "@hellotimber/nokia-kit/ui/sound/sequencer";
+import { StockSounder } from "@hellotimber/nokia-kit/system/sounder";
+import {
+  createSyntheticNetwork,
+  type StockNetworkPort,
+} from "@hellotimber/phone-services/messaging/network";
+import { StockMessaging, type MessagingLinks } from "@hellotimber/phone-services/messaging/service";
+import { StockMessages } from "@hellotimber/phone-services/messaging/store";
 import { SET_1_CENTRE_KEY } from "./features/messages";
 import { NO_T9_VIRGIN_CHOICES } from "../messages/bindings";
-import { stockT9, type StockT9 } from "../kit/system/t9/service";
+import { stockT9, type StockT9 } from "@hellotimber/nokia-kit/system/t9/service";
 
 /** The first-digit dots turn into the menu number 2948 ms after Menu (menu/01-phone-book.anim). */
 export const STOCK_SHORTCUT_WINDOW_MS = 2948;

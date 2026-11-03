@@ -3,15 +3,15 @@
 // `voice-*`).
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockServices } from "../firmware/features/feature";
-import { timelineByName } from "../kit/ui/timelines";
-import type { WidgetModel } from "../kit/ui/display/widgets";
-import { STOCK_FONTS } from "../kit/ui/resources";
+import { timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
+import type { WidgetModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import { STOCK_FONTS } from "@hellotimber/nokia-kit/ui/resources";
 import { textWidth } from "@hellotimber/phone-screen";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { note } from "../kit/ui/widgets/note";
-import { HeldC } from "../kit/ui/widgets/held-c";
-import { Playback } from "../kit/ui/widgets/playback";
-import { shownName } from "../services/phone-book/entries";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
+import { HeldC } from "@hellotimber/nokia-kit/ui/widgets/held-c";
+import { Playback } from "@hellotimber/nokia-kit/ui/widgets/playback";
+import { shownName } from "@hellotimber/phone-services/phone-book/entries";
 import { emptyNote, nameQueryWidget, names, phoneBookNote } from "./flows";
 import { VOICE_ERROR_BEEPS, VOICE_START_BEEP } from "./timings";
 

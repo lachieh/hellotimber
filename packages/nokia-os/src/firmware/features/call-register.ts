@@ -3,20 +3,24 @@
 // duration's pages (4-5) and Clear timers behind the security code, and Prepaid credit's page
 // results. Call costs and Call divert are plan 22b's.
 import { PhoneApplication } from "@hellotimber/phone-core";
-import type { CallEntry, CallList } from "../../services/calls/log";
-import { durationText } from "../../services/calls/log";
-import { callDate, callTime } from "../../services/calls/timestamp";
+import type { CallEntry, CallList } from "@hellotimber/phone-services/calls/log";
+import { durationText } from "@hellotimber/phone-services/calls/log";
+import { callDate, callTime } from "@hellotimber/phone-services/calls/timestamp";
 import { callEntry } from "../../widgets/call-entry";
-import { confirmQuery } from "../../kit/ui/widgets/confirm";
-import { StockFlowApplication, type Flow, type Widget } from "../../kit/ui/widgets/flow";
-import { infoPages } from "../../kit/ui/widgets/info-pages";
-import { infoScreen } from "../../kit/ui/widgets/info-screen";
-import { note } from "../../kit/ui/widgets/note";
-import { numberEntry as phoneNumberEntry } from "../../kit/ui/widgets/number-entry";
+import { confirmQuery } from "@hellotimber/nokia-kit/ui/widgets/confirm";
+import {
+  StockFlowApplication,
+  type Flow,
+  type Widget,
+} from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { infoPages } from "@hellotimber/nokia-kit/ui/widgets/info-pages";
+import { infoScreen } from "@hellotimber/nokia-kit/ui/widgets/info-screen";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
+import { numberEntry as phoneNumberEntry } from "@hellotimber/nokia-kit/ui/widgets/number-entry";
 import { OptionListWidget } from "../../widgets/option-list";
 import { savePhoneNumber } from "./phone-book";
 import { smsEditor } from "../../messages/write";
-import { nodeTimeline, timelineByName } from "../../kit/ui/timelines";
+import { nodeTimeline, timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import { numberEntry, placeCall, telephoneOf } from "./dialling";
 import type { StockPage, StockResult } from "../generated/stock-tree";
 import type { ScreenBinding, ScreenPlace, StockFeature, StockServices } from "./feature";

@@ -3,10 +3,10 @@
 // 18d owns (placeholders until then).
 import { openBox } from "../../messages/read";
 import { smsEditor } from "../../messages/write";
-import { interlude, softkeyAlone } from "../../kit/ui/widgets/interlude";
-import { note } from "../../kit/ui/widgets/note";
-import { numberEntry } from "../../kit/ui/widgets/number-entry";
-import { timelineByName } from "../../kit/ui/timelines";
+import { interlude, softkeyAlone } from "@hellotimber/nokia-kit/ui/widgets/interlude";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
+import { numberEntry } from "@hellotimber/nokia-kit/ui/widgets/number-entry";
+import { timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import type { ScreenBinding, StockFeature } from "./feature";
 
 /** The SIM's message centre of Set 1 (an emulator artefact, `sms/centre-1` 00). */

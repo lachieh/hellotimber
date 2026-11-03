@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeAll, describe, expect, it } from "vite-plus/test";
 import type { Golden } from "../scripts/golden-format.ts";
+import { KIT_RESOURCES_GENERATED } from "../scripts/kit-paths.ts";
 import {
   extractSpaceImpactResources,
   extractSpaceImpactSprites,
@@ -247,10 +248,7 @@ describe("Space impact HUD and ship resources", () => {
       },
     };
     expect(spaceImpactResourceModule.extract(io)).toBe(
-      readFileSync(
-        join(import.meta.dirname, "../src/kit/ui/resources/generated/space-impact.ts"),
-        "utf8",
-      ),
+      readFileSync(join(KIT_RESOURCES_GENERATED, "space-impact.ts"), "utf8"),
     );
   });
 });

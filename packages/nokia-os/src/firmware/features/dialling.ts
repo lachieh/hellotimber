@@ -2,9 +2,9 @@
 // standby entry application, what Call does with the characters, the codes `#` answers, and the
 // call screens a call shows (incoming ones through phone-core's interruption seam).
 import { PhoneApplication, type PhoneKey } from "@hellotimber/phone-core";
-import { CalculatorRate } from "../../kit/apps/calculator/rate";
-import { dialOutcome, immediateCode } from "../../services/calls/dial-string";
-import type { StockCall, StockTelephone } from "../../services/calls/telephone";
+import { CalculatorRate } from "@hellotimber/nokia-kit/apps/calculator/rate";
+import { dialOutcome, immediateCode } from "@hellotimber/phone-services/calls/dial-string";
+import type { StockCall, StockTelephone } from "@hellotimber/phone-services/calls/telephone";
 import {
   afterDown,
   CALLING,
@@ -13,12 +13,16 @@ import {
   type CallWidgetOptions,
 } from "../../widgets/call";
 import { dialEntry, type DialEntryWidget, type EntrySoftkey } from "../../widgets/dial-entry";
-import { StockFlowApplication, type Flow, type Widget } from "../../kit/ui/widgets/flow";
-import { note } from "../../kit/ui/widgets/note";
+import {
+  StockFlowApplication,
+  type Flow,
+  type Widget,
+} from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
 import { serviceRequest } from "../../widgets/service-request";
-import { placeholderWidget } from "../../kit/ui/widgets/placeholder";
+import { placeholderWidget } from "@hellotimber/nokia-kit/ui/widgets/placeholder";
 import type { StockEeprom } from "../eeprom";
-import { timelineByName } from "../../kit/ui/timelines";
+import { timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
 import type { StockFeature, StockServices } from "./feature";
 import { pickNumber, standbyList } from "../../phone-book/flows";
 import { inCallPhoneBook, savePhoneNumber } from "./phone-book";

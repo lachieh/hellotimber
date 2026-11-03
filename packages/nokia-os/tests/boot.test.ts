@@ -1,18 +1,18 @@
 // Plan 15 Task 8: the security-code and welcome-note boot gates of the stock phone (D9, D10).
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
-import { paintWidget, welcomeNoteLines } from "../src/kit/ui/display/widgets";
+import { paintWidget, welcomeNoteLines } from "@hellotimber/nokia-kit/ui/display/widgets";
 import { StockEeprom } from "../src/firmware/eeprom";
-import { SECURITY_RECORD } from "../src/kit/system/security";
+import { SECURITY_RECORD } from "@hellotimber/nokia-kit/system/security";
 import {
   GATE_BLANK_MS,
   GATED_WELCOME_END_MS,
   SELF_TEST_MS,
   WELCOME_BLANK_MS,
   WELCOME_NOTE_MS,
-} from "../src/kit/system/boot";
+} from "@hellotimber/nokia-kit/system/boot";
 import { createMemoryStorage, createStockPhone, missingStockGlyphs } from "../src/index";
-import { GATE_HANDS_TIMELINE } from "../src/kit/ui/resources";
+import { GATE_HANDS_TIMELINE } from "@hellotimber/nokia-kit/ui/resources";
 import type { StockStorage } from "../src/index";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage, loadGolden } from "./support/goldens.ts";

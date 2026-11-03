@@ -1,5 +1,5 @@
-import { SoundSequencer } from "../../src/kit/ui/sound/sequencer";
-import { StockSounder } from "../../src/kit/system/sounder";
+import { SoundSequencer } from "@hellotimber/nokia-kit/ui/sound/sequencer";
+import { StockSounder } from "@hellotimber/nokia-kit/system/sounder";
 import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockSettings } from "../../src/firmware/settings";
 import type { StockSoundEvent } from "../../src/index";
@@ -7,7 +7,7 @@ import { observedSpaceImpactInput } from "../../scripts/space-impact-delivery";
 import { loadGolden } from "./goldens";
 import { soundStorage } from "./sound-scenarios";
 import { expectSoundTimeline, loadSoundGolden } from "./sound";
-import { newSpaceImpactGame } from "../../src/kit/apps/games/space-impact/engine";
+import { newSpaceImpactGame } from "@hellotimber/nokia-kit/apps/games/space-impact/engine";
 import { deliverSpaceImpactResult } from "./space-impact-replay";
 import recovery from "../fixtures/space-impact-seed-recovery.json";
 

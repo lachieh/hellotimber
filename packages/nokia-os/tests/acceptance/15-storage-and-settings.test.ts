@@ -1,7 +1,7 @@
 // Plan 15's acceptance (docs/plans/15-storage-and-settings.md "Golden pipeline additions"): the
 // boot gates and welcome notes (Task 8), and the security-code probes (A4, A5, A7, 0c).
 import { expect } from "vite-plus/test";
-import { GATE_BLANK_MS, SELF_TEST_MS } from "../../src/kit/system/boot";
+import { GATE_BLANK_MS, SELF_TEST_MS } from "@hellotimber/nokia-kit/system/boot";
 import { createMemoryStorage, type StockStorage } from "../../src/index";
 import { acceptancePlan, type Scenario } from "../support/acceptance.ts";
 import { expectLcd, expectTimeline } from "../support/golden.ts";

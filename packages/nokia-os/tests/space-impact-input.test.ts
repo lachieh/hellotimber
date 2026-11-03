@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vite-plus/test";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { SpaceImpactState } from "../src/kit/apps/games/space-impact/model";
+import type { SpaceImpactState } from "@hellotimber/nokia-kit/apps/games/space-impact/model";
 import {
   expireSpaceImpactShield,
   newSpaceImpactGame,
   spaceImpactKey,
   spaceImpactRender,
   stepSpaceImpact,
-} from "../src/kit/apps/games/space-impact/engine";
-import { paintSpaceImpact } from "../src/kit/ui/display/widgets/space-impact";
+} from "@hellotimber/nokia-kit/apps/games/space-impact/engine";
+import { paintSpaceImpact } from "@hellotimber/nokia-kit/ui/display/widgets/space-impact";
 import { normalized, shipAt } from "../scripts/space-impact-capture-set";
 import { goldenImage, loadGolden } from "./support/goldens";
 import { replaySpaceImpactLevel } from "./support/space-impact-replay";

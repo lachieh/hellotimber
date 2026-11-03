@@ -1,7 +1,7 @@
 import { loadGolden } from "./goldens";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { expectTimeline, samePixels, type RecordedFrame } from "./golden";
-import { SPACE_IMPACT_DATA } from "../../src/kit/ui/resources/generated/space-impact";
+import { SPACE_IMPACT_DATA } from "@hellotimber/nokia-kit/ui/resources/generated/space-impact";
 import recovery from "../fixtures/space-impact-seed-recovery.json";
 import type { Golden } from "../../scripts/golden-format";
 import {
@@ -14,12 +14,12 @@ import {
   spaceImpactKey,
   spaceImpactRender,
   stepSpaceImpact,
-} from "../../src/kit/apps/games/space-impact/engine";
+} from "@hellotimber/nokia-kit/apps/games/space-impact/engine";
 import type {
   SpaceImpactResult,
   SpaceImpactState,
-} from "../../src/kit/apps/games/space-impact/model";
-import { paintSpaceImpact } from "../../src/kit/ui/display/widgets/space-impact";
+} from "@hellotimber/nokia-kit/apps/games/space-impact/model";
+import { paintSpaceImpact } from "@hellotimber/nokia-kit/ui/display/widgets/space-impact";
 
 export function deliverSpaceImpactResult(
   state: SpaceImpactState,

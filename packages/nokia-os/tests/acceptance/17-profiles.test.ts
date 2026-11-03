@@ -5,7 +5,7 @@
 // compare by the fidelity standard (tests/support/golden.ts); stills compare pixels exactly.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { PROFILE_SLUGS, type ProfileSlug } from "../../src/firmware/features/profiles";
-import { MULTITAP_KEYS } from "../../src/kit/ui/text/keys";
+import { MULTITAP_KEYS } from "@hellotimber/nokia-kit/ui/text/keys";
 import { THIN_GLYPH_PAGES } from "../../scripts/capture-sets/17-profiles.ts";
 import { acceptancePlan, type Scenario } from "../support/acceptance.ts";
 import { recordingScenario, type RecordingKey } from "../support/calculator.ts";

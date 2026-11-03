@@ -8,7 +8,7 @@ import {
   SECURITY_RECORD,
   StockSecurity,
   WRONG_CODE_LIMIT,
-} from "../src/kit/system/security";
+} from "@hellotimber/nokia-kit/system/security";
 import { createStockSettings } from "../src/firmware/settings";
 import { createMemoryStorage, STOCK_STORAGE_PREFIX, type StockStorage } from "../src/index";
 

@@ -7,7 +7,7 @@ import type { ScreenModel } from "@hellotimber/phone-core";
 import { SIM_CONTENT_TOOLKITS } from "../scripts/capture-sets/30-sim-content.ts";
 import { ALLOW_CALL, callConfirmLines, type StockSimToolkit } from "../src/sim/toolkit";
 import { fetchMs, toolkitSession, type ToolkitDial } from "../src/sim/session";
-import { StockFlowApplication } from "../src/kit/ui/widgets/flow";
+import { StockFlowApplication } from "@hellotimber/nokia-kit/ui/widgets/flow";
 import { flowRig } from "./support/flow-rig.ts";
 import { standbyRig } from "./support/rig.ts";
 import { createSyntheticNetwork, describeStockScreen, type StockOutgoingCall } from "../src/index";

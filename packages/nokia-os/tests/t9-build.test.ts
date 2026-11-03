@@ -3,7 +3,6 @@
 // and counts below are invented for the test.
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { describe, expect, it } from "vite-plus/test";
 import {
   ENGLISH_SOURCE,
@@ -13,6 +12,7 @@ import {
   weightOf,
   writeDictionaryModule,
 } from "../scripts/build-t9-dictionary.ts";
+import { KIT_T9_ENGLISH_GENERATED } from "../scripts/kit-paths.ts";
 
 const SAMPLE = [
   "the 1048576",
@@ -156,10 +156,7 @@ describe("writeDictionaryModule", () => {
 });
 
 describe("the committed dictionary", () => {
-  const generated = readFileSync(
-    join(import.meta.dirname, "../src/kit/ui/text/t9/generated/english.ts"),
-    "utf8",
-  );
+  const generated = readFileSync(KIT_T9_ENGLISH_GENERATED, "utf8");
 
   it("records the pinned source (D2)", () => {
     expect(ENGLISH_SOURCE).toMatchObject({

@@ -3,12 +3,15 @@
 // timing is a Task 0 capture's; the goldens are cited per flow.
 import type { StockServices } from "../firmware/features/feature";
 import { placeCall } from "../firmware/features/dialling";
-import { nodeTimeline, timelineByName } from "../kit/ui/timelines";
-import { nameQuery, type PhoneBookQueryModel } from "../kit/ui/display/widgets/name-list";
-import type { WidgetModel } from "../kit/ui/display/widgets";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { BLANK, interlude } from "../kit/ui/widgets/interlude";
-import { infoScreen } from "../kit/ui/widgets/info-screen";
+import { nodeTimeline, timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
+import {
+  nameQuery,
+  type PhoneBookQueryModel,
+} from "@hellotimber/nokia-kit/ui/display/widgets/name-list";
+import type { WidgetModel } from "@hellotimber/nokia-kit/ui/display/widgets";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { BLANK, interlude } from "@hellotimber/nokia-kit/ui/widgets/interlude";
+import { infoScreen } from "@hellotimber/nokia-kit/ui/widgets/info-screen";
 import {
   nameList,
   TYPE_OF_VIEW,
@@ -17,10 +20,10 @@ import {
   type NameListOptions,
   type NameListView,
 } from "../widgets/name-list";
-import { note } from "../kit/ui/widgets/note";
-import { noPhoneNumbers, numberEntry } from "../kit/ui/widgets/number-entry";
-import { textInput } from "../kit/ui/widgets/text-input";
-import { searchIndex, type PhoneBookEntry } from "../services/phone-book/entries";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
+import { noPhoneNumbers, numberEntry } from "@hellotimber/nokia-kit/ui/widgets/number-entry";
+import { textInput } from "@hellotimber/nokia-kit/ui/widgets/text-input";
+import { searchIndex, type PhoneBookEntry } from "@hellotimber/phone-services/phone-book/entries";
 import { SIM_NUMBER_DIGITS, simNameLength, simNumberProblem, type StockContact } from "./sim-card";
 
 /**

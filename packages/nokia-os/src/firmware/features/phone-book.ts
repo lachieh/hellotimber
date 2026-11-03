@@ -14,10 +14,10 @@ import {
 import { assignTone, edit, eraseAll, eraseOneByOne } from "../../phone-book/manage";
 import { addVoiceTag, speedDials } from "../../phone-book/speed";
 import type { StockFeature, StockServices } from "./feature";
-import type { Flow, Widget } from "../../kit/ui/widgets/flow";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
 import { OptionListWidget, settingOptionList } from "../../widgets/option-list";
 import { settingKey } from "../tree";
-import { note } from "../../kit/ui/widgets/note";
+import { note } from "@hellotimber/nokia-kit/ui/widgets/note";
 
 /** Save a number already entered or selected in the call register: ask only for its name. */
 export function savePhoneNumber(services: StockServices, number: string, text = ""): Widget {

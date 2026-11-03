@@ -1,7 +1,7 @@
 import { PhoneApplication } from "@hellotimber/phone-core";
 import type { ApplicationContext, PhoneApplicationSession } from "@hellotimber/phone-core";
-import { placeholderFrame } from "../kit/ui/display/placeholder";
-import { attachDescription, describeWidget } from "../kit/ui/display/describe";
+import { placeholderFrame } from "@hellotimber/nokia-kit/ui/display/placeholder";
+import { attachDescription, describeWidget } from "@hellotimber/nokia-kit/ui/display/describe";
 
 /**
  * A stock leaf that later plans implement (D13). It shows a marked placeholder frame; C exits to

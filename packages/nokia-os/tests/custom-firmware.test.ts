@@ -16,7 +16,7 @@ import { STOCK_HANDSET } from "../src/firmware/handset";
 import { firmwareRecords } from "../src/firmware/records";
 import { settingsRecordKeys, virginSettings } from "../src/firmware/settings";
 import { STOCK_FIRMWARE } from "../src/firmware/stock";
-import { STOCK_MENU_ICONS, WIDGET_TIMELINE_BY_NODE } from "../src/kit/ui/resources";
+import { STOCK_MENU_ICONS, WIDGET_TIMELINE_BY_NODE } from "@hellotimber/nokia-kit/ui/resources";
 import {
   composeFirmware,
   createFirmwarePhone,

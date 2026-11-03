@@ -9,19 +9,19 @@
 // also matches the node itself and everything below (`tree.ts` `matchesPattern`). Patterns of one
 // table must not overlap (tests/features.test.ts).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { StockMessaging } from "../../services/messaging/service";
-import type { StockPhoneBook } from "../../services/phone-book/store";
-import type { StockSounder } from "../../kit/system/sounder";
-import type { StockT9 } from "../../kit/system/t9/service";
-import type { Widget } from "../../kit/ui/widgets/flow";
-import type { ListNumbering } from "../../kit/ui/widgets/rows";
-import type { NoteSound } from "../../kit/ui/widgets/note";
-import type { PromptLayout } from "../../kit/ui/widgets/prompt";
+import type { StockMessaging } from "@hellotimber/phone-services/messaging/service";
+import type { StockPhoneBook } from "@hellotimber/phone-services/phone-book/store";
+import type { StockSounder } from "@hellotimber/nokia-kit/system/sounder";
+import type { StockT9 } from "@hellotimber/nokia-kit/system/t9/service";
+import type { Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import type { ListNumbering } from "@hellotimber/nokia-kit/ui/widgets/rows";
+import type { NoteSound } from "@hellotimber/nokia-kit/ui/widgets/note";
+import type { PromptLayout } from "@hellotimber/nokia-kit/ui/widgets/prompt";
 import type { EepromRecord, StockEeprom } from "../eeprom";
 import type { Firmware } from "../firmware";
 import type { StockResult, StockScreenSpec } from "../generated/stock-tree";
-import type { StockPorts } from "../../kit/system/ports";
-import type { StockSecurity } from "../../kit/system/security";
+import type { StockPorts } from "@hellotimber/nokia-kit/system/ports";
+import type { StockSecurity } from "@hellotimber/nokia-kit/system/security";
 import type { StockSettings } from "../settings";
 import type { StockGames } from "./games";
 

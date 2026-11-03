@@ -1,10 +1,10 @@
 // Info service › Topics (2-8-4) and the Service command editor (2-10), plan 18c Task 9 as Task 0
 // I and X captured them (`topics/*`, `service-command/*`, plan 14's `tree/02-messages/2-8-4-*`).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { EditorModel } from "../kit/ui/display/widgets";
+import type { EditorModel } from "@hellotimber/nokia-kit/ui/display/widgets";
 import type { StockServices } from "../firmware/features/feature";
-import { nodeTimeline, timelineByName } from "../kit/ui/timelines";
-import { TEXT_TIMINGS } from "../kit/ui/resources";
+import { nodeTimeline, timelineByName } from "@hellotimber/nokia-kit/ui/timelines";
+import { TEXT_TIMINGS } from "@hellotimber/nokia-kit/ui/resources";
 import {
   textClear,
   textDelete,
@@ -12,19 +12,19 @@ import {
   textMove,
   textTick,
   type TextState,
-} from "../kit/ui/text/multitap";
-import { editorModel, MODE_SPRITES, T9_MODE_X } from "../kit/ui/widgets/editor";
+} from "@hellotimber/nokia-kit/ui/text/multitap";
+import { editorModel, MODE_SPRITES, T9_MODE_X } from "@hellotimber/nokia-kit/ui/widgets/editor";
 import { t9Context } from "../messages/write";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { HeldC } from "../kit/ui/widgets/held-c";
+import type { Flow, Widget } from "@hellotimber/nokia-kit/ui/widgets/flow";
+import { HeldC } from "@hellotimber/nokia-kit/ui/widgets/held-c";
 import { multiSelect } from "../widgets/multi-select";
-import { note, type NoteEnd } from "../kit/ui/widgets/note";
-import { DIAL_CYCLE, numberEntry } from "../kit/ui/widgets/number-entry";
+import { note, type NoteEnd } from "@hellotimber/nokia-kit/ui/widgets/note";
+import { DIAL_CYCLE, numberEntry } from "@hellotimber/nokia-kit/ui/widgets/number-entry";
 import { OptionListWidget } from "../widgets/option-list";
 import { serviceRequest } from "../widgets/service-request";
-import { Playback } from "../kit/ui/widgets/playback";
-import { blinkShown } from "../kit/ui/widgets/text-entry";
-import { textInput } from "../kit/ui/widgets/text-input";
+import { Playback } from "@hellotimber/nokia-kit/ui/widgets/playback";
+import { blinkShown } from "@hellotimber/nokia-kit/ui/widgets/text-entry";
+import { textInput } from "@hellotimber/nokia-kit/ui/widgets/text-input";
 import { StockTopics } from "./topics";
 
 /** `Topic number:` types three digits (`topics/factory-numbers` 1000). */
