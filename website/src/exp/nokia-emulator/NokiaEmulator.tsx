@@ -27,6 +27,7 @@ import {
   type PanelTab,
 } from "./panel-state";
 import { DEFAULT_STAGE, fitForScale, type StageSettings } from "./stage-settings";
+import { WorldTab } from "./WorldTab";
 import "./emulator.css";
 
 const Studio = lazy(() => import("./Studio"));
@@ -156,6 +157,7 @@ export default function NokiaEmulator() {
         onStep={(by) => dispatch({ type: "step", by })}
       >
         {panel.tab === "inspector" && <Inspector emulator={emulator} state={state} />}
+        {panel.tab === "world" && <WorldTab emulator={emulator} state={state} />}
       </Panel>
     </div>
   );
