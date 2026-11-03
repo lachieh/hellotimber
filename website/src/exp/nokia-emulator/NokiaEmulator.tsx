@@ -27,6 +27,7 @@ import {
   type PanelTab,
 } from "./panel-state";
 import { DEFAULT_STAGE, fitForScale, type StageSettings } from "./stage-settings";
+import { StageTab } from "./StageTab";
 import { WorldTab } from "./WorldTab";
 import "./emulator.css";
 
@@ -82,6 +83,10 @@ export default function NokiaEmulator() {
     reveal: motion ? 0 : REVEAL_MS,
     float: motion,
   }));
+  const changeStage = useCallback((patch: Partial<StageSettings>) => {
+    stopReveal.current();
+    setStage((prev) => ({ ...prev, ...patch }));
+  }, []);
 
   // The reveal plays once as the model appears, and again from the Stage tab.
   const stopReveal = useRef<() => void>(() => {});
@@ -158,6 +163,9 @@ export default function NokiaEmulator() {
       >
         {panel.tab === "inspector" && <Inspector emulator={emulator} state={state} />}
         {panel.tab === "world" && <WorldTab emulator={emulator} state={state} />}
+        {panel.tab === "stage" && (
+          <StageTab stage={stage} onChange={changeStage} onReplay={playReveal} motion={motion} />
+        )}
       </Panel>
     </div>
   );
