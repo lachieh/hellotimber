@@ -58,8 +58,12 @@ inside your own `<Canvas>` instead.
 
 ## Server-rendered sketch and the form entrance
 
-`@hellotimber/phone-3d/sketch` exports `<Nokia3310Sketch fit? screenBgColor?/>`: the phone
-drawn flat in comic ink, as pure SVG with no three.js import, so it renders on the server. It is
+`@hellotimber/phone-3d/sketch` exports `<Nokia3310Sketch fit? screenBgColor? ink? paper?
+dimensions?/>`: the phone as a technical drawing (an even contour, finer detail lines, shading
+lines down its right side, and dimension lines giving its 113 mm height and 48 mm width; line
+weights stay in screen pixels at any scale), as pure SVG with no three.js import, so it renders
+on the server. `ink` and `paper` set its line and ground colours (the paper hides the 3D phone
+beneath it). It is
 traced from the model's front view (`vp run @hellotimber/phone-3d#sketch-outline` regenerates
 `src/sketch/outline.generated.ts` after a model change) and framed exactly like the stage's flat
 phone. Place it absolutely over `<PhoneStage form onFormStart={…}>` (same `fit`) and fade it out
@@ -69,7 +73,11 @@ on `onFormStart`: the 3D phone starts flat at the sketch's outline and leaps out
 To stage the entrance yourself, pass `<PhoneStage pose={() => …}>`: it reads a `FormPose`
 (`depth`, `lift`, `spread`, `tiltX`, `tiltY`, `settled`) every frame instead of `formPose`
 (exported, so a host can delay or re-time it). The sketch's `wipe` (0–1) turns it into the phone
-beneath, top to bottom: a bright edge sweeps down, the ink gone above it.
+beneath, top to bottom: a fine rule sweeps down across the figure, the drawing gone above it.
+
+`<Nokia3310Callouts fit? callouts={[{ target: "screen", label: "Display" }]}/>` draws leader
+lines from parts of the front view (`CalloutTarget`) to labels beside the phone, framed like the
+sketch so they point at the formed 3D phone. `HANDSET` gives the real handset's size and weight.
 
 ## Props (`Nokia3310Props`)
 

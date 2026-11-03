@@ -1,9 +1,11 @@
 import { useId } from "react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { VIEW_HEIGHT_AT_ORIGIN } from "../frame";
-import { MATERIALS, PRINT_DARK } from "../materials";
 import { DEFAULT_SCREEN_BG } from "../types";
 import { BOUNDS, REGIONS, SILHOUETTE } from "./outline.generated";
+
+/** The handset's published size and weight, which the drawing's dimension lines give. */
+export const HANDSET = { heightMm: 113, widthMm: 48, depthMm: 22, weightG: 133 } as const;
 
 export interface Nokia3310SketchProps {
   className?: string;
@@ -16,29 +18,42 @@ export interface Nokia3310SketchProps {
   /** Lines written on the LCD instead of the loading bar, e.g. when the 3D phone can't load. */
   lcdText?: readonly string[];
   /**
-   * How far the drawing has turned into the phone beneath it, 0–1: a bright edge sweeps down
-   * from the top, the ink gone above it, print dots dissolving in its wake. Gone at 1.
+   * How far the drawing has turned into the phone beneath it, 0–1: an edge sweeps down from the
+   * top, the drawing gone above it. Gone at 1.
    */
   wipe?: number;
+  /** The drawing's line colour (default near-black). */
+  ink?: string;
+  /** The paper it's drawn on, which also hides the 3D phone under it (default off-white). */
+  paper?: string;
+  /** Draw the height and width dimension lines beside the phone (default true). */
+  dimensions?: boolean;
 }
 
-const INK = "#16130f";
-/** The wipe's edge: the softness of the ink's cut-off below it, and the dissolving dots above. */
-const WIPE_SOFT = 0.12;
-const WIPE_TRAIL = 0.9;
-const WIPE_GLOW = "#e9fbff";
-const PAPER_HIGHLIGHT = "#fffdf6";
+const INK = "#1b1b19";
+const PAPER = "#f4f3ef";
 
-/** Flat comic colours for each model node: the 3D materials as they read lit on screen. */
-const FILL: Record<string, string> = {
-  island: "#d6d9e1",
-  badge: MATERIALS.badge.color,
-  badge_logo: "#dfe4ea",
-  key_power: "#3c4459",
-  key_navi: MATERIALS.navi.color,
-};
-const KEY_FILL = "#dadde5";
-const BODY_FILL = "#5e6883";
+/** Line weights in screen pixels, whatever the drawing's scale: contour, detail, dimension. */
+const CONTOUR = 1.5;
+const DETAIL = 0.8;
+const THIN = 0.6;
+
+/** The wipe's edge: the softness of the drawing's cut-off below it, and how far past the phone's
+ *  bottom it runs (clearing the width dimension) before the drawing is gone. */
+const WIPE_SOFT = 0.12;
+const WIPE_PAST = 0.9;
+
+/** The viewBox: the phone's bounds made symmetric about the stage origin, where the camera looks. */
+const HALF_W = Math.max(-BOUNDS.x, BOUNDS.x + BOUNDS.width);
+const HALF_H = Math.max(-BOUNDS.y, BOUNDS.y + BOUNDS.height);
+const VIEW_BOX = `${-HALF_W} ${-HALF_H} ${2 * HALF_W} ${2 * HALF_H}`;
+/** Room around the phone for the dimension lines, which draw outside the viewBox. */
+const MARGIN = 1.6;
+
+const TOP = BOUNDS.y;
+const BOTTOM = BOUNDS.y + BOUNDS.height;
+const LEFT = BOUNDS.x;
+const RIGHT = BOUNDS.x + BOUNDS.width;
 
 const DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 const LEGENDS: Record<string, string> = {
@@ -47,11 +62,6 @@ const LEGENDS: Record<string, string> = {
   key_hash: "#",
   key_c: "C",
 };
-
-/** The viewBox: the phone's bounds made symmetric about the stage origin, where the camera looks. */
-const HALF_W = Math.max(-BOUNDS.x, BOUNDS.x + BOUNDS.width);
-const HALF_H = Math.max(-BOUNDS.y, BOUNDS.y + BOUNDS.height);
-const VIEW_BOX = `${-HALF_W} ${-HALF_H} ${2 * HALF_W} ${2 * HALF_H}`;
 
 /**
  * The SVG's height in its container (which must be `container-type: size`, as the sketch's own
@@ -63,26 +73,8 @@ function sketchHeight(fit: number | undefined): string {
   return `min(${fit * 100}cqh, ${((fit * HALF_H) / HALF_W) * 100}cqw)`;
 }
 
-/**
- * The 3310 drawn flat in comic ink, traced from the 3D model's front view. Pure SVG: it renders
- * on the server, before three.js and the model have loaded, exactly where `<PhoneStage>` with
- * the same `fit` and `form` draws the phone flat before it rises.
- */
-export function Nokia3310Sketch({
-  className,
-  fit,
-  screenBgColor = DEFAULT_SCREEN_BG,
-  progress,
-  lcdText,
-  wipe = 0,
-}: Nokia3310SketchProps) {
-  const wrapper: CSSProperties = {
-    position: "absolute",
-    inset: 0,
-    containerType: "size",
-    pointerEvents: "none",
-  };
-  const svg: CSSProperties = {
+function svgStyle(fit: number | undefined): CSSProperties {
+  return {
     position: "absolute",
     left: "50%",
     top: "50%",
@@ -91,38 +83,58 @@ export function Nokia3310Sketch({
     translate: "-50% -50%",
     overflow: "visible",
   };
+}
+
+const WRAPPER: CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  containerType: "size",
+  pointerEvents: "none",
+};
+
+/** Strokes keep their pixel weight at any scale, like a pen on a drawing of any size. */
+const PEN = { vectorEffect: "non-scaling-stroke" } as const;
+
+/**
+ * The 3310 as a technical drawing, its front elevation traced from the 3D model: an even contour,
+ * finer detail lines, shading lines down the side away from the light, and dimension lines for its
+ * height and width. Pure SVG: it renders on the server, before three.js and the model have loaded,
+ * exactly where `<PhoneStage>` with the same `fit` and `form` draws the phone flat before it rises.
+ */
+export function Nokia3310Sketch({
+  className,
+  fit,
+  screenBgColor = DEFAULT_SCREEN_BG,
+  progress,
+  lcdText,
+  wipe = 0,
+  ink = INK,
+  paper = PAPER,
+  dimensions = true,
+}: Nokia3310SketchProps) {
   const screen = REGIONS.screen;
   // Ids unique per sketch: a page may hold several (one per breakpoint, say).
   const id = useId();
   const ref = (name: string) => `${id}${name}`;
   const url = (name: string) => `url(#${ref(name)})`;
   if (wipe >= 1) return null;
-  // The edge sweeps from the phone's top until its trail has left the bottom.
-  const edge = BOUNDS.y + wipe * (BOUNDS.height + WIPE_TRAIL);
+  // The edge sweeps from the phone's top until it has passed the width dimension below it, on
+  // the same clock as before the drawing had dimensions, so the 3D phone's leap lines up.
+  const edge = TOP + wipe * (BOUNDS.height + WIPE_PAST);
   const wiping = wipe > 0;
+  const area = {
+    x: -HALF_W - MARGIN,
+    y: -HALF_H - MARGIN,
+    width: 2 * (HALF_W + MARGIN),
+    height: 2 * (HALF_H + MARGIN),
+  };
   return (
-    <div className={className} style={wrapper} aria-hidden="true">
-      <svg viewBox={VIEW_BOX} style={svg} role="presentation">
+    <div className={className} style={WRAPPER} aria-hidden="true">
+      <svg viewBox={VIEW_BOX} style={svgStyle(fit)} role="presentation">
         <defs>
-          {/* Ben-Day dots for the shading, densest away from the light (top left). */}
-          <pattern id={ref("dots")} width="0.13" height="0.13" patternUnits="userSpaceOnUse">
-            <circle cx="0.065" cy="0.065" r="0.034" fill={INK} />
-          </pattern>
-          <linearGradient id={ref("shade")} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0.35" stopColor="#fff" stopOpacity="0" />
-            <stop offset="1" stopColor="#fff" stopOpacity="0.55" />
-          </linearGradient>
-          <mask id={ref("shade-mask")} maskContentUnits="objectBoundingBox">
-            <rect width="1" height="1" fill={url("shade")} />
-          </mask>
           <clipPath id={ref("body")}>
             <path d={SILHOUETTE} />
           </clipPath>
-          {screen && (
-            <clipPath id={ref("screen")}>
-              <path d={screen.d} />
-            </clipPath>
-          )}
           {wiping && (
             <>
               <linearGradient
@@ -136,182 +148,212 @@ export function Nokia3310Sketch({
                 <stop offset="0" stopColor="#000" />
                 <stop offset="1" stopColor="#fff" />
               </linearGradient>
-              <mask
-                id={ref("wipe")}
-                maskUnits="userSpaceOnUse"
-                x={-HALF_W}
-                y={-HALF_H}
-                width={2 * HALF_W}
-                height={2 * HALF_H}
-              >
-                <rect
-                  x={-HALF_W}
-                  y={-HALF_H}
-                  width={2 * HALF_W}
-                  height={2 * HALF_H}
-                  fill={url("wipe-fade")}
-                />
-              </mask>
-              <linearGradient
-                id={ref("wipe-trail")}
-                gradientUnits="userSpaceOnUse"
-                x1="0"
-                y1={edge - WIPE_TRAIL}
-                x2="0"
-                y2={edge}
-              >
-                <stop offset="0" stopColor="#fff" stopOpacity="0" />
-                <stop offset="1" stopColor="#fff" stopOpacity="0.9" />
-              </linearGradient>
-              <mask
-                id={ref("trail-mask")}
-                maskUnits="userSpaceOnUse"
-                x={-HALF_W}
-                y={edge - WIPE_TRAIL}
-                width={2 * HALF_W}
-                height={WIPE_TRAIL}
-              >
-                <rect
-                  x={-HALF_W}
-                  y={edge - WIPE_TRAIL}
-                  width={2 * HALF_W}
-                  height={WIPE_TRAIL}
-                  fill={url("wipe-trail")}
-                />
+              <mask id={ref("wipe")} maskUnits="userSpaceOnUse" {...area}>
+                <rect {...area} fill={url("wipe-fade")} />
               </mask>
             </>
           )}
         </defs>
 
         <g mask={wiping ? url("wipe") : undefined}>
-          <path d={SILHOUETTE} fill={BODY_FILL} />
-          <g clipPath={url("body")}>
-            <rect
-              x={-HALF_W}
-              y={-HALF_H}
-              width={2 * HALF_W}
-              height={2 * HALF_H}
-              fill={url("dots")}
-              mask={url("shade-mask")}
-            />
-          </g>
+          <path d={SILHOUETTE} fill={paper} />
+          <Shading ink={ink} clip={url("body")} />
 
-          <g stroke={INK} strokeWidth="0.045" strokeLinejoin="round">
+          <g stroke={ink} strokeWidth={DETAIL} strokeLinejoin="round" {...PEN}>
             {Object.entries(REGIONS).map(([name, region]) => (
               <path
                 key={name}
                 d={region.d}
                 fillRule="evenodd"
-                fill={name === "screen" ? screenBgColor : (FILL[name] ?? KEY_FILL)}
+                fill={name === "screen" ? screenBgColor : paper}
+                fillOpacity={name === "screen" ? 0.55 : 1}
+                {...PEN}
               />
             ))}
           </g>
 
-          {screen && lcdText !== undefined && <LcdText center={screen.center} lines={lcdText} />}
+          {screen && lcdText !== undefined && (
+            <LcdText center={screen.center} lines={lcdText} ink={ink} />
+          )}
           {screen && lcdText === undefined && progress !== undefined && (
-            <LcdLoading center={screen.center} progress={progress} />
+            <LcdLoading center={screen.center} progress={progress} ink={ink} />
           )}
 
-          {/* Gloss on the LCD: two hard white streaks. */}
-          {screen && (
-            <g clipPath={url("screen")} stroke={PAPER_HIGHLIGHT} strokeLinecap="round">
-              <path
-                d={`M${screen.center[0] - 1.6} ${screen.center[1] + 0.2}L${screen.center[0] - 0.4} ${screen.center[1] - 1.3}`}
-                strokeWidth="0.16"
-                opacity="0.75"
-              />
-              <path
-                d={`M${screen.center[0] - 1.0} ${screen.center[1] + 0.5}L${screen.center[0] + 0.1} ${screen.center[1] - 0.9}`}
-                strokeWidth="0.07"
-                opacity="0.75"
-              />
-            </g>
-          )}
+          <Lettering ink={ink} />
 
-          {/* Key legends, hand-lettered at each key's centre. */}
-          <g
-            fill={PRINT_DARK}
-            fontFamily='"Arial Black", "Helvetica Neue", system-ui, sans-serif'
-            fontWeight="900"
-            fontSize="0.34"
-            textAnchor="middle"
-            dominantBaseline="central"
-          >
-            {Object.entries(LEGENDS).map(([name, legend]) => {
-              const region = REGIONS[name];
-              if (!region) return null;
-              return (
-                <text key={name} x={region.center[0]} y={region.center[1]}>
-                  {legend}
-                </text>
-              );
-            })}
-          </g>
-          <ScrollArrows />
-          {REGIONS.key_navi && (
-            <path
-              d={`M${REGIONS.key_navi.center[0] - 0.42} ${REGIONS.key_navi.center[1]}h0.84`}
-              stroke={MATERIALS.naviBar.color}
-              strokeWidth="0.1"
-              strokeLinecap="round"
-            />
-          )}
+          {/* The contour last, so it sits over every inner line. */}
+          <path
+            d={SILHOUETTE}
+            fill="none"
+            stroke={ink}
+            strokeWidth={CONTOUR}
+            strokeLinejoin="round"
+            {...PEN}
+          />
 
-          {/* The bold outer contour last, so it sits over every inner line. */}
-          <path d={SILHOUETTE} fill="none" stroke={INK} strokeWidth="0.11" strokeLinejoin="round" />
+          {dimensions && <Dimensions ink={ink} paper={paper} />}
         </g>
 
-        {/* The transforming edge, on the phone only: print dots dissolving into the real thing
-            above it, and a bright line where ink turns to plastic. */}
+        {/* The edge itself: a fine rule sweeping down across the whole figure. */}
         {wiping && (
-          <g clipPath={url("body")}>
-            <rect
-              x={-HALF_W}
-              y={edge - WIPE_TRAIL}
-              width={2 * HALF_W}
-              height={WIPE_TRAIL}
-              fill={url("dots")}
-              mask={url("trail-mask")}
-            />
-            <rect
-              x={-HALF_W}
-              y={edge - 0.16}
-              width={2 * HALF_W}
-              height={0.32}
-              fill={WIPE_GLOW}
-              opacity="0.35"
-            />
-            <rect x={-HALF_W} y={edge - 0.04} width={2 * HALF_W} height={0.08} fill={WIPE_GLOW} />
-          </g>
+          <path
+            d={`M${area.x} ${edge}H${area.x + area.width}`}
+            stroke={ink}
+            strokeWidth={THIN}
+            {...PEN}
+          />
         )}
       </svg>
     </div>
   );
 }
 
-/** LCD ink: the dark pixels of the green screen. */
-const LCD_INK = "#1f2d22";
+/** Shading lines down the phone's right side, away from the light, closer together at the edge. */
+function Shading({ ink, clip }: { ink: string; clip: string }) {
+  const xs = [1.42, 1.62, 1.78, 1.9, 1.99, 2.05];
+  return (
+    <g clipPath={clip} stroke={ink} strokeWidth={THIN} {...PEN}>
+      {xs.map((x) => (
+        <path key={x} d={`M${x} ${TOP}V${BOTTOM}`} {...PEN} />
+      ))}
+    </g>
+  );
+}
+
+/** Key legends at each key's centre, scroll chevrons and the Navi key's bar. */
+function Lettering({ ink }: { ink: string }) {
+  return (
+    <>
+      <g
+        fill={ink}
+        fontFamily="inherit"
+        fontWeight="500"
+        fontSize="0.3"
+        textAnchor="middle"
+        dominantBaseline="central"
+      >
+        {Object.entries(LEGENDS).map(([name, legend]) => {
+          const region = REGIONS[name];
+          if (!region) return null;
+          return (
+            <text key={name} x={region.center[0]} y={region.center[1]}>
+              {legend}
+            </text>
+          );
+        })}
+      </g>
+      <g fill="none" stroke={ink} strokeWidth={DETAIL} strokeLinecap="round" {...PEN}>
+        {(["key_up", "key_down"] as const).map((name) => {
+          const region = REGIONS[name];
+          if (!region) return null;
+          const [x, y] = region.center;
+          const dy = name === "key_up" ? -0.06 : 0.06;
+          return (
+            <path
+              key={name}
+              d={`M${x - 0.11} ${y - dy}L${x} ${y + dy}L${x + 0.11} ${y - dy}`}
+              {...PEN}
+            />
+          );
+        })}
+        {REGIONS.key_navi && (
+          <path
+            d={`M${REGIONS.key_navi.center[0] - 0.36} ${REGIONS.key_navi.center[1]}h0.72`}
+            {...PEN}
+          />
+        )}
+      </g>
+    </>
+  );
+}
+
+/** How far the dimension lines stand off the phone, and the gap before their extension lines. */
+const DIM_OFFSET = 0.62;
+const EXT_GAP = 0.14;
+const EXT_OVER = 0.14;
+const ARROW = 0.16;
+const DIM_TEXT = 0.27;
+
+/** An arrowhead at `x, y` pointing along `(dx, dy)` (a unit axis). */
+function arrow(x: number, y: number, dx: number, dy: number): string {
+  const back = ARROW;
+  const half = ARROW * 0.3;
+  const bx = x - dx * back;
+  const by = y - dy * back;
+  return `M${x} ${y}L${bx - dy * half} ${by + dx * half}L${bx + dy * half} ${by - dx * half}Z`;
+}
+
+/** The height (left) and width (below) dimension lines, in millimetres. */
+function Dimensions({ ink, paper }: { ink: string; paper: string }) {
+  const hx = LEFT - DIM_OFFSET;
+  const wy = BOTTOM + DIM_OFFSET;
+  // Just past where the outline reaches its extremes: its top and bottom edges' left ends, and
+  // its sides' widest points, around the middle of the phone.
+  const topX = -0.95;
+  const bottomX = -1.2;
+  const sideY = 0.1;
+  const label = (x: number, y: number, text: string, vertical: boolean): ReactNode => (
+    <g transform={`translate(${x} ${y})${vertical ? " rotate(-90)" : ""}`}>
+      <rect x={-0.34} y={-0.17} width={0.68} height={0.34} fill={paper} />
+      <text
+        fill={ink}
+        fontFamily="inherit"
+        fontSize={DIM_TEXT}
+        textAnchor="middle"
+        dominantBaseline="central"
+        style={{ fontVariantNumeric: "tabular-nums" }}
+      >
+        {text}
+      </text>
+    </g>
+  );
+  return (
+    <g>
+      <g stroke={ink} strokeWidth={THIN} fill="none" {...PEN}>
+        {/* Extension lines. */}
+        <path d={`M${topX - EXT_GAP} ${TOP}H${hx - EXT_OVER}`} {...PEN} />
+        <path d={`M${bottomX - EXT_GAP} ${BOTTOM}H${hx - EXT_OVER}`} {...PEN} />
+        <path d={`M${LEFT} ${sideY + EXT_GAP}V${wy + EXT_OVER}`} {...PEN} />
+        <path d={`M${RIGHT} ${sideY + EXT_GAP}V${wy + EXT_OVER}`} {...PEN} />
+        {/* Dimension lines. */}
+        <path d={`M${hx} ${TOP}V${BOTTOM}`} {...PEN} />
+        <path d={`M${LEFT} ${wy}H${RIGHT}`} {...PEN} />
+      </g>
+      <g fill={ink}>
+        <path d={arrow(hx, TOP, 0, -1)} />
+        <path d={arrow(hx, BOTTOM, 0, 1)} />
+        <path d={arrow(LEFT, wy, -1, 0)} />
+        <path d={arrow(RIGHT, wy, 1, 0)} />
+      </g>
+      {label(hx, 0, String(HANDSET.heightMm), true)}
+      {label(0, wy, String(HANDSET.widthMm), false)}
+    </g>
+  );
+}
+
 /** Segments in the loading bar, like the 3310's own signal and battery bars. */
 const SEGMENTS = 10;
 
-/** Lines of text on the LCD, centred, in the screen's own ink. */
+/** Lines of text on the LCD, centred. */
 function LcdText({
   center: [cx, cy],
   lines,
+  ink,
 }: {
   center: readonly [number, number];
   lines: readonly string[];
+  ink: string;
 }) {
-  const leading = 0.46;
+  const leading = 0.42;
   return (
     <text
       role="status"
       x={cx}
       y={cy - ((lines.length - 1) * leading) / 2}
-      fill={LCD_INK}
-      fontFamily='"Courier New", ui-monospace, monospace'
-      fontWeight="700"
-      fontSize="0.32"
+      fill={ink}
+      fontFamily="inherit"
+      fontWeight="500"
+      fontSize="0.28"
       textAnchor="middle"
       dominantBaseline="central"
     >
@@ -331,27 +373,22 @@ function LcdText({
 function LcdLoading({
   center: [cx, cy],
   progress,
+  ink,
 }: {
   center: readonly [number, number];
   progress: number;
+  ink: string;
 }) {
   const lit = Math.round(Math.min(1, Math.max(0, progress)) * SEGMENTS);
   const width = 2.1;
-  const height = 0.34;
+  const height = 0.3;
   const gap = 0.05;
   const inner = (width - 2 * gap - (SEGMENTS - 1) * gap) / SEGMENTS;
   const left = cx - width / 2;
-  const top = cy + 0.12;
+  const top = cy + 0.1;
   return (
     <g role="progressbar" aria-valuenow={Math.round(progress * 100)}>
-      <text
-        x={left}
-        y={cy - 0.32}
-        fill={LCD_INK}
-        fontFamily='"Courier New", ui-monospace, monospace'
-        fontWeight="700"
-        fontSize="0.38"
-      >
+      <text x={left} y={cy - 0.28} fill={ink} fontFamily="inherit" fontWeight="500" fontSize="0.3">
         Loading
         {[0, 1, 2].map((i) => (
           <tspan key={i}>
@@ -371,38 +408,97 @@ function LcdLoading({
         y={top}
         width={width}
         height={height}
-        rx="0.04"
         fill="none"
-        stroke={LCD_INK}
-        strokeWidth="0.04"
+        stroke={ink}
+        strokeWidth={DETAIL}
+        {...PEN}
       />
       {Array.from({ length: lit }, (_, i) => (
         <rect
           key={i}
+          data-segment=""
           x={left + gap + i * (inner + gap)}
           y={top + gap}
           width={inner}
           height={height - 2 * gap}
-          fill={LCD_INK}
+          fill={ink}
         />
       ))}
     </g>
   );
 }
 
-/** Chevrons on the scroll keys. */
-function ScrollArrows() {
+/** A part of the phone a callout can point at. */
+export type CalloutTarget =
+  | "screen"
+  | "key_navi"
+  | "key_c"
+  | "key_up"
+  | "key_5"
+  | "key_power"
+  | "badge";
+
+export interface Callout {
+  target: CalloutTarget;
+  label: string;
+}
+
+export interface Nokia3310CalloutsProps {
+  className?: string;
+  /** Same as the sketch's and the stage's `fit`. */
+  fit?: number;
+  callouts: readonly Callout[];
+  ink?: string;
+  /** Which side of the phone the labels sit (default right). */
+  side?: "left" | "right";
+}
+
+/**
+ * Leader lines from parts of the phone to labels beside it, framed like the sketch so they point
+ * at the 3D phone once it has formed. Labels are HTML-free SVG text in the page's font.
+ */
+export function Nokia3310Callouts({
+  className,
+  fit,
+  callouts,
+  ink = INK,
+  side = "right",
+}: Nokia3310CalloutsProps) {
+  const dir = side === "right" ? 1 : -1;
+  const elbow = dir * (HALF_W + 0.35);
+  const textX = dir * (HALF_W + 0.5);
   return (
-    <g fill="none" stroke={PRINT_DARK} strokeWidth="0.06" strokeLinecap="round">
-      {(["key_up", "key_down"] as const).map((name) => {
-        const region = REGIONS[name];
-        if (!region) return null;
-        const [x, y] = region.center;
-        const dy = name === "key_up" ? -0.07 : 0.07;
-        return (
-          <path key={name} d={`M${x - 0.12} ${y - dy}L${x} ${y + dy}L${x + 0.12} ${y - dy}`} />
-        );
-      })}
-    </g>
+    <div className={className} style={WRAPPER} aria-hidden="true">
+      <svg viewBox={VIEW_BOX} style={svgStyle(fit)} role="presentation">
+        {callouts.map(({ target, label }) => {
+          const region = REGIONS[target];
+          if (!region) return null;
+          const [x, y] = region.center;
+          return (
+            <g key={target}>
+              <circle cx={x} cy={y} r={0.05} fill={ink} />
+              <path
+                d={`M${x} ${y}H${elbow}`}
+                stroke={ink}
+                strokeWidth={THIN}
+                fill="none"
+                {...PEN}
+              />
+              <text
+                x={textX}
+                y={y}
+                fill={ink}
+                fontFamily="inherit"
+                fontSize="0.26"
+                textAnchor={side === "right" ? "start" : "end"}
+                dominantBaseline="central"
+              >
+                {label}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
   );
 }
