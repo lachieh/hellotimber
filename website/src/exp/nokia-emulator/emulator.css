@@ -6,7 +6,7 @@
   position: absolute;
   inset: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) var(--emu-dock);
   transition: grid-template-columns 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -90,6 +90,905 @@
 }
 
 @media (pointer: coarse) {
+  .emu-keys {
+    display: none;
+  }
+}
+
+/* --- Panel shell ------------------------------------------------------------------------------ */
+
+.emu-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+  min-width: 0;
+  border-left: 1px solid var(--exp-line);
+  background: var(--exp-surface);
+  overflow: hidden;
+}
+
+.emu-panel__bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 36px;
+  padding: 0 4px 0 6px;
+  border-bottom: 1px solid var(--exp-line);
+}
+
+.emu-tabs {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.emu-tabs [role="tab"] {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--exp-text-2);
+  font: 500 12px/1 var(--exp-sans);
+  cursor: pointer;
+  transition:
+    color 120ms ease-out,
+    background-color 120ms ease-out;
+}
+
+.emu-tabs [role="tab"]:hover {
+  color: var(--exp-text);
+  background: var(--exp-surface-2);
+}
+
+.emu-tabs [role="tab"][aria-selected="true"] {
+  color: var(--exp-text);
+  background: var(--exp-surface-3);
+}
+
+.emu-tabs [role="tab"][aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 9px;
+  right: 9px;
+  bottom: -4px;
+  height: 1px;
+  background: var(--exp-signal);
+}
+
+.emu-panel__body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  min-height: 0;
+}
+
+.emu-panel__body[hidden] {
+  display: none;
+}
+
+/* Collapsed dock: a rail of icon tabs. */
+.emu[data-panel="closed"] .emu-panel__bar {
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  height: auto;
+  padding: 6px 0;
+  gap: 6px;
+  border-bottom: 0;
+}
+
+.emu[data-panel="closed"] .emu-tabs {
+  flex-direction: column;
+  align-items: center;
+  flex: none;
+}
+
+.emu[data-panel="closed"] .emu-tabs [role="tab"] {
+  width: 30px;
+  padding: 0;
+  justify-content: center;
+}
+
+.emu[data-panel="closed"] .emu-tabs [role="tab"] span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+/* --- Sections --------------------------------------------------------------------------------- */
+
+.emu-section + .emu-section {
+  border-top: 1px solid var(--exp-line);
+}
+
+.emu-section__head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 30px;
+  padding: 0 6px 0 4px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--exp-surface);
+}
+
+.emu-section__head h3 {
+  flex: 1;
+  margin: 0;
+  font-size: 12px;
+}
+
+.emu-section__head h3 button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  height: 26px;
+  padding: 0 6px 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--exp-text);
+  font: 600 12px/1 var(--exp-sans);
+  letter-spacing: -0.005em;
+  text-align: left;
+  cursor: pointer;
+}
+
+.emu-section__actions {
+  display: flex;
+  gap: 2px;
+}
+
+.emu-section__body {
+  display: grid;
+  gap: 10px;
+  padding: 2px 14px 14px;
+}
+
+.emu-chevron {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  fill: none;
+  stroke: var(--exp-text-3);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[aria-expanded="true"] > .emu-chevron {
+  transform: rotate(90deg);
+}
+
+.emu-hint {
+  margin: 0;
+  color: var(--exp-text-3);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.emu-hint[data-warn] {
+  color: var(--exp-amber);
+}
+
+/* --- Readouts --------------------------------------------------------------------------------- */
+
+.emu-num {
+  font-family: var(--exp-mono);
+  font-variant-numeric: tabular-nums slashed-zero;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.emu-unit {
+  margin-left: 3px;
+  color: var(--exp-text-3);
+  font-family: var(--exp-mono);
+  font-size: 10px;
+}
+
+.emu-readouts {
+  display: grid;
+  margin: 0;
+}
+
+.emu-readout {
+  display: grid;
+  grid-template-columns: minmax(96px, 40%) minmax(0, 1fr);
+  align-items: baseline;
+  gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px dotted var(--exp-line);
+}
+
+.emu-readout:last-child {
+  border-bottom: 0;
+}
+
+.emu-readout dt {
+  color: var(--exp-text-2);
+}
+
+.emu-readout dd {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  min-width: 0;
+  color: var(--exp-text);
+}
+
+.emu-readout dd .emu-num {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.emu-readout[data-warn] dd {
+  color: var(--exp-amber);
+}
+
+.emu-led {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2a2d30;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+  align-self: center;
+}
+
+.emu-led[data-on] {
+  background: var(--exp-signal);
+  box-shadow:
+    0 0 0 1px rgba(143, 227, 165, 0.25),
+    0 0 6px 1px rgba(143, 227, 165, 0.45);
+}
+
+.emu-led[data-on][data-warn] {
+  background: var(--exp-amber);
+  box-shadow: 0 0 6px 1px rgba(240, 180, 76, 0.45);
+}
+
+.emu-lcd-text {
+  margin: 0;
+  border: 1px solid var(--exp-line);
+  border-radius: 4px;
+  background: var(--exp-bg);
+}
+
+.emu-lcd-text figcaption {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--exp-line);
+  color: var(--exp-text-3);
+  font-size: 11px;
+}
+
+.emu-lcd-text pre {
+  margin: 0;
+  padding: 8px;
+  min-height: 4.6em;
+  color: var(--exp-signal);
+  font-family: var(--exp-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* --- Tree ------------------------------------------------------------------------------------- */
+
+.emu-tree {
+  margin: 0 -8px;
+}
+
+.emu-tree__level {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.emu-tree__row {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding-left: calc(var(--depth) * 14px);
+  border-radius: 3px;
+}
+
+.emu-tree__row:hover {
+  background: var(--exp-surface-2);
+}
+
+.emu-tree__row[data-here] {
+  background: var(--exp-signal-dim);
+}
+
+.emu-tree__disclose,
+.emu-tree__leaf {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.emu-tree__jump {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  height: 22px;
+  padding: 0 6px 0 0;
+  border: 0;
+  background: transparent;
+  color: var(--exp-text);
+  font: 400 12px/1 var(--exp-sans);
+  text-align: left;
+  cursor: pointer;
+}
+
+.emu-tree__jump:disabled {
+  cursor: default;
+  color: var(--exp-text-2);
+}
+
+.emu-tree__number {
+  flex: none;
+  min-width: 2.6em;
+  color: var(--exp-text-3);
+}
+
+.emu-tree__row[data-here] .emu-tree__number,
+.emu-tree__row[data-on-path] .emu-tree__number {
+  color: var(--exp-signal);
+}
+
+.emu-tree__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.emu-tree__jump .emu-icon {
+  flex: none;
+  opacity: 0;
+  color: var(--exp-text-3);
+  transition: opacity 120ms ease-out;
+}
+
+.emu-tree__jump:not(:disabled):hover .emu-icon,
+.emu-tree__jump:focus-visible .emu-icon {
+  opacity: 1;
+}
+
+/* --- Log -------------------------------------------------------------------------------------- */
+
+.emu-log {
+  margin: 0 -14px -14px;
+  padding: 4px 0;
+  max-height: 260px;
+  overflow-y: auto;
+  list-style: none;
+  border-top: 1px solid var(--exp-line);
+  background: var(--exp-bg);
+  font-family: var(--exp-mono);
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.emu-log li {
+  display: grid;
+  grid-template-columns: 66px 46px minmax(0, 1fr);
+  gap: 6px;
+  padding: 0 14px;
+}
+
+.emu-log li:nth-child(even) {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.emu-log__time {
+  color: var(--exp-text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.emu-log__kind {
+  color: var(--exp-text-2);
+}
+
+.emu-log li[data-kind="key"] .emu-log__kind {
+  color: var(--exp-signal);
+}
+
+.emu-log__text {
+  color: var(--exp-text);
+  overflow-wrap: anywhere;
+}
+
+.emu-log li[data-warn] .emu-log__text,
+.emu-log li[data-warn] .emu-log__kind {
+  color: var(--exp-amber);
+}
+
+/* --- Buttons and fields ----------------------------------------------------------------------- */
+
+.emu-icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--exp-text-2);
+  cursor: pointer;
+  transition:
+    color 120ms ease-out,
+    background-color 120ms ease-out;
+}
+
+.emu-icon-button:hover:not(:disabled) {
+  color: var(--exp-text);
+  background: var(--exp-surface-2);
+}
+
+.emu-icon-button:disabled {
+  color: var(--exp-text-3);
+  opacity: 0.5;
+  cursor: default;
+}
+
+.emu-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--exp-line-strong);
+  border-radius: 4px;
+  background: var(--exp-surface-2);
+  color: var(--exp-text);
+  font: 500 12px/1 var(--exp-sans);
+  cursor: pointer;
+  justify-self: start;
+  transition:
+    border-color 120ms ease-out,
+    background-color 120ms ease-out;
+}
+
+.emu-button:hover:not(:disabled) {
+  border-color: rgba(232, 238, 240, 0.28);
+  background: var(--exp-surface-3);
+}
+
+.emu-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.emu-button:disabled {
+  color: var(--exp-text-3);
+  cursor: default;
+  opacity: 0.6;
+}
+
+.emu-button[data-warn] {
+  border-color: rgba(240, 180, 76, 0.55);
+  background: var(--exp-amber-dim);
+  color: var(--exp-amber);
+}
+
+.emu-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.emu-form {
+  display: grid;
+  gap: 8px;
+}
+
+.emu-form + .emu-form {
+  padding-top: 10px;
+  border-top: 1px dotted var(--exp-line);
+}
+
+.emu-field {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  color: var(--exp-text-2);
+}
+
+.emu-field input,
+.emu-field textarea {
+  width: 100%;
+  padding: 5px 7px;
+  border: 1px solid var(--exp-line-strong);
+  border-radius: 3px;
+  background: var(--exp-bg);
+  color: var(--exp-text);
+  font-family: var(--exp-mono);
+  font-size: 11px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.emu-field input::placeholder,
+.emu-field textarea::placeholder {
+  color: var(--exp-text-3);
+}
+
+.emu-field input:focus-visible,
+.emu-field textarea:focus-visible {
+  outline: 1px solid var(--exp-signal);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+.emu-field__count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: var(--exp-text-3);
+  font-size: 10px;
+}
+
+/* --- Toggle (2px track) ----------------------------------------------------------------------- */
+
+.emu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--exp-text-2);
+  font: 400 12px/1 var(--exp-sans);
+  cursor: pointer;
+}
+
+.emu-toggle:disabled {
+  cursor: default;
+  color: var(--exp-text-3);
+}
+
+.emu-toggle__track {
+  position: relative;
+  width: 26px;
+  height: 12px;
+}
+
+.emu-toggle__track::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 5px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--exp-line-strong);
+  transition: background-color 160ms ease-out;
+}
+
+.emu-toggle__thumb {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--exp-text-2);
+  border-radius: 50%;
+  background: var(--exp-surface-3);
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 160ms ease-out,
+    border-color 160ms ease-out;
+}
+
+.emu-toggle[aria-checked="true"] .emu-toggle__track::before {
+  background: var(--exp-signal);
+}
+
+.emu-toggle[aria-checked="true"] .emu-toggle__thumb {
+  transform: translateX(16px);
+  border-color: var(--exp-signal);
+  background: var(--exp-signal);
+  box-shadow: 0 0 6px rgba(143, 227, 165, 0.4);
+}
+
+/* --- Grooved slider --------------------------------------------------------------------------- */
+
+.emu-slider {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 8px;
+}
+
+.emu-slider label {
+  color: var(--exp-text-2);
+}
+
+.emu-slider output {
+  color: var(--exp-text);
+}
+
+.emu-slider[data-warn] output {
+  color: var(--exp-amber);
+}
+
+.emu-slider input[type="range"] {
+  --fill: 50%;
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 16px;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+
+.emu-slider input[type="range"]::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 2px;
+  /* The groove: dark inset, a lit length up to the value, tick marks every tenth. */
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 10%),
+    linear-gradient(90deg, var(--exp-signal) var(--fill), #050606 var(--fill));
+  box-shadow:
+    inset 0 1px 1px rgba(0, 0, 0, 0.8),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.emu-slider input[type="range"]::-moz-range-track {
+  height: 3px;
+  border-radius: 2px;
+  background: #050606;
+  box-shadow:
+    inset 0 1px 1px rgba(0, 0, 0, 0.8),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.emu-slider input[type="range"]::-moz-range-progress {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--exp-signal);
+}
+
+.emu-slider input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 8px;
+  height: 14px;
+  margin-top: -5.5px;
+  border: 1px solid #5d6268;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #3a3e43, #24272a);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.emu-slider input[type="range"]::-moz-range-thumb {
+  width: 8px;
+  height: 14px;
+  border: 1px solid #5d6268;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #3a3e43, #24272a);
+}
+
+.emu-slider[data-warn] input[type="range"]::-webkit-slider-runnable-track {
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 10%),
+    linear-gradient(90deg, var(--exp-amber) var(--fill), #050606 var(--fill));
+}
+
+.emu-slider input[type="range"]:focus-visible {
+  outline: none;
+}
+
+.emu-slider input[type="range"]:focus-visible::-webkit-slider-thumb {
+  border-color: var(--exp-signal);
+  box-shadow: 0 0 0 2px var(--exp-signal-dim);
+}
+
+.emu-slider input[type="range"]:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* --- Knob ------------------------------------------------------------------------------------- */
+
+.emu-knobs {
+  display: flex;
+  gap: 18px;
+}
+
+.emu-knob {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 8px;
+}
+
+.emu-knob__dial {
+  grid-row: 1 / 3;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.emu-knob__dial svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.emu-knob__track,
+.emu-knob__value {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.emu-knob__track {
+  stroke: var(--exp-line-strong);
+}
+
+.emu-knob__value {
+  stroke: var(--exp-signal);
+}
+
+.emu-knob__body {
+  fill: #1f2225;
+  stroke: #4a4f55;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.emu-knob__dial:hover .emu-knob__body {
+  stroke: #6a7077;
+}
+
+.emu-knob__pointer {
+  stroke: var(--exp-text);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.emu-knob__dial:focus-visible {
+  outline-offset: 1px;
+  border-radius: 50%;
+}
+
+.emu-knob__label {
+  color: var(--exp-text-2);
+  align-self: end;
+}
+
+.emu-knob__value-text {
+  align-self: start;
+  color: var(--exp-text);
+}
+
+/* --- Segmented -------------------------------------------------------------------------------- */
+
+.emu-segmented {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.emu-segmented__label {
+  color: var(--exp-text-2);
+}
+
+.emu-segmented__group {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--exp-line-strong);
+  border-radius: 4px;
+  background: var(--exp-bg);
+}
+
+.emu-segmented__group button {
+  height: 20px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--exp-text-2);
+  font: 500 11px/1 var(--exp-sans);
+  cursor: pointer;
+}
+
+.emu-segmented__group button[aria-checked="true"] {
+  background: var(--exp-surface-3);
+  color: var(--exp-text);
+  box-shadow: inset 0 -1px 0 var(--exp-signal);
+}
+
+.emu-icon {
+  flex: none;
+}
+
+/* --- Bottom sheet below 760px (D6) ------------------------------------------------------------ */
+
+@media (max-width: 759px) {
+  .emu,
+  .emu[data-panel="closed"] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .emu-panel {
+    border-left: 0;
+    border-top: 1px solid var(--exp-line);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
+    max-height: 52dvh;
+  }
+
+  .emu[data-panel="closed"] .emu-panel__bar {
+    flex-direction: row;
+    height: 44px;
+    padding: 0 4px 0 6px;
+  }
+
+  .emu[data-panel="closed"] .emu-tabs {
+    flex-direction: row;
+    flex: 1;
+  }
+
+  .emu[data-panel="closed"] .emu-tabs [role="tab"] {
+    width: auto;
+    padding: 0 9px;
+  }
+
+  .emu[data-panel="closed"] .emu-tabs [role="tab"] span {
+    position: static;
+    width: auto;
+    height: auto;
+    clip: auto;
+  }
+
+  .emu-panel__bar {
+    height: 44px;
+  }
+
+  .emu-tabs [role="tab"] {
+    height: 32px;
+  }
+
+  .emu-panel__toggle {
+    transform: rotate(-90deg);
+  }
+
+  .emu[data-panel="open"] .emu-panel {
+    height: 52dvh;
+  }
+
   .emu-keys {
     display: none;
   }
