@@ -50,7 +50,7 @@ Three experiences instead of one:
 
 Each phase ships on its own, and `main` keeps working after each one.
 
-### Phase 0 - Split `@hellotimber/nokia-os` into `@hellotimber/nokia-kit` + `@hellotimber/firmware-v639`
+### Phase 0 - Split `@hellotimber/phone-services` and `@hellotimber/nokia-kit` out of `@hellotimber/nokia-os`
 
 Measured today (`cdc423d`): features already contribute screens, settings and records through
 `StockFeature`, but three things tie them to the stock phone:
@@ -101,25 +101,39 @@ The manifest then places the apps:
 Each step below keeps every golden test green, and `createStockPhone` stays as the public API
 until step 6:
 
-- [ ] 1. Fence: a dependency rule for the target layers, with today's violations as its baseline.
-- [ ] 2. Move app-specific widgets (calculator, call, composer, snake, etc.) into their apps.
-- [ ] 3. Extract `ui`: widgets, display, resources, text and T9, and the sound sequencer, with
+- [x] 1. Fence: a dependency rule for the target layers, with today's violations as its baseline.
+- [x] 2. Move app-specific widgets (calculator, call, composer, snake, etc.) into their apps.
+- [x] 3. Extract `ui`: widgets, display, resources, text and T9, and the sound sequencer, with
      timelines and settings passed in.
-- [ ] 4. Extract `system`: boot, standby/home, power list, battery and signal state, lights,
+- [x] 4. Extract `system`: boot, standby/home, power list, battery and signal state, lights,
      clock and alerts, keyguard, security, storage and the settings registry. Battery and signal
      become real state the emulator can drive.
-- [ ] 5a. Extract `packages/phone-services` (D20). Fix the leaks in the table above, add phone-core's
+- [x] 5a. Extract `packages/phone-services` (D20). Fix the leaks in the table above, add phone-core's
       optional service slot, and give the stock phone the services it creates.
 - [ ] 5b. Write the app contract and relative addressing. Port calculator, then games and Snake, then
       Messages, Chat, Phone book, SIM services and Call register. Each becomes its own app over
       phone-services.
-- [ ] 6. `defineFirmware`: the v6.39 manifest, with `createStockPhone = defineFirmware(v639)`.
-- [ ] 7. Move the kit into `packages/nokia-kit`. `@hellotimber/nokia-os` becomes `@hellotimber/firmware-v639`
+- [x] 6. `defineFirmware`: the v6.39 manifest, with `createStockPhone = defineFirmware(v639)`.
+- [x] 7. Move the kit into `packages/nokia-kit`. `@hellotimber/nokia-os` becomes `@hellotimber/firmware-v639`
      (manifest, generated tree, captured tables, goldens).
-- [ ] 8. The homepage manifest in `website/src/home/firmware.ts`, built from kit apps (a reader,
+- [ ] 8. (Done as Phase 2's first task.) The homepage manifest in `website/src/home/firmware.ts`, built from kit apps (a reader,
      a list, links, chat, Snake) and the content records (D14).
 
 Phase 1 can run alongside steps 1-5 because it only uses `createStockPhone`.
+
+**As built (2026-11-03, `66d8cd0`..`8a99f15`):**
+
+- **Packages:** `@hellotimber/phone-services` (no deps) and `@hellotimber/nokia-kit` (`ui`, `system`, `apps/{calculator,games}`; deps: phone-services, phone-core, phone-screen) were split out. Fences: `packages/nokia-kit/tests/layers.test.ts` and `packages/nokia-os/tests/package-boundaries.test.ts`.
+- **Composition:** the engine stays in `@hellotimber/nokia-os`, and the package is **not** renamed `firmware-v639`. The engine is `composeFirmware({ tree, features, handset, models?, simServices? })`, `createFirmwarePhone(firmware, config)`, the menu builder, the leaves and the settings schema. `firmware/phone.ts` still wires the stock standby shortcuts (▲ dialled numbers, ▼ phone book, number entry) and the call and keyguard flows, which import stock features. Until that wiring is pluggable, the engine can't move into the kit, so a rename would mislabel the package the homepage also builds on.
+- **Steps 5b and 6 changed shape.** The app contract is the existing `StockFeature`, placed in a firmware with `remountFeature(feature, from, to)`: it rewrites node-keyed tables and records the stock recording model. The rest is in place:
+  - a handset settings registry (`STOCK_HANDSET`);
+  - per-node carousel graphics (`FirmwareNode.graphic`);
+  - explicit recording models;
+  - a firmware-owned SIM services slot.
+
+  The cross-app capability wiring is not needed for the homepage (Chat and Snake II remount cleanly; `tests/custom-firmware.test.ts`) and is left undone.
+
+- **Not yet moved into the kit:** the stock app screens (messages, phone book, composer, clock screens, SIM session). They still read `StockServices`.
 
 ### Phase 1 - `/exp/nokia-emulator`
 
