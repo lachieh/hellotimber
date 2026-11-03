@@ -1,0 +1,1741 @@
+{
+  "virgin": {
+    "choices": {
+      "phone-book/options/type-of-view": {
+        "options": 3,
+        "chosen": 2
+      },
+      "messages/message-settings/set-1/messages-sent-as": {
+        "options": 4,
+        "chosen": 0
+      },
+      "messages/message-settings/set-1/message-validity": {
+        "options": 6,
+        "chosen": 5
+      },
+      "messages/message-settings/set-2/messages-sent-as": {
+        "options": 4,
+        "chosen": 0
+      },
+      "messages/message-settings/set-2/message-validity": {
+        "options": 6,
+        "chosen": 5
+      },
+      "messages/message-settings/common/delivery-reports": {
+        "options": 2,
+        "chosen": 1
+      },
+      "messages/message-settings/common/reply-via-same-centre": {
+        "options": 2,
+        "chosen": 1
+      },
+      "messages/message-settings/common/character-support": {
+        "options": 2,
+        "chosen": 0
+      },
+      "messages/info-service": {
+        "options": 3,
+        "chosen": 1
+      },
+      "messages/info-service/topics/edit": {
+        "options": 5,
+        "chosen": 0
+      },
+      "messages/info-service/topics/erase": {
+        "options": 5,
+        "chosen": 0
+      },
+      "call-register/erase-recent-call-lists": {
+        "options": 4,
+        "chosen": 0
+      },
+      "settings/call-settings/automatic-redial": {
+        "options": 2,
+        "chosen": 1
+      },
+      "settings/call-settings/speed-dialling": {
+        "options": 2,
+        "chosen": 1
+      },
+      "settings/call-settings/call-waiting-options": {
+        "options": 3,
+        "chosen": 0
+      },
+      "settings/call-settings/own-number-sending": {
+        "options": 3,
+        "chosen": 1
+      },
+      "settings/phone-settings/language": {
+        "options": 5,
+        "chosen": 0
+      },
+      "settings/phone-settings/cell-info-display": {
+        "options": 2,
+        "chosen": 1
+      },
+      "settings/phone-settings/confirm-sim-service-actions": {
+        "options": 2,
+        "chosen": 1
+      },
+      "settings/security-settings/call-barring-service/outgoing-calls": {
+        "options": 3,
+        "chosen": 0
+      },
+      "settings/security-settings/call-barring-service/international-calls": {
+        "options": 3,
+        "chosen": 0
+      },
+      "settings/security-settings/call-barring-service/international-except-to-home-country": {
+        "options": 3,
+        "chosen": 0
+      },
+      "settings/security-settings/call-barring-service/incoming-calls": {
+        "options": 3,
+        "chosen": 0
+      },
+      "settings/security-settings/call-barring-service/incoming-calls-when-abroad": {
+        "options": 3,
+        "chosen": 0
+      },
+      "settings/security-settings/closed-user-group": {
+        "options": 3,
+        "chosen": 0
+      },
+      "settings/security-settings/phone-security": {
+        "options": 2,
+        "chosen": 0
+      },
+      "call-divert/divert-all-voice-calls-without-ringing/activate": {
+        "options": 2,
+        "chosen": 0
+      },
+      "call-divert/divert-when-busy/activate": {
+        "options": 2,
+        "chosen": 0
+      },
+      "call-divert/divert-if-not-answered/activate": {
+        "options": 2,
+        "chosen": 0
+      },
+      "call-divert/divert-if-not-answered/set-delay": {
+        "options": 6,
+        "chosen": null
+      },
+      "call-divert/divert-when-phone-off-or-no-coverage/activate": {
+        "options": 2,
+        "chosen": 0
+      },
+      "games/snake/mazes": {
+        "options": 6,
+        "chosen": 0
+      },
+      "games/settings/sounds": {
+        "options": 2,
+        "chosen": 1
+      },
+      "games/settings/lights": {
+        "options": 2,
+        "chosen": 1
+      },
+      "games/settings/shakes": {
+        "options": 2,
+        "chosen": 1
+      },
+      "reminders/erase": {
+        "options": 2,
+        "chosen": 0
+      },
+      "clock/clock-settings/time-format": {
+        "options": 2,
+        "chosen": 0
+      },
+      "clock/auto-update-of-date-and-time": {
+        "options": 3,
+        "chosen": 2
+      },
+      "profiles/general/personalise/ringing-tone": {
+        "options": 42,
+        "chosen": null
+      },
+      "profiles/general/personalise/ringing-volume": {
+        "options": 5,
+        "chosen": null
+      },
+      "profiles/general/personalise/incoming-call-alert": {
+        "options": 5,
+        "chosen": null
+      },
+      "profiles/general/personalise/message-alert-tone": {
+        "options": 5,
+        "chosen": 0
+      },
+      "profiles/general/personalise/keypad-tones": {
+        "options": 4,
+        "chosen": null
+      },
+      "profiles/general/personalise/warning-tones": {
+        "options": 2,
+        "chosen": null
+      },
+      "profiles/general/personalise/vibrating-alert": {
+        "options": 2,
+        "chosen": null
+      },
+      "profiles/general/personalise/screen-saver": {
+        "options": 2,
+        "chosen": 0
+      },
+      "profiles/general/personalise/screen-saver/timeout": {
+        "options": 6,
+        "chosen": null
+      },
+      "profiles/silent/personalise/ringing-tone": {
+        "options": 42,
+        "chosen": null
+      },
+      "profiles/silent/personalise/ringing-volume": {
+        "options": 5,
+        "chosen": null
+      },
+      "profiles/silent/personalise/incoming-call-alert": {
+        "options": 5,
+        "chosen": null
+      },
+      "profiles/silent/personalise/message-alert-tone": {
+        "options": 5,
+        "chosen": 0
+      },
+      "profiles/silent/personalise/keypad-tones": {
+        "options": 4,
+        "chosen": null
+      },
+      "profiles/silent/personalise/warning-tones": {
+        "options": 2,
+        "chosen": null
+      },
+      "profiles/silent/personalise/vibrating-alert": {
+        "options": 2,
+        "chosen": null
+      },
+      "profiles/silent/personalise/screen-saver": {
+        "options": 2,
+        "chosen": 0
+      },
+      "profiles/silent/personalise/screen-saver/timeout": {
+        "options": 6,
+        "chosen": null
+      },
+      "profiles/discreet/personalise/ringing-tone": {
+        "options": 42,
+        "chosen": null
+      },
+      "profiles/discreet/personalise/ringing-volume": {
+        "options": 5,
+        "chosen": null
+      },
+      "profiles/discreet/personalise/incoming-call-alert": {
+        "options": 5,
+        "chosen": null
+      },
+      "profiles/discreet/personalise/message-alert-tone": {
+        "options": 5,
+        "chosen": 0
+      },
+      "profiles/discreet/personalise/keypad-tones": {
+        "options": 4,
+        "chosen": null
+      },
+      "profiles/discreet/personalise/warning-tones": {
+        "options": 2,
+        "chosen": null
+      },
+      "profiles/discreet/personalise/vibrating-alert": {
+        "options": 2,
+        "chosen": null
+      },
+      "profiles/discreet/personalise/screen-saver": {
+        "options": 2,
+        "chosen": 0
+      },
+      "profiles/discreet/personalise/screen-saver/timeout": {
+        "options": 6,
+        "chosen": null
+      },
+      "profiles/loud/personalise/ringing-tone": {
+        "options": 42,
+        "chosen": null
+      },
+      "profiles/loud/personalise/ringing-volume": {
+        "options": 5,
+        "chosen": null
+      },
+      "profiles/loud/personalise/incoming-call-alert": {
+        "options": 5,
+        "chosen": null
+      },
+      "profiles/loud/personalise/message-alert-tone": {
+        "options": 5,
+        "chosen": 0
+      },
+      "profiles/loud/personalise/keypad-tones": {
+        "options": 4,
+        "chosen": null
+      },
+      "profiles/loud/personalise/warning-tones": {
+        "options": 2,
+        "chosen": null
+      },
+      "profiles/loud/personalise/vibrating-alert": {
+        "options": 2,
+        "chosen": null
+      },
+      "profiles/loud/personalise/screen-saver": {
+        "options": 2,
+        "chosen": 0
+      },
+      "profiles/loud/personalise/screen-saver/timeout": {
+        "options": 6,
+        "chosen": null
+      },
+      "profiles/empty/personalise/ringing-tone": {
+        "options": 42,
+        "chosen": null
+      },
+      "profiles/empty/personalise/ringing-volume": {
+        "options": 5,
+        "chosen": null
+      },
+      "profiles/empty/personalise/incoming-call-alert": {
+        "options": 5,
+        "chosen": null
+      },
+      "profiles/empty/personalise/message-alert-tone": {
+        "options": 5,
+        "chosen": 0
+      },
+      "profiles/empty/personalise/keypad-tones": {
+        "options": 4,
+        "chosen": null
+      },
+      "profiles/empty/personalise/warning-tones": {
+        "options": 2,
+        "chosen": null
+      },
+      "profiles/empty/personalise/vibrating-alert": {
+        "options": 2,
+        "chosen": null
+      },
+      "profiles/empty/personalise/screen-saver": {
+        "options": 2,
+        "chosen": 0
+      },
+      "profiles/empty/personalise/screen-saver/timeout": {
+        "options": 6,
+        "chosen": null
+      },
+      "profiles/empty-2/personalise/ringing-tone": {
+        "options": 42,
+        "chosen": null
+      },
+      "profiles/empty-2/personalise/ringing-volume": {
+        "options": 5,
+        "chosen": null
+      },
+      "profiles/empty-2/personalise/incoming-call-alert": {
+        "options": 5,
+        "chosen": null
+      },
+      "profiles/empty-2/personalise/message-alert-tone": {
+        "options": 5,
+        "chosen": 0
+      },
+      "profiles/empty-2/personalise/keypad-tones": {
+        "options": 4,
+        "chosen": null
+      },
+      "profiles/empty-2/personalise/warning-tones": {
+        "options": 2,
+        "chosen": null
+      },
+      "profiles/empty-2/personalise/vibrating-alert": {
+        "options": 2,
+        "chosen": null
+      },
+      "profiles/empty-2/personalise/screen-saver": {
+        "options": 2,
+        "chosen": 0
+      },
+      "profiles/empty-2/personalise/screen-saver/timeout": {
+        "options": 6,
+        "chosen": null
+      },
+      "messages/dictionary": {
+        "options": 4,
+        "chosen": 1
+      },
+      "profiles/active": {
+        "options": 6,
+        "chosen": null
+      }
+    },
+    "marks": {
+      "messages/info-service/topics/select": [
+        true,
+        false,
+        false,
+        false,
+        true
+      ],
+      "messages/info-service/language": [
+        true,
+        true,
+        false,
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    "texts": {
+      "phone-book/options/type-of-view": "Large font",
+      "messages/message-settings/set-1/messages-sent-as": "Text",
+      "messages/message-settings/set-1/message-validity": "Maximum time",
+      "messages/message-settings/set-2/messages-sent-as": "Text",
+      "messages/message-settings/set-2/message-validity": "Maximum time",
+      "messages/message-settings/common/delivery-reports": "No",
+      "messages/message-settings/common/reply-via-same-centre": "No",
+      "messages/message-settings/common/character-support": "Full",
+      "messages/info-service": "Off",
+      "call-register/show-call-duration/last-call-duration": "00:00:00",
+      "call-register/show-call-duration/all-calls-duration": "00:00:00",
+      "call-register/show-call-duration/received-calls-duration": "00:00:00",
+      "call-register/show-call-duration/dialled-calls-duration": "00:00:00",
+      "call-register/show-call-costs/last-call-cost": "0",
+      "call-register/show-call-costs/all-calls-cost": "0",
+      "call-register/call-cost-settings/call-cost-limit": "Off",
+      "call-register/call-cost-settings/show-costs-in": "Units",
+      "call-register/prepaid-credit/credit-info-display": "Off",
+      "call-register/prepaid-credit/credit-available": "0",
+      "call-register/prepaid-credit/last-event-costs": "0",
+      "settings/call-settings/automatic-redial": "Off",
+      "settings/call-settings/speed-dialling": "Off",
+      "settings/call-settings/own-number-sending": "On",
+      "settings/phone-settings/language": "Automatic",
+      "settings/phone-settings/cell-info-display": "Off",
+      "settings/phone-settings/network-selection": "Automatic",
+      "settings/phone-settings/confirm-sim-service-actions": "Not asked",
+      "settings/security-settings/pin-code-request": "Off",
+      "settings/security-settings/closed-user-group": "Default",
+      "settings/security-settings/phone-security": "Off",
+      "games/snake/score-ids/last-score-id": "ç",
+      "games/snake/score-ids/top-score-id": "ÆG",
+      "games/snake/score-ids/bonus-id": "No ID",
+      "games/space-impact/score-ids/last-score-id": "ç",
+      "games/space-impact/score-ids/top-score-id": "ÆG",
+      "games/pairs-ii/time-trial/score-ids/last-score-id": "No ID",
+      "games/pairs-ii/time-trial/score-ids/top-score-id": "No ID",
+      "games/pairs-ii/puzzle/score-ids/last-score-id": "No ID",
+      "games/pairs-ii/puzzle/score-ids/top-score-id": "No ID",
+      "games/settings/sounds": "On",
+      "games/settings/shakes": "1 player",
+      "games/settings/club-nokia-id": "T",
+      "clock/auto-update-of-date-and-time": "Off",
+      "profiles/general/personalise/ringing-volume": "Level 1",
+      "profiles/general/personalise/message-alert-tone": "No tone",
+      "profiles/general/personalise/keypad-tones": "Level 1",
+      "profiles/general/personalise/screen-saver": "Off",
+      "profiles/silent/personalise/ringing-volume": "Level 1",
+      "profiles/silent/personalise/message-alert-tone": "No tone",
+      "profiles/silent/personalise/keypad-tones": "Level 1",
+      "profiles/silent/personalise/screen-saver": "Off",
+      "profiles/silent/personalise/rename": "Silent",
+      "profiles/discreet/personalise/ringing-volume": "Level 1",
+      "profiles/discreet/personalise/message-alert-tone": "No tone",
+      "profiles/discreet/personalise/keypad-tones": "Level 1",
+      "profiles/discreet/personalise/screen-saver": "Off",
+      "profiles/discreet/personalise/rename": "Discreet",
+      "profiles/loud/personalise/ringing-volume": "Level 1",
+      "profiles/loud/personalise/message-alert-tone": "No tone",
+      "profiles/loud/personalise/keypad-tones": "Level 1",
+      "profiles/loud/personalise/screen-saver": "Off",
+      "profiles/loud/personalise/rename": "Loud",
+      "profiles/empty/personalise/ringing-volume": "Level 1",
+      "profiles/empty/personalise/message-alert-tone": "No tone",
+      "profiles/empty/personalise/keypad-tones": "Level 1",
+      "profiles/empty/personalise/screen-saver": "Off",
+      "profiles/empty/personalise/rename": "(empty)",
+      "profiles/empty-2/personalise/ringing-volume": "Level 1",
+      "profiles/empty-2/personalise/message-alert-tone": "No tone",
+      "profiles/empty-2/personalise/keypad-tones": "Level 1",
+      "profiles/empty-2/personalise/screen-saver": "Off",
+      "profiles/empty-2/personalise/rename": "",
+      "messages/message-settings/set-1/message-centre-number": "+1234567890",
+      "messages/voice-mailbox-number": "793000333"
+    },
+    "numbers": {
+      "games/pairs-ii/time-trial/top-score": 0,
+      "games/pairs-ii/puzzle/top-score": 0,
+      "games/snake/level": 175,
+      "games/snake/top-score": 45,
+      "games/space-impact/top-score": 45
+    },
+    "aliases": {
+      "tones/ringing-tone": "profiles/general/personalise/ringing-tone",
+      "tones/ringing-volume": "profiles/general/personalise/ringing-volume",
+      "tones/incoming-call-alert": "profiles/general/personalise/incoming-call-alert",
+      "tones/message-alert-tone": "profiles/general/personalise/message-alert-tone",
+      "tones/keypad-tones": "profiles/general/personalise/keypad-tones",
+      "tones/warning-tones": "profiles/general/personalise/warning-tones",
+      "tones/vibrating-alert": "profiles/general/personalise/vibrating-alert",
+      "tones/screen-saver": "profiles/general/personalise/screen-saver",
+      "tones/screen-saver/timeout": "profiles/general/personalise/screen-saver/timeout"
+    }
+  },
+  "labels": {
+    "phone-book/options/type-of-view": [
+      "Name list",
+      "Name, number",
+      "Large font"
+    ],
+    "messages/message-settings/set-1/messages-sent-as": [
+      "Text",
+      "Fax",
+      "Paging",
+      "E-mail"
+    ],
+    "messages/message-settings/set-1/message-validity": [
+      "1 hour",
+      "6 hours",
+      "24 hours",
+      "72 hours",
+      "1 week",
+      "Maximum time"
+    ],
+    "messages/message-settings/set-2/messages-sent-as": [
+      "Text",
+      "Fax",
+      "Paging",
+      "E-mail"
+    ],
+    "messages/message-settings/set-2/message-validity": [
+      "1 hour",
+      "6 hours",
+      "24 hours",
+      "72 hours",
+      "1 week",
+      "Maximum time"
+    ],
+    "messages/message-settings/common/delivery-reports": [
+      "Yes",
+      "No"
+    ],
+    "messages/message-settings/common/reply-via-same-centre": [
+      "Yes",
+      "No"
+    ],
+    "messages/message-settings/common/character-support": [
+      "Full",
+      "Reduced"
+    ],
+    "messages/info-service": [
+      "On",
+      "Off",
+      "Topic index"
+    ],
+    "messages/info-service/topics/edit": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "messages/info-service/topics/erase": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "call-register/erase-recent-call-lists": [
+      "All",
+      "Missed",
+      "Dialled",
+      "Received"
+    ],
+    "settings/call-settings/automatic-redial": [
+      "On",
+      "Off"
+    ],
+    "settings/call-settings/speed-dialling": [
+      "On",
+      "Off"
+    ],
+    "settings/call-settings/call-waiting-options": [
+      "Activate",
+      "Cancel",
+      "Status"
+    ],
+    "settings/call-settings/own-number-sending": [
+      "Set by network",
+      "On",
+      "Off"
+    ],
+    "settings/phone-settings/language": [
+      "Automatic",
+      "English",
+      "Русский",
+      "Български",
+      "Українська"
+    ],
+    "settings/phone-settings/cell-info-display": [
+      "On",
+      "Off"
+    ],
+    "settings/phone-settings/confirm-sim-service-actions": [
+      "Asked",
+      "Not asked"
+    ],
+    "settings/security-settings/call-barring-service/outgoing-calls": [
+      "Activate",
+      "Cancel",
+      "Status"
+    ],
+    "settings/security-settings/call-barring-service/international-calls": [
+      "Activate",
+      "Cancel",
+      "Status"
+    ],
+    "settings/security-settings/call-barring-service/international-except-to-home-country": [
+      "Activate",
+      "Cancel",
+      "Status"
+    ],
+    "settings/security-settings/call-barring-service/incoming-calls": [
+      "Activate",
+      "Cancel",
+      "Status"
+    ],
+    "settings/security-settings/call-barring-service/incoming-calls-when-abroad": [
+      "Activate",
+      "Cancel",
+      "Status"
+    ],
+    "settings/security-settings/closed-user-group": [
+      "Default",
+      "On",
+      "Off"
+    ],
+    "settings/security-settings/phone-security": [
+      "Off",
+      "On"
+    ],
+    "call-divert/divert-all-voice-calls-without-ringing/activate": [
+      "Voice mailbox",
+      "Other number"
+    ],
+    "call-divert/divert-when-busy/activate": [
+      "Voice mailbox",
+      "Other number"
+    ],
+    "call-divert/divert-if-not-answered/activate": [
+      "Voice mailbox",
+      "Other number"
+    ],
+    "call-divert/divert-if-not-answered/set-delay": [
+      "5 seconds",
+      "10 seconds",
+      "15 seconds",
+      "20 seconds",
+      "25 seconds",
+      "30 seconds"
+    ],
+    "call-divert/divert-when-phone-off-or-no-coverage/activate": [
+      "Voice mailbox",
+      "Other number"
+    ],
+    "games/snake/mazes": [
+      "No maze",
+      "Maze 1",
+      "Maze 2",
+      "Maze 3",
+      "Maze 4",
+      "Maze 5"
+    ],
+    "games/settings/sounds": [
+      "Off",
+      "On"
+    ],
+    "games/settings/lights": [
+      "Off",
+      "On"
+    ],
+    "games/settings/shakes": [
+      "Off",
+      "On"
+    ],
+    "reminders/erase": [
+      "One by one",
+      "All"
+    ],
+    "clock/clock-settings/time-format": [
+      "24-hour",
+      "12-hour"
+    ],
+    "clock/auto-update-of-date-and-time": [
+      "On",
+      "Confirm first",
+      "Off"
+    ],
+    "profiles/general/personalise/ringing-tone": [
+      "Ring ring",
+      "Low",
+      "Mosquito",
+      "Bee",
+      "City bird",
+      "Hopping down",
+      "Kick",
+      "Playground",
+      "That's it!",
+      "Improvisation",
+      "Rocket",
+      "Croak",
+      "Nokia tune",
+      "Mozart 40",
+      "Badinerie",
+      "Attraction",
+      "Dawn",
+      "Polite",
+      "Tick tick",
+      "Samba rumble",
+      "Jumping",
+      "Lamb",
+      "Toreador",
+      "Matilda",
+      "Merry Xmas",
+      "Auld lang syne",
+      "Hurdy-gurdy",
+      "Groovy Blue",
+      "Sunny walks",
+      "The Buffoon",
+      "Indifference",
+      "Barn dance",
+      "Mangrove",
+      "Knick-knack",
+      "Get cool",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)"
+    ],
+    "profiles/general/personalise/ringing-volume": [
+      "Level 1",
+      "Level 2",
+      "Level 3",
+      "Level 4",
+      "Level 5"
+    ],
+    "profiles/general/personalise/incoming-call-alert": [
+      "Ringing",
+      "Ascending",
+      "Ring once",
+      "Beep once",
+      "Off"
+    ],
+    "profiles/general/personalise/message-alert-tone": [
+      "No tone",
+      "Standard",
+      "Special",
+      "Beep once",
+      "Ascending"
+    ],
+    "profiles/general/personalise/keypad-tones": [
+      "Off",
+      "Level 1",
+      "Level 2",
+      "Level 3"
+    ],
+    "profiles/general/personalise/warning-tones": [
+      "On",
+      "Off"
+    ],
+    "profiles/general/personalise/vibrating-alert": [
+      "On",
+      "Off"
+    ],
+    "profiles/general/personalise/screen-saver": [
+      "Off",
+      "On"
+    ],
+    "profiles/general/personalise/screen-saver/timeout": [
+      "5 seconds",
+      "20 seconds",
+      "1 minute",
+      "2 minutes",
+      "5 minutes",
+      "10 minutes"
+    ],
+    "profiles/silent/personalise/ringing-tone": [
+      "Ring ring",
+      "Low",
+      "Mosquito",
+      "Bee",
+      "City bird",
+      "Hopping down",
+      "Kick",
+      "Playground",
+      "That's it!",
+      "Improvisation",
+      "Rocket",
+      "Croak",
+      "Nokia tune",
+      "Mozart 40",
+      "Badinerie",
+      "Attraction",
+      "Dawn",
+      "Polite",
+      "Tick tick",
+      "Samba rumble",
+      "Jumping",
+      "Lamb",
+      "Toreador",
+      "Matilda",
+      "Merry Xmas",
+      "Auld lang syne",
+      "Hurdy-gurdy",
+      "Groovy Blue",
+      "Sunny walks",
+      "The Buffoon",
+      "Indifference",
+      "Barn dance",
+      "Mangrove",
+      "Knick-knack",
+      "Get cool",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)"
+    ],
+    "profiles/silent/personalise/ringing-volume": [
+      "Level 1",
+      "Level 2",
+      "Level 3",
+      "Level 4",
+      "Level 5"
+    ],
+    "profiles/silent/personalise/incoming-call-alert": [
+      "Ringing",
+      "Ascending",
+      "Ring once",
+      "Beep once",
+      "Off"
+    ],
+    "profiles/silent/personalise/message-alert-tone": [
+      "No tone",
+      "Standard",
+      "Special",
+      "Beep once",
+      "Ascending"
+    ],
+    "profiles/silent/personalise/keypad-tones": [
+      "Off",
+      "Level 1",
+      "Level 2",
+      "Level 3"
+    ],
+    "profiles/silent/personalise/warning-tones": [
+      "On",
+      "Off"
+    ],
+    "profiles/silent/personalise/vibrating-alert": [
+      "On",
+      "Off"
+    ],
+    "profiles/silent/personalise/screen-saver": [
+      "Off",
+      "On"
+    ],
+    "profiles/silent/personalise/screen-saver/timeout": [
+      "5 seconds",
+      "20 seconds",
+      "1 minute",
+      "2 minutes",
+      "5 minutes",
+      "10 minutes"
+    ],
+    "profiles/discreet/personalise/ringing-tone": [
+      "Ring ring",
+      "Low",
+      "Mosquito",
+      "Bee",
+      "City bird",
+      "Hopping down",
+      "Kick",
+      "Playground",
+      "That's it!",
+      "Improvisation",
+      "Rocket",
+      "Croak",
+      "Nokia tune",
+      "Mozart 40",
+      "Badinerie",
+      "Attraction",
+      "Dawn",
+      "Polite",
+      "Tick tick",
+      "Samba rumble",
+      "Jumping",
+      "Lamb",
+      "Toreador",
+      "Matilda",
+      "Merry Xmas",
+      "Auld lang syne",
+      "Hurdy-gurdy",
+      "Groovy Blue",
+      "Sunny walks",
+      "The Buffoon",
+      "Indifference",
+      "Barn dance",
+      "Mangrove",
+      "Knick-knack",
+      "Get cool",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)"
+    ],
+    "profiles/discreet/personalise/ringing-volume": [
+      "Level 1",
+      "Level 2",
+      "Level 3",
+      "Level 4",
+      "Level 5"
+    ],
+    "profiles/discreet/personalise/incoming-call-alert": [
+      "Ringing",
+      "Ascending",
+      "Ring once",
+      "Beep once",
+      "Off"
+    ],
+    "profiles/discreet/personalise/message-alert-tone": [
+      "No tone",
+      "Standard",
+      "Special",
+      "Beep once",
+      "Ascending"
+    ],
+    "profiles/discreet/personalise/keypad-tones": [
+      "Off",
+      "Level 1",
+      "Level 2",
+      "Level 3"
+    ],
+    "profiles/discreet/personalise/warning-tones": [
+      "On",
+      "Off"
+    ],
+    "profiles/discreet/personalise/vibrating-alert": [
+      "On",
+      "Off"
+    ],
+    "profiles/discreet/personalise/screen-saver": [
+      "Off",
+      "On"
+    ],
+    "profiles/discreet/personalise/screen-saver/timeout": [
+      "5 seconds",
+      "20 seconds",
+      "1 minute",
+      "2 minutes",
+      "5 minutes",
+      "10 minutes"
+    ],
+    "profiles/loud/personalise/ringing-tone": [
+      "Ring ring",
+      "Low",
+      "Mosquito",
+      "Bee",
+      "City bird",
+      "Hopping down",
+      "Kick",
+      "Playground",
+      "That's it!",
+      "Improvisation",
+      "Rocket",
+      "Croak",
+      "Nokia tune",
+      "Mozart 40",
+      "Badinerie",
+      "Attraction",
+      "Dawn",
+      "Polite",
+      "Tick tick",
+      "Samba rumble",
+      "Jumping",
+      "Lamb",
+      "Toreador",
+      "Matilda",
+      "Merry Xmas",
+      "Auld lang syne",
+      "Hurdy-gurdy",
+      "Groovy Blue",
+      "Sunny walks",
+      "The Buffoon",
+      "Indifference",
+      "Barn dance",
+      "Mangrove",
+      "Knick-knack",
+      "Get cool",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)"
+    ],
+    "profiles/loud/personalise/ringing-volume": [
+      "Level 1",
+      "Level 2",
+      "Level 3",
+      "Level 4",
+      "Level 5"
+    ],
+    "profiles/loud/personalise/incoming-call-alert": [
+      "Ringing",
+      "Ascending",
+      "Ring once",
+      "Beep once",
+      "Off"
+    ],
+    "profiles/loud/personalise/message-alert-tone": [
+      "No tone",
+      "Standard",
+      "Special",
+      "Beep once",
+      "Ascending"
+    ],
+    "profiles/loud/personalise/keypad-tones": [
+      "Off",
+      "Level 1",
+      "Level 2",
+      "Level 3"
+    ],
+    "profiles/loud/personalise/warning-tones": [
+      "On",
+      "Off"
+    ],
+    "profiles/loud/personalise/vibrating-alert": [
+      "On",
+      "Off"
+    ],
+    "profiles/loud/personalise/screen-saver": [
+      "Off",
+      "On"
+    ],
+    "profiles/loud/personalise/screen-saver/timeout": [
+      "5 seconds",
+      "20 seconds",
+      "1 minute",
+      "2 minutes",
+      "5 minutes",
+      "10 minutes"
+    ],
+    "profiles/empty/personalise/ringing-tone": [
+      "Ring ring",
+      "Low",
+      "Mosquito",
+      "Bee",
+      "City bird",
+      "Hopping down",
+      "Kick",
+      "Playground",
+      "That's it!",
+      "Improvisation",
+      "Rocket",
+      "Croak",
+      "Nokia tune",
+      "Mozart 40",
+      "Badinerie",
+      "Attraction",
+      "Dawn",
+      "Polite",
+      "Tick tick",
+      "Samba rumble",
+      "Jumping",
+      "Lamb",
+      "Toreador",
+      "Matilda",
+      "Merry Xmas",
+      "Auld lang syne",
+      "Hurdy-gurdy",
+      "Groovy Blue",
+      "Sunny walks",
+      "The Buffoon",
+      "Indifference",
+      "Barn dance",
+      "Mangrove",
+      "Knick-knack",
+      "Get cool",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)"
+    ],
+    "profiles/empty/personalise/ringing-volume": [
+      "Level 1",
+      "Level 2",
+      "Level 3",
+      "Level 4",
+      "Level 5"
+    ],
+    "profiles/empty/personalise/incoming-call-alert": [
+      "Ringing",
+      "Ascending",
+      "Ring once",
+      "Beep once",
+      "Off"
+    ],
+    "profiles/empty/personalise/message-alert-tone": [
+      "No tone",
+      "Standard",
+      "Special",
+      "Beep once",
+      "Ascending"
+    ],
+    "profiles/empty/personalise/keypad-tones": [
+      "Off",
+      "Level 1",
+      "Level 2",
+      "Level 3"
+    ],
+    "profiles/empty/personalise/warning-tones": [
+      "On",
+      "Off"
+    ],
+    "profiles/empty/personalise/vibrating-alert": [
+      "On",
+      "Off"
+    ],
+    "profiles/empty/personalise/screen-saver": [
+      "Off",
+      "On"
+    ],
+    "profiles/empty/personalise/screen-saver/timeout": [
+      "5 seconds",
+      "20 seconds",
+      "1 minute",
+      "2 minutes",
+      "5 minutes",
+      "10 minutes"
+    ],
+    "profiles/empty-2/personalise/ringing-tone": [
+      "Ring ring",
+      "Low",
+      "Mosquito",
+      "Bee",
+      "City bird",
+      "Hopping down",
+      "Kick",
+      "Playground",
+      "That's it!",
+      "Improvisation",
+      "Rocket",
+      "Croak",
+      "Nokia tune",
+      "Mozart 40",
+      "Badinerie",
+      "Attraction",
+      "Dawn",
+      "Polite",
+      "Tick tick",
+      "Samba rumble",
+      "Jumping",
+      "Lamb",
+      "Toreador",
+      "Matilda",
+      "Merry Xmas",
+      "Auld lang syne",
+      "Hurdy-gurdy",
+      "Groovy Blue",
+      "Sunny walks",
+      "The Buffoon",
+      "Indifference",
+      "Barn dance",
+      "Mangrove",
+      "Knick-knack",
+      "Get cool",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)",
+      "(empty)"
+    ],
+    "profiles/empty-2/personalise/ringing-volume": [
+      "Level 1",
+      "Level 2",
+      "Level 3",
+      "Level 4",
+      "Level 5"
+    ],
+    "profiles/empty-2/personalise/incoming-call-alert": [
+      "Ringing",
+      "Ascending",
+      "Ring once",
+      "Beep once",
+      "Off"
+    ],
+    "profiles/empty-2/personalise/message-alert-tone": [
+      "No tone",
+      "Standard",
+      "Special",
+      "Beep once",
+      "Ascending"
+    ],
+    "profiles/empty-2/personalise/keypad-tones": [
+      "Off",
+      "Level 1",
+      "Level 2",
+      "Level 3"
+    ],
+    "profiles/empty-2/personalise/warning-tones": [
+      "On",
+      "Off"
+    ],
+    "profiles/empty-2/personalise/vibrating-alert": [
+      "On",
+      "Off"
+    ],
+    "profiles/empty-2/personalise/screen-saver": [
+      "Off",
+      "On"
+    ],
+    "profiles/empty-2/personalise/screen-saver/timeout": [
+      "5 seconds",
+      "20 seconds",
+      "1 minute",
+      "2 minutes",
+      "5 minutes",
+      "10 minutes"
+    ],
+    "messages/dictionary": [
+      "Dictionary off",
+      "English",
+      "Русский",
+      "Български"
+    ],
+    "profiles/active": [
+      "general",
+      "silent",
+      "discreet",
+      "loud",
+      "empty",
+      "empty-2"
+    ]
+  },
+  "recordKeys": {
+    "choices": [
+      "call-divert/divert-all-voice-calls-without-ringing/activate",
+      "call-divert/divert-if-not-answered/activate",
+      "call-divert/divert-if-not-answered/set-delay",
+      "call-divert/divert-when-busy/activate",
+      "call-divert/divert-when-phone-off-or-no-coverage/activate",
+      "call-register/erase-recent-call-lists",
+      "clock/auto-update-of-date-and-time",
+      "clock/clock-settings/time-format",
+      "games/settings/lights",
+      "games/settings/shakes",
+      "games/settings/sounds",
+      "games/snake/mazes",
+      "messages/dictionary",
+      "messages/info-service",
+      "messages/info-service/topics/edit",
+      "messages/info-service/topics/erase",
+      "messages/message-settings/common/character-support",
+      "messages/message-settings/common/delivery-reports",
+      "messages/message-settings/common/reply-via-same-centre",
+      "messages/message-settings/set-1/message-validity",
+      "messages/message-settings/set-1/messages-sent-as",
+      "messages/message-settings/set-2/message-validity",
+      "messages/message-settings/set-2/messages-sent-as",
+      "phone-book/options/type-of-view",
+      "profiles/active",
+      "profiles/discreet/personalise/incoming-call-alert",
+      "profiles/discreet/personalise/keypad-tones",
+      "profiles/discreet/personalise/message-alert-tone",
+      "profiles/discreet/personalise/ringing-tone",
+      "profiles/discreet/personalise/ringing-volume",
+      "profiles/discreet/personalise/screen-saver",
+      "profiles/discreet/personalise/screen-saver/timeout",
+      "profiles/discreet/personalise/vibrating-alert",
+      "profiles/discreet/personalise/warning-tones",
+      "profiles/empty-2/personalise/incoming-call-alert",
+      "profiles/empty-2/personalise/keypad-tones",
+      "profiles/empty-2/personalise/message-alert-tone",
+      "profiles/empty-2/personalise/ringing-tone",
+      "profiles/empty-2/personalise/ringing-volume",
+      "profiles/empty-2/personalise/screen-saver",
+      "profiles/empty-2/personalise/screen-saver/timeout",
+      "profiles/empty-2/personalise/vibrating-alert",
+      "profiles/empty-2/personalise/warning-tones",
+      "profiles/empty/personalise/incoming-call-alert",
+      "profiles/empty/personalise/keypad-tones",
+      "profiles/empty/personalise/message-alert-tone",
+      "profiles/empty/personalise/ringing-tone",
+      "profiles/empty/personalise/ringing-volume",
+      "profiles/empty/personalise/screen-saver",
+      "profiles/empty/personalise/screen-saver/timeout",
+      "profiles/empty/personalise/vibrating-alert",
+      "profiles/empty/personalise/warning-tones",
+      "profiles/general/personalise/incoming-call-alert",
+      "profiles/general/personalise/keypad-tones",
+      "profiles/general/personalise/message-alert-tone",
+      "profiles/general/personalise/ringing-tone",
+      "profiles/general/personalise/ringing-volume",
+      "profiles/general/personalise/screen-saver",
+      "profiles/general/personalise/screen-saver/timeout",
+      "profiles/general/personalise/vibrating-alert",
+      "profiles/general/personalise/warning-tones",
+      "profiles/loud/personalise/incoming-call-alert",
+      "profiles/loud/personalise/keypad-tones",
+      "profiles/loud/personalise/message-alert-tone",
+      "profiles/loud/personalise/ringing-tone",
+      "profiles/loud/personalise/ringing-volume",
+      "profiles/loud/personalise/screen-saver",
+      "profiles/loud/personalise/screen-saver/timeout",
+      "profiles/loud/personalise/vibrating-alert",
+      "profiles/loud/personalise/warning-tones",
+      "profiles/silent/personalise/incoming-call-alert",
+      "profiles/silent/personalise/keypad-tones",
+      "profiles/silent/personalise/message-alert-tone",
+      "profiles/silent/personalise/ringing-tone",
+      "profiles/silent/personalise/ringing-volume",
+      "profiles/silent/personalise/screen-saver",
+      "profiles/silent/personalise/screen-saver/timeout",
+      "profiles/silent/personalise/vibrating-alert",
+      "profiles/silent/personalise/warning-tones",
+      "reminders/erase",
+      "settings/call-settings/automatic-redial",
+      "settings/call-settings/call-waiting-options",
+      "settings/call-settings/own-number-sending",
+      "settings/call-settings/speed-dialling",
+      "settings/phone-settings/cell-info-display",
+      "settings/phone-settings/confirm-sim-service-actions",
+      "settings/phone-settings/language",
+      "settings/security-settings/call-barring-service/incoming-calls",
+      "settings/security-settings/call-barring-service/incoming-calls-when-abroad",
+      "settings/security-settings/call-barring-service/international-calls",
+      "settings/security-settings/call-barring-service/international-except-to-home-country",
+      "settings/security-settings/call-barring-service/outgoing-calls",
+      "settings/security-settings/closed-user-group",
+      "settings/security-settings/phone-security"
+    ],
+    "marks": [
+      "messages/info-service/language",
+      "messages/info-service/topics/select"
+    ],
+    "texts": [
+      "call-register/call-cost-settings/call-cost-limit",
+      "call-register/call-cost-settings/show-costs-in",
+      "call-register/prepaid-credit/credit-available",
+      "call-register/prepaid-credit/credit-info-display",
+      "call-register/prepaid-credit/last-event-costs",
+      "call-register/show-call-costs/all-calls-cost",
+      "call-register/show-call-costs/last-call-cost",
+      "call-register/show-call-duration/all-calls-duration",
+      "call-register/show-call-duration/dialled-calls-duration",
+      "call-register/show-call-duration/last-call-duration",
+      "call-register/show-call-duration/received-calls-duration",
+      "clock/auto-update-of-date-and-time",
+      "games/pairs-ii/puzzle/score-ids/last-score-id",
+      "games/pairs-ii/puzzle/score-ids/top-score-id",
+      "games/pairs-ii/time-trial/score-ids/last-score-id",
+      "games/pairs-ii/time-trial/score-ids/top-score-id",
+      "games/settings/club-nokia-id",
+      "games/settings/shakes",
+      "games/settings/sounds",
+      "games/snake/score-ids/bonus-id",
+      "games/snake/score-ids/last-score-id",
+      "games/snake/score-ids/top-score-id",
+      "games/space-impact/score-ids/last-score-id",
+      "games/space-impact/score-ids/top-score-id",
+      "messages/info-service",
+      "messages/message-settings/common/character-support",
+      "messages/message-settings/common/delivery-reports",
+      "messages/message-settings/common/reply-via-same-centre",
+      "messages/message-settings/set-1/message-centre-number",
+      "messages/message-settings/set-1/message-validity",
+      "messages/message-settings/set-1/messages-sent-as",
+      "messages/message-settings/set-2/message-centre-number",
+      "messages/message-settings/set-2/message-validity",
+      "messages/message-settings/set-2/messages-sent-as",
+      "messages/voice-mailbox-number",
+      "phone-book/options/type-of-view",
+      "profiles/discreet/personalise/keypad-tones",
+      "profiles/discreet/personalise/message-alert-tone",
+      "profiles/discreet/personalise/rename",
+      "profiles/discreet/personalise/ringing-volume",
+      "profiles/discreet/personalise/screen-saver",
+      "profiles/empty-2/personalise/keypad-tones",
+      "profiles/empty-2/personalise/message-alert-tone",
+      "profiles/empty-2/personalise/rename",
+      "profiles/empty-2/personalise/ringing-volume",
+      "profiles/empty-2/personalise/screen-saver",
+      "profiles/empty/personalise/keypad-tones",
+      "profiles/empty/personalise/message-alert-tone",
+      "profiles/empty/personalise/rename",
+      "profiles/empty/personalise/ringing-volume",
+      "profiles/empty/personalise/screen-saver",
+      "profiles/general/personalise/keypad-tones",
+      "profiles/general/personalise/message-alert-tone",
+      "profiles/general/personalise/ringing-volume",
+      "profiles/general/personalise/screen-saver",
+      "profiles/loud/personalise/keypad-tones",
+      "profiles/loud/personalise/message-alert-tone",
+      "profiles/loud/personalise/rename",
+      "profiles/loud/personalise/ringing-volume",
+      "profiles/loud/personalise/screen-saver",
+      "profiles/silent/personalise/keypad-tones",
+      "profiles/silent/personalise/message-alert-tone",
+      "profiles/silent/personalise/rename",
+      "profiles/silent/personalise/ringing-volume",
+      "profiles/silent/personalise/screen-saver",
+      "settings/call-settings/automatic-redial",
+      "settings/call-settings/own-number-sending",
+      "settings/call-settings/speed-dialling",
+      "settings/phone-settings/cell-info-display",
+      "settings/phone-settings/confirm-sim-service-actions",
+      "settings/phone-settings/language",
+      "settings/phone-settings/network-selection",
+      "settings/phone-settings/welcome-note",
+      "settings/security-settings/closed-user-group",
+      "settings/security-settings/phone-security",
+      "settings/security-settings/pin-code-request"
+    ],
+    "numbers": [
+      "games/pairs-ii/puzzle/top-score",
+      "games/pairs-ii/time-trial/top-score",
+      "games/snake/level",
+      "games/snake/top-score",
+      "games/space-impact/top-score"
+    ]
+  },
+  "records": [
+    {
+      "name": "calculator",
+      "version": 1,
+      "initial": {
+        "direction": "foreign",
+        "rate": "0"
+      },
+      "factory": {
+        "direction": "foreign",
+        "rate": "1"
+      }
+    },
+    {
+      "name": "calls",
+      "version": 1,
+      "initial": {
+        "durations": {
+          "last": 0,
+          "all": 0,
+          "received": 0,
+          "dialled": 0
+        }
+      },
+      "factory": {
+        "durations": {
+          "last": 0,
+          "all": 0,
+          "received": 0,
+          "dialled": 0
+        }
+      }
+    },
+    {
+      "name": "clock",
+      "version": 1,
+      "initial": {
+        "alarm": null,
+        "alarmOn": false,
+        "snooze": null,
+        "offsetMinutes": 0,
+        "hidden": false
+      },
+      "factory": {
+        "alarm": null,
+        "alarmOn": false,
+        "snooze": null,
+        "offsetMinutes": 0,
+        "hidden": false
+      }
+    },
+    {
+      "name": "composer",
+      "version": 1,
+      "initial": {
+        "slots": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "factory": {
+        "slots": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "name": "info-topics",
+      "version": 1,
+      "initial": {
+        "topics": [
+          {
+            "number": "",
+            "name": "",
+            "marked": true
+          },
+          {
+            "number": "",
+            "name": "",
+            "marked": false
+          },
+          {
+            "number": "",
+            "name": "",
+            "marked": false
+          },
+          {
+            "number": "p9",
+            "name": "",
+            "marked": false
+          },
+          {
+            "number": "",
+            "name": "",
+            "marked": true
+          }
+        ]
+      },
+      "factory": {
+        "topics": []
+      }
+    },
+    {
+      "name": "messages",
+      "version": 1,
+      "initial": {
+        "sims": {}
+      },
+      "factory": null
+    },
+    {
+      "name": "phone-book",
+      "version": 1,
+      "initial": {
+        "sims": {},
+        "speedDials": {},
+        "tones": {}
+      },
+      "factory": null
+    },
+    {
+      "name": "reminders",
+      "version": 1,
+      "initial": {
+        "list": [],
+        "junk": true,
+        "next": 0
+      },
+      "factory": null
+    },
+    {
+      "name": "security",
+      "version": 1,
+      "initial": {
+        "code": "12345",
+        "recentSims": [],
+        "wrongAttempts": 0
+      },
+      "factory": null
+    },
+    {
+      "name": "settings",
+      "version": 1,
+      "initial": {
+        "choices": {},
+        "marks": {},
+        "texts": {},
+        "numbers": {}
+      },
+      "factory": {
+        "choices": {
+          "games/settings/lights": 0,
+          "call-divert/divert-if-not-answered/set-delay": 5,
+          "profiles/general/personalise/ringing-tone": 12,
+          "profiles/general/personalise/ringing-volume": 3,
+          "profiles/general/personalise/incoming-call-alert": 0,
+          "profiles/general/personalise/message-alert-tone": 1,
+          "profiles/general/personalise/keypad-tones": 2,
+          "profiles/general/personalise/warning-tones": 0,
+          "profiles/general/personalise/vibrating-alert": 0,
+          "profiles/general/personalise/screen-saver": 0,
+          "profiles/general/personalise/screen-saver/timeout": 0,
+          "profiles/silent/personalise/ringing-tone": 12,
+          "profiles/silent/personalise/ringing-volume": 0,
+          "profiles/silent/personalise/incoming-call-alert": 4,
+          "profiles/silent/personalise/message-alert-tone": 0,
+          "profiles/silent/personalise/keypad-tones": 0,
+          "profiles/silent/personalise/warning-tones": 1,
+          "profiles/silent/personalise/vibrating-alert": 1,
+          "profiles/silent/personalise/screen-saver": 1,
+          "profiles/silent/personalise/screen-saver/timeout": 0,
+          "profiles/discreet/personalise/ringing-tone": 12,
+          "profiles/discreet/personalise/ringing-volume": 0,
+          "profiles/discreet/personalise/incoming-call-alert": 3,
+          "profiles/discreet/personalise/message-alert-tone": 3,
+          "profiles/discreet/personalise/keypad-tones": 1,
+          "profiles/discreet/personalise/warning-tones": 1,
+          "profiles/discreet/personalise/vibrating-alert": 0,
+          "profiles/discreet/personalise/screen-saver": 1,
+          "profiles/discreet/personalise/screen-saver/timeout": 0,
+          "profiles/loud/personalise/ringing-tone": 12,
+          "profiles/loud/personalise/ringing-volume": 4,
+          "profiles/loud/personalise/incoming-call-alert": 0,
+          "profiles/loud/personalise/message-alert-tone": 2,
+          "profiles/loud/personalise/keypad-tones": 3,
+          "profiles/loud/personalise/warning-tones": 0,
+          "profiles/loud/personalise/vibrating-alert": 0,
+          "profiles/loud/personalise/screen-saver": 1,
+          "profiles/loud/personalise/screen-saver/timeout": 0,
+          "profiles/empty/personalise/ringing-tone": 34,
+          "profiles/empty/personalise/ringing-volume": 2,
+          "profiles/empty/personalise/incoming-call-alert": 0,
+          "profiles/empty/personalise/message-alert-tone": 1,
+          "profiles/empty/personalise/keypad-tones": 2,
+          "profiles/empty/personalise/warning-tones": 0,
+          "profiles/empty/personalise/vibrating-alert": 0,
+          "profiles/empty/personalise/screen-saver": 1,
+          "profiles/empty/personalise/screen-saver/timeout": 0,
+          "profiles/empty-2/personalise/ringing-tone": 12,
+          "profiles/empty-2/personalise/ringing-volume": 2,
+          "profiles/empty-2/personalise/incoming-call-alert": 0,
+          "profiles/empty-2/personalise/message-alert-tone": 1,
+          "profiles/empty-2/personalise/keypad-tones": 2,
+          "profiles/empty-2/personalise/warning-tones": 0,
+          "profiles/empty-2/personalise/vibrating-alert": 0,
+          "profiles/empty-2/personalise/screen-saver": 0,
+          "profiles/empty-2/personalise/screen-saver/timeout": 0,
+          "settings/call-settings/own-number-sending": 0
+        },
+        "marks": {
+          "messages/info-service/language": [
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ]
+        },
+        "texts": {
+          "profiles/empty-2/personalise/rename": "(empty)"
+        },
+        "numbers": {}
+      }
+    },
+    {
+      "name": "smileys",
+      "version": 1,
+      "initial": {
+        "slots": null
+      },
+      "factory": {
+        "slots": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    {
+      "name": "t9-user",
+      "version": 1,
+      "initial": {
+        "words": []
+      },
+      "factory": null
+    },
+    {
+      "name": "templates",
+      "version": 1,
+      "initial": {
+        "slots": null
+      },
+      "factory": {
+        "slots": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    }
+  ]
+}
