@@ -3,7 +3,7 @@
 // prompt shows its reciprocal, but conversions use the typed value (Task 0: Domestic 3 shows
 // Foreign 0.3333333, yet 10 In domestic is 3.3333333). This is a reproduction storage design;
 // the firmware's EEPROM representation is UNVERIFIED.
-import type { EepromRecord, StockEeprom } from "../firmware/eeprom";
+import type { EepromRecord, StockEeprom } from "../../../firmware/eeprom";
 import { calculate, parseDecimal, type CalcResult } from "./decimal";
 
 export type RateDirection = "foreign" | "domestic";

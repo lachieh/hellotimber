@@ -2,7 +2,7 @@
 // standby entry application, what Call does with the characters, the codes `#` answers, and the
 // call screens a call shows (incoming ones through phone-core's interruption seam).
 import { PhoneApplication, type PhoneKey } from "@hellotimber/phone-core";
-import { CalculatorRate } from "../../calculator/rate";
+import { CalculatorRate } from "../../kit/apps/calculator/rate";
 import { dialOutcome, immediateCode } from "../../calls/dial-string";
 import { CALLS_RECORD } from "../../calls/log";
 import type { StockCall, StockTelephone } from "../../calls/telephone";

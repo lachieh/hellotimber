@@ -4,8 +4,8 @@
 // and ignores the release of a key it did not see go down, so a key that changes the screen
 // never acts again on the screen it opened.
 import type { MenuIndicator, PhoneKey } from "@hellotimber/phone-core";
-import type { OptionsModel } from "../display/widgets";
-import type { CalculatorModel } from "../display/widgets/calculator";
+import type { OptionsModel } from "../../../display/widgets";
+import type { CalculatorModel } from "../../../display/widgets/calculator";
 import {
   CALCULATOR_START,
   chooseOption,
@@ -17,8 +17,8 @@ import {
   type CalculatorKey,
   type CalculatorNote,
   type CalculatorState,
-} from "../calculator/engine";
-import type { CalculatorRate, RateDirection } from "../calculator/rate";
+} from "./engine";
+import type { CalculatorRate, RateDirection } from "./rate";
 import {
   clearRateEntry,
   openRateEntry,
@@ -26,13 +26,13 @@ import {
   rateToSave,
   type RateEntry,
   type RateKey,
-} from "../calculator/rate-entry";
-import type { StockWidgetTimeline } from "../resources";
-import type { Flow, Widget } from "./flow";
-import { infoPages } from "./info-pages";
-import { note, type NoteSound } from "./note";
-import { Playback } from "./playback";
-import { moveRows, openRows, rowsIndicator, type RowsCursor } from "./rows";
+} from "./rate-entry";
+import type { StockWidgetTimeline } from "../../../resources";
+import type { Flow, Widget } from "../../../widgets/flow";
+import { infoPages } from "../../../widgets/info-pages";
+import { note, type NoteSound } from "../../../widgets/note";
+import { Playback } from "../../../widgets/playback";
+import { moveRows, openRows, rowsIndicator, type RowsCursor } from "../../../widgets/rows";
 
 /**
  * How long C is held before it clears (D8): the captured clears redraw 532.1 and 544.0 ms after

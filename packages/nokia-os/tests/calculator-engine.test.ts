@@ -2,7 +2,7 @@
 // stills' text (plan20/text.json, checked against the PNGs where OCR misses the `-` operator),
 // transcribed from Task 0's cases.
 import { describe, expect, it } from "vite-plus/test";
-import type { CalcResult } from "../src/calculator/decimal";
+import type { CalcResult } from "../src/kit/apps/calculator/decimal";
 import {
   CALCULATOR_START,
   chooseOption,
@@ -15,7 +15,7 @@ import {
   type CalculatorState,
   type OptionId,
   type Step,
-} from "../src/calculator/engine";
+} from "../src/kit/apps/calculator/engine";
 
 /** A virgin rate (Foreign 0): In domestic multiplies by 0, In foreign divides by it. */
 const VIRGIN_RATE = (amount: string, to: "domestic" | "foreign"): CalcResult =>

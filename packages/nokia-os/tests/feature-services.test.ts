@@ -1,7 +1,7 @@
 // Feature bindings see the phone's EEPROM (`StockServices.eeprom`), the one its settings store,
 // Restore factory settings and the features' registered records live in.
 import { describe, expect, it } from "vite-plus/test";
-import { CALCULATOR_RECORD } from "../src/calculator/rate";
+import { CALCULATOR_RECORD } from "../src/kit/apps/calculator/rate";
 import { createMemoryStorage, StockEeprom } from "../src/firmware/eeprom";
 import { stockServices } from "../src/firmware/menu";
 import { createStockGames } from "../src/firmware/features/games";

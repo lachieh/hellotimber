@@ -8,7 +8,7 @@ import {
   parseDecimal,
   type CalcOperator,
   type CalcResult,
-} from "../src/calculator/decimal";
+} from "../src/kit/apps/calculator/decimal";
 
 describe("display strings", () => {
   it("round-trips every kind of display string the goldens show", () => {

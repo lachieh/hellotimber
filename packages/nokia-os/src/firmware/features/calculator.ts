@@ -1,7 +1,7 @@
 // Calculator (menu 9, plan 20): the stock calculator over its pure engine, its Options in three
 // states, currency conversion and the exchange-rate entry, the rate stored in the EEPROM (D6).
-import { CALCULATOR_RECORD, CalculatorRate } from "../../calculator/rate";
-import { calculator } from "../../widgets/calculator";
+import { CALCULATOR_RECORD, CalculatorRate } from "../../kit/apps/calculator/rate";
+import { calculator } from "../../kit/apps/calculator/widget";
 import type { EepromRecord } from "../eeprom";
 import { timelineById, timelineByName } from "../timelines";
 import type { StockFeature } from "./feature";
