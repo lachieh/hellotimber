@@ -65,6 +65,9 @@ export interface StandbyIndicators {
   stopwatch?: boolean;
 }
 
+/** A standby ladder's bars: 0 (none) to 4 (full). */
+export type StatusLevel = 0 | 1 | 2 | 3 | 4;
+
 export type ScreenModel =
   | { kind: "off" }
   // With PhoneConfig.bootTimeline, boot is always phase "hands" and frame is the timeline frame.
@@ -73,8 +76,8 @@ export type ScreenModel =
       kind: "standby";
       carrier: string;
       clock?: string;
-      signal: 0 | 1 | 2 | 3 | 4;
-      battery: 0 | 1 | 2 | 3 | 4;
+      signal: StatusLevel;
+      battery: StatusLevel;
       indicators?: StandbyIndicators;
       /** Plan 17: the host's second standby line (PhoneConfig.standbyLine); absent when it returns none. */
       line?: string;
@@ -151,6 +154,10 @@ export interface PhoneConfig<Metadata = unknown> {
   menu: PhoneMenu<Metadata>;
   carrier?: string; // standby line, default ""
   clock?: () => string | undefined; // host supplies time; re-read on each tick
+  /** Plan 32: the signal ladder's bars on standby, re-read on each tick. Default: full (4). */
+  signal?: () => StatusLevel;
+  /** Plan 32: the battery ladder's bars on standby, re-read on each tick. Default: full (4). */
+  battery?: () => StatusLevel;
   bootMs?: number; // 0 skips boot; otherwise defaults to bootTimeline?.durationMs ?? 3000
   /** Finite boot animation; when set, boot lasts its durationMs. */
   bootTimeline?: Timeline;

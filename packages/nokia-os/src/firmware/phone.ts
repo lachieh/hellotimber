@@ -306,6 +306,9 @@ export function createStockPhoneWith(
       return { message, silent, divert: telephone.divert, ...phoneTime.indicators() };
     },
     carrier: config.carrier,
+    // Plan 32: the host's signal and battery levels (default full: the captured standby).
+    ...(config.signal === undefined ? {} : { signal: config.signal }),
+    ...(config.battery === undefined ? {} : { battery: config.battery }),
     // Plan 21 D10: standby shows the phone's time, hidden or 12-hour as Clock settings say.
     clock: () => phoneTime.standbyClock(),
     // Plan 21 D4: the alarm switches a powered-off phone on.

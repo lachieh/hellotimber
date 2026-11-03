@@ -11,6 +11,7 @@ export type {
   PhoneSnapshot,
   ScreenModel,
   StandbyIndicators,
+  StatusLevel,
 } from "./types";
 export { PhoneApplication } from "./application";
 export type {
