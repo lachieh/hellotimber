@@ -1,9 +1,9 @@
 // The internal stock settings store (plan 14 Task 8, D9), its virgin-EEPROM state (D10), and its
 // persistent record with the factory state (plan 15 Task 5, D3, D5).
 import { describe, expect, it } from "vite-plus/test";
-import { WELCOME_NOTE_KEY } from "../src/firmware/features/settings";
+import { WELCOME_NOTE_KEY } from "../src/kit/system/boot";
 import { DICTIONARY_KEY } from "../src/messages/bindings";
-import { PHONE_SECURITY_KEY } from "../src/firmware/security";
+import { PHONE_SECURITY_KEY } from "../src/kit/system/security";
 import { settingAlias, STOCK_SETTINGS } from "../src/firmware/stock";
 
 const { factoryDefaults: FACTORY_DEFAULTS, restoreKeeps: RESTORE_KEEPS } = STOCK_SETTINGS;

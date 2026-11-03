@@ -10,7 +10,7 @@ import {
   KEYGUARD_HINT_LEAD_MS,
   KEYGUARD_TIMES,
   KEYGUARD_UNLOCK_LEAD_MS,
-} from "../src/firmware/features/keyguard";
+} from "../src/kit/system/keyguard";
 import { createMemoryStorage, createSyntheticNetwork } from "../src/index";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";

@@ -1,10 +1,10 @@
 // Plan 21 Task 5: phone time over a scripted host clock (D1) and minute edges (D2).
 import { describe, expect, it } from "vite-plus/test";
 import { createMemoryStorage, StockEeprom } from "../src/firmware/eeprom";
-import { CLOCK_RECORD } from "../src/firmware/features/clock/record";
-import { StockClock, TIME_FORMAT } from "../src/firmware/features/clock/service";
+import { CLOCK_RECORD } from "../src/kit/system/clock/record";
+import { StockClock, TIME_FORMAT } from "../src/kit/system/clock/service";
 import { createStockSettings } from "../src/firmware/settings";
-import type { PhoneTime } from "../src/firmware/features/clock/time";
+import type { PhoneTime } from "../src/kit/system/clock/time";
 
 /** A host clock the test moves: `HH:MM` and `DD.MM.YYYY`. */
 function scriptedHost(clock = "10:10", date = "13.10.2026") {

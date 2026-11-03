@@ -2,12 +2,12 @@
 // a masked entry. Digits append (10 at most), C deletes the last and C held 1 s clears all; C on
 // the empty entry goes back in a menu and does nothing at the boot gate. OK submits.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { PromptModel } from "../kit/ui/display/widgets";
-import { CODE_ENTRY_MAX_DIGITS, type StockSecurity } from "../firmware/security";
-import type { StockWidgetTimeline } from "../kit/ui/resources";
-import { WIDGET_TIMELINE_BY_NAME, WIDGET_TIMELINES } from "../kit/ui/resources";
-import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { note, type NoteSound } from "../kit/ui/widgets/note";
+import type { PromptModel } from "../ui/display/widgets";
+import { CODE_ENTRY_MAX_DIGITS, type StockSecurity } from "./security";
+import type { StockWidgetTimeline } from "../ui/resources";
+import { WIDGET_TIMELINE_BY_NAME, WIDGET_TIMELINES } from "../ui/resources";
+import type { Flow, Widget } from "../ui/widgets/flow";
+import { note, type NoteSound } from "../ui/widgets/note";
 
 /**
  * The note a wrong security code shows (`probe/code-wrong-*` image h; `Code\nerror` in the

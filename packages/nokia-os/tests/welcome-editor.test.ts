@@ -2,8 +2,8 @@
 // the message centre and voice mailbox numbers save (Task 0 W and M), through the stock phone's
 // keys with the EEPROM read back from its storage.
 import { describe, expect, it } from "vite-plus/test";
-import { SELF_TEST_MS, WELCOME_BLANK_MS } from "../src/firmware/boot";
-import { WELCOME_NOTE_KEY } from "../src/firmware/features/settings";
+import { SELF_TEST_MS, WELCOME_BLANK_MS } from "../src/kit/system/boot";
+import { WELCOME_NOTE_KEY } from "../src/kit/system/boot";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import { createMemoryStorage, type StockStorage } from "../src/index";

@@ -1,5 +1,5 @@
 import { SoundSequencer } from "../../src/kit/ui/sound/sequencer";
-import { StockSounder } from "../../src/sound/sounder";
+import { StockSounder } from "../../src/kit/system/sounder";
 import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockSettings } from "../../src/firmware/settings";
 import type { StockSoundEvent } from "../../src/index";

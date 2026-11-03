@@ -2,9 +2,9 @@
 // standby clock reader (D10), and minute edges (D2), observed on kernel ticks. Alerts, the
 // countdown and the stopwatch are added by their own modules over this service.
 import type { StandbyIndicators } from "@hellotimber/phone-core";
-import type { EepromRecord, StockEeprom } from "../../eeprom";
-import type { StockPorts } from "../../ports";
-import type { StockSettings } from "../../settings";
+import type { EepromRecord, RecordStore } from "../../../services/storage";
+import type { StockPorts } from "../ports";
+import type { StockSettings } from "../settings";
 import { StockAlerts } from "./alerts";
 import { CLOCK_RECORD, type ClockState } from "./record";
 import {
@@ -23,7 +23,7 @@ export interface StockClockDeps {
   /** The host's real-time clock (`HH:MM`, `DD.MM.YYYY`), re-read whenever the time is needed. */
   readonly host: StockPorts;
   readonly settings: StockSettings;
-  readonly eeprom: StockEeprom;
+  readonly eeprom: RecordStore;
   /** The kernel time (the phone's `tick`); default 0 (a menu without a phone). */
   readonly now?: () => number;
 }
@@ -34,7 +34,7 @@ export type MinuteListener = (at: PhoneTime) => void;
 export class StockClock {
   readonly #host: StockPorts;
   readonly #settings: StockSettings;
-  readonly #eeprom: StockEeprom;
+  readonly #eeprom: RecordStore;
   readonly #listeners: MinuteListener[] = [];
   /** The minute the last tick saw (minuteIndex), undefined without a time. */
   #minute: number | undefined;

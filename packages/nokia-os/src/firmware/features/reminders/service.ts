@@ -16,10 +16,10 @@ import {
   ALERT_EXIT_MS,
   standbyOf,
   type AlertStandby,
-} from "../clock/alerts";
-import { phoneClock } from "../clock/registry";
-import type { StockClock } from "../clock/service";
-import { minuteIndex } from "../clock/time";
+} from "../../../kit/system/clock/alerts";
+import { phoneClock } from "../../../kit/system/clock/registry";
+import type { StockClock } from "../../../kit/system/clock/service";
+import { minuteIndex } from "../../../kit/system/clock/time";
 import { REMINDER_SNOOZE_MINUTES, StockReminders, type Reminder } from "./store";
 
 /** Snooze clears the ladders this long before `Alarm postponed` (plan21 alert-key-snooze 17 ms). */

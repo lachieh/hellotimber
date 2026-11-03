@@ -7,14 +7,14 @@
 import type { VirginChoice } from "./features/feature";
 import type { Handset } from "./firmware";
 import { AUTO_UPDATE } from "./features/clock";
-import { CLOCK_RECORD } from "./features/clock/record";
-import { TIME_FORMAT } from "./features/clock/service";
+import { CLOCK_RECORD } from "../kit/system/clock/record";
+import { TIME_FORMAT } from "../kit/system/clock/service";
 import { GAMES_LIGHTS_KEY } from "./features/backlight";
 import { SPEED_DIALLING_KEY } from "./features/dialling";
 import { ACTIVE_PROFILE_KEY, PROFILE_SLUGS, profileAlias } from "./features/profiles";
 import { REMINDERS_RECORD } from "./features/reminders/store";
-import { WELCOME_NOTE_KEY } from "./features/settings";
-import { PHONE_SECURITY_KEY, SECURITY_RECORD } from "./security";
+import { WELCOME_NOTE_KEY } from "../kit/system/boot";
+import { PHONE_SECURITY_KEY, SECURITY_RECORD } from "../kit/system/security";
 import { COMPOSER_RECORD, COMPOSER_SLOTS } from "../composer/store";
 import { RINGING_TONES } from "../kit/ui/resources";
 import { T9_USER_RECORD } from "../kit/system/t9/user";
@@ -24,7 +24,7 @@ import { OWN_NUMBER_SENDING_KEY } from "../services/calls/telephone";
 import { MESSAGES_RECORD } from "../services/messaging/store";
 import { PHONE_BOOK_RECORD } from "../services/phone-book/store";
 import type { EepromRecord } from "../services/storage";
-import { GAMES_SHAKES_KEY, GAMES_SOUNDS_KEY } from "../sound/sounder";
+import { GAMES_SHAKES_KEY, GAMES_SOUNDS_KEY } from "../kit/system/sounder";
 import { TYPE_OF_VIEW_KEY } from "../widgets/name-list";
 
 const OFF_ON = ["Off", "On"] as const;

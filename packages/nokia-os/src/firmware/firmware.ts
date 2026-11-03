@@ -34,7 +34,7 @@ import {
 import { timelineById } from "../kit/ui/timelines";
 import type { PromptLayout } from "../kit/ui/widgets/prompt";
 import type { ListNumbering } from "../kit/ui/widgets/rows";
-import type { StockPorts } from "./ports";
+import type { StockPorts } from "../kit/system/ports";
 import type { StockSettings } from "./settings";
 
 /**

@@ -11,7 +11,7 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StockMessaging } from "../../services/messaging/service";
 import type { StockPhoneBook } from "../../services/phone-book/store";
-import type { StockSounder } from "../../sound/sounder";
+import type { StockSounder } from "../../kit/system/sounder";
 import type { StockT9 } from "../../kit/system/t9/service";
 import type { Widget } from "../../kit/ui/widgets/flow";
 import type { ListNumbering } from "../../kit/ui/widgets/rows";
@@ -20,8 +20,8 @@ import type { PromptLayout } from "../../kit/ui/widgets/prompt";
 import type { EepromRecord, StockEeprom } from "../eeprom";
 import type { Firmware } from "../firmware";
 import type { StockResult, StockScreenSpec } from "../generated/stock-tree";
-import type { StockPorts } from "../ports";
-import type { StockSecurity } from "../security";
+import type { StockPorts } from "../../kit/system/ports";
+import type { StockSecurity } from "../../kit/system/security";
 import type { StockSettings } from "../settings";
 import type { StockGames } from "./games";
 

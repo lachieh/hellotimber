@@ -5,9 +5,9 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { appendDial, DIAL_CYCLE, immediateCode, starCycle } from "../services/calls/dial-string";
 import type { DialEntryModel, StandbyDrawModel, WidgetModel } from "../kit/ui/display/widgets";
-import type { StockSounder } from "../sound/sounder";
+import type { StockSounder } from "../kit/system/sounder";
 import type { Flow, Widget } from "../kit/ui/widgets/flow";
-import { LEVEL_REPEAT } from "./level-bar";
+import { LEVEL_REPEAT } from "../kit/ui/widgets/key-repeat";
 
 /**
  * The entry's timings, from its first redraw (the key's latency is not reproduced): the `*`

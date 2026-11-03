@@ -3,7 +3,7 @@
 // after a blocked step, and `blinkSnake` along the death steps. The rules follow the RE notes'
 // tick order, each confirmed by Task 0's captures (tests/snake-engine.test.ts).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { StockCue } from "../../firmware/cues";
+import type { StockCue } from "../../kit/system/cues";
 import { SNAKE_DATA } from "../../kit/ui/resources/generated/snake";
 import { headingFor, opposite } from "./keys";
 import type { Cell, Heading, Segment, SegmentPicture, SnakeRenderModel, SnakeState } from "./model";

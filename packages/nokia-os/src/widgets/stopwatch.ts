@@ -5,7 +5,7 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { StopwatchModel } from "../kit/ui/display/widgets/stopwatch";
 import { formatStopwatch, type StockStopwatch } from "../firmware/features/clock/stopwatch";
-import { ALERT_EXIT_MS, StandbyFrame, type AlertStandby } from "../firmware/features/clock/alerts";
+import { ALERT_EXIT_MS, StandbyFrame, type AlertStandby } from "../kit/system/clock/alerts";
 import type { Flow, Widget } from "../kit/ui/widgets/flow";
 import { freshKeys } from "../kit/ui/widgets/fresh-keys";
 import { OptionListWidget } from "./option-list";

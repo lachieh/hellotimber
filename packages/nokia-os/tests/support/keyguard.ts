@@ -9,8 +9,8 @@
 import { CALL_TIMINGS } from "../../src/services/calls/telephone";
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { expect } from "vite-plus/test";
-import type { StockLightEvent } from "../../src/firmware/features/backlight";
-import { KEYGUARD_TIMES } from "../../src/firmware/features/keyguard";
+import type { StockLightEvent } from "../../src/kit/system/lights";
+import { KEYGUARD_TIMES } from "../../src/kit/system/keyguard";
 import { createSyntheticNetwork, type StockPhoneConfig } from "../../src/index";
 import { expectLcd, expectTimeline, withoutPartialDraws } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";

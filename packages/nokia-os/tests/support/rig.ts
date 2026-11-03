@@ -2,8 +2,8 @@
 // (plan 13 "Scenario harness and coverage guard").
 import type { Phone, PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
-import { WELCOME_NOTE_KEY } from "../../src/firmware/features/settings";
-import { PHONE_SECURITY_KEY } from "../../src/firmware/security";
+import { WELCOME_NOTE_KEY } from "../../src/kit/system/boot";
+import { PHONE_SECURITY_KEY } from "../../src/kit/system/security";
 import { StockEeprom } from "../../src/firmware/eeprom";
 import { createStockPhoneWith, type StockPhoneInternals } from "../../src/firmware/phone";
 import { createStockSettings } from "../../src/firmware/settings";

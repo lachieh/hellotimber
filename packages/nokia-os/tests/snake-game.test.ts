@@ -5,7 +5,7 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
 import { isBoardFrame } from "../scripts/game-capture-set.ts";
-import type { StockCue } from "../src/firmware/cues";
+import type { StockCue } from "../src/kit/system/cues";
 import { createMemorySettings, virginSettings } from "../src/firmware/settings";
 import { snakeRender, stepSnake } from "../src/games/snake/engine";
 import { Framebuffer } from "@hellotimber/phone-screen";

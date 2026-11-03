@@ -4,14 +4,15 @@
 // phone is created: an invalid value throws, naming the field.
 import { missingStockGlyphs, type StockFontName } from "../kit/ui/resources";
 import { TYPEABLE } from "../kit/ui/text/keys";
-import { parseHostTime } from "./features/clock/time";
+import { parseHostTime } from "../kit/system/clock/time";
 import {
   REMINDER_TEXT_LIMIT,
   REMINDERS_CAPACITY,
   REMINDERS_RECORD,
   StockReminders,
 } from "./features/reminders/store";
-import { WELCOME_NOTE_KEY, WELCOME_NOTE_LIMIT } from "./features/settings";
+import { WELCOME_NOTE_KEY } from "../kit/system/boot";
+import { WELCOME_NOTE_LIMIT } from "./features/settings";
 import { SNAKE_SETTINGS } from "../widgets/snake";
 import { STOCK_STORAGE_PREFIX, type StockEeprom, type StockStorage } from "./eeprom";
 import type { Firmware } from "./firmware";

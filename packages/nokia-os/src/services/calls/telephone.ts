@@ -116,7 +116,7 @@ export interface CallTone {
   readonly afterMs: number;
 }
 
-/** The telephone's own sounds (the v6.39 table is `STOCK_CALL_TONES`, src/calls/sounds.ts). */
+/** The telephone's own sounds (the v6.39 table is `STOCK_CALL_TONES`, src/kit/system/call-sounds.ts). */
 export interface CallTones {
   readonly ringback: CallTone;
   readonly netEnd: CallTone;

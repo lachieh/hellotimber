@@ -1,7 +1,7 @@
 // Plan 30 Task 8: the host's IMEI (D9) and the phone-memory preload (D10).
 import { describe, expect, it } from "vite-plus/test";
 import { StockEeprom } from "../src/firmware/eeprom";
-import { WELCOME_NOTE_KEY } from "../src/firmware/features/settings";
+import { WELCOME_NOTE_KEY } from "../src/kit/system/boot";
 import { StockReminders } from "../src/firmware/features/reminders/store";
 import { checkImei } from "../src/firmware/preload";
 import { createStockSettings } from "../src/firmware/settings";

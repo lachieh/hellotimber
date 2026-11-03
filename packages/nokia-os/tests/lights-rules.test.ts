@@ -3,15 +3,9 @@
 // themselves are this plan's acceptance scenarios (`lightsScenario`); these tests pin the rules.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
-import {
-  FIREWORKS_MS,
-  GAMES_LIGHTS_KEY,
-  LIGHT_TICK_MS,
-  LIGHT_TICK_PHASE_MS,
-  LIGHT_TIMEOUT_MS,
-  SNAKE_DEATH_MS,
-} from "../src/firmware/features/backlight";
-import { KEYGUARD_TIMES } from "../src/firmware/features/keyguard";
+import { FIREWORKS_MS, GAMES_LIGHTS_KEY, SNAKE_DEATH_MS } from "../src/firmware/features/backlight";
+import { LIGHT_TICK_MS, LIGHT_TICK_PHASE_MS, LIGHT_TIMEOUT_MS } from "../src/kit/system/lights";
+import { KEYGUARD_TIMES } from "../src/kit/system/keyguard";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import { SNAKE_TOP_SCORE_MS } from "../src/kit/ui/resources";

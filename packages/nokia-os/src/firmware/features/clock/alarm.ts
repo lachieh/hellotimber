@@ -12,11 +12,11 @@ import { freshKeys } from "../../../kit/ui/widgets/fresh-keys";
 import { note } from "../../../kit/ui/widgets/note";
 import { timelineByName } from "../../../kit/ui/timelines";
 import type { StockServices } from "../feature";
-import type { AlarmTime } from "./record";
-import { alertExit, alertLeadIn } from "./alerts";
-import { phoneClock } from "./registry";
-import type { StockClock } from "./service";
-import { formatClock, minuteIndex, type PhoneTime } from "./time";
+import type { AlarmTime } from "../../../kit/system/clock/record";
+import { alertExit, alertLeadIn } from "../../../kit/system/clock/alerts";
+import { phoneClock } from "../../../kit/system/clock/registry";
+import type { StockClock } from "../../../kit/system/clock/service";
+import { formatClock, minuteIndex, type PhoneTime } from "../../../kit/system/clock/time";
 
 /**
  * Screens no capture shows, composed from captured widgets with v6.39's own strings (plan 21 D12,

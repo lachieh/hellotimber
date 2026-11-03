@@ -26,7 +26,7 @@ export { createMemoryStorage, STOCK_STORAGE_PREFIX } from "./firmware/eeprom";
 export type { StockStorage } from "./firmware/eeprom";
 export type { StockPhoneConfig } from "./firmware/phone";
 export type { StockSoundEvent, StockSoundPort } from "./kit/ui/sound/port";
-export type { StockLightEvent, StockLightsPort } from "./firmware/features/backlight";
+export type { StockLightEvent, StockLightsPort } from "./kit/system/lights";
 export { stockMenu, stockMenuFor } from "./firmware/menu";
 export { missingStockGlyphs } from "./kit/ui/resources";
 export type { StockFontName } from "./kit/ui/resources";

@@ -4,7 +4,7 @@
 import type { StockServices } from "../firmware/features/feature";
 import { timelineByName } from "../kit/ui/timelines";
 import type { WidgetModel } from "../kit/ui/display/widgets";
-import { codeEntry } from "../widgets/code-entry";
+import { codeEntry } from "../kit/system/code-entry";
 import type { Flow, Widget } from "../kit/ui/widgets/flow";
 import type { NameListControl } from "../widgets/name-list";
 import { nameList } from "../widgets/name-list";

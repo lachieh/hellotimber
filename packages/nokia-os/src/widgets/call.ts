@@ -13,9 +13,9 @@ import {
   transmittedDtmfProgram,
   VOLUME_TONE_MS,
   volumeTopProgram,
-} from "../calls/sounds";
+} from "../kit/system/call-sounds";
 import { DIAL_TIMINGS } from "./dial-entry";
-import type { StockSounder } from "../sound/sounder";
+import type { StockSounder } from "../kit/system/sounder";
 import type { Flow, Widget } from "../kit/ui/widgets/flow";
 import { numberEntry } from "../kit/ui/widgets/number-entry";
 import { note } from "../kit/ui/widgets/note";

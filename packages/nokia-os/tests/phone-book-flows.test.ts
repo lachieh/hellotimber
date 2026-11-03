@@ -2,7 +2,7 @@
 // tests/acceptance/19-phone-book.test.ts; these pin the rules between the captures).
 import { describe, expect, it } from "vite-plus/test";
 import { PHONE_BOOK_SIMS } from "../scripts/capture-sets/19-phone-book.ts";
-import { KEYGUARD_HINT_LEAD_MS, KEYGUARD_TIMES } from "../src/firmware/features/keyguard";
+import { KEYGUARD_HINT_LEAD_MS, KEYGUARD_TIMES } from "../src/kit/system/keyguard";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import { createMemoryStorage, type StockSimCard, type StockStorage } from "../src/index";

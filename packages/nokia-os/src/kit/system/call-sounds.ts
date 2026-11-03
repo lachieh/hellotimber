@@ -1,8 +1,8 @@
 // The telephone's sounds (plan 22 D7-D9), measured on the factory sound goldens
 // (`goldens/sound/calls/*`; tests/sound-calls.test.ts plays each program against its golden).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { SoundProgram } from "../kit/ui/sound/program";
-import { EARPIECE_STEPS, type CallTones } from "../services/calls/telephone";
+import type { SoundProgram } from "../ui/sound/program";
+import { EARPIECE_STEPS, type CallTones } from "../../services/calls/telephone";
 
 export { EARPIECE_STEPS };
 

@@ -8,7 +8,7 @@
 // not restart (plan21 settings/set-time-keys).
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { PromptModel } from "../kit/ui/display/widgets";
-import { isDate } from "../firmware/features/clock/time";
+import { isDate } from "../kit/system/clock/time";
 import type { StockWidgetTimeline } from "../kit/ui/resources";
 import type { Flow, Widget } from "../kit/ui/widgets/flow";
 import { note, type NoteSound } from "../kit/ui/widgets/note";

@@ -1,6 +1,6 @@
 // The clock's EEPROM record (plan 21 D7): what the phone keeps about its clock across power
 // cycles. The firmware's own representation is UNVERIFIED; this is the reproduction's.
-import type { EepromRecord } from "../../eeprom";
+import type { EepromRecord } from "../../../services/storage";
 
 export interface AlarmTime {
   readonly hour: number;

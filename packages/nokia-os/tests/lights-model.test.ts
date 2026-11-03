@@ -7,7 +7,7 @@ import {
   LIGHT_TIMEOUT_MS,
   StockLights,
   type StockLightEvent,
-} from "../src/firmware/features/backlight";
+} from "../src/kit/system/lights";
 import type { LightsGolden } from "../scripts/lights-format.ts";
 import {
   KEY_LIGHT_LATENCY_MAX_MS,

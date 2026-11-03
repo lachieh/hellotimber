@@ -3,14 +3,14 @@ import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { paintWidget, welcomeNoteLines } from "../src/kit/ui/display/widgets";
 import { StockEeprom } from "../src/firmware/eeprom";
-import { SECURITY_RECORD } from "../src/firmware/security";
+import { SECURITY_RECORD } from "../src/kit/system/security";
 import {
   GATE_BLANK_MS,
   GATED_WELCOME_END_MS,
   SELF_TEST_MS,
   WELCOME_BLANK_MS,
   WELCOME_NOTE_MS,
-} from "../src/firmware/boot";
+} from "../src/kit/system/boot";
 import { createMemoryStorage, createStockPhone, missingStockGlyphs } from "../src/index";
 import { GATE_HANDS_TIMELINE } from "../src/kit/ui/resources";
 import type { StockStorage } from "../src/index";

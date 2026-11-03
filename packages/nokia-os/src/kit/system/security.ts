@@ -1,6 +1,6 @@
 // The security code (plan 15 D6, D10): one EEPROM record shared by the boot gate and every
 // in-menu prompt, with the captured rules of Task 0 (A2-A5 entry, A3 lockout, B3 SIM, B4 change).
-import type { EepromRecord, StockEeprom } from "./eeprom";
+import type { EepromRecord, RecordStore } from "../../services/storage";
 import type { StockSettings } from "./settings";
 
 /** Phone security (6-3-5): a single choice behind the security code (the security feature). */
@@ -78,7 +78,7 @@ export interface StockSecurityOptions {
  * the lockout again at its first entry, as the capture shows a cold power-on still locked (A3).
  */
 export class StockSecurity {
-  readonly #eeprom: StockEeprom;
+  readonly #eeprom: RecordStore;
   readonly #settings: StockSettings;
   readonly #now: () => number;
   /** The inserted SIM card (D10). */
@@ -86,7 +86,7 @@ export class StockSecurity {
   /** When the lockout last (re)started, if this phone has seen it start. */
   #lockedAt: number | undefined;
 
-  constructor(eeprom: StockEeprom, settings: StockSettings, options: StockSecurityOptions = {}) {
+  constructor(eeprom: RecordStore, settings: StockSettings, options: StockSecurityOptions = {}) {
     this.#eeprom = eeprom;
     this.#settings = settings;
     this.#now = options.now ?? (() => 0);

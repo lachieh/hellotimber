@@ -13,7 +13,7 @@ import {
   KeyguardEngine,
   type KeyguardCalls,
   type KeyguardOutcome,
-} from "../src/firmware/features/keyguard";
+} from "../src/kit/system/keyguard";
 import { timelineByName } from "../src/kit/ui/timelines";
 import { findGoldenImage } from "../scripts/golden-format.ts";
 import { loadGolden } from "./support/goldens.ts";

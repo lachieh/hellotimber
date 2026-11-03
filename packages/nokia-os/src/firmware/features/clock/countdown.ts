@@ -9,9 +9,14 @@ import type { SoundPlay } from "../../../kit/ui/sound/sequencer";
 import type { Flow, Widget } from "../../../kit/ui/widgets/flow";
 import type { StockServices } from "../feature";
 import { bellsAt } from "./alarm";
-import { alertExit, alertLeadIn, standbyOf, type AlertStandby } from "./alerts";
-import { phoneClock } from "./registry";
-import type { StockClock } from "./service";
+import {
+  alertExit,
+  alertLeadIn,
+  standbyOf,
+  type AlertStandby,
+} from "../../../kit/system/clock/alerts";
+import { phoneClock } from "../../../kit/system/clock/registry";
+import type { StockClock } from "../../../kit/system/clock/service";
 
 /**
  * The countdown alert's bells step first this long after it is drawn (plan21 countdown/

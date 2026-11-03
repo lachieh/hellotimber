@@ -1,8 +1,8 @@
 // The stopwatch (plan 21 Task 10, D5): RAM state on kernel time (it keeps running while the phone
 // shows anything else; lost at power-off), and its standby indicator, blinking while it runs.
 import type { StockServices } from "../feature";
-import { phoneClock } from "./registry";
-import type { StockClock } from "./service";
+import { phoneClock } from "../../../kit/system/clock/registry";
+import type { StockClock } from "../../../kit/system/clock/service";
 
 /**
  * The standby indicator blinks while the stopwatch runs: shown, then hidden, this long each

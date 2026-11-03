@@ -36,7 +36,7 @@ import type { Firmware } from "./firmware";
 import { PlaceholderApplication } from "./placeholder";
 import { timelineById, timelineByName } from "../kit/ui/timelines";
 import { settingKey, slugOf } from "./tree";
-import type { StockSounder } from "../sound/sounder";
+import type { StockSounder } from "../kit/system/sounder";
 
 /** The soft key of Instructions pages (P12; the tree records only their text). */
 const TEXT_PAGES_SOFTKEY = "More";

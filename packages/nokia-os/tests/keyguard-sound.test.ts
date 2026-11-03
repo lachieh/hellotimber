@@ -3,7 +3,7 @@
 // (`keyguardSound`); these tests pin what they do not show.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
-import { KEYGUARD_TIMES } from "../src/firmware/features/keyguard";
+import { KEYGUARD_TIMES } from "../src/kit/system/keyguard";
 import { NOTE_SOUNDS } from "../src/kit/ui/resources";
 import { darkStandbyRig, lockedRig } from "./support/keyguard.ts";
 import { seededStorage } from "./support/rig.ts";

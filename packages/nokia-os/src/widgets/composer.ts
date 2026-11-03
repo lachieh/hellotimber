@@ -25,7 +25,7 @@ import {
   type StockWidgetTimeline,
 } from "../kit/ui/resources";
 import type { SoundPlay } from "../kit/ui/sound/sequencer";
-import type { StockSounder } from "../sound/sounder";
+import type { StockSounder } from "../kit/system/sounder";
 import type { Flow, Widget } from "../kit/ui/widgets/flow";
 import { note } from "../kit/ui/widgets/note";
 import { numberEntry } from "../kit/ui/widgets/number-entry";

@@ -2,9 +2,9 @@
 // and the vibrator, over one sequencer and the phone's settings. The phone wrapper tells it about
 // keys and power; widgets reach it through `LeafBinder` (previews, note tones).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { StockCue, StockCueSink } from "../firmware/cues";
-import type { StockSettings } from "../firmware/settings";
-import { LEVEL_REPEAT } from "../widgets/level-bar";
+import type { StockCue, StockCueSink } from "./cues";
+import type { StockSettings } from "./settings";
+import { LEVEL_REPEAT } from "../ui/widgets/key-repeat";
 import {
   BEEP_ONCE_LEVELS,
   BOOT_TONE,
@@ -18,16 +18,16 @@ import {
   RINGING_TONES,
   UNSET_MESSAGE_VOLUMES,
   VOLUME_RULE,
-} from "../kit/ui/resources";
-import { noteStarts, type SoundProgram } from "../kit/ui/sound/program";
+} from "../ui/resources";
+import { noteStarts, type SoundProgram } from "../ui/sound/program";
 import {
   BEEP_ONCE_RING,
   BEEP_ONCE_VIBRATOR,
   DTMF_PAIRS,
   DTMF_TAIL_MS,
   OFF_VIBRATOR,
-} from "../calls/sounds";
-import type { SoundPlay, SoundSequencer, SoundVolume } from "../kit/ui/sound/sequencer";
+} from "./call-sounds";
+import type { SoundPlay, SoundSequencer, SoundVolume } from "../ui/sound/sequencer";
 
 /**
  * The option lists that preview what they highlight (plan 16 D9), by setting slug, in Tones and
@@ -346,7 +346,7 @@ export class StockSounder implements StockCueSink {
     return { dtmf: { play, minEndMs: now + tapMs } };
   }
 
-  /** Plan 22: plays a call sound (`src/calls/sounds.ts`) from now, or from `atMs`. */
+  /** Plan 22: plays a call sound (`src/kit/system/call-sounds.ts`) from now, or from `atMs`. */
   callSound(program: SoundProgram, atMs: number = this.#now()): SoundPlay {
     return this.#sequencer.play(program, atMs);
   }

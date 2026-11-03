@@ -10,14 +10,14 @@ import { Playback } from "../../kit/ui/widgets/playback";
 import { timeEntry, type EntryMask } from "../../widgets/time-entry";
 import { timelineById, timelineByName } from "../../kit/ui/timelines";
 import { WIDGET_TIMELINE_BY_NODE } from "../../kit/ui/resources";
-import { clockOfSettings, phoneClock } from "./clock/registry";
-import { TIME_FORMAT } from "./clock/service";
-import { formatClock, formatDate, parseHostTime } from "./clock/time";
+import { clockOfSettings, phoneClock } from "../../kit/system/clock/registry";
+import { TIME_FORMAT } from "../../kit/system/clock/service";
+import { formatClock, formatDate, parseHostTime } from "../../kit/system/clock/time";
 import type { ScreenPlace, StockFeature, StockServices } from "./feature";
 import { phoneAlarm } from "./clock/alarm";
 import { countdownOf, phoneCountdown } from "./clock/countdown";
 import { phoneStopwatch } from "./clock/stopwatch";
-import { standbyOf } from "./clock/alerts";
+import { standbyOf } from "../../kit/system/clock/alerts";
 import { stopwatchWidget } from "../../widgets/stopwatch";
 import { OptionListWidget } from "../../widgets/option-list";
 

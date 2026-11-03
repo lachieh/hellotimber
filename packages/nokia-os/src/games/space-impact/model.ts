@@ -1,5 +1,5 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { StockCue } from "../../firmware/cues";
+import type { StockCue } from "../../kit/system/cues";
 
 export interface SpaceImpactPoint {
   readonly x: number;

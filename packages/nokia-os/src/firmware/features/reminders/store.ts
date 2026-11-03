@@ -3,7 +3,7 @@
 // factory settings. The virgin EEPROM holds one junk reminder (`0000000000`, P3): dormant here
 // (never listed or alerted, D8), it keeps View all and Erase on the level until Erase › All.
 import type { EepromRecord, StockEeprom } from "../../eeprom";
-import { minuteIndex, type PhoneTime } from "../clock/time";
+import { minuteIndex, type PhoneTime } from "../../../kit/system/clock/time";
 
 /** The memory holds this many reminders (plan21 reminders-full: the 11th asks to replace one). */
 export const REMINDERS_CAPACITY = 10;

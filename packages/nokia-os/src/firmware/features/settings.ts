@@ -7,9 +7,7 @@ import { note } from "../../kit/ui/widgets/note";
 import { OptionListWidget } from "../../widgets/option-list";
 import { timelineByName } from "../../kit/ui/timelines";
 import type { StockFeature, StockServices } from "./feature";
-
-/** The stored welcome note (a typed text; absent = no note). Plan 18's editor writes it. */
-export const WELCOME_NOTE_KEY = "settings/phone-settings/welcome-note";
+import { WELCOME_NOTE_KEY } from "../../kit/system/boot";
 
 /** The welcome note holds 36 characters (`welcome/editor` 36: the counter at 0, a 37th ignored). */
 export const WELCOME_NOTE_LIMIT = 36;

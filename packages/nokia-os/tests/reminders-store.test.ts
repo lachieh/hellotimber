@@ -2,7 +2,7 @@
 // reminders, malformed entries, Restore factory settings and the stored shape.
 import { describe, expect, it } from "vite-plus/test";
 import { createMemoryStorage, STOCK_STORAGE_PREFIX, StockEeprom } from "../src/firmware/eeprom";
-import { minuteIndex, type PhoneTime } from "../src/firmware/features/clock/time";
+import { minuteIndex, type PhoneTime } from "../src/kit/system/clock/time";
 import {
   REMINDERS_CAPACITY,
   REMINDERS_RECORD,

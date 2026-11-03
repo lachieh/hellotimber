@@ -8,7 +8,7 @@ import {
   minuteIndex,
   parseHostTime,
   type PhoneTime,
-} from "../src/firmware/features/clock/time";
+} from "../src/kit/system/clock/time";
 
 const at = (day: number, month: number, year: number, hour: number, minute: number): PhoneTime => ({
   year,
