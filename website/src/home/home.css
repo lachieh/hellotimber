@@ -1,270 +1,672 @@
-/* The homepage, plain and provisional (plan 32 Phase 2): a grid of the contents column, the phone
-   and the spread or page. Phase 3's Braun catalogue design replaces these styles. */
+/* The homepage as a product catalogue (website/DESIGN.md): a running head, the index, the phone as
+   the exhibit with its figure caption, and the spread, page or key guide. Palette and type come
+   from styles.css (`--paper`, `--ink`, `--ink-2`, `--hairline`, `--signal`). */
 
-.home {
+.cat {
   /* The phone at most its real size, 113 mm (4.45 in) tall. Browsers don't report a screen's
      physical size, so this goes by the CSS pixels in a real inch on each kind of screen: desktop
      and laptop displays ≈ 96–127 (110 at 1×, 120 on high-density ones), tablets ≈ 132, phones
      ≈ 160 (Android's dp, iPhones' points). */
   --ppi: 110;
   --real-phone: calc(var(--ppi) * 4.45px);
-  /* The stage, which the handset spans 0.87 of down (stage-frame.ts DESK_FIT). */
-  --stage: min(88vh, calc(var(--real-phone) / 0.87));
+  /* The stage, which the handset spans 0.87 of down (stage-frame.ts DESK_FIT), leaving the head
+     and the caption on screen. */
+  --stage: min(calc(100svh - 10rem), calc(var(--real-phone) / 0.87));
+  --margin: clamp(1.5rem, 3vw, 3rem);
+  --gutter: clamp(1.5rem, 3.5vw, 4rem);
+  --label: 0.8125rem;
+  --standfirst: 1.25rem;
+  --display: clamp(2.5rem, 1.75rem + 2vw, 3.5rem);
+
   position: relative;
   isolation: isolate;
-  min-height: 100vh;
+  min-height: 100svh;
   display: grid;
   grid-template-columns: 11rem auto minmax(0, 1fr);
-  grid-template-areas: "side phone main";
-  gap: 2rem 3rem;
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas:
+    "head head head"
+    "index exhibit main"
+    "colophon exhibit main";
+  column-gap: var(--gutter);
   align-items: start;
-  padding: 2rem;
-  background: #f4f3ef;
-  color: #1c1c1a;
-  font-family: ui-sans-serif, system-ui, sans-serif;
-  line-height: 1.5;
+  padding: 0 var(--margin) var(--margin);
 }
 
 @media (pointer: fine) and (min-resolution: 2dppx) {
-  .home {
+  .cat {
     --ppi: 120;
   }
 }
 
 @media (pointer: coarse) {
-  .home {
+  .cat {
     --ppi: 160;
   }
 }
 
 @media (pointer: coarse) and (min-width: 600px) and (min-height: 600px) {
-  .home {
+  .cat {
     --ppi: 132;
   }
 }
 
 /* Entered a section: the phone docks smaller beside its page. */
-.home[data-view="docked"] {
-  --stage: min(62vh, calc(var(--real-phone) / 0.87 * 0.62));
+.cat[data-view="docked"] {
+  --stage: min(calc(62svh - 4rem), calc(var(--real-phone) / 0.87 * 0.62));
 }
 
-/* Chat and Snake: the phone in the middle at real size, the key guide beside it. */
-.home[data-view="centred"] {
-  grid-template-columns: 11rem minmax(0, 1fr) auto minmax(0, 1fr);
-  grid-template-areas: "side . phone main";
+/* Chat and Snake: the phone in the middle at real size, the key guide beside it (on screens wide
+   enough to centre it; narrower ones keep the spread's columns). */
+@media (min-width: 1280px) {
+  .cat[data-view="centred"] {
+    grid-template-columns: 11rem minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-areas:
+      "head head head head"
+      "index . exhibit main"
+      "colophon . exhibit main";
+  }
 }
 
-.home a {
-  color: inherit;
-}
+/* --- Type and the browser's own surfaces ------------------------------ */
 
-.home :is(h1, h2) {
+.cat :is(h1, h2, p, ul, ol, dl, dd) {
   margin: 0;
-  line-height: 1.2;
 }
 
-.home h1 {
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-.home h2 {
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-.home-main a {
-  text-decoration: underline;
-}
-
-/* Above the phone's overscanned canvas, so their links stay clickable. */
-.home-side,
-.home-main {
-  position: relative;
-  z-index: 2;
-}
-
-.home-side {
-  grid-area: side;
-  display: grid;
-  gap: 2rem;
-}
-
-.home-contents ol {
-  margin: 0.75rem 0 0;
+.cat :is(ul, ol) {
   padding: 0;
   list-style: none;
-  display: grid;
-  gap: 0.25rem;
 }
 
-.home-contents__name {
-  font-weight: 700;
+.cat a {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in oklch, var(--ink) 35%, transparent);
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color 150ms var(--ease-out);
+}
+
+.cat a:hover {
+  text-decoration-color: var(--ink);
+}
+
+.cat :is(a, button):focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+.cat kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 0 0.35em;
+  border: 1px solid var(--ink);
+  border-radius: 3px;
+  font: 600 0.8125rem/1.35 var(--font);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.cat-label {
+  font-size: var(--label);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.cat-num {
+  font-variant-numeric: tabular-nums;
+}
+
+.cat-display {
+  font-size: var(--display);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+/* The section's number on the phone's menu, lighter, beside its name. */
+.cat-display__num {
+  font-weight: 400;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.cat-standfirst {
+  font-size: var(--standfirst);
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+/* --- Running head ------------------------------------------------------ */
+
+.cat-head {
+  grid-area: head;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+  margin-bottom: 2.5rem;
+  padding: 1.25rem 0 0.75rem;
+  border-bottom: 1px solid var(--ink);
+  font-size: var(--label);
+  line-height: 1.35;
+}
+
+.cat-head__name {
+  font-weight: 600;
+  text-decoration: none !important;
+}
+
+.cat-head__line {
+  grid-column: 2 / -1;
+  color: var(--ink-2);
+}
+
+/* --- Index ------------------------------------------------------------- */
+
+.cat-index {
+  grid-area: index;
+  position: relative;
+  z-index: 2;
+  /* Its label stands above the row, so its rule lines up with the phone's top and the heading. */
+  margin-top: calc(-1.35 * var(--label) - 0.75rem);
+}
+
+.cat-index ol {
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--ink);
+}
+
+.cat-index li {
+  position: relative;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.cat-index a {
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  padding: 0.45rem 0;
+  font-weight: 500;
   text-decoration: none;
 }
 
-.home-contents [aria-current="page"] {
-  font-weight: 700;
+.cat-index a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
 }
 
-.home-colophon {
+.cat-index .cat-num {
+  color: var(--ink-2);
+  font-weight: 400;
+}
+
+.cat-index [aria-current="page"] {
+  font-weight: 650;
+}
+
+/* Where the phone is: the one mark in the signal colour, hung in the margin. */
+.cat-index li[data-marked]::before {
+  content: "";
+  position: absolute;
+  left: -1rem;
+  top: 50%;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  translate: 0 -50%;
+  background: var(--signal);
+}
+
+/* --- Colophon ---------------------------------------------------------- */
+
+.cat-colophon {
+  grid-area: colophon;
+  position: relative;
+  z-index: 2;
   display: grid;
-  gap: 0.5rem;
+  gap: 0.75rem;
   justify-items: start;
-  font-size: 0.875rem;
+  margin-top: 3rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--hairline);
+  font-size: var(--label);
+  line-height: 1.35;
 }
 
-.home-colophon button {
-  font: inherit;
-  border: 1px solid currentColor;
+.cat-colophon ul {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.cat-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: -0.375rem 0;
+  padding: 0.375rem 0;
+  border: 0;
   background: none;
-  padding: 0.125rem 0.5rem;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
   cursor: pointer;
 }
 
-.home-colophon button[aria-pressed="true"] {
-  background: #1c1c1a;
-  color: #f4f3ef;
+.cat-switch__lamp {
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  transition:
+    background-color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out);
 }
 
-.home-phone {
-  grid-area: phone;
+.cat-switch[aria-checked="true"] .cat-switch__lamp {
+  border-color: var(--signal);
+  background: var(--signal);
+}
+
+.cat-switch__state {
+  min-width: 1.75rem;
+  color: var(--ink-2);
+  font-weight: 400;
+}
+
+/* --- Exhibit ----------------------------------------------------------- */
+
+.cat-exhibit {
+  grid-area: exhibit;
   position: sticky;
-  top: 2rem;
+  top: 1.5rem;
   z-index: 1;
+  /* The handset spans 0.87 of the stage, centred: lift it so its top meets the row's top. */
+  margin-top: calc(var(--stage) * -0.065);
 }
 
-.home-phone__stage {
+.cat-exhibit__stage {
   position: relative;
-  z-index: 1;
   height: var(--stage);
   width: calc(var(--stage) * 0.55);
   transition:
-    height 400ms ease,
-    width 400ms ease;
+    height 320ms var(--ease-out),
+    width 320ms var(--ease-out);
 }
 
 /* A vertical swipe that starts on the phone scrolls the page; taps still reach the keys. */
-.home-phone__stage,
-.home-phone__stage canvas {
+.cat-exhibit__stage,
+.cat-exhibit__stage canvas {
   touch-action: pan-y;
 }
 
-/* A soft shadow the size of the handset. PhoneSlot sets `--phone-rest` (0 drawn flat, 1 at rest)
-   and `--phone-leap` (1 at the top of the reveal's lift). */
-.home-phone__shadow {
+/* A soft shadow the size of the handset, as under a product photographed on paper. PhoneSlot
+   sets `--phone-rest` (0 drawn flat, 1 at rest) and `--phone-leap` (1 at the top of the lift). */
+.cat-exhibit__shadow {
   --rest: var(--phone-rest, 0);
   --leap: var(--phone-leap, 0);
   position: absolute;
   z-index: 0;
   left: 50%;
   top: 50%;
-  width: calc(var(--stage) * 0.38);
+  width: calc(var(--stage) * 0.36);
   height: calc(var(--stage) * 0.8);
-  translate: calc(-50% + 6px + var(--rest) * 24px + var(--leap) * 30px)
-    calc(-50% + 8px + var(--rest) * 28px + var(--leap) * 36px);
+  translate: calc(-50% + var(--rest) * 18px + var(--leap) * 26px)
+    calc(-50% + var(--rest) * 24px + var(--leap) * 32px);
   border-radius: 46% 46% 40% 40% / 22% 22% 18% 18%;
-  background: rgb(0 0 0 / 0.35);
-  filter: blur(calc(3px + var(--rest) * 13px + var(--leap) * 14px));
+  background: oklch(21% 0.004 95 / 0.28);
+  filter: blur(calc(2px + var(--rest) * 16px + var(--leap) * 12px));
+  opacity: var(--rest);
   pointer-events: none;
 }
 
-.home-main {
-  grid-area: main;
-  max-width: 68ch;
+.cat-exhibit__caption {
+  /* As wide as the stage, never wider: the caption mustn't widen the phone's column. */
+  contain: inline-size;
+  width: 100%;
+  /* Clear of the drawing's width dimension below the phone. */
+  margin-top: 1.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--hairline);
 }
 
-.home-spread,
-.home-page,
-.home-guide {
-  display: grid;
-  gap: 1rem;
+.cat-caption {
+  font-size: var(--label);
+  line-height: 1.4;
+  color: var(--ink-2);
+  text-wrap: pretty;
 }
 
-.home-spread__number {
-  margin: 0;
-  font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.home-specs {
-  margin: 0;
-  display: grid;
-  border-top: 1px solid currentColor;
-}
-
-.home-specs > div {
-  display: grid;
-  grid-template-columns: 8rem 1fr;
-  gap: 1rem;
-  padding: 0.375rem 0;
-  border-bottom: 1px solid rgb(0 0 0 / 0.2);
-}
-
-.home-specs dt {
+.cat-caption__fig {
+  margin-right: 0.35em;
+  color: var(--ink);
   font-weight: 600;
 }
 
-.home-specs dd {
-  margin: 0;
+.cat-caption kbd {
+  color: var(--ink);
 }
 
-.home-entries,
-.home-links {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+/* The strip's controls only exist on narrow screens (below). */
+.cat-exhibit__open,
+.cat-exhibit__toggle {
+  display: none;
+}
+
+.phone-callouts {
+  z-index: 2;
+  font-size: 1rem;
+  animation: cat-fade 400ms var(--ease-out) both;
+}
+
+/* --- Spread, page, key guide ------------------------------------------ */
+
+.cat-main {
+  grid-area: main;
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+
+/* The heading's capitals, not its line box, meet the row's top. */
+.cat-main .cat-display {
+  margin-top: -0.12em;
+}
+
+.cat-spread {
   display: grid;
-  gap: 1.25rem;
+  gap: 1rem;
+  max-width: 32rem;
+  animation: cat-turn 260ms var(--ease-out);
 }
 
-.home-entries p {
-  margin: 0.25rem 0;
+.cat-spread .cat-standfirst {
+  margin-bottom: 1rem;
+  max-width: 26em;
 }
 
-.home-entries__when {
+.cat-specs {
+  border-top: 1px solid var(--ink);
+}
+
+.cat-specs > div {
+  display: grid;
+  grid-template-columns: minmax(6rem, 10rem) minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.5rem 0 0.5625rem;
+  border-bottom: 1px solid var(--hairline);
   font-variant-numeric: tabular-nums;
 }
 
-/* Phones and narrow windows: one column, the contents first, the phone, then the spread or page. */
+.cat-specs dt {
+  color: var(--ink-2);
+  font-size: var(--label);
+  line-height: 1.5rem;
+}
+
+.cat-more {
+  margin-top: 0.75rem;
+  color: var(--ink-2);
+  font-size: var(--label);
+}
+
+.cat-more a {
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.cat-guide .cat-specs + .cat-specs {
+  margin-top: 1.5rem;
+}
+
+.cat-keys > div {
+  grid-template-columns: 5rem minmax(0, 1fr);
+}
+
+.cat-keys dt {
+  color: var(--ink);
+}
+
+.cat-guide {
+  max-width: 26rem;
+}
+
+/* A section's page: the standfirst, then a reading column of about 68 characters. */
+.cat-page {
+  display: grid;
+  gap: 1rem;
+  max-width: 42rem;
+  padding-bottom: 4rem;
+}
+
+.cat-page__body {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  max-width: 68ch;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.cat-page__body > .cat-specs,
+.cat-page__body > .cat-entries,
+.cat-page__body > .cat-list {
+  margin-bottom: 1rem;
+}
+
+.cat-list {
+  border-top: 1px solid var(--ink);
+}
+
+.cat-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.cat-entries {
+  border-top: 1px solid var(--ink);
+}
+
+.cat-entries li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 1.5rem;
+  row-gap: 0.25rem;
+  padding: 1rem 0 1.125rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.cat-entries h2 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.cat-entries__when {
+  color: var(--ink-2);
+  font-size: var(--label);
+  line-height: 1.4rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cat-entries__body {
+  grid-column: 1 / -1;
+}
+
+/* The spread turning to the next item: quick, and only a nudge. */
+@keyframes cat-turn {
+  from {
+    opacity: 0.15;
+    translate: 0 0.375rem;
+  }
+}
+
+@keyframes cat-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cat-spread {
+    animation-name: cat-fade;
+    animation-duration: 150ms;
+  }
+
+  .cat-exhibit__stage {
+    transition: none;
+  }
+}
+
+/* --- Narrow screens: one column; the index first, then the phone and its spread or page --- */
+
 @media (max-width: 899px) {
-  .home,
-  .home[data-view="centred"] {
-    --stage: min(70vh, calc(var(--real-phone) / 0.87));
+  .cat,
+  .cat[data-view="centred"] {
+    --stage: min(70svh, calc(var(--real-phone) / 0.87));
+    --margin: 1.25rem;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "side" "phone" "main";
-    padding: 1rem;
+    grid-template-rows: none;
+    grid-template-areas: "head" "index" "exhibit" "main" "colophon";
+  }
+
+  .cat-head {
+    display: flex;
+    justify-content: space-between;
     gap: 1rem;
+    margin-bottom: 0.75rem;
   }
 
-  .home[data-view="docked"] {
-    --stage: min(40vh, calc(var(--real-phone) / 0.87 * 0.5));
+  .cat-index .cat-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
   }
 
-  .home-side {
-    gap: 0.5rem;
-  }
-
-  .home-contents ol {
+  .cat-index ol {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem 1rem;
-    margin-top: 0.25rem;
+    gap: 0 1.25rem;
+    margin: 0;
+    border: 0;
   }
 
-  .home-colophon {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1rem;
+  .cat-index li {
+    border: 0;
   }
 
-  .home-phone {
+  .cat-index a {
+    display: inline-flex;
+    gap: 0.375rem;
+    padding: 0.375rem 0;
+  }
+
+  .cat-index li[data-marked]::before {
+    left: -0.75rem;
+    width: 0.375rem;
+    height: 0.375rem;
+  }
+
+  .cat-index {
+    margin-top: 0;
+  }
+
+  .cat-exhibit {
     position: relative;
     top: 0;
     justify-self: center;
+    margin: 1rem 0 1.5rem;
   }
 
-  .home-phone__stage {
-    width: min(100vw - 2rem, calc(var(--stage) * 0.55));
+  .cat-exhibit__stage {
+    width: min(100vw - 2 * var(--margin), calc(var(--stage) * 0.55));
+    margin-inline: auto;
+  }
+
+  .cat-exhibit__caption {
+    margin-top: 2.25rem;
+  }
+
+  .cat-spread,
+  .cat-page {
+    max-width: none;
+  }
+
+  .cat-colophon {
+    margin-top: 2.5rem;
+  }
+
+  /* A section's page: the phone docks as a strip above it, small enough to read past, and opens
+     to full size on a tap. */
+  .cat[data-view="docked"] .cat-exhibit {
+    justify-self: stretch;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 1rem;
+    margin: 0.5rem 0 2rem;
+    padding: 0.5rem 0;
+    border-block: 1px solid var(--hairline);
+  }
+
+  .cat[data-view="docked"]:not([data-phone="open"]) {
+    --stage: 9rem;
+  }
+
+  .cat[data-view="docked"][data-phone="open"] {
+    --stage: min(70svh, calc(var(--real-phone) / 0.87));
+  }
+
+  .cat[data-view="docked"]:not([data-phone="open"]) .phone-fill {
+    pointer-events: none;
+  }
+
+  .cat[data-view="docked"] .cat-exhibit__caption {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    contain: none;
+    display: grid;
+    gap: 0.75rem;
+    justify-items: start;
+  }
+
+  .cat[data-view="docked"]:not([data-phone="open"]) .cat-exhibit__open {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+  }
+
+  .cat[data-view="docked"] .cat-exhibit__toggle {
+    display: inline-block;
+    padding: 0.5rem 0.875rem;
+    border: 1px solid var(--ink);
+    border-radius: 2px;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--label);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .cat[data-view="docked"] .cat-exhibit__toggle[aria-expanded="false"] {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  /* Opened: the phone at full size across the strip, the caption and toggle under it. */
+  .cat[data-view="docked"][data-phone="open"] .cat-exhibit {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    row-gap: 1rem;
   }
 }

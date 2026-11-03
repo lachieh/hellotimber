@@ -26,7 +26,7 @@ import {
   TAB_LABELS,
   type PanelTab,
 } from "./panel-state";
-import { DEFAULT_STAGE, fitForScale, type StageSettings } from "./stage-settings";
+import { DEFAULT_STAGE, DRAWING, fitForScale, type StageSettings } from "./stage-settings";
 import { StageTab } from "./StageTab";
 import { WorldTab } from "./WorldTab";
 import "./emulator.css";
@@ -114,7 +114,12 @@ export default function NokiaEmulator() {
     <div className="emu" data-panel={panel.open ? "open" : "closed"}>
       <section className="emu-stage" aria-label="The phone" aria-describedby="emu-keys">
         {runtime === undefined ? (
-          <Nokia3310Sketch className="emu-sketch" fit={fitForScale(stage.scale)} progress={0.6} />
+          <Nokia3310Sketch
+            className="emu-sketch"
+            fit={fitForScale(stage.scale)}
+            progress={0.6}
+            {...DRAWING}
+          />
         ) : (
           <StageBoundary>
             <Suspense
@@ -123,6 +128,7 @@ export default function NokiaEmulator() {
                   className="emu-sketch"
                   fit={fitForScale(stage.scale)}
                   progress={0.8}
+                  {...DRAWING}
                 />
               }
             >

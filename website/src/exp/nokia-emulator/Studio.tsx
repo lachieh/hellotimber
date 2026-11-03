@@ -9,6 +9,7 @@ import { REVEAL_MS, revealAt, WIPE_MS } from "../../phone/reveal";
 import type { PhoneRuntime } from "../../phone/runtime";
 import type { Emulator } from "./emulator";
 import {
+  DRAWING,
   fitForScale,
   floatAt,
   keyLightPosition,
@@ -206,7 +207,9 @@ export default function Studio({
         pressedKeys={pressedKeys}
         onKey={(key, action) => emulator.input(key, action)}
       />
-      {wipe < 1 && <Nokia3310Sketch className="emu-sketch" fit={fit} progress={1} wipe={wipe} />}
+      {wipe < 1 && (
+        <Nokia3310Sketch className="emu-sketch" fit={fit} progress={1} wipe={wipe} {...DRAWING} />
+      )}
     </div>
   );
 }

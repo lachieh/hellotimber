@@ -1,7 +1,8 @@
+import type { Callout } from "@hellotimber/phone-3d/sketch";
 import { ClientOnly, createFileRoute, Outlet, useRouterState } from "@tanstack/react-router";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import ScreenMirror from "../components/ScreenMirror";
-import { Colophon, Contents, HomeViewContext } from "../home/Home";
+import { Colophon, Contents, ExhibitCaption, HomeViewContext, RunningHead } from "../home/Home";
 import { useHighlightedSection, useRouterSync } from "../home/use-phone";
 import { homeView } from "../home/view";
 import PhoneSlot from "../phone/PhoneSlot";
@@ -13,6 +14,20 @@ const PHONE_ASSETS = [
   "/models/nokia3310-v3.glb",
   "/draco/draco_wasm_wrapper.js",
   "/draco/draco_decoder.wasm",
+];
+
+/**
+ * Spec callouts: leader lines from the formed phone's parts to labels beside it (plan 32 D7).
+ * Off: judged in the browser, they compete with the spread for the same reading path and repeat
+ * the caption's dimensions; the drawing's own dimension lines carry the spec-sheet idea.
+ */
+const SPEC_CALLOUTS = false;
+
+const CALLOUTS: readonly Callout[] = [
+  { target: "screen", label: "Display, 84 × 48 px" },
+  { target: "key_navi", label: "Navi key: Menu, Select" },
+  { target: "key_c", label: "C: back, clear" },
+  { target: "key_5", label: "Keypad, T9" },
 ];
 
 export const Route = createFileRoute("/_home")({
@@ -36,21 +51,48 @@ function HomeLayout() {
   const highlighted = useHighlightedSection();
   const view = homeView(pathname, highlighted);
   useRouterSync();
+  // Narrow screens dock the phone as a strip above a section's page; this opens it to full size.
+  // Leaving the page (by its route) closes it again.
+  const [opened, setOpened] = useState<string | undefined>(undefined);
+  const open = view?.kind === "docked" && opened === pathname;
+  const callouts = SPEC_CALLOUTS && view?.kind !== "docked" ? CALLOUTS : undefined;
   return (
-    <div className="home" data-view={view?.kind ?? "spread"}>
-      <header className="home-side">
-        <Contents />
-        <Colophon />
-      </header>
-      <section className="home-phone" aria-label="The phone" aria-describedby="home-phone-keys">
-        <p id="home-phone-keys" className="sr-only">
+    <div className="cat" data-view={view?.kind ?? "spread"} data-phone={open ? "open" : undefined}>
+      <RunningHead />
+      <Contents marked={view?.section} />
+      <section className="cat-exhibit" aria-label="The phone" aria-describedby="cat-phone-keys">
+        <p id="cat-phone-keys" className="sr-only">
           A working Nokia 3310. Arrow keys scroll, Enter is the middle key, Escape or Backspace is
           C, 0 to 9, star and hash type, and P is power. What the screen shows is read out as it
           changes.
         </p>
-        <div className="home-phone__shadow" aria-hidden="true" />
-        <div className="home-phone__stage">
-          <PhoneSlot />
+        <div className="cat-exhibit__stage">
+          <div className="cat-exhibit__shadow" aria-hidden="true" />
+          <PhoneSlot callouts={callouts} />
+          {view?.kind === "docked" && (
+            // The strip's phone is too small to press: a tap opens it (the toggle below does the
+            // same for the keyboard and screen readers).
+            <button
+              type="button"
+              className="cat-exhibit__open"
+              tabIndex={-1}
+              aria-hidden="true"
+              onClick={() => setOpened(pathname)}
+            />
+          )}
+        </div>
+        <div className="cat-exhibit__caption">
+          <ExhibitCaption view={view} />
+          {view?.kind === "docked" && (
+            <button
+              type="button"
+              className="cat-exhibit__toggle"
+              aria-expanded={open}
+              onClick={() => setOpened(open ? undefined : pathname)}
+            >
+              {open ? "Smaller" : "Use the phone"}
+            </button>
+          )}
         </div>
         <ClientOnly>
           <Suspense>
@@ -58,11 +100,12 @@ function HomeLayout() {
           </Suspense>
         </ClientOnly>
       </section>
-      <main className="home-main">
+      <main className="cat-main">
         <HomeViewContext.Provider value={view}>
           <Outlet />
         </HomeViewContext.Provider>
       </main>
+      <Colophon />
     </div>
   );
 }

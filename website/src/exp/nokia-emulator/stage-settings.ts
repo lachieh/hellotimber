@@ -1,6 +1,9 @@
 import type { StageDrift, StageOrbit } from "@hellotimber/phone-3d";
 import { REVEAL_MS } from "../../phone/reveal";
 
+/** The phone's technical drawing in the studio: light lines on the dark stage. */
+export const DRAWING = { ink: "#c9ced3", paper: "#16181b" } as const;
+
 /** What the Stage tab sets about the studio. */
 export interface StageSettings {
   /** The key light's bearing around the phone, degrees clockwise from the camera (0 = front). */

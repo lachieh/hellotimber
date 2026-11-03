@@ -1,4 +1,5 @@
-import { Nokia3310Sketch } from "@hellotimber/phone-3d/sketch";
+import { Nokia3310Callouts, Nokia3310Sketch } from "@hellotimber/phone-3d/sketch";
+import type { Callout } from "@hellotimber/phone-3d/sketch";
 import { ClientOnly } from "@tanstack/react-router";
 import {
   Component,
@@ -54,11 +55,12 @@ class StageBoundary extends Component<{ onError: () => void; children: ReactNode
 const LIFT_FOR_FULL_SHADOW = 0.16;
 
 /**
- * The homepage phone. The server sends it drawn flat in comic ink, its LCD loading; once
+ * The homepage phone. The server sends it as a technical drawing, its LCD loading; once
  * three.js, the model and the firmware are in, the drawing turns into the 3D phone top to
- * bottom and the phone lifts off the page (reveal.ts). Mounted once per session, like the stage inside it.
+ * bottom and the phone lifts off the page (reveal.ts). Mounted once per session, like the stage
+ * inside it. `callouts` label the phone's parts once it has formed.
  */
-export default function PhoneSlot() {
+export default function PhoneSlot({ callouts }: { callouts?: readonly Callout[] }) {
   const [formed, setFormed] = useState(false);
   const [loaded, setLoaded] = useState<Loaded>({ page: false, stage: false, firmware: false });
   const [failed, setFailed] = useState(false);
@@ -99,7 +101,7 @@ export default function PhoneSlot() {
   // The shadow under the phone (home.css) follows it as it lifts.
   const fill = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
-    const phone = fill.current?.closest<HTMLElement>(".home-phone");
+    const phone = fill.current?.closest<HTMLElement>(".cat-exhibit");
     if (!phone) return;
     phone.style.setProperty("--phone-rest", String(Math.min(1, Math.max(0, frame.pose.depth))));
     phone.style.setProperty(
@@ -135,6 +137,9 @@ export default function PhoneSlot() {
         lcdText={failed ? CANT_SWITCH_ON : undefined}
         wipe={failed ? 0 : frame.wipe}
       />
+      {callouts !== undefined && formed && frame.wipe >= 1 && (
+        <Nokia3310Callouts className="phone-callouts" fit={DESK_FIT} callouts={callouts} />
+      )}
     </div>
   );
 }
