@@ -1,0 +1,161 @@
+/* The /exp frame (plan 32 D17) and the instrument tokens experiments share (D5): near-black
+   surfaces, one signal colour, amber for warnings, a crisp small sans and tabular mono. */
+
+.exp {
+  --exp-bg: #0a0b0c;
+  --exp-surface: #111214;
+  --exp-surface-2: #17191b;
+  --exp-surface-3: #1e2023;
+  --exp-line: rgba(232, 238, 240, 0.09);
+  --exp-line-strong: rgba(232, 238, 240, 0.16);
+  --exp-text: #e5e8ea;
+  --exp-text-2: #a2a8ad;
+  --exp-text-3: #7c838a;
+  /* The signal colour: the 3310's backlit LCD green, the one hue the instruments use. */
+  --exp-signal: #8fe3a5;
+  --exp-signal-dim: rgba(143, 227, 165, 0.16);
+  --exp-amber: #f0b44c;
+  --exp-amber-dim: rgba(240, 180, 76, 0.14);
+  --exp-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --exp-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --exp-bar-h: 44px;
+
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-rows: var(--exp-bar-h) minmax(0, 1fr);
+  background: var(--exp-bg);
+  color: var(--exp-text);
+  font-family: var(--exp-sans);
+  font-size: 12px;
+  line-height: 1.4;
+  color-scheme: dark;
+  accent-color: var(--exp-signal);
+  caret-color: var(--exp-signal);
+  -webkit-font-smoothing: antialiased;
+}
+
+.exp ::selection {
+  background: var(--exp-signal-dim);
+  color: var(--exp-text);
+}
+
+.exp :focus-visible {
+  outline: 1px solid var(--exp-signal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.exp * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--exp-line-strong) transparent;
+}
+
+.exp ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.exp ::-webkit-scrollbar-thumb {
+  background: var(--exp-line-strong);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.exp-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--exp-line);
+  background: var(--exp-bg);
+  min-width: 0;
+}
+
+.exp-bar__home {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--exp-text-2);
+  text-decoration: none;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  padding: 4px 2px;
+  transition: color 120ms ease-out;
+}
+
+.exp-bar__home:hover {
+  color: var(--exp-text);
+}
+
+.exp-bar__rule {
+  width: 1px;
+  height: 16px;
+  background: var(--exp-line-strong);
+}
+
+.exp-bar__title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.exp-bar__subtitle {
+  font-family: var(--exp-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--exp-text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.exp-bar__writeup {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--exp-text-2);
+  text-decoration: underline;
+  text-decoration-color: var(--exp-line-strong);
+  text-underline-offset: 3px;
+}
+
+.exp-bar__writeup:hover {
+  color: var(--exp-text);
+  text-decoration-color: var(--exp-signal);
+}
+
+.exp-main {
+  position: relative;
+  min-height: 0;
+  min-width: 0;
+}
+
+@media (max-width: 759px) {
+  .exp-bar__home span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+}
+
+.exp-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--exp-text-3);
+  font-family: var(--exp-mono);
+  font-size: 11px;
+}

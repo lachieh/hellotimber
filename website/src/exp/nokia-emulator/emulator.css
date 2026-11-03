@@ -1,0 +1,103 @@
+/* /exp/nokia-emulator: the studio stage and the inspector dock (plan 32 D4-D6). Tokens: exp.css. */
+
+.emu {
+  --emu-dock: 344px;
+  --emu-rail: 44px;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  transition: grid-template-columns 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.emu[data-panel="closed"] {
+  grid-template-columns: minmax(0, 1fr) var(--emu-rail);
+}
+
+/* --- Stage ------------------------------------------------------------------------------------ */
+
+.emu-stage {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  /* The cyclorama: a lit back wall curving into the floor, the light pooled behind the phone. */
+  background:
+    radial-gradient(ellipse 46% 36% at 50% 42%, rgba(126, 134, 144, 0.2), transparent 70%),
+    radial-gradient(ellipse 80% 26% at 50% 88%, rgba(90, 86, 80, 0.16), transparent 75%),
+    linear-gradient(180deg, #1a1c1f 0%, #131416 52%, #0f1011 68%, #17181a 100%);
+}
+
+/* A faint floor line where the wall turns into the floor. */
+.emu-stage::after {
+  content: "";
+  position: absolute;
+  inset: 68% 0 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 40%);
+  pointer-events: none;
+}
+
+.emu-studio,
+.emu-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.emu-sketch {
+  z-index: 1;
+}
+
+.emu-stage-error {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 24px;
+  text-align: center;
+  color: var(--exp-amber);
+  max-width: 48ch;
+  margin-inline: auto;
+}
+
+.emu-keys {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0;
+  max-width: calc(100% - 28px);
+  color: var(--exp-text-3);
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.emu-keys kbd {
+  display: inline-block;
+  min-width: 18px;
+  padding: 0 4px;
+  border: 1px solid var(--exp-line-strong);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  font-family: var(--exp-mono);
+  font-size: 10px;
+  line-height: 15px;
+  text-align: center;
+  color: var(--exp-text-2);
+}
+
+@media (pointer: coarse) {
+  .emu-keys {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .emu,
+  .emu * {
+    transition: none !important;
+  }
+}

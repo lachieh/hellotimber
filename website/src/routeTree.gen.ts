@@ -14,6 +14,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PhoneIndexRouteImport } from './routes/_phone/index'
 import { Route as PhoneSplatRouteImport } from './routes/_phone/$'
 import { Route as ApiSmsRouteImport } from './routes/api/sms'
+import { Route as ExpNokiaEmulatorRouteImport } from './routes/exp/nokia-emulator'
 
 const PhoneRoute = PhoneRouteImport.update({
   id: '/_phone',
@@ -39,17 +40,24 @@ const ApiSmsRoute = ApiSmsRouteImport.update({
   path: '/api/sms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExpNokiaEmulatorRoute = ExpNokiaEmulatorRouteImport.update({
+  id: '/exp/nokia-emulator',
+  path: '/exp/nokia-emulator',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof PhoneIndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$': typeof PhoneSplatRoute
   '/api/sms': typeof ApiSmsRoute
+  '/exp/nokia-emulator': typeof ExpNokiaEmulatorRoute
 }
 export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$': typeof PhoneSplatRoute
   '/api/sms': typeof ApiSmsRoute
+  '/exp/nokia-emulator': typeof ExpNokiaEmulatorRoute
   '/': typeof PhoneIndexRoute
 }
 export interface FileRoutesById {
@@ -58,19 +66,21 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_phone/$': typeof PhoneSplatRoute
   '/api/sms': typeof ApiSmsRoute
+  '/exp/nokia-emulator': typeof ExpNokiaEmulatorRoute
   '/_phone/': typeof PhoneIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/$' | '/api/sms'
+  fullPaths: '/' | '/sitemap.xml' | '/$' | '/api/sms' | '/exp/nokia-emulator'
   fileRoutesByTo: FileRoutesByTo
-  to: '/sitemap.xml' | '/$' | '/api/sms' | '/'
+  to: '/sitemap.xml' | '/$' | '/api/sms' | '/exp/nokia-emulator' | '/'
   id:
     | '__root__'
     | '/_phone'
     | '/sitemap.xml'
     | '/_phone/$'
     | '/api/sms'
+    | '/exp/nokia-emulator'
     | '/_phone/'
   fileRoutesById: FileRoutesById
 }
@@ -78,6 +88,7 @@ export interface RootRouteChildren {
   PhoneRoute: typeof PhoneRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiSmsRoute: typeof ApiSmsRoute
+  ExpNokiaEmulatorRoute: typeof ExpNokiaEmulatorRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -117,6 +128,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSmsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/exp/nokia-emulator': {
+      id: '/exp/nokia-emulator'
+      path: '/exp/nokia-emulator'
+      fullPath: '/exp/nokia-emulator'
+      preLoaderRoute: typeof ExpNokiaEmulatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -136,6 +154,7 @@ const rootRouteChildren: RootRouteChildren = {
   PhoneRoute: PhoneRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiSmsRoute: ApiSmsRoute,
+  ExpNokiaEmulatorRoute: ExpNokiaEmulatorRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
