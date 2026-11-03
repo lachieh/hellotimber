@@ -1,84 +1,49 @@
-export interface PortfolioLink {
-  readonly kind: "social" | "service" | "project";
-  readonly id: string;
+/** A link off the site: Lachlan's profiles and his projects' repositories. */
+export interface ExternalLink {
   readonly name: string;
+  /** What the link shows: a handle or a short name. */
   readonly label: string;
-  readonly number: string;
   readonly href: string;
   readonly rel?: string;
-  readonly download?: boolean;
 }
 
-// Fiction numbers: https://www.acma.gov.au/phone-numbers-use-tv-shows-films-and-creative-works
-export const SOURCE_LINK = {
-  kind: "service",
-  id: "source",
-  name: "Source code",
-  label: "Source code",
-  number: "0755507687",
-  href: "https://github.com/lachieh/hellotimber",
-} satisfies PortfolioLink;
-
-export const LINKS = [
-  {
-    kind: "social",
-    id: "github",
+export const PROFILES = {
+  github: {
     name: "GitHub",
     label: "github.com/lachieh",
-    number: "0755504484",
     href: "https://github.com/lachieh",
     rel: "me",
   },
-  {
-    kind: "social",
-    id: "linkedin",
+  linkedin: {
     name: "LinkedIn",
     label: "linkedin.com/in/lachlanh",
-    number: "0755505465",
     href: "https://www.linkedin.com/in/lachlanh/",
     rel: "me",
   },
-  {
-    kind: "social",
-    id: "x",
-    name: "X",
-    label: "x.com/lachie_h",
-    number: "0755500009",
-    href: "https://x.com/lachie_h",
-    rel: "me",
-  },
-  {
-    kind: "social",
-    id: "bluesky",
+  bluesky: {
     name: "Bluesky",
     label: "heywood.dev",
-    number: "0755502583",
     href: "https://bsky.app/profile/heywood.dev",
     rel: "me",
   },
-  {
-    kind: "project",
-    id: "tambo",
-    name: "tambo",
-    label: "tambo",
-    number: "0755508262",
-    href: "https://github.com/tambo-ai/tambo",
-  },
-  {
-    kind: "project",
-    id: "wasmcloud-ts",
+  x: { name: "X", label: "x.com/lachie_h", href: "https://x.com/lachie_h", rel: "me" },
+} as const satisfies Record<string, ExternalLink>;
+
+export const REPOSITORIES = {
+  tambo: { name: "tambo", label: "tambo-ai/tambo", href: "https://github.com/tambo-ai/tambo" },
+  wasmcloudTs: {
     name: "wasmCloud TS",
-    label: "wasmCloud TS",
-    number: "0755509276",
+    label: "wasmCloud/typescript",
     href: "https://github.com/wasmCloud/typescript",
   },
-  {
-    kind: "project",
-    id: "herdr-cmux",
+  herdrCmux: {
     name: "herdr-plugin-cmux",
-    label: "herdr-plugin-cmux",
-    number: "0755504373",
+    label: "lachieh/herdr-plugin-cmux",
     href: "https://github.com/lachieh/herdr-plugin-cmux",
   },
-  SOURCE_LINK,
-] satisfies readonly PortfolioLink[];
+  source: {
+    name: "Source code",
+    label: "lachieh/hellotimber",
+    href: "https://github.com/lachieh/hellotimber",
+  },
+} as const satisfies Record<string, ExternalLink>;

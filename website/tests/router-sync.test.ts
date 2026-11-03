@@ -1,6 +1,6 @@
-import { createStockPhone, createMemoryStorage } from "@hellotimber/nokia-os";
-import { PORTFOLIO_SIM } from "../src/content/sim";
-import type { Phone } from "@hellotimber/phone-core";
+import { createFirmwarePhone, createMemoryStorage } from "@hellotimber/nokia-os";
+import type { Phone, PhoneKey } from "@hellotimber/phone-core";
+import { homeFirmware } from "../src/home/firmware";
 import type { AnyRouter } from "@tanstack/react-router";
 import { describe, expect, it } from "vite-plus/test";
 import { connectPhoneToRouter } from "../src/phone/router-sync";
@@ -39,101 +39,130 @@ function fakeRouter(initialPathname: string) {
   return fake;
 }
 
-function bootedPhone(): Phone {
-  const phone = createStockPhone({
-    carrier: "LACHLAN",
-    boot: "skip",
-    storage: createMemoryStorage(),
-    sim: PORTFOLIO_SIM,
-  });
+/** A homepage phone at standby; `press` sends a key and lets it settle. */
+function homePhone(on = true) {
+  const phone = createFirmwarePhone(
+    homeFirmware(() => {}),
+    {
+      carrier: "LACHLAN",
+      boot: "skip",
+      storage: createMemoryStorage(),
+      t9: {},
+    },
+  );
+  let now = 0;
+  const wait = (ms: number) => {
+    const end = now + ms;
+    while (now < end) phone.tick(++now);
+  };
+  const press = (key: PhoneKey) => {
+    phone.send({ type: "down", key });
+    wait(50);
+    phone.send({ type: "up", key });
+    wait(1000);
+  };
   phone.tick(0);
-  phone.pressKey("power", 1000);
-  return phone;
+  if (on) {
+    phone.send({ type: "down", key: "power" });
+    wait(1000);
+    phone.send({ type: "up", key: "power" });
+    wait(1000);
+  }
+  return { phone, press, wait };
 }
 
 function connect(router: ReturnType<typeof fakeRouter>, phone: Phone): () => void {
   return connectPhoneToRouter(router as unknown as AnyRouter, phone);
 }
 
+const carouselItem = (phone: Phone) =>
+  phone.screen.kind === "menu-carousel" ? phone.screen.label : phone.screen.kind;
+
 describe("connectPhoneToRouter", () => {
-  it("aligns the phone to the URL on connect (deep link, even from off)", () => {
-    const router = fakeRouter("/menu/games/snake");
-    const phone = bootedPhone(); // off — navigate boots it
+  it("opens the phone at a deep link's section, even from off", () => {
+    const router = fakeRouter("/work");
+    const { phone, wait } = homePhone(false);
     connect(router, phone);
+    wait(3000);
+    expect(phone.path).toBe("menu/work");
+    expect(router.navigations).toEqual([]);
+  });
+
+  it("opens Snake II for /snake and Chat for /chat", () => {
+    const router = fakeRouter("/");
+    const { phone } = homePhone();
+    connect(router, phone);
+    router.settle("/snake");
     expect(phone.path).toBe("menu/games/snake");
-    expect(router.navigations).toEqual([]); // alignment never touches the URL
-  });
-
-  it("URL → phone: a settled navigation drives the phone", () => {
-    const router = fakeRouter("/");
-    const phone = bootedPhone();
-    connect(router, phone);
-    router.settle("/menu/chat");
+    router.settle("/chat");
     expect(phone.path).toBe("menu/chat");
+    expect(router.navigations).toEqual([]);
   });
 
-  it("URL → phone echo is suppressed: no router.navigate bounce", () => {
+  it("goes to a section's route when the phone enters it, and stays there inside it", () => {
     const router = fakeRouter("/");
-    const phone = bootedPhone();
+    const { phone, press } = homePhone();
     connect(router, phone);
-    router.settle("/menu/games");
-    expect(phone.path).toBe("menu/games");
-    expect(router.navigations).toEqual([]); // pathchange happened under the echo flag
+    press("navi");
+    expect(router.navigations).toEqual([]);
+    press("down");
+    press("navi");
+    expect(router.navigations).toEqual([{ to: "/work", replace: false }]);
+    press("navi");
+    expect(phone.path).toBe("menu/work/tambo");
+    expect(router.navigations).toHaveLength(1);
   });
 
-  it("phone → URL: keypad navigation pushes exactly one URL (no loop)", () => {
-    const router = fakeRouter("/");
-    const phone = bootedPhone();
+  it("returns to / when C leaves a section, the carousel on its item", () => {
+    const router = fakeRouter("/about");
+    const { phone, press } = homePhone();
     connect(router, phone);
-    phone.pressKey("navi"); // standby → menu carousel
+    press("c");
+    expect(router.navigations).toEqual([{ to: "/", replace: false }]);
+    expect(carouselItem(phone)).toBe("About");
+  });
+
+  it("puts the carousel on the section's item when the URL goes back to /", () => {
+    const router = fakeRouter("/work");
+    const { phone, press } = homePhone();
+    connect(router, phone);
+    press("navi");
+    expect(phone.path).toBe("menu/work/tambo");
+    router.settle("/");
     expect(phone.path).toBe("menu");
-    expect(router.navigations).toEqual([{ to: "/menu", replace: false }]);
-    // the fake settled the URL, the bridge saw it, the idempotence guard stopped it
+    expect(carouselItem(phone)).toBe("Work");
+    expect(router.navigations).toEqual([]);
   });
 
-  it("phone → URL: returning to standby replaces history", () => {
-    const router = fakeRouter("/menu/chat");
-    const phone = bootedPhone();
+  it("replaces the entry when the phone drops to standby", () => {
+    const router = fakeRouter("/work");
+    const { phone, wait } = homePhone();
     connect(router, phone);
-    phone.navigate("standby"); // e.g. hold-C
+    phone.send({ type: "down", key: "c" });
+    wait(2000);
+    phone.send({ type: "up", key: "c" });
+    wait(100);
+    expect(phone.path).toBe("standby");
     expect(router.navigations).toEqual([{ to: "/", replace: true }]);
   });
 
-  it("unknown URLs settle the phone on standby without navigating the router", () => {
+  it("leaves the phone alone on a route it isn't on", () => {
     const router = fakeRouter("/");
-    const phone = bootedPhone();
+    const { phone } = homePhone();
     connect(router, phone);
-    phone.pressKey("navi");
-    router.navigations.length = 0;
-    router.settle("/some/unknown/page");
-    expect(phone.path).toBe("standby"); // phonePathFromUrl shape fallback
-    expect(router.navigations).toEqual([]); // echo flag swallows the pathchange
+    router.settle("/writing/how-i-built-a-nokia-3310");
+    expect(phone.path).toBe("standby");
   });
 
-  it("disconnect stops both directions", () => {
+  it("stops syncing once disconnected", () => {
     const router = fakeRouter("/");
-    const phone = bootedPhone();
+    const { phone, press } = homePhone();
     const disconnect = connect(router, phone);
     disconnect();
-    router.settle("/menu/chat");
+    router.settle("/about");
     expect(phone.path).toBe("standby");
-    phone.pressKey("navi");
-    expect(router.navigations).toEqual([]);
-  });
-
-  it("aligns SIM projects without an echo", () => {
-    const phone = bootedPhone();
-    const router = fakeRouter("/menu/sim-services/projects");
-    connect(router, phone);
-    expect(phone.path).toBe("menu/sim-services/projects");
-    expect(router.navigations).toEqual([]);
-  });
-  it("standby name browsing keeps the root URL", () => {
-    const phone = bootedPhone();
-    const router = fakeRouter("/");
-    connect(router, phone);
-    phone.pressKey("down");
-    expect(phone.path).toBe("standby");
+    press("navi");
+    press("navi");
     expect(router.navigations).toEqual([]);
   });
 });

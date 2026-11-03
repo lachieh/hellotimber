@@ -3,7 +3,7 @@ import type { FormPose, Nokia3310Key } from "@hellotimber/phone-3d";
 import { useEffect, useState } from "react";
 import { attachKeyboard } from "./keyboard";
 import { DESK_FIT, MOBILE, MOBILE_FIT } from "./stage-frame";
-import { getPhoneRuntime } from "./stock-phone";
+import { getHomeRuntime } from "../home/runtime";
 
 /**
  * Bridges the phone runtime to the 3D stage. Client-only (lives under
@@ -19,8 +19,8 @@ export default function PhoneStageHost({
 }) {
   // `input` is a closure on the runtime object, not a class method — no `this`.
   // oxlint-disable-next-line unbound-method
-  const { renderer, input } = getPhoneRuntime();
-  const { lights } = getPhoneRuntime();
+  const { renderer, input } = getHomeRuntime();
+  const { lights } = getHomeRuntime();
   const [leds, setLeds] = useState({ display: false, keypad: false });
   const [version, setVersion] = useState(renderer.version);
 
@@ -41,7 +41,7 @@ export default function PhoneStageHost({
     };
   }, [renderer, lights]);
 
-  // Mobile: the phone spans 95% of the screen's limiting side (desk.css's mobile breakpoint).
+  // Mobile: the phone spans 95% of the screen's limiting side (home.css's mobile breakpoint).
   const [mobile, setMobile] = useState(() => window.matchMedia(MOBILE).matches);
   useEffect(() => {
     const media = window.matchMedia(MOBILE);

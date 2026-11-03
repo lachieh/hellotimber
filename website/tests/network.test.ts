@@ -1,30 +1,30 @@
 import { afterEach, expect, it, vi } from "vite-plus/test";
-import { createMemoryStorage, createStockPhone, describeStockScreen } from "@hellotimber/nokia-os";
-import { createPortfolioNetwork, LINK_CALL_MS, NO_ANSWER_MS } from "../src/phone/network";
+import {
+  createFirmwarePhone,
+  createMemoryStorage,
+  describeFirmwareScreen,
+} from "@hellotimber/nokia-os";
+import type { ScreenModel } from "@hellotimber/phone-core";
+import { homeFirmware } from "../src/home/firmware";
+import { HOME_SIM } from "../src/home/runtime";
+import { createPortfolioNetwork, NO_ANSWER_MS } from "../src/phone/network";
 import { createThreads } from "../src/phone/threads";
 import type { PhoneKey } from "@hellotimber/phone-core";
-import { PORTFOLIO_SIM } from "../src/content/sim";
 import { generateReply, validateSmsRequest } from "../src/messages/generate-reply";
 import { PEOPLE } from "../src/content/people";
-import { LINKS } from "../src/content/links";
 
 const number = PEOPLE[0]!.number;
-const github = LINKS.find((link) => link.id === "github")!;
+const firmware = homeFirmware(() => {});
+const describe = (screen: ScreenModel) => describeFirmwareScreen(firmware, screen);
 function setup(fetcher = vi.fn<typeof fetch>(async () => Response.json({ reply: "Hello!" }))) {
   const storage = createMemoryStorage();
-  const open = vi.fn();
-  const assign = vi.fn();
-  const download = vi.fn();
   const network = createPortfolioNetwork({
     storage,
     simId: "test",
     fetch: fetcher,
     now: () => new Date("2026-10-29T20:30:40Z"),
-    open,
-    assign,
-    download,
   });
-  return { network, fetcher, storage, open, assign, download };
+  return { network, fetcher, storage };
 }
 afterEach(() => vi.useRealTimers());
 it("posts a persona's history and delivers its reply with New York time", async () => {
@@ -75,26 +75,6 @@ it("settles sending on HTTP acceptance before reading the reply body", async () 
   finish({ reply: "Later" });
   await vi.waitFor(() => expect(deliver).toHaveBeenCalledOnce());
 });
-it("opens links synchronously, reports call progress and cancels release on hangup", () => {
-  vi.useFakeTimers();
-  const { network, open, assign, download } = setup();
-  const control = { alerting: vi.fn(), connected: vi.fn(), released: vi.fn() };
-  network.dial!({ number: github.number, emergency: false }, control);
-  expect(open).toHaveBeenCalledWith(github.href, "_blank", "noopener,noreferrer");
-  expect(control.alerting).toHaveBeenCalledOnce();
-  expect(control.connected).toHaveBeenCalledOnce();
-  vi.advanceTimersByTime(LINK_CALL_MS);
-  expect(control.released).toHaveBeenCalledOnce();
-  const link = network.dial!({ number: github.number, emergency: false }, control);
-  link.hangUp();
-  vi.advanceTimersByTime(LINK_CALL_MS);
-  expect(control.released).toHaveBeenCalledOnce();
-  const linkedin = LINKS.find((link) => link.id === "linkedin")!;
-  network.dial!({ number: linkedin.number, emergency: false }, control);
-  expect(open).toHaveBeenCalledWith(linkedin.href, "_blank", "noopener,noreferrer");
-  expect(assign).not.toHaveBeenCalled();
-  expect(download).not.toHaveBeenCalled();
-});
 it("leaves personas unanswered and rejects unknown numbers", () => {
   vi.useFakeTimers();
   const { network } = setup();
@@ -116,9 +96,8 @@ function requestBody(fetcher: ReturnType<typeof setup>["fetcher"], index: number
   return JSON.parse(body);
 }
 
-function stock() {
+function home() {
   const storage = createMemoryStorage();
-  const open = vi.fn();
   const fetcher = vi.fn<typeof fetch>(async (_url, init) => {
     if (typeof init?.body !== "string") throw Error("Missing body");
     const request = validateSmsRequest(JSON.parse(init.body));
@@ -134,14 +113,13 @@ function stock() {
   });
   const network = createPortfolioNetwork({
     storage,
-    simId: PORTFOLIO_SIM.id,
+    simId: HOME_SIM.id,
     fetch: fetcher,
-    open,
   });
-  const phone = createStockPhone({
+  const phone = createFirmwarePhone(firmware, {
     boot: "skip",
     carrier: "LACHLAN",
-    sim: PORTFOLIO_SIM,
+    sim: HOME_SIM,
     storage,
     network,
     t9: {},
@@ -160,48 +138,10 @@ function stock() {
   phone.tick(0);
   press("power", 1000);
   wait(1000);
-  return { phone, press, wait, open, fetcher };
+  return { phone, press, wait, fetcher };
 }
-it("opens GitHub during the stock phone's Navi event", () => {
-  vi.useFakeTimers();
-  const { phone, press, wait, open } = stock();
-  press("down");
-  wait(1000);
-  for (let n = 0; n < 12 && !describeStockScreen(phone.screen).includes("GitHub"); n++)
-    press("down");
-  expect(describeStockScreen(phone.screen)).toContain("GitHub");
-  press("navi");
-  expect(open).toHaveBeenCalledWith(github.href, "_blank", "noopener,noreferrer");
-});
-it("writes an SMS through stock keys and receives the canned reply in Inbox", async () => {
-  const { phone, press, wait, fetcher } = stock();
-  phone.navigate("menu/messages/write");
-  wait(1000);
-  press("4");
-  press("4");
-  wait(1500);
-  press("4");
-  press("4");
-  press("4");
-  wait(1500);
-  press("navi");
-  wait(500);
-  press("navi");
-  wait(500);
-  for (const digit of number) press(digit as PhoneKey);
-  press("navi");
-  await vi.waitFor(() => expect(fetcher).toHaveBeenCalledOnce());
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  wait(10000);
-  phone.navigate("menu/messages/inbox");
-  wait(3000);
-  expect(describeStockScreen(phone.screen)).toContain("Lachlan");
-  press("navi");
-  wait(1000);
-  expect(describeStockScreen(phone.screen)).toContain("G'day!");
-});
-it("uses the landed Chat implementation to send to a persona and show its reply", async () => {
-  const { phone, press, wait, fetcher } = stock();
+it("uses the homepage Chat to send to a persona and show its reply", async () => {
+  const { phone, press, wait, fetcher } = home();
   phone.navigate("menu/chat");
   wait(1000);
   for (const digit of number) press(digit as PhoneKey);
@@ -225,25 +165,23 @@ it("uses the landed Chat implementation to send to a persona and show its reply"
   await new Promise((resolve) => setTimeout(resolve, 0));
   wait(10000);
   expect(requestBody(fetcher, 0).text).toBe("A: Hi");
-  expect(describeStockScreen(phone.screen)).toContain("G'day!");
+  expect(describe(phone.screen)).toContain("G'day!");
 });
 
 it("rejects unknown dialled numbers with unallocated-number release", () => {
-  const { network, open } = setup();
+  const { network } = setup();
   const control = { alerting: vi.fn(), connected: vi.fn(), released: vi.fn() };
   network.dial!({ number: "0299999837", emergency: false }, control);
   expect(control.released).toHaveBeenCalledWith(1);
   expect(control.alerting).not.toHaveBeenCalled();
   expect(control.connected).not.toHaveBeenCalled();
-  expect(open).not.toHaveBeenCalled();
 });
 it("shows the stock network-failure screen for an unknown number, then standby", () => {
-  const { phone, press, wait, open } = stock();
+  const { phone, press, wait } = home();
   for (const digit of "0299999837") press(digit as PhoneKey);
   press("navi");
   wait(400);
-  expect(describeStockScreen(phone.screen)).toContain("Call 1, ended");
-  expect(open).not.toHaveBeenCalled();
+  expect(describe(phone.screen)).toContain("Call 1, ended");
   wait(3000);
   expect(phone.screen.kind).toBe("standby");
 });

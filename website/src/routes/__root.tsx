@@ -1,4 +1,4 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { site } from "../content/site";
@@ -41,7 +41,21 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: NotFound,
 });
+
+/** Any URL that isn't a page (plan 32 D15: the old `/menu/...` ones too, with no redirects). */
+function NotFound() {
+  return (
+    <main className="not-found">
+      <h1>Not found</h1>
+      <p>There's no page here.</p>
+      <p>
+        <Link to="/">Back to the phone</Link>
+      </p>
+    </main>
+  );
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -52,7 +66,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
-        {/* No chrome — the phone is the entire page. */}
         {children}
         <TanStackDevtools
           config={{

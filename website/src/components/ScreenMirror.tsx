@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import { getPhoneRuntime } from "../phone/stock-phone";
-import { describeStockScreen } from "@hellotimber/nokia-os";
+import { getHomeRuntime } from "../home/runtime";
 
 /** Visually-hidden, polite live region that mirrors the handset screen for AT. */
 export default function ScreenMirror() {
-  const { phone } = getPhoneRuntime();
+  const { phone, describe } = getHomeRuntime();
   const [text, setText] = useState("");
   useEffect(() => {
-    setText(describeStockScreen(phone.screen));
-    return phone.subscribe((snap) => setText(describeStockScreen(snap.screen)));
-  }, [phone]);
+    setText(describe(phone.screen));
+    return phone.subscribe((snap) => setText(describe(snap.screen)));
+  }, [phone, describe]);
   return (
     <p className="sr-only" aria-live="polite" role="status">
       {text}

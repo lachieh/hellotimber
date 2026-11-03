@@ -6,7 +6,7 @@ import * as THREE from "three";
 import type { StageDrift } from "@hellotimber/phone-3d";
 import { attachKeyboard } from "../../phone/keyboard";
 import { REVEAL_MS, revealAt, WIPE_MS } from "../../phone/reveal";
-import type { PhoneRuntime } from "../../phone/stock-phone";
+import type { PhoneRuntime } from "../../phone/runtime";
 import type { Emulator } from "./emulator";
 import {
   fitForScale,

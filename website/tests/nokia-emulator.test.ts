@@ -12,11 +12,10 @@ import { INITIAL_PANEL, panelReducer } from "../src/exp/nokia-emulator/panel-sta
 import {
   batteryBars,
   formatOffset,
-  memoryStorage,
-  scopedStorage,
   shiftedDate,
   signalBars,
 } from "../src/exp/nokia-emulator/world";
+import { memoryStorage, scopedStorage } from "../src/phone/storage";
 
 describe("panel state", () => {
   it("toggles open and closed, keeping the tab", () => {

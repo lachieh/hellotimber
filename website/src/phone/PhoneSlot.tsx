@@ -16,7 +16,7 @@ import type { ReactNode } from "react";
 import { DRAWN } from "./reveal";
 import { getRevealFrame, playReveal, subscribeReveal } from "./reveal-player";
 import { DESK_FIT, MOBILE_FIT } from "./stage-frame";
-import { loadPhoneRuntime } from "./stock-phone";
+import { loadHomeRuntime } from "../home/runtime";
 
 let stageModule: Promise<typeof import("./PhoneStageHost")> | undefined;
 const loadStage = () => (stageModule ??= import("./PhoneStageHost"));
@@ -28,7 +28,7 @@ const LOADING_SHARE = { page: 0.1, stage: 0.5, firmware: 0.2 } as const;
 type Loaded = Record<keyof typeof LOADING_SHARE, boolean>;
 
 /** What the drawing's LCD says when the 3D phone can't load (no WebGL, or its code or model
- *  failed): the desk and its links still work around it. */
+ *  failed): the page and its links still work around it. */
 const CANT_SWITCH_ON = ["Can't switch", "on. Reload", "to try again"] as const;
 
 function hasWebGL(): boolean {
@@ -50,13 +50,13 @@ class StageBoundary extends Component<{ onError: () => void; children: ReactNode
   }
 }
 
-/** How far the phone's lift (a share of the camera distance) is from the desk at its highest. */
+/** How far the phone's lift (a share of the camera distance) is from rest at its highest. */
 const LIFT_FOR_FULL_SHADOW = 0.16;
 
 /**
- * The phone on the desk. The server sends it drawn flat in comic ink, its LCD loading; once
+ * The homepage phone. The server sends it drawn flat in comic ink, its LCD loading; once
  * three.js, the model and the firmware are in, the drawing turns into the 3D phone top to
- * bottom and the phone leaps out of the desk (reveal.ts). Mounted once per session, like the stage inside it.
+ * bottom and the phone lifts off the page (reveal.ts). Mounted once per session, like the stage inside it.
  */
 export default function PhoneSlot() {
   const [formed, setFormed] = useState(false);
@@ -73,7 +73,7 @@ export default function PhoneSlot() {
     };
     mark("page")();
     void loadStage().then(mark("stage"), fail);
-    void loadPhoneRuntime().then(mark("firmware"));
+    void loadHomeRuntime().then(mark("firmware"));
     return () => {
       mounted = false;
     };
@@ -96,10 +96,10 @@ export default function PhoneSlot() {
 
   const frame = useSyncExternalStore(subscribeReveal, getRevealFrame, () => DRAWN);
 
-  // The desk's shadow (desk.css) follows the phone off the desk and back.
+  // The shadow under the phone (home.css) follows it as it lifts.
   const fill = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
-    const phone = fill.current?.closest<HTMLElement>(".d01-phone");
+    const phone = fill.current?.closest<HTMLElement>(".home-phone");
     if (!phone) return;
     phone.style.setProperty("--phone-rest", String(Math.min(1, Math.max(0, frame.pose.depth))));
     phone.style.setProperty(

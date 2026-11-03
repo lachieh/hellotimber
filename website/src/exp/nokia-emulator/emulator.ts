@@ -7,19 +7,17 @@ import {
 import type { PhoneKey, PhoneSnapshot } from "@hellotimber/phone-core";
 import { hostClock, hostDate, hostTimestamp } from "../../phone/host-clock";
 import { imeiForHash } from "../../phone/imei";
-import { loadEnglishT9, startStockRuntime, type PhoneRuntime } from "../../phone/stock-phone";
+import { loadEnglishT9, startPhoneRuntime, type PhoneRuntime } from "../../phone/runtime";
 import { appendLog, keyText, type LogEntry, type LogKind } from "./event-log";
 import {
   batteryBars,
   DEFAULT_WORLD,
   formatOffset,
-  memoryStorage,
-  scopedStorage,
   shiftedDate,
   signalBars,
-  type EnumerableStorage,
   type WorldSettings,
 } from "./world";
+import { hostStorage, scopedStorage } from "../../phone/storage";
 
 /** The emulator keeps its EEPROM apart from the homepage phone's. */
 export const EMULATOR_STORAGE_PREFIX = "hellotimber.exp.nokia-emulator/";
@@ -63,14 +61,6 @@ function machineOf(snapshot: Pick<PhoneSnapshot, "poweredOn" | "path" | "screen"
     kind: screen.kind === "custom" ? `custom:${screen.appId}` : screen.kind,
     text: describeStockScreen(screen),
   };
-}
-
-function hostStorage(): EnumerableStorage {
-  try {
-    return window.localStorage;
-  } catch {
-    return memoryStorage();
-  }
 }
 
 /**
@@ -149,7 +139,7 @@ export class Emulator {
     const world = () => this.#state.world;
     const english = await loadEnglishT9();
     if (generation !== this.#generation) return;
-    const starting = startStockRuntime({
+    const starting = startPhoneRuntime({
       english,
       carrier: EMULATOR_CARRIER,
       storage: this.storage,

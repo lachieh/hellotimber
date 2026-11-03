@@ -1,5 +1,5 @@
 import { site } from "./content/site";
-import { stockSitemapPaths } from "./phone/stock-routes";
+import { SECTIONS } from "./content/sections";
 
 export interface PageHeadInput {
   section?: string; // omit for home
@@ -28,11 +28,8 @@ export function pageHead(input: PageHeadInput): { meta: MetaTag[] } {
   };
 }
 
-/**
- * Canonical, indexable paths derived from PhoneMenu order and typed metadata.
- * SIM services, the 404 twin, is explicitly excluded by its noindex metadata.
- */
-export const SITEMAP_PATHS: string[] = stockSitemapPaths();
+/** The indexable paths: the homepage and its sections, in the phone's menu order. */
+export const SITEMAP_PATHS: readonly string[] = ["/", ...SECTIONS.map((section) => section.route)];
 
 export function personJsonLd(): Record<string, unknown> {
   return {

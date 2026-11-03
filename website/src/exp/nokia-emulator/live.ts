@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { PhoneRuntime } from "../../phone/stock-phone";
+import type { PhoneRuntime } from "../../phone/runtime";
 import type { Emulator } from "./emulator";
 
 /** What changes too often to publish through the emulator's state: sampled ten times a second. */

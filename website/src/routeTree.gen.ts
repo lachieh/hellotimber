@@ -9,15 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as PhoneRouteImport } from './routes/_phone'
+import { Route as HomeRouteImport } from './routes/_home'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as PhoneIndexRouteImport } from './routes/_phone/index'
-import { Route as PhoneSplatRouteImport } from './routes/_phone/$'
+import { Route as HomeIndexRouteImport } from './routes/_home/index'
+import { Route as HomeAboutRouteImport } from './routes/_home/about'
+import { Route as HomeChatRouteImport } from './routes/_home/chat'
+import { Route as HomeContactRouteImport } from './routes/_home/contact'
+import { Route as HomeNowRouteImport } from './routes/_home/now'
+import { Route as HomeSnakeRouteImport } from './routes/_home/snake'
+import { Route as HomeWorkRouteImport } from './routes/_home/work'
+import { Route as HomeWritingRouteImport } from './routes/_home/writing'
 import { Route as ApiSmsRouteImport } from './routes/api/sms'
 import { Route as ExpNokiaEmulatorRouteImport } from './routes/exp/nokia-emulator'
 
-const PhoneRoute = PhoneRouteImport.update({
-  id: '/_phone',
+const HomeRoute = HomeRouteImport.update({
+  id: '/_home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -25,15 +31,45 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PhoneIndexRoute = PhoneIndexRouteImport.update({
+const HomeIndexRoute = HomeIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => PhoneRoute,
+  getParentRoute: () => HomeRoute,
 } as any)
-const PhoneSplatRoute = PhoneSplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => PhoneRoute,
+const HomeAboutRoute = HomeAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => HomeRoute,
+} as any)
+const HomeChatRoute = HomeChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => HomeRoute,
+} as any)
+const HomeContactRoute = HomeContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => HomeRoute,
+} as any)
+const HomeNowRoute = HomeNowRouteImport.update({
+  id: '/now',
+  path: '/now',
+  getParentRoute: () => HomeRoute,
+} as any)
+const HomeSnakeRoute = HomeSnakeRouteImport.update({
+  id: '/snake',
+  path: '/snake',
+  getParentRoute: () => HomeRoute,
+} as any)
+const HomeWorkRoute = HomeWorkRouteImport.update({
+  id: '/work',
+  path: '/work',
+  getParentRoute: () => HomeRoute,
+} as any)
+const HomeWritingRoute = HomeWritingRouteImport.update({
+  id: '/writing',
+  path: '/writing',
+  getParentRoute: () => HomeRoute,
 } as any)
 const ApiSmsRoute = ApiSmsRouteImport.update({
   id: '/api/sms',
@@ -47,45 +83,91 @@ const ExpNokiaEmulatorRoute = ExpNokiaEmulatorRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof PhoneIndexRoute
+  '/': typeof HomeIndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/$': typeof PhoneSplatRoute
+  '/about': typeof HomeAboutRoute
+  '/chat': typeof HomeChatRoute
+  '/contact': typeof HomeContactRoute
+  '/now': typeof HomeNowRoute
+  '/snake': typeof HomeSnakeRoute
+  '/work': typeof HomeWorkRoute
+  '/writing': typeof HomeWritingRoute
   '/api/sms': typeof ApiSmsRoute
   '/exp/nokia-emulator': typeof ExpNokiaEmulatorRoute
 }
 export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/$': typeof PhoneSplatRoute
+  '/about': typeof HomeAboutRoute
+  '/chat': typeof HomeChatRoute
+  '/contact': typeof HomeContactRoute
+  '/now': typeof HomeNowRoute
+  '/snake': typeof HomeSnakeRoute
+  '/work': typeof HomeWorkRoute
+  '/writing': typeof HomeWritingRoute
   '/api/sms': typeof ApiSmsRoute
   '/exp/nokia-emulator': typeof ExpNokiaEmulatorRoute
-  '/': typeof PhoneIndexRoute
+  '/': typeof HomeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_phone': typeof PhoneRouteWithChildren
+  '/_home': typeof HomeRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/_phone/$': typeof PhoneSplatRoute
+  '/_home/about': typeof HomeAboutRoute
+  '/_home/chat': typeof HomeChatRoute
+  '/_home/contact': typeof HomeContactRoute
+  '/_home/now': typeof HomeNowRoute
+  '/_home/snake': typeof HomeSnakeRoute
+  '/_home/work': typeof HomeWorkRoute
+  '/_home/writing': typeof HomeWritingRoute
   '/api/sms': typeof ApiSmsRoute
   '/exp/nokia-emulator': typeof ExpNokiaEmulatorRoute
-  '/_phone/': typeof PhoneIndexRoute
+  '/_home/': typeof HomeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/$' | '/api/sms' | '/exp/nokia-emulator'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/sitemap.xml' | '/$' | '/api/sms' | '/exp/nokia-emulator' | '/'
-  id:
-    | '__root__'
-    | '/_phone'
+  fullPaths:
+    | '/'
     | '/sitemap.xml'
-    | '/_phone/$'
+    | '/about'
+    | '/chat'
+    | '/contact'
+    | '/now'
+    | '/snake'
+    | '/work'
+    | '/writing'
     | '/api/sms'
     | '/exp/nokia-emulator'
-    | '/_phone/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/sitemap.xml'
+    | '/about'
+    | '/chat'
+    | '/contact'
+    | '/now'
+    | '/snake'
+    | '/work'
+    | '/writing'
+    | '/api/sms'
+    | '/exp/nokia-emulator'
+    | '/'
+  id:
+    | '__root__'
+    | '/_home'
+    | '/sitemap.xml'
+    | '/_home/about'
+    | '/_home/chat'
+    | '/_home/contact'
+    | '/_home/now'
+    | '/_home/snake'
+    | '/_home/work'
+    | '/_home/writing'
+    | '/api/sms'
+    | '/exp/nokia-emulator'
+    | '/_home/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  PhoneRoute: typeof PhoneRouteWithChildren
+  HomeRoute: typeof HomeRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiSmsRoute: typeof ApiSmsRoute
   ExpNokiaEmulatorRoute: typeof ExpNokiaEmulatorRoute
@@ -93,11 +175,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_phone': {
-      id: '/_phone'
+    '/_home': {
+      id: '/_home'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof PhoneRouteImport
+      preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -107,19 +189,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_phone/': {
-      id: '/_phone/'
+    '/_home/': {
+      id: '/_home/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof PhoneIndexRouteImport
-      parentRoute: typeof PhoneRoute
+      preLoaderRoute: typeof HomeIndexRouteImport
+      parentRoute: typeof HomeRoute
     }
-    '/_phone/$': {
-      id: '/_phone/$'
-      path: '/$'
-      fullPath: '/$'
-      preLoaderRoute: typeof PhoneSplatRouteImport
-      parentRoute: typeof PhoneRoute
+    '/_home/about': {
+      id: '/_home/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof HomeAboutRouteImport
+      parentRoute: typeof HomeRoute
+    }
+    '/_home/chat': {
+      id: '/_home/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof HomeChatRouteImport
+      parentRoute: typeof HomeRoute
+    }
+    '/_home/contact': {
+      id: '/_home/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof HomeContactRouteImport
+      parentRoute: typeof HomeRoute
+    }
+    '/_home/now': {
+      id: '/_home/now'
+      path: '/now'
+      fullPath: '/now'
+      preLoaderRoute: typeof HomeNowRouteImport
+      parentRoute: typeof HomeRoute
+    }
+    '/_home/snake': {
+      id: '/_home/snake'
+      path: '/snake'
+      fullPath: '/snake'
+      preLoaderRoute: typeof HomeSnakeRouteImport
+      parentRoute: typeof HomeRoute
+    }
+    '/_home/work': {
+      id: '/_home/work'
+      path: '/work'
+      fullPath: '/work'
+      preLoaderRoute: typeof HomeWorkRouteImport
+      parentRoute: typeof HomeRoute
+    }
+    '/_home/writing': {
+      id: '/_home/writing'
+      path: '/writing'
+      fullPath: '/writing'
+      preLoaderRoute: typeof HomeWritingRouteImport
+      parentRoute: typeof HomeRoute
     }
     '/api/sms': {
       id: '/api/sms'
@@ -138,20 +262,32 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface PhoneRouteChildren {
-  PhoneSplatRoute: typeof PhoneSplatRoute
-  PhoneIndexRoute: typeof PhoneIndexRoute
+interface HomeRouteChildren {
+  HomeAboutRoute: typeof HomeAboutRoute
+  HomeChatRoute: typeof HomeChatRoute
+  HomeContactRoute: typeof HomeContactRoute
+  HomeNowRoute: typeof HomeNowRoute
+  HomeSnakeRoute: typeof HomeSnakeRoute
+  HomeWorkRoute: typeof HomeWorkRoute
+  HomeWritingRoute: typeof HomeWritingRoute
+  HomeIndexRoute: typeof HomeIndexRoute
 }
 
-const PhoneRouteChildren: PhoneRouteChildren = {
-  PhoneSplatRoute: PhoneSplatRoute,
-  PhoneIndexRoute: PhoneIndexRoute,
+const HomeRouteChildren: HomeRouteChildren = {
+  HomeAboutRoute: HomeAboutRoute,
+  HomeChatRoute: HomeChatRoute,
+  HomeContactRoute: HomeContactRoute,
+  HomeNowRoute: HomeNowRoute,
+  HomeSnakeRoute: HomeSnakeRoute,
+  HomeWorkRoute: HomeWorkRoute,
+  HomeWritingRoute: HomeWritingRoute,
+  HomeIndexRoute: HomeIndexRoute,
 }
 
-const PhoneRouteWithChildren = PhoneRoute._addFileChildren(PhoneRouteChildren)
+const HomeRouteWithChildren = HomeRoute._addFileChildren(HomeRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  PhoneRoute: PhoneRouteWithChildren,
+  HomeRoute: HomeRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiSmsRoute: ApiSmsRoute,
   ExpNokiaEmulatorRoute: ExpNokiaEmulatorRoute,

@@ -1,0 +1,270 @@
+/* The homepage, plain and provisional (plan 32 Phase 2): a grid of the contents column, the phone
+   and the spread or page. Phase 3's Braun catalogue design replaces these styles. */
+
+.home {
+  /* The phone at most its real size, 113 mm (4.45 in) tall. Browsers don't report a screen's
+     physical size, so this goes by the CSS pixels in a real inch on each kind of screen: desktop
+     and laptop displays ≈ 96–127 (110 at 1×, 120 on high-density ones), tablets ≈ 132, phones
+     ≈ 160 (Android's dp, iPhones' points). */
+  --ppi: 110;
+  --real-phone: calc(var(--ppi) * 4.45px);
+  /* The stage, which the handset spans 0.87 of down (stage-frame.ts DESK_FIT). */
+  --stage: min(88vh, calc(var(--real-phone) / 0.87));
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 11rem auto minmax(0, 1fr);
+  grid-template-areas: "side phone main";
+  gap: 2rem 3rem;
+  align-items: start;
+  padding: 2rem;
+  background: #f4f3ef;
+  color: #1c1c1a;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+@media (pointer: fine) and (min-resolution: 2dppx) {
+  .home {
+    --ppi: 120;
+  }
+}
+
+@media (pointer: coarse) {
+  .home {
+    --ppi: 160;
+  }
+}
+
+@media (pointer: coarse) and (min-width: 600px) and (min-height: 600px) {
+  .home {
+    --ppi: 132;
+  }
+}
+
+/* Entered a section: the phone docks smaller beside its page. */
+.home[data-view="docked"] {
+  --stage: min(62vh, calc(var(--real-phone) / 0.87 * 0.62));
+}
+
+/* Chat and Snake: the phone in the middle at real size, the key guide beside it. */
+.home[data-view="centred"] {
+  grid-template-columns: 11rem minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-areas: "side . phone main";
+}
+
+.home a {
+  color: inherit;
+}
+
+.home :is(h1, h2) {
+  margin: 0;
+  line-height: 1.2;
+}
+
+.home h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.home h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.home-main a {
+  text-decoration: underline;
+}
+
+/* Above the phone's overscanned canvas, so their links stay clickable. */
+.home-side,
+.home-main {
+  position: relative;
+  z-index: 2;
+}
+
+.home-side {
+  grid-area: side;
+  display: grid;
+  gap: 2rem;
+}
+
+.home-contents ol {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.home-contents__name {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.home-contents [aria-current="page"] {
+  font-weight: 700;
+}
+
+.home-colophon {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+  font-size: 0.875rem;
+}
+
+.home-colophon button {
+  font: inherit;
+  border: 1px solid currentColor;
+  background: none;
+  padding: 0.125rem 0.5rem;
+  cursor: pointer;
+}
+
+.home-colophon button[aria-pressed="true"] {
+  background: #1c1c1a;
+  color: #f4f3ef;
+}
+
+.home-phone {
+  grid-area: phone;
+  position: sticky;
+  top: 2rem;
+  z-index: 1;
+}
+
+.home-phone__stage {
+  position: relative;
+  z-index: 1;
+  height: var(--stage);
+  width: calc(var(--stage) * 0.55);
+  transition:
+    height 400ms ease,
+    width 400ms ease;
+}
+
+/* A vertical swipe that starts on the phone scrolls the page; taps still reach the keys. */
+.home-phone__stage,
+.home-phone__stage canvas {
+  touch-action: pan-y;
+}
+
+/* A soft shadow the size of the handset. PhoneSlot sets `--phone-rest` (0 drawn flat, 1 at rest)
+   and `--phone-leap` (1 at the top of the reveal's lift). */
+.home-phone__shadow {
+  --rest: var(--phone-rest, 0);
+  --leap: var(--phone-leap, 0);
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--stage) * 0.38);
+  height: calc(var(--stage) * 0.8);
+  translate: calc(-50% + 6px + var(--rest) * 24px + var(--leap) * 30px)
+    calc(-50% + 8px + var(--rest) * 28px + var(--leap) * 36px);
+  border-radius: 46% 46% 40% 40% / 22% 22% 18% 18%;
+  background: rgb(0 0 0 / 0.35);
+  filter: blur(calc(3px + var(--rest) * 13px + var(--leap) * 14px));
+  pointer-events: none;
+}
+
+.home-main {
+  grid-area: main;
+  max-width: 68ch;
+}
+
+.home-spread,
+.home-page,
+.home-guide {
+  display: grid;
+  gap: 1rem;
+}
+
+.home-spread__number {
+  margin: 0;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-specs {
+  margin: 0;
+  display: grid;
+  border-top: 1px solid currentColor;
+}
+
+.home-specs > div {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 1rem;
+  padding: 0.375rem 0;
+  border-bottom: 1px solid rgb(0 0 0 / 0.2);
+}
+
+.home-specs dt {
+  font-weight: 600;
+}
+
+.home-specs dd {
+  margin: 0;
+}
+
+.home-entries,
+.home-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.home-entries p {
+  margin: 0.25rem 0;
+}
+
+.home-entries__when {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Phones and narrow windows: one column, the contents first, the phone, then the spread or page. */
+@media (max-width: 899px) {
+  .home,
+  .home[data-view="centred"] {
+    --stage: min(70vh, calc(var(--real-phone) / 0.87));
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "side" "phone" "main";
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .home[data-view="docked"] {
+    --stage: min(40vh, calc(var(--real-phone) / 0.87 * 0.5));
+  }
+
+  .home-side {
+    gap: 0.5rem;
+  }
+
+  .home-contents ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin-top: 0.25rem;
+  }
+
+  .home-colophon {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+
+  .home-phone {
+    position: relative;
+    top: 0;
+    justify-self: center;
+  }
+
+  .home-phone__stage {
+    width: min(100vw - 2rem, calc(var(--stage) * 0.55));
+  }
+}

@@ -17,31 +17,16 @@ describe("seo", () => {
       title: "Lachlan Heywood",
     });
   });
-  it("sitemap paths are absolute, unique, and start with /", () => {
-    expect(SITEMAP_PATHS.length).toBeGreaterThan(10);
-    expect(new Set(SITEMAP_PATHS).size).toBe(SITEMAP_PATHS.length);
-    for (const p of SITEMAP_PATHS) expect(p.startsWith("/")).toBe(true);
-  });
-  it("preserves every sitemap path byte-for-byte in canonical order", () => {
+  it("lists the homepage and its sections in menu order, and nothing else (D15)", () => {
     expect(SITEMAP_PATHS).toEqual([
       "/",
-      "/menu",
-      "/menu/phone-book",
-      "/menu/phone-book/search",
-      "/menu/phone-book/service-nos",
-      "/menu/messages",
-      "/menu/messages/write",
-      "/menu/messages/inbox",
-      "/menu/chat",
-      "/menu/games",
-      "/menu/games/snake",
-      "/menu/calculator",
-      "/menu/reminders",
-      "/menu/reminders/view-all",
-      "/menu/clock",
-      "/menu/sim-services",
-      "/menu/sim-services/projects",
-      "/menu/sim-services/about",
+      "/about",
+      "/work",
+      "/writing",
+      "/now",
+      "/contact",
+      "/chat",
+      "/snake",
     ]);
   });
   it("Person JSON-LD has the expected shape", () => {

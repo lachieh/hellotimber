@@ -1,7 +1,8 @@
 import type { StockTimestamp } from "@hellotimber/nokia-os";
-import { clock } from "../content/clock";
+/** The phone keeps Lachlan's time: Atlanta, US Eastern. */
+const TIME_ZONE = "America/New_York";
 const formatter = new Intl.DateTimeFormat("en-AU", {
-  timeZone: clock.timeZone,
+  timeZone: TIME_ZONE,
   year: "numeric",
   month: "2-digit",
   day: "2-digit",

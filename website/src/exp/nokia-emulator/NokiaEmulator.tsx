@@ -14,7 +14,7 @@ import {
 } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
 import { REVEAL_MS } from "../../phone/reveal";
-import type { PhoneRuntime } from "../../phone/stock-phone";
+import type { PhoneRuntime } from "../../phone/runtime";
 import { Icon } from "./controls";
 import { Emulator } from "./emulator";
 import { Inspector } from "./Inspector";
