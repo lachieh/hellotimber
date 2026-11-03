@@ -30,9 +30,8 @@ function StudioEnvironment() {
   return null;
 }
 
-/** Device tilt (tilt.ts; none without a sensor), eased toward the target.
- *  Honors prefers-reduced-motion: the rig holds still for those users
- *  (plan 06 deviation 6 — the single sanctioned phone-3d edit). */
+/** Honors prefers-reduced-motion: the phone forms without its entrance, and device tilt doesn't
+ *  move the light (plan 06 deviation 6). */
 const prefersReducedMotion =
   typeof window !== "undefined" &&
   typeof window.matchMedia === "function" &&
@@ -152,16 +151,7 @@ function SwayRig({
   const group = useRef<Group>(null);
   const silhouette = useRef<Silhouette>(undefined);
   const forming = useRef<Forming>(undefined);
-  // The latest sensor reading and the rest pose it is measured from; unset without a sensor.
-  const tilt = useRef<{ now: ScreenTilt; rest: ScreenTilt }>(undefined);
-  useEffect(
-    () =>
-      watchTilt((now) => {
-        tilt.current = { now, rest: tilt.current?.rest ?? now };
-      }),
-    [],
-  );
-  useFrame((state, dt) => {
+  useFrame((state) => {
     const g = group.current;
     if (!g) return;
     // The model loads (suspends) after the rig mounts: measure once it is there.
@@ -194,27 +184,39 @@ function SwayRig({
     state.camera.position.set(x, y, z);
     // The leap: nearer the camera by a share of its distance.
     g.position.z = pose.lift * z;
-    if (prefersReducedMotion) {
-      g.rotation.y += (0 - g.rotation.y) * 0.1;
-      g.rotation.x += (0 - g.rotation.x) * 0.1;
-      return;
-    }
-    // Device tilt grows in as the phone settles; until then the forming wobble drives it. Without
-    // a tilt sensor the phone holds still.
-    const sway = pose.settled;
-    let turn = { x: 0, y: 0 };
-    if (tilt.current !== undefined) {
-      tilt.current.rest = settleRest(tilt.current.rest, tilt.current.now, dt);
-      turn = tiltRotation(tilt.current.rest, tilt.current.now);
-    }
-    const targetY = turn.y * sway;
-    const targetX = turn.x * sway;
-    if (sway < 1) {
-      g.rotation.set(pose.tiltX + targetX, pose.tiltY + targetY, 0);
-      return;
-    }
-    g.rotation.y += (targetY - g.rotation.y) * 0.05;
-    g.rotation.x += (targetX - g.rotation.x) * 0.05;
+    // The forming wobble; at rest the phone holds still (device tilt moves the light instead).
+    g.rotation.set(pose.tiltX, pose.tiltY, 0);
+  });
+  return <group ref={group}>{children}</group>;
+}
+
+/** How much further than the device's tilt the light swings, so the change in it reads. */
+const LIGHT_GAIN = 2.5;
+
+/**
+ * The lights and the environment's reflections, held still in the world while the device turns:
+ * tilting the handset the phone is shown on moves how the light falls across the phone, which
+ * itself stays put on the screen. Without a tilt sensor (or with reduced motion) the light stays.
+ */
+function TiltLights({ children }: { children: ReactNode }) {
+  const group = useRef<Group>(null);
+  const { scene } = useThree();
+  // The latest sensor reading and the rest pose it is measured from; unset without a sensor.
+  const tilt = useRef<{ now: ScreenTilt; rest: ScreenTilt }>(undefined);
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    return watchTilt((now) => {
+      tilt.current = { now, rest: tilt.current?.rest ?? now };
+    });
+  }, []);
+  useFrame((_, dt) => {
+    const g = group.current;
+    if (!g || tilt.current === undefined) return;
+    tilt.current.rest = settleRest(tilt.current.rest, tilt.current.now, dt);
+    // The world turns against the device, relative to its screen.
+    const turn = tiltRotation(tilt.current.rest, tilt.current.now);
+    g.rotation.set(turn.x * LIGHT_GAIN, turn.y * LIGHT_GAIN, 0);
+    scene.environmentRotation.set(turn.x * LIGHT_GAIN, turn.y * LIGHT_GAIN, 0);
   });
   return <group ref={group}>{children}</group>;
 }
@@ -239,7 +241,7 @@ export interface PhoneStageProps extends Nokia3310Props {
   pose?: () => FormPose;
 }
 
-/** Convenience scene: Canvas + lighting + resize + device-tilt motion (VISION contract).
+/** Convenience scene: Canvas + lighting + resize + light that moves with device tilt (VISION contract).
  *  R3F's Canvas tracks its container size, so resize works out of the box. */
 export function PhoneStage({
   className,
@@ -257,8 +259,10 @@ export function PhoneStage({
     >
       <StudioEnvironment />
       <ambientLight intensity={0.3} />
-      <directionalLight position={[4, 6, 8]} intensity={1.0} />
-      <directionalLight position={[-5, -2, 4]} intensity={0.3} />
+      <TiltLights>
+        <directionalLight position={[4, 6, 8]} intensity={1.0} />
+        <directionalLight position={[-5, -2, 4]} intensity={0.3} />
+      </TiltLights>
       <SwayRig fit={fit} form={form} onFormStart={onFormStart} pose={pose}>
         <Nokia3310 {...props} />
       </SwayRig>

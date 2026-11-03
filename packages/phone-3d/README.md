@@ -51,8 +51,9 @@ function MyPhone() {
 }
 ```
 
-`<PhoneStage>` creates its own R3F `<Canvas>` (lights, resize handling, and tilt from the
-device's orientation sensor, if there is one; otherwise the phone holds still). To compose into an existing scene, render `<Nokia3310 {...props}/>`
+`<PhoneStage>` creates its own R3F `<Canvas>` (lights, resize handling, and a light held still
+in the world while the device turns, read from its orientation sensor if it has one: the phone
+itself stays put on the screen). To compose into an existing scene, render `<Nokia3310 {...props}/>`
 inside your own `<Canvas>` instead.
 
 ## Server-rendered sketch and the form entrance

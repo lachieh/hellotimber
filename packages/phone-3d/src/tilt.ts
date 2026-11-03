@@ -1,7 +1,7 @@
 /**
- * Device tilt: the stage turns the phone with the handset it is shown on, read from the
- * orientation sensor. Devices without one (desktops) never report angles, so their phone only
- * sways.
+ * Device tilt, read from the orientation sensor: the stage holds its light still in the world as
+ * the handset it is shown on turns, so the light moves across the phone. Devices without a sensor
+ * (desktops) never report angles, so their light stays put.
  */
 
 /** A sensor reading in degrees: `beta` front-to-back, `gamma` left-to-right (DeviceOrientationEvent). */
@@ -16,7 +16,7 @@ export interface ScreenTilt {
   y: number;
 }
 
-/** Radians of phone rotation per degree of device tilt from rest, and the tilt that saturates. */
+/** Radians of rotation per degree of device tilt from rest, and the tilt that saturates. */
 const RADIANS_PER_DEGREE = 0.012;
 const MAX_DEGREES = 25;
 
@@ -49,8 +49,9 @@ export function settleRest(rest: ScreenTilt, now: ScreenTilt, dt: number): Scree
 }
 
 /**
- * The phone's rotation for the device tilted from `rest` to `now`: it turns against the device,
- * as if it stayed put in the world while the handset moved around it. Clamped at MAX_DEGREES.
+ * How the world turns relative to the screen when the device tilts from `rest` to `now`: against
+ * the device, as something held still in the world while the handset moves around it would.
+ * Clamped at MAX_DEGREES.
  */
 export function tiltRotation(rest: ScreenTilt, now: ScreenTilt): { x: number; y: number } {
   const clamp = (v: number) => Math.max(-MAX_DEGREES, Math.min(MAX_DEGREES, v));
