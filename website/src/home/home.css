@@ -397,6 +397,10 @@
   font-variant-numeric: tabular-nums;
 }
 
+.cat-specs dd {
+  text-wrap: pretty;
+}
+
 .cat-specs dt {
   color: var(--ink-2);
   font-size: var(--label);

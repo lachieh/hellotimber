@@ -210,16 +210,48 @@ contact,chat,snake}.tsx`. The sitemap lists those eight. Unknown URLs, `/menu/..
 
 ### Phase 3 - Braun catalogue visual
 
-- [ ] Run `/impeccable shape` on the catalogue direction: type (a self-hosted grotesk), the
+- [x] Run `/impeccable shape` on the catalogue direction: type (a self-hosted grotesk), the
       off-white palette with a single functional accent (Braun's signal green or orange), and the grid.
-- [ ] Redraw `Nokia3310Sketch` as a technical drawing: line weights, "Fig. 1", dimension lines. Keep
+- [x] Redraw `Nokia3310Sketch` as a technical drawing: line weights, "Fig. 1", dimension lines. Keep
       the wipe mask and the timing.
-- [ ] The landing composition: the phone at real size as the exhibit, the spread, the contents column,
+- [x] The landing composition: the phone at real size as the exhibit, the spread, the contents column,
       the colophon (mute, source link).
-- [ ] Section page template and docked phone. Spec callouts (D7) behind a flag, decided in a
+- [x] Section page template and docked phone. Spec callouts (D7) behind a flag, decided in a
       browser review.
-- [ ] Delete the desk, graffiti, pad and pencil case (D19). Rewrite DESIGN.md and its sidecar.
-- [ ] Run `/impeccable critique` and `polish`.
+- [x] Delete the desk, graffiti, pad and pencil case (D19). Rewrite DESIGN.md and its sidecar.
+- [x] Run `/impeccable critique` and `polish`.
+
+**As built (2026-11-03):**
+
+- **Direction** was set with Lachlan before the work, so the shape step ran from that brief rather
+  than an interview. `website/DESIGN.md` ("The 3310 in the Braun catalogue") and
+  `website/.impeccable/design.json` describe the system as built.
+- **Type:** Archivo (Omnibus-Type, OFL 1.1), variable 400–700, self-hosted in `website/public/fonts/`
+  (latin and latin-ext; the licence beside them), the latin file preloaded. Tabular figures for
+  spec values, dates and menu numbers.
+- **Palette** (OKLCH in `src/styles.css`): paper `#f4f3f0`, ink `#191816`, ink 2 `#565552`,
+  hairline `#cbcac7`, and one signal orange `#dd530f` for the phone's place in the index, the
+  sound lamp, focus rings and the caret. Light only: the template's dark theme script, its
+  sea/lagoon tokens, Google Fonts import and the Tailwind classes on `<body>` are gone.
+- **Grid:** a running head (subgrid) over index (11rem) | exhibit (the stage) | main; the index's
+  rule, the phone's top and the heading's capitals share one line. Section numbers are the menu
+  numbers the LCD shows. `/chat` and `/snake` centre the phone from 1280px wide.
+- **Drawing** (`phone-3d` `Nokia3310Sketch`): the front elevation in fixed-pixel line weights
+  (contour, detail, shading down the right side), dimension lines for 113 mm and 48 mm with filled
+  arrowheads, key legends in the page's font, a pale LCD pane with the loading bar or the
+  can't-switch-on text. `ink`/`paper` props draw it light on the emulator's dark stage. The wipe
+  keeps its mask and clock (edge from the phone's top to 0.9 below it); its edge is a fine rule
+  across the figure. "Fig. 1" is the HTML caption under the exhibit, which stays after the reveal.
+- **Spec callouts:** `Nokia3310Callouts` (phone-3d) behind `SPEC_CALLOUTS` in `routes/_home.tsx`,
+  set to **false**: in the browser the leader labels ran into the spread and the key guide and
+  repeated the caption and the drawing's dimensions.
+- **Narrow screens (≤ 899px):** one column (head, index as two wrapped lines, phone, spread or
+  page, colophon). A section page docks the phone as a strip (a 9rem phone beside its caption and
+  a "Use the phone" button); a tap on the phone or the button opens it to full size until the
+  route changes. The strip's phone takes taps only to open.
+- **Removed (D19):** the desk's fonts in `public/desk/` and the desk's surface brief.
+- **Detector:** `impeccable detect` is clean on the changed sources and on the built `/`, `/about`,
+  `/chat`, `/snake`, `/work` at 1440×900 and 390×844.
 
 ### Phase 4 - Writing
 
