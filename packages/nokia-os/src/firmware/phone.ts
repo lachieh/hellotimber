@@ -412,8 +412,9 @@ export function createStockPhoneWith(
   let booting = false;
   phone.subscribe((snapshot) => {
     if (!snapshot.poweredOn) powerOffGames(games);
-    // Plan 18 D9: messages delivered while off land once power-on reaches standby.
-    if (snapshot.poweredOn && snapshot.screen.kind === "standby") {
+    // Plan 18 D9: messages delivered while off land once power-on reaches standby, or the menu
+    // path a host's navigate() sent the boot to instead (a website's deep link).
+    if (snapshot.poweredOn && (snapshot.screen.kind === "standby" || snapshot.path !== "standby")) {
       messaging.atStandby();
       arrivals.atStandby();
     }

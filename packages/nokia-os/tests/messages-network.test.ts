@@ -199,6 +199,25 @@ describe("createStockPhone's network", () => {
     expect(store.inbox().map((m) => m.text)).toEqual(["Hello"]);
   });
 
+  it("receives once a boot that a host sent straight to a menu path ends there", () => {
+    const network = createSyntheticNetwork();
+    const storage = createMemoryStorage();
+    const phone = createStockPhone({ carrier: "Orange F", boot: "skip", storage, network });
+    let now = 0;
+    const until = (end: number) => {
+      while (now < end) phone.tick(++now);
+    };
+    phone.tick(0);
+    // A deep link: the boot ends in Messages, never drawing standby.
+    phone.navigate("menu/messages");
+    until(3000);
+    expect(phone.path).toBe("menu/messages");
+    network.deliver(HELLO);
+    until(3000 + RECEIVE_LINK_MS + 10);
+    const store = new StockMessages(new StockEeprom(storage), "sim-1");
+    expect(store.inbox().map((m) => m.text)).toEqual(["Hello"]);
+  });
+
   it("throws from deliver for a malformed SMS a host port passes on", () => {
     let deliver!: (sms: StockIncomingSms) => void;
     createStockPhone({
