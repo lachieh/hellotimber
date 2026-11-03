@@ -72,6 +72,7 @@
 
 .d01-pc__tape {
   display: block;
+  white-space: nowrap;
   padding: 3px 18px 1px;
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.06 0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.25  0.55 0 0 0 -0.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)'/%3E%3C/svg%3E"),
@@ -143,6 +144,8 @@
   color: #ffe75a;
 }
 
-.d01-case a:focus-visible {
+/* Marker yellow, not the desk's biro ring: navy on navy vanishes. Scoped under .desk to win over
+   desk.css's shared focus rule, which loads after this file. */
+.desk .d01-case a:focus-visible {
   outline-color: #ffe75a;
 }

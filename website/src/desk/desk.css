@@ -381,6 +381,11 @@
     --w: 290px;
   }
 
+  /* The name on its tape stays on one line on the narrower case. */
+  .d01-pc__tape {
+    font-size: 1.5rem;
+  }
+
   .d01-sticky {
     --w: 240px;
   }
@@ -410,22 +415,18 @@
     height: auto;
   }
 
-  /* The stage fills the screen and frames the phone to 95% of its limiting side
-     (PhoneStageHost's fit), but no more than the real phone: the handset is ≈ 0.43 as wide as
-     it is tall. */
+  /* The stage takes most of the first screen and frames the phone to 95% of its limiting side
+     (PhoneStageHost's fit), no more than the real phone (≈ 0.43 as wide as it is tall). It
+     leaves the top of the sticky pad, with what to press next, in view below it. */
   .d01-phone__stage {
     width: min(100%, calc(var(--d01-real-phone) * 0.43 / 0.95));
-    height: min(100svh, calc(var(--d01-real-phone) / 0.95));
+    height: min(74svh, calc(var(--d01-real-phone) / 0.95));
     margin-inline: auto;
   }
 
-  .d01-phone {
-    min-height: 100svh;
-  }
-
   .d01-phone__shadow {
-    width: calc(min(95svh, 95vw / 0.43, var(--d01-real-phone)) * 0.41);
-    height: calc(min(95svh, 95vw / 0.43, var(--d01-real-phone)) * 0.92);
+    width: calc(min(70svh, 95vw / 0.43, var(--d01-real-phone)) * 0.41);
+    height: calc(min(70svh, 95vw / 0.43, var(--d01-real-phone)) * 0.92);
   }
 
   .d01-more {

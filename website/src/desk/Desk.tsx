@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import type { ReactNode } from "react";
 import { deskHint } from "./lcd-copy";
+import type { KeyInput } from "./lcd-copy";
 import { usePhoneLive } from "./live";
 import Graffiti from "./Graffiti";
 import PencilCase from "./PencilCase";
@@ -10,6 +11,7 @@ import "./desk.css";
  *  things, which carry the info. */
 export default function Desk({ phone }: { phone: ReactNode }) {
   const live = usePhoneLive();
+  const input = useKeyInput();
   return (
     <div className="desk">
       <div className="d01-desk">
@@ -17,7 +19,12 @@ export default function Desk({ phone }: { phone: ReactNode }) {
         <Graffiti />
         <div className="d01-window-light" aria-hidden="true" />
 
-        <section className="d01-phone" aria-label="The phone">
+        <section className="d01-phone" aria-label="The phone" aria-describedby="d01-phone-keys">
+          <p id="d01-phone-keys" className="d01-sr">
+            A working Nokia 3310. Arrow keys scroll, Enter is the middle key, Escape or Backspace is
+            C, 0 to 9, star and hash type, and P is power. What the screen shows is read out as it
+            changes.
+          </p>
           <div className="d01-phone__shadow" aria-hidden="true" />
           <div className="d01-phone__stage">{phone}</div>
         </section>
@@ -27,7 +34,7 @@ export default function Desk({ phone }: { phone: ReactNode }) {
           <ScribbleArrow />
         </p>
 
-        <StickyNote hint={deskHint(live.path, live.screen)} />
+        <StickyNote hint={deskHint(live.path, live.screen, input)} />
         <PencilCase />
         <Biro />
       </div>
@@ -36,6 +43,22 @@ export default function Desk({ phone }: { phone: ReactNode }) {
 }
 
 /* ── sticky note pad: what to do next ────────────────────────────────────── */
+
+const COARSE = "(pointer: coarse)";
+
+/** Touch when the primary pointer is a finger (the hint names the phone's keys, not the
+ *  keyboard's); the keyboard on the server and until hydrated. */
+function useKeyInput(): KeyInput {
+  return useSyncExternalStore(
+    (onChange) => {
+      const media = window.matchMedia(COARSE);
+      media.addEventListener("change", onChange);
+      return () => media.removeEventListener("change", onChange);
+    },
+    () => (window.matchMedia(COARSE).matches ? "touch" : "keyboard"),
+    () => "keyboard",
+  );
+}
 
 /** The hint on screen and the one it replaced (peeling off the pad until the next change). */
 function useHintChange(hint: string): { hint: string; previous: string | null } {
@@ -59,7 +82,11 @@ function StickyNote({ hint }: { hint: string }) {
   const change = useHintChange(hint);
   return (
     <section className="d01-obj d01-sticky" aria-label="What to do next">
-      <div className="d01-sticky__sheet" key={change.hint} aria-live="polite">
+      {/* Announced from one element that stays put; the sheets come and go. */}
+      <p className="d01-sr" aria-live="polite">
+        now: {change.hint}
+      </p>
+      <div className="d01-sticky__sheet" key={change.hint} aria-hidden="true">
         <SheetText hint={change.hint} className="d01-sticky__hint--new" />
       </div>
       {change.previous !== null && (

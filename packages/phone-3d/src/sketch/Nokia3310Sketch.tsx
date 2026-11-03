@@ -13,6 +13,8 @@ export interface Nokia3310SketchProps {
   screenBgColor?: string;
   /** Show "Loading" on the LCD with a bar this full (0–1); a blank LCD when unset. */
   progress?: number;
+  /** Lines written on the LCD instead of the loading bar, e.g. when the 3D phone can't load. */
+  lcdText?: readonly string[];
   /**
    * How far the drawing has turned into the phone beneath it, 0–1: a bright edge sweeps down
    * from the top, the ink gone above it, print dots dissolving in its wake. Gone at 1.
@@ -71,6 +73,7 @@ export function Nokia3310Sketch({
   fit,
   screenBgColor = DEFAULT_SCREEN_BG,
   progress,
+  lcdText,
   wipe = 0,
 }: Nokia3310SketchProps) {
   const wrapper: CSSProperties = {
@@ -204,7 +207,8 @@ export function Nokia3310Sketch({
             ))}
           </g>
 
-          {screen && progress !== undefined && (
+          {screen && lcdText !== undefined && <LcdText center={screen.center} lines={lcdText} />}
+          {screen && lcdText === undefined && progress !== undefined && (
             <LcdLoading center={screen.center} progress={progress} />
           )}
 
@@ -289,6 +293,36 @@ export function Nokia3310Sketch({
 const LCD_INK = "#1f2d22";
 /** Segments in the loading bar, like the 3310's own signal and battery bars. */
 const SEGMENTS = 10;
+
+/** Lines of text on the LCD, centred, in the screen's own ink. */
+function LcdText({
+  center: [cx, cy],
+  lines,
+}: {
+  center: readonly [number, number];
+  lines: readonly string[];
+}) {
+  const leading = 0.46;
+  return (
+    <text
+      role="status"
+      x={cx}
+      y={cy - ((lines.length - 1) * leading) / 2}
+      fill={LCD_INK}
+      fontFamily='"Courier New", ui-monospace, monospace'
+      fontWeight="700"
+      fontSize="0.32"
+      textAnchor="middle"
+      dominantBaseline="central"
+    >
+      {lines.map((line, i) => (
+        <tspan key={i} x={cx} dy={i === 0 ? 0 : leading}>
+          {line}
+        </tspan>
+      ))}
+    </text>
+  );
+}
 
 /**
  * "Loading" on the LCD over a segmented bar, the way the phone draws its own progress. The dots
