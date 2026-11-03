@@ -5,7 +5,7 @@ import { describe, expect, it } from "vite-plus/test";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import { DICTIONARY_KEY, EDITOR_OPTIONS, NO_T9_VIRGIN_CHOICES } from "../src/messages/bindings";
-import { MESSAGE_SLOTS, StockMessages } from "../src/messages/store";
+import { MESSAGE_SLOTS, StockMessages } from "../src/services/messaging/store";
 import { SEND_LINK_MS } from "../src/kit/ui/resources";
 import {
   createMemoryStorage,

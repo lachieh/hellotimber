@@ -6,7 +6,7 @@
 // character by its code; a name that is a prefix of another sorts equal to it; equal keys keep
 // SIM order (`phone-book/view-sort`, `phone-book/edit-after`). Search and the list's letter keys land on the first name at
 // or after the query, else the first name.
-import type { StockContact } from "./sim-card";
+import type { StockContact } from "../sim/card";
 
 /** One SIM phone book entry at its SIM location. */
 export interface PhoneBookEntry extends StockContact {

@@ -18,13 +18,13 @@ import { createStockMenu, STOCK_SHORTCUT_WINDOW_MS, stockMessaging, stockService
 import { openBox } from "../messages/read";
 import { StockFlowApplication } from "../kit/ui/widgets/flow";
 import { applyPreload, checkImei, checkPreload, type StockPreload } from "./preload";
-import { createSyntheticNetwork, type StockNetworkPort } from "../messages/network";
+import { createSyntheticNetwork, type StockNetworkPort } from "../services/messaging/network";
 import { createStockGames, powerOffGames, powerOnGames } from "./features/games";
 import type { StockPorts } from "./ports";
 import { STOCK_DEFAULT_SIM, StockSecurity } from "./security";
 import { standbyList } from "../phone-book/flows";
 import { normaliseSim, type StockSimCard } from "../phone-book/sim-card";
-import { StockPhoneBook } from "../phone-book/store";
+import { StockPhoneBook } from "../services/phone-book/store";
 import { STANDBY_KEY_DELAY_MS } from "../phone-book/timings";
 import { stockBootGates } from "./boot";
 import {
@@ -54,9 +54,10 @@ import { StockSounder, type KeyDownOptions } from "../sound/sounder";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { paintStockScreen } from "../kit/ui/display/paint";
 import { attachDescription, describeStockScreen } from "../kit/ui/display/describe";
-import { StockCallLog } from "../calls/log";
-import { StockTelephone } from "../calls/telephone";
-import { CallClock } from "../calls/timestamp";
+import { StockCallLog } from "../services/calls/log";
+import { StockTelephone } from "../services/calls/telephone";
+import { STOCK_CALL_TONES } from "../calls/sounds";
+import { CallClock } from "../services/calls/timestamp";
 import { WIDGET_SPRITES } from "../kit/ui/resources";
 import { dialledStandbyList, missedCallsList } from "./features/call-register";
 import {
@@ -245,6 +246,7 @@ export function createStockPhoneWith(
   const telephone = new StockTelephone({
     network,
     sounder,
+    tones: STOCK_CALL_TONES,
     settings,
     log: callLog,
     clock: callClock,

@@ -33,7 +33,7 @@ import {
   T9_EDITOR_OPTIONS,
 } from "./bindings";
 import { insertionList } from "../content/insertion";
-import type { StockSms } from "./network";
+import type { StockSms } from "../services/messaging/network";
 
 /** An SMS holds 459 characters in three parts (`text/counter` 459: `0/3`). */
 export const SMS_LIMIT = 459;

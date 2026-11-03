@@ -5,7 +5,7 @@ import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";
 import { PHONE_BOOK_SIMS } from "../scripts/capture-sets/19-phone-book.ts";
 import { paintWidget, type WidgetModel } from "../src/kit/ui/display/widgets";
-import { shownName, sortEntries, type PhoneBookEntry } from "../src/phone-book/entries";
+import { shownName, sortEntries, type PhoneBookEntry } from "../src/services/phone-book/entries";
 import { nameList, type NameListView } from "../src/widgets/name-list";
 import { flowRig } from "./support/flow-rig.ts";
 import { lcdMismatch } from "./support/golden.ts";

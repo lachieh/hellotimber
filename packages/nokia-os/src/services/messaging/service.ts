@@ -1,7 +1,6 @@
 // One phone's SMS traffic over its host network port (plan 18 D9, D10): sends that settle no
-// sooner than the synthetic cell's median link time, and arrivals that land RECEIVE_LINK_MS after
-// the host delivers them. Times are the kernel's (`tick`); the port has no clock.
-import { RECEIVE_LINK_MS, SEND_LINK_MS } from "../kit/ui/resources";
+// sooner than the synthetic cell's median link time, and arrivals that land the receive link time
+// after the host delivers them. Times are the kernel's (`tick`); the port has no clock.
 import {
   checkIncomingSms,
   type StockBusinessCard,
@@ -26,6 +25,20 @@ export interface ArrivalListener {
  */
 export type ArrivalClaim = (sms: StockIncomingSms) => boolean;
 
+/** The cell's link times (the v6.39 firmware's are captured: `STOCK_MESSAGE_LINKS`). */
+export interface MessagingLinks {
+  /** A send settles no sooner than this after the port is called. */
+  readonly sendMs: number;
+  /** A delivered message lands this long after the host delivers it (or after standby). */
+  readonly receiveMs: number;
+}
+
+export interface MessagingOptions {
+  readonly links: MessagingLinks;
+  /** Where Details' message centre comes from when a message arrives (Set 1's centre). */
+  readonly centre?: () => string;
+}
+
 /** composer/send-ok: Message sent begins 3174 ms after Sending message. */
 const RINGTONE_SEND_LINK_MS = 3174;
 
@@ -48,6 +61,7 @@ function outcomeOf(value: unknown): StockSendOutcome {
 export class StockMessaging {
   readonly store: StockMessages;
   readonly #network: StockNetworkPort;
+  readonly #links: MessagingLinks;
   /** Where Details' message centre comes from when a message arrives (Set 1's centre). */
   readonly #centre: () => string;
   #now = 0;
@@ -61,10 +75,11 @@ export class StockMessaging {
   readonly #claims = new Set<ArrivalClaim>();
   #connected = false;
 
-  constructor(store: StockMessages, network: StockNetworkPort, centre: () => string = () => "") {
+  constructor(store: StockMessages, network: StockNetworkPort, options: MessagingOptions) {
     this.store = store;
     this.#network = network;
-    this.#centre = centre;
+    this.#links = options.links;
+    this.#centre = options.centre ?? (() => "");
   }
 
   /**
@@ -80,17 +95,18 @@ export class StockMessaging {
   /** An SMS from the network (checked: a malformed one throws, naming its field). */
   deliver(sms: StockIncomingSms): void {
     const checked = checkIncomingSms(sms);
-    if (this.#ready) this.#arriving.push({ dueAt: this.#now + RECEIVE_LINK_MS, sms: checked });
+    if (this.#ready)
+      this.#arriving.push({ dueAt: this.#now + this.#links.receiveMs, sms: checked });
     else this.#waiting.push(checked);
   }
 
   /**
    * Sends `sms` (the port is called at once) and calls `settled` with the outcome once the port
-   * has settled it and SEND_LINK_MS has passed, at a `tick`. Power-off drops it unsettled.
+   * has settled it and the send link time has passed, at a `tick`. Power-off drops it unsettled.
    */
   send(sms: StockSms, settled: (outcome: StockSendOutcome) => void): void {
     this.#start(
-      SEND_LINK_MS,
+      this.#links.sendMs,
       () => this.#network.send({ number: sms.number, text: sms.text }),
       settled,
     );
@@ -203,7 +219,7 @@ export class StockMessaging {
     if (this.#ready) return;
     this.#ready = true;
     for (const sms of this.#waiting) {
-      this.#arriving.push({ dueAt: this.#now + RECEIVE_LINK_MS, sms });
+      this.#arriving.push({ dueAt: this.#now + this.#links.receiveMs, sms });
     }
     this.#waiting = [];
   }

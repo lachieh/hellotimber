@@ -9,7 +9,7 @@ export type { StockLightEvent, StockLightsPort } from "./firmware/features/backl
 export { stockMenu, stockMenuFor } from "./firmware/menu";
 export { missingStockGlyphs } from "./kit/ui/resources";
 export type { StockFontName } from "./kit/ui/resources";
-export { createSyntheticNetwork } from "./messages/network";
+export { createSyntheticNetwork } from "./services/messaging/network";
 export type {
   StockBusinessCard,
   StockRingtone,
@@ -19,7 +19,7 @@ export type {
   StockSms,
   StockTimestamp,
   SyntheticNetwork,
-} from "./messages/network";
+} from "./services/messaging/network";
 // Plan 22: the network port's call half (dial, subscribeCalls) and the synthetic cell's rings.
 export type {
   StockCallControl,
@@ -28,7 +28,7 @@ export type {
   StockOutgoingCall,
   StockRing,
   SyntheticRing,
-} from "./calls/network";
+} from "./services/calls/network";
 export type { StockContact, StockSimCard } from "./phone-book/sim-card";
 // Plan 18b: T9 dictionaries (the English one is the `@hellotimber/nokia-os/t9-english` entry).
 export { createT9Dictionary } from "./kit/ui/text/t9/dictionary";
@@ -40,4 +40,8 @@ export { stockImeiLines } from "./firmware/preload";
 export { describeStockScreen } from "./kit/ui/display/describe";
 export type { StockPreload, StockReminderPreload } from "./firmware/preload";
 
-export type { StockServiceHost, StockServiceResult, StockServiceControl } from "./calls/services";
+export type {
+  StockServiceHost,
+  StockServiceResult,
+  StockServiceControl,
+} from "./services/calls/services";

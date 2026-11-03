@@ -4,7 +4,7 @@
 // no clock. A host backs it with whatever it likes (a test network, the website's contacts); the
 // default, `createSyntheticNetwork`, behaves as the v6.39 emulator's network does (Task 0 S10,
 // S11): it accepts every SMS and never loops one back. Plan 22 adds the call half
-// (`src/calls/network.ts`): `dial` and `subscribeCalls`.
+// (`src/services/calls/network.ts`): `dial` and `subscribeCalls`.
 import {
   syntheticCalls,
   type StockCallControl,
@@ -15,8 +15,8 @@ import {
 } from "../calls/network";
 
 import type { StockServiceHost } from "../calls/services";
-import type { ComposerTone } from "../composer/program";
-import type { StockContact } from "../phone-book/sim-card";
+import type { ComposerTone } from "./ringtone";
+import type { StockContact } from "../sim/card";
 
 /** One SMS as the phone sees it: a typed recipient number (or routing address) and its text. */
 export interface StockSms {

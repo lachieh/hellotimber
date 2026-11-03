@@ -3,8 +3,9 @@
 import { describe, expect, it } from "vite-plus/test";
 import { PHONE_BOOK_SIMS } from "../scripts/capture-sets/19-phone-book.ts";
 import { StockEeprom } from "../src/firmware/eeprom";
-import { StockMessaging } from "../src/messages/service";
-import { StockMessages } from "../src/messages/store";
+import { STOCK_MESSAGE_LINKS } from "../src/firmware/menu";
+import { StockMessaging } from "../src/services/messaging/service";
+import { StockMessages } from "../src/services/messaging/store";
 import {
   createMemoryStorage,
   createSyntheticNetwork,
@@ -21,7 +22,7 @@ const CARD: StockBusinessCard = { to: "0412", card: { name: "Ann", number: "0400
 
 function messaging(network: StockNetworkPort) {
   const store = new StockMessages(new StockEeprom(createMemoryStorage()), "sim-1");
-  return new StockMessaging(store, network);
+  return new StockMessaging(store, network, { links: STOCK_MESSAGE_LINKS });
 }
 
 describe("the network port's business cards (D10)", () => {

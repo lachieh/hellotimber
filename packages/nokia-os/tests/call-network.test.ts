@@ -1,7 +1,7 @@
 // Plan 22 Task 6: the network port's call half (D5) and the synthetic cell.
 import { describe, expect, it } from "vite-plus/test";
-import { createSyntheticNetwork } from "../src/messages/network";
-import type { StockCallControl } from "../src/calls/network";
+import { createSyntheticNetwork } from "../src/services/messaging/network";
+import type { StockCallControl } from "../src/services/calls/network";
 
 function control() {
   const seen: string[] = [];

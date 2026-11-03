@@ -13,7 +13,7 @@ import {
 } from "../../phone-book/flows";
 import { assignTone, edit, eraseAll, eraseOneByOne } from "../../phone-book/manage";
 import { addVoiceTag, speedDials } from "../../phone-book/speed";
-import { PHONE_BOOK_RECORD } from "../../phone-book/store";
+import { PHONE_BOOK_RECORD } from "../../services/phone-book/store";
 import type { EepromRecord } from "../eeprom";
 import type { StockFeature, StockServices } from "./feature";
 import type { Flow, Widget } from "../../kit/ui/widgets/flow";

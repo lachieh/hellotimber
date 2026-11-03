@@ -7,7 +7,7 @@ import {
   dialOutcome,
   immediateCode,
   starCycle,
-} from "../src/calls/dial-string";
+} from "../src/services/calls/dial-string";
 
 describe("the `*` cycle and the entry's length", () => {
   it("cycles * + p w and back to *", () => {

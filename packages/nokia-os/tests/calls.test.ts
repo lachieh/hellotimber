@@ -2,10 +2,14 @@
 // `dial` receives when Calling shows, a host that refuses the call, and rings.
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { describe, expect, it } from "vite-plus/test";
-import type { StockCallControl, StockCallLink, StockOutgoingCall } from "../src/calls/network";
+import type {
+  StockCallControl,
+  StockCallLink,
+  StockOutgoingCall,
+} from "../src/services/calls/network";
 import { describeStockScreen } from "../src/index";
-import { CALL_TIMINGS } from "../src/calls/telephone";
-import { createSyntheticNetwork } from "../src/messages/network";
+import { CALL_TIMINGS } from "../src/services/calls/telephone";
+import { createSyntheticNetwork } from "../src/services/messaging/network";
 import { standbyRig, type Rig } from "./support/rig.ts";
 
 function typeNumber(rig: Rig, keys: string): void {

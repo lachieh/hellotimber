@@ -2,7 +2,7 @@
 // `Missed 1:` and the number, ▲/▼ through the list (wrapping), the soft key (`Options` from the
 // menu, `Call` from standby ▲), C back. The list is read on every render, so an erase shows at once.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { CallEntry, CallList } from "../calls/log";
+import type { CallEntry, CallList } from "../services/calls/log";
 import type { CallEntryModel, StandbyDrawModel } from "../kit/ui/display/widgets";
 import type { Flow, Widget } from "../kit/ui/widgets/flow";
 

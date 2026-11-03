@@ -2,7 +2,7 @@ import { Timeline } from "@hellotimber/phone-core";
 import type { StockServices } from "../firmware/features/feature";
 import { telephoneOf } from "../firmware/features/dialling";
 import { timelineById, timelineByName } from "../kit/ui/timelines";
-import { ServiceRequest, type StockServiceResult } from "../calls/services";
+import { ServiceRequest, type StockServiceResult } from "../services/calls/services";
 import type { Widget } from "../kit/ui/widgets/flow";
 import { afterDown } from "./call";
 import { infoScreen } from "../kit/ui/widgets/info-screen";

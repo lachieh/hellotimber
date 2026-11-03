@@ -13,13 +13,11 @@ export default defineConfig({
     ignorePatterns: [
       "**/routeTree.gen.ts",
       "**/public/**",
-      "packages/nokia-os/src/resources/generated/**",
-      "packages/nokia-os/goldens/index/**",
-      // Plan 14: the stock tree and the tree text runs, written by scripts/import-tree.ts.
-      "packages/nokia-os/src/firmware/generated/**",
-      "packages/nokia-os/scripts/generated/**",
-      // Plan 18b: the T9 English dictionary, written by scripts/build-t9-dictionary.ts.
-      "packages/nokia-os/src/text/t9/generated/**",
+      // Every package's `src/**/generated/**`: the resources (scripts/extract-resources.ts), the
+      // stock tree (plan 14, scripts/import-tree.ts) and the T9 dictionary (plan 18b).
+      "packages/*/src/**/generated/**",
+      "packages/*/goldens/index/**",
+      "packages/*/scripts/generated/**",
     ],
   },
   lint: {

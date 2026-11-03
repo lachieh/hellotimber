@@ -2,6 +2,9 @@
 // (`goldens/sound/calls/*`; tests/sound-calls.test.ts plays each program against its golden).
 import type { PhoneKey } from "@hellotimber/phone-core";
 import type { SoundProgram } from "../kit/ui/sound/program";
+import { EARPIECE_STEPS, type CallTones } from "../services/calls/telephone";
+
+export { EARPIECE_STEPS };
 
 /** The DTMF pair of each dial key: the high and the low group (Hz), as the tone generator plays. */
 export const DTMF_PAIRS: Readonly<Partial<Record<PhoneKey, readonly [number, number]>>> = {
@@ -27,9 +30,6 @@ export const DTMF_TAIL_MS = 56;
 
 /** The earpiece's tone level word at the top Volume (`sound/calls/connected`: 0x99B5). */
 export const EARPIECE_TOP_WORD = 0x99b5;
-/** The in-call Volume's steps (`in-call/down-steps`: ten bars). */
-export const EARPIECE_STEPS = 10;
-
 /** The tone level word of earpiece Volume `level` (1-10): one step per bar (`volume-top`). */
 export function earpieceWord(level: number): number {
   return EARPIECE_TOP_WORD + (EARPIECE_STEPS - level);
@@ -137,3 +137,19 @@ export function transmittedDtmfProgram(text: string, volume: number): SoundProgr
   });
   return { id: "calls/transmitted-dtmf", steps: [{ ms: 264 }, ...pairs] };
 }
+
+/** The telephone's sounds (src/services/calls/telephone.ts) at an earpiece Volume. */
+export const STOCK_CALL_TONES: CallTones = {
+  ringback: {
+    program: (volume) => ringbackProgram(earpieceWord(volume)),
+    afterMs: RINGBACK_AFTER_ALERTING_MS,
+  },
+  netEnd: {
+    program: (volume) => netEndProgram(earpieceWord(volume)),
+    afterMs: NET_END_BEEPS_AFTER_MS,
+  },
+  emergency: {
+    program: (volume) => emergencyProgram(earpieceWord(volume)),
+    afterMs: EMERGENCY_BEEP_AFTER_MS,
+  },
+};

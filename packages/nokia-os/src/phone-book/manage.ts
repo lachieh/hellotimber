@@ -12,7 +12,7 @@ import { nameList } from "../widgets/name-list";
 import { note } from "../kit/ui/widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
 import { Playback } from "../kit/ui/widgets/playback";
-import type { PhoneBookEntry } from "./entries";
+import type { PhoneBookEntry } from "../services/phone-book/entries";
 import {
   emptyNote,
   nameQueryWidget,

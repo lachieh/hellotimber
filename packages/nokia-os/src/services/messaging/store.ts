@@ -6,7 +6,7 @@
 // write (a read flag, an erase, an arrival, a Save) stores them all under the SIM's identity
 // (plan 19 D3's rule). Restore factory settings keeps them (`sms/restore-*`, `plan30/sms/restore`),
 // so the record has no `factory`.
-import type { EepromRecord, StockEeprom } from "../firmware/eeprom";
+import type { EepromRecord, RecordStore } from "../storage";
 import { SIM_MESSAGE_SLOTS, type SimMessages } from "../sim/messages";
 import type { StockIncomingSms, StockTimestamp } from "./network";
 
@@ -138,11 +138,11 @@ const bySlot = (a: { slot: number }, b: { slot: number }) => a.slot - b.slot;
 
 /** One SIM's messages in the phone's EEPROM. */
 export class StockMessages {
-  readonly #eeprom: StockEeprom;
+  readonly #eeprom: RecordStore;
   readonly #sim: MessagesSim;
 
   /** `sim`: the inserted card (a string is the emulator SIM, 15 empty slots, under that id). */
-  constructor(eeprom: StockEeprom, sim: string | MessagesSim) {
+  constructor(eeprom: RecordStore, sim: string | MessagesSim) {
     this.#eeprom = eeprom;
     this.#sim =
       typeof sim === "string"

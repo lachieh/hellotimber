@@ -3,7 +3,7 @@
 // key (`Call`, `Save`, `Convert`), held `1` (the voice mailbox), `#` answering location numbers
 // and codes at once, DTMF while a key is held, and Call.
 import type { PhoneKey } from "@hellotimber/phone-core";
-import { appendDial, DIAL_CYCLE, immediateCode, starCycle } from "../calls/dial-string";
+import { appendDial, DIAL_CYCLE, immediateCode, starCycle } from "../services/calls/dial-string";
 import type { DialEntryModel, StandbyDrawModel, WidgetModel } from "../kit/ui/display/widgets";
 import type { StockSounder } from "../sound/sounder";
 import type { Flow, Widget } from "../kit/ui/widgets/flow";

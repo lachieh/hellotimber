@@ -2,7 +2,7 @@
 // Dialled lists, the unread missed calls behind the notice and `<n> new numbers`, and the call
 // durations. The lists are the phone's RAM (Task 0 F: a power cycle empties them); the durations
 // are the `calls` EEPROM record (they survive power-off; Clear timers and Restore zero them).
-import type { EepromRecord, StockEeprom } from "../firmware/eeprom";
+import type { EepromRecord, RecordStore } from "../storage";
 import type { CallStamp } from "./timestamp";
 
 export type CallList = "missed" | "received" | "dialled";
@@ -75,14 +75,14 @@ export const CALLS_RECORD: EepromRecord<CallDurations> = {
 
 /** One phone's call register: the lists for this power cycle and the durations record. */
 export class StockCallLog {
-  readonly #eeprom: StockEeprom;
+  readonly #eeprom: RecordStore;
   #lists: Record<CallList, CallEntry[]> = { missed: [], received: [], dialled: [] };
   /** Missed calls since the notice was last seen (the notice counts calls). */
   #noticeCount = 0;
   /** Missed numbers not yet seen in Missed calls (`<n> new numbers`: two calls, one number). */
   #unread = new Set<string>();
 
-  constructor(eeprom: StockEeprom) {
+  constructor(eeprom: RecordStore) {
     this.#eeprom = eeprom;
   }
 

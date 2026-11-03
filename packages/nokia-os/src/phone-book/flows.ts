@@ -20,7 +20,7 @@ import {
 import { note } from "../kit/ui/widgets/note";
 import { noPhoneNumbers, numberEntry } from "../kit/ui/widgets/number-entry";
 import { textInput } from "../kit/ui/widgets/text-input";
-import { searchIndex, type PhoneBookEntry } from "./entries";
+import { searchIndex, type PhoneBookEntry } from "../services/phone-book/entries";
 import { SIM_NUMBER_DIGITS, simNameLength, simNumberProblem, type StockContact } from "./sim-card";
 
 /**

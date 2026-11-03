@@ -1,5 +1,5 @@
 // Plan 25's lights goldens in tests: loading them by id and the comparison tolerances (Task 0).
-import { CALL_TIMINGS } from "../../src/calls/telephone";
+import { CALL_TIMINGS } from "../../src/services/calls/telephone";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Phone, PhoneKey } from "@hellotimber/phone-core";

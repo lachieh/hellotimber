@@ -9,10 +9,14 @@ import {
   stillFixtureOf,
   type CallCase,
 } from "../../scripts/capture-sets/22-calls.ts";
-import type { StockCallControl, StockOutgoingCall, SyntheticRing } from "../../src/calls/network";
-import type { StockNetworkPort } from "../../src/messages/network";
-import { createSyntheticNetwork } from "../../src/messages/network";
-import { CALL_TIMINGS } from "../../src/calls/telephone";
+import type {
+  StockCallControl,
+  StockOutgoingCall,
+  SyntheticRing,
+} from "../../src/services/calls/network";
+import type { StockNetworkPort } from "../../src/services/messaging/network";
+import { createSyntheticNetwork } from "../../src/services/messaging/network";
+import { CALL_TIMINGS } from "../../src/services/calls/telephone";
 import { englishT9 } from "../../src/kit/ui/text/t9/english";
 import { expectLcd, expectTimeline, type RecordedTimeline } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";

@@ -2,7 +2,7 @@ import { callRig, play } from "./support/calls";
 import { createSyntheticNetwork, describeStockScreen } from "../src/index";
 import { standbyRig } from "./support/rig";
 import { expect, it } from "vite-plus/test";
-import { ServiceRequest, type StockServiceControl } from "../src/calls/services";
+import { ServiceRequest, type StockServiceControl } from "../src/services/calls/services";
 
 it("waits for an explicit host outcome and applies it on a tick", () => {
   let control: StockServiceControl | undefined;

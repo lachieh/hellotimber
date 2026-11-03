@@ -6,8 +6,8 @@ import {
   callSeconds,
   durationText,
   StockCallLog,
-} from "../src/calls/log";
-import { CallClock, callDate, callTime, parseHostTime } from "../src/calls/timestamp";
+} from "../src/services/calls/log";
+import { CallClock, callDate, callTime, parseHostTime } from "../src/services/calls/timestamp";
 import { createMemoryStorage, StockEeprom } from "../src/firmware/eeprom";
 
 const log = () => new StockCallLog(new StockEeprom(createMemoryStorage()));

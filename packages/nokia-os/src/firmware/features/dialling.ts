@@ -3,9 +3,9 @@
 // call screens a call shows (incoming ones through phone-core's interruption seam).
 import { PhoneApplication, type PhoneKey } from "@hellotimber/phone-core";
 import { CalculatorRate } from "../../kit/apps/calculator/rate";
-import { dialOutcome, immediateCode } from "../../calls/dial-string";
-import { CALLS_RECORD } from "../../calls/log";
-import type { StockCall, StockTelephone } from "../../calls/telephone";
+import { dialOutcome, immediateCode } from "../../services/calls/dial-string";
+import { CALLS_RECORD } from "../../services/calls/log";
+import type { StockCall, StockTelephone } from "../../services/calls/telephone";
 import {
   afterDown,
   CALLING,

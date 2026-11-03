@@ -6,7 +6,7 @@
 // in the golden (a golden row), or `ms` after the trigger when its effect is no new frame (a hint
 // restarted on its own first step, a second Unlock) or when the window it falls in is what the
 // golden pins (`lock-gap/2920`).
-import { CALL_TIMINGS } from "../../src/calls/telephone";
+import { CALL_TIMINGS } from "../../src/services/calls/telephone";
 import type { PhoneKey } from "@hellotimber/phone-core";
 import { expect } from "vite-plus/test";
 import type { StockLightEvent } from "../../src/firmware/features/backlight";

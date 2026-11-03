@@ -1,4 +1,4 @@
-import type { StockServiceControl, StockServiceResult } from "../../src/calls/services";
+import type { StockServiceControl, StockServiceResult } from "../../src/services/calls/services";
 import { expectLcd, expectTimeline } from "./golden.ts";
 import { goldenImage, loadGolden } from "./goldens.ts";
 import { recordTimeline, type Scenario } from "./acceptance.ts";

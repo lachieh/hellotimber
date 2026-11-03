@@ -29,7 +29,7 @@ import { numberEntry } from "../kit/ui/widgets/number-entry";
 import { OptionListWidget } from "../widgets/option-list";
 import { symbolTable } from "../kit/ui/widgets/symbol-table";
 import { textInput } from "../kit/ui/widgets/text-input";
-import { ChatSession, lastChatName } from "./session";
+import { ChatSession, lastChatName } from "../services/chat/session";
 
 /** A chat line holds 140 characters (`chat/name-ok`: `140/1`; `chat/limit`: `0/1`). */
 export const CHAT_LIMIT = 140;

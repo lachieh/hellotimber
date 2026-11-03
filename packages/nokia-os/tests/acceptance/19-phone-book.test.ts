@@ -13,8 +13,8 @@ import {
 } from "../support/phone-book.ts";
 
 import { PHONE_BOOK_SIMS } from "../../scripts/capture-sets/19-phone-book.ts";
-import { createSyntheticNetwork } from "../../src/messages/network";
-import type { StockCallControl } from "../../src/calls/network";
+import { createSyntheticNetwork } from "../../src/services/messaging/network";
+import type { StockCallControl } from "../../src/services/calls/network";
 import { replayScenario, type ReplayContext } from "../support/replay.ts";
 import { standbyRig, type Rig } from "../support/rig.ts";
 

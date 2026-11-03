@@ -7,7 +7,7 @@ import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import { createMemoryStorage, type StockSimCard, type StockStorage } from "../src/index";
 import { normaliseSim } from "../src/phone-book/sim-card";
-import { StockPhoneBook } from "../src/phone-book/store";
+import { StockPhoneBook } from "../src/services/phone-book/store";
 import { expectLcd } from "./support/golden.ts";
 import { goldenImage } from "./support/goldens.ts";
 import { lockedRig } from "./support/keyguard.ts";

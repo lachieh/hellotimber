@@ -5,7 +5,7 @@
 import { StockEeprom } from "../../src/firmware/eeprom";
 import type { StockContact, StockSimCard } from "../../src/index";
 import { normaliseSim } from "../../src/phone-book/sim-card";
-import { StockPhoneBook } from "../../src/phone-book/store";
+import { StockPhoneBook } from "../../src/services/phone-book/store";
 import { byId, html, type DemoPanel } from "../panel";
 
 const SAMPLE_NAMES: readonly StockContact[] = [

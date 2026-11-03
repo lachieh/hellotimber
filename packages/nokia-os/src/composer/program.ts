@@ -9,17 +9,10 @@ import {
   VOLUME_RULE,
 } from "../kit/ui/resources";
 import type { SoundProgram, SoundStep } from "../kit/ui/sound/program";
+import type { ComposerTone } from "../services/messaging/ringtone";
 import { NOTE_PITCHES, type ComposerToken } from "./notation";
 
-/** A saved tone (plan 27 Internal API; stored by `store.ts`). */
-export interface ComposerTone {
-  /** 1-15 characters. */
-  readonly name: string;
-  /** One of COMPOSER_TEMPI. */
-  readonly tempo: number;
-  /** 1-50 tokens. */
-  readonly tokens: readonly ComposerToken[];
-}
+export type { ComposerTone };
 
 /** A built-in ringing tone's shape (plan 16), which a saved tone takes as Ringing tone 36-42. */
 export type RingingTone = (typeof RINGING_TONES)[number];

@@ -1,13 +1,12 @@
 // The phone's telephone (plan 22 D5, D8-D12): one call at a time, placed through or rung by the
 // host's network port, with the phone's own link times. It keeps each call's state and times for
-// the call screens (widgets/call.ts), sounds the ringback, the ringing and the network's end,
-// writes the call register and the durations, and queues a ring that comes during a call.
+// the call screens (src/widgets/call.ts), sounds the ringback, the ringing and the network's end
+// through the kit's sounder (`CallSounder`, `CallTones`), writes the call register and the
+// durations, and queues a ring that comes during a call.
 import { dialledNumber } from "./dial-string";
 import { ServiceRequest } from "./services";
-import type { StockNetworkPort } from "../messages/network";
-import type { StockSettings } from "../firmware/settings";
-import type { SoundPlay } from "../kit/ui/sound/sequencer";
-import type { StockSounder } from "../sound/sounder";
+import type { StockNetworkPort } from "../messaging/network";
+import type { SettingsReader } from "../settings";
 import type { StockCallLog } from "./log";
 import type {
   StockCallControl,
@@ -15,16 +14,6 @@ import type {
   StockIncomingCall,
   StockOutgoingCall,
 } from "./network";
-import {
-  EARPIECE_STEPS,
-  EMERGENCY_BEEP_AFTER_MS,
-  emergencyProgram,
-  earpieceWord,
-  NET_END_BEEPS_AFTER_MS,
-  netEndProgram,
-  RINGBACK_AFTER_ALERTING_MS,
-  ringbackProgram,
-} from "./sounds";
 import type { CallClock } from "./timestamp";
 
 /**
@@ -96,6 +85,38 @@ export const CALL_TIMINGS = {
   volumeEraseMs: 42,
 } as const;
 
+/** The in-call (earpiece) Volume's steps (`in-call/down-steps`: ten bars). */
+export const EARPIECE_STEPS = 10;
+
+/** A sound program the kit plays, opaque to the telephone. */
+export type CallSoundProgram = object;
+/** A sound the kit is playing, opaque to the telephone. */
+export type CallSoundPlay = object;
+
+/** The kit's sounder, as the telephone uses it (the v6.39 `StockSounder` is one). */
+export interface CallSounder {
+  /** Plays `program` from now, or from `atMs`. */
+  callSound(program: CallSoundProgram, atMs?: number): CallSoundPlay;
+  /** The incoming call's ringing for the profile at `prefix`. */
+  ring(prefix: string): CallSoundPlay | undefined;
+  /** The ringing (or a call sound) stops now, or at `atMs`. */
+  stopRing(play: CallSoundPlay | undefined, atMs?: number): void;
+}
+
+/** One call sound: its program at an earpiece Volume (1-10), and when it starts. */
+export interface CallTone {
+  program(volume: number): CallSoundProgram;
+  /** It starts this long after its moment (the alerting redraw, the release, the Call key). */
+  readonly afterMs: number;
+}
+
+/** The telephone's own sounds (the v6.39 table is `STOCK_CALL_TONES`, src/calls/sounds.ts). */
+export interface CallTones {
+  readonly ringback: CallTone;
+  readonly netEnd: CallTone;
+  readonly emergency: CallTone;
+}
+
 export type CallDirection = "out" | "in";
 
 /** One call and its times (kernel ms); undefined times have not happened. */
@@ -121,8 +142,8 @@ export interface StockCall {
   held?: boolean;
   postDial?: { readonly mode: "p" | "w"; readonly text: string; sent: boolean };
   /** Sounds playing for this call. */
-  ringing?: SoundPlay;
-  ringback?: SoundPlay;
+  ringing?: CallSoundPlay;
+  ringback?: CallSoundPlay;
   /** The call has left the screen and the register. */
   done: boolean;
   /** A call widget shows it (false: the screen below shows, with the handset). */
@@ -144,8 +165,9 @@ export type CallPhase =
 
 export interface TelephoneDeps {
   readonly network: StockNetworkPort | undefined;
-  readonly sounder: StockSounder;
-  readonly settings: StockSettings;
+  readonly sounder: CallSounder;
+  readonly tones: CallTones;
+  readonly settings: SettingsReader;
   readonly log: StockCallLog;
   readonly clock: CallClock;
   readonly now: () => number;
@@ -249,11 +271,6 @@ export class StockTelephone {
     this.#volume = Math.min(EARPIECE_STEPS, Math.max(1, level));
   }
 
-  /** The earpiece's tone word at the current Volume (DTMF and call sounds in a call). */
-  get earpieceWord(): number {
-    return earpieceWord(this.#volume);
-  }
-
   /** A call shows (or is on its way out). */
   get active(): boolean {
     return this.#call !== undefined && !this.#call.done;
@@ -320,10 +337,8 @@ export class StockTelephone {
       });
     }
     if (emergency) {
-      this.#deps.sounder.callSound(
-        emergencyProgram(this.earpieceWord),
-        now + EMERGENCY_BEEP_AFTER_MS,
-      );
+      const tone = this.#deps.tones.emergency;
+      this.#deps.sounder.callSound(tone.program(this.#volume), now + tone.afterMs);
     }
     const identity = this.#deps.settings.choice("settings/call-settings/own-number-sending");
     const policy = identity === 0 ? "network" : identity === 1 ? "show" : "hide";
@@ -531,18 +546,19 @@ export class StockTelephone {
     if (call === undefined || call.done) return;
     const now = this.#deps.now();
     if (call.direction === "out" && call.ringback === undefined) {
+      const tone = this.#deps.tones.ringback;
       const alerting = this.alertingAt(call);
       const connected = this.connectedAt(call);
       if (
         alerting !== undefined &&
-        now >= alerting + RINGBACK_AFTER_ALERTING_MS &&
+        now >= alerting + tone.afterMs &&
         (connected === undefined || now < connected) &&
         call.endedAt === undefined &&
         call.hostReleased === undefined
       ) {
         call.ringback = this.#deps.sounder.callSound(
-          ringbackProgram(this.earpieceWord),
-          alerting + RINGBACK_AFTER_ALERTING_MS,
+          tone.program(this.#volume),
+          alerting + tone.afterMs,
         );
       }
     }
@@ -588,10 +604,8 @@ export class StockTelephone {
     this.#stopSounds(call);
     if (!ringing) {
       // The network's end: three beeps (S14).
-      this.#deps.sounder.callSound(
-        netEndProgram(this.earpieceWord),
-        call.hostReleased + NET_END_BEEPS_AFTER_MS,
-      );
+      const tone = this.#deps.tones.netEnd;
+      this.#deps.sounder.callSound(tone.program(this.#volume), call.hostReleased + tone.afterMs);
       this.#addDuration(call, this.releasedAt(call)!);
     }
   }

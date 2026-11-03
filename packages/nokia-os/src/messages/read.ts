@@ -14,7 +14,7 @@ import { note } from "../kit/ui/widgets/note";
 import { OptionListWidget } from "../widgets/option-list";
 import { moveRows, rowsIndicator, type RowsCursor } from "../kit/ui/widgets/rows";
 import { chatWith } from "../chat/screens";
-import { messageDate, messageTime } from "./timestamp";
+import { messageDate, messageTime } from "../services/messaging/timestamp";
 import { smsEditor } from "./write";
 import { numberEntry } from "../firmware/features/dialling";
 

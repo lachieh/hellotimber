@@ -3,8 +3,8 @@
 import { describe, expect, it } from "vite-plus/test";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
-import { messageDate, messageTime } from "../src/messages/timestamp";
-import { MESSAGE_SLOTS, MESSAGES_RECORD, StockMessages } from "../src/messages/store";
+import { messageDate, messageTime } from "../src/services/messaging/timestamp";
+import { MESSAGE_SLOTS, MESSAGES_RECORD, StockMessages } from "../src/services/messaging/store";
 import { createMemoryStorage, STOCK_STORAGE_PREFIX, type StockIncomingSms } from "../src/index";
 
 const STAMP = { year: 2026, month: 10, day: 13, hour: 10, minute: 11, second: 20 };

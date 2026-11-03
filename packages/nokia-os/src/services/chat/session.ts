@@ -4,7 +4,7 @@
 // the partner's line, taken before Inbox (`chat/inbox-after`). Nothing of it outlives the chat
 // but the name, which the next chat's `Chat name:` offers (`chat/reentry`; over a power cycle
 // UNVERIFIED: kept in memory).
-import type { StockMessaging } from "../messages/service";
+import type { StockMessaging } from "../messaging/service";
 
 export interface ChatLine {
   readonly from: "me" | "them";

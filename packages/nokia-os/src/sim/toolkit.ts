@@ -8,40 +8,9 @@ import { textWidth, wrapText } from "../kit/ui/text/layout";
 import { simNumberProblem } from "../phone-book/sim-card";
 import { gsmSeptets } from "./messages";
 import { SIM_SERVICES_SLUG } from "./slot";
+import type { StockSimToolkit, StockToolkitItem, StockToolkitStep } from "../services/sim/toolkit";
 
-/** Plan 30: what the SIM applet does when an item is chosen (D3). */
-export type StockToolkitStep =
-  /** `DISPLAY TEXT`: a text page; OK goes on to the next step, C ends the session. */
-  | {
-      readonly kind: "text";
-      readonly text: string;
-      /** "user" (default): until a key or the ≈54 s timeout; "delay": clears itself after ≈3.58 s. */
-      readonly clear?: "user" | "delay";
-    }
-  /** `SELECT ITEM`: a list; choosing an item runs its steps. The 3310 does not draw `title`. */
-  | {
-      readonly kind: "select";
-      readonly title?: string;
-      readonly items: readonly StockToolkitItem[];
-    }
-  /** `SET UP CALL`: the phone confirms (with `confirm` as the alpha identifier) and dials `number`. */
-  | { readonly kind: "call"; readonly number: string; readonly confirm?: string };
-
-export interface StockToolkitItem {
-  /** Kebab-case, unique among its siblings; top-level items are route keys (`menu/sim-services/<id>`). */
-  readonly id: string;
-  /** Small face; cut with ` ...` where wider than its row. */
-  readonly label: string;
-  /** Run in order; the session ends after the last (back to the item's list). */
-  readonly steps: readonly StockToolkitStep[];
-}
-
-/** Plan 30: the SIM's toolkit menu (`SET UP MENU`). */
-export interface StockSimToolkit {
-  /** The alpha identifier: Menu 14's carousel label (the words that fit its line; large face). */
-  readonly title: string;
-  readonly items: readonly StockToolkitItem[];
-}
+export type { StockSimToolkit, StockToolkitItem, StockToolkitStep };
 
 /** A list holds at most this many items (an item identifier is one byte, GSM 11.14). */
 export const TOOLKIT_LIST_ITEMS = 255;

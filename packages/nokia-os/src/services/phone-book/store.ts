@@ -4,9 +4,9 @@
 // the tones assigned to locations. Restore factory settings keeps all of it (`speed/restore-*`),
 // so the record has no `factory`.
 import { sameSubscriber } from "./numbers";
-import type { EepromRecord, StockEeprom } from "../firmware/eeprom";
+import type { EepromRecord, RecordStore } from "../storage";
 import { sortEntries, type PhoneBookEntry } from "./entries";
-import type { NormalisedSimCard, StockContact } from "./sim-card";
+import type { NormalisedSimCard, StockContact } from "../sim/card";
 
 /** One SIM's locations (index 0 = location 1; null = free). */
 interface SimLocations {
@@ -82,10 +82,10 @@ export const PHONE_BOOK_RECORD: EepromRecord<PhoneBookState> = {
 
 /** The inserted SIM's phone book, its service numbers and the phone memory kept for it. */
 export class StockPhoneBook {
-  readonly #eeprom: StockEeprom;
+  readonly #eeprom: RecordStore;
   readonly #sim: NormalisedSimCard;
 
-  constructor(eeprom: StockEeprom, sim: NormalisedSimCard) {
+  constructor(eeprom: RecordStore, sim: NormalisedSimCard) {
     this.#eeprom = eeprom;
     this.#sim = sim;
   }

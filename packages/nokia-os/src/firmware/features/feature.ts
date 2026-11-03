@@ -8,8 +8,8 @@
 // also matches the node itself and everything below (`tree.ts` `matchesPattern`). Patterns of one
 // table must not overlap (tests/features.test.ts).
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { StockMessaging } from "../../messages/service";
-import type { StockPhoneBook } from "../../phone-book/store";
+import type { StockMessaging } from "../../services/messaging/service";
+import type { StockPhoneBook } from "../../services/phone-book/store";
 import type { StockSounder } from "../../sound/sounder";
 import type { StockT9 } from "../../kit/system/t9/service";
 import type { Widget } from "../../kit/ui/widgets/flow";

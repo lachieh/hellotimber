@@ -2,8 +2,9 @@
 // service (D10): link times on the kernel clock, outcomes from sync and async ports, power-off.
 import { describe, expect, it } from "vite-plus/test";
 import { StockEeprom } from "../src/firmware/eeprom";
-import { StockMessaging } from "../src/messages/service";
-import { StockMessages } from "../src/messages/store";
+import { STOCK_MESSAGE_LINKS } from "../src/firmware/menu";
+import { StockMessaging } from "../src/services/messaging/service";
+import { StockMessages } from "../src/services/messaging/store";
 import { RECEIVE_LINK_MS, SEND_LINK_MS } from "../src/kit/ui/resources";
 import {
   createMemoryStorage,
@@ -20,7 +21,10 @@ const HELLO: StockIncomingSms = { number: "0400000001", text: "Hello", sentAt: S
 
 function messaging(network: StockNetworkPort = createSyntheticNetwork()) {
   const store = new StockMessages(new StockEeprom(createMemoryStorage()), "sim-1");
-  const service = new StockMessaging(store, network, () => "+1234567890");
+  const service = new StockMessaging(store, network, {
+    links: STOCK_MESSAGE_LINKS,
+    centre: () => "+1234567890",
+  });
   return { store, service };
 }
 

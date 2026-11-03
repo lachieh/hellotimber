@@ -3,9 +3,9 @@
 // duration's pages (4-5) and Clear timers behind the security code, and Prepaid credit's page
 // results. Call costs and Call divert are plan 22b's.
 import { PhoneApplication } from "@hellotimber/phone-core";
-import type { CallEntry, CallList } from "../../calls/log";
-import { durationText } from "../../calls/log";
-import { callDate, callTime } from "../../calls/timestamp";
+import type { CallEntry, CallList } from "../../services/calls/log";
+import { durationText } from "../../services/calls/log";
+import { callDate, callTime } from "../../services/calls/timestamp";
 import { callEntry } from "../../widgets/call-entry";
 import { confirmQuery } from "../../kit/ui/widgets/confirm";
 import { StockFlowApplication, type Flow, type Widget } from "../../kit/ui/widgets/flow";

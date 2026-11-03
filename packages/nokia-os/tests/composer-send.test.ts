@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vite-plus/test";
 import { StockEeprom } from "../src/firmware/eeprom";
-import { StockMessaging } from "../src/messages/service";
-import { StockMessages } from "../src/messages/store";
+import { STOCK_MESSAGE_LINKS } from "../src/firmware/menu";
+import { StockMessaging } from "../src/services/messaging/service";
+import { StockMessages } from "../src/services/messaging/store";
 import { createMemoryStorage, type StockNetworkPort, type StockRingtone } from "../src/index";
 import { createSyntheticNetwork } from "../src/index";
 import { playComposer, setupKeys } from "./support/composer";
@@ -47,6 +48,7 @@ function service(network: StockNetworkPort): StockMessaging {
   return new StockMessaging(
     new StockMessages(new StockEeprom(createMemoryStorage()), "sim-1"),
     network,
+    { links: STOCK_MESSAGE_LINKS },
   );
 }
 

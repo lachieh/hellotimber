@@ -2,7 +2,7 @@
 // Message settings' virgin values, Info service's setter level and topics, and the leaves plan
 // 18d owns (placeholders until then).
 import { DICTIONARY_KEY, DICTIONARY_LABELS, VIRGIN_DICTIONARY } from "../../messages/bindings";
-import { MESSAGES_RECORD } from "../../messages/store";
+import { MESSAGES_RECORD } from "../../services/messaging/store";
 import { openBox } from "../../messages/read";
 import { smsEditor } from "../../messages/write";
 import { T9_USER_RECORD } from "../../kit/system/t9/user";

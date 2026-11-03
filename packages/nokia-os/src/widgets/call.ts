@@ -6,9 +6,14 @@ import type { PhoneKey } from "@hellotimber/phone-core";
 import type { CallBody, CallModel, StandbyDrawModel, WidgetModel } from "../kit/ui/display/widgets";
 import { Playback } from "../kit/ui/widgets/playback";
 import { timelineById, timelineByName } from "../kit/ui/timelines";
-import { CALL_TIMINGS, type StockCall, type StockTelephone } from "../calls/telephone";
-import { appendDial, starCycle } from "../calls/dial-string";
-import { transmittedDtmfProgram, VOLUME_TONE_MS, volumeTopProgram } from "../calls/sounds";
+import { CALL_TIMINGS, type StockCall, type StockTelephone } from "../services/calls/telephone";
+import { appendDial, starCycle } from "../services/calls/dial-string";
+import {
+  earpieceWord,
+  transmittedDtmfProgram,
+  VOLUME_TONE_MS,
+  volumeTopProgram,
+} from "../calls/sounds";
 import { DIAL_TIMINGS } from "./dial-entry";
 import type { StockSounder } from "../sound/sounder";
 import type { Flow, Widget } from "../kit/ui/widgets/flow";
@@ -249,7 +254,7 @@ export class CallWidget implements Widget {
     if (phase === "ringing") {
       if (key === "navi") {
         // Answer beeps in the earpiece (`sound/calls/ring-answer`).
-        this.#o.sounder.keyBeepWord(telephone.earpieceWord);
+        this.#o.sounder.keyBeepWord(earpieceWord(telephone.volume));
         telephone.answer(call);
       } else if (key === "c") telephone.reject(call);
       else if (key === "up" || key === "down") this.#volumeKey(key);
@@ -257,7 +262,7 @@ export class CallWidget implements Widget {
     }
     if (phase === "ending" || phase === "released") return;
     // In a call keys beep in the earpiece; ▲/▼ sound Volume's tone instead.
-    if (!/^[0-9*#]$/.test(key)) this.#o.sounder.keyBeepWord(telephone.earpieceWord);
+    if (!/^[0-9*#]$/.test(key)) this.#o.sounder.keyBeepWord(earpieceWord(telephone.volume));
     if (key === "up" || key === "down") {
       this.#volumeKey(key);
       this.#volumeRepeat = { key, at: now + VOLUME_REPEAT.firstMs };
@@ -266,7 +271,7 @@ export class CallWidget implements Widget {
     if (/^[0-9*#]$/.test(key)) {
       // DTMF digits (S15): shown in the entry's layout with Options for a while.
       if (phase === "calling") return;
-      this.#o.sounder.keyDtmf(telephone.earpieceWord);
+      this.#o.sounder.keyDtmf(earpieceWord(telephone.volume));
       this.#digit(key, now);
       this.#options = true;
       this.#digitsFirstAt = this.#digitsOptionsUntil === undefined ? now : this.#digitsFirstAt;
@@ -337,7 +342,7 @@ export class CallWidget implements Widget {
       // ▲ at the top restarts it; ▼ ends with a tone still sounding.
       const ms =
         key === "down" && this.#volumeToneEnd > now ? this.#volumeToneEnd - now : VOLUME_TONE_MS;
-      this.#o.sounder.callSound(volumeTopProgram(telephone.earpieceWord, ms));
+      this.#o.sounder.callSound(volumeTopProgram(earpieceWord(telephone.volume), ms));
       this.#volumeToneEnd = now + ms;
     }
     this.#volumeAt = now;
@@ -459,7 +464,7 @@ export class CallWidget implements Widget {
       completed = true;
       elapsed = 0;
       tone = this.#o.sounder.callSound(
-        transmittedDtmfProgram(text, this.#o.telephone.earpieceWord),
+        transmittedDtmfProgram(text, earpieceWord(this.#o.telephone.volume)),
       );
     });
     return {

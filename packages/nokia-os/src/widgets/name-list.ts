@@ -10,7 +10,7 @@
 // nothing.
 import { rowsWindowTop, type PhoneKey } from "@hellotimber/phone-core";
 import type { NameListModel } from "../kit/ui/display/widgets";
-import { searchIndex, shownName, type PhoneBookEntry } from "../phone-book/entries";
+import { searchIndex, shownName, type PhoneBookEntry } from "../services/phone-book/entries";
 import { TEXT_TIMINGS } from "../kit/ui/resources";
 import { MULTITAP_KEYS, type TextKey } from "../kit/ui/text/keys";
 import type { Flow, Widget } from "../kit/ui/widgets/flow";

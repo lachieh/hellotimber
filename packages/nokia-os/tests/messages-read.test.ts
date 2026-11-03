@@ -3,7 +3,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { messagePages } from "../src/messages/read";
-import { MESSAGE_SLOTS, StockMessages } from "../src/messages/store";
+import { MESSAGE_SLOTS, StockMessages } from "../src/services/messaging/store";
 import { RECEIVE_LINK_MS } from "../src/kit/ui/resources";
 import {
   createMemoryStorage,

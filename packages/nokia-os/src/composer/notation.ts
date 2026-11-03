@@ -1,20 +1,9 @@
 // The Composer's notation (plan 27 K6, D2): a tone is a list of tokens, each a note
 // (`[duration][.][#]<note><octave>`, `16.#f2`) or a rest (`[duration]-`, `8-`). Pure.
 
-export type NoteValue = 1 | 2 | 4 | 8 | 16 | 32;
-export type NotePitch = "c" | "d" | "e" | "f" | "g" | "a" | "b";
+import type { ComposerToken, NotePitch, NoteValue } from "../services/messaging/ringtone";
 
-export type ComposerToken =
-  | {
-      readonly kind: "note";
-      readonly value: NoteValue;
-      readonly dotted: boolean;
-      readonly pitch: NotePitch;
-      /** c, d, f, g and a only. */
-      readonly sharp: boolean;
-      readonly octave: 1 | 2 | 3;
-    }
-  | { readonly kind: "rest"; readonly value: NoteValue };
+export type { ComposerToken, NotePitch, NoteValue };
 
 /** A tone holds at most this many tokens (K6: the counter reads 0). */
 export const COMPOSER_LIMIT = 50;

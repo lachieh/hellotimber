@@ -4,7 +4,7 @@
 // owns them (`leaves.ts`, `stock.ts`, `features/`).
 import { normaliseSim, type NormalisedSimCard, type StockSimCard } from "../phone-book/sim-card";
 import { simServicesEntry } from "./features/sim-services";
-import { StockPhoneBook } from "../phone-book/store";
+import { StockPhoneBook } from "../services/phone-book/store";
 import {
   ApplicationEntry,
   MenuLevel,
@@ -16,7 +16,7 @@ import {
   type MenuEntry,
   type SubmenuOptions,
 } from "@hellotimber/phone-core";
-import { stockMenuGraphic } from "../kit/ui/resources";
+import { RECEIVE_LINK_MS, SEND_LINK_MS, stockMenuGraphic } from "../kit/ui/resources";
 import type { StockServices } from "./features/feature";
 import { createStockGames, type StockGames } from "./features/games";
 import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
@@ -29,9 +29,9 @@ import { LEADS, LEVELS, setterLevel, showsEntryIndicator, STOCK_SETTINGS } from 
 import { settingKey } from "./tree";
 import { SoundSequencer } from "../kit/ui/sound/sequencer";
 import { StockSounder } from "../sound/sounder";
-import { createSyntheticNetwork, type StockNetworkPort } from "../messages/network";
-import { StockMessaging } from "../messages/service";
-import { StockMessages } from "../messages/store";
+import { createSyntheticNetwork, type StockNetworkPort } from "../services/messaging/network";
+import { StockMessaging, type MessagingLinks } from "../services/messaging/service";
+import { StockMessages } from "../services/messaging/store";
 import { SET_1_CENTRE_KEY } from "./features/messages";
 import { NO_T9_VIRGIN_CHOICES } from "../messages/bindings";
 import { stockT9, type StockT9 } from "../kit/system/t9/service";
@@ -267,6 +267,12 @@ export function stockServices(
   };
 }
 
+/** The synthetic cell's SMS link times (plan 18 D9), as captured. */
+export const STOCK_MESSAGE_LINKS: MessagingLinks = {
+  sendMs: SEND_LINK_MS,
+  receiveMs: RECEIVE_LINK_MS,
+};
+
 /**
  * A phone's messaging: `sim`'s messages over `eeprom` (plan 30: the SIM's own until the phone
  * first writes them), Set 1's centre from `settings`.
@@ -278,7 +284,10 @@ export function stockMessaging(
   network: StockNetworkPort,
 ): StockMessaging {
   const centre = () => settings.text(SET_1_CENTRE_KEY) ?? "";
-  return new StockMessaging(new StockMessages(eeprom, sim), network, centre);
+  return new StockMessaging(new StockMessages(eeprom, sim), network, {
+    links: STOCK_MESSAGE_LINKS,
+    centre,
+  });
 }
 
 /** The whole v6.39 menu tree (no host ports, its own virgin settings store). */

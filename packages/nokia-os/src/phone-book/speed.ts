@@ -11,7 +11,7 @@ import type { Flow, Widget } from "../kit/ui/widgets/flow";
 import { note } from "../kit/ui/widgets/note";
 import { HeldC } from "../kit/ui/widgets/held-c";
 import { Playback } from "../kit/ui/widgets/playback";
-import { shownName } from "./entries";
+import { shownName } from "../services/phone-book/entries";
 import { emptyNote, nameQueryWidget, names, phoneBookNote } from "./flows";
 import { VOICE_ERROR_BEEPS, VOICE_START_BEEP } from "./timings";
 

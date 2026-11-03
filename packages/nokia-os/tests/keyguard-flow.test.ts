@@ -1,7 +1,7 @@
 // The keyguard over the kernel (plan 25 D4, Task 7): the stock phone routes a locked phone's keys
 // to the keyguard and shows its screens, while the kernel stays at standby underneath.
-import type { StockCallControl } from "../src/calls/network";
-import { CALL_TIMINGS } from "../src/calls/telephone";
+import type { StockCallControl } from "../src/services/calls/network";
+import { CALL_TIMINGS } from "../src/services/calls/telephone";
 import type { PhoneSnapshot } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it } from "vite-plus/test";

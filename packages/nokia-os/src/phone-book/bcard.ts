@@ -4,13 +4,13 @@ import type { StockServices } from "../firmware/features/feature";
 import { timelineById, timelineByName } from "../kit/ui/timelines";
 import type { WidgetModel } from "../kit/ui/display/widgets";
 import { COMPOSED_FLOWS } from "../messages/bindings";
-import type { StockSendOutcome } from "../messages/network";
+import type { StockSendOutcome } from "../services/messaging/network";
 import type { Flow, Widget } from "../kit/ui/widgets/flow";
 import { interlude } from "../kit/ui/widgets/interlude";
 import { note } from "../kit/ui/widgets/note";
 import { numberEntry } from "../kit/ui/widgets/number-entry";
 import { Playback } from "../kit/ui/widgets/playback";
-import type { PhoneBookEntry } from "./entries";
+import type { PhoneBookEntry } from "../services/phone-book/entries";
 import { emptyNote, names, pickNumber } from "./flows";
 import { BCARD_LINK_MS, BCARD_OK_MS } from "./timings";
 
