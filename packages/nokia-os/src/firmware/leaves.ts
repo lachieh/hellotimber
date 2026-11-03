@@ -1,5 +1,5 @@
-// The stock tree's leaves as applications (plan 14 Task 12): each leaf, option list and info
-// page opens a flow of stock widgets read from the tree and the features' tables (`stock.ts`), a
+// A firmware tree's leaves as applications (plan 14 Task 12): each leaf, option list and info
+// page opens a flow of stock widgets read from the tree and the firmware's tables (`firmware.ts`), a
 // screen a feature implements, or the placeholder of the plan that owns it. Timelines and layouts are resolved when the menu is built, so a missing binding fails
 // there and names its node.
 import { PhoneApplication } from "@hellotimber/phone-core";
@@ -33,25 +33,8 @@ import type {
   StockScreenSpec,
   StockTreeNode,
 } from "./generated/stock-tree";
+import type { Firmware } from "./firmware";
 import { PlaceholderApplication } from "./placeholder";
-import {
-  EXIT_LEVELS,
-  EXITS_WHEN,
-  LEVEL_BARS,
-  modelNumber,
-  noteEnd,
-  noteMoves,
-  noteTimelineId,
-  numberLine,
-  optionListHooks,
-  optionListNumbering,
-  placeholderOwner,
-  PROGRESS_QUITS,
-  PROMPT_LAYOUTS,
-  promptLayout,
-  QUERY_RESULTS,
-  SCREENS,
-} from "./stock";
 import { timelineById, timelineByName } from "../kit/ui/timelines";
 import { settingKey, slugOf } from "./tree";
 import type { StockSounder } from "../sound/sounder";
@@ -71,13 +54,17 @@ export interface LeafPlace {
 }
 
 /** The node's own recording's timeline (or its same-as model's), if any. */
-function ownTimeline(number: string): StockWidgetTimeline | undefined {
-  const id = WIDGET_TIMELINE_BY_NODE[modelNumber(number)];
+function ownTimeline(firmware: Firmware, number: string): StockWidgetTimeline | undefined {
+  const id = WIDGET_TIMELINE_BY_NODE[firmware.modelNumber(number)];
   return id === undefined ? undefined : timelineById(id, `node ${number}`);
 }
 
-function noteTimeline(number: string, lines: readonly string[]): StockWidgetTimeline | undefined {
-  const id = noteTimelineId(WIDGET_TIMELINE_BY_NODE, modelNumber(number), lines);
+function noteTimeline(
+  firmware: Firmware,
+  number: string,
+  lines: readonly string[],
+): StockWidgetTimeline | undefined {
+  const id = firmware.noteTimelineId(WIDGET_TIMELINE_BY_NODE, firmware.modelNumber(number), lines);
   return id === undefined ? undefined : timelineById(id, `the note at ${number}`);
 }
 
@@ -101,18 +88,24 @@ function placeholderWidget(label: string): Widget {
 }
 
 /** A prompt's layout: its own measured one, or its same-as model's. */
-function layoutOf(number: string, screen: StockLeafScreen): PromptLayout {
-  const layout = PROMPT_LAYOUTS[number] ?? promptLayout(modelNumber(number), screen.kind);
+function layoutOf(firmware: Firmware, number: string, screen: StockLeafScreen): PromptLayout {
+  const layout =
+    firmware.promptLayouts[number] ??
+    firmware.promptLayout(firmware.modelNumber(number), screen.kind);
   if (layout === undefined) throw new Error(`No prompt layout for ${number} (${screen.kind}).`);
   return layout;
 }
 
 /** The cursor blink of a prompt: its own recording's, else the representative one (P9). */
-function blinkOf(number: string, layout: PromptLayout): StockWidgetTimeline | undefined {
+function blinkOf(
+  firmware: Firmware,
+  number: string,
+  layout: PromptLayout,
+): StockWidgetTimeline | undefined {
   if (layout.entry !== "end" && layout.entry !== "start" && layout.entry !== "text") {
     return undefined;
   }
-  return ownTimeline(number) ?? timelineById(CURSOR_STYLE, `the cursor at ${number}`);
+  return ownTimeline(firmware, number) ?? timelineById(CURSOR_STYLE, `the cursor at ${number}`);
 }
 
 /** The application id of the node at `path`. */
@@ -121,14 +114,17 @@ function idOf(path: readonly StockTreeNode[]): string {
 }
 
 /**
- * Builds the stock leaves of one menu over one phone's services: its settings store, games
- * holder, security code, sounder (previews and note tones, plan 16) and host ports.
+ * Builds the stock leaves of one menu over one phone's services: its firmware's tables, its
+ * settings store, games holder, security code, sounder (previews and note tones, plan 16) and
+ * host ports.
  */
 export class LeafBinder {
   readonly #services: StockServices;
+  readonly #firmware: Firmware;
 
   constructor(services: StockServices) {
     this.#services = services;
+    this.#firmware = services.firmware;
   }
 
   /** The application a leaf node opens. */
@@ -138,19 +134,20 @@ export class LeafBinder {
     const bound = this.#bound(node.number, node.opens, settingKey(place.path));
     if (bound !== undefined) {
       const flow = new StockFlowApplication(id, bound);
-      const exits = EXITS_WHEN[node.number];
+      const exits = this.#firmware.exitsWhen[node.number];
       if (exits === undefined) return flow;
       const services = this.#services;
-      return new GatedApplication(id, flow, () => exits(services), EXIT_LEVELS[node.number] ?? 1);
+      const levels = this.#firmware.exitLevels[node.number] ?? 1;
+      return new GatedApplication(id, flow, () => exits(services), levels);
     }
-    const owner = placeholderOwner(node.number);
+    const owner = this.#firmware.placeholderOwner(node.number);
     if (owner !== undefined) {
       const path = place.path.map((n) => n.slug).join("/");
       return new PlaceholderApplication(`placeholder:${path}`, node.label, owner);
     }
     const spec = node.opens;
     if (spec.kind === "returns-immediately") {
-      return new ExitApplication(id, EXIT_LEVELS[node.number] ?? 1);
+      return new ExitApplication(id, this.#firmware.exitLevels[node.number] ?? 1);
     }
     return new StockFlowApplication(id, this.#root(place, spec));
   }
@@ -197,20 +194,21 @@ export class LeafBinder {
 
   /** A game level's splash intro (D12). */
   intro(node: StockTreeNode, path: string): PhoneApplication {
-    const timeline = ownTimeline(node.number);
+    const timeline = ownTimeline(this.#firmware, node.number);
     if (timeline === undefined) throw new Error(`No splash timeline for ${node.number}.`);
     return splashIntro(`stock:intro:${path}`, timeline);
   }
 
-  /** The screen a feature implements at node `number` (`SCREENS`), if one does. */
+  /** The screen a feature implements at node `number` (the firmware's `screens`), if one does. */
   #bound(
     number: string,
     screen: StockScreenSpec | StockResult,
     key: string,
   ): (() => Widget | undefined) | undefined {
-    const binding = SCREENS[number];
+    const binding = this.#firmware.screens[number];
     if (binding === undefined) return undefined;
-    const place: ScreenPlace = { number, screen, key, numbering: optionListNumbering(number) };
+    const numbering = this.#firmware.optionListNumbering(number);
+    const place: ScreenPlace = { number, screen, key, numbering };
     return binding(this.#services, place);
   }
 
@@ -237,6 +235,7 @@ export class LeafBinder {
   #screen(number: string, screen: StockLeafScreen, moves?: NoteOptions["moves"]): () => Widget {
     const { lines, softkey } = screen;
     const services = this.#services;
+    const firmware = this.#firmware;
     const sound = services.noteSound;
     const need = (what: string): string => {
       if (softkey === undefined) throw new Error(`${number}: ${what} without a soft key.`);
@@ -245,19 +244,19 @@ export class LeafBinder {
     switch (screen.kind) {
       case "timed-note":
       case "static-note": {
-        const timeline = noteTimeline(number, lines);
+        const timeline = noteTimeline(firmware, number, lines);
         if (timeline === undefined && screen.kind === "timed-note") {
           throw new Error(`No widget timeline for the note at ${number}.`);
         }
         const fallback: NoteEnd = screen.after === "standby" ? "standby" : "back";
-        const end = noteEnd(number);
+        const end = firmware.noteEnd(number);
         // A bound end may depend on the phone (Snake II's Top score returns to Continue while a
         // game is suspended), so it is read when the note opens.
         const endNow = (): NoteEnd =>
           end === undefined ? fallback : typeof end === "function" ? end(services) : end;
-        const keys = moves ?? noteMoves(number);
+        const keys = moves ?? firmware.noteMoves(number);
         // A line that shows a numeric setting (Top score) reads it when the note opens.
-        const shown = numberLine(number);
+        const shown = firmware.numberLine(number);
         const settings = services.settings;
         const linesNow = (): readonly string[] =>
           shown === undefined
@@ -277,11 +276,11 @@ export class LeafBinder {
           });
       }
       case "progress-note": {
-        const timeline = noteTimeline(number, lines);
+        const timeline = noteTimeline(firmware, number, lines);
         if (timeline === undefined) throw new Error(`No widget timeline for ${number}.`);
         const text = lines[0]!;
         const sk = need("a progress note");
-        const quitNote = PROGRESS_QUITS[text];
+        const quitNote = firmware.progressQuits[text];
         const quitTimeline = quitNote === undefined ? undefined : timelineByName(quitNote.timeline);
         const quit =
           quitNote === undefined
@@ -312,13 +311,13 @@ export class LeafBinder {
       // code's are the security feature's screens.
       case "text-input":
       case "number-input": {
-        const layout = layoutOf(number, screen);
-        const blink = blinkOf(number, layout);
+        const layout = layoutOf(firmware, number, screen);
+        const blink = blinkOf(firmware, number, layout);
         return () => promptFromLayout(layout, screen, blink);
       }
       case "level-bar": {
         const sk = need("a level bar");
-        const bars = LEVEL_BARS[modelNumber(number)];
+        const bars = firmware.levelBars[number] ?? firmware.levelBars[firmware.modelNumber(number)];
         if (bars === undefined) throw new Error(`No level bars for ${number}.`);
         return () => levelBar({ bars, softkey: sk });
       }
@@ -328,7 +327,7 @@ export class LeafBinder {
   }
 
   /**
-   * What OK on a confirm query does (`QUERY_RESULTS`): `store` runs first. A query pushed above
+   * What OK on a confirm query does (the firmware's `queryResults`): `store` runs first. A query pushed above
    * an option list (`pushed`) closes before its result replaces the list.
    */
   #queryResult(
@@ -336,7 +335,7 @@ export class LeafBinder {
     lines: readonly string[],
     store: () => void,
   ): (flow: Flow, pushed: boolean) => void {
-    const result = QUERY_RESULTS[lines[0] ?? ""];
+    const result = this.#firmware.queryResults[lines[0] ?? ""];
     if (result === undefined) throw new Error(`No result for the query at ${number}.`);
     let make: () => Widget;
     if (result.kind === "note") {
@@ -372,7 +371,7 @@ export class LeafBinder {
       );
       return () => multiSelect({ key, labels, opening, settings, inert });
     }
-    const exitLevels = EXIT_LEVELS[number];
+    const exitLevels = this.#firmware.exitLevels[number];
     const choices = spec.options.map((option, i): ((flow: Flow) => void) => {
       const store = () => settings.choose(key, i);
       if (exitLevels === undefined)
@@ -390,9 +389,9 @@ export class LeafBinder {
         choices[i]!,
       ),
     );
-    const numbering = optionListNumbering(number);
+    const numbering = this.#firmware.optionListNumbering(number);
     // Plan 16: key beeps and previews, from the feature that hooks this setting (tones).
-    const hooks = optionListHooks(key, this.#services);
+    const hooks = this.#firmware.optionListHooks(key, this.#services);
     return () =>
       new OptionListWidget({
         // Plan 27 (D8): a ringing-tone list names the Composer's saved tones as it opens.
@@ -420,7 +419,12 @@ export class LeafBinder {
   ): (flow: Flow) => void {
     const { kind } = option.result;
     const stores = kind === "timed-note" || kind === "returns-immediately";
-    if (!stores || placeholderOwner(number) !== undefined || SCREENS[number] !== undefined) {
+    const firmware = this.#firmware;
+    if (
+      !stores ||
+      firmware.placeholderOwner(number) !== undefined ||
+      firmware.screens[number] !== undefined
+    ) {
       return ok;
     }
     return (flow) => {
@@ -441,7 +445,7 @@ export class LeafBinder {
     moves: NoteOptions["moves"],
     store: () => void,
   ): (flow: Flow) => void {
-    const owner = placeholderOwner(number);
+    const owner = this.#firmware.placeholderOwner(number);
     if (owner !== undefined) return (flow) => flow.replace(placeholderWidget(option.label));
     const result: StockResult = option.result;
     const bound = this.#bound(number, result, key);

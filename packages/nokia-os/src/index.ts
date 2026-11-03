@@ -1,6 +1,13 @@
 // @hellotimber/nokia-os — the stock Nokia 3310 v6.39 firmware on the phone-core kernel.
 export { paintStockScreen } from "./kit/ui/display/paint";
-export { createStockPhone } from "./firmware/phone";
+export { createFirmwarePhone, createStockPhone } from "./firmware/phone";
+// Plan 32: a firmware is a value: a tree and the features bound to it (`createFirmwarePhone`).
+export { composeFirmware } from "./firmware/firmware";
+export type { Firmware, FirmwareSpec } from "./firmware/firmware";
+export { remountFeature } from "./firmware/remount";
+export { STOCK_FEATURES, STOCK_FIRMWARE } from "./firmware/stock";
+export type { StockFeature } from "./firmware/features/feature";
+export type { StockTreeNode } from "./firmware/generated/stock-tree";
 export { createMemoryStorage, STOCK_STORAGE_PREFIX } from "./firmware/eeprom";
 export type { StockStorage } from "./firmware/eeprom";
 export type { StockPhoneConfig } from "./firmware/phone";

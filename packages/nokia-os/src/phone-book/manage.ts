@@ -3,7 +3,6 @@
 // capture's (`phone-book/erase-*`, `edit-*`, `tone-*`).
 import type { StockServices } from "../firmware/features/feature";
 import { timelineByName } from "../kit/ui/timelines";
-import { treePath } from "../firmware/tree";
 import type { WidgetModel } from "../kit/ui/display/widgets";
 import { codeEntry } from "../widgets/code-entry";
 import type { Flow, Widget } from "../kit/ui/widgets/flow";
@@ -234,15 +233,15 @@ function editName(
 // ------------------------------------------------------------------ Assign tone (1-6)
 
 /** Tones › Ringing tone's entries (5-1: the built-in tones, then the composer's slots). */
-function ringingToneLabels(): readonly string[] {
-  const opens = treePath("5-1").at(-1)?.opens;
+function ringingToneLabels(services: StockServices): readonly string[] {
+  const opens = services.firmware.treePath("5-1").at(-1)?.opens;
   if (opens?.kind !== "option-list") throw new Error("5-1 is not the ringing tone list.");
   return opens.options.map((option) => option.label);
 }
 
 /** The tone list's entries: `No tone`, `Default`, then Tones › Ringing tone's (T). */
-function toneLabels(): readonly string[] {
-  return ["No tone", "Default", ...ringingToneLabels()];
+function toneLabels(services: StockServices): readonly string[] {
+  return ["No tone", "Default", ...ringingToneLabels(services)];
 }
 
 /** A stored tone (0 No tone, k ringing tone k, null Default) as its index in the tone list. */
@@ -259,7 +258,7 @@ function toneIndex(tone: number | null): number {
 export function assignTone(services: StockServices): Widget {
   const book = services.phoneBook;
   if (book.entries().length === 0) return emptyNote(services, "1-6");
-  const labels = toneLabels();
+  const labels = toneLabels(services);
   const { sounder, settings } = services;
   const preview = (index: number) => {
     if (index === 0) sounder.previewProgram(NO_TONE_PREVIEW);

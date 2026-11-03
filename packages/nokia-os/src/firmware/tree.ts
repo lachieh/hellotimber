@@ -1,6 +1,7 @@
-// Paths, keys and patterns over the generated stock tree (src/firmware/generated/stock-tree.ts),
-// shared by the menu, the leaves, the settings store and every feature (plan 14 D4).
-import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
+// Paths, keys and patterns over a menu tree in the generated stock tree's node format
+// (src/firmware/generated/stock-tree.ts), shared by the menu, the leaves, the settings store and
+// every feature (plan 14 D4). A composed firmware binds them to its own tree (`firmware.ts`).
+import type { StockTreeNode } from "./generated/stock-tree";
 
 /** A setting's key: the slug path of its tree node below the menu (`tones/ringing-volume`). */
 export function settingKey(path: readonly StockTreeNode[]): string {
@@ -36,10 +37,10 @@ export function byPattern<T>(table: Readonly<Record<string, T>>, number: string)
   return undefined;
 }
 
-/** The path from the top level to tree node `number`. */
-export function treePath(number: string): StockTreeNode[] {
+/** The path from the top level of `tree` to its node `number`. */
+export function treePath(tree: readonly StockTreeNode[], number: string): StockTreeNode[] {
   const path: StockTreeNode[] = [];
-  let level: readonly StockTreeNode[] = STOCK_TREE;
+  let level: readonly StockTreeNode[] = tree;
   for (const segment of number.split("-")) {
     const found = level.find((n) => n.number.split("-").at(-1) === segment);
     if (found === undefined) throw new Error(`No tree node ${number}.`);
@@ -49,10 +50,10 @@ export function treePath(number: string): StockTreeNode[] {
   return path;
 }
 
-/** The slug of the tree node after `number` among its siblings (circular). */
-export function nextSibling(number: string): string {
+/** The slug of the node after `number` among its siblings in `tree` (circular). */
+export function nextSibling(tree: readonly StockTreeNode[], number: string): string {
   const segments = number.split("-");
-  let level: readonly StockTreeNode[] = STOCK_TREE;
+  let level: readonly StockTreeNode[] = tree;
   for (const segment of segments.slice(0, -1)) {
     level = level.find((n) => n.number.split("-").at(-1) === segment)?.children ?? [];
   }
@@ -61,9 +62,9 @@ export function nextSibling(number: string): string {
   return level[(index + 1) % level.length]!.slug;
 }
 
-/** Every tree node with its path from the top level, in tree order. */
+/** Every node of `level` and below with its path from the top level, in tree order. */
 export function* treePaths(
-  level: readonly StockTreeNode[] = STOCK_TREE,
+  level: readonly StockTreeNode[],
   parents: readonly StockTreeNode[] = [],
 ): Generator<readonly StockTreeNode[]> {
   for (const node of level) {

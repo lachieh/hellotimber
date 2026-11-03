@@ -2,7 +2,8 @@
 // the screens it implements by tree node, the leaves it leaves to a later plan's placeholder, the
 // tables the generic stock widgets read (prompt layouts, note styles and ends, query results,
 // ...), its settings (virgin and factory values, aliases) and its EEPROM records. `stock.ts`
-// composes every feature registered in `features/index.ts`; a node or key bound twice throws.
+// composes every feature registered in `features/index.ts` (`firmware.ts` `composeFirmware`); a
+// node or key bound twice throws. `remount.ts` moves a feature's bindings to another subtree.
 //
 // Node patterns are menu numbers whose segments may be `*` (any one segment); a trailing `-**`
 // also matches the node itself and everything below (`tree.ts` `matchesPattern`). Patterns of one
@@ -17,6 +18,7 @@ import type { ListNumbering } from "../../kit/ui/widgets/rows";
 import type { NoteSound } from "../../kit/ui/widgets/note";
 import type { PromptLayout } from "../../kit/ui/widgets/prompt";
 import type { EepromRecord, StockEeprom } from "../eeprom";
+import type { Firmware } from "../firmware";
 import type { StockResult, StockScreenSpec } from "../generated/stock-tree";
 import type { StockPorts } from "../ports";
 import type { StockSecurity } from "../security";
@@ -25,6 +27,8 @@ import type { StockGames } from "./games";
 
 /** One phone's state and outputs, as feature bindings see them. */
 export interface StockServices {
+  /** The firmware the phone runs: its tree and composed feature tables (`firmware.ts`). */
+  readonly firmware: Firmware;
   readonly ports: StockPorts;
   readonly settings: StockSettings;
   /** The suspended games, the seed and the cue sink (plans 23, 24). */

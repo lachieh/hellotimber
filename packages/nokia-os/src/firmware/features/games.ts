@@ -10,6 +10,7 @@ import { snakeGame } from "../../widgets/snake";
 import { NO_CUES, type StockCueSink } from "../cues";
 import type { StockPorts } from "../ports";
 import { nextSibling } from "../tree";
+import { STOCK_TREE } from "../generated/stock-tree";
 import type { LeadEntry, NoteEndBinding, StockFeature, StockServices } from "./feature";
 
 /**
@@ -153,7 +154,7 @@ export function gameLevelTables(levels: readonly GameLevel[]): GameLevelTables {
     }
     const page = level.level;
     if (page !== undefined) {
-      const after = nextSibling(page);
+      const after = nextSibling(STOCK_TREE, page);
       levelStores[page] = ({ games }) => {
         if (games.suspended[game] === undefined) return undefined;
         delete games.suspended[game];

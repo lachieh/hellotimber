@@ -14,7 +14,11 @@ import type { StockCueSink } from "./cues";
 import { createMemoryStorage, StockEeprom, type StockStorage } from "./eeprom";
 import { composerOf } from "./features/composer";
 import { invalidShortcut } from "./leaves";
-import { createStockMenu, STOCK_SHORTCUT_WINDOW_MS, stockMessaging, stockServices } from "./menu";
+import { firmwareMenu, STOCK_SHORTCUT_WINDOW_MS, stockMessaging, stockServices } from "./menu";
+import type { Firmware } from "./firmware";
+import { firmwareRecords } from "./records";
+import { settingsRecordOf } from "./settings";
+import { STOCK_FIRMWARE } from "./stock";
 import { openBox } from "../messages/read";
 import { StockFlowApplication } from "../kit/ui/widgets/flow";
 import { applyPreload, checkImei, checkPreload, type StockPreload } from "./preload";
@@ -146,11 +150,22 @@ export interface StockPhoneInternals {
   readonly seed?: number;
   /** Where the games' cues go, stamped with the kernel time (D8; default: the phone's sounder). */
   readonly cues?: StockCueSink;
+  /** The firmware the phone runs (default: the stock v6.39 firmware, `STOCK_FIRMWARE`). */
+  readonly firmware?: Firmware;
 }
 
 /** A phone-core phone running the stock v6.39 firmware. It starts powered off. */
 export function createStockPhone(config: StockPhoneConfig): Phone {
   return createStockPhoneWith(config);
+}
+
+/**
+ * A phone-core phone running `firmware` (`composeFirmware`): its tree as the menu and its
+ * features' screens and settings, with the stock handset around it (boot, standby, calls, lights,
+ * sound). It starts powered off.
+ */
+export function createFirmwarePhone(firmware: Firmware, config: StockPhoneConfig): Phone {
+  return createStockPhoneWith(config, { firmware });
 }
 
 /**
@@ -177,12 +192,13 @@ export function createStockPhoneWith(
   const imei = config.imei === undefined ? undefined : checkImei(config.imei);
   const preload = checkPreload(config.preload);
   const { clock, date } = config;
+  const firmware = internals.firmware ?? STOCK_FIRMWARE;
   const storage = config.storage ?? createMemoryStorage();
-  const eeprom = new StockEeprom(storage);
+  const eeprom = new StockEeprom(storage, firmwareRecords(firmware));
   const t9 = stockT9(eeprom, config.t9?.english);
   // Plan 18b D5: without a T9 dictionary the virgin editor is multi-tap (Dictionary off).
-  const settings = createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES);
-  applyPreload(preload, storage, eeprom, settings);
+  const settings = createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES, firmware);
+  applyPreload(preload, storage, eeprom, settings, settingsRecordOf(firmware));
   let now = 0;
   const security = new StockSecurity(eeprom, settings, { now: () => now, sim });
   const skip = config.boot === "skip";
@@ -227,8 +243,22 @@ export function createStockPhoneWith(
   const messaging = stockMessaging(eeprom, settings, simCard, network);
   messaging.connect();
   const phoneBook = new StockPhoneBook(eeprom, simCard);
+  // The menu's leaves see these services without the IMEI (plan 30 D9: only standby's `*#06#`).
+  const menuServices = stockServices(
+    ports,
+    settings,
+    games,
+    security,
+    sounder,
+    eeprom,
+    messaging,
+    t9,
+    phoneBook,
+    undefined,
+    firmware,
+  );
   const services: StockServices = {
-    ...stockServices(ports, settings, games, security, sounder, eeprom, messaging, t9, phoneBook),
+    ...menuServices,
     ...(imei === undefined ? {} : { imei }),
   };
   // Plan 21: the clock's features over this phone's services (the alarm's minute listener, the
@@ -260,18 +290,7 @@ export function createStockPhoneWith(
   registerTelephone(eeprom, telephone, power);
   let keyguardCall: PhoneApplication | undefined;
   const phone: Phone = createPhone({
-    menu: createStockMenu(
-      ports,
-      settings,
-      games,
-      security,
-      sounder,
-      eeprom,
-      messaging,
-      t9,
-      phoneBook,
-      simCard,
-    ),
+    menu: firmwareMenu(menuServices, simCard),
     // Plan 18 D11: the envelope while Inbox holds unread messages, blinking while every slot is
     // used (`sms/full-arrival`: 480 ms steps; its phase is UNVERIFIED). Plan 17 D6: the silent
     // icon while the active profile's Incoming call alert is Off. Plan 21 D10: the alarm, timer

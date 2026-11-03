@@ -20,7 +20,8 @@ export const snakeFeature: StockFeature = {
     "8-1-2": (services, { number, screen }) => {
       const softkey = "softkey" in screen ? screen.softkey : undefined;
       if (softkey === undefined) throw new Error(`${number}: a level bar without a soft key.`);
-      const store = GAME_LEVEL_TABLES.levelStores[number];
+      // By the stock node, so a remounted copy of this feature (`remount.ts`) finds it too.
+      const store = GAME_LEVEL_TABLES.levelStores["8-1-2"];
       if (store === undefined) throw new Error(`${number}: not a game's Level page.`);
       return () =>
         levelPage({

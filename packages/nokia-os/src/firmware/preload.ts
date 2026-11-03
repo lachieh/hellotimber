@@ -14,7 +14,8 @@ import {
 import { WELCOME_NOTE_KEY, WELCOME_NOTE_LIMIT } from "./features/settings";
 import { SNAKE_SETTINGS } from "../widgets/snake";
 import { STOCK_STORAGE_PREFIX, type StockEeprom, type StockStorage } from "./eeprom";
-import { SETTINGS_RECORD, type StockSettings } from "./settings";
+import type { EepromRecord } from "../services/storage";
+import { SETTINGS_RECORD, type SettingsOverrides, type StockSettings } from "./settings";
 
 /** Plan 30: a reminder as the user could have typed it (D10). */
 export interface StockReminderPreload {
@@ -145,19 +146,20 @@ function stored(storage: StockStorage, record: { readonly name: string }): boole
  * Writes `preload` where its record does not exist in `storage` (D10): the Welcome note while
  * there is no settings record, the reminders (in order, as `Add` would) while there is no
  * reminders record, Snake II's level while the settings record holds none. Call before the phone
- * writes anything.
+ * writes anything. `settingsRecord` is the settings record `eeprom` holds (its firmware's).
  */
 export function applyPreload(
   preload: StockPreload,
   storage: StockStorage,
   eeprom: StockEeprom,
   settings: StockSettings,
+  settingsRecord: EepromRecord<SettingsOverrides> = SETTINGS_RECORD,
 ): void {
   const { welcomeNote, reminders, snakeLevel } = preload;
-  if (welcomeNote !== undefined && !stored(storage, SETTINGS_RECORD)) {
+  if (welcomeNote !== undefined && !stored(storage, settingsRecord)) {
     settings.setText(WELCOME_NOTE_KEY, welcomeNote);
   }
-  if (snakeLevel !== undefined && !(SNAKE_SETTINGS.level in eeprom.peek(SETTINGS_RECORD).numbers)) {
+  if (snakeLevel !== undefined && !(SNAKE_SETTINGS.level in eeprom.peek(settingsRecord).numbers)) {
     settings.setNumber(SNAKE_SETTINGS.level, snakeLevel);
   }
   if (reminders !== undefined && reminders.length > 0 && !stored(storage, REMINDERS_RECORD)) {

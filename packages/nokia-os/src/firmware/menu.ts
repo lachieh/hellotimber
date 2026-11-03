@@ -1,7 +1,7 @@
-// The stock v6.39 menu (plan 14 D4): the generated tree (`generated/stock-tree.ts`) as phone-core
-// entries. Submenus keep their presentation, soft key, opening selection, page values and game
-// splash; leaves open stock widget flows, a feature's screens or the placeholder of the plan that
-// owns them (`leaves.ts`, `stock.ts`, `features/`).
+// A firmware's menu (plan 14 D4): its tree (the stock v6.39 one: `generated/stock-tree.ts`) as
+// phone-core entries. Submenus keep their presentation, soft key, opening selection, page values
+// and game splash; leaves open stock widget flows, a feature's screens or the placeholder of the
+// plan that owns them (`leaves.ts`, `firmware.ts`, `features/`).
 import { normaliseSim, type NormalisedSimCard, type StockSimCard } from "../phone-book/sim-card";
 import { simServicesEntry } from "./features/sim-services";
 import { StockPhoneBook } from "../services/phone-book/store";
@@ -19,13 +19,15 @@ import {
 import { RECEIVE_LINK_MS, SEND_LINK_MS, stockMenuGraphic } from "../kit/ui/resources";
 import type { StockServices } from "./features/feature";
 import { createStockGames, type StockGames } from "./features/games";
-import { STOCK_TREE, type StockTreeNode } from "./generated/stock-tree";
+import type { StockTreeNode } from "./generated/stock-tree";
+import type { Firmware } from "./firmware";
 import { LeafBinder, type LeafPlace } from "./leaves";
 import { createMemoryStorage, StockEeprom } from "./eeprom";
 import type { StockPorts } from "./ports";
 import { StockSecurity } from "./security";
 import { createStockSettings, stockPageValue, type StockSettings } from "./settings";
-import { LEADS, LEVELS, setterLevel, showsEntryIndicator, STOCK_SETTINGS } from "./stock";
+import { firmwareRecords } from "./records";
+import { STOCK_FIRMWARE } from "./stock";
 import { settingKey } from "./tree";
 import { SoundSequencer } from "../kit/ui/sound/sequencer";
 import { StockSounder } from "../sound/sounder";
@@ -40,6 +42,7 @@ import { stockT9, type StockT9 } from "../kit/system/t9/service";
 export const STOCK_SHORTCUT_WINDOW_MS = 2948;
 
 interface Builder {
+  readonly firmware: Firmware;
   readonly ports: StockPorts;
   readonly settings: StockSettings;
   readonly services: StockServices;
@@ -50,9 +53,11 @@ interface Builder {
  * The value a stock page shows: the host's where a feature reads it (the Clock pages: the clock
  * in the chosen Time format), else the settings' (D9).
  */
-function pageDetail(key: string, ports: StockPorts, settings: StockSettings): string | undefined {
-  const host = STOCK_SETTINGS.hostValues[key];
-  return host === undefined ? stockPageValue(settings, key) : host(ports, settings);
+function pageDetail(key: string, b: Builder): string | undefined {
+  const host = b.firmware.settings.hostValues[key];
+  return host === undefined
+    ? stockPageValue(b.settings, key, b.firmware)
+    : host(b.ports, b.settings);
 }
 
 /**
@@ -84,7 +89,7 @@ function entryOf(
   if (spec.kind !== "submenu") {
     const moves = movesOf(parent, index);
     const place: LeafPlace = { path, ...(moves === undefined ? {} : { moves }) };
-    const setter = parent === undefined ? undefined : setterLevel(parent.number);
+    const setter = parent === undefined ? undefined : b.firmware.setterLevel(parent.number);
     const setterIndex = setter?.indexOf(node.slug) ?? -1;
     const application =
       setterIndex >= 0
@@ -97,7 +102,7 @@ function entryOf(
   // (Snake II's Continue, plan 23 D10); the tree's children follow it (orders 2.., slugs
   // unchanged), numbered by position. A lead `after` a child follows that child instead (plan
   // 18c: Topics' Add topic after Select).
-  const lead = LEADS[node.number];
+  const lead = b.firmware.leads[node.number];
   const treeChildren = node.children ?? [];
   const leadAt =
     lead?.after === undefined ? 0 : treeChildren.findIndex((c) => c.slug === lead.after) + 1;
@@ -118,11 +123,11 @@ function entryOf(
   );
   if (leadEntry !== undefined) children.splice(leadAt, 0, leadEntry);
   const key = settingKey(path);
-  const setter = setterLevel(node.number);
+  const setter = b.firmware.setterLevel(node.number);
   const bySlug = (s: string | undefined) => children.find((child) => child.slug.value === s);
   // A feature's level options (plan 17: the Profiles level shows the stored names and opens on
   // the active profile).
-  const level = LEVELS[node.number]?.(b.services);
+  const level = b.firmware.levels[node.number]?.(b.services);
   const opening =
     level?.opening !== undefined
       ? () => bySlug(level.opening!())
@@ -143,7 +148,7 @@ function entryOf(
       ? {
           detail: (child: MenuEntry) =>
             b.leaves.pageValue(`${key}/${child.slug.value}`) ??
-            pageDetail(`${key}/${child.slug.value}`, b.ports, b.settings),
+            pageDetail(`${key}/${child.slug.value}`, b),
         }
       : {}),
     ...(opening === undefined ? {} : { opening }),
@@ -156,7 +161,9 @@ function entryOf(
               : (level?.shown?.(child.slug.value) ?? true),
         }),
     ...(spec.intro ? { intro: b.leaves.intro(node, path.map((n) => n.slug).join("/")) } : {}),
-    ...(showsEntryIndicator(node.number) ? { entryIndicatorMs: STOCK_SHORTCUT_WINDOW_MS } : {}),
+    ...(b.firmware.showsEntryIndicator(node.number)
+      ? { entryIndicatorMs: STOCK_SHORTCUT_WINDOW_MS }
+      : {}),
     ...(level?.label === undefined
       ? {}
       : { label: (child: MenuEntry) => level.label!(child.slug.value, child.order.value) }),
@@ -199,13 +206,22 @@ export function createStockMenu(
     phoneBook,
     sim,
   );
+  return firmwareMenu(services, sim);
+}
+
+/**
+ * The menu of `services.firmware` over one phone's services: its tree's top level as the
+ * carousel, and (plan 30 D5) SIM services after it when `sim` has a toolkit.
+ */
+export function firmwareMenu(services: StockServices, sim?: NormalisedSimCard): PhoneMenu {
   const builder: Builder = {
-    ports,
+    firmware: services.firmware,
+    ports: services.ports,
     settings: services.settings,
     services,
     leaves: new LeafBinder(services),
   };
-  const entries = STOCK_TREE.map(
+  const entries = services.firmware.tree.map(
     (node, i) => new TopLevelEntry(entryOf([node], i, builder), stockMenuGraphic(node.slug)),
   );
   // Plan 30 D5: a SIM with a toolkit adds SIM services (Menu 14) after Profiles.
@@ -236,7 +252,10 @@ export function stockMenuFor(sim: string | StockSimCard): PhoneMenu {
   );
 }
 
-/** What feature bindings see: `createStockMenu`'s services, its defaults filled in over `eeprom`. */
+/**
+ * What feature bindings see: `createStockMenu`'s services, its defaults filled in over `eeprom`,
+ * running `firmware` (default the stock firmware; a default settings store is that firmware's).
+ */
 export function stockServices(
   ports: StockPorts,
   settings: StockSettings | undefined,
@@ -248,11 +267,16 @@ export function stockServices(
   t9: StockT9 = stockT9(eeprom),
   phoneBook?: StockPhoneBook,
   sim?: NormalisedSimCard,
+  firmware: Firmware = STOCK_FIRMWARE,
 ): StockServices {
-  const store = settings ?? createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES);
+  const store =
+    settings ?? createStockSettings(eeprom, t9.english ? {} : NO_T9_VIRGIN_CHOICES, firmware);
   const sound = sounder ?? new StockSounder(new SoundSequencer(() => {}), store, () => games.now());
-  const code = security ?? new StockSecurity(new StockEeprom(createMemoryStorage()), store);
+  const code =
+    security ??
+    new StockSecurity(new StockEeprom(createMemoryStorage(), firmwareRecords(firmware)), store);
   return {
+    firmware,
     ports,
     settings: store,
     games,

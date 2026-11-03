@@ -18,7 +18,7 @@ import type { EepromRecord } from "../eeprom";
 import type { StockFeature, StockServices } from "./feature";
 import type { Flow, Widget } from "../../kit/ui/widgets/flow";
 import { OptionListWidget, settingOptionList } from "../../widgets/option-list";
-import { settingKey, treePath } from "../tree";
+import { settingKey } from "../tree";
 import { nodeTimeline } from "../../kit/ui/timelines";
 import { note } from "../../kit/ui/widgets/note";
 
@@ -37,7 +37,7 @@ export function savePhoneNumber(services: StockServices, number: string, text = 
 
 /** The Phone book level opened over a call, sharing the menu's tree and feature screens. */
 export function inCallPhoneBook(services: StockServices, number = "1"): Widget {
-  const path = treePath(number);
+  const path = services.firmware.treePath(number);
   const node = path[path.length - 1]!;
   const screen = node.opens;
   const key = settingKey(path);
