@@ -135,18 +135,39 @@ interface Forming {
   done: boolean;
 }
 
+/** Where the camera looks from, about the framed phone (PhoneStage `orbit`). */
+export interface StageOrbit {
+  /** Radians around the phone's vertical axis; positive moves the camera to the phone's right. */
+  yaw: number;
+  /** Radians above (positive) or below the phone's centre. */
+  pitch: number;
+}
+
+/** An offset over the phone's pose (PhoneStage `drift`), e.g. a showcase's idle float. */
+export interface StageDrift {
+  /** World units up (the phone is STAGE_HEIGHT tall). */
+  y: number;
+  /** Radians about the screen's x and y axes. */
+  tiltX: number;
+  tiltY: number;
+}
+
 function SwayRig({
   children,
   fit,
   form,
   onFormStart,
   pose: posed,
+  orbit,
+  drift,
 }: {
   children: ReactNode;
   fit: number | undefined;
   form: boolean;
   onFormStart: (() => void) | undefined;
   pose: (() => FormPose) | undefined;
+  orbit: (() => StageOrbit) | undefined;
+  drift: (() => StageDrift) | undefined;
 }) {
   const group = useRef<Group>(null);
   const silhouette = useRef<Silhouette>(undefined);
@@ -162,7 +183,8 @@ function SwayRig({
     if (forming.current === undefined) {
       forming.current = {
         startedAt: performance.now(),
-        done: !form || prefersReducedMotion,
+        // A host-driven pose is the host's to run (its own reduced-motion rule).
+        done: !form || (prefersReducedMotion && posed === undefined),
       };
       onFormStart?.();
     }
@@ -181,11 +203,24 @@ function SwayRig({
       fit === undefined
         ? [0, 0, CAMERA_Z]
         : fitCamera(silhouette.current, state.size.width / state.size.height, fit, depth);
-    state.camera.position.set(x, y, z);
+    const view = orbit?.();
+    if (view === undefined) state.camera.position.set(x, y, z);
+    else {
+      // On a sphere about the framed centre, as far away as the fit put it.
+      const flat = Math.cos(view.pitch);
+      state.camera.position.set(
+        x + z * Math.sin(view.yaw) * flat,
+        y + z * Math.sin(view.pitch),
+        z * Math.cos(view.yaw) * flat,
+      );
+      state.camera.lookAt(x, y, 0);
+    }
+    const offset = drift?.();
     // The leap: nearer the camera by a share of its distance.
     g.position.z = pose.lift * z;
+    g.position.y = offset?.y ?? 0;
     // The forming wobble; at rest the phone holds still (device tilt moves the light instead).
-    g.rotation.set(pose.tiltX, pose.tiltY, 0);
+    g.rotation.set(pose.tiltX + (offset?.tiltX ?? 0), pose.tiltY + (offset?.tiltY ?? 0), 0);
   });
   return <group ref={group}>{children}</group>;
 }
@@ -239,6 +274,14 @@ export interface PhoneStageProps extends Nokia3310Props {
    * (`depth` 1, `settled` 1, the rest neutral) once it is over.
    */
   pose?: () => FormPose;
+  /** Replaces the default ambient, key and fill lights (still turned by device tilt). */
+  lighting?: ReactNode;
+  /** More scene content in world space, outside the phone's rig (a floor, a contact shadow). */
+  scene?: ReactNode;
+  /** Read every frame: orbit the camera about the framed phone, looking at it. */
+  orbit?: () => StageOrbit;
+  /** Read every frame: an offset over the phone's pose. */
+  drift?: () => StageDrift;
 }
 
 /** Convenience scene: Canvas + lighting + resize + light that moves with device tilt (VISION contract).
@@ -249,6 +292,10 @@ export function PhoneStage({
   form = false,
   onFormStart,
   pose,
+  lighting,
+  scene,
+  orbit,
+  drift,
   ...props
 }: PhoneStageProps) {
   return (
@@ -258,12 +305,24 @@ export function PhoneStage({
       camera={{ position: [0, 0, CAMERA_Z], fov: CAMERA_FOV }}
     >
       <StudioEnvironment />
-      <ambientLight intensity={0.3} />
       <TiltLights>
-        <directionalLight position={[4, 6, 8]} intensity={1.0} />
-        <directionalLight position={[-5, -2, 4]} intensity={0.3} />
+        {lighting ?? (
+          <>
+            <ambientLight intensity={0.3} />
+            <directionalLight position={[4, 6, 8]} intensity={1.0} />
+            <directionalLight position={[-5, -2, 4]} intensity={0.3} />
+          </>
+        )}
       </TiltLights>
-      <SwayRig fit={fit} form={form} onFormStart={onFormStart} pose={pose}>
+      {scene}
+      <SwayRig
+        fit={fit}
+        form={form}
+        onFormStart={onFormStart}
+        pose={pose}
+        orbit={orbit}
+        drift={drift}
+      >
         <Nokia3310 {...props} />
       </SwayRig>
     </Canvas>
