@@ -2,8 +2,12 @@
 // seed state, and the seed New game takes from the clock.
 import { describe, expect, it } from "vite-plus/test";
 import { replaySeed, searchSeeds } from "../scripts/snake-seeds.ts";
-import { createAnsiRandom, createGameRandom, GAME_RANDOM_MODULUS } from "../src/games/random";
-import { gameSeed } from "../src/games/seed";
+import {
+  createAnsiRandom,
+  createGameRandom,
+  GAME_RANDOM_MODULUS,
+} from "../src/kit/apps/games/random";
+import { gameSeed } from "../src/kit/apps/games/seed";
 import { goldenPlacements } from "./support/snake-decode";
 
 const step = (seed: number) => (seed * 0x625f + 0x3623) % GAME_RANDOM_MODULUS;

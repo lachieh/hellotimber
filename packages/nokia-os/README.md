@@ -323,7 +323,7 @@ re-entry from standby, Top score return and twelve tap-key fixtures have exact a
 coverage. The full 60-frame New game tree capture also passes. Each game's suspended state
 is independent; New game seeds once and replaces only its own state.
 
-`src/games/space-impact/` owns pure state and steps; `src/firmware/features/space-impact.ts`
+`src/kit/apps/games/space-impact/` owns pure state and steps; `src/firmware/features/space-impact.ts`
 owns timers, key repeats and suspension. Games wiring stays in `features/games.ts`. Generated
 opening-wave declarations come from committed LCD evidence. Full level-0 replay still fails
 at image `ah`; collisions, later waves, RNG consumption, bonuses, bosses, game over, seeded
@@ -335,7 +335,7 @@ defaults remain UNVERIFIED. See `docs/specs/stock/space-impact.md` and plan 24 f
 `Games › Snake II › New game` plays the firmware's game (plan 23), checked against gameplay
 captures pixel for pixel and tick by tick.
 
-- **Engine.** `src/games/snake/` is a pure engine (`newSnakeGame`, `snakeKey`, `stepSnake`,
+- **Engine.** `src/kit/apps/games/snake/` is a pure engine (`newSnakeGame`, `snakeKey`, `stepSnake`,
   `blinkSnake`, `snakeRender`) with the firmware's rules: the 20x9 board and its wrap, the five
   mazes, every game key, food and growth, the bonus creatures and their countdown, the grace
   tick before a crash, the death blink and the ring quirk. It is separate from

@@ -1,34 +1,16 @@
 // The Snake II game state and what the painter draws from it (plan 23 D1). Pure data: the
 // engine (engine.ts) turns one state into the next; nothing here knows about time.
-import type { Cell, CreatureKind } from "./rng";
+import type { Cell, CreatureKind, Heading, Segment } from "../../../ui/display/widgets/snake";
 
-export type { Cell, CreatureKind } from "./rng";
-
-/** A direction of travel. */
-export type Heading = "right" | "left" | "up" | "down";
-
-/** A corner by the two cell edges it joins (`up-left`: in from the top, out to the left). */
-export type Corner = "up-left" | "up-right" | "down-left" | "down-right";
-
-/**
- * A segment's picture, named as the stock sprites are: heads (mouth closed or open) by heading,
- * tails by the way to the next segment, straights by heading, corners by their edges, and the
- * fat ones drawn where the snake ate.
- */
-export type SegmentPicture =
-  | `head/${Heading}`
-  | `head-open/${Heading}`
-  | `tail/${Heading}`
-  | `body/${Heading}`
-  | `body-fat/${Heading}`
-  | `corner/${Corner}`
-  | `corner-fat/${Corner}`;
-
-export interface Segment extends Cell {
-  /** The heading of the step that reached this cell. */
-  readonly heading: Heading;
-  readonly picture: SegmentPicture;
-}
+export type {
+  Cell,
+  Corner,
+  CreatureKind,
+  Heading,
+  Segment,
+  SegmentPicture,
+  SnakeRenderModel,
+} from "../../../ui/display/widgets/snake";
 
 export interface Creature {
   readonly kind: CreatureKind;
@@ -78,20 +60,4 @@ export interface SnakeState {
   readonly collected: number;
   /** False while the death blink hides the snake. */
   readonly visible: boolean;
-}
-
-export interface SnakeRenderModel {
-  readonly maze: number;
-  /** Empty while the death blink hides the snake. */
-  readonly segments: readonly Segment[];
-  readonly food?: Cell;
-  readonly creature?: {
-    readonly kind: CreatureKind;
-    readonly cells: readonly Cell[];
-    readonly frame: 1 | 2;
-  };
-  /** The low 16 bits of the score (H16). */
-  readonly score: number;
-  /** The creature's steps left, shown beside its HUD icon while it is out. */
-  readonly countdown?: number;
 }

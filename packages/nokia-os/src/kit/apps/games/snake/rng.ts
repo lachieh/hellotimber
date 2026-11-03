@@ -1,13 +1,10 @@
 // Snake II's placements (plan 23 D4, H8, H9): the RE notes' rules, kept because one seed per
 // recorded game reproduces every food and creature placement (tests/snake-rng.test.ts). They
 // draw from the games' shared generator (`../random.ts`, plan 24 D5). Pure: no time, no I/O.
+import type { Cell, CreatureKind } from "../../../ui/display/widgets/snake";
 import type { RandomSource } from "../random";
 
-/** A board cell: x 0..19, y 0..8. */
-export interface Cell {
-  readonly x: number;
-  readonly y: number;
-}
+export type { Cell, CreatureKind };
 
 export const BOARD_WIDTH = 20;
 export const BOARD_HEIGHT = 9;
@@ -37,8 +34,6 @@ export function placeFood(
   }
   return undefined;
 }
-
-export type CreatureKind = 0 | 1 | 2 | 3 | 4 | 5 | "large";
 
 export interface CreaturePlacement {
   /** False when 100 tries found no place: the cells are the last try's (RE, UNVERIFIED). */

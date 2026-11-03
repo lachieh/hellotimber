@@ -7,7 +7,8 @@ import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
 import { MESSAGES_RECORD, StockMessages } from "../src/services/messaging/store";
 import { normaliseSim } from "../src/phone-book/sim-card";
-import { gsmSeptets, simMessagesProblem, smsDrawn } from "../src/sim/messages";
+import { gsmSeptets, simMessagesProblem } from "../src/sim/messages";
+import { smsDrawn } from "../src/kit/ui/text/sms";
 import {
   createMemoryStorage,
   createStockPhone,

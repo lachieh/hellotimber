@@ -2,7 +2,7 @@
 import type { MenuIndicator } from "@hellotimber/phone-core";
 import type { Framebuffer } from "@hellotimber/phone-screen";
 import { missingStockGlyphs, STOCK_FONTS, WIDGET_SPRITES } from "../../resources";
-import { smsDrawn } from "../../../../sim/messages";
+import { smsDrawn } from "../../text/sms";
 import { paintIndicator } from "../indicator";
 import { VISIBLE_ROWS } from "../list-rows";
 import { SOFTKEY_TOP } from "../standby";

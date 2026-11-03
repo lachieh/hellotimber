@@ -10,8 +10,13 @@ import type { PhoneKey } from "@hellotimber/phone-core";
 import { expect } from "vite-plus/test";
 import { isBoardFrame } from "../../scripts/game-capture-set.ts";
 import { findGoldenImage, LCD_WIDTH, parseTickGolden } from "../../scripts/golden-format.ts";
-import { newSnakeGame, snakeKey, snakeRender, stepSnake } from "../../src/games/snake/engine";
-import type { SnakeState } from "../../src/games/snake/model";
+import {
+  newSnakeGame,
+  snakeKey,
+  snakeRender,
+  stepSnake,
+} from "../../src/kit/apps/games/snake/engine";
+import type { SnakeState } from "../../src/kit/apps/games/snake/model";
 import {
   SNAKE_FIRST_TICK,
   SNAKE_GRACE_MS,

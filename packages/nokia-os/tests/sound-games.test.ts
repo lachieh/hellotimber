@@ -4,7 +4,7 @@ import { describe, expect, it } from "vite-plus/test";
 import type { StockCue } from "../src/kit/system/cues";
 import { StockEeprom } from "../src/firmware/eeprom";
 import { createStockSettings } from "../src/firmware/settings";
-import { SNAKE_VIBRATE_MS } from "../src/games/snake/engine";
+import { SNAKE_VIBRATE_MS } from "../src/kit/apps/games/snake/engine";
 import type { StockSoundEvent } from "../src/index";
 import { GAME_CUES, KEYPAD_BEEP } from "../src/kit/ui/resources";
 import { SoundSequencer } from "../src/kit/ui/sound/sequencer";

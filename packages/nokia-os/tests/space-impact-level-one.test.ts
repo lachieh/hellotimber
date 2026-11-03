@@ -5,8 +5,8 @@ import {
   spaceImpactKey,
   spaceImpactRender,
   stepSpaceImpact,
-} from "../src/games/space-impact/engine";
-import { paintSpaceImpact } from "../src/kit/apps/games/display-space-impact";
+} from "../src/kit/apps/games/space-impact/engine";
+import { paintSpaceImpact } from "../src/kit/ui/display/widgets/space-impact";
 import { observedSpaceImpactInput } from "../scripts/space-impact-delivery";
 import { deliverSpaceImpactEvent } from "./support/space-impact-replay";
 import { goldenImage, loadGolden } from "./support/goldens";

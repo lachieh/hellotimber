@@ -1,9 +1,14 @@
 // The Snake II seed search (plan 23 Task 5, D4): which of the 65,521 generator states before a
 // game's first draw reproduce every food and creature placement decoded from its golden. The
 // placements come from tests/support/snake-decode.ts (`goldenPlacements`); the generator and
-// the placement rules are the engine's own (src/games/random.ts, src/games/snake/rng.ts).
-import { createGameRandom, GAME_RANDOM_MODULUS } from "../src/games/random.ts";
-import { placeCreature, placeFood, type Cell, type CreatureKind } from "../src/games/snake/rng.ts";
+// the placement rules are the engine's own (src/kit/apps/games/random.ts, src/kit/apps/games/snake/rng.ts).
+import { createGameRandom, GAME_RANDOM_MODULUS } from "../src/kit/apps/games/random.ts";
+import {
+  placeCreature,
+  placeFood,
+  type Cell,
+  type CreatureKind,
+} from "../src/kit/apps/games/snake/rng.ts";
 
 /** One placement as the board showed it right after it, with the board it was made on. */
 export type SeedPlacement =

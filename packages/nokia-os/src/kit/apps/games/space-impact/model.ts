@@ -1,22 +1,13 @@
 import type { PhoneKey } from "@hellotimber/phone-core";
-import type { StockCue } from "../../kit/system/cues";
+import type { StockCue } from "../../../system/cues";
+import type { SpaceImpactHud, SpaceImpactPoint } from "../../../ui/display/widgets/space-impact";
 
-export interface SpaceImpactPoint {
-  readonly x: number;
-  readonly y: number;
-}
-
-export interface SpaceImpactSprite extends SpaceImpactPoint {
-  readonly picture: string;
-  readonly opaque?: boolean;
-}
-
-export interface SpaceImpactHud {
-  readonly lives: number;
-  readonly weapon: "missile" | "wall" | "beam";
-  readonly count: number;
-  readonly score: number;
-}
+export type {
+  SpaceImpactHud,
+  SpaceImpactPoint,
+  SpaceImpactRenderModel,
+  SpaceImpactSprite,
+} from "../../../ui/display/widgets/space-impact";
 
 export type SpaceImpactControl = "8" | "0" | "*" | "#" | "1" | "3";
 
@@ -62,13 +53,6 @@ export interface SpaceImpactState {
   readonly held: { readonly key: PhoneKey; readonly attempts: number } | null;
   /** H16, UNVERIFIED: a pending return consumes the next event without advancing the game. */
   readonly pendingCue: string | null;
-}
-
-export interface SpaceImpactRenderModel {
-  readonly level: number;
-  readonly scroll: number;
-  readonly hud: SpaceImpactHud;
-  readonly sprites: readonly SpaceImpactSprite[];
 }
 
 export interface SpaceImpactResult {

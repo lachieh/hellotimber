@@ -7,7 +7,7 @@ import { observedSpaceImpactInput } from "../../scripts/space-impact-delivery";
 import { loadGolden } from "./goldens";
 import { soundStorage } from "./sound-scenarios";
 import { expectSoundTimeline, loadSoundGolden } from "./sound";
-import { newSpaceImpactGame } from "../../src/games/space-impact/engine";
+import { newSpaceImpactGame } from "../../src/kit/apps/games/space-impact/engine";
 import { deliverSpaceImpactResult } from "./space-impact-replay";
 import recovery from "../fixtures/space-impact-seed-recovery.json";
 

@@ -2,8 +2,57 @@
 // cropped from the gameplay goldens (src/kit/ui/resources). Geometry (H1): cell (x, y) has its top-left
 // pixel at (2 + 4x, 10 + 4y).
 import type { Framebuffer } from "@hellotimber/phone-screen";
-import type { SnakeRenderModel } from "../../../games/snake/model";
-import { SNAKE_MAZES, SNAKE_SPRITES, type SnakeSpriteId } from "../../ui/resources";
+import { SNAKE_MAZES, SNAKE_SPRITES, type SnakeSpriteId } from "../../resources";
+
+/** A board cell: x 0..19, y 0..8. */
+export interface Cell {
+  readonly x: number;
+  readonly y: number;
+}
+
+export type CreatureKind = 0 | 1 | 2 | 3 | 4 | 5 | "large";
+
+/** A direction of travel. */
+export type Heading = "right" | "left" | "up" | "down";
+
+/** A corner by the two cell edges it joins (`up-left`: in from the top, out to the left). */
+export type Corner = "up-left" | "up-right" | "down-left" | "down-right";
+
+/**
+ * A segment's picture, named as the stock sprites are: heads (mouth closed or open) by heading,
+ * tails by the way to the next segment, straights by heading, corners by their edges, and the
+ * fat ones drawn where the snake ate.
+ */
+export type SegmentPicture =
+  | `head/${Heading}`
+  | `head-open/${Heading}`
+  | `tail/${Heading}`
+  | `body/${Heading}`
+  | `body-fat/${Heading}`
+  | `corner/${Corner}`
+  | `corner-fat/${Corner}`;
+
+export interface Segment extends Cell {
+  /** The heading of the step that reached this cell. */
+  readonly heading: Heading;
+  readonly picture: SegmentPicture;
+}
+
+export interface SnakeRenderModel {
+  readonly maze: number;
+  /** Empty while the death blink hides the snake. */
+  readonly segments: readonly Segment[];
+  readonly food?: Cell;
+  readonly creature?: {
+    readonly kind: CreatureKind;
+    readonly cells: readonly Cell[];
+    readonly frame: 1 | 2;
+  };
+  /** The low 16 bits of the score (H16). */
+  readonly score: number;
+  /** The creature's steps left, shown beside its HUD icon while it is out. */
+  readonly countdown?: number;
+}
 
 /** The game screen: the board the engine rendered. */
 export interface SnakeModel {

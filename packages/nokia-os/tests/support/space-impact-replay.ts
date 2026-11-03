@@ -14,9 +14,12 @@ import {
   spaceImpactKey,
   spaceImpactRender,
   stepSpaceImpact,
-} from "../../src/games/space-impact/engine";
-import type { SpaceImpactResult, SpaceImpactState } from "../../src/games/space-impact/model";
-import { paintSpaceImpact } from "../../src/kit/apps/games/display-space-impact";
+} from "../../src/kit/apps/games/space-impact/engine";
+import type {
+  SpaceImpactResult,
+  SpaceImpactState,
+} from "../../src/kit/apps/games/space-impact/model";
+import { paintSpaceImpact } from "../../src/kit/ui/display/widgets/space-impact";
 
 export function deliverSpaceImpactResult(
   state: SpaceImpactState,

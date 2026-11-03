@@ -6,8 +6,14 @@ import type { PhoneKey } from "@hellotimber/phone-core";
 import type { SnakeModel } from "../kit/ui/display/widgets";
 import type { StockGames } from "../firmware/features/games";
 import type { StockSettings } from "../firmware/settings";
-import { blinkSnake, newSnakeGame, snakeKey, snakeRender, stepSnake } from "../games/snake/engine";
-import type { SnakeState } from "../games/snake/model";
+import {
+  blinkSnake,
+  newSnakeGame,
+  snakeKey,
+  snakeRender,
+  stepSnake,
+} from "../kit/apps/games/snake/engine";
+import type { SnakeState } from "../kit/apps/games/snake/model";
 import {
   GAME_CUES,
   SNAKE_DEATH_STEPS,

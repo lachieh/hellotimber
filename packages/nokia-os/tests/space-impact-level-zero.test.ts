@@ -1,8 +1,8 @@
 import { Framebuffer } from "@hellotimber/phone-screen";
-import { paintSpaceImpact } from "../src/kit/apps/games/display-space-impact";
-import { spaceImpactRender, stepSpaceImpact } from "../src/games/space-impact/engine";
-import { createGameRandom } from "../src/games/random";
-import { newSpaceImpactGame } from "../src/games/space-impact/engine";
+import { paintSpaceImpact } from "../src/kit/ui/display/widgets/space-impact";
+import { spaceImpactRender, stepSpaceImpact } from "../src/kit/apps/games/space-impact/engine";
+import { createGameRandom } from "../src/kit/apps/games/random";
+import { newSpaceImpactGame } from "../src/kit/apps/games/space-impact/engine";
 import { deliverSpaceImpactEvent } from "./support/space-impact-replay";
 import { observedSpaceImpactInput } from "../scripts/space-impact-delivery";
 import recovery from "./fixtures/space-impact-seed-recovery.json";

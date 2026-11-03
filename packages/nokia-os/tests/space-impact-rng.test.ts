@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
-import { createGameRandom, GAME_RANDOM_MODULUS } from "../src/games/random";
-import { spaceImpactBonus } from "../src/games/space-impact/random";
+import { createGameRandom, GAME_RANDOM_MODULUS } from "../src/kit/apps/games/random";
+import { spaceImpactBonus } from "../src/kit/apps/games/space-impact/random";
 import {
   filterSpaceImpactSeedEvents,
   spaceImpactU32SeedAliases,

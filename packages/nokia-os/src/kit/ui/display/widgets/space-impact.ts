@@ -1,6 +1,29 @@
 import type { Framebuffer } from "@hellotimber/phone-screen";
-import type { SpaceImpactRenderModel } from "../../../games/space-impact/model";
-import { SPACE_IMPACT_DATA } from "../../ui/resources/generated/space-impact";
+import { SPACE_IMPACT_DATA } from "../../resources/generated/space-impact";
+
+export interface SpaceImpactPoint {
+  readonly x: number;
+  readonly y: number;
+}
+
+export interface SpaceImpactSprite extends SpaceImpactPoint {
+  readonly picture: string;
+  readonly opaque?: boolean;
+}
+
+export interface SpaceImpactHud {
+  readonly lives: number;
+  readonly weapon: "missile" | "wall" | "beam";
+  readonly count: number;
+  readonly score: number;
+}
+
+export interface SpaceImpactRenderModel {
+  readonly level: number;
+  readonly scroll: number;
+  readonly hud: SpaceImpactHud;
+  readonly sprites: readonly SpaceImpactSprite[];
+}
 
 export interface SpaceImpactModel {
   readonly kind: "space-impact";

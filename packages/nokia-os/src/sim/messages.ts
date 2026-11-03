@@ -1,6 +1,7 @@
 // SMS stored on the SIM card (plan 30 D2, Task 0 M): the GSM 7-bit alphabet a SIM message is
 // written in, how the 3310 draws it, and the validation of `StockSimCard.messages`. Pure.
 import { missingStockGlyphs } from "../kit/ui/resources";
+import { smsDrawn } from "../kit/ui/text/sms";
 import { TIMESTAMP_RANGES } from "../services/messaging/network";
 import {
   SIM_MESSAGE_SLOTS,
@@ -24,9 +25,6 @@ const GSM_BASIC = new Set(
 /** Its extension table (escape + one septet: two each); the form feed is not text. */
 const GSM_EXTENSION = new Set(Array.from("^{}\\[~]|€"));
 
-/** Extension characters v6.39 draws as `?` (`sms/read/2`: `€` and `\` draw). */
-const DRAWN_AS_QUESTION = new Set(Array.from("[]{}~|^"));
-
 /** The septets `text` takes in the GSM 7-bit alphabet; undefined when a character is not in it. */
 export function gsmSeptets(text: string): number | undefined {
   let septets = 0;
@@ -36,11 +34,6 @@ export function gsmSeptets(text: string): number | undefined {
     else return undefined;
   }
   return septets;
-}
-
-/** `text` as the 3310 draws a stored SMS: the extension characters it lacks become `?`. */
-export function smsDrawn(text: string): string {
-  return Array.from(text, (char) => (DRAWN_AS_QUESTION.has(char) ? "?" : char)).join("");
 }
 
 const NUMBER = /^\+?[0-9]{1,20}$/;

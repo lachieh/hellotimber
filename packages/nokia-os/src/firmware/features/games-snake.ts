@@ -1,5 +1,5 @@
 // Snake II (Games › 8-1; plan 23): New game opens the game, the Level page edits the numeric
-// level, and the scores it writes. The game is src/widgets/snake.ts over src/games/snake/; its
+// level, and the scores it writes. The game is src/widgets/snake.ts over src/kit/apps/games/snake/; its
 // Continue, Top score and Level returns come from its row of GAME_LEVELS (features/games.ts).
 import { levelPage } from "../../widgets/level-bar";
 import { snakeGame } from "../../widgets/snake";

@@ -7,7 +7,7 @@ import { describe, expect, it } from "vite-plus/test";
 import { isBoardFrame } from "../scripts/game-capture-set.ts";
 import type { StockCue } from "../src/kit/system/cues";
 import { createMemorySettings, virginSettings } from "../src/firmware/settings";
-import { snakeRender, stepSnake } from "../src/games/snake/engine";
+import { snakeRender, stepSnake } from "../src/kit/apps/games/snake/engine";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { paintWidget } from "../src/kit/ui/display/widgets";
 import { GAME_CUES, SNAKE_PERIODS } from "../src/kit/ui/resources";

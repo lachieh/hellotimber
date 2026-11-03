@@ -5,7 +5,7 @@ import {
   spaceImpactRender,
   stepSpaceImpact,
   expireSpaceImpactShield,
-} from "../src/games/space-impact/engine";
+} from "../src/kit/apps/games/space-impact/engine";
 
 function steps(count: number, state = newSpaceImpactGame()) {
   for (let tick = 0; tick < count; tick++) state = stepSpaceImpact(state).state;

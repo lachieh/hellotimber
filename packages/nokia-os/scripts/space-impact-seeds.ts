@@ -1,4 +1,4 @@
-import { createGameRandom, GAME_RANDOM_MODULUS } from "../src/games/random.ts";
+import { createGameRandom, GAME_RANDOM_MODULUS } from "../src/kit/apps/games/random.ts";
 
 export interface SpaceImpactRandomObservation {
   /** One-based position in the game chain, including all earlier consumers. */

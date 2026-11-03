@@ -3,8 +3,8 @@
 // (tests/game-random.test.ts).
 import { describe, expect, it } from "vite-plus/test";
 import { replaySeed, searchSeeds } from "../scripts/snake-seeds.ts";
-import { createGameRandom, type RandomSource } from "../src/games/random";
-import { placeCreature, placeFood, type Cell } from "../src/games/snake/rng";
+import { createGameRandom, type RandomSource } from "../src/kit/apps/games/random";
+import { placeCreature, placeFood, type Cell } from "../src/kit/apps/games/snake/rng";
 import { goldenPlacements } from "./support/snake-decode";
 
 /** Draws the given values in order, then fails. */

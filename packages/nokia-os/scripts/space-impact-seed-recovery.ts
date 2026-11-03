@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { parseGolden, findGoldenImage, type Golden } from "./golden-format.ts";
 import { extractSpaceImpactLevelObservations } from "./space-impact-levels.ts";
 import { observedSpaceImpactInput } from "./space-impact-delivery.ts";
-import { createGameRandom, GAME_RANDOM_MODULUS } from "../src/games/random.ts";
+import { createGameRandom, GAME_RANDOM_MODULUS } from "../src/kit/apps/games/random.ts";
 import { SPACE_IMPACT_DATA } from "../src/kit/ui/resources/generated/space-impact.ts";
 import { spaceImpactU32SeedAliases } from "./space-impact-seeds.ts";
 
