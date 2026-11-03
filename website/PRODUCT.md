@@ -53,11 +53,13 @@ against emulator captures of the real firmware.
 - The 3D phone stage (`PhoneStageHost`) mounts once in `routes/_home.tsx` and must never
   remount across the section routes.
 - The phone packages must not know about the router; the website owns all bridging.
-- The phone renders at most its real physical size; the server sends a comic-ink drawing of it
-  that turns into the 3D phone once it has loaded, or says it can't switch on if it can't.
-- The layout around the phone is provisional (plain grid) until the Braun catalogue design
-  (plan 32 Phase 3). The desk, sticky pad, pencil case and graffiti are gone; Sound off sits
-  in the colophon under the contents.
+- The phone renders at most its real physical size; the server sends a technical drawing of it
+  (Fig. 1, with its dimensions) that turns into the 3D phone once it has loaded, or says it
+  can't switch on if it can't.
+- The page around the phone is a Braun-style product catalogue (`DESIGN.md`): a running head,
+  the contents as the catalogue's index, the phone as the exhibit with its figure caption, the
+  spread or page beside it, and a colophon with the sound switch, the emulator and the source.
+  It is light only. On narrow screens a section page docks the phone as a strip above it.
 - The stock v6.39 firmware runs only at `/exp/nokia-emulator`, with its inspector, world and
   stage controls.
 

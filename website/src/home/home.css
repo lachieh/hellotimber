@@ -95,7 +95,6 @@
 .cat :is(a, button):focus-visible {
   outline: 2px solid var(--signal);
   outline-offset: 3px;
-  border-radius: 1px;
 }
 
 .cat kbd {
@@ -579,7 +578,7 @@
     position: relative;
     top: 0;
     justify-self: center;
-    margin: 1rem 0 1.5rem;
+    margin: 1rem 0 2.5rem;
   }
 
   .cat-exhibit__stage {

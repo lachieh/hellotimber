@@ -73,8 +73,9 @@ homepage SIM carries only the three personas in its phone book, so Chat's Search
 from the route and the phone: on `/` the spread of the carousel's highlighted item; on a page
 section the page, the phone docked smaller beside it; on `/chat` and `/snake` the phone
 centred at real size with a key guide. A contents column of plain links to every section is
-always present and works without JavaScript. The layout is provisional until the Braun
-catalogue design (plan 32 Phase 3).
+always present and works without JavaScript. The page is set as a Braun product catalogue
+(`website/DESIGN.md`): the phone is the exhibit, the menu numbers number the index, and on
+narrow screens a section page docks the phone as a strip that opens to full size on a tap.
 
 Portfolio copy is sourced from Lachlan's public GitHub profile and history or supplied
 directly by him; Recruiter Rachel and Y2K Support are fictional personas.

@@ -4,7 +4,7 @@ import type { FormPose } from "@hellotimber/phone-3d";
 /** How long the drawing takes to turn into the phone, top to bottom. */
 export const WIPE_MS = 650;
 
-/** When the phone starts leaping out of the desk: just after the edge sets off, so it pitches up
+/** When the phone starts leaping off the page: just after the edge sets off, so it pitches up
  *  and rises out of the drawing while the edge sweeps over it. */
 export const LEAP_MS = 100;
 
@@ -28,9 +28,9 @@ const WIPE_DEPTH = 0.06;
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
 
 /**
- * The reveal `ms` after the 3D model is ready under the drawing. A bright edge sweeps down the
+ * The reveal `ms` after the 3D model is ready under the drawing. A fine rule sweeps down the
  * drawing, turning it into the real phone, and as it goes the phone pops out of the page: it
- * pitches up and leaps off the desk (phone-3d's `formPose`), then settles.
+ * pitches up and leaps off it (phone-3d's `formPose`), then settles.
  */
 export function revealAt(ms: number): RevealFrame {
   const wipe = easeInOut(Math.min(1, Math.max(0, ms / WIPE_MS)));

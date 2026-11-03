@@ -1,257 +1,251 @@
 ---
 name: hellotimber
-description: A working Nokia 3310, put down on a graffitied school desk in 2001; what you need to use it is lying around it.
+description: A working Nokia 3310 shown as the exhibit in a 1960s Braun product catalogue; every page around it is set like the catalogue's spec sheets.
 colors:
-  biro-blue: "#1f2c86"
-  red-pen: "#b0171b"
-  desk-laminate: "#cb9f63"
-  laminate-light: "#d4a96b"
-  laminate-deep: "#c0915a"
-  sticky-yellow: "#f6e36c"
-  sticky-light: "#f9e978"
-  pad-edge: "#e8d45a"
-  pencil-graphite: "#3a3631"
-  graffiti-graphite: "#4b4640"
-  graffiti-biro: "#22308c"
-  graffiti-red: "#a51e1c"
-  graffiti-marker: "#1c1a17"
-  carved-cream: "#fff4de"
-  nylon-navy: "#2a3a70"
-  correction-fluid: "#f4f1e6"
-  marker-yellow: "#ffe75a"
-  masking-tape: "#f0e5c2"
-  comic-ink: "#16130f"
-  lcd-ink: "#1f2d22"
-  window-cream: "#ffecc8"
-  shadow-umber: "#2d1404"
+  paper: "#f4f3f0"
+  ink: "#191816"
+  ink-2: "#565552"
+  hairline: "#cbcac7"
+  signal: "#dd530f"
+  lcd-tint: "#c7f0d8"
 typography:
-  headline:
-    fontFamily: "D01 Kalam, Comic Sans MS, cursive"
-    fontSize: "1.75rem"
-    fontWeight: 700
-    lineHeight: 1.25
-  hint:
-    fontFamily: "D01 Kalam, Comic Sans MS, cursive"
-    fontSize: "1.45rem"
-    fontWeight: 700
-    lineHeight: 1.2
-  title:
-    fontFamily: "D01 Kalam, Comic Sans MS, cursive"
-    fontSize: "1.2rem"
-    fontWeight: 700
-    lineHeight: 1.25
-  body:
-    fontFamily: "D01 Kalam, Comic Sans MS, cursive"
-    fontSize: "1.04rem"
-    fontWeight: 400
-    lineHeight: 1.35
-  scrawl:
-    fontFamily: "D01 Reenie, D01 Kalam, cursive"
-    fontSize: "1.6rem"
-    fontWeight: 400
+  display:
+    fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
+    fontSize: "clamp(2.5rem, 1.75rem + 2vw, 3.5rem)"
+    fontWeight: 600
     lineHeight: 1
+    letterSpacing: "-0.03em"
+  standfirst:
+    fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
+    fontSize: "1.25rem"
+    fontWeight: 400
+    lineHeight: 1.4
+  reading:
+    fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
+    fontSize: "1.0625rem"
+    fontWeight: 400
+    lineHeight: 1.6
+  body:
+    fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
+    fontSize: "1rem"
+    fontWeight: 400
+    lineHeight: 1.5
+  entry-title:
+    fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
+    fontSize: "1.0625rem"
+    fontWeight: 600
+    lineHeight: 1.4
+  label:
+    fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
+    fontSize: "0.8125rem"
+    fontWeight: 600
+    lineHeight: 1.35
+  caption:
+    fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
+    fontSize: "0.8125rem"
+    fontWeight: 400
+    lineHeight: 1.4
+  not-found-title:
+    fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
+    fontSize: "2rem"
+    fontWeight: 600
+    lineHeight: 1.1
 rounded:
-  pad: "2px"
-  sheet-curl: "1px 1px 2px 14px / 1px 1px 2px 6px"
-  nylon: "30px 34px 28px 32px / 30px 28px 34px 30px"
-  tick: "6px"
+  none: "0"
+  keycap: "3px"
+  button: "2px"
 spacing:
   hair: "4px"
-  tight: "6px"
-  sheet: "22px"
-  gap: "32px"
-  edge: "24px"
+  tight: "8px"
+  row: "12px"
+  block: "16px"
+  group: "24px"
+  section: "48px"
+  margin: "clamp(1.5rem, 3vw, 3rem)"
+  gutter: "clamp(1.5rem, 3.5vw, 4rem)"
 components:
-  sticky-pad:
-    backgroundColor: "{colors.pad-edge}"
-    rounded: "{rounded.pad}"
-    width: "280px"
-  sticky-sheet:
-    backgroundColor: "{colors.sticky-yellow}"
-    textColor: "{colors.red-pen}"
-    typography: "{typography.hint}"
-    rounded: "{rounded.sheet-curl}"
-    padding: "34px 22px 22px"
-  mute-tick:
-    textColor: "{colors.biro-blue}"
+  index-link:
+    textColor: "{colors.ink}"
     typography: "{typography.body}"
-    rounded: "{rounded.tick}"
-    padding: "4px 6px"
-  pencil-case:
-    backgroundColor: "{colors.nylon-navy}"
-    textColor: "{colors.correction-fluid}"
-    rounded: "{rounded.nylon}"
-    padding: "40px 24px 24px"
-    width: "320px"
-  pencil-case-link-hover:
-    textColor: "{colors.marker-yellow}"
+    padding: "7px 0"
+  spec-row:
+    textColor: "{colors.ink}"
+    typography: "{typography.body}"
+    padding: "8px 0 9px"
+  keycap:
+    textColor: "{colors.ink}"
+    typography: "{typography.label}"
+    rounded: "{rounded.keycap}"
+    padding: "0 0.35em"
+  strip-toggle:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.paper}"
+    typography: "{typography.label}"
+    rounded: "{rounded.button}"
+    padding: "8px 14px"
 ---
 
 # Design System: hellotimber
 
 ## Overview
 
-**Creative North Star: "Left on the desk, 2001"**
+**Creative North Star: "The 3310 in the Braun catalogue"**
 
-The page is not a page. It is a school desk: one sheet of pale, honey-coloured laminate, worn paler where arms rest along its front, scratched and written over by years of kids, lit by one window at the top left. A working Nokia 3310 has just been put down in the middle of it, at the size of the real handset. Only two things lie beside it: a full pad of sticky notes at its bottom right that says what to press next, and a navy nylon pencil case at its bottom left that says whose desk this is. A biro pokes out from under the case.
+The site is a product catalogue of the kind Braun printed in the 1960s and 70s, with one product in it: a working Nokia 3310. Off-white paper, near-black type, a precise grid ruled with hairlines, the product photographed on the page as the exhibit, and spec-sheet captions in tabular figures. One functional colour, signal orange, is used the way Braun used its power marks: rarely, and only to say "here" or "on".
 
-The graffiti is the desk's history, not information: faded older names and dates under newer pencil, biro, red pen, permanent marker and compass-point carvings, hearts, tallies and scribbled-out patches. It stays texture, always quieter than the objects on top of it, with one exception: the freshest biro on the desk, pressed hard, gives the phone's own number for Lachlan.
+The phone arrives as a technical drawing, its front elevation with dimension lines (113 mm by 48 mm), and a fine rule sweeps down the figure turning it into the 3D phone, which pitches up off the page and settles. That reveal is the page's one authored moment. Everything else is quick and quiet.
 
-The phone arrives as a comic drawing. The server renders the handset in flat comic ink with "Loading…" and a segmented bar on its LCD; when three.js and the model are ready, a bright edge sweeps down the drawing, turning it into the real phone, which pitches up and leaps out of the desk as the edge passes, then drops back to hover. On a device with a tilt sensor, tilting it moves the window's light across the phone; the phone itself stays put.
+The catalogue is refined, not skeuomorphic: no paper texture, no props, no imitation objects. It reads in daylight, so it is light only.
 
 **Key Characteristics:**
 
-- One light source: a window at the top left; every shadow falls down and to the right.
-- Handwriting is the UI type. Nothing is set in a neutral web sans.
-- Objects sit a few degrees off square, never aligned to the viewport.
-- The phone is dead centre, at most its real 113 mm, and nothing covers it.
-- Every object that carries information is a real control or real text; decoration is `aria-hidden`.
+- The phone is the exhibit, at about its real size, and nothing covers it.
+- One typeface, Archivo, in three weights; numbers in tabular figures wherever they're data.
+- Hairline rules organise everything: a full ink rule opens each table, list and index; grey hairlines separate rows.
+- The signal orange appears in exactly two places: where the phone is in the index, and the sound lamp when sound is on (plus the focus ring and caret).
+- Section numbers are the phone's own menu numbers, the figure its LCD shows in the corner.
 
 ## Colors
 
-A pale laminate ground with paper, ink and nylon colours a 2001 kid's desk would plausibly hold; the hues come from the objects and the pens, not from a brand palette.
+Paper and ink, a grey for secondary text, a grey for hairlines, and one signal. Defined in OKLCH in `src/styles.css`; hex here is the sRGB equivalent.
 
 ### Primary
 
-- **Biro Blue** (`biro-blue`): the default ink. The mute tick-box and its label, the desk's focus ring (dashed), and the one readable line of graffiti.
+- **Ink** (`ink`, `oklch(21% 0.004 95)`): all type, the opening rule of every table and list, the running head's rule, keycap borders, the drawing's lines. 16:1 on paper.
 
 ### Secondary
 
-- **Red Pen** (`red-pen`): the live hint on the sticky pad, its scribbled arrow, and the tick in the mute box. The pen for "look here now", never decoration.
+- **Signal** (`signal`, `oklch(62% 0.185 41)`): the square hung in the index's margin beside the section the phone is on; the sound lamp when sound is on; focus rings; the caret; `accent-color`. Never type, never a fill larger than 8px. 3.6:1 on paper.
 
 ### Neutral
 
-- **Desk Laminate** (`desk-laminate`), with **Laminate Light** (`laminate-light`) at the top and **Laminate Deep** (`laminate-deep`) at the front: the ground, a vertical gradient with a faint paler wash where arms rest, under multiplied fine fractal grain.
-- **Sticky Yellow** (`sticky-yellow`, lighter at `sticky-light`): each sheet of the pad. **Pad Edge** (`pad-edge`): the pad's body, its stacked sheet edges stepping down and to the right in alternating darker and lighter yellows.
-- **Nylon Navy** (`nylon-navy`): the pencil case, a radial from a lighter navy at the top left to near-black blue at the far edge, with a ripstop grid and fibre noise.
-- **Correction Fluid** (`correction-fluid`): all writing on the pencil case except the name. **Masking Tape** (`masking-tape`): the strip the name is written on in black marker.
-- **Comic Ink** (`comic-ink`) and **LCD Ink** (`lcd-ink`): the loading drawing's outlines and the dark pixels of its green LCD.
-- **Window Cream** (`window-cream`): the window's warm light from the top left, at 0.38 alpha fading out. **Shadow Umber** (`shadow-umber`): every cast shadow, 0.3 to 0.45 alpha; shadows are warm brown, never grey.
-
-### Graffiti inks
-
-Each mark's ink follows what it was made with; all sit at reduced opacity so the graffiti reads as old, cleaned-at writing.
-
-- **Graffiti Graphite** (`graffiti-graphite`): pencil at 0.5, and the faded "ghost" layer of older writing at 0.2.
-- **Graffiti Biro** (`graffiti-biro`, 0.62), **Graffiti Red** (`graffiti-red`, 0.6): pen.
-- **Graffiti Marker** (`graffiti-marker`, 0.5, faintly blurred into the grain): permanent marker.
-- **Carved Cream** (`carved-cream` at 0.75, dark groove shadow up-left): scratched in with a compass point.
-- **Marker Yellow** (`marker-yellow`): hover and focus on the pencil case's links, where biro would vanish on navy.
+- **Paper** (`paper`, `oklch(96.4% 0.004 95)`): the ground of every page, the drawing's ground, the selection's text.
+- **Ink 2** (`ink-2`, `oklch(45% 0.005 95)`): spec labels, captions, dates, the section number before a heading, the running head's second line. 6.7:1 on paper.
+- **Hairline** (`hairline`, `oklch(84% 0.005 95)`): row rules in tables, the index and lists; the caption's rule; the scrollbar thumb. Decorative only (1.5:1); nothing reads by it alone.
+- **LCD tint** (`lcd-tint`): the drawing's LCD pane at 55% over paper, the one colour in the figure.
 
 ### Named Rules
 
-**The Right Pen Rule.** Ink follows the object and the act: biro writes, red pen points at the live state, correction fluid belongs to the pencil case, marker is for names on tape. A new mark picks its pen from what a kid would have used.
+**The Power Mark Rule.** The signal colour marks state ("the phone is here", "sound is on", "focus is here"), never decoration, never text, never a region. If a second thing wants it, it doesn't get it.
 
-**The Quiet History Rule.** Graffiti never outweighs the desk's objects. Its heaviest marks (marker) stay at or below 0.5 opacity and under 2rem; only the way-in line is written fresh, at 0.9.
-
-**The Window Rule.** There is exactly one light, from the top left. Device tilt moves that light across the phone; nothing is lit from anywhere else.
+**The Paper Rule.** No gradients, textures, glass or tinted panels. Ground is paper; structure is rules and space.
 
 ## Typography
 
-**Hand Font:** Kalam (self-hosted as "D01 Kalam", 400 and 700, with Comic Sans MS and cursive as fallback)
-**Scrawl Font:** Reenie Beanie (self-hosted as "D01 Reenie", falling back to Kalam)
+**Face:** Archivo (Omnibus-Type, SIL Open Font License 1.1), a grotesque in the late-nineteenth-century lineage Akzidenz-Grotesk comes from. Self-hosted variable woff2 (weights 400–700) in `public/fonts/` in latin and latin-ext subsets, `font-display: swap`, the latin file preloaded. Fallbacks: Helvetica Neue, Arial. The licence is `public/fonts/Archivo-OFL.txt`.
 
-**Character:** a neat teenage biro hand for everything a person wrote, and a fast scrawl for asides and the quicker graffiti. Fonts live in `public/desk/fonts/` and are all `font-display: swap`. The loading drawing's LCD uses a monospace in LCD ink, as the phone's own screen would.
+**Character:** firm and slightly narrow, with real ink at small sizes, so 13px spec labels and captions hold up. `tnum` is on for every spec value, date and number.
 
 ### Hierarchy
 
-- **Headline** (Kalam 700, 1.75rem, 1.25; 1.5rem on narrower desktops): the name in black marker on the pencil case's masking tape, on one line.
-- **Hint** (Kalam 700, 1.45rem, 1.2): the sticky pad's "now: …", in red pen.
-- **Title** (Kalam 700, 1.2rem): the pencil case's job line.
-- **Body** (Kalam 400, 1.04rem): the pencil case's tagline and links, the mute label. Body on objects never drops below 0.92rem.
-- **Scrawl** (Reenie Beanie, 1.6rem, 1): "more on the desk" on mobile, and quick graffiti.
+- **Display** (600, `clamp(2.5rem, 1.75rem + 2vw, 3.5rem)`, line-height 1, tracking -0.03em): the spread's or page's heading, the section's menu number before it in Ink 2 at 400.
+- **Standfirst** (400, 1.25rem, 1.4): the one-line summary under the heading.
+- **Reading** (400, 1.0625rem, 1.6, max 68ch): a section page's body.
+- **Body** (400–500, 1rem, 1.5): spec values, index links, the spread's text.
+- **Entry title** (600, 1.0625rem): a job, project or post on a page.
+- **Label** (600, 0.8125rem): "Contents", the running head's name, the sound switch, keycaps.
+- **Caption** (400, 0.8125rem, Ink 2): spec labels, figure captions, dates.
+
+Weights step 400 → 500 (index links) → 600 (headings, labels) → 650 (the current page in the index). Headings use `text-wrap: balance`, prose `pretty`.
 
 ### Named Rules
 
-**The Who Wrote It Rule.** Every line of visible text was written by hand, in Kalam or Reenie, or shown on the phone's own LCD.
+**The One Face Rule.** Archivo for everything on the catalogue, including the drawing's lettering (the SVG inherits the page's font). No monospace costume, no second family.
 
 ## Layout
 
-On wide screens the desk is a full-viewport, non-scrolling grid of `left | phone | right`, the phone column `minmax(360px, 40vw)` (`minmax(320px, 34vw)` from 900 to 1180px wide). The phone's stage is `min(88vh, real size)` tall, where real size is 113 mm at the CSS pixels in an inch for the kind of screen (110 on desktop, 120 at high density, 132 on tablets, 160 on phones; browsers don't report physical size). The phone's canvas overscans its stage 1.6× each way, centred, so the leap out of the desk is never cut off, and the phone is framed smaller to keep its size.
+A three-column grid under a running head: **index** (11rem) | **exhibit** (the phone's stage, as wide as the phone) | **main** (the rest). Page margin `clamp(1.5rem, 3vw, 3rem)`, gutter `clamp(1.5rem, 3.5vw, 4rem)`. The running head is a subgrid, so the name sits over the index and the job line over the exhibit, closed by an ink rule.
 
-The pad and the pencil case sit beside the phone, low on the desk: each `32px` clear of the handset when the screen has room for it. With less room each slides in, its outer edge kept `24px` inside the screen, and sinks out of the way, at the least its top peeking up just below the phone's bottom edge; neither ever covers the phone.
+**The top line.** The index's opening rule, the phone's top edge and the heading's capitals all sit on one line: the index's "Contents" label hangs above it, the stage is lifted by the 6.5% of it above the handset, and the heading's line box by 0.12em.
 
-- **899px and below:** the desk scrolls. The phone stage takes `min(74svh, real size)` so the top of the pad, with its hint, shows on the first screen; "more on the desk" points down; the pad and the case follow in a single centred column at `min(330px, 100vw - 48px)`, slightly rotated. The biro and wide-only graffiti are removed.
-- **900px+ wide and 760px or less tall:** the pad scales to 0.85.
+**The phone's size.** The stage is `min(100svh − 10rem, real size)`, where real size is 113 mm at the CSS pixels in an inch for the kind of screen (110 on desktop, 120 at high density, 132 on tablets, 160 on phones) and the handset spans 0.87 of it. The canvas overscans the stage 1.6× each way so the lift is never cut off.
+
+**Views** (`.cat[data-view]`, derived from the route and the phone, `home/view.ts`):
+
+- **spread** (`/`): index | phone at real size | the spread (max 32rem).
+- **docked** (`/about`, `/work`, `/writing`, `/now`, `/contact`): the stage at 0.62, sticky, with the page beside it (max 42rem; body 68ch).
+- **centred** (`/chat`, `/snake`): from 1280px wide, index | space | phone | key guide, so the phone sits in the middle at real size; narrower, the spread's columns.
+
+**Narrow screens (899px and below):** one column: the running head, the index as two wrapped lines of numbered links, the phone, the spread or page, the colophon. On a section page the phone docks as a **strip**: a 9rem-tall phone beside its caption and a "Use the phone" button, between hairlines. A tap on the phone or the button opens it to full size (`data-phone="open"`, keyed to the route, so leaving the page closes it); "Smaller" docks it again. The strip's phone is too small to press, so it takes taps only to open.
+
+Spacing steps: 4, 8, 12, 16, 24, 48px, with the page margin and gutter fluid. More space above a group than inside it.
 
 ## Elevation & Depth
 
-Depth is physical: every object lies on the desk and casts a warm, two-part shadow down and to the right, a tight contact shadow plus a soft far one. The phone's shadow follows the phone: a tight contact shadow while it is drawn flat in the desk, stretching and softening as it leaps, settling to a hover shadow at rest.
-
-### Shadow Vocabulary
-
-- **Desk contact** (`box-shadow: 1px 2px 2px rgb(45 20 4 / 0.32), 8px 14px 22px rgb(45 20 4 / 0.38)`): any object on the desk.
-- **Pad stack** (eight 1px steps down and to the right in alternating pad yellows, then desk contact and `12px 18px 18px -6px rgb(45 20 4 / 0.45)`): the full pad's sheet edges.
-- **Pencil case bulk** (contact plus `10px 18px 26px rgb(45 20 4 / 0.42)`, with insets for the puffed nylon): a soft, stuffed object.
-- **Phone contact** (a blurred pill of `rgb(24 8 0 / 0.78)`, from 3px blur at 6px/8px offset flat, to 16px blur at 42px/50px at rest, to 30px blur at its highest leap).
-
-### Named Rules
-
-**The Down-Right Rule.** Every shadow offset is positive on both axes.
-
-**The Lying Flat Rule.** Nothing floats except the phone in its entrance. No hover lift, no glow.
+Flat paper, one shadow: the phone's, a soft blurred handset shape in `oklch(21% 0.004 95 / 0.28)` like a product photographed on a sheet. It is absent while the phone is a drawing and grows as it forms and lifts (PhoneSlot sets `--phone-rest` and `--phone-leap`). Nothing else casts a shadow, lifts on hover or glows.
 
 ## Shapes
 
-Nothing is a clean rectangle unless the real object was. The pad is square (`2px` corners) with sheets that curl at the bottom left (`sheet-curl`) and a gum strip across their tops; masking tape has a torn clip-path; the nylon case is a puffy, uneven rounded rectangle (`nylon`) with a stitched seam. Drawn things are drawn: the mute box is a wobbly biro square ticked in red pen, the hint's arrow is a scribbled stroke, the graffiti's hearts, stars, tallies and cube are hand-stroked SVG with round caps.
+Rectangles and rules. Corners are square except keycaps (3px) and the strip's button (2px). The sound lamp is a round 8px lamp, ringed in ink when off and filled signal when on.
 
 ## Components
 
-### Sticky Pad (live hint)
+### Running head
 
-What to press next, in the phone's own terms.
+The name (Label, links home) over the index column and "Software Engineer, Atlanta" (Ink 2) over the rest, closed by a 1px ink rule. On narrow screens they sit at either end of one line.
 
-- **Shape:** a full square pad (280px; 240px on narrower desktops) of stacked sheets, rotated 4deg (-2deg on mobile).
-- **Content:** only the live hint, "now: …" in red pen after a scribbled red arrow. Wording follows the input: keyboard visitors read "press Menu (Enter)", touch visitors read "tap Menu, the big middle key"; entry screens say to type.
-- **Behaviour:** when the hint changes, the top sheet peels off from its bottom edge, curls toward the viewer and flies away up and to the right (720ms), and the new hint is written on the blank sheet beneath with a left-to-right ink wipe (760ms after 380ms). Under reduced motion the sheet simply changes.
-- **Accessibility:** one stable, visually hidden live element announces "now: …"; the sheets themselves are hidden from assistive tech.
+### Index (contents)
 
-### Mute Tick-box (switch)
+`nav` labelled "Contents": an ordered list of every section, always present, rendered on the server, plain links in tab order. Each row: the menu number (tabular, Ink 2) in a 1.75rem column, the label (500), a hairline under it; an ink rule opens the list. The current route is `aria-current="page"` and 650. The section the phone is on (its carousel highlight, or the page it's at) gets a 7px signal square hung 1rem into the margin.
 
-Sound off, drawn in the pad's bottom left corner.
+### Exhibit and figure caption
 
-- **Style:** a 24px wobbly biro square and "shh, no sound" in biro; a faint white wash in the box rising on hover; ticked in red pen when sound is off.
-- **Behaviour:** a real `role="switch"` button labelled "Sound off", bound to the site's mute setting (persisted). It stays as sheets peel.
-- **Focus:** the desk's dashed biro ring.
+The phone's stage, then a caption under a hairline, as wide as the stage: on `/`, `/chat` and `/snake`, "**Fig. 1** Nokia 3310, front. 113 × 48 × 22 mm, 133 g. Shown at about actual size."; beside a page, "The phone at About. [C] goes back to the menu."
 
-### Pencil Case (contact)
+### Spread
 
-Whose desk this is.
+The highlighted section's menu number and name (Display), its summary (Standfirst), its spec sheet, and "**Open Work**, or Select (Enter) on the phone." At standby it is the introduction: the name, the tagline and the phone's spec sheet. It changes as the carousel moves.
 
-- **Shape and fill:** `nylon` corners, nylon navy with ripstop grid and fibre noise, zip across the top, 40px 24px 24px padding.
-- **Name:** black marker on a torn masking-tape strip, rotated 1.5deg, on one line.
-- **Everything else:** correction fluid, run through a chalky displacement filter.
-- **Links:** correction fluid with a 2px underline; hover and focus turn marker yellow, the focus ring dashed marker yellow.
+### Spec sheet
 
-### Loading Drawing (signature)
+`dl`: an ink rule, then rows of label (Caption, Ink 2, 6–10rem column) and value (Body, tabular), each closed by a hairline. Used for specs, Contact's links and the key guide.
 
-The phone, drawn flat in comic ink until the real one is ready.
+### Section page
 
-- **Drawing:** traced from the 3D model's front view, flat comic fills with Ben-Day dot shading and a bold outer contour, framed exactly where the 3D phone lies flat.
-- **LCD:** "Loading…" with blinking dots and a ten-segment bar filling as the page, three.js, the firmware and the model arrive. If the 3D phone can't load, the LCD reads "Can't switch on. Reload to try again" and the desk stays usable.
-- **Reveal:** a bright edge trailing dissolving print dots sweeps top to bottom (650ms) while the phone pitches up and leaps out of the desk (1.6s), then settles.
+Heading and standfirst, then the reading column: paragraphs; lists as hairline-ruled rows; entries (Work, Writing) as rows with the title and its date (tabular, Ink 2, right-aligned) above the body, with the link inline at its end.
 
-### Graffiti
+### Key guide
 
-Decoration only, under the window's light and every object.
+Chat and Snake: heading, standfirst, a spec sheet whose labels are keycaps (`kbd`: 1px ink border, 3px corners, Label), then the section's specs.
 
-- **Marks:** text or hand-drawn doodles placed by percentage across the desk, each in its ink at a small rotation. Marks that need room are dropped on mobile.
+### Colophon
+
+Under a hairline: the **sound switch** (`role="switch"`, labelled "Sound", the lamp and "On"/"Off"; persisted), then the emulator and source links.
+
+### Technical drawing (the reveal's first frame)
+
+`@hellotimber/phone-3d/sketch`: the 3310's front elevation traced from the model. A 1.5px contour, 0.8px detail lines, 0.6px shading lines down the right side (away from the light) and dimension lines, all fixed in screen pixels at any scale (`vector-effect: non-scaling-stroke`); filled arrowheads; the height (113) and width (48) set in the page's font on paper knock-outs; key legends in Archivo. Its LCD shows "Loading…" over a ten-segment bar as the page, three.js, the firmware and the model arrive, or "Can't switch on. Reload to try again" when WebGL or the model fails, and the page works around it. The emulator draws it light on its dark stage (`ink`/`paper` props).
+
+### Spec callouts (off)
+
+`Nokia3310Callouts` draws leader lines from the formed phone's display, Navi key, C key and keypad to labels beside it. `SPEC_CALLOUTS` in `routes/_home.tsx` is **false**: in the browser the labels run into the spread and the key guide and repeat what the caption and the drawing's dimensions already say.
+
+## Motion
+
+- **The reveal** (the one authored moment): the drawing's rule sweeps top to bottom over 650ms (ease-in-out) while the 3D phone pitches up and leaps off the page from 100ms (`formPose`, 1.6s), then settles. Under reduced motion it jumps to the formed phone.
+- **The spread turning**: 260ms on `cubic-bezier(0.16, 1, 0.3, 1)`, from 15% opacity and 6px down. Reduced motion: a 150ms fade.
+- **Docking**: the stage's size eases over 320ms on the same curve. Reduced motion: none.
+- **Small states**: link underlines and the sound lamp, 150ms.
+- Tilting a device moves the light across the phone; the phone stays put.
+
+## Browser surfaces
+
+Selection is paper on ink. Focus is a 2px signal outline 3px off the element. The caret and `accent-color` are signal. Scrollbars are a hairline thumb on paper. Links carry a 1px underline at 35% ink, 0.22em below, going full ink on hover. `color-scheme: light`.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- **Do** put new information on a plausible 2001 desk object, in the pen that object would be written with.
-- **Do** keep the phone dead centre, at most its real size, uncovered, with the pad and case clear of it when there is room.
-- **Do** cast every shadow down and to the right in shadow umber.
-- **Do** make every object that carries information a real control or real text, and mark decoration `aria-hidden`.
-- **Do** name the visitor's own keys: keyboard keys for keyboards, the phone's keys for touch.
-- **Do** animate writing as writing: a left-to-right ink wipe on `cubic-bezier(0.16, 1, 0.3, 1)`, removed under `prefers-reduced-motion`.
+- **Do** keep the phone the exhibit: at most its real size, uncovered, top-aligned with the index and the heading.
+- **Do** set every new piece of information as a spec row, a caption or a ruled list before reaching for anything else.
+- **Do** use tabular figures for numbers that are data, and the phone's menu numbers for sections.
+- **Do** name the visitor's keys in the phone's terms first, the keyboard's in brackets: "Select (Enter)".
+- **Do** keep the index plain links, server-rendered and first in tab order after the running head.
 
 ### Don't:
 
-- **Don't** add a header, footer, nav bar or any web chrome around the phone.
-- **Don't** put a key legend or instructions on the desk; the pad shows only what to press next.
-- **Don't** let graffiti outweigh the desk's objects (The Quiet History Rule).
-- **Don't** light anything from a second direction, or add hover lift, glows or floating shadows.
-- **Don't** reuse the legacy sea/lagoon tokens in `src/styles.css` (`--surface`, `--line`, …); they belong to the original site template.
+- **Don't** add a second accent, a second typeface, gradients, textures, glass, cards or rounded panels.
+- **Don't** put a kicker or eyebrow above a heading; the section number sits beside it, in the heading.
+- **Don't** animate anything else on load; the reveal is the moment.
+- **Don't** turn the spec callouts on without checking they no longer meet the spread.
+- **Don't** reuse the desk's or the template's old tokens (biro, laminate, sea/lagoon); they are gone.

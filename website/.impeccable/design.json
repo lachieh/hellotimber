@@ -1,519 +1,290 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-03T06:12:41.389043+00:00",
+  "generatedAt": "2026-11-03T23:36:28.227156+00:00",
   "title": "Design System: hellotimber",
   "extensions": {
     "colorMeta": {
-      "biro-blue": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "oklch(96.4% 0.004 95)",
+        "tonalRamp": [
+          "#0c0b09",
+          "#272624",
+          "#464543",
+          "#676663",
+          "#8a8986",
+          "#afaeab",
+          "#d5d4d1",
+          "#efeeeb"
+        ]
+      },
+      "ink": {
         "role": "primary",
-        "displayName": "Biro Blue",
-        "canonical": "#1f2c86",
+        "displayName": "Ink",
+        "canonical": "oklch(21% 0.004 95)",
         "tonalRamp": [
-          "#0e143e",
-          "#19246d",
-          "#24339d",
-          "#2f43cc",
-          "#5c6cd9",
-          "#8c97e4",
-          "#bbc2ef",
-          "#eaecfa"
+          "#0c0b09",
+          "#272624",
+          "#464543",
+          "#676663",
+          "#8a8986",
+          "#afaeab",
+          "#d5d4d1",
+          "#efeeeb"
         ]
       },
-      "red-pen": {
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "oklch(45% 0.005 95)",
+        "tonalRamp": [
+          "#0c0b09",
+          "#272624",
+          "#464542",
+          "#676663",
+          "#8a8986",
+          "#afaeaa",
+          "#d5d4d1",
+          "#efeeeb"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(84% 0.005 95)",
+        "tonalRamp": [
+          "#0c0b09",
+          "#272624",
+          "#464542",
+          "#676663",
+          "#8a8986",
+          "#afaeaa",
+          "#d5d4d1",
+          "#efeeeb"
+        ]
+      },
+      "signal": {
         "role": "secondary",
-        "displayName": "Red Pen",
-        "canonical": "#b0171b",
+        "displayName": "Signal",
+        "canonical": "oklch(62% 0.185 41)",
         "tonalRamp": [
-          "#44090a",
-          "#771012",
-          "#ab161a",
-          "#de1d22",
-          "#e84e52",
-          "#ef8184",
-          "#f5b5b7",
-          "#fce8e9"
+          "#200000",
+          "#4b0c00",
+          "#7b2200",
+          "#ae3a00",
+          "#dd5a21",
+          "#fa8b62",
+          "#ffbb99",
+          "#ffdabe"
         ]
       },
-      "desk-laminate": {
+      "lcd-tint": {
         "role": "neutral",
-        "displayName": "Desk Laminate",
-        "canonical": "#cb9f63",
+        "displayName": "LCD tint",
+        "canonical": "#c7f0d8",
         "tonalRamp": [
-          "#392913",
-          "#654922",
-          "#916830",
-          "#bd873f",
-          "#cda369",
-          "#dbbd94",
-          "#ead8c0",
-          "#f9f3ec"
-        ]
-      },
-      "laminate-light": {
-        "role": "neutral",
-        "displayName": "Laminate Light",
-        "canonical": "#d4a96b",
-        "tonalRamp": [
-          "#3b2a11",
-          "#684a1e",
-          "#966a2b",
-          "#c38a39",
-          "#d2a564",
-          "#dfbf91",
-          "#ecd9be",
-          "#f9f4eb"
-        ]
-      },
-      "laminate-deep": {
-        "role": "neutral",
-        "displayName": "Laminate Deep",
-        "canonical": "#c0915a",
-        "tonalRamp": [
-          "#372815",
-          "#624625",
-          "#8c6435",
-          "#b68245",
-          "#c89e6e",
-          "#d8ba98",
-          "#e8d7c2",
-          "#f8f3ed"
-        ]
-      },
-      "sticky-yellow": {
-        "role": "neutral",
-        "displayName": "Sticky Yellow",
-        "canonical": "#f6e36c",
-        "tonalRamp": [
-          "#483f04",
-          "#7f6f08",
-          "#b69e0b",
-          "#edce0f",
-          "#f3db42",
-          "#f7e679",
-          "#faf0b0",
-          "#fefae7"
-        ]
-      },
-      "sticky-light": {
-        "role": "neutral",
-        "displayName": "Sticky Light",
-        "canonical": "#f9e978",
-        "tonalRamp": [
-          "#494103",
-          "#817206",
-          "#b9a308",
-          "#f1d40b",
-          "#f6e03f",
-          "#f9e977",
-          "#fbf2af",
-          "#fefbe7"
-        ]
-      },
-      "pad-edge": {
-        "role": "neutral",
-        "displayName": "Pad Edge",
-        "canonical": "#e8d45a",
-        "tonalRamp": [
-          "#433b09",
-          "#766810",
-          "#a99518",
-          "#ddc21f",
-          "#e6d14f",
-          "#eedf82",
-          "#f5ecb5",
-          "#fcf9e9"
-        ]
-      },
-      "pencil-graphite": {
-        "role": "neutral",
-        "displayName": "Pencil Graphite",
-        "canonical": "#3a3631",
-        "tonalRamp": [
-          "#292723",
-          "#49443e",
-          "#696158",
-          "#887f73",
-          "#a39c92",
-          "#beb9b2",
-          "#d9d5d2",
-          "#f3f2f1"
-        ]
-      },
-      "graffiti-graphite": {
-        "role": "neutral",
-        "displayName": "Graffiti Graphite",
-        "canonical": "#4b4640",
-        "tonalRamp": [
-          "#292723",
-          "#49443e",
-          "#686159",
-          "#887f74",
-          "#a39c93",
-          "#beb8b2",
-          "#d8d5d2",
-          "#f3f2f1"
-        ]
-      },
-      "graffiti-biro": {
-        "role": "neutral",
-        "displayName": "Graffiti Biro",
-        "canonical": "#22308c",
-        "tonalRamp": [
-          "#0f153e",
-          "#1a256c",
-          "#26359b",
-          "#3145ca",
-          "#5e6ed8",
-          "#8d98e3",
-          "#bcc2ef",
-          "#eaedfa"
-        ]
-      },
-      "graffiti-red": {
-        "role": "neutral",
-        "displayName": "Graffiti Red",
-        "canonical": "#a51e1c",
-        "tonalRamp": [
-          "#410c0b",
-          "#731514",
-          "#a51e1c",
-          "#d72724",
-          "#e25654",
-          "#ea8786",
-          "#f3b8b7",
-          "#fbe9e9"
-        ]
-      },
-      "graffiti-marker": {
-        "role": "neutral",
-        "displayName": "Graffiti Marker",
-        "canonical": "#1c1a17",
-        "tonalRamp": [
-          "#2a2722",
-          "#4a453d",
-          "#6a6257",
-          "#8a8071",
-          "#a59d91",
-          "#bfb9b1",
-          "#d9d6d1",
-          "#f4f3f1"
-        ]
-      },
-      "carved-cream": {
-        "role": "neutral",
-        "displayName": "Carved Cream",
-        "canonical": "#fff4de",
-        "tonalRamp": [
-          "#4c3300",
-          "#875a00",
-          "#c18100",
-          "#fba800",
-          "#ffbc37",
-          "#ffd071",
-          "#ffe3ab",
-          "#fff7e6"
-        ]
-      },
-      "nylon-navy": {
-        "role": "neutral",
-        "displayName": "Nylon Navy",
-        "canonical": "#2a3a70",
-        "tonalRamp": [
-          "#151d38",
-          "#253362",
-          "#35498c",
-          "#455fb7",
-          "#6d82c8",
-          "#98a6d8",
-          "#c2cbe8",
-          "#eceff8"
-        ]
-      },
-      "correction-fluid": {
-        "role": "neutral",
-        "displayName": "Correction Fluid",
-        "canonical": "#f4f1e6",
-        "tonalRamp": [
-          "#352f17",
-          "#5e5229",
-          "#86763b",
-          "#af9a4d",
-          "#c2b174",
-          "#d4c89c",
-          "#e5dec5",
-          "#f7f5ed"
-        ]
-      },
-      "marker-yellow": {
-        "role": "neutral",
-        "displayName": "Marker Yellow",
-        "canonical": "#ffe75a",
-        "tonalRamp": [
-          "#4c4100",
-          "#877300",
-          "#c1a500",
-          "#fbd700",
-          "#ffe237",
-          "#ffea71",
-          "#fff3ab",
-          "#fffbe6"
-        ]
-      },
-      "masking-tape": {
-        "role": "neutral",
-        "displayName": "Masking Tape",
-        "canonical": "#f0e5c2",
-        "tonalRamp": [
-          "#3d320f",
-          "#6c591b",
-          "#9b7f26",
-          "#caa532",
-          "#d7ba5e",
-          "#e3ce8d",
-          "#eee2bc",
-          "#faf6eb"
-        ]
-      },
-      "comic-ink": {
-        "role": "neutral",
-        "displayName": "Comic Ink",
-        "canonical": "#16130f",
-        "tonalRamp": [
-          "#2d271f",
-          "#504537",
-          "#73634e",
-          "#958166",
-          "#ae9e88",
-          "#c5baab",
-          "#ddd6cd",
-          "#f5f3f0"
-        ]
-      },
-      "lcd-ink": {
-        "role": "neutral",
-        "displayName": "Lcd Ink",
-        "canonical": "#1f2d22",
-        "tonalRamp": [
-          "#1f2d22",
-          "#37503c",
-          "#4f7256",
-          "#679570",
-          "#88ad90",
-          "#abc5b0",
-          "#cdddd1",
-          "#f0f5f1"
-        ]
-      },
-      "window-cream": {
-        "role": "neutral",
-        "displayName": "Window Cream",
-        "canonical": "#ffecc8",
-        "tonalRamp": [
-          "#4c3200",
-          "#875800",
-          "#c17e00",
-          "#fba500",
-          "#ffba37",
-          "#ffce71",
-          "#ffe2ab",
-          "#fff6e6"
-        ]
-      },
-      "shadow-umber": {
-        "role": "neutral",
-        "displayName": "Shadow Umber",
-        "canonical": "#2d1404",
-        "tonalRamp": [
-          "#461f06",
-          "#7c370b",
-          "#b14f10",
-          "#e76715",
-          "#ef8847",
-          "#f3ab7d",
-          "#f8cdb2",
-          "#fdf0e8"
+          "#040e08",
+          "#182b21",
+          "#304c3d",
+          "#4b705c",
+          "#6b947d",
+          "#95b8a4",
+          "#c0dccc",
+          "#def5e7"
         ]
       }
     },
     "typographyMeta": {
-      "headline": {
-        "displayName": "Headline",
-        "purpose": "The name in marker on the pencil case's masking tape."
+      "display": {
+        "displayName": "Display",
+        "purpose": "The spread's or page's heading, the menu number before it in Ink 2."
       },
-      "hint": {
-        "displayName": "Hint",
-        "purpose": "The sticky pad's live 'now: …' in red pen."
+      "standfirst": {
+        "displayName": "Standfirst",
+        "purpose": "The one-line summary under a heading."
       },
-      "title": {
-        "displayName": "Title",
-        "purpose": "The pencil case's job line."
+      "reading": {
+        "displayName": "Reading",
+        "purpose": "A section page's body, 68ch."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Pencil case tagline and links, the mute label."
+        "purpose": "Spec values, index links, the spread's text."
       },
-      "scrawl": {
-        "displayName": "Scrawl",
-        "purpose": "Quick asides and graffiti."
+      "entry-title": {
+        "displayName": "Entry title",
+        "purpose": "A job, project or post on a page."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Contents, the running head's name, the sound switch, keycaps."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Spec labels, figure captions, dates, in Ink 2."
+      },
+      "not-found-title": {
+        "displayName": "Not found title",
+        "purpose": "The 404 page's heading."
       }
     },
     "shadows": [
       {
-        "name": "desk-contact",
-        "value": "1px 2px 2px rgb(45 20 4 / 0.32), 8px 14px 22px rgb(45 20 4 / 0.38)",
-        "purpose": "Any object on the desk."
-      },
-      {
-        "name": "pad-stack",
-        "value": "1px 1px 0 #f4e277, 2px 2px 0 #e2ce55, 3px 3px 0 #f2e073, 4px 4px 0 #dfcb52, 5px 5px 0 #f0de71, 6px 6px 0 #dbc74e, 7px 7px 0 #eedc6e, 8px 8px 0 #d3bf48",
-        "purpose": "The full pad's stacked sheet edges."
-      },
-      {
-        "name": "case-bulk",
-        "value": "10px 18px 26px rgb(45 20 4 / 0.42)",
-        "purpose": "The pencil case's soft bulk, with desk contact."
+        "name": "exhibit",
+        "value": "blur(2px → 30px) of oklch(21% 0.004 95 / 0.28), offset 0 → 44px/56px down-right as the phone forms and lifts",
+        "purpose": "The phone's only shadow, like a product photographed on paper."
       }
     ],
     "motion": [
       {
-        "name": "ease-write",
+        "name": "ease-out",
         "value": "cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Ink wipes and small state changes."
+        "purpose": "Every routine transition."
       },
       {
-        "name": "peel",
-        "value": "720ms cubic-bezier(0.45, 0, 0.7, 0.35)",
-        "purpose": "A sheet peeling off the pad."
+        "name": "reveal",
+        "value": "wipe 650ms ease-in-out; leap from 100ms over 1600ms (formPose)",
+        "purpose": "The drawing turning into the 3D phone: the one authored moment."
       },
       {
-        "name": "write-hint",
-        "value": "760ms after 380ms",
-        "purpose": "The new hint written on the blank sheet."
+        "name": "spread-turn",
+        "value": "260ms ease-out from opacity 0.15, 6px down",
+        "purpose": "The spread changing with the carousel."
       },
       {
-        "name": "reveal-wipe",
-        "value": "650ms",
-        "purpose": "The drawing turning into the phone, top to bottom."
+        "name": "dock",
+        "value": "320ms ease-out on the stage's size",
+        "purpose": "The phone docking beside a page."
       },
       {
-        "name": "form-leap",
-        "value": "1600ms",
-        "purpose": "The phone pitching up and leaping out of the desk."
+        "name": "state",
+        "value": "150ms ease-out",
+        "purpose": "Underlines, the sound lamp."
       }
     ],
     "breakpoints": [
       {
-        "name": "mobile",
-        "value": "max-width: 899px"
+        "name": "narrow",
+        "value": "899px"
       },
       {
-        "name": "narrow-desk",
-        "value": "900px to 1180px"
-      },
-      {
-        "name": "short-desk",
-        "value": "min-width 900px and max-height 760px"
+        "name": "centred",
+        "value": "1280px"
       }
     ]
   },
   "components": [
     {
-      "name": "Sticky Pad",
-      "kind": "custom",
-      "refersTo": "sticky-pad",
-      "description": "The full pad with the live hint in red pen on its top sheet.",
-      "html": "<div class=\"ds-pad\"><div class=\"ds-pad-sheet\"><p class=\"ds-pad-hint\"><span class=\"ds-pad-arrow\">&rarr;</span> now: press Menu (Enter)</p></div></div>",
-      "css": ".ds-pad{position:relative;width:240px;aspect-ratio:1;rotate:4deg;border-radius:2px;background:#e8d45a;box-shadow:1px 1px 0 #f4e277,2px 2px 0 #e2ce55,3px 3px 0 #f2e073,4px 4px 0 #dfcb52,5px 5px 0 #f0de71,6px 6px 0 #dbc74e,7px 7px 0 #eedc6e,8px 8px 0 #d3bf48,1px 2px 2px rgb(45 20 4 / .32),8px 14px 22px rgb(45 20 4 / .38)} .ds-pad-sheet{position:absolute;inset:0;padding:34px 22px 22px;border-radius:1px 1px 2px 14px / 1px 1px 2px 6px;background:linear-gradient(180deg,rgb(120 96 10 / .1) 0 24px,transparent 24px),linear-gradient(170deg,#f9e978,#f6e36c 70%,#ecd75c)} .ds-pad-hint{margin:0;font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;font-weight:700;font-size:1.3rem;line-height:1.2;color:#b0171b} .ds-pad-arrow{display:inline-block;rotate:-10deg}"
-    },
-    {
-      "name": "Mute Tick-box",
-      "kind": "input",
-      "refersTo": "mute-tick",
-      "description": "A biro tick-box switch for Sound off, ticked in red pen.",
-      "html": "<button class=\"ds-mute\" role=\"switch\" aria-checked=\"true\" aria-label=\"Sound off\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 5.2c5.4-1 10.8-1.2 16-.4.9 5 1 10.2.2 15.2-5.2.9-10.6.9-16 .2-.9-5-1-10 0-15z\"/><path class=\"ds-mute-tick\" d=\"M6.5 12.5l4 4.5 9-13\"/></svg><span>shh, no sound</span></button>",
-      "css": ".ds-mute{display:inline-flex;align-items:center;gap:6px;padding:4px 6px;border:0;border-radius:6px;background:#f6e36c;color:#1f2c86;font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;font-size:1.05rem;cursor:pointer} .ds-mute svg{width:24px;height:24px;overflow:visible;fill:rgb(255 255 255 / .18);stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:fill 160ms cubic-bezier(.16,1,.3,1)} .ds-mute:hover svg{fill:rgb(255 255 255 / .55)} .ds-mute:focus-visible{outline:2.5px dashed #1f2c86;outline-offset:3px} .ds-mute .ds-mute-tick{fill:none;stroke:#b0171b;stroke-width:2.6}"
-    },
-    {
-      "name": "Pencil Case Link",
+      "name": "Index",
       "kind": "nav",
-      "refersTo": "pencil-case-link-hover",
-      "description": "A contact link in correction fluid on navy nylon; marker yellow on hover and focus.",
-      "html": "<div class=\"ds-case\"><a class=\"ds-case-link\" href=\"#\">github.com/lachieh</a></div>",
-      "css": ".ds-case{padding:24px;border-radius:30px 34px 28px 32px / 30px 28px 34px 30px;background:radial-gradient(130% 120% at 0 0,#3e5290,#1b2550 60%,#141c40)} .ds-case-link{font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;font-size:1.04rem;color:#f4f1e6;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px} .ds-case-link:hover{color:#ffe75a} .ds-case-link:focus-visible{color:#ffe75a;outline:2.5px dashed #ffe75a;outline-offset:3px}"
+      "refersTo": "index-link",
+      "description": "Every section as a plain numbered link; the phone's place marked by the signal square in the margin.",
+      "html": "<nav class=\"ds-index\" aria-label=\"Contents\"><p class=\"ds-index-label\">Contents</p><ol><li><a href=\"#\"><span>1</span>About</a></li><li class=\"is-marked\"><a href=\"#\" aria-current=\"page\"><span>2</span>Work</a></li><li><a href=\"#\"><span>3</span>Writing</a></li></ol></nav>",
+      "css": ".ds-index{width:11rem;padding-left:1rem;font-family:Archivo, \"Helvetica Neue\", Arial, sans-serif;color:#191816} .ds-index-label{margin:0 0 .75rem;font-size:.8125rem;font-weight:600} .ds-index ol{margin:0;padding:0;list-style:none;border-top:1px solid #191816} .ds-index li{position:relative;border-bottom:1px solid #cbcac7} .ds-index a{display:grid;grid-template-columns:1.75rem 1fr;padding:.45rem 0;color:inherit;font-weight:500;text-decoration:none} .ds-index a:hover{text-decoration:underline;text-decoration-thickness:1px} .ds-index a:focus-visible{outline:2px solid #dd530f;outline-offset:3px} .ds-index span{color:#565552;font-weight:400;font-variant-numeric:tabular-nums} .ds-index [aria-current=page]{font-weight:650} .ds-index .is-marked::before{content:'';position:absolute;left:-1rem;top:50%;width:7px;height:7px;translate:0 -50%;background:#dd530f}"
     },
     {
-      "name": "Masking Tape Name",
+      "name": "Spec sheet",
       "kind": "custom",
-      "refersTo": "pencil-case",
-      "description": "The name in black marker on a torn strip of masking tape.",
-      "html": "<span class=\"ds-tape\">Lachlan Heywood</span>",
-      "css": ".ds-tape{display:inline-block;padding:3px 18px 1px;rotate:1.5deg;white-space:nowrap;background:linear-gradient(178deg,rgb(240 229 194 / .9),rgb(226 212 172 / .86));clip-path:polygon(5px 0,calc(100% - 7px) 2px,100% 21%,calc(100% - 5px) 50%,100% 80%,calc(100% - 4px) 100%,6px calc(100% - 2px),0 70%,4px 40%,0 12%);font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;font-size:1.75rem;font-weight:700;line-height:1.25;color:#151515;filter:drop-shadow(1px 2px 1.5px rgb(0 0 0 / .35))}"
+      "refersTo": "spec-row",
+      "description": "Label and value rows under an ink rule, closed by hairlines; tabular figures.",
+      "html": "<dl class=\"ds-specs\"><div><dt>Model</dt><dd>Nokia 3310</dd></div><div><dt>Dimensions</dt><dd>113 × 48 × 22 mm</dd></div><div><dt>Weight</dt><dd>133 g</dd></div></dl>",
+      "css": ".ds-specs{margin:0;max-width:32rem;border-top:1px solid #191816;font-family:Archivo, \"Helvetica Neue\", Arial, sans-serif;color:#191816} .ds-specs div{display:grid;grid-template-columns:10rem 1fr;gap:1rem;padding:.5rem 0 .5625rem;border-bottom:1px solid #cbcac7;font-variant-numeric:tabular-nums} .ds-specs dt{color:#565552;font-size:.8125rem;line-height:1.5rem} .ds-specs dd{margin:0;line-height:1.5rem}"
     },
     {
-      "name": "Graffiti Marks",
+      "name": "Spread heading",
       "kind": "custom",
-      "refersTo": "desk-laminate",
-      "description": "Graffiti on the laminate in each ink: faded pencil, biro, red pen, marker, carving, and the fresh way-in line.",
-      "html": "<div class=\"ds-desk\"><span class=\"ds-g ds-g-ghost\">steph &amp; bec</span><span class=\"ds-g ds-g-pencil\">maths sux</span><span class=\"ds-g ds-g-red\">kate wuz ere</span><span class=\"ds-g ds-g-marker\">SK8 OR DIE</span><span class=\"ds-g ds-g-carved\">L.H. '01</span><span class=\"ds-g ds-g-fresh\">txt Lachlan 0491 570 006</span></div>",
-      "css": ".ds-desk{display:flex;flex-wrap:wrap;gap:14px 22px;padding:22px;background:linear-gradient(180deg,#d4a96b,#cb9f63 55%,#c0915a)} .ds-g{font-family:\"D01 Kalam\", \"Comic Sans MS\", cursive;mix-blend-mode:multiply} .ds-g-ghost{color:#4b4640;opacity:.2;font-size:1.6rem} .ds-g-pencil{color:#4b4640;opacity:.5} .ds-g-red{color:#a51e1c;opacity:.6} .ds-g-marker{color:#1c1a17;opacity:.5;font-weight:700;letter-spacing:.04em;font-size:1.5rem;filter:blur(.3px)} .ds-g-carved{color:rgb(255 244 222 / .75);font-weight:700;letter-spacing:.08em;mix-blend-mode:normal;text-shadow:-1px -1px 0 rgb(70 38 12 / .55),1px 1px 0 rgb(255 248 230 / .35)} .ds-g-fresh{color:#1f2c86;opacity:.9;font-weight:700;font-size:1.2rem}"
+      "refersTo": "display",
+      "description": "The section's menu number and name, then its standfirst.",
+      "html": "<div class=\"ds-spread\"><h1><span>2</span> Work</h1><p>Jobs and projects, newest first.</p></div>",
+      "css": ".ds-spread{font-family:Archivo, \"Helvetica Neue\", Arial, sans-serif;color:#191816} .ds-spread h1{margin:0;font-size:3.5rem;font-weight:600;line-height:1;letter-spacing:-.03em} .ds-spread h1 span{color:#565552;font-weight:400;font-variant-numeric:tabular-nums} .ds-spread p{margin:1rem 0 0;font-size:1.25rem;line-height:1.4}"
+    },
+    {
+      "name": "Sound switch",
+      "kind": "button",
+      "refersTo": "label",
+      "description": "The colophon's sound switch: a round lamp, signal when sound is on.",
+      "html": "<button class=\"ds-switch\" role=\"switch\" aria-checked=\"true\"><span class=\"ds-lamp\"></span>Sound<span class=\"ds-state\">On</span></button>",
+      "css": ".ds-switch{display:inline-flex;align-items:center;gap:.5rem;padding:.375rem 0;border:0;background:none;color:#191816;font:600 .8125rem/1.35 Archivo, \"Helvetica Neue\", Arial, sans-serif;cursor:pointer} .ds-switch:focus-visible{outline:2px solid #dd530f;outline-offset:3px} .ds-lamp{width:.5rem;height:.5rem;border:1px solid #191816;border-radius:50%;transition:background-color 150ms cubic-bezier(.16,1,.3,1)} .ds-switch[aria-checked=true] .ds-lamp{border-color:#dd530f;background:#dd530f} .ds-state{color:#565552;font-weight:400}"
+    },
+    {
+      "name": "Figure caption",
+      "kind": "custom",
+      "refersTo": "caption",
+      "description": "The caption under the exhibit, under a hairline.",
+      "html": "<p class=\"ds-caption\"><b>Fig. 1</b> Nokia 3310, front. 113 × 48 × 22 mm, 133 g. Shown at about actual size.</p>",
+      "css": ".ds-caption{max-width:19rem;margin:0;padding-top:.5rem;border-top:1px solid #cbcac7;font:400 .8125rem/1.4 Archivo, \"Helvetica Neue\", Arial, sans-serif;color:#565552} .ds-caption b{margin-right:.35em;color:#191816;font-weight:600}"
+    },
+    {
+      "name": "Keycap",
+      "kind": "chip",
+      "refersTo": "keycap",
+      "description": "A key's name in the key guide and captions.",
+      "html": "<kbd class=\"ds-kbd\">C</kbd> <kbd class=\"ds-kbd\">Select</kbd>",
+      "css": ".ds-kbd{display:inline-block;min-width:1.6em;padding:0 .35em;border:1px solid #191816;border-radius:3px;font:600 .8125rem/1.35 Archivo, \"Helvetica Neue\", Arial, sans-serif;color:#191816;text-align:center}"
+    },
+    {
+      "name": "Strip toggle",
+      "kind": "button",
+      "refersTo": "strip-toggle",
+      "description": "Narrow screens: opens the docked phone strip to full size.",
+      "html": "<button class=\"ds-toggle\" aria-expanded=\"false\">Use the phone</button>",
+      "css": ".ds-toggle{padding:.5rem .875rem;border:1px solid #191816;border-radius:2px;background:#191816;color:#f4f3f0;font:600 .8125rem/1.35 Archivo, \"Helvetica Neue\", Arial, sans-serif;cursor:pointer} .ds-toggle[aria-expanded=true]{background:none;color:#191816} .ds-toggle:focus-visible{outline:2px solid #dd530f;outline-offset:3px}"
+    },
+    {
+      "name": "Entry row",
+      "kind": "custom",
+      "refersTo": "entry-title",
+      "description": "A job, project or post: title and date above the body, link inline.",
+      "html": "<ul class=\"ds-entries\"><li><h2>tambo</h2><p class=\"ds-when\">2025–now</p><p class=\"ds-body\">A generative UI SDK for React. <a href=\"#\">tambo-ai/tambo</a></p></li></ul>",
+      "css": ".ds-entries{margin:0;padding:0;list-style:none;max-width:42rem;border-top:1px solid #191816;font-family:Archivo, \"Helvetica Neue\", Arial, sans-serif;color:#191816} .ds-entries li{display:grid;grid-template-columns:1fr auto;column-gap:1.5rem;padding:1rem 0 1.125rem;border-bottom:1px solid #cbcac7} .ds-entries h2{margin:0;font-size:1.0625rem;font-weight:600} .ds-when{margin:0;color:#565552;font-size:.8125rem;font-variant-numeric:tabular-nums} .ds-body{grid-column:1/-1;margin:0;font-size:1.0625rem;line-height:1.6} .ds-body a{color:inherit;text-decoration-thickness:1px;text-decoration-color:rgb(25 24 22/.35);text-underline-offset:.22em} .ds-body a:hover{text-decoration-color:#191816}"
     }
   ],
   "narrative": {
-    "northStar": "Left on the desk, 2001",
-    "overview": "The page is not a page. It is a school desk: one sheet of pale, honey-coloured laminate, worn paler where arms rest along its front, scratched and written over by years of kids, lit by one window at the top left. A working Nokia 3310 has just been put down in the middle of it, at the size of the real handset. Only two things lie beside it: a full pad of sticky notes at its bottom right that says what to press next, and a navy nylon pencil case at its bottom left that says whose desk this is. A biro pokes out from under the case.\n\nThe graffiti is the desk's history, not information: faded older names and dates under newer pencil, biro, red pen, permanent marker and compass-point carvings, hearts, tallies and scribbled-out patches. It stays texture, always quieter than the objects on top of it, with one exception: the freshest biro on the desk, pressed hard, gives the phone's own number for Lachlan.\n\nThe phone arrives as a comic drawing. The server renders the handset in flat comic ink with \"Loading…\" and a segmented bar on its LCD; when three.js and the model are ready, a bright edge sweeps down the drawing, turning it into the real phone, which pitches up and leaps out of the desk as the edge passes, then drops back to hover. On a device with a tilt sensor, tilting it moves the window's light across the phone; the phone itself stays put.",
+    "northStar": "The 3310 in the Braun catalogue",
+    "overview": "The site is a product catalogue of the kind Braun printed in the 1960s and 70s, with one product in it: a working Nokia 3310. Off-white paper, near-black type, a precise grid ruled with hairlines, the product as the exhibit, and spec-sheet captions in tabular figures. One functional colour, signal orange, is used like Braun's power marks: rarely, and only to say 'here' or 'on'.\n\nThe phone arrives as a technical drawing with dimension lines, and a fine rule sweeps down it turning it into the 3D phone, which lifts off the page and settles: the one authored moment. Refined, not skeuomorphic, and light only.",
     "keyCharacteristics": [
-      "One light source: a window at the top left; every shadow falls down and to the right.",
-      "Handwriting is the UI type. Nothing is set in a neutral web sans.",
-      "Objects sit a few degrees off square, never aligned to the viewport.",
-      "The phone is dead centre, at most its real 113 mm, and nothing covers it.",
-      "Every object that carries information is a real control or real text; decoration is `aria-hidden`."
+      "The phone is the exhibit, at about its real size, uncovered.",
+      "One typeface, Archivo, tabular figures for data.",
+      "Hairline rules organise everything; an ink rule opens each table and list.",
+      "Signal orange only for the phone's place in the index, the sound lamp, focus and the caret.",
+      "Section numbers are the phone's menu numbers."
     ],
     "rules": [
       {
-        "name": "The Right Pen Rule",
-        "body": "Ink follows the object and the act: biro writes, red pen points at the live state, correction fluid belongs to the pencil case, marker is for names on tape. A new mark picks its pen from what a kid would have used.",
+        "name": "The Power Mark Rule",
+        "body": "The signal colour marks state, never decoration, text or a region.",
         "section": "colors"
       },
       {
-        "name": "The Quiet History Rule",
-        "body": "Graffiti never outweighs the desk's objects. Its heaviest marks (marker) stay at or below 0.5 opacity and under 2rem; only the way-in line is written fresh, at 0.9.",
+        "name": "The Paper Rule",
+        "body": "No gradients, textures, glass or tinted panels; structure is rules and space.",
         "section": "colors"
       },
       {
-        "name": "The Window Rule",
-        "body": "There is exactly one light, from the top left. Device tilt moves that light across the phone; nothing is lit from anywhere else.",
-        "section": "colors"
-      },
-      {
-        "name": "The Who Wrote It Rule",
-        "body": "Every line of visible text was written by hand, in Kalam or Reenie, or shown on the phone's own LCD.",
+        "name": "The One Face Rule",
+        "body": "Archivo for everything, the drawing's lettering included.",
         "section": "typography"
       },
       {
-        "name": "The Down-Right Rule",
-        "body": "Every shadow offset is positive on both axes.",
-        "section": "elevation"
-      },
-      {
-        "name": "The Lying Flat Rule",
-        "body": "Nothing floats except the phone in its entrance. No hover lift, no glow.",
-        "section": "elevation"
+        "name": "The Top Line",
+        "body": "The index's rule, the phone's top and the heading's capitals share one line.",
+        "section": "layout"
       }
     ],
     "dos": [
-      "**Do** put new information on a plausible 2001 desk object, in the pen that object would be written with.",
-      "**Do** keep the phone dead centre, at most its real size, uncovered, with the pad and case clear of it when there is room.",
-      "**Do** cast every shadow down and to the right in shadow umber.",
-      "**Do** make every object that carries information a real control or real text, and mark decoration `aria-hidden`.",
-      "**Do** name the visitor's own keys: keyboard keys for keyboards, the phone's keys for touch.",
-      "**Do** animate writing as writing: a left-to-right ink wipe on `cubic-bezier(0.16, 1, 0.3, 1)`, removed under `prefers-reduced-motion`."
+      "Do keep the phone the exhibit: at most its real size, uncovered.",
+      "Do set new information as a spec row, caption or ruled list.",
+      "Do use tabular figures for data and the phone's menu numbers for sections.",
+      "Do name keys in the phone's terms first: Select (Enter).",
+      "Do keep the index plain, server-rendered links."
     ],
     "donts": [
-      "**Don't** add a header, footer, nav bar or any web chrome around the phone.",
-      "**Don't** put a key legend or instructions on the desk; the pad shows only what to press next.",
-      "**Don't** let graffiti outweigh the desk's objects (The Quiet History Rule).",
-      "**Don't** light anything from a second direction, or add hover lift, glows or floating shadows.",
-      "**Don't** reuse the legacy sea/lagoon tokens in `src/styles.css` (`--surface`, `--line`, …); they belong to the original site template."
+      "Don't add a second accent, typeface, gradients, textures, glass, cards or rounded panels.",
+      "Don't put a kicker above a heading.",
+      "Don't animate anything else on load.",
+      "Don't turn on spec callouts without checking they clear the spread.",
+      "Don't reuse the desk's or template's old tokens."
     ]
   }
 }
