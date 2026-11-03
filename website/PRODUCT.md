@@ -15,11 +15,11 @@ it is and how to reach them.
 
 ## Product Purpose
 
-hellotimber is Lachlan Heywood's portfolio, built as a faithful, working Nokia 3310 rendered
-in three.js. The phone runs a reproduction of the stock v6.39 firmware; its menus hold the
-portfolio content, and the site's routes mirror the phone's screens. Success: a visitor plays
-with the phone, understands how to drive it, and can find out who Lachlan is and how to get in
-touch.
+hellotimber is Lachlan Heywood's portfolio, built around a faithful, working Nokia 3310
+rendered in three.js. The homepage phone runs Lachlan's own firmware: the stock look, keys,
+sounds and navigation with his sections as the menu. Each section is also a plain HTML page.
+Success: a visitor plays with the phone, understands how to drive it, and can find out who
+Lachlan is and how to get in touch, with or without the phone.
 
 ## Positioning
 
@@ -33,21 +33,33 @@ against emulator captures of the real firmware.
   digits, `*`, `#`, `p` = power); pointer presses the 3D keys.
 - Touch: tap the 3D keys.
 - The phone boots (~5 s) before standby; the LCD is 84×48 monochrome.
-- Live phone state is available to the page: the current route/menu path, a text rendering of
-  the LCD (`describeStockScreen`, today an sr-only `role=status` mirror), sound and backlight settings.
+- Live phone state is available to the page: the current menu path and highlighted item, a text
+  rendering of the LCD (the runtime's `describe`, an sr-only `role=status` mirror), sound and
+  backlight settings.
 
 ## Capabilities and Constraints
 
-- The 3D phone stage (`PhoneStageHost`) mounts once in `routes/_phone.tsx` and must never
-  remount across routes.
-- Per-route portfolio content is server-rendered and crawlable; today it is visually hidden.
+- Routes: `/` (the phone and the spread of the highlighted menu item), `/about`, `/work`,
+  `/writing`, `/now`, `/contact` (the section's page with the phone docked beside it), `/chat`
+  and `/snake` (the phone centred at real size with a key guide). Entering a section on the
+  phone changes the URL; Back on the phone returns to `/` with the carousel on that item; a
+  deep link opens the phone at the section. Old `/menu/...` URLs return 404.
+- Each section is one content record (`website/src/content/`): the LCD's short form and the
+  page's long form, so they can't drift apart.
+- A contents column of plain links to every section is always present, keyboard-first and
+  works without JavaScript.
+- Contact's LCD list opens GitHub, LinkedIn, Bluesky and X in a new tab; Writing's list opens
+  the post's page. Chat texts the personas through `/api/sms`; Games has Snake II.
+- The 3D phone stage (`PhoneStageHost`) mounts once in `routes/_home.tsx` and must never
+  remount across the section routes.
 - The phone packages must not know about the router; the website owns all bridging.
-- The 2001 school desk carries a sticky pad with the live "what to press next" hint (worded for
-  keyboard or touch) and a Sound off tick-box, and a pencil case with the name and contact
-  links. There is no key legend and no LCD transcription on the desk: the phone teaches itself,
-  one step at a time. The phone's number for Lachlan (0491 570 006) is written on the desk.
 - The phone renders at most its real physical size; the server sends a comic-ink drawing of it
   that turns into the 3D phone once it has loaded, or says it can't switch on if it can't.
+- The layout around the phone is provisional (plain grid) until the Braun catalogue design
+  (plan 32 Phase 3). The desk, sticky pad, pencil case and graffiti are gone; Sound off sits
+  in the colophon under the contents.
+- The stock v6.39 firmware runs only at `/exp/nokia-emulator`, with its inspector, world and
+  stage controls.
 
 ## Brand Commitments
 
@@ -69,18 +81,3 @@ against emulator captures of the real firmware.
 3. Teach the device in its own terms (keys, menus, the LCD), not in web-UI idioms.
 4. Who and how-to-reach must be findable without driving the phone.
 5. Fidelity is the craft: never fake phone behaviour in the surrounds.
-
-## Stock runtime desk (plan 31)
-
-The sticky pad's hint reads the stock screen (its kind, softkey and accessible description);
-it never reconstructs the LCD. The Sound off tick-box gates the stock audio adapter's master
-gain and never rewrites firmware settings. Lights follow the firmware's own automatic timeout.
-
-A direct unknown URL keeps the handset and desk available while the runtime loads, then
-opens stock SIM services. The server response remains a 404; client navigation follows the
-phone to SIM services. Route changes and browser Back/Forward keep the same stage canvas.
-
-Confirming a project's Open question in SIM services opens its link through the same call
-flow as a phone-book contact: the handset shows the existing Calling, connected and call-end
-screens, then standby. The toolkit composition is UNVERIFIED against real SET UP CALL
-firmware; plan 30 records the missing capture.

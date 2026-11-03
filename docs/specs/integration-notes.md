@@ -190,13 +190,13 @@ matched across navigations never remounts; only changed child matches swap throu
 ```
 website/src/routes/
   __root.tsx          (unchanged shell)
-  _phone.tsx          ← layout: canvas mounts here, persists
-  _phone/index.tsx    ← matches "/"
-  _phone/menu.tsx     ← matches "/menu"   (etc.)
+  _home.tsx           ← layout: canvas mounts here, persists
+  _home/index.tsx     ← matches "/"
+  _home/about.tsx     ← matches "/about"   (etc.)
 ```
 
 ```tsx
-// website/src/routes/_phone.tsx
+// website/src/routes/_home.tsx
 import { Outlet, createFileRoute, ClientOnly } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 
@@ -204,12 +204,12 @@ const PhoneStage = lazy(() =>
   import("@hellotimber/phone-3d").then((m) => ({ default: m.PhoneStage })),
 );
 
-export const Route = createFileRoute("/_phone")({ component: PhoneLayout });
+export const Route = createFileRoute("/_home")({ component: PhoneLayout });
 
 function PhoneLayout() {
   return (
     <div className="phone-layout">
-      {/* persists across /, /menu, ... — never remounts */}
+      {/* persists across /, /about, ... — never remounts */}
       <ClientOnly fallback={<div className="phone-skeleton" />}>
         <Suspense fallback={<div className="phone-skeleton" />}>
           {/* stage wrapper wires canvas/version/onKey — see plan 05 */}

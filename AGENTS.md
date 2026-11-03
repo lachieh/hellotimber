@@ -1,12 +1,14 @@
 # AGENTS.md — Operating Manual for Implementation Agents
 
-This repo is **hellotimber**: Lachlan Heywood's portfolio website, built as a faithful,
-working Nokia 3310 rendered in three.js — where the phone's menus contain the portfolio
-content, and the website's routes mirror the phone's screens.
+This repo is **hellotimber**: Lachlan Heywood's portfolio website, built around a faithful,
+working Nokia 3310 rendered in three.js. The homepage phone runs Lachlan's own firmware (the
+stock look and behaviour with his sections as the menu); each top-level item is one route
+(`/about`, `/work`, `/writing`, `/now`, `/contact`, `/chat`, `/snake`) whose page and LCD read
+the same content record. The strict stock v6.39 firmware runs at `/exp/nokia-emulator`.
 
 **Read these before writing any code:**
 
-- `VISION.md` — what we're building and why, the menu→route map, architecture, and contracts.
+- `VISION.md` — what we're building and why, the section→route map, architecture, and contracts.
 - `docs/plans/README.md` — the plan index. Every implementation task lives in a numbered
   plan file. Work on exactly the task you were assigned; do not start tasks from other plans.
 - `docs/specs/integration-notes.md` — verified Vite+/TanStack/R3F patterns (versions,

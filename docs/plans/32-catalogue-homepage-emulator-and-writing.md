@@ -116,7 +116,7 @@ until step 6:
 - [x] 6. `defineFirmware`: the v6.39 manifest, with `createStockPhone = defineFirmware(v639)`.
 - [x] 7. Move the kit into `packages/nokia-kit`. `@hellotimber/nokia-os` becomes `@hellotimber/firmware-v639`
      (manifest, generated tree, captured tables, goldens).
-- [ ] 8. (Done as Phase 2's first task.) The homepage manifest in `website/src/home/firmware.ts`, built from kit apps (a reader,
+- [x] 8. (Done as Phase 2's first task.) The homepage manifest in `website/src/home/firmware.ts`, built from kit apps (a reader,
      a list, links, chat, Snake) and the content records (D14).
 
 Phase 1 can run alongside steps 1-5 because it only uses `createStockPhone`.
@@ -157,19 +157,56 @@ The stock firmware moves off the homepage and into its own experiment.
 
 ### Phase 2 - Homepage firmware and section routes
 
-- [ ] Requires Phase 0 through step 8. The homepage manifest provides the menu tree (D1), each
+- [x] Requires Phase 0 through step 8. The homepage manifest provides the menu tree (D1), each
       section's `lcd` screens, and the Writing list (D10).
-- [ ] Content records (D14) for About, Work, Now and Contact, migrated from `sim-messages.ts`,
+- [x] Content records (D14) for About, Work, Now and Contact, migrated from `sim-messages.ts`,
       `people.ts`, `now.ts` and `toolkit.ts`. Delete the SIM-card portfolio content the
       emulator doesn't need.
-- [ ] Routes `/`, `/about`, `/work`, `/now`, `/contact`, `/writing`, `/chat`, `/snake`. Rebuild the
+- [x] Routes `/`, `/about`, `/work`, `/now`, `/contact`, `/writing`, `/chat`, `/snake`. Rebuild the
       router bridge on the new tree. Delete the `/menu/...` routes, `ROUTE_CONTENT`, `REDIRECTS` and the
       panels registry (D15).
-- [ ] A spread and docking state machine in the website: the highlighted item → spread, entered →
+- [x] A spread and docking state machine in the website: the highlighted item → spread, entered →
       route and docked phone, Back → `/` (D8, D9, D11).
-- [ ] Rewrite the VISION.md routes and content sections, the AGENTS.md website contract, and the
+- [x] Rewrite the VISION.md routes and content sections, the AGENTS.md website contract, and the
       PRODUCT.md capabilities.
-- [ ] Verify: SSR of each route, the sitemap, the contents column without JS (D12), and the tests.
+- [x] Verify: SSR of each route, the sitemap, the contents column without JS (D12), and the tests.
+
+**As built (2026-11-03):**
+
+- **Firmware** (`website/src/home/firmware.ts`): a hand-written tree, one top-level item per
+  section in `content/sections.ts` order: 1 About (reader pages), 2 Work (rows; each entry opens
+  reader pages), 3 Writing (rows of posts), 4 Now (reader pages), 5 Contact (rows: GitHub,
+  LinkedIn, Bluesky, X open their links; Hours reads), 6 Chat (stock 3 remounted), 7 Games (stock
+  8 with Snake II only, remounted). `composeFirmware` over `STOCK_HANDSET` with no SIM services
+  slot. Reader pages are the stock `text-pages` widget (thin font, three lines, More); the
+  website wraps and glyph-checks them (`home/lcd.ts`). Link rows are a website feature whose
+  screen binding opens the link and shows no response, so the list stays. Games keeps only the
+  stock Games feature's Snake II part (Continue, Top score's return): the rest binds Space
+  impact, Bantumi and Pairs II, which this tree leaves out.
+- **Carousel graphics** (`home/icons.ts`): About (head and shoulders) and Work (briefcase) are
+  drawn 1-bit beside the stock hand and pen every icon carries, right-aligned like the stock
+  ones; Writing, Now and Contact reuse the stock Messages, Reminders and Phone book icons (frames
+  and timeline, not their per-reveal timelines); Chat and Games are their stock icons by slug.
+- **Runtime:** `phone/runtime.ts` `startPhoneRuntime({ firmware? })` serves both the homepage
+  (`home/runtime.ts`: its own EEPROM prefix `hellotimber.home/`, a SIM with the personas so
+  Chat's Search finds them, Snake II level 5) and the emulator (stock). The network port keeps
+  persona SMS over `/api/sms` and drops the plan 31 link calls.
+- **Routes:** `routes/_home.tsx` mounts the stage once; `_home/{index,about,work,writing,now,
+contact,chat,snake}.tsx`. The sitemap lists those eight. Unknown URLs, `/menu/...` included,
+  get the root 404 page. `/writing/<slug>` 404s until Phase 4.
+- **Bridge** (`phone/router-sync.ts`, `home/routes.ts`): phone path → its section's route
+  (`/` at standby and the carousel); a route → the section's node; back to `/` from inside a
+  section reopens the section afresh and presses C, so the carousel lands on its item.
+- **View** (`home/view.ts`): derived, not stored: `homeView(route, highlighted)` is `spread`
+  (the highlighted item's section, or an intro at standby), `docked` (page sections) or
+  `centred` (Chat, Snake); `highlightedSection` reads the carousel's item or the section the
+  phone is in.
+- **Layout:** plain CSS grid (`home/home.css`): contents column with Sound off, the phone, the
+  spread or page. The desk, graffiti, sticky pad and pencil case were deleted with their CSS and
+  tests (D19, early): nothing in the new composition used them.
+- **nokia-os fix:** messages delivered to a phone whose boot a host sent straight to a menu path
+  (a deep link) now land; before, they queued until standby was drawn, which a deep-linked boot
+  never does (plan 31's deep-boot SMS limitation).
 
 ### Phase 3 - Braun catalogue visual
 
