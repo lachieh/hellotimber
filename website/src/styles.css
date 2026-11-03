@@ -486,10 +486,11 @@ a {
   margin: 0;
 }
 
+/* The canvas overscans the stage 1.6× each way, centred (stage-frame.ts OVERSCAN), so the phone
+   leaping out of the desk has room; the phone is framed smaller to keep its size. */
 .phone-fill {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: -30%;
 }
 
 /* The phone drawn flat (server-rendered) lies over the 3D stage until the model has loaded; then

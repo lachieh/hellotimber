@@ -2,7 +2,7 @@ import { PhoneStage } from "@hellotimber/phone-3d";
 import type { FormPose, Nokia3310Key } from "@hellotimber/phone-3d";
 import { useEffect, useState } from "react";
 import { attachKeyboard } from "./keyboard";
-import { MOBILE, MOBILE_FIT } from "./stage-frame";
+import { DESK_FIT, MOBILE, MOBILE_FIT } from "./stage-frame";
 import { getPhoneRuntime } from "./stock-phone";
 
 /**
@@ -71,7 +71,7 @@ export default function PhoneStageHost({
   return (
     <PhoneStage
       className="phone-stage"
-      fit={mobile ? MOBILE_FIT : undefined}
+      fit={mobile ? MOBILE_FIT : DESK_FIT}
       form
       onFormStart={onFormStart}
       pose={pose}

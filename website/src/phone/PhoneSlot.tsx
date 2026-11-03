@@ -13,7 +13,7 @@ import {
 } from "react";
 import { DRAWN } from "./reveal";
 import { getRevealFrame, playReveal, subscribeReveal } from "./reveal-player";
-import { MOBILE_FIT } from "./stage-frame";
+import { DESK_FIT, MOBILE_FIT } from "./stage-frame";
 import { loadPhoneRuntime } from "./stock-phone";
 
 let stageModule: Promise<typeof import("./PhoneStageHost")> | undefined;
@@ -84,6 +84,7 @@ export default function PhoneSlot() {
       {/* One sketch per breakpoint, each framed like the stage there (PhoneStageHost's fit). */}
       <Nokia3310Sketch
         className="phone-sketch phone-sketch--wide"
+        fit={DESK_FIT}
         progress={progress}
         wipe={frame.wipe}
       />
