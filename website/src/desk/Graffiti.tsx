@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import "./graffiti.css";
 
 /** What a mark was made with. */
-type Ink = "ghost" | "pencil" | "biro" | "red" | "marker" | "carved";
+type Ink = "ghost" | "pencil" | "biro" | "red" | "marker" | "carved" | "fresh";
 
 interface Mark {
   /** Where on the desk, in % of its width and height, and its turn in degrees. */
@@ -125,7 +125,7 @@ const MARKS: Mark[] = [
   { x: 66, y: 27, turn: -2, ink: "pencil", size: 1.2, text: "mr. P is a legend", wide: true },
   { x: 78, y: 36, turn: 7, ink: "red", size: 1.6, scrawl: true, text: "kate wuz ere" },
   { x: 92, y: 44, turn: -4, ink: "biro", size: 3.6, doodle: cube, wide: true },
-  { x: 68, y: 52, turn: 12, ink: "biro", size: 2.6, scrawl: true, text: "M A R C U S", wide: true },
+  { x: 70, y: 44, turn: 12, ink: "biro", size: 2.6, scrawl: true, text: "M A R C U S", wide: true },
   { x: 84, y: 62, turn: -7, ink: "pencil", size: 1.1, text: "who stole my pen??" },
   { x: 66, y: 70, turn: 4, ink: "pencil", size: 4.6, doodle: arrow, wide: true },
   { x: 72, y: 72, turn: 4, ink: "pencil", size: 1.2, scrawl: true, text: "boring", wide: true },
@@ -142,6 +142,8 @@ const MARKS: Mark[] = [
     text: "is ur mum calling?",
     wide: true,
   },
+  // The way in, written by someone who knew: the phone's own number for Lachlan.
+  { x: 58, y: 59, turn: -4, ink: "fresh", size: 1.3, text: "txt Lachlan 0491 570 006" },
   { x: 31, y: 27, turn: 22, ink: "marker", size: 1.3, text: "B.K.", wide: true },
   { x: 2, y: 47, turn: 4, ink: "red", size: 7, doodle: zigzag },
   { x: 20, y: 57, turn: -9, ink: "biro", size: 1.2, text: "TXT ME 0412 ***", wide: true },

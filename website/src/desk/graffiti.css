@@ -65,6 +65,13 @@
   opacity: 0.6;
 }
 
+/* The freshest biro on the desk, pressed hard: the one line worth reading. */
+.d01-graffiti__mark--fresh {
+  color: #1f2c86;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
 /* Permanent marker: bold and nearly black, bled a little into the grain. */
 .d01-graffiti__mark--marker {
   color: #1c1a17;

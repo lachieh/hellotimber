@@ -1,5 +1,6 @@
 import { useState, useSyncExternalStore } from "react";
 import type { ReactNode } from "react";
+import { updateSettings, useSettings } from "../settings";
 import { deskHint } from "./lcd-copy";
 import type { KeyInput } from "./lcd-copy";
 import { usePhoneLive } from "./live";
@@ -23,7 +24,7 @@ export default function Desk({ phone }: { phone: ReactNode }) {
           <p id="d01-phone-keys" className="d01-sr">
             A working Nokia 3310. Arrow keys scroll, Enter is the middle key, Escape or Backspace is
             C, 0 to 9, star and hash type, and P is power. What the screen shows is read out as it
-            changes.
+            changes. To reach Lachlan, text him on 0491 570 006 from Messages.
           </p>
           <div className="d01-phone__shadow" aria-hidden="true" />
           <div className="d01-phone__stage">{phone}</div>
@@ -98,7 +99,29 @@ function StickyNote({ hint }: { hint: string }) {
           <SheetText hint={change.previous} />
         </div>
       )}
+      <MuteBox />
     </section>
+  );
+}
+
+/** A tick-box drawn in the pad's corner: ticked, the phone makes no sound. */
+function MuteBox() {
+  const { muted } = useSettings();
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={muted}
+      aria-label="Sound off"
+      className="d01-sticky__mute"
+      onClick={() => updateSettings({ muted: !muted })}
+    >
+      <svg className="d01-sticky__mute-box" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 5.2c5.4-1 10.8-1.2 16-.4.9 5 1 10.2.2 15.2-5.2.9-10.6.9-16 .2-.9-5-1-10 0-15z" />
+        {muted && <path className="d01-sticky__mute-tick" d="M6.5 12.5l4 4.5 9-13" />}
+      </svg>
+      <span aria-hidden="true">shh, no sound</span>
+    </button>
   );
 }
 

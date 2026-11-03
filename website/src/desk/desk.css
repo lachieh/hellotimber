@@ -235,7 +235,7 @@
   translate: var(--x)
     min(
       calc(50vh - 50% - 28px + var(--over) * 1.5),
-      max(calc(50vh - 50% - 28px), calc(var(--phone-bottom) - 40px + 50%))
+      max(calc(50vh - 50% - 28px), calc(var(--phone-bottom) + 8px + 50%))
     );
 }
 
@@ -249,11 +249,11 @@
 
 /* ── sticky note pad ──────────────────────────────────────────────────── */
 
-/* A full pad, square like the real thing, its sheets' edges stacked down and to the right; under
-   the phone where the two meet. */
+/* A full pad, square like the real thing, its sheets' edges stacked down and to the right. Above
+   the phone's overscanned canvas so its tick-box takes clicks (it never covers the handset). */
 .d01-sticky {
   --w: 280px;
-  z-index: 0;
+  z-index: 2;
   aspect-ratio: 1;
   rotate: 4deg;
   border-radius: 2px;
@@ -322,6 +322,49 @@
   width: 30px;
   height: 30px;
   rotate: -60deg;
+}
+
+/* The mute tick-box, drawn in biro in the pad's bottom left corner; it stays as sheets peel. */
+.d01-sticky__mute {
+  position: absolute;
+  z-index: 2;
+  left: 18px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--d01-biro);
+  font: inherit;
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.d01-sticky__mute-box {
+  width: 24px;
+  height: 24px;
+  overflow: visible;
+  fill: rgb(255 255 255 / 0.18);
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: fill 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.d01-sticky__mute:hover .d01-sticky__mute-box {
+  fill: rgb(255 255 255 / 0.55);
+}
+
+/* Ticked in red pen, as if done in a hurry. */
+.d01-sticky__mute-tick {
+  fill: none;
+  stroke: #b0171b;
+  stroke-width: 2.6;
 }
 
 /* The new hint is written on the blank sheet once the old one is lifting away. */
