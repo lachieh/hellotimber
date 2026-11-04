@@ -55,6 +55,21 @@ const BOTTOM = BOUNDS.y + BOUNDS.height;
 const LEFT = BOUNDS.x;
 const RIGHT = BOUNDS.x + BOUNDS.width;
 
+/** The drawing's top edge `wipe` of the way through (SVG y, down), where it starts to show. */
+const wipeEdge = (wipe: number) => TOP + wipe * (BOUNDS.height + WIPE_PAST);
+
+/**
+ * Where the drawing is whole again below its wiping edge, `wipe` of the way through, as a world
+ * height on the stage (y up): the line a stage with the same `fit` should hold the 3D phone to
+ * (FormPose `pivot` and `cut`), so the phone shows only where the drawing has gone.
+ */
+export function wipeLine(wipe: number): number {
+  return -(wipeEdge(wipe) + WIPE_SOFT);
+}
+
+/** The world height of the phone's bottom in the drawing (and on the stage). */
+export const OUTLINE_BOTTOM = -BOTTOM;
+
 const DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 const LEGENDS: Record<string, string> = {
   ...Object.fromEntries(DIGITS.map((d) => [`key_${d}`, d])),
@@ -120,7 +135,7 @@ export function Nokia3310Sketch({
   if (wipe >= 1) return null;
   // The edge sweeps from the phone's top until it has passed the width dimension below it, on
   // the same clock as before the drawing had dimensions, so the 3D phone's leap lines up.
-  const edge = TOP + wipe * (BOUNDS.height + WIPE_PAST);
+  const edge = wipeEdge(wipe);
   const wiping = wipe > 0;
   const area = {
     x: -HALF_W - MARGIN,

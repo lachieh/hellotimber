@@ -204,13 +204,26 @@ The server can't render WebGL, so it sends a technical drawing of the phone inst
 
 ```ts
 export function revealAt(ms: number): RevealFrame {
-  const wipe = easeInOut(Math.min(1, Math.max(0, ms / WIPE_MS)));
-  const pose = formPose(Math.max(0, ms - LEAP_MS));
-  return { wipe, pose: { ...pose, depth: Math.max(WIPE_DEPTH, pose.depth) } };
+  const wipe = easeInOut(clamp(ms / WIPE_MS));
+  const base = formPose(Math.max(0, ms - LEAP_MS));
+  const held = 1 - smooth(clamp((ms - WIPE_MS) / RELEASE_MS));
+  const free = 1 - held;
+  const line = wipeLine(wipe);
+  const pose: FormPose = {
+    ...base,
+    depth: Math.max(WIPE_DEPTH, base.depth),
+    lift: base.lift * free,
+    spread: 1 + (base.spread - 1) * free,
+    tiltX: base.tiltX + PEEL * base.lift * held,
+    tiltY: base.tiltY * free,
+    pivot: Math.max(line, OUTLINE_BOTTOM) * held,
+  };
+  if (wipe < 1) pose.cut = line;
+  return { wipe, pose };
 }
 ```
 
-The wipe takes 650 ms. The phone starts to leap 100 ms in and takes 1,600 ms to form: it pitches up, swells to about 16% bigger as it lifts off the page, and settles. Because it's a pure function of `ms`, the homepage plays it on a clock and the figure below lets you drag it.
+The wipe takes 650 ms. While it runs, the phone is hinged to the edge: it turns about that line (`pivot`) instead of its centre, and the stage clips everything below it (`cut`) with a plane through the camera and the line, so the phone never shows past the drawing still covering it. Moving it towards the camera would pull it off the line, so until the drawing has gone the leap becomes a peel: what's been revealed pitches up off the page about the edge. Then the phone lets go over 250 ms, swells to about 16% bigger as it lifts, and settles, 1,700 ms in all. Because it's a pure function of `ms`, the homepage plays it on a clock and the figure below lets you drag it.
 
 <RevealScrubber caption="The reveal, scrubbable: the same revealAt(ms) as the homepage, over the real 3D model. Depth is the phone's thickness against its rest, overshooting as it swells; size is how much bigger the lift makes it look." />
 

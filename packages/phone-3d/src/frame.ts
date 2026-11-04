@@ -42,6 +42,16 @@ export interface FormPose {
   tiltY: number;
   /** How far forming has got, 0 to 1: idle motion blends in with it. */
   settled: number;
+  /**
+   * The world height of a line across the page (z = 0) the phone tilts and spreads about instead
+   * of its centre: a reveal's edge, so the phone stays pinned to the drawing there.
+   */
+  pivot?: number;
+  /**
+   * The world height of a line across the page below which the phone isn't drawn, as the camera
+   * sees it: a reveal's edge, so none of the phone shows past the drawing still covering it.
+   */
+  cut?: number;
 }
 
 /** How far the phone leaps towards the camera (peaks ≈ 16 % bigger). */

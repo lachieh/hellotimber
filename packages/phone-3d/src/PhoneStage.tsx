@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import * as THREE from "three";
 import type { Group } from "three";
@@ -126,6 +126,10 @@ function fitCamera(
   return [x!, y!, d];
 }
 
+/** The cut when there is none: below everything, keeping all of it. */
+const UP = new THREE.Vector3(0, 1, 0);
+const FAR = 1e6;
+
 /** Lowest depth scale while forming: a zero scale has no inverse for the normals. */
 const FLAT = 0.002;
 
@@ -170,6 +174,8 @@ function SwayRig({
   drift: (() => StageDrift) | undefined;
 }) {
   const group = useRef<Group>(null);
+  const hung = useRef<Group>(null);
+  const [cut] = useState(() => new THREE.Plane());
   const silhouette = useRef<Silhouette>(undefined);
   const forming = useRef<Forming>(undefined);
   useFrame((state) => {
@@ -216,13 +222,43 @@ function SwayRig({
       state.camera.lookAt(x, y, 0);
     }
     const offset = drift?.();
+    // Turned and spread about the pivot: the rig sits on it and the phone hangs back off it.
+    const pivot = pose.pivot ?? 0;
+    hung.current?.position.set(0, -pivot, 0);
     // The leap: nearer the camera by a share of its distance.
     g.position.z = pose.lift * z;
-    g.position.y = offset?.y ?? 0;
+    g.position.y = pivot + (offset?.y ?? 0);
     // The forming wobble; at rest the phone holds still (device tilt moves the light instead).
     g.rotation.set(pose.tiltX + (offset?.tiltX ?? 0), pose.tiltY + (offset?.tiltY ?? 0), 0);
+
+    // The cut: a plane through the camera and the line, so it falls on that line on screen. It
+    // clips only the phone (a host's scene, like a floor, stays whole), and with no cut it lies
+    // far below everything, so the phone's shaders never change.
+    if (pose.cut === undefined) cut.set(UP, FAR);
+    else {
+      const line = new THREE.Vector3(0, pose.cut, 0);
+      const normal = new THREE.Vector3(1, 0, 0)
+        .cross(state.camera.position.clone().sub(line))
+        .normalize();
+      // Keep what is above the line.
+      if (normal.y < 0) normal.negate();
+      cut.setFromNormalAndCoplanarPoint(normal, line);
+    }
+    state.gl.localClippingEnabled = true;
+    hung.current?.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
+      const materials: THREE.Material[] = Array.isArray(object.material)
+        ? object.material
+        : [object.material];
+      for (const material of materials)
+        if (material.clippingPlanes?.[0] !== cut) material.clippingPlanes = [cut];
+    });
   });
-  return <group ref={group}>{children}</group>;
+  return (
+    <group ref={group}>
+      <group ref={hung}>{children}</group>
+    </group>
+  );
 }
 
 /** How much further than the device's tilt the light swings, so the change in it reads. */
@@ -303,6 +339,11 @@ export function PhoneStage({
       className={className}
       dpr={[1, 2]}
       camera={{ position: [0, 0, CAMERA_Z], fov: CAMERA_FOV }}
+      // Resize with the container every frame it animates. R3F's default debounce lands on the
+      // resize observer too (react-use-measure feeds it the scroll-debounced callback), so a
+      // transitioning container only reframed the phone once it stopped. Pointer events use
+      // offsetX/Y, so the canvas's page position (the scroll tracking) isn't needed.
+      resize={{ scroll: false, debounce: 0 }}
     >
       <StudioEnvironment />
       <TiltLights>
