@@ -1,5 +1,5 @@
-import { FORM_MS, formPose } from "@hellotimber/phone-3d";
-import type { FormPose } from "@hellotimber/phone-3d";
+// From the three-free entry: the homepage and the posts time the reveal before three.js loads.
+import { FORM_MS, formPose, type FormPose } from "@hellotimber/phone-3d/sketch";
 
 /** How long the drawing takes to turn into the phone, top to bottom. */
 export const WIPE_MS = 650;

@@ -5,4 +5,6 @@ export type {
   Nokia3310SketchProps,
 } from "./Nokia3310Sketch";
 export { HANDSET, Nokia3310Callouts, Nokia3310Sketch } from "./Nokia3310Sketch";
-export { FORM_MS } from "../frame";
+// The forming pose is three-free too, so a host can time the reveal without loading three.js.
+export type { FormPose } from "../frame";
+export { FORM_MS, formPose } from "../frame";
