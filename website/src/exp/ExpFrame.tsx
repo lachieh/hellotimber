@@ -4,12 +4,6 @@ import type { ReactNode } from "react";
 import "./exp.css";
 
 /**
- * Whether write-up links render. The posts arrive with plan 32 Phase 4 (`/writing/<slug>`); until
- * then the link would 404, so it stays off.
- */
-export const WRITE_UPS_PUBLISHED = false;
-
-/**
  * The thin frame every experiment under `/exp` shares (plan 32 D17): a mark back to the home page,
  * the experiment's title and a link to its write-up.
  */
@@ -37,7 +31,7 @@ export function ExpFrame({
           {title}
           {subtitle !== undefined && <span className="exp-bar__subtitle">{subtitle}</span>}
         </h1>
-        {writeUp !== undefined && WRITE_UPS_PUBLISHED && (
+        {writeUp !== undefined && (
           <a className="exp-bar__writeup" href={writeUp.href}>
             {writeUp.label}
             <ArrowUpRight size={14} strokeWidth={1} absoluteStrokeWidth aria-hidden="true" />
