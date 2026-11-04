@@ -1,5 +1,5 @@
 // From the three-free entry: the homepage and the posts time the reveal before three.js loads.
-import { OUTLINE_BOTTOM, wipeLine, type FormPose } from "@hellotimber/phone-3d/sketch";
+import { wipeLine, type FormPose } from "@hellotimber/phone-3d/sketch";
 import type { EasingConfig } from "dialkit/store";
 import { computeClipState, computeStaticTimeline, parseTimelineConfig } from "dialkit/timeline";
 import type { TimelineConfig } from "dialkit/timeline";
@@ -26,6 +26,8 @@ const dial = (value: number, min: number, max: number, step = 0.005) =>
   [value, min, max, step] as [number, number, number, number];
 const unit = (value: number) => dial(value, 0, 1, 0.01);
 const scale = (value: number) => dial(value, 0.8, 1.2);
+/** World units on the page (the phone is 10 tall, centred on 0). */
+const units = (value: number, reach: number) => dial(value, -reach, reach, 0.05);
 /** Degrees of pitch (top edge towards you) or yaw (right edge away). */
 const degrees = (value: number) => dial(value, -45, 45, 0.5);
 
@@ -36,11 +38,12 @@ const LET_GO_AT = 0.65;
 
 /**
  * The reveal, in seconds from the moment the 3D model is ready under the drawing. A fine rule
- * sweeps down the drawing (`wipe`), turning it into the real phone. While it sweeps, the phone is
- * hinged to it (`hold`): what is revealed peels up off the page about the edge (`peel`), and
- * nothing shows below it. Pinned to the edge it can't move towards the camera, spread or turn
- * sideways, so `lift`, `spread` and `yaw` only show as `hold` lets go; `depth` and `pitch` show
- * throughout. One clip per thing that moves; DialKit's timeline dock edits it in dev
+ * sweeps down the drawing (`wipe`), turning it into the real phone, and nothing of the phone shows
+ * below it; the wipe moves only that line. While the phone is pinned to the drawing (`hold`) its
+ * front lies over it, and it peels up off the page (`peel`) about a line across it (`hinge`, its
+ * height on the page). Pinned, it can't move towards the camera, spread or turn sideways, so
+ * `lift`, `spread` and `yaw` only show as `hold` lets go; `position` moves it across and up the
+ * page throughout. One clip per thing that moves; DialKit's timeline dock edits it in dev
  * (RevealTuner), and the same config plays in production (`revealAt`).
  */
 export const REVEAL = {
@@ -57,6 +60,24 @@ export const REVEAL = {
     from: { v: unit(1) },
     to: { v: unit(0) },
     transition: IN_OUT,
+  },
+  // Starts in step with the wipe, so what's revealed peels up about the edge.
+  hinge: {
+    at: 0,
+    duration: 0.6,
+    from: { y: units(4.9, 6) },
+    to: { y: units(-5, 6) },
+    transition: SWEEP,
+  },
+  position: {
+    at: MOVE_AT,
+    from: { x: units(0, 3), y: units(0, 3) },
+    transition: IN_OUT,
+    steps: [
+      { duration: 0.4, to: { x: units(0, 3), y: units(0, 3) } },
+      { duration: 0.4, to: { x: units(0, 3), y: units(0, 3) } },
+      { duration: 0.8, to: { x: units(0, 3), y: units(0, 3) } },
+    ],
   },
   peel: {
     at: MOVE_AT,
@@ -156,10 +177,9 @@ const num = (values: Record<string, unknown>, fallback: number, key = "v"): numb
 export function revealFrame(sample: RevealSample): RevealFrame {
   const wipe = num(sample.wipe, 1);
   // 1 while the phone is hinged to the edge: moving towards the camera, spreading or turning any
-  // other way would pull it off the line.
+  // other way would pull it off the drawing.
   const held = num(sample.hold, 0);
   const free = 1 - held;
-  const line = wipeLine(wipe);
   const pose: FormPose = {
     depth: Math.max(WIPE_DEPTH, num(sample.depth, 1)),
     lift: num(sample.lift, 0) * free,
@@ -167,12 +187,13 @@ export function revealFrame(sample: RevealSample): RevealFrame {
     tiltX: (num(sample.pitch, 0) + num(sample.peel, 0, "pitch")) * RADIANS,
     tiltY: num(sample.yaw, 0) * free * RADIANS,
     settled: num(sample.settle, 1),
-    // Past the phone's bottom the edge can't hold it: it rocks on its bottom edge, and as it
-    // lets go it turns about its centre again (where a host's own drift turns it at rest).
-    pivot: Math.max(line, OUTLINE_BOTTOM) * held,
+    // As it lets go it turns about its centre again (where a host's own drift turns it at rest).
+    pivot: num(sample.hinge, 0, "y") * held,
     pin: held,
+    x: num(sample.position, 0, "x"),
+    y: num(sample.position, 0, "y"),
   };
-  if (wipe < 1) pose.cut = line;
+  if (wipe < 1) pose.cut = wipeLine(wipe);
   return { wipe, pose };
 }
 

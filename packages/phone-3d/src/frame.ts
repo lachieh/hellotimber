@@ -48,9 +48,9 @@ export interface FormPose {
    */
   pivot?: number;
   /**
-   * How firmly the phone is pinned to `pivot`, 0 to 1 (default 1): pinned, it turns about its
-   * front at that height, and moves so its front there lies over the drawing's line on screen,
-   * whatever its depth and lean. 0 turns it about its middle, where it would be anyway.
+   * How firmly the phone is pinned to the drawing, 0 to 1 (default 1): pinned, its front lies
+   * over the drawing on screen whatever its depth, and it turns about its front at `pivot`'s
+   * height. 0 turns it about its middle, where it would be anyway.
    */
   pin?: number;
   /**
@@ -58,6 +58,9 @@ export interface FormPose {
    * sees it: a reveal's edge, so none of the phone shows past the drawing still covering it.
    */
   cut?: number;
+  /** An offset across (`x`) and up (`y`) the page, in world units (the phone is 10 tall). */
+  x?: number;
+  y?: number;
 }
 
 /** How far the phone leaps towards the camera (peaks ≈ 16 % bigger). */

@@ -1,7 +1,8 @@
-import { OUTLINE_BOTTOM, wipeLine } from "@hellotimber/phone-3d/sketch";
+import { wipeLine } from "@hellotimber/phone-3d/sketch";
 import { describe, expect, it } from "vite-plus/test";
 import { parseTimelineConfig } from "dialkit/timeline";
-import { DRAWN, REVEAL, REVEALED, revealAt, WIPE_MS } from "../src/phone/reveal";
+import { DRAWN, REVEAL, REVEALED, revealAt, revealFrame, WIPE_MS } from "../src/phone/reveal";
+import type { RevealSample } from "../src/phone/reveal";
 
 /** Every slider in a DialKit config: `[path, [value, min, max, step]]`. */
 function sliders(config: unknown, path = ""): [string, number[]][] {
@@ -40,12 +41,32 @@ describe("the phone reveal", () => {
       // Hidden below the edge, and turning about it while it's on the phone: pinned to the page
       // there, so it never shows past the drawing still covering it.
       expect(pose.cut).toBe(line);
-      expect(pose.pivot).toBe(Math.max(line, OUTLINE_BOTTOM));
       expect(pose.pin).toBe(1);
       expect([pose.lift, pose.spread, pose.tiltY]).toEqual([0, 1, 0].map((v) => expect.closeTo(v)));
     }
     // Mid-wipe, what's revealed is already pitching up off the page.
     expect(Math.max(...wipes.map((frame) => frame.pose.tiltX))).toBeGreaterThan(0.1);
+  });
+
+  it("moves only the line with the wipe, never the phone", () => {
+    const sample = (wipe: number): RevealSample => ({
+      wipe: { v: wipe },
+      hold: { v: 1 },
+      hinge: { y: 1.5 },
+      position: { x: 0.2, y: -0.4 },
+      peel: { pitch: 12 },
+      depth: { v: 1.1 },
+      lift: { v: 0.1 },
+      spread: { v: 1.02 },
+      pitch: { v: 4 },
+      yaw: { v: -3 },
+      settle: { v: 0.3 },
+    });
+    const { cut: cutA, ...phoneA } = revealFrame(sample(0.2)).pose;
+    const { cut: cutB, ...phoneB } = revealFrame(sample(0.7)).pose;
+    expect(phoneB).toEqual(phoneA);
+    expect(cutA).toBe(wipeLine(0.2));
+    expect(cutB).toBe(wipeLine(0.7));
   });
 
   it("lets the phone go to leap free once the drawing has gone", () => {

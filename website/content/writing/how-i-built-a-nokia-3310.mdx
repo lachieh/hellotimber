@@ -200,14 +200,13 @@ The replies have to be things the phone can show, so the server holds them to th
 
 The handset is a sourced mesh with its 17 keys as named nodes (plan 10), Draco-compressed into a 490 KB GLB. The file carries only geometry; every material is set in code. The screen is a mesh textured from the same 84×48 canvas the painter fills.
 
-The server can't render WebGL, so it sends a technical drawing of the phone instead: an SVG traced from the model's outline, with the 113 mm and 48 mm dimension lines. When three.js, the model and the firmware have loaded, a fine rule sweeps down the drawing and the 3D phone rises out of it. All of that is one timeline: a DialKit config, `REVEAL`, with a clip for each thing that moves (the wipe, the hinge's hold, the peel, depth, lift, spread, pitch, yaw), each a few keyframes. In development DialKit's timeline dock sits over the homepage to scrub and retime it; in production the same config is sampled on a clock. Each sample turns into a frame:
+The server can't render WebGL, so it sends a technical drawing of the phone instead: an SVG traced from the model's outline, with the 113 mm and 48 mm dimension lines. When three.js, the model and the firmware have loaded, a fine rule sweeps down the drawing and the 3D phone rises out of it. All of that is one timeline: a DialKit config, `REVEAL`, with a clip for each thing that moves (the wipe, the hold that pins the phone to the drawing, the hinge it peels about, its position, the peel, depth, lift, spread, pitch, yaw), each a few keyframes. In development DialKit's timeline dock sits over the homepage to scrub and retime it; in production the same config is sampled on a clock. Each sample turns into a frame:
 
 ```ts
 export function revealFrame(sample: RevealSample): RevealFrame {
   const wipe = num(sample.wipe, 1);
   const held = num(sample.hold, 0);
   const free = 1 - held;
-  const line = wipeLine(wipe);
   const pose: FormPose = {
     depth: Math.max(WIPE_DEPTH, num(sample.depth, 1)),
     lift: num(sample.lift, 0) * free,
@@ -215,15 +214,17 @@ export function revealFrame(sample: RevealSample): RevealFrame {
     tiltX: (num(sample.pitch, 0) + num(sample.peel, 0, "pitch")) * RADIANS,
     tiltY: num(sample.yaw, 0) * free * RADIANS,
     settled: num(sample.settle, 1),
-    pivot: Math.max(line, OUTLINE_BOTTOM) * held,
+    pivot: num(sample.hinge, 0, "y") * held,
     pin: held,
+    x: num(sample.position, 0, "x"),
+    y: num(sample.position, 0, "y"),
   };
-  if (wipe < 1) pose.cut = line;
+  if (wipe < 1) pose.cut = wipeLine(wipe);
   return { wipe, pose };
 }
 ```
 
-The wipe takes 650 ms. While it runs, the phone is hinged to the edge (`pivot`, `pin`). The drawing is the phone flat, but the 3D phone has depth: its front sits nearer the camera than the page, and the camera pulls back to keep it framed, so left alone its features drift off the drawing's. Pinned, the phone moves so its front at the edge's height lies over the drawing's line on screen, and turns about that point instead of its centre; and the stage clips everything below it (`cut`) with a plane through the camera and the line, so the phone never shows past the drawing still covering it. Moving it towards the camera would pull it off the line, so until the drawing has gone the leap becomes a peel: what's been revealed pitches up off the page about the edge. Then the phone lets go over 250 ms, swells to about 16% bigger as it lifts, and settles, 1,700 ms in all. Because each frame is a function of the time, the homepage plays it on a clock and the figure below lets you drag it.
+The wipe takes 650 ms. While it runs, the phone is pinned to the drawing (`pin`). The drawing is the phone flat, but the 3D phone has depth: its front sits nearer the camera than the page, and the camera pulls back to keep it framed, so left alone its features drift off the drawing's. Pinned, the stage moves and scales the phone so its front lies over the drawing at every height, and it turns about a line across its front (`pivot`, the hinge track) instead of its centre. The wipe moves only the edge: the stage clips everything below it (`cut`) with a plane through the camera and the line, so the phone never shows past the drawing still covering it. Moving the phone towards the camera would pull it off the drawing, so until the drawing has gone the leap becomes a peel: the hinge sweeps down with the edge, and what's been revealed pitches up off the page about it. Then the phone lets go over 250 ms, swells to about 16% bigger as it lifts, and settles, 1,700 ms in all. Because each frame is a function of the time, the homepage plays it on a clock and the figure below lets you drag it.
 
 <RevealScrubber caption="The reveal, scrubbable: the same revealAt(ms) as the homepage, over the real 3D model. Depth is the phone's thickness against its rest, overshooting as it swells; size is how much bigger the lift makes it look." />
 

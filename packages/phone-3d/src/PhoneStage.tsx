@@ -9,6 +9,7 @@ import type { FormPose } from "./frame";
 import { settleRest, tiltRotation, watchTilt } from "./tilt";
 import type { ScreenTilt } from "./tilt";
 import { Nokia3310 } from "./Nokia3310";
+import { onDrawingLine, pinRig } from "./pin";
 import type { Nokia3310Props } from "./types";
 
 /** Procedural studio environment (no fetched assets) — required for the
@@ -66,22 +67,6 @@ function restSilhouette(g: Group): Silhouette | undefined {
   g.updateMatrixWorld(true);
   if (across.length === 0) return undefined;
   return { x: convexHull(across), y: convexHull(up) };
-}
-
-/** How far forward the phone at rest comes at height `y`: the front of its side profile there. */
-function frontAt(profile: Profile, y: number): number {
-  let front = -Infinity;
-  for (const [i, [y0, z0]] of profile.entries()) {
-    const [y1, z1] = profile[(i + 1) % profile.length]!;
-    if ((y - y0) * (y - y1) > 0) continue;
-    front = Math.max(front, y0 === y1 ? Math.max(z0, z1) : z0 + ((y - y0) / (y1 - y0)) * (z1 - z0));
-  }
-  // Above or below the phone: its front at the nearest end.
-  if (front === -Infinity) {
-    const ys = profile.map(([e]) => e);
-    return frontAt(profile, Math.min(Math.max(...ys), Math.max(Math.min(...ys), y)));
-  }
-  return front;
 }
 
 /** Andrew's monotone chain: the hull's corners (a linear maximum over the points is at one). */
@@ -219,7 +204,6 @@ function SwayRig({
       if (ms >= FORM_MS) f.done = true;
     }
     const depth = Math.max(FLAT, pose.depth);
-    g.scale.set(pose.spread, pose.spread, depth);
 
     const [x, y, z] =
       fit === undefined
@@ -238,32 +222,27 @@ function SwayRig({
       state.camera.lookAt(x, y, 0);
     }
     const offset = drift?.();
-    // Where the drawing's lines fall on screen: the drawing is the phone flat, framed for no depth
-    // (Nokia3310Sketch with the same `fit`). A line at height h on it is the ray from that camera
-    // through (0, h, 0); from the stage camera now, the same screen line runs back along
-    // `onLine`. (The views it is used for face the phone head on.)
-    const [px, py, pz] =
+    // The drawing is the phone flat, framed for no depth (Nokia3310Sketch with the same `fit`).
+    const paper: THREE.Vector3Tuple =
       fit === undefined
         ? [0, 0, CAMERA_Z]
         : fitCamera(silhouette.current, state.size.width / state.size.height, fit, FLAT);
-    const onLine = (h: number, atZ: number): THREE.Vector3Tuple => [
-      x - (px / pz) * (z - atZ),
-      y + ((h - py) / pz) * (z - atZ),
-      atZ,
-    ];
-
-    // Turned and spread about the pivot: the rig sits on it and the phone hangs back off it.
-    // Pinned, the pivot is on the phone's front at that height, held over the drawing's line.
-    const pivot = pose.pivot ?? 0;
-    const pin = pose.pivot === undefined ? 0 : (pose.pin ?? 1);
-    const front = frontAt(silhouette.current.y, pivot) * pin;
-    hung.current?.position.set(0, -pivot, -front);
-    const [heldX, heldY] = onLine(pivot, front * depth);
-    // The leap: nearer the camera by a share of its distance.
+    const rig = pinRig({
+      camera: [x, y, z],
+      paper,
+      pivot: pose.pivot ?? 0,
+      pin: pose.pivot === undefined ? 0 : (pose.pin ?? 1),
+      front: Math.max(...silhouette.current.y.map(([, front]) => front)),
+      depth,
+      spread: pose.spread,
+      lift: pose.lift,
+    });
+    g.scale.set(...rig.scale);
+    hung.current?.position.set(...rig.hang);
     g.position.set(
-      heldX * pin,
-      pivot + (heldY - pivot) * pin + (offset?.y ?? 0),
-      front * depth + pose.lift * z,
+      rig.position[0] + (pose.x ?? 0),
+      rig.position[1] + (pose.y ?? 0) + (offset?.y ?? 0),
+      rig.position[2],
     );
     // The forming wobble; at rest the phone holds still (device tilt moves the light instead).
     g.rotation.set(pose.tiltX + (offset?.tiltX ?? 0), pose.tiltY + (offset?.tiltY ?? 0), 0);
@@ -273,7 +252,7 @@ function SwayRig({
     // it lies far below everything, so the phone's shaders never change.
     if (pose.cut === undefined) cut.set(UP, FAR);
     else {
-      const line = new THREE.Vector3(...onLine(pose.cut, 0));
+      const line = new THREE.Vector3(...onDrawingLine([x, y, z], paper, pose.cut, 0));
       const normal = new THREE.Vector3(1, 0, 0)
         .cross(state.camera.position.clone().sub(line))
         .normalize();
