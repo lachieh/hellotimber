@@ -63,9 +63,6 @@ catalogs:
     dialkit:
       specifier: ^2.1.0
       version: 2.1.0
-    motion:
-      specifier: ^14.9.0
-      version: 14.9.0
     nitro:
       specifier: 3.0.260610-beta
       version: 3.0.260610-beta
@@ -342,9 +339,6 @@ importers:
       jsdom:
         specifier: ^28.1.0
         version: 28.1.0
-      motion:
-        specifier: 'catalog:'
-        version: 14.9.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       remark-frontmatter:
         specifier: 'catalog:'
         version: 5.0.0
@@ -7942,6 +7936,7 @@ snapshots:
     optionalDependencies:
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
+    optional: true
 
   fs-extra@11.1.0:
     dependencies:
@@ -8800,8 +8795,10 @@ snapshots:
   motion-dom@14.9.0:
     dependencies:
       motion-utils: 14.7.0
+    optional: true
 
-  motion-utils@14.7.0: {}
+  motion-utils@14.7.0:
+    optional: true
 
   motion@14.9.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:
@@ -8810,6 +8807,7 @@ snapshots:
     optionalDependencies:
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
+    optional: true
 
   mri@1.2.0: {}
 

@@ -51,7 +51,6 @@
     "@types/three": "catalog:",
     "@vitejs/plugin-react": "^6.0.1",
     "jsdom": "^28.1.0",
-    "motion": "catalog:",
     "remark-frontmatter": "catalog:",
     "shiki": "catalog:",
     "typescript": "^6.0.2",

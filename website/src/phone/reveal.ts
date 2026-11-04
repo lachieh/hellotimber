@@ -4,7 +4,7 @@ import type { EasingConfig } from "dialkit/store";
 import { computeClipState, computeStaticTimeline, parseTimelineConfig } from "dialkit/timeline";
 import type { TimelineConfig } from "dialkit/timeline";
 
-/** A cubic-bezier easing. Its duration is the clip's or step's (the bar's length in the dock). */
+/** A cubic-bezier easing. Its duration is the clip's or step's. */
 const easing = (ease: EasingConfig["ease"]): EasingConfig => ({
   type: "easing",
   duration: 1,
@@ -16,8 +16,8 @@ const IN_OUT = easing([0.45, 0, 0.55, 1]);
 const LINEAR = easing([0, 0, 1, 1]);
 
 /**
- * A value with its slider in the dock: `[value, min, max, step]`. DialKit otherwise guesses the
- * range from the property's name and rounds to it.
+ * A value with its DialKit slider: `[value, min, max, step]`, so the config can go back into
+ * DialKit's timeline dock to be retuned without rounding.
  */
 const dial = (value: number, min: number, max: number, step = 0.005) =>
   [value, min, max, step] as [number, number, number, number];
@@ -35,8 +35,8 @@ const degrees = (value: number) => dial(value, -45, 45, 0.5);
  * front lies over it, and it peels up off the page (`peel`) about a line across it (`hinge`, its
  * height on the page). Pinned, it can't move towards the camera, spread or turn sideways, so
  * `lift`, `spread` and `yaw` only show as `hold` lets go; `position` moves it across and up the
- * page throughout. One clip per thing that moves; DialKit's timeline dock edits it in dev
- * (RevealTuner), and the same config plays in production (`revealAt`).
+ * page throughout. One clip per thing that moves, tuned in DialKit's timeline dock and played
+ * here on a clock (`revealAt`).
  */
 export const REVEAL = {
   wipe: {
@@ -171,7 +171,7 @@ const num = (values: Record<string, unknown>, fallback: number, key = "v"): numb
   return typeof value === "number" ? value : fallback;
 };
 
-/** The frame for one sample of REVEAL's clips (from the dock, or `revealAt`). */
+/** The frame for one sample of REVEAL's clips (`revealAt`). */
 export function revealFrame(sample: RevealSample): RevealFrame {
   const wipe = num(sample.wipe, 1);
   // 1 while the phone is hinged to the edge: moving towards the camera, spreading or turning any

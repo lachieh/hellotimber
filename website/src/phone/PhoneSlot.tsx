@@ -13,7 +13,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import type { ComponentType, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { DRAWN } from "./reveal";
 import { getRevealFrame, playReveal, subscribeReveal } from "./reveal-player";
 import { DESK_FIT, MOBILE_FIT } from "./stage-frame";
@@ -96,13 +96,6 @@ export default function PhoneSlot({ callouts }: { callouts?: readonly Callout[] 
     setFailed(true);
   }, []);
 
-  // Dev only: DialKit's timeline dock drives the reveal (RevealTuner).
-  const [Tuner, setTuner] = useState<ComponentType>();
-  useEffect(() => {
-    if (!import.meta.env.DEV) return;
-    void import("./RevealTuner").then((module) => setTuner(() => module.default));
-  }, []);
-
   const frame = useSyncExternalStore(subscribeReveal, getRevealFrame, () => DRAWN);
 
   // The shadow under the phone (home.css) follows it as it lifts.
@@ -127,7 +120,6 @@ export default function PhoneSlot({ callouts }: { callouts?: readonly Callout[] 
             </Suspense>
           </StageBoundary>
         )}
-        {Tuner && <Tuner />}
       </ClientOnly>
       {/* One sketch per breakpoint, each framed like the stage there (PhoneStageHost's fit). If
           the 3D phone can't load, the drawing stays whole and says so on its LCD. */}
