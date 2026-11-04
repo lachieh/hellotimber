@@ -184,6 +184,11 @@ fully removed (git history keeps them); license invoice retained by Lachlan.
 
 ## Appendix — the surgery script (re-runnable)
 
+> **2026-11-04:** the surgery is now `packages/phone-3d/scripts/build-glb.py` (see its header
+> for the commands). It keeps the port access (`Connector_Board*`, `Cylinder`,
+> `Electric_Surface` → `port`, `port_socket`, `port_mic`, `port_contacts`), and its export closes
+> the gap the 2026-07-01 GLB had down the side between the front and back shells.
+
 Stored during the 2026-07-01 session; if `nokia3310-v3.glb` is ever lost,
 re-run against the .blend: drop `Camera/Lamp*/Plane.005/Connector_Board*/
 Cylinder/Electric_Surface/Speaker_Plate`; `separate(type='LOOSE')` on
