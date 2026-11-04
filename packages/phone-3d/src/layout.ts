@@ -36,6 +36,10 @@ export const STATIC_NODES = [
   "badge",
   "badge_logo",
   "side_cap",
+  "port",
+  "port_socket",
+  "port_mic",
+  "port_contacts",
 ] as const;
 
 /** Key depress travel as a fraction of the model's bounding height (the GLB

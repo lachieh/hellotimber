@@ -4,22 +4,26 @@ export interface MaterialSpec {
   metalness: number;
 }
 
-/** Palette traced from the reference renders (nokia-3310/ + spec §1): grey-blue
- *  shell, one chrome "island" carrying screen + navi cluster, silver keys,
- *  white NaviKey with the cyan bar. */
+/** Palette matched to photographs of a dark blue 3310 (Xpress-on cover): a deep navy shell with
+ *  a fine light fleck (grain.ts), satin silver-grey plastic for the island and keys (painted
+ *  plastic, not chrome), a white-silver NaviKey with the cyan bar, and the light grey inner
+ *  chassis that shows at the side clips and the port access along the bottom. */
 export const MATERIALS = {
   // Colors are authored darker than the reference reads on screen — the
   // stage's lights + environment are additive (~1.7× on camera-facing faces).
-  body: { color: "#4d566f", roughness: 0.55, metalness: 0.05 },
+  body: { color: "#2a4058", roughness: 0.7, metalness: 0.08 },
   /** The inside of the shell, through its openings: unlit, near black. */
   interior: { color: "#0b0c10", roughness: 1, metalness: 0 },
-  face: { color: "#49526b", roughness: 0.6, metalness: 0.05 },
-  island: { color: "#c3c7d1", roughness: 0.3, metalness: 0.75 },
-  key: { color: "#c9cdd6", roughness: 0.28, metalness: 0.7 },
-  navi: { color: "#e6e8ee", roughness: 0.3, metalness: 0.55 },
-  naviBar: { color: "#3fc1c9", roughness: 0.4, metalness: 0.1 },
-  bezel: { color: "#333a4e", roughness: 0.65, metalness: 0.05 },
-  grille: { color: "#4d566f", roughness: 0.6, metalness: 0.05 },
+  island: { color: "#b7bbbf", roughness: 0.38, metalness: 0.35 },
+  key: { color: "#c2c6ca", roughness: 0.38, metalness: 0.3 },
+  navi: { color: "#d3d6d9", roughness: 0.4, metalness: 0.15 },
+  naviBar: { color: "#2fb2d6", roughness: 0.4, metalness: 0.1 },
+  /** The inner chassis: the side clips and the port access. */
+  chassis: { color: "#9a9ea2", roughness: 0.62, metalness: 0 },
+  /** The charging socket's pin and the microphone's tube, seen down their holes. */
+  socket: { color: "#2a2c30", roughness: 0.5, metalness: 0.5 },
+  /** The data contacts beside the socket. */
+  contacts: { color: "#c9a24a", roughness: 0.35, metalness: 1 },
   badge: { color: "#101216", roughness: 0.5, metalness: 0.1 },
 } as const satisfies Record<string, MaterialSpec>;
 

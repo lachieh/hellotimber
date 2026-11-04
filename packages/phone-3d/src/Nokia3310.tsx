@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { LED_X, backlightLightmap, unlitLightmap } from "./backlight";
 import { STAGE_HEIGHT } from "./frame";
+import { CASE_GRAIN, grained } from "./grain";
 import Key from "./Key";
 import {
   INK_SHADOW_BLUR,
@@ -281,12 +282,18 @@ export function Nokia3310({
       island: MATERIALS.island,
       badge: MATERIALS.badge,
       badge_logo: MATERIALS.badge,
-      side_cap: MATERIALS.body,
+      side_cap: MATERIALS.chassis,
+      port: MATERIALS.chassis,
+      port_socket: MATERIALS.socket,
+      port_mic: MATERIALS.socket,
+      port_contacts: MATERIALS.contacts,
     };
     for (const name of STATIC_NODES) {
       const o = model.getObjectByName(name);
       if (o instanceof THREE.Mesh && dress[name]) o.material = standard(dress[name]);
     }
+    const body = model.getObjectByName("body");
+    if (body instanceof THREE.Mesh) body.material = grained(standard(MATERIALS.body), CASE_GRAIN);
     // The shell's inside, seen through its openings (the earpiece slots, the key wells): the
     // one-sided body would show straight through to whatever is behind the phone, so its
     // inward faces are drawn dark and unlit.
