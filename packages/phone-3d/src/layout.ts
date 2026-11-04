@@ -53,3 +53,19 @@ export const SCREEN_APERTURE = { left: 0.02, right: 0.02, top: 0.07, bottom: 0.0
 /** Visible LCD scale relative to the model's oversized display plane. A narrow
  *  surround remains visible, while the 84×48 render fills most of the window. */
 export const SCREEN_SCALE = 0.9;
+
+/** The bezel's opening over the display plane, as fractions of the plane's local bbox (hidden on
+ *  each side), with its corners' radii as fractions of the opening's width: tight at the top,
+ *  rounder at the bottom. Measured once against this asset, like SCREEN_APERTURE. */
+export const LCD_OPENING = {
+  left: 0.029,
+  right: 0.036,
+  top: 0.037,
+  bottom: 0.029,
+  radiusTop: 0.04,
+  radiusBottom: 0.12,
+} as const;
+
+/** How far the display plane sits below the bezel's lip, as a fraction of the plane's height
+ *  (about 0.65 mm on the real phone). Measured once against this asset. */
+export const LCD_RECESS = 0.029;
