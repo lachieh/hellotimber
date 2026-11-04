@@ -34,6 +34,8 @@ export interface LinkTarget {
 export interface PageEntry {
   readonly title: string;
   readonly when?: string;
+  /** `when` as a machine-readable date (`YYYY-MM-DD`), set as `<time>`. */
+  readonly datetime?: string;
   readonly body: string;
   readonly link?: { readonly href: string; readonly label: string; readonly rel?: string };
 }

@@ -187,7 +187,13 @@ function Block({ block }: { block: PageBlock }) {
           {block.entries.map((entry) => (
             <li key={entry.title}>
               <h2>{entry.title}</h2>
-              <p className="cat-entries__when">{entry.when}</p>
+              <p className="cat-entries__when">
+                {entry.datetime === undefined ? (
+                  entry.when
+                ) : (
+                  <time dateTime={entry.datetime}>{entry.when}</time>
+                )}
+              </p>
               <p className="cat-entries__body">
                 {entry.body}
                 {entry.link !== undefined && (

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as HomeRouteImport } from './routes/_home'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as HomeIndexRouteImport } from './routes/_home/index'
 import { Route as HomeAboutRouteImport } from './routes/_home/about'
@@ -21,9 +22,15 @@ import { Route as HomeWorkRouteImport } from './routes/_home/work'
 import { Route as HomeWritingRouteImport } from './routes/_home/writing'
 import { Route as ApiSmsRouteImport } from './routes/api/sms'
 import { Route as ExpNokiaEmulatorRouteImport } from './routes/exp/nokia-emulator'
+import { Route as WritingSlugRouteImport } from './routes/writing/$slug'
 
 const HomeRoute = HomeRouteImport.update({
   id: '/_home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -81,9 +88,15 @@ const ExpNokiaEmulatorRoute = ExpNokiaEmulatorRouteImport.update({
   path: '/exp/nokia-emulator',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WritingSlugRoute = WritingSlugRouteImport.update({
+  id: '/writing/$slug',
+  path: '/writing/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof HomeIndexRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/about': typeof HomeAboutRoute
   '/chat': typeof HomeChatRoute
@@ -94,8 +107,10 @@ export interface FileRoutesByFullPath {
   '/writing': typeof HomeWritingRoute
   '/api/sms': typeof ApiSmsRoute
   '/exp/nokia-emulator': typeof ExpNokiaEmulatorRoute
+  '/writing/$slug': typeof WritingSlugRoute
 }
 export interface FileRoutesByTo {
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/about': typeof HomeAboutRoute
   '/chat': typeof HomeChatRoute
@@ -106,11 +121,13 @@ export interface FileRoutesByTo {
   '/writing': typeof HomeWritingRoute
   '/api/sms': typeof ApiSmsRoute
   '/exp/nokia-emulator': typeof ExpNokiaEmulatorRoute
+  '/writing/$slug': typeof WritingSlugRoute
   '/': typeof HomeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_home': typeof HomeRouteWithChildren
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_home/about': typeof HomeAboutRoute
   '/_home/chat': typeof HomeChatRoute
@@ -121,12 +138,14 @@ export interface FileRoutesById {
   '/_home/writing': typeof HomeWritingRoute
   '/api/sms': typeof ApiSmsRoute
   '/exp/nokia-emulator': typeof ExpNokiaEmulatorRoute
+  '/writing/$slug': typeof WritingSlugRoute
   '/_home/': typeof HomeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/rss.xml'
     | '/sitemap.xml'
     | '/about'
     | '/chat'
@@ -137,8 +156,10 @@ export interface FileRouteTypes {
     | '/writing'
     | '/api/sms'
     | '/exp/nokia-emulator'
+    | '/writing/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/rss.xml'
     | '/sitemap.xml'
     | '/about'
     | '/chat'
@@ -149,10 +170,12 @@ export interface FileRouteTypes {
     | '/writing'
     | '/api/sms'
     | '/exp/nokia-emulator'
+    | '/writing/$slug'
     | '/'
   id:
     | '__root__'
     | '/_home'
+    | '/rss.xml'
     | '/sitemap.xml'
     | '/_home/about'
     | '/_home/chat'
@@ -163,14 +186,17 @@ export interface FileRouteTypes {
     | '/_home/writing'
     | '/api/sms'
     | '/exp/nokia-emulator'
+    | '/writing/$slug'
     | '/_home/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   HomeRoute: typeof HomeRouteWithChildren
+  RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiSmsRoute: typeof ApiSmsRoute
   ExpNokiaEmulatorRoute: typeof ExpNokiaEmulatorRoute
+  WritingSlugRoute: typeof WritingSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -180,6 +206,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -259,6 +292,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExpNokiaEmulatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/writing/$slug': {
+      id: '/writing/$slug'
+      path: '/writing/$slug'
+      fullPath: '/writing/$slug'
+      preLoaderRoute: typeof WritingSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -288,9 +328,11 @@ const HomeRouteWithChildren = HomeRoute._addFileChildren(HomeRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRouteWithChildren,
+  RssDotxmlRoute: RssDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiSmsRoute: ApiSmsRoute,
   ExpNokiaEmulatorRoute: ExpNokiaEmulatorRoute,
+  WritingSlugRoute: WritingSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

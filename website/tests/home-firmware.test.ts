@@ -7,7 +7,7 @@ import {
 import type { PhoneKey, ScreenModel } from "@hellotimber/phone-core";
 import { Framebuffer } from "@hellotimber/phone-screen";
 import { describe, expect, it, vi } from "vite-plus/test";
-import { POSTS } from "../src/content/writing";
+import { POSTS } from "../src/writing/posts";
 import { homeFirmware } from "../src/home/firmware";
 import { readerPages } from "../src/home/lcd";
 

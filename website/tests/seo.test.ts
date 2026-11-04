@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { pageHead, personJsonLd, SITEMAP_PATHS } from "../src/seo";
+import { POSTS } from "../src/writing/posts";
 
 describe("seo", () => {
   it("builds a titled head with description meta", () => {
@@ -17,7 +18,7 @@ describe("seo", () => {
       title: "Lachlan Heywood",
     });
   });
-  it("lists the homepage and its sections in menu order, and nothing else (D15)", () => {
+  it("lists the homepage, its sections in menu order and the posts, and nothing else (D15)", () => {
     expect(SITEMAP_PATHS).toEqual([
       "/",
       "/about",
@@ -27,6 +28,7 @@ describe("seo", () => {
       "/contact",
       "/chat",
       "/snake",
+      ...POSTS.map((post) => `/writing/${post.slug}`),
     ]);
   });
   it("Person JSON-LD has the expected shape", () => {

@@ -1,0 +1,249 @@
+---
+title: How I built a Nokia 3310
+lcd: Building a 3310
+date: 2026-11-03
+summary: "A working 3310 in the browser: a kernel and a firmware, LCD goldens from the real phone, the painter, T9, texting personas, and a 3D model that grows out of a drawing."
+draft: false
+---
+
+The homepage of this site is a Nokia 3310. It boots, it has a menu, its keys work, and you can text people on it. Under the 3D model there are two operating systems: a strict copy of the 3310's stock v6.39 firmware, and my own firmware built from the same parts.
+
+This post is how that's put together, from the kernel up to the CSS that keeps the phone at about its real size. Every figure in it is the real thing: the same firmware, painter and reveal as the homepage, running in your browser.
+
+Here's the homepage firmware on its own, without the 3D model. Press the keys under it, or click the screen and use your keyboard (arrows, Enter, Escape).
+
+<LiveLcd
+  start="menu"
+  caption="The homepage firmware, live. Navi is the middle key and does what the screen's bottom line says; C goes back."
+/>
+
+If you'd rather drive the stock phone with everything exposed, it's in [the Nokia 3310 emulator](/exp/nokia-emulator).
+
+## A kernel and a firmware
+
+The repo is a monorepo of small packages, and the phone is split across them so each one can be tested and used on its own:
+
+- `phone-core` is the kernel: the menu model, key handling (press, long press, multi-tap), a timeline that animations and timers run on, and the phone's path, like `menu/writing`. It has no dependencies.
+- `phone-screen` is the LCD: an 84×48 framebuffer, bitmap and font primitives, and a canvas renderer. It doesn't know what a menu is; the host hands it a painter.
+- `phone-services` is the state a handset keeps: SMS, the phone book, the SIM, calls and the call log, and the network port. No screens, no menus, and no dependency on the kernel.
+- `nokia-kit` is the Nokia OS as parts: `ui` (widgets, the painter, fonts, text entry and T9, sound), `system` (boot, standby, battery, signal, lights, keyguard, settings) and apps.
+- `nokia-os` is the stock v6.39 firmware made of those parts, plus the tests that hold it to the real phone.
+- `phone-3d` is the handset in three.js. It takes a canvas for its screen and reports key presses through a callback. It never imports the kernel.
+
+What holds this together is the direction of the arrows. The website can depend on anything; a package can only depend on the ones below it, and two tests fail if an import goes the wrong way (`nokia-os/tests/package-boundaries.test.ts` and `nokia-kit/tests/layers.test.ts`):
+
+```text
+website                  ──▶ any package
+nokia-os                 ──▶ nokia-kit, phone-services, phone-core, phone-screen
+nokia-kit                ──▶ phone-services, phone-core, phone-screen
+phone-screen             ──▶ phone-core (types only)
+phone-services, phone-3d ──▶ nothing
+```
+
+The most important rule isn't in that list: no package knows about the router. The phone is controlled through `navigate(path)` and reports where it is through `subscribe`. The website maps phone paths to URLs and back, so entering Work on the phone takes the browser to `/work`, and loading `/work` opens the phone at Work.
+
+## A firmware is a value
+
+Before plan 32 the site ran the stock firmware, with my content on its SIM card (plan 31). Plan 32 split the stock firmware into features, each one a table of screens and settings keyed by its place in the menu tree, and made a firmware something you compose:
+
+```ts
+export interface FirmwareSpec {
+  readonly handset: Handset;
+  readonly tree: readonly FirmwareNode[];
+  readonly features: readonly StockFeature[];
+  readonly models?: Readonly<Record<string, string>>;
+  readonly simServices?: SimServicesSlot;
+}
+```
+
+`composeFirmware(spec)` binds the features to the tree and throws if two of them claim the same node. The stock phone is that, with the captured v6.39 tree and every stock feature. The homepage phone is the same handset with a tree I wrote: one item per section of this site, built from the same content records the HTML pages read, so the LCD and the page can't drift apart.
+
+Chat and Snake II on the homepage aren't rewrites. They're the stock features, moved. Stock features are keyed by stock node numbers (Chat is `3`, Games is `8`, Snake II's New game is `8-1-1`), so `remountFeature` rewrites every key from one subtree to another:
+
+```ts
+remountFeature(stockFeature("chat"), STOCK_CHAT, chat),
+remountFeature(snakeGames(), STOCK_GAMES, games),
+remountFeature(stockFeature("games-snake"), STOCK_GAMES, games),
+```
+
+It also records where each moved node came from, so the homepage's Chat, item 6, still plays the recordings captured from Chat at item 3 on the real phone.
+
+Here's the homepage firmware's tree next to a live phone. The square marks what the phone has highlighted, or the screen it's on; the screens above it are in ink.
+
+<StateMachine caption="The homepage firmware's menu, two levels deep, read from the firmware itself. Scroll the carousel, then open Work or Contact and scroll its list." />
+
+## Ground truth: LCD goldens
+
+The first version of the screen was reconstructed from photographs of a real 3310 (plan 12). Plan 13 measured it against emulator captures of the real v6.39 firmware, and they disagreed almost everywhere: the signal bars had the wrong number of rows, the soft key sat at y 41 instead of y 40, the fan-made font differed from the firmware's glyphs (`S` among them), and the menu had 13 entries where v6.39 has 12.
+
+So the captures became the specification. They stay outside the repo and are never committed; an importer turns them into text fixtures that are. A golden is a header and a grid, one character per pixel:
+
+```text
+lcd-golden 1
+id: menu/01-phone-book.anim
+status: asserted
+source: captures/6.39/menu-anim-long/01-phone-book
+trigger-frame: 1
+omitted: none
+
+@image a
+####.................................................##...###.......##...###....####
+####................................................###..##.##.##..###..##.##...####
+```
+
+There are 3,377 of these files in `packages/nokia-os/goldens/`: 2,513 LCD goldens, 706 sound recordings, 139 backlight recordings and one tick recording, with one index per plan (18 of them). The acceptance tests replay each golden's key presses on the reproduction and compare what comes out.
+
+The same discipline applied to things I couldn't capture as pixels. T9 was a clean-room job (plan 18b): one agent studied the firmware and wrote a behaviour spec; the agents who implemented it could read only that spec, the plans, the code and the committed goldens, never the firmware or its dictionary.
+
+## What faithful means
+
+"Pixel-exact" is easy to say about a still frame. It's harder about time. The display redraws on a 17 ms frame, the firmware gets round to things when it does, and two recordings of the same key presses on the real firmware don't match to the millisecond either.
+
+I settled it with one rule, written down on 15 October 2026: "If it doesn't change the game on a human perceivable level, it doesn't matter." In the tests that becomes:
+
+- **Pixels:** every settled frame matches exactly. There's no pixel tolerance.
+- **One-off transitions** (a screen change, a beep, a light) land within two display frames (34 ms), growing as 10% of the time since their trigger, up to 100 ms.
+- **Long sequences** like tunes and animations may also drift 2% from their first instant.
+- **Game rhythm:** Snake's tick-to-tick period matches within 20%, so a change of speed you'd feel still fails. Scores and positions are exact.
+
+```ts
+export function timingToleranceMs(elapsedMs: number, sequenceMs = 0): number {
+  const oneOff = Math.min(LONG_TOLERANCE_MS, Math.max(TWO_FRAMES_MS, Math.abs(elapsedMs) / 10));
+  return oneOff + SEQUENCE_DRIFT * Math.abs(sequenceMs);
+}
+```
+
+That helper is the only tolerance, and there are no per-test ones. A difference the rule catches is a known gap with a written reason, not a looser number in one test.
+
+## The painter, and art made from the goldens
+
+The kernel doesn't draw. It produces a `ScreenModel`, a plain description of the screen (standby with its carrier and bars, the carousel at item 3 of 7, a list with row 2 selected), and the painter turns that into pixels:
+
+```ts
+export const screenPainter =
+  (display: ScreenDisplay = {}): ScreenPainter =>
+  (fb, screen) => {
+    fb.clear();
+    switch (screen.kind) {
+      case "standby":
+        paintStandby(fb, screen);
+        return;
+      case "menu-carousel":
+        paintCarousel(fb, screen, display);
+        return;
+      case "custom":
+        fb.blitBitmap(screen.frame, 0, 0);
+        return;
+      // …
+    }
+  };
+```
+
+Menus, lists and standby are drawn from the model. Apps like the message editor and the games draw their own frames and hand the painter a bitmap. Underneath is a `Uint8Array` of 84 × 48 ones and zeros; the canvas renderer turns it into the 3310's green-grey at its native size and lets the browser scale it up with nearest-neighbour filtering.
+
+None of the art is drawn by hand. The fonts, icons, boot frames, status bars, widget layouts and sounds are extracted from the goldens by a script into 16 generated modules in `nokia-kit/src/ui/resources/generated/` (4.9 MB of TypeScript, most of it Space Impact's levels). They're regenerated, never edited, and a test fails if a generated file differs from what the extractor would write.
+
+Here's the stock firmware on the same painter, with the number keys. Its standby has no clock because this figure's phone isn't given one.
+
+<LiveLcd
+  firmware="stock"
+  digits
+  caption="The stock v6.39 firmware, live: Menu shows its twelve items. The same painter draws both firmwares."
+/>
+
+## T9
+
+T9 maps each letter to its key, so a word becomes a key sequence, and the dictionary answers "which words are 4-3-5-5-6?" ranked by how common they are:
+
+```ts
+const LETTER_KEYS = {
+  ...Object.fromEntries(
+    (["2abc", "3def", "4ghi", "5jkl", "6mno", "7pqrs", "8tuv", "9wxyz"] as const).flatMap(
+      ([key, ...letters]) => letters.map((letter) => [letter, key]),
+    ),
+  ),
+  "'": "1",
+  ".": "1",
+};
+```
+
+The English dictionary is built from an openly licensed word-frequency list (Ilya Semenov's counts over English Wikipedia, MIT): the 30,000 most common lower-case words, each with a weight. It's a 246 KB module, and the website loads it as its own chunk once the page is up.
+
+This replays eleven key presses on the stock phone's Write messages screen:
+
+<KeyReplay
+  firmware="stock"
+  start="menu/messages/write"
+  t9
+  keys="4 3 5 5 6 0 9 6 7 5 3"
+  caption="T9 English on the stock firmware: 4 3 5 5 6 gives “Hello” (the editor starts in sentence case), 0 is a space, and 9 6 7 5 3 gives “world”."
+/>
+
+## Texting the personas
+
+The firmware owns SMS: writing, sending, the inbox, the "1 message received" note. What it doesn't own is the network. It talks to one through a port:
+
+```ts
+export interface StockNetworkPort {
+  send(sms: StockSms): StockSendOutcome | Promise<StockSendOutcome>;
+  subscribe(deliver: (sms: StockIncomingSms) => void): () => void;
+  dial?(call: StockOutgoingCall, phone: StockCallControl): StockCallLink;
+  // …
+}
+```
+
+The emulator plugs in a synthetic network whose texts and calls you trigger from its World controls. The homepage plugs in an adapter that knows three numbers: me, Recruiter Rachel (a recruiter in the year 2000) and Y2K Support (a deadpan Y2K incident desk). A text to one of them goes to `/api/sms`, which asks Claude Haiku for a reply in that persona, and the reply comes back through `deliver` like any incoming SMS.
+
+The replies have to be things the phone can show, so the server holds them to the phone's rules: at most 160 characters, curly quotes and dashes turned into plain ones, and any character the stock font has no glyph for dropped. Without an API key, or on any error, each persona answers from a few canned replies instead, so a text always gets an answer. Try it in [Chat](/chat) on the homepage.
+
+## The 3D model, the reveal and the light
+
+The handset is a sourced mesh with its 17 keys as named nodes (plan 10), Draco-compressed into a 490 KB GLB. The file carries only geometry; every material is set in code. The screen is a mesh textured from the same 84×48 canvas the painter fills.
+
+The server can't render WebGL, so it sends a technical drawing of the phone instead: an SVG traced from the model's outline, with the 113 mm and 48 mm dimension lines. When three.js, the model and the firmware have loaded, a fine rule sweeps down the drawing and the 3D phone rises out of it. All of that is one function of time:
+
+```ts
+export function revealAt(ms: number): RevealFrame {
+  const wipe = easeInOut(Math.min(1, Math.max(0, ms / WIPE_MS)));
+  const pose = formPose(Math.max(0, ms - LEAP_MS));
+  return { wipe, pose: { ...pose, depth: Math.max(WIPE_DEPTH, pose.depth) } };
+}
+```
+
+The wipe takes 650 ms. The phone starts to leap 100 ms in and takes 1,600 ms to form: it pitches up, swells to about 16% bigger as it lifts off the page, and settles. Because it's a pure function of `ms`, the homepage plays it on a clock and the figure below lets you drag it.
+
+<RevealScrubber caption="The reveal, scrubbable: the same revealAt(ms) as the homepage, over the real 3D model. Depth is the phone's thickness against its rest, overshooting as it swells; size is how much bigger the lift makes it look." />
+
+On a phone or tablet with a tilt sensor, tilting the device moves the light across the handset while the phone itself stays put on the screen. The stage holds its lights and reflections still in the world and turns them against the device, 2.5 times further than the tilt so the change reads. With reduced motion on, the light stays still. iOS only reports tilt after a permission prompt, which the page asks for on your first tap.
+
+## About its real size
+
+A 3310 is 113 mm tall, and the homepage shows it at about that size. Browsers don't tell a page how big a CSS pixel is in the real world, so the CSS goes by the kind of screen:
+
+```css
+.cat {
+  --ppi: 110;
+  --real-phone: calc(var(--ppi) * 4.45px);
+  --stage: min(calc(100svh - 10rem), calc(var(--real-phone) / 0.87));
+}
+
+@media (pointer: fine) and (min-resolution: 2dppx) {
+  .cat {
+    --ppi: 120;
+  }
+}
+
+@media (pointer: coarse) {
+  .cat {
+    --ppi: 160;
+  }
+}
+```
+
+Desktop and laptop screens have roughly 96 to 127 CSS pixels in a real inch, tablets about 132 and phones about 160 (Android's dp, iPhones' points). The phone is 4.45 inches tall, the handset fills 0.87 of its stage, and the stage never grows past the window. It's an estimate, but it keeps the phone the size of a phone rather than a poster.
+
+## How it's held together
+
+Most of this is plain TypeScript with tests, because the phone is cheap to test and expensive to debug by eye. As I write this, `phone-core` runs 423 tests, `nokia-kit` 269, `phone-screen` 24 and `phone-services` 11, and `nokia-os` passes 10,954, the golden replays among them. Another 138 are known gaps, marked as expected to fail, each with its reason. The work is written up as 37 plans in `docs/plans/`, each a task with its files and tests and an "as built" note once it lands.
+
+If you want to poke at the stock firmware with its machine state, menu tree and an event log in front of you, open [the emulator](/exp/nokia-emulator). If you want the phone with my things on it, it's [on the homepage](/).
