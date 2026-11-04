@@ -1,149 +1,131 @@
 import { describe, expect, it } from "vite-plus/test";
-import { ATLAS, LEGEND_CELLS, paintLegendAtlas } from "../src/legends";
-import type { Ctx2D } from "../src/legends";
+import {
+  ATLAS,
+  GLYPH_NAMES,
+  LEGEND_CELLS,
+  LEGENDS,
+  legendMarks,
+  paintLegendAtlas,
+} from "../src/legends";
+import type { Ctx2D, PrintedKey } from "../src/legends";
 
-/** Minimal recording stub — jsdom has no real 2D context in this repo
- *  (phone-screen precedent mocks getContext), so we assert on draw calls. */
-function recordingCtx() {
-  const texts: { text: string; x: number; y: number }[] = [];
-  const rects: { x: number; y: number; w: number; h: number }[] = [];
-  const ellipses: { x: number; y: number }[] = [];
-  const ctx: Ctx2D = {
-    font: "",
-    fillStyle: "",
-    textAlign: "center",
-    textBaseline: "middle",
-    clearRect: () => {},
-    fillText: (text: string, x: number, y: number) => {
-      texts.push({ text, x, y });
-    },
-    fillRect: (x: number, y: number, w: number, h: number) => {
-      rects.push({ x, y, w, h });
-    },
-    beginPath: () => {},
-    ellipse: (x: number, y: number) => {
-      ellipses.push({ x, y });
-    },
-    fill: () => {},
+const KEYS = Object.keys(LEGEND_CELLS) as PrintedKey[];
+
+/** A mark's extent on the atlas, from its path's points (a curve stays inside its control
+ *  points) and half its weight. */
+function extent(mark: ReturnType<typeof legendMarks>[number]) {
+  const [s, , , , e, f] = mark.transform;
+  const nums = (mark.d.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+  const pad = (mark.weight / 2) * s;
+  const xs = nums.filter((_, i) => i % 2 === 0).map((x) => e + x * s);
+  const ys = nums.filter((_, i) => i % 2 === 1).map((y) => f + y * s);
+  return {
+    left: Math.min(...xs) - pad,
+    right: Math.max(...xs) + pad,
+    top: Math.min(...ys) - pad,
+    bottom: Math.max(...ys) + pad,
   };
-  return { ctx, texts, rects, ellipses };
 }
 
-const inCell = (name: string, x: number, y: number): boolean => {
-  const c = LEGEND_CELLS[name];
-  if (c === undefined) return false;
-  const px = { x: c.u * ATLAS.size, y: (1 - c.v - c.h) * ATLAS.size };
-  const w = c.w * ATLAS.size;
-  const h = c.h * ATLAS.size;
-  return x >= px.x && x <= px.x + w && y >= px.y && y <= px.y + h;
-};
-
 describe("LEGEND_CELLS", () => {
-  const expected = [
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "*",
-    "#",
-    "c",
-    "up",
-    "down",
-    "navi",
-    "nokia",
-    "earpiece",
-  ];
-
-  it("covers digits, symbols, cluster keys, wordmark, earpiece — nothing else", () => {
-    expect(Object.keys(LEGEND_CELLS).sort()).toEqual([...expected].sort());
-  });
-
-  it("every cell is inside [0,1]² UV space", () => {
-    for (const [name, c] of Object.entries(LEGEND_CELLS)) {
-      expect(c.u, name).toBeGreaterThanOrEqual(0);
-      expect(c.v, name).toBeGreaterThanOrEqual(0);
-      expect(c.u + c.w, name).toBeLessThanOrEqual(1);
-      expect(c.v + c.h, name).toBeLessThanOrEqual(1);
-      expect(c.w, name).toBeGreaterThan(0);
-      expect(c.h, name).toBeGreaterThan(0);
+  it("gives every key with front print a cell, inside the atlas, none overlapping", () => {
+    expect([...KEYS].sort()).toEqual(
+      ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#", "c", "up", "down"].sort(),
+    );
+    const cells = Object.values(LEGEND_CELLS);
+    for (const c of cells) {
+      expect(c.u).toBeGreaterThanOrEqual(0);
+      expect(c.v).toBeGreaterThanOrEqual(0);
+      expect(c.u + c.w).toBeLessThanOrEqual(1);
+      expect(c.v + c.h).toBeLessThanOrEqual(1);
     }
+    for (let i = 0; i < cells.length; i++)
+      for (let j = i + 1; j < cells.length; j++) {
+        const [a, b] = [cells[i]!, cells[j]!];
+        expect(a.u + a.w <= b.u || b.u + b.w <= a.u || a.v + a.h <= b.v || b.v + b.h <= a.v).toBe(
+          true,
+        );
+      }
+  });
+});
+
+describe("LEGENDS", () => {
+  const glyphs = (key: PrintedKey) => LEGENDS[key].map((p) => p.glyph).join(",");
+
+  it("prints each digit key's digit and its multi-tap letters, as on the phone", () => {
+    expect(glyphs("1")).toBe("1,voicemail");
+    expect(glyphs("2")).toBe("2,a,b,c");
+    expect(glyphs("3")).toBe("d,e,f,3");
+    expect(glyphs("4")).toBe("4,g,h,i");
+    expect(glyphs("5")).toBe("5,j,k,l");
+    expect(glyphs("6")).toBe("m,n,o,6");
+    expect(glyphs("7")).toBe("7,p,q,r,s");
+    expect(glyphs("8")).toBe("8,t,u,v");
+    expect(glyphs("9")).toBe("w,x,y,z,9");
+    expect(glyphs("0")).toBe("0,space");
+    expect(glyphs("*")).toBe("star,plus");
+    expect(glyphs("#")).toBe("house,hash");
+    expect(glyphs("c")).toBe("crescent");
   });
 
-  it("cells never overlap", () => {
-    const entries = Object.entries(LEGEND_CELLS);
-    for (let i = 0; i < entries.length; i++) {
-      for (let j = i + 1; j < entries.length; j++) {
-        const [na, a] = entries[i]!;
-        const [nb, b] = entries[j]!;
-        const disjoint =
-          a.u + a.w <= b.u || b.u + b.w <= a.u || a.v + a.h <= b.v || b.v + b.h <= a.v;
-        expect(disjoint, `${na} overlaps ${nb}`).toBe(true);
+  it("draws every glyph it places", () => {
+    for (const key of KEYS) for (const p of LEGENDS[key]) expect(GLYPH_NAMES).toContain(p.glyph);
+  });
+
+  it("keeps the left column's digit left and the right column's right", () => {
+    const digitX = (key: PrintedKey) => LEGENDS[key].find((p) => p.glyph === key)!.x;
+    for (const key of ["1", "4", "7"] as const) expect(digitX(key)).toBeLessThan(-50);
+    for (const key of ["3", "6", "9"] as const) expect(digitX(key)).toBeGreaterThan(20);
+  });
+});
+
+describe("legendMarks", () => {
+  it("keeps every key's print inside its cell's middle band (the decals are wide ovals)", () => {
+    for (const key of KEYS) {
+      const c = LEGEND_CELLS[key];
+      const left = c.u * ATLAS.size;
+      const top = (1 - c.v - c.h) * ATLAS.size;
+      // The digit keys' decals show the middle 54 % of their cell's height.
+      const band = ["c", "up", "down"].includes(key) ? 1 : 0.54;
+      const margin = (ATLAS.cell * (1 - band)) / 2;
+      for (const mark of legendMarks(key)) {
+        const e = extent(mark);
+        expect(e.left, key).toBeGreaterThanOrEqual(left);
+        expect(e.right, key).toBeLessThanOrEqual(left + ATLAS.cell);
+        expect(e.top, key).toBeGreaterThanOrEqual(top + margin);
+        expect(e.bottom, key).toBeLessThanOrEqual(top + ATLAS.cell - margin);
       }
     }
   });
 });
 
 describe("paintLegendAtlas", () => {
-  const { ctx, texts, rects, ellipses } = recordingCtx();
-  paintLegendAtlas(ctx);
-  const drawn = (t: string) => texts.filter((e) => e.text === t);
-
-  it("draws every digit inside its own cell", () => {
-    for (const d of ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]) {
-      const hits = drawn(d);
-      expect(hits.length, d).toBeGreaterThanOrEqual(1);
-      expect(
-        hits.some((h) => inCell(d, h.x, h.y)),
-        `digit ${d} lands in its cell`,
-      ).toBe(true);
-    }
-  });
-
-  it("draws the multi-tap letter triplets for 2–9 in the digit cells", () => {
-    const letters: Record<string, string> = {
-      "2": "abc",
-      "3": "def",
-      "4": "ghi",
-      "5": "jkl",
-      "6": "mno",
-      "7": "pqrs",
-      "8": "tuv",
-      "9": "wxyz",
+  it("strokes or fills every mark, white, with the mark's own weight", () => {
+    const drawn: { kind: string; d: string; width: number }[] = [];
+    const ctx: Ctx2D<string> = {
+      fillStyle: "",
+      strokeStyle: "",
+      lineWidth: 1,
+      lineCap: "round",
+      lineJoin: "miter",
+      clearRect: () => {},
+      setTransform: () => {},
+      stroke(d) {
+        drawn.push({ kind: "stroke", d, width: this.lineWidth });
+      },
+      fill(d) {
+        drawn.push({ kind: "fill", d, width: 0 });
+      },
     };
-    for (const [d, abc] of Object.entries(letters)) {
-      const hits = drawn(abc);
-      expect(hits.length, abc).toBe(1);
-      expect(inCell(d, hits[0]!.x, hits[0]!.y), `${abc} in ${d}'s cell`).toBe(true);
+    paintLegendAtlas(ctx, (d) => d);
+    expect(ctx.fillStyle).toBe("#ffffff");
+    expect(ctx.strokeStyle).toBe("#ffffff");
+    const marks = KEYS.flatMap(legendMarks);
+    expect(drawn).toHaveLength(marks.length);
+    for (const [i, m] of marks.entries()) {
+      expect(drawn[i]!.d).toBe(m.d);
+      expect(drawn[i]!.kind).toBe(m.fill ? "fill" : "stroke");
+      if (!m.fill) expect(drawn[i]!.width).toBe(m.weight);
     }
-  });
-
-  it("draws the symbol and cluster legends", () => {
-    expect(drawn("*").length + drawn("* +").length).toBeGreaterThanOrEqual(1); // star (with plus)
-    expect(drawn("+").length).toBeGreaterThanOrEqual(1);
-    expect(drawn("#").length).toBeGreaterThanOrEqual(1);
-    expect(drawn("⇧").length).toBe(1); // shift glyph on the hash key
-    expect(drawn("C").length).toBe(1);
-    expect(drawn("▲").length).toBe(1);
-    expect(drawn("▼").length).toBe(1);
-    expect(drawn("NOKIA").length).toBe(1);
-  });
-
-  it("draws the NaviKey bar as a fill and the earpiece as a row of ≥6 dots", () => {
-    const inRectCell = (name: string) =>
-      rects.some((r) => inCell(name, r.x + r.w / 2, r.y + r.h / 2));
-    expect(inRectCell("navi"), "navi bar").toBe(true);
-    const dots = ellipses.filter((e) => inCell("earpiece", e.x, e.y));
-    expect(dots.length, "earpiece dots").toBeGreaterThanOrEqual(6);
-  });
-
-  it("draws the voicemail circles on 1's cell", () => {
-    const circles = ellipses.filter((e) => inCell("1", e.x, e.y));
-    expect(circles.length).toBeGreaterThanOrEqual(2);
   });
 });

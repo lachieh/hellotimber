@@ -2,8 +2,8 @@
 
 A Nokia 3310 as react-three-fiber components — **fully procedural, no model
 assets**. The body is a beveled extrusion of the 3310 silhouette; all 17 keys are
-individually meshed, pressable, and printed (digits + multi-tap letter triplets
-from a canvas-drawn legend atlas); the green backlight lights every key, legend,
+individually meshed, pressable, and printed (the original keypad legends redrawn as SVG paths
+painted into one atlas); the green backlight lights every key, legend,
 and the LCD; the 84×48 canvas-textured screen sits in real bezel geometry.
 
 The package is host-agnostic: you hand it any `HTMLCanvasElement` as the screen

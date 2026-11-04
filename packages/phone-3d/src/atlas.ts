@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { createLegendAtlas, LEGEND_CELLS } from "./legends";
+import type { PrintedKey } from "./legends";
 
 /**
  * three-side bindings for the legend atlas: ONE shared CanvasTexture and
@@ -25,9 +26,8 @@ export function legendTexture(): THREE.CanvasTexture {
  *  full cell width maps to the plane width and the v-range is the centered
  *  horizontal band matching the plane's aspect, so texels stay square (the
  *  atlas itself is square). Painters must keep art inside that band. */
-export function cellPlaneGeometry(w: number, h: number, cellName: string): THREE.PlaneGeometry {
-  const cell = LEGEND_CELLS[cellName];
-  if (cell === undefined) throw new Error(`unknown atlas cell: ${cellName}`);
+export function cellPlaneGeometry(w: number, h: number, key: PrintedKey): THREE.PlaneGeometry {
+  const cell = LEGEND_CELLS[key];
   const bandH = Math.min(cell.h, cell.w * (h / w));
   const v0 = cell.v + (cell.h - bandH) / 2;
   const geometry = new THREE.PlaneGeometry(w, h);

@@ -3,17 +3,32 @@ import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { cellPlaneGeometry, legendTexture } from "./atlas";
 import { LEGEND_GLOW_COLOR, MATERIALS, PRINT_DARK, legendEmission } from "./materials";
+import type { PrintedKey } from "./legends";
 import type { MaterialSpec } from "./materials";
 import type { Nokia3310Key } from "./types";
 
-/** Which atlas cell prints on each key. The sourced mesh ships geometry only
- *  (its legends lived in the stripped textures), so the plan-09 atlas decals
- *  carry the print. Power sits on the top edge — no front print. */
-function legendCellFor(key: Nokia3310Key): string | null {
-  if (key === "power") return null;
-  if (key === "*") return "*";
-  if (key === "#") return "#";
-  return key; // digits, c, up, down — cell names match the key ids
+/** The atlas cell printed on each key (legends.ts): the GLB ships geometry only. The power key
+ *  (on the top edge) has no front print, and the NaviKey's bar is a part of its own. */
+function legendCellFor(key: Nokia3310Key): PrintedKey | null {
+  return key === "power" || key === "navi" ? null : key;
+}
+
+/** A w × h bar with round ends, bent so its ends sit `rise` above its middle. */
+function naviBarGeometry(w: number, h: number, rise: number): THREE.BufferGeometry {
+  const r = h / 2;
+  const shape = new THREE.Shape();
+  shape.moveTo(-w / 2 + r, -r);
+  shape.lineTo(w / 2 - r, -r);
+  shape.absarc(w / 2 - r, 0, r, -Math.PI / 2, Math.PI / 2, false);
+  shape.lineTo(-w / 2 + r, r);
+  shape.absarc(-w / 2 + r, 0, r, Math.PI / 2, (3 * Math.PI) / 2, false);
+  const geometry = new THREE.ShapeGeometry(shape, 12);
+  const position = geometry.getAttribute("position");
+  for (let i = 0; i < position.count; i++) {
+    const x = position.getX(i) / (w / 2);
+    position.setY(i, position.getY(i) + rise * x * x);
+  }
+  return geometry;
 }
 
 function specFor(key: Nokia3310Key): MaterialSpec {
@@ -74,9 +89,10 @@ export default function Key({ id, mesh, lightOn, pressed, travel, onKey }: KeyPr
     const h = bb.max.y - bb.min.y;
     const front = bb.max.z;
     if (id === "navi") {
-      // The cyan bar is the NaviKey's only marking.
+      // The cyan bar is the NaviKey's only marking: a thin rounded stroke, its ends turned up a
+      // little with the key's curve.
       const bar = new THREE.Mesh(
-        new THREE.PlaneGeometry(w * 0.42, h * 0.22),
+        naviBarGeometry(w * 0.5, h * 0.11, h * 0.035),
         new THREE.MeshStandardMaterial({
           color: MATERIALS.naviBar.color,
           roughness: MATERIALS.naviBar.roughness,
