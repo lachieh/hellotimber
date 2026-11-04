@@ -11,11 +11,8 @@ const easing = (ease: EasingConfig["ease"]): EasingConfig => ({
   ease,
 });
 
-/** Ease out: quick off the mark, gentle into place. */
-const OUT = easing([0.2, 0.7, 0.3, 1]);
-/** Ease in and out, for the edge's sweep and the settling swings. */
+/** Ease in and out, for the settling swings. */
 const IN_OUT = easing([0.45, 0, 0.55, 1]);
-const SWEEP = easing([0.65, 0, 0.35, 1]);
 const LINEAR = easing([0, 0, 1, 1]);
 
 /**
@@ -31,11 +28,6 @@ const units = (value: number, reach: number) => dial(value, -reach, reach, 0.05)
 /** Degrees of pitch (top edge towards you) or yaw (right edge away). */
 const degrees = (value: number) => dial(value, -45, 45, 0.5);
 
-/** When the phone starts to move: just after the edge sets off. */
-const MOVE_AT = 0.1;
-/** When the drawing has gone and the phone starts to let go of the edge. */
-const LET_GO_AT = 0.65;
-
 /**
  * The reveal, in seconds from the moment the 3D model is ready under the drawing. A fine rule
  * sweeps down the drawing (`wipe`), turning it into the real phone, and nothing of the phone shows
@@ -49,28 +41,29 @@ const LET_GO_AT = 0.65;
 export const REVEAL = {
   wipe: {
     at: 0,
-    duration: 0.65,
+    duration: 1,
     from: { v: unit(0) },
     to: { v: unit(1) },
-    transition: SWEEP,
+    transition: easing([0.57, 0, 1, 1.02]),
   },
+  // Lets go all at once as the edge clears the phone.
   hold: {
-    at: LET_GO_AT,
+    at: 0.96,
     duration: 0.25,
     from: { v: unit(1) },
     to: { v: unit(0) },
-    transition: IN_OUT,
+    transition: { type: "spring", bounce: 0, visualDuration: 0.05 },
   },
-  // Starts in step with the wipe, so what's revealed peels up about the edge.
+  // Sweeps down just behind the edge, so what's revealed peels up about it.
   hinge: {
-    at: 0,
-    duration: 0.6,
+    at: 0.09,
+    duration: 0.87,
     from: { y: units(4.9, 6) },
-    to: { y: units(-5, 6) },
-    transition: SWEEP,
+    to: { y: units(-5.3, 6) },
+    transition: easing([0.5, 0, 1, 1]),
   },
   position: {
-    at: MOVE_AT,
+    at: 0.1,
     from: { x: units(0, 3), y: units(0, 3) },
     transition: IN_OUT,
     steps: [
@@ -79,67 +72,72 @@ export const REVEAL = {
       { duration: 0.8, to: { x: units(0, 3), y: units(0, 3) } },
     ],
   },
+  // Held up off the page while the edge sweeps, then laid down as the phone lets go.
   peel: {
-    at: MOVE_AT,
-    from: { pitch: degrees(0) },
+    at: 0.1,
+    from: { pitch: degrees(30) },
     transition: IN_OUT,
     steps: [
-      { duration: 0.45, to: { pitch: degrees(16) }, transition: OUT },
-      { duration: 0.35, to: { pitch: degrees(0) } },
+      { duration: 0.86, to: { pitch: degrees(30) }, transition: easing([0.28, 0, 0.08, 0.93]) },
+      { duration: 0.24, to: { pitch: degrees(0) } },
     ],
   },
   depth: {
-    at: MOVE_AT,
+    at: 0.9,
     from: { v: dial(0, 0, 2) },
     transition: IN_OUT,
     steps: [
-      { duration: 0.415, to: { v: dial(1.2, 0, 2) }, transition: OUT },
-      { duration: 0.385, to: { v: dial(1, 0, 2) } },
+      { duration: 0.2, to: { v: dial(1.245, 0, 2) }, transition: easing([0.5, 0, 0.5, 1]) },
+      { duration: 0.16, to: { v: dial(1, 0, 2) } },
     ],
   },
   lift: {
-    at: MOVE_AT,
+    at: 0.68,
     from: { v: dial(0, 0, 0.5) },
     transition: IN_OUT,
     steps: [
-      { duration: 0.49, to: { v: dial(0.14, 0, 0.5) }, transition: OUT },
-      { duration: 1.11, to: { v: dial(0, 0, 0.5) } },
+      {
+        duration: 0.31,
+        to: { v: dial(0.24, 0, 0.5) },
+        transition: easing([0.43, 0.05, 0.34, 1.25]),
+      },
+      { duration: 0.42, to: { v: dial(0, 0, 0.5) }, transition: easing([0.49, 0, 0.55, 1]) },
     ],
   },
   spread: {
-    at: LET_GO_AT,
+    at: 0.99,
     from: { v: scale(1) },
     transition: IN_OUT,
     steps: [
-      { duration: 0.2, to: { v: scale(1.03) }, transition: OUT },
-      { duration: 0.3, to: { v: scale(0.99) } },
-      { duration: 0.35, to: { v: scale(1) } },
+      { duration: 0.16, to: { v: scale(1.03) }, transition: easing([0.2, 0.7, 0.3, 1]) },
+      { duration: 0.27, to: { v: scale(0.99) }, transition: easing([0.89, 0.97, 0.05, 1]) },
+      { duration: 0.05, to: { v: scale(1) } },
     ],
   },
-  // Rocks about the screen's x axis: up out of the page, back, and still.
+  // Rocks about the screen's x axis as it lands: up, back, and still.
   pitch: {
-    at: MOVE_AT,
+    at: 1.02,
     from: { v: degrees(0) },
     transition: IN_OUT,
     steps: [
-      { duration: 0.24, to: { v: degrees(10) }, transition: OUT },
-      { duration: 0.56, to: { v: degrees(-4.5) } },
-      { duration: 0.53, to: { v: degrees(0.5) } },
-      { duration: 0.27, to: { v: degrees(0) } },
+      { duration: 0.16, to: { v: degrees(6) }, transition: easing([0.57, 0.09, 0.3, 1]) },
+      { duration: 0.14, to: { v: degrees(-7) } },
+      { duration: 0.14, to: { v: degrees(0) } },
+      { duration: 0.12, to: { v: degrees(0) } },
     ],
   },
   yaw: {
-    at: MOVE_AT,
+    at: 1.02,
     from: { v: degrees(0) },
     transition: IN_OUT,
     steps: [
-      { duration: 0.4, to: { v: degrees(-7) } },
-      { duration: 0.8, to: { v: degrees(1) } },
-      { duration: 0.4, to: { v: degrees(0) } },
+      { duration: 0.3, to: { v: degrees(15) }, transition: easing([0.28, 0.43, 0.5, 1]) },
+      { duration: 0.14, to: { v: degrees(-6) }, transition: easing([0.24, 0, 0.71, 1.01]) },
+      { duration: 0.05, to: { v: degrees(0) } },
     ],
   },
   settle: {
-    at: MOVE_AT,
+    at: 0.1,
     duration: 1.6,
     from: { v: unit(0) },
     to: { v: unit(1) },
