@@ -13,21 +13,32 @@ function legendCellFor(key: Nokia3310Key): PrintedKey | null {
   return key === "power" || key === "navi" ? null : key;
 }
 
-/** A w × h bar with round ends, bent so its ends sit `rise` above its middle. */
+/** A w × h bar with round ends, bent along a parabola so its ends sit `rise` above its middle:
+ *  its outline is traced point by point (ShapeGeometry only triangulates the outline it gets). */
 function naviBarGeometry(w: number, h: number, rise: number): THREE.BufferGeometry {
   const r = h / 2;
-  const shape = new THREE.Shape();
-  shape.moveTo(-w / 2 + r, -r);
-  shape.lineTo(w / 2 - r, -r);
-  shape.absarc(w / 2 - r, 0, r, -Math.PI / 2, Math.PI / 2, false);
-  shape.lineTo(-w / 2 + r, r);
-  shape.absarc(-w / 2 + r, 0, r, Math.PI / 2, (3 * Math.PI) / 2, false);
-  const geometry = new THREE.ShapeGeometry(shape, 12);
-  const position = geometry.getAttribute("position");
-  for (let i = 0; i < position.count; i++) {
-    const x = position.getX(i) / (w / 2);
-    position.setY(i, position.getY(i) + rise * x * x);
+  const half = w / 2 - r;
+  const spine = (x: number) => rise * (x / half) ** 2;
+  const steps = 24;
+  const points: THREE.Vector2[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const x = -half + (2 * half * i) / steps;
+    points.push(new THREE.Vector2(x, spine(x) - r));
   }
+  for (let i = 1; i < 12; i++) {
+    const a = -Math.PI / 2 + (Math.PI * i) / 12;
+    points.push(new THREE.Vector2(half + r * Math.cos(a), spine(half) + r * Math.sin(a)));
+  }
+  for (let i = steps; i >= 0; i--) {
+    const x = -half + (2 * half * i) / steps;
+    points.push(new THREE.Vector2(x, spine(x) + r));
+  }
+  for (let i = 1; i < 12; i++) {
+    const a = Math.PI / 2 + (Math.PI * i) / 12;
+    points.push(new THREE.Vector2(-half + r * Math.cos(a), spine(-half) + r * Math.sin(a)));
+  }
+  const geometry = new THREE.ShapeGeometry(new THREE.Shape(points));
+  geometry.translate(0, -rise / 2, 0);
   return geometry;
 }
 
@@ -89,10 +100,10 @@ export default function Key({ id, mesh, lightOn, pressed, travel, onKey }: KeyPr
     const h = bb.max.y - bb.min.y;
     const front = bb.max.z;
     if (id === "navi") {
-      // The cyan bar is the NaviKey's only marking: a thin rounded stroke, its ends turned up a
-      // little with the key's curve.
+      // The cyan bar is the NaviKey's only marking: a thin rounded stroke curving up to its ends
+      // with the key's top edge.
       const bar = new THREE.Mesh(
-        naviBarGeometry(w * 0.5, h * 0.11, h * 0.035),
+        naviBarGeometry(w * 0.54, h * 0.1, h * 0.08),
         new THREE.MeshStandardMaterial({
           color: MATERIALS.naviBar.color,
           roughness: MATERIALS.naviBar.roughness,

@@ -15,7 +15,7 @@ export interface Grain {
 }
 
 /** A grain about a pixel across with the phone filling the stage, filtering to an even colour when smaller. */
-export const CASE_GRAIN: Grain = { density: 1600, amount: 0.16, sheen: 0.2 };
+export const CASE_GRAIN: Grain = { density: 2600, amount: 0.15, sheen: 0.2 };
 
 /** Adds `grain` to a standard material (in place; returns it). */
 export function grained<T extends THREE.MeshStandardMaterial>(material: T, grain: Grain): T {

@@ -257,13 +257,13 @@ const circle = (cx: number, cy: number, r: number) => {
 
 /** The symbols, drawn at the size they print (decal units). */
 const SYMBOLS: Record<string, Glyph> = {
-  /** The star key's six-armed star: a bar crossed by an X, in a light weight. */
-  star: { advance: 72, marks: stroke(5, "M0 -28L72 -28", "M20 -56L52 0", "M52 -56L20 0") },
-  plus: { advance: 30, marks: stroke(4.5, "M0 -15L30 -15", "M15 -30L15 0") },
-  /** The hash, slanted. */
+  /** The star key's six-armed star: a bar crossed by a steep X, bold. */
+  star: { advance: 58, marks: stroke(9, "M0 -27L58 -27", "M15 -54L43 0", "M43 -54L15 0") },
+  plus: { advance: 30, marks: stroke(5.5, "M0 -15L30 -15", "M15 -30L15 0") },
+  /** The hash, bold and steeply slanted. */
   hash: {
-    advance: 60,
-    marks: stroke(6.5, "M25 -42L16 0", "M47 -42L38 0", "M7 -29L60 -29", "M2 -13L55 -13"),
+    advance: 54,
+    marks: stroke(9.5, "M28 -44L13 0", "M46 -44L31 0", "M7 -31L53 -31", "M2 -13L48 -13"),
   },
   /** The shift key's house: an outline, its roof's eaves past its walls. */
   house: { advance: 60, marks: stroke(4.5, "M2 -18L30 -33L58 -18", "M9 -22L9 -2L51 -2L51 -22") },
@@ -274,20 +274,29 @@ const SYMBOLS: Record<string, Glyph> = {
   },
   /** The space: an open bracket on the baseline. */
   space: { advance: 57, marks: stroke(4, "M2 -12L2 -2L55 -2L55 -12") },
-  /** The C key's crescent, thick in its middle and tapering to its tips. */
+  /** The C key's crescent: a heavy bracket, thickest at its middle, its ends rounded off. */
   crescent: {
-    advance: 17,
+    advance: 22,
     marks: [
       {
-        d: "M15 -47C5.5 -41 1.5 -33 1.5 -25C1.5 -17 5.5 -9 15 -3C11 -10 9 -17.5 9 -25C9 -32.5 11 -40 15 -47Z",
+        d: "M16 -48C6 -44 0 -35 0 -24C0 -13 6 -4 16 0C19 1 21 -2 20 -5C14 -8 11 -15 11 -24C11 -33 14 -40 20 -43C21 -46 19 -49 16 -48Z",
         weight: 0,
         fill: true,
       },
     ],
   },
-  /** The rocker's hooks: up turns down from a bar (¬), down turns up into one (∟). */
-  hookUp: { advance: 20, marks: stroke(5, "M1 -38L18 -44L19.5 -26") },
-  hookDown: { advance: 20, marks: stroke(5, "M2 -44L1 -26L18 -21") },
+  /** The rocker's arrowheads: up's apex on top, a short arm out left and a long one down; down
+   *  is up turned over. Both taper to points from a heavy apex. */
+  hookUp: {
+    advance: 28,
+    marks: [
+      { d: "M0 -22L19 -31C22 -32.5 25 -31 25.5 -28L27 -3L18.5 -23.5Z", weight: 0, fill: true },
+    ],
+  },
+  hookDown: {
+    advance: 28,
+    marks: [{ d: "M27 -13L8 -4C5 -2.5 2 -4 1.5 -7L0 -32L8.5 -11.5Z", weight: 0, fill: true }],
+  },
 };
 
 const GLYPHS: Record<string, Glyph> = {
@@ -346,11 +355,11 @@ export const LEGENDS: Record<PrintedKey, Placed[]> = {
   "8": [glyph("8", -63, 20), ...word("tuv", -5, 20)],
   "9": [...word("wxyz", -82, 23), glyph("9", 32, -8)],
   "0": [glyph("0", -63, 12), glyph("space", 11, 12)],
-  "*": [glyph("star", -83, 17), glyph("plus", 11, 38)],
-  "#": [glyph("house", -61, 44), glyph("hash", 26, 8)],
-  c: [glyph("crescent", -12, 40, 1.6)],
-  up: [glyph("hookUp", -20, 40, 2)],
-  down: [glyph("hookDown", -20, 44, 2)],
+  "*": [glyph("star", -80, 14), glyph("plus", 11, 38)],
+  "#": [glyph("house", -61, 44), glyph("hash", 28, 6)],
+  c: [glyph("crescent", -12, 36, 1.5)],
+  up: [glyph("hookUp", -20, 46, 1.9)],
+  down: [glyph("hookDown", -30, 50, 1.9)],
 };
 
 /** A mark ready to paint: its path, weight and fill, and the transform onto the atlas (canvas
