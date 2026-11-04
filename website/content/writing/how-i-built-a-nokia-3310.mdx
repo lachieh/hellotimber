@@ -217,13 +217,14 @@ export function revealAt(ms: number): RevealFrame {
     tiltX: base.tiltX + PEEL * base.lift * held,
     tiltY: base.tiltY * free,
     pivot: Math.max(line, OUTLINE_BOTTOM) * held,
+    pin: held,
   };
   if (wipe < 1) pose.cut = line;
   return { wipe, pose };
 }
 ```
 
-The wipe takes 650 ms. While it runs, the phone is hinged to the edge: it turns about that line (`pivot`) instead of its centre, and the stage clips everything below it (`cut`) with a plane through the camera and the line, so the phone never shows past the drawing still covering it. Moving it towards the camera would pull it off the line, so until the drawing has gone the leap becomes a peel: what's been revealed pitches up off the page about the edge. Then the phone lets go over 250 ms, swells to about 16% bigger as it lifts, and settles, 1,700 ms in all. Because it's a pure function of `ms`, the homepage plays it on a clock and the figure below lets you drag it.
+The wipe takes 650 ms. While it runs, the phone is hinged to the edge (`pivot`, `pin`). The drawing is the phone flat, but the 3D phone has depth: its front sits nearer the camera than the page, and the camera pulls back to keep it framed, so left alone its features drift off the drawing's. Pinned, the phone moves so its front at the edge's height lies over the drawing's line on screen, and turns about that point instead of its centre; and the stage clips everything below it (`cut`) with a plane through the camera and the line, so the phone never shows past the drawing still covering it. Moving it towards the camera would pull it off the line, so until the drawing has gone the leap becomes a peel: what's been revealed pitches up off the page about the edge. Then the phone lets go over 250 ms, swells to about 16% bigger as it lifts, and settles, 1,700 ms in all. Because it's a pure function of `ms`, the homepage plays it on a clock and the figure below lets you drag it.
 
 <RevealScrubber caption="The reveal, scrubbable: the same revealAt(ms) as the homepage, over the real 3D model. Depth is the phone's thickness against its rest, overshooting as it swells; size is how much bigger the lift makes it look." />
 

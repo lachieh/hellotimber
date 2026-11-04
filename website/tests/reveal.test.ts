@@ -20,6 +20,7 @@ describe("the phone reveal", () => {
       // there, so it never shows past the drawing still covering it.
       expect(pose.cut).toBe(line);
       expect(pose.pivot).toBe(Math.max(line, OUTLINE_BOTTOM));
+      expect(pose.pin).toBe(1);
       expect([pose.lift, pose.spread, pose.tiltY]).toEqual([0, 1, 0].map((v) => expect.closeTo(v)));
     }
     // Mid-wipe, what's revealed is already pitching up off the page.
@@ -36,5 +37,6 @@ describe("the phone reveal", () => {
     expect(REVEALED).toMatchObject({ wipe: 1, pose: { depth: 1, settled: 1 } });
     expect(REVEALED.pose.lift).toBeCloseTo(0);
     expect(REVEALED.pose.pivot).toBeCloseTo(0);
+    expect(REVEALED.pose.pin).toBeCloseTo(0);
   });
 });

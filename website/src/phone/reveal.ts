@@ -66,6 +66,7 @@ export function revealAt(ms: number): RevealFrame {
     // Past the phone's bottom the edge can't hold it: it rocks on its bottom edge, and as it
     // lets go it turns about its centre again (where a host's own drift turns it at rest).
     pivot: Math.max(line, OUTLINE_BOTTOM) * held,
+    pin: held,
   };
   if (wipe < 1) pose.cut = line;
   return { wipe, pose };

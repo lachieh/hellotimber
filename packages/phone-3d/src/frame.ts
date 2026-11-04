@@ -43,12 +43,18 @@ export interface FormPose {
   /** How far forming has got, 0 to 1: idle motion blends in with it. */
   settled: number;
   /**
-   * The world height of a line across the page (z = 0) the phone tilts and spreads about instead
-   * of its centre: a reveal's edge, so the phone stays pinned to the drawing there.
+   * The height of a line across the drawing (Nokia3310Sketch, same `fit`) the phone tilts and
+   * spreads about instead of its centre: a reveal's edge.
    */
   pivot?: number;
   /**
-   * The world height of a line across the page below which the phone isn't drawn, as the camera
+   * How firmly the phone is pinned to `pivot`, 0 to 1 (default 1): pinned, it turns about its
+   * front at that height, and moves so its front there lies over the drawing's line on screen,
+   * whatever its depth and lean. 0 turns it about its middle, where it would be anyway.
+   */
+  pin?: number;
+  /**
+   * The height of a line across the drawing below which the phone isn't drawn, as the camera
    * sees it: a reveal's edge, so none of the phone shows past the drawing still covering it.
    */
   cut?: number;
