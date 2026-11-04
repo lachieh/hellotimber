@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { describe, expect, it } from "vite-plus/test";
+import { LCD_OPENING } from "../src/lcd-opening.generated";
 import { recessShadow, towardLightIn } from "../src/lcd-recess";
 
 /** The stage's default key light: up, right and in front of the phone. */
@@ -69,5 +70,47 @@ describe("the bezel's shadow on the LCD", () => {
 
   it("casts nothing with the light behind the LCD, which it doesn't light at all", () => {
     expect(shadow(1, undefined, new THREE.Vector3(0, 1, -0.2)).strength).toBe(0);
+  });
+});
+
+describe("the bezel's opening, traced off the model", () => {
+  const { x, y, width, height, columns, rows, range, distances } = LCD_OPENING;
+  const field = Int8Array.from(atob(distances), (c) => (c.charCodeAt(0) << 24) >> 24);
+  /** The signed distance at a fraction across and up the display plane. */
+  const at = (fx: number, fy: number) =>
+    (field[Math.floor(fy * rows) * columns + Math.floor(fx * columns)]! / 127) * range;
+
+  it("covers the display plane, sample for sample", () => {
+    expect(field.length).toBe(columns * rows);
+    expect(width).toBeGreaterThan(0);
+    expect(height).toBeGreaterThan(0);
+    expect(Number.isFinite(x + y)).toBe(true);
+  });
+
+  it("is open in the middle of the LCD and covered at the plane's corners", () => {
+    expect(at(0.5, 0.5)).toBeLessThan(0);
+    for (const [fx, fy] of [
+      [0, 0],
+      [0.999, 0],
+      [0, 0.999],
+      [0.999, 0.999],
+    ] as const)
+      expect(at(fx, fy), `${fx}, ${fy}`).toBeGreaterThan(0);
+  });
+
+  it("has its edge in the plane's hidden margins, where the bezel overlaps it", () => {
+    // The bezel overlaps the plane by 3–4 % of it on each side (measured off the model's front
+    // view): open 6 % in, covered at the very edges.
+    for (const [fx, fy] of [
+      [0.5, 0.94],
+      [0.5, 0.06],
+      [0.06, 0.5],
+      [0.94, 0.5],
+    ] as const)
+      expect(at(fx, fy), `${fx}, ${fy}`).toBeLessThan(0);
+    expect(at(0.5, 0.995)).toBeGreaterThan(0);
+    expect(at(0.5, 0.005)).toBeGreaterThan(0);
+    expect(at(0.005, 0.5)).toBeGreaterThan(0);
+    expect(at(0.995, 0.5)).toBeGreaterThan(0);
   });
 });

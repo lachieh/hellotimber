@@ -16,14 +16,8 @@ import {
 import type { Mask } from "./lcd-ink";
 import { LCD_SHADOW, recessShadow as shadowFromLip, towardLightIn } from "./lcd-recess";
 import type { LcdShadow } from "./lcd-recess";
-import {
-  KEY_NODES,
-  LCD_OPENING,
-  LCD_RECESS,
-  SCREEN_APERTURE,
-  SCREEN_SCALE,
-  STATIC_NODES,
-} from "./layout";
+import { LCD_OPENING } from "./lcd-opening.generated";
+import { KEY_NODES, LCD_RECESS, SCREEN_APERTURE, SCREEN_SCALE, STATIC_NODES } from "./layout";
 import {
   BACKLIGHT_COLOR,
   LCD_GLOW_INTENSITY,
@@ -91,27 +85,39 @@ function keyLight(scene: THREE.Object3D): THREE.DirectionalLight | undefined {
   return key;
 }
 
+/** The bezel's opening (lcd-opening.generated.ts) as a texture: its signed distance, from 0 (as far
+ *  inside as the field reaches) to 1 (as far outside), 0.5 on the edge. */
+function openingTexture(): THREE.DataTexture {
+  const bytes = Uint8Array.from(atob(LCD_OPENING.distances), (c) => c.charCodeAt(0));
+  // Signed bytes, shifted to unsigned so the texture filters linearly everywhere.
+  const data = bytes.map((b) => ((b << 24) >> 24) + 128);
+  const t = new THREE.DataTexture(data, LCD_OPENING.columns, LCD_OPENING.rows, THREE.RedFormat);
+  t.magFilter = THREE.LinearFilter;
+  t.minFilter = THREE.LinearFilter;
+  t.needsUpdate = true;
+  return t;
+}
+
 /**
- * The bezel's shadow on the LCD (lcd-recess.ts): a plane over the opening, in front of the LCD's
- * layers, dark where a point's ray to the key light crosses the lip's height outside the opening.
- * Its opening and recess are the display plane's (LCD_OPENING, LCD_RECESS), in its local space;
- * how it looks is read every frame (`look`).
+ * The bezel's shadow on the LCD (lcd-recess.ts), drawn over the display plane itself, so the bezel
+ * hides it wherever it covers the plane: dark where a point's ray to the key light crosses the
+ * lip's height outside the opening (traced off the model). The recess is the plane's
+ * (LCD_RECESS); how it looks is read every frame (`look`).
  */
-function recessShadow(screen: THREE.Mesh, look: () => LcdShadow): THREE.Mesh | null {
+function recessShadow(
+  screen: THREE.Mesh,
+  look: () => LcdShadow,
+): { mesh: THREE.Mesh; opening: THREE.Texture } | null {
   screen.geometry.computeBoundingBox();
   const bb = screen.geometry.boundingBox;
   if (bb === null) return null;
-  const w = bb.max.x - bb.min.x;
-  const h = bb.max.y - bb.min.y;
+  const measured = LCD_RECESS * (bb.max.y - bb.min.y);
+  const opening = openingTexture();
   const o = LCD_OPENING;
-  const x0 = bb.min.x + o.left * w;
-  const x1 = bb.max.x - o.right * w;
-  const y0 = bb.min.y + o.bottom * h;
-  const y1 = bb.max.y - o.top * h;
-  const measured = LCD_RECESS * h;
   const uniforms = {
-    uHalf: { value: new THREE.Vector2((x1 - x0) / 2, (y1 - y0) / 2) },
-    uRadius: { value: new THREE.Vector2(o.radiusTop * (x1 - x0), o.radiusBottom * (x1 - x0)) },
+    uOpening: { value: opening },
+    uField: { value: new THREE.Vector4(o.x, o.y, o.width, o.height) },
+    uRange: { value: o.range },
     uOffset: { value: new THREE.Vector2() },
     uSoft: { value: 0 },
   };
@@ -120,6 +126,10 @@ function recessShadow(screen: THREE.Mesh, look: () => LcdShadow): THREE.Mesh | n
     transparent: true,
     depthWrite: false,
     toneMapped: false,
+    // On the display plane's own surface, drawn over it.
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -4,
   });
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms);
@@ -131,29 +141,34 @@ function recessShadow(screen: THREE.Mesh, look: () => LcdShadow): THREE.Mesh | n
         "#include <common>",
         `#include <common>
 varying vec2 vLcd;
-uniform vec2 uHalf, uRadius, uOffset;
+uniform sampler2D uOpening;
+uniform vec4 uField;
+uniform float uRange;
+uniform vec2 uOffset;
 uniform float uSoft;
-// Signed distance to the opening, the plane's own centre: a rounded rectangle, its top corners
-// tighter than its bottom.
+// Signed distance to the bezel's opening, negative inside it (clamped past the field's edge,
+// which the bezel covers).
 float opening(vec2 p) {
-  float r = p.y > 0.0 ? uRadius.x : uRadius.y;
-  vec2 q = abs(p) - uHalf + r;
-  return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
+  float stored = texture2D(uOpening, (p - uField.xy) / uField.zw).r * 255.0 - 128.0;
+  return stored / 127.0 * uRange;
 }`,
       )
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-if (opening(vLcd) > 0.0) discard;
-diffuseColor.a *= smoothstep(-uSoft, uSoft, opening(vLcd + uOffset));`,
+// In shadow where the ray to the light meets the lip's height outside the opening, softened
+// either side of that line; and only as far as the lip throws it across this edge (the distance
+// gained along the ray), so edges facing away from the light, or a shadow with no length, show
+// no soft rim.
+float lip = opening(vLcd + uOffset);
+float thrown = lip - opening(vLcd);
+diffuseColor.a *= smoothstep(-uSoft, uSoft, lip) * smoothstep(0.0, uSoft, thrown);`,
       );
   };
   material.customProgramCacheKey = () => "lcd-recess-shadow";
 
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, y1 - y0), material);
+  const mesh = new THREE.Mesh(screen.geometry, material);
   mesh.name = "lcd_recess_shadow";
-  mesh.position.set((x0 + x1) / 2, (y0 + y1) / 2, bb.max.z + 0.0015);
-  mesh.renderOrder = 1;
   mesh.raycast = () => {};
   let key: THREE.DirectionalLight | undefined;
   const toLight = new THREE.Vector3();
@@ -173,7 +188,7 @@ diffuseColor.a *= smoothstep(-uSoft, uSoft, opening(vLcd + uOffset));`,
     material.color.set(now.highlight ? "#ff2d55" : "#000000");
     material.opacity = (now.highlight ? 1 : now.opacity) * strength;
   };
-  return mesh;
+  return { mesh, opening };
 }
 
 /** Texels across the lit lightmap (its height follows the aperture's aspect). */
@@ -404,8 +419,9 @@ export function Nokia3310({
     glass.name = "lcd_glass";
     glass.position.set(rect.cx, rect.cy, rect.z + 0.001);
     const recess = recessShadow(nodes.screen, () => shadowLook.current);
-    const layers = recess === null ? [shadow, ink, glass] : [shadow, ink, glass, recess];
-    return { layers, ink, lightmaps, masks, leds };
+    const layers = recess === null ? [shadow, ink, glass] : [shadow, ink, glass, recess.mesh];
+    const textures = recess === null ? [] : [recess.opening];
+    return { layers, ink, lightmaps, masks, textures, leds };
   }, [model, nodes, texture, screenCanvas]);
   // Attach the layers in an effect: StrictMode runs the memo twice and keeps
   // one result, so only the kept layers may join the scene.
@@ -415,7 +431,12 @@ export function Nokia3310({
     screen.add(...lcd.layers);
     return () => {
       screen.remove(...lcd.layers);
-      for (const t of [...Object.values(lcd.lightmaps), ...Object.values(lcd.masks)]) t.dispose();
+      for (const t of [
+        ...Object.values(lcd.lightmaps),
+        ...Object.values(lcd.masks),
+        ...lcd.textures,
+      ])
+        t.dispose();
     };
   }, [lcd, nodes]);
 
