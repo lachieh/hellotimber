@@ -6,16 +6,31 @@
  */
 import * as THREE from "three";
 
-/** How dark the shadow is with the key light straight on to the LCD: the share of its light the
- *  lip takes away (the LCD isn't lit by the scene's lights, it's lit by its lightmap). */
-export const LCD_SHADOW_OPACITY = 0.42;
+/** How the bezel's shadow on the LCD looks. */
+export interface LcdShadow {
+  /** How dark it is with the key light straight on to the LCD: the share of its light the lip
+   *  takes away (the LCD isn't lit by the scene's lights, it's lit by its lightmap). */
+  opacity: number;
+  /** Its soft edge, either side of the line the lip casts, as a fraction of the recess. */
+  softness: number;
+  /** How much softer it gets the further it falls, as a share of how far it reaches. */
+  spread: number;
+  /** The longest it gets, as a multiple of the recess (when the light grazes the LCD). */
+  reach: number;
+  /** The recess, times the depth measured off the model (LCD_RECESS). */
+  depth: number;
+  /** Draw it in red at full strength, to see where it falls. */
+  highlight: boolean;
+}
 
-/** The shadow's soft edge, either side of the line the lip casts: a fraction of the recess, plus
- *  a share of how far the shadow reaches (the further it falls, the softer it gets). */
-export const LCD_SHADOW_SOFTNESS = { recess: 0.6, reach: 0.3 } as const;
-
-/** The longest the shadow gets, as a multiple of the recess. */
-const MAX_REACH = 12;
+export const LCD_SHADOW: LcdShadow = {
+  opacity: 0.42,
+  softness: 0.6,
+  spread: 0.3,
+  reach: 12,
+  depth: 1,
+  highlight: false,
+};
 
 export interface RecessShadow {
   /** Where a point on the LCD looks, along its ray to the light, at the lip's height: the point
@@ -29,11 +44,13 @@ export interface RecessShadow {
 /**
  * The lip's shadow on the LCD. `towardLight` is the direction to the key light in the LCD's own
  * (unscaled) space, so a phone squashed flat (its z scaled down) sees the light from nearly
- * straight on; `recess` is the lip's height above the LCD in the same space.
+ * straight on; `recess` is the lip's height above the LCD in the same space, and `maxReach` the
+ * longest the shadow gets, in recesses.
  */
 export function recessShadow(
   towardLight: readonly [number, number, number],
   recess: number,
+  maxReach = LCD_SHADOW.reach,
 ): RecessShadow {
   const [x, y, z] = towardLight;
   const length = Math.hypot(x, y, z);
@@ -41,7 +58,7 @@ export function recessShadow(
   if (length === 0 || z <= 0) return { offset: [0, 0], strength: 0 };
   const strength = z / length;
   if (across === 0) return { offset: [0, 0], strength };
-  const reach = Math.min(MAX_REACH, across / z) * recess;
+  const reach = Math.min(maxReach, across / z) * recess;
   return { offset: [(x / across) * reach, (y / across) * reach], strength };
 }
 

@@ -1,3 +1,4 @@
+import type { LcdShadow } from "./lcd-recess";
 /** The 3310's physical keys. Same literals as phone-core's PhoneKey — defined
  *  independently here because phone-3d has no internal dependencies. */
 export type Nokia3310Key =
@@ -38,6 +39,8 @@ export interface Nokia3310Props {
   modelUrl?: string;
   /** Directory containing the Draco decoder (draco_decoder.wasm + .js). */
   dracoPath?: string;
+  /** How the bezel's shadow on the LCD looks, over LCD_SHADOW. */
+  lcdShadow?: Partial<LcdShadow>;
 }
 
 /** The phone's two LED lines, resolved from the props: the display LEDs

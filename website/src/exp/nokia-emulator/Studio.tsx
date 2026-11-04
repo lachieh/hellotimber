@@ -166,6 +166,7 @@ export default function Studio({
   const settings = useRef(stage);
   settings.current = stage;
   const pose = useCallback(() => revealAt(settings.current.reveal).pose, []);
+  const deviceTilt = useCallback(() => settings.current.tilt, []);
   const motion = useRef(!reducedMotion());
   // While the drawing wipes away it lines up with the phone only head on and still; the view and
   // the float ease in over the rest of the reveal.
@@ -198,6 +199,8 @@ export default function Studio({
         pose={pose}
         orbit={orbit}
         drift={drift}
+        deviceTilt={deviceTilt}
+        lcdShadow={stage.lcdShadow}
         lighting={<StudioLights angle={stage.lightAngle} intensity={stage.lightIntensity} />}
         scene={<FloorShadow drift={drift} />}
         screenCanvas={renderer.canvas}

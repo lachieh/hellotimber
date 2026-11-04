@@ -60,6 +60,13 @@ describe("the bezel's shadow on the LCD", () => {
     expect(grazing.strength).toBeLessThan(shadow(1).strength / 4);
   });
 
+  it("reaches no further than its longest", () => {
+    const low = new THREE.Vector3(0, 1, 0.01);
+    const phone = new THREE.Object3D();
+    phone.updateMatrixWorld();
+    expect(recessShadow(towardLightIn(phone, low), RECESS, 3).offset[1]).toBeCloseTo(RECESS * 3);
+  });
+
   it("casts nothing with the light behind the LCD, which it doesn't light at all", () => {
     expect(shadow(1, undefined, new THREE.Vector3(0, 1, -0.2)).strength).toBe(0);
   });

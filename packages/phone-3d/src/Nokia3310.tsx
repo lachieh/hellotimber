@@ -14,12 +14,8 @@ import {
   shadowMask,
 } from "./lcd-ink";
 import type { Mask } from "./lcd-ink";
-import {
-  LCD_SHADOW_OPACITY,
-  LCD_SHADOW_SOFTNESS,
-  recessShadow as shadowFromLip,
-  towardLightIn,
-} from "./lcd-recess";
+import { LCD_SHADOW, recessShadow as shadowFromLip, towardLightIn } from "./lcd-recess";
+import type { LcdShadow } from "./lcd-recess";
 import {
   KEY_NODES,
   LCD_OPENING,
@@ -98,9 +94,10 @@ function keyLight(scene: THREE.Object3D): THREE.DirectionalLight | undefined {
 /**
  * The bezel's shadow on the LCD (lcd-recess.ts): a plane over the opening, in front of the LCD's
  * layers, dark where a point's ray to the key light crosses the lip's height outside the opening.
- * Its opening and recess are the display plane's (LCD_OPENING, LCD_RECESS), in its local space.
+ * Its opening and recess are the display plane's (LCD_OPENING, LCD_RECESS), in its local space;
+ * how it looks is read every frame (`look`).
  */
-function recessShadow(screen: THREE.Mesh): THREE.Mesh | null {
+function recessShadow(screen: THREE.Mesh, look: () => LcdShadow): THREE.Mesh | null {
   screen.geometry.computeBoundingBox();
   const bb = screen.geometry.boundingBox;
   if (bb === null) return null;
@@ -111,7 +108,7 @@ function recessShadow(screen: THREE.Mesh): THREE.Mesh | null {
   const x1 = bb.max.x - o.right * w;
   const y0 = bb.min.y + o.bottom * h;
   const y1 = bb.max.y - o.top * h;
-  const recess = LCD_RECESS * h;
+  const measured = LCD_RECESS * h;
   const uniforms = {
     uHalf: { value: new THREE.Vector2((x1 - x0) / 2, (y1 - y0) / 2) },
     uRadius: { value: new THREE.Vector2(o.radiusTop * (x1 - x0), o.radiusBottom * (x1 - x0)) },
@@ -121,7 +118,6 @@ function recessShadow(screen: THREE.Mesh): THREE.Mesh | null {
   const material = new THREE.MeshBasicMaterial({
     color: "#000000",
     transparent: true,
-    opacity: LCD_SHADOW_OPACITY,
     depthWrite: false,
     toneMapped: false,
   });
@@ -168,12 +164,14 @@ diffuseColor.a *= smoothstep(-uSoft, uSoft, opening(vLcd + uOffset));`,
       material.opacity = 0;
       return;
     }
+    const now = look();
+    const recess = measured * now.depth;
     key.getWorldPosition(toLight).sub(key.target.getWorldPosition(target));
-    const { offset, strength } = shadowFromLip(towardLightIn(mesh, toLight), recess);
+    const { offset, strength } = shadowFromLip(towardLightIn(mesh, toLight), recess, now.reach);
     uniforms.uOffset.value.set(...offset);
-    uniforms.uSoft.value =
-      LCD_SHADOW_SOFTNESS.recess * recess + LCD_SHADOW_SOFTNESS.reach * Math.hypot(...offset);
-    material.opacity = LCD_SHADOW_OPACITY * strength;
+    uniforms.uSoft.value = now.softness * recess + now.spread * Math.hypot(...offset);
+    material.color.set(now.highlight ? "#ff2d55" : "#000000");
+    material.opacity = (now.highlight ? 1 : now.opacity) * strength;
   };
   return mesh;
 }
@@ -230,6 +228,7 @@ export function Nokia3310({
   screenBgColor = DEFAULT_SCREEN_BG,
   modelUrl = DEFAULT_MODEL_URL,
   dracoPath = DEFAULT_DRACO_PATH,
+  lcdShadow,
 }: Nokia3310Props) {
   const { scene } = useGLTF(modelUrl, dracoPath);
   const { display: displayOn, keypad: keypadOn } = resolveLights({ backlightOn, keypadLightOn });
@@ -314,6 +313,10 @@ export function Nokia3310({
     return t;
   }, [screenCanvas]);
   useEffect(() => () => texture.dispose(), [texture]);
+
+  // The bezel's shadow reads how it looks every frame, so tuning it never rebuilds the LCD.
+  const shadowLook = useRef(LCD_SHADOW);
+  shadowLook.current = lcdShadow === undefined ? LCD_SHADOW : { ...LCD_SHADOW, ...lcdShadow };
 
   // The LCD, back to front: the model's oversized display plane is the lit
   // LCD (screenBgColor under the display LEDs' lightmap, laid over the visible
@@ -400,7 +403,7 @@ export function Nokia3310({
     );
     glass.name = "lcd_glass";
     glass.position.set(rect.cx, rect.cy, rect.z + 0.001);
-    const recess = recessShadow(nodes.screen);
+    const recess = recessShadow(nodes.screen, () => shadowLook.current);
     const layers = recess === null ? [shadow, ink, glass] : [shadow, ink, glass, recess];
     return { layers, ink, lightmaps, masks, leds };
   }, [model, nodes, texture, screenCanvas]);

@@ -1,4 +1,5 @@
-import type { StageDrift, StageOrbit } from "@hellotimber/phone-3d";
+import { LCD_SHADOW } from "@hellotimber/phone-3d";
+import type { LcdShadow, ScreenTilt, StageDrift, StageOrbit } from "@hellotimber/phone-3d";
 import { REVEAL_MS } from "../../phone/reveal";
 
 /** The phone's technical drawing in the studio: light lines on the dark stage. */
@@ -19,6 +20,10 @@ export interface StageSettings {
   reveal: number;
   /** The phone's idle float. */
   float: boolean;
+  /** The bezel's shadow on the LCD. */
+  lcdShadow: LcdShadow;
+  /** The tilt sensor, held: the device's tilt from rest, degrees in the screen's axes. */
+  tilt: ScreenTilt;
 }
 
 export const LIGHT_ANGLE = { min: -180, max: 180 } as const;
@@ -26,6 +31,17 @@ export const LIGHT_INTENSITY = { min: 0, max: 3 } as const;
 export const YAW = { min: -75, max: 75 } as const;
 export const PITCH = { min: -35, max: 35 } as const;
 export const SCALE = { min: 50, max: 125 } as const;
+/** The tilt sensor's range (tilt.ts saturates past 25°). */
+export const TILT = { min: -25, max: 25 } as const;
+
+/** The LCD shadow's sliders. */
+export const LCD_SHADOW_RANGE = {
+  opacity: { min: 0, max: 1, step: 0.01 },
+  softness: { min: 0, max: 3, step: 0.05 },
+  spread: { min: 0, max: 1.5, step: 0.05 },
+  reach: { min: 1, max: 30, step: 0.5 },
+  depth: { min: 0, max: 4, step: 0.05 },
+} as const satisfies Record<string, { min: number; max: number; step: number }>;
 
 export const DEFAULT_STAGE: StageSettings = {
   lightAngle: 40,
@@ -36,6 +52,8 @@ export const DEFAULT_STAGE: StageSettings = {
   scale: 100,
   reveal: REVEAL_MS,
   float: true,
+  lcdShadow: LCD_SHADOW,
+  tilt: { x: 0, y: 0 },
 };
 
 /** How much of the stage's limiting side the phone spans at 100 %. */

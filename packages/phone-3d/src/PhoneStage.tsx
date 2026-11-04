@@ -285,7 +285,13 @@ const LIGHT_GAIN = 2.5;
  * tilting the handset the phone is shown on moves how the light falls across the phone, which
  * itself stays put on the screen. Without a tilt sensor (or with reduced motion) the light stays.
  */
-function TiltLights({ children }: { children: ReactNode }) {
+function TiltLights({
+  children,
+  deviceTilt,
+}: {
+  children: ReactNode;
+  deviceTilt: (() => ScreenTilt | undefined) | undefined;
+}) {
   const group = useRef<Group>(null);
   const { scene } = useThree();
   // The latest sensor reading and the rest pose it is measured from; unset without a sensor.
@@ -298,10 +304,19 @@ function TiltLights({ children }: { children: ReactNode }) {
   }, []);
   useFrame((_, dt) => {
     const g = group.current;
-    if (!g || tilt.current === undefined) return;
-    tilt.current.rest = settleRest(tilt.current.rest, tilt.current.now, dt);
+    if (!g) return;
+    const sensed = tilt.current;
+    if (sensed !== undefined) sensed.rest = settleRest(sensed.rest, sensed.now, dt);
+    const held = deviceTilt?.();
+    const from = held === undefined ? sensed : { rest: { x: 0, y: 0 }, now: held };
+    if (from === undefined) {
+      // No sensor, and no tilt held any more: the light goes back where it was.
+      g.rotation.set(0, 0, 0);
+      scene.environmentRotation.set(0, 0, 0);
+      return;
+    }
     // The world turns against the device, relative to its screen.
-    const turn = tiltRotation(tilt.current.rest, tilt.current.now);
+    const turn = tiltRotation(from.rest, from.now);
     g.rotation.set(turn.x * LIGHT_GAIN, turn.y * LIGHT_GAIN, 0);
     scene.environmentRotation.set(turn.x * LIGHT_GAIN, turn.y * LIGHT_GAIN, 0);
   });
@@ -334,6 +349,9 @@ export interface PhoneStageProps extends Nokia3310Props {
   orbit?: () => StageOrbit;
   /** Read every frame: an offset over the phone's pose. */
   drift?: () => StageDrift;
+  /** Read every frame: stands in for the tilt sensor while it returns a tilt, degrees from rest
+   *  in the screen's axes (ScreenTilt), held rather than settling back to rest. */
+  deviceTilt?: () => ScreenTilt | undefined;
 }
 
 /** Convenience scene: Canvas + lighting + resize + light that moves with device tilt (VISION contract).
@@ -348,6 +366,7 @@ export function PhoneStage({
   scene,
   orbit,
   drift,
+  deviceTilt,
   ...props
 }: PhoneStageProps) {
   return (
@@ -362,7 +381,7 @@ export function PhoneStage({
       resize={{ scroll: false, debounce: 0 }}
     >
       <StudioEnvironment />
-      <TiltLights>
+      <TiltLights deviceTilt={deviceTilt}>
         {lighting ?? (
           <>
             <ambientLight intensity={0.3} />

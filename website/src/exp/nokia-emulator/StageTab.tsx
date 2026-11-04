@@ -1,13 +1,16 @@
-import { Play, RotateCcw } from "lucide-react";
+import { Check, Copy, Play, RotateCcw } from "lucide-react";
+import type { LcdShadow } from "@hellotimber/phone-3d";
 import { useState } from "react";
 import { REVEAL_MS } from "../../phone/reveal";
 import { Icon, Knob, Section, Slider, Toggle } from "./controls";
 import {
   DEFAULT_STAGE,
   LIGHT_ANGLE,
+  LCD_SHADOW_RANGE,
   LIGHT_INTENSITY,
   PITCH,
   SCALE,
+  TILT,
   YAW,
   type StageSettings,
 } from "./stage-settings";
@@ -26,10 +29,32 @@ export function StageTab({
   /** False under reduced motion: the float stays off. */
   motion: boolean;
 }) {
-  const [open, setOpen] = useState({ light: true, camera: true, reveal: true, size: true });
+  const [open, setOpen] = useState({
+    light: true,
+    tilt: true,
+    shadow: true,
+    camera: true,
+    reveal: true,
+    size: true,
+  });
   const toggle = (key: keyof typeof open) => () =>
     setOpen((prev) => ({ ...prev, [key]: !prev[key] }));
   const viewMoved = stage.yaw !== DEFAULT_STAGE.yaw || stage.pitch !== DEFAULT_STAGE.pitch;
+  const tilted = stage.tilt.x !== 0 || stage.tilt.y !== 0;
+  const shadow = stage.lcdShadow;
+  const setShadow = (patch: Partial<LcdShadow>) =>
+    onChange({ lcdShadow: { ...stage.lcdShadow, ...patch } });
+  const shadowMoved = (Object.keys(LCD_SHADOW_RANGE) as (keyof typeof LCD_SHADOW_RANGE)[]).some(
+    (key) => shadow[key] !== DEFAULT_STAGE.lcdShadow[key],
+  );
+  const [copied, setCopied] = useState(false);
+  const copyShadow = () => {
+    const { highlight: _, ...values } = shadow;
+    void navigator.clipboard.writeText(JSON.stringify(values, null, 2)).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  };
   return (
     <>
       <Section title="Key light" open={open.light} onToggle={toggle("light")}>
@@ -57,6 +82,129 @@ export function StageTab({
         </div>
         <p className="emu-hint">
           A rim light sits opposite the key; a warm bounce comes off the floor.
+        </p>
+      </Section>
+
+      <Section
+        title="Device tilt"
+        open={open.tilt}
+        onToggle={toggle("tilt")}
+        actions={
+          <button
+            type="button"
+            className="emu-icon-button"
+            aria-label="Level the device"
+            title="Level"
+            disabled={!tilted}
+            onClick={() => onChange({ tilt: { x: 0, y: 0 } })}
+          >
+            <Icon icon={RotateCcw} />
+          </button>
+        }
+      >
+        <div className="emu-knobs">
+          <Knob
+            label="Roll"
+            value={stage.tilt.x}
+            min={TILT.min}
+            max={TILT.max}
+            format={signed}
+            unit="°"
+            onChange={(x) => onChange({ tilt: { ...stage.tilt, x } })}
+          />
+          <Knob
+            label="Pitch"
+            value={stage.tilt.y}
+            min={TILT.min}
+            max={TILT.max}
+            format={signed}
+            unit="°"
+            onChange={(y) => onChange({ tilt: { ...stage.tilt, y } })}
+          />
+        </div>
+        <p className="emu-hint">
+          Holds the handset tilted, as the tilt sensor would: the lights swing against it.
+        </p>
+      </Section>
+
+      <Section
+        title="LCD shadow"
+        open={open.shadow}
+        onToggle={toggle("shadow")}
+        actions={
+          <>
+            <button
+              type="button"
+              className="emu-icon-button"
+              aria-label="Copy the LCD shadow's values"
+              title={copied ? "Copied" : "Copy values"}
+              onClick={copyShadow}
+            >
+              <Icon icon={copied ? Check : Copy} />
+            </button>
+            <button
+              type="button"
+              className="emu-icon-button"
+              aria-label="Reset the LCD shadow"
+              title="Reset"
+              disabled={!shadowMoved}
+              onClick={() =>
+                onChange({
+                  lcdShadow: { ...DEFAULT_STAGE.lcdShadow, highlight: shadow.highlight },
+                })
+              }
+            >
+              <Icon icon={RotateCcw} />
+            </button>
+          </>
+        }
+      >
+        <Slider
+          label="Darkness"
+          value={shadow.opacity}
+          {...LCD_SHADOW_RANGE.opacity}
+          format={(v) => v.toFixed(2)}
+          onChange={(opacity) => setShadow({ opacity })}
+        />
+        <Slider
+          label="Recess depth"
+          value={shadow.depth}
+          {...LCD_SHADOW_RANGE.depth}
+          format={(v) => v.toFixed(2)}
+          unit="×"
+          onChange={(depth) => setShadow({ depth })}
+        />
+        <Slider
+          label="Edge softness"
+          value={shadow.softness}
+          {...LCD_SHADOW_RANGE.softness}
+          format={(v) => v.toFixed(2)}
+          unit="× recess"
+          onChange={(softness) => setShadow({ softness })}
+        />
+        <Slider
+          label="Softens with length"
+          value={shadow.spread}
+          {...LCD_SHADOW_RANGE.spread}
+          format={(v) => v.toFixed(2)}
+          onChange={(spread) => setShadow({ spread })}
+        />
+        <Slider
+          label="Longest"
+          value={shadow.reach}
+          {...LCD_SHADOW_RANGE.reach}
+          format={(v) => v.toFixed(1)}
+          unit="× recess"
+          onChange={(reach) => setShadow({ reach })}
+        />
+        <Toggle
+          label="Show in red"
+          checked={shadow.highlight}
+          onChange={(highlight) => setShadow({ highlight })}
+        />
+        <p className="emu-hint">
+          Cast by the brightest light (the key) over the lip the LCD sits under. Scrub the reveal to
+          see it with the phone flat and popping out.
         </p>
       </Section>
 
