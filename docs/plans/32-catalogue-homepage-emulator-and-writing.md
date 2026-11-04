@@ -255,15 +255,49 @@ contact,chat,snake}.tsx`. The sitemap lists those eight. Unknown URLs, `/menu/..
 
 ### Phase 4 - Writing
 
-- [ ] MDX pipeline in the TanStack Start app: posts in `website/content/writing/*.mdx`,
+- [x] MDX pipeline in the TanStack Start app: posts in `website/content/writing/*.mdx`,
       frontmatter (title, date, summary), Shiki code blocks themed from the palette, and an RSS feed.
-- [ ] `/writing` index and `/writing/<slug>` reading layout (D16). Feed the post list to the
+- [x] `/writing` index and `/writing/<slug>` reading layout (D16). Feed the post list to the
       portfolio-os Writing screen at build time.
-- [ ] Figure kit: an inline live LCD (the phone-screen painter, no 3D), a state-machine diagram
+- [x] Figure kit: an inline live LCD (the phone-screen painter, no 3D), a state-machine diagram
       driven by the real machine, a reveal scrubber, and a key-press replayer.
-- [ ] First post, "How I built a Nokia 3310": the kernel and firmware split, LCD goldens and
+- [x] First post, "How I built a Nokia 3310": the kernel and firmware split, LCD goldens and
       fidelity, the painter, T9, the SMS personas over the network port, the 3D model and the
       reveal, the real-size calculation. It links to `/exp/nokia-emulator`.
+
+**As built (2026-11-03):**
+
+- **Pipeline** (`website/vite.config.ts`): `@mdx-js/rollup` with `remark-frontmatter` and
+  `@shikijs/rehype` (theme `src/writing/code-theme.ts`: ink and Ink 2 only), so code is
+  highlighted at build time and no highlighter ships to the client. A small plugin answers
+  `post.mdx?frontmatter` with the post's frontmatter block and prose word count, and the MDX plugin
+  skips queried ids (it drops the query and would compile them as MDX). `src/writing/frontmatter.ts`
+  parses the block strictly (`title`, `date`, `summary` required; `lcd`, `updated`, `draft`
+  optional; unknown keys, bad dates and `updated` before `date` throw, naming the file).
+- **One list** (`src/writing/posts.ts`): posts newest first, drafts only outside production. It
+  feeds `content/writing.ts` (the index's entries with `<time>` dates and reading time, and the
+  phone's Writing rows from `lcd` or the title; `tests/content.test.ts` keeps rows glyph-valid and
+  one row wide), `/rss.xml` (RSS 2.0, `src/writing/feed.ts`), the sitemap (after the sections) and
+  the post route. The post route imports the compiled MDX bodies (`src/writing/bodies.ts`), so
+  only its chunk carries them.
+- **Post page** (`routes/writing/$slug.tsx`, `src/writing/PostPage.tsx`, `writing.css`): outside
+  `_home`, so no phone; the running head, an index column with "Back to the phone" and the
+  details, the body at 68ch. Head: title, description, canonical, Open Graph article tags,
+  `BlogPosting` JSON-LD and the feed's `alternate` link. Unknown slugs 404.
+- **Figures** (`src/writing/figures/`, given to MDX as components): `LiveLcd` (homepage or stock
+  firmware, optional `start` path, digits, T9), `StateMachine` (the firmware's `tree` to a depth
+  beside a live LCD; the carousel's item, a list's selected row or the open screen is marked),
+  `KeyReplay` (a key sequence with `:long` holds; Play, Pause, Step, Reset) and `RevealScrubber`
+  (the drawing over the **real 3D stage**, loaded lazily, scrubbed through `revealAt`; without
+  WebGL the drawing and its readouts stay). Phones are created by `figure-phone.ts` (boot skipped,
+  memory storage, no sound), imported only when a figure nears the screen and ticked only while
+  it's on screen. The server sends a blank LCD pane and the drawing. Pure logic is in `machine.ts`.
+- **phone-3d:** `formPose` and `FormPose` are exported from the three-free `./sketch` entry too, and
+  `phone/reveal.ts` imports them there, so neither the post page nor the homepage pulls three.js
+  into its route chunk through the reveal's timing.
+- **Emulator:** `WRITE_UPS_PUBLISHED` is gone; the frame always shows its write-up link.
+- **Not done:** heading anchors (no `rehype-slug`); the post's prose needs Lachlan's review before
+  the branch is published.
 
 ## Risks
 

@@ -51,7 +51,7 @@ to their places. Each top-level item is one section and one route:
 | —    | Standby | Operator `LACHLAN` and US Eastern time                      | `/`        | The spread of the highlighted item (an intro at standby) |
 | 1    | About   | Reader pages                                                | `/about`   | Who Lachlan is                                           |
 | 2    | Work    | A list of jobs and projects; each opens reader pages        | `/work`    | Jobs and projects with years and links                   |
-| 3    | Writing | A list of posts; Select opens `/writing/<slug>` (Phase 4)   | `/writing` | The post index                                           |
+| 3    | Writing | A list of posts; Select opens `/writing/<slug>`             | `/writing` | The post index                                           |
 | 4    | Now     | Reader pages                                                | `/now`     | What he's doing now                                      |
 | 5    | Contact | GitHub, LinkedIn, Bluesky, X (Select opens the link), Hours | `/contact` | Links, the Chat number and hours                         |
 | 6    | Chat    | Stock Chat; personas answer over the SMS network port       | `/chat`    | Phone centred at real size with a key guide              |
@@ -59,15 +59,15 @@ to their places. Each top-level item is one section and one route:
 
 The phone anywhere inside a section is on its route; standby and the carousel are `/`
 (`website/src/home/routes.ts`). Old `/menu/...` URLs return 404 with no redirects (D15). The
-sitemap lists exactly the routes above.
+sitemap lists exactly the routes above, then each published post.
 
 **Content (D14).** Each section is one typed record in `website/src/content/` (`about.ts`,
 `work.ts`, `writing.ts`, `now.ts`, `contact.ts`, `chat.ts`, `snake.ts`; types in
 `section.ts`): a name, a one-line summary, three or four spec rows for the spread, an `lcd`
 short form (reader text or a list of readers and links, checked against the stock fonts) and a
 `page` long form (paragraphs, entries, lists, links). The phone and the page read the same
-record, so they can't drift apart. Writing's post index is `content/writing.ts`. The
-homepage SIM carries only the three personas in its phone book, so Chat's Search finds them.
+record, so they can't drift apart. Writing's record (`content/writing.ts`) is built from the
+posts. The homepage SIM carries only the three personas in its phone book, so Chat's Search finds them.
 
 **Around the phone (D8, D9, D11, D12).** `website/src/home/view.ts` derives what the page shows
 from the route and the phone: on `/` the spread of the carousel's highlighted item; on a page
@@ -76,6 +76,17 @@ centred at real size with a key guide. A contents column of plain links to every
 always present and works without JavaScript. The page is set as a Braun product catalogue
 (`website/DESIGN.md`): the phone is the exhibit, the menu numbers number the index, and on
 narrow screens a section page docks the phone as a strip that opens to full size on a tap.
+
+**Writing (plan 32 Phase 4).** Posts are MDX files in `website/content/writing/<slug>.mdx` with
+typed frontmatter (`title`, `date`, `summary`, optional `lcd` for the LCD row, `updated`,
+`draft`). `website/src/writing/posts.ts` reads only the frontmatter at build time (a
+`?frontmatter` import, `vite.config.ts`) and is the one list the `/writing` index, the phone's
+Writing rows, `/rss.xml` and the sitemap read; drafts are left out of production builds.
+`/writing/<slug>` is the reading layout (no phone; a "Back to the phone" link), its MDX compiled
+by `@mdx-js/rollup` with Shiki highlighting at build time. Posts use the figure kit in
+`website/src/writing/figures/` (`LiveLcd`, `StateMachine`, `KeyReplay`, `RevealScrubber`): the
+real firmware, painter and reveal, loaded lazily as each figure nears the screen. The emulator's
+frame links to its write-up.
 
 Portfolio copy is sourced from Lachlan's public GitHub profile and history or supplied
 directly by him; Recruiter Rachel and Y2K Support are fictional personas.

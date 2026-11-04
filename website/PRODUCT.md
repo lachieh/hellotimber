@@ -50,6 +50,11 @@ against emulator captures of the real firmware.
   works without JavaScript.
 - Contact's LCD list opens GitHub, LinkedIn, Bluesky and X in a new tab; Writing's list opens
   the post's page. Chat texts the personas through `/api/sms`; Games has Snake II.
+- Writing: posts are MDX files (`website/content/writing/`). `/writing` lists them beside the
+  docked phone; `/writing/<slug>` is a full reading layout without the phone, with a link back to
+  it, and its interactive figures run the real firmware, painter and reveal (a live LCD with its
+  keys, the menu as states, a key replayer, the reveal scrubber). `/rss.xml` is the feed. The first
+  post is how the phone was built, and the emulator links to it.
 - The 3D phone stage (`PhoneStageHost`) mounts once in `routes/_home.tsx` and must never
   remount across the section routes.
 - The phone packages must not know about the router; the website owns all bridging.

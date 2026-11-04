@@ -45,6 +45,11 @@ typography:
     fontSize: "0.8125rem"
     fontWeight: 400
     lineHeight: 1.4
+  code:
+    fontFamily: "ui-monospace, SF Mono, Menlo, Consolas, monospace"
+    fontSize: "0.8125rem"
+    fontWeight: 400
+    lineHeight: 1.6
   not-found-title:
     fontFamily: "Archivo, Helvetica Neue, Arial, sans-serif"
     fontSize: "2rem"
@@ -102,7 +107,7 @@ The catalogue is refined, not skeuomorphic: no paper texture, no props, no imita
 - The phone is the exhibit, at about its real size, and nothing covers it.
 - One typeface, Archivo, in three weights; numbers in tabular figures wherever they're data.
 - Hairline rules organise everything: a full ink rule opens each table, list and index; grey hairlines separate rows.
-- The signal orange appears in exactly two places: where the phone is in the index, and the sound lamp when sound is on (plus the focus ring and caret).
+- The signal orange appears in exactly two places: where the phone is (in the index, or in a post's menu diagram), and the sound lamp when sound is on (plus the focus ring, caret and `accent-color`).
 - Section numbers are the phone's own menu numbers, the figure its LCD shows in the corner.
 
 ## Colors
@@ -115,7 +120,7 @@ Paper and ink, a grey for secondary text, a grey for hairlines, and one signal. 
 
 ### Secondary
 
-- **Signal** (`signal`, `oklch(62% 0.185 41)`): the square hung in the index's margin beside the section the phone is on; the sound lamp when sound is on; focus rings; the caret; `accent-color`. Never type, never a fill larger than 8px. 3.6:1 on paper.
+- **Signal** (`signal`, `oklch(62% 0.185 41)`): the square hung in the index's margin beside the section the phone is on (and, in a post's StateMachine figure, beside the state the phone is on); the sound lamp when sound is on; focus rings; the caret; `accent-color`. Never type, never a fill larger than 8px. 3.6:1 on paper.
 
 ### Neutral
 
@@ -150,7 +155,7 @@ Weights step 400 → 500 (index links) → 600 (headings, labels) → 650 (the c
 
 ### Named Rules
 
-**The One Face Rule.** Archivo for everything on the catalogue, including the drawing's lettering (the SVG inherits the page's font). No monospace costume, no second family.
+**The One Face Rule.** Archivo for everything on the catalogue, including the drawing's lettering (the SVG inherits the page's font). No monospace costume, no second family. The one exception is code in a post (code blocks and inline code), set in the system's monospace (`ui-monospace`, no web font) because code's alignment depends on it.
 
 ## Layout
 
@@ -212,6 +217,14 @@ Chat and Snake: heading, standfirst, a spec sheet whose labels are keycaps (`kbd
 
 Under a hairline: the **sound switch** (`role="switch"`, labelled "Sound", the lamp and "On"/"Off"; persisted), then the emulator and source links.
 
+### Reading layout (posts)
+
+`/writing/<slug>` (`src/writing/PostPage.tsx`, `writing.css`): the running head, then two columns: the **index column** (11rem, sticky) holds "← Back to the phone" and the post's details as a spec sheet (Published and Updated as `<time>`, Reading in minutes, In: Writing); the **main column** holds the title (Display), the summary (Standfirst) and the body. No phone docks here (D10). The body is one 68ch measure at the Reading size: paragraphs, square-bulleted lists, `h2`s opened by an ink rule (1.5rem, 600), and code blocks between an ink rule and a hairline on paper, highlighted at build time by Shiki in ink and Ink 2 only (bold keywords and names, italic comments; `code-theme.ts`). Narrow screens: one column, the details as a wrapped line above the title.
+
+### Figures (posts)
+
+A figure takes the measure: an ink rule, the exhibit, then the caption under a hairline, "**Fig. n**" numbered down the post by a CSS counter. The frame, caption, keys and controls follow the catalogue (keycaps 1px ink, 3px corners, Label size; pressed keys fill ink); the subject keeps its own look: the LCD in the 3310's green-grey (`#c7f0d8`, pixels `#43523d`) in a dark surround, at native 84×48 scaled with `image-rendering: pixelated`. The StateMachine's tree is drawn like the index (menu numbers in tabular Ink 2, hairline rails); the state the phone is on gets the signal square, the screens above it go ink. Phone figures and the 3D phone load as they near the screen; before that (and on the server) the LCD is a blank pane and the reveal is the drawing.
+
 ### Technical drawing (the reveal's first frame)
 
 `@hellotimber/phone-3d/sketch`: the 3310's front elevation traced from the model. A 1.5px contour, 0.8px detail lines, 0.6px shading lines down the right side (away from the light) and dimension lines, all fixed in screen pixels at any scale (`vector-effect: non-scaling-stroke`); filled arrowheads; the height (113) and width (48) set in the page's font on paper knock-outs; key legends in Archivo. Its LCD shows "Loading…" over a ten-segment bar as the page, three.js, the firmware and the model arrive, or "Can't switch on. Reload to try again" when WebGL or the model fails, and the page works around it. The emulator draws it light on its dark stage (`ink`/`paper` props).
@@ -225,7 +238,7 @@ Under a hairline: the **sound switch** (`role="switch"`, labelled "Sound", the l
 - **The reveal** (the one authored moment): the drawing's rule sweeps top to bottom over 650ms (ease-in-out) while the 3D phone pitches up and leaps off the page from 100ms (`formPose`, 1.6s), then settles. Under reduced motion it jumps to the formed phone.
 - **The spread turning**: 260ms on `cubic-bezier(0.16, 1, 0.3, 1)`, from 15% opacity and 6px down. Reduced motion: a 150ms fade.
 - **Docking**: the stage's size eases over 320ms on the same curve. Reduced motion: none.
-- **Small states**: link underlines and the sound lamp, 150ms.
+- **Small states**: link underlines and the sound lamp, 150ms; a figure's key filling as it's pressed, 100ms.
 - Tilting a device moves the light across the phone; the phone stays put.
 
 ## Browser surfaces
