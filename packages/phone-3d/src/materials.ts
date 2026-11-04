@@ -20,8 +20,8 @@ export const MATERIALS = {
   naviBar: { color: "#2fb2d6", roughness: 0.4, metalness: 0.1 },
   /** The inner chassis: the side clips and the port access. */
   chassis: { color: "#9a9ea2", roughness: 0.62, metalness: 0 },
-  /** The charging socket's pin and the microphone's tube, seen down their holes. */
-  socket: { color: "#2a2c30", roughness: 0.5, metalness: 0.5 },
+  /** Down the port's holes: the charging socket and the microphone, near black. */
+  socket: { color: "#121315", roughness: 0.9, metalness: 0 },
   /** The data contacts beside the socket. */
   contacts: { color: "#c9a24a", roughness: 0.35, metalness: 1 },
   badge: { color: "#101216", roughness: 0.5, metalness: 0.1 },
