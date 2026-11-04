@@ -1,8 +1,29 @@
 import { OUTLINE_BOTTOM, wipeLine } from "@hellotimber/phone-3d/sketch";
 import { describe, expect, it } from "vite-plus/test";
-import { DRAWN, REVEALED, revealAt, WIPE_MS } from "../src/phone/reveal";
+import { parseTimelineConfig } from "dialkit/timeline";
+import { DRAWN, REVEAL, REVEALED, revealAt, WIPE_MS } from "../src/phone/reveal";
+
+/** Every slider in a DialKit config: `[path, [value, min, max, step]]`. */
+function sliders(config: unknown, path = ""): [string, number[]][] {
+  if (Array.isArray(config) && config.length === 4 && config.every((v) => typeof v === "number"))
+    return [[path, config as number[]]];
+  if (typeof config !== "object" || config === null || Array.isArray(config)) return [];
+  return Object.entries(config).flatMap(([key, value]) => sliders(value, `${path}.${key}`));
+}
 
 describe("the phone reveal", () => {
+  it("has every value on its slider in the dock, so tuning never rounds it away", () => {
+    const all = sliders(parseTimelineConfig(REVEAL).dialConfig).filter(
+      ([path]) => !/\.(at|duration|ease)$/.test(path),
+    );
+    expect(all.length).toBeGreaterThan(20);
+    for (const [path, [value, min, max, step]] of all) {
+      expect(value, path).toBeGreaterThanOrEqual(min!);
+      expect(value, path).toBeLessThanOrEqual(max!);
+      expect(Math.abs(value! / step! - Math.round(value! / step!)), path).toBeLessThan(1e-6);
+    }
+  });
+
   it("starts as the drawing over a flat phone", () => {
     expect(DRAWN.wipe).toBe(0);
     expect(DRAWN.pose).toMatchObject({ lift: 0, settled: 0 });
