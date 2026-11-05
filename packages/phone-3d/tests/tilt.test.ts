@@ -1,46 +1,60 @@
 import { describe, expect, it } from "vite-plus/test";
-import { REST_SECONDS, screenTilt, settleRest, tiltRotation } from "../src/tilt";
+import { REST_SECONDS, screenQuaternion, settleRest, tiltBetween, tiltRotation } from "../src/tilt";
 
-describe("screenTilt", () => {
-  const reading = { beta: 40, gamma: 10 };
+const at = (alpha: number, beta: number, gamma: number, screen = 0) =>
+  screenQuaternion({ alpha, beta, gamma }, screen);
+
+describe("tiltBetween", () => {
   it("reads gamma across and beta up the screen in portrait", () => {
-    expect(screenTilt(reading, 0)).toEqual({ x: 10, y: 40 });
+    const tilt = tiltBetween(at(0, 30, 0), at(0, 30, 10));
+    expect(tilt.x).toBeCloseTo(10);
+    expect(tilt.y).toBeCloseTo(0);
+    const up = tiltBetween(at(0, 0, 0), at(0, 10, 0));
+    expect(up.x).toBeCloseTo(0);
+    expect(up.y).toBeCloseTo(10);
   });
+
   it("swaps the axes in landscape, either way round", () => {
-    expect(screenTilt(reading, 90)).toEqual({ x: 40, y: -10 });
-    expect(screenTilt(reading, 270)).toEqual({ x: -40, y: 10 });
-    expect(screenTilt(reading, -90)).toEqual({ x: -40, y: 10 });
+    const right = tiltBetween(at(0, 0, 0, 90), at(0, 10, 0, 90));
+    expect(right.x).toBeCloseTo(10);
+    expect(right.y).toBeCloseTo(0);
+    expect(tiltBetween(at(0, 0, 0, 270), at(0, 10, 0, 270)).x).toBeCloseTo(-10);
+    expect(tiltBetween(at(0, 0, 0, -90), at(0, 10, 0, -90)).x).toBeCloseTo(-10);
+  });
+
+  it("stays steady held upright, where the sensor's angles swing", () => {
+    // Twisting an upright phone half a degree reads as gamma -79° and alpha 79°.
+    const tilt = tiltBetween(at(0, 89.9, 0), at(78.69, 89.49, -78.69));
+    expect(Math.hypot(tilt.x, tilt.y)).toBeLessThan(1);
+  });
+
+  it("reads one pose the same whichever angles the sensor names it by", () => {
+    const tilt = tiltBetween(at(10, 89, 3), at(190, 91, -177));
+    expect(Math.hypot(tilt.x, tilt.y)).toBeCloseTo(0);
   });
 });
 
 describe("tiltRotation", () => {
   it("holds still at rest", () => {
-    const rest = { x: 5, y: 45 };
-    const turn = tiltRotation(rest, rest);
+    const turn = tiltRotation({ x: 0, y: 0 });
     expect(Math.abs(turn.x) + Math.abs(turn.y)).toBe(0);
   });
+
   it("turns the phone against the device, saturating", () => {
-    const rest = { x: 0, y: 45 };
-    const right = tiltRotation(rest, { x: 10, y: 45 });
+    const right = tiltRotation({ x: 10, y: 0 });
     expect(right.y).toBeLessThan(0);
     expect(right.x).toBeCloseTo(0);
-    const far = tiltRotation(rest, { x: 80, y: 45 });
-    expect(far.y).toBe(tiltRotation(rest, { x: 25, y: 45 }).y);
-  });
-  it("measures across the ±180° wrap", () => {
-    expect(tiltRotation({ x: 0, y: 175 }, { x: 0, y: -175 }).x).toBeCloseTo(
-      tiltRotation({ x: 0, y: 0 }, { x: 0, y: 10 }).x,
-    );
+    expect(tiltRotation({ x: 80, y: 0 }).y).toBe(tiltRotation({ x: 25, y: 0 }).y);
   });
 });
 
 describe("settleRest", () => {
   it("re-centres on a new grip over a few seconds", () => {
-    let rest = { x: 0, y: 0 };
-    const now = { x: 0, y: 30 };
+    let rest = at(0, 0, 0);
+    const now = at(0, 30, 0);
     rest = settleRest(rest, now, REST_SECONDS);
-    expect(rest.y).toBeCloseTo(30 * (1 - Math.exp(-1)));
+    expect(tiltBetween(at(0, 0, 0), rest).y).toBeCloseTo(30 * (1 - Math.exp(-1)), 1);
     for (let i = 0; i < 600; i++) rest = settleRest(rest, now, 1 / 60);
-    expect(rest.y).toBeCloseTo(30, 0);
+    expect(tiltBetween(rest, now).y).toBeCloseTo(0, 0);
   });
 });

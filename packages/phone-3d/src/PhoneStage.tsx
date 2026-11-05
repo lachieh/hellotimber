@@ -6,7 +6,7 @@ import type { Group } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { CAMERA_FOV, CAMERA_Z, FORM_MS, formPose } from "./frame";
 import type { FormPose } from "./frame";
-import { settleRest, tiltRotation, watchTilt } from "./tilt";
+import { settleRest, tiltBetween, tiltRotation, watchTilt } from "./tilt";
 import type { ScreenTilt } from "./tilt";
 import { Nokia3310 } from "./Nokia3310";
 import { onDrawingLine, pinRig } from "./pin";
@@ -295,7 +295,7 @@ function TiltLights({
   const group = useRef<Group>(null);
   const { scene } = useThree();
   // The latest sensor reading and the rest pose it is measured from; unset without a sensor.
-  const tilt = useRef<{ now: ScreenTilt; rest: ScreenTilt }>(undefined);
+  const tilt = useRef<{ now: THREE.Quaternion; rest: THREE.Quaternion }>(undefined);
   useEffect(() => {
     if (prefersReducedMotion) return;
     return watchTilt((now) => {
@@ -308,7 +308,7 @@ function TiltLights({
     const sensed = tilt.current;
     if (sensed !== undefined) sensed.rest = settleRest(sensed.rest, sensed.now, dt);
     const held = deviceTilt?.();
-    const from = held === undefined ? sensed : { rest: { x: 0, y: 0 }, now: held };
+    const from = held ?? (sensed === undefined ? undefined : tiltBetween(sensed.rest, sensed.now));
     if (from === undefined) {
       // No sensor, and no tilt held any more: the light goes back where it was.
       g.rotation.set(0, 0, 0);
@@ -316,7 +316,7 @@ function TiltLights({
       return;
     }
     // The world turns against the device, relative to its screen.
-    const turn = tiltRotation(from.rest, from.now);
+    const turn = tiltRotation(from);
     g.rotation.set(turn.x * LIGHT_GAIN, turn.y * LIGHT_GAIN, 0);
     scene.environmentRotation.set(turn.x * LIGHT_GAIN, turn.y * LIGHT_GAIN, 0);
   });
