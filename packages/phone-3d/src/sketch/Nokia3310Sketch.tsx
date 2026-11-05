@@ -2,7 +2,9 @@ import { useId } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { VIEW_HEIGHT_AT_ORIGIN } from "../frame";
 import { DEFAULT_SCREEN_BG } from "../types";
-import { BOUNDS, REGIONS, SILHOUETTE } from "./outline.generated";
+import { DECAL_SPAN, LEGEND_PATHS } from "../legend-paths";
+import { WORDMARK } from "../wordmark";
+import { BOUNDS, EARPIECE, REGIONS, SILHOUETTE } from "./outline.generated";
 
 /** The handset's published size and weight, which the drawing's dimension lines give. */
 export const HANDSET = { heightMm: 113, widthMm: 48, depthMm: 22, weightG: 133 } as const;
@@ -70,12 +72,16 @@ export function wipeLine(wipe: number): number {
 /** The world height of the phone's bottom in the drawing (and on the stage). */
 export const OUTLINE_BOTTOM = -BOTTOM;
 
-const DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-const LEGENDS: Record<string, string> = {
-  ...Object.fromEntries(DIGITS.map((d) => [`key_${d}`, d])),
+/** The keys' print (legend-paths.ts), by model node. */
+const PRINT: Record<string, keyof typeof LEGEND_PATHS> = {
+  ...Object.fromEntries(
+    (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"] as const).map((d) => [`key_${d}`, d]),
+  ),
   key_star: "*",
   key_hash: "#",
-  key_c: "C",
+  key_c: "c",
+  key_up: "up",
+  key_down: "down",
 };
 
 /**
@@ -175,16 +181,19 @@ export function Nokia3310Sketch({
           <Shading ink={ink} clip={url("body")} />
 
           <g stroke={ink} strokeWidth={DETAIL} strokeLinejoin="round" {...PEN}>
-            {Object.entries(REGIONS).map(([name, region]) => (
-              <path
-                key={name}
-                d={region.d}
-                fillRule="evenodd"
-                fill={name === "screen" ? screenBgColor : paper}
-                fillOpacity={name === "screen" ? 0.55 : 1}
-                {...PEN}
-              />
-            ))}
+            {Object.entries(REGIONS).map(([name, region]) =>
+              // The wordmark is drawn from wordmark.ts, below.
+              name === "badge_logo" ? null : (
+                <path
+                  key={name}
+                  d={region.d}
+                  fillRule="evenodd"
+                  fill={name === "screen" ? screenBgColor : paper}
+                  fillOpacity={name === "screen" ? 0.55 : 1}
+                  {...PEN}
+                />
+              ),
+            )}
           </g>
 
           {screen && lcdText !== undefined && (
@@ -235,50 +244,50 @@ function Shading({ ink, clip }: { ink: string; clip: string }) {
   );
 }
 
-/** Key legends at each key's centre, scroll chevrons and the Navi key's bar. */
+/** A key's region's bounds' centre and width. */
+function placeOf(box: readonly [number, number, number, number]) {
+  const [x0, y0, x1, y1] = box;
+  return { x: (x0 + x1) / 2, y: (y0 + y1) / 2, width: x1 - x0, height: y1 - y0 };
+}
+
+/**
+ * The print on the phone, as the 3D phone wears it: each key's traced print where its decal
+ * sits, the NaviKey's curved bar, the NOKIA wordmark on its badge and the earpiece's slots.
+ */
 function Lettering({ ink }: { ink: string }) {
+  const navi = REGIONS.key_navi && placeOf(REGIONS.key_navi.box);
+  const badge = REGIONS.badge && placeOf(REGIONS.badge.box);
   return (
-    <>
-      <g
-        fill={ink}
-        fontFamily="inherit"
-        fontWeight="500"
-        fontSize="0.3"
-        textAnchor="middle"
-        dominantBaseline="central"
-      >
-        {Object.entries(LEGENDS).map(([name, legend]) => {
-          const region = REGIONS[name];
-          if (!region) return null;
-          return (
-            <text key={name} x={region.center[0]} y={region.center[1]}>
-              {legend}
-            </text>
-          );
-        })}
-      </g>
-      <g fill="none" stroke={ink} strokeWidth={DETAIL} strokeLinecap="round" {...PEN}>
-        {(["key_up", "key_down"] as const).map((name) => {
-          const region = REGIONS[name];
-          if (!region) return null;
-          const [x, y] = region.center;
-          const dy = name === "key_up" ? -0.06 : 0.06;
-          return (
-            <path
-              key={name}
-              d={`M${x - 0.11} ${y - dy}L${x} ${y + dy}L${x + 0.11} ${y - dy}`}
-              {...PEN}
-            />
-          );
-        })}
-        {REGIONS.key_navi && (
+    <g fill={ink} fillRule="evenodd">
+      {Object.entries(PRINT).map(([name, key]) => {
+        const region = REGIONS[name];
+        if (!region) return null;
+        const { x, y, width } = placeOf(region.box);
+        // The print's units: 200 across the decal, which spans DECAL_SPAN of the key.
+        const scale = (width * DECAL_SPAN) / 200;
+        return (
           <path
-            d={`M${REGIONS.key_navi.center[0] - 0.36} ${REGIONS.key_navi.center[1]}h0.72`}
-            {...PEN}
+            key={name}
+            d={LEGEND_PATHS[key]}
+            transform={`translate(${x} ${y}) scale(${scale})`}
           />
-        )}
-      </g>
-    </>
+        );
+      })}
+      {navi && (
+        // Key.tsx's bar: 0.54 of the key wide, 0.1 high, its ends 0.08 of the key above its middle.
+        <path
+          d={`M${navi.x - navi.width * 0.25} ${navi.y - navi.height * 0.04}Q${navi.x} ${navi.y + navi.height * 0.12} ${navi.x + navi.width * 0.25} ${navi.y - navi.height * 0.04}`}
+          fill="none"
+          stroke={ink}
+          strokeWidth={navi.height * 0.1}
+          strokeLinecap="round"
+        />
+      )}
+      {badge && (
+        <path d={WORDMARK} transform={`translate(${badge.x} ${badge.y}) scale(${badge.width})`} />
+      )}
+      <path d={EARPIECE} />
+    </g>
   );
 }
 

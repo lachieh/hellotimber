@@ -1,5 +1,7 @@
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
+import { LEGEND_PATHS } from "../src/legend-paths";
+import { WORDMARK } from "../src/wordmark";
 import { describe, expect, it } from "vite-plus/test";
 import { Nokia3310Callouts, Nokia3310Sketch } from "../src/sketch";
 import { KEY_NODES } from "../src/layout";
@@ -13,11 +15,12 @@ describe("Nokia3310Sketch", () => {
     for (const node of Object.values(KEY_NODES)) expect(REGIONS).toHaveProperty(node);
   });
 
-  it("renders on the server, hidden from assistive tech, with the keypad lettered", () => {
+  it("renders on the server, hidden from assistive tech, with the keypad and badge printed", () => {
     const html = render();
     expect(html).toContain('aria-hidden="true"');
-    for (const legend of ["1", "5", "9", "0", "*", "#", "C"])
-      expect(html).toContain(`>${legend}</text>`);
+    for (const key of ["1", "5", "9", "0", "*", "#", "c", "up", "down"] as const)
+      expect(html).toContain(`d="${LEGEND_PATHS[key]}"`);
+    expect(html).toContain(`d="${WORDMARK}"`);
   });
 
   it("keeps its SVG ids apart when a page holds two sketches", () => {

@@ -1,3 +1,6 @@
+/** The share of its key (front-view bounds) a key's decal spans, both ways. */
+export const DECAL_SPAN = 0.86;
+
 /** Each key's print, traced off a front-on photo of a real 3310, as SVG path data (fill
  *  even-odd) in its decal's units: x -100 to 100 across the decal, y down from its centre. */
 export const LEGEND_PATHS = {

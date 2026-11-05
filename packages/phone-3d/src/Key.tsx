@@ -3,6 +3,7 @@ import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { cellPlaneGeometry, legendTexture } from "./atlas";
 import { LEGEND_GLOW_COLOR, MATERIALS, PRINT_DARK, legendEmission } from "./materials";
+import { DECAL_SPAN } from "./legend-paths";
 import type { PrintedKey } from "./legends";
 import type { MaterialSpec } from "./materials";
 import type { Nokia3310Key } from "./types";
@@ -119,7 +120,7 @@ export default function Key({ id, mesh, lightOn, pressed, travel, onKey }: KeyPr
     }
     if (cell === null) return null;
     const decal = new THREE.Mesh(
-      cellPlaneGeometry(w * 0.86, h * 0.86, cell),
+      cellPlaneGeometry(w * DECAL_SPAN, h * DECAL_SPAN, cell),
       new THREE.MeshStandardMaterial({
         map: legendTexture(),
         transparent: true,
