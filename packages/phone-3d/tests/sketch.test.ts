@@ -1,26 +1,24 @@
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
-import { LEGEND_PATHS } from "../src/legend-paths";
 import { WORDMARK } from "../src/wordmark";
 import { describe, expect, it } from "vite-plus/test";
 import { Nokia3310Callouts, Nokia3310Sketch } from "../src/sketch";
-import { KEY_NODES } from "../src/layout";
-import { REGIONS } from "../src/sketch/outline.generated";
+import { BOUNDS, INK, LINES, SILHOUETTE } from "../src/sketch/drawing";
 
 const render = (props: Parameters<typeof Nokia3310Sketch>[0] = {}) =>
   renderToString(createElement(Nokia3310Sketch, props));
 
 describe("Nokia3310Sketch", () => {
-  it("traces every key of the model", () => {
-    for (const node of Object.values(KEY_NODES)) expect(REGIONS).toHaveProperty(node);
+  it("spans the model's height, centred on the stage", () => {
+    expect(BOUNDS.height).toBeCloseTo(10);
+    expect(BOUNDS.y).toBeCloseTo(-5);
+    expect(BOUNDS.x + BOUNDS.width / 2).toBeCloseTo(0, 1);
   });
 
-  it("renders on the server, hidden from assistive tech, with the keypad and badge printed", () => {
+  it("renders on the server, hidden from assistive tech, outlined, edged and printed", () => {
     const html = render();
     expect(html).toContain('aria-hidden="true"');
-    for (const key of ["1", "5", "9", "0", "*", "#", "c", "up", "down"] as const)
-      expect(html).toContain(`d="${LEGEND_PATHS[key]}"`);
-    expect(html).toContain(`d="${WORDMARK}"`);
+    for (const d of [SILHOUETTE, LINES, INK, WORDMARK]) expect(html).toContain(`d="${d}"`);
   });
 
   it("keeps its SVG ids apart when a page holds two sketches", () => {

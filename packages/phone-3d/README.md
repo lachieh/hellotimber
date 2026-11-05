@@ -64,9 +64,8 @@ lines down its right side, and dimension lines giving its 113 mm height and 48 m
 weights stay in screen pixels at any scale), as pure SVG with no three.js import, so it renders
 on the server. `ink` and `paper` set its line and ground colours (the paper hides the 3D phone
 beneath it). It is
-traced from the model's front view (`vp run @hellotimber/phone-3d#sketch-outline` regenerates
-`src/sketch/outline.generated.ts` after a model change) and framed exactly like the stage's flat
-phone. Place it absolutely over `<PhoneStage form onFormStart={…}>` (same `fit`) and fade it out
+traced off a front-on photo of the phone (`src/sketch/drawing.ts`), scaled to the model's height
+and framed like the stage's flat phone. Place it absolutely over `<PhoneStage form onFormStart={…}>` (same `fit`) and fade it out
 on `onFormStart`: the 3D phone starts flat at the sketch's outline and leaps out of it over
 `FORM_MS`.
 

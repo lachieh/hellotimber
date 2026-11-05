@@ -2,9 +2,8 @@ import { useId } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { VIEW_HEIGHT_AT_ORIGIN } from "../frame";
 import { DEFAULT_SCREEN_BG } from "../types";
-import { DECAL_SPAN, LEGEND_PATHS } from "../legend-paths";
 import { WORDMARK } from "../wordmark";
-import { BOUNDS, EARPIECE, REGIONS, SILHOUETTE } from "./outline.generated";
+import { BADGE, BOUNDS, INK as PRINT, LINES, PLACES, SCREEN, SILHOUETTE } from "./drawing";
 
 /** The handset's published size and weight, which the drawing's dimension lines give. */
 export const HANDSET = { heightMm: 113, widthMm: 48, depthMm: 22, weightG: 133 } as const;
@@ -72,18 +71,6 @@ export function wipeLine(wipe: number): number {
 /** The world height of the phone's bottom in the drawing (and on the stage). */
 export const OUTLINE_BOTTOM = -BOTTOM;
 
-/** The keys' print (legend-paths.ts), by model node. */
-const PRINT: Record<string, keyof typeof LEGEND_PATHS> = {
-  ...Object.fromEntries(
-    (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"] as const).map((d) => [`key_${d}`, d]),
-  ),
-  key_star: "*",
-  key_hash: "#",
-  key_c: "c",
-  key_up: "up",
-  key_down: "down",
-};
-
 /**
  * The SVG's height in its container (which must be `container-type: size`, as the sketch's own
  * wrapper is): the flat phone's height under the stage camera. Without `fit` the camera sees
@@ -117,7 +104,7 @@ const WRAPPER: CSSProperties = {
 const PEN = { vectorEffect: "non-scaling-stroke" } as const;
 
 /**
- * The 3310 as a technical drawing, its front elevation traced from the 3D model: an even contour,
+ * The 3310 as a technical drawing, its front elevation traced off a photo of the phone: an even contour,
  * finer detail lines, shading lines down the side away from the light, and dimension lines for its
  * height and width. Pure SVG: it renders on the server, before three.js and the model have loaded,
  * exactly where `<PhoneStage>` with the same `fit` and `form` draws the phone flat before it rises.
@@ -133,7 +120,7 @@ export function Nokia3310Sketch({
   paper = PAPER,
   dimensions = true,
 }: Nokia3310SketchProps) {
-  const screen = REGIONS.screen;
+  const screen = PLACES.screen;
   // Ids unique per sketch: a page may hold several (one per breakpoint, say).
   const id = useId();
   const ref = (name: string) => `${id}${name}`;
@@ -180,27 +167,21 @@ export function Nokia3310Sketch({
           <path d={SILHOUETTE} fill={paper} />
           <Shading ink={ink} clip={url("body")} />
 
-          <g stroke={ink} strokeWidth={DETAIL} strokeLinejoin="round" {...PEN}>
-            {Object.entries(REGIONS).map(([name, region]) =>
-              // The wordmark is drawn from wordmark.ts, below.
-              name === "badge_logo" ? null : (
-                <path
-                  key={name}
-                  d={region.d}
-                  fillRule="evenodd"
-                  fill={name === "screen" ? screenBgColor : paper}
-                  fillOpacity={name === "screen" ? 0.55 : 1}
-                  {...PEN}
-                />
-              ),
-            )}
-          </g>
+          {/* The parts are paper over the shading, edged in ink. */}
+          <path
+            d={LINES}
+            fill={paper}
+            fillRule="evenodd"
+            stroke={ink}
+            strokeWidth={DETAIL}
+            strokeLinejoin="round"
+            {...PEN}
+          />
+          <path d={SCREEN} fill={screenBgColor} fillOpacity={0.55} />
 
-          {screen && lcdText !== undefined && (
-            <LcdText center={screen.center} lines={lcdText} ink={ink} />
-          )}
-          {screen && lcdText === undefined && progress !== undefined && (
-            <LcdLoading center={screen.center} progress={progress} ink={ink} />
+          {lcdText !== undefined && <LcdText center={screen} lines={lcdText} ink={ink} />}
+          {lcdText === undefined && progress !== undefined && (
+            <LcdLoading center={screen} progress={progress} ink={ink} />
           )}
 
           <Lettering ink={ink} />
@@ -244,49 +225,17 @@ function Shading({ ink, clip }: { ink: string; clip: string }) {
   );
 }
 
-/** A key's region's bounds' centre and width. */
-function placeOf(box: readonly [number, number, number, number]) {
-  const [x0, y0, x1, y1] = box;
-  return { x: (x0 + x1) / 2, y: (y0 + y1) / 2, width: x1 - x0, height: y1 - y0 };
-}
-
-/**
- * The print on the phone, as the 3D phone wears it: each key's traced print where its decal
- * sits, the NaviKey's curved bar, the NOKIA wordmark on its badge and the earpiece's slots.
- */
+/** What prints on the phone: the keys' print, the NaviKey's bar, the earpiece's slots and the
+ *  NOKIA wordmark on its badge. */
 function Lettering({ ink }: { ink: string }) {
-  const navi = REGIONS.key_navi && placeOf(REGIONS.key_navi.box);
-  const badge = REGIONS.badge && placeOf(REGIONS.badge.box);
+  const [x0, y0, x1, y1] = BADGE;
   return (
     <g fill={ink} fillRule="evenodd">
-      {Object.entries(PRINT).map(([name, key]) => {
-        const region = REGIONS[name];
-        if (!region) return null;
-        const { x, y, width } = placeOf(region.box);
-        // The print's units: 200 across the decal, which spans DECAL_SPAN of the key.
-        const scale = (width * DECAL_SPAN) / 200;
-        return (
-          <path
-            key={name}
-            d={LEGEND_PATHS[key]}
-            transform={`translate(${x} ${y}) scale(${scale})`}
-          />
-        );
-      })}
-      {navi && (
-        // Key.tsx's bar: 0.54 of the key wide, 0.1 high, its ends 0.08 of the key above its middle.
-        <path
-          d={`M${navi.x - navi.width * 0.25} ${navi.y - navi.height * 0.04}Q${navi.x} ${navi.y + navi.height * 0.12} ${navi.x + navi.width * 0.25} ${navi.y - navi.height * 0.04}`}
-          fill="none"
-          stroke={ink}
-          strokeWidth={navi.height * 0.1}
-          strokeLinecap="round"
-        />
-      )}
-      {badge && (
-        <path d={WORDMARK} transform={`translate(${badge.x} ${badge.y}) scale(${badge.width})`} />
-      )}
-      <path d={EARPIECE} />
+      <path d={PRINT} />
+      <path
+        d={WORDMARK}
+        transform={`translate(${(x0 + x1) / 2} ${(y0 + y1) / 2}) scale(${x1 - x0})`}
+      />
     </g>
   );
 }
@@ -495,9 +444,7 @@ export function Nokia3310Callouts({
     <div className={className} style={WRAPPER} aria-hidden="true">
       <svg viewBox={VIEW_BOX} style={svgStyle(fit)} role="presentation">
         {callouts.map(({ target, label }) => {
-          const region = REGIONS[target];
-          if (!region) return null;
-          const [x, y] = region.center;
+          const [x, y] = PLACES[target];
           return (
             <g key={target}>
               <circle cx={x} cy={y} r={0.05} fill={ink} />

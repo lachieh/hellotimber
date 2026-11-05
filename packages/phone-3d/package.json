@@ -10,7 +10,6 @@
   },
   "scripts": {
     "dev": "vp dev",
-    "sketch-outline": "node scripts/sketch-outline.ts",
     "lcd-opening": "node scripts/lcd-opening.ts",
     "test": "vp test run"
   },
