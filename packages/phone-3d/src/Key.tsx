@@ -1,7 +1,7 @@
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
-import { cellPlaneGeometry, legendTexture } from "./atlas";
+import { cellPlaneGeometry, keyGlowTexture, legendTexture } from "./atlas";
 import { LEGEND_GLOW_COLOR, MATERIALS, PRINT_DARK, legendEmission } from "./materials";
 import { DECAL_SPAN } from "./legend-paths";
 import type { PrintedKey } from "./legends";
@@ -128,6 +128,7 @@ export default function Key({ id, mesh, lightOn, pressed, travel, onKey }: KeyPr
         roughness: 0.55,
         metalness: 0,
         emissive: new THREE.Color(LEGEND_GLOW_COLOR),
+        emissiveMap: keyGlowTexture(),
         emissiveIntensity: 0,
         polygonOffset: true,
         polygonOffsetFactor: -1,

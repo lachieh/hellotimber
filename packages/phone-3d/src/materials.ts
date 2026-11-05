@@ -45,13 +45,22 @@ export const PRINT_DARK = "#18251b";
  *  saturated green, still darker than the cap around them, so the print stays
  *  legible (a brighter glow washes out to the cap's own lightness). */
 export const LEGEND_GLOW_COLOR = "#4cc43a";
-export const LEGEND_GLOW_INTENSITY = 0.6;
+export const LEGEND_GLOW_INTENSITY = 0.5;
+
+/** Each key is lit by an LED behind its middle: the glow is full there and falls off towards the
+ *  key's edges. `x` and `y` run from -1 to 1 across the key's print; returns the glow's share. */
+export function keyGlowFalloff(x: number, y: number): number {
+  const r = Math.min(1, Math.hypot(x, y * 0.8));
+  return KEY_GLOW_EDGE + (1 - KEY_GLOW_EDGE) * (1 - r * r) ** 2;
+}
+/** The glow's share at the key's edge. */
+export const KEY_GLOW_EDGE = 0.15;
 export const LCD_GLOW_INTENSITY = 0.55;
 
 /** The NaviKey's cyan bar glows cyan-green rather than the legends' green,
  *  so it keeps its colour under the same LEDs. */
 export const NAVI_BAR_GLOW_COLOR = "#2fc4c8";
-export const NAVI_BAR_GLOW_INTENSITY = 0.45;
+export const NAVI_BAR_GLOW_INTENSITY = 0.35;
 
 /** The emission of a key's lit part, the legend print or the NaviKey's bar,
  *  under the keypad LEDs; unlit, neither glows. */

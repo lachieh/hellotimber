@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vite-plus/test";
 import {
   BACKLIGHT_COLOR,
+  KEY_GLOW_EDGE,
+  keyGlowFalloff,
   LCD_GLOW_INTENSITY,
   LEGEND_GLOW_COLOR,
   LEGEND_GLOW_INTENSITY,
@@ -85,5 +87,18 @@ describe("keypad light emission", () => {
       color: LEGEND_GLOW_COLOR,
       intensity: LEGEND_GLOW_INTENSITY,
     });
+  });
+});
+
+describe("the glow across a key", () => {
+  it("is full behind the key's middle and fades to its edge", () => {
+    expect(keyGlowFalloff(0, 0)).toBe(1);
+    expect(keyGlowFalloff(1, 0)).toBeCloseTo(KEY_GLOW_EDGE);
+    expect(keyGlowFalloff(-1, -1)).toBeCloseTo(KEY_GLOW_EDGE);
+  });
+
+  it("dims steadily outward from the middle", () => {
+    const along = [0, 0.25, 0.5, 0.75, 1].map((t) => keyGlowFalloff(t, t / 2));
+    for (let i = 1; i < along.length; i++) expect(along[i]).toBeLessThan(along[i - 1]);
   });
 });
