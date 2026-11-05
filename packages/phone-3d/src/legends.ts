@@ -1,12 +1,12 @@
 /**
- * The keypad's print, traced off a front-on photo of a real 3310 (scripts/trace-legends.py writes
- * legends.generated.ts): each key's digits, letters and symbols as one SVG path in its decal's
- * units, painted once onto one square texture. Each key's decal maps into its cell
+ * The keypad's print, traced off a front-on photo of a real 3310 (legend-paths.ts): each key's
+ * digits, letters and symbols as one SVG path in its decal's units, painted once onto one square
+ * texture. Each key's decal maps into its cell
  * (LEGEND_CELLS). The painter needs only a 2D context and a way to make a path from SVG path
  * data, so it unit-tests in node with a recording stub. The art is white on transparent; the
  * decal's material tints it (dark print by day, a green glow under the keypad LEDs).
  */
-import { LEGEND_PATHS } from "./legends.generated";
+import { LEGEND_PATHS } from "./legend-paths";
 import type { Nokia3310Key } from "./types";
 
 export const ATLAS = { size: 2048, cell: 256 } as const;
