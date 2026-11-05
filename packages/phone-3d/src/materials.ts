@@ -24,7 +24,10 @@ export const MATERIALS = {
   socket: { color: "#121315", roughness: 0.9, metalness: 0 },
   /** The data contacts beside the socket. */
   contacts: { color: "#c9a24a", roughness: 0.35, metalness: 1 },
-  badge: { color: "#101216", roughness: 0.5, metalness: 0.1 },
+  /** The badges the wordmark sits on: near-black, matte. */
+  badge: { color: "#1f2022", roughness: 0.8, metalness: 0 },
+  /** The wordmark's letters: light grey. */
+  logo: { color: "#a4a7a8", roughness: 0.55, metalness: 0.15 },
 } as const satisfies Record<string, MaterialSpec>;
 
 /** Green LCD backlight glow (spec §9: backlight is green). */

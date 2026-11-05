@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { LED_X, backlightLightmap, unlitLightmap } from "./backlight";
 import { STAGE_HEIGHT } from "./frame";
+import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import { CASE_GRAIN, grained } from "./grain";
 import Key from "./Key";
 import {
@@ -28,6 +29,7 @@ import {
 } from "./materials";
 import type { MaterialSpec } from "./materials";
 import { startPress } from "./press";
+import { WORDMARK } from "./wordmark";
 import { DEFAULT_DRACO_PATH, DEFAULT_MODEL_URL, DEFAULT_SCREEN_BG, resolveLights } from "./types";
 import type { Nokia3310Key, Nokia3310Props } from "./types";
 
@@ -74,6 +76,87 @@ function apertureUvs(geometry: THREE.BufferGeometry, rect: ApertureRect): THREE.
   }
   g.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
   return g;
+}
+
+/** The triangles of `geometry` behind its middle (z): a front and back pair's back one. */
+function backHalf(geometry: THREE.BufferGeometry): THREE.BufferGeometry {
+  geometry.computeBoundingBox();
+  const box = geometry.boundingBox!;
+  const middle = (box.min.z + box.max.z) / 2;
+  const z = geometry.getAttribute("position");
+  const index = geometry.index;
+  if (index === null) return geometry;
+  const kept: number[] = [];
+  for (let i = 0; i < index.count; i += 3) {
+    const [a, b, c] = [index.getX(i), index.getX(i + 1), index.getX(i + 2)];
+    if ((z.getZ(a) + z.getZ(b) + z.getZ(c)) / 3 < middle) kept.push(a, b, c);
+  }
+  const back = geometry.clone();
+  back.setIndex(kept);
+  return back;
+}
+
+/** How far the wordmark's letters stand off the badge, in the GLB's units (about 0.2 mm). */
+const WORDMARK_RELIEF = 0.0004;
+
+/**
+ * The wordmark (wordmark.ts) as raised letters on the front of the badge `plate` (whose geometry
+ * holds the front badge and the back one): centred on the front badge, as wide as on the photo,
+ * standing off its face (a plane fitted to its forward-facing points, as it leans with the face).
+ */
+function wordmarkOn(plate: THREE.BufferGeometry): THREE.BufferGeometry {
+  plate.computeBoundingBox();
+  const box = plate.boundingBox!;
+  const middle = (box.min.z + box.max.z) / 2;
+  const position = plate.getAttribute("position");
+  const normal = plate.getAttribute("normal");
+  const front = new THREE.Box3();
+  // Least squares for the face z = a + b·x + c·y, over its forward-facing points.
+  const sums = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  const rhs = new THREE.Vector3();
+  const point = new THREE.Vector3();
+  for (let i = 0; i < position.count; i++) {
+    point.fromBufferAttribute(position, i);
+    if (point.z < middle) continue;
+    front.expandByPoint(point);
+    if (normal.getZ(i) < 0.95) continue;
+    const row = [1, point.x, point.y];
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 3; c++) sums[r * 3 + c]! += row[r]! * row[c]!;
+      rhs.setComponent(r, rhs.getComponent(r) + row[r]! * point.z);
+    }
+  }
+  const normalEquations = new THREE.Matrix3().fromArray(sums); // symmetric: order doesn't matter
+  const [a, b, c] = rhs.applyMatrix3(normalEquations.invert()).toArray();
+  const width = front.max.x - front.min.x;
+  const cx = (front.min.x + front.max.x) / 2;
+  const cy = (front.min.y + front.max.y) / 2;
+
+  const svg = new SVGLoader().parse(
+    `<svg xmlns="http://www.w3.org/2000/svg"><path d="${WORDMARK}" fill-rule="evenodd"/></svg>`,
+  );
+  const shapes = svg.paths.flatMap((path) => SVGLoader.createShapes(path));
+  const geometry = new THREE.ExtrudeGeometry(shapes, {
+    depth: 1,
+    bevelEnabled: false,
+    curveSegments: 6,
+  });
+  const p = geometry.getAttribute("position") as THREE.BufferAttribute;
+  for (let i = 0; i < p.count; i++) {
+    const x = cx + p.getX(i) * width;
+    const y = cy - p.getY(i) * width;
+    p.setXYZ(i, x, y, a! + b! * x + c! * y + p.getZ(i) * WORDMARK_RELIEF);
+  }
+  // Turning y over turned the triangles inside out: turn them back.
+  for (let i = 0; i < p.count; i += 3) {
+    const [x, y, z] = [p.getX(i + 1), p.getY(i + 1), p.getZ(i + 1)];
+    p.setXYZ(i + 1, p.getX(i + 2), p.getY(i + 2), p.getZ(i + 2));
+    p.setXYZ(i + 2, x, y, z);
+  }
+  geometry.deleteAttribute("normal");
+  geometry.deleteAttribute("uv");
+  geometry.computeVertexNormals();
+  return geometry;
 }
 
 /** The brightest directional light in `scene`: the key light the bezel's shadow follows. */
@@ -308,14 +391,17 @@ export function Nokia3310({
       interior.raycast = () => {};
       o.add(interior);
     }
-    // badge logo prints light
+    // The badges: the model's wordmark stays on the back; the front's is redrawn as on the
+    // photographed phone (wordmark.ts), light grey letters on the dark badge.
+    const badge = model.getObjectByName("badge");
     const logo = model.getObjectByName("badge_logo");
-    if (logo instanceof THREE.Mesh) {
-      logo.material = new THREE.MeshStandardMaterial({
-        color: "#e8ecf2",
-        roughness: 0.5,
-        metalness: 0.05,
-      });
+    if (logo instanceof THREE.Mesh && badge instanceof THREE.Mesh && !logo.userData.wordmark) {
+      logo.userData.wordmark = true;
+      logo.geometry = backHalf(logo.geometry);
+      logo.material = standard(MATERIALS.logo);
+      const letters = new THREE.Mesh(wordmarkOn(badge.geometry), standard(MATERIALS.logo));
+      letters.name = "badge_wordmark";
+      badge.add(letters);
     }
     // The sourced glass mesh only covers the upper part of the LCD. A matching
     // full-size glass plane is added with lcd_pixels below.
