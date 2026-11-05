@@ -23,7 +23,12 @@ describe("Nokia3310Sketch", () => {
 
   it("keeps its SVG ids apart when a page holds two sketches", () => {
     const html = renderToString(
-      createElement("div", null, createElement(Nokia3310Sketch), createElement(Nokia3310Sketch)),
+      createElement(
+        "div",
+        null,
+        createElement(Nokia3310Sketch, { wipe: 0.5 }),
+        createElement(Nokia3310Sketch, { wipe: 0.5 }),
+      ),
     );
     const ids = [...html.matchAll(/ id="([^"]+)"/g)].map((m) => m[1]);
     expect(ids.length).toBeGreaterThan(0);
@@ -53,8 +58,8 @@ describe("Nokia3310Sketch", () => {
     expect(render({ wipe: 1 })).toBe("");
   });
 
-  it("paints the LCD the stage's colour", () => {
-    expect(render({ screenBgColor: "#abcdef" })).toContain('fill="#abcdef"');
+  it("outlines the LCD without filling it", () => {
+    expect(render()).not.toMatch(/fill-opacity/);
   });
 });
 

@@ -58,9 +58,8 @@ inside your own `<Canvas>` instead.
 
 ## Server-rendered sketch and the form entrance
 
-`@hellotimber/phone-3d/sketch` exports `<Nokia3310Sketch fit? screenBgColor? ink? paper?
-dimensions?/>`: the phone as a technical drawing (an even contour, finer detail lines, shading
-lines down its right side, and dimension lines giving its 113 mm height and 48 mm width; line
+`@hellotimber/phone-3d/sketch` exports `<Nokia3310Sketch fit? ink? paper?
+dimensions?/>`: the phone as a technical drawing (an even contour, finer detail lines and dimension lines giving its 113 mm height and 48 mm width; line
 weights stay in screen pixels at any scale), as pure SVG with no three.js import, so it renders
 on the server. `ink` and `paper` set its line and ground colours (the paper hides the 3D phone
 beneath it). It is

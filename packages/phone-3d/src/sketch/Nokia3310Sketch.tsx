@@ -1,9 +1,8 @@
 import { useId } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { VIEW_HEIGHT_AT_ORIGIN } from "../frame";
-import { DEFAULT_SCREEN_BG } from "../types";
 import { WORDMARK } from "../wordmark";
-import { BADGE, BOUNDS, INK as PRINT, LINES, PLACES, SCREEN, SILHOUETTE } from "./drawing";
+import { BADGE, BOUNDS, INK as PRINT, LINES, PLACES, SILHOUETTE } from "./drawing";
 
 /** The handset's published size and weight, which the drawing's dimension lines give. */
 export const HANDSET = { heightMm: 113, widthMm: 48, depthMm: 22, weightG: 133 } as const;
@@ -12,8 +11,6 @@ export interface Nokia3310SketchProps {
   className?: string;
   /** Same as `<PhoneStage fit>`: the sketch then lines up with the stage's flat phone. */
   fit?: number;
-  /** The LCD's background; pass the `screenBgColor` you give the stage. */
-  screenBgColor?: string;
   /** Show "Loading" on the LCD with a bar this full (0–1); a blank LCD when unset. */
   progress?: number;
   /** Lines written on the LCD instead of the loading bar, e.g. when the 3D phone can't load. */
@@ -104,15 +101,13 @@ const WRAPPER: CSSProperties = {
 const PEN = { vectorEffect: "non-scaling-stroke" } as const;
 
 /**
- * The 3310 as a technical drawing, its front elevation traced off a photo of the phone: an even contour,
- * finer detail lines, shading lines down the side away from the light, and dimension lines for its
- * height and width. Pure SVG: it renders on the server, before three.js and the model have loaded,
+ * The 3310 as a technical drawing, its front elevation traced off a photo of the phone: an even
+ * contour, finer detail lines, its print, and dimension lines for its height and width. Pure SVG: it renders on the server, before three.js and the model have loaded,
  * exactly where `<PhoneStage>` with the same `fit` and `form` draws the phone flat before it rises.
  */
 export function Nokia3310Sketch({
   className,
   fit,
-  screenBgColor = DEFAULT_SCREEN_BG,
   progress,
   lcdText,
   wipe = 0,
@@ -140,9 +135,6 @@ export function Nokia3310Sketch({
     <div className={className} style={WRAPPER} aria-hidden="true">
       <svg viewBox={VIEW_BOX} style={svgStyle(fit)} role="presentation">
         <defs>
-          <clipPath id={ref("body")}>
-            <path d={SILHOUETTE} />
-          </clipPath>
           {wiping && (
             <>
               <linearGradient
@@ -165,9 +157,7 @@ export function Nokia3310Sketch({
 
         <g mask={wiping ? url("wipe") : undefined}>
           <path d={SILHOUETTE} fill={paper} />
-          <Shading ink={ink} clip={url("body")} />
 
-          {/* The parts are paper over the shading, edged in ink. */}
           <path
             d={LINES}
             fill={paper}
@@ -177,7 +167,6 @@ export function Nokia3310Sketch({
             strokeLinejoin="round"
             {...PEN}
           />
-          <path d={SCREEN} fill={screenBgColor} fillOpacity={0.55} />
 
           {lcdText !== undefined && <LcdText center={screen} lines={lcdText} ink={ink} />}
           {lcdText === undefined && progress !== undefined && (
@@ -210,18 +199,6 @@ export function Nokia3310Sketch({
         )}
       </svg>
     </div>
-  );
-}
-
-/** Shading lines down the phone's right side, away from the light, closer together at the edge. */
-function Shading({ ink, clip }: { ink: string; clip: string }) {
-  const xs = [1.42, 1.62, 1.78, 1.9, 1.99, 2.05];
-  return (
-    <g clipPath={clip} stroke={ink} strokeWidth={THIN} {...PEN}>
-      {xs.map((x) => (
-        <path key={x} d={`M${x} ${TOP}V${BOTTOM}`} {...PEN} />
-      ))}
-    </g>
   );
 }
 
