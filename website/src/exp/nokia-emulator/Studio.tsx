@@ -12,10 +12,11 @@ import {
   DRAWING,
   fitForScale,
   floatAt,
+  CAMERA,
   keyLightPosition,
-  orbitOf,
   rimLightPosition,
   STILL,
+  turned,
   type StageSettings,
 } from "./stage-settings";
 import type { BacklightMode } from "./world";
@@ -168,20 +169,18 @@ export default function Studio({
   const pose = useCallback(() => revealAt(settings.current.reveal).pose, []);
   const deviceTilt = useCallback(() => settings.current.tilt, []);
   const motion = useRef(!reducedMotion());
-  // While the drawing wipes away it lines up with the phone only head on and still; the view and
-  // the float ease in over the rest of the reveal.
+  // While the drawing wipes away it lines up with the phone only head on and still; the camera's
+  // height, the phone's turn and its float ease in over the rest of the reveal.
   const orbit = useCallback(() => {
-    const now = settings.current;
-    const k = settledShare(now.reveal);
-    const view = orbitOf(now);
-    return { yaw: view.yaw * k, pitch: view.pitch * k };
+    const k = settledShare(settings.current.reveal);
+    return { yaw: CAMERA.yaw * k, pitch: CAMERA.pitch * k };
   }, []);
   const drift = useCallback(() => {
     const now = settings.current;
-    if (!now.float || !motion.current) return STILL;
     const k = settledShare(now.reveal);
-    const float = floatAt(performance.now());
-    return { y: float.y * k, tiltX: float.tiltX * k, tiltY: float.tiltY * k };
+    const float = now.float && motion.current ? floatAt(performance.now()) : STILL;
+    const pose = turned(now, float);
+    return { y: pose.y * k, tiltX: pose.tiltX * k, tiltY: pose.tiltY * k };
   }, []);
 
   const fit = fitForScale(stage.scale);

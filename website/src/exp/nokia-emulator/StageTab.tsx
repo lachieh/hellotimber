@@ -33,7 +33,7 @@ export function StageTab({
     light: true,
     tilt: true,
     shadow: true,
-    camera: true,
+    turn: true,
     reveal: true,
     size: true,
   });
@@ -209,15 +209,15 @@ export function StageTab({
       </Section>
 
       <Section
-        title="Camera"
-        open={open.camera}
-        onToggle={toggle("camera")}
+        title="Turn"
+        open={open.turn}
+        onToggle={toggle("turn")}
         actions={
           <button
             type="button"
             className="emu-icon-button"
-            aria-label="Reset the camera"
-            title="Reset camera"
+            aria-label="Reset the phone's turn"
+            title="Reset turn"
             disabled={!viewMoved}
             onClick={() => onChange({ yaw: DEFAULT_STAGE.yaw, pitch: DEFAULT_STAGE.pitch })}
           >
@@ -227,7 +227,7 @@ export function StageTab({
       >
         <div className="emu-knobs">
           <Knob
-            label="Orbit"
+            label="Turn"
             value={stage.yaw}
             min={YAW.min}
             max={YAW.max}
@@ -236,7 +236,7 @@ export function StageTab({
             onChange={(yaw) => onChange({ yaw })}
           />
           <Knob
-            label="Elevation"
+            label="Tip"
             value={stage.pitch}
             min={PITCH.min}
             max={PITCH.max}

@@ -11,7 +11,8 @@ export interface StageSettings {
   lightAngle: number;
   /** The key light's strength, times its default. */
   lightIntensity: number;
-  /** The camera's bearing and height about the phone, degrees. */
+  /** The phone's turn on the stage, degrees: `yaw` shows its right side, `pitch` its top. The
+   *  camera stays put, so the floor and the light's pool on it hold still. */
   yaw: number;
   pitch: number;
   /** The phone's size on the stage, % of its default framing. */
@@ -47,8 +48,7 @@ export const DEFAULT_STAGE: StageSettings = {
   lightAngle: 40,
   lightIntensity: 1.6,
   yaw: 0,
-  // A little above the phone, so its contact shadow reads on the floor.
-  pitch: 8,
+  pitch: 0,
   scale: 100,
   reveal: REVEAL_MS,
   float: true,
@@ -75,8 +75,19 @@ export function rimLightPosition(angle: number, distance = 10): [number, number,
   return [-Math.sin(angle * RAD) * distance, distance * 0.35, -distance * 0.9];
 }
 
-export function orbitOf(settings: Pick<StageSettings, "yaw" | "pitch">): StageOrbit {
-  return { yaw: settings.yaw * RAD, pitch: settings.pitch * RAD };
+/** The studio camera: a little above the phone, so its contact shadow reads on the floor. */
+export const CAMERA: StageOrbit = { yaw: 0, pitch: 8 * RAD };
+
+/** The phone turned by the Stage tab's knobs, over its idle `float`. */
+export function turned(
+  settings: Pick<StageSettings, "yaw" | "pitch">,
+  float: StageDrift,
+): StageDrift {
+  return {
+    y: float.y,
+    tiltX: float.tiltX + settings.pitch * RAD,
+    tiltY: float.tiltY - settings.yaw * RAD,
+  };
 }
 
 /** The float's period: slow enough to read as hovering, not bobbing. */
