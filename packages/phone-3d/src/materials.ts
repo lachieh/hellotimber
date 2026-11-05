@@ -41,17 +41,17 @@ export const SCREEN_LIT_PIXEL_TINT = "#eeefee";
 export const PRINT_LIGHT = "#dfe4ea";
 export const PRINT_DARK = "#18251b";
 /** The original legends are dark, translucent green plastic set into opaque
- *  silver caps, lit from behind by the keypad LEDs. Lit, they read as bright
- *  green print (plan 25 Task 12: about ten times the pre-plan-25 glow, which
- *  read at a tenth of a real keypad). */
-export const LEGEND_GLOW_COLOR = "#7fcf6a";
-export const LEGEND_GLOW_INTENSITY = 1.4;
+ *  silver caps, lit from behind by the keypad LEDs. Lit, they read as a deep,
+ *  saturated green, still darker than the cap around them, so the print stays
+ *  legible (a brighter glow washes out to the cap's own lightness). */
+export const LEGEND_GLOW_COLOR = "#4cc43a";
+export const LEGEND_GLOW_INTENSITY = 0.6;
 export const LCD_GLOW_INTENSITY = 0.55;
 
 /** The NaviKey's cyan bar glows cyan-green rather than the legends' green,
  *  so it keeps its colour under the same LEDs. */
-export const NAVI_BAR_GLOW_COLOR = "#6fd6b8";
-export const NAVI_BAR_GLOW_INTENSITY = 1.2;
+export const NAVI_BAR_GLOW_COLOR = "#2fc4c8";
+export const NAVI_BAR_GLOW_INTENSITY = 0.45;
 
 /** The emission of a key's lit part, the legend print or the NaviKey's bar,
  *  under the keypad LEDs; unlit, neither glows. */

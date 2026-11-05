@@ -58,13 +58,22 @@ function luminance(hex: string): number {
 
 describe("keypad light emission", () => {
   // Before plan 25 the legends and the NaviKey bar glowed #496847 × 0.6, which
-  // reads at about a tenth of a real 3310's keypad lights (TODOS.md).
+  // read at about a tenth of a real 3310's keypad lights.
   const before = luminance("#496847") * 0.6;
 
-  it.each(["legend", "naviBar"] as const)("lit %s glows at least 8× the old keypad", (part) => {
+  it.each(["legend", "naviBar"] as const)(
+    "lit %s glows clearly brighter than the old keypad",
+    (part) => {
+      const { color, intensity } = legendEmission(part, true);
+      expect(color).toMatch(HEX);
+      expect(luminance(color) * intensity).toBeGreaterThanOrEqual(2 * before);
+    },
+  );
+
+  it.each(["legend", "naviBar"] as const)("lit %s stays darker than the key it sits on", (part) => {
+    // Brighter than half the cap and the print washes out into it.
     const { color, intensity } = legendEmission(part, true);
-    expect(color).toMatch(HEX);
-    expect(luminance(color) * intensity).toBeGreaterThanOrEqual(8 * before);
+    expect(luminance(color) * intensity).toBeLessThanOrEqual(luminance(MATERIALS.key.color) / 2);
   });
 
   it.each(["legend", "naviBar"] as const)("unlit %s does not glow", (part) => {
