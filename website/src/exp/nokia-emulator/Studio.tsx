@@ -8,6 +8,7 @@ import { attachKeyboard } from "../../phone/keyboard";
 import { REVEAL_MS, revealAt, WIPE_MS } from "../../phone/reveal";
 import type { PhoneRuntime } from "../../phone/runtime";
 import type { Emulator } from "./emulator";
+import { shadowUnder } from "./floor-shadow";
 import {
   DRAWING,
   fitForScale,
@@ -48,8 +49,6 @@ function settledShare(reveal: number): number {
 
 /** The phone's floor, just under its lowest float (the model is 10 units tall, centred). */
 const FLOOR_Y = -5.7;
-/** The phone's lowest point at rest. */
-const PHONE_BOTTOM = -5;
 
 /** A soft elliptical spot of `rgb`: dense at the centre, gone at the edge. */
 function spotTexture(rgb: string): THREE.CanvasTexture {
@@ -68,8 +67,8 @@ function spotTexture(rgb: string): THREE.CanvasTexture {
 }
 
 /**
- * The phone's contact shadow on the floor: under the phone's footprint, darker and tighter the
- * nearer it floats to the floor.
+ * The phone's contact shadow on the floor: under the phone's footprint as it is turned and tipped
+ * (shadowUnder), darker and tighter the nearer it floats to the floor.
  */
 function FloorShadow({ drift }: { drift: () => StageDrift }) {
   const texture = useMemo(() => spotTexture("0,0,0"), []);
@@ -81,13 +80,23 @@ function FloorShadow({ drift }: { drift: () => StageDrift }) {
     },
     [texture, pool],
   );
+  const spot = useRef<THREE.Group>(null);
   const mesh = useRef<THREE.Mesh>(null);
   const material = useRef<THREE.MeshBasicMaterial>(null);
   useFrame(() => {
-    const gap = PHONE_BOTTOM + drift().y - FLOOR_Y;
+    const pose = drift();
+    const shape = shadowUnder(pose);
+    const gap = shape.bottom + pose.y - FLOOR_Y;
     const spread = 1 + gap * 0.35;
-    mesh.current?.scale.set(spread, spread, 1);
-    if (material.current) material.current.opacity = Math.min(1, 0.9 / spread);
+    spot.current?.position.set(shape.x, FLOOR_Y, 0.2 + shape.z);
+    spot.current?.rotation.set(0, shape.angle, 0);
+    // The plane lies flat: its y runs front to back.
+    mesh.current?.scale.set(spread * shape.across, spread * shape.along, 1);
+    if (material.current)
+      material.current.opacity = Math.min(
+        1,
+        0.9 / (spread * Math.sqrt(shape.across * shape.along)),
+      );
   });
   return (
     <>
@@ -102,16 +111,18 @@ function FloorShadow({ drift }: { drift: () => StageDrift }) {
           toneMapped={false}
         />
       </mesh>
-      <mesh ref={mesh} position={[0, FLOOR_Y, 0.2]} rotation-x={-Math.PI / 2} renderOrder={-1}>
-        <planeGeometry args={[7.5, 3.4]} />
-        <meshBasicMaterial
-          ref={material}
-          map={texture}
-          transparent
-          depthWrite={false}
-          toneMapped={false}
-        />
-      </mesh>
+      <group ref={spot}>
+        <mesh ref={mesh} rotation-x={-Math.PI / 2} renderOrder={-1}>
+          <planeGeometry args={[7.5, 3.4]} />
+          <meshBasicMaterial
+            ref={material}
+            map={texture}
+            transparent
+            depthWrite={false}
+            toneMapped={false}
+          />
+        </mesh>
+      </group>
     </>
   );
 }
