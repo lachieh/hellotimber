@@ -161,6 +161,12 @@ function cycleSteps(tone: RingingTone): number {
   return best.steps;
 }
 
+/**
+ * The register a game's own notes play at (plan 28 D10): the meal's captured one. A choice: no
+ * capture shows a game's notes.
+ */
+export const GAME_NOTE_VOLUME = 6;
+
 /** `program` without its vibrator track (Vibrating alert Off). */
 function withoutVibrator(program: SoundProgram): SoundProgram {
   return {
@@ -222,6 +228,8 @@ export class StockSounder implements StockCueSink {
   readonly #gameSounds: Readonly<Record<string, SoundProgram>>;
   /** The game sound playing: the next one cuts it off (plan 24 H19). */
   #gameSound: SoundPlay | undefined;
+  /** What game cues started and may still play: a `stop` cue ends them (plan 28 D10). */
+  #gamePlays: SoundPlay[] = [];
 
   readonly #userTones: UserRingingTones | undefined;
 
@@ -573,7 +581,9 @@ export class StockSounder implements StockCueSink {
    * games' sounds (`GAME_SOUNDS`, plan 24 D13) play their captured programs with Warning tones On
    * and Games › Settings › Sounds On, a game sound cutting off the one before it; a shake runs
    * the vibrator for its `ms` with Shakes On and the active profile's Vibrating alert On; a
-   * silent key makes the key going down then beep nothing.
+   * silent key makes the key going down then beep nothing. A game's notes (plan 28 D10) play on
+   * the buzzer at `GAME_NOTE_VOLUME` under the sounds' settings. A stop ends what the cues before
+   * it started, whatever the settings are by then.
    */
   cue(cue: StockCue, atMs: number): void {
     // An unknown sound is a bug whatever the settings.
@@ -582,20 +592,41 @@ export class StockSounder implements StockCueSink {
       this.#silenceKey(atMs);
       return;
     }
+    if (cue.kind === "stop") {
+      for (const play of this.#gamePlays) this.#sequencer.cancel(play, atMs);
+      this.#gamePlays = [];
+      return;
+    }
     if (cue.kind === "vibrate") {
       if (this.#settings.choice(GAMES_SHAKES_KEY) !== GAMES_ON || !this.#vibrates()) return;
-      this.#sequencer.play({ id: "game/vibrate", steps: [{ ms: cue.ms, vibrator: true }] }, atMs);
+      this.#game({ id: "game/vibrate", steps: [{ ms: cue.ms, vibrator: true }] }, atMs);
       return;
     }
     if (this.#settings.choice(WARNING_TONES_KEY) !== WARNING_TONES_ON) return;
     if (this.#settings.choice(GAMES_SOUNDS_KEY) !== GAMES_ON) return;
     if (cue.kind === "game-sound") {
       if (this.#gameSound !== undefined) this.#sequencer.cancel(this.#gameSound, atMs);
-      this.#gameSound = this.#sequencer.play(this.#gameProgram(cue.id), atMs);
+      this.#gameSound = this.#game(this.#gameProgram(cue.id), atMs);
+      return;
+    }
+    if (cue.kind === "notes") {
+      if (cue.notes.length === 0) return;
+      const steps = cue.notes.map(({ hz, ms }) => ({
+        ms,
+        buzzer: { hz, volume: GAME_NOTE_VOLUME },
+      }));
+      this.#game({ id: "game/notes", steps }, atMs);
       return;
     }
     const program = { eat: GAME_CUES.eat, crash: GAME_CUES.crash, "top-score": GAME_CUES.topScore };
-    this.#sequencer.play(program[cue.kind], atMs);
+    this.#game(program[cue.kind], atMs);
+  }
+
+  /** Starts a game cue's program, kept for a `stop` cue while it may still play. */
+  #game(program: SoundProgram, atMs: number): SoundPlay {
+    const play = this.#sequencer.play(program, atMs);
+    this.#gamePlays = [...this.#gamePlays.filter((each) => this.#sequencer.playing(each)), play];
+    return play;
   }
 
   #gameProgram(id: string): SoundProgram {

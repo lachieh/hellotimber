@@ -16,6 +16,19 @@ export type StockCue =
    * cuts off the one playing (H19).
    */
   | { readonly kind: "game-sound"; readonly id: string }
+  /**
+   * A game's own buzzer notes (plan 28 D10): whole Hz, each for a positive whole `ms`, at
+   * `GAME_NOTE_VOLUME`. It replaces the sound playing; no notes play nothing.
+   */
+  | {
+      readonly kind: "notes";
+      readonly notes: readonly { readonly hz: number; readonly ms: number }[];
+    }
+  /**
+   * Everything the cues before it started stops: the game's sound and its vibration (plan 28
+   * D10: a suspended or ended game). Sounds that are not a game's play on.
+   */
+  | { readonly kind: "stop" }
   /** The vibrator: ≈480 ms per meal and at the crash (with Shakes On). */
   | { readonly kind: "vibrate"; readonly ms: number }
   /**
