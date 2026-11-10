@@ -94,28 +94,42 @@ directly by him; Recruiter Rachel and Y2K Support are fictional personas.
 ## Architecture
 
 A Vite+ (`vp`) pnpm monorepo. Workspaces: `website`, `packages/*`. Hard rule: packages
-are independent and reusable; **only `website/` composes them**.
+are independent and reusable; **`website/` owns production composition; package demos may compose siblings through devDependencies**.
 
 ```
 website (TanStack Start, router bridge, content, host adapters)
   ├── nokia-os (stock firmware and painter)
+  │     ├── nokia-kit (UI, system and apps)
+  │     ├── phone-services (shared phone state)
+  │     ├── nokia-games-sdk (plan 28 shell contract)
   │     ├── phone-core (kernel and menu model)
   │     └── phone-screen (LCD toolkit)
   ├── phone-core (types and router bridge)
   ├── phone-screen (canvas renderer)
   └── phone-3d (R3F model)
 
+nokia-kit ──▶ phone-services, phone-core, phone-screen
+nokia-games ──▶ nokia-games-sdk
+nokia-games-sandbox ──▶ nokia-games-sdk, ses
+nokia-games-sdk ──▶ (none at runtime)
+nokia-os/demo ──▶ nokia-games, nokia-games-sandbox (planned devDependencies)
 phone-screen ──▶ phone-core (type-only)
 snake (standalone package; unused by the website after cutover)
 ```
 
-| Package                     | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Dependencies                                                       |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), app hosting, path serialization, sound _events_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | none                                                               |
-| `@hellotimber/phone-screen` | LCD framebuffer, bitmap/font primitives and canvas renderer; the host supplies the painter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | `phone-core` (type-only)                                           |
-| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei` |
-| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | none                                                               |
-| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18), T9 English (open dictionary, plan 18b), number entry, calls and the call register over the same port (plan 22), the SIM card port with its phone book (plan 19), clock and alerts (plan 21), SIM content and SIM services (SIM-stored SMS, sender names, the SIM Toolkit's Menu 14, IMEI, preload, screen text; plan 30), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, keyguard and display/keypad LED events on the light tick (plan 25), standalone demo | `phone-core`, `phone-screen` (runtime: LCD toolkit)                |
+| Package                     | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Dependencies                                                                   |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `@hellotimber/phone-core`   | The "firmware": menu tree model, navigation state machine, key handling (press/long-press), app hosting, path serialization, sound _events_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | none                                                                           |
+| `@hellotimber/phone-screen` | LCD framebuffer, bitmap/font primitives and canvas renderer; the host supplies the painter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | `phone-core` (type-only)                                                       |
+| `@hellotimber/phone-3d`     | The physical phone in three.js: body, keypad with pressable meshes, screen mesh textured from a provided canvas, backlight                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | peers: `react`, `three`, `@react-three/fiber`, `@react-three/drei`             |
+| `@hellotimber/snake`        | Snake II rules engine + pure bitmap rasterizer (`Uint8Array`), zero deps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | none                                                                           |
+| `@hellotimber/nokia-os`     | Strict reproduction of the stock 3310 v6.39 firmware on the phone-core kernel: stock menu, SMS through a host network port (plan 18), T9 English (open dictionary, plan 18b), number entry, calls and the call register over the same port (plan 22), the SIM card port with its phone book (plan 19), clock and alerts (plan 21), SIM content and SIM services (SIM-stored SMS, sender names, the SIM Toolkit's Menu 14, IMEI, preload, screen text; plan 30), placeholder applications, stock painter, fonts/icons/boot frames derived from committed LCD goldens, buzzer/tone/vibrator events from sound goldens, keyguard and display/keypad LED events on the light tick (plan 25), standalone demo | `nokia-kit`, `phone-services`, `phone-core`, `phone-screen`, `nokia-games-sdk` |
+
+| `@hellotimber/phone-services` | Shared SMS, chat, phone book, SIM, telephone, call log and network state | none |
+| `@hellotimber/nokia-kit` | Modular Nokia UI, system and apps | `phone-services`, `phone-core`, `phone-screen` |
+| `@hellotimber/nokia-games-sdk` | Plan 28: game contracts, drawing, sessions, replays and protocol | none at runtime; dev: `watr` |
+| `@hellotimber/nokia-games` | Plan 28: first-party games and example user packages | `nokia-games-sdk`; dev: `watr` |
+| `@hellotimber/nokia-games-sandbox` | Plan 28: browser sandbox, worker watchdog and self-test | `nokia-games-sdk`, `ses` |
 
 The homepage creates one runtime per session (`website/src/home/runtime.ts`) running the
 homepage firmware through `createFirmwarePhone`, with a SIM holding the personas, a Snake II
@@ -1376,3 +1390,288 @@ Decisions made without blocking on input — flag if any is wrong:
   — see `docs/specs/nokia-3310.md`, including its flagged UNVERIFIED details (signal
   bar count, Snake scoring formula, font metrics). Where the spec is unverified, plans
   pick the documented best guess.
+
+## Planned game contracts (plan 28)
+
+These contracts describe behaviour being built by plan 28; they are not shipped guarantees.
+
+Extra games are opt-in through `games`, after Pairs II: stock games keep 8-1…8-4, extras take 8-5 onward, and Settings stays 8-6 with zero or one extra, then becomes 8-(5+n). Their gameplay and composed error note are non-stock screens. Games request wakes on the kernel session clock, which stops during suspension. D19 limits only protect the host: 504-byte frames, 1 MiB Wasm memory, 1024-byte storage, 512 KiB packages, 64 effects and 8192 notes per reply, 1000/5000 ms play/load watchdogs, 10 ms minimum wakes, i32 time and scores, and labels that fit stock glyphs and widgets; other counts and durations belong to the game.
+
+### `@hellotimber/nokia-games-sdk` (new)
+
+```ts
+export const SCREEN_WIDTH = 84;
+export const SCREEN_HEIGHT = 48;
+/** Packed frame: 84×48 bits, row-major, MSB first, 1 = ink (504 bytes). */
+export const PACKED_FRAME_BYTES = 504;
+
+/** The host limits (D19); the only caps on a game. */
+export const MIN_WAKE_MS = 10;
+export const MAX_STORAGE_BYTES = 1024;
+export const MAX_PACKAGE_BYTES = 512 * 1024;
+export const MAX_EFFECTS_PER_REPLY = 64;
+export const MAX_NOTES_PER_REPLY = 8192;
+export const MAX_SESSION_MS = 2 ** 31 - 1; // also the largest score
+export const WATCHDOG_MS = { play: 1000, load: 5000 } as const;
+
+export type GameKey =
+  | "up"
+  | "down"
+  | "*"
+  | "#"
+  | "0"
+  | "1"
+  | "2"
+  | "3"
+  | "4"
+  | "5"
+  | "6"
+  | "7"
+  | "8"
+  | "9";
+
+/** Plain data (JSON in a user package). `validateManifest` checks structure; the host checks glyphs. */
+export interface GameManifest {
+  readonly sdk: 1;
+  /** Kebab-case: the menu slug and the storage namespace; not a stock Games slug. */
+  readonly id: string;
+  /** The Games list label (stock small face, one row). */
+  readonly name: string;
+  /** The game's menu animation (D2). */
+  readonly splash: GameSplash;
+  /** The game menu in order (D5); the first item is a `play`. */
+  readonly menu: readonly GameMenuItem[];
+  /** Integers, 1 <= initial <= max; no upper cap (D19). Absent: no Level page, `start.level` is 1. */
+  readonly level?: { readonly max: number; readonly initial: number };
+  /** Navi/C suspend the game and add Continue (default false: they quit to the game menu). */
+  readonly suspend?: boolean;
+  /** Default true: `over(score)` shows the stock game-over screens and keeps a top score. */
+  readonly scores?: boolean;
+  /** Saved bytes the game may keep: 0..MAX_STORAGE_BYTES, default 0. */
+  readonly storageBytes?: number;
+}
+
+export interface GameSplash {
+  /** Packed frames, base64 (504 bytes each); at least one. */
+  readonly frames: readonly string[];
+  /** At least one step; `ms` a positive integer. Count and length are the game's; any key skips (shell). */
+  readonly steps: readonly { readonly frame: number; readonly ms: number }[];
+}
+
+export type GameMenuItem =
+  | { readonly kind: "play"; readonly slug: string; readonly label: string; readonly mode?: string }
+  | { readonly kind: "level" }
+  | {
+      readonly kind: "choice";
+      readonly slug: string;
+      readonly label: string;
+      readonly options: readonly string[]; // at least one; the stock list scrolls
+      readonly initial: number;
+    }
+  | { readonly kind: "top-score" }
+  /** Each page's text wraps in the thin face and continues on the next screen; `\n` breaks a line. */
+  | { readonly kind: "instructions"; readonly pages: readonly string[] };
+
+export interface GameStart {
+  readonly mode: string; // the play item's mode ("" for none)
+  readonly level: number;
+  readonly choices: Readonly<Record<string, number>>; // by choice slug
+  readonly seed: number; // uint32
+  readonly topScore: number;
+  readonly storage: Uint8Array; // the saved bytes (<= storageBytes)
+}
+
+/** Glyph rows of `#`/`.`; a row's length is the glyph's advance (STOCK_FONT_DATA's shape). */
+export interface GameFont {
+  readonly height: number;
+  readonly glyphs: Readonly<Record<string, readonly string[]>>;
+}
+export interface GameFonts {
+  readonly game: GameFont; // GAME_DIGITS, always
+  readonly small?: GameFont;
+  readonly large?: GameFont;
+  readonly digits?: GameFont;
+  readonly thin?: GameFont;
+}
+
+export type GameSound =
+  | "eat"
+  | "crash"
+  /** Positive integers; any number of notes (D10). */
+  | { readonly notes: readonly { readonly hz: number; readonly ms: number }[] };
+
+export interface GameContext {
+  readonly start: GameStart;
+  readonly fonts: GameFonts;
+  /** The session's seeded generator (mulberry32 over start.seed): a uint32 per call. */
+  random(): number;
+  sound(sound: GameSound): void;
+  vibrate(ms: number): void; // a positive integer
+  /** Replaces the saved bytes; false (nothing saved) over storageBytes. */
+  save(bytes: Uint8Array): boolean;
+  /** Ends the session after the current call; the shell takes over (D5). */
+  over(score?: number): void;
+}
+
+/**
+ * When the game next needs `update` (D4): a delay in ms from the call's time (raised to
+ * MIN_WAKE_MS; a fraction rounds up), or null: sleep until a key.
+ */
+export type GameWake = number | null;
+
+export interface GameInstance {
+  /** At session time 0 (New game), then at each requested wake; `nowMs` is exactly the time asked for. */
+  update(nowMs: number): GameWake;
+  /** A game key went down at `nowMs`. A wake replaces the pending one; undefined (no return) keeps it. */
+  keyDown?(key: GameKey, nowMs: number): GameWake | undefined;
+  /** As keyDown, for a release (only of keys whose key-down the game got). */
+  keyUp?(key: GameKey, nowMs: number): GameWake | undefined;
+  /** Called after every update, keyDown and keyUp; the screen keeps the previous frame. */
+  draw(screen: GameScreen): void;
+}
+
+export interface GameDefinition {
+  readonly manifest: GameManifest;
+  create(ctx: GameContext): GameInstance;
+}
+
+/** What a game module evaluates to: the SDK's helpers arrive as the argument (no imports). */
+export type GameFactory = (sdk: GameSdk) => GameDefinition;
+
+export interface GameSdk {
+  readonly version: 1;
+  readonly GAME_DIGITS: GameFont;
+  readonly MIN_WAKE_MS: number;
+  createScreen(): GameScreen;
+  drawText(
+    screen: GameScreen,
+    font: GameFont,
+    text: string,
+    x: number,
+    y: number,
+    ink?: 0 | 1,
+  ): number;
+  textWidth(font: GameFont, text: string): number;
+  drawNumber(
+    screen: GameScreen,
+    value: number,
+    x: number,
+    y: number,
+    options?: {
+      font?: GameFont;
+      scale?: 1 | 2 | 3;
+      gap?: number;
+      align?: "left" | "right";
+      ink?: 0 | 1;
+    },
+  ): number;
+  encodeFrame(screen: GameScreen): string; // base64 of the packed frame (splash building)
+}
+export const sdk: GameSdk;
+
+export class GameScreen {
+  readonly width: 84;
+  readonly height: 48;
+  readonly pixels: Uint8Array; // 4032 bytes, 0/1, row-major (phone-core Bitmap layout)
+  get(x: number, y: number): 0 | 1; // 0 outside
+  set(x: number, y: number, ink?: 0 | 1): void; // clipped
+  clear(): void;
+  fill(x: number, y: number, w: number, h: number, ink?: 0 | 1): void;
+  invert(x: number, y: number, w: number, h: number): void;
+  blit(art: readonly string[], x: number, y: number): void; // `#` ink, `.` paper, other chars skip
+  pack(): Uint8Array; // 504 bytes
+}
+export function unpackFrame(packed: Uint8Array): Uint8Array; // 4032 bytes
+export const GAME_DIGITS: GameFont;
+export function createRandom(seed: number): () => number; // mulberry32
+export function mixSeed(a: number, b: number): number; // uint32 hash of two uint32s
+export function validateManifest(value: unknown): GameManifest; // throws naming the field
+
+// --- hosts -----------------------------------------------------------------------------------
+/** `at`: the session ms of the call that made the effect. */
+export type GameEffect =
+  | { readonly kind: "sound"; readonly at: number; readonly sound: GameSound }
+  | { readonly kind: "vibrate"; readonly at: number; readonly ms: number }
+  | { readonly kind: "save"; readonly at: number; readonly bytes: Uint8Array }
+  | { readonly kind: "over"; readonly at: number; readonly score: number | undefined };
+
+/** One running game, driven synchronously by a host (D6). Times are session ms, non-decreasing. */
+export interface GameSession {
+  /** Runs every wake due at or before `nowMs` (each at its own time), then delivers the key. */
+  keyDown(key: GameKey, nowMs: number): void;
+  keyUp(key: GameKey, nowMs: number): void;
+  /** Runs every wake due at or before `nowMs`, each at its own time. */
+  advance(nowMs: number): void;
+  /** The session ms of the next wake; null while the game sleeps (remote: or an advance is in flight). */
+  wake(): number | null;
+  /** The newest packed frame; undefined before the first. Remote sessions lag by the round trip. */
+  frame(): Uint8Array | undefined;
+  /** Effects since the last drain, in order. */
+  drain(): readonly GameEffect[];
+  /** Set once the game threw, broke the protocol or a limit, or tripped the watchdog; the session is dead. */
+  readonly failure: string | undefined;
+  dispose(): void;
+}
+export interface GameModule {
+  readonly manifest: GameManifest;
+  /** Creates the instance and runs `update(0)`. */
+  start(start: GameStart, fonts: GameFonts): GameSession;
+}
+export function localGame(definition: GameDefinition): GameModule;
+export function wasmGame(manifest: GameManifest, bytes: Uint8Array): GameDefinition; // ABI v1
+export function parseGamePackage(value: unknown): GamePackage; // `nokia-game 1`
+export function recording(module: GameModule): GameModule & { lastReplay(): string | undefined };
+// replays: parseReplay, serializeReplay, recordReplay, checkReplay (see "Replay goldens")
+// protocol: HostMessage, WorkerMessage, serveGame, remoteGameModule (see "Message protocol")
+// conformance: CONFORMANCE_JS, CONFORMANCE_WASM, CONFORMANCE_MANIFEST, CONFORMANCE_REPLAY
+```
+
+### `@hellotimber/nokia-games` (new)
+
+```ts
+export const factory2048: GameFactory;
+export const game2048: GameDefinition; // factory2048(sdk)
+export const dotWasm: Uint8Array; // the Wasm example's bytes (generated)
+export const EXAMPLE_PACKAGES: { readonly "2048": unknown; readonly dot: unknown }; // `nokia-game 1` JSON
+```
+
+### `@hellotimber/nokia-games-sandbox` (new)
+
+```ts
+export interface GameSandboxOptions {
+  /** Where the hidden iframe goes (default document.body). */
+  readonly container?: HTMLElement;
+  /** A served copy of SANDBOX_HTML, for host pages whose CSP forbids 'unsafe-eval' (F10). */
+  readonly src?: string;
+  readonly watchdogMs?: number; // default WATCHDOG_MS.play
+}
+export interface GameSandbox {
+  /** Validates, loads once in a worker (manifest equality, D14) and returns a module whose sessions are remote. */
+  install(pkg: unknown): Promise<GameModule>;
+  /** Probes the browser's enforcement outside SES (D7 (5)): fetch, WebSocket, importScripts, nested worker. */
+  selfTest(): Promise<SandboxSelfTest>;
+  dispose(): void;
+}
+export function createGameSandbox(options?: GameSandboxOptions): GameSandbox;
+export const SANDBOX_HTML: string;
+export const SANDBOX_CSP: string;
+```
+
+### `@hellotimber/nokia-os` (additive)
+
+```ts
+export interface StockPhoneConfig {
+  // ...plan 13/15/16 fields unchanged...
+  /**
+   * Plan 28: extra games, appended to Games after Pairs II in this order (D3). Default: none,
+   * which is the stock phone. Throws when a game fails `validateStockGame`, naming it.
+   */
+  games?: readonly GameModule[];
+}
+/** Problems that keep `manifest` off the stock phone (glyphs, row and note fit, slugs; D12, D19); [] when fine. */
+export function validateStockGame(manifest: GameManifest): string[];
+```
+
+`stockMenu`, `paintStockScreen`, `missingStockGlyphs`, the storage and sound contracts are
+unchanged. Internal: `src/games/sdk/**`, the `sdk-games` record in `STOCK_RECORDS`, the
+`notes` cue, `levelPage` (generalised from `snakeLevel`), the `game-frame` widget model.

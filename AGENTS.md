@@ -57,6 +57,9 @@ packages/
   snake/            @hellotimber/snake        — standalone legacy Snake logic (not used by the website)
   phone-services/   @hellotimber/phone-services — shared phone state: SMS, chat, phone book, SIM, telephone, call log, network port
   nokia-kit/        @hellotimber/nokia-kit    — the modular Nokia OS: ui (widgets, painter, resources, text, sound), system, apps
+  nokia-games-sdk/   @hellotimber/nokia-games-sdk — game contracts, sessions, drawing and replays (plan 28)
+  nokia-games/       @hellotimber/nokia-games — first-party games and user examples (plan 28)
+  nokia-games-sandbox/ @hellotimber/nokia-games-sandbox — browser sandbox and watchdog (plan 28)
   nokia-os/         @hellotimber/nokia-os     — stock v6.39 firmware engine and snapshot (menu, features, tree, goldens, demo)
 docs/plans/         numbered implementation plans (the source of truth for tasks)
 ```
@@ -75,10 +78,13 @@ use `"catalog:"` specifiers where a catalog entry exists.
 
    ```
    website ──▶ nokia-os, nokia-kit, phone-services, phone-core (types/router bridge), phone-screen (renderer), phone-3d
-   nokia-os ──▶ nokia-kit, phone-services, phone-core, phone-screen
+   nokia-os ──▶ nokia-kit, phone-services, phone-core, phone-screen, nokia-games-sdk
    nokia-kit ──▶ phone-services, phone-core, phone-screen   (runtime: kernel/menu model/Timeline; LCD toolkit)
    phone-services ──▶ (no internal deps)
    phone-screen ──▶ phone-core (type-only imports of ScreenModel — no runtime dep)
+   nokia-games ──▶ nokia-games-sdk
+   nokia-games-sandbox ──▶ nokia-games-sdk, ses
+   nokia-games-sdk ──▶ (no runtime deps)
    snake, phone-3d ──▶ (no internal deps)
    ```
 
@@ -97,7 +103,12 @@ use `"catalog:"` specifiers where a catalog entry exists.
    devDependencies for local dev/tests). Never put `three` in `dependencies` —
    duplicate three instances break `instanceof` checks at runtime.
 5. Integration code (adapters between packages, router bridge, content) lives in
-   `website/src/` only.
+   `website/src/`. A package’s `demo/` may compose siblings through devDependencies; its
+   `src/` and `tests/` may not import those demo-only siblings. The nokia-os demo may compose
+   nokia-games and nokia-games-sandbox. nokia-kit does not depend on the SDK.
+
+Plan 28 approves `ses` for nokia-games-sandbox and `watr` as a devDependency of the SDK
+and nokia-games; use their catalog entries.
 
 ## Creating a new package
 

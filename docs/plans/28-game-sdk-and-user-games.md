@@ -994,17 +994,17 @@ of plan 13's `Golden mismatch`. `recordReplay(module, start, input, until)` writ
 
 **Files:** `VISION.md`, `AGENTS.md`, `docs/specs/nokia-3310.md`, `docs/plans/README.md`, this plan.
 
-- [ ] VISION: architecture diagram and package table with the three packages and the edges of
+- [x] VISION: architecture diagram and package table with the three packages and the edges of
       "Package boundaries"; the four contract sections exactly as "Contract changes"; one
       paragraph on extra games (opt-in, D3 numbering, non-stock screens, wake-based timing on the
       kernel clock, D19's limits).
-- [ ] AGENTS: workspace layout entries; the dependency directions; the demo rule (D1); `ses` and
+- [x] AGENTS: workspace layout entries; the dependency directions; the demo rule (D1); `ses` and
       `watr` as the approved dependencies of this plan.
-- [ ] Spec §7: "Extra games (plan 28, not stock)": where they appear, D3 numbering, the composed
+- [x] Spec §7: "Extra games (plan 28, not stock)": where they appear, D3 numbering, the composed
       `Game\nerror` note, and that their gameplay has no captured ground truth.
-- [ ] Plans README row 28 `in progress`.
-- [ ] No runtime code. `mise exec -- vp check --fix`.
-- [ ] Commit: `docs: define the game SDK, shell and sandbox contracts (plan 28)`.
+- [x] Plans README row 28 `in progress`.
+- [x] No runtime code. `mise exec -- vp check --fix`.
+- [x] Commit: `docs: define the game SDK, shell and sandbox contracts (plan 28)`.
 
 ### Task 2 - SDK I: screen, drawing, digits, random, limits and manifests (TDD)
 
