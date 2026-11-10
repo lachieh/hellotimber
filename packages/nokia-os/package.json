@@ -22,6 +22,7 @@
     "build-t9-dictionary": "node scripts/build-t9-dictionary.ts"
   },
   "dependencies": {
+    "@hellotimber/nokia-games-sdk": "workspace:*",
     "@hellotimber/nokia-kit": "workspace:*",
     "@hellotimber/phone-core": "workspace:*",
     "@hellotimber/phone-screen": "workspace:*",

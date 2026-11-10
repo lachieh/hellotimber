@@ -17,7 +17,57 @@ pixel-exact, timings match within one display frame (≈17 ms), or ≈50 ms for 
 and longer, and sub-frame partial redraws are ignored. SDK replays are exact, because both sides
 are our code on the kernel clock (D11).
 "Sandbox investigation" cites the sandbox facts; read it before Tasks 9-12.
-**Status:** not started.
+**Status:** in progress (2026-11-10). Read "Execution (2026-11-10)" first: it remaps the paths this
+plan wrote before plan 32 split nokia-kit out of nokia-os, and replaces the parallelism rule.
+
+## Execution (2026-11-10)
+
+This plan was written before plan 32 Phase 0 moved the kit out of `@hellotimber/nokia-os`. The
+decisions (D1-D19) and the contracts stand. Where a task names an old path, use this map. The
+fidelity wording of AGENTS.md ("Fidelity standard") supersedes the 17 ms / 50 ms wording here.
+
+| The plan says (under `packages/nokia-os/`)           | Today                                                                                  |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `src/games/sdk/**` (the shell)                       | unchanged: `packages/nokia-os/src/games/sdk/**` (new directory)                        |
+| `src/firmware/{menu,records,leaves,phone}.ts`        | unchanged; the Games level is built by `src/firmware/features/{games,games-snake}.ts`  |
+| `src/firmware/cues.ts`                               | `packages/nokia-kit/src/system/cues.ts`                                                |
+| `src/sound/sounder.ts`, `tests/sounder.test.ts`      | `packages/nokia-kit/src/system/sounder.ts` and its test in `packages/nokia-kit/tests/` |
+| `src/widgets/text-pages.ts`                          | `packages/nokia-kit/src/ui/widgets/text-pages.ts`                                      |
+| `src/widgets/{level-bar,game-over}.ts`               | unchanged (`packages/nokia-os/src/widgets/`)                                           |
+| `src/display/widgets/{index,game-frame}.ts`          | `packages/nokia-kit/src/ui/display/widgets/{index,game-frame}.ts`                      |
+| `src/resources/generated/snake.ts` (`SNAKE_SPRITES`) | `packages/nokia-kit/src/ui/resources/generated/snake.ts`, read through `ui/resources`  |
+| `demo/games.ts`                                      | `demo/panels/games.ts` plus one export line in `demo/panels/index.ts` (AGENTS, rule 6) |
+| `tests/boundaries.test.ts` (new)                     | extend `tests/package-boundaries.test.ts`                                              |
+
+Boundaries as they are now: `nokia-os ▶ nokia-games-sdk` (runtime) is the only new edge into the
+phone packages. **nokia-kit does not depend on the SDK**: what it gains (the `notes` cue, the
+`game-frame` widget model, wrapped text pages) is plain data. D18 still holds for the website: the
+homepage firmware (`website/src/home/firmware.ts`) mounts only the Snake II part of Games and
+passes no `games`, so `website/` does not change.
+
+**Foundation (done before the lanes):** the three packages are scaffolded, `ses` and `watr` are in
+the catalog and the lockfile, nokia-os depends on the SDK, and the SDK holds the contract as types
+(`src/contract.ts`), D19's constants (`src/limits.ts`) and an unimplemented `GameScreen`
+(`src/screen.ts`). No lane edits `pnpm-workspace.yaml` or `pnpm-lock.yaml`.
+
+**Lanes (max 8 concurrent agents; this replaces "Parallelism" under Conventions).** Each lane works
+in its own git worktree and commits there; the parent merges lanes into the integration branch.
+A lane edits only the files listed for it.
+
+| Wave | Lane                  | Work                                                                                                                                                  | Needs      |
+| ---- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| 1    | A · SDK core          | Task 2, then Task 3                                                                                                                                   | foundation |
+| 1    | B · 2048 engine       | Task 5                                                                                                                                                | foundation |
+| 1    | C · shell groundwork  | the SDK-free parts of Tasks 7-8: `levelPage`, wrapped text pages, the `game-frame` widget, the `notes` cue, the game-over top-score source            | foundation |
+| 1    | D · sandbox page      | the SDK-free parts of Task 11: `SANDBOX_HTML`, `SANDBOX_CSP`, the bootstrap and its hash, the self-test probe; how `ses`'s UMD text is read (Task 10) | foundation |
+| 1    | E · contracts in docs | Task 1                                                                                                                                                | foundation |
+| 2    | F · SDK remote        | Task 4 (Wasm ABI, packages, protocol, conformance)                                                                                                    | A          |
+| 2    | G · 2048 on the LCD   | Task 6                                                                                                                                                | A, B       |
+| 2    | H · shell             | the rest of Task 7, then Task 8                                                                                                                       | A, C       |
+| 3    | I · user packages     | Task 9                                                                                                                                                | F, G       |
+| 3    | J · sandbox           | Task 10, then the rest of Task 11                                                                                                                     | D, F       |
+| 4    | K · demo and browser  | Task 12                                                                                                                                               | H, I, J    |
+| 4    | L · closeout          | Task 13                                                                                                                                               | K          |
 
 ## Goal
 

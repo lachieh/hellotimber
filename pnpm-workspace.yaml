@@ -44,6 +44,8 @@ catalog:
   "@shikijs/rehype": ^4.0.0
   shiki: ^4.0.0
   dialkit: ^2.1.0
+  ses: ^2.3.0
+  watr: ^5.11.0
 overrides:
   vite: "catalog:"
   vitest: "catalog:"
