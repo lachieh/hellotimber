@@ -242,6 +242,33 @@ describe("levelPage (D14)", () => {
     expect(page(175, 5).widget.render(NO_FLOW)).toMatchObject({ bars: "level/snake-5" });
   });
 
+  it("counts past its bars: nine bars at most while ▲ climbs to a max of 20 (plan 28 D5)", () => {
+    const settings = createMemorySettings(virginSettings());
+    settings.setNumber(KEY, 8);
+    const widget = levelPage({
+      settings,
+      key: KEY,
+      max: 20,
+      maxBars: 9,
+      bars: "level/snake",
+      softkey: "OK",
+    });
+    const rig = flowRig(() => widget);
+    expect(widget.render(NO_FLOW)).toMatchObject({ bars: "level/snake-8" });
+    rig.press("up");
+    expect(widget.render(NO_FLOW)).toMatchObject({ bars: "level/snake-9" });
+    for (let i = 0; i < 14; i++) rig.press("up");
+    expect(widget.render(NO_FLOW)).toMatchObject({ bars: "level/snake-9" });
+    // 8 + 15 presses stops at 20; nine presses down from there is 11, still nine bars.
+    for (let i = 0; i < 9; i++) rig.press("down");
+    expect(widget.render(NO_FLOW)).toMatchObject({ bars: "level/snake-9" });
+    for (let i = 0; i < 3; i++) rig.press("down");
+    expect(widget.render(NO_FLOW)).toMatchObject({ bars: "level/snake-8" });
+    for (let i = 0; i < 20; i++) rig.press("up");
+    rig.press("navi");
+    expect(settings.number(KEY)).toBe(20);
+  });
+
   it("a 5-bar page clamps ▼ at 1 and ▲ at 5", () => {
     const low = page(3, 5);
     for (let i = 0; i < 4; i++) low.rig.press("down");

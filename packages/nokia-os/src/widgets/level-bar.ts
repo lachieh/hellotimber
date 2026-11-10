@@ -22,8 +22,13 @@ export interface LevelPageOptions {
   readonly settings: StockSettings;
   /** The numeric setting the page edits (`games/snake/level`). */
   readonly key: string;
-  /** The most bars the page draws, and the highest level ▲ reaches (Snake II: 9). */
+  /** The highest level ▲ reaches (Snake II: 9). */
   readonly max: number;
+  /**
+   * The most bars the page draws. Default: `max`, a page with a bar for every level. A game
+   * with more levels than bar sprites passes fewer (plan 28 D5: nine bars, `max` 20).
+   */
+  readonly maxBars?: number;
   /** The bar sprites' prefix: `<bars>-<n>` draws n filled bars (Snake II: `level/snake`). */
   readonly bars: string;
   readonly softkey: string;
@@ -36,7 +41,7 @@ export interface LevelPageOptions {
 
 /**
  * A game's Level page (plan 24 D14; Snake II's, plan 23 D11, Task 0 C1, is the `max: 9` case):
- * `min(level, max)` filled bars. ▼ lowers the level by one down to 1; ▲ raises it by one only
+ * `min(level, maxBars)` filled bars. ▼ lowers the level by one down to 1; ▲ raises it by one only
  * below `max` (from Snake II's virgin 175 it does nothing). Both act on key-down and repeat
  * while held. OK stores the level and goes back; C goes back without storing.
  */
@@ -51,8 +56,8 @@ class LevelPageWidget implements Widget {
   }
 
   render(): LevelBarModel {
-    const { bars, max, softkey } = this.#options;
-    return { kind: "level-bar", bars: `${bars}-${Math.min(this.#level, max)}`, softkey };
+    const { bars, max, maxBars = max, softkey } = this.#options;
+    return { kind: "level-bar", bars: `${bars}-${Math.min(this.#level, maxBars)}`, softkey };
   }
 
   onKeyDown(key: PhoneKey, flow: Flow): void {
