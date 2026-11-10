@@ -99,6 +99,8 @@ export function describeWidget(model: WidgetModel): string {
       return `Snake II, score ${model.board.score}`;
     case "game-over":
       return `Game over: ${model.label} ${model.score}`.trim();
+    case "game-frame":
+      return "Game screen";
     case "boot-frame":
       return model.frame === 0 ? "Blank screen" : "Switching on";
     case "welcome-note":

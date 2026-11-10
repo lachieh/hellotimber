@@ -138,6 +138,7 @@ const SAMPLES: { readonly [K in WidgetModel["kind"]]: Extract<WidgetModel, { kin
     label: "Score:",
     score: "12",
   } as never,
+  "game-frame": { kind: "game-frame", frame: "A".repeat(672) },
   "boot-frame": { kind: "boot-frame", frame: 0 },
   "welcome-note": { kind: "welcome-note", text: "Hi" },
   editor: {
@@ -233,6 +234,7 @@ describe("describeWidget: every stock widget kind", () => {
     expect(describeWidget(SAMPLES.editor)).toBe("Editor: Hi (158) [Options]");
     expect(describeWidget(SAMPLES.placeholder)).toBe("Calling (not implemented)");
     expect(describeWidget(SAMPLES.snake)).toBe("Snake II, score 12");
+    expect(describeWidget(SAMPLES["game-frame"])).toBe("Game screen");
     expect(describeWidget(SAMPLES["message-page"])).toBe("Sender: Ben 0400000002 [Options]");
   });
 });

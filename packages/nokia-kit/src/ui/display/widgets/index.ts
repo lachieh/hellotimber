@@ -23,6 +23,7 @@ import { paintReminderView, type ReminderViewModel } from "./reminder-view";
 import { paintConfirm, type ConfirmModel } from "./confirm";
 import { paintContentList, type ContentListModel } from "./content-list";
 import { paintEditor, type EditorModel } from "./editor";
+import { paintGameFrame, type GameFrameModel } from "./game-frame";
 import { paintGameOver, type GameOverModel } from "./game-over";
 import { paintInfoPage, type InfoPageModel } from "./info-pages";
 import { paintInfoScreen, type InfoScreenModel } from "./info-screen";
@@ -69,6 +70,8 @@ export type { ComposerModel } from "./composer";
 export type { ConfirmModel } from "./confirm";
 export type { ContentListModel } from "./content-list";
 export type { EditorModel } from "./editor";
+export { GAME_FRAME_BYTES, gameFrame } from "./game-frame";
+export type { GameFrameModel } from "./game-frame";
 export type { GameOverModel } from "./game-over";
 export type { InfoPageModel } from "./info-pages";
 export type { InfoScreenModel } from "./info-screen";
@@ -136,6 +139,7 @@ export type WidgetModel =
   | SplashModel
   | SnakeModel
   | GameOverModel
+  | GameFrameModel
   | BootFrameModel
   | WelcomeNoteModel
   | EditorModel
@@ -211,6 +215,9 @@ export function paintWidget(fb: Framebuffer, model: WidgetModel, previous?: Uint
       return;
     case "game-over":
       paintGameOver(fb, model);
+      return;
+    case "game-frame":
+      paintGameFrame(fb, model);
       return;
     case "boot-frame":
       paintBootFrame(fb, model.frame);
