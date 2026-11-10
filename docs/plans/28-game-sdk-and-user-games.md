@@ -1012,28 +1012,45 @@ of plan 13's `Golden mismatch`. `recordReplay(module, start, input, until)` writ
 `src/{index,contract,limits,screen,draw,digits,random,manifest}.ts`,
 `tests/{screen,draw,random,manifest}.test.ts`.
 
-- [ ] Scaffold per AGENTS ("Creating a new package"); `vp install`.
-- [ ] TDD `GameScreen`: clipping; `fill`/`invert`/`blit`; `pack()`/`unpackFrame()` round trip,
+- [x] Scaffold per AGENTS ("Creating a new package"); `vp install`.
+- [x] TDD `GameScreen`: clipping; `fill`/`invert`/`blit`; `pack()`/`unpackFrame()` round trip,
       with known bytes for a hand-made frame (MSB first, row-major, 504 bytes).
-- [ ] TDD drawing: `textWidth`/`drawText` over a two-glyph test font (advance = row length; a
+- [x] TDD drawing: `textWidth`/`drawText` over a two-glyph test font (advance = row length; a
       missing glyph throws, naming it); `drawNumber` with `GAME_DIGITS` at scale 1 and 3,
       `align: "right"`, gap 0, `ink: 0` on a filled box; `encodeFrame` is base64 of `pack()`.
-- [ ] `GAME_DIGITS`: the ten 4×5 cells of Snake II's HUD digits, transcribed from
+- [x] `GAME_DIGITS`: the ten 4×5 cells of Snake II's HUD digits, transcribed from
       `packages/nokia-os/src/resources/generated/snake.ts` (`digit/0`…`9`). Task 7's guard
       pins the equality.
-- [ ] TDD `createRandom` (mulberry32: published first outputs for seed 1 and 44530), uint32
+- [x] TDD `createRandom` (mulberry32: published first outputs for seed 1 and 44530), uint32
       output; `mixSeed` deterministic, uint32, sensitive to both inputs.
-- [ ] `src/limits.ts` holds D19's constants, each with its reason in a comment; nothing else in
+- [x] `src/limits.ts` holds D19's constants, each with its reason in a comment; nothing else in
       the SDK declares a bound.
-- [ ] TDD `validateManifest`: structure only (kebab id, first item `play`, unique slugs, integer
+- [x] TDD `validateManifest`: structure only (kebab id, first item `play`, unique slugs, integer
       `level` with 1 ≤ initial ≤ max, choice `initial` in range, splash frames of 504 bytes and
       step frame indices in range, positive integer step ms, `storageBytes` within the quota,
       `top-score` refused with `scores: false`); errors name the field path. Positive tests prove
       the removed caps stay removed: `level.max` 1000, a 20-option choice, a 40-frame 20 s splash,
       a ten-line instructions page all pass.
-- [ ] `src/index.ts` exports the contract, `sdk` (a frozen object of the helpers) and the rest.
-- [ ] `mise exec -- vp run @hellotimber/nokia-games-sdk#test`, `vp check --fix`.
-- [ ] Commit: `feat(nokia-games-sdk): screen, drawing, digits, random, limits and manifests`.
+- [x] `src/index.ts` exports the contract, `sdk` (a frozen object of the helpers) and the rest.
+- [x] `mise exec -- vp run @hellotimber/nokia-games-sdk#test`, `vp check --fix`.
+- [x] Commit: `feat(nokia-games-sdk): screen, drawing, digits, random, limits and manifests`.
+
+Deviation: the scaffold, `contract.ts` and `limits.ts` came from the foundation commit, and
+`GAME_DIGITS` is transcribed from nokia-kit's `src/ui/resources/generated/snake.ts` (Execution map).
+One file is added: `src/base64.ts` with `tests` in `draw.test.ts`. `encodeFrame` and the splash
+check need base64, and `btoa`/`atob` do not exist in an SES compartment, so the SDK carries its own
+codec and exports it (`encodeBase64`, `decodeBase64`; strict, padded, canonical). The contract is
+unchanged otherwise.
+
+Deviation: `validateManifest` reads "structure only" with four well-formedness rules the task did
+not spell out, none of them a cap (D19). It refuses unknown fields, naming them. A play or choice
+slug may not be `continue`, `level`, `top-score` or `instructions`, the slugs of the shell's own
+entries. A menu holds at most one `level`, one `top-score` and one `instructions` item, because
+those entries have no slug or label of their own to tell two apart. A `level` item needs the
+manifest's `level`. It returns a frozen copy read field by field, so a manifest cannot change after
+it passed. "Not a stock Games slug" (the `id` comment) stays the host's check: the SDK has no
+phone vocabulary. `drawText` and `drawNumber` return the width drawn, and `drawNumber` accepts any
+positive integer `scale` at runtime (the type says 1-3).
 
 ### Task 3 - SDK II: wake-based local sessions, replays and recording (TDD)
 
