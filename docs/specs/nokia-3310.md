@@ -225,8 +225,7 @@ where a spec file and a golden disagree, fix the spec. The facts live in one fil
 | Number entry, calls and the call register (plan 22)        | [stock/calls.md](stock/calls.md)                                   | 22   |
 | Supplementary requests and in-call services (plan 22b)     | [stock/calls-services.md](stock/calls-services.md)                 | 22b  |
 | SIM messages, sender names, SIM services, IMEI             | [stock/sim-services.md](stock/sim-services.md)                     | 30   |
-
-| Extra games (planned extension, not stock ground truth) | [stock/extra-games.md](stock/extra-games.md) | 28 |
+| Extra games (planned extension, not stock ground truth)    | [stock/extra-games.md](stock/extra-games.md)                       | 28   |
 
 ---
 

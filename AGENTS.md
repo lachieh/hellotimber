@@ -57,9 +57,9 @@ packages/
   snake/            @hellotimber/snake        — standalone legacy Snake logic (not used by the website)
   phone-services/   @hellotimber/phone-services — shared phone state: SMS, chat, phone book, SIM, telephone, call log, network port
   nokia-kit/        @hellotimber/nokia-kit    — the modular Nokia OS: ui (widgets, painter, resources, text, sound), system, apps
-  nokia-games-sdk/   @hellotimber/nokia-games-sdk — game contracts, sessions, drawing and replays (plan 28)
-  nokia-games/       @hellotimber/nokia-games — first-party games and user examples (plan 28)
-  nokia-games-sandbox/ @hellotimber/nokia-games-sandbox — browser sandbox and watchdog (plan 28)
+  nokia-games-sdk/  @hellotimber/nokia-games-sdk — what games and hosts share: contract, screen, sessions, replays (plan 28)
+  nokia-games/      @hellotimber/nokia-games  — first-party games (2048) and example user packages (plan 28)
+  nokia-games-sandbox/ @hellotimber/nokia-games-sandbox — browser sandbox for user games: iframe, CSP, SES worker, watchdog (plan 28)
   nokia-os/         @hellotimber/nokia-os     — stock v6.39 firmware engine and snapshot (menu, features, tree, goldens, demo)
 docs/plans/         numbered implementation plans (the source of truth for tasks)
 ```
