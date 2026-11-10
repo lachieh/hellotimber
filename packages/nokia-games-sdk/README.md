@@ -1,7 +1,8 @@
 # @hellotimber/nokia-games-sdk
 
 What a game for the 84×48 phone and its hosts share: the game contract, the screen, drawing
-helpers, the game digits, the seeded generator, the host limits and manifest validation. No
+helpers, the game digits, the seeded generator, the host limits, manifest validation, in-process
+sessions and replay goldens. No
 runtime dependencies, and nothing from the DOM or Node: it runs in a page, a worker, Node and an
 SES compartment. Plan 28 (`docs/plans/28-game-sdk-and-user-games.md`) is the design.
 
@@ -64,6 +65,63 @@ returns the definition, so its source needs no imports.
 - `validateManifest(value)` checks an untrusted manifest's structure and returns a frozen copy,
   or throws naming the field (`Invalid game manifest: menu[2].initial: expected …`). It refuses
   unknown fields. Whether the labels can be drawn in the host's fonts is the host's check.
+
+## Running a game
+
+`localGame(definition)` validates the manifest and returns a `GameModule`. Each `start` is one
+`GameSession`, driven synchronously with the host's session time in whole, non-decreasing ms:
+
+```ts
+import { GAME_DIGITS, localGame } from "@hellotimber/nokia-games-sdk";
+import { counter } from "./counter";
+
+const session = localGame(counter).start(
+  { mode: "", level: 1, choices: {}, seed: 44530, topScore: 0, storage: new Uint8Array(0) },
+  { game: GAME_DIGITS },
+);
+session.keyDown("5", 420); // runs every wake due by 420 ms first, each at its own time
+session.keyUp("5", 500);
+session.advance(3000); // runs the wakes at 1000, 2000 and 3000 ms
+session.frame(); // the newest packed frame; a new array only when the pixels changed
+session.drain(); // the effects since the last drain, each with the ms of its call
+session.wake(); // 4000: the next wake, or null while the game sleeps
+```
+
+`update` runs at exactly the times the game asked for, however coarsely the host advances. A
+delay below `MIN_WAKE_MS` is raised to it and a fraction rounds up. A key goes down once and its
+release is delivered only if its key-down was. After `ctx.over()` the session ignores every call.
+
+`session.failure` is set once the game is dead, and starts with the reason: `game: …` (it threw),
+`wake: …` (a delay that is negative, not finite or not a number), `effect: …` (a malformed ctx
+call), `limit: …` (more than 64 effects or 8192 notes in one call) or `clock` (the session reached
+`MAX_SESSION_MS`). A time that decreases, or a key that is not a `GameKey`, is the host's bug and
+throws.
+
+## Replays
+
+A replay (`game-replay 1`) holds a session's start and its keys, and what the game must then do:
+every effect with its ms, the frame standing at 0, every 10 000 ms, at each vibrate or over and at
+the end, and a hash over every distinct frame with the ms it was drawn at. Replays are exact.
+
+```ts
+import {
+  checkReplay,
+  parseReplay,
+  recordReplay,
+  serializeReplay,
+} from "@hellotimber/nokia-games-sdk";
+
+const replay = recordReplay(module, start, "400:6 900:2 2600:8+ 2750:8-", 30_000, { note: "…" });
+const text = serializeReplay(replay); // commit this as a golden
+
+const mismatch = checkReplay(module, parseReplay(text, "goldens/counter.replay"));
+if (mismatch) throw new Error(mismatch.message); // the first differing effect or frame, with its ms
+```
+
+In `input`, `400:6` is a key-down and a key-up at 400 ms, and `8+`/`8-` give them separately; keys
+are `0`-`9`, `*`, `#`, `up` and `down`. `checkReplay(module, replay, { advanceMs: 17 })` also calls
+`advance` on that grid, which must change nothing. `recording(module)` wraps a module so that
+`lastReplay()` returns the replay text of the session just played.
 
 ## Limits
 

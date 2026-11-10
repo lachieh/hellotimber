@@ -1058,7 +1058,7 @@ positive integer `scale` at runtime (the type says 1-3).
 `tests/support/counter-game.ts` (new: a tiny fixture game using every ctx call, with a scripted
 schedule of wakes).
 
-- [ ] TDD `localGame` timing:
+- [x] TDD `localGame` timing:
   - `start` creates the instance and calls `update(0)`;
   - `update` runs at exactly the requested times, whether `advance` is called every 1 ms, every
     17 ms or once far past several wakes (identical call logs);
@@ -1069,20 +1069,55 @@ schedule of wakes).
   - a sleeping game is never called by `advance` (call count 0);
   - non-decreasing times are required of the host (a decreasing time throws: a host bug);
   - a session reaching `MAX_SESSION_MS` fails `clock`.
-- [ ] TDD the rest of `localGame`: `draw` after every call; `frame()` changes only when pixels
+- [x] TDD the rest of `localGame`: `draw` after every call; `frame()` changes only when pixels
       change; `drain()` returns effects stamped with their call's ms; `ctx.random` is mulberry32
       over `start.seed`; `save` enforces `storageBytes`; nothing after `over` (calls are
       ignored); malformed effects (non-integer notes or vibration) and D19's per-call bounds
       throw inside the game, so `failure` is set; a throwing game sets `failure` and stops;
       `dispose` is idempotent.
-- [ ] TDD the replay format: parse/serialize round trip, header order, `input` forms,
+- [x] TDD the replay format: parse/serialize round trip, header order, `input` forms,
       non-decreasing ms, `until`, frame grids 84×48, `@hash` over (ms, frame); `file:line` errors.
-- [ ] TDD `recordReplay`/`checkReplay` on the fixture game: an edited effect, effect ms or pixel
+- [x] TDD `recordReplay`/`checkReplay` on the fixture game: an edited effect, effect ms or pixel
       is reported with its ms and a row diff; `advanceMs: 1` and `advanceMs: 17` pass the same
       replay.
-- [ ] TDD `recording(module)`: a played session (keys between wakes, a held key) yields a replay
+- [x] TDD `recording(module)`: a played session (keys between wakes, a held key) yields a replay
       that `checkReplay` passes.
-- [ ] Commit: `feat(nokia-games-sdk): wake-based local sessions and replay goldens`.
+- [x] Commit: `feat(nokia-games-sdk): wake-based local sessions and replay goldens`.
+
+Deviation: `contract.ts` is implemented as written. The session rules the plan left open are
+decided here and tested in `tests/local.test.ts`. `failure` starts with its kind: `game: …` (it
+threw), `wake: …` (a malformed delay; `undefined` from `update` is one), `effect: …` (a malformed
+ctx call, or a second `over`), `limit: …` (D19's per-call bounds) or exactly `clock`. A ctx call
+that breaks a rule throws inside the game and fails the session even if the game catches it. The
+failed call is not drawn and its effects are dropped; earlier effects stay. `clock` is set by the
+first host call at or past `MAX_SESSION_MS`, after the wakes due before it. A key goes down once,
+and a release reaches the game only if its key-down did; the due wakes still run for a key that is
+not delivered. A key that is not a `GameKey`, a time that decreases or is not a whole ms, and a
+`start.storage` over the manifest's quota throw as host bugs. Once the game is over, failed or
+disposed, every call is ignored, the clock check included. `over()` inside `create` ends the
+session before `update(0)`, so `frame()` stays undefined. Effects made after `over` in the same
+call are kept. ctx calls made outside a game call are ignored. `tests/support/counter-game.ts`
+holds two fixtures: `probeGame` (every call scripted and logged) and `counterGame`.
+
+Deviation: D19's effect bounds are enforced per game call, as this task says, so that they do not
+depend on how finely the host advances. The protocol states them per reply, and one reply can
+carry several calls (the due wakes, then the key). Task 4 has to bound a reply by the calls it
+carries, or split it; a game that passes in-process must not fail `protocol` because the host was
+late.
+
+Deviation: the replay format needed forms the example does not show. In `@effects`: `sound notes
+440x100 880x50` (hz x ms; `sound notes` alone for none), `save <base64>`, and `-` for no saved bytes
+and for `over` without a score. `storage:` is base64, `choices:` is `slug=index` in slug order, and
+empty values end at the colon. A frame "standing at" a ms is the last one drawn at or before it.
+`recordReplay(module, start, input, until, { fonts?, note? })` takes the keys as a list or as the
+`input:` text; the replay it returns ends at `over` if that came first (`until` and the keys are
+cut there), while `checkReplay` accepts a hand-written `until` past `over`. `checkReplay` returns
+`{ at, message } | undefined`; `at` is undefined when only `@hash` differs, because no single frame
+can be named then. It plays a replay by advancing to each wake at its own time, which is how it
+knows the ms a frame was drawn at, so it needs a session that answers synchronously
+(`localGame`). `recording(module).lastReplay()` plays the logged keys again through `module` for
+the same reason: it serves in-process modules. A remote module needs the replay run where its
+`localGame` session lives (Task 4's conformance and Task 10 decide how).
 
 ### Task 4 - SDK III: protocol, Wasm ABI, packages and conformance (TDD)
 
