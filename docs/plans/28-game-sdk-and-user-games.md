@@ -1293,11 +1293,26 @@ other than Snake II's), `src/index.ts`, `tests/sdk-session.test.ts` (new), `test
 - [ ] Generator twice, no diff. `mise exec -- vp run @hellotimber/nokia-games-sandbox#test`.
 - [ ] Commit: `feat(nokia-games-sandbox): SES worker runtime for user games`.
 
+Note (lane D, 2026-11-10), how `ses`'s UMD text is read: `ses` 2.3.0's `exports` map does not
+list `dist/ses.umd.min.js`. Node refuses the path (`ERR_PACKAGE_PATH_NOT_EXPORTED`, `require` and
+`import`), and so does Vite+ 0.1.24: `import "ses/dist/ses.umd.min.js?raw"` fails in vitest and
+in a browser build ("is not exported under the conditions …"). `?raw` only works through a
+relative path into `node_modules`, which a package read from source cannot rely on.
+`ses/package.json` is exported, so `scripts/ses-source.ts` finds the package with `createRequire`,
+reads the file and writes `src/generated/ses-source.ts` (`SES_SOURCE`, one string of 235,851
+characters, 237,664 B as UTF-8, with the version and licence in its header). Run it with
+`mise exec -- vp run @hellotimber/nokia-games-sandbox#generate`; `tests/ses-source.test.ts` is
+the freshness test, and also runs `SES_SOURCE` as a classic script in a `node:worker_threads`
+worker, where `lockdown()` and `new Compartment({ globals: {}, __options__: true })` work (F6's
+open point, for Node). The module bundles in a Vite browser build. `scripts/bundle-worker.ts`
+imports `SES_SOURCE` for the blob source; whether it inlines it into `worker-runtime.ts` or the
+host concatenates the two at runtime is lane J's choice.
+
 ### Task 11 - Sandbox II: the browser host
 
 **Files:** `src/{index,host,sandbox-html,self-test}.ts`, `tests/{sandbox-html,host}.test.ts`.
 
-- [ ] `SANDBOX_HTML`/`SANDBOX_CSP`: a bootstrap script that takes one message from the parent
+- [x] `SANDBOX_HTML`/`SANDBOX_CSP`: a bootstrap script that takes one message from the parent
       (`{ source, port }`), makes a `Blob` and a `Worker`, and transfers the port to the worker.
       The CSP is D7's L4, with `'sha256-…'` of the bootstrap; a test recomputes the hash.
 - [ ] `createGameSandbox`:
@@ -1316,6 +1331,29 @@ other than Snake II's), `src/index.ts`, `tests/sdk-session.test.ts` (new), `test
       frame; above 300 ms → pre-warm, D8, Deviation), and key-to-frame latency (within one display
       frame is the fidelity target; sub-frame differences are not chased).
 - [ ] Commit: `feat(nokia-games-sandbox): sandboxed iframe host with network denial`.
+
+Note (lane D, 2026-11-10): `src/sandbox-html.ts` and `src/self-test.ts` are done with their Node
+tests (the bootstrap and the probe worker's source both run there against fake scopes). Left for
+lane J: `src/host.ts` (`createGameSandbox`, `install`, `dispose`), `selfTest()` as a call of
+`runSelfTest(start)` with the iframe plumbing, `install` refusing unless the report is `ok`, and
+`tests/host.test.ts`. `SandboxSelfTest` is `{ ok, probes }`, one `blocked`/`allowed` per probe.
+
+Deviation (lane D): the bootstrap starts one worker per parent message, not one in total (a
+session needs a fresh worker from the one iframe), and the message may carry a second port,
+`{ source, port, stop }`. Any message on `stop` terminates that worker and revokes its blob URL.
+The plan's `terminate` needs it: the parent cannot reach a worker owned by another frame, and
+removing the iframe would end every session. It is used at setup and at the end only, so the
+session still has no hop through the iframe (D7). The blob URL is revoked there and not straight
+after `new Worker`, which browsers have not handled uniformly.
+
+Deviation (lane D): the `new Worker` probe starts a `data:` worker, which `worker-src blob:`
+refuses. A worker at a public URL fails from an opaque origin before any policy is consulted
+(F11), so it would show nothing. A probe is `blocked` only when the attempt failed and the worker
+saw a `securitypolicyviolation` for that probe's directive; a failure without one (offline) is
+reported `allowed`, as is an attempt still pending after 2 s, so the report never credits the
+policy with a failure it did not cause. Unverified until Task 12's browser run: that each engine
+fires `securitypolicyviolation` in a worker scope for `connect-src`, `script-src` and
+`worker-src` blocks. Where one does not, the self-test fails closed and user games are refused.
 
 ### Task 12 - Demo, READMEs and browser verification
 
