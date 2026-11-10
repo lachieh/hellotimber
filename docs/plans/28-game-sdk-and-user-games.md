@@ -1105,8 +1105,8 @@ script), `pnpm-workspace.yaml` (catalog `watr`), `tests/{protocol,wasm,package,c
 **Files:** `packages/nokia-games/{package.json,tsconfig.json,vite.config.ts,README.md}`,
 `src/2048/engine.ts`, `tests/2048-engine.test.ts`.
 
-- [ ] Scaffold per AGENTS; dependency `@hellotimber/nokia-games-sdk` (`workspace:*`).
-- [ ] TDD the engine as pure functions over an immutable state (size 4 or 3, cells as
+- [x] Scaffold per AGENTS; dependency `@hellotimber/nokia-games-sdk` (`workspace:*`).
+- [x] TDD the engine as pure functions over an immutable state (size 4 or 3, cells as
       exponents, score, pending spawn, won, over), with synthetic boards for each case:
   - slides in four directions;
   - one merge per tile per move, from the leading edge (`2 2 2 2` → `4 4`, `2 2 4` → `4 4`,
@@ -1117,8 +1117,16 @@ script), `pnpm-workspace.yaml` (catalog `watr`), `tests/{protocol,wasm,package,c
   - the start's two spawns;
   - the first 2048 sets `won` once;
   - lose detection (full, no equal neighbours, 4×4 and 3×3).
-- [ ] A test fails if `src/2048/**` uses `Math.random`, `Date`, `performance` or a runtime import.
-- [ ] Commit: `feat(nokia-games): 2048 engine`.
+- [x] A test fails if `src/2048/**` uses `Math.random`, `Date`, `performance` or a runtime import.
+- [x] Commit: `feat(nokia-games): 2048 engine`.
+
+Deviation: the scaffold and the SDK dependency were the foundation's work, so this task only
+removed the `passWithNoTests` placeholder from `vite.config.ts`. The source check is its own file,
+`tests/2048-source.test.ts`, and reads "a runtime import" as one that leaves `src/2048/`: the
+game's files import each other (D13 bundles them into one script), while a package import must be
+`import type`. The engine takes no timing decisions: `move` leaves `pendingSpawn` set and throws
+if called again before `spawn`, which is a no-op drawing nothing when no spawn is pending, so the
+game's `move(spawn(state, ctx.random), direction)` covers a key that arrives before the wake.
 
 ### Task 6 - 2048 II: the LCD, splash, game and replay goldens (TDD)
 
