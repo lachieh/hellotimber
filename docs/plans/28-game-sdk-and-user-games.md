@@ -1255,6 +1255,20 @@ the SDK, one with every menu item, a level `max` of 20 and a long instructions p
       `vp check --fix`.
 - [ ] Commit: `feat(nokia-os): extra games in the Games menu`.
 
+Groundwork (lane C): the SDK-free parts exist; none imports the SDK and no golden changed.
+`levelPage` (`packages/nokia-os/src/widgets/level-bar.ts`) takes an optional `maxBars` (default
+`max`): pass `maxBars: 9, max: 20` for nine bars while ▲ climbs to 20. `wrapTextPages(texts)`
+(`packages/nokia-kit/src/ui/widgets/text-pages.ts`) turns texts of any length into the
+three-line screens `textPages({ pages, softkey })` already steps through and cycles. It does not
+call `wrapText`: the five stock instruction texts keep a word that ends within the 84 columns,
+without the editor's two-column margin, and `tests/text-pages-wrap.test.ts` re-wraps each of them
+into its captured pages. `GameFrameModel` (`{ kind: "game-frame", frame }`), `gameFrame(packed)`,
+`GAME_FRAME_BYTES` and `paintGameFrame` (`ui/display/widgets/game-frame.ts`, registered in
+`WidgetModel`, `paintWidget` and `describeWidget` as `Game screen`). For Task 8, `StockCue`
+gains `{ kind: "notes", notes }`, played at the exported `GAME_NOTE_VOLUME` under the sounds'
+gating, and `{ kind: "stop" }`, which ends every sound and vibration that game cues started and
+leaves other sounds playing. `gameOver` is unchanged: it already takes the score in `ending`.
+
 ### Task 8 - Shell II: sessions, end screens and effects (TDD)
 
 **Files:** `src/games/sdk/session.ts` (new), `src/firmware/{phone,cues,menu}.ts`,
